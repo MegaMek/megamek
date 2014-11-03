@@ -19,6 +19,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -365,7 +366,7 @@ public interface IGame {
      * Get a vector of entity objects that are "acceptable" to attack with this
      * entity
      */
-    public abstract Vector<Entity> getValidTargets(Entity entity);
+    public abstract List<Entity> getValidTargets(Entity entity);
 
     /**
      * Returns true if this phase has turns. If false, the phase is simply
@@ -432,12 +433,12 @@ public interface IGame {
     /**
      * Returns the current turn vector
      */
-    public abstract Vector<GameTurn> getTurnVector();
+    public abstract List<GameTurn> getTurnVector();
 
     /**
      * Sets the current turn vector
      */
-    public abstract void setTurnVector(Vector<GameTurn> turnVector);
+    public abstract void setTurnVector(List<GameTurn> turnVector);
 
     public abstract IGame.Phase getPhase();
 
@@ -476,17 +477,17 @@ public interface IGame {
     /**
      * Returns a vector of entities that have not yet deployed
      */
-    public abstract Vector<Entity> getUndeployedEntities();
+    public abstract List<Entity> getUndeployedEntities();
 
     /**
      * Returns an enumeration of all the entites in the game.
      */
-    public abstract Enumeration<Entity> getEntities();
+    public abstract Iterator<Entity> getEntities();
 
     /**
      * Returns the actual vector for the entities
      */
-    public abstract Vector<Entity> getEntitiesVector();
+    public abstract List<Entity> getEntitiesVector();
 
     public abstract void setEntitiesVector(Vector<Entity> entities);
 
@@ -693,17 +694,22 @@ public interface IGame {
     /**
      * Returns an Enumeration of the active entities at the given coordinates.
      */
-    public abstract Enumeration<Entity> getEntities(Coords c);
+    public abstract Iterator<Entity> getEntities(Coords c);
 
     /**
      * Returns an Enumeration of the active entities at the given coordinates.
      */
-    public abstract Enumeration<Entity> getEntities(Coords c, boolean ignore);
+    public abstract Iterator<Entity> getEntities(Coords c, boolean ignore);
 
     /**
      * Returns a Vector of the active entities at the given coordinates.
      */
     public abstract List<Entity> getEntitiesVector(Coords c);
+    
+    /**
+     * Returns a Vector of the active entities at the given coordinates.
+     */
+    public abstract List<Entity> getEntitiesVector(Coords c, boolean ignore);
 
     /**
      * Returns a Vector of the gun emplacements at the given coordinates.
@@ -730,7 +736,7 @@ public interface IGame {
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the
      *         given coordinates who are enemies of the given unit.
      */
-    public abstract Enumeration<Entity> getEnemyEntities(final Coords c,
+    public abstract Iterator<Entity> getEnemyEntities(final Coords c,
             final Entity currentEntity);
 
     /**
@@ -742,7 +748,7 @@ public interface IGame {
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the
      *         given coordinates who are friends of the given unit.
      */
-    public abstract Enumeration<Entity> getFriendlyEntities(final Coords c,
+    public abstract Iterator<Entity> getFriendlyEntities(final Coords c,
             final Entity currentEntity);
 
     /**
@@ -1204,7 +1210,7 @@ public interface IGame {
      *         accepts. This value will not be <code>null</code> but it may be
      *         empty.
      */
-    public abstract Enumeration<Entity> getSelectedEntities(
+    public abstract Iterator<Entity> getSelectedEntities(
             EntitySelector selector);
 
     /**

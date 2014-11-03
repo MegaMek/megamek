@@ -19,7 +19,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigInteger;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -270,7 +269,7 @@ public class MapMenu extends JPopupMenu {
         JMenuItem item = new JMenuItem(
                 Messages.getString("MovementDisplay.butCharge"));
 
-        if (!client.getGame().getEntities(coords).hasMoreElements()) {
+        if (!client.getGame().getEntities(coords).hasNext()) {
             return null;
         }
         item.setActionCommand(MovementDisplay.MoveCommand.MOVE_CHARGE.getCmd());
@@ -288,7 +287,7 @@ public class MapMenu extends JPopupMenu {
         JMenuItem item = new JMenuItem(
                 Messages.getString("MovementDisplay.butDfa"));
 
-        if (!client.getGame().getEntities(coords).hasMoreElements()) {
+        if (!client.getGame().getEntities(coords).hasNext()) {
             return null;
         }
         item.setActionCommand(MovementDisplay.MoveCommand.MOVE_DFA.getCmd());
@@ -419,28 +418,22 @@ public class MapMenu extends JPopupMenu {
         JMenu menu = new JMenu("Select");
         // add select options
         if (canSelectEntities()) {
-            for (Enumeration<Entity> i = client.getGame().getEntities(coords,
-                    canTargetEntities()); i.hasMoreElements();) {
-                final Entity entity = i.nextElement();
+            for (Entity entity : client.getGame().getEntitiesVector(coords,
+                    canTargetEntities())) {
                 if (client.getMyTurn().isValidEntity(entity, client.getGame())) {
                     menu.add(selectJMenuItem(entity));
                 }
             }
         }
-
         return menu;
     }
 
     private JMenu createViewMenu() {
         JMenu menu = new JMenu("View");
-        for (Enumeration<Entity> i = client.getGame().getEntities(coords, true); i
-                .hasMoreElements();) {
-            final Entity entity = i.nextElement();
+        for (Entity entity : client.getGame().getEntitiesVector(coords, true)) {
             menu.add(viewJMenuItem(entity));
         }
-
         return menu;
-
     }
 
     private JMenu createMovementMenu(boolean entityInHex) {

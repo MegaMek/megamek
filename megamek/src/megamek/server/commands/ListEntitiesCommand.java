@@ -3,8 +3,6 @@
  */
 package megamek.server.commands;
 
-import java.util.Enumeration;
-
 import megamek.common.Entity;
 import megamek.common.IPlayer;
 import megamek.server.Server;
@@ -19,7 +17,8 @@ public class ListEntitiesCommand extends ServerCommand {
         super(
                 server,
                 "listEntities",
-                "Show the ids of all entities owned by this player. Ussage: /listEntities");
+                "Show the ids of all entities owned by this player. " +
+                "Usage: /listEntities");
     }
 
     /**
@@ -33,11 +32,11 @@ public class ListEntitiesCommand extends ServerCommand {
     	if(null == p) {
     		return;
     	}
-    	for (Enumeration<Entity> i = server.getGame().getEntities(); i.hasMoreElements();) {
+    	for (Entity ent : server.getGame().getEntitiesVector()) {
 	        try {
-	            Entity ent = i.nextElement();
 	            if(ent.getOwnerId() == connId) {
-	                server.sendServerChat(connId, ent.getId() + " - " + ent.getDisplayName());
+                    server.sendServerChat(connId,
+                            ent.getId() + " - " + ent.getDisplayName());
 	            }
 	        } catch (NumberFormatException nfe) {
 	        } catch (NullPointerException npe) {

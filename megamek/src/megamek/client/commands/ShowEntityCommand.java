@@ -3,8 +3,6 @@
  */
 package megamek.client.commands;
 
-import java.util.Enumeration;
-
 import megamek.client.Client;
 import megamek.common.Entity;
 
@@ -38,9 +36,7 @@ public class ShowEntityCommand extends ClientCommand {
         }
         if (args.length == 1) {
             String list = "List of all entities.\n";
-            Enumeration<Entity> entities = getClient().getEntities();
-            while (entities.hasMoreElements()) {
-                Entity ent = entities.nextElement();
+            for (Entity ent : getClient().getEntitiesVector()) {
                 list += ent.getId() + " " + ent.getOwner().getName() + "'s "
                         + ent.getDisplayName() + "\n";
             }

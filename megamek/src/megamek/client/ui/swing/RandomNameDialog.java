@@ -21,8 +21,8 @@ package megamek.client.ui.swing;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
-import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -43,7 +43,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
     private static final long serialVersionUID = -2459992981678758743L;
     private Client client;
     private ClientGUI clientgui;
-    private Vector<Entity> units;
+    private List<Entity> units;
     private RandomNameGenerator rng;
 
     private JLabel lblFaction;
@@ -134,7 +134,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
         super.setVisible(show);
     }
 
-    public  void showDialog(Vector<Entity> units){
+    public  void showDialog(List<Entity> units){
         this.units=units;
         setVisible(true);
     }
@@ -157,8 +157,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
             }
             saveSettings();
             // go through all of the units provided for this player and assign random names
-            for (Enumeration<Entity> e = units.elements(); e.hasMoreElements();) {
-                Entity ent = e.nextElement();
+            for (Entity ent : units) {
                 if (ent.getOwnerId() == c.getLocalPlayer().getId()) {
                     ent.getCrew().setName(rng.generate());
                     c.sendUpdateEntity(ent);

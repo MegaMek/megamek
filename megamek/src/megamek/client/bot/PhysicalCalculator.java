@@ -14,7 +14,6 @@
 
 package megamek.client.bot;
 
-import java.util.Enumeration;
 import java.util.Iterator;
 
 import megamek.common.BattleArmor;
@@ -278,8 +277,7 @@ public final class PhysicalCalculator {
             }
         }
 
-        for (Enumeration<Entity> e = game.getEntities(); e.hasMoreElements(); ) {
-            Entity target = e.nextElement();
+        for (Entity target : game.getEntitiesVector()) {
 
             if (target.equals(entity)) {
                 continue;

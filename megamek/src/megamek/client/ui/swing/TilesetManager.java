@@ -34,7 +34,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -351,8 +350,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         }
 
         // load all mech images
-        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
-            Entity e = i.nextElement();
+        for (Entity e : game.getEntitiesVector()) {
             if (e.getSecondaryPositions().isEmpty()) {
                 loadImage(e, -1);
             } else {

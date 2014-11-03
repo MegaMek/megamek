@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.Coords;
@@ -102,9 +101,7 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
             Coords coords = target.getPosition();
             server.deliverScreen(coords, vPhaseReport);
             // damage any entities in the hex
-            for (Enumeration<Entity> impactHexHits = game.getEntities(coords); impactHexHits
-                    .hasMoreElements();) {
-                Entity entity = impactHexHits.nextElement();
+            for (Entity entity : game.getEntitiesVector(coords)) {
                 // if fighter squadron all fighters are damaged
                 if (entity instanceof FighterSquadron) {
                     for (Entity fighter : ((FighterSquadron) entity)

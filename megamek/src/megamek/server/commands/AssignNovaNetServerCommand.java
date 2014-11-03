@@ -3,7 +3,6 @@
  */
 package megamek.server.commands;
 
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -407,9 +406,7 @@ public class AssignNovaNetServerCommand extends ServerCommand {
      */
     private List<Entity> getMyNovaUnits(int connID) {
         List<Entity> novaUnits = new LinkedList<Entity>();
-        Enumeration<Entity> entities = server.getGame().getEntities();
-        while (entities.hasMoreElements()) {
-            Entity ent = entities.nextElement();
+        for (Entity ent : server.getGame().getEntitiesVector()) {
             if ((ent.getOwnerId() == connID) && ent.hasNovaCEWS()) {
                 novaUnits.add(ent);
             }

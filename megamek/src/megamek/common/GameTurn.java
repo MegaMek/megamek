@@ -22,7 +22,7 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.Enumeration;
+import java.util.Iterator;
 
 /**
  * Represents a single turn within a phase of the game, where a specific player
@@ -466,7 +466,7 @@ public class GameTurn implements Serializable {
          *                <code>null</code> or empty value is passed for
          *                entities.
          */
-        public UnloadStrandedTurn(Enumeration<Entity> entities) {
+        public UnloadStrandedTurn(Iterator<Entity> entities) {
             super(IPlayer.PLAYER_NONE);
 
             // Validate input.
@@ -474,16 +474,16 @@ public class GameTurn implements Serializable {
                 throw new IllegalArgumentException(
                         "the passed enumeration of entities is null");
             }
-            if (!entities.hasMoreElements()) {
+            if (!entities.hasNext()) {
                 throw new IllegalArgumentException(
                         "the passed enumeration of entities is empty");
             }
 
             // Get the first entity.
-            Entity entity = entities.nextElement();
+            Entity entity = entities.next();
 
             // Do we need to get more entities?
-            if (entities.hasMoreElements()) {
+            if (entities.hasNext()) {
 
                 // It's a bit of a hack, but get the Game from the first
                 // entity, and create a temporary array that can hold the
@@ -495,8 +495,8 @@ public class GameTurn implements Serializable {
                 ids[length++] = entity.getId();
 
                 // Walk the list of remaining stranded entities.
-                while (entities.hasMoreElements()) {
-                    ids[length++] = entities.nextElement().getId();
+                while (entities.hasNext()) {
+                    ids[length++] = entities.next().getId();
                 }
 
                 // Create an array that just holds the stranded entity ids.

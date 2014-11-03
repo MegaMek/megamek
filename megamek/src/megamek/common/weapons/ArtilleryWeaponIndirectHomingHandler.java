@@ -14,7 +14,6 @@
 
 package megamek.common.weapons;
 
-import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
@@ -283,9 +282,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         handleClearDamage(vPhaseReport, bldg, ratedDamage * 2, false);
         ratedDamage -= bldgAbsorbs;
         if (ratedDamage > 0) {
-            for (Enumeration<Entity> impactHexHits = game.getEntities(coords); impactHexHits
-                    .hasMoreElements();) {
-                Entity entity = impactHexHits.nextElement();
+            for (Entity entity : game.getEntitiesVector(coords)) {
                 if (!bMissed) {
                     if (entity == entityTarget) {
                         continue; // don't splash the target unless missile

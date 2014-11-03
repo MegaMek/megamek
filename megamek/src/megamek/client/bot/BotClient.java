@@ -194,8 +194,7 @@ public abstract class BotClient extends Client {
 
     public List<Entity> getEntitiesOwned() {
         ArrayList<Entity> result = new ArrayList<Entity>();
-        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
-            Entity entity = i.nextElement();
+        for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(getLocalPlayer())
                 && (entity.getPosition() != null) && !entity.isOffBoard()) {
                 result.add(entity);
@@ -206,8 +205,7 @@ public abstract class BotClient extends Client {
 
     public List<Entity> getEnemyEntities() {
         ArrayList<Entity> result = new ArrayList<Entity>();
-        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
-            Entity entity = i.nextElement();
+        for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().isEnemyOf(getLocalPlayer())
                 && (entity.getPosition() != null) && !entity.isOffBoard()
                 && (entity.getCrew() != null) && !entity.getCrew().isDead()) {
@@ -220,9 +218,7 @@ public abstract class BotClient extends Client {
 
     public List<Entity> getFriendEntities() {
         List<Entity> result = new ArrayList<Entity>();
-        Enumeration<Entity> i = game.getEntities();
-        while (i.hasMoreElements()) {
-            Entity entity = i.nextElement();
+        for (Entity entity : game.getEntitiesVector()) {
             if (!entity.getOwner().isEnemyOf(getLocalPlayer()) && (entity.getPosition() != null)
                 && !entity.isOffBoard()) {
                 result.add(entity);
@@ -418,8 +414,7 @@ public abstract class BotClient extends Client {
             mech_count = 0;
             conv_fcount = 0;
             conv_ecount = 0;
-            for (Enumeration<Entity> stacked_ents = game.getEntities(element); stacked_ents.hasMoreElements(); ) {
-                Entity test_ent = stacked_ents.nextElement();
+            for (Entity test_ent : game.getEntitiesVector(element)) {
                 if (test_ent instanceof Mech) {
                     mech_count++;
                 } else {
@@ -584,7 +579,7 @@ public abstract class BotClient extends Client {
             deployed_ent.setPosition(coord);
 
             // Create a list of potential attackers/targets for this location
-            Vector<Entity> potentialAttackers =
+            List<Entity> potentialAttackers =
                     game.getValidTargets(deployed_ent);
             valid_attackers = new Vector<Entity>(potentialAttackers.size());
             for (Entity e : potentialAttackers) {
@@ -914,10 +909,8 @@ public abstract class BotClient extends Client {
 
         int total_bv, known_bv, known_range, known_count, trigger_range;
         int new_stealth = 1;
-        Entity test_ent;
 
-        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
-            Entity check_ent = i.nextElement();
+        for (Entity check_ent : game.getEntitiesVector()) {
             if ((check_ent.getOwnerId() == localPlayerNumber)
                 && (check_ent instanceof Mech)) {
                 if (check_ent.hasStealth()) {
@@ -946,10 +939,7 @@ public abstract class BotClient extends Client {
                                 known_count = 0;
                                 trigger_range = 5;
 
-                                for (Enumeration<Entity> all_units = game
-                                        .getEntities(); all_units
-                                             .hasMoreElements(); ) {
-                                    test_ent = all_units.nextElement();
+                                for (Entity test_ent : game.getEntitiesVector()) {
                                     if (check_ent.isEnemyOf(test_ent)) {
                                         total_bv += test_ent
                                                 .calculateBattleValue();

@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.TimerTask;
 import java.util.Vector;
 
@@ -2492,8 +2493,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         clearC3Networks();
         clearFlyOverPaths();
-        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
-            final Entity entity = i.nextElement();
+        for (Entity entity : game.getEntitiesVector()) {
             if (entity.getPosition() == null) {
                 continue;
             }
@@ -2818,9 +2818,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         if (e.hasC3i()) {
-            for (Enumeration<Entity> i = game.getEntities(); i
-                    .hasMoreElements();) {
-                final Entity fe = i.nextElement();
+            for (Entity fe : game.getEntitiesVector()) {
                 if (fe.getPosition() == null) {
                     return;
                 }
@@ -2833,9 +2831,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
         } else if (e.hasActiveNovaCEWS()) {
             // WOR Nova CEWS
-            for (Enumeration<Entity> i = game.getEntities(); i
-                    .hasMoreElements();) {
-                final Entity fe = i.nextElement();
+            for (Entity fe : game.getEntitiesVector()) {
                 if (fe.getPosition() == null) {
                     return;
                 }
@@ -2981,8 +2977,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     public void refreshMoveVectors() {
         clearAllMoveVectors();
-        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
-            Entity e = i.nextElement();
+        for (Entity e : game.getEntitiesVector()) {
             if (e.getPosition() != null) {
                 movementSprites.add(new MovementSprite(this, e, e.getVectors(),
                         Color.gray, false));
@@ -2994,8 +2989,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         clearAllMoveVectors();
         // same as normal but when I find the active entity I used the MovePath
         // to get vector
-        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
-            Entity e = i.nextElement();
+        for (Entity e : game.getEntitiesVector()) {
             if (e.getPosition() != null) {
                 if ((en != null) && (e.getId() == en.getId())) {
                     movementSprites.add(new MovementSprite(this, e, md
@@ -3815,8 +3809,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void updateEcmList() {
         LinkedList<EcmBubble> list = new LinkedList<EcmBubble>();
         // Compute ECM information for all entities
-        for (Enumeration<Entity> e = game.getEntities(); e.hasMoreElements();) {
-            Entity ent = e.nextElement();
+        for (Entity ent : game.getEntitiesVector()) {
             Coords entPos = ent.getPosition();
             int range = ent.getECMRange();
             boolean deployed = ent.isDeployed();
@@ -3939,18 +3932,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         Entity choice = null;
 
         // Get the available choices.
-        Enumeration<Entity> choices = game.getEntities(pos);
+        List<Entity> entities = game.getEntitiesVector(pos);
 
-        // Convert the choices into a List of targets.
-        Vector<Entity> entities = new Vector<Entity>();
-        while (choices.hasMoreElements()) {
-            entities.addElement(choices.nextElement());
-        }
 
         // Do we have a single choice?
         if (entities.size() == 1) {
             // Return that choice.
-            choice = entities.elementAt(0);
+            choice = entities.get(0);
         }
 
         // If we have multiple choices, display a selection dialog.

@@ -14,7 +14,6 @@
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -147,8 +146,7 @@ public class Precognition implements Runnable {
 
         try {
             pause();
-            for (Enumeration<Entity> entities = getGame().getEntities(); entities.hasMoreElements(); ) {
-                Entity entity = entities.nextElement();
+            for (Entity entity : getGame().getEntitiesVector()) {
                 if (!entity.isDeployed() || entity.isOffBoard()) {
                     continue;
                 }
@@ -299,8 +297,7 @@ public class Precognition implements Runnable {
                     // All units are dirty
                     if (phaseChange.getNewPhase() == IGame.Phase.PHASE_MOVEMENT) {
                         getPathEnumerator().clear();
-                        for (Enumeration<Entity> entities = getGame().getEntities(); entities.hasMoreElements(); ) {
-                            Entity entity = entities.nextElement();
+                        for (Entity entity : getGame().getEntitiesVector()) {
                             if (entity.isActive() && entity.isDeployed() && entity.getPosition() != null) {
                                 getDirtyUnits().add(entity.getId());
                             }

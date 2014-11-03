@@ -903,8 +903,8 @@ public class Client implements IClientCommandHandler {
      */
     @SuppressWarnings("unchecked")
     protected void receiveEntities(Packet c) {
-        Vector<Entity> newEntities = (Vector<Entity>) c.getObject(0);
-        Vector<Entity> newOutOfGame = (Vector<Entity>) c.getObject(1);
+        List<Entity> newEntities = (List<Entity>) c.getObject(0);
+        List<Entity> newOutOfGame = (List<Entity>) c.getObject(1);
 
         // Replace the entities in the game.
         game.setEntitiesVector(newEntities);

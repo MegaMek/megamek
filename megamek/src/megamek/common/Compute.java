@@ -967,7 +967,7 @@ public class Compute {
                                            useExtremeRange, useLOSRange);
 
         // Additional checks for LOS range and some weapon types, TO 85
-        if (useLOSRange) {
+        if (range == RangeType.RANGE_LOS) {
             int longRange = wtype.getRanges(weapon)[RangeType.RANGE_LONG];
             // No Missiles or Direct Fire Ballistics with range < 13 
             if (wtype.hasFlag(WeaponType.F_MISSILE) 
@@ -977,7 +977,7 @@ public class Compute {
                     range = RangeType.RANGE_OUT;
                 }
             }
-            // No Direct Fire Energy or Pulse with range < 13            
+            // No Direct Fire Energy or Pulse with range < 7            
             if (wtype.hasFlag(WeaponType.F_PULSE)
                     && (wtype.hasFlag(WeaponType.F_ENERGY) 
                             || wtype.hasFlag(WeaponType.F_DIRECT_FIRE))) {

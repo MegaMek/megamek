@@ -56,6 +56,7 @@ v0.39.3-dev (SVN)
     penalties normally apply, unless the target is conventional infantry, where
     the direct fire energy penalties apply
 + Bug: [#4287] princess.PathRanker.rankPaths IndexOutOfBoundsException
++ Bug: LOS Range was making some short range weapons unable to fire
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

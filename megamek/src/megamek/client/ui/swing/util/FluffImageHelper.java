@@ -17,6 +17,7 @@ package megamek.client.ui.swing.util;
 
 import java.awt.Image;
 import java.io.File;
+import java.io.FilenameFilter;
 
 import javax.swing.ImageIcon;
 
@@ -36,8 +37,8 @@ public class FluffImageHelper {
     public static final String DIR_NAME_AERO = "aero";
     public static final String DIR_NAME_BA = "BattleArmor";
     public static final String DIR_NAME_VEHICLE = "vehicle";
-    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = { ".png",
-            ".jpg", ".gif" };
+    public static final String[] EXTENSIONS_FLUFF_IMAGE_FORMATS = 
+        { ".png", ".jpg", ".gif", ".PNG", ".JPG", ".GIF" };
 
     /**
      * Get the fluff image for the specified unit, if available.
@@ -140,7 +141,43 @@ public class FluffImageHelper {
                 break;
             }
         }
-
+        final String model = unit.getModel().replace("\"", "");
+        final String chassisModel = unit.getChassis() + " " + model;
+         
+        // If the previous checks failed, we're going to try to discount the
+        //  CSO author name, which will make the file look like:
+        //   Chassis + model + [ <author> ] + extension
+        if (fluff_file == null) {
+            File[] files = directory.listFiles(new FilenameFilter() {
+                public boolean accept(File direc, String name) {
+                    boolean extMatch = false;
+                    for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
+                        extMatch |= name.endsWith(ext);
+                    }
+                    return name.contains(chassisModel) && extMatch;
+                }
+            });
+            if (files.length > 0) {
+                fluff_file = files[0];
+            }
+        }
+        
+        // If we still haven't found a file, see if ignoring the model helps
+        if (fluff_file == null) {
+            File[] files = directory.listFiles(new FilenameFilter() {
+                public boolean accept(File direc, String name) {
+                    boolean extMatch = false;
+                    for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
+                        extMatch |= name.endsWith(ext);
+                    }
+                    return name.contains(unit.getChassis()) && extMatch;
+                }
+            });
+            if (files.length > 0) {
+                fluff_file = files[0];
+            }
+        }
+        
         return fluff_file;
     }
 }

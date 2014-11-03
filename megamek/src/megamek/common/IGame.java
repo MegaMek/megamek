@@ -489,7 +489,7 @@ public interface IGame {
      */
     public abstract List<Entity> getEntitiesVector();
 
-    public abstract void setEntitiesVector(Vector<Entity> entities);
+    public abstract void setEntitiesVector(List<Entity> entities);
 
     /**
      * Returns the actual vector for the out-of-game entities
@@ -513,7 +513,7 @@ public interface IGame {
      * @throw <code>IllegalArgumentException</code> if the new list is
      *        <code>null</code>.
      */
-    public abstract void setOutOfGameEntitiesVector(Vector<Entity> vOutOfGame);
+    public abstract void setOutOfGameEntitiesVector(List<Entity> vOutOfGame);
 
     /**
      * Returns a <code>Vector</code> containing the <code>Entity</code>s

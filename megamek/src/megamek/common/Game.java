@@ -903,7 +903,7 @@ public class Game implements Serializable, IGame {
         return Collections.unmodifiableList(entities);
     }
 
-    public void setEntitiesVector(Vector<Entity> entities) {
+    public void setEntitiesVector(List<Entity> entities) {
         this.entities.clear();
         this.entities.addAll(entities);
         reindexEntities();
@@ -925,7 +925,7 @@ public class Game implements Serializable, IGame {
      *                   value should <em>not</em> be <code>null</code>.
      * @throws IllegalArgumentException if the new list is <code>null</code>.
      */
-    public void setOutOfGameEntitiesVector(Vector<Entity> vOutOfGame) {
+    public void setOutOfGameEntitiesVector(List<Entity> vOutOfGame) {
         assert (vOutOfGame != null) : "New out-of-game list should not be null.";
         Vector<Entity> newOutOfGame = new Vector<Entity>();
 

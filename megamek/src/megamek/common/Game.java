@@ -17,6 +17,7 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -355,9 +356,8 @@ public class Game implements Serializable, IGame {
      * This returns a clone of the vector of teams. Each element is one of the
      * teams in the game.
      */
-    @SuppressWarnings("unchecked")
-    public Vector<Team> getTeamsVector() {
-        return (Vector<Team>) teams.clone();
+    public List<Team> getTeamsVector() {
+        return Collections.unmodifiableList(teams);
     }
 
     /**
@@ -1519,14 +1519,14 @@ public class Game implements Serializable, IGame {
      * @param c
      * @return <code>Vector<Entity></code>
      */
-    public Vector<Entity> getEntitiesVector(Coords c) {
+    public List<Entity> getEntitiesVector(Coords c) {
         // Make sure the look-up is initialized
         if (entityPosLookup == null
                 || (entityPosLookup.size() < 1 && entities.size() > 0)) {
             resetEntityPositionLookup();
         }
         HashSet<Integer> posEntities = entityPosLookup.get(c);
-        Vector<Entity> vector = new Vector<Entity>();
+        ArrayList<Entity> vector = new ArrayList<Entity>();
         if (posEntities != null) {
             for (Integer eId : posEntities) {
                 Entity e = getEntity(eId);
@@ -1543,7 +1543,6 @@ public class Game implements Serializable, IGame {
             }
         }
         return vector;
-
     }
 
     /**
@@ -2306,8 +2305,8 @@ public class Game implements Serializable, IGame {
      * Returns the actions vector. Do not use to modify the actions; I will be
      * angry. >:[ Used for sending all actions to the client.
      */
-    public Vector<EntityAction> getActionsVector() {
-        return actions;
+    public List<EntityAction> getActionsVector() {
+        return Collections.unmodifiableList(actions);
     }
 
     public void addInitiativeRerollRequest(Team t) {
@@ -2364,8 +2363,8 @@ public class Game implements Serializable, IGame {
      * Returns the charges vector. Do not modify. >:[ Used for sending all
      * charges to the client.
      */
-    public Vector<AttackAction> getChargesVector() {
-        return pendingCharges;
+    public List<AttackAction> getChargesVector() {
+        return Collections.unmodifiableList(pendingCharges);
     }
 
     /**
@@ -2395,8 +2394,8 @@ public class Game implements Serializable, IGame {
      * Returns the rams vector. Do not modify. >:[ Used for sending all charges
      * to the client.
      */
-    public Vector<AttackAction> getRamsVector() {
-        return pendingRams;
+    public List<AttackAction> getRamsVector() {
+        return Collections.unmodifiableList(pendingRams);
     }
 
     /**
@@ -2426,8 +2425,8 @@ public class Game implements Serializable, IGame {
      * Returns the rams vector. Do not modify. >:[ Used for sending all charges
      * to the client.
      */
-    public Vector<AttackAction> getTeleMissileAttacksVector() {
-        return pendingTeleMissileAttacks;
+    public List<AttackAction> getTeleMissileAttacksVector() {
+        return Collections.unmodifiableList(pendingTeleMissileAttacks);
     }
 
     /**
@@ -2987,12 +2986,12 @@ public class Game implements Serializable, IGame {
      *
      * @return
      */
-    public Vector<GameListener> getGameListeners() {
+    public List<GameListener> getGameListeners() {
         // Since gameListeners is transient, it could be null
         if (gameListeners == null) {
             gameListeners = new Vector<GameListener>();
         }
-        return gameListeners;
+        return Collections.unmodifiableList(gameListeners);
     }
 
     /**

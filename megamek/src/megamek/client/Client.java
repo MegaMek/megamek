@@ -1010,7 +1010,7 @@ public class Client implements IClientCommandHandler {
      */
     @SuppressWarnings("unchecked")
     protected void receiveAttack(Packet c) {
-        Vector<EntityAction> vector = (Vector<EntityAction>) c.getObject(0);
+        List<EntityAction> vector = (List<EntityAction>) c.getObject(0);
         int charge = c.getIntValue(1);
         boolean addAction = true;
         for (EntityAction ea : vector) {

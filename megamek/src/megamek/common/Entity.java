@@ -8260,7 +8260,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean isAttackingThisTurn() {
-        Vector<EntityAction> actions = game.getActionsVector();
+        List<EntityAction> actions = game.getActionsVector();
         for (EntityAction ea : actions) {
             if ((ea.getEntityId() == getId())
                 && (ea instanceof AbstractAttackAction)) {

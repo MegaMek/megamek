@@ -129,7 +129,7 @@ public interface IGame {
      *
      * @return
      */
-    public abstract Vector<GameListener> getGameListeners();
+    public abstract List<GameListener> getGameListeners();
 
     /**
      * purges all Game Listener objects.
@@ -280,7 +280,7 @@ public interface IGame {
     /**
      * Return the immutable vector of teams
      */
-    public abstract Vector<Team> getTeamsVector();
+    public abstract List<Team> getTeamsVector();
 
     /**
      * Return a players team Note: may return null if player has no team
@@ -703,7 +703,7 @@ public interface IGame {
     /**
      * Returns a Vector of the active entities at the given coordinates.
      */
-    public abstract Vector<Entity> getEntitiesVector(Coords c);
+    public abstract List<Entity> getEntitiesVector(Coords c);
 
     /**
      * Returns a Vector of the gun emplacements at the given coordinates.
@@ -975,7 +975,7 @@ public interface IGame {
      * Returns the actions vector. Do not use to modify the actions; I will be
      * angry. >:[ Used for sending all actions to the client.
      */
-    public abstract Vector<EntityAction> getActionsVector();
+    public abstract List<EntityAction> getActionsVector();
 
     public abstract void addInitiativeRerollRequest(Team t);
 
@@ -1003,7 +1003,7 @@ public interface IGame {
      * Returns the charges vector. Do not modify. >:[ Used for sending all
      * charges to the client.
      */
-    public abstract Vector<AttackAction> getChargesVector();
+    public abstract List<AttackAction> getChargesVector();
 
     /**
      * Adds a pending ram attack to the list for this phase.
@@ -1025,7 +1025,7 @@ public interface IGame {
      * Returns the ram vector. Do not modify. >:[ Used for sending all
      * charges to the client.
      */
-    public abstract Vector<AttackAction> getRamsVector();
+    public abstract List<AttackAction> getRamsVector();
 
     /**
      * Adds a pending tele-missile attack to the list for this phase.
@@ -1047,7 +1047,7 @@ public interface IGame {
      * Returns the telemissile attack vector. Do not modify. >:[ Used for sending all
      * charges to the client.
      */
-    public abstract Vector<AttackAction> getTeleMissileAttacksVector();
+    public abstract List<AttackAction> getTeleMissileAttacksVector();
 
     /**
      * Adds a pending PSR to the list for this phase.

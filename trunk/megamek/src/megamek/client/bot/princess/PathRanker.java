@@ -256,8 +256,7 @@ public class PathRanker {
 
         try {
             ArrayList<Entity> enemies = new ArrayList<>();
-            for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
-                Entity entity = i.nextElement();
+            for (Entity entity : game.getEntitiesVector()) {
                 if (entity.getOwner().isEnemyOf(myunit.getOwner()) &&
                     (entity.getPosition() != null) &&
                     !entity.isOffBoard() &&
@@ -288,8 +287,7 @@ public class PathRanker {
 
         try {
             ArrayList<Entity> friends = new ArrayList<>();
-            for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
-                Entity entity = i.nextElement();
+            for (Entity entity : game.getEntitiesVector()) {
                 if (!entity.getOwner().isEnemyOf(myunit.getOwner())
                         && (entity.getPosition() != null) && !entity.isOffBoard()
                         && (!entity.equals(myunit))) {

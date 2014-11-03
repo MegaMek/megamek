@@ -1505,8 +1505,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 entityCorrespondance[listIndex++] = -1;
 
             }
-            for (Enumeration<Entity> i = client.getEntities(); i.hasMoreElements();) {
-                final Entity e = i.nextElement();
+            for (Entity e : client.getEntitiesVector()) {
                 // ignore enemies or self
                 if (entity.isEnemyOf(e) || entity.equals(e)) {
                     continue;

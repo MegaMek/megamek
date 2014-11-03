@@ -25,6 +25,7 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -502,9 +503,7 @@ public class MoveStep implements Serializable {
             // of jumping over
             boolean grdDropship = false;
             if (building < 10) {
-                for (Enumeration<Entity> i = game.getEntities(getPosition()); i
-                        .hasMoreElements(); ) {
-                    final Entity inHex = i.nextElement();
+                for (Entity inHex : game.getEntitiesVector(getPosition())) {
                     if (inHex.equals(entity)) {
                         continue;
                     }
@@ -2787,11 +2786,11 @@ public class MoveStep implements Serializable {
 
             // Find the unit being loaded.
             Entity other = null;
-            Enumeration<Entity> entities = game.getEntities(src);
-            while (entities.hasMoreElements()) {
+            Iterator<Entity> entities = game.getEntities(src);
+            while (entities.hasNext()) {
 
                 // Is the other unit friendly and not the current entity?
-                other = entities.nextElement();
+                other = entities.next();
                 if (!entity.getOwner().isEnemyOf(other.getOwner())
                         && !entity.equals(other)) {
 
@@ -2929,9 +2928,7 @@ public class MoveStep implements Serializable {
             // Dropship unless infantry
             // or a VTOL at high enough elevation
             if (!(entity instanceof Infantry)) {
-                for (Enumeration<Entity> i = game.getEntities(src); i
-                        .hasMoreElements(); ) {
-                    final Entity inHex = i.nextElement();
+                for (Entity inHex : game.getEntitiesVector(src)) {
                     if (inHex.equals(entity)) {
                         continue;
                     }

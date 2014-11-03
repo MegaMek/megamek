@@ -17,13 +17,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
@@ -577,14 +577,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
+        final Client client = clientgui.getClient();
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
         }
-        if (statusBarActionPerformed(ev, clientgui.getClient())) {
+        if (statusBarActionPerformed(ev, client)) {
             return;
         }
-        if (!clientgui.getClient().isMyTurn()) {
+        if (!client.isMyTurn()) {
             // odd...
             return;
         } else if (ev.getActionCommand().equals(DeployCommand.DEPLOY_NEXT.getCmd())) {
@@ -597,8 +598,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     // orders.
                     ce().unload(other);
                     other.setTransportId(Entity.NONE);
-                    other.newRound(clientgui.getClient().getGame()
-                            .getRoundCount());
+                    other.newRound(client.getGame().getRoundCount());
                 }
                 // if any of these were loaded in the chat lounge I need to
                 // reload them however
@@ -608,17 +608,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                             .setTransportId(ce().getId());
                 }
             }
-            selectEntity(clientgui.getClient().getNextDeployableEntityNum(cen));
+            selectEntity(client.getNextDeployableEntityNum(cen));
         } else if (ev.getActionCommand().equals(DeployCommand.DEPLOY_TURN.getCmd())) {
             turnMode = true;
         } else if (ev.getActionCommand().equals(DeployCommand.DEPLOY_LOAD.getCmd())) {
             // What undeployed units can we load?
             Vector<Entity> choices = new Vector<Entity>();
-            Enumeration<Entity> entities = clientgui.getClient().getGame()
-                    .getEntities();
             Entity other;
-            while (entities.hasMoreElements()) {
-                other = entities.nextElement();
+            for (Entity o : client.getGame().getEntitiesVector()) {
+                other = o;
                 if (other.isSelectableThisTurn() && (ce() != null)
                         && ce().canLoad(other, false)) {
                     choices.addElement(other);

@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -338,10 +337,8 @@ class FovHighlightingAndDarkening implements AutoCloseable{
         // First, we take the tallest unit in the destination hex, if no
         // units
         // are present we use the mechInSecond GUIPref.
-        Enumeration<Entity> destEntities = this.boardView1.game.getEntities(dest);
         ai.targetHeight = ai.targetAbsHeight = Integer.MIN_VALUE;
-        while (destEntities.hasMoreElements()) {
-            Entity ent = destEntities.nextElement();
+        for (Entity ent : this.boardView1.game.getEntitiesVector(dest)) {
             int trAbsheight = dstHex.surface() + ent.relHeight();
             if (trAbsheight > ai.targetAbsHeight) {
                 ai.targetHeight = ent.getHeight();

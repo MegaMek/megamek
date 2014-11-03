@@ -29,6 +29,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Enumeration;
+import java.util.Iterator;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -267,7 +268,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                             break;
                         default:
                     }
-                    Enumeration<Entity> thisPlayerArtyUnits = client.getGame()
+                    Iterator<Entity> thisPlayerArtyUnits = client.getGame()
                             .getSelectedEntities(new EntitySelector() {
                                 public boolean accept(Entity entity) {
                                     if (entity.getOwnerId() == client
@@ -277,8 +278,8 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                                     return false;
                                 }
                             });
-                    while (thisPlayerArtyUnits.hasMoreElements()) {
-                        Entity entity = thisPlayerArtyUnits.nextElement();
+                    while (thisPlayerArtyUnits.hasNext()) {
+                        Entity entity = thisPlayerArtyUnits.next();
                         if (entity.getOffBoardDirection() != OffBoardDirection.NONE) {
                             if (direction != OffBoardDirection.NONE) {
                                 entity.setOffBoard(entity.getOffBoardDistance(),

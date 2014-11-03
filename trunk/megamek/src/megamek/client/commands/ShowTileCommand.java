@@ -3,7 +3,7 @@
  */
 package megamek.client.commands;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import megamek.client.Client;
 import megamek.common.Coords;
@@ -48,14 +48,14 @@ public class ShowTileCommand extends ClientCommand {
                     // if we are not playing in double blind mode also list the
                     // units in this tile.
                     if (!getClient().getGame().getOptions().booleanOption("double_blind")) {
-                        Enumeration<Entity> entList = getClient().getGame()
+                        Iterator<Entity> entList = getClient().getGame()
                                 .getEntities(coord);
-                        if (entList.hasMoreElements()) {
+                        if (entList.hasNext()) {
                             str = str + "; Contains entities: "
-                                    + entList.nextElement().getId();
-                            while (entList.hasMoreElements()) {
+                                    + entList.next().getId();
+                            while (entList.hasNext()) {
                                 str = str + ", "
-                                        + entList.nextElement().getId();
+                                        + entList.next().getId();
                             }
                         }
                     }

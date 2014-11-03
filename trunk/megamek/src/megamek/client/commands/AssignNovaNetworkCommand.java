@@ -3,7 +3,6 @@
  */
 package megamek.client.commands;
 
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -312,9 +311,7 @@ public class AssignNovaNetworkCommand extends ClientCommand {
     private List<Entity> getMyNovaUnits()
     {
     	List<Entity> novaUnits = new LinkedList<Entity>();
-    	Enumeration<Entity> entities = client.getEntities();
-    	while (entities.hasMoreElements()) {
-            Entity ent = entities.nextElement();
+    	for (Entity ent : client.getEntitiesVector()) {
             if(ent.getOwnerId() == client.getLocalPlayer().getId() && ent.hasNovaCEWS())
             {
             	novaUnits.add(ent);

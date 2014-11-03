@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
 
 import megamek.common.Aero;
@@ -156,7 +157,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         // Are there any valid spotters?
         if ((null != spottersBefore) && !isFlak) {
             // fetch possible spotters now
-            Enumeration<Entity> spottersAfter = game
+            Iterator<Entity> spottersAfter = game
                     .getSelectedEntities(new EntitySelector() {
                         public int player = playerId;
 
@@ -181,8 +182,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                     });
 
             // Out of any valid spotters, pick the best.
-            while (spottersAfter.hasMoreElements()) {
-                Entity ent = spottersAfter.nextElement();
+            while (spottersAfter.hasNext()) {
+                Entity ent = spottersAfter.next();
                 if ((bestSpotter == null)
                         || (ent.getCrew().getGunnery() < bestSpotter.getCrew()
                                 .getGunnery())) {

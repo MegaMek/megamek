@@ -26,7 +26,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
-import java.util.Enumeration;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -330,12 +329,10 @@ public class Ruler extends JDialog implements BoardViewListener {
     }
 
     private void addPoint(Coords c) {
-        Enumeration<Entity> destEntities = client.getGame().getEntities(c);
         int absHeight = Integer.MIN_VALUE;
         boolean isMech = false;
         boolean entFound = false;
-        while (destEntities.hasMoreElements()) {
-            Entity ent = destEntities.nextElement();
+        for (Entity ent : client.getGame().getEntitiesVector(c)) {
             int trAbsheight = ent.relHeight();
             if (trAbsheight > absHeight) {
                 absHeight = trAbsheight;

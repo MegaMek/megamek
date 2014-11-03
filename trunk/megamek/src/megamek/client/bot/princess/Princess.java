@@ -853,7 +853,7 @@ public class Princess extends BotClient {
 
             // ----Debugging: print out any errors made in guessing to hit
             // values-----
-            Vector<Entity> ents = game.getEntitiesVector();
+            List<Entity> ents = game.getEntitiesVector();
             for (Entity ent : ents) {
                 String errors = fireControl.checkAllGuesses(ent, game);
                 if (errors != null) {
@@ -966,8 +966,7 @@ public class Princess extends BotClient {
                 Enumeration<Coords> bldgCoords = bldg.getCoords();
                 while (bldgCoords.hasMoreElements()) {
                     Coords coords = bldgCoords.nextElement();
-                    for (Enumeration<Entity> i = game.getEntities(coords, true); i.hasMoreElements(); ) {
-                        Entity entity = i.nextElement();
+                    for (Entity entity : game.getEntitiesVector(coords, true)) {
                         BuildingTarget bt = new BuildingTarget(coords, game.getBoard(), false);
                         if (isEnemyGunEmplacement(entity, coords)) {
                             fireControl.getAdditionalTargets().add(bt);
@@ -1015,8 +1014,7 @@ public class Princess extends BotClient {
                 Enumeration<Coords> bldgCoords = bldg.getCoords();
                 while (bldgCoords.hasMoreElements()) {
                     Coords coords = bldgCoords.nextElement();
-                    for (Enumeration<Entity> i = getGame().getEntities(coords, true); i.hasMoreElements(); ) {
-                        Entity entity = i.nextElement();
+                    for (Entity entity : game.getEntitiesVector(coords, true)) {
                         if (isEnemyGunEmplacement(entity, coords)) {
                             getStrategicBuildingTargets().add(coords);
                             sendChat("Building in Hex " + coords.toFriendlyString() +

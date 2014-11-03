@@ -580,8 +580,8 @@ public class Game implements Serializable, IGame {
      * Get a vector of entity objects that are "acceptable" to attack with this
      * entity
      */
-    public Vector<Entity> getValidTargets(Entity entity) {
-        Vector<Entity> ents = new Vector<Entity>();
+    public List<Entity> getValidTargets(Entity entity) {
+        List<Entity> ents = new ArrayList<Entity>();
 
         boolean friendlyFire = getOptions().booleanOption("friendly_fire");
 
@@ -593,11 +593,11 @@ public class Game implements Serializable, IGame {
                 && otherEntity.isTargetable()
                 && (entity.isEnemyOf(otherEntity) || (friendlyFire && (entity
                                                                                .getId() != otherEntity.getId())))) {
-                ents.addElement(otherEntity);
+                ents.add(otherEntity);
             }
         }
 
-        return ents;
+        return Collections.unmodifiableList(ents);
     }
 
     /**
@@ -726,15 +726,18 @@ public class Game implements Serializable, IGame {
     /**
      * Returns the current turn vector
      */
-    public Vector<GameTurn> getTurnVector() {
-        return turnVector;
+    public List<GameTurn> getTurnVector() {
+        return Collections.unmodifiableList(turnVector);
     }
 
     /**
      * Sets the current turn vector
      */
-    public void setTurnVector(Vector<GameTurn> turnVector) {
-        this.turnVector = turnVector;
+    public void setTurnVector(List<GameTurn> turnVector) {
+        this.turnVector.clear();
+        for (GameTurn turn : turnVector) {
+            this.turnVector.add(turn);
+        }
     }
 
     public Phase getPhase() {
@@ -849,26 +852,26 @@ public class Game implements Serializable, IGame {
     /**
      * Returns a vector of entities that have not yet deployed
      */
-    public Vector<Entity> getUndeployedEntities() {
-        Vector<Entity> entList = new Vector<Entity>();
+    public List<Entity> getUndeployedEntities() {
+        List<Entity> entList = new ArrayList<Entity>();
         Enumeration<Vector<Entity>> iter = deploymentTable.elements();
 
         while (iter.hasMoreElements()) {
             Vector<Entity> vecTemp = iter.nextElement();
 
             for (int i = 0; i < vecTemp.size(); i++) {
-                entList.addElement(vecTemp.elementAt(i));
+                entList.add(vecTemp.elementAt(i));
             }
         }
 
-        return entList;
+        return Collections.unmodifiableList(entList);
     }
 
     /**
      * Returns an enumeration of all the entites in the game.
      */
-    public Enumeration<Entity> getEntities() {
-        return getEntitiesVector().elements();
+    public Iterator<Entity> getEntities() {
+        return entities.iterator();
     }
 
     public Entity getPreviousEntityFromList(Entity current) {
@@ -896,8 +899,8 @@ public class Game implements Serializable, IGame {
     /**
      * Returns the actual vector for the entities
      */
-    public Vector<Entity> getEntitiesVector() {
-        return new Vector<>(entities);
+    public List<Entity> getEntitiesVector() {
+        return Collections.unmodifiableList(entities);
     }
 
     public void setEntitiesVector(Vector<Entity> entities) {
@@ -1481,14 +1484,14 @@ public class Game implements Serializable, IGame {
     /**
      * Returns an Enumeration of the active entities at the given coordinates.
      */
-    public Enumeration<Entity> getEntities(Coords c) {
+    public Iterator<Entity> getEntities(Coords c) {
         return getEntities(c, false);
     }
 
     /**
      * Returns an Enumeration of the active entities at the given coordinates.
      */
-    public Enumeration<Entity> getEntities(Coords c, boolean ignore) {
+    public Iterator<Entity> getEntities(Coords c, boolean ignore) {
         // Make sure the look-up is initialized
         if (entityPosLookup.isEmpty() && !entities.isEmpty()) {
             resetEntityPositionLookup();
@@ -1510,7 +1513,7 @@ public class Game implements Serializable, IGame {
                 }
             }
         }
-        return vector.elements();
+        return Collections.unmodifiableList(vector).iterator();
     }
 
     /**
@@ -1520,6 +1523,18 @@ public class Game implements Serializable, IGame {
      * @return <code>Vector<Entity></code>
      */
     public List<Entity> getEntitiesVector(Coords c) {
+        return getEntitiesVector(c, false);
+    }
+    
+    /**
+     * Return a Vector of Entites at Coords <code>c</code>
+     * 
+     * @param c
+     * @param ignore
+     *            Flag that determines whether the ability to target is ignored
+     * @return <code>Vector<Entity></code>
+     */
+    public List<Entity> getEntitiesVector(Coords c, boolean ignore) {
         // Make sure the look-up is initialized
         if (entityPosLookup == null
                 || (entityPosLookup.size() < 1 && entities.size() > 0)) {
@@ -1530,7 +1545,7 @@ public class Game implements Serializable, IGame {
         if (posEntities != null) {
             for (Integer eId : posEntities) {
                 Entity e = getEntity(eId);
-                if (e.isTargetable()) {
+                if (e.isTargetable() || ignore) {
                     vector.add(e);
 
                     // Sanity check
@@ -1542,7 +1557,7 @@ public class Game implements Serializable, IGame {
                 }
             }
         }
-        return vector;
+        return Collections.unmodifiableList(vector);
     }
 
     /**
@@ -1579,8 +1594,7 @@ public class Game implements Serializable, IGame {
     public Entity getAffaTarget(Coords c, Entity ignore) {
         Vector<Entity> vector = new Vector<Entity>();
         if (board.contains(c)) {
-            for (Enumeration<Entity> e = getEntities(c); e.hasMoreElements(); ) {
-                Entity entity = e.nextElement();
+            for (Entity entity : getEntitiesVector(c)) {
                 if (entity.isTargetable()
                     && (entity.getElevation() == 0)
                     && (entity.getAltitude() == 0)
@@ -1606,7 +1620,7 @@ public class Game implements Serializable, IGame {
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the given
      * coordinates who are enemies of the given unit.
      */
-    public Enumeration<Entity> getEnemyEntities(final Coords c,
+    public Iterator<Entity> getEnemyEntities(final Coords c,
                                                 final Entity currentEntity) {
         // Use an EntitySelector to avoid walking the entities vector twice.
         return getSelectedEntities(new EntitySelector() {
@@ -1632,7 +1646,7 @@ public class Game implements Serializable, IGame {
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the given
      * coordinates who are friends of the given unit.
      */
-    public Enumeration<Entity> getFriendlyEntities(final Coords c,
+    public Iterator<Entity> getFriendlyEntities(final Coords c,
                                                    final Entity currentEntity) {
         // Use an EntitySelector to avoid walking the entities vector twice.
         return getSelectedEntities(new EntitySelector() {
@@ -2711,8 +2725,8 @@ public class Game implements Serializable, IGame {
      * accepts. This value will not be <code>null</code> but it may be
      * empty.
      */
-    public Enumeration<Entity> getSelectedEntities(EntitySelector selector) {
-        Enumeration<Entity> retVal;
+    public Iterator<Entity> getSelectedEntities(EntitySelector selector) {
+        Iterator<Entity> retVal;
 
         // If no selector was supplied, return all entities.
         if (null == selector) {
@@ -2723,19 +2737,19 @@ public class Game implements Serializable, IGame {
         // that selects entities in this game.
         else {
             final EntitySelector entry = selector;
-            retVal = new Enumeration<Entity>() {
+            retVal = new Iterator<Entity>() {
                 private EntitySelector entitySelector = entry;
                 private Entity current = null;
-                private Enumeration<Entity> iter = getEntities();
+                private Iterator<Entity> iter = getEntities();
 
                 // Do any more entities meet the selection criteria?
-                public boolean hasMoreElements() {
+                public boolean hasNext() {
                     // See if we have a pre-approved entity.
                     if (null == current) {
 
                         // Find the first acceptable entity
-                        while ((null == current) && iter.hasMoreElements()) {
-                            current = iter.nextElement();
+                        while ((null == current) && iter.hasNext()) {
+                            current = iter.next();
                             if (!entitySelector.accept(current)) {
                                 current = null;
                             }
@@ -2745,9 +2759,9 @@ public class Game implements Serializable, IGame {
                 }
 
                 // Get the next entity that meets the selection criteria.
-                public Entity nextElement() {
+                public Entity next() {
                     // Pre-approve an entity.
-                    if (!hasMoreElements()) {
+                    if (!hasNext()) {
                         return null;
                     }
 
@@ -2755,6 +2769,11 @@ public class Game implements Serializable, IGame {
                     Entity next = current;
                     current = null;
                     return next;
+                }
+
+                @Override
+                public void remove() {
+                    throw new UnsupportedOperationException();                    
                 }
             };
 
@@ -2786,9 +2805,9 @@ public class Game implements Serializable, IGame {
 
         // Otherwise, count the entities that meet the selection criteria.
         else {
-            Enumeration<Entity> iter = this.getEntities();
-            while (iter.hasMoreElements()) {
-                if (selector.accept(iter.nextElement())) {
+            Iterator<Entity> iter = this.getEntities();
+            while (iter.hasNext()) {
+                if (selector.accept(iter.next())) {
                     retVal++;
                 }
             }
@@ -2944,8 +2963,7 @@ public class Game implements Serializable, IGame {
         final ArrayList<Coords> in = Coords.intervening(attackerPos, target);
         Vector<Entity> nemesisTargets = new Vector<Entity>();
         for (Coords c : in) {
-            for (Enumeration<Entity> e = getEntities(c); e.hasMoreElements(); ) {
-                Entity entity = e.nextElement();
+            for (Entity entity : getEntitiesVector(c)) {
                 if (entity.isINarcedWith(INarcPod.NEMESIS)
                     && !entity.isEnemyOf(attacker)) {
                     nemesisTargets.addElement(entity);

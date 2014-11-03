@@ -35,6 +35,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.TreeSet;
 
 import javax.swing.JButton;
@@ -456,7 +457,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             // Get the Protomechs of this entity's player
             // that *aren't* in the entity's unit.
-            Enumeration<Entity> otherUnitEntities = client.getGame()
+            Iterator<Entity> otherUnitEntities = client.getGame()
                     .getSelectedEntities(new EntitySelector() {
                         private final int ownerId = CustomMechDialog.this.entity
                                 .getOwnerId();
@@ -476,7 +477,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     });
 
             // If we got any other entites, show the unit number controls.
-            if (otherUnitEntities.hasMoreElements()) {
+            if (otherUnitEntities.hasNext()) {
                 panPilot.add(labUnitNum, GBC.std());
                 panPilot.add(choUnitNum, GBC.eop());
                 refreshUnitNum(otherUnitEntities);
@@ -887,7 +888,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
      *            the <code>Enumeration</code> containing entities in other
      *            units.
      */
-    private void refreshUnitNum(Enumeration<Entity> others) {
+    private void refreshUnitNum(Iterator<Entity> others) {
         // Clear the list of old values
         choUnitNum.removeAllItems();
         entityUnitNum.clear();
@@ -898,9 +899,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         entityUnitNum.add(entity);
 
         // Walk through the other entities.
-        while (others.hasMoreElements()) {
+        while (others.hasNext()) {
             // Track the position of the next other entity.
-            final Entity other = others.nextElement();
+            final Entity other = others.next();
             entityUnitNum.add(other);
 
             // Show the other entity's name and callsign.

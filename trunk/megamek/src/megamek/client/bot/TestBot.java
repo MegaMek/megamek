@@ -17,7 +17,6 @@ package megamek.client.bot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -139,10 +138,7 @@ public class TestBot extends BotClient {
             enemies_moved = initiative;
             ArrayList<MoveOption[]> possible = new ArrayList<MoveOption[]>();
 
-            Enumeration<Entity> e = game.getEntities();
-
-            while (e.hasMoreElements()) {
-                Entity entity = e.nextElement();
+            for (Entity entity : game.getEntitiesVector()) {
 
                 // ignore loaded and off-board units
                 if ((entity.getPosition() == null) || entity.isOffBoard()) {
@@ -311,9 +307,7 @@ public class TestBot extends BotClient {
                     // functional
                     // If nothing is "close" then unjam anyways
                     int check_range = 100;
-                    for (Enumeration<Entity> unit_selection = game
-                            .getEntities(); unit_selection.hasMoreElements(); ) {
-                        Entity enemy = unit_selection.nextElement();
+                    for (Entity enemy : game.getEntitiesVector()) {
                         if ((min.getCEntity().entity.getPosition() != null)
                             && (enemy.getPosition() != null)
                             && (enemy.isEnemyOf(min.getCEntity().entity))) {
@@ -1741,8 +1735,6 @@ public class TestBot extends BotClient {
         double av_range;
 
         Coords pointing_to = new Coords();
-        Entity test_ent;
-        Enumeration<Entity> valid_attackers;
 
         int entNum = game.getFirstDeployableEntityNum();
         assert (entNum != Entity.NONE) : "The bot is trying to deploy without units being left.";
@@ -1810,9 +1802,7 @@ public class TestBot extends BotClient {
         hex_count = 0;
         x_ave = 0;
         y_ave = 0;
-        valid_attackers = game.getEntities();
-        while (valid_attackers.hasMoreElements()) {
-            test_ent = valid_attackers.nextElement();
+        for (Entity test_ent : game.getEntitiesVector()) {
             if (test_ent.isDeployed()) {
                 if (test_ent.isVisibleToEnemy()) {
                     if (cDeploy.distance(test_ent.getPosition()) <= (int) av_range) {
@@ -1960,9 +1950,7 @@ public class TestBot extends BotClient {
                     // functional
                     // If nothing is "close" then unjam anyways
                     int check_range = 100;
-                    for (Enumeration<Entity> unit_selection = game
-                            .getEntities(); unit_selection.hasMoreElements(); ) {
-                        Entity enemy = unit_selection.nextElement();
+                    for (Entity enemy : game.getEntitiesVector()) {
                         if ((min.getCEntity().entity.getPosition() != null)
                             && (enemy.getPosition() != null)
                             && (enemy.isEnemyOf(min.getCEntity().entity))) {

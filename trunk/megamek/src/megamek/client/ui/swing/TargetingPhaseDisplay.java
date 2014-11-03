@@ -790,7 +790,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     private void cacheVisibleTargets() {
         clearVisibleTargets();
 
-        Vector<Entity> vec = clientgui.getClient().getGame().getValidTargets(ce());
+        List<Entity> vec = clientgui.getClient().getGame().getValidTargets(ce());
         Comparator<Entity> sortComp = new Comparator<Entity>() {
             public int compare(Entity x, Entity y) {
 
@@ -809,7 +809,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         visibleTargets = new Entity[vec.size()];
 
         for (int i = 0; i < vec.size(); i++) {
-            tree.add(vec.elementAt(i));
+            tree.add(vec.get(i));
         }
 
         Iterator<Entity> it = tree.iterator();
@@ -953,7 +953,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 .booleanOption("friendly_fire"); //$NON-NLS-1$
         // Assume that we have *no* choice.
         Targetable choice = null;
-        Enumeration<Entity> choices;
+        Iterator<Entity> choices;
 
         // Get the available choices, depending on friendly fire
         if (friendlyFire) {
@@ -965,8 +965,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         // Convert the choices into a List of targets.
         List<Targetable> targets = new ArrayList<Targetable>();
-        while (choices.hasMoreElements()) {
-            choice = choices.nextElement();
+        while (choices.hasNext()) {
+            choice = choices.next();
             if (!ce().equals(choice)) {
                 targets.add(choice);
             }

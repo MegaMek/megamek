@@ -797,7 +797,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     private void cacheVisibleTargets() {
         clearVisibleTargets();
 
-        Vector<Entity> vec = clientgui.getClient().getGame()
+        List<Entity> vec = clientgui.getClient().getGame()
                 .getValidTargets(ce());
         Comparator<Entity> sortComp = new Comparator<Entity>() {
             public int compare(Entity entX, Entity entY) {
@@ -817,7 +817,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         visibleTargets = new Entity[vec.size()];
 
         for (int i = 0; i < vec.size(); i++) {
-            tree.add(vec.elementAt(i));
+            tree.add(vec.get(i));
         }
 
         // not go through the sorted Set to cache the targets.
@@ -2472,24 +2472,23 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
      * @param pos - the <code>Coords</code> containing targets.
      */
     private Targetable chooseTarget(Coords pos) {
-
-        boolean friendlyFire = clientgui.getClient().getGame().getOptions()
-                                        .booleanOption("friendly_fire"); //$NON-NLS-1$
+        final IGame game = clientgui.getClient().getGame();
+        boolean friendlyFire = game.getOptions().booleanOption("friendly_fire"); //$NON-NLS-1$
         // Assume that we have *no* choice.
         Targetable choice = null;
-        Enumeration<Entity> choices;
+        Iterator<Entity> choices;
 
         // Get the available choices, depending on friendly fire
         if (friendlyFire) {
-            choices = clientgui.getClient().getGame().getEntities(pos);
+            choices = game.getEntities(pos);
         } else {
-            choices = clientgui.getClient().getGame().getEnemyEntities(pos, ce());
+            choices = game.getEnemyEntities(pos, ce());
         }
 
         // Convert the choices into a List of targets.
         List<Targetable> targets = new ArrayList<Targetable>();
-        while (choices.hasMoreElements()) {
-            choice = choices.nextElement();
+        while (choices.hasNext()) {
+            choice = choices.next();
             if (!ce().equals(choice)) {
                 targets.add(choice);
             }

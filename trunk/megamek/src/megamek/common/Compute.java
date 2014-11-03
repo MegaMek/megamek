@@ -18,6 +18,7 @@ package megamek.common;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -274,9 +275,7 @@ public class Compute {
             }
 
             // Walk through the entities in the given hex.
-            for (Enumeration<Entity> i = game.getEntities(coords); i
-                    .hasMoreElements(); ) {
-                final Entity inHex = i.nextElement();
+            for (Entity inHex : game.getEntitiesVector(coords)) {
 
                 if (inHex.isAirborne()) {
                     continue;
@@ -363,11 +362,9 @@ public class Compute {
      * does not return true if the enemy unit is currenly making a DFA.
      */
     public static boolean isEnemyIn(IGame game, Entity entity, Coords coords,
-                                    boolean onlyMechs, boolean ignoreInfantry, int enLowEl) {
+            boolean onlyMechs, boolean ignoreInfantry, int enLowEl) {
         int enHighEl = enLowEl + entity.getHeight();
-        for (Enumeration<Entity> i = game.getEntities(coords); i
-                .hasMoreElements(); ) {
-            final Entity inHex = i.nextElement();
+        for (Entity inHex : game.getEntitiesVector(coords)) {
             int inHexEnLowEl = inHex.getElevation();
             int inHexEnHighEl = inHexEnLowEl + inHex.getHeight();
             if ((!onlyMechs || (inHex instanceof Mech))
@@ -600,9 +597,7 @@ public class Compute {
         int range = 1;
         // check for a central dropship hex and if so, then displace to a two
         // hex radius
-        Enumeration<Entity> entities = game.getEntities(src);
-        while (entities.hasMoreElements()) {
-            Entity en = entities.nextElement();
+        for (Entity en : game.getEntitiesVector(src)) {
             if ((en instanceof Dropship) && !en.isAirborne()
                 && en.getPosition().equals(src)) {
                 range = 2;
@@ -648,9 +643,9 @@ public class Compute {
             Coords dest = src.translated((direction + offset) % 6);
             if (Compute.isValidDisplacement(game, entityId, src, dest)
                 && game.getBoard().contains(dest)) {
-                Enumeration<Entity> entities = game.getFriendlyEntities(dest,
-                                                                        game.getEntity(entityId));
-                if (entities.hasMoreElements()) {
+                Iterator<Entity> entities = game.getFriendlyEntities(dest,
+                        game.getEntity(entityId));
+                if (entities.hasNext()) {
                     // friendly unit here, try next hex
                     continue;
                 }
@@ -748,25 +743,23 @@ public class Compute {
         }
         ToHitData bestMods = new ToHitData(TargetRoll.IMPOSSIBLE, "");
 
-        for (java.util.Enumeration<Entity> i = game.getEntities(); i
-                .hasMoreElements(); ) {
-            Entity other = i.nextElement();
+        for (Entity other : game.getEntitiesVector()) {
             if (((other.isSpotting() && (other.getSpotTargetId() == target
                     .getTargetId())) || (taggedBy == other.getId()))
-                && !attacker.isEnemyOf(other)) {
+                    && !attacker.isEnemyOf(other)) {
                 // what are this guy's mods to the attack?
                 LosEffects los = LosEffects.calculateLos(game, other.getId(),
-                                                         target, true);
+                        target, true);
                 ToHitData mods = los.losModifiers(game);
                 los.setTargetCover(LosEffects.COVER_NONE);
                 mods.append(Compute.getAttackerMovementModifier(game,
-                                                                other.getId()));
+                        other.getId()));
                 if (other.isAttackingThisTurn()) {
                     mods.addModifier(1, "spotter is making an attack this turn");
                 }
                 // is this guy a better spotter?
                 if ((spotter == null)
-                    || (mods.getValue() < bestMods.getValue())) {
+                        || (mods.getValue() < bestMods.getValue())) {
                     spotter = other;
                     bestMods = mods;
                 }
@@ -1518,20 +1511,19 @@ public class Compute {
         Entity c3spotter = attacker;
         int c3range = attacker.getPosition().distance(target.getPosition());
 
-        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
-            Entity friend = i.nextElement();
+        for (Entity friend : game.getEntitiesVector()) {
 
             // TODO : can units being transported be used for C3 spotting? For
             // now we'll say no.
             if (attacker.equals(friend) || !friend.isActive()
-                || !attacker.onSameC3NetworkAs(friend)
-                || !friend.isDeployed()
-                || (friend.getTransportId() != Entity.NONE)) {
+                    || !attacker.onSameC3NetworkAs(friend)
+                    || !friend.isDeployed()
+                    || (friend.getTransportId() != Entity.NONE)) {
                 continue; // useless to us...
             }
 
             int buddyRange = Compute.effectiveDistance(game, friend, target,
-                                                       false);
+                    false);
             if (buddyRange < c3range) {
                 c3range = buddyRange;
                 c3spotter = friend;
@@ -1557,8 +1549,7 @@ public class Compute {
 
         ArrayList<Entity> network = new ArrayList<Entity>();
 
-        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
-            Entity friend = i.nextElement();
+        for (Entity friend : game.getEntitiesVector()) {
 
             if (attacker.equals(friend)
                 || !attacker.onSameC3NetworkAs(friend, true)
@@ -1617,23 +1608,22 @@ public class Compute {
 
         ArrayList<Entity> network = new ArrayList<Entity>();
 
-        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
-            Entity friend = i.nextElement();
+        for (Entity friend : game.getEntitiesVector()) {
 
             if (attacker.equals(friend)
-                || !attacker.onSameC3NetworkAs(friend, true)
-                || !friend.isDeployed()) {
+                    || !attacker.onSameC3NetworkAs(friend, true)
+                    || !friend.isDeployed()) {
                 continue; // useless to us...
             }
 
             int buddyRange = Compute.effectiveDistance(game, friend, target,
-                                                       false);
+                    false);
 
             boolean added = false;
             // but everyone in the C3i network into a list and sort it by range.
             for (int pos = 0; pos < network.size(); pos++) {
                 if (Compute.effectiveDistance(game, network.get(pos), target,
-                                              false) >= buddyRange) {
+                        false) >= buddyRange) {
                     network.add(pos, friend);
                     added = true;
                     break;
@@ -4108,8 +4098,7 @@ public class Compute {
         Vector<Coords> vFriendlyECMCoords = new Vector<Coords>(16);
         Vector<Integer> vFriendlyECMRanges = new Vector<Integer>(16);
         Vector<Double> vFriendlyECMStrengths = new Vector<Double>(16);
-        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements(); ) {
-            Entity ent = e.nextElement();
+        for (Entity ent : ae.getGame().getEntitiesVector()) {
             Coords entPos = ent.getPosition();
             if (ent.isEnemyOf(ae) && ent.hasGhostTargets(true)
                 && (entPos != null)) {
@@ -4273,9 +4262,7 @@ public class Compute {
         boolean canTarget = false;
         Coords attackCoords = null;
         for (Coords c : attacker.getPassedThrough()) {
-            for (Enumeration<Entity> e = game.getEntities(c); e
-                    .hasMoreElements(); ) {
-                Entity target = e.nextElement();
+            for (Entity target : game.getEntitiesVector(c)) {
                 if (target.getId() == defender.getId()) {
                     canTarget = true;
                 }
@@ -4968,10 +4955,10 @@ public class Compute {
                                                Coords coords, int weaponId) {
         Entity tempEntity = null;
         // first, check the hex of the original target
-        Enumeration<Entity> entities = game.getEntities(coords);
+        Iterator<Entity> entities = game.getEntities(coords);
         Vector<Entity> possibleTargets = new Vector<Entity>();
-        while (entities.hasMoreElements()) {
-            tempEntity = entities.nextElement();
+        while (entities.hasNext()) {
+            tempEntity = entities.next();
             if (!tempEntity.getTargetedBySwarm(aeId, weaponId)) {
                 // we found a target
                 possibleTargets.add(tempEntity);
@@ -4992,8 +4979,8 @@ public class Compute {
                 continue;
             }
             entities = game.getEntities(tempcoords);
-            if (entities.hasMoreElements()) {
-                tempEntity = entities.nextElement();
+            if (entities.hasNext()) {
+                tempEntity = entities.next();
                 if (!tempEntity.getTargetedBySwarm(aeId, weaponId)) {
                     // we found a target
                     possibleTargets.add(tempEntity);
@@ -5336,9 +5323,7 @@ public class Compute {
                 continue;
             }
             // now lets add all the entities here
-            for (Enumeration<Entity> i = game.getEntities(c); i
-                    .hasMoreElements(); ) {
-                Entity en = i.nextElement();
+            for (Entity en : game.getEntitiesVector(c)) {
                 entities.add(en);
             }
         }
@@ -5468,12 +5453,10 @@ public class Compute {
             if (null == hex) {
                 continue;
             }
-            Enumeration<Entity> entities = game.getEntities(c);
-            while (entities.hasMoreElements()) {
+            for (Entity other : game.getEntitiesVector(c)) {
                 // Is the other unit friendly and not the current entity?
-                Entity other = entities.nextElement();
                 if ((en.getOwner().equals(other.getOwner()) || (en.getOwner()
-                                                                  .getTeam() == other.getOwner().getTeam()))
+                        .getTeam() == other.getOwner().getTeam()))
                     && !en.equals(other)
                     && (other instanceof SmallCraft)
                     && other.canLoad(en)

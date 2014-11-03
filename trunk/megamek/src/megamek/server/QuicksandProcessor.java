@@ -14,7 +14,6 @@
  */
 package megamek.server;
 
-import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.Coords;
@@ -86,9 +85,7 @@ public class QuicksandProcessor extends DynamicTerrainProcessor {
                 //check for quicksand that has been around at least one turn
                 if(currentHex.terrainLevel(Terrains.SWAMP) == 3) {
                     //sink any units that occupy this hex
-                    Enumeration<Entity> entities = game.getEntities(currentCoords);
-                    while (entities.hasMoreElements()) {
-                        final Entity entity = entities.nextElement();
+                    for (Entity entity : game.getEntitiesVector(currentCoords)) {
                         if(entity.isStuck()) {
                             server.doSinkEntity(entity);
                         }

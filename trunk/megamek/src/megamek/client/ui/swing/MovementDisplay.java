@@ -18,8 +18,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -2240,6 +2240,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     }
 
     private synchronized void updateLoadButtons() {
+        final IGame game = clientgui.getClient().getGame();
         final Entity ce = ce();
         if (null == ce) {
             return;
@@ -2265,7 +2266,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (!ce.isAirborne()
                 && (mpUsed <= Math.ceil((ce.getWalkMP() / 2.0)))
                 && (Compute.getMountableUnits(ce, pos, elev,
-                        clientgui.getClient().getGame()).size() > 0)) {
+                        game).size() > 0)) {
             setMountEnabled(true);
         }
 
@@ -2295,12 +2296,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             setLoadEnabled(false);
         } else {
             // Check the other entities in the current hex for friendly units.
-            Entity other = null;
-            Enumeration<Entity> entities = clientgui.getClient().getGame()
-                    .getEntities(ce.getPosition());
             boolean isGood = false;
-            while (entities.hasMoreElements()) {
-                other = entities.nextElement();
+            for (Entity other : game.getEntitiesVector(ce.getPosition())) {
                 // If the other unit is friendly and not the current entity
                 // and the current entity has at least 1 MP, if it can
                 // transport the other unit, and if the other hasn't moved
@@ -2405,14 +2402,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     }
 
     private Entity getLoadedUnit() {
+        final IGame game = clientgui.getClient().getGame();
         Entity choice = null;
 
         Vector<Entity> choices = new Vector<Entity>();
-        Enumeration<Entity> entities = clientgui.getClient().getGame()
-                .getEntities(ce().getPosition());
-        Entity other;
-        while (entities.hasMoreElements()) {
-            other = entities.nextElement();
+        for (Entity other : game.getEntitiesVector(ce().getPosition())) {
             if (other.isSelectableThisTurn() && (ce() != null)
                     && ce().canLoad(other, false)) {
                 choices.addElement(other);
@@ -2582,7 +2576,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * is ended and hops on. need a new function
      */
     private synchronized void updateRecoveryButton() {
-
+        final IGame game = clientgui.getClient().getGame();
         final Entity ce = ce();
         if (null == ce) {
             return;
@@ -2600,12 +2594,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 loadeePos = Compute.getFinalPosition(ce.getPosition(),
                         cmd.getFinalVectors());
             }
-            Entity other = null;
-            Enumeration<Entity> entities = clientgui.getClient().getGame()
-                    .getEntities(loadeePos);
             boolean isGood = false;
-            while (entities.hasMoreElements()) {
-                other = entities.nextElement();
+            for (Entity other : game.getEntitiesVector(loadeePos)) {
                 // Is the other unit friendly and not the current entity?
                 // must be done with its movement
                 // it also must be same heading and velocity
@@ -2658,9 +2648,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * a squadron or another solo fighter
      */
     private synchronized void updateJoinButton() {
-
-        if (!clientgui.getClient().getGame().getOptions()
-                .booleanOption("stratops_capital_fighter")) {
+        final IGame game = clientgui.getClient().getGame();        
+        if (!game.getOptions().booleanOption("stratops_capital_fighter")) {
             return;
         }
 
@@ -2674,17 +2663,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         Coords loadeePos = cmd.getFinalCoords();
-        if (clientgui.getClient().getGame().useVectorMove()) {
+        if (game.useVectorMove()) {
             // not where you are, but where you will be
             loadeePos = Compute.getFinalPosition(ce.getPosition(),
                     cmd.getFinalVectors());
         }
-        Entity other = null;
-        Enumeration<Entity> entities = clientgui.getClient().getGame()
-                .getEntities(loadeePos);
         boolean isGood = false;
-        while (entities.hasMoreElements()) {
-            other = entities.nextElement();
+        for (Entity other : game.getEntitiesVector(loadeePos)) {
             // Is the other unit friendly and not the current entity?
             // must be done with its movement
             // it also must be same heading and velocity
@@ -2695,7 +2680,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 // now lets check velocity
                 // depends on movement rules
                 Aero oa = (Aero) other;
-                if (clientgui.getClient().getGame().useVectorMove()) {
+                if (game.useVectorMove()) {
                     // can you do equality with vectors?
                     if (Compute.sameVectors(cmd.getFinalVectors(),
                             oa.getVectors())) {
@@ -3006,7 +2991,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * get the unit id that the player wants to be recovered by
      */
     private int getRecoveryUnit() {
-        Entity ce = ce();
+        final IGame game = clientgui.getClient().getGame();
+        final Entity ce = ce();
         List<Entity> choices = new ArrayList<Entity>();
 
         // collect all possible choices
@@ -3016,11 +3002,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             loadeePos = Compute.getFinalPosition(ce.getPosition(),
                     cmd.getFinalVectors());
         }
-        Entity other = null;
-        Enumeration<Entity> entities = clientgui.getClient().getGame()
-                .getEntities(loadeePos);
-        while (entities.hasMoreElements()) {
-            other = entities.nextElement();
+        for (Entity other : game.getEntitiesVector(loadeePos)) {
             // Is the other unit friendly and not the current entity?
             // must be done with its movement
             // it also must be same heading and velocity
@@ -3094,7 +3076,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * @return the unit id that the player wants to join
      */
     private int getUnitJoined() {
-        Entity ce = ce();
+        final IGame game = clientgui.getClient().getGame();
+        final Entity ce = ce();
         List<Entity> choices = new ArrayList<Entity>();
 
         // collect all possible choices
@@ -3104,11 +3087,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             loadeePos = Compute.getFinalPosition(ce.getPosition(),
                     cmd.getFinalVectors());
         }
-        Entity other = null;
-        Enumeration<Entity> entities = clientgui.getClient().getGame()
-                .getEntities(loadeePos);
-        while (entities.hasMoreElements()) {
-            other = entities.nextElement();
+        for (Entity other : game.getEntitiesVector(loadeePos)) {
             // Is the other unit friendly and not the current entity?
             // must be done with its movement
             // it also must be same heading and velocity
@@ -3243,21 +3222,19 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      *            - the <code>Coords</code> containing targets.
      */
     private Targetable chooseTarget(Coords pos) {
+        final IGame game = clientgui.getClient().getGame();
         final Entity ce = ce();
 
         // Assume that we have *no* choice.
         Targetable choice = null;
 
-        // Get the available choices.
-        Enumeration<Entity> choices = clientgui.getClient().getGame()
-                .getEntities(pos);
+        // Get the available choices.        
 
         // Convert the choices into a List of targets.
         ArrayList<Targetable> targets = new ArrayList<Targetable>();
-        while (choices.hasMoreElements()) {
-            choice = choices.nextElement();
-            if (!ce.equals(choice)) {
-                targets.add(choice);
+        for (Entity ent : game.getEntitiesVector(pos)) {
+            if (!ce.equals(ent)) {
+                targets.add(ent);
             }
         }
 
@@ -4288,7 +4265,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setStatusBarText(Messages.getString("MovementDisplay.AllPlayersUnload")); //$NON-NLS-1$
 
         // Collect the stranded entities into the vector.
-        Enumeration<Entity> entities = clientgui.getClient()
+        Iterator<Entity> entities = clientgui.getClient()
                 .getSelectedEntities(new EntitySelector() {
                     private final IGame game = clientgui.getClient().getGame();
                     private final GameTurn turn = clientgui.getClient()
@@ -4303,8 +4280,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         return false;
                     }
                 });
-        while (entities.hasMoreElements()) {
-            stranded.addElement(entities.nextElement());
+        while (entities.hasNext()) {
+            stranded.addElement(entities.next());
         }
 
         // Construct an array of stranded entity names

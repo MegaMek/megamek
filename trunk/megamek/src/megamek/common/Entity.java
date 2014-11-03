@@ -1329,8 +1329,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * entity is a target of.
      */
     public DisplacementAttackAction findTargetedDisplacement() {
-        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
-            Entity other = i.nextElement();
+        for (Entity other : game.getEntitiesVector()) {
             if (other.hasDisplacementAttack()
                 && (other.getDisplacementAttack().getTargetId() == id)) {
                 return other.getDisplacementAttack();
@@ -4784,9 +4783,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (hasC3MM()) {
             nodes = 2;
             if (game != null) {
-                for (java.util.Enumeration<Entity> i = game.getEntities(); i
-                        .hasMoreElements(); ) {
-                    final Entity e = i.nextElement();
+                for (Entity e : game.getEntitiesVector()) {
                     if (e.hasC3M() && (e != this)) {
                         final Entity m = e.getC3Master();
                         if (equals(m)) {
@@ -4801,9 +4798,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else if (hasC3M() && C3MasterIs(this)) {
             nodes = 3;
             if (game != null) {
-                for (java.util.Enumeration<Entity> i = game.getEntities(); i
-                        .hasMoreElements(); ) {
-                    final Entity e = i.nextElement();
+                for (Entity e : game.getEntitiesVector()) {
                     if (e.hasC3() && (e != this)) {
                         final Entity m = e.getC3Master();
                         if (equals(m)) {
@@ -4834,9 +4829,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (hasC3i()) {
             nodes = 5;
             if (game != null) {
-                for (Enumeration<Entity> i = game.getEntities(); i
-                        .hasMoreElements(); ) {
-                    final Entity e = i.nextElement();
+                for (Entity e : game.getEntitiesVector()) {
                     if (!equals(e) && onSameC3NetworkAs(e)) {
                         nodes--;
                         if (nodes <= 0) {
@@ -4848,9 +4841,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else if (hasC3M()) {
             nodes = 3;
             if (game != null) {
-                for (Enumeration<Entity> i = game.getEntities(); i
-                        .hasMoreElements(); ) {
-                    final Entity e = i.nextElement();
+                for (Entity e : game.getEntitiesVector()) {
                     if (e.hasC3() && !equals(e)) {
                         final Entity m = e.getC3Master();
                         if (equals(m)) {
@@ -4869,9 +4860,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else if (hasActiveNovaCEWS()) {
             nodes = 2;
             if (game != null) {
-                for (Enumeration<Entity> i = game.getEntities(); i
-                        .hasMoreElements(); ) {
-                    final Entity e = i.nextElement();
+                for (Entity e : game.getEntitiesVector()) {
                     if (!equals(e) && onSameC3NetworkAs(e)) {
                         nodes--;
                         if (nodes <= 0) {
@@ -5050,9 +5039,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // this just changed from a company-level to lance-level (or vice
             // versa); have to disconnect all slaved units to maintain
             // integrity.
-            for (java.util.Enumeration<Entity> i = game.getEntities(); i
-                    .hasMoreElements(); ) {
-                final Entity e = i.nextElement();
+            for (Entity e : game.getEntitiesVector()) {
                 if (e.C3MasterIs(this) && !equals(e)) {
                     e.setC3Master(NONE, reset);
                 }
@@ -5068,9 +5055,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else if (hasC3() || hasC3i()) {
             c3NetIdString = game.getEntity(entityId).getC3NetId();
         }
-        for (java.util.Enumeration<Entity> i = game.getEntities(); i
-                .hasMoreElements(); ) {
-            final Entity e = i.nextElement();
+        for (Entity e : game.getEntitiesVector()) {
             if (e.C3MasterIs(this) && !equals(e)) {
                 e.c3NetIdString = c3NetIdString;
             }
@@ -8325,9 +8310,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // Try to find a valid entity target.
-        Enumeration<Entity> e = game.getEntities();
-        while (!canHit && e.hasMoreElements()) {
-            Entity target = e.nextElement();
+        Iterator<Entity> e = game.getEntities();
+        while (!canHit && e.hasNext()) {
+            Entity target = e.next();
 
             // don't shoot at friendlies unless you are into that sort of thing
             // and do not shoot yourself even then

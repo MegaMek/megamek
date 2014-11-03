@@ -97,11 +97,10 @@ public class ComputeECM {
         Vector<Coords> vFriendlyBAPCoords = new Vector<Coords>(16);
         Vector<Integer> vFriendlyBAPRanges = new Vector<Integer>(16);
         Vector<Integer> vFriendlyBAPFacings = new Vector<Integer>(16);
-        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements(); ) {
-            Entity ent = e.nextElement();
+        for (Entity ent : ae.getGame().getEntitiesVector()) {
             Coords entPos = ent.getPosition();
             if ((entPos == null) && (ent.getTransportId() != Entity.NONE)) {
-                Entity carrier = ae.game.getEntity(ent.getTransportId());
+                Entity carrier = ae.getGame().getEntity(ent.getTransportId());
                 if ((null != carrier) && carrier.loadedUnitsHaveActiveECM()) {
                     entPos = carrier.getPosition();
                 }
@@ -221,11 +220,10 @@ public class ComputeECM {
         Vector<Coords> vFriendlyBAPCoords = new Vector<Coords>(16);
         Vector<Integer> vFriendlyBAPRanges = new Vector<Integer>(16);
         Vector<Integer> vFriendlyBAPFacings = new Vector<Integer>(16);
-        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements(); ) {
-            Entity ent = e.nextElement();
+        for (Entity ent : ae.getGame().getEntitiesVector()) {
             Coords entPos = ent.getPosition();
             if ((entPos == null) && (ent.getTransportId() != Entity.NONE)) {
-                Entity carrier = ae.game.getEntity(ent.getTransportId());
+                Entity carrier = ae.getGame().getEntity(ent.getTransportId());
                 if ((null != carrier) && carrier.loadedUnitsHaveActiveECM()) {
                     entPos = carrier.getPosition();
                 }
@@ -329,7 +327,7 @@ public class ComputeECM {
      * @return          An ECMInfo entry for each active ECM and ECCM fielded.
      */
     public static List<ECMInfo> computeAllEntitiesECMInfo(
-            Vector<Entity> entities) {
+            List<Entity> entities) {
         
         ArrayList<ECMInfo> allEcmInfo = new ArrayList<ECMInfo>(entities.size());
         ArrayList<ECMInfo> allEccmInfo = new ArrayList<ECMInfo>(entities.size());

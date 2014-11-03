@@ -375,7 +375,7 @@ public class Client implements IClientCommandHandler {
      * Returns an <code>Enumeration</code> of the entities that match the
      * selection criteria.
      */
-    public Enumeration<Entity> getSelectedEntities(EntitySelector selector) {
+    public Iterator<Entity> getSelectedEntities(EntitySelector selector) {
         return game.getSelectedEntities(selector);
     }
 
@@ -424,8 +424,8 @@ public class Client implements IClientCommandHandler {
     /**
      * Returns an enumeration of the entities in game.entities
      */
-    public Enumeration<Entity> getEntities() {
-        return game.getEntities();
+    public List<Entity> getEntitiesVector() {
+        return game.getEntitiesVector();
     }
 
     public MapSettings getMapSettings() {
@@ -887,7 +887,7 @@ public class Client implements IClientCommandHandler {
      */
     @SuppressWarnings("unchecked")
     protected void receiveTurns(Packet packet) {
-        game.setTurnVector((Vector<GameTurn>) packet.getObject(0));
+        game.setTurnVector((List<GameTurn>) packet.getObject(0));
     }
 
     /**

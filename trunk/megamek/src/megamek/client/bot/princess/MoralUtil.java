@@ -27,8 +27,8 @@ import megamek.common.logging.Logger;
 
 import java.text.DecimalFormat;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -161,7 +161,7 @@ public class MoralUtil implements IMoralUtil {
         int enemyBv = 0;
 
         // Loop through every entity in the game.
-        Vector<Entity> allEntities = game.getEntitiesVector();
+        List<Entity> allEntities = game.getEntitiesVector();
         for (Entity entity : allEntities) {
 
             // Ignore units not on the board.

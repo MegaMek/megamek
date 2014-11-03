@@ -1009,9 +1009,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                         break;
                     }
                 }
-                for (Enumeration<Entity> i = game.getEntities(target
-                                                                      .getPosition()); i.hasMoreElements(); ) {
-                    Entity en = i.nextElement();
+                for (Entity en : game.getEntitiesVector(target.getPosition())) {
                     if (!en.isEnemyOf(a) && en.isLargeCraft() && !en.equals(a)
                         && ((en.getWeight() - a.getWeight()) >= -100000.0)) {
                         toHit.addModifier(+1, "Sensor Shadow");
@@ -2353,9 +2351,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                         break;
                     }
                 }
-                for (Enumeration<Entity> i = game.getEntities(target
-                                                                      .getPosition()); i.hasMoreElements(); ) {
-                    Entity en = i.nextElement();
+                for (Entity en : game.getEntitiesVector(target.getPosition())) {
                     if (!en.isEnemyOf(a) && en.isLargeCraft() && !en.equals(a)
                         && ((en.getWeight() - a.getWeight()) >= -100000.0)) {
                         toHit.addModifier(+1, "Sensor Shadow");
@@ -3723,9 +3719,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (ae.hasC3() || ae.hasC3i()) {
                 // c3 units can fire if any other unit in their network is in
                 // visual or sensor range
-                for (Enumeration<Entity> i = game.getEntities(); i
-                        .hasMoreElements(); ) {
-                    Entity en = i.nextElement();
+                for (Entity en : game.getEntitiesVector()) {
                     if (!en.isEnemyOf(ae) && en.onSameC3NetworkAs(ae)
                         && Compute.canSee(game, en, target)) {
                         networkSee = true;

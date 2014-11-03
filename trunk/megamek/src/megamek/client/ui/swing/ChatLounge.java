@@ -1247,11 +1247,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
          * units will be sorted by the order they were "added" to the list.
          */
         ArrayList<Entity> allEntities = new ArrayList<Entity>();
-        for (Enumeration<Entity> i = clientgui.getClient().getEntities(); i
-                .hasMoreElements();) {
-            Entity entity = i.nextElement();
-            // sortedEntities.add(entity);
-            allEntities.add(entity);
+        for (Entity ent : clientgui.getClient().getEntitiesVector()) {
+            allEntities.add(ent);
         }
 
         Collections.sort(allEntities, new Comparator<Entity>() {
@@ -2834,10 +2831,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             int bv = 0;
             int cost = 0;
             float ton = 0;
-            for (Enumeration<Entity> j = clientgui.getClient().getEntities(); j
-                    .hasMoreElements();) {
-                Entity entity = j.nextElement();
-                if (entity.getOwner().equals(player)) {
+            for (Entity entity : clientgui.getClient().getEntitiesVector()) {
+                 if (entity.getOwner().equals(player)) {
                     bv += entity.calculateBattleValue();
                     cost += entity.getCost(false);
                     ton += entity.getWeight();

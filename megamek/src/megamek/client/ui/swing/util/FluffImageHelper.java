@@ -170,7 +170,9 @@ public class FluffImageHelper {
                     for (String ext : EXTENSIONS_FLUFF_IMAGE_FORMATS) {
                         extMatch |= name.endsWith(ext);
                     }
-                    return name.contains(unit.getChassis()) && extMatch;
+                    String chassis =  name.split("\\[")[0].trim(); 
+                    return chassis.equalsIgnoreCase(unit.getChassis())
+                            && extMatch;
                 }
             });
             if (files.length > 0) {

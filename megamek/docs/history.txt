@@ -60,6 +60,7 @@ v0.39.3-dev (SVN)
 + The Game object frequently returns Vectors instead of Lists, work has begun to
     instead return Lists that are read-only
 + Added additional heuristics for finding fluff images
++ Data: New Images and Unit Names Fixes
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

@@ -1,6 +1,6 @@
 Version:1.1
 Scarecrow
-UCU-F4r "Hobbled Scarecrow"
+UCU-F4r 'Hobbled Scarecrow'
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

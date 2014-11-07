@@ -1,6 +1,6 @@
 Version:1.0
 Rock Hound ProspectorMech
-AM-PRM-RH7 "Rock Possum"
+AM-PRM-RH7 'Rock Possum'
 
 Config:Biped
 TechBase:Inner Sphere

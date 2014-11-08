@@ -57,7 +57,6 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_FAST_RELOAD, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_HEAD_EJECT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_HYPER_ACTUATOR, false);
-        // addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_COOLING_JACKET, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_COM, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_LIFE_SUPPORT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_TARG_L, false);
@@ -69,11 +68,12 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_MOD_WEAPONS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_MULTI_TRAC, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_OVERHEAD_ARMS, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_POWER_REVERSE, false); //Not Implemented
         addOption(posQuirk, OptionsConstants.QUIRK_POS_PRO_ACTUATOR, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_REINFORCED_LEGS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_RUMBLE_SEAT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_SEARCHLIGHT, false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_STABLE, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_STABLE, false); // Not Implemented
         addOption(posQuirk, OptionsConstants.QUIRK_POS_TRAILER_HITCH, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S, false);
@@ -87,6 +87,7 @@ public class Quirks extends AbstractOptions {
         //Internal Bomb Bay
         //Variable Range Targeting
         //VTOL Rotor Arrangement (no vee adv move rules)
+        //Combat Mech
 
         // negative quirks
         IBasicOptionGroup negQuirk = addGroup("neg_quirks", NEG_QUIRKS); //$NON-NLS-1$
@@ -99,6 +100,7 @@ public class Quirks extends AbstractOptions {
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_FRAGILE_FUEL, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_GAS_HOG, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_HARD_PILOT, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_ILLEGAL_DESIGN, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_LARGE_DROPPER, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_LOW_ARMS, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_NO_ARMS, false);
@@ -179,6 +181,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals("weak_undercarriage")
                     || qName.equals("vtol_rotor")
                     || qName.equals("gas_hog")
+                    || qName.equals("power_reverse")
                     || qName.equals("unstreamlined")) {
                 return false;
             }
@@ -226,6 +229,8 @@ public class Quirks extends AbstractOptions {
                     || qName.equals("weak_head_3")
                     || qName.equals("weak_head_4")
                     || qName.equals("weak_head_5")
+                    || qName.equals("stable")
+                    || qName.equals("compact_mech")
                     || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST)) {
                 return false;
             }
@@ -288,6 +293,9 @@ public class Quirks extends AbstractOptions {
                     || qName.equals("rumble_seat")
                     || qName.equals("poor_performance")
                     || qName.equals("distracting")
+                    || qName.equals("power_reverse")
+                    || qName.equals("stable")
+                    || qName.equals("compact_mech")
                     || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST)) {
                 return false;
             }
@@ -342,6 +350,9 @@ public class Quirks extends AbstractOptions {
                     || qName.equals("poor_performance")
                     || qName.equals("distracting")
                     || qName.equals("poor_sealing")
+                    || qName.equals("power_reverse")
+                    || qName.equals("stable")
+                    || qName.equals("compact_mech")
                     || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST)) {
                 return false;
             }
@@ -384,6 +395,9 @@ public class Quirks extends AbstractOptions {
                     || qName.equals("weak_head_4")
                     || qName.equals("weak_head_5")
                     || qName.equals("poor_sealing")
+                    || qName.equals("power_reverse")
+                    || qName.equals("stable")
+                    || qName.equals("compact_mech")
                     || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST)) {
                 return false;
             }
@@ -419,6 +433,9 @@ public class Quirks extends AbstractOptions {
                     || qName.equals("weak_head_4")
                     || qName.equals("weak_head_5")
                     || qName.equals("poor_sealing")
+                    || qName.equals("power_reverse")
+                    || qName.equals("stable")
+                    || qName.equals("compact_mech")
                     || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST)) {
                 return false;
             }
@@ -451,6 +468,9 @@ public class Quirks extends AbstractOptions {
                     || qName.equals("poor_work")
                     || qName.equals("prototype")
                     || qName.equals("sensor_ghosts")
+                    || qName.equals("power_reverse")
+                    || qName.equals("stable")
+                    || qName.equals("compact_mech")
                     || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST)) {
                 return true;
             }

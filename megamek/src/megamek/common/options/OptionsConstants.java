@@ -52,6 +52,7 @@ public class OptionsConstants {
     public static final String QUIRK_POS_MOD_WEAPONS= "mod_weapons"; //$NON-NLS-1$
     public static final String QUIRK_POS_MULTI_TRAC= "multi_trac"; //$NON-NLS-1$
     public static final String QUIRK_POS_OVERHEAD_ARMS = "overhead_arms"; //$NON-NLS-1$
+    public static final String QUIRK_POS_POWER_REVERSE = "power_reverse"; //$NON-NLS-1$
     public static final String QUIRK_POS_PRO_ACTUATOR= "pro_actuator"; //$NON-NLS-1$
     public static final String QUIRK_POS_REINFORCED_LEGS= "reinforced_legs"; //$NON-NLS-1$
     public static final String QUIRK_POS_RUMBLE_SEAT= "rumble_seat"; //$NON-NLS-1$
@@ -74,6 +75,7 @@ public class OptionsConstants {
     public static final String QUIRK_NEG_FRAGILE_FUEL= "fragile_fuel"; //$NON-NLS-1$
     public static final String QUIRK_NEG_GAS_HOG= "gas_hog"; //$NON-NLS-1$
     public static final String QUIRK_NEG_HARD_PILOT= "hard_pilot"; //$NON-NLS-1$
+    public static final String QUIRK_NEG_ILLEGAL_DESIGN= "illegal_design"; //$NON-NLS-1$
     public static final String QUIRK_NEG_LARGE_DROPPER= "large_dropper"; //$NON-NLS-1$
     public static final String QUIRK_NEG_LOW_ARMS = "low_arms"; //$NON-NLS-1$
     public static final String QUIRK_NEG_NO_EJECT= "no_eject"; //$NON-NLS-1$
@@ -104,7 +106,7 @@ public class OptionsConstants {
     
     public static final String QUIRK_WEAP_NEG_INACCURATE = "inaccurate"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_NEG_STATIC_FEED = "static_feed"; //$NON-NLS-1$
-
+    
     public static final String PILOT_APTITUDE_GUNNERY = "aptitude_gunnery"; //$NON-NLS-1$
     public static final String PILOT_APTITUDE_PILOTING = "aptitude_piloting"; //$NON-NLS-1$
 }

@@ -415,7 +415,17 @@ public class ChatProcessor {
                 return;
             }
 
-            princess.getBehaviorSettings().addStrategicTarget(hex);
+            int x = Integer.parseInt(hex.substring(0, 2)) - 1;
+            int y = Integer.parseInt(hex.substring(2, 4)) - 1;
+            Coords coords = new Coords(x, y);
+            if (!princess.getGame().getBoard().contains(coords)) {
+                msg = "Board does not have hex " + hex;
+                princess.log(getClass(), METHOD_NAME, LogLevel.WARNING, msg + "\n" + chatEvent.getMessage());
+                princess.sendChat(msg);
+                return;
+            }
+
+            princess.addStrategicBuildingTarget(coords);
             msg = "Hex " + hex + " added to strategic targets list.";
             princess.sendChat(msg);
         }

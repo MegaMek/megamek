@@ -58,6 +58,7 @@ import megamek.common.logging.LogLevel;
 import megamek.common.logging.Logger;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
+import sun.rmi.runtime.Log;
 
 public class Princess extends BotClient {
 
@@ -169,6 +170,18 @@ public class Princess extends BotClient {
 
     public Set<Coords> getStrategicBuildingTargets() {
         return strategicBuildingTargets;
+    }
+
+    public void addStrategicBuildingTarget(Coords coords) {
+        if (coords == null) {
+            throw new NullPointerException("Coords is null.");
+        }
+        if (!getGame().getBoard().contains(coords)) {
+            log(getClass(), "addStrategicBuildingTarget(Coords)", LogLevel.WARNING,
+                "Board does not contain " + coords.toFriendlyString());
+            return;
+        }
+        getStrategicBuildingTargets().add(coords);
     }
 
     public Set<Integer> getPriorityUnitTargets() {

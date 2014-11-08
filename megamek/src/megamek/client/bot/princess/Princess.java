@@ -58,7 +58,6 @@ import megamek.common.logging.LogLevel;
 import megamek.common.logging.Logger;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
-import sun.rmi.runtime.Log;
 
 public class Princess extends BotClient {
 

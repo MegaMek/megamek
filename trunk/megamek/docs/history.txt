@@ -61,6 +61,7 @@ v0.39.3-dev (SVN)
     instead return Lists that are read-only
 + Added additional heuristics for finding fluff images
 + Data: New Images and Unit Names Fixes
++ Bug: [#4273] Issue with Princess target ChatCommand
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

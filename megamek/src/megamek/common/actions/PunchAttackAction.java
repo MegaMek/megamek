@@ -271,6 +271,11 @@ public class PunchAttackAction extends PhysicalAttackAction {
         } else if (hasClaws) {
             toHit.addModifier(1, "Using Claws");
         }
+        
+        if (ae.hasQuirk(OptionsConstants.QUIRK_POS_BATTLE_FIST)
+                && hasHandActuator) {
+            toHit.addModifier(-1, "Battlefist");
+        }
 
         // elevation
         if ((attackerHeight == targetElevation) && !ae.isHullDown()) {

@@ -41,43 +41,43 @@ public class Quirks extends AbstractOptions {
     public synchronized void initialize() {
         //positive quirks
         IBasicOptionGroup posQuirk = addGroup("pos_quirks", POS_QUIRKS); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_ANTI_AIR, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_ATMO_FLYER, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_BATTLE_COMP, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_BATTLE_FIST, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_COMBAT_COMPUTER, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_COMMAND_MECH, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_COMPACT, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_COWL, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_DISTRACTING, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_DOCKING_ARMS, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_EASY_MAINTAIN, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_EASY_PILOT, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_EXT_TWIST, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_FAST_RELOAD, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_HEAD_EJECT, false); //$NON-NLS-1
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_HYPER_ACTUATOR, false); //$NON-NLS-1$
- //       addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_COOLING_JACKET, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_COM, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_LIFE_SUPPORT, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_TARG_L, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_TARG_M, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_TARG_S, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_IMPROVED_SENSORS, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_INTERNAL_BOMB, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_LOW_PROFILE, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_MOD_WEAPONS, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_MULTI_TRAC, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_OVERHEAD_ARMS, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_PRO_ACTUATOR, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_REINFORCED_LEGS, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUMBLE_SEAT, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_SEARCHLIGHT, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_STABLE, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_TRAILER_HITCH, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S, false); //$NON-NLS-1$
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_VTOL_ROTOR, false); //$NON-NLS-1$
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_ANTI_AIR, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_ATMO_FLYER, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_BATTLE_COMP, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_BATTLE_FIST, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_COMBAT_COMPUTER, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_COMMAND_MECH, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_COMPACT, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_COWL, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_DISTRACTING, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_DOCKING_ARMS, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_EASY_MAINTAIN, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_EASY_PILOT, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_EXT_TWIST, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_FAST_RELOAD, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_HEAD_EJECT, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_HYPER_ACTUATOR, false);
+        // addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_COOLING_JACKET, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_COM, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_LIFE_SUPPORT, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_TARG_L, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_TARG_M, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_IMP_TARG_S, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_IMPROVED_SENSORS, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_INTERNAL_BOMB, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_LOW_PROFILE, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_MOD_WEAPONS, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_MULTI_TRAC, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_OVERHEAD_ARMS, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_PRO_ACTUATOR, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_REINFORCED_LEGS, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_RUMBLE_SEAT, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_SEARCHLIGHT, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_STABLE, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_TRAILER_HITCH, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S, false);
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_VTOL_ROTOR, false);
 
         
         //not yet implemented
@@ -90,42 +90,42 @@ public class Quirks extends AbstractOptions {
 
         // negative quirks
         IBasicOptionGroup negQuirk = addGroup("neg_quirks", NEG_QUIRKS); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_BAD_REP, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_DIFFICULT_MAINTAIN, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_EXP_ACTUATOR, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_FLAWED_COOLING, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_FRAGILE_FUEL, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_GAS_HOG, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_HARD_PILOT, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_LARGE_DROPPER, false); //$NON-NLS-1$
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_BAD_REP, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_DIFFICULT_MAINTAIN, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_EXP_ACTUATOR, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_FLAWED_COOLING, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_FRAGILE_FUEL, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_GAS_HOG, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_HARD_PILOT, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_LARGE_DROPPER, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_LOW_ARMS, false);
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_NO_ARMS, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_NO_EJECT, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_NO_TWIST, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_NON_STANDARD, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_OBSOLETE, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_POOR_LIFE_SUPPORT, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_POOR_PERFORMANCE, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_POOR_SEALING, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_POOR_TARG_L, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_POOR_TARG_M, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_POOR_TARG_S, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_POOR_WORK, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_PROTOTYPE, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_SENSOR_GHOSTS, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_SUSCEPTIBLE_CWS, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_UNBALANCED, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_UNSTREAMLINED, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_HEAD_1, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_HEAD_2, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_HEAD_3, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_HEAD_4, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_HEAD_5, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_LEGS, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_UNDERCARRIAGE, false); //$NON-NLS-1$
-        addOption(negQuirk, OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY, false); //$NON-NLS-1$
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_NO_ARMS, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_NO_EJECT, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_NO_TWIST, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_NON_STANDARD, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_OBSOLETE, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_POOR_LIFE_SUPPORT, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_POOR_PERFORMANCE, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_POOR_SEALING, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_POOR_TARG_L, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_POOR_TARG_M, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_POOR_TARG_S, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_POOR_WORK, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_PROTOTYPE, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_SENSOR_GHOSTS, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_SUSCEPTIBLE_CWS, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_UNBALANCED, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_UNSTREAMLINED, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_HEAD_1, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_HEAD_2, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_HEAD_3, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_HEAD_4, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_HEAD_5, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_LEGS, false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_WEAK_UNDERCARRIAGE,false);
+        addOption(negQuirk, OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY, false);
         addOption(negQuirk, OptionsConstants.QUIRK_NEG_OVERSIZED, false);
         
         //quirks not implemented yet

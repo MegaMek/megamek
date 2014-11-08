@@ -56,11 +56,14 @@ public class WeaponQuirks extends AbstractOptions {
         addOption(wpnQuirk, "em_interference", false); //$NON-NLS-1$
         addOption(wpnQuirk, "jettison_capable", false); //$NON-NLS-1$
         addOption(wpnQuirk, "fast_reload", false);
+        addOption(wpnQuirk, "non_functional", false);
         addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED, false);
     }
     //unimplemented
     //ammo feed problem
     //EM Interference
+    //jettison-capable Weapon
+    //non-functional
 
     /*
      * (non-Javadoc)

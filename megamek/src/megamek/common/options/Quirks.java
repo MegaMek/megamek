@@ -71,9 +71,9 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L, false); //$NON-NLS-1$
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S, false); //$NON-NLS-1$
         addOption(posQuirk, "vtol_rotor", false); //$NON-NLS-1$
-        addOption(posQuirk, "rumble_seat", false);
-        addOption(posQuirk, "distracting", false);
-        addOption(posQuirk, "head_eject", false);
+        addOption(posQuirk, "rumble_seat", false); //$NON-NLS-1$
+        addOption(posQuirk, "distracting", false); //$NON-NLS-1$
+        addOption(posQuirk, "head_eject", false); //$NON-NLS-1$
         addOption(posQuirk, OptionsConstants.QUIRK_POS_BATTLE_FIST, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_OVERHEAD_ARMS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_COMPACT, false);
@@ -82,7 +82,6 @@ public class Quirks extends AbstractOptions {
         //Fast Reload (no game effect at present)
         //Improved Communications
         //Internal Bomb Bay
-        //Searchlight
         //Variable Range Targeting
         //VTOL Rotor Arrangement (no vee adv move rules)
 

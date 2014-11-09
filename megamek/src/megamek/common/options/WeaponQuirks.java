@@ -89,8 +89,15 @@ public class WeaponQuirks extends AbstractOptions {
         if (!(wtype instanceof EnergyWeapon) && quirk.getName().equals("em_interference")) {
             return false;
         }
+        
+        if (en instanceof Protomech) {
+        	if (quirk.getName().equals("fast_reload")
+        		|| quirk.getName().equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)) {
+        		return false;
+        	}
+        }
 
-        if (en instanceof Tank || en instanceof BattleArmor) {
+        if (en instanceof Tank || en instanceof BattleArmor || en instanceof Protomech ) {
             if (quirk.getName().equals("imp_cooling")
                 || quirk.getName().equals("poor_cooling")
                 || quirk.getName().equals("no_cooling")) {

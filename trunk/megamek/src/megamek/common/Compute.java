@@ -1963,7 +1963,7 @@ public class Compute {
                          target, attacker.getForwardArc());
         boolean curInRearArc = Compute.isInArc(attacker.getPosition(),
                                                attacker.getSecondaryFacing(), target, attacker.getRearArc());
-        if (!curInRearArc && attacker.hasQuirk("multi_trac")) {
+        if (!curInRearArc && attacker.hasQuirk(OptionsConstants.QUIRK_POS_MULTI_TRAC)) {
             return null;
         }
 
@@ -4392,10 +4392,10 @@ public class Compute {
         }
 
         // protected/exposed actuator quirk may adjust target roll
-        if (defender.hasQuirk("pro_actuator")) {
+        if (defender.hasQuirk(OptionsConstants.QUIRK_POS_LOW_PROFILE)) {
             data.addModifier(+1, "protected actuators");
         }
-        if (defender.hasQuirk("exp_actuator")) {
+        if (defender.hasQuirk(OptionsConstants.QUIRK_NEG_EXP_ACTUATOR)) {
             data.addModifier(-1, "exposed actuators");
         }
 

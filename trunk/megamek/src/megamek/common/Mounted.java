@@ -27,6 +27,7 @@ import java.util.Vector;
 
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
+import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.weapons.AmmoBayWeapon;
 import megamek.common.weapons.AmmoWeapon;
@@ -1338,13 +1339,13 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             }
             // multiply by number of shots and number of weapons
             heat = heat * getCurrentShots() * getNWeapons();
-            if (hasQuirk("imp_cooling")) {
+            if (hasQuirk(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)) {
                 heat = Math.max(1, heat - 1);
             }
-            if (hasQuirk("poor_cooling")) {
+            if (hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)) {
                 heat += 1;
             }
-            if (hasQuirk("no_cooling")) {
+            if (hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)) {
                 heat += 2;
             }
             if (hasChargedCapacitor() == 2) {

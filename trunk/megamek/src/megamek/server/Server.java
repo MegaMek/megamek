@@ -2555,7 +2555,7 @@ public class Server implements Runnable {
             }
             // Give the unit a spotlight, if it has the spotlight quirk
             entity.setExternalSpotlight(entity.hasExternaSpotlight()
-                                        || entity.hasQuirk("searchlight"));
+                                        || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
             entityUpdate(entity.getId());
         }
     }
@@ -13493,7 +13493,7 @@ public class Server implements Runnable {
                                            new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                                                             VTOL.CRIT_ROTOR_DESTROYED), false, 0, false));
             }
-            if (te.hasQuirk("weak_legs")) {
+            if (te.hasQuirk(OptionsConstants.QUIRK_NEG_WEAK_LEGS)) {
                 addNewLines();
                 addReport(criticalEntity(te, hit.getLocation(), hit.isRear(),
                                          0, 0));
@@ -16400,7 +16400,7 @@ public class Server implements Runnable {
             damageTaken = (int) Math.floor(damageTaken / 2.0);
         }
 
-        if (ae.hasQuirk("reinforced_legs")) {
+        if (ae.hasQuirk(OptionsConstants.QUIRK_POS_REINFORCED_LEGS)) {
             damageTaken = (int) Math.floor(damageTaken / 2.0);
         }
 
@@ -16419,7 +16419,7 @@ public class Server implements Runnable {
             damageTaken -= cluster;
         }
 
-        if (ae.hasQuirk("weak_legs")) {
+        if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_WEAK_LEGS)) {
             addNewLines();
             addReport(criticalEntity(ae, Mech.LOC_LLEG, false, 0, 0));
             addNewLines();
@@ -16464,7 +16464,7 @@ public class Server implements Runnable {
         int mod = 0;
         PilotingRollData psr = new PilotingRollData(psrEntity.getId(), mod,
                                                     reason);
-        if (psrEntity.hasQuirk("stable")) {
+        if (psrEntity.hasQuirk(OptionsConstants.QUIRK_POS_STABLE)) {
             psr.addModifier(-1, "stable");
         }
         if (game.getOptions().booleanOption("tacops_physical_psr")) {
@@ -16621,7 +16621,7 @@ public class Server implements Runnable {
                 }
 
                 // Combat computers help manage heat
-                if (entity.hasQuirk("combat_computer")) {
+                if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
                     int reduce = Math.min(entity.heatBuildup, 4);
                     r = new Report(5026);
                     r.subject = entity.getId();
@@ -17151,7 +17151,7 @@ public class Server implements Runnable {
             entity.coolFromExternal = 0;
 
             // Combat computers help manage heat
-            if (entity.hasQuirk("combat_computer")) {
+            if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
                 int reduce = Math.min(entity.heatBuildup, 4);
                 r = new Report(5026);
                 r.subject = entity.getId();
@@ -17447,10 +17447,10 @@ public class Server implements Runnable {
                         Mech.LOC_HEAD);
             }
             int damageHeat = entity.heat;
-            if (entity.hasQuirk("imp_life_support")) {
+            if (entity.hasQuirk(OptionsConstants.QUIRK_POS_IMP_LIFE_SUPPORT)) {
                 damageHeat -= 5;
             }
-            if (entity.hasQuirk("poor_life_support")) {
+            if (entity.hasQuirk(OptionsConstants.QUIRK_NEG_POOR_LIFE_SUPPORT)) {
                 damageHeat += 5;
             }
             if ((lifeSupportCritCount > 0)
@@ -17738,7 +17738,7 @@ public class Server implements Runnable {
         }
 
         // Check for existence of flawed cooling quirk.
-        if (!entity.hasQuirk("flawed_cooling")) {
+        if (!entity.hasQuirk(OptionsConstants.QUIRK_NEG_FLAWED_COOLING)) {
             return;
         }
         entity.setFallen(false);
@@ -17765,7 +17765,7 @@ public class Server implements Runnable {
             }
 
             // Check for existence of flawed cooling quirk.
-            if (!entity.hasQuirk("flawed_cooling")) {
+            if (!entity.hasQuirk(OptionsConstants.QUIRK_NEG_FLAWED_COOLING)) {
                 continue;
             }
 
@@ -23628,7 +23628,7 @@ public class Server implements Runnable {
         if (en.hasQuirk("poor_work")) {
             critMod += 1;
         }
-        if (en.hasQuirk("prototype")) {
+        if (en.hasQuirk(OptionsConstants.QUIRK_NEG_PROTOTYPE)) {
             critMod += 2;
         }
 
@@ -26464,7 +26464,7 @@ public class Server implements Runnable {
             }
             // Give the unit a spotlight, if it has the spotlight quirk
             entity.setExternalSpotlight(entity.hasExternaSpotlight()
-                                        || entity.hasQuirk("searchlight"));
+                                        || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
             entityIds.add(entity.getId());
         }
 
@@ -29953,7 +29953,7 @@ public class Server implements Runnable {
                 Report.addNewline(vDesc);
                 if ((rollTarget.getValue() - diceRoll) > 1) {
                     int damage = (rollTarget.getValue() - diceRoll) / 2;
-                    if (entity.hasQuirk("difficult_eject")) {
+                    if (entity.hasQuirk(OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT)) {
                         damage++;
                     }
                     vDesc.addAll(damageCrew(pilot, damage));

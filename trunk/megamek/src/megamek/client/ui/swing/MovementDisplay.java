@@ -745,7 +745,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else {
             setEjectEnabled(isMech
                     && (((Mech) ce).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED)
-                    && ce.isActive() && !ce.hasQuirk("no_eject"));
+                    && ce.isActive() && !ce.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT));
         }
 
         if (ce.isDropping()) {

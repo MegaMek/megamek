@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.EnergyWeapon;
 import megamek.common.weapons.PPCWeapon;
 
@@ -2418,13 +2419,13 @@ public class Aero extends Entity {
         }
 
         // quirks?
-        if (hasQuirk("atmo_flyer") && !game.getBoard().inSpace()) {
+        if (hasQuirk(OptionsConstants.QUIRK_POS_ATMO_FLYER) && !game.getBoard().inSpace()) {
             prd.addModifier(-1, "atmospheric flyer");
         }
-        if (hasQuirk("atmo_instability") && !game.getBoard().inSpace()) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY) && !game.getBoard().inSpace()) {
             prd.addModifier(+1, "atmospheric flight instability");
         }
-        if (hasQuirk("cramped_cockpit")) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)) {
             prd.addModifier(1, "cramped cockpit");
         }
 

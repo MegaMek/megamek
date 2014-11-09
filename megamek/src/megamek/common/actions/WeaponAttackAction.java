@@ -1076,7 +1076,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         // quirks
-        if (ae.hasQuirk("sensor_ghosts")) {
+        if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_SENSOR_GHOSTS)) {
             toHit.addModifier(+1, "sensor ghosts");
         }
 
@@ -2396,7 +2396,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         // quirks
-        if (ae.hasQuirk("sensor_ghosts")) {
+        if (ae.hasQuirk(OptionsConstants.QUIRK_NEG_SENSOR_GHOSTS)) {
             toHit.addModifier(+1, "sensor ghosts");
         }
 

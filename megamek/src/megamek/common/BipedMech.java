@@ -74,7 +74,7 @@ public class BipedMech extends Mech {
             canFlip = false;
         }
 
-        if (hasQuirk("hyper_actuator")) {
+        if (hasQuirk(OptionsConstants.QUIRK_POS_HYPER_ACTUATOR)) {
             canFlip = true;
         }
 

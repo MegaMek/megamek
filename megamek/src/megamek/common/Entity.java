@@ -5810,7 +5810,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             roll.addModifier(-2, "careful stand");
         }
 
-        if (hasQuirk("hard_pilot")) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_HARD_PILOT)) {
             roll.addModifier(+1, "hard to pilot");
         }
 
@@ -6617,7 +6617,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT) && (getCrew().getPiloting() > 3)) {
             psr.addModifier(-1, "easy to pilot");
         }
-        if (hasQuirk("unbalanced")) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_UNBALANCED)) {
             psr.addModifier(+1, "unbalanced");
         }
     }

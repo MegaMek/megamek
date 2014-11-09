@@ -57,6 +57,7 @@ import megamek.common.SmallCraft;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.options.IOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -299,7 +300,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             add(labSearchlight, GBC.std());
             add(chSearchlight, GBC.eol());
             chSearchlight.setSelected(entity.hasSpotlight()
-                    || entity.hasQuirk("searchlight"));
+                    || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
         }
 
         // Set up mines

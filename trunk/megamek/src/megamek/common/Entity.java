@@ -35,6 +35,7 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import megamek.common.Building.BasementType;
+import megamek.common.IGame.Phase;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ChargeAttackAction;
@@ -267,6 +268,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int mpUsed = 0;
     public EntityMovementType moved = EntityMovementType.MOVE_NONE;
     private boolean movedBackwards = false;
+    /**
+     * Used to keep track of usage of the power reverse quirk, which allows a
+     * combat vehicle to use flank MP in reverse.  If power reverse is used and
+     * a PSR is required, it adds a +1 modifier to the PSR.
+     */
+    private boolean isPowerReverse = false;
     protected int mpUsedLastRound = 0;
     public boolean gotPavementBonus = false;
     public boolean hitThisRoundByAntiTSM = false;
@@ -5197,6 +5204,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         moved = EntityMovementType.MOVE_NONE;
         movedBackwards = false;
+        isPowerReverse = true;
         gotPavementBonus = false;
         hitThisRoundByAntiTSM = false;
         inReverse = false;
@@ -5822,6 +5830,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         if (taserInterference > 0) {
             roll.addModifier(taserInterference, "taser interference");
+        }
+        
+        if ((game.getPhase() == Phase.PHASE_MOVEMENT) && isPowerReverse()){
+            roll.addModifier(1, "power reverse");
         }
 
         return roll;
@@ -12048,6 +12060,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setMovedBackwards(boolean back) {
         movedBackwards = back;
+    }
+    
+    public boolean isPowerReverse() {
+        return isPowerReverse;
+    }
+    
+    public void setPowerReverse(boolean isPowerReverse) {
+        this.isPowerReverse = isPowerReverse; 
     }
 
     public void setHardenedArmorDamaged(HitData hit, boolean damaged) {

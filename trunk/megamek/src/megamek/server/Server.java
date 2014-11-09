@@ -6124,7 +6124,12 @@ public class Server implements Runnable {
         }
         if (md.contains(MoveStepType.BACKWARDS)) {
             entity.setMovedBackwards(true);
+            if (md.getMpUsed() > entity.getWalkMP()) {
+                entity.setPowerReverse(true);
+            }
         }
+        
+        
 
         if (md.contains(MoveStepType.TAKEOFF) && (entity instanceof Aero)) {
             Aero a = (Aero) entity;

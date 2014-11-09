@@ -467,11 +467,8 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_POOR_TARG_L)
                     || qName.equals("poor_work")
                     || qName.equals("prototype")
-                    || qName.equals("sensor_ghosts")
-                    || qName.equals("power_reverse")
-                    || qName.equals("stable")
-                    || qName.equals("compact_mech")
-                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST)) {
+                    || qName.equals("sensor_ghosts"))
+            		{
                 return true;
             }
             return false;

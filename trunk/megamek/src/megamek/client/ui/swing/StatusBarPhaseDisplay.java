@@ -272,6 +272,10 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected void setStatusBarText(String text) {
         labStatus.setText(text);
     }
+    
+    protected String getStatusBarText() {
+        return labStatus.getText();
+    }
 
     protected boolean statusBarActionPerformed(ActionEvent ev, Client client) {
         return false;

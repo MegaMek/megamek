@@ -2000,6 +2000,13 @@ public class MoveStep implements Serializable {
         }
 
         int tmpWalkMP = entity.getWalkMP();
+        final int runMP = entity.getRunMP();
+        final int runMPnoMASC = entity.getRunMPwithoutMASC();
+        final int sprintMP = entity.getSprintMP();;
+        final int sprintMPnoMASC = entity.getSprintMPwithoutMASC();
+        final boolean isMASCUsed = entity.isMASCUsed();
+        final boolean hasPoorPerformance = entity
+                .hasQuirk(OptionsConstants.QUIRK_NEG_POOR_PERFORMANCE);
 
         IHex currHex = game.getBoard().getHex(curPos);
         IHex lastHex = game.getBoard().getHex(lastPos);
@@ -2075,14 +2082,21 @@ public class MoveStep implements Serializable {
                 // gravity psr
                 movementType = EntityMovementType.MOVE_WALK;
                 entity.gotPavementBonus = true;
-            } else if (((getMpUsed() <= entity.getRunMPwithoutMASC()) || ((getMpUsed() <= entity
-                    .getRunMP()) && entity.isMASCUsed())) && !isRunProhibited()) {
+            } else if ((((getMpUsed() <= runMP) && isMASCUsed) 
+                    || (getMpUsed() <= runMPnoMASC)) && !isRunProhibited()) {
+                // Poor performance requires spending all walk MP in the
+                //  previous round in order to flank
+                if (hasPoorPerformance 
+                        && (entity.getMpUsedLastRound() < entity.getWalkMP())) { 
+                    movementType = EntityMovementType.MOVE_ILLEGAL;
+                    return;
+                } 
                 if (entity.getMovementMode() == EntityMovementMode.VTOL) {
                     movementType = EntityMovementType.MOVE_VTOL_RUN;
                 } else {
                     movementType = EntityMovementType.MOVE_RUN;
                 }
-            } else if ((getMpUsed() <= entity.getRunMP()) && !isRunProhibited()
+            } else if ((getMpUsed() <= runMP) && !isRunProhibited()
                     && !isEvading()) {
                 setUsingMASC(true);
                 setTargetNumberMASC(entity.getMASCTarget());
@@ -2093,7 +2107,7 @@ public class MoveStep implements Serializable {
                 }
             } else if ((entity instanceof Tank) && !(entity instanceof VTOL)
                     && isOnlyPavement()
-                    && (getMpUsed() <= (entity.getRunMP() + 1))
+                    && (getMpUsed() <= (runMP + 1))
                     && !isRunProhibited()) {
                 movementType = EntityMovementType.MOVE_RUN;
                 // store if we got the pavement Bonus for end of phase
@@ -2101,11 +2115,11 @@ public class MoveStep implements Serializable {
                 entity.gotPavementBonus = true;
             } else if (game.getOptions().booleanOption("tacops_sprint")
                     && (entity instanceof Mech)
-                    && ((getMpUsed() <= entity.getSprintMPwithoutMASC()) || ((getMpUsed() <= entity
-                    .getSprintMP()) && ((Mech) entity).isMASCUsed()))
+                    && ((getMpUsed() <= sprintMPnoMASC) 
+                            || ((getMpUsed() <= sprintMP) && isMASCUsed))
                     && !isRunProhibited() && !isEvading()) {
                 movementType = EntityMovementType.MOVE_SPRINT;
-            } else if ((getMpUsed() <= entity.getSprintMP())
+            } else if ((getMpUsed() <= sprintMP)
                     && !isRunProhibited() && !isEvading()
                     && game.getOptions().booleanOption("tacops_sprint")) {
                 setUsingMASC(true);

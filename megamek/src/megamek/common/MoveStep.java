@@ -30,6 +30,7 @@ import java.util.TreeMap;
 import java.util.Vector;
 
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.options.OptionsConstants;
 
 /**
  * A single step in the entity's movment.
@@ -621,7 +622,8 @@ public class MoveStep implements Serializable {
                 && (entity.getMovementMode() != EntityMovementMode.WIGE)) {
             setRunProhibited(true);
         }
-        if (entity.getMovedBackwards()) {
+        if (entity.getMovedBackwards() 
+                && !entity.hasQuirk(OptionsConstants.QUIRK_POS_POWER_REVERSE)) {
             setRunProhibited(true);
         }
 
@@ -733,7 +735,9 @@ public class MoveStep implements Serializable {
             case BACKWARDS:
                 moveInDir((getFacing() + 3) % 6);
                 setThisStepBackwards(true);
-                setRunProhibited(true);
+                if (!entity.hasQuirk(OptionsConstants.QUIRK_POS_POWER_REVERSE)) {
+                    setRunProhibited(true);
+                }
                 compileMove(game, entity, prev);
                 break;
             case FORWARDS:
@@ -756,7 +760,9 @@ public class MoveStep implements Serializable {
                 moveInDir((MovePath.getAdjustedFacing(getFacing(),
                         MovePath.turnForLateralShift(getType())) + 3) % 6);
                 setThisStepBackwards(true);
-                setRunProhibited(true);
+                if (!entity.hasQuirk(OptionsConstants.QUIRK_POS_POWER_REVERSE)) {
+                    setRunProhibited(true);
+                }
                 compileMove(game, entity, prev);
                 if (entity.isAirborne()) {
                     setMp(0);

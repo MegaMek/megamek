@@ -66,6 +66,7 @@ v0.39.3-dev (SVN)
 + Feature: implemented Battlefists quirk
 + Added data for a couple of missing quirks and added page references
 + Restricting some quirks to unit types.
++ Feature: implemented power reverse quirk
 
 
 v0.39.2 (2014-09-27 23:51 UTC)

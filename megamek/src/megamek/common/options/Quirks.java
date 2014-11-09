@@ -25,6 +25,8 @@ import megamek.common.GunEmplacement;
 import megamek.common.Jumpship;
 import megamek.common.Mech;
 import megamek.common.Protomech;
+import megamek.common.SupportTank;
+import megamek.common.SupportVTOL;
 import megamek.common.Tank;
 
 /**
@@ -193,7 +195,17 @@ public class Quirks extends AbstractOptions {
         }
 
         if(en instanceof Tank) {
-            if(qName.equals("atmo_flyer")
+            // Power reverse only legal for wheeled or tracked combat vehicles
+            if (qName.equals(OptionsConstants.QUIRK_POS_POWER_REVERSE)) {
+                if ((en.getMovementMode() == EntityMovementMode.WHEELED
+                        || en.getMovementMode() == EntityMovementMode.TRACKED)
+                        && !((en instanceof SupportTank)
+                                || (en instanceof SupportVTOL))) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if(qName.equals("atmo_flyer")
                     || qName.equals("combat_computer")
                     || qName.equals(OptionsConstants.QUIRK_POS_COMMAND_MECH)
                     || qName.equals("cowl")

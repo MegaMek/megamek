@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.CLChemicalLaserWeapon;
 import megamek.common.weapons.VehicleFlamerWeapon;
@@ -3454,6 +3455,6 @@ public class Tank extends Entity {
     public boolean isEjectionPossible() {
         return game.getOptions().booleanOption("vehicles_can_eject")
                 && getCrew().isActive()
-                && !hasQuirk("no_eject");
+                && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
     }
 }

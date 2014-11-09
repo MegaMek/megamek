@@ -64,7 +64,9 @@ public class OptionsConstants {
     public static final String QUIRK_POS_VTOL_ROTOR= "vtol_rotor"; //$NON-NLS-1$
     
     public static final String QUIRK_WEAP_POS_ACCURATE = "accurate"; //$NON-NLS-1$
-
+    public static final String QUIRK_WEAP_POS_IMP_COOLING = "imp_cooling"; //$NON-NLS-1$
+    public static final String QUIRK_WEAP_POS_JETTISON_CAPABLE = "jettison_capable"; //$NON-NLS-1$
+ 
     public static final String QUIRK_NEG_ATMO_INSTABILITY= "atmo_instability"; //$NON-NLS-1$
     public static final String QUIRK_NEG_BAD_REP= "bad_rep"; //$NON-NLS-1$
     public static final String QUIRK_NEG_CRAMPED_COCKPIT= "cramped_cockpit"; //$NON-NLS-1$
@@ -104,7 +106,13 @@ public class OptionsConstants {
     public static final String QUIRK_NEG_WEAK_UNDERCARRIAGE= "weak_undercarriage"; //$NON-NLS-1$
     public static final String QUIRK_NEG_NO_ARMS = "no_arms"; //$NON-NLS-1$
     
+    public static final String QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS = "ammo_feed_problems"; //$NON-NLS-1$
+    public static final String QUIRK_WEAP_NEG_EM_INTERFERENCE = "em_interference"; //$NON-NLS-1$
+    public static final String QUIRK_WEAP_NEG_EXPOSED_LINKAGE = "exposed_linkage"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_NEG_INACCURATE = "inaccurate"; //$NON-NLS-1$
+    public static final String QUIRK_WEAP_NEG_NO_COOLING = "no_cooling"; //$NON-NLS-1$
+    public static final String QUIRK_WEAP_NEG_NON_FUNCTIONAL = "non_functional"; //$NON-NLS-1$
+    public static final String QUIRK_WEAP_NEG_POOR_COOLING = "poor_cooling"; //$NON-NLS-1$
     public static final String QUIRK_WEAP_NEG_STATIC_FEED = "static_feed"; //$NON-NLS-1$
     
     public static final String PILOT_APTITUDE_GUNNERY = "aptitude_gunnery"; //$NON-NLS-1$

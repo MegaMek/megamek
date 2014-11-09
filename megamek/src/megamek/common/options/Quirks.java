@@ -70,12 +70,12 @@ public class Quirks extends AbstractOptions {
         addOption(posQuirk, OptionsConstants.QUIRK_POS_MOD_WEAPONS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_MULTI_TRAC, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_OVERHEAD_ARMS, false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_POWER_REVERSE, false); //Not Implemented
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_POWER_REVERSE, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_PRO_ACTUATOR, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_REINFORCED_LEGS, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_RUMBLE_SEAT, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_SEARCHLIGHT, false);
-        addOption(posQuirk, OptionsConstants.QUIRK_POS_STABLE, false); // Not Implemented
+        addOption(posQuirk, OptionsConstants.QUIRK_POS_STABLE, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_TRAILER_HITCH, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_L, false);
         addOption(posQuirk, OptionsConstants.QUIRK_POS_VAR_RNG_TARG_S, false);
@@ -89,7 +89,7 @@ public class Quirks extends AbstractOptions {
         //Internal Bomb Bay
         //Variable Range Targeting
         //VTOL Rotor Arrangement (no vee adv move rules)
-        //Combat Mech
+        //Compact Mech
 
         // negative quirks
         IBasicOptionGroup negQuirk = addGroup("neg_quirks", NEG_QUIRKS); //$NON-NLS-1$
@@ -137,7 +137,6 @@ public class Quirks extends AbstractOptions {
         //Exposed Weapon Linkage (weapon-specific, sort of)
         //Gas Hog
         //Large Dropship (no docking)
-        //Poor Performance
         //Un-streamlined
         //Weak Head Armor
         //Weak Undercarriage (no landing)

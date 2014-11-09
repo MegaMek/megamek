@@ -593,7 +593,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
         
-        if ((ce() != null) &&ce().isWeapOrderChanged()) {
+        if ((ce() != null) && ce().isWeapOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
         
@@ -610,6 +610,22 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         clientgui.mechD.showPanel("movement"); //$NON-NLS-1$
         if (!clientgui.bv.isMovingUnits()) {
             clientgui.bv.centerOnHex(ce.getPosition());
+        }
+        
+        String yourTurnMsg = Messages
+                .getString("MovementDisplay.its_your_turn");
+        if (ce.hasQuirk(OptionsConstants.QUIRK_NEG_POOR_PERFORMANCE)) {
+            String poorPerfMsg;
+            if (ce.getMpUsedLastRound() < ce.getWalkMP()) {
+                poorPerfMsg = Messages
+                        .getString("MovementDisplay.NotUpToSpeed");
+            } else {
+                poorPerfMsg = Messages.getString("MovementDisplay.UpToSpeed");
+            }
+            setStatusBarText("<html><center>" + yourTurnMsg + "<br>"
+                    + poorPerfMsg + "</center></html>");
+        } else {
+            setStatusBarText(yourTurnMsg);
         }
     }
 

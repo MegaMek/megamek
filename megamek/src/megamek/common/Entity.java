@@ -13218,4 +13218,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void setWeapOrderChanged(boolean weapOrderChanged) {
         this.weapOrderChanged = weapOrderChanged;
     }
+
+    public int getMpUsedLastRound() {
+        return mpUsedLastRound;
+    }
+
+    public void setMpUsedLastRound(int mpUsedLastRound) {
+        this.mpUsedLastRound = mpUsedLastRound;
+    }
 }

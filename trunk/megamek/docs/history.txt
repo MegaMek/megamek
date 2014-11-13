@@ -68,6 +68,7 @@ v0.39.3-dev (SVN)
 + Restricting some quirks to unit types.
 + Feature: implemented power reverse quirk
 + Feature: implemented poor performance quirk
++ Bug [#4290]: Highlight color now reflects movement mode (walk/jump/backup)
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

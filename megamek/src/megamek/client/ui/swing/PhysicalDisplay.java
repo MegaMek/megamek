@@ -406,55 +406,53 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      * Punch the target!
      */
     void punch() {
+        if (ce() == null) {
+            return;
+        }
+        final Entity en = ce();
+        final boolean isAptPiloting = (en.getCrew() != null)
+                && en.getCrew()
+                        .getOptions()
+                        .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        final boolean isMeleeMaster = (en.getCrew() != null)
+                && en.getCrew().getOptions().booleanOption("melee_master");
         final ToHitData leftArm = PunchAttackAction.toHit(clientgui.getClient()
                 .getGame(), cen, target, PunchAttackAction.LEFT);
         final ToHitData rightArm = PunchAttackAction.toHit(clientgui
                 .getClient().getGame(), cen, target, PunchAttackAction.RIGHT);
-        String title = Messages
-                .getString(
-                        "PhysicalDisplay.PunchDialog.title", new Object[] { target.getDisplayName() }); //$NON-NLS-1$
+        
+        final double punchOddsRight = Compute.oddsAbove(rightArm.getValue(),
+                isAptPiloting);
+        final int punchDmgRight = PunchAttackAction.getDamageFor(en,
+                PunchAttackAction.RIGHT, (target instanceof Infantry)
+                        && !(target instanceof BattleArmor));
+        
+        final double punchOddsLeft = Compute.oddsAbove(leftArm.getValue(),
+                isAptPiloting);
+        final int punchDmgLeft = PunchAttackAction.getDamageFor(en,
+                PunchAttackAction.LEFT, (target instanceof Infantry)
+                        && !(target instanceof BattleArmor));
+        
+        String title = Messages.getString("PhysicalDisplay.PunchDialog.title", //$NON-NLS-1$
+                new Object[] { target.getDisplayName() }); 
         String message = Messages
-                .getString(
-                        "PhysicalDisplay.PunchDialog.message", new Object[] {//$NON-NLS-1$
+                .getString("PhysicalDisplay.PunchDialog.message", //$NON-NLS-1$ 
+                        new Object[] {
                                 rightArm.getValueAsString(),
-                                new Double(
-                                        Compute.oddsAbove(
-                                                rightArm.getValue(),
-                                                ce().getCrew()
-                                                        .getOptions()
-                                                        .booleanOption(
-                                                                OptionsConstants.PILOT_APTITUDE_PILOTING))),
+                                punchOddsRight,
                                 rightArm.getDesc(),
-                                new Integer(
-                                        PunchAttackAction
-                                                .getDamageFor(
-                                                        ce(),
-                                                        PunchAttackAction.RIGHT,
-                                                        (target instanceof Infantry)
-                                                                && !(target instanceof BattleArmor))),
+                                punchDmgRight,
                                 rightArm.getTableDesc(),
                                 leftArm.getValueAsString(),
-                                new Double(
-                                        Compute.oddsAbove(
-                                                leftArm.getValue(),
-                                                ce().getCrew()
-                                                        .getOptions()
-                                                        .booleanOption(
-                                                                OptionsConstants.PILOT_APTITUDE_PILOTING))),
+                                punchOddsLeft,
                                 leftArm.getDesc(),
-                                new Integer(
-                                        PunchAttackAction
-                                                .getDamageFor(
-                                                        ce(),
-                                                        PunchAttackAction.LEFT,
-                                                        (target instanceof Infantry)
-                                                                && !(target instanceof BattleArmor))),
+                                punchDmgLeft,
                                 leftArm.getTableDesc() });
         if (clientgui.doYesNoDialog(title, message)) {
             // check for retractable blade that can be extended in each arm
             boolean leftBladeExtend = false;
             boolean rightBladeExtend = false;
-            if ((ce() instanceof Mech)
+            if ((en instanceof Mech)
                     && (target instanceof Entity)
                     && clientgui.getClient().getGame().getOptions()
                             .booleanOption("tacops_retractable_blades")
@@ -467,17 +465,17 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                                 new Object[] { ce().getLocationName(
                                         Mech.LOC_LARM) }));
             }
-            if ((ce() instanceof Mech)
+            if ((en instanceof Mech)
                     && (target instanceof Entity)
                     && (rightArm.getValue() != TargetRoll.IMPOSSIBLE)
                     && clientgui.getClient().getGame().getOptions()
                             .booleanOption("tacops_retractable_blades")
-                    && ((Mech) ce()).hasRetractedBlade(Mech.LOC_RARM)) {
+                    && ((Mech) en).hasRetractedBlade(Mech.LOC_RARM)) {
                 rightBladeExtend = clientgui.doYesNoDialog(Messages
                         .getString("PhysicalDisplay.ExtendBladeDialog"
                                 + ".title"), Messages.getString(
                         "PhysicalDisplay.ExtendBladeDialog.message",
-                        new Object[] { ce().getLocationName(Mech.LOC_RARM) }));
+                        new Object[] { en.getLocationName(Mech.LOC_RARM) }));
             }
             disableButtons();
             // declare searchlight, if possible
@@ -491,9 +489,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         .getTargetType(), target.getTargetId(),
                         PunchAttackAction.BOTH, leftBladeExtend,
                         rightBladeExtend));
-                if (null != ce().getCrew()
-                        && ce().getCrew().getOptions()
-                                .booleanOption("melee_master")) {
+                if (isMeleeMaster) {
                     // hit 'em again!
                     attacks.addElement(new PunchAttackAction(cen, target
                             .getTargetType(), target.getTargetId(),
@@ -505,9 +501,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         .getTargetType(), target.getTargetId(),
                         PunchAttackAction.LEFT, leftBladeExtend,
                         rightBladeExtend));
-                if (null != ce().getCrew()
-                        && ce().getCrew().getOptions()
-                                .booleanOption("melee_master")) {
+                if (isMeleeMaster) {
                     // hit 'em again!
                     attacks.addElement(new PunchAttackAction(cen, target
                             .getTargetType(), target.getTargetId(),
@@ -519,9 +513,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         .getTargetType(), target.getTargetId(),
                         PunchAttackAction.RIGHT, leftBladeExtend,
                         rightBladeExtend));
-                if (null != ce().getCrew()
-                        && ce().getCrew().getOptions()
-                                .booleanOption("melee_master")) {
+                if (isMeleeMaster) {
                     // hit 'em again!
                     attacks.addElement(new PunchAttackAction(cen, target
                             .getTargetType(), target.getTargetId(),

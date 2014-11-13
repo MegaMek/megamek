@@ -16,7 +16,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JCheckBoxMenuItem;
@@ -30,6 +29,7 @@ import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.WeaponOrderHandler;
+import megamek.common.Entity.WeaponSortOrder;
 
 /**
  * Every menu bar in MegaMek should have an identical look-and-feel, with
@@ -956,12 +956,17 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     
     public synchronized void updateSaveWeaponOrderMenuItem() {
         if ((entity != null)) {
-            Map<Integer, Integer> storedWeapOrder = WeaponOrderHandler
+            WeaponOrderHandler.WeaponOrder storedWeapOrder = WeaponOrderHandler
                     .getWeaponOrder(entity.getChassis(), entity.getModel());
-            Map<Integer, Integer> currWeapOrder = entity.getCustomWeaponOrder();
-            if ((storedWeapOrder == null && currWeapOrder != null)
-                    || (storedWeapOrder != null && !storedWeapOrder
-                            .equals(currWeapOrder))) {
+            WeaponOrderHandler.WeaponOrder newWeapOrder = 
+                    new WeaponOrderHandler.WeaponOrder();
+            newWeapOrder.orderType = entity.getWeaponSortOrder();
+            newWeapOrder.customWeaponOrderMap = entity.getCustomWeaponOrder();
+
+            boolean isDefault = (storedWeapOrder == null) 
+                    && (newWeapOrder.orderType == WeaponSortOrder.DEFAULT);
+            
+            if (!newWeapOrder.equals(storedWeapOrder) && !isDefault) {
                 fireSaveWeapOrder.setEnabled(true);    
             } else {
                 fireSaveWeapOrder.setEnabled(false);

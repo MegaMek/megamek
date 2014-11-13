@@ -753,7 +753,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             Entity ent = mechD.getCurrentEntity();
             if (ent != null) {
                 WeaponOrderHandler.setWeaponOrder(ent.getChassis(),
-                        ent.getModel(), ent.getCustomWeaponOrder());
+                        ent.getModel(), ent.getWeaponSortOrder(),
+                        ent.getCustomWeaponOrder());
                 getMenuBar().updateSaveWeaponOrderMenuItem();
             }
         }

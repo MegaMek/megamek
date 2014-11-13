@@ -930,32 +930,25 @@ public class UnitDisplay extends JPanel {
                 if (currentIndex != dragSourceIndex) {
                     int dragTargetIndex = srcList.getSelectedIndex();
                     Mounted weap1 = srcModel.getWeaponAt(dragSourceIndex);
-                    Mounted weap2 = srcModel.getWeaponAt(dragTargetIndex);
                     srcModel.swapIdx(dragSourceIndex, dragTargetIndex);
                     dragSourceIndex = currentIndex;
                     Entity ent = weap1.getEntity();
                     // Is the sort order custom?
                     int customId = Entity.WeaponSortOrder.CUSTOM.ordinal();
-                    if (weapSortOrder.getSelectedIndex()
-                            == customId) {
-                        // Update custom order
-                        ent.setCustomWeaponOrder(weap1, dragTargetIndex);
-                        ent.setCustomWeaponOrder(weap2, dragSourceIndex);
-                        clientgui.getMenuBar().updateSaveWeaponOrderMenuItem();
-                    } else {
-                        // Set the order to but custom, and set the order based
-                        // on current order
+                    // Update weap sort order drop down
+                    if (weapSortOrder.getSelectedIndex() != customId) {
+                        // Set the order to custom
                         ent.setWeaponSortOrder(Entity.WeaponSortOrder.CUSTOM);
-                        for (int i = 0; i < srcModel.getSize(); i++) {
-                            Mounted m = srcModel.getWeaponAt(i);
-                            ent.setCustomWeaponOrder(m, i);
-                            clientgui.getMenuBar()
-                                    .updateSaveWeaponOrderMenuItem();
-                        }
                         weapSortOrder.removeActionListener(WeaponPanel.this);
                         weapSortOrder.setSelectedIndex(customId);
                         weapSortOrder.addActionListener(WeaponPanel.this);
                     }
+                    // Update custom order
+                    for (int i = 0; i < srcModel.getSize(); i++) {
+                        Mounted m = srcModel.getWeaponAt(i);
+                        ent.setCustomWeaponOrder(m, i);
+                    }
+                    clientgui.getMenuBar().updateSaveWeaponOrderMenuItem();
                 }
             }
         }
@@ -2891,6 +2884,7 @@ public class UnitDisplay extends JPanel {
                 entity.setWeaponSortOrder(Entity.WeaponSortOrder.DEFAULT);
                 weapComparator = new WeaponComparatorNum(entity);
             }
+            clientgui.getMenuBar().updateSaveWeaponOrderMenuItem();
             ((WeaponListModel)weaponList.getModel()).sort(weapComparator);
         }
     }

@@ -5204,7 +5204,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         moved = EntityMovementType.MOVE_NONE;
         movedBackwards = false;
-        isPowerReverse = true;
+        isPowerReverse = false;
         gotPavementBonus = false;
         hitThisRoundByAntiTSM = false;
         inReverse = false;

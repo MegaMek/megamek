@@ -12744,12 +12744,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void loadDefaultCustomWeaponOrder() {
-        Map<Integer, Integer> weapOrder = WeaponOrderHandler.getWeaponOrder(
+        WeaponOrderHandler.WeaponOrder weapOrder = WeaponOrderHandler.getWeaponOrder(
                 getChassis(), getModel());
         
-        if (weapOrder != null && weapOrder.size() > 0) {
-            setCustomWeaponOrder(weapOrder);
-            setWeaponSortOrder(WeaponSortOrder.CUSTOM);
+        if (weapOrder != null) {
+            setWeaponSortOrder(weapOrder.orderType);
+            setCustomWeaponOrder(weapOrder.customWeaponOrderMap);
         }
     }
     

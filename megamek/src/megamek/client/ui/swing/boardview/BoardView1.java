@@ -3506,6 +3506,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     BoardViewEvent.BOARD_HEX_HIGHLIGHTED, 0));
         }
     }
+    
+    public void setHighlightColor(Color c) {
+        highlightSprite.setColor(c);
+        highlightSprite.prepare();
+        repaint();
+    }
 
     /**
      * Highlights the specified Coords.

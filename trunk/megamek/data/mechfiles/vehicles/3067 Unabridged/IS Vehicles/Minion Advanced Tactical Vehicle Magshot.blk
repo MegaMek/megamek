@@ -17,7 +17,7 @@ Minion Advanced Tactical Vehicle
 </Name>
 
 <Model>
-(Gauss) "Sandblaster"
+(Gauss) 'Sandblaster'
 </Model>
 
 <year>

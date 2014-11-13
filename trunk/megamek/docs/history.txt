@@ -70,6 +70,8 @@ v0.39.3-dev (SVN)
 + Feature: implemented poor performance quirk
 + Bug [#4290]: Highlight color now reflects movement mode (walk/jump/backup)
 + Bug [#4298]: Melee master ability doesn't grant an extra attack with a hatchet
++ Bug [#4299]: Power Reverse PSR on jumping mech
++ Data: New Images and Unit Names Fixes
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

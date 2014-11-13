@@ -107,6 +107,13 @@ public interface IBoardView extends MechDisplayListener {
      * @param coords the Coords.
      */
     public abstract void highlight(Coords coords);
+    
+    /**
+     * Sets the color of the highlight cursor.
+     * 
+     * @param c  The color of the highlight cursor.
+     */
+    public abstract void setHighlightColor(Color c);
 
     /**
      * Determines if this Board contains the Coords, and if so, "cursors" that

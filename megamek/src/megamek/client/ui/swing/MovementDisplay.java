@@ -14,6 +14,7 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
@@ -604,6 +605,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Update the menu bar.
         clientgui.getMenuBar().setEntity(ce);
         clientgui.getBoardView().highlight(ce.getPosition());
+        Color walkColor = GUIPreferences.getInstance().getColor(
+                GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+        clientgui.getBoardView().setHighlightColor(walkColor);
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
         clientgui.mechD.displayEntity(ce);
@@ -815,6 +819,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         cen = Entity.NONE;
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().highlight(null);
+        // Return the highlight sprite back to its original color
+        clientgui.getBoardView().setHighlightColor(Color.white);
         clientgui.getBoardView().cursor(null);
         clientgui.getBoardView().selectEntity(null);
         clientgui.bv.clearMovementData();
@@ -914,6 +920,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         // set to "walk," or the equivalent
         gear = MovementDisplay.GEAR_LAND;
+        Color walkColor = GUIPreferences.getInstance().getColor(
+                GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+        clientgui.getBoardView().setHighlightColor(walkColor);
 
         // update some GUI elements
         clientgui.bv.clearMovementData();
@@ -3623,6 +3632,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     || (gear == MovementDisplay.GEAR_SWIM)) {
                 clear();
             }
+            Color walkColor = GUIPreferences.getInstance().getColor(
+                    GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+            clientgui.getBoardView().setHighlightColor(walkColor);
             gear = MovementDisplay.GEAR_LAND;
         } else if (ev.getActionCommand().equals(MoveCommand.MOVE_JUMP.getCmd())) {
             if ((gear != MovementDisplay.GEAR_JUMP)
@@ -3635,6 +3647,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.START_JUMP);
             }
             gear = MovementDisplay.GEAR_JUMP;
+            Color jumpColor = GUIPreferences.getInstance().getColor(
+                    GUIPreferences.ADVANCED_MOVE_JUMP_COLOR);
+            clientgui.getBoardView().setHighlightColor(jumpColor);
         } else if (ev.getActionCommand().equals(MoveCommand.MOVE_SWIM.getCmd())) {
             if (gear != MovementDisplay.GEAR_SWIM) {
                 clear();
@@ -3651,6 +3666,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 clear();
             }
             gear = MovementDisplay.GEAR_BACKUP;
+            Color backColor = GUIPreferences.getInstance().getColor(
+                    GUIPreferences.ADVANCED_MOVE_BACK_COLOR);
+            clientgui.getBoardView().setHighlightColor(backColor);
         } else if (ev.getActionCommand().equals(
                 MoveCommand.MOVE_LONGEST_RUN.getCmd())) {
             if (gear == MovementDisplay.GEAR_JUMP) {

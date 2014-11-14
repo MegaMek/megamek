@@ -79,6 +79,7 @@ v0.39.3-dev (SVN)
     and any options that contain that text in their name or tooltip will be
     displayed
 + Bug [#4243]: Added BA vs BA damage optional rule from TO 2nd printing pg 109
++ Bug [#4243]: Updated Flak Ammo per new TO errata
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

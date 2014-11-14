@@ -1740,18 +1740,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         // Check whether we're eligible for a flak bonus...
         boolean isFlakAttack = !game.getBoard().inSpace()
-                               && (te != null)
-                               && (te.isAirborne() || te.isAirborneVTOLorWIGE())
-                               && (atype != null)
-                               && ((((atype.getAmmoType() == AmmoType.T_AC_LBX)
-                                     || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB) || (atype
-                                                                                                   .getAmmoType() ==
-                                                                                           AmmoType.T_SBGAUSS)) &&
-                                    (atype
-                                                                                                                                                      .getMunitionType() == AmmoType.M_CLUSTER))
-                                   || (atype.getMunitionType() == AmmoType.M_FLAK) || (atype
-                                                                                               .getAmmoType() ==
-                                                                                       AmmoType.T_HAG));
+                && (te != null)
+                && (te.isAirborne() || te.isAirborneVTOLorWIGE())
+                && (atype != null)
+                && ((((atype.getAmmoType() == AmmoType.T_AC_LBX)
+                        || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB) 
+                        || (atype.getAmmoType() == AmmoType.T_SBGAUSS)) 
+                        && (atype.getMunitionType() == AmmoType.M_CLUSTER))
+                        || (atype.getMunitionType() == AmmoType.M_FLAK) 
+                        || (atype.getAmmoType() == AmmoType.T_HAG));
         if (isFlakAttack) {
             // ...and if so, which one (HAGs get an extra -1 as per TW p. 136
             // that's not covered by anything else).
@@ -1861,22 +1858,24 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 toHit.addModifier(3, "aiming with targeting computer");
             }
         } else {
-            // LB-X ACs firing cluster nor HAGs used as flak are eligible
-            // for a TC bonus.
-            boolean usesLBXCluster = usesAmmo && (atype != null)
-                                     && (atype.getAmmoType() == AmmoType.T_AC_LBX
-                                         || atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
-                                     && atype.getMunitionType() == AmmoType.M_CLUSTER;
+            // LB-X cluster, HAG flak, flak ammo ineligible for TC bonus
+            boolean usesLBXCluster = usesAmmo
+                    && (atype != null)
+                    && (atype.getAmmoType() == AmmoType.T_AC_LBX 
+                        || atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
+                    && atype.getMunitionType() == AmmoType.M_CLUSTER;
             boolean usesHAGFlak = usesAmmo && (atype != null)
-                                  && atype.getAmmoType() == AmmoType.T_HAG
-                                  && isFlakAttack;
+                    && atype.getAmmoType() == AmmoType.T_HAG && isFlakAttack;
             boolean isSBGauss = usesAmmo && (atype != null)
-                                && atype.getAmmoType() == AmmoType.T_SBGAUSS;
+                    && atype.getAmmoType() == AmmoType.T_SBGAUSS;
+            boolean isFlakAmmo = usesAmmo && (atype != null)
+                    && (atype.getMunitionType() == AmmoType.M_FLAK); 
             if (ae.hasTargComp()
-                && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
-                && !wtype.hasFlag(WeaponType.F_CWS)
-                && !wtype.hasFlag(WeaponType.F_TASER)
-                && (!usesAmmo || !(usesLBXCluster || usesHAGFlak || isSBGauss))) {
+                    && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
+                    && !wtype.hasFlag(WeaponType.F_CWS)
+                    && !wtype.hasFlag(WeaponType.F_TASER)
+                    && (!usesAmmo || !(usesLBXCluster || usesHAGFlak
+                            || isSBGauss || isFlakAmmo))) {
                 toHit.addModifier(-1, "targeting computer");
             }
         }

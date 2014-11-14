@@ -5149,6 +5149,37 @@ public class Compute {
     }
 
     /**
+     * Returns how much damage a weapon will do against against a BattleArmor
+     * target if the BattleArmor vs BattleArmor rules on TO pg 109 are in 
+     * effect.
+     *
+     * @param damage      Original weapon damage
+     * @param damageType  The damage type for BA vs BA damage
+     * @param target      The target, used for ensuring the target BA isn't
+     *                    fire resistant
+     * @return
+     */
+    public static int directBlowBADamage(double damage, int damageType,
+            BattleArmor target) {
+        switch (damageType) {
+            case WeaponType.WEAPON_BURST_1D6:
+                damage = Compute.d6();
+                break;
+            case WeaponType.WEAPON_BURST_3D6:
+                damage = Compute.d6(3);
+                break;
+            case WeaponType.WEAPON_PLASMA:
+                // If the target is fire-resistant BA, damage is normal               
+                if (!target.isFireResistant()) {
+                    damage = 1 + Compute.d6(1);
+                }
+                break;
+        }
+        damage = Math.ceil(damage);
+        return (int) damage;
+    }
+    
+    /**
      * Method replicates the Non-Conventional Damage against Infantry damage
      * table as well as shifting for direct blows. also adjust for non-infantry
      * damaging mechanized infantry
@@ -5231,6 +5262,10 @@ public class Compute {
         }
         return (int) damage;
     }
+    
+    
+    
+    
 
     /**
      * Method computes how much damage a dial down weapon has done

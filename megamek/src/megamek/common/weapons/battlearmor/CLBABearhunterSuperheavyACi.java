@@ -44,6 +44,7 @@ public class CLBABearhunterSuperheavyACi extends Weapon {
         heat = 0;
         damage = 5;
         infDamageClass = WeaponType.WEAPON_BURST_3D6;
+        baDamageClass = WeaponType.WEAPON_BURST_3D6;
         ammoType = AmmoType.T_NA;
         toHitModifier = 1;
         shortRange = 0;

@@ -631,12 +631,22 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage(nRange);
+        
+        // Check for BA vs BA weapon effectiveness, if option is on
+        if (game.getOptions().booleanOption("tacops_ba_vs_ba") 
+                && (target instanceof BattleArmor)) {
+            // We don't check to make sure the attacker is BA, as most weapons
+            //  will return their normal damage.
+            toReturn = Compute.directBlowBADamage(toReturn,
+                    wtype.getBADamageClass(), (BattleArmor)target);
+        }
+
         // we default to direct fire weapons for anti-infantry damage
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                                                        bDirect ? toHit.getMoS() / 3 : 0,
-                                                        wtype.getInfantryDamageClass(),
-                                                        ((Infantry) target).isMechanized());
+                    bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized());
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }

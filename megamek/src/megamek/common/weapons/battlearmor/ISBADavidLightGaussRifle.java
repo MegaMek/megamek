@@ -19,6 +19,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 import megamek.common.weapons.Weapon;
 
 /**
@@ -40,6 +41,7 @@ public class ISBADavidLightGaussRifle extends Weapon {
         setInternalName("BADavidLightGaussRifle");
         addLookupName("ISBADavidLightGaussRifle");
         damage = 1;
+        baDamageClass = WeaponType.WEAPON_BURST_1D6;
         ammoType = AmmoType.T_NA;
         shortRange = 3;
         mediumRange = 5;

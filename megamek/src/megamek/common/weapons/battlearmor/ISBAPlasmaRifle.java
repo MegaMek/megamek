@@ -19,6 +19,7 @@ package megamek.common.weapons.battlearmor;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 import megamek.common.weapons.Weapon;
 
 /**
@@ -40,6 +41,7 @@ public class ISBAPlasmaRifle extends Weapon {
         setInternalName("ISBAPlasmaRifle");
         addLookupName("IS BA Plasma Rifle");
         damage = 2;
+        baDamageClass = WeaponType.WEAPON_PLASMA;
         ammoType = AmmoType.T_NA;
         shortRange = 2;
         mediumRange = 4;

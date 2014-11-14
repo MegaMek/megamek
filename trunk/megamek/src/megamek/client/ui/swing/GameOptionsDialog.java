@@ -24,12 +24,17 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.BoxLayout;
@@ -43,6 +48,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -79,14 +86,31 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
 
     private boolean editable = true;
 
-    private Vector<DialogOptionComponent> optionComps = new Vector<DialogOptionComponent>();
+    /**
+     * A map that maps an option to a collection of DialogOptionComponents that
+     * can effect the value of this option.
+     */
+    private Map<String, List<DialogOptionComponent>> optionComps = new HashMap<>();
+    
+    /**
+     * Keeps track of the DialogOptionComponents that have been added to the
+     * search panel.  This is used to remove those components from optionComps
+     * when they get removed.
+     */
+    private ArrayList<DialogOptionComponent> searchComps = new ArrayList<>();
 
     private int maxOptionWidth;
 
     private JTabbedPane panOptions = new JTabbedPane();
-    private JScrollPane scrOptions;
-    private JPanel groupPanel;
 
+    /**
+     * Panel that holds all of the options found via search
+     */
+    private JPanel panSearchOptions;
+    /**
+     * Text field that contains text to search on
+     */
+    private JTextField txtSearch;
     private JPanel panPassword = new JPanel();
     private JLabel labPass = new JLabel(Messages
             .getString("GameOptionsDialog.Password")); //$NON-NLS-1$
@@ -178,12 +202,14 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
     private void send() {
         Vector<IBasicOption> changed = new Vector<IBasicOption>();
 
-        for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                .hasMoreElements();) {
-            DialogOptionComponent comp = i.nextElement();
-
-            if (comp.hasChanged()) {
-                changed.addElement(comp.changedOption());
+        for (List<DialogOptionComponent> comps : optionComps.values()) {
+            // Each option in the list should have the same value, so picking
+            //  the first is fine
+            if (comps.size() > 0) {
+                DialogOptionComponent comp = comps.get(0);
+                if (comp.hasChanged()) {
+                    changed.addElement(comp.changedOption());
+                }
             }
         }
 
@@ -198,41 +224,46 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
 
     public Vector<IBasicOption> getOptions() {
         Vector<IBasicOption> output = new Vector<IBasicOption>();
-
-        for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                .hasMoreElements();) {
-            DialogOptionComponent comp = i.nextElement();
-            IBasicOption option = comp.changedOption();
-            output.addElement(option);
+        
+        for (List<DialogOptionComponent> comps : optionComps.values()) {
+            // Each option in the list should have the same value, so picking
+            //  the first is fine
+            if (comps.size() > 0) {
+                IBasicOption option = comps.get(0).changedOption();
+                output.addElement(option);
+            }
         }
         return output;
     }
 
     private void resetToDefaults() {
-        for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                .hasMoreElements();) {
-            DialogOptionComponent comp = i.nextElement();
-            comp.resetToDefault();
+        for (List<DialogOptionComponent> comps : optionComps.values()) {
+            for (DialogOptionComponent comp : comps) {
+                if (comp.hasChanged()) {
+                    comp.resetToDefault();
+                }
+            }
         }
     }
 
     private void refreshOptions() {
         panOptions.removeAll();
-        optionComps = new Vector<DialogOptionComponent>();
+        optionComps = new HashMap<>();
 
         for (Enumeration<IOptionGroup> i = options.getGroups(); i
                 .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
 
-            addGroup(group);
+            JPanel groupPanel = addGroup(group);
 
-            for (Enumeration<IOption> j = group.getOptions(); j
-                    .hasMoreElements();) {
+            for (Enumeration<IOption> j = group.getOptions(); 
+                    j.hasMoreElements();) {
                 IOption option = j.nextElement();
-
-                addOption(option);
+                addOption(groupPanel, option);
             }
         }
+        
+        addSearchPanel();
 
         // Make the width accomadate the longest game option label
         // without needing to scroll horizontally.
@@ -241,19 +272,118 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
 
         validate();
     }
+    
+    private void refreshSearchPanel() {
+        panSearchOptions.removeAll();
+        // We need to first remove all of the DialogOptionComponents
+        //  that were on the search panel
+        for (DialogOptionComponent comp : searchComps) {
+            List<DialogOptionComponent> compList = optionComps.get(comp.option
+                    .getName());
+            if (compList != null) { // Shouldn't be null...
+                compList.remove(comp);
+            }
+        }
+        
+        // Add new DialogOptionComponents for all matching Options
+        final String searchText = txtSearch.getText().toLowerCase();
+        for (List<DialogOptionComponent> comps : optionComps.values()) {
+            ArrayList<DialogOptionComponent> newComps = new ArrayList<>();
+            for (DialogOptionComponent comp : comps) {
+                String optName = comp.option.getDisplayableName().toLowerCase();
+                String optDesc = comp.option.getDescription().toLowerCase();
+                if (optName.contains(searchText)
+                        || optDesc.contains(searchText)) {
+                    DialogOptionComponent newComp = new DialogOptionComponent(
+                            this, comp.option);
+                    newComp.setEditable(comp.getEditable());
+                    searchComps.add(newComp);
+                    newComps.add(newComp);
+                    panSearchOptions.add(newComp);
+                }
+            }
+            comps.addAll(newComps);
+        }        
+        panSearchOptions.validate();
+        panSearchOptions.repaint();
+    }
 
-    private void addGroup(IOptionGroup group) {
-        groupPanel = new JPanel();
-        scrOptions = new JScrollPane(groupPanel);
+    private JPanel addGroup(IOptionGroup group) {
+        JPanel groupPanel = new JPanel();
+        JScrollPane scrOptions = new JScrollPane(groupPanel);
         groupPanel.setLayout(new BoxLayout(groupPanel,BoxLayout.Y_AXIS));
         scrOptions.setAutoscrolls(true);
         scrOptions.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrOptions.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         panOptions.addTab(group.getDisplayableName(),scrOptions);
+        return groupPanel;
+    }
+    
+    private void addSearchPanel() {
+        JPanel panSearch = new JPanel();
+        JScrollPane scrOptions = new JScrollPane(panSearch);
+        scrOptions.setAutoscrolls(true);
+        scrOptions.setVerticalScrollBarPolicy(
+                ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        scrOptions.setHorizontalScrollBarPolicy(
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        
+        
+        // Panel for holding the label and text field for searching
+        JPanel panText = new JPanel();
+        JLabel lblSearch = new JLabel(
+                Messages.getString("GameOptionsDialog.Search") + ":");
+        txtSearch = new JTextField("");
+        lblSearch.setToolTipText(Messages.getString("GameOptionsDialog.SearchToolTip"));
+        txtSearch.setToolTipText(Messages.getString("GameOptionsDialog.SearchToolTip"));
+        txtSearch.getDocument().addDocumentListener(new DocumentListener() {
+            public void changedUpdate(DocumentEvent e) {
+                refreshSearchPanel();
+            }
+
+            public void insertUpdate(DocumentEvent e) {
+                refreshSearchPanel();
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                refreshSearchPanel();
+            }
+        });
+        
+        panText.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = gbc.gridy = 0;
+        gbc.insets = new Insets(10,5,15,5);
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.fill = GridBagConstraints.NONE;
+        panText.add(lblSearch, gbc);
+        gbc.gridx++;
+        gbc.weightx = 0.7;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panText.add(txtSearch, gbc);
+        
+        panSearchOptions = new JPanel();
+        panSearchOptions.setLayout(new BoxLayout(panSearchOptions,BoxLayout.Y_AXIS));
+        
+        panSearch.setLayout(new GridBagLayout());
+        gbc.gridx = gbc.gridy = 0;
+        gbc.insets = new Insets(0,0,0,0);
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 0.7;
+        panSearch.add(panText, gbc);
+        gbc.gridy++;
+        gbc.weighty = 0.7;
+        
+        gbc.fill = GridBagConstraints.BOTH;
+        panSearch.add(panSearchOptions, gbc);
+
+        panOptions.addTab(Messages.getString("GameOptionsDialog.Search"),
+                scrOptions);        
     }
 
-    private void addOption(IOption option) {
+    private void addOption(JPanel groupPanel, IOption option) {
         DialogOptionComponent optionComp = new DialogOptionComponent(this,
                 option);
 
@@ -376,241 +506,221 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         } else {
             optionComp.setEditable(editable);
         }
-        optionComps.addElement(optionComp);
+        List<DialogOptionComponent> comps = optionComps.get(option.getName());
+        if (comps == null) {
+            comps = new ArrayList<DialogOptionComponent>();
+            optionComps.put(option.getName(), comps);
+        }
+        comps.add(optionComp);
     }
 
     // Gets called when one of the option checkboxes is clicked.
     // Arguments are the GameOption object and the true/false
     // state of the checkbox.
-    public void optionClicked(DialogOptionComponent comp, IOption option,
+    public void optionClicked(DialogOptionComponent clickedComp, IOption option,
             boolean state) {
+        
+        // Ensure that any other DialogOptionComponents with the same IOption
+        //  have the same value
+        List<DialogOptionComponent> comps = optionComps.get(option.getName());
+        for (DialogOptionComponent comp : comps) {
+            if (!comp.equals(clickedComp)) {
+                comp.setValue(clickedComp.getValue());
+            }
+        }
+        
         if ("inf_move_even".equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
-                DialogOptionComponent comp_i = i.nextElement();
-                if ("inf_deploy_even".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(state);
-                    comp_i.setSelected(false);
-                }
-                if ("inf_move_multi".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                }
-                if ("inf_move_later".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                }
+            comps = optionComps.get("inf_deploy_even"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(state);
+                comp_i.setSelected(false);
+            }
+            comps = optionComps.get("inf_move_multi"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+            }
+            comps = optionComps.get("inf_move_later"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
             }
         }
         if ("inf_move_multi".equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
-                DialogOptionComponent comp_i = i.nextElement();
-                if ("inf_move_even".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                }
-                if ("inf_move_later".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                }
+            comps = optionComps.get("inf_move_even"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+            }
+            comps = optionComps.get("inf_move_later"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
             }
         }
         if ("inf_move_later".equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
-                DialogOptionComponent comp_i = i.nextElement();
-                if ("inf_move_even".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                }
-                if ("inf_move_multi".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                }
+            comps = optionComps.get("inf_move_even"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+            }
+            comps = optionComps.get("inf_move_multi"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
             }
         }
         if ("protos_move_even".equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
-                DialogOptionComponent comp_i = i.nextElement();
-                if ("protos_deploy_even".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(state);
-                    comp_i.setSelected(false);
-                }
-                if ("protos_move_multi".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                }
-                if ("protos_move_later".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                }
+            comps = optionComps.get("protos_deploy_even"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(state);
+                comp_i.setSelected(false);
+            }
+            comps = optionComps.get("protos_move_multi"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+            }
+            comps = optionComps.get("protos_move_later"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
             }
         }
         if ("protos_move_multi".equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
-                DialogOptionComponent comp_i = i.nextElement();
-                if ("protos_move_even".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                }
-                if ("protos_move_later".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                }
+            comps = optionComps.get("protos_move_even"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+            }
+            comps = optionComps.get("protos_move_later"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
             }
         }
         if ("protos_move_later".equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
-                DialogOptionComponent comp_i = i.nextElement();
-                if ("protos_move_even".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                }
-                if ("protos_move_multi".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                }
+            comps = optionComps.get("protos_move_even"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+            }
+            comps = optionComps.get("protos_move_multi"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
             }
         }
         if (option.getName().equals("individual_initiative")) { //$NON-NLS-1$
-            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
-                DialogOptionComponent comp_i = i.nextElement();
-                if (comp_i.option.getName().equals("protos_deploy_even")) { //$NON-NLS-1$
-                    comp_i.setEditable(false);
-                    comp_i.setSelected(false);
-                }
-                if (comp_i.option.getName().equals("protos_move_even")) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                    comp_i.setSelected(false);
-                }
-                if (comp_i.option.getName().equals("protos_move_multi")) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                    comp_i.setSelected(false);
-                }
-                if (comp_i.option.getName().equals("protos_move_later")) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                    comp_i.setSelected(false);
-                }
-                if (comp_i.option.getName().equals("inf_deploy_even")) { //$NON-NLS-1$
-                    comp_i.setEditable(false);
-                    comp_i.setSelected(false);
-                }
-                if (comp_i.option.getName().equals("inf_move_even")) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                    comp_i.setSelected(false);
-                }
-                if (comp_i.option.getName().equals("inf_move_multi")) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                    comp_i.setSelected(false);
-                }
-                if (comp_i.option.getName().equals("inf_move_later")) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                    comp_i.setSelected(false);
-                }
+            comps = optionComps.get("protos_deploy_even"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(false);
+                comp_i.setSelected(false);
+            }
+            comps = optionComps.get("protos_move_even"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+                comp_i.setSelected(false);
+            }
+            comps = optionComps.get("protos_move_multi"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+                comp_i.setSelected(false);
+            }
+            comps = optionComps.get("protos_move_later"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+                comp_i.setSelected(false);
+            }
+            comps = optionComps.get("inf_deploy_even"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(false);
+                comp_i.setSelected(false);
+            }
+            comps = optionComps.get("inf_move_even"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+                comp_i.setSelected(false);
+            }
+            comps = optionComps.get("inf_move_multi"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+                comp_i.setSelected(false);
+            }
+            comps = optionComps.get("inf_move_later"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+                comp_i.setSelected(false);
             }
         }
         if ("vacuum".equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
-                DialogOptionComponent comp_i = i.nextElement();
-                if ("fire".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                    comp_i.setSelected(false);
-                }
+            comps = optionComps.get("fire"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+                comp_i.setSelected(false);
             }
         }
         if ("tacops_hull_down".equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
-                DialogOptionComponent comp_i = i.nextElement();
-                if ("tacops_falling_expanded".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(state);
-                    comp_i.setSelected(false);
-                }
+            comps = optionComps.get("tacops_falling_expanded"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(state);
+                comp_i.setSelected(false);
             }
         }
         if ("double_blind".equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
-                DialogOptionComponent comp_i = i.nextElement();
-                if ("visibility".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(state);
-                }
+            comps = optionComps.get("visibility"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(state);
             }
         }
         if ("tacops_dead_zones".equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
-                DialogOptionComponent comp_i = i.nextElement();
-                if ("tacops_LOS1".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                    comp_i.setSelected(false);
-                }
+            comps = optionComps.get("tacops_LOS1"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+                comp_i.setSelected(false);
             }
         }
-        if (OptionsConstants.AC_TAC_OPS_RANGE.equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
-                DialogOptionComponent comp_i = i.nextElement();
-                if (OptionsConstants.AC_TAC_OPS_LOS_RANGE.equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(state);
-                    comp_i.setSelected(false);
-                }
-            }
+        if (OptionsConstants.AC_TAC_OPS_RANGE.equals(option.getName())) {
+            comps = optionComps.get(OptionsConstants.AC_TAC_OPS_LOS_RANGE);
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(state);
+                comp_i.setSelected(false);
+            }            
         }        
         if ("tacops_LOS1".equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
-                DialogOptionComponent comp_i = i.nextElement();
-                if ("tacops_dead_zones".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                    comp_i.setSelected(false);
-                }
+            comps = optionComps.get("tacops_dead_zones"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+                comp_i.setSelected(false);
             }
         }
         if (option.getName().equals("tacops_rapid_ac")) {
-            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
-                DialogOptionComponent comp_i = i.nextElement();
-                if ("kind_rapid_ac".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(state);
-                    comp_i.setSelected(false);
-                }
+            comps = optionComps.get("kind_rapid_ac"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(state);
+                comp_i.setSelected(false);
             }
         }
         if (option.getName().equals("vehicles_threshold")) {
-            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
-                DialogOptionComponent comp_i = i.nextElement();
-                if ("vehicles_threshold_variable".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(state);
-                    comp_i.setSelected(false);
-                }
-                if ("vehicles_threshold_divisor".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(state);
-                    comp_i.resetToDefault();
-                }
+            comps = optionComps.get("vehicles_threshold_variable"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(state);
+                comp_i.setSelected(false);
+            }
+            comps = optionComps.get("vehicles_threshold_divisor"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(state);
+                comp_i.resetToDefault();
             }
         }
         if (option.getName().equals("manual_shutdown")) {
-            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
-                DialogOptionComponent comp_i = i.nextElement();
-                if ("begin_shutdown".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(state);
-                    comp_i.setSelected(false);
-                }
+            comps = optionComps.get("begin_shutdown"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(state);
+                comp_i.setSelected(false);
             }
         }
         if (option.getName().equals("alternate_masc")) {
-            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
-                DialogOptionComponent comp_i = i.nextElement();
-                if ("alternate_masc_enhanced".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(state);
-                    comp_i.setSelected(false);
-                }
+            comps = optionComps.get("alternate_masc_enhanced"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(state);
+                comp_i.setSelected(false);
             }
         }
         if (option.getName().equals("allow_experimental_ammo")) {
-            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
-                DialogOptionComponent comp_i = i.nextElement();
-                if ("allow_advanced_ammo".equals(comp_i.option.getName())) { //$NON-NLS-1$
-                    comp_i.setEditable(!state);
-                    if (state){
-                        comp_i.setSelected(state);
-                    }
+            comps = optionComps.get("allow_advanced_ammo"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+                if (state){
+                    comp_i.setSelected(state);
                 }
             }
         }
@@ -671,13 +781,16 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             File gameOptsFile = selectGameOptionsFile(false);
             if (gameOptsFile != null) {
                 options.loadOptions(gameOptsFile, false);
-                Vector<DialogOptionComponent> changed = 
-                        new Vector<DialogOptionComponent>();
-                for (Enumeration<DialogOptionComponent> i = optionComps
-                        .elements(); i.hasMoreElements();) {
-                    DialogOptionComponent comp = i.nextElement();
-                    if (comp.hasChanged()) {
-                        changed.addElement(comp);
+                ArrayList<DialogOptionComponent> changed = 
+                        new ArrayList<DialogOptionComponent>();
+                for (List<DialogOptionComponent> comps : optionComps.values()) {
+                    // Each option in the list should have the same value, so
+                    //  picking the first is fine
+                    if (comps.size() > 0) {
+                        DialogOptionComponent comp = comps.get(0);
+                        if (comp.hasChanged()) {
+                            changed.add(comp);
+                        }
                     }
                 }
                 refreshOptions();
@@ -754,10 +867,10 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
     public void setEditable(boolean editable) {
 
         // Set enabled state of all of the option components in the dialog.
-        for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                .hasMoreElements();) {
-            DialogOptionComponent comp = i.nextElement();
-            comp.setEditable(editable);
+        for (List<DialogOptionComponent> comps : optionComps.values()) {
+            for (DialogOptionComponent comp : comps) {
+                comp.setEditable(editable);
+            }
         }
 
         // If the panel is editable, the player can commit or reset.

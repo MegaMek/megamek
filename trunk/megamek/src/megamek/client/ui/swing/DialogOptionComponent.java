@@ -143,6 +143,22 @@ public class DialogOptionComponent extends JPanel implements
                 return null;
         }
     }
+    
+    public void setValue(Object v) {
+        switch (option.getType()) {
+            case IOption.BOOLEAN:
+                checkbox.setSelected((Boolean)v);
+                break;
+            case IOption.INTEGER:
+            case IOption.FLOAT:
+            case IOption.STRING:
+                textField.setText((String)v);
+                break;
+            case IOption.CHOICE:
+                choice.setSelectedItem(v);
+            default:
+        }
+    }
 
     public IOption getOption() {
         return option;
@@ -168,6 +184,10 @@ public class DialogOptionComponent extends JPanel implements
                 textField.setEnabled(editable);
                 break;
         }
+    }
+    
+    public boolean getEditable() {
+        return checkbox.isEnabled();
     }
 
     public void setSelected(boolean state) {

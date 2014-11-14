@@ -5527,47 +5527,56 @@ public class Compute {
                 if (weapon.getCurrentShots() > 1) {
                     return false;
                 }
-                if (atype != null) {
-                    switch (atype.getAmmoType()) {
-                        case AmmoType.T_SRM_STREAK:
-                        case AmmoType.T_LRM_STREAK:
-                        case AmmoType.T_LRM:
-                        case AmmoType.T_LRM_TORPEDO:
-                        case AmmoType.T_SRM:
-                        case AmmoType.T_SRM_TORPEDO:
-                        case AmmoType.T_MRM:
-                        case AmmoType.T_NARC:
-                        case AmmoType.T_INARC:
-                        case AmmoType.T_AMS:
-                        case AmmoType.T_ARROW_IV:
-                        case AmmoType.T_LONG_TOM:
-                        case AmmoType.T_SNIPER:
-                        case AmmoType.T_THUMPER:
-                        case AmmoType.T_SRM_ADVANCED:
-                        case AmmoType.T_LRM_TORPEDO_COMBO:
-                        case AmmoType.T_ATM:
-                        case AmmoType.T_IATM:
-                        case AmmoType.T_MML:
-                        case AmmoType.T_EXLRM:
-                        case AmmoType.T_NLRM:
-                        case AmmoType.T_TBOLT_5:
-                        case AmmoType.T_TBOLT_10:
-                        case AmmoType.T_TBOLT_15:
-                        case AmmoType.T_TBOLT_20:
-                        case AmmoType.T_PXLRM:
-                        case AmmoType.T_HSRM:
-                        case AmmoType.T_MRM_STREAK:
-                        case AmmoType.T_HAG:
-                        case AmmoType.T_ROCKET_LAUNCHER:
-                            return false;
-                    }
-                    if (((atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
-                         || (atype.getAmmoType() == AmmoType.T_AC_LBX)
-                         || (atype.getAmmoType() == AmmoType.T_SBGAUSS))
-                        && (atype.getMunitionType() == AmmoType.M_CLUSTER)) {
-                        return false;
-                    }
+                if (atype == null) {
+                    break;
                 }
+                switch (atype.getAmmoType()) {
+                    case AmmoType.T_SRM_STREAK:
+                    case AmmoType.T_LRM_STREAK:
+                    case AmmoType.T_LRM:
+                    case AmmoType.T_LRM_TORPEDO:
+                    case AmmoType.T_SRM:
+                    case AmmoType.T_SRM_TORPEDO:
+                    case AmmoType.T_MRM:
+                    case AmmoType.T_NARC:
+                    case AmmoType.T_INARC:
+                    case AmmoType.T_AMS:
+                    case AmmoType.T_ARROW_IV:
+                    case AmmoType.T_LONG_TOM:
+                    case AmmoType.T_SNIPER:
+                    case AmmoType.T_THUMPER:
+                    case AmmoType.T_SRM_ADVANCED:
+                    case AmmoType.T_LRM_TORPEDO_COMBO:
+                    case AmmoType.T_ATM:
+                    case AmmoType.T_IATM:
+                    case AmmoType.T_MML:
+                    case AmmoType.T_EXLRM:
+                    case AmmoType.T_NLRM:
+                    case AmmoType.T_TBOLT_5:
+                    case AmmoType.T_TBOLT_10:
+                    case AmmoType.T_TBOLT_15:
+                    case AmmoType.T_TBOLT_20:
+                    case AmmoType.T_PXLRM:
+                    case AmmoType.T_HSRM:
+                    case AmmoType.T_MRM_STREAK:
+                    case AmmoType.T_HAG:
+                    case AmmoType.T_ROCKET_LAUNCHER:
+                        return false;
+                }
+                if (((atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
+                     || (atype.getAmmoType() == AmmoType.T_AC_LBX)
+                     || (atype.getAmmoType() == AmmoType.T_SBGAUSS))
+                    && (atype.getMunitionType() == AmmoType.M_CLUSTER)) {
+                    return false;
+                }
+                // Flak Ammo can't make aimed shots
+                if (((atype.getAmmoType() == AmmoType.T_AC)
+                        || (atype.getAmmoType() == AmmoType.T_AC_ULTRA) 
+                        || (atype.getAmmoType() == AmmoType.T_AC_ULTRA_THB))
+                        && (atype.getMunitionType() == AmmoType.M_FLAK)) {
+                    return false;
+                }
+                
                 break;
             case (IAimingModes.AIM_MODE_TARG_COMP):
                 if (!wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
@@ -5586,6 +5595,14 @@ public class Compute {
                     && (atype.getMunitionType() == AmmoType.M_CLUSTER)) {
                     return false;
                 }
+                
+                // Flak Ammo can't make aimed shots
+                if (((atype.getAmmoType() == AmmoType.T_AC)
+                        || (atype.getAmmoType() == AmmoType.T_AC_ULTRA) 
+                        || (atype.getAmmoType() == AmmoType.T_AC_ULTRA_THB))
+                        && (atype.getMunitionType() == AmmoType.M_FLAK)) {
+                    return false;
+                }              
                 break;
         }
         return true;

@@ -186,8 +186,15 @@ public class DialogOptionComponent extends JPanel implements
         }
     }
     
-    public boolean getEditable() {
-        return checkbox.isEnabled();
+    public boolean getEditable() { 
+        switch (option.getType()) {
+            case IOption.BOOLEAN:
+                return checkbox.isEnabled();
+            case IOption.CHOICE:
+                return choice.isEnabled();
+            default:
+                return textField.isEnabled();
+        }
     }
 
     public void setSelected(boolean state) {

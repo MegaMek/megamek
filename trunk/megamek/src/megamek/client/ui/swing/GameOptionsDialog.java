@@ -31,6 +31,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -287,25 +288,31 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         
         // Add new DialogOptionComponents for all matching Options
         final String searchText = txtSearch.getText().toLowerCase();
+        ArrayList<DialogOptionComponent> allNewComps = new ArrayList<>();
         for (List<DialogOptionComponent> comps : optionComps.values()) {
             ArrayList<DialogOptionComponent> newComps = new ArrayList<>();
             for (DialogOptionComponent comp : comps) {
                 String optName = comp.option.getDisplayableName().toLowerCase();
                 String optDesc = comp.option.getDescription().toLowerCase();
-                if (optName.contains(searchText)
-                        || optDesc.contains(searchText)) {
+                if ((optName.contains(searchText) 
+                        || optDesc.contains(searchText))
+                        && !searchText.equals("")) {
                     DialogOptionComponent newComp = new DialogOptionComponent(
                             this, comp.option);
                     newComp.setEditable(comp.getEditable());
                     searchComps.add(newComp);
                     newComps.add(newComp);
-                    panSearchOptions.add(newComp);
                 }
             }
             comps.addAll(newComps);
-        }        
-        panSearchOptions.validate();
-        panSearchOptions.repaint();
+            allNewComps.addAll(newComps);
+        }
+        Collections.sort(allNewComps);
+        for (DialogOptionComponent comp : allNewComps) {
+            panSearchOptions.add(comp);
+        }
+        //panSearchOptions.validate();
+        panOptions.repaint();
     }
 
     private JPanel addGroup(IOptionGroup group) {

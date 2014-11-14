@@ -36,7 +36,7 @@ import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 
 public class DialogOptionComponent extends JPanel implements 
-        ItemListener {
+        ItemListener, Comparable {
     /**
      * 
      */
@@ -268,6 +268,20 @@ public class DialogOptionComponent extends JPanel implements
         public Object getValue() {
             return value;
         }
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (!(o instanceof DialogOptionComponent)) {
+            return 0;
+        }
+        DialogOptionComponent other = (DialogOptionComponent) o;
+        return option.getDisplayableName().compareTo(
+                other.option.getDisplayableName());
+    }
+    
+    public String toString() {
+        return option.getDisplayableName();
     }
 
 }

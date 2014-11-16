@@ -2506,11 +2506,11 @@ public class Compute {
      * damage
      */
     public static WeaponAttackAction getHighestExpectedDamage(IGame g,
-                                                              Vector<WeaponAttackAction> vAttacks, boolean assumeHit) {
+            List<WeaponAttackAction> vAttacks, boolean assumeHit) {
         float fHighest = -1.0f;
         WeaponAttackAction waaHighest = null;
         for (int x = 0, n = vAttacks.size(); x < n; x++) {
-            WeaponAttackAction waa = vAttacks.elementAt(x);
+            WeaponAttackAction waa = vAttacks.get(x);
             float fDanger = Compute.getExpectedDamage(g, waa, assumeHit);
             if (fDanger > fHighest) {
                 fHighest = fDanger;

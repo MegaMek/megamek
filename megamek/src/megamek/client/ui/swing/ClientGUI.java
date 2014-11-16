@@ -85,9 +85,11 @@ import megamek.common.EntityListFile;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.MechSummaryCache;
+import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.WeaponOrderHandler;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEndEvent;
 import megamek.common.event.GameListener;
@@ -1754,9 +1756,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         
         @Override
 		public void gameClientFeedbackRquest(GameCFREvent evt) {
+            Entity e = client.getGame().getEntity(evt.getEntityId());
+            
         	switch (evt.getCFRType()){
-	        	case Packet.COMMAND_CFR_DOMINO_EFFECT:
-		        	Entity e = client.getGame().getEntity(evt.getEntityId());
+	        	case Packet.COMMAND_CFR_DOMINO_EFFECT:		        	
 		        	// If the client connects to a game as a bot, it's possible
 		        	//  to have the bot respond AND have the client ask the
 		        	//  player.  This is bad, ignore this if the client is a bot
@@ -1773,6 +1776,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 					String title = Messages.getString("CFRDomino.Title");
 					String msg = Messages.getString("CFRDomino.Message",
 							new Object[] { e.getDisplayName() });
+					int choice;
 					Object options[];
 					MovePath paths[];
 					int optionType;
@@ -1808,7 +1812,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 						paths[1] = null;
 						optionType = JOptionPane.YES_NO_OPTION;
 					}			
-					int choice = JOptionPane.showOptionDialog(frame, msg, title, 
+					choice = JOptionPane.showOptionDialog(frame, msg, title, 
 							optionType, JOptionPane.QUESTION_MESSAGE, null, 
 							options, options[0]);
 					// If they closed it, assume no action
@@ -1817,6 +1821,38 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 					}
 					client.sendDominoCFRResponse(paths[choice]);
 	        		break;
+	        	case Packet.COMMAND_CFR_AMS_ASSIGN:
+	        	    ArrayList<String> amsOptions = new ArrayList<>();
+	        	    amsOptions.add("None");
+	        	    for (WeaponAttackAction waa : evt.getWAAs()) {
+	        	        Entity ae = waa.getEntity(client.getGame());
+	        	        String waaMsg;
+	        	        if (ae != null) {
+    	        	        Mounted weapon = ae.getEquipment(waa.getWeaponId());
+                            waaMsg = weapon.getDesc() + " from "
+                                    + ae.getDisplayName();
+	        	        } else {
+	        	            waaMsg = "Missiles from unknown attacker";
+	        	        }
+	        	        amsOptions.add(waaMsg);
+	        	    }
+	        	    
+	        	    optionType = JOptionPane.OK_CANCEL_OPTION;
+	        	    title = Messages.getString("CFRAMSAssign.Title",
+                            new Object[] { e.getDisplayName() });
+                    msg = Messages.getString("CFRAMSAssign.Message",
+                            new Object[] { e.getDisplayName() });
+	        	    Object result = JOptionPane.showInputDialog(frame, msg, title, 
+                            JOptionPane.QUESTION_MESSAGE, null, 
+                           amsOptions.toArray(), null);
+                    // If they closed it, assume no action
+	        	    if ((result == null) || result.equals("None")) {
+                        client.sendAMSAssignCFRResponse(null);
+                    } else {
+                        client.sendAMSAssignCFRResponse(
+                                amsOptions.indexOf(result) - 1);                 
+                    }
+                    break;
         	}
         }
     };

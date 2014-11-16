@@ -1285,14 +1285,14 @@ public class Compute {
         if (distance == 0) {
 
             if (wpn.hasFlag(WeaponType.F_INF_POINT_BLANK)) {
-                mod++;
+                mods.addModifier(1, "point blank weapon");
             }
             if (wpn.hasFlag(WeaponType.F_INF_ENCUMBER) || (wpn.getCrew() > 1)) {
-                mod++;
+                mods.addModifier(1, "point blank support weapon");
             }
 
             if (wpn.hasFlag(WeaponType.F_INF_BURST)) {
-                mod--;
+                mods.addModifier(-1, "point blank burst fire weapon");
             }
         }
 

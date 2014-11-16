@@ -204,9 +204,22 @@ public class BLKFile {
 
     public void setFluff(Entity e) throws EntityLoadingException {
 
+        if (dataFile.exists("capabilities")) {
+            e.getFluff().setCapabilities(dataFile.getDataAsString("capabilities")[0]);
+        }
+        
+        if (dataFile.exists("overview")) {
+            e.getFluff().setOverview(dataFile.getDataAsString("overview")[0]);
+        }
+        
+        if (dataFile.exists("deployment")) {
+            e.getFluff().setDeployment(dataFile.getDataAsString("deployment")[0]);
+        }
+        
         if (dataFile.exists("history")) {
             e.getFluff().setHistory(dataFile.getDataAsString("history")[0]);
         }
+
 
         if (dataFile.exists("imagepath")) {
             e.getFluff().setMMLImagePath(
@@ -563,7 +576,19 @@ public class BLKFile {
             blk.writeBlockData("barrating", t.getBARRating(1));
         }
 
-        if (t.getFluff().getHistory().trim().length() > 0) {
+        if (t.getFluff().getCapabilities().trim().length() > 0) {
+            blk.writeBlockData("capabilities", t.getFluff().getCapabilities());
+        }
+        
+        if (t.getFluff().getOverview().trim().length() > 0) {
+            blk.writeBlockData("overview", t.getFluff().getOverview());
+        }
+        
+        if (t.getFluff().getDeployment().trim().length() > 0) {
+            blk.writeBlockData("deployment", t.getFluff().getDeployment());
+        }
+        
+        if (t.getFluff().getDeployment().trim().length() > 0) {
             blk.writeBlockData("history", t.getFluff().getHistory());
         }
 

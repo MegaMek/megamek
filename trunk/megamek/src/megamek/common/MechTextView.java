@@ -207,10 +207,27 @@ public class MechTextView {
                 sBasic.append(getInternalAndArmor());
             }
         }
-        if (entity.getFluff().getHistory() != null) {
+        
+        if (entity.getFluff().getOverview() !=("")) {
+            sFluff.append(entity.getFluff().getOverview());
+        }
+        sFluff.append("\n\n");
+        
+        if (entity.getFluff().getCapabilities() !=("")) {
+            sFluff.append(entity.getFluff().getCapabilities());
+        }
+        sFluff.append("\n\n");
+        
+        if (entity.getFluff().getDeployment() !=("")) {
+            sFluff.append(entity.getFluff().getDeployment());
+        }
+        sFluff.append("\n\n");
+        
+        if (entity.getFluff().getHistory() !=("")) {
             sFluff.append(entity.getFluff().getHistory());
         }
         sFluff.append("\n");
+   
     }
 
     public String getMechReadoutHead() {

@@ -5987,12 +5987,31 @@ public abstract class Mech extends Entity {
             }
             sb.append(newLine);
         }
+        
+        if (getFluff().getOverview().trim().length() > 0) {
+            sb.append("overview:");
+            sb.append(getFluff().getOverview());
+            sb.append(newLine);
+        }
 
-        if (getFluff().getHistory().trim().length() > 0) {
+        if (getFluff().getCapabilities().trim().length() > 0) {
+            sb.append("capabilities:");
+            sb.append(getFluff().getCapabilities());
+            sb.append(newLine);
+        }
+               
+        if (getFluff().getDeployment().trim().length() > 0) {
+            sb.append("deployment:");
+            sb.append(getFluff().getDeployment());
+            sb.append(newLine);
+        }
+        
+        if (getFluff().getDeployment().trim().length() > 0) {
             sb.append("history:");
             sb.append(getFluff().getHistory());
             sb.append(newLine);
         }
+
 
         if (getFluff().getMMLImagePath().trim().length() > 0) {
             sb.append("imagefile:");

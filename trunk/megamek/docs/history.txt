@@ -82,6 +82,8 @@ v0.39.3-dev (SVN)
 + Bug [#4243]: Updated Flak Ammo per new TO errata
 + Bug [#4098]: Anti-Missile System Manual Engagement
 + Feature [#1324]: Auto target woods hex when no other targets present
++ Bug [#4191]: Entity.isImmobile(Entity.java:1223) will throw an NPE if the crew
+    is NULL (such as coming from MHQ w/out a crew assigned)
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

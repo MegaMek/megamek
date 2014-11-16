@@ -11286,7 +11286,15 @@ public class Server implements Runnable {
 
     private void sendDominoEffectCFR(Entity e) {
         send(e.getOwnerId(), new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
-                                        new Object[]{Packet.COMMAND_CFR_DOMINO_EFFECT, e.getId()}));
+                new Object[] { Packet.COMMAND_CFR_DOMINO_EFFECT, e.getId() }));
+    }
+    
+    private void sendAMSAssignCFR(Entity e, Mounted ams,
+            ArrayList<WeaponAttackAction> waas) {
+        send(e.getOwnerId(),
+                new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
+                        new Object[] { Packet.COMMAND_CFR_AMS_ASSIGN,
+                                e.getId(), e.getEquipmentNum(ams), waas }));
     }
 
     private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity,
@@ -11929,7 +11937,62 @@ public class Server implements Runnable {
         // let each target assign its AMS
         for (Entity e : htAttacks.keySet()) {
             Vector<WeaponHandler> vAttacks = htAttacks.get(e);
-            e.assignAMS(vAttacks);
+            // Allow MM to automatically assign AMS targets
+            if (game.getOptions().booleanOption("auto_ams")) {
+                e.assignAMS(vAttacks);
+            } else { // Allow user to manually assign targets
+                // Current AMS targets: each attack can only be targeted once
+                HashSet<WeaponAttackAction> amsTargets = 
+                        new HashSet<WeaponAttackAction>();
+                // Pick assignment for each active AMS
+                for (Mounted ams : e.getActiveAMS()) {
+                    // Create a list of valid assignments for this AMS
+                    ArrayList<WeaponAttackAction> vAttacksInArc = 
+                            new ArrayList<WeaponAttackAction>(vAttacks.size());
+                    for (WeaponHandler wr : vAttacks) {
+                        if (!amsTargets.contains(wr.waa)
+                                && Compute.isInArc(game, e.getId(),
+                                        e.getEquipmentNum(ams),
+                                        game.getEntity(wr.waa.getEntityId()))) {
+                            vAttacksInArc.add(wr.waa);
+                        }
+                    }
+                    
+                    // If there are no valid attacks left, don't bother
+                    if (vAttacksInArc.size() < 1) {
+                        continue;
+                    }
+                    
+                    // Send a client feedback request
+                    sendAMSAssignCFR(e, ams, vAttacksInArc);
+                    synchronized (cfrPacketQueue) {
+                        try {
+                            cfrPacketQueue.wait();
+                        } catch (InterruptedException ex) {
+                            // Do nothing
+                        }
+                        if (cfrPacketQueue.size() > 0) {
+                            ReceivedPacket rp = cfrPacketQueue.poll();
+                            int cfrType = (int) rp.packet.getData()[0];
+                            // Make sure we got the right type of response
+                            if (cfrType != Packet.COMMAND_CFR_AMS_ASSIGN) {
+                                System.err.println("Excepted a "
+                                        + "COMMAND_CFR_AMS_ASSIGN CFR packet, "
+                                        + "received: " + cfrType);
+                                throw new IllegalStateException();
+                            }
+                            Integer waaIndex = 
+                                    (Integer)rp.packet.getData()[1];
+                            if (waaIndex != null) {
+                                WeaponAttackAction waa = vAttacksInArc
+                                        .get(waaIndex);
+                                waa.addCounterEquipment(ams);
+                                amsTargets.add(waa);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

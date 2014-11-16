@@ -145,6 +145,14 @@ public abstract class BotClient extends Client {
                         //   domino effect
                         sendDominoCFRResponse(null);
                         break;
+                    case Packet.COMMAND_CFR_AMS_ASSIGN:
+                        // Picks the WAA with the highest expected damage,
+                        //  essentially same as if the auto_ams option was on
+                        WeaponAttackAction waa = 
+                            Compute.getHighestExpectedDamage(game, 
+                                    evt.getWAAs(), true);
+                        sendAMSAssignCFRResponse(evt.getWAAs().indexOf(waa));
+                        break;
                 }
             }
 

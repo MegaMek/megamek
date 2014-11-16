@@ -45,6 +45,7 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameEntityChangeEvent;
+import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
@@ -10088,6 +10089,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (game == null) {
             return;
         }
+        
+        final GameOptions gameOpts = game.getOptions();
 
         // if the small craft does not already have ECM, then give them a single
         // hex ECM so they can change the mode
@@ -10095,7 +10098,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // craft having
         // ECM when the rule is not in effect and in non-space maps
         if ((this instanceof SmallCraft) && !(this instanceof Dropship)
-            && !hasActiveECM() && isMilitary()) {
+                && !hasActiveECM() && isMilitary()) {
             try {
                 String prefix = "IS";
                 if (isClan()) {
@@ -10111,15 +10114,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         for (Mounted mounted : getWeaponList()) {
             if ((mounted.getType() instanceof GaussWeapon)
-                && game.getOptions().booleanOption("tacops_gauss_weapons")) {
+                && gameOpts.booleanOption("tacops_gauss_weapons")) {
                 String[] modes = {"Powered Up", "Powered Down"};
                 ((WeaponType) mounted.getType()).setModes(modes);
                 ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
             } else if ((mounted.getType() instanceof ACWeapon)
-                       && game.getOptions().booleanOption("tacops_rapid_ac")) {
+                       && gameOpts.booleanOption("tacops_rapid_ac")) {
                 String[] modes = {"", "Rapid"};
                 ((WeaponType) mounted.getType()).setModes(modes);
-                if (game.getOptions().booleanOption("kind_rapid_ac")) {
+                if (gameOpts.booleanOption("kind_rapid_ac")) {
                     mounted.setKindRapidFire(true);
                 }
             } else if (mounted.getType() instanceof ISBombastLaser) {
@@ -10131,29 +10134,44 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     modes.add("Damage " + damage);
                 }
                 ((WeaponType) mounted.getType()).setModes(modes
-                                                                  .toArray(stringArray));
+                        .toArray(stringArray));
             } else if (((WeaponType) mounted.getType()).isCapital()
-                       && (((WeaponType) mounted.getType()).getAtClass() != WeaponType.CLASS_CAPITAL_MISSILE)
-                       && (((WeaponType) mounted.getType()).getAtClass() != WeaponType.CLASS_AR10)) {
+                       && (((WeaponType) mounted.getType()).getAtClass() 
+                               != WeaponType.CLASS_CAPITAL_MISSILE)
+                       && (((WeaponType) mounted.getType()).getAtClass() 
+                               != WeaponType.CLASS_AR10)) {
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
                 modes.add("");
-                if (game.getOptions().booleanOption("stratops_bracket_fire")) {
+                if (gameOpts.booleanOption("stratops_bracket_fire")) {
                     modes.add("Bracket 80%");
                     modes.add("Bracket 60%");
                     modes.add("Bracket 40%");
                 }
-                if (((mounted.getType() instanceof CapitalLaserBayWeapon) || (mounted
-                        .getType() instanceof SCLBayWeapon))
-                    && game.getOptions()
-                           .booleanOption("stratops_aaa_laser")) {
+                if (((mounted.getType() instanceof CapitalLaserBayWeapon) 
+                        || (mounted.getType() instanceof SCLBayWeapon))
+                    && gameOpts.booleanOption("stratops_aaa_laser")) {
                     modes.add("AAA");
                     ((WeaponType) mounted.getType()).addEndTurnMode("AAA");
                 }
                 if (modes.size() > 1) {
                     ((WeaponType) mounted.getType()).setModes(modes
-                                                                      .toArray(stringArray));
+                            .toArray(stringArray));
                 }
+            } else if (mounted.getType().hasFlag(WeaponType.F_AMS) 
+                    && !gameOpts.booleanOption("auto_ams")) {
+                Enumeration<EquipmentMode> modeEnum = mounted.getType().getModes();
+                ArrayList<String> newModes = new ArrayList<>();
+                while (modeEnum.hasMoreElements()) {
+                    newModes.add(modeEnum.nextElement().getName());
+                }
+                if (!newModes.contains("Automatic")) {
+                    newModes.add("Automatic");
+                }
+                String modes[] = new String [newModes.size()];
+                newModes.toArray(modes);
+                ((WeaponType) mounted.getType()).setModes(modes);
+                ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
             }
 
         }
@@ -10161,7 +10179,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Mounted misc : getMisc()) {
             if (misc.getType().hasFlag(MiscType.F_BAP)
                 && (this instanceof Aero)
-                && game.getOptions().booleanOption("stratops_ecm")) {
+                && gameOpts.booleanOption("stratops_ecm")) {
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
                 modes.add("Short");
@@ -10174,19 +10192,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 ArrayList<String> modes = new ArrayList<String>();
                 modes.add("ECM");
                 String[] stringArray = {};
-                if (game.getOptions().booleanOption("tacops_eccm")) {
+                if (gameOpts.booleanOption("tacops_eccm")) {
                     modes.add("ECCM");
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                         modes.add("ECM & ECCM");
                     }
-                } else if (game.getOptions().booleanOption("stratops_ecm")
+                } else if (gameOpts.booleanOption("stratops_ecm")
                            && (this instanceof Aero)) {
                     modes.add("ECCM");
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                         modes.add("ECM & ECCM");
                     }
                 }
-                if (game.getOptions().booleanOption("tacops_ghost_target")) {
+                if (gameOpts.booleanOption("tacops_ghost_target")) {
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                         modes.add("ECM & Ghost Targets");
                         modes.add("ECCM & Ghost Targets");

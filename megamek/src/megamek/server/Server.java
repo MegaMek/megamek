@@ -11963,33 +11963,42 @@ public class Server implements Runnable {
                         continue;
                     }
                     
-                    // Send a client feedback request
-                    sendAMSAssignCFR(e, ams, vAttacksInArc);
-                    synchronized (cfrPacketQueue) {
-                        try {
-                            cfrPacketQueue.wait();
-                        } catch (InterruptedException ex) {
-                            // Do nothing
-                        }
-                        if (cfrPacketQueue.size() > 0) {
-                            ReceivedPacket rp = cfrPacketQueue.poll();
-                            int cfrType = (int) rp.packet.getData()[0];
-                            // Make sure we got the right type of response
-                            if (cfrType != Packet.COMMAND_CFR_AMS_ASSIGN) {
-                                System.err.println("Excepted a "
-                                        + "COMMAND_CFR_AMS_ASSIGN CFR packet, "
-                                        + "received: " + cfrType);
-                                throw new IllegalStateException();
+                    WeaponAttackAction targetedWAA = null;
+                    
+                    if (ams.curMode().equals("Automatic")) {
+                        targetedWAA = Compute.getHighestExpectedDamage(game,
+                                vAttacksInArc, true);
+                    } else {
+                        // Send a client feedback request
+                        sendAMSAssignCFR(e, ams, vAttacksInArc);
+                        synchronized (cfrPacketQueue) {
+                            try {
+                                cfrPacketQueue.wait();
+                            } catch (InterruptedException ex) {
+                                // Do nothing
                             }
-                            Integer waaIndex = 
-                                    (Integer)rp.packet.getData()[1];
-                            if (waaIndex != null) {
-                                WeaponAttackAction waa = vAttacksInArc
-                                        .get(waaIndex);
-                                waa.addCounterEquipment(ams);
-                                amsTargets.add(waa);
+                            if (cfrPacketQueue.size() > 0) {
+                                ReceivedPacket rp = cfrPacketQueue.poll();
+                                int cfrType = (int) rp.packet.getData()[0];
+                                // Make sure we got the right type of response
+                                if (cfrType != Packet.COMMAND_CFR_AMS_ASSIGN) {
+                                    System.err.println("Excepted a "
+                                            + "COMMAND_CFR_AMS_ASSIGN CFR "
+                                            + "packet, received: " + cfrType);
+                                    throw new IllegalStateException();
+                                }
+                                Integer waaIndex = 
+                                        (Integer)rp.packet.getData()[1];
+                                if (waaIndex != null) {
+                                    targetedWAA = vAttacksInArc.get(waaIndex);
+                                }
                             }
                         }
+                    }
+                    
+                    if (targetedWAA != null) {
+                        targetedWAA.addCounterEquipment(ams);
+                        amsTargets.add(targetedWAA);
                     }
                 }
             }

@@ -1273,7 +1273,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Is this entity shut down or is the crew unconscious?
      */
     public boolean isImmobile() {
-        return isShutDown() || crew.isUnconscious();
+        return isShutDown() || ((crew != null) && crew.isUnconscious());
     }
 
     /**

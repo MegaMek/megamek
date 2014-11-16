@@ -81,6 +81,9 @@ public class MtfFile implements IMechLoader {
 
     String[][] critData;
 
+    String capabilities = "";
+    String deployment = "";
+    String overview = "";
     String history = "";
     String imagePath = "";
 
@@ -494,7 +497,10 @@ public class MtfFile implements IMechLoader {
                 }
             }
 
-            mech.getFluff().setHistory(history);
+            mech.getFluff().setCapabilities(capabilities);
+            mech.getFluff().setOverview(overview);
+            mech.getFluff().setDeployment(deployment);
+            mech.getFluff().setDeployment(history);
             mech.getFluff().setMMLImagePath(imagePath);
 
             mech.setArmorTonnage(mech.getArmorWeight());
@@ -956,7 +962,22 @@ public class MtfFile implements IMechLoader {
             armorType = line;
             return true;
         }
+        
+        if (line.trim().toLowerCase().startsWith("overview:")) {
+            overview = line.substring("overview:".length());
+            return true;
+        }
 
+        if (line.trim().toLowerCase().startsWith("capabilities:")) {
+            capabilities = line.substring("capabilities:".length());
+            return true;
+        }
+                
+        if (line.trim().toLowerCase().startsWith("deployment:")) {
+            deployment = line.substring("deployment:".length());
+            return true;
+        }
+        
         if (line.trim().toLowerCase().startsWith("history:")) {
             history = line.substring("history:".length());
             return true;

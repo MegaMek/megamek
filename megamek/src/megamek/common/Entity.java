@@ -12001,6 +12001,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
          *
          */
         private static final long serialVersionUID = -8018098140016149185L;
+        private String capabilities = "";
+        private String overview = "";
+        private String deployment = "";
         private String history = "";
         private String mmlImageFilePath = "";
 
@@ -12008,13 +12011,36 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // Constructor
         }
 
-        public String getHistory() {
-            return history;
+        public String getCapabilities() {
+            return capabilities;
         }
+        
+        public void setCapabilities(String newCapabilities) {
+            capabilities = newCapabilities;
+        }
+        
+        public String getOverview() {
+            return overview;
+        }
+		public void setOverview(String newOverview) {
+			overview = newOverview;			
+		}
+		
+		public String getDeployment() {
+            return deployment;
+		}
 
-        public void setHistory(String newHistory) {
-            history = newHistory;
-        }
+		public void setDeployment(String newDeployment) {
+			deployment = newDeployment;
+		}
+		
+		public void setHistory(String newHistory) {
+			history = newHistory;
+		}
+		
+		public String getHistory() {
+			return history;
+		}
 
         public String getMMLImagePath() {
             return mmlImageFilePath;
@@ -12023,6 +12049,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         public void setMMLImagePath(String filePath) {
             mmlImageFilePath = filePath;
         }
+   
+
     }
 
     public Vector<Integer> getLoadedKeepers() {

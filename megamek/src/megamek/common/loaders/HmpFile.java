@@ -446,7 +446,7 @@ implements IMechLoader
             mech.setChassis(name);
             mech.setModel(model);
             mech.setYear(year);
-            mech.getFluff().setHistory(fluff);
+            mech.getFluff().setCapabilities(fluff);
 
             mech.setOmni((chassisType == ChassisType.BIPED_OMNI) || (chassisType == ChassisType.QUADRAPED_OMNI));
 

@@ -60,6 +60,7 @@ import megamek.common.IAimingModes;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
+import megamek.common.IHex;
 import megamek.common.INarcPod;
 import megamek.common.IdealHex;
 import megamek.common.LargeSupportTank;
@@ -71,6 +72,7 @@ import megamek.common.SuperHeavyTank;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
+import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.AbstractEntityAction;
@@ -2500,6 +2502,16 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (bldg != null) {
             targets.add(new BuildingTarget(pos, clientgui.getClient().getGame()
                                                          .getBoard(), false));
+        }
+        
+        // If we clicked on a wooded hex with no other targets, clear woods
+        if (targets.size() == 0) {
+            IHex hex = game.getBoard().getHex(pos);
+            if (hex.containsTerrain(Terrains.WOODS)
+                    || hex.containsTerrain(Terrains.JUNGLE)) {
+                targets.add(new HexTarget(pos, game.getBoard(),
+                        Targetable.TYPE_HEX_CLEAR));
+            }
         }
 
         // Do we have a single choice?

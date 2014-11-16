@@ -74,6 +74,7 @@ v0.39.3-dev (SVN)
 + Data: New Images and Unit Names Fixes
 + Bug [#4293]: Can only save custom weapon order orders, issues with saving
     weapon sort orders (this will invalidate any currently saved weapon sort
++ Bug [#4307]: TacOps BA vs BA weapon damage applied to wrong David Gauss Rifle
     orders)
 + Feature: GameOptionsDialog now has a Search tab, where the user can enter text
     and any options that contain that text in their name or tooltip will be

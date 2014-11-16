@@ -5431,60 +5431,75 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
+     * Return the currently operable AMS mounted in this Entity.
+     * 
+     * @return
+     */
+    public List<Mounted> getActiveAMS() {
+        ArrayList<Mounted> ams = new ArrayList<>();
+        for (Mounted weapon : getWeaponList()) {
+            // Skip anything that's not AMS
+            if (!weapon.getType().hasFlag(WeaponType.F_AMS)) {
+                continue;
+            }
+
+            // Make sure the AMS is good to go
+            if (!weapon.isReady() || weapon.isMissing()
+                    || weapon.curMode().equals("Off")) {
+                continue;
+            }
+
+            // AMS blocked by transported units can not fire
+            if (isWeaponBlockedAt(weapon.getLocation(),
+                    weapon.isRearMounted())) {
+                continue;
+            }
+
+            // Make sure ammo is loaded
+            Mounted ammo = weapon.getLinked();
+            if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY))
+                    && ((ammo == null) || (ammo.getUsableShotsLeft() == 0) 
+                            || ammo.isDumping())) {
+                loadWeapon(weapon);
+                ammo = weapon.getLinked();
+            }
+
+            // try again
+            if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY))
+                    && ((ammo == null) || (ammo.getUsableShotsLeft() == 0) 
+                            || ammo.isDumping())) {
+                // No ammo for this AMS.
+                continue;
+            }
+            ams.add(weapon);
+        }
+        return ams;
+    }
+    
+    /**
      * Assign AMS systems to the most dangerous incoming missile attacks. This
      * should only be called once per turn, or AMS will get extra attacks
      */
     public void assignAMS(Vector<WeaponHandler> vAttacks) {
 
         HashSet<WeaponAttackAction> targets = new HashSet<WeaponAttackAction>();
-        for (Mounted weapon : getWeaponList()) {
-            if (weapon.getType().hasFlag(WeaponType.F_AMS)) {
-                if (!weapon.isReady() || weapon.isMissing()
-                        || weapon.curMode().equals("Off")) {
-                    continue;
+        for (Mounted ams : getActiveAMS()) {
+            // make a new vector of only incoming attacks in arc
+            Vector<WeaponAttackAction> vAttacksInArc = 
+                    new Vector<WeaponAttackAction>(vAttacks.size());
+            for (WeaponHandler wr : vAttacks) {
+                if (!targets.contains(wr.waa)
+                        && Compute.isInArc(game, getId(), getEquipmentNum(ams),
+                                game.getEntity(wr.waa.getEntityId()))) {
+                    vAttacksInArc.addElement(wr.waa);
                 }
-
-                // AMS blocked by transported units can not fire
-                if (isWeaponBlockedAt(weapon.getLocation(),
-                        weapon.isRearMounted())) {
-                    continue;
-                }
-
-                // make sure ammo is loaded
-                Mounted ammo = weapon.getLinked();
-                if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY))
-                        && ((ammo == null) || (ammo.getUsableShotsLeft() == 0) 
-                                || ammo.isDumping())) {
-                    loadWeapon(weapon);
-                    ammo = weapon.getLinked();
-                }
-
-                // try again
-                if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY))
-                        && ((ammo == null) || (ammo.getUsableShotsLeft() == 0) 
-                                || ammo.isDumping())) {
-                    // No ammo for this AMS.
-                    continue;
-                }
-
-                // make a new vector of only incoming attacks in arc
-                Vector<WeaponAttackAction> vAttacksInArc = 
-                        new Vector<WeaponAttackAction>(vAttacks.size());
-                for (WeaponHandler wr : vAttacks) {
-                    if (!targets.contains(wr.waa)
-                            && Compute.isInArc(game, getId(),
-                                    getEquipmentNum(weapon),
-                                    game.getEntity(wr.waa.getEntityId()))) {
-                        vAttacksInArc.addElement(wr.waa);
-                    }
-                }
-                // find the most dangerous salvo by expected damage
-                WeaponAttackAction waa = Compute.getHighestExpectedDamage(game,
-                        vAttacksInArc, true);
-                if (waa != null) {
-                    waa.addCounterEquipment(weapon);
-                    targets.add(waa);
-                }
+            }
+            // find the most dangerous salvo by expected damage
+            WeaponAttackAction waa = Compute.getHighestExpectedDamage(game,
+                    vAttacksInArc, true);
+            if (waa != null) {
+                waa.addCounterEquipment(ams);
+                targets.add(waa);
             }
         }
     }

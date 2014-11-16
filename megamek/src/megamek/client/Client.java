@@ -85,6 +85,7 @@ import megamek.common.actions.DodgeAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEntityChangeEvent;
@@ -1396,6 +1397,11 @@ public class Client implements IClientCommandHandler {
                     case (Packet.COMMAND_CFR_DOMINO_EFFECT):
                         cfrEvt.setEntityId((int) c.getData()[1]);
                         break;
+                    case Packet.COMMAND_CFR_AMS_ASSIGN:
+                        cfrEvt.setEntityId((int) c.getData()[1]);
+                        cfrEvt.setAmsEquipNum((int) c.getData()[2]);
+                        cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
+                        break;
                 }
                 game.processGameEvent(cfrEvt);
                 break;
@@ -1426,9 +1432,14 @@ public class Client implements IClientCommandHandler {
     }
 
     public void sendDominoCFRResponse(MovePath mp) {
-        Object data[] = {Packet.COMMAND_CFR_DOMINO_EFFECT, mp};
-        Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
-                                   data);
+        Object data[] = { Packet.COMMAND_CFR_DOMINO_EFFECT, mp };
+        Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
+        send(packet);
+    }
+
+    public void sendAMSAssignCFRResponse(Integer waaIndex) {
+        Object data[] = { Packet.COMMAND_CFR_AMS_ASSIGN, waaIndex };
+        Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }
 

@@ -89,6 +89,7 @@ v0.39.3-dev (SVN)
 + Feature: Add Overview, Capability, and Deployment tags, so the unit files could have descriptive text that match the 
 	fields from the published TROs.  No unit files have been changed.
 + Feature [#1323]: AMS now have an Automatic mode when auto AMS rule is off
++ Bug [#4305]: Movepath displays PSR warning for vehicles moving through rubble
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

@@ -410,7 +410,7 @@ public class Compute {
         if ((movementType != EntityMovementType.MOVE_JUMP)
             && (destHex.terrainLevel(Terrains.RUBBLE) > 0)
             && (entity.getMovementMode() != EntityMovementMode.VTOL)
-            && !isInfantry) {
+            && (entity instanceof Mech)) {
             return true;
         }
 

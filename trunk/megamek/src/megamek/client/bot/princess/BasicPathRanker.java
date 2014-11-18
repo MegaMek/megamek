@@ -267,6 +267,10 @@ public class BasicPathRanker extends PathRanker {
 
     protected double calculateKickDamagePotential(Entity enemy, MovePath path, IGame game) {
 
+        if (!(enemy instanceof Mech)) {
+            return 0.0;
+        }
+
         // if they can kick me, and probably hit, they probably will.
         PhysicalInfo theirKick = new PhysicalInfo(enemy, null, path.getEntity(),
                                                   new EntityState(path), PhysicalAttackType.RIGHT_KICK, game, owner,
@@ -305,6 +309,10 @@ public class BasicPathRanker extends PathRanker {
     }
 
     protected double calculateMyKickDamagePotential(MovePath path, Entity enemy, IGame game) {
+        if (!(path.getEntity() instanceof Mech)) {
+            return 0.0;
+        }
+
         PhysicalInfo myKick = new PhysicalInfo(path.getEntity(),
                                                new EntityState(path), enemy, null, PhysicalAttackType.RIGHT_KICK,
                                                game, owner, true);
@@ -489,12 +497,14 @@ public class BasicPathRanker extends PathRanker {
                 if (myDamagePotential > maximumDamageDone) {
                     maximumDamageDone = myDamagePotential;
                 }
-                PhysicalInfo myKick = new PhysicalInfo(
-                        path.getEntity(), new EntityState(path), target, null,
-                        PhysicalAttackType.RIGHT_KICK, game, owner, true);
-                double expectedKickDamage = myKick.getExpectedDamageOnHit() * myKick.getProbabilityToHit();
-                if (expectedKickDamage > maximumPhysicalDamage) {
-                    maximumPhysicalDamage = expectedKickDamage;
+                if (path.getEntity() instanceof Mech) {
+                    PhysicalInfo myKick = new PhysicalInfo(
+                            path.getEntity(), new EntityState(path), target, null,
+                            PhysicalAttackType.RIGHT_KICK, game, owner, true);
+                    double expectedKickDamage = myKick.getExpectedDamageOnHit() * myKick.getProbabilityToHit();
+                    if (expectedKickDamage > maximumPhysicalDamage) {
+                        maximumPhysicalDamage = expectedKickDamage;
+                    }
                 }
             }
 

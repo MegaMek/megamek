@@ -1566,7 +1566,15 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         // allow spotting
         if ((ce() != null) && ce().canSpot() && (target != null)
                 && game.getOptions().booleanOption("indirect_fire")) { //$NON-NLS-1$)
-            setSpotEnabled(true);
+            boolean hasLos = LosEffects.calculateLos(game, cen, target)
+                    .canSee();
+            // In double blind, we need to "spot" the target as well as LoS
+            if (game.getOptions().booleanOption("double_blind")
+                    && !Compute.inVisualRange(game, ce(), target)
+                    && !Compute.inSensorRange(game, ce(), target, null)) {
+                hasLos = false;
+            }
+            setSpotEnabled(hasLos);
         } else {
             setSpotEnabled(false);
         }

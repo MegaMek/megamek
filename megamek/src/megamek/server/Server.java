@@ -2960,13 +2960,7 @@ public class Server implements Runnable {
 
             // update turn order
             if (switched) {
-                // lets hope this works... But I would assume, that the current
-                // turn has to end so lets call the function...
-                //
-                GameTurn nextturn = turns.get(nextturnid);
-                GameTurn currentturn = turns.get(currentturnindex);
-                turns.set(nextturnid, currentturn);
-                turns.set(currentturnindex, nextturn);
+                game.swapTurnOrder(currentturnindex, nextturnid);
                 // update the turn packages for all players.
                 send(createTurnVectorPacket());
                 send(createTurnIndexPacket());

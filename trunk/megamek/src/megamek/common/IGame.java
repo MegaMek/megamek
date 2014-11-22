@@ -416,6 +416,13 @@ public interface IGame {
     public abstract void insertTurnAfter(GameTurn turn, int index);
 
     /**
+     * Swaps the turn at index 1 with the turn at index 2.
+     * 
+     * @param index1
+     * @param index2
+     */
+    public abstract void swapTurnOrder(int index1, int index2);
+    /**
      * Returns an Enumeration of the current turn list
      */
     public abstract Enumeration<GameTurn> getTurns();

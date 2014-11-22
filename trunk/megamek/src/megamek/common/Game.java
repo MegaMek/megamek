@@ -697,6 +697,13 @@ public class Game implements Serializable, IGame {
             turnVector.insertElementAt(turn, index + 1);
         }
     }
+    
+    public void swapTurnOrder(int index1, int index2) {
+        GameTurn turn1 = turnVector.get(index1);
+        GameTurn turn2 = turnVector.get(index2);
+        turnVector.set(index2, turn1);
+        turnVector.set(index1, turn2);
+    }
 
     /**
      * Returns an Enumeration of the current turn list

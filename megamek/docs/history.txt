@@ -90,6 +90,7 @@ v0.39.3-dev (SVN)
 + Feature [#1323]: AMS now have an Automatic mode when auto AMS rule is off
 + Bug [#4305]: Movepath displays PSR warning for vehicles moving through rubble
 + Bug [#4311] Infantry attempting to kick targets results in hang at end of firing phase
++ Bug [#4322]: Next Player Causes UnsupportedOperationException
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

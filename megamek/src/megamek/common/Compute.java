@@ -751,6 +751,13 @@ public class Compute {
                 LosEffects los = LosEffects.calculateLos(game, other.getId(),
                         target, true);
                 ToHitData mods = los.losModifiers(game);
+                // If the target isn't spotted, can't target
+                if (game.getOptions().booleanOption("double_blind")
+                        && !Compute.inVisualRange(game, other, target)
+                        && !Compute.inSensorRange(game, other, target, null)) {
+                    mods.addModifier(TargetRoll.IMPOSSIBLE,
+                            "outside of visual and sensor range");
+                }
                 los.setTargetCover(LosEffects.COVER_NONE);
                 mods.append(Compute.getAttackerMovementModifier(game,
                         other.getId()));

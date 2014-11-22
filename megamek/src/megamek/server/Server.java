@@ -1894,6 +1894,7 @@ public class Server implements Runnable {
         boolean outOfOrder = false;
         GameTurn turn = game.getTurn();
         if (game.isPhaseSimultaneous() && (entityUsed != null)
+            && (entityUsed != null) 
             && !turn.isValid(entityUsed.getOwnerId(), game)) {
             // turn played out of order
             outOfOrder = true;
@@ -1911,22 +1912,22 @@ public class Server implements Runnable {
                                                 : entityUsed.getOwnerId();
         boolean infMoved = entityUsed instanceof Infantry;
         boolean infMoveMulti = gameOpts.booleanOption("inf_move_multi")
-                               && ((currPhase == IGame.Phase.PHASE_MOVEMENT)
-                                   || (currPhase == IGame.Phase.PHASE_DEPLOYMENT)
-                                   || (currPhase == IGame.Phase.PHASE_INITIATIVE));
+               && ((currPhase == IGame.Phase.PHASE_MOVEMENT)
+                   || (currPhase == IGame.Phase.PHASE_DEPLOYMENT)
+                   || (currPhase == IGame.Phase.PHASE_INITIATIVE));
         boolean protosMoved = entityUsed instanceof Protomech;
         boolean protosMoveMulti = gameOpts.booleanOption("protos_move_multi");
         boolean tanksMoved = entityUsed instanceof Tank;
         boolean tanksMoveMulti = gameOpts.booleanOption(
                 "vehicle_lance_movement")
-                                 && ((currPhase == IGame.Phase.PHASE_MOVEMENT)
-                                     || (currPhase == IGame.Phase.PHASE_DEPLOYMENT)
-                                     || (currPhase == IGame.Phase.PHASE_INITIATIVE));
+                && ((currPhase == IGame.Phase.PHASE_MOVEMENT)
+                    || (currPhase == IGame.Phase.PHASE_DEPLOYMENT)
+                    || (currPhase == IGame.Phase.PHASE_INITIATIVE));
         boolean meksMoved = entityUsed instanceof Mech;
         boolean meksMoveMulti = gameOpts.booleanOption("mek_lance_movement")
-                                && ((currPhase == IGame.Phase.PHASE_MOVEMENT)
-                                    || (currPhase == IGame.Phase.PHASE_DEPLOYMENT)
-                                    || (currPhase == IGame.Phase.PHASE_INITIATIVE));
+                && ((currPhase == IGame.Phase.PHASE_MOVEMENT)
+                    || (currPhase == IGame.Phase.PHASE_DEPLOYMENT)
+                    || (currPhase == IGame.Phase.PHASE_INITIATIVE));
 
         // If infantry or protos move multi see if any
         // other unit types can move in the current turn.
@@ -1953,7 +1954,8 @@ public class Server implements Runnable {
             if (nextTurn instanceof GameTurn.SpecificEntityTurn) {
                 GameTurn.SpecificEntityTurn seTurn =
                         (GameTurn.SpecificEntityTurn) nextTurn;
-                if (seTurn.getEntityNum() == entityUsed.getId()) {
+                if ((entityUsed != null)
+                        && seTurn.getEntityNum() == entityUsed.getId()) {
                     turnIndex++;
                     usedEntityNotDone = true;
                 }

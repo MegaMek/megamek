@@ -74,6 +74,7 @@ v0.39.3-dev (SVN)
 + Data: New Images and Unit Names Fixes
 + Bug [#4293]: Can only save custom weapon order orders, issues with saving
     weapon sort orders (this will invalidate any currently saved weapon sort
++ Bug [#4307]: TacOps BA vs BA weapon damage applied to wrong David Gauss Rifle
     orders)
 + Feature: GameOptionsDialog now has a Search tab, where the user can enter text
     and any options that contain that text in their name or tooltip will be
@@ -96,6 +97,13 @@ v0.39.3-dev (SVN)
 + Bug [#4316]: NPE when attempting to skip a bot's turn while deploying
     reinforcements
 + Bug [#4319]: BA with Infantry Support Weapons cannot attack with them
++ Bug [#4311] Infantry attempting to kick targets results in hang at end of firing phase
++ Feature: [#1109] Add new command line parameters for /replacePlayer
+    Added a new menu command "Replace Player" (under File > Game) that will bring up the Bot Config Dialog to allow
+    the user to replace specific player(s) and, if using Princess, go through the full configuration process.  This
+    function allows the user to replace multiple ghost players through the selection window on the left side
+    of the dialog.  The old command-line "/replacePlayer" command, though still functional, should no longer be
+    necessary and does not have the ability to replace multiple players simultaneously.
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

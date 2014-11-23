@@ -42,13 +42,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -69,6 +63,7 @@ import megamek.client.Client;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
+import megamek.client.bot.princess.Princess;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.GBC;
@@ -105,6 +100,7 @@ import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.logging.Logger;
 import megamek.common.net.Packet;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 
@@ -712,6 +708,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         	ignoreHotKeys = true;
         	boardSaveAsImage();
             ignoreHotKeys = false;
+        }
+        if ("replacePlayer".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+            replacePlayer();
         }
         if (event.getActionCommand().equals(VIEW_MEK_DISPLAY)) {
             toggleDisplay();
@@ -1322,7 +1321,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * lounge. The file can record damage sustained, non- standard munitions
      * selected, and ammunition expended in a prior engagement.
      *
-     * @param Client
+     * @param c
      */
     protected void loadListFile(Client c) {
         loadListFile(c.getLocalPlayer());
@@ -2093,5 +2092,55 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 	@Override
 	public void componentShown(ComponentEvent arg0) {
 	}
+
+    void replacePlayer() {
+        Set<IPlayer> ghostPlayers = new HashSet<>();
+        for (IPlayer p : client.getGame().getPlayersVector()) {
+            if (p.isGhost()) {
+                ghostPlayers.add(p);
+            }
+        }
+        if (ghostPlayers.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No ghost players to replace.", "No Ghosts",
+                                          JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        BotConfigDialog botConfigDialog = new BotConfigDialog(this.frame, ghostPlayers);
+        botConfigDialog.setModal(true);
+        botConfigDialog.setVisible(true);
+        if (botConfigDialog.dialogAborted) {
+            return;
+        }
+        AddBotUtil util = new AddBotUtil();
+        BotClient botClient = botConfigDialog.getSelectedBot(client.getHost(), client.getPort());
+        String args[];
+        Collection<String> playersToReplace = botConfigDialog.getPlayerToReplace();
+        Collection<String[]> replaceCommands = new HashSet<>(playersToReplace.size());
+        if (botClient instanceof Princess) {
+            for (String player : playersToReplace) {
+                args = new String[]{
+                        "/replacePlayer",
+                        "-b:Princess",
+                        "-c:" + ((Princess) botClient).getBehaviorSettings().getDescription(),
+                        "-v:" + ((Princess) botClient).getVerbosity(),
+                        "-p:" + player
+                };
+                replaceCommands.add(args);
+            }
+
+        } else {
+            for (String player : playersToReplace) {
+                args = new String[]{
+                        "/replacePlayer",
+                        player
+                };
+                replaceCommands.add(args);
+            }
+        }
+        for (String[] cmd : replaceCommands) {
+            util.addBot(cmd, client.getGame(), client.getHost(), client.getPort());
+        }
+    }
 
 }

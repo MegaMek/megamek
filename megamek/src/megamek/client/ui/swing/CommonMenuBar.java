@@ -53,6 +53,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem fileGameScenario;
     private JMenuItem fileGameConnectBot;
     private JMenuItem fileGameConnect;
+    private JMenuItem replacePlayer;
     /**
      * When we have a <code>Board</code>, set this to <code>true</code>.
      */
@@ -70,6 +71,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem fileUnitsReinforceRAT;
     private JMenuItem fileUnitsOpen;
     private JMenuItem fileUnitsClear;
+    @SuppressWarnings("FieldCanBeLocal")
     private JMenuItem fileUnitsSave;
     /**
      * The <code>Entity</code> current selected. This value may be
@@ -85,11 +87,17 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem viewMekDisplay;
     private JMenuItem viewZoomIn;
     private JMenuItem viewZoomOut;
+    @SuppressWarnings("FieldCanBeLocal")
     private JCheckBoxMenuItem toggleIsometric;
+    @SuppressWarnings("FieldCanBeLocal")
     private JCheckBoxMenuItem toggleFovHighlight;
+    @SuppressWarnings("FieldCanBeLocal")
     private JCheckBoxMenuItem toggleFovDarken;
+    @SuppressWarnings("FieldCanBeLocal")
     private JCheckBoxMenuItem toggleFiringSolutions;
+    @SuppressWarnings("FieldCanBeLocal")
     private JMenuItem viewMovementEnvelope;
+    @SuppressWarnings("FieldCanBeLocal")
     private JMenuItem viewMovModEnvelope;
     private JMenuItem viewLOSSetting;
     private JMenuItem viewUnitOverview;
@@ -187,7 +195,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
      * A <code>Vector</code> containing the <code>ActionListener</code>s
      * that have registered themselves with this menu bar.
      */
-    private final Vector<ActionListener> actionListeners = new Vector<ActionListener>();
+    private final Vector<ActionListener> actionListeners = new Vector<>();
 
     /**
      * Create a MegaMek menu bar.
@@ -198,10 +206,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     }
 
     public CommonMenuBar() {
-        JMenu menu = null;
-        JMenu submenu = null;
-        JMenu aeromenu = null;
-        JMenuItem item = null;
+        JMenu menu;
+        JMenu submenu;
+        JMenu aeromenu;
+        JMenuItem item;
 
         // *** Create the File menu.
         menu = new JMenu(Messages.getString("CommonMenuBar.FileMenu")); //$NON-NLS-1$
@@ -216,7 +224,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         fileGameNew.addActionListener(this);
         fileGameNew.setActionCommand("fileGameNew"); //$NON-NLS-1$
         fileGameNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
-                getToolkit().getMenuShortcutKeyMask()));
+                                                          getToolkit().getMenuShortcutKeyMask()));
         submenu.add(fileGameNew);
         fileGameOpen = new JMenuItem(Messages
                 .getString("CommonMenuBar.fileGameOpen")); //$NON-NLS-1$
@@ -250,6 +258,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         fileGameConnect.addActionListener(this);
         fileGameConnect.setActionCommand("fileGameConnect"); //$NON-NLS-1$
         submenu.add(fileGameConnect);
+        replacePlayer = new JMenuItem(Messages.getString("CommonMenuBar.replacePlayer")); //$NON-NLS-1$
+        replacePlayer.addActionListener(this);
+        replacePlayer.setActionCommand("replacePlayer");
+        submenu.add(replacePlayer);
 
         // Create the Board sub-menu.
         submenu = new JMenu(Messages.getString("CommonMenuBar.BoardMenu")); //$NON-NLS-1$
@@ -796,6 +808,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
             fileGameScenario.setEnabled(false);
             fileGameConnectBot.setEnabled(false);
             fileGameConnect.setEnabled(false);
+            replacePlayer.setEnabled(false);
             // We can only save in certain phases of the game.
             if ((phase != IGame.Phase.PHASE_UNKNOWN) && (phase != IGame.Phase.PHASE_LOUNGE)
                     && (phase != IGame.Phase.PHASE_SELECTION)
@@ -804,9 +817,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
                     && (phase != IGame.Phase.PHASE_STARTING_SCENARIO)) {
                 fileGameSave.setEnabled(true);
                 fileGameSaveServer.setEnabled(true);
+                replacePlayer.setEnabled(true);
             } else {
                 fileGameSave.setEnabled(false);
                 fileGameSaveServer.setEnabled(false);
+                replacePlayer.setEnabled(false);
             }
         }
         // If we have no game, we can't save, but we can create or join one.
@@ -818,6 +833,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
             fileGameScenario.setEnabled(true);
             fileGameConnectBot.setEnabled(true);
             fileGameConnect.setEnabled(true);
+            replacePlayer.setEnabled(true);
         }
 
         // can view Game Opts if we have a game
@@ -1244,32 +1260,32 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     // Manages deploy minefield items...
     public synchronized void setDeployConventionalEnabled(int nbr) {
         deployMinesConventional.setText(Messages.getString(
-                "CommonMenuBar.Minefield", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+                "CommonMenuBar.Minefield", new Object[]{nbr})); //$NON-NLS-1$
         deployMinesConventional.setEnabled(nbr > 0);
     }
 
     public synchronized void setDeployCommandEnabled(int nbr) {
         deployMinesCommand.setText(Messages.getString(
-                "CommonMenuBar.Command", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+                "CommonMenuBar.Command", new Object[]{nbr})); //$NON-NLS-1$
         // Cannot ever deploy command mines...
         deployMinesCommand.setEnabled(false);
     }
 
     public synchronized void setDeployVibrabombEnabled(int nbr) {
         deployMinesVibrabomb.setText(Messages.getString(
-                "CommonMenuBar.Vibrabomb", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+                "CommonMenuBar.Vibrabomb", new Object[]{nbr})); //$NON-NLS-1$
         deployMinesVibrabomb.setEnabled(nbr > 0);
     }
 
     public synchronized void setDeployActiveEnabled(int nbr) {
         deployMinesActive.setText(Messages.getString(
-                "CommonMenuBar.Active", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+                "CommonMenuBar.Active", new Object[]{nbr})); //$NON-NLS-1$
         deployMinesActive.setEnabled(nbr > 0);
     }
 
     public synchronized void setDeployInfernoEnabled(int nbr) {
         deployMinesInferno.setText(Messages.getString(
-                "CommonMenuBar.Inferno", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+                "CommonMenuBar.Inferno", new Object[]{nbr})); //$NON-NLS-1$
         deployMinesInferno.setEnabled(nbr > 0);
     }
 

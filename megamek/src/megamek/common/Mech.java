@@ -341,6 +341,7 @@ public abstract class Mech extends Entity {
         switch (location) {
             case Mech.LOC_RT:
             case Mech.LOC_LT:
+            case Mech.LOC_CLEG:
                 return Mech.LOC_CT;
             case Mech.LOC_LLEG:
             case Mech.LOC_LARM:

@@ -104,6 +104,7 @@ v0.39.3-dev (SVN)
     function allows the user to replace multiple ghost players through the selection window on the left side
     of the dialog.  The old command-line "/replacePlayer" command, though still functional, should no longer be
     necessary and does not have the ability to replace multiple players simultaneously.
++ Bug [#3696]: Princess Does Not Understand Torso-Mounted Cockpits
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

@@ -379,8 +379,9 @@ public class ComputeECM {
                     continue;
                 }
                 eccmIterator = allEccmInfo.iterator();
+                boolean ecmNegated = false;
                 // ECCM that covers source of an ECM field, negates the field
-                while (eccmIterator.hasNext()) {
+                while (eccmIterator.hasNext() && !ecmNegated) {
                     ECMInfo eccmInfo = eccmIterator.next();
                     // ECCM only effects enemy ECM
                     if (!eccmInfo.isOpposed(ecmInfo)) {
@@ -393,12 +394,14 @@ public class ComputeECM {
                         if (!ecmInfo.isAngelECM() && eccmInfo.isAngelECCM()) {
                             // Remove ECM, but ECCM is unaffected
                             ecmIterator.remove();
+                            ecmNegated = true;
                         // Angel vs Angel
                         } else if (eccmInfo.getAngelECCMStrength() 
                                         >= ecmInfo.getAngelECMStrength()) {
                             // Remove the ECM and ECCM
                             ecmIterator.remove();
                             eccmIterator.remove();
+                            ecmNegated = true;
                             // Keep track of this eccm to remove it again later
                             eccmToRemove.add(eccmInfo);
                         } else if (!ecmInfo.isAngelECM() 
@@ -407,6 +410,7 @@ public class ComputeECM {
                             // Remove the ECM and ECCM
                             ecmIterator.remove();
                             eccmIterator.remove();
+                            ecmNegated = true;
                             // Keep track of this eccm to remove it again later                            
                             eccmToRemove.add(eccmInfo);
                         }

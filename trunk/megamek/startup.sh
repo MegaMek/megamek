@@ -15,12 +15,11 @@
 # 
 
 # Define script constants.
+MEGAMEK_NIX_NAME="megamek"  # Assuming on *nix name is lower case (megamek-*)
 MEGAMEK_MAIN_CLASS="megamek.MegaMek"
 MEGAMEK_DEFAULT_JARNAME="MegaMek.jar"
 MEGAMEK_DEFAULT_CLASSPATH="/usr/share/java"
 MEGAMEK_DEFAULT_CONFROOT="$HOME"
-MEGAMEK_DEFAULT_CONFPATH="$MEGAMEK_DEFAULT_CONFROOT/.megamek"
-MEGAMEK_DEFAULT_DATAPATH="/usr/share/MegaMek"
 
 MEGAMEK_ACTUAL_PATH=$(dirname $0)
 cd $MEGAMEK_ACTUAL_PATH
@@ -31,6 +30,7 @@ JAVA=/usr/bin/java
 test -x "$JAVA_HOME/bin/java" && JAVA="$JAVA_HOME/bin/java"
 
 # Try to find the directory containing MegaMek JARs.
+#  MEGAMEK_CLASSPATH may be set before hand, which is not desired.
 if ! test -z "$MEGAMEK_CLASSPATH"; then
     if ! test -d "/.$MEGAMEK_CLASSPATH" -a \
         -f "/.$MEGAMEK_CLASSPATH/$MEGAMEK_DEFAULT_JARNAME"; then
@@ -56,7 +56,25 @@ if test -z "$MEGAMEK_CLASSPATH"; then
     exit 1
 fi
 
+# Define the default names by megamek version.
+temp_path=$MEGAMEK_CLASSPATH
+old_IFS=$IFS    # Need to reset later
+IFS="/"
+for name in $temp_path ; do
+    # Test for "megamek" substring
+    if test "${name#*$MEGAMEK_NIX_NAME}" != "$name" ; then
+        # Found "megamek" within $name (don't let != confuse)
+        MEGAMEK_VERSION=$name
+    fi
+done
+IFS=$old_IFS    # Back to normal
+
+#Define default CONFPATH and DATAPATH
+MEGAMEK_DEFAULT_CONFPATH="$MEGAMEK_DEFAULT_CONFROOT/.$MEGAMEK_VERSION"
+MEGAMEK_DEFAULT_DATAPATH="/usr/share/$MEGAMEK_VERSION"
+
 # Try to find the configuration directory.
+#  MEGAMEK_CONFPATH may be set before hand, which is not desired.
 if ! test -z "$MEGAMEK_CONFPATH"; then
     if ! test -d "/.$MEGAMEK_CONFPATH" -a \
         -f "/.$MEGAMEK_CONFPATH/$MEGAMEK_DEFAULT_JARNAME"; then
@@ -94,6 +112,7 @@ if test -z "$MEGAMEK_CONFPATH"; then
 fi
 
 # Try to find the data directory.
+#  MEGAMEK_DATAPATH may be set before hand, which is not desired.
 if ! test -z "$MEGAMEK_DATAPATH"; then
     if ! test -d "/.$MEGAMEK_DATAPATH" -a \
         -f "/.$MEGAMEK_DATAPATH/$MEGAMEK_DEFAULT_JARNAME"; then
@@ -168,4 +187,5 @@ if ! test $PWD -ef $MEGAMEK_CONFPATH; then
     echo "Switching directory to $MEGAMEK_CONFPATH."
     cd $MEGAMEK_CONFPATH
 fi
+#Change the number in -Xmx to the amount of memory available to MegaMek
 $JAVA -Xmx1024m -classpath $RUNPATH $MEGAMEK_MAIN_CLASS $@

@@ -3118,7 +3118,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 2710;
         misc.extinctDate = 2784;
         misc.reintroDate = 3052;
-        misc.techLevel.put(2710, TechConstants.T_IS_TW_ALL);
+        misc.techLevel.put(2710, TechConstants.T_ALL_IS);
         misc.techRating = RATING_E;
         misc.availRating = new int[] { RATING_F, RATING_F, RATING_E };
 
@@ -7472,7 +7472,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Sprayer";
         misc.setInternalName("Tank Sprayer");
         misc.tonnage = 0.015f;
-        misc.criticals = 0;
+        misc.criticals = 1;
         misc.cost = 1000;
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_SPRAYER);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
@@ -7969,6 +7969,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("Hitch");
         misc.tonnage = 0f;
         misc.cost = 0;
+        misc.criticals = 1; //not list in a chart but TM pg 98 mentions they take 1 item slot.
         misc.flags = misc.flags.or(F_HITCH).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.industrial = true;
@@ -8535,6 +8536,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("FieldKitchen");
         misc.tonnage = 3f;
         misc.cost = 25000;
+        misc.criticals = 1;
         misc.flags = misc.flags.or(F_FIELD_KITCHEN).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.industrial = true;
@@ -9477,6 +9479,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBulldozer() {
         MiscType misc = new MiscType();
         misc.tonnage = 2;
+        misc.criticals = 1;
         misc.cost = 50000;
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "Bulldozer";
@@ -9513,6 +9516,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.tonnage = 0.01f;
         misc.cost = 7500;
+        misc.criticals = 1;
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "Manipulator";
         misc.setInternalName(misc.name);

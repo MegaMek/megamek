@@ -7986,7 +7986,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean canFlee() {
         Coords pos = getPosition();
         return (pos != null)
-               && (getWalkMP() > 0)
+               && ((getWalkMP() > 0) || (this instanceof Infantry))
                && !isProne()
                && !isStuck()
                && !isShutDown()

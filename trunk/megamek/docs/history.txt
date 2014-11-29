@@ -107,6 +107,7 @@ v0.39.3-dev (SVN)
 + Bug [#3696]: Princess Does Not Understand Torso-Mounted Cockpits
 + Bug [#4332]: ECM causes illegal state exception
 + Bug [#4328]: Jump platoon unable to flee off the map despite being at map edge
++ Bug [#4160]: startup.sh should handle new versions of megamek better
 + Data: New Images and Unit Fixes.
 + Bug: BA standard armor cannot be selected
 

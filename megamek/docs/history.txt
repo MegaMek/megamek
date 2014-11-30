@@ -112,6 +112,7 @@ v0.39.3-dev (SVN)
 + Bug: BA standard armor cannot be selected
 - Removed hidden directories from startup.sh script
 + Bug [#4326]: Load/Unload buttons always enabled during deployment
++ Bug [#4335] Direct fire Longtom marks a hex as auto hit, but no bonus applies
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

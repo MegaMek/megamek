@@ -20,6 +20,7 @@ MEGAMEK_MAIN_CLASS="megamek.MegaMek"
 MEGAMEK_DEFAULT_JARNAME="MegaMek.jar"
 MEGAMEK_DEFAULT_CLASSPATH="/usr/share/java"
 MEGAMEK_DEFAULT_CONFROOT="$HOME"
+MEGAMEK_DEFAULT_DATAPATH="/usr/share/MegaMek"
 
 MEGAMEK_ACTUAL_PATH=$(dirname $0)
 cd $MEGAMEK_ACTUAL_PATH
@@ -56,23 +57,6 @@ if test -z "$MEGAMEK_CLASSPATH"; then
     exit 1
 fi
 
-# Define the default names by megamek version.
-temp_path=$MEGAMEK_CLASSPATH
-old_IFS=$IFS    # Need to reset later
-IFS="/"
-for name in $temp_path ; do
-    # Test for "megamek" substring
-    if test "${name#*$MEGAMEK_NIX_NAME}" != "$name" ; then
-        # Found "megamek" within $name (don't let != confuse)
-        MEGAMEK_VERSION=$name
-    fi
-done
-IFS=$old_IFS    # Back to normal
-
-#Define default CONFPATH and DATAPATH
-MEGAMEK_DEFAULT_CONFPATH="$MEGAMEK_DEFAULT_CONFROOT/.$MEGAMEK_VERSION"
-MEGAMEK_DEFAULT_DATAPATH="/usr/share/$MEGAMEK_VERSION"
-
 # Try to find the configuration directory.
 #  MEGAMEK_CONFPATH may be set before hand, which is not desired.
 if ! test -z "$MEGAMEK_CONFPATH"; then
@@ -83,25 +67,8 @@ if ! test -z "$MEGAMEK_CONFPATH"; then
     fi
 fi
 if test -z "$MEGAMEK_CONFPATH"; then
-    temp_path=$MEGAMEK_DEFAULT_CONFPATH
-    if test -d $temp_path; then
-        MEGAMEK_CONFPATH=$temp_path
-    else
-        # See if we should create the default configuration directory.
-        if test -d $MEGAMEK_DEFAULT_CONFROOT -a \
-            -w $MEGAMEK_DEFAULT_CONFROOT; then
-            mkdir $temp_path
-            if test -d $temp_path; then
-                MEGAMEK_CONFPATH=$temp_path
-            fi
-        fi
-
-        # If MEGAMEK_CONFPATH is still not set, try the PWD.
-        if test -z "$MEGAMEK_CONFPATH"; then
-            if test -w $PWD; then
-                MEGAMEK_CONFPATH=$PWD
-            fi
-        fi
+    if test -w $PWD; then
+        MEGAMEK_CONFPATH=$PWD
     fi
 fi
 

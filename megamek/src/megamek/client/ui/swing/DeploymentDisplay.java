@@ -175,8 +175,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.setSelectedEntityNum(en);
         setTurnEnabled(true);
         butDone.setEnabled(false);
-        setLoadEnabled(true);
-        setUnloadEnabled(true);
+        List<Entity> loadableUnits = getLoadableEntities();
+        setLoadEnabled(loadableUnits.size() > 0);
+        setUnloadEnabled(ce().getLoadedUnits().size() > 0);
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
         clientgui.getBoardView().markDeploymentHexesFor(ce());
@@ -613,15 +614,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             turnMode = true;
         } else if (ev.getActionCommand().equals(DeployCommand.DEPLOY_LOAD.getCmd())) {
             // What undeployed units can we load?
-            Vector<Entity> choices = new Vector<Entity>();
-            Entity other;
-            for (Entity o : client.getGame().getEntitiesVector()) {
-                other = o;
-                if (other.isSelectableThisTurn() && (ce() != null)
-                        && ce().canLoad(other, false)) {
-                    choices.addElement(other);
-                }
-            }
+            List<Entity> choices = getLoadableEntities();
 
             // Do we have anyone to load?
             if (choices.size() > 0) {
@@ -633,7 +626,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                                 Messages.getString("DeploymentDisplay.loadUnitDialog.title"), //$NON-NLS-1$
                                 JOptionPane.QUESTION_MESSAGE, null,
                                 SharedUtility.getDisplayArray(choices), null);
-                other = (Entity) SharedUtility.getTargetPicked(choices, input);
+                Entity other = (Entity) SharedUtility.getTargetPicked(choices, input);
                 if (!(other instanceof Infantry)) {
                     Vector<Integer> bayChoices = new Vector<Integer>();
                     for (Transporter t : ce().getTransports()) {
@@ -837,5 +830,27 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      */
     public void removeAllListeners() {
         die();
+    }
+    
+    /**
+     * Returns a list of the entities that can be loaded into the currently
+     * selected entity.
+     * 
+     * @return
+     */
+    private List<Entity> getLoadableEntities() {       
+        ArrayList<Entity> choices = new ArrayList<Entity>();
+        // If current entity is null, nothing to do
+        if (ce() == null) {
+            return choices;
+        }
+        List<Entity> entities = clientgui.getClient().getGame()
+                .getEntitiesVector();
+        for (Entity other : entities) {        
+            if (other.isSelectableThisTurn() && ce().canLoad(other, false)) {
+                choices.add(other);
+            }
+        }
+        return choices;
     }
 }

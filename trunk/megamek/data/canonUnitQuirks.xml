@@ -241,6 +241,7 @@
         <chassis>Cyclops</chassis>
         <model>all</model>
         <quirk>cowl</quirk>
+        <quirk>battle_computer</quirk>
     </unit>
     <unit>
         <chassis>Cygnus</chassis>

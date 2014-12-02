@@ -2996,8 +2996,10 @@ public class MoveStep implements Serializable {
         }
 
         // We need extra checking for dropships, due to secondary positions
+        // if the Dropship is taking off, movetype will be safe thrust
         if ((entity instanceof Dropship) && !entity.isAirborne()
-                && isPavementStep() && entity.isLocationProhibited(dest)) {
+                && isPavementStep() && entity.isLocationProhibited(dest)
+                && (movementType != EntityMovementType.MOVE_SAFE_THRUST)) {
             for (int dir = 0; dir < 6; dir++) {
                 Coords secondaryCoords = dest.translated(dir);
                 IHex secondaryHex = game.getBoard().getHex(secondaryCoords);

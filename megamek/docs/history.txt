@@ -113,6 +113,8 @@ v0.39.3-dev (SVN)
 - Removed hidden directories from startup.sh script
 + Bug [#4326]: Load/Unload buttons always enabled during deployment
 + Bug [#4335] Direct fire Longtom marks a hex as auto hit, but no bonus applies
++ Bug [#4344] Stiletto image file missing from megamek
++ Bug MML Ammo Costs wrong.
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

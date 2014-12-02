@@ -5879,7 +5879,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 40;
         ammo.bv = 4;
-        ammo.cost = 75000;
+        ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[]{"", "HotLoad"});
         ammo.introDate = 2300;
@@ -5904,7 +5904,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 33;
         ammo.bv = 4;
-        ammo.cost = 75000;
+        ammo.cost = 27000;
         ammo.availRating = new int[]{EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B};
         ammo.introDate = 2370;
@@ -5928,7 +5928,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 24;
         ammo.bv = 6;
-        ammo.cost = 75000;
+        ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[]{"", "HotLoad"});
         ammo.introDate = 2300;
@@ -5954,7 +5954,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 20;
         ammo.bv = 6;
-        ammo.cost = 75000;
+        ammo.cost = 27000;
         ammo.availRating = new int[]{EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B};
         ammo.introDate = 2370;
@@ -5978,7 +5978,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 17;
         ammo.bv = 8;
-        ammo.cost = 75000;
+        ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[]{"", "HotLoad"});
         ammo.introDate = 2300;
@@ -6004,7 +6004,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 14;
         ammo.bv = 8;
-        ammo.cost = 75000;
+        ammo.cost = 27000;
         ammo.availRating = new int[]{EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B};
         ammo.introDate = 2370;
@@ -6028,7 +6028,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 13;
         ammo.bv = 11;
-        ammo.cost = 75000;
+        ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[]{"", "HotLoad"});
         ammo.introDate = 2300;
@@ -6054,7 +6054,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 11;
         ammo.bv = 11;
-        ammo.cost = 75000;
+        ammo.cost = 27000;
         ammo.availRating = new int[]{EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B};
         ammo.introDate = 2370;

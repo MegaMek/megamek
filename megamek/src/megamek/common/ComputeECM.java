@@ -360,6 +360,11 @@ public class ComputeECM {
             }
         }
         
+        // If either case is true, the rest is meaningless
+        if ((entities.size() < 1) || (game == null)) {
+            return allEcmInfo;
+        }
+        
         // Sort the ECM, as we need to take care of the stronger ECM/ECCM first
         // ie; Angel ECCM can counter any number of ECM, however if an angel
         //  ECM counters it first...

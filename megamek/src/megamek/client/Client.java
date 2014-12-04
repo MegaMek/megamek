@@ -265,7 +265,8 @@ public class Client implements IClientCommandHandler {
         if (result) {
             connection.addConnectionListener(connectionListener);
             packetUpdate = new ConnectionHandler();
-            connThread = new Thread(packetUpdate, "Client Connection");
+            connThread = new Thread(packetUpdate, "Client Connection, Player "
+                    + name);
             connThread.start();
         }
         return result;

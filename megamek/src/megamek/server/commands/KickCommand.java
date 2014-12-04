@@ -20,6 +20,7 @@
 
 package megamek.server.commands;
 
+import megamek.common.net.Packet;
 import megamek.server.Server;
 
 /**
@@ -68,6 +69,8 @@ public class KickCommand extends ServerCommand {
                 server.sendServerChat(server.getPlayer(connId).getName()
                         + " attempts to kick player #" + kickedId + " ("
                         + server.getPlayer(kickedId).getName() + ")...");
+                
+                server.send(kickedId, new Packet(Packet.COMMAND_CLOSE_CONNECTION));
                 server.getConnection(kickedId).close();
 
             } catch (ArrayIndexOutOfBoundsException ex) {

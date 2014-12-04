@@ -27641,7 +27641,7 @@ public class Server implements Runnable {
     /**
      * Send a packet to a specific connection.
      */
-    private void send(int connId, Packet packet) {
+    public void send(int connId, Packet packet) {
         if (getClient(connId) != null) {
             getClient(connId).send(packet);
         } else {

@@ -54,6 +54,7 @@ public class ISLongTom extends ArtilleryWeapon {
         techRating = RATING_B;
         availRating = new int[] { RATING_C, RATING_C, RATING_C };
         introDate = 1950;	
+        techLevel.put(1950, TechConstants.T_IS_ADVANCED);
 
     }
 

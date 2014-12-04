@@ -20,7 +20,7 @@
 Taurian 3028 Light Vehicles C
 @Davion 3028 Light Vehicles C,50
 Ferret Light Scout VTOL (Standard),26
-Ferret Light Scout VTOL (Armor) "Wild Weasel",9
+Ferret Light Scout VTOL (Armor) 'Wild Weasel',9
 Galleon Light Tank GAL-100,34
 Maultier Hover APC (Standard),34
 Karnov UR Gunship (Standard),17

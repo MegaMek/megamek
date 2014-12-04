@@ -21,7 +21,7 @@ Canopus 3039 Light Vehicles D
 @Liao 3028 Light Vehicles D,92
 @Marik 3028 Light Vehicles D,18
 Ferret Light Scout VTOL (Standard),39
-Ferret Light Scout VTOL (Armor) "Wild Weasel",16
+Ferret Light Scout VTOL (Armor) 'Wild Weasel',16
 Galleon Light Tank GAL-100,32
 Karnov UR Gunship (Standard),16
 Warrior Attack Helicopter H-7A,16

@@ -9,4 +9,4 @@ Hephaestus Jump Tank (Standard),5
 Anhur Transport (BA),4
 Hephaestus Jump Tank (AP),3
 Hephaestus Scout Tank Prime,2
-Svantovit Infantry Fighting Vehicle (ATM) "Masada",1
+Svantovit Infantry Fighting Vehicle (ATM) 'Masada',1

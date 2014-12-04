@@ -18,7 +18,7 @@
 #   receives a base Weight of 100.                                          #
 #############################################################################
 Outworlds 3039 Light Vehicles A
-Ferret Light Scout VTOL (Armor) "Wild Weasel",6
+Ferret Light Scout VTOL (Armor) 'Wild Weasel',6
 Galleon Light Tank GAL-100,32
 Karnov UR Gunship (Standard),16
 Warrior Attack Helicopter H-7A,16

@@ -9,4 +9,4 @@ Wasp WSP-1A,5
 Javelin JVN-10N,4
 Locust LCT-1S,3
 Commando COM-3A,2
-Firestarter FS9-M "Mirage",1
+Firestarter FS9-M 'Mirage',1

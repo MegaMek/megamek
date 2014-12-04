@@ -1,7 +1,7 @@
 3145 AFFS Light Vehicles B
 Scorpion Light Tank (LAC), 1
 Pandion Combat WiGE (Standard), 2
-Ferret Light Scout VTOL (Armor) "Wild Weasel", 3
+Ferret Light Scout VTOL (Armor) 'Wild Weasel', 3
 Yellow Jacket Gunship (RAC), 4
 Fox Armored Car (VSP), 5
 Pegasus Scout Hover Tank (3058 Upgrade), 6

@@ -25,8 +25,8 @@ Achileus Light Battle Armor [Laser],5
 Achileus Light Battle Armor [MG],5
 Achileus Light Battle Armor [TAG],5
 Achileus Light Battle Armor [IS] (WoB),6
-Longinus Battle Armor "Hacked" [David],5
-Longinus Battle Armor "Hacked" [MG],5
+Longinus Battle Armor 'Hacked' [David],5
+Longinus Battle Armor 'Hacked' [MG],5
 Longinus Battle Armor (Magnetic),5
 Phalanx Battle Armor (A),3
 Phalanx Battle Armor (B),3

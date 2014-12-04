@@ -24,7 +24,7 @@ Mercenary Periphery General 3028 Light Vehicles D
 @Marik 3028 Light Vehicles D,30
 @Steiner 3028 Light Vehicles D,30
 Ferret Light Scout VTOL (Standard),26
-Ferret Light Scout VTOL (Armor) "Wild Weasel",9
+Ferret Light Scout VTOL (Armor) 'Wild Weasel',9
 Galleon Light Tank GAL-100,35
 Karnov UR Gunship (Standard),17
 Warrior Attack Helicopter H-7A,17

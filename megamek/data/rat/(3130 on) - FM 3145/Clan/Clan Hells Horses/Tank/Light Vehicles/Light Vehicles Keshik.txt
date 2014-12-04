@@ -5,7 +5,7 @@ Hephaestus Jump Tank (Standard), 3
 Anhur Transport (Standard), 4
 Hephaestus Jump Tank (AP), 5
 Hephaestus Scout Tank Prime, 6
-Svantovit Infantry Fighting Vehicle (ATM) "Masada", 5
+Svantovit Infantry Fighting Vehicle (ATM) 'Masada', 5
 Donar Assault Helicopter (Close Support), 4
 Donar Assault Helicopter (Standard), 3
 Anhur Transport (Standard), 2

@@ -9,4 +9,4 @@ Zahn Heavy Transport (Standard), 5
 LRM Carrier (Standard), 4
 Po II Heavy Tank (Standard), 3
 Pixiu Heavy Tank (Standard), 2
-Pike Support Vehicle (RAC) "Assault Pike", 1
+Pike Support Vehicle (RAC) 'Assault Pike', 1

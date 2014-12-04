@@ -6,7 +6,7 @@ Dervish DV-6M, 4
 Shadow Hawk SHD-2H, 5
 Phoenix Hawk PXH-1, 6
 Griffin GRF-1N, 5
-Hermes II HER-2M "Mercury", 4
+Hermes II HER-2M 'Mercury', 4
 Vulcan VL-2T, 3
 Hermes II HER-2S, 2
 Wolverine WVR-6R, 1

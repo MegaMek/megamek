@@ -604,10 +604,10 @@ public class Aero extends Entity {
     public void setFuel(int gas) {
         fuel = gas;
     }
-    
+
     public float getFuelPointsPerTon(){
         if (getEntityType() == Entity.ETYPE_CONV_FIGHTER){
-            return 160;            
+            return 160;
         } else if (getEntityType() == Entity.ETYPE_DROPSHIP) {
             if (getWeight() < 400){
                 return 80;
@@ -642,25 +642,25 @@ public class Aero extends Entity {
             return 80;
         }
     }
-    
+
     /**
      * Set number of fuel points based on fuel tonnage.
-     * 
+     *
      * @param fuelTons  The number of tons of fuel
      */
     public void setFuelTonnage(float fuelTons){
-        float pointsPerTon = getFuelPointsPerTon();        
-        fuel = (int)Math.ceil(pointsPerTon * fuelTons);        
+        float pointsPerTon = getFuelPointsPerTon();
+        fuel = (int)Math.ceil(pointsPerTon * fuelTons);
     }
-    
+
     /**
      * Gets the fuel for this Aero in terms of tonnage.
-     * 
+     *
      * @return The number of tons of fuel on this Aero.
      */
     public float getFuelTonnage(){
-        return fuel / getFuelPointsPerTon();        
-    }    
+        return fuel / getFuelPointsPerTon();
+    }
 
     public int getHeatType() {
         return heatType;
@@ -2383,8 +2383,8 @@ public class Aero extends Entity {
 
         int atmoCond = game.getPlanetaryConditions().getAtmosphere();
         // add in atmospheric effects later
-        if (!(game.getBoard().inSpace() 
-                || atmoCond == PlanetaryConditions.ATMO_VACUUM) 
+        if (!(game.getBoard().inSpace()
+                || atmoCond == PlanetaryConditions.ATMO_VACUUM)
                 && isAirborne()) {
             prd.addModifier(+2, "Atmospheric operations");
 
@@ -2497,7 +2497,7 @@ public class Aero extends Entity {
     public int getHeatCapacity() {
         return getHeatCapacity(true);
     }
-    
+
     public int getHeatCapacity(boolean includeRadicalHeatSink){
         int capacity = (getHeatSinks() * (getHeatType() + 1));
         if (includeRadicalHeatSink
@@ -2555,7 +2555,7 @@ public class Aero extends Entity {
                     return (int)Math.round(getCapArmor() / 40.0)+1;
                 } else {
                     return (int)Math.round(getCap0Armor() / 40.0)+1;
-                } 
+                }
             } else {
                 return 2;
             }
@@ -2730,7 +2730,7 @@ public class Aero extends Entity {
     }
 
     @Override
-    public void addEquipment(Mounted mounted, int loc, boolean rearMounted) 
+    public void addEquipment(Mounted mounted, int loc, boolean rearMounted)
             throws LocationFullException {
         if (getEquipmentNum(mounted) == -1){
             super.addEquipment(mounted, loc, rearMounted);
@@ -3010,12 +3010,12 @@ public class Aero extends Entity {
     /**
      * Checks if a maneuver requires a control roll
      */
-    public PilotingRollData checkManeuver(MoveStep step, 
+    public PilotingRollData checkManeuver(MoveStep step,
             EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if ((step == null) || (step.getType() != MoveStepType.MANEUVER)) {
-            roll.addModifier(TargetRoll.CHECK_FALSE, 
+            roll.addModifier(TargetRoll.CHECK_FALSE,
                     "Check false: Entity is not attempting to get up.");
             return roll;
         }
@@ -3169,21 +3169,6 @@ public class Aero extends Entity {
     @Override
     public int height() {
         return 0;
-    }
-
-    /**
-     * Returns true if the entity has an RAC which is jammed and not destroyed
-     */
-    // different from base bacause I have to look beyond weapon bays
-    @Override
-    public boolean canUnjamRAC() {
-        for (Mounted mounted : getTotalWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
-            if ((wtype.getAmmoType() == AmmoType.T_AC_ROTARY) && mounted.isJammed() && !mounted.isDestroyed()) {
-                return true;
-            }
-        }
-        return false;
     }
 
     // I need a function that takes the bombChoices variable and uses it to
@@ -3503,7 +3488,7 @@ public class Aero extends Entity {
     /***
      * use the specified amount of fuel for this Aero. The amount may be
      * adjusted by certain game options
-     * 
+     *
      * @param fuel  The number of fuel points to use
      */
     public void useFuel(int fuelUsed) {
@@ -3676,7 +3661,7 @@ public class Aero extends Entity {
             setMovementMode(EntityMovementMode.AERODYNE);
         }
         setAltitude(altitude);
-        
+
         HashSet<Coords> positions = getOccupiedCoords();
         secondaryPositions.clear();
         if (game != null) {
@@ -3938,7 +3923,7 @@ public class Aero extends Entity {
         }
         return false;
     }
-    
+
     @Override
     public boolean isCrippled(boolean checkCrew) {
         return isCrippled();

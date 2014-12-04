@@ -19,7 +19,7 @@
 #############################################################################
 Marik 3039 Light Vehicles B
 Ferret Light Scout VTOL (Standard),27
-Ferret Light Scout VTOL (Armor) "Wild Weasel",7
+Ferret Light Scout VTOL (Armor) 'Wild Weasel',7
 Galleon Light Tank GAL-100,146
 Karnov UR Gunship (Standard),10
 Warrior Attack Helicopter H-7A,10

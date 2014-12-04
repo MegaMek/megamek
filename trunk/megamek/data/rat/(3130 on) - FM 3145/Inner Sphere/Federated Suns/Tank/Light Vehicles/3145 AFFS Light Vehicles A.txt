@@ -1,5 +1,5 @@
 3145 AFFS Light Vehicles A
-Ferret Light Scout VTOL (Armor) "Wild Weasel", 1
+Ferret Light Scout VTOL (Armor) 'Wild Weasel', 1
 Yellow Jacket Gunship (RAC), 2
 Fox Armored Car (VSP), 3
 Pegasus Scout Hover Tank (3058 Upgrade), 4

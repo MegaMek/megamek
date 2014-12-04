@@ -21,7 +21,7 @@ Steiner 3039 Light Vehicles F
 @Kurita 3028 Light Vehicles F,121
 @Marik 3028 Light Vehicles F,49
 Ferret Light Scout VTOL (Standard),31
-Ferret Light Scout VTOL (Armor) "Wild Weasel",8
+Ferret Light Scout VTOL (Armor) 'Wild Weasel',8
 Galleon Light Tank GAL-100,22
 Savannah Master Hovercraft (Standard),40
 Karnov UR Gunship (Standard),11

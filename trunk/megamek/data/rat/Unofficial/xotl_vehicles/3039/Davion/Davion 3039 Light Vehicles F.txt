@@ -21,7 +21,7 @@ Davion 3039 Light Vehicles F
 @Kurita 3028 Light Vehicles F,61
 @Liao 3028 Light Vehicles F,109
 Ferret Light Scout VTOL (Standard),68
-Ferret Light Scout VTOL (Armor) "Wild Weasel",17
+Ferret Light Scout VTOL (Armor) 'Wild Weasel',17
 Darter Scout Car (Standard),40
 Galleon Light Tank GAL-100,23
 Savannah Master Hovercraft (Standard),40

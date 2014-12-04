@@ -39,7 +39,7 @@ Firestarter FS9-H,102
 Valkyrie VLK-QA,54
 Mongoose MON-67,16
 Firestarter FS9-K,8
-Firestarter FS9-M "Mirage",16
+Firestarter FS9-M 'Mirage',16
 Javelin JVN-10F 'Fire Javelin',8
 Wolfhound WLF-1,30
 Wolfhound WLF-1A,8

@@ -2,7 +2,7 @@
 Hunchback HBK-4G, 1
 Cronus CNS-3M, 2
 Hunchback HBK-4N, 3
-Hermes II HER-2M "Mercury", 4
+Hermes II HER-2M 'Mercury', 4
 Griffin GRF-1N, 5
 Wolverine WVR-6R, 6
 Phoenix Hawk PXH-1, 5

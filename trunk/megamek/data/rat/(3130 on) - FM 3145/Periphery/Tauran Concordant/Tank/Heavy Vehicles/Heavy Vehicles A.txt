@@ -9,4 +9,4 @@ Rommel Tank (Sealed), 5
 Zhukov Heavy Tank (Liao), 4
 Kinnol MBT (Standard), 3
 Manticore Heavy Tank (HPPC), 2
-Pike Support Vehicle (RAC) "Assault Pike", 1
+Pike Support Vehicle (RAC) 'Assault Pike', 1

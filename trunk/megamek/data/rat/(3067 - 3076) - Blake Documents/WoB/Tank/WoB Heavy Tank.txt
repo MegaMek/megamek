@@ -7,6 +7,6 @@ Magi Infantry Support Vehicle (UCSV),5
 Demon Tank (HGR),6
 Brutus Assault Tank (PPC),5
 SRM Carrier (WoB),4
-Pike Support Vehicle (RAC) "Assault Pike",3
+Pike Support Vehicle (RAC) 'Assault Pike',3
 Thumper Artillery Vehicle (Standard),2
 Padilla Heavy Artillery Tank (Standard),1

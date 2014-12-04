@@ -22,8 +22,8 @@ Purifier Adaptive Battle Armor [PPC],8
 Purifier Adaptive Battle Armor [Laser],5
 Purifier Adaptive Battle Armor [Narc],5
 Purifier Adaptive Battle Armor [TAG],5
-Longinus Battle Armor "Hacked" [David],4
-Longinus Battle Armor "Hacked" [MG],4
+Longinus Battle Armor 'Hacked' [David],4
+Longinus Battle Armor 'Hacked' [MG],4
 Longinus Battle Armor (Magnetic),2
 Achileus Light Battle Armor [David],1
 Achileus Light Battle Armor [Flamer],1

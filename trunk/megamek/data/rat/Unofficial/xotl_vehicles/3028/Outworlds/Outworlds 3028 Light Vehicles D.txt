@@ -21,7 +21,7 @@ Outworlds 3028 Light Vehicles D
 @Davion 3028 Light Vehicles D,50
 @Kurita 3028 Light Vehicles D,50
 Ferret Light Scout VTOL (Standard),27
-Ferret Light Scout VTOL (Armor) "Wild Weasel",9
+Ferret Light Scout VTOL (Armor) 'Wild Weasel',9
 Galleon Light Tank GAL-100,35
 Karnov UR Gunship (Standard),18
 Warrior Attack Helicopter H-7A,18

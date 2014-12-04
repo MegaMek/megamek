@@ -1,5 +1,5 @@
 Clan Keshik Light Vehicles (WoRS)
-Svantovit Infantry Fighting Vehicle (ATM) "Masada", 1
+Svantovit Infantry Fighting Vehicle (ATM) 'Masada', 1
 Svantovit Infantry Fighting Vehicle (Standard), 2
 Svantovit Infantry Fighting Vehicle (Standard), 3
 Donar Assault Helicopter (Standard), 4

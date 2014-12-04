@@ -121,6 +121,8 @@ v0.39.3-dev (SVN)
 + Bug [#4347]: Unofficial rule : Unjam ultra ACs does not work for ASFs
 + Bug [#4350]: Princess Does Not Release CPU When 'Kicked' in Windows Client
 + Bug [#4348]: Unloading BA in the deployment phase is bugged
++ Data: New images and tons of RAT fixes
++ Bug [MML#141]: Long Tom Availablity Bugged by Year
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

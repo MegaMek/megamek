@@ -30,7 +30,7 @@ Whitworth WTH-1S,5
 Vulcan VL-5T,5
 Centurion CN9-A,10
 Blackjack BJ-1,36
-Hermes II HER-4K "Hermes III",10
+Hermes II HER-4K 'Hermes III',10
 Whitworth WTH-1,51
 Trebuchet TBT-5S,5
 Trebuchet TBT-7K,5

@@ -1,7 +1,7 @@
 Mercenaries Heavy Aerospace
 Stuka STU-D6,1
 Slayer SL-15B,2
-Transgressor TR-14 "AC",3
+Transgressor TR-14 'AC',3
 Chippewa CHP-W5,4
 Stuka STU-K5,5
 Eagle EGL-R6,6

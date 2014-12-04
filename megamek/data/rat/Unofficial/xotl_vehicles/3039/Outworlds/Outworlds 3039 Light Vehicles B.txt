@@ -19,7 +19,7 @@
 #############################################################################
 Outworlds 3039 Light Vehicles B
 Ferret Light Scout VTOL (Standard),40
-Ferret Light Scout VTOL (Armor) "Wild Weasel",16
+Ferret Light Scout VTOL (Armor) 'Wild Weasel',16
 Galleon Light Tank GAL-100,32
 Karnov UR Gunship (Standard),16
 Warrior Attack Helicopter H-7A,16

@@ -7,6 +7,6 @@ Manticore Heavy Tank (Standard), 5
 Po Heavy Tank (LB-X), 6
 Zhukov Heavy Tank (Liao), 5
 Po Heavy Tank (Light Gauss), 4
-Pike Support Vehicle (RAC) "Assault Pike", 3
+Pike Support Vehicle (RAC) 'Assault Pike', 3
 Po II Heavy Tank (Standard), 2
 Po II Heavy Tank (Arrow IV), 1

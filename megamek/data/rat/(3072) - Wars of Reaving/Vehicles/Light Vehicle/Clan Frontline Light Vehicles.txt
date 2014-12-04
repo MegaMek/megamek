@@ -1,7 +1,7 @@
 Clan Frontline Light Vehicles (WoRS)
 Mithras Light Tank (ERLL), 1
 Zorya Light Tank (Standard), 2
-Svantovit Infantry Fighting Vehicle (ATM) "Masada", 3
+Svantovit Infantry Fighting Vehicle (ATM) 'Masada', 3
 Svantovit Infantry Fighting Vehicle (Standard), 4
 Svantovit Infantry Fighting Vehicle (Standard), 5
 Donar Assault Helicopter (Standard), 6

@@ -9,4 +9,4 @@ Ebony MEB-9,5
 Havoc HVC-P6,4
 Gun GN-2O,3
 Yinghuochong YHC-3E,2
-Dola DOL-1A2 "Yoh Ti Ts'angs",1
+Dola DOL-1A2 'Yoh Ti Ts'angs',1

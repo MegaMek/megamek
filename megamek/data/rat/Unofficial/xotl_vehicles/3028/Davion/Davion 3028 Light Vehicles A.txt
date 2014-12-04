@@ -19,7 +19,7 @@
 #############################################################################
 Davion 3028 Light Vehicles A
 Ferret Light Scout VTOL (Standard),28
-Ferret Light Scout VTOL (Armor) "Wild Weasel",19
+Ferret Light Scout VTOL (Armor) 'Wild Weasel',19
 Darter Scout Car (Standard),45
 Galleon Light Tank GAL-100,26
 Karnov UR Gunship (Standard),13

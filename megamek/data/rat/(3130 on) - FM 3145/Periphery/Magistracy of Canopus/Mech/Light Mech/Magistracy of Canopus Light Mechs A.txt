@@ -8,5 +8,5 @@ Anubis ABS-5Y,6
 Ebony MEB-10,5
 Raven RVN-4Lr,4
 Gun GN-2O,3
-Dola DOL-1A2 "Yoh Ti Ts'angs",2
+Dola DOL-1A2 'Yoh Ti Ts'angs',2
 Koshi (Standard),1

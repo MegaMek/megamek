@@ -41,7 +41,6 @@ import megamek.client.ui.Messages;
 import megamek.common.IPlayer;
 import megamek.common.logging.LogLevel;
 import megamek.common.logging.Logger;
-import sun.swing.SwingUtilities2;
 
 /**
  * BotConfigDialog is a dialog box that configures bot properties
@@ -167,10 +166,9 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
             }
         }
         playersToReplace = new JList<>(playerList);
-        int minWidth = (int) SwingUtilities2.getFontMetrics(playersToReplace,
-                                                            playersToReplace.getFont())
-                                            .getStringBounds(longestEntry, null)
-                                            .getWidth();
+        int minWidth = (int) playersToReplace
+                .getFontMetrics(playersToReplace.getFont())
+                .getStringBounds(longestEntry, null).getWidth();
         playersToReplace.setSelectedIndex(0);
         playersToReplace.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         playersToReplace.setPreferredSize(new Dimension(minWidth, playersToReplace.getPreferredSize().height));

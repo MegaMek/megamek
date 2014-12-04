@@ -3323,6 +3323,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     HashMap<Long, Double> capacities, counts;
                     capacities = new HashMap<Long, Double>();
                     counts = new HashMap<Long, Double>();
+                    HashMap<Transporter, Double> potentialLoad = 
+                            new HashMap<Transporter, Double>();
                     // Get the counts and capacities for all present types
                     for (Entity e : entities) {
                         long entityType = e.getEntityType();
@@ -3344,9 +3346,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                                 // transporters....
                                 boolean hasTroopSpace = false;
                                 for (Transporter t: loadingEntity.getTransports()) {
+                                    double loadWeight = e.getWeight();
+                                    if (potentialLoad.containsKey(t)) {
+                                        loadWeight += potentialLoad.get(t);
+                                    }
                                     if (!(t instanceof BattleArmorHandlesTank)
-                                            && t.canLoad(e)) {
+                                            && t.canLoad(e) 
+                                            && (loadWeight <= t.getUnused())) {
                                         hasTroopSpace = true;
+                                        potentialLoad.put(t, loadWeight);                                        
+                                        break;
                                     }
                                 }
                                 if (hasTroopSpace) {

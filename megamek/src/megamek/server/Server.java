@@ -24494,8 +24494,10 @@ public class Server implements Runnable {
 
                 swarmer.setSwarmTargetId(Entity.NONE);
                 // a unit that stopped swarming due to the swarmed unit dieing
-                // should be able to move
+                // should be able to move: setSwarmTargetId to Entity.None 
+                // changes done to true and unloaded to true, need to undo this
                 swarmer.setUnloaded(false);
+                swarmer.setDone(false);
                 entity.setSwarmAttackerId(Entity.NONE);
                 Report.addNewline(vDesc);
                 r = new Report(6380);

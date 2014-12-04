@@ -71,7 +71,6 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem fileUnitsReinforceRAT;
     private JMenuItem fileUnitsOpen;
     private JMenuItem fileUnitsClear;
-    @SuppressWarnings("FieldCanBeLocal")
     private JMenuItem fileUnitsSave;
     /**
      * The <code>Entity</code> current selected. This value may be
@@ -87,17 +86,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem viewMekDisplay;
     private JMenuItem viewZoomIn;
     private JMenuItem viewZoomOut;
-    @SuppressWarnings("FieldCanBeLocal")
     private JCheckBoxMenuItem toggleIsometric;
-    @SuppressWarnings("FieldCanBeLocal")
     private JCheckBoxMenuItem toggleFovHighlight;
-    @SuppressWarnings("FieldCanBeLocal")
     private JCheckBoxMenuItem toggleFovDarken;
-    @SuppressWarnings("FieldCanBeLocal")
     private JCheckBoxMenuItem toggleFiringSolutions;
-    @SuppressWarnings("FieldCanBeLocal")
     private JMenuItem viewMovementEnvelope;
-    @SuppressWarnings("FieldCanBeLocal")
     private JMenuItem viewMovModEnvelope;
     private JMenuItem viewLOSSetting;
     private JMenuItem viewUnitOverview;
@@ -356,7 +349,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         viewUnitOverview.setMnemonic(KeyEvent.VK_U);
         viewUnitOverview.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U,
                 getToolkit().getMenuShortcutKeyMask()));
-        menu.add(viewUnitOverview);        
+        menu.add(viewUnitOverview);
         viewZoomIn = new JMenuItem(Messages
                 .getString("CommonMenuBar.viewZoomIn")); //$NON-NLS-1$
         viewZoomIn.addActionListener(this);
@@ -373,7 +366,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         toggleIsometric.addActionListener(this);
         toggleIsometric.setState(GUIPreferences.getInstance().getBoolean("UseIsometric")); //$NON-NLS-1$
         toggleIsometric.setActionCommand(ClientGUI.VIEW_TOGGLE_ISOMETRIC);
-        menu.add(toggleIsometric);        
+        menu.add(toggleIsometric);
         toggleFovDarken = new JCheckBoxMenuItem(Messages
                 .getString("CommonMenuBar.viewToggleFovDarken")); //$NON-NLS-1$
         toggleFovDarken.addActionListener(this);
@@ -431,7 +424,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
                 .getString("CommonMenuBar.viewClientSettings")); //$NON-NLS-1$
         viewClientSettings.setActionCommand("viewClientSettings"); //$NON-NLS-1$
         viewClientSettings.addActionListener(this);
-        menu.add(viewClientSettings);        
+        menu.add(viewClientSettings);
         viewLOSSetting = new JMenuItem(Messages
                 .getString("CommonMenuBar.viewLOSSetting")); //$NON-NLS-1$
         viewLOSSetting.addActionListener(this);
@@ -679,7 +672,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         menu.addSeparator();
         fireSaveWeapOrder = createMenuItem(
                 menu,
-                Messages.getString("CommonMenuBar.fireSaveWeapOrder"), ClientGUI.SAVE_WEAP_ORDER); //$NON-NLS-1$        
+                Messages.getString("CommonMenuBar.fireSaveWeapOrder"), ClientGUI.SAVE_WEAP_ORDER); //$NON-NLS-1$
 
         // *** Create the physical menu.
         menu = new JMenu(Messages.getString("CommonMenuBar.PhysicalMenu")); //$NON-NLS-1$
@@ -727,7 +720,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         item = new JMenuItem(Messages.getString("CommonMenuBar.helpSkinning")); //$NON-NLS-1$
         item.addActionListener(this);
         item.setActionCommand("helpSkinning"); //$NON-NLS-1$
-        menu.add(item);        
+        menu.add(item);
         menu.addSeparator();
         item = new JMenuItem(Messages.getString("CommonMenuBar.helpAbout")); //$NON-NLS-1$
         item.setActionCommand("helpAbout"); //$NON-NLS-1$
@@ -966,24 +959,24 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         } else {
             fireCancel.setEnabled(true);
         }
-        
+
         updateSaveWeaponOrderMenuItem();
     }
-    
+
     public synchronized void updateSaveWeaponOrderMenuItem() {
         if ((entity != null)) {
             WeaponOrderHandler.WeaponOrder storedWeapOrder = WeaponOrderHandler
                     .getWeaponOrder(entity.getChassis(), entity.getModel());
-            WeaponOrderHandler.WeaponOrder newWeapOrder = 
+            WeaponOrderHandler.WeaponOrder newWeapOrder =
                     new WeaponOrderHandler.WeaponOrder();
             newWeapOrder.orderType = entity.getWeaponSortOrder();
             newWeapOrder.customWeaponOrderMap = entity.getCustomWeaponOrder();
 
-            boolean isDefault = (storedWeapOrder == null) 
+            boolean isDefault = (storedWeapOrder == null)
                     && (newWeapOrder.orderType == WeaponSortOrder.DEFAULT);
-            
+
             if (!newWeapOrder.equals(storedWeapOrder) && !isDefault) {
-                fireSaveWeapOrder.setEnabled(true);    
+                fireSaveWeapOrder.setEnabled(true);
             } else {
                 fireSaveWeapOrder.setEnabled(false);
             }
@@ -1383,8 +1376,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     public synchronized void setFireClearWeaponJamEnabled(boolean enabled) {
         fireClearWeaponJam.setEnabled(enabled);
     }
-    
+
     public synchronized void setStrafeEnabled(boolean enabled) {
         fireStrafe.setEnabled(enabled);
-    }    
+    }
 }

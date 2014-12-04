@@ -172,7 +172,6 @@ public final class HexHasPathToCenterCache {
             return result;
         }
 
-        @SuppressWarnings("NullableProblems")
         @Override
         public int compareTo(Key o) {
             int result = getHexCoords().compareTo(o.getHexCoords());

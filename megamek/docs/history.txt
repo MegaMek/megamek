@@ -86,7 +86,7 @@ v0.39.3-dev (SVN)
 + Bug [#4191]: Entity.isImmobile(Entity.java:1223) will throw an NPE if the crew
     is NULL (such as coming from MHQ w/out a crew assigned)
 + Bug [#4303]: Infantry heavy lasers do not display the -1 to hit at range 0
-+ Feature: Add Overview, Capability, and Deployment tags, so the unit files could have descriptive text that match the 
++ Feature: Add Overview, Capability, and Deployment tags, so the unit files could have descriptive text that match the
 	fields from the published TROs.  No unit files have been changed.
 + Feature [#1323]: AMS now have an Automatic mode when auto AMS rule is off
 + Bug [#4305]: Movepath displays PSR warning for vehicles moving through rubble
@@ -118,6 +118,7 @@ v0.39.3-dev (SVN)
 + Bug [#4342]: Dropship unable to lift off (under specific circumstances)
 + Bug: ComputeECM.computeAllEntitiesECMInfo could NPE in some circumstances
 + Bug [#4341]: BA cannot mount on omni vehicles in the lobby
++ Bug [#4347]: Unofficial rule : Unjam ultra ACs does not work for ASFs
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

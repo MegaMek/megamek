@@ -579,6 +579,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     //
     public void actionPerformed(ActionEvent ev) {
         final Client client = clientgui.getClient();
+        final String actionCmd = ev.getActionCommand();
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -589,30 +590,25 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (!client.isMyTurn()) {
             // odd...
             return;
-        } else if (ev.getActionCommand().equals(DeployCommand.DEPLOY_NEXT.getCmd())) {
+        } else if (actionCmd.equals(DeployCommand.DEPLOY_NEXT.getCmd())) {
             if (ce() != null) {
                 ce().setPosition(null);
                 clientgui.bv.redrawEntity(ce());
-                // Unload any loaded units.
+                // Unload any loaded units during this turn
+                List<Integer> lobbyLoadedUnits = ce().getLoadedKeepers();
                 for (Entity other : ce().getLoadedUnits()) {
-                    // Please note, the Server never got this unit's load
-                    // orders.
-                    ce().unload(other);
-                    other.setTransportId(Entity.NONE);
-                    other.newRound(client.getGame().getRoundCount());
-                }
-                // if any of these were loaded in the chat lounge I need to
-                // reload them however
-                for (int otherId : ce().getLoadedKeepers()) {
-                    ce().load(ce().getGame().getEntity(otherId));
-                    ce().getGame().getEntity(otherId)
-                            .setTransportId(ce().getId());
+                    // Ignore units loaded before this turn
+                    if (!lobbyLoadedUnits.contains(other.getId())) {
+                        ce().unload(other);
+                        other.setTransportId(Entity.NONE);
+                        other.newRound(client.getGame().getRoundCount());
+                    }                    
                 }
             }
             selectEntity(client.getNextDeployableEntityNum(cen));
-        } else if (ev.getActionCommand().equals(DeployCommand.DEPLOY_TURN.getCmd())) {
+        } else if (actionCmd.equals(DeployCommand.DEPLOY_TURN.getCmd())) {
             turnMode = true;
-        } else if (ev.getActionCommand().equals(DeployCommand.DEPLOY_LOAD.getCmd())) {
+        } else if (actionCmd.equals(DeployCommand.DEPLOY_LOAD.getCmd())) {
             // What undeployed units can we load?
             List<Entity> choices = getLoadableEntities();
 
@@ -622,7 +618,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         .showInputDialog(
                                 clientgui,
                                 Messages.getString(
-                                        "DeploymentDisplay.loadUnitDialog.message", new Object[] { ce().getShortName(), ce().getUnusedString() }), //$NON-NLS-1$
+                                        "DeploymentDisplay.loadUnitDialog.message",
+                                        new Object[] { ce().getShortName(),
+                                                ce().getUnusedString() }), //$NON-NLS-1$
                                 Messages.getString("DeploymentDisplay.loadUnitDialog.title"), //$NON-NLS-1$
                                 JOptionPane.QUESTION_MESSAGE, null,
                                 SharedUtility.getDisplayArray(choices), null);
@@ -641,12 +639,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                                 + (int) ce().getBayById(bn).getUnused() + ")";
                     }
                     if ((bayChoices.size() > 1) && !(other instanceof Infantry)) {
+                        String title = Messages.getString("DeploymentDisplay." + //$NON-NLS-1$
+                        		"loadUnitBayNumberDialog.title"); //$NON-NLS-1$
+                        String msg = Messages.getString("DeploymentDisplay." + //$NON-NLS-1$
+                        		"loadUnitBayNumberDialog.message", //$NON-NLS-1$
+                        		new Object[] { ce().getShortName() });
                         String bayString = (String) JOptionPane
-                                .showInputDialog(
-                                        clientgui,
-                                        Messages.getString(
-                                                "DeploymentDisplay.loadUnitBayNumberDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
-                                        Messages.getString("DeploymentDisplay.loadUnitBayNumberDialog.title"), //$NON-NLS-1$
+                                .showInputDialog(clientgui, msg, title,
                                         JOptionPane.QUESTION_MESSAGE, null,
                                         retVal, null);
                         int bayNum = Integer.parseInt(bayString.substring(0,
@@ -654,7 +653,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         other.setTargetBay(bayNum);
                         // We need to update the entity here so that the server
                         // knows about our target bay
-                        clientgui.getClient().sendUpdateEntity(other);
+                        client.sendUpdateEntity(other);
                     } else if (other != null) {
                         other.setTargetBay(-1); // Safety set!
                     }
@@ -666,41 +665,51 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     ce().load(other, false, other.getTargetBay());
                     other.setTransportId(cen);
                     clientgui.mechD.displayEntity(ce());
+                    setUnloadEnabled(true);
                 }
             } // End have-choices
             else {
-                JOptionPane
-                        .showMessageDialog(
-                                clientgui.frame,
-                                Messages.getString(
-                                        "DeploymentDisplay.alertDialog1.message", new Object[] { ce().getShortName() }), Messages.getString("DeploymentDisplay.alertDialog1.title") //$NON-NLS-1$
-                                , JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(clientgui.frame, Messages
+                        .getString("DeploymentDisplay.alertDialog1.message",
+                                new Object[] { ce().getShortName() }), Messages
+                        .getString("DeploymentDisplay.alertDialog1.title") //$NON-NLS-1$
+                        , JOptionPane.ERROR_MESSAGE);
             }
         } // End load-unit
-        else if (ev.getActionCommand().equals(DeployCommand.DEPLOY_UNLOAD.getCmd())) {
+        else if (actionCmd.equals(DeployCommand.DEPLOY_UNLOAD.getCmd())) {
             // Do we have anyone to unload?
-            List<Entity> choices = ce().getLoadedUnits();
+            Entity loader = ce();
+            List<Entity> choices = loader.getLoadedUnits();
             if (choices.size() > 0) {
-                Entity other = null;
-                String input = (String) JOptionPane
-                        .showInputDialog(
-                                clientgui,
-                                Messages.getString(
-                                        "DeploymentDisplay.unloadUnitDialog.message", new Object[] { ce().getShortName(), ce().getUnusedString() }), //$NON-NLS-1$
-                                Messages.getString("DeploymentDisplay.unloadUnitDialog.title"), //$NON-NLS-1$
-                                JOptionPane.QUESTION_MESSAGE, null,
-                                SharedUtility.getDisplayArray(choices), null);
-                other = (Entity) SharedUtility.getTargetPicked(choices, input);
-                if (other != null) {
-                    // Please note, the Server never got this load order.
-                    if (ce().unload(other)) {
-                        other.setTransportId(Entity.NONE);
-                        other.newRound(clientgui.getClient().getGame()
+                Entity loaded = null;
+                String msg = Messages.getString("DeploymentDisplay." //$NON-NLS-1$
+                        + "unloadUnitDialog.message", //$NON-NLS-1$
+                        new Object[] { ce().getShortName(),
+                                ce().getUnusedString() });
+                String title = Messages.getString("DeploymentDisplay." + //$NON-NLS-1$
+                		"unloadUnitDialog.title"); //$NON-NLS-1$
+                String input = (String) JOptionPane.showInputDialog(clientgui,
+                        msg, title, JOptionPane.QUESTION_MESSAGE, null,
+                        SharedUtility.getDisplayArray(choices), null);
+                loaded = (Entity) SharedUtility.getTargetPicked(choices, input);
+                if (loaded != null) {
+                    if (loader.unload(loaded)) {
+                        loaded.setTransportId(Entity.NONE);
+                        loaded.newRound(clientgui.getClient().getGame()
                                 .getRoundCount());
                         clientgui.mechD.displayEntity(ce());
+                        // Unit loaded in the lobby?  Server needs updating
+                        if (loader.getLoadedKeepers().contains(loaded.getId())) {
+                            Vector<Integer> lobbyLoaded = loader.getLoadedKeepers();
+                            lobbyLoaded.remove(loaded.getId());
+                            loader.setLoadedKeepers(lobbyLoaded);
+                            client.sendUpdateEntity(loader);
+                            client.sendUpdateEntity(loaded);    
+                        }
+                        setLoadEnabled(getLoadableEntities().size() > 0);
                     } else {
                         System.out.println("Could not unload " + //$NON-NLS-1$
-                                other.getShortName()
+                                loaded.getShortName()
                                 + " from " + ce().getShortName()); //$NON-NLS-1$
                     }
                 }
@@ -713,7 +722,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                                         "DeploymentDisplay.alertDialog2.message", new Object[] { ce().getShortName() }), Messages.getString("DeploymentDisplay.alertDialog2.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
         } // End unload-unit
-        else if (ev.getActionCommand().equals(DeployCommand.DEPLOY_REMOVE.getCmd())) {
+        else if (actionCmd.equals(DeployCommand.DEPLOY_REMOVE.getCmd())) {
             if (JOptionPane.showConfirmDialog(clientgui.frame, Messages
                     .getString("DeploymentDisplay.removeTitle"), Messages
                     .getString("DeploymentDisplay.removeMessage",
@@ -721,7 +730,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 remove();
             }
-        } else if (ev.getActionCommand().equals(DeployCommand.DEPLOY_ASSAULTDROP.getCmd())) {
+        } else if (actionCmd.equals(DeployCommand.DEPLOY_ASSAULTDROP.getCmd())) {
             assaultDropPreference = !assaultDropPreference;
             if (assaultDropPreference) {
             buttons.get(DeployCommand.DEPLOY_ASSAULTDROP).setText(Messages
@@ -760,25 +769,26 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (isIgnoringEvents()) {
             return;
         }
-        Entity e = clientgui.getClient().getGame().getEntity(b.getEntityId());
+        final Client client = clientgui.getClient(); 
+        final Entity e = client.getGame().getEntity(b.getEntityId());
         if (null == e) {
             return;
         }
-        if (clientgui.getClient().isMyTurn()) {
-            if (clientgui.getClient().getGame().getTurn()
-                    .isValidEntity(e, clientgui.getClient().getGame())) {
+        if (client.isMyTurn()) {
+            if (client.getGame().getTurn()
+                    .isValidEntity(e, client.getGame())) {
                 if (ce() != null) {
                     ce().setPosition(null);
                     clientgui.bv.redrawEntity(ce());
-                    // Unload any loaded units.
+                    // Unload any loaded units during this turn
+                    List<Integer> lobbyLoadedUnits = ce().getLoadedKeepers();
                     for (Entity other : ce().getLoadedUnits()) {
-
-                        // Please note, the Server never got this unit's load
-                        // orders.
-                        ce().unload(other);
-                        other.setTransportId(Entity.NONE);
-                        other.newRound(clientgui.getClient().getGame()
-                                .getRoundCount());
+                        // Ignore units loaded before this turn
+                        if (!lobbyLoadedUnits.contains(other.getId())) {
+                            ce().unload(other);
+                            other.setTransportId(Entity.NONE);
+                            other.newRound(client.getGame().getRoundCount());
+                        }                    
                     }
                 }
                 selectEntity(e.getId());

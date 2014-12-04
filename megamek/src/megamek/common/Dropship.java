@@ -1479,7 +1479,7 @@ public class Dropship extends SmallCraft {
     @Override
     public void setAltitude(int altitude) {
         super.setAltitude(altitude);
-        if ((getAltitude() == 0) && !game.getBoard().inSpace()
+        if ((getAltitude() == 0) && (game != null) && !game.getBoard().inSpace()
                 && (getPosition() != null)) {
             secondaryPositions.put(0, getPosition());
             secondaryPositions.put(1, getPosition().translated(getFacing()));

@@ -86,6 +86,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
+import megamek.common.BattleArmorHandlesTank;
 import megamek.common.Bay;
 import megamek.common.Board;
 import megamek.common.BoardDimensions;
@@ -3325,17 +3326,39 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     // Get the counts and capacities for all present types
                     for (Entity e : entities) {
                         long entityType = e.getEntityType();
+                        long loaderType = loadingEntity.getEntityType();
                         double unitSize = 0;
                         if ((entityType & Entity.ETYPE_MECH) != 0) {
                             entityType = Entity.ETYPE_MECH;
                             unitSize = 1;
                         } else if ((entityType & Entity.ETYPE_INFANTRY) != 0) {
                             entityType = Entity.ETYPE_INFANTRY;
-                            // TroopSpace uses tonnage, bays use a count
-                            if ((loadingEntity.getEntityType() & Entity.ETYPE_TANK) != 0) {
-                                unitSize = e.getWeight();
-                            } else {
+                            boolean useCount = true;
+                            if ((loaderType & Entity.ETYPE_TANK) != 0) {
+                                // This is a super hack... When getting
+                                // capacities, troopspace gives unused space in
+                                // terms of tons, and BattleArmorHandles gives
+                                // it in terms of unit count.  If I call
+                                // getUnused, it sums these together, and is
+                                // meaningless, so we'll go through all 
+                                // transporters....
+                                boolean hasTroopSpace = false;
+                                for (Transporter t: loadingEntity.getTransports()) {
+                                    if (!(t instanceof BattleArmorHandlesTank)
+                                            && t.canLoad(e)) {
+                                        hasTroopSpace = true;
+                                    }
+                                }
+                                if (hasTroopSpace) {
+                                    useCount = false;
+                                }
+                            }
+                            // TroopSpace uses tonnage
+                            // bays and BA handlebars use a count
+                            if (useCount) {
                                 unitSize = 1;
+                            } else {
+                                unitSize = e.getWeight();
                             }
                         } else if ((entityType & Entity.ETYPE_PROTOMECH) != 0) {
                             entityType = Entity.ETYPE_PROTOMECH;

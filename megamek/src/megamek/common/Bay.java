@@ -110,6 +110,12 @@ public class Bay implements Transporter {
         loadedThisTurn = 0;
     }
 
+    public void resetTransporter() {
+    	troops = new Vector<Integer>();
+    	currentSpace = totalSpace;
+    	resetCounts();
+    }
+    
     /**
      * Determines if this object can accept the given unit. The unit may not be
      * of the appropriate type or there may be no room for the unit.

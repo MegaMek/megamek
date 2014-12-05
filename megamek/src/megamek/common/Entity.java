@@ -7311,6 +7311,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // If we got here, none of our transports currently carry the unit.
         return false;
     }
+    
+    public void resetTransporter() {
+        // Walk through this entity's transport components;
+        // and resets them
+        Enumeration<Transporter> iter = transports.elements();
+        while (iter.hasMoreElements()) {
+            Transporter next = iter.nextElement();
+            next.resetTransporter();
+        }
+    }
 
     /**
      * Return a string that identifies the unused capacity of this transporter.

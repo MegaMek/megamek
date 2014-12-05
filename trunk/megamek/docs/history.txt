@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.39.3-dev (SVN)
+v0.39.3 / v.0.40.0RC1 (2014-12-05 2:40 GMT)
 + Bug [#4260]: Strafing: can designate the same hex twice
 + Bug: weapon sort order updates being sent to server too frequently
 + Data: New Images

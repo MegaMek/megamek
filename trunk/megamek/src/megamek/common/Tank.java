@@ -1000,6 +1000,7 @@ public class Tank extends Entity {
         }
         if (table == ToHitData.HIT_SWARM) {
             rv.setEffect(rv.getEffect() | HitData.EFFECT_CRITICAL);
+            setPotCrit(HitData.EFFECT_CRITICAL);
         }
         return rv;
     }

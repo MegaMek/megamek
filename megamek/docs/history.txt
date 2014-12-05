@@ -125,6 +125,7 @@ v0.39.3-dev (SVN)
 + Bug [MML#141]: Long Tom Availablity Bugged by Year
 + Bug [#4339]: Dropship's 'Save Unit List' MUL File Error
 + Bug [#4312]: 'No units left to move' error when unit being swarmed dies
++ Bug [#4333]: BA swarm attack causes critical but no critical hit is rolled
 
 v0.39.2 (2014-09-27 23:51 UTC)
 + Bug [#4238]: Delayed deployment not working in scenario

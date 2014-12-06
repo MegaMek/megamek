@@ -1143,6 +1143,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         setFireEnabled(true);
         for (Coords c : strafingCoords) {
             for (Entity t : game.getEntitiesVector(c)) {
+                // Airborne units cannot be strafed
+                if (t.isAirborne()) {
+                    continue;
+                }
                 toHit = WeaponAttackAction.toHit(game, cen, t, weaponId,
                         Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE, true);
                 toHitBuff.append(t.getShortName() + ": ");

@@ -7,6 +7,7 @@ v0.39.4-dev / v0.40.0RC2 (SVN)
 + Updated Server messages for /allowTeamChange to make it clear who voted
 + Bug: Extreme range rule check box was disabled in game options dialog
 + Bug [#4361]: Out of control ASFs do not have access to the ASF movement option
++ Bug: Unexpected connection closing can cause client to enter an infinite loop
 
 v0.39.3 / v.0.40.0RC1 (2014-12-05 2:40 GMT)
 + Bug [#4260]: Strafing: can designate the same hex twice

@@ -250,7 +250,7 @@ public class Client implements IClientCommandHandler {
      * call this once to update the connection
      */
     protected void updateConnection() {
-        if (connection != null) {
+        if (connection != null && !connection.isClosed()) {
             connection.update();
         }
     }

@@ -48,6 +48,8 @@ public class AllowTeamChangeCommand extends ServerCommand {
                 		"teams in progress!");
                 return;
             }
+            
+            // Tally votes
             boolean changeTeam = true;
             int voteCount = 0;
             int eligiblePlayerCount = 0;
@@ -61,10 +63,21 @@ public class AllowTeamChangeCommand extends ServerCommand {
                 }
                 
             }
-            server.sendServerChat(connId, "Vote accepted, " + voteCount
+            
+            // Inform all players about the vote
+            server.sendServerChat(player.getName() + " has voted to allow " 
+                    + server.getPlayerRequestingTeamChange().getName()
+                    + " to join Team " + server.getRequestedTeam()
+                    + ", " + voteCount
                     + " vote(s) received out of " + eligiblePlayerCount
                     + " vote(s) needed");
+            
+            // If all votes are received, perform team change
             if (changeTeam){
+                server.sendServerChat("All votes received, "
+                        + server.getPlayerRequestingTeamChange().getName()
+                        + " will join Team " + server.getRequestedTeam()
+                        + " at the end of the turn.");
                 server.allowTeamChange();                
             }
         } catch (NumberFormatException nfe) {

@@ -464,7 +464,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals(OptionsConstants.AC_TAC_OPS_RANGE)) { //$NON-NLS-1$
+        } else if (option.getName().equals(OptionsConstants.AC_TAC_OPS_LOS_RANGE)) { //$NON-NLS-1$
             if (!options.getOption(OptionsConstants.AC_TAC_OPS_RANGE).booleanValue() //$NON-NLS-1$
                     || !editable) {
                 optionComp.setEditable(false);

@@ -3178,6 +3178,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (a.isOutControlTotal() && a.isAirborne()) {
             disableButtons();
             butDone.setEnabled(true);
+            getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
             getBtn(MoveCommand.MOVE_NEXT).setEnabled(true);
             setForwardIniEnabled(true);
             getBtn(MoveCommand.MOVE_LAUNCH).setEnabled(true);

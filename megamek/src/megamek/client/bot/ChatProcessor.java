@@ -28,7 +28,9 @@ import megamek.common.IPlayer;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.logging.LogLevel;
 import megamek.common.util.StringUtil;
+import megamek.server.Server;
 import megamek.server.commands.DefeatCommand;
+import megamek.server.commands.JoinTeamCommand;
 
 public class ChatProcessor {
 
@@ -112,7 +114,13 @@ public class ChatProcessor {
                 break;
             }
         }
-        if (p == null) {
+        if (name.equals(Server.ORIGIN)) {
+            String msg = st.nextToken();
+            if (msg.contains(JoinTeamCommand.SERVER_VOTE_PROMPT_MSG)) {
+                bot.sendChat("/allowTeamChange");
+            }
+            return;
+        } else if (p == null) {
             return;
         }
         if (bot instanceof TestBot) {

@@ -1825,6 +1825,14 @@ public class Server implements Runnable {
     public boolean isTeamChangeRequestInProgress() {
         return playerChangingTeam != null;
     }
+    
+    public IPlayer getPlayerRequestingTeamChange() {
+        return playerChangingTeam;
+    }
+    
+    public int getRequestedTeam() {
+        return requestedTeam;
+    }
 
     private void processTeamChange() {
         if (playerChangingTeam != null) {

@@ -466,10 +466,12 @@ public abstract class AbstractConnection implements IConnection {
             }
         } catch (SocketException e) {
         	// Do nothing, happens when the socket closes
+            close();
         } catch (EOFException e) {
         	// Do nothing, happens when the socket closes
+            close();
         } catch (IOException e) {
-            System.err
+            System.out
                     .println("IOException during AbstractConnection#update()");
             close();
         } catch (Exception e) {

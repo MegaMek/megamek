@@ -4327,7 +4327,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         vbar = scrollpane.getVerticalScrollBar();
         hbar = scrollpane.getHorizontalScrollBar();
 
-        if (!scrollBars){
+        if (!scrollBars && !bvSkinSpec.showScrollBars){
             vbar.setPreferredSize(new Dimension(0, vbar.getHeight()));
             hbar.setPreferredSize(new Dimension(hbar.getWidth(),0));
         }

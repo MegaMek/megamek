@@ -71,6 +71,7 @@ public class SkinXMLHandler {
     public static String RIGHT_LINE = "line_right";
     public static String LEFT_LINE = "line_left";
     public static String BACKGROUND_IMAGE = "background_image";
+    public static String SHOW_SCROLL_BARS = "show_scroll_bars";
     
     private static Hashtable<String, SkinSpecification> skinSpecs;
     
@@ -182,6 +183,14 @@ public class SkinXMLHandler {
                                     backgrounds.item(bg).getTextContent());
                         }
                     }
+                }
+                
+                // Pase show scroll bars
+                Element showScrollEle = (Element) borderList
+                        .getElementsByTagName(SHOW_SCROLL_BARS).item(0);
+                if (showScrollEle != null) {
+                    skinSpec.showScrollBars = Boolean
+                            .parseBoolean(showScrollEle.getTextContent());
                 }
                 
                 // Parse font color

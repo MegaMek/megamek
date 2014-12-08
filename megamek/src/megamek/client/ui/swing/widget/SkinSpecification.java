@@ -11,27 +11,95 @@ import java.util.ArrayList;
  */
 public class SkinSpecification {
     
+    /**
+     * Path to an image to be used in the top left corner.
+     */
     public String tl_corner;
+    
+    /**
+     * Path to an image to be used in the top right corner.
+     */
     public String tr_corner;
+    
+    /**
+     * Path to an image to be used in the bottom left corner.
+     */
     public String bl_corner;
+    
+    /**
+     * Path to an image to be used in the bottom right corner.
+     */
     public String br_corner;
     
+    
+    /**
+     * Path to images to be used along the top edge.
+     */
     public ArrayList<String> topEdge;
+    /**
+     * Has an entry for each image for the top edge that determines whether
+     * that image should be tiled or just drawn once.
+     */
     public ArrayList<Boolean> topShouldTile;
+    
+    /**
+     * Path to images to be used along the right edge.
+     */
     public ArrayList<String> rightEdge;
+    /**
+     * Has an entry for each image for the right edge that determines whether
+     * that image should be tiled or just drawn once.
+     */
     public ArrayList<Boolean> rightShouldTile;
+    
+    /**
+     * Path to images to be used along the bottom edge.
+     */
     public ArrayList<String> bottomEdge;
+    /**
+     * Has an entry for each image for the bottom edge that determines whether
+     * that image should be tiled or just drawn once.
+     */
     public ArrayList<Boolean> bottomShouldTile;
+    
+    /**
+     * Path to images to be used along the left edge.
+     */
     public ArrayList<String> leftEdge;
+    /**
+     * Has an entry for each image for the left edge that determines whether
+     * that image should be tiled or just drawn once.
+     */
     public ArrayList<Boolean> leftShouldTile;
     
+    /**
+     * Specifies the font color for the UI component
+     */
     public Color fontColor = Color.black;
     
+    /**
+     * A collection of background images.  Most UI components only need one,
+     * but some have more.  For instance, buttons have a normal background and
+     * a pressed background.
+     */
     public ArrayList<String> backgrounds;
     
-    boolean noBorder = false;
+    /**
+     * It set, it indicates that no borders should be drawn.
+     */
+    public boolean noBorder = false;
     
-    boolean tileBackground = true;
+    /**
+     * Flag that determines whether the background image should be tiled or
+     * scaled.
+     */
+    public boolean tileBackground = true;
+    
+    /**
+     * Used to specify whether a component should display scrollbars,
+     * particularly for the board view. 
+     */
+    public boolean showScrollBars = false;
     
     public SkinSpecification(){
         tl_corner = tr_corner = bl_corner = br_corner = "";

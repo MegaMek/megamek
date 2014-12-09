@@ -2807,6 +2807,10 @@ public class Tank extends Entity {
     public ArrayList<Mounted> getJammedWeapons() {
         return jammedWeapons;
     }
+    
+    public void resetJammedWeapons() {
+    	jammedWeapons = new ArrayList<Mounted>();
+    }
 
     /**
      * apply the effects of an "engine hit" crit

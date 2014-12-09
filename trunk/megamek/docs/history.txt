@@ -10,6 +10,7 @@ v0.39.4-dev / v0.40.0RC2 (SVN)
 + Bug: Unexpected connection closing can cause client to enter an infinite loop
 + Bug: Added showScrollBar to SkinSpec specifications, added plainSkinScrollBars
 + Added Entity.clearBombs() for MekHQ
++ MHQ helper functions for resetting weapon jams
 
 v0.39.3 / v.0.40.0RC1 (2014-12-05 2:40 GMT)
 + Bug [#4260]: Strafing: can designate the same hex twice

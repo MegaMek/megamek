@@ -602,6 +602,14 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public boolean jammedThisPhase() {
         return jammedThisPhase;
     }
+    
+    /**
+     * Clear all jam statuses - used by MHQ, because phase resetting doesn't work
+     */
+    public void resetJam() {
+    	jammed = false;
+    	jammedThisPhase = false;
+    }
 
     /**
      * The number of shots of ammunition currently stored in this Mounted

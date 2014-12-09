@@ -1825,11 +1825,11 @@ public class Server implements Runnable {
     public boolean isTeamChangeRequestInProgress() {
         return playerChangingTeam != null;
     }
-    
+
     public IPlayer getPlayerRequestingTeamChange() {
         return playerChangingTeam;
     }
-    
+
     public int getRequestedTeam() {
         return requestedTeam;
     }
@@ -1902,7 +1902,7 @@ public class Server implements Runnable {
         boolean outOfOrder = false;
         GameTurn turn = game.getTurn();
         if (game.isPhaseSimultaneous() && (entityUsed != null)
-            && (entityUsed != null) 
+            && (entityUsed != null)
             && !turn.isValid(entityUsed.getOwnerId(), game)) {
             // turn played out of order
             outOfOrder = true;
@@ -2495,8 +2495,8 @@ public class Server implements Runnable {
     }
 
     /**
-     * loop through entitis in the exchange phase (i.e. after leaving
-     * chatlounge) and do any actions that need to be done
+     * loop through entities in the exchange phase (i.e. after leaving
+     * chat lounge) and do any actions that need to be done
      */
     public void checkEntityExchange() {
         for (Iterator<Entity> entities = game.getEntities(); entities.hasNext();) {
@@ -6132,8 +6132,8 @@ public class Server implements Runnable {
                 entity.setPowerReverse(true);
             }
         }
-        
-        
+
+
 
         if (md.contains(MoveStepType.TAKEOFF) && (entity instanceof Aero)) {
             Aero a = (Aero) entity;
@@ -11292,7 +11292,7 @@ public class Server implements Runnable {
         send(e.getOwnerId(), new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
                 new Object[] { Packet.COMMAND_CFR_DOMINO_EFFECT, e.getId() }));
     }
-    
+
     private void sendAMSAssignCFR(Entity e, Mounted ams,
             ArrayList<WeaponAttackAction> waas) {
         send(e.getOwnerId(),
@@ -11946,12 +11946,12 @@ public class Server implements Runnable {
                 e.assignAMS(vAttacks);
             } else { // Allow user to manually assign targets
                 // Current AMS targets: each attack can only be targeted once
-                HashSet<WeaponAttackAction> amsTargets = 
+                HashSet<WeaponAttackAction> amsTargets =
                         new HashSet<WeaponAttackAction>();
                 // Pick assignment for each active AMS
                 for (Mounted ams : e.getActiveAMS()) {
                     // Create a list of valid assignments for this AMS
-                    ArrayList<WeaponAttackAction> vAttacksInArc = 
+                    ArrayList<WeaponAttackAction> vAttacksInArc =
                             new ArrayList<WeaponAttackAction>(vAttacks.size());
                     for (WeaponHandler wr : vAttacks) {
                         if (!amsTargets.contains(wr.waa)
@@ -11961,14 +11961,14 @@ public class Server implements Runnable {
                             vAttacksInArc.add(wr.waa);
                         }
                     }
-                    
+
                     // If there are no valid attacks left, don't bother
                     if (vAttacksInArc.size() < 1) {
                         continue;
                     }
-                    
+
                     WeaponAttackAction targetedWAA = null;
-                    
+
                     if (ams.curMode().equals("Automatic")) {
                         targetedWAA = Compute.getHighestExpectedDamage(game,
                                 vAttacksInArc, true);
@@ -11991,7 +11991,7 @@ public class Server implements Runnable {
                                             + "packet, received: " + cfrType);
                                     throw new IllegalStateException();
                                 }
-                                Integer waaIndex = 
+                                Integer waaIndex =
                                         (Integer)rp.packet.getData()[1];
                                 if (waaIndex != null) {
                                     targetedWAA = vAttacksInArc.get(waaIndex);
@@ -11999,7 +11999,7 @@ public class Server implements Runnable {
                             }
                         }
                     }
-                    
+
                     if (targetedWAA != null) {
                         targetedWAA.addCounterEquipment(ams);
                         amsTargets.add(targetedWAA);
@@ -17833,9 +17833,9 @@ public class Server implements Runnable {
             final Entity entity = i.next();
 
             // Only applies to units that track heat.
-            if (!((entity instanceof Mech) 
-                    || ((entity instanceof Aero) 
-                            && !((entity instanceof SmallCraft) 
+            if (!((entity instanceof Mech)
+                    || ((entity instanceof Aero)
+                            && !((entity instanceof SmallCraft)
                                     || (entity instanceof Jumpship))))) {
                 continue;
             }
@@ -24502,7 +24502,7 @@ public class Server implements Runnable {
 
                 swarmer.setSwarmTargetId(Entity.NONE);
                 // a unit that stopped swarming due to the swarmed unit dieing
-                // should be able to move: setSwarmTargetId to Entity.None 
+                // should be able to move: setSwarmTargetId to Entity.None
                 // changes done to true and unloaded to true, need to undo this
                 swarmer.setUnloaded(false);
                 swarmer.setDone(false);
@@ -24897,7 +24897,7 @@ public class Server implements Runnable {
 
     /**
      * Makes a mech fall.
-     * 
+     *
      * @param entity
      *            The Entity that is falling. It is expected that the Entity's
      *            position and elevation reflect the state prior to the fall

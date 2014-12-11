@@ -44,7 +44,7 @@ public class BombType extends AmmoType {
                                               "Alamo Missile"};
 
     public static final String[] bombInternalNames = {"HEBomb","ClusterBomb","LGBomb",
-                                                      "RocketBomb", "TAGBomb", "AAAMissile Ammo",
+                                                      "RL 10 Ammo (bomb)", "TAGBomb", "AAAMissile Ammo",
                                                       "ASMissile Ammo",
                                                       "ASEWMissile Ammo", "ArrowIVMissile Ammo",
                                                       "ArrowIVHomingMissile Ammo", "InfernoBomb",

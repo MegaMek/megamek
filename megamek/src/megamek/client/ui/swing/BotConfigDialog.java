@@ -238,15 +238,17 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     private JPanel okayPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
 
-        JPanel namepanel = new JPanel(new FlowLayout());
-        namepanel.add(new JLabel(Messages.getString("BotConfigDialog.nameLabel")));
-        nameField = new JTextField();
-        nameField.setText("Princess");
-        nameField.setColumns(12);
-        nameField.setToolTipText(Messages.getString("BotConfigDialog.namefield.tooltip"));
-        nameField.addKeyListener(this);
-        namepanel.add(nameField);
-        panel.add(namepanel);
+        if (!replacePlayer) {
+            JPanel namepanel = new JPanel(new FlowLayout());
+            namepanel.add(new JLabel(Messages.getString("BotConfigDialog.nameLabel")));
+            nameField = new JTextField();
+            nameField.setText("Princess");
+            nameField.setColumns(12);
+            nameField.setToolTipText(Messages.getString("BotConfigDialog.namefield.tooltip"));
+            nameField.addKeyListener(this);
+            namepanel.add(nameField);
+            panel.add(namepanel);
+        }
 
         butOK.addActionListener(this);
         panel.add(butOK);
@@ -618,6 +620,9 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     }
 
     String getBotName() {
+        if (replacePlayer) {
+            return playersToReplace.getSelectedValuesList().get(0);
+        }
         return nameField.getText();
     }
 

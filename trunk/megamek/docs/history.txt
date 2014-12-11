@@ -14,6 +14,9 @@ v0.39.4-dev / v0.40.0RC2 (SVN)
 + Data: New Unit images and couple of unit fixes.
 + Bug [#4373] Aero Squadron with RocketBomb MUL fails to load
 + Bug [#4358]: ASFs can combine strafing with the aimed shot popup to aim
++ Bug [#4377]: New replacePlayer menu option was replacing all bot players rather than just the selected players.
+    Also changed the "show config" and "list commands" chat commands so that Princess will respond to these commands
+    from enemies.
 
 v0.39.3 / v.0.40.0RC1 (2014-12-05 2:40 GMT)
 + Bug [#4260]: Strafing: can designate the same hex twice

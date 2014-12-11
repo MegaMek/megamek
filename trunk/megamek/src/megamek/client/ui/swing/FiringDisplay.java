@@ -508,6 +508,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     public void selectEntity(int en) {
         // clear any previously considered attacks
         if (en != cen) {
+            target(null);
             clearAttacks();
             refreshAll();
         }
@@ -1127,7 +1128,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     }
     
     private void doStrafe() {
-        clearAttacks();
+        target(null);
+        clearAttacks();        
         isStrafing = true;
         setStatusBarText(Messages
                 .getString("FiringDisplay.Strafing.StatusLabel"));
@@ -1535,7 +1537,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();
         Mounted weapon = ce().getEquipment(weaponId); 
         // Some weapons pick an automatic target
-        if ((weapon != null) && weapon.getType().hasFlag(WeaponType.F_VGL)) {
+        if ((t != null) && (weapon != null) 
+                && weapon.getType().hasFlag(WeaponType.F_VGL)) {
             int facing;
             if (ce().isSecondaryArcWeapon(weaponId)) {
                 facing = ce().getSecondaryFacing();
@@ -2036,7 +2039,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             setStatusBarText(Messages
                     .getString("FiringDisplay.its_your_turn")); //$NON-NLS-1$
         }
-        clearAttacks();
+        target(null);
+        clearAttacks();        
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
         refreshAll();

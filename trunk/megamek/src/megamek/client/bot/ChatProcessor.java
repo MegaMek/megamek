@@ -273,6 +273,22 @@ public class ChatProcessor {
             return;
         }
 
+        // Tell me what behavior you are using.
+        if (command.toLowerCase().startsWith(ChatCommands.SHOW_BEHAVIOR.getAbbreviation())) {
+            msg = "Current Behavior: " + princess.getBehaviorSettings().getDescription();
+            princess.sendChat(msg);
+            princess.log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
+        }
+
+        // List the available commands.
+        if (command.toLowerCase().startsWith(ChatCommands.LIST__COMMANDS.getAbbreviation())) {
+            StringBuilder out = new StringBuilder("Princess Chat Commands");
+            for (ChatCommands cmd : ChatCommands.values()) {
+                out.append("\n").append(cmd.getSyntax()).append(" :: ").append(cmd.getDescription());
+            }
+            princess.sendChat(out.toString());
+        }
+
         // Make sure the command came from my team.
         int speakerTeam = speakerPlayer.getTeam();
         int princessTeam = princessPlayer.getTeam();
@@ -457,22 +473,6 @@ public class ChatProcessor {
             princess.getBehaviorSettings().addPriorityUnit(id);
             msg = "Unit " + id + " added to priority unit targets list.";
             princess.sendChat(msg);
-        }
-
-        // Tell me what behavior you are using.
-        if (command.toLowerCase().startsWith(ChatCommands.SHOW_BEHAVIOR.getAbbreviation())) {
-            msg = "Current Behavior: " + princess.getBehaviorSettings().getDescription();
-            princess.sendChat(msg);
-            princess.log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
-        }
-
-        // List the available commands.
-        if (command.toLowerCase().startsWith(ChatCommands.LIST__COMMANDS.getAbbreviation())) {
-            StringBuilder out = new StringBuilder("Princess Chat Commands");
-            for (ChatCommands cmd : ChatCommands.values()) {
-                out.append("\n").append(cmd.getSyntax()).append(" :: ").append(cmd.getDescription());
-            }
-            princess.sendChat(out.toString());
         }
     }
 }

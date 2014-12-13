@@ -1524,8 +1524,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                      && (climbMode || isJumpingNow) && (this instanceof Mech))
                     || (retVal > bldnex)) {
                     retVal = bldnex;
-                    System.err.println(" Entity " + getDisplayName()
-                                       + "1 retval=" + retVal);
                 } else if ((bldnex + next.surface()) > (bldcur + current
                         .surface())) {
                     if (climbMode || isJumpingNow) {

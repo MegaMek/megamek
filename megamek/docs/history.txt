@@ -18,6 +18,7 @@ v0.39.4-dev / v0.40.0RC2 (SVN)
     Also changed the "show config" and "list commands" chat commands so that Princess will respond to these commands
     from enemies.
 + Bug: Fixed potential NPE in MovementDisplay.currentMove
++ Bug: Deploy phase Remove Unit dialog used wrong l10n entries
 
 v0.39.3 / v.0.40.0RC1 (2014-12-05 2:40 GMT)
 + Bug [#4260]: Strafing: can designate the same hex twice

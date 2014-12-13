@@ -1365,7 +1365,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         // Make sure MovePath's last step is set to isEnd=true
-        cmd.getLastStep().setEndPos(true);
+        MoveStep lastStep = cmd.getLastStep();
+        if (lastStep != null) {
+            lastStep.setEndPos(true);
+        }
     }
 
     //

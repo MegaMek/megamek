@@ -1500,29 +1500,7 @@ public class Game implements Serializable, IGame {
      * Returns an Enumeration of the active entities at the given coordinates.
      */
     public Iterator<Entity> getEntities(Coords c, boolean ignore) {
-        checkPositionCacheConsistency();
-        // Make sure the look-up is initialized
-        if (entityPosLookup.isEmpty() && !entities.isEmpty()) {
-            resetEntityPositionLookup();
-        }
-        HashSet<Integer> posEntities = entityPosLookup.get(c);
-        Vector<Entity> vector = new Vector<Entity>();
-        if (posEntities != null) {
-            for (Integer eId : posEntities) {
-                Entity e = getEntity(eId);
-                if (e.isTargetable() || ignore) {
-                    vector.add(e);
-
-                    // Sanity check
-                    HashSet<Coords> positions = e.getOccupiedCoords();
-                    if (!positions.contains(c)) {
-                        System.out.println("Game.getEntities(2)Error! "
-                                + e.getDisplayName() + " is not in " + c + "!");
-                    }
-                }
-            }
-        }
-        return Collections.unmodifiableList(vector).iterator();
+        return getEntitiesVector(c,ignore).iterator();
     }
 
     /**
@@ -3417,7 +3395,7 @@ public class Game implements Serializable, IGame {
 
         HashSet<Coords> newPositions = e.getOccupiedCoords();
         // Check to see that the position has actually changed
-        if (newPositions.equals(oldPositions) || !e.isDeployed()) {
+        if (newPositions.equals(oldPositions)) {
             return;
         }
 
@@ -3461,9 +3439,28 @@ public class Game implements Serializable, IGame {
         }
     }
     
+    private int countEntitiesInCache() {
+        int count = 0;
+        for (Coords c : entityPosLookup.keySet()) {
+            count += entityPosLookup.get(c).size();
+        }
+        return count;
+    }
+    
     private void checkPositionCacheConsistency() {
         // Sanity check on the position cache
         //  This could be removed once we are confident the cache is working
+        int entitiesInCache = countEntitiesInCache(); 
+        if (entitiesInCache != entities.size()
+                && (getPhase() != Phase.PHASE_DEPLOYMENT)
+                && (getPhase() != Phase.PHASE_EXCHANGE)
+                && (getPhase() != Phase.PHASE_LOUNGE)
+                && (getPhase() != Phase.PHASE_INITIATIVE_REPORT)
+                && (getPhase() != Phase.PHASE_INITIATIVE)) {
+            System.out.println("Entities vector has " + entities.size()
+                    + " but pos lookup cache has " + entitiesInCache
+                    + " entities!");
+        }
         for (Entity e : entities) {
             HashSet<Coords> positions = e.getOccupiedCoords();
             for (Coords c : positions) {
@@ -3483,7 +3480,7 @@ public class Game implements Serializable, IGame {
                 }
                 HashSet<Coords> positions = e.getOccupiedCoords();
                 if (!positions.contains(c)) {
-                    System.out.println("Entity Position Cache thinks Entity"
+                    System.out.println("Entity Position Cache thinks Entity "
                             + eId + "is in " + c
                             + " but the Entity thinks it's in "
                             + e.getPosition());

@@ -724,9 +724,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         } // End unload-unit
         else if (actionCmd.equals(DeployCommand.DEPLOY_REMOVE.getCmd())) {
             if (JOptionPane.showConfirmDialog(clientgui.frame, Messages
-                    .getString("DeploymentDisplay.removeTitle"), Messages
-                    .getString("DeploymentDisplay.removeMessage",
-                            new Object[] { ce().getShortName() }),
+                    .getString("DeploymentDisplay.removeUnit",
+                            new Object[] { ce().getShortName() }), Messages
+                    .getString("DeploymentDisplay.removeTitle"),
                     JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                 remove();
             }

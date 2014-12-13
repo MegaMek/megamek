@@ -43,7 +43,7 @@ class ConnectionWatchdog extends TimerTask {
             return;
         }
         System.err.println("Bark Bark");
-        if (failCount > 1000) {
+        if (failCount > 120) {
             server.getPendingConnection(id).close();
             cancel();
             System.err.println("Growl");

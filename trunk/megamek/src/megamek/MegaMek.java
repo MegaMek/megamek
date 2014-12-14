@@ -18,11 +18,16 @@ package megamek;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Properties;
@@ -116,6 +121,52 @@ public class MegaMek {
             message.append(ARGUMENTS_DESCRIPTION_MESSAGE);
             MegaMek.displayMessageAndExit(message.toString());
         }
+    }
+
+    /**
+     * Calculates the SHA-256 hash of the MegaMek.jar file
+     * Used primarily for purposes of checksum comparison when
+     * connecting a new client.
+     * @return String representing the SHA-256 hash
+     */
+    public static String getMegaMekSHA256() {
+        StringBuilder sb = new StringBuilder();
+        byte[] buffer = new byte[8192];
+        DigestInputStream in = null;
+
+        // Calculate the digest for the given file.
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            in = new DigestInputStream(new FileInputStream("MegaMek.jar"), md);
+            while (0 < in.read(buffer)) {}
+            // gets digest
+            byte[] digest = md.digest();
+            // convert the byte to hex format
+            for (byte d : digest) {
+                sb.append(String.format("%02", d));
+            }
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        } catch (NoSuchAlgorithmException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                in.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return sb.toString();
     }
 
     /**

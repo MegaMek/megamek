@@ -32,7 +32,6 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -82,6 +81,7 @@ import megamek.common.Crew;
 import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.ECMInfo;
+import megamek.common.EjectedCrew;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
@@ -253,8 +253,6 @@ import megamek.server.commands.WhoCommand;
 import megamek.server.victory.Victory;
 
 import com.thoughtworks.xstream.XStream;
-
-import megamek.common.EjectedCrew;
 
 /**
  * @author Ben Mazur
@@ -808,7 +806,7 @@ public class Server implements Runnable {
 
     private void receivePlayerVersion(Packet packet, int connId) {
         String version = (String) packet.getObject(0);
-        long timestamp = Long.parseLong((String) packet.getObject(1));
+        String checksum = (String) packet.getObject(1);
         StringBuffer buf = new StringBuffer();
         boolean needs = false;
         if (!version.equals(MegaMek.VERSION)) {
@@ -816,18 +814,13 @@ public class Server implements Runnable {
                        + MegaMek.VERSION + ", Client reports: " + version);
             needs = true;
         }
-        String ts1 = DateFormat.getInstance().format(
-                new Date(MegaMek.TIMESTAMP));
-        String ts2 = DateFormat.getInstance().format(new Date(timestamp));
-        if ((MegaMek.TIMESTAMP > 0L) && (timestamp > 0L)
-            && (Math.abs(timestamp - MegaMek.TIMESTAMP) > 90000)) {
+        if (!checksum.equals(MegaMek.getMegaMekSHA256())) {
             if (!version.equals(MegaMek.VERSION)) {
-                buf.append("\nClient/Server timestamp mismatch. Server reports: "
-                           + ts1 + ", Client reports: " + ts2);
-            } else {
-                buf.append("Client/Server timestamp mismatch. Server reports: "
-                           + ts1 + ", Client reports: " + ts2);
+                buf.append(System.lineSeparator());
             }
+            buf.append("Client/Server checksum mismatch. Server reports: "
+                    + MegaMek.getMegaMekSHA256()
+                    + ", Client reports: " + checksum);
             needs = true;
         }
 
@@ -835,8 +828,9 @@ public class Server implements Runnable {
         if (needs) {
             IPlayer player = getPlayer(connId);
             if (null != player) {
-                sendServerChat("For " + player.getName() + " Server reports:\n"
-                               + buf.toString());
+                sendServerChat("For " + player.getName() + " Server reports:"
+                        + System.lineSeparator()
+                        + buf.toString());
             }
         }
     }

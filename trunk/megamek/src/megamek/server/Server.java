@@ -806,7 +806,9 @@ public class Server implements Runnable {
 
     private void receivePlayerVersion(Packet packet, int connId) {
         String version = (String) packet.getObject(0);
-        String checksum = (String) packet.getObject(1);
+        String clientChecksum = (String) packet.getObject(1);
+        String serverChecksum = MegaMek.getMegaMekSHA256();
+        System.out.println("ERROR: Client/Server Checksum Mismatch -- Client: "+clientChecksum+" Server: "+serverChecksum);
         StringBuffer buf = new StringBuffer();
         boolean needs = false;
         if (!version.equals(MegaMek.VERSION)) {
@@ -814,13 +816,12 @@ public class Server implements Runnable {
                        + MegaMek.VERSION + ", Client reports: " + version);
             needs = true;
         }
-        if (!checksum.equals(MegaMek.getMegaMekSHA256())) {
+        if (!clientChecksum.equals(serverChecksum)) {
             if (!version.equals(MegaMek.VERSION)) {
                 buf.append(System.lineSeparator());
             }
             buf.append("Client/Server checksum mismatch. Server reports: "
-                    + MegaMek.getMegaMekSHA256()
-                    + ", Client reports: " + checksum);
+                    + serverChecksum + ", Client reports: " + clientChecksum);
             needs = true;
         }
 

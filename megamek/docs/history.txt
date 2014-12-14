@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.39.4-dev / v0.40.0RC2 (SVN)
+v0.39.4 / v0.40.0RC2 (2014-12-14 19:00 UTC)
 + added Transporter.resetTransporter function for MHQ purposes
 + Bug [#4355]: ASFs are unable to strafe hexes with friendly ASFs
 + Bots will now issue /allowTeamChange in response to /joinTeam requests

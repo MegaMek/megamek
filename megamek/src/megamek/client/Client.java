@@ -1148,7 +1148,7 @@ public class Client implements IClientCommandHandler {
                 send(new Packet(Packet.COMMAND_CLIENT_NAME, name));
                 Object[] versionData = new Object[2];
                 versionData[0] = MegaMek.VERSION;
-                versionData[1] = Long.toString(MegaMek.TIMESTAMP);
+                versionData[1] = MegaMek.getMegaMekSHA256();
                 send(new Packet(Packet.COMMAND_CLIENT_VERSIONS, versionData));
                 break;
             case Packet.COMMAND_SERVER_CORRECT_NAME:

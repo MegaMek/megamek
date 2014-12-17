@@ -3439,10 +3439,11 @@ public class Game implements Serializable, IGame {
         }
     }
     
-    private int countEntitiesInCache() {
+    private int countEntitiesInCache(List<Integer> entitiesInCache) {
         int count = 0;
         for (Coords c : entityPosLookup.keySet()) {
             count += entityPosLookup.get(c).size();
+            entitiesInCache.addAll(entityPosLookup.get(c));
         }
         return count;
     }
@@ -3450,15 +3451,26 @@ public class Game implements Serializable, IGame {
     private void checkPositionCacheConsistency() {
         // Sanity check on the position cache
         //  This could be removed once we are confident the cache is working
-        int entitiesInCache = countEntitiesInCache(); 
-        if (entitiesInCache != entities.size()
+        List<Integer> entitiesInCache = new ArrayList();
+        List<Integer> entitiesInVector = new ArrayList();
+        int entitiesInCacheCount = countEntitiesInCache(entitiesInCache); 
+        int entityVectorSize = 0;
+        for (Entity e : entities) {
+            if (e.getPosition() != null) {
+                entityVectorSize++;
+                entitiesInVector.add(e.getId());
+            }
+        }
+        Collections.sort(entitiesInCache);
+        Collections.sort(entitiesInVector);
+        if ((entitiesInCacheCount != entityVectorSize)
                 && (getPhase() != Phase.PHASE_DEPLOYMENT)
                 && (getPhase() != Phase.PHASE_EXCHANGE)
                 && (getPhase() != Phase.PHASE_LOUNGE)
                 && (getPhase() != Phase.PHASE_INITIATIVE_REPORT)
                 && (getPhase() != Phase.PHASE_INITIATIVE)) {
             System.out.println("Entities vector has " + entities.size()
-                    + " but pos lookup cache has " + entitiesInCache
+                    + " but pos lookup cache has " + entitiesInCache.size()
                     + " entities!");
         }
         for (Entity e : entities) {

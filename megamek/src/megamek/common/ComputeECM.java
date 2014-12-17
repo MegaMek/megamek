@@ -350,6 +350,11 @@ public class ComputeECM {
             }
         }
         
+        // If either case is true, the rest is meaningless
+        if ((entities.size() < 1) || (game == null)) {
+            return allEcmInfo;
+        }
+        
         // Add ECMInfo for chaff 
         for (SmokeCloud cloud : game.getSmokeCloudList()) {
             if (cloud.getSmokeLevel() == SmokeCloud.SMOKE_CHAFF_LIGHT) {
@@ -358,11 +363,6 @@ public class ComputeECM {
                     allEcmInfo.add(ecmInfo);
                 }
             }
-        }
-        
-        // If either case is true, the rest is meaningless
-        if ((entities.size() < 1) || (game == null)) {
-            return allEcmInfo;
         }
         
         // Sort the ECM, as we need to take care of the stronger ECM/ECCM first

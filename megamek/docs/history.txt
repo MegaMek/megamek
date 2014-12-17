@@ -39,6 +39,11 @@ v0.39.4 / v0.40.0RC2 (2014-12-14 19:00 UTC)
 + Feature: Changed the client/server mismatch check to use a checksum of the MegaMek.jar file instead of timestamp
 + Bug: Checksum NumberFormat error
 + Added logging for the new checksum system
++ Data:New Images/Unit Fixes
++ Bug: Deployment tag not working
++ Bug: Round error for JS/WS Sail Integrity.
++ Bug: [#150 MML] - Improved heavy gauss rifle ammo not available for aeros in 3070
++ Data: Some units with unit data for testing and viewing (Thorn,Mongoose,Mercury,Hussar,Hermes,Commando)
 
 v0.39.3 / v.0.40.0RC1 (2014-12-05 2:40 GMT)
 + Bug [#4260]: Strafing: can designate the same hex twice

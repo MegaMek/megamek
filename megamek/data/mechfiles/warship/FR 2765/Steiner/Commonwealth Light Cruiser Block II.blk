@@ -237,7 +237,7 @@ aerodyne
 <transporters>
 ASFBay:18:4
 SmallCraftBay:4:1
-CargoBay:89058:2
+CargoBay:89208:2
 </transporters>
 
 <docking_collar>
@@ -264,5 +264,5 @@ CargoBay:89058:2
 </passengers>
 
 <History>
-50 officers, 140 enlisted/non-rated, 100 gunners,120 marines, 110 bay personnel 
+50 officers, 140 enlisted/non-rated, 100 gunners,120 marines, 56 bay personnel 
 </History>

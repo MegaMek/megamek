@@ -3258,7 +3258,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISIHVGaussAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.techLevel.put(3065, TechConstants.T_IS_EXPERIMENTAL);
         ammo.name = "Improved Heavy Gauss Ammo";
         ammo.shortName = "iHeavy Gauss";
         ammo.setInternalName("ISImprovedHeavyGauss Ammo");

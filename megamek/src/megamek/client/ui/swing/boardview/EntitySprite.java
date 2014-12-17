@@ -495,16 +495,16 @@ class EntitySprite extends Sprite {
                 int dig = ((Infantry) entity).getDugIn();
                 if (dig == Infantry.DUG_IN_COMPLETE) {
                     // draw "D"
-                    graph.setColor(Color.darkGray);
-                    graph.drawString("D", 40, 71); //$NON-NLS-1$
                     graph.setColor(Color.black);
-                    graph.drawString("D", 39, 70); //$NON-NLS-1$
+                    graph.drawString("Dug In", 27, 71); //$NON-NLS-1$
+                    graph.setColor(Color.red);
+                    graph.drawString("Dug In", 26, 70); //$NON-NLS-1$
                 } else if (dig != Infantry.DUG_IN_NONE) {
                     // draw "W"
-                    graph.setColor(Color.darkGray);
-                    graph.drawString("W", 40, 71); //$NON-NLS-1$
                     graph.setColor(Color.black);
-                    graph.drawString("W", 39, 70); //$NON-NLS-1$
+                    graph.drawString("Working", 23, 71); //$NON-NLS-1$
+                    graph.setColor(Color.red);
+                    graph.drawString("Working", 22, 70); //$NON-NLS-1$
                 }
             }
 

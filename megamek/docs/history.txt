@@ -15,6 +15,7 @@ v0.39.5 / v0.40.0RC3 (SVN)
   when infantry have field guns
 + Bug [#4142]: Alternate "Better" MASC should mention, or not effect, superchargers
 + Bug [#3655]: Hardened armor and vehicle damage threshold rule
++ Bug [#4370]: Spheroid dropships have incorrect atmospheric modifiers
 
 v0.39.4 / v0.40.0RC2 (2014-12-14 19:00 UTC)
 + added Transporter.resetTransporter function for MHQ purposes

@@ -9,7 +9,7 @@
 <!--     d) A source-file only release to comply with GPL                 -->
 <!-- 2) Reduce the amount of folders and files in each release to make it -->
 <!--    more intuitive for the user                                       -->
-    
+
 <project default="release" name="MegaMek" basedir=".">
 
 	<!-- Global properties for this build -->
@@ -25,10 +25,10 @@
 	<property name="docdir" value="docs" />
 	<property name="localdir" value="localdev" />
 	<property name="util" value="packaging_utils" />
-	
+
 	<!-- Version and packaging properties -->
 	<property name="project.name" value="megamek" />
-	
+
 	<!-- same as builddir but under local -->
 	<property name="localbuilddir" value="${localdir}/${builddir}" />
 
@@ -57,7 +57,7 @@
 			</chainedmapper>
 		</mapper>
 	</pathconvert>
-	
+
 	<condition property="isOsUnixLike">
 		<os family="unix" />
 	</condition>
@@ -65,7 +65,7 @@
 	<condition property="isOsWindows">
 		<os family="windows" />
 	</condition>
-	
+
 	<condition property="isOsUnixNotMac">
 		<and>
 			<os family="unix" />
@@ -78,7 +78,7 @@
 	<condition property="isOsMac">
 		<os family="mac" />
 	</condition>
-	
+
 	<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="${util}/jarbundler-2.1.0.jar"/>
 
 	<!-- if we're using a Mac then we'll use the launch4j for Mac OS -->
@@ -105,16 +105,16 @@
 		<property name="nixdist" value="${project.name}-${version}" />
 		<property name="srcdist" value="${project.name}-${version}-source" />
 	</target>
-	
+
 	<!-- following localdev-* tasks get, build & package the current version from local sources -->
 	<target name="localdev-get" depends="localdev-init" description="get the local source">
-		<copy todir="${localdir}" >  
+		<copy todir="${localdir}" >
 			<fileset dir="${basedir}">
 				<exclude name="${localdir}" />
 			</fileset>
 		</copy>
 	</target>
-	
+
 	<target name="localdev-build" depends="localdev-get" description="compile project from local source and generate JAR file" >
 		<mkdir dir="${localbuilddir}" />
 
@@ -154,12 +154,12 @@
 		<touch file="${localdir}/${timestampfile}" />
 
 	</target>
-	
+
 	<target name="localdev-clean" description="remove the local build directory">
 		<delete dir="${localbuilddir}" />
         <delete dir="${localdir}" />
 	</target>
-	
+
 	<target name="mac-bundle" description="Bundle the project built from local source into an Mac OSX distribution">
 		<mkdir dir="${osxdist}" />
 		<copy todir="${osxdist}">
@@ -186,14 +186,14 @@
 			</fileset>
 		</copy>
 	</target>
-	
+
 	<!-- I think this will only work on OS X systems -->
 	<target name="mac-dmg" description="Create a dmg file from the OS X distribution (NOTE: only works on OSX)">
 		<exec executable="hdiutil">
 			<arg line="create -srcfolder ${osxdist} ${osxdist}.dmg -volname megamek-dev-local-mac-${DSTAMP}"/>
 		</exec>
 	</target>
-	
+
 	<target name="mac-stub" if="isOsMac" description="Replace stubs if on OSX">
 		<delete file="${osxdist}/MegaMek.app/Contents/MacOS/JavaApplicationStub" />
 		<exec executable="ln">
@@ -207,15 +207,15 @@
 			<tarfileset dir="${osxdist}" mode="755" />
 		</tar>
 	</target>
-		
+
 	<target name="mac-tar" depends="mac-stub,mac-zip" description="Create a compressed tar file of the OS X distribution"/>
-		
+
 	<target name="mac-clean">
 		<delete dir="${osxdist}" />
 	</target>
-	
+
 	<target name="mac-package" depends="mac-bundle, mac-tar, mac-clean" description="Package a Mac OS X distribution of the project built from local sources" />
-	
+
 	<target name="nix-bundle" description="Bundle the project built from local sources into a unix distribution">
 		<mkdir dir="${nixdist}" />
 		<mkdir dir="${nixdist}/${nixdist}" />
@@ -233,23 +233,23 @@
 			</fileset>
 		</copy>
 	</target>
-	
+
 	<target name="nix-tar" description="Create a compressed tar file of the unix distribution">
 		<tar destfile="${nixdist}.tar.gz" basedir="${nixdist}" compression="gzip"  longfile="gnu"/>
 	</target>
-	
+
 	<target name="nix-clean">
 		<delete dir="${nixdist}" />
 	</target>
-		
+
 	<target name="nix-package" depends="nix-bundle, nix-tar, nix-clean" description="Package a Unix distribution of the project built from local sources"/>
-	
+
 	<!-- Produce an EXE file -->
 	<target name="exe" description="Generate an EXE wrapper for MegaMek.jar">
 		<delete file="${localdir}/MegaMek.exe"/>
 		<launch4j configFile="${util}/megamek.4j_local.xml" />
 	</target>
-	
+
 	<target name="win-bundle" depends="exe" description="Bundle the project built from local sources into a Windows distribution">
 		<mkdir dir="${windist}" />
 		<copy todir="${windist}">
@@ -265,8 +265,9 @@
 			</fileset>
 		</copy>
 		<copy file="${util}/megamek.l4j.ini" todir="${windist}"/>
+        <copy file="${localdir}/MegaMek.jar" todir="${windist}/lib/" />
 	</target>
-	
+
 	<target name="unitfiles-zip" description="Create a zipfile of the Mech datafiles">
 		<zip zipfile="${localdir}/${datadir}/mechfiles/battlearmor.zip" basedir="${localdir}/${datadir}/mechfiles/battlearmor"/>
 		<zip zipfile="${localdir}/${datadir}/mechfiles/convfighter.zip" basedir="${localdir}/${datadir}/mechfiles/convfighter"/>
@@ -297,17 +298,17 @@
 		<delete dir="${localdir}/${datadir}/mechfiles/vehicles"/>
 		<delete dir="${localdir}/${datadir}/mechfiles/warship"/>
     </target>
-	
+
 	<target name="win-zip" description="Create a zipfile of the Windows distribution">
 		<zip zipfile="${basedir}/${windist}.zip" basedir="${windist}"  />
 	</target>
-		
+
 	<target name="win-clean">
 		<delete dir="${windist}" />
 	</target>
-			
+
 	<target name="win-package" depends="win-bundle, win-zip, win-clean" description="Package a Windows distribution of the project built from local sources"/>
-	
+
 	<target name="source-package" description="Package a source-only distribution of the project built from local sources">
 		<mkdir dir="${srcdist}" />
 		<mkdir dir="${srcdist}/${srcdist}" />
@@ -324,7 +325,7 @@
 		</tar>
 		<delete dir="${srcdist}" />
 	</target>
-	
+
 	<target name="release" depends="localdev-build, unitfiles-zip, mac-package, nix-package, win-package, source-package, localdev-clean" description="Build the project from local sources and package it as Windows, Mac, Unix, and source-only" />
-	
+
 </project>

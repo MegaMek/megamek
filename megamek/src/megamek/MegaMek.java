@@ -134,6 +134,16 @@ public class MegaMek {
         byte[] buffer = new byte[8192];
         DigestInputStream in = null;
 
+        // Assume UNIX/Linux, which has the jar in the root folder
+        String filename = "MegaMek.jar";
+        // If it isn't UNIX/Linux, maybe it's Windows where we've stashed it in the lib folder
+        if (new File("lib/"+filename).exists()) {
+            filename = "lib/"+filename;
+        // And if it isn't either UNIX/Linux or Windows it's got to be Mac, where it's buried inside the app
+        } else if (new File("MegaMek.app/Contents/Resources/Java/"+filename).exists()) {
+            filename = "MegaMek.app/Contents/Resources/Java/"+filename;
+        }
+
         // Calculate the digest for the given file.
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");

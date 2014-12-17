@@ -288,7 +288,8 @@
 				<include name="MegaMek.exe" />
 			</fileset>
 		</copy>
-		<copy file="${util}/megamek.l4j.ini" todir="${windist}" />
+        <copy file="${util}/megamek.l4j.ini" todir="${windist}" />
+        <copy file="${svndir}/MegaMek.jar" todir="${windist}/lib/" />
 	</target>
 
 	<target name="unitfiles-zip" description="Create a zipfile of the Mech datafiles">

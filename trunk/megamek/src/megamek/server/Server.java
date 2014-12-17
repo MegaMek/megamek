@@ -808,12 +808,12 @@ public class Server implements Runnable {
         String version = (String) packet.getObject(0);
         String clientChecksum = (String) packet.getObject(1);
         String serverChecksum = MegaMek.getMegaMekSHA256();
-        System.out.println("ERROR: Client/Server Checksum Mismatch -- Client: "+clientChecksum+" Server: "+serverChecksum);
         StringBuffer buf = new StringBuffer();
         boolean needs = false;
         if (!version.equals(MegaMek.VERSION)) {
             buf.append("Client/Server version mismatch. Server reports: "
                        + MegaMek.VERSION + ", Client reports: " + version);
+            System.out.println("ERROR: Client/Server Version Mismatch -- Client: "+version+" Server: "+MegaMek.VERSION);
             needs = true;
         }
         if (!clientChecksum.equals(serverChecksum)) {
@@ -822,6 +822,7 @@ public class Server implements Runnable {
             }
             buf.append("Client/Server checksum mismatch. Server reports: "
                     + serverChecksum + ", Client reports: " + clientChecksum);
+            System.out.println("ERROR: Client/Server Checksum Mismatch -- Client: "+clientChecksum+" Server: "+serverChecksum);
             needs = true;
         }
 
@@ -833,6 +834,8 @@ public class Server implements Runnable {
                         + System.lineSeparator()
                         + buf.toString());
             }
+        } else {
+            System.out.println("SUCCESS: Client/Server Version ("+version+") and Checksum ("+clientChecksum+") matched");
         }
     }
 

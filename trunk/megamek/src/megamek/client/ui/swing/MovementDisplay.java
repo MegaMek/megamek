@@ -685,13 +685,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else {
             getBtn(MoveCommand.MOVE_CLIMB_MODE).setEnabled(true);
         }
-        if (ce instanceof Infantry) {
-            getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(true);
-            getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(true);
-        } else {
-            getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
-            getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(false);
-        }
         updateTurnButton();
 
         updateProneButtons();
@@ -747,7 +740,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (isInfantry
                 && clientgui.getClient().getGame().getOptions()
                         .booleanOption("tacops_dig_in")) {
-            getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(true);
+            // Allow infantry to dig in if they aren't currently dug in
+            int dugInState = ((Infantry)ce).getDugIn();
+            getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(
+                    dugInState == Infantry.DUG_IN_NONE);
         } else {
             getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
         }

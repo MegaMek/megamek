@@ -921,7 +921,8 @@ public abstract class BotClient extends Client {
         for (Entity check_ent : game.getEntitiesVector()) {
             if ((check_ent.getOwnerId() == localPlayerNumber)
                 && (check_ent instanceof Mech)) {
-                if (check_ent.hasStealth()) {
+                if (check_ent.hasStealth()
+                        && (check_ent.getPosition() != null)) {
                     for (Mounted mEquip : check_ent.getMisc()) {
                         MiscType mtype = (MiscType) mEquip.getType();
                         if (mtype.hasFlag(MiscType.F_STEALTH)) {

@@ -9,6 +9,10 @@ v0.39.5 / v0.40.0RC3 (SVN)
 + Bug [#4374] Infantry units may dig in even if they are already dug in
 + Feature [#1345]: Dugged in indicator for infantry units
 + Bug [#4379]: java.io.FileNotFoundException when any player joins
++ Bug [#4368]: Infantry Field guns were using wrong firing arc
++ Changed when facing widge is drawn for infantry: previously it was drawn when
+  they were dug in (since digging in used to require a facing), now it's drawn
+  when infantry have field guns
 
 v0.39.4 / v0.40.0RC2 (2014-12-14 19:00 UTC)
 + added Transporter.resetTransporter function for MHQ purposes

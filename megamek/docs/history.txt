@@ -14,6 +14,7 @@ v0.39.5 / v0.40.0RC3 (SVN)
   they were dug in (since digging in used to require a facing), now it's drawn
   when infantry have field guns
 + Bug [#4142]: Alternate "Better" MASC should mention, or not effect, superchargers
++ Bug [#3655]: Hardened armor and vehicle damage threshold rule
 
 v0.39.4 / v0.40.0RC2 (2014-12-14 19:00 UTC)
 + added Transporter.resetTransporter function for MHQ purposes

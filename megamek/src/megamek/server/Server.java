@@ -19937,6 +19937,12 @@ public class Server implements Runnable {
                                                           .getArmor(hit) : te.getOArmor(hit))
                                                  / game.getOptions().intOption(
                             "vehicles_threshold_divisor"));
+
+                    // adjust for hardened armor
+                    if (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED) {
+                        thresh *= 2;
+                    }
+
                     if (damage > thresh) {
                         hit.setEffect(((Tank) te).getPotCrit());
                         ((Tank) te).setOverThresh(true);

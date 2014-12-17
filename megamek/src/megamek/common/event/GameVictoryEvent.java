@@ -60,6 +60,9 @@ public class GameVictoryEvent extends GameEvent {
         }
 
         vOutOfGame = (Vector<Entity>) game.getOutOfGameEntitiesVector().clone();
+        for (Entity entity : vOutOfGame) {
+            entityIds.put(entity.getId(), entity);
+        }
     }
 
     @Override

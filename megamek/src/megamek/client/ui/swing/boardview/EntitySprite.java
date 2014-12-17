@@ -210,11 +210,11 @@ class EntitySprite extends Sprite {
             // draw facing
             graph.setColor(Color.white);
             if ((entity.getFacing() != -1)
-                    && !((entity instanceof Infantry) && (((Infantry) entity)
-                            .getDugIn() == Infantry.DUG_IN_NONE))
+                    && !((entity instanceof Infantry) 
+                            && !((Infantry) entity).hasFieldGun())
                     && !((entity instanceof Aero)
-                            && ((Aero) entity).isSpheroid() && !this.boardView1.game
-                            .getBoard().inSpace())) {
+                            && ((Aero) entity).isSpheroid() 
+                            && !this.boardView1.game.getBoard().inSpace())) {
                 graph.drawPolygon(this.boardView1.facingPolys[entity.getFacing()]);
             }
 

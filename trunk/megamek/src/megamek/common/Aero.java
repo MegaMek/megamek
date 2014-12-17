@@ -2391,7 +2391,7 @@ public class Aero extends Entity {
             // check type
             if (this instanceof Dropship) {
                 if (isSpheroid()) {
-                    prd.addModifier(-1, "spheroid dropship");
+                    prd.addModifier(+1, "spheroid dropship");
                 } else {
                     prd.addModifier(0, "aerodyne dropship");
                 }

@@ -522,7 +522,10 @@ public class Infantry extends Entity {
     public int getWeaponArc(int wn) {
         Mounted mounted = getEquipment(wn);
         if(mounted.getLocation() == LOC_FIELD_GUNS) {
-            return Compute.ARC_TURRET;
+            if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                return Compute.ARC_TURRET;
+            }
+            return Compute.ARC_FORWARD;
         }
         //This is interesting, according to TacOps rules, Dug in units no longer
         //have to declare a facing

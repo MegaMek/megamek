@@ -500,7 +500,7 @@ public class MtfFile implements IMechLoader {
             mech.getFluff().setCapabilities(capabilities);
             mech.getFluff().setOverview(overview);
             mech.getFluff().setDeployment(deployment);
-            mech.getFluff().setDeployment(history);
+            mech.getFluff().setHistory(history);
             mech.getFluff().setMMLImagePath(imagePath);
 
             mech.setArmorTonnage(mech.getArmorWeight());

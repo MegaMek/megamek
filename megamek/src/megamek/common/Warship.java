@@ -79,13 +79,13 @@ public class Warship extends Jumpship {
 
     @Override
     public void initializeSailIntegrity() {
-        int integrity = 1 + (int)Math.round((30.0 + weight / 20000.0)/ 20.0);
+        int integrity = 1 + (int)Math.ceil((30.0 + weight / 20000.0)/ 20.0);
         setSailIntegrity(integrity);
     }
 
     @Override
     public void initializeKFIntegrity() {
-        int integrity = (int)Math.round(2 + 0.4525 * weight/25000.0);
+        int integrity = (int)Math.ceil(2 + 0.4525 * weight/25000.0);
         setKFIntegrity(integrity);
     }
 

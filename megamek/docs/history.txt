@@ -18,6 +18,7 @@ v0.39.5 / v0.40.0RC3 (SVN)
 + Bug [#4370]: Spheroid dropships have incorrect atmospheric modifiers
 + Bug [#4313]: Bot auto-disconnects when all units are destroyed
 + Bug [#4386]: PSD files included with binary releases
++ Bug [#4330]: Potential problem with the vehicle threshold rule
 
 v0.39.4 / v0.40.0RC2 (2014-12-14 19:00 UTC)
 + added Transporter.resetTransporter function for MHQ purposes

@@ -215,8 +215,9 @@ Targets list.</SPAN></SPAN></P>
 
 <P>If a player has become disconnected (the word &quot;<I>(ghost)</I>&quot;
     appears next to their name, you can replace that player with a bot.&nbsp;
-    To use Princess as the replacement, issue the following command in
-    the chat window:</P>
+    There are two methods for replacing a player. The first is the <i>Replace Player</i> command under the <u>File</u>
+    menu. This will bring up a version of the Bot Config Dialog along with a list of players that can be replaced. The
+    second option is to use the <i>/replacePlayer</i> command in the chat window:</P>
 
 <P>&nbsp;&nbsp;&nbsp; <I>/replacePlayer -b:Princess &lt;-c:ConfigName&gt;
     &lt;-v:VerbosityLevel&gt; &lt;-p:&gt;PlayerName</I></P>
@@ -375,12 +376,11 @@ Targets list.</SPAN></SPAN></P>
 
 <P STYLE="margin-bottom: 0in"><B>Initiative Rules</B></P>
 <UL>
-    <LI><P STYLE="margin-bottom: 0in">Simultaneous deployment phase</P>
-    <LI><P STYLE="margin-bottom: 0in">Simultaneous targeting phase</P>
-    <LI><P STYLE="margin-bottom: 0in">Simultaneous firing phase</P>
-    <LI><P STYLE="margin-bottom: 0in">Simultaneous physical phase</P>
     <LI><P STYLE="margin-bottom: 0in">Front load initiative</P>
     <LI><P STYLE="margin-bottom: 0in">Initiative streak compensation</P>
+    <LI><P STYLE="...">Simultaneous Phases (any) - Technically they can be used but they cause massive CPU and Memory
+        consumption. So, don't use these unless you're running a high-end system. Also, Simultaneous Movement won't work
+        at all.</P></LI>
 </UL>
 <P STYLE="margin-bottom: 0in"><BR>
 </P>

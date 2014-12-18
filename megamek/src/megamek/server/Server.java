@@ -20056,6 +20056,14 @@ public class Server implements Runnable {
                                                  / game.getOptions().intOption(
                             "vehicles_threshold_divisor"));
 
+                    // adjust for hardened armor
+                    if (hardenedArmor
+                            && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING)
+                            && (hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE)
+                            && (hit.getGeneralDamageType() != HitData.DAMAGE_IGNORES_DMG_REDUCTION)) {
+                        thresh *= 2;
+                    }
+
                     if (damage > thresh
                             || te.getArmor(hit) < damage
                             || damageIS) {

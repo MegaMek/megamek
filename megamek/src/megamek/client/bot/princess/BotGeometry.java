@@ -132,11 +132,11 @@ public class BotGeometry {
 
             setDirection(dir);
             if ((getDirection() == 0) || (getDirection() == 3)) {
-                setIntercept(c.x);
+                setIntercept(c.getX());
             } else if ((getDirection() == 1) || (getDirection() == 4)) {
-                setIntercept(c.y + ((c.x + 1) / 2));
+                setIntercept(c.getY() + ((c.getX() + 1) / 2));
             } else {//direction==2||direction==5
-                setIntercept(c.y - ((c.x) / 2));
+                setIntercept(c.getY() - ((c.getX()) / 2));
             }
         }
 
@@ -260,12 +260,12 @@ public class BotGeometry {
             try {
                 if ((getDirection() == 0) || (getDirection() == 3)) { //technically two points are equidistant,
                     // but who's counting
-                    return new Coords(getIntercept(), c.y);
+                    return new Coords(getIntercept(), c.getY());
                 } else if ((getDirection() == 1) || (getDirection() == 4)) {
-                    double myx = (-2.0 / 3.0) * (getIntercept() - 0.5 - c.y - (2.0 * c.x));
+                    double myx = (-2.0 / 3.0) * (getIntercept() - 0.5 - c.getY() - (2.0 * c.getX()));
                     return new Coords((int) myx, getYfromX((int) myx));
                 }
-                double myx = (-5.0 / 3.0) * (getIntercept() - (double) c.y - (2.0 * c.x));
+                double myx = (-5.0 / 3.0) * (getIntercept() - (double) c.getY() - (2.0 * c.getX()));
                 return new Coords((int) myx, getYfromX((int) myx));
             } finally {
                 owner.methodEnd(getClass(), METHOD_NAME);
@@ -495,7 +495,7 @@ public class BotGeometry {
                     }
                 }
                 if (closest == null) {
-                    return new Coords(c.x, c.y);
+                    return new Coords(c.getX(), c.getY());
                 }
                 return closest;
             } finally {

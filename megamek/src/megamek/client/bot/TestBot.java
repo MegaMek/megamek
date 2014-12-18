@@ -18,7 +18,6 @@ package megamek.client.bot;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -1739,7 +1738,7 @@ public class TestBot extends BotClient {
         int entNum = game.getFirstDeployableEntityNum();
         assert (entNum != Entity.NONE) : "The bot is trying to deploy without units being left.";
 
-        LinkedList<Coords> cStart = getStartingCoordsArray();
+        List<Coords> cStart = getStartingCoordsArray();
         Coords cDeploy = getCoordsAround(getEntity(entNum), cStart);
 
         if (cDeploy == null) {
@@ -1807,8 +1806,8 @@ public class TestBot extends BotClient {
                 if (test_ent.isVisibleToEnemy()) {
                     if (cDeploy.distance(test_ent.getPosition()) <= (int) av_range) {
                         hex_count++;
-                        x_ave += test_ent.getPosition().x;
-                        y_ave += test_ent.getPosition().y;
+                        x_ave += test_ent.getPosition().getX();
+                        y_ave += test_ent.getPosition().getY();
                     }
                 }
             }

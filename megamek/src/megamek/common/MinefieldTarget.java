@@ -39,8 +39,8 @@ public class MinefieldTarget implements Targetable {
     public Coords getPosition() {
         return m_coords;
     }
-    
-    public Map<Integer, Coords> getSecondaryPositions(){
+
+    public Map<Integer, Coords> getSecondaryPositions() {
         return new HashMap<Integer, Coords>();
     }
 
@@ -73,7 +73,7 @@ public class MinefieldTarget implements Targetable {
 
     // encode 2 numbers into 1
     public static int coordsToId(Coords c) {
-        return c.y * 100000 + c.x;
+        return c.getY() * 100000 + c.getX();
     }
 
     // decode 1 number into 2
@@ -89,7 +89,7 @@ public class MinefieldTarget implements Targetable {
     public int sideTable(Coords src, boolean usePrior) {
         return sideTable(src);
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Targetable#isOffBoard()
@@ -97,7 +97,7 @@ public class MinefieldTarget implements Targetable {
     public boolean isOffBoard() {
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborne()
@@ -105,7 +105,7 @@ public class MinefieldTarget implements Targetable {
     public boolean isAirborne() {
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborneVTOLorWIGE()
@@ -113,7 +113,7 @@ public class MinefieldTarget implements Targetable {
     public boolean isAirborneVTOLorWIGE() {
         return false;
     }
-    
+
     public int getAltitude() {
         return 0;
     }

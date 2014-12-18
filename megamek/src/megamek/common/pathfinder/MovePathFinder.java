@@ -27,24 +27,23 @@ import megamek.common.MovePath;
  * Generic implementation of AbstractPathFinder when we restrict graph nodes to
  * (coordinates x facing) and edges to MovePaths. Provides useful
  * implementations of functional interfaces defined in AbstractPathFinder.
- * 
+ *
  * @param <C>
  */
 public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsWithFacing, C, MovePath> {
 
     /**
      * Node defined by coordinates and unit facing.
-     * 
+     *
      */
     /**
      * @author Saginatio
-     * 
      */
     public static class CoordsWithFacing {
         /**
          * Returns a list containing six instances of CoordsWithFacing, one for
          * each facing.
-         * 
+         *
          * @param c
          */
         public static List<CoordsWithFacing> getAllFacingsAt(Coords c) {
@@ -60,8 +59,9 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
         final private int facing;
 
         public CoordsWithFacing(Coords c, int facing) {
-            if (c == null)
+            if (c == null) {
                 throw new NullPointerException();
+            }
             this.coords = c;
             this.facing = facing;
         }
@@ -72,8 +72,9 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
 
         @Override
         public boolean equals(Object obj) {
-            if (!(obj instanceof CoordsWithFacing))
+            if (!(obj instanceof CoordsWithFacing)) {
                 return false;
+            }
             CoordsWithFacing t = (CoordsWithFacing) obj;
             return (facing == t.facing) && Objects.equals(coords, t.coords);
         }
@@ -99,25 +100,24 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
 
     /**
      * Filters MovePaths that are forcing PSR.
-     * 
+     * <p/>
      * Current implementation uses MoveStep.isDanger(). This implementation is
      * broken :( It does not work properly for movement paths that use running
      * mp.
-     * 
      */
     public static class MovePathRiskFilter extends AbstractPathFinder.Filter<MovePath> {
         @Override
         public boolean shouldStay(MovePath mp) {
             MoveStep step = mp.getLastStep();
-            if (step == null)
+            if (step == null) {
                 return true;
+            }
             return !step.isDanger();
         }
     }
 
     /**
      * Returns the final CoordsWithFacing for a given MovePath.
-     * 
      */
     public static class MovePathDestinationMap
             implements AbstractPathFinder.DestinationMap<CoordsWithFacing, MovePath> {
@@ -133,18 +133,20 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             if (lastStep != null && lastStep.isThisStepBackwards()) {
                 Facing f = Facing.valueOfInt(e.getFinalFacing());
                 cfw = new CoordsWithFacing(e.getFinalCoords(), f.getOpposite().getIntValue());
-            } else
+            } else {
                 cfw = new CoordsWithFacing(e);
+            }
             return cfw;
-        };
+        }
+
+        ;
     }
 
     /**
      * Filters edges that are illegal.
-     * 
+     * <p/>
      * Current implementation uses MoveStep.isMovementPossible() to verify
      * legality.
-     * 
      */
     public static class MovePathLegalityFilter extends AbstractPathFinder.Filter<MovePath> {
         IGame game;
@@ -160,9 +162,9 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                  * isMovemementPossible is currently not working for aero units,
                  * so we have to use a substitute.
                  */
-                if (edge.length() == 0)
+                if (edge.length() == 0) {
                     return true;
-                else {
+                } else {
                     MoveStep lastStep = edge.getLastStep();
                     return (lastStep == null) || lastStep.getMovementType() != EntityMovementType.MOVE_ILLEGAL;
                 }
@@ -186,7 +188,6 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
     /**
      * This filter removes MovePaths that need more movement points than
      * specified in constructor invocation.
-     * 
      */
     public static class MovePathLengthFilter extends Filter<MovePath> {
         private final int maxMP;
@@ -238,11 +239,9 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
          * extending steps include also {B, ShBL, ShBR}. If stepType is equal to
          * MoveStep.DFA or MoveStep.CHARGE then it is added to the resulting
          * set.
-         * 
+         *
          * @param mp the MovePath to be extended
-         * 
          * @see AbstractPathFinder.AdjacencyMap
-         * 
          */
         @Override
         public Collection<MovePath> getAdjacent(MovePath mp) {
@@ -258,14 +257,17 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
              * list.
              */
             if (entity instanceof Aero &&
-                    (lType == MoveStepType.OFF || lType == MoveStepType.RETURN))
+                (lType == MoveStepType.OFF || lType == MoveStepType.RETURN)) {
                 return result;
+            }
 
 
-            if (lType != MoveStepType.TURN_LEFT)
+            if (lType != MoveStepType.TURN_LEFT) {
                 result.add(mp.clone().addStep(MoveStepType.TURN_RIGHT));
-            if (lType != MoveStepType.TURN_RIGHT)
+            }
+            if (lType != MoveStepType.TURN_RIGHT) {
                 result.add(mp.clone().addStep(MoveStepType.TURN_LEFT));
+            }
 
 
             /*
@@ -292,8 +294,9 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             }
 
             result.add(mp.clone().addStep(MoveStepType.FORWARDS));
-            if (walking)
+            if (walking) {
                 result.add(mp.clone().addStep(MoveStepType.BACKWARDS));
+            }
 
             if (charge) {
                 result.add(mp.clone().addStep(stepType));
@@ -317,7 +320,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
          * Extends the result produced by
          * {@linkNextStepsAdjacencyMap#getAdjacent(megamek.common.MovePath)}
          * with manoeuvres for Aero
-         * 
+         *
          * @see NextStepsAdjacencyMap#getAdjacent(megamek.common.MovePath)
          */
         @Override
@@ -326,27 +329,28 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             // fly off of edge of board
             Coords c = mp.getFinalCoords();
             IGame game = mp.getEntity().getGame();
-            if (((c.x == 0) || (c.y == 0)
-                    || (c.x == (game.getBoard().getWidth() - 1)) || (c.y == (game
-                    .getBoard().getHeight() - 1)))
-                    && (mp.getFinalVelocity() > 0)) {
+            if (((c.getX() == 0) || (c.getY() == 0)
+                 || (c.getX() == (game.getBoard().getWidth() - 1)) || (c.getY() == (game
+                                                                                            .getBoard().getHeight() - 1)))
+                && (mp.getFinalVelocity() > 0)) {
                 result.add(mp.clone().addStep(MoveStepType.RETURN));
             }
             if (!mp.contains(MoveStepType.MANEUVER)) {
                 // side slips
                 result.add(mp.clone()
-                        .addManeuver(ManeuverType.MAN_SIDE_SLIP_LEFT)
-                        .addStep(MoveStepType.LATERAL_LEFT, true, true));
+                             .addManeuver(ManeuverType.MAN_SIDE_SLIP_LEFT)
+                             .addStep(MoveStepType.LATERAL_LEFT, true, true));
                 result.add(mp.clone()
-                        .addManeuver(ManeuverType.MAN_SIDE_SLIP_RIGHT)
-                        .addStep(MoveStepType.LATERAL_RIGHT, true, true));
+                             .addManeuver(ManeuverType.MAN_SIDE_SLIP_RIGHT)
+                             .addStep(MoveStepType.LATERAL_RIGHT, true, true));
                 boolean has_moved = mp.getHexesMoved() == 0;
                 if (!has_moved) {
-                     //result.add(mp.clone().addManeuver(ManeuverType.MAN_HAMMERHEAD).
-                     //result.add(mp.clone().addManeuver(MoveStepType.YAW, true, true);
+                    //result.add(mp.clone().addManeuver(ManeuverType.MAN_HAMMERHEAD).
+                    //result.add(mp.clone().addManeuver(MoveStepType.YAW, true, true);
                     // immelmen
-                    if (mp.getFinalVelocity() > 2)
+                    if (mp.getFinalVelocity() > 2) {
                         result.add(mp.clone().addManeuver(ManeuverType.MAN_IMMELMAN));
+                    }
                     // split s
                     if (mp.getFinalAltitude() > 2) {
                         result.add(mp.clone().addManeuver(ManeuverType.MAN_SPLIT_S));
@@ -354,7 +358,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                     // loop
                     if (mp.getFinalVelocity() > 4) {
                         result.add(mp.clone().addManeuver(ManeuverType.MAN_LOOP)
-                                .addStep(MoveStepType.LOOP, true, true));
+                                     .addStep(MoveStepType.LOOP, true, true));
                     }
                 }
             }
@@ -369,18 +373,17 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
      * parameter.
      */
     public MovePathFinder(EdgeRelaxer<C, MovePath> edgeRelaxer,
-            AdjacencyMap<MovePath> edgeAdjacencyMap,
-            Comparator<MovePath> comparator,
-            IGame game) {
+                          AdjacencyMap<MovePath> edgeAdjacencyMap,
+                          Comparator<MovePath> comparator,
+                          IGame game) {
         super(new MovePathDestinationMap(),
-                edgeRelaxer,
-                edgeAdjacencyMap,
-                comparator);
+              edgeRelaxer,
+              edgeAdjacencyMap,
+              comparator);
     }
 
     /**
      * Returns a map of all computed shortest paths
-     * 
      */
     protected Map<Coords, C> getAllComputedCosts(Comparator<C> comp) {
         Set<Coords> computedCoords = new HashSet<>();
@@ -400,7 +403,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
      * Returns computed cost to reach the hex at c coordinates. If multiple path
      * are present with different final facings, the one minimal one is chosen.
      * If none paths are present then {@code null} is returned.
-     * 
+     *
      * @param c
      * @param comp - comparator used if multiple paths are present
      * @return shortest path to the hex at c coordinates or {@code null}
@@ -410,8 +413,9 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
         List<C> paths = new ArrayList<>();
         for (ShortestPathFinder.CoordsWithFacing n : allFacings) {
             C cost = getCostOf(n);
-            if (cost != null)
+            if (cost != null) {
                 paths.add(cost);
+            }
         }
 
         return paths.size() > 0 ? Collections.min(paths, comp) : null;

@@ -22,7 +22,6 @@ import java.io.InputStreamReader;
 import java.lang.NullPointerException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -201,7 +200,7 @@ public abstract class BotClient extends Client {
     protected abstract void checkMoral();
 
     public List<Entity> getEntitiesOwned() {
-        ArrayList<Entity> result = new ArrayList<Entity>();
+        ArrayList<Entity> result = new ArrayList<>();
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(getLocalPlayer())
                 && (entity.getPosition() != null) && !entity.isOffBoard()) {
@@ -212,7 +211,7 @@ public abstract class BotClient extends Client {
     }
 
     public List<Entity> getEnemyEntities() {
-        ArrayList<Entity> result = new ArrayList<Entity>();
+        ArrayList<Entity> result = new ArrayList<>();
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().isEnemyOf(getLocalPlayer())
                 && (entity.getPosition() != null) && !entity.isOffBoard()
@@ -225,7 +224,7 @@ public abstract class BotClient extends Client {
     }
 
     public List<Entity> getFriendEntities() {
-        List<Entity> result = new ArrayList<Entity>();
+        List<Entity> result = new ArrayList<>();
         for (Entity entity : game.getEntitiesVector()) {
             if (!entity.getOwner().isEnemyOf(getLocalPlayer()) && (entity.getPosition() != null)
                 && !entity.isOffBoard()) {
@@ -322,6 +321,7 @@ public abstract class BotClient extends Client {
         String sLogDir = PreferenceManager.getClientPreferences().getLogDirectory();
         File logDir = new File(sLogDir);
         if (!logDir.exists()) {
+            //noinspection ResultOfMethodCallIgnored
             logDir.mkdir();
         }
         String fileName = "Bot_" + getLocalPlayer().getName() + ".mul";
@@ -340,7 +340,7 @@ public abstract class BotClient extends Client {
 
     private Entity getRandomUnmovedEntity() {
         List<Entity> owned = getEntitiesOwned();
-        List<Entity> unMoved = new ArrayList<Entity>();
+        List<Entity> unMoved = new ArrayList<>();
         for (Entity e : owned) {
             if (e.isSelectableThisTurn()) {
                 unMoved.add(e);
@@ -408,7 +408,7 @@ public abstract class BotClient extends Client {
     /**
      * Gets valid & empty starting coords around the specified point
      */
-    protected Coords getCoordsAround(Entity deploy_me, LinkedList<Coords> c) {
+    protected Coords getCoordsAround(Entity deploy_me, List<Coords> c) {
         int mech_count;
         int conv_fcount; // Friendly conventional units
         int conv_ecount; // Enemy conventional units
@@ -469,25 +469,13 @@ public abstract class BotClient extends Client {
          */
     }
 
-    // New bot deploy algorithm
-    // Screens out invalid hexes then rates them
-    // Highest rating wins out; if this applies to multiple hexes then randomly
-    // select among them
-    protected Coords getStartingCoords() {
-        LinkedList<Coords> calc = getStartingCoordsArray();
-        if (calc != null && calc.size() > 0) {
-            return calc.peek();
-        }
-        return null;
-    }
-
-    protected LinkedList<Coords> getStartingCoordsArray() {
+    protected List<Coords> getStartingCoordsArray() {
         int highest_elev, lowest_elev, weapon_count;
         double av_range, ideal_elev;
         double adjusted_damage, max_damage, total_damage;
         IBoard board = game.getBoard();
         Coords highestHex;
-        LinkedList<Coords> validCoords = new LinkedList<Coords>();
+        List<RankedCoords> validCoords = new LinkedList<>();
         Vector<Entity> valid_attackers;
         Entity deployed_ent = getEntity(game.getFirstDeployableEntityNum());
         WeaponAttackAction test_attack;
@@ -499,7 +487,7 @@ public abstract class BotClient extends Client {
                 Coords c = new Coords(x, y);
                 if (board.isLegalDeployment(c, deployed_ent.getStartingPos())
                     && !deployed_ent.isLocationProhibited(c)) {
-                    validCoords.add(new Coords(c));
+                    validCoords.add(new RankedCoords(new Coords(c), 0));
                 }
             }
         }
@@ -512,13 +500,13 @@ public abstract class BotClient extends Client {
         highest_elev = Integer.MIN_VALUE;
 
         lowest_elev = Integer.MAX_VALUE;
-        for (Coords c : validCoords) {
-            int elev = board.getHex(c.x, c.y).getLevel();
+        for (RankedCoords c : validCoords) {
+            int elev = board.getHex(c.getX(), c.getY()).getLevel();
             if (elev > highest_elev) {
-                highest_elev = board.getHex(c.x, c.y).getLevel();
+                highest_elev = board.getHex(c.getX(), c.getY()).getLevel();
             }
             if (elev < lowest_elev) {
-                lowest_elev = board.getHex(c.x, c.y).getLevel();
+                lowest_elev = board.getHex(c.getX(), c.getY()).getLevel();
             }
         }
 
@@ -577,19 +565,19 @@ public abstract class BotClient extends Client {
             ideal_elev = highest_elev;
         }
 
-        for (Coords coord : validCoords) {
+        for (RankedCoords coord : validCoords) {
 
             // Calculate the fitness factor for each hex and save it to the array
             // -> Absolute difference between hex elevation and ideal elevation decreases fitness
-            coord.fitness = -1 * (Math.abs(ideal_elev - board.getHex(coord.x, coord.y).getLevel()));
+            coord.setFitness(-1 * (Math.abs(ideal_elev - board.getHex(coord.getX(), coord.getY()).getLevel())));
 
             total_damage = 0.0;
-            deployed_ent.setPosition(coord);
+            deployed_ent.setPosition(coord.getCoords());
 
             // Create a list of potential attackers/targets for this location
             List<Entity> potentialAttackers =
                     game.getValidTargets(deployed_ent);
-            valid_attackers = new Vector<Entity>(potentialAttackers.size());
+            valid_attackers = new Vector<>(potentialAttackers.size());
             for (Entity e : potentialAttackers) {
 
                 // Unit must be deployed and not off board, with valid position
@@ -646,8 +634,8 @@ public abstract class BotClient extends Client {
                 // -> Trees are good
                 // -> Water isn't that great below depth 1 -> this saves actual
                 // ground space for infantry/vehicles (minor)
-                int x = coord.x;
-                int y = coord.y;
+                int x = coord.getX();
+                int y = coord.getY();
                 if (board.getHex(x, y).containsTerrain(Terrains.WOODS)) {
                     coord.fitness += 1;
                 }
@@ -657,7 +645,7 @@ public abstract class BotClient extends Client {
                     }
                 }
                 //If building, make sure not too heavy to safely move out of
-                coord.fitness -= potentialBuildingDamage(coord.x, coord.y,
+                coord.fitness -= potentialBuildingDamage(coord.getX(), coord.getY(),
                                                          deployed_ent);
             }
 
@@ -668,19 +656,19 @@ public abstract class BotClient extends Client {
                 // infantry
                 // rough is nice, too
                 // -> Massed infantry is more effective, so try to cluster them
-                if (board.getHex(coord.x, coord.y).containsTerrain(
+                if (board.getHex(coord.getX(), coord.getY()).containsTerrain(
                         Terrains.ROUGH)) {
                     coord.fitness += 1.5;
                 }
-                if (board.getHex(coord.x, coord.y).containsTerrain(
+                if (board.getHex(coord.getX(), coord.getY()).containsTerrain(
                         Terrains.WOODS)) {
                     coord.fitness += 2;
                 }
-                if (board.getHex(coord.x, coord.y).containsTerrain(
+                if (board.getHex(coord.getX(), coord.getY()).containsTerrain(
                         Terrains.BUILDING)) {
                     coord.fitness += 4;
                 }
-                highestHex = coord;
+                highestHex = coord.getCoords();
                 for (Entity test_ent : game.getEntitiesVector(highestHex)) {
                     if ((deployed_ent.getOwner().equals(test_ent.getOwner()))
                         && !deployed_ent.equals(test_ent)) {
@@ -693,7 +681,7 @@ public abstract class BotClient extends Client {
                 boolean foundAdj = false;
                 IPlayer owner = deployed_ent.getOwner();
                 for (int x = 0; x < 6 && !foundAdj; x++) {
-                    highestHex = coord.translated(x);
+                    highestHex = coord.getCoords().translated(x);
                     for (Entity test_ent : game.getEntitiesVector(highestHex)) {
                         if ((owner.equals(test_ent.getOwner()))
                             && !deployed_ent.equals(test_ent)
@@ -709,7 +697,7 @@ public abstract class BotClient extends Client {
                 // Not sure why bot tries to deploy infantry in water, it SHOULD
                 // be caught by the isHexProhibited method when
                 // selecting hexes, but sometimes it has a mind of its own so...
-                if (board.getHex(coord.x, coord.y).containsTerrain(
+                if (board.getHex(coord.getX(), coord.getY()).containsTerrain(
                         Terrains.WATER)) {
                     coord.fitness -= 10;
                 }
@@ -725,7 +713,7 @@ public abstract class BotClient extends Client {
                 // Tracked vehicle
                 // -> Trees increase fitness
                 if (deployed_ent.getMovementMode() == EntityMovementMode.TRACKED) {
-                    if (board.getHex(coord.x, coord.y).containsTerrain(
+                    if (board.getHex(coord.getX(), coord.getY()).containsTerrain(
                             Terrains.WOODS)) {
                         coord.fitness += 2;
                     }
@@ -738,20 +726,20 @@ public abstract class BotClient extends Client {
                 // -> Water in hex increases fitness, hover vehicles have an
                 // advantage in water areas
                 if (deployed_ent.getMovementMode() == EntityMovementMode.HOVER) {
-                    if (board.getHex(coord.x, coord.y).containsTerrain(
+                    if (board.getHex(coord.getX(), coord.getY()).containsTerrain(
                             Terrains.WATER)) {
                         coord.fitness += 2;
                     }
                 }
                 // If building, make sure not too heavy to safely move out of.
-                coord.fitness -= potentialBuildingDamage(coord.x, coord.y,
+                coord.fitness -= potentialBuildingDamage(coord.getX(), coord.getY(),
                                                          deployed_ent);
             }
             // ProtoMech
             // ->
             // -> Trees increase fitness by +2 (minor)
             if (deployed_ent instanceof Protomech) {
-                if (board.getHex(coord.x, coord.y).containsTerrain(
+                if (board.getHex(coord.getX(), coord.getY()).containsTerrain(
                         Terrains.WOODS)) {
                     coord.fitness += 2;
                 }
@@ -764,9 +752,14 @@ public abstract class BotClient extends Client {
         }
 
         // Now sort the valid array.
-        Collections.sort(validCoords, new FitnessComparator());
+        Collections.sort(validCoords);
 
-        return validCoords;
+        List<Coords> result = new ArrayList<>(validCoords.size());
+        for (RankedCoords rc : validCoords) {
+            result.add(rc.getCoords());
+        }
+
+        return result;
     }
 
     // ToDo: Change this to 'hasSafePathToCenter' to account for buildings, lava and similar hazards.
@@ -825,12 +818,6 @@ public abstract class BotClient extends Client {
         boolean aptGunnery = entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
         double oddsTakeDmg = 1 - (Compute.oddsAbove(entity.getCrew().getPiloting(), aptGunnery) / 100);
         return potentialDmg * oddsTakeDmg;
-    }
-
-    class FitnessComparator implements Comparator<Coords> {
-        public int compare(Coords d1, Coords d2) {
-            return -1 * Double.compare(d1.fitness, d2.fitness);
-        }
     }
 
     // Missile hits table
@@ -916,7 +903,7 @@ public abstract class BotClient extends Client {
         initialize();
 
         int total_bv, known_bv, known_range, known_count, trigger_range;
-        int new_stealth = 1;
+        int new_stealth;
 
         for (Entity check_ent : game.getEntitiesVector()) {
             if ((check_ent.getOwnerId() == localPlayerNumber)
@@ -946,7 +933,6 @@ public abstract class BotClient extends Client {
                                 known_bv = 0;
                                 known_range = 0;
                                 known_count = 0;
-                                trigger_range = 5;
 
                                 for (Entity test_ent : game.getEntitiesVector()) {
                                     if (check_ent.isEnemyOf(test_ent)) {
@@ -971,13 +957,11 @@ public abstract class BotClient extends Client {
                                     || (known_bv < (total_bv / 2))) {
                                     new_stealth = 1;
                                 } else {
-                                    if (known_count != 0) {
-                                        if ((known_range / known_count) <= (5 + Compute
-                                                .randomInt(5))) {
-                                            new_stealth = 0;
-                                        } else {
-                                            new_stealth = 1;
-                                        }
+                                    if ((known_range / known_count) <= (5 + Compute
+                                            .randomInt(5))) {
+                                        new_stealth = 0;
+                                    } else {
+                                        new_stealth = 1;
                                     }
                                 }
                             }
@@ -1060,5 +1044,90 @@ public abstract class BotClient extends Client {
 
     public void endOfTurnProcessing() {
         // Do nothing;
+    }
+
+    private class RankedCoords implements Comparable<RankedCoords> {
+        private Coords coords;
+        private double fitness;
+
+        RankedCoords(Coords coords, double fitness) {
+            if (coords == null) {
+                throw new IllegalArgumentException("Coords cannot be null.");
+            }
+            this.coords = coords;
+            this.fitness = fitness;
+        }
+
+        public Coords getCoords() {
+            return coords;
+        }
+
+        public void setCoords(Coords coords) {
+            if (coords == null) {
+                throw new IllegalArgumentException("Coords cannot be null.");
+            }
+            this.coords = coords;
+        }
+
+        public double getFitness() {
+            return fitness;
+        }
+
+        public void setFitness(double fitness) {
+            this.fitness = fitness;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof RankedCoords)) {
+                return false;
+            }
+
+            RankedCoords coords1 = (RankedCoords) o;
+
+            if (Double.compare(coords1.fitness, fitness) != 0) {
+                return false;
+            }
+            //noinspection RedundantIfStatement
+            if (!coords.equals(coords1.coords)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result;
+            long temp;
+            result = coords.hashCode();
+            temp = Double.doubleToLongBits(fitness);
+            result = 31 * result + (int) (temp ^ (temp >>> 32));
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            return "RankedCoords{" +
+                   "coords=" + coords +
+                   ", fitness=" + fitness +
+                   '}';
+        }
+
+        int getX() {
+            return coords.getX();
+        }
+
+        int getY() {
+            return coords.getY();
+        }
+
+        @Override
+        public int compareTo(RankedCoords o) {
+            return -Double.compare(getFitness(), o.getFitness());
+        }
     }
 }

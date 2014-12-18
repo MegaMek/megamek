@@ -1153,7 +1153,8 @@ public class FireControl {
     /**
      * calculates the 'utility' of a firing plan. override this function if you have a better idea about what firing
      * plans are good
-     *  @param firingPlan        The {@link FiringPlan} to be calculated.
+     *
+     * @param firingPlan        The {@link FiringPlan} to be calculated.
      * @param overheatTolerance How much overheat we're willing to forgive.
      * @param shooterIsAero     Set TRUE if the shooter is an Aero unit.  Overheating Aeros take stiffer penalties.
      */
@@ -1186,7 +1187,7 @@ public class FireControl {
 
         DecimalFormat coordsFormat = new DecimalFormat("00");
         Coords targetCoords = target.getPosition();
-        String coords = coordsFormat.format(targetCoords.x + 1) + coordsFormat.format(targetCoords.y + 1);
+        String coords = coordsFormat.format(targetCoords.getX() + 1) + coordsFormat.format(targetCoords.getY() + 1);
         if (owner.getBehaviorSettings().getStrategicBuildingTargets().contains(coords)) {
             return STRATEGIC_TARGET_UTILITY;
         }

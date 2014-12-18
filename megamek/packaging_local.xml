@@ -170,6 +170,7 @@
 				<include name="${logdir}/" />
 			    <include name="${datadir}/" />
 			    <include name="${confdir}/" />
+				<exclude name="**/*.psd"/>
 			</fileset>
 		</copy>
 		<mkdir dir="${osxdist}/MegaMek.app" />
@@ -230,6 +231,7 @@
 				<include name="readme*.txt" />
 				<include name="license.txt" />
 				<include name="startup.sh" />
+				<exclude name="**/*.psd"/>
 			</fileset>
 		</copy>
 	</target>
@@ -262,6 +264,7 @@
 				<include name="readme*.txt" />
 				<include name="license.txt" />
 				<include name="MegaMek.exe" />
+				<exclude name="**/*.psd"/>
 			</fileset>
 		</copy>
 		<copy file="${util}/megamek.l4j.ini" todir="${windist}"/>

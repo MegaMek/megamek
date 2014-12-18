@@ -697,7 +697,7 @@ public class Game implements Serializable, IGame {
             turnVector.insertElementAt(turn, index + 1);
         }
     }
-    
+
     public void swapTurnOrder(int index1, int index2) {
         GameTurn turn1 = turnVector.get(index1);
         GameTurn turn2 = turnVector.get(index2);
@@ -1437,7 +1437,7 @@ public class Game implements Serializable, IGame {
     private void reindexEntities() {
         entityIds.clear();
         lastEntityId = 0;
-        
+
         if (entities != null) {
             // Add these entities to the game.
             for (Entity entity : entities) {
@@ -1512,10 +1512,10 @@ public class Game implements Serializable, IGame {
     public List<Entity> getEntitiesVector(Coords c) {
         return getEntitiesVector(c, false);
     }
-    
+
     /**
      * Return a Vector of Entites at Coords <code>c</code>
-     * 
+     *
      * @param c
      * @param ignore
      *            Flag that determines whether the ability to target is ignored
@@ -2761,7 +2761,7 @@ public class Game implements Serializable, IGame {
 
                 @Override
                 public void remove() {
-                    throw new UnsupportedOperationException();                    
+                    throw new UnsupportedOperationException();
                 }
             };
 
@@ -3438,7 +3438,7 @@ public class Game implements Serializable, IGame {
             updateEntityPositionLookup(e, null);
         }
     }
-    
+
     private int countEntitiesInCache(List<Integer> entitiesInCache) {
         int count = 0;
         for (Coords c : entityPosLookup.keySet()) {
@@ -3447,13 +3447,13 @@ public class Game implements Serializable, IGame {
         }
         return count;
     }
-    
+
     private void checkPositionCacheConsistency() {
         // Sanity check on the position cache
         //  This could be removed once we are confident the cache is working
-        List<Integer> entitiesInCache = new ArrayList();
-        List<Integer> entitiesInVector = new ArrayList();
-        int entitiesInCacheCount = countEntitiesInCache(entitiesInCache); 
+        List<Integer> entitiesInCache = new ArrayList<Integer>();
+        List<Integer> entitiesInVector = new ArrayList<Integer>();
+        int entitiesInCacheCount = countEntitiesInCache(entitiesInCache);
         int entityVectorSize = 0;
         for (Entity e : entities) {
             if (e.getPosition() != null) {

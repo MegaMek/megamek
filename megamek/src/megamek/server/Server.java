@@ -9464,7 +9464,7 @@ public class Server implements Runnable {
                             critRollMod -= 2;
                         }
                         vPhaseReport.addAll(criticalEntity(te, hit.getLocation(),
-                                                           hit.isRear(), critRollMod, 0));
+                                                           hit.isRear(), critRollMod, 0, true));
                     }
                 } else if (te instanceof Protomech) {
                     te.heatFromExternal += missiles;
@@ -17756,7 +17756,7 @@ public class Server implements Runnable {
                 }
                 // roll a critical hit
                 Report.addNewline(vPhaseReport);
-                addReport(criticalTank((Tank) entity, Tank.LOC_FRONT, bonus, 0));
+                addReport(criticalTank((Tank) entity, Tank.LOC_FRONT, bonus, 0, true));
             } else if (entity instanceof Protomech) {
                 // this code is taken from inferno hits
                 HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL,
@@ -23174,11 +23174,28 @@ public class Server implements Runnable {
     }
 
     /**
+     * Rolls and resolves critical hits with a die roll modifier.
+     */
+
+    public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear,
+                                         int critMod, int damage, boolean damagedByFire) {
+        return criticalEntity(en, loc, isRear, critMod, true, false, damage, damagedByFire);
+    }
+
+    /**
      * Rolls one critical hit
      */
-    private Vector<Report> oneCriticalEntity(Entity en, int loc,
+    public Vector<Report> oneCriticalEntity(Entity en, int loc,
                                              boolean isRear, int damage) {
         return criticalEntity(en, loc, isRear, 0, false, false, damage);
+    }
+
+    /**
+     * Rolls one critical hit
+     */
+    public Vector<Report> oneCriticalEntity(Entity en, int loc,
+                                             boolean isRear, int damage, boolean damagedByFire) {
+        return criticalEntity(en, loc, isRear, 0, false, false, damage, damagedByFire);
     }
 
     /**
@@ -23536,7 +23553,7 @@ public class Server implements Runnable {
      * @param critMod the <code>int</code> modifier to the critroll
      * @return a <code>Vector<Report></code> containing the phasereports
      */
-    private Vector<Report> criticalTank(Tank t, int loc, int critMod, int damage) {
+    private Vector<Report> criticalTank(Tank t, int loc, int critMod, int damage, boolean damagedByFire) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
@@ -23565,7 +23582,7 @@ public class Server implements Runnable {
         vDesc.add(r);
 
         // now look up on vehicle crits table
-        int critType = t.getCriticalEffect(roll, loc);
+        int critType = t.getCriticalEffect(roll, loc, damagedByFire);
         if ((critType == Tank.CRIT_NONE)
             && (game.getOptions().booleanOption("vehicles_threshold") && !t
                 .getOverThresh())) {
@@ -23709,6 +23726,15 @@ public class Server implements Runnable {
      */
     public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear,
                                          int critMod, boolean rollNumber, boolean isCapital, int damage) {
+        return criticalEntity(en, loc, isRear, critMod, rollNumber, isCapital, damage, false);
+    }
+
+    /**
+     * Rolls and resolves critical hits on mechs or vehicles. if rollNumber is
+     * false, a single hit is applied - needed for MaxTech Heat Scale rule.
+     */
+    public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear,
+                                         int critMod, boolean rollNumber, boolean isCapital, int damage, boolean damagedByFire) {
 
         if (en.hasQuirk("poor_work")) {
             critMod += 1;
@@ -23724,7 +23750,7 @@ public class Server implements Runnable {
         }
 
         if (en instanceof Tank) {
-            return criticalTank((Tank) en, loc, critMod, damage);
+            return criticalTank((Tank) en, loc, critMod, damage, damagedByFire);
         }
         if (en instanceof Aero) {
             return criticalAero((Aero) en, loc, critMod, "unknown", 8, damage,

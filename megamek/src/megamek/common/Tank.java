@@ -2546,11 +2546,25 @@ public class Tank extends Entity {
      * @return a critical type
      */
     public int getCriticalEffect(int roll, int loc) {
+        return getCriticalEffect(roll, loc, false);
+    }
+
+    /**
+     * get the type of critical caused by a critical roll, taking account of
+     * existing damage
+     *
+     * @param roll
+     *            the final dice roll
+     * @param loc
+     *            the hit location
+     * @return a critical type
+     */
+    public int getCriticalEffect(int roll, int loc, boolean damagedByFire) {
         if (roll > 12) {
             roll = 12;
         }
         if ((roll < 6)
-                || (game.getOptions().booleanOption("vehicles_threshold") && !getOverThresh())) {
+                || (game.getOptions().booleanOption("vehicles_threshold") && !getOverThresh() && !damagedByFire)) {
             return CRIT_NONE;
         }
         for (int i = 0; i < 2; i++) {
@@ -2807,7 +2821,7 @@ public class Tank extends Entity {
     public ArrayList<Mounted> getJammedWeapons() {
         return jammedWeapons;
     }
-    
+
     public void resetJammedWeapons() {
     	jammedWeapons = new ArrayList<Mounted>();
     }
@@ -3339,7 +3353,7 @@ public class Tank extends Entity {
         }
         return false;
     }
-    
+
     @Override
     public boolean isCrippled(boolean checkCrew) {
         return isCrippled();

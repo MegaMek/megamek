@@ -83,7 +83,7 @@ public class PathRanker {
             // Let's try to whittle down this list.
             List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTollerance, startingHomeDistance);
             owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, "Validated " + validPaths.size() + " out of " +
-                    movePaths.size() + " possible paths.");
+                                                               movePaths.size() + " possible paths.");
 
             Coords allyCenter = calcAllyCenter(movePaths.get(0).getEntity().getId(), friends, game);
 
@@ -98,7 +98,7 @@ public class PathRanker {
                 BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
                                           .round(new MathContext(0, RoundingMode.DOWN));
                 if ((percent.compareTo(interval) >= 0)
-                        && (LogLevel.INFO.getLevel() <= owner.getVerbosity().getLevel())) {
+                    && (LogLevel.INFO.getLevel() <= owner.getVerbosity().getLevel())) {
                     owner.sendChat("... " + percent.intValue() + "% complete.");
                     interval = percent.add(new BigDecimal(5));
                 }
@@ -119,7 +119,7 @@ public class PathRanker {
             // straight away.
             return startingPathList;
         }
-        
+
         Entity mover = startingPathList.get(0).getEntity();
 
         // No support yet for Aero units.
@@ -289,8 +289,8 @@ public class PathRanker {
             ArrayList<Entity> friends = new ArrayList<>();
             for (Entity entity : game.getEntitiesVector()) {
                 if (!entity.getOwner().isEnemyOf(myunit.getOwner())
-                        && (entity.getPosition() != null) && !entity.isOffBoard()
-                        && (!entity.equals(myunit))) {
+                    && (entity.getPosition() != null) && !entity.isOffBoard()
+                    && (!entity.equals(myunit))) {
                     friends.add(entity);
                 }
             }
@@ -359,16 +359,16 @@ public class PathRanker {
             StringBuilder msg = new StringBuilder("Getting distance to home edge: ");
             if (HomeEdge.NORTH.equals(homeEdge)) {
                 msg.append("North");
-                edgeCoords = new Coords(position.x, 0);
+                edgeCoords = new Coords(position.getX(), 0);
             } else if (HomeEdge.SOUTH.equals(homeEdge)) {
                 msg.append("South");
-                edgeCoords = new Coords(position.x, boardHeight);
+                edgeCoords = new Coords(position.getX(), boardHeight);
             } else if (HomeEdge.WEST.equals(homeEdge)) {
                 msg.append("West");
-                edgeCoords = new Coords(0, position.y);
+                edgeCoords = new Coords(0, position.getY());
             } else if (HomeEdge.EAST.equals(homeEdge)) {
                 msg.append("East");
-                edgeCoords = new Coords(boardWidth, position.y);
+                edgeCoords = new Coords(boardWidth, position.getY());
             } else {
                 msg.append("Default");
                 owner.log(getClass(), METHOD_NAME, LogLevel.WARNING, "Invalid home edge.  Defaulting to NORTH.");
@@ -474,8 +474,8 @@ public class PathRanker {
                 continue;
             }
 
-            xTotal += friendPosition.x;
-            yTotal += friendPosition.y;
+            xTotal += friendPosition.getX();
+            yTotal += friendPosition.getY();
             friendOnBoardCount++;
         }
 
@@ -489,7 +489,7 @@ public class PathRanker {
 
         if (!game.getBoard().contains(center)) {
             owner.log(getClass(), "calcAllyCenter(int, List<Entity>, IGame)", LogLevel.ERROR, "Center of ally group " +
-                    center.toFriendlyString() + " not within board boundaries.");
+                                                                                              center.toFriendlyString() + " not within board boundaries.");
             return null;
         }
 

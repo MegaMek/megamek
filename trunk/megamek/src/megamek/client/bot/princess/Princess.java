@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -218,7 +217,7 @@ public class Princess extends BotClient {
             }
 
             // on the list to be deployed get a set of all the
-            LinkedList<Coords> startingCoords = getStartingCoordsArray();
+            List<Coords> startingCoords = getStartingCoordsArray();
             if (startingCoords.size() == 0) {
                 log(getClass(), METHOD_NAME, LogLevel.ERROR,
                     "No valid locations to deploy " + getEntity(entityNum).getDisplayName());

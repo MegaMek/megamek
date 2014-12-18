@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package megamek.client.commands;
 
@@ -11,9 +11,9 @@ import megamek.common.Entity;
 import megamek.common.IHex;
 
 /**
- * @author dirk 
- * This command exists to print tile information to the chat
- * window, it's primarily intended for vissually impaired users.
+ * @author dirk
+ *         This command exists to print tile information to the chat
+ *         window, it's primarily intended for vissually impaired users.
  */
 
 public class ShowTileCommand extends ClientCommand {
@@ -27,7 +27,7 @@ public class ShowTileCommand extends ClientCommand {
 
     /**
      * Run this command with the arguments supplied
-     * 
+     *
      * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
      */
     @Override
@@ -36,34 +36,34 @@ public class ShowTileCommand extends ClientCommand {
             int i = 3;
             String str = "", report = "";
             Coords coord = new Coords(Integer.parseInt(args[1]) - 1, Integer
-                    .parseInt(args[2]) - 1);
+                                                                             .parseInt(args[2]) - 1);
             IHex hex;
 
             do {
                 hex = getClient().getGame().getBoard().getHex(coord);
                 if (hex != null) {
-                    str = "Details for hex (" + (coord.x + 1) + ", "
-                            + (coord.y + 1) + ") : " + hex.toString();
+                    str = "Details for hex (" + (coord.getX() + 1) + ", "
+                          + (coord.getY() + 1) + ") : " + hex.toString();
 
                     // if we are not playing in double blind mode also list the
                     // units in this tile.
                     if (!getClient().getGame().getOptions().booleanOption("double_blind")) {
                         Iterator<Entity> entList = getClient().getGame()
-                                .getEntities(coord);
+                                                              .getEntities(coord);
                         if (entList.hasNext()) {
                             str = str + "; Contains entities: "
-                                    + entList.next().getId();
+                                  + entList.next().getId();
                             while (entList.hasNext()) {
                                 str = str + ", "
-                                        + entList.next().getId();
+                                      + entList.next().getId();
                             }
                         }
                     }
 
                     report = report + str + "\n";
                 } else {
-                    report = report + "Hex (" + (coord.x + 1) + ", "
-                            + (coord.y + 1) + ") is not on the board.\n";
+                    report = report + "Hex (" + (coord.getX() + 1) + ", "
+                             + (coord.getY() + 1) + ") is not on the board.\n";
                 }
 
                 if (i < args.length) {

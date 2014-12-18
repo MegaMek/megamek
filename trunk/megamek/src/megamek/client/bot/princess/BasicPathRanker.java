@@ -645,15 +645,15 @@ public class BasicPathRanker extends PathRanker {
         try {
             int width = game.getBoard().getWidth();
             int height = game.getBoard().getHeight();
-            int minimum = position.x;
-            if ((width - position.x) < minimum) {
-                minimum = position.x;
+            int minimum = position.getX();
+            if ((width - position.getX()) < minimum) {
+                minimum = position.getX();
             }
-            if (position.y < minimum) {
-                minimum = position.y;
+            if (position.getY() < minimum) {
+                minimum = position.getY();
             }
-            if ((height - position.y) < minimum) {
-                minimum = height - position.y;
+            if ((height - position.getY()) < minimum) {
+                minimum = height - position.getY();
             }
             return minimum;
         } finally {
@@ -684,24 +684,24 @@ public class BasicPathRanker extends PathRanker {
             int distance;
             switch (homeEdge) {
                 case NORTH: {
-                    distance = position.y;
+                    distance = position.getY();
                     break;
                 }
                 case SOUTH: {
-                    distance = height - position.y - 1;
+                    distance = height - position.getY() - 1;
                     break;
                 }
                 case WEST: {
-                    distance = position.x;
+                    distance = position.getX();
                     break;
                 }
                 case EAST: {
-                    distance = width - position.x - 1;
+                    distance = width - position.getX() - 1;
                     break;
                 }
                 default: {
                     owner.log(getClass(), METHOD_NAME, LogLevel.WARNING, "Invalid home edge.  Defaulting to NORTH.");
-                    distance = position.y;
+                    distance = position.getY();
                 }
             }
 

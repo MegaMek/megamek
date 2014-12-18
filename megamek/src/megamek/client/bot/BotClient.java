@@ -147,8 +147,8 @@ public abstract class BotClient extends Client {
                     case Packet.COMMAND_CFR_AMS_ASSIGN:
                         // Picks the WAA with the highest expected damage,
                         //  essentially same as if the auto_ams option was on
-                        WeaponAttackAction waa = 
-                            Compute.getHighestExpectedDamage(game, 
+                        WeaponAttackAction waa =
+                            Compute.getHighestExpectedDamage(game,
                                     evt.getWAAs(), true);
                         sendAMSAssignCFRResponse(evt.getWAAs().indexOf(waa));
                         break;
@@ -248,10 +248,14 @@ public abstract class BotClient extends Client {
                     initialize();
                     break;
                 case PHASE_MOVEMENT:
+                    /* Do not uncomment this. It is so that bots stick around till end of game
+                     * for proper salvage. If the bot dies out here, the salvage for all but the
+                     * last bot disappears for some reason
                     if (game.getEntitiesOwnedBy(getLocalPlayer()) == 0) {
                         sendChat(Messages.getString("BotClient.HowAbout")); //$NON-NLS-1$
                         die();
                     }
+                     */
                     // if the game is not double blind and I can't see anyone
                     // else on the board I should kill myself.
                     if (!(game.getOptions().booleanOption("double_blind")) //$NON-NLS-1$
@@ -492,7 +496,7 @@ public abstract class BotClient extends Client {
             }
         }
 
-        // Randomize hexes to prevent clumping at the upper-left corner on 
+        // Randomize hexes to prevent clumping at the upper-left corner on
         // very flat maps
         Collections.shuffle(validCoords);
 
@@ -1021,7 +1025,7 @@ public abstract class BotClient extends Client {
 
     @Override
     protected void correctName(Packet inP) {
-        // If we have a clientgui, it keeps track of a Name -> Client map, and 
+        // If we have a clientgui, it keeps track of a Name -> Client map, and
         //  we need to update that map with this name change.
         if (getClientGUI() != null) {
             Map<String, Client> bots = getClientGUI().getBots();
@@ -1062,6 +1066,7 @@ public abstract class BotClient extends Client {
             return coords;
         }
 
+        @SuppressWarnings("unused")
         public void setCoords(Coords coords) {
             if (coords == null) {
                 throw new IllegalArgumentException("Coords cannot be null.");

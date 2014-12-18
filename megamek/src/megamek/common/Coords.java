@@ -39,11 +39,6 @@ public class Coords implements Serializable {
 
     public static final double HEXSIDE = Math.PI / 3.0;
 
-    public int x;
-    public int y;
-
-    public double fitness = 0; // Included for the bot.
-
     /**
      * Allow at most 30 boards (510 hexes) in the 'y' direction.
      */
@@ -61,12 +56,8 @@ public class Coords implements Serializable {
      */
     public static final int MAX_BOARD_WIDTH = (Integer.MAX_VALUE - Coords.MAX_BOARD_HEIGHT) >> (Coords.SHIFT + 2);
 
-    /**
-     * Constructs a new coordinate pair at (0, 0).
-     */
-    public Coords() {
-        this(0, 0);
-    }
+    private final int x;
+    private final int y;
 
     /**
      * Constructs a new coordinate pair at (x, y).
@@ -77,10 +68,17 @@ public class Coords implements Serializable {
     }
 
     /**
+     * Constructs a new coordinate pair at (0, 0).
+     */
+    public Coords() {
+        this(0, 0);
+    }
+
+    /**
      * Constructs a new coordinate pair that is a duplicate of the parameter.
      */
     public Coords(Coords c) {
-        this(c.x, c.y);
+        this(c.getX(), c.getY());
     }
 
     /**
@@ -92,12 +90,12 @@ public class Coords implements Serializable {
      * @param dir the direction.
      */
     public final Coords translated(int dir) {
-        return new Coords(xInDir(x, y, dir), yInDir(x, y, dir));
+        return translated(dir, 1);
     }
 
     public final Coords translated(int dir, int distance) {
-        int newx = xInDir(x, y, dir, distance);
-        int newy = yInDir(x, y, dir, distance);
+        int newx = xInDir(getX(), getY(), dir, distance);
+        int newy = yInDir(getX(), getY(), dir, distance);
         return new Coords(newx, newy);
     }
 
@@ -128,7 +126,7 @@ public class Coords implements Serializable {
     /**
      * Returns the x parameter of the coordinates in the direction
      */
-    public final static int xInDir(int x, int y, int dir) {
+    public static int xInDir(int x, int y, int dir) {
         switch (dir) {
             case 1:
             case 2:
@@ -141,7 +139,7 @@ public class Coords implements Serializable {
         }
     }
 
-    public final static int xInDir(int x, int y, int dir, int distance) {
+    public static int xInDir(int x, int y, int dir, int distance) {
         switch (dir) {
             case 1:
             case 2:
@@ -157,7 +155,7 @@ public class Coords implements Serializable {
     /**
      * Returns the y parameter of the coordinates in the direction
      */
-    public final static int yInDir(int x, int y, int dir) {
+    public static int yInDir(int x, int y, int dir) {
         switch (dir) {
             case 0:
                 return y - 1;
@@ -174,7 +172,7 @@ public class Coords implements Serializable {
         }
     }
 
-    public final static int yInDir(int x, int y, int dir, int distance) {
+    public static int yInDir(int x, int y, int dir, int distance) {
         switch (dir) {
             case 0:
                 return y - distance;
@@ -200,8 +198,8 @@ public class Coords implements Serializable {
      * significant in determining where this coordinate lies in relation to
      * other coordinates.
      */
-    public boolean isXOdd() {
-        return (x & 1) == 1;
+    public final boolean isXOdd() {
+        return (getX() & 1) == 1;
     }
 
     /**
@@ -219,7 +217,7 @@ public class Coords implements Serializable {
      * 
      * @param d the destination coordinate.
      */
-    public double radian(Coords d) {
+    public final double radian(Coords d) {
         final IdealHex src = IdealHex.get(this);
         final IdealHex dst = IdealHex.get(d);
 
@@ -246,33 +244,33 @@ public class Coords implements Serializable {
      * 
      * @param d the destination coordinate.
      */
-    public int degree(Coords d) {
+    public final int degree(Coords d) {
         return (int) Math.round((180 / Math.PI) * radian(d));
     }
 
     /**
      * Returns the distance to another coordinate.
      */
-    public int distance(Coords c) {
+    public final int distance(Coords c) {
         // based off of
         // http://www.rossmack.com/ab/RPG/traveller/AstroHexDistance.asp
         // since I'm too dumb to make my own
         int xd, ym, ymin, ymax, yo;
-        xd = Math.abs(this.x - c.x);
+        xd = Math.abs(this.getX() - c.getX());
         yo = (xd / 2) + (!isXOdd() && c.isXOdd() ? 1 : 0);
-        ymin = this.y - yo;
+        ymin = this.getY() - yo;
         ymax = ymin + xd;
         ym = 0;
-        if (c.y < ymin) {
-            ym = ymin - c.y;
+        if (c.getY() < ymin) {
+            ym = ymin - c.getY();
         }
-        if (c.y > ymax) {
-            ym = c.y - ymax;
+        if (c.getY() > ymax) {
+            ym = c.getY() - ymax;
         }
         return xd + ym;
     }
 
-    public int distance(int distx, int disty) {
+    public final int distance(int distx, int disty) {
         return distance(new Coords(distx, disty));
     }
 
@@ -280,10 +278,10 @@ public class Coords implements Serializable {
      * Returns a string representing a coordinate in "board number" format.
      */
     public final String getBoardNum() {
-        StringBuffer num = new StringBuffer();
+        StringBuilder num = new StringBuilder();
 
-        num.append((x > -1 && x < 9 ? "0" : "") + (x + 1));
-        num.append((y > -1 && y < 9 ? "0" : "") + (y + 1));
+        num.append(getX() > -1 && getX() < 9 ? "0" : "").append(getX() + 1);
+        num.append(getY() > -1 && getY() < 9 ? "0" : "").append(getY() + 1);
 
         return num.toString();
     }
@@ -299,7 +297,7 @@ public class Coords implements Serializable {
             return false;
         }
         Coords other = (Coords) object;
-        return other.x == this.x && other.y == this.y;
+        return other.getX() == this.getX() && other.getY() == this.getY();
     }
 
     /**
@@ -310,18 +308,18 @@ public class Coords implements Serializable {
     @Override
     public int hashCode() {
         // Record the signs of X and Y separately from their values.
-        boolean negy = (y < 0);
-        boolean negx = (x < 0);
+        boolean negy = (getY() < 0);
+        boolean negx = (getX() < 0);
         int signbits = 0;
-        int absx = x;
-        int absy = y;
+        int absx = getX();
+        int absy = getY();
         if (negy) {
             signbits += 0x1;
-            absy = -y;
+            absy = -getY();
         }
         if (negx) {
             signbits += 0x2;
-            absx = -x;
+            absx = -getX();
         }
         return (((absx << Coords.SHIFT) ^ absy) << 2) + signbits;
     }
@@ -348,7 +346,7 @@ public class Coords implements Serializable {
 
     @Override
     public String toString() {
-        return "Coords (" + x + ", " + y + "); " + getBoardNum();
+        return "Coords (" + getX() + ", " + getY() + "); " + getBoardNum();
     }
 
     /**
@@ -362,21 +360,33 @@ public class Coords implements Serializable {
      * site. (http://www-cs-students.stanford.edu/~amitp/gameprog.html)
      * 
      * Note: this function can return Coordinates that are not on the board.
+     *
+     * @param src Starting point.
+     * @param dest Ending Point.
+     * @return The list of intervening coordinates.
      */
     public static ArrayList<Coords> intervening(Coords src, Coords dest) {
         return intervening(src, dest, false);
     }
 
     /**
+     * Returns an array of the Coords of hexes that are crossed by a straight
+     * line from the center of src to the center of dest, including src & dest.
+     * The returned coordinates are in line order, and if the line passes
+     * directly between two hexes, it returns them both. Based on the degree of
+     * the angle, the next hex is going to be one of three hexes. We check those
+     * three hexes, sides first, add the first one that intersects and continue
+     * from there. Based off of some of the formulas at Amit's game programming
+     * site. (http://www-cs-students.stanford.edu/~amitp/gameprog.html)
+     *
      * Note: this function can return Coordinates that are not on the board.
-     * 
-     * @param src
-     * @param dest
-     * @param split
-     * @return
+     *
+     * @param src Starting point.
+     * @param dest Ending Point.
+     * @param split Set TRUE to make left appear before right in the sequence reliably
+     * @return The list of intervening coordinates.
      */
-    public static ArrayList<Coords> intervening(Coords src, Coords dest,
-            boolean split) {
+    public static ArrayList<Coords> intervening(Coords src, Coords dest, boolean split) {
         IdealHex iSrc = IdealHex.get(src);
         IdealHex iDest = IdealHex.get(dest);
 
@@ -391,7 +401,7 @@ public class Coords implements Serializable {
         directions[1] = (centerDirection + 5) % 6;
         directions[0] = (centerDirection + 1) % 6;
 
-        ArrayList<Coords> hexes = new ArrayList<Coords>();
+        ArrayList<Coords> hexes = new ArrayList<>();
         Coords current = src;
 
         hexes.add(current);
@@ -410,12 +420,11 @@ public class Coords implements Serializable {
      * center first, it would end up missing the side hexes sometimes. Not the
      * most elegant solution, but it works.
      */
-    public static Coords nextHex(Coords current, IdealHex iSrc, IdealHex iDest,
-            int[] directions) {
-        for (int i = 0; i < directions.length; i++) {
-            Coords testing = current.translated(directions[i]);
+    public static Coords nextHex(Coords current, IdealHex iSrc, IdealHex iDest, int[] directions) {
+        for (int direction : directions) {
+            Coords testing = current.translated(direction);
             if (IdealHex.get(testing).isIntersectedBy(iSrc.cx, iSrc.cy,
-                    iDest.cx, iDest.cy)) {
+                                                      iDest.cx, iDest.cy)) {
                 return testing;
             }
         }
@@ -430,16 +439,16 @@ public class Coords implements Serializable {
         if (current == destination)
             return current;
         int[] directions;
-        if (current.x == destination.x) {
-            if (current.y > destination.y) {
+        if (current.getX() == destination.getX()) {
+            if (current.getY() > destination.getY()) {
                 directions = new int[1];
                 directions[0] = 0;
             } else {
                 directions = new int[1];
                 directions[0] = 3;
             }
-        } else if (current.x > destination.x) {
-            if (current.y > destination.y) {
+        } else if (current.getX() > destination.getX()) {
+            if (current.getY() > destination.getY()) {
                 directions = new int[3];
                 directions[0] = 4;
                 directions[1] = 5;
@@ -451,7 +460,7 @@ public class Coords implements Serializable {
                 directions[2] = 5;
             }
         } else {
-            if (current.y > destination.y) {
+            if (current.getY() > destination.getY()) {
                 directions = new int[3];
                 directions[0] = 0;
                 directions[1] = 1;
@@ -470,10 +479,16 @@ public class Coords implements Serializable {
     /**
      * this makes the coordinates 1 based instead of 0 based to match the tiles
      * diaplayed on the grid.
-     * 
-     * @return
      */
-    public String toFriendlyString() {
-        return "(" + (x + 1) + ", " + (y + 1) + ")";
+    public final String toFriendlyString() {
+        return "(" + (getX() + 1) + ", " + (getY() + 1) + ")";
+    }
+
+    public final int getX() {
+        return x;
+    }
+
+    public final int getY() {
+        return y;
     }
 }

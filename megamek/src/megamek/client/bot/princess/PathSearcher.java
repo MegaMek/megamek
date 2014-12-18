@@ -42,8 +42,9 @@ public class PathSearcher {
         public MovePath path;
 
         public int compareTo(Object o) {
-            if (o instanceof WeightedPath)
+            if (o instanceof WeightedPath) {
                 return compareTo(o);
+            }
 
             return 0;
         }
@@ -74,16 +75,16 @@ public class PathSearcher {
                 if (po.facing < facing) {
                     return 1;
                 }
-                if (location.x < po.location.x) {
+                if (location.getX() < po.location.getX()) {
                     return -1;
                 }
-                if (po.location.x < location.x) {
+                if (po.location.getX() < location.getX()) {
                     return 1;
                 }
-                if (location.y < po.location.y) {
+                if (location.getY() < po.location.getY()) {
                     return -1;
                 }
-                if (po.location.y < location.y) {
+                if (po.location.getY() < location.getY()) {
                     return 1;
                 }
                 if (po.hulldown && (!hulldown)) {
@@ -117,8 +118,8 @@ public class PathSearcher {
      * to each location/facing considered
      */
     ArrayList<WeightedPath> seeAllPaths(ArrayList<WeightedPath> start_paths,
-            boolean forward, boolean backward, IGame game,
-            TreeMap<PathState, WeightedPath> pathmap) {
+                                        boolean forward, boolean backward, IGame game,
+                                        TreeMap<PathState, WeightedPath> pathmap) {
         final String METHOD_NAME = "seeAllPaths(ArrayList<WeightedPath>, boolean, boolean, IGame, TreeMap<PathState, WeightedPath>)";
         owner.methodBegin(getClass(), METHOD_NAME);
         try {
@@ -126,15 +127,12 @@ public class PathSearcher {
             for (WeightedPath sp : start_paths) {
                 List<MovePath> nextmoves = sp.path.getNextMoves(backward, forward);
                 for (MovePath p : nextmoves) {
-                    if (!p.getLastStep().isLegal())
-                    {
+                    if (!p.getLastStep().isLegal()) {
                         continue; // don't make illegal moves
                     }
-                    if (p.getLastStep().getType() == MovePath.MoveStepType.GET_UP)
-                    {
+                    if (p.getLastStep().getType() == MovePath.MoveStepType.GET_UP) {
                         if (p.getLastStep().getMpUsed() > sp.path.getEntity()
-                                .getRunMP())
-                        {
+                                                                 .getRunMP()) {
                             continue; // ignore if I'm out of MP
                         }
                     }
@@ -157,7 +155,7 @@ public class PathSearcher {
             }
             if (next_steps.size() != 0) {
                 ArrayList<WeightedPath> all_paths = seeAllPaths(next_steps,
-                        forward, backward, game, pathmap);
+                                                                forward, backward, game, pathmap);
                 all_paths.addAll(start_paths);
                 return all_paths;
             }
@@ -168,7 +166,7 @@ public class PathSearcher {
         }
     }
 
-    ArrayList<WeightedPath> getAllWeightedPaths(Entity entity,IGame game) {
+    ArrayList<WeightedPath> getAllWeightedPaths(Entity entity, IGame game) {
         final String METHOD_NAME = "getAllWeightedPaths(Entity, IGame)";
         owner.methodBegin(getClass(), METHOD_NAME);
         try {
@@ -182,11 +180,11 @@ public class PathSearcher {
             pathmap.put(new PathState(start.path), start);
             start_path.add(start);
 
-            if(entity.getJumpMP()>0) { //allow jumping
-                MovePath jump_path=new MovePath(game,entity);
+            if (entity.getJumpMP() > 0) { //allow jumping
+                MovePath jump_path = new MovePath(game, entity);
                 jump_path.addStep(MoveStepType.START_JUMP);
-                WeightedPath startjump=new WeightedPath(jump_path,empty_rank-0.1);
-                pathmap.put(new PathState(startjump.path),startjump);
+                WeightedPath startjump = new WeightedPath(jump_path, empty_rank - 0.1);
+                pathmap.put(new PathState(startjump.path), startjump);
                 start_path.add(startjump);
             }
 
@@ -196,13 +194,13 @@ public class PathSearcher {
         }
     }
 
-    ArrayList<WeightedPath> getTopPaths(Entity entity,IGame game,int npaths) {
+    ArrayList<WeightedPath> getTopPaths(Entity entity, IGame game, int npaths) {
         final String METHOD_NAME = "getTopPaths(Entity, IGame, int)";
         owner.methodBegin(getClass(), METHOD_NAME);
         try {
-            ArrayList<WeightedPath> allpaths = getAllWeightedPaths(entity,game);
+            ArrayList<WeightedPath> allpaths = getAllWeightedPaths(entity, game);
             Collections.sort(allpaths);
-            return (ArrayList<WeightedPath>)allpaths.subList(0, npaths);
+            return (ArrayList<WeightedPath>) allpaths.subList(0, npaths);
         } finally {
             owner.methodEnd(getClass(), METHOD_NAME);
         }
@@ -213,7 +211,7 @@ public class PathSearcher {
         owner.methodBegin(getClass(), METHOD_NAME);
         try {
             //System.err.println("Unit: " + entity.getDisplayName() + " is pathing.");
-            ArrayList<WeightedPath> allpaths=getAllWeightedPaths(entity,game);
+            ArrayList<WeightedPath> allpaths = getAllWeightedPaths(entity, game);
 
             //System.err.println("choosing between "
             //        + Integer.toString(allpaths.size()) + " paths");

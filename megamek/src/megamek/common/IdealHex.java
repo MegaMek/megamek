@@ -40,8 +40,8 @@ public class IdealHex {
 
     public IdealHex(Coords c) {
         // determine origin
-        double ox = c.x * XCONST * 3;
-        double oy = c.y * 2 + (c.isXOdd() ? 1 : 0);
+        double ox = c.getX() * XCONST * 3;
+        double oy = c.getY() * 2 + (c.isXOdd() ? 1 : 0);
 
         // center
         cx = ox + (XCONST * 2);
@@ -85,10 +85,10 @@ public class IdealHex {
      * deadeye00 (Derek Evans)
      */
     public static int turns(double x0, double y0, double x1, double y1,
-            double x2, double y2) {
+                            double x2, double y2) {
         final double cross = (x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0);
         return ((cross > 0.000001) ? LEFT : ((cross < -0.000001) ? RIGHT
-                : STRAIGHT));
+                                                                 : STRAIGHT));
     }
 
     /**
@@ -109,13 +109,13 @@ public class IdealHex {
      * cached yet, creates it. If the cache is too small, does not resize it.
      */
     public static IdealHex get(Coords coords) {
-        if (cache == null || coords.x >= cacheWidth || coords.y >= cacheHeight
-                || coords.x < 0 || coords.y < 0) {
+        if (cache == null || coords.getX() >= cacheWidth || coords.getY() >= cacheHeight
+            || coords.getX() < 0 || coords.getY() < 0) {
             // System.err.println("IdealHex cache miss on " + coords);
             return new IdealHex(coords);
         }
         // okay, check cache
-        int index = (coords.y * cacheWidth) + coords.x;
+        int index = (coords.getY() * cacheWidth) + coords.getX();
         IdealHex hex = cache[index];
         if (hex != null) {
             return hex;

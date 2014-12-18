@@ -19926,35 +19926,6 @@ public class Server implements Runnable {
                     }
                 }
 
-                // If we're using optional tank damage thresholds, setup our hit
-                // effects now...
-                if ((te instanceof Tank)
-                    && game.getOptions()
-                           .booleanOption("vehicles_threshold")
-                    && !((te instanceof VTOL) || (te instanceof GunEmplacement))) {
-                    int thresh = (int) Math.ceil((game.getOptions()
-                                                      .booleanOption("vehicles_threshold_variable") ? te
-                                                          .getArmor(hit) : te.getOArmor(hit))
-                                                 / game.getOptions().intOption(
-                            "vehicles_threshold_divisor"));
-
-                    // adjust for hardened armor
-                    if (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_HARDENED) {
-                        thresh *= 2;
-                    }
-
-                    if (damage > thresh) {
-                        hit.setEffect(((Tank) te).getPotCrit());
-                        ((Tank) te).setOverThresh(true);
-                        // TACs from the hit location table
-                        crits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) ? 1
-                                                                                                         : 0;
-                    } else {
-                        ((Tank) te).setOverThresh(false);
-                        crits = 0;
-                    }
-                }
-
                 // is this a mech/tank dumping ammo being hit in the rear torso?
                 if (((te instanceof Mech) && hit.isRear() && bTorso)
                     || ((te instanceof Tank) && (hit.getLocation() == (te instanceof SuperHeavyTank ? SuperHeavyTank
@@ -20071,6 +20042,32 @@ public class Server implements Runnable {
                     r.indent(3);
                     r.add(damage);
                     vDesc.addElement(r);
+                }
+
+                // If we're using optional tank damage thresholds, setup our hit
+                // effects now...
+                if ((te instanceof Tank)
+                    && game.getOptions()
+                           .booleanOption("vehicles_threshold")
+                    && !((te instanceof VTOL) || (te instanceof GunEmplacement))) {
+                    int thresh = (int) Math.ceil((game.getOptions()
+                                                      .booleanOption("vehicles_threshold_variable") ? te
+                                                          .getArmor(hit) : te.getOArmor(hit))
+                                                 / game.getOptions().intOption(
+                            "vehicles_threshold_divisor"));
+
+                    if (damage > thresh
+                            || te.getArmor(hit) < damage
+                            || damageIS) {
+                        hit.setEffect(((Tank) te).getPotCrit());
+                        ((Tank) te).setOverThresh(true);
+                        // TACs from the hit location table
+                        crits = ((hit.getEffect() & HitData.EFFECT_CRITICAL)
+                                == HitData.EFFECT_CRITICAL) ? 1 : 0;
+                    } else {
+                        ((Tank) te).setOverThresh(false);
+                        crits = 0;
+                    }
                 }
 
                 // if there's a mast mount in the rotor, it and all other

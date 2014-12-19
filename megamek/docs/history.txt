@@ -20,6 +20,7 @@ v0.39.5 / v0.40.0RC3 (SVN)
 + Bug [#4386]: PSD files included with binary releases
 + Bug [#4330]: Potential problem with the vehicle threshold rule
 + Feature [feature-requests:#1340]: Please make inferno bombs work with the vehicle damage threshold rule
++ Data [#388] & [#389]: New Maps!
 
 v0.39.4 / v0.40.0RC2 (2014-12-14 19:00 UTC)
 + added Transporter.resetTransporter function for MHQ purposes

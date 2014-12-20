@@ -21,6 +21,9 @@ v0.39.5 / v0.40.0RC3 (SVN)
 + Bug [#4330]: Potential problem with the vehicle threshold rule
 + Feature [feature-requests:#1340]: Please make inferno bombs work with the vehicle damage threshold rule
 + Data [#388] & [#389]: New Maps!
++ Data: Added a new quicksand image under the singlehex folder
+    This is not implemented in tilesets because I'm not sure what the setting should be for it
+    Right now the classic tileset has a weird note about quicksand, but the images are all commented
 
 v0.39.4 / v0.40.0RC2 (2014-12-14 19:00 UTC)
 + added Transporter.resetTransporter function for MHQ purposes

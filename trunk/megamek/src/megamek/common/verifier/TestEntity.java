@@ -21,9 +21,11 @@ package megamek.common.verifier;
 
 import java.util.Iterator;
 
+import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.Bay;
 import megamek.common.BipedMech;
+import megamek.common.BombType;
 import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
@@ -445,6 +447,11 @@ public abstract class TestEntity implements TestEntityOption {
                 continue;
             }
 
+            // Bombs on ASF don't count!
+            if (getEntity() instanceof Aero && m.getType() instanceof BombType) {
+                continue;
+            }
+
             AmmoType mt = (AmmoType) m.getType();
             weight += mt.getTonnage(getEntity());
         }
@@ -811,11 +818,11 @@ public abstract class TestEntity implements TestEntityOption {
                         illegal = true;
                     }
                 }
-                
+
 
                 if (m.getType().hasFlag(MiscType.F_HARJEL)
-                        && ((m.getLocation() == Tank.LOC_BODY) 
-                                || ((getEntity() instanceof VTOL) 
+                        && ((m.getLocation() == Tank.LOC_BODY)
+                                || ((getEntity() instanceof VTOL)
                                     && m.getLocation() == VTOL.LOC_ROTOR))) {
                     illegal = true;
                     buff.append("Unable to load harjel in body or rotor.\n");

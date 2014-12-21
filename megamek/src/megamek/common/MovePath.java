@@ -537,7 +537,7 @@ public class MovePath implements Cloneable, Serializable {
             boolean returned = false;
             while (i.hasMoreElements()) {
                 step = i.nextElement();
-                // Make sure the parent path of the step is correct                
+                // Make sure the parent path of the step is correct
                 step.setParent(this);
                 if (!left) {
                     if (!step.getPosition().equals(getEntity().getPosition())
@@ -812,7 +812,8 @@ public class MovePath implements Cloneable, Serializable {
                 }
             } else {
                 if ((getLastStep().getVelocityLeft() > 0) && !getGame().useVectorMove()
-                        && (getLastStep().getType() != MovePath.MoveStepType.FLEE)) {
+                        && !(getLastStep().getType() == MovePath.MoveStepType.FLEE
+                        || getLastStep().getType() == MovePath.MoveStepType.EJECT)) {
                     return false;
                 }
             }
@@ -906,9 +907,9 @@ public class MovePath implements Cloneable, Serializable {
             }
             // If we're doing a special movement, like charging or DFA, we will
             //  have to take extra steps to see if we can finish off the move
-            //  this is because getNextMoves only considers turning and 
+            //  this is because getNextMoves only considers turning and
             //  forward/backward movement
-            if (type == MoveStepType.CHARGE || 
+            if (type == MoveStepType.CHARGE ||
                     type == MoveStepType.DFA){
                 MovePath expandedPath = candidatePath.clone();
                 expandedPath.addStep(type);
@@ -926,8 +927,8 @@ public class MovePath implements Cloneable, Serializable {
                     }
                 }
             }
-            
-            
+
+
             loopcount++;
             if (((loopcount % 256) == 0) && keepLooping
                     && (candidates.size() > 0)) {

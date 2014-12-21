@@ -1524,13 +1524,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                      && (climbMode || isJumpingNow) && (this instanceof Mech))
                     || (retVal > bldnex)) {
                     retVal = bldnex;
-                } else if ((bldnex + next.surface()) > (bldcur + current
-                        .surface())) {
+                } else if ((bldnex + next.surface()) 
+                        > (bldcur + current.surface())) {
+                    int nextBasement = 
+                            next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE);
+                    int collapsedBasement = 
+                            next.terrainLevel(Terrains.BLDG_BASE_COLLAPSED);
                     if (climbMode || isJumpingNow) {
                         retVal = bldnex + next.surface();
+                    // If the basement is collapsed, there is no level 0
                     } else if ((assumedElevation == 0)
-                               && (next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE) > BasementType.NONE
-                            .getValue())) {
+                            && (nextBasement > BasementType.NONE.getValue())
+                            && (collapsedBasement > 0)) {
                         retVal -= BasementType.getType(
                                 next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE))
                                               .getDepth();

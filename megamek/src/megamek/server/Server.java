@@ -31335,9 +31335,8 @@ public class Server implements Runnable {
 
                     // wheeled and hover tanks take movement critical
                     if ((entity instanceof Tank)
-                        && ((entity.getMovementMode() == EntityMovementMode.WHEELED) || (entity
-                                                                                                 .getMovementMode()
-                                                                                         == EntityMovementMode.HOVER)
+                        && ((entity.getMovementMode() == EntityMovementMode.WHEELED)
+                                || (entity.getMovementMode() == EntityMovementMode.HOVER)
                     )) {
                         r = new Report(6480);
                         r.subject = entity.getId();
@@ -31352,8 +31351,8 @@ public class Server implements Runnable {
                     // only infantry and support vees with bar < 5 are affected
                     if ((entity instanceof BattleArmor)
                         || ((entity instanceof SupportTank)
-                            && !entity.hasPatchworkArmor() && (entity
-                                                                       .getBARRating(1) > 4))) {
+                            && !entity.hasPatchworkArmor()
+                            && (entity.getBARRating(1) > 4))) {
                         continue;
                     }
                     if (entity instanceof Infantry) {

@@ -1,12 +1,12 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur
  * (bmazur@sev.org)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License as published by the Free Software
  * Foundation; either version 2 of the License, or (at your option) any later
  * version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
@@ -123,9 +123,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public static enum MoveCommand implements PhaseCommand {
         MOVE_NEXT("moveNext", CMD_NONE), //$NON-NLS-1$
         MOVE_TURN("moveTurn", CMD_GROUND | CMD_AERO), //$NON-NLS-1$
-        MOVE_WALK("moveWalk", CMD_GROUND | CMD_AERO), //$NON-NLS-1$   
-        MOVE_JUMP("moveJump", CMD_MECH | CMD_TANK | CMD_INF), //$NON-NLS-1$                
-        MOVE_BACK_UP("moveBackUp", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$        
+        MOVE_WALK("moveWalk", CMD_GROUND | CMD_AERO), //$NON-NLS-1$
+        MOVE_JUMP("moveJump", CMD_MECH | CMD_TANK | CMD_INF), //$NON-NLS-1$
+        MOVE_BACK_UP("moveBackUp", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_GET_UP("moveGetUp", CMD_MECH), //$NON-NLS-1$
         MOVE_FORWARD_INI("moveForwardIni", CMD_ALL), //$NON-NLS-1$
         MOVE_CHARGE("moveCharge", CMD_MECH | CMD_TANK), //$NON-NLS-1$
@@ -756,8 +756,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             && !(isMech && (((Mech) ce).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED))
                             && ce.isActive());
         } else {
-            setEjectEnabled(isMech
-                            && (((Mech) ce).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED)
+            setEjectEnabled(((isMech
+                            && (((Mech) ce).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED))
+                            || isAero)
                             && ce.isActive() && !ce.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT));
         }
 
@@ -1439,7 +1440,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     || !(target instanceof Aero)) {
                     clientgui.doAlertDialog(
                             Messages.getString("MovementDisplay.CantRam"), //$NON-NLS-1$
-                            Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ 
+                            Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$
                     clear();
                     return;
                 }
@@ -1512,7 +1513,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 if ((target == null) || target.equals(ce)) {
                     clientgui.doAlertDialog(
                             Messages.getString("MovementDisplay.CantCharge"), //$NON-NLS-1$
-                            Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ 
+                            Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$
                     clear();
                     return;
                 }
@@ -3250,7 +3251,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // Assume that we have *no* choice.
         Targetable choice = null;
 
-        // Get the available choices.        
+        // Get the available choices.
 
         // Convert the choices into a List of targets.
         ArrayList<Targetable> targets = new ArrayList<Targetable>();

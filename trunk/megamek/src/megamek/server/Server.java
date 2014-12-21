@@ -6104,7 +6104,7 @@ public class Server implements Runnable {
         }
 
         if (md.contains(MoveStepType.EJECT)) {
-            if (entity instanceof Mech) {
+            if (entity instanceof Mech || entity instanceof Aero) {
                 r = new Report(2020);
                 r.subject = entity.getId();
                 r.add(entity.getCrew().getName());

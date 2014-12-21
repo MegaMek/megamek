@@ -25,6 +25,7 @@ v0.39.5 / v0.40.0RC3 (SVN)
     This is not implemented in tilesets because I'm not sure what the setting should be for it
     Right now the classic tileset has a weird note about quicksand, but the images are all commented
 + Bug: Aero validation failed for Aero's with bombs loaded as reinforcements from MUL because bombs were counted for weight
++ Bug [#4362]: ASFs at velocity 1 are unable to eject because "this unit has not used all of its velocity"
 
 v0.39.4 / v0.40.0RC2 (2014-12-14 19:00 UTC)
 + added Transporter.resetTransporter function for MHQ purposes

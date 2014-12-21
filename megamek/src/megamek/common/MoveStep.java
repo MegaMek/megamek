@@ -2615,9 +2615,12 @@ public class MoveStep implements Serializable {
                 return;
             }
             // non-flying Infantry and ground vehicles are charged double.
-            if ((isInfantry && !((getMovementType() == EntityMovementType.MOVE_VTOL_WALK) || (getMovementType() == EntityMovementType.MOVE_VTOL_RUN)))
+            if ((isInfantry 
+                    && !((getMovementType() == EntityMovementType.MOVE_VTOL_WALK) 
+                            || (getMovementType() == EntityMovementType.MOVE_VTOL_RUN)))
                     || ((moveMode == EntityMovementMode.TRACKED)
-                    || (moveMode == EntityMovementMode.WHEELED) || (moveMode == EntityMovementMode.HOVER))) {
+                            || (moveMode == EntityMovementMode.WHEELED) 
+                            || (moveMode == EntityMovementMode.HOVER))) {
                 delta_e *= 2;
             }
             mp += delta_e;

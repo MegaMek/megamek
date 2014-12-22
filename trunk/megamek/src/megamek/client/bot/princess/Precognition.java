@@ -190,6 +190,7 @@ public class Precognition implements Runnable {
                 } else if (!getDirtyUnits().isEmpty()) {
                     Entity entity = getGame().getEntity(getDirtyUnits().pollFirst());
                     if (entity != null) {
+                        unPause();
                         getOwner().log(getClass(), METHOD_NAME, "recalculating paths for " + entity.getDisplayName());
                         getPathEnumerator().recalculateMovesFor(entity);
                         getOwner().log(getClass(), METHOD_NAME, "finished recalculating paths for " + entity
@@ -220,10 +221,14 @@ public class Precognition implements Runnable {
 
         try {
             while (!getDone().get() &&
-                   (getWaitWhenDone().get() || (getEventsToProcess().isEmpty() && getDirtyUnits().isEmpty()))) {
-                getOwner().log(getClass(), METHOD_NAME, "waitWhenDone = " + getWaitWhenDone() +
-                                                        " :: eventsToProcess = " + getEventsToProcess().size() +
-                                                        " :: dirtyUnits = " + getDirtyUnits().size());
+                   (getWaitWhenDone().get() ||
+                    (getEventsToProcess().isEmpty() &&
+                     getDirtyUnits().isEmpty()))) {
+                getOwner().log(getClass(), METHOD_NAME,
+                               "waitWhenDone = " + getWaitWhenDone() +
+                               " :: eventsToProcess = " +
+                               getEventsToProcess().size() +
+                               " :: dirtyUnits = " + getDirtyUnits().size());
                 getWaiting().set(true);
                 try {
                     wait();

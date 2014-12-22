@@ -48,9 +48,6 @@ public class Board implements Serializable, IBoard {
 
     public static final String BOARD_REQUEST_ROTATION = "rotate:";
 
-    public static final int BOARD_MAX_WIDTH = Coords.MAX_BOARD_WIDTH;
-    public static final int BOARD_MAX_HEIGHT = Coords.MAX_BOARD_HEIGHT;
-
     //starting positions
     public static final int START_NONE = -1;
     public static final int START_ANY = 0;
@@ -504,7 +501,6 @@ public class Board implements Serializable, IBoard {
      *
      * @param coords A list of coordinates to be updated
      * @param hexes  The hex to be updated for each coordinate
-     * @see setHex
      */
     public void setHexes(List<Coords> coords, List<IHex> hexes) {
         //Keeps track of hexes that will need to be reinitialized
@@ -1128,7 +1124,7 @@ public class Board implements Serializable, IBoard {
     /**
      * Collapse a vector of building hexes.
      *
-     * @param bldgs - the <code>Vector</code> of <code>Coord</code>
+     * @param coords - the <code>Vector</code> of <code>Coord</code>
      *              objects to be collapsed.
      */
     public void collapseBuilding(Vector<Coords> coords) {
@@ -1149,7 +1145,7 @@ public class Board implements Serializable, IBoard {
      * The given building hex has collapsed. Remove it from the board and
      * replace it with rubble.
      *
-     * @param other - the <code>Building</code> that has collapsed.
+     * @param coords - the <code>Building</code> that has collapsed.
      */
     public void collapseBuilding(Coords coords) {
         final IHex curHex = this.getHex(coords);
@@ -1207,7 +1203,7 @@ public class Board implements Serializable, IBoard {
      * The given building has collapsed. Remove it from the board and replace it
      * with rubble.
      *
-     * @param other - the <code>Building</code> that has collapsed.
+     * @param bldg - the <code>Building</code> that has collapsed.
      */
     public void collapseBuilding(Building bldg) {
 
@@ -1520,5 +1516,16 @@ public class Board implements Serializable, IBoard {
     public void resetStoredElevation() {
         minElevation = UNDEFINED_MIN_ELEV;
         maxElevation = UNDEFINED_MAX_ELEV;
+    }
+
+    @Override
+    public boolean containsBridges() {
+        for (Coords c : bldgByCoords.keySet()) {
+            IHex hex = getHex(c);
+            if (hex.containsTerrain(Terrains.BRIDGE)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

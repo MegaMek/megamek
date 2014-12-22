@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
@@ -30,6 +31,7 @@ import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.Terrains;
 import megamek.common.pathfinder.AbstractPathFinder.Filter;
 import megamek.common.pathfinder.LongestPathFinder;
 import megamek.common.pathfinder.MovePathFinder;
@@ -43,6 +45,9 @@ public class PathEnumerator {
     private final Map<Integer, ConvexBoardArea> unitMovableAreas = new ConcurrentHashMap<>();
     private final Map<Integer, Set<CoordFacingCombo>> unitPotentialLocations = new ConcurrentHashMap<>();
     private final Map<Integer, CoordFacingCombo> lastKnownLocations = new ConcurrentHashMap<>();
+
+    private AtomicBoolean mapHasBridges = null;
+    private final Object BRIDGE_LOCK = new Object();
 
     //todo VTOL elevation changes.
 
@@ -214,7 +219,6 @@ public class PathEnumerator {
                 paths.addAll(lpf.getLongestComputedPaths());
 
                 //add walking moves
-                // todo: Why BACKWARDS?
                 lpf = LongestPathFinder.newInstanceOfLongestPath(mover.getWalkMP(), MoveStepType.BACKWARDS, getGame());
                 lpf.run(new MovePath(getGame(), mover));
                 paths.addAll(lpf.getLongestComputedPaths());
@@ -227,6 +231,9 @@ public class PathEnumerator {
                     spf.run((new MovePath(game, mover)).addStep(MoveStepType.START_JUMP));
                     paths.addAll(spf.getAllComputedPathsUncategorized());
                 }
+
+                // Try climbing over obstacles and onto bridges
+                adjustPathsForBridges(paths);
 
                 //filter those paths that end in illegal state
                 Filter<MovePath> filter = new Filter<MovePath>() {
@@ -252,6 +259,41 @@ public class PathEnumerator {
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
+    }
+
+    private void adjustPathsForBridges(List<MovePath> paths) {
+        if (!worryAboutBridges()) {
+            return;
+        }
+
+        for (MovePath path : paths) {
+            adjustPathForBidge(path);
+        }
+    }
+
+    private void adjustPathForBidge(MovePath path) {
+        boolean needsAdjust = false;
+        for (Coords c : path.getCoordsSet()) {
+            if (getGame().getBoard().getHex(c)
+                         .containsTerrain(Terrains.BRIDGE)) {
+                if (getGame().getBoard().getBuildingAt(c).getCurrentCF(c) >=
+                    path.getEntity().getWeight()) {
+                    needsAdjust = true;
+                    break;
+                } else {
+                    needsAdjust = false;
+                    break;
+                }
+            }
+        }
+        if (!needsAdjust) {
+            return;
+        }
+        MovePath adjusted = new MovePath(getGame(), path.getEntity());
+        adjusted.addStep(MoveStepType.CLIMB_MODE_ON);
+        adjusted.addSteps(path.getStepVector(), true);
+        adjusted.addStep(MoveStepType.CLIMB_MODE_OFF);
+        path.replaceSteps(adjusted.getStepVector());
     }
 
 //    public void debugPrintContents() {
@@ -329,5 +371,22 @@ public class PathEnumerator {
 
     protected IGame getGame() {
         return game;
+    }
+
+    private boolean worryAboutBridges() {
+        if (mapHasBridges != null) {
+            return mapHasBridges.get();
+        }
+
+        synchronized (BRIDGE_LOCK) {
+            if (mapHasBridges != null) {
+                return mapHasBridges.get();
+            }
+
+            mapHasBridges = new AtomicBoolean(getGame().getBoard()
+                                                       .containsBridges());
+        }
+
+        return mapHasBridges.get();
     }
 }

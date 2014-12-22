@@ -29,6 +29,7 @@ v0.39.5 / v0.40.0RC3 (SVN)
 + Bug [#4359]: Units forced to move into basement, even if not collapsed
 + Bug [#4357]: TestMech now ensures Omni 'mechs don't have hand/lower arm
     actuators with arm mounted PPCs/Gauss/Autocannons
++ Bug [#2843]: bot does not use bridges (fixed for Princess only).
 
 v0.39.4 / v0.40.0RC2 (2014-12-14 19:00 UTC)
 + added Transporter.resetTransporter function for MHQ purposes

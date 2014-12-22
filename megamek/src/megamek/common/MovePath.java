@@ -21,9 +21,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 
@@ -36,6 +39,9 @@ import megamek.common.preference.PreferenceManager;
  */
 public class MovePath implements Cloneable, Serializable {
     private static final long serialVersionUID = -4258296679177532986L;
+
+    private Set<Coords> coordsSet = null;
+    private final transient Object COORD_SET_LOCK = new Object();
 
     protected IGame getGame() {
         return game;
@@ -190,6 +196,27 @@ public class MovePath implements Cloneable, Serializable {
 
     protected MovePath addStep(final MoveStep step) {
         return addStep(step, true);
+    }
+
+    public Set<Coords> getCoordsSet() {
+        if (coordsSet != null) {
+            return coordsSet;
+        }
+
+        synchronized (COORD_SET_LOCK) {
+            if (coordsSet != null) {
+                return coordsSet;
+            }
+
+            coordsSet = new HashSet<>();
+            for (MoveStep step : getStepVector()) {
+                if (step.getPosition() == null) {
+                    continue;
+                }
+                coordsSet.add(step.getPosition());
+            }
+        }
+        return coordsSet;
     }
 
     /**

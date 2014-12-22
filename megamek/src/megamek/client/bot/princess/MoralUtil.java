@@ -91,7 +91,7 @@ public class MoralUtil implements IMoralUtil {
 
                 // Base target number is 2 for a regular check or 6 for a rally check.
                 int targetNumber = rally ? 6 : 2;
-                logMsg.append("\nt\tBase Target Number = ").append(targetNumber);
+                logMsg.append("\n\t\tBase Target Number = ").append(targetNumber);
 
                 // If the unit is crippled and forced withdrawal is in effect, the unit will automatically break.
                 targetNumber += calcDamageMod(unit, forcedWithdrawal, logMsg);

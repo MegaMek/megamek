@@ -52,6 +52,11 @@ public class HitData {
     //need to keep track of the attack value for a single attack in the case of fighter squadrons
     //probably not the best place for this, but I don't want to add another parameter to damageEntity
     private int singleAV = -1;
+    /**
+     * Does this HitData represent the first hit in a series of hits (ie, 
+     * cluster weapons).
+     */
+    private boolean firstHit = true;
 
 
     public HitData(int location) {
@@ -243,5 +248,13 @@ public class HitData {
 
     public void setLocation(int location) {
         this.location = location;
+    }
+
+    public boolean isFirstHit() {
+        return firstHit;
+    }
+
+    public void setFirstHit(boolean firstHit) {
+        this.firstHit = firstHit;
     }
 }

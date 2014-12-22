@@ -92,7 +92,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean secondShot = false;
     protected int numRapidFireHits;
     protected String sSalvoType = " shots(s) ";
-    int nSalvoBonus = 0;
+    protected int nSalvoBonus = 0;
+    /**
+     * Keeps track of whether we are processing the first hit in a series of
+     * hits (like for cluster weapons)
+     */
+    protected boolean firstHit = true;
 
     /**
      * Boolean flag that determines whether or not this attack is part of a
@@ -571,6 +576,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                                            hits, nCluster, bldgAbsorbs);
                         server.creditKill(entityTarget, ae);
                         hits -= nCluster;
+                        firstHit = false;
                     }
                 } // Handle the next cluster.
             } else { // We missed, but need to handle special miss cases
@@ -909,6 +915,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         hit.setCapital(wtype.isCapital());
         hit.setBoxCars(roll == 12);
         hit.setCapMisCritMod(getCapMisMod());
+        hit.setFirstHit(firstHit);
         if (weapon.isWeaponGroup()) {
             hit.setSingleAV(attackValue);
         }

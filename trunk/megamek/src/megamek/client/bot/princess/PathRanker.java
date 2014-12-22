@@ -145,7 +145,7 @@ public class PathRanker {
 
                 // If fleeing, skip any paths that don't get me closer to home.
                 if (fleeing && (distanceToHomeEdge(finalCoords, homeEdge, game) >= startingHomeDistance)) {
-                    logLevel = LogLevel.WARNING;
+                    logLevel = LogLevel.INFO;
                     msg.append("\n\tINVALID: Running away in wrong direction.");
                     continue;
                 }
@@ -160,7 +160,7 @@ public class PathRanker {
 
                 // Don't move on/through buildings that will not support our weight.
                 if (willBuildingCollapse(path, game)) {
-                    logLevel = LogLevel.WARNING;
+                    logLevel = LogLevel.INFO;
                     msg.append("\n\tINVALID: Building in path will collapse.");
                     continue;
                 }
@@ -168,7 +168,7 @@ public class PathRanker {
                 // Skip any path where I am too likely to fail my piloting roll.
                 double chance = getMovePathSuccessProbability(path, msg);
                 if (chance < fallTolerance) {
-                    logLevel = LogLevel.WARNING;
+                    logLevel = LogLevel.INFO;
                     msg.append("\n\tINVALID: Too likely to fall on my face.");
                     continue;
                 }

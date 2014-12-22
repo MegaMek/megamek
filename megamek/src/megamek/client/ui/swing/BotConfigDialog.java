@@ -503,7 +503,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     public void actionPerformed(ActionEvent e) {
         CardLayout cardlayout = (CardLayout) (botSpecificCardsPanel.getLayout());
         if (testBotRadiobutton.equals(e.getSource())) {
-            if (!customName) {
+            if (!customName && !replacePlayer) {
                 nameField.setText("TestBot");
             }
             cardlayout.show(botSpecificCardsPanel, TESTBOT_PANEL);

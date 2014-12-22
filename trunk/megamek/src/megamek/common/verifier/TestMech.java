@@ -24,6 +24,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
+import megamek.common.BipedMech;
 import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
@@ -35,7 +36,12 @@ import megamek.common.Mounted;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.util.StringUtil;
+import megamek.common.weapons.ACWeapon;
 import megamek.common.weapons.EnergyWeapon;
+import megamek.common.weapons.GaussWeapon;
+import megamek.common.weapons.LBXACWeapon;
+import megamek.common.weapons.PPCWeapon;
+import megamek.common.weapons.UACWeapon;
 
 public class TestMech extends TestEntity {
     private Mech mech = null;
@@ -398,10 +404,11 @@ public class TestMech extends TestEntity {
 
     public void checkCriticalSlotsForEquipment(Entity entity,
             Vector<Mounted> unallocated, Vector<Serializable> allocation,
-            Vector<Integer> heatSinks) {
+            Vector<Integer> heatSinks, StringBuffer buff) {
         int countInternalHeatSinks = 0;
         for (Mounted m : entity.getEquipment()) {
-            if (m.getLocation() == Entity.LOC_NONE) {
+            int loc = m.getLocation();
+            if (loc == Entity.LOC_NONE) {
                 if ((m.getType() instanceof AmmoType)
                         && (m.getUsableShotsLeft() <= 1)) {
                     continue;
@@ -423,6 +430,32 @@ public class TestMech extends TestEntity {
                     continue;
                 }
             }
+            // Check for illegal allocations
+            if (entity.isOmni()
+                    && (entity instanceof BipedMech)
+                    && ((loc == Mech.LOC_LARM) || (loc == Mech.LOC_RARM))
+                    && ((m.getType() instanceof GaussWeapon)
+                            || (m.getType() instanceof ACWeapon)
+                            || (m.getType() instanceof UACWeapon)
+                            || (m.getType() instanceof LBXACWeapon) 
+                            || (m.getType() instanceof PPCWeapon))) {
+                String weapon = "";
+                if (m.getType() instanceof GaussWeapon) {
+                    weapon = "gauss rifles"; 
+                } else if ((m.getType() instanceof ACWeapon) 
+                        || (m.getType() instanceof UACWeapon)
+                        || (m.getType() instanceof LBXACWeapon)) {
+                    weapon = "autocannons";
+                } else if (m.getType() instanceof PPCWeapon) {
+                    weapon = "PPCs";
+                }
+                if (entity.hasSystem(Mech.ACTUATOR_LOWER_ARM, loc)
+                        || entity.hasSystem(Mech.ACTUATOR_HAND, loc)) {
+                    buff.append("Omni mechs with arm mounted " + weapon
+                            + " cannot have lower armor or hand actuators!");
+                }
+            }
+            
         }
         if ((countInternalHeatSinks > engine.integralHeatSinkCapacity(mech
                 .hasCompactHeatSinks()))
@@ -438,7 +471,8 @@ public class TestMech extends TestEntity {
         Vector<Mounted> unallocated = new Vector<Mounted>();
         Vector<Serializable> allocation = new Vector<Serializable>();
         Vector<Integer> heatSinks = new Vector<Integer>();
-        checkCriticalSlotsForEquipment(mech, unallocated, allocation, heatSinks);
+        checkCriticalSlotsForEquipment(mech, unallocated, allocation,
+                heatSinks, buff);
         boolean correct = true;
         /*
          * StringBuffer critAlloc = new StringBuffer(); need to redo this, in

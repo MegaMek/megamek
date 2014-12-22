@@ -23664,22 +23664,30 @@ public class Server implements Runnable {
 
         // apply crits
         if (hit.rolledBoxCars()) {
-            vDesc.addAll(criticalAero(a, hit.getLocation(), hit.glancingMod(),
-                                      "12 to hit", 8, damage_orig, isCapital));
+            if (hit.isFirstHit()) {
+                vDesc.addAll(criticalAero(a, hit.getLocation(),
+                        hit.glancingMod(), "12 to hit", 8, damage_orig,
+                        isCapital));
+            } else { // Let the user know why the lucky crit doesn't apply
+                r = new Report(9102);
+                r.subject = a.getId();
+                r.indent(3);
+                vDesc.addElement(r);
+            }
         }
         // ammo explosions shouldn't affect threshold because they
         // go right to SI
         if (critThresh && !ammoExplosion) {
             vDesc.addAll(criticalAero(a, hit.getLocation(), hit.glancingMod(),
-                                      "Damage threshold exceeded", 8, damage_orig, isCapital));
+                    "Damage threshold exceeded", 8, damage_orig, isCapital));
         }
         if (critSI && !ammoExplosion) {
             vDesc.addAll(criticalAero(a, hit.getLocation(), hit.glancingMod(),
-                                      "SI damaged", 8, damage_orig, isCapital));
+                    "SI damaged", 8, damage_orig, isCapital));
         }
         if ((capitalMissile > 0) && !nukeS2S) {
             vDesc.addAll(criticalAero(a, hit.getLocation(), hit.glancingMod(),
-                                      "Capital Missile", capitalMissile, damage_orig, isCapital));
+                    "Capital Missile", capitalMissile, damage_orig, isCapital));
         }
     }
 

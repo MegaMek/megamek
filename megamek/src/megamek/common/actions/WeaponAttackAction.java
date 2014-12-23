@@ -17,6 +17,7 @@ package megamek.common.actions;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Aero;
@@ -31,6 +32,7 @@ import megamek.common.Coords;
 import megamek.common.Crew;
 import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
+import megamek.common.ECMInfo;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
@@ -229,6 +231,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 game.getTarget(getOldTargetType(), getOldTargetId()),
                 isStrafing());
     }
+    
+    public ToHitData toHit(IGame game, List<ECMInfo> allECMInfo) {
+        return WeaponAttackAction.toHit(game, getEntityId(),
+                game.getTarget(getTargetType(), getTargetId()), getWeaponId(),
+                getAimedLocation(), getAimingMode(), nemesisConfused,
+                swarmingMissiles,
+                game.getTarget(getOldTargetType(), getOldTargetId()),
+                isStrafing(), allECMInfo);
+    }
 
     public static ToHitData toHit(IGame game, int attackerId,
             Targetable target, int weaponId, boolean isStrafing) {
@@ -244,13 +255,23 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 aimingAt, aimingMode, false, false, null, isStrafing);
     }
 
+    private static ToHitData toHit(IGame game, int attackerId,
+            Targetable target, int weaponId, int aimingAt, int aimingMode,
+            boolean isNemesisConfused, boolean exchangeSwarmTarget,
+            Targetable oldTarget, boolean isStrafing) {
+        return WeaponAttackAction.toHit(game, attackerId, target, weaponId,
+                aimingAt, aimingMode, isNemesisConfused, exchangeSwarmTarget,
+                oldTarget, isStrafing, null);
+    }
+    
     /**
      * To-hit number for attacker firing a weapon at the target.
      */
     private static ToHitData toHit(IGame game, int attackerId,
             Targetable target, int weaponId, int aimingAt, int aimingMode,
             boolean isNemesisConfused, boolean exchangeSwarmTarget,
-            Targetable oldTarget, boolean isStrafing) {
+            Targetable oldTarget, boolean isStrafing, 
+            List<ECMInfo> allECMInfo) {
         final Entity ae = game.getEntity(attackerId);
         final Mounted weapon = ae.getEquipment(weaponId);
         
@@ -300,46 +321,42 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 "Indirect"))
                              || (wtype instanceof ArtilleryCannonWeapon);
         boolean isInferno = ((atype != null)
-                             && ((atype.getAmmoType() == AmmoType.T_SRM) || (atype
-                                                                                     .getAmmoType() == AmmoType
-                                                                                     .T_MML)) && (atype
-                                                                                                                                    .getMunitionType() == AmmoType.M_INFERNO))
-                            || (isWeaponInfantry && (wtype.hasFlag(WeaponType.F_INFERNO)));
+                && ((atype.getAmmoType() == AmmoType.T_SRM) || (atype
+                        .getAmmoType() == AmmoType.T_MML)) && (atype
+                .getMunitionType() == AmmoType.M_INFERNO))
+                || (isWeaponInfantry && (wtype.hasFlag(WeaponType.F_INFERNO)));
         boolean isArtilleryDirect = wtype.hasFlag(WeaponType.F_ARTILLERY)
-                                    && (game.getPhase() == IGame.Phase.PHASE_FIRING);
+                && (game.getPhase() == IGame.Phase.PHASE_FIRING);
         boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY)
-                                      && ((game.getPhase() == IGame.Phase.PHASE_TARGETING) || (game
-                                                                                                       .getPhase() ==
-                                                                                               IGame.Phase
-                                                                                                       .PHASE_OFFBOARD));
+                && ((game.getPhase() == IGame.Phase.PHASE_TARGETING) || (game
+                        .getPhase() == IGame.Phase.PHASE_OFFBOARD));
         // hack, otherwise when actually resolves shot labeled impossible.
         boolean isArtilleryFLAK = isArtilleryDirect
-                                  && (te != null)
-                                  && ((((te.getMovementMode() == EntityMovementMode.VTOL) || (te
-                                                                                                      .getMovementMode() == EntityMovementMode.WIGE)) && te
-                                               .isAirborneVTOLorWIGE()) || (te.isAirborne()))
-                                  && (atype != null)
-                                  && (usesAmmo && (atype.getMunitionType() == AmmoType.M_STANDARD));
+                && (te != null)
+                && ((((te.getMovementMode() == EntityMovementMode.VTOL) || (te
+                        .getMovementMode() == EntityMovementMode.WIGE)) && te
+                        .isAirborneVTOLorWIGE()) || (te.isAirborne()))
+                && (atype != null)
+                && (usesAmmo && (atype.getMunitionType() == AmmoType.M_STANDARD));
         boolean isHaywireINarced = ae.isINarcedWith(INarcPod.HAYWIRE);
         boolean isINarcGuided = false;
         // for attacks where ECM along flight path makes a difference
-        boolean isECMAffected = ComputeECM.isAffectedByECM(ae, ae.getPosition(),
-                                                           target.getPosition());
+        boolean isECMAffected = ComputeECM.isAffectedByECM(ae,
+                ae.getPosition(), target.getPosition(), allECMInfo);
         // for attacks where only ECM on the target hex makes a difference
         boolean isTargetECMAffected = ComputeECM.isAffectedByECM(ae,
-                                                                 target.getPosition(), target.getPosition());
+                target.getPosition(), target.getPosition(), allECMInfo);
         boolean isTAG = wtype.hasFlag(WeaponType.F_TAG);
         boolean isHoming = false;
         boolean bHeatSeeking = (atype != null)
-                               && ((atype.getAmmoType() == AmmoType.T_SRM)
-                                   || (atype.getAmmoType() == AmmoType.T_MML) || (atype
-                                                                                          .getAmmoType() == AmmoType
-                                                                                          .T_LRM))
-                               && (atype.getMunitionType() == AmmoType.M_HEAT_SEEKING);
+                && ((atype.getAmmoType() == AmmoType.T_SRM)
+                        || (atype.getAmmoType() == AmmoType.T_MML) || (atype
+                        .getAmmoType() == AmmoType.T_LRM))
+                && (atype.getMunitionType() == AmmoType.M_HEAT_SEEKING);
         boolean bFTL = (atype != null)
-                       && ((atype.getAmmoType() == AmmoType.T_MML) || (atype
-                                                                               .getAmmoType() == AmmoType.T_LRM))
-                       && (atype.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER);
+                && ((atype.getAmmoType() == AmmoType.T_MML) || (atype
+                        .getAmmoType() == AmmoType.T_LRM))
+                && (atype.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER);
 
         Mounted mLinker = weapon.getLinkedBy();
         boolean bApollo = ((mLinker != null)
@@ -364,16 +381,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // from surface vessel, awaiting rules clarification
         // http://www.classicbattletech.com/forums/index.php/topic,48744.0.html
         boolean underWater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)
-                             || (wtype instanceof SRTWeapon) || (wtype instanceof LRTWeapon);
+                || (wtype instanceof SRTWeapon) || (wtype instanceof LRTWeapon);
 
         if (te != null) {
             if (!isTargetECMAffected
-                && te.isINarcedBy(ae.getOwner().getTeam())
-                && (atype != null)
-                && ((atype.getAmmoType() == AmmoType.T_LRM)
-                    || (atype.getAmmoType() == AmmoType.T_MML) || (atype
-                                                                           .getAmmoType() == AmmoType.T_SRM))
-                && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)) {
+                    && te.isINarcedBy(ae.getOwner().getTeam())
+                    && (atype != null)
+                    && ((atype.getAmmoType() == AmmoType.T_LRM)
+                            || (atype.getAmmoType() == AmmoType.T_MML) || (atype
+                            .getAmmoType() == AmmoType.T_SRM))
+                    && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)) {
                 isINarcGuided = true;
             }
         }
@@ -445,11 +462,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             } else {
                 spotter = Compute.findSpotter(game, ae, target);
             }
-            if ((spotter == null) && (atype != null)
-                && ((atype.getAmmoType() == AmmoType.T_LRM)
-                    || (atype.getAmmoType() == AmmoType.T_MML) || (atype
-                                                                           .getAmmoType() == AmmoType.T_NLRM))
-                && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)) {
+            if ((spotter == null)
+                    && (atype != null)
+                    && ((atype.getAmmoType() == AmmoType.T_LRM)
+                            || (atype.getAmmoType() == AmmoType.T_MML) || (atype
+                            .getAmmoType() == AmmoType.T_NLRM))
+                    && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)) {
                 for (TagInfo ti : game.getTagInfo()) {
                     if (target.getTargetId() == ti.target.getTargetId()) {
                         spotter = game.getEntity(ti.attackerId);
@@ -497,16 +515,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
             losMods = los.losModifiers(game, eistatus, underWater);
             if ((atype != null)
-                && ((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
-                    || (atype.getAmmoType() == AmmoType.T_SRM_TORPEDO) || (((atype
-                                                                                     .getAmmoType() == AmmoType.T_SRM)
-                                                                            || (atype.getAmmoType() == AmmoType.T_MRM)
-                                                                            || (atype.getAmmoType() == AmmoType
-                    .T_LRM) || (atype
-                                                                                                                                   .getAmmoType() == AmmoType.T_MML)) && (munition == AmmoType.M_TORPEDO)))
-                && (los.getMinimumWaterDepth() < 1)) {
+                    && ((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
+                            || (atype.getAmmoType() == AmmoType.T_SRM_TORPEDO) || (((atype
+                            .getAmmoType() == AmmoType.T_SRM)
+                            || (atype.getAmmoType() == AmmoType.T_MRM)
+                            || (atype.getAmmoType() == AmmoType.T_LRM) || (atype
+                            .getAmmoType() == AmmoType.T_MML)) && (munition == AmmoType.M_TORPEDO)))
+                    && (los.getMinimumWaterDepth() < 1)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                     "Torpedos must follow water their entire LOS");
+                        "Torpedos must follow water their entire LOS");
             }
         } else {
             los = LosEffects.calculateLos(game, spotter.getId(), target, true);

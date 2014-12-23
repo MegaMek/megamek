@@ -33,6 +33,7 @@ v0.39.5 / v0.40.0RC3 (SVN)
 + Bug [#4364]: Cluster hit weapons may cause multiple critical hits per weapon
     on a to hit roll of 12
 + Bug [#3235]: Bot hates air-dropped units
++ Cached ECM Info computation for Princess, should speed-up deployment/movement
 
 v0.39.4 / v0.40.0RC2 (2014-12-14 19:00 UTC)
 + added Transporter.resetTransporter function for MHQ purposes

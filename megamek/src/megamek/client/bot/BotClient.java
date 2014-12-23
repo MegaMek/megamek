@@ -41,7 +41,9 @@ import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.Compute;
+import megamek.common.ComputeECM;
 import megamek.common.Coords;
+import megamek.common.ECMInfo;
 import megamek.common.Entity;
 import megamek.common.EntityListFile;
 import megamek.common.EntityMovementMode;
@@ -483,6 +485,8 @@ public abstract class BotClient extends Client {
         Vector<Entity> valid_attackers;
         Entity deployed_ent = getEntity(game.getFirstDeployableEntityNum());
         WeaponAttackAction test_attack;
+        List<ECMInfo> allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
+                .getEntitiesVector());
 
         // Create array of hexes in the deployment zone that can be deployed to
         // Check for prohibited terrain, stacking limits
@@ -606,7 +610,7 @@ public abstract class BotClient extends Client {
                                                          deployed_ent.getId(),
                                                          test_ent.getEquipmentNum(mounted));
                     adjusted_damage = BotClient.getDeployDamage(game,
-                                                                test_attack);
+                                                                test_attack, allECMInfo);
                     total_damage += adjusted_damage;
                 }
             }
@@ -624,7 +628,7 @@ public abstract class BotClient extends Client {
                                                          test_ent.getId(),
                                                          deployed_ent.getEquipmentNum(mounted));
                     adjusted_damage = BotClient.getDeployDamage(game,
-                                                                test_attack);
+                                                                test_attack, allECMInfo);
                     if (adjusted_damage > max_damage) {
                         max_damage = adjusted_damage;
                     }
@@ -837,12 +841,12 @@ public abstract class BotClient extends Client {
      * Compute.getExpectedDamage; the logfile print commands were removed due to
      * excessive data generated
      */
-    private static float getDeployDamage(IGame g, WeaponAttackAction waa) {
+    private static float getDeployDamage(IGame g, WeaponAttackAction waa, List<ECMInfo> allECMInfo) {
         Entity attacker = g.getEntity(waa.getEntityId());
         boolean naturalAptGunnery = attacker.getCrew().getOptions()
                                             .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
         Mounted weapon = attacker.getEquipment(waa.getWeaponId());
-        ToHitData hitData = waa.toHit(g);
+        ToHitData hitData = waa.toHit(g, allECMInfo);
         if (hitData.getValue() > 12) {
             return 0.0f;
         }

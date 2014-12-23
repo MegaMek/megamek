@@ -318,11 +318,23 @@ public class WeaponFireInfo {
     }
 
     protected double computeExpectedDamage() {
-        if (getTarget() instanceof Entity) {
-            return Compute.getExpectedDamage(getGame(), getAction(), true, 
-                    owner.getPrecognition().getECMInfo());
+
+        // For clan plasma cannon, assume 7 "damage".
+        WeaponType weaponType = (WeaponType) weapon.getType();
+        if (weaponType.hasFlag(WeaponType.F_PLASMA) &&
+                weaponType.getTechLevels().containsValue(TechConstants.T_CLAN_TW)) {
+            return 7D;
         }
-        return ((WeaponType) weapon.getType()).getDamage();
+
+        if (getTarget() instanceof Entity) {
+            double dmg = Compute.getExpectedDamage(getGame(), getAction(),
+                    true, owner.getPrecognition().getECMInfo());
+            if (weaponType.hasFlag(WeaponType.F_PLASMA)) {
+                dmg += 3; // Account for potential plasma heat.
+            }
+            return dmg;
+        }
+        return weaponType.getDamage();
     }
 
     /*

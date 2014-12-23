@@ -51,5 +51,6 @@ public class CLLightTAG extends TAGWeapon {
         techLevel.put(3054, techLevel.get(3071));
         availRating = new int[] { RATING_X, RATING_X, RATING_F };
         techRating = RATING_F;
+        flags = flags.andNot(F_BA_WEAPON).or(F_AERO_WEAPON);
     }
 }

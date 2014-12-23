@@ -676,6 +676,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             || (ce.getMovementMode() == EntityMovementMode.SUBMARINE)
             || (ce.getMovementMode() == EntityMovementMode.INF_UMU)
             || (ce.getMovementMode() == EntityMovementMode.VTOL)
+            || (ce.getMovementMode() == EntityMovementMode.WIGE)
             || (ce.getMovementMode() == EntityMovementMode.BIPED_SWIM)
             || (ce.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
             getBtn(MoveCommand.MOVE_CLIMB_MODE).setEnabled(false);

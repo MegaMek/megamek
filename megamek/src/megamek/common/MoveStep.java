@@ -622,7 +622,7 @@ public class MoveStep implements Serializable {
                 && (entity.getMovementMode() != EntityMovementMode.WIGE)) {
             setRunProhibited(true);
         }
-        if (entity.getMovedBackwards() 
+        if (entity.getMovedBackwards()
                 && !entity.hasQuirk(OptionsConstants.QUIRK_POS_POWER_REVERSE)) {
             setRunProhibited(true);
         }
@@ -1347,7 +1347,7 @@ public class MoveStep implements Serializable {
     public boolean isLegal() {
         // A step is legal if it's static movement type is not illegal,
         // and it is either a valid end position, or not an end position.
-        return ((movementType != EntityMovementType.MOVE_ILLEGAL) 
+        return ((movementType != EntityMovementType.MOVE_ILLEGAL)
                 && (!isEndPos || isLegalEndPos()));
     }
 
@@ -1922,6 +1922,13 @@ public class MoveStep implements Serializable {
                 && (entity.getMovementMode() == EntityMovementMode.WIGE)) {
             movementType = EntityMovementType.MOVE_WALK;
         }
+        // WIGEs need to be able to land too..
+        if (entity.getMovementMode() == EntityMovementMode.WIGE
+                && type == MoveStepType.DOWN
+                && getElevation() == 0
+                && prev.getElevation() > 0) { // landing
+            movementType = EntityMovementType.MOVE_LEGAL;
+        }
 
         // check to see if it's trying to flee and can legally do so.
         if ((type == MoveStepType.FLEE) && entity.canFlee()) {
@@ -2048,7 +2055,8 @@ public class MoveStep implements Serializable {
             // WiGEs on the ground can use only 1 MP / do just one step
             if (!isFirstStep()
                     && (entity.getMovementMode() == EntityMovementMode.WIGE)
-                    && (getElevation() == 0)) {
+                    && (getElevation() == 0)
+                    && (prev.getElevation() == 0)) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
             }
@@ -2066,7 +2074,7 @@ public class MoveStep implements Serializable {
             } else if ((entity instanceof Infantry)
                     && (curPos.distance(entity.getPosition()) == 1)
                     && (lastPos.equals(entity.getPosition()))) {
-                // This ensures that Infantry always get their minimum 1 hex 
+                // This ensures that Infantry always get their minimum 1 hex
                 //  movement when TO fast infantry movement is on.
                 // A movepath that consists of a single step from one hex to the
                 // next should always be a walk, since it's covered under the
@@ -2083,15 +2091,15 @@ public class MoveStep implements Serializable {
                 // gravity psr
                 movementType = EntityMovementType.MOVE_WALK;
                 entity.gotPavementBonus = true;
-            } else if ((((getMpUsed() <= runMP) && isMASCUsed) 
+            } else if ((((getMpUsed() <= runMP) && isMASCUsed)
                     || (getMpUsed() <= runMPnoMASC)) && !isRunProhibited()) {
                 // Poor performance requires spending all walk MP in the
                 //  previous round in order to flank
-                if (hasPoorPerformance 
-                        && (entity.getMpUsedLastRound() < entity.getWalkMP())) { 
+                if (hasPoorPerformance
+                        && (entity.getMpUsedLastRound() < entity.getWalkMP())) {
                     movementType = EntityMovementType.MOVE_ILLEGAL;
                     return;
-                } 
+                }
                 if (entity.getMovementMode() == EntityMovementMode.VTOL) {
                     movementType = EntityMovementType.MOVE_VTOL_RUN;
                 } else {
@@ -2116,7 +2124,7 @@ public class MoveStep implements Serializable {
                 entity.gotPavementBonus = true;
             } else if (game.getOptions().booleanOption("tacops_sprint")
                     && (entity instanceof Mech)
-                    && ((getMpUsed() <= sprintMPnoMASC) 
+                    && ((getMpUsed() <= sprintMPnoMASC)
                             || ((getMpUsed() <= sprintMP) && isMASCUsed))
                     && !isRunProhibited() && !isEvading()) {
                 movementType = EntityMovementType.MOVE_SPRINT;
@@ -2523,11 +2531,11 @@ public class MoveStep implements Serializable {
         }
 
 
-        boolean applyNightPen = 
-                !game.getOptions().booleanOption("no_night_move_pen");  
-        boolean carefulExempt = 
+        boolean applyNightPen =
+                !game.getOptions().booleanOption("no_night_move_pen");
+        boolean carefulExempt =
                 (moveMode == EntityMovementMode.VTOL) || parent.isJumping();
-         
+
         // Apply careful movement MP penalties for fog and light (TO pg 63)
         if (!game.getBoard().inSpace() && parent.isCareful() && applyNightPen
                 && !carefulExempt) {
@@ -2615,11 +2623,11 @@ public class MoveStep implements Serializable {
                 return;
             }
             // non-flying Infantry and ground vehicles are charged double.
-            if ((isInfantry 
-                    && !((getMovementType() == EntityMovementType.MOVE_VTOL_WALK) 
+            if ((isInfantry
+                    && !((getMovementType() == EntityMovementType.MOVE_VTOL_WALK)
                             || (getMovementType() == EntityMovementType.MOVE_VTOL_RUN)))
                     || ((moveMode == EntityMovementMode.TRACKED)
-                            || (moveMode == EntityMovementMode.WHEELED) 
+                            || (moveMode == EntityMovementMode.WHEELED)
                             || (moveMode == EntityMovementMode.HOVER))) {
                 delta_e *= 2;
             }

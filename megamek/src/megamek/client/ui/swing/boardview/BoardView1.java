@@ -2652,8 +2652,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         || (step.getType() == MoveStepType.DOWN)
                         || (step.getType() == MoveStepType.ACC)
                         || (step.getType() == MoveStepType.DEC)
-                        || (step.getType() == MoveStepType.ACCN) || (step
-                                                                             .getType() == MoveStepType.DECN))) {
+                        || (step.getType() == MoveStepType.ACCN)
+                        || (step.getType() == MoveStepType.DECN))) {
                     // Mark the previous elevation change sprite hidden
                     // so that we can draw a new one in it's place without
                     // having overlap.

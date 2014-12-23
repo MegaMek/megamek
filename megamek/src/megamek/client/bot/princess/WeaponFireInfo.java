@@ -258,7 +258,8 @@ public class WeaponFireInfo {
     }
 
     protected ToHitData calcRealToHit(WeaponAttackAction weaponAttackAction) {
-        return weaponAttackAction.toHit(getGame());
+        return weaponAttackAction.toHit(getGame(), 
+                owner.getPrecognition().getECMInfo());
     }
 
     public IGame getGame() {
@@ -318,7 +319,8 @@ public class WeaponFireInfo {
 
     protected double computeExpectedDamage() {
         if (getTarget() instanceof Entity) {
-            return Compute.getExpectedDamage(getGame(), getAction(), true);
+            return Compute.getExpectedDamage(getGame(), getAction(), true, 
+                    owner.getPrecognition().getECMInfo());
         }
         return ((WeaponType) weapon.getType()).getDamage();
     }

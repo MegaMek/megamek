@@ -2580,6 +2580,15 @@ public class Compute {
      */
     public static float getExpectedDamage(IGame g, WeaponAttackAction waa,
                                           boolean assumeHit) {
+        return Compute.getExpectedDamage(g,  waa, assumeHit, null);
+    }
+    
+    /**
+     * Determines the expected damage of a weapon attack, based on to-hit, salvo
+     * sizes, etc.
+     */
+    public static float getExpectedDamage(IGame g, WeaponAttackAction waa,
+            boolean assumeHit, List<ECMInfo> allECMInfo) {
         boolean use_table = false;
 
         AmmoType loaded_ammo = new AmmoType();
@@ -2590,7 +2599,7 @@ public class Compute {
         Mounted weapon = attacker.getEquipment(waa.getWeaponId());
         Mounted lnk_guide;
 
-        ToHitData hitData = waa.toHit(g);
+        ToHitData hitData = waa.toHit(g, allECMInfo);
 
         if (attacker instanceof BattleArmor) {
             ba_attacker = (BattleArmor) g.getEntity(waa.getEntityId());
@@ -2681,10 +2690,11 @@ public class Compute {
                 fHits = 2.0f * expectedHitsByRackSize[wt.getRackSize() / 2];
             }
             if (((wt.getAmmoType() == AmmoType.T_SRM_STREAK)
-                 || (wt.getAmmoType() == AmmoType.T_MRM_STREAK) || (wt
-                                                                            .getAmmoType() == AmmoType.T_LRM_STREAK))
-                && !ComputeECM.isAffectedByAngelECM(attacker, attacker
-                    .getPosition(), waa.getTarget(g).getPosition())) {
+                    || (wt.getAmmoType() == AmmoType.T_MRM_STREAK) || (wt
+                    .getAmmoType() == AmmoType.T_LRM_STREAK))
+                    && !ComputeECM.isAffectedByAngelECM(attacker, attacker
+                            .getPosition(), waa.getTarget(g).getPosition(),
+                            allECMInfo)) {
                 fHits = wt.getRackSize();
             }
             if ((wt.getAmmoType() == AmmoType.T_AC_ULTRA)
@@ -2732,7 +2742,7 @@ public class Compute {
             // If there is no ECM coverage to the target, guidance systems are
             // good for another 1.20x damage on missile weapons
             if ((!ComputeECM.isAffectedByECM(attacker, attacker.getPosition(), g
-                    .getEntity(waa.getTargetId()).getPosition()))
+                    .getEntity(waa.getTargetId()).getPosition(), allECMInfo))
                 && (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTERTABLE)
                 && (wt.hasFlag(WeaponType.F_MISSILE))) {
                 // Check for linked artemis guidance system
@@ -2767,12 +2777,12 @@ public class Compute {
                 // friendly unit
                 if (g.getEntity(waa.getTargetId()).isNarcedBy(
                         attacker.getOwner().getTeam())
-                    || g.getEntity(waa.getTargetId()).isINarcedBy(
-                        attacker.getOwner().getTeam())) {
+                        || g.getEntity(waa.getTargetId()).isINarcedBy(
+                                attacker.getOwner().getTeam())) {
                     if (((at.getAmmoType() == AmmoType.T_LRM)
-                         || (at.getAmmoType() == AmmoType.T_MML) || (at
-                                                                             .getAmmoType() == AmmoType.T_SRM))
-                        && (at.getMunitionType() == AmmoType.M_NARC_CAPABLE)) {
+                            || (at.getAmmoType() == AmmoType.T_MML) || (at
+                            .getAmmoType() == AmmoType.T_SRM))
+                            && (at.getMunitionType() == AmmoType.M_NARC_CAPABLE)) {
                         fHits *= 1.2f;
                     }
                 }

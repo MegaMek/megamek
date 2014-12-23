@@ -14,6 +14,7 @@
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,7 +26,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.common.Aero;
+import megamek.common.ComputeECM;
 import megamek.common.Coords;
+import megamek.common.ECMInfo;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.event.GameEntityChangeEvent;
@@ -46,6 +49,13 @@ public class Precognition implements Runnable {
     private IGame game;
     private final ReentrantReadWriteLock GAME_LOCK = new ReentrantReadWriteLock();
 
+    /**
+     * Computing ECMInfo requires iterating over all Entities in the Game and 
+     * this can be an expensive operation, so it's cheaper to use cache it and
+     * re-use the cache.
+     */
+    private List<ECMInfo> ecmInfo;
+        
     private PathEnumerator pathEnumerator;
     private final ReentrantReadWriteLock PATH_ENUMERATOR_LOCK = new ReentrantReadWriteLock();
 
@@ -187,6 +197,8 @@ public class Precognition implements Runnable {
             while (!getDone().get()) {
                 if (!getEventsToProcess().isEmpty()) {
                     processGameEvents();
+                    ecmInfo = ComputeECM.computeAllEntitiesECMInfo(game
+                            .getEntitiesVector());
                 } else if (!getDirtyUnits().isEmpty()) {
                     Entity entity = getGame().getEntity(getDirtyUnits().pollFirst());
                     if (entity != null) {
@@ -414,6 +426,10 @@ public class Precognition implements Runnable {
                            "PATH_ENUMERATOR_LOCK write unlocked.");
             PATH_ENUMERATOR_LOCK.writeLock().unlock();
         }
+    }
+    
+    public List<ECMInfo> getECMInfo() {
+        return Collections.unmodifiableList(ecmInfo);
     }
 
     private ConcurrentSkipListSet<Integer> getDirtyUnits() {

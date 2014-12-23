@@ -45,7 +45,22 @@ public class ComputeECM {
      * @return
      */
     public static boolean isAffectedByECM(Entity ae, Coords a, Coords b) {
-        ECMInfo ecmInfo = getECMEffects(ae, a, b, null);
+        return ComputeECM.isAffectedByECM(ae, a, b, null);
+    }
+    
+    /**
+     * This method checks to see if a line from a to b is affected by any ECM
+     * field (including Angel) of the enemy of ae
+     *
+     * @param ae
+     * @param a
+     * @param b
+     * @param allECMInfo A collection of ECMInfo for each Entity in the Game.
+     * @return
+     */
+    public static boolean isAffectedByECM(Entity ae, Coords a, Coords b, 
+            List<ECMInfo> allECMInfo) {
+        ECMInfo ecmInfo = getECMEffects(ae, a, b, allECMInfo);
         return (ecmInfo != null) && ecmInfo.isECM();
     }
 
@@ -76,9 +91,29 @@ public class ComputeECM {
      * enemy or friendly fields.
      */
     public static boolean isAffectedByAngelECM(Entity ae, Coords a, Coords b) {
-        ECMInfo ecmInfo = getECMEffects(ae, a, b, null);
+        return ComputeECM.isAffectedByAngelECM(ae, a, b, null);
+    }
+    
+    /**
+     * This method checks to see if a line from a to b is affected by an Angel
+     * ECM field of the enemy of ae (ignoring other kinds of ECM).
+     *
+     * @param ae
+     * @param a
+     * @param b
+     * @param allECMInfo A collection of ECMInfo for each Entity in the Game.
+     * @return count that shows if you are in an friendly ECCM field positive
+     * number means you are in an friendly ECCM field Negative number
+     * means you are in a enemy ECM field 0 means you are not effect by
+     * enemy or friendly fields.
+     */
+    public static boolean isAffectedByAngelECM(Entity ae, Coords a, Coords b, 
+            List<ECMInfo> allECMInfo) {
+        ECMInfo ecmInfo = getECMEffects(ae, a, b, allECMInfo);
         return (ecmInfo != null) && ecmInfo.isAngelECM();
-    }    
+    }
+    
+    
 
     /**
      * Check for the total number of fighter/small craft ECM bubbles in space

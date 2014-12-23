@@ -3472,6 +3472,13 @@ public class Game implements Serializable, IGame {
             System.out.println("Entities vector has " + entities.size()
                     + " but pos lookup cache has " + entitiesInCache.size()
                     + " entities!");
+            List<Integer> missingIds = new ArrayList<Integer>();
+            for (Integer id : entitiesInVector) {
+                if (!entitiesInCache.contains(id)) {
+                    missingIds.add(id);
+                }
+            }
+            System.out.println("Missing ids: " + missingIds);
         }
         for (Entity e : entities) {
             HashSet<Coords> positions = e.getOccupiedCoords();

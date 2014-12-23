@@ -798,7 +798,8 @@ public class MapMenu extends JPopupMenu {
                         int weaponNum = gui.mechD.wPan.getSelectedWeaponNum();
                         Mounted mounted = myEntity.getEquipment(weaponNum);
 
-                        if (mounted.usedInPhase() == IGame.Phase.PHASE_UNKNOWN) {
+                        if (mounted.getType().hasFlag(WeaponType.F_MISSILE)
+                                && mounted.usedInPhase() == IGame.Phase.PHASE_UNKNOWN) {
                             panel.fire();
                         } else {
                             panel.nextWeapon();

@@ -110,15 +110,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     // equipment that affects this attack (AMS, ECM?, etc)
     // only used server-side
     private transient ArrayList<Mounted> vCounterEquipment;
-    
+
     /**
      * Boolean flag that determines whether or not this attack is part of a
      * strafing run.
      */
     private boolean isStrafing = false;
-    
+
     /**
-     * Boolean flag that determiens if this shot was the first one by a 
+     * Boolean flag that determiens if this shot was the first one by a
      * particular weapon in a strafing run.  Used to ensure that heat is only
      * added once.
      */
@@ -231,7 +231,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 game.getTarget(getOldTargetType(), getOldTargetId()),
                 isStrafing());
     }
-    
+
     public ToHitData toHit(IGame game, List<ECMInfo> allECMInfo) {
         return WeaponAttackAction.toHit(game, getEntityId(),
                 game.getTarget(getTargetType(), getTargetId()), getWeaponId(),
@@ -263,18 +263,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 aimingAt, aimingMode, isNemesisConfused, exchangeSwarmTarget,
                 oldTarget, isStrafing, null);
     }
-    
+
     /**
      * To-hit number for attacker firing a weapon at the target.
      */
     private static ToHitData toHit(IGame game, int attackerId,
             Targetable target, int weaponId, int aimingAt, int aimingMode,
             boolean isNemesisConfused, boolean exchangeSwarmTarget,
-            Targetable oldTarget, boolean isStrafing, 
+            Targetable oldTarget, boolean isStrafing,
             List<ECMInfo> allECMInfo) {
         final Entity ae = game.getEntity(attackerId);
         final Mounted weapon = ae.getEquipment(weaponId);
-        
+
         if (!(weapon.getType() instanceof WeaponType)) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Not a weapon");
         }
@@ -286,7 +286,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     ae.getPosition().distance(target.getPosition()),
                     wtype.getRanges(weapon),
                     game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE),
-                    game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)); 
+                    game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE));
             if (range == RangeType.RANGE_OUT) {
                 return new ToHitData(TargetRoll.AUTOMATIC_FAIL,
                                      "swarm target out of range");
@@ -1675,7 +1675,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         // secondary targets modifier,
         // if this is not a iNarc Nemesis confused attack
-        if (!isNemesisConfused && !wtype.hasFlag(WeaponType.F_ALT_BOMB) 
+        if (!isNemesisConfused && !wtype.hasFlag(WeaponType.F_ALT_BOMB)
                 && !isStrafing) {
             toHit.append(Compute.getSecondaryTargetMod(game, ae, target,
                                                        exchangeSwarmTarget));
@@ -1761,10 +1761,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && (te.isAirborne() || te.isAirborneVTOLorWIGE())
                 && (atype != null)
                 && ((((atype.getAmmoType() == AmmoType.T_AC_LBX)
-                        || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB) 
-                        || (atype.getAmmoType() == AmmoType.T_SBGAUSS)) 
+                        || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
+                        || (atype.getAmmoType() == AmmoType.T_SBGAUSS))
                         && (atype.getMunitionType() == AmmoType.M_CLUSTER))
-                        || (atype.getMunitionType() == AmmoType.M_FLAK) 
+                        || (atype.getMunitionType() == AmmoType.M_FLAK)
                         || (atype.getAmmoType() == AmmoType.T_HAG));
         if (isFlakAttack) {
             // ...and if so, which one (HAGs get an extra -1 as per TW p. 136
@@ -1878,7 +1878,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             // LB-X cluster, HAG flak, flak ammo ineligible for TC bonus
             boolean usesLBXCluster = usesAmmo
                     && (atype != null)
-                    && (atype.getAmmoType() == AmmoType.T_AC_LBX 
+                    && (atype.getAmmoType() == AmmoType.T_AC_LBX
                         || atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
                     && atype.getMunitionType() == AmmoType.M_CLUSTER;
             boolean usesHAGFlak = usesAmmo && (atype != null)
@@ -1886,7 +1886,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             boolean isSBGauss = usesAmmo && (atype != null)
                     && atype.getAmmoType() == AmmoType.T_SBGAUSS;
             boolean isFlakAmmo = usesAmmo && (atype != null)
-                    && (atype.getMunitionType() == AmmoType.M_FLAK); 
+                    && (atype.getMunitionType() == AmmoType.M_FLAK);
             if (ae.hasTargComp()
                     && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
                     && !wtype.hasFlag(WeaponType.F_CWS)
@@ -2138,13 +2138,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (ae.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE) {
             toHit.addModifier(+2, "attacker has TSEMP interference");
         }
-        
+
         if (weapon.getType().hasFlag(WeaponType.F_VGL)) {
             Coords c = ae.getPosition().translated(weapon.getFacing());
-            if ((target instanceof HexTarget) 
+            if ((target instanceof HexTarget)
                     && target.getPosition().equals(c)) {
-                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Vehicular " 
-                    + "grenade launchers automatically hit all units in " 
+                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Vehicular "
+                    + "grenade launchers automatically hit all units in "
                     + "the 3 adjacent hexes of their firing arc!");
             }
         }
@@ -2815,7 +2815,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
         }
-        
+
         // BA can only make one AP attack
         if ((ae instanceof BattleArmor)
                 && weapon.getType().hasFlag(WeaponType.F_INFANTRY)) {
@@ -2833,7 +2833,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                         Mounted prevWeapon =
                                 ae.getEquipment(prevAttack.getWeaponId());
                         WeaponType prevWtype = (WeaponType) prevWeapon.getType();
-                        if (prevWtype.hasFlag(WeaponType.F_INFANTRY) 
+                        if (prevWtype.hasFlag(WeaponType.F_INFANTRY)
                                 && (prevAttack.getWeaponId() != weapId)) {
                             return "BA can only make one " +
                             		"anti-personnel attack!";
@@ -3319,7 +3319,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
 
+        // limit large craft to zero net heat and to heat by arc
+        final int heatcap = ae.getHeatCapacity();
         if (ae.usesWeaponBays() && (weapon.getBayWeapons().size() > 0)) {
+            int totalheat = 0;
 
             // first check to see if there are any usable weapons
             boolean useable = false;
@@ -3343,10 +3346,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (!useable) {
                 return "weapon bay out of ammo or otherwise unusable";
             }
-
-            // limit large craft to zero net heat and to heat by arc
-            int totalheat = 0;
-            int heatcap = ae.getHeatCapacity();
 
             // create an array of booleans of locations
             boolean[] usedFrontArc = new boolean[ae.locations()];
@@ -3431,6 +3430,26 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                         return "heat exceeds capacity";
                     }
                 }
+            }
+        } else if (ae instanceof Dropship) {
+            int totalheat = 0;
+
+            for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
+                Object o = i.nextElement();
+                if (!(o instanceof WeaponAttackAction)) {
+                    continue;
+                }
+                WeaponAttackAction prevAttack = (WeaponAttackAction) o;
+                if ((prevAttack.getEntityId() == attackerId)
+                    && (weaponId != prevAttack.getWeaponId())) {
+                    Mounted prevWeapon =
+                            ae.getEquipment(prevAttack.getWeaponId());
+                    totalheat += prevWeapon.getCurrentHeat();
+                }
+            }
+
+            if ((totalheat + weapon.getCurrentHeat()) > heatcap) {
+                return "heat exceeds capacity";
             }
         }
 
@@ -3766,13 +3785,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             // Additional Nape-of-Earth restrictions for strafing
             if (ae.getAltitude() == 1 && isStrafing) {
                 Vector<Coords> passedThrough = ae.getPassedThrough();
-                if ((passedThrough.size() == 0) 
+                if ((passedThrough.size() == 0)
                         || passedThrough.get(0).equals(target.getPosition())) {
-                    // TW pg 243 says units flying at NOE have a harder time 
+                    // TW pg 243 says units flying at NOE have a harder time
                     // establishing LoS while strafing and hence have to
                     // consider the adjacent hex along the flight place in the
                     // direction of the attack.  What if there is no adjacent
-                    // hex?  The rules don't address this.  We could 
+                    // hex?  The rules don't address this.  We could
                     // theoretically consider last turns movement, but that's
                     // cumbersome, so we'll just assume it's impossible - Arlith
                     return "target is too close to strafe";
@@ -3788,10 +3807,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     return "target is in dead-zone";
                 }
             }
-            
+
             // Only direct-fire energy weapons can strafe
             EquipmentType wt = weapon.getType();
-            boolean isDirectFireEnergy = wt.hasFlag(WeaponType.F_DIRECT_FIRE) 
+            boolean isDirectFireEnergy = wt.hasFlag(WeaponType.F_DIRECT_FIRE)
                     && (wt.hasFlag(WeaponType.F_LASER)
                             || wt.hasFlag(WeaponType.F_PPC)
                             || wt.hasFlag(WeaponType.F_PLASMA)
@@ -3799,11 +3818,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                             || wt.hasFlag(WeaponType.F_FLAMER));
             boolean isEnergyBay = (wt instanceof LaserBayWeapon)
                     || (wt instanceof PPCBayWeapon)
-                    || (wt instanceof PulseLaserBayWeapon); 
+                    || (wt instanceof PulseLaserBayWeapon);
             if (isStrafing && !isDirectFireEnergy && !isEnergyBay) {
                 return "only direct-fire energy weapons can strafe!";
             }
-            
+
             // only certain weapons can be used for air to ground attacks
             if (ae instanceof Aero) {
                 // Spheroids can't strafe
@@ -4249,12 +4268,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     public void setStrafing(boolean isStrafing) {
         this.isStrafing = isStrafing;
     }
-    
+
     public boolean isStrafingFirstShot() {
         return isStrafingFirstShot;
     }
-    
+
     public void setStrafingFirstShot(boolean isStrafingFirstShot) {
         this.isStrafingFirstShot = isStrafingFirstShot;
-    }    
+    }
 }

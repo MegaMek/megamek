@@ -197,8 +197,8 @@ public class Precognition implements Runnable {
             while (!getDone().get()) {
                 if (!getEventsToProcess().isEmpty()) {
                     processGameEvents();
-                    ecmInfo = ComputeECM.computeAllEntitiesECMInfo(game
-                            .getEntitiesVector());
+                    ecmInfo = ComputeECM.computeAllEntitiesECMInfo(
+                            game.getEntitiesVector());
                 } else if (!getDirtyUnits().isEmpty()) {
                     Entity entity = getGame().getEntity(getDirtyUnits().pollFirst());
                     if (entity != null) {

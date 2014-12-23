@@ -38,6 +38,7 @@ v0.39.5 / v0.40.0RC3 (SVN)
 + Bug [#4351]: Alpha strike with ASFs conflicts with bombs
 + Data: New Unit Images.
 + Bug [MML#150]: Fixed alot of equipment in MiscType wrongly showing for Aeros
++ Bug [#4349]: Unable to manually land WIGEs (MM simply will not allow it)
 
 v0.39.4 / v0.40.0RC2 (2014-12-14 19:00 UTC)
 + added Transporter.resetTransporter function for MHQ purposes

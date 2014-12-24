@@ -30432,29 +30432,30 @@ public class Server implements Runnable {
         Iterator<Entity> sinkableTanks = game
                 .getSelectedEntities(new EntitySelector() {
                     public boolean accept(Entity entity) {
-                        if (entity.isOffBoard()) {
+                        if (entity.isOffBoard() 
+                                || (entity.getPosition() == null)
+                                || !(entity instanceof Tank)) {
                             return false;
                         }
-
-                        if ((entity instanceof Tank)
-                            && (entity.getPosition() != null)
-                            && ((entity.getMovementMode() == EntityMovementMode.TRACKED)
-                                || (entity.getMovementMode() == EntityMovementMode.WHEELED) || ((entity
-                                                                                                         .getMovementMode() == EntityMovementMode.HOVER) && entity
-                                                                                                        .isImmobile()))
-                            && (game.getBoard()
-                                    .getHex(entity.getPosition())
-                                    .terrainLevel(Terrains.WATER) > 0)
-                            && (!(game.getBoard()
-                                      .getHex(entity.getPosition())
-                                      .terrainLevel(Terrains.BRIDGE) > 0) && (entity
-                                                                                      .getElevation() == game.getBoard()
-                                                                                                             .getHex(entity.getPosition())
-                                                                                                             .terrainLevel(Terrains.BRIDGE_ELEV)))
-                            && !(entity
-                                .hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
-                            && !(entity
-                                .hasWorkingMisc(MiscType.F_FLOTATION_HULL))) {
+                        final IHex hex = game.getBoard().getHex(
+                                entity.getPosition());
+                        final boolean onBridge = (hex
+                                .terrainLevel(Terrains.BRIDGE) > 0)
+                                && (entity.getElevation() == hex
+                                        .terrainLevel(Terrains.BRIDGE_ELEV));
+                        if (((entity.getMovementMode() 
+                                    == EntityMovementMode.TRACKED)
+                                || (entity.getMovementMode() 
+                                        == EntityMovementMode.WHEELED) 
+                                || ((entity.getMovementMode() 
+                                        == EntityMovementMode.HOVER)))
+                                    && entity.isImmobile()
+                                    && (hex.terrainLevel(Terrains.WATER) > 0)
+                                    && !onBridge
+                                    && !(entity.hasWorkingMisc(
+                                            MiscType.F_FULLY_AMPHIBIOUS))
+                                    && !(entity.hasWorkingMisc(
+                                            MiscType.F_FLOTATION_HULL))) {
                             return true;
                         }
                         return false;

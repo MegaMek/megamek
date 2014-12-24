@@ -43,6 +43,7 @@ v0.39.5 / v0.40.0RC3 (SVN)
 + Bug [#4336]: Unofficial rule : Grounded dropships fire weapons individually allows dropships to disregard max heat
 + Bug [#4381]: Various Game.checkPositionCacheConsistency() Errors
 + Bug [#4391]: Immobilized Hovers Not Sinking
++ Bug [#4396]: VTOLs shouldn't get building floor select dialog when deploying
 
 v0.39.4 / v0.40.0RC2 (2014-12-14 19:00 UTC)
 + added Transporter.resetTransporter function for MHQ purposes

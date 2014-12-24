@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import megamek.common.actions.ArtilleryAttackAction;
@@ -86,7 +85,7 @@ public class Game implements Serializable, IGame {
 
     private Hashtable<Integer, IPlayer> playerIds = new Hashtable<Integer, IPlayer>();
 
-    private final Map<Coords, HashSet<Integer>> entityPosLookup = new ConcurrentHashMap<>();
+    private final Map<Coords, HashSet<Integer>> entityPosLookup = new HashMap<>();
 
     /**
      * have the entities been deployed?
@@ -910,7 +909,7 @@ public class Game implements Serializable, IGame {
         return Collections.unmodifiableList(entities);
     }
 
-    public void setEntitiesVector(List<Entity> entities) {
+    public synchronized void setEntitiesVector(List<Entity> entities) {
         checkPositionCacheConsistency();
         this.entities.clear();
         this.entities.addAll(entities);
@@ -1219,7 +1218,7 @@ public class Game implements Serializable, IGame {
         addEntity(entity, true);
     }
 
-    public void addEntity(Entity entity, boolean genEvent) {
+    public synchronized void addEntity(Entity entity, boolean genEvent) {
         entity.setGame(this);
         if (entity instanceof Mech) {
             ((Mech) entity).setBAGrabBars();
@@ -1283,7 +1282,7 @@ public class Game implements Serializable, IGame {
         setEntity(id, entity, null);
     }
 
-    public void setEntity(int id, Entity entity, Vector<UnitLocation> movePath) {
+    public synchronized void setEntity(int id, Entity entity, Vector<UnitLocation> movePath) {
         final Entity oldEntity = getEntity(id);
         if (oldEntity == null) {
             addEntity(entity);
@@ -1326,7 +1325,7 @@ public class Game implements Serializable, IGame {
      * Remove an entity from the master list. If we can't find that entity,
      * (probably due to double-blind) ignore it.
      */
-    public void removeEntity(int id, int condition) {
+    public synchronized void removeEntity(int id, int condition) {
         Entity toRemove = getEntity(id);
         if (toRemove == null) {
             // This next statement has been cluttering up double-blind
@@ -1378,7 +1377,7 @@ public class Game implements Serializable, IGame {
     /**
      * Resets this game.
      */
-    public void reset() {
+    public synchronized void reset() {
         roundCount = 0;
 
         entities.clear();
@@ -1521,7 +1520,7 @@ public class Game implements Serializable, IGame {
      *            Flag that determines whether the ability to target is ignored
      * @return <code>Vector<Entity></code>
      */
-    public List<Entity> getEntitiesVector(Coords c, boolean ignore) {
+    public synchronized List<Entity> getEntitiesVector(Coords c, boolean ignore) {
         checkPositionCacheConsistency();
         // Make sure the look-up is initialized
         if (entityPosLookup == null
@@ -3390,9 +3389,8 @@ public class Game implements Serializable, IGame {
      *
      * @param e
      */
-    public void updateEntityPositionLookup(Entity e,
+    public synchronized void updateEntityPositionLookup(Entity e,
             HashSet<Coords> oldPositions) {
-
         HashSet<Coords> newPositions = e.getOccupiedCoords();
         // Check to see that the position has actually changed
         if (newPositions.equals(oldPositions)) {

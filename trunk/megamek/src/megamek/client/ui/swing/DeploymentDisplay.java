@@ -479,7 +479,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             // deploy at
             Building bldg = clientgui.getClient().getGame().getBoard()
                     .getBuildingAt(moveto);
-            if ((null != bldg) && !(ce() instanceof Aero)) {
+            if ((null != bldg)
+                    && !(ce() instanceof Aero) && !(ce() instanceof VTOL)) {
                 if (clientgui.getClient().getGame().getBoard().getHex(moveto)
                         .containsTerrain(Terrains.BLDG_ELEV)) {
                     int height = clientgui.getClient().getGame().getBoard()

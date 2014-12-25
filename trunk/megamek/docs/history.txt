@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.39.5 / v0.40.0RC3 (SVN)
+v0.39.5 / v0.40.0RC3 (2014-12-25 15:10 UTC)
 + Bug: GameVictoryEvent was not adding "Out of Game" entities to the entityIds hashtable
     This was causing bugs in MekHQ, such as not registering kills properly
 + Bug: ComputeECM.computeAllEntitiesECMInfo could NPE in some circumstances

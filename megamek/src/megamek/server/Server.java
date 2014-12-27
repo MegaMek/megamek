@@ -7393,11 +7393,11 @@ public class Server implements Runnable {
             if (entity instanceof Mech) {
                 if (!lastPos.equals(curPos)
                     && (prevStep != null)
-                    && ((lastHex.containsTerrain(Terrains.FIRE) && (prevStep
-                                                                            .getElevation() <= 1)) || (lastHex
-                                                                                                               .containsTerrain(Terrains.MAGMA) && (prevStep
-                                                                                                                                                            .getElevation() == 0)))
-                    && ((step.getMovementType() != EntityMovementType.MOVE_JUMP)
+                        && ((lastHex.containsTerrain(Terrains.FIRE) 
+                                && (prevStep.getElevation() <= 1)) 
+                                || (lastHex.containsTerrain(Terrains.MAGMA) 
+                                        && (prevStep.getElevation() == 0)))
+                        && ((step.getMovementType() != EntityMovementType.MOVE_JUMP)
                         // Bug #828741 -- jumping bypasses fire, but not on the
                         // first step
                         // getMpUsed -- total MP used to this step
@@ -9083,8 +9083,8 @@ public class Server implements Runnable {
         IHex h = game.getBoard().getHex(coords);
         Report r;
         // Unless there is a fire in the hex already, start one.
-        if (!h.containsTerrain(Terrains.FIRE)) {
-            ignite(coords, true, vPhaseReport);
+        if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_IV) {
+            ignite(coords, Terrains.FIRE_LVL_INFERNO_IV, vPhaseReport);
         }
         // possibly melt ice and snow
         if (h.containsTerrain(Terrains.ICE) || h.containsTerrain(Terrains.SNOW)) {
@@ -9115,8 +9115,8 @@ public class Server implements Runnable {
             }
             h = game.getBoard().getHex(tempcoords);
             // Unless there is a fire in the hex already, start one.
-            if (!h.containsTerrain(Terrains.FIRE)) {
-                ignite(tempcoords, true, vPhaseReport);
+            if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_IV) {
+                ignite(tempcoords, Terrains.FIRE_LVL_INFERNO_IV, vPhaseReport);
             }
             // possibly melt ice and snow
             if (h.containsTerrain(Terrains.ICE)
@@ -10213,7 +10213,7 @@ public class Server implements Runnable {
         r.addDesc(entity);
         if (!hex.containsTerrain(Terrains.FIRE)) {
             r.messageId = 2175;
-            ignite(coords, true, null);
+            ignite(coords, Terrains.FIRE_LVL_INFERNO, null);
         }
         addReport(r);
     }
@@ -23535,9 +23535,9 @@ public class Server implements Runnable {
             IHex hex = game.getBoard().getHex(pos);
             if (hex.containsTerrain(Terrains.WOODS)
                 || hex.containsTerrain(Terrains.JUNGLE)) {
-                ignite(pos, false, vDesc);
+                ignite(pos, Terrains.FIRE_LVL_NORMAL, vDesc);
             } else {
-                ignite(pos, true, vDesc);
+                ignite(pos, Terrains.FIRE_LVL_INFERNO, vDesc);
             }
             vDesc.addAll(destroyEntity(en, "crashed and burned", false, false));
         }
@@ -25518,7 +25518,7 @@ public class Server implements Runnable {
             vPhaseReport.add(r);
         }
         if (fireRoll >= roll.getValue()) {
-            ignite(c, bInferno, vPhaseReport);
+            ignite(c, Terrains.FIRE_LVL_NORMAL, vPhaseReport);
             return true;
         }
         return false;
@@ -25555,10 +25555,10 @@ public class Server implements Runnable {
     /**
      * add fire to a hex
      *
-     * @param c        - the <code>Coords</code> of the hex to be set on fire
-     * @param bInferno - <code>true</code> if the fire to be set is an inferno
+     * @param c         - the <code>Coords</code> of the hex to be set on fire
+     * @param fireLevel - The level of fire, see Terrains
      */
-    public void ignite(Coords c, boolean bInferno, Vector<Report> vReport) {
+    public void ignite(Coords c, int fireLevel, Vector<Report> vReport) {
         // you can't start fires in some planetary conditions!
         if (null != game.getPlanetaryConditions().cannotStartFire()) {
             if (null != vReport) {
@@ -25591,12 +25591,17 @@ public class Server implements Runnable {
         r.add(c.getBoardNum());
         r.type = Report.PUBLIC;
 
-        // type of fire. We use level 2 for infernos
-        int type = 1;
-        if (bInferno) {
-            type = type + 1;
-            r.messageId = 3006;
-
+        // Adjust report message for inferno types
+        switch (fireLevel) {
+            case Terrains.FIRE_LVL_INFERNO:
+                r.messageId = 3006;
+                break;
+            case Terrains.FIRE_LVL_INFERNO_BOMB:
+                r.messageId = 3003;
+                break;
+            case Terrains.FIRE_LVL_INFERNO_IV:
+                r.messageId = 3004;
+                break;
         }
 
         // report it
@@ -25604,7 +25609,7 @@ public class Server implements Runnable {
             vReport.add(r);
         }
         hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
-                Terrains.FIRE, type));
+                Terrains.FIRE, fireLevel));
         sendChangedHex(c);
     }
 
@@ -28248,7 +28253,7 @@ public class Server implements Runnable {
             }
             Report.addNewline(vDesc);
             if (onFire && !hex.containsTerrain(Terrains.FIRE)) {
-                ignite(c, false, vDesc);
+                ignite(c, Terrains.FIRE_LVL_NORMAL, vDesc);
             }
         } else {
             // report no explosion
@@ -31615,8 +31620,8 @@ public class Server implements Runnable {
         IHex h = game.getBoard().getHex(coords);
         Report r;
         // Unless there is a fire in the hex already, start one.
-        if (!h.containsTerrain(Terrains.FIRE)) {
-            ignite(coords, true, vPhaseReport);
+        if (h.terrainLevel(Terrains.FIRE) < Terrains.FIRE_LVL_INFERNO_BOMB) {
+            ignite(coords, Terrains.FIRE_LVL_INFERNO_BOMB, vPhaseReport);
         }
         // possibly melt ice and snow
         if (h.containsTerrain(Terrains.ICE) || h.containsTerrain(Terrains.SNOW)) {

@@ -2005,6 +2005,8 @@ super * "heavy_industrial:*" "" "transparent/heavy_industrial_zone.gif"
 
 super * "fire:1" "" "boring/fire.gif"
 super * "fire:2" "" "transparent/inferno.png"
+super * "fire:3" "" "transparent/inferno.png"
+super * "fire:4" "" "transparent/inferno.png"
 super * "smoke:1" "" "transparent/light_smoke.png"
 super * "smoke:2" "" "transparent/heavy_smoke.png"
 super * "smoke:3" "" "transparent/lismoke.gif"

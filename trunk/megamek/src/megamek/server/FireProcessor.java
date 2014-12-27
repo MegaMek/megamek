@@ -133,7 +133,9 @@ public class FireProcessor extends DynamicTerrainProcessor {
                 if(currentHex.containsTerrain(Terrains.FIRE)) {
                     //If the woods has been cleared, or the building
                     // has collapsed put non-inferno fires out.
-                    if ((currentHex.terrainLevel(Terrains.FIRE) == 1) && !currentHex.isIgnitable()) {
+                    if ((currentHex.terrainLevel(Terrains.FIRE) 
+                            == Terrains.FIRE_LVL_NORMAL) 
+                            && !currentHex.isIgnitable()) {
                         server.removeFire(currentCoords, "lack of fuel");
                         continue;
                     }
@@ -148,12 +150,18 @@ public class FireProcessor extends DynamicTerrainProcessor {
                         }
                         //report and check for fire spread
                         r = new Report(5125, Report.PUBLIC);
-                        if (currentHex.terrainLevel(Terrains.FIRE) == 2) {
+                        if ((currentHex.terrainLevel(Terrains.FIRE) 
+                                == Terrains.FIRE_LVL_INFERNO)
+                                || (currentHex.terrainLevel(Terrains.FIRE) 
+                                        == Terrains.FIRE_LVL_INFERNO_BOMB)
+                                || (currentHex.terrainLevel(Terrains.FIRE) 
+                                        == Terrains.FIRE_LVL_INFERNO_IV)) {
                             r.messageId = 5130;
                         }
                         r.add(currentCoords.getBoardNum());
                         vPhaseReport.addElement(r);
-                        spreadFire(currentXCoord, currentYCoord, windDirection, windStrength);
+                        spreadFire(currentXCoord, currentYCoord, windDirection,
+                                windStrength);
                     }
                 }
             }

@@ -1885,6 +1885,8 @@ super * "smoke:4" "" "boring/lismoke.gif"
 super * "smoke:5" "" "boring/chaff.gif"
 super * "fire:1" "" "boring/fire.gif"
 super * "fire:2" "" "boring/fire.gif"
+super * "fire:3" "" "boring/fire.gif"
+super * "fire:4" "" "boring/fire.gif"
 
 super * "fortified:1" "" "boring/sandbags.gif"
 

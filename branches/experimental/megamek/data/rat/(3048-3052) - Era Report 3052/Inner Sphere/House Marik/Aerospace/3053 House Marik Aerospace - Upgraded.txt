@@ -1,0 +1,12 @@
+3053 House Marik Aerospace - Upgraded
+Transgressor TR-13,1
+Corsair CSR-V12,2
+Cheetah F-10,3
+Riever F-100,4
+Stingray F-92,5
+Stingray F-90,6
+Cheetah F-14-S,5
+Eagle EGL-R6,4
+Transit TR-10,3
+Chippewa CHP-W5,2
+Riever F-700,1

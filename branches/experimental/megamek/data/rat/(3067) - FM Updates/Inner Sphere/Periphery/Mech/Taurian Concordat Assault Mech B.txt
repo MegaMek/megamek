@@ -1,0 +1,12 @@
+Taurian Concordat Assault Mechs B 3067 FM-U
+Stalker STK-5S,1
+Cyclops CP-11-A,2
+Charger CGR-1A5,3
+Banshee BNC-3M,4
+Stalker STK-3F,5
+Awesome AWS-8Q,6
+Victor VTR-9B,5
+Zeus ZEU-6T,4
+Longbow LGB-7Q,3
+Banshee BNC-3S,2
+Awesome AWS-9Q,1

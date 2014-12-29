@@ -1,0 +1,204 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Seeker
+
+</Name>
+
+<Model>
+
+(3054)
+
+</Model>
+
+<Tonnage>
+
+3900
+
+</Tonnage>
+
+<SafeThrust>
+
+5
+
+</SafeThrust>
+
+<Armor>
+
+140
+
+120
+
+120
+
+110
+
+</Armor>
+
+<Nose Equipment>
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+ISERPPC
+
+(R) ISLRM10
+
+(R) IS Artemis IV FCS
+
+(R) ISLRM10 Ammo Artemis-capable:12
+
+(R) ISERLargeLaser
+
+(R) ISMediumLaser
+
+(R) ISMediumLaser
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+ISERPPC
+
+(R) ISLRM10
+
+(R) IS Artemis IV FCS
+
+(R) ISLRM10 Ammo Artemis-capable:12
+
+(R) ISERLargeLaser
+
+(R) ISMediumLaser
+
+(R) ISMediumLaser
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+ISERLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+</Aft Equipment>
+
+<structural_integrity>
+
+10
+
+</structural_integrity>
+
+<heatsinks>
+
+94
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+6810
+
+</fuel>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+3054
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+spheroid
+
+</motion_type>
+
+
+
+<transporters>
+
+LightVehicleBay:36:1
+
+InfantryBay:9:1
+
+CargoBay:160:1
+
+</transporters>
+
+<escape_pod>
+
+8
+
+</escape_pod>
+
+<life_boat>
+
+0
+
+</life_boat>
+
+<crew>
+
+452
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

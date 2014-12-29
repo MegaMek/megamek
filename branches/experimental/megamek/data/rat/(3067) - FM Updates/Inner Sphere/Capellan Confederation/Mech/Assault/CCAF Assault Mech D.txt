@@ -1,0 +1,12 @@
+CCAF Assault Mechs D 3067
+Atlas AS7-D,1
+Cyclops CP-10-Q,2
+Charger CGR-1A1,3
+Striker STC-2C,4
+Cyclops CP-10-Z,5
+Longbow LGB-7Q,6
+Longbow LGB-7Q,5
+Charger CGR-1L,4
+Charger CGR-1L,3
+Stalker STK-3F,2
+Banshee BNC-3E,1

@@ -1,0 +1,12 @@
+3034 House Davion Mech - Assault C
+Longbow LGB-7Q,1
+Banshee BNC-3E,2
+BattleMaster BLR-1G,3
+Cyclops CP-10-Z,4
+Victor VTR-9B,5
+Atlas AS7-D,6
+Stalker STK-3F,5
+Awesome AWS-8Q,4
+Charger CGR-1A1,3
+Longbow LGB-7Q,2
+Goliath GOL-1H,1

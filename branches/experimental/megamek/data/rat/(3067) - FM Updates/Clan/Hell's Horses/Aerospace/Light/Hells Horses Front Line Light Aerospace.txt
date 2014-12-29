@@ -1,0 +1,12 @@
+Clan Hell's Horses Front-Line Light Aerospace (FMU)
+Avar Prime,1
+Vandal B,2
+Batu B,3
+Bashkir Prime,4
+Batu C,5
+Sulla A,6
+Bashkir B,5
+Avar C,4
+Bashkir C,3
+Vandal C,2
+Avar B,1

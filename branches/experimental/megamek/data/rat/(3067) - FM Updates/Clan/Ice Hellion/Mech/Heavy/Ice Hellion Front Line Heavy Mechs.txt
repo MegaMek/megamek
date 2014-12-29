@@ -1,0 +1,12 @@
+Clan Ice Hellion Front-Line Heavy Mechs (FMU)
+Linebacker A,1
+Vulture (Mad Dog) D,2
+Nova Cat Prime,3
+Thor (Summoner) C,4
+Mad Cat (Timber Wolf) D,5
+Linebacker Prime,6
+Thor (Summoner) A,5
+Linebacker E,4
+Cauldron-Born (Ebon Jaguar) A,3
+Nova Cat B,2
+Vulture (Mad Dog) C,1

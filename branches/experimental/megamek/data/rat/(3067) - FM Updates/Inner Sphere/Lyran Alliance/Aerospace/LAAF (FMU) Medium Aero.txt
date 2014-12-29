@@ -1,0 +1,12 @@
+LAAF Medium Aerospace 3067 (FMU)
+Stingray F-90S,1
+Shilone SL-17,2
+Hellcat HCT-213,3
+Stingray F-92,4
+Lucifer LCF-R16,5
+Lucifer LCF-R15,6
+Corsair CSR-V20,5
+Lucifer LCF-R20,4
+Corsair CSR-V12,3
+Lightning LTN-G15,2
+Stingray F-94,1

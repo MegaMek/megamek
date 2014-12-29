@@ -1,0 +1,75 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Packrat LRPV
+</Name>
+
+<Model>
+PKR-T5 (ICE)
+</Model>
+
+<year>
+2846
+</year>
+
+<type>
+IS Level 1
+</type>
+
+<tonnage>
+20.0
+</tonnage>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+cargobay:1:1
+</transporters>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+7
+</cruiseMP>
+
+<armor>
+12
+12
+12
+12
+</armor>
+
+<Body Equipment>
+IS Ammo SRM-6
+IS Ammo SRM-6
+</Body Equipment>
+
+<Front Equipment>
+SRM 6
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+

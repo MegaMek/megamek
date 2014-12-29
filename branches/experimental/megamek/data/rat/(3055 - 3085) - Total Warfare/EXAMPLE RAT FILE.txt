@@ -1,0 +1,6 @@
+#Type in a pound sign to insert a comment.
+#Format is like this:
+#unitname model,frequency
+#Take a look at the other RATs for ideas.
+#Edited by Harold "BATTLEMASTER" N.
+#3/2/2011

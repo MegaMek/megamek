@@ -1,0 +1,46 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+SRM Foot Infantry
+</Name>
+<Model>
+Taurian Citizens' Militia
+</Model>
+<squad_size>
+10
+</squad_size>
+<squadn>
+3
+</squadn>
+<Primary>
+InfantryZeusHeavyRifle
+</Primary>
+<Secondary>
+InfantrySRM
+</Secondary>
+<secondn>
+1
+</secondn>
+<type>
+IS Level 2
+</type>
+<year>
+2500
+</year>
+<era>
+Age of War
+</era>
+<motion_type>
+leg
+</motion_type>
+<antimek>
+</antimek>

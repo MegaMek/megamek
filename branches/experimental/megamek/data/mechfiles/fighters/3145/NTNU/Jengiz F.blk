@@ -1,0 +1,109 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Jengiz
+</Name>
+
+<Model>
+F
+</Model>
+
+<year>
+3130
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+20
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+85
+63
+63
+48
+</armor>
+
+<Nose Equipment>
+CLLongTomCannon
+CLUltraAC20
+CLLongTomCannonAmmo
+CLLongTomCannonAmmo
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLERSmallLaser
+CLTargeting Computer
+</Aft Equipment>
+
+<source>
+TRO 3145 NT NU
+</source>
+
+<tonnage>
+80.0
+</tonnage>
+

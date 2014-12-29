@@ -1,0 +1,12 @@
+DCMS Medium Mechs D 3067 FM-U
+Scorpion SCP-1O,1
+Trebuchet TBT-5N,2
+Chameleon CLN-7V,3
+Assassin ASN-21,4
+Phoenix Hawk PXH-1K,5
+Whitworth WTH-1,6
+Wolverine WVR-6K,5
+Griffin GRF-1N,4
+Hunchback HBK-4G,3
+Shadow Hawk SHD-2K,2
+Wolverine WVR-7K,1

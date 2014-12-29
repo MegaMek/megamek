@@ -1,0 +1,12 @@
+Federated Suns Medium Mechs C
+Enforcer III ENF-6M,1
+Hatchetman HCT-6D,2
+Scarecrow UCU-F4,3
+Centurion CN9-D5,4
+Hellspawn HSN-10SR,5
+Antlion LK-3D,6
+Legionnaire LGN-2D,5
+Blackjack BJ2-O,4
+Centurion CN11-O,3
+Griffin GRF-6S,2
+Fennec FEC-1CM,1

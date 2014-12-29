@@ -1,0 +1,69 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Patton Tank
+</Name>
+<Model>
+(Ultra)
+</Model>
+<Tonnage>
+65
+</Tonnage>
+<cruiseMP>
+4
+</cruiseMP>
+<Armor>
+51
+46
+46
+38
+51
+</Armor>
+<Turret Equipment>
+ISUltraAC10
+ISMediumLaser
+ISMediumLaser
+</Turret Equipment>
+<Front Equipment>
+ISMachine Gun
+ISMachine Gun
+</Front Equipment>
+<Rear Equipment>
+ISMachine Gun
+</Rear Equipment>
+<Body Equipment>
+ISUltraAC10 Ammo
+ISUltraAC10 Ammo
+ISUltraAC10 Ammo
+ISMG Ammo (100)
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3062
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Civil War
+</source>

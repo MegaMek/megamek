@@ -1,0 +1,91 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Heavy LRM Carrier
+</Name>
+
+<Model>
+(EN Variant)
+</Model>
+
+<year>
+3073
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<tonnage>
+80.0
+</tonnage>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<engine_type>
+2
+</engine_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<armor_type>
+4
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+17
+16
+16
+14
+17
+</armor>
+
+<Body Equipment>
+ISEnhancedLRM15 Ammo
+ISEnhancedLRM15 Ammo
+ISEnhancedLRM15 Ammo
+ISExtended LRM15 Ammo
+ISExtended LRM15 Ammo
+ISExtended LRM15 Ammo
+ISExtended LRM15 Ammo
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Enhanced LRM 15
+Enhanced LRM 15
+ISExtendedLRM15
+ISExtendedLRM15
+</Turret Equipment>
+

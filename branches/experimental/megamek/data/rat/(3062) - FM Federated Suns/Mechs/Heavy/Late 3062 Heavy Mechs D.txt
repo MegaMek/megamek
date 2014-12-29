@@ -1,0 +1,12 @@
+Late 3062 AFFS Heavy Mechs, Tech Level D
+Axman AXM-2N,1
+Orion ON1-K,2
+Catapult CPLT-C4,3
+Caesar CES-3R,4
+Cataphract CTF-3D,5
+JagerMech JM6-DD,6
+Quickdraw QKD-5K,5
+Grasshopper GHR-5H,4
+Cataphract CTF-1X,3
+Axman AXM-1N,2
+Falconer FLC-8R,1

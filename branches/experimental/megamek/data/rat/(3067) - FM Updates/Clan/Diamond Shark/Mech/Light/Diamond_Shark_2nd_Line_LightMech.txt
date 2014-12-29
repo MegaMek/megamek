@@ -1,0 +1,12 @@
+Diamond_Shark 2nd-Line Light Mechs (FMU)
+Solitaire (Standard),1
+Piranha (Standard),2
+Solitaire (Standard),3
+Jenner IIC 2,4
+Mercury MCY-97,5
+Solitaire (Standard),6
+Vixen (Incubus) (Standard),5
+Thorn THE-N,4
+Jenner IIC (Standard),3
+Piranha (Standard),2
+Pack Hunter (Standard),1

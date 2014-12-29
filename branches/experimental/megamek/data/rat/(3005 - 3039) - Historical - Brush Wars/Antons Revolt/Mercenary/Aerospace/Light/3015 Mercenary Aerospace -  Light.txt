@@ -1,0 +1,12 @@
+3015 Mercenary Aerospace -  Light
+Thrush TR-7,1
+Seydlitz SYD-Z3,2
+Seydlitz SYD-Z1,3
+Sabre SB-27,4
+Sabre SB-27,5
+Sparrowhawk SPR-H5,6
+Centurion CNT-1D,5
+Centurion CNT-1D,4
+Cheetah F-10,3
+Sholagar SL-21,2
+Sholagar SL-21,1

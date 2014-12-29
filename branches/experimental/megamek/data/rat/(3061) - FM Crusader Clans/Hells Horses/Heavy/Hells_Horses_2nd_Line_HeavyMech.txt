@@ -1,0 +1,12 @@
+Crusader Clan Second-Line Heavy Mechs (Hell's Horses),
+Guillotine GLT-3N,1
+Thresher 2,2
+Champion CHP-1N,3
+Galahad (Glass Spider) (Standard),4
+Grizzly (Standard),5
+Rifleman IIC (Standard),6
+Guillotine GLT-3N,5
+Rifleman IIC 2,4
+Thresher 2,3
+Viper (Black Python) 2,2
+Viper (Black Python) (Standard),1

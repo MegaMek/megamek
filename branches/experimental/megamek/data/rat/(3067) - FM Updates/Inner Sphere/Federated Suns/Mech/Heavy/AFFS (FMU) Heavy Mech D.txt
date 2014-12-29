@@ -1,0 +1,12 @@
+AFFS Heavy Mechs D 3067 (FMU)
+Grasshopper GHR-6K,1
+Marauder MAD-5T,2
+Ostsol OTL-6D,3
+Caesar CES-3R,4
+Cataphract CTF-3L,5
+Marauder MAD-5S,6
+JagerMech III JM6-D3,5
+Rifleman RFL-6X,4
+Warhammer WHM-8D,3
+Thunderbolt TDR-7SE,2
+Warhammer WHM-9D,1

@@ -1,0 +1,12 @@
+Clan Hell's Horses Heavy Vehicles (FMU)
+Marksman Artillery Vehicle (Standard),1
+Demon Tank (Standard),2
+Oro Heavy Tank (Standard),3
+Ishtar Heavy Fire Support Tank (Standard),4
+Athena Combat Vehicle (Standard),5
+Oro Heavy Tank (Standard),6
+Ishtar Heavy Fire Support Tank (Standard),5
+Athena Combat Vehicle (Standard),4
+Pike Support Vehicle (Clan),3
+Burke Defense Tank (Standard),2
+Ishtar Heavy Fire Support Tank (Standard),1

@@ -1,0 +1,64 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Chevalier Light Tank
+</Name>
+<Model>
+(BAP)
+</Model>
+<Tonnage>
+35
+</Tonnage>
+<cruiseMP>
+6
+</cruiseMP>
+<Armor>
+16
+12
+12
+10
+14
+</Armor>
+<Turret Equipment>
+ISERLargeLaser
+</Turret Equipment>
+<Front Equipment>
+ISStreakSRM2
+ISStreakSRM2
+ISMachine Gun
+</Front Equipment>
+<Body Equipment>
+ISStreakSRM2 Ammo
+ISMG Ammo (100)
+ISBeagleActiveProbe
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+2958
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>
+<source>
+Succession Wars
+</source>

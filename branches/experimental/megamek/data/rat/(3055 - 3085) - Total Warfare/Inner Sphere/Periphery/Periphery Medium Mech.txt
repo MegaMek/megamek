@@ -1,0 +1,14 @@
+Periphery Medium 'Mech
+Hatchetman HCT-3F, 1
+Hunchback HBK-4G, 2
+Dervish DV-6M, 3
+Trebuchet TBT-5N, 4
+Vulcan VL-2T, 5
+Whitworth WTH-1, 6
+Hunchback HBK-4G, 5
+Assassin ASN-21, 4
+Blackjack BJ-1, 3
+Blackjack BJ-1, 2
+Marshal MHL-X1, 1
+#Edited by Harold "BATTLEMASTER" N.
+#3/2/2011

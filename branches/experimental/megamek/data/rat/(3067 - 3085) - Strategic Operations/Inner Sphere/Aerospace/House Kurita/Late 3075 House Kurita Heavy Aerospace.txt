@@ -1,0 +1,12 @@
+Kurita Heavy Aerospace Late 3075
+Hammerhead HMR-HD,1
+Hammerhead HMR-HD,2
+Stuka STU-K5,3
+Riever F-100b,4
+Eagle EGL-R6,5
+Slayer SL-15,6
+Slayer SL-15R,5
+Riever F-700b,4
+Slayer SL-15R,3
+Thunderbird TRB-D50,2
+Slayer SL-15K,1

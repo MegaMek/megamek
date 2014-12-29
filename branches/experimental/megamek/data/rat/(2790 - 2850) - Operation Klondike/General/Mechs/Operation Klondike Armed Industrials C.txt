@@ -1,0 +1,7 @@
+2821 Operations Klondike Armed Industrials C
+Crosscut ED-X2M ForestryMech(Flamer),1
+Powerman XI LoaderMech (SRM),1
+Carbine CON-1 ConstructionMech (RL),1
+Daedalus GTX2 (Militarized),1
+Harvester Ant KIC-3 Agromech(MG),1
+Crosscut ED-X2M2 ForestryMech(Rocket),1

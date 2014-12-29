@@ -18,13 +18,13 @@ abstract class Sprite implements ImageObserver {
     /**
      * 
      */
-    protected final BoardView1 boardView1;
+    protected final BoardView1 bv;
 
     /**
      * @param boardView1
      */
     Sprite(BoardView1 boardView1) {
-        this.boardView1 = boardView1;
+        this.bv = boardView1;
     }
 
     protected Rectangle bounds;
@@ -48,7 +48,7 @@ abstract class Sprite implements ImageObserver {
             int width, int height) {
         if (infoflags == ImageObserver.ALLBITS) {
             prepare();
-            this.boardView1.repaint();
+            this.bv.repaint();
             return false;
         }
         return true;

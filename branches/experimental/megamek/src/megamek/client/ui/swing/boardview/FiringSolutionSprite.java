@@ -31,7 +31,7 @@ class FiringSolutionSprite extends Sprite {
         toHitMod = thm;
         loc = l;
         range = r;
-        bounds = new Rectangle(this.boardView1.getHexLocation(loc), this.boardView1.hex_size);
+        bounds = new Rectangle(this.bv.getHexLocation(loc), this.bv.hex_size);
         image = null;
         baseScaleImage = null;
     }
@@ -46,12 +46,12 @@ class FiringSolutionSprite extends Sprite {
             return;
         }
 
-        if (this.boardView1.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-            image = this.boardView1.createImage(new FilteredImageSource(
+        if (this.bv.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
+            image = this.bv.createImage(new FilteredImageSource(
                     baseScaleImage.getSource(), new KeyAlphaFilter(
                             BoardView1.TRANSPARENT)));
         } else {
-            image = this.boardView1.getScaledImage(this.boardView1.createImage(new FilteredImageSource(
+            image = this.bv.getScaledImage(this.bv.createImage(new FilteredImageSource(
                     baseScaleImage.getSource(), new KeyAlphaFilter(
                             BoardView1.TRANSPARENT))),false);
         }
@@ -60,7 +60,7 @@ class FiringSolutionSprite extends Sprite {
     @Override
     public void prepare() {
         // create image for buffer
-        Image tempImage = this.boardView1.createImage(bounds.width, bounds.height);
+        Image tempImage = this.bv.createImage(bounds.width, bounds.height);
         Graphics graph = tempImage.getGraphics();
 
         // fill with key color
@@ -68,7 +68,7 @@ class FiringSolutionSprite extends Sprite {
         graph.fillRect(0, 0, bounds.width, bounds.height);
 
         // Draw firing information
-        Point p = this.boardView1.getHexLocation(loc);
+        Point p = this.bv.getHexLocation(loc);
         p.translate(-bounds.x, -bounds.y);
         graph.setFont(getFiringFont());
 
@@ -129,14 +129,14 @@ class FiringSolutionSprite extends Sprite {
         // graph.setColor(drawColor);
         // graph.drawPolygon(hexPoly);
 
-        baseScaleImage = this.boardView1.createImage(new FilteredImageSource(
+        baseScaleImage = this.bv.createImage(new FilteredImageSource(
                 tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT)));
         // create final image
-        if (this.boardView1.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-            image = this.boardView1.createImage(new FilteredImageSource(
+        if (this.bv.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
+            image = this.bv.createImage(new FilteredImageSource(
                     tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT)));
         } else {
-            image = this.boardView1.getScaledImage(this.boardView1.createImage(new FilteredImageSource(
+            image = this.bv.getScaledImage(this.bv.createImage(new FilteredImageSource(
                     tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT))),false);
         }
         graph.dispose();
@@ -145,7 +145,7 @@ class FiringSolutionSprite extends Sprite {
 
     @Override
     public Rectangle getBounds() {
-        bounds = new Rectangle(this.boardView1.getHexLocation(loc), this.boardView1.hex_size);
+        bounds = new Rectangle(this.bv.getHexLocation(loc), this.bv.hex_size);
         return bounds;
     }
 

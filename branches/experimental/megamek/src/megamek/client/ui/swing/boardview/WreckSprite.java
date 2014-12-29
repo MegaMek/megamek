@@ -31,13 +31,13 @@ class WreckSprite extends Sprite {
         String shortName = entity.getShortName();
 
         Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
-        modelRect = new Rectangle(47, 55, this.boardView1.getFontMetrics(font).stringWidth(
-                shortName) + 1, this.boardView1.getFontMetrics(font).getAscent());
-        Rectangle tempBounds = new Rectangle(this.boardView1.hex_size).union(modelRect);
+        modelRect = new Rectangle(47, 55, this.bv.getFontMetrics(font).stringWidth(
+                shortName) + 1, this.bv.getFontMetrics(font).getAscent());
+        Rectangle tempBounds = new Rectangle(this.bv.hex_size).union(modelRect);
         if (secondaryPos == -1) {
-            tempBounds.setLocation(this.boardView1.getHexLocation(entity.getPosition()));
+            tempBounds.setLocation(this.bv.getHexLocation(entity.getPosition()));
         } else {
-            tempBounds.setLocation(this.boardView1.getHexLocation(entity
+            tempBounds.setLocation(this.bv.getHexLocation(entity
                     .getSecondaryPositions().get(secondaryPos)));
         }
 
@@ -47,8 +47,8 @@ class WreckSprite extends Sprite {
 
     @Override
     public Rectangle getBounds() {
-        Rectangle tempBounds = new Rectangle(this.boardView1.hex_size).union(modelRect);
-        tempBounds.setLocation(this.boardView1.getHexLocation(entity.getPosition()));
+        Rectangle tempBounds = new Rectangle(this.bv.hex_size).union(modelRect);
+        tempBounds.setLocation(this.bv.getHexLocation(entity.getPosition()));
         bounds = tempBounds;
 
         return bounds;
@@ -63,15 +63,15 @@ class WreckSprite extends Sprite {
         // figure out size
         String shortName = entity.getShortName();
         Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
-        Rectangle tempRect = new Rectangle(47, 55, this.boardView1.getFontMetrics(font)
-                .stringWidth(shortName) + 1, this.boardView1.getFontMetrics(font)
+        Rectangle tempRect = new Rectangle(47, 55, this.bv.getFontMetrics(font)
+                .stringWidth(shortName) + 1, this.bv.getFontMetrics(font)
                 .getAscent());
 
         // create image for buffer
         Image tempImage;
         Graphics graph;
         try {
-            tempImage = this.boardView1.createImage(bounds.width, bounds.height);
+            tempImage = this.bv.createImage(bounds.width, bounds.height);
             graph = tempImage.getGraphics();
         } catch (NullPointerException ex) {
             // argh! but I want it!
@@ -83,7 +83,7 @@ class WreckSprite extends Sprite {
         graph.fillRect(0, 0, bounds.width, bounds.height);
 
         // Draw wreck image,if we've got one.
-        Image wreck = this.boardView1.tileManager.wreckMarkerFor(entity, -1);
+        Image wreck = this.bv.tileManager.wreckMarkerFor(entity, -1);
         if (null != wreck) {
             graph.drawImage(wreck, 0, 0, this);
         }
@@ -108,11 +108,11 @@ class WreckSprite extends Sprite {
         }
 
         // create final image
-        if (this.boardView1.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-            image = this.boardView1.createImage(new FilteredImageSource(
+        if (this.bv.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
+            image = this.bv.createImage(new FilteredImageSource(
                     tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT)));
         } else {
-            image = this.boardView1.getScaledImage(this.boardView1.createImage(new FilteredImageSource(
+            image = this.bv.getScaledImage(this.bv.createImage(new FilteredImageSource(
                     tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT))),false);
         }
         graph.dispose();

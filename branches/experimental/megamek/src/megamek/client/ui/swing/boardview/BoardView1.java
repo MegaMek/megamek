@@ -345,8 +345,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     FovHighlightingAndDarkening fovHighlightingAndDarkening;
 
     private String FILENAME_FLARE_IMAGE = "flare.png";
+    
+    private String FILENAME_RADAR_BLIP_IMAGE = "radarBlip.png";
 
     private Image flareImage;
+    
+    private Image radarBlipImage;
 
     /**
      * Construct a new board view for the specified game
@@ -557,6 +561,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         flareImage = getToolkit().getImage(
                 new File(Configuration.miscImagesDir(), FILENAME_FLARE_IMAGE)
                         .toString());
+        radarBlipImage = getToolkit().getImage(
+                new File(Configuration.miscImagesDir(),
+                        FILENAME_RADAR_BLIP_IMAGE).toString());
     }
 
     private void registerKeyboardCommands(final BoardView1 bv,
@@ -2371,7 +2378,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (position != null) {
             // If no secondary positions, add a sprite for the central position
             if (entity.getSecondaryPositions().isEmpty()) {
-                sprite = new EntitySprite(this, entity, -1);
+                sprite = new EntitySprite(this, entity, -1, radarBlipImage);
                 newSprites.add(sprite);
                 temp = new ArrayList<Integer>();
                 temp.add(entityId);
@@ -2380,7 +2387,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             } else { // Add all secondary position sprites, which includes a
                 // sprite for the central hex
                 for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
-                    sprite = new EntitySprite(this, entity, secondaryPos);
+                    sprite = new EntitySprite(this, entity, secondaryPos, radarBlipImage);
                     newSprites.add(sprite);
                     temp = new ArrayList<Integer>();
                     temp.add(entityId);
@@ -2391,7 +2398,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
             // If no secondary positions, add a sprite for the central position
             if (entity.getSecondaryPositions().isEmpty()) {
-                isoSprite = new IsometricSprite(this, entity, -1);
+                isoSprite = new IsometricSprite(this, entity, -1, radarBlipImage);
                 isoSprites.add(isoSprite);
                 temp = new ArrayList<Integer>();
                 temp.add(entityId);
@@ -2400,7 +2407,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             } else { // Add all secondary position sprites, which includes a
                 // sprite for the central hex
                 for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
-                    isoSprite = new IsometricSprite(this, entity, secondaryPos);
+                    isoSprite = new IsometricSprite(this, entity, secondaryPos, radarBlipImage);
                     isoSprites.add(isoSprite);
                     temp = new ArrayList<Integer>();
                     temp.add(entityId);
@@ -2493,13 +2500,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 continue;
             }
             if (entity.getSecondaryPositions().isEmpty()) {
-                EntitySprite sprite = new EntitySprite(this, entity, -1);
+                EntitySprite sprite = new EntitySprite(this, entity, -1,
+                        radarBlipImage);
                 newSprites.add(sprite);
                 ArrayList<Integer> temp = new ArrayList<Integer>();
                 temp.add(entity.getId());
                 temp.add(-1);
                 newSpriteIds.put(temp, sprite);
-                IsometricSprite isosprite = new IsometricSprite(this, entity, -1);
+                IsometricSprite isosprite = new IsometricSprite(this, entity,
+                        -1, radarBlipImage);
                 newIsometricSprites.add(isosprite);
                 temp = new ArrayList<Integer>();
                 temp.add(entity.getId());
@@ -2507,15 +2516,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 newIsoSpriteIds.put(temp, isosprite);
             } else {
                 for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
-                    EntitySprite sprite = new EntitySprite(this, entity, secondaryPos);
+                    EntitySprite sprite = new EntitySprite(this, entity,
+                            secondaryPos, radarBlipImage);
                     newSprites.add(sprite);
                     ArrayList<Integer> temp = new ArrayList<Integer>();
                     temp.add(entity.getId());
                     temp.add(secondaryPos);
                     newSpriteIds.put(temp, sprite);
 
-                    IsometricSprite isosprite = new IsometricSprite(this, entity,
-                                                                    secondaryPos);
+                    IsometricSprite isosprite = new IsometricSprite(this,
+                            entity, secondaryPos, radarBlipImage);
                     newIsometricSprites.add(isosprite);
                     temp = new ArrayList<Integer>();
                     temp.add(entity.getId());

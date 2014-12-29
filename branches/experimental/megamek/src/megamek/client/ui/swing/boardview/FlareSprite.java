@@ -28,10 +28,10 @@ class FlareSprite extends Sprite {
     @Override
     public Rectangle getBounds() {
 
-        Dimension dim = new Dimension(boardView1.hex_size.width, 
-                boardView1.hex_size.height);
+        Dimension dim = new Dimension(bv.hex_size.width, 
+                bv.hex_size.height);
         bounds = new Rectangle(dim);
-        bounds.setLocation(this.boardView1.getHexLocation(flare.position));
+        bounds.setLocation(this.bv.getHexLocation(flare.position));
 
         return bounds;
     }

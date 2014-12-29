@@ -25,9 +25,9 @@ public abstract class HexSprite extends Sprite {
     }
 
     protected void updateBounds() {
-        bounds = new Rectangle(this.boardView1.hexPoly.getBounds().width,
-                this.boardView1.hexPoly.getBounds().height);
-        bounds.setLocation(this.boardView1.getHexLocation(loc));
+        bounds = new Rectangle(this.bv.hexPoly.getBounds().width,
+                this.bv.hexPoly.getBounds().height);
+        bounds.setLocation(this.bv.getHexLocation(loc));
     }
 
 }

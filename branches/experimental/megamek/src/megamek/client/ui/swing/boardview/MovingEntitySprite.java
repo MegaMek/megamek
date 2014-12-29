@@ -34,22 +34,22 @@ class MovingEntitySprite extends Sprite {
 
         String shortName = entity.getShortName();
         Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
-        modelRect = new Rectangle(47, 55, this.boardView1.getFontMetrics(font).stringWidth(
-                shortName) + 1, this.boardView1.getFontMetrics(font).getAscent());
+        modelRect = new Rectangle(47, 55, this.bv.getFontMetrics(font).stringWidth(
+                shortName) + 1, this.bv.getFontMetrics(font).getAscent());
 
         int altAdjust = 0;
-        if (this.boardView1.useIsometric()
+        if (this.bv.useIsometric()
                 && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
-            altAdjust = (int) (this.boardView1.DROPSHDW_DIST * this.boardView1.scale);
-        } else if (this.boardView1.useIsometric() && (elevation != 0)) {
-            altAdjust = (int) (elevation * BoardView1.HEX_ELEV * this.boardView1.scale);
+            altAdjust = (int) (this.bv.DROPSHDW_DIST * this.bv.scale);
+        } else if (this.bv.useIsometric() && (elevation != 0)) {
+            altAdjust = (int) (elevation * BoardView1.HEX_ELEV * this.bv.scale);
         }
 
-        Dimension dim = new Dimension(this.boardView1.hex_size.width, this.boardView1.hex_size.height
+        Dimension dim = new Dimension(this.bv.hex_size.width, this.bv.hex_size.height
                 + altAdjust);
         Rectangle tempBounds = new Rectangle(dim).union(modelRect);
 
-        tempBounds.setLocation(this.boardView1.getHexLocation(position));
+        tempBounds.setLocation(this.bv.getHexLocation(position));
         if (elevation > 0) {
             tempBounds.y = tempBounds.y - altAdjust;
         }
@@ -60,43 +60,43 @@ class MovingEntitySprite extends Sprite {
     @Override
     public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
         // If this is an airborne unit, render the shadow.
-        if (this.boardView1.useIsometric()
+        if (this.bv.useIsometric()
                 && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
-            Image shadow = this.boardView1.createShadowMask(this.boardView1.tileManager.imageFor(entity,
+            Image shadow = this.bv.createShadowMask(this.bv.tileManager.imageFor(entity,
                     facing, -1));
 
-            if (this.boardView1.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-                shadow = this.boardView1.createImage(new FilteredImageSource(
+            if (this.bv.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
+                shadow = this.bv.createImage(new FilteredImageSource(
                         shadow.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT)));
             } else {
-                shadow = this.boardView1.getScaledImage(this.boardView1.createImage(new FilteredImageSource(
+                shadow = this.bv.getScaledImage(this.bv.createImage(new FilteredImageSource(
                         shadow.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT))),false);
             }
 
-            g.drawImage(shadow, x, y + (int) (this.boardView1.DROPSHDW_DIST * this.boardView1.scale),
+            g.drawImage(shadow, x, y + (int) (this.bv.DROPSHDW_DIST * this.bv.scale),
                     observer);
         } else if (elevation > 0) {
-            Image shadow = this.boardView1.createShadowMask(this.boardView1.tileManager.imageFor(entity,
+            Image shadow = this.bv.createShadowMask(this.bv.tileManager.imageFor(entity,
                     facing, -1));
 
-            if (this.boardView1.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-                shadow = this.boardView1.createImage(new FilteredImageSource(
+            if (this.bv.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
+                shadow = this.bv.createImage(new FilteredImageSource(
                         shadow.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT)));
             } else {
-                shadow = this.boardView1.getScaledImage(this.boardView1.createImage(new FilteredImageSource(
+                shadow = this.bv.getScaledImage(this.bv.createImage(new FilteredImageSource(
                         shadow.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT))),false);
             }
 
             g.drawImage(shadow, x,
-                    y + (int) (elevation * BoardView1.HEX_ELEV * this.boardView1.scale), observer);
+                    y + (int) (elevation * BoardView1.HEX_ELEV * this.bv.scale), observer);
         }
         // submerged?
-        if (this.boardView1.useIsometric() && ((elevation + entity.getHeight()) < 0)) {
+        if (this.bv.useIsometric() && ((elevation + entity.getHeight()) < 0)) {
             Graphics2D g2 = (Graphics2D) g;
             g2.setComposite(AlphaComposite.getInstance(
                     AlphaComposite.SRC_OVER, 0.35f));
             g2.drawImage(image, x,
-                    y - (int) (elevation * BoardView1.HEX_ELEV * this.boardView1.scale), observer);
+                    y - (int) (elevation * BoardView1.HEX_ELEV * this.bv.scale), observer);
             g2.setComposite(AlphaComposite.getInstance(
                     AlphaComposite.SRC_OVER, 1.0f));
         } else {
@@ -104,15 +104,15 @@ class MovingEntitySprite extends Sprite {
             drawOnto(g, x, y, observer, false);
         }
         // If this is a submerged unit, render the shadow after the unit.
-        if (this.boardView1.useIsometric() && (elevation < 0)) {
-            Image shadow = this.boardView1.createShadowMask(this.boardView1.tileManager.imageFor(entity,
+        if (this.bv.useIsometric() && (elevation < 0)) {
+            Image shadow = this.bv.createShadowMask(this.bv.tileManager.imageFor(entity,
                     facing, -1));
 
-            if (this.boardView1.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-                shadow = this.boardView1.createImage(new FilteredImageSource(
+            if (this.bv.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
+                shadow = this.bv.createImage(new FilteredImageSource(
                         shadow.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT)));
             } else {
-                shadow = this.boardView1.getScaledImage(this.boardView1.createImage(new FilteredImageSource(
+                shadow = this.bv.getScaledImage(this.bv.createImage(new FilteredImageSource(
                         shadow.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT))),false);
             }
 
@@ -130,7 +130,7 @@ class MovingEntitySprite extends Sprite {
         Image tempImage;
         Graphics graph;
         try {
-            tempImage = this.boardView1.createImage(bounds.width, bounds.height);
+            tempImage = this.bv.createImage(bounds.width, bounds.height);
             graph = tempImage.getGraphics();
         } catch (NullPointerException ex) {
             // argh! but I want it!
@@ -140,15 +140,15 @@ class MovingEntitySprite extends Sprite {
         // fill with key color
         graph.setColor(new Color(BoardView1.TRANSPARENT));
         graph.fillRect(0, 0, bounds.width, bounds.height);
-        graph.drawImage(this.boardView1.tileManager.imageFor(entity, facing, -1), 0, 0,
+        graph.drawImage(this.bv.tileManager.imageFor(entity, facing, -1), 0, 0,
                 this);
 
         // create final image
-        if (this.boardView1.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-            image = this.boardView1.createImage(new FilteredImageSource(
+        if (this.bv.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
+            image = this.bv.createImage(new FilteredImageSource(
                     tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT)));
         } else {
-            image = this.boardView1.getScaledImage(this.boardView1.createImage(new FilteredImageSource(
+            image = this.bv.getScaledImage(this.bv.createImage(new FilteredImageSource(
                     tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT))),false);
         }
         graph.dispose();

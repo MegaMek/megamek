@@ -77,7 +77,7 @@ class MovementSprite extends Sprite {
          * | (transparency << 24), true); }
          */
         // red if offboard
-        if (!this.boardView1.game.getBoard().contains(end)) {
+        if (!this.bv.game.getBoard().contains(end)) {
             int colour = 0xff0000; // red
             int transparency = GUIPreferences.getInstance().getInt(
                     GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
@@ -109,8 +109,8 @@ class MovementSprite extends Sprite {
 
     private void makePoly() {
         // make a polygon
-        a = this.boardView1.getHexLocation(start);
-        t = this.boardView1.getHexLocation(end);
+        a = this.bv.getHexLocation(start);
+        t = this.bv.getHexLocation(end);
         // OK, that is actually not good. I do not like hard coded figures.
         // HEX_W/2 - x distance in pixels from origin of hex bounding box to
         // the center of hex.
@@ -120,16 +120,16 @@ class MovementSprite extends Sprite {
         // directly
         // in the centes of hex and hiding mek under.
 
-        a.x = a.x + (int) ((BoardView1.HEX_W / 2) * this.boardView1.scale)
-                + (int) Math.round(Math.cos(an) * (int) (18 * this.boardView1.scale));
-        t.x = (t.x + (int) ((BoardView1.HEX_W / 2) * this.boardView1.scale))
-                - (int) Math.round(Math.cos(an) * (int) (18 * this.boardView1.scale));
-        a.y = a.y + (int) ((BoardView1.HEX_H / 2) * this.boardView1.scale)
-                + (int) Math.round(Math.sin(an) * (int) (18 * this.boardView1.scale));
-        t.y = (t.y + (int) ((BoardView1.HEX_H / 2) * this.boardView1.scale))
-                - (int) Math.round(Math.sin(an) * (int) (18 * this.boardView1.scale));
-        movePoly = new StraightArrowPolygon(a, t, (int) (4 * this.boardView1.scale),
-                (int) (8 * this.boardView1.scale), false);
+        a.x = a.x + (int) ((BoardView1.HEX_W / 2) * this.bv.scale)
+                + (int) Math.round(Math.cos(an) * (int) (18 * this.bv.scale));
+        t.x = (t.x + (int) ((BoardView1.HEX_W / 2) * this.bv.scale))
+                - (int) Math.round(Math.cos(an) * (int) (18 * this.bv.scale));
+        a.y = a.y + (int) ((BoardView1.HEX_H / 2) * this.bv.scale)
+                + (int) Math.round(Math.sin(an) * (int) (18 * this.bv.scale));
+        t.y = (t.y + (int) ((BoardView1.HEX_H / 2) * this.bv.scale))
+                - (int) Math.round(Math.sin(an) * (int) (18 * this.bv.scale));
+        movePoly = new StraightArrowPolygon(a, t, (int) (4 * this.bv.scale),
+                (int) (8 * this.bv.scale), false);
     }
 
     @Override

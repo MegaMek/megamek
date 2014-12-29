@@ -35,7 +35,7 @@ class StepSprite extends Sprite {
         this.step = step;
 
         // step is the size of the hex that this step is in
-        bounds = new Rectangle(this.boardView1.getHexLocation(step.getPosition()), this.boardView1.hex_size);
+        bounds = new Rectangle(this.bv.getHexLocation(step.getPosition()), this.bv.hex_size);
         image = null;
         baseScaleImage = null;
     }
@@ -50,12 +50,12 @@ class StepSprite extends Sprite {
             return;
         }
 
-        if (this.boardView1.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-            image = this.boardView1.createImage(new FilteredImageSource(
+        if (this.bv.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
+            image = this.bv.createImage(new FilteredImageSource(
                     baseScaleImage.getSource(), new KeyAlphaFilter(
                             BoardView1.TRANSPARENT)));
         } else {
-            image = this.boardView1.getScaledImage(this.boardView1.createImage(new FilteredImageSource(
+            image = this.bv.getScaledImage(this.bv.createImage(new FilteredImageSource(
                     baseScaleImage.getSource(), new KeyAlphaFilter(
                             BoardView1.TRANSPARENT))),false);
         }
@@ -64,7 +64,7 @@ class StepSprite extends Sprite {
     @Override
     public void prepare() {
         // create image for buffer
-        Image tempImage = this.boardView1.createImage(bounds.width, bounds.height);
+        Image tempImage = this.bv.createImage(bounds.width, bounds.height);
         Graphics graph = tempImage.getGraphics();
 
         // fill with key color
@@ -72,10 +72,10 @@ class StepSprite extends Sprite {
         graph.fillRect(0, 0, bounds.width, bounds.height);
 
         // setup some variables
-        final Point stepPos = this.boardView1.getHexLocation(step.getPosition());
+        final Point stepPos = this.bv.getHexLocation(step.getPosition());
         stepPos.translate(-bounds.x, -bounds.y);
-        final Polygon facingPoly = this.boardView1.facingPolys[step.getFacing()];
-        final Polygon movePoly = this.boardView1.movementPolys[step.getFacing()];
+        final Polygon facingPoly = this.bv.facingPolys[step.getFacing()];
+        final Polygon movePoly = this.bv.movementPolys[step.getFacing()];
         Point offsetCostPos;
         Polygon myPoly;
         Color col;
@@ -115,7 +115,7 @@ class StepSprite extends Sprite {
                 break;
         }
 
-        if (this.boardView1.game.useVectorMove()) {
+        if (this.bv.game.useVectorMove()) {
             drawActiveVectors(step, stepPos, graph);
         }
 
@@ -157,7 +157,7 @@ class StepSprite extends Sprite {
             case FORTIFY:
                 // draw arrow indicating dropping prone
                 // also doubles as the descent indication
-                Polygon downPoly = this.boardView1.movementPolys[7];
+                Polygon downPoly = this.bv.movementPolys[7];
                 myPoly = new Polygon(downPoly.xpoints, downPoly.ypoints,
                         downPoly.npoints);
                 graph.setColor(Color.darkGray);
@@ -175,7 +175,7 @@ class StepSprite extends Sprite {
             case CAREFUL_STAND:
                 // draw arrow indicating standing up
                 // also doubles as the climb indication
-                Polygon upPoly = this.boardView1.movementPolys[6];
+                Polygon upPoly = this.bv.movementPolys[6];
                 myPoly = new Polygon(upPoly.xpoints, upPoly.ypoints,
                         upPoly.npoints);
                 graph.setColor(Color.darkGray);
@@ -245,7 +245,7 @@ class StepSprite extends Sprite {
                 graph.setColor(col);
                 myPoly.translate(-1, -1);
                 graph.drawPolygon(myPoly);
-                if (this.boardView1.game.useVectorMove()) {
+                if (this.bv.game.useVectorMove()) {
                     drawMovementCost(step, stepPos, graph, col, false);
                 }
                 break;
@@ -392,14 +392,14 @@ class StepSprite extends Sprite {
                 break;
         }
 
-        baseScaleImage = this.boardView1.createImage(new FilteredImageSource(
+        baseScaleImage = this.bv.createImage(new FilteredImageSource(
                 tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT)));
         // create final image
-        if (this.boardView1.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-            image = this.boardView1.createImage(new FilteredImageSource(
+        if (this.bv.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
+            image = this.bv.createImage(new FilteredImageSource(
                     tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT)));
         } else {
-            image = this.boardView1.getScaledImage(this.boardView1.createImage(new FilteredImageSource(
+            image = this.bv.getScaledImage(this.bv.createImage(new FilteredImageSource(
                     tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT))),false);
         }
         graph.dispose();
@@ -472,7 +472,7 @@ class StepSprite extends Sprite {
 
     @Override
     public Rectangle getBounds() {
-        bounds = new Rectangle(this.boardView1.getHexLocation(step.getPosition()), this.boardView1.hex_size);
+        bounds = new Rectangle(this.bv.getHexLocation(step.getPosition()), this.bv.hex_size);
         return bounds;
     }
 
@@ -497,7 +497,7 @@ class StepSprite extends Sprite {
         String velString = null;
         StringBuffer velStringBuf = new StringBuffer();
 
-        if (this.boardView1.game.useVectorMove()) {
+        if (this.bv.game.useVectorMove()) {
             return;
         }
 
@@ -512,7 +512,7 @@ class StepSprite extends Sprite {
 
         int distTraveled = step.getDistance();
         int velocity = step.getVelocity();
-        if (this.boardView1.game.getBoard().onGround()) {
+        if (this.bv.game.getBoard().onGround()) {
             velocity *= 16;
         }
 
@@ -538,7 +538,7 @@ class StepSprite extends Sprite {
         graph.drawString(velString, costX - 1, stepPos.y + 27);
 
         // if we are in atmosphere, then report the free turn status as well
-        if (!this.boardView1.game.getBoard().inSpace()) {
+        if (!this.bv.game.getBoard().inSpace()) {
             String turnString = null;
             StringBuffer turnStringBuf = new StringBuffer();
             turnStringBuf.append("<").append(step.getNStraight())
@@ -547,7 +547,7 @@ class StepSprite extends Sprite {
             col = Color.RED;
             if (step.dueFreeTurn()) {
                 col = Color.GREEN;
-            } else if (step.canAeroTurn(this.boardView1.game)) {
+            } else if (step.canAeroTurn(this.bv.game)) {
                 col = Color.YELLOW;
             }
             // Convert the buffer to a String and draw it.

@@ -81,11 +81,6 @@ import megamek.common.actions.RamAttackAction;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.GameOptions;
-import megamek.common.pathfinder.AbstractPathFinder;
-import megamek.common.pathfinder.LongestPathFinder;
-import megamek.common.pathfinder.ShortestPathFinder;
-import megamek.common.preference.PreferenceManager;
-
 
 public class MovementDisplay extends StatusBarPhaseDisplay {
     /**
@@ -185,8 +180,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_END_OVER("MoveEndOver", CMD_AERO_VECTORED), //$NON-NLS-1$
         // Move envelope
         MOVE_ENVELOPE("MoveEnvelope", CMD_NONE),  //$NON-NLS-1$
-        MOVE_LONGEST_RUN("MoveLongestRun", CMD_ALL), //$NON-NLS-1$
-        MOVE_LONGEST_WALK("MoveLongestWalk", CMD_ALL), //$NON-NLS-1$
         // Traitor
         MOVE_TRAITOR("Traitor", CMD_NONE),
         MOVE_MORE("MoveMore", CMD_NONE); //$NON-NLS-1$
@@ -3417,7 +3410,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     	if (ce() == null){
     		return;
     	}
-        Map<Coords,MovePath> mvEnvData = new Hashtable<Coords,MovePath>();
+        Hashtable<Coords,MovePath> mvEnvData = new Hashtable<Coords,MovePath>();
         MovePath mp = new MovePath(clientgui.getClient().getGame(),ce());
 
         int maxMP;
@@ -3433,6 +3426,19 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 maxMP = ce().getRunMP();
             }
         }
+
+        MovePath mp = mvEnvData.get(loc);
+        if (mp == null){
+            System.out.println("Error computing movement envelope: " +
+                    "no move path for given location!");
+            return;
+        }
+
+        boolean jumping = gear == GEAR_JUMP;
+        if (mp.countMp(jumping) >= maxMP){
+            return;
+        }
+
         MoveStepType stepType = (gear == GEAR_BACKUP) ?
                 MoveStepType.BACKWARDS : MoveStepType.FORWARDS;
         if (gear == GEAR_JUMP)
@@ -3534,16 +3540,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 clear();
             }
             gear = MovementDisplay.GEAR_BACKUP;
-        } else if (ev.getActionCommand().equals(Command.MOVE_LONGEST_RUN.getCmd())) {
-            if (gear == MovementDisplay.GEAR_JUMP) {
-                clear();
-            }
-            gear = MovementDisplay.GEAR_LONGEST_RUN;
-        } else if (ev.getActionCommand().equals(Command.MOVE_LONGEST_WALK.getCmd())) {
-            if (gear == MovementDisplay.GEAR_JUMP) {
-                clear();
-            }
-            gear = MovementDisplay.GEAR_LONGEST_WALK;
         } else if (ev.getActionCommand().equals(Command.MOVE_CLEAR.getCmd())) {
             clear();
             if (!clientgui.getClient().getGame().containsMinefield(ce.getPosition())) {

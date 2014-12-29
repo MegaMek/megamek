@@ -792,7 +792,6 @@ public class Princess extends BotClient {
         methodBegin(getClass(), METHOD_NAME);
 
         try {
-            initialize();
             checkMoral();
 
             // reset strategic targets

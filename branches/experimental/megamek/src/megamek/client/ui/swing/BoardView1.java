@@ -716,8 +716,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         SpecialHexDisplay.Type.PLAYER_NOTE.init(getToolkit());
 
         fovHighlightingAndDarkening = new FovHighlightingAndDarkening();
-        
-        bv.close();
     }
 
     @Override

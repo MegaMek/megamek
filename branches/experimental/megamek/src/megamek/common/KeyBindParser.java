@@ -55,14 +55,8 @@ public class KeyBindParser {
 	public static String IS_REPEATABLE = "isRepeatable";
 	
 	public static void parseKeyBindings(MegaMekController controller){
-		// Get the path to the defaultQuirks.xml file.
-        String filePath = System.getProperty("user.dir");
-        if (!filePath.endsWith(File.separator)) {
-            filePath += File.separator;
-        }
-        filePath += Configuration.configDir() + File.separator + 
-        		DEFAULT_BINDINGS_FILE;
-        File file = new File(filePath);
+		// Get the path to the default bindings file.
+        File file = new File(Configuration.configDir(), DEFAULT_BINDINGS_FILE);
         if (!file.exists() || !file.isFile()) {
             return;
         }
@@ -71,7 +65,7 @@ public class KeyBindParser {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
             DocumentBuilder builder = dbf.newDocumentBuilder();
-            System.out.println("Parsing " + filePath);
+            System.out.println("Parsing " + file.getName());
             Document doc = builder.parse(file);
             System.out.println("Parsing finished.");
 

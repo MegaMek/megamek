@@ -1,11 +1,11 @@
 Version:1.0
 Javelin
-JVN-10F "Fire Javelin"
+JVN-10F 'Fire Javelin'
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2819
-Source:Succession Wars
+Source:TRO 3039
 Rules Level:1
 
 Mass:30

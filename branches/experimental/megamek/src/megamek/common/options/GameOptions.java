@@ -75,6 +75,7 @@ public class GameOptions extends AbstractOptions {
         addOption(base, "breeze", false); //$NON-NLS-1$
         addOption(base, "year", 3145); //$NON-NLS-1$
         addOption(base, "random_basements", true); //$NON-NLS-1$
+        addOption(base, "auto_ams", true); //$NON-NLS-1$
 
         IBasicOptionGroup victory = addGroup("victory"); //$NON-NLS-1$
         addOption(victory, "skip_forced_victory", false); //$NON-NLS-1$
@@ -153,7 +154,8 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, "tacops_called_shots", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_prone_fire", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_start_fire", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_range", false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.AC_TAC_OPS_RANGE, false);
+        addOption(advancedCombat, OptionsConstants.AC_TAC_OPS_LOS_RANGE, false);
         addOption(advancedCombat, "tacops_dead_zones", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_LOS1", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_altdmg", false); //$NON-NLS-1$
@@ -181,6 +183,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, "tacops_vehicle_arcs", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_advanced_mech_hit_locations", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_coolant_failure", false); //$NON-NLS-1$
+        addOption(advancedCombat, "tacops_ba_vs_ba", false); //$NON-NLS-1$
         addOption(advancedCombat, "no_tac", false); //$NON-NLS-1$
         addOption(advancedCombat, "vehicles_threshold", false); //$NON-NLS-1$
         addOption(advancedCombat, "vehicles_threshold_variable", false); //$NON-NLS-1$
@@ -198,15 +201,17 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, "map_area_predesignate", 1088); //$NON-NLS-1$
         addOption(advancedCombat, "max_external_heat", 15); //$NON-NLS-1$
         addOption(advancedCombat, "case_pilot_damage", false); //$NON-NLS-1$
+        addOption(advancedCombat, "no_forced_primary_targets", false); //$NON-NLS-1$
+        addOption(advancedCombat, "full_rotor_hits", false); //$NON-NLS-1$
 
         IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement"); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_sprint", false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "tacops_standing_still", false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.AGM_TAC_OPS_STANDING_STILL, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_evade", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_skilled_evasion", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_leaping", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_physical_psr", false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "tacops_attack_physical_psr", false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.AGM_TAC_OPS_PHYSICAL_ATTACK_PSR, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_taking_damage", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_leg_damage", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_walk_backwards", false); //$NON-NLS-1$
@@ -267,8 +272,8 @@ public class GameOptions extends AbstractOptions {
         addOption(initiative, "protos_move_later", false); //$NON-NLS-1$
         addOption(initiative, "protos_move_multi", false); //$NON-NLS-1$
         addOption(initiative, "inf_proto_move_multi", 3); //$NON-NLS-1$
-        //addOption(initiative, "simultaneous_deployment", false); //$NON-NLS-1$
-        //addOption(initiative, "simultaneous_movement", false); //$NON-NLS-1$
+        addOption(initiative, "simultaneous_deployment", false); //$NON-NLS-1$
+        addOption(initiative, "simultaneous_movement", false); //$NON-NLS-1$
         addOption(initiative, "simultaneous_targeting", false); //$NON-NLS-1$
         addOption(initiative, "simultaneous_firing", false); //$NON-NLS-1$
         addOption(initiative, "simultaneous_physical", false); //$NON-NLS-1$
@@ -293,10 +298,10 @@ public class GameOptions extends AbstractOptions {
     }
 
     public Vector<IOption> loadOptions() {
-        return loadOptions(new File(GAME_OPTIONS_FILE_NAME));
+        return loadOptions(new File(GAME_OPTIONS_FILE_NAME), true);
     }
 
-    public synchronized Vector<IOption> loadOptions(File file) {
+    public synchronized Vector<IOption> loadOptions(File file, boolean print) {
         ParsedXML root = null;
         InputStream is = null;
         Vector<IOption> changedOptions = new Vector<IOption>(1, 1);
@@ -323,7 +328,7 @@ public class GameOptions extends AbstractOptions {
 
             while (children.hasMoreElements()) {
                 IOption option = parseOptionNode((ParsedXML) children
-                        .nextElement());
+                        .nextElement(), print);
 
                 if (null != option) {
                     changedOptions.addElement(option);
@@ -333,11 +338,12 @@ public class GameOptions extends AbstractOptions {
             return changedOptions;
         }
         System.out
-                .println("Root node of game options file is incorrectly named. Name should be 'options' but name is '" + optionsNode.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+                .println("Root node of game options file is incorrectly named. Name should be 'options' but name is " +
+                         "'" + optionsNode.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
         return changedOptions;
     }
 
-    private IOption parseOptionNode(ParsedXML node) {
+    private IOption parseOptionNode(ParsedXML node, boolean print) {
         IOption option = null;
 
         if (node.getName().equals("gameoption")) { //$NON-NLS-1$
@@ -362,7 +368,7 @@ public class GameOptions extends AbstractOptions {
 
                 if (null != tempOption) {
                     if (!tempOption.getValue().toString()
-                            .equals(value.toString())) {
+                                   .equals(value.toString())) {
                         try {
                             switch (tempOption.getType()) {
                                 case IOption.STRING:
@@ -371,32 +377,35 @@ public class GameOptions extends AbstractOptions {
 
                                 case IOption.BOOLEAN:
                                     tempOption.setValue(new Boolean(value
-                                            .toString()));
+                                                                            .toString()));
                                     break;
 
                                 case IOption.INTEGER:
                                     tempOption.setValue(new Integer(value
-                                            .toString()));
+                                                                            .toString()));
                                     break;
 
                                 case IOption.FLOAT:
                                     tempOption.setValue(new Float(value
-                                            .toString()));
+                                                                          .toString()));
                                     break;
                             }
-
-                            System.out
-                                    .println("Set option '" + name + "' to '" + value + "'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                            if (print) {
+                                System.out.println("Set option '" + name //$NON-NLS-1$
+                                                   + "' to '" + value + "'."); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
 
                             option = tempOption;
                         } catch (IllegalArgumentException iaEx) {
                             System.out
-                                    .println("Error trying to load option '" + name + "' with a value of '" + value + "'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                    .println("Error trying to load option '" + name + "' with a value of '" + value +
+                                             "'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                         }
                     }
                 } else {
                     System.out
-                            .println("Invalid option '" + name + "' when trying to load options file."); //$NON-NLS-1$ //$NON-NLS-2$
+                            .println("Invalid option '" + name + "' when trying to load options file.");
+                            //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
         }
@@ -404,16 +413,19 @@ public class GameOptions extends AbstractOptions {
         return option;
     }
 
+    public static void saveOptions(Vector<IBasicOption> options) {
+        saveOptions(options, GAME_OPTIONS_FILE_NAME);
+    }
+
     /**
      * Saves the given <code>Vector</code> of <code>IBasicOption</code>
      *
-     * @param options
-     *            <code>Vector</code> of <code>IBasicOption</code>
+     * @param options <code>Vector</code> of <code>IBasicOption</code>
      */
-    public static void saveOptions(Vector<IBasicOption> options) {
+    public static void saveOptions(Vector<IBasicOption> options, String file) {
         try {
             Writer output = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(new File(GAME_OPTIONS_FILE_NAME))));
+                    new FileOutputStream(new File(file))));
 
             // Output the doctype and header stuff.
             output.write("<?xml version=\"1.0\"?>"); //$NON-NLS-1$

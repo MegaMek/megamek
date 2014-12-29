@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
 
 import megamek.common.Aero;
@@ -156,7 +157,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         // Are there any valid spotters?
         if ((null != spottersBefore) && !isFlak) {
             // fetch possible spotters now
-            Enumeration<Entity> spottersAfter = game
+            Iterator<Entity> spottersAfter = game
                     .getSelectedEntities(new EntitySelector() {
                         public int player = playerId;
 
@@ -181,8 +182,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                     });
 
             // Out of any valid spotters, pick the best.
-            while (spottersAfter.hasMoreElements()) {
-                Entity ent = spottersAfter.nextElement();
+            while (spottersAfter.hasNext()) {
+                Entity ent = spottersAfter.next();
                 if ((bestSpotter == null)
                         || (ent.getCrew().getGunnery() < bestSpotter.getCrew()
                                 .getGunnery())) {
@@ -204,7 +205,9 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
             // If the shot hit the target hex, then all subsequent
             // fire will hit the hex automatically.
-            if (roll >= toHit.getValue()) {
+            // This should only happen for indirect shots
+            if (roll >= toHit.getValue() 
+                    && !(this instanceof ArtilleryWeaponDirectFireHandler)) {
                 ae.aTracker
                         .setModifier(TargetRoll.AUTOMATIC_SUCCESS, targetPos);
             }
@@ -212,16 +215,14 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             // spotter, future shots are more likely to hit.
 
             // Note: Because artillery fire is adjusted on a per-unit basis,
-            // this
-            // can result in a unit firing multiple artillery weapons at the
-            // same
-            // hex getting this bonus more than once per turn. Since the
-            // Artillery
-            // Modifiers Table on TacOps p. 180 lists a -1 per shot (not salvo!)
-            // previously fired at the target hex, this would in fact appear to
-            // be
-            // correct.
-            else if (null != bestSpotter) {
+            // this can result in a unit firing multiple artillery weapons at 
+            // the same hex getting this bonus more than once per turn. Since
+            // the Artillery Modifiers Table on TacOps p. 180 lists a -1 per 
+            // shot (not salvo!) previously fired at the target hex, this would
+            // in fact appear to be correct.
+            // Only apply these modifiers to indirect artillery
+            else if ((null != bestSpotter) 
+                     && !(this instanceof ArtilleryWeaponDirectFireHandler)) {
                 // only add mods if it's not an automatic success
                 if (ae.aTracker.getModifier(weapon, targetPos) 
                         != TargetRoll.AUTOMATIC_SUCCESS) {

@@ -18,6 +18,7 @@ import java.util.Vector;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
+import megamek.common.ComputeECM;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
@@ -239,7 +240,7 @@ public class LRMSwarmHandler extends LRMHandler {
         if (swarmMissilesNowLeft > 0) {
             Entity swarmTarget = Compute.getSwarmMissileTarget(game,
                     ae.getId(), target.getPosition(), waa.getWeaponId());
-            boolean stoppedByECM = Compute.isAffectedByECM(ae,
+            boolean stoppedByECM = ComputeECM.isAffectedByECM(ae,
                     target.getPosition(), target.getPosition())
                     && !(this instanceof LRMSwarmIHandler);
             if (swarmTarget != null && !stoppedByECM) {
@@ -313,7 +314,7 @@ public class LRMSwarmHandler extends LRMHandler {
 
         Entity swarmTarget = Compute.getSwarmMissileTarget(game, ae.getId(),
                 target.getPosition(), waa.getWeaponId());
-        boolean stoppedByECM = Compute.isAffectedByECM(ae,
+        boolean stoppedByECM = ComputeECM.isAffectedByECM(ae,
                 target.getPosition(), target.getPosition())
                 && !(this instanceof LRMSwarmIHandler);
         if (swarmTarget != null && !stoppedByECM) {

@@ -21,7 +21,6 @@ package megamek.common.net;
 public class Packet {
 
     public static final int COMMAND_CLOSE_CONNECTION = 0;
-    public static final int COMMAND_RESET_CONNECTION = 5;
     public static final int COMMAND_SERVER_GREETING = 10;
     public static final int COMMAND_CLIENT_NAME = 20;
     public static final int COMMAND_CLIENT_VERSIONS = 25;
@@ -40,11 +39,13 @@ public class Packet {
     public static final int COMMAND_ENTITY_DEPLOY = 120;
     public static final int COMMAND_ENTITY_ATTACK = 130;
     public static final int COMMAND_ENTITY_UPDATE = 140;
+    public static final int COMMAND_ENTITY_WORDER_UPDATE = 145;
     public static final int COMMAND_ENTITY_MODECHANGE = 150;
     public static final int COMMAND_ENTITY_AMMOCHANGE = 160;
     public static final int COMMAND_ENTITY_SYSTEMMODECHANGE = 170;
 
     public static final int COMMAND_ENTITY_VISIBILITY_INDICATOR = 180;
+    public static final int COMMAND_ADD_SMOKE_CLOUD = 185;
     public static final int COMMAND_CHANGE_HEX = 190;
     public static final int COMMAND_CHANGE_HEXES= 195;
 
@@ -117,8 +118,9 @@ public class Packet {
     public static final int COMMAND_CLIENT_FEEDBACK_REQUEST = 700;
     public static final int COMMAND_CFR_DOMINO_EFFECT = 705;
     public static final int COMMAND_CFR_EDGE_PROMPT = 710;
+    public static final int COMMAND_CFR_AMS_ASSIGN = 715;
     
-
+    public static final int COMMAND_GAME_VICTORY_EVENT = 800;
 
     private int command;
 

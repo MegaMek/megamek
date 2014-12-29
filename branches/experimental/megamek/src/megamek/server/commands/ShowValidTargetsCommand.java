@@ -1,6 +1,6 @@
 package megamek.server.commands;
 
-import java.util.Vector;
+import java.util.List;
 
 import megamek.common.Entity;
 import megamek.common.LosEffects;
@@ -28,7 +28,7 @@ public class ShowValidTargetsCommand extends ServerCommand {
                 boolean canHit = false;
                 ToHitData thd;
 
-                Vector<Entity> entList = server.getGame().getValidTargets(ent);
+                List<Entity> entList = server.getGame().getValidTargets(ent);
                 Entity target;
 
                 for (int i = 0; i < entList.size(); i++) {

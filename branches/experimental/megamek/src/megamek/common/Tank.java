@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.CLChemicalLaserWeapon;
 import megamek.common.weapons.VehicleFlamerWeapon;
@@ -655,6 +656,10 @@ public class Tank extends Entity {
                 && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
             return Compute.ARC_360;
         }
+        // VGLs always be considered forward, since arc is set by VGL facing
+        if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
+            return Compute.ARC_FORWARD;
+        }
         switch (mounted.getLocation()) {
             case LOC_BODY:
                 // Body mounted C3Ms fire into the front arc,
@@ -995,6 +1000,7 @@ public class Tank extends Entity {
         }
         if (table == ToHitData.HIT_SWARM) {
             rv.setEffect(rv.getEffect() | HitData.EFFECT_CRITICAL);
+            setPotCrit(HitData.EFFECT_CRITICAL);
         }
         return rv;
     }
@@ -2540,11 +2546,25 @@ public class Tank extends Entity {
      * @return a critical type
      */
     public int getCriticalEffect(int roll, int loc) {
+        return getCriticalEffect(roll, loc, false);
+    }
+
+    /**
+     * get the type of critical caused by a critical roll, taking account of
+     * existing damage
+     *
+     * @param roll
+     *            the final dice roll
+     * @param loc
+     *            the hit location
+     * @return a critical type
+     */
+    public int getCriticalEffect(int roll, int loc, boolean damagedByFire) {
         if (roll > 12) {
             roll = 12;
         }
         if ((roll < 6)
-                || (game.getOptions().booleanOption("vehicles_threshold") && !getOverThresh())) {
+                || (game.getOptions().booleanOption("vehicles_threshold") && !getOverThresh() && !damagedByFire)) {
             return CRIT_NONE;
         }
         for (int i = 0; i < 2; i++) {
@@ -2802,6 +2822,10 @@ public class Tank extends Entity {
         return jammedWeapons;
     }
 
+    public void resetJammedWeapons() {
+    	jammedWeapons = new ArrayList<Mounted>();
+    }
+
     /**
      * apply the effects of an "engine hit" crit
      */
@@ -2931,11 +2955,8 @@ public class Tank extends Entity {
             if (mtype.hasFlag(MiscType.F_STEALTH)) {
 
                 if (mEquip.curMode().equals("On")
-                        && hasActiveECM()
-                        && !Compute.isAffectedByECCM(this, getPosition(),
-                                getPosition())) {
+                        && hasActiveECM()) {
                     // Return true if the mode is "On" and ECM is working
-                    // and we're not in ECCM
                     return true;
                 }
             }
@@ -3199,14 +3220,8 @@ public class Tank extends Entity {
                     }
                     break;
                 case RangeType.RANGE_LONG:
-                    if (isStealthActive() && !isInfantry) {
-                        result = new TargetRoll(2, "stealth");
-                    } else {
-                        // must be infantry
-                        result = new TargetRoll(0, "infantry ignore stealth");
-                    }
-                    break;
                 case RangeType.RANGE_EXTREME:
+                case RangeType.RANGE_LOS:
                     if (isStealthActive() && !isInfantry) {
                         result = new TargetRoll(2, "stealth");
                     } else {
@@ -3340,6 +3355,11 @@ public class Tank extends Entity {
     }
 
     @Override
+    public boolean isCrippled(boolean checkCrew) {
+        return isCrippled();
+    }
+
+    @Override
     public boolean isDmgHeavy() {
         if (((double) getWalkMP() / getOriginalJumpMP()) <= 0.5) {
             return true;
@@ -3454,6 +3474,6 @@ public class Tank extends Entity {
     public boolean isEjectionPossible() {
         return game.getOptions().booleanOption("vehicles_can_eject")
                 && getCrew().isActive()
-                && !hasQuirk("no_eject");
+                && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
     }
 }

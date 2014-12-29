@@ -80,6 +80,10 @@ public class GameListenerAdapter implements GameListener {
     
     @Override
 	public void gameClientFeedbackRquest(GameCFREvent evt) {
+    }
+
+    @Override
+    public void gameVictory(GameVictoryEvent e) {        
     }    
 
 }

@@ -17,7 +17,7 @@ Gladiator Exoskeleton
 </Name>
 
 <Model>
-"The Spider"
+'The Spider'
 </Model>
 
 <year>
@@ -49,11 +49,11 @@ BA-Magnetic Clamp:Body
 BABattleClawVibro:LA
 BAArmoredGlove:RA
 ISMechanicalJumpBooster:Body
-Infantry Auto Rifle:RA
 SwarmMek
 SwarmWeaponMek
 StopSwarm
 LegAttack
+Infantry Auto Rifle:APM
 </Squad Equipment>
 
 <Trooper 1 Equipment>

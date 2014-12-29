@@ -1,11 +1,11 @@
 Version:1.0
 Firestarter
-FS9-M "Mirage"
+FS9-M 'Mirage'
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2893
-Source:Succession Wars
+Source:TRO 3039
 Rules Level:1
 
 Mass:35

@@ -137,6 +137,10 @@ public class TargetRoll implements Serializable {
 
         return allDesc.toString();
     }
+    
+    public String toString() {
+        return getDesc();
+    }
 
     /**
      * Returns the first description found

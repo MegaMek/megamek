@@ -25,6 +25,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -36,6 +37,7 @@ import java.util.Map;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -43,6 +45,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -50,18 +53,67 @@ import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.MouseInputAdapter;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.widget.SkinXMLHandler;
+import megamek.common.Configuration;
+import megamek.common.IGame;
 import megamek.common.KeyBindParser;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 
 public class CommonSettingsDialog extends ClientDialog implements
         ActionListener, ItemListener, FocusListener, ListSelectionListener {
+    
+    private class PhaseCommandListMouseAdapter extends MouseInputAdapter {
+        private boolean mouseDragging = false;
+        private int dragSourceIndex;
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (SwingUtilities.isLeftMouseButton(e)) {
+                Object src = e.getSource();
+                if (src instanceof JList) {
+                    dragSourceIndex = ((JList<?>) src).getSelectedIndex();
+                    mouseDragging = true;
+                }                
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            mouseDragging = false;
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            Object src = e.getSource();
+            if (mouseDragging && (src instanceof JList)) {
+                JList<?> srcList = (JList<?>) src;
+                DefaultListModel<?> srcModel = (DefaultListModel<?>) srcList.getModel();
+                int currentIndex = srcList.locationToIndex(e.getPoint());
+                if (currentIndex != dragSourceIndex) {
+                    int dragTargetIndex = srcList.getSelectedIndex();
+                    moveElement(srcModel, dragSourceIndex, dragTargetIndex);
+                    dragSourceIndex = currentIndex;
+                }
+            }
+        }
+
+        private <T> void moveElement(DefaultListModel<T> srcModel, int srcIndex, int trgIndex) {
+            T dragElement = srcModel.get(srcIndex);
+            srcModel.remove(srcIndex);
+            srcModel.add(trgIndex, dragElement);
+        }
+
+    }
+    
     /**
      *
      */
@@ -109,11 +161,21 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JSlider fovDarkenAlpha;
     private JTextField fovHighlightRingsRadii;
     private JTextField fovHighlightRingsColors;
+    
+    private JComboBox<String> skinFiles;
 
+    // Key Binds
     private JList<String> keys;
     private int keysIndex = 0;
     private JTextField value;
 
+    // Button order
+    private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> movePhaseCommands;
+    private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> deployPhaseCommands;
+    private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> firingPhaseCommands;
+    private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> physicalPhaseCommands;
+    private DefaultListModel<StatusBarPhaseDisplay.PhaseCommand> targetingPhaseCommands;
+    
     private JComboBox<String> tileSetChoice;
     private File[] tileSets;
 
@@ -134,12 +196,24 @@ public class CommonSettingsDialog extends ClientDialog implements
      * isRepeatable flag.
      */
     private Map<String, JCheckBox> cmdRepeatableMap;
+    
+    private ClientGUI clientgui = null;
 
     private static final String CANCEL = "CANCEL"; //$NON-NLS-1$
     private static final String UPDATE = "UPDATE"; //$NON-NLS-1$
 
     private static final String[] LOCALE_CHOICES = { "en", "de", "ru" }; //$NON-NLS-1$
 
+    /**
+     * Standard constructor. There is no default constructor for this class.
+     *
+     * @param owner - the <code>Frame</code> that owns this dialog.
+     */
+    public CommonSettingsDialog(JFrame owner, ClientGUI cg) {
+        this(owner);
+        clientgui = cg;
+    }
+    
     /**
      * Standard constructor. There is no default constructor for this class.
      *
@@ -163,6 +237,9 @@ public class CommonSettingsDialog extends ClientDialog implements
         JScrollPane keyBindScrollPane = new JScrollPane(keyBindPanel);
         panTabs.add("Key Binds", keyBindScrollPane);
 
+        JPanel buttonOrderPanel = getButtonOrderPanel();
+        panTabs.add("Button Order", buttonOrderPanel);
+        
         JPanel advancedSettingsPanel = getAdvancedSettingsPanel();
         JScrollPane advancedSettingsPane = new JScrollPane(advancedSettingsPanel);
         panTabs.add("Advanced", advancedSettingsPane);
@@ -392,9 +469,9 @@ public class CommonSettingsDialog extends ClientDialog implements
         comps.add(row);
 
         chkAntiAliasing = new JCheckBox(Messages.getString(
-        		"CommonSettingsDialog.antiAliasing")); //$NON-NLS-1$
+                "CommonSettingsDialog.antiAliasing")); //$NON-NLS-1$
         chkAntiAliasing.setToolTipText(Messages.getString(
-        		"CommonSettingsDialog.antiAliasingToolTip"));
+                "CommonSettingsDialog.antiAliasingToolTip"));
         row = new ArrayList<JComponent>();
         row.add(chkAntiAliasing);
         comps.add(row);
@@ -404,6 +481,13 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<JComponent>();
         row.add(showDamageLevel);
         comps.add(row);
+        
+        skinFiles = new JComboBox<String>();
+        JLabel skinFileLabel = new JLabel(Messages.getString("CommonSettingsDialog.skinFile")); //$NON-NLS-1$
+        row = new ArrayList<JComponent>();
+        row.add(skinFileLabel);
+        row.add(skinFiles);
+        comps.add(row);        
 
         return createSettingsPanel(comps);
     }
@@ -479,10 +563,7 @@ public class CommonSettingsDialog extends ClientDialog implements
                 + "hexes" + File.separator);
         tileSets = dir.listFiles(new FilenameFilter() {
             public boolean accept(File direc, String name) {
-                if (name.endsWith(".tileset")) {
-                    return true;
-                }
-                return false;
+                return name.endsWith(".tileset");
             }
         });
         tileSetChoice.removeAllItems();
@@ -494,13 +575,29 @@ public class CommonSettingsDialog extends ClientDialog implements
             }
         }
 
+        skinFiles.removeAllItems();
+        String[] xmlFiles = 
+            Configuration.configDir().list(new FilenameFilter() {
+                public boolean accept(File directory, String fileName) {
+                    return fileName.endsWith(".xml");
+                } 
+            });
+        for (String file : xmlFiles) {
+            if (SkinXMLHandler.validSkinSpecFile(file)) {
+                skinFiles.addItem(file);
+            }
+        }
+        // Select the default file first
+        skinFiles.setSelectedItem(SkinXMLHandler.defaultSkinXML);
+        // If this select fials, the default skin will be selected
+        skinFiles.setSelectedItem(GUIPreferences.getInstance().getSkinFile());
+        
         fovInsideEnabled.setSelected(gs.getFovHighlight());
         fovHighlightAlpha.setValue((int) ((100./255.) * gs.getFovHighlightAlpha()));
         fovHighlightRingsRadii.setText( gs.getFovHighlightRingsRadii());
         fovHighlightRingsColors.setText( gs.getFovHighlightRingsColorsHsb() );
         fovOutsideEnabled.setSelected(gs.getFovDarken());
         fovDarkenAlpha.setValue((int) ((100./255.) * gs.getFovDarkenAlpha()));
-
 
         getFocus.setSelected(gs.getFocus());
         super.setVisible(visible);
@@ -561,7 +658,23 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setAntiAliasing(chkAntiAliasing.isSelected());
 
         gs.setShowDamageLevel(showDamageLevel.isSelected());
-
+        
+        String newSkinFile = (String)skinFiles.getSelectedItem();
+        String oldSkinFile = gs.getSkinFile();
+        if (!oldSkinFile.equals(newSkinFile)) {
+            boolean success = SkinXMLHandler.initSkinXMLHandler(newSkinFile);
+            if (!success) {
+                SkinXMLHandler.initSkinXMLHandler(oldSkinFile);
+                String title = Messages
+                        .getString("CommonSettingsDialog.skinFileFail.title");
+                String msg = Messages
+                        .getString("CommonSettingsDialog.skinFileFail.msg");
+                JOptionPane.showMessageDialog(owner, msg, title,
+                        JOptionPane.ERROR_MESSAGE);
+            } else {
+                gs.setSkinFile(newSkinFile);
+            }            
+        }
 
         if (tileSetChoice.getSelectedIndex() >= 0) {
             cs.setMapTileset(tileSets[tileSetChoice.getSelectedIndex()]
@@ -588,45 +701,127 @@ public class CommonSettingsDialog extends ClientDialog implements
         //  changed
         boolean bindsChanged = false;
         for (KeyCommandBind kcb : KeyCommandBind.values()){
-        	JTextField txtModifiers = cmdModifierMap.get(kcb.cmd);
-        	JCheckBox repeatable = cmdRepeatableMap.get(kcb.cmd);
-        	Integer keyCode = cmdKeyMap.get(kcb.cmd);
-        	// This shouldn't happen, but just to be safe...
-        	if (txtModifiers == null || keyCode == null || repeatable == null){
-        		continue;
-        	}
-        	int modifiers = 0;
-        	if (txtModifiers.getText().contains(
-        			KeyEvent.getKeyModifiersText(KeyEvent.SHIFT_MASK))){
-        		modifiers |= KeyEvent.SHIFT_MASK;
-        	}
-        	if (txtModifiers.getText().contains(
-        			KeyEvent.getKeyModifiersText(KeyEvent.ALT_MASK))){
-        		modifiers |= KeyEvent.ALT_MASK;
-        	}
-        	if (txtModifiers.getText().contains(
-        			KeyEvent.getKeyModifiersText(KeyEvent.CTRL_MASK))){
-        		modifiers |= KeyEvent.CTRL_MASK;
-        	}
+            JTextField txtModifiers = cmdModifierMap.get(kcb.cmd);
+            JCheckBox repeatable = cmdRepeatableMap.get(kcb.cmd);
+            Integer keyCode = cmdKeyMap.get(kcb.cmd);
+            // This shouldn't happen, but just to be safe...
+            if (txtModifiers == null || keyCode == null || repeatable == null){
+                continue;
+            }
+            int modifiers = 0;
+            if (txtModifiers.getText().contains(
+                    KeyEvent.getKeyModifiersText(KeyEvent.SHIFT_MASK))){
+                modifiers |= KeyEvent.SHIFT_MASK;
+            }
+            if (txtModifiers.getText().contains(
+                    KeyEvent.getKeyModifiersText(KeyEvent.ALT_MASK))){
+                modifiers |= KeyEvent.ALT_MASK;
+            }
+            if (txtModifiers.getText().contains(
+                    KeyEvent.getKeyModifiersText(KeyEvent.CTRL_MASK))){
+                modifiers |= KeyEvent.CTRL_MASK;
+            }
 
-        	if (kcb.modifiers != modifiers){
-        		bindsChanged = true;
-        		kcb.modifiers = modifiers;
-        	}
+            if (kcb.modifiers != modifiers){
+                bindsChanged = true;
+                kcb.modifiers = modifiers;
+            }
 
-        	if (kcb.key != keyCode){
-        		bindsChanged = true;
-        		kcb.key = keyCode;
-        	}
+            if (kcb.key != keyCode){
+                bindsChanged = true;
+                kcb.key = keyCode;
+            }
 
-        	if (kcb.isRepeatable != repeatable.isSelected()){
-        		bindsChanged = true;
-        		kcb.isRepeatable = repeatable.isSelected();
-        	}
+            if (kcb.isRepeatable != repeatable.isSelected()){
+                bindsChanged = true;
+                kcb.isRepeatable = repeatable.isSelected();
+            }
         }
 
         if (bindsChanged){
-        	KeyBindParser.writeKeyBindings();
+            KeyBindParser.writeKeyBindings();
+        }
+        
+        // Button Order
+        // Movement
+        ButtonOrderPreferences bop = ButtonOrderPreferences.getInstance();
+        boolean buttonOrderChanged = false;
+        for (int i = 0; i < movePhaseCommands.getSize(); i++) {
+            StatusBarPhaseDisplay.PhaseCommand cmd = movePhaseCommands.get(i);
+            if (cmd.getPriority() != i) {
+                cmd.setPriority(i);
+                bop.setValue(cmd.getCmd(), i);
+                buttonOrderChanged = true;
+            }
+        }
+        
+        // Need to do stuff if the order changes.
+        if (buttonOrderChanged && (clientgui != null)) {
+            clientgui.updateButtonPanel(IGame.Phase.PHASE_MOVEMENT);
+        }
+        
+        // Deploy
+        buttonOrderChanged = false;
+        for (int i = 0; i < deployPhaseCommands.getSize(); i++) {
+            StatusBarPhaseDisplay.PhaseCommand cmd = deployPhaseCommands.get(i);
+            if (cmd.getPriority() != i) {
+                cmd.setPriority(i);
+                bop.setValue(cmd.getCmd(), i);
+                buttonOrderChanged = true;
+            }
+        }
+        
+        // Need to do stuff if the order changes.
+        if (buttonOrderChanged && (clientgui != null)) {
+            clientgui.updateButtonPanel(IGame.Phase.PHASE_DEPLOYMENT);
+        }        
+        
+        // Firing
+        buttonOrderChanged = false;
+        for (int i = 0; i < firingPhaseCommands.getSize(); i++) {
+            StatusBarPhaseDisplay.PhaseCommand cmd = firingPhaseCommands.get(i);
+            if (cmd.getPriority() != i) {
+                cmd.setPriority(i);
+                bop.setValue(cmd.getCmd(), i);
+                buttonOrderChanged = true;
+            }
+        }
+        
+        // Need to do stuff if the order changes.
+        if (buttonOrderChanged && (clientgui != null)) {
+            clientgui.updateButtonPanel(IGame.Phase.PHASE_FIRING);
+        }
+        
+        // Physical
+        buttonOrderChanged = false;
+        for (int i = 0; i < physicalPhaseCommands.getSize(); i++) {
+            StatusBarPhaseDisplay.PhaseCommand cmd = physicalPhaseCommands.get(i);
+            if (cmd.getPriority() != i) {
+                cmd.setPriority(i);
+                bop.setValue(cmd.getCmd(), i);
+                buttonOrderChanged = true;
+            }
+        }
+        
+        // Need to do stuff if the order changes.
+        if (buttonOrderChanged && (clientgui != null)) {
+            clientgui.updateButtonPanel(IGame.Phase.PHASE_PHYSICAL);
+        }
+        
+        // Targeting
+        buttonOrderChanged = false;
+        for (int i = 0; i < targetingPhaseCommands.getSize(); i++) {
+            StatusBarPhaseDisplay.PhaseCommand cmd = targetingPhaseCommands.get(i);
+            if (cmd.getPriority() != i) {
+                cmd.setPriority(i);
+                bop.setValue(cmd.getCmd(), i);
+                buttonOrderChanged = true;
+            }
+        }
+        
+        // Need to do stuff if the order changes.
+        if (buttonOrderChanged && (clientgui != null)) {
+            clientgui.updateButtonPanel(IGame.Phase.PHASE_TARGETING);
         }
 
         setVisible(false);
@@ -750,126 +945,231 @@ public class CommonSettingsDialog extends ClientDialog implements
      * @return
      */
     private JPanel getKeyBindPanel(){
-    	// Create the panel to hold all the components
-    	// We will have an N x 43 grid, the first column is for labels, the
-    	//  second column will hold text fields for modifiers, the third
-    	//  column holds text fields for keys, and the fourth has a checkbox for
-    	//  isRepeatable.
-    	JPanel keyBinds = new JPanel(new GridLayout(0,4,5,5));
+        // Create the panel to hold all the components
+        // We will have an N x 43 grid, the first column is for labels, the
+        //  second column will hold text fields for modifiers, the third
+        //  column holds text fields for keys, and the fourth has a checkbox for
+        //  isRepeatable.
+        JPanel keyBinds = new JPanel(new GridLayout(0,4,5,5));
 
-    	// Create header: labels for describing what each column does
-    	JLabel headers = new JLabel("Name");
-    	headers.setToolTipText("The name of the action");
-    	keyBinds.add(headers);
-    	headers = new JLabel("Modifier");
-    	headers.setToolTipText("The modifier key, like shift, ctrl, alt");
-    	keyBinds.add(headers);
-    	headers = new JLabel("Key");
-    	headers.setToolTipText("The key");
-    	keyBinds.add(headers);
-    	headers = new JLabel("Repeatable?");
-    	headers.setToolTipText("Should this action repeat rapidly " +
-    			"when the key is held down?");
-    	keyBinds.add(headers);
+        // Create header: labels for describing what each column does
+        JLabel headers = new JLabel("Name");
+        headers.setToolTipText("The name of the action");
+        keyBinds.add(headers);
+        headers = new JLabel("Modifier");
+        headers.setToolTipText("The modifier key, like shift, ctrl, alt");
+        keyBinds.add(headers);
+        headers = new JLabel("Key");
+        headers.setToolTipText("The key");
+        keyBinds.add(headers);
+        headers = new JLabel("Repeatable?");
+        headers.setToolTipText("Should this action repeat rapidly " +
+                "when the key is held down?");
+        keyBinds.add(headers);
 
-    	// Create maps to retrieve the text fields for saving
-    	int numBinds = KeyCommandBind.values().length;
-    	cmdModifierMap = new HashMap<String,JTextField>((int)(numBinds*1.26));
-    	cmdKeyMap = new HashMap<String,Integer>((int)(numBinds*1.26));
-    	cmdRepeatableMap = new HashMap<String,JCheckBox>((int)(numBinds*1.26));
+        // Create maps to retrieve the text fields for saving
+        int numBinds = KeyCommandBind.values().length;
+        cmdModifierMap = new HashMap<String,JTextField>((int)(numBinds*1.26));
+        cmdKeyMap = new HashMap<String,Integer>((int)(numBinds*1.26));
+        cmdRepeatableMap = new HashMap<String,JCheckBox>((int)(numBinds*1.26));
 
-    	// For each keyCommandBind, create a label and two text fields
-    	for (KeyCommandBind kcb : KeyCommandBind.values()){
-    		JLabel name = new JLabel(
-    				Messages.getString("KeyBinds.cmdNames." + kcb.cmd));
-    		name.setToolTipText(
-    				Messages.getString("KeyBinds.cmdDesc." + kcb.cmd));
-    		keyBinds.add(name);
+        // For each keyCommandBind, create a label and two text fields
+        for (KeyCommandBind kcb : KeyCommandBind.values()){
+            JLabel name = new JLabel(
+                    Messages.getString("KeyBinds.cmdNames." + kcb.cmd));
+            name.setToolTipText(
+                    Messages.getString("KeyBinds.cmdDesc." + kcb.cmd));
+            keyBinds.add(name);
 
-    		final JTextField modifiers = new JTextField(15);
-    		modifiers.setText(KeyEvent.getKeyModifiersText(kcb.modifiers));
-    		for (KeyListener kl : modifiers.getKeyListeners()){
-    			modifiers.removeKeyListener(kl);
+            final JTextField modifiers = new JTextField(15);
+            modifiers.setText(KeyEvent.getKeyModifiersText(kcb.modifiers));
+            for (KeyListener kl : modifiers.getKeyListeners()){
+                modifiers.removeKeyListener(kl);
             }
-    		// Update how typing in the text field works
-    		modifiers.addKeyListener(new KeyListener(){
+            // Update how typing in the text field works
+            modifiers.addKeyListener(new KeyListener(){
 
-				@Override
-				public void keyPressed(KeyEvent evt) {
-					modifiers.setText(
-							KeyEvent.getKeyModifiersText(evt.getModifiers()));
-					evt.consume();
-				}
+                @Override
+                public void keyPressed(KeyEvent evt) {
+                    modifiers.setText(
+                            KeyEvent.getKeyModifiersText(evt.getModifiers()));
+                    evt.consume();
+                }
 
-				@Override
-				public void keyReleased(KeyEvent evt) {
-				}
+                @Override
+                public void keyReleased(KeyEvent evt) {
+                }
 
-				@Override
-				public void keyTyped(KeyEvent evt) {
-					// This might be a bit hackish, but we want to deal with
-					//  the key code, so the code to update the text is in
-					//  keyPressed.  We've already done what we want with the
-					//  typed key, and we don't want anything else acting upon
-					//  the key typed event, so we consume it here.
-					evt.consume();
-				}
+                @Override
+                public void keyTyped(KeyEvent evt) {
+                    // This might be a bit hackish, but we want to deal with
+                    //  the key code, so the code to update the text is in
+                    //  keyPressed.  We've already done what we want with the
+                    //  typed key, and we don't want anything else acting upon
+                    //  the key typed event, so we consume it here.
+                    evt.consume();
+                }
 
-    		});
-    		keyBinds.add(modifiers);
-    		cmdModifierMap.put(kcb.cmd, modifiers);
-    		final JTextField key  = new JTextField(15);
-    		key.setName(kcb.cmd);
-    		key.setText(KeyEvent.getKeyText(kcb.key));
-    		// Update how typing in the text field works
-    		final String cmd = kcb.cmd;
-    		cmdKeyMap.put(cmd, kcb.key);
-    		key.addKeyListener(new KeyListener(){
+            });
+            keyBinds.add(modifiers);
+            cmdModifierMap.put(kcb.cmd, modifiers);
+            final JTextField key  = new JTextField(15);
+            key.setName(kcb.cmd);
+            key.setText(KeyEvent.getKeyText(kcb.key));
+            // Update how typing in the text field works
+            final String cmd = kcb.cmd;
+            cmdKeyMap.put(cmd, kcb.key);
+            key.addKeyListener(new KeyListener(){
 
-				@Override
-				public void keyPressed(KeyEvent evt) {
-					key.setText(KeyEvent.getKeyText(evt.getKeyCode()));
-					cmdKeyMap.put(cmd, evt.getKeyCode());
-					evt.consume();
-				}
+                @Override
+                public void keyPressed(KeyEvent evt) {
+                    key.setText(KeyEvent.getKeyText(evt.getKeyCode()));
+                    cmdKeyMap.put(cmd, evt.getKeyCode());
+                    evt.consume();
+                }
 
-				@Override
-				public void keyReleased(KeyEvent evt) {
-				}
+                @Override
+                public void keyReleased(KeyEvent evt) {
+                }
 
-				@Override
-				public void keyTyped(KeyEvent evt) {
-					// This might be a bit hackish, but we want to deal with
-					//  the key code, so the code to update the text is in
-					//  keyPressed.  We've already done what we want with the
-					//  typed key, and we don't want anything else acting upon
-					//  the key typed event, so we consume it here.
-					evt.consume();
-				}
+                @Override
+                public void keyTyped(KeyEvent evt) {
+                    // This might be a bit hackish, but we want to deal with
+                    //  the key code, so the code to update the text is in
+                    //  keyPressed.  We've already done what we want with the
+                    //  typed key, and we don't want anything else acting upon
+                    //  the key typed event, so we consume it here.
+                    evt.consume();
+                }
 
-    		});
-    		keyBinds.add(key);
+            });
+            keyBinds.add(key);
 
-    		JCheckBox repeatable = new JCheckBox("Repeatable?");
-    		repeatable.setSelected(kcb.isRepeatable);
-    		cmdRepeatableMap.put(kcb.cmd,repeatable);
-    		keyBinds.add(repeatable);
-    	}
+            JCheckBox repeatable = new JCheckBox("Repeatable?");
+            repeatable.setSelected(kcb.isRepeatable);
+            cmdRepeatableMap.put(kcb.cmd,repeatable);
+            keyBinds.add(repeatable);
+        }
+        return keyBinds;
+    }
+    
+    /**
+     * Creates a panel with a list boxes that allow the button order to be 
+     * changed.
+     *
+     * @return
+     */
+    private JPanel getButtonOrderPanel(){
+        JPanel buttonOrderPanel = new JPanel();
+        buttonOrderPanel.setLayout(new BoxLayout(buttonOrderPanel, BoxLayout.Y_AXIS));
+        JTabbedPane phasePane = new JTabbedPane();
+        buttonOrderPanel.add(phasePane);
+        
+        StatusBarPhaseDisplay.PhaseCommand commands[];
+        StatusBarPhaseDisplay.CommandComparator cmdComp = 
+                new StatusBarPhaseDisplay.CommandComparator(); 
+        PhaseCommandListMouseAdapter cmdMouseAdaptor = 
+                new PhaseCommandListMouseAdapter();
 
-    	return keyBinds;
+        // MovementPhaseDisplay        
+        JPanel movementPanel = new JPanel();
+        movePhaseCommands = 
+                new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
+        commands = MovementDisplay.MoveCommand.values();
+        Arrays.sort(commands, cmdComp);        
+        for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
+            movePhaseCommands.addElement(cmd);
+        }
+        JList<StatusBarPhaseDisplay.PhaseCommand> moveList = new JList<>(movePhaseCommands);
+        moveList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        moveList.addMouseListener(cmdMouseAdaptor);
+        moveList.addMouseMotionListener(cmdMouseAdaptor);
+        movementPanel.add(moveList);
+        JScrollPane movementScrollPane = new JScrollPane(movementPanel);
+        phasePane.add("Movement", movementScrollPane);
+        
+        // DeploymentPhaseDisplay
+        JPanel deployPanel = new JPanel();
+        deployPhaseCommands = 
+                new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
+        commands = DeploymentDisplay.DeployCommand.values();
+        Arrays.sort(commands, cmdComp);        
+        for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
+            deployPhaseCommands.addElement(cmd);
+        }
+        JList<StatusBarPhaseDisplay.PhaseCommand> deployList = new JList<>(deployPhaseCommands);
+        deployList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        deployList.addMouseListener(cmdMouseAdaptor);
+        deployList.addMouseMotionListener(cmdMouseAdaptor);
+        deployPanel.add(deployList);
+        JScrollPane deployScrollPane = new JScrollPane(deployPanel);
+        phasePane.add("Deployment", deployScrollPane);
+        
+        // FiringPhaseDisplay
+        JPanel firingPanel = new JPanel();
+        firingPhaseCommands = 
+                new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
+        commands = FiringDisplay.FiringCommand.values();
+        Arrays.sort(commands, cmdComp);        
+        for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
+            firingPhaseCommands.addElement(cmd);
+        }
+        JList<StatusBarPhaseDisplay.PhaseCommand> firingList = new JList<>(firingPhaseCommands);
+        firingList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        firingList.addMouseListener(cmdMouseAdaptor);
+        firingList.addMouseMotionListener(cmdMouseAdaptor);
+        firingPanel.add(firingList);
+        JScrollPane firingScrollPane = new JScrollPane(firingPanel);
+        phasePane.add("Firing", firingScrollPane);
+        
+        // PhysicalPhaseDisplay
+        JPanel physicalPanel = new JPanel();
+        physicalPhaseCommands = 
+                new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
+        commands = PhysicalDisplay.PhysicalCommand.values();
+        Arrays.sort(commands, cmdComp);        
+        for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
+            physicalPhaseCommands.addElement(cmd);
+        }
+        JList<StatusBarPhaseDisplay.PhaseCommand> physicalList = new JList<>(physicalPhaseCommands);
+        physicalList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        physicalList.addMouseListener(cmdMouseAdaptor);
+        physicalList.addMouseMotionListener(cmdMouseAdaptor);
+        physicalPanel.add(physicalList);
+        JScrollPane physicalScrollPane = new JScrollPane(physicalPanel);
+        phasePane.add("Physical", physicalScrollPane);          
+        
+        // TargetingPhaseDisplay
+        JPanel targetingPanel = new JPanel();
+        targetingPhaseCommands = 
+                new DefaultListModel<StatusBarPhaseDisplay.PhaseCommand>();
+        commands = TargetingPhaseDisplay.TargetingCommand.values();
+        Arrays.sort(commands, cmdComp);        
+        for (StatusBarPhaseDisplay.PhaseCommand cmd : commands) {
+            targetingPhaseCommands.addElement(cmd);
+        }
+        JList<StatusBarPhaseDisplay.PhaseCommand> targetingList = new JList<>(targetingPhaseCommands);
+        targetingList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        targetingList.addMouseListener(cmdMouseAdaptor);
+        targetingList.addMouseMotionListener(cmdMouseAdaptor);
+        targetingPanel.add(targetingList);
+        JScrollPane targetingScrollPane = new JScrollPane(targetingPanel);
+        phasePane.add("Targeting", targetingScrollPane);            
+        
+        return buttonOrderPanel;
     }
 
     private JPanel createSettingsPanel(ArrayList<ArrayList<JComponent>> comps) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         for (ArrayList<JComponent> cs : comps) {
-        	JPanel subPanel = new JPanel();
+            JPanel subPanel = new JPanel();
             subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.X_AXIS));
-        	for (JComponent c : cs) {
-        		subPanel.add(c);
-        	}
-        	subPanel.add(Box.createHorizontalGlue());
-        	panel.add(subPanel);
+            for (JComponent c : cs) {
+                subPanel.add(c);
+            }
+            subPanel.add(Box.createHorizontalGlue());
+            panel.add(subPanel);
         }
         panel.add(Box.createVerticalGlue());
         return panel;

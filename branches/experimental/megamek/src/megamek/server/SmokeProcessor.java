@@ -75,15 +75,19 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
         for( Coords coords : cloud.getCoordsList() ){
             IHex smokeHex = game.getBoard().getHex(coords);
             if ( smokeHex != null ){
-                if ( smokeHex.containsTerrain(Terrains.SMOKE) ) {
-                    if ( smokeHex.terrainLevel(Terrains.SMOKE) == 1 ) {
+                if (smokeHex.containsTerrain(Terrains.SMOKE)) {
+                    if (smokeHex.terrainLevel(Terrains.SMOKE) 
+                            == SmokeCloud.SMOKE_LIGHT) {
                         smokeHex.removeTerrain(Terrains.SMOKE);
-                        smokeHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SMOKE, 2));
+                        smokeHex.addTerrain(Terrains.getTerrainFactory()
+                                .createTerrain(Terrains.SMOKE,
+                                        SmokeCloud.SMOKE_HEAVY));
                         server.getHexUpdateSet().add(coords);
                     }
-                }
-                else if ( cloud.getSmokeLevel() > 0){
-                    smokeHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SMOKE, cloud.getSmokeLevel()));
+                } else if (cloud.getSmokeLevel() > SmokeCloud.SMOKE_NONE) {
+                    smokeHex.addTerrain(Terrains.getTerrainFactory()
+                            .createTerrain(Terrains.SMOKE,
+                                    cloud.getSmokeLevel()));
                     server.getHexUpdateSet().add(coords);
                 }
             }
@@ -97,12 +101,25 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
         //Have to remove all smoke at once before creating new ones.
         for ( SmokeCloud cloud : server.getSmokeCloudList() ){
             server.removeSmokeTerrain(cloud);
+            // Dissipate the cloud, this gets handled in FireProcessor if 
+            //  TO start fires is on
+            if (!game.getOptions().booleanOption("tacops_start_fire")) {
+                if ((cloud.getDuration() > 0)
+                        && ((cloud.getDuration() - 1) > 0)) {
+                    cloud.setDuration(cloud.getDuration() - 1);
+                }
+                if (cloud.getDuration() < 1) {
+                    cloud.setSmokeLevel(0);
+                }
+            }
         }
+        
         //Remove any smoke clouds that no longer exist
         removeEmptyClouds();
         //Create new Smoke Clouds.
         for ( SmokeCloud cloud : server.getSmokeCloudList() ){
-            if ( (cloud.getCoordsList().size() > 0) && (cloud.getSmokeLevel() > 0) ) {
+            if ((cloud.getCoordsList().size() > 0)
+                    && (cloud.getSmokeLevel() > 0)) {
                 createSmokeTerrain(cloud);
             }
         }

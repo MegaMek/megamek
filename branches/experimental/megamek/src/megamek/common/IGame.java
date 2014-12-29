@@ -19,6 +19,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
@@ -129,7 +130,7 @@ public interface IGame {
      *
      * @return
      */
-    public abstract Vector<GameListener> getGameListeners();
+    public abstract List<GameListener> getGameListeners();
 
     /**
      * purges all Game Listener objects.
@@ -280,7 +281,7 @@ public interface IGame {
     /**
      * Return the immutable vector of teams
      */
-    public abstract Vector<Team> getTeamsVector();
+    public abstract List<Team> getTeamsVector();
 
     /**
      * Return a players team Note: may return null if player has no team
@@ -365,7 +366,7 @@ public interface IGame {
      * Get a vector of entity objects that are "acceptable" to attack with this
      * entity
      */
-    public abstract Vector<Entity> getValidTargets(Entity entity);
+    public abstract List<Entity> getValidTargets(Entity entity);
 
     /**
      * Returns true if this phase has turns. If false, the phase is simply
@@ -415,6 +416,13 @@ public interface IGame {
     public abstract void insertTurnAfter(GameTurn turn, int index);
 
     /**
+     * Swaps the turn at index 1 with the turn at index 2.
+     * 
+     * @param index1
+     * @param index2
+     */
+    public abstract void swapTurnOrder(int index1, int index2);
+    /**
      * Returns an Enumeration of the current turn list
      */
     public abstract Enumeration<GameTurn> getTurns();
@@ -432,12 +440,12 @@ public interface IGame {
     /**
      * Returns the current turn vector
      */
-    public abstract Vector<GameTurn> getTurnVector();
+    public abstract List<GameTurn> getTurnVector();
 
     /**
      * Sets the current turn vector
      */
-    public abstract void setTurnVector(Vector<GameTurn> turnVector);
+    public abstract void setTurnVector(List<GameTurn> turnVector);
 
     public abstract IGame.Phase getPhase();
 
@@ -476,19 +484,19 @@ public interface IGame {
     /**
      * Returns a vector of entities that have not yet deployed
      */
-    public abstract Vector<Entity> getUndeployedEntities();
+    public abstract List<Entity> getUndeployedEntities();
 
     /**
      * Returns an enumeration of all the entites in the game.
      */
-    public abstract Enumeration<Entity> getEntities();
+    public abstract Iterator<Entity> getEntities();
 
     /**
      * Returns the actual vector for the entities
      */
-    public abstract Vector<Entity> getEntitiesVector();
+    public abstract List<Entity> getEntitiesVector();
 
-    public abstract void setEntitiesVector(Vector<Entity> entities);
+    public abstract void setEntitiesVector(List<Entity> entities);
 
     /**
      * Returns the actual vector for the out-of-game entities
@@ -512,7 +520,7 @@ public interface IGame {
      * @throw <code>IllegalArgumentException</code> if the new list is
      *        <code>null</code>.
      */
-    public abstract void setOutOfGameEntitiesVector(Vector<Entity> vOutOfGame);
+    public abstract void setOutOfGameEntitiesVector(List<Entity> vOutOfGame);
 
     /**
      * Returns a <code>Vector</code> containing the <code>Entity</code>s
@@ -604,7 +612,7 @@ public interface IGame {
      * @param ids  A collection of ids for each Entity to be added.
      * @param entities  The Entity objects to be added.
      */
-    public abstract void addEntities(List<Integer> ids, List<Entity> entities);
+    public abstract void addEntities(List<Entity> entities);
 
     /**
      * Adds a new Entity to this Game object.
@@ -614,7 +622,7 @@ public interface IGame {
      * @param genEvent  A flag that determiens wheher a GameEntityNewEvent is
      *                  generated.
      */
-    public abstract void addEntity(int id, Entity entity, boolean genEvent);
+    public abstract void addEntity(Entity entity, boolean genEvent);
 
     /**
      * Adds a new Entity to this Game object and generates a GameEntityNewEvent.
@@ -622,6 +630,17 @@ public interface IGame {
      * @param id  The id of the Entity to be added.
      * @param entity The Entity to add.
      **/
+    public void addEntity(Entity entity);
+    
+    /**
+     * Adds a new Entity.  The id parameter is ignored and addEntity(Entity)
+     * is called instead.  This is just to maintain compatibility with the old
+     * API.
+     *  
+     * @param id    Value that is ignored: the id is pulled from the passed 
+     *               Entity
+     * @param entity The Entity to add to the game.
+     */
     public void addEntity(int id, Entity entity);
 
     public abstract void setEntity(int id, Entity entity);
@@ -682,17 +701,22 @@ public interface IGame {
     /**
      * Returns an Enumeration of the active entities at the given coordinates.
      */
-    public abstract Enumeration<Entity> getEntities(Coords c);
+    public abstract Iterator<Entity> getEntities(Coords c);
 
     /**
      * Returns an Enumeration of the active entities at the given coordinates.
      */
-    public abstract Enumeration<Entity> getEntities(Coords c, boolean ignore);
+    public abstract Iterator<Entity> getEntities(Coords c, boolean ignore);
 
     /**
      * Returns a Vector of the active entities at the given coordinates.
      */
-    public abstract Vector<Entity> getEntitiesVector(Coords c);
+    public abstract List<Entity> getEntitiesVector(Coords c);
+    
+    /**
+     * Returns a Vector of the active entities at the given coordinates.
+     */
+    public abstract List<Entity> getEntitiesVector(Coords c, boolean ignore);
 
     /**
      * Returns a Vector of the gun emplacements at the given coordinates.
@@ -719,7 +743,7 @@ public interface IGame {
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the
      *         given coordinates who are enemies of the given unit.
      */
-    public abstract Enumeration<Entity> getEnemyEntities(final Coords c,
+    public abstract Iterator<Entity> getEnemyEntities(final Coords c,
             final Entity currentEntity);
 
     /**
@@ -731,7 +755,7 @@ public interface IGame {
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the
      *         given coordinates who are friends of the given unit.
      */
-    public abstract Enumeration<Entity> getFriendlyEntities(final Coords c,
+    public abstract Iterator<Entity> getFriendlyEntities(final Coords c,
             final Entity currentEntity);
 
     /**
@@ -964,7 +988,7 @@ public interface IGame {
      * Returns the actions vector. Do not use to modify the actions; I will be
      * angry. >:[ Used for sending all actions to the client.
      */
-    public abstract Vector<EntityAction> getActionsVector();
+    public abstract List<EntityAction> getActionsVector();
 
     public abstract void addInitiativeRerollRequest(Team t);
 
@@ -992,7 +1016,7 @@ public interface IGame {
      * Returns the charges vector. Do not modify. >:[ Used for sending all
      * charges to the client.
      */
-    public abstract Vector<AttackAction> getChargesVector();
+    public abstract List<AttackAction> getChargesVector();
 
     /**
      * Adds a pending ram attack to the list for this phase.
@@ -1014,7 +1038,7 @@ public interface IGame {
      * Returns the ram vector. Do not modify. >:[ Used for sending all
      * charges to the client.
      */
-    public abstract Vector<AttackAction> getRamsVector();
+    public abstract List<AttackAction> getRamsVector();
 
     /**
      * Adds a pending tele-missile attack to the list for this phase.
@@ -1036,7 +1060,7 @@ public interface IGame {
      * Returns the telemissile attack vector. Do not modify. >:[ Used for sending all
      * charges to the client.
      */
-    public abstract Vector<AttackAction> getTeleMissileAttacksVector();
+    public abstract List<AttackAction> getTeleMissileAttacksVector();
 
     /**
      * Adds a pending PSR to the list for this phase.
@@ -1193,7 +1217,7 @@ public interface IGame {
      *         accepts. This value will not be <code>null</code> but it may be
      *         empty.
      */
-    public abstract Enumeration<Entity> getSelectedEntities(
+    public abstract Iterator<Entity> getSelectedEntities(
             EntitySelector selector);
 
     /**
@@ -1408,5 +1432,14 @@ public interface IGame {
      *      contained the input hex.
      */
     public abstract boolean addIlluminatedPosition(Coords c);
+    
+    /**
+     * Updates the map that maps a position to the list of Entity's in that 
+     * position.
+     *  
+     * @param e
+     */
+    public abstract void updateEntityPositionLookup(Entity e, 
+            HashSet<Coords> oldPositions);
 
 }

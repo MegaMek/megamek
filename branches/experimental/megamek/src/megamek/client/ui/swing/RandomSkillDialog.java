@@ -21,8 +21,8 @@ package megamek.client.ui.swing;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.JDialog;
@@ -38,7 +38,7 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
     private static final long serialVersionUID = -2459992981678758743L;
     private Client client;
     private ClientGUI clientgui;
-    private Vector<Entity> units;
+    private List<Entity> units;
     private RandomSkillsGenerator rsg;
 
     /** Creates new form RandomSkillDialog2 */
@@ -118,6 +118,7 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
         chType.setSelectedIndex(rsg.getType());
         chLevel.setSelectedIndex(rsg.getLevel());
         cForceClose.setSelected(rsg.isClose());
+        pack();
     }
 
     private void saveSettings() {
@@ -135,7 +136,7 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
         super.setVisible(show);
     }
 
-    public  void showDialog(Vector<Entity> units){
+    public  void showDialog(List<Entity> units){
         this.units=units;
         setVisible(true);
     }
@@ -149,8 +150,8 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
     public void actionPerformed(java.awt.event.ActionEvent ev) {
         if (ev.getSource() == butOkay) {
             saveSettings();
-            // go through all of the units provided for this player and assign random
-            // skill levels
+            // go through all of the units provided for this player and assign
+            // random skill levels
             Client c = null;
             if (chPlayer.getSelectedIndex() > 0) {
                 String name = (String) chPlayer.getSelectedItem();
@@ -159,8 +160,7 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
             if (c == null) {
                 c = client;
             }
-            for (Enumeration<Entity> e = units.elements(); e.hasMoreElements();) {
-                Entity ent = e.nextElement();
+            for (Entity ent : units) {
                 if (ent.getOwnerId() == c.getLocalPlayer().getId()) {
                     int skills[] = rsg.getRandomSkills(ent);
                     if (cForceClose.isSelected()) {

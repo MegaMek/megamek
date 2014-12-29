@@ -18,9 +18,7 @@ Orc
 <Tonnage>
 4
 </Tonnage>
-<BV>
-122
-</BV>
+
 <cruiseMP>
 6
 </cruiseMP>
@@ -33,7 +31,7 @@ Orc
 </Armor>
 <Torso Equipment>
 CLMG
-CLMG Ammo (20)
+CLMG Ammo (10)
 CLLRM2 Ammo (3)
 CLLRM2 Ammo (3)
 </Torso Equipment>

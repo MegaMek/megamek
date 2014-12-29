@@ -20,16 +20,19 @@ package megamek.common;
 public interface IHex extends Cloneable {
 
     /**
-     * @return hex elevation (hex level in TW nomenclature)
+     * The level of a hex, as defined in TW.  This refers to the height of the
+     * ground terrain.
+     *  
+     * @return Hex level 
      */
-    public abstract int getElevation();
+    public abstract int getLevel();
 
     /**
-     * set the elevation
+     * Set the level of the hex.
      *
-     * @param elevation
+     * @param level
      */
-    public abstract void setElevation(int elevation);
+    public abstract void setLevel(int level);
 
     /**
      * The theme is intended as a tag for the tileset file to indicate a special
@@ -125,7 +128,7 @@ public interface IHex extends Cloneable {
     public abstract int ceiling();
 
     /**
-     * @return the surface level of the hex. Equal to getElevation().
+     * @return the surface level of the hex. Equal to getLevel().
      */
     public abstract int surface();
 
@@ -142,7 +145,7 @@ public interface IHex extends Cloneable {
 
     /**
      * @return a level indicating how far features in this hex extend below the
-     *         surface elevation.
+     *         surface level.
      */
     public abstract int depth();
     public abstract int depth(boolean hidden);
@@ -260,4 +263,6 @@ public interface IHex extends Cloneable {
     public abstract boolean isClearForLanding();
 
     public abstract Coords getCoords();
+
+    public abstract void setCoords(Coords c);
 }

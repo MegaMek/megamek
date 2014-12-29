@@ -30,7 +30,7 @@ public class Hex implements IHex, Serializable {
      *
      */
     private static final long serialVersionUID = 82483704768044698L;
-    private int elevation;
+    private int level;
     /**
      * An array to store the terrain types present in this hex.  The array
      * allows for constant access to the terrain type given a terrain id.
@@ -51,18 +51,18 @@ public class Hex implements IHex, Serializable {
         this(0);
     }
 
-    /** Constructs clean, plain hex at specified elevation. */
-    public Hex(int elevation) {
-        this(elevation, new ITerrain[Terrains.SIZE], null, new Coords(0,0));
+    /** Constructs clean, plain hex at specified level. */
+    public Hex(int level) {
+        this(level, new ITerrain[Terrains.SIZE], null, new Coords(0,0));
     }
 
-    public Hex(int elevation, ITerrain[] terrains, String theme) {
-        this(elevation, terrains, theme, new Coords(0,0));
+    public Hex(int level, ITerrain[] terrains, String theme) {
+        this(level, terrains, theme, new Coords(0,0));
     }
 
     /** Constructs hex with all parameters. */
-    public Hex(int elevation, ITerrain[] terrains, String theme, Coords c) {
-        this.elevation = elevation;
+    public Hex(int level, ITerrain[] terrains, String theme, Coords c) {
+        this.level = level;
         coords = c;
         this.terrains = terrains;
         // Creates a HM with a capacity that is 25% larger than the number of
@@ -83,13 +83,13 @@ public class Hex implements IHex, Serializable {
         }
     }
 
-    public Hex(int elevation, String terrain, String theme) {
-        this(elevation,terrain,theme,new Coords(0,0));
+    public Hex(int level, String terrain, String theme) {
+        this(level,terrain,theme,new Coords(0,0));
     }
 
     /** Contructs hex with string terrain info */
-    public Hex(int elevation, String terrain, String theme, Coords c) {
-        this(elevation, new ITerrain[Terrains.SIZE], theme, c);
+    public Hex(int level, String terrain, String theme, Coords c) {
+        this(level, new ITerrain[Terrains.SIZE], theme, c);
         for (StringTokenizer st = new StringTokenizer(terrain, ";", false); st
                 .hasMoreTokens();) {
             addTerrain(Terrains.getTerrainFactory().createTerrain(
@@ -114,19 +114,19 @@ public class Hex implements IHex, Serializable {
     /*
      * (non-Javadoc)
      *
-     * @see megamek.common.IHex#getElevation()
+     * @see megamek.common.IHex#getLevel()
      */
-    public int getElevation() {
-        return elevation;
+    public int getLevel() {
+        return level;
     }
 
     /*
      * (non-Javadoc)
      *
-     * @see megamek.common.IHex#setElevation(int)
+     * @see megamek.common.IHex#setLevel(int)
      */
-    public void setElevation(int elevation) {
-        this.elevation = elevation;
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     /*
@@ -307,7 +307,7 @@ public class Hex implements IHex, Serializable {
             maxFeature = terrainLevel(Terrains.BRIDGE_ELEV);
         }
 
-        return elevation + maxFeature;
+        return level + maxFeature;
     }
 
     /*
@@ -316,7 +316,7 @@ public class Hex implements IHex, Serializable {
      * @see megamek.common.IHex#surface()
      */
     public int surface() {
-        return elevation;
+        return level;
     }
 
     /*
@@ -325,7 +325,7 @@ public class Hex implements IHex, Serializable {
      * @see megamek.common.IHex#floor()
      */
     public int floor() {
-        return elevation - depth();
+        return level - depth();
     }
 
     /*
@@ -482,7 +482,7 @@ public class Hex implements IHex, Serializable {
                 tcopy[i] = f.createTerrain(terrains[i]);
             }
         }
-        return new Hex(elevation, tcopy, theme, coords);
+        return new Hex(level, tcopy, theme, coords);
     }
 
     public int terrainPilotingModifier(EntityMovementMode moveMode) {
@@ -508,7 +508,7 @@ public class Hex implements IHex, Serializable {
     @Override
     public String toString() {
         String temp;
-        temp = "Elevation: " + getElevation();
+        temp = "Level: " + getLevel();
         temp = temp + "  Features: ";
         for (Integer i : hsTerrains) {
             ITerrain terrain = terrains[i];
@@ -650,6 +650,10 @@ public class Hex implements IHex, Serializable {
      */
     public Coords getCoords() {
         return coords;
+    }
+    
+    public void setCoords(Coords c) {
+    	coords = c;
     }
 
 }

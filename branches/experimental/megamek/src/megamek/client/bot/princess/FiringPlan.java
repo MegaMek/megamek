@@ -25,7 +25,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Vector;
 
 /**
@@ -123,7 +122,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
      * @return The list of actions as a vector.
      */
     synchronized public Vector<EntityAction> getEntityActionVector() {
-        Vector<EntityAction> actionVector = new Vector<EntityAction>();
+        Vector<EntityAction> actionVector = new Vector<>();
         if (size() == 0) {
             return actionVector;
         }
@@ -229,7 +228,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
     }
 
     /**
-     * Hole-punchers before crit-seekers.
+     * Hole punchers before crit seekers
      */
     public void sortPlan() {
         Collections.sort(this, new Comparator<WeaponFireInfo>() {
@@ -243,7 +242,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
                     return 0;
                 }
 
-                // Not-null beats null.
+                // Not null beats null;
                 if (weapon1 == null) {
                     return -1;
                 }
@@ -281,7 +280,6 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
                     dmg2 = weaponType2.getDamage();
                 }
 
-                // Compare damage done per hit.
                 return -Double.compare(dmg1, dmg2);
             }
         });
@@ -290,7 +288,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
     public String getWeaponNames() {
         StringBuilder out = new StringBuilder("");
         for (WeaponFireInfo wfi : this) {
-            if (!StringUtil.isNullOrEmpty(out.toString())) {
+            if (!StringUtil.isNullOrEmpty(out)) {
                 out.append(",");
             }
 
@@ -300,7 +298,6 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
             }
             out.append(wfi.getWeapon().getName());
         }
-
         return out.toString();
     }
 }

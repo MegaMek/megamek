@@ -29,38 +29,42 @@ import megamek.common.weapons.EnergyWeapon;
 
 /**
  * Contains the options determining quirks of the unit
- * 
+ *
  * @author Taharqa (Jay Lawson)
  */
 public class WeaponQuirks extends AbstractOptions {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -8455685281028804229L;
     public static final String WPN_QUIRKS = "WeaponQuirks"; //$NON-NLS-1$
-  
+
     public WeaponQuirks() {
         super();
     }
 
     @Override
     public void initialize() {
-        //positive quirks
         IBasicOptionGroup wpnQuirk = addGroup("wpn_quirks", WPN_QUIRKS); //$NON-NLS-1$
-        addOption(wpnQuirk, "accurate", false); //$NON-NLS-1$
-        addOption(wpnQuirk, "inaccurate", false); //$NON-NLS-1$
-        addOption(wpnQuirk, "imp_cooling", false); //$NON-NLS-1$
-        addOption(wpnQuirk, "poor_cooling", false); //$NON-NLS-1$
-        addOption(wpnQuirk, "no_cooling", false); //$NON-NLS-1$
-        addOption(wpnQuirk, "exposed_linkage", false); //$NON-NLS-1$
-        addOption(wpnQuirk, "ammo_feed", false); //$NON-NLS-1$
-        addOption(wpnQuirk, "em_interference", false); //$NON-NLS-1$
-        addOption(wpnQuirk, "jettison_capable", false); //$NON-NLS-1$
-        addOption(wpnQuirk, "fast_reload", false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_ACCURATE, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_INACCURATE, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_EXPOSED_LINKAGE, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_POS_JETTISON_CAPABLE, false); //$NON-NLS-1$
+        addOption(wpnQuirk, OptionsConstants.QUIRK_POS_FAST_RELOAD, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_NON_FUNCTIONAL, false);
+        addOption(wpnQuirk, OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED, false);
     }
+    
     //unimplemented
     //ammo feed problem
     //EM Interference
+    //jettison-capable Weapon
+    //non-functional
 
     /*
      * (non-Javadoc)
@@ -71,49 +75,61 @@ public class WeaponQuirks extends AbstractOptions {
     protected AbstractOptionsInfo getOptionsInfoImp() {
         return WeaponQuirksInfo.getInstance();
     }
-    
+
     public static boolean isQuirkLegalFor(IOption quirk, Entity en, WeaponType wtype) {
-        
-        if (!(wtype instanceof AmmoWeapon) && quirk.getName().equals("ammo_feed")) {
-            return false;
-        }
 
-        if (!(wtype instanceof EnergyWeapon) && quirk.getName().equals("em_interference")) {
-            return false;
-        }
-        
-        if(en instanceof Tank || en instanceof BattleArmor) {
-            if(quirk.getName().equals("imp_cooling")
-                    || quirk.getName().equals("poor_cooling")
-                    || quirk.getName().equals("no_cooling")) {
+        if (!(wtype instanceof AmmoWeapon)) {
+            if (quirk.getName().equals(OptionsConstants.QUIRK_WEAP_NEG_AMMO_FEED_PROBLEMS)) {
                 return false;
             }
-        }
-        
-        if(en instanceof Infantry && !(en instanceof BattleArmor)) {
-            return false;
-        }
-        
-        if(wtype.getHeat() == 0) {
-            if(quirk.getName().equals("imp_cooling")
-                    || quirk.getName().equals("poor_cooling")
-                    || quirk.getName().equals("no_cooling")) {
+            if (quirk.getName().equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)) {
                 return false;
             }
         }
 
-        if (quirk.getName().equals("jettison_capable")) {
+        if (!(wtype instanceof EnergyWeapon) && quirk.getName().equals(OptionsConstants.QUIRK_WEAP_NEG_EM_INTERFERENCE)) {
+            return false;
+        }
+        
+        if (en instanceof Protomech) {
+        	if (quirk.getName().equals(OptionsConstants.QUIRK_POS_FAST_RELOAD)
+        		|| quirk.getName().equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)) {
+        		return false;
+        	}
+        }
+
+        if (en instanceof Tank || en instanceof BattleArmor || en instanceof Protomech ) {
+            if (quirk.getName().equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
+                || quirk.getName().equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
+                || quirk.getName().equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)) {
+                return false;
+            }
+        }
+
+        if (en instanceof Infantry && !(en instanceof BattleArmor)) {
+            return false;
+        }
+
+        if (wtype.getHeat() == 0) {
+            if (quirk.getName().equals(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)
+                || quirk.getName().equals(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)
+                || quirk.getName().equals(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)) {
+                return false;
+            }
+        }
+
+        if (quirk.getName().equals(OptionsConstants.QUIRK_WEAP_POS_JETTISON_CAPABLE)) {
             if (en instanceof Protomech
-                    || en instanceof Aero
-                    || en instanceof Jumpship
-                    || en instanceof Dropship) {
+                || en instanceof Aero
+                || en instanceof Jumpship
+                || en instanceof Dropship) {
 
                 return false;
             }
         }
 
         return true;
-        
+
     }
 
     private static class WeaponQuirksInfo extends AbstractOptionsInfo {
@@ -127,7 +143,6 @@ public class WeaponQuirks extends AbstractOptions {
             super("WeaponQuirksInfo"); //$NON-NLS-1$
         }
     }
-    
-    
-    
+
+
 }

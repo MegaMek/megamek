@@ -21,7 +21,6 @@ import java.util.Vector;
 
 import megamek.common.BattleArmor;
 import megamek.common.Building;
-import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
@@ -123,7 +122,7 @@ class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
                         break;
                 }
             }
-            int sdroll = Compute.d6(2);
+            int sdroll = entityTarget.getCrew().rollPilotingSkill();
             r = new Report(5060);
             r.subject = entityTarget.getId();
             r.indent(3);

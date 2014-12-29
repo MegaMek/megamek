@@ -46,11 +46,7 @@ Unit_LoneStar_6=Enforcer ENF-4R,Kasha Lowe,3,4
 Unit_LoneStar_7=Clint CLNT-2-3T,Brian Kolowski,4,5
 Unit_LoneStar_8=Jenner JR7-D,Andrew Thompson,3,4,S,5,10
 
-
-
-
 Unit_LoneStar_5_DamageSpecific=N1:0,I1:4,R3:0,I3:8
-
 Unit_RedfieldsRenegades_4_CritHit=0:2
 Unit_RedfieldsRenegades_4_SetAmmoTo=3:1-4
 

@@ -78,7 +78,7 @@ public class BasicPathRanker extends PathRanker {
         bestDamageByEnemies = new TreeMap<>();
         owner = owningPrincess;
         owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, "Using " + owner.getBehaviorSettings().getDescription() +
-                " behavior");
+                                                           " behavior");
     }
 
     protected Princess getOwner() {
@@ -102,41 +102,41 @@ public class BasicPathRanker extends PathRanker {
     }
 
     protected Coords getClosestCoordsTo(int unitId, Coords location) {
-        return pathEnumerator.unit_movable_areas.get(unitId).getClosestCoordsTo(location);
+        return pathEnumerator.getUnitMovableAreas().get(unitId).getClosestCoordsTo(location);
     }
 
     protected boolean isInMyLoS(Entity unit, HexLine leftBounds, HexLine rightBounds) {
-        return (leftBounds.judgeArea(pathEnumerator.unit_movable_areas.get(unit.getId())) > 0)
-                && (rightBounds.judgeArea(pathEnumerator.unit_movable_areas.get(unit.getId())) < 0);
+        return (leftBounds.judgeArea(pathEnumerator.getUnitMovableAreas().get(unit.getId())) > 0)
+               && (rightBounds.judgeArea(pathEnumerator.getUnitMovableAreas().get(unit.getId())) < 0);
     }
 
-    protected double getMaxDamageAtRange(FireControl fireControl, Entity shooter, int range, boolean useExtremeRange) {
-        return fireControl.getMaxDamageAtRange(shooter, range, useExtremeRange);
+    protected double getMaxDamageAtRange(FireControl fireControl, Entity shooter, int range, boolean useExtremeRange, boolean useLOSRange) {
+        return fireControl.getMaxDamageAtRange(shooter, range, useExtremeRange, useLOSRange);
     }
 
     protected boolean canFlankAndKick(Entity enemy, Coords behind, Coords leftFlank, Coords rightFlank, int myFacing) {
         final String METHOD_NAME = "canFlankAndKick(Entity, Coords, Coords, Coords, int)";
-        Set<CoordFacingCombo> enemyFacingSet = pathEnumerator.unit_potential_locations.get(enemy.getId());
+        Set<CoordFacingCombo> enemyFacingSet = pathEnumerator.getUnitPotentialLocations().get(enemy.getId());
         if (enemyFacingSet == null) {
             getOwner().log(getClass(), METHOD_NAME, LogLevel.WARNING, "no facing set for " + enemy.getDisplayName());
             return false;
         }
-        return enemyFacingSet.contains(new CoordFacingCombo(behind, myFacing))
-                || enemyFacingSet.contains(new CoordFacingCombo(behind, (myFacing + 1) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(behind, (myFacing + 5) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, myFacing))
-                || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, (myFacing + 4) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(leftFlank, (myFacing + 5) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, myFacing))
-                || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, (myFacing + 1) % 6))
-                || enemyFacingSet.contains(new CoordFacingCombo(rightFlank, (myFacing + 2) % 6));
+        return enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, myFacing))
+               || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, (myFacing + 1) % 6))
+               || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(behind, (myFacing + 5) % 6))
+               || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(leftFlank, myFacing))
+               || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(leftFlank, (myFacing + 4) % 6))
+               || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(leftFlank, (myFacing + 5) % 6))
+               || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, myFacing))
+               || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, (myFacing + 1) % 6))
+               || enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, (myFacing + 2) % 6));
     }
 
     /**
      * Guesses a number of things about an enemy that has not yet moved
      * TODO estimated damage is sloppy.  Improve for missile attacks, gun skill, and range
      */
-    public EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, boolean useExtremeRange) {
+    public EntityEvaluationResponse evaluateUnmovedEnemy(Entity enemy, MovePath path, boolean useExtremeRange, boolean useLOSRange) {
         final String METHOD_NAME = "EntityEvaluationResponse evaluateUnmovedEnemy(Entity,MovePath,IGame)";
         getOwner().methodBegin(getClass(), METHOD_NAME);
 
@@ -157,6 +157,9 @@ public class BasicPathRanker extends PathRanker {
             Coords leftFlank = finalCoords.translated((myFacing + 2) % 6);
             Coords rightFlank = finalCoords.translated((myFacing + 4) % 6);
             Coords closest = getClosestCoordsTo(enemy.getId(), finalCoords);
+            if (closest == null) {
+                return returnResponse;
+            }
             int range = closest.distance(finalCoords);
 
             // I would prefer if the enemy must end its move in my line of fire if so, I can guess that I may do some
@@ -165,21 +168,21 @@ public class BasicPathRanker extends PathRanker {
             HexLine leftBounds;
             HexLine rightBounds;
             if (path.getEntity().canChangeSecondaryFacing()) {
-                leftBounds = new HexLine(behind, (myFacing + 2) % 6);
-                rightBounds = new HexLine(behind, (myFacing + 4) % 6);
+                leftBounds = new HexLine(behind, (myFacing + 2) % 6, owner);
+                rightBounds = new HexLine(behind, (myFacing + 4) % 6, owner);
             } else {
-                leftBounds = new HexLine(behind, (myFacing + 1) % 6);
-                rightBounds = new HexLine(behind, (myFacing + 5) % 6);
+                leftBounds = new HexLine(behind, (myFacing + 1) % 6, owner);
+                rightBounds = new HexLine(behind, (myFacing + 5) % 6, owner);
             }
             boolean inMyLos = isInMyLoS(enemy, leftBounds, rightBounds);
             if (inMyLos) {
                 returnResponse.addToMyEstimatedDamage(getMaxDamageAtRange(fireControl, path.getEntity(), range,
-                                                                          useExtremeRange) * damageDiscount);
+                                                                          useExtremeRange, useLOSRange) * damageDiscount);
             }
 
             //in general if an enemy can end its position in range, it can hit me
-            returnResponse.addToEstimatedEnemyDamage(getMaxDamageAtRange(fireControl, enemy, range, useExtremeRange)
-                                                             * damageDiscount);
+            returnResponse.addToEstimatedEnemyDamage(getMaxDamageAtRange(fireControl, enemy, range, useExtremeRange, useLOSRange)
+                                                     * damageDiscount);
 
             //It is especially embarrassing if the enemy can move behind or flank me and then kick me
             if (canFlankAndKick(enemy, behind, leftFlank, rightFlank, myFacing)) {
@@ -264,6 +267,10 @@ public class BasicPathRanker extends PathRanker {
 
     protected double calculateKickDamagePotential(Entity enemy, MovePath path, IGame game) {
 
+        if (!(enemy instanceof Mech)) {
+            return 0.0;
+        }
+
         // if they can kick me, and probably hit, they probably will.
         PhysicalInfo theirKick = new PhysicalInfo(enemy, null, path.getEntity(),
                                                   new EntityState(path), PhysicalAttackType.RIGHT_KICK, game, owner,
@@ -302,6 +309,10 @@ public class BasicPathRanker extends PathRanker {
     }
 
     protected double calculateMyKickDamagePotential(MovePath path, Entity enemy, IGame game) {
+        if (!(path.getEntity() instanceof Mech)) {
+            return 0.0;
+        }
+
         PhysicalInfo myKick = new PhysicalInfo(path.getEntity(),
                                                new EntityState(path), enemy, null, PhysicalAttackType.RIGHT_KICK,
                                                game, owner, true);
@@ -372,18 +383,18 @@ public class BasicPathRanker extends PathRanker {
 
         Entity closest = findClosestEnemy(movingUnit, movingUnit.getPosition(), game);
         Coords toFace = closest == null ?
-                game.getBoard().getCenter() :
-                closest.getPosition();
+                        game.getBoard().getCenter() :
+                        closest.getPosition();
         int desiredFacing = (toFace.direction(movingUnit.getPosition()) + 3) % 6;
         int currentFacing = path.getFinalFacing();
         int facingDiff;
         if (currentFacing == desiredFacing) {
             facingDiff = 0;
         } else if ((currentFacing == ((desiredFacing + 1) % 6))
-                || (currentFacing == ((desiredFacing + 5) % 6))) {
+                   || (currentFacing == ((desiredFacing + 5) % 6))) {
             facingDiff = 1;
         } else if ((currentFacing == ((desiredFacing + 2) % 6))
-                || (currentFacing == ((desiredFacing + 4) % 6))) {
+                   || (currentFacing == ((desiredFacing + 4) % 6))) {
             facingDiff = 2;
         } else {
             facingDiff = 3;
@@ -397,7 +408,7 @@ public class BasicPathRanker extends PathRanker {
 
     // If I need to flee the board, I want to get closer to my home edge.
     private double calculateSelfPreservationMod(Entity movingUnit, MovePath path, IGame game, StringBuilder formula) {
-        if (getOwner().wantsToFallBack(movingUnit)) {
+        if (getOwner().getFallBack() || movingUnit.isCrippled()) {
             int newDistanceToHome = distanceToHomeEdge(path.getFinalCoords(), getOwner().getHomeEdge(), game);
             double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
             double selfPreservationMod = newDistanceToHome * selfPreservation;
@@ -805,6 +816,7 @@ public class BasicPathRanker extends PathRanker {
             double maximumPhysicalDamage = 0;
             double expectedDamageTaken = checkPathForHazards(pathCopy, movingUnit, game);
             boolean extremeRange = game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE);
+            boolean losRange = game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE);
             for (Entity enemy : enemies) {
 
                 // Skip ejected pilots.
@@ -814,7 +826,7 @@ public class BasicPathRanker extends PathRanker {
 
                 // Skip units not actually on the board.
                 if (enemy.isOffBoard() || (enemy.getPosition() == null)
-                        || !game.getBoard().contains(enemy.getPosition())) {
+                    || !game.getBoard().contains(enemy.getPosition())) {
                     continue;
                 }
 
@@ -822,7 +834,7 @@ public class BasicPathRanker extends PathRanker {
                 if ((!enemy.isSelectableThisTurn()) || enemy.isImmobile()) { //For units that have already moved
                     eval = evaluateMovedEnemy(enemy, pathCopy, game);
                 } else { //for units that have not moved this round
-                    eval = evaluateUnmovedEnemy(enemy, path, extremeRange);
+                    eval = evaluateUnmovedEnemy(enemy, path, extremeRange, losRange);
                 }
                 if (maximumDamageDone < eval.getMyEstimatedDamage()) {
                     maximumDamageDone = eval.getMyEstimatedDamage();
@@ -837,7 +849,7 @@ public class BasicPathRanker extends PathRanker {
             for (int i = 0; i < getOwner().getFireControl().getAdditionalTargets().size(); i++) {
                 Targetable target = getOwner().getFireControl().getAdditionalTargets().get(i);
                 if (target.isOffBoard() || (target.getPosition() == null)
-                        || !game.getBoard().contains(target.getPosition())) {
+                    || !game.getBoard().contains(target.getPosition())) {
                     continue; // Skip targets not actually on the board.
                 }
                 FiringPlan myFiringPlan = fireControl.guessBestFiringPlanWithTwists(path.getEntity(),
@@ -847,12 +859,14 @@ public class BasicPathRanker extends PathRanker {
                 if (myDamagePotential > maximumDamageDone) {
                     maximumDamageDone = myDamagePotential;
                 }
-                PhysicalInfo myKick = new PhysicalInfo(
-                        path.getEntity(), new EntityState(path), target, null,
-                        PhysicalAttackType.RIGHT_KICK, game, owner, true);
-                double expectedKickDamage = myKick.getExpectedDamageOnHit() * myKick.getProbabilityToHit();
-                if (expectedKickDamage > maximumPhysicalDamage) {
-                    maximumPhysicalDamage = expectedKickDamage;
+                if (path.getEntity() instanceof Mech) {
+                    PhysicalInfo myKick = new PhysicalInfo(
+                            path.getEntity(), new EntityState(path), target, null,
+                            PhysicalAttackType.RIGHT_KICK, game, owner, true);
+                    double expectedKickDamage = myKick.getExpectedDamageOnHit() * myKick.getProbabilityToHit();
+                    if (expectedKickDamage > maximumPhysicalDamage) {
+                        maximumPhysicalDamage = expectedKickDamage;
+                    }
                 }
             }
 
@@ -975,15 +989,15 @@ public class BasicPathRanker extends PathRanker {
         try {
             int width = game.getBoard().getWidth();
             int height = game.getBoard().getHeight();
-            int minimum = position.x;
-            if ((width - position.x) < minimum) {
-                minimum = position.x;
+            int minimum = position.getX();
+            if ((width - position.getX()) < minimum) {
+                minimum = position.getX();
             }
-            if (position.y < minimum) {
-                minimum = position.y;
+            if (position.getY() < minimum) {
+                minimum = position.getY();
             }
-            if ((height - position.y) < minimum) {
-                minimum = height - position.y;
+            if ((height - position.getY()) < minimum) {
+                minimum = height - position.getY();
             }
             return minimum;
         } finally {
@@ -997,7 +1011,7 @@ public class BasicPathRanker extends PathRanker {
      *
      * @param position Final coordinates of the proposed move.
      * @param homeEdge Unit's home edge.
-     * @param game The {@link IGame} currently in play.
+     * @param game     The {@link IGame} currently in play.
      * @return The distance to the unit's home edge.
      */
     @Override
@@ -1014,24 +1028,24 @@ public class BasicPathRanker extends PathRanker {
             int distance;
             switch (homeEdge) {
                 case NORTH: {
-                    distance = position.y;
+                    distance = position.getY();
                     break;
                 }
                 case SOUTH: {
-                    distance = height - position.y - 1;
+                    distance = height - position.getY() - 1;
                     break;
                 }
                 case WEST: {
-                    distance = position.x;
+                    distance = position.getX();
                     break;
                 }
                 case EAST: {
-                    distance = width - position.x - 1;
+                    distance = width - position.getX() - 1;
                     break;
                 }
                 default: {
                     owner.log(getClass(), METHOD_NAME, LogLevel.WARNING, "Invalid home edge.  Defaulting to NORTH.");
-                    distance = position.y;
+                    distance = position.getY();
                 }
             }
 
@@ -1041,5 +1055,366 @@ public class BasicPathRanker extends PathRanker {
         } finally {
             owner.methodEnd(BasicPathRanker.class, METHOD_NAME);
         }
+    }
+
+    protected double checkPathForHazards(MovePath path, Entity movingUnit, IGame game) {
+        final String METHOD_NAME = "checkPathForHazards(MovePath, Entity, IGame)";
+
+        StringBuilder logMsg = new StringBuilder("Checking Path (").append(path.toString()).append(") for hazards.");
+
+        try {
+            // If we're flying or swimming, we don't care about ground hazards.
+            if (EntityMovementType.MOVE_FLYING.equals(path.getLastStepMovementType()) ||
+                EntityMovementType.MOVE_OVER_THRUST.equals(path.getLastStepMovementType()) ||
+                EntityMovementType.MOVE_SAFE_THRUST.equals(path.getLastStepMovementType()) ||
+                EntityMovementType.MOVE_VTOL_WALK.equals(path.getLastStepMovementType()) ||
+                EntityMovementType.MOVE_VTOL_RUN.equals(path.getLastStepMovementType()) ||
+                EntityMovementType.MOVE_SUBMARINE_WALK.equals(path.getLastStepMovementType()) ||
+                EntityMovementType.MOVE_SUBMARINE_RUN.equals(path.getLastStepMovementType())) {
+
+                logMsg.append("\n\tMove Type (").append(path.getLastStepMovementType().toString())
+                      .append(") ignores ground hazards.");
+                return 0;
+            }
+
+            // If we're jumping, we only care about where we land.
+            if (path.isJumping()) {
+                logMsg.append("\n\tJumping");
+                Coords endCoords = path.getFinalCoords();
+                IHex endHex = game.getBoard().getHex(endCoords);
+                return checkHexForHazards(endHex, movingUnit, true, path.getLastStep(), true, path, game.getBoard(),
+                                          logMsg);
+            }
+
+            double totalHazard = 0;
+            Coords previousCoords = null;
+            MoveStep lastStep = path.getLastStep();
+            for (MoveStep step : path.getStepVector()) {
+                Coords coords = step.getPosition();
+                if ((coords == null) || coords.equals(previousCoords)) {
+                    continue;
+                }
+                IHex hex = game.getBoard().getHex(coords);
+                totalHazard += checkHexForHazards(hex, movingUnit, lastStep.equals(step), step, false, path,
+                                                  game.getBoard(), logMsg);
+                previousCoords = coords;
+            }
+
+            return totalHazard;
+        } finally {
+            getOwner().log(getClass(), METHOD_NAME, LogLevel.DEBUG, logMsg);
+        }
+    }
+
+    private double checkHexForHazards(IHex hex, Entity movingUnit, boolean endHex, MoveStep step, boolean jumpLanding,
+                                      MovePath movePath, IBoard board, StringBuilder logMsg) {
+        logMsg.append("\n\tHex ").append(hex.getCoords().toFriendlyString());
+
+        final List<Integer> HAZARDS = new ArrayList<>(Arrays.asList(Terrains.FIRE, Terrains.MAGMA, Terrains.ICE,
+                                                                    Terrains.WATER, Terrains.BUILDING));
+
+        int[] terrainTypes = hex.getTerrainTypes();
+        Set<Integer> hazards = new HashSet<>();
+        for (int type : terrainTypes) {
+            if (HAZARDS.contains(type)) {
+                hazards.add(type);
+            }
+        }
+
+        // No hazards were found, so nothing to worry about.
+        if (hazards.isEmpty()) {
+            logMsg.append(" has no hazards.");
+            return 0;
+        }
+
+        // Calculate hazard value by terrain type.
+        double hazardValue = 0;
+        for (int hazard : hazards) {
+            switch (hazard) {
+                case Terrains.FIRE:
+                    hazardValue += calcFireHazard(movingUnit, endHex, logMsg);
+                    break;
+                case Terrains.MAGMA:
+                    hazardValue += calcMagmaHazard(hex, endHex, movingUnit, jumpLanding, step, logMsg);
+                    break;
+                case Terrains.ICE:
+                    hazardValue += calcIceHazard(movingUnit, hex, step, jumpLanding, logMsg);
+                    break;
+                case Terrains.WATER:
+                    if (!hazards.contains(Terrains.ICE)) {
+                        hazardValue += calcWaterHazard(movingUnit, hex, step, logMsg);
+                    }
+                    break;
+                case Terrains.BUILDING:
+                    hazardValue += calcBuildingHazard(step, movingUnit, movePath, board, logMsg);
+                    break;
+            }
+        }
+        logMsg.append("\n\tTotal Hazard = ").append(LOG_DECIMAL.format(hazardValue));
+
+        return hazardValue;
+    }
+
+    // Building collapse and basements are handled in PathRanker.validatePaths.
+    private double calcBuildingHazard(MoveStep step, Entity movingUnit, MovePath movePath, IBoard board,
+                                      StringBuilder logMsg) {
+        logMsg.append("\n\tCalculating building hazard:  ");
+
+        // Protos, BA and Infantry move through buildings freely.
+        if (movingUnit instanceof Protomech || movingUnit instanceof Infantry) {
+            logMsg.append("Safe for infantry and protos.");
+            return 0;
+        }
+
+        // Jumping onto a building is handled in PathRanker validatePaths.
+        if (movePath.isJumping()) {
+            return 0;
+        }
+
+        // Get the odds of failing the piloting roll while moving through the building.
+        double odds = (1.0 - (Compute.oddsAbove(movingUnit.getCrew().getPiloting()) / 100));
+        logMsg.append("\n\t\tChance to fail piloting roll: ").append(LOG_PERCENT.format(odds));
+
+        // Hazard is based on potential damage taken.
+        double dmg = board.getBuildingAt(step.getPosition()).getCurrentCF(step.getPosition()) / 10D;
+        logMsg.append("\n\t\tPotential building damage: ").append(LOG_DECIMAL.format(dmg));
+
+        double hazard = dmg * odds;
+        logMsg.append("\n\t\tHazard value (").append(LOG_DECIMAL.format(hazard)).append(").");
+        return hazard;
+    }
+
+    private double calcIceHazard(Entity movingUnit, IHex hex, MoveStep step, boolean jumpLanding,
+                                 StringBuilder logMsg) {
+        logMsg.append("\n\tCalculating ice hazard:  ");
+
+        // Hover units are above the surface.
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
+            EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+            logMsg.append("Hovering above ice (0).");
+            return 0;
+        }
+
+        // If there is no water under the ice, don't worry about breaking through.
+        if (hex.depth() < 1) {
+            logMsg.append("No water under ice (0).");
+            return 0;
+        }
+
+        // Hazard is based on chance to break through to the water underneath.
+        double breakthroughMod = jumpLanding ? 0.5 : 0.1667;
+        logMsg.append("\n\t\tChance to break through ice: ").append(LOG_PERCENT.format(breakthroughMod));
+
+        double hazard = calcWaterHazard(movingUnit, hex, step, logMsg) * breakthroughMod;
+        logMsg.append("\n\t\tHazard value (").append(LOG_DECIMAL.format(hazard)).append(").");
+        return hazard;
+    }
+
+    private double calcWaterHazard(Entity movingUnit, IHex hex, MoveStep step, StringBuilder logMsg) {
+        logMsg.append("\n\tCalculating water hazard:  ");
+
+        // Puddles don't count.
+        if (hex.depth() == 0) {
+            logMsg.append("Puddles don't count (0).");
+            return 0;
+        }
+
+        // Hover units are above the surface.
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
+            EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+            logMsg.append("Hovering above water (0).");
+            return 0;
+        }
+
+        // Amphibious units are safe (kind of the point).
+        if (movingUnit.hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) ||
+            movingUnit.hasWorkingMisc(MiscType.F_AMPHIBIOUS)) {
+            logMsg.append("Amphibious unit (0).");
+            return 0;
+        }
+
+        // Most other units are automatically destroyed.
+        if (!(movingUnit instanceof Mech || movingUnit instanceof Protomech || movingUnit instanceof BattleArmor)) {
+            logMsg.append("Ill drown (1000).");
+            return 1000;
+        }
+
+        // Unsealed unit will drown.
+        if (movingUnit instanceof Mech && ((Mech) movingUnit).isIndustrial()) {
+            logMsg.append("Industrial mechs drown too (1000).");
+            return 1000;
+        }
+
+        // Find the submerged locations.
+        Set<Integer> submergedLocations = new HashSet<>();
+        for (int loc = 0; loc < movingUnit.locations(); loc++) {
+            if (Mech.LOC_CLEG == loc && !(movingUnit instanceof TripodMech)) {
+                continue;
+            }
+
+            if ((hex.depth() >= 2) || step.isProne() || !(movingUnit instanceof Mech)) {
+                submergedLocations.add(loc);
+                continue;
+            }
+
+            if (Mech.LOC_RLEG == loc || Mech.LOC_LLEG == loc || Mech.LOC_CLEG == loc) {
+                submergedLocations.add(loc);
+                continue;
+            }
+
+            if ((movingUnit instanceof QuadMech) && (Mech.LOC_RARM == loc || Mech.LOC_LARM == loc)) {
+                submergedLocations.add(loc);
+            }
+        }
+        logMsg.append("\n\t\tSubmerged locations: ").append(submergedLocations.size());
+
+        int hazardValue = 0;
+        for (int loc : submergedLocations) {
+            logMsg.append("\n\t\t\tLocation ").append(loc).append(" is ");
+
+            // Only locations withou armor can breach in movement phase.
+            if (movingUnit.getArmor(loc) > 0) {
+                logMsg.append(" not breached (0).");
+                continue;
+            }
+
+            // Mechs or Protomechs having a head or torso breach is deadly.  For other units, any breach is deadly.
+            //noinspection ConstantConditions
+            if (Mech.LOC_HEAD == loc ||
+                Mech.LOC_CT == loc ||
+                Protomech.LOC_HEAD == loc ||
+                Protomech.LOC_TORSO == loc ||
+                (!(movingUnit instanceof Mech) && !(movingUnit instanceof Protomech))) {
+                logMsg.append(" breached and critical (1000).");
+                return 1000;
+            }
+
+            // Add 50 points per potential breach location.
+            logMsg.append(" breached (50).");
+            hazardValue += 50;
+        }
+
+        return hazardValue;
+    }
+
+    private double calcFireHazard(Entity movingUnit, boolean endHex, StringBuilder logMsg) {
+        logMsg.append("\n\tCalculating fire hazard:  ");
+
+        double hazardValue = 0;
+
+        // Fireproof BA ignores fire.
+        if ((movingUnit instanceof BattleArmor) && ((BattleArmor) movingUnit).isFireResistant()) {
+            logMsg.append("Ignored by fire resistant armor (0).");
+            return 0;
+        }
+
+        // Tanks risk critical hits.
+        if (movingUnit instanceof Tank) {
+            logMsg.append("Possible crit on tank (25).");
+            return 25;
+        }
+
+        // Protomechs risk location destruction.
+        if (movingUnit instanceof Protomech) {
+            logMsg.append("Possible location destruction (50).");
+            return 50;
+        }
+
+        // Infantry and BA risk total destruction.
+        if (movingUnit instanceof Infantry) {
+            logMsg.append(("Possible unit destruction (1000)."));
+            return 1000;
+        }
+
+        // If this unit tracks heat, add the heat gain to the hazard value.
+        if (movingUnit.getHeatCapacity() != Entity.DOES_NOT_TRACK_HEAT) {
+            hazardValue += endHex ? 5 : 2;
+            logMsg.append("Heat gain (").append(hazardValue).append(").");
+        }
+
+        return hazardValue;
+    }
+
+    private double calcMagmaHazard(IHex hex, boolean endHex, Entity movingUnit, boolean jumpLanding, MoveStep step,
+                                   StringBuilder logMsg) {
+        logMsg.append("\n\tCalculating magma hazard:  ");
+
+        // Hovers are unaffected.
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
+            EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+            logMsg.append("Hovering above magma (0).");
+            return 0;
+        }
+
+        double hazardValue = 0;
+        int magmaLevel = hex.terrainLevel(Terrains.MAGMA);
+
+        // Liquid magma.
+        if (magmaLevel == 2) {
+            return calcLavaHazard(endHex, movingUnit, step, logMsg);
+        } else {
+            double breakThroughMod = jumpLanding ? 0.5 : 0.1667;
+            logMsg.append("\n\t\tChance to break through crust = ").append(LOG_PERCENT.format(breakThroughMod));
+
+            // Factor in the chance to break through.
+            double lavalHazard = calcLavaHazard(endHex, movingUnit, step, logMsg) * breakThroughMod;
+            logMsg.append("\n\t\t\tLava hazard (").append(LOG_DECIMAL.format(lavalHazard)).append(").");
+            hazardValue += lavalHazard;
+
+            // Factor in heat.
+            if (movingUnit.getHeatCapacity() != Entity.DOES_NOT_TRACK_HEAT) {
+                double heatMod = (endHex ? 5 : 2) * (1 - breakThroughMod);
+                hazardValue += heatMod;
+                logMsg.append("\n\t\tHeat gain (").append(LOG_DECIMAL.format(heatMod)).append(").");
+            }
+        }
+
+        return hazardValue;
+    }
+
+    private double calcLavaHazard(boolean endHex, Entity movingUnit, MoveStep step, StringBuilder logMsg) {
+        logMsg.append("\n\tCalculating laval hazard:  ");
+
+
+        // Hovers are unaffected.
+        if (EntityMovementMode.HOVER == movingUnit.getMovementMode() ||
+            EntityMovementMode.WIGE == movingUnit.getMovementMode()) {
+            logMsg.append("Hovering above lava (0).");
+            return 0;
+        }
+
+        // Non-mech units auto-destroyed.
+        if (!(movingUnit instanceof Mech)) {
+            logMsg.append("Non-mech instant destruction (1000).");
+            return 1000;
+        }
+
+        double hazardValue = 0;
+
+        // Factor in heat.
+        double heat = endHex ? 10.0 : 5.0;
+        hazardValue += heat;
+        logMsg.append("\n\t\tHeat gain (").append(heat).append(LOG_DECIMAL.format(heat)).append(").");
+
+        // Factor in potential damage.
+        double dmg;
+        logMsg.append("\n\t\tDamage to ");
+        if (step.isProne()) {
+            dmg = 7 * movingUnit.locations();
+            logMsg.append("everything [prone] (");
+        } else if (movingUnit instanceof BipedMech) {
+            dmg = 14;
+            logMsg.append("legs (");
+        } else if (movingUnit instanceof TripodMech) {
+            dmg = 21;
+            logMsg.append("legs (");
+        } else {
+            dmg = 28;
+            logMsg.append("legs (");
+        }
+        logMsg.append(LOG_DECIMAL.format(dmg)).append(").");
+        hazardValue += dmg;
+
+        return hazardValue;
     }
 }

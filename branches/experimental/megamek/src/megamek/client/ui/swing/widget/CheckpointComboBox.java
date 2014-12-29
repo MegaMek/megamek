@@ -24,7 +24,7 @@ import javax.swing.*;
  * @version %Id%
  * @since 3/21/14 8:34 AM
  */
-public class CheckpointComboBox<E> extends JComboBox {
+public class CheckpointComboBox<E> extends JComboBox<E> {
 
     /**
      * 
@@ -43,8 +43,7 @@ public class CheckpointComboBox<E> extends JComboBox {
      *
      * @param items The items to be displayed in the combobox.
      */
-    @SuppressWarnings("unchecked")
-    public CheckpointComboBox(Object[] items) {
+    public CheckpointComboBox(E[] items) {
         super(items);
     }
 

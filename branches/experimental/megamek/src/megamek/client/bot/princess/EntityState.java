@@ -20,6 +20,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.MovePath;
 import megamek.common.Targetable;
+import megamek.common.options.OptionsConstants;
 
 /**
  * EntityState describes a hypothetical situation an entity could be in when firing
@@ -41,6 +42,8 @@ public class EntityState {
     private boolean building;
     private boolean aero;
     private boolean airborne;
+    private boolean naturalAptGun;
+    private boolean naturalAptPilot;
 
     /**
      * Initialize an entity state from the state an entity is actually in
@@ -61,6 +64,8 @@ public class EntityState {
             building = false;
             aero = (target instanceof Aero);
             airborne = entity.isAirborne() || entity.isAirborneVTOLorWIGE();
+            naturalAptGun = entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+            naturalAptPilot = entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
         } else { // for buildings and such
             position = target.getPosition();
             facing = 0;
@@ -73,6 +78,8 @@ public class EntityState {
             setSecondaryFacing(0);
             building = (target instanceof BuildingTarget);
             aero = false;
+            naturalAptGun = false;
+            naturalAptPilot = false;
         }
     }
 
@@ -89,16 +96,19 @@ public class EntityState {
         } else if (path.getLastStepMovementType() == EntityMovementType.MOVE_RUN) {
             heat = getHeat() + 2;
         } else if ((path.getLastStepMovementType() == EntityMovementType.MOVE_JUMP)
-                && (getHexesMoved() <= 3)) {
+                   && (getHexesMoved() <= 3)) {
             heat = getHeat() + 3;
         } else if ((path.getLastStepMovementType() == EntityMovementType.MOVE_JUMP)
-                && (getHexesMoved() > 3)) {
+                   && (getHexesMoved() > 3)) {
             heat = getHeat() + getHexesMoved();
         }
         prone = path.getFinalProne() || path.getFinalHullDown();
         immobile = path.getEntity().isImmobile();
         jumping = path.isJumping();
         movementType = path.getLastStepMovementType();
+        naturalAptGun = path.getEntity().getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+        naturalAptPilot = path.getEntity().getCrew().getOptions()
+                              .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
         setSecondaryFacing(getFacing());
     }
 
@@ -156,5 +166,13 @@ public class EntityState {
 
     public boolean isAirborneAero() {
         return aero && airborne;
+    }
+
+    public boolean hasNaturalAptGun() {
+        return naturalAptGun;
+    }
+
+    public boolean hasNaturalAptPiloting() {
+        return naturalAptPilot;
     }
 }

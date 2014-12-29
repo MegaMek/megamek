@@ -19,7 +19,7 @@
 #############################################################################
 Liao 3050 Medium Mechs A
 Blackjack BJ-1,14
-Vindicator VND-1AA "Avenging Angel",21
+Vindicator VND-1AA 'Avenging Angel',21
 Whitworth WTH-1,11
 Trebuchet TBT-5S,11
 Scorpion SCP-1N,11

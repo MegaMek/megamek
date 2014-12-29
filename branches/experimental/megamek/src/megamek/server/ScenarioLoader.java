@@ -314,7 +314,7 @@ public class ScenarioLoader {
             for (int y = 0; y < entities.length; y++) {
                 entities[y].setOwner(players[x]);
                 entities[y].setId(nIndex++);
-                g.addEntity(entities[y].getId(), entities[y]);
+                g.addEntity(entities[y]);
             }
         }
         // game's ready
@@ -324,7 +324,7 @@ public class ScenarioLoader {
             g.getOptions().loadOptions();
         } else {
             g.getOptions().loadOptions(
-                    new File(m_scenFile.getParentFile(), optionFile));
+                    new File(m_scenFile.getParentFile(), optionFile), true);
         }
 
         // set wind
@@ -471,6 +471,9 @@ public class ScenarioLoader {
                     System.out.println(e.getDisplayName()
                             + " will be deployed before round " + round);
                     e.setDeployRound(round);
+                    e.setDeployed(false);
+                    e.setNeverDeployed(false);
+                    e.setPosition(null);
                 }
             }
 

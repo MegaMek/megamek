@@ -1,6 +1,6 @@
 Version:1.0
 Wight
-WGT-4NC "Dezgra"
+WGT-4NC 'Dezgra'
 
 Config:Biped
 TechBase:Mixed (IS Chassis)

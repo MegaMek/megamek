@@ -13,7 +13,7 @@ BattleArmor
 Tornado PA(L)
 </Name>
 <Model>
-P12 "Hurricane"
+P12 'Hurricane'
 </Model>
 <chassis>
 biped

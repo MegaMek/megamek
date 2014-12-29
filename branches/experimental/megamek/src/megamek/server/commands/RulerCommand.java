@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package megamek.server.commands;
 
@@ -36,9 +36,9 @@ public class RulerCommand extends ServerCommand {
             ToHitData thd;
 
             start = new Coords(Integer.parseInt(args[1]) - 1, Integer
-                    .parseInt(args[2]) - 1);
+                                                                      .parseInt(args[2]) - 1);
             end = new Coords(Integer.parseInt(args[3]) - 1, Integer
-                    .parseInt(args[4]) - 1);
+                                                                    .parseInt(args[4]) - 1);
             if (args.length > 5) {
                 try {
                     elev1 = Integer.parseInt(args[5]);
@@ -55,7 +55,7 @@ public class RulerCommand extends ServerCommand {
             }
 
             thd = LosEffects.calculateLos(server.getGame(),
-                    buildAttackInfo(start, end, elev1, elev2)).losModifiers(
+                                          buildAttackInfo(start, end, elev1, elev2)).losModifiers(
                     server.getGame());
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
                 toHit1 = thd.getValue() + " because "; //$NON-NLS-1$
@@ -63,7 +63,7 @@ public class RulerCommand extends ServerCommand {
             toHit1 += thd.getDesc();
 
             thd = LosEffects.calculateLos(server.getGame(),
-                    buildAttackInfo(end, start, elev2, elev1)).losModifiers(
+                                          buildAttackInfo(end, start, elev2, elev1)).losModifiers(
                     server.getGame());
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
                 toHit2 = thd.getValue() + " because  "; //$NON-NLS-1$
@@ -71,11 +71,11 @@ public class RulerCommand extends ServerCommand {
             toHit2 += thd.getDesc();
 
             server.sendServerChat(connId, "The ToHit from hex ("
-                    + (start.x + 1) + ", " + (start.y + 1) + ") at elevation "
-                    + elev1 + " to (" + (end.x + 1) + ", " + (end.y + 1)
-                    + ") at elevation " + elev2 + " has a range of "
-                    + start.distance(end) + " and a modifier of " + toHit1
-                    + " and return fire has a modifier of " + toHit2 + ".");
+                                          + (start.getX() + 1) + ", " + (start.getY() + 1) + ") at elevation "
+                                          + elev1 + " to (" + (end.getX() + 1) + ", " + (end.getY() + 1)
+                                          + ") at elevation " + elev2 + " has a range of "
+                                          + start.distance(end) + " and a modifier of " + toHit1
+                                          + " and return fire has a modifier of " + toHit2 + ".");
         } catch (NumberFormatException nfe) {
         } catch (NullPointerException npe) {
         } catch (IndexOutOfBoundsException ioobe) {
@@ -85,7 +85,7 @@ public class RulerCommand extends ServerCommand {
     /**
      * Build line of sight effects between coordinates c1 and c2 at height h1
      * and h2 respectivly.
-     * 
+     *
      * @param c1 the source coordiantes.
      * @param c2 the target coordinates.
      * @param h1 the height in the source tile that is being shot from.
@@ -93,16 +93,16 @@ public class RulerCommand extends ServerCommand {
      * @return an attackInfo object that describes the apliable modifiers.
      */
     private LosEffects.AttackInfo buildAttackInfo(Coords c1, Coords c2, int h1,
-            int h2) {
+                                                  int h2) {
         LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
         ai.attackPos = c1;
         ai.targetPos = c2;
         ai.attackHeight = h1;
         ai.targetHeight = h2;
         ai.attackAbsHeight = server.getGame().getBoard().getHex(c1).floor()
-                + h1;
+                             + h1;
         ai.targetAbsHeight = server.getGame().getBoard().getHex(c2).floor()
-                + h2;
+                             + h2;
         return ai;
     }
 

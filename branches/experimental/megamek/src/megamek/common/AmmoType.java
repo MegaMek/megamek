@@ -1329,6 +1329,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, 2620, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Vibrabomb-IV", 1, M_VIBRABOMB_IV, 3065, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M, 2620, TechConstants.T_IS_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Flare", 1, M_FLARE, 2620, TechConstants.T_IS_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1341,6 +1342,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Homing", 1, M_HOMING, 2850, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, 2850, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M, 2850, TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Flare", 1, M_FLARE, 2850, TechConstants.T_CLAN_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1349,16 +1351,16 @@ public class AmmoType extends EquipmentType {
         // create the munition types for clan vehicular grenade launchers
         munitions.clear();
         munitions.add(new MunitionMutator("Chaff", 1, M_CHAFF, 3065, TechConstants.T_CLAN_ADVANCED).addTechLevel(3080, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("Incendiary", 1, M_CHAFF, 2820, TechConstants.T_CLAN_ADVANCED).addTechLevel(3080, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("Smoke", 1, M_CHAFF, 2820, TechConstants.T_CLAN_ADVANCED).addTechLevel(3080, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("Incendiary", 1, M_INCENDIARY, 2820, TechConstants.T_CLAN_ADVANCED).addTechLevel(3080, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKEGRENADE, 2820, TechConstants.T_CLAN_ADVANCED).addTechLevel(3080, TechConstants.T_CLAN_TW));
 
         AmmoType.createMunitions(clanVGLAmmos, munitions);
 
         // create the munition types for IS vehicular grenade launchers
         munitions.clear();
         munitions.add(new MunitionMutator("Chaff", 1, M_CHAFF, 3052, TechConstants.T_IS_ADVANCED).addTechLevel(3080, TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Incendiary", 1, M_CHAFF, 1950, TechConstants.T_IS_ADVANCED).addTechLevel(3080, TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Smoke", 1, M_CHAFF, 1950, TechConstants.T_IS_ADVANCED).addTechLevel(3080, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Incendiary", 1, M_INCENDIARY, 1950, TechConstants.T_IS_ADVANCED).addTechLevel(3080, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKEGRENADE, 1950, TechConstants.T_IS_ADVANCED).addTechLevel(3080, TechConstants.T_IS_TW_NON_BOX));
 
         AmmoType.createMunitions(vglAmmos, munitions);
 
@@ -1369,6 +1371,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM, 2621, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE, 1950, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, 1950, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Flare", 1, M_FLARE, 1950, TechConstants.T_IS_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1404,6 +1407,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) FASCAM", 1, M_FASCAM, 2820, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("(Clan) Flechette", 1, M_FLECHETTE, 2820, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE, 2820, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("(Clan) Flare", 1, M_FLARE, 2820, TechConstants.T_CLAN_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -3254,7 +3258,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISIHVGaussAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.techLevel.put(3065, TechConstants.T_IS_EXPERIMENTAL);
         ammo.name = "Improved Heavy Gauss Ammo";
         ammo.shortName = "iHeavy Gauss";
         ammo.setInternalName("ISImprovedHeavyGauss Ammo");
@@ -5875,7 +5879,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 40;
         ammo.bv = 4;
-        ammo.cost = 75000;
+        ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[]{"", "HotLoad"});
         ammo.introDate = 2300;
@@ -5900,7 +5904,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 33;
         ammo.bv = 4;
-        ammo.cost = 75000;
+        ammo.cost = 27000;
         ammo.availRating = new int[]{EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B};
         ammo.introDate = 2370;
@@ -5924,7 +5928,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 24;
         ammo.bv = 6;
-        ammo.cost = 75000;
+        ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[]{"", "HotLoad"});
         ammo.introDate = 2300;
@@ -5950,7 +5954,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 20;
         ammo.bv = 6;
-        ammo.cost = 75000;
+        ammo.cost = 27000;
         ammo.availRating = new int[]{EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B};
         ammo.introDate = 2370;
@@ -5974,7 +5978,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 17;
         ammo.bv = 8;
-        ammo.cost = 75000;
+        ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[]{"", "HotLoad"});
         ammo.introDate = 2300;
@@ -6000,7 +6004,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 14;
         ammo.bv = 8;
-        ammo.cost = 75000;
+        ammo.cost = 27000;
         ammo.availRating = new int[]{EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B};
         ammo.introDate = 2370;
@@ -6024,7 +6028,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 13;
         ammo.bv = 11;
-        ammo.cost = 75000;
+        ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[]{"", "HotLoad"});
         ammo.introDate = 2300;
@@ -6050,7 +6054,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 11;
         ammo.bv = 11;
-        ammo.cost = 75000;
+        ammo.cost = 27000;
         ammo.availRating = new int[]{EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B};
         ammo.introDate = 2370;
@@ -11405,8 +11409,10 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3067, TechConstants.T_CLAN_ADVANCED);
-        ammo.name = "Vehicular Grenade Launcher Ammo";
-        ammo.shortName = "VGL";
+        ammo.name = "VGL Fragmentation Grenade";
+        ammo.subMunitionBegin = 4;
+        ammo.subMunitionLength = 13;
+        ammo.shortName = "VGL Fragmentation";
         ammo.setInternalName("CL Ammo VGL");
         ammo.addLookupName("CLVehicularGrenadeLauncherAmmo");
         ammo.damagePerShot = 0;
@@ -11429,8 +11435,10 @@ public class AmmoType extends EquipmentType {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3067, TechConstants.T_IS_ADVANCED);
-        ammo.name = "Vehicular Grenade Launcher Ammo";
-        ammo.shortName = "VGL";
+        ammo.name = "VGL Fragmentation Grenade";
+        ammo.subMunitionBegin = 4;
+        ammo.subMunitionLength = 13;
+        ammo.shortName = "VGL Fragmentation";
         ammo.setInternalName("IS Ammo VGL");
         ammo.addLookupName("ISVehicularGrenadeLauncherAmmo");
         ammo.damagePerShot = 0;
@@ -11479,14 +11487,19 @@ public class AmmoType extends EquipmentType {
     public static boolean canClearMinefield(AmmoType at) {
         // first the normal munition types
         if (at != null) {
-            if (((((at.getAmmoType() == T_LRM)
+            // LRM-20's, RL-20's, and MRM 20, 30, and 40 can clear minefields
+            if (((at.getAmmoType() == T_LRM)
                     || (at.getAmmoType() == T_LRM_STREAK)
                     || (at.getAmmoType() == T_EXLRM)
                     || (at.getAmmoType() == T_PXLRM)
                     || (at.getAmmoType() == T_MRM)
-                    || (at.getAmmoType() == T_MRM_STREAK) || (at.getAmmoType() == T_ROCKET_LAUNCHER)) && (at
-                    .getRackSize() >= 20)) || (at.getAmmoType() == T_TBOLT_20))
-                    && (at.getMunitionType() == M_STANDARD)) {
+                    || (at.getAmmoType() == T_MRM_STREAK) 
+                    || (at.getAmmoType() == T_ROCKET_LAUNCHER))
+                    && (at.getRackSize() >= 20)
+                    && ((at.getMunitionType() == M_STANDARD)
+                            || (at.getMunitionType() == M_ARTEMIS_CAPABLE)
+                            || (at.getMunitionType() == M_ARTEMIS_V_CAPABLE)
+                            || (at.getMunitionType() == M_NARC_CAPABLE))) {
                 return true;
             }
             // ATMs
@@ -11607,6 +11620,7 @@ public class AmmoType extends EquipmentType {
 
             // Create an uninitialized munition object.
             AmmoType munition = new AmmoType();
+            munition.setTonnage(base.getTonnage(null));
 
             // Manipulate the base round's names, depending on ammoType.
             switch (base.ammoType) {
@@ -11705,6 +11719,20 @@ public class AmmoType extends EquipmentType {
                     munition.addBeforeString(base, "Ammo", name + " ");
                     break;
                 case AmmoType.T_VGL:
+                    // Replace "Fragmentation" with the submunition name
+                    munition.name = base.name.replace("Fragmentation", name);
+                    munition.subMunitionBegin = base.subMunitionBegin;
+                    munition.subMunitionLength = name.length();                    
+
+                    munition.shortName = 
+                            base.shortName.replace("Fragmentation", name);
+                    StringBuffer internalName = new StringBuffer(
+                            base.getInternalName());
+                    munition.setInternalName(internalName.insert(
+                            internalName.lastIndexOf("Ammo"), name + " ")
+                            .toString());
+                    munition.addBeforeString(base, "Ammo", name + " ");
+                    break;
                 case AmmoType.T_LONG_TOM:
                 case AmmoType.T_SNIPER:
                 case AmmoType.T_THUMPER:

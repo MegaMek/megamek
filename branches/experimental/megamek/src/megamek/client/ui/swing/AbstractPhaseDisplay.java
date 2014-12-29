@@ -54,11 +54,12 @@ import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.GameVictoryEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 public abstract class AbstractPhaseDisplay extends JPanel implements 
-		BoardViewListener, GameListener, Distractable {
+        BoardViewListener, GameListener, Distractable {
 
     /**
      *
@@ -76,24 +77,24 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
     ImageIcon backgroundIcon = null;
 
     protected AbstractPhaseDisplay() {
-    	SkinSpecification pdSkinSpec = 
-        		SkinXMLHandler.getSkin(SkinXMLHandler.PHASEDISPLAY);
+        SkinSpecification pdSkinSpec = 
+                SkinXMLHandler.getSkin(SkinXMLHandler.PHASEDISPLAY);
         
         try {
-        	if (pdSkinSpec.backgrounds.size() > 0){
-            	File file = new File(Configuration.widgetsDir(), 
-            			pdSkinSpec.backgrounds.get(0));
-    			URI imgURL = file.toURI();
-    			if (!file.exists()){
-    				System.err.println("PhaseDisplay Error: icon doesn't exist: "
-    						+ file.getAbsolutePath());
-    			} else {
-    				backgroundIcon = new ImageIcon(imgURL.toURL());
-    			}
-        	}
+            if (pdSkinSpec.backgrounds.size() > 0){
+                File file = new File(Configuration.widgetsDir(), 
+                        pdSkinSpec.backgrounds.get(0));
+                URI imgURL = file.toURI();
+                if (!file.exists()){
+                    System.err.println("PhaseDisplay Error: icon doesn't exist: "
+                            + file.getAbsolutePath());
+                } else {
+                    backgroundIcon = new ImageIcon(imgURL.toURL());
+                }
+            }
         } catch (Exception e){
-        	System.out.println("Error loading PhaseDisplay background image!");
-        	System.out.println(e.getMessage());
+            System.out.println("Error loading PhaseDisplay background image!");
+            System.out.println(e.getMessage());
         }
         
         setBorder(new MegamekBorder("PhaseDisplayBorder"));
@@ -107,16 +108,16 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
                     return;
                 }
                 if (clientgui.getClient().isMyTurn() || 
-                		(clientgui.getClient().getGame().getTurn() == null)) {
+                        (clientgui.getClient().getGame().getTurn() == null)) {
                     ready();
                 }
             }
         });
         
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-        		KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
-        								InputEvent.CTRL_DOWN_MASK),
-        								"doneButton");
+                KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
+                                        InputEvent.CTRL_DOWN_MASK),
+                                        "doneButton");
 
         getActionMap().put("doneButton", new AbstractAction() {
             private static final long serialVersionUID = -5034474968902280850L;
@@ -126,7 +127,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
                     return;
                 }
                 if (clientgui.getClient().isMyTurn() || 
-                		(clientgui.getClient().getGame().getTurn() == null)) {
+                        (clientgui.getClient().getGame().getTurn() == null)) {
                     ready();
                 }
             }
@@ -134,10 +135,10 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
     }
     
     protected void paintComponent(Graphics g) {
-    	if (backgroundIcon == null){
-    		super.paintComponent(g);
-    		return;
-    	}
+        if (backgroundIcon == null){
+            super.paintComponent(g);
+            return;
+        }
         int w = getWidth();
         int h = getHeight();
         int iW = backgroundIcon.getIconWidth();
@@ -279,8 +280,13 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
     }
     
     @Override
-	public void gameClientFeedbackRquest(GameCFREvent evt) {
-    	//noaction default
+    public void gameClientFeedbackRquest(GameCFREvent evt) {
+        //noaction default
+    }
+    
+    @Override
+    public void gameVictory(GameVictoryEvent e) {
+        //noaction default
     }
 
     public void ready() {

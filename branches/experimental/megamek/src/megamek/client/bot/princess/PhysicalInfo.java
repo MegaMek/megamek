@@ -203,7 +203,10 @@ public class PhysicalInfo {
             setMaxDamage((int) Math.floor(getShooter().getWeight() / 5.0));
         }
 
-        setProbabilityToHit(Compute.oddsAbove(getHitData().getValue()) / 100.0);
+        if (shooterState.hasNaturalAptPiloting()) {
+            msg.append("\n\tAttacker has Natural Aptitude Piloting");
+        }
+        setProbabilityToHit(Compute.oddsAbove(getHitData().getValue(), shooterState.hasNaturalAptPiloting()) / 100.0);
 
         setExpectedDamageOnHit(getMaxDamage());
 

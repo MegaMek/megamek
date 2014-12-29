@@ -128,6 +128,50 @@
       <background_image>hyades.jpg</background_image>
   </UI_Element>
 
+  <!-- Defines the borders for the PhaseDisplay -->
+  <UI_Element>
+      <name>PhaseDisplayBorder</name>
+      <!-- Specification of border images -->
+      <border>
+        <!-- Corner images -->
+        <corner_top_left>monitor_top_left.png</corner_top_left>
+        <corner_top_right>monitor_top_right.png</corner_top_right>
+        <corner_bottom_left>monitor_bottom_left.png</corner_bottom_left>
+        <corner_bottom_right>monitor_bottom_right.png</corner_bottom_right>
+        <!-- Border lines: these images will be tiled -->
+        <edge>
+          <edgeIcon>
+            <icon>monitor_top_line.png</icon>
+            <tiled>true</tiled>
+          </edgeIcon>
+          <edgeName>top</edgeName>>
+        </edge>
+        <edge>
+          <edgeIcon>
+            <icon>monitor_right_line.png</icon>
+            <tiled>true</tiled>
+          </edgeIcon>
+          <edgeName>right</edgeName>>
+        </edge>
+        <edge>
+          <edgeIcon>
+            <icon>monitor_bottom_line.png</icon>
+            <tiled>true</tiled>
+          </edgeIcon>
+          <edgeName>bottom</edgeName>>
+        </edge>
+        <edge>
+          <edgeIcon>
+            <icon>monitor_left_line.png</icon>
+            <tiled>true</tiled>
+          </edgeIcon>
+          <edgeName>left</edgeName>>
+        </edge>
+      </border>
+    <background_image>tile.gif</background_image>
+    <font_color>#FFFF00</font_color>
+  </UI_Element>
+
   <!-- Defines default borders used in Megamek -->
   <UI_Element>
       <name>defaultElement</name>

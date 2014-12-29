@@ -168,11 +168,11 @@ Clan Level 3
 </engine_type>
 <motion_type>
 aerodyne
-</motion_type>
+</motion_type>
 <transporters>
 SmallCraftBay:10:2
 ASFBay:20:4
-CargoBay:85835:1
+CargoBay:62914.5:1
 </transporters>
 <docking_collar>
 4

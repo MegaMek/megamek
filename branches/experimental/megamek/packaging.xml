@@ -33,7 +33,7 @@
 	<property name="svnbuilddir" value="${svndir}/${builddir}" />
 
 	<!-- svnroot used for svn authentification -->
-	<property name="svnroot" value="svn://svn.code.sf.net/p/megamek/code/branches/experimental/megamek" />
+	<property name="svnroot" value="svn://svn.code.sf.net/p/megamek/code/trunk/megamek" />
 
 	<property name="timestampfile" value="${logdir}/timestamp" />
 	<property name="TinyXMLsrc" value="TinyXML07-src.zip" />
@@ -169,6 +169,7 @@
 
 	<target name="svndev-clean" description="remove the SVN build directory">
 		<delete dir="${svnbuilddir}" />
+        <delete dir="${svndir}" />
 	</target>
 
 	<target name="mac-bundle" description="Bundle the project built from SVN into an Mac OSX distribution">
@@ -181,6 +182,7 @@
 				<include name="${logdir}/" />
 				<include name="${datadir}/" />
 				<include name="${confdir}/" />
+				<exclude name="**/*.psd"/>
 			</fileset>
 		</copy>
 		<mkdir dir="${osxdist}/MegaMek.app" />
@@ -196,7 +198,7 @@
 				<include name="${jarfile}" />
 			</fileset>
 		</copy>
-		<!-- We are no longer going to use jarbundler directly, but rather a static app that 
+		<!-- We are no longer going to use jarbundler directly, but rather a static app that
 	         we can copy new jars into. We are also moving the lib outside the app
 	         so that it is consistent with MekHQ
 		<jarbundler dir="${osxdist}" name="MegaMek" mainclass="megamek.MegaMek" stubfile="packaging_utils/JavaApplicationStub" icon="data/images/misc/megamek.icns" workingdirectory="$APP_PACKAGE/../" vmoptions="-Xmx256m">
@@ -253,6 +255,7 @@
 				<include name="readme*.txt" />
 				<include name="license.txt" />
 				<include name="startup.sh" />
+				<exclude name="**/*.psd"/>
 			</fileset>
 		</copy>
 	</target>
@@ -285,9 +288,11 @@
 				<include name="readme*.txt" />
 				<include name="license.txt" />
 				<include name="MegaMek.exe" />
+				<exclude name="**/*.psd"/>
 			</fileset>
 		</copy>
-		<copy file="${util}/megamek.l4j.ini" todir="${windist}" />
+        <copy file="${util}/megamek.l4j.ini" todir="${windist}" />
+        <copy file="${svndir}/MegaMek.jar" todir="${windist}/lib/" />
 	</target>
 
 	<target name="unitfiles-zip" description="Create a zipfile of the Mech datafiles">

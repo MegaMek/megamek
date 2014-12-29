@@ -13,11 +13,8 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
+import megamek.common.AmmoType;
 import megamek.common.IGame;
-import megamek.common.Infantry;
-import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -25,7 +22,7 @@ import megamek.server.Server;
 /**
  * @author Jason Tighe
  */
-public class ACFlakHandler extends AmmoWeaponHandler {
+public class ACFlakHandler extends LBXHandler {
 
     /**
      *
@@ -40,42 +37,22 @@ public class ACFlakHandler extends AmmoWeaponHandler {
      */
     public ACFlakHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
+        sSalvoType = " fragment(s) ";
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
+     * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override
-    protected int calcDamagePerHit() {
-        double toReturn = wtype.getDamage();
+    protected int calcnCluster() {
+        return 5;
+    }
 
-        if (!(target.isAirborneVTOLorWIGE())
-                && !((target instanceof Aero) && target.isAirborne())
-                && !((target instanceof Infantry) && !(target instanceof BattleArmor))) {
-            toReturn /= 2;
-        }
-
-        // during a swarm, all damage gets applied as one block to one
-        // location
-        if ((ae instanceof BattleArmor)
-                && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
-                && !(weapon.isSquadSupportWeapon())
-                && (ae.getSwarmTargetId() == target.getTargetId())) {
-            toReturn *= ((BattleArmor) ae).getShootingStrength();
-        }
-
-        if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        }
-
-        if (game.getOptions().booleanOption("tacops_range")
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
-            toReturn = (int) Math.floor(toReturn * .75);
-        }
-
-        return (int) toReturn;
+    @Override
+    protected boolean usesClusterTable() {
+        return ((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_FLAK;
     }
 
 }

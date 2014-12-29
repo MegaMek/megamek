@@ -33,10 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -67,6 +64,7 @@ import megamek.common.KeyBindParser;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummaryCache;
 import megamek.common.Player;
+import megamek.common.WeaponOrderHandler;
 import megamek.common.logging.LogLevel;
 import megamek.common.logging.Logger;
 import megamek.common.options.GameOptions;
@@ -895,6 +893,12 @@ public class MegaMekGUI implements IMegaMekGUI {
      */
     static void quit() {
         PreferenceManager.getInstance().save();
+        try {
+            WeaponOrderHandler.saveWeaponOrderFile();
+        } catch (IOException e) {
+            System.out.println("Error saving custom weapon orders!");
+            e.printStackTrace();
+        }
         System.exit(0);
     }
 

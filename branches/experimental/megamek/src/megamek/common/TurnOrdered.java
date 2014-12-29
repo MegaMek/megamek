@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 public abstract class TurnOrdered implements ITurnOrdered {
@@ -73,7 +74,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
         int turns = 0;
         // turns_multi is transient, so it could be null
         if (turns_multi == null) {
-            return turns;
+            turns_multi = new HashMap<Integer, Integer>();
         }
         if (game.getOptions().booleanOption("mek_lance_movement")) {
             double lanceSize = 
@@ -157,7 +158,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
     public void incrementMultiTurns(int entityClass) {
         // turns_multi is transient, so it could be null
         if (turns_multi == null) {
-            return;
+            turns_multi = new HashMap<Integer, Integer>();
         }
         Integer classCount = turns_multi.get(entityClass);
         if (classCount == null) {
@@ -210,7 +211,9 @@ public abstract class TurnOrdered implements ITurnOrdered {
     @Override
     public void resetMultiTurns() {
         // turns_multi is transient, so it could be null
-        if (turns_multi != null) {
+        if (turns_multi == null) {
+            turns_multi = new HashMap<Integer, Integer>();
+        } else {
             turns_multi.clear();
         }
     }
@@ -258,7 +261,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
         getInitiative().clear();
     }
 
-    public static void rollInitiative(Vector<? extends ITurnOrdered> v,
+    public static void rollInitiative(List<? extends ITurnOrdered> v,
             boolean bUseInitiativeCompensation) {
         // Clear all rolls
         for (ITurnOrdered item : v) {
@@ -303,8 +306,8 @@ public abstract class TurnOrdered implements ITurnOrdered {
      *                          compensation bonus should be used: used to
      *                          prevent one side getting long init win streaks
      */
-    public static void rollInitAndResolveTies(Vector<? extends ITurnOrdered> v,
-            Vector<? extends ITurnOrdered> rerollRequests,
+    public static void rollInitAndResolveTies(List<? extends ITurnOrdered> v,
+            List<? extends ITurnOrdered> rerollRequests,
             boolean bInitCompBonus) {
         for (ITurnOrdered item : v) {
             int bonus = 0;
@@ -350,8 +353,8 @@ public abstract class TurnOrdered implements ITurnOrdered {
         }
 
         // initiative compensation
-        if (bInitCompBonus && (v.elements().nextElement() instanceof Team)) {
-            final ITurnOrdered comparisonElement = v.elements().nextElement();
+        if (bInitCompBonus && (v.size() > 0) && (v.get(0) instanceof Team)) {
+            final ITurnOrdered comparisonElement = v.get(0);
             int difference = 0;
             ITurnOrdered winningElement = comparisonElement;
 
@@ -386,7 +389,7 @@ public abstract class TurnOrdered implements ITurnOrdered {
      * This takes a Vector of TurnOrdered and generates a TurnVector.
      */
     public static TurnVectors generateTurnOrder(
-            Vector<? extends ITurnOrdered> v, IGame game) {
+            List<? extends ITurnOrdered> v, IGame game) {
         int[] num_even_turns = new int[v.size()];
         int[] num_normal_turns = new int[v.size()];
         int[] num_space_station_turns = new int[v.size()];

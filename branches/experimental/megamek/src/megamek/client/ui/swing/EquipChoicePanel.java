@@ -41,6 +41,7 @@ import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Configuration;
+import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
@@ -56,6 +57,7 @@ import megamek.common.SmallCraft;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.options.IOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -298,7 +300,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             add(labSearchlight, GBC.std());
             add(chSearchlight, GBC.eol());
             chSearchlight.setSelected(entity.hasSpotlight()
-                    || entity.hasQuirk("searchlight"));
+                    || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
         }
 
         // Set up mines
@@ -385,7 +387,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     .size();
             
             if ((entC3nodeCount + choC3nodeCount) <= Entity.MAX_C3_NODES
-                    && entity.getC3MasterId() != chosen.getId()) {
+                    && ((chosen == null) 
+                            || entity.getC3MasterId() != chosen.getId())) {
                 entity.setC3Master(chosen, true);
             } else if (entity.getC3MasterId() != chosen.getId()){
                 String message = Messages
@@ -522,7 +525,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         GridBagLayout gbl = new GridBagLayout();
         panAPMounts.setLayout(gbl);
         
+        // Weapons that can be used in an AP Mount
         ArrayList<WeaponType> apWeapTypes = new ArrayList<WeaponType>(100);
+        // Weapons that can be used in an Armored Glove
+        ArrayList<WeaponType> agWeapTypes = new ArrayList<WeaponType>(100);
         Enumeration<EquipmentType> allTypes = EquipmentType.getAllTypes();
         while (allTypes.hasMoreElements()){
             EquipmentType eq = allTypes.nextElement();
@@ -544,19 +550,51 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             if (infWeap.hasFlag(WeaponType.F_INFANTRY)
                     && !infWeap.hasFlag(WeaponType.F_INF_POINT_BLANK)
                     && !infWeap.hasFlag(WeaponType.F_INF_ARCHAIC)
-                    && !infWeap.hasFlag(WeaponType.F_INF_SUPPORT)
-                    && (infWeap.getCrew() < 2)){
+                    && !infWeap.hasFlag(WeaponType.F_INF_SUPPORT)){
                 apWeapTypes.add(infWeap);
             }
+            if (infWeap.hasFlag(WeaponType.F_INFANTRY)
+                    && !infWeap.hasFlag(WeaponType.F_INF_POINT_BLANK)
+                    && !infWeap.hasFlag(WeaponType.F_INF_ARCHAIC)
+                    && (infWeap.getCrew() < 2)){
+                agWeapTypes.add(infWeap);
+            }
         }
-        
+
+        ArrayList<Mounted> armoredGloves = new ArrayList<Mounted>(2);
         for (Mounted m : entity.getMisc()){
             if (!m.getType().hasFlag(MiscType.F_AP_MOUNT)){
                 continue;
             }
-            APWeaponChoicePanel apcp;
-            apcp = new APWeaponChoicePanel(entity, m, apWeapTypes);
-            
+            APWeaponChoicePanel apcp = null;
+            // Armored gloves need to be treated slightly differently, since
+            // 1 or 2 armored gloves allow 1 additional AP weapon
+            if (m.getType().hasFlag(MiscType.F_ARMORED_GLOVE)) {
+                armoredGloves.add(m);                
+            } else{
+                apcp = new APWeaponChoicePanel(entity, m, apWeapTypes);
+            }
+            if (apcp != null) {
+                panAPMounts.add(apcp, GBC.eol());
+                m_vAPMounts.add(apcp);
+            }
+        }
+        
+        // If there is an armored glove with a weapon already mounted, we need
+        //  to ensure that that glove is displayed, and not the empty glove
+        Mounted aGlove = null;
+        for (Mounted ag : armoredGloves) {
+            if (aGlove == null) {
+                aGlove = ag;
+            } else if ((aGlove.getLinked() == null) 
+                    && (ag.getLinked() != null)) {
+                aGlove = ag;
+            } 
+            // If both are linked, TestBattleArmor will mark unit as invalid
+        }
+        if (aGlove != null) {
+            APWeaponChoicePanel apcp = new APWeaponChoicePanel(entity, aGlove,
+                    agWeapTypes);
             panAPMounts.add(apcp, GBC.eol());
             m_vAPMounts.add(apcp);
         }
@@ -847,10 +885,23 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 
                 // Remove any currently mounted AP weapon
                 if (m_APmounted.getLinked() != null 
-                        && m_APmounted.getLinked().getType() != apType){
-                    entity.getEquipment().remove(m_APmounted.getLinked());
-                    entity.getWeaponList().remove(m_APmounted.getLinked());
-                    entity.getTotalWeaponList().remove(m_APmounted.getLinked());
+                        && m_APmounted.getLinked().getType() != apType) {
+                    Mounted apWeapon = m_APmounted.getLinked();
+                    entity.getEquipment().remove(apWeapon);
+                    entity.getWeaponList().remove(apWeapon);
+                    entity.getTotalWeaponList().remove(apWeapon);
+                    // We need to make sure that the weapon has been removed
+                    //  from the criticals, otherwise it can cause issues
+                    for (int loc = 0; loc < entity.locations(); loc++) {
+                        for (int c = 0; 
+                                c < entity.getNumberOfCriticals(loc); c++) {
+                            CriticalSlot crit = entity.getCritical(loc, c);
+                            if (crit != null && crit.getMount() != null 
+                                    && crit.getMount().equals(apWeapon)) {
+                                entity.setCritical(loc, c, null);
+                            }
+                        }
+                    }
                 }
                 
                 // Did the selection not change, or no weapon was selected
@@ -1019,7 +1070,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     Messages.getString("CustomMechDialog.switchToHotLoading")); //$NON-NLS-1$
 
             JCheckBox chHotLoad = new JCheckBox();
-
+            
             @SuppressWarnings("unchecked")
             MunitionChoicePanel(Mounted m, ArrayList<AmmoType> vTypes) {
                 m_vTypes = vTypes;
@@ -1070,13 +1121,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
 
                 int loc;
+                boolean isOneShot = false;
                 if (m.getLocation() == Entity.LOC_NONE) {
                     // oneshot weapons don't have a location of their own
                     Mounted linkedBy = m.getLinkedBy();
                     loc = linkedBy.getLocation();
+                    isOneShot = linkedBy.isOneShot();
                 } else {
                     loc = m.getLocation();
                 }
+                m_num_shots.setVisible(!isOneShot);
                 String sDesc = '(' + entity.getLocationAbbr(loc) + ')';
                 JLabel lLoc = new JLabel(sDesc);
                 GridBagLayout g = new GridBagLayout();
@@ -1452,8 +1506,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 entityCorrespondance[listIndex++] = -1;
 
             }
-            for (Enumeration<Entity> i = client.getEntities(); i.hasMoreElements();) {
-                final Entity e = i.nextElement();
+            for (Entity e : client.getEntitiesVector()) {
                 // ignore enemies or self
                 if (entity.isEnemyOf(e) || entity.equals(e)) {
                     continue;

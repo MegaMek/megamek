@@ -33,7 +33,7 @@ public class ClientDialog extends JDialog {
     private static final double TASKBAR_SIZE = .05;
     private static final int CONTAINER_BUFFER = 10;
 
-    private JFrame owner = null;
+    protected JFrame owner = null;
 
     /**
      * @param owner - the <code>Frame</code> that owns this dialog.

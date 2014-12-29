@@ -68,7 +68,7 @@ IS Level 1
 </year>
 
 <source>
-Star League
+TRO 3039
 </source>
 
 <internal_type>
@@ -82,6 +82,10 @@ Star League
 <engine_type>				
 1
 </engine_type>
+
+<transporters>
+cargobay:20.5:1
+</transporters>
 
 <motion_type>
 aerodyne

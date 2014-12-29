@@ -66,6 +66,7 @@ IS Ammo AC/2:90
 NAC10
 NAC10
 NAC10
+NAC10
 NAC10 Ammo:60
 Autocannon/5
 Autocannon/5
@@ -89,6 +90,7 @@ Autocannon/2
 IS Ammo AC/2:90
 </Front Left Side Equipment>
 <Front Right Side Equipment>
+NAC10
 NAC10
 NAC10
 NAC10
@@ -178,6 +180,7 @@ IS Ammo AC/2:90
 NAC10
 NAC10
 NAC10
+NAC10
 NAC10 Ammo:60
 Autocannon/5
 Autocannon/5
@@ -201,6 +204,7 @@ Autocannon/2
 IS Ammo AC/2:90
 </Aft Left Side Equipment>
 <Aft Right Side Equipment>
+NAC10
 NAC10
 NAC10
 NAC10

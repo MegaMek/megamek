@@ -294,4 +294,10 @@ public class DockingCollar implements Transporter {
     public void setGame(IGame game) {
         this.game = game;
     }
+    
+    public void resetTransporter() {
+    	troops = new Vector<Integer>();
+    	currentSpace = totalSpace;
+    }
+    
 } // End package class TroopSpace implements Transporter

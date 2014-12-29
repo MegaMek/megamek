@@ -138,11 +138,20 @@ public class StringUtil {
     /**
      * Returns TRUE if the passed in text is either a NULL value or is an empty string.
      *
-     * @param text  The string to be evalutated.
-     * @return
+     * @param text  The string to be evaluated.
      */
     public static boolean isNullOrEmpty(String text) {
         return (text == null) || (text.trim().isEmpty());
+    }
+
+
+    /**
+     * Returns TRUE if the passed in text is either a NULL value or is an empty string.
+     *
+     * @param text The string to be evaluated.
+     */
+    public static boolean isNullOrEmpty(StringBuilder text) {
+        return (text == null) || isNullOrEmpty(text.toString());
     }
 
     /**
@@ -201,4 +210,24 @@ public class StringUtil {
             return false;
         }
     }
+    
+    /**
+     * Returns TRUE if the passed string is an integer value.
+     *
+     * @param number The {@link String} to be evaluated.
+     * @return TRUE if the value can be parsed to an {@link Integer} without throwing a {@link NumberFormatException}
+     *         and the parsed value is greater than or equal to zero.
+     */
+    public static boolean isInteger(String number) {
+        if (isNullOrEmpty(number)) {
+            return false;
+        }
+        try {
+            Integer.parseInt(number);
+            // If we parsed without exception, we are an int
+            return  true;
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+    }    
 }

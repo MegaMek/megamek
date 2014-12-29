@@ -86,6 +86,8 @@ public class GameLog {
     }
 
     public void close() throws java.io.IOException {
-        writer.close();
+        if (writer != null) {
+            writer.close();
+        }
     }
 }

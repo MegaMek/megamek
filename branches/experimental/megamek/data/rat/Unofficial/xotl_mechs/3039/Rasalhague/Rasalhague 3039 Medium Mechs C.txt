@@ -28,8 +28,8 @@ Whitworth WTH-1S,6
 Vulcan VL-5T,6
 Centurion CN9-A,12
 Blackjack BJ-1,42
-Vindicator VND-1AA "Avenging Angel",6
-Hermes II HER-4K "Hermes III",12
+Vindicator VND-1AA 'Avenging Angel',6
+Hermes II HER-4K 'Hermes III',12
 Whitworth WTH-1,61
 Trebuchet TBT-5S,6
 Trebuchet TBT-7K,6

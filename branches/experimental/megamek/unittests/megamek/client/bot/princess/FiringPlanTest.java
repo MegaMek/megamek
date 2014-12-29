@@ -42,13 +42,11 @@ public class FiringPlanTest {
 
     private Targetable mockTarget;
     private WeaponFireInfo mockWeaponFireInfoMG;
-    private Mounted mockMG;
     private WeaponAttackAction mockWeaponAttackActionMG;
     private WeaponFireInfo mockWeaponFireInfoPPC;
     private Mounted mockPPC;
     private WeaponAttackAction mockWeaponAttackActionPPC;
     private WeaponFireInfo mockWeaponFireInfoERML;
-    private Mounted mockERML;
     private WeaponAttackAction mockWeaponAttackActionERML;
 
     private FiringPlan testFiringPlan;
@@ -61,7 +59,7 @@ public class FiringPlanTest {
 
         mockWeaponFireInfoMG = Mockito.mock(WeaponFireInfo.class);
         testFiringPlan.add(mockWeaponFireInfoMG);
-        mockMG = Mockito.mock(Mounted.class);
+        Mounted mockMG = Mockito.mock(Mounted.class);
         Mockito.when(mockWeaponFireInfoMG.getWeapon()).thenReturn(mockMG);
         mockWeaponAttackActionMG = Mockito.mock(WeaponAttackAction.class);
         Mockito.when(mockWeaponFireInfoMG.getWeaponAttackAction()).thenReturn(mockWeaponAttackActionMG);
@@ -75,7 +73,7 @@ public class FiringPlanTest {
 
         mockWeaponFireInfoERML = Mockito.mock(WeaponFireInfo.class);
         testFiringPlan.add(mockWeaponFireInfoERML);
-        mockERML = Mockito.mock(Mounted.class);
+        Mounted mockERML = Mockito.mock(Mounted.class);
         Mockito.when(mockWeaponFireInfoERML.getWeapon()).thenReturn(mockERML);
         mockWeaponAttackActionERML = Mockito.mock(WeaponAttackAction.class);
         Mockito.when(mockWeaponFireInfoERML.getWeaponAttackAction()).thenReturn(mockWeaponAttackActionERML);
@@ -120,6 +118,7 @@ public class FiringPlanTest {
         Mockito.when(mockWeaponFireInfoPPC.getKillProbability()).thenReturn(0.0024);
         Mockito.when(mockWeaponFireInfoERML.getKillProbability()).thenReturn(0.0);
 
+        //noinspection PointlessArithmeticExpression
         double expected = 1 - ((1 - 0) * (1 - 0.0024) * (1 - 0));
         Assert.assertEquals(expected, testFiringPlan.getKillProbability(), TOLERANCE);
         
@@ -127,14 +126,15 @@ public class FiringPlanTest {
         Mockito.when(mockWeaponFireInfoPPC.getKillProbability()).thenReturn(0.0024);
         Mockito.when(mockWeaponFireInfoERML.getKillProbability()).thenReturn(0.0);
 
-        expected = 1 - ((1 - 1) * (1 - 0.0024) * (1 - 0));;
+        //noinspection PointlessArithmeticExpression
+        expected = 1 - ((1 - 1) * (1 - 0.0024) * (1 - 0));
         Assert.assertEquals(expected, testFiringPlan.getKillProbability(), TOLERANCE);
         
         Mockito.when(mockWeaponFireInfoMG.getKillProbability()).thenReturn(0.5);
         Mockito.when(mockWeaponFireInfoPPC.getKillProbability()).thenReturn(0.5);
         Mockito.when(mockWeaponFireInfoERML.getKillProbability()).thenReturn(0.5);
 
-        expected = 1 - ((1 - 0.5) * (1 - 0.5) * (1 - 0.5));;
+        expected = 1 - ((1 - 0.5) * (1 - 0.5) * (1 - 0.5));
         Assert.assertEquals(expected, testFiringPlan.getKillProbability(), TOLERANCE);
     }
 
@@ -154,7 +154,7 @@ public class FiringPlanTest {
 
         // Test a no-twist plan.
         Mockito.when(testFiringPlan.getTwist()).thenReturn(0);
-        expected = new Vector<EntityAction>(3);
+        expected = new Vector<>(3);
         expected.add(mockWeaponAttackActionMG);
         expected.add(mockWeaponAttackActionPPC);
         expected.add(mockWeaponAttackActionERML);
@@ -163,8 +163,9 @@ public class FiringPlanTest {
         // todo Test torso-twists.
 
         // Test an empty firing plan.
+        //noinspection MismatchedQueryAndUpdateOfCollection
         FiringPlan emptyPlan = new FiringPlan(mockTarget);
-        expected = new Vector<EntityAction>(0);
+        expected = new Vector<>(0);
         Assert.assertEquals(expected, emptyPlan.getEntityActionVector());
     }
 

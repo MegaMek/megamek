@@ -212,6 +212,7 @@ public class MechFileParser {
 
         try {
             ent.loadDefaultQuirks();
+            ent.loadDefaultCustomWeaponOrder();
         } catch (Exception e) {
             e.printStackTrace();
         }

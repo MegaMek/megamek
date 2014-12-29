@@ -35,7 +35,7 @@ import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
 
 /**
- * This class loads the default quirks list from the mmconf/defaultQuirks.xml file.
+ * This class loads the default quirks list from the mmconf/cannonUnitQuirks.xml file.
  *
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @version %Id%

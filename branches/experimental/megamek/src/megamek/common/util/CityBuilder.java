@@ -61,7 +61,6 @@ public class CityBuilder {
      * North and South and 4 roads running east west
      * 
      * @author Torren (Jason Tighe)
-     * @param buildingTemplate
      * @return
      */
     public ArrayList<BuildingTemplate> generateCity(boolean genericRoad) {
@@ -251,8 +250,8 @@ public class CityBuilder {
             Coords coords = new Coords(x, y);
 
             int nextDirection = baseDirection;
-            while (coords.x >= -1 && coords.x <= maxX && coords.y >= -1
-                    && coords.y <= maxY) {
+            while (coords.getX() >= -1 && coords.getX() <= maxX && coords.getY() >= -1
+                   && coords.getY() <= maxY) {
                 int choice = Compute.randomInt(10);
 
                 if (board.contains(coords)) {
@@ -278,8 +277,8 @@ public class CityBuilder {
                 }
                 cityPlan.add(coords);
 
-                x = coords.x;
-                y = coords.y;
+                x = coords.getX();
+                y = coords.getY();
             }
 
         }
@@ -321,15 +320,18 @@ public class CityBuilder {
     }
 
     private Coords selectNextGrid(int dir, Coords coords) {
-        Coords result = coords.translated(dir);
+        int x = Coords.xInDir(coords.getX(), coords.getY(), dir);
+        int y = Coords.yInDir(coords.getX(), coords.getY(), dir);
 
-        if (dir == E)
-            result.x++;
+        if (dir == E) {
+            x++;
+        }
 
-        if (dir == W)
-            result.x--;
+        if (dir == W) {
+            x--;
+        }
 
-        return result;
+        return new Coords(x, y);
     }
 
     /**
@@ -343,7 +345,7 @@ public class CityBuilder {
                 || hex.containsTerrain(Terrains.SWAMP)) {
             return false; // uneconomic to build here
         }
-        if (hex.getElevation() >= 4) {
+        if (hex.getLevel() >= 4) {
             return false; // don't build on mountaintops (aesthetics)
         }
         return true;
@@ -374,7 +376,7 @@ public class CityBuilder {
 
     private void addBridge(IHex hex, int exits, int altitude, int cf) {
         ITerrainFactory tf = Terrains.getTerrainFactory();
-        int bridgeElevation = altitude - hex.getElevation();
+        int bridgeElevation = altitude - hex.getLevel();
 
         hex.addTerrain(tf.createTerrain(Terrains.BRIDGE,
                 getBuildingTypeByCF(cf), true, (exits & 63)));
@@ -401,7 +403,6 @@ public class CityBuilder {
      * Build a bridge across an obstacle
      * 
      * @todo: use a bridge not a road when bridges are working
-     * @param board
      * @param start
      * @param direction
      * @return coordinates to resume roadbuilding
@@ -428,8 +429,8 @@ public class CityBuilder {
             // got start and end, can we make a bridge?
             if (hexes.size() == 0)
                 return null;
-            int elev1 = board.getHex(start).getElevation();
-            int elev2 = board.getHex(end).getElevation();
+            int elev1 = board.getHex(start).getLevel();
+            int elev2 = board.getHex(end).getLevel();
             int elevBridge = board.getHex(end).terrainLevel(Terrains.BRIDGE);
             if (elevBridge >= 0) {
                 if (Math.abs(elev2 + elevBridge - elev1) > 2)
@@ -483,8 +484,8 @@ public class CityBuilder {
     private void buildStraightRoad(Coords start, int direction, int roadStyle) {
         Coords coords = start;
 
-        while (coords != null && coords.x <= board.getWidth() && coords.x >= -1
-                && coords.y <= board.getHeight() && coords.y >= -1) {
+        while (coords != null && coords.getX() <= board.getWidth() && coords.getX() >= -1
+               && coords.getY() <= board.getHeight() && coords.getY() >= -1) {
             cityPlan.add(coords);
             Coords next = extendRoad(coords, direction, roadStyle);
             if (next == null) {

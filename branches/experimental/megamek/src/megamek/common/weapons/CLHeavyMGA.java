@@ -36,6 +36,7 @@ public class CLHeavyMGA extends AmmoWeapon {
         techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "Heavy Machine Gun Array";
         setInternalName("CLHMGA");
+        setInternalName("Clan Heavy Machine Gun Array");
         heat = 0;
         damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_3D6;

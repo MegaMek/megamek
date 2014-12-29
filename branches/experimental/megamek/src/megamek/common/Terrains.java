@@ -16,6 +16,8 @@ package megamek.common;
 
 import java.util.Hashtable;
 
+import megamek.server.SmokeCloud;
+
 public class Terrains implements ITerrainFactory {
 
     //base terrain types
@@ -42,7 +44,7 @@ public class Terrains implements ITerrainFactory {
     public static final int RAPIDS   = 16; //1: rapids 2: torrent
     public static final int ICE      = 17;
     public static final int SNOW     = 18; // 1: thin 2: deep
-    public static final int FIRE     = 19; // 1: normal fire 2: inferno fire
+    public static final int FIRE     = 19; // 1: normal, fire 2: inferno fire, 3: inferno bombs, 4: inferno IV
     public static final int SMOKE    = 20; // 1: light smoke 2: heavy smoke 3:light LI smoke 4: Heavy LI smoke
     public static final int GEYSER   = 21; // 1: dormant 2: active 3: magma vent
     //unimplemented
@@ -53,6 +55,12 @@ public class Terrains implements ITerrainFactory {
     //Rail
     //Dirt Roads, Gravel Roads
     //Water Flow
+    
+    public static final int FIRE_LVL_NORMAL         = 1;
+    public static final int FIRE_LVL_INFERNO        = 2;
+    public static final int FIRE_LVL_INFERNO_BOMB   = 3;
+    public static final int FIRE_LVL_INFERNO_IV     = 4;
+    
 
     //Building stuff
     public static final int BUILDING       = 22; // 1: light 2: medium 3: heavy 4: hardened 5: wall
@@ -172,22 +180,25 @@ public class Terrains implements ITerrainFactory {
                 if(level == 1) {
                     return "fire";
                 }
-                if(level == 2) {
+                if(level == 2 || level == 3 || level == 4) {
                     return "inferno fire";
                 }
                 return "fire (unknown)";
             case(SMOKE):
-                if(level == 1) {
+                if(level == SmokeCloud.SMOKE_LIGHT) {
                     return "light smoke";
                 }
-                if(level == 2) {
+                if(level == SmokeCloud.SMOKE_HEAVY) {
                     return "heavy smoke";
                 }
-                if(level == 3) {
+                if(level == SmokeCloud.SMOKE_LI_LIGHT) {
                     return "LASER inhibiting smoke";
                 }
-                if(level == 4) {
+                if(level == SmokeCloud.SMOKE_LI_HEAVY) {
                     return "LASER inhibiting smoke";
+                }
+                if(level == SmokeCloud.SMOKE_CHAFF_LIGHT) {
+                    return "Chaff (ECM)";
                 }
                 return "smoke (unknown)";
             case(SWAMP):

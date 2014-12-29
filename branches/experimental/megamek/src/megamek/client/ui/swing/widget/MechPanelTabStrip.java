@@ -15,7 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-import megamek.client.ui.swing.MechDisplay;
+import megamek.client.ui.swing.UnitDisplay;
 import megamek.common.Configuration;
 
 public class MechPanelTabStrip extends PicMap {
@@ -30,14 +30,14 @@ public class MechPanelTabStrip extends PicMap {
     private static final Image[] activeImage = new Image[6];
     private Image idleCorner, selectedCorner;
     private int activeTab = 0;
-    MechDisplay md;
+    UnitDisplay md;
 
     private Polygon firstTab = new Polygon(new int[] { 0, 43, 59, 59, 0 },
             new int[] { 0, 0, 16, 17, 17 }, 5);
     private int[] pointsX = new int[] { 0, 43, 59, 59, 13, 0 };
     private int[] pointsY = new int[] { 0, 0, 16, 17, 17, 4 };
 
-    public MechPanelTabStrip(MechDisplay md) {
+    public MechPanelTabStrip(UnitDisplay md) {
         super();
         this.md = md;
     }

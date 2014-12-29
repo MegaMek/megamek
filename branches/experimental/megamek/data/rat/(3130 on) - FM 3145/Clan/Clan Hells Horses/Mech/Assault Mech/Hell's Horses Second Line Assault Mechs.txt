@@ -1,5 +1,5 @@
 Hell's Horses Second Line Assault Mechs
-Thunder Stallion 2 "Fire Stallion",1
+Thunder Stallion 2 'Fire Stallion',1
 Thunder Stallion 3,2
 Behemoth (Stone Rhino) 3,3
 Marauder IIC 7,4

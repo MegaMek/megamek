@@ -81,6 +81,9 @@ public class MtfFile implements IMechLoader {
 
     String[][] critData;
 
+    String capabilities = "";
+    String deployment = "";
+    String overview = "";
     String history = "";
     String imagePath = "";
 
@@ -105,6 +108,9 @@ public class MtfFile implements IMechLoader {
             BufferedReader r = new BufferedReader(new InputStreamReader(is));
 
             version = r.readLine();
+            if (version == null) {
+            	throw new EntityLoadingException("MTF File empty!");
+            }
             // Version 1.0: Initial version.
             // Version 1.1: Added level 3 cockpit and gyro options.
             // version 1.2: added full head ejection
@@ -491,6 +497,9 @@ public class MtfFile implements IMechLoader {
                 }
             }
 
+            mech.getFluff().setCapabilities(capabilities);
+            mech.getFluff().setOverview(overview);
+            mech.getFluff().setDeployment(deployment);
             mech.getFluff().setHistory(history);
             mech.getFluff().setMMLImagePath(imagePath);
 
@@ -953,7 +962,22 @@ public class MtfFile implements IMechLoader {
             armorType = line;
             return true;
         }
+        
+        if (line.trim().toLowerCase().startsWith("overview:")) {
+            overview = line.substring("overview:".length());
+            return true;
+        }
 
+        if (line.trim().toLowerCase().startsWith("capabilities:")) {
+            capabilities = line.substring("capabilities:".length());
+            return true;
+        }
+                
+        if (line.trim().toLowerCase().startsWith("deployment:")) {
+            deployment = line.substring("deployment:".length());
+            return true;
+        }
+        
         if (line.trim().toLowerCase().startsWith("history:")) {
             history = line.substring("history:".length());
             return true;

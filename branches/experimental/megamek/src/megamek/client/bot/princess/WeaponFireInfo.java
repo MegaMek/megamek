@@ -13,15 +13,7 @@
  */
 package megamek.client.bot.princess;
 
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.IGame;
-import megamek.common.Mech;
-import megamek.common.Mounted;
-import megamek.common.MovePath;
-import megamek.common.Targetable;
-import megamek.common.ToHitData;
-import megamek.common.WeaponType;
+import megamek.common.*;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.logging.LogLevel;
@@ -35,7 +27,7 @@ import java.text.NumberFormat;
  *
  * @version $Id$
  * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
- * @since: 12/18/13 11:46 AM
+ * @since: 11/24/14 2:50 PM
  */
 public class WeaponFireInfo {
     private static final NumberFormat LOG_PER = NumberFormat.getPercentInstance();
@@ -266,7 +258,8 @@ public class WeaponFireInfo {
     }
 
     protected ToHitData calcRealToHit(WeaponAttackAction weaponAttackAction) {
-        return weaponAttackAction.toHit(getGame());
+        return weaponAttackAction.toHit(getGame(), 
+                owner.getPrecognition().getECMInfo());
     }
 
     public IGame getGame() {
@@ -325,10 +318,23 @@ public class WeaponFireInfo {
     }
 
     protected double computeExpectedDamage() {
-        if (getTarget() instanceof Entity) {
-            return Compute.getExpectedDamage(getGame(), getAction(), true);
+
+        // For clan plasma cannon, assume 7 "damage".
+        WeaponType weaponType = (WeaponType) weapon.getType();
+        if (weaponType.hasFlag(WeaponType.F_PLASMA) &&
+                weaponType.getTechLevels().containsValue(TechConstants.T_CLAN_TW)) {
+            return 7D;
         }
-        return ((WeaponType) weapon.getType()).getDamage();
+
+        if (getTarget() instanceof Entity) {
+            double dmg = Compute.getExpectedDamage(getGame(), getAction(),
+                    true, owner.getPrecognition().getECMInfo());
+            if (weaponType.hasFlag(WeaponType.F_PLASMA)) {
+                dmg += 3; // Account for potential plasma heat.
+            }
+            return dmg;
+        }
+        return weaponType.getDamage();
     }
 
     /*
@@ -372,7 +378,10 @@ public class WeaponFireInfo {
                 return;
             }
 
-            setProbabilityToHit(Compute.oddsAbove(getToHit().getValue()) / 100);
+            if (getShooterState().hasNaturalAptGun()) {
+                msg.append("\n\tAttacker has Natural Aptitude Gunnery");
+            }
+            setProbabilityToHit(Compute.oddsAbove(getToHit().getValue(), getShooterState().hasNaturalAptGun()) / 100);
             msg.append("\n\tHit Chance: ").append(LOG_PER.format(getProbabilityToHit()));
 
             setHeat(((WeaponType) getWeapon().getType()).getHeat());
@@ -396,30 +405,43 @@ public class WeaponFireInfo {
             // now guess how many critical hits will be done
             Mech targetMech = (Mech) getTarget();
 
+            // A mech with a torso-mounted cockpit can survive losing its head.
+            double headlessOdds = 0.0;
+
             // Loop through hit locations.
+            // todo Targeting tripods.
             for (int i = 0; i <= 7; i++) {
                 int hitLocation = i;
-                while (targetMech.isLocationBad(hitLocation) && (hitLocation != Mech.LOC_CT)) {
-                    if (hitLocation > 7) {
-                        hitLocation = 0;
+
+                while (targetMech.isLocationBad(hitLocation) &&
+                       (hitLocation != Mech.LOC_CT)) {
+
+                    // Head shots don't travel inward if the head is removed.  Instead, a new roll gets made.
+                    if (hitLocation == Mech.LOC_HEAD) {
+                        headlessOdds = ProbabilityCalculator.getHitProbability(getDamageDirection(), Mech.LOC_HEAD);
+                        break;
                     }
+
+                    // Get the next most inward location.
                     hitLocation = Mech.getInnerLocation(hitLocation);
                 }
                 double hitLocationProbability =
                         ProbabilityCalculator.getHitProbability(getDamageDirection(), hitLocation);
-                int targetArmor = targetMech.getArmor(hitLocation, (getDamageDirection() == 3));
-                int targetInternals = targetMech.getInternal(hitLocation);
-                if (targetArmor < 0) {
-                    targetArmor = 0; // ignore NA or Destroyed cases
-                }
-                if (targetInternals < 0) {
-                    targetInternals = 0;
-                }
+
+                // Account for the possibility of re-rolling a head hit on a headless mech.
+                hitLocationProbability += (hitLocationProbability * headlessOdds);
+
+                // Get the armor and internals for this location.
+                int targetArmor = Math.max(0, targetMech.getArmor(hitLocation, (getDamageDirection() == 3)));
+                int targetInternals = Math.max(0, targetMech.getInternal(hitLocation));
 
                 // If the location could be destroyed outright...
                 if (getExpectedDamageOnHit() > ((targetArmor + targetInternals))) {
                     setExpectedCriticals(getExpectedCriticals() + (hitLocationProbability * getProbabilityToHit()));
-                    if ((Mech.LOC_HEAD == hitLocation) || (Mech.LOC_CT == hitLocation)) {
+                    if (Mech.LOC_CT == hitLocation) {
+                        setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
+                    } else if ((Mech.LOC_HEAD == hitLocation) &&
+                               (targetMech.getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED)) {
                         setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
                     }
 
@@ -449,7 +471,8 @@ public class WeaponFireInfo {
                 setProbabilityToHit(0);
                 return null;
             }
-            setProbabilityToHit(Compute.oddsAbove(getAction().toHit(getGame()).getValue()) / 100.0);
+            setProbabilityToHit(Compute.oddsAbove(getAction().toHit(getGame()).getValue(),
+                                                  getShooterState().hasNaturalAptGun()) / 100.0);
             return getAction();
         } finally {
             owner.methodEnd(getClass(), METHOD_NAME);

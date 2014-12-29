@@ -80,6 +80,10 @@ public class MechView {
         sHead.append("<font size=+1><b>" + entity.getShortNameRaw()
                 + "</b></font>");
         sHead.append("<br>"); //$NON-NLS-1$
+        if (!entity.isDesignValid()) {
+            sHead.append(Messages.getString("MechView.DesignInvalid"));
+            sHead.append("<br>"); //$NON-NLS-1$
+        }
         if (entity.isMixedTech()) {
             if (entity.isClan()) {
                 sHead.append(Messages.getString("MechView.MixedClan"));
@@ -222,7 +226,7 @@ public class MechView {
                 sBasic.append("<br>"); //$NON-NLS-1$
                 sBasic.append(Messages.getString("MechView.Cockpit"));
                 sBasic.append(aMech.getCockpitTypeString());
-                if (cpSlot.isArmored()){
+                if ((cpSlot != null) && cpSlot.isArmored()){
                     sBasic.append(" (armored)");
                 }
             }
@@ -256,8 +260,34 @@ public class MechView {
                 sBasic.append(getInternalAndArmor());
             }
         }
-        if (entity.getFluff().getHistory() != null) {
-            sFluff.append(entity.getFluff().getHistory());
+        
+
+        if (entity.getFluff().getOverview() != "") {
+            sFluff.append("<br>");
+            sFluff.append("\n<b>Overview:</b> <br>\n");
+            sFluff.append(entity.getFluff().getOverview());
+            sFluff.append("<br>");
+        }
+        
+        if (entity.getFluff().getCapabilities() != "") {
+            sFluff.append("<br>");
+            sFluff.append("\n<b>Capabilities:</b> <br>\n");
+            sFluff.append(entity.getFluff().getCapabilities()); 
+            sFluff.append("<br>");
+        }
+        
+        if (entity.getFluff().getDeployment() != "") {
+            sFluff.append("<br>");
+            sFluff.append("\n<b>Deployment:</b> <br>\n");
+            sFluff.append(entity.getFluff().getDeployment());
+            sFluff.append("<br>");
+        }
+        
+        if (entity.getFluff().getHistory() != "") {
+            sFluff.append("<br>");
+            sFluff.append("\n<b>History:</b> <br>\n");
+            sFluff.append(entity.getFluff().getHistory()); 
+            sFluff.append("<br>");
         }
         sFluff.append("<br>");
     }
@@ -675,6 +705,8 @@ public class MechView {
         sAmmo.append("</table>");
         return sAmmo.toString();
     }
+    
+    
 
     private String getBombs() {
         StringBuffer sBombs = new StringBuffer();

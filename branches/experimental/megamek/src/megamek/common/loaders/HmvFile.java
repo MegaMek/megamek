@@ -466,7 +466,7 @@ public class HmvFile implements IMechLoader {
             vehicle.setModel(model);
             vehicle.setYear(year);
             vehicle.setOmni(isOmni);
-            vehicle.getFluff().setHistory(fluff);
+            vehicle.getFluff().setCapabilities(fluff);
 
             int techLevel = TechConstants.T_IS_ADVANCED;
             if (rulesLevel == 1) {

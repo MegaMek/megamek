@@ -1,11 +1,11 @@
 Version:1.0
 Hammer
-HMR-3S "Slammer"
+HMR-3S 'Slammer'
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3054
-Source:Clan Invasion
+Source:TRO 3055 Upgrade
 Rules Level:2
 
 Mass:30

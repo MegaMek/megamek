@@ -14,9 +14,11 @@
 package megamek.client.bot.princess;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
 import megamek.common.Aero;
 import megamek.common.AmmoType;
@@ -72,8 +74,10 @@ public class FireControl {
     private static double CRITICAL_UTILITY = 10.0;
     private static double KILL_UTILITY = 50.0;
     private static double OVERHEAT_DISUTILITY = 5.0;
-    private static double OVERHEAT_DISUTILITY_AERO = 50.0;  // Aeros *really* don't want to overheat.
+    private static double OVERHEAT_DISUTILITY_AERO = 50.0; // Aeros *really* don't want to overheat.
     private static double EJECTED_PILOT_DISUTILITY = 1000.0;
+    private static double CIVILIAN_TARGET_DISUTILITY = 250.0;
+
     protected static double COMMANDER_UTILITY = 0.5;
     protected static double SUB_COMMANDER_UTILITY = 0.25;
     protected static double STRATEGIC_TARGET_UTILITY = 0.5;
@@ -190,6 +194,7 @@ public class FireControl {
     protected static final TargetRollModifier TH_MEDIUM_RANGE = new TargetRollModifier(2, "Medium Range");
     protected static final TargetRollModifier TH_LONG_RANGE = new TargetRollModifier(4, "Long Range");
     protected static final TargetRollModifier TH_EXTREME_RANGE = new TargetRollModifier(6, "Extreme Range");
+    protected static final TargetRollModifier TH_LOS_RANGE = new TargetRollModifier(8, "LOS Range");
     protected static final TargetRollModifier TH_TARGETTING_COMP = new TargetRollModifier(-1, "targeting computer");
     protected static final TargetRollModifier TH_IMP_TARG_SHORT =
             new TargetRollModifier(-1, "improved targetting (short) quirk");
@@ -361,7 +366,9 @@ public class FireControl {
 
         int smokeLevel = targetHex.terrainLevel(Terrains.SMOKE);
         if (smokeLevel >= 1) {
-            toHitData.addModifier(smokeLevel, TH_SMOKE);
+            // Smoke level doesn't necessary correspond to the to-hit modifier
+            // even levels are light smoke, odd are heavy smoke
+            toHitData.addModifier((smokeLevel % 2) + 1, TH_SMOKE);
         }
 
         if (targetState.isProne() && (distance > 1)) {
@@ -476,9 +483,9 @@ public class FireControl {
         // Check elevation difference.
         IHex attackerHex = game.getBoard().getHex(shooterState.getPosition());
         IHex targetHex = game.getBoard().getHex(targetState.getPosition());
-        final int attackerElevation = shooter.getElevation() + attackerHex.getElevation();
-        final int attackerHeight = shooter.absHeight() + attackerHex.getElevation();
-        final int targetElevation = target.getElevation() + targetHex.getElevation();
+        final int attackerElevation = shooter.getElevation() + attackerHex.getLevel();
+        final int attackerHeight = shooter.relHeight() + attackerHex.getLevel();
+        final int targetElevation = target.getElevation() + targetHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
         if (attackType.isPunch()) {
             if (shooter.hasQuirk(OptionsConstants.QUIRK_NEG_NO_ARMS)) {
@@ -751,7 +758,8 @@ public class FireControl {
             }
         }
         int range = RangeType.rangeBracket(distance, weaponType.getRanges(weapon),
-                                           game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE));
+                                           game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE),
+                                           game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE));
         if (RangeType.RANGE_OUT == range) {
             return new ToHitData(TH_OUT_OF_RANGE);
         } else if ((range == RangeType.RANGE_MINIMUM) && targetState.isAirborneAero()) {
@@ -874,7 +882,7 @@ public class FireControl {
             }
         }
 
-        // targetting computer
+        // targeting computer
         if (shooter.hasTargComp() && weaponType.hasFlag(WeaponType.F_DIRECT_FIRE)) {
             toHit.addModifier(TH_TARGETTING_COMP);
         }
@@ -1146,14 +1154,11 @@ public class FireControl {
      * calculates the 'utility' of a firing plan. override this function if you have a better idea about what firing
      * plans are good
      *
-     * @param firingPlan        The {@link megamek.client.bot.princess.FiringPlan} to be calculated.
+     * @param firingPlan        The {@link FiringPlan} to be calculated.
      * @param overheatTolerance How much overheat we're willing to forgive.
-     * @param isAero
+     * @param shooterIsAero     Set TRUE if the shooter is an Aero unit.  Overheating Aeros take stiffer penalties.
      */
-    // todo ammo considerations should affect utility.
-    // todo strategic targets utility
-    // todo crippled/retreating targets disutility
-    void calculateUtility(FiringPlan firingPlan, int overheatTolerance, boolean isAero) {
+    void calculateUtility(FiringPlan firingPlan, int overheatTolerance, boolean shooterIsAero) {
         int overheat = 0;
         if (firingPlan.getHeat() > overheatTolerance) {
             overheat = firingPlan.getHeat() - overheatTolerance;
@@ -1163,13 +1168,14 @@ public class FireControl {
         modifier += calcCommandUtility(firingPlan.getTarget());
         modifier += calcStrategicBuildingTargetUtility(firingPlan.getTarget());
         modifier += calcPriorityUnitTargetUtility(firingPlan.getTarget());
-        
+
         double utility = 0;
         utility += DAMAGE_UTILITY * firingPlan.getExpectedDamage();
         utility += CRITICAL_UTILITY * firingPlan.getExpectedCriticals();
         utility += KILL_UTILITY * firingPlan.getKillProbability();
+        utility -= calcCivilianTargetDisutility(firingPlan.getTarget());
         utility *= modifier;
-        utility -= (isAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
+        utility -= (shooterIsAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
         utility -= (firingPlan.getTarget() instanceof MechWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
         firingPlan.setUtility(utility);
     }
@@ -1181,7 +1187,7 @@ public class FireControl {
 
         DecimalFormat coordsFormat = new DecimalFormat("00");
         Coords targetCoords = target.getPosition();
-        String coords = coordsFormat.format(targetCoords.x + 1) + coordsFormat.format(targetCoords.y + 1);
+        String coords = coordsFormat.format(targetCoords.getX() + 1) + coordsFormat.format(targetCoords.getY() + 1);
         if (owner.getBehaviorSettings().getStrategicBuildingTargets().contains(coords)) {
             return STRATEGIC_TARGET_UTILITY;
         }
@@ -1194,10 +1200,27 @@ public class FireControl {
         }
 
         int id = ((Entity) target).getId();
-        if (owner.getBehaviorSettings().getPriorityUnitTargets().contains(id)) {
+        if (owner.getPriorityUnitTargets().contains(id)) {
             return PRIORITY_TARGET_UTILITY;
         }
         return 0;
+    }
+
+    private double calcCivilianTargetDisutility(Targetable target) {
+        if (!(target instanceof Entity)) {
+            return 0;
+        }
+        Entity entity = (Entity) target;
+        if (entity.isMilitary()) {
+            return 0;
+        }
+        if (owner.getPriorityUnitTargets().contains(entity.getId())) {
+            return 0;
+        }
+        if (owner.getHonorUtil().isEnemyDishonored(entity.getOwnerId())) {
+            return 0;
+        }
+        return CIVILIAN_TARGET_DISUTILITY;
     }
 
     private double calcCommandUtility(Targetable target) {
@@ -1247,6 +1270,7 @@ public class FireControl {
         utility += calcCommandUtility(physicalInfo.getTarget());
         utility += calcStrategicBuildingTargetUtility(physicalInfo.getTarget());
         utility += calcPriorityUnitTargetUtility(physicalInfo.getTarget());
+        utility -= calcCivilianTargetDisutility(physicalInfo.getTarget());
 
         physicalInfo.setUtility(utility);
     }
@@ -1366,7 +1390,8 @@ public class FireControl {
      * @return The {@link FiringPlan} containing all weapons to be fired.
      */
     FiringPlan guessFullAirToGroundPlan(Entity shooter, Targetable target, @Nullable EntityState targetState,
-                                        MovePath flightPath, IGame game, boolean assumeUnderFlightPath) {
+                                        MovePath flightPath, IGame game,
+                                        boolean assumeUnderFlightPath) {
         final String METHOD_NAME = "guessFullAirToGroundPlan(Entity, Targetable, EntityState, MovePath, IGame, " +
                                    "boolean)";
 
@@ -1416,8 +1441,10 @@ public class FireControl {
      * @param game    The game being played.
      * @return The {@link FiringPlan} containing all weapons to be fired.
      */
-    FiringPlan getFullFiringPlan(Entity shooter, Targetable target, IGame game) {
+    FiringPlan getFullFiringPlan(Entity shooter, Targetable target,
+                                 Map<Mounted, Double> ammoConservation, IGame game) {
         final String METHOD_NAME = "getFullFiringPlan(Entity, Targetable, IGame)";
+        final NumberFormat DECF = new DecimalFormat("0.000");
 
         FiringPlan myPlan = new FiringPlan(target);
 
@@ -1434,10 +1461,15 @@ public class FireControl {
 
         // cycle through my weapons
         for (Mounted weapon : shooter.getWeaponList()) {
+            double toHitThreshold = ammoConservation.get(weapon);
             WeaponFireInfo shoot = buildWeaponFireInfo(shooter, target, weapon, game, false);
-            if ((shoot.getProbabilityToHit() > 0)) {
+            if ((shoot.getProbabilityToHit() > toHitThreshold)) {
                 myPlan.add(shoot);
+                continue;
             }
+            owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG,
+                      "\nTo Hit Chance (" + DECF.format(shoot.getProbabilityToHit()) + ") for " + weapon.getName() +
+                      " is less than threshold (" + DECF.format(toHitThreshold) + ")");
         }
 
         // Rank how useful this plan is.
@@ -1541,10 +1573,11 @@ public class FireControl {
      * @param game The game currently being played.
      * @return the 'best' firing plan, using heat as a disutility.
      */
-    FiringPlan getBestFiringPlan(Entity shooter, Targetable target, IGame game) {
+    FiringPlan getBestFiringPlan(Entity shooter, Targetable target, IGame game,
+                                 Map<Mounted, Double> ammoConservation) {
 
         // Start with an alpha strike.
-        FiringPlan alphaStrike = getFullFiringPlan(shooter, target, game);
+        FiringPlan alphaStrike = getFullFiringPlan(shooter, target, ammoConservation, game);
         if (shooter.getHeatCapacity() == 999) {
             return alphaStrike; // No need to worry about heat if the unit doesn't track it.
         }
@@ -1568,7 +1601,8 @@ public class FireControl {
      * @return the 'best' firing plan under a certain heat.
      */
     FiringPlan guessBestFiringPlanUnderHeat(Entity shooter, @Nullable EntityState shooterState, Targetable target,
-                                            @Nullable EntityState targetState, int maxHeat, IGame game) {
+                                            @Nullable EntityState targetState, int maxHeat,
+                                            IGame game) {
 
         // can't have less than zero heat
         if (maxHeat < 0) {
@@ -1612,7 +1646,8 @@ public class FireControl {
         return getBestFiringPlanUnderHeat(target, shooter, allPlans);
     }
 
-    private FiringPlan getBestFiringPlanUnderHeat(Targetable target, Entity shooter, FiringPlan[] allPlans) {
+    private FiringPlan getBestFiringPlanUnderHeat(Targetable target, Entity shooter,
+                                                  FiringPlan[] allPlans) {
 
         // Determine the best plan taking into account our heat tolerance.
         FiringPlan bestPlan = new FiringPlan(target);
@@ -1636,13 +1671,14 @@ public class FireControl {
      * @param game    The game currently being played.
      * @return the 'best' firing plan using heat as disutiltiy includes the option of twisting
      */
-    FiringPlan getBestFiringPlanWithTwists(Entity shooter, Targetable target, IGame game) {
+    FiringPlan getBestFiringPlanWithTwists(Entity shooter, Targetable target, IGame game,
+                                           Map<Mounted, Double> ammoConservation) {
 
         // Keep track of our original facing so we can go back to it.
         int originalFacing = shooter.getSecondaryFacing();
 
         // Get the best plan without any twists.
-        FiringPlan noTwistPlan = getBestFiringPlan(shooter, target, game);
+        FiringPlan noTwistPlan = getBestFiringPlan(shooter, target, game, ammoConservation);
 
         // If we can't change facing, we're done.
         if (!shooter.canChangeSecondaryFacing()) {
@@ -1651,12 +1687,12 @@ public class FireControl {
 
         // Turn to the right.
         shooter.setSecondaryFacing(correctFacing(originalFacing + 1));
-        FiringPlan rightTwistPlan = getBestFiringPlan(shooter, target, game);
+        FiringPlan rightTwistPlan = getBestFiringPlan(shooter, target, game, ammoConservation);
         rightTwistPlan.setTwist(1);
 
         // Turn to the left.
         shooter.setSecondaryFacing(correctFacing(originalFacing - 1));
-        FiringPlan leftTwistPlan = getBestFiringPlan(shooter, target, game);
+        FiringPlan leftTwistPlan = getBestFiringPlan(shooter, target, game, ammoConservation);
         leftTwistPlan.setTwist(-1);
 
         // todo extended torso twist.
@@ -1691,8 +1727,8 @@ public class FireControl {
                                                       int maxHeat, IGame game) {
 
         // Get the best plan without any twists.
-        FiringPlan noTwistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState, maxHeat,
-                                                              game);
+        FiringPlan noTwistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState,
+                                                              maxHeat, game);
 
         // If we can't change facing, we're done.
         if (!shooter.canChangeSecondaryFacing()) {
@@ -1704,14 +1740,14 @@ public class FireControl {
 
         // Turn to the right.
         shooter.setSecondaryFacing(correctFacing(originalFacing + 1));
-        FiringPlan rightTwistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState, maxHeat,
-                                                                 game);
+        FiringPlan rightTwistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState,
+                                                                 maxHeat, game);
         rightTwistPlan.setTwist(1);
 
         // Turn to the left.
         shooter.setSecondaryFacing(correctFacing(originalFacing - 1));
-        FiringPlan leftTwistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState, maxHeat,
-                                                                game);
+        FiringPlan leftTwistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState,
+                                                                maxHeat, game);
         leftTwistPlan.setTwist(-1);
 
         // todo extended torso twist.
@@ -1749,7 +1785,8 @@ public class FireControl {
 
         // Turn to the right.
         shooter.setSecondaryFacing(correctFacing(originalFacing + 1));
-        FiringPlan rightTwistPlan = guessBestFiringPlan(shooter, shooterState, target, targetState, game);
+        FiringPlan rightTwistPlan = guessBestFiringPlan(shooter, shooterState, target, targetState,
+                                                        game);
         rightTwistPlan.setTwist(1);
 
         // Turn to the left.
@@ -1790,8 +1827,10 @@ public class FireControl {
             if (entity.getOwner().isEnemyOf(shooter.getOwner())
                 && (entity.getPosition() != null)
                 && !entity.isOffBoard()
-                && entity.isTargetable()) {
-                LosEffects effects = 
+                && entity.isTargetable()
+                && (entity.getCrew() != null) && !entity.getCrew().isDead()) {
+
+                LosEffects effects =
                         LosEffects.calculateLos(game, shooter.getId(), entity);
                 if (effects.canSee()) {
                     targetableEnemyList.add(entity);
@@ -1813,7 +1852,8 @@ public class FireControl {
      * @param game    The game being played.
      * @return
      */
-    FiringPlan getBestFiringPlan(Entity shooter, IGame game) {
+    FiringPlan getBestFiringPlan(Entity shooter, IHonorUtil honorUtil, IGame game,
+                                 Map<Mounted, Double> ammoConservation) {
         final String METHOD_NAME = "getBestFiringPlan(Entity, IGame)";
 
         FiringPlan bestPlan = null;
@@ -1823,7 +1863,19 @@ public class FireControl {
 
         // Loop through each enemy and find the best plan for attacking them.
         for (Targetable enemy : enemies) {
-            FiringPlan plan = getBestFiringPlanWithTwists(shooter, enemy, game);
+
+            boolean priorityTarget = owner.getPriorityUnitTargets().contains(enemy.getTargetId());
+
+            // Skip retreating enemies so long as they haven't fired on me while retreating.
+            int playerId = (enemy instanceof Entity) ? ((Entity) enemy).getOwnerId() : -1;
+            if (!priorityTarget && honorUtil.isEnemyBroken(enemy.getTargetId(), playerId,
+                                                           owner.getForcedWithdrawal())) {
+                owner.log(getClass(), METHOD_NAME, LogLevel.INFO, enemy.getDisplayName() + " is broken - ignoring");
+                continue;
+            }
+
+            FiringPlan plan = getBestFiringPlanWithTwists(shooter, enemy,
+                                                          game, ammoConservation);
             owner.log(getClass(), METHOD_NAME, LogLevel.INFO, shooter.getDisplayName() + " at " + enemy
                     .getDisplayName() + " - Best Firing Plan: " + plan.getDebugDescription(true));
             if ((bestPlan == null) || (plan.getUtility() > bestPlan.getUtility())) {
@@ -1844,13 +1896,13 @@ public class FireControl {
      * @return The most damage done at that range.
      */
     // todo cluster and other variable damage.
-    public double getMaxDamageAtRange(Entity shooter, int range, boolean useExtremeRange) {
+    public double getMaxDamageAtRange(Entity shooter, int range, boolean useExtremeRange, boolean useLOSRange) {
         double maxDamage = 0;
 
         // cycle through my weapons
         for (Mounted weapon : shooter.getWeaponList()) {
             WeaponType weaponType = (WeaponType) weapon.getType();
-            int bracket = RangeType.rangeBracket(range, weaponType.getRanges(weapon), useExtremeRange);
+            int bracket = RangeType.rangeBracket(range, weaponType.getRanges(weapon), useExtremeRange, useLOSRange);
             if ((bracket != RangeType.RANGE_OUT) && (weaponType.getDamage() > 0)) {
                 maxDamage += weaponType.getDamage();
             }

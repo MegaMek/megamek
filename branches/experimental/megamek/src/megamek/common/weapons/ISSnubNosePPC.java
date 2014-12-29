@@ -65,7 +65,7 @@ public class ISSnubNosePPC extends PPCWeapon {
         techLevel.put(2784,TechConstants.T_IS_EXPERIMENTAL);
         extinctDate = 2790;
         reintroDate = 3067;
-        availRating = new int[] { RATING_E, RATING_X, RATING_E };
+        availRating = new int[] { RATING_E, RATING_F, RATING_E };
         techRating = RATING_E;
     }
 

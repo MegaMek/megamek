@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Vector;
 
 /**
- * Represtents a set of handles on an OmniMech used by Battle Armor units
+ * Represents a set of handles on an OmniMech used by Battle Armor units
  * equiped with Boarding Claws to attach themselves for transport. This is
  * standard equipment on OmniMechs.
  *
@@ -222,6 +222,10 @@ import java.util.Vector;
         }
     }
 
+    public void resetTransporter() {
+    	troopers = -1;
+    }
+    
     /**
      * Determine if transported units prevent a weapon in the given location
      * from firing.

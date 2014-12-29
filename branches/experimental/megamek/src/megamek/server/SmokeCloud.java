@@ -22,6 +22,12 @@ import megamek.common.Coords;
 
 public class SmokeCloud implements Serializable{
     
+    public static final int SMOKE_NONE = 0;
+    public static final int SMOKE_LIGHT = 1;
+    public static final int SMOKE_HEAVY = 2;
+    public static final int SMOKE_LI_LIGHT = 3;
+    public static final int SMOKE_LI_HEAVY = 4;
+    public static final int SMOKE_CHAFF_LIGHT = 5;
     /**
      * 
      */
@@ -51,6 +57,33 @@ public class SmokeCloud implements Serializable{
         this.smokeLevel = Math.min(4, level);
     }
     
+    /**
+     * Reduces the level of smoke, heavy goes to light, LI heavy goes to LI 
+     * light.
+     */
+    public void reduceSmokeLevel() {
+        switch (smokeLevel) {
+            case SMOKE_LIGHT:
+            case SMOKE_LI_LIGHT:
+            case SMOKE_CHAFF_LIGHT:
+                smokeLevel = SMOKE_NONE;
+                break;
+            case SMOKE_HEAVY:
+                smokeLevel = SMOKE_LIGHT;
+                break;
+            case SMOKE_LI_HEAVY:
+                smokeLevel = SMOKE_LI_LIGHT;
+                break;
+            default:
+                smokeLevel = SMOKE_NONE;
+        }
+    }
+    
+    /**
+     * Returns the level of smoke, odd levels will correspond to light smoke
+     * while even levels will be heavy smoke.
+     * @return
+     */
     public int getSmokeLevel(){
         return smokeLevel;
     }

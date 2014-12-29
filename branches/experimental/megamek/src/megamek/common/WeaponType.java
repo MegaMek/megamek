@@ -134,10 +134,10 @@ public class WeaponType extends EquipmentType {
     public static final BigInteger F_CWS = BigInteger.valueOf(1).shiftLeft(59);
     
     // add maximum range for AT2
-    public static final int RANGE_SHORT = 1;
-    public static final int RANGE_MED = 2;
-    public static final int RANGE_LONG = 3;
-    public static final int RANGE_EXT = 4;
+    public static final int RANGE_SHORT = RangeType.RANGE_SHORT;
+    public static final int RANGE_MED = RangeType.RANGE_MEDIUM;
+    public static final int RANGE_LONG = RangeType.RANGE_LONG;
+    public static final int RANGE_EXT = RangeType.RANGE_EXTREME;
 
     // add weapon classes for AT2
     public static final int CLASS_NONE = 0;
@@ -181,6 +181,8 @@ public class WeaponType extends EquipmentType {
     public static final int WEAPON_BURST_5D6 = 12;
     public static final int WEAPON_BURST_6D6 = 13;
     public static final int WEAPON_BURST_7D6 = 14;
+    // Used for BA vs BA damage for BA Plasma Rifle
+    public static final int WEAPON_PLASMA = 15;
 
 
     public static String[] classNames =
@@ -209,6 +211,12 @@ public class WeaponType extends EquipmentType {
 
     //the class of weapon for infantry damage
     public int infDamageClass = WEAPON_DIRECT_FIRE;
+    /**
+     *  Used for the BA vs BA damage rules on TO pg 109.  Determines how much
+     *  damage a weapon will inflict on BA, where the default WEAPON_DIRECT_FIRE
+     *  indicates normal weapon damage. 
+     */
+    protected int baDamageClass = WEAPON_DIRECT_FIRE;
 
     // get stuff for AT2
     // separate attack value by range. It will make weapon bays easier
@@ -425,6 +433,10 @@ public class WeaponType extends EquipmentType {
 
     public int getInfantryDamageClass() {
         return infDamageClass;
+    }
+    
+    public int getBADamageClass() {
+        return baDamageClass;
     }
 
     public int[] getATRanges() {

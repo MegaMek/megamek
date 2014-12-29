@@ -27,6 +27,7 @@ Black Eagle
 171
 120
 </Armor>
+
 <Nose Equipment>
 ISLargeLaser
 ISLargeLaser
@@ -39,13 +40,15 @@ ISLRM20 Ammo
 ISLRM20 Ammo
 ISLRM20 Ammo
 </Nose Equipment>
+
 <Left Side Equipment>
 ISLargeLaser
 ISLargeLaser
 IS LRM-20
 IS LRM-20
 (R) IS LRM-20
-(R) ISLargeLaser
+(R) ISLRM20 Ammo
+(R) ISLRM20 Ammo
 (R) ISLargeLaser
 (R) ISMediumLaser
 (R) ISMediumLaser
@@ -58,13 +61,15 @@ ISLRM20 Ammo
 ISLRM20 Ammo
 ISLRM20 Ammo
 </Left Side Equipment>
+
 <Right Side Equipment> 
 ISLargeLaser
 ISLargeLaser
 IS LRM-20
 IS LRM-20
 (R) IS LRM-20
-(R) ISLargeLaser
+(R) ISLRM20 Ammo
+(R) ISLRM20 Ammo
 (R) ISLargeLaser
 (R) ISMediumLaser
 (R) ISMediumLaser
@@ -77,6 +82,7 @@ ISLRM20 Ammo
 ISLRM20 Ammo
 ISLRM20 Ammo
 </Right Side Equipment>
+
 <Aft Equipment> 
 ISLargeLaser
 ISMediumLaser

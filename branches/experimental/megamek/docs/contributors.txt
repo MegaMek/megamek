@@ -3,8 +3,13 @@
   Original author:
      Ben Mazur <bmazur@sev.org>
      
-  Current maintainer:
+  Current maintainers:
      Sebastian Brocks <beerockxs@users.sourceforge.net>
+	 Dave Nawton <hammer-gs@users.sourceforge.net>
+	 Nicholas Walczak <arlith@users.sourceforge.net>
+	 Deric "Netzilla" Page <dericpage@users.sourceforge.net>
+     Dylan Myers <ralgith-erian@users.sourceforge.net>
+	 
 
   AI Coding:
      Steven Hawkins <skh_mail@yahoo.com>
@@ -188,16 +193,23 @@
      Stingr4y
      RJM
      SteveRestless
+     Dervishx5
      
   Camo Pack
   	 SeaVea
-
+  	 
+  Fluff Pack (Optional pack available for down from (https://sourceforge.net/projects/megamek/files/?source=navbar)
+  	The optional fluff pack images have been provided by the artists of http://www.camospecs.com/ and other community artists.
+  	All images are owned by the original artist and these materials are included under the fair use exemption and are
+    restricted from further use.
+   
   Random Assignment Tables
      Harold "BATTLEMASTER" N. <s_d@users.sourceforge.net>
      Nicholas "starbird7" Ristow
      Magnus Kerensky <mkerensky@users.sourceforge.net>
      Netzilla and Xotl (Classic Battletech Forums)
      Dave Nawton <hammer-gs@users.sourceforge.net>
+	 Greekfire.
 
   Translations
      Jörg Harder <joergharder@t-online.de>
@@ -211,6 +223,7 @@
         data/images/hexes/note.png (modified for formatting, from http://www.iconspedia.com/icon/note-icon-21517.html)
       Wikimedia Commons, licensed under CC Attribution-Share Alike 2.5 Generic (http://creativecommons.org/licenses/by-sa/2.5/deed.en)
         data/images/widgets/hyades.jpg
+      UI Materials licensed from EVILSYSTEM (http://www.evilsystem.eu/terms/).
 
 
   And Of Course...
@@ -219,5 +232,5 @@
 
 
   If I've missed anyone or details have changed, please accept apologies and
-  contact the author (above.)
+  contact the author(s) (above.)
 

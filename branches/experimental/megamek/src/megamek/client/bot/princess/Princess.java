@@ -16,16 +16,21 @@ package megamek.client.bot.princess;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 import megamek.client.bot.BotClient;
 import megamek.client.bot.ChatProcessor;
 import megamek.client.bot.PhysicalOption;
+import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -38,32 +43,26 @@ import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
 import megamek.common.Minefield;
+import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Tank;
 import megamek.common.Targetable;
+import megamek.common.WeaponType;
 import megamek.common.actions.EntityAction;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.logging.LogLevel;
 import megamek.common.logging.Logger;
 import megamek.common.util.StringUtil;
+import megamek.common.weapons.AmmoWeapon;
 
 public class Princess extends BotClient {
 
-    public static final String CMD_FLEE = "fl";
-    public static final String CMD_VERBOSE = "ve";
-    public static final String CMD_BEHAVIOR = "be";
-    public static final String CMD_CAUTION = "ca";
-    public static final String CMD_AVOID = "av";
-    public static final String CMD_AGGRESSION = "ag";
-    public static final String CMD_HERDING = "he";
-    public static final String CMD_BRAVERY = "br";
-    public static final String CMD_TARGET = "ta";
-    public static final String CMD_PRIORITY = "pr";
-
     private static final Logger logger = new Logger();
+
+    private final IHonorUtil honorUtil = new HonorUtil();
 
     private boolean initialized = false;
 
@@ -75,12 +74,13 @@ public class Princess extends BotClient {
     private Precognition precognition;
     private Thread precogThread;
     private final Set<Coords> strategicBuildingTargets = new HashSet<>();
-    private final Set<Integer> priorityUnitTargets = new HashSet<>();
     private boolean fallBack = false;
     protected ChatProcessor chatProcessor = new ChatProcessor();
     private boolean fleeBoard = false;
-    private boolean forcedWithdrawal = false;
     private IMoralUtil moralUtil = new MoralUtil(logger);
+    private final Set<Integer> attackedWhileFleeing =
+            Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
+    private final Set<Integer> myFleeingEntities = Collections.newSetFromMap(new ConcurrentHashMap<Integer, Boolean>());
 
     public Princess(String name, String host, int port, LogLevel verbosity) {
         super(name, host, port);
@@ -107,15 +107,15 @@ public class Princess extends BotClient {
     public boolean getFleeBoard() {
         return fleeBoard;
     }
-    
+
     public boolean getForcedWithdrawal() {
-    	return forcedWithdrawal;
+        return getBehaviorSettings().isForcedWithdrawal();
     }
 
     public void setFleeBoard(boolean fleeBoard, String reason) {
-        log(getClass(), "setFleeBoard(boolean, String)", LogLevel.INFO, "Setting Flee Board " + fleeBoard +
-                														" because: " + reason);
-    	
+        log(getClass(), "setFleeBoard(boolean, String)", LogLevel.DEBUG, "Setting Flee Board " + fleeBoard +
+                                                                         " because: " + reason);
+
         this.fleeBoard = fleeBoard;
     }
 
@@ -124,16 +124,9 @@ public class Princess extends BotClient {
     }
 
     public void setFallBack(boolean fallBack, String reason) {
-        log(getClass(), "setFallBack(boolean, String)", LogLevel.INFO, "Setting Fall Back " + fallBack +
-                                                                         " because: " + reason);
+        log(getClass(), "setFallBack(boolean, String)", LogLevel.DEBUG, "Setting Fall Back " + fallBack +
+                                                                        " because: " + reason);
         this.fallBack = fallBack;
-    }
-    
-    public void setForcedWithdrawal(boolean forcedWithdrawal, String reason) {
-    	log(getClass(), "setForcedWithdrawal(boolean, String)", LogLevel.INFO, "Setting Forced Withdrawal " +
-    																		   forcedWithdrawal + " because: " +
-    																		   reason);
-    	this.forcedWithdrawal = forcedWithdrawal;															  
     }
 
     public void setBehaviorSettings(BehaviorSettings behaviorSettings) {
@@ -149,7 +142,6 @@ public class Princess extends BotClient {
         getStrategicBuildingTargets().clear();
         setFallBack(behaviorSettings.shouldGoHome(), "Fall Back Configuration.");
         setFleeBoard(behaviorSettings.shouldAutoFlee(), "Flee Board Configuration.");
-        setForcedWithdrawal(behaviorSettings.isForcedWithdrawal(), "Forced Withdrawal Configuration.");
         if (getFallBack()) {
             return;
         }
@@ -160,15 +152,9 @@ public class Princess extends BotClient {
             }
             String x = targetCoords.substring(0, 2);
             String y = targetCoords.replaceFirst(x, "");
-            Coords coords = new Coords(Integer.parseInt(x), Integer.parseInt(y));
+            // Need to subtract 1, since we are given a Hex number string, which is Coords X+1Y+1 
+            Coords coords = new Coords(Integer.parseInt(x) - 1, Integer.parseInt(y) - 1);
             getStrategicBuildingTargets().add(coords);
-        }
-
-        for (int priorityUnit : behaviorSettings.getPriorityUnitTargets()) {
-            if (priorityUnit <= 0) {
-                continue;
-            }
-            getPriorityUnitTargets().add(priorityUnit);
         }
     }
 
@@ -184,8 +170,20 @@ public class Princess extends BotClient {
         return strategicBuildingTargets;
     }
 
+    public void addStrategicBuildingTarget(Coords coords) {
+        if (coords == null) {
+            throw new NullPointerException("Coords is null.");
+        }
+        if (!getGame().getBoard().contains(coords)) {
+            log(getClass(), "addStrategicBuildingTarget(Coords)", LogLevel.WARNING,
+                "Board does not contain " + coords.toFriendlyString());
+            return;
+        }
+        getStrategicBuildingTargets().add(coords);
+    }
+
     public Set<Integer> getPriorityUnitTargets() {
-        return priorityUnitTargets;
+        return getBehaviorSettings().getPriorityUnitTargets();
     }
 
     @Override
@@ -219,11 +217,10 @@ public class Princess extends BotClient {
             }
 
             // on the list to be deployed get a set of all the
-            LinkedList<Coords> startingCoords = getStartingCoordsArray();
+            List<Coords> startingCoords = getStartingCoordsArray();
             if (startingCoords.size() == 0) {
                 log(getClass(), METHOD_NAME, LogLevel.ERROR,
-                    "No valid locations to deploy "
-                    + getEntity(entityNum).getDisplayName());
+                    "No valid locations to deploy " + getEntity(entityNum).getDisplayName());
             }
 
             // get the coordinates I can deploy on
@@ -253,12 +250,15 @@ public class Princess extends BotClient {
                                                                                    .getBoard().getHeight() / 2);
                 decentFacing = deployCoords.direction(center);
             }
+
             Entity deployEntity = game.getEntity(entityNum);
             IHex deployHex = game.getBoard().getHex(deployCoords);
+
             // Entity.elevatoinOccupied performs a null check on IHex
             int deployElevation = deployEntity.elevationOccupied(deployHex);
+
             // Compensate for hex elevation where != 0...
-            deployElevation -= deployHex.getElevation();
+            deployElevation -= deployHex.getLevel();
             deploy(entityNum, deployCoords, decentFacing, deployElevation);
         } finally {
             methodEnd(getClass(), METHOD_NAME);
@@ -271,10 +271,30 @@ public class Princess extends BotClient {
         methodBegin(getClass(), METHOD_NAME);
 
         try {
-            Entity shooter = game.getFirstEntity(getMyTurn()); // get the first
+            // get the first entity that can act this turn make sure weapons are loaded
+            Entity shooter = game.getFirstEntity(getMyTurn());
+
+            // If my unit is forced to withdraw, don't fire unless I've been fired on.
+            if (getForcedWithdrawal() && shooter.isCrippled()) {
+                StringBuilder msg = new StringBuilder(shooter.getDisplayName()).append(" is crippled and withdrawing.");
+                try {
+                    if (attackedWhileFleeing.contains(shooter.getId())) {
+                        msg.append("\n\tBut I was fired on, so I will return fire.");
+                    } else {
+                        msg.append("\n\tI will not fire so long as I'm not fired on.");
+                        sendAttackData(shooter.getId(), new Vector<EntityAction>(0));
+                        return;
+                    }
+                } finally {
+                    log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
+                }
+            }
+
+            // Set up ammo conservation.
+            Map<Mounted, Double> ammoConservation = calcAmmoConservation(shooter);
 
             // entity that can act this turn make sure weapons are loaded
-            FiringPlan plan = fireControl.getBestFiringPlan(shooter, game);
+            FiringPlan plan = fireControl.getBestFiringPlan(shooter, getHonorUtil(), game, ammoConservation);
             if (plan != null) {
                 fireControl.loadAmmo(shooter, plan);
                 plan.sortPlan();
@@ -291,6 +311,57 @@ public class Princess extends BotClient {
             }
         } finally {
             methodEnd(getClass(), METHOD_NAME);
+        }
+    }
+
+    Map<Mounted, Double> calcAmmoConservation(Entity shooter) {
+        final String METHOD_NAME = "calcAmmoConservation(Entity)";
+        final double aggroFactor = (10 - getBehaviorSettings().getHyperAggressionIndex()) * 2;
+        StringBuilder msg = new StringBuilder("\nCalculating ammo conservation for ").append(shooter.getDisplayName());
+        msg.append("\nAggression Factor = ").append(aggroFactor);
+
+        try {
+            Map<AmmoType, Integer> ammoCounts = new HashMap<>();
+            msg.append("\nPooling Ammo:");
+            for (Mounted ammo : shooter.getAmmo()) {
+                AmmoType ammoType = (AmmoType) ammo.getType();
+                msg.append("\n\t").append(ammoType.toString());
+                if (ammoCounts.containsKey(ammoType)) {
+                    ammoCounts.put(ammoType, ammoCounts.get(ammoType) + ammo.getUsableShotsLeft());
+                    msg.append(" + ").append(ammo.getUsableShotsLeft()).append(" = ").append(ammoCounts.get(ammoType));
+                    continue;
+                }
+                ammoCounts.put(ammoType, ammo.getUsableShotsLeft());
+                msg.append(" + ").append(ammo.getUsableShotsLeft()).append(" = ").append(ammoCounts.get(ammoType));
+            }
+
+            Map<Mounted, Double> ammoConservation = new HashMap<>();
+            msg.append("\nCalculating conservation for each weapon");
+            for (Mounted weapon : shooter.getWeaponList()) {
+                WeaponType weaponType = (WeaponType) weapon.getType();
+                msg.append("\n\t").append(weaponType.toString());
+                if (!(weaponType instanceof AmmoWeapon)) {
+                    ammoConservation.put(weapon, 0.0);
+                    msg.append(" doesn't use ammo.");
+                    continue;
+                }
+
+                int ammoCount = 0;
+                for (AmmoType ammoType : ammoCounts.keySet()) {
+                    if (!AmmoType.isAmmoValid(ammoType, weaponType)) {
+                        continue;
+                    }
+                    ammoCount += ammoCounts.get(ammoType);
+                }
+                msg.append(" has ").append(ammoCount).append(" shots left");
+                double toHitThreshold = Math.max(0.0, 1 - (ammoCount / aggroFactor));
+                msg.append("; To Hit Threshold = ").append(new DecimalFormat("0.000").format(toHitThreshold));
+                ammoConservation.put(weapon, toHitThreshold);
+            }
+
+            return ammoConservation;
+        } finally {
+            log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg);
         }
     }
 
@@ -467,9 +538,22 @@ public class Princess extends BotClient {
 
         try {
             // get the first entity that can act this turn
-            Entity first_entity = game.getFirstEntity(getMyTurn());
+            Entity attacker = game.getFirstEntity(getMyTurn());
+
+            // If my unit is forced to withdraw, don't attack unless I've been attacked.
+            if (getForcedWithdrawal() && attacker.isCrippled()) {
+                StringBuilder msg = new StringBuilder(attacker.getDisplayName()).append(" is crippled and withdrawing.");
+                if (attackedWhileFleeing.contains(attacker.getId())) {
+                    msg.append("\n\tBut I was fired on, so I will hit back.");
+                } else {
+                    msg.append("\n\tI will not attack so long as I'm not fired on.");
+                    return null;
+                }
+                log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
+            }
+
             PhysicalInfo best_attack = null;
-            int firstEntityId = first_entity.getId();
+            int firstEntityId = attacker.getId();
             int nextEntityId = firstEntityId;
 
             // this is an array of all my enemies
@@ -483,7 +567,7 @@ public class Princess extends BotClient {
                     continue;
                 }
 
-                log(getClass(), METHOD_NAME, LogLevel.INFO,
+                log(getClass(), METHOD_NAME, LogLevel.DEBUG,
                     "Calculating physical attacks for " + hitter.getDisplayName());
 
                 // cycle through potential enemies
@@ -492,6 +576,9 @@ public class Princess extends BotClient {
                         continue; // Skip enemies not on the board.
                     }
                     if (hitter.getPosition().distance(e.getPosition()) > 1) {
+                        continue;
+                    }
+                    if (getHonorUtil().isEnemyBroken(e.getTargetId(), e.getOwnerId(), getForcedWithdrawal())) {
                         continue;
                     }
 
@@ -531,14 +618,16 @@ public class Princess extends BotClient {
 
                 }
                 if (best_attack != null) {
-                    log(getClass(), METHOD_NAME, LogLevel.INFO, "Attack is " + best_attack.getDebugDescription());
+                    log(getClass(), METHOD_NAME, LogLevel.INFO, "Best Physical Attack is " +
+                                                                best_attack.getDebugDescription());
                 } else {
-                    log(getClass(), METHOD_NAME, LogLevel.INFO, "No useful attack to be made");
+                    log(getClass(), METHOD_NAME, LogLevel.INFO, "No useful physical attack to be made");
                 }
                 if (best_attack != null) {
                     return best_attack.getAsPhysicalOption();
                 }
             } while (nextEntityId != firstEntityId);
+
             // no one can hit anything anymore, so give up
             return null;
         } finally {
@@ -547,7 +636,7 @@ public class Princess extends BotClient {
     }
 
     protected boolean wantsToFallBack(Entity entity) {
-        return getFallBack() || (entity.isCrippled() && getForcedWithdrawal());
+        return (entity.isCrippled() && getForcedWithdrawal()) || getFallBack();
     }
 
     protected IMoralUtil getMoralUtil() {
@@ -555,7 +644,7 @@ public class Princess extends BotClient {
     }
 
     protected boolean isFallingBack(Entity entity) {
-        return !entity.isImmobile() && wantsToFallBack(entity);
+        return getMyFleeingEntities().contains(entity.getId());
     }
 
     protected boolean mustFleeBoard(Entity entity) {
@@ -569,7 +658,11 @@ public class Princess extends BotClient {
         if (getPathRanker().distanceToHomeEdge(entity.getPosition(), getHomeEdge(), getGame()) > 0) {
             return false;
         }
-        return !(!getFleeBoard() && !(entity.isCrippled() && getForcedWithdrawal()));
+        //noinspection RedundantIfStatement
+        if (!getFleeBoard() && !(entity.isCrippled() && getForcedWithdrawal())) {
+            return false;
+        }
+        return true;
     }
 
     protected boolean isImmobilized(Entity mover) {
@@ -644,7 +737,7 @@ public class Princess extends BotClient {
         MoveStep walk = new MoveStep(movePath, type);
         IHex hex = getHex(mech.getPosition());
         PilotingRollData target = mech.checkBogDown(walk, hex, mech.getPriorPosition(), mech.getPosition(),
-                                                    hex.getElevation(), false);
+                                                    hex.getLevel(), false);
         log(getClass(), METHOD_NAME, LogLevel.INFO,
             "Need to roll " + target.getValue() + " to get unstuck and our tolerance is " + threshold);
         return (target.getValue() >= threshold);
@@ -658,7 +751,7 @@ public class Princess extends BotClient {
         return getBoard().getHex(coords);
     }
 
-    protected ArrayList<RankedPath> rankPaths(ArrayList<MovePath> paths, int maxRange, double fallTollerance,
+    protected ArrayList<RankedPath> rankPaths(List<MovePath> paths, int maxRange, double fallTollerance,
                                               int startingHomeDistance,
                                               List<Entity> enemies, List<Entity> friends) {
         return getPathRanker().rankPaths(paths, getGame(), maxRange, fallTollerance, startingHomeDistance,
@@ -671,8 +764,7 @@ public class Princess extends BotClient {
         methodBegin(getClass(), METHOD_NAME);
 
         if (entity == null) {
-            log(getClass(), METHOD_NAME, LogLevel.WARNING, "Entity is NULL.");
-            return new MovePath(getGame(), null);
+            throw new NullPointerException("Entity is null.");
         }
 
         try {
@@ -682,7 +774,7 @@ public class Princess extends BotClient {
             log(getClass(), METHOD_NAME, "Moving " + entity.getDisplayName() + " (ID " + entity.getId() + ")");
             getPrecognition().insureUpToDate();
 
-            if (wantsToFallBack(entity)) {
+            if (isFallingBack(entity)) {
                 String msg = entity.getDisplayName();
                 if (getFallBack()) {
                     msg += " is falling back.";
@@ -710,7 +802,7 @@ public class Princess extends BotClient {
                 }
             }
 
-            ArrayList<MovePath> paths = getPrecognition().getPathEnumerator().unit_paths.get(entity.getId());
+            List<MovePath> paths = getPrecognition().getPathEnumerator().getUnitPaths().get(entity.getId());
 
             if (paths == null) {
                 log(getClass(), METHOD_NAME, LogLevel.WARNING,
@@ -753,12 +845,12 @@ public class Princess extends BotClient {
                 return new MovePath(game, entity);
             }
             log(getClass(), METHOD_NAME, "Path ranking took " + Long.toString(stop_time - startTime) + " millis");
-            precognition.unpause();
             RankedPath bestpath = PathRanker.getBestPath(rankedpaths);
             log(getClass(), METHOD_NAME, LogLevel.INFO, "Best Path: " + bestpath.path.toString() + "  Rank: "
                                                         + bestpath.rank);
             return bestpath.path;
         } finally {
+            precognition.unPause();
             methodEnd(getClass(), METHOD_NAME);
         }
     }
@@ -773,7 +865,7 @@ public class Princess extends BotClient {
 
             // ----Debugging: print out any errors made in guessing to hit
             // values-----
-            Vector<Entity> ents = game.getEntitiesVector();
+            List<Entity> ents = game.getEntitiesVector();
             for (Entity ent : ents) {
                 String errors = fireControl.checkAllGuesses(ent, game);
                 if (errors != null) {
@@ -783,6 +875,79 @@ public class Princess extends BotClient {
             // -----------------------------------------------------------------------
         } finally {
             methodEnd(getClass(), METHOD_NAME);
+        }
+    }
+
+    private void checkForDishonoredEnemies() {
+        final String METHOD_NAME = "checkForDishonoredEnemies()";
+
+        StringBuilder msg = new StringBuilder("Checking for dishonored enemies.");
+
+        try {
+            // If the Forced Withdrawal rule is not turned on, then it's a fight to the death anyway.
+            if (!getForcedWithdrawal()) {
+                msg.append("\n\tForced withdrawal turned off.");
+                return;
+            }
+
+            for (Entity mine : getEntitiesOwned()) {
+
+                // Who just attacked me?
+                Collection<Integer> attackedBy = mine.getAttackedByThisTurn();
+                if (attackedBy.isEmpty()) {
+                    continue;
+                }
+
+                // Is my unit trying to withdraw?
+                boolean fleeing = getMyFleeingEntities().contains(mine.getId());
+
+                for (int id : attackedBy) {
+                    Entity entity = getGame().getEntity(id);
+                    if (entity == null) {
+                        continue;
+                    }
+
+                    if (getHonorUtil().isEnemyBroken(entity.getTargetId(), entity.getOwnerId(),
+                                                     getForcedWithdrawal()) || !entity.isMilitary()) {
+                        // If he'd just continued running, I would have let him go, but the bastard shot at me!
+                        msg.append("\n\t")
+                           .append(entity.getDisplayName())
+                           .append("dishonored himself by attacking me even though he is ");
+                        if (!entity.isMilitary()) {
+                            msg.append("a civilian.");
+                        } else {
+                            msg.append("fleeing.");
+                        }
+                        getHonorUtil().setEnemyDishonored(entity.getOwnerId());
+                        continue;
+                    }
+
+                    // He shot me while I was running away!
+                    if (fleeing) {
+                        msg.append("\n\t")
+                           .append(entity.getDisplayName())
+                           .append("dishonored himself by attacking a fleeing unit (")
+                           .append(mine.getDisplayName())
+                           .append(").");
+                        getHonorUtil().setEnemyDishonored(entity.getOwnerId());
+                        attackedWhileFleeing.add(mine.getId());
+                    }
+                }
+            }
+        } finally {
+            log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
+        }
+    }
+
+    private void checkForBrokenEnemies() {
+
+        // If the Forced Withdrawal rule is not turned on, then it's a fight to the death anyway.
+        if (!getForcedWithdrawal()) {
+            return;
+        }
+
+        for (Entity entity : getEnemyEntities()) {
+            getHonorUtil().checkEnemyBroken(entity, getForcedWithdrawal());
         }
     }
 
@@ -812,12 +977,9 @@ public class Princess extends BotClient {
                 Enumeration<Coords> bldgCoords = bldg.getCoords();
                 while (bldgCoords.hasMoreElements()) {
                     Coords coords = bldgCoords.nextElement();
-                    for (Enumeration<Entity> i = game.getEntities(coords, true); i.hasMoreElements(); ) {
-                        Entity entity = i.nextElement();
+                    for (Entity entity : game.getEntitiesVector(coords, true)) {
                         BuildingTarget bt = new BuildingTarget(coords, game.getBoard(), false);
-                        if ((entity instanceof GunEmplacement)
-                            && entity.getOwner().isEnemyOf(getLocalPlayer())
-                            && (fireControl.getAdditionalTargets().indexOf(bt) == -1)) {
+                        if (isEnemyGunEmplacement(entity, coords)) {
                             fireControl.getAdditionalTargets().add(bt);
                             sendChat("Building in Hex " + coords.toFriendlyString()
                                      + " designated target due to Gun Emplacement.");
@@ -848,12 +1010,12 @@ public class Princess extends BotClient {
             pathSearcher.ranker = pathRanker;
             fireControl = new FireControl(this);
             pathRanker.setFireControl(fireControl);
-            precognition = new Precognition(this);
-            precognition.setGame(getGame());
+            precognition = new Precognition(this, game);
+            precognition.updateGame(getGame());
             pathRanker.setPathEnumerator(precognition.getPathEnumerator());
 
             precogThread = new Thread(precognition, "Princess-precognition ("
-                    + getName() + ")");
+                                                    + getName() + ")");
             precogThread.start();
 
             // Pick up any turrets and add their buildings to the strategic targets list.
@@ -863,11 +1025,8 @@ public class Princess extends BotClient {
                 Enumeration<Coords> bldgCoords = bldg.getCoords();
                 while (bldgCoords.hasMoreElements()) {
                     Coords coords = bldgCoords.nextElement();
-                    for (Enumeration<Entity> i = getGame().getEntities(coords, true); i.hasMoreElements(); ) {
-                        Entity entity = i.nextElement();
-                        if (entity instanceof GunEmplacement
-                            && entity.getOwner().isEnemyOf(getLocalPlayer())
-                            && !getStrategicBuildingTargets().contains(coords)) {
+                    for (Entity entity : game.getEntitiesVector(coords, true)) {
+                        if (isEnemyGunEmplacement(entity, coords)) {
                             getStrategicBuildingTargets().add(coords);
                             sendChat("Building in Hex " + coords.toFriendlyString() +
                                      " designated target due to Gun Emplacement.");
@@ -882,12 +1041,21 @@ public class Princess extends BotClient {
             methodEnd(getClass(), METHOD_NAME);
         }
     }
-    
+
+    private boolean isEnemyGunEmplacement(Entity entity, Coords coords) {
+        return entity instanceof GunEmplacement
+               && entity.getOwner().isEnemyOf(getLocalPlayer())
+               && !getStrategicBuildingTargets().contains(coords)
+               && (entity.getCrew() != null) && !entity.getCrew().isDead();
+    }
+
     @Override
     public void die() {
         super.die();
-        precognition.signalDone();
-        precogThread.interrupt();
+        if (precognition != null) {
+            precognition.signalDone();
+            precogThread.interrupt();
+        }
     }
 
     @Override
@@ -901,6 +1069,9 @@ public class Princess extends BotClient {
     }
 
     public void log(Class<?> callingClass, String methodName, LogLevel level, StringBuilder msg) {
+        if (msg == null) {
+            return;
+        }
         log(callingClass, methodName, level, msg.toString());
     }
 
@@ -950,5 +1121,48 @@ public class Princess extends BotClient {
     protected void checkMoral() {
         moralUtil.checkMoral(behaviorSettings.isForcedWithdrawal(), behaviorSettings.getBraveryIndex(),
                              behaviorSettings.getSelfPreservationIndex(), getLocalPlayer(), game);
+    }
+
+    public IHonorUtil getHonorUtil() {
+        return honorUtil;
+    }
+
+    @Override
+    public void endOfTurnProcessing() {
+        logger.methodBegin(getClass(), "endOfTurnProcessing()");
+        checkForDishonoredEnemies();
+        updateMyFleeingEntities();
+        checkForBrokenEnemies();
+        logger.methodEnd(getClass(), "endOfTurnProcessing()");
+    }
+
+    Set<Integer> getMyFleeingEntities() {
+        return myFleeingEntities;
+    }
+
+    private void updateMyFleeingEntities() {
+        final String METHOD_NAME = "updateMyFleeingEntities()";
+
+        StringBuilder msg = new StringBuilder("Updating my list of falling back units.");
+
+        try {
+            // If the Forced Withdrawal rule is not turned on, then it's a fight to the death anyway.
+            if (!getForcedWithdrawal()) {
+                msg.append("\n\tForced withdrawal turned off.");
+                return;
+            }
+
+            for (Entity mine : getEntitiesOwned()) {
+                if (myFleeingEntities.contains(mine.getId())) {
+                    continue;
+                }
+                if (wantsToFallBack(mine)) {
+                    msg.append("\n\tAdding ").append(mine.getDisplayName());
+                    myFleeingEntities.add(mine.getId());
+                }
+            }
+        } finally {
+            log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
+        }
     }
 }

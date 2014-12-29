@@ -1293,8 +1293,8 @@ public class BattleArmor extends Infantry {
                     result = new TargetRoll(mediumStealthMod, stealthName);
                     break;
                 case RangeType.RANGE_LONG:
-                case RangeType.RANGE_EXTREME: // TODO : what's the *real*
-                    // modifier?
+                case RangeType.RANGE_EXTREME:
+                case RangeType.RANGE_LOS:
                     result = new TargetRoll(longStealthMod, stealthName);
                     break;
                 case RangeType.RANGE_OUT:

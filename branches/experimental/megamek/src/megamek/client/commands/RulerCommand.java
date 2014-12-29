@@ -22,8 +22,8 @@ import megamek.common.ToHitData;
 
 /**
  * @author dirk
- * This is the ruler for LOS stuff implemented in command line.
- * There should be a more intuitive ruler.
+ *         This is the ruler for LOS stuff implemented in command line.
+ *         There should be a more intuitive ruler.
  */
 public class RulerCommand extends ClientCommand {
 
@@ -43,9 +43,9 @@ public class RulerCommand extends ClientCommand {
             ToHitData thd;
 
             start = new Coords(Integer.parseInt(args[1]) - 1, Integer
-                    .parseInt(args[2]) - 1);
+                                                                      .parseInt(args[2]) - 1);
             end = new Coords(Integer.parseInt(args[3]) - 1, Integer
-                    .parseInt(args[4]) - 1);
+                                                                    .parseInt(args[4]) - 1);
             if (args.length > 5) {
                 try {
                     elev1 = Integer.parseInt(args[5]);
@@ -62,9 +62,9 @@ public class RulerCommand extends ClientCommand {
             }
 
             thd = LosEffects.calculateLos(getClient().getGame(),
-                    LosEffects.buildAttackInfo(start, end, elev1, elev2,
-                            getClient().getBoard().getHex(start).floor(),
-                            getClient().getBoard().getHex(end).floor())).losModifiers(
+                                          LosEffects.buildAttackInfo(start, end, elev1, elev2,
+                                                                     getClient().getBoard().getHex(start).floor(),
+                                                                     getClient().getBoard().getHex(end).floor())).losModifiers(
                     getClient().getGame());
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
                 toHit1 = thd.getValue() + " because "; //$NON-NLS-1$
@@ -72,21 +72,21 @@ public class RulerCommand extends ClientCommand {
             toHit1 += thd.getDesc();
 
             thd = LosEffects.calculateLos(getClient().getGame(),
-                    LosEffects.buildAttackInfo(end, start, elev2, elev1,
-                            getClient().getBoard().getHex(end).floor(),
-                            getClient().getBoard().getHex(start).floor())).losModifiers(
+                                          LosEffects.buildAttackInfo(end, start, elev2, elev1,
+                                                                     getClient().getBoard().getHex(end).floor(),
+                                                                     getClient().getBoard().getHex(start).floor())).losModifiers(
                     getClient().getGame());
             if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
                 toHit2 = thd.getValue() + " because  "; //$NON-NLS-1$
             }
             toHit2 += thd.getDesc();
 
-            return "The ToHit from hex (" + (start.x + 1) + ", "
-                    + (start.y + 1) + ") at elevation " + elev1 + " to ("
-                    + (end.x + 1) + ", " + (end.y + 1) + ") at elevation "
-                    + elev2 + " has a range of " + start.distance(end)
-                    + " and a modifier of " + toHit1
-                    + " and return fire has a modifier of " + toHit2 + ".";
+            return "The ToHit from hex (" + (start.getX() + 1) + ", "
+                   + (start.getY() + 1) + ") at elevation " + elev1 + " to ("
+                   + (end.getX() + 1) + ", " + (end.getY() + 1) + ") at elevation "
+                   + elev2 + " has a range of " + start.distance(end)
+                   + " and a modifier of " + toHit1
+                   + " and return fire has a modifier of " + toHit2 + ".";
         } catch (NumberFormatException nfe) {
         } catch (NullPointerException npe) {
         } catch (IndexOutOfBoundsException ioobe) {

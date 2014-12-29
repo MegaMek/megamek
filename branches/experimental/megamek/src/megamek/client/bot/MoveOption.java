@@ -17,10 +17,8 @@ package megamek.client.bot;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Vector;
 
 import megamek.client.ui.SharedUtility;
 import megamek.common.Compute;
@@ -38,6 +36,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import megamek.common.options.OptionsConstants;
 
 /**
  * TODO: add the notion of a dependent state (at least a first pass estimate of
@@ -141,8 +140,8 @@ public class MoveOption extends MovePath {
     }
 
     public MoveOption(MoveOption base) {
-        this(base.game, base.centity);
-        steps = new Vector<MoveStep>(base.steps);
+        this(base.getGame(), base.centity);
+        replaceSteps(base.getStepVector());
         threat = base.threat;
         damage = base.damage;
         movement_threat = base.movement_threat;
@@ -191,17 +190,17 @@ public class MoveOption extends MovePath {
         super.addStep(step_type);
         MoveStep current = getLastStep();
         // running with gyro or hip hit is dangerous!
-        PilotingRollData rollTarget = entity.checkRunningWithDamage(current.getMovementType());
+        PilotingRollData rollTarget = getEntity().checkRunningWithDamage(current.getMovementType());
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             getStep(0).setDanger(true);
             current.setDanger(true);
         }
 
         //Don't jump onto a building with CF < weight
-        IHex h = game.getBoard().getHex(getFinalCoords());
+        IHex h = getGame().getBoard().getHex(getFinalCoords());
         if((h != null) && (h.getTerrain(Terrains.BLDG_CF) != null)) {
             int cf = h.getTerrain(Terrains.BLDG_CF).getTerrainFactor();
-            if(cf < entity.getWeight()) {
+            if (cf < getEntity().getWeight()) {
                 current.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             }
         }
@@ -210,7 +209,7 @@ public class MoveOption extends MovePath {
                 current.setMovementType(EntityMovementType.MOVE_ILLEGAL);
             } else {
                 double cur_threat = getCEntity().getThreatUtility(
-                        .2 * entity.getWeight(), ToHitData.SIDE_REAR)
+                        .2 * getEntity().getWeight(), ToHitData.SIDE_REAR)
                         * (1 - Math.pow(getCEntity().base_psr_odds, 2));
                 movement_threat += cur_threat;
                 if (centity.getTb().debug) {
@@ -273,15 +272,13 @@ public class MoveOption extends MovePath {
         }
         if ((last.getType() != MoveStepType.FORWARDS)
                 || (isClan
-                        && game.getOptions().booleanOption("no_clan_physical") && (getEntity()
+                    && getGame().getOptions().booleanOption("no_clan_physical") && (getEntity()
                         .getSwarmAttackerId() == Entity.NONE))) {
             return false;
         }
-        Enumeration<Entity> e = game.getEntities(last.getPosition());
         // TODO: this just takes the first target
-        while (e.hasMoreElements()) {
-            Entity en = e.nextElement();
-            if (!en.isSelectableThisTurn() && en.isEnemyOf(entity)) {
+        for (Entity en : getGame().getEntitiesVector(last.getPosition())) {
+            if (!en.isSelectableThisTurn() && en.isEnemyOf(getEntity())) {
                 isPhysical = true;
                 removeLastStep();
                 if (isJumping()) {
@@ -297,21 +294,21 @@ public class MoveOption extends MovePath {
 
     // it would be nice to have a stand still move...
     public void setState() {
-        entity = centity.entity;
-        if (steps.size() == 0) {
-            entity.setPosition(pos);
-            entity.setFacing(facing);
-            entity.setSecondaryFacing(facing);
-            entity.delta_distance = 0;
-            entity.setProne(prone);
+        setEntity(centity.entity);
+        if (getStepVector().isEmpty()) {
+            getEntity().setPosition(pos);
+            getEntity().setFacing(facing);
+            getEntity().setSecondaryFacing(facing);
+            getEntity().delta_distance = 0;
+            getEntity().setProne(prone);
         } else {
-            entity.setPosition(getFinalCoords());
-            entity.setFacing(getFinalFacing());
-            entity.setSecondaryFacing(getFinalFacing());
-            entity.setProne(getFinalProne());
-            entity.delta_distance = getHexesMoved();
+            getEntity().setPosition(getFinalCoords());
+            getEntity().setFacing(getFinalFacing());
+            getEntity().setSecondaryFacing(getFinalFacing());
+            getEntity().setProne(getFinalProne());
+            getEntity().delta_distance = getHexesMoved();
         }
-        entity.moved = getLastStepMovementType();
+        getEntity().moved = getLastStepMovementType();
     }
 
     /**
@@ -320,7 +317,7 @@ public class MoveOption extends MovePath {
      */
     public int[] getModifiers(final Entity te) {
         // set them at the appropriate positions
-        final Entity ae = entity;
+        final Entity ae = getEntity();
 
         int attHeight = ae.isProne() ? 0 : 1;
         int targHeight = te.isProne() ? 0 : 1;
@@ -336,19 +333,19 @@ public class MoveOption extends MovePath {
         ToHitData toHita = new ToHitData();
         ToHitData toHitd = new ToHitData();
 
-        toHita.append(Compute.getAttackerMovementModifier(game, ae.getId()));
-        toHita.append(Compute.getTargetMovementModifier(game, te.getId()));
-        toHita.append(Compute.getTargetTerrainModifier(game, te));
-        toHita.append(Compute.getAttackerTerrainModifier(game, ae.getId()));
+        toHita.append(Compute.getAttackerMovementModifier(getGame(), ae.getId()));
+        toHita.append(Compute.getTargetMovementModifier(getGame(), te.getId()));
+        toHita.append(Compute.getTargetTerrainModifier(getGame(), te));
+        toHita.append(Compute.getAttackerTerrainModifier(getGame(), ae.getId()));
 
-        toHitd.append(Compute.getAttackerMovementModifier(game, te.getId()));
-        toHitd.append(Compute.getTargetMovementModifier(game, ae.getId()));
+        toHitd.append(Compute.getAttackerMovementModifier(getGame(), te.getId()));
+        toHitd.append(Compute.getTargetMovementModifier(getGame(), ae.getId()));
         if (!(isPhysical && isJumping())) {
-            toHitd.append(Compute.getTargetTerrainModifier(game, ae));
+            toHitd.append(Compute.getTargetTerrainModifier(getGame(), ae));
         }
-        toHitd.append(Compute.getAttackerTerrainModifier(game, te.getId()));
+        toHitd.append(Compute.getAttackerTerrainModifier(getGame(), te.getId()));
 
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
+        IHex attHex = getGame().getBoard().getHex(ae.getPosition());
         if (attHex.containsTerrain(Terrains.WATER) && (attHex.surface() > attEl)) {
             toHita.addModifier(TargetRoll.IMPOSSIBLE,
                     "Attacker in depth 2+ water");
@@ -357,7 +354,7 @@ public class MoveOption extends MovePath {
         } else if ((attHex.surface() == attEl) && (ae.height() > 0)) {
             apc = true;
         }
-        IHex targHex = game.getBoard().getHex(te.getPosition());
+        IHex targHex = getGame().getBoard().getHex(te.getPosition());
         if (targHex.containsTerrain(Terrains.WATER)) {
             if ((targHex.surface() == targEl) && (te.height() > 0)) {
                 pc = true;
@@ -370,8 +367,8 @@ public class MoveOption extends MovePath {
         }
 
         // calc & add attacker los mods
-        LosEffects los = LosEffects.calculateLos(game, ae.getId(), te);
-        toHita.append(los.losModifiers(game));
+        LosEffects los = LosEffects.calculateLos(getGame(), ae.getId(), te);
+        toHita.append(los.losModifiers(getGame()));
         // save variables
         pc = los.isTargetCover();
         apc = los.isAttackerCover();
@@ -379,7 +376,7 @@ public class MoveOption extends MovePath {
         int temp = los.getTargetCover();
         los.setTargetCover(los.getAttackerCover());
         los.setAttackerCover(temp);
-        toHitd.append(los.losModifiers(game));
+        toHitd.append(los.losModifiers(getGame()));
 
         // heatBuildup
         if (ae.getHeatFiringModifier() != 0) {
@@ -452,8 +449,10 @@ public class MoveOption extends MovePath {
         double retVal = temp_threat - temp_damage;
 
         List<TargetRoll> psrList = SharedUtility.getPSRList(this);
+        boolean aptPiloting = getEntity().getCrew().getOptions().booleanOption(OptionsConstants
+                                                                                       .PILOT_APTITUDE_PILOTING);
         for (TargetRoll roll : psrList) {
-            double multiple = Compute.oddsAbove(roll.getValue())/100;
+            double multiple = Compute.oddsAbove(roll.getValue(), aptPiloting) / 100;
             retVal *= (multiple > 0) ? multiple : 0.01;
         }
         utility = retVal;
@@ -472,7 +471,7 @@ public class MoveOption extends MovePath {
         double mod = 1;
         // heat effect modifiers
         if (enemy.isJumping()
-                || ((enemy.entity.heat + enemy.entity.heatBuildup) > 4)) {
+            || ((enemy.getEntity().heat + enemy.getEntity().heatBuildup) > 4)) {
             if (enemy.centity.overheat == CEntity.OVERHEAT_LOW) {
                 mod = .75;
             } else if (enemy.centity.overheat == CEntity.OVERHEAT_HIGH) {
@@ -481,6 +480,8 @@ public class MoveOption extends MovePath {
                 mod = .9;
             }
         }
+        boolean aptGunnery = enemy.getEntity().getCrew().getOptions()
+                                  .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
         int enemy_firing_arcs[] = { 0, 0, 0};
         enemy_firing_arcs[0] =CEntity.getThreatHitArc(enemy
                 .getFinalCoords(), MovePath.getAdjustedFacing(enemy
@@ -492,39 +493,41 @@ public class MoveOption extends MovePath {
                 .getFinalCoords(), MovePath.getAdjustedFacing(enemy
                         .getFinalFacing(), MoveStepType.TURN_RIGHT), getFinalCoords());
         max = enemy.centity.getModifiedDamage((apc == 1) ? CEntity.TT
-                : enemy_firing_arcs[0], distance, modifier);
+                                                         : enemy_firing_arcs[0], distance, modifier, aptGunnery);
 
         if (enemy_firing_arcs[1] == ToHitData.SIDE_FRONT) {
             max = Math.max(max, enemy.centity.getModifiedDamage(CEntity.TT,
-                    distance, modifier));
+                                                                distance, modifier, aptGunnery));
         } else {
             max = Math.max(max, enemy.centity.getModifiedDamage(
-                    enemy_firing_arcs[1], distance, modifier));
+                    enemy_firing_arcs[1], distance, modifier, aptGunnery));
         }
         if (enemy_firing_arcs[2] == ToHitData.SIDE_FRONT) {
             max = Math.max(max, enemy.centity.getModifiedDamage(CEntity.TT,
-                    distance, modifier));
+                                                                distance, modifier, aptGunnery));
         } else {
             max = Math.max(max, enemy.centity.getModifiedDamage(
-                    enemy_firing_arcs[2], distance, modifier));
+                    enemy_firing_arcs[2], distance, modifier, aptGunnery));
         }
         // TODO this is not quite right, but good enough for now...
         // ideally the pa charaterization should be in centity
         max *= mod;
         if (!enemy.getFinalProne() && (distance == 1)
                 && (enemy_firing_arcs[0] != ToHitData.SIDE_REAR)) {
-            IHex h = game.getBoard().getHex(getFinalCoords());
-            IHex h1 = game.getBoard().getHex(enemy.getFinalCoords());
-            if (Math.abs(h.getElevation() - h1.getElevation()) < 2) {
-                max += ((((((h1.getElevation() - h.getElevation()) == 1) || getFinalProne()) ? 5
+            IHex h = getGame().getBoard().getHex(getFinalCoords());
+            IHex h1 = getGame().getBoard().getHex(enemy.getFinalCoords());
+            if (Math.abs(h.getLevel() - h1.getLevel()) < 2) {
+                max += ((((((h1.getLevel() - h.getLevel()) == 1) || getFinalProne()) ? 5
                         : 1)
                         * ((enemy_firing_arcs[0] == ToHitData.SIDE_FRONT) ? .2
                                 : .05)
                         * centity.entity.getWeight()
-                        * Compute.oddsAbove(3 + modifier))
+                        * Compute.oddsAbove(3 + modifier,
+                                            getEntity().getCrew().getOptions()
+                                                       .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING)))
                         / 100)
                         + (((1 - enemy.centity.base_psr_odds)
-                        * enemy.entity.getWeight()) / 10.0);
+                            * enemy.getEntity().getWeight()) / 10.0);
             }
         }
         return max;
@@ -551,7 +554,7 @@ public class MoveOption extends MovePath {
         if (step == null) {
             return -1;
         }
-        Targetable target = step.getTarget(game);
+        Targetable target = step.getTarget(getGame());
         if (target == null) {
             return -1;
         }

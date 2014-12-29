@@ -16,6 +16,6 @@ Unit_1stSomersetStrikers_3=Wolfhound WLF-2, Lieutenant Ciro Ramirez,4,5,S,12,06
 # Unit_1stSomersetStrikers_4=Banshee BSE-X2, Cadet Katiara Kylie,4,3
 # Black Vision, Falcon Star: 
 Unit_BlackVision_1=Vulture (Mad Dog) Prime,Star Colonel Kristen Redmond,2,2,SW,07,21
-Unit_BlackVision_2=Hunchback IIC,Mechwarrior Deval,3,4,S,06,20
+Unit_BlackVision_2=Hunchback IIC (Standard),Mechwarrior Deval,3,4,S,06,20
 Unit_BlackVision_1_Damage=2
 Unit_BlackVision_2_Damage=2

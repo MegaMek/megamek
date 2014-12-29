@@ -21,10 +21,10 @@
 package megamek.common;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.client.ui.Messages;
+import megamek.server.SmokeCloud;
 
 /**
  * Keeps track of the cumulative effects of intervening terrain on LOS
@@ -48,24 +48,28 @@ public class LosEffects {
         public boolean attOffBoard;
         public Coords attackPos;
         public Coords targetPos;
+        
         /**
          * The absolute elevation of the attacker, i.e. the number of levels
          * attacker is placed above a level 0 hex.
          */
         public int attackAbsHeight;
+        
         /**
          * The absolute elevation of the target, i.e. the number of levels
          * target is placed above a level 0 hex.
          */
         public int targetAbsHeight;
+        
         /**
-         * The height of the attacker, that is, how many levels above it's
-         * elevation is it for LOS purposes.
+         * The height of the attacker, that is, how many levels above its
+         * elevation it is for LOS purposes.
          */
         public int attackHeight;
+        
         /**
-         * The height of the target, that is, how many levels above it's
-         * elevation is it for LOS purposes.
+         * The height of the target, that is, how many levels above its
+         * elevation it is for LOS purposes.
          */
         public int targetHeight;
         public int attackerId;
@@ -430,22 +434,12 @@ public class LosEffects {
         ai.attackHeight = ae.getHeight();
         ai.targetHeight = target.getHeight();
 
-        int attEl = ae.absHeight() + attHex.getElevation();
+        int attEl = ae.relHeight() + attHex.getLevel();
         // for spotting, a mast mount raises our elevation by 1
         if (spotting && ae.hasWorkingMisc(MiscType.F_MAST_MOUNT, -1)) {
             attEl += 1;
         }
-        int targEl;
-        if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
-                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE)
-                || (target.getTargetType() == Targetable.TYPE_BUILDING)
-                || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE)) {
-            targEl = target.absHeight() + targetHex.getElevation();
-        } else {
-            targEl = game.getBoard().getHex(targetPos).surface();
-        }
-
+        int targEl = target.relHeight() + targetHex.getLevel();
 
         ai.attackAbsHeight = attEl;
         ai.targetAbsHeight = targEl;
@@ -1075,8 +1069,7 @@ public class LosEffects {
         Entity coveringDropship = null;
         //check for grounded dropships - treat like a building 10 elevations tall
         if(bldgEl < 10) {
-            for (Enumeration<Entity> i = game.getEntities(coords); i.hasMoreElements();) {
-                final Entity inHex = i.nextElement();
+            for (Entity inHex : game.getEntitiesVector()) {
                 if(ai.attackerId == inHex.getId() || ai.targetId == inHex.getId()) {
                     continue;
                 }
@@ -1175,11 +1168,12 @@ public class LosEffects {
                 // LOS
                 // so check them both
                 if (hex.containsTerrain(Terrains.SMOKE)) {
-                    if ((hex.terrainLevel(Terrains.SMOKE) == 1)
-                        || (hex.terrainLevel(Terrains.SMOKE) == 3)
-                        ||(hex.terrainLevel(Terrains.SMOKE) == 4)) {
+                    if ((hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LIGHT)
+                        || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LI_LIGHT)
+                        || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_LI_HEAVY)
+                        || (hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_CHAFF_LIGHT)) {
                         los.lightSmoke++;
-                    } else if ((hex.terrainLevel(Terrains.SMOKE) == 2)) {
+                    } else if ((hex.terrainLevel(Terrains.SMOKE) == SmokeCloud.SMOKE_HEAVY)) {
                         los.heavySmoke++;
                     }
                 }
@@ -1383,8 +1377,7 @@ public class LosEffects {
                }
                //check for grounded dropships - treat like a building 10 elevations tall
                if(bldgEl < 10) {
-                   for (Enumeration<Entity> i = game.getEntities(c); i.hasMoreElements();) {
-                       final Entity inHex = i.nextElement();
+                   for (Entity inHex : game.getEntitiesVector()) {
                        if(ai.attackerId == inHex.getId() || ai.targetId == inHex.getId()) {
                            continue;
                        }

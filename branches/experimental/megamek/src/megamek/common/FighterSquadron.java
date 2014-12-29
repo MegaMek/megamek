@@ -522,9 +522,11 @@ public class FighterSquadron extends Aero {
 
     /**
      * When fighters are removed it is necessary to unlink all ammo to the
-     * squadron's weapons and reload it to ensure that ammo from to the removed
+     * squadron's weapons and reload it to ensure that ammo from the removed
      * fighter does not remain linked
      */
+    // TODO: Evaluate for removal
+    @SuppressWarnings("unused")
     private void reloadAllWeapons() {
         for (Mounted weapon : getTotalWeaponList()) {
             if ((((WeaponType) weapon.getType()).getAmmoType() != AmmoType.T_NA) && (null != weapon.getLinked()) && (weapon.getLinked().getType() instanceof AmmoType)) {

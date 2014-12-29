@@ -60,11 +60,11 @@ Basic Fire Control
 </Body Equipment>
 
 <Right Equipment>
-ISVehicularGrenadeLauncher
+ISVehicularGrenadeLauncher (FR)
 </Right Equipment>
 
 <Left Equipment>
-ISVehicularGrenadeLauncher
+ISVehicularGrenadeLauncher (FL)
 </Left Equipment>
 
 <type>

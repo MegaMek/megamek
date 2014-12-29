@@ -21,25 +21,13 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Set;
+import java.util.Vector;
 
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
@@ -50,6 +38,7 @@ import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.princess.PrincessException;
 import megamek.client.ui.Messages;
+import megamek.common.IPlayer;
 import megamek.common.logging.LogLevel;
 import megamek.common.logging.Logger;
 
@@ -62,11 +51,12 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     private static final String TESTBOT_PANEL = "testbot_config";
     private static final String UNIT_TARGET = Messages.getString("BotConfigDialog.targetUnit");
     private static final String BUILDING_TARGET = Messages.getString("BotConfigDialog.targetBuilding");
-
     private static final long serialVersionUID = -544663266637225925L;
+
     private JRadioButton testBotRadiobutton;
     private JRadioButton princessRadiobutton;
     private ButtonGroup selectBotGroup = new ButtonGroup();
+    private JList<String> playersToReplace;
 
     private BehaviorSettingsFactory behaviorSettingsFactory = BehaviorSettingsFactory.getInstance();
     private BehaviorSettings princessBehavior;
@@ -95,14 +85,26 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     private boolean customName = false; // did user not use default name?
     public boolean dialogAborted = true; // did user not click Ok button?
 
+    // Are we replacing an existing player?
+    private final Set<IPlayer> ghostPlayers = new HashSet<>();
+    private final boolean replacePlayer;
+
     private final JButton butOK = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
 
     private final JPanel botSpecificCardsPanel;
 
     public BotConfigDialog(JFrame parent) {
+        this(parent, null);
+    }
+
+    public BotConfigDialog(JFrame parent, Set<IPlayer> ghostPlayers) {
         super(parent, "Configure Bot", true);
 
         //        setLocationRelativeTo(parent);
+        if (ghostPlayers != null) {
+            this.ghostPlayers.addAll(ghostPlayers);
+        }
+        this.replacePlayer = !this.ghostPlayers.isEmpty();
 
         setLayout(new BorderLayout());
         add(switchBotPanel(), BorderLayout.NORTH);
@@ -110,10 +112,16 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         botSpecificCardsPanel.add(new JPanel(), TESTBOT_PANEL);
         JScrollPane princessScroll = new JScrollPane(princessPanel());
         botSpecificCardsPanel.add(princessScroll, PRINCESS_PANEL);
+        CardLayout cardlayout = (CardLayout) (botSpecificCardsPanel.getLayout());
+        cardlayout.show(botSpecificCardsPanel, PRINCESS_PANEL);
         add(botSpecificCardsPanel, BorderLayout.CENTER);
         butOK.addActionListener(this);
 
         add(okayPanel(), BorderLayout.SOUTH);
+
+        if (replacePlayer) {
+            add(selectPlayerToReplacePanel(), BorderLayout.WEST);
+        }
 
         validate();
         pack();
@@ -125,13 +133,49 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
         JPanel panel = new JPanel(new FlowLayout());
         testBotRadiobutton = new JRadioButton(Messages.getString("BotConfigDialog.testBotRadioButton"));
         testBotRadiobutton.addActionListener(this);
+        selectBotGroup.add(testBotRadiobutton);
+        panel.add(testBotRadiobutton);
+
         princessRadiobutton = new JRadioButton(Messages.getString("BotConfigDialog.princessRadioButton"));
         princessRadiobutton.addActionListener(this);
-        selectBotGroup.add(testBotRadiobutton);
         selectBotGroup.add(princessRadiobutton);
-        testBotRadiobutton.setSelected(true);
-        panel.add(testBotRadiobutton);
+        princessRadiobutton.setSelected(true);
         panel.add(princessRadiobutton);
+
+        return panel;
+    }
+
+    private JPanel selectPlayerToReplacePanel() {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        String title = Messages.getString("BotConfigDialog.replacePlayerLabel") + "  ";
+        TitledBorder border = new TitledBorder(new LineBorder(Color.black, 1),
+                                               Messages.getString("BotConfigDialog.replacePlayerLabel"),
+                                               TitledBorder.LEFT,
+                                               TitledBorder.DEFAULT_POSITION);
+        panel.setBorder(border);
+        panel.setBackground(Color.white);
+        String longestEntry = title;
+
+        Vector<String> playerList = new Vector<>(ghostPlayers.size());
+        for (IPlayer p : ghostPlayers) {
+            playerList.add(p.getName());
+            if (p.getName().length() > longestEntry.length()) {
+                longestEntry = p.getName() + "  ";
+            }
+        }
+        playersToReplace = new JList<>(playerList);
+        int minWidth = (int) playersToReplace
+                .getFontMetrics(playersToReplace.getFont())
+                .getStringBounds(longestEntry, null).getWidth();
+        playersToReplace.setSelectedIndex(0);
+        playersToReplace.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        playersToReplace.setPreferredSize(new Dimension(minWidth, playersToReplace.getPreferredSize().height));
+        panel.add(playersToReplace);
+
+        panel.add(Box.createVerticalGlue());
+
         return panel;
     }
 
@@ -194,15 +238,17 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     private JPanel okayPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 2, 2));
 
-        JPanel namepanel = new JPanel(new FlowLayout());
-        namepanel.add(new JLabel(Messages.getString("BotConfigDialog.nameLabel")));
-        nameField = new JTextField();
-        nameField.setText(Messages.getString("BotConfigDialog.namefield.default"));
-        nameField.setColumns(12);
-        nameField.setToolTipText(Messages.getString("BotConfigDialog.namefield.tooltip"));
-        nameField.addKeyListener(this);
-        namepanel.add(nameField);
-        panel.add(namepanel);
+        if (!replacePlayer) {
+            JPanel namepanel = new JPanel(new FlowLayout());
+            namepanel.add(new JLabel(Messages.getString("BotConfigDialog.nameLabel")));
+            nameField = new JTextField();
+            nameField.setText("Princess");
+            nameField.setColumns(12);
+            nameField.setToolTipText(Messages.getString("BotConfigDialog.namefield.tooltip"));
+            nameField.addKeyListener(this);
+            namepanel.add(nameField);
+            panel.add(namepanel);
+        }
 
         butOK.addActionListener(this);
         panel.add(butOK);
@@ -457,7 +503,7 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     public void actionPerformed(ActionEvent e) {
         CardLayout cardlayout = (CardLayout) (botSpecificCardsPanel.getLayout());
         if (testBotRadiobutton.equals(e.getSource())) {
-            if (!customName) {
+            if (!customName && !replacePlayer) {
                 nameField.setText("TestBot");
             }
             cardlayout.show(botSpecificCardsPanel, TESTBOT_PANEL);
@@ -574,6 +620,16 @@ public class BotConfigDialog extends JDialog implements ActionListener, KeyListe
     }
 
     String getBotName() {
+        if (replacePlayer) {
+            return playersToReplace.getSelectedValuesList().get(0);
+        }
         return nameField.getText();
+    }
+
+    Collection<String> getPlayerToReplace() {
+        if (!replacePlayer) {
+            return new HashSet<>(0);
+        }
+        return playersToReplace.getSelectedValuesList();
     }
 }

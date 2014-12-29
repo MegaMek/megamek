@@ -24,12 +24,10 @@ public class HexTarget implements Targetable {
     private static final long serialVersionUID = -5742445409423125942L;
     private Coords m_coords;
     private boolean m_bIgnite;
-    private int m_elev;
     private int m_type;
 
     public HexTarget(Coords c, IBoard board, int nType) {
         m_coords = c;
-        m_elev = board.getHex(m_coords).getElevation();
         m_type = nType;
         m_bIgnite = (nType == Targetable.TYPE_HEX_IGNITE);
     }
@@ -45,12 +43,12 @@ public class HexTarget implements Targetable {
     public Coords getPosition() {
         return m_coords;
     }
-    
-    public Map<Integer, Coords> getSecondaryPositions(){
+
+    public Map<Integer, Coords> getSecondaryPositions() {
         return new HashMap<Integer, Coords>();
     }
 
-    public int absHeight() {
+    public int relHeight() {
         return getHeight() + getElevation();
     }
 
@@ -59,7 +57,7 @@ public class HexTarget implements Targetable {
     }
 
     public int getElevation() {
-        return m_elev;
+        return 0;
     }
 
     public boolean isImmobile() {
@@ -69,36 +67,36 @@ public class HexTarget implements Targetable {
     public String getDisplayName() {
         String name = "";
         switch (m_type) {
-        case (Targetable.TYPE_FLARE_DELIVER):
-            name = Messages.getString("HexTarget.DeliverFlare");
-        break;
-        case (Targetable.TYPE_MINEFIELD_DELIVER):
-            name = Messages.getString("HexTarget.DeliverMinefield");
-        break;
-        case (Targetable.TYPE_HEX_BOMB):
-            name = Messages.getString("HexTarget.Bomb");
-        break;
-        case (Targetable.TYPE_HEX_CLEAR):
-            name = Messages.getString("HexTarget.Clear");
-        break;
-        case (Targetable.TYPE_HEX_IGNITE):
-            name = Messages.getString("HexTarget.Ignite");
-        break;
-        case (Targetable.TYPE_HEX_ARTILLERY):
-            name = Messages.getString("HexTarget.Artillery");
-        break;
-        case Targetable.TYPE_HEX_EXTINGUISH:
-            name = Messages.getString("HexTarget.Extinguish");
-            break;
-        case (Targetable.TYPE_HEX_SCREEN):
-            name = Messages.getString("HexTarget.Screen");
-        break;
-        case (Targetable.TYPE_HEX_AERO_BOMB):
-            name = Messages.getString("HexTarget.Bomb");
-        break;
-        case (Targetable.TYPE_HEX_TAG):
-            name = Messages.getString("HexTarget.Tag");
-        break;
+            case (Targetable.TYPE_FLARE_DELIVER):
+                name = Messages.getString("HexTarget.DeliverFlare");
+                break;
+            case (Targetable.TYPE_MINEFIELD_DELIVER):
+                name = Messages.getString("HexTarget.DeliverMinefield");
+                break;
+            case (Targetable.TYPE_HEX_BOMB):
+                name = Messages.getString("HexTarget.Bomb");
+                break;
+            case (Targetable.TYPE_HEX_CLEAR):
+                name = Messages.getString("HexTarget.Clear");
+                break;
+            case (Targetable.TYPE_HEX_IGNITE):
+                name = Messages.getString("HexTarget.Ignite");
+                break;
+            case (Targetable.TYPE_HEX_ARTILLERY):
+                name = Messages.getString("HexTarget.Artillery");
+                break;
+            case Targetable.TYPE_HEX_EXTINGUISH:
+                name = Messages.getString("HexTarget.Extinguish");
+                break;
+            case (Targetable.TYPE_HEX_SCREEN):
+                name = Messages.getString("HexTarget.Screen");
+                break;
+            case (Targetable.TYPE_HEX_AERO_BOMB):
+                name = Messages.getString("HexTarget.Bomb");
+                break;
+            case (Targetable.TYPE_HEX_TAG):
+                name = Messages.getString("HexTarget.Tag");
+                break;
         }
         return "Hex: " + m_coords.getBoardNum() + name;
     }
@@ -116,7 +114,7 @@ public class HexTarget implements Targetable {
 
     // encode 2 numbers into 1
     public static int coordsToId(Coords c) {
-        return c.y * 100000 + c.x;
+        return c.getY() * 100000 + c.getX();
     }
 
     // decode 1 number into 2

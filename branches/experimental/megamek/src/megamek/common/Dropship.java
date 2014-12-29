@@ -16,6 +16,7 @@ package megamek.common;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -66,7 +67,7 @@ public class Dropship extends SmallCraft {
                 || (hex.terrainLevel(Terrains.GEYSER) == 2);
         
         HashMap<Integer,Integer> elevations = new HashMap<Integer,Integer>();
-        elevations.put(hex.getElevation(), 1);
+        elevations.put(hex.getLevel(), 1);
         for (int dir = 0; dir < 6; dir++){
             Coords secondaryCoord = c.translated(dir);
             IHex secondaryHex = game.getBoard().getHex(secondaryCoord);
@@ -81,7 +82,7 @@ public class Dropship extends SmallCraft {
                         || (secondaryHex.terrainLevel(Terrains.SNOW) > 1)
                         || (secondaryHex.terrainLevel(Terrains.GEYSER) == 2);
                 
-                int elev = secondaryHex.getElevation();
+                int elev = secondaryHex.getLevel();
                 if (elevations.containsKey(elev)){
                     elevations.put(elev, elevations.get(elev)+1);
                 }else{
@@ -125,16 +126,16 @@ public class Dropship extends SmallCraft {
         //  to see if they share an elevation. We need to have a number of these
         //  adjacencies equal to the number of secondary elevation hexes - 1.
         int numAdjacencies = 0;
-        int centralElev = hex.getElevation();       
+        int centralElev = hex.getLevel();       
         int secondElev = centralElev;
         IHex currHex = game.getBoard().getHex(c.translated(5));
         for (int dir = 0; dir < 6; dir++){
-            if (currHex.getElevation() != centralElev){
-                secondElev = currHex.getElevation();
+            if (currHex.getLevel() != centralElev){
+                secondElev = currHex.getLevel();
             }
             IHex nextHex = game.getBoard().getHex(c.translated(dir));
-            if (currHex.getElevation() != centralElev &&
-                    currHex.getElevation() == nextHex.getElevation()){
+            if (currHex.getLevel() != centralElev &&
+                    currHex.getLevel() == nextHex.getLevel()){
                 numAdjacencies++;
             }   
             currHex = nextHex;
@@ -1451,8 +1452,10 @@ public class Dropship extends SmallCraft {
      * @see megamek.common.Entity#setPosition(megamek.common.Coords)
      */
     @Override
+    
     public void setPosition(Coords position) {
-        super.setPosition(position);
+        HashSet<Coords> oldPositions = getOccupiedCoords();
+        super.setPosition(position, false);
         if ((getAltitude() == 0) && !game.getBoard().inSpace()
                 && (position != null)) {
             secondaryPositions.put(0, position);
@@ -1468,25 +1471,28 @@ public class Dropship extends SmallCraft {
             secondaryPositions.put(6,
                     position.translated((getFacing() + 5) % 6));
         }
+        if (game != null) {
+            game.updateEntityPositionLookup(this, oldPositions);
+        }       
     }
 
     @Override
     public void setAltitude(int altitude) {
         super.setAltitude(altitude);
-        if ((getAltitude() == 0) && !game.getBoard().inSpace()
-                && (position != null)) {
-            secondaryPositions.put(0, position);
-            secondaryPositions.put(1, position.translated(getFacing()));
+        if ((getAltitude() == 0) && (game != null) && !game.getBoard().inSpace()
+                && (getPosition() != null)) {
+            secondaryPositions.put(0, getPosition());
+            secondaryPositions.put(1, getPosition().translated(getFacing()));
             secondaryPositions.put(2,
-                    position.translated((getFacing() + 1) % 6));
+                    getPosition().translated((getFacing() + 1) % 6));
             secondaryPositions.put(3,
-                    position.translated((getFacing() + 2) % 6));
+                    getPosition().translated((getFacing() + 2) % 6));
             secondaryPositions.put(4,
-                    position.translated((getFacing() + 3) % 6));
+                    getPosition().translated((getFacing() + 3) % 6));
             secondaryPositions.put(5,
-                    position.translated((getFacing() + 4) % 6));
+                    getPosition().translated((getFacing() + 4) % 6));
             secondaryPositions.put(6,
-                    position.translated((getFacing() + 5) % 6));
+                    getPosition().translated((getFacing() + 5) % 6));
         }
     }
 

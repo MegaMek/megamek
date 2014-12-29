@@ -202,7 +202,7 @@ aerodyne
 <transporters>
 SmallCraftBay:6:2
 CargoBay:10000:1
-CargoBay:53600:1
+CargoBay:94536:1
 </transporters>
 
 <docking_collar>
@@ -232,3 +232,7 @@ CargoBay:53600:1
 <passengers>
 500
 </passengers>
+
+<History>
+50 officers,150 enlisted/non-rated,90 gunners,30 bay personnel.  Dropshuttle bays are not coded in MegaMek at this time. The 10000 ton Cargo bay represent them.
+</History>

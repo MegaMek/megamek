@@ -74,6 +74,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_UNITOVERVIEW_VALID_COLOR = "AdvancedUnitOverviewValidColor";
     public static final String ADVANCED_KEY_REPEAT_DELAY = "AdvancedKeyRepeatDelay";
     public static final String ADVANCED_KEY_REPEAT_RATE = "AdvancedKeyRepeatRate";
+    public static final String ADVANCED_SHOW_FPS = "AdvancedShowFPS";
     /* --End advanced settings-- */
 
 
@@ -161,6 +162,21 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String USE_ISOMETRIC = "UseIsometric";
     public static final String SHOW_UNIT_OVERVIEW = "ShowUnitOverview";
     public static final String SHOW_DAMAGE_LEVEL = "ShowDamageLevel";
+    public static final String SKIN_FILE = "SkinFile";
+    
+    // RAT dialog preferences
+    public static String RAT_TECH_LEVEL = "RATTechLevel";
+    public static String RAT_BV_MIN = "RATBVMin";
+    public static String RAT_BV_MAX = "RATBVMax";
+    public static String RAT_NUM_MECHS = "RATNumMechs";
+    public static String RAT_NUM_VEES = "RATNumVees";
+    public static String RAT_NUM_BA = "RATNumBA";
+    public static String RAT_NUM_INF = "RATNumInf";
+    public static String RAT_YEAR_MIN = "RATYearMin";
+    public static String RAT_YEAR_MAX = "RATYearMax";
+    public static String RAT_PAD_BV = "RATPadBV";
+    public static String RAT_SELECTED_RAT = "RATSelectedRAT";
+    
 
     protected static GUIPreferences instance = new GUIPreferences();
 
@@ -209,8 +225,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_CHATBOX2_FONTSIZE, 12);
         store.setDefault(ADVANCED_CHATBOX2_TRANSPARANCY, 50);
         store.setDefault(ADVANCED_CHATBOX2_AUTOSLIDEDOWN, true);
-        store.setDefault(ADVANCED_KEY_REPEAT_DELAY, 10);
-        store.setDefault(ADVANCED_KEY_REPEAT_RATE, 10);
+        store.setDefault(ADVANCED_KEY_REPEAT_DELAY, 0);
+        store.setDefault(ADVANCED_KEY_REPEAT_RATE, 20);
+        store.setDefault(ADVANCED_SHOW_FPS, "false");
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
@@ -284,6 +301,20 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(USE_ISOMETRIC, false);
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
         store.setDefault(SHOW_DAMAGE_LEVEL, false);
+        store.setDefault(SKIN_FILE, "defaultSkin.xml");
+        
+        store.setDefault(RAT_TECH_LEVEL, 0);
+        store.setDefault(RAT_BV_MIN, "5800");
+        store.setDefault(RAT_BV_MAX, "6000");
+        store.setDefault(RAT_NUM_MECHS, "4");
+        store.setDefault(RAT_NUM_VEES, "0");
+        store.setDefault(RAT_NUM_BA, "0");
+        store.setDefault(RAT_NUM_INF, "0");
+        store.setDefault(RAT_YEAR_MIN, "2500");
+        store.setDefault(RAT_YEAR_MAX, "3100");
+        store.setDefault(RAT_PAD_BV, false);
+        store.setDefault(RAT_SELECTED_RAT, "");        
+        
     }
 
     public void setDefault(String name, Color color) {
@@ -615,6 +646,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getShowUnitOverview(){
         return store.getBoolean(SHOW_UNIT_OVERVIEW);
     }
+    
+    public String getSkinFile() {
+        return store.getString(SKIN_FILE);
+    }
 
     public void setAntiAliasing(boolean state){
         store.setValue(ANTIALIASING, state);
@@ -924,6 +959,98 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setShowDamageLevel(boolean b){
         store.setValue(SHOW_DAMAGE_LEVEL, b);
     }
+    
+    public void setSkinFile(String s) {
+        store.setValue(SKIN_FILE, s);
+    }
+
+    public int getRATTechLevel() {
+        return store.getInt(RAT_TECH_LEVEL);
+    }
+
+    public void setRATTechLevel(int v) {
+        store.setValue(RAT_TECH_LEVEL, v);
+    }
+
+    public String getRATBVMin() {
+        return store.getString(RAT_BV_MIN);
+    }
+
+    public void setRATBVMin(String v) {
+        store.setValue(RAT_BV_MIN, v);
+    }
+
+    public String getRATBVMax() {
+        return store.getString(RAT_BV_MAX);
+    }
+
+    public void setRATBVMax(String v) {
+        store.setValue(RAT_BV_MAX, v);
+    }
+
+    public String getRATNumMechs() {
+        return store.getString(RAT_NUM_MECHS);
+    }
+
+    public void setRATNumMechs(String v) {
+        store.setValue(RAT_NUM_MECHS, v);
+    }
+
+    public String getRATNumVees() {
+        return store.getString(RAT_NUM_VEES);
+    }
+
+    public void setRATNumVees(String v) {
+        store.setValue(RAT_NUM_VEES, v);
+    }
+
+    public String getRATNumBA() {
+        return store.getString(RAT_NUM_BA);
+    }
+
+    public void setRATNumBA(String v) {
+        store.setValue(RAT_NUM_BA, v);
+    }
+
+    public String getRATNumInf() {
+        return store.getString(RAT_NUM_INF);
+    }
+
+    public void setRATNumInf(String v) {
+        store.setValue(RAT_NUM_INF, v);
+    }
+    
+    public String getRATYearMin() {
+        return store.getString(RAT_YEAR_MIN);
+    }
+
+    public void setRATYearMin(String v) {
+        store.setValue(RAT_YEAR_MIN, v);
+    }
+
+    public String getRATYearMax() {
+        return store.getString(RAT_YEAR_MAX);
+    }
+
+    public void setRATYearMax(String v) {
+        store.setValue(RAT_YEAR_MAX, v);
+    }
+
+    public boolean getRATPadBV() {
+        return store.getBoolean(RAT_PAD_BV);
+    }
+
+    public void setRATPadBV(boolean v) {
+        store.setValue(RAT_PAD_BV, v);
+    }
+    
+    public String getRATSelectedRAT() {
+        return store.getString(RAT_SELECTED_RAT);
+    }
+
+    public void setRATSelectedRAT(String v) {
+        store.setValue(RAT_SELECTED_RAT, v);
+    }
 
     protected ColorParser p = new ColorParser();
 
@@ -935,7 +1062,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return b.toString();
     }
 
-    protected Color getColor(String name) {
+    public Color getColor(String name) {
         String sresult = store.getString(name);
         if (sresult != null) {
             if (!p.parse(sresult)) {
@@ -943,7 +1070,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
             }
         }
         return Color.black;
-
     }
 
 }

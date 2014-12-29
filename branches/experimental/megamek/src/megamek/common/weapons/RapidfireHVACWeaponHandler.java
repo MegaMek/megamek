@@ -27,6 +27,7 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.server.SmokeCloud;
 
 public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
 
@@ -67,18 +68,18 @@ public class RapidfireHVACWeaponHandler extends RapidfireACWeaponHandler {
 
             if (!board.contains(rearCoords)) {
                 rearCoords = src;
-            } else if (board.getHex(rearCoords).getElevation() > currentHex
-                    .getElevation() + 4) {
+            } else if (board.getHex(rearCoords).getLevel() > currentHex
+                    .getLevel() + 4) {
                 rearCoords = src;
             } else if ((board.getBuildingAt(rearCoords) != null)
                     && (board.getHex(rearCoords).terrainLevel(
                             Terrains.BLDG_ELEV)
-                            + board.getHex(rearCoords).getElevation() > currentHex
-                            .getElevation() + 4)) {
+                            + board.getHex(rearCoords).getLevel() > currentHex
+                            .getLevel() + 4)) {
                 rearCoords = src;
             }
 
-            server.createSmoke(rearCoords, 2, 2);
+            server.createSmoke(rearCoords, SmokeCloud.SMOKE_HEAVY, 2);
         }
         return super.handle(phase, vPhaseReport);
     }

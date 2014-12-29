@@ -32,8 +32,7 @@ public class Chromosome implements Comparable<Chromosome> {
     }
 
     public int compareTo(Chromosome o) {
-        double delta = fitness - o.fitness;
-        return delta > 0 ? 1 : delta < 0 ? -1 : 0;
+        return Double.compare(fitness, o.fitness);
     }
 
 }

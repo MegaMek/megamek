@@ -17,9 +17,7 @@ package megamek.client.bot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -53,6 +51,7 @@ import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.options.OptionsConstants;
 
 public class TestBot extends BotClient {
 
@@ -138,10 +137,7 @@ public class TestBot extends BotClient {
             enemies_moved = initiative;
             ArrayList<MoveOption[]> possible = new ArrayList<MoveOption[]>();
 
-            Enumeration<Entity> e = game.getEntities();
-
-            while (e.hasMoreElements()) {
-                Entity entity = e.nextElement();
+            for (Entity entity : game.getEntitiesVector()) {
 
                 // ignore loaded and off-board units
                 if ((entity.getPosition() == null) || entity.isOffBoard()) {
@@ -212,6 +208,8 @@ public class TestBot extends BotClient {
                 if (game.getOptions().booleanOption("skip_ineligable_movement")
                     && cen.getEntity().isImmobile()) {
                     cen.moved = true;
+                } else if (result == null) {
+                    short_circuit = true;
                 } else if (!cen.moved) {
                     if (result.length < 6) {
                         min = result.length > 0 ? (MoveOption) result[0] : null;
@@ -308,9 +306,7 @@ public class TestBot extends BotClient {
                     // functional
                     // If nothing is "close" then unjam anyways
                     int check_range = 100;
-                    for (Enumeration<Entity> unit_selection = game
-                            .getEntities(); unit_selection.hasMoreElements(); ) {
-                        Entity enemy = unit_selection.nextElement();
+                    for (Entity enemy : game.getEntitiesVector()) {
                         if ((min.getCEntity().entity.getPosition() != null)
                             && (enemy.getPosition() != null)
                             && (enemy.isEnemyOf(min.getCEntity().entity))) {
@@ -439,6 +435,8 @@ public class TestBot extends BotClient {
                            + move_array.length + " moves");
         for (MoveOption option : move_array) {
             option.setState();
+            boolean aptPiloting = option.getEntity().getCrew().getOptions()
+                                        .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
             for (int e = 0; e < enemies.size(); e++) { // for each enemy
                 Entity en = enemies.get(e);
 
@@ -540,7 +538,7 @@ public class TestBot extends BotClient {
                                                                                                             .getEntity()),
                                                                    ToHitData.SIDE_REAR
                                                                             ) * Compute
-                                                           .oddsAbove(toHit.getValue())) / 100;
+                                            .oddsAbove(toHit.getValue(), aptPiloting)) / 100;
                                     self_threat += option.getCEntity()
                                                          .getThreatUtility(
                                                                  .1 * self.getEntity()
@@ -568,16 +566,14 @@ public class TestBot extends BotClient {
                                                                                   target.getEntity()),
                                                                   ToHitData.SIDE_FRONT
                                                                            )
-                                                  * (Compute.oddsAbove(toHit
-                                                                               .getValue()) / 100);
+                                                  * (Compute.oddsAbove(toHit.getValue(), aptPiloting) / 100);
                                     option.setState();
                                 } else {
                                     toHit = new ToHitData(
                                             TargetRoll.IMPOSSIBLE, "");
                                 }
                                 damage = (target.getThreatUtility(damage,
-                                                                  toHit.getSideTable()) * Compute
-                                                  .oddsAbove(toHit.getValue())) / 100;
+                                                                  toHit.getSideTable()) * Compute.oddsAbove(toHit.getValue(), aptPiloting)) / 100;
                                 // charging is a good tactic against larger
                                 // mechs
                                 if (!option.isJumping()) {
@@ -765,9 +761,9 @@ public class TestBot extends BotClient {
             // add them in now, then re-add them later
             if (self.range > CEntity.RANGE_SHORT) {
                 int ele_dif = game.getBoard().getHex(option.getFinalCoords())
-                                  .getElevation()
+                                  .getLevel()
                               - game.getBoard().getHex(self.current.getFinalCoords())
-                                    .getElevation();
+                                    .getLevel();
                 adjustment -= (Math.max(ele_dif, 0) + 1)
                               * ((double) Compute.getTargetTerrainModifier(game,
                                                                            option.getEntity()).getValue() + 1);
@@ -904,6 +900,8 @@ public class TestBot extends BotClient {
                                         enemy_option, modifiers[1],
                                         modifiers[MoveOption.DEFENCE_PC]);
                             } else {
+                                boolean enemyAptGunnery = enemy.getEntity().getCrew().getOptions()
+                                                               .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
                                 max_threat = .8 * enemy
                                         .getModifiedDamage(
                                                 (modifiers[MoveOption.DEFENCE_PC] == 1) ? CEntity.TT
@@ -912,8 +910,7 @@ public class TestBot extends BotClient {
                                                         .getFinalCoords()
                                                         .distance(
                                                                 option.getFinalCoords()),
-                                                modifiers[1]
-                                                          );
+                                                modifiers[1], enemyAptGunnery);
                             }
                             max_threat = self.getThreatUtility(max_threat,
                                                                self_hit_arc);
@@ -1136,11 +1133,13 @@ public class TestBot extends BotClient {
         WeaponAttackAction wep_test;
         WeaponType spinner;
         AttackOption a = null;
-        AttackOption max = new AttackOption(null, null, 0, null, 1);
+        AttackOption max = new AttackOption(null, null, 0, null, 1, en.getCrew().getOptions()
+                                                                      .booleanOption(
+                                                                              OptionsConstants.PILOT_APTITUDE_GUNNERY));
         for (Entity e : ents) {
             CEntity enemy = centities.get(e);
             // long entry = System.currentTimeMillis();
-            ToHitData th = WeaponAttackAction.toHit(game, from, e, weaponID);
+            ToHitData th = WeaponAttackAction.toHit(game, from, e, weaponID, false);
             // long exit = System.currentTimeMillis();
             // if (exit != entry)
             // System.out.println("Weapon attack toHit took "+(exit-entry));
@@ -1191,7 +1190,8 @@ public class TestBot extends BotClient {
                     starg_mod = 13;
                 }
 
-                a = new AttackOption(enemy, mw, expectedDmg, th, starg_mod);
+                a = new AttackOption(enemy, mw, expectedDmg, th, starg_mod,
+                                     en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY));
                 if (a.value > max.value) {
                     if (best_only) {
                         max = a;
@@ -1207,7 +1207,9 @@ public class TestBot extends BotClient {
             result.add(max);
         }
         if (result.size() > 0) {
-            result.add(new AttackOption(null, mw, 0, null, 1));
+            result.add(new AttackOption(null, mw, 0, null, 1, en.getCrew().getOptions()
+                                                                .booleanOption(OptionsConstants
+                                                                                       .PILOT_APTITUDE_GUNNERY)));
         }
         return result;
     }
@@ -1732,13 +1734,11 @@ public class TestBot extends BotClient {
         double av_range;
 
         Coords pointing_to = new Coords();
-        Entity test_ent;
-        Enumeration<Entity> valid_attackers;
 
         int entNum = game.getFirstDeployableEntityNum();
         assert (entNum != Entity.NONE) : "The bot is trying to deploy without units being left.";
 
-        LinkedList<Coords> cStart = getStartingCoordsArray();
+        List<Coords> cStart = getStartingCoordsArray();
         Coords cDeploy = getCoordsAround(getEntity(entNum), cStart);
 
         if (cDeploy == null) {
@@ -1801,15 +1801,13 @@ public class TestBot extends BotClient {
         hex_count = 0;
         x_ave = 0;
         y_ave = 0;
-        valid_attackers = game.getEntities();
-        while (valid_attackers.hasMoreElements()) {
-            test_ent = valid_attackers.nextElement();
+        for (Entity test_ent : game.getEntitiesVector()) {
             if (test_ent.isDeployed()) {
                 if (test_ent.isVisibleToEnemy()) {
                     if (cDeploy.distance(test_ent.getPosition()) <= (int) av_range) {
                         hex_count++;
-                        x_ave += test_ent.getPosition().x;
-                        y_ave += test_ent.getPosition().y;
+                        x_ave += test_ent.getPosition().getX();
+                        y_ave += test_ent.getPosition().getY();
                     }
                 }
             }
@@ -1845,6 +1843,11 @@ public class TestBot extends BotClient {
 
     @Override
     protected MovePath continueMovementFor(Entity entity) {
+
+        if (entity == null) {
+            throw new NullPointerException("Entity is null.");
+        }
+
         System.out.println("Contemplating movement of " + entity.getShortName()
                            + " " + entity.getId());
         CEntity cen = centities.get(entity);
@@ -1946,9 +1949,7 @@ public class TestBot extends BotClient {
                     // functional
                     // If nothing is "close" then unjam anyways
                     int check_range = 100;
-                    for (Enumeration<Entity> unit_selection = game
-                            .getEntities(); unit_selection.hasMoreElements(); ) {
-                        Entity enemy = unit_selection.nextElement();
+                    for (Entity enemy : game.getEntitiesVector()) {
                         if ((min.getCEntity().entity.getPosition() != null)
                             && (enemy.getPosition() != null)
                             && (enemy.isEnemyOf(min.getCEntity().entity))) {
@@ -2197,6 +2198,8 @@ public class TestBot extends BotClient {
                     // Get the weapon
 
                     Mounted test_weapon = current_option.weapon;
+                    boolean aptGunnery = current_option.target.getEntity().getCrew().getOptions()
+                                                              .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
 
                     // If the weapon is not LBX cannon or LBX cannon loaded with
                     // slug
@@ -2251,7 +2254,7 @@ public class TestBot extends BotClient {
                                                                                         IAimingModes
                                                                                                 .AIM_MODE_TARG_COMP)) {
                                 refactored_damage = base_damage
-                                                    * (Compute.oddsAbove(base_to_hit + 4) / 100.0);
+                                                    * (Compute.oddsAbove(base_to_hit + 4, aptGunnery) / 100.0);
                                 ((WeaponAttackAction) atk_action_list
                                         .get(action_index))
                                         .setAimingMode(IAimingModes.AIM_MODE_TARG_COMP);
@@ -2259,12 +2262,11 @@ public class TestBot extends BotClient {
                                 // 20% chance of hitting the same location
                                 // Use the better of the regular shot or aimed
                                 // shot
-                                if ((0.2 * base_damage * (Compute
-                                                                  .oddsAbove(base_to_hit) / 100.0)) >
+                                if ((0.2 * base_damage * (Compute.oddsAbove(base_to_hit, aptGunnery) / 100.0)) >
                                     refactored_damage) {
                                     refactored_damage = 0.2
                                                         * base_damage
-                                                        * (Compute.oddsAbove(base_to_hit) / 100.0);
+                                                        * (Compute.oddsAbove(base_to_hit, aptGunnery) / 100.0);
                                     ((WeaponAttackAction) atk_action_list
                                             .get(action_index))
                                             .setAimingMode(IAimingModes.AIM_MODE_NONE);
@@ -2293,7 +2295,7 @@ public class TestBot extends BotClient {
                                     // increased to-hit number of the tcomp
 
                                     refactored_damage = base_damage
-                                                        * (Compute.oddsAbove(base_to_hit + 4) / 100.0);
+                                                        * (Compute.oddsAbove(base_to_hit + 4, aptGunnery) / 100.0);
                                     refactored_head = 0.0;
                                     ((WeaponAttackAction) atk_action_list
                                             .get(action_index))
@@ -2304,16 +2306,16 @@ public class TestBot extends BotClient {
 
                                 }
                                 if (((0.50 * base_damage * (Compute
-                                                                    .oddsAbove(base_to_hit) / 100.0)) >
+                                                                    .oddsAbove(base_to_hit, aptGunnery) / 100.0)) >
                                      refactored_damage) && Compute.allowAimedShotWith(test_weapon,
                                                                                       IAimingModes.AIM_MODE_IMMOBILE)) {
                                     refactored_damage = 0.50
                                                         * base_damage
-                                                        * (Compute.oddsAbove(base_to_hit) / 100.0);
+                                                        * (Compute.oddsAbove(base_to_hit, aptGunnery) / 100.0);
                                     refactored_head = 0.50
                                                       * base_damage
                                                       * (Compute
-                                                                 .oddsAbove(base_to_hit + 7) / 100.0);
+                                                                 .oddsAbove(base_to_hit + 7, aptGunnery) / 100.0);
                                     ((WeaponAttackAction) atk_action_list
                                             .get(action_index))
                                             .setAimingMode(IAimingModes.AIM_MODE_IMMOBILE);
@@ -2326,10 +2328,10 @@ public class TestBot extends BotClient {
 
                                 refactored_damage = 0.50
                                                     * base_damage
-                                                    * (Compute.oddsAbove(base_to_hit) / 100.0);
+                                                    * (Compute.oddsAbove(base_to_hit, aptGunnery) / 100.0);
                                 refactored_head = 0.50
                                                   * base_damage
-                                                  * (Compute.oddsAbove(base_to_hit + 7) / 100.0);
+                                                  * (Compute.oddsAbove(base_to_hit + 7, aptGunnery) / 100.0);
                                 ((WeaponAttackAction) atk_action_list
                                         .get(action_index))
                                         .setAimingMode(IAimingModes.AIM_MODE_IMMOBILE);

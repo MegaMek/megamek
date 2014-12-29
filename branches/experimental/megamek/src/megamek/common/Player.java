@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
 
 import megamek.common.event.GamePlayerChangeEvent;
@@ -378,7 +379,7 @@ public final class Player extends TurnOrdered implements IPlayer {
 
     @Override
     public boolean hasTAG() {
-        for (Enumeration<Entity> e = game
+        for (Iterator<Entity> e = game
                 .getSelectedEntities(new EntitySelector() {
                     private final int ownerId = getId();
 
@@ -391,8 +392,8 @@ public final class Player extends TurnOrdered implements IPlayer {
                         }
                         return false;
                     }
-                }); e.hasMoreElements(); ) {
-            Entity m = e.nextElement();
+                }); e.hasNext(); ) {
+            Entity m = e.next();
             if (m.hasTAG()) {
                 return true;
             }
@@ -406,12 +407,11 @@ public final class Player extends TurnOrdered implements IPlayer {
      */
     @Override
     public int getBV() {
-        Enumeration<Entity> survivors = game.getEntities();
         int bv = 0;
 
-        while (survivors.hasMoreElements()) {
-            Entity entity = survivors.nextElement();
-            if (entity.getOwner().equals(this) && !entity.isDestroyed() && !entity.isTrapped()) {
+        for (Entity entity : game.getEntitiesVector()) {
+            if (equals(entity.getOwner()) && !entity.isDestroyed()
+                    && !entity.isTrapped()) {
                 bv += entity.calculateBattleValue();
             }
         }

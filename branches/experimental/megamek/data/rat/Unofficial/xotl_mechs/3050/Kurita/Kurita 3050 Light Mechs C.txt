@@ -50,7 +50,7 @@ Mongoose MON-67,16
 Mongoose MON-66,4
 Firestarter FS9-K,4
 Panther PNT-9R,206
-Javelin JVN-10F "Fire Javelin",4
+Javelin JVN-10F 'Fire Javelin',4
 Jenner JR7-D,62
 Jenner JR7-K,14
 Jenner JR7-F,4

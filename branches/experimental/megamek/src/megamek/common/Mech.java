@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.loaders.MtfFile;
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.ACWeapon;
 import megamek.common.weapons.CLImprovedHeavyLargeLaser;
@@ -310,7 +311,7 @@ public abstract class Mech extends Entity {
     }
 
     public boolean hasCowl() {
-        return hasQuirk("cowl");
+        return hasQuirk(OptionsConstants.QUIRK_POS_COWL);
     }
 
     /**
@@ -340,6 +341,7 @@ public abstract class Mech extends Entity {
         switch (location) {
             case Mech.LOC_RT:
             case Mech.LOC_LT:
+            case Mech.LOC_CLEG:
                 return Mech.LOC_CT;
             case Mech.LOC_LLEG:
             case Mech.LOC_LARM:
@@ -1699,7 +1701,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public boolean canChangeSecondaryFacing() {
-        if (hasQuirk("no_twist")) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_NO_TWIST)) {
             return false;
         }
         return !isProne();
@@ -1712,7 +1714,7 @@ public abstract class Mech extends Entity {
     public boolean isValidSecondaryFacing(int dir) {
         int rotate = dir - getFacing();
         if (canChangeSecondaryFacing()) {
-            if (hasQuirk("ext_twist")) {
+            if (hasQuirk(OptionsConstants.QUIRK_POS_EXT_TWIST)) {
                 return (rotate == 0) || (rotate == 1) || (rotate == 2)
                         || (rotate == -1) || (rotate == -2) || (rotate == -5)
                         || (rotate == -4) || (rotate == 5) || (rotate == 4);
@@ -1737,7 +1739,7 @@ public abstract class Mech extends Entity {
         }
         // otherwise, twist once in the appropriate direction
         final int rotate = (dir + (6 - getFacing())) % 6;
-        if ((rotate == 3) && hasQuirk("ext_twist")) {
+        if ((rotate == 3) && hasQuirk(OptionsConstants.QUIRK_POS_EXT_TWIST)) {
             // if the unit can do an extended torso twist and the area chosen
             // was directly behind them, then just rotate one way
             return (getFacing() + 2) % 6;
@@ -5014,7 +5016,7 @@ public abstract class Mech extends Entity {
             }
         }
 
-        if (hasQuirk("cramped_cockpit")) {
+        if (hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)) {
             roll.addModifier(1, "cramped cockpit");
         }
 
@@ -5063,11 +5065,8 @@ public abstract class Mech extends Entity {
             if (mtype.hasFlag(MiscType.F_STEALTH)) {
 
                 if (mEquip.curMode().equals("On")
-                        && hasActiveECM()
-                        && !Compute.isAffectedByECCM(this, getPosition(),
-                                getPosition())) {
+                        && hasActiveECM()) {
                     // Return true if the mode is "On" and ECM is working
-                    // and we're not in ECCM
                     return true;
                 }
             }
@@ -5295,21 +5294,8 @@ public abstract class Mech extends Entity {
                     }
                     break;
                 case RangeType.RANGE_LONG:
-                    if (isStealthActive() && !isInfantry) {
-                        result = new TargetRoll(2, "stealth");
-                    } else if (isChameleonShieldActive()) {
-                        result = new TargetRoll(2, "chameleon");
-                        if (isNullSigActive() && !isInfantry) {
-                            result.addModifier(2, "null-sig");
-                        }
-                    } else if (isNullSigActive() && !isInfantry) {
-                        result = new TargetRoll(2, "null-sig");
-                    } else {
-                        // must be infantry
-                        result = new TargetRoll(0, "infantry ignore stealth");
-                    }
-                    break;
                 case RangeType.RANGE_EXTREME:
+                case RangeType.RANGE_LOS:
                     if (isStealthActive() && !isInfantry) {
                         result = new TargetRoll(2, "stealth");
                     } else if (isChameleonShieldActive()) {
@@ -6002,12 +5988,31 @@ public abstract class Mech extends Entity {
             }
             sb.append(newLine);
         }
+        
+        if (getFluff().getOverview().trim().length() > 0) {
+            sb.append("overview:");
+            sb.append(getFluff().getOverview());
+            sb.append(newLine);
+        }
 
-        if (getFluff().getHistory().trim().length() > 0) {
+        if (getFluff().getCapabilities().trim().length() > 0) {
+            sb.append("capabilities:");
+            sb.append(getFluff().getCapabilities());
+            sb.append(newLine);
+        }
+               
+        if (getFluff().getDeployment().trim().length() > 0) {
+            sb.append("deployment:");
+            sb.append(getFluff().getDeployment());
+            sb.append(newLine);
+        }
+        
+        if (getFluff().getDeployment().trim().length() > 0) {
             sb.append("history:");
             sb.append(getFluff().getHistory());
             sb.append(newLine);
         }
+
 
         if (getFluff().getMMLImagePath().trim().length() > 0) {
             sb.append("imagefile:");
@@ -6061,17 +6066,21 @@ public abstract class Mech extends Entity {
                     case 1:
                         toReturn.append(m.getType().getInternalName())
                                 .append(" (FR)").append(armoredText);
+                        break;
                     case 2:
                         toReturn.append(m.getType().getInternalName())
                                 .append(" (RR)").append(armoredText);
+                        break;
                     // case 3:
                         // already handled by isRearMounted() above
                     case 4:
                         toReturn.append(m.getType().getInternalName())
                                 .append(" (RL)").append(armoredText);
+                        break;
                     case 5:
                         toReturn.append(m.getType().getInternalName())
                                 .append(" (FL)").append(armoredText);
+                        break;
                     default:
                         break;
                 }
@@ -6928,7 +6937,7 @@ public abstract class Mech extends Entity {
             r.add(1);
             r.add(base.getPlainDesc());
             vPhaseReport.add(r);
-            int diceRoll = Compute.d6(2);
+            int diceRoll = getCrew().rollPilotingSkill();
             r = new Report(2300);
             r.subject = getId();
             r.add(base.getValueAsString());
@@ -6989,7 +6998,7 @@ public abstract class Mech extends Entity {
             r.add(1);
             r.add(base.getPlainDesc());
             vPhaseReport.add(r);
-            int diceRoll = Compute.d6(2);
+            int diceRoll = getCrew().rollPilotingSkill();
             r = new Report(2300);
             r.subject = getId();
             r.add(base.getValueAsString());
@@ -7742,6 +7751,11 @@ public abstract class Mech extends Entity {
 
     @Override
     public boolean isCrippled() {
+        return isCrippled(false);
+    }
+
+    @Override
+    public boolean isCrippled(boolean checkCrew) {
         if (countInternalDamagedLimbs() >= 3) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
@@ -7815,7 +7829,7 @@ public abstract class Mech extends Entity {
             return true;
         }
 
-        if (isPermanentlyImmobilized()) {
+        if (isPermanentlyImmobilized(checkCrew)) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out
                         .println(getDisplayName() + " CRIPPLED: Immobilized.");
@@ -7876,10 +7890,10 @@ public abstract class Mech extends Entity {
     }
 
     @Override
-    public boolean isPermanentlyImmobilized() {
+    public boolean isPermanentlyImmobilized(boolean checkCrew) {
         // First check for conditions that would permanently immobilize *any*
         // entity; if we find any, we're already done.
-        if (super.isPermanentlyImmobilized()) {
+        if (super.isPermanentlyImmobilized(checkCrew)) {
             return true;
         }
         // If we're prone and base walking MP -- adjusted for gravity and
@@ -8042,7 +8056,7 @@ public abstract class Mech extends Entity {
     @Override
     public boolean isEjectionPossible() {
         return (getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED)
-                && getCrew().isActive() && !hasQuirk("no_eject");
+                && getCrew().isActive() && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
     }
 
     /**

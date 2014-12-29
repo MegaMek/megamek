@@ -170,8 +170,8 @@ spheroid
 
 <transporters>
 smallcraftbay:1:1
-infantrybay:50.5:1
-infantrybay:50.5:1
+infantrybay:18:1
+infantrybay:18:1
 CargoBay:1900:2
 CargoBay:1901:2
 </transporters>

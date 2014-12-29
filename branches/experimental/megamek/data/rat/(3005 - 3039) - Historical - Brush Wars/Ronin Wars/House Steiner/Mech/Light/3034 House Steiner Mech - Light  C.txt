@@ -1,6 +1,6 @@
 3034 House Steiner Mech - Light  C
 Spider SDR-5V,1
-Firestarter FS9-M "Mirage",2
+Firestarter FS9-M 'Mirage',2
 Stinger STG-3G,3
 Firestarter FS9-H,4
 Stinger STG-3R,5

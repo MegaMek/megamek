@@ -27,6 +27,7 @@ import java.util.Vector;
 
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
+import megamek.common.options.OptionsConstants;
 import megamek.common.options.WeaponQuirks;
 import megamek.common.weapons.AmmoBayWeapon;
 import megamek.common.weapons.AmmoWeapon;
@@ -437,6 +438,29 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         if (pintleTurretMounted) {
             desc.append(" (PT)");
         }
+        // Append the facing for VGLs
+        if (getType().hasFlag(WeaponType.F_VGL)) {
+            switch (facing) {
+            case 0:
+                desc.append(" (F)");
+                break;
+            case 1:
+                desc.append(" (FR)");
+                break;
+            case 2:
+                desc.append(" (RR)");
+                break;
+            case 3:
+                desc.append(" (R)");
+                break;
+            case 4:
+                desc.append(" (RL)");
+                break;
+            case 5:
+                desc.append(" (FL)");
+                break;
+            }
+        }
         if ((type instanceof AmmoType) && (location != Entity.LOC_NONE)) {
 
             desc.append(" (");
@@ -474,8 +498,12 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
 
     public boolean isReady() {
-        return !usedThisRound && !destroyed && !missing && !jammed && !useless
-                && !fired
+        return isReady(false);
+    }
+    
+    public boolean isReady(boolean isStrafing) {
+        return (!usedThisRound || isStrafing) && !destroyed && !missing
+                && !jammed && !useless && !fired
                 && (!isDWPMounted || (isDWPMounted && (getLinkedBy() != null)));
     }
 
@@ -573,6 +601,14 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public boolean jammedThisPhase() {
         return jammedThisPhase;
+    }
+    
+    /**
+     * Clear all jam statuses - used by MHQ, because phase resetting doesn't work
+     */
+    public void resetJam() {
+    	jammed = false;
+    	jammedThisPhase = false;
     }
 
     /**
@@ -1015,9 +1051,13 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      *         <code>false</code> otherwise.
      */
     public boolean canFire() {
+        return canFire(false);
+    }
+    
+    public boolean canFire(boolean isStrafing) {
 
         // Equipment operational?
-        if (!isReady() || isBreached() || isMissing() || isFired()) {
+        if (!isReady(isStrafing) || isBreached() || isMissing() || isFired()) {
             return false;
         }
 
@@ -1307,13 +1347,13 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             }
             // multiply by number of shots and number of weapons
             heat = heat * getCurrentShots() * getNWeapons();
-            if (hasQuirk("imp_cooling")) {
+            if (hasQuirk(OptionsConstants.QUIRK_WEAP_POS_IMP_COOLING)) {
                 heat = Math.max(1, heat - 1);
             }
-            if (hasQuirk("poor_cooling")) {
+            if (hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_POOR_COOLING)) {
                 heat += 1;
             }
-            if (hasQuirk("no_cooling")) {
+            if (hasQuirk(OptionsConstants.QUIRK_WEAP_NEG_NO_COOLING)) {
                 heat += 2;
             }
             if (hasChargedCapacitor() == 2) {

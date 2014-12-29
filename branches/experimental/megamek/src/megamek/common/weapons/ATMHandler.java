@@ -20,6 +20,7 @@ import java.util.Vector;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
+import megamek.common.ComputeECM;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
@@ -132,7 +133,7 @@ public class ATMHandler extends MissileWeaponHandler {
     @Override
     protected int calcAttackValue() {
         int av = 0;
-        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true);
+        int range = RangeType.rangeBracket(nRange, wtype.getATRanges(), true, false);
         AmmoType atype = (AmmoType) ammo.getType();
         if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
             if (range == WeaponType.RANGE_SHORT) {
@@ -218,7 +219,7 @@ public class ATMHandler extends MissileWeaponHandler {
         // if the attacker is affected by ECM or the target is protected by ECM
         // then
         // act as if effected.
-        if (Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
+        if (ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
             bECMAffected = true;
         }
 
@@ -266,7 +267,7 @@ public class ATMHandler extends MissileWeaponHandler {
             // narc capable missiles are only affected if the narc pod, which
             // sits on the target, is ECM affected
             boolean bTargetECMAffected = false;
-            bTargetECMAffected = Compute.isAffectedByECM(ae,
+            bTargetECMAffected = ComputeECM.isAffectedByECM(ae,
                     target.getPosition(), target.getPosition());
             if (((atype.getAmmoType() == AmmoType.T_LRM) || (atype
                     .getAmmoType() == AmmoType.T_SRM))

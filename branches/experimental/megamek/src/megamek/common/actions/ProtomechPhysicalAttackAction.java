@@ -110,10 +110,10 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         if ((attHex == null) || (targHex == null)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "off board");
         }
-        final int attackerElevation = ae.getElevation() + attHex.getElevation();
-        final int targetHeight = target.absHeight() + targHex.getElevation();
+        final int attackerElevation = ae.getElevation() + attHex.getLevel();
+        final int targetHeight = target.relHeight() + targHex.getLevel();
         final int targetElevation = target.getElevation()
-                + targHex.getElevation();
+                + targHex.getLevel();
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
 
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);

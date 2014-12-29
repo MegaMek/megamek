@@ -74,6 +74,9 @@ buildings:
 - Meks and Tanks that exceed the Building's current CF collapse building.
 - Bridges can be targeted and collapse like buildings, but provide no cover.
 
+TacOps "Taking Control"
+- Page 216 of TacOps describes the process of "taking control" of units.
+    Implement this.
 
 FUTURE VERSION PLANS:
 ---------------------
@@ -84,6 +87,6 @@ FUTURE VERSION PLANS:
 Forward Error Correction:
 -------------------------
 Ranselix on the irc.evilnet.net#megamek IRC said to look at the following
-pages to learn about a way to guard against bit errors on transimissions:
+pages to learn about a way to guard against bit errors on transmissions:
 - http://www.eccpage.com/
 - http://www.ka9q.net/code/fec

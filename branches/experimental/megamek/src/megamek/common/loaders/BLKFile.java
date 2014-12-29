@@ -63,6 +63,7 @@ import megamek.common.Transporter;
 import megamek.common.TroopSpace;
 import megamek.common.VTOL;
 import megamek.common.Warship;
+import megamek.common.WeaponType;
 import megamek.common.util.BuildingBlock;
 
 public class BLKFile {
@@ -109,6 +110,32 @@ public class BLKFile {
                     equipName = equipName.substring(0, equipName.length() - 4)
                             .trim();
                 }
+                int facing = -1;
+                if (equipName.toUpperCase().endsWith("(FL)")) {
+                    facing = 5;
+                    equipName = equipName.substring(0, equipName.length() - 4)
+                            .trim();
+                }
+                if (equipName.toUpperCase().endsWith("(FR)")) {
+                    facing = 1;
+                    equipName = equipName.substring(0, equipName.length() - 4)
+                            .trim();
+                }
+                if (equipName.toUpperCase().endsWith("(RL)")) {
+                    facing = 4;
+                    equipName = equipName.substring(0, equipName.length() - 4)
+                            .trim();
+                }
+                if (equipName.toUpperCase().endsWith("(RR)")) {
+                    facing = 2;
+                    equipName = equipName.substring(0, equipName.length() - 4)
+                            .trim();
+                }
+                if (equipName.toUpperCase().endsWith("(R)")) {
+                    facing = 3;
+                    equipName = equipName.substring(0, equipName.length() - 4)
+                            .trim();
+                }                
                 EquipmentType etype = EquipmentType.get(equipName);
 
                 if (etype == null) {
@@ -118,9 +145,19 @@ public class BLKFile {
 
                 if (etype != null) {
                     try {
-                        t.addEquipment(etype, nLoc, false,
+                        Mounted mount = t.addEquipment(etype, nLoc, false,
                                 BattleArmor.MOUNT_LOC_NONE, false, false,
                                 isTurreted, isPintleTurreted);
+                        // Need to set facing for VGLs
+                        if ((etype instanceof WeaponType) 
+                                && etype.hasFlag(WeaponType.F_VGL)) {
+                            // If no facing specified, assume front
+                            if (facing == -1) {
+                                mount.setFacing(0);
+                            } else {
+                                mount.setFacing(facing);
+                            }
+                        }
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }
@@ -167,9 +204,22 @@ public class BLKFile {
 
     public void setFluff(Entity e) throws EntityLoadingException {
 
+        if (dataFile.exists("capabilities")) {
+            e.getFluff().setCapabilities(dataFile.getDataAsString("capabilities")[0]);
+        }
+        
+        if (dataFile.exists("overview")) {
+            e.getFluff().setOverview(dataFile.getDataAsString("overview")[0]);
+        }
+        
+        if (dataFile.exists("deployment")) {
+            e.getFluff().setDeployment(dataFile.getDataAsString("deployment")[0]);
+        }
+        
         if (dataFile.exists("history")) {
             e.getFluff().setHistory(dataFile.getDataAsString("history")[0]);
         }
+
 
         if (dataFile.exists("imagepath")) {
             e.getFluff().setMMLImagePath(
@@ -526,7 +576,19 @@ public class BLKFile {
             blk.writeBlockData("barrating", t.getBARRating(1));
         }
 
-        if (t.getFluff().getHistory().trim().length() > 0) {
+        if (t.getFluff().getCapabilities().trim().length() > 0) {
+            blk.writeBlockData("capabilities", t.getFluff().getCapabilities());
+        }
+        
+        if (t.getFluff().getOverview().trim().length() > 0) {
+            blk.writeBlockData("overview", t.getFluff().getOverview());
+        }
+        
+        if (t.getFluff().getDeployment().trim().length() > 0) {
+            blk.writeBlockData("deployment", t.getFluff().getDeployment());
+        }
+        
+        if (t.getFluff().getDeployment().trim().length() > 0) {
             blk.writeBlockData("history", t.getFluff().getHistory());
         }
 

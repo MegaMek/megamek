@@ -35,10 +35,10 @@ import javax.swing.JTextField;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 
-public class DialogOptionComponent extends JPanel implements 
-        ItemListener {
+public class DialogOptionComponent extends JPanel implements
+        ItemListener, Comparable<DialogOptionComponent> {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4190538980884459746L;
 
@@ -106,7 +106,7 @@ public class DialogOptionComponent extends JPanel implements
     public static String convertToHtml(String source) {
         StringBuffer sb = new StringBuffer();
         sb.append("<html>");
-        StringTokenizer tok =new StringTokenizer(source,"\n"); 
+        StringTokenizer tok =new StringTokenizer(source,"\n");
         while ( tok.hasMoreTokens() ) {
             sb.append(tok.nextToken());
             sb.append("<br>");
@@ -144,13 +144,29 @@ public class DialogOptionComponent extends JPanel implements
         }
     }
 
+    public void setValue(Object v) {
+        switch (option.getType()) {
+            case IOption.BOOLEAN:
+                checkbox.setSelected((Boolean)v);
+                break;
+            case IOption.INTEGER:
+            case IOption.FLOAT:
+            case IOption.STRING:
+                textField.setText((String)v);
+                break;
+            case IOption.CHOICE:
+                choice.setSelectedItem(v);
+            default:
+        }
+    }
+
     public IOption getOption() {
         return option;
     }
 
     /**
      * Update the option component so that it is editable or view-only.
-     * 
+     *
      * @param editable - <code>true</code> if the contents of the component
      *            are editable, <code>false</code> if they are view-only.
      */
@@ -167,6 +183,17 @@ public class DialogOptionComponent extends JPanel implements
             default:
                 textField.setEnabled(editable);
                 break;
+        }
+    }
+
+    public boolean getEditable() {
+        switch (option.getType()) {
+            case IOption.BOOLEAN:
+                return checkbox.isEnabled();
+            case IOption.CHOICE:
+                return choice.isEnabled();
+            default:
+                return textField.isEnabled();
         }
     }
 
@@ -197,8 +224,8 @@ public class DialogOptionComponent extends JPanel implements
                 break;
         }
     }
-    
-    
+
+
 
     /**
      * Returns a new option, representing the option in it's changed state.
@@ -213,7 +240,7 @@ public class DialogOptionComponent extends JPanel implements
 
     private static class BasicOption implements IBasicOption, Serializable {
         /**
-         * 
+         *
          */
         private static final long serialVersionUID = -1888895390718831758L;
         private String name;
@@ -226,7 +253,7 @@ public class DialogOptionComponent extends JPanel implements
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see megamek.common.options.IBasicOption#getName()
          */
         public String getName() {
@@ -235,12 +262,21 @@ public class DialogOptionComponent extends JPanel implements
 
         /*
          * (non-Javadoc)
-         * 
+         *
          * @see megamek.common.options.IBasicOption#getValue()
          */
         public Object getValue() {
             return value;
         }
+    }
+
+    @Override
+    public int compareTo(DialogOptionComponent doc) {
+        return option.getDisplayableName().compareTo(doc.option.getDisplayableName());
+    }
+
+    public String toString() {
+        return option.getDisplayableName();
     }
 
 }

@@ -34,7 +34,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -271,12 +270,12 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                 pgMech.grabPixels();
             } catch (InterruptedException e) {
                 System.err
-                        .println("EntityImage.applyColor(): Failed to grab pixels for mech image." + e.getMessage()); //$NON-NLS-1$
+                        .println("TilesetManager.getEcmShade(): Failed to grab pixels for mech image." + e.getMessage()); //$NON-NLS-1$
                 return image;
             }
             if ((pgMech.getStatus() & ImageObserver.ABORT) != 0) {
                 System.err
-                        .println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
+                        .println("TilesetManager.getEcmShade(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
                 return image;
             }
 
@@ -351,8 +350,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         }
 
         // load all mech images
-        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
-            Entity e = i.nextElement();
+        for (Entity e : game.getEntitiesVector()) {
             if (e.getSecondaryPositions().isEmpty()) {
                 loadImage(e, -1);
             } else {
@@ -624,6 +622,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             }
         }
 
+        @SuppressWarnings("unused")
         public Image loadPreviewImage() {
             base = applyColor(base);
             return base;
@@ -681,7 +680,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                 }
                 if ((pgCamo.getStatus() & ImageObserver.ABORT) != 0) {
                     System.err
-                            .println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
+                            .println("EntityImage.applyColor(): Failed to grab pixels for camo image. ImageObserver aborted."); //$NON-NLS-1$
                     return image;
                 }
             }

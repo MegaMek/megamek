@@ -27,8 +27,6 @@ import megamek.common.Aero;
 import megamek.common.BombType;
 
 /**
- * This class loads the default quirks list from the mmconf/defaultQuirks.xml file.
- *
  * @author Deric "Netzilla" Page (deric dot page at usa dot net)
  * @version %Id%
  * @since 2012-04-07
@@ -46,8 +44,8 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
     private int maxPoints = 0;
     private int maxRows = (int) Math.ceil(BombType.B_NUM / 2.0);
 
-    private BombChoicePanel m_bombs;
-    private JPanel panBombs = new JPanel();
+    //private BombChoicePanel m_bombs;
+    //private JPanel panBombs = new JPanel();
 
     @SuppressWarnings("unchecked")
     public BombChoicePanel(Aero aero, boolean at2Nukes, boolean allowAdvancedAmmo) {

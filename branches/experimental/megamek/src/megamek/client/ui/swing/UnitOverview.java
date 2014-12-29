@@ -36,6 +36,7 @@ import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Configuration;
 import megamek.common.Entity;
+import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
 import megamek.common.IArmorState;
 import megamek.common.IGame;
@@ -146,7 +147,14 @@ public class UnitOverview implements IDisplayable {
             graph.drawRect(x, y, ICON_WIDTH, ICON_HEIGHT);
 
             IGame game = clientgui.getClient().getGame();
-            if (game.getTurn() != null && game.getTurn().isValidEntity(e,game)) {
+            GameTurn turn;
+            if (game.isPhaseSimultaneous()) {
+                turn = game.getTurnForPlayer(clientgui.getClient()
+                        .getLocalPlayer().getId());
+            } else {
+                turn = game.getTurn();
+            }
+            if ((turn != null) && turn.isValidEntity(e,game)) {
                 Color oldColor = graph.getColor();
                 graph.setColor(GUIPreferences.getInstance().getColor(
                         GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR));
@@ -529,7 +537,15 @@ public class UnitOverview implements IDisplayable {
 
             if (metrics.stringWidth(iconName) > ICON_NAME_MAX_LENGTH) {
                 Vector<String> v = StringUtil.splitString(iconName, " "); //$NON-NLS-1$
-                iconName = v.elementAt(0);
+                iconName = "";
+                for (String tok : v) {                  
+                    String newName = iconName + " " + tok;
+                    if (metrics.stringWidth(newName) <= ICON_NAME_MAX_LENGTH) {
+                        iconName = newName;
+                    } else {
+                        break;
+                    }                    
+                }
             }
             return adjustString(iconName, metrics);
         } else if ((e instanceof Infantry) || (e instanceof Mech)

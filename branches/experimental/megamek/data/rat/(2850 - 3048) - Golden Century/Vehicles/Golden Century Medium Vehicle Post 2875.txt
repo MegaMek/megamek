@@ -1,7 +1,7 @@
 2875 Golden Century Medium Vehicle
 Condor Heavy Hover Tank (Standard),1
 Hachiman Fire Support Tank (Standard),2
-Ku Wheeled Assault Tank (IFV) "Turhan II",3
+Ku Wheeled Assault Tank (IFV) 'Turhan II',3
 Bandit (C) Hovercraft Prime,4
 Ares Medium Tank (Standard),5
 Hachiman Fire Support Tank (Standard),6

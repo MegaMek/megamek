@@ -6,6 +6,7 @@ Config:Biped Omnimech
 TechBase:Clan
 Era:3065
 Rules Level:2
+source:TRO 3067
 
 Mass:50
 Engine:350 XL Engine

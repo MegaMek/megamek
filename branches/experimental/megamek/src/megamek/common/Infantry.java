@@ -522,7 +522,10 @@ public class Infantry extends Entity {
     public int getWeaponArc(int wn) {
         Mounted mounted = getEquipment(wn);
         if(mounted.getLocation() == LOC_FIELD_GUNS) {
-            return Compute.ARC_TURRET;
+            if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                return Compute.ARC_TURRET;
+            }
+            return Compute.ARC_FORWARD;
         }
         //This is interesting, according to TacOps rules, Dug in units no longer
         //have to declare a facing
@@ -1135,8 +1138,8 @@ public class Infantry extends Entity {
                     result = new TargetRoll(+1, "Sneak, IR/DEST suit");
                     break;
                 case RangeType.RANGE_LONG:
-                case RangeType.RANGE_EXTREME: // TODO : what's the *real*
-                    // modifier?
+                case RangeType.RANGE_EXTREME:
+                case RangeType.RANGE_LOS:
                     result = new TargetRoll(+2, "Sneak, IR/DEST suit");
                     break;
                 case RangeType.RANGE_OUT:
@@ -1425,6 +1428,11 @@ public class Infantry extends Entity {
         }
         return false;
     }
+    
+    @Override
+    public boolean isCrippled(boolean checkCrew) {
+        return isCrippled();
+    }
 
     @Override
     public boolean isDmgHeavy() {
@@ -1468,4 +1476,13 @@ public class Infantry extends Entity {
     public long getEntityType(){
         return Entity.ETYPE_INFANTRY;
     }
+    
+    public PilotingRollData checkLandingInHeavyWoods(
+            EntityMovementType overallMoveType, IHex curHex) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
+        roll.addModifier(TargetRoll.CHECK_FALSE,
+                         "Infantry cannot fall");
+        return roll;
+    }    
+    
 } // End class Infantry

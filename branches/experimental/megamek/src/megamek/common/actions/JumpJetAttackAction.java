@@ -120,10 +120,10 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
 
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(target.getPosition());
-        final int attackerElevation = ae.getElevation() + attHex.getElevation();
+        final int attackerElevation = ae.getElevation() + attHex.getLevel();
         final int attackerHeight = attackerElevation + ae.getHeight();
         final int targetElevation = target.getElevation()
-                + targHex.getElevation();
+                + targHex.getLevel();
         final int targetHeight = targetElevation + target.getHeight();
 
         int[] kickLegs = new int[2];

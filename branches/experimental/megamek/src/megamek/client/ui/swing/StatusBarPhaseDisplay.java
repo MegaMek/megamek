@@ -14,7 +14,7 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -35,11 +36,15 @@ import javax.swing.SwingConstants;
 
 import megamek.client.Client;
 import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.SkinSpecification;
+import megamek.client.ui.swing.widget.SkinXMLHandler;
 
 /**
  * This is a parent class for the button display for each phase.  Every phase 
- * has a panel of control buttons along with a done button.  This class formats
- * the button panel, the done button, and a status display area. 
+ * has a panel of control buttons along with a done button.  Each button
+ * correspondes to a command that can be carried out in the current phase.  
+ * This class formats the button panel, the done button, and a status display 
+ * area. 
  * 
  * Control buttons are grouped and the groups can be cycled through.
  *
@@ -50,6 +55,35 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     private static final long serialVersionUID = 639696875125581395L;
     
     protected static final int TRANSPARENT = 0xFFFF00FF;
+    
+    protected static final Dimension minButtonSize = new Dimension(32,32);
+    
+    /**
+     * Interface that defines what a command for a phase is.
+     * 
+     * @author arlith
+     *
+     */
+    public interface PhaseCommand {
+        public String getCmd();
+        public int getPriority();
+        public void setPriority(int p);
+    }
+    
+    /**
+     * Comparator for comparing the priority of two commands, used to determine
+     * button order.
+     * 
+     * @author arlith
+     *
+     */
+    public  static class CommandComparator implements Comparator<PhaseCommand>
+    {
+        public int compare(PhaseCommand c1, PhaseCommand c2)
+        {
+            return c1.getPriority() - c2.getPriority();            
+        }
+    }
     
     // displays
     private JLabel labStatus;
@@ -69,7 +103,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
 
     protected StatusBarPhaseDisplay() {
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-        		KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "clearButton");
+            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "clearButton");
 
         getActionMap().put("clearButton", new AbstractAction() {
             private static final long serialVersionUID = -7781405756822535409L;
@@ -79,8 +113,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
                     return;
                 }
                 if (clientgui.bv.getChatterBoxActive()){
-                	clientgui.bv.setChatterBoxActive(false);
-                	clientgui.cb2.clearMessage();
+                    clientgui.bv.setChatterBoxActive(false);
+                    clientgui.cb2.clearMessage();
                 } else if (clientgui.getClient().isMyTurn()) {
                     clear();
                 }
@@ -103,7 +137,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
      * Adds the buttons and status bar to the panel.    
      */
     protected void layoutScreen(){
-    	GridBagLayout gridbag = new GridBagLayout();
+        GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
         c.fill = GridBagConstraints.BOTH;
@@ -114,7 +148,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         c.gridy = 0;
         addBag(panButtons, gridbag, c);
         c.gridy = 1;
-        addBag(panStatus, gridbag, c);    	
+        addBag(panStatus, gridbag, c);    
     }
     
     /**
@@ -123,7 +157,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
      * display is defined in <code>buttonsPerGroup</code> and which group of
      * buttons will be displayed is set by <code>currentButtonGroup</code>.
      */
-    protected void setupButtonPanel() {
+    public void setupButtonPanel() {
         panButtons.removeAll();
         panButtons.setLayout(new GridBagLayout());
         
@@ -139,8 +173,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         boolean ok = false;
         while (!ok && (currentButtonGroup != 0)) {
             for (int i = currentButtonGroup * buttonsPerGroup; 
-            		(i < ((currentButtonGroup + 1) * buttonsPerGroup))
-                    	&& (i < buttonList.size()); i++) {
+            (i < ((currentButtonGroup + 1) * buttonsPerGroup))
+                    && (i < buttonList.size()); i++) {
                 if (buttonList.get(i) != null && buttonList.get(i).isEnabled()){
                     ok = true;
                     break;
@@ -148,26 +182,28 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
             }
             if (!ok) {
                 // skip as nothing was enabled
-            	currentButtonGroup++;
-                if ((currentButtonGroup * buttonsPerGroup) >= 
-                		buttonList.size()) {
-                	currentButtonGroup = 0;
+                currentButtonGroup++;
+                if ((currentButtonGroup * buttonsPerGroup) >= buttonList.size()) {
+                    currentButtonGroup = 0;
                 }
             }
         }
         int i = 0;
         for (i = currentButtonGroup * buttonsPerGroup; 
-        		(i < ((currentButtonGroup + 1) * buttonsPerGroup))
-                	&& (i < buttonList.size()); i++) {        
-            if (buttonList.get(i) != null){
-            	subPanel.add(buttonList.get(i));              
+                (i < ((currentButtonGroup + 1) * buttonsPerGroup))
+                    && (i < buttonList.size()); i++) {
+            if (buttonList.get(i) != null) {
+                MegamekButton button = buttonList.get(i);
+                button.setMinimumSize(minButtonSize);
+                button.setPreferredSize(minButtonSize);
+                subPanel.add(button);
             } else {
-            	subPanel.add(Box.createHorizontalGlue());
+                subPanel.add(Box.createHorizontalGlue());
             }
-        }           
+        }         
         while ( i < ((currentButtonGroup + 1) * buttonsPerGroup)){
-        	subPanel.add(Box.createHorizontalGlue());
-        	i++;
+        subPanel.add(Box.createHorizontalGlue());
+        i++;
         }
            
         GridBagConstraints c = new GridBagConstraints();
@@ -184,9 +220,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         c.gridx = 1;
         panButtons.add(butDone,c);        
         butDone.setSize(DONE_BUTTON_WIDTH,butDone.getHeight());
-    	butDone.setPreferredSize(butDone.getSize());
-    	butDone.setMinimumSize(butDone.getSize());
-    	
+        butDone.setPreferredSize(butDone.getSize());
+        butDone.setMinimumSize(butDone.getSize());
+    
         panButtons.validate();
         panButtons.repaint();   
     }
@@ -209,10 +245,13 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
      * Sets up the status bar with toggle buttons for the mek display and map.
      */
     protected void setupStatusBar(String defStatus) {
+        SkinSpecification pdSkinSpec = 
+                SkinXMLHandler.getSkin(SkinXMLHandler.PHASEDISPLAY);
+        
         panStatus = new JPanel();
         panStatus.setOpaque(false);
         labStatus = new JLabel(defStatus, SwingConstants.CENTER);
-        labStatus.setForeground(Color.yellow);
+        labStatus.setForeground(pdSkinSpec.fontColor);
         labStatus.setOpaque(false);
 
         // layout
@@ -233,20 +272,24 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected void setStatusBarText(String text) {
         labStatus.setText(text);
     }
+    
+    protected String getStatusBarText() {
+        return labStatus.getText();
+    }
 
     protected boolean statusBarActionPerformed(ActionEvent ev, Client client) {
         return false;
     }
     
-	@Override
-	public void keyPressed(KeyEvent evt) {	
-	}
+@Override
+public void keyPressed(KeyEvent evt) {
+}
 
-	@Override
-	public void keyReleased(KeyEvent evt) {
-	}
+@Override
+public void keyReleased(KeyEvent evt) {
+}
 
-	@Override
-	public void keyTyped(KeyEvent evt) {			
-	}
+@Override
+public void keyTyped(KeyEvent evt) {
+}
 }

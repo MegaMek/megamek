@@ -1,11 +1,11 @@
 Version:1.0
 Vindicator
-VND-1AA "Avenging Angel"
+VND-1AA 'Avenging Angel'
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2863
-Source:Succession Wars
+Source:TRO 3039
 Rules Level:1
 
 Mass:45

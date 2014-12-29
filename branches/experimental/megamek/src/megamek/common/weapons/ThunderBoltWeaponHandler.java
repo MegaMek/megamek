@@ -20,6 +20,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.Infantry;
+import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -55,7 +56,13 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
     protected int calcDamagePerHit() {
         AmmoType atype = (AmmoType) ammo.getType();
         double toReturn = atype.getDamagePerShot();
-        if ((nRange <= wtype.getMinimumRange()) && !weapon.isHotLoaded()) {
+        int minRange;
+        if (ae.isAirborne()) {
+            minRange = wtype.getATRanges()[RangeType.RANGE_MINIMUM];
+        } else {
+            minRange = wtype.getMinimumRange();
+        }
+        if ((nRange <= minRange) && !weapon.isHotLoaded()) {
             toReturn /= 2;
             toReturn = Math.floor(toReturn);
         }

@@ -15,6 +15,9 @@
 
 package megamek.common.event;
 
+import java.util.List;
+
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.net.Packet;
 
 /**
@@ -36,6 +39,17 @@ public class GameCFREvent extends GameEvent {
 	private int eId;
 	
 	/**
+	 * The equipment number for the AMS used in AMS_ASSIGN CFRs.
+	 */
+	private int amsEquipNum;
+	
+	/**
+	 * List of WeaponAttackActions that can have an AMS assigned to them for 
+	 * AMS_ASSIGN CFRs.
+	 */
+	private List<WeaponAttackAction> waas;
+	
+	/**
      * Construct game event
      */
     public GameCFREvent(Object source, int t) {
@@ -54,8 +68,14 @@ public class GameCFREvent extends GameEvent {
     
     public String getEventName() {
     	String evtName = "Client Feedback Request, ";
-    	if (cfrType == Packet.COMMAND_CFR_DOMINO_EFFECT){
-			evtName += " stepping out of a domino effect for Entity Id " + eId;
+    	switch (cfrType) {
+        	case Packet.COMMAND_CFR_DOMINO_EFFECT:
+        	    evtName += " stepping out of a domino effect for Entity Id " 
+        	            + eId;
+        	    break;
+        	case Packet.COMMAND_CFR_AMS_ASSIGN:
+        	    evtName += " assigning AMS for Entity Id " + eId;
+        	    break;
     	}
     	return evtName;
     }
@@ -79,4 +99,20 @@ public class GameCFREvent extends GameEvent {
 	public void setEntityId(int id) {
 		eId = id;
 	}
+
+    public int getAmsEquipNum() {
+        return amsEquipNum;
+    }
+
+    public void setAmsEquipNum(int amsEquipNum) {
+        this.amsEquipNum = amsEquipNum;
+    }
+
+    public List<WeaponAttackAction> getWAAs() {
+        return waas;
+    }
+
+    public void setWAAs(List<WeaponAttackAction> waas) {
+        this.waas = waas;
+    }
 }

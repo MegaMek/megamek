@@ -29,8 +29,8 @@ public class VerifyNotEmpty implements DataVerifier {
         if (value instanceof String) {
             return verify((String) value);
         }
-        if (value instanceof Collection) {
-            return verify((Collection) value);
+        if (value instanceof Collection<?>) {
+            return verify((Collection<?>) value);
         }
         if (value instanceof Object[]) {
             return verify((Object[]) value);
@@ -53,7 +53,7 @@ public class VerifyNotEmpty implements DataVerifier {
         return EMPTY;
     }
 
-    public String verify(Collection value) {
+    public String verify(Collection<?> value) {
         if (!value.isEmpty()) {
             return null;
         }

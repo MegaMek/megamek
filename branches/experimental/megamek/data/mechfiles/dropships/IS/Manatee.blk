@@ -167,13 +167,11 @@ spheroid
 
 </motion_type>
 
-
-
 <transporters>
 
 MechBay:4:4
 
-CargoBay:196:1
+CargoBay:396:1
 
 </transporters>
 

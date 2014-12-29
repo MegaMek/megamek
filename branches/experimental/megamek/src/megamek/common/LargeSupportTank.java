@@ -185,7 +185,7 @@ public class LargeSupportTank extends SupportTank {
 
     @Override
     public int sideTable(Coords src, boolean usePrior, int face) {
-        Coords effectivePos = position;
+        Coords effectivePos = getPosition();
         if (usePrior) {
             effectivePos = getPriorPosition();
         }
@@ -274,6 +274,10 @@ public class LargeSupportTank extends SupportTank {
         if ((mounted.getType() instanceof WeaponType)
                 && mounted.getType().hasFlag(WeaponType.F_B_POD)) {
             return Compute.ARC_360;
+        }
+        // VGLs always be considered forward, since arc is set by VGL facing
+        if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
+            return Compute.ARC_FORWARD;
         }
         switch (mounted.getLocation()) {
             case LOC_BODY:

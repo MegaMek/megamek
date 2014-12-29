@@ -1,11 +1,11 @@
 Version:1.0
 Hermes II
-HER-2M "Mercury"
+HER-2M 'Mercury'
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2802
-Source:Succession Wars
+Source:TRO 3039
 Rules Level:1
 
 Mass:40

@@ -19,7 +19,7 @@ import java.util.Map;
 
 /**
  * This class represents a single, targetable hex of a building. The building
- * itself may occupy multiple hexex.
+ * itself may occupy multiple hexes.
  *
  * @author Suvarov454@sourceforge.net (James A. Damour )
  * @version $Revision$
@@ -42,12 +42,15 @@ public class BuildingTarget implements Targetable {
     private int id = Building.UNKNOWN;
 
     /**
-     * The height of the building at the targeted position.
+     * The height of the building at the targeted position, used to indicate
+     * the number of levels of the building.  A height 0 building is a 1-story
+     * (level 1) building.  Bridges will always have a height of 0.
      */
     private int height = Building.UNKNOWN;
 
     /**
-     * The elevation of the building at the targeted position.
+     * The elevation of the building at the targeted position, generally only
+     * used by bridges but also for buildings on hexes with depth.
      */
     private int elevation = Building.UNKNOWN;
 
@@ -55,7 +58,7 @@ public class BuildingTarget implements Targetable {
      * The name of this hex of the building.
      */
     private String name = null;
-    
+
     /**
      * The type of attack that is targeting this building.
      */
@@ -65,11 +68,11 @@ public class BuildingTarget implements Targetable {
      * Initialize this object from the input.
      *
      * @param coords - the <code>Coords</code> of the hext being targeted.
-     * @param board - the game's <code>Board</code> object.
+     * @param board  - the game's <code>Board</code> object.
      * @param ignite - a <code>boolean</code> flag that indicates whether the
-     *            player is attempting to set the building on fire, or not.
-     * @exception an <code>IllegalArgumentException</code> will be thrown if
-     *                the given coordinates do not contain a building.
+     *               player is attempting to set the building on fire, or not.
+     * @throws an <code>IllegalArgumentException</code> will be thrown if
+     *            the given coordinates do not contain a building.
      */
     protected void init(Coords coords, IBoard board, int nType) {
         position = coords;
@@ -79,8 +82,8 @@ public class BuildingTarget implements Targetable {
         Building bldg = board.getBuildingAt(position);
         if (bldg == null) {
             throw new IllegalArgumentException("The coordinates, "
-                    + position.getBoardNum()
-                    + ", do not contain a building.");
+                                               + position.getBoardNum()
+                                               + ", do not contain a building.");
         }
 
         // Save the building's ID.
@@ -89,8 +92,8 @@ public class BuildingTarget implements Targetable {
         // Generate a name.
         StringBuffer buff = new StringBuffer();
         buff.append("Hex ").append(position.getBoardNum()).append(" of ")
-                .append(bldg.getName());
-        switch (nType){
+            .append(bldg.getName());
+        switch (nType) {
             case Targetable.TYPE_BLDG_IGNITE:
                 buff.append(Messages.getString("BuildingTarget.Ignite"));
                 break;
@@ -99,7 +102,7 @@ public class BuildingTarget implements Targetable {
                 break;
             case Targetable.TYPE_BLDG_TAG:
                 buff.append(Messages.getString("BuildingTarget.Tag"));
-                break;                    
+                break;
         }
 
         name = buff.toString();
@@ -124,11 +127,11 @@ public class BuildingTarget implements Targetable {
      * Target a single hex of a building.
      *
      * @param coords - the <code>Coords</code> of the hext being targeted.
-     * @param board - the game's <code>Board</code> object.
-     * @param type - an <code>int</code> value that indicates whether the
-     *            player is attempting to set the building on fire, or not.
-     * @exception an <code>IllegalArgumentException</code> will be thrown if
-     *                the given coordinates do not contain a building.
+     * @param board  - the game's <code>Board</code> object.
+     * @param type   - an <code>int</code> value that indicates whether the
+     *               player is attempting to set the building on fire, or not.
+     * @throws an <code>IllegalArgumentException</code> will be thrown if
+     *            the given coordinates do not contain a building.
      */
     public BuildingTarget(Coords coords, IBoard board, int nType) {
         init(coords, board, nType);
@@ -138,15 +141,15 @@ public class BuildingTarget implements Targetable {
      * Target a single hex of a building.
      *
      * @param coords - the <code>Coords</code> of the hext being targeted.
-     * @param board - the game's <code>Board</code> object.
+     * @param board  - the game's <code>Board</code> object.
      * @param ignite - a <code>boolean</code> flag that indicates whether the
-     *            player is attempting to set the building on fire, or not.
-     * @exception an <code>IllegalArgumentException</code> will be thrown if
-     *                the given coordinates do not contain a building.
+     *               player is attempting to set the building on fire, or not.
+     * @throws an <code>IllegalArgumentException</code> will be thrown if
+     *            the given coordinates do not contain a building.
      */
     public BuildingTarget(Coords coords, IBoard board, boolean ignite) {
-        init(coords, board, 
-                ignite ? Targetable.TYPE_BLDG_IGNITE : Targetable.TYPE_BUILDING);
+        init(coords, board,
+             ignite ? Targetable.TYPE_BLDG_IGNITE : Targetable.TYPE_BUILDING);
     }
 
     // Implementation of Targetable
@@ -162,12 +165,12 @@ public class BuildingTarget implements Targetable {
     public Coords getPosition() {
         return position;
     }
-    
-    public Map<Integer, Coords> getSecondaryPositions(){
+
+    public Map<Integer, Coords> getSecondaryPositions() {
         return new HashMap<Integer, Coords>();
     }
 
-    public int absHeight() {
+    public int relHeight() {
         return getHeight() + getElevation();
     }
 
@@ -188,7 +191,7 @@ public class BuildingTarget implements Targetable {
     }
 
     /**
-     * Creates an id for this building based on its location as well as a 
+     * Creates an id for this building based on its location as well as a
      * building code.
      * The transformation encodes the y value in the top 5 decimal digits and
      * the x value in the bottom 5. Could more efficiently encode this by
@@ -196,12 +199,12 @@ public class BuildingTarget implements Targetable {
      * and still allows for a 99999x99999 hex map.
      */
     public static int coordsToId(Coords c) {
-        return Targetable.TYPE_BUILDING * 1000000 + c.y * 1000 + c.x;
+        return Targetable.TYPE_BUILDING * 1000000 + c.getY() * 1000 + c.getX();
     }
 
     // decode 1 number into 2
     public static Coords idToCoords(int id) {
-        int idNoType =  id - Targetable.TYPE_BUILDING * 1000000;
+        int idNoType = id - Targetable.TYPE_BUILDING * 1000000;
         int y = (idNoType) / 1000;
         return new Coords(idNoType - (y * 1000), y);
     }
@@ -209,7 +212,7 @@ public class BuildingTarget implements Targetable {
     public int sideTable(Coords src) {
         return ToHitData.SIDE_FRONT;
     }
-    
+
     public int sideTable(Coords src, boolean usePrior) {
         return sideTable(src);
     }
@@ -221,7 +224,7 @@ public class BuildingTarget implements Targetable {
     public boolean isOffBoard() {
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborne()
@@ -229,7 +232,7 @@ public class BuildingTarget implements Targetable {
     public boolean isAirborne() {
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see megamek.common.Targetable#isAirborneVTOLorWIGE()
@@ -237,7 +240,7 @@ public class BuildingTarget implements Targetable {
     public boolean isAirborneVTOLorWIGE() {
         return false;
     }
-    
+
     public int getAltitude() {
         return 0;
     }

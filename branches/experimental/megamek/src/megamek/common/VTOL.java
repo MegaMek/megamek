@@ -30,6 +30,7 @@ public class VTOL extends Tank {
     public static final int LOC_ROTOR = 5;
     public static final int LOC_TURRET = 6;
     public static final int LOC_TURRET_2 = 7;
+    public static final int LOC_NUM = 8;
 
     private static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR",
             "RO", "TU", "TU2" };

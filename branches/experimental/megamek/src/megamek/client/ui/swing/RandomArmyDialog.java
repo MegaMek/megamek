@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 
 import javax.swing.BorderFactory;
@@ -48,6 +49,8 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import megamek.client.Client;
@@ -164,15 +167,18 @@ WindowListener, TreeSelectionListener {
         updatePlayerChoice();
         asd = new AdvancedSearchDialog(m_clientgui.frame,
                 m_client.getGame().getOptions().intOption("year"));
+        
+        GUIPreferences guip = GUIPreferences.getInstance();
         // set defaults
-        m_tMechs.setText("4");
-        m_tBVmin.setText("5800");
-        m_tBVmax.setText("6000");
-        m_tVees.setText("0");
-        m_tBA.setText("0");
-        m_tMinYear.setText("2500");
-        m_tMaxYear.setText("3100");
-        m_tInfantry.setText("0");
+        m_tMechs.setText(guip.getRATNumMechs());
+        m_tBVmin.setText(guip.getRATBVMin());
+        m_tBVmax.setText(guip.getRATBVMax());
+        m_tVees.setText(guip.getRATNumVees());
+        m_tBA.setText(guip.getRATNumBA());
+        m_tMinYear.setText(guip.getRATYearMin());
+        m_tMaxYear.setText(guip.getRATYearMax());
+        m_tInfantry.setText(guip.getRATNumInf());
+        m_chkPad.setSelected(guip.getRATPadBV());
         m_chkCanon.setSelected(m_client.getGame().getOptions().booleanOption(
         "canon_only"));
         updateTechChoice(true);
@@ -454,6 +460,25 @@ WindowListener, TreeSelectionListener {
             c.sendAddEntity(entities);
             armyModel.clearData();
             unitsModel.clearData();
+            
+            // Save preferences
+            GUIPreferences guip = GUIPreferences.getInstance();
+            guip.setRATBVMin(m_tBVmin.getText());
+            guip.setRATBVMax(m_tBVmax.getText());
+            guip.setRATNumMechs(m_tMechs.getText());
+            guip.setRATNumVees(m_tVees.getText());
+            guip.setRATNumBA(m_tBA.getText());
+            guip.setRATNumInf(m_tInfantry.getText());
+            guip.setRATYearMin(m_tMinYear.getText());
+            guip.setRATYearMax(m_tMaxYear.getText());
+            guip.setRATPadBV(m_chkPad.isSelected());
+            guip.setRATTechLevel(m_chType.getSelectedIndex());
+            if (m_treeRAT.getSelectionPath() != null) {
+                guip.setRATSelectedRAT(m_treeRAT.getSelectionPath().toString());
+            } else {
+                guip.setRATSelectedRAT("");
+            }
+            
             setVisible(false);
         } else if (ev.getSource().equals(m_bClear)) {
         	armyModel.clearData();
@@ -573,23 +598,30 @@ WindowListener, TreeSelectionListener {
         for (int i = 0; i < maxTech; i++) {
             m_chType.addItem(TechConstants.getLevelDisplayableName(i));
         }
-        if (maxTechOption) {
-            m_chType.setSelectedItem(TechConstants.T_IS_ADVANCED);
-        } else {
-            m_chType.setSelectedItem(TechConstants.T_IS_TW_NON_BOX);
-        }
+        int savedSelection = GUIPreferences.getInstance().getRATTechLevel();
+        savedSelection = Math.min(savedSelection, maxTech - 1);
+        m_chType.setSelectedIndex(savedSelection);
     }
 
     private void updateRATs() {
         Iterator<String> rats = rug.getRatList();
         if(null == rats) {
             return;
-        }
-
+        }  
+        
         RandomUnitGenerator.RatTreeNode ratTree = rug.getRatTree();
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(ratTree.name);
         createRatTreeNodes(root, ratTree);
         m_treeRAT.setModel(new DefaultTreeModel(root));
+        
+        String selectedRATPath = 
+                GUIPreferences.getInstance().getRATSelectedRAT();
+        if (!selectedRATPath.equals("")) {
+            String[] nodes = selectedRATPath.replace('[', ' ')
+                    .replace(']', ' ').split(",");
+            TreePath path = findPathByName(nodes);
+            m_treeRAT.setSelectionPath(path);
+        }
     }
 
     private void createRatTreeNodes(DefaultMutableTreeNode parentNode, RandomUnitGenerator.RatTreeNode ratTreeNode) {
@@ -600,6 +632,39 @@ WindowListener, TreeSelectionListener {
             }
             parentNode.add(newNode);
         }
+    }
+    
+    private TreePath findPathByName(String[] nodeNames) {
+        TreeNode root = (TreeNode)m_treeRAT.getModel().getRoot();
+        return findNextNode(new TreePath(root), nodeNames, 0);
+    }
+    
+    private TreePath findNextNode(TreePath parent, String[] nodes, int depth) {
+        TreeNode node = (TreeNode)parent.getLastPathComponent();
+        String currNode = node.toString();
+
+        // If equal, go down the branch
+        if (currNode.equals(nodes[depth].trim())) {
+            // If at end, return match
+            if (depth == nodes.length-1) {
+                return parent;
+            }
+
+            // Traverse children
+            if (node.getChildCount() >= 0) {
+                for (Enumeration<?> e = node.children(); e.hasMoreElements(); ) {
+                    TreeNode n = (TreeNode)e.nextElement();
+                    TreePath path = parent.pathByAddingChild(n);
+                    TreePath result = findNextNode(path, nodes, depth + 1);
+                    // Found a match
+                    if (result != null) {
+                        return result;
+                    }
+                }
+            }
+        }
+        // No match at this branch
+        return null;
     }
 
     @Override

@@ -5,12 +5,12 @@ RTX1-OG
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3070
-Source:Jihad
+Source:TRO 3058 Upgrade
 Rules Level:2
 
 Mass:25
-Engine:175 XL Engine
-Structure:Endo Steel
+Engine:175 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Double
@@ -61,19 +61,19 @@ ISDoubleHeatSink
 ISSmallPulseLaser
 ISSmallPulseLaser
 ISSmallPulseLaser
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -85,10 +85,10 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 ISERSmallLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -105,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Endo Steel
+-Empty-
 -Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
--Empty-
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -127,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
 
 import megamek.common.Aero;
@@ -140,6 +141,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         Coords targetPos = target.getPosition();
         final int playerId = aaa.getPlayerId();
         boolean isFlak = (target instanceof VTOL) || (target instanceof Aero);
+        boolean mineClear = target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR;
         boolean asfFlak = target instanceof Aero;
         Entity bestSpotter = null;
         if (ae == null) {
@@ -152,7 +154,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         // Are there any valid spotters?
         if ((null != spottersBefore) && !isFlak) {
             // fetch possible spotters now
-            Enumeration<Entity> spottersAfter = game
+            Iterator<Entity> spottersAfter = game
                     .getSelectedEntities(new EntitySelector() {
                         public int player = playerId;
 
@@ -177,8 +179,8 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                     });
 
             // Out of any valid spotters, pick the best.
-            while (spottersAfter.hasMoreElements()) {
-                Entity ent = spottersAfter.nextElement();
+            while (spottersAfter.hasNext()) {
+                Entity ent = spottersAfter.next();
                 if ((bestSpotter == null)
                         || (ent.getCrew().getGunnery() < bestSpotter.getCrew()
                                 .getGunnery())) {
@@ -287,6 +289,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         if (!handledAmmoAndReport) {
             addHeat();
         }
+        
         if (!bMissed) {
             if (!isFlak) {
                 r = new Report(3190);
@@ -295,7 +298,10 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             }
             r.subject = subjectId;
             r.add(targetPos.getBoardNum());
-            vPhaseReport.addElement(r);
+            // Mine clearance has its own report which will get added
+            if (!mineClear) {
+                vPhaseReport.addElement(r);
+            }
             artyMsg = "Artillery hit here on round " + game.getRoundCount() 
                     + ", fired by " + game.getPlayer(aaa.getPlayerId()).getName()
                     + " (this hex is now an auto-hit)";
@@ -400,7 +406,7 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
         // check to see if this is a mine clearing attack
         // According to the RAW you have to hit the right hex to hit even if the
         // scatter hex has minefields
-        boolean mineClear = target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR;
+        
         if (mineClear && game.containsMinefield(targetPos) && !isFlak
                 && !bMissed) {
             r = new Report(3255);

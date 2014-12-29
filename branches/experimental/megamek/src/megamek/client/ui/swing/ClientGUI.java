@@ -42,13 +42,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -69,11 +63,13 @@ import megamek.client.Client;
 import megamek.client.TimerSingleton;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
+import megamek.client.bot.princess.Princess;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.GBC;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Aero;
@@ -84,8 +80,11 @@ import megamek.common.EntityListFile;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.MechSummaryCache;
+import megamek.common.Mounted;
 import megamek.common.MovePath;
+import megamek.common.WeaponOrderHandler;
 import megamek.common.MovePath.MoveStepType;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEndEvent;
 import megamek.common.event.GameListener;
@@ -101,6 +100,7 @@ import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.logging.Logger;
 import megamek.common.net.Packet;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.util.AddBotUtil;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 
@@ -124,6 +124,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String VIEW_TOGGLE_FOV_HIGHLIGHT = "viewToggleFovHighlight"; //$NON-NLS-1$
     public static final String VIEW_TOGGLE_FIRING_SOLUTIONS = "viewToggleFiringSolutions"; //$NON-NLS-1$
     public static final String VIEW_MOVE_ENV = "viewMovementEnvelope"; //$NON-NLS-1$
+    public static final String VIEW_MOVE_MOD_ENV = "viewMovModEnvelope"; //$NON-NLS-1$
+    
+    public static final String SAVE_WEAP_ORDER = "saveWeapOrder";
 
     // a frame, to show stuff in
     public JFrame frame;
@@ -143,7 +146,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public BoardView1 bv;
     private Component bvc;
     public JDialog mechW;
-    public MechDisplay mechD;
+    public UnitDisplay mechD;
     public JDialog minimapW;
     public MiniMap minimap;
     private MapMenu popup;
@@ -200,6 +203,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * The <code>JPanel</code> containing the secondary display area.
      */
     private JPanel panSecondary = new JPanel();
+    
+    private StatusBarPhaseDisplay currPhaseDisplay;
 
     /**
      * The <code>CardLayout</code> of the secondary display area.
@@ -426,7 +431,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         mechW.setSize(w, h);
         mechW.setResizable(true);
         mechW.addWindowListener(this);
-        mechD = new MechDisplay(this);
+        mechD = new UnitDisplay(this);
         mechD.addMechDisplayListener(bv);
         mechW.add(mechD);
 
@@ -570,7 +575,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private void showSettings() {
         // Do we need to create the "settings" dialog?
         if (setdlg == null) {
-            setdlg = new CommonSettingsDialog(frame);
+            setdlg = new CommonSettingsDialog(frame, this);
         }
 
         // Show the settings dialog.
@@ -590,6 +595,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         getGameOptionsDialog().update(client.getGame().getOptions());
         getGameOptionsDialog().setVisible(true);
     }
+    
+    public void customizePlayer() {
+        PlayerSettingsDialog psd = new PlayerSettingsDialog(this, client);
+        psd.setVisible(true);
+    }
 
     /**
      * Called when the user selects the "View->Player List" menu item.
@@ -605,7 +615,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * Called when the user selects the "View->Round Report" menu item.
      */
     private void showRoundReport() {
-        new MiniReportDisplay(frame, client.roundReport).setVisible(true);
+        new MiniReportDisplay(frame, client).setVisible(true);
     }
 
     /**
@@ -677,6 +687,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if ("viewGameOptions".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showOptions();
         }
+        if ("viewPlayerSettings".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+            customizePlayer();
+        }
         if ("viewPlayerList".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             showPlayerList();
         }
@@ -695,6 +708,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         	ignoreHotKeys = true;
         	boardSaveAsImage();
             ignoreHotKeys = false;
+        }
+        if ("replacePlayer".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
+            replacePlayer();
         }
         if (event.getActionCommand().equals(VIEW_MEK_DISPLAY)) {
             toggleDisplay();
@@ -721,7 +737,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             if (!GUIPreferences.getInstance().getFiringSolutions()){
                 bv.clearFiringSolutionData();
             } else {
-                if (curPanel instanceof FiringDisplay){
+                if (curPanel instanceof FiringDisplay) {
                     ((FiringDisplay) curPanel).setFiringSolutions();
                 }
             }
@@ -729,6 +745,18 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         } else if (event.getActionCommand().equals(VIEW_MOVE_ENV)) {
             if (curPanel instanceof MovementDisplay){
                 ((MovementDisplay) curPanel).computeMovementEnvelope();
+            }
+        } else if (event.getActionCommand().equals(VIEW_MOVE_MOD_ENV)) {
+            if (curPanel instanceof MovementDisplay) {
+                ((MovementDisplay) curPanel).computeModifierEnvelope();
+            }
+        } else if (event.getActionCommand().equals(SAVE_WEAP_ORDER)) {
+            Entity ent = mechD.getCurrentEntity();
+            if (ent != null) {
+                WeaponOrderHandler.setWeaponOrder(ent.getChassis(),
+                        ent.getModel(), ent.getWeaponSortOrder(),
+                        ent.getCustomWeaponOrder());
+                getMenuBar().updateSaveWeaponOrderMenuItem();
             }
         }
 
@@ -978,6 +1006,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
     }
 
+    public void updateButtonPanel(IGame.Phase phase) {
+        if ((currPhaseDisplay != null) 
+                && client.getGame().getPhase().equals(phase)) {
+            currPhaseDisplay.setupButtonPanel();
+        }        
+    }
+    
     private JComponent initializePanel(IGame.Phase phase) {
         // Create the components for this phase.
         String name = String.valueOf(phase);
@@ -1012,6 +1047,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
+                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_DEPLOY_MINEFIELDS:
@@ -1022,6 +1058,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
+                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_DEPLOYMENT:
@@ -1032,6 +1069,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
+                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_TARGETING:
@@ -1043,6 +1081,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
+                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_MOVEMENT:
@@ -1053,6 +1092,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
+                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_OFFBOARD:
@@ -1064,6 +1104,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
+                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_FIRING:
@@ -1074,6 +1115,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
+                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_PHYSICAL:
@@ -1084,6 +1126,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
                 }
+                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
                 panSecondary.add(component, secondary);
                 break;
             case PHASE_INITIATIVE_REPORT:
@@ -1278,7 +1321,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * lounge. The file can record damage sustained, non- standard munitions
      * selected, and ammunition expended in a prior engagement.
      *
-     * @param Client
+     * @param c
      */
     protected void loadListFile(Client c) {
         loadListFile(c.getLocalPlayer());
@@ -1712,9 +1755,10 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         
         @Override
 		public void gameClientFeedbackRquest(GameCFREvent evt) {
+            Entity e = client.getGame().getEntity(evt.getEntityId());
+            
         	switch (evt.getCFRType()){
-	        	case Packet.COMMAND_CFR_DOMINO_EFFECT:
-		        	Entity e = client.getGame().getEntity(evt.getEntityId());
+	        	case Packet.COMMAND_CFR_DOMINO_EFFECT:		        	
 		        	// If the client connects to a game as a bot, it's possible
 		        	//  to have the bot respond AND have the client ask the
 		        	//  player.  This is bad, ignore this if the client is a bot
@@ -1731,6 +1775,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 					String title = Messages.getString("CFRDomino.Title");
 					String msg = Messages.getString("CFRDomino.Message",
 							new Object[] { e.getDisplayName() });
+					int choice;
 					Object options[];
 					MovePath paths[];
 					int optionType;
@@ -1766,7 +1811,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 						paths[1] = null;
 						optionType = JOptionPane.YES_NO_OPTION;
 					}			
-					int choice = JOptionPane.showOptionDialog(frame, msg, title, 
+					choice = JOptionPane.showOptionDialog(frame, msg, title, 
 							optionType, JOptionPane.QUESTION_MESSAGE, null, 
 							options, options[0]);
 					// If they closed it, assume no action
@@ -1775,6 +1820,38 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 					}
 					client.sendDominoCFRResponse(paths[choice]);
 	        		break;
+	        	case Packet.COMMAND_CFR_AMS_ASSIGN:
+	        	    ArrayList<String> amsOptions = new ArrayList<>();
+	        	    amsOptions.add("None");
+	        	    for (WeaponAttackAction waa : evt.getWAAs()) {
+	        	        Entity ae = waa.getEntity(client.getGame());
+	        	        String waaMsg;
+	        	        if (ae != null) {
+    	        	        Mounted weapon = ae.getEquipment(waa.getWeaponId());
+                            waaMsg = weapon.getDesc() + " from "
+                                    + ae.getDisplayName();
+	        	        } else {
+	        	            waaMsg = "Missiles from unknown attacker";
+	        	        }
+	        	        amsOptions.add(waaMsg);
+	        	    }
+	        	    
+	        	    optionType = JOptionPane.OK_CANCEL_OPTION;
+	        	    title = Messages.getString("CFRAMSAssign.Title",
+                            new Object[] { e.getDisplayName() });
+                    msg = Messages.getString("CFRAMSAssign.Message",
+                            new Object[] { e.getDisplayName() });
+	        	    Object result = JOptionPane.showInputDialog(frame, msg, title, 
+                            JOptionPane.QUESTION_MESSAGE, null, 
+                           amsOptions.toArray(), null);
+                    // If they closed it, assume no action
+	        	    if ((result == null) || result.equals("None")) {
+                        client.sendAMSAssignCFRResponse(null);
+                    } else {
+                        client.sendAMSAssignCFRResponse(
+                                amsOptions.indexOf(result) - 1);                 
+                    }
+                    break;
         	}
         }
     };
@@ -2015,5 +2092,55 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 	@Override
 	public void componentShown(ComponentEvent arg0) {
 	}
+
+    void replacePlayer() {
+        Set<IPlayer> ghostPlayers = new HashSet<>();
+        for (IPlayer p : client.getGame().getPlayersVector()) {
+            if (p.isGhost()) {
+                ghostPlayers.add(p);
+            }
+        }
+        if (ghostPlayers.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No ghost players to replace.", "No Ghosts",
+                                          JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        BotConfigDialog botConfigDialog = new BotConfigDialog(this.frame, ghostPlayers);
+        botConfigDialog.setModal(true);
+        botConfigDialog.setVisible(true);
+        if (botConfigDialog.dialogAborted) {
+            return;
+        }
+        AddBotUtil util = new AddBotUtil();
+        BotClient botClient = botConfigDialog.getSelectedBot(client.getHost(), client.getPort());
+        String args[];
+        Collection<String> playersToReplace = botConfigDialog.getPlayerToReplace();
+        Collection<String[]> replaceCommands = new HashSet<>(playersToReplace.size());
+        if (botClient instanceof Princess) {
+            for (String player : playersToReplace) {
+                args = new String[]{
+                        "/replacePlayer",
+                        "-b:Princess",
+                        "-c:" + ((Princess) botClient).getBehaviorSettings().getDescription(),
+                        "-v:" + ((Princess) botClient).getVerbosity(),
+                        "-p:" + player
+                };
+                replaceCommands.add(args);
+            }
+
+        } else {
+            for (String player : playersToReplace) {
+                args = new String[]{
+                        "/replacePlayer",
+                        player
+                };
+                replaceCommands.add(args);
+            }
+        }
+        for (String[] cmd : replaceCommands) {
+            util.addBot(cmd, client.getGame(), client.getHost(), client.getPort());
+        }
+    }
 
 }

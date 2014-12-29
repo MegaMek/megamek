@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -99,8 +100,22 @@ public class RandomMapDialog extends JDialog implements ActionListener {
      */
     public RandomMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, Client client,
                            MapSettings mapSettings) {
-
-        super(parent, Messages.getString("RandomMapDialog.title"), true);
+    	this(parent, mapSettingsObserver, client, mapSettings, Messages.getString("RandomMapDialog.title"));
+    }
+    
+    /**
+     * Constructor for this dialog.
+     *
+     * @param parent              The parent {@link JFrame} invoking this dialog.
+     * @param mapSettingsObserver The {@link IMapSettingsObserver} objects to which the map setting will be passed if
+     *                            this is a local only game.
+     * @param client              The {@link Client} that will send the map settings to the server if this is a
+     *                            server-based game.
+     * @param mapSettings         The {@link MapSettings} describing the map to be generated.
+     */
+    public RandomMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, Client client,
+                           MapSettings mapSettings, String title) {
+        super(parent, title, true);
         this.mapSettings = mapSettings;
         PARENT = parent;
         MAP_SETTINGS_OBSERVER = mapSettingsObserver;
@@ -341,7 +356,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
         // Have the user choose a file to save the new settings to.
         File selectedFile = fileBrowser(Messages.getString("RandomMapDialog.FileLoadDialog"),
-                                        "data" + File.separator + "boards", null, ".xml", "(*.xml)", false);
+                                        "data" + File.separator + "boards", null, ".xml", "(*.xml)", true);
 
         // If no file was selected, we're done.
         if (selectedFile == null) {
@@ -350,7 +365,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
         // Load the changed settings into the existing map settings object.
         try {
-            mapSettings.load(new FileInputStream(selectedFile));
+            mapSettings.save(new FileOutputStream(selectedFile));
         } catch (Exception ex) {
             ex.printStackTrace();
         }

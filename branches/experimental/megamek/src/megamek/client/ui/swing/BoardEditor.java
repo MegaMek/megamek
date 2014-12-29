@@ -65,15 +65,18 @@ import javax.swing.filechooser.FileFilter;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.common.Coords;
 import megamek.common.Game;
 import megamek.common.Hex;
 import megamek.common.IBoard;
+import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ITerrain;
 import megamek.common.MapSettings;
 import megamek.common.Terrains;
+import megamek.common.logging.Logger;
 import megamek.common.util.BoardUtilities;
 
 public class BoardEditor extends JComponent implements ItemListener,
@@ -128,6 +131,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     private JDialog minimapW;
     private MiniMap minimap;
     private MapSettings mapSettings = new MapSettings();
+    private JButton butExpandMap;
 
     Coords lastClicked;
 
@@ -286,6 +290,9 @@ public class BoardEditor extends JComponent implements ItemListener,
         butBoardNew = new JButton(Messages.getString("BoardEditor.butBoardNew")); //$NON-NLS-1$
         butBoardNew.setActionCommand("fileBoardNew"); //$NON-NLS-1$
         butBoardNew.addActionListener(this);
+        butExpandMap = new JButton(Messages.getString("BoardEditor.butExpandMap")); //$NON-NLS-1$
+        butExpandMap.setActionCommand("fileBoardExpand"); //$NON-NLS-1$
+        butExpandMap.addActionListener(this);
         butBoardLoad = new JButton(Messages
                                            .getString("BoardEditor.butBoardLoad")); //$NON-NLS-1$
         butBoardLoad.setActionCommand("fileBoardOpen"); //$NON-NLS-1$
@@ -302,11 +309,14 @@ public class BoardEditor extends JComponent implements ItemListener,
                                                   .getString("BoardEditor.butBoardSaveAsImage")); //$NON-NLS-1$
         butBoardSaveAsImage.setActionCommand("fileBoardSaveAsImage"); //$NON-NLS-1$
         butBoardSaveAsImage.addActionListener(this);
-        panButtons = new JPanel(new GridLayout(3, 2, 2, 2));
+        panButtons = new JPanel(new GridLayout(4, 2, 2, 2));
         panButtons.add(labBoard);
+        panButtons.add(new JLabel("")); // Spacer Label
+        panButtons.add(new JLabel("")); // Spacer Label
         panButtons.add(butBoardNew);
-        panButtons.add(butBoardLoad);
         panButtons.add(butBoardSave);
+        panButtons.add(butBoardLoad);
+        panButtons.add(butExpandMap);
         panButtons.add(butBoardSaveAs);
         panButtons.add(butBoardSaveAsImage);
         blankL = new JLabel("", SwingConstants.CENTER); //$NON-NLS-1$
@@ -383,7 +393,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     public void resurfaceHex(Coords c) {
         if (board.contains(c)) {
             IHex newHex = curHex.duplicate();
-            newHex.setElevation(board.getHex(c).getElevation());
+            newHex.setLevel(board.getHex(c).getLevel());
             board.resetStoredElevation();
             board.setHex(c, newHex);
         }
@@ -396,7 +406,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         if (board.contains(c)) {
             IHex newHex = curHex.duplicate();
             IHex oldHex = board.getHex(c);
-            newHex.setElevation(oldHex.getElevation());
+            newHex.setLevel(oldHex.getLevel());
             int terrainTypes[] = oldHex.getTerrainTypes();
             for (int i = 0; i < terrainTypes.length; i++) {
                 int terrainID = terrainTypes[i];
@@ -417,7 +427,7 @@ public class BoardEditor extends JComponent implements ItemListener,
      */
     void setCurrentHex(IHex hex) {
         curHex = hex.duplicate();
-        texElev.setText(Integer.toString(curHex.getElevation()));
+        texElev.setText(Integer.toString(curHex.getLevel()));
         refreshTerrainList();
         if (lisTerrain.getModel().getSize() > 0) {
             lisTerrain.setSelectedIndex(0);
@@ -493,8 +503,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     }
 
     public void boardNew() {
-        RandomMapDialog rmd = new RandomMapDialog(frame, this, null, mapSettings); // new RandomMapDialog(frame,
-        // this, null, mapSettings);
+        RandomMapDialog rmd = new RandomMapDialog(frame, this, null, mapSettings);
         rmd.setVisible(true);
         board = BoardUtilities.generateRandom(mapSettings);
         game.setBoard(board);
@@ -502,6 +511,46 @@ public class BoardEditor extends JComponent implements ItemListener,
         frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
         menuBar.setBoard(true);
         bvc.doLayout();
+    }
+    
+    public void boardResize() {
+    	ResizeMapDialog emd = new ResizeMapDialog(frame, this, null, mapSettings);
+        emd.setVisible(true);
+        board = BoardUtilities.generateRandom(mapSettings);
+        
+        // Implant the old board
+        board = implantOldBoard(game, emd.getExpandWest(), emd.getExpandNorth(), emd.getExpandEast(), emd.getExpandSouth());
+        
+        game.setBoard(board);
+        curfile = null;
+        frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
+        menuBar.setBoard(true);
+        bvc.doLayout();
+    }
+    
+    
+    // When we resize a board, implant the old board's hexes where they should be in the new board
+    public IBoard implantOldBoard(IGame game, int xMod, int yMod, int xMod2, int yMod2) {
+    	IBoard oldBoard = game.getBoard();
+        for (int x = 0; x < oldBoard.getWidth(); x++) {
+            for (int y = 0; y < oldBoard.getHeight(); y++) {
+            	int newX = x+xMod;
+            	int newY = y+yMod;
+            	if (board.contains(newX, newY)) {
+            		IHex oldHex = oldBoard.getHex(x, y);
+            		try {
+            			oldHex.setCoords(new Coords(newX, newY));
+            			board.setHex(newX, newY, oldHex);
+            		} catch (Exception e) {
+            			new Logger().log(getClass(),
+            					"implantOldBoard(game, int, int, int, int)",
+            					"x="+x+", y="+y+", xMod="+xMod+", yMod="+yMod);
+            		}
+            	}
+            }
+        }
+        
+        return board;
     }
 
     public void updateMapSettings(MapSettings newSettings) {
@@ -711,8 +760,8 @@ public class BoardEditor extends JComponent implements ItemListener,
             } catch (NumberFormatException ex) {
                 return;
             }
-            if (value != curHex.getElevation()) {
-                curHex.setElevation(value);
+            if (value != curHex.getLevel()) {
+                curHex.setLevel(value);
                 repaintWorkingHex();
             }
         } else if (te.getDocument().equals(texTheme.getDocument())) {
@@ -767,6 +816,8 @@ public class BoardEditor extends JComponent implements ItemListener,
     public void actionPerformed(ActionEvent ae) {
         if ("fileBoardNew".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             boardNew();
+        } else if ("fileBoardExpand".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+            boardResize();
         } else if ("fileBoardOpen".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             boardLoad();
         } else if ("fileBoardSave".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
@@ -785,14 +836,14 @@ public class BoardEditor extends JComponent implements ItemListener,
         } else if (ae.getSource().equals(butAddTerrain)) {
             addSetTerrain();
         } else if (ae.getSource().equals(butElevUp)
-                   && (curHex.getElevation() < 9)) {
-            curHex.setElevation(curHex.getElevation() + 1);
-            texElev.setText(Integer.toString(curHex.getElevation()));
+                   && (curHex.getLevel() < 9)) {
+            curHex.setLevel(curHex.getLevel() + 1);
+            texElev.setText(Integer.toString(curHex.getLevel()));
             repaintWorkingHex();
         } else if (ae.getSource().equals(butElevDown)
-                   && (curHex.getElevation() > -5)) {
-            curHex.setElevation(curHex.getElevation() - 1);
-            texElev.setText(Integer.toString(curHex.getElevation()));
+                   && (curHex.getLevel() > -5)) {
+            curHex.setLevel(curHex.getLevel() - 1);
+            texElev.setText(Integer.toString(curHex.getLevel()));
             repaintWorkingHex();
         } else if (ae.getSource().equals(butTerrExits)) {
             ExitsDialog ed = new ExitsDialog(frame);
@@ -865,7 +916,7 @@ public class BoardEditor extends JComponent implements ItemListener,
                 g.setFont(new Font("SansSerif", Font.PLAIN, 9)); //$NON-NLS-1$
                 g
                         .drawString(
-                                Messages.getString("BoardEditor.LEVEL") + curHex.getElevation(), 24, 70); //$NON-NLS-1$
+                                Messages.getString("BoardEditor.LEVEL") + curHex.getLevel(), 24, 70); //$NON-NLS-1$
             } else {
                 g.clearRect(0, 0, 72, 72);
             }

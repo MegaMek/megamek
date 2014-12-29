@@ -34,6 +34,7 @@ import megamek.common.MoveStep;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.logging.LogLevel;
+import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 
 public class PathRanker {
@@ -67,17 +68,22 @@ public class PathRanker {
         return null;
     }
 
-    public ArrayList<RankedPath> rankPaths(ArrayList<MovePath> movePaths, IGame game, int maxRange,
+    public ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, IGame game, int maxRange,
                                            double fallTollerance, int startingHomeDistance,
                                            List<Entity> enemies, List<Entity> friends) {
         final String METHOD_NAME = "rankPaths(ArrayList<MovePath>, IGame)";
         owner.methodBegin(getClass(), METHOD_NAME);
 
         try {
+            // No point in ranking an empty list.
+            if (movePaths.isEmpty()) {
+                return new ArrayList<>();
+            }
+
             // Let's try to whittle down this list.
             List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTollerance, startingHomeDistance);
-            owner.log(getClass(), METHOD_NAME, LogLevel.INFO, "Validated " + validPaths.size() + " out of " +
-                    movePaths.size() + " possible paths.");
+            owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, "Validated " + validPaths.size() + " out of " +
+                                                               movePaths.size() + " possible paths.");
 
             Coords allyCenter = calcAllyCenter(movePaths.get(0).getEntity().getId(), friends, game);
 
@@ -92,7 +98,7 @@ public class PathRanker {
                 BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
                                           .round(new MathContext(0, RoundingMode.DOWN));
                 if ((percent.compareTo(interval) >= 0)
-                        && (LogLevel.INFO.getLevel() <= owner.getVerbosity().getLevel())) {
+                    && (LogLevel.INFO.getLevel() <= owner.getVerbosity().getLevel())) {
                     owner.sendChat("... " + percent.intValue() + "% complete.");
                     interval = percent.add(new BigDecimal(5));
                 }
@@ -121,6 +127,12 @@ public class PathRanker {
         final String METHOD_NAME = "validatePaths(List<MovePath>, IGame, Targetable, int, double, int, int)";
         LogLevel logLevel = LogLevel.DEBUG;
 
+        if (startingPathList.isEmpty()) {
+            // Nothing to validate here, might as well return the empty list
+            // straight away.
+            return startingPathList;
+        }
+
         Entity mover = startingPathList.get(0).getEntity();
 
         // No support yet for Aero units.
@@ -130,8 +142,8 @@ public class PathRanker {
 
         Targetable closestTarget = findClosestEnemy(mover, mover.getPosition(), game);
         int startingTargetDistance = (closestTarget == null ?
-                Integer.MAX_VALUE :
-                closestTarget.getPosition().distance(mover.getPosition()));
+                                      Integer.MAX_VALUE :
+                                      closestTarget.getPosition().distance(mover.getPosition()));
 
         List<MovePath> returnPaths = new ArrayList<>(startingPathList.size());
         List<MovePath> efficientPaths = getBestTmmPaths(startingPathList);
@@ -145,59 +157,29 @@ public class PathRanker {
         while (tryAgain) {
             tryAgain = false;
 
-            for (MovePath path : checkPaths) {
-                StringBuilder msg = new StringBuilder("Validating Path: ").append(path.toString());
+                // If fleeing, skip any paths that don't get me closer to home.
+                if (fleeing && (distanceToHomeEdge(finalCoords, homeEdge, game) >= startingHomeDistance)) {
+                    logLevel = LogLevel.INFO;
+                    msg.append("\n\tINVALID: Running away in wrong direction.");
+                    continue;
+                }
 
                 try {
                     Coords finalCoords = path.getFinalCoords();
 
-                    // If fleeing, skip any paths that don't get me closer to home.
-                    if (fleeing && (distanceToHomeEdge(finalCoords, homeEdge, game) > startingHomeDistance)) {
-                        logLevel = LogLevel.WARNING;
-                        msg.append("\n\tINVALID: Running away in wrong direction.");
-                        continue;
-                    }
-
-                    // Make sure I'm trying to get/stay in range of a target.
-                    Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
-                    String validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange,
-                                                   inRange);
-
-                    if (!StringUtil.isNullOrEmpty(validation)) {
-                        msg.append("\n\t").append(validation);
-                        continue;
-                    }
-
-                    // Don't move on/through buildings that will not support our weight.
-                    if (willBuildingCollapse(path, game)) {
-                        logLevel = LogLevel.WARNING;
-                        msg.append("\n\tINVALID: Building in path will collapse.");
-                        continue;
-                    }
-
-                    // Skip any path where I am too likely to fail my piloting roll.
-                    double chance = getMovePathSuccessProbability(path, msg);
-                    if (chance < fallTolerance) {
-                        logLevel = LogLevel.WARNING;
-                        msg.append("\n\tINVALID: Too likely to fall on my face.");
-                        continue;
-                    }
-
-                    // If all the above checks have passed, this is a valid path.
-                    msg.append("\n\tVALID.");
-                    returnPaths.add(path);
-
-                } finally {
-                    owner.log(getClass(), METHOD_NAME, logLevel, msg.toString());
+                // Don't move on/through buildings that will not support our weight.
+                if (willBuildingCollapse(path, game)) {
+                    logLevel = LogLevel.INFO;
+                    msg.append("\n\tINVALID: Building in path will collapse.");
+                    continue;
                 }
 
-                // If no good paths were found and we were using our highest TMM paths, try again with all paths.
-                if (returnPaths.isEmpty() && !efficientPaths.isEmpty()) {
-                    owner.log(getClass(), METHOD_NAME, LogLevel.WARNING,
-                              "None of the efficient paths satisfy my needs, trying again with all paths.");
-                    checkPaths = startingPathList;
-                    efficientPaths = new ArrayList<>(0);
-                    tryAgain = true;
+                // Skip any path where I am too likely to fail my piloting roll.
+                double chance = getMovePathSuccessProbability(path, msg);
+                if (chance < fallTolerance) {
+                    logLevel = LogLevel.INFO;
+                    msg.append("\n\tINVALID: Too likely to fall on my face.");
+                    continue;
                 }
             }
         }
@@ -297,10 +279,14 @@ public class PathRanker {
 
         try {
             ArrayList<Entity> enemies = new ArrayList<>();
-            for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
-                Entity entity = i.nextElement();
-                if (entity.getOwner().isEnemyOf(myunit.getOwner())
-                        && (entity.getPosition() != null) && !entity.isOffBoard()) {
+            for (Entity entity : game.getEntitiesVector()) {
+                if (entity.getOwner().isEnemyOf(myunit.getOwner()) &&
+                    (entity.getPosition() != null) &&
+                    !entity.isOffBoard() &&
+                    (entity.getCrew() != null) &&
+                    !entity.getCrew().isDead() &&
+                    !owner.getHonorUtil().isEnemyBroken(entity.getId(), entity.getOwnerId(),
+                                                        owner.getForcedWithdrawal())) {
                     enemies.add(entity);
                     int initBonus = entity.getHQIniBonus() + entity.getMDIniBonus() + entity.getQuirkIniBonus();
                     if (initBonus > highestEnemyInitiativeBonus) {
@@ -324,11 +310,10 @@ public class PathRanker {
 
         try {
             ArrayList<Entity> friends = new ArrayList<>();
-            for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements(); ) {
-                Entity entity = i.nextElement();
+            for (Entity entity : game.getEntitiesVector()) {
                 if (!entity.getOwner().isEnemyOf(myunit.getOwner())
-                        && (entity.getPosition() != null) && !entity.isOffBoard()
-                        && (!entity.equals(myunit))) {
+                    && (entity.getPosition() != null) && !entity.isOffBoard()
+                    && (!entity.equals(myunit))) {
                     friends.add(entity);
                 }
             }
@@ -355,9 +340,14 @@ public class PathRanker {
             if (roll.getDesc().toLowerCase().contains("careful stand")) {
                 continue;
             }
+            boolean naturalAptPilot = movePath.getEntity().getCrew().getOptions()
+                                              .booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+            if (naturalAptPilot) {
+                msg.append("\n\t\tPilot has Natural Aptitude Piloting");
+            }
 
             msg.append("\n\t\tRoll ").append(roll.getDesc()).append(" ").append(roll.getValue());
-            double odds = Compute.oddsAbove(roll.getValue()) / 100;
+            double odds = Compute.oddsAbove(roll.getValue(), naturalAptPilot) / 100;
             msg.append(" (").append(NumberFormat.getPercentInstance().format(odds)).append(")");
             successProbability *= odds;
         }
@@ -367,9 +357,10 @@ public class PathRanker {
             msg.append("\n\t\tMASC ");
             int target = pathCopy.getEntity().getMASCTarget();
             msg.append(target);
+            // todo Does Natural Aptitude Piloting apply to this?  I assume not.
             double odds = Compute.oddsAbove(target) / 100;
             msg.append(" (").append(NumberFormat.getPercentInstance().format(odds)).append(")");
-            successProbability *= (Compute.oddsAbove(pathCopy.getEntity().getMASCTarget()) / 100);
+            successProbability *= odds;
         }
         msg.append("\n\t\tTotal = ").append(NumberFormat.getPercentInstance().format(successProbability));
 
@@ -391,16 +382,16 @@ public class PathRanker {
             StringBuilder msg = new StringBuilder("Getting distance to home edge: ");
             if (HomeEdge.NORTH.equals(homeEdge)) {
                 msg.append("North");
-                edgeCoords = new Coords(position.x, 0);
+                edgeCoords = new Coords(position.getX(), 0);
             } else if (HomeEdge.SOUTH.equals(homeEdge)) {
                 msg.append("South");
-                edgeCoords = new Coords(position.x, boardHeight);
+                edgeCoords = new Coords(position.getX(), boardHeight);
             } else if (HomeEdge.WEST.equals(homeEdge)) {
                 msg.append("West");
-                edgeCoords = new Coords(0, position.y);
+                edgeCoords = new Coords(0, position.getY());
             } else if (HomeEdge.EAST.equals(homeEdge)) {
                 msg.append("East");
-                edgeCoords = new Coords(boardWidth, position.y);
+                edgeCoords = new Coords(boardWidth, position.getY());
             } else {
                 msg.append("Default");
                 owner.log(getClass(), METHOD_NAME, LogLevel.WARNING, "Invalid home edge.  Defaulting to NORTH.");
@@ -506,8 +497,8 @@ public class PathRanker {
                 continue;
             }
 
-            xTotal += friendPosition.x;
-            yTotal += friendPosition.y;
+            xTotal += friendPosition.getX();
+            yTotal += friendPosition.getY();
             friendOnBoardCount++;
         }
 
@@ -521,7 +512,7 @@ public class PathRanker {
 
         if (!game.getBoard().contains(center)) {
             owner.log(getClass(), "calcAllyCenter(int, List<Entity>, IGame)", LogLevel.ERROR, "Center of ally group " +
-                    center.toFriendlyString() + " not within board boundaries.");
+                                                                                              center.toFriendlyString() + " not within board boundaries.");
             return null;
         }
 

@@ -5,12 +5,12 @@ BHKU-OX
 Config:Biped Omnimech
 TechBase:Inner Sphere
 Era:3058
-Source:Clan Invasion
+Source:TRO 3058 Upgrade
 Rules Level:4
 
 Mass:60
-Engine:300 XL Engine
-Structure:Standard
+Engine:300 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:14 Double
@@ -50,6 +50,7 @@ Medium Laser, Right Arm
 Left Arm:
 Shoulder
 Upper Arm Actuator
+Lower Arm Actuator
 Medium Laser
 Medium Laser
 Medium Laser
@@ -57,13 +58,13 @@ Medium Laser
 Medium Laser
 Medium Laser
 Medium Laser
--Empty-
 -Empty-
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
+Lower Arm Actuator
 Medium Laser
 Medium Laser
 Medium Laser
@@ -71,7 +72,6 @@ Medium Laser
 Medium Laser
 Medium Laser
 Medium Laser
--Empty-
 -Empty-
 -Empty-
 

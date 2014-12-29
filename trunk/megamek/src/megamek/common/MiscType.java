@@ -3018,7 +3018,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0;
         misc.tankslots = 0;
         misc.flags = misc.flags.or(F_ARMORED_CHASSIS).or(F_TANK_EQUIPMENT)
-                .or(F_CHASSIS_MODIFICATION);
+                .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.introDate = 1950;
         misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
@@ -7883,8 +7883,8 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.flags = misc.flags.or(MiscType.F_ADVANCED_FIRECONTROL).or(
                 MiscType.F_SUPPORT_TANK_EQUIPMENT);
-        misc.introDate = 2300;
-        misc.techLevel.put(2300, misc.techLevel.get(3071));
+        misc.introDate = 2284;
+        misc.techLevel.put(2284, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_C, RATING_D, RATING_D };
         misc.techRating = RATING_C;
 

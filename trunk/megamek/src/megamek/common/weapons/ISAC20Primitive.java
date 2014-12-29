@@ -59,8 +59,8 @@ public class ISAC20Primitive extends ACWeapon {
         //Per Blake Documents using normal weapon information and an introdate 10 years before the normal.
         availRating = new int[] { EquipmentType.RATING_C,
                 EquipmentType.RATING_D, EquipmentType.RATING_D };
-        introDate = 2490;
-        techLevel.put(2490, techLevel.get(3071));
+        introDate = 2488;
+        techLevel.put(2488, techLevel.get(3071));
         techRating = RATING_C;
     }
 

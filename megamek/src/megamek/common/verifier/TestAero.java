@@ -703,6 +703,12 @@ public class TestAero extends TestEntity {
      * @return
      */
     public boolean correctHeatSinks(StringBuffer buff) {
+        if ((aero.getHeatType() != Aero.HEAT_SINGLE) 
+                && (aero.getHeatType() != Aero.HEAT_DOUBLE)) {
+            buff.append("Invalid heatsink type!  Valid types are "
+                    + Aero.HEAT_SINGLE + " and " + Aero.HEAT_DOUBLE
+                    + ".  Found " + aero.getHeatType() + ".");
+        }
         // Conventional Fighters must be heat neutral
         if (aero.getEntityType() == Entity.ETYPE_CONV_FIGHTER){
             int maxWeapHeat = countHeatEnergyWeapons();

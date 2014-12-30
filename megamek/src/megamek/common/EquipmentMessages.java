@@ -18,6 +18,7 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import megamek.common.util.EncodeControl;
 import megamek.common.preference.PreferenceManager;
 
 public class EquipmentMessages {
@@ -26,7 +27,7 @@ public class EquipmentMessages {
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
             .getBundle(BUNDLE_NAME, PreferenceManager.getClientPreferences()
-                    .getLocale());
+                    .getLocale(), new EncodeControl());
 
     private EquipmentMessages() {
     }

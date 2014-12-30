@@ -166,10 +166,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         DAMAGE_HL("DAMAGE_HL"),
         CUSTOM("CUSTOM");
 
-        public final String l10nEntry;
+        public final String i18nEntry;
 
         WeaponSortOrder(String s) {
-            l10nEntry = s;
+            i18nEntry = s;
         }
     }
 

@@ -44,14 +44,14 @@ public class EncodeControl extends ResourceBundle.Control {
         Object bundle = null;
         if (format.equals("java.class")) {
             try {
-                Class resourceName = loader.loadClass(bundleName);
+                Class<?> resourceName = loader.loadClass(bundleName);
                 if (!ResourceBundle.class.isAssignableFrom(resourceName)) {
                     throw new ClassCastException(resourceName.getName() + " cannot be cast to ResourceBundle");
                 }
 
                 bundle = (ResourceBundle) resourceName.newInstance();
             } catch (ClassNotFoundException var19) {
-                ;
+                throw (IOException) var19.getException();
             }
         } else {
             if (!format.equals("java.properties")) {
@@ -68,7 +68,7 @@ public class EncodeControl extends ResourceBundle.Control {
             InputStream stream = null;
 
             try {
-                stream = (InputStream) AccessController.doPrivileged(new PrivilegedExceptionAction() {
+                stream = (InputStream) AccessController.doPrivileged(new PrivilegedExceptionAction<InputStream>() {
                     public InputStream run() throws IOException {
                         InputStream is = null;
                         if (reloadFlag) {

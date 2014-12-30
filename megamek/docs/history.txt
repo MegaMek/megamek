@@ -9,6 +9,11 @@ v0.39.6 / v0.40.0RC4 (SVN)
 + Bug: Vehicular Stealth was trying to allocate 2 items that each take 2 slots, instead of 2*1
 + TestAero now ensures that Aeros have valid heatsink types
 + Refactored l10n folder name to i18n, which is the proper term for the usage we're doing
++ Data: FR 2765 Warships/XTR Prim IV Units/New Images
++ Data: RS: Vehicle Annex - please note units from these RS supersede the 
+	Industrial mechs in other books and are to be considered the most 
+	current versions. Any previous versions have been marked unofficial
+	and moved into the unofficial folder.
 
 v0.39.5 / v0.40.0RC3 (2014-12-25 15:10 UTC)
 + Bug: GameVictoryEvent was not adding "Out of Game" entities to the entityIds hashtable

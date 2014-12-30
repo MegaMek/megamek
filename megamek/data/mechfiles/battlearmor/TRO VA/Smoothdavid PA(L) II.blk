@@ -47,10 +47,7 @@ Leg
 <Squad Equipment>
 BAArmoredGlove:LA
 BAArmoredGlove:RA
-BAAPMount:LA
-BAAPMount:RA
 BASearchlight:Body
-Infantry Auto Rifle:APM
 SwarmMek
 SwarmWeaponMek
 StopSwarm
@@ -70,7 +67,7 @@ LegAttack
 </Trooper 4 Equipment>
 
 <source>
-TRO VA
+RS VA
 </source>
 
 <chassis>

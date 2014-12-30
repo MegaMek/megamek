@@ -49,6 +49,10 @@ BAMEA:LA
 BAMEA:RA
 BAArmoredGlove:LA
 BAArmoredGlove:RA
+SwarmMek
+SwarmWeaponMek
+StopSwarm
+LegAttack
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -64,7 +68,7 @@ BAArmoredGlove:RA
 </Trooper 4 Equipment>
 
 <source>
-TRO VA
+RS VA
 </source>
 
 <chassis>

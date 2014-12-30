@@ -45,14 +45,14 @@ Jump
 </armor_tech>
 
 <Point Equipment>
-Clan BA Fire Resistant:Body
-Clan BA Fire Resistant:LA
-Clan BA Fire Resistant:RA
-Clan BA Fire Resistant:LA
-Clan BA Fire Resistant:RA
 BASalvageArm:LA
 BABasicManipulator:RA
 CLImprovedSensors:Body
+Clan BA Fire Resistant:RA
+Clan BA Fire Resistant:RA
+Clan BA Fire Resistant:Body
+Clan BA Fire Resistant:LA
+Clan BA Fire Resistant:LA
 </Point Equipment>
 
 <Trooper 1 Equipment>
@@ -71,7 +71,7 @@ CLImprovedSensors:Body
 </Trooper 5 Equipment>
 
 <source>
-TRO VA
+RS VA
 </source>
 
 <chassis>
@@ -91,6 +91,6 @@ biped
 </Trooper Count>
 
 <weightclass>
-1
+0
 </weightclass>
 

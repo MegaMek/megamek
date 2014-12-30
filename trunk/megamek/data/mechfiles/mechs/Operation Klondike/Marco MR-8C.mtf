@@ -8,16 +8,17 @@ Era:2719
 Rules Level:2
 
 Mass:30
-Engine:120 Fusion Engine
-Structure:Industrial
+Engine:120 Fusion Engine(IS)
+Structure:IS Industrial
 Myomer:Standard
 Cockpit:Industrial Cockpit
+Gyro:Standard Gyro
 
 Heat Sinks:10 Single
 Walk MP:4
 Jump MP:3
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:6
 RA Armor:6
 LT Armor:6
@@ -30,20 +31,15 @@ RTL Armor:2
 RTR Armor:2
 RTC Armor:3
 
-Weapons:6
-1 Searchlight, Center Torso
-1 Cargo (1 ton), Right Torso
-1 Cargo (1 ton), Right Torso
-1 ISSmallLaser, Left Arm
-1 SalvageArm, Right Arm
-1 Cargo (0.5 tons), Right Torso
+Weapons:1
+Small Laser, Left Arm
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISSmallLaser
+Small Laser
 Environmental Sealing
 -Empty-
 -Empty-
@@ -56,8 +52,8 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-SalvageArm
-SalvageArm
+Salvage Arm
+Salvage Arm
 Environmental Sealing
 -Empty-
 -Empty-
@@ -83,9 +79,9 @@ Environmental Sealing
 Right Torso:
 Heat Sink
 Heat Sink
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (0.5 tons)
+Cargo (2.5 tons)
+Cargo (2.5 tons)
+Cargo (2.5 tons)
 Environmental Sealing
 -Empty-
 -Empty-
@@ -95,16 +91,16 @@ Environmental Sealing
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Searchlight
 Environmental Sealing
 
@@ -115,6 +111,12 @@ Cockpit
 Environmental Sealing
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
@@ -123,6 +125,12 @@ Lower Leg Actuator
 Foot Actuator
 Heat Sink
 Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
@@ -131,3 +139,11 @@ Lower Leg Actuator
 Foot Actuator
 Heat Sink
 Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

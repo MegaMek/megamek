@@ -25,7 +25,7 @@ Krise PA(L)
 </year>
 
 <type>
-Clan Level 2
+IS Level 2
 </type>
 
 <motion_type>
@@ -41,17 +41,17 @@ Jump
 </armor_type>
 
 <armor_tech>
-2
+1
 </armor_tech>
 
-<Point Equipment>
+<Squad Equipment>
 BASalvageArm:LA
 BABasicManipulator:RA
-CLImprovedSensors:Body
 BACuttingTorch:RA
 BASearchlight:LA
 BAExtendedLifeSupport:Body
-</Point Equipment>
+ISImprovedSensors:Body
+</Squad Equipment>
 
 <Trooper 1 Equipment>
 </Trooper 1 Equipment>
@@ -65,11 +65,8 @@ BAExtendedLifeSupport:Body
 <Trooper 4 Equipment>
 </Trooper 4 Equipment>
 
-<Trooper 5 Equipment>
-</Trooper 5 Equipment>
-
 <source>
-TRO VA
+RS VA
 </source>
 
 <chassis>
@@ -85,10 +82,10 @@ biped
 </armor>
 
 <Trooper Count>
-5
+4
 </Trooper Count>
 
 <weightclass>
-1
+0
 </weightclass>
 

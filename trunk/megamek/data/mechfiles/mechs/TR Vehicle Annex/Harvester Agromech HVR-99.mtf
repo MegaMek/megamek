@@ -1,6 +1,6 @@
 Version:1.1
-Harvester 
-HVR-99 Agromech
+Harvester HVR-99 AgroMech
+(Standard)
 
 Config:Biped
 TechBase:Inner Sphere
@@ -19,7 +19,7 @@ Heat Sinks:0 Single
 Walk MP:4
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:8
 RA Armor:8
 LT Armor:9
@@ -38,10 +38,10 @@ Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Lift Hoist
-Lift Hoist
-Lift Hoist
--Empty-
+Combine
+Combine
+Combine
+Combine
 -Empty-
 -Empty-
 -Empty-
@@ -52,10 +52,10 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Combine
-Combine
-Combine
-Combine
+Lift Hoist
+Lift Hoist
+Lift Hoist
+-Empty-
 -Empty-
 -Empty-
 -Empty-

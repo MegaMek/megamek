@@ -1,23 +1,23 @@
 Version:1.0
 Copper SecurityMech
-CPK-19 
+CPK-19
 
 Config:Biped
 TechBase:Inner Sphere
 Era:2619
-Source:TRO VA
+Source:RS:VA IM Exo
 Rules Level:2
 
 Mass:25
-Engine:100 Fuel Cell Engine(IS)
+Engine:100 ICE Engine(IS)
 Structure:IS Industrial
 Myomer:Standard
 
-Heat Sinks:3 Single
+Heat Sinks:0 Single
 Walk MP:4
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Heavy Industrial(Inner Sphere)
 LA Armor:7
 RA Armor:7
 LT Armor:8
@@ -30,10 +30,11 @@ RTL Armor:4
 RTR Armor:4
 RTC Armor:6
 
-Weapons:3
+Weapons:4
 Machine Gun, Left Arm
 Machine Gun, Left Arm
-SRM 2, Right Arm
+Machine Gun, Right Arm
+Machine Gun, Right Arm
 
 Left Arm:
 Shoulder
@@ -53,9 +54,9 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-SRM 2
-IS Ammo SRM-2
--Empty-
+Machine Gun
+Machine Gun
+IS Ammo MG - Full
 -Empty-
 -Empty-
 -Empty-

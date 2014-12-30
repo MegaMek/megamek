@@ -15,6 +15,7 @@ v0.39.6 / v0.40.0RC4 (SVN)
 	current versions. Any previous versions have been marked unofficial
 	and moved into the unofficial folder
 + Bug: build.xml not up to date with l10n -> i18n change
++ Fixed some issues with the space in the name of Industrial armor
 
 v0.39.5 / v0.40.0RC3 (2014-12-25 15:10 UTC)
 + Bug: GameVictoryEvent was not adding "Out of Game" entities to the entityIds hashtable

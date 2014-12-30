@@ -7,7 +7,7 @@
     <!-- Global properties for this build -->
 
     <property name="srcdir" value="src"/>
-    <property name="propdir" value="l10n"/>
+    <property name="propdir" value="i18n"/>
     <property name="confdir" value="mmconf"/>
     <property name="logdir" value="logs"/>
     <property name="builddir" value="classes"/>

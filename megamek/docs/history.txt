@@ -7,6 +7,7 @@ v0.39.6 / v0.40.0RC4 (SVN)
 + Bug: Some weapon data and use fixes
 + Data: New Unit images
 + Bug: Vehicular Stealth was trying to allocate 2 items that each take 2 slots, instead of 2*1
++ TestAero now ensures that Aeros have valid heatsink types
 
 v0.39.5 / v0.40.0RC3 (2014-12-25 15:10 UTC)
 + Bug: GameVictoryEvent was not adding "Out of Game" entities to the entityIds hashtable

@@ -86,7 +86,7 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
         super(boardView1, mp.getFinalCoords());
 
         facing = Facing.valueOfInt(mp.getFinalFacing());
-        bounds = new Rectangle(this.boardView1.getHexLocation(loc), this.boardView1.hex_size);
+        bounds = new Rectangle(bv.getHexLocation(loc), bv.hex_size);
         modifier = Compute.getTargetMovementModifier(mp.getHexesMoved(),
                 mp.isJumping(),
                 mp.getEntity() instanceof VTOL,
@@ -106,7 +106,7 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
     public void prepare() {
         updateBounds();
         // create image for buffer
-        Image tempImage = this.boardView1.createImage(bounds.width, bounds.height);
+        Image tempImage = bv.createImage(bounds.width, bounds.height);
         Graphics graph = tempImage.getGraphics();
 
         // fill with key color
@@ -129,13 +129,9 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
         graph.drawString(s, sp.x, sp.y);
 
         // create final image
-        if (this.boardView1.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-            image = this.boardView1.createImage(new FilteredImageSource(
-                    tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT)));
-        } else {
-            image = this.boardView1.getScaledImage(this.boardView1.createImage(new FilteredImageSource(
-                    tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT))), false);
-        }
+        image = bv.getScaledImage(bv.createImage(new FilteredImageSource(
+                tempImage.getSource(), new KeyAlphaFilter(
+                        BoardView1.TRANSPARENT))), false);
         graph.dispose();
         tempImage.flush();
 

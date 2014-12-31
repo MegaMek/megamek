@@ -21,8 +21,8 @@ class CursorSprite extends Sprite {
     public CursorSprite(BoardView1 boardView1, final Color color) {
         super(boardView1);
         this.color = color;
-        bounds = new Rectangle(this.boardView1.hexPoly.getBounds().width + 1,
-                this.boardView1.hexPoly.getBounds().height + 1);
+        bounds = new Rectangle(bv.hexPoly.getBounds().width + 1,
+                bv.hexPoly.getBounds().height + 1);
         image = null;
 
         // start offscreen
@@ -32,7 +32,7 @@ class CursorSprite extends Sprite {
     @Override
     public void prepare() {
         // create image for buffer
-        Image tempImage = this.boardView1.createImage(bounds.width, bounds.height);
+        Image tempImage = bv.createImage(bounds.width, bounds.height);
         Graphics graph = tempImage.getGraphics();
 
         // fill with key color
@@ -40,16 +40,13 @@ class CursorSprite extends Sprite {
         graph.fillRect(0, 0, bounds.width, bounds.height);
         // draw attack poly
         graph.setColor(color);
-        graph.drawPolygon(this.boardView1.hexPoly);
+        graph.drawPolygon(bv.hexPoly);
 
         // create final image
-        if (this.boardView1.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-            image = this.boardView1.createImage(new FilteredImageSource(
-                    tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT)));
-        } else {
-            image = this.boardView1.getScaledImage(this.boardView1.createImage(new FilteredImageSource(
-                    tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT))),false);
-        }
+        image = bv.getScaledImage(bv
+                .createImage(new FilteredImageSource(tempImage.getSource(),
+                        new KeyAlphaFilter(BoardView1.TRANSPARENT))), false);
+        
         graph.dispose();
         tempImage.flush();
     }
@@ -61,14 +58,14 @@ class CursorSprite extends Sprite {
 
     public void setHexLocation(Coords hexLoc) {
         this.hexLoc = hexLoc;
-        bounds.setLocation(this.boardView1.getHexLocation(hexLoc));
+        bounds.setLocation(bv.getHexLocation(hexLoc));
     }
 
     @Override
     public Rectangle getBounds() {
-        bounds = new Rectangle(this.boardView1.hexPoly.getBounds().width + 1,
-                this.boardView1.hexPoly.getBounds().height + 1);
-        bounds.setLocation(this.boardView1.getHexLocation(hexLoc));
+        bounds = new Rectangle(bv.hexPoly.getBounds().width + 1,
+                bv.hexPoly.getBounds().height + 1);
+        bounds.setLocation(bv.getHexLocation(hexLoc));
 
         return bounds;
     }

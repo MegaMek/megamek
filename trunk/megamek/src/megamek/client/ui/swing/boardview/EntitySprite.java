@@ -59,25 +59,25 @@ class EntitySprite extends Sprite {
         }
         int face = entity.isCommander() ? Font.ITALIC : Font.PLAIN;
         Font font = new Font("SansSerif", face, 10); //$NON-NLS-1$
-        modelRect = new Rectangle(47, 55, this.boardView1.getFontMetrics(font).stringWidth(
-                shortName) + 1, this.boardView1.getFontMetrics(font).getAscent());
+        modelRect = new Rectangle(47, 55, this.bv.getFontMetrics(font).stringWidth(
+                shortName) + 1, this.bv.getFontMetrics(font).getAscent());
 
         int altAdjust = 0;
-        if (this.boardView1.useIsometric()
+        if (this.bv.useIsometric()
                 && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
-            altAdjust = (int) (this.boardView1.DROPSHDW_DIST * this.boardView1.scale);
-        } else if (this.boardView1.useIsometric() && (entity.getElevation() != 0)
+            altAdjust = (int) (this.bv.DROPSHDW_DIST * this.bv.scale);
+        } else if (this.bv.useIsometric() && (entity.getElevation() != 0)
                 && !(entity instanceof GunEmplacement)) {
-            altAdjust = (int) (entity.getElevation() * BoardView1.HEX_ELEV * this.boardView1.scale);
+            altAdjust = (int) (entity.getElevation() * BoardView1.HEX_ELEV * this.bv.scale);
         }
 
-        Dimension dim = new Dimension(this.boardView1.hex_size.width, this.boardView1.hex_size.height
+        Dimension dim = new Dimension(this.bv.hex_size.width, this.bv.hex_size.height
                 + altAdjust);
         Rectangle tempBounds = new Rectangle(dim).union(modelRect);
         if (secondaryPos == -1) {
-            tempBounds.setLocation(this.boardView1.getHexLocation(entity.getPosition()));
+            tempBounds.setLocation(this.bv.getHexLocation(entity.getPosition()));
         } else {
-            tempBounds.setLocation(this.boardView1.getHexLocation(entity
+            tempBounds.setLocation(this.bv.getHexLocation(entity
                     .getSecondaryPositions().get(secondaryPos)));
         }
 
@@ -85,9 +85,9 @@ class EntitySprite extends Sprite {
             tempBounds.y = tempBounds.y - altAdjust;
         }
         bounds = tempBounds;
-        entityRect = new Rectangle(bounds.x + (int) (20 * this.boardView1.scale), bounds.y
-                + (int) (14 * this.boardView1.scale), (int) (44 * this.boardView1.scale),
-                (int) (44 * this.boardView1.scale));
+        entityRect = new Rectangle(bounds.x + (int) (20 * this.bv.scale), bounds.y
+                + (int) (14 * this.bv.scale), (int) (44 * this.bv.scale),
+                (int) (44 * this.bv.scale));
         image = null;
     }
 
@@ -95,30 +95,30 @@ class EntitySprite extends Sprite {
     public Rectangle getBounds() {
 
         int altAdjust = 0;
-        if (this.boardView1.useIsometric()
+        if (this.bv.useIsometric()
                 && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
-            altAdjust = (int) (this.boardView1.DROPSHDW_DIST * this.boardView1.scale);
-        } else if (this.boardView1.useIsometric() && (entity.getElevation() != 0)
+            altAdjust = (int) (this.bv.DROPSHDW_DIST * this.bv.scale);
+        } else if (this.bv.useIsometric() && (entity.getElevation() != 0)
                 && !(entity instanceof GunEmplacement)) {
-            altAdjust = (int) (entity.getElevation() * BoardView1.HEX_ELEV * this.boardView1.scale);
+            altAdjust = (int) (entity.getElevation() * BoardView1.HEX_ELEV * this.bv.scale);
         }
 
-        Dimension dim = new Dimension(this.boardView1.hex_size.width, this.boardView1.hex_size.height
+        Dimension dim = new Dimension(this.bv.hex_size.width, this.bv.hex_size.height
                 + altAdjust);
         Rectangle tempBounds = new Rectangle(dim).union(modelRect);
         if (secondaryPos == -1) {
-            tempBounds.setLocation(this.boardView1.getHexLocation(entity.getPosition()));
+            tempBounds.setLocation(this.bv.getHexLocation(entity.getPosition()));
         } else {
-            tempBounds.setLocation(this.boardView1.getHexLocation(entity
+            tempBounds.setLocation(this.bv.getHexLocation(entity
                     .getSecondaryPositions().get(secondaryPos)));
         }
         if (entity.getElevation() > 0) {
             tempBounds.y = tempBounds.y - altAdjust;
         }
         bounds = tempBounds;
-        entityRect = new Rectangle(bounds.x + (int) (20 * this.boardView1.scale), bounds.y
-                + (int) (14 * this.boardView1.scale), (int) (44 * this.boardView1.scale),
-                (int) (44 * this.boardView1.scale));
+        entityRect = new Rectangle(bounds.x + (int) (20 * this.bv.scale), bounds.y
+                + (int) (14 * this.bv.scale), (int) (44 * this.bv.scale),
+                (int) (44 * this.bv.scale));
 
         return bounds;
     }
@@ -155,15 +155,15 @@ class EntitySprite extends Sprite {
         }
         int face = entity.isCommander() ? Font.ITALIC : Font.PLAIN;
         Font font = new Font("SansSerif", face, 10); //$NON-NLS-1$
-        Rectangle tempRect = new Rectangle(47, 55, this.boardView1.getFontMetrics(font)
-                .stringWidth(shortName) + 1, this.boardView1.getFontMetrics(font)
+        Rectangle tempRect = new Rectangle(47, 55, this.bv.getFontMetrics(font)
+                .stringWidth(shortName) + 1, this.bv.getFontMetrics(font)
                 .getAscent());
 
         // create image for buffer
         Image tempImage;
         Graphics graph;
         try {
-            tempImage = this.boardView1.createImage(bounds.width, bounds.height);
+            tempImage = this.bv.createImage(bounds.width, bounds.height);
             // fill with key color
             graph = tempImage.getGraphics();
         } catch (NullPointerException ex) {
@@ -173,10 +173,10 @@ class EntitySprite extends Sprite {
 
         graph.setColor(new Color(BoardView1.TRANSPARENT));
         graph.fillRect(0, 0, bounds.width, bounds.height);
-        if (!this.boardView1.useIsometric()) {
+        if (!this.bv.useIsometric()) {
             // The entity sprite is drawn when the hexes are rendered.
             // So do not include the sprite info here.
-            graph.drawImage(this.boardView1.tileManager.imageFor(entity, secondaryPos), 0,
+            graph.drawImage(this.bv.tileManager.imageFor(entity, secondaryPos), 0,
                     0, this);
         }
         if ((secondaryPos == -1) || (secondaryPos == 6)) {
@@ -214,8 +214,8 @@ class EntitySprite extends Sprite {
                             && !((Infantry) entity).hasFieldGun())
                     && !((entity instanceof Aero)
                             && ((Aero) entity).isSpheroid() 
-                            && !this.boardView1.game.getBoard().inSpace())) {
-                graph.drawPolygon(this.boardView1.facingPolys[entity.getFacing()]);
+                            && !this.bv.game.getBoard().inSpace())) {
+                graph.drawPolygon(this.bv.facingPolys[entity.getFacing()]);
             }
 
             // determine secondary facing for non-mechs & flipped arms
@@ -228,12 +228,12 @@ class EntitySprite extends Sprite {
             // draw red secondary facing arrow if necessary
             if ((secFacing != -1) && (secFacing != entity.getFacing())) {
                 graph.setColor(Color.red);
-                graph.drawPolygon(this.boardView1.facingPolys[secFacing]);
+                graph.drawPolygon(this.bv.facingPolys[secFacing]);
             }
-            if ((entity instanceof Aero) && this.boardView1.game.useVectorMove()) {
+            if ((entity instanceof Aero) && this.bv.game.useVectorMove()) {
                 for (int head : entity.getHeading()) {
                     graph.setColor(Color.red);
-                    graph.drawPolygon(this.boardView1.facingPolys[head]);
+                    graph.drawPolygon(this.bv.facingPolys[head]);
                 }
             }
 
@@ -254,7 +254,7 @@ class EntitySprite extends Sprite {
 
             // draw elevation/altitude if non-zero
             if (entity.isAirborne()) {
-                if (!this.boardView1.game.getBoard().inSpace()) {
+                if (!this.bv.game.getBoard().inSpace()) {
                     graph.setColor(Color.darkGray);
                     graph.drawString(Integer.toString(entity.getAltitude())
                             + "A", 26, 15);
@@ -546,13 +546,10 @@ class EntitySprite extends Sprite {
         }
 
         // create final image
-        if (this.boardView1.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-            image = this.boardView1.createImage(new FilteredImageSource(
-                    tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT)));
-        } else {
-            image = this.boardView1.getScaledImage(this.boardView1.createImage(new FilteredImageSource(
-                    tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT))),false);
-        }
+        image = this.bv.getScaledImage(this.bv
+                .createImage(new FilteredImageSource(tempImage.getSource(),
+                        new KeyAlphaFilter(BoardView1.TRANSPARENT))),false);
+
         graph.dispose();
         tempImage.flush();
     }
@@ -576,14 +573,14 @@ class EntitySprite extends Sprite {
      * mechs and teammates mechs (assuming team vision option).
      */
     private boolean trackThisEntitiesVisibilityInfo(Entity e) {
-        if (this.boardView1.getLocalPlayer() == null) {
+        if (this.bv.getLocalPlayer() == null) {
             return false;
         }
 
-        if (this.boardView1.game.getOptions().booleanOption("double_blind") //$NON-NLS-1$
-                && ((e.getOwner().getId() == this.boardView1.getLocalPlayer().getId()) || (this.boardView1.game
+        if (this.bv.game.getOptions().booleanOption("double_blind") //$NON-NLS-1$
+                && ((e.getOwner().getId() == this.bv.getLocalPlayer().getId()) || (this.bv.game
                         .getOptions().booleanOption("team_vision") //$NON-NLS-1$
-                && (e.getOwner().getTeam() == this.boardView1.getLocalPlayer().getTeam())))) {
+                && (e.getOwner().getTeam() == this.bv.getLocalPlayer().getTeam())))) {
             return true;
         }
         return false;
@@ -655,7 +652,7 @@ class EntitySprite extends Sprite {
                     .append(":") //$NON-NLS-1$
                     .append(entity.delta_distance)
                     .append(" (+") //$NON-NLS-1$
-                    .append(Compute.getTargetMovementModifier(this.boardView1.game,
+                    .append(Compute.getTargetMovementModifier(this.bv.game,
                             entity.getId()).getValue()).append(")") //$NON-NLS-1$
                     .append(entity.isEvading() ? Messages
                             .getString("BoardView1.Evade") : "")//$NON-NLS-1$ //$NON-NLS-2$

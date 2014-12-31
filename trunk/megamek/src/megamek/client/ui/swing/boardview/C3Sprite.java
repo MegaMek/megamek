@@ -70,42 +70,42 @@ class C3Sprite extends Sprite {
 
     private void makePoly() {
         // make a polygon
-        final Point a = boardView1.getHexLocation(entityE.getPosition());
-        final Point t = this.boardView1.getHexLocation(entityM.getPosition());
+        final Point a = bv.getHexLocation(entityE.getPosition());
+        final Point t = this.bv.getHexLocation(entityM.getPosition());
 
         final double an = (entityE.getPosition().radian(
                 entityM.getPosition()) + (Math.PI * 1.5))
                 % (Math.PI * 2); // angle
-        final double lw = this.boardView1.scale * BoardView1.C3_LINE_WIDTH; // line width
+        final double lw = this.bv.scale * BoardView1.C3_LINE_WIDTH; // line width
 
         c3Poly = new Polygon();
         c3Poly.addPoint(
                 a.x
-                        + (int) ((this.boardView1.scale * (BoardView1.HEX_W / 2)) - (int) Math
+                        + (int) ((this.bv.scale * (BoardView1.HEX_W / 2)) - (int) Math
                                 .round(Math.sin(an) * lw)),
                 a.y
-                        + (int) ((this.boardView1.scale * (BoardView1.HEX_H / 2)) + (int) Math
+                        + (int) ((this.bv.scale * (BoardView1.HEX_H / 2)) + (int) Math
                                 .round(Math.cos(an) * lw)));
         c3Poly.addPoint(
                 a.x
-                        + (int) ((this.boardView1.scale * (BoardView1.HEX_W / 2)) + (int) Math
+                        + (int) ((this.bv.scale * (BoardView1.HEX_W / 2)) + (int) Math
                                 .round(Math.sin(an) * lw)),
                 a.y
-                        + (int) ((this.boardView1.scale * (BoardView1.HEX_H / 2)) - (int) Math
+                        + (int) ((this.bv.scale * (BoardView1.HEX_H / 2)) - (int) Math
                                 .round(Math.cos(an) * lw)));
         c3Poly.addPoint(
                 t.x
-                        + (int) ((this.boardView1.scale * (BoardView1.HEX_W / 2)) + (int) Math
+                        + (int) ((this.bv.scale * (BoardView1.HEX_W / 2)) + (int) Math
                                 .round(Math.sin(an) * lw)),
                 t.y
-                        + (int) ((this.boardView1.scale * (BoardView1.HEX_H / 2)) - (int) Math
+                        + (int) ((this.bv.scale * (BoardView1.HEX_H / 2)) - (int) Math
                                 .round(Math.cos(an) * lw)));
         c3Poly.addPoint(
                 t.x
-                        + (int) ((this.boardView1.scale * (BoardView1.HEX_W / 2)) - (int) Math
+                        + (int) ((this.bv.scale * (BoardView1.HEX_W / 2)) - (int) Math
                                 .round(Math.sin(an) * lw)),
                 t.y
-                        + (int) ((this.boardView1.scale * (BoardView1.HEX_H / 2)) + (int) Math
+                        + (int) ((this.bv.scale * (BoardView1.HEX_H / 2)) + (int) Math
                                 .round(Math.cos(an) * lw)));
     }
 

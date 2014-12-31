@@ -81,7 +81,6 @@ import megamek.client.ui.swing.TilesetManager;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
-import megamek.client.ui.swing.util.KeyAlphaFilter;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
@@ -279,6 +278,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     float scale = 1.00f;
     private ImageCache<Integer, Image> scaledImageCache =
             new ImageCache<Integer, Image>();
+    private ImageCache<Integer, BufferedImage> shadowImageCache =
+            new ImageCache<Integer, BufferedImage>();
 
     // Displayables (Chat box, etc.)
     ArrayList<IDisplayable> displayables = new ArrayList<IDisplayable>();
@@ -1767,9 +1768,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 if (useIsometric()
                     && (hex.terrainLevel(Terrains.BRIDGE_ELEV) > 0)) {
                     Image shadow = createShadowMask(scaledImage);
-
-                    shadow = createImage(new FilteredImageSource(
-                            shadow.getSource(), new KeyAlphaFilter(TRANSPARENT)));
                     boardGraph.drawImage(shadow, hexLoc.x, hexLoc.y, this);
                 }
             }
@@ -1778,8 +1776,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (ecmHexes != null) {
             Integer tint = ecmHexes.get(c);
             if (tint != null) {
-                scaledImage = getScaledImage(tileManager.getEcmShade(tint
-                                                                             .intValue()), true);
+                scaledImage = getScaledImage(
+                        tileManager.getEcmShade(tint.intValue()), true);
                 boardGraph.drawImage(scaledImage, drawX, drawY, this);
             }
         }
@@ -1803,26 +1801,26 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (shdList != null) {
                 for (SpecialHexDisplay shd : shdList) {
                     if (shd.drawNow(game.getPhase(), game.getRoundCount(),
-                                    localPlayer)) {
+                            localPlayer)) {
                         scaledImage = getScaledImage(shd.getType()
-                                                        .getDefaultImage(), true);
+                                .getDefaultImage(), true);
                         boardGraph.drawImage(scaledImage, drawX, drawY, this);
                     }
                 }
             }
         } catch (IllegalArgumentException e) {
-            System.err.println("Illegal argument exception, probably " +
-                               "can't load file.");
+            System.err.println("Illegal argument exception, probably "
+                    + "can't load file.");
             e.printStackTrace();
             drawCenteredString("Loading Error", drawX, drawY
-                                                       + (int) (50 * scale), font_note, boardGraph);
+                    + (int) (50 * scale), font_note, boardGraph);
             return;
         }
 
         // draw hex number
         if (scale >= 0.5) {
             drawCenteredString(c.getBoardNum(), drawX, drawY
-                                                       + (int) (12 * scale), font_hexnum, boardGraph);
+                    + (int) (12 * scale), font_hexnum, boardGraph);
         }
 
         // draw terrain level / water depth / building height
@@ -4509,8 +4507,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     BufferedImage createShadowMask(Image image) {
-        BufferedImage mask = new BufferedImage(image.getWidth(null),
-                                               image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        int hashCode = image.hashCode();
+        BufferedImage mask = shadowImageCache.get(hashCode);
+        if (mask != null) {
+            return mask;
+        }
+        mask = new BufferedImage(image.getWidth(null),
+                image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
         float opacity = 0.4f;
         Graphics2D g2d = mask.createGraphics();
         g2d.drawImage(image, 0, 0, null);
@@ -4519,6 +4522,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         g2d.setColor(Color.BLACK);
         g2d.fillRect(0, 0, image.getWidth(null), image.getHeight(null));
         g2d.dispose();
+        shadowImageCache.put(hashCode, mask);
         return mask;
     }
 

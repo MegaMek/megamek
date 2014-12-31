@@ -109,16 +109,7 @@ class IsometricSprite extends Sprite {
         } else if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
             Image shadow = bv.createShadowMask(bv.tileManager.imageFor(
                     entity, entity.getFacing(), secondaryPos));
-
-            if (bv.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-                shadow = bv.createImage(new FilteredImageSource(
-                        shadow.getSource(), new KeyAlphaFilter(
-                                BoardView1.TRANSPARENT)));
-            } else {
-                shadow = bv.getScaledImage(bv.createImage(new FilteredImageSource(
-                        shadow.getSource(), new KeyAlphaFilter(
-                                BoardView1.TRANSPARENT))),false);
-            }
+            shadow = bv.getScaledImage(shadow, true);
             // Draw airborne units in 2 passes. Shadow is rendered
             // during the opaque pass, and the
             // Actual unit is rendered during the transparent pass.
@@ -135,6 +126,7 @@ class IsometricSprite extends Sprite {
             Image shadow = bv.createShadowMask(bv.tileManager.imageFor(
                     entity, entity.getFacing(), secondaryPos));
             shadow = bv.getScaledImage(shadow, true);
+
             // Entities on a bridge hex or submerged in water.
             int altAdjust = (int) (entity.getElevation() * BoardView1.HEX_ELEV * bv.scale);
             if (makeTranslucent) {

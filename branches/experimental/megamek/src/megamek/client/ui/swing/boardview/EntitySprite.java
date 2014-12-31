@@ -564,13 +564,10 @@ class EntitySprite extends Sprite {
         }
 
         // create final image
-        if (this.bv.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-            image = this.bv.createImage(new FilteredImageSource(
-                    tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT)));
-        } else {
-            image = this.bv.getScaledImage(this.bv.createImage(new FilteredImageSource(
-                    tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT))),false);
-        }
+        image = this.bv.getScaledImage(this.bv
+                .createImage(new FilteredImageSource(tempImage.getSource(),
+                        new KeyAlphaFilter(BoardView1.TRANSPARENT))),false);
+
         graph.dispose();
         tempImage.flush();
     }
@@ -598,11 +595,10 @@ class EntitySprite extends Sprite {
         if (localPlayer == null) {
             return false;
         }
-        IOptions opts = this.bv.game.getOptions();
-        if (opts.booleanOption("double_blind") //$NON-NLS-1$
-                && ((e.getOwner().getId() == localPlayer.getId()) 
-                        || (opts.booleanOption("team_vision") //$NON-NLS-1$
-                && (e.getOwner().getTeam() == localPlayer.getTeam())))) {
+        if (this.bv.game.getOptions().booleanOption("double_blind") //$NON-NLS-1$
+                && ((e.getOwner().getId() == this.bv.getLocalPlayer().getId()) || (this.bv.game
+                        .getOptions().booleanOption("team_vision") //$NON-NLS-1$
+                && (e.getOwner().getTeam() == this.bv.getLocalPlayer().getTeam())))) {
             return true;
         }
         return false;

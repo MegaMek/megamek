@@ -924,7 +924,7 @@ public class MiscType extends EquipmentType {
                 return (int) Math.round(entity.getWeight() / 25.0);
             }
             return (int) Math.round(entity.getWeight() / 20.0);
-            
+
         } else if ((entity instanceof Aero)
                 && (hasFlag(F_REACTIVE) || hasFlag(F_REFLECTIVE)
                         || hasFlag(F_ANTI_PENETRATIVE_ABLATIVE)
@@ -1066,8 +1066,8 @@ public class MiscType extends EquipmentType {
         	else if (entity instanceof BipedMech || entity instanceof QuadMech) {
         		return 7;
         	}
-            
-        }    
+
+        }
         // right, well I'll just guess then
         return 1;
     }
@@ -1585,7 +1585,7 @@ public class MiscType extends EquipmentType {
 
         EquipmentType.addType(MiscType.createLAMBombBay());
         EquipmentType.addType(MiscType.createLightFluidSuctionSystemMech());
-        EquipmentType.addType(MiscType.createLightFluidSuctionSystem());       
+        EquipmentType.addType(MiscType.createLightFluidSuctionSystem());
         EquipmentType.addType(MiscType.createFluidSuctionSystem());
 
     }
@@ -2532,7 +2532,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createGECMPrototype() {
         MiscType misc = new MiscType();
 
@@ -3018,7 +3018,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 0;
         misc.tankslots = 0;
         misc.flags = misc.flags.or(F_ARMORED_CHASSIS).or(F_TANK_EQUIPMENT)
-                .or(F_CHASSIS_MODIFICATION);
+                .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.introDate = 1950;
         misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
@@ -3293,7 +3293,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 50000;
-        //Since this is supposed to mimic the SL Era Stealth Basic, 
+        //Since this is supposed to mimic the SL Era Stealth Basic,
         //I'm going to use it as SL Era Prototype that is rediscovered in 3050.
         misc.introDate = 2710;
         misc.extinctDate = 2720;
@@ -3317,7 +3317,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 50000;
-        //Since this is supposed to mimic the SL Era Stealth Basic, 
+        //Since this is supposed to mimic the SL Era Stealth Basic,
         //I'm going to use it as Clan Unofficial Prototype.
         misc.introDate = 2820;
         misc.techLevel.put(2820, TechConstants.T_CLAN_UNOFFICIAL);
@@ -3647,7 +3647,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.techRating = RATING_B;
-        misc.introDate = 2820;	
+        misc.introDate = 2820;
         misc.availRating = new int[] { RATING_X, RATING_E, RATING_D };
         misc.flags = misc.flags.or(F_VEHICLE_MINE_DISPENSER)
                 .or(F_MECH_EQUIPMENT).or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
@@ -3917,7 +3917,9 @@ public class MiscType extends EquipmentType {
                 EquipmentType.T_ARMOR_STEALTH_VEHICLE, false));
         misc.addLookupName("IS Vehicular Stealth Armor");
         misc.tonnage = 0; // ???
-        misc.tankslots = 2;
+        // Has to be 1, because we allocate 2 of them, so 2*1=2, which is correct
+        // When this was 2, it was ending up as 2*2=4 slots used on the tank. Bad juju.
+        misc.tankslots = 1;
         misc.hittable = false;
         misc.spreadable = true;
         misc.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
@@ -5210,7 +5212,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createBeagleActiveProbePrototype() {
         MiscType misc = new MiscType();
 
@@ -5928,7 +5930,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 2720;
         misc.techLevel.put(2720, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_D, RATING_D, RATING_D };
-        
+
 
         return misc;
     }
@@ -5976,7 +5978,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 2720;
         misc.techLevel.put(2720, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_D, RATING_D, RATING_D };
-        
+
 
         return misc;
     }
@@ -7883,8 +7885,8 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.flags = misc.flags.or(MiscType.F_ADVANCED_FIRECONTROL).or(
                 MiscType.F_SUPPORT_TANK_EQUIPMENT);
-        misc.introDate = 2300;
-        misc.techLevel.put(2300, misc.techLevel.get(3071));
+        misc.introDate = 2284;
+        misc.techLevel.put(2284, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_C, RATING_D, RATING_D };
         misc.techRating = RATING_C;
 
@@ -9796,7 +9798,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createLightFluidSuctionSystem() {
         MiscType misc = new MiscType();
         misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);

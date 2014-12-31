@@ -1668,6 +1668,11 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 22;
         ammo.cost = 10000;
+        ammo.availRating = new int[]{EquipmentType.RATING_D,
+                EquipmentType.RATING_E, EquipmentType.RATING_D};
+        ammo.introDate = 2488;
+        ammo.techLevel.put(2488, ammo.techLevel.get(3067));
+        ammo.techRating = RATING_C;
 
         return ammo;
     }

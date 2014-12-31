@@ -967,7 +967,7 @@ public class UnitDisplay extends JPanel {
                    .insets(15, 9, 1, 1).gridy(gridy).gridx(0));
             weapSortOrder = new JComboBox<String>();
             for (Entity.WeaponSortOrder s : Entity.WeaponSortOrder.values()) {
-                String entry = "MechDisplay.WeaponSortOrder." + s.l10nEntry;
+                String entry = "MechDisplay.WeaponSortOrder." + s.i18nEntry;
                 weapSortOrder.addItem(Messages.getString(entry));
             }
             weapSortOrder.addActionListener(this);

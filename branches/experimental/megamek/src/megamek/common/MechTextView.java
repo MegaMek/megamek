@@ -287,7 +287,8 @@ public class MechTextView {
         }
         if (!isInf && !isProto && !entity.hasPatchworkArmor()) {
             sIntArm.append(Messages.getString("MechView."
-                    + EquipmentType.getArmorTypeName(entity.getArmorType(1))));
+                    + EquipmentType.getArmorTypeName(entity.getArmorType(1))
+                            .trim()));
         }
         sIntArm.append("\n"); //$NON-NLS-1$
         // Walk through the entity's locations.
@@ -386,7 +387,8 @@ public class MechTextView {
 
         if (!entity.hasPatchworkArmor()) {
             sIntArm.append(Messages.getString("MechView."
-                    + EquipmentType.getArmorTypeName(entity.getArmorType(1))));
+                    + EquipmentType.getArmorTypeName(entity.getArmorType(1))
+                            .trim()));
         }
 
         sIntArm.append("\n"); //$NON-NLS-1$

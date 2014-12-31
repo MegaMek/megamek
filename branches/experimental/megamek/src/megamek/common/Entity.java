@@ -166,10 +166,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         DAMAGE_HL("DAMAGE_HL"),
         CUSTOM("CUSTOM");
 
-        public final String l10nEntry;
+        public final String i18nEntry;
 
         WeaponSortOrder(String s) {
-            l10nEntry = s;
+            i18nEntry = s;
         }
     }
 
@@ -3161,14 +3161,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((mounted != null)
             && (mounted.isReady())
             && (!mounted.getType().hasFlag(WeaponType.F_AMS))
-            && ((mounted.getLinked() == null) || (mounted.getLinked()
-                                                         .getUsableShotsLeft() > 0))) {
+            && ((mounted.getLinked() == null) 
+                || mounted.getLinked().getType().hasFlag(MiscType.F_AP_MOUNT)
+                || (mounted.getLinked().getUsableShotsLeft() > 0))) {
 
             // TAG only in the correct phase...
-            if ((mounted.getType().hasFlag(WeaponType.F_TAG) && (game
-                                                                         .getPhase() != IGame.Phase.PHASE_OFFBOARD))
-                || (!mounted.getType().hasFlag(WeaponType.F_TAG) && (game
-                                                                             .getPhase() == IGame.Phase.PHASE_OFFBOARD))) {
+            if ((mounted.getType().hasFlag(WeaponType.F_TAG) 
+                    && (game.getPhase() != IGame.Phase.PHASE_OFFBOARD))
+                    || (!mounted.getType().hasFlag(WeaponType.F_TAG) 
+                            && (game.getPhase() 
+                                    == IGame.Phase.PHASE_OFFBOARD))) {
                 return false;
             }
 

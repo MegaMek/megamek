@@ -38,26 +38,26 @@ class IsometricSprite extends Sprite {
         this.secondaryPos = secondaryPos;
         String shortName = entity.getShortName();
         Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
-        modelRect = new Rectangle(47, 55, this.bv.getFontMetrics(font).stringWidth(
-                shortName) + 1, this.bv.getFontMetrics(font).getAscent());
+        modelRect = new Rectangle(47, 55, bv.getFontMetrics(font).stringWidth(
+                shortName) + 1, bv.getFontMetrics(font).getAscent());
 
         int altAdjust = 0;
-        if (this.bv.useIsometric()
+        if (bv.useIsometric()
                 && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
-            altAdjust = (int) (this.bv.DROPSHDW_DIST * this.bv.scale);
-        } else if (this.bv.useIsometric() && (entity.getElevation() != 0)
+            altAdjust = (int) (bv.DROPSHDW_DIST * bv.scale);
+        } else if (bv.useIsometric() && (entity.getElevation() != 0)
                 && !(entity instanceof GunEmplacement)) {
-            altAdjust = (int) (entity.getElevation() * BoardView1.HEX_ELEV * this.bv.scale);
+            altAdjust = (int) (entity.getElevation() * BoardView1.HEX_ELEV * bv.scale);
         }
 
-        Dimension dim = new Dimension(this.bv.hex_size.width, this.bv.hex_size.height
+        Dimension dim = new Dimension(bv.hex_size.width, bv.hex_size.height
                 + altAdjust);
         Rectangle tempBounds = new Rectangle(dim).union(modelRect);
 
         if (secondaryPos == -1) {
-            tempBounds.setLocation(this.bv.getHexLocation(entity.getPosition()));
+            tempBounds.setLocation(bv.getHexLocation(entity.getPosition()));
         } else {
-            tempBounds.setLocation(this.bv.getHexLocation(entity
+            tempBounds.setLocation(bv.getHexLocation(entity
                     .getSecondaryPositions().get(secondaryPos)));
         }
         if (entity.getElevation() > 0) {
@@ -130,24 +130,13 @@ class IsometricSprite extends Sprite {
             } else {
                 g.drawImage(shadow, p.x, p.y, this);
             }
-
         } else if ((entity.getElevation() != 0)
                 && !(entity instanceof GunEmplacement)) {
             Image shadow = bv.createShadowMask(bv.tileManager.imageFor(
                     entity, entity.getFacing(), secondaryPos));
-
-            if (bv.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-                shadow = bv.createImage(new FilteredImageSource(
-                        shadow.getSource(), new KeyAlphaFilter(
-                                BoardView1.TRANSPARENT)));
-            } else {
-                shadow = bv.getScaledImage(bv.createImage(new FilteredImageSource(
-                        shadow.getSource(), new KeyAlphaFilter(
-                                BoardView1.TRANSPARENT))),false);
-            }
+            shadow = bv.getScaledImage(shadow, true);
             // Entities on a bridge hex or submerged in water.
             int altAdjust = (int) (entity.getElevation() * BoardView1.HEX_ELEV * bv.scale);
-
             if (makeTranslucent) {
                 if (entity.relHeight() < 0) {
                     g2.setComposite(AlphaComposite.getInstance(
@@ -178,7 +167,7 @@ class IsometricSprite extends Sprite {
         Image tempImage;
         Graphics graph;
         try {
-            tempImage = this.bv.createImage(bounds.width, bounds.height);
+            tempImage = bv.createImage(bounds.width, bounds.height);
             graph = tempImage.getGraphics();
         } catch (NullPointerException ex) {
             // argh! but I want it!
@@ -190,17 +179,13 @@ class IsometricSprite extends Sprite {
         graph.fillRect(0, 0, bounds.width, bounds.height);
 
         // draw entity image
-        graph.drawImage(this.bv.tileManager.imageFor(entity, secondaryPos), 0, 0,
+        graph.drawImage(bv.tileManager.imageFor(entity, secondaryPos), 0, 0,
                 this);
 
         // create final image
-        if (this.bv.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-            image = this.bv.createImage(new FilteredImageSource(
-                    tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT)));
-        } else {
-            image = this.bv.getScaledImage(this.bv.createImage(new FilteredImageSource(
-                    tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT))),false);
-        }
+        image = bv.getScaledImage(bv.createImage(new FilteredImageSource(
+                tempImage.getSource(), new KeyAlphaFilter(
+                        BoardView1.TRANSPARENT))), false);
         graph.dispose();
         tempImage.flush();
     }

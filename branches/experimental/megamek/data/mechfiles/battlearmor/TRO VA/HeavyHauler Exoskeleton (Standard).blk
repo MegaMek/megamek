@@ -45,8 +45,10 @@ Leg
 </armor_tech>
 
 <Squad Equipment>
-BACargoLifter:LA
 BACargoLifter:RA
+BACargoLifter:LA
+BACuttingTorch:Body
+BASearchlight:Body
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -62,7 +64,7 @@ BACargoLifter:RA
 </Trooper 4 Equipment>
 
 <source>
-TRO VA
+RS VA
 </source>
 
 <chassis>

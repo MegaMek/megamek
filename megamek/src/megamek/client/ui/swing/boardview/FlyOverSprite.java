@@ -69,19 +69,19 @@ class FlyOverSprite extends Sprite {
             if (prev.equals(c)) {
                 continue;
             }
-            Point a = this.boardView1.getHexLocation(prev);
-            Point t = this.boardView1.getHexLocation(c);
+            Point a = this.bv.getHexLocation(prev);
+            Point t = this.bv.getHexLocation(c);
 
             final double an = (prev.radian(c) + (Math.PI * 1.5))
                     % (Math.PI * 2); // angle
-            final double lw = this.boardView1.scale * BoardView1.FLY_OVER_LINE_WIDTH; // line width
+            final double lw = this.bv.scale * BoardView1.FLY_OVER_LINE_WIDTH; // line width
 
             flyOverPoly.addPoint(
                     a.x
-                            + (int) ((this.boardView1.scale * (BoardView1.HEX_W / 2)) - (int) Math
+                            + (int) ((this.bv.scale * (BoardView1.HEX_W / 2)) - (int) Math
                                     .round(Math.sin(an) * lw)),
                     a.y
-                            + (int) ((this.boardView1.scale * (BoardView1.HEX_H / 2)) + (int) Math
+                            + (int) ((this.bv.scale * (BoardView1.HEX_H / 2)) + (int) Math
                                     .round(Math.cos(an) * lw)));
             // flyOverPoly.addPoint(
             // a.x + (int) (scale * (HEX_W / 2) + (int)
@@ -95,10 +95,10 @@ class FlyOverSprite extends Sprite {
             // * lw)));
             flyOverPoly.addPoint(
                     t.x
-                            + (int) ((this.boardView1.scale * (BoardView1.HEX_W / 2)) - (int) Math
+                            + (int) ((this.bv.scale * (BoardView1.HEX_W / 2)) - (int) Math
                                     .round(Math.sin(an) * lw)),
                     t.y
-                            + (int) ((this.boardView1.scale * (BoardView1.HEX_H / 2)) + (int) Math
+                            + (int) ((this.bv.scale * (BoardView1.HEX_H / 2)) + (int) Math
                                     .round(Math.cos(an) * lw)));
 
         }
@@ -107,12 +107,12 @@ class FlyOverSprite extends Sprite {
         for (int i = (en.getPassedThrough().size() - 1); i > 0; i--) {
             Coords c = en.getPassedThrough().elementAt(i);
             Coords next = en.getPassedThrough().elementAt(i - 1);
-            Point a = this.boardView1.getHexLocation(c);
-            Point t = this.boardView1.getHexLocation(next);
+            Point a = this.bv.getHexLocation(c);
+            Point t = this.bv.getHexLocation(next);
 
             final double an = (c.radian(next) + (Math.PI * 1.5))
                     % (Math.PI * 2); // angle
-            final double lw = this.boardView1.scale * BoardView1.FLY_OVER_LINE_WIDTH; // line width
+            final double lw = this.bv.scale * BoardView1.FLY_OVER_LINE_WIDTH; // line width
             // flyOverPoly.addPoint(
             // a.x + (int) (scale * (HEX_W / 2) + (int)
             // Math.round(Math.sin(an) * lw)), a.y
@@ -126,17 +126,17 @@ class FlyOverSprite extends Sprite {
 
             flyOverPoly.addPoint(
                     a.x
-                            + (int) ((this.boardView1.scale * (BoardView1.HEX_W / 2)) - (int) Math
+                            + (int) ((this.bv.scale * (BoardView1.HEX_W / 2)) - (int) Math
                                     .round(Math.sin(an) * lw)),
                     a.y
-                            + (int) ((this.boardView1.scale * (BoardView1.HEX_H / 2)) + (int) Math
+                            + (int) ((this.bv.scale * (BoardView1.HEX_H / 2)) + (int) Math
                                     .round(Math.cos(an) * lw)));
             flyOverPoly.addPoint(
                     t.x
-                            + (int) ((this.boardView1.scale * (BoardView1.HEX_W / 2)) - (int) Math
+                            + (int) ((this.bv.scale * (BoardView1.HEX_W / 2)) - (int) Math
                                     .round(Math.sin(an) * lw)),
                     t.y
-                            + (int) ((this.boardView1.scale * (BoardView1.HEX_H / 2)) + (int) Math
+                            + (int) ((this.bv.scale * (BoardView1.HEX_H / 2)) + (int) Math
                                     .round(Math.cos(an) * lw)));
 
         }

@@ -34,26 +34,26 @@ class IsometricSprite extends Sprite {
         this.secondaryPos = secondaryPos;
         String shortName = entity.getShortName();
         Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
-        modelRect = new Rectangle(47, 55, this.boardView1.getFontMetrics(font).stringWidth(
-                shortName) + 1, this.boardView1.getFontMetrics(font).getAscent());
+        modelRect = new Rectangle(47, 55, bv.getFontMetrics(font).stringWidth(
+                shortName) + 1, bv.getFontMetrics(font).getAscent());
 
         int altAdjust = 0;
-        if (this.boardView1.useIsometric()
+        if (bv.useIsometric()
                 && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
-            altAdjust = (int) (this.boardView1.DROPSHDW_DIST * this.boardView1.scale);
-        } else if (this.boardView1.useIsometric() && (entity.getElevation() != 0)
+            altAdjust = (int) (bv.DROPSHDW_DIST * bv.scale);
+        } else if (bv.useIsometric() && (entity.getElevation() != 0)
                 && !(entity instanceof GunEmplacement)) {
-            altAdjust = (int) (entity.getElevation() * BoardView1.HEX_ELEV * this.boardView1.scale);
+            altAdjust = (int) (entity.getElevation() * BoardView1.HEX_ELEV * bv.scale);
         }
 
-        Dimension dim = new Dimension(this.boardView1.hex_size.width, this.boardView1.hex_size.height
+        Dimension dim = new Dimension(bv.hex_size.width, bv.hex_size.height
                 + altAdjust);
         Rectangle tempBounds = new Rectangle(dim).union(modelRect);
 
         if (secondaryPos == -1) {
-            tempBounds.setLocation(this.boardView1.getHexLocation(entity.getPosition()));
+            tempBounds.setLocation(bv.getHexLocation(entity.getPosition()));
         } else {
-            tempBounds.setLocation(this.boardView1.getHexLocation(entity
+            tempBounds.setLocation(bv.getHexLocation(entity
                     .getSecondaryPositions().get(secondaryPos)));
         }
         if (entity.getElevation() > 0) {
@@ -80,25 +80,20 @@ class IsometricSprite extends Sprite {
         if (isReady()) {
             Point p;
             if (secondaryPos == -1) {
-                p = this.boardView1.getHexLocation(entity.getPosition());
+                p = bv.getHexLocation(entity.getPosition());
             } else {
-                p = this.boardView1.getHexLocation(entity.getSecondaryPositions().get(
+                p = bv.getHexLocation(entity.getSecondaryPositions().get(
                         secondaryPos));
             }
             Graphics2D g2 = (Graphics2D) g;
             if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
-                Image shadow = this.boardView1.createShadowMask(this.boardView1.tileManager.imageFor(
+                Image shadow = bv.createShadowMask(bv.tileManager.imageFor(
                         entity, entity.getFacing(), secondaryPos));
 
-                if (this.boardView1.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-                    shadow = this.boardView1.createImage(new FilteredImageSource(
-                            shadow.getSource(), new KeyAlphaFilter(
-                                    BoardView1.TRANSPARENT)));
-                } else {
-                    shadow = this.boardView1.getScaledImage(this.boardView1.createImage(new FilteredImageSource(
-                            shadow.getSource(), new KeyAlphaFilter(
-                                    BoardView1.TRANSPARENT))),false);
-                }
+                shadow = bv.getScaledImage(bv
+                        .createImage(new FilteredImageSource(
+                                shadow.getSource(), new KeyAlphaFilter(
+                                        BoardView1.TRANSPARENT))), false);
                 // Draw airborne units in 2 passes. Shadow is rendered
                 // during the opaque pass, and the
                 // Actual unit is rendered during the transparent pass.
@@ -106,27 +101,24 @@ class IsometricSprite extends Sprite {
                 // opaque.
                 if (makeTranslucent) {
                     g.drawImage(image, p.x, p.y
-                            - (int) (this.boardView1.DROPSHDW_DIST * this.boardView1.scale), this);
+                            - (int) (bv.DROPSHDW_DIST * bv.scale), this);
                 } else {
                     g.drawImage(shadow, p.x, p.y, this);
                 }
 
             } else if ((entity.getElevation() != 0)
                     && !(entity instanceof GunEmplacement)) {
-                Image shadow = this.boardView1.createShadowMask(this.boardView1.tileManager.imageFor(
+                Image shadow = bv.createShadowMask(bv.tileManager.imageFor(
                         entity, entity.getFacing(), secondaryPos));
 
-                if (this.boardView1.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-                    shadow = this.boardView1.createImage(new FilteredImageSource(
-                            shadow.getSource(), new KeyAlphaFilter(
-                                    BoardView1.TRANSPARENT)));
-                } else {
-                    shadow = this.boardView1.getScaledImage(this.boardView1.createImage(new FilteredImageSource(
-                            shadow.getSource(), new KeyAlphaFilter(
-                                    BoardView1.TRANSPARENT))),false);
-                }
+                
+                shadow = bv.getScaledImage(bv
+                        .createImage(new FilteredImageSource(
+                                shadow.getSource(), new KeyAlphaFilter(
+                                        BoardView1.TRANSPARENT))), false);
+                
                 // Entities on a bridge hex or submerged in water.
-                int altAdjust = (int) (entity.getElevation() * BoardView1.HEX_ELEV * this.boardView1.scale);
+                int altAdjust = (int) (entity.getElevation() * BoardView1.HEX_ELEV * bv.scale);
 
                 if (makeTranslucent) {
                     if (entity.relHeight() < 0) {
@@ -161,7 +153,7 @@ class IsometricSprite extends Sprite {
         Image tempImage;
         Graphics graph;
         try {
-            tempImage = this.boardView1.createImage(bounds.width, bounds.height);
+            tempImage = bv.createImage(bounds.width, bounds.height);
             graph = tempImage.getGraphics();
         } catch (NullPointerException ex) {
             // argh! but I want it!
@@ -173,17 +165,13 @@ class IsometricSprite extends Sprite {
         graph.fillRect(0, 0, bounds.width, bounds.height);
 
         // draw entity image
-        graph.drawImage(this.boardView1.tileManager.imageFor(entity, secondaryPos), 0, 0,
+        graph.drawImage(bv.tileManager.imageFor(entity, secondaryPos), 0, 0,
                 this);
 
         // create final image
-        if (this.boardView1.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-            image = this.boardView1.createImage(new FilteredImageSource(
-                    tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT)));
-        } else {
-            image = this.boardView1.getScaledImage(this.boardView1.createImage(new FilteredImageSource(
-                    tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT))),false);
-        }
+        image = bv.getScaledImage(bv.createImage(new FilteredImageSource(
+                tempImage.getSource(), new KeyAlphaFilter(
+                        BoardView1.TRANSPARENT))), false);
         graph.dispose();
         tempImage.flush();
     }

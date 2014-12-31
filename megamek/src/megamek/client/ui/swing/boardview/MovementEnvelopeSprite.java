@@ -26,7 +26,7 @@ class MovementEnvelopeSprite extends HexSprite {
     public void prepare() {
         updateBounds();
         // create image for buffer
-        Image tempImage = this.boardView1.createImage(bounds.width, bounds.height);
+        Image tempImage = bv.createImage(bounds.width, bounds.height);
         Graphics graph = tempImage.getGraphics();
 
         // fill with key color
@@ -36,17 +36,13 @@ class MovementEnvelopeSprite extends HexSprite {
         graph.setColor(drawColor);
         Stroke st = ((Graphics2D) graph).getStroke();
         ((Graphics2D) graph).setStroke(new BasicStroke(2));
-        graph.drawPolygon(this.boardView1.hexPoly);
+        graph.drawPolygon(bv.hexPoly);
         ((Graphics2D) graph).setStroke(st);
 
         // create final image
-        if (this.boardView1.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-            image = this.boardView1.createImage(new FilteredImageSource(
-                    tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT)));
-        } else {
-            image = this.boardView1.getScaledImage(this.boardView1.createImage(new FilteredImageSource(
-                    tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT))),false);
-        }
+        image = bv.getScaledImage(bv.createImage(new FilteredImageSource(
+                tempImage.getSource(), new KeyAlphaFilter(
+                        BoardView1.TRANSPARENT))), false);
         graph.dispose();
         tempImage.flush();
     }

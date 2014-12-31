@@ -23,10 +23,10 @@ class GhostEntitySprite extends Sprite {
 
         String shortName = entity.getShortName();
         Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
-        modelRect = new Rectangle(47, 55, this.boardView1.getFontMetrics(font).stringWidth(
-                shortName) + 1, this.boardView1.getFontMetrics(font).getAscent());
-        Rectangle tempBounds = new Rectangle(this.boardView1.hex_size).union(modelRect);
-        tempBounds.setLocation(this.boardView1.getHexLocation(entity.getPosition()));
+        modelRect = new Rectangle(47, 55, bv.getFontMetrics(font).stringWidth(
+                shortName) + 1, bv.getFontMetrics(font).getAscent());
+        Rectangle tempBounds = new Rectangle(bv.hex_size).union(modelRect);
+        tempBounds.setLocation(bv.getHexLocation(entity.getPosition()));
 
         bounds = tempBounds;
         image = null;
@@ -42,7 +42,7 @@ class GhostEntitySprite extends Sprite {
         Image tempImage;
         Graphics graph;
         try {
-            tempImage = this.boardView1.createImage(bounds.width, bounds.height);
+            tempImage = bv.createImage(bounds.width, bounds.height);
             graph = tempImage.getGraphics();
         } catch (NullPointerException ex) {
             // argh! but I want it!
@@ -54,24 +54,20 @@ class GhostEntitySprite extends Sprite {
         graph.fillRect(0, 0, bounds.width, bounds.height);
 
         // draw entity image
-        graph.drawImage(this.boardView1.tileManager.imageFor(entity), 0, 0, this);
+        graph.drawImage(bv.tileManager.imageFor(entity), 0, 0, this);
 
         // create final image
-        if (this.boardView1.zoomIndex == BoardView1.BASE_ZOOM_INDEX) {
-            image = this.boardView1.createImage(new FilteredImageSource(
-                    tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT)));
-        } else {
-            image = this.boardView1.getScaledImage(this.boardView1.createImage(new FilteredImageSource(
-                    tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT))),false);
-        }
+        image = bv.getScaledImage(bv.createImage(new FilteredImageSource(
+                tempImage.getSource(), new KeyAlphaFilter(
+                        BoardView1.TRANSPARENT))), false);
         graph.dispose();
         tempImage.flush();
     }
 
     @Override
     public Rectangle getBounds() {
-        Rectangle tempBounds = new Rectangle(this.boardView1.hex_size).union(modelRect);
-        tempBounds.setLocation(this.boardView1.getHexLocation(entity.getPosition()));
+        Rectangle tempBounds = new Rectangle(bv.hex_size).union(modelRect);
+        tempBounds.setLocation(bv.getHexLocation(entity.getPosition()));
         bounds = tempBounds;
 
         return bounds;

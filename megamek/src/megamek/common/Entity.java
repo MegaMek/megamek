@@ -1524,11 +1524,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                      && (climbMode || isJumpingNow) && (this instanceof Mech))
                     || (retVal > bldnex)) {
                     retVal = bldnex;
-                } else if ((bldnex + next.surface()) 
+                } else if ((bldnex + next.surface())
                         > (bldcur + current.surface())) {
-                    int nextBasement = 
+                    int nextBasement =
                             next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE);
-                    int collapsedBasement = 
+                    int collapsedBasement =
                             next.terrainLevel(Terrains.BLDG_BASE_COLLAPSED);
                     if (climbMode || isJumpingNow) {
                         retVal = bldnex + next.surface();
@@ -3161,15 +3161,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((mounted != null)
             && (mounted.isReady())
             && (!mounted.getType().hasFlag(WeaponType.F_AMS))
-            && ((mounted.getLinked() == null) 
+            && ((mounted.getLinked() == null)
                 || mounted.getLinked().getType().hasFlag(MiscType.F_AP_MOUNT)
                 || (mounted.getLinked().getUsableShotsLeft() > 0))) {
 
             // TAG only in the correct phase...
-            if ((mounted.getType().hasFlag(WeaponType.F_TAG) 
+            if ((mounted.getType().hasFlag(WeaponType.F_TAG)
                     && (game.getPhase() != IGame.Phase.PHASE_OFFBOARD))
-                    || (!mounted.getType().hasFlag(WeaponType.F_TAG) 
-                            && (game.getPhase() 
+                    || (!mounted.getType().hasFlag(WeaponType.F_TAG)
+                            && (game.getPhase()
                                     == IGame.Phase.PHASE_OFFBOARD))) {
                 return false;
             }
@@ -8974,6 +8974,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             setArmorType(EquipmentType.T_ARMOR_UNKNOWN);
         } else {
             setArmorType(EquipmentType.getArmorType(et));
+            // TODO: Is this needed? WTF is the point of it?
             if (et.getCriticals(this) == 0) {
                 try {
                     this.addEquipment(et, LOC_NONE);
@@ -8995,6 +8996,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             setArmorType(EquipmentType.T_ARMOR_UNKNOWN, loc);
         } else {
             setArmorType(EquipmentType.getArmorType(et), loc);
+            // TODO: Is this needed? WTF is the point of it?
             if (et.getCriticals(this) == 0) {
                 try {
                     this.addEquipment(et, LOC_NONE);
@@ -9016,6 +9018,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             structureTechLevel = TechConstants.T_TECH_UNKNOWN;
         } else {
             structureTechLevel = et.getTechLevel(year);
+            // TODO: Is this needed? WTF is the point of it?
             if (et.getCriticals(this) == 0) {
                 try {
                     this.addEquipment(et, LOC_NONE);

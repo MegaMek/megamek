@@ -1,1 +1,0 @@
-start wjview /cp collections.jar;TinyXML.jar;MegaMek.jar megamek/MegaMek

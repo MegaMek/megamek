@@ -1,6 +1,0 @@
-2821 Operations Klondike Armed Industrials B
-Harvester Ant KIC-3 (LRM),2
-Powerman LoaderMech SC XI (Laser),1
-Buster Class HaulerMech BC XV (PPC),1
-Marco MR-8E,1
-Carbine ConstructionMech CON-1 (RL),1

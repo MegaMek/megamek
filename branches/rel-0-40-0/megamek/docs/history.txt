@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.40.1-dev (SVN)
+
 v0.40.0 (2015-01-01 20:40 UTC)
 + Bug [#4372]: Inferno Bomb/IV fires do not last the proper duration
 + Bug: NPE in Precognition.getECMInfo when using /replacePlayer

@@ -2156,7 +2156,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
 
         // display dialog
-        MechEditorDialog med = new MechEditorDialog(clientgui.getFrame(),
+        UnitEditorDialog med = new UnitEditorDialog(clientgui.getFrame(),
                 entity);
         // med.setPlayer(c.getLocalPlayer());
         med.setVisible(true);

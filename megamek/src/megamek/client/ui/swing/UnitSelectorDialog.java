@@ -77,7 +77,7 @@ import megamek.common.preference.PreferenceManager;
  * The original list has been changed to a sortable table and a text filter
  * is used for advanced searching.
  */
-public class MechSelectorDialog extends JDialog implements Runnable,
+public class UnitSelectorDialog extends JDialog implements Runnable,
     KeyListener, ActionListener {
 
     /**
@@ -129,7 +129,7 @@ public class MechSelectorDialog extends JDialog implements Runnable,
     private TableRowSorter<MechTableModel> sorter;
 
     /** Creates new form UnitSelectorDialog */
-    public MechSelectorDialog(ClientGUI cl, UnitLoadingDialog uld) {
+    public UnitSelectorDialog(ClientGUI cl, UnitLoadingDialog uld) {
         super(cl.frame, Messages.getString("MechSelectorDialog.title"), true); //$NON-NLS-1$
         client = cl.getClient();
         clientgui = cl;

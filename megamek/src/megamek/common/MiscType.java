@@ -6597,6 +6597,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.availRating = new int[] { RATING_A, RATING_A, RATING_A };
         misc.techRating = RATING_A;
+        misc.criticals = 0;
 
         return misc;
     }

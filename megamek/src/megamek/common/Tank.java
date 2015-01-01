@@ -16,6 +16,7 @@ package megamek.common;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -3019,7 +3020,8 @@ public class Tank extends Entity {
                     continue;
                 }
             }
-            if (!(mount.getType() instanceof AmmoType)) {
+            if (!(mount.getType() instanceof AmmoType
+                    || Arrays.asList(EquipmentType.armorNames).contains(mount.getType().getName()))) {
                 usedSlots += mount.getType().getTankslots(this);
             }
         }

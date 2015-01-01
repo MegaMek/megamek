@@ -58,7 +58,7 @@ import megamek.common.VTOL;
  *         for use in both MegaMek and MHQ so don't go messing things up for MHQ
  *         by changing a bunch of stuff
  */
-public class MechEditorDialog extends JDialog {
+public class UnitEditorDialog extends JDialog {
 
     /**
      *
@@ -100,7 +100,7 @@ public class MechEditorDialog extends JDialog {
     CheckCritPanel dockCollarCrit;
     CheckCritPanel[] protoCrits;
 
-    public MechEditorDialog(JFrame parent, Entity m) {
+    public UnitEditorDialog(JFrame parent, Entity m) {
         super(parent, true);
         entity = m;
         initComponents();

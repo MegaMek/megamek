@@ -20,6 +20,7 @@ v0.39.6 / v0.40.0RC4 (SVN)
     Also, replaced unreadable Russian character code with the actual word in the .properties files
 + Bug [#4398]: APMs cannot be selected in UnitDisplay Weapons tab
 + Changes for MegaMekLab Bug 139
++ Changes for MegaMekLab Bug 95
 
 v0.39.5 / v0.40.0RC3 (2014-12-25 15:10 UTC)
 + Bug: GameVictoryEvent was not adding "Out of Game" entities to the entityIds hashtable

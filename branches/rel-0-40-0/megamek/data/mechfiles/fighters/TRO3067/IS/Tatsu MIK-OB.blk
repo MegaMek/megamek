@@ -1,0 +1,162 @@
+
+<BlockVersion>
+
+2
+
+</BlockVersion>
+
+<Version>
+
+1
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Tatsu
+
+</Name>
+
+<Model>
+
+MIK-OB
+
+</Model>
+
+<Tonnage>
+
+70
+
+</Tonnage>
+
+<SafeThrust>
+
+5
+
+</SafeThrust>
+
+<Armor>
+
+86
+
+69
+
+69
+
+40
+
+</Armor>
+
+<Nose Equipment>
+
+ISLBXAC10
+
+ISLBXAC10 CL Ammo
+
+ISLBXAC10 CL Ammo
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+ISLRM15
+
+ISArtemisIV
+
+ISLRM15 Ammo Artemis-capable
+
+ISLRM15 Ammo Artemis-capable
+
+ISLRM15 Ammo Artemis-capable
+
+ISERMediumLaser
+
+ISERMediumLaser
+
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+
+ISLRM15
+
+ISArtemisIV
+
+ISLRM15 Ammo Artemis-capable
+
+ISLRM15 Ammo Artemis-capable
+
+ISLRM15 Ammo Artemis-capable
+
+ISERMediumLaser
+
+ISERMediumLaser
+
+</Right Wing Equipment>
+
+<Aft Equipment>
+
+</Aft Equipment>
+
+<heatsinks>
+
+12
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+400
+
+</fuel>
+
+<type>
+
+IS
+
+</type>
+
+<year>
+
+3063
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+2
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+<omni>
+
+</omni>

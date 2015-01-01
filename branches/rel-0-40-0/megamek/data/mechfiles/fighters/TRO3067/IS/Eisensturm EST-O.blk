@@ -1,0 +1,151 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Eisensturm
+
+</Name>
+
+<Model>
+
+EST-O
+
+</Model>
+
+<Tonnage>
+
+95
+
+</Tonnage>
+
+<SafeThrust>
+
+6
+
+</SafeThrust>
+
+<Armor>
+
+110
+
+85
+
+85
+
+69
+
+</Armor>
+
+<Nose Equipment>
+
+ISGaussRifle
+
+ISGaussRifle
+
+ISGauss Ammo
+
+ISGauss Ammo
+
+ISGauss Ammo
+
+ISGauss Ammo
+
+ISMediumLaser
+
+ISMediumLaser
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+ISLargeLaser
+
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+
+ISLargeLaser
+
+</Right Wing Equipment>
+
+<Aft Equipment> 
+
+</Aft Equipment>
+
+<heatsinks>
+
+11
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+400
+
+</fuel>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+3066
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+19
+</armor_type>
+
+<engine_type>
+
+2
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+<omni>
+
+</omni>

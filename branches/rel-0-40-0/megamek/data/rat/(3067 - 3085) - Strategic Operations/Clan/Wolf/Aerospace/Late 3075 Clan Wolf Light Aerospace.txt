@@ -1,0 +1,12 @@
+Clan Wolf Light Aerospace Late 3075
+Swift C,1
+Vandal D,2
+Batu D,3
+Batu C,4
+Batu Prime,5
+Sulla Prime,6
+Batu A,5
+Sulla D,4
+Avar D,3
+Vandal C,2
+Avar B,1

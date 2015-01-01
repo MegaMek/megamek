@@ -1,0 +1,193 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+
+
+<Name>
+
+Transgressor
+
+</Name>
+
+
+
+<Model>
+
+TR-16
+
+</Model>
+
+
+
+<Tonnage>
+
+75
+
+</Tonnage>
+
+
+
+<SafeThrust>
+
+6
+
+</SafeThrust>
+
+
+
+<Armor>
+
+66
+
+49
+
+49
+
+33
+
+</Armor>
+
+
+
+<Nose Equipment>
+
+ISGaussRifle
+
+ISGaussRifle
+
+Medium Laser
+
+IS Gauss Ammo
+
+IS Gauss Ammo
+
+IS Gauss Ammo
+
+</Nose Equipment>
+
+
+
+<Left Wing Equipment>
+
+Medium Laser
+
+</Left Wing Equipment>
+
+
+
+<Right Wing Equipment>
+
+Medium Laser
+
+</Right Wing Equipment>
+
+
+
+<Aft Equipment>
+
+Medium Laser
+
+</Aft Equipment>
+
+
+
+<heatsinks>
+
+10
+
+</heatsinks>
+
+
+
+<sink_type>
+
+1
+
+</sink_type>
+
+
+
+<fuel>
+
+400
+
+</fuel>
+
+
+
+<type>
+
+IS Level 2
+
+</type>
+
+
+
+<year>
+
+3058
+
+</year>
+
+
+
+<source>
+
+Clan Invasion
+
+</source>
+
+
+
+<internal_type>
+
+0				
+
+</internal_type>
+
+
+
+<armor_type>
+
+19
+</armor_type>
+
+
+
+<engine_type>				
+
+0
+
+</engine_type>
+
+
+
+<motion_type>
+
+aerodyne
+
+</motion_type>

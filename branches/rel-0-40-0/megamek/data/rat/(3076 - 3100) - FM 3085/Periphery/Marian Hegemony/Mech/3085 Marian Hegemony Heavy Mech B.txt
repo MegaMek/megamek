@@ -1,0 +1,12 @@
+3085 Marian Hegemony Heavy Mech B
+Merlin MLN-1C,1
+Rifleman RFL-5M,2
+Quickdraw QKD-5M,3
+Warhammer WHM-6R,4
+Grasshopper GHR-5H,5
+JagerMech JM6-H,6
+Catapult CPLT-H2,5
+Thunderbolt TDR-7M,4
+Gallant GLT-7-0,3
+Marauder MAD-3R,2
+Thunderbolt TDR-9M,1

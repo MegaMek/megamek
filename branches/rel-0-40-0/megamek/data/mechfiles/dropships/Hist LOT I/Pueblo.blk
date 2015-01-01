@@ -1,0 +1,166 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Pueblo
+</Name>
+
+<Model>
+(2673)
+</Model>
+
+<Tonnage>
+8400
+</Tonnage>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<Armor>
+520
+520
+520
+300
+</Armor>
+
+<Nose Equipment>
+ISERPPC
+ISERPPC
+ISLRM15
+ISArtemisIV
+ISLRM15
+ISArtemisIV
+ISLRM15
+ISArtemisIV
+ISLRM15 Ammo Artemis-capable:72
+ISERLargeLaser
+ISERLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMobileHPG
+ISSmallNavalCommScannerSuite
+</Nose Equipment>
+
+<Left Side Equipment>
+ISERPPC
+ISERPPC
+ISLRM15
+ISArtemisIV
+ISLRM15
+ISArtemisIV
+ISLRM15 Ammo Artemis-capable:48
+ISERLargeLaser
+ISERLargeLaser
+ISMediumLaser
+ISMediumLaser
+(R) ISERPPC
+(R) ISMediumLaser
+(R) ISMediumLaser
+</Left Side Equipment>
+
+<Right Side Equipment> 
+ISERPPC
+ISERPPC
+ISLRM15
+ISArtemisIV
+ISLRM15
+ISArtemisIV
+ISLRM15 Ammo Artemis-capable:48
+ISERLargeLaser
+ISERLargeLaser
+ISMediumLaser
+ISMediumLaser
+(R) ISERPPC
+(R) ISMediumLaser
+(R) ISMediumLaser
+</Right Side Equipment>
+
+<Aft Equipment> 
+ISERPPC
+ISERPPC
+ISLRM15
+ISArtemisIV
+ISLRM15
+ISArtemisIV
+ISLRM15 Ammo Artemis-capable:48
+</Aft Equipment>
+
+<structural_integrity>
+30
+</structural_integrity>
+
+<heatsinks>
+164
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+1350
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+2673
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+19
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+SmallCraftBay:4:2
+CargoBay:300:2
+CargoBay:1000:2
+</transporters>
+
+<escape_pod>
+4
+</escape_pod>
+
+<life_boat>
+6
+</life_boat>
+
+<crew>
+14
+</crew>
+
+<passengers>
+18
+</passengers>
+
+<Marines>
+6
+</marines>

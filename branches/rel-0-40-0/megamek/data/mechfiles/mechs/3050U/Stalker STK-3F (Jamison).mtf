@@ -1,0 +1,157 @@
+Version:1.0
+Stalker
+STK-3F (Jamison)
+
+Config:Biped
+TechBase:Mixed (IS Chassis)
+Era:3054
+Source:RS3050Uu-I
+Rules Level:4
+
+Mass:85
+Engine:255 Fusion Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+
+Heat Sinks:18 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:28
+RA Armor:28
+LT Armor:28
+RT Armor:28
+CT Armor:40
+HD Armor:9
+LL Armor:35
+RL Armor:35
+RTL Armor:7
+RTR Armor:7
+RTC Armor:14
+
+Weapons:10
+LRM 20, Right Arm
+LRM 20, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+Large Pulse Laser, Right Torso
+Large Pulse Laser, Left Torso
+Streak SRM 6, Right Torso
+Streak SRM 6, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLERMediumLaser
+CLERMediumLaser
+Clan Ammo LRM-20
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLERMediumLaser
+CLERMediumLaser
+Clan Ammo LRM-20
+-Empty-
+
+Left Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLLargePulseLaser
+CLLargePulseLaser
+CLStreakSRM6
+CLStreakSRM6
+Clan Streak SRM 6 Ammo
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+
+Right Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLLargePulseLaser
+CLLargePulseLaser
+CLStreakSRM6
+CLStreakSRM6
+Clan Streak SRM 6 Ammo
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

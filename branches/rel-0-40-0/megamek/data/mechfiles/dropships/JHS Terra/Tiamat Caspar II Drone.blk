@@ -1,0 +1,217 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Tiamat Pocket Warship
+</Name>
+
+<Model>
+(CASPAR II Drone)
+</Model>
+
+<motion_type>
+Spheriod
+</motion_type>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+3079
+</year>
+
+<Tonnage>
+36000
+</Tonnage>
+
+<BV>
+</BV>
+
+<fuel>
+10000
+</fuel>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+415
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<structural_integrity>
+75
+</structural_integrity>
+
+<Armor>
+810
+750
+750
+705
+</Armor>
+
+<armor_type>
+20
+</armor_type>
+
+<internal_type>
+0
+</internal_type>
+
+<engine_type>
+0
+</engine_type>
+
+<transporters>
+asfbay:6:6
+CargoBay:143:1
+</transporters>
+
+<escape_pod>
+0
+</escape_pod>
+
+<life_boat>
+0
+</life_boat>
+
+<crew>
+0
+</crew>
+
+<battlearmor>
+0
+</battlearmor>
+
+<marines>
+0
+</marines>
+
+<passengers>
+0
+</passengers>
+
+<otherpassenger>
+0
+</otherpassenger>
+
+<Nose Equipment>
+SCL1
+SCL1
+SCL1
+SCL1
+SCL1
+SCL1
+HeavySCC
+HeavySCC
+HeavySCC
+HeavySCC Ammo:60
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISheavyGaussRifle Ammo:80
+ISERPPC
+ISERPPC
+ISERPPC
+ISERPPC
+ISLaserAMS
+ISLaserAMS
+ISLaserAMS
+ISLaserAMS
+</Nose Equipment>
+
+<Left Side Equipment>
+SCL3
+SCL3
+SCL3
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+ISLaserAMS
+ISLaserAMS
+ISLaserAMS
+ISLaserAMS
+(R) Piranha
+(R) Piranha Ammo:15
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLaserAMS
+(R) ISLaserAMS
+(R) ISLaserAMS
+(R) ISLaserAMS
+</Left Side Equipment>
+
+<Right Side Equipment>
+SCL3
+SCL3
+SCL3
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+ISLaserAMS
+ISLaserAMS
+ISLaserAMS
+ISLaserAMS
+(R) Piranha
+(R) Piranha Ammo:15
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLargeVSPLaser
+(R) ISLaserAMS
+(R) ISLaserAMS
+(R) ISLaserAMS
+</Right Side Equipment>
+
+<Aft Equipment>
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLaserAMS
+ISLaserAMS
+ISLaserAMS
+ISLaserAMS
+Screen Launcher
+ScreenLauncher Ammo:20
+</Aft Equipment>
+
+<history>
+The Caspar II Advanced Smart Robotic Control System isn't implemented in MM.  Unit included for completeness.  If used as a drone it is a Piloting 5/Gunnery 4 unit.  Fighter bay normally carriers Aeshna heavy drone fighters
+</history>
+
+
+

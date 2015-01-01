@@ -1,0 +1,153 @@
+Version:1.1
+Antlion
+LK-3D
+
+Config:Quad
+TechBase:Mixed (IS Chassis)
+Era:3117
+Source:TRO 3145 FS
+Rules Level:4
+
+Mass:45
+Engine:225 XL Engine(IS)
+Structure:IS Reinforced
+Myomer:Standard
+Cockpit:Small Cockpit
+Gyro:XL Gyro
+
+Heat Sinks:10 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Light Ferro-Fibrous(Inner Sphere)
+FLL Armor:20
+FRL Armor:20
+LT Armor:17
+RT Armor:17
+CT Armor:22
+HD Armor:9
+RLL Armor:20
+RRL Armor:20
+RTL Armor:5
+RTR Armor:5
+RTC Armor:6
+
+Weapons:4
+Mortar 4, Right Torso
+Mortar 4, Left Torso
+Light Machine Gun, Head
+Light Machine Gun, Head
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Light Machine Gun Ammo - Half
+IS Light Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Clan Mech Mortar-4
+Clan Mech Mortar-4
+BloodhoundActiveProbe
+BloodhoundActiveProbe
+BloodhoundActiveProbe
+RemoteSensorDispenser
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Mech Mortar-4
+Clan Mech Mortar-4
+Clan Ammo SC Mortar-4
+Clan Ammo SC Mortar-4
+Clan Ammo SC Mortar-4
+Clan Ammo SC Mortar-4
+Clan Ammo SC Mortar-4
+Clan Ammo SC Mortar-4
+ISCASEII
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+Light Machine Gun
+Light Machine Gun
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

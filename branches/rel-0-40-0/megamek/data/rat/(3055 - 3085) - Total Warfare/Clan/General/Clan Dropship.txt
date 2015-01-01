@@ -1,0 +1,14 @@
+Clan Dropship
+Noruff (Standard),1
+Outpost (3063),2
+Confederate (Clan),3
+Carrier (Standard),4
+Union C,5
+Overlord C,6
+Broadsword (Standard),5
+Mercer (3065),4
+Arcadia (3066),3
+Sassanid (Standard),2
+Miraborg (Standard),1
+#Edited by Harold "BATTLEMASTER" N.
+#3/2/2011

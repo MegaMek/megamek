@@ -1,0 +1,12 @@
+Word of Blake Medium Vehicles A
+Chaparral Missile Artillery Tank (Standard),1
+Maxim Heavy Hover Transport (BA Factory Upgrade),2
+Zephyr Hovertank (C3i),3
+Maxim Heavy Hover Transport (Fire Support),4
+Goblin Infantry Support Vehicle (Sealed),5
+Zephyr Hovertank (C3i),6
+Regulator II Hovertank (Standard),5
+Stygian Strike Tank (Armor),4
+Drillson Heavy Hover Tank (ERLL),3
+Stygian Strike Tank (WOB),2
+Regulator II Hovertank (Standard),1	

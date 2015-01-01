@@ -1,0 +1,12 @@
+Capellan Confederation Light Mechs C
+Anubis ABS-3T,1
+Duan Gung D9-G9,2
+Raven RVN-4Lr,3
+Stinger STG-6L,4
+Anubis ABS-5Y,5
+Dola DOL-1A1,6
+Ebony MEB-9,5
+Havoc HVC-P6,4
+Gun GN-2O,3
+Yinghuochong YHC-3E,2
+Dola DOL-1A2 'Yoh Ti Ts'angs',1

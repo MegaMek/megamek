@@ -1,0 +1,12 @@
+Cloud Cobra FL Heavy Aerospace (FMU)
+Scytha B,1
+Kirghiz Prime,2
+Kirghiz C,3
+Jengiz A,4
+Kirghiz B,5
+Scytha B,6
+Jengiz B,5
+Scytha C,4
+Scytha A,3
+Sabutai B,2
+Jengiz C,1

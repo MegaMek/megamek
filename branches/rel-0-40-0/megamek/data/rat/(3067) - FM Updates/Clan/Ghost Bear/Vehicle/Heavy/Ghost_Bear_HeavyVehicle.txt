@@ -1,0 +1,12 @@
+Ghost Bear Heavy Vehicle (FMU)
+Shoden Assault Vehicle (Standard),1
+LRM Carrier (Standard),2
+Oro Heavy Tank (Standard),3
+Pike Support Vehicle (Clan),4
+Ishtar Heavy Fire Support Tank (Standard),5
+Oro Heavy Tank (Standard),6
+Ishtar Heavy Fire Support Tank (Standard),5
+Oro Heavy Tank (Standard),4
+Pike Support Vehicle (Clan),3
+Athena Combat Vehicle (Standard),2
+Tokugawa Heavy Tank TKG-150,1

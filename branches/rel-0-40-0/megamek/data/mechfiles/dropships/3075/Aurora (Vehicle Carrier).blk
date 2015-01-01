@@ -1,0 +1,128 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Aurora
+</Name>
+
+<Model>
+(Vehicle)
+</Model>
+
+<Tonnage>
+1600
+</Tonnage>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<Armor>
+180
+150
+150
+120
+</Armor>
+
+<Nose Equipment>
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo:40
+ISERMediumLaser
+ISERMediumLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+ISERPPC
+ISERPPC
+</Left Side Equipment>
+
+<Right Side Equipment> 
+ISERPPC
+ISERPPC
+</Right Side Equipment>
+
+<Aft Equipment> 
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo:40
+ISLargePulseLaser
+ISLargePulseLaser
+</Aft Equipment>
+
+<structural_integrity>
+8
+</structural_integrity>
+
+<heatsinks>
+50
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+5000
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3062
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+lightvehiclebay:3:1
+lightvehiclebay:3:1
+lightvehiclebay:3:1
+lightvehiclebay:3:1
+CargoBay:164:0
+</transporters>
+
+<escape_pod>
+3
+</escape_pod>
+
+<life_boat>
+0
+</life_boat>
+
+<crew>
+14
+</crew>
+
+<passengers>
+0
+</passengers>

@@ -1,0 +1,12 @@
+3085 Taurian Concordant Light Mech D
+Stinger STG-3R,1
+Locust LCT-5V,2
+Wasp WSP-1A,3
+Stinger STG-5R,4
+Wasp WSP-1A,5
+Locust LCT-1V,6
+Commando COM-2D,5
+Toro TR-A-1,4
+Commando COM-2D,3
+Anubis ABS-3L,2
+Stinger STG-5T,1

@@ -1,0 +1,97 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Hachiman Fire Support Tank
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2842
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+30
+29
+29
+19
+27
+</armor>
+
+<Body Equipment>
+Clan Streak SRM 4 Ammo
+Clan Ammo LRM-20 (Clan) Artemis-capable
+Clan Ammo LRM-20 (Clan) Artemis-capable
+Clan Ammo LRM-20 (Clan) Artemis-capable
+Clan Ammo LRM-20 (Clan) Artemis-capable
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+CLStreakSRM4
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLERMediumLaser
+CLERMediumLaser
+CLLRM20
+CLArtemisIV
+CLLRM20
+CLArtemisIV
+</Turret Equipment>
+
+<source>
+Succession Wars
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+

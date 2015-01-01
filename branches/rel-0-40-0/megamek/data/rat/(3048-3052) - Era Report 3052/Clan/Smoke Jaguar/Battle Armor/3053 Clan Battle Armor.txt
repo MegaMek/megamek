@@ -1,0 +1,6 @@
+3053 Clan - Battle Armor
+Elemental Battle Armor (Headhunter),1
+Elemental Battle Armor [Flamer],2
+Elemental Battle Armor [Laser],4
+Elemental Battle Armor [MG],3
+##I have taken the liberty of creating this RAT but it does exist anywhere.

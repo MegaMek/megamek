@@ -1,0 +1,12 @@
+LAAF Light Mechs F 3067 (FMU)
+Wolfhound WLF-1,1
+Spider SDR-5V,2
+Panther PNT-9R,3
+Firestarter FS9-H,4
+Locust LCT-1V,5
+Commando COM-2D,6
+Stinger STG-3R,5
+Wasp WSP-1A,4
+Jenner JR7-D,3
+Javelin JVN-10N,2
+Commando COM-5S,1 

@@ -1,0 +1,12 @@
+Clan Fire Mandrill Light Vehicles (FMU)
+Svantovit Infantry Fighting Vehicle (Original),1
+Shamash Reconnaissance Vehicle (Standard),2
+Svantovit Infantry Fighting Vehicle (Original),3
+Donar Assault Helicopter (Standard),4
+Svantovit Infantry Fighting Vehicle (Standard),5
+Odin Scout Tank (Standard),6
+Zorya Light Tank (Standard),5
+Svantovit Infantry Fighting Vehicle (Standard),4
+Asshur Fast Reconnaissance Vehicle (Standard),3
+Zorya Light Tank (Standard),2
+Shamash Reconnaissance Vehicle (Standard),1

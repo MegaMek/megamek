@@ -1,0 +1,201 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Arondight Pocket Warship
+</Name>
+
+<model>
+(Refit)
+</model>
+
+<Tonnage>
+12000
+</Tonnage>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<Armor>
+352
+322
+322
+301
+</Armor>
+
+<Nose Equipment>
+KrakenT
+KrakenT Ammo:10
+HeavySCC
+HeavySCC Ammo:60
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo:32
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+AMS
+AMS
+AMS
+ISAMS Ammo:72
+</Nose Equipment>
+
+<Left Side Equipment>
+LightSCC
+LightSCC
+LightSCC
+LightSCC
+LightSCC Ammo:80
+(B) Piranha
+Piranha
+Piranha Ammo:20
+ISERMediumLaser
+ISERMediumLaser
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5 Ammo:120
+AMS
+AMS
+ISAMS Ammo:48
+(R) Piranha
+(R) Piranha
+(R) Piranha Ammo:20
+(R) ISRotaryAC5
+(R) ISRotaryAC5
+(R) ISRotaryAC5 Ammo:120
+(R) ISERMediumLaser
+(R) ISERMediumLaser
+(R) ISERMediumLaser
+(R) AMS
+(R) AMS
+(R) AMS
+(R) ISAMS Ammo:72
+</Left Side Equipment>
+
+<Right Side Equipment> 
+LightSCC
+LightSCC
+LightSCC
+LightSCC
+LightSCC Ammo:80
+(B) Piranha
+Piranha
+Piranha Ammo:20
+ISERMediumLaser
+ISERMediumLaser
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5 Ammo:120
+AMS
+AMS
+ISAMS Ammo:48
+(R) Piranha
+(R) Piranha
+(R) Piranha Ammo:20
+(R) ISRotaryAC5
+(R) ISRotaryAC5
+(R) ISRotaryAC5 Ammo:120
+(R) ISERMediumLaser
+(R) ISERMediumLaser
+(R) ISERMediumLaser
+(R) AMS
+(R) AMS
+(R) AMS
+(R) ISAMS Ammo:72
+</Right Side Equipment>
+
+<Aft Equipment>
+Screen Launcher 
+Ammo Screen:10 
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo:32
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+AMS
+AMS
+AMS
+ISAMS Ammo:72
+</Aft Equipment>
+
+<structural_integrity>
+20
+</structural_integrity>
+
+<heatsinks>
+200
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+7500
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+3082
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+19
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+spheroid
+</motion_type>
+
+<transporters>
+CargoBay:370:2
+SmallCraftBay:2:2
+</transporters>
+
+<escape_pod>
+7
+</escape_pod>
+
+<life_boat>
+4
+</life_boat>
+
+<crew>
+48
+</crew>
+
+<marines>
+24
+</marines>
+
+<passengers>
+0
+</passengers>

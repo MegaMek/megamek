@@ -1,0 +1,101 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Rapier
+</Name>
+
+<Model>
+RPR-300X
+</Model>
+
+<year>
+3070
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+15
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+20
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+77
+64
+64
+62
+</armor>
+
+<Nose Equipment>
+Hyper Velocity Auto Cannon/10
+Hyper Velocity Auto Cannon/10
+Extended LRM 10
+IS Ammo HVAC/10
+IS Ammo HVAC/10
+IS Ammo HVAC/10
+IS Ammo Extended LRM-10
+IS Ammo Extended LRM-10
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<tonnage>
+85.0
+</tonnage>
+

@@ -1,0 +1,129 @@
+Version:1.1
+Annihilator
+ANH-2AX
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3074
+Rules Level:4
+
+Mass:100
+Engine:200 Compact Engine
+Structure:Standard
+Gyro:Compact Gyro
+Myomer:Standard
+
+Heat Sinks:10 Single
+Walk MP:2
+Jump MP:0
+
+Armor:Reflective
+LA Armor:34
+RA Armor:34
+LT Armor:32
+RT Armor:32
+CT Armor:44
+HD Armor:9
+LL Armor:42
+RL Armor:42
+RTL Armor:10
+RTR Armor:10
+RTC Armor:15
+
+Weapons:2
+1 ISImprovedHeavyGaussRifle, Left Torso, Ammo:32
+1 ISImprovedHeavyGaussRifle, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+IS Improved Heavy Gauss Rifle Ammo
+IS Improved Heavy Gauss Rifle Ammo
+IS Improved Heavy Gauss Rifle Ammo
+IS Improved Heavy Gauss Rifle Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+IS Improved Heavy Gauss Rifle Ammo
+IS Improved Heavy Gauss Rifle Ammo
+IS Improved Heavy Gauss Rifle Ammo
+IS Improved Heavy Gauss Rifle Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISCASE
+
+Right Torso:
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISCASE
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Heat Sink
+Heat Sink
+Reflective
+Reflective
+Reflective
+Reflective
+Reflective
+
+Head:
+Life Support (armored)
+Sensors (armored)
+Cockpit (armored)
+Reflective
+Sensors (armored)
+Life Support (armored)
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Reflective
+Reflective
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Reflective
+Reflective

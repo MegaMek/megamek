@@ -1,0 +1,157 @@
+Version:1.0
+Behemoth (Stone Rhino)
+5
+
+Config:Biped
+TechBase:Clan
+Era:2846
+Source:RS3055Uu
+Rules Level:2
+
+Mass:100
+Engine:400 XL (Clan) Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Clan)
+LA Armor:29
+RA Armor:29
+LT Armor:28
+RT Armor:28
+CT Armor:40
+HD Armor:9
+LL Armor:34
+RL Armor:34
+RTL Armor:9
+RTR Armor:9
+RTC Armor:13
+
+Weapons:10
+LB 5-X AC, Right Torso
+LB 5-X AC, Left Torso
+LB 5-X AC, Left Torso
+LB 5-X AC, Right Torso
+ER Medium Laser, Right Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+ER Medium Laser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
+Clan LB 5-X AC Ammo
+Clan LB 5-X Cluster Ammo
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
+CLLBXAC5
+Clan LB 5-X AC Ammo
+Clan LB 5-X Cluster Ammo
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

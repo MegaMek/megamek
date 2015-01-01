@@ -1,0 +1,12 @@
+Draconis Combine Assault 'Mech
+Goliath GOL-1H,1
+Zeus ZEU-6S,2
+Banshee BNC-3E,3
+Charger CGR-1A1,4
+BattleMaster BLR-1G,5
+Stalker STK-3F,6
+Cyclops CP-10-Z,5
+Charger CGR-1A9,4
+BattleMaster BLR-1G,3
+Victor VTR-9B,2
+Atlas AS7-D,1

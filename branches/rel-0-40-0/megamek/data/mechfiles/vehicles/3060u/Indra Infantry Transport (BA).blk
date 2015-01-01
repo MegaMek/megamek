@@ -1,0 +1,101 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Indra Infantry Transport
+</Name>
+
+<Model>
+(BA)
+</Model>
+
+<year>
+3069
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+troopspace:5.0
+</transporters>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<armor>
+25
+20
+20
+14
+17
+</armor>
+
+<Body Equipment>
+CLLightActiveProbe
+CLPlasmaCannonAmmo
+CLPlasmaCannonAmmo
+CLAPGaussRifle Ammo
+CLAPGaussRifle Ammo
+CLCASE
+</Body Equipment>
+
+<Front Equipment>
+CLPlasmaCannon
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+CLBPod
+</Rear Equipment>
+
+<Turret Equipment>
+CLAPGaussRifle
+CLAPGaussRifle
+CLAPGaussRifle
+CLAPGaussRifle
+CLCASE
+</Turret Equipment>
+
+<source>
+Jihad
+</source>
+
+<tonnage>
+35.0
+</tonnage>
+

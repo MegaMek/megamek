@@ -1,0 +1,88 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Fulcrum Heavy HoverTank
+</Name>
+
+<Model>
+X
+</Model>
+
+<year>
+3075
+</year>
+
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<cruiseMP>
+10
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+2
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+40
+27
+27
+20
+38
+</armor>
+
+<Body Equipment>
+ISMagshotGR Ammo
+ISArmoredMotiveSystem
+ISAngelECMSuite
+Supercharger
+</Body Equipment>
+
+<Front Equipment>
+ISMagshotGR
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLMediumPulseLaser
+CLMediumPulseLaser
+ISMagshotGR
+</Turret Equipment>
+
+<tonnage>
+50.0
+</tonnage>
+

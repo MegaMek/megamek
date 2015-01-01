@@ -1,0 +1,12 @@
+Word of Blake Light Vehicles B
+Cavalry Attack Helicopter (SRM),1
+Lightning Attack Hovercraft (Standard),2
+Main Gauche Light Support Tank (XL),3
+Chevalier Light Tank (Standard),4
+Hunter Light Support Tank (Standard),5
+Pinto Attack VTOL (WoB),6
+Cyrano Gunship (ML),5
+Chevalier Light Tank (BAP),4
+Galleon Light Tank GAL-104,3
+Lightning Attack Hovercraft (ERML),2
+Hawk Moth Gunship (Thunderbolt),1

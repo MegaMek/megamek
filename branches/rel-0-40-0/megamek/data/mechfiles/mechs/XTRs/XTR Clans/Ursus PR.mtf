@@ -1,0 +1,155 @@
+Version:1.0
+Ursus
+PR
+
+Config:Biped
+TechBase:Mixed (Clan Chassis)
+Era:3074
+Source:XTR Clans
+Rules Level:4
+
+Mass:50
+Engine:200 Fusion Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:15
+RA Armor:15
+LT Armor:18
+RT Armor:18
+CT Armor:25
+HD Armor:9
+LL Armor:23
+RL Armor:23
+RTL Armor:5
+RTR Armor:5
+RTC Armor:7
+
+Weapons:8
+ProtoMech AC/8, Right Arm
+ProtoMech AC/8, Right Arm
+Improved Heavy Medium Laser, Left Torso
+Improved Heavy Medium Laser, Right Torso
+ER Flamer, Head
+AP Gauss Rifle, Left Arm
+AP Gauss Rifle, Left Arm
+AP Gauss Rifle, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLAPGaussRifle
+CLAPGaussRifle
+CLAPGaussRifle
+CLAPGaussRifle Ammo
+CLAPGaussRifle Ammo
+CLCASEII
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLProtoMechAC8
+CLProtoMechAC8
+CLProtoMechAC8
+CLProtoMechAC8
+CLProtoMechAC8
+CLProtoMechAC8
+CLProtoMechAC8
+CLProtoMechAC8
+Clan Ferro-Fibrous
+
+Left Torso:
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+CLImprovedMediumHeavyLaser
+CLImprovedMediumHeavyLaser
+Clan ProtoMech AC/8 Ammo
+Clan ProtoMech AC/8 Ammo
+CLCASEII
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISC3iUnit
+ISC3iUnit
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERFlamer
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

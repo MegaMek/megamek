@@ -1,0 +1,12 @@
+3055 House Kurita Mech - Light
+Hitman HM-1,1
+Jenner JR7-D,2
+Owens OW-1,3
+Panther PNT-9R,4
+Raptor RTX1-OA,5
+Raptor RTX1-O,6
+Kabuto KBO-7A,5
+Jenner JR7-D,4
+Spider SDR-5V,3
+Venom SDR-9K,2
+Panther PNT-C,1

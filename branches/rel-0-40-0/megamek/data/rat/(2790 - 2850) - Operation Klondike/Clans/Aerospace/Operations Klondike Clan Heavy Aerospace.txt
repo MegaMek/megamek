@@ -1,0 +1,12 @@
+2821 Operations Klondike Clan Heavy Aerospace
+Eagle EGL-R6b,1
+Rapier RPR-100,2
+Thunderbird TRB-D36b,3
+Stuka STU-K5b,4
+Ahab AHB-443b,5
+Rapier RPR-100b,6
+Hammerhead HMR-HDb,5
+Eagle EGL-R6b,4
+Thunderbird TRB-D36b,3
+Chippewa CHP-W5b,2
+Ahab AHB-443,1

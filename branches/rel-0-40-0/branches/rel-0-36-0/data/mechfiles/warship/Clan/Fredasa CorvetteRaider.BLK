@@ -1,0 +1,193 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Fredasa Corvette/Raider
+</Name>
+<Tonnage>
+180000
+</Tonnage>
+<SafeThrust>
+5
+</SafeThrust>
+<Armor>
+40
+30
+30
+30
+30
+35
+</Armor>
+<Nose Equipment>
+Clan Gauss Rifle
+Clan Gauss Rifle
+Clan Gauss Rifle Ammo
+Clan Gauss Rifle Ammo
+Clan Gauss Rifle Ammo
+Clan Gauss Rifle Ammo
+Clan Gauss Rifle Ammo
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+NAC40
+NAC40 Ammo:100
+NL45
+NL45
+</Nose Equipment>
+<Front Left Side Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+NAC10
+NAC10
+NAC10 Ammo:100
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+NAC10
+NAC10
+NAC10 Ammo:100
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6 Ammo
+CLStreakSRM6 Ammo
+CLStreakSRM6 Ammo
+CLStreakSRM6 Ammo
+CLStreakSRM6 Ammo
+CLStreakSRM6 Ammo
+NL45
+NL45
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6 Ammo
+CLStreakSRM6 Ammo
+CLStreakSRM6 Ammo
+CLStreakSRM6 Ammo
+CLStreakSRM6 Ammo
+CLStreakSRM6 Ammo
+NL45
+NL45
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+CLLRM20
+Clan Artemis IV FCS
+CLLRM20
+Clan Artemis IV FCS
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+</Aft Left Side Equipment>
+<Aft Right Side Equipment> 
+CLLRM20
+Clan Artemis IV FCS
+CLLRM20
+Clan Artemis IV FCS
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+</Aft Right Side Equipment>
+<Aft Equipment> 
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+NL45
+NL45
+</Aft Equipment>
+<structural_integrity>
+40
+</structural_integrity>
+<heatsinks>
+373
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+30000
+</fuel>
+<type>
+Clan Level 3
+</type>
+<year>
+2962
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+12
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+SmallCraftBay:2:1
+ASFBay:20:4
+CargoBay:3416:1
+</transporters>
+<docking_collar>
+1
+</docking_collar>
+<grav_deck>
+1
+</grav_deck>
+<escape_pod>
+0
+</escape_pod>
+<life_boat>
+15
+</life_boat>
+<crew>
+152
+</crew>
+<passengers>
+0
+</passengers>
+<lithium-fusion>
+</lithium-fusion>

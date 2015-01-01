@@ -1,0 +1,154 @@
+Version:1.1
+Osteon
+Prime
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3072
+Source:WoR
+Rules Level:4
+
+Mass:85
+Engine:255 XL (Clan) Engine(IS)
+Structure:Clan Standard
+Myomer:Standard
+Cockpit:Torso-Mounted Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:10 Double
+Base Chassis Heat Sinks:10
+Walk MP:3
+Jump MP:0
+
+Armor:Ferro-Lamellor(Clan)
+LA Armor:24
+RA Armor:24
+LT Armor:24
+RT Armor:24
+CT Armor:40
+HD Armor:8
+LL Armor:36
+RL Armor:36
+RTL Armor:12
+RTR Armor:12
+RTC Armor:12
+
+Weapons:4
+iATM 9, Right Torso
+iATM 9, Left Arm
+iATM 9, Left Torso
+iATM 9, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLiATM9
+CLiATM9
+CLiATM9
+CLiATM9
+Clan Ammo iATM-9
+Clan Ammo iATM-9
+Clan Ammo iATM-9
+CLCASEII
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLiATM9
+CLiATM9
+CLiATM9
+CLiATM9
+Clan Ammo iATM-9
+Clan Ammo iATM-9
+Clan Ammo iATM-9
+CLCASEII
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Life Support
+CLiATM9
+CLiATM9
+CLiATM9
+CLiATM9
+Clan Ammo iATM-9
+Clan Ammo iATM-9
+CLCASEII
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Life Support
+CLiATM9
+CLiATM9
+CLiATM9
+CLiATM9
+Clan Ammo iATM-9
+Clan Ammo iATM-9
+CLCASEII
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Cockpit
+Sensors
+
+Head:
+Sensors
+Sensors
+NovaCEWS
+Clan Ammo iATM-9
+Clan Ammo iATM-9
+Clan Ammo iATM-9
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

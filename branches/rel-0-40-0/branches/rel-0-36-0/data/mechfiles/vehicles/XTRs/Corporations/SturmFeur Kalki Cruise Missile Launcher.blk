@@ -1,0 +1,93 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+SturmFeur
+</Name>
+
+<Model>
+“Kalki” Cruise Missile Launcher
+</Model>
+
+<year>
+3068
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+13
+12
+12
+12
+12
+7
+12
+</armor>
+
+<Body Equipment>
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+ISCruiseMissile50
+ISCruiseMissile50Ammo
+</Front Equipment>
+
+<Front Right Equipment>
+</Front Right Equipment>
+
+<Front Left Equipment>
+</Front Left Equipment>
+
+<Rear Right Equipment>
+</Rear Right Equipment>
+
+<Rear Left Equipment>
+</Rear Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Machine Gun
+Machine Gun
+</Turret Equipment>
+
+<source>
+XTR Corporations
+</source>
+
+<tonnage>
+125.0
+</tonnage>
+
+<history>
+The unit is 12.5 tons overweight. The unit in the TRO has been built wrong(IS calculated as if not Super-Heavy) and will likely be impossible to fix.  Included only for completeness.
+</history>
+

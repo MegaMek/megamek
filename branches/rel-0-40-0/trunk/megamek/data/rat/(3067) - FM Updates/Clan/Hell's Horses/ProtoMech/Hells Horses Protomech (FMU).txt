@@ -1,0 +1,12 @@
+Clan Hell's Horses ProtoMech 3067 (FMU)
+Harpy (Standard),1
+Harpy (Standard),2
+Harpy 2,3
+Harpy 2,4
+Hydra (Standard),5
+Minotaur (Standard),6
+Minotaur (Standard),5
+Minotaur 2,4
+Minotaur 2,3
+Hydra (Standard),2
+Hydra (Standard),1

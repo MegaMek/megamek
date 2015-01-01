@@ -1,0 +1,12 @@
+Rim Commonality Guard Heavy Mechs D
+Quickdraw QKD-5Mr,1
+Guillotine GLT-5M,2
+Tempest TMP-3M,3
+Archer ARC-8M,4
+Rifleman RFL-7M,5
+Thunderbolt TDR-10M,6
+Marauder MAD-9M2,5
+Archer ARC-9M,4
+Koschei KSC-5MC,3
+Hercules HRC-LS-9000,2
+Orion ON3-M,1

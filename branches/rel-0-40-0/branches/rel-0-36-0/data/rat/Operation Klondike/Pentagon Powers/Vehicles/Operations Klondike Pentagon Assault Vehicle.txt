@@ -1,0 +1,12 @@
+2821 Operations Klondike Pentagon Assault Vehicle
+Puma Assault Tank PAT-005b,1
+Alacorn Heavy Tank Mk VI,2
+Puma Assault Tank PAT-001,3
+Brunel Dump Truck (AC/20),4
+Fury Command Tank,5
+Rhino Fire Support Tank,6
+Puma Assault Tank PAT-001,5
+Brunel Dump Truck (LRM),4
+Fury Command Tank,3
+Fury Command Tank (Royal),2
+Alacorn Heavy Tank Mk VI,1

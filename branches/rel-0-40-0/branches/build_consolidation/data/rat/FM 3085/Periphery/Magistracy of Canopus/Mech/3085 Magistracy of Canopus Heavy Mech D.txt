@@ -1,0 +1,12 @@
+3085 Magistracy of Canopus Heavy Mech D
+Helios HEL-3D,1
+Orion ON1-K,2
+Thunderbolt TDR-5S,3
+Quickdraw QKD-4G,4
+Crusader CRD-3R,5
+Cataphract CTF-1X,6
+Ti Ts'ang TSG-9H,5
+Archer ARC-2R,4
+Warhammer WHM-6L,3
+Ostroc OSR-4L,2
+Marauder MAD-5L,1

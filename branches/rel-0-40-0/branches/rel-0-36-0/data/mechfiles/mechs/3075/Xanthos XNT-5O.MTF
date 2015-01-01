@@ -1,0 +1,156 @@
+Version:1.1
+Xanthos
+XNT-5O
+
+Config:Quad
+TechBase:Inner Sphere
+Era:3076
+Source:Jihad
+Rules Level:2
+
+Mass:100
+Engine:300 Compact Engine
+Structure:Endo Steel
+Myomer:Standard
+Cockpit:Standard Cockpit
+Gyro:Compact Gyro
+
+Heat Sinks:12 Double
+Walk MP:3
+Jump MP:5
+
+Armor:Light Ferro-Fibrous(Inner Sphere)
+FLL Armor:42
+FRL Armor:42
+LT Armor:32
+RT Armor:32
+CT Armor:46
+HD Armor:9
+RLL Armor:42
+RRL Armor:42
+RTL Armor:10
+RTR Armor:10
+RTC Armor:16
+
+Weapons:7
+Medium Pulse Laser, Head
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+ER PPC, Center Torso
+ER Small Laser, Center Torso
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Improved Jump Jet
+Improved Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Improved Jump Jet
+Improved Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISMediumPulseLaser
+ISMediumPulseLaser
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+
+Right Torso:
+ISMediumPulseLaser
+ISMediumPulseLaser
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Improved Jump Jet
+Improved Jump Jet
+ISERPPC
+ISERPPC
+ISERPPC
+ISERSmallLaser (R)
+Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISMediumPulseLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Improved Jump Jet
+Improved Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Improved Jump Jet
+Improved Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

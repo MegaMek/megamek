@@ -1,0 +1,12 @@
+Mercenary/Militia Medium Vehicles B
+Prowler Multi-Terrain Vehicle (WoB),1
+Hetzer Wheeled Assault Gun (Sealed),2
+Goblin Medium Tank (Standard),3
+Myrmidon Medium Tank (Standard),4
+Vedette Medium Tank (Cell),5
+Maxim Heavy Hover Transport (BA Field Upgrade),6
+Chaparral Missile Artillery Tank (Standard),5
+Zephyr Hovertank (LRM),4
+Maxim Heavy Hover Transport (Fire Support),3
+Goblin Infantry Support Vehicle (Sealed),2
+Regulator II Hovertank (Standard),1

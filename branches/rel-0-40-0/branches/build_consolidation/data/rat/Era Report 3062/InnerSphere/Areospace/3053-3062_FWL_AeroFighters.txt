@@ -1,0 +1,16 @@
+########################################################
+# Taken from Era Report 3062.
+# Conversion performed by Deric Page deric.page@usa.net
+########################################################
+3053-3062 FWL Areospace Fighters
+Cheetah F-11,222
+Corsair CSR-V14,56
+Riever F-700,139
+Shiva SHV-O,28
+Shiva SHV-OA,28
+Shiva SHV-OB,28
+Shiva SHV-OC,27
+Stingray F-92,250
+Stingray F-94,56
+Transgressor TR-13,28
+Transit TR-11,139

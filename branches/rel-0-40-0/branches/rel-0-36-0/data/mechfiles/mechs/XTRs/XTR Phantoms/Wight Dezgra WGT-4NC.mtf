@@ -1,0 +1,149 @@
+Version:1.0
+Wight
+WGT-4NC "Dezgra"
+
+Config:Biped
+TechBase:Mixed (IS Chassis)
+Era:3074
+Source:XTR: Phantoms
+Rules Level:4
+
+Mass:35
+Engine:280 XL Engine(IS)
+Structure:IS Composite
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:8
+Jump MP:7
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:11
+RA Armor:11
+LT Armor:11
+RT Armor:11
+CT Armor:15
+HD Armor:9
+LL Armor:16
+RL Armor:16
+RTL Armor:5
+RTR Armor:5
+RTC Armor:5
+
+Weapons:2
+Medium Pulse Laser, Left Torso
+Large Pulse Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+Mek Null Signature System
+Chameleon Light Polarization Shield
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+Mek Null Signature System
+Chameleon Light Polarization Shield
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Jump Jet
+CLMediumPulseLaser
+WatchdogECMSuite
+WatchdogECMSuite
+Mek Null Signature System
+Chameleon Light Polarization Shield
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Jump Jet
+CLLargePulseLaser
+CLLargePulseLaser
+IS Ferro-Fibrous
+Mek Null Signature System
+Chameleon Light Polarization Shield
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Mek Null Signature System
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Mek Null Signature System
+Chameleon Light Polarization Shield
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Mek Null Signature System
+Chameleon Light Polarization Shield
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

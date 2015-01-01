@@ -1,0 +1,334 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Fortress
+
+</Name>
+
+<Model>
+
+(2613)
+
+</Model>
+
+<Tonnage>
+
+6000
+
+</Tonnage>
+
+<SafeThrust>
+
+3
+
+</SafeThrust>
+
+<Armor>
+
+220
+
+210
+
+210
+
+150
+
+</Armor>
+
+<Nose Equipment>
+
+ISPPC
+
+ISPPC
+
+ISAC5
+
+ISAC5
+
+ISAC5 Ammo
+
+ISAC5 Ammo
+
+ISLargeLaser
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+ISPPC
+
+ISLRM20
+
+ISLRM20
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLargeLaser
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+(R) ISPPC
+
+(R) ISAC20
+
+(R) ISAC20 Ammo
+
+(R) ISAC20 Ammo
+
+(R) ISAC20 Ammo
+
+(R) ISAC5
+
+(R) ISAC5 Ammo
+
+(R) ISLRM10
+
+(R) ISLRM10
+
+(R) ISLRM10 Ammo
+
+(R) ISLRM10 Ammo
+
+(R) ISSRM6
+
+(R) ISSRM6
+
+(R) ISSRM6 Ammo
+
+(R) ISSRM6 Ammo
+
+(R) ISMediumLaser
+
+(R) ISMediumLaser
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+ISPPC
+
+ISLRM20
+
+ISLRM20
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLargeLaser
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+(R) ISPPC
+
+(R) ISAC20
+
+(R) ISAC20 Ammo
+
+(R) ISAC20 Ammo
+
+(R) ISAC20 Ammo
+
+(R) ISAC5
+
+(R) ISAC5 Ammo
+
+(R) ISLRM10
+
+(R) ISLRM10
+
+(R) ISLRM10 Ammo
+
+(R) ISLRM10 Ammo
+
+(R) ISSRM6
+
+(R) ISSRM6
+
+(R) ISSRM6 Ammo
+
+(R) ISSRM6 Ammo
+
+(R) ISMediumLaser
+
+(R) ISMediumLaser
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+ISAC5
+
+ISAC5 Ammo
+
+ISLargeLaser
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+</Aft Equipment>
+
+<structural_integrity>
+
+13
+
+</structural_integrity>
+
+<heatsinks>
+
+131
+
+</heatsinks>
+
+<sink_type>
+
+0
+
+</sink_type>
+
+<fuel>
+
+12000
+
+</fuel>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+2613
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+spheroid
+
+</motion_type>
+
+
+
+<transporters>
+
+MechBay:12:1
+
+HeavyVehicleBay:12:2
+
+InfantryBay:3:1
+
+CargoBay:415:1
+
+LongTomIIICannon
+
+</transporters>
+
+<escape_pod>
+
+4
+
+</escape_pod>
+
+<life_boat>
+
+5
+
+</life_boat>
+
+<crew>
+
+246
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

@@ -1,0 +1,139 @@
+Version:1.1
+Kodiak
+Cale
+
+Config:Biped
+TechBase:Mixed (Clan Chassis)
+Era:3068
+Rules Level:4
+
+Mass:100
+Engine:300 Fusion Engine (Clan)
+Structure:Endo-Steel
+Myomer:Standard
+
+Heat Sinks:15 Double (Clan)
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor (Clan)
+LA Armor:34
+RA Armor:34
+LT Armor:32
+RT Armor:32
+CT Armor:47
+HD Armor:9
+LL Armor:42
+RL Armor:42
+RTL Armor:10
+RTR Armor:10
+RTC Armor:15
+
+Weapons:13
+1 ISHeavyPPC, Right Arm
+1 ISERMediumLaser, Left Arm
+1 ISERMediumLaser, Left Arm
+1 ISMediumLaser, Head
+1 CLERMediumLaser, Left Arm
+1 CLERMediumLaser, Left Arm
+1 CLERMediumLaser, Left Arm
+1 ISAC10, Right Torso, Ammo:20
+1 ISBeagleActiveProbe, Right Torso
+1 ISC3MasterComputer, Left Torso
+1 CLStreakSRM6, Left Torso, Ammo:30
+1 CLStreakSRM6, Left Torso
+1 ISMediumLaser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISMediumLaser
+Endo-Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+Endo-Steel
+Endo-Steel
+-Empty-
+
+Left Torso:
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6 Ammo
+CLStreakSRM6 Ammo
+ISC3MasterComputer
+ISC3MasterComputer
+ISC3MasterComputer
+ISC3MasterComputer
+ISC3MasterComputer
+Endo-Steel
+
+Right Torso:
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10
+ISAC10 Ammo
+ISAC10 Ammo
+ISBeagleActiveProbe
+ISBeagleActiveProbe
+Endo-Steel
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+Endo-Steel
+Endo-Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISMediumLaser
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink

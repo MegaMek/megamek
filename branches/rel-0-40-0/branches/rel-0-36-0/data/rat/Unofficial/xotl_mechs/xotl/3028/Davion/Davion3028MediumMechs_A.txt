@@ -1,0 +1,65 @@
+#############################################################################
+# Tables adapted from the Xotl FACTION ASSIGNMENT & RARITY TABLES           #
+#   Original tables can be found here:                                      #
+#     http://www.classicbattletech.com/forums/index.php/topic,1219.0.html   #
+#   As noted in the original files, these are fan works and should not be   #
+#   taken as official in any way.                                           #
+#                                                                           #
+# Adaptation performed by Deric Page (aka Netzilla on                       #
+#     http://www.classicbattletech.com/forums/)                             #
+#   If any discrepancies are found between these files and the original     #
+#   Xotl tables, please contact me by PM on the forums or via email:        #
+#     deric.page@usa.net.                                                   #
+#                                                                           #
+# Notes on adaptation:                                                      #
+# * The original Xotl tables use a d1,000 to randomly determine the unit.   #
+#   For the adaptation I simply use the frequency of the entry as the       #
+#   MegaMek RAT Weight value.  So, a unit that appears on rolls 101-200     #
+#   receives a base Weight of 100.                                          #
+# * The original Xotl tables include a chance for a faction to field the    #
+#   units of another faction. Unfortunately, MegaMek will not recognize a   #
+#   call to a different RAT file.  In order to facilitate this              #
+#   functionality, I include the salvaged/isorla faction's mechs.  However, #
+#   in oder to preserve unit ratios as much as possible, I weight the main  #
+#   faction's list higher.  In general, the faction allocations values 1-50 #
+#   as salvage.  This is 5% of the available possibilities.  If a faction   #
+#   salvages from 2 other lists, they tend to be split evenly (25 entries   #
+#   each or 2.5%).  So, in this case, I multiply salvage faction's weights  #
+#   by the approrpiate percentage and add them to the main faction list.  I #
+#   then multiply all the weights by 10 (rounding to the nearest integer)   #
+#   to turn the table into a d10,000 roll and drop any weights that end up  #
+#   less than 1.                                                            #
+#############################################################################
+Davion3028MediumMechs_A
+Assassin ASN-101,1
+Hatchetman HCT-3F,3
+Shadow Hawk SHD-2D,69
+Blackjack BJ-1DC,3
+Centurion CN9-AH,11
+Blackjack BJ-1DB,3
+Enforcer ENF-4R,172
+Centurion CN9-AL,11
+Phoenix Hawk PXH-1D,34
+Kintaro KTO-18,14
+Clint CLNT-2-3T,7
+Vulcan VL-5T,10
+Centurion CN9-A,103
+Blackjack BJ-1,52
+Whitworth WTH-1,24
+Trebuchet TBT-5S,3
+Wyvern WVE-6N,7
+Scorpion SCP-1N,14
+Phoenix Hawk PXH-1,69
+Hunchback HBK-4G,24
+Shadow Hawk SHD-2H,34
+Hunchback HBK-4H,3
+Hunchback HBK-4N,3
+Wolverine WVR-6R,52
+Hunchback HBK-4P,3
+Crab CRB-20,10
+Hunchback HBK-4J,3
+Dervish DV-6M,69
+Trebuchet TBT-5N,14
+Griffin GRF-1N,69
+Gladiator GLD-3R,3
+Gladiator GLD-4R,103

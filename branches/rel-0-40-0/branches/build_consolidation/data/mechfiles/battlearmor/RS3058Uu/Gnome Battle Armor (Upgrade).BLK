@@ -1,0 +1,55 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+BattleArmor
+</UnitType>
+<Name>
+Gnome Battle Armor
+</Name>
+<Model>
+(Upgrade) [Bearhunter]
+</Model>
+<chassis>
+biped
+</chassis>
+<weightclass>
+3
+</weightclass>
+<Trooper Count>
+5
+</Trooper Count>
+<cruiseMP>
+1
+</cruiseMP>
+<jumpingMP>
+2
+</jumpingMP>
+<Armor>
+14
+</Armor>
+<Squad Equipment>
+CLBearhunter Superheavy AC
+CLBearhunter Superheavy AC
+Clan Advanced SRM-2:Body
+BA-Advanced SRM-2 Ammo
+BA-Advanced SRM-2 Ammo
+BAHeavyBattleClaw
+</Squad Equipment>
+<type>
+Clan Level 2
+</type>
+<year>
+3069
+</year>
+<motion_type>
+Jump
+</motion_type>
+<source>
+Jihad
+</source>

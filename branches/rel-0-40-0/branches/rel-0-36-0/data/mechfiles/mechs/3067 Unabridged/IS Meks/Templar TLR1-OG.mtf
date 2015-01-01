@@ -1,0 +1,132 @@
+Version:1.1
+Templar
+TLR1-OG
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3069
+Rules Level:2
+
+Mass:85
+Engine:340 XL Fusion Engine
+Structure:Endo-Steel
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:28
+RA Armor:28
+LT Armor:26
+RT Armor:26
+CT Armor:44
+HD Armor:9
+LL Armor:36
+RL Armor:36
+RTL Armor:10
+RTR Armor:10
+RTC Armor:10
+
+Weapons:6
+1 ISC3SlaveUnit, Center Torso
+1 ISLBXAC2, Right Arm, Ammo:45
+1 ISLBXAC2, Left Torso
+1 ISLBXAC2, Right Torso
+1 ISLightGaussRifle, Right Arm, Ammo:16
+1 ISERPPC, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle
+ISLBXAC2
+ISLBXAC2
+ISLBXAC2
+ISLBXAC2
+Endo-Steel
+
+Left Torso:
+Engine
+Engine
+Engine
+ISLBXAC2
+ISLBXAC2
+ISLBXAC2
+ISLBXAC2
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Engine
+Engine
+Engine
+ISLBXAC2
+ISLBXAC2
+ISLBXAC2
+ISLBXAC2
+ISLBXAC2 Ammo
+ISLightGauss Ammo
+ISCASE
+Endo-Steel
+Endo-Steel
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISC3SlaveUnit
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo-Steel
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel

@@ -1,0 +1,117 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Bonaventure Corvette
+</Name>
+<Model>
+</Model>
+<Tonnage>
+240000
+</Tonnage>
+<SafeThrust>
+4
+</SafeThrust>
+<Armor>
+21
+20
+20
+20
+20
+17
+</Armor>
+<Nose Equipment>
+ISLRM15
+ISLRM15
+ISLRM15 Ammo:56
+</Nose Equipment>
+<Front Left Side Equipment>
+NL35
+ISLargeLaser
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+NL35
+ISLargeLaser
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+ISAC10
+ISAC10
+ISAC10 Ammo:80
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+ISAC10
+ISAC10
+ISAC10 Ammo:80
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+ISLargeLaser
+</Aft Left Side Equipment>
+<Aft Right Side Equipment>
+ISLargeLaser
+</Aft Right Side Equipment>
+<Aft Equipment> 
+ISLRM15
+ISLRM15
+ISLRM15 Ammo:56
+</Aft Equipment>
+<structural_integrity>
+36
+</structural_integrity>
+<heatsinks>
+384
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+32500
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+2317
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+ASFBay:6:2
+SmallCraftBay:2:1
+CargoBay:53926:1
+</transporters>
+<docking_collar>
+0
+</docking_collar>
+<grav_deck>
+1
+</grav_deck>
+<escape_pod>
+17
+</escape_pod>
+<life_boat>
+10
+</life_boat>
+<crew>
+121
+</crew>
+<passengers>
+0
+</passengers>

@@ -1,0 +1,12 @@
+Clan Wolf Medium Aerospace Late 3075
+Turk Prime,1
+Ammon (Standard),2
+Jagatai A,3
+Visigoth A,4
+Jagatai D,5
+Visigoth Prime,6
+Jagatai Prime,5
+Visigoth B,4
+Jagatai B,3
+Visigoth C,2
+Tyre (Standard),1

@@ -1,0 +1,150 @@
+Version:1.0
+Trebuchet
+TBT-5-KH-UK
+
+Config:Biped
+TechBase:Mixed (IS Chassis)
+Era:3058
+Rules Level:4
+
+Mass:50
+Engine:250 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:11 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:10
+RA Armor:10
+LT Armor:11
+RT Armor:11
+CT Armor:22
+HD Armor:9
+LL Armor:15
+RL Armor:15
+RTL Armor:5
+RTR Armor:5
+RTC Armor:7
+
+Weapons:5
+2 CLERMediumLaser, Right Arm
+1 CLERMediumLaser, Left Arm
+1 CLLRM15, Left Arm, Ammo:40
+1 CLLRM15, Right Torso
+1 ISC3SlaveUnit, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+CLLRM15
+CLLRM15
+CLArtemisIV
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLLRM15 Ammo (Clan) Artemis-capable
+CLLRM15 Ammo (Clan) Artemis-capable
+CLLRM15 Ammo (Clan) Artemis-capable
+CLLRM15 Ammo (Clan) Artemis-capable
+CLLRM15 Ammo (Clan) Artemis-capable
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+CLLRM15
+CLLRM15
+CLArtemisIV
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISC3SlaveUnit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

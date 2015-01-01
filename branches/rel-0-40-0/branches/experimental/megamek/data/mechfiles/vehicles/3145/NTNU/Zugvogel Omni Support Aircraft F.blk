@@ -1,0 +1,130 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+FixedWingSupport
+</UnitType>
+
+<Name>
+Zugvogel Omni Support Aircraft
+</Name>
+
+<Model>
+F
+</Model>
+
+<Tonnage>
+200
+</Tonnage>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<Armor>
+51
+51
+51
+51
+</Armor>
+
+<barrating>
+10
+</barrating>
+
+<Nose Equipment>
+CLLRM15
+CLLRM15
+CLLRM15
+ISThunderbolt20
+ISThunderbolt20
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLLRM15
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLLRM15
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLMediumChemLaser
+CLMediumChemLaser
+CLMediumChemLaser
+</Aft Equipment>
+
+<Body Equipment>
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+ISThunderbolt20 Ammo
+ISThunderbolt20 Ammo
+ISThunderbolt20 Ammo
+ISThunderbolt20 Ammo
+ISThunderbolt20 Ammo
+ISThunderbolt20 Ammo
+ISThunderbolt20 Ammo
+ISThunderbolt20 Ammo
+ISThunderbolt20 Ammo
+ISThunderbolt20 Ammo
+CLMediumChemLaserAmmo
+ISCASE
+Advanced Fire Control
+Armored Chassis
+STOLChassisMod
+</Body Equipment>
+
+<heatsinks>
+4
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+369
+</fuel>
+
+<type>
+Mixed (IS Chassis) Advanced
+</type>
+
+<year>
+3130
+</year>
+
+<source>
+RS 3145 NT NU
+</source>
+
+<internal_type>
+0				
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+0		
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

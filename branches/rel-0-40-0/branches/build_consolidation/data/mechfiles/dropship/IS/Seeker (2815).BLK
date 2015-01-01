@@ -1,0 +1,202 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Seeker
+
+</Name>
+
+<Model>
+
+(2815)
+
+</Model>
+
+<Tonnage>
+
+6700
+
+</Tonnage>
+
+<SafeThrust>
+
+5
+
+</SafeThrust>
+
+<Armor>
+
+140
+
+120
+
+120
+
+110
+
+</Armor>
+
+<Nose Equipment>
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+ISPPC
+
+(R) ISLRM10
+
+(R) ISLRM10 Ammo:12
+
+(R) ISLargeLaser
+
+(R) ISMediumLaser
+
+(R) ISMediumLaser
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+ISPPC
+
+(R) ISLRM10
+
+(R) ISLRM10 Ammo:12
+
+(R) ISLargeLaser
+
+(R) ISMediumLaser
+
+(R) ISMediumLaser
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+</Aft Equipment>
+
+<structural_integrity>
+
+10
+
+</structural_integrity>
+
+<heatsinks>
+
+126
+
+</heatsinks>
+
+<sink_type>
+
+0
+
+</sink_type>
+
+<fuel>
+
+11670
+
+</fuel>
+
+<type>
+
+IS Level 1
+
+</type>
+
+<year>
+
+2815
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+spheroid
+
+</motion_type>
+
+
+
+<transporters>
+
+LightVehicleBay:40:1
+
+InfantryBay:4:1
+
+CargoBay:1200:1
+
+CargoBay:432:1
+
+</transporters>
+
+<escape_pod>
+
+8
+
+</escape_pod>
+
+<life_boat>
+
+0
+
+</life_boat>
+
+<crew>
+
+332
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

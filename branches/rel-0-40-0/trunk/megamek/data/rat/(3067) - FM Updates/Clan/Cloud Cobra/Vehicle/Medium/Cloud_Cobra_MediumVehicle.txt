@@ -1,0 +1,12 @@
+Cloud Cobra Medium Vehicles (FMU)
+Ares Medium Tank (Standard),1
+Chaparral Missile Artillery Tank (Standard),2
+Bandit (C) Hovercraft Prime,3
+Chaparral Missile Artillery Tank (Standard),4
+Bandit (C) Hovercraft A,5
+Hachiman Fire Support Tank (Standard),6
+Ares Medium Tank (Standard),5
+Maxim Heavy Hover Transport (Clan),4
+Hachiman Fire Support Tank (Standard),3
+Epona Pursuit Tank C,2
+Epona Pursuit Tank A,1

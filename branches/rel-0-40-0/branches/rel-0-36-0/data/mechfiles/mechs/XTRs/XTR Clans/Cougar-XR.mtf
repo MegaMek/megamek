@@ -1,0 +1,152 @@
+Version:1.1
+Cougar
+XR
+
+Config:Biped
+TechBase:Mixed (Clan Chassis)
+Era:3071
+Source:XTR Clans
+Rules Level:4
+
+Mass:35
+Engine:175 XL (Clan) Engine
+Structure:Clan Endo-Steel
+Myomer:Standard
+Cockpit:Small Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:10 Double
+Walk MP:5
+Jump MP:5
+
+Armor:Reflective(Clan)
+LA Armor:12
+RA Armor:12
+LT Armor:11
+RT Armor:11
+CT Armor:13
+HD Armor:9
+LL Armor:14
+RL Armor:14
+RTL Armor:5
+RTR Armor:5
+RTC Armor:6
+
+Weapons:3
+ER Medium Pulse Laser, Right Arm
+LRM 15, Left Torso
+LRM 15, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Endo-Steel
+Clan Endo-Steel
+Clan Endo-Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERMediumPulseLaser
+CLERMediumPulseLaser
+Clan Endo-Steel
+Clan Endo-Steel
+Clan Endo-Steel
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLLRM15
+CLLRM15
+CLArtemisV
+CLArtemisV
+Clan Ammo LRM-15 (Clan) Artemis V-capable
+CLPartialWing
+CLPartialWing
+CLPartialWing
+Clan Reflective
+Clan Reflective
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLLRM15
+CLLRM15
+CLArtemisV
+CLArtemisV
+Clan Ammo LRM-15 (Clan) Artemis V-capable
+CLPartialWing
+CLPartialWing
+CLPartialWing
+Clan Reflective
+Clan Reflective
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Clan Endo-Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+Clan Reflective
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,0 +1,62 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Aikuchi
+</Name>
+<Model>
+Prime-UK
+</Model>
+<Tonnage>
+60
+</Tonnage>
+<cruiseMP>
+5
+</cruiseMP>
+<Armor>
+50
+35
+35
+23
+</Armor>
+<Front Equipment>
+ISMRM40
+ISMRM40
+ISERMediumLaser
+ISERMediumLaser
+</Front Equipment>
+<Body Equipment>
+ISMRM40 Ammo
+ISMRM40 Ammo
+ISMRM40 Ammo
+ISMRM40 Ammo
+ISC3SlaveUnit
+</Body Equipment>
+<type>
+IS
+</type>
+<year>
+3058
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>
+<omni>
+</omni>

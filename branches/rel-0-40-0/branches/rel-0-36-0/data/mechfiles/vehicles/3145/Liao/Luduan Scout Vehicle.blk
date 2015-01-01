@@ -1,0 +1,91 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Luduan Scout Vehicle
+</Name>
+
+<Model>
+
+</Model>
+
+<year>
+3136
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<cruiseMP>
+11
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+22
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+12
+10
+10
+8
+8
+</armor>
+
+<Body Equipment>
+IS Vehicular Stealth
+ISMagshotGR Ammo
+ISAngelECMSuite
+BloodhoundActiveProbe
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISMagshotGR
+ISMagshotGR
+ISMagshotGR
+</Turret Equipment>
+
+<source>
+TRO 3145 CC
+</source>
+
+<tonnage>
+25.0
+</tonnage>
+

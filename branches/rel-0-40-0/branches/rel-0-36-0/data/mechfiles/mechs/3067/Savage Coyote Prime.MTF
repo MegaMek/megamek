@@ -1,0 +1,136 @@
+Version:1.1
+Savage Coyote
+Prime
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3059
+Rules Level:2
+
+Mass:85
+Engine:255 XL Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:17 Double
+Base Chassis Heat Sinks: 14
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:25
+RA Armor:25
+LT Armor:26
+RT Armor:26
+CT Armor:34
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:10
+RTR Armor:10
+RTC Armor:15
+
+Weapons:9
+1 CLERPPC, Right Arm
+1 CLERMediumLaser, Right Arm
+1 CLERSmallLaser, Right Arm
+1 CLERSmallLaser, Right Arm
+1 CLLBXAC10, Left Arm, Ammo:20
+1 CLERMediumLaser, Left Arm
+1 CLATM12, Right Torso, Ammo:30
+1 CLATM12, Left Torso
+1 CLERMediumLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10 Ammo
+CLLBXAC10 CL Ammo
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLERMediumLaser
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLERPPC
+CLERPPC
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLERMediumLaser
+CLERSmallLaser
+CLERSmallLaser
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Engine
+Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12 Ammo
+CLATM12 ER Ammo
+CLATM12 HE Ammo
+
+Right Torso:
+Engine
+Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12 Ammo
+CLATM12 ER Ammo
+CLATM12 HE Ammo
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERMediumLaser
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink

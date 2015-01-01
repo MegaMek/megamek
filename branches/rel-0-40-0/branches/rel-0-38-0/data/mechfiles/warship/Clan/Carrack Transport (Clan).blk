@@ -1,0 +1,219 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Carrack Transport
+</Name>
+<Model>
+(Clan)
+</Model>
+<Tonnage>
+300000
+</Tonnage>
+<SafeThrust>
+3
+</SafeThrust>
+<Armor>
+10
+8
+8
+6
+6
+9
+</Armor>
+<Nose Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+NL35
+NL35
+NAC20
+NAC20 Ammo:166
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1500
+</Nose Equipment>
+<Front Left Side Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+NL35
+NL35
+NAC10
+NAC10 Ammo:200
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1500
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+NL35
+NL35
+NAC10
+NAC10 Ammo:200
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1500
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+NL35
+NL35
+NAC20
+NAC20 Ammo:167
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1500
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+NL35
+NL35
+NAC20
+NAC20 Ammo:167
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1500
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+NL35
+NL35
+NAC10
+NAC10 Ammo:200
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1500
+</Aft Left Side Equipment>
+<Aft Right Side Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+NL35
+NL35
+NAC10
+NAC10 Ammo:200
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1500
+</Aft Right Side Equipment>
+<Aft Equipment> 
+CLERLargeLaser
+CLERLargeLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+NL35
+NL35
+NAC10
+NAC10 Ammo:200
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1500
+</Aft Equipment>
+<structural_integrity>
+15
+</structural_integrity>
+<heatsinks>
+373
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+5000
+</fuel>
+<type>
+Clan Level 3
+</type>
+<year>
+2950
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+SmallCraftBay:4:4
+CargoBay:71411:10
+</transporters>
+<docking_collar>
+2
+</docking_collar>
+<grav_deck>
+1
+</grav_deck>
+<escape_pod>
+4
+</escape_pod>
+<life_boat>
+4
+</life_boat>
+<crew>
+166
+</crew>
+<passengers>
+0
+</passengers>

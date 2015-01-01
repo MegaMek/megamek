@@ -1,0 +1,53 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Morrigu Fire Support Vehicle
+</Name>
+<Model>
+(Laser)
+</Model>
+<Tonnage>
+80
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+53
+35
+35
+24
+29
+</Armor>
+<Turret Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+</Turret Equipment>
+<type>
+Clan
+</type>
+<year>
+3067
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>

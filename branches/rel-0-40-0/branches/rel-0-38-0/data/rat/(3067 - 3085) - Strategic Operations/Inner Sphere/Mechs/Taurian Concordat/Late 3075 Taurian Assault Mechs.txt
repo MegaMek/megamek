@@ -1,0 +1,12 @@
+Taurian Concordat Assault Mechs Late 3075
+Banshee BNC-3S,1
+Devastator DVS-1D,2
+Yu Huang Y-H9G,3
+Emperor EMP-6A,4
+Stalker STK-5M,5
+Awesome AWS-9M,6
+Atlas AS7-D,5
+Pillager PLG-3Z,4
+Victor VTR-9K,3
+Zeus ZEU-9S,2
+Charger CGR-2A2,1

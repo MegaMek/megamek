@@ -1,0 +1,12 @@
+3015 Wolf's Dragoons Vehicle - Heavy
+Bulldog Medium Tank,1
+Bulldog Medium Tank,2
+SRM Carrier,3
+SRM Carrier,4
+Manticore Heavy Tank,5
+Manticore Heavy Tank,6
+LRM Carrier,5
+LRM Carrier,4
+Von Luckner Heavy Tank VNL-K65N,3
+Von Luckner Heavy Tank VNL-K65N,2
+Pike Support Vehicle,1

@@ -1,0 +1,152 @@
+Version:1.1
+Thunder Fox
+TFT-L8
+
+Config:Quad
+TechBase:Inner Sphere
+Era:3082
+Source:Dark Age
+Rules Level:2
+
+Mass:55
+Engine:275 XL Engine
+Structure:Standard
+Myomer:Standard
+Cockpit:Small Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:10 Double
+Walk MP:5
+Jump MP:4
+
+Armor:Light Ferro-Fibrous(Inner Sphere)
+FLL Armor:17
+FRL Armor:17
+LT Armor:20
+RT Armor:20
+CT Armor:21
+HD Armor:9
+RLL Armor:17
+RRL Armor:17
+RTL Armor:4
+RTR Armor:4
+RTC Armor:6
+
+Weapons:3
+Snub-Nose PPC, Left Torso
+Snub-Nose PPC, Left Torso
+LB 10-X AC, Right Torso
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISSNPPC
+ISSNPPC
+ISSNPPC
+ISSNPPC
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Light Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+Light Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

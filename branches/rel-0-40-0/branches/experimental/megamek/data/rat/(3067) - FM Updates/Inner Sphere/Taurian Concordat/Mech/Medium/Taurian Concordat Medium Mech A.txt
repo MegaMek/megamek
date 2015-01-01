@@ -1,0 +1,12 @@
+Taurian Concordat Medium Mechs A 3067 FM-U
+Blackjack BJ-2,1
+Enforcer ENF-5D,2
+Dervish DV-7D,3
+Enforcer ENF-4R,4
+Marshal MHL-X1,5
+Trebuchet TBT-5N,6
+Lineholder KW1-LH2,5
+Vindicator VND-3L,4
+Marshal MHL-2L,3
+Blackjack BJ-3,2
+Shadow Hawk SHD-7M,1

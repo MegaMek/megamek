@@ -1,0 +1,54 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+BattleArmor
+</UnitType>
+<Name>
+Hauberk Battle Armor
+</Name>
+<Model>
+Commando
+</Model>
+<chassis>
+biped
+</chassis>
+<weightclass>
+4
+</weightclass>
+<Trooper Count>
+4
+</Trooper Count>
+<cruiseMP>
+2
+</cruiseMP>
+<Armor>
+11
+</Armor>
+<Squad Equipment>
+ISDetachableWeaponPack
+ISERSmallLaser:DWP
+ISDetachableWeaponPack
+ISERSmallLaser:DWP
+ISDetachableWeaponPack
+ISSRM2 (OS):DWP
+Single-Hex ECM
+Mimetic Armor
+</Squad Equipment>
+<type>
+IS Level 4
+</type>
+<year>
+3088
+</year>
+<source>
+TRO:Prototypes
+</source>
+<motion_type>
+Leg
+</motion_type>

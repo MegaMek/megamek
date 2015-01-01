@@ -1,0 +1,202 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Vampire
+
+</Name>
+
+<Tonnage>
+
+400
+
+</Tonnage>
+
+<SafeThrust>
+
+6
+
+</SafeThrust>
+
+<Armor>
+
+134
+
+107
+
+107
+
+92
+
+</Armor>
+
+<Nose Equipment>
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+ISSRM6
+
+ISSRM6 Ammo
+
+ISMediumLaser
+
+ISMediumLaser
+
+(R) ISLRM20
+
+(R) ISLRM20 Ammo
+
+(R) ISLRM20 Ammo
+
+(R) ISLargeLaser
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+ISSRM6
+
+ISSRM6 Ammo
+
+ISMediumLaser
+
+ISMediumLaser
+
+(R) ISLRM20
+
+(R) ISLRM20 Ammo
+
+(R) ISLRM20 Ammo
+
+(R) ISLargeLaser
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+ISMediumPulseLaser
+
+ISMediumPulseLaser
+
+</Aft Equipment>
+
+<structural_integrity>
+
+11
+
+</structural_integrity>
+
+<heatsinks>
+
+37
+
+</heatsinks>
+
+<sink_type>
+
+0
+
+</sink_type>
+
+<fuel>
+
+2660
+
+</fuel>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+2715
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+<transporters>
+
+InfantryBay:3:1
+
+CargoBay:10:1
+
+</transporters>
+
+<escape_pod>
+
+0
+
+</escape_pod>
+
+<life_boat>
+
+0
+
+</life_boat>
+
+<crew>
+
+69
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

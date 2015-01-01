@@ -1,0 +1,77 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Aero
+</UnitType>
+<Name>
+Thunderbird
+</Name>
+<Model>
+TRB-XTS
+</Model>
+<Tonnage>
+100
+</Tonnage>
+<SafeThrust>
+5
+</SafeThrust>
+<Armor>
+96
+64
+64
+44
+
+</Armor>
+<Nose Equipment>
+Centurion Weapon System
+Centurion Weapon System
+</Nose Equipment>
+<Right Wing Equipment>
+ISLargePulseLaser
+ISLaserInsulator
+ISRotaryAC5
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+</Right Wing Equipment>
+<Left Wing Equipment>
+ISLargePulseLaser
+ISLaserInsulator
+ISRotaryAC5
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+</Left Wing Equipment>
+<Aft Equipment>
+</Aft Equipment>
+<heatsinks>
+19
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+400
+</fuel>
+<type>
+IS Level 4
+</type>
+<year>
+3073
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>

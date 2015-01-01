@@ -1,0 +1,12 @@
+3085 Lyran Commonwealth Assault Mech C
+Longbow LGB-12C,1
+Emperor EMP-6S,2
+Nightstar NSR-9J,3
+Zeus ZEU-9T,4
+Gunslinger GUN-1ERD,5
+Highlander HGN-734,6
+Banshee BNC-5S,5
+Fafnir FNR-5B,4
+BattleMaster BLR-10S,3
+Thunder Hawk TDK-7X,2
+Atlas AS7-S2,1

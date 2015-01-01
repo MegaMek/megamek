@@ -1,0 +1,12 @@
+3085 Ghost Bear Dominion Assault Mech Second Line
+Annihilator C 2,1
+Zeus ZEU-6S,2
+Atlas AS7-K2,3
+Cyclops CP-11-G,4
+Viking VKG-2F,5
+Marauder IIC 7,6
+Supernova,5
+Warhammer IIC 8,4
+Bruin,3
+Mad Cat Mk II Enhanced,2
+Marauder IIC 4,1

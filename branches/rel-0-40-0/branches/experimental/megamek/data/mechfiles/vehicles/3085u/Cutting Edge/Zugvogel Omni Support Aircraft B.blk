@@ -1,0 +1,115 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+FixedWingSupport
+</UnitType>
+
+<Name>
+Zugvogel Omni Support Aircraft
+</Name>
+
+<Model>
+B
+</Model>
+
+<Tonnage>
+200
+</Tonnage>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<Armor>
+51
+51
+51
+51
+</Armor>
+
+<barrating>
+10
+</barrating>
+
+<Left Wing Equipment>
+Searchlight
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Searchlight
+</Right Wing Equipment>
+
+<Body Equipment>
+MASH core component
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+Paramedic Equipment
+Paramedic Equipment
+Paramedic Equipment
+Paramedic Equipment
+FieldKitchen
+ISCASE
+Advanced Fire Control
+Armored Chassis
+STOLChassisMod
+</Body Equipment>
+
+<transporters>
+TroopSpace:4
+LightVehicleBay:1:1
+</transporters>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+369
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3086
+</year>
+
+<source>
+Dark Age
+</source>
+
+<internal_type>
+0				
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+0		
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

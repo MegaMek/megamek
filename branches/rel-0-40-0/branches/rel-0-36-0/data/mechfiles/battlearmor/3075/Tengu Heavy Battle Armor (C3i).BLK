@@ -1,0 +1,51 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+BattleArmor
+</UnitType>
+<Name>
+Tengu Heavy Battle Armor
+</Name>
+<Model>
+(C3i)
+</Model>
+<chassis>
+biped
+</chassis>
+<weightclass>
+3
+</weightclass>
+<Trooper Count>
+6
+</Trooper Count>
+<cruiseMP>
+2
+</cruiseMP>
+<jumpingMP>
+2
+</jumpingMP>
+<Armor>
+13
+</Armor>
+<Squad Equipment>
+IS BC3i
+ISLightTAG
+BABasicManipulator
+BABasicManipulator
+BAAPMount
+</Squad Equipment>
+<type>
+IS Level 4
+</type>
+<year>
+3075
+</year>
+<motion_type>
+Leg
+</motion_type>

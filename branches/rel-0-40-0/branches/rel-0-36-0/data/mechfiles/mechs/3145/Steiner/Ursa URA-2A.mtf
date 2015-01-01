@@ -1,0 +1,153 @@
+Version:1.0
+Ursa
+URA-2A
+
+Config:Quad
+TechBase:Inner Sphere
+Era:3112
+Source:TRO 3145 LC
+Rules Level:3
+
+Mass:65
+Engine:325 XL Engine(IS)
+Structure:IS Endo Steel
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+FLL Armor:23
+FRL Armor:23
+LT Armor:23
+RT Armor:23
+CT Armor:29
+HD Armor:9
+RLL Armor:23
+RRL Armor:23
+RTL Armor:7
+RTR Armor:7
+RTC Armor:10
+
+Weapons:6
+ER PPC, Left Torso
+Medium X-Pulse Laser, Left Torso
+Medium X-Pulse Laser, Left Torso
+Rotary AC/2, Right Torso
+Medium X-Pulse Laser, Right Torso
+Medium X-Pulse Laser, Right Torso
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERPPC
+ISERPPC
+ISERPPC
+ISMediumXPulseLaser
+ISMediumXPulseLaser
+ISMASC
+ISMASC
+ISMASC
+IS Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISRotaryAC2
+ISRotaryAC2
+ISRotaryAC2
+ISMediumXPulseLaser
+ISMediumXPulseLaser
+ISRotaryAC2 Ammo
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Endo Steel
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

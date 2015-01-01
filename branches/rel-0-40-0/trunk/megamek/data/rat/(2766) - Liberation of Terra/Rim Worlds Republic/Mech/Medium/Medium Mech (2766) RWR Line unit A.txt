@@ -1,0 +1,12 @@
+Medium Mech (2766) RWR Line unit A
+Lynx LNX-9Q,2
+Sentinel STN-3L,3
+Phoenix Hawk PXH-1,4
+Wyvern WVE-5N,5
+Griffin GRF-1N,6
+Phoenix PX-3R,7
+Wolverine WVR-6R,6
+Crab CRB-27,5
+Hunchback HBK-4G,4
+Shadow Hawk SHD-2H,3
+Kintaro KTO-19,2

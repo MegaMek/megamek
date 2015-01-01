@@ -1,0 +1,12 @@
+3085 Ghost Bear Dominion Medium Mech Second Line
+Phoenix Hawk PXH-3K,1
+Great Wyrm 2,2
+Shadow Hawk IIC 2,3
+Ursus 3,4
+Hunchback HBK-5N,5
+Beowulf BEO-14,6
+Ursus,5
+Ursus II,4
+Hunchback IIC,3
+Beowulf C,2
+Shadow Hawk SHD-12C,1

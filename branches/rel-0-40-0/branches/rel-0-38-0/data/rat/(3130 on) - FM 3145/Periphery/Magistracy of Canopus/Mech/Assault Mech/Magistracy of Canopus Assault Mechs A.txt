@@ -1,0 +1,12 @@
+Magistracy of Canopus Assault Mechs A
+Xanthos XNT-4O,1
+Longbow LGB-14C,2
+Trebaruna TR-XL,3
+Emperor EMP-6A,4
+Stalker STK-3Fb,5
+Xanthos XNT-5O,6
+Yu Huang Y-H11G,5
+Emperor EMP-6L,4
+Pillager PLG-5Z,3
+Stalker II STK-9A,2
+Warhammer IIC 8,1

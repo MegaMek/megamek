@@ -1,0 +1,16 @@
+########################################################
+# Taken from Era Report 3062.
+# Conversion performed by Deric Page deric.page@usa.net
+########################################################
+3053-3062 ComStar_WoB_FRR Areospace Fighters
+Ahab AHB-443,28
+Gotha GTHA-500,83
+Hammerhead HMR-HD,56
+Hellcat II HCT-213B,83
+Ironsides IRN-SD1,56
+Rapier RPR-100,28
+Rogue RGU-133E,111
+Spad SPD-502,139
+Swift SW-606,167
+# Tomahawk THK-63K,111 # NOTE: This unit appears to not be implemented in MegaMek yet.
+Zero ZRO-114,139

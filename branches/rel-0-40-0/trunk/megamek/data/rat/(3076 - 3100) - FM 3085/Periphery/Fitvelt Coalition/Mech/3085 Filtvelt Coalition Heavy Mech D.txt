@@ -1,0 +1,12 @@
+3085 Filtvelt Coalition Heavy Mech D
+JagerMech JM6-A,1
+JagerMech JM6-S,2
+Crusader CRD-3D,3
+Rifleman RFL-3N,4
+JagerMech JM6-DD,5
+Warhammer WHM-6K,6
+Rifleman RFL-5D,5
+Archer ARC-2R,4
+Thunderbolt TDR-5S,3
+Crusader CRD-4D,2
+Marauder MAD-3D,1

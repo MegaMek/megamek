@@ -1,0 +1,12 @@
+3085 Cappellan Confederation Light Mech A
+Stinger STG-6L,1
+Anubis ABS-3T,2
+Wasp WSP-3L,3
+Duan Gung D9-G10,4
+Flea FLE-20,5
+Raven RVN-4Lr,6
+Ebony MEB-9,5
+Dola DOL-1A1,4
+Ebony MEB-11,3
+Dola DOL-1A2 "Yoh Ti Ts'angs",2
+Owens OW-1,1

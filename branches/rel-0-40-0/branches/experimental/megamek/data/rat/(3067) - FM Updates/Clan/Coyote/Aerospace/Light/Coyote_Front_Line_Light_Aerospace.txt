@@ -1,0 +1,12 @@
+Coyote Front-Line Light ASF (FMU)
+Vandal Prime,1
+Sulla B,2
+Bashkir Prime,3
+Bashkir C,4
+Avar C,5
+Sulla Prime,6
+Avar Prime,5
+Sulla C,4
+Bashkir A,3
+Batu C,2
+Batu A,1

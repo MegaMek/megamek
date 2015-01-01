@@ -1,0 +1,82 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Zou Heavy Battle Armor
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3113
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<Squad Equipment>
+BABattleClaw:LA
+ISBAMediumLaser:RA
+IS BA Reflective:LA
+IS BA Reflective:Body
+IS BA Reflective:RA
+IS BA Reflective:LA
+IS BA Reflective:Body
+IS BA Reflective:Body
+IS BA Reflective:Body
+</Squad Equipment>
+
+<source>
+TRO 3145 Draconis Combine
+</source>
+
+<chassis>
+Biped
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+11
+</armor>
+
+<armor_type>
+37
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+4
+</weightclass>
+

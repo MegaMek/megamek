@@ -1,0 +1,93 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Demon Tank
+</Name>
+
+<Model>
+(Royal)
+</Model>
+
+<year>
+2744
+</year>
+
+<source>
+Star League
+</source>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+60.0
+</tonnage>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<engine_type>
+2
+</engine_type>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+50
+30
+30
+20
+38
+</armor>
+
+<Body Equipment>
+IS Streak SRM 2 Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2
+</Front Equipment>
+
+<Right Equipment>
+ISMediumPulseLaser
+</Right Equipment>
+
+<Left Equipment>
+ISMediumPulseLaser
+</Left Equipment>
+
+<Rear Equipment>
+ISCASE
+</Rear Equipment>
+
+<Turret Equipment>
+ISGaussRifle
+</Turret Equipment>
+
+<armor_type>
+0
+</armor_type>

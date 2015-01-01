@@ -1,0 +1,73 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Shoden Assault Vehicle
+</Name>
+<Tonnage>
+70
+</Tonnage>
+<cruiseMP>
+4
+</cruiseMP>
+<Armor>
+55
+37
+37
+25
+30
+</Armor>
+<Turret Equipment>
+CLATM9
+CLATM9
+CLATM9
+</Turret Equipment>
+<Front Equipment>
+CLLightMG
+CLLightMG
+</Front Equipment>
+<Right Equipment>
+CLLightMG
+</Right Equipment>
+<Left Equipment>
+CLLightMG
+</Left Equipment>
+<Body Equipment>
+CLATM9 ER Ammo
+CLATM9 Ammo
+CLATM9 HE Ammo
+CLATM9 ER Ammo
+CLATM9 Ammo
+CLATM9 HE Ammo
+CLATM9 ER Ammo
+CLATM9 Ammo
+CLATM9 HE Ammo
+CLLightMG Ammo (200)
+CLCASE
+</Body Equipment>
+<type>
+Clan
+</type>
+<year>
+3064
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>

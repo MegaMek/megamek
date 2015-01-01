@@ -1,0 +1,14 @@
+House Steiner Heavy 'Mech
+Cestus CTS-6Y,1
+Axman AXM-1N,2
+Caesar CES-3R,3
+Gallowglas GAL-1GLS,4
+Penetrator PTR-4D,5
+Falconer FLC-8R,6
+Dragon Fire DGR-3F,5
+Maelstrom MTR-5K,4
+Barghest BGS-1T,3
+Verfolger VR5-R,2
+Thanatos THS-4S,1
+#Edited by Harold "BATTLEMASTER" N.
+#3/2/2011

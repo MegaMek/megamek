@@ -1,0 +1,10 @@
+3062 Clan Ghost Bear - Assault
+Kodiak,1
+Kingfisher C,2
+Gladiator (Executioner) B,6
+Masakari (Warhawk) A,4
+Kingfisher Prime,5
+Gladiator (Executioner) Prime,11
+Kingfisher A,4
+Gladiator (Executioner) C,2
+Supernova 4,1

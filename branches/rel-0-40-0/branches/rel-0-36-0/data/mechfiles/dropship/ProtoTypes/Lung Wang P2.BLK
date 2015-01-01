@@ -1,0 +1,123 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Dropship
+</UnitType>
+<Name>
+Lung Wang
+</Name>
+
+<Model>
+P2
+</Model>
+
+<Tonnage>
+2600
+</Tonnage>
+<SafeThrust>
+5
+</SafeThrust>
+<Armor>
+220
+190
+190
+190
+</Armor>
+<Nose Equipment>
+SCL3
+SCL3
+SCL3
+ISExtendedLRM20
+ISExtendedLRM20
+ISExtended LRM20 Ammo:60
+ISERPPC
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10 Ammo:20
+ISERLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISERPPC
+ISMediumPulseLaser
+</Left Side Equipment>
+<Right Side Equipment> 
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10 Ammo:20
+ISERLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISERPPC
+ISMediumPulseLaser
+</Right Side Equipment>
+<Aft Equipment> 
+ISERLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISLRM20
+IS Artemis IV FCS
+ISLRM20 Ammo Artemis-capable:12
+ISLargePulseLaser
+ISSRM6
+IS Artemis IV FCS
+ISSRM6 Ammo Artemis-capable:15
+</Aft Equipment>
+<structural_integrity>
+15
+</structural_integrity>
+<heatsinks>
+100
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+3120
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+3082
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+ASFBay:2:2
+CargoBay:55.5:1
+InfantryBay:2:1
+</transporters>
+<escape_pod>
+4
+</escape_pod>
+<life_boat>
+2
+</life_boat>
+<crew>
+78
+</crew>
+<passengers>
+0
+</passengers>

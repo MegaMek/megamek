@@ -1,0 +1,12 @@
+Cloud Cobra SL Light Aerospace (FMU)
+Sulla Prime,1
+Sulla C,2
+Batu B,3
+Batu Prime,4
+Chaeronea (Standard),5
+Issus (Standard),6
+Chaeronea 2,5
+Issus 2,4
+Chaeronea 2,3
+Vandal C,2
+Issus 2,1

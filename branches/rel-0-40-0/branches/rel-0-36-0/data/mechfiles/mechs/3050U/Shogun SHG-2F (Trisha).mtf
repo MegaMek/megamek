@@ -1,0 +1,152 @@
+Version:1.0
+Shogun
+SHG-2F (Trisha)
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3071
+Source:RS3050Uu-I
+Rules Level:2
+
+Mass:85
+Engine:255 Fusion Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+
+Heat Sinks:16 Single
+Walk MP:3
+Jump MP:3
+
+Armor:Standard(Inner Sphere)
+LA Armor:22
+RA Armor:22
+LT Armor:28
+RT Armor:28
+CT Armor:40
+HD Armor:9
+LL Armor:36
+RL Armor:36
+RTL Armor:8
+RTR Armor:8
+RTC Armor:11
+
+Weapons:5
+Snub-Nose PPC, Right Torso
+SRM 6, Right Torso
+SRM 6, Left Torso
+LB 5-X AC, Right Arm
+LB 5-X AC, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLBXAC5
+ISLBXAC5
+ISLBXAC5
+ISLBXAC5
+ISLBXAC5
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLBXAC5
+ISLBXAC5
+ISLBXAC5
+ISLBXAC5
+ISLBXAC5
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Heat Sink
+Heat Sink
+SRM 6
+SRM 6
+IS Ammo SRM-6
+IS LB 5-X Cluster Ammo
+ISCASE
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISSNPPC
+ISSNPPC
+SRM 6
+SRM 6
+IS Ammo SRM-6
+IS LB 5-X AC Ammo
+ISCASE
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+Heat Sink
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

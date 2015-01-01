@@ -1,0 +1,132 @@
+Version:1.1
+Nightstar
+NSR-9J Brubaker
+
+Config:Biped
+TechBase:Mixed (IS Chassis)
+Era:3057
+Rules Level:4
+
+Mass:95
+Engine:285 XL Fusion Engine (Inner Sphere)
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:14 Double (Inner Sphere)
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor (Clan)
+LA Armor:32
+RA Armor:32
+LT Armor:32
+RT Armor:32
+CT Armor:50
+HD Armor:9
+LL Armor:40
+RL Armor:40
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:6
+1 CLLargePulseLaser, Left Arm
+1 CLLargePulseLaser, Right Torso
+1 CLLargePulseLaser, Right Arm
+1 CLGaussRifle, Right Arm, Ammo:48
+1 CLGaussRifle, Left Arm
+1 CLERSmallLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLLargePulseLaser
+CLLargePulseLaser
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLLargePulseLaser
+CLLargePulseLaser
+
+Left Torso:
+Engine
+Engine
+Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+CLGauss Ammo
+CLGauss Ammo
+CLGauss Ammo
+
+Right Torso:
+Engine
+Engine
+Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+CLLargePulseLaser
+CLLargePulseLaser
+CLGauss Ammo
+CLGauss Ammo
+CLGauss Ammo
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERSmallLaser
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-

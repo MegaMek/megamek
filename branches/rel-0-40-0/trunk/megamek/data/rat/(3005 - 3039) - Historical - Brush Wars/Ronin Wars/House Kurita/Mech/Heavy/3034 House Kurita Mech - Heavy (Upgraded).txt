@@ -1,0 +1,12 @@
+3034 House Kurita Mech - Heavy (Upgraded)
+Flashman FLS-8K,1
+Guillotine GLT-3N,2
+Champion CHP-1N,3
+Black Knight BL-6-KNT,4
+Guillotine GLT-4L,5
+Champion CHP-1N,6
+Flashman FLS-8K,5
+Lancelot LNC25-01,4
+Exterminator EXT-4D,3
+Dragon DRG-5N,2
+Lancelot LNC25-01,1

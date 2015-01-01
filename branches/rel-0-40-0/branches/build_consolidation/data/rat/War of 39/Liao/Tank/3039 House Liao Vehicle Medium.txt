@@ -1,0 +1,15 @@
+3039 House Liao Vehicle Medium
+Drillson Heavy Hover Tank, 1
+Drillson Heavy Hover Tank, 2
+Maxim Heavy Hover Transport, 3
+Hetzer Wheeled Assault Gun, 4
+Vedette Medium Tank, 5
+Vedette Medium Tank, 6
+Hetzer Wheeled Assault Gun, 5
+Maxim Heavy Hover Transport, 4
+Vedette Medium Tank (Liao), 3
+Condor Heavy Hover Tank, 2
+Condor Heavy Hover Tank, 1
+##Version 1 - May 2011
+##From RUS Files
+##Editted by Dave "Hammer" Nawton

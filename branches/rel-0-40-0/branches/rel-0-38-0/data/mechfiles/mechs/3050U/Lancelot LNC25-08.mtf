@@ -1,0 +1,152 @@
+Version:1.1
+Lancelot
+LNC25-08
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3071
+Source:RS3050Uu-C
+Rules Level:2
+
+Mass:60
+Engine:360 XL Engine(IS)
+Structure:IS Endo-Steel
+Myomer:Standard
+Cockpit:Small Cockpit
+Gyro:XL Gyro
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Light Ferro-Fibrous(Inner Sphere)
+LA Armor:15
+RA Armor:15
+LT Armor:16
+RT Armor:16
+CT Armor:24
+HD Armor:9
+LL Armor:20
+RL Armor:20
+RTL Armor:5
+RTR Armor:5
+RTC Armor:7
+
+Weapons:3
+PPC, Right Torso
+LB 5-X AC, Left Arm
+LB 5-X AC, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISLBXAC5
+ISLBXAC5
+ISLBXAC5
+ISLBXAC5
+ISLBXAC5
+IS LB 5-X AC Ammo
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISLBXAC5
+ISLBXAC5
+ISLBXAC5
+ISLBXAC5
+ISLBXAC5
+IS LB 5-X Cluster Ammo
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+PPC
+PPC
+PPC
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Light Ferro-Fibrous
+IS Light Ferro-Fibrous
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+ISC3iUnit
+ISC3iUnit
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

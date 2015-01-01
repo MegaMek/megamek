@@ -1,0 +1,155 @@
+Version:1.0
+Onager
+
+
+Config:Biped
+TechBase:Clan
+Era:3083
+Source:Dark Age
+Rules Level:2
+
+Mass:90
+Engine:270 Fusion (Clan) Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:3
+Jump MP:5
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:30
+RA Armor:30
+LT Armor:25
+RT Armor:25
+CT Armor:40
+HD Armor:9
+LL Armor:38
+RL Armor:38
+RTL Armor:13
+RTR Armor:13
+RTC Armor:18
+
+Weapons:8
+Micro Pulse Laser, Right Torso
+Micro Pulse Laser, Right Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Left Torso
+Small Pulse Laser, Head
+SRM 6, Right Torso
+SRM 6, Left Torso
+HAG/30, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLHAG30
+CLHAG30
+CLHAG30
+CLHAG30
+CLHAG30
+CLHAG30
+CLHAG30
+CLHAG30
+HAG/30 Ammo
+HAG/30 Ammo
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Left Torso:
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+CLSRM6
+CLMediumPulseLaser
+Clan Ammo SRM-6
+Clan Ammo SRM-6
+HAG/30 Ammo
+HAG/30 Ammo
+Endo Steel
+Ferro-Fibrous
+
+Right Torso:
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+CLSRM6
+CLMediumPulseLaser
+CLMicroPulseLaser
+CLMicroPulseLaser
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLSmallPulseLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,0 +1,21 @@
+###################################################################################################
+# This adaptation of the RAT files in Era Report 3062 takes into account the odds of rolling an
+# upgraded BattleMek.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3053 FedCom_and_LA Light Meks
+Battle Hawk BH-K305,83
+Commando COM-2D,153
+Commando COM-5S,14
+Dart DRT-3S,111
+Fireball ALM-7D,111
+Garm GRM-01B,83
+Javelin JVN-10N,51
+Javelin JVN-10P,5
+Night Hawk NTK-2Q,28
+Spector SPR-5F,56
+Talon TLN-5W,28
+Valkyrie VLK-QA,127
+Valkyrie VLK-QD,12
+Wolfhound WLF-1,127
+Wolfhound WLF-2,12

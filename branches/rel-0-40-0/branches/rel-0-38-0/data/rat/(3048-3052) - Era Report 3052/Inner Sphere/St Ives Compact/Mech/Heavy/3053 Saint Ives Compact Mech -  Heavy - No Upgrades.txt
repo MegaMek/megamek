@@ -1,0 +1,12 @@
+3053 Saint Ives Compact Mech -  Heavy - No Upgraded
+Cataphract CTF-2X,1
+Catapult CPLT-C1,2
+JagerMech JM6-S,3
+Marauder MAD-3L,4
+Rifleman RFL-3N,5
+Cataphract CTF-1X,6
+Catapult CPLT-C1,5
+Crusader CRD-3L,4
+Thunderbolt TDR-5S,3
+JagerMech JM6-S,2
+Catapult CPLT-C4,1

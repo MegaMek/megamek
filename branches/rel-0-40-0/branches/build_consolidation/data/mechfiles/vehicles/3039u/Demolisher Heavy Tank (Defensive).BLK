@@ -1,0 +1,87 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Demolisher Heavy Tank
+</Name>
+
+<Model>
+(Defensive)
+</Model>
+
+<year>
+2823
+</year>
+
+<source>
+Succession Wars
+</source>
+
+<type>
+IS Level 1
+</type>
+
+<tonnage>
+80.0
+</tonnage>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor>
+32
+22
+22
+12
+32
+</armor>
+
+<Body Equipment>
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+Machine Gun
+</Right Equipment>
+
+<Left Equipment>
+Machine Gun
+</Left Equipment>
+
+<Rear Equipment>
+Machine Gun
+</Rear Equipment>
+
+<Turret Equipment>
+Autocannon/20
+Autocannon/20
+</Turret Equipment>
+

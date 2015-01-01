@@ -1,0 +1,150 @@
+Version:1.0
+Liberator
+A-UK
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3058
+Rules Level:2
+
+Mass:65
+Engine:260 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:20
+RA Armor:20
+LT Armor:23
+RT Armor:23
+CT Armor:32
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:7
+RTR Armor:7
+RTC Armor:10
+
+Weapons:5
+2 CLLRM15, Right Arm, Ammo:64
+2 CLLRM15, Left Arm
+1 CLLRM15, Right Torso
+1 CLLRM15, Left Torso
+1 CLERSmallLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLRM15
+CLLRM15
+CLArtemisIV
+CLLRM15
+CLLRM15
+CLArtemisIV
+CLLRM15 Ammo (Clan) Artemis-capable
+CLLRM15 Ammo (Clan) Artemis-capable
+CLLRM15 Ammo (Clan) Artemis-capable
+CLLRM15 Ammo (Clan) Artemis-capable
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLRM15
+CLLRM15
+CLArtemisIV
+CLLRM15
+CLLRM15
+CLArtemisIV
+CLLRM15 Ammo (Clan) Artemis-capable
+CLLRM15 Ammo (Clan) Artemis-capable
+CLLRM15 Ammo (Clan) Artemis-capable
+CLLRM15 Ammo (Clan) Artemis-capable
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLLRM15
+CLLRM15
+CLArtemisIV
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLLRM15
+CLLRM15
+CLArtemisIV
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

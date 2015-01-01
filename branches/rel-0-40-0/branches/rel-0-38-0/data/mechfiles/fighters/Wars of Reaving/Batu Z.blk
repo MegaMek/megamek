@@ -1,0 +1,106 @@
+
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Batu
+</Name>
+
+<Model>
+Z
+</Model>
+
+<Tonnage>
+40
+</Tonnage>
+
+<SafeThrust>
+9
+</SafeThrust>
+
+<Armor>
+50
+38
+38
+27
+</Armor>
+
+<Nose Equipment>
+CLiATM12
+CLIATM12 Ammo
+CLIATM12 Ammo
+CLIATM12 Ammo
+CLIATM12 Ammo
+NovaCEWS
+CLTargeting Computer
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLERMediumLaser
+CLERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+CLERMediumLaser
+CLERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment> 
+CLERSmallLaser
+</Aft Equipment>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+240
+</fuel>
+
+<type>
+Clan Level 4
+</type>
+
+<armor_tech>
+8
+</armor_tech>
+
+<year>
+3072
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+19
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<omni>
+</omni>

@@ -1,0 +1,196 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+
+
+<Name>
+
+Riever
+
+</Name>
+
+
+
+<Model>
+
+F-100b
+
+</Model>
+
+
+
+<Tonnage>
+
+100
+
+</Tonnage>
+
+
+
+<SafeThrust>
+
+5
+
+</SafeThrust>
+
+
+
+<Armor>
+
+66
+
+57
+
+57
+
+44
+
+</Armor>
+
+
+
+<Nose Equipment>
+
+Autocannon/20
+
+LRM 10
+
+IS Ammo AC/20
+
+IS Ammo AC/20
+
+IS Ammo LRM-10
+
+IS Ammo LRM-10
+
+</Nose Equipment>
+
+
+
+<Left Wing Equipment>
+
+Autocannon/5
+
+IS Ammo AC/5
+
+</Left Wing Equipment>
+
+
+
+<Right Wing Equipment>
+
+Autocannon/5
+
+IS Ammo AC/5
+
+</Right Wing Equipment>
+
+
+
+<Aft Equipment>
+
+</Aft Equipment>
+
+
+
+<heatsinks>
+
+28
+
+</heatsinks>
+
+
+
+<sink_type>
+
+0
+
+</sink_type>
+
+
+
+<fuel>
+
+400
+
+</fuel>
+
+
+
+<type>
+
+IS Level 1
+
+</type>
+
+
+
+<year>
+
+2835
+
+</year>
+
+
+
+<source>
+
+Succession Wars
+
+</source>
+
+
+
+<internal_type>
+
+0				
+
+</internal_type>
+
+
+
+<armor_type>
+
+0
+
+</armor_type>
+
+
+
+<engine_type>				
+
+0
+
+</engine_type>
+
+
+
+<motion_type>
+
+aerodyne
+
+</motion_type>

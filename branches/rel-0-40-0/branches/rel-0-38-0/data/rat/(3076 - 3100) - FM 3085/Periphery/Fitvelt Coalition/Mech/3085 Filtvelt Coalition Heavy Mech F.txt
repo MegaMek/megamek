@@ -1,0 +1,12 @@
+3085 Filtvelt Coalition Heavy Mech F
+Ostsol OTL-4F,1
+Quickdraw QKD-4G,2
+JagerMech JM6-A,3
+JagerMech JM6-S,4
+Crusader CRD-3D,5
+Rifleman RFL-3N,6
+JagerMech JM6-DD,5
+Warhammer WHM-6K,4
+Rifleman RFL-5D,3
+Archer ARC-2R,2
+Thunderbolt TDR-5S,1

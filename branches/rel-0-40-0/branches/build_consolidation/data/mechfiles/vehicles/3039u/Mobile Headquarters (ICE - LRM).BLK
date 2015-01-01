@@ -1,0 +1,78 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Mobile Headquarters
+</Name>
+
+<Model>
+(ICE - LRM)
+</Model>
+
+<year>
+3060
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+25.0
+</tonnage>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+cargobay:0.5:1
+</transporters>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<armor>
+16
+19
+19
+16
+10
+</armor>
+
+<Body Equipment>
+IS Ammo LRM-10
+Communications Equipment (2 ton)
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+LRM 10
+</Turret Equipment>

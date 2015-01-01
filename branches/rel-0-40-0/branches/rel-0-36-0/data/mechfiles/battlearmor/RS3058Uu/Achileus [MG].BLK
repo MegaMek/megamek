@@ -1,0 +1,54 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+BattleArmor
+</UnitType>
+<Name>
+Achileus Light Battle Armor
+</Name>
+<Model>
+[MG]
+</Model>
+<Trooper Count>
+4
+</Trooper Count>
+<chassis>
+biped
+</chassis>
+<weightclass>
+1
+</weightclass>
+<cruiseMP>
+1
+</cruiseMP>
+<jumpingMP>
+3
+</jumpingMP>
+<Armor>
+6
+</Armor>
+<Squad Equipment>
+BA Machine Gun
+Improved Stealth
+BAAPMount
+BABasicManipulator
+BABasicManipulator
+</Squad Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3057
+</year>
+<motion_type>
+Jump
+</motion_type>
+<source>
+Clan Invasion
+</source>

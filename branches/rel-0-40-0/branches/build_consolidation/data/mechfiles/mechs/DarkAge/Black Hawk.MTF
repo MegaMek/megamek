@@ -1,0 +1,152 @@
+Version:1.0
+Black Hawk
+
+Config:Biped
+TechBase:Clan
+Era:3073
+Source:DTP Liao
+Rules Level:2
+
+Mass:50
+Engine:250 XL (Clan) Engine(IS)
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:14 Double
+Walk MP:5
+Jump MP:5
+
+Armor:Standard(Clan)
+LA Armor:13
+RA Armor:13
+LT Armor:14
+RT Armor:14
+CT Armor:19
+HD Armor:9
+LL Armor:19
+RL Armor:19
+RTL Armor:5
+RTR Armor:5
+RTC Armor:6
+
+Weapons:6
+Streak SRM 4, Left Arm
+Streak SRM 4, Left Arm
+Streak SRM 4, Right Arm
+Streak SRM 4, Right Arm
+ER Large Laser, Left Torso
+ER Large Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLStreakSRM4
+CLStreakSRM4
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLStreakSRM4
+CLStreakSRM4
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERLargeLaser
+Clan Streak SRM 4 Ammo
+Clan Streak SRM 4 Ammo
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERLargeLaser
+Clan Streak SRM 4 Ammo
+Clan Streak SRM 4 Ammo
+Endo Steel
+Endo Steel
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

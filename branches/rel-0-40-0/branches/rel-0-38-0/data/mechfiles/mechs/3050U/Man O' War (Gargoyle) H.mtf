@@ -1,0 +1,132 @@
+Version:1.1
+Man O' War (Gargoyle)
+H
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3059
+Rules Level:2
+
+Mass:80
+Engine:400 XL Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:16 Double
+Base Chassis Heat Sinks: 16
+Walk MP:5
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:23
+RA Armor:23
+LT Armor:24
+RT Armor:24
+CT Armor:30
+HD Armor:9
+LL Armor:24
+RL Armor:24
+RTL Armor:10
+RTR Armor:10
+RTC Armor:10
+
+Weapons:5
+1 CLUltraAC10, Right Arm, Ammo:20
+1 CLHeavyLargeLaser, Left Arm
+1 CLERMediumLaser, Left Arm
+1 CLERMediumLaser, Left Arm
+1 CLLRM10, Left Torso, Ammo:12
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLHeavyLargeLaser
+CLHeavyLargeLaser
+CLHeavyLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+-Empty-
+-Empty-
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10
+CLUltraAC10 Ammo
+CLUltraAC10 Ammo
+-Empty-
+-Empty-
+-Empty-
+Ferro-Fibrous
+
+Left Torso:
+Engine
+Engine
+CLLRM10
+CLLRM10 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Torso:
+Engine
+Engine
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-

@@ -1,0 +1,12 @@
+3085 Clan Wolf in Exile Battlearmor Second Line
+Elemental Battle Armor [MG],1
+Nighthawk PA(L) Mk. XXI,2
+Clan Medium Battle Armor "Rabid",3
+Elemental Battle Armor [MG],4
+Clan Medium Battle Armor "Rabid",5
+Elemental Battle Armor [MG],6
+Elemental Battle Armor [MG],5
+Elemental Battle Armor [MG],4
+Elemental Battle Armor (Headhunter),3
+Elemental Battle Armor [MG],2
+Elemental Battle Armor [MG],1

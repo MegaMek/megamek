@@ -1,0 +1,76 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+J. Edgar Light Hover Tank
+</Name>
+
+<year>
+2722
+</year>
+
+<source>
+Star League
+</source>
+
+<type>
+IS Level 1
+</type>
+
+<tonnage>
+25.0
+</tonnage>
+
+<motion_type>
+Hover
+</motion_type>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+11
+</cruiseMP>
+
+<armor>
+30
+19
+19
+12
+24
+</armor>
+
+<Body Equipment>
+IS Ammo SRM-2
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Medium Laser
+SRM 2
+SRM 2
+</Turret Equipment>
+

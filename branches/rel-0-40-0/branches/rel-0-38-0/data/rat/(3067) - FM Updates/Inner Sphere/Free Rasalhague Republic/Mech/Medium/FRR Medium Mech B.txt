@@ -1,0 +1,12 @@
+FRR Medium Mechs B 3067
+Wolf Trap (Tora) WFT-1,1
+Vulcan VT-5S,2
+Griffin GRF-1DS,3
+Trebuchet TBT-7M,4
+Hunchback HBK-5M,5
+Wolverine WVR-7K,6
+Phoenix Hawk PXH-3K,5
+Kintaro KTO-20,4
+Crab CRB-27,3
+Komodo KIM-2,2
+Chameleon CLN-7W,1

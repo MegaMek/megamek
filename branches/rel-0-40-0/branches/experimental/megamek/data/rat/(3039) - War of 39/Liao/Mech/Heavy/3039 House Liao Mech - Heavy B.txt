@@ -1,0 +1,15 @@
+3039 House Liao Mech - Heavy B
+Cataphract CTF-1X, 1
+Orion ON1-K, 2
+Grasshopper GHR-5H, 3
+Marauder MAD-3L, 4
+Rifleman RFL-3N, 5
+Catapult CPLT-C1, 6
+Archer ARC-2R, 5
+Warhammer WHM-6L, 4
+Crusader CRD-3L, 3
+Thunderbolt TDR-5S, 2
+JagerMech JM6-S, 1
+##Version 1 - May 2011
+##From RUS Files
+##Editted by Dave "Hammer" Nawton

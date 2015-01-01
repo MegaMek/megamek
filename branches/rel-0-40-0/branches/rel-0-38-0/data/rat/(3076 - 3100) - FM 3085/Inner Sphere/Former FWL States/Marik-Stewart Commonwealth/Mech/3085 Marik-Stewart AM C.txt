@@ -1,0 +1,12 @@
+3085 Marik-Stewart Commonwealth Assault Mech C
+BattleMaster BLR-3M,1
+Stalker STK-5M,2
+Emperor EMP-6M,3
+Goliath GOL-3M,4
+Longbow LGB-12C,5
+Albatross ALB-3Ur,6
+Awesome AWS-10KM,5
+Stalker STK-6M,4
+Sirocco SRC-3C,3
+Goliath GOL-6M,2
+Grand Titan T-IT-N10M,1

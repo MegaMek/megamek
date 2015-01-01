@@ -1,0 +1,69 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+DI Schmitt Tank
+</Name>
+<Tonnage>
+80
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+45
+31
+31
+20
+25
+</Armor>
+<Turret Equipment>
+ISLRM15
+ISRotaryAC5
+ISRotaryAC5
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMachine Gun
+ISMachine Gun
+</Turret Equipment>
+<Front Equipment>
+ISFlamer
+ISFlamer
+</Front Equipment>
+<Body Equipment>
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISMG Ammo (100)
+</Body Equipment>
+<type>
+IS
+</type>
+<year>
+3132
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>

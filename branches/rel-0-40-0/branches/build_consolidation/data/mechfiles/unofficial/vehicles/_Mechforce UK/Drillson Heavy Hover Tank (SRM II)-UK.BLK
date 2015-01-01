@@ -1,0 +1,69 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Drillson Heavy Hover Tank
+</Name>
+<Model>
+(SRM II)-UK
+</Model>
+<Tonnage>
+50
+</Tonnage>
+<cruiseMP>
+8
+</cruiseMP>
+<Armor>
+25
+21
+21
+20
+25
+</Armor>
+<Turret Equipment>
+ISMediumLaser
+ISSRM2
+</Turret Equipment>
+<Front Equipment>
+ISSRM2
+ISSRM2
+ISSRM2
+ISSRM2
+ISSRM2
+ISSRM2
+ISSRM2
+ISSRM2
+ISMachine Gun
+ISMachine Gun
+</Front Equipment>
+<Body Equipment>
+ISMG Ammo (100)
+ISSRM2 Ammo
+ISSRM2 Ammo
+</Body Equipment>
+<type>
+IS
+</type>
+<year>
+3025
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+1
+</engine_type>
+<motion_type>
+Hover
+</motion_type>

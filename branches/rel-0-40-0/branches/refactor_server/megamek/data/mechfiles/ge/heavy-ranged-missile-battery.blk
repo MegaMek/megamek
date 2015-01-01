@@ -1,0 +1,48 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+GunEmplacement
+</UnitType>
+<Name>
+Heavy Ranged Missile Battery
+</Name>
+<Model>
+Yoyodyne HRMB-A5
+</Model>
+<Year>
+3025
+</Year>
+<Type>
+IS Level 1
+</Type>
+<ConstructionFactor>
+90
+</ConstructionFactor>
+<Height>
+2
+</Height>
+<Turret>
+90
+</Turret>
+<Turret Equipment>
+ISLRM20
+ISLRM20
+</Turret Equipment>
+<Building Equipment>
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+ISLRM20 Ammo
+</Building Equipment>

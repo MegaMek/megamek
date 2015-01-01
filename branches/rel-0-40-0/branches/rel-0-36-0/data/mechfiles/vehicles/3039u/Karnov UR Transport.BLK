@@ -1,0 +1,76 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Karnov UR Transport
+</Name>
+
+<year>
+2600
+</year>
+
+<source>
+Star League
+</source>
+
+<type>
+IS Level 1
+</type>
+
+<tonnage>
+30.0
+</tonnage>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<transporters>
+TroopSpace:6
+</transporters>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+11
+</cruiseMP>
+
+<armor>
+6
+5
+5
+6
+2
+</armor>
+
+<Body Equipment>
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+

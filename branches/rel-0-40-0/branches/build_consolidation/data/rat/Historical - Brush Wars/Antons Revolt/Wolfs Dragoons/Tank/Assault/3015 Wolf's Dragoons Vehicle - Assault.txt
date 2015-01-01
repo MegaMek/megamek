@@ -1,0 +1,12 @@
+3015 Wolf's Dragoons Vehicle - Assault
+Partisan Heavy Tank,1
+Partisan Heavy Tank,2
+Schrek PPC Carrier,3
+Schrek PPC Carrier,4
+Demolisher Heavy Tank,5
+Demolisher Heavy Tank,6
+Demolisher Heavy Tank,5
+Ontos Heavy Tank,4
+Ontos Heavy Tank,3
+Ontos Heavy Tank,2
+Behemoth Heavy Tank,1

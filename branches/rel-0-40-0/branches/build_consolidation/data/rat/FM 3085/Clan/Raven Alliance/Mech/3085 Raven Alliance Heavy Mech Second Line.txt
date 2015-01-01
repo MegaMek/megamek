@@ -1,0 +1,12 @@
+3085 Raven Alliance Heavy Mech Second Line
+Viper (Black Python),1
+Merlin MLN-1B,2
+Grasshopper GHR-5H,3
+Merlin MLN-1C,4
+Bombardier BMB-05A,5
+Merlin MLN-1A,6
+Galahad (Glass Spider),5
+Hercules HRC-LS-9000,4
+Rifleman IIC,3
+Bombardier BMB-12D,2
+Thresher,1

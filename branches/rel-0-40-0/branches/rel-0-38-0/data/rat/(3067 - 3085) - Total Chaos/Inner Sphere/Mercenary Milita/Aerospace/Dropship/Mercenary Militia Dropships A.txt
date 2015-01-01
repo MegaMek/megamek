@@ -1,0 +1,12 @@
+Mercenary/Militia Dropships A
+Leopard CV (3054),1
+Hamilcar (Standard),2
+Vengeance (2682),3
+Kuan Ti (Standard),4
+Merlin (3063),5
+Assault Triumph (3062),6
+Kuan Ti (Standard),5
+Merlin (3063),4
+Leopard "Pocket Warship",3
+Mule (Pocket Warship),2
+Interdictor Pocket Warship (Standard),1

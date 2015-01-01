@@ -1,0 +1,151 @@
+Version:1.0
+Sha Yu
+SYU-2B
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3063
+Rules Level:2
+
+Mass:40
+Engine:280 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:7
+Jump MP:0
+
+Armor:Stealth Armor
+LA Armor:9
+RA Armor:9
+LT Armor:13
+RT Armor:13
+CT Armor:14
+HD Armor:9
+LL Armor:11
+RL Armor:11
+RTL Armor:5
+RTR Armor:5
+RTC Armor:5
+
+Weapons:6
+1 ISERLargeLaser, Right Arm
+1 ISERLargeLaser, Left Arm
+1 ISERMediumLaser, Right Torso
+1 ISERMediumLaser, Left Torso
+1 ISTAG, Head
+1 ISGuardianECM, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERLargeLaser
+ISERLargeLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Stealth Armor
+Stealth Armor
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERLargeLaser
+ISERLargeLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Stealth Armor
+Stealth Armor
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERMediumLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Stealth Armor
+Stealth Armor
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERMediumLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Stealth Armor
+Stealth Armor
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISGuardianECM
+ISGuardianECM
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISTAG
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Stealth Armor
+Stealth Armor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Stealth Armor
+Stealth Armor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

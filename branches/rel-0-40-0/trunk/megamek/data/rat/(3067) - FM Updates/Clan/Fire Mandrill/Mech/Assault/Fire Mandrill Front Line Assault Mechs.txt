@@ -1,0 +1,12 @@
+Clan Fire Mandrill Front-Line Assault Mechs (FMU)
+Turkina B,1
+Turkina A,2
+Masakari (Warhawk) H,3
+Masakari (Warhawk) C,4
+Man O' War (Gargoyle) A,5
+Masakari (Warhawk) A,6
+Masakari (Warhawk) Prime,5
+Man O' War (Gargoyle) Prime,4
+Turkina Prime,3
+Man O' War (Gargoyle) A,2
+Turkina C,1

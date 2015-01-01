@@ -1,0 +1,94 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Daimyo HQ
+</Name>
+
+<Model>
+67-K2
+</Model>
+
+<year>
+3067
+</year>
+
+<source>
+Jihad
+</source>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+50.0
+</tonnage>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+TroopSpace: 3
+</transporters>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+34
+22
+22
+15
+19
+</armor>
+
+<Body Equipment>
+IS Machine Gun Ammo - Half
+Communications Equipment (7 ton)
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+Machine Gun
+</Right Equipment>
+
+<Left Equipment>
+Machine Gun
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISLPPC
+ISLPPC
+</Turret Equipment>
+
+<armor_type>
+0
+</armor_type>
+

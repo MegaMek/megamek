@@ -1,0 +1,78 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Condor Heavy Hover Tank
+</Name>
+
+<year>
+2564
+</year>
+
+<source>
+Star League
+</source>
+
+<type>
+IS Level 1
+</type>
+
+<tonnage>
+50.0
+</tonnage>
+
+<motion_type>
+Hover
+</motion_type>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<armor>
+30
+15
+15
+14
+22
+</armor>
+
+<Body Equipment>
+IS Ammo AC/5
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Autocannon/5
+Medium Laser
+Medium Laser
+</Turret Equipment>
+

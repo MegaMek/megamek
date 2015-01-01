@@ -1,0 +1,80 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Armored Personnel Carrier
+</Name>
+
+<Model>
+(Tracked MG)
+</Model>
+
+<year>
+1950
+</year>
+
+<source>
+Star League
+</source>
+
+<type>
+IS Level 1
+</type>
+
+<tonnage>
+10.0
+</tonnage>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<armor>
+10
+8
+8
+10
+4
+</armor>
+
+<Body Equipment>
+IS Ammo MG - Full
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+Machine Gun
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+</Turret Equipment>
+

@@ -1,0 +1,220 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Jumpship
+</UnitType>
+<Name>
+Comitatus JumpShip
+</Name>
+<Tonnage>
+250000
+</Tonnage>
+<Armor>
+16
+14
+14
+12
+12
+16
+</Armor>
+<Nose Equipment>
+CLGaussRifle
+CLGauss Ammo
+CLGauss Ammo
+CLGauss Ammo
+CLGauss Ammo
+CLERLargeLaser
+CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+CLLRM20
+Clan Artemis IV FCS
+CLLRM20
+Clan Artemis IV FCS
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+Clan AMS
+Clan AMS
+Clan AMS Ammo
+Clan AMS Ammo
+Clan AMS Ammo
+Clan AMS Ammo
+Clan AMS Ammo
+Clan AMS Ammo
+CLERPPC
+CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLStreakSRM6
+CLStreakSRM6 Ammo
+</Nose Equipment>
+<Front Left Side Equipment>
+Clan Ultra AC/20
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLERLargeLaser
+CLERMediumLaser
+CLLRM20
+Clan Artemis IV FCS
+CLLRM20
+Clan Artemis IV FCS
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+Clan AMS
+Clan AMS
+Clan AMS Ammo
+Clan AMS Ammo
+CLLargePulseLaser
+CLStreakSRM6
+CLStreakSRM6 Ammo
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+Clan Ultra AC/20
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLUltraAC20 Ammo
+CLERLargeLaser
+CLERMediumLaser
+CLLRM20
+Clan Artemis IV FCS
+CLLRM20
+Clan Artemis IV FCS
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+Clan AMS
+Clan AMS
+Clan AMS Ammo
+Clan AMS Ammo
+CLLargePulseLaser
+CLStreakSRM6
+CLStreakSRM6 Ammo
+</Front Right Side Equipment>
+<Aft Left Side Equipment>
+CLERLargeLaser
+CLERMediumLaser
+CLLRM20
+Clan Artemis IV FCS
+CLLRM20
+Clan Artemis IV FCS
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+Clan AMS
+Clan AMS
+Clan AMS Ammo
+Clan AMS Ammo
+CLLargePulseLaser
+CLStreakSRM6
+CLStreakSRM6 Ammo
+</Aft Left Side Equipment>
+<Aft Right Side Equipment> 
+CLERLargeLaser
+CLERMediumLaser
+CLLRM20
+Clan Artemis IV FCS
+CLLRM20
+Clan Artemis IV FCS
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+Clan AMS
+Clan AMS
+Clan AMS Ammo
+Clan AMS Ammo
+CLLargePulseLaser
+CLStreakSRM6
+CLStreakSRM6 Ammo
+</Aft Right Side Equipment>
+<Aft Equipment> 
+CLGaussRifle
+CLGauss Ammo
+CLGauss Ammo
+CLGauss Ammo
+CLGauss Ammo
+CLLRM20
+Clan Artemis IV FCS
+CLLRM20
+Clan Artemis IV FCS
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+CLLRM20 Ammo (Clan) Artemis-capable
+Clan AMS
+Clan AMS
+Clan AMS Ammo
+Clan AMS Ammo
+CLERPPC
+CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLStreakSRM6
+CLStreakSRM6 Ammo
+</Aft Equipment>
+<structural_integrity>
+1
+</structural_integrity>
+<heatsinks>
+122
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+1150
+</fuel>
+<type>
+Clan Level 2
+</type>
+<year>
+2995
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+13
+</armor_type>
+
+<transporters>
+ASFBay:20:2
+BattleArmorBay:5:1
+SmallCraftBay:5:1
+CargoBay:778:0
+</transporters>
+<docking_collar>
+1
+</docking_collar>
+<grav_deck>
+1
+</grav_deck>
+<escape_pod>
+0
+</escape_pod>
+<life_boat>
+4
+</life_boat>
+<crew>
+140
+</crew>
+<passengers>
+0
+</passengers>

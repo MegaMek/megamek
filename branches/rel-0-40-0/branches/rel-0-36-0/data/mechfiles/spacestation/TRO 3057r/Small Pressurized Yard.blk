@@ -1,0 +1,116 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SpaceStation
+</UnitType>
+
+<Name>
+Small Pressurized Shipyard
+</Name>
+
+<Model>
+</Model>
+
+<Tonnage>
+2500
+</Tonnage>
+
+<Armor>
+4
+4
+4
+4
+4
+4
+</Armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Front Left Side Equipment>
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+</Front Right Side Equipment>
+
+<Aft Left Side Equipment>
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+</Aft Right Side Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<structural_integrity>
+1
+</structural_integrity>
+
+<heatsinks>
+52
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+100
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+2100
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<transporters>
+SmallCraftBay:5:2
+CargoBay:51:1
+</transporters>
+
+<docking_collar>
+0
+</docking_collar>
+
+<grav_deck>
+0
+</grav_deck>
+
+<escape_pod>
+5
+</escape_pod>
+
+<life_boat>
+0
+</life_boat>
+
+<crew>
+71
+</crew>
+
+<passengers>
+</passengers>
+
+<History>
+Unit has Pressurized Dry Dock with 10000t Capacity. No Rules for Ship Yards are in MegaMek. Unit included for completeness.
+</history>

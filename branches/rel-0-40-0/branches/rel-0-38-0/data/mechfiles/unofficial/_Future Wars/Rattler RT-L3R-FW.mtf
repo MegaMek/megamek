@@ -1,0 +1,150 @@
+Version:1.0
+Rattler
+RT-L3R-FW
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:2
+
+Mass:100
+Engine:300 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:3
+Jump MP:3
+
+Armor:Standard Armor
+LA Armor:34
+RA Armor:34
+LT Armor:35
+RT Armor:35
+CT Armor:47
+HD Armor:9
+LL Armor:42
+RL Armor:42
+RTL Armor:7
+RTR Armor:7
+RTC Armor:12
+
+Weapons:5
+8 ISStreakSRM2, Right Arm, Ammo:100
+8 ISStreakSRM2, Left Arm
+10 ISMachine Gun, Right Torso, Ammo:400
+10 ISMachine Gun, Left Torso
+1 ISMediumLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2 Ammo
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2
+ISStreakSRM2 Ammo
+
+Left Torso:
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMG Ammo (200)
+ISCASE
+
+Right Torso:
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMachine Gun
+ISMG Ammo (200)
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISMediumLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

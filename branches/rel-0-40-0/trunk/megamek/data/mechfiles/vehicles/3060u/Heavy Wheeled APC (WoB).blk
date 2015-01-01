@@ -1,0 +1,118 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Heavy Wheeled APC
+</Name>
+
+<Model>
+(WoB)
+</Model>
+
+<Tonnage>
+20
+</Tonnage>
+
+<cruiseMP>
+7
+</cruiseMP>
+
+#Order is Tank/VTOL/LST
+<Armor>
+29
+20
+20
+10
+</Armor>
+
+<Front Equipment>
+ISSmallVariableSpeedLaser
+ISSmallVariableSpeedLaser
+</Front Equipment>
+
+<Left Equipment>
+
+</Left Equipment>
+
+<Right Equipment>
+
+</Right Equipment>
+
+<Rear Equipment>
+
+</Rear Equipment>
+
+<Turret Equipment>
+
+</Turret Equipment>
+
+<Rotor Equipment>
+
+</Rotor Equipment>
+
+<Front Left Equipment>
+
+</Front Left Equipment>
+
+<Front Right Equipment>
+
+</Front Right Equipment>
+
+<Rear Left Equipment>
+
+</Rear Left Equipment>
+
+<Rear Right Equipment>
+
+</Rear Right Equipment>
+
+<Body Equipment>
+
+</Body Equipment>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+3072
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+6
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<barrating>
+
+</barrating>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+TroopSpace:6
+</transporters>
+
+<source>
+Jihad
+</source>

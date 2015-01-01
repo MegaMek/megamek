@@ -1,0 +1,107 @@
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Shikra
+</Name>
+
+<Model>
+SKR-4M
+</Model>
+
+<Tonnage>
+90
+</Tonnage>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<Armor>
+111
+83
+83
+70
+</Armor>
+
+<Nose Equipment>
+ISGaussRifle
+ISGauss Ammo
+ISGauss Ammo
+ISGauss Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISUltraAC10
+ISUltraAC10 Ammo
+ISUltraAC10 Ammo
+ISUltraAC10 Ammo
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISUltraAC10
+ISUltraAC10 Ammo
+ISUltraAC10 Ammo
+ISUltraAC10 Ammo
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISMediumPulseLaser
+ISChaffPod
+ISChaffPod
+</Aft Equipment>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3104
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+6
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<history>
+</history>
+
+<cockpit_type>
+0
+</cockpit_type>
+

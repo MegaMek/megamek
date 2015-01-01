@@ -1,0 +1,12 @@
+Clan Jade Falcon Second-Line Heavy Aerospace (FMU)
+Hammerhead HMR-HD,1
+Sabutai Prime,2
+Sabutai A,3
+Ahab AHB-443,4
+Kirghiz A,5
+Rapier RPR-100,6
+Scytha Prime,5
+Ahab AHB-443,4
+Kirghiz Prime,3
+Sabutai C,2
+Rapier RPR-100,1

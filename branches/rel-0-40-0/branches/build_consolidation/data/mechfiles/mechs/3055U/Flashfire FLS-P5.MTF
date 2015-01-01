@@ -1,0 +1,154 @@
+Version:1.0
+Flashfire
+FLS-P5
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3067
+Source:Civil War
+Rules Level:4
+
+Mass:30
+Engine:180 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:4
+
+Armor:Standard(Inner Sphere)
+LA Armor:8
+RA Armor:8
+LT Armor:10
+RT Armor:10
+CT Armor:12
+HD Armor:9
+LL Armor:12
+RL Armor:12
+RTL Armor:2
+RTR Armor:2
+RTC Armor:3
+
+Weapons:7
+ER Small Laser, Left Arm
+ER Small Laser, Left Arm
+Fluid Gun, Left Arm
+SRM 6, Right Arm
+ER Small Laser, Right Arm
+ER Small Laser, Right Arm
+Fluid Gun, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERSmallLaser
+ISERSmallLaser
+IS Fluid Gun
+IS Fluid Gun
+ISFluidGun Ammo
+Spikes
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+SRM 6
+SRM 6
+ISERSmallLaser
+ISERSmallLaser
+IS Fluid Gun
+IS Fluid Gun
+ISFluidGun Ammo
+IS Ammo SRM-6
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo Steel
+Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

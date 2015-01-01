@@ -1,0 +1,156 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Shade
+
+</Name>
+
+<Model>
+
+S-HA-OC Comminus
+
+</Model>
+
+<Tonnage>
+
+35
+
+</Tonnage>
+
+<SafeThrust>
+
+9
+
+</SafeThrust>
+
+<Armor>
+
+40
+
+28
+
+28
+
+20
+
+</Armor>
+
+<Nose Equipment>
+
+ISThunderbolt10
+
+ISThunderbolt10 Ammo
+
+ISThunderbolt10 Ammo
+
+CASE
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+ISERMediumLaser
+
+ISERMediumLaser
+
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+
+ISERMediumLaser
+
+ISERMediumLaser
+
+</Right Wing Equipment>
+
+<Aft Equipment> 
+
+</Aft Equipment>
+
+<heatsinks>
+
+12
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+400
+
+</fuel>
+
+<type>
+
+IS Level 3
+
+</type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<year>
+
+3072
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+19
+</armor_type>
+
+<cockpit_type>
+
+1
+
+</cockpit_type>
+
+<engine_type>
+
+2
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+
+
+

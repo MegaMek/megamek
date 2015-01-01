@@ -1,0 +1,12 @@
+3030 House Marik Aerospace - Assault
+Fury (2638),1
+Gazelle (2531),2
+Overlord (2762),3
+Union (2708),4
+Leopard (2537),5
+Union (2708),6
+Leopard (2537),5
+Leopard CV (2581),4
+Intruder (2655),3
+Condor (2801),2
+Overlord (2762),1

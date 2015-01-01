@@ -1,0 +1,132 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+SpaceStation
+</UnitType>
+<Name>
+Snowden Mining Station
+</Name>
+<Model>
+Mk1
+</Model>
+<Tonnage>
+51000
+</Tonnage>
+<Armor>
+23
+22
+22
+22
+22
+22
+</Armor>
+<Nose Equipment>
+ISLargeLaser
+ISLargeLaser
+ISSmallLaser
+ISSmallLaser
+</Nose Equipment>
+<Front Left Side Equipment>
+ISPPC
+ISMediumLaser
+ISMediumLaser
+ISSmallLaser
+ISSmallLaser
+</Front Left Side Equipment>
+<Front Right Side Equipment> 
+ISPPC
+ISMediumLaser
+ISMediumLaser
+ISSmallLaser
+ISSmallLaser
+</Front Right Side Equipment>
+<Aft Left Side Equipment>
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+(B) ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISSmallLaser
+ISSmallLaser
+</Aft Left Side Equipment>
+<Aft Right Side Equipment> 
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+(B) ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISSmallLaser
+ISSmallLaser
+</Aft Right Side Equipment>
+<Aft Equipment> 
+ISLargeLaser
+ISLargeLaser
+ISSmallLaser
+ISSmallLaser
+</Aft Equipment>
+<structural_integrity>
+1
+</structural_integrity>
+<heatsinks>
+79
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+510
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+2390
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+
+<transporters>
+SmallCraftBay:22:4
+ShuttleHangerAndFacilities:1:0
+SmallCraftBay:22:4
+ShuttleHangerAndFacilities:1:0
+PressurisedRepair:5000:1
+UnPressurisedRepair:15000:1
+CargoBay:15412:1
+OreProcessingFacility:6000:1
+KFBoom:1:0
+</transporters>
+<docking_collar>
+0
+</docking_collar>
+<grav_deck>
+2
+</grav_deck>
+<escape_pod>
+0
+</escape_pod>
+<life_boat>
+150
+</life_boat>
+<crew>
+354
+</crew>
+<passengers>
+1000
+</passengers>

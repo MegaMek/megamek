@@ -1,0 +1,78 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Bandit (C) Hovercraft
+</Name>
+<Model>
+G
+</Model>
+<Tonnage>
+50
+</Tonnage>
+<cruiseMP>
+9
+</cruiseMP>
+<Armor>
+40
+40
+40
+20
+32
+</Armor>
+<Turret Equipment>
+CLERMediumLaser
+CLLightMG
+CLLightMG
+CLLightMG
+CLLightMG
+CLLMGA
+</Turret Equipment>
+<Front Equipment>
+CLHeavyMG
+CLHeavyMG
+CLHeavyMG
+CLHeavyMG
+CLHMGA
+</Front Equipment>
+<transporters>
+TroopSpace:5
+</transporters>
+<Body Equipment>
+CLHeavyMG Ammo (100)
+CLLightMG Ammo (100)
+CLCASE
+CLActiveProbe
+CLECMSuite
+</Body Equipment>
+<type>
+Clan Level 2
+</type>
+<year>
+3072
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Hover
+</motion_type>
+<omni>
+</omni>
+<source>
+Jihad
+</source>

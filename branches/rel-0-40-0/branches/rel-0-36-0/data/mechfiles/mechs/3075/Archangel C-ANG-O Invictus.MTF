@@ -1,0 +1,152 @@
+Version:1.1
+Archangel
+C-ANG-O Invictus
+
+Config:Biped Omnimech
+TechBase:Inner Sphere
+Era:3069
+Source:Jihad
+Rules Level:2
+
+Mass:100
+Engine:300 Compact Engine
+Structure:Endo Steel
+Myomer:Standard
+Cockpit:Small Cockpit
+Gyro:Compact Gyro
+
+Heat Sinks:13 Double
+Base Chassis Heat Sinks:12
+Walk MP:3
+Jump MP:3
+
+Armor:Standard(Inner Sphere)
+LA Armor:34
+RA Armor:34
+LT Armor:32
+RT Armor:32
+CT Armor:47
+HD Armor:9
+LL Armor:42
+RL Armor:42
+RTL Armor:10
+RTR Armor:10
+RTC Armor:15
+
+Weapons:2
+Heavy PPC, Right Arm
+Plasma Rifle, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Retractable Blade
+Retractable Blade
+Retractable Blade
+Retractable Blade
+Retractable Blade
+Retractable Blade
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Jump Jet
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Jump Jet
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Jump Jet
+ISC3iUnit
+ISC3iUnit
+ISGuardianECMSuite
+ISGuardianECMSuite
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+ISPlasmaRifle
+ISPlasmaRifle
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

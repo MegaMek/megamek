@@ -1,0 +1,129 @@
+Version:1.1
+Buster Class HaulerMech
+BC XV (PPC)
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2801
+Rules Level:2
+
+Mass:50
+Engine:150 I.C.E. Engine
+Structure:Industrial
+Myomer:Standard
+
+Heat Sinks:10 Single
+Walk MP:3
+Jump MP:0
+
+Armor:Commercial
+LA Armor:10
+RA Armor:10
+LT Armor:10
+RT Armor:10
+CT Armor:11
+HD Armor:9
+LL Armor:10
+RL Armor:10
+RTL Armor:4
+RTR Armor:4
+RTC Armor:8
+
+Weapons:3
+1 ISPPC, Right Torso
+1 Cargo (1 ton), Left Torso
+1 Cargo (1 ton), Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Heat Sink
+Cargo (1 ton)
+Cargo (1 ton)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+ISPPC
+ISPPC
+ISPPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Heat Sink
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+-Empty-

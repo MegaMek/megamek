@@ -1,0 +1,12 @@
+LAAF Medium Mechs C 3067 (FMU)
+Phoenix Hawk PXH-3M,1
+Enforcer ENF-5D,2
+Stealth STH-1D,3
+Clint CLNT-2-3U,4
+Vulcan VT-5S,5
+Hatchetman HCT-5S,6
+Nightsky NGS-4S,5
+Centurion CN9-D,4
+Bushwacker BSW-S2,3
+Griffin GRF-6S,2
+Scorpion SCP-12S,1

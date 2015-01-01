@@ -1,0 +1,12 @@
+Clan Jade Falcon Front-Line Light Mechs (FMU)
+Hellion Prime,1
+Cougar Prime,2
+Puma (Adder) A,3
+Puma (Adder) Prime,4
+Uller (Kit Fox) D,5
+Uller (Kit Fox) Prime,6
+Dasher (Fire Moth) Prime,5
+Dasher (Fire Moth) A,4
+Fire Falcon A,3
+Koshi (Mist Lynx) D,2
+Fire Falcon Prime,1

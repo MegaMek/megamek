@@ -1,0 +1,14 @@
+3039 House Marik Aerospace Medium
+Corsair CSR-V12, 1
+Corsair CSR-V12, 2
+Hellcat HCT-213R, 3
+Hellcat HCT-213R, 4
+Transit TR-10, 5
+Lightning LTN-G15, 6
+Lightning LTN-G15, 5
+Lightning LTN-G15, 4
+Stingray F-90, 3
+Transit TR-11, 2
+##Version 1 - May 2011
+##From RUS Files
+##Editted by Dave "Hammer" Nawton

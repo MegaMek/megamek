@@ -1,0 +1,149 @@
+Version:1.0
+Jenner
+JR7-K Grace
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3039
+Rules Level:5
+
+Mass:35
+Engine:245 Fusion Engine(IS)
+Structure:Endo Steel Prototype
+Myomer:Standard
+
+Heat Sinks:10 Single
+Walk MP:7
+Jump MP:5
+
+Armor:Ferro-Fibrous Prototype(Inner Sphere)
+LA Armor:8
+RA Armor:8
+LT Armor:8
+RT Armor:8
+CT Armor:10
+HD Armor:7
+LL Armor:11
+RL Armor:11
+RTL Armor:3
+RTR Armor:3
+RTC Armor:3
+
+Weapons:3
+Medium Laser, Left Arm
+Medium Laser, Right Arm
+Narc, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Medium Laser
+Ferro-Fibrous Prototype
+Ferro-Fibrous Prototype
+Ferro-Fibrous Prototype
+Ferro-Fibrous Prototype
+Ferro-Fibrous Prototype
+Ferro-Fibrous Prototype
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Medium Laser
+Endo Steel Prototype
+Endo Steel Prototype
+Endo Steel Prototype
+Endo Steel Prototype
+Ferro-Fibrous Prototype
+Ferro-Fibrous Prototype
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Jump Jet
+Jump Jet
+ISNarcBeacon
+ISNarcBeacon
+ISNarc Pods
+ISNarc Pods
+ISNarc Pods
+Ferro-Fibrous Prototype
+Ferro-Fibrous Prototype
+Ferro-Fibrous Prototype
+Ferro-Fibrous Prototype
+Ferro-Fibrous Prototype
+
+Right Torso:
+Jump Jet
+Jump Jet
+Endo Steel Prototype
+Endo Steel Prototype
+Endo Steel Prototype
+Endo Steel Prototype
+Endo Steel Prototype
+Endo Steel Prototype
+Endo Steel Prototype
+Endo Steel Prototype
+Endo Steel Prototype
+Endo Steel Prototype
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Ferro-Fibrous Prototype
+
+Head:
+Life Support
+Sensors
+Cockpit
+Heat Sink
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous Prototype
+Ferro-Fibrous Prototype
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel Prototype
+Endo Steel Prototype
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,0 +1,284 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Union
+
+</Name>
+
+<Model>
+
+C
+
+</Model>
+
+<Tonnage>
+
+4700
+
+</Tonnage>
+
+<SafeThrust>
+
+4
+
+</SafeThrust>
+
+<Armor>
+
+280
+
+210
+
+210
+
+160
+
+</Armor>
+
+<Nose Equipment>
+
+CLGaussRifle
+
+CLGauss Ammo
+
+CLGauss Ammo
+
+CLERLargeLaser
+
+CLLRM20
+
+Clan Artemis IV FCS
+
+CLLRM20
+
+Clan Artemis IV FCS
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLLargePulseLaser
+
+CLLargePulseLaser
+
+CLMediumPulseLaser
+
+CLMediumPulseLaser
+
+CLMediumPulseLaser
+
+CLMediumPulseLaser
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+CLGaussRifle
+
+CLGauss Ammo
+
+CLGauss Ammo
+
+CLGaussRifle
+
+CLGauss Ammo
+
+CLGauss Ammo
+
+CLERLargeLaser
+
+CLLargePulseLaser
+
+CLMediumPulseLaser
+
+CLMediumPulseLaser
+
+(R) CLMediumPulseLaser
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+CLGaussRifle
+
+CLGauss Ammo
+
+CLGauss Ammo
+
+CLGaussRifle
+
+CLGauss Ammo
+
+CLGauss Ammo
+
+CLERLargeLaser
+
+CLLargePulseLaser
+
+CLMediumPulseLaser
+
+CLMediumPulseLaser
+
+(R) CLMediumPulseLaser
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+CLGaussRifle
+
+CLGauss Ammo
+
+CLGauss Ammo
+
+CLERLargeLaser
+
+CLLRM20
+
+Clan Artemis IV FCS
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLLRM20 Ammo (Clan) Artemis-capable
+
+CLLargePulseLaser
+
+CLLargePulseLaser
+
+CLMediumPulseLaser
+
+CLMediumPulseLaser
+
+CLMediumPulseLaser
+
+CLMediumPulseLaser
+
+</Aft Equipment>
+
+<structural_integrity>
+
+12
+
+</structural_integrity>
+
+<heatsinks>
+
+126
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+7500
+
+</fuel>
+
+<type>
+
+Clan Level 2
+
+</type>
+
+<year>
+
+2829
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+spheroid
+
+</motion_type>
+
+
+
+<transporters>
+
+MechBay:5:1
+
+MechBay:10:1
+
+CargoBay:454:1
+
+</transporters>
+
+<escape_pod>
+
+4
+
+</escape_pod>
+
+<life_boat>
+
+0
+
+</life_boat>
+
+<crew>
+
+44
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

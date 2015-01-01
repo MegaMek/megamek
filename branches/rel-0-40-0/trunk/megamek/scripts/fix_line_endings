@@ -1,0 +1,55 @@
+#!/bin/python3
+# Fix line endings. Run from project root.
+
+import sys
+import os
+import os.path
+import subprocess
+import re
+
+SVN_COMMAND = ['svn', 'propset', 'svn:eol-style']
+
+DOS = '\r\n'
+UNIX = '\n'
+
+DOS_EXTENSIONS = ['.bat']
+UNIX_EXTENSIONS = ['.properties', '.java', '.xml', '.txt', '.mms', '.board', '.tileset', '.mtf', '.blk']
+EXCLUDE_DIRS = ['packaging_utils']
+
+def convert(filepath, line_ending):
+    file = open(filepath, 'rt')
+    lines = file.readlines()
+    file.close()
+    file = open(filepath, 'wt', newline='\r\n')
+    for line in lines:
+        file.write(line)
+    file.close()
+
+def convert_files():
+    for root, dirs, files in os.walk('.'):
+        dirs[:] = [d for d in dirs if d not in EXCLUDE_DIRS]
+        dos_files = []
+        unix_files = []
+        for filename in files:
+            file_ext = os.path.splitext(filename)[1].lower()
+            filepath = os.path.join(root, filename)
+            if file_ext in UNIX_EXTENSIONS:
+                print('UNIX: ', filepath)
+                unix_files.append(filepath)
+                convert(filepath, UNIX)
+            elif file_ext in DOS_EXTENSIONS:
+                print('DOS: ', os.path.join(root, filename))
+                dos_files.append(filepath)
+                convert(filepath, DOS)
+        if len(dos_files) > 0:
+            command = SVN_COMMAND + ['CRLF']
+            command.extend(dos_files)
+            subprocess.call(command)
+        if len(unix_files) > 0:
+            command = SVN_COMMAND + ['LF']
+            command.extend(unix_files)
+            subprocess.call(command)
+    return 0
+
+if __name__ == '__main__':
+    sys.exit(convert_files())

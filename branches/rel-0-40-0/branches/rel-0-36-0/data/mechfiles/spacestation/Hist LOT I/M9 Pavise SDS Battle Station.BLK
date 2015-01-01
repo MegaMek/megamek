@@ -1,0 +1,755 @@
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+SpaceStation
+
+</UnitType>
+
+<Name>
+M9 Pavise SDS Battle Station
+</Name>
+
+<Tonnage>
+1500000
+</Tonnage>
+<Armor>
+550
+550
+550
+550
+550
+550
+</Armor>
+<Nose Equipment>
+HeavyNGauss
+HeavyNGauss
+HeavyNGauss Ammo:200
+HeavyNGauss
+HeavyNGauss
+HeavyNGauss Ammo:200
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NAC35
+NAC35
+NAC35 Ammo:200
+NAC35
+NAC35
+NAC35 Ammo:200
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:500
+AR10
+AR10
+AR10
+AR10
+AR10 KillerWhale Ammo:100
+AR10 WhiteShark Ammo:100
+AR10 Barracuda Ammo:100
+PPC
+PPC
+PPC
+PPC
+PPC
+PPC
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo:160
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10 Ammo:160
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20 Ammo Artemis-capable:144
+</Nose Equipment>
+
+<Front Left Side Equipment>
+HeavyNGauss
+HeavyNGauss
+HeavyNGauss Ammo:200
+HeavyNGauss
+HeavyNGauss
+HeavyNGauss Ammo:200
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NAC35
+NAC35
+NAC35 Ammo:200
+NAC35
+NAC35
+NAC35 Ammo:200
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:500
+AR10
+AR10
+AR10
+AR10
+AR10 KillerWhale Ammo:100
+AR10 WhiteShark Ammo:100
+AR10 Barracuda Ammo:100
+PPC
+PPC
+PPC
+PPC
+PPC
+PPC
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo:160
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10 Ammo:160
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20 Ammo Artemis-capable:144
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+HeavyNGauss
+HeavyNGauss
+HeavyNGauss Ammo:200
+HeavyNGauss
+HeavyNGauss
+HeavyNGauss Ammo:200
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NAC35
+NAC35
+NAC35 Ammo:200
+NAC35
+NAC35
+NAC35 Ammo:200
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:500
+AR10
+AR10
+AR10
+AR10
+AR10 KillerWhale Ammo:100
+AR10 WhiteShark Ammo:100
+AR10 Barracuda Ammo:100
+PPC
+PPC
+PPC
+PPC
+PPC
+PPC
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo:160
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10 Ammo:160
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20 Ammo Artemis-capable:144
+</Front Right Side Equipment>
+
+<Aft Left Side Equipment>
+HeavyNGauss
+HeavyNGauss
+HeavyNGauss Ammo:200
+HeavyNGauss
+HeavyNGauss
+HeavyNGauss Ammo:200
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NAC35
+NAC35
+NAC35 Ammo:200
+NAC35
+NAC35
+NAC35 Ammo:200
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:500
+AR10
+AR10
+AR10
+AR10
+AR10 KillerWhale Ammo:100
+AR10 WhiteShark Ammo:100
+AR10 Barracuda Ammo:100
+PPC
+PPC
+PPC
+PPC
+PPC
+PPC
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo:160
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10 Ammo:160
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20 Ammo Artemis-capable:144
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+HeavyNGauss
+HeavyNGauss
+HeavyNGauss Ammo:200
+HeavyNGauss
+HeavyNGauss
+HeavyNGauss Ammo:200
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NAC35
+NAC35
+NAC35 Ammo:200
+NAC35
+NAC35
+NAC35 Ammo:200
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:500
+AR10
+AR10
+AR10
+AR10
+AR10 KillerWhale Ammo:100
+AR10 WhiteShark Ammo:100
+AR10 Barracuda Ammo:100
+PPC
+PPC
+PPC
+PPC
+PPC
+PPC
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo:160
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10 Ammo:160
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20 Ammo Artemis-capable:144
+</Aft Right Side Equipment>
+
+<Aft Equipment>
+HeavyNGauss
+HeavyNGauss
+HeavyNGauss Ammo:200
+HeavyNGauss
+HeavyNGauss
+HeavyNGauss Ammo:200
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NAC35
+NAC35
+NAC35 Ammo:200
+NAC35
+NAC35
+NAC35 Ammo:200
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:500
+AR10
+AR10
+AR10
+AR10
+AR10 KillerWhale Ammo:100
+AR10 WhiteShark Ammo:100
+AR10 Barracuda Ammo:100
+PPC
+PPC
+PPC
+PPC
+PPC
+PPC
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo:160
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10 Ammo:160
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20 Ammo Artemis-capable:144
+</Aft Equipment>
+
+<structural_integrity>
+1
+</structural_integrity>
+
+<heatsinks>
+7000
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+12500
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+2720
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+11
+</armor_type>
+
+<transporters>
+SmallCraftBay:10:1
+ASFBay:144:21
+Repair:800000:1
+Repair:100000:1
+Cargobay:157585:1
+Cargobay:30000:1
+</transporters>
+
+<docking_collar>
+12
+</docking_collar>
+
+<grav_deck>
+2
+</grav_deck>
+
+<escape_pod>
+90
+</escape_pod>
+
+<life_boat>
+0
+</life_boat>
+
+<crew>
+170
+</crew>
+
+<passengers>
+25
+</passengers>

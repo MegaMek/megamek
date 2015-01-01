@@ -1,0 +1,61 @@
+###################################################################################################
+# This is an adaptation of the RAT files in Era Report 3062.  With omni configurations, I divided 
+# the likely-hood for each configuration as evenly as possible.  For example, with Clan Wolf, the 
+# Cougar has a roughly 28:1000 chance to be rolled.  There are 9 Cougar configurations.  28/9 = 3r1.  
+# So, I gave the Prime configuraiton a frequency of 4 and the other 8 configurations a frequency 
+# of 3 each.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3053-3062 Homeworld Assault Meks
+Blood Asp Prime,5
+Blood Asp A,5
+Blood Asp B,5
+Blood Asp C,5
+Blood Asp D,4
+Blood Asp E,4
+Daishi (Dire Wolf) Prime,12
+Daishi (Dire Wolf) A,12
+Daishi (Dire Wolf) B,12
+Daishi (Dire Wolf) C,12
+Daishi (Dire Wolf) D,12
+Daishi (Dire Wolf) H,12
+Daishi (Dire Wolf) S,11
+Gladiator (Executioner) Prime,8
+Gladiator (Executioner) A,8
+Gladiator (Executioner) B,8
+Gladiator (Executioner) C,8
+Gladiator (Executioner) D,8
+Gladiator (Executioner) E,8
+Gladiator (Executioner) H,8
+Kingfisher Prime,20
+Kingfisher A,20
+Kingfisher B,20
+Kingfisher C,20
+Kingfisher D,20
+Kingfisher E,20
+Kingfisher F,19
+Kraken (Bane),28
+Kraken (Bane) 2,28
+Kraken (Bane) 3,27
+Man O' War (Gargoyle) Prime,20
+Man O' War (Gargoyle) A,20
+Man O' War (Gargoyle) B,20
+Man O' War (Gargoyle) C,20
+Man O' War (Gargoyle) D,20
+Man O' War (Gargoyle) E,20
+Man O' War (Gargoyle) H,19
+Marauder IIC,28
+Masakari (Warhawk) Prime,16
+Masakari (Warhawk) A,16
+Masakari (Warhawk) B,16
+Masakari (Warhawk) C,16
+Masakari (Warhawk) D,16
+Masakari (Warhawk) E,16
+Masakari (Warhawk) H,15
+Naga Prime,34
+Naga A,34
+Naga B,34
+Naga C,33
+Naga D,33
+Phoenix Hawk IIC,56
+Phoenix Hawk IIC 2,55

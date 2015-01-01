@@ -1,0 +1,92 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Lightning
+</Name>
+
+<Model>
+LTN-G14
+</Model>
+
+<year>
+2465
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<heatsinks>
+13
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+17
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+46
+30
+30
+22
+</armor>
+
+<Nose Equipment>
+Medium Laser
+Autocannon/10
+IS Ammo AC/10
+IS Ammo AC/10
+</Nose Equipment>
+
+<Left Wing Equipment>
+Medium Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Medium Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+Medium Laser
+</Aft Equipment>
+
+<tonnage>
+50.0
+</tonnage>
+

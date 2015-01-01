@@ -1,0 +1,57 @@
+Index: megamek/client/ClientGUI.java
+===================================================================
+RCS file: /cvsroot/megamek/megamek/megamek/client/ClientGUI.java,v
+retrieving revision 1.18
+diff -C3 -r1.18 ClientGUI.java
+*** megamek/client/ClientGUI.java	25 Jul 2004 03:47:36 -0000	1.18
+--- megamek/client/ClientGUI.java	25 Jul 2004 03:49:54 -0000
+***************
+*** 32,39 ****
+--- 32,41 ----
+  import megamek.common.util.Distractable;
+  import megamek.common.util.StringUtil;
+  
++ /* ** don't use Sun-specific classes **
+  import sun.audio.AudioPlayer;
+  import sun.audio.AudioStream;
++ /* ** don't use Sun-specific classes **/
+  
+  public class ClientGUI
+      extends Panel
+***************
+*** 154,160 ****
+                      new String(
+                          Settings.soundBingFilename.substring(0, Settings.soundBingFilename.lastIndexOf(".")) + ".au");
+              }
+!         } catch (Exception ex) {
+              ex.printStackTrace();
+          }
+      }
+--- 156,162 ----
+                      new String(
+                          Settings.soundBingFilename.substring(0, Settings.soundBingFilename.lastIndexOf(".")) + ".au");
+              }
+!         } catch (Throwable ex) {
+              ex.printStackTrace();
+          }
+      }
+***************
+*** 1186,1191 ****
+--- 1188,1194 ----
+          if (!Settings.soundMute) {
+              if (null != bingClip) {
+                  bingClip.play();
++ /* ** don't use Sun-specific classes **
+              } else {
+                  try {
+                      File file = new File(Settings.soundBingFilename);
+***************
+*** 1195,1200 ****
+--- 1198,1204 ----
+                  } catch (Exception err) {
+                      err.printStackTrace();
+                  }
++ /* ** don't use Sun-specific classes **/
+              }
+          }
+      }

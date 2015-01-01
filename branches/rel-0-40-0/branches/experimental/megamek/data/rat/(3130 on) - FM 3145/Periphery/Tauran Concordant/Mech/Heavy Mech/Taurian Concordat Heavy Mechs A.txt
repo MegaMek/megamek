@@ -1,0 +1,12 @@
+Taurian Concordat Heavy Mechs A
+Thunderbolt TDR-5Sb,1
+Marauder MAD-2R,2
+Brahma BRM-5B,3
+Warhammer WHM-10T,4
+Warhammer WHM-6Rb,5
+Brahma BRM-5A,6
+Marauder MAD-2R,5
+Brahma BRM-5B,4
+Vulture Mk IV (Mad Dog Mk IV) Prime,3
+Hound HD-2F,2
+Vulture Mk IV (Mad Dog Mk IV) A,1

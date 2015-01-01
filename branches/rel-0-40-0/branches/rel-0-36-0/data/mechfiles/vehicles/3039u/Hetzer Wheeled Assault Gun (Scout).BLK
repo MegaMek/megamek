@@ -1,0 +1,76 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Hetzer Wheeled Assault Gun
+</Name>
+
+<Model>
+(Scout)
+</Model>
+
+<source>
+Succession Wars
+</source>
+
+<year>
+3014
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+40.0
+</tonnage>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<armor>
+32
+24
+24
+24
+</armor>
+
+<Body Equipment>
+BeagleActiveProbe
+IS Ammo AC/20
+IS Ammo AC/20
+</Body Equipment>
+
+<Front Equipment>
+Autocannon/20
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+

@@ -1,0 +1,125 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Jagatai
+
+</Name>
+
+<Model>
+X
+</Model>
+
+<Tonnage>
+
+70
+
+</Tonnage>
+
+<SafeThrust>
+
+6
+
+</SafeThrust>
+
+<Armor>
+
+65
+
+50
+
+50
+
+46
+
+</Armor>
+
+<Nose Equipment>
+CLERSmallLaser
+Clan Light Active Probe
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLLRM20
+CLArtemisV
+CLLRM20
+CLArtemisV
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+CLLRM20
+CLLRM20
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+</Right Wing Equipment>
+
+<Aft Equipment> 
+CLERMediumLaser
+CLAngelECM
+</Aft Equipment>
+
+<heatsinks>
+16
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<type>
+Clan Level 4
+</type>
+
+<year>
+3072
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+19
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<omni>
+</omni>

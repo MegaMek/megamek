@@ -1,0 +1,12 @@
+WoB Medium Mechs B 3067 (FMU)
+Buccaneer BCN-3R,1
+Kintaro KTO-21,2
+Sentinel STN-3L,3
+Huron Warrior HUR-WO-R4L,4
+Grim Reaper GRM-R-PR29,5
+Crab CRB-27,6
+Cicada CDA-3M,5
+Raijin RJN101-A,4
+Wraith TR1,3
+Griffin GRF-3M,2
+Wyvern WVE-9N,1

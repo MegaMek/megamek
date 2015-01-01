@@ -1,0 +1,12 @@
+3034 House Davion Mech - Assault A
+Stalker STK-3F,1
+Victor VTR-9A1,2
+Longbow LGB-7Q,3
+Stalker STK-3H,4
+Victor VTR-9B,5
+BattleMaster BLR-1D,6
+Atlas AS7-D,5
+Awesome AWS-8Q,4
+Banshee BNC-3S,3
+Cyclops CP-10-Z,2
+King Crab KGC-0000,1

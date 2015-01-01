@@ -1,0 +1,12 @@
+3085 Clan Wolf Medium Aerospace Front Line
+Hellcat II HCT-213C,1
+Ironsides IRN-SD1b,2
+Tyre,3
+Gotha GTHA-500b,4
+Ammon,5
+Tyre,6
+Ammon,5
+Jagatai Prime,4
+Jagatai Prime,3
+Turk Prime,2
+Visigoth Prime,1

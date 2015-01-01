@@ -1,0 +1,97 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Sabutai
+</Name>
+
+<Model>
+E
+</Model>
+
+<Tonnage>
+75
+</Tonnage>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<Armor>
+62
+45
+45
+40
+</Armor>
+
+<Nose Equipment>
+CLActiveProbe
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLHAG40
+CLHAG40 Ammo
+CLHeavyMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+CLHAG40
+CLHAG40 Ammo
+CLHeavyMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment> 
+CLHeavySmallLaser
+</Aft Equipment>
+
+<heatsinks>
+15
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<type>
+Clan Level 2
+</type>
+
+<year>
+3071
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+19
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<omni>
+</omni>

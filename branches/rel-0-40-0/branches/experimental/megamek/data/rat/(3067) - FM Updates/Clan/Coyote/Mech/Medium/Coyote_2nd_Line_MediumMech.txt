@@ -1,0 +1,12 @@
+Coyote 2nd-Line Medium Mechs (FMU)
+Hoplite C,1
+Lobo (Standard),2
+Griffin IIC (Standard),3
+Wyvern IIC (Standard),4
+Rabid Coyote (Standard),5
+Hellhound (Conjurer) (Standard),6
+Griffin IIC 4,5
+Goshawk (Vapor Eagle) (Standard),34
+Great Wyrm (Standard),3
+Clint IIC (Standard),2
+Ryoken (Stormcrow) Prime,1

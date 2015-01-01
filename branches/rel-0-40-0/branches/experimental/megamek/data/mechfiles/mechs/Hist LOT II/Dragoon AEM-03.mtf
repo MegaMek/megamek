@@ -1,0 +1,135 @@
+Version:1.1
+Dragoon
+AEM-03
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2771
+Source:Hist LOT II
+Rules Level:2
+
+Mass:70
+Engine:280 XL Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:20
+RA Armor:20
+LT Armor:24
+RT Armor:24
+CT Armor:33
+HD Armor:9
+LL Armor:27
+RL Armor:27
+RTL Armor:6
+RTR Armor:6
+RTC Armor:10
+
+Weapons:8
+1 ISLRM15, Left Arm, Ammo:48
+1 ISLRM15, Right Torso
+1 ISLRM15, Right Arm
+1 ISMediumPulseLaser, Left Arm
+1 ISMediumPulseLaser, Right Arm
+1 ISSmallPulseLaser, Head
+1 ISSmallPulseLaser, Center Torso
+1 ISMediumLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISMediumPulseLaser
+ISLRM15
+ISLRM15
+ISLRM15
+ISArtemisIV
+ISLRM15 Ammo Artemis-capable
+ISLRM15 Ammo Artemis-capable
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISMediumPulseLaser
+ISLRM15
+ISLRM15
+ISLRM15
+ISArtemisIV
+ISLRM15 Ammo Artemis-capable
+ISLRM15 Ammo Artemis-capable
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Left Torso:
+Engine
+Engine
+Engine
+ISLRM15 Ammo Artemis-capable
+ISLRM15 Ammo Artemis-capable
+ISCASE
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Right Torso:
+Engine
+Engine
+Engine
+ISLRM15
+ISLRM15
+ISLRM15
+ISArtemisIV
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISMediumLaser
+ISSmallPulseLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISSmallPulseLaser
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-

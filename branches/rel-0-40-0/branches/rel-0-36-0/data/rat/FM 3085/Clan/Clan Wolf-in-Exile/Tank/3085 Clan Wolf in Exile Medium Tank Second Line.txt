@@ -1,0 +1,12 @@
+3085 Clan Wolf in Exile Medium Tank Second Line
+Thor Artillery Vehicle (Clan),1
+Hachiman Fire Support Tank 'Huey',2
+Zephyr Hovertank,3
+Bandit (C) Hovercraft Prime,4
+Bandit Hovercraft Mk 2,5
+Maxim Heavy Hover Transport,6
+Chaparral Missile Artillery Tank,5
+Garuda Heavy VTOL,4
+Epona Pursuit Tank Prime,3
+Hachiman Fire Support Tank 'Huey',2
+Enyo Strike Tank,1

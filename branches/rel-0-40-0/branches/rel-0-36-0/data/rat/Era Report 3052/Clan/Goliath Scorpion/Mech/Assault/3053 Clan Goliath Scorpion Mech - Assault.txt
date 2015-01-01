@@ -1,0 +1,12 @@
+3053 Clan Goliath Scorpion Mech - Assault
+Marauder IIC,1
+Gladiator (Executioner) B,2
+Kraken (Bane),3
+Supernova,4
+Kingfisher Prime,5
+Naga Prime,6
+Man O' War (Gargoyle) A,5
+Phoenix Hawk IIC,4
+Daishi (Dire Wolf) B,3
+Warhammer IIC,2
+Behemoth (Stone Rhino),1

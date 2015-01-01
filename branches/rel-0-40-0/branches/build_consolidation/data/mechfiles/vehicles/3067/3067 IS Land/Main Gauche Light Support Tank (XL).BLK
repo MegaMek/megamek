@@ -1,0 +1,56 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Main Gauche Light Support Tank
+</Name>
+<Model>
+(XL)
+</Model>
+<Tonnage>
+30
+</Tonnage>
+<cruiseMP>
+6
+</cruiseMP>
+<Armor>
+30
+19
+19
+13
+</Armor>
+<Front Equipment>
+ISLightGaussRifle
+ISMachine Gun
+ISMachine Gun
+</Front Equipment>
+<Body Equipment>
+ISLightGauss Ammo
+ISMG Ammo (100)
+</Body Equipment>
+<type>
+IS
+</type>
+<year>
+3066
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>

@@ -1,0 +1,157 @@
+Version:1.1
+Deva
+C-DVA-OE Eminus
+
+Config:Biped Omnimech
+TechBase:Inner Sphere
+Era:3072
+Source:Jihad
+Rules Level:3
+
+Mass:70
+Engine:280 Light Engine
+Structure:Endo Steel
+Myomer:Standard
+Cockpit:Small Cockpit
+Gyro:Heavy Duty Gyro
+
+Heat Sinks:13 Double
+Base Chassie Heat Sinks:11
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:22
+RA Armor:22
+LT Armor:20
+RT Armor:20
+CT Armor:33
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:10
+RTR Armor:10
+RTC Armor:10
+
+Weapons:7
+Light PPC, Right Torso
+Light PPC, Head
+Light PPC, Center Torso
+Light PPC, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+Thunderbolt 15, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Thunderbolt 15
+Thunderbolt 15
+Thunderbolt 15
+IS Ammo Thunderbolt-15
+IS Ammo Thunderbolt-15
+Endo Steel
+Endo Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Light PPC
+Light PPC
+ISCASE
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Light PPC
+Light PPC
+ISERMediumLaser
+ISERMediumLaser
+ISC3iUnit
+ISC3iUnit
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Light PPC
+Light PPC
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+Light PPC
+Light PPC
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

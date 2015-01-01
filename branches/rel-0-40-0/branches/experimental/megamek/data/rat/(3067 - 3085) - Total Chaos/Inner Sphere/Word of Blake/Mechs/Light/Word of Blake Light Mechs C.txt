@@ -1,0 +1,12 @@
+Word of Blake Light Mechs C
+Mercury MCY-102,1
+Jackrabbit JKR-9W,2
+Red Shift RDS-2B,3
+Locust LCT-5W,4
+Hermes HER-3S1,5
+Nexus NXS1-B,6
+Tarantula ZPH-2A,5
+Ostscout OTT-9CS,4
+Mongoose MON-76,3
+Jackal JA-KL-1532,2
+Gurkha GUR-4G,1

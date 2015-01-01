@@ -1,0 +1,136 @@
+Version:1.1
+Perseus
+P1E
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3072
+Rules Level:3
+
+Mass:75
+Engine:300 XL Fusion Engine
+Structure:Endo-Steel
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:21
+RA Armor:21
+LT Armor:24
+RT Armor:24
+CT Armor:36
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:8
+RTR Armor:8
+RTC Armor:9
+
+Weapons:10
+1 ISGaussRifle, Right Arm, Ammo:16
+1 ISERSmallLaser, Head
+1 ISSRM6 (iOS), Center Torso
+1 ISCommunicationsEquipment, Right Torso
+1 ISBeagleActiveProbe, Left Torso
+1 ISERMediumLaser (R), Left Torso (R)
+1 ISVehicularGrenadeLauncher, Left Torso
+1 ISVehicularGrenadeLauncher, Left Torso
+1 ISLargeVSPLaser, Left Arm
+1 ISMediumVSPLaser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISLargeVSPLaser
+ISMediumVSPLaser
+ISMediumVSPLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+Engine
+Engine
+Engine
+ISVehicularGrenadeLauncher
+ISVehicularGrenadeLauncher
+ISERMediumLaser (R)
+ISBeagleActiveProbe
+ISBeagleActiveProbe
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Torso:
+Engine
+Engine
+Engine
+ISGauss Ammo
+ISGauss Ammo
+CommsGear:1
+CommsGear:1
+CommsGear:1
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISSRM6 (iOS)
+ISSRM6 (iOS)
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISERSmallLaser
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-

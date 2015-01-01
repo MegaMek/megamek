@@ -1,0 +1,101 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Puma Assault Tank
+</Name>
+
+<Model>
+PAT-008
+</Model>
+
+<year>
+3068
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+95.0
+</tonnage>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<engine_type>
+4
+</engine_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<armor>
+51
+35
+35
+26
+51
+</armor>
+
+<Body Equipment>
+ISGuardianECM
+ISTargeting Computer
+IS MML-9 LRM Ammo Artemis-capable
+IS MML-9 SRM Ammo Artemis-capable
+IS MML-9 LRM Ammo Artemis-capable
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISAntiMissileSystem
+ISAntiMissileSystem
+ISMML9
+IS Artemis IV FCS
+ISBPod
+</Front Equipment>
+
+<Right Equipment>
+ISAntiMissileSystem
+ISMML9
+IS Artemis IV FCS
+ISBPod
+</Right Equipment>
+
+<Left Equipment>
+ISAntiMissileSystem
+ISMML9
+IS Artemis IV FCS
+ISBPod
+</Left Equipment>
+
+<Rear Equipment>
+ISAntiMissileSystem
+</Rear Equipment>
+
+<Turret Equipment>
+ISAntiMissileSystem
+ISERPPC
+</Turret Equipment>

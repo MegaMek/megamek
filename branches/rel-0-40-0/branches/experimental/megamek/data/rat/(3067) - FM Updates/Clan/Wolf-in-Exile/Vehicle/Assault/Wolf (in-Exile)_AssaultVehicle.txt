@@ -1,0 +1,12 @@
+Wolf (in-Exile) Assault Vehicle (FMU)
+Partisan Air Defense Tank (Standard),1
+Demolisher Heavy Tank (Clan),2
+Heimdall Ground Monitor Tank Prime,3
+Sturmfeur Heavy Tank (Standard),4
+Heimdall Ground Monitor Tank A,5
+Sturmfeur Heavy Tank (Heavy Gauss),6
+Alacorn Heavy Tank Mk VI,5
+Heimdall Ground Monitor Tank Prime,4
+Alacorn Heavy Tank Mk VII,3
+Heimdall Ground Monitor Tank A,2
+Demolisher II Heavy Tank (Standard),1

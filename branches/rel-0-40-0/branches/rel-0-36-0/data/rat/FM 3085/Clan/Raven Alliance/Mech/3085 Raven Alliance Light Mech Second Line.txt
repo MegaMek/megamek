@@ -1,0 +1,12 @@
+3085 Raven Alliance Light Mech Second Line
+Mercury MCY-97,1
+Thorn THE-Nb,2
+Piranha,3
+Baboon (Howler) 2,4
+Wasp WSP-1A,5
+Stinger STG-3R,6
+Locust LCT-1V,5
+Wasp WSP-3A,4
+Stinger IIC 2,3
+Mongoose MON-66b,2
+Stinger IIC,1

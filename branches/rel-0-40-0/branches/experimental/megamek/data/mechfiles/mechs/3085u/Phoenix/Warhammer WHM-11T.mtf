@@ -1,0 +1,154 @@
+Version:1.0
+Warhammer
+WHM-11T
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3084
+Source:Dark Age
+Rules Level:2
+
+Mass:70
+Engine:280 XL Engine(IS)
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:4
+Jump MP:5
+
+Armor:Light Ferro-Fibrous(Inner Sphere)
+LA Armor:20
+RA Armor:20
+LT Armor:22
+RT Armor:22
+CT Armor:28
+HD Armor:9
+LL Armor:18
+RL Armor:18
+RTL Armor:6
+RTR Armor:6
+RTC Armor:9
+
+Weapons:7
+Snub-Nose PPC, Left Arm
+Light PPC, Left Arm
+Snub-Nose PPC, Right Arm
+Light PPC, Right Arm
+ER Medium Laser, Left Torso
+MML 5, Right Torso
+ER Medium Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISSNPPC
+ISSNPPC
+Light PPC
+Light PPC
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISSNPPC
+ISSNPPC
+Light PPC
+Light PPC
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Improved Jump Jet
+Improved Jump Jet
+ISERMediumLaser
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Improved Jump Jet
+Improved Jump Jet
+ISMML5
+ISMML5
+ISMML5
+ISERMediumLaser
+IS Ammo MML-5 LRM
+IS Ammo MML-5 SRM
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Improved Jump Jet
+Improved Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+Light Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Improved Jump Jet
+Improved Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Improved Jump Jet
+Improved Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+imagefile:.\data\images\fluff\Mech\3085 Warhammer .jpg

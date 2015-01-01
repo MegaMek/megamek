@@ -1,0 +1,315 @@
+MegaMek Weapon and Equipment Lists for MTF file construction.
+Written by Robert Heath<blasty_mcnasty@users.sourceforge.net>
+
+ This a list of weapons, ammo and equipment names for use in the construction 
+ of .mtf files. I am not sure if I have all item names for .mtf files listed.
+ Should there be any that I have missed, or that have been added into the game,
+ please insert them in the appropriate place. Thank you - Blasty McNasty
+
+Inner Sphere Level 1 Tech:
+ Weapons:
+  ISPPC
+  ISLargeLaser
+  ISMediumLaser
+  ISSmallLaser
+  ISAC2
+  ISAC5
+  ISAC10
+  ISAC20
+  ISLRM5
+  ISLRM10
+  ISLRM15
+  ISLRM20
+  ISSRM2
+  ISSRM4
+  ISSRM6
+  ISLRTorpedo5
+  ISLRTorpedo10
+  ISLRTorpedo15
+  ISLRTorpedo20
+  ISSRTorpedo2
+  ISSRTorpedo4
+  ISSRTorpedo6
+  ISMachine Gun
+  ISFlamer
+
+ Ammo:
+  ISAC2 Ammo
+  ISAC5 Ammo
+  ISAC10 Ammo
+  ISAC20 Ammo
+  ISLRM5 Ammo
+  ISLRM10 Ammo
+  ISLRM15 Ammo
+  ISLRM20 Ammo
+  ISSRM2 Ammo
+  ISSRM4 Ammo
+  ISSRM6 Ammo
+  ISLRTorpedo5 Ammo
+  ISLRTorpedo10 Ammo
+  ISLRTorpedo15 Ammo
+  ISLRTorpedo20 Ammo
+  ISSRTorpedo2 Ammo
+  ISSRTorpedo4 Ammo
+  ISSRTorpedo6 Ammo
+  ISMG Ammo
+
+ Equipment:
+  Hatchet
+  Jump Jet
+  Fusion Engine
+  Gyro
+  Life Support
+  Sensors
+  Cockpit
+  Shoulder
+  Upper Arm Actuator
+  Lower Arm Actuator
+  Hand Actuator
+  Hip
+  Upper Leg Actuator
+  Lower Leg Actuator
+  Foot Actuator
+  Heat Sink
+  Vacuum Protection
+
+Inner Sphere Level 2 Tech: [Note: All IS Level 1 tech is present in IS
+ Weapons:                   Level 2 play and won't be posted again by
+  ISERSmallLaser            me, here on the IS Level 2 list.]
+  ISERMediumLaser
+  ISERLargeLaser
+  ISSmallPulseLaser
+  ISMediumPulseLaser
+  ISLargePulseLaser
+  ISERPPC
+  ISStreakSRM2
+  ISStreakSRM4
+  ISStreakSRM6
+  ISMRM10
+  ISMRM20
+  ISMRM30
+  ISMRM40
+  ISLBXAC2
+  ISLBXAC5
+  ISLBXAC10
+  ISLBXAC20
+  ISUltraAC2
+  ISUltraAC5
+  ISUltraAC10
+  ISUltraAC20
+  ISRotaryAC2
+  ISRotaryAC5
+  ISLightGaussRifle
+  ISGaussRifle
+  ISHeavyGaussRifle
+  ISAntiMissileSystem
+  ISNarcBeacon
+
+ Ammo:
+  ISStreakSRM2 Ammo
+  ISStreakSRM4 Ammo
+  ISStreakSRM6 Ammo
+  ISMRM10 Ammo
+  ISMRM20 Ammo
+  ISMRM30 Ammo
+  ISMRM40 Ammo
+  ISLBXAC2 Ammo
+  ISLBXAC2 CL Ammo
+  ISLBXAC5 Ammo
+  ISLBXAC5 CL Ammo
+  ISLBXAC10 Ammo
+  ISLBXAC10 CL Ammo
+  ISLBXAC20 Ammo
+  ISLBXAC20 CL Ammo
+  ISUltraAC2 Ammo
+  ISUltraAC5 Ammo
+  ISUltraAC10 Ammo
+  ISUltraAC20 Ammo
+  ISRotaryAC2 Ammo
+  ISRotaryAC5 Ammo
+  ISLightGauss Ammo
+  ISGauss Ammo
+  ISHeavyGauss Ammo
+  ISAMS Ammo
+  ISNarc Pods
+
+ Equipment:
+  ISCASE
+  ISGaurdianECM
+  ISArtemisIV
+  ISMASC
+  ISBeagleActiveProbe
+  ISTargeting Computer
+  ISC3SlaveUnit
+  ISC3MasterComputer
+  ISTAG
+  ISImprovedC3CPU
+  Stealth Armor
+  Ferro-Fibrous
+  Triple Strength Myomer
+  ISDouble Heat Sink
+  ISAntiPersonnelPod
+
+ Structures:
+  Endo-Steel
+  Composite
+  Reinforced
+
+Clan Level 2 Tech:
+ Weapons:
+  CLERMicroLaser
+  CLERSmallLaser
+  CLERMediumLaser
+  CLERLargeLaser
+  CLMicroPulseLaser
+  CLSmallPulseLaser
+  CLMediumPulseLaser
+  CLLargePulseLaser
+  CLHeavySmallLaser
+  CLHeavyMediumLaser
+  CLHeavyLargeLaser
+  CLERPPC
+  CLFlamer
+  CLLightMG
+  CLMG
+  CLHeavyMG
+  CLLBXAC2
+  CLLBXAC5
+  CLLBXAC10
+  CLLBXAC20
+  CLUltraAC2
+  CLUltraAC5
+  CLUltraAC10
+  CLUltraAC20
+  CLGaussRifle
+  CLAntiMissileSystem
+  CLATM3
+  CLATM6
+  CLATM9
+  CLATM12
+  CLLRM5
+  CLLRM10
+  CLLRM15
+  CLLRM20
+  CLLRTorpedo5
+  CLLRTorpedo10
+  CLLRTorpedo15
+  CLLRTorpedo20
+  CLNarcBeacon
+  CLSRM2
+  CLSRM4
+  CLSRM6
+  CLSRTorpedo2
+  CLSRTorpedo4
+  CLSRTorpedo6
+  CLStreakSRM2
+  CLStreakSRM4
+  CLStreakSRM6
+
+ Ammo:
+  CLLightMG Ammo
+  CLMG Ammo
+  CLHeavyMG Ammo
+  CLLBXAC2 Ammo
+  CLLBXAC2 CL Ammo
+  CLLBXAC5 Ammo
+  CLLBXAC5 CL Ammo
+  CLLBXAC10 Ammo
+  CLLBXAC10 CL Ammo
+  CLLBXAC20 Ammo
+  CLLBXAC20 CL Ammo
+  CLUltraAC2 Ammo
+  CLUltraAC5 Ammo
+  CLUltraAC10 Ammo
+  CLUltraAC20 Ammo
+  CLGauss Ammo
+  CLAMS Ammo
+  CLATM3 Ammo
+  CLATM6 Ammo
+  CLATM9 Ammo
+  CLATM12 Ammo
+  CLLRM5 Ammo
+  CLLRM10 Ammo
+  CLLRM15 Ammo
+  CLLRM20 Ammo
+  CLNarcPods
+  CLSRM2 Ammo
+  CLSRM4 Ammo
+  CLSRM6 Ammo
+  CLLRTorpedo5 Ammo
+  CLLRTorpedo10 Ammo
+  CLLRTorpedo15 Ammo
+  CLLRTorpedo20 Ammo
+  CLSRTorpedo2 Ammo
+  CLSRTorpedo4 Ammo
+  CLSRTorpedo6 Ammo
+  CLStreakSRM2 Ammo
+  CLStreakSRM4 Ammo
+  CLStreakSRM6 Ammo
+
+ Equipment:
+  CLTargeting Computer
+  CLDouble Heat Sink
+  CLArtemisIV
+  CLECMSuite
+  CLMASC
+  CLTAG
+  CLActiveProbe
+  CLAntiPersonnelPod
+  CLLightTAG
+  Light Active Probe
+  Shoulder
+  Upper Arm Actuator
+  Lower Arm Actuator
+  Hand Actuator
+  Hip
+  Upper Leg Actuator
+  Lower Leg Actuator
+  Foot Actuator
+  Life Support
+  Sensors
+  Cockpit
+  Ferro-Fibrous
+  Endo Steel
+  Fusion Engine
+  
+Inner Sphere Level 3 Tech:
+ Weapons:
+  ISERLargeLaserPrototype
+  ISMediumPulseLaserPrototype
+  ISGaussRiflePrototype
+  ISLBXAC10Prototype
+  ISUltraAC5Prototype
+  ISLaserAntiMissileSystem
+  ISLaserAntiMissileSystemTHB
+  
+ Equipment:
+  Endo-Steel Prototype
+  Ferro-Fibrous Prototype
+  IS1 Compact Heat Sink
+  IS2 Compact Heat Sinks
+
+Clan Level 3 Tech:
+ Weapons:
+  CLLaserAntiMissileSystem
+  CLStreakLRM5
+  CLStreakLRM10
+  CLStreakLRM15
+  CLStreakLRM20
+  CLRotaryAC2
+  CLRotaryAC5
+  CLRotaryAC10
+  CLRotaryAC20
+ Ammo:
+  CLStreakLRM5 Ammo
+  CLStreakLRM10 Ammo
+  CLStreakLRM15 Ammo
+  CLStreakLRM20 Ammo
+  CLRotaryAC2 Ammo
+  CLRotaryAC5 Ammo
+  CLRotaryAC10 Ammo
+  CLRotaryAC20 Ammo
+ Equipment:
+  CLLaser Heat Sink
+
+  

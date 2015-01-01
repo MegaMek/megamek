@@ -1,0 +1,12 @@
+Taurian Concordat Heavy Mechs A 3067 FM-U
+Archer ARC-6W,1
+Helios HEL-3D,2
+Orion ON2-M,3
+Catapult CPLT-C3,4
+Grasshopper GHR-5J,5
+Catapult CPLT-C1,6
+Cataphract CTF-3D,5
+Grasshopper GHR-5N,4
+Cataphract CTF-3L,3
+Ti Ts'ang TSG-9H,2
+Ostroc OSR-4C,1

@@ -1,0 +1,12 @@
+DCMS Assault Mechs Early 3059, Tech Level B
+Gunslinger GUN-1ERD,1
+Charger CGR-3K,2
+Hatamoto-Mizo HTM-27Y,3
+Hatamoto-Hi HTM-27U,4
+Hatamoto-Chi HTM-27T,5
+Sunder SD1-O,6
+Mauler MAL-1R,5
+Cyclops CP-11-C,4
+Hatamoto-Kaze HTM-27V,3
+Cerberus MR-V2,2
+O-Bakemono OBK-M10,1

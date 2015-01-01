@@ -1,0 +1,15 @@
+3039 House Davion Mech - Medium A
+Trebuchet TBT-5N, 1
+Dervish DV-6M, 2
+Shadow Hawk SHD-2D, 3
+Centurion CN9-A, 4
+Enforcer ENF-4R, 5
+Phoenix Hawk PXH-1D, 6
+Griffin GRF-1N, 5
+Hunchback HBK-4G, 4
+Centurion CN9-AH, 3
+Blackjack BJ-3, 2
+Hunchback HBK-4P, 1
+##Version 1 - May 2011
+##From RUS Files
+##Editted by Dave "Hammer" Nawton

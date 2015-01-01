@@ -1,0 +1,22 @@
+###################################################################################################
+# This adaptation of the RAT files in Era Report 3062 takes into account the odds of rolling an
+# upgraded BattleMek.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3057 FedCom_and_LA Assault Meks
+Atlas AS7-D,39
+Atlas AS7-K,100
+Awesome AWS-8Q,23
+Awesome AWS-9M,60
+Banshee BNC-3E,23
+Banshee BNC-5S,60
+Devastator DVS-2,28
+Gunslinger GUN-1ERD,111
+Hauptmann HA1-O,56
+Marauder II MAD-4A,8
+Marauder II MAD-5A,20
+Salamander PPR-5S,56
+Victor VTR-9B,69
+Victor VTR-9K,181
+Zeus ZEU-6S,46
+Zeus ZEU-9S,120

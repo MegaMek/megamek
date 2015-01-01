@@ -1,0 +1,318 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Defender Battlecruiser
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<Tonnage>
+960000
+</Tonnage>
+<SafeThrust>
+5
+</SafeThrust>
+<Armor>
+60
+60
+60
+50
+50
+50
+</Armor>
+<Nose Equipment>
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:60
+NAC35
+NAC35 Ammo:20
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+ISMG
+ISMG
+ISMG
+IS Machine Gun Ammo:400
+</Nose Equipment>
+
+<Front Left Side Equipment>
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:60
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:60
+NAC35
+NAC35 Ammo:20
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+ISMG
+ISMG
+ISMG
+IS Machine Gun Ammo:400
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:60
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:60
+NAC35
+NAC35 Ammo:20
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+ISMG
+ISMG
+ISMG
+IS Machine Gun Ammo:400
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:60
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:60
+NAC35
+NAC35 Ammo:20
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+ISMG
+ISMG
+ISMG
+IS Machine Gun Ammo:400
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:60
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:60
+NAC35
+NAC35 Ammo:20
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+ISMG
+ISMG
+ISMG
+IS Machine Gun Ammo:400
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:200
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:200
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG
+IS Machine Gun Ammo:1000
+</Aft Left Side Equipment>
+<Aft Right Side Equipment>
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:200
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:200
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG
+IS Machine Gun Ammo:1000
+</Aft Right Side Equipment>
+<Aft Equipment>
+NAC20
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:200
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:200
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG
+ISMG
+IS Machine Gun Ammo:1000
+</Aft Equipment>
+<structural_integrity>
+40
+</structural_integrity>
+<heatsinks>
+900
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+7500
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+2360
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+SmallCraftBay:20:10
+CargoBay:105890:2
+CargoBay:20000:1
+CargoBay:20000:1
+CargoBay:20000:1
+CargoBay:20000:1
+</transporters>
+
+<docking_collar>
+0
+</docking_collar>
+<grav_deck>
+2
+</grav_deck>
+<escape_pod>
+35
+</escape_pod>
+<life_boat>
+35
+</life_boat>
+<crew>
+420
+</crew>
+<passengers>
+</passengers>
+
+<History>
+60 officers,200 enlisted/non-rated,70 gunners,100 bay personnel.  Dropshuttle bays are not coded in MegaMek at this time. The 20000 ton Cargo bays represent them.
+</History>

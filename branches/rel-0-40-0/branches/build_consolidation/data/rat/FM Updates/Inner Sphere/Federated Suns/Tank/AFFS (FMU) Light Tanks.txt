@@ -1,0 +1,12 @@
+AFFS Light Vehicles 3067 (FMU)
+Warrior Attack Helicopter H-8,1
+Cavalry Attack Helicopter,2
+J. Edgar Light Hover Tank,3
+Hunter Light Support Tank (3054 Upgrade),4
+Minion Advanced Tactical Vehicle (Targeting Computer),5
+Striker Light Tank (3053 Upgrade),6
+Pegasus Scout Hover Tank (3058 Upgrade),5
+Saladin Assault Hover Tank (LB-X),4
+Yellow Jacket Gunship,3
+Blizzard Hover Transport,2
+Mantis Light Attack VTOL,1

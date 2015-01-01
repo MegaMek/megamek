@@ -1,0 +1,76 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Po II Heavy Tank
+</Name>
+
+<Model>
+(Arrow IV)
+</Model>
+
+<year>
+3085
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<tonnage>
+60
+</tonnage>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<engine_type>
+2
+</engine_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<armor>
+40
+32
+32
+30
+42
+</armor>
+
+<Body Equipment>
+ISArrowIV Ammo
+ISArrowIV Ammo
+ISArrowIV Homing Ammo
+IS Ammo LRM-5
+IS Streak SRM 2 Ammo
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Turret Equipment>
+ISArrowIV
+LRM 5
+LRM 5
+ISStreakSRM2
+ISStreakSRM2
+Machine Gun
+Machine Gun
+</Turret Equipment>
+
+<source>
+Dark Age
+</source>

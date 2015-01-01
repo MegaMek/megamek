@@ -1,0 +1,63 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Zorya Light Tank
+</Name>
+<Model>
+(ATM)
+</Model>
+<Tonnage>
+35
+</Tonnage>
+<cruiseMP>
+5
+</cruiseMP>
+<Armor>
+18
+10
+10
+10
+16
+</Armor>
+<Turret Equipment>
+CLLBXAC5
+CLATM6
+</Turret Equipment>
+<Body Equipment>
+CLATM6 Ammo
+CLATM6 Ammo
+CLLBXAC5 CL Ammo
+CLLBXAC5 Ammo
+CLECMSuite
+CLCASE
+</Body Equipment>
+<type>
+Clan Level 3
+</type>
+<year>
+3068
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+6
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Jihad
+</source>

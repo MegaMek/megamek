@@ -1,0 +1,129 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SpaceStation
+</UnitType>
+
+<Name>
+Large Habitat
+</Name>
+
+<Model>
+</Model>
+
+<Tonnage>
+500000
+</Tonnage>
+
+<Armor>
+10
+10
+10
+10
+10
+10
+</Armor>
+
+<Nose Equipment>
+ISSmallLaser
+ISSmallLaser
+</Nose Equipment>
+
+<Front Left Side Equipment>
+ISSmallLaser
+ISSmallLaser
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+ISSmallLaser
+ISSmallLaser
+</Front Right Side Equipment>
+
+<Aft Left Side Equipment>
+ISSmallLaser
+ISSmallLaser
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+ISSmallLaser
+ISSmallLaser
+</Aft Right Side Equipment>
+
+<Aft Equipment>
+ISSmallLaser
+ISSmallLaser
+</Aft Equipment>
+
+<structural_integrity>
+1
+</structural_integrity>
+
+<heatsinks>
+154
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+250
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+2500
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<transporters>
+SmallCraftBay:40:5
+CargoBay:136801:2
+</transporters>
+
+<docking_collar>
+8
+</docking_collar>
+
+<grav_deck>
+3
+</grav_deck>
+
+<escape_pod>
+1000
+</escape_pod>
+
+<life_boat>
+1000
+</life_boat>
+
+<crew>
+540
+</crew>
+
+<passengers>
+28600
+</passengers>
+
+<History>
+No Rules for Habitat Units in MegaMek. Unit included for completeness.
+</history>

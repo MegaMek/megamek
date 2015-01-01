@@ -1,0 +1,156 @@
+Version:1.1
+Thug
+THG-11ECX (Jose)
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2772
+Source:XTRO Gunslinger
+Rules Level:4
+
+Mass:80
+Engine:320 XL Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+Cockpit:Command Console
+Gyro:Standard Gyro
+
+Heat Sinks:14 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Standard(Inner Sphere)
+LA Armor:25
+RA Armor:25
+LT Armor:25
+RT Armor:25
+CT Armor:35
+HD Armor:9
+LL Armor:31
+RL Armor:31
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:7
+ER Large Laser, Left Arm
+SRM 6, Left Torso
+SRM 6, Right Torso
+SRM 6, Left Torso
+SRM 6, Right Torso
+SRM 6, Right Torso
+ER Large Laser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERLargeLaser
+ISERLargeLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERLargeLaser
+ISERLargeLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+SRM 6
+SRM 6
+SRM 6
+SRM 6
+IS Ammo SRM-6
+IS Ammo SRM-6
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+SRM 6
+SRM 6
+SRM 6
+SRM 6
+SRM 6
+SRM 6
+IS Ammo SRM-6
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Cockpit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

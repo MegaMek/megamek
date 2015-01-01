@@ -1,0 +1,52 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+BattleArmor
+</UnitType>
+<Name>
+Purifier Adaptive Battle Armor
+</Name>
+<Model>
+[Laser] (RAF)
+</Model>
+<chassis>
+biped
+</chassis>
+<weightclass>
+2
+</weightclass>
+<Trooper Count>
+4
+</Trooper Count>
+<cruiseMP>
+1
+</cruiseMP>
+<jumpingMP>
+3
+</jumpingMP>
+<Armor>
+6
+</Armor>
+<Squad Equipment>
+IS ER Small Laser
+Mimetic Armor
+BABattleClaw
+</Squad Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3081
+</year>
+<motion_type>
+Jump
+</motion_type>
+<source>
+Dark Age
+</source>

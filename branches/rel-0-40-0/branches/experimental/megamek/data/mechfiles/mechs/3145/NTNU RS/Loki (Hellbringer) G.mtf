@@ -1,0 +1,153 @@
+Version:1.0
+Loki (Hellbringer)
+G
+
+Config:Biped Omnimech
+TechBase:Mixed (Clan Chassis)
+Era:3130
+Source:RS 3145 NTNU
+Rules Level:3
+
+Mass:65
+Engine:325 XL (Clan) Engine
+Structure:IS Standard
+Myomer:Standard
+
+Heat Sinks:13 Double
+Base Chassis Heat Sinks:13
+Walk MP:5
+Jump MP:0
+
+Armor:Standard(IS/Clan)
+LA Armor:11
+RA Armor:11
+LT Armor:14
+RT Armor:14
+CT Armor:17
+HD Armor:9
+LL Armor:15
+RL Armor:15
+RTL Armor:7
+RTR Armor:7
+RTC Armor:8
+
+Weapons:5
+Improved Heavy Large Laser, Left Arm
+Improved Heavy Gauss Rifle, Right Torso
+ER Small Laser, Right Arm
+ER Small Laser, Right Arm
+ER Small Laser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLImprovedHeavyLargeLaser
+CLImprovedHeavyLargeLaser
+CLImprovedHeavyLargeLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERSmallLaser
+CLERSmallLaser
+CLERSmallLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGaussRifle
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGauss Ammo
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

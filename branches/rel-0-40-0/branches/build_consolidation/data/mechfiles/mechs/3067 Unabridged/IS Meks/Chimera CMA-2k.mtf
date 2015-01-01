@@ -1,0 +1,136 @@
+Version:1.1
+Chimera
+CMA-2k
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3069
+Rules Level:2
+
+Mass:40
+Engine:280 XL Fusion Engine
+Structure:Endo-Steel
+Gyro:XL Gyro
+Myomer:Triple Strength Myomer
+
+Heat Sinks:10 Double
+Walk MP:7
+Jump MP:7
+
+Armor:Standard Armor
+LA Armor:10
+RA Armor:10
+LT Armor:13
+RT Armor:13
+CT Armor:18
+HD Armor:9
+LL Armor:16
+RL Armor:16
+RTL Armor:5
+RTR Armor:5
+RTC Armor:5
+
+Weapons:9
+1 ISC3SlaveUnit, Right Torso
+1 ISSNPPC, Right Torso
+1 ISSmallLaser, Left Torso
+1 ISSmallPulseLaser, Left Torso
+1 Sword, Right Arm
+1 ISMediumLaser, Left Arm
+1 ISMediumLaser, Left Arm
+1 ISMediumLaser, Left Arm
+1 ISMediumLaser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+Endo-Steel
+Endo-Steel
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Sword
+Sword
+Sword
+Endo-Steel
+Endo-Steel
+Triple Strength Myomer
+Triple Strength Myomer
+Triple Strength Myomer
+
+Left Torso:
+Engine
+Engine
+Engine
+Jump Jet
+Jump Jet
+Jump Jet
+ISSmallPulseLaser
+ISSmallLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Torso:
+Engine
+Engine
+Engine
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+ISSNPPC
+ISSNPPC
+ISC3SlaveUnit
+Endo-Steel
+Endo-Steel
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel

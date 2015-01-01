@@ -1,0 +1,133 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Warship
+</UnitType>
+
+<Name>
+Bug-Eye Surveillance Ship
+</Name>
+
+<Tonnage>
+6100
+</Tonnage>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<Armor>
+2
+3
+3
+2
+2
+2
+</Armor>
+
+<Nose Equipment>
+ISPPC
+ISLookDownRadar
+ISHypersprectralImager
+</Nose Equipment>
+
+<Front Left Side Equipment>
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+ISLargeLaser
+</Front Right Side Equipment>
+
+<Left Broadside Equipment>
+ISLargeLaser
+</Left Broadside Equipment>
+
+<Right Broadside Equipment>
+</Right Broadside Equipment>
+
+<Aft Left Side Equipment>
+
+</Aft Left Side Equipment>
+</Aft Right Side Equipment>
+
+<Aft Equipment> 
+ISAC20
+ISAC20 Ammo:30
+ISLargeNavalCommScannerSuite
+</Aft Equipment>
+
+<structural_integrity>
+20
+</structural_integrity>
+
+<heatsinks>
+105
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+960
+</fuel>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+2620
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+19
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+CargoBay:102:1
+</transporters>
+
+<docking_collar>
+0
+</docking_collar>
+
+<grav_deck>
+0
+</grav_deck>
+
+<escape_pod>
+0
+</escape_pod>
+
+<life_boat>
+0
+</life_boat>
+
+<crew>
+48
+</crew>
+
+<passengers>
+12
+</passengers>

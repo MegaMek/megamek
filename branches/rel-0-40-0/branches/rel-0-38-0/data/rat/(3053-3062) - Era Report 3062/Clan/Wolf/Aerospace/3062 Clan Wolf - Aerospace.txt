@@ -1,0 +1,12 @@
+3062 Clan Wolf - Aerospace
+Visigoth Prime,1
+Jagatai C,2
+Batu B,3
+Jengiz A,4
+Visigoth Prime,5
+Jagatai Prime,6
+Jengiz A,5
+Jagatai B,7
+Kirghiz C,6
+Bashkir Prime,5
+Vandal Prime,4

@@ -1,0 +1,12 @@
+CCAF Heavy Mechs D 3067
+Marauder MAD-3L,1
+Grasshopper GHR-5H,2
+Ostroc OSR-2C,3
+Catapult CPLT-C3,4
+Caesar CES-3R,5
+Cataphract CTF-2X,6
+Cataphract CTF-2X,5
+Thunderbolt TDR-5S,4
+Orion ON1-VA,3
+Warhammer WHM-6L,2
+Orion ON1-K,1

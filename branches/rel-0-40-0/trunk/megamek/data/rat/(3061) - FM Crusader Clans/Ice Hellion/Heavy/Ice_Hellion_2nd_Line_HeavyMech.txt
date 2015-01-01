@@ -1,0 +1,12 @@
+Crusader Clan Second-Line Heavy Mechs (Ice Hellion),
+Grizzly 2,1
+Flashman FLS-8K,2
+Guillotine GLT-3N,3
+Thresher (Standard),4
+Viper (Black Python) 2,5
+Viper (Black Python) (Standard),6
+Thresher (Standard),5
+Grizzly (Standard),4
+Thresher 2,3
+Lancelot LNC25-01,2
+Galahad (Glass Spider) 3,1

@@ -1,0 +1,12 @@
+Wolf's Dragoons Assault 'Mech
+Awesome AWS-8Q,1
+Atlas AS7-D,2
+Shogun SHG-2E,3
+Zeus ZEU-6T,4
+Imp IMP-2E,5
+BattleMaster BLR-1G,6
+Stalker STK-3F,5
+BattleMaster BLR-1G,4
+Cyclops CP-10-Z,3
+Atlas AS7-D,2
+Marauder II MAD-4A,1

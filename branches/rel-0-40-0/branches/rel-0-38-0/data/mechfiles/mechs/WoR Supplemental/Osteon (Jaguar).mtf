@@ -1,0 +1,155 @@
+Version:1.1
+Osteon
+(Jaguar)
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3073
+Source:WoR
+Rules Level:4
+
+Mass:85
+Engine:255 XL (Clan) Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+Cockpit:Torso-Mounted Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:12 Double
+Base Chassis Heat Sinks:10
+Walk MP:3
+Jump MP:0
+
+Armor:Ferro-Lamellor(Clan)
+LA Armor:24
+RA Armor:24
+LT Armor:24
+RT Armor:24
+CT Armor:40
+HD Armor:8
+LL Armor:36
+RL Armor:36
+RTL Armor:12
+RTR Armor:12
+RTC Armor:12
+
+Weapons:5
+ER PPC, Right Torso
+ER Small Laser, Left Torso
+ER Small Laser, Right Torso
+Large Pulse Laser, Left Torso
+Ultra AC/20, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Retractable Blade
+Retractable Blade
+Retractable Blade
+Retractable Blade
+Retractable Blade
+Retractable Blade
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Life Support
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLLargePulseLaser
+CLLargePulseLaser
+CLERSmallLaser
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Life Support
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERPPC
+CLERPPC
+CLERSmallLaser
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Cockpit
+Sensors
+
+Head:
+Sensors
+Sensors
+NovaCEWS
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

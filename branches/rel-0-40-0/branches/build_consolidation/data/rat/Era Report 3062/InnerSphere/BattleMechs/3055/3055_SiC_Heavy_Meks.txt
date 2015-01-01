@@ -1,0 +1,20 @@
+###################################################################################################
+# This adaptation of the RAT files in Era Report 3062 takes into account the odds of rolling an
+# upgraded BattleMek.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3055 SiC Heavy Meks
+Anvil ANV-3M,83
+Cataphract CTF-1X,139
+Cataphract CTF-3L,28
+Catapult CPLT-C1,116
+Catapult CPLT-C3,23
+Grasshopper GHR-5H,116
+Grasshopper GHR-5J,23
+Helios HEL-3D,56
+Jinggau JN-G8A,194
+Orion ON1-K,46
+Orion ON1-M,9
+Thunder THR-1L,28
+Ti Ts'ang TSG-9H,111
+War Dog WR-DG-02FC,28

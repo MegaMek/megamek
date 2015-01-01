@@ -1,0 +1,46 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+BattleArmor
+</UnitType>
+<Name>
+Sloth Battle Armor
+</Name>
+<chassis>
+quad
+</chassis>
+<weightclass>
+3
+</weightclass>
+<Trooper Count>
+4
+</Trooper Count>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+5
+</Armor>
+<Squad Equipment>
+ISSmallLaser:Body
+ISSmallLaser:Body
+ISMine Launcher:Body
+</Squad Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3050
+</year>
+<motion_type>
+Leg
+</motion_type>
+<source>
+Clan Invasion
+</source>

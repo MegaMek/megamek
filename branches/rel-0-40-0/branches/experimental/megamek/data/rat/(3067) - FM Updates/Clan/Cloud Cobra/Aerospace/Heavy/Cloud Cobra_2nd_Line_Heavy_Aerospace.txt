@@ -1,0 +1,12 @@
+Cloud Cobra SL Heavy Aerospace (FMU)
+Sabutai A,1
+Kirghiz C,2
+Hydaspes 2,3
+Sabutai A,4
+Xerxes 1,5
+Hydaspes (Standard),6
+Jengiz C,5
+Xerxes 2,4
+Hydaspes 2,3
+Xerxes 2,2
+Jengiz A,1

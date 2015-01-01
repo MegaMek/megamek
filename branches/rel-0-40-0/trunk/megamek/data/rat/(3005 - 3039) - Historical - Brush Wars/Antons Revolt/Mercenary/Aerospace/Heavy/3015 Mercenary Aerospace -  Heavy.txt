@@ -1,0 +1,12 @@
+3015 Mercenary Aerospace -  Heavy
+Slayer SL-15,1
+Chippewa CHP-W5,2
+Chippewa CHP-W5,3
+Thunderbird TRB-D36,4
+Thunderbird TRB-D36,5
+Eagle EGL-R6,6
+Eagle EGL-R6,5
+Stuka STU-K5,4
+Stuka STU-K5,3
+Riever F-100,2
+Riever F-100,1

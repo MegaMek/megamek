@@ -1,0 +1,12 @@
+Triarii Protectors Light Mechs
+Garm GRM-01A2,1
+Fireball ALM-10D,2
+Hermes HER-4S,3
+Falcon Hawk FNHK-9K,4
+Javelin JVN-11A "Fire Javelin",5
+Flea FLE-17,6
+Blade BLD-XL,5
+#Celerity CLR-03-O,0
+Wight WGT-1LAW/SC,3
+Wolfhound WLF-4W,2
+Locust IIC 8,1

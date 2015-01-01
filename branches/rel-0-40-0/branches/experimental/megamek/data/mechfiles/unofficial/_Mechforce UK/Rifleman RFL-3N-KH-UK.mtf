@@ -1,0 +1,154 @@
+Version:1.0
+Rifleman
+RFL-3N-KH-UK
+
+Config:Biped
+TechBase:Mixed (IS Chassis)
+Era:3050
+Rules Level:5
+
+Mass:60
+Engine:240 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:15
+RA Armor:15
+LT Armor:15
+RT Armor:15
+CT Armor:26
+HD Armor:9
+LL Armor:20
+RL Armor:20
+RTL Armor:5
+RTR Armor:5
+RTC Armor:7
+
+Weapons:9
+1 CLUltraAC5, Right Arm, Ammo:40
+1 CLERMediumLaser, Right Arm
+1 CLUltraAC5, Left Arm
+1 CLERMediumLaser, Left Arm
+1 CLERMediumLaser, Right Torso
+1 CLERMediumLaser, Left Torso
+1 ISC3SlaveUnit, Center Torso
+1 CLAntiPersonnelPod, Left Leg
+1 CLAntiPersonnelPod, Right Leg
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC5
+CLUltraAC5
+CLUltraAC5
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC5
+CLUltraAC5
+CLUltraAC5
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLERMediumLaser
+CLUltraAC5 Ammo
+CLUltraAC5 Ammo
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+CLERMediumLaser
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISC3SlaveUnit
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Armored Cowl
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLAntiPersonnelPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLAntiPersonnelPod
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

@@ -1,0 +1,11 @@
+3062 Clan Coyote - Light Vehicle
+Anhur Transport (BA),1
+Asshur Fast Reconnaissance Vehicle,2
+Donar Assault Helicopter (Recon),3
+Donar Assault Helicopter,4
+Mithras Light Tank,5
+Odin Scout Tank,6
+Zorya Light Tank,5
+Svantovit Infantry Fighting Vehicle (Original),13
+Indra Infantry Transport,5
+Shamash Reconnaissance Vehicle,4

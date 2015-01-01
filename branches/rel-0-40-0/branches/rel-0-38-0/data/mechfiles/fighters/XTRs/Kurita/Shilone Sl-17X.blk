@@ -1,0 +1,106 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+Shilone
+</Name>
+
+<Model>
+SL-17X
+</Model>
+
+<Tonnage>
+65
+</Tonnage>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<Armor>
+60
+45
+45
+38
+</Armor>
+
+<Nose Equipment>
+ISImprovedHeavyGaussRifle
+ISImprovedHeavyGauss Ammo
+ISImprovedHeavyGauss Ammo 
+ISImprovedHeavyGauss Ammo 
+ISLargeLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLMediumPulseLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+CLMediumPulseLaser
+</Right Wing Equipment>
+
+<Aft Equipment> 
+ISChaffPod
+ISChaffPod
+</Aft Equipment>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
+<year>
+3075
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+19
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+
+
+

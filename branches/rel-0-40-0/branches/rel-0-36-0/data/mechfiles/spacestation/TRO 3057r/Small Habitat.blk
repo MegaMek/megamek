@@ -1,0 +1,117 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SpaceStation
+</UnitType>
+
+<Name>
+Small Habitat
+</Name>
+
+<Model>
+</Model>
+
+<Tonnage>
+120000
+</Tonnage>
+
+<Armor>
+13
+13
+13
+13
+13
+13
+</Armor>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Front Left Side Equipment>
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+</Front Right Side Equipment>
+
+<Aft Left Side Equipment>
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+</Aft Right Side Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<structural_integrity>
+1
+</structural_integrity>
+
+<heatsinks>
+98
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+200
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+2100
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<transporters>
+SmallCraftBay:20:3
+CargoBay:39818.5:2
+</transporters>
+
+<docking_collar>
+2
+</docking_collar>
+
+<grav_deck>
+1
+</grav_deck>
+
+<escape_pod>
+300
+</escape_pod>
+
+<life_boat>
+300
+</life_boat>
+
+<crew>
+224
+</crew>
+
+<passengers>
+5880
+</passengers>
+
+<History>
+No Rules for Habitat Units in MegaMek. Unit included for completeness.
+</history>

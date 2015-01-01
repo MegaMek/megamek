@@ -1,0 +1,156 @@
+Version:1.0
+BattleMaster
+BLR-4S Calvin II
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3071
+Rules Level:4
+
+Mass:85
+Engine:340 Light Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+
+Heat Sinks:15 Double
+Walk MP:4
+Jump MP:0
+
+Armor:IS Reflective(Inner Sphere)
+LA Armor:24
+RA Armor:24
+LT Armor:23
+RT Armor:23
+CT Armor:32
+HD Armor:9
+LL Armor:31
+RL Armor:31
+RTL Armor:8
+RTR Armor:8
+RTC Armor:11
+
+Weapons:10
+Light PPC, Left Arm
+Light PPC, Left Arm
+Rotary AC/5, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+Machine Gun, Left Torso
+Streak SRM 6, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+Machine Gun, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Light PPC
+Light PPC
+Light PPC
+Light PPC
+IS Reflective
+IS Reflective
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+IS Reflective
+IS Reflective
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERMediumLaser
+ISERMediumLaser
+Machine Gun
+ISStreakSRM6
+ISStreakSRM6
+IS Streak SRM 6 Ammo
+ISCASE
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERMediumLaser
+ISERMediumLaser
+Machine Gun
+IS Machine Gun Ammo - Half
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Reflective
+IS Reflective
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Reflective
+IS Reflective
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Reflective
+IS Reflective
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

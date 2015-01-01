@@ -1,0 +1,151 @@
+Version:1.0
+Blue Flame
+BLF-21
+
+Config:Quad
+TechBase:Inner Sphere
+Era:3062
+Rules Level:2
+
+Mass:45
+Engine:225 Light Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:22
+RA Armor:22
+LT Armor:15
+RT Armor:15
+CT Armor:21
+HD Armor:9
+LL Armor:22
+RL Armor:22
+RTL Armor:7
+RTR Armor:7
+RTC Armor:7
+
+Weapons:6
+1 ISERLargeLaser, Right Torso
+1 ISStreakSRM2, Right Torso, Ammo:50
+1 ISERLargeLaser, Left Torso
+1 ISStreakSRM2, Left Torso
+1 ISImprovedC3CPU, Center Torso
+1 ISStreakSRM2, Head
+
+Left Arm:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISERLargeLaser
+ISERLargeLaser
+ISStreakSRM2
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERLargeLaser
+ISERLargeLaser
+ISStreakSRM2
+ISStreakSRM2 Ammo
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISImprovedC3CPU
+ISImprovedC3CPU
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISStreakSRM2
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

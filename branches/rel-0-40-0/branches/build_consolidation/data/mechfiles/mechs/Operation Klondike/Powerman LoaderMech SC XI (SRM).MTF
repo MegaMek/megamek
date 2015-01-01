@@ -1,0 +1,131 @@
+Version:1.1
+Powerman LoaderMech
+SC XI (SRM)
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2801
+Rules Level:2
+
+Mass:35
+Engine:140 I.C.E. Engine
+Structure:Industrial
+Myomer:Standard
+
+Heat Sinks:3 Single
+Walk MP:4
+Jump MP:0
+
+Armor:Commercial
+LA Armor:5
+RA Armor:5
+LT Armor:8
+RT Armor:8
+CT Armor:12
+HD Armor:2
+LL Armor:7
+RL Armor:7
+RTL Armor:2
+RTR Armor:2
+RTC Armor:2
+
+Weapons:5
+1 Cargo (0.5 tons), Center Torso
+1 Cargo (1 ton), Right Torso
+1 Cargo (1 ton), Left Torso
+1 ISSRM4, Right Arm, Ammo:25
+1 ISSRM4, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISSRM4
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISSRM4
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Cargo (1 ton)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Cargo (1 ton)
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+Cargo (0.5 tons)
+ISSRM4 Ammo
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-

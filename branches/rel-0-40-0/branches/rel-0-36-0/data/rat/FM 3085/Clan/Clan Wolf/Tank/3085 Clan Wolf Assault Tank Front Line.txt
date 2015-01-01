@@ -1,0 +1,12 @@
+3085 Clan Wolf Assault Tank Front Line
+Alacorn Heavy Tank Mk VI,1
+Puma Assault Tank PAT-005,2
+Demolisher Heavy Tank (Clan),3
+Carnivore Assault Tank (Second Line),4
+Rhino Fire Support Tank,5
+Carnivore Assault Tank,6
+Carnivore Assault Tank (HAG),5
+Huitzilopochtli Assault Tank 'Huey',4
+Carnivore Assault Tank,3
+Carnivore Assault Tank (HAG),2
+Alacorn Heavy Tank Mk VI,1

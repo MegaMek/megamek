@@ -1,0 +1,98 @@
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Scarab Medium Drone Fighter
+</Name>
+
+<Model>
+</Model>
+
+<Tonnage>
+70
+</Tonnage>
+
+<SafeThrust>
+7
+</SafeThrust>
+
+<Armor>
+62
+52
+52
+42
+</Armor>
+
+<Nose Equipment>
+ISMediumVSPLaser
+ISMediumVSPLaser
+ISGuardianECM
+ISBeagleActiveProbe
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISLargePulseLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISLargePulseLaser
+</Right Wing Equipment>
+
+<Aft Equipment> 
+</Aft Equipment>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+480
+</fuel>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+3072
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+20
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<history>
+Aerospace Smart Robotic Control System (Improved) gives the Scarab a Piloting Skill of 5 and a Gunnery Skill of 4.  The ASRCS is not programmed into MM. Unit included for completeness.
+</history>
+
+<cockpit_type>
+0
+</cockpit_type>
+

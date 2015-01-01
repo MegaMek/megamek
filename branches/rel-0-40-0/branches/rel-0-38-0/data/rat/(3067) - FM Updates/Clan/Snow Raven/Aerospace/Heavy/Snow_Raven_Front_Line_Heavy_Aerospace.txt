@@ -1,0 +1,12 @@
+Snow Raven Front-Line Heavy ASF (FMU)
+Hydaspes 2,1
+Sabutai A,2
+Hydaspes (Standard),3
+Kirghiz A,4
+Sabutai Prime,5
+Sabutai C,6
+Kirghiz Prime,5
+Kirghiz B,4
+Kirghiz A,3
+Sabutai A,2
+Sabutai B,1

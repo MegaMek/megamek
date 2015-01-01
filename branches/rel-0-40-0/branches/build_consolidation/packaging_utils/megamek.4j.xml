@@ -1,0 +1,19 @@
+<launch4jConfig>
+  <headerType>gui</headerType>
+  <jar>../svndev/MegaMek.jar</jar>
+  <outfile>../svndev/MegaMek.exe</outfile>
+  <errTitle></errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl>http://megamek.sourceforge.net/forums</supportUrl>
+  <customProcName>true</customProcName>
+  <stayAlive>false</stayAlive>
+  <icon>../data/images/misc/megamek.ico</icon>
+  <jre>
+    <minVersion>1.5.0</minVersion>
+    <jdkPreference>preferJre</jdkPreference>
+    <maxHeapSize>256</maxHeapSize>
+  </jre>
+</launch4jConfig>

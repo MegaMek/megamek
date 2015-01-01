@@ -1,0 +1,348 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Black Lion I-Battlecruiser
+</Name>
+<Model>
+</Model>
+
+<Tonnage>
+720000
+</Tonnage>
+<SafeThrust>
+3
+</SafeThrust>
+<Armor>
+72
+84
+84
+84
+84
+72
+</Armor>
+<Nose Equipment>
+(B) NAC20
+NAC20
+NAC20
+NAC20 Ammo:45
+(B) NAC20
+NAC20
+NAC20
+NAC20 Ammo:45
+(B) ISAC5
+ISAC5
+ISAC5
+ISAC5
+ISAC5 Ammo:80
+(B) ISAC5
+ISAC5
+ISAC5
+ISAC5
+ISAC5 Ammo:80
+(B) ISAC2
+ISAC2
+ISAC2
+ISAC2
+ISAC2 Ammo:90
+(B) ISAC2
+ISAC2
+ISAC2
+ISAC2
+ISAC2 Ammo:90
+</Nose Equipment>
+
+<Front Left Side Equipment>
+NAC20
+NAC20
+NAC20 Ammo:30
+(B) KillerWhale
+KillerWhale
+KillerWhale
+KillerWhale Ammo:30
+(B) ISAC5
+ISAC5
+ISAC5
+ISAC5
+ISAC5 Ammo:80
+(B) ISAC5
+ISAC5
+ISAC5
+ISAC5
+ISAC5 Ammo:80
+(B) ISAC2
+ISAC2
+ISAC2
+ISAC2
+ISAC2 Ammo:90
+(B) ISAC2
+ISAC2
+ISAC2
+ISAC2
+ISAC2 Ammo:90
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+NAC20
+NAC20
+NAC20 Ammo:30
+(B) KillerWhale
+KillerWhale
+KillerWhale
+KillerWhale Ammo:30
+(B) ISAC5
+ISAC5
+ISAC5
+ISAC5
+ISAC5 Ammo:80
+(B) ISAC5
+ISAC5
+ISAC5
+ISAC5
+ISAC5 Ammo:80
+(B) ISAC2
+ISAC2
+ISAC2
+ISAC2
+ISAC2 Ammo:90
+(B) ISAC2
+ISAC2
+ISAC2
+ISAC2
+ISAC2 Ammo:90
+</Front Right Side Equipment>
+
+<Left Broadside Equipment>
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:45
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:45
+(B) ISAC5
+ISAC5
+ISAC5
+ISAC5
+ISAC5 Ammo:80
+(B) ISAC5
+ISAC5
+ISAC5
+ISAC5
+ISAC5 Ammo:80
+(B) ISAC2
+ISAC2
+ISAC2
+ISAC2
+ISAC2 Ammo:90
+(B) ISAC2
+ISAC2
+ISAC2
+ISAC2
+ISAC2 Ammo:90
+</Left Broadside Equipment>
+
+<Right Broadside Equipment>
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:45
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:45
+(B) ISAC5
+ISAC5
+ISAC5
+ISAC5
+ISAC5 Ammo:80
+(B) ISAC5
+ISAC5
+ISAC5
+ISAC5
+ISAC5 Ammo:80
+(B) ISAC2
+ISAC2
+ISAC2
+ISAC2
+ISAC2 Ammo:90
+(B) ISAC2
+ISAC2
+ISAC2
+ISAC2
+ISAC2 Ammo:90
+</Right Broadside Equipment>
+
+<Aft Left Side Equipment>
+NAC20
+NAC20
+NAC20 Ammo:30
+(B) KillerWhale
+KillerWhale
+KillerWhale
+KillerWhale Ammo:30
+(B) ISAC5
+ISAC5
+ISAC5
+ISAC5
+ISAC5 Ammo:80
+(B) ISAC5
+ISAC5
+ISAC5
+ISAC5
+ISAC5 Ammo:80
+(B) ISAC2
+ISAC2
+ISAC2
+ISAC2
+ISAC2 Ammo:90
+(B) ISAC2
+ISAC2
+ISAC2
+ISAC2
+ISAC2 Ammo:90
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment> 
+NAC20
+NAC20
+NAC20 Ammo:30
+(B) KillerWhale
+KillerWhale
+KillerWhale
+KillerWhale Ammo:30
+(B) ISAC5
+ISAC5
+ISAC5
+ISAC5
+ISAC5 Ammo:80
+(B) ISAC5
+ISAC5
+ISAC5
+ISAC5
+ISAC5 Ammo:80
+(B) ISAC2
+ISAC2
+ISAC2
+ISAC2
+ISAC2 Ammo:90
+(B) ISAC2
+ISAC2
+ISAC2
+ISAC2
+ISAC2 Ammo:90
+</Aft Right Side Equipment>
+
+<Aft Equipment> 
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:45
+NAC20
+NAC20
+NAC20 Ammo:45
+(B) ISAC5
+ISAC5
+ISAC5
+ISAC5
+ISAC5 Ammo:80
+(B) ISAC5
+ISAC5
+ISAC5
+ISAC5
+ISAC5 Ammo:80
+(B) ISAC2
+ISAC2
+ISAC2
+ISAC2
+ISAC2 Ammo:90
+(B) ISAC2
+ISAC2
+ISAC2
+ISAC2
+ISAC2 Ammo:90
+</Aft Equipment>
+
+<structural_integrity>
+75
+</structural_integrity>
+
+<heatsinks>
+1954
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+10000
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+2315
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<armor_tech>
+5
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+SmallCraftBay:12:2
+SmallCraftBay:12:2
+CargoBay:93688:2
+</transporters>
+
+<docking_collar>
+0
+</docking_collar>
+
+<grav_deck>
+2
+</grav_deck>
+
+<escape_pod>
+36
+</escape_pod>
+
+<life_boat>
+36
+</life_boat>
+<crew>
+717
+</crew>
+
+<passengers>
+70
+</passengers>
+
+<marines>
+140
+</marines>

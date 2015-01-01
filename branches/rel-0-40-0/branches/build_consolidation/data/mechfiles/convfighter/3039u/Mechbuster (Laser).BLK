@@ -1,0 +1,91 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+ConvFighter
+</UnitType>
+
+<Name>
+'MechBuster
+</Name>
+
+<Model>
+(Laser)
+</Model>
+
+<Tonnage>
+50
+</Tonnage>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<Armor>
+12
+10
+10
+10
+</Armor>
+
+<Nose Equipment>
+Medium Laser
+Medium Laser
+Medium Laser
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<heatsinks>
+9
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+640
+</fuel>
+
+<type>
+IS Level 1
+</type>
+
+<year>
+3024
+</year>
+
+<source>
+Succession Wars
+</source>
+
+<internal_type>
+0				
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+1
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

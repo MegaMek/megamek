@@ -1,0 +1,15 @@
+3039 House Marik Mech - Heavy B
+Ostroc OSR-2C, 1
+Ostroc OSR-2M, 2
+Grasshopper GHR-5H, 3
+Thunderbolt TDR-5S, 4
+Marauder MAD-3M, 5
+Archer ARC-2R, 6
+Orion ON1-K, 5
+Quickdraw QKD-4G, 4
+Rifleman RFL-3N, 3
+Crusader CRD-3R, 2
+Orion ON1-VA, 1
+##Version 1 - May 2011
+##From RUS Files
+##Editted by Dave "Hammer" Nawton

@@ -1,0 +1,12 @@
+Mercenary/Militia Dropships F
+Excalibur (2786),1
+Intruder (3056),2
+Mule (Standard),3
+Fury (3056),4
+Hannibal (Standard),5
+Leopard (3056),6
+Seeker (2815),5
+Overlord (3056),4
+Leopard CV (3054),3
+Hamilcar (Standard),2
+Vengeance (2682),1

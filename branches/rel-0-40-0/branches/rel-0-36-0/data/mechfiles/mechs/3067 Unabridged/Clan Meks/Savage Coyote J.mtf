@@ -1,0 +1,134 @@
+Version:1.1
+Savage Coyote
+J
+
+Config:Biped
+TechBase:Clan
+Era:3073
+Rules Level:2
+
+Mass:85
+Engine:255 XL Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:19 Double
+Walk MP:3
+Jump MP:5
+
+Armor:Standard Armor
+LA Armor:25
+RA Armor:25
+LT Armor:26
+RT Armor:26
+CT Armor:34
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:10
+RTR Armor:10
+RTC Armor:15
+
+Weapons:8
+1 CLSmallPulseLaser, Left Torso
+1 CLSmallPulseLaser, Left Torso
+1 CLSmallPulseLaser, Right Torso
+1 CLSmallPulseLaser, Right Torso
+1 CLLargePulseLaser, Left Arm
+1 CLERLargeLaser, Left Arm
+1 CLERLargeLaser, Left Arm
+1 CLLBXAC10, Right Arm, Ammo:20
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLLargePulseLaser
+CLLargePulseLaser
+CLERLargeLaser
+CLERLargeLaser
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10
+CLLBXAC10 Ammo
+CLLBXAC10 CL Ammo
+-Empty-
+
+Left Torso:
+Engine
+Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLSmallPulseLaser
+CLSmallPulseLaser
+
+Right Torso:
+Engine
+Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLImprovedJump Jet
+CLSmallPulseLaser
+CLSmallPulseLaser
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+CLImprovedJump Jet
+CLImprovedJump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink

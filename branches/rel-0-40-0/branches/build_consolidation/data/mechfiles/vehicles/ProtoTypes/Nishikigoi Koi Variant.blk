@@ -1,0 +1,117 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+LargeSupportTank
+</UnitType>
+
+<Name>
+Nishikigoi Support Aircraft
+</Name>
+
+<Model>
+Koi Variant
+</Model>
+
+<year>
+3079
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+WIGE
+</motion_type>
+
+<cruiseMP>
+5
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+0
+</armor_type>
+
+<barrating>
+10
+</barrating>
+
+<armor>
+18
+18
+18
+18
+18
+18
+18
+</armor>
+
+<barrating>
+10
+</barrating>
+
+<Body Equipment>
+Advanced Fire Control
+ISSuperCharger
+ISThunderbolt10 Ammo
+ISThunderbolt10 Ammo
+ISThunderbolt10 Ammo
+ISThunderbolt10 Ammo
+ISThunderbolt10 Ammo
+ISThunderbolt10 Ammo
+ISThunderbolt10 Ammo
+ISThunderbolt10 Ammo
+ISThunderbolt10 Ammo
+ISThunderbolt10 Ammo
+ISAMS Ammo
+Armored Chassis
+ISFullyAmphibious
+CommsGear:8
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Front Right Equipment>
+</Front Right Equipment>
+
+<Front Left Equipment>
+</Front Left Equipment>
+
+<Rear Right Equipment>
+IS AMS
+</Rear Right Equipment>
+
+<Rear Left Equipment>
+IS AMS
+</Rear Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISThunderbolt10
+ISThunderbolt10
+ISThunderbolt10
+ISThunderbolt10
+</Turret Equipment>
+
+<tonnage>
+240
+</tonnage>
+
+<transporters>
+CargoBay:51.5:1
+</transporters>

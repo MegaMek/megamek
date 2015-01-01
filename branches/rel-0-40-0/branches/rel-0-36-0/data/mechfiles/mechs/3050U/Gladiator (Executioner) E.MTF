@@ -1,0 +1,134 @@
+Version:1.1
+Gladiator (Executioner)
+E
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3054
+Rules Level:2
+
+Mass:95
+Engine:380 XL Fusion Engine
+Structure:Standard
+Myomer:CLMASC
+
+Heat Sinks:17 Double
+Base Chassis Heat Sinks: 16
+Walk MP:4
+Jump MP:4
+
+Armor:Ferro-Fibrous
+LA Armor:32
+RA Armor:32
+LT Armor:20
+RT Armor:20
+CT Armor:37
+HD Armor:9
+LL Armor:40
+RL Armor:40
+RTL Armor:10
+RTR Armor:10
+RTC Armor:9
+
+Weapons:7
+1 CLERLargeLaser, Right Arm
+1 CLERLargeLaser, Right Arm
+1 CLHeavyMediumLaser, Right Torso
+1 CLHeavyMediumLaser, Right Torso
+1 CLHeavySmallLaser, Right Torso
+1 CLATM9, Left Arm, Ammo:35
+1 CLATM9, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+-Empty-
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLERLargeLaser
+CLERLargeLaser
+-Empty-
+-Empty-
+-Empty-
+Ferro-Fibrous
+
+Left Torso:
+Engine
+Engine
+CLMASC
+CLMASC
+CLMASC
+CLMASC
+CLATM9 Ammo
+CLATM9 Ammo
+CLATM9 Ammo
+CLATM9 ER Ammo
+CLATM9 HE Ammo
+-Empty-
+
+Right Torso:
+Engine
+Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavySmallLaser
+-Empty-
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+Ferro-Fibrous
+Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet

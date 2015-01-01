@@ -1,0 +1,12 @@
+AFFS Light Mechs A 3067 (FMU)
+Valkyrie VLK-QD1,1
+Night Hawk NTK-2Q,2
+Garm GRM-01C,3
+Hollander BZK-F3,4
+Venom SDR-9K,5
+Raptor RTX1-OA,6
+Javelin JVN-11D,5
+Owens OW-1C,4
+Wolfhound WLF-2,3
+Jackal JA-KL-55,2
+Wolfhound WLF-3S,1

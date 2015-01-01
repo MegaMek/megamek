@@ -1,0 +1,65 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Tufana Hovercraft
+</Name>
+<Model>
+(iNarc)
+</Model>
+<Tonnage>
+35
+</Tonnage>
+<cruiseMP>
+11
+</cruiseMP>
+<Armor>
+25
+15
+15
+10
+15
+</Armor>
+<Turret Equipment>
+ISImprovedNarc
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISTAG
+</Turret Equipment>
+<Front Equipment>
+ISERSmallLaser
+</Front Equipment>
+<Body Equipment>
+IS iNarc Missile Beacon Ammo
+IS iNarc Missile Beacon Ammo
+IS iNarc Missile Beacon Ammo
+</Body Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3083
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+Hover
+</motion_type>
+<source>
+Dark Age
+</source>

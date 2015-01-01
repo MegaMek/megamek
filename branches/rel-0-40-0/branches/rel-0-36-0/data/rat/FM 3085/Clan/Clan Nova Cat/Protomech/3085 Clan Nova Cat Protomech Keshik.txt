@@ -1,0 +1,12 @@
+3085 Clan Nova Cat Protomech Keshik
+Gorgon,1
+Roc 2,2
+Chrysaor,3
+Satyr XP,4
+Gorgon,5
+Roc,6
+Satyr,5
+Centaur,4
+Satyr 2,3
+Chrysaor 2,2
+Roc 4,1

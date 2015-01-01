@@ -1,0 +1,12 @@
+3085 Clan Nova Cat Assault Mech Second Line
+Hatamoto-Ku HTM-27W,1
+Highlander IIC,2
+Phoenix Hawk IIC,3
+Viking VKG-2G,4
+Mad Cat Mk II (Standard),5
+Supernova,6
+Mad Cat Mk II Enhanced,5
+Phoenix Hawk IIC 2,4
+Supernova 2,3
+Marauder IIC 4,2
+Supernova,1

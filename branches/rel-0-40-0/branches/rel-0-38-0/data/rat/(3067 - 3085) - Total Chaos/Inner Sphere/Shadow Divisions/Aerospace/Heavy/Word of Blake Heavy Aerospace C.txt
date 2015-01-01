@@ -1,0 +1,15 @@
+Word of Blake Heavy Aerospace C
+Rapier RPR-100,1
+Hammerhead HMR-HD,2
+Hammerhead HMR-HF,3
+Ahab AHB-643,4
+Rapier RPR-100,5
+Riever F-700,6
+Ahab AHB-443,5
+Riever F-700a,4
+Riever F-700b,3
+Shiva SHV-O,3
+Shiva SHV-OA,3
+Shiva SHV-OB,3
+Shiva SHV-OC,3
+Shiva SHV-OD,3

@@ -1,0 +1,316 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Dreadnought Battleship
+</Name>
+
+<Model>
+(2330)
+</Model>
+
+<Tonnage>
+960000
+</Tonnage>
+<SafeThrust>
+3
+</SafeThrust>
+<Armor>
+85
+85
+85
+80
+80
+80
+</Armor>
+<Nose Equipment>
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:45
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:45
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+</Nose Equipment>
+
+<Front Left Side Equipment>
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:60
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:60
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:45
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:45
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:45
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:45
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:60
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+</Aft Left Side Equipment>
+<Aft Right Side Equipment>
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:60
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+</Aft Right Side Equipment>
+<Aft Equipment>
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:45
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:45
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/5
+Autocannon/5
+Autocannon/5
+Autocannon/5
+IS Ammo AC/5:80
+Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+Autocannon/2
+Autocannon/2
+Autocannon/2
+Autocannon/2
+IS Ammo AC/2:90
+</Aft Equipment>
+<structural_integrity>
+60
+</structural_integrity>
+<heatsinks>
+2048
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+12500
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+2300
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+SmallCraftBay:12:2
+SmallCraftBay:12:2
+CargoBay:132316.5:4
+CargoBay:40000:2
+</transporters>
+<docking_collar>
+0
+</docking_collar>
+<grav_deck>
+2
+</grav_deck>
+<escape_pod>
+60
+</escape_pod>
+<life_boat>
+60
+</life_boat>
+<crew>
+890
+</crew>
+<passengers>
+340
+</passengers>
+
+<History>
+Crew: 146 Officers, 518 Enlisted/non-rated, 98 Gunners, 20 First-Class Passengers, 50 Second-Class Passengers, 270 Marines, 128 Bay Personnel
+</History>

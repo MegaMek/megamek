@@ -1,0 +1,121 @@
+Lot of people have contributed to the MegaMek project.
+
+  Original author and present maintainer:
+     Ben Mazur <bmazur@sev.org>
+
+  AI Coding:
+     Steven Hawkins <skh_mail@yahoo.com>
+     Michael Hanson <hanson@cs.stanford.edu>
+
+  More Code:
+     John Uckele <btzealot55@yahoo.com>
+     Derek "deadeye00" Evans
+     Nathan Rowden <njrkrynn@attbi.com>
+     Brian Bucklew <brian.bucklew@scriptlogic.com>
+     Dima Nemchenko <Dima.Nemchenko@lunarlollipop.co.uk>
+     Cord Awtry <kipsta@bs-interactive.com>
+     Joseph Tyx <spikezom@yahoo.com>
+     Robert Hinkle <Rasia@planettribes.com>
+     Joshua Yockey <joshua@sublimity.net>
+     John Rowat
+     Hugh "TigerWraith" Peeples
+     James "Suvarov454" Damour <suvarov454@users.sourceforge.net>
+     Jason "Ensign" Bush <ensign@users.sourceforge.net>
+     Tim Mead
+     Ryan "Oscar" McConnell  <oscarmm@users.sourceforge.net>
+     Slava Zipunov <zipp32@users.sourceforge.net>
+     Michael Newcomb <mnewcomb@users.sourceforge.net>
+     Wirianto Djunaidi <wdjunai@users.sourceforge.net>
+     Dirk Wilhelm <wayne07@users.sourceforge.net>
+     David Smith <xylaan@users.sourceforge.net>
+     David Taylor <dtaylor@swiftdsl.com.au>
+     Björn Olsson <nalleolsson@users.sourceforge.net>
+     Florian Stock <flolo@users.sourceforge.net>
+     Patrick Johnmeyer <pineconius@users.sourceforge.net>
+     Alexander Schölling <schoelling@users.sourceforge.net>
+     Sebastian Brocks <beerockxs@users.sourceforge.net>
+     Robin D. Toll <neko128@users.sourceforge.net>
+     Ecthellion <ecthellion@users.sourceforge.net>
+     Jaxom Renard <jaxom_renard@users.sourceforge.net>
+     Brent Dill <hentaizonga@users.sourceforge.net>
+     Immanuel Scholz <immanuel.scholz@gmx.de>
+     Stefan Bissell <weaselflink@users.sourceforge.net>
+     Reinhard Vicinus <rvicinus@users.sourceforge.net>
+     Chris Nelson <albinosqrl@users.sourceforge.net>
+     fastsammy <fastsammy@users.sourceforge.net>
+
+  XML Parser:
+     Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)
+
+  Map Conversion:
+     Lars "Shockmilk" Kreilkamp <shockmilk@users.sourceforge.net>
+     Pierre Savard <xsurrealx@users.sourceforge.net>
+     shockmilk <shockmilk@users.sourceforge.net>
+     Jan Ferdinand Rehse
+     Thomas "DarkViper" Wehner
+     Endreffy Janos <endrosz@freemail.hu>
+
+  German Readme:
+     Black Ice <WKA_Online@yahoo.de>
+
+  Scenario Readme:
+     Lee "T-Bolt" Smith
+
+  Mech, Vehicle, Protomech and Infantry Conversion and QA:
+     Hopalong
+     Martis Truesight
+     Taerkar
+     coralbeach
+     Robert Heath <blasty_mcnasty@users.sourceforge.net>
+     Jacob Wall <lancemanprime@users.sourceforge.net>
+     Alexander Schölling <schoelling@users.sourceforge.net>
+     fastsammy <fastsammy@users.sourceforge.net>
+
+  Updates to the Ant build file:
+     Robert Schuster <thebohemian@users.sourceforge.net>
+
+  Testing, Ideas and Feedback (just a few of many):
+     Jeff "Shrike" Biron <Shrike@dropshipcommand.com>
+     Jason Kean
+     Jess Freeman
+     Jeff Kean
+     Matt Trumbull
+     Bob Dee
+     Doug Moore
+     #player2player on Sorcery
+
+  Various Images:
+     Nehal Mistry
+     Paolo D'Inca <paolodinca@hotmail.com>
+     Ian Hamilton <jabberwocky@planethalflife.com>
+     Charlie Brown
+     <Cyric27@users.sourceforge.net>
+     <rakkasan@users.sourceforge.net>
+     Blazindizzy
+     Kurt Aronnax Kajal<kurt_kajal@users.sourceforge.net>
+     Martis Truesight <carpe_mortis@users.sourceforge.net>
+     Philip <rancherion@users.sourceforge.net>
+     Jeff Wrbelis <starcaptaintorc@users.sourceforge.net>
+     Fritz Ullmann <brandfuchs@users.sourceforge.net>
+     Brandon Robertson <majortom88@users.sourceforge.net>
+     James Lacy <freakboy2571@users.sourceforge.net>
+     Kolja Geldmacher <flashhawk2k@users.sourceforge.net>
+     Carlo Sta. Romana <marwynn@users.sourceforge.net>
+     Adam Lovatt <ekm@users.sourceforge.net>
+     Jan Hansen <felsen@users.sourceforge.net>
+     Brock Peterman <bh-21@users.sourceforge.net>
+     R. Newton <anubaji@users.sourceforge.net>
+     Jan Rzadkowski <st0ny@users.sourceforge.net>
+     Santander
+     Ploppy
+     Alan Bell
+     victor23
+
+  And Of Course...
+     FASA, WizKids and FanPro for creating and publishing the original game of 
+     BattleTech, a source of fun and inspiration to us all.
+
+
+  If I've missed anyone or details have changed, please accept apologies and
+  contact the author (above.)
+

@@ -1,0 +1,12 @@
+Hell's Horses Keshik Heavy Mechs
+Blood Reaper (Standard),1
+Rifleman IIC 8,2
+Thor (Summoner) Prime,3
+Loki (Hellbringer) Prime,4
+Vulture (Mad Dog) Prime,5
+Mad Cat Mk IV (Savage Wolf) (Prime),6
+Vulture Mk IV (Mad Dog Mk IV) Prime,5
+Thor (Summoner) Prime,4
+Balius Prime,3
+Balius A,2
+Balius B,1

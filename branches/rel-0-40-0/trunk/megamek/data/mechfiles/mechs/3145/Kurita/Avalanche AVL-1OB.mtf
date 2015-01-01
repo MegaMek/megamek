@@ -1,0 +1,154 @@
+Version:1.0
+Avalanche
+AVL-1OB
+
+Config:Biped Omnimech
+TechBase:Inner Sphere
+Era:3133
+Source:TRO 3145 DC
+Rules Level:2
+
+Mass:50
+Engine:250 Fusion Engine(IS)
+Structure:IS Endo-Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Base Chassis Heat Sinks:10
+Walk MP:5
+Jump MP:5
+
+Armor:Standard(Inner Sphere)
+LA Armor:15
+RA Armor:15
+LT Armor:17
+RT Armor:17
+CT Armor:24
+HD Armor:8
+LL Armor:21
+RL Armor:21
+RTL Armor:7
+RTR Armor:7
+RTC Armor:8
+
+Weapons:6
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+Light PPC, Left Arm
+Light PPC, Right Arm
+Thunderbolt 5, Left Torso
+Thunderbolt 5, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Light PPC
+Light PPC
+ISERMediumLaser
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Light PPC
+Light PPC
+ISERMediumLaser
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Jump Jet
+Jump Jet
+Thunderbolt 5
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Jump Jet
+Jump Jet
+Thunderbolt 5
+IS Ammo Thunderbolt-5
+IS Ammo Thunderbolt-5
+ISCASE
+IS Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+IS Endo-Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo-Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

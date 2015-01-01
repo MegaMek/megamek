@@ -1,0 +1,149 @@
+Version:1.0
+Odin
+OD-1-NA
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3058
+Rules Level:3
+
+Mass:100
+Engine:300 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:32
+RA Armor:32
+LT Armor:29
+RT Armor:29
+CT Armor:44
+HD Armor:9
+LL Armor:39
+RL Armor:39
+RTL Armor:10
+RTR Armor:10
+RTC Armor:15
+
+Weapons:4
+1 ISERPPC, Right Arm
+1 ISUltraAC20, Right Arm, Ammo:20
+1 ISUltraAC10, Left Torso, Ammo:20
+1 ISStreakSRM4, Left Torso, Ammo:25
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+ISUltraAC20 (Split)
+ISUltraAC20 (Split)
+ISUltraAC20 (Split)
+ISUltraAC20 (Split)
+ISUltraAC20 (Split)
+ISUltraAC20 (Split)
+
+Left Torso:
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISStreakSRM4
+ISUltraAC10 Ammo
+ISUltraAC10 Ammo
+ISStreakSRM4 Ammo
+ISCASE
+
+Right Torso:
+ISUltraAC20 Ammo
+ISUltraAC20 Ammo
+ISUltraAC20 Ammo
+ISUltraAC20 Ammo
+ISUltraAC20 (Split)
+ISUltraAC20 (Split)
+ISUltraAC20 (Split)
+ISUltraAC20 (Split)
+Endo-Steel
+ISCASE
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo-Steel
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Command Console
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

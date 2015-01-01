@@ -1,0 +1,10 @@
+3062 Clan Wolf - Light
+Pack Hunter,1
+Uller (Kit Fox) C,2
+Koshi (Mist Lynx) B,3
+Koshi (Mist Lynx) A,4
+Puma (Adder) Prime,16
+Koshi (Mist Lynx) A,4
+Uller (Kit Fox) B,3
+Dasher (Fire Moth) C,2
+Cougar Prime,1

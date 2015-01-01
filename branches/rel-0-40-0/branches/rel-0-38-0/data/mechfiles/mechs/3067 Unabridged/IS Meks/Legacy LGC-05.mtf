@@ -1,0 +1,135 @@
+Version:1.1
+Legacy
+LGC-05
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3073
+Rules Level:3
+
+Mass:80
+Engine:240 Compact Fusion Engine
+Structure:Endo-Steel
+Gyro:Compact Gyro
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:3
+Jump MP:2
+
+Armor:Standard Armor
+LA Armor:26
+RA Armor:26
+LT Armor:27
+RT Armor:27
+CT Armor:40
+HD Armor:9
+LL Armor:34
+RL Armor:34
+RTL Armor:7
+RTR Armor:7
+RTC Armor:10
+
+Weapons:8
+1 ISERSmallLaser, Head
+1 ISMML7, Right Torso, Ammo:34
+1 ISMML7, Left Torso
+1 ISImprovedC3CPU, Left Torso
+1 ISLightPPC, Right Arm
+1 ISLightPPC, Left Arm
+1 ISMediumVSPLaser, Right Arm
+1 ISMediumVSPLaser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumVSPLaser
+ISMediumVSPLaser
+ISLightPPC
+ISLightPPC
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumVSPLaser
+ISMediumVSPLaser
+ISLightPPC
+ISLightPPC
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISMML7
+ISMML7
+ISMML7
+ISMML7
+ISArtemisIV
+ISImprovedC3CPU
+ISImprovedC3CPU
+Endo-Steel
+Endo-Steel
+
+Right Torso:
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISMML7
+ISMML7
+ISMML7
+ISMML7
+ISArtemisIV
+ISMML7 LRM Ammo Artemis-capable
+ISMML7 SRM Ammo Artemis-capable
+Endo-Steel
+ISCASE
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Endo-Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISERSmallLaser
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Endo-Steel
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Endo-Steel

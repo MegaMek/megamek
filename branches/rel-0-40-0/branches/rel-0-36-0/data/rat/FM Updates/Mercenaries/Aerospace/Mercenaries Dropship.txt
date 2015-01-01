@@ -1,0 +1,12 @@
+Mercenaries Dropship
+Excalibur (3056),1
+Intruder (3056),2
+Mule (Standard),3
+Triumph (3057),4
+Leopard (3054),5
+Union (3055),6
+Seeker (3054),5
+Overlord (3056),4
+Condor (3054),3
+Gazelle (3055),2
+Avenger (3048),1

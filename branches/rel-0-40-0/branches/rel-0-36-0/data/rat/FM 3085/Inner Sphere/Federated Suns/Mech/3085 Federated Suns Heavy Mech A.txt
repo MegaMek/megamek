@@ -1,0 +1,12 @@
+3085 Federated Suns Heavy Mech A
+Rakshasa MDG-1Ar,1
+JagerMech III JM6-D4,2
+BattleAxe BKX-8D,3
+Falconer FLC-8R,4
+Thanatos TNS-4S,5
+Black Hawk-KU BHKU-O,6
+Maelstrom MTR-5K,5
+Hammerhands HMH-6D,4
+Avatar AV1-O,3
+Gallant GLT-7-0,2
+Hammerhands HMH-6E,1

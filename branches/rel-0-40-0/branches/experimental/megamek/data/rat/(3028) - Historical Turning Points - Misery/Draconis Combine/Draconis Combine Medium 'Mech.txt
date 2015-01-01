@@ -1,0 +1,12 @@
+Draconis Combine Medium 'Mech
+Enforcer ENF-4R,1
+Hunchback HBK-4G,2
+Griffin GRF-1N,3
+Phoenix Hawk PXH-1,4
+Phoenix Hawk PXH-1K,5
+Shadow Hawk SHD-2K,6
+Wolverine WVR-6R,5
+Wolverine WVR-6R,4
+Shadow Hawk SHD-2H,3
+Hunchback HBK-4G,2
+Assassin ASN-21,1

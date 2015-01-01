@@ -1,0 +1,151 @@
+Version:1.0
+BattleMaster
+BLR-4S Calvin II
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3071
+Rules Level:3
+
+Mass:85
+Engine:340 Light Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:15 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Reflective
+LA Armor:24
+RA Armor:24
+LT Armor:23
+RT Armor:23
+CT Armor:32
+HD Armor:9
+LL Armor:31
+RL Armor:31
+RTL Armor:8
+RTR Armor:8
+RTC Armor:11
+
+Weapons:7
+1 ISRotaryAC5, Right Arm, Ammo:40
+2 ISLightPPC, Left Arm
+2 ISERMediumLaser, Right Torso
+1 ISMachine Gun, Right Torso, Ammo:100
+2 ISERMediumLaser, Left Torso
+1 ISMachine Gun, Left Torso
+1 ISStreakSRM6, Left Torso, Ammo:15
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLightPPC
+ISLightPPC
+ISLightPPC
+ISLightPPC
+Reflective Armor
+Reflective Armor
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+Reflective Armor
+Reflective Armor
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERMediumLaser
+ISERMediumLaser
+ISMachine Gun
+ISStreakSRM6
+ISStreakSRM6
+ISStreakSRM6 Ammo
+ISCASE
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERMediumLaser
+ISERMediumLaser
+ISMachine Gun
+ISMG Ammo (100)
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Reflective Armor
+Reflective Armor
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Reflective Armor
+Reflective Armor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Reflective Armor
+Reflective Armor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

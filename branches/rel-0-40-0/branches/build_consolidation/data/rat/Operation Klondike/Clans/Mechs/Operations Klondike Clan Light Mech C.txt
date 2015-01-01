@@ -1,0 +1,12 @@
+2821 Operations Klondike Clan Light Mech C
+Hermes HER-1Sb,1
+Firefly FFL-3SLE,2
+Mercury MCY-99,3
+Spector SPR-5F,4
+Thorn THE-Nb,5
+Locust LCT-1Vb,6
+Night Hawk NTK-2Q,5
+Firefly FFL-3SLE,4
+Javelin JVN-10P,3
+Panther PNT-9R,2
+Stinger STG-3Gb,1

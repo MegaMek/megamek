@@ -1,0 +1,12 @@
+3085 Clan Diamond Shark Heavy Mech Second Line
+Rifleman C,1
+Predator 2,2
+Thresher,3
+Ryoken II,4
+Ha Otoko 3,5
+Rifleman IIC 3,6
+Ha Otoko,5
+Ha Otoko 2,4
+Arcas,3
+Sphinx,2
+Ha Otoko 2,1

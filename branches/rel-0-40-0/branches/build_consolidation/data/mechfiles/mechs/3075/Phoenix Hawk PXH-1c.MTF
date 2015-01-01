@@ -1,0 +1,153 @@
+Version:1.0
+Phoenix Hawk
+PXH-1c
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2784
+Source:Star League
+Rules Level:2
+
+Mass:45
+Engine:270 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:6
+
+Armor:Standard
+LA Armor:12
+RA Armor:12
+LT Armor:18
+RT Armor:18
+CT Armor:23
+HD Armor:8
+LL Armor:20
+RL Armor:20
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
+
+Weapons:6
+Medium Laser, Right Arm
+Medium Laser, Left Arm
+ER Large Laser, Right Torso
+Machine Gun, Right Arm
+Machine Gun, Left Arm
+Snub-Nose PPC, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Medium Laser
+Machine Gun
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISSNPPC
+ISSNPPC
+Medium Laser
+Machine Gun
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Jump Jet
+IS Ammo MG - Full
+ISCASE
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+Jump Jet
+ISERLargeLaser
+ISERLargeLaser
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISGuardianECMSuite
+ISGuardianECMSuite
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

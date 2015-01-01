@@ -1,0 +1,59 @@
+###################################################################################################
+# This is an adaptation of the RAT files in Era Report 3062.  With omni configurations, I divided 
+# the likely-hood for each configuration as evenly as possible.  For example, with Clan Wolf, the 
+# Cougar has a roughly 28:1000 chance to be rolled.  There are 9 Cougar configurations.  28/9 = 3r1.  
+# So, I gave the Prime configuraiton a frequency of 4 and the other 8 configurations a frequency 
+# of 3 each.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3053-3062 Wolf Light Meks
+Cougar Prime,4
+Cougar A,3
+Cougar B,3
+Cougar C,3
+Cougar D,3
+Cougar E,3
+Cougar F,3
+Cougar G,3
+Cougar H,3
+Dasher (Fire Moth) Prime,7
+Dasher (Fire Moth) A,7
+Dasher (Fire Moth) B,6
+Dasher (Fire Moth) C,6
+Dasher (Fire Moth) D,6
+Dasher (Fire Moth) E,6
+Dasher (Fire Moth) F,6
+Dasher (Fire Moth) H,6
+Dasher (Fire Moth) K,6
+Koshi (Mist Lynx) Prime, 31
+Koshi (Mist Lynx) A, 31
+Koshi (Mist Lynx) B, 31
+Koshi (Mist Lynx) C, 31
+Koshi (Mist Lynx) D, 31
+Koshi (Mist Lynx) E, 31
+Koshi (Mist Lynx) F, 30
+Koshi (Mist Lynx) G, 30
+Koshi (Mist Lynx) H, 30
+Koshi (Mist Lynx) P, 30
+Pack Hunter,7
+Pack Hunter 2,7
+Pack Hunter 3,7
+Pack Hunter 4,6
+Puma (Adder) Prime,9
+Puma (Adder) A,9
+Puma (Adder) B,9
+Puma (Adder) C,9
+Puma (Adder) D,8
+Puma (Adder) E,8
+Puma (Adder) H,8
+Puma (Adder) J,8
+Uller (Kit Fox) Prime,11
+Uller (Kit Fox) A,11
+Uller (Kit Fox) B,11
+Uller (Kit Fox) C,11
+Uller (Kit Fox) D,11
+Uller (Kit Fox) E,11
+Uller (Kit Fox) F,11
+Uller (Kit Fox) H,11
+Uller (Kit Fox) S,11
+Uller (Kit Fox) W,10

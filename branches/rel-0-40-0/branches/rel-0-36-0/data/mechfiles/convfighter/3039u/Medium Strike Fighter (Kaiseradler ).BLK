@@ -1,0 +1,98 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+ConvFighter
+</UnitType>
+
+<Name>
+Medium Strike Fighter
+</Name>
+
+<Model>
+(Kaiseradler)
+</Model>
+
+<Tonnage>
+25
+</Tonnage>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<Armor>
+7
+6
+6
+5
+</Armor>
+
+<Nose Equipment>
+Machine Gun
+Machine Gun
+IS Machine Gun Ammo - Half
+IS Ammo SRM-4
+</Nose Equipment>
+
+<Left Wing Equipment>
+SRM 4
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+SRM 4
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<type>
+IS Level 1
+</type>
+
+<year>
+2841
+</year>
+
+<source>
+Succession Wars
+</source>
+
+<internal_type>
+0				
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+1
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<VSTOL>
+1
+</VSTOL>

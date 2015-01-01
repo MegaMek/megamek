@@ -1,0 +1,14 @@
+########################################################
+# Taken from Era Report 3062.
+# Conversion performed by Deric Page deric.page@usa.net
+########################################################
+3053-3062 Clan Medium Vehicles
+Ares Medium Tank,444
+Epona Pursuit Tank Prime,5
+Epona Pursuit Tank A,5
+Epona Pursuit Tank B,5
+Epona Pursuit Tank C,5
+Epona Pursuit Tank D,4
+Epona Pursuit Tank E,4
+Hachiman Fire Support Tank 'Huey',306
+Ku Wheeled Assault Tank,222

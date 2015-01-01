@@ -1,0 +1,88 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Praetorian Mobile Command HQ
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3090
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+60
+44
+44
+32
+28
+</armor>
+
+<Body Equipment>
+Armored Chassis
+Cargo (1 ton)
+ISArmoredMotiveSystem
+Communications Equipment (7 ton)
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+ISAntiPersonnelPod
+</Right Equipment>
+
+<Left Equipment>
+ISAntiPersonnelPod
+</Left Equipment>
+
+<Rear Equipment>
+ISAntiPersonnelPod
+</Rear Equipment>
+
+<Turret Equipment>
+ISERMediumLaser
+</Turret Equipment>
+
+<tonnage>
+60.0
+</tonnage>
+

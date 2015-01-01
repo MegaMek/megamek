@@ -1,0 +1,12 @@
+WoB Light Mech Protectorate Militia
+Jackal JA-KL-1532,1
+Wasp WSP-3L,2
+Gurkha GUR-2G,3
+Red Shift RDS-2A,4
+Locust LCT-3M,5
+Mercury MCY-102,6
+Owens OW-1,5
+Falcon Hawk FNHK-9K1B,4
+Tarantula ZPH-2A,3
+Mercury MCY-99,2
+Nexus NXS1-B,1

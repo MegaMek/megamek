@@ -1,0 +1,150 @@
+Version:1.0
+Iron Bear
+E-UK
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3055
+Rules Level:2
+
+Mass:50
+Engine:300 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:14
+RA Armor:14
+LT Armor:15
+RT Armor:15
+CT Armor:20
+HD Armor:9
+LL Armor:18
+RL Armor:18
+RTL Armor:7
+RTR Armor:7
+RTC Armor:7
+
+Weapons:5
+1 CLGaussRifle, Right Arm, Ammo:16
+2 CLMG, Left Arm, Ammo:100
+2 CLERMediumLaser, Right Torso
+2 CLERMediumLaser, Left Torso
+2 CLERMediumLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLMG
+CLMG
+CLMG Ammo (100)
+-Empty-
+-Empty-
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+-Empty-
+Endo Steel
+Endo Steel
+Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLGauss Ammo
+CLGauss Ammo
+CLERMediumLaser
+CLERMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERMediumLaser
+CLERMediumLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

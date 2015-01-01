@@ -1,0 +1,12 @@
+3062 Clan Steel Viper - Heavy
+Nova Cat A,1
+Vulture (Mad Dog) C,2
+Mad Cat (Timber Wolf) B,3
+Thor (Summoner) A,4
+Vulture (Mad Dog) Prime,5
+Loki (Hellbringer) Prime,6
+Thor (Summoner) Prime,5
+Vulture (Mad Dog) A,4
+Loki (Hellbringer) B,3
+Mad Cat (Timber Wolf) Prime,2
+Nova Cat Prime,1

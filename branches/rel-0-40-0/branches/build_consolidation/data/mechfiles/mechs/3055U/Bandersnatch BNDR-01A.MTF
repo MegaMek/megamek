@@ -1,0 +1,158 @@
+Version:1.0
+Bandersnatch
+BNDR-01A
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3052
+Source:Clan Invasion
+Rules Level:2
+
+Mass:75
+Engine:300 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:18
+RA Armor:18
+LT Armor:23
+RT Armor:23
+CT Armor:23
+HD Armor:9
+LL Armor:18
+RL Armor:18
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:11
+LB 10-X AC, Left Arm
+Medium Laser, Left Arm
+Medium Laser, Left Arm
+LB 10-X AC, Right Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+LRM 5, Left Torso
+LRM 5, Right Torso
+Medium Laser, Center Torso
+Medium Laser, Center Torso
+LRM 5, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+Medium Laser
+Medium Laser
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+Medium Laser
+Medium Laser
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+LRM 5
+IS Ammo LRM-5
+IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo
+ISCASE
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+LRM 5
+IS Ammo LRM-5
+IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo
+ISCASE
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser (R)
+Medium Laser (R)
+
+Head:
+Life Support
+Sensors
+Cockpit
+LRM 5
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

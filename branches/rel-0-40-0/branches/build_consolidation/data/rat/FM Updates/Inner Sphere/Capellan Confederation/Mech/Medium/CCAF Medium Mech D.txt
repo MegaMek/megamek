@@ -1,0 +1,12 @@
+CCAF Medium Mechs D 3067
+Clint CLNT-2-3U,1
+Clint CLNT-2-3U,2
+Phoenix Hawk PXH-1,3
+Cicada CDA-2A,4
+Cicada CDA-2A,5
+Vindicator VND-1R,6
+Vindicator VND-1AA "Avenging Angel",5
+Blackjack BJ-1,4
+Blackjack BJ-3,3
+Marshal MHL-X1,2
+Marshal MHL-2L,1

@@ -1,0 +1,376 @@
+This is a text document explaining the workings of *.BLK files for vehicles.  For ground vehicles:
+
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+The next few lines are pretty self explanatory:
+
+<UnitType>
+Tank
+</UnitType>
+<Name>
+LRM Carrier
+</Name>
+<Model>
+(3055)
+</Model>
+<Tonnage>
+60
+</Tonnage>
+<cruiseMP>
+2
+</cruiseMP>
+<armor>
+14
+14
+14
+12
+</Armor>
+
+UnitType needs to be "VTOL" for VTOLs, "Tank" for normal vehicles,
+"SupportTank" for Support Vehicles, "SupportVTOL" for Support VTOLs,
+"LargeSupportTank" for large support vehicle.
+
+Name, Model, Tonnage and Cruise MP are self explanatory.
+
+The armor values are each location's armor values, in this order:
+-For Tanks: Front, Left, Right, Rear, and if the unit has a Turret, Turret.
+-For VTOLs: Front, Left, Right, Rear, Rotor
+-For Large Support Tanks: Front, Front Right, Front Left, Rear Right, Rear Left,
+ Rear, and if the unit has a Turret, Turret.
+-If the tank has two turrets:  Front, Left, Right, Rear, Front Turret, Rear Turret.
+
+
+Then you have an entry for each location that mounts equipment.
+
+<Front Equipment>
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+ISLRM20
+ISArtemisIV
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Body Equipment>
+ISLRM20 Ammo Artemis-capable
+ISLRM20 Ammo Artemis-capable
+ISLRM20 Ammo Artemis-capable
+ISLRM20 Ammo Artemis-capable
+ISLRM20 Ammo Artemis-capable
+ISLRM20 Ammo Artemis-capable
+ISC3SlaveUnit
+</Body Equipment>
+
+<Rear Turret Equipment>
+Light PPC
+PPC Capacitor
+ISMML9
+</Rear Turret Equipment>
+
+<Front Turret Equipment>
+ISMagshotGR
+ISMagshotGR
+</Front Turret Equipment>
+
+"<Front Equipment>" for equipment mounted in the front, "<Rear Equipment>" for
+rear, "<Body Equipment>" for the body, "<Turret Equipment>" for the turret, etc.
+For large support tank, the side ones become "Front Left Equipment" etc.  If the
+tank has two turrets, there is an entry for "Front Turret Equipment" and
+"Rear Turret Equipment".
+
+Then comes the <type> entry:
+
+<type>
+IS Level 2
+</type>
+
+The entry depends on the unit't tech level, the following values are what needs
+to be used:
+
+"IS Level 1"
+Introductory box set
+"IS Level 2"
+IS TW
+"IS Level 3"
+Advanced tech
+"IS Level 4"
+Experimental tech
+"IS Level 5"
+IS unofficial/old tech (you probably won't need this.)
+"Clan Level 2"
+Clan TW
+"Clan Level 3"
+Clan advanced
+"Clan Level 4"
+Clan experimental
+"Clan Level 5"
+Clan unofficial/old tech (you probably won't need this._
+
+For mixed tech, these are used:
+Mixed (IS Chassis)
+Mixed (IS Chassis) Experimental
+Mixed (IS Chassis) Unofficial
+Mixed (Clan Chassis)
+Mixed (Clan Chassis) Experimental
+Mixed (Clan Chassis) Unofficial
+
+Next is the entry for the year this unit originated in:
+
+<year>
+3055
+</year>
+
+then we set the internal structure, armor and engine type:
+
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+1
+</engine_type>
+
+For internal structure, 0 means standard, 1 means Endo-Steel, 2 means Endo-Steel
+Prototype, 3 means reinforced, 4 means composite.  These are only really important for battlemechs.
+
+The armor values are 0 standard, 1 Ferro-Fibrous, 2 reactive, 3 reflective, 4
+hardened, 5 light ferro, 6 heavy ferro, 8 stealth, 9 ferro-fib prototype, 10
+commercial, 14 industrial, 15 heavy industrial.  Some of these might not apply
+for tanks.
+
+For the engine types, the following codes apply:
+
+Fusion: 0
+ICE: 1
+XL: 2
+XXL: 3
+LIGHT: 4
+COMPACT: 5
+Fuel Cell: 6
+Fission: 7
+
+For Support Tanks, you'll also need an entry named "barrating" to set the BAR
+rating, we do not yet automatically set that based on the armor type set earlier.
+So you'll need something like this:
+
+<barrating>
+5
+</barrating>
+
+Next up is the motion type of the tank:
+
+<motion_type>
+Tracked
+</motion_type>
+
+The values are:
+
+Tracked
+Wheeled
+Hover
+VTOL
+Naval
+Hydrofoil
+Submarine
+WiGE
+
+For OmniTanks, you'll need to add these lines:
+
+<omni>
+1
+</omni>
+
+For tanks that have infantry bays, you'll need an entry along these lines:
+
+<transporters>
+TroopSpace:3
+</transporters>
+
+This example would give the unit a 3 ton infantry bay.
+
+
+
+
+Aerospace units are not much different from this format.  Here is a Sabutai for an example:
+
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Aero
+</UnitType>
+
+Notice that in this case, the unit type is set to Aero.  You can also set it to
+Dropship, Jumpship, Warsship, and SpaceStation.
+
+<Name>
+Sabutai
+</Name>
+<Model>
+Prime
+</Model>
+<Tonnage>
+75
+</Tonnage>
+<SafeThrust>
+6
+</SafeThrust>
+<Armor>
+62
+45
+45
+40
+</Armor>
+
+-For aerodynes, armor is arranged as Nose, Left Wing, Right Wing, and Aft.
+-For sphereoids, armor is arranged as Nose, Left side, Right Side, and Aft.
+-For jumpships, warships, and space stations, armor is arranged as Nose,
+ Front Left Side, Front Right Side, Aft Left Side, Aft Right Side, and Aft.
+ ***Note that armor for jumpships, warships and space stations is in
+ capital scale.
+
+The following sections are more or less the same as vehicles.
+
+<Nose Equipment>
+CLGaussRifle
+CLGauss Ammo
+CLERSmallLaser
+</Nose Equipment>
+<Left Wing Equipment>
+CLERPPC
+CLLargePulseLaser
+</Left Wing Equipment>
+<Right Wing Equipment> 
+CLERPPC
+CLLargePulseLaser
+</Right Wing Equipment>
+<Aft Equipment> 
+CLERSmallLaser
+CLERSmallLaser
+</Aft Equipment>
+
+For jumpships, warships, and space stations, they have "<Front Left Side Equipment>",
+"<Aft Right Side Equipment>", etc.  Weapons rear-mounted on dropship wings can be
+denoted by playing a (R) before the weapon ("(R) CLERPPC").  To create different
+weapon bays, place a (B) in front of a group of weapons and at the end of a group
+to create a bay ("(R) (B) CLLargePulseLaser").
+
+<heatsinks>
+21
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+
+Make sure you have fuel for your aircraft!
+
+<fuel>
+240
+</fuel>
+
+<type>
+Clan Level 2
+</type>
+<year>
+3045
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+2
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<omni>
+1
+</omni>
+
+
+The following fields are more or less for large craft:
+
+<transporters>
+SmallCraftBay:8:1
+CargoBay:91509:1
+</transporters>
+
+These denote cargo bays for holding fighters, 'mechs, cargo, etc.
+Valid fields include:
+
+MechBay:62:2
+ASFBay:43:2
+InfantryBay:160:1
+BattleArmorBay:200:1
+HeavyVehicleBay:100:2
+CargoBay:6038:1
+SmallCraftBay:2:1
+
+The format is BayType:#Units or Tons of Cargo:# Doors Available for Bays
+
+Docking collars denote how many dropships can be carried.
+
+<docking_collar>
+4
+</docking_collar>
+
+
+The following are pretty self-explanatory:
+
+<grav_deck>
+2
+</grav_deck>
+<escape_pod>
+100
+</escape_pod>
+<life_boat>
+100
+</life_boat>
+<crew>
+542
+</crew>
+<passengers>
+0
+</passengers>
+<lithium-fusion>
+1
+</lithium-fusion>
+
+
+
+Now you can create your custom vehicles!  If you want an easy way to
+make just tanks (no VTOLs, WiGEs, or wet-naval yet), please try out
+MegaMekLab (http://sourceforge.net/projects/megameklab).
+
+Now create your armies!
+
+
+Guide created by Harold "BATTLEMASTER" N.
+3/1/2011
+

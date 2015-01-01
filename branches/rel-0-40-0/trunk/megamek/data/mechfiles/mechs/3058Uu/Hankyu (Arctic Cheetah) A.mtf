@@ -1,0 +1,152 @@
+Version:1.0
+Hankyu (Arctic Cheetah)
+A
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3037
+Source:Succession Wars
+Rules Level:2
+
+Mass:30
+Engine:240 XL (Clan) Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Base Chassis Heat Sinks:9
+Walk MP:8
+Jump MP:6
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:7
+RA Armor:7
+LT Armor:8
+RT Armor:8
+CT Armor:8
+HD Armor:9
+LL Armor:8
+RL Armor:8
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
+
+Weapons:4
+Streak SRM 6, Left Arm
+Flamer, Left Arm
+Streak SRM 6, Right Arm
+Small Pulse Laser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLStreakSRM6
+CLStreakSRM6
+CLFlamer
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLStreakSRM6
+CLStreakSRM6
+CLSmallPulseLaser
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Clan Streak SRM 6 Ammo
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Streak SRM 6 Ammo
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

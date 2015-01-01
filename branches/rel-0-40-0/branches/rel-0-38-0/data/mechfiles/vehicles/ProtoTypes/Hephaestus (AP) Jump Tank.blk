@@ -1,0 +1,100 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Hephaestus Jump Tank 
+</Name>
+
+<Model>
+(AP)
+</Model>
+
+<year>
+3089
+</year>
+
+<type>
+Clan Level 4
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+8
+</armor_tech>
+
+<armor>
+20
+24
+24
+19
+18
+</armor>
+
+<Body Equipment>
+CLArmoredMotiveSystem
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+Jump Jet
+CLAPGaussRifle Ammo
+</Body Equipment>
+
+<Front Equipment>
+CLAPGaussRifle
+CLAPGaussRifle
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+CLERMediumLaser
+CLERMediumLaser
+CLAPGaussRifle
+CLAPGaussRifle
+</Turret Equipment>
+
+<source>
+TRO:Prototypes
+</source>
+
+<tonnage>
+35.0
+</tonnage>
+

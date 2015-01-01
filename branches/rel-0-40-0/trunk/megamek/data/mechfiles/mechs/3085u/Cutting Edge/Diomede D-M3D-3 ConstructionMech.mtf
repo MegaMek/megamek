@@ -1,0 +1,151 @@
+Version:1.0
+Diomede
+D-M3D-3 ConstructionMech
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3084
+Source:Dark Age
+Rules Level:2
+
+Mass:100
+Engine:200 Fusion Engine(IS)
+Structure:Industrial
+Myomer:Standard
+
+Heat Sinks:10 Single
+Walk MP:2
+Jump MP:0
+
+Armor:Heavy Industrial(Inner Sphere)
+LA Armor:33
+RA Armor:33
+LT Armor:30
+RT Armor:30
+CT Armor:45
+HD Armor:9
+LL Armor:42
+RL Armor:42
+RTL Armor:12
+RTR Armor:12
+RTC Armor:16
+
+Weapons:4
+Nail Gun, Right Arm
+Nail Gun, Right Arm
+MML 7, Left Torso
+MML 7, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Pile Driver
+Pile Driver
+Pile Driver
+Pile Driver
+Pile Driver
+Pile Driver
+Pile Driver
+Pile Driver
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Nail Gun
+Nail Gun
+IS Ammo Nail/Rivet - Full
+IS Ammo Nail/Rivet - Full
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISMML7
+ISMML7
+ISMML7
+ISMML7
+IS Ammo MML-7 LRM
+IS Ammo MML-7 SRM
+MechSprayer
+Lift Hoist (R)
+Lift Hoist (R)
+Lift Hoist (R)
+Searchlight
+ISCASE
+
+Right Torso:
+ISMML7
+ISMML7
+ISMML7
+ISMML7
+IS Ammo MML-7 LRM
+IS Ammo MML-7 SRM
+MechSprayer
+Lift Hoist (R)
+Lift Hoist (R)
+Lift Hoist (R)
+Searchlight
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Liquid Storage (1 ton)
+Liquid Storage (1 ton)
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ejection Seat
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Tracks
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Tracks
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+imagefile:.\data\images\fluff\Mech\Diomede.jpg

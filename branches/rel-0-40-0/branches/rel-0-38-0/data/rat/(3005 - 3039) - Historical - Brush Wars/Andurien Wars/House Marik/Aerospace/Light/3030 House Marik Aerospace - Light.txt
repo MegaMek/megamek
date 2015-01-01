@@ -1,0 +1,12 @@
+3030 House Marik Aerospace - Light
+Sabre SB-27,1
+Thrush TR-7,2
+Thrush TR-7,3
+Cheetah F-11-R,4
+Cheetah F-12-S,5
+Cheetah F-10,6
+Cheetah F-10,5
+Cheetah F-10,4
+Sabre SB-27,3
+Centurion CNT-1D,2
+Centurion CNT-1D,1

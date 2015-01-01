@@ -1,0 +1,12 @@
+3085 Lyran Commonwealth Assault Mech A
+Gunslinger GUN-1ERD,1
+Highlander HGN-734,2
+Banshee BNC-5S,3
+Fafnir FNR-5B,4
+BattleMaster BLR-10S,5
+Thunder Hawk TDK-7X,6
+Atlas AS7-S2,5
+Hauptmann HA1-O,4
+Mad Cat Mk II (Standard),3
+Sunder SD1-O,2
+Berserker BRZ-C3,1

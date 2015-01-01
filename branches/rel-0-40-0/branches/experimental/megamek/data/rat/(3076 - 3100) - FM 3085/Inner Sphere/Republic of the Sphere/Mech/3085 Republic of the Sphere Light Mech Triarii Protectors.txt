@@ -1,0 +1,12 @@
+3085 Republic of the Sphere Light Mech Triarii Protectors
+Mongoose MON-68,1
+Javelin JVN-11B,2
+Panther PNT-9R,3
+Fireball ALM-10D,4
+Panther PNT-16K,5
+Hermes HER-4S,6
+Night Hawk NTK-2S,5
+Wolfhound WLF-4W,4
+Jackal JA-KL-55,3
+Falcon Hawk FNHK-9K1A,2
+Garm GRM-01A2,1

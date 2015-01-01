@@ -1,0 +1,13 @@
+########################################################
+# Taken from Era Report 3062.
+# Conversion performed by Deric Page deric.page@usa.net
+########################################################
+3053-3062 DracCom Areospace Fighters
+Chippewa CHP-W7,28
+Eagle EGL-R6,111
+Lightning LTN-G15,56
+Sabre SB-27,139
+Sai S-4,167
+Shilone SL-17,167
+Sholagar SL-21,167
+Slayer SL-15,167

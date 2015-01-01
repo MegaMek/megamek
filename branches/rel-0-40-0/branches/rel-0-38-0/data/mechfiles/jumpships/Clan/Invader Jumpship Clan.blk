@@ -1,0 +1,93 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Jumpship
+</UnitType>
+<Name>
+Invader Jumpship
+</Name>
+<Model>
+(Clan)
+</Model>
+<Tonnage>
+152000
+</Tonnage>
+<Armor>
+7
+7
+7
+6
+6
+5
+</Armor>
+<Nose Equipment>
+</Nose Equipment>
+<Front Left Side Equipment>
+ISLargeLaser
+</Front Left Side Equipment>
+<Front Right Side Equipment> 
+ISLargeLaser
+</Front Right Side Equipment>
+<Aft Left Side Equipment>
+</Aft Left Side Equipment>
+<Aft Right Side Equipment> 
+</Aft Right Side Equipment>
+<Aft Equipment> 
+</Aft Equipment>
+<structural_integrity>
+1
+</structural_integrity>
+<heatsinks>
+116
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+250
+</fuel>
+<type>
+Clan Level 2
+</type>
+<year>
+2830
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+
+<transporters>
+SmallCraftBay:2:2
+CargoBay:287:1
+CargoBay:288:1
+</transporters>
+<docking_collar>
+3
+</docking_collar>
+<grav_deck>
+1
+</grav_deck>
+<escape_pod>
+6
+</escape_pod>
+<life_boat>
+0
+</life_boat>
+<crew>
+34
+</crew>
+<passengers>
+0
+</passengers>
+<source>
+TRO 3057r
+</source>

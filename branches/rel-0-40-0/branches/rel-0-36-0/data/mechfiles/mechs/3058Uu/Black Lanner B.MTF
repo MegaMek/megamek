@@ -1,0 +1,150 @@
+Version:1.0
+Black Lanner
+B
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3052
+Source:Clan Invasion
+Rules Level:2
+
+Mass:55
+Engine:385 XL (Clan) Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Base Chassis Heat Sinks:10
+Walk MP:7
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:13
+RA Armor:13
+LT Armor:16
+RT Armor:16
+CT Armor:25
+HD Armor:9
+LL Armor:22
+RL Armor:22
+RTL Armor:5
+RTR Armor:5
+RTC Armor:7
+
+Weapons:2
+LRM 20, Left Arm
+LRM 20, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Clan Ammo LRM-20
+Clan Ammo LRM-20
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Clan Ammo LRM-20
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLMASC
+CLMASC
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,0 +1,75 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Asshur Fast Reconnaissance Vehicle
+</Name>
+
+<Model>
+(PAC)
+</Model>
+
+<Tonnage>
+20
+</Tonnage>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+#Order is Tank/VTOL/LST
+<Armor>
+14
+10
+10
+9
+13
+</Armor>
+
+<Turret Equipment>
+CLProtoMechAC8
+</Turret Equipment>
+
+<Body Equipment>
+Clan ProtoMech AC/8 Ammo
+CLCASE
+</Body Equipment>
+
+<type>
+Clan Level 3
+</type>
+
+<year>
+3073
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+6
+</engine_type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<source>
+Jihad
+</source>

@@ -1,0 +1,81 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Condor Heavy Hover Tank
+</Name>
+
+<Model>
+(Davion)
+</Model>
+
+<year>
+2952
+</year>
+
+<source>
+Succession Wars
+</source>
+
+<type>
+IS Level 1
+</type>
+
+<tonnage>
+50.0
+</tonnage>
+
+<motion_type>
+Hover
+</motion_type>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<armor>
+28
+14
+14
+12
+20
+</armor>
+
+<Body Equipment>
+IS Machine Gun Ammo - Half
+IS Ammo AC/5
+</Body Equipment>
+
+<Front Equipment>
+Machine Gun
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Autocannon/5
+Autocannon/5
+</Turret Equipment>
+

@@ -1,0 +1,197 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Czar
+
+</Name>
+
+<Tonnage>
+
+6400
+
+</Tonnage>
+
+<SafeThrust>
+
+3
+
+</SafeThrust>
+
+<Armor>
+
+98
+
+74
+
+74
+
+50
+
+</Armor>
+
+<Nose Equipment>
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+
+(R) ISLargeLaser
+(R) ISLargeLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+</Left Side Equipment>
+
+<Right Side Equipment> 
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+
+(R) ISLargeLaser
+(R) ISLargeLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+(R) ISMediumLaser
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Aft Equipment>
+
+<structural_integrity>
+
+7
+
+</structural_integrity>
+
+<heatsinks>
+
+112
+
+</heatsinks>
+
+<sink_type>
+
+0
+
+</sink_type>
+
+<fuel>
+
+4500
+
+</fuel>
+
+<type>
+
+IS Level 4
+
+</type>
+
+<year>
+
+2462
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+17
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+spheroid
+
+</motion_type>
+
+
+
+<transporters>
+smallcraftbay:1:1
+infantrybay:50.5:1
+infantrybay:50.5:1
+CargoBay:1900:2
+CargoBay:1901:2
+</transporters>
+
+<escape_pod>
+
+4
+
+</escape_pod>
+
+<life_boat>
+
+10
+
+</life_boat>
+
+<crew>
+
+44
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

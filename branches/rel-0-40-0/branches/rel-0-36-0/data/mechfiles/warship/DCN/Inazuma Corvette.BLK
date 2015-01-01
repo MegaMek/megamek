@@ -1,0 +1,191 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Inazuma Corvette
+</Name>
+<Tonnage>
+200000
+</Tonnage>
+<SafeThrust>
+5
+</SafeThrust>
+<Armor>
+28
+30
+30
+30
+30
+25
+</Armor>
+<Nose Equipment>
+ISAntiMissileSystem
+ISAMS Ammo:36
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+MediumNPPC
+MediumNPPC
+</Nose Equipment>
+<Front Left Side Equipment>
+ISAntiMissileSystem
+ISAMS Ammo:36
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+NAC20
+NAC20 Ammo:50
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+ISAntiMissileSystem
+ISAMS Ammo:36
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+NAC20
+NAC20 Ammo:50
+</Front Right Side Equipment>
+<Left Broadside EQuipment>
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+MediumNPPC
+NAC20
+NAC20 Ammo:50
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+MediumNPPC
+NAC20
+NAC20 Ammo:50
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+ISAntiMissileSystem
+ISAMS Ammo:36
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+NAC20
+NAC20 Ammo:50
+</Aft Left Side Equipment>
+<Aft Right Side Equipment>
+ISAntiMissileSystem
+ISAMS Ammo:36
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+NAC20
+NAC20 Ammo:50
+</Aft Right Side Equipment>
+<Aft Equipment>
+ISAntiMissileSystem
+ISAMS Ammo:36
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+NAC20
+NAC20 Ammo:50
+</Aft Equipment>
+<structural_integrity>
+46
+</structural_integrity>
+<heatsinks>
+391
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+25000
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+3058
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+ASFBay:6:3
+SmallCraftBay:2:1
+CargoBay:1889:2
+</transporters>
+<docking_collar>
+3
+</docking_collar>
+<grav_deck>
+1
+</grav_deck>
+<escape_pod>
+0
+</escape_pod>
+<life_boat>
+12
+</life_boat>
+<crew>
+117
+</crew>
+<passengers>
+0
+</passengers>
+<lithium-fusion>
+</lithium-fusion>

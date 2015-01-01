@@ -1,0 +1,327 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Stefan Amaris
+</Name>
+<Model>
+(BattleShip)
+</Model>
+<Tonnage>
+1040000
+</Tonnage>
+<SafeThrust>
+3
+</SafeThrust>
+<Armor>
+280
+260
+260
+260
+260
+251
+</Armor>
+
+<Nose Equipment>
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo:72
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:96
+</Nose Equipment>
+
+<Front Left Side Equipment>
+NAC30
+NAC30
+NAC30 Ammo:20
+NAC25
+NAC25
+NAC25 Ammo:20
+KillerWhale
+KillerWhale
+KillerWhale Ammo:20
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo:72
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:96
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+NAC30
+NAC30
+NAC30 Ammo:20
+NAC25
+NAC25
+NAC25 Ammo:20
+KillerWhale
+KillerWhale
+KillerWhale Ammo:20
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo:72
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:96
+<Front Right Side Equipment>
+
+<Left Broadside Equipment>
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+NAC30
+NAC30
+NAC30 Ammo:20
+NAC25
+NAC25
+NAC25 Ammo:20
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo:72
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:96
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+</Left Broadside Equipment>
+
+<Right Broadside Equipment>
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+NAC30
+NAC30
+NAC30 Ammo:20
+NAC25
+NAC25
+NAC25 Ammo:20
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo:72
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:96
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+</Right Broadside Equipment>
+
+<Aft Left Side Equipment>
+NAC30
+NAC30
+NAC30 Ammo:20
+NAC25
+NAC25
+NAC25 Ammo:20
+KillerWhale
+KillerWhale
+KillerWhale Ammo:20
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo:72
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:96
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment> 
+NAC30
+NAC30
+NAC30 Ammo:20
+NAC25
+NAC25
+NAC25 Ammo:20
+KillerWhale
+KillerWhale
+KillerWhale Ammo:20
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo:72
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:96
+</Aft Right Side Equipment>
+
+<Aft Equipment> 
+NAC40
+NAC40 Ammo:10
+NL45
+NL45
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo:72
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:96
+</Aft Equipment>
+
+<structural_integrity>
+100
+</structural_integrity>
+
+<heatsinks>
+1666
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+15000
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+2764
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+11
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+ASFBay:18:4
+ASFBay:18:4
+SmallCraftBay:6:2
+CargoBay:97600:4
+</transporters>
+
+<docking_collar>
+4
+</docking_collar>
+
+<grav_deck>
+2
+</grav_deck>
+
+<escape_pod>
+100
+</escape_pod>
+
+<life_boat>
+60
+</life_boat>
+
+<crew>
+714
+</crew>
+
+<passengers>
+175
+</passengers>
+
+<marines>
+60
+</marines>

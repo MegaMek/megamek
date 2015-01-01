@@ -1,0 +1,12 @@
+3085 Clan Jade Falcon Medium Tank Front Line
+Chalchiuhtotolin Support Tank (Chemical Laser),1
+Hachiman Fire Support Tank 'Huey',2
+Sokar Urban Combat Unit,3
+Condor Heavy Hover Tank,4
+Chalchiuhtotolin Support Tank,5
+Chalchiuhtotolin Support Tank,6
+Sokar Urban Combat Unit,5
+Ares Medium Tank,4
+Hachiman Fire Support Tank 'Huey',3
+Ku Wheeled Assault Tank (IFV) "Turhan II",2
+Enyo Strike Tank,1

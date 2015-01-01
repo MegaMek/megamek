@@ -1,0 +1,42 @@
+########################################################
+# Taken from Era Report 3062.  With OmniFighters, I've
+# divided the odds for each configuration as evenly as
+# possible.
+# Conversion performed by Deric Page deric.page@usa.net
+########################################################
+3053-3062 Wolf Areospace Fighters
+Bashkir Prime,12
+Bashkir A,11
+Bashkir B,11
+Bashkir C,11
+Bashkir D,11
+Batu Prime,17
+Batu A,17
+Batu B,17
+Batu C,16
+Batu D,16
+Jagatai Prime,67
+Jagatai A,67
+Jagatai B,67
+Jagatai C,66
+Jagatai D,66
+Jengiz Prime,50
+Jengiz A,50
+Jengiz B,50
+Jengiz C,50
+Jengiz D,50
+Kirghiz Prime,17
+Kirghiz A,17
+Kirghiz B,17
+Kirghiz C,16
+Kirghiz D,16
+Vandal Prime,6
+Vandal A,6
+Vandal B,6
+Vandal C,5
+Vandal D,5
+Visigoth Prime,34
+Visigoth A,34
+Visigoth B,33
+Visigoth C,33
+Visigoth D,33

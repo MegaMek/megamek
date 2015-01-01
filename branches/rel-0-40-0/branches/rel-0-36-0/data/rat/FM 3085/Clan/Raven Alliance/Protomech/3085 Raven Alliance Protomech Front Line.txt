@@ -1,0 +1,12 @@
+3085 Raven Alliance Protomech Front Line
+Chrysaor 2,1
+Cecerops 2,2
+Roc,3
+Cecerops,4
+Gorgon,5
+Roc,6
+Chrysaor,5
+Roc 2,4
+Gorgon 3,3
+Satyr,2
+Chrysaor 2,1

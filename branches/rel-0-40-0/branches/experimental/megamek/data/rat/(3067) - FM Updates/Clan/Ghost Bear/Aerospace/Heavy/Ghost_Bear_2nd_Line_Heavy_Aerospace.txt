@@ -1,0 +1,12 @@
+Ghost Bear 2nd-Line Heavy Aerospace (FMU)
+Kirghiz C,1
+Jengiz A,2
+Jengiz Prime,3
+Ahab AHB-443,4
+Hammerhead HMR-HD,5
+Hydaspes (Standard),6
+Xerxes 1,5
+Rapier RPR-100,4
+Ahab AHB-443,3
+Sabutai Prime,2
+Scytha Prime,1

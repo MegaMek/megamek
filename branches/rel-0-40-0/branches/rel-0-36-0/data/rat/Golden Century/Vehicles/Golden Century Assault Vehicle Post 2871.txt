@@ -1,0 +1,12 @@
+2871 Golden Century Assault Vehicle
+Rhino Fire Support Tank,1
+Huitzilopochtli Assault Tank 'Huey',2
+Alacorn Heavy Tank Mk VI,3
+Puma Assault Tank PAT-005,4
+Mars Assault Vehicle,5
+Huitzilopochtli Assault Tank 'Huey',6
+Rhino Fire Support Tank (Royal),5
+Alacorn Heavy Tank Mk VI,4
+Fury Command Tank (Royal),3
+Rhino Fire Support Tank,2
+Mars Assault Vehicle,1

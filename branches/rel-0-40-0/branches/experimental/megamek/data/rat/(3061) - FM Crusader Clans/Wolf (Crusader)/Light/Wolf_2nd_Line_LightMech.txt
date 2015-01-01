@@ -1,0 +1,12 @@
+Crusader Clan Second-Line Light Mechs (Wolf),
+Jenner IIC (Standard),1
+Jenner IIC (Standard),2
+Thorn THE-N,3
+Vixen (Incubus) (Standard),4
+Mongoose MON-66,5
+Locust IIC (Standard),6
+Locust IIC (Standard),5
+Jenner IIC (Standard),4
+Mercury MCY-97,3
+Hussar HSR-200-D,2
+Puma (Adder) Prime,1

@@ -1,0 +1,80 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Rommel Tank
+</Name>
+
+<year>
+3027
+</year>
+
+<source>
+Succession Wars
+</source>
+
+<type>
+IS Level 1
+</type>
+
+<tonnage>
+65.0
+</tonnage>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<armor>
+38
+38
+38
+24
+38
+</armor>
+
+<Body Equipment>
+IS Ammo LRM-5
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+</Body Equipment>
+
+<Front Equipment>
+Small Laser
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+LRM 5
+Autocannon/20
+</Turret Equipment>
+

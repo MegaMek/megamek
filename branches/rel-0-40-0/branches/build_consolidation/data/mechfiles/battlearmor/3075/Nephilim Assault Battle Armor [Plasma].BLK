@@ -1,0 +1,48 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+BattleArmor
+</UnitType>
+<Name>
+Nephilim Assault Battle Armor
+</Name>
+<Model>
+[Plasma]
+</Model>
+<chassis>
+biped
+</chassis>
+<weightclass>
+4
+</weightclass>
+<Trooper Count>
+6
+</Trooper Count>
+<cruiseMP>
+2
+</cruiseMP>
+<Armor>
+16
+</Armor>
+<Squad Equipment>
+ISBAPlasmaRifle
+ISSRM2OS:Body
+ISSRM2OS:Body
+BAHeavyBattleClaw
+Mimetic Armor
+</Squad Equipment>
+<type>
+IS Level 2
+</type>
+<year>
+3071
+</year>
+<motion_type>
+leg
+</motion_type>

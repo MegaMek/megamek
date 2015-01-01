@@ -1,0 +1,12 @@
+WoB Assault Mechs B 3067 (FMU)
+Albatross ALB-3U,1
+Grand Crusader GRN-D-01,2
+King Crab KGC-000,3
+Awesome AWS-9M,4
+Thug THG-11E,5
+Highlander HGN-732,6
+Stalker STK-5M,5
+Crockett CRK-5003-1,4
+Longbow LGB-7V,3
+Cerberus MR-5M,2
+King Crab KGC-001,1

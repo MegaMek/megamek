@@ -1,0 +1,152 @@
+Version:1.0
+Emperor
+EMP-7L
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3069
+Source:Jihad
+Rules Level:2
+
+Mass:90
+Engine:270 Fusion Engine
+Structure:Standard
+Myomer:Triple-Strength
+
+Heat Sinks:12 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Stealth(Inner Sphere)
+LA Armor:30
+RA Armor:30
+LT Armor:28
+RT Armor:28
+CT Armor:44
+HD Armor:9
+LL Armor:38
+RL Armor:38
+RTL Armor:10
+RTR Armor:10
+RTC Armor:14
+
+Weapons:5
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+ER Large Laser, Left Torso
+Autocannon/10, Left Arm
+Autocannon/10, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Stealth
+Stealth
+TSM
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Autocannon/10
+Stealth
+Stealth
+TSM
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERLargeLaser
+ISERLargeLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISGuardianECMSuite
+ISGuardianECMSuite
+Stealth
+Stealth
+TSM
+
+Right Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+IS Ammo AC/10
+IS Ammo AC/10
+IS Ammo AC/10
+IS Ammo AC/10
+IS Ammo AC/10
+IS Ammo AC/10
+ISCASE
+Stealth
+Stealth
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+TSM
+TSM
+
+Head:
+Life Support
+Sensors
+Cockpit
+TSM
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Stealth
+Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Stealth
+Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

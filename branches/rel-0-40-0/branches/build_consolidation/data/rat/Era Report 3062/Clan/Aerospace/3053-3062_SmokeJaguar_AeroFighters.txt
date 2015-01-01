@@ -1,0 +1,52 @@
+########################################################
+# Taken from Era Report 3062.  With OmniFighters, I've
+# divided the odds for each configuration as evenly as
+# possible.
+# Conversion performed by Deric Page deric.page@usa.net
+########################################################
+3053-3062 Smoke Jaguar Areospace Fighters
+Bashkir Prime,23
+Bashkir A,22
+Bashkir B,22
+Bashkir C,22
+Bashkir D,22
+Batu Prime,28
+Batu A,28
+Batu B,28
+Batu C,28
+Batu D,27
+Jagatai Prime,50
+Jagatai A,50
+Jagatai B,50
+Jagatai C,50
+Jagatai D,50
+Jengiz Prime,6
+Jengiz A,6
+Jengiz B,6
+Jengiz C,5
+Jengiz D,5
+Kirghiz Prime,6
+Kirghiz A,6
+Kirghiz B,6
+Kirghiz C,5
+Kirghiz D,5
+Sabutai Prime,23
+Sabutai A,23
+Sabutai B,22
+Sabutai C,22
+Sabutai D,22
+Sulla Prime,28
+Sulla A,28
+Sulla B,28
+Sulla C,28
+Sulla D,27
+Turk Prime,23
+Turk A,22
+Turk B,22
+Turk C,22
+Turk D,22
+Visigoth Prime,17
+Visigoth A,17
+Visigoth B,17
+Visigoth C,16
+Visigoth D,16

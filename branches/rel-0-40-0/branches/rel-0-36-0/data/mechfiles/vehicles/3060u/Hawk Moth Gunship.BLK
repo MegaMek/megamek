@@ -1,0 +1,87 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<Name>
+Hawk Moth Gunship
+</Name>
+
+<Model>
+
+</Model>
+
+<year>
+3060
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+9
+6
+6
+3
+2
+</armor>
+
+<Body Equipment>
+IS Light Gauss Ammo
+IS Light Gauss Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISLightGaussRifle
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<source>
+Clan Invasion
+</source>
+
+<tonnage>
+25.0
+</tonnage>
+

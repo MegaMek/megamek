@@ -1,0 +1,150 @@
+Version:1.0
+Flea
+FLE-19
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3068
+Rules Level:2
+
+Mass:20
+Engine:120 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Single
+Walk MP:6
+Jump MP:0
+
+Armor:Standard
+LA Armor:4
+RA Armor:4
+LT Armor:5
+RT Armor:5
+CT Armor:8
+HD Armor:5
+LL Armor:4
+RL Armor:4
+RTL Armor:3
+RTR Armor:3
+RTC Armor:3
+
+Weapons:6
+1 ISRocketLauncher10, Right Torso
+1 ISFlamer, Center Torso
+4 ISLightMG, Right Arm, Ammo:100
+1 ISLMGA, Right Arm
+4 ISLightMG, Left Arm
+1 ISLMGA, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISLightMG
+ISLightMG
+ISLightMG
+ISLightMG
+ISLMGA
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISLightMG
+ISLightMG
+ISLightMG
+ISLightMG
+ISLMGA
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Heat Sink
+ISLightMG Ammo (100)
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Heat Sink
+ISRocketLauncher10
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISFlamer
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

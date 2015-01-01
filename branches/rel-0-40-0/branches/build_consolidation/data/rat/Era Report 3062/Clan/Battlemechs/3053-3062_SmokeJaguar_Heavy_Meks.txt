@@ -1,0 +1,45 @@
+###################################################################################################
+# This is an adaptation of the RAT files in Era Report 3062.  With omni configurations, I divided 
+# the likely-hood for each configuration as evenly as possible.  For example, with Clan Wolf, the 
+# Cougar has a roughly 28:1000 chance to be rolled.  There are 9 Cougar configurations.  28/9 = 3r1.  
+# So, I gave the Prime configuraiton a frequency of 4 and the other 8 configurations a frequency 
+# of 3 each.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3053-3062 Smoke Jaguar Heavy Meks
+Loki (Hellbringer) Prime,48
+Loki (Hellbringer) A,48
+Loki (Hellbringer) B,48
+Loki (Hellbringer) C,48
+Loki (Hellbringer) D,47
+Loki (Hellbringer) E,47
+Loki (Hellbringer) H,47
+Mad Cat (Timber Wolf) Prime,31
+Mad Cat (Timber Wolf) A,31
+Mad Cat (Timber Wolf) B,31
+Mad Cat (Timber Wolf) C,31
+Mad Cat (Timber Wolf) D,31
+Mad Cat (Timber Wolf) E,31
+Mad Cat (Timber Wolf) F,31
+Mad Cat (Timber Wolf) H,31
+Mad Cat (Timber Wolf) S,30
+Rifleman IIC,10
+Rifleman IIC 2,9
+Rifleman IIC 3,9
+Thor (Summoner) Prime,19
+Thor (Summoner) A,19
+Thor (Summoner) B,19
+Thor (Summoner) C,19
+Thor (Summoner) D,19
+Thor (Summoner) E,18
+Thor (Summoner) G,18
+Thor (Summoner) H,18
+Thor (Summoner) M,18
+Vulture (Mad Dog) Prime,25
+Vulture (Mad Dog) A,25
+Vulture (Mad Dog) B,24
+Vulture (Mad Dog) C,24
+Vulture (Mad Dog) D,24
+Vulture (Mad Dog) E,24
+Vulture (Mad Dog) F,24
+Vulture (Mad Dog) H,24

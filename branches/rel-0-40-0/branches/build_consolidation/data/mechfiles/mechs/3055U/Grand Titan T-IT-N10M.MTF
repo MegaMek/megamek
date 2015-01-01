@@ -1,0 +1,157 @@
+Version:1.0
+Grand Titan
+T-IT-N10M
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3054
+Source:Clan Invasion
+Rules Level:2
+
+Mass:100
+Engine:400 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:29
+RA Armor:29
+LT Armor:31
+RT Armor:31
+CT Armor:42
+HD Armor:9
+LL Armor:38
+RL Armor:38
+RTL Armor:11
+RTR Armor:11
+RTC Armor:19
+
+Weapons:10
+LRM 15, Left Arm
+Medium Pulse Laser, Left Arm
+Large Pulse Laser, Right Arm
+Large Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+SRM 6, Left Torso
+Small Pulse Laser, Left Torso
+SRM 6, Right Torso
+Small Pulse Laser, Right Torso
+AMS, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+LRM 15
+LRM 15
+LRM 15
+ISArtemisIV
+ISMediumPulseLaser
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISLargePulseLaser
+ISMediumPulseLaser
+Endo Steel
+Endo Steel
+Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+SRM 6
+SRM 6
+ISArtemisIV
+ISSmallPulseLaser (R)
+IS Ammo SRM-6 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+Endo Steel
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+SRM 6
+SRM 6
+ISArtemisIV
+ISSmallPulseLaser (R)
+IS Ammo SRM-6 Artemis-capable
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISAMS Ammo
+Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISAntiMissileSystem
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

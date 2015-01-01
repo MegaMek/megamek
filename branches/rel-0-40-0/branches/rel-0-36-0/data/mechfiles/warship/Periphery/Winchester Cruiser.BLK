@@ -1,0 +1,162 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Winchester Cruiser
+</Name>
+<Tonnage>
+740000
+</Tonnage>
+<SafeThrust>
+3
+</SafeThrust>
+<Armor>
+45
+42
+42
+42
+42
+41
+</Armor>
+<Nose Equipment>
+NL45
+NL45
+NL45
+ISLargeLaser
+ISLargeLaser
+</Nose Equipment>
+<Front Left Side Equipment>
+NAC25
+NAC25 Ammo:60
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:60
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+NAC25
+NAC25 Ammo:60
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:60
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:60
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+NAC10
+NAC10
+NAC10
+NAC10
+NAC10 Ammo:60
+ISLargeLaser
+ISLargeLaser
+ISLargeLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+NL35
+NL35
+</Aft Left Side Equipment>
+<Aft Right Side Equipment>
+NL35
+NL35
+</Aft Right Side Equipment>
+<Aft Equipment> 
+NAC30
+NAC30
+NAC30 Ammo:60
+ISAC5
+ISAC5
+ISAC5
+ISAC5
+ISAC5 Ammo:200
+</Aft Equipment>
+<structural_integrity>
+75
+</structural_integrity>
+<heatsinks>
+1500
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+25000
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+2364
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+ASFBay:12:3
+SmallCraftBay:6:2
+CargoBay:155353:1
+</transporters>
+<docking_collar>
+3
+</docking_collar>
+<grav_deck>
+2
+</grav_deck>
+<escape_pod>
+30
+</escape_pod>
+<life_boat>
+42
+</life_boat>
+<crew>
+334
+</crew>
+<passengers>
+0
+</passengers>

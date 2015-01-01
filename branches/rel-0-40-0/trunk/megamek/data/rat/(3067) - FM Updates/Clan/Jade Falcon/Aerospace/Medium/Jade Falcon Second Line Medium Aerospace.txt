@@ -1,0 +1,12 @@
+Clan Jade Falcon Second-Line Medium Aerospace (FMU)
+Ironsides IRN-SD1,1
+Tyre (Standard),2
+Jagatai Prime,3
+Hellcat II HCT-213B,4
+Gotha GTHA-500,5
+Visigoth A,6
+Jagatai B,5
+Hellcat II HCT-213B,4
+Visigoth Prime,3
+Tyre 2,2
+Gotha GTHA-500,1

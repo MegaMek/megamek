@@ -1,0 +1,12 @@
+3062 House Steiner - Heavy
+Zhukov Heavy Tank,1
+Patton Tank (Ultra),2
+Po Heavy Tank,3
+Manticore Heavy Tank (3055 Upgrade),4
+Pike Support Vehicle,5
+LRM Carrier (3055 Upgrade),6
+SRM Carrier (3054 Upgrade),5
+Bulldog Medium Tank,4
+Von Luckner Heavy Tank VNL-K70,3
+Pilum Heavy Tank,2
+Tokugawa Heavy Tank,1

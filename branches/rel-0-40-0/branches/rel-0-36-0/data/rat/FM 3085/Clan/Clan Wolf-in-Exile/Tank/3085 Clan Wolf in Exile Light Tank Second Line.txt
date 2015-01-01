@@ -1,0 +1,12 @@
+3085 Clan Wolf in Exile Light Tank Second Line
+Kestrel VTOL (Clan),1
+Svantovit Infantry Fighting Vehicle,2
+Pegasus Scout Hover Tank,3
+Odin Scout Tank,4
+Striker Light Tank,5
+Warrior Attack Helicopter H-10,6
+Striker Light Tank,5
+Anhur Transport (BA),4
+Svantovit Infantry Fighting Vehicle,3
+Donar Assault Helicopter,2
+Warrior Attack Helicopter H-9,1

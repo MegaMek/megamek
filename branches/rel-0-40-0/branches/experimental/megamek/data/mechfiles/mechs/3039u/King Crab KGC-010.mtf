@@ -1,0 +1,153 @@
+Version:1.0
+King Crab
+KGC-010
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2743
+Source:Star League
+Rules Level:2
+
+Mass:100
+Engine:300 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:34
+RA Armor:34
+LT Armor:32
+RT Armor:32
+CT Armor:46
+HD Armor:9
+LL Armor:41
+RL Armor:41
+RTL Armor:10
+RTR Armor:10
+RTC Armor:15
+
+Weapons:6
+LB 10-X AC, Left Arm
+LB 10-X AC, Right Arm
+PPC, Left Torso
+PPC, Right Torso
+SRM 6, Left Torso
+SRM 6, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+Endo Steel
+Endo Steel
+Endo Steel
+
+Left Torso:
+PPC
+PPC
+PPC
+SRM 6
+SRM 6
+IS LB 10-X AC Ammo
+IS LB 10-X AC Ammo
+IS LB 10-X AC Ammo
+IS Ammo SRM-6
+ISCASE
+Endo Steel
+Endo Steel
+
+Right Torso:
+PPC
+PPC
+PPC
+SRM 6
+SRM 6
+IS LB 10-X Cluster Ammo
+IS LB 10-X Cluster Ammo
+IS LB 10-X Cluster Ammo
+IS Ammo SRM-6
+ISCASE
+Endo Steel
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

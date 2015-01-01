@@ -1,0 +1,8 @@
+########################################################
+# Taken from Era Report 3062.
+# Conversion performed by Deric Page deric.page@usa.net
+########################################################
+3053-3062 Clan Heavy Vehicles
+Athena Combat Vehicle,28
+Ishtar Heavy Fire Support Tank,417
+Oro Heavy Tank,556

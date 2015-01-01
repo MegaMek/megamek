@@ -1,0 +1,12 @@
+3085 Clan Wolf Heavy Mech Second Line
+Excalibur EXC-B2b,1
+Black Knight BL6b-KNT,2
+Galahad (Glass Spider),3
+Archer C,4
+Guillotine IIC,5
+Galahad (Glass Spider) 2,6
+Rifleman IIC 8,5
+Orion IIC,4
+Tundra Wolf 2,3
+Loki (Hellbringer) Prime,2
+Thor (Summoner) Prime,1

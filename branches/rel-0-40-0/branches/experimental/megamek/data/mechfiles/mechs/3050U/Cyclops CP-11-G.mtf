@@ -1,0 +1,131 @@
+Version:1.1
+Cyclops
+CP-11-G
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3058
+Rules Level:2
+
+Mass:90
+Engine:360 Fusion Engine
+Structure:Endo-Steel
+Myomer:Standard
+
+Heat Sinks:11 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:29
+RA Armor:29
+LT Armor:28
+RT Armor:28
+CT Armor:40
+HD Armor:9
+LL Armor:37
+RL Armor:37
+RTL Armor:9
+RTR Armor:9
+RTC Armor:13
+
+Weapons:5
+1 ISGaussRifle, Right Torso, Ammo:16
+1 ISERMediumLaser, Right Arm
+1 ISERMediumLaser, Right Arm
+1 ISLRM10, Left Torso, Ammo:12
+1 ISStreakSRM4, Center Torso, Ammo:25
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+ISERMediumLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+ISLRM10
+ISLRM10
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Endo-Steel
+Endo-Steel
+
+Right Torso:
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGauss Ammo
+ISGauss Ammo
+ISStreakSRM4 Ammo
+ISLRM10 Ammo
+ISCASE
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISStreakSRM4
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel

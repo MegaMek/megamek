@@ -1,0 +1,12 @@
+DCMS Heavy Mechs F 3067 FM-U
+Archer ARC-2R,1
+Crusader CRD-3K,2
+Catapult CPLT-C1,3
+Rifleman RFL-5M,4
+Warhammer WHM-6R,5
+JagerMech JM6-S,6
+Grasshopper GHR-5H,5
+Quickdraw QKD-4G,4
+Quickdraw QKD-4H,3
+Quickdraw QKD-5A,2
+Warhammer WHM-6K,1

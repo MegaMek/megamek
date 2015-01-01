@@ -1,0 +1,151 @@
+Version:1.0
+Tessen
+TSN-C3
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3062
+Rules Level:2
+
+Mass:50
+Engine:300 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:11 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:16
+RA Armor:16
+LT Armor:18
+RT Armor:18
+CT Armor:25
+HD Armor:9
+LL Armor:20
+RL Armor:20
+RTL Armor:6
+RTR Armor:6
+RTC Armor:7
+
+Weapons:6
+1 ISERPPC, Right Arm
+1 ISMediumPulseLaser, Right Arm
+1 ISImprovedNarc, Left Arm, Ammo:16
+1 ISMediumPulseLaser, Left Torso
+1 ISC3SlaveUnit, Center Torso
+1 ISTAG, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISImprovedNarc
+ISImprovedNarc
+ISImprovedNarc
+ISiNarc Pods
+ISiNarc Pods
+ISiNarc Pods
+ISiNarc Pods
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+ISMediumPulseLaser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumPulseLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISC3SlaveUnit
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISTAG
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

@@ -1,0 +1,99 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Swift
+</Name>
+
+<Model>
+SWF-606 (Aaron)
+</Model>
+
+<year>
+2756
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+12
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+22
+17
+17
+15
+</armor>
+
+<Nose Equipment>
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISLaserInsulator
+ISLaserInsulator
+ISLaserInsulator
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+XTRO Gunslingers
+</source>
+
+<tonnage>
+25.0
+</tonnage>
+

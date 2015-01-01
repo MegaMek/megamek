@@ -1,0 +1,232 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Triumph
+
+</Name>
+
+<Model>
+
+(2593)
+
+</Model>
+
+<Tonnage>
+
+8600
+
+</Tonnage>
+
+<SafeThrust>
+
+3
+
+</SafeThrust>
+
+<Armor>
+
+150
+
+140
+
+140
+
+120
+
+</Armor>
+
+<Nose Equipment>
+
+ISPPC
+
+ISAC10
+
+ISAC10 Ammo
+
+ISAC10 Ammo
+
+ISLRM20
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISMediumLaser
+
+ISMediumLaser
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+ISAC5
+
+ISAC5 Ammo
+
+ISLRM15
+
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+ISAC5
+
+ISAC5 Ammo
+
+ISLRM15
+
+ISLRM15 Ammo
+
+ISLRM15 Ammo
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+ISMediumLaser
+
+ISMediumLaser
+
+ISLRM10
+
+ISLRM10 Ammo
+
+</Aft Equipment>
+
+<structural_integrity>
+
+11
+
+</structural_integrity>
+
+<heatsinks>
+
+112
+
+</heatsinks>
+
+<sink_type>
+
+0
+
+</sink_type>
+
+<fuel>
+
+11490
+
+</fuel>
+
+<type>
+
+IS Level 1
+
+</type>
+
+<year>
+
+2593
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+
+
+<transporters>
+
+HeavyVehicleBay:45:1
+
+LightVehicleBay:8:1
+
+InfantryBay:4:1
+
+CargoBay:750:0
+
+</transporters>
+
+<escape_pod>
+
+4
+
+</escape_pod>
+
+<life_boat>
+
+3
+
+</life_boat>
+
+<crew>
+
+527
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

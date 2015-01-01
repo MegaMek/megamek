@@ -1,0 +1,12 @@
+3085 Republic of the Sphere Light Mech A
+Hollander BZK-F3,1
+Garm GRM-01B,2
+Falcon Hawk FNHK-9K1A,3
+Arctic Fox AF1,4
+Javelin JVN-11B,5
+Talon TLN-5W,6
+Jackal JA-KL-1532,5
+Wolfhound WLF-2H,4
+Uller (Kit Fox) Prime,3
+Wolfhound WLF-5,2
+Puma (Adder) Prime,1

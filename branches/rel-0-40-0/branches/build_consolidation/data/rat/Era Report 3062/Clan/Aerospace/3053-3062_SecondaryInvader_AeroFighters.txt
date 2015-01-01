@@ -1,0 +1,52 @@
+########################################################
+# Taken from Era Report 3062.  With OmniFighters, I've
+# divided the odds for each configuration as evenly as
+# possible.
+# Conversion performed by Deric Page deric.page@usa.net
+########################################################
+3053-3062 Secondary Invasion Areospace Fighters
+Avar Prime,12
+Avar A,11
+Avar B,11
+Avar C,11
+Avar D,11
+Batu Prime,23
+Batu A,22
+Batu B,22
+Batu C,22
+Batu D,22
+Jagatai Prime,39
+Jagatai A,39
+Jagatai B,39
+Jagatai C,39
+Jagatai D,38
+Jengiz Prime,6
+Jengiz A,6
+Jengiz B,6
+Jengiz C,5
+Jengiz D,5
+Kirghiz Prime,23
+Kirghiz A,22
+Kirghiz B,22
+Kirghiz C,22
+Kirghiz D,22
+Sulla Prime,17
+Sulla A,17
+Sulla B,17
+Sulla C,16
+Sulla D,16
+Turk Prime,28
+Turk A,28
+Turk B,28
+Turk C,28
+Turk D,27
+Vandal Prime,6
+Vandal A,6
+Vandal B,6
+Vandal C,5
+Vandal D,5
+Visigoth Prime,50
+Visigoth A,50
+Visigoth B,50
+Visigoth C,50
+Visigoth D,50

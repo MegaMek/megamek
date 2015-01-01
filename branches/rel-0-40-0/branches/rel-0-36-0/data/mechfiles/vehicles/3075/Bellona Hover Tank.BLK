@@ -1,0 +1,96 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Bellona Hover Tank
+</Name>
+
+<Model>
+
+</Model>
+
+<year>
+3070
+</year>
+
+<source>
+Jihad
+</source>
+
+<type>
+Clan Level 2
+</type>
+
+<tonnage>
+45.0
+</tonnage>
+
+<motion_type>
+Hover
+</motion_type>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+9
+</cruiseMP>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+30
+21
+21
+21
+27
+</armor>
+
+<Body Equipment>
+Clan Ultra AC/10 Ammo
+Clan Ultra AC/10 Ammo
+Clan Light Machine Gun Ammo - Half
+Clan Light Machine Gun Ammo - Half
+Clan Light Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+CLLightMG
+CLLightMG
+</Front Equipment>
+
+<Right Equipment>
+CLLightMG
+</Right Equipment>
+
+<Left Equipment>
+CLLightMG
+</Left Equipment>
+
+<Rear Equipment>
+CLCASE
+</Rear Equipment>
+
+<Turret Equipment>
+CLFlamer
+CLFlamer
+CLUltraAC10
+</Turret Equipment>
+
+<armor_type>
+0
+</armor_type>

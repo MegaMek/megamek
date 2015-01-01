@@ -1,0 +1,94 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Aero
+</UnitType>
+<Name>
+Umbra
+</Name>
+
+<Model>
+RF-1
+</Model>
+
+<Tonnage>
+30
+</Tonnage>
+
+<SafeThrust>
+10
+</SafeThrust>
+
+<Armor>
+45
+32
+32
+34
+</Armor>
+
+<armor_type>
+1
+</armor_type>
+
+
+<Nose Equipment>
+ISSnubnosedPPC
+SNPPC Capacitor
+ISERMediumLaser
+ISERMediumLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+</Right Wing Equipment>
+
+<Aft Equipment> 
+</Aft Equipment>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+3082
+</year>
+
+<source>
+TRO:Prototypes
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<cockpit_type>
+0
+</cockpit_type>

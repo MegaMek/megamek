@@ -1,0 +1,109 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Hellcat
+
+</Name>
+
+<Model>
+
+HCT-313
+
+</Model>
+
+<Tonnage>
+
+60
+
+</Tonnage>
+
+<SafeThrust>
+
+6
+
+</SafeThrust>
+
+<Armor>
+65
+50
+50
+43
+</Armor>
+
+<Nose Equipment>
+ISERLargeLaser
+ISERMediumLaser
+ISERMediumLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERLargeLaser
+ISERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERLargeLaser
+ISERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISERMediumLaser
+</Aft Equipment>
+
+<heatsinks>
+20
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3073
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+20
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

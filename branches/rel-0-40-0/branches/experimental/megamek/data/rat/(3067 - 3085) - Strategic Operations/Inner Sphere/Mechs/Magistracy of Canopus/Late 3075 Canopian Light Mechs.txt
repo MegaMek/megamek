@@ -1,0 +1,12 @@
+Magistracy of Canopus Light Mechs Late 3075
+Wasp WSP-3L,1
+Stinger STG-6L,2
+Eagle EGL-2M,3
+Tarantula ZPH-1A,4
+Duan Gung D9-G9,5
+Anubis ABS-3R,6
+Raven RVN-3L,5
+Spider SDR-7M,4
+Anubis ABS-3L,3
+Locust LCT-5V,2
+Stinger STG-6L,1

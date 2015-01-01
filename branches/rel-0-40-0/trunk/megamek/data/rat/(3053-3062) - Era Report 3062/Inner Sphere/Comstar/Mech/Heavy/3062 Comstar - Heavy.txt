@@ -1,0 +1,12 @@
+3062 Comstar - Heavy
+Yeoman YMN-6Y,1
+Flashman FLS-8K,2
+Champion CHP-1N,3
+Lancelot LNC25-01,4
+Guillotine GLT-3N,5
+Black Knight BL-6-KNT,6
+Flashman FLS-8K,5
+Bombardier BMB-12D,4
+Lancelot LNC25-01,3
+Toyama TYM-1A,2
+Helios HEL-3D,1

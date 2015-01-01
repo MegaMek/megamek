@@ -1,0 +1,12 @@
+3085 Federated Suns Heavy Mech D
+Rifleman RFL-3N,1
+Cestus CTS-6Y,2
+Caesar CES-3R,3
+Penetrator PTR-6S,4
+Argus AGS-2D,5
+Marauder MAD-5D,6
+Rakshasa MDG-1Ar,5
+JagerMech III JM6-D4,4
+BattleAxe BKX-8D,3
+Falconer FLC-8R,2
+Thanatos TNS-4S,1

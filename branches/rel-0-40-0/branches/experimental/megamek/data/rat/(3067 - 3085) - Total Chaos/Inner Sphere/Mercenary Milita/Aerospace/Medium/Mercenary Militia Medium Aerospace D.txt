@@ -1,0 +1,12 @@
+Mercenary/Militia Medium Aerospace D
+Lancer LX-2,1
+Lancer LX-2A,2
+Hellcat HCT-213,3
+Gotha GTHA-100,4
+Lancer LX-2,5
+Lancer LX-2A,6
+Stingray F-94,5
+Hellcat II HCT-214,4
+Gotha GTHA-100,3
+Hellcat II HCT-214,2
+Gotha GTHA-500,1

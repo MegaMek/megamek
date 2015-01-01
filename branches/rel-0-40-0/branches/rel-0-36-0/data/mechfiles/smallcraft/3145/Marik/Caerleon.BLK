@@ -1,0 +1,108 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+SmallCraft
+</UnitType>
+<Name>
+Caerleon
+</Name>
+<Model>
+(Standard)
+</Model>
+<Tonnage>
+195
+</Tonnage>
+<SafeThrust>
+4
+</SafeThrust>
+<Armor>
+107
+99
+99
+86
+</Armor>
+<Nose Equipment>
+ISLightGaussRifle
+ISLightGaussRifle
+ISLightGaussRifle Ammo
+ISLightGaussRifle Ammo
+ISLRM15
+ISArtemisIV
+ISLRM15
+ISArtemisIV
+ISLRM15 
+ISLRM15 Ammo Artemis-capable
+ISLRM15 Ammo Artemis-capable
+ISLRM15 Ammo Artemis-capable
+ISLRM15 Ammo Artemis-capable
+</Nose Equipment>
+
+<Left Side Equipment>
+</Left Side Equipment>
+
+<Right Side Equipment>
+</Right Side Equipment>
+
+<Aft Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Aft Equipment>
+
+<structural_integrity>
+6
+</structural_integrity>
+
+<heatsinks>
+8
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+1200
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+3093
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+19
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+Battlearmorbay:20:1
+CargoBay:4.5:1
+</transporters>
+
+<crew>
+4
+</crew>
+
+<passengers>
+0
+</passengers>

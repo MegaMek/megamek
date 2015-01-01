@@ -1,0 +1,12 @@
+Mercenaries Assault C 'Mech
+Salamander PPR-5S,1
+Gunslinger GUN-1ERD,2
+Stalker STK-5S,3
+Longbow LGB-7Q,4
+Victor VTR-9K,5
+Atlas AS7-S,6
+Awesome AWS-9Q,5
+BattleMaster BLR-3M,4
+Banshee BNC-3S,3
+Cerberus MR-V2,2
+Grand Titan T-IT-N10M,1

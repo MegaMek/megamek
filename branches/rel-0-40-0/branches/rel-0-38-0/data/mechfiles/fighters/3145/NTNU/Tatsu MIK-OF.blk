@@ -1,0 +1,97 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Tatsu
+</Name>
+
+<Model>
+MIK-OF
+</Model>
+
+<year>
+3130
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+14
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<omni>
+1
+</omni>
+
+<armor>
+86
+69
+69
+40
+</armor>
+
+<Nose Equipment>
+Large Re-engineered Laser
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISMML7
+Large Re-engineered Laser
+IS Ammo MML-7 LRM
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Large Re-engineered Laser
+ISMML7
+IS Ammo MML-7 LRM
+</Right Wing Equipment>
+
+<Aft Equipment>
+IS Ammo MML-7 SRM
+</Aft Equipment>
+
+<source>
+TRO 3145 NT NU
+</source>
+
+<tonnage>
+70.0
+</tonnage>
+

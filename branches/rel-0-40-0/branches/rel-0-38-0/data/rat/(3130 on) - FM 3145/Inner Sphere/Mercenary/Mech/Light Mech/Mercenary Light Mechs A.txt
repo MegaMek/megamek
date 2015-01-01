@@ -1,0 +1,12 @@
+Mercenary Light Mechs A
+Gambit GBT-1G,1
+Wolfhound WLF-2H,2
+Arbalest (Standard),3
+Koshi (Standard) 2,4
+Pack Hunter II (Standard),5
+Koshi (Standard),6
+Crimson Hawk (Standard),5
+Jackalope JLP-BD,4
+Stinger IIC (Standard),3
+Jackalope JLP-KA,2
+Uller (Kit Fox) Prime,1

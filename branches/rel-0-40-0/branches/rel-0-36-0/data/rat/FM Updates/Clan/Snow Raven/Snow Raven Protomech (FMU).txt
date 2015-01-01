@@ -1,0 +1,12 @@
+Clan Snow Raven ProtoMech 3067 (FMU)
+Satyr,1
+Satyr 2,2
+Minotaur,3
+Roc,4
+Roc 3,5
+Roc 2,6
+Gorgon 3,5
+Gorgon,4
+Centaur 3,3
+Centaur 2,2
+Centaur,1

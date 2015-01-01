@@ -1,0 +1,84 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Jumpship
+</UnitType>
+<Name>
+Quetzalcoatl-Scout JumpShip
+</Name>
+<Tonnage>
+90000
+</Tonnage>
+<Armor>
+6
+6
+6
+5
+5
+4
+</Armor>
+<Nose Equipment>
+</Nose Equipment>
+<Front Left Side Equipment>
+</Front Left Side Equipment>
+<Front Right Side Equipment> 
+</Front Right Side Equipment>
+<Aft Left Side Equipment>
+</Aft Left Side Equipment>
+<Aft Right Side Equipment> 
+</Aft Right Side Equipment>
+<Aft Equipment> 
+</Aft Equipment>
+<structural_integrity>
+1
+</structural_integrity>
+<heatsinks>
+91
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+520
+</fuel>
+<type>
+IS Level 2
+</type>
+<year>
+2876
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+
+<transporters>
+ASFBay:12:2
+CargoBay:327:1
+</transporters>
+<docking_collar>
+0
+</docking_collar>
+<grav_deck>
+0
+</grav_deck>
+<escape_pod>
+0
+</escape_pod>
+<life_boat>
+3
+</life_boat>
+<crew>
+17
+</crew>
+<passengers>
+28
+</passengers>

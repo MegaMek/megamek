@@ -1,0 +1,151 @@
+Version:1.0
+Wolverine
+WVR-TD-TF
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3055
+Rules Level:2
+
+Mass:55
+Engine:275 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:5
+Jump MP:5
+
+Armor:Standard Armor
+LA Armor:18
+RA Armor:18
+LT Armor:20
+RT Armor:20
+CT Armor:26
+HD Armor:9
+LL Armor:25
+RL Armor:25
+RTL Armor:6
+RTR Armor:6
+RTC Armor:10
+
+Weapons:6
+1 ISERPPC, Right Arm
+1 ISStreakSRM6, Right Torso, Ammo:15
+1 ISMediumLaser, Right Torso
+1 ISStreakSRM6, Left Torso
+1 ISSmallLaser, Center Torso
+1 ISMediumPulseLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISStreakSRM6
+ISStreakSRM6
+ISStreakSRM6 Ammo
+ISCASE
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+ISStreakSRM6
+ISStreakSRM6
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISMediumLaser
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+ISSmallLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISMediumPulseLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

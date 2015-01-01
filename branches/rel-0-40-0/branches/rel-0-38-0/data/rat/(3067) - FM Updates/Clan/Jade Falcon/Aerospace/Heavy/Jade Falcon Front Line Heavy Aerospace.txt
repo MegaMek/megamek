@@ -1,0 +1,12 @@
+Clan Jade Falcon Front-Line Heavy Aerospace (FMU)
+Sabutai A,1
+Sabutai B,2
+Scytha B,3
+Kirghiz Prime,4
+Jengiz Prime,5
+Scytha Prime,6
+Scytha A,5
+Kirghiz A,4
+Scytha C,3
+Sabutai Prime,2
+Hydaspes (Standard),1

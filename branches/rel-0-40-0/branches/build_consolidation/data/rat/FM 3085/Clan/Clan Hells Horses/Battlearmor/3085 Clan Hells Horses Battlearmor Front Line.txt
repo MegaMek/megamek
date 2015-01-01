@@ -1,0 +1,12 @@
+3085 Clan Hell's Horses Battlearmor Front Line
+Elemental II (Production),1
+Gnome Battle Armor,2
+Elemental Battle Armor [MG],3
+Afreet Medium Battle Armor (Hells's Horses),4
+Gnome Battle Armor (LRM),5
+Gnome Battle Armor (Upgrade) [Bearhunter],6
+Golem Assault Armor (Rock Golem),5
+Gnome Battle Armor,4
+Golem Assault Armor (Fast Assault),3
+Elemental Battle Armor (Fire) [AP Gauss],2
+Golem Assault Armor (Standard),1

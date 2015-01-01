@@ -1,0 +1,12 @@
+Crusader Clan Second-Line Light Mechs (Fire Mandrill)
+Mercury MCY-97,1
+Hermes HER-1S,2
+Locust IIC,3
+Vixen (Incubus),4
+Jenner IIC,5
+Locust IIC,6
+Baboon (Howler),5
+Hussar HSR-200-D,4
+Baboon (Howler),3
+Baboon (Howler),2
+Piranha,1

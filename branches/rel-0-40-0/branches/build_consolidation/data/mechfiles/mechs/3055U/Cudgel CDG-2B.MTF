@@ -1,0 +1,155 @@
+Version:1.1
+Cudgel
+CDG-2B
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3068
+Source:Jihad
+Rules Level:3
+
+Mass:80
+Engine:400 XL Engine
+Structure:Standard
+Myomer:Triple-Strength
+Cockpit:Small Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:10 Double
+Walk MP:5
+Jump MP:0
+
+Armor:Light Ferro-Fibrous(Inner Sphere)
+LA Armor:26
+RA Armor:26
+LT Armor:26
+RT Armor:26
+CT Armor:38
+HD Armor:9
+LL Armor:34
+RL Armor:34
+RTL Armor:8
+RTR Armor:8
+RTC Armor:12
+
+Weapons:6
+ER Medium Laser, Left Torso
+Streak SRM 6, Left Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Right Torso
+ER Medium Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Mace
+Mace
+Mace
+Mace
+Mace
+Mace
+Mace
+Mace
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISClaw
+ISClaw
+ISClaw
+ISClaw
+ISClaw
+ISClaw
+Light Ferro-Fibrous
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+ISStreakSRM6
+ISStreakSRM6
+IS Streak SRM 6 Ammo
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+TSM
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+TSM
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+Light Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+Light Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+TSM
+TSM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+TSM
+TSM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,0 +1,12 @@
+3085 Taurian Concordant Assault Mech C
+Stalker STK-4N,1
+Cyclops CP-11-H,2
+Cyclops CP-10-Q,3
+Victor VTR-9B,4
+Stalker STK-3H,5
+Stalker STK-3F,6
+Awesome AWS-8Q,5
+Emperor EMP-6A,4
+Yu Huang Y-H9G,3
+Awesome AWS-9Q,2
+Longbow LGB-7Q,1

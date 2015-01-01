@@ -1,0 +1,138 @@
+Version:1.1
+Hatamoto-Kaeru
+HTM-35X
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3075
+Rules Level:4
+
+Mass:80
+Engine:320 XL Fusion Engine
+Structure:Composite
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Ferro-Fibrous
+LA Armor:26
+RA Armor:26
+LT Armor:25
+RT Armor:25
+CT Armor:35
+HD Armor:9
+LL Armor:34
+RL Armor:34
+RTL Armor:9
+RTR Armor:9
+RTC Armor:15
+
+Weapons:12
+1 ISSNPPC, Right Arm
+1 ISSNPPC, Left Arm
+1 LRT 15, Right Torso, Ammo:16
+1 LRT 15, Left Torso
+1 ISSRT4, Right Leg, Ammo:25
+1 ISSRT4, Left Leg
+1 ISMediumLaser, Left Torso
+1 ISMediumLaser, Center Torso
+1 ISMediumLaser, Left Torso
+1 ISMediumLaser, Right Torso
+1 ISMediumLaser, Right Torso
+1 ISMASS, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISSNPPC
+ISSNPPC
+-Empty-
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISSNPPC
+ISSNPPC
+-Empty-
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Left Torso:
+Engine
+Engine
+Engine
+LRT 15
+LRT 15
+LRT 15
+ISMediumLaser
+ISMediumLaser
+ISUMU
+ISUMU
+ISLRT15 Ammo
+Ferro-Fibrous
+
+Right Torso:
+Engine
+Engine
+Engine
+LRT 15
+LRT 15
+LRT 15
+ISMediumLaser
+ISMediumLaser
+ISUMU
+ISUMU
+ISLRT15 Ammo
+ISSRT4 Ammo
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISMediumLaser
+Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISMASS
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISSRT4
+Ferro-Fibrous
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISSRT4
+Ferro-Fibrous

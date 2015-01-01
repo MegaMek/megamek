@@ -1,0 +1,12 @@
+Draconis Combine Heavy 'Mech
+Grand Dragon DRG-1G,1
+Grasshopper GHR-5H,2
+Catapult CPLT-C1,3
+Warhammer WHM-6K,4
+Dragon DRG-1N,5
+Dragon DRG-1N,6
+Dragon DRG-1N,5
+Archer ARC-2R,4
+Orion ON1-K,3
+Warhammer WHM-6K,2
+Grand Dragon DRG-1G,1

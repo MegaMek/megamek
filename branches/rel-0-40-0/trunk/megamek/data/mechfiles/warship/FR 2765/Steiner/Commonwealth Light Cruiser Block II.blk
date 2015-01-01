@@ -1,0 +1,268 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Commonwealth Light Cruiser
+</Name>
+
+<Model>
+(Block II)	
+</Model>
+
+<Tonnage>
+700000
+</Tonnage>
+<SafeThrust>
+3
+</SafeThrust>
+<Armor>
+75
+75
+75
+75
+75
+75
+</Armor>
+<Nose Equipment>
+NL55
+NL55
+NL55
+NL55
+KillerWhale
+KillerWhale
+KillerWhale
+KillerWhale
+KillerWhale Ammo:40
+ISAMS
+ISAMS
+ISAMS
+ISAMS
+ISAMS
+ISAMS
+ISAMS Ammo:600
+</Nose Equipment>
+
+<Front Left Side Equipment>
+NL35
+NL35
+NL35
+NL35
+NL35
+NL35
+NL35
+NL35
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:135
+ISAMS
+ISAMS
+ISAMS
+ISAMS
+ISAMS
+ISAMS
+ISAMS Ammo:600
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+NL35
+NL35
+NL35
+NL35
+NL35
+NL35
+NL35
+NL35
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:135
+ISAMS
+ISAMS
+ISAMS
+ISAMS
+ISAMS
+ISAMS
+ISAMS Ammo:600
+</Front Right Side Equipment>
+
+<Left Broadside Equipment>
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NAC35
+NAC35
+NAC35 Ammo:50
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:135
+</Left Broadside Equipment>
+
+<Right Broadside Equipment>
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NAC35
+NAC35
+NAC35 Ammo:50
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:135
+</Right Broadside Equipment>
+
+<Aft Left Side Equipment>
+NL35
+NL35
+NL35
+NL35
+NL35
+NL35
+NL35
+NL35
+NAC35
+NAC35
+NAC35 Ammo:50
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:135
+ISAMS
+ISAMS
+ISAMS
+ISAMS
+ISAMS
+ISAMS
+ISAMS Ammo:600
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment>
+NL35
+NL35
+NL35
+NL35
+NL35
+NL35
+NL35
+NL35
+NAC35
+NAC35
+NAC35 Ammo:50
+Barracuda
+Barracuda
+Barracuda
+Barracuda Ammo:135
+ISAMS
+ISAMS
+ISAMS
+ISAMS
+ISAMS
+ISAMS
+ISAMS Ammo:600
+</Aft Right Side Equipment>
+
+<Aft Equipment>
+NL55
+NL55
+NL55
+NL55
+ISAMS
+ISAMS
+ISAMS
+ISAMS
+ISAMS
+ISAMS
+ISAMS Ammo:600
+</Aft Equipment>
+
+<structural_integrity>
+50
+</structural_integrity>
+
+<heatsinks>
+3200
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+12500
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+2765
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+13
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+ASFBay:18:4
+SmallCraftBay:4:1
+CargoBay:89208:2
+</transporters>
+
+<docking_collar>
+6
+</docking_collar>
+
+<grav_deck>
+2
+</grav_deck>
+
+<escape_pod>
+30
+</escape_pod>
+
+<life_boat>
+35
+</life_boat>
+
+<crew>
+400
+</crew>
+
+<passengers>
+</passengers>
+
+<History>
+50 officers, 140 enlisted/non-rated, 100 gunners,120 marines, 56 bay personnel 
+</History>

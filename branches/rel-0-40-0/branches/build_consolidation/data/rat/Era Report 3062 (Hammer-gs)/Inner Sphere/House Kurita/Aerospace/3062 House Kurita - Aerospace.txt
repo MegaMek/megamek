@@ -1,0 +1,12 @@
+3062 House Kurita - Aerospace
+Chippewa CHP-W7,1
+Lightning LTN-G15,2
+Sai S-4,3
+Eagle EGL-R6,4
+Sabre SB-27,5
+Sholagar SL-21,6
+Slayer SL-15,5
+Shilone SL-17,4
+Sai S-4,3
+Shilone SL-17,2
+Slayer SL-15,1

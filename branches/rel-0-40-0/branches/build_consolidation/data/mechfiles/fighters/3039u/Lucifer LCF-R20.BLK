@@ -1,0 +1,190 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+
+
+<Name>
+
+Lucifer
+
+</Name>
+
+
+
+<Model>
+
+LCF-R20
+
+</Model>
+
+
+
+<Tonnage>
+
+65
+
+</Tonnage>
+
+
+
+<SafeThrust>
+
+5
+
+</SafeThrust>
+
+
+
+<Armor>
+
+135
+
+80
+
+80
+
+73
+
+</Armor>
+
+
+
+<Nose Equipment>
+
+Large Laser
+
+Large Laser
+
+</Nose Equipment>
+
+
+
+<Left Wing Equipment>
+
+Small Laser
+
+Small Laser
+
+</Left Wing Equipment>
+
+
+
+<Right Wing Equipment>
+
+Small Laser
+
+Small Laser
+
+</Right Wing Equipment>
+
+
+
+<Aft Equipment>
+
+Medium Laser
+
+</Aft Equipment>
+
+
+
+<heatsinks>
+
+23
+
+</heatsinks>
+
+
+
+<sink_type>
+
+0
+
+</sink_type>
+
+
+
+<fuel>
+
+400
+
+</fuel>
+
+
+
+<type>
+
+IS Level 1
+
+</type>
+
+
+
+<year>
+
+2609
+
+</year>
+
+
+
+<source>
+
+Star League
+
+</source>
+
+
+
+<internal_type>
+
+0				
+
+</internal_type>
+
+
+
+<armor_type>
+
+0
+
+</armor_type>
+
+
+
+<engine_type>				
+
+0
+
+</engine_type>
+
+
+
+<motion_type>
+
+aerodyne
+
+</motion_type>

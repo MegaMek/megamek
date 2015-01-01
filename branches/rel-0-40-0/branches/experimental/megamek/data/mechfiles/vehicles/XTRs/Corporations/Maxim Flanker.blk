@@ -1,0 +1,89 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Maxim Flanker
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3074
+</year>
+
+<Source>
+Jihad
+</Source>
+
+<type>
+IS Level 4
+</type>
+
+<tonnage>
+50.0
+</tonnage>
+
+<motion_type>
+Hover
+</motion_type>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<armor>
+20
+46
+10
+12
+</armor>
+
+<Body Equipment>
+ISSponsonTurret
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Ammo SRM-4
+IS Ammo SRM-2
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+LRM 15(ST)
+SRM 4(ST)
+</Right Equipment>
+
+<Left Equipment>
+SRM 2(ST)
+Machine Gun(ST)
+Machine Gun(ST)
+Machine Gun(ST)
+</Left Equipment>
+
+<Rear Equipment>
+Machine Gun
+</Rear Equipment>
+

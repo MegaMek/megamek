@@ -1,0 +1,12 @@
+3085 Filtvelt Coalition Light Mech B
+Hornet HNT-171,1
+Valkyrie VLK-QA,2
+Locust LCT-3D,3
+Toro TR-A-1,4
+Javelin JVN-10N,5
+Wasp WSP-1S,6
+Spider SDR-5D,5
+Commando COM-5S,4
+Valkyrie VLK-QD2,3
+Osiris OSR-3D,2
+Wolfhound WLF-2,1

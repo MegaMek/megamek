@@ -1,0 +1,54 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+BattleArmor
+</UnitType>
+<Name>
+Gray Death Strike
+</Name>
+<Model>
+(Production)
+</Model>
+<chassis>
+biped
+</chassis>
+<weightclass>
+2
+</weightclass>
+<Trooper Count>
+4
+</Trooper Count>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+9
+</Armor>
+<Squad Equipment>
+ISDetachableWeaponPack
+ISSRM3:DWP
+BA-SRM3 Ammo
+BA-SRM3 Ammo
+ISLightTAG
+BABasicManipulator
+BABasicManipulator
+BAAPMount
+</Squad Equipment>
+<type>
+IS Level 5
+</type>
+<year>
+3085
+</year>
+<motion_type>
+Leg
+</motion_type>
+<source>
+Jihad
+</source>

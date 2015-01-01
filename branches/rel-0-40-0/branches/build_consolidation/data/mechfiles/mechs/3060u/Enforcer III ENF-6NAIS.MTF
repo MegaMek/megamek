@@ -1,0 +1,150 @@
+Version:1.0
+Enforcer III
+ENF-6NAIS
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3074
+Source:Jihad
+Rules Level:3
+
+Mass:50
+Engine:250 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:11 Double
+Walk MP:5
+Jump MP:5
+
+Armor:Light Ferro-Fibrous(Inner Sphere)
+LA Armor:15
+RA Armor:15
+LT Armor:19
+RT Armor:19
+CT Armor:23
+HD Armor:9
+LL Armor:22
+RL Armor:22
+RTL Armor:5
+RTR Armor:5
+RTC Armor:7
+
+Weapons:3
+Snub-Nose PPC, Left Arm
+Large VSP, Right Arm
+ER Small Laser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISSNPPC
+ISSNPPC
+Endo Steel
+Endo Steel
+Endo Steel
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISLargeVariableSpeedLaser
+ISLargeVariableSpeedLaser
+ISLargeVariableSpeedLaser
+ISLargeVariableSpeedLaser
+Endo Steel
+Endo Steel
+Endo Steel
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERSmallLaser
+ISGuardianECMSuite
+ISGuardianECMSuite
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Jump Jet
+Light Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISC3SlaveUnit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

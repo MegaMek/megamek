@@ -1,0 +1,84 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Sea Fox Amphibious Armor
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3116
+</year>
+
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
+<motion_type>
+Submarine
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<Squad Equipment>
+Basic Stealth
+BACuttingTorch
+ISSRM1OS
+ISBALightMG:Body
+BAExtendedLifeSupport:Body
+ISMechanicalJumpBooster
+BAArmoredGlove
+</Squad Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<source>
+TRO 3145 FS
+</source>
+
+<chassis>
+biped
+</chassis>
+
+<armor>
+5
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+1
+</weightclass>
+

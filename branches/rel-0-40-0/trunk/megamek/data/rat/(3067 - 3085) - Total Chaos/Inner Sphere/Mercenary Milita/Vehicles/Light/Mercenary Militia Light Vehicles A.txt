@@ -1,0 +1,12 @@
+Mercenary/Militia Light Vehicles A
+Main Gauche Light Support Tank (Standard),1
+Scorpion Light Tank (Standard),2
+Warrior Attack Helicopter H-7,3
+Hawk Moth Gunship (Armor),4
+Lightning Attack Hovercraft (Standard),5
+Main Gauche Light Support Tank (XL),6
+Chevalier Light Tank (Standard),5
+Hunter Light Support Tank (Standard),4
+Pinto Attack VTOL (WoB),3
+Cyrano Gunship (ML),2
+Chevalier Light Tank (BAP),1

@@ -1,0 +1,16 @@
+########################################################
+# Taken from Era Report 3062.
+# Conversion performed by Deric Page deric.page@usa.net
+########################################################
+3053-3062 Clan Battle Armor
+Elemental Battle Armor (Headhunter),84
+Elemental Battle Armor [AP Gauss],84
+Elemental Battle Armor [ER Laser],84
+Elemental Battle Armor [Flamer],83
+Elemental Battle Armor [HMG],83
+Elemental Battle Armor [Laser],83
+Elemental Battle Armor [MG],83
+Elemental Battle Armor [Pulse Laser],83
+Gnome Battle Armor,278
+Sylph Battle Armor,28
+Undine Battle Armor,28

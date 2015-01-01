@@ -1,0 +1,154 @@
+Version:1.2
+Phoenix Hawk
+PXH-4L Sante
+
+Config:Biped
+TechBase:Mixed (IS Chassis)
+Era:3068
+Source:BattleTech Dossiers: The Bounty Hunter
+Rules Level:4
+
+Mass:45
+Engine:270 Fusion Engine(IS)
+Structure:Endo Steel
+Myomer:Standard
+Ejection:Full Head Ejection System
+
+Heat Sinks:11 Double
+Walk MP:6
+Jump MP:6
+
+Armor:Stealth(Inner Sphere)
+LA Armor:10
+RA Armor:10
+LT Armor:18
+RT Armor:18
+CT Armor:23
+HD Armor:6
+LL Armor:15
+RL Armor:15
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
+
+Weapons:6
+TAG, Center Torso
+ER Large Laser, Right Arm
+ER Medium Laser, Left Arm
+ER Medium Laser, Right Arm
+Machine Gun, Right Arm
+Machine Gun, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISERMediumLaser
+Machine Gun
+Endo Steel
+Endo Steel
+Endo Steel
+Stealth
+Stealth
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERLargeLaser
+ISERMediumLaser
+Machine Gun
+Endo Steel
+Endo Steel
+Stealth
+Stealth
+-Empty-
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Jump Jet
+Jump Jet
+Jump Jet
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Stealth
+Stealth
+
+Right Torso:
+Jump Jet
+Jump Jet
+Jump Jet
+ISGuardianECMSuite
+ISGuardianECMSuite
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Stealth
+Stealth
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Machine Gun Ammo - Half
+ISTAG
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Stealth
+Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Stealth
+Stealth
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

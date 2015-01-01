@@ -1,0 +1,174 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Kirghiz
+
+</Name>
+
+<Model>
+
+D
+
+</Model>
+
+<Tonnage>
+
+100
+
+</Tonnage>
+
+<SafeThrust>
+
+5
+
+</SafeThrust>
+
+<Armor>
+
+84
+
+62
+
+62
+
+48
+
+</Armor>
+
+<Nose Equipment>
+
+CLERLargeLaser
+
+CLERLargeLaser
+
+CLERMediumLaser
+
+CLMediumPulseLaser
+
+</Nose Equipment>
+
+<Left Wing Equipment>
+
+CLATM12
+
+CLATM12
+
+CLATM12 Ammo
+
+CLATM12 Ammo
+
+CLATM12 Ammo
+
+CLATM12 Ammo
+
+CLATM12 Ammo
+
+CLATM12 Ammo
+
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+
+CLATM12
+
+CLATM12
+
+CLATM12 Ammo
+
+CLATM12 Ammo
+
+CLATM12 Ammo
+
+CLATM12 Ammo
+
+CLATM12 Ammo
+
+CLATM12 Ammo
+
+</Right Wing Equipment>
+
+<Aft Equipment>
+
+CLERSmallLaser
+
+</Aft Equipment>
+
+<heatsinks>
+
+25
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+400
+
+</fuel>
+
+<type>
+
+Clan Level 2
+
+</type>
+
+<year>
+
+3067
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+2
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+<omni>
+
+</omni>

@@ -1,0 +1,12 @@
+3085 Clan Hell's Horses Heavy Tank Second Line
+Marksman Artillery Vehicle,1
+Demon Tank,2
+Burke Defense Tank,3
+Ishtar Heavy Fire Support Tank (Original),4
+Ishtar Heavy Fire Support Tank (Original),5
+Athena Combat Vehicle,6
+Ishtar Heavy Fire Support Tank (Gauss),5
+Oro Heavy Tank,4
+Athena Combat Vehicle,3
+Ishtar Heavy Fire Support Tank (Gauss),2
+Athena Combat Vehicle (HAG),1

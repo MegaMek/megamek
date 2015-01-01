@@ -1,0 +1,12 @@
+3085 Ghost Bear Dominion Battlearmor Keshik
+Rogue Bear Heavy Battle Armor,1
+Elemental Battle Armor [MG],2
+Elemental Battle Armor [MG],3
+Elemental Battle Armor [MG],4
+Elemental Battle Armor [MG],5
+Golem Assault Armor (Standard),6
+Golem Assault Armor (Standard),5
+Golem Assault Armor (Support),4
+Elemental Battle Armor (Headhunter),3
+Gnome Battle Armor (Upgrade) [Bearhunter],2
+Golem Assault Armor (Support),1

@@ -1,0 +1,150 @@
+Version:1.0
+Trident
+TRI-UK
+
+Config:Biped
+TechBase:Clan
+Era:3058
+Rules Level:3
+
+Mass:100
+Engine:300 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:19 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:30
+RA Armor:30
+LT Armor:30
+RT Armor:30
+CT Armor:38
+HD Armor:9
+LL Armor:35
+RL Armor:35
+RTL Armor:10
+RTR Armor:10
+RTC Armor:13
+
+Weapons:5
+2 CLERLargeLaser, Right Arm
+1 CLGaussRifle, Left Arm, Ammo:16
+1 CLArrowIVSystem, Right Torso, Ammo:10
+1 CLECMSuite, Left Torso
+1 CLLRM10 (OS), Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGauss Ammo
+CLGauss Ammo
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLERLargeLaser
+CLERLargeLaser
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLArrowIV Ammo
+CLArrowIV Homing Ammo
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Left Torso:
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLECMSuite
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Torso:
+CLArrowIVSystem
+CLArrowIVSystem
+CLArrowIVSystem
+CLArrowIVSystem
+CLArrowIVSystem
+CLArrowIVSystem
+CLArrowIVSystem
+CLArrowIVSystem
+CLArrowIVSystem
+CLArrowIVSystem
+CLArrowIVSystem
+CLArrowIVSystem
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLLRM10 (OS)
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

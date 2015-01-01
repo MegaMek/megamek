@@ -1,0 +1,6 @@
+3062 Clan Jade Falcon - Heavy Vehicle
+Oro Heavy Tank (HAG),1
+Ishtar Heavy Fire Support Tank (Original),18
+Oro Heavy Tank,20
+Oro Heavy Tank (HAG),5
+Athena Combat Vehicle,4

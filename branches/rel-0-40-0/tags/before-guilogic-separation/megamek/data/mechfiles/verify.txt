@@ -1,0 +1,7 @@
+To run a verification test on all the mechs and vehicles in the mechfiles folder, run the unit verifier with a command such as:
+
+java -classpath classes;collections.jar;TinyXML.jar megamek.test.entities.TestAllEntities
+    --- OR (using the MS JVM) ---
+jview /cp classes;collections.jar;TinyXML.jar megamek/test/entities/TestAllEntities
+
+Various verification options can be changed in the testallentities.xml file.

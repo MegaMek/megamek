@@ -1,0 +1,12 @@
+3034 Free Rasalhague Republic Mech - Medium (Upgraded)
+Crab CRB-20,1
+Crab CRB-20,2
+Sentinel STN-3M,3
+Crab CRB-20,4
+Kintaro KTO-20,5
+Wyvern WVE-5N,6
+Sentinel STN-3K,5
+Sentinel STN-3M,4
+Kintaro KTO-20,3
+Wyvern WVE-5N,2
+Wyvern WVE-5N,1

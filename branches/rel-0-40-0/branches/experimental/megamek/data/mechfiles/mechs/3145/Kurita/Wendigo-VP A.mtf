@@ -1,0 +1,155 @@
+Version:1.1
+Wendigo-VP
+A
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3135
+Source:TRO 3145 DC
+Rules Level:4
+
+Mass:50
+Engine:250 XL (Clan) Engine(IS)
+Structure:Clan Endo-Steel
+Myomer:Standard
+Cockpit:Torso-Mounted Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:14 Double
+Base Chassis Heat Sinks:10
+Walk MP:5
+Jump MP:8
+
+Armor:Reflective(Clan)
+LA Armor:16
+RA Armor:16
+LT Armor:16
+RT Armor:16
+CT Armor:22
+HD Armor:8
+LL Armor:20
+RL Armor:20
+RTL Armor:5
+RTR Armor:5
+RTC Armor:8
+
+Weapons:5
+AP Gauss Rifle, Right Arm
+AP Gauss Rifle, Left Arm
+AP Gauss Rifle, Head
+ER Large Laser, Left Arm
+ER Large Laser, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERLargeLaser
+CLAPGaussRifle
+Clan Reflective
+Clan Reflective
+Clan Reflective
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERLargeLaser
+CLAPGaussRifle
+Clan Endo-Steel
+Clan Endo-Steel
+Clan Endo-Steel
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Life Support
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Endo-Steel
+Clan Endo-Steel
+Clan Reflective
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Life Support
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+Clan Endo-Steel
+Clan Endo-Steel
+Clan Reflective
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Cockpit
+Sensors
+
+Head:
+Sensors
+Sensors
+CLAPGaussRifle
+CLAPGaussRifle Ammo
+CLTargeting Computer
+CLTargeting Computer
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Improved Jump Jet
+Clan Improved Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

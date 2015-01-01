@@ -1,0 +1,31 @@
+###################################################################################################
+# This adaptation of the RAT files in Era Report 3062 takes into account the odds of rolling an
+# upgraded BattleMek.
+# Conversion performed by Deric Page (deric.page@usa.net)
+###################################################################################################
+3057 FedCom_and_LA Medium Meks
+Blackjack BJ-1,31
+Blackjack BJ-2,80
+Blitzkrieg BTZ-3F,28
+Bushwacker BSW-S2,56
+Centurion CN9-A,31
+Centurion CN9-D,80
+Enfield END-6Q,56
+Enforcer ENF-4R,46
+Enforcer III ENF-6M,120
+Firestarter FS9-O,3
+Firestarter FS9-OA,3
+Firestarter FS9-OB,3
+Firestarter FS9-OC,3
+Firestarter FS9-OD,3
+Firestarter FS9-OE,3
+Firestarter FS9-OF,2
+Firestarter FS9-OG,2
+Firestarter FS9-OH,2
+Firestarter FS9-OR,2
+Firestarter FS9-OX,2
+Hatchetman HCT-3F,39
+Hatchetman HCT-5S,100
+Nightsky NGS-4S,83
+Sentry SNT-04,139
+Stealth STH-1D,83

@@ -1,0 +1,12 @@
+3085 Clan Wolf Heavy Mech Keshik
+Thor (Summoner) Prime,1
+Tundra Wolf,2
+Tundra Wolf 4,3
+Mad Cat (Timber Wolf) Prime,4
+Blood Reaper 2,5
+Mad Cat (Timber Wolf) Prime,6
+Tundra Wolf 3,5
+Blood Reaper,4
+Linebacker Prime,3
+Mad Cat (Timber Wolf) Prime,2
+Orion IIC,1

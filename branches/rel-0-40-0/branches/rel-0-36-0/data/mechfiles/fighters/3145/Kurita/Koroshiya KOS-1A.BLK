@@ -1,0 +1,99 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Koroshiya
+</Name>
+
+<Model>
+KOS-1A
+</Model>
+
+<Tonnage>
+95
+</Tonnage>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<Armor>
+103
+71
+71
+51
+</Armor>
+
+<Nose Equipment>
+ISMRM40
+ISApollo
+ISMRM40 Ammo
+ISMRM40 Ammo
+ISHeavyPPC
+ISHeavyPPC
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISAngelECM
+</Aft Equipment>
+
+<heatsinks>
+21
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<type>
+IS Level 3
+</type>
+
+<year>
+3128
+</year>
+
+<source>
+TRO 3145 DC
+</source>
+
+<internal_type>
+0				
+</internal_type>
+
+<armor_type>
+3
+</armor_type>
+
+<engine_type>				
+0
+</engine_type>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<motion_type>
+aerodyne
+</motion_type>

@@ -1,0 +1,154 @@
+Version:1.0
+Koshi
+(Standard) 3
+
+Config:Biped
+TechBase:Clan
+Era:3145
+Source:Mercs 3145
+Rules Level:2
+
+Mass:25
+Engine:175 XL (Clan) Engine(IS)
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:11 Double
+Walk MP:7
+Jump MP:6
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:4
+RA Armor:4
+LT Armor:7
+RT Armor:7
+CT Armor:10
+HD Armor:9
+LL Armor:5
+RL Armor:5
+RTL Armor:5
+RTR Armor:5
+RTC Armor:6
+
+Weapons:7
+Light TAG, Right Torso
+Heavy Small Laser, Right Arm
+Heavy Small Laser, Left Arm
+Heavy Small Laser, Right Arm
+Heavy Small Laser, Right Arm
+Heavy Small Laser, Left Arm
+Heavy Small Laser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLHeavySmallLaser
+CLHeavySmallLaser
+CLHeavySmallLaser
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLHeavySmallLaser
+CLHeavySmallLaser
+CLHeavySmallLaser
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+Jump Jet
+Jump Jet
+CLECMSuite
+Ferro-Fibrous
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Jump Jet
+Jump Jet
+Jump Jet
+CLLightTAG
+Endo Steel
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLTargeting Computer
+CLMASC
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLActiveProbe
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

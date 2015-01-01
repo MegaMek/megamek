@@ -1,0 +1,153 @@
+Version:1.0
+Kraken (Bane)
+4
+
+Config:Biped
+TechBase:Clan
+Era:3066
+Source:Civil War
+Rules Level:2
+
+Mass:100
+Engine:300 XL (Clan) Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:17 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard(Clan)
+LA Armor:34
+RA Armor:34
+LT Armor:32
+RT Armor:32
+CT Armor:46
+HD Armor:9
+LL Armor:42
+RL Armor:42
+RTL Armor:10
+RTR Armor:10
+RTC Armor:13
+
+Weapons:6
+Ultra AC/20, Left Arm
+Ultra AC/20, Right Arm
+ATM 6, Left Torso
+ATM 6, Right Torso
+ATM 6, Right Torso
+ER Large Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+CLUltraAC20
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLATM6
+CLATM6
+CLATM6
+Clan Ammo ATM-6
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLATM6
+CLATM6
+CLATM6
+CLATM6
+CLATM6
+CLATM6
+CLERLargeLaser
+Clan Ammo ATM-6
+Clan Ammo ATM-6 ER
+Clan Ammo ATM-6 HE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

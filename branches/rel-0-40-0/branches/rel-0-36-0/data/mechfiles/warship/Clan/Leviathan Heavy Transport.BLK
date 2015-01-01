@@ -1,0 +1,419 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Leviathan Heavy Transport
+</Name>
+<Tonnage>
+2400000
+</Tonnage>
+<SafeThrust>
+2
+</SafeThrust>
+<Armor>
+250
+250
+250
+250
+250
+250
+</Armor>
+<Nose Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGauss Ammo:600
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1008
+HeavyNGauss
+HeavyNGauss Ammo:100
+NAC30
+NAC30
+NAC30 Ammo:200
+MediumNPPC
+MediumNPPC
+AR10
+AR10 Barracuda Ammo:100
+AR10 WhiteShark Ammo:50
+AR10 KillerWhale Ammo:25
+</Nose Equipment>
+<Front Left Side Equipment>
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6 Ammo:300
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1008
+MediumNPPC
+NAC30
+NAC30 Ammo:100
+AR10
+AR10 Barracuda Ammo:100
+AR10 WhiteShark Ammo:50
+AR10 KillerWhale Ammo:25
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6 Ammo:300
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1008
+MediumNPPC
+NAC30
+NAC30 Ammo:100
+AR10
+AR10 Barracuda Ammo:100
+AR10 WhiteShark Ammo:50
+AR10 KillerWhale Ammo:25
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERPPC
+CLERPPC
+CLERPPC
+CLERPPC
+CLERPPC
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6 Ammo:300
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20 Ammo (Clan) Artemis-capable:600
+CLArtemisIV
+CLArtemisIV
+CLArtemisIV
+CLArtemisIV
+CLArtemisIV
+CLArtemisIV
+MediumNGauss
+MediumNGauss Ammo:100
+NL55
+NL55
+NL55
+NL55
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERPPC
+CLERPPC
+CLERPPC
+CLERPPC
+CLERPPC
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6 Ammo:300
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20 Ammo (Clan) Artemis-capable:600
+CLArtemisIV
+CLArtemisIV
+CLArtemisIV
+CLArtemisIV
+CLArtemisIV
+CLArtemisIV
+MediumNGauss
+MediumNGauss Ammo:100
+NL55
+NL55
+NL55
+NL55
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6 Ammo:300
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1008
+NAC30
+NAC30 Ammo:100
+AR10
+AR10 Barracuda Ammo:100
+AR10 WhiteShark Ammo:50
+AR10 KillerWhale Ammo:25
+</Aft Left Side Equipment>
+<Aft Right Side Equipment> 
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6
+CLStreakSRM6 Ammo:300
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1008
+NAC30
+NAC30 Ammo:100
+AR10
+AR10 Barracuda Ammo:100
+AR10 WhiteShark Ammo:50
+AR10 KillerWhale Ammo:25
+</Aft Right Side Equipment>
+<Aft Equipment> 
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGauss Ammo:600
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1008
+MediumNPPC
+MediumNPPC
+AR10
+AR10 Barracuda Ammo:100
+AR10 WhiteShark Ammo:50
+AR10 KillerWhale Ammo:25
+</Aft Equipment>
+<structural_integrity>
+90
+</structural_integrity>
+<heatsinks>
+1500
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+37500
+</fuel>
+<type>
+Clan Level 3
+</type>
+<year>
+3055
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+11
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+ASFBay:50:8
+CargoBay:2497:10
+HPG
+</transporters>
+<docking_collar>
+8
+</docking_collar>
+<grav_deck>
+8
+</grav_deck>
+<escape_pod>
+30000
+</escape_pod>
+<life_boat>
+150
+</life_boat>
+<crew>
+1425
+</crew>
+<passengers>
+250000
+</passengers>
+<lithium-fusion>
+1
+</lithium-fusion>

@@ -1,0 +1,102 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Tracker Surveillance
+</Name>
+<Tonnage>
+120000
+</Tonnage>
+<SafeThrust>
+4
+</SafeThrust>
+<Armor>
+18
+15
+15
+15
+15
+15
+</Armor>
+<Nose Equipment>
+NL45
+</Nose Equipment>
+<Front Left Side Equipment>
+ISPPC
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+ISPPC
+</Front Right Side Equipment>
+<Left Broadside Equipment>
+</Left Broadside Equipment>
+<Right Broadside Equipment>
+</Right Broadside Equipment>
+<Aft Left Side Equipment>
+</Aft Left Side Equipment>
+<Aft Right Side Equipment> 
+</Aft Right Side Equipment>
+<Aft Equipment> 
+Barracuda
+Barracuda
+Barracuda Ammo:24
+</Aft Equipment>
+<structural_integrity>
+36
+</structural_integrity>
+<heatsinks>
+285
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+14000
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+2407
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+<transporters>
+SmallCraftBay:4:1
+CargoBay:23585:1
+</transporters>
+<docking_collar>
+2
+</docking_collar>
+<grav_deck>
+1
+</grav_deck>
+<escape_pod>
+15
+</escape_pod>
+<life_boat>
+10
+</life_boat>
+<crew>
+155
+</crew>
+<passengers>
+0
+</passengers>

@@ -1,0 +1,314 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Achilles
+
+</Name>
+
+<Model>
+
+(2582)
+
+</Model>
+
+<Tonnage>
+
+4500
+
+</Tonnage>
+
+<SafeThrust>
+
+8
+
+</SafeThrust>
+
+<Armor>
+
+290
+
+260
+
+260
+
+170
+
+</Armor>
+
+<Nose Equipment>
+
+ISPPC
+
+ISPPC
+
+ISLRM20
+
+ISLRM20
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLargeLaser
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+ISPPC
+
+ISAC5 
+
+ISAC5 
+
+ISAC5 Ammo
+
+ISAC5 Ammo
+
+ISAC20
+
+ISAC20 Ammo
+
+ISAC20 Ammo
+
+ISAC20 Ammo
+
+ISLRM20
+
+ISLRM20
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISMediumLaser
+
+ISMediumLaser
+
+(R) ISPPC
+
+(R) ISAC10
+
+(R) ISAC10 Ammo
+
+(R) ISAC10 Ammo
+
+(R) ISLargeLaser
+
+(R) ISMediumLaser
+
+(R) ISMediumLaser
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+ISPPC
+
+ISAC5 
+
+ISAC5 
+
+ISAC5 Ammo
+
+ISAC5 Ammo
+
+ISAC20
+
+ISAC20 Ammo
+
+ISAC20 Ammo
+
+ISAC20 Ammo
+
+ISLRM20
+
+ISLRM20
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISMediumLaser
+
+ISMediumLaser
+
+(R) ISPPC
+
+(R) ISAC10
+
+(R) ISAC10 Ammo
+
+(R) ISAC10 Ammo
+
+(R) ISLargeLaser
+
+(R) ISMediumLaser
+
+(R) ISMediumLaser
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+ISAC20
+
+ISAC20 Ammo
+
+ISAC20 Ammo
+
+ISLRM10
+
+ISLRM10 Ammo
+
+ISMediumLaser
+
+ISMediumLaser
+
+</Aft Equipment>
+
+<structural_integrity>
+
+16
+
+</structural_integrity>
+
+<heatsinks>
+
+124
+
+</heatsinks>
+
+<sink_type>
+
+0
+
+</sink_type>
+
+<fuel>
+
+9000
+
+</fuel>
+
+<type>
+
+IS Level 1
+
+</type>
+
+<year>
+
+2582
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>
+
+
+
+<transporters>
+
+ASFBay:2:1
+
+SmallCraft:2:2
+
+InfantryBay:1:1
+
+CargoBay:160:0
+
+</transporters>
+
+<escape_pod>
+
+6
+
+</escape_pod>
+
+<life_boat>
+
+1
+
+</life_boat>
+
+<crew>
+
+72
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

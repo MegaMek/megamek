@@ -1,0 +1,12 @@
+WoB Light Aerospace SD/A
+Shade S-HA-0 Invictus (Primary),1
+Shade S-HA-0 Invictus (Primary),2
+Zero ZRO-115,3
+Rogue RGU-133LP,4
+Spad SPD-504,5
+Trident TRN-3T,6
+Cheetah F-12-S,5
+Rogue RGU-133E,4
+Tomahawk THK-63CS,3
+Tomahawk THK-63CS,2
+Shade S-HA-0 Invictus (Primary),1

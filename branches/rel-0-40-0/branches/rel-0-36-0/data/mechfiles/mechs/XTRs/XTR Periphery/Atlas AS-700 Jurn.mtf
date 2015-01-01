@@ -1,0 +1,154 @@
+Version:1.1
+Atlas
+AS7-00 Jurn
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3081
+Source:XTR Periphery
+Rules Level:4
+
+Mass:100
+Engine:300 XL Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+Cockpit:Command Console
+Gyro:Standard Gyro
+
+Heat Sinks:16 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:34
+RA Armor:34
+LT Armor:32
+RT Armor:32
+CT Armor:47
+HD Armor:9
+LL Armor:41
+RL Armor:41
+RTL Armor:10
+RTR Armor:10
+RTC Armor:14
+
+Weapons:5
+Light PPC, Right Arm
+Snub-Nose PPC, Right Torso
+Light PPC, Left Arm
+HVAC/10, Right Torso
+Thunderbolt 15, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Light PPC
+Light PPC
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Light PPC
+Light PPC
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Thunderbolt 15
+Thunderbolt 15
+Thunderbolt 15
+IS Ammo Thunderbolt-15
+IS Ammo Thunderbolt-15
+IS Ammo HVAC/10
+IS Ammo HVAC/10
+ISCASEII
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Hyper Velocity Auto Cannon/10
+Hyper Velocity Auto Cannon/10
+Hyper Velocity Auto Cannon/10
+Hyper Velocity Auto Cannon/10
+Hyper Velocity Auto Cannon/10
+Hyper Velocity Auto Cannon/10
+ISSNPPC
+ISSNPPC
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+BeagleActiveProbe
+BeagleActiveProbe
+
+Head:
+Life Support
+Sensors
+Cockpit (armored)
+Cockpit (armored)
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+RemoteSensorDispenser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+RemoteSensorDispenser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

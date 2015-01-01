@@ -1,0 +1,97 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+ConvFighter
+</UnitType>
+
+<Name>
+Drake Medium Strike Fighter
+</Name>
+
+<Tonnage>
+35
+</Tonnage>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<Armor>
+10
+8
+8
+6
+</Armor>
+
+<Nose Equipment>
+Light Auto Cannon/5
+Light AC/5 Ammo
+ISMML3
+IS MML-3 LRM Ammo
+IS MML-3 SRM Ammo
+ISMML3
+IS MML-3 LRM Ammo
+IS MML-3 SRM Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISGuardianECMSuite
+</Aft Equipment>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+10
+</sink_type>
+
+<fuel>
+560
+</fuel>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+3073
+</year>
+
+<source>
+TRO:Prototypes
+</source>
+
+<internal_type>
+0				
+</internal_type>
+
+<armor_type>
+8
+</armor_type>
+
+<engine_type>				
+0
+</engine_type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<vstol>
+1
+</vstol>

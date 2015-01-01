@@ -1,0 +1,153 @@
+Version:1.0
+Nova Cat
+E
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3064
+Source:Civil War
+Rules Level:2
+
+Mass:70
+Engine:280 XL (Clan) Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:15 Double
+Base Chassis Heat Sinks:11
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Clan)
+LA Armor:22
+RA Armor:22
+LT Armor:23
+RT Armor:23
+CT Armor:35
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:7
+RTR Armor:7
+RTC Armor:8
+
+Weapons:5
+ATM 9, Left Arm
+ATM 9, Left Arm
+ATM 9, Right Arm
+ATM 9, Right Arm
+Large Pulse Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+CLATM9
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+Clan Ammo ATM-9
+Clan Ammo ATM-9
+Clan Ammo ATM-9 ER
+Clan Ammo ATM-9 HE
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLLargePulseLaser
+CLLargePulseLaser
+Clan Ammo ATM-9
+Clan Ammo ATM-9
+Clan Ammo ATM-9 ER
+Clan Ammo ATM-9 HE
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo Steel
+Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

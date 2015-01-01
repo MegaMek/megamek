@@ -1,0 +1,60 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Darter Scout Car
+</Name>
+<Model>
+(C3)
+</Model>
+<Tonnage>
+13
+</Tonnage>
+<cruiseMP>
+7
+</cruiseMP>
+<Armor>
+10
+7
+7
+8
+</Armor>
+<Front Equipment>
+ISMachine Gun
+</Front Equipment>
+<transporters>
+TroopSpace:1.5
+</transporters>
+<Body Equipment>
+ISMG Ammo (200)
+ISC3SlaveUnit
+</Body Equipment>
+<type>
+IS
+</type>
+<year>
+3057
+</year>
+<source>
+Clan Invasion
+</source>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+1
+</engine_type>
+<motion_type>
+Wheeled
+</motion_type>

@@ -34,6 +34,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -118,6 +119,10 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
 
     private MechSummary[] mechs;
 
+    // For MML
+    private Entity chosenEntity;
+    private boolean useAlternate = false;
+
     private MechTableModel unitModel;
     private MechSearchFilter searchFilter;
 
@@ -125,15 +130,19 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
     private ClientGUI clientgui;
     private UnitLoadingDialog unitLoadingDialog;
     AdvancedSearchDialog asd;
+    JFrame frame;
 
     private TableRowSorter<MechTableModel> sorter;
 
     /** Creates new form UnitSelectorDialog */
     public UnitSelectorDialog(ClientGUI cl, UnitLoadingDialog uld) {
         super(cl.frame, Messages.getString("MechSelectorDialog.title"), true); //$NON-NLS-1$
-        client = cl.getClient();
-        clientgui = cl;
         unitLoadingDialog = uld;
+        if (null != cl) {
+            frame = cl.getFrame();
+            client = cl.getClient();
+            clientgui = cl;
+        }
 
         unitModel = new MechTableModel();
         initComponents();
@@ -141,9 +150,29 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         int width = guip.getMechSelectorSizeWidth();
         int height = guip.getMechSelectorSizeHeight();
         setSize(width,height);
-        setLocationRelativeTo(cl.frame);
-        asd = new AdvancedSearchDialog(cl.frame,
-                client.getGame().getOptions().intOption("year"));
+        if (null != cl) {
+            setLocationRelativeTo(cl.frame);
+            asd = new AdvancedSearchDialog(cl.frame,
+                    client.getGame().getOptions().intOption("year"));
+        }
+    }
+
+    public UnitSelectorDialog(JFrame frame, UnitLoadingDialog uld, boolean useAlternate) {
+        super(frame, Messages.getString("MechSelectorDialog.title"), true); //$NON-NLS-1$
+        unitLoadingDialog = uld;
+        this.frame = frame;
+        this.useAlternate = useAlternate;setLocationRelativeTo(frame);
+
+        unitModel = new MechTableModel();
+        initComponents();
+        GUIPreferences guip = GUIPreferences.getInstance();
+        int width = guip.getMechSelectorSizeWidth();
+        int height = guip.getMechSelectorSizeHeight();
+        setSize(width,height);
+        setLocationRelativeTo(frame);
+        asd = new AdvancedSearchDialog(frame, 999999);
+        run();
+        setVisible(true);
     }
 
     private void initComponents() {
@@ -192,6 +221,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         lblPlayer = new JLabel(
                 Messages.getString("MechSelectorDialog.m_labelPlayer"), SwingConstants.RIGHT); //$NON-NLS-1$
         comboPlayer = new JComboBox<String>();
+        comboPlayer.setVisible(!useAlternate);
 
         getContentPane().setLayout(new GridBagLayout());
 
@@ -397,6 +427,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
 
         btnSelect.setText(Messages.getString("MechSelectorDialog.m_bPick"));
         btnSelect.addActionListener(this);
+        btnSelect.setVisible(!useAlternate);
         panelOKBtns.add(btnSelect, new GridBagConstraints());
 
         btnSelectClose.setText(Messages
@@ -408,7 +439,9 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         btnClose.addActionListener(this);
         panelOKBtns.add(btnClose, new GridBagConstraints());
 
-        updatePlayerChoice();
+        if (!useAlternate) {
+            updatePlayerChoice();
+        }
         panelOKBtns.add(lblPlayer, new GridBagConstraints());
         panelOKBtns.add(comboPlayer, new GridBagConstraints());
 
@@ -434,7 +467,9 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
 
     void select(boolean close) {
         Entity e = getSelectedEntity();
-        if (null != e) {
+        if (useAlternate) { // For MML
+            chosenEntity = e;
+        } else if (null != e) {
             Client c = null;
             if (comboPlayer.getSelectedIndex() > 0) {
                 String name = (String) comboPlayer.getSelectedItem();
@@ -464,10 +499,11 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                 public boolean include(Entry<? extends MechTableModel, ? extends Integer> entry) {
                     MechTableModel mechModel = entry.getModel();
                     MechSummary mech = mechModel.getMechSummary(entry.getIdentifier());
+                    int year = null != client ? client.getGame().getOptions().intOption("year") : 999999;
                     if (/* Weight */
                             ((nClass == EntityWeightClass.SIZE) || (mech.getWeightClass() == nClass)) &&
                             /*Canon*/
-                            (!client.getGame().getOptions().booleanOption("canon_only") || mech.isCanon()) &&
+                            ((null != client && !client.getGame().getOptions().booleanOption("canon_only")) || mech.isCanon() || useAlternate) &&
                             /*Technology Level*/
                             ((nType == TechConstants.T_ALL)
                                 || (nType == mech.getType())
@@ -492,7 +528,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                             && ((nUnit == -1) || mech.getUnitType().equals(UnitType.getTypeName(nUnit)))
                             /*Advanced Search*/
                             && ((searchFilter==null) || MechSearchFilter.isMatch(mech, searchFilter))
-                            && !(mech.getYear() > client.getGame().getOptions().intOption("year"))) {
+                            && !(mech.getYear() > year)) {
                         if(txtFilter.getText().length() > 0) {
                             String text = txtFilter.getText();
                             return mech.getName().toLowerCase().contains(text.toLowerCase());
@@ -551,8 +587,10 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
             panelMekView.reset();
         }
 
-        clientgui.loadPreviewImage(lblImage, selectedUnit,
-                client.getLocalPlayer());
+        if (null != clientgui) {
+            clientgui.loadPreviewImage(lblImage, selectedUnit,
+                    client.getLocalPlayer());
+        }
     }
 
     public Entity getSelectedEntity() {
@@ -576,6 +614,18 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
             ex.printStackTrace();
             return null;
         }
+    }
+
+    public MechSummary getChosenMechSummary() {
+        int view = tableUnits.getSelectedRow();
+        if (view < 0) {
+            // selection got filtered away
+            return null;
+        }
+        int selected = tableUnits.convertRowIndexToModel(view);
+        // else
+        MechSummary ms = mechs[selected];
+        return ms;
     }
 
     private void autoSetSkillsAndName(Entity e) {
@@ -624,15 +674,15 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
          unitLoadingDialog.setVisible(false);
 
          // In some cases, it's possible to get here without an initialized
-         // instance (loading a saved game without a cahce).  In these cases,
+         // instance (loading a saved game without a cache).  In these cases,
          // we dn't care about the failed loads.
-         if (mscInstance.isInitialized())
+         if (mscInstance.isInitialized() && !useAlternate)
          {
              final Map<String, String> hFailedFiles =
                  MechSummaryCache.getInstance().getFailedFiles();
              if ((hFailedFiles != null) && (hFailedFiles.size() > 0)) {
                  // self-showing dialog
-                 new UnitFailureDialog(clientgui.frame, hFailedFiles);
+                 new UnitFailureDialog(frame, hFailedFiles);
              }
          }
          GUIPreferences guip = GUIPreferences.getInstance();
@@ -652,7 +702,9 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
          asd.clearValues();
          searchFilter=null;
          btnResetSearch.setEnabled(false);
-         updatePlayerChoice();
+         if (!useAlternate) {
+             updatePlayerChoice();
+         }
          //FIXME: this is not updating the table when canonicity is selected/deselected until user clicks it
          filterUnits();
          super.setVisible(visible);
@@ -757,20 +809,22 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                 if(col == COL_WEIGHT) {
                     return ms.getTons();
                 }
-                if(col == COL_BV) {
-                    if (client.getGame().getOptions()
-                        .booleanOption("geometric_mean_bv")) {
-                    if (client.getGame().getOptions().booleanOption("reduced_overheat_modifier_bv")) {
-                        return ms.getRHGMBV();
+                if (col == COL_BV) {
+                    if (null != client && client.getGame().getOptions()
+                            .booleanOption("geometric_mean_bv")) {
+                        if (null != client && client.getGame().getOptions()
+                                .booleanOption("reduced_overheat_modifier_bv")) {
+                            return ms.getRHGMBV();
+                        } else {
+                            return ms.getGMBV();
+                        }
                     } else {
-                        return ms.getGMBV();
-                    }
-                    } else {
-                    if (client.getGame().getOptions().booleanOption("reduced_overheat_modifier_bv")) {
-                        return ms.getRHBV();
-                    } else {
-                        return ms.getBV();
-                    }
+                        if (null != client && client.getGame().getOptions()
+                                .booleanOption("reduced_overheat_modifier_bv")) {
+                            return ms.getRHBV();
+                        } else {
+                            return ms.getBV();
+                        }
                     }
                 }
                 if(col == COL_YEAR) {
@@ -863,5 +917,12 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
 
     public void enableResetButton(boolean b) {
         btnResetSearch.setEnabled(b);
+    }
+
+    /**
+     * @return the chosenEntity
+     */
+    public Entity getChosenEntity() {
+        return chosenEntity;
     }
  }

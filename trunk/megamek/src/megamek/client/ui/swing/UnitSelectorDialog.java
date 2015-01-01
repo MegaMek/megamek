@@ -220,6 +220,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         lblImage = new JLabel();
         lblPlayer = new JLabel(
                 Messages.getString("MechSelectorDialog.m_labelPlayer"), SwingConstants.RIGHT); //$NON-NLS-1$
+        lblPlayer.setVisible(!useAlternate);
         comboPlayer = new JComboBox<String>();
         comboPlayer.setVisible(!useAlternate);
 
@@ -447,6 +448,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
 
         btnShowBV.setText(Messages.getString("MechSelectorDialog.BV")); //$NON-NLS-1$
         btnShowBV.addActionListener(this);
+        btnShowBV.setVisible(!useAlternate);
         panelOKBtns.add(btnShowBV, new GridBagConstraints());
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,

@@ -78,6 +78,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityListFile;
 import megamek.common.IGame;
+import megamek.common.IGame.Phase;
 import megamek.common.IPlayer;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
@@ -729,9 +730,15 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         } else if (event.getActionCommand().equals(VIEW_TOGGLE_FOV_HIGHLIGHT)) {
             GUIPreferences.getInstance().setFovHighlight(!GUIPreferences.getInstance().getFovHighlight());
             bv.refreshDisplayables();
+            if (client.getGame().getPhase() == Phase.PHASE_MOVEMENT) {
+                bv.clearHexImageCache();
+            }
         } else if (event.getActionCommand().equals(VIEW_TOGGLE_FOV_DARKEN)) {
             GUIPreferences.getInstance().setFovDarken(!GUIPreferences.getInstance().getFovDarken());
             bv.refreshDisplayables();
+            if (client.getGame().getPhase() == Phase.PHASE_MOVEMENT) {
+                bv.clearHexImageCache();
+            }
         } else if (event.getActionCommand().equals(VIEW_TOGGLE_FIRING_SOLUTIONS)) {
             GUIPreferences.getInstance().setFiringSolutions(!GUIPreferences.getInstance().getFiringSolutions());
             if (!GUIPreferences.getInstance().getFiringSolutions()){

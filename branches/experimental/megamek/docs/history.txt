@@ -5,6 +5,7 @@ exp
 + Bug [#4129]: double blind sensor detection should only reveal a radar blip,
     not whole unit
 + Bug [#4404]: Performance issues with BoardView1.createShadowMask
++ Bug [#4405]: rendering loop could be greatly sped up with caching hex images
 
 v0.39.6 / v0.40.0RC4 (SVN)
 + Bug [#4372]: Inferno Bomb/IV fires do not last the proper duration

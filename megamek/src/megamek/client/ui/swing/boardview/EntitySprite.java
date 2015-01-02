@@ -18,10 +18,12 @@ import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.GunEmplacement;
+import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Protomech;
 import megamek.common.Tank;
+import megamek.common.options.IOptions;
 import megamek.common.options.PilotOptions;
 import megamek.common.preference.PreferenceManager;
 
@@ -33,6 +35,8 @@ import megamek.common.preference.PreferenceManager;
 class EntitySprite extends Sprite {
 
     Entity entity;
+    
+    private Image radarBlipImage;
 
     private Rectangle entityRect;
 
@@ -40,9 +44,10 @@ class EntitySprite extends Sprite {
 
     private int secondaryPos;
 
-    public EntitySprite(BoardView1 boardView1, final Entity entity, int secondaryPos) {
+    public EntitySprite(BoardView1 boardView1, final Entity entity, int secondaryPos, Image radarBlipImage) {
         super(boardView1);
         this.entity = entity;
+        this.radarBlipImage = radarBlipImage;
         this.secondaryPos = secondaryPos;
 
         String shortName = entity.getShortName();
@@ -58,6 +63,10 @@ class EntitySprite extends Sprite {
                     .concat(")");
         }
         int face = entity.isCommander() ? Font.ITALIC : Font.PLAIN;
+        if (onlyDetectedBySensors()) {
+            shortName = Messages.getString("BoardView1.sensorReturn") ;
+            face = Font.PLAIN;
+        }
         Font font = new Font("SansSerif", face, 10); //$NON-NLS-1$
         modelRect = new Rectangle(47, 55, this.bv.getFontMetrics(font).stringWidth(
                 shortName) + 1, this.bv.getFontMetrics(font).getAscent());
@@ -125,10 +134,11 @@ class EntitySprite extends Sprite {
 
     @Override
     public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
+        boolean translucentHiddenUnits = GUIPreferences.getInstance()
+                .getBoolean(GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS);
+                
         if ((trackThisEntitiesVisibilityInfo(entity)
-                && !entity.isVisibleToEnemy() && GUIPreferences
-                .getInstance().getBoolean(
-                        GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS))
+                && !entity.isVisibleToEnemy() && translucentHiddenUnits)
                 || (entity.relHeight() < 0)) {
             // create final image with translucency
             drawOnto(g, x, y, observer, true);
@@ -154,6 +164,10 @@ class EntitySprite extends Sprite {
             shortName += (Messages.getString("BoardView1.ID") + entity.getId()); //$NON-NLS-1$
         }
         int face = entity.isCommander() ? Font.ITALIC : Font.PLAIN;
+        if (onlyDetectedBySensors()) {
+            shortName = Messages.getString("BoardView1.sensorReturn") ;
+            face = Font.PLAIN;
+        }
         Font font = new Font("SansSerif", face, 10); //$NON-NLS-1$
         Rectangle tempRect = new Rectangle(47, 55, this.bv.getFontMetrics(font)
                 .stringWidth(shortName) + 1, this.bv.getFontMetrics(font)
@@ -176,17 +190,21 @@ class EntitySprite extends Sprite {
         if (!this.bv.useIsometric()) {
             // The entity sprite is drawn when the hexes are rendered.
             // So do not include the sprite info here.
-            graph.drawImage(this.bv.tileManager.imageFor(entity, secondaryPos), 0,
-                    0, this);
+            if (onlyDetectedBySensors() && !bv.useIsometric()) {
+                graph.drawImage(radarBlipImage, 0, 0, this);
+            } else {
+                graph.drawImage(bv.tileManager.imageFor(entity, secondaryPos),
+                        0, 0, this);
+            }
         }
         if ((secondaryPos == -1) || (secondaryPos == 6)) {
             // draw box with shortName
             Color text, bkgd, bord;
-            if (entity.isDone()) {
+            if (entity.isDone() && !onlyDetectedBySensors()) {
                 text = Color.lightGray;
                 bkgd = Color.darkGray;
                 bord = Color.black;
-            } else if (entity.isImmobile()) {
+            } else if (entity.isImmobile() && !onlyDetectedBySensors()) {
                 text = Color.darkGray;
                 bkgd = Color.black;
                 bord = Color.lightGray;
@@ -573,10 +591,10 @@ class EntitySprite extends Sprite {
      * mechs and teammates mechs (assuming team vision option).
      */
     private boolean trackThisEntitiesVisibilityInfo(Entity e) {
-        if (this.bv.getLocalPlayer() == null) {
+        IPlayer localPlayer = this.bv.getLocalPlayer();
+        if (localPlayer == null) {
             return false;
         }
-
         if (this.bv.game.getOptions().booleanOption("double_blind") //$NON-NLS-1$
                 && ((e.getOwner().getId() == this.bv.getLocalPlayer().getId()) || (this.bv.game
                         .getOptions().booleanOption("team_vision") //$NON-NLS-1$
@@ -584,6 +602,29 @@ class EntitySprite extends Sprite {
             return true;
         }
         return false;
+    }
+    
+    /**
+     * Used to determine if this EntitySprite is only detected by an enemies
+     * sensors and hence should only be a sensor return.
+     * 
+     * @return
+     */
+    private boolean onlyDetectedBySensors() {
+        boolean sensors = bv.game.getOptions().booleanOption(
+                "tacops_sensors");
+        boolean sensorsDetectAll = bv.game.getOptions().booleanOption(
+                "sensors_detect_all");
+        boolean doubleBlind = bv.game.getOptions().booleanOption(
+                "double_blind");
+
+        if (sensors && doubleBlind && !sensorsDetectAll
+                && !trackThisEntitiesVisibilityInfo(entity) 
+                && entity.isDetectedByEnemy() && !entity.isVisibleToEnemy()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private Color getStatusBarColor(double percentRemaining) {
@@ -608,6 +649,12 @@ class EntitySprite extends Sprite {
     public String[] getTooltip() {
         String[] tipStrings = new String[4];
         StringBuffer buffer;
+                
+        if (onlyDetectedBySensors()) {
+            tipStrings = new String[1];
+            tipStrings[0] = Messages.getString("BoardView1.sensorReturn");
+            return tipStrings;
+        }
 
         buffer = new StringBuffer();
         buffer.append(entity.getChassis()).append(" (") //$NON-NLS-1$

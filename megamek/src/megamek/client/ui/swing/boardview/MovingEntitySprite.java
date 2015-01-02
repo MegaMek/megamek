@@ -64,20 +64,14 @@ class MovingEntitySprite extends Sprite {
                 && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
             Image shadow = bv.createShadowMask(bv.tileManager.imageFor(entity,
                     facing, -1));
-
-            shadow = bv.getScaledImage(bv.createImage(new FilteredImageSource(
-                    shadow.getSource(), new KeyAlphaFilter(
-                            BoardView1.TRANSPARENT))), false);
+            shadow = bv.getScaledImage(shadow, true);
 
             g.drawImage(shadow, x, y + (int) (bv.DROPSHDW_DIST * bv.scale),
                     observer);
         } else if (elevation > 0) {
             Image shadow = bv.createShadowMask(bv.tileManager.imageFor(entity,
                     facing, -1));
-
-            shadow = bv.getScaledImage(bv.createImage(new FilteredImageSource(
-                    shadow.getSource(), new KeyAlphaFilter(
-                            BoardView1.TRANSPARENT))), false);
+            shadow = bv.getScaledImage(shadow, true);
             
             g.drawImage(shadow, x, y
                     + (int) (elevation * BoardView1.HEX_ELEV * bv.scale),
@@ -101,9 +95,7 @@ class MovingEntitySprite extends Sprite {
         if (bv.useIsometric() && (elevation < 0)) {
             Image shadow = bv.createShadowMask(bv.tileManager.imageFor(entity,
                     facing, -1));
-            shadow = bv.getScaledImage(bv.createImage(new FilteredImageSource(
-                    shadow.getSource(), new KeyAlphaFilter(
-                            BoardView1.TRANSPARENT))), false);            
+            shadow = bv.getScaledImage(shadow, true);         
 
             g.drawImage(shadow, x, y, observer);
         }

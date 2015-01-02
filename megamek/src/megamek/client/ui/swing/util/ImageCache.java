@@ -77,4 +77,8 @@ public class ImageCache<K, V> {
         return cache.size();
     }
     
+    public void clear() {
+        cache.clear();
+    }
+    
 }

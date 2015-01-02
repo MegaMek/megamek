@@ -39,6 +39,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import megamek.client.ui.ITilesetManager;
+import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
@@ -140,6 +141,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             try {
                 hts.loadFromFile((String) e.getNewValue());
                 hexTileset = hts;
+                if (comp instanceof BoardView1) {
+                    ((BoardView1)comp).clearHexImageCache();
+                }
             } catch (IOException ex) {
                 return;
             }

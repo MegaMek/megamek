@@ -3007,11 +3007,10 @@ public class Server implements Runnable {
         if ((null != player) && player.isGhost()) {
             sendGhostSkipMessage(player);
         } else if ((null == game.getFirstEntity())
-                   && (null != player)
-                   && ((game.getPhase() != IGame.Phase.PHASE_DEPLOY_MINEFIELDS) && (game
-                                                                                            .getPhase() != IGame
-                                                                                            .Phase
-                                                                                            .PHASE_SET_ARTYAUTOHITHEXES))) {
+                && (null != player)
+                && ((game.getPhase() != IGame.Phase.PHASE_DEPLOY_MINEFIELDS) 
+                        && (game.getPhase() 
+                                != IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES))) {
             sendTurnErrorSkipMessage(player);
         }
     }
@@ -26011,7 +26010,7 @@ public class Server implements Runnable {
         List<ECMInfo> allECMInfo = null;
         if (game.getOptions().booleanOption("tacops_sensors") && useSensors) {
             allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
-                                                                      .getEntitiesVector());
+                    .getEntitiesVector());
         }
 
         boolean bTeamVision = game.getOptions().booleanOption("team_vision");

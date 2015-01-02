@@ -497,7 +497,13 @@ public class MechTileset {
 
         public void loadImage(Component comp) {
             // System.out.println("loading mech image...");
-            image = comp.getToolkit().getImage(new File(dir, imageFile).toString());
+            File fin = new File(dir, imageFile);
+            if (!fin.exists()) {
+                System.out.println("Warning: MechTileSet is trying to " +
+                		"load a file that doesn't exist: "
+                        + fin.getPath());
+            }
+            image = comp.getToolkit().getImage(fin.toString());
         }
     }
 }

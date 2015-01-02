@@ -40,6 +40,7 @@ import megamek.common.HexTarget;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.IPlayer;
 import megamek.common.Mech;
 import megamek.common.MinefieldTarget;
 import megamek.common.MiscType;
@@ -342,7 +343,7 @@ public class MapMenu extends JPopupMenu {
             public void actionPerformed(ActionEvent e) {
                 try {
                     selectedEntity = game.getEntity(Integer.parseInt(e
-                                                                             .getActionCommand()));
+                            .getActionCommand()));
                     gui.setDisplayVisible(true);
                     gui.mechD.displayEntity(selectedEntity);
                 } catch (Exception ex) {
@@ -430,8 +431,31 @@ public class MapMenu extends JPopupMenu {
 
     private JMenu createViewMenu() {
         JMenu menu = new JMenu("View");
-        for (Entity entity : client.getGame().getEntitiesVector(coords, true)) {
-            menu.add(viewJMenuItem(entity));
+        IGame game = client.getGame();
+        
+        boolean sensors = game.getOptions().booleanOption(
+                "tacops_sensors");
+        boolean sensorsDetectAll = game.getOptions().booleanOption(
+                "sensors_detect_all");
+        boolean doubleBlind = game.getOptions().booleanOption(
+                "double_blind");
+                
+        IPlayer localPlayer = client.getLocalPlayer();
+        int localTeam = localPlayer.getTeam();
+        
+        for (Entity entity : game.getEntitiesVector(coords, true)) {
+            boolean alliedUnit = 
+                    !entity.getOwner().isEnemyOf(localPlayer)
+                    || (entity.getOwner().getTeam() == localTeam 
+                        && game.getOptions().booleanOption("team_vision"));
+
+            // Only add the unit if it's actually visible
+            //  With double blind on, the game may unseen units
+            if (!sensors || !doubleBlind || alliedUnit 
+                    || entity.isVisibleToEnemy()
+                    || (sensorsDetectAll && entity.isDetectedByEnemy())) {
+                menu.add(viewJMenuItem(entity));
+            }
         }
         return menu;
     }

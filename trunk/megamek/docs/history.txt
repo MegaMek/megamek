@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.41.0-dev (SVN)
++ Bug [#4397]: Option for year is short a character
 
 v0.40.0 (2015-01-01 20:40 UTC)
 + Bug [#4372]: Inferno Bomb/IV fires do not last the proper duration

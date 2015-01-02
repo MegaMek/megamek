@@ -939,12 +939,9 @@ public class UnitEditorDialog extends JDialog {
             CheckCritPanel crit = equipCrits.get(eqNum);
             if (null != crit) {
                 int hits = crit.getHits();
-                if (hits > 0) {
-                    m.setDestroyed(true);
-                    m.setHit(true);
-                    entity.damageSystem(CriticalSlot.TYPE_EQUIPMENT, eqNum,
-                            hits);
-                }
+                m.setDestroyed(hits > 0);
+                m.setHit(hits > 0);
+                entity.damageSystem(CriticalSlot.TYPE_EQUIPMENT, eqNum, hits);
             }
         }
 

@@ -12,6 +12,8 @@ v0.41.0-dev (SVN)
 + Bug [#4405]: rendering loop could be greatly sped up with caching hex images
 + Bug [#4401]: Unit Damage Editor dialog only allows equipment to be damaged
 + Bug: MechTileset quietly creates entries for files that don't exist
++ Data: New Images/RAT Fixes/Other small data fixes
++ Bug [#4407]: Missing King Davids
 
 v0.40.0 (2015-01-01 20:40 UTC)
 + Bug [#4372]: Inferno Bomb/IV fires do not last the proper duration

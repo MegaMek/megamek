@@ -13,19 +13,19 @@ BattleArmor
 </UnitType>
 
 <Name>
-Phalanx Battle Armor
+Sloth Battle Armor
 </Name>
 
 <Model>
-(A)
+(Huntsman)
 </Model>
 
 <year>
-3065
+3130
 </year>
 
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <motion_type>
@@ -33,7 +33,7 @@ Leg
 </motion_type>
 
 <cruiseMP>
-2
+3
 </cruiseMP>
 
 <armor_type>
@@ -45,18 +45,14 @@ Leg
 </armor_tech>
 
 <Squad Equipment>
-ISBASRM4:Body
-BA-SRM4 Ammo:Body:Shots1#
-BA-SRM4 Ammo:Body:Shots1#
-BABattleClaw:LA
-BAArmoredGlove:RA
-Infantry Auto Rifle:APM:RA
+ISMechanicalJumpBooster:Body
 IS BA Stealth (Improved):Body
 IS BA Stealth (Improved):Body
-IS BA Stealth (Improved):RA
-IS BA Stealth (Improved):LA
-IS BA Stealth (Improved):LA
-ISBAKingDavidLightGaussRifle:RA
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):Body
+IS BA Stealth (Improved):Body
+ISBAKingDavidLightGaussRifle:Body
+ISBAKingDavidLightGaussRifle:Body
 </Squad Equipment>
 
 <Trooper 1 Equipment>
@@ -72,11 +68,11 @@ ISBAKingDavidLightGaussRifle:RA
 </Trooper 4 Equipment>
 
 <source>
-TRO 3075
+RS3145 NT NU
 </source>
 
 <chassis>
-biped
+quad
 </chassis>
 
 <jumpingMP>
@@ -84,7 +80,7 @@ biped
 </jumpingMP>
 
 <armor>
-7
+5
 </armor>
 
 <Trooper Count>

@@ -192,7 +192,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     private class OptionInfo implements IOptionInfo {
 
         private String name;
-        private int textFieldLength = 2;
+        private int textFieldLength = 3;
 
         private boolean labelBeforeTextField = false;
 

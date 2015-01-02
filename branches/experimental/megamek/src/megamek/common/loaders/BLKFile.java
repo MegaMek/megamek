@@ -135,7 +135,7 @@ public class BLKFile {
                     facing = 3;
                     equipName = equipName.substring(0, equipName.length() - 4)
                             .trim();
-                }                
+                }
                 EquipmentType etype = EquipmentType.get(equipName);
 
                 if (etype == null) {
@@ -149,7 +149,7 @@ public class BLKFile {
                                 BattleArmor.MOUNT_LOC_NONE, false, false,
                                 isTurreted, isPintleTurreted);
                         // Need to set facing for VGLs
-                        if ((etype instanceof WeaponType) 
+                        if ((etype instanceof WeaponType)
                                 && etype.hasFlag(WeaponType.F_VGL)) {
                             // If no facing specified, assume front
                             if (facing == -1) {
@@ -207,15 +207,15 @@ public class BLKFile {
         if (dataFile.exists("capabilities")) {
             e.getFluff().setCapabilities(dataFile.getDataAsString("capabilities")[0]);
         }
-        
+
         if (dataFile.exists("overview")) {
             e.getFluff().setOverview(dataFile.getDataAsString("overview")[0]);
         }
-        
+
         if (dataFile.exists("deployment")) {
             e.getFluff().setDeployment(dataFile.getDataAsString("deployment")[0]);
         }
-        
+
         if (dataFile.exists("history")) {
             e.getFluff().setHistory(dataFile.getDataAsString("history")[0]);
         }
@@ -430,7 +430,7 @@ public class BLKFile {
                 blk.writeBlockData("cruiseMP", t.getOriginalWalkMP());
             }
         }
-        
+
         int numLocs = t.locations();
         // Aeros have an extra special location called "wings" that we
         //  don't want to consider
@@ -503,7 +503,7 @@ public class BLKFile {
             }
             blk.writeBlockData("armor", armor_array);
         }
-        
+
         // Write out armor_type and armor_tech entries for BA
         if (t instanceof BattleArmor){
             blk.writeBlockData("armor_type", t.getArmorType(1));
@@ -511,7 +511,7 @@ public class BLKFile {
         }
 
         Vector<Vector<String>> eq = new Vector<Vector<String>>(numLocs);
-        
+
         for (int i = 0; i < numLocs; i++) {
             eq.add(new Vector<String>());
         }
@@ -520,13 +520,13 @@ public class BLKFile {
             if (m.isWeaponGroup()){
                 continue;
             }
-            
+
             // Ignore ammo for one-shot launchers
-            if (m.getLinkedBy() != null 
+            if (m.getLinkedBy() != null
                     && m.getLinkedBy().isOneShot()){
                 continue;
             }
-            
+
             String name = m.getType().getInternalName();
             if (m.isSponsonTurretMounted()) {
                 name = name + "(ST)";
@@ -555,9 +555,9 @@ public class BLKFile {
             if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RARM){
                 name += ":RA";
             }
-            // For BattleArmor, we need to save how many shots are in this 
+            // For BattleArmor, we need to save how many shots are in this
             //  location
-            if ((t instanceof BattleArmor) 
+            if ((t instanceof BattleArmor)
                     && (m.getType() instanceof AmmoType)){
                 name += ":Shots" + m.getBaseShotsLeft() + "#";
             }
@@ -579,15 +579,15 @@ public class BLKFile {
         if (t.getFluff().getCapabilities().trim().length() > 0) {
             blk.writeBlockData("capabilities", t.getFluff().getCapabilities());
         }
-        
+
         if (t.getFluff().getOverview().trim().length() > 0) {
             blk.writeBlockData("overview", t.getFluff().getOverview());
         }
-        
+
         if (t.getFluff().getDeployment().trim().length() > 0) {
             blk.writeBlockData("deployment", t.getFluff().getDeployment());
         }
-        
+
         if (t.getFluff().getDeployment().trim().length() > 0) {
             blk.writeBlockData("history", t.getFluff().getHistory());
         }
@@ -630,6 +630,7 @@ public class BLKFile {
                 blk.writeBlockData("Secondary", infantry.getSecondaryWeapon()
                         .getInternalName());
             }
+            blk.writeBlockData("antimek", (new Boolean(infantry.isAntiMek() && !infantry.isMechanized()).toString()));
             if (infantry.getDamageDivisor() != 1) {
                 blk.writeBlockData("armordivisor",
                         Double.toString(infantry.getDamageDivisor()));

@@ -40,16 +40,19 @@ import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
+import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.TimerTask;
 import java.util.Vector;
 
@@ -81,7 +84,6 @@ import megamek.client.ui.swing.TilesetManager;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
-import megamek.client.ui.swing.util.KeyAlphaFilter;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
@@ -98,6 +100,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Flare;
 import megamek.common.Game;
+import megamek.common.Hex;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
@@ -279,6 +282,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     float scale = 1.00f;
     private ImageCache<Integer, Image> scaledImageCache =
             new ImageCache<Integer, Image>();
+    private ImageCache<Integer, BufferedImage> shadowImageCache =
+            new ImageCache<Integer, BufferedImage>();
+    
+    private Set<Integer> animatedImages = new HashSet<Integer>();
 
     // Displayables (Chat box, etc.)
     ArrayList<IDisplayable> displayables = new ArrayList<IDisplayable>();
@@ -345,8 +352,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     FovHighlightingAndDarkening fovHighlightingAndDarkening;
 
     private String FILENAME_FLARE_IMAGE = "flare.png";
+    
+    private String FILENAME_RADAR_BLIP_IMAGE = "radarBlip.png";
 
     private Image flareImage;
+    
+    private Image radarBlipImage;
+
+    /**
+    * Cache that stores hex images for different coords
+    */
+    ImageCache<Coords, HexImageCacheEntry> hexImageCache;
 
     /**
      * Construct a new board view for the specified game
@@ -354,7 +370,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public BoardView1(final IGame game, final MegaMekController controller)
             throws java.io.IOException {
         this.game = game;
-
+        
+        hexImageCache = new ImageCache<Coords, HexImageCacheEntry>();
+        
         tileManager = new TilesetManager(this);
         ToolTipManager.sharedInstance().registerComponent(this);
 
@@ -557,6 +575,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         flareImage = getToolkit().getImage(
                 new File(Configuration.miscImagesDir(), FILENAME_FLARE_IMAGE)
                         .toString());
+        radarBlipImage = getToolkit().getImage(
+                new File(Configuration.miscImagesDir(),
+                        FILENAME_RADAR_BLIP_IMAGE).toString());
     }
 
     private void registerKeyboardCommands(final BoardView1 bv,
@@ -1156,7 +1177,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * for all sprites.
      */
     private final void drawIsometricSprites(Graphics g,
-                                            ArrayList<IsometricSprite> spriteArrayList) {
+            ArrayList<IsometricSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricSprite sprite : spriteArrayList) {
             if (view.intersects(sprite.getBounds()) && !sprite.hidden) {
@@ -1621,66 +1642,39 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int drawWidth = (int) (view.width / (HEX_WC * scale)) + 3;
         int drawHeight = (int) (view.height / (HEX_H * scale)) + 3;
 
-        /*
-        if (!useIsometric()) {
-            // clear, if we need to
-            // The first column has no hexes in it, so drawHex won't update it
-            if (view.x < (HEX_W_4TH * scale)) {
-                boardGraph.fillRect(view.x - drawRect.x, view.y - drawRect.y,
-                        (int) (HEX_W_4TH * scale) - view.x, view.height);
-            }
-            if (view.y < (HEX_H_HALF * scale)) {
-                boardGraph.fillRect(view.x - drawRect.x, view.y - drawRect.y,
-                        view.width, (int) (HEX_H_HALF * scale) - view.y);
-            }
-            if (view.x > (boardSize.width - view.width - (HEX_W_4TH * scale))) {
-                boardGraph.fillRect(Math.min(drawRect.width, boardSize.width)
-                        - (int) (HEX_W_4TH * scale), view.y - drawRect.y,
-                        (int) (HEX_W_4TH * scale), view.height);
-            }
-            if (view.y > (boardSize.height - view.height - (HEX_H_HALF * scale))) {
-                boardGraph.fillRect(view.x - drawRect.x,
-                        Math.min(drawRect.height, boardSize.height)
-                                - (int) (HEX_H_HALF * scale), view.width,
-                        (int) (HEX_H_HALF * scale));
-            }
-        }
-        */
         // draw some hexes.
         if (useIsometric()) {
-            //g.clearRect(view.x, view.y, view.width, view.height);
             // When using isometric rendering, hexes within a given row
             // must be drawn from lowest to highest elevation.
             IBoard board = game.getBoard();
             final int minElev = board.getMinElevation();
+            final int maxElev = board.getMaxElevation();
             for (int i = 0; i < drawHeight; i++) {
-                for (int x = minElev; x <= game.getBoard().getMaxElevation(); x++) {
+                for (int x = minElev; x <= maxElev; x++) {
                     for (int j = 0; j < drawWidth; j++) {
                         Coords c = new Coords(j + drawX, i + drawY);
-                        IHex hex = game.getBoard().getHex(c);
+                        IHex hex = board.getHex(c);
                         if ((hex != null) && (hex.getLevel() == x)) {
                             drawHex(c, g, saveBoardImage);
-                            drawHexSpritesForHex(c, g,
-                                                 moveEnvSprites);
-                            drawHexSpritesForHex(c, g,
-                                                 moveModEnvSprites);
+                            drawHexSpritesForHex(c, g, moveEnvSprites);
+                            drawHexSpritesForHex(c, g, moveModEnvSprites);
                             if ((en_Deployer != null)
-                                && board.isLegalDeployment(c,
-                                                           en_Deployer.getStartingPos())) {
+                                    && board.isLegalDeployment(c,
+                                            en_Deployer.getStartingPos())) {
                                 drawHexBorder(getHexLocation(c), g,
-                                              Color.yellow);
+                                        Color.yellow);
                             }
                         }
                     }
                 }
                 for (int k = 0; k < drawWidth; k++) {
                     Coords c = new Coords(k + drawX, i + drawY);
-                    IHex hex = game.getBoard().getHex(c);
+                    IHex hex = board.getHex(c);
                     if (hex != null) {
                         drawOrthograph(c, g);
                         if (!saveBoardImage) {
                             drawIsometricWreckSpritesForHex(c, g,
-                                                            isometricWreckSprites);
+                                    isometricWreckSprites);
                             drawIsometricSpritesForHex(c, g, isometricSprites);
                         }
                     }
@@ -1716,9 +1710,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         final IHex hex = game.getBoard().getHex(c);
         final Point hexLoc = getHexLocation(c);
-
+        
+        int drawX = hexLoc.x;
+        int drawY = hexLoc.y;
+        
+        // Check the cache to see if we already have the image
+        HexImageCacheEntry cacheEntry = hexImageCache.get(c);
+        if (cacheEntry != null && !cacheEntry.needsUpdating) {
+            boardGraph.drawImage(cacheEntry.hexImage, drawX, drawY, this);
+            return;
+        }
+        
+        // Some hex images shouldn't be cached, like if they are animated
+        boolean dontCache = false;
         int level = hex.getLevel();
-
         int depth = hex.depth(false);
 
         ITerrain basement = hex.getTerrain(Terrains.BLDG_BASEMENT_TYPE);
@@ -1730,40 +1735,66 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                               hex.terrainLevel(Terrains.BRIDGE_ELEV));
         height = Math.max(height, hex.terrainLevel(Terrains.INDUSTRIAL));
 
-        // offset drawing point
-        int drawX = hexLoc.x;
-        int drawY = hexLoc.y;
-        //if (!useIsometric()) {
-        //    drawX -= drawRect.x;
-        //    drawY -= drawRect.y;
-        //}
         // draw picture
         Image baseImage = tileManager.baseFor(hex);
         Image scaledImage = getScaledImage(baseImage, true);
+        
+        if (animatedImages.contains(baseImage.hashCode())) {
+            dontCache = true;
+        }
+        
+        int imgHeight, imgWidth;
+        imgWidth = scaledImage.getWidth(null);
+        imgHeight = scaledImage.getHeight(null);
+        if (useIsometric()) {
+            int largestLevelDiff = 0;
+            for (int dir = 0; dir < 6; dir++) {
+                IHex adjHex = game.getBoard().getHexInDir(c, dir);
+                if (adjHex == null) {
+                    continue;
+                }
+                int levelDiff = Math.abs(level - adjHex.getLevel());
+                if (levelDiff > largestLevelDiff) {
+                    largestLevelDiff = levelDiff;
+                }                
+            }
+            imgHeight += HEX_ELEV * scale * Math.abs(largestLevelDiff);
+        }
+        Image hexImage = new BufferedImage(imgWidth, imgHeight,
+                BufferedImage.TYPE_INT_ARGB);
+        
+        Graphics g = hexImage.getGraphics();        
+        drawX = 0;
+        drawY = 0;
 
-        boardGraph.drawImage(scaledImage, drawX, drawY, this);
+        g.drawImage(scaledImage, drawX, drawY, this);
 
-        if (tileManager.supersFor(hex) != null) {
-            for (Image image : tileManager.supersFor(hex)) {
+        List<Image> supers = tileManager.supersFor(hex);
+        if (supers != null) {
+            for (Image image : supers) {
+                if (animatedImages.contains(image.hashCode())) {
+                    dontCache = true;
+                }
                 scaledImage = getScaledImage(image, true);
-                boardGraph.drawImage(scaledImage, drawX, drawY, this);
+                g.drawImage(scaledImage, drawX, drawY, this);
             }
         }
 
-        if (tileManager.orthoFor(hex) != null) {
-            for (Image image : tileManager.orthoFor(hex)) {
+        List<Image> orthos = tileManager.orthoFor(hex); 
+        if (orthos != null) {
+            for (Image image : orthos) {
+                if (animatedImages.contains(image.hashCode())) {
+                    dontCache = true;
+                }
                 scaledImage = getScaledImage(image, true);
                 if (!useIsometric()) {
-                    boardGraph.drawImage(scaledImage, drawX, drawY, this);
+                    g.drawImage(scaledImage, drawX, drawY, this);
                 }
                 // draw a shadow for bridge hex.
                 if (useIsometric()
                     && (hex.terrainLevel(Terrains.BRIDGE_ELEV) > 0)) {
                     Image shadow = createShadowMask(scaledImage);
-
-                    shadow = createImage(new FilteredImageSource(
-                            shadow.getSource(), new KeyAlphaFilter(TRANSPARENT)));
-                    boardGraph.drawImage(shadow, hexLoc.x, hexLoc.y, this);
+                    g.drawImage(shadow, drawX, drawY, this);
                 }
             }
         }
@@ -1771,51 +1802,51 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (ecmHexes != null) {
             Integer tint = ecmHexes.get(c);
             if (tint != null) {
-                scaledImage = getScaledImage(tileManager.getEcmShade(tint
-                                                                             .intValue()), true);
-                boardGraph.drawImage(scaledImage, drawX, drawY, this);
+                scaledImage = getScaledImage(
+                        tileManager.getEcmShade(tint.intValue()), true);
+                g.drawImage(scaledImage, drawX, drawY, this);
             }
         }
 
         if (GUIPreferences.getInstance().getBoolean(
                 GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
-            && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)
-            && game.isPositionIlluminated(c) == Game.ILLUMINATED_NONE) {
+                && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)
+                && game.isPositionIlluminated(c) == Game.ILLUMINATED_NONE) {
             scaledImage = getScaledImage(tileManager.getNightFog(), true);
-            boardGraph.drawImage(scaledImage, drawX, drawY, this);
+            g.drawImage(scaledImage, drawX, drawY, this);
         }
-        boardGraph.setColor(GUIPreferences.getInstance().getMapTextColor());
+        g.setColor(GUIPreferences.getInstance().getMapTextColor());
         if (game.getBoard().inSpace()) {
-            boardGraph.setColor(Color.LIGHT_GRAY);
+            g.setColor(Color.LIGHT_GRAY);
         }
 
         // draw special stuff for the hex
         final Collection<SpecialHexDisplay> shdList = game.getBoard()
-                                                          .getSpecialHexDisplay(c);
+                .getSpecialHexDisplay(c);
         try {
             if (shdList != null) {
                 for (SpecialHexDisplay shd : shdList) {
                     if (shd.drawNow(game.getPhase(), game.getRoundCount(),
-                                    localPlayer)) {
+                            localPlayer)) {
                         scaledImage = getScaledImage(shd.getType()
-                                                        .getDefaultImage(), true);
-                        boardGraph.drawImage(scaledImage, drawX, drawY, this);
+                                .getDefaultImage(), true);
+                        g.drawImage(scaledImage, drawX, drawY, this);
                     }
                 }
             }
         } catch (IllegalArgumentException e) {
-            System.err.println("Illegal argument exception, probably " +
-                               "can't load file.");
+            System.err.println("Illegal argument exception, probably "
+                    + "can't load file.");
             e.printStackTrace();
             drawCenteredString("Loading Error", drawX, drawY
-                                                       + (int) (50 * scale), font_note, boardGraph);
+                    + (int) (50 * scale), font_note, g);
             return;
         }
 
         // draw hex number
         if (scale >= 0.5) {
             drawCenteredString(c.getBoardNum(), drawX, drawY
-                                                       + (int) (12 * scale), font_hexnum, boardGraph);
+                    + (int) (12 * scale), font_hexnum, g);
         }
 
         // draw terrain level / water depth / building height
@@ -1824,39 +1855,38 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (level != 0) {
                 drawCenteredString(
                         Messages.getString("BoardView1.LEVEL") + level, //$NON-NLS-1$
-                        drawX, drawY + (int) (ypos * scale), font_elev,
-                        boardGraph);
+                        drawX, drawY + (int) (ypos * scale), font_elev, g);
                 ypos -= 10;
             }
             if (depth != 0) {
                 drawCenteredString(
                         Messages.getString("BoardView1.DEPTH") + depth, //$NON-NLS-1$
-                        drawX, drawY + (int) (ypos * scale), font_elev,
-                        boardGraph);
+                        drawX, drawY + (int) (ypos * scale), font_elev, g);
                 ypos -= 10;
             }
             if (height > 0) {
-                boardGraph.setColor(GUIPreferences.getInstance().getColor(
+                g.setColor(GUIPreferences.getInstance().getColor(
                         "AdvancedBuildingTextColor"));
                 drawCenteredString(
                         Messages.getString("BoardView1.HEIGHT") + height, //$NON-NLS-1$
-                        drawX, drawY + (int) (ypos * scale), font_elev,
-                        boardGraph);
+                        drawX, drawY + (int) (ypos * scale), font_elev, g);
                 ypos -= 10;
             }
         }
 
         // draw elevation borders
-        boardGraph.setColor(Color.black);
+        Point p1, p2;
+        g.setColor(Color.black);
         if (drawElevationLine(c, 0)) {
             final int x1 = drawX + (int) (21 * scale);
             final int x2 = drawX + (int) (62 * scale);
             final int y1 = drawY;
             final int y2 = drawY;
 
-            drawIsometricElevation(c, Color.GRAY, new Point(x2, y2), new Point(
-                    x1, y1), 0, boardGraph);
-            boardGraph.drawLine(x1, y1, x2, y2);
+            p1 = new Point(x2, y2);
+            p2 = new Point(x1, y1);
+            drawIsometricElevation(c, Color.GRAY, p1, p2, 0, g);
+            g.drawLine(x1, y1, x2, y2);
         }
         if (drawElevationLine(c, 1)) {
             final int x1 = drawX + (int) (62 * scale);
@@ -1864,9 +1894,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             final int y1 = drawY;
             final int y2 = drawY + (int) (35 * scale);
 
-            drawIsometricElevation(c, Color.DARK_GRAY, new Point(x2, y2),
-                                   new Point(x1, y1), 1, boardGraph);
-            boardGraph.drawLine(x1, y1, x2, y2);
+            p1 = new Point(x2, y2);
+            p2 = new Point(x1, y1);
+            drawIsometricElevation(c, Color.DARK_GRAY, p1, p2, 1, g);
+            g.drawLine(x1, y1, x2, y2);
         }
         if (drawElevationLine(c, 2)) {
             final int x1 = drawX + (int) (83 * scale);
@@ -1874,9 +1905,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             final int y1 = drawY + (int) (36 * scale);
             final int y2 = drawY + (int) (71 * scale);
 
-            drawIsometricElevation(c, Color.LIGHT_GRAY, new Point(x1, y1),
-                                   new Point(x2, y2), 2, boardGraph);
-            boardGraph.drawLine(x1, y1, x2, y2);
+            p1 = new Point(x1, y1);
+            p2 = new Point(x2, y2);
+            drawIsometricElevation(c, Color.LIGHT_GRAY, p1, p2, 2, g);
+            g.drawLine(x1, y1, x2, y2);
         }
         if (drawElevationLine(c, 3)) {
             final int x1 = drawX + (int) (62 * scale);
@@ -1884,9 +1916,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             final int y1 = drawY + (int) (71 * scale);
             final int y2 = drawY + (int) (71 * scale);
 
-            drawIsometricElevation(c, Color.GRAY, new Point(x2, y2), new Point(
-                    x1, y1), 3, boardGraph);
-            boardGraph.drawLine(x1, y1, x2, y2);
+            p1 = new Point(x2, y2);
+            p2 = new Point(x1, y1);
+            drawIsometricElevation(c, Color.GRAY, p1, p2, 3, g);
+            g.drawLine(x1, y1, x2, y2);
         }
         if (drawElevationLine(c, 4)) {
             final int x1 = drawX + (int) (21 * scale);
@@ -1894,9 +1927,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             final int y1 = drawY + (int) (71 * scale);
             final int y2 = drawY + (int) (36 * scale);
 
-            drawIsometricElevation(c, Color.DARK_GRAY, new Point(x2, y2),
-                                   new Point(x1, y1), 4, boardGraph);
-            boardGraph.drawLine(x1, y1, x2, y2);
+            p1 = new Point(x2, y2);
+            p2 = new Point(x1, y1);
+            drawIsometricElevation(c, Color.DARK_GRAY, p1, p2, 4, g);
+            g.drawLine(x1, y1, x2, y2);
         }
         if (drawElevationLine(c, 5)) {
             final int x1 = drawX;
@@ -1904,61 +1938,64 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             final int y1 = drawY + (int) (35 * scale);
             final int y2 = drawY;
 
-            drawIsometricElevation(c, Color.LIGHT_GRAY, new Point(x1, y1),
-                                   new Point(x2, y2), 5, boardGraph);
-            boardGraph.drawLine(x1, y1, x2, y2);
+            p1 = new Point(x1, y1);
+            p2 = new Point(x2, y2);
+            drawIsometricElevation(c, Color.LIGHT_GRAY, p1, p2, 5, g);
+            g.drawLine(x1, y1, x2, y2);
         }
 
-        fovHighlightingAndDarkening.draw(boardGraph, c, drawX, drawY,
-                                         saveBoardImage);
+        fovHighlightingAndDarkening.draw(g, c, drawX, drawY, saveBoardImage);
 
         // draw mapsheet borders
         if (GUIPreferences.getInstance().getShowMapsheets()) {
-            boardGraph.setColor(GUIPreferences.getInstance().getColor(
+            g.setColor(GUIPreferences.getInstance().getColor(
                     GUIPreferences.ADVANCED_MAPSHEET_COLOR));
             if ((c.getX() % 16) == 0) {
                 // left edge of sheet (edge 4 & 5)
-                boardGraph
-                        .drawLine(drawX + (int) (21 * scale), drawY
-                                                              + (int) (71 * scale), drawX, drawY
-                                                                                           + (int) (36 * scale));
-                boardGraph.drawLine(drawX, drawY + (int) (35 * scale), drawX
-                                                                       + (int) (21 * scale), drawY);
+                g.drawLine(drawX + (int) (21 * scale), drawY
+                        + (int) (71 * scale), drawX, drawY + (int) (36 * scale));
+                g.drawLine(drawX, drawY + (int) (35 * scale), drawX
+                        + (int) (21 * scale), drawY);
             } else if ((c.getX() % 16) == 15) {
                 // right edge of sheet (edge 1 & 2)
-                boardGraph.drawLine(drawX + (int) (62 * scale), drawY, drawX
-                                                                       + (int) (83 * scale), drawY + (int) (35 * scale));
-                boardGraph.drawLine(drawX + (int) (83 * scale), drawY
-                                                                + (int) (36 * scale), drawX + (int) (62 * scale), drawY
-                                                                                                                  + (int) (71 * scale));
+                g.drawLine(drawX + (int) (62 * scale), drawY, drawX
+                        + (int) (83 * scale), drawY + (int) (35 * scale));
+                g.drawLine(drawX + (int) (83 * scale), drawY
+                        + (int) (36 * scale), drawX + (int) (62 * scale), drawY
+                        + (int) (71 * scale));
             }
             if ((c.getY() % 17) == 0) {
                 // top edge of sheet (edge 0 and possible 1 & 5)
-                boardGraph.drawLine(drawX + (int) (21 * scale), drawY, drawX
-                                                                       + (int) (62 * scale), drawY);
+                g.drawLine(drawX + (int) (21 * scale), drawY, drawX
+                        + (int) (62 * scale), drawY);
                 if ((c.getX() % 2) == 0) {
-                    boardGraph.drawLine(drawX + (int) (62 * scale), drawY,
-                                        drawX + (int) (83 * scale), drawY
-                                                                    + (int) (35 * scale));
-                    boardGraph.drawLine(drawX, drawY + (int) (35 * scale),
-                                        drawX + (int) (21 * scale), drawY);
+                    g.drawLine(drawX + (int) (62 * scale), drawY, drawX
+                            + (int) (83 * scale), drawY + (int) (35 * scale));
+                    g.drawLine(drawX, drawY + (int) (35 * scale), drawX
+                            + (int) (21 * scale), drawY);
                 }
             } else if ((c.getY() % 17) == 16) {
                 // bottom edge of sheet (edge 3 and possible 2 & 4)
-                boardGraph.drawLine(drawX + (int) (62 * scale), drawY
-                                                                + (int) (71 * scale), drawX + (int) (21 * scale), drawY
-                                                                                                                  + (int) (71 * scale));
+                g.drawLine(drawX + (int) (62 * scale), drawY
+                        + (int) (71 * scale), drawX + (int) (21 * scale), drawY
+                        + (int) (71 * scale));
                 if ((c.getX() % 2) == 1) {
-                    boardGraph.drawLine(drawX + (int) (83 * scale), drawY
-                                                                    + (int) (36 * scale), drawX + (int) (62 * scale),
-                                        drawY + (int) (71 * scale));
-                    boardGraph.drawLine(drawX + (int) (21 * scale), drawY
-                                                                    + (int) (71 * scale), drawX, drawY
-                                                                                                 + (int) (36 * scale));
+                    g.drawLine(drawX + (int) (83 * scale), drawY
+                            + (int) (36 * scale), drawX + (int) (62 * scale),
+                            drawY + (int) (71 * scale));
+                    g.drawLine(drawX + (int) (21 * scale), drawY
+                            + (int) (71 * scale), drawX, drawY
+                            + (int) (36 * scale));
                 }
             }
-            boardGraph.setColor(Color.black);
+            g.setColor(Color.black);
         }
+        
+        cacheEntry = new HexImageCacheEntry(hexImage);
+        if (!dontCache) {
+            hexImageCache.put(c, cacheEntry);
+        }
+        boardGraph.drawImage(cacheEntry.hexImage, hexLoc.x, hexLoc.y, this);
     }
 
     /**
@@ -2022,10 +2059,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * @param p1         The First point on the edge of the hex.
      * @param p2         The second point on the edge of the hex.
      * @param dir        The side of the hex to have the elevation drawn on.
-     * @param boardGraph
+     * @param g
      */
     private final void drawIsometricElevation(Coords c, Color color, Point p1,
-                                              Point p2, int dir, Graphics boardGraph) {
+            Point p2, int dir, Graphics g) {
         final IHex dest = game.getBoard().getHexInDir(c, dir);
         final IHex src = game.getBoard().getHex(c);
 
@@ -2033,8 +2070,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             return;
         }
 
-        // Pad the polygon size slightly to avoid rounding errors from the scale
-        // float.
+        // Pad polygon size slightly to avoid rounding errors from scale float.
         int fudge = -1;
         if ((dir == 2) || (dir == 4) || (dir == 3)) {
             fudge = 1;
@@ -2052,19 +2088,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 && (elev > southHex.getLevel())) {
                 height = elev - southHex.getLevel();
             }
+            int scaledHeight = (int) (HEX_ELEV * scale * height);
 
-            Polygon p = new Polygon(new int[]{p1.x, p2.x, p2.x, p1.x},
-                                    new int[]{p1.y + fudge, p2.y + fudge,
-                                              p2.y + (int) (HEX_ELEV * scale * height),
-                                              p1.y + (int) (HEX_ELEV * scale * height)}, 4);
-            boardGraph.setColor(color);
-            boardGraph.drawPolygon(p);
-            boardGraph.fillPolygon(p);
+            Polygon p = new Polygon(new int[] { p1.x, p2.x, p2.x, p1.x },
+                    new int[] { p1.y + fudge, p2.y + fudge,
+                            p2.y + scaledHeight, p1.y + scaledHeight }, 4);
+            g.setColor(color);
+            g.drawPolygon(p);
+            g.fillPolygon(p);
 
-            boardGraph.setColor(Color.BLACK);
+            g.setColor(Color.BLACK);
             if ((dir == 2) || (dir == 4)) {
-                boardGraph.drawLine(p1.x, p1.y, p1.x, p1.y
-                                                      + (int) (HEX_ELEV * scale * height));
+                g.drawLine(p1.x, p1.y, p1.x, p1.y + scaledHeight);
             }
             return;
         } else if (dest == null) {
@@ -2082,31 +2117,45 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         if (dir == 1) {
             // Draw a little bit of shadow to improve the 3d isometric effect.
-            Polygon shadow1 = new Polygon(new int[]{p1.x, p2.x,
-                                                    p2.x - (int) (HEX_ELEV * scale)}, new int[]{p1.y, p2.y,
-                                                                                                p2.y}, 3);
-            boardGraph.setColor(new Color(0, 0, 0, 0.4f));
-            boardGraph.fillPolygon(shadow1);
+            Polygon shadow1 = new Polygon(new int[] { p1.x, p2.x,
+                    p2.x - (int) (HEX_ELEV * scale) }, new int[] { p1.y, p2.y,
+                    p2.y }, 3);
+            if ((p2.x - (int) (HEX_ELEV * scale)) < 0) {
+                System.out.println("Negative X value!: " + (p2.x - (int) (HEX_ELEV * scale)));
+            }
+            g.setColor(new Color(0, 0, 0, 0.4f));
+            g.fillPolygon(shadow1);
         }
 
         if ((dir == 2) || (dir == 3) || (dir == 4)) {
+            int scaledDelta = (int) (HEX_ELEV * scale * delta);
+            Point p3 = new Point(p1.x, p1.y + scaledDelta + fudge);
 
-            Point p3 = new Point(p1.x, p1.y + (int) (HEX_ELEV * scale * delta)
-                                       + fudge);
+            Polygon p = new Polygon(new int[] { p1.x, p2.x, p2.x, p1.x },
+                    new int[] { p1.y + fudge, p2.y + fudge,
+                            p2.y + fudge + scaledDelta,
+                            p1.y + fudge + scaledDelta }, 4);
 
-            Polygon p = new Polygon(new int[]{p1.x, p2.x, p2.x, p1.x},
-                                    new int[]{p1.y + fudge, p2.y + fudge,
-                                              p2.y + fudge + (int) (HEX_ELEV * scale * delta),
-                                              p1.y + fudge + (int) (HEX_ELEV * scale * delta)},
-                                    4);
+            if ((p1.y + fudge) < 0) {
+                System.out.println("Negative Y value (Fudge)!: " + (p1.y + fudge));
+            }
+            if ((p2.y + fudge) < 0) {
+                System.out.println("Negative Y value (Fudge)!: " + (p2.y + fudge));
+            }
+            
+            if ((p2.y + fudge + scaledDelta) < 0) {
+                System.out.println("Negative Y value!: " + (p2.y + fudge + scaledDelta));
+            }
+            if (( p1.y + fudge + scaledDelta) < 0) {
+                System.out.println("Negative Y value!: " + ( p1.y + fudge + scaledDelta));
+            }
+            g.setColor(color);
+            g.drawPolygon(p);
+            g.fillPolygon(p);
 
-            boardGraph.setColor(color);
-            boardGraph.drawPolygon(p);
-            boardGraph.fillPolygon(p);
-
-            boardGraph.setColor(Color.BLACK);
+            g.setColor(Color.BLACK);
             if ((dir == 1) || (dir == 2) || (dir == 5) || (dir == 4)) {
-                boardGraph.drawLine(p1.x, p1.y, p3.x, p3.y);
+                g.drawLine(p1.x, p1.y, p3.x, p3.y);
             }
         }
     }
@@ -2371,7 +2420,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (position != null) {
             // If no secondary positions, add a sprite for the central position
             if (entity.getSecondaryPositions().isEmpty()) {
-                sprite = new EntitySprite(this, entity, -1);
+                sprite = new EntitySprite(this, entity, -1, radarBlipImage);
                 newSprites.add(sprite);
                 temp = new ArrayList<Integer>();
                 temp.add(entityId);
@@ -2380,7 +2429,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             } else { // Add all secondary position sprites, which includes a
                 // sprite for the central hex
                 for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
-                    sprite = new EntitySprite(this, entity, secondaryPos);
+                    sprite = new EntitySprite(this, entity, secondaryPos, radarBlipImage);
                     newSprites.add(sprite);
                     temp = new ArrayList<Integer>();
                     temp.add(entityId);
@@ -2391,7 +2440,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
             // If no secondary positions, add a sprite for the central position
             if (entity.getSecondaryPositions().isEmpty()) {
-                isoSprite = new IsometricSprite(this, entity, -1);
+                isoSprite = new IsometricSprite(this, entity, -1, radarBlipImage);
                 isoSprites.add(isoSprite);
                 temp = new ArrayList<Integer>();
                 temp.add(entityId);
@@ -2400,7 +2449,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             } else { // Add all secondary position sprites, which includes a
                 // sprite for the central hex
                 for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
-                    isoSprite = new IsometricSprite(this, entity, secondaryPos);
+                    isoSprite = new IsometricSprite(this, entity, secondaryPos, radarBlipImage);
                     isoSprites.add(isoSprite);
                     temp = new ArrayList<Integer>();
                     temp.add(entityId);
@@ -2493,13 +2542,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 continue;
             }
             if (entity.getSecondaryPositions().isEmpty()) {
-                EntitySprite sprite = new EntitySprite(this, entity, -1);
+                EntitySprite sprite = new EntitySprite(this, entity, -1,
+                        radarBlipImage);
                 newSprites.add(sprite);
                 ArrayList<Integer> temp = new ArrayList<Integer>();
                 temp.add(entity.getId());
                 temp.add(-1);
                 newSpriteIds.put(temp, sprite);
-                IsometricSprite isosprite = new IsometricSprite(this, entity, -1);
+                IsometricSprite isosprite = new IsometricSprite(this, entity,
+                        -1, radarBlipImage);
                 newIsometricSprites.add(isosprite);
                 temp = new ArrayList<Integer>();
                 temp.add(entity.getId());
@@ -2507,15 +2558,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 newIsoSpriteIds.put(temp, isosprite);
             } else {
                 for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
-                    EntitySprite sprite = new EntitySprite(this, entity, secondaryPos);
+                    EntitySprite sprite = new EntitySprite(this, entity,
+                            secondaryPos, radarBlipImage);
                     newSprites.add(sprite);
                     ArrayList<Integer> temp = new ArrayList<Integer>();
                     temp.add(entity.getId());
                     temp.add(secondaryPos);
                     newSpriteIds.put(temp, sprite);
 
-                    IsometricSprite isosprite = new IsometricSprite(this, entity,
-                                                                    secondaryPos);
+                    IsometricSprite isosprite = new IsometricSprite(this,
+                            entity, secondaryPos, radarBlipImage);
                     newIsometricSprites.add(isosprite);
                     temp = new ArrayList<Integer>();
                     temp.add(entity.getId());
@@ -2679,6 +2731,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     public void clearMovementData() {
         pathSprites = new ArrayList<StepSprite>();
+        checkFoVHexImageCacheClear();
         repaint();
         refreshMoveVectors();
     }
@@ -3418,7 +3471,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void setSelected(Coords selected) {
         if (this.selected != selected) {
             this.selected = selected;
-
+            checkFoVHexImageCacheClear();
             // force a repaint of the board
             updateBoard();
         }
@@ -3602,6 +3655,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     public void boardNewBoard(BoardEvent b) {
         updateBoard();
+        clearHexImageCache();
     }
 
     /*
@@ -3611,6 +3665,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * megamek.common.BoardListener#boardChangedHex(megamek.common.BoardEvent)
      */
     public synchronized void boardChangedHex(BoardEvent b) {
+        hexImageCache.remove(b.getCoords());
         IHex hex = game.getBoard().getHex(b.getCoords());
         tileManager.clearHex(hex);
         tileManager.waitForHex(hex);
@@ -3624,6 +3679,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * megamek.common.BoardListener#boardChangedHex(megamek.common.BoardEvent)
      */
     public synchronized void boardChangedAllHexes(BoardEvent b) {
+        clearHexImageCache();
         tileManager.loadAllHexes();
         repaint();
     }
@@ -3685,11 +3741,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (b != null) {
                 b.addBoardListener(BoardView1.this);
             }
+            clearHexImageCache();
             updateBoard();
         }
 
         @Override
         public void gameBoardChanged(GameBoardChangeEvent e) {
+            clearHexImageCache();
             boardChanged();
         }
 
@@ -3713,6 +3771,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 case PHASE_VICTORY:
                     clearSprites();
                 case PHASE_LOUNGE:
+                    clearHexImageCache();
                     clearAllMoveVectors();
                     clearAllAttacks();
                     clearSprites();
@@ -3776,6 +3835,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     public synchronized void selectEntity(Entity e) {
         selectedEntity = e;
+        checkFoVHexImageCacheClear();
         // If we don't do this, the selectedWeapon might not correspond to this
         // entity
         selectedWeapon = null;
@@ -4397,7 +4457,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             sprite.refreshZoomLevel();
         }
         this.setSize(boardSize);
-
+        clearHexImageCache();
         repaint();
     }
 
@@ -4493,14 +4553,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     public boolean toggleIsometric() {
         drawIsometric = !drawIsometric;
+        clearHexImageCache();
         updateBoard();
         repaint();
         return drawIsometric;
     }
 
     BufferedImage createShadowMask(Image image) {
-        BufferedImage mask = new BufferedImage(image.getWidth(null),
-                                               image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        int hashCode = image.hashCode();
+        BufferedImage mask = shadowImageCache.get(hashCode);
+        if (mask != null) {
+            return mask;
+        }
+        mask = new BufferedImage(image.getWidth(null),
+                image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
         float opacity = 0.4f;
         Graphics2D g2d = mask.createGraphics();
         g2d.drawImage(image, 0, 0, null);
@@ -4509,6 +4575,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         g2d.setColor(Color.BLACK);
         g2d.fillRect(0, 0, image.getWidth(null), image.getHeight(null));
         g2d.dispose();
+        shadowImageCache.put(hashCode, mask);
         return mask;
     }
 
@@ -4536,5 +4603,33 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     public void setShouldIgnoreKeys(boolean shouldIgnoreKeys) {
         this.shouldIgnoreKeys = shouldIgnoreKeys;
+    }
+    
+    public boolean imageUpdate(Image img, int flags, int x, int y, int w, int h) {
+        // If FRAMEBITS is set, then new frame from a multi-frame image is ready
+        // This indicates an animated image, which shouldn't be cached
+        if ((flags & ImageObserver.FRAMEBITS) != 0) {
+            animatedImages.add(img.hashCode());
+        }
+        return super.imageUpdate(img, flags, x, y, w, h);
+    }
+    
+    public void clearHexImageCache() {
+        hexImageCache.clear();
+    }
+    
+    /**
+     * Check to see if the HexImageCache should be cleared because of
+     * field-of-view changes. 
+     */
+    public void checkFoVHexImageCacheClear() {
+        boolean darken = GUIPreferences.getInstance().getBoolean(
+                GUIPreferences.FOV_DARKEN);
+        boolean highlight = GUIPreferences.getInstance().getBoolean(
+                GUIPreferences.FOV_HIGHLIGHT);
+        if (game.getPhase() == Phase.PHASE_MOVEMENT
+                && (darken || highlight)) {
+            clearHexImageCache();
+        }
     }
 }

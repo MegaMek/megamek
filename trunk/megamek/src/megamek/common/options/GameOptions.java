@@ -128,6 +128,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, "assault_drop", false); //$NON-NLS-1$
         addOption(advancedRules, "paratroopers", false); //$NON-NLS-1$
         addOption(advancedRules, "inclusive_sensor_range", false); //$NON-NLS-1$
+        addOption(advancedRules, "sensors_detect_all", false); //$NON-NLS-1$
         addOption(advancedRules, "magscan_nohills", false); //$NON-NLS-1$
         addOption(advancedRules, "woods_burn_down", false); //$NON-NLS-1$
         addOption(advancedRules, "woods_burn_down_amount", 5); //$NON-NLS-1$

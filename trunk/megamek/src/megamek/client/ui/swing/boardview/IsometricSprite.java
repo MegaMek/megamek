@@ -16,6 +16,8 @@ import megamek.client.ui.swing.util.KeyAlphaFilter;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
+import megamek.common.IPlayer;
+import megamek.common.options.IOptions;
 
 /**
  * Sprite used for isometric rendering to render an entity partially hidden
@@ -25,12 +27,14 @@ import megamek.common.GunEmplacement;
 class IsometricSprite extends Sprite {
 
     Entity entity;
+    private Image radarBlipImage;
     private Rectangle modelRect;
     private int secondaryPos;
 
-    public IsometricSprite(BoardView1 boardView1, Entity entity, int secondaryPos) {
+    public IsometricSprite(BoardView1 boardView1, Entity entity, int secondaryPos, Image radarBlipImage) {
         super(boardView1);
         this.entity = entity;
+        this.radarBlipImage = radarBlipImage;
         this.secondaryPos = secondaryPos;
         String shortName = entity.getShortName();
         Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
@@ -77,74 +81,76 @@ class IsometricSprite extends Sprite {
     @Override
     public void drawOnto(Graphics g, int x, int y, ImageObserver observer,
             boolean makeTranslucent) {
-        if (isReady()) {
-            Point p;
-            if (secondaryPos == -1) {
-                p = bv.getHexLocation(entity.getPosition());
-            } else {
-                p = bv.getHexLocation(entity.getSecondaryPositions().get(
-                        secondaryPos));
-            }
-            Graphics2D g2 = (Graphics2D) g;
-            if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
-                Image shadow = bv.createShadowMask(bv.tileManager.imageFor(
-                        entity, entity.getFacing(), secondaryPos));
-
-                shadow = bv.getScaledImage(bv
-                        .createImage(new FilteredImageSource(
-                                shadow.getSource(), new KeyAlphaFilter(
-                                        BoardView1.TRANSPARENT))), false);
-                // Draw airborne units in 2 passes. Shadow is rendered
-                // during the opaque pass, and the
-                // Actual unit is rendered during the transparent pass.
-                // However the unit is always drawn
-                // opaque.
-                if (makeTranslucent) {
-                    g.drawImage(image, p.x, p.y
-                            - (int) (bv.DROPSHDW_DIST * bv.scale), this);
-                } else {
-                    g.drawImage(shadow, p.x, p.y, this);
-                }
-
-            } else if ((entity.getElevation() != 0)
-                    && !(entity instanceof GunEmplacement)) {
-                Image shadow = bv.createShadowMask(bv.tileManager.imageFor(
-                        entity, entity.getFacing(), secondaryPos));
-
-                
-                shadow = bv.getScaledImage(bv
-                        .createImage(new FilteredImageSource(
-                                shadow.getSource(), new KeyAlphaFilter(
-                                        BoardView1.TRANSPARENT))), false);
-                
-                // Entities on a bridge hex or submerged in water.
-                int altAdjust = (int) (entity.getElevation() * BoardView1.HEX_ELEV * bv.scale);
-
-                if (makeTranslucent) {
-                    if (entity.relHeight() < 0) {
-                        g2.setComposite(AlphaComposite.getInstance(
-                                AlphaComposite.SRC_OVER, 0.35f));
-                        g2.drawImage(image, p.x, p.y - altAdjust, observer);
-                        g2.setComposite(AlphaComposite.getInstance(
-                                AlphaComposite.SRC_OVER, 1.0f));
-                    } else {
-                        g.drawImage(image, p.x, p.y - altAdjust, this);
-                    }
-                } else {
-                    g.drawImage(shadow, p.x, p.y, this);
-                }
-
-            } else if (makeTranslucent) {
+        
+        if (!isReady()) {
+            prepare();
+            return;
+        }
+        Point p;
+        if (secondaryPos == -1) {
+            p = bv.getHexLocation(entity.getPosition());
+        } else {
+            p = bv.getHexLocation(entity.getSecondaryPositions().get(
+                    secondaryPos));
+        }
+        Graphics2D g2 = (Graphics2D) g;
+        
+        if (onlyDetectedBySensors()) {
+            Image blipImage = bv.getScaledImage(radarBlipImage, true);
+            if (makeTranslucent) {
                 g2.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_OVER, 0.35f));
-                g2.drawImage(image, x, y, observer);
+                        AlphaComposite.SRC_OVER, 0.65f));
+                g2.drawImage(blipImage, x, y, observer);
                 g2.setComposite(AlphaComposite.getInstance(
                         AlphaComposite.SRC_OVER, 1.0f));
             } else {
-                g.drawImage(image, x, y, observer);
+                g.drawImage(blipImage, x, y, observer);
+            }            
+        } else if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
+            Image shadow = bv.createShadowMask(bv.tileManager.imageFor(
+                    entity, entity.getFacing(), secondaryPos));
+            shadow = bv.getScaledImage(shadow, true);
+            // Draw airborne units in 2 passes. Shadow is rendered
+            // during the opaque pass, and the
+            // Actual unit is rendered during the transparent pass.
+            // However the unit is always drawn
+            // opaque.
+            if (makeTranslucent) {
+                g.drawImage(image, p.x, p.y
+                        - (int) (bv.DROPSHDW_DIST * bv.scale), this);
+            } else {
+                g.drawImage(shadow, p.x, p.y, this);
             }
+        } else if ((entity.getElevation() != 0)
+                && !(entity instanceof GunEmplacement)) {
+            Image shadow = bv.createShadowMask(bv.tileManager.imageFor(
+                    entity, entity.getFacing(), secondaryPos));
+            shadow = bv.getScaledImage(shadow, true);
+
+            // Entities on a bridge hex or submerged in water.
+            int altAdjust = (int) (entity.getElevation() * BoardView1.HEX_ELEV * bv.scale);
+            if (makeTranslucent) {
+                if (entity.relHeight() < 0) {
+                    g2.setComposite(AlphaComposite.getInstance(
+                            AlphaComposite.SRC_OVER, 0.35f));
+                    g2.drawImage(image, p.x, p.y - altAdjust, observer);
+                    g2.setComposite(AlphaComposite.getInstance(
+                            AlphaComposite.SRC_OVER, 1.0f));
+                } else {
+                    g.drawImage(image, p.x, p.y - altAdjust, this);
+                }
+            } else {
+                g.drawImage(shadow, p.x, p.y, this);
+            }
+
+        } else if (makeTranslucent) {
+            g2.setComposite(AlphaComposite.getInstance(
+                    AlphaComposite.SRC_OVER, 0.35f));
+            g2.drawImage(image, x, y, observer);
+            g2.setComposite(AlphaComposite.getInstance(
+                    AlphaComposite.SRC_OVER, 1.0f));
         } else {
-            prepare();
+            g.drawImage(image, x, y, observer);
         }
     }
 
@@ -174,6 +180,48 @@ class IsometricSprite extends Sprite {
                         BoardView1.TRANSPARENT))), false);
         graph.dispose();
         tempImage.flush();
+    }
+    
+    /**
+     * We only want to show double-blind visibility indicators on our own
+     * mechs and teammates mechs (assuming team vision option).
+     */
+    private boolean trackThisEntitiesVisibilityInfo(Entity e) {
+        IPlayer localPlayer = this.bv.getLocalPlayer();
+        if (localPlayer == null) {
+            return false;
+        }
+        IOptions opts = this.bv.game.getOptions();
+        if (opts.booleanOption("double_blind") //$NON-NLS-1$
+                && ((e.getOwner().getId() == localPlayer.getId()) 
+                        || (opts.booleanOption("team_vision") //$NON-NLS-1$
+                && (e.getOwner().getTeam() == localPlayer.getTeam())))) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Used to determine if this EntitySprite is only detected by an enemies
+     * sensors and hence should only be a sensor return.
+     * 
+     * @return
+     */
+    private boolean onlyDetectedBySensors() {
+        boolean sensors = bv.game.getOptions().booleanOption(
+                "tacops_sensors");
+        boolean sensorsDetectAll = bv.game.getOptions().booleanOption(
+                "sensors_detect_all");
+        boolean doubleBlind = bv.game.getOptions().booleanOption(
+                "double_blind");
+
+        if (sensors && doubleBlind && !sensorsDetectAll
+                && !trackThisEntitiesVisibilityInfo(entity) 
+                && entity.isDetectedByEnemy() && !entity.isVisibleToEnemy()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

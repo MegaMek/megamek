@@ -18,13 +18,21 @@ public class ECMInfo implements Comparable<Object> {
     private Coords pos;
     
     /**
-     * The id of the owning player, used to determine if this ECMInfo belongs to
-     * an enemy or not.
+     * Used in rare cases that E(C)CM is directional, like active probes on
+     * Aerospace Fighters in space.
+     */
+    private int direction = -1;
+    
+    /**
+     * The id of the owning player, used to determine information about who
+     * are allies and enemies when looking at other <code>ECMInfo</code>s.
      */
     private IPlayer owner;
     
     /**
-     * The strength of the ECM field, counted in number of fields.
+     * The strength of the ECM field, counted in number of fields.  This could
+     * be the number of friendly ECM fields, or the number of enemy ECM fields
+     * depending upon context.
      */
     private double strength = 0;
     
@@ -36,7 +44,9 @@ public class ECMInfo implements Comparable<Object> {
     private int angelStrength = 0;
     
     /**
-     * The strength of the ECCM field, counted in number of fields.
+     * The strength of the ECCM field, counted in number of fields.  This could
+     * be the number of friendly ECCM fields, or the number of enemy ECCM fields
+     * depending upon context.
      */
     private int eccmStrength = 0;
     
@@ -72,6 +82,16 @@ public class ECMInfo implements Comparable<Object> {
         this.owner = owner;
         this.strength = strength;
         this.angelStrength = angelStrength;
+    }
+    
+    public ECMInfo(ECMInfo other) {
+        this.range = other.range;
+        this.pos = other.pos;
+        this.owner = other.owner;
+        this.strength = other.strength;
+        this.angelStrength = other.angelStrength;
+        this.eccmStrength = other.eccmStrength;
+        this.angelECCMStrength = other.angelECCMStrength;
     }
     
     public boolean isAngel() {
@@ -121,11 +141,13 @@ public class ECMInfo implements Comparable<Object> {
     
     
     /**
-     * Compute the ECMInfo from another instance into this one.  All enemy ECM
-     * strength is added, and all allied ECCM strength is added.
+     * Compute the ECMInfo from another instance into this one, where this 
+     * ECMInfo contains information about fields opposed to the owner. 
+     * All enemy ECM strength is added, and all allied ECCM strength is added.
+     * 
      * @param other
      */
-    public void addECMEffects(ECMInfo other) {
+    public void addOpposingECMEffects(ECMInfo other) {
         // Enemy ECM (ECM without an owner is always considered an enemy)
         if (((other.owner == null) || owner.isEnemyOf(other.owner))) {
             strength += other.strength;
@@ -135,6 +157,25 @@ public class ECMInfo implements Comparable<Object> {
             eccmStrength += other.eccmStrength;
             angelECCMStrength += other.angelECCMStrength;
         }        
+    }
+    
+    /**
+     * Compute the ECMInfo from another instance into this one, where this 
+     * ECMInfo contains information about fields allied to the owner. 
+     * All allied ECM strength is added, and all enemy ECCM strength is added.
+     * 
+     * @param other
+     */
+    public void addAlliedECMEffects(ECMInfo other) {
+        // Enemy ECCM (ECCM without an owner is always considered an enemy)
+        if (((other.owner == null) || owner.isEnemyOf(other.owner))) {
+            eccmStrength += other.eccmStrength;
+            angelECCMStrength += other.angelECCMStrength;
+        // Allied ECM
+        } else if ((other.owner != null) && !owner.isEnemyOf(other.owner)) {
+            strength += other.strength;
+            angelStrength += other.angelStrength;
+        }          
     }
     
     public String toString() {
@@ -321,5 +362,13 @@ public class ECMInfo implements Comparable<Object> {
 
     public void setAngelECCMStrength(int angelECCMStrength) {
         this.angelECCMStrength = Math.max(0, angelECCMStrength);
+    }
+
+    public int getDirection() {
+        return direction;
+    }
+
+    public void setDirection(int direction) {
+        this.direction = direction;
     }
 }

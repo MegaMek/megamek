@@ -23,7 +23,6 @@ import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Protomech;
 import megamek.common.Tank;
-import megamek.common.options.IOptions;
 import megamek.common.options.PilotOptions;
 import megamek.common.preference.PreferenceManager;
 
@@ -35,7 +34,7 @@ import megamek.common.preference.PreferenceManager;
 class EntitySprite extends Sprite {
 
     Entity entity;
-    
+
     private Image radarBlipImage;
 
     private Rectangle entityRect;
@@ -136,7 +135,7 @@ class EntitySprite extends Sprite {
     public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
         boolean translucentHiddenUnits = GUIPreferences.getInstance()
                 .getBoolean(GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS);
-                
+
         if ((trackThisEntitiesVisibilityInfo(entity)
                 && !entity.isVisibleToEnemy() && translucentHiddenUnits)
                 || (entity.relHeight() < 0)) {
@@ -228,10 +227,10 @@ class EntitySprite extends Sprite {
             // draw facing
             graph.setColor(Color.white);
             if ((entity.getFacing() != -1)
-                    && !((entity instanceof Infantry) 
+                    && !((entity instanceof Infantry)
                             && !((Infantry) entity).hasFieldGun())
                     && !((entity instanceof Aero)
-                            && ((Aero) entity).isSpheroid() 
+                            && ((Aero) entity).isSpheroid()
                             && !this.bv.game.getBoard().inSpace())) {
                 graph.drawPolygon(this.bv.facingPolys[entity.getFacing()]);
             }
@@ -603,11 +602,11 @@ class EntitySprite extends Sprite {
         }
         return false;
     }
-    
+
     /**
      * Used to determine if this EntitySprite is only detected by an enemies
      * sensors and hence should only be a sensor return.
-     * 
+     *
      * @return
      */
     private boolean onlyDetectedBySensors() {
@@ -619,7 +618,7 @@ class EntitySprite extends Sprite {
                 "double_blind");
 
         if (sensors && doubleBlind && !sensorsDetectAll
-                && !trackThisEntitiesVisibilityInfo(entity) 
+                && !trackThisEntitiesVisibilityInfo(entity)
                 && entity.isDetectedByEnemy() && !entity.isVisibleToEnemy()) {
             return true;
         } else {
@@ -649,7 +648,7 @@ class EntitySprite extends Sprite {
     public String[] getTooltip() {
         String[] tipStrings = new String[4];
         StringBuffer buffer;
-                
+
         if (onlyDetectedBySensors()) {
             tipStrings = new String[1];
             tipStrings[0] = Messages.getString("BoardView1.sensorReturn");

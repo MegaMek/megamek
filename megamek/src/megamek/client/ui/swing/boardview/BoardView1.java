@@ -100,7 +100,6 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Flare;
 import megamek.common.Game;
-import megamek.common.Hex;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
@@ -284,7 +283,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             new ImageCache<Integer, Image>();
     private ImageCache<Integer, BufferedImage> shadowImageCache =
             new ImageCache<Integer, BufferedImage>();
-    
+
     private Set<Integer> animatedImages = new HashSet<Integer>();
 
     // Displayables (Chat box, etc.)
@@ -352,11 +351,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     FovHighlightingAndDarkening fovHighlightingAndDarkening;
 
     private String FILENAME_FLARE_IMAGE = "flare.png";
-    
+
     private String FILENAME_RADAR_BLIP_IMAGE = "radarBlip.png";
 
     private Image flareImage;
-    
+
     private Image radarBlipImage;
 
     /**
@@ -370,9 +369,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public BoardView1(final IGame game, final MegaMekController controller)
             throws java.io.IOException {
         this.game = game;
-        
+
         hexImageCache = new ImageCache<Coords, HexImageCacheEntry>();
-        
+
         tileManager = new TilesetManager(this);
         ToolTipManager.sharedInstance().registerComponent(this);
 
@@ -1710,17 +1709,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         final IHex hex = game.getBoard().getHex(c);
         final Point hexLoc = getHexLocation(c);
-        
+
         int drawX = hexLoc.x;
         int drawY = hexLoc.y;
-        
+
         // Check the cache to see if we already have the image
         HexImageCacheEntry cacheEntry = hexImageCache.get(c);
         if (cacheEntry != null && !cacheEntry.needsUpdating) {
             boardGraph.drawImage(cacheEntry.hexImage, drawX, drawY, this);
             return;
         }
-        
+
         // Some hex images shouldn't be cached, like if they are animated
         boolean dontCache = false;
         int level = hex.getLevel();
@@ -1738,11 +1737,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // draw picture
         Image baseImage = tileManager.baseFor(hex);
         Image scaledImage = getScaledImage(baseImage, true);
-        
+
         if (animatedImages.contains(baseImage.hashCode())) {
             dontCache = true;
         }
-        
+
         int imgHeight, imgWidth;
         imgWidth = scaledImage.getWidth(null);
         imgHeight = scaledImage.getHeight(null);
@@ -1756,14 +1755,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 int levelDiff = Math.abs(level - adjHex.getLevel());
                 if (levelDiff > largestLevelDiff) {
                     largestLevelDiff = levelDiff;
-                }                
+                }
             }
             imgHeight += HEX_ELEV * scale * Math.abs(largestLevelDiff);
         }
         Image hexImage = new BufferedImage(imgWidth, imgHeight,
                 BufferedImage.TYPE_INT_ARGB);
-        
-        Graphics g = hexImage.getGraphics();        
+
+        Graphics g = hexImage.getGraphics();
         drawX = 0;
         drawY = 0;
 
@@ -1780,7 +1779,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
         }
 
-        List<Image> orthos = tileManager.orthoFor(hex); 
+        List<Image> orthos = tileManager.orthoFor(hex);
         if (orthos != null) {
             for (Image image : orthos) {
                 if (animatedImages.contains(image.hashCode())) {
@@ -1990,7 +1989,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
             g.setColor(Color.black);
         }
-        
+
         cacheEntry = new HexImageCacheEntry(hexImage);
         if (!dontCache) {
             hexImageCache.put(c, cacheEntry);
@@ -2142,7 +2141,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if ((p2.y + fudge) < 0) {
                 System.out.println("Negative Y value (Fudge)!: " + (p2.y + fudge));
             }
-            
+
             if ((p2.y + fudge + scaledDelta) < 0) {
                 System.out.println("Negative Y value!: " + (p2.y + fudge + scaledDelta));
             }
@@ -4604,7 +4603,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void setShouldIgnoreKeys(boolean shouldIgnoreKeys) {
         this.shouldIgnoreKeys = shouldIgnoreKeys;
     }
-    
+
     public boolean imageUpdate(Image img, int flags, int x, int y, int w, int h) {
         // If FRAMEBITS is set, then new frame from a multi-frame image is ready
         // This indicates an animated image, which shouldn't be cached
@@ -4613,14 +4612,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         return super.imageUpdate(img, flags, x, y, w, h);
     }
-    
+
     public void clearHexImageCache() {
         hexImageCache.clear();
     }
-    
+
     /**
      * Check to see if the HexImageCache should be cleared because of
-     * field-of-view changes. 
+     * field-of-view changes.
      */
     public void checkFoVHexImageCacheClear() {
         boolean darken = GUIPreferences.getInstance().getBoolean(

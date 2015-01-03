@@ -243,7 +243,13 @@ public class FighterSquadron extends Aero {
         if (!game.getOptions().booleanOption("stratops_ecm") || !game.getBoard().inSpace()) {
             return super.hasActiveECM();
         }
-        return getECMRange() > Entity.NONE;
+        boolean hasActiveECM = false;
+        for (Integer fId : fighters) {
+            Aero fighter = (Aero)game.getEntity(fId);
+            // if any fighter doesn't have it, then return false
+            hasActiveECM |= fighter.hasActiveECM();
+        }
+        return hasActiveECM;
     }
 
     /**

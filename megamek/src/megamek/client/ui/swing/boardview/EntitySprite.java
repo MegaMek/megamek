@@ -15,6 +15,7 @@ import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyAlphaFilter;
 import megamek.common.Aero;
 import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.GunEmplacement;
@@ -642,6 +643,10 @@ class EntitySprite extends Sprite {
     @Override
     public boolean isInside(Point point) {
         return entityRect.contains(point.x, point.y);
+    }
+    
+    public Coords getPosition() {
+        return entity.getPosition();
     }
 
     @Override

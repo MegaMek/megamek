@@ -50,8 +50,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -86,7 +86,6 @@ import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.MegamekBorder;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
@@ -97,6 +96,7 @@ import megamek.common.Compute;
 import megamek.common.ComputeECM;
 import megamek.common.Configuration;
 import megamek.common.Coords;
+import megamek.common.ECMInfo;
 import megamek.common.Entity;
 import megamek.common.Flare;
 import megamek.common.Game;
@@ -320,7 +320,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private Mounted selectedWeapon = null;
 
     // hexes with ECM effect
-    private HashMap<Coords, Integer> ecmHexes = null;
+    private Map<Coords, Color> ecmHexes = null;
+    // hexes that are teh centers of ECM effects
+    private Map<Coords, Color> ecmCenters = null;
+    // hexes with ECM effect
+    private Map<Coords, Color> eccmHexes = null;
+    // hexes that are teh centers of ECCM effects    
+    private Map<Coords, Color> eccmCenters = null;
 
     // reference to our timertask for redraw
     private TimerTask ourTask = null;
@@ -1759,6 +1765,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
             imgHeight += HEX_ELEV * scale * Math.abs(largestLevelDiff);
         }
+        // If the base image isn't ready, we should signal a repaint and stop
+        if ((imgWidth < 0) || (imgHeight < 0)) {
+            repaint();
+            return;
+        }
         Image hexImage = new BufferedImage(imgWidth, imgHeight,
                 BufferedImage.TYPE_INT_ARGB);
 
@@ -1797,13 +1808,42 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
         }
-
+        // Shade and add static noise to hexes that are in an ECM field
         if (ecmHexes != null) {
-            Integer tint = ecmHexes.get(c);
+            Color tint = ecmHexes.get(c);
+            if (tint != null) {      
+                Color origColor = g.getColor();
+                g.setColor(tint);
+                g.fillPolygon(hexPoly); 
+                g.setColor(origColor);
+                Image staticImage = tileManager.getEcmStaticImage(tint);
+                g.drawImage(staticImage, drawX, drawY,
+                        staticImage.getWidth(null),
+                        staticImage.getHeight(null), this);
+            }
+        }
+        // Shade hexes that are in an ECCM field
+        if (eccmHexes != null) {
+            Color tint = eccmHexes.get(c);
+            if (tint != null) {      
+                Color origColor = g.getColor();
+                g.setColor(tint);
+                g.fillPolygon(hexPoly); 
+                g.setColor(origColor);
+            }
+        }
+        // Highlight hexes that contain the source of an ECM field
+        if (ecmCenters != null) {
+            Color tint = ecmCenters.get(c);
             if (tint != null) {
-                scaledImage = getScaledImage(
-                        tileManager.getEcmShade(tint.intValue()), true);
-                g.drawImage(scaledImage, drawX, drawY, this);
+                drawHexBorder(new Point(0, 0), g, tint.darker(), 5, 10);
+            }
+        }
+        // Highlight hexes that contain the source of an ECCM field
+        if (eccmCenters != null) {
+            Color tint = eccmCenters.get(c);
+            if (tint != null) {
+                drawHexBorder(new Point(0, 0), g, tint.darker(), 5, 10);
             }
         }
 
@@ -3838,6 +3878,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // If we don't do this, the selectedWeapon might not correspond to this
         // entity
         selectedWeapon = null;
+        updateEcmList();
     }
 
     public synchronized void weaponSelected(MechDisplayEvent b) {
@@ -3846,72 +3887,87 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         repaint();
     }
 
-    // This is expensive, so precalculate when entity changes
+    /**
+     *  Updates maps that determine how to shade hexes effected by E(C)CM. This
+     *  is expensive, so precalculate only when entity changes occur
+     **/
     public void updateEcmList() {
-        LinkedList<EcmBubble> list = new LinkedList<EcmBubble>();
-        // Compute ECM information for all entities
-        for (Entity ent : game.getEntitiesVector()) {
-            Coords entPos = ent.getPosition();
-            int range = ent.getECMRange();
-            boolean deployed = ent.isDeployed();
-            boolean offboard = ent.isOffBoard();
-            boolean isTransported = ent.getTransportId() != Entity.NONE;
-            if ((entPos == null) || !deployed || offboard || isTransported) {
+        Map<Coords, Color> newECMHexes = new HashMap<Coords, Color>();
+        Map<Coords, Color> newECMCenters = new HashMap<Coords, Color>();
+        Map<Coords, Color> newECCMHexes = new HashMap<Coords, Color>();
+        Map<Coords, Color> newECCMCenters = new HashMap<Coords, Color>();
+
+        // Compute info about all E(C)CM on the board
+        final List<ECMInfo> allEcmInfo = ComputeECM
+                .computeAllEntitiesECMInfo(game.getEntitiesVector());
+        
+        // First, mark the sources of E(C)CM
+        // Used for highlighting hexes and tooltips
+        for (Entity e : game.getEntitiesVector()) {
+            if (e.getPosition() == null) {
                 continue;
             }
-            if (range != Entity.NONE) {
-                int tint = PlayerColors.getColorRGB(ent.getOwner()
-                                                       .getColorIndex());
-                list.add(new EcmBubble(entPos, range, tint));
+            final Color ecmColor = ECMEffects.getECMColor(e.getOwner());
+            // Update ECM center information
+            if (e.getECMInfo() != null) {
+                newECMCenters.put(e.getPosition(), ecmColor);
             }
-            if (game.getBoard().inSpace()) {
-                // then BAP is also ECCM so it needs a bubble
-                range = ent.getBAPRange();
-                int direction = -1;
-                if (range != Entity.NONE) {
-                    if (range > 6) {
-                        direction = ent.getFacing();
+            // Update ECCM center information
+            if (e.getECCMInfo() != null) {
+                newECCMCenters.put(e.getPosition(), ecmColor);
+            }
+        }
+        
+        // Next, determine what E(C)CM effects each Coord
+        Map<Coords, ECMEffects> ecmAffectedCoords = 
+                new HashMap<Coords, ECMEffects>();
+        for (ECMInfo ecmInfo : allEcmInfo) {
+            final Coords ecmPos = ecmInfo.getPos();
+            final int range = ecmInfo.getRange();
+            
+            // Add each Coords within range to the list of ECM Coords
+            for (int x = -range; x <= range; x++) {
+                for (int y = -range; y <= range; y++) {
+                    Coords c = new Coords(x + ecmPos.getX(), y + ecmPos.getY());
+                    int dist = ecmPos.distance(c);
+                    int dir = ecmInfo.getDirection();
+                    // Direction is the facing of the owning Entity
+                    boolean inArc = (dir == -1)
+                            || Compute
+                                    .isInArc(ecmPos, dir, c, Compute.ARC_NOSE);
+                    if ((dist > range) || !inArc) {
+                        continue;
                     }
-                    int tint = PlayerColors.getColorRGB(ent.getOwner()
-                                                           .getColorIndex());
-                    list.add(new EcmBubble(entPos, range, tint, direction));
+                    ECMEffects ecmEffects = ecmAffectedCoords.get(c);
+                    if (ecmEffects == null) {
+                        ecmEffects = new ECMEffects();
+                        ecmAffectedCoords.put(c, ecmEffects);
+                    }
+                    ecmEffects.addECM(ecmInfo);
                 }
             }
         }
-
-
-        HashMap<Coords, Integer> table = new HashMap<Coords, Integer>();
-        for (EcmBubble b : list) {
-            Integer col = new Integer(b.tint);
-            for (int x = -b.range; x <= b.range; x++) {
-                for (int y = -b.range; y <= b.range; y++) {
-                    Coords c = new Coords(x + b.getX(), y + b.getY());
-                    // clip rectangle to hexagon
-                    if ((b.distance(c) <= b.range)
-                        && ((b.direction == -1) || Compute.isInArc(b,
-                                                                   b.direction, c, Compute.ARC_NOSE))) {
-                        Integer tint = table.get(c);
-                        if (tint == null) {
-                            table.put(c, col);
-                        } else if (tint.intValue() != b.tint) {
-                            int red1 = (tint.intValue() >> 16) & 0xff;
-                            int green1 = (tint.intValue() >> 8) & 0xff;
-                            int blue1 = tint.intValue() & 0xff;
-                            int red2 = (b.tint >> 16) & 0xff;
-                            int green2 = (b.tint >> 8) & 0xff;
-                            int blue2 = b.tint & 0xff;
-                            red1 = (red1 + red2) / 2;
-                            green1 = (green1 + green2) / 2;
-                            blue1 = (blue1 + blue2) / 2;
-                            table.put(c, new Integer((red1 << 16)
-                                                     | (green1 << 8) | blue1));
-                        }
-                    }
-                }
+        
+        // Finally, determine the color for each effected hex
+        for (Coords c : ecmAffectedCoords.keySet()) {
+            ECMEffects ecmEffects = ecmAffectedCoords.get(c);
+            Color hexColor = ecmEffects.getHexColor();
+            // Hex color is null if all effects cancel out
+            if (hexColor == null) {
+                continue;
+            }
+            if (ecmEffects.isECCM()) {
+                newECCMHexes.put(c, hexColor);
+            } else {
+                newECMHexes.put(c, hexColor);
             }
         }
+
         synchronized (this) {
-            ecmHexes = table;
+            ecmHexes    = newECMHexes;
+            ecmCenters  = newECMCenters;
+            eccmHexes   = newECCMHexes;
+            eccmCenters = newECCMCenters;
         }
         repaint();
     }
@@ -4173,6 +4229,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 final String[] entityStrings = eSprite.getTooltip();
                 for (String entString : entityStrings) {
                     txt.append(entString);
+                    txt.append("<br>"); //$NON-NLS-1$
+                }
+                if ((ecmCenters != null) 
+                        && ecmCenters.containsKey(eSprite.getPosition())) {
+                    txt.append(Messages.getString("BoardView1.ecmSource")); //$NON-NLS-1$
+                    txt.append("<br>"); //$NON-NLS-1$
+                }
+                if ((eccmCenters != null) 
+                        && eccmCenters.containsKey(eSprite.getPosition())) {
+                    txt.append(Messages.getString("BoardView1.eccmSource")); //$NON-NLS-1$
                     txt.append("<br>"); //$NON-NLS-1$
                 }
             }
@@ -4630,5 +4696,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 && (darken || highlight)) {
             clearHexImageCache();
         }
+    }
+
+    public Polygon getHexPoly() {
+        return hexPoly;
     }
 }

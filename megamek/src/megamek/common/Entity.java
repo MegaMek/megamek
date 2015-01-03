@@ -4511,9 +4511,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 // in space the range of all BAPs is given by the mode
                 if (game.getBoard().inSpace()) {
                     if (m.curMode().equals("Medium")) {
-                        return 12 + cyberBonus + quirkBonus;
+                        return 12;
                     }
-                    return 6 + cyberBonus + quirkBonus;
+                    return 6;
                 }
 
                 if (m.getName().equals("Bloodhound Active Probe (THB)")
@@ -10539,10 +10539,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return null;
         }
 
-        // No ECM in space unless SO rule is on
-        if (game.getBoard().inSpace()
-            && !game.getOptions().booleanOption("stratops_ecm")) {
-            return null;
+        // E(C)CM operates differently in space (SO pg 110)
+        if (game.getBoard().inSpace()) {
+            // No ECM in space unless SO rule is on
+            if (!game.getOptions().booleanOption("stratops_ecm")) {
+                return null;
+            }
+            int range = getECMRange();
+            if ((range >= 0) && hasActiveECM()) {
+                return new ECMInfo(range, 1, this);    
+            } else {
+                return null;
+            }
         }
 
         ECMInfo bestInfo = null;
@@ -10604,10 +10612,28 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             || getTransportId() != Entity.NONE) {
             return null;
         }
-        // No ECM in space unless SO rule is on
-        if (game.getBoard().inSpace()
-            && !game.getOptions().booleanOption("stratops_ecm")) {
-            return null;
+        // E(C)CM operates differently in space (SO pg 110)
+        if (game.getBoard().inSpace()) {
+            // No ECCM in space unless SO rule is on
+            if (!game.getOptions().booleanOption("stratops_ecm")) {
+                return null;
+            }
+            int bapRange = getBAPRange();
+            int range = getECMRange();
+            ECMInfo eccmInfo = new ECMInfo(0, 0, this);
+            eccmInfo.setECCMStrength(1);
+            if (bapRange > 0) {
+                eccmInfo.setRange(bapRange);
+                // Medium range band only effects the nose, so set direction
+                if (bapRange > 6) {
+                    eccmInfo.setDirection(getFacing());
+                }
+            } else if ((range >= 0) && hasActiveECCM()) {
+                eccmInfo.setRange(range);
+            } else {
+                eccmInfo = null;
+            }
+            return eccmInfo;
         }
 
         ECMInfo bestInfo = null;

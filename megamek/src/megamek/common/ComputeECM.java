@@ -503,7 +503,7 @@ public class ComputeECM {
                     if (affectedInfo == null) {
                         affectedInfo = new ECMInfo(0, 0, ae.getOwner(), c);
                     }
-                    affectedInfo.addECMEffects(ecmInfo);
+                    affectedInfo.addOpposingECMEffects(ecmInfo);
                 }
             }
             if ((worstECMEffects == null && affectedInfo != null) ||

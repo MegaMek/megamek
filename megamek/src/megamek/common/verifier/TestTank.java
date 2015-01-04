@@ -19,6 +19,8 @@
 
 package megamek.common.verifier;
 
+import java.util.Vector;
+
 import megamek.common.AmmoType;
 import megamek.common.Engine;
 import megamek.common.Entity;
@@ -37,12 +39,12 @@ import megamek.common.weapons.CLChemicalLaserWeapon;
 import megamek.common.weapons.VehicleFlamerWeapon;
 
 public class TestTank extends TestEntity {
-    
+
     /**
      * Defines the maximum amount of armor a VTOL can mount on its rotor.
      */
     public static int VTOL_MAX_ROTOR_ARMOR = 2;
-    
+
     private Tank tank = null;
 
     public TestTank(Tank tank, TestEntityOption options, String fileString) {
@@ -98,7 +100,7 @@ public class TestTank extends TestEntity {
     public boolean isMech() {
         return false;
     }
-    
+
     @Override
     public boolean isAero() {
         return false;
@@ -288,12 +290,21 @@ public class TestTank extends TestEntity {
             buff.append(".\n\n");
             correct = false;
         }
-        if ((tank instanceof VTOL) 
-                && (tank.getOArmor(VTOL.LOC_ROTOR) > VTOL_MAX_ROTOR_ARMOR)) {
-            buff.append(tank.getOArmor(VTOL.LOC_ROTOR));
-            buff.append(" points of VTOL rotor armor exceed "
-                    + VTOL_MAX_ROTOR_ARMOR + "-point limit.\n\n");
-            correct = false;
+        if (tank instanceof VTOL) {
+            if (!tank.hasWorkingMisc(MiscType.F_MAST_MOUNT)) {
+                for (Mounted m : tank.getEquipment()) {
+                    if (m.getLocation() == VTOL.LOC_ROTOR) {
+                        buff.append("rotor equipment must be placed in mast mount");
+                        correct = false;
+                    }
+                }
+            }
+            if (tank.getOArmor(VTOL.LOC_ROTOR) > VTOL_MAX_ROTOR_ARMOR) {
+                buff.append(tank.getOArmor(VTOL.LOC_ROTOR));
+                buff.append(" points of VTOL rotor armor exceed "
+                        + VTOL_MAX_ROTOR_ARMOR + "-point limit.\n\n");
+                correct = false;
+            }
         }
         for (Mounted m : tank.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_COMBAT_VEHICLE_ESCAPE_POD)) {
@@ -312,17 +323,8 @@ public class TestTank extends TestEntity {
             }
             if (count > 2) {
                 buff.append("max of 2 manipulators per location");
-                return false;
-            }
-        }
-        if (tank instanceof VTOL) {
-            if (!tank.hasWorkingMisc(MiscType.F_MAST_MOUNT)) {
-                for (Mounted m : tank.getEquipment()) {
-                    if (m.getLocation() == VTOL.LOC_ROTOR) {
-                        buff.append("rotor equipment must be placed in mast mount");
-                        correct = false;
-                    }
-                }
+                correct = false;
+                break;
             }
         }
 
@@ -340,6 +342,43 @@ public class TestTank extends TestEntity {
             buff.append("Vacuum protection requires fusion engine.\n");
             correct = false;
         }
+        if (!correctCriticals(buff)) {
+            correct = false;
+        }
+        return correct;
+    }
+
+    public boolean correctCriticals(StringBuffer buff) {
+        Vector<Mounted> unallocated = new Vector<Mounted>();
+        boolean correct = true;
+
+        for (Mounted mount : tank.getMisc()) {
+            if (mount.getLocation() == Entity.LOC_NONE && !(mount.getType().getCriticals(tank) == 0)) {
+                unallocated.add(mount);
+            }
+        }
+        for (Mounted mount : tank.getWeaponList()) {
+            if (mount.getLocation() == Entity.LOC_NONE) {
+                unallocated.add(mount);
+            }
+        }
+        for (Mounted mount : tank.getAmmo()) {
+            int ammoType = ((AmmoType)mount.getType()).getAmmoType();
+            if ((mount.getLocation() == Entity.LOC_NONE) &&
+                    (mount.getUsableShotsLeft() > 1
+                            || ammoType == AmmoType.T_CRUISE_MISSILE )) {
+                unallocated.add(mount);
+            }
+        }
+
+        if (!unallocated.isEmpty()) {
+            buff.append("Unallocated Equipment:\n");
+            for (Mounted mount : unallocated) {
+                buff.append(mount.getType().getInternalName()).append("\n");
+            }
+            correct = false;
+        }
+
         return correct;
     }
 

@@ -371,21 +371,26 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (isIgnoringEvents()) {
             return;
         }
-        
-        if (clientgui.getClient().getGame().getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
-	        if (clientgui.getClient().isMyTurn()) {
-                if (cen == Entity.NONE) {
-                    beginMyTurn();
-                }
-	            setStatusBarText(Messages
-	                    .getString("DeploymentDisplay.its_your_turn")); //$NON-NLS-1$
-	        } else {
-	            endMyTurn();
-	            setStatusBarText(Messages
-	                    .getString(
-	                            "DeploymentDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
-	        }
+        if (clientgui.getClient().getGame().getPhase() 
+                != IGame.Phase.PHASE_DEPLOYMENT) {
+            // ignore
+            return;
         }
+        // else, change turn
+        endMyTurn();
+        
+        if (clientgui.getClient().isMyTurn()) {
+            if (cen == Entity.NONE) {
+                beginMyTurn();
+            }
+            setStatusBarText(Messages
+                    .getString("DeploymentDisplay.its_your_turn")); //$NON-NLS-1$
+        } else {
+            setStatusBarText(Messages.getString(
+                    "DeploymentDisplay.its_others_turn", //$NON-NLS-1$
+                    new Object[] { e.getPlayer().getName() }));
+        }
+        
     }
 
     @Override

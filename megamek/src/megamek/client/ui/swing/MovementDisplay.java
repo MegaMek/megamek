@@ -804,12 +804,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // end my turn, then.
         disableButtons();
         Entity next = clientgui.getClient().getGame()
-                               .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
+                .getNextEntity(clientgui.getClient().getGame().getTurnIndex());
         if ((IGame.Phase.PHASE_MOVEMENT == clientgui.getClient().getGame()
-                                                    .getPhase())
-            && (null != next)
-            && (null != ce)
-            && (next.getOwnerId() != ce.getOwnerId())) {
+                .getPhase())
+                && (null != next)
+                && (null != ce)
+                && (next.getOwnerId() != ce.getOwnerId())) {
             clientgui.setDisplayVisible(false);
         }
         cen = Entity.NONE;
@@ -3477,13 +3477,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         } else {
             if ((e.getPlayer() == null)
-                && (clientgui.getClient().getGame().getTurn() instanceof GameTurn.UnloadStrandedTurn)) {
+                    && (clientgui.getClient().getGame().getTurn() instanceof GameTurn.UnloadStrandedTurn)) {
                 setStatusBarText(Messages
-                                         .getString("MovementDisplay.waitForAnother")); //$NON-NLS-1$
+                        .getString("MovementDisplay.waitForAnother")); //$NON-NLS-1$
             } else {
                 setStatusBarText(Messages.getString(
-                        "MovementDisplay.its_others_turn", new Object[]{e
-                                                                                .getPlayer().getName()})); //$NON-NLS-1$
+                        "MovementDisplay.its_others_turn", new Object[] { e
+                                .getPlayer().getName() })); //$NON-NLS-1$
             }
         }
     }

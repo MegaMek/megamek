@@ -2678,7 +2678,8 @@ public class Compute {
                 }
             }
             AmmoType at = null;
-            if (weapon.getLinked() != null) {
+            if ((weapon.getLinked() != null) 
+                    && (weapon.getLinked().getType() instanceof AmmoType)) {
                 at = (AmmoType) weapon.getLinked().getType();
                 fDamage = at.getDamagePerShot();
             }

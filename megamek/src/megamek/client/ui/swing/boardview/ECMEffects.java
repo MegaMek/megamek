@@ -1,5 +1,5 @@
 /*
- * MegaMek - 
+ * MegaMek -
  * Copyright © 2015 Nicholas Walczak (walczak@cs.umn.edu)
  *
  *  This program is free software; you can redistribute it and/or modify it
@@ -27,22 +27,22 @@ import megamek.common.IPlayer;
 
 /**
  * This class contains a collection of <code>ECMInfo</code> instances that all
- * effect a particular location.   
- * 
+ * effect a particular location.
+ *
  * This is used by BoardView1 to keep track of what kindof E(C)CM is effecting
- * a particular Coords, and determine how to color a Hex based on that 
+ * a particular Coords, and determine how to color a Hex based on that
  * information.
- * 
+ *
  * @author arlith
  *
  */
 public class ECMEffects {
-    
+
     /**
      * A collection of <code>ECMInfo</code> instances that effect a location.
      */
     protected LinkedList<ECMInfo> ecmEffects;
-    
+
     /**
      * Flag that determines if the dominant effect for the location is ECCM.
      * This is set by the <code>getHexColor()</code> method.
@@ -52,7 +52,7 @@ public class ECMEffects {
     ECMEffects() {
         ecmEffects = new LinkedList<ECMInfo>();
     }
-    
+
     /**
      * Added another ECMInfo to the effects for a location.
      * @param info
@@ -60,7 +60,7 @@ public class ECMEffects {
     public void addECM(ECMInfo info) {
         ecmEffects.add(info);
     }
-    
+
     /**
      * Once all of the ECMInfo has been collected for this location, we need to
      * determine how to color the Hex.  Each player that has an E(C)CM presense
@@ -68,12 +68,12 @@ public class ECMEffects {
      * ECCM effects should also be considered.  This method should also update
      * the isECCM state variable, so we can determine whether ECM or ECCM
      * shading should be used.
-     * 
+     *
      * @return  The color to use to represent the ECM effects in this hex
      */
     public Color getHexColor() {
         Color c = null;
-        Map<IPlayer, ECMInfo> ecmEffectsForPlayer = 
+        Map<IPlayer, ECMInfo> ecmEffectsForPlayer =
                 new HashMap<IPlayer, ECMInfo>();
         // Total the ECM effects for each Player
         for (ECMInfo ecmInfo : ecmEffects) {
@@ -87,13 +87,13 @@ public class ECMEffects {
         }
         // Each Player that has an active E(C)CM effect will have a color
         // to contribute to this location
-        List<Color> ecmColors = new LinkedList();
-        List<Color> eccmColors = new LinkedList();
+        List<Color> ecmColors = new LinkedList<Color>();
+        List<Color> eccmColors = new LinkedList<Color>();
         for (IPlayer p : ecmEffectsForPlayer.keySet()) {
             ECMInfo playerECM = new ECMInfo(ecmEffectsForPlayer.get(p));
             for (IPlayer other : ecmEffectsForPlayer.keySet()) {
                 // Don't add info for p again
-                if (((p == null) && (other == null)) 
+                if (((p == null) && (other == null))
                         || ((p != null) && p.equals(other))) {
                     continue;
                 }
@@ -105,13 +105,13 @@ public class ECMEffects {
                 eccmColors.add(getECMColor(p));
             }
         }
-        
+
         // It's possible all effects cancel each other out; then return null
         if (ecmColors.size() == 0 && eccmColors.size() == 0) {
             return null;
         }
         // If there is ECCM present, but no ECM, then shade as ECCM.
-        // ECM shading subsumes ECCM shading, so if ECM is present, 
+        // ECM shading subsumes ECCM shading, so if ECM is present,
         // ECCM shading isn't needed
         if ((ecmColors.size() < 1) && (eccmColors.size() > 0)) {
             isECCM = true;
@@ -122,22 +122,22 @@ public class ECMEffects {
         }
         return c;
     }
-    
+
     public boolean isECCM() {
         return isECCM;
     }
-    
+
     /**
      * Given a collection of colors, which represents all of ECM colors for
      * different players, create an average color to be used.
-     * 
+     *
      * @param colors
      * @return
      */
     public static Color getColorAverage(List<Color> colors) {
         final int alpha = GUIPreferences.getInstance().getInt(
                 GUIPreferences.ADVANCED_ECM_TRANSPARENCY);
-        
+
         int red, green, blue;
         red = green = blue = 0;
         for (Color c : colors) {
@@ -148,14 +148,14 @@ public class ECMEffects {
         red = red / colors.size();
         green = green / colors.size();
         blue = blue / colors.size();
-        
+
         return new Color(red, green, blue, alpha);
     }
-    
+
     /**
      * Used to determine the color that should be used to indicate ECM effects
      * for a given player
-     * 
+     *
      * @param player
      * @return
      */
@@ -173,5 +173,5 @@ public class ECMEffects {
         // Create a new color by adding transparency to the tint
         return new Color(tint.getRed(), tint.getGreen(), tint.getBlue(), alpha);
     }
-    
+
 }

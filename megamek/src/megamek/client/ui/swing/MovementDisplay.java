@@ -1021,11 +1021,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (!((ce() instanceof VTOL) && ce().hasWorkingMisc(
                     MiscType.F_JET_BOOSTER))) {
                 ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                                                      Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
-                                                      Messages.getString(
-                                                              "MovementDisplay.ConfirmMoveRoll",
-                                                              new Object[]{new Integer(ce().getMASCTarget())}), //$NON-NLS-1$
-                                                      true);
+                        Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                        Messages.getString(
+                                "MovementDisplay.ConfirmMoveRoll",
+                                new Object[] { new Integer(ce().getMASCTarget()) }), //$NON-NLS-1$
+                        true);
                 nag.setVisible(true);
                 if (nag.getAnswer()) {
                     // do they want to be bothered again?
@@ -1039,10 +1039,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         if ((cmd.getLastStepMovementType() == EntityMovementType.MOVE_SPRINT)
-            && GUIPreferences.getInstance().getNagForSprint()) {
+                && GUIPreferences.getInstance().getNagForSprint()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                                                  Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
-                                                  Messages.getString("MovementDisplay.ConfirmSprint"), true);
+                    Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                    Messages.getString("MovementDisplay.ConfirmSprint"), true);
             nag.setVisible(true);
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
@@ -1056,10 +1056,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         String check = SharedUtility.doPSRCheck(cmd);
         if ((check.length() > 0) && GUIPreferences.getInstance().getNagForPSR()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                                                  Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
-                                                  Messages.getString("MovementDisplay.ConfirmPilotingRoll") +
-                                                  //$NON-NLS-1$
-                                                  check, true);
+                    Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                    Messages.getString("MovementDisplay.ConfirmPilotingRoll") +
+                    //$NON-NLS-1$
+                            check, true);
             nag.setVisible(true);
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
@@ -1073,23 +1073,23 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         // Should we nag about taking fall damage with mechanical jump boosters?
         if (cmd.shouldMechanicalJumpCauseFallDamage()
-            && GUIPreferences.getInstance()
-                             .getNagForMechanicalJumpFallDamage()) {
+                && GUIPreferences.getInstance()
+                        .getNagForMechanicalJumpFallDamage()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                                                  Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
-                                                  Messages.getString(
-                                                          "MovementDisplay.ConfirmMechanicalJumpFallDamage",
-                                                          new Object[]{
-                                                                  cmd.getJumpMaxElevationChange(),
-                                                                  ce().getJumpMP(),
-                                                                  cmd.getJumpMaxElevationChange()
-                                                                  - ce().getJumpMP()}), true);
+                    Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                    Messages.getString(
+                            "MovementDisplay.ConfirmMechanicalJumpFallDamage",
+                            new Object[] {
+                                    cmd.getJumpMaxElevationChange(),
+                                    ce().getJumpMP(),
+                                    cmd.getJumpMaxElevationChange()
+                                            - ce().getJumpMP() }), true);
             nag.setVisible(true);
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
                 if (!nag.getShowAgain()) {
                     GUIPreferences.getInstance()
-                                  .setNagForMechanicalJumpFallDamage(false);
+                            .setNagForMechanicalJumpFallDamage(false);
                 }
             } else {
                 return;
@@ -1100,10 +1100,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         check = SharedUtility.doThrustCheck(cmd, clientgui.getClient());
         if ((check.length() > 0) && GUIPreferences.getInstance().getNagForPSR()) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                                                  Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
-                                                  Messages.getString("MovementDisplay.ConfirmPilotingRoll") +
-                                                  //$NON-NLS-1$
-                                                  check, true);
+                    Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                    Messages.getString("MovementDisplay.ConfirmPilotingRoll") +
+                    //$NON-NLS-1$
+                            check, true);
             nag.setVisible(true);
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
@@ -1117,7 +1117,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         // check for unsafe takeoffs
         if (cmd.contains(MoveStepType.VTAKEOFF)
-            || cmd.contains(MoveStepType.TAKEOFF)) {
+                || cmd.contains(MoveStepType.TAKEOFF)) {
             boolean unsecure = false;
             for (Entity loaded : ce().getLoadedUnits()) {
                 if (loaded.wasLoadedThisTurn() && !(loaded instanceof Infantry)) {
@@ -1145,14 +1145,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         // check to see if spheroids will drop an elevation
         if ((ce() instanceof Aero) && ((Aero) ce()).isSpheroid()
-            && !clientgui.getClient().getGame().getBoard().inSpace()
-            && ((Aero) ce()).isAirborne() && (cmd.getFinalNDown() == 0)
-            && (cmd.getMpUsed() == 0) && !cmd.contains(MoveStepType.VLAND)) {
+                && !clientgui.getClient().getGame().getBoard().inSpace()
+                && ((Aero) ce()).isAirborne() && (cmd.getFinalNDown() == 0)
+                && (cmd.getMpUsed() == 0) && !cmd.contains(MoveStepType.VLAND)) {
             ConfirmDialog nag = new ConfirmDialog(clientgui.frame,
-                                                  Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
-                                                  Messages.getString("MovementDisplay.SpheroidAltitudeLoss") +
-                                                  //$NON-NLS-1$
-                                                  check, true);
+                    Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                    Messages.getString("MovementDisplay.SpheroidAltitudeLoss") +
+                    //$NON-NLS-1$
+                            check, true);
             nag.setVisible(true);
             if (nag.getAnswer()) {
                 // do they want to be bothered again?
@@ -1221,6 +1221,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         disableButtons();
         clientgui.bv.clearMovementData();
+        clientgui.bv.clearMovementEnvelope();
         if (ce().hasUMU()) {
             clientgui.getClient().sendUpdateEntity(ce());
         }

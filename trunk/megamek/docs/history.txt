@@ -18,6 +18,7 @@ v0.41.0-dev (SVN)
 + Bug [#4408]: Client drawing of ECM effects is incorrect
 + Feature [#1344]: Highlight hexes with enemy ECM units
 + Bug: Movement envelope highlighting not cleared when Done is clicked
++ Bug: Entity may not be selected for Deployment under certain circumstances
 
 v0.40.0 (2015-01-01 20:40 UTC)
 + Bug [#4372]: Inferno Bomb/IV fires do not last the proper duration

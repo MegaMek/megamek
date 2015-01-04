@@ -726,7 +726,7 @@ public class Game implements Serializable, IGame {
         // intelligently.
         this.turnIndex = turnIndex;
         processGameEvent(new GameTurnChangeEvent(this, getPlayer(getTurn()
-                                                                         .getPlayerNum())));
+                .getPlayerNum())));
     }
 
     /**

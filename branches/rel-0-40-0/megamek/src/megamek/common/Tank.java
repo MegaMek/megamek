@@ -3014,8 +3014,9 @@ public class Tank extends Entity {
             if ((mount.getType() instanceof MiscType)
                     && mount.getType().hasFlag(MiscType.F_CARGO)) {
                 if (!addedCargo) {
-                    usedSlots++;
+                    usedSlots += mount.getType().getTankslots(this);
                     addedCargo = true;
+                    continue;
                 } else {
                     continue;
                 }

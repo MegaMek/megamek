@@ -171,19 +171,12 @@ public abstract class Mech extends Entity {
 
     // jump types
     public static final int JUMP_UNKNOWN = -1;
-
     public static final int JUMP_NONE = 0;
-
     public static final int JUMP_STANDARD = 1;
-
     public static final int JUMP_IMPROVED = 2;
-
     public static final int JUMP_PROTOTYPE = 3;
-
     public static final int JUMP_BOOSTER = 4;
-
     public static final int JUMP_DISPOSABLE = 5;
-
     // Type for Improved Jumpjet Prototype
     public static final int JUMP_PROTOTYPE_IMPROVED = 6;
 
@@ -5516,7 +5509,7 @@ public abstract class Mech extends Entity {
     public boolean removePartialCoverHits(int location, int cover, int side) {
         // left and right cover are from attacker's POV.
         // if hitting front arc, need to swap them
-        
+
         // Handle upper cover specially, as treating it as a bitmask will lead
         //  to every location being covered
         if (cover  == LosEffects.COVER_UPPER) {
@@ -5526,7 +5519,7 @@ public abstract class Mech extends Entity {
                 return true;
             }
         }
-        
+
         if (side == ToHitData.SIDE_FRONT) {
             if (((cover & LosEffects.COVER_LOWRIGHT) != 0)
                     && (location == Mech.LOC_LLEG)) {
@@ -5988,7 +5981,7 @@ public abstract class Mech extends Entity {
             }
             sb.append(newLine);
         }
-        
+
         if (getFluff().getOverview().trim().length() > 0) {
             sb.append("overview:");
             sb.append(getFluff().getOverview());
@@ -6000,13 +5993,13 @@ public abstract class Mech extends Entity {
             sb.append(getFluff().getCapabilities());
             sb.append(newLine);
         }
-               
+
         if (getFluff().getDeployment().trim().length() > 0) {
             sb.append("deployment:");
             sb.append(getFluff().getDeployment());
             sb.append(newLine);
         }
-        
+
         if (getFluff().getDeployment().trim().length() > 0) {
             sb.append("history:");
             sb.append(getFluff().getHistory());

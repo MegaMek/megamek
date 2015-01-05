@@ -6951,6 +6951,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -6972,6 +6973,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -6993,6 +6995,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7014,6 +7017,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7035,6 +7039,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7056,6 +7061,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7077,6 +7083,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7098,6 +7105,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7119,6 +7127,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7140,6 +7149,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7161,6 +7171,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7182,6 +7193,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7203,6 +7215,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7224,6 +7237,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7245,6 +7259,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7266,6 +7281,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7287,6 +7303,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7308,6 +7325,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7329,6 +7347,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7350,6 +7369,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7371,6 +7391,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7392,6 +7413,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7413,6 +7435,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7434,6 +7457,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }
@@ -7455,6 +7479,7 @@ public class MiscType extends EquipmentType {
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.techRating = RATING_A;
+        misc.tankslots = 1;
 
         return misc;
     }

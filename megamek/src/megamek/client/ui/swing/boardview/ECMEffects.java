@@ -29,7 +29,7 @@ import megamek.common.IPlayer;
  * This class contains a collection of <code>ECMInfo</code> instances that all
  * effect a particular location.
  *
- * This is used by BoardView1 to keep track of what kindof E(C)CM is effecting
+ * This is used by BoardView1 to keep track of what kindof E(C)CM is affecting
  * a particular Coords, and determine how to color a Hex based on that
  * information.
  *
@@ -39,7 +39,7 @@ import megamek.common.IPlayer;
 public class ECMEffects {
 
     /**
-     * A collection of <code>ECMInfo</code> instances that effect a location.
+     * A collection of <code>ECMInfo</code> instances that affect a location.
      */
     protected LinkedList<ECMInfo> ecmEffects;
 
@@ -107,7 +107,7 @@ public class ECMEffects {
         }
 
         // It's possible all effects cancel each other out; then return null
-        if (ecmColors.size() == 0 && eccmColors.size() == 0) {
+        if ((ecmColors.size() == 0) && (eccmColors.size() == 0)) {
             return null;
         }
         // If there is ECCM present, but no ECM, then shade as ECCM.

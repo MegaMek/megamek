@@ -1784,8 +1784,13 @@ public class UnitDisplay extends JPanel {
          */
         public int selectNextWeapon() {
             int selected = weaponList.getSelectedIndex();
+            // In case nothing was selected
+            if (selected == -1) {
+                selected = weaponList.getModel().getSize() - 1;
+            }
             Mounted selectedWeap;
             int initialSelection = selected;
+            
             boolean hasLooped = false;
             do {
                 selected++;
@@ -1816,6 +1821,10 @@ public class UnitDisplay extends JPanel {
          */
         public int selectPrevWeapon() {
             int selected = weaponList.getSelectedIndex();
+            // In case nothing was selected
+            if (selected == -1) {
+                selected = 0;
+            }
             Mounted selectedWeap;
             int initialSelection = selected;
             boolean hasLooped = false;

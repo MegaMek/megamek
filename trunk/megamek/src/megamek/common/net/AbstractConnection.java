@@ -23,8 +23,8 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.LinkedList;
 import java.util.Vector;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -36,14 +36,6 @@ import megamek.common.util.CircularIntegerBuffer;
  * Generic bidirectional connection between client and server
  */
 public abstract class AbstractConnection implements IConnection {
-
-    /*
-     * mev wrote: This class provides common reusable code for both Client and
-     * Server. I've constructed it from the Server & client implementations of
-     * the read/write functionality. I'm not quite sure in the interface and the
-     * implementation of this class and descendants, so comments/suggestions are
-     * welcome.
-     */
 
     private static PacketMarshallerFactory marshallerFactory = PacketMarshallerFactory
             .getInstance();
@@ -78,7 +70,7 @@ public abstract class AbstractConnection implements IConnection {
     /**
      * Bytes send during the connection lifecycle
      */
-    long bytesSent;
+    private long bytesSent;
 
     /**
      * Bytes received during the connection lifecycle
@@ -115,12 +107,12 @@ public abstract class AbstractConnection implements IConnection {
     /**
      * Marshaller used to send packets
      */
-    PacketMarshaller marshaller;
+    protected PacketMarshaller marshaller;
 
     /**
      * Indicates the need to compress sent data
      */
-    boolean zipData = true;
+    private boolean zipData = true;
 
     /**
      * Creates new client (connection from client to server) connection
@@ -217,8 +209,6 @@ public abstract class AbstractConnection implements IConnection {
                 // We don't need a full stack trace... we're
                 // just closing the connection anyway.
                 // e.printStackTrace();
-            } catch (NullPointerException ex) {
-                // never initialized, poor thing
             }
             socket = null;
         }
@@ -275,7 +265,7 @@ public abstract class AbstractConnection implements IConnection {
     /**
      * Adds a packet to the send queue to be send on a seperate thread.
      */
-    public void send(Packet packet) {
+    public synchronized void send(Packet packet) {
         sendQueue.addPacket(new SendPacket(packet));
         // Send right now
         flush();
@@ -298,7 +288,7 @@ public abstract class AbstractConnection implements IConnection {
      * 
      * @return <code>true</code> if there are pending packets
      */
-    public boolean hasPending() {
+    public synchronized boolean hasPending() {
         return sendQueue.hasPending();
     }
 
@@ -384,7 +374,7 @@ public abstract class AbstractConnection implements IConnection {
      * 
      * @param buffer <code>StringBuffer</code> to add the report to
      */
-    protected void reportLastCommands() {
+    protected synchronized void reportLastCommands() {
         reportLastCommands(true);
         System.err.println();
         reportLastCommands(false);
@@ -451,16 +441,15 @@ public abstract class AbstractConnection implements IConnection {
     }
         
     /**
-     * Checks if there is anything to send or receive and sends or receives that
-     * stuff. 
-     * 
-     * @return the amount of milliseconds that we assume we should be called
-     *         again in. must return >=0 always
+     * Process all incoming data, blocking on the input stream until new input
+     * is available.  This method should not be synchronized as it should only
+     * deal with the input side of things.  Without creating separate read/write
+     * locks, making this method synchronized would not allow synchronous reads
+     * and writes.
      */
-    public long update() {
-        flush();
-        INetworkPacket np;
+    public void update() {
         try {
+            INetworkPacket np;
             while ((np = readNetworkPacket()) != null) {
                 processPacket(np);
             }
@@ -479,17 +468,13 @@ public abstract class AbstractConnection implements IConnection {
             reportReceiveException(e);
             close();
         }
-        return 50;
     }
 
     /**
-     * this is the method that should be overridden
+     * Send all queued packets.  This method is synchronized since it deals with
+     * the non-thread-safe send queue.
      */
-    public void flush() {
-        doFlush();
-    }
-
-    protected void doFlush() {
+    public synchronized void flush() {
         SendPacket packet = null;
         try {
             while ((packet = sendQueue.getPacket()) != null) {
@@ -551,21 +536,23 @@ public abstract class AbstractConnection implements IConnection {
     protected abstract void sendNetworkPacket(byte[] data, boolean zipped)
             throws Exception;
 
+    /**
+     * Wrapper around a <code>LinkedList</code> for keeping a queue of packets
+     * to send.  Note that this implementation is not synchronized.
+     */
     static class SendQueue {
 
-        private ConcurrentLinkedQueue<SendPacket> queue = 
-        		new ConcurrentLinkedQueue<SendPacket>();
+        private LinkedList<SendPacket> queue = 
+        		new LinkedList<SendPacket>();
         private boolean finished = false;
 
-        public synchronized void addPacket(SendPacket packet) {
+        public void addPacket(SendPacket packet) {
             queue.add(packet);
-            notifyAll();
         }
 
-        public synchronized void finish() {
+        public void finish() {
             queue.clear();
             finished = true;
-            notifyAll();
         }
 
         /**
@@ -573,21 +560,18 @@ public abstract class AbstractConnection implements IConnection {
          * 
          * @return the first available packet in the queue or null if none
          */
-        public synchronized SendPacket getPacket() {
-            SendPacket packet = null;
-            if (!hasPending())
-                return null;
+        public SendPacket getPacket() {
             if (!finished) {
-                packet = queue.poll();
-            }
-            return packet;
+                return queue.poll();
+            } 
+            return null;
         }
 
         /**
          * Returns true if this connection has pending data
          */
-        public synchronized boolean hasPending() {
-            return queue.size() > 0;
+        public boolean hasPending() {
+            return !queue.isEmpty();
         }
 
         public void reportContents() {

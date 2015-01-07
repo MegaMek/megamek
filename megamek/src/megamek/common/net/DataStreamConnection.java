@@ -105,7 +105,6 @@ class DataStreamConnection extends AbstractConnection {
         if (out == null) {
             out = new DataOutputStream(new BufferedOutputStream(
                     getOutputStream(),getSendBufferSize()));
-            // out.flush(); thsi should be unnecessary?
         }
         synchronized (out){
 	        out.writeBoolean(iszipped);
@@ -113,7 +112,6 @@ class DataStreamConnection extends AbstractConnection {
 	        out.writeInt(data.length);
 	        out.write(data);
     	}
-        // out.flush(); avoid flushing before all packets are sent
     }
 
     /**
@@ -121,17 +119,19 @@ class DataStreamConnection extends AbstractConnection {
      */
     @Override
     public void flush() {
-	        super.flush();
-	        try {
-	            if (out != null)
-	            	synchronized (out){
-	            		out.flush();
-	            	}
-	        } catch (IOException ioe) {
-	            ioe.printStackTrace();
-	            // close this connection, because it's broken
-	            close();
-	        }
+        // Sends all queued packets
+        super.flush();
+        try {
+            // Flush the output stream, to ensure all packets are sent
+            if (out != null)
+                synchronized (out) {
+                    out.flush();
+                }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            // close this connection, because it's broken
+            close();
+        }
     }
 
     private static class NetworkPacket implements INetworkPacket {

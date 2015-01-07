@@ -369,7 +369,7 @@ public class Server implements Runnable {
 
     private Vector<DynamicTerrainProcessor> terrainProcessors = new Vector<DynamicTerrainProcessor>();
 
-    private Timer timer = new Timer();
+    private Timer watchdogTimer = new Timer("Watchdog Timer");
 
     private static EntityVerifier entityVerifier;
 
@@ -379,7 +379,7 @@ public class Server implements Runnable {
 
     private String serverAccessKey = null;
 
-    private Timer t = new Timer(true);
+    private Timer serverBrowserUpdateTimer = null;
 
     /**
      * Keeps track of what team a player requested to join.
@@ -549,6 +549,7 @@ public class Server implements Runnable {
         packetPumpThread.start();
 
         if (registerWithServerBrowser) {
+            
             final TimerTask register = new TimerTask() {
                 @Override
                 public void run() {
@@ -556,7 +557,9 @@ public class Server implements Runnable {
                                               Server.getServerInstance().metaServerUrl);
                 }
             };
-            t.schedule(register, 1, 40000);
+            serverBrowserUpdateTimer = new Timer(
+                    "Server Browser Register Timer", true);
+            serverBrowserUpdateTimer.schedule(register, 1, 40000);
         }
     }
 
@@ -665,7 +668,7 @@ public class Server implements Runnable {
      * Shuts down the server.
      */
     public void die() {
-        timer.cancel();
+        watchdogTimer.cancel();
 
         // kill thread accepting new connections
         connector = null;
@@ -704,7 +707,9 @@ public class Server implements Runnable {
 
         connections.removeAllElements();
         connectionIds.clear();
-        t.cancel();
+        if (serverBrowserUpdateTimer != null) {
+            serverBrowserUpdateTimer.cancel();
+        }
         if (metaServerUrl != "") {
             registerWithServerBrowser(false, metaServerUrl);
         }
@@ -28038,7 +28043,7 @@ public class Server implements Runnable {
 
                 greeting(id);
                 ConnectionWatchdog w = new ConnectionWatchdog(this, id);
-                timer.schedule(w, 1000, 500);
+                watchdogTimer.schedule(w, 1000, 500);
             } catch (InterruptedIOException iioe) {
                 // ignore , just SOTimeout blowing..
             } catch (IOException ex) {

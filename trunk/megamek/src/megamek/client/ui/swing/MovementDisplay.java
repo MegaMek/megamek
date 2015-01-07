@@ -2433,7 +2433,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         Vector<Entity> choices = new Vector<Entity>();
         for (Entity other : game.getEntitiesVector(ce().getPosition())) {
-            if (other.isSelectableThisTurn() && (ce() != null)
+            if (other.isLoadableThisTurn() && (ce() != null)
                 && ce().canLoad(other, false)) {
                 choices.addElement(other);
             }

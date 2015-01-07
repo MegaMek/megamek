@@ -43,8 +43,10 @@ public class ConnectionHandler implements Runnable {
 	@Override
 	public void run() {
 		while (!shouldStop){
-			connection.update();
-			connection.flush();
+		    // Write out any queued packets
+		    connection.flush();
+		    // Wait for input
+		    connection.update();			
 			if (connection.isClosed()){
 				shouldStop = true;
 			}

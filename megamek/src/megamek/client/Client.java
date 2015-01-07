@@ -168,8 +168,10 @@ public class Client implements IClientCommandHandler {
 
         public void run() {
             while (!shouldStop) {
-                updateConnection();
+                // Write any queued packets
                 flushConn();
+                // Wait for new input
+                updateConnection();
                 if ((connection == null) || connection.isClosed()) {
                     shouldStop = true;
                 }

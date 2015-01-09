@@ -589,171 +589,166 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                                           final MegaMekController controller) {
         // Register the action for TOGGLE_CHAT
         controller.registerCommandAction(KeyCommandBind.TOGGLE_CHAT.cmd,
-                                         new CommandAction() {
+                new CommandAction() {
 
-                                             @Override
-                                             public boolean shouldPerformAction() {
-                                                 if (shouldIgnoreKeyCommands()) {
-                                                     return false;
-                                                 } else {
-                                                     return true;
-                                                 }
-                                             }
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (shouldIgnoreKeyCommands()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-                                             @Override
-                                             public void performAction() {
-                                                 if (!getChatterBoxActive()) {
-                                                     setChatterBoxActive(true);
-                                                     for (IDisplayable disp : displayables) {
-                                                         if (disp instanceof ChatterBox2) {
-                                                             ((ChatterBox2) disp).slideUp();
-                                                         }
-                                                     }
-                                                     requestFocus();
-                                                 }
-                                             }
+                    @Override
+                    public void performAction() {
+                        if (!getChatterBoxActive()) {
+                            setChatterBoxActive(true);
+                            for (IDisplayable disp : displayables) {
+                                if (disp instanceof ChatterBox2) {
+                                    ((ChatterBox2) disp).slideUp();
+                                }
+                            }
+                            requestFocus();
+                        }
+                    }
 
-                                         });
+                });
 
         // Register the action for TOGGLE_CHAT
         controller.registerCommandAction(KeyCommandBind.TOGGLE_CHAT_CMD.cmd,
-                                         new CommandAction() {
+                new CommandAction() {
 
-                                             @Override
-                                             public boolean shouldPerformAction() {
-                                                 if (shouldIgnoreKeyCommands()) {
-                                                     return false;
-                                                 } else {
-                                                     return true;
-                                                 }
-                                             }
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (shouldIgnoreKeyCommands()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-                                             @Override
-                                             public void performAction() {
-                                                 if (!getChatterBoxActive()) {
-                                                     setChatterBoxActive(true);
-                                                     for (IDisplayable disp : displayables) {
-                                                         if (disp instanceof ChatterBox2) {
-                                                             ((ChatterBox2) disp).slideUp();
-                                                             ((ChatterBox2) disp).setMessage("/");
-                                                         }
-                                                     }
-                                                     requestFocus();
-                                                 }
-                                             }
+                    @Override
+                    public void performAction() {
+                        if (!getChatterBoxActive()) {
+                            setChatterBoxActive(true);
+                            for (IDisplayable disp : displayables) {
+                                if (disp instanceof ChatterBox2) {
+                                    ((ChatterBox2) disp).slideUp();
+                                    ((ChatterBox2) disp).setMessage("/");
+                                }
+                            }
+                            requestFocus();
+                        }
+                    }
 
-                                         });
+                });
 
         // Register the action for CENTER_ON_SELECTED
         controller.registerCommandAction(KeyCommandBind.CENTER_ON_SELECTED.cmd,
-                                         new CommandAction() {
+                new CommandAction() {
 
-                                             @Override
-                                             public boolean shouldPerformAction() {
-                                                 if (shouldIgnoreKeyCommands()
-                                                     || selectedEntity == null) {
-                                                     return false;
-                                                 } else {
-                                                     return true;
-                                                 }
-                                             }
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (shouldIgnoreKeyCommands() || selectedEntity == null) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-                                             @Override
-                                             public void performAction() {
-                                                 if (selectedEntity != null) {
-                                                     centerOnHex(selectedEntity.getPosition());
-                                                 }
-                                             }
+                    @Override
+                    public void performAction() {
+                        if (selectedEntity != null) {
+                            centerOnHex(selectedEntity.getPosition());
+                        }
+                    }
 
-                                         });
+                });
 
         // Register the action for SCROLL_NORTH
         controller.registerCommandAction(KeyCommandBind.SCROLL_NORTH.cmd,
-                                         new CommandAction() {
+                new CommandAction() {
 
-                                             @Override
-                                             public boolean shouldPerformAction() {
-                                                 if (shouldIgnoreKeyCommands()) {
-                                                     return false;
-                                                 } else {
-                                                     return true;
-                                                 }
-                                             }
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (shouldIgnoreKeyCommands()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-                                             @Override
-                                             public void performAction() {
-                                                 controller.stopRepeating(KeyCommandBind.SCROLL_SOUTH);
-                                                 vbar.setValue((int)
-                                                                       (vbar.getValue() - (HEX_H * scale)));
-                                             }
+                    @Override
+                    public void performAction() {
+                        controller.stopRepeating(KeyCommandBind.SCROLL_SOUTH);
+                        vbar.setValue((int) (vbar.getValue() - (HEX_H * scale)));
+                    }
 
-                                         });
+                });
 
         // Register the action for SCROLL_SOUTH
         controller.registerCommandAction(KeyCommandBind.SCROLL_SOUTH.cmd,
-                                         new CommandAction() {
+                new CommandAction() {
 
-                                             @Override
-                                             public boolean shouldPerformAction() {
-                                                 if (shouldIgnoreKeyCommands()) {
-                                                     return false;
-                                                 } else {
-                                                     return true;
-                                                 }
-                                             }
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (shouldIgnoreKeyCommands()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-                                             @Override
-                                             public void performAction() {
-                                                 controller.stopRepeating(KeyCommandBind.SCROLL_NORTH);
-                                                 vbar.setValue((int)
-                                                                       (vbar.getValue() + (HEX_H * scale)));
-                                             }
+                    @Override
+                    public void performAction() {
+                        controller.stopRepeating(KeyCommandBind.SCROLL_NORTH);
+                        vbar.setValue((int) (vbar.getValue() + (HEX_H * scale)));
+                    }
 
-                                         });
+                });
 
         // Register the action for SCROLL_EAST
         controller.registerCommandAction(KeyCommandBind.SCROLL_EAST.cmd,
-                                         new CommandAction() {
+                new CommandAction() {
 
-                                             @Override
-                                             public boolean shouldPerformAction() {
-                                                 if (shouldIgnoreKeyCommands()) {
-                                                     return false;
-                                                 } else {
-                                                     return true;
-                                                 }
-                                             }
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (shouldIgnoreKeyCommands()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-                                             @Override
-                                             public void performAction() {
-                                                 controller.stopRepeating(KeyCommandBind.SCROLL_WEST);
-                                                 hbar.setValue((int)
-                                                                       (hbar.getValue() + (HEX_W * scale)));
-                                             }
+                    @Override
+                    public void performAction() {
+                        controller.stopRepeating(KeyCommandBind.SCROLL_WEST);
+                        hbar.setValue((int) (hbar.getValue() + (HEX_W * scale)));
+                    }
 
-                                         });
+                });
 
         // Register the action for SCROLL_WEST
         controller.registerCommandAction(KeyCommandBind.SCROLL_WEST.cmd,
-                                         new CommandAction() {
+                new CommandAction() {
 
-                                             @Override
-                                             public boolean shouldPerformAction() {
-                                                 if (shouldIgnoreKeyCommands()) {
-                                                     return false;
-                                                 } else {
-                                                     return true;
-                                                 }
-                                             }
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (shouldIgnoreKeyCommands()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-                                             @Override
-                                             public void performAction() {
-                                                 controller.stopRepeating(KeyCommandBind.SCROLL_EAST);
-                                                 hbar.setValue((int)
-                                                                       (hbar.getValue() - (HEX_W * scale)));
-                                             }
+                    @Override
+                    public void performAction() {
+                        controller.stopRepeating(KeyCommandBind.SCROLL_EAST);
+                        hbar.setValue((int) (hbar.getValue() - (HEX_W * scale)));
+                    }
 
-                                         });
+                });
     }
 
     private boolean shouldIgnoreKeyCommands() {

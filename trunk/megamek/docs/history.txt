@@ -32,6 +32,8 @@ v0.41.0-dev (SVN)
 + Bug: Hang in UnitDisplay if next/prev weapon used with no weapon selected
 + Bug: Load button could be enabled but not able to load Infantry
 + Translation(Russian): Adding bot information window (readme) completed
++ New Sprites and Camos
+
 
 v0.40.0 (2015-01-01 20:40 UTC)
 + Bug [#4372]: Inferno Bomb/IV fires do not last the proper duration

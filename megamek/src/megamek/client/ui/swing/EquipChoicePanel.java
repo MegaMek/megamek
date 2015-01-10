@@ -1334,6 +1334,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     Messages.getString("CustomMechDialog.labSpaceSuit"));
             JLabel labDEST = new JLabel(
                     Messages.getString("CustomMechDialog.labDEST"));
+            JLabel labMountain = new JLabel(
+                    Messages.getString("CustomMechDialog.labMountain"));
             JLabel labSneakCamo = new JLabel(
                     Messages.getString("CustomMechDialog.labSneakCamo"));
             JLabel labSneakIR = new JLabel(
@@ -1344,6 +1346,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             JCheckBox chEncumber = new JCheckBox();
             JCheckBox chSpaceSuit = new JCheckBox();
             JCheckBox chDEST = new JCheckBox();
+            JCheckBox chMountain = new JCheckBox();
             JCheckBox chSneakCamo = new JCheckBox();
             JCheckBox chSneakIR = new JCheckBox();
             JCheckBox chSneakECM = new JCheckBox();
@@ -1360,6 +1363,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 add(chSpaceSuit, GBC.eol());
                 add(labDEST, GBC.std());
                 add(chDEST, GBC.eol());
+                add(labMountain, GBC.std());
+                add(chMountain, GBC.eol());
                 add(labSneakCamo, GBC.std());
                 add(chSneakCamo, GBC.eol());
                 add(labSneakIR, GBC.std());
@@ -1374,6 +1379,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 chEncumber.setSelected(inf.isArmorEncumbering());
                 chSpaceSuit.setSelected(inf.hasSpaceSuit());
                 chDEST.setSelected(inf.hasDEST());
+                chMountain.setSelected(inf.hasMountain());
                 chSneakCamo.setSelected(inf.hasSneakCamo());
                 chSneakIR.setSelected(inf.hasSneakIR());
                 chSneakECM.setSelected(inf.hasSneakECM());
@@ -1405,6 +1411,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 inf.setArmorEncumbering(chEncumber.isSelected());
                 inf.setSpaceSuit(chSpaceSuit.isSelected());
                 inf.setDEST(chDEST.isSelected());
+                inf.setMountain(chMountain.isSelected());
                 inf.setSneakCamo(chSneakCamo.isSelected());
                 inf.setSneakIR(chSneakIR.isSelected());
                 inf.setSneakECM(chSneakECM.isSelected());
@@ -1417,6 +1424,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 chEncumber.setEnabled(enabled);
                 chSpaceSuit.setEnabled(enabled);
                 chDEST.setEnabled(enabled);
+                chMountain.setEnabled(enabled);
                 chSneakCamo.setEnabled(enabled);
                 chSneakIR.setEnabled(enabled);
                 chSneakECM.setEnabled(enabled);

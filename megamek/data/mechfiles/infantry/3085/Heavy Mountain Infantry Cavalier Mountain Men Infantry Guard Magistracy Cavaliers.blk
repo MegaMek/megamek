@@ -55,7 +55,6 @@ Imperator AX-22 Assault Rifle
 Infantry Heavy Mortar
 </Secondary>
 
-<history>
-Mountain climbing equipment. Unit can traverse 3 levels per hex. Unit is immune to the effects of Thin Atmosphere. These abilities are not coded in MM.  Unit included for completeness.
-</history>
+<mountain>
+</mountain>
 

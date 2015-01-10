@@ -33,6 +33,7 @@ v0.41.0-dev (SVN)
 + Bug: Load button could be enabled but not able to load Infantry
 + Translation(Russian): Adding bot information window (readme) completed
 + New Sprites and Camos
++ Feature: Mountain Infantry
 
 
 v0.40.0 (2015-01-01 20:40 UTC)

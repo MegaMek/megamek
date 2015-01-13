@@ -30,13 +30,16 @@ import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.WeaponOrderHandler;
 import megamek.common.Entity.WeaponSortOrder;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 
 /**
  * Every menu bar in MegaMek should have an identical look-and-feel, with
  * various menu items enabled or disabled, based upon the frame that owns the
  * menu bar, and the current state of the program.
  */
-public class CommonMenuBar extends JMenuBar implements ActionListener {
+public class CommonMenuBar extends JMenuBar implements ActionListener,
+        IPreferenceChangeListener {
     /**
      *
      */
@@ -729,6 +732,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
 
         // Now manage the menu items.
         manageMenu();
+        
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
     }
 
     private JMenuItem createMenuItem(JMenu m, String label, String command,
@@ -1379,5 +1384,17 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
 
     public synchronized void setStrafeEnabled(boolean enabled) {
         fireStrafe.setEnabled(enabled);
+    }
+
+    @Override
+    public void preferenceChange(PreferenceChangeEvent e) {
+        if (e.getName().equals(GUIPreferences.USE_ISOMETRIC)) {
+            toggleIsometric.setSelected((Boolean)e.getNewValue());
+        }
+        
+    }
+
+    public void die() {
+        GUIPreferences.getInstance().removePreferenceChangeListener(this);        
     }
 }

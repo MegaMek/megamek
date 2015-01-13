@@ -28,8 +28,10 @@ public enum KeyCommandBind {
 	SCROLL_SOUTH("scrollS",true),
 	SCROLL_EAST("scrollE",true),
 	SCROLL_WEST("scrollW",true),
+	// Toggles isometric view on/off
+	TOGGLE_ISO("toggleIso",false),
 	// Activates chat box
-	TOGGLE_CHAT("toggleChat",false),
+    TOGGLE_CHAT("toggleChat",false),
 	// Activates chat box and adds the command character (/)
 	TOGGLE_CHAT_CMD("toggleChatCmd", false),
 	// Change facing one hexside to the left

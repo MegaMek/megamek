@@ -154,7 +154,7 @@ import megamek.common.preference.PreferenceManager;
  * Displays the board; lets the user scroll around and select points on it.
  */
 public class BoardView1 extends JPanel implements IBoardView, Scrollable,
-        BoardListener, MouseListener, IPreferenceChangeListener, AutoCloseable {
+        BoardListener, MouseListener, IPreferenceChangeListener {
 
     private static final long serialVersionUID = -5582195884759007416L;
 
@@ -762,13 +762,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                || game.getPhase() == Phase.PHASE_OFFBOARD_REPORT
                || game.getPhase() == Phase.PHASE_INITIATIVE_REPORT
                || shouldIgnoreKeys;
-    }
-
-    @Override
-    public void close() {
-        //There are a lot of listeners that should be removed, fortunately there should
-        //be no more than one instance of BoardView1 in lifetime of app so no memory leak is possible.
-        fovHighlightingAndDarkening.close();
     }
 
     protected final RedrawWorker redrawWorker = new RedrawWorker();
@@ -4641,6 +4634,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     public void die() {
         ourTask.cancel();
+        fovHighlightingAndDarkening.die();
     }
 
     /**

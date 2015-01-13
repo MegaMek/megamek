@@ -30,7 +30,7 @@ import megamek.common.preference.PreferenceChangeEvent;
  * A helper class for highlighting and darkening hexes.
  *
  */
-class FovHighlightingAndDarkening implements AutoCloseable{
+class FovHighlightingAndDarkening {
 
     /**
      * 
@@ -65,7 +65,7 @@ class FovHighlightingAndDarkening implements AutoCloseable{
         this.boardView1.game.addGameListener(cacheGameListner);
     }
 
-    public void close() {
+    public void die() {
         gs.removePreferenceChangeListener(ringsChangeListner);
         this.boardView1.game.removeGameListener(cacheGameListner);
     };

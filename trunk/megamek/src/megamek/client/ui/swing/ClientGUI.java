@@ -894,8 +894,15 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         TimerSingleton.getInstance().killTimer();
         
-        controller.removeAllActions();
-        controller.clientgui = null;
+        if (controller != null) {
+            controller.removeAllActions();
+            controller.clientgui = null;
+        }
+        
+        if (menuBar != null) {
+            menuBar.die();
+            menuBar = null;
+        }
     }
 
     public GameOptionsDialog getGameOptionsDialog() {

@@ -751,7 +751,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             bv.refreshDisplayables();
         } else if (event.getActionCommand().equals(VIEW_MOVE_ENV)) {
             if (curPanel instanceof MovementDisplay){
-                ((MovementDisplay) curPanel).computeMovementEnvelope();
+                ((MovementDisplay) curPanel).computeMovementEnvelope(mechD
+                        .getCurrentEntity());
             }
         } else if (event.getActionCommand().equals(VIEW_MOVE_MOD_ENV)) {
             if (curPanel instanceof MovementDisplay) {

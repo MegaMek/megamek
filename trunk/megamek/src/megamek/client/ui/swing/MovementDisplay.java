@@ -346,155 +346,155 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         final StatusBarPhaseDisplay display = this;
         // Register the action for TURN_LEFT
         controller.registerCommandAction(KeyCommandBind.TURN_LEFT.cmd,
-                                         new CommandAction() {
+                new CommandAction() {
 
-                                             @Override
-                                             public boolean shouldPerformAction() {
-                                                 if (!clientgui.getClient().isMyTurn()
-                                                     || clientgui.bv.getChatterBoxActive()
-                                                     || display.isIgnoringEvents()
-                                                     || !display.isVisible()) {
-                                                     return false;
-                                                 } else {
-                                                     return true;
-                                                 }
-                                             }
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || display.isIgnoringEvents()
+                                || !display.isVisible()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-                                             @Override
-                                             public void performAction() {
-                                                 int curDir = cmd.getFinalFacing();
-                                                 int dir = curDir;
-                                                 dir = (dir + 5) % 6;
-                                                 Coords curPos = cmd.getFinalCoords();
-                                                 Coords target = curPos.translated(dir);
-                                                 // We need to set this to get the rotate behavior
-                                                 shiftheld = true;
-                                                 currentMove(target);
-                                                 shiftheld = false;
-                                                 clientgui.bv.drawMovementData(ce(), cmd);
-                                             }
-                                         });
+                    @Override
+                    public void performAction() {
+                        int curDir = cmd.getFinalFacing();
+                        int dir = curDir;
+                        dir = (dir + 5) % 6;
+                        Coords curPos = cmd.getFinalCoords();
+                        Coords target = curPos.translated(dir);
+                        // We need to set this to get the rotate behavior
+                        shiftheld = true;
+                        currentMove(target);
+                        shiftheld = false;
+                        clientgui.bv.drawMovementData(ce(), cmd);
+                    }
+                });
 
         // Register the action for TURN_RIGHT
         controller.registerCommandAction(KeyCommandBind.TURN_RIGHT.cmd,
-                                         new CommandAction() {
+                new CommandAction() {
 
-                                             @Override
-                                             public boolean shouldPerformAction() {
-                                                 if (!clientgui.getClient().isMyTurn()
-                                                     || clientgui.bv.getChatterBoxActive()
-                                                     || display.isIgnoringEvents()
-                                                     || !display.isVisible()) {
-                                                     return false;
-                                                 } else {
-                                                     return true;
-                                                 }
-                                             }
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || display.isIgnoringEvents()
+                                || !display.isVisible()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-                                             @Override
-                                             public void performAction() {
-                                                 int curDir = cmd.getFinalFacing();
-                                                 int dir = curDir;
-                                                 dir = (dir + 7) % 6;
-                                                 Coords curPos = cmd.getFinalCoords();
-                                                 Coords target = curPos.translated(dir);
-                                                 // We need to set this to get the rotate behavior
-                                                 shiftheld = true;
-                                                 currentMove(target);
-                                                 shiftheld = false;
-                                                 clientgui.bv.drawMovementData(ce(), cmd);
-                                             }
-                                         });
+                    @Override
+                    public void performAction() {
+                        int curDir = cmd.getFinalFacing();
+                        int dir = curDir;
+                        dir = (dir + 7) % 6;
+                        Coords curPos = cmd.getFinalCoords();
+                        Coords target = curPos.translated(dir);
+                        // We need to set this to get the rotate behavior
+                        shiftheld = true;
+                        currentMove(target);
+                        shiftheld = false;
+                        clientgui.bv.drawMovementData(ce(), cmd);
+                    }
+                });
 
         // Register the action for UNDO
         controller.registerCommandAction(KeyCommandBind.UNDO.cmd,
-                                         new CommandAction() {
+                new CommandAction() {
 
-                                             @Override
-                                             public boolean shouldPerformAction() {
-                                                 if (!clientgui.getClient().isMyTurn()
-                                                     || clientgui.bv.getChatterBoxActive()
-                                                     || display.isIgnoringEvents()
-                                                     || !display.isVisible()) {
-                                                     return false;
-                                                 } else {
-                                                     return true;
-                                                 }
-                                             }
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || display.isIgnoringEvents()
+                                || !display.isVisible()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-                                             @Override
-                                             public void performAction() {
-                                                 removeLastStep();
-                                             }
-                                         });
+                    @Override
+                    public void performAction() {
+                        removeLastStep();
+                    }
+                });
 
         // Register the action for NEXT_UNIT
         controller.registerCommandAction(KeyCommandBind.NEXT_UNIT.cmd,
-                                         new CommandAction() {
+                new CommandAction() {
 
-                                             @Override
-                                             public boolean shouldPerformAction() {
-                                                 if (!clientgui.getClient().isMyTurn()
-                                                     || clientgui.bv.getChatterBoxActive()
-                                                     || !display.isVisible()
-                                                     || display.isIgnoringEvents()) {
-                                                     return false;
-                                                 } else {
-                                                     return true;
-                                                 }
-                                             }
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-                                             @Override
-                                             public void performAction() {
-                                                 selectEntity(clientgui.getClient()
-                                                                       .getNextEntityNum(cen));
-                                             }
-                                         });
+                    @Override
+                    public void performAction() {
+                        selectEntity(clientgui.getClient()
+                                .getNextEntityNum(cen));
+                    }
+                });
 
         // Register the action for PREV_UNIT
         controller.registerCommandAction(KeyCommandBind.PREV_UNIT.cmd,
-                                         new CommandAction() {
+                new CommandAction() {
 
-                                             @Override
-                                             public boolean shouldPerformAction() {
-                                                 if (!clientgui.getClient().isMyTurn()
-                                                     || clientgui.bv.getChatterBoxActive()
-                                                     || !display.isVisible()
-                                                     || display.isIgnoringEvents()) {
-                                                     return false;
-                                                 } else {
-                                                     return true;
-                                                 }
-                                             }
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-                                             @Override
-                                             public void performAction() {
-                                                 selectEntity(clientgui.getClient()
-                                                                       .getPrevEntityNum(cen));
-                                             }
-                                         });
+                    @Override
+                    public void performAction() {
+                        selectEntity(clientgui.getClient()
+                                .getPrevEntityNum(cen));
+                    }
+                });
 
         // Register the action for MOVE_ENVELOPE
         controller.registerCommandAction(KeyCommandBind.MOVE_ENVELOPE.cmd,
-                                         new CommandAction() {
+                new CommandAction() {
 
-                                             @Override
-                                             public boolean shouldPerformAction() {
-                                                 if (!clientgui.getClient().isMyTurn()
-                                                     || clientgui.bv.getChatterBoxActive()
-                                                     || !display.isVisible()
-                                                     || display.isIgnoringEvents()) {
-                                                     return false;
-                                                 } else {
-                                                     return true;
-                                                 }
-                                             }
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
 
-                                             @Override
-                                             public void performAction() {
-                                                 computeMovementEnvelope();
-                                             }
-                                         });
+                    @Override
+                    public void performAction() {
+                        computeMovementEnvelope(clientgui.mechD
+                                .getCurrentEntity());
+                    }
+                });
 
     }
 
@@ -896,6 +896,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // clear board cursors
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
+        clientgui.getBoardView().clearMovementEnvelope();
 
         if (ce == null) {
             return;
@@ -966,8 +967,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             updateLoadButtons();
             butDone.setEnabled(true);
         }
-
-        clientgui.bv.clearMovementEnvelope();
     }
 
     private void removeLastStep() {
@@ -3503,44 +3502,69 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                      .getString("MovementDisplay.waitingForMovementPhase")); //$NON-NLS-1$
         }
     }
-
-    public void computeMovementEnvelope() {
-        if (ce() == null) {
+    
+    /**
+     * Computes all of the possible moves for an Entity in a particular gear.
+     * The Entity can either be a suggested Entity or the currently selected 
+     * one.  If there is a selected entity (which implies it's the current 
+     * players turn), then the current gear is used (which is set by the user).
+     * If there is no selected entity, then the current gear is invalid, and it
+     * defaults to GEAR_LAND (standard "walk forward").
+     * 
+     * @param suggestion  The suggested Entity to use to compute the movement
+     *                      envelope.  If used, the gear will be set to 
+     *                      GEAR_LAND.  This takes precendence over the
+     *                      currently selected unit. 
+     * @param suggestion
+     */
+    public void computeMovementEnvelope(Entity suggestion) {
+        Entity en = ce();
+        int mvMode = gear;
+        if ((en == null) && (suggestion == null)) {
+            return;
+        } else if (en == null) {
+            en = suggestion;
+            mvMode = GEAR_LAND;
+        } else {
+            en = suggestion;
+        }
+        if (en.isDone()) {
             return;
         }
+        
         Map<Coords, MovePath> mvEnvData = new Hashtable<Coords, MovePath>();
-        MovePath mp = new MovePath(clientgui.getClient().getGame(), ce());
+        MovePath mp = new MovePath(clientgui.getClient().getGame(), en);
 
         int maxMP;
-        if (gear == GEAR_JUMP) {
-            maxMP = ce().getJumpMP();
-        } else if (gear == GEAR_BACKUP) {
-            maxMP = ce().getWalkMP();
+        if (mvMode == GEAR_JUMP) {
+            maxMP = en.getJumpMP();
+        } else if (mvMode == GEAR_BACKUP) {
+            maxMP = en.getWalkMP();
         } else {
             if (clientgui.getClient().getGame().getOptions()
                          .booleanOption("tacops_sprint")) {
-                maxMP = ce().getSprintMP();
+                maxMP = en.getSprintMP();
             } else {
-                maxMP = ce().getRunMP();
+                maxMP = en.getRunMP();
             }
         }
-        MoveStepType stepType = (gear == GEAR_BACKUP) ? MoveStepType.BACKWARDS
-                                                      : MoveStepType.FORWARDS;
-        if (gear == GEAR_JUMP) {
+        MoveStepType stepType = (mvMode == GEAR_BACKUP) ? MoveStepType.BACKWARDS
+                : MoveStepType.FORWARDS;
+        if (mvMode == GEAR_JUMP) {
             mp.addStep(MoveStepType.START_JUMP);
         }
 
         ShortestPathFinder pf = ShortestPathFinder.newInstanceOfOneToAll(maxMP,
-                                                                         stepType, ce().getGame());
+                stepType, en.getGame());
         pf.run(mp);
         mvEnvData = pf.getAllComputedPaths();
         Hashtable<Coords, Integer> mvEnvMP = new Hashtable<Coords, Integer>(
                 (int) ((mvEnvData.size() * 1.25) + 1));
         for (Coords c : mvEnvData.keySet()) {
-            mvEnvMP.put(c, mvEnvData.get(c).countMp(gear == GEAR_JUMP));
+            mvEnvMP.put(c, mvEnvData.get(c).countMp(mvMode == GEAR_JUMP));
         }
-        clientgui.bv.setMovementEnvelope(mvEnvMP, ce().getWalkMP(), ce()
-                .getRunMP(), ce().getJumpMP(), gear);
+        clientgui.bv.setMovementEnvelope(mvEnvMP, en.getWalkMP(), en
+                .getRunMP(), en.getJumpMP(), mvMode);
     }
 
     public void computeModifierEnvelope() {
@@ -4140,7 +4164,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 }
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_ENVELOPE.getCmd())) {
-            computeMovementEnvelope();
+            computeMovementEnvelope(clientgui.mechD.getCurrentEntity());
         } else if (actionCmd.equals(MoveCommand.MOVE_TRAITOR.getCmd())) {
             // Set up variables we need
             // We use a vector instead of enumeration here so we can grab the

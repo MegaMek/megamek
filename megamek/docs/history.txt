@@ -1,6 +1,5 @@
 VERSION HISTORY:
 ----------------
-
 v0.41.0-dev (SVN)
 + Bug [#4397]: Option for year is short a character
 + Feature [#1327]: Changing the firing text for swarming attacks
@@ -36,7 +35,7 @@ v0.41.0-dev (SVN)
 + Feature: Mountain Infantry
 + Bug: FovHighlightingAndDarkening/BoardView close methods were never called
 + Feature: Added key bind for toggling isometric view (defaults to T)
-
++ EntityListFile changes to support MekHQ
 
 v0.40.0 (2015-01-01 20:40 UTC)
 + Bug [#4372]: Inferno Bomb/IV fires do not last the proper duration

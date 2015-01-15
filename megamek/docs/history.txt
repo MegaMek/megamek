@@ -38,6 +38,7 @@ v0.41.0-dev (SVN)
 + EntityListFile changes to support MekHQ
 + Feature: MovementEnvelope can now be computed for any selected/viewed unit,
     regardless of whose turn it is
++ Bug [#4414]: Aero strafing runs are targeting other airborne Aeros
 
 v0.40.0 (2015-01-01 20:40 UTC)
 + Bug [#4372]: Inferno Bomb/IV fires do not last the proper duration

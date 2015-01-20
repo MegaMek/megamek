@@ -9,14 +9,14 @@ Source:XTR Prim IV
 Rules Level:5
 
 Mass:35
-Engine:130 Fusion Engine(IS)
+Engine:170 Fusion Engine(IS)
 Structure:IS Standard
 Myomer:Standard
 Cockpit:Primitive Cockpit
 Gyro:Standard Gyro
 
-Heat Sinks:11 Single
-Walk MP:3
+Heat Sinks:10 Single
+Walk MP:4
 Jump MP:0
 
 Armor:Primitive(Inner Sphere)
@@ -126,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink
-Heat Sink
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-

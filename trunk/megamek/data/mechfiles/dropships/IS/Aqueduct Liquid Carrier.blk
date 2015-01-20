@@ -149,15 +149,15 @@ spheroid
 
 SmallCraftBay:2:2
 
-LiquidCargo:7143:4
+LiquidCargobay:7143:0
 
-LiquidCargo:7143:4
+LiquidCargobay:7143:0
 
-LiquidCargo:7143:4
+LiquidCargobay:7143:0
 
-LiquidCargo:7143:4
+LiquidCargobay:7143:0
 
-MechBay:2:2
+MechBay:2:1
 
 CargoBay:2850:2
 

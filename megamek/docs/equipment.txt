@@ -2966,6 +2966,7 @@ M,2300-IS/Clan3071-IS/Clan,2300-(allowed to all)3071-(allowed to all),BALaserMic
 M,3071-IS/Clan1950-IS/Clan,3071-(allowed to all)1950-(allowed to all),BAPowerpack,
 M,2000-IS/Clan3071-IS/Clan,2000-(allowed to all)3071-(allowed to all),BAShotgunMicrophone,
 M,3071-Inner Sphere3062-Inner Sphere,3071-IS_Advanced3062-IS_Advanced,ISBAMineDispenser,
+M,3071-IS/Clan2720-IS/Clan,3071-(allowed to all)2720-(allowed to all),Mission Equipment Storage,
 M,1950-IS/Clan,1950-(allowed to all),Tractor,
 M,1950-IS/Clan,1950-(allowed to all),Trailer,
 M,1950-IS/Clan,1950-(allowed to all),Armored Chassis,

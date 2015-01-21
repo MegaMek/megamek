@@ -41,7 +41,12 @@ v0.41.0-dev (SVN)
 + Bug [#4414]: Aero strafing runs are targeting other airborne Aeros
 + Data: New Images/Unit Files/Maps (Thanks Ratach).  Added missing BA Equipment
 + Translation(Russian): More client changes from an actual Russian. Still need
-    his permission to add name to contributors list.
+    his permission to add name to contributors list
++ BoardEditor improvements to the size changing code, but it still isn't right
++ MiscType Hitch, set tank slots to 1
+    Someone has been using crit slots for this purpose, but we have a dedicated tankSlots
+    variable for a reason. Use it! This is how we have equipment that takes 8 crits in
+    mechs take 1 slot in a tank!
 
 v0.40.0 (2015-01-01 20:40 UTC)
 + Bug [#4372]: Inferno Bomb/IV fires do not last the proper duration

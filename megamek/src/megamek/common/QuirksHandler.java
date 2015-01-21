@@ -89,7 +89,8 @@ public class QuirksHandler {
 
                 // Get the model.
                 Element modelElement = (Element) unitList.getElementsByTagName(MODEL).item(0);
-                String model = null;
+                // default to "all" model for entries that don't list a model.. backwards compatibility with older quirks files
+                String model = "all";
                 if (modelElement != null) {
                     model = modelElement.getTextContent();
                 }

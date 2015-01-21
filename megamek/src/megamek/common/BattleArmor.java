@@ -304,7 +304,9 @@ public class BattleArmor extends Infantry {
     }
 
     /**
-     * Returns the number of locations in this unit.
+     * Returns the number of Troopers in the BattleArmor squad, since locations
+     * for BattleArmor correspond to the different suits instead of the actual
+     * mount locations for equipment.
      */
     @Override
     public int locations() {

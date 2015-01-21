@@ -584,8 +584,8 @@ public class TestBattleArmor extends TestEntity {
                     + "mechanical jump booster!");
             return false;
         }
-
-        if (ba.countWorkingMisc(MiscType.F_MASC) > 1) {
+        EquipmentType boosterType = EquipmentType.get("CLBAMyomerBooster");
+        if (ba.countWorkingMisc(MiscType.F_MASC) > boosterType.getCriticals(ba)) {
             buff.append("BattleArmor may only mount 1 " + "myomer booster!");
             return false;
         }

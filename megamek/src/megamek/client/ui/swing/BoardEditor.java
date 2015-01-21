@@ -76,7 +76,6 @@ import megamek.common.IHex;
 import megamek.common.ITerrain;
 import megamek.common.MapSettings;
 import megamek.common.Terrains;
-import megamek.common.logging.Logger;
 import megamek.common.util.BoardUtilities;
 
 public class BoardEditor extends JComponent implements ItemListener,
@@ -512,44 +511,52 @@ public class BoardEditor extends JComponent implements ItemListener,
         menuBar.setBoard(true);
         bvc.doLayout();
     }
-    
+
     public void boardResize() {
     	ResizeMapDialog emd = new ResizeMapDialog(frame, this, null, mapSettings);
         emd.setVisible(true);
         board = BoardUtilities.generateRandom(mapSettings);
-        
+
         // Implant the old board
-        board = implantOldBoard(game, emd.getExpandWest(), emd.getExpandNorth(), emd.getExpandEast(), emd.getExpandSouth());
-        
+        int west = emd.getExpandWest();
+        int north = emd.getExpandNorth();
+        int east = emd.getExpandEast();
+        int south = emd.getExpandSouth();
+        board = implantOldBoard(game, west, north, east, south);
+
         game.setBoard(board);
         curfile = null;
         frame.setTitle(Messages.getString("BoardEditor.title")); //$NON-NLS-1$
         menuBar.setBoard(true);
         bvc.doLayout();
     }
-    
-    
+
+
     // When we resize a board, implant the old board's hexes where they should be in the new board
-    public IBoard implantOldBoard(IGame game, int xMod, int yMod, int xMod2, int yMod2) {
+    public IBoard implantOldBoard(IGame game, int west, int north, int east, int south) {
     	IBoard oldBoard = game.getBoard();
         for (int x = 0; x < oldBoard.getWidth(); x++) {
             for (int y = 0; y < oldBoard.getHeight(); y++) {
-            	int newX = x+xMod;
-            	int newY = y+yMod;
-            	if (board.contains(newX, newY)) {
+            	int newX = x+west;
+            	int newY = y+north;
+            	if (oldBoard.contains(x, y) && board.contains(newX, newY)) {
             		IHex oldHex = oldBoard.getHex(x, y);
-            		try {
-            			oldHex.setCoords(new Coords(newX, newY));
-            			board.setHex(newX, newY, oldHex);
-            		} catch (Exception e) {
-            			new Logger().log(getClass(),
-            					"implantOldBoard(game, int, int, int, int)",
-            					"x="+x+", y="+y+", xMod="+xMod+", yMod="+yMod);
-            		}
+            		IHex hex = board.getHex(newX, newY);
+            		hex.removeAllTerrains();
+            		    hex.setLevel(oldHex.getLevel());
+                    int terrainTypes[] = oldHex.getTerrainTypes();
+                    for (int i = 0; i < terrainTypes.length; i++) {
+                        int terrainID = terrainTypes[i];
+                        if (!hex.containsTerrain(terrainID) &&
+                            oldHex.containsTerrain(terrainID)) {
+                            hex.addTerrain(oldHex.getTerrain(terrainID));
+                        }
+                    }
+                    board.setHex(newX, newY, hex);
+                    board.resetStoredElevation();
             	}
             }
         }
-        
         return board;
     }
 

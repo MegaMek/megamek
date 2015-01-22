@@ -86,6 +86,7 @@ public class Infantry extends Entity {
     private boolean sneak_camo = false;
     private boolean sneak_ir = false;
     private boolean sneak_ecm = false;
+    private boolean mountain = false;
 
     /**
      * The location for infantry equipment.
@@ -719,11 +720,14 @@ public class Infantry extends Entity {
     }
 
     /**
-     * Infantry can only change 1 elevation level at a time.
+     * Infantry can only change 1 elevation level at a time unless Mountain Inf which is 3.
      */
     @Override
     public int getMaxElevationChange() {
-        return 1;
+    	if (hasMountain()) {
+        return 3;
+    	}
+    	return 1;
     }
 
     /**
@@ -1084,7 +1088,15 @@ public class Infantry extends Entity {
     public void setDEST(boolean b) {
         dest = b;
     }
-
+    
+    public boolean hasMountain() {
+        return mountain;
+    }
+    
+    public void setMountain(boolean b) {
+        mountain = b;
+    }
+    
     public boolean hasSneakCamo() {
         return sneak_camo;
     }

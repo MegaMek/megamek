@@ -1,7 +1,8 @@
 Dropships (2766) RWR
 Achilles (2582),2
 Union (2708),3
-DroST Light Bulk Transport IIA,4
+DroST IIa Transport (2470),4
+DroST IIb Transport (2470),4
 Triumph (2593),5
 Jumbo (Standard),6
 Buccaneer (Standard),7

@@ -2140,8 +2140,10 @@ public class MoveStep implements Serializable {
         if (isInfantry
                 && (parent.getEntity().getWalkMP() == 0)
                 && parent.getEntity().getPosition().equals(prev.getPosition())
-                && ((parent.getEntity().getPosition().distance(getPosition()) == 1) || (Math
-                .abs(parent.getEntity().getElevation() - getElevation()) == 1))
+                && (prev.getElevation() == entity.getElevation())
+                && (parent.getEntity().getPosition().distance(getPosition()) <= 1)
+                && (Math.abs(entity.getElevation() - getElevation()) 
+                        <= entity.getMaxElevationChange())
                 && (movementType != EntityMovementType.MOVE_JUMP)) {
             movementType = EntityMovementType.MOVE_WALK;
         }
@@ -2877,6 +2879,8 @@ public class MoveStep implements Serializable {
             return false;
         }
 
+    
+        
         if ((movementType != EntityMovementType.MOVE_JUMP)
                 && (nMove != EntityMovementMode.VTOL)) {
             if ((((srcAlt - destAlt) > 0) && ((srcAlt - destAlt) > entity

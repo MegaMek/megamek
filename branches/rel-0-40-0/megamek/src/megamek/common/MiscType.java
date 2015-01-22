@@ -1545,6 +1545,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createBAPowerPack());
         EquipmentType.addType(MiscType.createShotgunMicrophone());
         EquipmentType.addType(MiscType.createISBAMineDispenser());
+        EquipmentType.addType(MiscType.createBAMissionEquipStorage());
 
         // support vee stuff
         EquipmentType.addType(MiscType.createTractorModification());
@@ -8696,7 +8697,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 250000;
         misc.criticals = 1;
         misc.flags = misc.flags.or(F_INFRARED_IMAGER).or(F_VTOL_EQUIPMENT)
-                .or(F_AERO_EQUIPMENT);
+                .or(F_AERO_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_D, EquipmentType.RATING_D };
@@ -8714,7 +8715,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 5f;
         misc.cost = 250000;
         misc.flags = misc.flags.or(F_INFRARED_IMAGER).or(F_VTOL_EQUIPMENT)
-                .or(F_AERO_EQUIPMENT);
+                .or(F_AERO_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.criticals = 1;
         misc.availRating = new int[] { EquipmentType.RATING_D,
@@ -9950,7 +9951,27 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
+    
+    public static MiscType createBAMissionEquipStorage() {
+        MiscType misc = new MiscType();
 
+        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+        misc.name = "Mission Equipment Storage";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 0.02f;
+        misc.criticals = 1;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).andNot(F_MECH_EQUIPMENT)
+                .andNot(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        misc.cost = 750;
+        misc.introDate = 2720;
+        misc.techLevel.put(2720, misc.techLevel.get(3071));
+        misc.availRating = new int[] { RATING_C, RATING_C, RATING_C };
+        misc.techRating = RATING_C;
+
+        return misc;
+    }
+    
     public static MiscType create20mLadder() {
         MiscType misc = new MiscType();
         misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);

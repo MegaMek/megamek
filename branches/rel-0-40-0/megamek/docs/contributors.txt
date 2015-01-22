@@ -110,6 +110,7 @@
      DarkISI
      Rovnek
      Aokarasu
+     Ratach
 
   German Readme:
      Black Ice <WKA_Online@yahoo.de>
@@ -194,6 +195,7 @@
      RJM
      SteveRestless
      Dervishx5
+     Adam Werner
      
   Camo Pack
   	 SeaVea

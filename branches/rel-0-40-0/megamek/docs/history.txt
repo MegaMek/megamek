@@ -35,6 +35,14 @@ v0.40.1-dev (SVN)
     mechs take 1 slot in a tank!
 + Bug: Model should default to "all" but doesn't for loading quirks files,
     in case the model tag is missing for chassis wide quirks
++ Data: New Images/RAT Fixes/Other small data fixes
++ Bug [#4407]: Missing King Davids
++ Data:New Images
++ New Sprites and Camos
++ Feature: Mountain Infantry
++ Data: New Images/Unit Files/Maps (Thanks Ratach).  Added missing BA Equipment
++ Data: New Sprites/Few New Units/and Unit Fixes.
+
 
 v0.40.0 (2015-01-01 20:40 UTC)
 + Bug [#4372]: Inferno Bomb/IV fires do not last the proper duration

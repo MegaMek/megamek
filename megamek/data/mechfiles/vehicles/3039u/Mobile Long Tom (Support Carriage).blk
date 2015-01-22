@@ -9,7 +9,7 @@ MAM0
 </Version>
 
 <UnitType>
-Tank
+SupportTank
 </UnitType>
 
 <Name>
@@ -49,6 +49,10 @@ Tracked
 16
 16
 </armor>
+
+<barrating>
+10
+</barrating>
 
 <Body Equipment>
 Communications Equipment (3 ton)

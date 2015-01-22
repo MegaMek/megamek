@@ -9,7 +9,7 @@ MAM0
 </Version>
 
 <UnitType>
-Tank
+SupportTank
 </UnitType>
 
 <Name>

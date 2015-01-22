@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.40.1-dev (SVN)
+v0.40.1 (2015-01-22 21:00 UTC)
 + Bug [#4406]: Dropship causes targeting range to be one
 + Bug [#4410]: Tanks and subclasses pass validation when they shouldn't
 + Bug [#4413]: Tank: Cargo cost 2 crit slots, doesn't matter how much Cargo

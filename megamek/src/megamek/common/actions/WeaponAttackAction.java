@@ -4185,18 +4185,24 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             EntityAction ea = actions.nextElement();
             if (ea instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) ea;
-                if (waa.getEntity(game).equals(attacker)) {
+                Entity waaAE = waa.getEntity(game);
+                if (waaAE == null) {
+                    continue;
+                }
+                if (waaAE.equals(attacker)) {
                     // If there is an attack by this unit that is not the attack
                     // type, fail.
-                    if (!waa.getEntity(game).getEquipment(waa.getWeaponId())
+                    if (!waaAE.getEquipment(waa.getWeaponId())
                             .getType().getInternalName().equals(attackType)) {
                         return false;
                     }
                 }
-                if (waa.getEntity(game).getEquipment(waa.getWeaponId())
-                       .getType().getInternalName().equals(attackType)
-                    && waa.getTarget(game).equals(target)) {
-                    if (!waa.getEntity(game).equals(attacker)) {
+                Targetable waaTarget = waa.getTarget(game);
+                EquipmentType weapType = waaAE.getEquipment(waa.getWeaponId())
+                        .getType();
+                if (weapType.getInternalName().equals(attackType)
+                    && (waaTarget != null) && waaTarget.equals(target)) {
+                    if (!waaAE.equals(attacker)) {
                         // If there is an attack by another unit that has this
                         // attack type against the same target, fail.
                         return false;

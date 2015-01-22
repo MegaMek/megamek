@@ -51,6 +51,7 @@ v0.41.0-dev (SVN)
     instead of lumping crits together
 + Bug: Model should default to "all" but doesn't for loading quirks files,
     in case the model tag is missing for chassis wide quirks
++ Bug [#4417]: Game Not Responsive After Infantry Firing
 
 v0.40.0 (2015-01-01 20:40 UTC)
 + Bug [#4372]: Inferno Bomb/IV fires do not last the proper duration

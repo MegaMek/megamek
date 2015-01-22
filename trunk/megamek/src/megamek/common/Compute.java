@@ -4445,8 +4445,9 @@ public class Compute {
             EntityAction ea = actions.nextElement();
             if (ea instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) ea;
-                if (waa.getEntity(game).equals(attacker)) {
-                    // impossible if alraedy doing a swarm attack
+                Entity waaAE = waa.getEntity(game);
+                if ((waaAE != null) && waaAE.equals(attacker)) {
+                    // impossible if already doing a swarm attack
                     if (waa.getEntity(game).getEquipment(waa.getWeaponId())
                            .getType().getInternalName()
                            .equals(Infantry.SWARM_MEK)) {
@@ -4531,8 +4532,9 @@ public class Compute {
             EntityAction ea = actions.nextElement();
             if (ea instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) ea;
-                if (waa.getEntity(game).equals(attacker)) {
-                    // impossible if alraedy doing a swarm attack
+                Entity waaAE = waa.getEntity(game);
+                if ((waaAE != null) && waaAE.equals(attacker)) {
+                    // impossible if already doing a swarm attack
                     if (waa.getEntity(game).getEquipment(waa.getWeaponId())
                            .getType().getInternalName()
                            .equals(Infantry.LEG_ATTACK)) {

@@ -8016,6 +8016,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0f;
         misc.cost = 0;
         misc.criticals = 1; //not list in a chart but TM pg 98 mentions they take 1 item slot.
+        misc.tankslots = 1;
         misc.flags = misc.flags.or(F_HITCH).or(F_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.industrial = true;

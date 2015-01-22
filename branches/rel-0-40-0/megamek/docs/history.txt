@@ -20,10 +20,21 @@ v0.40.1-dev (SVN)
     movement for the turn
 + Bug [#4401]: Unit Damage Editor dialog only allows equipment to be damaged
 + Bug: MechTileset quietly creates entries for files that don't exist
-+ Bug [#4406]: Dropship causes targeting range to be one
 + Bug: Entity may not be selected for Deployment under certain circumstances
 + Bug: Added missing i18n entry for sensors_detect_all
 + Bug: Load button could be enabled but not able to load Infantry
++ Translation(Russian): Initial welcome window pop up completed along with some other similar words
++ Translation(Russian): Adding bot information window (readme) completed
++ EntityListFile changes to support MekHQ
++ Translation(Russian): More client changes from an actual Russian. Still need
+    his permission to add name to contributors list
++ BoardEditor improvements to the size changing code, but it still isn't right
++ MiscType Hitch, set tank slots to 1
+    Someone has been using crit slots for this purpose, but we have a dedicated tankSlots
+    variable for a reason. Use it! This is how we have equipment that takes 8 crits in
+    mechs take 1 slot in a tank!
++ Bug: Model should default to "all" but doesn't for loading quirks files,
+    in case the model tag is missing for chassis wide quirks
 
 v0.40.0 (2015-01-01 20:40 UTC)
 + Bug [#4372]: Inferno Bomb/IV fires do not last the proper duration

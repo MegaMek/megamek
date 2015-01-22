@@ -157,7 +157,7 @@ public class FluffImageHelper {
                     return name.contains(chassisModel) && extMatch;
                 }
             });
-            if (files.length > 0) {
+            if (files != null && files.length > 0) {
                 fluff_file = files[0];
             }
         }
@@ -175,7 +175,7 @@ public class FluffImageHelper {
                             && extMatch;
                 }
             });
-            if (files.length > 0) {
+            if (files != null && files.length > 0) {
                 fluff_file = files[0];
             }
         }

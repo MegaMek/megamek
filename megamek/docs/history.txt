@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.41.0-dev (SVN)
+v0.41.0 (2015-01-22 21:00 UTC)
 + Bug [#4397]: Option for year is short a character
 + Feature [#1327]: Changing the firing text for swarming attacks
 + Feature [#1342]: Unjam RAC button should display a warning that it will end

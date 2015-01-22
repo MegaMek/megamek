@@ -259,7 +259,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
                 Mounted ammo1 = weapon1.getLinked();
                 Mounted ammo2 = weapon2.getLinked();
 
-                if (ammo1 != null) {
+                if ((ammo1 != null) && (ammo1.getType() instanceof AmmoType)) {
                     AmmoType ammoType = (AmmoType) ammo1.getType();
                     if (WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType1.getDamage() ||
                         AmmoType.M_CLUSTER == ammoType.getMunitionType()) {
@@ -269,7 +269,7 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
                 if (dmg1 == -1) {
                     dmg1 = weaponType1.getDamage();
                 }
-                if (ammo2 != null) {
+                if ((ammo2 != null) && (ammo2.getType() instanceof AmmoType)) {
                     AmmoType ammoType = (AmmoType) ammo2.getType();
                     if (WeaponType.DAMAGE_BY_CLUSTERTABLE == weaponType2.getDamage() ||
                         AmmoType.M_CLUSTER == ammoType.getMunitionType()) {

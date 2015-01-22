@@ -4,6 +4,16 @@ v0.40.1-dev (SVN)
 + Bug [#4406]: Dropship causes targeting range to be one
 + Bug [#4410]: Tanks and subclasses pass validation when they shouldn't
 + Bug [#4413]: Tank: Cargo cost 2 crit slots, doesn't matter how much Cargo
++ Bug [#4409]: Princess Cannot Move/Fire BAs with APMs
++ Bug: Client can get deadlocked when disconnecting
++ Adjusted threading properties of AbstractConnection
++ Bug [#4400]: Fixed potential threading issus in Server.  This, combined with
+    the last fix, should hopefully eliminate some occurances of server hanging
++ Bug: Hang in UnitDisplay if next/prev weapon used with no weapon selected
++ Bug [#4414]: Aero strafing runs are targeting other airborne Aeros
++ BattleArmor Myomer Booster now properly  treated as a spread-crit item,
+    instead of lumping crits together
++ Bug [#4417]: Game Not Responsive After Infantry Firing
 
 v0.40.0 (2015-01-01 20:40 UTC)
 + Bug [#4372]: Inferno Bomb/IV fires do not last the proper duration

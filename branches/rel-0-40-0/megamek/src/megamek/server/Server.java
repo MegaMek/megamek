@@ -306,17 +306,19 @@ public class Server implements Runnable {
         @Override
         public void run() {
             while (!shouldStop) {
-                synchronized (packetQueue) {
-                    while (packetQueue.size() > 0) {
-                        ReceivedPacket rp = packetQueue.poll();
+                while (!packetQueue.isEmpty()) {
+                    ReceivedPacket rp = packetQueue.poll();
+                    synchronized (serverLock) {
                         handle(rp.connId, rp.packet);
                     }
-                    try {
+                }
+                try {
+                    synchronized (packetQueue) {
                         packetQueue.wait();
-                    } catch (InterruptedException e) {
-                        // If we are interrupted, just keep going, generally
-                        // this happens after we are signalled to stop.
                     }
+                } catch (InterruptedException e) {
+                    // If we are interrupted, just keep going, generally
+                    // this happens after we are signalled to stop.
                 }
             }
         }
@@ -369,7 +371,7 @@ public class Server implements Runnable {
 
     private Vector<DynamicTerrainProcessor> terrainProcessors = new Vector<DynamicTerrainProcessor>();
 
-    private Timer timer = new Timer();
+    private Timer watchdogTimer = new Timer("Watchdog Timer");
 
     private static EntityVerifier entityVerifier;
 
@@ -379,7 +381,7 @@ public class Server implements Runnable {
 
     private String serverAccessKey = null;
 
-    private Timer t = new Timer(true);
+    private Timer serverBrowserUpdateTimer = null;
 
     /**
      * Keeps track of what team a player requested to join.
@@ -409,25 +411,27 @@ public class Server implements Runnable {
          */
         @Override
         public void disconnected(DisconnectedEvent e) {
-            IConnection conn = e.getConnection();
-
-            // write something in the log
-            System.out.println("s: connection " + conn.getId()
-                               + " disconnected");
-
-            connections.removeElement(conn);
-            connectionsPending.removeElement(conn);
-            connectionIds.remove(conn.getId());
-            ConnectionHandler ch = connectionHandlers.get(conn.getId());
-            if (ch != null) {
-                ch.signalStop();
-                connectionHandlers.remove(conn.getId());
-            }
-
-            // if there's a player for this connection, remove it too
-            IPlayer player = getPlayer(conn.getId());
-            if (null != player) {
-                Server.this.disconnected(player);
+            synchronized (serverLock) { 
+                IConnection conn = e.getConnection();
+    
+                // write something in the log
+                System.out.println("s: connection " + conn.getId()
+                                   + " disconnected");
+    
+                connections.removeElement(conn);
+                connectionsPending.removeElement(conn);
+                connectionIds.remove(conn.getId());
+                ConnectionHandler ch = connectionHandlers.get(conn.getId());
+                if (ch != null) {
+                    ch.signalStop();
+                    connectionHandlers.remove(conn.getId());
+                }
+    
+                // if there's a player for this connection, remove it too
+                IPlayer player = getPlayer(conn.getId());
+                if (null != player) {
+                    Server.this.disconnected(player);
+                }
             }
         }
 
@@ -450,6 +454,12 @@ public class Server implements Runnable {
         }
 
     };
+    
+    /**
+     * Used to ensure only one thread at a time is accessing this particular
+     * instance of the server.
+     */
+    private final Object serverLock = new Object();
 
     public Server(String password, int port) throws IOException {
         this(password, port, false, "");
@@ -466,7 +476,6 @@ public class Server implements Runnable {
      */
     public Server(String password, int port, boolean registerWithServerBrowser,
                   String metaServerUrl) throws IOException {
-        serverInstance = this;
         this.metaServerUrl = metaServerUrl;
         this.password = password.length() > 0 ? password : null;
         // initialize server socket
@@ -540,15 +549,12 @@ public class Server implements Runnable {
         terrainProcessors.add(new WeatherProcessor(this));
         terrainProcessors.add(new QuicksandProcessor(this));
 
-        // Fully initialised, now accept connections
-        connector = new Thread(this, "Connection Listener");
-        connector.start();
-
         packetPump = new PacketPump();
         packetPumpThread = new Thread(packetPump, "Packet Pump");
         packetPumpThread.start();
 
         if (registerWithServerBrowser) {
+            
             final TimerTask register = new TimerTask() {
                 @Override
                 public void run() {
@@ -556,8 +562,16 @@ public class Server implements Runnable {
                                               Server.getServerInstance().metaServerUrl);
                 }
             };
-            t.schedule(register, 1, 40000);
+            serverBrowserUpdateTimer = new Timer(
+                    "Server Browser Register Timer", true);
+            serverBrowserUpdateTimer.schedule(register, 1, 40000);
         }
+        
+        // Fully initialised, now accept connections
+        connector = new Thread(this, "Connection Listener");
+        connector.start();
+        
+        serverInstance = this;
     }
 
     /**
@@ -665,7 +679,7 @@ public class Server implements Runnable {
      * Shuts down the server.
      */
     public void die() {
-        timer.cancel();
+        watchdogTimer.cancel();
 
         // kill thread accepting new connections
         connector = null;
@@ -704,7 +718,9 @@ public class Server implements Runnable {
 
         connections.removeAllElements();
         connectionIds.clear();
-        t.cancel();
+        if (serverBrowserUpdateTimer != null) {
+            serverBrowserUpdateTimer.cancel();
+        }
         if (metaServerUrl != "") {
             registerWithServerBrowser(false, metaServerUrl);
         }
@@ -28022,24 +28038,25 @@ public class Server implements Runnable {
         while (connector == currentThread) {
             try {
                 Socket s = serverSocket.accept();
+                synchronized (serverLock) {
+                    int id = getFreeConnectionId();
+                    System.out.println("s: accepting player connection #" + id
+                            + " ...");
 
-                int id = getFreeConnectionId();
-                System.out.println("s: accepting player connection #" + id
-                                   + " ...");
+                    IConnection c = ConnectionFactory.getInstance()
+                            .createServerConnection(s, id);
+                    c.addConnectionListener(connectionListener);
+                    c.open();
+                    connectionsPending.addElement(c);
+                    ConnectionHandler ch = new ConnectionHandler(c);
+                    Thread newConnThread = new Thread(ch, "Connection " + id);
+                    newConnThread.start();
+                    connectionHandlers.put(id, ch);
 
-                IConnection c = ConnectionFactory.getInstance()
-                                                 .createServerConnection(s, id);
-                c.addConnectionListener(connectionListener);
-                c.open();
-                connectionsPending.addElement(c);
-                ConnectionHandler ch = new ConnectionHandler(c);
-                Thread newConnThread = new Thread(ch, "Connection " + id);
-                newConnThread.start();
-                connectionHandlers.put(id, ch);
-
-                greeting(id);
-                ConnectionWatchdog w = new ConnectionWatchdog(this, id);
-                timer.schedule(w, 1000, 500);
+                    greeting(id);
+                    ConnectionWatchdog w = new ConnectionWatchdog(this, id);
+                    watchdogTimer.schedule(w, 1000, 500);
+                }
             } catch (InterruptedIOException iioe) {
                 // ignore , just SOTimeout blowing..
             } catch (IOException ex) {

@@ -558,6 +558,11 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_MASC)) {
             if (entity instanceof Protomech) {
                 return entity.getWeight() * 0.025f;
+            // Myomer Boosters for BA
+            } else if (entity instanceof BattleArmor) {
+                // Myomer boosters weight 0.250 tons, however this has to
+                // be split across 3 instances, since it's spreadable equipment
+                return (0.250f / 3);
             } else {
                 if (hasSubType(S_JETBOOSTER)) {
                     return entity.getEngine().getWeightEngine(entity) / 10.0f;
@@ -2140,8 +2145,11 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("CLBAMyomerBooster");
         misc.addLookupName("CLBAMB");
         misc.addLookupName("BAMyomerBooster");
-        misc.tonnage = .250f;
+        // Need variable  tonnage because we have to account for tonnage being
+        // split across 3 criticals, since it's spreadable equipment
+        misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 3;
+        misc.spreadable = true;
         misc.cost = COST_VARIABLE;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_MASC).or(F_BA_EQUIPMENT)

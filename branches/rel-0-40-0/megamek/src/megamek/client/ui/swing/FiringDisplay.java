@@ -1269,7 +1269,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 if (bldg != null) {
                     targets.add(new BuildingTarget(c, game.getBoard(), false));
                 }
-                targets.addAll(game.getEntitiesVector(c));
+                // Target all ground units (non-airborne, VTOLs still count)
+                for (Entity t : game.getEntitiesVector(c)) {
+                    if (!t.isAirborne()) {
+                        targets.add(t);
+                    }
+                }
             }
         } else {
             targets.add(target);

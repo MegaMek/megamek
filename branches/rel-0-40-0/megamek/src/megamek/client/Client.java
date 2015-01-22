@@ -168,8 +168,10 @@ public class Client implements IClientCommandHandler {
 
         public void run() {
             while (!shouldStop) {
-                updateConnection();
+                // Write any queued packets
                 flushConn();
+                // Wait for new input
+                updateConnection();
                 if ((connection == null) || connection.isClosed()) {
                     shouldStop = true;
                 }
@@ -188,7 +190,17 @@ public class Client implements IClientCommandHandler {
          */
         @Override
         public void disconnected(DisconnectedEvent e) {
-            Client.this.disconnected();
+            // We can't just run this directly, otherwise we open up all sorts
+            //  of concurrency issues with the AWT event dispatch thread.
+            // Instead, if we will have the event dispatch thread handle it,
+            // by using SwingUtilities.invokeLater
+            // Not running this on the AWT EDT can lead to dead-lock
+            Runnable handlePacketEvent = new Runnable() {
+                public void run() {
+                    Client.this.disconnected();
+                }
+            };
+            SwingUtilities.invokeLater(handlePacketEvent);            
         }
 
         @Override

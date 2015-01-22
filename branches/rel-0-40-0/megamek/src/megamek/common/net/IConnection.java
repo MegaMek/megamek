@@ -59,18 +59,14 @@ public interface IConnection {
     public String getInetAddress();
 
     /**
-     * call this to update the connection state. should be called a few times
-     * per second normally. This method should not block for too long. Instead
-     * it should return 0 and hope to be called asap again.
-     * 
-     * @return the amount of milliseconds it is approximately ok not to call
-     *         this method. Must return >=0
+     * Process all incoming data, blocking on the input stream until new input
+     * is available.
      */
-    public long update();
+    public void update();
 
     /**
-     * sibling of the update() method. will not read anything, will just flush
-     * the pending packets from the queue
+     * Sibling of the update() method, will not read anything, will just flush
+     * the pending packets from the queue.
      */
     public void flush();
 

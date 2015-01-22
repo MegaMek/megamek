@@ -20,9 +20,13 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.Serializable;
 import java.util.StringTokenizer;
 
@@ -59,46 +63,94 @@ public class DialogOptionComponent extends JPanel implements
         dialogOptionListener = parent;
         this.option = option;
 
-        setLayout(new BorderLayout());
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.WEST;
         switch (option.getType()) {
             case IOption.BOOLEAN:
-                checkbox = new JCheckBox(option.getDisplayableName(), option
-                        .booleanValue());
+                checkbox = new JCheckBox("", option.booleanValue());
                 checkbox.addItemListener(this);
-                add(checkbox, BorderLayout.CENTER);
                 checkbox.setToolTipText(convertToHtml(option.getDescription()));
-                if (!editable)
+                if (!editable) {
                     checkbox.setEnabled(false);
-
-                break;
-            case IOption.CHOICE:
-                choice = new JComboBox<String>();
+                }
 
                 label = new JLabel(option.getDisplayableName());
                 label.setToolTipText(convertToHtml(option.getDescription()));
-                add(label, BorderLayout.WEST);
-                add(choice, BorderLayout.CENTER);
-
-                if (!editable)
+                label.addMouseListener(new MouseListener(){
+                    public void mouseClicked(MouseEvent evt) {
+                        if (checkbox.isEnabled()) {
+                            checkbox.setSelected(!checkbox.isSelected());
+                        }
+                    }
+                    public void mouseEntered(MouseEvent evt) {}
+                    public void mouseExited(MouseEvent evt) {}
+                    public void mousePressed(MouseEvent evt) {}
+                    public void mouseReleased(MouseEvent evt) {}                    
+                });
+                
+                gbc.gridx = gbc.gridy = 0;
+                gbc.anchor = GridBagConstraints.CENTER;
+                gbc.insets = new Insets(0,10,0,10);
+                add(checkbox, gbc);
+                gbc.gridx++;
+                gbc.weightx = 1.0;
+                gbc.anchor = GridBagConstraints.WEST;
+                gbc.insets = new Insets(0,0,0,0);
+                add(label, gbc);
+                break;
+            case IOption.CHOICE:
+                choice = new JComboBox<String>();
+                label = new JLabel(option.getDisplayableName());
+                label.setToolTipText(convertToHtml(option.getDescription()));
+                if (!editable) {
                     choice.setEnabled(false);
+                }
 
+                gbc.gridx = gbc.gridy = 0;
+                add(label, gbc);
+                gbc.gridx++;
+                gbc.weightx = 1.0;
+                add(choice, gbc);
                 break;
             default:
                 textField = new JTextField(option.stringValue(), option
                         .getTextFieldLength());
+                textField.setHorizontalAlignment(JTextField.CENTER);
                 label = new JLabel(option.getDisplayableName());
                 label.setToolTipText(convertToHtml(option.getDescription()));
-                if (option.isLabelBeforeTextField()) {
-                    add(label, BorderLayout.CENTER);
-                    add(textField, BorderLayout.WEST);
-                } else {
-                    add(textField, BorderLayout.WEST);
-                    add(label, BorderLayout.CENTER);
-                }
-
-                if (!editable)
+                label.addMouseListener(new MouseListener(){
+                    public void mouseClicked(MouseEvent evt) {
+                        if (textField.isEnabled()) {
+                            textField.requestFocus();
+                            textField.selectAll();
+                        }
+                    }
+                    public void mouseEntered(MouseEvent evt) {}
+                    public void mouseExited(MouseEvent evt) {}
+                    public void mousePressed(MouseEvent evt) {}
+                    public void mouseReleased(MouseEvent evt) {}                    
+                });
+                
+                if (!editable) {
                     textField.setEnabled(false);
-
+                }
+                
+                if (option.isLabelBeforeTextField()) {
+                    gbc.gridx = gbc.gridy = 0;
+                    add(label, gbc);
+                    gbc.gridx++;
+                    gbc.weightx = 1.0;
+                    add(textField, gbc);
+                } else {
+                    gbc.gridx = gbc.gridy = 0;
+                    gbc.insets = new Insets(0,2,0,2);
+                    add(textField, gbc);
+                    gbc.gridx++;
+                    gbc.insets = new Insets(0,0,0,0);
+                    gbc.weightx = 1.0;
+                    add(label, gbc);
+                }
                 break;
         }
     }

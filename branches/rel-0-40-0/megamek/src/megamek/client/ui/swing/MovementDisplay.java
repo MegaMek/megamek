@@ -3605,6 +3605,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             setupButtonPanel();
         } else if (ev.getActionCommand()
                      .equals(MoveCommand.MOVE_UNJAM.getCmd())) {
+            String title = Messages
+                    .getString("MovementDisplay.UnjamRAC.title"); //$NON-NLS-1$
+            String msg = Messages.getString(
+                    "MovementDisplay.UnjamRAC.message"); //$NON-NLS-1$
             if ((gear == MovementDisplay.GEAR_JUMP)
                 || (gear == MovementDisplay.GEAR_CHARGE)
                 || (gear == MovementDisplay.GEAR_DFA)
@@ -3621,7 +3625,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 // clearAllMoves();
                 // gear = Compute.GEAR_LAND;
                 setUnjamEnabled(false);
-            } else {
+            } else  if (clientgui.doYesNoDialog(title, msg)) {
                 cmd.addStep(MoveStepType.UNJAM_RAC);
                 ready();
             }

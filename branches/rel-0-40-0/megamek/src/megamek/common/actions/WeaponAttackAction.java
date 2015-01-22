@@ -632,7 +632,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     return new ToHitData(TargetRoll.IMPOSSIBLE, "Use the 'Attack Swarmed Mek' attack instead");
                 }
                 return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                                     "swarming", ToHitData.HIT_SWARM, side);
+                        "swarming (automatic hit)", ToHitData.HIT_SWARM, side);
             }
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
                                  "swarming", ToHitData.HIT_SWARM_CONVENTIONAL,

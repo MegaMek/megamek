@@ -87,6 +87,15 @@ Saxon APC (Laser)|
 Merkava Heavy Tank Mk VII|
 Marsden II MBT II-A (LB-X)|
 Crow Scout Helicopter (Standard)|
+Ibex RV (Militarized:MG)|
+Hector Road Train Trailer Module (Livestock)|
+Hector Road Train Trailer Module (Liquid)|
+Hector Road Train Tractor (Standard)|
+Hector Road Train Trailer Module (Passenger)|
+Hector Road Train Trailer Module (Refrigerated)|
+Hector Road Train Trailer Module (Standard)|
+Ibex RV (Standard)|
+Ibex RV (Militarized:Gauss)|
 Mobile Tactical Command HQ (Standard)|
 Shackleton AESV (Standard)|
 Iveco Burro II Super Heavy Cargo Truck (Standard)|
@@ -118,6 +127,14 @@ Wayland Mobile Base (Standard)|
 Tiger Medium Tank T-12|
 Hipparch Cavalry Tank (Standard)|
 Gallant Urban Assault Tank (Standard)|
+C-85 Sprinter Delivery Vehicle (Standard)|
+Apple-Churchill Surveillance VTOL (Standard)|
+Apocalypse World Rover (Standard)|
+Generic Expandable Services Vehicle Trailer (Bunk)|
+Generic Expandable Services Vehicle (Field Kitchen)|
+Generic Expandable Services Vehicle (MASH)|
+Generic Expandable Services Vehicle (Command Post)|
+Generic Expandable Services Vehicle Trailer (Cargo)|
 Karnov UR Transport (Artillery)|
 Goblin Medium Tank (Standard)|
 Pegasus Scout Hover Tank (Missile)|
@@ -423,6 +440,7 @@ Schiltron Mobile Fire-Support Platform Prime|
 Mantis Light Attack VTOL (ECCM)|
 Schiltron Mobile Fire-Support Platform D|
 Heavy Hover APC (SRM)|
+Flatbed Truck (AC)|
 Chevalier Light Tank (BAP)|
 Ishtar Heavy Fire Support Tank (Standard)|
 Heavy Wheeled APC (LRM)|
@@ -583,6 +601,11 @@ Humming Bird VTOL (Rescue)|
 Nike Air Defense Platform (Standard)|
 Hwacha Urban Combat Vehicle HW1|
 Barouche Military Transport (Standard)|
+Chi-Ha Infantry Combat Vehicle (Standard)|
+Cobra VTOL Transport (Fusion)|
+Chi-Ha Infantry Combat Vehicle (Original)|
+Sturmblitz Assault Gun (Standard)|
+Cobra VTOL Transport (Standard)|
 Demon Tank CX-2|
 Lightning Attack Hovercraft CX-3|
 Fury Command Tank CX-17|
@@ -1479,6 +1502,8 @@ Slayer SL-CX1|
 Lucifer LCF-X30|
 Shilone SL-17X|
 Oni ON-2X|
+Hammerhead HMR-HC|
+Hammerhead HMR-HA|
 Sabre SB-31 'Defense Special'|
 Sholagar SL-27X|
 Hellcat II HCT-213BC (Herman)|
@@ -1560,11 +1585,14 @@ Tyre (Michiko)|
 Hydaspes (Algar)|
 Issus (Erika)|
 Mechbuster (Mary)|
+Mowang Courier (Standard)|
 Foxhound Gunboat TIG-40|
 Tigress Close Patrol Craft TIG-15|
 Long-Range Shuttlecraft KR-61C|
 Long-Range Shuttlecraft KR-61|
 Ares Assault Craft Mark VII|
+Intrepid Assault Craft (2331)|
+Intrepid Assault Craft (2478)|
 Ares Assault Craft Mark VII-C|
 Lyonesse Escort (Standard)|
 Aquarius Escort|
@@ -1681,6 +1709,9 @@ Commonwealth Light Cruiser (Block II)|
 Cruiser (Standard)|
 Narukami Destroyer (Block I)|
 Narukami Destroyer (Block II)|
+Essex I Destroyer (Standard)|
+Riga II Destroyer/Carrier (Standard)|
+Athena Cruiser (Standard)|
 Tharkad Battlecruiser (WoB)|
 Mako Corvette (Standard)|
 Mjolnir Battlecruiser (Standard)|
@@ -1784,21 +1815,37 @@ Nephilim Assault Battle Armor (Gauss)|
 Kobold Battle Armor (CS) [GL/TAG]|
 Kobold Battle Armor (GB) [SL/Flamer]|
 Kobold Battle Armor [GL]|
+Resgate PA(L) (Scout)|
+Tunnel Rat Mining Exoskeleton III [Armored Glove]|
+Resgate PA(L) (Support)|
+Groundhog Exoskeleton CEX-205 [Armored Glove]|
 Gladiator Exoskeleton (Standard) [AG]|
+Tunnel Rat Mining Exoskeleton IV [Armored Glove/LMG]|
 PowerLoader Exoskeleton P-5000|
-Salrilla Exoskeleton PEX-2F|
+Tunnel Rat Mining Exoskeleton I / II [Industrial Drill]|
+Groundhog Exoskeleton CEX-205 [Basic Manipulator]|
 Smoothgoliath PA(L) II|
+Resgate PA(L) (Spotter)|
+Smoothdavid PA(L) III|
 Krise PA(L) (Standard)|
-Tunnel Rat Mining Exoskeleton I|
 Ailette Zero-G Engineering Exoskeleton (Standard)|
-Tunnel Rat Mining Exoskeleton II|
-Tunnel Rat Mining Exoskeleton III|
+Groundhog Exoskeleton CEX-205 [Salvage Arm]|
+Groundhog Exoskeleton CEX-205 [Cargo Lifter]|
+Gorilla Exoskeleton 'Falcata'|
+Tunnel Rat Mining Exoskeleton IV [Armored Glove/GL]|
+Tunnel Rat Mining Exoskeleton IV [Battle Claw/LMG]|
+Salrilla Exoskeleton [Mine Clearance]|
+Tunnel Rat Mining Exoskeleton I / II [Armored Glove]|
 Gladiator Exoskeleton (Standard) [BC/ID]|
 Gorilla Exoskeleton PEX-2B|
 Resgate PA(L) (Standard)|
-Groundhog Exoskeleton CEX-205|
+Salrilla Exoskeleton [Salvage Arm]|
+Resgate PA(L) (Interdictor)|
+Tunnel Rat Mining Exoskeleton IV [Battle Claw/GL]|
+Groundhog Exoskeleton CEX-205 [Industrial Drill]|
 Smoothdavid PA(L) II|
 HeavyHauler Exoskeleton (Standard)|
+Groundhog Exoskeleton CEX-205 [Mine Clearance]|
 Rogue Bear Heavy Battle Armor (Hybrid)|
 Sylph Battle Armor (Enhanced)|
 Void Medium Battle Armor (Minelayer)|
@@ -1982,12 +2029,12 @@ Ravager Assault Battle Armor (LRM) [MH]|
 Kobold Battle Armor IIC|
 Grenadier Battle Armor (Hunter-Killer)[SVSP/Magshot]|
 Ravager Assault Battle Armor (LRM)|
-Sloth Battle Armor (Huntsman)|
 Infiltrator Mk. II Battle Armor (Marine)|
 Kopis Assault Battle Armor (AI Mk IIr)|
 Kopis Assault Battle Armor (AI Mk II)|
 Phalanx Battle Armor (D)|
 Warg Assault Battle Armor (Reactive)|
+Sloth Battle Armor (Huntsman)|
 Gray Death Strike Armor (HarJel)|
 Kopis Assault Battle Armor (Mortar)|
 Grenadier Battle Armor [Heavy Flamer]|
@@ -2315,7 +2362,6 @@ Assault Triumph (3062)|
 Assault Triumph (3082)|
 Merlin (3063)|
 Conquistador (3063)|
-DroST Light Bulk Transport IIA|
 Jumbo (Standard)|
 Carrier (Standard)|
 Outpost (3063)|
@@ -2354,6 +2400,10 @@ Battle Taxi NL-43|
 Merlin Ngake|
 Lung Wang 'Predator'|
 Czar Dropship (Standard)|
+DroST IIb Transport (2445)|
+DroST IIa Transport (2470)|
+DroST IIb Transport (2470)|
+DroST IIa Transport (2445)|
 M3 Drone|
 Lee (2756)|
 Model 96C 'Howdah'|
@@ -2457,16 +2507,14 @@ Imp IMP-1C|
 Imp IMP-1A|
 Hoplite HOP-4Bb|
 Annihilator ANH-1X|
+Crosscut ED-X2 (Flamer)|
 Sling SL-1H|
 Falcon FLC-4Nb|
-Harvester Ant KIC-3 Agromech(MG)|
-Crosscut ED-X2 ForestryMech|
 Daedalus GTX2A 'Stevedore'|
 Firefly FFL-3PP3|
-Crosscut ED-X2M2 ForestryMech(Rocket)|
 Locust LCT-1Vb|
 Firefly FFL-4A|
-Powerman XI LoaderMech (Laser)|
+Crosscut ED-X2 (RL)|
 Marco MR-8D|
 Carbine CON-1 ConstructionMech (RL)|
 Annihilator C 'Gausszilla'|
@@ -2475,36 +2523,31 @@ Warhammer WHM-7A|
 Daedalus GTX2B 'Navvy'|
 Thorn THE-Nb|
 Firefly FFL-3PP|
-Buster XV HaulerMech (PPC)|
 Stalker STK-3Fb|
 Firefly FFL-3SLE|
 Falcon FLC-4Nb-PP2|
-Buster XV HaulerMech|
 Highlander HGN-732 (Colleen)|
-Powerman XI LoaderMech|
 Shogun SHG-2H|
 Crockett CRK-5003-1b|
 Marco MR-8E|
 Firefly FFL-3A|
 Carbine CON-1 ConstructionMech|
 Daedalus GTX2 (Militarized)|
-Crosscut ED-X2M ForestryMech(Flamer)|
 Annihilator ANH-1G|
 Hoplite HOP-4Cb|
 Imp IMP-1B|
 Stinger STG-3Gb|
-Harvester Ant KIC-3 Agromech(LRM)|
 Griffin GRF-2N|
 Falcon FLC-4Nb (Saho)|
-Powerman XI LoaderMech (SRM)|
 Shadow Hawk SHD-2Hb|
+Powerman XI LoaderMech (Standard)|
 Sling SL-1G|
+Crosscut ED-X2 ForestryMech|
 Thunderbolt TDR-5Sb|
 Falcon FLC-4Nb-PP|
 Exterminator EXT-4Db|
 Firefly FFL-3PP2|
 Sentinel STN-3Lb|
-Buster XV HaulerMech (AC)|
 Hermes HER-1Sb|
 Jupiter 2|
 Malak C-MK-O Invictus|
@@ -2573,7 +2616,6 @@ Phoenix PX-1R|
 Valiant V4-LNT-K7|
 Legionnaire LGN-2XA|
 Seraph C-SRP-OA Dominus|
-Xanthos XNT-2O|
 Crimson Hawk 2|
 Gladiator GLD-5R|
 Balius Prime|
@@ -2689,7 +2731,6 @@ Warhammer WHM-6Rb|
 Pariah (Septicemia) D|
 Lumberjack LM4/C|
 Pariah (Septicemia) B|
-Toro TR-A-1|
 Crusader CRD-2R|
 Jackrabbit JKR-9R 'Joker'|
 Pariah (Septicemia) A|
@@ -2733,21 +2774,67 @@ Osteon Prime|
 Thor (Summoner) Z|
 Osteon D|
 Pariah (Septicemia) A-Z|
-Buster XXI HaulerMech|
-Harvester HVR-99 Agromech|
-Cattlemaster CTL-2 (Hunter)|
-Powerman XV LoaderMech|
-Harvester Ant KIC-3 Agromech|
-Carbine CON-7 ConstructionMech|
+Carbine CON-9M-B ConstructionMech MOD|
+Shugosha LAW-QM2 Q-Mech|
+Uni ATAE-70T CargoMech (Standard)|
+Harvester HVR-99 AgroMech (Standard)|
+Marco MR-7|
+Dig Lord RCL-4 MiningMech|
+Buster BC XV HaulerMech (Standard)|
+Grommet D90 MilitiaMech (Standard)|
+Crosscut ED-X4X LoggerMech|
+Buster BC XV-M-W HaulerMech MOD|
+Buster BC XV-M-B HaulerMech MOD|
+Uni ATAE-70 CargoMech (Standard)|
+Powerman SC XV HaulerMech (Standard)|
+Crosscut ED-X4D DemolitionMech|
+Peacekeeper PK-6 SecurityMech|
+Crosscut ED-X5M LoggerMech MOD|
+Powerman SC XI-M LoaderMech MOD|
+Shugosha PTN-LAW LoaderMech|
+Lumberjack LM5/M|
+Copper SecurityMech CPK-65|
+Vampyr SC-V-1 SalvageMech (Standard)|
+Carbine CON-7 ConstructionMech (Standard)|
+Shugosha LAW-QM1 Q-Mech|
+ScavengerMech SC-V-M MilitiaMech (Standard)|
+CattleMaster CTL-3R 'Herder' IndustrialMech|
+Crosscut ED-X5M-B LoggerMech MOD|
+Uni ATAE-70 MilitiaMech (Standard)|
+Marco MR-6|
+Jabberwocky MilitiaMech JAW-67|
 Pompier Firemech GM-3A|
-Crosscut ED-X4 ForestryMech|
-Carbine CON-8 ConstructionMech|
-Uni ATAE-70 CargoMech|
-Cattlemaster CTL-3R (Herder)|
-Powerman XVI LoaderMech|
+Peacemaker PM6 PoliceMech (Standard)|
+Harvester Ant KIC-3M AgroMech MOD|
+Buster BC XV-M HaulerMech MOD|
+Crosscut ED-X2M LoggerMech MOD|
+Carbine CON-8 ConstructionMech (Standard)|
+Buster BC XV-M-C HaulerMech MOD|
+Carbine CON-9M ConstructionMech MOD|
+Buster BC XXI HaulerMech (Standard)|
+Shugosha LAW-QM3 Q-Mech|
+Pompier Firemech GM-3HT|
+ScavengerMech SC-V SalvageMech (Standard)|
+Harvester Ant KIC-3 AgroMech|
+Crosscut ED-X4M LoggerMech MOD|
+CattleMaster CTL-3R2 'Hunter' IndustrialMech|
+Carbine CON-8H HaulerMech (Standard)|
+Pompier Firemech GM-3CD|
+Crosscut ED-X1 LoggerMech|
+Crosscut ED-X4 LoggerMech|
+Carbine CON-7M ConstructionMech MOD|
+Harvester Ant KIC-3M-B AgroMech MOD|
+Powerman SC XI-M-B LoaderMech MOD|
+Carbine CON-9 ConstructionMech (Standard)|
+ForestryMech ED-X3|
+CattleMaster CTL-3R3 SecurityMech|
+Heavy Lifter HCL-1 CargoMech (Standard)|
+Dig King RCL-1 MiningMech (Standard)|
 Chaffee Servicemech BT1|
+Dig King RCL-1 MiningMech MOD|
+Crosscut ED-X4B DemolitionMech|
 Copper SecurityMech CPK-19|
-ScavengerMech 'Vampyr' SC-V-1|
+Powerman SC XVI HaulerMech (Standard)|
 Orion ON1-K (Kerensky)|
 Banshee BNC-9S|
 Ti Ts'ang TSG-9 'China Doll'|
@@ -2759,14 +2846,11 @@ Pack Hunter II (Isis)|
 Centurion CN9-D4D|
 Catapult CPLT-K2K|
 Hatchetman HCT-5D|
-Dig Lord RCL-4M MiningMech MOD|
 Black Hawk (Standard)|
 Centurion CN9-D3D|
 Yu Huang (Carson)|
 Mad Cat III (Eve)|
-Dig Lord RCL-4 MiningMech|
 Ryoken II (Tassa)|
-Cattlemaster RA-4 (Herder)|
 Mad Cat III 2|
 Atlas AS7-K2 (Jedra)|
 Black Hawk 2|
@@ -3727,14 +3811,14 @@ Cauldron-Born (Ebon Jaguar) (Samantha)|
 Grasshopper (Reynolds)|
 Emperor EMP-6ME 'Mercury Elite'|
 Albatross ALB-5W (Dantalion)|
-Peacemaker PM6 PoliceMech|
 Dasher (Fire Moth) (Aletha)|
 Kodiak (Cale)|
-Uni ATAE-70 MilitiaMech|
 BattleMaster BLR-3M (Rogers)|
 Nightstar NSR-9J (Brubaker)|
 Rampage RMP-4G (Benboudaoud)|
 Rifleman II RFL-3N-2 (Kataga)|
+Highlander HGN-732 (Jorgensson)|
+Atlas II AS7-D-H (Kerensky)|
 Cataphract CTF-5MOC (Naomi)|
 Jinggau JN-G8BX (Rush)|
 Seraph C-SRP-OR (Ravana)|
@@ -4393,6 +4477,14 @@ Centurion CN9-H|
 Pathfinder PFF-2T|
 HawkWolf HWK-3F|
 Pathfinder PFF-2|
+Rifleman RFL-2N|
+Rifleman RFL-1N|
+Xanthos XNT-2O|
+Swordsman SWD-2|
+Emperor EMP-1A|
+Swordsman SWD-1|
+Griffin GRF-1A|
+Toro TR-A-1|
 Highlander HGN-641-X-2|
 Grim Reaper GRM-R (Einar)|
 Beowulf BEO-X-7a|
@@ -4445,6 +4537,7 @@ Jackalope JLP-KW 'Wolpertinger'|
 Ares ARS-V1B Hades|
 Poseidon PSD-V2|
 Doloire DLR-OA|
+Celerity CLR-03-OC|
 Lament LMT-3R|
 Kheper KPH-7R|
 Malice MAL-XV|
@@ -4452,6 +4545,8 @@ Doloire DLR-OD|
 Doloire DLR-OC|
 Lament LMT-3C|
 Ares ARS-V1D Hephaestus|
+Celerity CLR-04-R|
+Celerity CLR-03-OB|
 Doloire DLR-O|
 Lament LMT-4RC|
 Night Stalker NSR-K7|
@@ -4459,14 +4554,19 @@ Ares ARS-V1A Hera|
 Night Stalker NSR-K4|
 Night Stalker NSR-K3|
 Jackalope JLP-C|
+Celerity CLR-03-OD|
 Night Stalker NSR-KC|
 Jackalope JLP-BD|
 Ares ARS-V1C Aphrodite|
+Celerity CLR-03-OA|
 Malice MAL-XT|
 Uraeus UAE-7R|
 Malice MAL-XP|
 Lament LMT-2R|
+Celerity CLR-03-OE|
 Jackalope JLP-KA|
+Celerity CLR-03-O|
+Celerity CLR-05-X|
 Night Stalker NSR-K1|
 Doloire DLR-OB|
 Ares ARS-V1 Zeus|
@@ -5595,6 +5695,8 @@ Archangel C-ANG-O (Berith)|
 Griffin GRF-6S (Francine)|
 BattleMaster BLR-4S (Calvin)|
 Zeus-X ZEU-9WD (Stacy)|
+Hong Lung Interdiction Station (Standard)|
+Crucible Station (Standard)|
 Drake SDS Control Station (Standard)|
 Large Pressurized Yard (Standard)|
 Bastion System Defense Station (Standard)|
@@ -5649,6 +5751,7 @@ Drake Medium Stealth Fighter (Standard)|
 Planetlifter Tactical Support (Standard)|
 Drake Medium Strike Fighter (Standard)|
 SeaBuster Strike Fighter (Standard)|
+Mustang Fighter (Standard)|
 Planetlifter Support Aircraft (Standard)|
 Hurricane Conventional Fighter (Standard)|
 Tsuru VIP Aircraft (Standard)|

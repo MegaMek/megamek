@@ -89,6 +89,8 @@ public class InfantryWeaponHandler extends WeaponHandler {
         //when swarming all troopers hit
         if (ae.getSwarmTargetId() == target.getTargetId()) {
             troopersHit = ((Infantry)ae).getShootingStrength();
+        } else if (!(ae instanceof Infantry)) {
+            troopersHit = 1;
         } else {
         	troopersHit = Compute.missilesHit(((Infantry) ae)
                 .getShootingStrength(), nHitMod, bGlancing);
@@ -111,7 +113,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
         if((ae instanceof Infantry)
                 && nRange == 0
                 && ae.getCrew().getOptions().booleanOption("tsm_implant")) {
-            
+
         }
         if ((target instanceof Infantry) && ((Infantry)target).isMechanized()) {
             damageDealt /= 2;
@@ -125,26 +127,31 @@ public class InfantryWeaponHandler extends WeaponHandler {
         }
         Report r = new Report(3325);
         r.subject = subjectId;
-        r.add(troopersHit);
-        r.add(" troopers ");
+        if (ae instanceof Infantry) {
+            r.add(troopersHit);
+            r.add(" troopers ");
+        } else { // Needed for support tanks with infantry weapons
+            r.add("");
+            r.add("");
+        }
         r.add(toHit.getTableDesc() + ", causing " + damageDealt
                 + " damage.");
         r.newlines = 0;
         vPhaseReport.addElement(r);
         if((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            //this is a little strange, but I cant just do this in calcDamagePerHit because
+            //this is a little strange, but I can't just do this in calcDamagePerHit because
             //that is called up before misses are determined and will lead to weird reporting
             nDamPerHit = damageDealt;
             return 1;
         }
         return damageDealt;
     }
-    
+
     //we need to figure out AV damage to aeros for AA weapons
     protected int calcnClusterAero(Entity entityTarget) {
         return 5;
     }
-    
+
     protected int calcAttackValue() {
         int av = 0;
         //Sigh, another rules oversight - nobody bothered to figure this out

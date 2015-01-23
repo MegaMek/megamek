@@ -194,8 +194,8 @@ public class WeaponOrderHandler {
             // Get the list of units.
             NodeList listOfEntries = doc.getElementsByTagName(UNIT);
             int totalEntries = listOfEntries.getLength();
-            log.append("\n\tTotal number of quirk entries: ").append(
-                    totalEntries);
+            log.append("\n\tTotal number of custom weapon order entries: ")
+                    .append(totalEntries);
             for (int unitCount = 0; unitCount < totalEntries; unitCount++) {
 
                 // Get the first element of this node.

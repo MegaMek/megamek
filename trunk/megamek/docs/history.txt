@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.41.1-dev (SVN)
++ Bug [#4418]: Custom weapon order XML file thinks it's quirks
 
 v0.41.0 (2015-01-22 21:00 UTC)
 + Bug [#4397]: Option for year is short a character

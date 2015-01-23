@@ -383,6 +383,7 @@ Ripper Infantry Transport (Standard)|
 Puma Assault Tank PAT-005|
 Chaparral Missile Artillery Tank (Standard)|
 Fury Command Tank (C3S)|
+RRV 'Rock Rover' Half-Track (Standard)|
 Sturmfeur Heavy Tank (WoB)|
 Heavy Weapons Carrier (PPC)|
 Koryu Submarine (Civilian)|

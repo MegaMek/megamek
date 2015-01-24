@@ -330,8 +330,8 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             Coords c = mp.getFinalCoords();
             IGame game = mp.getEntity().getGame();
             if (((c.getX() == 0) || (c.getY() == 0)
-                 || (c.getX() == (game.getBoard().getWidth() - 1)) || (c.getY() == (game
-                                                                                            .getBoard().getHeight() - 1)))
+                    || (c.getX() == (game.getBoard().getWidth() - 1)) 
+                    || (c.getY() == (game.getBoard().getHeight() - 1)))
                 && (mp.getFinalVelocity() > 0)) {
                 result.add(mp.clone().addStep(MoveStepType.RETURN));
             }

@@ -820,7 +820,14 @@ public class MovePath implements Cloneable, Serializable {
             pf.run(bestMp);
             finPath = pf.getComputedPath(dest);
         }
-        this.steps = finPath.steps;
+        if (finPath != null) {
+            this.steps = finPath.steps;
+        } else {
+            System.out.println("Error: " +
+            		"Unable to find a path to the destination hex!");
+            System.out.println("\tMoving " + getEntity() + "from "
+                    + getFinalCoords() + " to " + dest);
+        }
     }
 
     public boolean isMoveLegal() {

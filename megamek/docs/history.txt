@@ -3,6 +3,7 @@ VERSION HISTORY:
 v0.41.1-dev (SVN)
 + Bug [#4418]: Custom weapon order XML file thinks it's quirks
 + Bug [#4419]: Support Vee's and Infantry Weapons
++ Bug [#4297]: Possible NPE in MovePath.findPathTo
 
 v0.41.0 (2015-01-22 21:00 UTC)
 + Bug [#4397]: Option for year is short a character

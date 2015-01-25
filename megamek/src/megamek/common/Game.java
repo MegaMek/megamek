@@ -910,7 +910,7 @@ public class Game implements Serializable, IGame {
     }
 
     public synchronized void setEntitiesVector(List<Entity> entities) {
-        checkPositionCacheConsistency();
+        //checkPositionCacheConsistency();
         this.entities.clear();
         this.entities.addAll(entities);
         reindexEntities();
@@ -1521,7 +1521,7 @@ public class Game implements Serializable, IGame {
      * @return <code>Vector<Entity></code>
      */
     public synchronized List<Entity> getEntitiesVector(Coords c, boolean ignore) {
-        checkPositionCacheConsistency();
+        //checkPositionCacheConsistency();
         // Make sure the look-up is initialized
         if (entityPosLookup == null
                 || (entityPosLookup.size() < 1 && entities.size() > 0)) {
@@ -3445,7 +3445,13 @@ public class Game implements Serializable, IGame {
         }
         return count;
     }
-
+    
+    /**
+     * A check to ensure that the position cache is properly updated.  This 
+     * is only used for debugging purposes, and will cause a number of things
+     * to slow down.
+     */
+    @SuppressWarnings("unused")
     private void checkPositionCacheConsistency() {
         // Sanity check on the position cache
         //  This could be removed once we are confident the cache is working

@@ -203,6 +203,7 @@ import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
+import megamek.common.util.HashCodeUtil;
 import megamek.common.util.StringUtil;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
@@ -259,6 +260,34 @@ import com.thoughtworks.xstream.XStream;
  */
 public class Server implements Runnable {
 
+    private static class EntityTargetPair {
+        Entity ent;
+        
+        Targetable target;
+        
+        EntityTargetPair (Entity e, Targetable t) {
+            ent = e;
+            target = t;
+        }
+        
+        public boolean equals(Object o) {
+            if (!(o instanceof EntityTargetPair)) {
+                return false;
+            }
+            EntityTargetPair other = (EntityTargetPair)o;
+            return ent.equals(other.ent)
+                    && (((target != null) && target.equals(other.target)) 
+                            || (target == null && other.target == null));               
+        }
+        
+        public int hashCode() {
+            int hashCode = HashCodeUtil.SEED;
+            hashCode = HashCodeUtil.hash(hashCode, ent.getId());
+            hashCode = HashCodeUtil.hash(hashCode, target);
+            return hashCode;
+        }
+        
+    }
     /**
      * The DamageType enumeration is used for the damageEntity function.
      */
@@ -1061,7 +1090,7 @@ public class Server implements Runnable {
      */
     public void sendEntities(int connId) {
         if (doBlind()) {
-            send(connId, createFilteredEntitiesPacket(getPlayer(connId)));
+            send(connId, createFilteredEntitiesPacket(getPlayer(connId), null));
         } else {
             send(connId, createEntitiesPacket());
         }
@@ -2259,7 +2288,7 @@ public class Server implements Runnable {
             case PHASE_OFFBOARD:
                 // Update visibility indications if using double blind.
                 if (doBlind()) {
-                    updateVisibilityIndicator();
+                    updateVisibilityIndicator(null);
                 }
                 resetEntityPhase(phase);
                 checkForObservers();
@@ -3079,7 +3108,7 @@ public class Server implements Runnable {
                 break;
             case PHASE_MOVEMENT:
                 if (toSkip != null) {
-                    processMovement(toSkip, new MovePath(game, toSkip));
+                    processMovement(toSkip, new MovePath(game, toSkip), null);
                 }
                 endCurrentTurn(toSkip);
                 break;
@@ -4629,6 +4658,7 @@ public class Server implements Runnable {
      * the current turn.
      */
     private void receiveMovement(Packet packet, int connId) {
+        Map<EntityTargetPair, LosEffects> losCache = new HashMap<>();
         Entity entity = game.getEntity(packet.getIntValue(0));
         MovePath md = (MovePath) packet.getObject(1);
 
@@ -4650,7 +4680,7 @@ public class Server implements Runnable {
         }
 
         // looks like mostly everything's okay
-        processMovement(entity, md);
+        processMovement(entity, md, losCache);
 
         // check the LOS of any telemissiles owned by this entity
         for (int missileId : entity.getTMTracker().getMissiles()) {
@@ -4671,7 +4701,7 @@ public class Server implements Runnable {
 
         // Update visibility indications if using double blind.
         if (doBlind()) {
-            updateVisibilityIndicator();
+            updateVisibilityIndicator(losCache);
         }
 
         // This entity's turn is over.
@@ -5598,7 +5628,7 @@ public class Server implements Runnable {
                     }
                     game.removeTurnFor(target);
                     send(createTurnVectorPacket());
-                    processMovement(target, md);
+                    processMovement(target, md, null);
                     // for some reason it is not clearing out turn
                 } else {
                     // what needs to get checked?
@@ -6106,8 +6136,20 @@ public class Server implements Runnable {
 
     /**
      * Steps through an entity movement packet, executing it.
+     * 
+     * @param entity   The Entity that is moving
+     * @param md       The MovePath that defines how the Entity moves
+     * @param losCache A cache that stores Los between various Entities and 
+     *                 targets.  In doubleblind games, we may need to compute a
+     *                 lot of LosEffects, so caching them can really speed
+     *                 things up.
      */
-    private void processMovement(Entity entity, MovePath md) {
+    private void processMovement(Entity entity, MovePath md, 
+            Map<EntityTargetPair, LosEffects> losCache) {
+        // Make sure the cache isn't null
+        if (losCache == null) {
+            losCache = new HashMap<>();
+        }
         Report r;
         boolean sideslipped = false; // for VTOL sideslipping
         PilotingRollData rollTarget;
@@ -8610,7 +8652,7 @@ public class Server implements Runnable {
         // Update the entitiy's position,
         // unless it is off the game map.
         if (!game.isOutOfGame(entity)) {
-            entityUpdate(entity.getId(), movePath, true);
+            entityUpdate(entity.getId(), movePath, true, losCache);
             if (entity.isDoomed()) {
                 send(createRemoveEntityPacket(entity.getId(),
                                               entity.getRemovalCondition()));
@@ -8667,7 +8709,7 @@ public class Server implements Runnable {
         // if using double blind, update the player on new units he might see
         if (doBlind()) {
             send(entity.getOwner().getId(),
-                 createFilteredEntitiesPacket(entity.getOwner()));
+                 createFilteredEntitiesPacket(entity.getOwner(), losCache));
         }
 
         // if we generated a charge attack, report it now
@@ -11415,7 +11457,7 @@ public class Server implements Runnable {
 
         // Update visibility indications if using double blind.
         if (doBlind()) {
-            updateVisibilityIndicator();
+            updateVisibilityIndicator(null);
         }
 
         endCurrentTurn(entity);
@@ -11701,7 +11743,7 @@ public class Server implements Runnable {
 
         // Update visibility indications if using double blind.
         if (doBlind()) {
-            updateVisibilityIndicator();
+            updateVisibilityIndicator(null);
         }
 
         endCurrentTurn(entity);
@@ -12032,16 +12074,16 @@ public class Server implements Runnable {
             allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
                     .getEntitiesVector());
         }
-
+        Map<EntityTargetPair, LosEffects> losCache = new HashMap<>();
         for (Entity entity : game.getEntitiesVector()) {
             // We are hidden once again!
             entity.clearSeenBy();
             // Handle visual spotting
-            for (IPlayer p : whoCanSee(entity)) {
+            for (IPlayer p : whoCanSee(entity, false, losCache)) {
                 entity.addBeenSeenBy(p);
             }
             // Handle detection by sensors
-            for (IPlayer p : whoCanDetect(entity, allECMInfo)) {
+            for (IPlayer p : whoCanDetect(entity, allECMInfo, losCache)) {
                 if (!entity.hasSeenEntity(p)) {
                     entity.addBeenSeenBy(p);
                 }
@@ -25888,7 +25930,7 @@ public class Server implements Runnable {
      * everyone
      */
     public void entityUpdate(int nEntityID) {
-        entityUpdate(nEntityID, new Vector<UnitLocation>(), true);
+        entityUpdate(nEntityID, new Vector<UnitLocation>(), true, null);
     }
 
     /**
@@ -25899,8 +25941,9 @@ public class Server implements Runnable {
      *                         called to update who can see the entity for
      *                         double-blind games.
      */
-    public void entityUpdate(int nEntityID, Vector<UnitLocation> movePath, boolean
-            updateVisibility) {
+    public void entityUpdate(int nEntityID, Vector<UnitLocation> movePath, 
+            boolean updateVisibility, 
+            Map<EntityTargetPair, LosEffects> losCache) {
         Entity eTarget = game.getEntity(nEntityID);
         if (eTarget == null) {
             if (game.getOutOfGameEntity(nEntityID) != null) {
@@ -25921,7 +25964,7 @@ public class Server implements Runnable {
             Vector<IPlayer> playersVector = game.getPlayersVector();
             Vector<IPlayer> vCanSee;
             if (updateVisibility) {
-                vCanSee = whoCanSee(eTarget);
+                vCanSee = whoCanSee(eTarget, true, losCache);
             } else {
                 vCanSee = eTarget.getWhoCanSee();
             }
@@ -26005,7 +26048,7 @@ public class Server implements Runnable {
      * for sensor detections.
      */
     private Vector<IPlayer> whoCanSee(Entity entity) {
-        return whoCanSee(entity, true);
+        return whoCanSee(entity, true, null);
     }
 
     /**
@@ -26016,8 +26059,11 @@ public class Server implements Runnable {
      * @param useSensors A flag that determines whether sensors are allowed
      * @return A vector of the players who can see the entity
      */
-    private Vector<IPlayer> whoCanSee(Entity entity, boolean useSensors) {
-
+    private Vector<IPlayer> whoCanSee(Entity entity, boolean useSensors, 
+            Map<EntityTargetPair, LosEffects> losCache) {
+        if (losCache == null) {
+            losCache = new HashMap<>();
+        }
         // Some times Null entities are sent to this
         if (entity == null) {
             return new Vector<IPlayer>();
@@ -26039,7 +26085,7 @@ public class Server implements Runnable {
         }
 
         // Deal with players who can see all.
-        for (Enumeration<IPlayer> p = game.getPlayers(); p.hasMoreElements(); ) {
+        for (Enumeration<IPlayer> p = game.getPlayers(); p.hasMoreElements();) {
             IPlayer player = p.nextElement();
 
             if (player.canSeeAll() && !vCanSee.contains(p)) {
@@ -26048,34 +26094,53 @@ public class Server implements Runnable {
         }
 
         // If the entity is hidden, skip; noone else will be able to see it.
-        if (!entity.isHidden()) {
-            for (int i = 0; i < vEntities.size(); i++) {
-                Entity e = vEntities.get(i);
-                if (vCanSee.contains(e.getOwner()) || !e.isActive()) {
-                    continue;
+        if (entity.isHidden()) {
+            return vCanSee;
+        }
+        for (Entity spotter : vEntities) {
+            // Certain conditions make the spotter ineligible
+            if (!spotter.isActive() || spotter.isOffBoard()
+                    || vCanSee.contains(spotter.getOwner())) {
+                continue;
+            }
+            // See if the LosEffects is cached, and if not cache it
+            EntityTargetPair etp = new EntityTargetPair(spotter, entity);
+            LosEffects los = losCache.get(etp);
+            if (los == null) {
+                los = LosEffects.calculateLos(game, spotter.getId(), entity);
+                losCache.put(etp, los);
+            }
+            if (Compute.canSee(game, spotter, entity, useSensors, los,
+                    allECMInfo)) {
+                if (!vCanSee.contains(spotter.getOwner())) {
+                    vCanSee.addElement(spotter.getOwner());
                 }
-
-                // Off board units should not spot on board units
-                if (e.isOffBoard()) {
-                    continue;
+                if (bTeamVision) {
+                    addTeammates(vCanSee, spotter.getOwner());
                 }
-                if (Compute.canSee(game, e, entity, useSensors, allECMInfo)) {
-                    if (!vCanSee.contains(e.getOwner())) {
-                        vCanSee.addElement(e.getOwner());
-                    }
-                    if (bTeamVision) {
-                        addTeammates(vCanSee, e.getOwner());
-                    }
-                    addObservers(vCanSee);
-                }
+                addObservers(vCanSee);
             }
         }
-
         return vCanSee;
     }
 
-    private Vector<IPlayer> whoCanDetect(Entity entity,
-                                         List<ECMInfo> allECMInfo) {
+    /**
+     * Determine which players can detect the given entity with sensors.  
+     * Because recomputing ECM and LosEffects frequently can get expensive, this
+     * data can be cached and passed in.
+     * 
+     * @param entity        The Entity being detected.
+     * @param allECMInfo    Cached ECMInfo for all Entities in the game.
+     * @param losCache      Cached LosEffects for particular Entity/Targetable
+     *                      pairs.  Can be passed in null.
+     * @return
+     */
+    private Vector<IPlayer> whoCanDetect(Entity entity, 
+            List<ECMInfo> allECMInfo, 
+            Map<EntityTargetPair, LosEffects> losCache) {
+        if (losCache == null) {
+            losCache = new HashMap<>();
+        }
 
         boolean bTeamVision = game.getOptions().booleanOption("team_vision");
         List<Entity> vEntities = game.getEntitiesVector();
@@ -26083,28 +26148,32 @@ public class Server implements Runnable {
         Vector<IPlayer> vCanDetect = new Vector<IPlayer>();
 
         // If the entity is hidden, skip; noone else will be able to detect it
-        if (!entity.isHidden() && !entity.isOffBoard()) {
-            for (int i = 0; i < vEntities.size(); i++) {
-                Entity e = vEntities.get(i);
-                if (vCanDetect.contains(e.getOwner()) || !e.isActive()) {
-                    continue;
-                }
-
-                // Off board units should not spot on board units
-                if (e.isOffBoard()) {
-                    continue;
-                }
-                if (Compute.inSensorRange(game, e, entity, allECMInfo)) {
-                    if (!vCanDetect.contains(e.getOwner())) {
-                        vCanDetect.addElement(e.getOwner());
-                    }
-                    if (bTeamVision) {
-                        addTeammates(vCanDetect, e.getOwner());
-                    }
-                    addObservers(vCanDetect);
-                }
-            }
+        if (entity.isHidden() || entity.isOffBoard()) {
+            return vCanDetect;
         }
+            
+        for (Entity spotter : vEntities) {
+            if (!spotter.isActive() || spotter.isOffBoard()
+                    || vCanDetect.contains(spotter.getOwner())) {
+                continue;
+            }
+            // See if the LosEffects is cached, and if not cache it
+            EntityTargetPair etp = new EntityTargetPair(spotter, entity);
+            LosEffects los = losCache.get(etp);
+            if (los == null) {
+                los = LosEffects.calculateLos(game, spotter.getId(), entity);
+                losCache.put(etp, los);
+            }
+            if (Compute.inSensorRange(game, los, spotter, entity, allECMInfo)) {
+                if (!vCanDetect.contains(spotter.getOwner())) {
+                    vCanDetect.addElement(spotter.getOwner());
+                }
+                if (bTeamVision) {
+                    addTeammates(vCanDetect, spotter.getOwner());
+                }
+                addObservers(vCanDetect);
+            }
+            }
 
         return vCanDetect;
     }
@@ -26146,7 +26215,7 @@ public class Server implements Runnable {
             Vector<IPlayer> playersVector = game.getPlayersVector();
             for (int x = 0; x < playersVector.size(); x++) {
                 IPlayer p = playersVector.elementAt(x);
-                send(p.getId(), createFilteredEntitiesPacket(p));
+                send(p.getId(), createFilteredEntitiesPacket(p, null));
             }
             return;
         }
@@ -26158,8 +26227,12 @@ public class Server implements Runnable {
     /**
      * Filters an entity vector according to LOS
      */
-    private List<Entity> filterEntities(IPlayer pViewer,
-                                          List<Entity> vEntities) {
+    private List<Entity> filterEntities(IPlayer pViewer, 
+            List<Entity> vEntities,
+            Map<EntityTargetPair, LosEffects> losCache) {
+        if (losCache == null) {
+            losCache = new HashMap<>();
+        }
         Vector<Entity> vCanSee = new Vector<Entity>();
         Vector<Entity> vMyEntities = new Vector<Entity>();
         boolean bTeamVision = game.getOptions().booleanOption("team_vision");
@@ -26172,7 +26245,7 @@ public class Server implements Runnable {
         List<ECMInfo> allECMInfo = null;
         if (game.getOptions().booleanOption("tacops_sensors")) {
             allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
-                                                                      .getEntitiesVector());
+                    .getEntitiesVector());
         }
 
         // If they're an observer, they can see anything seen by any enemy.
@@ -26181,7 +26254,7 @@ public class Server implements Runnable {
             for (Entity a : vMyEntities) {
                 for (Entity b : vMyEntities) {
                     if (a.isEnemyOf(b)
-                        && Compute.canSee(game, b, a, true, allECMInfo)) {
+                        && Compute.canSee(game, b, a, true, null, allECMInfo)) {
                         addVisibleEntity(vCanSee, a);
                         break;
                     }
@@ -26218,9 +26291,16 @@ public class Server implements Runnable {
                 if (spotter.isOffBoard()) {
                     continue;
                 }
-
+                
+                // See if the LosEffects is cached, and if not cache it
+                EntityTargetPair etp = new EntityTargetPair(spotter, e);
+                LosEffects los = losCache.get(etp);
+                if (los == null) {
+                    los = LosEffects.calculateLos(game, spotter.getId(), e);
+                    losCache.put(etp, los);
+                }
                 // Otherwise, if they can see the entity in question
-                if (Compute.canSee(game, spotter, e, true, allECMInfo)) {
+                if (Compute.canSee(game, spotter, e, true, los, allECMInfo)) {
                     addVisibleEntity(vCanSee, e);
                     break;
                 }
@@ -26405,12 +26485,20 @@ public class Server implements Runnable {
     /**
      * Updates entities graphical "visibility indications" which are used in
      * double-blind games.
+     * 
+     * @param losCache  It can be expensive to have to recompute LoSEffects
+     *                  again and again, so in some cases where this may happen,
+     *                  the LosEffects are cached.   This can safely be null.
      */
-    private void updateVisibilityIndicator() {
+    private void updateVisibilityIndicator(
+            Map<EntityTargetPair, LosEffects> losCache) {
+        if (losCache == null) {
+            losCache = new HashMap<>();
+        }
         List<ECMInfo> allECMInfo = null;
         if (game.getOptions().booleanOption("tacops_sensors")) {
             allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
-                                                                      .getEntitiesVector());
+                    .getEntitiesVector());
         }
 
         List<Entity> vAllEntities = game.getEntitiesVector();
@@ -26421,7 +26509,7 @@ public class Server implements Runnable {
             boolean previousDetectedValue = e.isDetectedByEnemy();
             e.setVisibleToEnemy(false);
             e.setDetectedByEnemy(false);
-            Vector<IPlayer> vCanSee = whoCanSee(e, false);
+            Vector<IPlayer> vCanSee = whoCanSee(e, false, losCache);
             e.clearSeenBy();
             for (IPlayer p : vCanSee) {
                 if (e.getOwner().isEnemyOf(p) && !p.isObserver()) {
@@ -26434,7 +26522,8 @@ public class Server implements Runnable {
             }
             // If the unit isn't visible, is it detected by sensors?
             if (!e.isDetectedByEnemy()) {
-                Vector<IPlayer> vCanDetect = whoCanDetect(e, allECMInfo);
+                Vector<IPlayer> vCanDetect = whoCanDetect(e, allECMInfo,
+                        losCache);
                 for (IPlayer p : vCanDetect) {
                     if (e.getOwner().isEnemyOf(p) && !p.isObserver()) {
                         e.setDetectedByEnemy(true);
@@ -26446,7 +26535,7 @@ public class Server implements Runnable {
             // possible that the enemy's client doesn't know about the unit
             if ((!previousVisibleValue && e.isVisibleToEnemy())
                 || (!previousDetectedValue && e.isDetectedByEnemy())) {
-                entityUpdate(e.getId(), new Vector<UnitLocation>(), false);
+                entityUpdate(e.getId(), new Vector<UnitLocation>(), false, losCache);
             } else if ((previousVisibleValue != e.isVisibleToEnemy())
                        || (previousSeenValue != e.isEverSeenByEnemy())
                        || (previousDetectedValue != e.isDetectedByEnemy())) {
@@ -27373,9 +27462,10 @@ public class Server implements Runnable {
      * Creates a packet containing all entities visible to the player in a blind
      * game
      */
-    private Packet createFilteredEntitiesPacket(IPlayer p) {
+    private Packet createFilteredEntitiesPacket(IPlayer p,
+            Map<EntityTargetPair, LosEffects> losCache) {
         return new Packet(Packet.COMMAND_SENDING_ENTITIES, filterEntities(p,
-                                                                          game.getEntitiesVector()));
+                game.getEntitiesVector(), losCache));
     }
 
     /**
@@ -27384,7 +27474,7 @@ public class Server implements Runnable {
      */
     private Packet createFilteredFullEntitiesPacket(IPlayer p) {
         final Object[] data = new Object[2];
-        data[0] = filterEntities(p, game.getEntitiesVector());
+        data[0] = filterEntities(p, game.getEntitiesVector(), null);
         data[1] = game.getOutOfGameEntitiesVector();
         return new Packet(Packet.COMMAND_SENDING_ENTITIES, data);
     }

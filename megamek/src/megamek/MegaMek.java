@@ -147,7 +147,7 @@ public class MegaMek {
         // Calculate the digest for the given file.
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            in = new DigestInputStream(new FileInputStream("MegaMek.jar"), md);
+            in = new DigestInputStream(new FileInputStream(filename), md);
             while (0 < in.read(buffer)) {}
             // gets digest
             byte[] digest = md.digest();

@@ -5,6 +5,7 @@ v0.41.1-dev (SVN)
 + Bug [#4419]: Support Vee's and Infantry Weapons
 + Bug [#4297]: Possible NPE in MovePath.findPathTo
 + Bug [#4420]: Optimization pass on LosEffects, particular losForCoords
++ Bug [#4420]: Game with a hidden unit carrying ECM causes lagged movement
 
 v0.41.0 (2015-01-22 21:00 UTC)
 + Bug [#4397]: Option for year is short a character

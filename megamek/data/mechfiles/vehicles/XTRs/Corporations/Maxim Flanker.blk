@@ -57,10 +57,6 @@ Hover
 
 <Body Equipment>
 ISSponsonTurret
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
 IS Ammo LRM-15
 IS Ammo LRM-15
 IS Ammo SRM-4
@@ -87,3 +83,6 @@ Machine Gun(ST)
 Machine Gun
 </Rear Equipment>
 
+<transporters>
+cargobay:4:1
+</transporters>

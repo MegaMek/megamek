@@ -66,6 +66,7 @@ IS Ammo MML-7 LRM
 IS Ammo MML-7 LRM
 IS Ammo MML-7 SRM
 ISMagshotGR Ammo
+ISSponsonTurret
 </Body Equipment>
 
 <Front Equipment>
@@ -73,15 +74,13 @@ ISMML7
 </Front Equipment>
 
 <Right Equipment>
-ISMagshotGR
-ISMagshotGR
-ISSponsonTurret
+ISMagshotGR (ST)
+ISMagshotGR (ST)
 </Right Equipment>
 
 <Left Equipment>
-ISMagshotGR
-ISMagshotGR
-ISSponsonTurret
+ISMagshotGR (ST)
+ISMagshotGR (ST)
 </Left Equipment>
 
 <Rear Equipment>

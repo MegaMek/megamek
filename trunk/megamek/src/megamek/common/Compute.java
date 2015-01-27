@@ -5634,9 +5634,10 @@ public class Compute {
                 }
 
                 // Flak Ammo can't make aimed shots
-                if (((atype.getAmmoType() == AmmoType.T_AC)
-                     || (atype.getAmmoType() == AmmoType.T_AC_ULTRA)
-                     || (atype.getAmmoType() == AmmoType.T_AC_ULTRA_THB))
+                if ((atype != null)
+                    && ((atype.getAmmoType() == AmmoType.T_AC)
+                        || (atype.getAmmoType() == AmmoType.T_AC_ULTRA)
+                        || (atype.getAmmoType() == AmmoType.T_AC_ULTRA_THB))
                     && (atype.getMunitionType() == AmmoType.M_FLAK)) {
                     return false;
                 }

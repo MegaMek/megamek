@@ -353,7 +353,6 @@ public class LosEffects {
 
     public static LosEffects calculateLos(IGame game, int attackerId,
             Targetable target, boolean spotting) {
-        System.out.println("LosEffects calculateLos: " + Thread.currentThread().getStackTrace()[3]);
         //we need an extra step here, because units with secondary position can calculate LoS
         //from hexes other than that returned from getPosition()
         final Entity ae = game.getEntity(attackerId);

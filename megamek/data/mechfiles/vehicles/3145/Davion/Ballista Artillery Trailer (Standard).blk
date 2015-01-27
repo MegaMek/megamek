@@ -79,6 +79,7 @@ ISArrowIVAmmo
 ISArrowIVAmmo
 ISArrowIVAmmo
 IS Light Machine Gun Ammo - Full
+ISSponsonTurret
 </Body Equipment>
 
 <Front Equipment>
@@ -86,16 +87,14 @@ IS Light Machine Gun Ammo - Full
 
 <Right Equipment>
 ISAntiMissileSystem
-Light Machine Gun
-Light Machine Gun
-ISSponsonTurret
+Light Machine Gun (ST)
+Light Machine Gun (ST)
 </Right Equipment>
 
 <Left Equipment>
 ISAntiMissileSystem
-Light Machine Gun
-Light Machine Gun
-ISSponsonTurret
+Light Machine Gun (ST)
+Light Machine Gun (ST)
 </Left Equipment>
 
 <Rear Equipment>

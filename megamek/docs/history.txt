@@ -8,6 +8,7 @@ v0.41.1-dev (SVN)
 + Bug [#4420]: Game with a hidden unit carrying ECM causes lagged movement
 + Bug [#4420]: Removed calls to Game.checkPositionCacheConsistency
 + Bug: SHA256 check still generating NPEs
++ Bug: Potential NPE in Compute.allowAimedShotWith
 
 v0.41.0 (2015-01-22 21:00 UTC)
 + Bug [#4397]: Option for year is short a character

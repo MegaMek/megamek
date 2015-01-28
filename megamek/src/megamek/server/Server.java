@@ -262,31 +262,33 @@ public class Server implements Runnable {
 
     private static class EntityTargetPair {
         Entity ent;
-        
+
         Targetable target;
-        
+
         EntityTargetPair (Entity e, Targetable t) {
             ent = e;
             target = t;
         }
-        
+
+        @Override
         public boolean equals(Object o) {
             if (!(o instanceof EntityTargetPair)) {
                 return false;
             }
             EntityTargetPair other = (EntityTargetPair)o;
             return ent.equals(other.ent)
-                    && (((target != null) && target.equals(other.target)) 
-                            || (target == null && other.target == null));               
+                    && (((target != null) && target.equals(other.target))
+                            || ((target == null) && (other.target == null)));
         }
-        
+
+        @Override
         public int hashCode() {
             int hashCode = HashCodeUtil.SEED;
             hashCode = HashCodeUtil.hash(hashCode, ent.getId());
             hashCode = HashCodeUtil.hash(hashCode, target);
             return hashCode;
         }
-        
+
     }
     /**
      * The DamageType enumeration is used for the damageEntity function.
@@ -440,13 +442,13 @@ public class Server implements Runnable {
          */
         @Override
         public void disconnected(DisconnectedEvent e) {
-            synchronized (serverLock) { 
+            synchronized (serverLock) {
                 IConnection conn = e.getConnection();
-    
+
                 // write something in the log
                 System.out.println("s: connection " + conn.getId()
                                    + " disconnected");
-    
+
                 connections.removeElement(conn);
                 connectionsPending.removeElement(conn);
                 connectionIds.remove(conn.getId());
@@ -455,7 +457,7 @@ public class Server implements Runnable {
                     ch.signalStop();
                     connectionHandlers.remove(conn.getId());
                 }
-    
+
                 // if there's a player for this connection, remove it too
                 IPlayer player = getPlayer(conn.getId());
                 if (null != player) {
@@ -483,7 +485,7 @@ public class Server implements Runnable {
         }
 
     };
-    
+
     /**
      * Used to ensure only one thread at a time is accessing this particular
      * instance of the server.
@@ -583,7 +585,7 @@ public class Server implements Runnable {
         packetPumpThread.start();
 
         if (registerWithServerBrowser) {
-            
+
             final TimerTask register = new TimerTask() {
                 @Override
                 public void run() {
@@ -595,11 +597,11 @@ public class Server implements Runnable {
                     "Server Browser Register Timer", true);
             serverBrowserUpdateTimer.schedule(register, 1, 40000);
         }
-        
+
         // Fully initialised, now accept connections
         connector = new Thread(this, "Connection Listener");
         connector.start();
-        
+
         serverInstance = this;
     }
 
@@ -2006,7 +2008,7 @@ public class Server implements Runnable {
                 GameTurn.SpecificEntityTurn seTurn =
                         (GameTurn.SpecificEntityTurn) nextTurn;
                 if ((entityUsed != null)
-                        && seTurn.getEntityNum() == entityUsed.getId()) {
+                        && (seTurn.getEntityNum() == entityUsed.getId())) {
                     turnIndex++;
                     usedEntityNotDone = true;
                 }
@@ -2386,7 +2388,7 @@ public class Server implements Runnable {
                         }
                     }
                     //fix the armor and SI of aeros if using aero sanity rules for the MUL
-                    if (game.getOptions().booleanOption("aero_sanity") && entity instanceof Aero) {
+                    if (game.getOptions().booleanOption("aero_sanity") && (entity instanceof Aero)) {
                         //need to rescale SI and armor
                         int scale = 1;
                         if (entity.isCapitalScale()) {
@@ -2843,7 +2845,7 @@ public class Server implements Runnable {
                 // check phase report
                 // HACK: hardcoded message ID check
                 if ((vPhaseReport.size() > 3)
-                    || (vPhaseReport.size() > 1 && vPhaseReport.elementAt(1).messageId != 1205)) {
+                    || ((vPhaseReport.size() > 1) && (vPhaseReport.elementAt(1).messageId != 1205))) {
                     game.addReports(vPhaseReport);
                     changePhase(IGame.Phase.PHASE_END_REPORT);
                 } else {
@@ -3053,8 +3055,8 @@ public class Server implements Runnable {
             sendGhostSkipMessage(player);
         } else if ((null == game.getFirstEntity())
                 && (null != player)
-                && ((game.getPhase() != IGame.Phase.PHASE_DEPLOY_MINEFIELDS) 
-                        && (game.getPhase() 
+                && ((game.getPhase() != IGame.Phase.PHASE_DEPLOY_MINEFIELDS)
+                        && (game.getPhase()
                                 != IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES))) {
             sendTurnErrorSkipMessage(player);
         }
@@ -3358,12 +3360,12 @@ public class Server implements Runnable {
                         .getPhase() == IGame.Phase.PHASE_DEPLOYMENT));
         boolean infMoveMulti = game.getOptions()
                 .booleanOption("inf_move_multi")
-                && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || (game
-                        .getPhase() == IGame.Phase.PHASE_MOVEMENT || game
-                        .getPhase() == IGame.Phase.PHASE_DEPLOYMENT));
+                && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || ((game
+                        .getPhase() == IGame.Phase.PHASE_MOVEMENT) || (game
+                        .getPhase() == IGame.Phase.PHASE_DEPLOYMENT)));
         boolean protosMoveEven = (game.getOptions().booleanOption(
-                "protos_move_even") && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || (game
-                .getPhase() == IGame.Phase.PHASE_MOVEMENT || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)))
+                "protos_move_even") && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || ((game
+                .getPhase() == IGame.Phase.PHASE_MOVEMENT) || (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT))))
                 || (game.getOptions().booleanOption("protos_deploy_even") && (game
                         .getPhase() == IGame.Phase.PHASE_DEPLOYMENT));
         boolean protosMoveMulti = game.getOptions().booleanOption(
@@ -3371,14 +3373,14 @@ public class Server implements Runnable {
         boolean protosMoveByPoint = !protosMoveMulti;
         boolean tankMoveByLance = game.getOptions().booleanOption(
                 "vehicle_lance_movement")
-                && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || (game
-                        .getPhase() == IGame.Phase.PHASE_MOVEMENT || game
-                        .getPhase() == IGame.Phase.PHASE_DEPLOYMENT));
+                && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || ((game
+                        .getPhase() == IGame.Phase.PHASE_MOVEMENT) || (game
+                        .getPhase() == IGame.Phase.PHASE_DEPLOYMENT)));
         boolean mekMoveByLance = game.getOptions().booleanOption(
                 "mek_lance_movement")
-                && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || (game
-                        .getPhase() == IGame.Phase.PHASE_MOVEMENT || game
-                        .getPhase() == IGame.Phase.PHASE_DEPLOYMENT));
+                && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || ((game
+                        .getPhase() == IGame.Phase.PHASE_MOVEMENT) || (game
+                        .getPhase() == IGame.Phase.PHASE_DEPLOYMENT)));
 
         int evenMask = 0;
         if (infMoveEven) {
@@ -3449,29 +3451,29 @@ public class Server implements Runnable {
             if (entity.isSelectableThisTurn()) {
                 final IPlayer player = entity.getOwner();
                 if ((entity instanceof SpaceStation)
-                    && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
-                        || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
+                    && ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
+                        || (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT))) {
                     player.incrementSpaceStationTurns();
                 } else if ((entity instanceof Warship)
-                           && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
-                               || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
+                           && ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
+                               || (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT))) {
                     player.incrementWarshipTurns();
                 } else if ((entity instanceof Jumpship)
-                           && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
-                               || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
+                           && ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
+                               || (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT))) {
                     player.incrementJumpshipTurns();
                 } else if ((entity instanceof Dropship) && entity.isAirborne()
-                           && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
-                               || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
+                           && ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
+                               || (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT))) {
                     player.incrementDropshipTurns();
                 } else if ((entity instanceof SmallCraft)
                            && entity.isAirborne()
-                           && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
-                               || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
+                           && ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
+                               || (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT))) {
                     player.incrementSmallCraftTurns();
                 } else if (entity.isAirborne()
-                           && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
-                               || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
+                           && ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
+                               || (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT))) {
                     player.incrementAeroTurns();
                 } else if ((entity instanceof Infantry)) {
                     if (infMoveEven) {
@@ -3545,8 +3547,8 @@ public class Server implements Runnable {
         Vector<GameTurn> turns;
 
         if (strandedUnits.hasNext()
-            && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
-                || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
+            && ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
+                || (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT))) {
             // Add a game turn to unload stranded units, if this
             // is the movement phase.
             turns = new Vector<GameTurn>(team_order.getTotalTurns()
@@ -3628,8 +3630,8 @@ public class Server implements Runnable {
                     int newMask = evenMask;
                     // if this is the movement phase, then don't allow Aeros on
                     // normal turns
-                    if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
-                        || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
+                    if ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
+                        || (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
                         newMask += aeroMask;
                     }
                     turn = new GameTurn.EntityClassTurn(player.getId(),
@@ -3640,8 +3642,8 @@ public class Server implements Runnable {
                 else {
                     // well, almost anybody; Aero don't get normal turns during
                     // the movement phase
-                    if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT
-                        || game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
+                    if ((game.getPhase() == IGame.Phase.PHASE_MOVEMENT)
+                        || (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT)) {
                         turn = new GameTurn.EntityClassTurn(player.getId(),
                                                             ~aeroMask);
                     } else {
@@ -6136,15 +6138,15 @@ public class Server implements Runnable {
 
     /**
      * Steps through an entity movement packet, executing it.
-     * 
+     *
      * @param entity   The Entity that is moving
      * @param md       The MovePath that defines how the Entity moves
-     * @param losCache A cache that stores Los between various Entities and 
+     * @param losCache A cache that stores Los between various Entities and
      *                 targets.  In doubleblind games, we may need to compute a
      *                 lot of LosEffects, so caching them can really speed
      *                 things up.
      */
-    private void processMovement(Entity entity, MovePath md, 
+    private void processMovement(Entity entity, MovePath md,
             Map<EntityTargetPair, LosEffects> losCache) {
         // Make sure the cache isn't null
         if (losCache == null) {
@@ -6161,7 +6163,7 @@ public class Server implements Runnable {
         }
 
         if (md.contains(MoveStepType.EJECT)) {
-            if (entity instanceof Mech || entity instanceof Aero) {
+            if ((entity instanceof Mech) || (entity instanceof Aero)) {
                 r = new Report(2020);
                 r.subject = entity.getId();
                 r.add(entity.getCrew().getName());
@@ -7450,9 +7452,9 @@ public class Server implements Runnable {
             if (entity instanceof Mech) {
                 if (!lastPos.equals(curPos)
                     && (prevStep != null)
-                        && ((lastHex.containsTerrain(Terrains.FIRE) 
-                                && (prevStep.getElevation() <= 1)) 
-                                || (lastHex.containsTerrain(Terrains.MAGMA) 
+                        && ((lastHex.containsTerrain(Terrains.FIRE)
+                                && (prevStep.getElevation() <= 1))
+                                || (lastHex.containsTerrain(Terrains.MAGMA)
                                         && (prevStep.getElevation() == 0)))
                         && ((step.getMovementType() != EntityMovementType.MOVE_JUMP)
                         // Bug #828741 -- jumping bypasses fire, but not on the
@@ -11236,8 +11238,8 @@ public class Server implements Runnable {
             MovePath stepBackwards = new MovePath(game, violation);
             stepForward.addStep(MoveStepType.FORWARDS);
             stepBackwards.addStep(MoveStepType.BACKWARDS);
-            if (direction != violation.getFacing()
-                && direction != ((violation.getFacing() + 3) % 6)
+            if ((direction != violation.getFacing())
+                && (direction != ((violation.getFacing() + 3) % 6))
                 && !entity.getIsJumpingNow()
                 && (stepForward.isMoveLegal() || stepBackwards
                     .isMoveLegal())) {
@@ -19877,7 +19879,7 @@ public class Server implements Runnable {
                             // total by 2 and round down. If we have an odd
                             // damage total, need to add 1 to make this
                             // evenly divisible by 2
-                            if ((absorb % 2 != 0) && armorDamageReduction) {
+                            if (((absorb % 2) != 0) && armorDamageReduction) {
                                 absorb++;
                             }
                         }
@@ -20121,8 +20123,8 @@ public class Server implements Runnable {
                         thresh *= 2;
                     }
 
-                    if (damage > thresh
-                            || te.getArmor(hit) < damage
+                    if ((damage > thresh)
+                            || (te.getArmor(hit) < damage)
                             || damageIS) {
                         hit.setEffect(((Tank) te).getPotCrit());
                         ((Tank) te).setOverThresh(true);
@@ -21915,7 +21917,7 @@ public class Server implements Runnable {
                 // and four pilot hits.
                 vDesc.addAll(damageCrew(entity, 4));
             } else {
-                // Buildings and gun emplacements and such are only effected by
+                // Buildings and gun emplacements and such are only affected by
                 // the EMI.
                 // No auto-crits or anything.
             }
@@ -21965,7 +21967,7 @@ public class Server implements Runnable {
                 // and two pilot hits.
                 vDesc.addAll(damageCrew(entity, 2));
             } else {
-                // Buildings and gun emplacements and such are only effected by
+                // Buildings and gun emplacements and such are only affected by
                 // the EMI.
                 // No auto-crits or anything.
             }
@@ -25941,8 +25943,8 @@ public class Server implements Runnable {
      *                         called to update who can see the entity for
      *                         double-blind games.
      */
-    public void entityUpdate(int nEntityID, Vector<UnitLocation> movePath, 
-            boolean updateVisibility, 
+    public void entityUpdate(int nEntityID, Vector<UnitLocation> movePath,
+            boolean updateVisibility,
             Map<EntityTargetPair, LosEffects> losCache) {
         Entity eTarget = game.getEntity(nEntityID);
         if (eTarget == null) {
@@ -25969,7 +25971,7 @@ public class Server implements Runnable {
                 vCanSee = eTarget.getWhoCanSee();
             }
 
-            // If this unit has ECM, players with units effected by the ECM will
+            // If this unit has ECM, players with units affected by the ECM will
             //  need to know about this entity, even if they can't see it.
             //  Otherwise, the client can't properly report things like to-hits.
             if ((eTarget.getECMRange() > 0) && (eTarget.getPosition() != null)) {
@@ -26059,7 +26061,7 @@ public class Server implements Runnable {
      * @param useSensors A flag that determines whether sensors are allowed
      * @return A vector of the players who can see the entity
      */
-    private Vector<IPlayer> whoCanSee(Entity entity, boolean useSensors, 
+    private Vector<IPlayer> whoCanSee(Entity entity, boolean useSensors,
             Map<EntityTargetPair, LosEffects> losCache) {
         if (losCache == null) {
             losCache = new HashMap<>();
@@ -26125,18 +26127,18 @@ public class Server implements Runnable {
     }
 
     /**
-     * Determine which players can detect the given entity with sensors.  
+     * Determine which players can detect the given entity with sensors.
      * Because recomputing ECM and LosEffects frequently can get expensive, this
      * data can be cached and passed in.
-     * 
+     *
      * @param entity        The Entity being detected.
      * @param allECMInfo    Cached ECMInfo for all Entities in the game.
      * @param losCache      Cached LosEffects for particular Entity/Targetable
      *                      pairs.  Can be passed in null.
      * @return
      */
-    private Vector<IPlayer> whoCanDetect(Entity entity, 
-            List<ECMInfo> allECMInfo, 
+    private Vector<IPlayer> whoCanDetect(Entity entity,
+            List<ECMInfo> allECMInfo,
             Map<EntityTargetPair, LosEffects> losCache) {
         if (losCache == null) {
             losCache = new HashMap<>();
@@ -26151,7 +26153,7 @@ public class Server implements Runnable {
         if (entity.isHidden() || entity.isOffBoard()) {
             return vCanDetect;
         }
-            
+
         for (Entity spotter : vEntities) {
             if (!spotter.isActive() || spotter.isOffBoard()
                     || vCanDetect.contains(spotter.getOwner())) {
@@ -26227,7 +26229,7 @@ public class Server implements Runnable {
     /**
      * Filters an entity vector according to LOS
      */
-    private List<Entity> filterEntities(IPlayer pViewer, 
+    private List<Entity> filterEntities(IPlayer pViewer,
             List<Entity> vEntities,
             Map<EntityTargetPair, LosEffects> losCache) {
         if (losCache == null) {
@@ -26291,7 +26293,7 @@ public class Server implements Runnable {
                 if (spotter.isOffBoard()) {
                     continue;
                 }
-                
+
                 // See if the LosEffects is cached, and if not cache it
                 EntityTargetPair etp = new EntityTargetPair(spotter, e);
                 LosEffects los = losCache.get(etp);
@@ -26305,7 +26307,7 @@ public class Server implements Runnable {
                     break;
                 }
 
-                // If this unit has ECM, players with units effected by the ECM
+                // If this unit has ECM, players with units affected by the ECM
                 //  will need to know about this entity, even if they can't see
                 //  it.  Otherwise, the client can't properly report things
                 //  like to-hits.
@@ -26485,7 +26487,7 @@ public class Server implements Runnable {
     /**
      * Updates entities graphical "visibility indications" which are used in
      * double-blind games.
-     * 
+     *
      * @param losCache  It can be expensive to have to recompute LoSEffects
      *                  again and again, so in some cases where this may happen,
      *                  the LosEffects are cached.   This can safely be null.
@@ -27921,7 +27923,7 @@ public class Server implements Runnable {
                     processCommand(connId, chat);
                 } else if (packet.getData().length > 1) {
                     connId = (int) packet.getObject(1);
-                    if (connId == Player.PLAYER_NONE) {
+                    if (connId == IPlayer.PLAYER_NONE) {
                         sendServerChat(chat);
                     } else {
                         sendServerChat(connId, chat);
@@ -30543,7 +30545,7 @@ public class Server implements Runnable {
         Iterator<Entity> sinkableTanks = game
                 .getSelectedEntities(new EntitySelector() {
                     public boolean accept(Entity entity) {
-                        if (entity.isOffBoard() 
+                        if (entity.isOffBoard()
                                 || (entity.getPosition() == null)
                                 || !(entity instanceof Tank)) {
                             return false;
@@ -30554,11 +30556,11 @@ public class Server implements Runnable {
                                 .terrainLevel(Terrains.BRIDGE) > 0)
                                 && (entity.getElevation() == hex
                                         .terrainLevel(Terrains.BRIDGE_ELEV));
-                        if (((entity.getMovementMode() 
+                        if (((entity.getMovementMode()
                                     == EntityMovementMode.TRACKED)
-                                || (entity.getMovementMode() 
-                                        == EntityMovementMode.WHEELED) 
-                                || ((entity.getMovementMode() 
+                                || (entity.getMovementMode()
+                                        == EntityMovementMode.WHEELED)
+                                || ((entity.getMovementMode()
                                         == EntityMovementMode.HOVER)))
                                     && entity.isImmobile()
                                     && (hex.terrainLevel(Terrains.WATER) > 0)

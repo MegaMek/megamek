@@ -60,7 +60,7 @@ public class ATMHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -91,7 +91,7 @@ public class ATMHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override
@@ -101,7 +101,7 @@ public class ATMHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -127,7 +127,7 @@ public class ATMHandler extends MissileWeaponHandler {
 
     /**
      * Calculate the attack value based on range
-     * 
+     *
      * @return an <code>int</code> representing the attack value at that range.
      */
     @Override
@@ -138,7 +138,7 @@ public class ATMHandler extends MissileWeaponHandler {
         if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
             if (range == WeaponType.RANGE_SHORT) {
                 av = wtype.getRoundShortAV();
-                av = av + av / 2;
+                av = av + (av / 2);
             }
         } else if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
             if (range == WeaponType.RANGE_SHORT) {
@@ -175,7 +175,7 @@ public class ATMHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcStandardAndExtendedAmmoHits(Vector<Report> vPhaseReport) {
@@ -211,14 +211,13 @@ public class ATMHandler extends MissileWeaponHandler {
         }
         Mounted mLinker = weapon.getLinkedBy();
         AmmoType atype = (AmmoType) ammo.getType();
-        
+
         int nMissilesModifier = getClusterModifiers(atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE);
-        
+
         // is any hex in the flight path of the missile ECM affected?
         boolean bECMAffected = false;
         // if the attacker is affected by ECM or the target is protected by ECM
-        // then
-        // act as if effected.
+        // then act as if affected.
         if (ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
             bECMAffected = true;
         }
@@ -286,7 +285,7 @@ public class ATMHandler extends MissileWeaponHandler {
                 }
             }
         }
-        
+
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
 

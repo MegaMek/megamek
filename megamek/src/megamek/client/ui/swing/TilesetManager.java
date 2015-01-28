@@ -27,6 +27,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Polygon;
+import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
@@ -40,8 +41,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
-import java.awt.image.BufferedImage;
 
 import megamek.client.ui.ITilesetManager;
 import megamek.client.ui.swing.boardview.BoardView1;
@@ -121,7 +120,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      * Creates new TilesetManager
      */
     public TilesetManager(BoardView1 bv) throws IOException {
-        this.boardview = bv;
+        boardview = bv;
         tracker = new MediaTracker(boardview);
         try {
             camos = new DirectoryItems(
@@ -268,10 +267,10 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
     }
 
     /**
-     * Hexes effected by ECM will have a shaded static effect drawn on them.
+     * Hexes affected by ECM will have a shaded static effect drawn on them.
      * This method will check the cache for a suitable static image for a given
      * color, and if one doesn't exists an image is created and cached.
-     * 
+     *
      * @param tint
      * @return
      */
@@ -292,7 +291,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                 if (hexPoly.contains(x,y)) {
                     g.fillOval(x, y, 3, 3);
                 }
-            }            
+            }
             ecmStaticImages.put(tint, image);
         }
         return image;
@@ -336,9 +335,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         // pre-match all hexes with images, load hex images
         int width = board.getWidth();
         int height = board.getHeight();
-        // We want to cache as many of the images as we can, but if we have 
+        // We want to cache as many of the images as we can, but if we have
         //  more images than cache size, lets not waste time
-        if (width*height > ImageCache.MAX_SIZE){
+        if ((width*height) > ImageCache.MAX_SIZE){
             // Find the largest size by size square we can fit in the cache
             int max_dim = (int)Math.sqrt(ImageCache.MAX_SIZE);
             width = height = max_dim;
@@ -530,8 +529,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         // check if we have a duplicate image already loaded
         for (Iterator<EntityImage> j = mechImageList.iterator(); j.hasNext();) {
             EntityImage onList = j.next();
-            if (onList.getBase() != null && onList.getBase().equals(base)
-                    && (onList.tint == tint) && onList.getCamo() != null
+            if ((onList.getBase() != null) && onList.getBase().equals(base)
+                    && (onList.tint == tint) && (onList.getCamo() != null)
                     && onList.getCamo().equals(camo)) {
                 entityImage = onList;
                 break;

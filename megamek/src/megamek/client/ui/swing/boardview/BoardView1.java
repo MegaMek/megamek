@@ -99,7 +99,6 @@ import megamek.common.Coords;
 import megamek.common.ECMInfo;
 import megamek.common.Entity;
 import megamek.common.Flare;
-import megamek.common.Game;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IGame.Phase;
@@ -325,7 +324,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private Map<Coords, Color> ecmCenters = null;
     // hexes with ECM effect
     private Map<Coords, Color> eccmHexes = null;
-    // hexes that are teh centers of ECCM effects    
+    // hexes that are teh centers of ECCM effects
     private Map<Coords, Color> eccmCenters = null;
 
     // reference to our timertask for redraw
@@ -607,7 +606,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
 
                 });
-        
+
         // Register the action for TOGGLE_CHAT
         controller.registerCommandAction(KeyCommandBind.TOGGLE_CHAT.cmd,
                 new CommandAction() {
@@ -671,7 +670,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public boolean shouldPerformAction() {
-                        if (shouldIgnoreKeyCommands() || selectedEntity == null) {
+                        if (shouldIgnoreKeyCommands() || (selectedEntity == null)) {
                             return false;
                         } else {
                             return true;
@@ -774,14 +773,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     private boolean shouldIgnoreKeyCommands() {
         return getChatterBoxActive() || !isVisible()
-               || game.getPhase() == Phase.PHASE_LOUNGE
-               || game.getPhase() == Phase.PHASE_END_REPORT
-               || game.getPhase() == Phase.PHASE_MOVEMENT_REPORT
-               || game.getPhase() == Phase.PHASE_TARGETING_REPORT
-               || game.getPhase() == Phase.PHASE_FIRING_REPORT
-               || game.getPhase() == Phase.PHASE_PHYSICAL_REPORT
-               || game.getPhase() == Phase.PHASE_OFFBOARD_REPORT
-               || game.getPhase() == Phase.PHASE_INITIATIVE_REPORT
+               || (game.getPhase() == Phase.PHASE_LOUNGE)
+               || (game.getPhase() == Phase.PHASE_END_REPORT)
+               || (game.getPhase() == Phase.PHASE_MOVEMENT_REPORT)
+               || (game.getPhase() == Phase.PHASE_TARGETING_REPORT)
+               || (game.getPhase() == Phase.PHASE_FIRING_REPORT)
+               || (game.getPhase() == Phase.PHASE_PHYSICAL_REPORT)
+               || (game.getPhase() == Phase.PHASE_OFFBOARD_REPORT)
+               || (game.getPhase() == Phase.PHASE_INITIATIVE_REPORT)
                || shouldIgnoreKeys;
     }
 
@@ -940,8 +939,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         Rectangle viewRect = scrollpane.getVisibleRect();
-        if (bvBgBuffer == null || bvBgBuffer.getWidth() != viewRect.getWidth()
-            || bvBgBuffer.getHeight() != viewRect.getHeight()) {
+        if ((bvBgBuffer == null) || (bvBgBuffer.getWidth() != viewRect.getWidth())
+            || (bvBgBuffer.getHeight() != viewRect.getHeight())) {
             bvBgBuffer = new BufferedImage((int) viewRect.getWidth(),
                                            (int) viewRect.getHeight(), BufferedImage.TYPE_INT_RGB);
             Graphics bgGraph = bvBgBuffer.getGraphics();
@@ -1545,7 +1544,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
              minedCoords.hasMoreElements(); ) {
             Coords c = minedCoords.nextElement();
             // If the coords aren't visible, skip
-            if (c.getX() < drawX || c.getX() > maxX || c.getY() < drawY || c.getY() > maxY
+            if ((c.getX() < drawX) || (c.getX() > maxX) || (c.getY() < drawY) || (c.getY() > maxY)
                 || !board.contains(c)) {
                 continue;
             }
@@ -1730,7 +1729,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Check the cache to see if we already have the image
         HexImageCacheEntry cacheEntry = hexImageCache.get(c);
-        if (cacheEntry != null && !cacheEntry.needsUpdating) {
+        if ((cacheEntry != null) && !cacheEntry.needsUpdating) {
             boardGraph.drawImage(cacheEntry.hexImage, drawX, drawY, this);
             return;
         }
@@ -1820,10 +1819,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // Shade and add static noise to hexes that are in an ECM field
         if (ecmHexes != null) {
             Color tint = ecmHexes.get(c);
-            if (tint != null) {      
+            if (tint != null) {
                 Color origColor = g.getColor();
                 g.setColor(tint);
-                g.fillPolygon(hexPoly); 
+                g.fillPolygon(hexPoly);
                 g.setColor(origColor);
                 Image staticImage = tileManager.getEcmStaticImage(tint);
                 g.drawImage(staticImage, drawX, drawY,
@@ -1834,10 +1833,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // Shade hexes that are in an ECCM field
         if (eccmHexes != null) {
             Color tint = eccmHexes.get(c);
-            if (tint != null) {      
+            if (tint != null) {
                 Color origColor = g.getColor();
                 g.setColor(tint);
-                g.fillPolygon(hexPoly); 
+                g.fillPolygon(hexPoly);
                 g.setColor(origColor);
             }
         }
@@ -1859,7 +1858,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (GUIPreferences.getInstance().getBoolean(
                 GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
                 && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)
-                && game.isPositionIlluminated(c) == Game.ILLUMINATED_NONE) {
+                && (game.isPositionIlluminated(c) == IGame.ILLUMINATED_NONE)) {
             scaledImage = getScaledImage(tileManager.getNightFog(), true);
             g.drawImage(scaledImage, drawX, drawY, this);
         }
@@ -2852,8 +2851,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     public void setMovementModifierEnvelope(Collection<MovePath> movePaths) {
         moveModEnvSprites.clear();
-        for (MovePath mp : movePaths)
+        for (MovePath mp : movePaths) {
             moveModEnvSprites.add(new MovementModifierEnvelopeSprite(this, mp));
+        }
         repaint();
     }
 
@@ -3898,7 +3898,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     *  Updates maps that determine how to shade hexes effected by E(C)CM. This
+     *  Updates maps that determine how to shade hexes affected by E(C)CM. This
      *  is expensive, so precalculate only when entity changes occur
      **/
     public void updateEcmList() {
@@ -3910,7 +3910,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // Compute info about all E(C)CM on the board
         final List<ECMInfo> allEcmInfo = ComputeECM
                 .computeAllEntitiesECMInfo(game.getEntitiesVector());
-        
+
         // First, mark the sources of E(C)CM
         // Used for highlighting hexes and tooltips
         for (Entity e : game.getEntitiesVector()) {
@@ -3927,14 +3927,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 newECCMCenters.put(e.getPosition(), ecmColor);
             }
         }
-        
+
         // Next, determine what E(C)CM effects each Coord
-        Map<Coords, ECMEffects> ecmAffectedCoords = 
+        Map<Coords, ECMEffects> ecmAffectedCoords =
                 new HashMap<Coords, ECMEffects>();
         for (ECMInfo ecmInfo : allEcmInfo) {
             final Coords ecmPos = ecmInfo.getPos();
             final int range = ecmInfo.getRange();
-            
+
             // Add each Coords within range to the list of ECM Coords
             for (int x = -range; x <= range; x++) {
                 for (int y = -range; y <= range; y++) {
@@ -3957,8 +3957,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
         }
-        
-        // Finally, determine the color for each effected hex
+
+        // Finally, determine the color for each affected hex
         for (Coords c : ecmAffectedCoords.keySet()) {
             ECMEffects ecmEffects = ecmAffectedCoords.get(c);
             Color hexColor = ecmEffects.getHexColor();
@@ -4023,8 +4023,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // However, we also need the scrollable client to be as big as the
         //  board plus the pad size.
         return new Dimension(
-                Math.max(boardSize.width + 2 * HEX_W, preferredSize.width),
-                Math.max(boardSize.height + 2 * HEX_W, preferredSize.height));
+                Math.max(boardSize.width + (2 * HEX_W), preferredSize.width),
+                Math.max(boardSize.height + (2 * HEX_W), preferredSize.height));
     }
 
     /**
@@ -4241,12 +4241,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     txt.append(entString);
                     txt.append("<br>"); //$NON-NLS-1$
                 }
-                if ((ecmCenters != null) 
+                if ((ecmCenters != null)
                         && ecmCenters.containsKey(eSprite.getPosition())) {
                     txt.append(Messages.getString("BoardView1.ecmSource")); //$NON-NLS-1$
                     txt.append("<br>"); //$NON-NLS-1$
                 }
-                if ((eccmCenters != null) 
+                if ((eccmCenters != null)
                         && eccmCenters.containsKey(eSprite.getPosition())) {
                     txt.append(Messages.getString("BoardView1.eccmSource")); //$NON-NLS-1$
                     txt.append("<br>"); //$NON-NLS-1$
@@ -4402,6 +4402,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
              */
             private static final long serialVersionUID = 5973610449428194319L;
 
+            @Override
             protected void paintComponent(Graphics g) {
                 if (scrollPaneBgIcon == null) {
                     super.paintComponent(g);
@@ -4411,9 +4412,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 int h = getHeight();
                 int iW = scrollPaneBgIcon.getIconWidth();
                 int iH = scrollPaneBgIcon.getIconHeight();
-                if (scrollPaneBgBuffer == null
-                    || scrollPaneBgBuffer.getWidth() != w
-                    || scrollPaneBgBuffer.getHeight() != h) {
+                if ((scrollPaneBgBuffer == null)
+                    || (scrollPaneBgBuffer.getWidth() != w)
+                    || (scrollPaneBgBuffer.getHeight() != h)) {
                     scrollPaneBgBuffer = new BufferedImage(w, h,
                                                            BufferedImage.TYPE_INT_RGB);
                     Graphics bgGraph = scrollPaneBgBuffer.getGraphics();
@@ -4454,8 +4455,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     public void showPopup(Object popup, Coords c) {
         Point p = getHexLocation(c);
-        p.x += (int) (HEX_WC * scale) - scrollpane.getX() + HEX_W;
-        p.y += (int) ((HEX_H * scale) / 2) - scrollpane.getY() + HEX_H;
+        p.x += ((int) (HEX_WC * scale) - scrollpane.getX()) + HEX_W;
+        p.y += ((int) ((HEX_H * scale) / 2) - scrollpane.getY()) + HEX_H;
         if (((JPopupMenu) popup).getParent() == null) {
             add((JPopupMenu) popup);
         }
@@ -4518,10 +4519,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         selectedSprite.prepare();
         firstLOSSprite.prepare();
         secondLOSSprite.prepare();
-        for (Sprite spr : moveEnvSprites)
+        for (Sprite spr : moveEnvSprites) {
             spr.prepare();
-        for (Sprite spr : moveModEnvSprites)
+        }
+        for (Sprite spr : moveModEnvSprites) {
             spr.prepare();
+        }
 
         updateFontSizes();
         updateBoard();
@@ -4681,6 +4684,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         this.shouldIgnoreKeys = shouldIgnoreKeys;
     }
 
+    @Override
     public boolean imageUpdate(Image img, int flags, int x, int y, int w, int h) {
         // If FRAMEBITS is set, then new frame from a multi-frame image is ready
         // This indicates an animated image, which shouldn't be cached
@@ -4703,7 +4707,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 GUIPreferences.FOV_DARKEN);
         boolean highlight = GUIPreferences.getInstance().getBoolean(
                 GUIPreferences.FOV_HIGHLIGHT);
-        if (game.getPhase() == Phase.PHASE_MOVEMENT
+        if ((game.getPhase() == Phase.PHASE_MOVEMENT)
                 && (darken || highlight)) {
             clearHexImageCache();
         }

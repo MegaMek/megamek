@@ -1297,7 +1297,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return true if unit is permanently immobile
      */
     public boolean isPermanentlyImmobilized(boolean checkCrew) {
-        if (checkCrew && (getCrew() == null || getCrew().isDead())) {
+        if (checkCrew && ((getCrew() == null) || getCrew().isDead())) {
             return true;
         } else if (((getOriginalWalkMP() > 0) || (getOriginalRunMP() > 0) || (getOriginalJumpMP() > 0))
                 /*
@@ -1406,8 +1406,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public HashSet<Coords> getOccupiedCoords() {
         HashSet<Coords> positions = new HashSet<Coords>();
-        if (getSecondaryPositions() != null
-            && getSecondaryPositions().size() != 0) {
+        if ((getSecondaryPositions() != null)
+            && (getSecondaryPositions().size() != 0)) {
             for (int key : getSecondaryPositions().keySet()) {
                 positions.add(getSecondaryPositions().get(key));
             }
@@ -1428,11 +1428,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public void setPosition(Coords position, boolean gameUpdate) {
         HashSet<Coords> oldPositions = null;
-        if (game != null && gameUpdate) {
+        if ((game != null) && gameUpdate) {
             oldPositions = getOccupiedCoords();
         }
         this.position = position;
-        if (game != null && gameUpdate) {
+        if ((game != null) && gameUpdate) {
             game.updateEntityPositionLookup(this, oldPositions);
         }
     }
@@ -2219,7 +2219,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * Returns this entity's current jumping MP, not effected by terrain,
+     * Returns this entity's current jumping MP, not affected by terrain,
      * factored for gravity.
      */
     public int getJumpMP() {
@@ -3354,46 +3354,46 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void clearBombs() {
         bombList.clear();
         for (Iterator<Mounted> i = equipmentList.iterator(); i.hasNext(); ) {
-            Mounted m = (Mounted) i.next();
-            if (m.getType() instanceof BombType
-                || m.getType() instanceof DiveBombAttack
-                || m.getType() instanceof SpaceBombAttack
-                || m.getType() instanceof AltitudeBombAttack
-                || m.getType() instanceof ISAAAMissileWeapon
-                || m.getType() instanceof CLAAAMissileWeapon
-                || m.getType() instanceof ASMissileWeapon
-                || m.getType() instanceof ASEWMissileWeapon
-                || m.getType() instanceof ISLAAMissileWeapon
-                || m.getType() instanceof CLLAAMissileWeapon
-                || m.getType() instanceof BombArrowIV
+            Mounted m = i.next();
+            if ((m.getType() instanceof BombType)
+                || (m.getType() instanceof DiveBombAttack)
+                || (m.getType() instanceof SpaceBombAttack)
+                || (m.getType() instanceof AltitudeBombAttack)
+                || (m.getType() instanceof ISAAAMissileWeapon)
+                || (m.getType() instanceof CLAAAMissileWeapon)
+                || (m.getType() instanceof ASMissileWeapon)
+                || (m.getType() instanceof ASEWMissileWeapon)
+                || (m.getType() instanceof ISLAAMissileWeapon)
+                || (m.getType() instanceof CLLAAMissileWeapon)
+                || (m.getType() instanceof BombArrowIV)
                     /*|| m.getType() instanceof CLBombArrowIV*/
-                    || m.getType() instanceof BombTAG
-                    || m.getType() instanceof BombISRL10
-                    || m.getType() instanceof AlamoMissileWeapon) {
+                    || (m.getType() instanceof BombTAG)
+                    || (m.getType() instanceof BombISRL10)
+                    || (m.getType() instanceof AlamoMissileWeapon)) {
                 i.remove();
             }
         }
         for (Iterator<Mounted> i = weaponList.iterator(); i.hasNext(); ) {
-            Mounted m = (Mounted) i.next();
-            if (m.getType() instanceof DiveBombAttack
-                || m.getType() instanceof SpaceBombAttack
-                || m.getType() instanceof AltitudeBombAttack
-                || m.getType() instanceof ISAAAMissileWeapon
-                || m.getType() instanceof CLAAAMissileWeapon
-                || m.getType() instanceof ASMissileWeapon
-                || m.getType() instanceof ASEWMissileWeapon
-                || m.getType() instanceof ISLAAMissileWeapon
-                || m.getType() instanceof CLLAAMissileWeapon
-                || m.getType() instanceof BombArrowIV
+            Mounted m = i.next();
+            if ((m.getType() instanceof DiveBombAttack)
+                || (m.getType() instanceof SpaceBombAttack)
+                || (m.getType() instanceof AltitudeBombAttack)
+                || (m.getType() instanceof ISAAAMissileWeapon)
+                || (m.getType() instanceof CLAAAMissileWeapon)
+                || (m.getType() instanceof ASMissileWeapon)
+                || (m.getType() instanceof ASEWMissileWeapon)
+                || (m.getType() instanceof ISLAAMissileWeapon)
+                || (m.getType() instanceof CLLAAMissileWeapon)
+                || (m.getType() instanceof BombArrowIV)
                     /*|| m.getType() instanceof CLBombArrowIV*/
-                    || m.getType() instanceof BombTAG
-                    || m.getType() instanceof BombISRL10
-                    || m.getType() instanceof AlamoMissileWeapon) {
+                    || (m.getType() instanceof BombTAG)
+                    || (m.getType() instanceof BombISRL10)
+                    || (m.getType() instanceof AlamoMissileWeapon)) {
                 i.remove();
             }
         }
         for (Iterator<Mounted> i = ammoList.iterator(); i.hasNext(); ) {
-            Mounted m = (Mounted) i.next();
+            Mounted m = i.next();
             if (m.getType() instanceof BombType) {
                 i.remove();
             }
@@ -4434,7 +4434,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if ((type instanceof MiscType) && type.hasFlag(MiscType.F_BAP)) {
 
                 if (!m.isInoperable()) {
-                    // Beagle Isn't effected by normal ECM
+                    // Beagle Isn't affected by normal ECM
                     if (type.getName().equals("Beagle Active Probe")) {
 
                         if ((game != null)
@@ -5388,7 +5388,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             taserFeedBackRounds--;
         }
 
-        // If we are effected by the TSEMP Shutdown effect, we should remove
+        // If we are affected by the TSEMP Shutdown effect, we should remove
         // it now, so we can startup during the end phase
         if (getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_SHUTDOWN) {
             setTsempEffect(TSEMPWeapon.TSEMP_EFFECT_NONE);
@@ -5697,8 +5697,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean useReducedOverheatModifierBV() {
-        return (useReducedOverheatModifierBV || (game != null)
-                                                && game.getOptions().booleanOption("reduced_overheat_modifier_bv"));
+        return (useReducedOverheatModifierBV || ((game != null)
+                                                && game.getOptions().booleanOption("reduced_overheat_modifier_bv")));
     }
 
     /**
@@ -6370,7 +6370,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         addPilotingModifierForTerrain(roll, curPos);
 
         if (!lastPos.equals(curPos)
-            && (step.getMovementType() != EntityMovementType.MOVE_JUMP
+            && ((step.getMovementType() != EntityMovementType.MOVE_JUMP)
                 || isLastStep)
             && (curHex.terrainLevel(Terrains.RUBBLE) > 0)
             && (this instanceof Mech)) {
@@ -8016,7 +8016,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void setDeployed(boolean deployed) {
         this.deployed = deployed;
         if (deployed) {
-            this.neverDeployed = false;
+            neverDeployed = false;
         }
     }
 
@@ -8100,7 +8100,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean isVisibleToEnemy() {
         // If double blind isn't on, the unit is always visible
-        if (game != null && !game.getOptions().booleanOption("double_blind")) {
+        if ((game != null) && !game.getOptions().booleanOption("double_blind")) {
             return true;
         }
         return visibleToEnemy;
@@ -8112,7 +8112,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean isDetectedByEnemy() {
         // If double blind isn't on, the unit is always detected
-        if (game != null && !game.getOptions().booleanOption("double_blind")) {
+        if ((game != null) && !game.getOptions().booleanOption("double_blind")) {
             return true;
         }
         return detectedByEnemy;
@@ -10534,8 +10534,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public ECMInfo getECMInfo() {
         // If we don't have a position, ECM doesn't have an effect
-        if (getPosition() == null || isShutDown() || isStealthOn()
-            || getTransportId() != Entity.NONE) {
+        if ((getPosition() == null) || isShutDown() || isStealthOn()
+            || (getTransportId() != Entity.NONE)) {
             return null;
         }
 
@@ -10547,7 +10547,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
             int range = getECMRange();
             if ((range >= 0) && hasActiveECM()) {
-                return new ECMInfo(range, 1, this);    
+                return new ECMInfo(range, 1, this);
             } else {
                 return null;
             }
@@ -10590,7 +10590,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // In some type of ECM mode...
             if (newInfo != null) {
                 if ((bestInfo == null)
-                    || newInfo.compareTo(bestInfo) > 0) {
+                    || (newInfo.compareTo(bestInfo) > 0)) {
                     bestInfo = newInfo;
                 }
             }
@@ -10608,8 +10608,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public ECMInfo getECCMInfo() {
         // If we don't have a position, ECM doesn't have an effect
-        if (getPosition() == null || isShutDown() || isStealthOn()
-            || getTransportId() != Entity.NONE) {
+        if ((getPosition() == null) || isShutDown() || isStealthOn()
+            || (getTransportId() != Entity.NONE)) {
             return null;
         }
         // E(C)CM operates differently in space (SO pg 110)
@@ -10679,7 +10679,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // In some type of ECCM mode...
             if (newInfo != null) {
                 if ((bestInfo == null)
-                    || newInfo.compareTo(bestInfo) > 0) {
+                    || (newInfo.compareTo(bestInfo) > 0)) {
                     bestInfo = newInfo;
                 }
             }

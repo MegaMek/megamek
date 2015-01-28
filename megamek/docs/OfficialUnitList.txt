@@ -326,9 +326,76 @@ Glory Heavy Fire Support Vehicle (Light Gauss)|
 Manteuffel Attack Tank Prime|
 Morningstar City Command Vehicle (Laser)|
 Glory Heavy Fire Support Vehicle (Standard)|
+Prairie Schooner Land Train (Standard)|
+Mao-Heng Charioteer (Original)|
+Durandel-British 'Blue Nova' Convertible (Standard)|
+Motuo Che Shang No.2 (Standard)|
+Ceres-Bikes Flashbang ZZ10000|
+Aston-Martin Fiver Roadster (Standard)|
+Bailey Armored Car (Standard)|
 Brunel Dump Truck (Standard)|
 Brunel Dump Truck (LRM)|
+Skoda 'Growler' Service Utility Truck (Standard)|
+Simca Ambulance (Standard)|
+Bulldog Medium Truck (Standard)|
+Pit Bull Medium Truck (Standard)|
+Saurer-Bucher Fire Engine TLF-LL6500|
+Saturnus V Grande Circuit Racer (Standard)|
+Aston-Martin Fiver Traveler (Standard)|
 Brunel Dump Truck (AC)|
+Prairie Schooner Module (Standard)|
+Lesseps Dump Truck (Standard)|
+Knox Armored Car (Standard)|
+Deusenberg VIP Luxury Hovercar (Original)|
+Ina-du Swamp Skimmer (Standard)|
+Bayamo Hoverbike (Standard)|
+Slipper Hovercar LX-Series (Standard)|
+Kressly Dillinger Police Vehicle (Standard)|
+Deusenberg VIP Luxury Hovercar (One)|
+Buffalo BFFL Hovertruck (Standard)|
+Routemaster Hover Shuttle (Standard)|
+Champion Hoversports CS535 Hover Car (Standard)|
+Freedom 900 Hover Jeep (Standard)|
+Lewis Skimmer Bus (Standard)|
+Champion Hoversports Crimson Streak Hover Racer (Standard)|
+Sky Eye News Helicopter (Standard)|
+St. Christopher Cargo Lifter C1|
+Lexan Oceanic Luxury VTOL Series VI|
+St. Christopher Cargo Lifter C2|
+Pion-Laurier Cascatelle (Standard)|
+SOAR (Standard)|
+Blackstone Baronet Passenger VTOL (Standard)|
+Pion-Laurier Lama-Deux (Standard)|
+Lexan Oceanic Personal VTOL Series II|
+Blackstone Pegasus Passenger VTOL (Standard)|
+Cal-Boeing Swiftran RTC-215M (Passenger)|
+Peacekeeper SWAT Carrier (Standard)|
+Galaport Ground Tug (Standard)|
+Cellco Ranger UPU-3000|
+Gienah-Durapaq Elite Land Train (Tractor) Series 3|
+Sherpa Armored Truck (MASH)|
+Donovan-Miter Magellan Series Four (Standard)|
+Hesiod Utility Vehicle A (Harvester)|
+Luciano White Wolverine (Standard)|
+Hesiod Utility Vehicle Prime (Cargo)|
+Croyle Systems Cortez Series N (Standard)|
+Kallon UL-series Construction Vehicle UL-10 'Backhoe'|
+Galaport Ground Tug (Standard)|
+Saturn Harvester (Standard)|
+Corx Mobile Tunnel Miner (Standard)|
+RRV 'Rock Rover' Half-Track (Standard)|
+Gienah-Durapaq Elite Land Train (Trailer) Series 3T|
+Sherpa Armored Truck (Standard)|
+Hesiod Utility Vehicle B (Bulldozer)|
+Hesiod Utility Vehicle C (Crane)|
+Raptor Law Enforcement Vehicle (Standard)|
+Quicksilver Personal Sports Craft (Standard)|
+Koi Heavy Transport (Standard)|
+Fulmar Patrol Craft (Original)|
+Fulmar Patrol Craft (Standard)|
+Cormorant Medium Cargo Craft (Standard)|
+Ryu Heavy Transport (Standard)|
+Coanda Personal Sports Craft (Standard)|
 Puma Assault Tank PAT-008|
 Rhino Fire Support Tank (Flamer)|
 Ripper Infantry Transport (Light PPC)|
@@ -383,7 +450,6 @@ Ripper Infantry Transport (Standard)|
 Puma Assault Tank PAT-005|
 Chaparral Missile Artillery Tank (Standard)|
 Fury Command Tank (C3S)|
-RRV 'Rock Rover' Half-Track (Standard)|
 Sturmfeur Heavy Tank (WoB)|
 Heavy Weapons Carrier (PPC)|
 Koryu Submarine (Civilian)|
@@ -530,8 +596,13 @@ Fulcrum Heavy HoverTank X|
 Challenger MBT XVc|
 Cavalry Attack Helicopter Cadence Rain|
 Danai Support Vehicle Arrow|
+Dreadnought Mk II Land Trailer Configuration #4|
 Patton Tank-SB|
+Dreadnought Mk II Land Train (Standard)|
 Saladin Assault Hover Tank Ifrit|
+Dreadnought Mk II Land Trailer Configuration #2|
+Dreadnought Mk II Land Trailer Configuration #3|
+Dreadnought Mk II Land Trailer Configuration #1|
 Buffalo Drone Bomb (Standard)|
 Condor Heavy Hover Tank (Fission)|
 Kestrel VTOL (Scout)|

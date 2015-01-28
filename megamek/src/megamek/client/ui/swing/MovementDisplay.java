@@ -3461,12 +3461,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (isIgnoringEvents()) {
             return;
         }
+        
         if (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT) {
             // ignore
             return;
         }
-        // else, change turn
-        endMyTurn();
+
         if (clientgui.getClient().isMyTurn()) {
             // Can the player unload entities stranded on immobile transports?
             if (clientgui.getClient().canUnloadStranded()) {
@@ -3475,6 +3475,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 beginMyTurn();
             }
         } else {
+            endMyTurn();
             if ((e.getPlayer() == null)
                     && (clientgui.getClient().getGame().getTurn() instanceof GameTurn.UnloadStrandedTurn)) {
                 setStatusBarText(Messages
@@ -3489,6 +3490,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
     @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
+        // In case of a /reset command, ensure the state gets reset
+        if (clientgui.getClient().getGame().getPhase() 
+                == IGame.Phase.PHASE_LOUNGE) {
+            endMyTurn();
+        }
+        
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -4286,21 +4293,21 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setStatusBarText(Messages.getString("MovementDisplay.AllPlayersUnload")); //$NON-NLS-1$
 
         // Collect the stranded entities into the vector.
-        Iterator<Entity> entities = clientgui.getClient()
-                                             .getSelectedEntities(new EntitySelector() {
-                                                 private final IGame game = clientgui.getClient().getGame();
-                                                 private final GameTurn turn = clientgui.getClient()
-                                                                                        .getGame().getTurn();
-                                                 private final int ownerId = clientgui.getClient()
-                                                                                      .getLocalPlayer().getId();
+        Iterator<Entity> entities = clientgui.getClient().getSelectedEntities(
+                new EntitySelector() {
+                    private final IGame game = clientgui.getClient().getGame();
+                    private final GameTurn turn = clientgui.getClient()
+                            .getGame().getTurn();
+                    private final int ownerId = clientgui.getClient()
+                            .getLocalPlayer().getId();
 
-                                                 public boolean accept(Entity acc) {
-                                                     if (turn.isValid(ownerId, acc, game)) {
-                                                         return true;
-                                                     }
-                                                     return false;
-                                                 }
-                                             });
+                    public boolean accept(Entity acc) {
+                        if (turn.isValid(ownerId, acc, game)) {
+                            return true;
+                        }
+                        return false;
+                    }
+                });
         while (entities.hasNext()) {
             stranded.addElement(entities.next());
         }
@@ -4315,16 +4322,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             if (null == transport) {
                 buffer = entity.getDisplayName();
             } else {
-                buffer = Messages.getString("MovementDisplay.EntityAt",
-                                            new Object[]{entity.getDisplayName(),
-                                                         transport.getPosition().getBoardNum()});
-                //$NON-NLS-1$
+                buffer = Messages.getString("MovementDisplay.EntityAt", //$NON-NLS-1$
+                        new Object[] { entity.getDisplayName(),
+                                transport.getPosition().getBoardNum() });
             }
             names[index] = buffer.toString();
         }
 
         // Show the choices to the player
-
         int[] indexes = clientgui
                 .doChoiceDialog(
                         Messages.getString("MovementDisplay.UnloadStrandedUnitsDialog.title"), //$NON-NLS-1$

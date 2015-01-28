@@ -376,8 +376,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             // ignore
             return;
         }
-        // else, change turn
-        endMyTurn();
         
         if (clientgui.getClient().isMyTurn()) {
             if (cen == Entity.NONE) {
@@ -386,6 +384,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             setStatusBarText(Messages
                     .getString("DeploymentDisplay.its_your_turn")); //$NON-NLS-1$
         } else {
+            endMyTurn();
             setStatusBarText(Messages.getString(
                     "DeploymentDisplay.its_others_turn", //$NON-NLS-1$
                     new Object[] { e.getPlayer().getName() }));
@@ -396,6 +395,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
         DeploymentDisplay.this.clientgui.bv.markDeploymentHexesFor(null);
+        
+       // In case of a /reset command, ensure the state gets reset
+        if (clientgui.getClient().getGame().getPhase() 
+                == IGame.Phase.PHASE_LOUNGE) {
+            endMyTurn();
+        }
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;

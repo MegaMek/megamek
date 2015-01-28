@@ -3764,7 +3764,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 refreshMoveVectors();
             }
             if ((mp != null) && (mp.size() > 0)
-                && GUIPreferences.getInstance().getShowMoveStep()) {
+                && GUIPreferences.getInstance().getShowMoveStep()
+                && !game.getOptions().booleanOption("simultaneous_movement")) {
                 addMovingUnit(e.getEntity(), mp);
             } else {
                 redrawEntity(e.getEntity(), e.getOldEntity());

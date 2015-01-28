@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.41.1-dev (SVN)
+v0.41.1 (2015-01-28 17:10 UTC)
 + Bug [#4418]: Custom weapon order XML file thinks it's quirks
 + Bug [#4419]: Support Vee's and Infantry Weapons
 + Bug [#4297]: Possible NPE in MovePath.findPathTo

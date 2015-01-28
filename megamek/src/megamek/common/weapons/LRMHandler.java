@@ -64,7 +64,7 @@ public class LRMHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
      * megamek.common.Entity, boolean)
@@ -102,7 +102,7 @@ public class LRMHandler extends MissileWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -143,8 +143,7 @@ public class LRMHandler extends MissileWeaponHandler {
         // is any hex in the flight path of the missile ECM affected?
         boolean bECMAffected = false;
         // if the attacker is affected by ECM or the target is protected by ECM
-        // then
-        // act as if effected.
+        // then act as if affected.
         if (ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
             bECMAffected = true;
         }
@@ -234,7 +233,7 @@ public class LRMHandler extends MissileWeaponHandler {
                 }
             }
         }
-        
+
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
 

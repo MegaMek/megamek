@@ -68,7 +68,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
@@ -113,8 +113,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // is any hex in the flight path of the missile ECM affected?
         boolean bECMAffected = false;
         // if the attacker is affected by ECM or the target is protected by ECM
-        // then
-        // act as if effected.
+        // then act as if affected.
         if (ComputeECM.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
             bECMAffected = true;
         }
@@ -263,7 +262,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     @Override
@@ -273,7 +272,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     @Override
@@ -293,7 +292,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
     /**
      * Calculate the attack value based on range
-     * 
+     *
      * @return an <code>int</code> representing the attack value at that range.
      */
     @Override
@@ -355,7 +354,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common
      * .Entity, boolean, megamek.common.Building)
@@ -457,7 +456,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     @Override
@@ -484,7 +483,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         r.newlines = 0;
         r.subject = subjectId;
         r.add(wtype.getName() + number);
-        if (entityTarget != null) {            
+        if (entityTarget != null) {
             if (wtype.getAmmoType() != AmmoType.T_NA){
                 AmmoType atype = (AmmoType) weapon.getLinked().getType();
                 if (atype.getMunitionType() != AmmoType.M_STANDARD){
@@ -641,7 +640,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // ways
         int nCluster = calcnCluster();
         int id = vPhaseReport.size();
-        int hits = calcHits(vPhaseReport);           
+        int hits = calcHits(vPhaseReport);
         if (target.isAirborne() || game.getBoard().inSpace()) {
             //if we added a line to the phase report for calc hits, remove it now
             while(vPhaseReport.size() > id) {
@@ -651,9 +650,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             hits = aeroResults[0];
             nCluster = aeroResults[1];
         }
-        
+
         // We have to adjust the reports on a miss, so they line up
-        if (bMissed && id != vPhaseReport.size()){
+        if (bMissed && (id != vPhaseReport.size())){
             vPhaseReport.get(id-1).newlines--;
             vPhaseReport.get(id).indent(2);
             vPhaseReport.get(vPhaseReport.size()-1).newlines++;
@@ -666,14 +665,14 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             if (targetInBuilding && (bldg != null)) {
                 bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
             }
-    
+
             // Make sure the player knows when his attack causes no damage.
             if (hits == 0) {
                 r = new Report(3365);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
             }
-    
+
             // for each cluster of hits, do a chunk of damage
             while (hits > 0) {
                 int nDamage;
@@ -706,19 +705,19 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 }
             } // Handle the next cluster.
         } else { // We missed, but need to handle special miss cases
-            
+
             // When shooting at a non-infantry unit in a building and the
             //  shot misses, the building is damaged instead, TW pg 171
             int dist = ae.getPosition().distance(target.getPosition());
-            if (targetInBuilding && !(entityTarget instanceof Infantry) && 
-                    dist == 1){   
+            if (targetInBuilding && !(entityTarget instanceof Infantry) &&
+                    (dist == 1)){
                 r = new Report(6429);
                 r.indent(2);
                 r.subject = ae.getId();
                 r.newlines--;
                 vPhaseReport.add(r);
                 int nDamage = nDamPerHit * hits;
-                // We want to set bSalvo to true to prevent 
+                // We want to set bSalvo to true to prevent
                 //  handleBuildingDamage from reporting a hit
                 boolean savedSalvo = bSalvo;
                 bSalvo = true;

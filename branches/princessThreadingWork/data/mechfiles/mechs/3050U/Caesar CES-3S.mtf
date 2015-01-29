@@ -1,0 +1,150 @@
+Version:1.0
+Caesar
+CES-3S
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3067
+Rules Level:2
+
+Mass:70
+Engine:280 Light Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Light Ferro-Fibrous
+LA Armor:22
+RA Armor:22
+LT Armor:22
+RT Armor:22
+CT Armor:33
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:8
+RTR Armor:8
+RTC Armor:11
+
+Weapons:6
+1 ISHeavyPPC, Right Arm
+1 ISMediumPulseLaser, Right Arm
+1 ISMediumPulseLaser, Left Arm
+1 ISGaussRifle, Right Torso, Ammo:16
+1 ISGuardianECM, Right Torso
+1 ISERSmallLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumPulseLaser
+Endo Steel
+Endo Steel
+Endo Steel
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+ISMediumPulseLaser
+Endo Steel
+Endo Steel
+Light Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISGauss Ammo
+ISGauss Ammo
+Endo Steel
+Endo Steel
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGuardianECM
+ISGuardianECM
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERSmallLaser
+Endo Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-

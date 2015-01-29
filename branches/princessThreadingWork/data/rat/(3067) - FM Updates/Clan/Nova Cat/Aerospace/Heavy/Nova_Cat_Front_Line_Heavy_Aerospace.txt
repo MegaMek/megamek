@@ -1,0 +1,12 @@
+Nova Cat Front-Line Heavy ASF (FMU)
+Xerxes 1,1
+Jengiz Prime,2
+Scytha Prime,3
+Kirghiz Prime,4
+Jengiz Prime,5
+Scytha Prime,6
+Kirghiz Prime,5
+Scytha Prime,4
+Scytha Prime,3
+Hydaspes (Standard),2
+Sabutai Prime,1

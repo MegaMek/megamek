@@ -1,0 +1,12 @@
+Federated Suns Heavy Mechs B
+Argus AGS-5D,1
+Hammerhands HMH-6E,2
+BattleAxe BKX-8D,3
+Avatar AV1-O,4
+Falconer FLC-8R,5
+Black Knight BLK-NT-4D,6
+Marauder MAD-5R,5
+Warhammer WHM-9D,4
+Vulpes VLP-1D,3
+Black Knight BLK-NT-5H,2
+Black Hawk-KU BHKU-O,1

@@ -1,0 +1,12 @@
+3055 Mercenary - Light
+Thorn THE-S,1
+Hermes HER-1A,2
+Panther PNT-9R,3
+Jenner JR7-D,4
+Javelin JVN-10N,5
+Locust LCT-1V,6
+Wasp WSP-1A,5
+Firestarter FS9-H,4
+Valkyrie VLK-QA,3
+Mongoose MON-67,2
+Wolfhound WLF-1,1

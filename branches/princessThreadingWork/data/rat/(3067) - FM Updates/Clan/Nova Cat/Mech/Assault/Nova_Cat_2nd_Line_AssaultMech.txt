@@ -1,0 +1,12 @@
+Nova Cat 2nd-Line Assault Mechs (FMU)
+Highlander IIC (Standard),1
+Crockett CRK-5003-1,2
+Supernova (Standard),3
+Pillager PLG-3Z,4
+Emperor EMP-6A,5
+Mad Cat Mk II (Standard),6
+Mad Cat Mk II (Standard),5
+Viking VKG-2G,4
+Supernova (Standard),3
+Marauder II MAD-4S,2
+Akuma AKU-1XJ,1

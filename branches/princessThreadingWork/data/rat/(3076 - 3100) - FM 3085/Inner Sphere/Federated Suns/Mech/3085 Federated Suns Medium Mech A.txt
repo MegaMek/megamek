@@ -1,0 +1,12 @@
+3085 Federated Suns Medium Mech A
+Legionnaire LGN-2D,1
+Enforcer III ENF-6Ma,2
+Blackjack BJ-4,3
+Hatchetman HCT-6D,4
+Hellspawn HSN-7D,5
+Stealth STH-1D,6
+Wolverine WVR-8D,5
+Dervish DV-8D,4
+Shadow Hawk SHD-5D,3
+Centurion CN9-D9,2
+Fennec FEC-1CM,1

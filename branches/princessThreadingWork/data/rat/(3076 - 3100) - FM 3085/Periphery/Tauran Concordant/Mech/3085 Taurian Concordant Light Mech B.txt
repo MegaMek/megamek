@@ -1,0 +1,12 @@
+3085 Taurian Concordant Light Mech B
+Wasp WSP-1A,1
+Locust LCT-1V,2
+Commando COM-2D,3
+Toro TR-A-1,4
+Commando COM-2D,5
+Anubis ABS-3L,6
+Stinger STG-5T,5
+Wasp WSP-7MAF,4
+Firestarter FS9-H,3
+Commando COM-2Dr,2
+Garm GRM-01A,1

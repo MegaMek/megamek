@@ -1,0 +1,149 @@
+Version:1.0
+Gator
+(Clan)-TF
+
+Config:Biped
+TechBase:Mixed (IS Chassis)
+Era:3050
+Rules Level:4
+
+Mass:85
+Engine:340 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:28
+RA Armor:28
+LT Armor:30
+RT Armor:30
+CT Armor:46
+HD Armor:9
+LL Armor:36
+RL Armor:36
+RTL Armor:6
+RTR Armor:6
+RTC Armor:8
+
+Weapons:4
+1 CLGaussRifle, Right Arm, Ammo:16
+2 CLLRM15, Right Torso, Ammo:64
+2 CLLRM15, Left Torso
+1 CLLRM15, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGauss Ammo
+CLGauss Ammo
+Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+ISCASE
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+CLLRM15 Ammo
+ISCASE
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLLRM15
+CLLRM15
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

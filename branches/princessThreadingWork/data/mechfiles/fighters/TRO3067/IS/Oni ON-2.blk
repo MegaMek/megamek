@@ -1,0 +1,130 @@
+
+<BlockVersion>
+
+2
+
+</BlockVersion>
+
+<Version>
+
+1
+
+</Version>
+
+<UnitType>
+
+Aero
+
+</UnitType>
+
+<Name>
+
+Oni
+
+</Name>
+
+<Model>
+
+ON-2
+
+</Model>
+
+<Tonnage>
+
+55
+
+</Tonnage>
+
+<SafeThrust>
+
+7
+
+</SafeThrust>
+
+<Armor>
+
+37
+
+30
+
+30
+
+28
+
+</Armor>
+
+<Nose Equipment>
+ISMRM40
+IS MRM Apollo FCS
+ISMRM40 Ammo
+ISMRM40 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment> 
+ISERMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISGuardianECMSuite
+</Aft Equipment>
+
+<heatsinks>
+
+13
+
+</heatsinks>
+
+<sink_type>
+
+1
+
+</sink_type>
+
+<fuel>
+
+320
+
+</fuel>
+
+<type>
+
+IS Level 3
+
+</type>
+
+<year>
+
+3078
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+19
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+aerodyne
+
+</motion_type>

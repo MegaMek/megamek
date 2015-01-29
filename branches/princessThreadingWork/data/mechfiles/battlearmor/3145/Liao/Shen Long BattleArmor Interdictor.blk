@@ -1,0 +1,75 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Shen Long Battle Armor
+</Name>
+
+<Model>
+[Interdictor]
+</Model>
+
+<year>
+3092
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Leg
+</motion_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<Squad Equipment>
+ISBAFlamer:Body
+ISBAFlamer:Body
+IS BA ECM:Body
+</Squad Equipment>
+
+<source>
+TRO 3145 Capellan Confederation
+</source>
+
+<chassis>
+quad
+</chassis>
+
+<jumpingMP>
+0
+</jumpingMP>
+
+<armor>
+11
+</armor>
+
+<Trooper Count>
+4
+</Trooper Count>
+
+<weightclass>
+3
+</weightclass>
+
+<armor_type>
+36
+</armor_type>
+<armor_tech>
+3
+</armor_tech>
+

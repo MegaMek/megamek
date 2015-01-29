@@ -1,0 +1,149 @@
+Version:1.1
+Heavy Lifter HCL-1 CargoMech
+(Standard)
+
+Config:Quad
+TechBase:Inner Sphere
+Era:3060
+Source:RS IA
+Rules Level:2
+
+Mass:60
+Engine:240 Fusion Engine(IS)
+Structure:IS Industrial
+Myomer:Industrial Triple-Strength
+Cockpit:Industrial Cockpit
+Gyro:Standard Gyro
+
+Heat Sinks:10 Single
+Walk MP:4
+Jump MP:0
+
+Armor:Industrial (Inner Sphere)
+FLL Armor:16
+FRL Armor:16
+LT Armor:21
+RT Armor:21
+CT Armor:23
+HD Armor:9
+RLL Armor:16
+RRL Armor:16
+RTL Armor:5
+RTR Armor:5
+RTC Armor:7
+
+Weapons:0
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Searchlight
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Searchlight
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Lift Hoist
+Lift Hoist
+Lift Hoist
+Cargo (1 ton)
+Industrial TSM
+Industrial TSM
+Industrial TSM
+Industrial TSM
+Industrial TSM
+Industrial TSM
+Environmental Sealing
+-Empty-
+
+Right Torso:
+Lift Hoist
+Lift Hoist
+Lift Hoist
+Cargo (1 ton)
+Industrial TSM
+Industrial TSM
+Industrial TSM
+Industrial TSM
+Industrial TSM
+Industrial TSM
+Environmental Sealing
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+Environmental Sealing
+
+Head:
+Life Support
+Sensors
+Cockpit
+Environmental Sealing
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Searchlight
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Searchlight
+Environmental Sealing
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

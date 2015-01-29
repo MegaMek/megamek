@@ -1,0 +1,12 @@
+2821 Operations Klondike Pentagon Medium Mech A
+Shadow Hawk SHD-2Hb,1
+Wolverine II WVR-7H,2
+Vulcan VL-5T,3
+Kintaro KTO-19,4
+Hoplite HOP-4Bb,5
+Phoenix Hawk PXH-1,6
+Kyudo KY2-D-02,5
+Scorpion SCP-1N,4
+Crab CRB-27b,3
+Assassin ASN-21,2
+Wyvern WVE-5Nb,1

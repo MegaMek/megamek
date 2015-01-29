@@ -1,0 +1,12 @@
+Taurian Concordat Medium Mechs F
+Griffin GRF-1N,1
+Griffin GRF-1N,2
+Clint CLNT-2-3U,3
+Bloodhound B3-HND,4
+Clint CLNT-3-3T,5
+Phoenix Hawk PXH-4W,6
+Shadow Hawk SHD-7M,5
+Griffin GRF-4N,4
+Starslayer STY-3Dr,3
+Assassin ASN-23,2
+Enforcer ENF-4R,1

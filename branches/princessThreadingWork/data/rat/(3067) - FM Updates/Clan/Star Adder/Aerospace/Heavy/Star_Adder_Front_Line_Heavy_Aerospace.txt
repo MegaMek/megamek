@@ -1,0 +1,12 @@
+Clan Star Adder Front-Line Heavy Aerospace (FMU)
+Jengiz Prime,1
+Scytha B,2
+Kirghiz C,3
+Scytha B,4
+Sabutai C,5
+Scytha C,6
+Sabutai A,5
+Kirghiz B,4
+Scytha A,3
+Sabutai B,2
+Jengiz B,1

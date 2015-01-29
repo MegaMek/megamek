@@ -1,0 +1,152 @@
+Version:1.0
+Conquistador
+CNQ-4R-FW
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3050
+Rules Level:2
+
+Mass:75
+Engine:300 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:21
+RA Armor:21
+LT Armor:24
+RT Armor:24
+CT Armor:37
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:8
+RTR Armor:8
+RTC Armor:8
+
+Weapons:7
+1 ISAC20, Right Arm, Ammo:25
+1 ISAC20, Left Arm
+1 ISMediumLaser, Right Torso
+1 ISMediumLaser, Left Torso
+1 ISMediumLaser, Center Torso
+1 ISMediumLaser, Head
+1 ISMediumLaser, Right Leg
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISAC20 (Split)
+ISAC20 (Split)
+ISAC20 (Split)
+ISAC20 (Split)
+ISAC20 (Split)
+ISAC20 (Split)
+ISAC20 (Split)
+ISAC20 (Split)
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISAC20 (Split)
+ISAC20 (Split)
+ISAC20 (Split)
+ISAC20 (Split)
+ISAC20 (Split)
+ISAC20 (Split)
+ISAC20 (Split)
+ISAC20 (Split)
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISAC20 (Split)
+ISAC20 (Split)
+ISMediumLaser
+ISAC20 Ammo
+ISAC20 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISAC20 (Split)
+ISAC20 (Split)
+ISMediumLaser
+ISAC20 Ammo
+ISAC20 Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+ISAC20 Ammo
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISMediumLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+ISMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

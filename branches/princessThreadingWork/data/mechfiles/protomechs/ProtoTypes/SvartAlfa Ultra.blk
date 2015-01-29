@@ -1,0 +1,75 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+ProtoMech
+</UnitType>
+<Name>
+Svartalfa
+</Name>
+<Model>
+Ultra
+</Model>
+<Tonnage>
+14
+</Tonnage>
+<cruiseMP>
+1
+</cruiseMP>
+<jumpingMP>
+0
+</jumpingMP>
+<Armor>
+9
+23
+6
+6
+14
+7
+</Armor>
+<Main Gun Equipment>
+Clan Streak SRM 6
+CLStreakSRM6 Ammo (10)
+</Main Gun Equipment>
+<Torso Equipment>
+Clan Machine Gun
+Clan Machine Gun Ammo (50)
+ProtoMechPartialWing
+</Torso Equipment>
+<Right Arm Equipment>
+CLMediumChemicalLaser
+CLMediumChemLaserAmmo (15)
+</Right Arm Equipment>
+<Left Arm Equipment>
+CLMediumChemicalLaser
+CLMediumChemLaserAmmo (15)
+</Left Arm Equipment>
+
+<type>
+Clan Level 4
+</type>
+<year>
+3083
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Biped
+</motion_type>
+<source>
+XTR Clans
+</source>
+
+

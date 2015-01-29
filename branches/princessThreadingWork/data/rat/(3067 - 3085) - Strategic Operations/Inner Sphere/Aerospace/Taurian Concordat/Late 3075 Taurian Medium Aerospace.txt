@@ -1,0 +1,12 @@
+Taurian Concordat Medium Aerospace Late 3075
+Shilone SL-17,1
+Corsair CSR-V12,2
+Troika CMT-4U,3
+Hellcat HCT-213,4
+Lightning LTN-G15,5
+Troika CMT-3T,6
+Lightning LTN-G16T,5
+Transit TR-10,4
+Corsair CSR-V20,3
+Stingray F-90,2
+Lucifer LCF-R15,1

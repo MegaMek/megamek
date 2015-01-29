@@ -1,0 +1,130 @@
+Version:1.1
+Wolfhound
+WLF-2X
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3072
+Rules Level:4
+
+Mass:35
+Engine:210 XL Engine
+Structure:Endo-Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:0
+
+Armor:Reflective
+LA Armor:12
+RA Armor:12
+LT Armor:12
+RT Armor:12
+CT Armor:16
+HD Armor:9
+LL Armor:16
+RL Armor:16
+RTL Armor:4
+RTR Armor:4
+RTC Armor:5
+
+Weapons:4
+1 ISHeavyPPC, Right Arm
+1 ISERMediumLaser, Left Torso
+1 ISERSmallLaser, Center Torso
+1 ISERMediumLaser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Reflective
+Reflective
+Reflective
+Reflective
+Reflective
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISAES
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPC
+ISHeavyPPCCapacitor
+
+Left Torso:
+Engine
+Engine
+Engine
+ISERMediumLaser
+IS Super Charger
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Reflective
+Reflective
+
+Right Torso:
+Engine
+Engine
+Engine
+ISERMediumLaser
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Reflective
+Reflective
+Reflective
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+ISERSmallLaser
+Endo-Steel
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel

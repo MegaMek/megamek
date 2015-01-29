@@ -1,0 +1,12 @@
+Crusader Clan Second-Line Heavy Mechs (Blood Spirit),
+Galahad (Glass Spider) 2,1
+Thresher 2,2
+Rifleman IIC 3,3
+Black Knight BL-6-KNT,4
+Thresher (Standard),5
+Grizzly (Standard),6
+Rifleman IIC (Standard),5
+Grizzly 2,4
+Rifleman IIC 2,3
+Galahad (Glass Spider) (Standard),2
+Black Knight BL-6-KNT,1

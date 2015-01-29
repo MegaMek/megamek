@@ -1,0 +1,12 @@
+Wolf (in-Exile) Front-Line Heavy ASF (FMU)
+Xerxes 1,1
+Jengiz Prime,2
+Scytha Prime,3
+Kirghiz A,4
+Jengiz A,5
+Scytha A,6
+Kirghiz Prime,5
+Scytha B,4
+Scytha C,3
+Hydaspes (Standard),2
+Kirghiz C,1

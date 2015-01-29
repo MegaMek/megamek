@@ -1,0 +1,153 @@
+Version:1.1
+Penthesilea
+PEN-2MAF
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3085
+Source:Dark Age
+Rules Level:2
+
+Mass:75
+Engine:300 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+Cockpit:Standard Cockpit
+Gyro:XL Gyro
+
+Heat Sinks:14 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Light Ferro-Fibrous(Inner Sphere)
+LA Armor:24
+RA Armor:24
+LT Armor:22
+RT Armor:22
+CT Armor:34
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:10
+RTR Armor:10
+RTC Armor:12
+
+Weapons:4
+ER PPC, Left Arm
+ER Large Laser, Left Arm
+LB 20-X AC, Right Torso
+ER Medium Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISERPPC
+ISERPPC
+ISERPPC
+ISERLargeLaser
+ISERLargeLaser
+Endo Steel
+Endo Steel
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+
+Left Torso:
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+
+Right Torso:
+ISLBXAC20
+IS LB 20-X AC Ammo
+IS LB 20-X Cluster Ammo
+ISCASE
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Light Ferro-Fibrous
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISERMediumLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Light Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Light Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

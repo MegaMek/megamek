@@ -1,0 +1,72 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Ontos Heavy Tank
+</Name>
+<Model>
+(Sealed)
+</Model>
+<Tonnage>
+95
+</Tonnage>
+<cruiseMP>
+3
+</cruiseMP>
+<Armor>
+40
+32
+32
+30
+36
+</Armor>
+<Turret Equipment>
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISERMediumLaser
+ISERMediumLaser
+ISMML7
+ISArtemisIV
+ISMML7
+ISArtemisIV
+</Turret Equipment>
+<Body Equipment>
+ISMML7 LRM Ammo Artemis-capable
+ISMML7 LRM Ammo Artemis-capable
+ISMML7 SRM Ammo Artemis-capable
+ISMML7 SRM Ammo Artemis-capable
+ISMML7 SRM Ammo Artemis-capable
+ISCASE
+Environmental Sealing
+</Body Equipment>
+<type>
+IS Level 3
+</type>
+<year>
+3078
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+1
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Jihad
+</source>

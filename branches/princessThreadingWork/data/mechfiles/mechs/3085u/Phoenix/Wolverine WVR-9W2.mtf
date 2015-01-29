@@ -1,0 +1,152 @@
+Version:1.0
+Wolverine
+WVR-9W2
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3084
+Source:Dark Age
+Rules Level:2
+
+Mass:55
+Engine:275 XL Engine(IS)
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:12 Double
+Walk MP:5
+Jump MP:7
+
+Armor:Light Ferro-Fibrous(Inner Sphere)
+LA Armor:17
+RA Armor:17
+LT Armor:20
+RT Armor:20
+CT Armor:25
+HD Armor:9
+LL Armor:22
+RL Armor:22
+RTL Armor:5
+RTR Armor:5
+RTC Armor:7
+
+Weapons:5
+MML 5, Left Arm
+ER Small Laser, Left Arm
+Light PPC, Right Arm
+Light PPC, Right Arm
+ER Medium Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMML5
+ISMML5
+ISMML5
+ISArtemisIV
+ISERSmallLaser
+IS Ammo MML-5 LRM Artemis-capable
+IS Ammo MML-5 SRM Artemis-capable
+Light Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Light PPC
+Light PPC
+Light PPC
+Light PPC
+Light Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+ISCASE
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+ISGuardianECMSuite
+ISGuardianECMSuite
+ISC3SlaveUnit
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Improved Jump Jet
+Improved Jump Jet
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISERMediumLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Improved Jump Jet
+Improved Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Improved Jump Jet
+Improved Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+imagefile:.\data\images\fluff\Mech\3085 Wolverine .jpg

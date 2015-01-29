@@ -1,0 +1,12 @@
+3085 Calderon Protectorate Medium Mech F
+Vulcan VL-5T,1
+Blackjack BJ-1,2
+Centurion CN9-A,3
+Griffin GRF-1N,4
+Shadow Hawk SHD-2H,5
+Hunchback HBK-4G,6
+Phoenix Hawk PXH-1,5
+Enforcer ENF-4R,4
+Vindicator VND-1R,3
+Trebuchet TBT-5N,2
+Griffin GRF-1N,1

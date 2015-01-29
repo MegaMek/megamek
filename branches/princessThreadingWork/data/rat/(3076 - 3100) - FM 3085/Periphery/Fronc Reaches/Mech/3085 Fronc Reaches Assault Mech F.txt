@@ -1,0 +1,12 @@
+3085 Fronc Reaches Assault Mech F
+Victor VTR-9A1,1
+Banshee BNC-3E,2
+Victor VTR-9B,3
+Longbow LGB-7Q,4
+Stalker STK-3H,5
+Longbow LGB-0W,6
+Longbow LGB-13C,5
+Cyclops CP-11-H,4
+Awesome AWS-8Q,3
+Stalker STK-3F,2
+BattleMaster BLR-1G,1

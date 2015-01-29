@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+This file allows users to customize the default cannon quirks list.  Any quirk assignments in this file will override
+  the cannon quirk entries entirely.  Changes to this file will not take effect until the next time megamek is launched.
+
+To assign a unit a quirk, the entry should be in the following format:
+    <unit>
+        <chassis>[chassis name]</chassis>
+        <model>{model}</model>
+        <quirk>[quirk1 name]</quirk>
+        <quirk>[quirk2 name]</quirk>
+        <weaponQuirk>
+            <weaponQuirkName>[weapon quirk 1 name]</weaponQuirkName>
+            <location>[location of weapon]</location>
+            <slot>[critical slot of weapon]</slot>
+            <weaponName>[name of weapon]</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>[weapon quirk 2 name]</weaponQuirkName>
+            <location>[location of weapon]</location>
+            <slot>[critical slot of weapon]</slot>
+            <weaponName>[name of weapon]</weaponName>
+        </weaponQuirk>
+    </unit>
+
+The "model" field can be left blank if there is no model number for the unit (common for some tank chassis), but the
+  tags should still be included.  A <model> of "all" will cause all units with the same <chassis> to have the defined
+  quirks.  This can later be overridden with entries for specific models.
+
+Multiple quirks should be contained within separate "quirk" tags.
+
+Multiple weapon quirks should be contained within separate "weaponQuirk" structures, even if multiple quirks apply to
+  the same weapon.
+
+The proper names for quirks can be found in the
+  l10n/megamek/common/options/messages.properties file.  Search for the "QuirksInfo" section.
+  The name you want will fall between "option" and "displayableName".  For example, if you wish to apply the
+  "Anti-Aircraft Targeting" quirk to a unit, you will find the following entry in the messages.properties file:
+    QuirksInfo.option.anti_air.displayableName
+  The name you want to include in this file for the <quirk> entry is "anti_air".
+
+If you wish to remove all quirks for a unit, you can create an entry in this file with a <quirk> of "none".
+
+Example:  If you wish to declare that all Atlas variants do not have the Command Mech quirk:
+    <unit>
+        <chassis>Atlas</chassis>
+        <model>all</model>
+        <quirk>none</quirk>
+    </unit>
+
+Example: If you decide only the AS7-D Atlas, but no other variant, should have the Command Mech quirk:
+    <unit>
+        <chassis>Atlas</chassis>
+        <model>all</model>
+        <quirk>none</quirk>
+    </unit>
+    <unit>
+        <chassis>Atlas</chassis>
+        <model>AS7-D</model>
+        <quirk>command_mech</quirk>
+    </unit>
+
+Example: You can also do this in the opposite direction, so that all Atlases have the Command Mech quirk except the AS7-D:
+    <unit>
+        <chassis>Atlas</chassis>
+        <model>all</model>
+        <quirk>command_mech</quirk>
+    </unit>
+    <unit>
+        <chassis>Atlas</chassis>
+        <model>AS7-D</model>
+        <quirk>none</quirk>
+    </unit>
+
+Example: You can define quirks that affect all units of a given chassis and then add specific quirks to specific models:
+    <unit>
+        <chassis>Atlas</chassis>
+        <model>all</model>
+        <quirk>command_mech</quirk>
+    </unit>
+    <unit>
+        <chassis>Atlas</chassis>
+        <model>AS7-D</model>
+        <quirk>anti_air</quirk>
+    </unit>
+-->
+
+<unitQuirks xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../data/unitQuirksSchema.xsl">
+    <unit> <!-- Placeholder that is exactly the same as in canon file because we need to have at least one entry. -->
+        <chassis>Atlas</chassis>
+        <model>all</model>
+        <quirk>command_mech</quirk>
+    </unit>
+</unitQuirks>

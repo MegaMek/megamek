@@ -1,0 +1,12 @@
+Clan Fire Mandrill Second-Line Light Mechs (FMU)
+Mercury MCY-97,1
+Mongoose MON-66,2
+Locust IIC (Standard),3
+Vixen (Incubus) (Standard),4
+Mandrill (Standard),5
+Baboon (Howler) (Standard),6
+Jenner IIC (Standard),5
+Mandrill (Standard),4
+Vixen (Incubus) 2,3
+Baboon (Howler) (Standard),2
+Piranha (Standard),1

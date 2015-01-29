@@ -1,0 +1,12 @@
+AFFS Heavy Mechs C 3067 (FMU)
+War Dog WR-DG-02FC,1
+Falconer FLC-8R,2
+Guillotine GLT-8D,3
+Marauder MAD-5D,4
+Caesar CES-3R,5
+Rifleman RFL-8D,6
+Thunderbolt TDR-7SE,5
+Cataphract CTF-3D,4
+Orion ON2-M,3
+JagerMech III JM6-D3,2
+Cestus CTS-6Y,1

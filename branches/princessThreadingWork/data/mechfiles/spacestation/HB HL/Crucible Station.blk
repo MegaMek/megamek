@@ -1,0 +1,147 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+SpaceStation
+</UnitType>
+<Name>
+Crucible Station
+</Name>
+<Model>
+(Standard)
+</Model>
+<Tonnage>
+6000
+</Tonnage>
+<Armor>
+20
+20
+20
+20
+20
+20
+</Armor>
+<Nose Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSRM6
+ISSRM6
+ISSRM6 Ammo
+ISSRM6 Ammo
+</Nose Equipment>
+<Front Left Side Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSRM6
+ISSRM6
+ISSRM6 Ammo
+</Front Left Side Equipment>
+<Front Right Side Equipment> 
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSRM6
+ISSRM6
+ISSRM6 Ammo
+</Front Right Side Equipment>
+<Aft Left Side Equipment>
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSRM6
+ISSRM6
+ISSRM6 Ammo
+</Aft Left Side Equipment>
+<Aft Right Side Equipment> 
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSRM6
+ISSRM6
+ISSRM6 Ammo
+</Aft Right Side Equipment>
+<Aft Equipment> 
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSmallPulseLaser
+ISSRM6
+ISSRM6
+ISSRM6 Ammo
+ISSRM6 Ammo
+</Aft Equipment>
+<structural_integrity>
+1
+</structural_integrity>
+<heatsinks>
+150
+</heatsinks>
+<sink_type>
+1
+</sink_type>
+<fuel>
+510
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+3065
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+
+<transporters>
+SmallCraftBay:6:2
+InfantryBay:9:1
+CargoBay:550:2
+</transporters>
+<docking_collar>
+0
+</docking_collar>
+<grav_deck>
+2
+</grav_deck>
+<escape_pod>
+6
+</escape_pod>
+<life_boat>
+40
+</life_boat>
+<crew>
+330
+</crew>
+<passengers>
+352
+</passengers>
+
+<Battlestation>
+</battlestation>

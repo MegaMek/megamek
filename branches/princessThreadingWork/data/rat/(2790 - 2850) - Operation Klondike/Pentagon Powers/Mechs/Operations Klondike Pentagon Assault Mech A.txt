@@ -1,0 +1,12 @@
+2821 Operations Klondike Pentagon Assault Mech A 
+Highlander HGN-732b,1
+Stalker STK-3Fb,2
+Thug THG-11Eb,3
+Longbow LGB-7Q,4
+Goliath GOL-1H,5
+Striker STC-2C,6
+Banshee BNC-3M,5
+Rifleman II RFL-3N-2,4
+King Crab KGC-000,3
+Shogun SHG-2H,2
+Thunder Hawk TDK-7X,1

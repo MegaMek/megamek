@@ -1174,8 +1174,8 @@ public class LosEffects {
             int jungleLevel = hex.terrainLevel(Terrains.JUNGLE);
             // Check smoke, woods and jungle
             if ((smokeLevel != ITerrain.LEVEL_NONE) 
-                    && (woodsLevel != ITerrain.LEVEL_NONE)
-                    && (jungleLevel != ITerrain.LEVEL_NONE)) {
+                    || (woodsLevel != ITerrain.LEVEL_NONE)
+                    || (jungleLevel != ITerrain.LEVEL_NONE)) {
                 // Regular smoke/woods/jungle rise 2 levels above the hex level
                 int terrainEl = hexEl + 2;
                 if (((terrainEl > ai.attackAbsHeight) && (terrainEl > ai.targetAbsHeight))

@@ -3,6 +3,8 @@ VERSION HISTORY:
 v0.41.2-dev (SVN)
 + Bug [#4422]: Woods, jungle, and smoke not getting counted for LoS
 + Bug [#4409]: Fixed another AmmoType related java.lang.ClassCastException
++ Data: New Sprites and Removed the TRO VA units since they are not ready
+	for use yet.
 
 v0.41.1 (2015-01-28 17:10 UTC)
 + Bug [#4418]: Custom weapon order XML file thinks it's quirks

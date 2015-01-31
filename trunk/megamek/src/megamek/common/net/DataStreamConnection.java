@@ -20,6 +20,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * Implementation of the <code>Connection</code> that uses the
@@ -127,7 +128,14 @@ class DataStreamConnection extends AbstractConnection {
                 synchronized (out) {
                     out.flush();
                 }
+        } catch (SocketException se) {
+            // close this connection, because it's broken
+            // This can happen if the connection is closed while being written
+            // to, and it's not a big deal, since the connection is being broken
+            // anyways
+            close();
         } catch (IOException ioe) {
+            // Log non-SocketException IOExceptions
             ioe.printStackTrace();
             // close this connection, because it's broken
             close();

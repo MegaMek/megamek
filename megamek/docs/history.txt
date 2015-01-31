@@ -5,6 +5,7 @@ v0.41.2-dev (SVN)
 + Bug [#4409]: Fixed another AmmoType related java.lang.ClassCastException
 + Data: New Sprites and Removed the TRO VA units since they are not ready
 	for use yet.
++ Bug [#4219]: Issues with stacking violations and MovePaths
 
 v0.41.1 (2015-01-28 17:10 UTC)
 + Bug [#4418]: Custom weapon order XML file thinks it's quirks

@@ -142,11 +142,6 @@ public class MoveStep implements Serializable {
     private boolean terrainInvalid = false;
 
     /**
-     * Flag that indicates that this step's position is the end of a path.
-     */
-    private boolean isEndPos = true;
-
-    /**
      * A collection of buildings that are crushed during this move step. This is
      * used for landed Aerodyne Dropships and Mobile Structures.
      */
@@ -1348,7 +1343,7 @@ public class MoveStep implements Serializable {
         // A step is legal if it's static movement type is not illegal,
         // and it is either a valid end position, or not an end position.
         return ((movementType != EntityMovementType.MOVE_ILLEGAL)
-                && (!isEndPos || isLegalEndPos()));
+                && (!isEndPos() || isLegalEndPos()));
     }
 
     /**
@@ -1360,7 +1355,7 @@ public class MoveStep implements Serializable {
         EntityMovementType moveType = movementType;
         // If this step's position is the end of the path, and it is not
         // a valid end postion, then the movement type is "illegal".
-        if (isEndPos && !isLegalEndPos()) {
+        if (isEndPos() && !isLegalEndPos()) {
             moveType = EntityMovementType.MOVE_ILLEGAL;
         }
         return moveType;
@@ -1405,6 +1400,7 @@ public class MoveStep implements Serializable {
      * @see <code>MovePath#addStep( MoveStep )</code>
      */
     public boolean setEndPos(boolean isEnd) {
+        boolean isEndPos = true;
         // A step that is always illegal is always the end of the path.
         if (EntityMovementType.MOVE_ILLEGAL == movementType) {
             isEnd = true;
@@ -1428,6 +1424,34 @@ public class MoveStep implements Serializable {
         }
 
         return moreUpdates;
+    }
+    
+    public boolean isEndPos() {
+        // A step that is illegal is always the end of the path.
+        if (EntityMovementType.MOVE_ILLEGAL == movementType) {
+            return true;
+        }
+        
+        if (parent == null) {
+            return true;
+        }
+        
+        // A step is an end position if it is the last legal step.
+        Vector<MoveStep> steps = parent.getStepVector();
+        for (int i = steps.size() - 1; i > 0; i--) {
+            MoveStep step = steps.get(i);
+            boolean stepMatch = this.equals(step);
+            // If there is a legal step after us, we're not the end
+            if ((step.movementType != EntityMovementType.MOVE_ILLEGAL) 
+                    && !stepMatch) {
+                return false;
+            // If we found the current step, no need to check the others
+            } else if (stepMatch) {
+                return true;
+            }
+        }
+        // Shouldn't reach here, since this step should be in the step list
+        return true;        
     }
 
     /**
@@ -2436,7 +2460,7 @@ public class MoveStep implements Serializable {
         // jumping into heavy woods is danger
         if (game.getOptions().booleanOption("psr_jump_heavy_woods")) {
             if (parent.isJumping()
-                    && isEndPos
+                    && isEndPos()
                     && game.getBoard().getHex(curPos)
                     .containsTerrain(Terrains.WOODS, 2)) {
                 danger = true;

@@ -2551,7 +2551,8 @@ public class MoveStep implements Serializable {
         if (isInfantry
                 && (parent.getEntity().getWalkMP() == 0)
                 && parent.getEntity().getPosition().equals(prev)
-                && (parent.getEntity().getPosition().distance(getPosition()) == 1)) {
+                && (parent.getEntity().getPosition().distance(getPosition()) == 1)
+                && (!parent.isJumping())) {
             mp = 0;
             return;
         }

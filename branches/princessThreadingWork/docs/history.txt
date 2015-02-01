@@ -1,5 +1,9 @@
 VERSION HISTORY:
 ----------------
+
+princessThreadingWork
++ Bug [#4425]: Princess and Precognition share a Game reference
+
 v0.41.2-dev (SVN)
 + Bug [#4422]: Woods, jungle, and smoke not getting counted for LoS
 + Bug [#4409]: Fixed another AmmoType related java.lang.ClassCastException

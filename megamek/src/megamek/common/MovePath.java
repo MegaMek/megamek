@@ -819,6 +819,10 @@ public class MovePath implements Cloneable, Serializable {
             pf = ShortestPathFinder.newInstanceOfGreedy(dest, type, game);
             pf.run(bestMp);
             finPath = pf.getComputedPath(dest);
+            // If no path could be found, use the best one returned by A*
+            if (finPath == null) {
+                finPath = bestMp;
+            }
         }
         if (finPath != null) {
             this.steps = finPath.steps;

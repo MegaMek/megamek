@@ -7,6 +7,7 @@ v0.41.2-dev (SVN)
 	for use yet.
 + Bug [#4219]: Issues with stacking violations and MovePaths
 + Data: New Sprites
++ Feature [#1359]: Display "Velocity" in "Currently" field for ASF
 
 v0.41.1 (2015-01-28 17:10 UTC)
 + Bug [#4418]: Custom weapon order XML file thinks it's quirks

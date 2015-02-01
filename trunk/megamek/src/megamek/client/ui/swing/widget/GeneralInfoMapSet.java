@@ -413,7 +413,8 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
         if (en instanceof Aero) {
             Aero a = (Aero) en;
-            curMoveR.setString(Integer.toString(a.getCurrentVelocity()));
+            curMoveR.setString(Integer.toString(a.getCurrentVelocity())
+                    + Messages.getString("GeneralInfoMapSet.velocity"));
             int currentFuel = a.getFuel();
             int safeThrust = a.getWalkMP();
             fuelR.setString(Integer.toString(a.getFuel()));

@@ -822,6 +822,10 @@ public class MovePath implements Cloneable, Serializable {
         }
         if (finPath != null) {
             this.steps = finPath.steps;
+            // Ensure that the parent for each step is correct
+            for (MoveStep step : steps) {
+                step.setParent(this);
+            }
         } else {
             System.out.println("Error: " +
             		"Unable to find a path to the destination hex!");

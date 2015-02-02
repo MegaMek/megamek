@@ -6,6 +6,7 @@ import java.util.Map;
 
 import megamek.common.Aero;
 import megamek.common.Coords;
+import megamek.common.Dropship;
 import megamek.common.IGame;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
@@ -156,8 +157,10 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         public int compare(MovePath first, MovePath second) {
 
             int h1 = 0, h2 = 0;
-            if ((first.getEntity() instanceof Aero)) {
+            if ((first.getEntity() instanceof Aero) 
+                    && !((Aero)first.getEntity()).isSpheroid()) {
                 //we cannot estimate the needed cost for aeros - maybe a facing change cost would be apropiate
+                // However, Dropships basically follow ground movement rules
             }else if(first.getEntity().getWalkMP()==0) {
                 //current implementation of movement cost allows a 0mp moves for units with 0 mp.
             }else{

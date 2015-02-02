@@ -15,6 +15,7 @@ v0.41.2-dev (SVN)
     be reached
 + Bug: A* path comparator wasn't considering facing in the heuristic
 + Bug [#4369]: Dropship pathing goes haywire
++ Bug: Updated A* heuristic for aerodyne ASFs: paths shoulder be shorter now
 
 v0.41.1 (2015-01-28 17:10 UTC)
 + Bug [#4418]: Custom weapon order XML file thinks it's quirks

@@ -23214,7 +23214,7 @@ public class Server implements Runnable {
             r.choose(roll >= 8);
             r.indent(2);
             vDesc.add(r);
-            if (roll >= 7) {
+            if (roll >= 8) {
                 vDesc.addAll(damageCrew(en, 1));
             }
         }

@@ -167,7 +167,13 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
                 if (dd != 0) {
                     return dd;
                 } else {
-                    return (first.getHexesMoved() - second.getHexesMoved());
+                    // Pick the shortest path
+                    int hexesMovedDiff =first.getHexesMoved() - second.getHexesMoved(); 
+                    if (hexesMovedDiff != 0) {
+                        return hexesMovedDiff;
+                    }
+                    // If both are the same length, pick one with fewer steps
+                    return (first.length() - second.length());
                 }
             }else if(first.getEntity().getWalkMP()==0) {
                 //current implementation of movement cost allows a 0mp moves for units with 0 mp.

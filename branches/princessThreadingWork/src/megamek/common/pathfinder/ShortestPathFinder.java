@@ -143,31 +143,54 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      */
     public static class MovePathAStarComparator implements Comparator<MovePath> {
         Coords destination;
+        MoveStepType stepType;
 
-        public MovePathAStarComparator(Coords destination) {
+        public MovePathAStarComparator(Coords destination, MoveStepType stepType) {
             if (destination == null)
                 throw new NullPointerException();
             this.destination = destination;
+            this.stepType = stepType;
         }
 
         @Override
         public int compare(MovePath first, MovePath second) {
 
             int h1 = 0, h2 = 0;
-            if ((first.getEntity() instanceof Aero)) {
-                //we cannot estimate the needed cost for aeros - maybe a facing change cost would be apropiate
+            // We cannot estimate the needed cost for aeros
+            // However, Dropships basically follow ground movement rules
+            if ((first.getEntity() instanceof Aero) 
+                    && !((Aero)first.getEntity()).isSpheroid()) {
+                // We want to pick paths that use fewer MP, and are also shorter
+                // unlike ground units which could benefit from better target
+                // movement modifiers for longer paths
+                int dd = (first.getMpUsed() + h1) - (second.getMpUsed() + h2);
+                if (dd != 0) {
+                    return dd;
+                } else {
+                    // Pick the shortest path
+                    int hexesMovedDiff =first.getHexesMoved() - second.getHexesMoved(); 
+                    if (hexesMovedDiff != 0) {
+                        return hexesMovedDiff;
+                    }
+                    // If both are the same length, pick one with fewer steps
+                    return (first.length() - second.length());
+                }
             }else if(first.getEntity().getWalkMP()==0) {
                 //current implementation of movement cost allows a 0mp moves for units with 0 mp.
             }else{
-                h1 = first.getFinalCoords().distance(destination);
-                h2 = second.getFinalCoords().distance(destination);
+                boolean backwards = stepType == MoveStepType.BACKWARDS;
+                h1 = first.getFinalCoords().distance(destination)
+                        + getFacingDiff(first, destination, backwards);
+                h2 = second.getFinalCoords().distance(destination)
+                        + getFacingDiff(second, destination, backwards);
             }
 
             int dd = (first.getMpUsed() + h1) - (second.getMpUsed() + h2);
-            if (dd != 0)
+            if (dd != 0) {
                 return dd;
-            else
+            } else {
                 return -(first.getHexesMoved() - second.getHexesMoved());
+            }
         }
     }
 
@@ -189,8 +212,8 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
     public static ShortestPathFinder newInstanceOfAStar(final Coords destination, final MoveStepType stepType, final IGame game) {
         final ShortestPathFinder spf = new ShortestPathFinder(
                 new ShortestPathFinder.MovePathRelaxer(),
-                new ShortestPathFinder.MovePathAStarComparator(destination),
-                stepType, game);
+                new ShortestPathFinder.MovePathAStarComparator(destination,
+                        stepType), stepType, game);
 
         spf.addStopCondition(new DestinationReachedStopCondition(destination));
         spf.addFilter(new MovePathLegalityFilter(game));
@@ -262,5 +285,28 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
 
     public Collection<MovePath> getAllComputedPathsUncategorized() {
         return getPathCostMap().values();
+    }
+    
+    public static int getFacingDiff(final MovePath mp, Coords dest,
+            boolean backward) {
+        if (mp.isJumping()) {
+            return 0;
+        }
+        if (mp.getFinalCoords().equals(dest)) {
+            return 0;
+        }
+        int firstFacing = Math
+                .abs(((mp.getFinalCoords().direction(dest) + (backward ? 3 : 0)) % 6)
+                        - mp.getFinalFacing());
+        if (firstFacing > 3) {
+            firstFacing = 6 - firstFacing;
+        }
+        if (mp.canShift()) {
+            firstFacing = Math.max(0, firstFacing - 1);
+        }
+        if ((mp.getFinalCoords().degree(dest) % 60) != 0) {
+            firstFacing++;
+        }
+        return firstFacing;
     }
 }

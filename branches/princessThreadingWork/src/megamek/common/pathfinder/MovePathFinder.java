@@ -220,7 +220,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
      */
     public static class NextStepsAdjacencyMap implements AdjacencyMap<MovePath> {
         protected final MoveStepType stepType;
-        protected final boolean walking;
+        protected final boolean backwardsStep;
         protected final boolean charge;
 
         /**
@@ -228,7 +228,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
          */
         public NextStepsAdjacencyMap(MoveStepType stepType) {
             this.stepType = stepType;
-            walking = stepType == MoveStepType.BACKWARDS;
+            backwardsStep = stepType == MoveStepType.BACKWARDS;
             charge = (stepType == MoveStepType.CHARGE) || (stepType == MoveStepType.DFA);
         }
 
@@ -285,17 +285,19 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             }
 
             if (mp.canShift()) {
-                result.add(mp.clone().addStep(MoveStepType.LATERAL_RIGHT));
-                result.add(mp.clone().addStep(MoveStepType.LATERAL_LEFT));
-                if (walking) {
+                if (backwardsStep) {
                     result.add(mp.clone().addStep(MoveStepType.LATERAL_RIGHT_BACKWARDS));
                     result.add(mp.clone().addStep(MoveStepType.LATERAL_LEFT_BACKWARDS));
+                } else { 
+                    result.add(mp.clone().addStep(MoveStepType.LATERAL_RIGHT));
+                    result.add(mp.clone().addStep(MoveStepType.LATERAL_LEFT));
                 }
             }
-
-            result.add(mp.clone().addStep(MoveStepType.FORWARDS));
-            if (walking) {
+            
+            if (backwardsStep) {
                 result.add(mp.clone().addStep(MoveStepType.BACKWARDS));
+            } else {
+                result.add(mp.clone().addStep(MoveStepType.FORWARDS));
             }
 
             if (charge) {

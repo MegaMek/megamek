@@ -11220,9 +11220,10 @@ public class Server implements Runnable {
             game.addPSR(roll);
         }
 
-        if (waterDepth > 0) {
+        if ((waterDepth > 0)
+                && !(entity.getMovementMode() == EntityMovementMode.HOVER)) {
             PilotingRollData waterRoll = entity.checkWaterMove(waterDepth,
-                                                               entity.moved);
+                    entity.moved);
             if (waterRoll.getValue() != TargetRoll.CHECK_FALSE) {
                 doSkillCheckInPlace(entity, waterRoll);
             }
@@ -16255,10 +16256,9 @@ public class Server implements Runnable {
 
         // should we even bother?
         if ((target == null)
-            || ((target.getTargetType() == Targetable.TYPE_ENTITY) && (te
-                                                                               .isDestroyed() || te.isDoomed() || te
-                                                                               .getCrew()
-                                                                               .isDead()))) {
+                || ((target.getTargetType() == Targetable.TYPE_ENTITY) && (te
+                        .isDestroyed() || te.isDoomed() || te.getCrew()
+                        .isDead()))) {
             r = new Report(4245);
             r.subject = ae.getId();
             r.indent();
@@ -23214,7 +23214,7 @@ public class Server implements Runnable {
             r.choose(roll >= 8);
             r.indent(2);
             vDesc.add(r);
-            if (roll >= 7) {
+            if (roll >= 8) {
                 vDesc.addAll(damageCrew(en, 1));
             }
         }

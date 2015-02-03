@@ -11,6 +11,17 @@ v0.41.2-dev (SVN)
 	for use yet.
 + Bug [#4219]: Issues with stacking violations and MovePaths
 + Data: New Sprites
++ Feature [#1359]: Display "Velocity" in "Currently" field for ASF
++ Bug [#4424]: Jump infantry with 0MP get a free hex when jumping
++ Bug: MovePath.findPathTo can return a path where MoveStep.parent isn't
+    properly updated in each step
++ Bug: MovePath.findPathTo doesn't return a good path if the destination can't
+    be reached
++ Bug: A* path comparator wasn't considering facing in the heuristic
++ Bug [#4369]: Dropship pathing goes haywire
++ Bug: Updated A* heuristic for aerodyne ASFs: paths shoulder be shorter now
++ After clicking backwards button, path planner will only step back and turn
++ Bug: Buffered VDNI damage avoid not working correctly
 
 v0.41.1 (2015-01-28 17:10 UTC)
 + Bug [#4418]: Custom weapon order XML file thinks it's quirks

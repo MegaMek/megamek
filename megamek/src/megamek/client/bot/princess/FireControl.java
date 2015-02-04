@@ -875,7 +875,9 @@ public class FireControl {
         }
 
         // ammo mods
-        if (weaponType.getAmmoType() != AmmoType.T_NA) {
+        if (weaponType.getAmmoType() != AmmoType.T_NA
+                && (weapon.getLinked() != null)
+                && (weapon.getLinked().getType() instanceof AmmoType)) {
             AmmoType ammoType = (AmmoType) weapon.getLinked().getType();
             if ((ammoType != null) && (ammoType.getToHitModifier() != 0)) {
                 toHit.addModifier(ammoType.getToHitModifier(), TH_AMMO_MOD);

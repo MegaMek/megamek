@@ -21,6 +21,8 @@ v0.41.2-dev (SVN)
 + Bug [#4426]: Game freezes before Firing Phase
 + Data: New Sprites
 + Translation(Russian): Translation of common/options/message_ru.properties
++ Bug [#4392]: Landing Checks include additional modifiers that they shouldn't
++ Bug: Updated landing checks to match current errata
 
 v0.41.1 (2015-01-28 17:10 UTC)
 + Bug [#4418]: Custom weapon order XML file thinks it's quirks

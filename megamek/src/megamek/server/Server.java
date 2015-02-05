@@ -6226,9 +6226,9 @@ public class Server implements Runnable {
 
         if (md.contains(MoveStepType.LAND) && (entity instanceof Aero)) {
             Aero a = (Aero) entity;
-            rollTarget = a.checkHorizontalLanding(md.getLastStepMovementType(),
-                                                  md.getFinalVelocity(), md.getFinalCoords(),
-                                                  md.getFinalFacing());
+            rollTarget = a.checkLanding(md.getLastStepMovementType(),
+                    md.getFinalVelocity(), md.getFinalCoords(),
+                    md.getFinalFacing(), false);
             doAttemptLanding(entity, rollTarget);
             a.land();
             entity.setPosition(md.getFinalCoords().translated(
@@ -6240,8 +6240,9 @@ public class Server implements Runnable {
 
         if (md.contains(MoveStepType.VLAND) && (entity instanceof Aero)) {
             Aero a = (Aero) entity;
-            rollTarget = a.checkVerticalLanding(md.getLastStepMovementType(),
-                                                md.getFinalVelocity(), md.getFinalCoords());
+            rollTarget = a.checkLanding(md.getLastStepMovementType(),
+                    md.getFinalVelocity(), md.getFinalCoords(),
+                    md.getFinalFacing(), true);
             doAttemptLanding(entity, rollTarget);
             if (entity instanceof Dropship) {
                 applyDropshipLandingDamage(md.getFinalCoords(), a);

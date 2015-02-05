@@ -2870,11 +2870,45 @@ public class Aero extends Entity {
 
         return roll;
     }
+    
+    /**
+     * 
+     * @param moveType
+     * @param velocity
+     * @param currentPos
+     * @param isVertical
+     * @return
+     */
+    public PilotingRollData checkLanding(EntityMovementType moveType,
+            int velocity, Coords currentPos, int face, boolean isVertical) {
+        // Base piloting skill
+        PilotingRollData roll = new PilotingRollData(getId(), getCrew()
+                .getPiloting(), "Base piloting skill");
+        
+        
+        // Apply critical hit effects, TW pg 239
+        int avihits = getAvionicsHits();
+        if ((avihits > 0) && (avihits < 3)) {
+            roll.addModifier(avihits, "Avionics Damage");
+        }
 
-    public PilotingRollData checkHorizontalLanding(EntityMovementType moveType, int velocity, Coords currentPos, int face) {
-        PilotingRollData roll = getBasePilotingRoll(moveType);
-
-        int velmod = Math.max(0, velocity - 3);
+        // this should probably be replaced with some kind of AVI_DESTROYED
+        // boolean
+        if (avihits >= 3) {
+            roll.addModifier(5, "Avionics Destroyed");
+        }
+        
+        if (!hasLifeSupport()) {
+            roll.addModifier(+2, "No life support");
+        }
+        
+        // Landing Modifiers table, TW pg 86
+        int velmod;
+        if (isVertical) {
+            velmod = Math.max(0, velocity - 1);        
+        } else {
+            velmod = Math.max(0, velocity - 2);
+        }
         if (velmod > 0) {
             roll.addModifier(velmod, "excess velocity");
         }
@@ -2882,11 +2916,13 @@ public class Aero extends Entity {
             roll.addModifier(+4, "Maneuvering thrusters damaged");
         }
         if (isGearHit()) {
-            roll.addModifier(+3, "landing gear damaged");
+            roll.addModifier(+5, "landing gear damaged");
         }
         if (getArmor(LOC_NOSE) <= 0) {
             roll.addModifier(+2, "nose armor destroyed");
         }
+        // Unit reduced to 50% or less of starting thrust
+        // ...
         if (getCurrentThrust() <= 0) {
             if (isSpheroid()) {
                 roll.addModifier(+8, "no thrust");
@@ -2900,30 +2936,39 @@ public class Aero extends Entity {
         boolean heavyWoods = false;
         boolean paved = true;
         // dropships need a a landing strip three hexes wide
-        Vector<Coords> startingPos = new Vector<Coords>();
-        startingPos.add(currentPos);
+        Set<Coords> landingPositions = new HashSet<Coords>();
         if (this instanceof Dropship) {
-            startingPos.add(currentPos.translated((face + 4) % 6));
-            startingPos.add(currentPos.translated((face + 2) % 6));
-        }
-        for (Coords pos : startingPos) {
-            for (int i = 0; i < getLandingLength(); i++) {
-                pos = pos.translated(face);
-                IHex hex = game.getBoard().getHex(pos);
-                if (paved && !hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.ROAD)) {
-                    paved = false;
+            // Vertical landing just checks the cener hex and 6 adjacent hexes
+            if (isVertical) {
+                landingPositions.add(currentPos);
+                for (int i = 0; i < 6; i++) {
+                    landingPositions.add(currentPos.translated(i));
                 }
-                if ((!rough && hex.containsTerrain(Terrains.ROUGH)) || hex.containsTerrain(Terrains.RUBBLE)) {
-                    rough = true;
-                }
-                if (!heavyWoods && hex.containsTerrain(Terrains.WOODS, 2)) {
-                    heavyWoods = true;
-                } else if (!lightWoods && hex.containsTerrain(Terrains.WOODS, 1)) {
-                    lightWoods = true;
-                }
-
+            // Horizontal landing requires checking whole landing strip
+            } else {
+                for (int i = 0; i < getLandingLength(); i++) {
+                    Coords pos = currentPos.translated(face, i);
+                    landingPositions.add(pos);
+                    landingPositions.add(pos.translated((face + 4) % 6));
+                    landingPositions.add(pos.translated((face + 2) % 6));
+                }                
             }
         }
+        for (Coords pos : landingPositions) {
+            IHex hex = game.getBoard().getHex(pos);
+            if (hex.containsTerrain(Terrains.ROUGH)
+                    || hex.containsTerrain(Terrains.RUBBLE)) {
+                rough = true;
+            } else if (hex.containsTerrain(Terrains.WOODS, 2)) {
+                heavyWoods = true;
+            } else if (hex.containsTerrain(Terrains.WOODS, 1)) {
+                lightWoods = true;
+            } else if (!hex.containsTerrain(Terrains.PAVEMENT)
+                    && !hex.containsTerrain(Terrains.ROAD)) {
+                paved = false;
+            } 
+        }
+ 
         // we only take the worst mod
         if (heavyWoods) {
             roll.addModifier(+5, "heavy woods in landing path");
@@ -2935,73 +2980,6 @@ public class Aero extends Entity {
             roll.addModifier(+0, "paved/road landing strip");
         } else {
             roll.addModifier(+2, "clear hex in landing path");
-        }
-
-        return roll;
-    }
-
-    public PilotingRollData checkVerticalLanding(EntityMovementType moveType, int velocity, Coords currentPos) {
-        PilotingRollData roll = getBasePilotingRoll(moveType);
-
-        int velmod = Math.max(0, velocity - 3);
-        if (velmod > 0) {
-            roll.addModifier(velmod, "excess velocity");
-        }
-        if ((getLeftThrustHits() + getRightThrustHits()) > 0) {
-            roll.addModifier(+4, "Maneuvering thrusters damaged");
-        }
-        if (isGearHit()) {
-            roll.addModifier(+3, "landing gear damaged");
-        }
-        if (getArmor(LOC_NOSE) <= 0) {
-            roll.addModifier(+2, "nose armor destroyed");
-        }
-        if (getCurrentThrust() <= 0) {
-            if (isSpheroid()) {
-                roll.addModifier(+8, "no thrust");
-            } else {
-                roll.addModifier(+4, "no thrust");
-            }
-        }
-        // terrain mods
-        boolean lightWoods = false;
-        boolean rough = false;
-        boolean heavyWoods = false;
-        boolean paved = true;
-        // dropships also need to look at all adjacent hexes
-        Vector<Coords> positions = new Vector<Coords>();
-        positions.add(currentPos);
-        if (this instanceof Dropship) {
-            for (int i = 0; i < 6; i++) {
-                positions.add(currentPos.translated(i));
-            }
-        }
-        for (Coords pos : positions) {
-            IHex hex = game.getBoard().getHex(pos);
-            if (paved && !hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.ROAD)) {
-                paved = false;
-            }
-            if ((!rough && hex.containsTerrain(Terrains.ROUGH)) || hex.containsTerrain(Terrains.RUBBLE)) {
-                rough = true;
-            }
-            if (!heavyWoods && hex.containsTerrain(Terrains.WOODS, 2)) {
-                heavyWoods = true;
-            } else if (!lightWoods && hex.containsTerrain(Terrains.WOODS, 1)) {
-                lightWoods = true;
-            }
-        }
-        // we only take the worst mod - terrain mods are halved for vertical
-        // landings (round down)
-        if (heavyWoods) {
-            roll.addModifier(+2, "heavy woods in landing path");
-        } else if (lightWoods) {
-            roll.addModifier(+2, "light woods in landing path");
-        } else if (rough) {
-            roll.addModifier(+1, "rough/rubble in landing path");
-        } else if (paved) {
-            roll.addModifier(+0, "paved/road landing strip");
-        } else {
-            roll.addModifier(+1, "clear hex in landing path");
         }
 
         return roll;

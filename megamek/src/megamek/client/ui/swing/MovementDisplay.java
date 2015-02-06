@@ -643,6 +643,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * Sets the buttons to their proper states
      */
     private void updateButtons() {
+        final IGame game = clientgui.getClient().getGame();
         final Entity ce = ce();
         boolean isMech = (ce instanceof Mech);
         boolean isInfantry = (ce instanceof Infantry);
@@ -752,16 +753,22 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         setLayMineEnabled(ce.canLayMine());
         setFleeEnabled(ce.canFlee());
-        if (clientgui.getClient().getGame().getOptions()
-                     .booleanOption("vehicles_can_eject")) { //$NON-NLS-1$
-            setEjectEnabled((!isInfantry)
-                            && !(isMech && (((Mech) ce).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED))
-                            && ce.isActive());
+        if (game.getOptions().booleanOption("vehicles_can_eject")
+                && (ce instanceof Tank)) { //$NON-NLS-1$
+            // Vehicle don't have ejection systems so crews abandon, and must 
+            // enter a valid hex, if they cannot they can't abandon TO pg 197
+            Coords pos = ce().getPosition();
+            Infantry inf = new Infantry();
+            inf.setGame(clientgui.getClient().getGame());
+            boolean hasLegalHex = !inf.isLocationProhibited(pos);
+            for (int i = 0; i < 6; i++) {
+                hasLegalHex |= !inf.isLocationProhibited(pos.translated(i));
+            }
+            setEjectEnabled(hasLegalHex);
         } else {
-            setEjectEnabled(((isMech
-                            && (((Mech) ce).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED))
-                            || isAero)
-                            && ce.isActive() && !ce.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT));
+            setEjectEnabled(((isMech && (((Mech) ce).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED)) || isAero)
+                    && ce.isActive()
+                    && !ce.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT));
         }
 
         if (ce.isDropping()) {

@@ -30281,21 +30281,45 @@ public class Server implements Runnable {
                  && !game.getOptions().booleanOption("ejected_pilots_flee")
                  && (entity instanceof Tank)) {
             EjectedCrew crew = new EjectedCrew(entity);
+            // Need to set game manually; since game.addEntity not called yet
+            // Don't want to do this yet, as Entity may not be added
+            crew.setGame(game);
             crew.setDeployed(true);
             crew.setId(getFreeEntityId());
-            game.addEntity(crew);
-            send(createAddEntityPacket(crew.getId()));
             // Make them not get a move this turn
             crew.setDone(true);
             // Place on board
-
-            crew.setPosition(entity.getPosition());
-            // Update the entity
+            // Vehicles don't have ejection systems, so crew must abandon into
+            // a legal hex
+            Coords legalPosition = null;
+            if (!crew.isLocationProhibited(entity.getPosition())) {
+                legalPosition = entity.getPosition();
+            } else {
+                for (int dir = 0; dir < 6 && legalPosition == null; dir++) {
+                    Coords adjCoords = entity.getPosition().translated(dir);
+                    if (!crew.isLocationProhibited(adjCoords)) {
+                        legalPosition = adjCoords;
+                    }
+                }
+            }
+            // Cannot abandon if there is no legal hex.  This shoudln't have 
+            // been allowed
+            if (legalPosition == null) {
+                System.err.println("Error in Server.ejectEntity: vehicle " +
+                		"crews cannot abandon if there is no legal hex!");
+                return vDesc;
+            }
+            crew.setPosition(legalPosition);
+            // Add Entity to game
+            game.addEntity(crew);
+            // Tell clients about new entity
+            send(createAddEntityPacket(crew.getId()));
+            // Sent entity info to clients
             entityUpdate(crew.getId());
             // Check if the crew lands in a minefield
             vDesc.addAll(doEntityDisplacementMinefieldCheck(crew,
-                                                            entity.getPosition(), entity.getPosition(),
-                                                            entity.getElevation()));
+                    entity.getPosition(), entity.getPosition(),
+                    entity.getElevation()));
         }
 
         // Mark the entity's crew as "ejected".
@@ -30308,9 +30332,9 @@ public class Server implements Runnable {
         // only remove the unit that ejected manually
         if (!autoEject) {
             game.removeEntity(entity.getId(),
-                              IEntityRemovalConditions.REMOVE_EJECTED);
+                    IEntityRemovalConditions.REMOVE_EJECTED);
             send(createRemoveEntityPacket(entity.getId(),
-                                          IEntityRemovalConditions.REMOVE_EJECTED));
+                    IEntityRemovalConditions.REMOVE_EJECTED));
         }
         return vDesc;
     }

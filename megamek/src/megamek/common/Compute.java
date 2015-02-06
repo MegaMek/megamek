@@ -1976,6 +1976,8 @@ public class Compute {
                     } else if ((primaryTarget == Entity.NONE) && !curInFrontArc) {
                         primaryTarget = prevAttack.getTargetId();
                     }
+                } else if (primaryTarget == Entity.NONE){
+                    primaryTarget = prevAttack.getTargetId();
                 }
             }
         }

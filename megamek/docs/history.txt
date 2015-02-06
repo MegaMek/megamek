@@ -26,6 +26,7 @@ v0.41.2-dev (SVN)
 + Bug [#4367]: Non-Aerospace units firing at ASFs does not appear to follow
     latest errata rules
 + Data: New Sprites/Add some units from TRO VAr
++ Bug [#4429]: MM Option Unofficial Primary Target is bugged
 
 v0.41.1 (2015-01-28 17:10 UTC)
 + Bug [#4418]: Custom weapon order XML file thinks it's quirks

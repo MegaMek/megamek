@@ -2872,15 +2872,19 @@ public class Aero extends Entity {
     }
     
     /**
+     * Compute the PilotingRollData for a landing control roll (see TW pg 86).
      * 
      * @param moveType
-     * @param velocity
-     * @param currentPos
-     * @param isVertical
-     * @return
+     * @param velocity      Velocity when the check is to be made, this needs to
+     *                      be passed as the check could happen as part of a 
+     *                      Move Path
+     * @param landingPos    The final position the Aero will land on.
+     * @param isVertical    If this a vertical or horizontal landing
+     * @return              A PilotingRollData tha represents the landing
+     *                      control roll that must be passed
      */
     public PilotingRollData checkLanding(EntityMovementType moveType,
-            int velocity, Coords currentPos, int face, boolean isVertical) {
+            int velocity, Coords landingPos, int face, boolean isVertical) {
         // Base piloting skill
         PilotingRollData roll = new PilotingRollData(getId(), getCrew()
                 .getPiloting(), "Base piloting skill");
@@ -2922,7 +2926,10 @@ public class Aero extends Entity {
             roll.addModifier(+2, "nose armor destroyed");
         }
         // Unit reduced to 50% or less of starting thrust
-        // ...
+        double thrustPercent = ((double)getWalkMP())/getOriginalWalkMP();
+        if (thrustPercent <= .5) {
+            roll.addModifier(+2, "thrust reduced to 50% or less of original");
+        }
         if (getCurrentThrust() <= 0) {
             if (isSpheroid()) {
                 roll.addModifier(+8, "no thrust");
@@ -2935,25 +2942,30 @@ public class Aero extends Entity {
         boolean rough = false;
         boolean heavyWoods = false;
         boolean paved = true;
-        // dropships need a a landing strip three hexes wide
         Set<Coords> landingPositions = new HashSet<Coords>();
-        if (this instanceof Dropship) {
-            // Vertical landing just checks the cener hex and 6 adjacent hexes
-            if (isVertical) {
-                landingPositions.add(currentPos);
+        boolean isDropship = (this instanceof Dropship);
+        // Vertical landing just checks the landing hex
+        if (isVertical) {
+            landingPositions.add(landingPos);
+            // Dropships must also check the adjacent 6 hexes
+            if (isDropship) {
                 for (int i = 0; i < 6; i++) {
-                    landingPositions.add(currentPos.translated(i));
+                    landingPositions.add(landingPos.translated(i));
                 }
-            // Horizontal landing requires checking whole landing strip
-            } else {
-                for (int i = 0; i < getLandingLength(); i++) {
-                    Coords pos = currentPos.translated(face, i);
-                    landingPositions.add(pos);
+            }
+        // Horizontal landing requires checking whole landing strip
+        } else {
+            for (int i = 0; i < getLandingLength(); i++) {
+                Coords pos = landingPos.translated(face, i);
+                landingPositions.add(pos);
+                // Dropships have to check the front adjacent hexes
+                if (isDropship) {
                     landingPositions.add(pos.translated((face + 4) % 6));
                     landingPositions.add(pos.translated((face + 2) % 6));
-                }                
-            }
+                }
+            }                
         }
+        
         for (Coords pos : landingPositions) {
             IHex hex = game.getBoard().getHex(pos);
             if (hex.containsTerrain(Terrains.ROUGH)

@@ -38,7 +38,6 @@ import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.ThrashAttackAction;
 import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.ArtilleryCannonWeapon;
 import megamek.common.weapons.BayWeapon;
@@ -1374,57 +1373,19 @@ public class Compute {
         }
 
         if (Compute.isGroundToAir(attacker, target)
-            && (target instanceof Entity)) {
-            if (game.getOptions().booleanOption("stratops_aa_fire")) {
-                // distance is determined by closest point on flight path
-                distance = attacker.getPosition().distance(
-                        getClosestFlightPath(attacker.getPosition(),
-                                             (Entity) target));
-                // NOTE: this will return a distance of one even when a flyover
-                // occurs
-                // That is my interpretation of this ruling
-                // http://www.classicbattletech.com/forums/index.php?topic=72723.0
+                && (target instanceof Entity)) {
+            // distance is determined by closest point on flight path
+            distance = attacker.getPosition().distance(
+                    getClosestFlightPath(attacker.getPosition(),
+                                         (Entity) target));
 
-                // if the ground attacker uses weapon bays and we are on a
-                // ground map, then we will divide this distance by 16
-                // This is totally crazy, but I don't see how else to do it. Use
-                // the unofficial
-                // "grounded dropships use individual weapons" for sanity.
-                if (attacker.usesWeaponBays() && game.getBoard().onGround()) {
-                    distance = (int) Math.ceil(distance / 16.0);
-                }
-            } else {
-                // ground units that are the target of air to ground attacks
-                // always have
-                // a distance of zero
-                // for return fire except for altitude differences
-                for (Enumeration<EntityAction> i = game.getActions(); i
-                        .hasMoreElements(); ) {
-                    EntityAction ea = i.nextElement();
-                    if (!(ea instanceof WeaponAttackAction)) {
-                        continue;
-                    }
-                    WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                    if (prevAttack.getEntityId() != ((Entity) target).getId()) {
-                        // not the aero target's attack
-                        continue;
-                    }
-                    Targetable prevTarget = prevAttack.getTarget(game);
-                    if ((prevTarget instanceof Entity)
-                        && (prevAttack.getTargetId() == attacker.getId())) {
-                        distance = 0;
-                        break;
-                    }
-                    // check for dive-bombing of this hex
-                    Coords apos = attacker.getPosition();
-                    if (prevAttack.isDiveBomb(game)
-                        && (prevTarget instanceof HexTarget)
-                        && ((HexTarget) prevTarget).getPosition().equals(
-                            apos)) {
-                        distance = 0;
-                        break;
-                    }
-                }
+            // if the ground attacker uses weapon bays and we are on a
+            // ground map, then we will divide this distance by 16
+            // This is totally crazy, but I don't see how else to do it. Use
+            // the unofficial
+            // "grounded dropships use individual weapons" for sanity.
+            if (attacker.usesWeaponBays() && game.getBoard().onGround()) {
+                distance = (int) Math.ceil(distance / 16.0);
             }
         }
 
@@ -3360,8 +3321,7 @@ public class Compute {
 
         // if using advanced AA options, then ground-to-air fire determines arc
         // by closest position
-        if (isGroundToAir(ae, t) && (t instanceof Entity)
-            && game.getOptions().booleanOption("stratops_aa_fire")) {
+        if (isGroundToAir(ae, t) && (t instanceof Entity)) {
             tPos = getClosestFlightPath(ae.getPosition(), (Entity) t);
         }
 
@@ -3661,10 +3621,8 @@ public class Compute {
                        && ((Infantry) te).hasSneakCamo()) {
                 visualRange = visualRange / 2;
             }
-            // We need to consiter the SO Advanced AA fire for Aeros
-            GameOptions opts = ae.getGame().getOptions();
-            if ((te instanceof Aero) && isGroundToAir(ae, target)
-                && opts.booleanOption("stratops_aa_fire")) {
+            // Ground targets pick the closest path to Aeros (TW pg 107)
+            if ((te instanceof Aero) && isGroundToAir(ae, target)) {
                 targetPos = Compute.getClosestFlightPath(ae.getPosition(), te);
             }
         }
@@ -3917,17 +3875,14 @@ public class Compute {
         }
 
         // if this is a air to ground attack, then attacker position is given by
-        // the direction
-        // from which they entered the target hex
+        // the direction from which they entered the target hex
         if (isAirToGround(attacker, target)) {
             attackPos = attacker.passedThroughPrevious(target.getPosition());
         }
 
-        if (isGroundToAir(attacker, target)
-            && attacker.getGame().getOptions()
-                       .booleanOption("stratops_aa_fire") && (null != te)) {
+        if (isGroundToAir(attacker, target) && (null != te)) {
             return te.sideTable(attackPos, usePrior, te.getFacing(),
-                                Compute.getClosestFlightPath(attackPos, te));
+                    Compute.getClosestFlightPath(attackPos, te));
         }
 
         if ((null != te) && (called == CalledShot.CALLED_LEFT)) {

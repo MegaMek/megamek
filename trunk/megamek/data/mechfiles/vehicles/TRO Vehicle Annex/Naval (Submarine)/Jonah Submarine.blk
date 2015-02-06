@@ -1,0 +1,86 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Jonah Submarine
+</Name>
+
+<Model>
+JN-002
+</Model>
+
+<year>
+2714
+</year>
+
+<source>
+TRO VAr
+</source>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+2
+</tonnage>
+
+<motion_type>
+Submarine
+</motion_type>
+
+<transporters>
+</transporters>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<armor>
+2
+1
+1
+1
+</armor>
+
+<barrating>
+3
+</barrating>
+
+<Body Equipment>
+UltraLightChassisMod
+</Body Equipment>
+
+<Front Equipment>
+Searchlight
+Manipulator
+Manipulator
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+Remote Sensor Dispenser
+</Rear Equipment>
+
+
+

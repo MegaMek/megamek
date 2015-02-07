@@ -9,11 +9,11 @@ MAM0
 </Version>
 
 <UnitType>
-SupportTank
+FixedWingSupport
 </UnitType>
 
 <Name>
-Knox Armored Car
+Zanadu Air Bus
 </Name>
 
 <Model>
@@ -21,7 +21,7 @@ Knox Armored Car
 </Model>
 
 <year>
-2947
+3004
 </year>
 
 <type>
@@ -29,57 +29,63 @@ IS Level 2
 </type>
 
 <motion_type>
-Wheeled
+Aerodyne
 </motion_type>
 
-<cruiseMP>
-5
-</cruiseMP>
+<SafeThrust>
+3
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+1200
+</fuel>
 
 <engine_type>
 1
 </engine_type>
 
 <armor>
-3
-3
-3
-3
-3
+13
+13
+13
+13
 </armor>
 
 <barrating>
-10
+6
 </barrating>
 
-<structural_tech_rating>
-3
-</structural_tech_rating> 
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
 
 <Body Equipment>
-IS Machine Gun Ammo - Half
-Basic Fire Control
-Armored Chassis
+FieldKitchen
 </Body Equipment>
 
-<Front Equipment>
-</Front Equipment>
-
-<Right Equipment>
-</Right Equipment>
-
-<Left Equipment>
-</Left Equipment>
-
-<Rear Equipment>
-</Rear Equipment>
-
-<Turret Equipment>
-Machine Gun
-</Turret Equipment>
+<Aft Equipment>
+</Aft Equipment>
 
 <transporters>
-cargobay:3:1
+cargobay:6.5:1
+troopspace:7.5
 </transporters>
 
 <source>
@@ -87,6 +93,6 @@ TRO VAr
 </source>
 
 <tonnage>
-12.0
+80.0
 </tonnage>
 

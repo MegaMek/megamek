@@ -52,6 +52,10 @@ cargobay:1.55:1
 12
 </armor>
 
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <barrating>
 10
 </barrating>

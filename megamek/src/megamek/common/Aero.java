@@ -2941,7 +2941,9 @@ public class Aero extends Entity {
         boolean lightWoods = false;
         boolean rough = false;
         boolean heavyWoods = false;
+        boolean clear = false;
         boolean paved = true;
+        
         Set<Coords> landingPositions = new HashSet<Coords>();
         boolean isDropship = (this instanceof Dropship);
         // Vertical landing just checks the landing hex
@@ -2978,19 +2980,25 @@ public class Aero extends Entity {
             } else if (!hex.containsTerrain(Terrains.PAVEMENT)
                     && !hex.containsTerrain(Terrains.ROAD)) {
                 paved = false;
+                // Landing in other terrains isn't allowed, so if we reach here
+                // it must be a clear hex
+                clear = true;
             } 
         }
- 
-        // we only take the worst mod
+
         if (heavyWoods) {
             roll.addModifier(+5, "heavy woods in landing path");
-        } else if (lightWoods) {
+        }
+        if (lightWoods) {
             roll.addModifier(+4, "light woods in landing path");
-        } else if (rough) {
+        }
+        if (rough) {
             roll.addModifier(+3, "rough/rubble in landing path");
-        } else if (paved) {
+        }
+        if (paved) {
             roll.addModifier(+0, "paved/road landing strip");
-        } else {
+        }
+        if (clear) {
             roll.addModifier(+2, "clear hex in landing path");
         }
 

@@ -57,6 +57,10 @@ liquidcargobay:.955:1
 8
 </barrating>
 
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <Body Equipment>
 Basic Fire Control
 </Body Equipment>

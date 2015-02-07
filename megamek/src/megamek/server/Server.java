@@ -4263,7 +4263,16 @@ public class Server implements Runnable {
         if (diceRoll < roll.getValue()) {
             r.choose(false);
             addReport(r);
-            int damage = 10 * (roll.getValue() - diceRoll);
+            int mof = roll.getValue() - diceRoll;
+            int damage = 10 * (mof);
+            // Report damage taken
+            r = new Report(9609);
+            r.indent();
+            r.addDesc(entity);
+            r.add(damage);
+            r.add(mof);
+            addReport(r);
+            
             int side = ToHitData.SIDE_FRONT;
             if ((entity instanceof Aero) && ((Aero) entity).isSpheroid()) {
                 side = ToHitData.SIDE_REAR;

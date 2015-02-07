@@ -9,19 +9,19 @@ MAM0
 </Version>
 
 <UnitType>
-SupportVTOL
+FixedWingSupport
 </UnitType>
 
 <Name>
-Cal-Boeing Swiftran RTC-215M
+Protector High-Speed Medevac
 </Name>
 
 <Model>
-(Passenger)
+C-790
 </Model>
 
 <year>
-3053
+2997
 </year>
 
 <type>
@@ -29,67 +29,83 @@ IS Level 2
 </type>
 
 <motion_type>
-VTOL
+Aerodyne
 </motion_type>
 
-<transporters>
-troopspace:1.5
-</transporters>
+<SafeThrust>
+5
+</SafeThrust>
 
-<cruiseMP>
-11
-</cruiseMP>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+460
+</fuel>
 
 <engine_type>
 1
 </engine_type>
 
 <armor>
-8
-7
-7
-5
-2
+20
+15
+15
+12	
 </armor>
 
 <barrating>
-10
+6
 </barrating>
 
 <structural_tech_rating>
-4
+2
 </structural_tech_rating>
 
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
 <Body Equipment>
-Armored Chassis
+STOLChassisMod
+Paramedic Equipment
+Paramedic Equipment
+Paramedic Equipment
+Paramedic Equipment
+Paramedic Equipment
+Paramedic Equipment
+Paramedic Equipment
+Paramedic Equipment
+Paramedic Equipment
+Paramedic Equipment
 </Body Equipment>
 
-<Front Equipment>
-</Front Equipment>
+<Aft Equipment>
+</Aft Equipment>
 
-<Right Equipment>
-Paramedic Equipment
-Paramedic Equipment
-</Right Equipment>
-
-<Left Equipment>
-Paramedic Equipment
-Paramedic Equipment
-</Left Equipment>
-
-<Rear Equipment>
-Paramedic Equipment
-Paramedic Equipment
-</Rear Equipment>
-
-<Rotor Equipment>
-</Rotor Equipment>
+<transporters>
+troopspace:4.5
+</transporters>
 
 <source>
 TRO VAr
 </source>
 
 <tonnage>
-25.0
+90.0
 </tonnage>
 

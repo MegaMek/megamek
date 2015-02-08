@@ -188,7 +188,8 @@ public class Engine implements Serializable {
         if (hasFlag(SUPPORT_VEE_ENGINE) && (engineType != STEAM)
                 && (engineType != COMBUSTION_ENGINE) && (engineType != BATTERY)
                 && (engineType != FUEL_CELL) && (engineType != SOLAR)
-                && (engineType != FISSION) && (engineType != NORMAL_ENGINE)) {
+                && (engineType != FISSION) && (engineType != NORMAL_ENGINE)
+                && (engineType != NONE)) {
             problem.append("Invalid Engine type for support vehicle engines!");
             return false;
         }

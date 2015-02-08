@@ -79,7 +79,7 @@ MASH Operation Theater
 
 <transporters>
 liquidcargobay:20:1
-troopspace:5:1
+troopspace:5
 </transporters>
 
 <type>

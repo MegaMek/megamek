@@ -74,7 +74,7 @@ Trailer
 
 <transporters>
 cargobay:1.5:1
-troopspace:10:2
+troopspace:10
 </transporters>
 
 <source>

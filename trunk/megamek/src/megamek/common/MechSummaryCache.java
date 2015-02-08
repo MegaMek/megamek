@@ -369,7 +369,7 @@ public class MechSummaryCache {
         ms.setRunMp(e.getRunMP(false, false, false));
         ms.setJumpMp(e.getJumpMP(false));
         ms.setClan(e.isClan());
-        if ((e instanceof SupportTank) || (e instanceof SupportVTOL)) {
+        if (e.isSupportVehicle()) {
             ms.setSupport(true);
         }
         if (e instanceof Mech) {
@@ -467,6 +467,7 @@ public class MechSummaryCache {
         } else {
             ms.setMyomerName("None");
         }
+        
         return ms;
     }
 

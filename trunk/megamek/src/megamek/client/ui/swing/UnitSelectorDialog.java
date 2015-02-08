@@ -335,6 +335,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         for (int i = 0; i < UnitType.SIZE; i++) {
             unitTypeModel.addElement(UnitType.getTypeDisplayableName(i));
         }
+        unitTypeModel.addElement(Messages
+                .getString("MechSelectorDialog.SupportVee"));
         comboUnitType.setModel(unitTypeModel);
         comboUnitType.setMinimumSize(new java.awt.Dimension(200, 27));
         comboUnitType.setPreferredSize(new java.awt.Dimension(200, 27));
@@ -494,6 +496,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         final int nType = comboType.getSelectedIndex();
         final int nClass = comboWeight.getSelectedIndex();
         final int nUnit = comboUnitType.getSelectedIndex() - 1;
+        final boolean checkSupportVee = comboUnitType.getSelectedItem().equals(
+                Messages.getString("MechSelectorDialog.SupportVee"));
         //If current expression doesn't parse, don't update.
         try {
             unitTypeFilter = new RowFilter<MechTableModel,Integer>() {
@@ -527,7 +531,9 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                                      || (mech.getType() == TechConstants.T_CLAN_ADVANCED)
                                      || (mech.getType() == TechConstants.T_CLAN_EXPERIMENTAL)
                                      || (mech.getType() == TechConstants.T_CLAN_UNOFFICIAL))))
-                            && ((nUnit == -1) || mech.getUnitType().equals(UnitType.getTypeName(nUnit)))
+                            && ((nUnit == -1) 
+                                    || (!checkSupportVee && mech.getUnitType().equals(UnitType.getTypeName(nUnit)))
+                                    || (checkSupportVee && mech.isSupport()))
                             /*Advanced Search*/
                             && ((searchFilter==null) || MechSearchFilter.isMatch(mech, searchFilter))
                             && !(mech.getYear() > year)) {

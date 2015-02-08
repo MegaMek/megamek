@@ -313,6 +313,10 @@ public class Engine implements Serializable {
                     .getStructuralTechRating()];
             float weight = entity.getBaseEngineValue() * movementFactor
                     * engineWeightMult * entity.getWeight();
+            roundWeight = TestEntity.CEIL_HALFTON;
+            if (entity.getWeight() < 5) {
+                roundWeight = TestEntity.CEIL_KILO;
+            }
             weight = TestEntity.ceilMaxHalf(weight, roundWeight);
             return weight;
         }

@@ -26,6 +26,8 @@ public class SupportTank extends Tank {
      */
     private static final long serialVersionUID = -9028127010133768714L;
     private int[] barRating;
+    
+    public final static float[] SV_TR_MULTIPLIERS = {1.60f,1.30f,1.15f,1.00f,0.85f,.66f}; 
 
     public SupportTank() {
         super();
@@ -116,6 +118,157 @@ public class SupportTank extends Tank {
         return getExtraCommGearTons();
     }
 
+
+    
+    // CONSTRUCTION INFORMATION
+    //Support Vee Engine Information
+    public float getBaseChassisValue() {
+        switch (movementMode) {
+            /*case AIRSHIP:
+                if (getWeight() < 5) {
+                    return 0.2f;
+                } else {
+                    return 0.25f;
+                }*/
+            case HOVER:
+                if (getWeight() < 5) {
+                    return 0.2f;
+                } else if (!isSuperHeavy()) {
+                    return 0.25f;
+                } else {
+                    return 0.3f;
+                }
+            case NAVAL:
+                if (getWeight() < 5) {
+                    return 0.12f;
+                } else {
+                    return 0.15f;
+                }
+            case HYDROFOIL:
+                if (getWeight() < 5) {
+                    return 0.12f;
+                } else {
+                    return 0.15f;
+                }
+            case SUBMARINE:
+                if (getWeight() < 5) {
+                    return 0.12f;
+                } else {
+                    return 0.15f;
+                }
+            case TRACKED:
+                if (getWeight() < 5) {
+                    return 0.13f;
+                } else if (!isSuperHeavy()) {
+                    return 0.15f;
+                } else {
+                    return 0.25f;
+                }
+            case WHEELED:
+                if (getWeight() < 5) {
+                    return 0.12f;
+                } else if (!isSuperHeavy()) {
+                    return 0.15f;
+                } else {
+                    return 0.18f;
+                }
+            case WIGE:
+                if (getWeight() < 5) {
+                    return 0.12f;
+                } else if (!isSuperHeavy()) {
+                    return 0.15f;
+                } else {
+                    return 0.17f;
+                }
+           default:
+               return 0f;
+        }
+    }
+
+    //Support Vee Engine Information
+    public float getBaseEngineValue() {
+        switch (movementMode) {
+            /*case AIRSHIP:
+                if (getWeight() < 5) {
+                    return 0.005f;
+                } else {
+                    return 0.008f;
+                }*/
+            case HOVER:
+                if (getWeight() < 5) {
+                    return 0.0025f;
+                } else if (!isSuperHeavy()) {
+                    return 0.004f;
+                } else {
+                    return 0.008f;
+                }
+            case NAVAL:
+            	if (getWeight() <5) {
+            		return 0.004f;
+                } else {
+                    return 0.007f;
+                }
+            case HYDROFOIL:
+            	if (getWeight() <5) {
+            		return 0.004f;
+                } else {
+                    return 0.007f;
+                }
+            case SUBMARINE:
+                if (getWeight() < 5) {
+                    return 0.004f;
+                } else {
+                    return 0.007f;
+                }
+            case TRACKED:
+                if (getWeight() < 5) {
+                    return 0.006f;
+                } else if (!isSuperHeavy()) {
+                    return 0.013f;
+                } else {
+                    return 0.025f;
+                }
+            case WHEELED:
+                if (getWeight() < 5) {
+                    return 0.0025f;
+                } else if (!isSuperHeavy()) {
+                    return 0.0075f;
+                } else {
+                    return 0.015f;
+                }
+            case WIGE:
+                if (getWeight() < 5) {
+                    return 0.003f;
+                } else if (!isSuperHeavy()) {
+                    return 0.005f;
+                } else {
+                    return 0.006f;
+                }
+           default:
+               return 0f;
+        }
+    }
+    
+    //FUEL CAPACITY TM 128
+    //DETERMINE SI TM 130
+    //ADD LIFT/DIVE EQUIPMENT TM 131
+    //ADD CONTROL AND CREW STUFF TM 131
+    //ADD HEAT SINKS TM 133
+    //ADD ARMOR
+    //ADD WEAPONS AMMO and EQUIPMENT
+      
+        
+    @Override
+    public int getTotalSlots() {
+        return 5 + (int) Math.floor(getWeight() / 10);
+    }
+
+    public long getEntityType(){
+        return Entity.ETYPE_TANK | Entity.ETYPE_SUPPORT_TANK;
+    }
+    
+    
+    //START OF BATTLEFORCE STUFF.
     @Override
     public int getBattleForceSize() {
         //The tables are on page 356 of StartOps
@@ -196,120 +349,9 @@ public class SupportTank extends Tank {
             return super.getBattleForceStructurePoints();
         }
     }
-
-    public float getBaseEngineValue() {
-        switch (movementMode) {
-            /*case AIRSHIP:
-                if (getWeight() < 5) {
-                    return 0.005f;
-                } else {
-                    return 0.008f;
-                }*/
-            case HOVER:
-                if (getWeight() < 5) {
-                    return 0.0025f;
-                } else if (!isSuperHeavy()) {
-                    return 0.004f;
-                } else {
-                    return 0.008f;
-                }
-            case NAVAL:
-            case HYDROFOIL:
-            case SUBMARINE:
-                if (getWeight() < 5) {
-                    return 0.004f;
-                } else {
-                    return 0.007f;
-                }
-            case TRACKED:
-                if (getWeight() < 5) {
-                    return 0.006f;
-                } else if (!isSuperHeavy()) {
-                    return 0.013f;
-                } else {
-                    return 0.025f;
-                }
-            case WHEELED:
-                if (getWeight() < 5) {
-                    return 0.0025f;
-                } else if (!isSuperHeavy()) {
-                    return 0.0075f;
-                } else {
-                    return 0.015f;
-                }
-            case WIGE:
-                if (getWeight() < 5) {
-                    return 0.003f;
-                } else if (!isSuperHeavy()) {
-                    return 0.005f;
-                } else {
-                    return 0.006f;
-                }
-           default:
-               return 0f;
-        }
-    }
-
-    public float getBaseChassisValue() {
-        switch (movementMode) {
-            /*case AIRSHIP:
-                if (getWeight() < 5) {
-                    return 0.2f;
-                } else {
-                    return 0.25f;
-                }*/
-            case HOVER:
-                if (getWeight() < 5) {
-                    return 0.2f;
-                } else if (!isSuperHeavy()) {
-                    return 0.25f;
-                } else {
-                    return 0.3f;
-                }
-            case NAVAL:
-            case HYDROFOIL:
-            case SUBMARINE:
-                if (getWeight() < 5) {
-                    return 0.12f;
-                } else {
-                    return 0.15f;
-                }
-            case TRACKED:
-                if (getWeight() < 5) {
-                    return 0.13f;
-                } else if (!isSuperHeavy()) {
-                    return 0.15f;
-                } else {
-                    return 0.25f;
-                }
-            case WHEELED:
-                if (getWeight() < 5) {
-                    return 0.12f;
-                } else if (!isSuperHeavy()) {
-                    return 0.15f;
-                } else {
-                    return 0.18f;
-                }
-            case WIGE:
-                if (getWeight() < 5) {
-                    return 0.12f;
-                } else if (!isSuperHeavy()) {
-                    return 0.15f;
-                } else {
-                    return 0.17f;
-                }
-           default:
-               return 0f;
-        }
-    }
-
-    @Override
-    public int getTotalSlots() {
-        return 5 + (int) Math.floor(getWeight() / 10);
-    }
-
-    public long getEntityType(){
-        return Entity.ETYPE_TANK | Entity.ETYPE_SUPPORT_TANK;
+    
+    public boolean isSupportVehicle() {
+        return true;
     }
 
 }

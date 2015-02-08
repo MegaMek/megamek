@@ -43,6 +43,7 @@ import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
+import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
 
 /**
@@ -418,8 +419,13 @@ public class MechSummaryCache {
                 testEntity = new TestMech((Mech) e, entityVerifier.mechOption,
                         null);
             } else if (e instanceof Tank){
-                testEntity = new TestTank((Tank) e, entityVerifier.tankOption,
-                        null);
+                if (e.isSupportVehicle()) {
+                    testEntity = new TestSupportVehicle((Tank) e,
+                            entityVerifier.tankOption, null);
+                } else {
+                    testEntity = new TestTank((Tank) e,
+                            entityVerifier.tankOption, null);
+                }
             }else if (e.getEntityType() == Entity.ETYPE_AERO
                     && e.getEntityType() != 
                             Entity.ETYPE_DROPSHIP

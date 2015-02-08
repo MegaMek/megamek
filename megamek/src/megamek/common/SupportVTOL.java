@@ -14,13 +14,11 @@
 
 package megamek.common;
 
-import java.io.Serializable;
-
 /**
  * This is a support vehicle VTOL
  * @author beerockxs
  */
-public class SupportVTOL extends VTOL implements Serializable {
+public class SupportVTOL extends VTOL {
 
     /**
      *
@@ -124,6 +122,10 @@ public class SupportVTOL extends VTOL implements Serializable {
     
     public long getEntityType(){
         return Entity.ETYPE_TANK | Entity.ETYPE_VTOL | Entity.ETYPE_SUPPORT_VTOL;
+    }
+    
+    public boolean isSupportVehicle() {
+        return true;
     }
     
  }

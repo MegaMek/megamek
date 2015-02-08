@@ -257,6 +257,11 @@ public class LargeSupportTank extends SupportTank {
     public int height() {
         return 1;
     }
+    
+    @Override
+    public boolean isSuperHeavy() {
+        return true;
+    }
 
     @Override
     public int[] getNoOfSlots() {

@@ -1732,7 +1732,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
-        misc.cost = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_TRACTOR_MODIFICATION)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -1753,7 +1753,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
-        misc.cost = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_TRAILER_MODIFICATION)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -1775,7 +1775,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("MonocycleChassisMod");
         misc.tonnage = 0;
         misc.criticals = 0;
-        misc.cost = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_MONOCYCLE).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -1796,7 +1796,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("BicycleChassisMod");
         misc.tonnage = 0;
         misc.criticals = 0;
-        misc.cost = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_BICYCLE).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -1817,7 +1817,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("ConvertibleChassisMod");
         misc.tonnage = 0;
         misc.criticals = 0;
-        misc.cost = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_CONVERTIBLE).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -3024,7 +3024,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("Armored Chassis");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
-        misc.cost = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.tankslots = 0;
         misc.flags = misc.flags.or(F_ARMORED_CHASSIS).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
@@ -5885,7 +5885,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 8;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.spreadable = true;
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING)
@@ -8060,7 +8060,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_LIMITED_AMPHIBIOUS).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -8082,7 +8082,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_FULLY_AMPHIBIOUS).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -8103,7 +8103,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_AMPHIBIOUS).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -8121,6 +8121,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "Snowmobile";
         misc.setInternalName("SnowmobileChassis");
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.tankslots = 0;
@@ -8147,7 +8148,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0f;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -8169,7 +8170,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0f;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_OFF_ROAD).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -8191,7 +8192,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0f;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_OFF_ROAD).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -8212,7 +8213,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0f;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_FLOTATION_HULL).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -8234,7 +8235,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_LIMITED_AMPHIBIOUS).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -8256,7 +8257,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_FULLY_AMPHIBIOUS).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -8278,7 +8279,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0f;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -8768,7 +8769,7 @@ public class MiscType extends EquipmentType {
         misc.name = "STOL";
         misc.setInternalName("STOLChassisMod");
         misc.tonnage = 0f;
-        misc.cost = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_STOL_CHASSIS).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -8786,7 +8787,7 @@ public class MiscType extends EquipmentType {
         misc.name = "VSTOL";
         misc.setInternalName("VSTOLChassisMod");
         misc.tonnage = 0f;
-        misc.cost = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_VSTOL_CHASSIS)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -9620,6 +9621,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "Prop";
         misc.setInternalName("PropChassisMod");
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.tankslots = 0;
         misc.flags = misc.flags.andNot(F_AERO_EQUIPMENT).or(F_CHASSIS_MODIFICATION)
                 .or(F_PROP);
@@ -9637,6 +9639,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Ultra-Light";
         misc.setInternalName("UltraLightChassisMod");
         misc.tankslots = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_ULTRA_LIGHT);
         //Setting this Pre-Spaceflight

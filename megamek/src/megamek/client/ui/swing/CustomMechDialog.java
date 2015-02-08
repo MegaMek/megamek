@@ -83,6 +83,7 @@ import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
+import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
 
 /**
@@ -1170,8 +1171,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     null);
         } else if ((entity instanceof Tank) && 
                 !(entity instanceof GunEmplacement)) {
-            testEntity = new TestTank((Tank) entity, verifier.tankOption,
-                    null);
+            if (entity.isSupportVehicle()) {
+                testEntity = new TestSupportVehicle(
+                        (Tank) entity,
+                        verifier.tankOption, null);
+            } else {
+                testEntity = new TestTank((Tank) entity,
+                        verifier.tankOption, null);
+            }
         }else if (entity.getEntityType() == Entity.ETYPE_AERO
                 && entity.getEntityType() != 
                         Entity.ETYPE_DROPSHIP

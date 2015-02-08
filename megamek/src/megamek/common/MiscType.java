@@ -703,8 +703,18 @@ public class MiscType extends EquipmentType {
             return tons;
         } else if (hasFlag(F_VACUUM_PROTECTION)) {
             return (float) Math.ceil(entity.getWeight() / 10.0f);
-        } else if (hasFlag(F_ENVIRONMENTAL_SEALING) || hasFlag(F_DUNE_BUGGY)) {
+                     
+        } else if (hasFlag(F_DUNE_BUGGY)) {
             return entity.getWeight() / 10.0f;
+            
+        } else if (hasFlag(F_ENVIRONMENTAL_SEALING)) {
+        	if ((entity instanceof SupportTank ) || (entity instanceof LargeSupportTank )
+        			|| (entity instanceof FixedWingSupport ) || (entity instanceof SupportVTOL )) {
+        		return 0;
+          	} else {
+                return entity.getWeight() / 10.0f;
+            }
+            
         } else if (hasFlag(F_JUMP_BOOSTER)) {
             return (float) (Math.ceil((entity.getWeight() * entity
                     .getOriginalJumpMP()) / 10.0f) / 2.0);
@@ -1551,6 +1561,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createTractorModification());
         EquipmentType.addType(MiscType.createTrailerModification());
         EquipmentType.addType(MiscType.createArmoredChassis());
+        EquipmentType.addType(MiscType.createEnviromentalSealedChassis());
         EquipmentType.addType(MiscType.createBasicFireControl());
         EquipmentType.addType(MiscType.createAdvancedFireControl());
         EquipmentType.addType(MiscType.createISMineSweeper());
@@ -2987,7 +2998,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 4;
         misc.cost = 75000;
         misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);;
+                .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
         misc.subType |= S_COMBINE;
         misc.bv = 5;
         misc.industrial = true;
@@ -3007,7 +3018,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0.5f;
         misc.criticals = 1;
         misc.cost = 0;
-        misc.flags = misc.flags.or(F_EJECTION_SEAT).or(F_MECH_EQUIPMENT);
+        misc.flags = misc.flags.or(F_EJECTION_SEAT).or(F_MECH_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.industrial = true;
         misc.introDate = 1950;
@@ -3022,11 +3033,31 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Armored Chassis";
         misc.setInternalName("Armored Chassis");
-        misc.tonnage = TONNAGE_VARIABLE;
+        misc.tonnage = 0;
         misc.criticals = 0;
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.tankslots = 0;
         misc.flags = misc.flags.or(F_ARMORED_CHASSIS).or(F_TANK_EQUIPMENT)
+                .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.availRating = new int[] { RATING_C, RATING_E, RATING_D };
+        misc.techRating = RATING_B;
+
+        return misc;
+    }
+    
+    public static MiscType createEnviromentalSealedChassis() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Enviromental Sealed Chassis";
+        misc.setInternalName("Enviromental Sealed Chassis");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
+        misc.tankslots = 0;
+        misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.introDate = 1950;
@@ -4662,7 +4693,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4687,7 +4718,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 2;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4712,7 +4743,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 3;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4737,7 +4768,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 4;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4762,7 +4793,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 5;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4787,7 +4818,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 6;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4812,7 +4843,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 7;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4837,7 +4868,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 8;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4862,7 +4893,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 9;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4887,7 +4918,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 10;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4912,7 +4943,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 11;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4937,7 +4968,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 12;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4962,7 +4993,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 13;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4987,7 +5018,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 14;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -5012,7 +5043,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 15;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -5867,7 +5898,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.cost = 0;
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
-        misc.flags = misc.flags.or(F_VACUUM_PROTECTION).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_VACUUM_PROTECTION).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);;
         misc.bv = 0;
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
@@ -6078,7 +6109,6 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         misc.name = "Claw";
         misc.setInternalName("ISClaw");
-        misc.addLookupName("Claw");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
@@ -6100,7 +6130,6 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         misc.name = "Claw (Clan)";
         misc.setInternalName("ClClaw");
-        misc.addLookupName("Claw");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
@@ -7902,7 +7931,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.flags = misc.flags.or(MiscType.F_BASIC_FIRECONTROL).or(
-                MiscType.F_SUPPORT_TANK_EQUIPMENT);
+                MiscType.F_SUPPORT_TANK_EQUIPMENT).or(MiscType.F_TANK_EQUIPMENT);
         misc.industrial = true;
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
@@ -7919,7 +7948,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.flags = misc.flags.or(MiscType.F_ADVANCED_FIRECONTROL).or(
-                MiscType.F_SUPPORT_TANK_EQUIPMENT);
+                MiscType.F_SUPPORT_TANK_EQUIPMENT.or(MiscType.F_TANK_EQUIPMENT));
         misc.introDate = 2284;
         misc.techLevel.put(2284, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_C, RATING_D, RATING_D };
@@ -8730,7 +8759,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLLookDownRadar() {
         MiscType misc = new MiscType();
         misc.techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
-        misc.name = "Look-Down Rader";
+        misc.name = "Look-Down Radar";
         misc.setInternalName("CLLookDownRadar");
         misc.tonnage = 5f;
         misc.cost = 400000;
@@ -9559,7 +9588,7 @@ public class MiscType extends EquipmentType {
         misc.name = "External Stores Hardpoint";
         misc.setInternalName(misc.name);
         misc.flags = misc.flags.or(F_EXTERNAL_STORES_HARDPOINT).or(
-                F_SUPPORT_TANK_EQUIPMENT);
+                F_SUPPORT_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.industrial = true;
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));

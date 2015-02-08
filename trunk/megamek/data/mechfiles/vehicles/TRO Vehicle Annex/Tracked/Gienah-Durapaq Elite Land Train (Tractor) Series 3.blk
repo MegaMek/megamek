@@ -61,6 +61,10 @@ cargobay:2:1
 6
 </barrating>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <Body Equipment>
 Paramedic Equipment
 Paramedic Equipment

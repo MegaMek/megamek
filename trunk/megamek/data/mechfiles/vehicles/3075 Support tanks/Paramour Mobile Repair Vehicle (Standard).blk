@@ -56,6 +56,10 @@ cargobay:15:1
 6
 </barrating>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <armor_type>
 14
 </armor_type>

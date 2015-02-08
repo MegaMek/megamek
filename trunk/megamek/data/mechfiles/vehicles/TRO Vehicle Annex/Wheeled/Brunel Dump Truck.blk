@@ -57,6 +57,10 @@ Wheeled
 10
 </armor>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <Body Equipment>
 ISOffRoadChassis
 </Body Equipment>

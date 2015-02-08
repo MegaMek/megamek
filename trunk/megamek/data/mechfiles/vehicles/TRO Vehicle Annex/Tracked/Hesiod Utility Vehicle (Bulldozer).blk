@@ -59,7 +59,6 @@ cargobay:1:1
 4
 </barrating>
 
-
 <Body Equipment>
 ISOffRoadChassis
 </Body Equipment>
@@ -84,4 +83,11 @@ TRO Var
 <tonnage>
 7.0
 </tonnage>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
+<omni>
+</omni>
 

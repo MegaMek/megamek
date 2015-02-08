@@ -86,7 +86,7 @@ public class SupportVeeStructure extends Structure {
         if (sv.getWeight() < 5) {
             roundWeight = TestEntity.CEIL_KILO;
         }
-        return TestEntity.ceilMaxHalf(weight,roundWeight);
+        return TestEntity.ceil(weight,roundWeight);
     }
     
     public float getWeightStructure(float weight, float roundWeight) {

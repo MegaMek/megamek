@@ -210,6 +210,8 @@ public class Engine implements Serializable {
             case FUEL_CELL:
             case NONE:
             case MAGLEV:
+            case BATTERY:
+            case SOLAR:
                 break;
             case COMPACT_ENGINE:
                 if (hasFlag(LARGE_ENGINE)) {
@@ -317,7 +319,7 @@ public class Engine implements Serializable {
             if (entity.getWeight() < 5) {
                 roundWeight = TestEntity.CEIL_KILO;
             }
-            weight = TestEntity.ceilMaxHalf(weight, roundWeight);
+            weight = TestEntity.ceil(weight, roundWeight);
             return weight;
         }
         float weight = ENGINE_RATINGS[(int) Math.ceil(engineRating / 5.0)];
@@ -487,6 +489,10 @@ public class Engine implements Serializable {
             case FISSION:
                 sb.append(" Fission"); //$NON-NLS-1$
                 break;
+            case BATTERY:
+                sb.append(" Battery"); //$NON-NLS-1$
+            case SOLAR:
+                sb.append(" Solar");  //$NON-NLS-1$
             case NONE:
                 sb.append(" NONE"); //$NON-NLS-1$
                 break;

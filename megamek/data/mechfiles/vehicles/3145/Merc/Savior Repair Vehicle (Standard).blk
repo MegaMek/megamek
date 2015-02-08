@@ -34,9 +34,6 @@ Tracked
 
 <transporters>
 troopspace:3.0
-</transporters>
-
-<transporters>
 cargobay:3.5:1
 </transporters>
 
@@ -56,9 +53,14 @@ cargobay:3.5:1
 5
 </armor>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <Body Equipment>
 Armored Chassis
 ISMobileFieldBase
+ISCASE
 </Body Equipment>
 
 <Front Equipment>

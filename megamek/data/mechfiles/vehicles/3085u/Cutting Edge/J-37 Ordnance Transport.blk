@@ -37,6 +37,10 @@ J-37 Ordnance Transport
 12
 </Armor>
 
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <Turret Equipment>
 ISERSmallLaser
 </Turret Equipment>
@@ -60,7 +64,7 @@ IS Level 2
 </year>
 
 <source>
-Jihad
+TRO 3085
 </source>
 
 <internal_type>
@@ -85,4 +89,5 @@ Wheeled
 
 <transporters>
 TroopSpace:1
+cargobay:17:1
 </transporters>

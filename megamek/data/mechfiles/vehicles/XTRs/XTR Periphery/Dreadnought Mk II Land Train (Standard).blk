@@ -33,8 +33,11 @@ Tracked
 </motion_type>
 
 <transporters>
-troopspace:5.0
+troopspace:10.0
 cargobay:4:1
+steeragequarters:5:1
+steeragequarters:5:1
+steeragequarters:5:1
 </transporters>
 
 <cruiseMP>
@@ -59,7 +62,12 @@ cargobay:4:1
 7
 </barrating>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <Body Equipment>
+Tractor
 ISSponsonTurret
 FieldKitchen
 IS Ammo Extended LRM-5
@@ -98,7 +106,6 @@ ISMGA (ST)
 
 <Rear Equipment>
 Lift Hoist
-Hitch
 </Rear Equipment>
 
 <Turret Equipment>

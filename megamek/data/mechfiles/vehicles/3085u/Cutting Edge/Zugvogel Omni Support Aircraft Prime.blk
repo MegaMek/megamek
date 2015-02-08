@@ -39,6 +39,10 @@ Prime
 10
 </barrating>
 
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <Nose Equipment>
 ISLRM15
 ISLRM15
@@ -52,6 +56,9 @@ ISLightGaussRifle
 </Aft Equipment>
 
 <Body Equipment>
+Advanced Fire Control
+Armored Chassis
+STOLChassisMod
 ISLRM15 Ammo
 ISLRM15 Ammo
 ISLRM15 Ammo
@@ -61,33 +68,6 @@ ISLAC2 Ammo
 ISLAC2 Ammo
 ISLightGauss Ammo
 ISCASE
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (0.5 tons)
-Advanced Fire Control
-Armored Chassis
-STOLChassisMod
 </Body Equipment>
 
 <heatsinks>
@@ -97,7 +77,6 @@ STOLChassisMod
 <sink_type>
 0
 </sink_type>
-
 
 <fuel>
 369
@@ -112,7 +91,7 @@ IS Level 2
 </year>
 
 <source>
-Dark Age
+TRO 3085
 </source>
 
 <internal_type>
@@ -130,3 +109,10 @@ Dark Age
 <motion_type>
 aerodyne
 </motion_type>
+
+<transporters>
+cargobay:23.5:1
+</transporters>
+
+<omni>
+</omni>

@@ -2,100 +2,101 @@
 <BlockVersion>
 1
 </BlockVersion>
-
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
-
 <UnitType>
-SupportTank
+LargeSupportTank
 </UnitType>
 
 <Name>
-Jifty Transportable Field Repair Unit
+'Oppie' (HMRV Salvage Bed Trailer)
 </Name>
 
 <Model>
-JI-50 (Q-Vehicle)
+(Standard)
 </Model>
 
 <Tonnage>
-60
+150
 </Tonnage>
 
 <cruiseMP>
-4
+0
 </cruiseMP>
 
+<barrating>
+8
+</barrating>
+
 <Armor>
-27
-20
-20
-25
+30
+40
+40
+40
+40
+54
 </Armor>
 
 <structural_tech_rating>
-3
+4
 </structural_tech_rating>
 
 <Front Equipment>
-ISSRM4
-ISSRM4
-ISSRM4
-ISSRM4
-ISSRM4
-ISSRM4
-ISSRM4
-ISSRM4
+Searchlight
 </Front Equipment>
 
+<Front Left Equipment>
+Lift Hoist
+Searchlight
+</Front Left Equipment>
+
+<Front Right Equipment>
+Lift Hoist
+Searchlight
+</Front Right Equipment>
+
+<Rear Left Equipment>
+</Rear Left Equipment>
+
+<Rear Right Equipment>
+</Rear Right Equipment>
+
 <Rear Equipment>
-Lift Hoist
-Lift Hoist
+Backhoe
+Searchlight
+Searchlight
 </Rear Equipment>
 
 <Body Equipment>
-Armored Chassis
-ISSRM4 Ammo
-ISSRM4 Ammo
-ISSRM4 Ammo
-ISSRM4 Ammo
-ISSRM4 Ammo
+Trailer
 </Body Equipment>
 
+<transporters>
+cargobay:100:1
+</transporters>
+
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <year>
-3074
+3069
 </year>
-
-<source>
-TRO 3075
-</source>
 
 <internal_type>
 0
 </internal_type>
 
 <armor_type>
-14
+0
 </armor_type>
 
 <engine_type>
-0
+8
 </engine_type>
-
-<barrating>
-6
-</barrating>
 
 <motion_type>
 Tracked
 </motion_type>
-
-<transporters>
-TroopSpace:19.5
-</transporters>

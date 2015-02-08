@@ -37,7 +37,7 @@ Wheeled
 </cruiseMP>
 
 <engine_type>
-1
+0
 </engine_type>
 
 <armor>
@@ -51,6 +51,10 @@ Wheeled
 <barrating>
 7
 </barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <Body Equipment>
 Basic Fire Control

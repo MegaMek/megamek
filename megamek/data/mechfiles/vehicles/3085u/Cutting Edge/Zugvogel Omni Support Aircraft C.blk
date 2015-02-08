@@ -39,6 +39,19 @@ C
 10
 </barrating>
 
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
 <Aft Equipment>
 Searchlight
 </Aft Equipment>
@@ -48,26 +61,6 @@ ISMobileFieldBase
 ISMobileFieldBase
 Lift Hoist
 ISCASE
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
-Cargo (1 ton)
 Advanced Fire Control
 Armored Chassis
 STOLChassisMod
@@ -75,6 +68,7 @@ STOLChassisMod
 
 <transporters>
 TroopSpace:12
+cargobay:20:1
 </transporters>
 
 <heatsinks>
@@ -99,7 +93,7 @@ IS Level 3
 </year>
 
 <source>
-Dark Age
+TRO 3085
 </source>
 
 <internal_type>
@@ -117,3 +111,6 @@ Dark Age
 <motion_type>
 aerodyne
 </motion_type>
+
+<omni>
+</omni>

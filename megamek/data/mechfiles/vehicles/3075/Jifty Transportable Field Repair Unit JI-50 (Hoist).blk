@@ -35,6 +35,10 @@ JI-50 (Hoist)
 25
 </Armor>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <Front Equipment>
 Light Machine Gun
 Light Machine Gun
@@ -60,7 +64,7 @@ IS Level 2
 </year>
 
 <source>
-Jihad
+TRO 3075
 </source>
 
 <internal_type>

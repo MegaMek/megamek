@@ -51,7 +51,13 @@ Wheeled
 3
 </barrating>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <Body Equipment>
+Tractor
+Trailer
 </Body Equipment>
 
 <Front Equipment>
@@ -64,7 +70,6 @@ Wheeled
 </Left Equipment>
 
 <Rear Equipment>
-Hitch
 </Rear Equipment>
 
 <transporters>

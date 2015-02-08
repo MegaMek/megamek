@@ -53,7 +53,12 @@ VTOL
 10
 </barrating>
 
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <Body Equipment>
+Armored Chassis
 ISGuardianECM
 </Body Equipment>
 

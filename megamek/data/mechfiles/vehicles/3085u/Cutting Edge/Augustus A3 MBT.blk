@@ -37,6 +37,10 @@ A3
 35
 </Armor>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <Front Equipment>
 Searchlight
 </Front Equipment>
@@ -65,7 +69,7 @@ IS Level 2
 </year>
 
 <source>
-Star League
+TRO 3085
 </source>
 
 <internal_type>

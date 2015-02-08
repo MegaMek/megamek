@@ -24,6 +24,7 @@ import java.util.Vector;
 
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.verifier.SupportVeeStructure;
 import megamek.common.weapons.CLChemicalLaserWeapon;
 import megamek.common.weapons.VehicleFlamerWeapon;
 
@@ -99,6 +100,9 @@ public class Tank extends Entity {
     private static String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front",
             "Right", "Left", "Rear", "Rear Turret", "Front Turret" };
 
+    public static float[] BAR_ARMOR_COST_MULT = { 0, 0, 50, 100, 150, 200, 250,
+            300, 400, 500, 625 };
+    
     @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
@@ -190,7 +194,7 @@ public class Tank extends Entity {
      * the side parameter falls outside ToHitData's range of "fixed" side
      * values; in particular, it will return 0 if handed
      * {@link ToHitData#SIDE_RANDOM}.
-     *
+     * 
      * @param side
      *            The attack direction as specified above.
      * @return The appropriate directional roll modifier.
@@ -1298,14 +1302,15 @@ public class Tank extends Entity {
                 typeModifier = 0.6;
         }
 
-        if (!(this instanceof SupportTank) && (hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS)
-                || hasWorkingMisc(MiscType.F_DUNE_BUGGY)
-                || hasWorkingMisc(MiscType.F_FLOTATION_HULL)
-                || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION)
-                || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)
-                || hasWorkingMisc(MiscType.F_ARMORED_MOTIVE_SYSTEM))) {
+        if (!(this instanceof SupportTank)
+                && (hasWorkingMisc(MiscType.F_LIMITED_AMPHIBIOUS)
+                        || hasWorkingMisc(MiscType.F_DUNE_BUGGY)
+                        || hasWorkingMisc(MiscType.F_FLOTATION_HULL)
+                        || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION)
+                        || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING) || hasWorkingMisc(MiscType.F_ARMORED_MOTIVE_SYSTEM))) {
             typeModifier += .1;
-        } else if (hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS) && !(this instanceof SupportTank)) {
+        } else if (hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS)
+                && !(this instanceof SupportTank)) {
             typeModifier += .2;
         }
         bvText.append(startColumn);
@@ -1326,9 +1331,12 @@ public class Tank extends Entity {
         bvText.append("x Target Movement modifier");
         bvText.append(endColumn);
         // adjust for target movement modifier
-        double tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true), this instanceof VTOL, this instanceof VTOL, game).getValue();
+        double tmmRan = Compute.getTargetMovementModifier(
+                getRunMP(false, true, true), this instanceof VTOL,
+                this instanceof VTOL, game).getValue();
         // for the future, when we implement jumping tanks
-        double tmmJumped = Compute.getTargetMovementModifier(getJumpMP(), true, false, game).getValue();
+        double tmmJumped = Compute.getTargetMovementModifier(getJumpMP(), true,
+                false, game).getValue();
         if (hasStealth()) {
             tmmRan += 2;
             tmmJumped += 2;
@@ -1484,7 +1492,9 @@ public class Tank extends Entity {
             }
             bvText.append(endColumn);
             bvText.append(startColumn);
-            if (mounted.getLocation() == (this instanceof SuperHeavyTank?SuperHeavyTank.LOC_REAR:this instanceof LargeSupportTank?LargeSupportTank.LOC_REAR:LOC_REAR)) {
+            if (mounted.getLocation() == (this instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
+                    : this instanceof LargeSupportTank ? LargeSupportTank.LOC_REAR
+                            : LOC_REAR)) {
                 weaponsBVRear += dBV;
                 bvText.append(" Rear");
             } else if (mounted.getLocation() == LOC_FRONT) {
@@ -1962,7 +1972,7 @@ public class Tank extends Entity {
                 r = new Report(7073, Report.PUBLIC);
             }
             vDesc.addElement(r);
-        } else if (getCrew().isEjected()){
+        } else if (getCrew().isEjected()) {
             r = new Report(7071, Report.PUBLIC);
             vDesc.addElement(r);
         }
@@ -1987,7 +1997,7 @@ public class Tank extends Entity {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getRunMP(boolean, boolean, boolean)
      */
     @Override
@@ -2045,7 +2055,7 @@ public class Tank extends Entity {
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     *
+     * 
      * @return A <code>boolean</code> that is <code>true</code> if the unit can
      *         be repaired (given enough time and parts); if this value is
      *         <code>false</code>, the unit is only a source of spares.
@@ -2186,20 +2196,33 @@ public class Tank extends Entity {
 
     private void addCostDetails(double cost, double[] costs) {
         bvText = new StringBuffer();
-        String[] left = {
-                "Engine",
-                "Control Systems",
-                "Internal Structure",
-                "Power Amplifiers",
-                "Heat Sinks",
-                "Turret",
-                "Armor",
-                "Lift Equipment",
-                "Equipment",
-                "Omni Multiplier",
-                "Movement Multiplier",
-                "Flotation Hull/Vacuum Protection/Environmental Sealing multiplier",
-                "Off-Road Multiplier" };
+        ArrayList<String> left = new ArrayList();
+
+        if (isSupportVehicle()) {
+            left.add("Chassis");
+        }
+        left.add("Engine");
+        left.add("Armor");
+        if (isSupportVehicle()) {
+            left.add("Final Structural Cost");
+        } else {
+            left.add("Internal Structure");
+            left.add("Control Systems");        
+        }        
+        left.add("Power Amplifiers");
+        left.add("Heat Sinks");
+        left.add("Turret");
+        left.add("Equipment");
+        if (!isSupportVehicle()) {
+            left.add("Lift Equipment");
+        }
+        left.add("Omni Multiplier");
+        left.add("Tonnage Multiplier");
+        if (!isSupportVehicle()) {
+            
+            left.add("Flotation Hull/Vacuum Protection/Environmental Sealing multiplier");
+            left.add("Off-Road Multiplier");
+        }        
 
         NumberFormat commafy = NumberFormat.getInstance();
 
@@ -2212,14 +2235,23 @@ public class Tank extends Entity {
 
         bvText.append(startTable);
         // find the maximum length of the columns.
-        for (int l = 0; l < left.length; l++) {
+        for (int l = 0; l < left.size(); l++) {
 
             if (l == 8) {
                 getWeaponsAndEquipmentCost(true);
-            } else {
+            }else {
+                if (left.get(l).equals("Final Structural Cost")) {
+                    bvText.append(startRow);
+                    bvText.append(startColumn);
+                    bvText.append(endColumn);
+                    bvText.append(startColumn);
+                    bvText.append("-------------");
+                    bvText.append(endColumn);
+                    bvText.append(endRow);
+                }
                 bvText.append(startRow);
                 bvText.append(startColumn);
-                bvText.append(left[l]);
+                bvText.append(left.get(l));
                 bvText.append(endColumn);
                 bvText.append(startColumn);
 
@@ -2261,18 +2293,131 @@ public class Tank extends Entity {
     public double getCost(boolean ignoreAmmo) {
         double[] costs = new double[13 + locations()];
         int i = 0;
-        costs[i++] = (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
+        // Chassis cost for Support Vehicles
+        if (isSupportVehicle()) {
+            double chassisCost = 2500 * SupportVeeStructure.getWeightStructure(this);
+            if (hasMisc(MiscType.F_AMPHIBIOUS)) {
+                chassisCost *= 1.25;
+            }
+            if (hasMisc(MiscType.F_ARMORED_CHASSIS)) {
+                chassisCost *= 2.0;
+            }
+            if (hasMisc(MiscType.F_BICYCLE)) {
+                chassisCost *= 0.75;
+            }
+            if (hasMisc(MiscType.F_CONVERTIBLE)) {
+                chassisCost *= 1.1;
+            }
+            if (hasMisc(MiscType.F_DUNE_BUGGY)) {
+                chassisCost *= 1.25;
+            }
+            if (hasMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
+                chassisCost *= 1.75;
+            }
+            // Hydrofoil?
+            if (hasMisc(MiscType.F_MONOCYCLE)) {
+                chassisCost *= 1.3;
+            }
+            if (hasMisc(MiscType.F_OFF_ROAD)) {
+                chassisCost *= 1.2;
+            }
+            if (hasMisc(MiscType.F_PROP)) {
+                chassisCost *= 0.75;
+            }
+            if (hasMisc(MiscType.F_SNOWMOBILE)) {
+                chassisCost *= 1.3;
+            }
+            if (hasMisc(MiscType.F_STOL_CHASSIS)) {
+                chassisCost *= 1.5;
+            }
+            // Submersible?
+            if (hasMisc(MiscType.F_TRACTOR_MODIFICATION)) {
+                chassisCost *= 1.1;
+            }
+            if (hasMisc(MiscType.F_TRAILER_MODIFICATION)) {
+                chassisCost *= 0.75;
+            }
+            if (hasMisc(MiscType.F_ULTRA_LIGHT)) {
+                chassisCost *= 1.5;
+            }
+            if (hasMisc(MiscType.F_VSTOL_CHASSIS)) {
+                chassisCost *= 2;
+            }
+            costs[i++] = chassisCost;
+        }
 
-        double controlWeight = Math.ceil(weight * 0.05 * 2.0) / 2.0; // ?
-        // should
-        // be
-        // rounded
-        // up to
-        // nearest
-        // half-ton
-        costs[i++] = 10000 * controlWeight;
-        // IS has no variations, no Endo etc.
-        costs[i++] = (weight / 10.0) * 10000;
+        // Engine Costs
+        double engineCost;
+        if (isSupportVehicle()) {
+            engineCost = 5000 * getEngine().getWeightEngine(this);
+            switch (getEngine().getEngineType()) {
+                case Engine.STEAM:
+                    engineCost *= 0.8;
+                    break;
+                case Engine.COMBUSTION_ENGINE:
+                    engineCost *= 1.0;
+                    break;
+                case Engine.BATTERY:
+                    engineCost *= 1.2;
+                    break;
+                case Engine.FUEL_CELL:
+                    engineCost *= 1.4;
+                    break;
+                case Engine.SOLAR:
+                    engineCost *= 1.6;
+                    break;
+                case Engine.FISSION:
+                    engineCost *= 3;
+                    break;
+                case Engine.NORMAL_ENGINE:
+                    engineCost *= 2;
+                    break;
+            }
+        } else {
+            engineCost = (getEngine().getBaseCost() * 
+                    getEngine().getRating() * weight) / 75.0;
+        }
+        costs[i++] = engineCost;
+
+        // armor
+        if (isSupportVehicle()) {
+            int totalArmorPoints = 0;
+            for (int loc = 0; loc < locations(); loc++) {
+                totalArmorPoints += getOArmor(loc);
+            }
+            costs[i++] = totalArmorPoints * 
+                    BAR_ARMOR_COST_MULT[getBARRating(LOC_BODY)];
+        } else {
+            if (hasPatchworkArmor()) {
+                for (int loc = 0; loc < locations(); loc++) {
+                    costs[i++] = getArmorWeight(loc)
+                            * EquipmentType.getArmorCost(armorType[loc]);
+                }
+    
+            } else {
+                costs[i++] = getArmorWeight()
+                        * EquipmentType.getArmorCost(armorType[0]);
+            }
+        }
+        
+        // Compute final structural cost
+        int structCostIdx = 0;
+        if (isSupportVehicle()) {
+            structCostIdx = i++;
+            costs[structCostIdx] = 0;
+            for (int c = 0; c < structCostIdx; c++) {
+                costs[structCostIdx] += costs[c]; 
+            }
+            double techRatingMultiplier = 0.5 + getStructuralTechRating() * 0.25;
+            costs[structCostIdx] *= techRatingMultiplier; 
+        } else {
+            // IS has no variations, no Endo etc.
+            costs[i++] = (weight / 10.0) * 10000;
+            double controlWeight = Math.ceil(weight * 0.05 * 2.0) / 2.0; // ?
+            // should be rounded up to nearest half-ton
+            costs[i++] = 10000 * controlWeight;        
+        }
+        
         double freeHeatSinks = engine.getWeightFreeEngineHeatSinks();
         int sinks = 0;
         double turretWeight = 0;
@@ -2298,19 +2443,12 @@ public class Tank extends Entity {
         costs[i++] = 20000 * paWeight;
         costs[i++] = 2000 * Math.max(0, sinks - freeHeatSinks);
         costs[i++] = turretWeight * 5000;
-        // armor
-        if (hasPatchworkArmor()) {
-            for (int loc = 0; loc < locations(); loc++) {
-                costs[i++] = getArmorWeight(loc)
-                        * EquipmentType.getArmorCost(armorType[loc]);
-            }
 
-        } else {
-            costs[i++] = getArmorWeight()
-                    * EquipmentType.getArmorCost(armorType[0]);
-        }
-        double diveTonnage;
-        switch (movementMode) {
+        costs[i++] = getWeaponsAndEquipmentCost(ignoreAmmo);
+
+        if (!isSupportVehicle()) {
+            double diveTonnage;
+            switch (movementMode) {
             case HOVER:
             case HYDROFOIL:
             case VTOL:
@@ -2321,17 +2459,16 @@ public class Tank extends Entity {
             default:
                 diveTonnage = 0.0;
                 break;
+            }
+            if (movementMode != EntityMovementMode.VTOL) {
+                costs[i++] = diveTonnage * 20000;
+            } else {
+                costs[i++] = diveTonnage * 40000;
+            }
         }
-        if (movementMode != EntityMovementMode.VTOL) {
-            costs[i++] = diveTonnage * 20000;
-        } else {
-            costs[i++] = diveTonnage * 40000;
-        }
-
-        costs[i++] = getWeaponsAndEquipmentCost(ignoreAmmo);
-
+        
         double cost = 0; // calculate the total
-        for (int x = 0; x < i; x++) {
+        for (int x = structCostIdx; x < i; x++) {
             cost += costs[x];
         }
         if (isOmni()) { // Omni conversion cost goes here.
@@ -2341,6 +2478,7 @@ public class Tank extends Entity {
             costs[i++] = 0;
         }
 
+        
         double multiplier = 1.0;
         switch (movementMode) {
             case HOVER:
@@ -2367,18 +2505,22 @@ public class Tank extends Entity {
         }
         cost *= multiplier;
         costs[i++] = -multiplier;
+            
+        if (!isSupportVehicle()) {            
+            if (hasWorkingMisc(MiscType.F_FLOTATION_HULL)
+                    || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION)
+                    || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
+                cost *= 1.25;
+                costs[i++] = -1.25;
 
-        if (hasWorkingMisc(MiscType.F_FLOTATION_HULL)
-                || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION)
-                || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
-            cost *= 1.25;
-            costs[i++] = -1.25;
+            }
+            if (hasWorkingMisc(MiscType.F_OFF_ROAD)) {
+                cost *= 1.2;
+                costs[i++] = -1.2;
+            }
+        }
 
-        }
-        if (hasWorkingMisc(MiscType.F_OFF_ROAD)) {
-            cost *= 1.2;
-            costs[i++] = -1.2;
-        }
+        
         addCostDetails(cost, costs);
         return Math.round(cost);
     }
@@ -2421,12 +2563,12 @@ public class Tank extends Entity {
      *  @return True if hull-down is enabled and the Tank is in a fortified hex.
      */
     public boolean canGoHullDown() {
-        //MoveStep line 2179 performs this same check
+        // MoveStep line 2179 performs this same check
         // performing it here will allow us to disable the Hulldown button
         // if the movement is illegal
         IHex occupiedHex = game.getBoard().getHex(getPosition());
-        return occupiedHex.containsTerrain(Terrains.FORTIFIED) &&
-               game.getOptions().booleanOption("tacops_hull_down");
+        return occupiedHex.containsTerrain(Terrains.FORTIFIED)
+                && game.getOptions().booleanOption("tacops_hull_down");
     }
 
     public void setOnFire(boolean inferno) {
@@ -2464,7 +2606,7 @@ public class Tank extends Entity {
 
     /**
      * adds minor, moderate or heavy movement system damage
-     *
+     * 
      * @param level
      *            a <code>int</code> representing minor damage (1), moderate
      *            damage (2), heavy damage (3), or immobilized (4)
@@ -2539,7 +2681,7 @@ public class Tank extends Entity {
     /**
      * get the type of critical caused by a critical roll, taking account of
      * existing damage
-     *
+     * 
      * @param roll
      *            the final dice roll
      * @param loc
@@ -2553,7 +2695,7 @@ public class Tank extends Entity {
     /**
      * get the type of critical caused by a critical roll, taking account of
      * existing damage
-     *
+     * 
      * @param roll
      *            the final dice roll
      * @param loc
@@ -2565,7 +2707,8 @@ public class Tank extends Entity {
             roll = 12;
         }
         if ((roll < 6)
-                || (game.getOptions().booleanOption("vehicles_threshold") && !getOverThresh() && !damagedByFire)) {
+                || (game.getOptions().booleanOption("vehicles_threshold")
+                        && !getOverThresh() && !damagedByFire)) {
             return CRIT_NONE;
         }
         for (int i = 0; i < 2; i++) {
@@ -2791,9 +2934,11 @@ public class Tank extends Entity {
         if (isOmni()) {
             return;
         }
-        //TODO: I really hate this optional rule - what if some units are already loaded?
-        //if ba_grab_bars is on, then we need to add battlearmor handles, otherwise clamp mounts
-        //but first clear out whatever we have
+        // TODO: I really hate this optional rule - what if some units are
+        // already loaded?
+        // if ba_grab_bars is on, then we need to add battlearmor handles,
+        // otherwise clamp mounts
+        // but first clear out whatever we have
         Vector<Transporter> et = new Vector<Transporter>(getTransports());
         for (Transporter t : et) {
             if (t instanceof BattleArmorHandlesTank) {
@@ -2824,7 +2969,7 @@ public class Tank extends Entity {
     }
 
     public void resetJammedWeapons() {
-    	jammedWeapons = new ArrayList<Mounted>();
+        jammedWeapons = new ArrayList<Mounted>();
     }
 
     /**
@@ -2838,11 +2983,11 @@ public class Tank extends Entity {
         for (Mounted m : getWeaponList()) {
             WeaponType wtype = (WeaponType) m.getType();
             if (wtype.hasFlag(WeaponType.F_ENERGY)
-                // Chemical lasers still work even after an engine hit.
-                && !(wtype instanceof CLChemicalLaserWeapon)
-                // And presumably vehicle flamers should, too; we can always
-                // remove this again if ruled otherwise.
-                && !(wtype instanceof VehicleFlamerWeapon)) {
+            // Chemical lasers still work even after an engine hit.
+                    && !(wtype instanceof CLChemicalLaserWeapon)
+                    // And presumably vehicle flamers should, too; we can always
+                    // remove this again if ruled otherwise.
+                    && !(wtype instanceof VehicleFlamerWeapon)) {
                 m.setBreached(true); // not destroyed, just unpowered
             }
         }
@@ -2866,7 +3011,7 @@ public class Tank extends Entity {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getTotalCommGearTons()
      */
     @Override
@@ -2876,7 +3021,7 @@ public class Tank extends Entity {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see megamek.common.Entity#getIniBonus()
      */
     @Override
@@ -2943,7 +3088,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -2955,8 +3100,7 @@ public class Tank extends Entity {
             MiscType mtype = (MiscType) mEquip.getType();
             if (mtype.hasFlag(MiscType.F_STEALTH)) {
 
-                if (mEquip.curMode().equals("On")
-                        && hasActiveECM()) {
+                if (mEquip.curMode().equals("On") && hasActiveECM()) {
                     // Return true if the mode is "On" and ECM is working
                     return true;
                 }
@@ -2971,7 +3115,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -2994,7 +3138,7 @@ public class Tank extends Entity {
 
     /**
      * get the total amount of item slots available for this tank
-     *
+     * 
      * @return
      */
     public int getTotalSlots() {
@@ -3003,7 +3147,7 @@ public class Tank extends Entity {
 
     /**
      * get the free item slots for this tank
-     *
+     * 
      * @return
      */
     public int getFreeSlots() {
@@ -3021,8 +3165,9 @@ public class Tank extends Entity {
                     continue;
                 }
             }
-            if (!(mount.getType() instanceof AmmoType
-                    || Arrays.asList(EquipmentType.armorNames).contains(mount.getType().getName()))) {
+            if (!(mount.getType() instanceof AmmoType || Arrays.asList(
+                    EquipmentType.armorNames).contains(
+                    mount.getType().getName()))) {
                 usedSlots += mount.getType().getTankslots(this);
             }
         }
@@ -3139,7 +3284,8 @@ public class Tank extends Entity {
         if ((armType == EquipmentType.T_ARMOR_STEALTH_VEHICLE) && addMount) {
             try {
                 this.addEquipment(EquipmentType.get(EquipmentType
-                        .getArmorTypeName(EquipmentType.T_ARMOR_STEALTH_VEHICLE, false)),
+                        .getArmorTypeName(
+                                EquipmentType.T_ARMOR_STEALTH_VEHICLE, false)),
                         LOC_BODY);
             } catch (LocationFullException e) {
                 // this should never happen
@@ -3183,7 +3329,7 @@ public class Tank extends Entity {
      * <code>IllegalArgumentException</code> will be thrown.
      * <p/>
      * Sub-classes are encouraged to override this method.
-     *
+     * 
      * @param range
      *            - an <code>int</code> value that must match one of the
      *            <code>Compute</code> class range constants.
@@ -3347,8 +3493,7 @@ public class Tank extends Entity {
         // combined weapons damage,
         // or has no weapons with range greater than 5 hexes
         if (!hasViableWeapons()) {
-            if (PreferenceManager.getClientPreferences().debugOutputOn())
-            {
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: has no more viable weapons.");
             }
@@ -3444,7 +3589,7 @@ public class Tank extends Entity {
 
     /**
      * Tanks go Hull Down slightly differently, this method accounts for this
-     *
+     * 
      * @see megamek.common.Entity#setHullDown(boolean)
      */
     @Override
@@ -3461,7 +3606,7 @@ public class Tank extends Entity {
 
     /**
      * Returns True if this tank moved backwards before going Hull Down
-     *
+     * 
      * @return
      */
     public boolean isBackedIntoHullDown() {
@@ -3469,7 +3614,7 @@ public class Tank extends Entity {
     }
 
     @Override
-    public long getEntityType(){
+    public long getEntityType() {
         return Entity.ETYPE_TANK;
     }
 

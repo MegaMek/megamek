@@ -54,6 +54,7 @@ public abstract class TestEntity implements TestEntityOption {
     public final static float CEIL_HALFTON = 2.0f;
     public final static float CEIL_QUARTERTON = 4.0f;
     public final static float CEIL_TENTHTON = 10.0f;
+    public final static float CEIL_KILO = 1000.0f;
 
     protected Engine engine = null;
     protected Armor[] armor = null;
@@ -1342,6 +1343,9 @@ class Structure {
     private boolean isSuperHeavy;
     private EntityMovementMode movementmode;
 
+    public Structure() {
+    }
+    
     public Structure(int structureType, boolean superHeavy,
             EntityMovementMode movementMode) {
         this.structureType = structureType;

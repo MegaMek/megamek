@@ -51,7 +51,9 @@ public class SupportVeeStructure extends Structure {
         if (sv.hasMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
             chassisModMult *= 2;
         }
-        // Hydrofoil?
+        if (sv.hasMisc(MiscType.F_HYDROFOIL)) {
+        	chassisModMult *=1.7;
+        }
         if (sv.hasMisc(MiscType.F_MONOCYCLE)) {
             chassisModMult *= 0.5;
         }
@@ -67,7 +69,9 @@ public class SupportVeeStructure extends Structure {
         if (sv.hasMisc(MiscType.F_STOL_CHASSIS)) {
             chassisModMult *= 1.5;
         }
-        // Submersible?
+        if (sv.hasMisc(MiscType.F_SUBMERSIBLE)) {
+            chassisModMult *= 1.8;
+        }
         if (sv.hasMisc(MiscType.F_TRACTOR_MODIFICATION)) {
             chassisModMult *= 1.2;
         }

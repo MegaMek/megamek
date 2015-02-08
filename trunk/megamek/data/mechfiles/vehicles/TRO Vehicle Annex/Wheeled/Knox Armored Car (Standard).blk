@@ -25,7 +25,7 @@ Knox Armored Car
 </year>
 
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <motion_type>
@@ -79,7 +79,7 @@ Machine Gun
 </Turret Equipment>
 
 <transporters>
-cargobay:3:1
+cargobay:1.5:1
 </transporters>
 
 <source>

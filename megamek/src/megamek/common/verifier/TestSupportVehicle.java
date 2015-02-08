@@ -65,8 +65,13 @@ public class TestSupportVehicle extends TestTank {
         }
         int bar = getEntity().getBARRating(Tank.LOC_BODY);
         int techRating = getEntity().getStructuralTechRating();
-        float weight = totalArmorPoints * SV_ARMOR_WEIGHT[bar][techRating]; 
-        return TestEntity.ceil(weight, getWeightCeilingArmor());
+        float weight = totalArmorPoints * SV_ARMOR_WEIGHT[bar][techRating];
+        if (getEntity().getWeight() < 5) {
+            return TestEntity.floor(weight, CEIL_KILO);
+        } else {
+            return TestEntity.ceil(weight, CEIL_HALFTON);
+        }
+        
     }    
 
 }

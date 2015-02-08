@@ -205,7 +205,15 @@ public abstract class TestEntity implements TestEntityOption {
         return options.getPrintSize();
     }
 
-    protected static float ceil(float f, float type) {
+    /**
+     * Used to round values up based on the specified type.
+     * 
+     * @param f     Value to round
+     * @param type  Specifies the number of decimals to round to, see 
+     *              TestEntity.CEIL_TON, etc.
+     * @return      Rounded value
+     */
+    public static float ceil(float f, float type) {
         return (float) Math.ceil(f * type) / type;
     }
 
@@ -214,6 +222,14 @@ public abstract class TestEntity implements TestEntityOption {
             return TestEntity.ceil(f, CEIL_HALFTON);
         }
         return TestEntity.ceil(f, type);
+    }
+    
+    public static float floor(float f, float type) {
+        return (float) Math.floor(f * type) / type;
+    }
+    
+    public static float round(float f, float type) {
+        return (float) Math.round(f * type) / type;
     }
 
     protected static String makeWeightString(float weight) {

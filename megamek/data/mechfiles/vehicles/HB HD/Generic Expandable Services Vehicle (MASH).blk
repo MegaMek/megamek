@@ -51,7 +51,12 @@ Wheeled
 7
 </barrating>
 
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <Body Equipment>
+Tractor
 MASH core component
 MASH Operation Theater
 MASH Operation Theater
@@ -84,4 +89,7 @@ HB HD
 <tonnage>
 30.0
 </tonnage>
+
+<omni>
+</omni>
 

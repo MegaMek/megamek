@@ -54,6 +54,10 @@ Tracked
 7
 </barrating>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <Transporters>
 CargoBay:11:1
 </Transporters>
@@ -74,12 +78,15 @@ ISMobileFieldBase
 <Rear Left Equipment>
 </Rear Left Equipment>
 
+<Body Equipment>
+Advanced Fire Control
+</Body Equipment>
+
 <Rear Equipment>
 Lift Hoist
 </Rear Equipment>
 
 <Turret Equipment>
-Advanced Fire Control
 Medium Laser
 Medium Laser
 Medium Laser

@@ -37,12 +37,16 @@ Tonbo Superheavy Transport
 2
 </Armor>
 
-<Front Equipment>
+<structural_tech_rating>
+4
+</structural_tech_rating>
 
+<Front Equipment>
+Searchlight
 </Front Equipment>
 
 <Rear Equipment>
-
+Searchlight
 </Rear Equipment>
 
 <Body Equipment>
@@ -62,7 +66,7 @@ IS Level 2
 </year>
 
 <source>
-Clan Invasion
+TRO 3085
 </source>
 
 <internal_type>

@@ -48,7 +48,12 @@ VTOL
 2
 </armor>
 
+<structural_tech_rating>
+5
+</structural_tech_rating>
+
 <Body Equipment>
+Armored Chassis
 ISAngelECMSuite
 </Body Equipment>
 

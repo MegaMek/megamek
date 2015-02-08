@@ -35,6 +35,10 @@ Transportable Field Repair Unit
 25
 </Armor>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <Front Equipment>
 Light Machine Gun
 Light Machine Gun

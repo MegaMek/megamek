@@ -17,7 +17,7 @@ Zugvogel Omni Support Aircraft
 </Name>
 
 <Model>
-D
+D 'Raubvogel'
 </Model>
 
 <Tonnage>
@@ -38,6 +38,10 @@ D
 <barrating>
 10
 </barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
 
 <Nose Equipment>
 ISGaussRifle
@@ -87,7 +91,7 @@ IS Level 2
 </year>
 
 <source>
-Dark Age
+TRO 3085
 </source>
 
 <internal_type>
@@ -105,3 +109,6 @@ Dark Age
 <motion_type>
 aerodyne
 </motion_type>
+
+<omni>
+</omni>

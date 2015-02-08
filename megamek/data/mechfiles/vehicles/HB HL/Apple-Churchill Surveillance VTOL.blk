@@ -53,6 +53,10 @@ VTOL
 5
 </barrating>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <Body Equipment>
 CommsGear:1
 Remote Sensor Dispenser

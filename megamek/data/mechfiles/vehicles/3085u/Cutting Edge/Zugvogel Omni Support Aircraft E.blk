@@ -39,6 +39,10 @@ E
 10
 </barrating>
 
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <Nose Equipment>
 ISMML5
 ISMML5
@@ -91,7 +95,7 @@ IS Level 2
 </year>
 
 <source>
-Dark Age
+TRO 3085
 </source>
 
 <internal_type>
@@ -109,3 +113,6 @@ Dark Age
 <motion_type>
 aerodyne
 </motion_type>
+
+<omni>
+</omni>

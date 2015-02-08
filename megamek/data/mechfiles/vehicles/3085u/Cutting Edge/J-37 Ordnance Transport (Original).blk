@@ -37,6 +37,10 @@ J-37 Ordnance Transport
 10
 </Armor>
 
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <Turret Equipment>
 ISSmallLaser
 </Turret Equipment>
@@ -84,4 +88,5 @@ Wheeled
 
 <transporters>
 TroopSpace:1
+cargobay:21:1
 </transporters>

@@ -52,9 +52,13 @@ VTOL
 8
 </barrating>
 
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <Body Equipment>
 Cargo Container (10 tons)
-Environmental Sealing
+Enviromental Sealed Chassis
 </Body Equipment>
 
 <Front Equipment>

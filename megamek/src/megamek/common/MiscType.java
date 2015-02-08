@@ -23,6 +23,7 @@ package megamek.common;
 
 import java.math.BigInteger;
 
+import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.CLERPPC;
 import megamek.common.weapons.ISERPPC;
 import megamek.common.weapons.ISHeavyPPC;
@@ -754,35 +755,43 @@ public class MiscType extends EquipmentType {
                     cargoTonnage += mount.getType().getTonnage(entity);
                 }
             }
-            // round to half ton TODO: round to kilograms for small support
-            // vees, but we don't support them yet
+            float roundWeight = TestEntity.CEIL_HALFTON;
+            if (entity.isSupportVehicle() && entity.getWeight() < 5) {
+                roundWeight = TestEntity.CEIL_KILO;
+            }
             float weight = cargoTonnage / 20f;
-            return (float) (Math.ceil(weight * 2.0f)) / 2.0f;
+            return TestEntity.round(weight, roundWeight);
         } else if (hasFlag(F_BASIC_FIRECONTROL)) {
             // 5% of weapon weight
             float weaponWeight = 0;
             for (Mounted mount : entity.getWeaponList()) {
                 weaponWeight += mount.getType().getTonnage(entity);
             }
-            // round to half ton TODO: round to kilograms for small support
-            // vees, but we don't support them yet
+            float roundWeight = TestEntity.CEIL_HALFTON;
+            if (entity.isSupportVehicle() && entity.getWeight() < 5) {
+                roundWeight = TestEntity.CEIL_KILO;
+            }
             float weight = weaponWeight / 20f;
-            return (float) (Math.ceil(weight * 2.0f)) / 2.0f;
+            return TestEntity.round(weight, roundWeight);
         } else if (hasFlag(F_ADVANCED_FIRECONTROL)) {
             // 10% of weapon weight
             float weaponWeight = 0;
             for (Mounted mount : entity.getWeaponList()) {
                 weaponWeight += mount.getType().getTonnage(entity);
             }
-            // round to half ton TODO: round to kilograms for small support
-            // vees, but we don't support them yet
-            return (float) (Math.ceil(weaponWeight / 20f) * 2.0);
+            float roundWeight = TestEntity.CEIL_HALFTON;
+            if (entity.isSupportVehicle() && entity.getWeight() < 5) {
+                roundWeight = TestEntity.CEIL_KILO;
+            }
+            return TestEntity.round(weaponWeight / 10f, roundWeight);
         } else if (hasFlag(F_BOOBY_TRAP)) {
             // 10% of unit weight
-            // round to half ton TODO: round to kilograms for small support
-            // vees, but we don't support them yet
             float weight = entity.getWeight() / 10f;
-            return (float) (Math.ceil(weight * 2.0f)) / 2.0f;
+            float roundWeight = TestEntity.CEIL_HALFTON;
+            if (entity.isSupportVehicle() && entity.getWeight() < 5) {
+                roundWeight = TestEntity.CEIL_KILO;
+            }
+            return TestEntity.round(weight, roundWeight);
         } else if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
             float weight = 2;
             for (Mounted mount : entity.getMisc()) {

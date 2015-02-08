@@ -54,11 +54,11 @@ Tracked
 </barrating>
 
 <structural_tech_rating>
-2
+3
 </structural_tech_rating>
 
 <Body Equipment>
-ISFullyAmphibiousChassis
+AmphibiousChassis
 </Body Equipment>
 
 <Front Equipment>

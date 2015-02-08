@@ -30,7 +30,6 @@ import megamek.common.GunEmplacement;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.SuperHeavyTank;
-import megamek.common.SupportTank;
 import megamek.common.Tank;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
@@ -48,12 +47,15 @@ public class TestTank extends TestEntity {
     private Tank tank = null;
 
     public TestTank(Tank tank, TestEntityOption options, String fileString) {
-        super(options, tank.getEngine(), TestTank.getArmor(tank), TestTank.getStructure(tank));
+        super(options, tank.getEngine(), getArmor(tank), getStructure(tank));
         this.tank = tank;
         this.fileString = fileString;
     }
 
-    private static Structure getStructure(Tank tank) {
+    protected static Structure getStructure(Tank tank) {
+        if (tank.isSupportVehicle()) {
+            return new SupportVeeStructure(tank);
+        }
         int type = EquipmentType.T_STRUCTURE_STANDARD;
         if (tank.getStructureType() == 1) {
             type = EquipmentType.T_STRUCTURE_ENDO_STEEL;
@@ -252,10 +254,6 @@ public class TestTank extends TestEntity {
 
     @Override
     public boolean correctEntity(StringBuffer buff, boolean ignoreAmmo) {
-        if ((tank instanceof SupportTank)) {
-            return true;
-        } // don't bother checking, won't work. Needs fixing (new class
-            // needed.)
         boolean correct = true;
         if (skip()) {
             return true;

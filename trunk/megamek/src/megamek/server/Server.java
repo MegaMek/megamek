@@ -210,6 +210,7 @@ import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
+import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.BPodWeapon;
@@ -26579,11 +26580,16 @@ public class Server implements Runnable {
             entity.restore();
             if (entity instanceof Mech) {
                 testEntity = new TestMech((Mech) entity,
-                                          Server.entityVerifier.mechOption, null);
+                        entityVerifier.mechOption, null);
             } else if ((entity.getEntityType() == Entity.ETYPE_TANK)
                        && (entity.getEntityType() != Entity.ETYPE_GUN_EMPLACEMENT)) {
-                testEntity = new TestTank((Tank) entity,
-                                          Server.entityVerifier.tankOption, null);
+                if (entity.isSupportVehicle()) {
+                    testEntity = new TestSupportVehicle((Tank) entity,
+                            entityVerifier.tankOption, null);
+                } else {
+                    testEntity = new TestTank((Tank) entity,
+                            entityVerifier.tankOption, null);
+                }
             } else if ((entity.getEntityType() == Entity.ETYPE_AERO)
                        && (entity.getEntityType() != Entity.ETYPE_DROPSHIP)
                        && (entity.getEntityType() != Entity.ETYPE_SMALL_CRAFT)
@@ -26591,16 +26597,16 @@ public class Server implements Runnable {
                        && (entity.getEntityType() != Entity.ETYPE_JUMPSHIP)
                        && (entity.getEntityType() != Entity.ETYPE_SPACE_STATION)) {
                 testEntity = new TestAero((Aero) entity,
-                                          Server.entityVerifier.aeroOption, null);
+                        entityVerifier.aeroOption, null);
             } else if (entity instanceof BattleArmor) {
                 testEntity = new TestBattleArmor((BattleArmor) entity,
-                                                 entityVerifier.baOption, null);
+                        entityVerifier.baOption, null);
             }
 
             if (testEntity != null) {
                 StringBuffer sb = new StringBuffer();
                 if (testEntity.correctEntity(sb, !game.getOptions()
-                                                      .booleanOption("is_eq_limits"))) {
+                        .booleanOption("is_eq_limits"))) {
                     entity.setDesignValid(true);
                 } else {
                     System.err.println(sb);

@@ -191,6 +191,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected String model;
     protected int year = 3071;
     protected int techLevel;
+    /**
+     * Used by support vehicles to define the structural tech rating 
+     * (TM pg 117).  The values should come from EquipmentType.RATING_A-X.
+     */
+    protected int structuralTechRating;
     protected Engine engine;
     protected boolean mixedTech = false;
     protected boolean designValid = true;
@@ -3433,6 +3438,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 MiscType type = (MiscType) m.getType();
                 if (type.hasFlag(flag)
                     && ((secondary == -1) || type.hasSubType(secondary))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    public boolean hasMisc(BigInteger flag) {
+        for (Mounted m : miscList) {
+            if ((m.getType() instanceof MiscType)) {
+                MiscType type = (MiscType) m.getType();
+                if (type.hasFlag(flag)) {
                     return true;
                 }
             }
@@ -13406,5 +13423,41 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setMpUsedLastRound(int mpUsedLastRound) {
         this.mpUsedLastRound = mpUsedLastRound;
+    }
+    
+    /**
+     * Flag that determines if the Entity is a support vehicle.
+     * @return
+     */
+    public boolean isSupportVehicle() {
+        return false;
+    }
+
+    public int getStructuralTechRating() {
+        return structuralTechRating;
+    }
+
+    public void setStructuralTechRating(int structuralTechRating) {
+        this.structuralTechRating = structuralTechRating;
+    }
+    
+    /**
+     * Returns the base engine value for support vehicles, see TM pg 120.  Non
+     * support vehicle Entities will return 0.
+     * 
+     * @return
+     */
+    public float getBaseEngineValue() {
+        return 0;
+    }
+
+    /**
+     * Returns the base chassis value for support vehicles, see TM pg 120.  Non
+     * support vehicle Entities will return 0.
+     * 
+     * @return
+     */
+    public float getBaseChassisValue() {
+        return 0;
     }
 }

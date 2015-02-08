@@ -55,6 +55,10 @@ Wheeled
 5
 </barrating>
 
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
 <Body Equipment>
 ISDuneBuggyChassis
 </Body Equipment>

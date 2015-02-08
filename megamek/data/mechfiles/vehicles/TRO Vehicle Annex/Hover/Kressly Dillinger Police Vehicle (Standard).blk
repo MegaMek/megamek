@@ -57,6 +57,10 @@ cargobay:5.275:1
 10
 </barrating>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <Body Equipment>
 Armored Chassis
 Basic Fire Control

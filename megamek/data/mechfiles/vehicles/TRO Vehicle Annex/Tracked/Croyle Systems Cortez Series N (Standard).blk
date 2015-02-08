@@ -57,8 +57,12 @@ cargobay:8.92:1
 8
 </barrating>
 
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <Body Equipment>
-ISFullyAmphibiousChassis
+AmphibiousChassis
 Environmental Sealing
 </Body Equipment>
 

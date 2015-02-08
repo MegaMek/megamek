@@ -124,7 +124,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public static enum MoveCommand implements PhaseCommand {
         MOVE_NEXT("moveNext", CMD_NONE), //$NON-NLS-1$
         MOVE_TURN("moveTurn", CMD_GROUND | CMD_AERO), //$NON-NLS-1$
-        MOVE_WALK("moveWalk", CMD_GROUND | CMD_AERO), //$NON-NLS-1$
+        MOVE_WALK("moveWalk", CMD_GROUND), //$NON-NLS-1$
         MOVE_JUMP("moveJump", CMD_MECH | CMD_TANK | CMD_INF), //$NON-NLS-1$
         MOVE_BACK_UP("moveBackUp", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_GET_UP("moveGetUp", CMD_MECH), //$NON-NLS-1$

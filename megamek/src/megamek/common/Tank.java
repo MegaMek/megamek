@@ -2314,7 +2314,9 @@ public class Tank extends Entity {
             if (hasMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
                 chassisCost *= 1.75;
             }
-            // Hydrofoil?
+            if (hasMisc(MiscType.F_HYDROFOIL)) {
+                chassisCost *= 1.1;
+            }
             if (hasMisc(MiscType.F_MONOCYCLE)) {
                 chassisCost *= 1.3;
             }
@@ -2330,7 +2332,9 @@ public class Tank extends Entity {
             if (hasMisc(MiscType.F_STOL_CHASSIS)) {
                 chassisCost *= 1.5;
             }
-            // Submersible?
+            if (hasMisc(MiscType.F_SUBMERSIBLE)) {
+                chassisCost *= 3.5;
+            }
             if (hasMisc(MiscType.F_TRACTOR_MODIFICATION)) {
                 chassisCost *= 1.1;
             }

@@ -52,6 +52,10 @@ battlearmorbay:36:1
 2
 </armor>
 
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <armor_type>
 0
 </armor_type>
@@ -83,7 +87,7 @@ battlearmorbay:36:1
 </barrating>
 
 <source>
-Dark Age
+TRO 3085s
 </source>
 
 <tonnage>

@@ -56,9 +56,14 @@ troopspace:1.0
 6
 </barrating>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <Body Equipment>
 Basic Fire Control
 IS Machine Gun Ammo - Half
+ISOffRoadChassis
 </Body Equipment>
 
 <Front Equipment>

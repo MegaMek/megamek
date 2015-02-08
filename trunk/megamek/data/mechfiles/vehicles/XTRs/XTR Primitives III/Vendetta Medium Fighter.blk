@@ -35,6 +35,10 @@ Vendetta Medium Fighter
 10
 </Armor>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <Nose Equipment>
 ISLargeLaser
 ISSmallLaser
@@ -54,6 +58,11 @@ External Stores Hardpoint
 External Stores Hardpoint
 </Right Wing Equipment>
 
+<Body Equipment>
+Advanced Fire Control
+Armored Chassis
+</Body Equipment>
+
 <Aft Equipment>
 </Aft Equipment>
 
@@ -70,7 +79,7 @@ External Stores Hardpoint
 </fuel>
 
 <type>
-IS Level 4
+IS Level 5
 </type>
 
 <year>

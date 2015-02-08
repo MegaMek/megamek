@@ -39,11 +39,14 @@ Mosquito Light Fighter
 6
 </barrating>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <Nose Equipment>
 Advanced Fire Control
-IS LRM-5 Primitive
-ISLRM5p Ammo
+IS LRM-5
+ISLRM5 Ammo
 ISMG Ammo (200)
 </Nose Equipment>
 

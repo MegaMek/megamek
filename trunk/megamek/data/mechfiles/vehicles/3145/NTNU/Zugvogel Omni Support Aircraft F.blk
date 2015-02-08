@@ -39,6 +39,10 @@ F
 10
 </barrating>
 
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <Nose Equipment>
 CLLRM15
 CLLRM15
@@ -128,3 +132,6 @@ RS 3145 NT NU
 <motion_type>
 aerodyne
 </motion_type>
+
+<omni>
+</omni>

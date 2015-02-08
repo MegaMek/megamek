@@ -7,22 +7,23 @@
 MAM0
 </Version>
 <UnitType>
-LargeSupportTank
+SupportTank
 </UnitType>
+
 <Name>
-O-65 'Oppie' Hazardous Materials Recovery Vehicle
+'Oppie' (HMRV DeConAid Trailer)
 </Name>
 
 <Model>
-O-65 HMRV
+(Standard)
 </Model>
 
 <Tonnage>
-150
+60
 </Tonnage>
 
 <cruiseMP>
-2
+0
 </cruiseMP>
 
 <barrating>
@@ -30,12 +31,10 @@ O-65 HMRV
 </barrating>
 
 <Armor>
-100
-40
-40
-40
-40
-40
+30
+31
+31
+30
 </Armor>
 
 <structural_tech_rating>
@@ -43,44 +42,44 @@ O-65 HMRV
 </structural_tech_rating>
 
 <Front Equipment>
-ISMinesweeper
-Bulldozer
+Searchlight
 Searchlight
 </Front Equipment>
 
-<Front Left Equipment>
-Manipulator
+<Left Equipment>
 Searchlight
-</Front Left Equipment>
+Tank Sprayer
+</Left Equipment>
 
-<Front Right Equipment>
-Manipulator
+<Right Equipment>
 Searchlight
-</Front Right Equipment>
-
-<Rear Left Equipment>
-Manipulator
 Tank Sprayer
-</Rear Left Equipment>
-
-<Rear Right Equipment>
-Manipulator
-Tank Sprayer
-</Rear Right Equipment>
+</Right Equipment>
 
 <Rear Equipment>
-Backhoe
+Searchlight
 Searchlight
 </Rear Equipment>
 
 <Body Equipment>
-Paramedic Equipment
+Trailer
 Enviromental Sealed Chassis
-Tractor
+MASH core component
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
+MASH Operation Theater
 </Body Equipment>
 
 <transporters>
-liquidcargobay:22.91:1
+liquidcargobay:20:1
+troopspace:5:1
 </transporters>
 
 <type>
@@ -88,7 +87,7 @@ IS Level 3
 </type>
 
 <year>
-2822
+3069
 </year>
 
 <internal_type>
@@ -100,7 +99,7 @@ IS Level 3
 </armor_type>
 
 <engine_type>
-0
+8
 </engine_type>
 
 <motion_type>

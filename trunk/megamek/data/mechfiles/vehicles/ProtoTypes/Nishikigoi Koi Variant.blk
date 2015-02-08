@@ -62,7 +62,13 @@ WIGE
 10
 </barrating>
 
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <Body Equipment>
+AmphibiousChassis
+Armored Chassis
 Advanced Fire Control
 ISSuperCharger
 ISThunderbolt10 Ammo
@@ -76,8 +82,6 @@ ISThunderbolt10 Ammo
 ISThunderbolt10 Ammo
 ISThunderbolt10 Ammo
 ISAMS Ammo
-Armored Chassis
-ISFullyAmphibious
 CommsGear:8
 </Body Equipment>
 

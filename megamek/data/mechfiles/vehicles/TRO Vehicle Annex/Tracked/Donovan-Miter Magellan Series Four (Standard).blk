@@ -57,11 +57,15 @@ cargobay:9.98:1
 5
 </barrating>
 
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <Body Equipment>
 Basic Fire Control
 IS Machine Gun Ammo - Half
 Environmental Sealing
-ISFullyAmphibiousChassis
+AmphibiousChassis
 </Body Equipment>
 
 <Front Equipment>

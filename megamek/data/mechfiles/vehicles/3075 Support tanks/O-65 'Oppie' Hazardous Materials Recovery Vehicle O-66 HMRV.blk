@@ -38,6 +38,10 @@ O-65 HMRV
 40
 </Armor>
 
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <Front Equipment>
 ISMinesweeper
 Bulldozer

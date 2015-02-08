@@ -8220,7 +8220,6 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
         misc.flags = misc.flags.or(F_SNOWMOBILE).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;

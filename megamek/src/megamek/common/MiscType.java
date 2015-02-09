@@ -766,7 +766,7 @@ public class MiscType extends EquipmentType {
                 roundWeight = TestEntity.CEIL_KILO;
             }
             float weight = cargoTonnage / 20f;
-            return TestEntity.round(weight, roundWeight);
+            return TestEntity.ceil(weight, roundWeight);
         } else if (hasFlag(F_BASIC_FIRECONTROL)) {
             // 5% of weapon weight
             float weaponWeight = 0;
@@ -778,7 +778,7 @@ public class MiscType extends EquipmentType {
                 roundWeight = TestEntity.CEIL_KILO;
             }
             float weight = weaponWeight / 20f;
-            return TestEntity.round(weight, roundWeight);
+            return TestEntity.ceil(weight, roundWeight);
         } else if (hasFlag(F_ADVANCED_FIRECONTROL)) {
             // 10% of weapon weight
             float weaponWeight = 0;
@@ -789,7 +789,7 @@ public class MiscType extends EquipmentType {
             if (entity.isSupportVehicle() && entity.getWeight() < 5) {
                 roundWeight = TestEntity.CEIL_KILO;
             }
-            return TestEntity.round(weaponWeight / 10f, roundWeight);
+            return TestEntity.ceil(weaponWeight / 10f, roundWeight);
         } else if (hasFlag(F_BOOBY_TRAP)) {
             // 10% of unit weight
             float weight = entity.getWeight() / 10f;
@@ -797,7 +797,7 @@ public class MiscType extends EquipmentType {
             if (entity.isSupportVehicle() && entity.getWeight() < 5) {
                 roundWeight = TestEntity.CEIL_KILO;
             }
-            return TestEntity.round(weight, roundWeight);
+            return TestEntity.ceil(weight, roundWeight);
         } else if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
             float weight = 2;
             for (Mounted mount : entity.getMisc()) {

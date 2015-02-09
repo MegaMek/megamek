@@ -158,6 +158,16 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
         }
         a.setStructuralTechRating(dataFile
                 .getDataAsInt("structural_tech_rating")[0]);
+        // Set armor tech rating, if it exists (defaults to structural tr)
+        if (dataFile.exists("armor_tech_rating")) {
+            a.setArmorTechRating(dataFile
+                    .getDataAsInt("armor_tech_rating")[0]);            
+        }
+        // Set engine tech rating, if it exists (defaults to structural tr)        
+        if (dataFile.exists("engine_tech_rating")) {
+            a.setArmorTechRating(dataFile
+                    .getDataAsInt("engine_tech_rating")[0]);            
+        }
 
         a.autoSetInternal();
         a.autoSetSI();

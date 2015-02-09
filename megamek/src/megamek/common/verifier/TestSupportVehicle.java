@@ -64,7 +64,7 @@ public class TestSupportVehicle extends TestTank {
             totalArmorPoints += getEntity().getOArmor(loc);
         }
         int bar = getEntity().getBARRating(Tank.LOC_BODY);
-        int techRating = getEntity().getStructuralTechRating();
+        int techRating = getEntity().getArmorTechRating();
         float weight = totalArmorPoints * SV_ARMOR_WEIGHT[bar][techRating];
         if (getEntity().getWeight() < 5) {
             return TestEntity.floor(weight, CEIL_KILO);

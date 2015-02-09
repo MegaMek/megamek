@@ -33,7 +33,6 @@ Wheeled
 </motion_type>
 
 <transporters>
-troopspace:2.0
 cargobay:2:1
 </transporters>
 

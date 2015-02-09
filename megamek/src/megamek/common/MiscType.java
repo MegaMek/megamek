@@ -1764,7 +1764,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Tractor";
         misc.setInternalName(misc.name);
-        misc.tonnage = TONNAGE_VARIABLE;
+        misc.tonnage = 0; //accounted as part of the unit Construction
         misc.criticals = 0;
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_TRACTOR_MODIFICATION)
@@ -1785,7 +1785,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Trailer";
         misc.setInternalName(misc.name);
-        misc.tonnage = TONNAGE_VARIABLE;
+        misc.tonnage = 0; //accounted as part of the unit Construction
         misc.criticals = 0;
         misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_TRAILER_MODIFICATION)
@@ -8257,7 +8257,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISOffRoadChassis() {
         MiscType misc = new MiscType();
-        misc.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
+        misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         misc.name = "Off-Road";
         misc.setInternalName("ISOffRoadChassis");
         misc.addLookupName("ISOffRoad");
@@ -8279,7 +8279,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createCLOffRoadChassis() {
         MiscType misc = new MiscType();
-        misc.techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
+        misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
         misc.name = "Off-Road";
         misc.setInternalName("ClanOffRoadChassis");
         misc.addLookupName("CLOffRoad");

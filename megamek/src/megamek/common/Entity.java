@@ -156,6 +156,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public static final int DMG_MODERATE = 2;
     public static final int DMG_HEAVY = 3;
     public static final int DMG_CRIPPLED = 4;
+    
+    public static final int USE_STRUCTURAL_RATING = -1;
 
     // Weapon sort order defines
     public static enum WeaponSortOrder {
@@ -195,7 +197,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Used by support vehicles to define the structural tech rating 
      * (TM pg 117).  The values should come from EquipmentType.RATING_A-X.
      */
-    protected int structuralTechRating;
+    protected int structuralTechRating =  EquipmentType.RATING_A;
+    /**
+     * Used by support vehicles to define tech rating of armor.  Default value
+     * indicates that structural tech rating should be used, as in most cases
+     * the armor and structural tech ratings match.
+     */
+    protected int armorTechRating = USE_STRUCTURAL_RATING;
+    /**
+     * Used by support vehicles to define tech rating of armor.  Default value
+     * indicates that structural tech rating should be used, as in most cases
+     * the engine and structural tech ratings match.
+     */
+    protected int engineTechRating = USE_STRUCTURAL_RATING;
     protected Engine engine;
     protected boolean mixedTech = false;
     protected boolean designValid = true;
@@ -13459,5 +13473,27 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public float getBaseChassisValue() {
         return 0;
+    }
+
+    public int getArmorTechRating() {
+        if (armorTechRating == USE_STRUCTURAL_RATING) {
+            return structuralTechRating;
+        }
+        return armorTechRating;
+    }
+
+    public void setArmorTechRating(int armorTechRating) {
+        this.armorTechRating = armorTechRating;
+    }
+
+    public int getEngineTechRating() {
+        if (engineTechRating == USE_STRUCTURAL_RATING) {
+            return structuralTechRating;
+        }
+        return engineTechRating;
+    }
+
+    public void setEngineTechRating(int engineTechRating) {
+        this.engineTechRating = engineTechRating;
     }
 }

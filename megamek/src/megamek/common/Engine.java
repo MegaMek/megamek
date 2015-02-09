@@ -313,7 +313,7 @@ public class Engine implements Serializable {
             float movementFactor = 4 + entity.getOriginalWalkMP()
                     * entity.getOriginalWalkMP();
             float engineWeightMult = SV_ENGINE_RATINGS[engineType][entity
-                    .getStructuralTechRating()];
+                    .getEngineTechRating()];
             float weight = entity.getBaseEngineValue() * movementFactor
                     * engineWeightMult * entity.getWeight();
             roundWeight = TestEntity.CEIL_HALFTON;

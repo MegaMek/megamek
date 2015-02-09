@@ -164,7 +164,7 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
         }
         // Set engine tech rating, if it exists (defaults to structural tr)
         if (dataFile.exists("engine_tech_rating")) {
-            t.setArmorTechRating(dataFile
+            t.setEngineTechRating(dataFile
                     .getDataAsInt("engine_tech_rating")[0]);            
         }
 

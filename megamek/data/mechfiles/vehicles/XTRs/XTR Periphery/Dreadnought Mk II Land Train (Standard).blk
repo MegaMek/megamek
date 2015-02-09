@@ -122,4 +122,8 @@ XTRO Periphery
 <tonnage>
 200.0
 </tonnage>
+ 
+<engine_tech_rating>
+4
+</engine_tech_rating>
 

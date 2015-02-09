@@ -123,7 +123,17 @@ public class TestTank extends TestEntity {
                 weight += m.getType().getTonnage(tank);
             }
         }
-        return TestEntity.ceilMaxHalf(weight / 10.0f, getWeightCeilingTurret());
+        // Turrets weight 10% of the weight of weapons in them
+        weight = weight / 10.0f;
+        if (tank.isSupportVehicle()) {
+            if (getEntity().getWeight() < 5) {
+                return TestEntity.ceil(weight, CEIL_KILO);
+            } else {
+                return TestEntity.ceil(weight, CEIL_HALFTON);
+            }
+        } else {
+            return TestEntity.ceilMaxHalf(weight, getWeightCeilingTurret());
+        }
     }
 
     public float getTankWeightDualTurret() {

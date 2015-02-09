@@ -29,10 +29,10 @@ public class SupportVeeStructure extends Structure {
     }
     
     public static  float getWeightStructure(Tank sv) {
-        float baseChassisVal = sv.getBaseChassisValue();
-        float trMult = SV_TECH_RATING_STRUCTURE_MULTIPLIER[sv
+        double baseChassisVal = sv.getBaseChassisValue();
+        double trMult = SV_TECH_RATING_STRUCTURE_MULTIPLIER[sv
                 .getStructuralTechRating()];
-        float chassisModMult = 1;
+        double chassisModMult = 1;
         if (sv.hasMisc(MiscType.F_AMPHIBIOUS)) {
             chassisModMult *= 1.75;
         }
@@ -52,7 +52,7 @@ public class SupportVeeStructure extends Structure {
             chassisModMult *= 2;
         }
         if (sv.hasMisc(MiscType.F_HYDROFOIL)) {
-        	chassisModMult *=1.7;
+        	chassisModMult *= 1.7;
         }
         if (sv.hasMisc(MiscType.F_MONOCYCLE)) {
             chassisModMult *= 0.5;
@@ -85,12 +85,12 @@ public class SupportVeeStructure extends Structure {
             chassisModMult *= 2;
         }
         
-        float weight = baseChassisVal * trMult * chassisModMult * sv.getWeight();
+        double weight = baseChassisVal * trMult * chassisModMult * sv.getWeight();
         float roundWeight = TestEntity.CEIL_HALFTON;
         if (sv.getWeight() < 5) {
             roundWeight = TestEntity.CEIL_KILO;
         }
-        return TestEntity.ceil(weight,roundWeight);
+        return TestEntity.ceil((float)weight,roundWeight);
     }
     
     public float getWeightStructure(float weight, float roundWeight) {

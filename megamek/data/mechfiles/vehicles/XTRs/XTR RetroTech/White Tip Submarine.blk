@@ -64,6 +64,10 @@ Submarine
 3
 </armor_tech>
 
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <Body Equipment>
 SubmersibleChassisMod
 Advanced Fire Control

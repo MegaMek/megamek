@@ -66,6 +66,14 @@ steeragequarters:5:1
 3
 </structural_tech_rating>
 
+<engine_tech_rating>
+4
+</engine_tech_rating>
+
+<armor_tech_rating>
+3
+</armor_tech_rating>
+
 <Body Equipment>
 Tractor
 ISSponsonTurret

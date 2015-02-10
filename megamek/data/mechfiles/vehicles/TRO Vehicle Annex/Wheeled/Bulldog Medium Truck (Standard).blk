@@ -75,7 +75,8 @@ BASearchlight
 </Rear Equipment>
 
 <transporters>
-cargobay:1.6:1
+cargobay:1.617:1
+standardseats:.3:1
 </transporters>
 
 <source>

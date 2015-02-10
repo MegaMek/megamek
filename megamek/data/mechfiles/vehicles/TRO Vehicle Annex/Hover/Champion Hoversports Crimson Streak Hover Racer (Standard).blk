@@ -73,6 +73,7 @@ UltraLightChassisMod
 
 <transporters>
 cargobay:.053:1
+standardseats:.075:1
 </transporters>
 
 <source>

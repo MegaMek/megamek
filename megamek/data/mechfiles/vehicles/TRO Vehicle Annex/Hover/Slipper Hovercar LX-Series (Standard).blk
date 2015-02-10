@@ -71,6 +71,10 @@ UltraLightChassisMod
 <Rear Equipment>
 </Rear Equipment>
 
+<transporters>
+standardseats:.3:4
+</transporters>
+
 <source>
 TRO VAr
 </source>

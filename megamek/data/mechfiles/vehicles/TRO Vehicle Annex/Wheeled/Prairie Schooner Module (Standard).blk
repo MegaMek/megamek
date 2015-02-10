@@ -56,6 +56,8 @@ Wheeled
 </structural_tech_rating>
 
 <Body Equipment>
+Tractor
+Trailer
 ISOffRoadChassis
 </Body Equipment>
 
@@ -75,7 +77,7 @@ ISOffRoadChassis
 </Rear Left Equipment>
 
 <Rear Equipment>
-hitch
+
 </Rear Equipment>
 
 <transporters>

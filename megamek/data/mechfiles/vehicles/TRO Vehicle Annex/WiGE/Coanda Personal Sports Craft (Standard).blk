@@ -73,6 +73,7 @@ AmphibiousChassis
 
 <transporters>
 cargobay:.019:1
+standardseats:.15:2
 </transporters>
 
 <source>

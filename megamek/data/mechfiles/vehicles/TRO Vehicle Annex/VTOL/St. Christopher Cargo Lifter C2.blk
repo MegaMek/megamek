@@ -76,6 +76,7 @@ VTOL
 
 <transporters>
 cargobay:12.55:3
+troopspace:.45
 </transporters>
 
 <source>

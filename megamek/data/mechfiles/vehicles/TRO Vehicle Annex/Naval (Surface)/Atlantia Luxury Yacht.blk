@@ -42,22 +42,9 @@ Naval
 
 <transporters>
 Cargobay:7:1
-1stclassquarters:10:1
-1stclassquarters:10:1
-1stclassquarters:10:1
-1stclassquarters:10:1
-1stclassquarters:10:1
-1stclassquarters:10:1
-1stclassquarters:10:1
-2ndclassquarters:7:1
-2ndclassquarters:7:1
-steeragequarters:5:1
-steeragequarters:5:1
-steeragequarters:5:1
-steeragequarters:5:1
-steeragequarters:5:1
-steeragequarters:5:1
-steeragequarters:5:1
+1stclassquarters:70:7
+2ndclassquarters:14:2
+steeragequarters:35:7
 </transporters>
 
 <engine_type>

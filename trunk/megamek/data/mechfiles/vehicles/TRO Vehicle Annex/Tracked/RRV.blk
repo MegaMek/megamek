@@ -34,7 +34,8 @@ Tracked
 
 <transporters>
 troopspace:1.0
-cargobay:1:1
+cargobay:1.054:1
+standardseats:.225:3
 </transporters>
 
 <cruiseMP>
@@ -62,6 +63,7 @@ cargobay:1:1
 </structural_tech_rating>
 
 <Body Equipment>
+AmphibiousChassis
 Advanced Fire Control
 PintleTurret
 </Body Equipment>

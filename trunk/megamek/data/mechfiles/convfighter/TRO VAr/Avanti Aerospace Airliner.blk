@@ -106,8 +106,7 @@ Lifeboat (Maritime)
 <transporters>
 troopspace:9
 cargobay:6:1
-1stclassquarters:10:1
-1stclassquarters:10:1
+1stclassquarters:20:2
 </transporters>
 
 <source>

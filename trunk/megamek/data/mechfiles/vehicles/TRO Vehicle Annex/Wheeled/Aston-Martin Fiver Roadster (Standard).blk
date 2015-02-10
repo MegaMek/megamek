@@ -73,6 +73,7 @@ ConvertibleChassisMod
 
 <transporters>
 cargobay:.05:1
+standardseats:.15:1
 </transporters>
 
 <source>

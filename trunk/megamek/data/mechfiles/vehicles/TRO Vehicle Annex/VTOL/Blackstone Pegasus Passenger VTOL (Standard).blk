@@ -34,6 +34,7 @@ VTOL
 
 <transporters>
 troopspace:7.5
+cargobay:5:1
 </transporters>
 
 <cruiseMP>

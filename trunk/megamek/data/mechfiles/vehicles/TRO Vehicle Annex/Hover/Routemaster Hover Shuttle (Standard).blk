@@ -71,8 +71,9 @@ Hover
 </Rear Equipment>
 
 <transporters>
-troopspace:1
+troopspace:.975
 cargobay:.085:1
+standardseats:.075:1
 </transporters>
 
 <source>

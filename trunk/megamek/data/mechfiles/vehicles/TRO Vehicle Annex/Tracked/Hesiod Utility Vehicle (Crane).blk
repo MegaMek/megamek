@@ -29,12 +29,8 @@ IS Level 3
 </type>
 
 <motion_type>
-Tracked
+Wheeled
 </motion_type>
-
-<transporters>
-
-</transporters>
 
 <cruiseMP>
 4
@@ -43,10 +39,6 @@ Tracked
 <engine_type>
 1
 </engine_type>
-
-<omni>
-1
-</omni>
 
 <armor>
 5

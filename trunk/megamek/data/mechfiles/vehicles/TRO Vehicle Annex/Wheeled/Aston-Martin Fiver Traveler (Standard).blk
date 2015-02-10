@@ -72,6 +72,7 @@ Wheeled
 
 <transporters>
 cargobay:.2:1
+standardseats:.15:1
 </transporters>
 
 <source>

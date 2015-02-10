@@ -89,11 +89,7 @@ Aerodyne
 <transporters>
 troopspace:1.5
 cargobay:8.5:1
-1stclassquarters:10:1
-1stclassquarters:10:1
-1stclassquarters:10:1
-1stclassquarters:10:1
-1stclassquarters:10:1
+1stclassquarters:50:5
 </transporters>
 
 <source>

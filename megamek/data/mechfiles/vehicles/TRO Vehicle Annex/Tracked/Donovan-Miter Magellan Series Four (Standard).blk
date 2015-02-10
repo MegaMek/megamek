@@ -58,8 +58,17 @@ cargobay:9.98:1
 </barrating>
 
 <structural_tech_rating>
-4
+3
 </structural_tech_rating>
+
+<armor_tech_rating>
+4
+</armor_tech_rating>
+
+<engine_tech_rating>
+3
+</engine_tech_rating>
+
 
 <Body Equipment>
 Basic Fire Control

@@ -67,6 +67,7 @@ Submarine
 </structural_tech_rating>
 
 <Body Equipment>
+SubmersibleChassisMod
 UltraLightChassisMod
 </Body Equipment>
 
@@ -85,6 +86,11 @@ Manipulator
 <Rear Equipment>
 Remote Sensor Dispenser
 </Rear Equipment>
+
+<transporters>
+standardseats:.225:3
+</transporters>
+
 
 
 

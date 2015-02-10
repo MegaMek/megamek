@@ -42,6 +42,7 @@ Submarine
 
 <transporters>
 cargobay:84.55:3
+troopspace:.45
 </transporters>
 
 <engine_type>
@@ -68,6 +69,7 @@ cargobay:84.55:3
 </structural_tech_rating>
 
 <Body Equipment>
+SubmersibleChassisMod
 Basic Fire Control
 Lifeboat (Maritime)
 Lifeboat (Maritime)

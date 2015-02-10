@@ -58,6 +58,7 @@ Wheeled
 </structural_tech_rating>
 
 <Body Equipment>
+Tractor
 ISOffRoadChassis
 </Body Equipment>
 
@@ -82,9 +83,7 @@ hitch
 
 <transporters>
 cargobay:17:1
-2ndclassquarters:7:1
-2ndclassquarters:7:1
-2ndclassquarters:7:1
+2ndclassquarters:21:3
 </transporters>
 
 <source>

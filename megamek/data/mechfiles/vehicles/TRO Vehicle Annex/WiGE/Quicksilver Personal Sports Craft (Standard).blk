@@ -73,6 +73,7 @@ AmphibiousChassis
 
 <transporters>
 cargobay:.019:1
+standardseats:.075:1
 </transporters>
 
 <source>
@@ -80,6 +81,6 @@ TRO VAr
 </source>
 
 <tonnage>
-5.0
+4.5
 </tonnage>
 

@@ -76,7 +76,8 @@ TRO VAr
 </source>
 
 <transporters>
-cargobay:.2:1
+cargobay:.198:1
+standardseats:.15:2
 </transporters>
 
 <tonnage>

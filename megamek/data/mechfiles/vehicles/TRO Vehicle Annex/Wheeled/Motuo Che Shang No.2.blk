@@ -60,7 +60,6 @@ MonocycleChassisMod
 </Body Equipment>
 
 <Front Equipment>
-Ejection Seat
 </Front Equipment>
 
 <Right Equipment>
@@ -74,6 +73,7 @@ Ejection Seat
 
 <transporters>
 cargobay:.025:1
+pillionseats:.025:1
 </transporters>
 
 <source>

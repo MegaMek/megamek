@@ -58,6 +58,7 @@ Tracked
 </structural_tech_rating>
 
 <Body Equipment>
+Tractor
 Enviromental Sealed Chassis
 </Body Equipment>
 
@@ -78,7 +79,6 @@ Searchlight
 </Rear Left Equipment>
 
 <Rear Equipment>
-Hitch
 </Rear Equipment>
 
 <source>

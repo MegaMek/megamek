@@ -77,6 +77,10 @@ UltraLightChassisMod
 <Rear Equipment>
 </Rear Equipment>
 
+<transporters>
+standardseats:.075:1
+</transporters>
+
 <tonnage>
 .23
 </tonnage>

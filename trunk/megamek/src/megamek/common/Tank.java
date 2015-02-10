@@ -102,7 +102,7 @@ public class Tank extends Entity {
 
     public static float[] BAR_ARMOR_COST_MULT = { 0, 0, 50, 100, 150, 200, 250,
             300, 400, 500, 625 };
-    
+
     @Override
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
@@ -194,7 +194,7 @@ public class Tank extends Entity {
      * the side parameter falls outside ToHitData's range of "fixed" side
      * values; in particular, it will return 0 if handed
      * {@link ToHitData#SIDE_RANDOM}.
-     * 
+     *
      * @param side
      *            The attack direction as specified above.
      * @return The appropriate directional roll modifier.
@@ -1997,7 +1997,7 @@ public class Tank extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getRunMP(boolean, boolean, boolean)
      */
     @Override
@@ -2055,7 +2055,7 @@ public class Tank extends Entity {
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     * 
+     *
      * @return A <code>boolean</code> that is <code>true</code> if the unit can
      *         be repaired (given enough time and parts); if this value is
      *         <code>false</code>, the unit is only a source of spares.
@@ -2196,7 +2196,7 @@ public class Tank extends Entity {
 
     private void addCostDetails(double cost, double[] costs) {
         bvText = new StringBuffer();
-        ArrayList<String> left = new ArrayList();
+        ArrayList<String> left = new ArrayList<String>();
 
         if (isSupportVehicle()) {
             left.add("Chassis");
@@ -2207,8 +2207,8 @@ public class Tank extends Entity {
             left.add("Final Structural Cost");
         } else {
             left.add("Internal Structure");
-            left.add("Control Systems");        
-        }        
+            left.add("Control Systems");
+        }
         left.add("Power Amplifiers");
         left.add("Heat Sinks");
         left.add("Turret");
@@ -2219,10 +2219,10 @@ public class Tank extends Entity {
         left.add("Omni Multiplier");
         left.add("Tonnage Multiplier");
         if (!isSupportVehicle()) {
-            
+
             left.add("Flotation Hull/Vacuum Protection/Environmental Sealing multiplier");
             left.add("Off-Road Multiplier");
-        }        
+        }
 
         NumberFormat commafy = NumberFormat.getInstance();
 
@@ -2378,7 +2378,7 @@ public class Tank extends Entity {
                     break;
             }
         } else {
-            engineCost = (getEngine().getBaseCost() * 
+            engineCost = (getEngine().getBaseCost() *
                     getEngine().getRating() * weight) / 75.0;
         }
         costs[i++] = engineCost;
@@ -2389,7 +2389,7 @@ public class Tank extends Entity {
             for (int loc = 0; loc < locations(); loc++) {
                 totalArmorPoints += getOArmor(loc);
             }
-            costs[i++] = totalArmorPoints * 
+            costs[i++] = totalArmorPoints *
                     BAR_ARMOR_COST_MULT[getBARRating(LOC_BODY)];
         } else {
             if (hasPatchworkArmor()) {
@@ -2397,31 +2397,31 @@ public class Tank extends Entity {
                     costs[i++] = getArmorWeight(loc)
                             * EquipmentType.getArmorCost(armorType[loc]);
                 }
-    
+
             } else {
                 costs[i++] = getArmorWeight()
                         * EquipmentType.getArmorCost(armorType[0]);
             }
         }
-        
+
         // Compute final structural cost
         int structCostIdx = 0;
         if (isSupportVehicle()) {
             structCostIdx = i++;
             costs[structCostIdx] = 0;
             for (int c = 0; c < structCostIdx; c++) {
-                costs[structCostIdx] += costs[c]; 
+                costs[structCostIdx] += costs[c];
             }
             double techRatingMultiplier = 0.5 + getStructuralTechRating() * 0.25;
-            costs[structCostIdx] *= techRatingMultiplier; 
+            costs[structCostIdx] *= techRatingMultiplier;
         } else {
             // IS has no variations, no Endo etc.
             costs[i++] = (weight / 10.0) * 10000;
             double controlWeight = Math.ceil(weight * 0.05 * 2.0) / 2.0; // ?
             // should be rounded up to nearest half-ton
-            costs[i++] = 10000 * controlWeight;        
+            costs[i++] = 10000 * controlWeight;
         }
-        
+
         double freeHeatSinks = engine.getWeightFreeEngineHeatSinks();
         int sinks = 0;
         double turretWeight = 0;
@@ -2470,7 +2470,7 @@ public class Tank extends Entity {
                 costs[i++] = diveTonnage * 40000;
             }
         }
-        
+
         double cost = 0; // calculate the total
         for (int x = structCostIdx; x < i; x++) {
             cost += costs[x];
@@ -2482,7 +2482,7 @@ public class Tank extends Entity {
             costs[i++] = 0;
         }
 
-        
+
         double multiplier = 1.0;
         switch (movementMode) {
             case HOVER:
@@ -2509,8 +2509,8 @@ public class Tank extends Entity {
         }
         cost *= multiplier;
         costs[i++] = -multiplier;
-            
-        if (!isSupportVehicle()) {            
+
+        if (!isSupportVehicle()) {
             if (hasWorkingMisc(MiscType.F_FLOTATION_HULL)
                     || hasWorkingMisc(MiscType.F_VACUUM_PROTECTION)
                     || hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
@@ -2524,7 +2524,7 @@ public class Tank extends Entity {
             }
         }
 
-        
+
         addCostDetails(cost, costs);
         return Math.round(cost);
     }
@@ -2610,7 +2610,7 @@ public class Tank extends Entity {
 
     /**
      * adds minor, moderate or heavy movement system damage
-     * 
+     *
      * @param level
      *            a <code>int</code> representing minor damage (1), moderate
      *            damage (2), heavy damage (3), or immobilized (4)
@@ -2685,7 +2685,7 @@ public class Tank extends Entity {
     /**
      * get the type of critical caused by a critical roll, taking account of
      * existing damage
-     * 
+     *
      * @param roll
      *            the final dice roll
      * @param loc
@@ -2699,7 +2699,7 @@ public class Tank extends Entity {
     /**
      * get the type of critical caused by a critical roll, taking account of
      * existing damage
-     * 
+     *
      * @param roll
      *            the final dice roll
      * @param loc
@@ -3015,7 +3015,7 @@ public class Tank extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getTotalCommGearTons()
      */
     @Override
@@ -3025,7 +3025,7 @@ public class Tank extends Entity {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see megamek.common.Entity#getIniBonus()
      */
     @Override
@@ -3092,7 +3092,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -3119,7 +3119,7 @@ public class Tank extends Entity {
      * can be active and not working when under ECCM)
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @return <code>true</code> if this unit has a stealth system that is
      *         currently active, <code>false</code> if there is no stealth
      *         system or if it is inactive.
@@ -3142,7 +3142,7 @@ public class Tank extends Entity {
 
     /**
      * get the total amount of item slots available for this tank
-     * 
+     *
      * @return
      */
     public int getTotalSlots() {
@@ -3151,7 +3151,7 @@ public class Tank extends Entity {
 
     /**
      * get the free item slots for this tank
-     * 
+     *
      * @return
      */
     public int getFreeSlots() {
@@ -3333,7 +3333,7 @@ public class Tank extends Entity {
      * <code>IllegalArgumentException</code> will be thrown.
      * <p/>
      * Sub-classes are encouraged to override this method.
-     * 
+     *
      * @param range
      *            - an <code>int</code> value that must match one of the
      *            <code>Compute</code> class range constants.
@@ -3593,7 +3593,7 @@ public class Tank extends Entity {
 
     /**
      * Tanks go Hull Down slightly differently, this method accounts for this
-     * 
+     *
      * @see megamek.common.Entity#setHullDown(boolean)
      */
     @Override
@@ -3610,7 +3610,7 @@ public class Tank extends Entity {
 
     /**
      * Returns True if this tank moved backwards before going Hull Down
-     * 
+     *
      * @return
      */
     public boolean isBackedIntoHullDown() {

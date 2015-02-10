@@ -19,6 +19,7 @@ import java.awt.Component;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.Hashtable;
+import java.util.List;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -169,5 +170,11 @@ public interface IBoardView extends MechDisplayListener {
      */
     public void setChatterBoxActive(boolean cba);
 
+    /**
+     * Returns any Entities that are flying over the given Coords.
+     * @param c
+     * @return
+     */
+    public List<Entity> getEntitiesFlyingOver(Coords c);
 
 }

@@ -2517,13 +2517,24 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 targets.add(choice);
             }
         }
+        
+        // If there aren't other targets, check for targets flying over pos
+        if (targets.size() == 0) {
+            List<Entity> flyovers = 
+                    clientgui.getBoardView().getEntitiesFlyingOver(pos);
+            for (Entity e : flyovers) {
+                if (!targets.contains(e)) {
+                    targets.add(e);
+                }
+            }
+        }
 
         // Is there a building in the hex?
         Building bldg = clientgui.getClient().getGame().getBoard()
-                                 .getBuildingAt(pos);
+                .getBuildingAt(pos);
         if (bldg != null) {
             targets.add(new BuildingTarget(pos, clientgui.getClient().getGame()
-                                                         .getBoard(), false));
+                    .getBoard(), false));
         }
         
         // If we clicked on a wooded hex with no other targets, clear woods

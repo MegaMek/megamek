@@ -798,6 +798,13 @@ public class MiscType extends EquipmentType {
                 roundWeight = TestEntity.CEIL_KILO;
             }
             return TestEntity.ceil(weight, roundWeight);
+            
+        } else if (hasFlag(F_EJECTION_SEAT)) {
+            if (entity.isSupportVehicle() && entity.getWeight() < 5) {
+            	return .1f;
+            } else {
+            	return .5f;
+            }
         } else if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
             float weight = 2;
             for (Mounted mount : entity.getMisc()) {
@@ -3080,7 +3087,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Ejection Seat";
         misc.setInternalName(misc.name);
-        misc.tonnage = 0.5f;
+        misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_EJECTION_SEAT).or(F_MECH_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
@@ -7758,6 +7765,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = 0.25f;
         misc.criticals = 1;
+        misc.tankslots = 0;
         misc.cost = 7500;
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT)
                 .or(F_MECH_EQUIPMENT);

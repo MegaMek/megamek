@@ -33,8 +33,8 @@ Hover
 </motion_type>
 
 <transporters>
-insulatedcargobay:3.48:1:1
-insulatedcargobay:1.74:1:1
+insulatedcargobay:4:1:1
+insulatedcargobay:2:1:1
 </transporters>
 
 <cruiseMP>

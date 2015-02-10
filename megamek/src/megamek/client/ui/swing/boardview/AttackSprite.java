@@ -12,6 +12,8 @@ import java.util.Iterator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.StraightArrowPolygon;
+import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Targetable;
 import megamek.common.WeaponType;
@@ -78,7 +80,14 @@ class AttackSprite extends Sprite {
         // color?
         attackColor = PlayerColors.getColor(ae.getOwner().getColorIndex());
         // angle of line connecting two hexes
-        an = (ae.getPosition().radian(target.getPosition()) + (Math.PI * 1.5))
+        Coords targetPosition;
+        if (Compute.isGroundToAir(ae, target)) {
+            targetPosition = Compute.getClosestFlightPath(ae.getPosition(),
+                    (Entity) target);
+        } else {
+            targetPosition = target.getPosition();
+        }
+        an = (ae.getPosition().radian(targetPosition) + (Math.PI * 1.5))
                 % (Math.PI * 2); // angle
         makePoly();
 
@@ -128,7 +137,14 @@ class AttackSprite extends Sprite {
     private void makePoly() {
         // make a polygon
         a = this.boardView1.getHexLocation(ae.getPosition());
-        t = this.boardView1.getHexLocation(target.getPosition());
+        Coords targetPosition;
+        if (Compute.isGroundToAir(ae, target)) {
+            targetPosition = Compute.getClosestFlightPath(ae.getPosition(),
+                    (Entity) target);
+        } else {
+            targetPosition = target.getPosition();
+        }
+        t = this.boardView1.getHexLocation(targetPosition);
         // OK, that is actually not good. I do not like hard coded figures.
         // HEX_W/2 - x distance in pixels from origin of hex bounding box to
         // the center of hex.

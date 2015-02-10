@@ -314,14 +314,13 @@ public class Engine implements Serializable {
                     * entity.getOriginalWalkMP();
             float engineWeightMult = SV_ENGINE_RATINGS[engineType][entity
                     .getEngineTechRating()];
-            float weight = entity.getBaseEngineValue() * movementFactor
+            double weight = entity.getBaseEngineValue() * movementFactor
                     * engineWeightMult * entity.getWeight();
             roundWeight = TestEntity.CEIL_HALFTON;
             if (entity.getWeight() < 5) {
                 roundWeight = TestEntity.CEIL_KILO;
             }
-            weight = TestEntity.ceil(weight, roundWeight);
-            return weight;
+            return TestEntity.ceil((float)weight, roundWeight);
         }
         float weight = ENGINE_RATINGS[(int) Math.ceil(engineRating / 5.0)];
         switch (engineType) {

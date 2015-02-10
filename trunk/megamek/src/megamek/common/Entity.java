@@ -13461,7 +13461,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * 
      * @return
      */
-    public float getBaseEngineValue() {
+    public double getBaseEngineValue() {
         return 0;
     }
 
@@ -13471,7 +13471,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * 
      * @return
      */
-    public float getBaseChassisValue() {
+    public double getBaseChassisValue() {
         return 0;
     }
 

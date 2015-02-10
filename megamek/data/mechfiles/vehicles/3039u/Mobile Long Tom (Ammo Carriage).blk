@@ -9,7 +9,7 @@ MAM0
 </Version>
 
 <UnitType>
-Tank
+SupportTank
 </UnitType>
 
 <Name>
@@ -50,6 +50,10 @@ Tracked
 <barrating>
 10
 </barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
 
 <Body Equipment>
 ISLongTomAmmo

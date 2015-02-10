@@ -74,8 +74,8 @@ BASearchlight
 
 <transporters>
 cargobay:.068:1
-pillionseats:.25:1
-standardseats:.25:1
+pillionseats:.025:1
+standardseats:.025:1
 </transporters>
 
 <source>

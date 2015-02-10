@@ -2897,6 +2897,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         flyOverSprites.add(new FlyOverSprite(this, e));
     }
+    
+    public List<Entity> getEntitiesFlyingOver(Coords c) {
+        List<Entity> entities = new ArrayList<Entity>();
+        for (FlyOverSprite fsprite : flyOverSprites) {
+            if (fsprite.getEntity().getPassedThrough().contains(c)) {
+                entities.add(fsprite.getEntity());
+            }
+        }
+        return entities;
+    }
 
     /**
      * Adds a c3 line to the sprite list.

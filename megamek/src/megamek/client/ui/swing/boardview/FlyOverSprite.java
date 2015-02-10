@@ -167,6 +167,10 @@ class FlyOverSprite extends Sprite {
     public int getEntityId() {
         return en.getId();
     }
+    
+    public Entity getEntity() {
+        return en;
+    }
 
     @Override
     public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {

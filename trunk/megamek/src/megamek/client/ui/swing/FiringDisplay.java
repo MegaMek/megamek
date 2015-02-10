@@ -1565,6 +1565,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         } else {
             target = t;
         }
+        if ((target instanceof Entity) && Compute.isGroundToAir(ce(), target)) {
+            Coords targetPos = Compute.getClosestFlightPath(ce().getPosition(),
+                    (Entity) target);
+            clientgui.getBoardView().cursor(targetPos);
+        }
         ash.setAimingMode();
         updateTarget();
         ash.showDialog();

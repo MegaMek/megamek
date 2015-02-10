@@ -26,18 +26,18 @@ public class TestSupportVehicle extends TestTank {
      * Gives the weight of a single point of armor at a particular BAR for a 
      * given tech level.
      */
-    public static final float[][] SV_ARMOR_WEIGHT = 
-        {{0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
-         {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f},
-         {.040f, .025f, .016f, .013f, .012f, .011f},
-         {.060f, .038f, .024f, .019f, .017f, .016f},
-         {.000f, .050f, .032f, .026f, .023f, .021f},
-         {.000f, .063f, .040f, .032f, .028f, .026f},
-         {.000f, .000f, .048f, .038f, .034f, .032f},
-         {.000f, .000f, .056f, .045f, .040f, .037f},
-         {.000f, .000f, .000f, .051f, .045f, .042f},
-         {.000f, .000f, .000f, .057f, .051f, .047f},
-         {.000f, .000f, .000f, .063f, .056f, .052f},};
+    public static final double[][] SV_ARMOR_WEIGHT = 
+        {{0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+         {0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+         {.040, .025, .016, .013, .012, .011},
+         {.060, .038, .024, .019, .017, .016},
+         {.000, .050, .032, .026, .023, .021},
+         {.000, .063, .040, .032, .028, .026},
+         {.000, .000, .048, .038, .034, .032},
+         {.000, .000, .056, .045, .040, .037},
+         {.000, .000, .000, .051, .045, .042},
+         {.000, .000, .000, .057, .051, .047},
+         {.000, .000, .000, .063, .056, .052},};
     
     public TestSupportVehicle(Tank sv, TestEntityOption options,
             String fileString) {
@@ -65,11 +65,11 @@ public class TestSupportVehicle extends TestTank {
         }
         int bar = getEntity().getBARRating(Tank.LOC_BODY);
         int techRating = getEntity().getArmorTechRating();
-        float weight = totalArmorPoints * SV_ARMOR_WEIGHT[bar][techRating];
+        double weight = totalArmorPoints * SV_ARMOR_WEIGHT[bar][techRating];
         if (getEntity().getWeight() < 5) {
-            return TestEntity.floor(weight, CEIL_KILO);
+            return TestEntity.floor((float)weight, CEIL_KILO);
         } else {
-            return TestEntity.ceil(weight, CEIL_HALFTON);
+            return TestEntity.ceil((float)weight, CEIL_HALFTON);
         }
         
     }    

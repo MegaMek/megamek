@@ -95,23 +95,23 @@ public class SupportVTOL extends VTOL {
         return 3;
     }
 
-    public float getBaseEngineValue() {
+    public double getBaseEngineValue() {
         if (getWeight() < 5) {
-            return 0.002f;
+            return 0.002;
         } else if (!isSuperHeavy()) {
-            return 0.0025f;
+            return 0.0025;
         } else {
-            return 0.004f;
+            return 0.004;
         }
     }
 
-    public float getBaseChassisValue() {
+    public double getBaseChassisValue() {
         if (getWeight() < 5) {
-            return 0.2f;
+            return 0.2;
         } else if (!isSuperHeavy()) {
-            return 0.25f;
+            return 0.25;
         } else {
-            return 0.3f;
+            return 0.3;
         }
     }
 

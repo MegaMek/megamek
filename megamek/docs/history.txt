@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
-v0.41.2 (2015-02-12 17:20 UTC)
+v0.41.3-dev
+
+v0.41.2-dev (SVN)
 + Bug [#4422]: Woods, jungle, and smoke not getting counted for LoS
 + Bug [#4409]: Fixed another AmmoType related java.lang.ClassCastException
 + Data: New Sprites and Removed the TRO VA units since they are not ready

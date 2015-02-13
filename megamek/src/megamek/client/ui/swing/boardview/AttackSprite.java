@@ -82,8 +82,8 @@ class AttackSprite extends Sprite {
         // angle of line connecting two hexes
         Coords targetPosition;
         if (Compute.isGroundToAir(ae, target)) {
-            targetPosition = Compute.getClosestFlightPath(ae.getPosition(),
-                    (Entity) target);
+            targetPosition = Compute.getClosestFlightPath(ae.getId(),
+                    ae.getPosition(), (Entity) target);
         } else {
             targetPosition = target.getPosition();
         }
@@ -139,8 +139,8 @@ class AttackSprite extends Sprite {
         a = this.boardView1.getHexLocation(ae.getPosition());
         Coords targetPosition;
         if (Compute.isGroundToAir(ae, target)) {
-            targetPosition = Compute.getClosestFlightPath(ae.getPosition(),
-                    (Entity) target);
+            targetPosition = Compute.getClosestFlightPath(ae.getId(),
+                    ae.getPosition(), (Entity) target);
         } else {
             targetPosition = target.getPosition();
         }

@@ -77,6 +77,7 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.AbstractEntityAction;
 import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
 import megamek.common.actions.FlipArmsAction;
@@ -1033,6 +1034,15 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 }
             }
         }
+        
+        // If the user picked a hex along the flight path, server needs to know
+        if ((target instanceof Entity) && Compute.isGroundToAir(ce(), target)) {
+            Coords targetPos = ((Entity)target).getPlayerPickedPassThrough(cen);
+            if (targetPos != null) {
+                clientgui.getClient().sendPlayerPickedPassThrough(
+                        ((Entity) target).getId(), cen, targetPos);
+            }
+        }
 
         // send out attacks
         clientgui.getClient().sendAttackData(cen, newAttacks);
@@ -1566,8 +1576,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             target = t;
         }
         if ((target instanceof Entity) && Compute.isGroundToAir(ce(), target)) {
-            Coords targetPos = Compute.getClosestFlightPath(ce().getPosition(),
-                    (Entity) target);
+            Coords targetPos = Compute.getClosestFlightPath(cen, ce()
+                    .getPosition(), (Entity) target);
             clientgui.getBoardView().cursor(targetPos);
         }
         ash.setAimingMode();
@@ -1800,6 +1810,26 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     updateFlipArms(false);
                     torsoTwist(b.getCoords());
                 } else if (targ != null) {
+                    if ((targ instanceof Entity) 
+                            && Compute.isGroundToAir(ce(), targ)) {
+                        Entity entTarg = (Entity)targ;
+                        boolean alreadyShotAt = false;
+                        List<EntityAction> actions = clientgui.getClient()
+                                .getGame().getActionsVector();
+                        for (EntityAction action : actions) {
+                            if (!(action instanceof AttackAction)) {
+                                continue;
+                            }
+                            AttackAction aa = (AttackAction)action;
+                            if ((action.getEntityId() == cen) 
+                                    && (aa.getTargetId() == entTarg.getId())) {
+                                alreadyShotAt = true;
+                            }
+                        }
+                        if (!alreadyShotAt) {
+                            entTarg.setPlayerPickedPassThrough(cen, evtCoords);
+                        }
+                    }
                     target(targ);
                 }
             }
@@ -2049,6 +2079,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (clientgui.getClient().isMyTurn()) {
             setStatusBarText(Messages
                     .getString("FiringDisplay.its_your_turn")); //$NON-NLS-1$
+        }
+        if ((target instanceof Entity) 
+                && Compute.isGroundToAir(ce(), target)) {
+            ((Entity)target).setPlayerPickedPassThrough(cen, null);
         }
         target(null);
         clearAttacks();        

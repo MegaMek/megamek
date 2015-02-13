@@ -662,6 +662,26 @@ public class Client implements IClientCommandHandler {
         send(new Packet(Packet.COMMAND_ENTITY_DEPLOY, data));
         flushConn();
     }
+    
+    /**
+     * For ground to air attacks, the ground unit targets the closest hex in
+     * the air units flight path.  In the case of several equidistant hexes,
+     * the attacker gets to choose.  This method updates the server with the
+     * users choice.
+     * 
+     * @param targetId
+     * @param attackerId
+     * @param pos
+     */
+    public void sendPlayerPickedPassThrough(Integer targetId,
+            Integer attackerId, Coords pos) {
+        Object[] data = new Object[3];
+        data[0] = targetId;
+        data[1] = attackerId;
+        data[2] = pos;
+        
+        send(new Packet(Packet.COMMAND_ENTITY_GTA_HEX_SELECT, data));
+    }
 
     /**
      * Send a weapon fire command to the server.

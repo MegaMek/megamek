@@ -1376,8 +1376,8 @@ public class Compute {
                 && (target instanceof Entity)) {
             // distance is determined by closest point on flight path
             distance = attacker.getPosition().distance(
-                    getClosestFlightPath(attacker.getPosition(),
-                                         (Entity) target));
+                    getClosestFlightPath(attacker.getId(),
+                            attacker.getPosition(), (Entity) target));
 
             // if the ground attacker uses weapon bays and we are on a
             // ground map, then we will divide this distance by 16
@@ -1426,9 +1426,22 @@ public class Compute {
         return distance;
     }
 
-    public static Coords getClosestFlightPath(Coords aPos, Entity te) {
+    /**
+     * Returns the closest position along <code>te</codeE>'s flight path to 
+     * <code>aPos</code>.  In the case of multiple equi-distance positions, the
+     * first one is picked unless <code>te</code>'s playerPickedPassThrough
+     * position is non-null.
+     * 
+     * @param aPos
+     * @param te
+     * @return
+     */
+    public static Coords getClosestFlightPath(int attackerId, Coords aPos, Entity te) {
 
         Coords finalPos = te.getPosition();
+        if (te.getPlayerPickedPassThrough(attackerId) != null) {
+            finalPos = te.getPlayerPickedPassThrough(attackerId);
+        }
         int distance = aPos.distance(finalPos);
         // don't return zero distance Coords, but rather the Coords immediately
         // before this
@@ -3324,7 +3337,8 @@ public class Compute {
         // if using advanced AA options, then ground-to-air fire determines arc
         // by closest position
         if (isGroundToAir(ae, t) && (t instanceof Entity)) {
-            tPos = getClosestFlightPath(ae.getPosition(), (Entity) t);
+            tPos = getClosestFlightPath(ae.getId(), ae.getPosition(),
+                    (Entity) t);
         }
 
         tPosV.add(tPos);
@@ -3625,7 +3639,8 @@ public class Compute {
             }
             // Ground targets pick the closest path to Aeros (TW pg 107)
             if ((te instanceof Aero) && isGroundToAir(ae, target)) {
-                targetPos = Compute.getClosestFlightPath(ae.getPosition(), te);
+                targetPos = Compute.getClosestFlightPath(ae.getId(),
+                        ae.getPosition(), te);
             }
         }
 
@@ -3883,8 +3898,8 @@ public class Compute {
         }
 
         if (isGroundToAir(attacker, target) && (null != te)) {
-            return te.sideTable(attackPos, usePrior, te.getFacing(),
-                    Compute.getClosestFlightPath(attackPos, te));
+            return te.sideTable(attackPos, usePrior, te.getFacing(), Compute
+                    .getClosestFlightPath(attacker.getId(), attackPos, te));
         }
 
         if ((null != te) && (called == CalledShot.CALLED_LEFT)) {

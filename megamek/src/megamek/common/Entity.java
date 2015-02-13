@@ -340,6 +340,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     // need to keep a list of areas that this entity has passed through on the
     // current turn
     private Vector<Coords> passedThrough = new Vector<Coords>();
+    /**
+     * Stores the player selected hex ground to air targeting.
+     * For ground to air, distance to target for the ground unit is determined
+     * by the closest hex in the flight path of the airborne unit.  It's
+     * possible that there are multiple equidistance hexes in the flight path
+     * and in some cases, one of those hexes will be better than the other (ie,
+     * one could be side arc and one rear).  By default, MM picks the first hex,
+     * but the user should be able to distinguish between multiple equi-distant
+     * hexes.
+     */
+    private Map<Integer, Coords> playerPickedPassThrough = new HashMap<>();
     private boolean ramming;
     // to determine what arcs have fired for large craft
     private boolean[] frontArcFired;
@@ -5365,6 +5376,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // reset hexes passed through
         setPassedThrough(new Vector<Coords>());
+        if (playerPickedPassThrough == null) {
+            playerPickedPassThrough = new HashMap<>();
+        } else {
+            playerPickedPassThrough.clear();
+        }
 
         resetFiringArcs();
 
@@ -10016,6 +10032,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         heading.addElement(curDir);
         return heading;
+    }
+    
+    public void setPlayerPickedPassThrough(int attackerId, Coords c) {
+        if (playerPickedPassThrough == null) {
+            playerPickedPassThrough = new HashMap<>();
+        }
+        playerPickedPassThrough.put(attackerId, c);
+    }
+    
+    public Coords getPlayerPickedPassThrough(int attackerId) {
+        if (playerPickedPassThrough == null) {
+            playerPickedPassThrough = new HashMap<>();
+        }
+        return playerPickedPassThrough.get(attackerId);
     }
 
     public void setPassedThrough(Vector<Coords> pass) {

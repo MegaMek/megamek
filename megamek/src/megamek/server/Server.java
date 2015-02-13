@@ -11712,6 +11712,20 @@ public class Server implements Runnable {
             }
         }
     }
+    
+    /**
+     * Client has sent an update indicating that a ground unit is firing at
+     * an airborne unit and is overriding the default select for the position
+     * in the flight path.
+     * @param packet
+     * @param connId
+     */
+    private void receiveGroundToAirHexSelectPacket(Packet packet, int connId) {
+        Integer targetId = (Integer)packet.getObject(0);
+        Integer attackerId = (Integer)packet.getObject(1);
+        Coords pos = (Coords)packet.getObject(2);
+        game.getEntity(targetId).setPlayerPickedPassThrough(attackerId, pos);
+    }
 
     /**
      * Gets a bunch of entity attacks from the packet. If valid, processess them
@@ -27968,6 +27982,9 @@ public class Server implements Runnable {
             case Packet.COMMAND_ENTITY_ATTACK:
                 receiveAttack(packet, connId);
                 break;
+            case Packet.COMMAND_ENTITY_GTA_HEX_SELECT:
+                receiveGroundToAirHexSelectPacket(packet, connId);
+                break;                
             case Packet.COMMAND_ENTITY_ADD:
                 receiveEntityAdd(packet, connId);
                 resetPlayersDone();

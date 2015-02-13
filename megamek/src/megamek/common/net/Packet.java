@@ -38,6 +38,7 @@ public class Packet {
     public static final int COMMAND_ENTITY_MOVE = 110;
     public static final int COMMAND_ENTITY_DEPLOY = 120;
     public static final int COMMAND_ENTITY_ATTACK = 130;
+    public static final int COMMAND_ENTITY_GTA_HEX_SELECT = 135;
     public static final int COMMAND_ENTITY_UPDATE = 140;
     public static final int COMMAND_ENTITY_WORDER_UPDATE = 145;
     public static final int COMMAND_ENTITY_MODECHANGE = 150;

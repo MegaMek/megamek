@@ -1,0 +1,94 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportVTOL
+</UnitType>
+
+<Name>
+SOAR
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3018
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor>
+4
+3
+3
+2
+2
+</armor>
+
+<barrating>
+4
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
+<Body Equipment>
+Enviromental Sealed Chassis
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+Paramedic Equipment
+</Right Equipment>
+
+<Left Equipment>
+Paramedic Equipment
+</Left Equipment>
+
+<Rear Equipment>
+Paramedic Equipment
+Paramedic Equipment
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<transporters>
+cargobay:.05:1
+troopspace:.45
+</transporters>
+
+<source>
+TRO VAr
+</source>
+
+<tonnage>
+15.0
+</tonnage>
+

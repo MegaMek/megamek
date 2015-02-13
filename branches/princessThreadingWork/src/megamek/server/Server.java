@@ -210,6 +210,7 @@ import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
+import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
 import megamek.common.weapons.AttackHandler;
 import megamek.common.weapons.BPodWeapon;
@@ -4263,7 +4264,16 @@ public class Server implements Runnable {
         if (diceRoll < roll.getValue()) {
             r.choose(false);
             addReport(r);
-            int damage = 10 * (roll.getValue() - diceRoll);
+            int mof = roll.getValue() - diceRoll;
+            int damage = 10 * (mof);
+            // Report damage taken
+            r = new Report(9609);
+            r.indent();
+            r.addDesc(entity);
+            r.add(damage);
+            r.add(mof);
+            addReport(r);
+            
             int side = ToHitData.SIDE_FRONT;
             if ((entity instanceof Aero) && ((Aero) entity).isSpheroid()) {
                 side = ToHitData.SIDE_REAR;
@@ -6226,9 +6236,9 @@ public class Server implements Runnable {
 
         if (md.contains(MoveStepType.LAND) && (entity instanceof Aero)) {
             Aero a = (Aero) entity;
-            rollTarget = a.checkHorizontalLanding(md.getLastStepMovementType(),
-                                                  md.getFinalVelocity(), md.getFinalCoords(),
-                                                  md.getFinalFacing());
+            rollTarget = a.checkLanding(md.getLastStepMovementType(),
+                    md.getFinalVelocity(), md.getFinalCoords(),
+                    md.getFinalFacing(), false);
             doAttemptLanding(entity, rollTarget);
             a.land();
             entity.setPosition(md.getFinalCoords().translated(
@@ -6240,8 +6250,9 @@ public class Server implements Runnable {
 
         if (md.contains(MoveStepType.VLAND) && (entity instanceof Aero)) {
             Aero a = (Aero) entity;
-            rollTarget = a.checkVerticalLanding(md.getLastStepMovementType(),
-                                                md.getFinalVelocity(), md.getFinalCoords());
+            rollTarget = a.checkLanding(md.getLastStepMovementType(),
+                    md.getFinalVelocity(), md.getFinalCoords(),
+                    md.getFinalFacing(), true);
             doAttemptLanding(entity, rollTarget);
             if (entity instanceof Dropship) {
                 applyDropshipLandingDamage(md.getFinalCoords(), a);
@@ -26569,11 +26580,16 @@ public class Server implements Runnable {
             entity.restore();
             if (entity instanceof Mech) {
                 testEntity = new TestMech((Mech) entity,
-                                          Server.entityVerifier.mechOption, null);
+                        entityVerifier.mechOption, null);
             } else if ((entity.getEntityType() == Entity.ETYPE_TANK)
                        && (entity.getEntityType() != Entity.ETYPE_GUN_EMPLACEMENT)) {
-                testEntity = new TestTank((Tank) entity,
-                                          Server.entityVerifier.tankOption, null);
+                if (entity.isSupportVehicle()) {
+                    testEntity = new TestSupportVehicle((Tank) entity,
+                            entityVerifier.tankOption, null);
+                } else {
+                    testEntity = new TestTank((Tank) entity,
+                            entityVerifier.tankOption, null);
+                }
             } else if ((entity.getEntityType() == Entity.ETYPE_AERO)
                        && (entity.getEntityType() != Entity.ETYPE_DROPSHIP)
                        && (entity.getEntityType() != Entity.ETYPE_SMALL_CRAFT)
@@ -26581,16 +26597,16 @@ public class Server implements Runnable {
                        && (entity.getEntityType() != Entity.ETYPE_JUMPSHIP)
                        && (entity.getEntityType() != Entity.ETYPE_SPACE_STATION)) {
                 testEntity = new TestAero((Aero) entity,
-                                          Server.entityVerifier.aeroOption, null);
+                        entityVerifier.aeroOption, null);
             } else if (entity instanceof BattleArmor) {
                 testEntity = new TestBattleArmor((BattleArmor) entity,
-                                                 entityVerifier.baOption, null);
+                        entityVerifier.baOption, null);
             }
 
             if (testEntity != null) {
                 StringBuffer sb = new StringBuffer();
                 if (testEntity.correctEntity(sb, !game.getOptions()
-                                                      .booleanOption("is_eq_limits"))) {
+                        .booleanOption("is_eq_limits"))) {
                     entity.setDesignValid(true);
                 } else {
                     System.err.println(sb);
@@ -30280,21 +30296,45 @@ public class Server implements Runnable {
                  && !game.getOptions().booleanOption("ejected_pilots_flee")
                  && (entity instanceof Tank)) {
             EjectedCrew crew = new EjectedCrew(entity);
+            // Need to set game manually; since game.addEntity not called yet
+            // Don't want to do this yet, as Entity may not be added
+            crew.setGame(game);
             crew.setDeployed(true);
             crew.setId(getFreeEntityId());
-            game.addEntity(crew);
-            send(createAddEntityPacket(crew.getId()));
             // Make them not get a move this turn
             crew.setDone(true);
             // Place on board
-
-            crew.setPosition(entity.getPosition());
-            // Update the entity
+            // Vehicles don't have ejection systems, so crew must abandon into
+            // a legal hex
+            Coords legalPosition = null;
+            if (!crew.isLocationProhibited(entity.getPosition())) {
+                legalPosition = entity.getPosition();
+            } else {
+                for (int dir = 0; dir < 6 && legalPosition == null; dir++) {
+                    Coords adjCoords = entity.getPosition().translated(dir);
+                    if (!crew.isLocationProhibited(adjCoords)) {
+                        legalPosition = adjCoords;
+                    }
+                }
+            }
+            // Cannot abandon if there is no legal hex.  This shoudln't have 
+            // been allowed
+            if (legalPosition == null) {
+                System.err.println("Error in Server.ejectEntity: vehicle " +
+                		"crews cannot abandon if there is no legal hex!");
+                return vDesc;
+            }
+            crew.setPosition(legalPosition);
+            // Add Entity to game
+            game.addEntity(crew);
+            // Tell clients about new entity
+            send(createAddEntityPacket(crew.getId()));
+            // Sent entity info to clients
             entityUpdate(crew.getId());
             // Check if the crew lands in a minefield
             vDesc.addAll(doEntityDisplacementMinefieldCheck(crew,
-                                                            entity.getPosition(), entity.getPosition(),
-                                                            entity.getElevation()));
+                    entity.getPosition(), entity.getPosition(),
+                    entity.getElevation()));
         }
 
         // Mark the entity's crew as "ejected".
@@ -30307,9 +30347,9 @@ public class Server implements Runnable {
         // only remove the unit that ejected manually
         if (!autoEject) {
             game.removeEntity(entity.getId(),
-                              IEntityRemovalConditions.REMOVE_EJECTED);
+                    IEntityRemovalConditions.REMOVE_EJECTED);
             send(createRemoveEntityPacket(entity.getId(),
-                                          IEntityRemovalConditions.REMOVE_EJECTED));
+                    IEntityRemovalConditions.REMOVE_EJECTED));
         }
         return vDesc;
     }

@@ -1,0 +1,90 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportVTOL
+</UnitType>
+
+<Name>
+St. Christopher Cargo Lifter
+</Name>
+
+<Model>
+C1
+</Model>
+
+<year>
+3067
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor>
+7
+5
+5
+2
+2
+</armor>
+
+<barrating>
+10
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<Body Equipment>
+Armored Chassis
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<transporters>
+cargobay:8.55:3
+troopspace:.45
+</transporters>
+
+<source>
+TRo VAr
+</source>
+
+<tonnage>
+25.0
+</tonnage>
+

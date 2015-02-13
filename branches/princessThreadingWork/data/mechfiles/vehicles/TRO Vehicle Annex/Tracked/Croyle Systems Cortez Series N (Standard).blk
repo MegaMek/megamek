@@ -1,0 +1,108 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Croyle Systems Cortez Series N
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2582
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+Infantrybay:1:1
+cargobay:8.92:1
+</transporters>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+21
+18
+18
+15
+16
+</armor>
+
+<barrating>
+8
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
+<Body Equipment>
+AmphibiousChassis
+Enviromental Sealed Chassis
+</Body Equipment>
+
+<Front Equipment>
+BeagleActiveProbe
+BASearchlight
+BASearchlight
+BASearchlight
+</Front Equipment>
+
+<Right Equipment>
+BASearchlight
+BASearchlight
+BASearchlight
+</Right Equipment>
+
+<Left Equipment>
+BASearchlight
+BASearchlight
+BASearchlight
+</Left Equipment>
+
+<Rear Equipment>
+Cargo Container (10 tons)
+RemoteSensorDispenser
+BASearchlight
+BASearchlight
+BASearchlight
+</Rear Equipment>
+
+<Turret Equipment>
+Medium Laser
+Searchlight
+</Turret Equipment>
+
+<source>
+TRO VAr
+</source>
+
+<tonnage>
+75.0
+</tonnage>
+

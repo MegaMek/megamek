@@ -37,6 +37,10 @@ Estevez MBT
 35
 </Armor>
 
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
 <Front Equipment>
 </Front Equipment>
 
@@ -64,7 +68,7 @@ ISVehicularGrenadeLauncher (FL)
 </Left Equipment>
 
 <type>
-IS Level 2
+IS Level 4
 </type>
 
 <year>

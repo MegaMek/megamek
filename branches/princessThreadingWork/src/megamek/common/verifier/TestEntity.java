@@ -54,6 +54,7 @@ public abstract class TestEntity implements TestEntityOption {
     public final static float CEIL_HALFTON = 2.0f;
     public final static float CEIL_QUARTERTON = 4.0f;
     public final static float CEIL_TENTHTON = 10.0f;
+    public final static float CEIL_KILO = 1000.0f;
 
     protected Engine engine = null;
     protected Armor[] armor = null;
@@ -204,7 +205,15 @@ public abstract class TestEntity implements TestEntityOption {
         return options.getPrintSize();
     }
 
-    protected static float ceil(float f, float type) {
+    /**
+     * Used to round values up based on the specified type.
+     * 
+     * @param f     Value to round
+     * @param type  Specifies the number of decimals to round to, see 
+     *              TestEntity.CEIL_TON, etc.
+     * @return      Rounded value
+     */
+    public static float ceil(float f, float type) {
         return (float) Math.ceil(f * type) / type;
     }
 
@@ -213,6 +222,14 @@ public abstract class TestEntity implements TestEntityOption {
             return TestEntity.ceil(f, CEIL_HALFTON);
         }
         return TestEntity.ceil(f, type);
+    }
+    
+    public static float floor(float f, float type) {
+        return (float) Math.floor(f * type) / type;
+    }
+    
+    public static float round(float f, float type) {
+        return (float) Math.round(f * type) / type;
     }
 
     protected static String makeWeightString(float weight) {
@@ -1342,6 +1359,9 @@ class Structure {
     private boolean isSuperHeavy;
     private EntityMovementMode movementmode;
 
+    public Structure() {
+    }
+    
     public Structure(int structureType, boolean superHeavy,
             EntityMovementMode movementMode) {
         this.structureType = structureType;

@@ -679,6 +679,15 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         if ("fileUnitsReinforceRAT".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             ignoreHotKeys = true;
+            if (client.getLocalPlayer().getTeam() == IPlayer.TEAM_UNASSIGNED){
+                String title = Messages.getString(
+                        "ClientGUI.openUnitListFileDialog.noReinforceTitle"); //$NON-NLS-1$
+                String msg = Messages.getString(
+                        "ClientGUI.openUnitListFileDialog.noReinforceMessage");  //$NON-NLS-1$          
+                JOptionPane.showMessageDialog(frame, msg, title,
+                        JOptionPane.OK_OPTION, null);
+                return;
+            }
             getRandomArmyDialog().setVisible(true);
             ignoreHotKeys = false;
         }

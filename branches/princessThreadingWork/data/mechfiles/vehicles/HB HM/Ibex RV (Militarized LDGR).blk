@@ -21,7 +21,7 @@ Ibex RV
 </Model>
 
 <year>
-3049
+3063
 </year>
 
 <type>
@@ -37,7 +37,7 @@ Wheeled
 </cruiseMP>
 
 <engine_type>
-0
+1
 </engine_type>
 
 <armor>
@@ -51,9 +51,14 @@ Wheeled
 7
 </barrating>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <Body Equipment>
-IS BA King David Light Gauss Rifle (PT)
-IS BA King David Light Gauss Rifle (PT)
+ISOffRoadChassis
+Infantry King David Light Gauss Rifle (PT)
+Infantry King David Light Gauss Rifle (PT)
 PintleTurret
 </Body Equipment>
 
@@ -70,7 +75,8 @@ PintleTurret
 </Rear Equipment>
 
 <transporters>
-cargobay:.3:1
+cargobay:.388:1
+troopspace:.6
 </transporters>
 
 <source>

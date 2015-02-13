@@ -25,7 +25,7 @@ Paramour Mobile Repair Vehicle
 </year>
 
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <motion_type>
@@ -55,6 +55,10 @@ cargobay:15:1
 <barrating>
 6
 </barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
 
 <armor_type>
 14

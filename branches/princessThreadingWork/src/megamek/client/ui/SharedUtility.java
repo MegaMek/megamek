@@ -133,12 +133,16 @@ public class SharedUtility {
             }
 
             //check for landing
-            if((step.getType() == MoveStepType.LAND) && (entity instanceof Aero)) {
-                rollTarget = ((Aero)entity).checkHorizontalLanding(moveType, step.getVelocity(), curPos, curFacing);
+            if ((step.getType() == MoveStepType.LAND)
+                    && (entity instanceof Aero)) {
+                rollTarget = ((Aero) entity).checkLanding(moveType,
+                        step.getVelocity(), curPos, curFacing, false);
                 checkNag(rollTarget, nagReport, psrList);
             }
-            if((step.getType() == MoveStepType.VLAND) && (entity instanceof Aero)) {
-                rollTarget = ((Aero)entity).checkVerticalLanding(moveType, step.getVelocity(), curPos);
+            if ((step.getType() == MoveStepType.VLAND)
+                    && (entity instanceof Aero)) {
+                rollTarget = ((Aero) entity).checkLanding(moveType,
+                        step.getVelocity(), curPos, curFacing, true);
                 checkNag(rollTarget, nagReport, psrList);
             }
 

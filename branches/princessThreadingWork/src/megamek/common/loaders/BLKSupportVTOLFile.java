@@ -75,7 +75,7 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("engine_type")) {
             engineCode = dataFile.getDataAsInt("engine_type")[0];
         }
-        int engineFlags = Engine.TANK_ENGINE;
+        int engineFlags = Engine.TANK_ENGINE | Engine.SUPPORT_VEE_ENGINE;
         if (t.isClan()) {
             engineFlags |= Engine.CLAN_ENGINE;
         }
@@ -138,6 +138,24 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
                 t.setArmorTechLevel(dataFile.getDataAsInt(t.getLocationName(i) + "_armor_type")[0], i);
                 t.setBARRating(dataFile.getDataAsInt(t.getLocationName(i) + "_barrating")[0], i);
             }
+        }
+        
+        // Set the structural tech rating
+        if (!dataFile.exists("structural_tech_rating")) {
+            throw new EntityLoadingException("Could not find " +
+            		"structural_tech_rating block!");
+        }
+        t.setStructuralTechRating(dataFile
+                .getDataAsInt("structural_tech_rating")[0]);
+        // Set armor tech rating, if it exists (defaults to structural tr)
+        if (dataFile.exists("armor_tech_rating")) {
+            t.setArmorTechRating(dataFile
+                    .getDataAsInt("armor_tech_rating")[0]);            
+        }
+        // Set engine tech rating, if it exists (defaults to structural tr)
+        if (dataFile.exists("engine_tech_rating")) {
+            t.setEngineTechRating(dataFile
+                    .getDataAsInt("engine_tech_rating")[0]);            
         }
 
         t.autoSetInternal();

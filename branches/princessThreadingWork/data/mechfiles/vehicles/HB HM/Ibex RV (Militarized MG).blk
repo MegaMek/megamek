@@ -37,7 +37,7 @@ Wheeled
 </cruiseMP>
 
 <engine_type>
-0
+1
 </engine_type>
 
 <armor>
@@ -51,7 +51,12 @@ Wheeled
 7
 </barrating>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <Body Equipment>
+ISOffRoadChassis
 ISBALightMG (PT)
 PintleTurret
 </Body Equipment>
@@ -69,7 +74,8 @@ PintleTurret
 </Rear Equipment>
 
 <transporters>
-cargobay:.3:1
+cargobay:.387:1
+troopspace:.6
 </transporters>
 
 <source>

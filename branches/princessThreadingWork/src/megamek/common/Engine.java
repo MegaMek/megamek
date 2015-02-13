@@ -47,12 +47,14 @@ public class Engine implements Serializable {
             56.5f, 61.0f, 66.5f, 72.5f, 79.5f, 87.5f, 97.0f, 107.5f, 119.5f,
             133.5f, 150.0f, 168.5f, 190.0f, 214.5f, 243.0f, 275.5f, 313.0f,
             356.0f, 405.5f, 462.5f };
-
+    
+  
     // flags
     public final static int CLAN_ENGINE = 0x1;
     public final static int TANK_ENGINE = 0x2;
     public final static int LARGE_ENGINE = 0x4;
     public final static int SUPERHEAVY_ENGINE = 0x8;
+    public final static int SUPPORT_VEE_ENGINE = 0x10;
 
     // types
     public final static int COMBUSTION_ENGINE = 0;
@@ -68,7 +70,64 @@ public class Engine implements Serializable {
     public final static int STEAM = 10;
     public final static int BATTERY = 11;
     public final static int SOLAR = 12;
+    
+    //These are the SUPPORT VEHICLE ENGINE WEIGHT MULTIPLIERS from TM PG 127
+    //The other engine types are assumed to have a value of ) in the array
+    //if not listed.
+    public final static float[][] SV_ENGINE_RATINGS = new float[13][6];
+    static { 
+    SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_A] = 4.0f;
+    SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_B] = 3.5f;
+    SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_C] = 3.0f;
+    SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_D] = 2.8f;
+    SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_E] = 2.6f;
+    SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_F] = 2.5f;
+    
+    SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_A] = 0.0f;
+    SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_B] = 3.0f;
+    SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_C] = 2.0f;
+    SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_D] = 1.5f;
+    SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_E] = 1.3f;
+    SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_F] = 1.0f;
+    
+    SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_A] = 0.0f;
+    SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_B] = 0.0f;
+    SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_C] = 1.5f;
+    SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_D] = 1.2f;
+    SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_E] = 1.0f;
+    SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_F] = 0.8f;
+    
+    SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_A] = 0.0f;
+    SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_B] = 0.0f;
+    SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_C] = 1.2f;
+    SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_D] = 1.0f;
+    SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_E] = 0.9f;
+    SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_F] = 0.7f;
+    
+    SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_A] = 0.0f;
+    SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_B] = 0.0f;
+    SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_C] = 5.0f;
+    SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_D] = 4.5f;
+    SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_E] = 4.0f;
+    SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_F] = 3.5f;
+    
+    SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_A] = 0.0f;
+    SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_B] = 0.0f;
+    SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_C] = 1.75f;
+    SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_D] = 1.5f;
+    SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_E] = 1.4f;
+    SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_F] = 1.3f;
+    
+    SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_A] = 0.0f;
+    SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_B] = 0.0f;
+    SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_C] = 1.5f;
+    SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_D] = 1.0f;
+    SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_E] = 0.75f;
+    SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_F] = 0.5f;
+        
+    }
 
+       
     public boolean engineValid;
     private int engineRating;
     private int engineType;
@@ -120,17 +179,27 @@ public class Engine implements Serializable {
      * @return true if the engine is useable.
      */
     private boolean isValidEngine() {
-        if (hasFlag(~(CLAN_ENGINE | TANK_ENGINE | LARGE_ENGINE |SUPERHEAVY_ENGINE))) {
+        if (hasFlag(~(CLAN_ENGINE | TANK_ENGINE | LARGE_ENGINE
+                | SUPERHEAVY_ENGINE | SUPPORT_VEE_ENGINE))) {
             problem.append("Flags:" + engineFlags);
             return false;
         }
+        
+        if (hasFlag(SUPPORT_VEE_ENGINE) && (engineType != STEAM)
+                && (engineType != COMBUSTION_ENGINE) && (engineType != BATTERY)
+                && (engineType != FUEL_CELL) && (engineType != SOLAR)
+                && (engineType != FISSION) && (engineType != NORMAL_ENGINE)
+                && (engineType != NONE)) {
+            problem.append("Invalid Engine type for support vehicle engines!");
+            return false;
+        }
 
-        if (((int) Math.ceil(engineRating / 5) > ENGINE_RATINGS.length)
-                || (engineRating < 0)) {
+        if ((((int) Math.ceil(engineRating / 5) > ENGINE_RATINGS.length)
+                || (engineRating < 0)) && !hasFlag(SUPPORT_VEE_ENGINE)) {
             problem.append("Rating:" + engineRating);
             return false;
         }
-        if (engineRating > 400) {
+        if ((engineRating > 400) && !hasFlag(SUPPORT_VEE_ENGINE)) {
             engineFlags |= LARGE_ENGINE;
         }
 
@@ -142,6 +211,8 @@ public class Engine implements Serializable {
             case FUEL_CELL:
             case NONE:
             case MAGLEV:
+            case BATTERY:
+            case SOLAR:
                 break;
             case COMPACT_ENGINE:
                 if (hasFlag(LARGE_ENGINE)) {
@@ -236,6 +307,21 @@ public class Engine implements Serializable {
      * @return the weight of the engine in tons.
      */
     public float getWeightEngine(Entity entity, float roundWeight) {
+        // Support Vehicles compute engine weight differently
+        if ((entity.isSupportVehicle() || hasFlag(SUPPORT_VEE_ENGINE))
+                && isValidEngine()) {
+            float movementFactor = 4 + entity.getOriginalWalkMP()
+                    * entity.getOriginalWalkMP();
+            float engineWeightMult = SV_ENGINE_RATINGS[engineType][entity
+                    .getEngineTechRating()];
+            double weight = entity.getBaseEngineValue() * movementFactor
+                    * engineWeightMult * entity.getWeight();
+            roundWeight = TestEntity.CEIL_HALFTON;
+            if (entity.getWeight() < 5) {
+                roundWeight = TestEntity.CEIL_KILO;
+            }
+            return TestEntity.ceil((float)weight, roundWeight);
+        }
         float weight = ENGINE_RATINGS[(int) Math.ceil(engineRating / 5.0)];
         switch (engineType) {
             case COMBUSTION_ENGINE:
@@ -270,6 +356,8 @@ public class Engine implements Serializable {
         if (hasFlag(TANK_ENGINE) && (isFusion() || (engineType == FISSION))) {
             weight *= 1.5f;
         }
+        
+        
         float toReturn = TestEntity.ceilMaxHalf(weight, roundWeight);
         // hover have a minimum weight of 20%
         if ((entity.getMovementMode() == EntityMovementMode.HOVER) && (entity instanceof Tank)) {
@@ -283,6 +371,10 @@ public class Engine implements Serializable {
      * @return
      */
     public int getWeightFreeEngineHeatSinks() {
+        // Support Vee engines never provide free heat-sinks, TM pg 133
+        if (hasFlag(SUPPORT_VEE_ENGINE)) {
+            return 0;
+        }
         if (isFusion()) {
             return 10;
         } else if (engineType == FISSION) {
@@ -397,6 +489,10 @@ public class Engine implements Serializable {
             case FISSION:
                 sb.append(" Fission"); //$NON-NLS-1$
                 break;
+            case BATTERY:
+                sb.append(" Battery"); //$NON-NLS-1$
+            case SOLAR:
+                sb.append(" Solar");  //$NON-NLS-1$
             case NONE:
                 sb.append(" NONE"); //$NON-NLS-1$
                 break;

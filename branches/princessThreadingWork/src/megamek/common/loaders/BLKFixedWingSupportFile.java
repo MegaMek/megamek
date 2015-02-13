@@ -93,7 +93,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("engine_type")) {
             engineCode = dataFile.getDataAsInt("engine_type")[0];
         }
-        int engineFlags = 0;
+        int engineFlags = Engine.SUPPORT_VEE_ENGINE;
         if (a.isClan()) {
             engineFlags |= Engine.CLAN_ENGINE;
         }
@@ -150,6 +150,24 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
         a.initializeArmor(armor[BLKAeroFile.RW], Aero.LOC_RWING);
         a.initializeArmor(armor[BLKAeroFile.LW], Aero.LOC_LWING);
         a.initializeArmor(armor[BLKAeroFile.AFT], Aero.LOC_AFT);
+        
+        // Set the structural tech rating
+        if (!dataFile.exists("structural_tech_rating")) {
+            throw new EntityLoadingException("Could not find " +
+                    "structural_tech_rating block!");
+        }
+        a.setStructuralTechRating(dataFile
+                .getDataAsInt("structural_tech_rating")[0]);
+        // Set armor tech rating, if it exists (defaults to structural tr)
+        if (dataFile.exists("armor_tech_rating")) {
+            a.setArmorTechRating(dataFile
+                    .getDataAsInt("armor_tech_rating")[0]);            
+        }
+        // Set engine tech rating, if it exists (defaults to structural tr)        
+        if (dataFile.exists("engine_tech_rating")) {
+            a.setEngineTechRating(dataFile
+                    .getDataAsInt("engine_tech_rating")[0]);            
+        }
 
         a.autoSetInternal();
         a.autoSetSI();

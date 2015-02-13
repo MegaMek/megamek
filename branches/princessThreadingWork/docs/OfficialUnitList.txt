@@ -131,6 +131,7 @@ C-85 Sprinter Delivery Vehicle (Standard)|
 Apple-Churchill Surveillance VTOL (Standard)|
 Apocalypse World Rover (Standard)|
 Generic Expandable Services Vehicle Trailer (Bunk)|
+Heavy Combat ATV (Standard)|
 Generic Expandable Services Vehicle (Field Kitchen)|
 Generic Expandable Services Vehicle (MASH)|
 Generic Expandable Services Vehicle (Command Post)|
@@ -370,7 +371,7 @@ Lexan Oceanic Personal VTOL Series II|
 Blackstone Pegasus Passenger VTOL (Standard)|
 Cal-Boeing Swiftran RTC-215M (Passenger)|
 Peacekeeper SWAT Carrier (Standard)|
-Galaport Ground Tug (Standard)|
+Galaport Ground Trailer (Standard)|
 Cellco Ranger UPU-3000|
 Gienah-Durapaq Elite Land Train (Tractor) Series 3|
 Sherpa Armored Truck (MASH)|
@@ -396,6 +397,14 @@ Fulmar Patrol Craft (Standard)|
 Cormorant Medium Cargo Craft (Standard)|
 Ryu Heavy Transport (Standard)|
 Coanda Personal Sports Craft (Standard)|
+Seahorse Cargo Sub (Standard)|
+Jonah Submarine JN-002|
+Baleena Passenger Submarine (Standard)|
+Whitestreak Jetski (Standard)|
+Whitestreak Speedboat (Standard)|
+Silverback Coastal Cutter (Standard)|
+Silverfin Coastal Cutter (Standard)|
+Atlantia Luxury Yacht (Standard)|
 Puma Assault Tank PAT-008|
 Rhino Fire Support Tank (Flamer)|
 Ripper Infantry Transport (Light PPC)|
@@ -699,6 +708,8 @@ O-66 'Oppie' Hazardous Materials Recovery Vehicle O-66 HMRV|
 O-65 'Oppie' Hazardous Materials Recovery Vehicle O-65 HMRV|
 Buffel Engineering Support Vehicle VII (Cargo)|
 Paramour Mobile Repair Vehicle (Standard)|
+'Oppie' (HMRV Salvage Bed Trailer) (Standard)|
+'Oppie' (HMRV DeConAid Trailer) (Standard)|
 Paramour Mobile Repair Vehicle (MFB)|
 Buffel Engineering Support Vehicle VIII (Standard)|
 Dromedary Water Transport (Standard)|
@@ -871,7 +882,7 @@ Jet Sled (Standard)|
 Ground Car (Standard)|
 Weapons Carrier A (LL)|
 M.A.S.H. Truck (Small)|
-Heavy Transport B1|
+Heavy Transport B1 (Standard)|
 Speeder (Standard)|
 Falcon Hover Tank (Standard)|
 Jeep (Standard)|
@@ -908,7 +919,7 @@ Ontos Heavy Tank (MML)|
 Zhukov Heavy Tank (Liao)|
 Striker Light Tank (Sealed)|
 JES I Tactical Missile Carrier (3082 Upgrade)|
-Zugvogel Omni Support Aircraft D|
+Zugvogel Omni Support Aircraft D 'Raubvogel'|
 Fox Armored Car (Standard)|
 JES II Strategic Missile Carrier (Ammo)|
 Prowler Multi-Terrain Vehicle (Standard)|
@@ -4521,6 +4532,11 @@ Commando COM-1A|
 Kyudo KY2-D-01|
 Helepolis HEP-1H|
 Shadow Hawk SHD-1R|
+Huron Warrior HUR-WO-RX4|
+Mauler MAL-4X 'Todesbote'|
+Pompier Firemech GM-FL|
+Black Knight BL-X-KNT 'Red Reaper'|
+Fireball ALM-XF|
 Crosscut ED-XX 'Ichabod'|
 Juggernaut JG-R9TX1 'Leapin' Lil'|
 Wraith TR2-X 'Alexander'|
@@ -5819,6 +5835,15 @@ Light Strike Fighter Angel|
 Light Strike Fighter Andurien|
 Medium Strike Fighter Defender|
 Raubvogel Aerobomber AB-18C|
+Jetta Coruna 4X (Standard)|
+Mosquito Radar Plane IX (Standard)|
+Federated-Boeing Longhaul FB-335|
+Protector High-Speed Medevac C-790|
+S 2772 Airplane (Standard)|
+Avanti Aerospace Airliner ACL-800|
+King Karnov Transport KC-9|
+Torrent Heavy Bomber (Standard)|
+Zanadu Air Bus (Standard)|
 Drake Medium Stealth Fighter (Standard)|
 Planetlifter Tactical Support (Standard)|
 Drake Medium Strike Fighter (Standard)|

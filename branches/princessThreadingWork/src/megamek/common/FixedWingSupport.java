@@ -149,23 +149,23 @@ public class FixedWingSupport extends ConvFighter {
         }
     }
 
-    public float getBaseEngineValue() {
+    public double getBaseEngineValue() {
         if (getWeight() < 5) {
-            return 0.005f;
+            return 0.005;
         } else if (getWeight() <= 100) {
-            return 0.01f;
+            return 0.01;
         } else {
-            return 0.015f;
+            return 0.015;
         }
     }
 
-    public float getBaseChassisValue() {
+    public double getBaseChassisValue() {
         if (getWeight() < 5) {
-            return 0.08f;
+            return 0.08;
         } else if (getWeight() <= 100) {
-            return 0.1f;
+            return 0.1;
         } else {
-            return 0.15f;
+            return 0.15;
         }
     }
 

@@ -91,6 +91,10 @@ aerodyne
 6
 </barrating>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <transporters>
 cargobay:60:4
 </transporters>

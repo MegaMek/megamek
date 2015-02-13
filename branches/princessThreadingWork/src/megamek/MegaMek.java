@@ -55,6 +55,7 @@ import megamek.common.verifier.TestAero;
 import megamek.common.verifier.TestBattleArmor;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
+import megamek.common.verifier.TestSupportVehicle;
 import megamek.common.verifier.TestTank;
 import megamek.server.DedicatedServer;
 /**
@@ -62,7 +63,7 @@ import megamek.server.DedicatedServer;
  */
 public class MegaMek {
 
-    public static String VERSION = "0.41.2-dev"; //$NON-NLS-1$
+    public static String VERSION = "0.41.3-dev"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager
             .getClientPreferences().getLogDirectory()
             + File.separator
@@ -604,8 +605,14 @@ public class MegaMek {
                             }
                             if ((entity instanceof Tank)
                                     && !(entity instanceof GunEmplacement)) {
-                                testEntity = new TestTank((Tank) entity,
-                                        entityVerifier.tankOption, null);
+                                if (entity.isSupportVehicle()) {
+                                    testEntity = new TestSupportVehicle(
+                                            (Tank) entity,
+                                            entityVerifier.tankOption, null);
+                                } else {
+                                    testEntity = new TestTank((Tank) entity,
+                                            entityVerifier.tankOption, null);
+                                }
                             }
                             if ((entity.getEntityType() == Entity.ETYPE_AERO)
                                     && (entity.getEntityType() !=

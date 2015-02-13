@@ -30,7 +30,6 @@ import megamek.common.GunEmplacement;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.SuperHeavyTank;
-import megamek.common.SupportTank;
 import megamek.common.Tank;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
@@ -48,12 +47,15 @@ public class TestTank extends TestEntity {
     private Tank tank = null;
 
     public TestTank(Tank tank, TestEntityOption options, String fileString) {
-        super(options, tank.getEngine(), TestTank.getArmor(tank), TestTank.getStructure(tank));
+        super(options, tank.getEngine(), getArmor(tank), getStructure(tank));
         this.tank = tank;
         this.fileString = fileString;
     }
 
-    private static Structure getStructure(Tank tank) {
+    protected static Structure getStructure(Tank tank) {
+        if (tank.isSupportVehicle()) {
+            return new SupportVeeStructure(tank);
+        }
         int type = EquipmentType.T_STRUCTURE_STANDARD;
         if (tank.getStructureType() == 1) {
             type = EquipmentType.T_STRUCTURE_ENDO_STEEL;
@@ -121,7 +123,17 @@ public class TestTank extends TestEntity {
                 weight += m.getType().getTonnage(tank);
             }
         }
-        return TestEntity.ceilMaxHalf(weight / 10.0f, getWeightCeilingTurret());
+        // Turrets weight 10% of the weight of weapons in them
+        weight = weight / 10.0f;
+        if (tank.isSupportVehicle()) {
+            if (getEntity().getWeight() < 5) {
+                return TestEntity.ceil(weight, CEIL_KILO);
+            } else {
+                return TestEntity.ceil(weight, CEIL_HALFTON);
+            }
+        } else {
+            return TestEntity.ceilMaxHalf(weight, getWeightCeilingTurret());
+        }
     }
 
     public float getTankWeightDualTurret() {
@@ -252,10 +264,6 @@ public class TestTank extends TestEntity {
 
     @Override
     public boolean correctEntity(StringBuffer buff, boolean ignoreAmmo) {
-        if ((tank instanceof SupportTank)) {
-            return true;
-        } // don't bother checking, won't work. Needs fixing (new class
-            // needed.)
         boolean correct = true;
         if (skip()) {
             return true;
@@ -338,10 +346,17 @@ public class TestTank extends TestEntity {
             correct = false;
         }
         // only tanks with fusion engine can be vacuum protected
-        if (!(tank.getEngine().isFusion()||(tank.getEngine().getEngineType() == Engine.FUEL_CELL)) && !tank.doomedInVacuum()) {
-            buff.append("Vacuum protection requires fusion engine.\n");
-            correct = false;
-        }
+        if (!(tank.getEngine().isFusion() 
+        		|| (tank.getEngine().getEngineType() == Engine.FUEL_CELL)
+        		|| (tank.getEngine().getEngineType() == Engine.SOLAR)
+        		|| (tank.getEngine().getEngineType() == Engine.BATTERY)
+        		|| (tank.getEngine().getEngineType() == Engine.FISSION)
+        		|| (tank.getEngine().getEngineType() == Engine.NONE))
+        		&& !tank.doomedInVacuum()) {
+        		buff.append("Vacuum protection requires fusion engine.\n");
+        		correct = false;
+        		}
+
         if (!correctCriticals(buff)) {
             correct = false;
         }

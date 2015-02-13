@@ -64,7 +64,12 @@ Submarine
 3
 </armor_tech>
 
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <Body Equipment>
+SubmersibleChassisMod
 Advanced Fire Control
 IS Ammo SRTorpedo-4
 IS Ammo SRTorpedo-4
@@ -100,3 +105,19 @@ LRT 10
 IS ER Medium Laser
 </Turret Equipment>
 
+<Transporters>
+1stclassquarters:10:1
+1stclassquarters:10:1
+1stclassquarters:10:1
+2ndclassquarters:7:1
+2ndclassquarters:7:1
+2ndclassquarters:7:1
+2ndclassquarters:7:1
+steeragequarters:5:1
+steeragequarters:5:1
+steeragequarters:5:1
+steeragequarters:5:1
+steeragequarters:5:1
+steeragequarters:5:1
+cargobay:30:1
+</transporters>

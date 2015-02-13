@@ -14,13 +14,11 @@
 
 package megamek.common;
 
-import java.io.Serializable;
-
 /**
  * This is a support vehicle VTOL
  * @author beerockxs
  */
-public class SupportVTOL extends VTOL implements Serializable {
+public class SupportVTOL extends VTOL {
 
     /**
      *
@@ -97,23 +95,23 @@ public class SupportVTOL extends VTOL implements Serializable {
         return 3;
     }
 
-    public float getBaseEngineValue() {
+    public double getBaseEngineValue() {
         if (getWeight() < 5) {
-            return 0.002f;
+            return 0.002;
         } else if (!isSuperHeavy()) {
-            return 0.0025f;
+            return 0.0025;
         } else {
-            return 0.004f;
+            return 0.004;
         }
     }
 
-    public float getBaseChassisValue() {
+    public double getBaseChassisValue() {
         if (getWeight() < 5) {
-            return 0.2f;
+            return 0.2;
         } else if (!isSuperHeavy()) {
-            return 0.25f;
+            return 0.25;
         } else {
-            return 0.3f;
+            return 0.3;
         }
     }
 
@@ -124,6 +122,10 @@ public class SupportVTOL extends VTOL implements Serializable {
     
     public long getEntityType(){
         return Entity.ETYPE_TANK | Entity.ETYPE_VTOL | Entity.ETYPE_SUPPORT_VTOL;
+    }
+    
+    public boolean isSupportVehicle() {
+        return true;
     }
     
  }

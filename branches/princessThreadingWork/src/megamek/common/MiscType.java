@@ -23,6 +23,7 @@ package megamek.common;
 
 import java.math.BigInteger;
 
+import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.CLERPPC;
 import megamek.common.weapons.ISERPPC;
 import megamek.common.weapons.ISHeavyPPC;
@@ -397,6 +398,12 @@ public class MiscType extends EquipmentType {
             .shiftLeft(182);
     public static final BigInteger F_FLUID_SUCTION_SYSTEM = BigInteger.valueOf(1)
             .shiftLeft(183);
+    public static final BigInteger F_HYDROFOIL = BigInteger.valueOf(1)
+            .shiftLeft(184);
+    public static final BigInteger F_SUBMERSIBLE = BigInteger.valueOf(1)
+            .shiftLeft(185);
+     
+        
     // Flag for BattleArmor Modular Equipment Adaptor
     public static final BigInteger F_BA_MEA = BigInteger.valueOf(1)
             .shiftLeft(184);
@@ -703,8 +710,18 @@ public class MiscType extends EquipmentType {
             return tons;
         } else if (hasFlag(F_VACUUM_PROTECTION)) {
             return (float) Math.ceil(entity.getWeight() / 10.0f);
-        } else if (hasFlag(F_ENVIRONMENTAL_SEALING) || hasFlag(F_DUNE_BUGGY)) {
+                     
+        } else if (hasFlag(F_DUNE_BUGGY)) {
             return entity.getWeight() / 10.0f;
+            
+        } else if (hasFlag(F_ENVIRONMENTAL_SEALING)) {
+        	if ((entity instanceof SupportTank ) || (entity instanceof LargeSupportTank )
+        			|| (entity instanceof FixedWingSupport ) || (entity instanceof SupportVTOL )) {
+        		return 0;
+          	} else {
+                return entity.getWeight() / 10.0f;
+            }
+            
         } else if (hasFlag(F_JUMP_BOOSTER)) {
             return (float) (Math.ceil((entity.getWeight() * entity
                     .getOriginalJumpMP()) / 10.0f) / 2.0);
@@ -744,35 +761,50 @@ public class MiscType extends EquipmentType {
                     cargoTonnage += mount.getType().getTonnage(entity);
                 }
             }
-            // round to half ton TODO: round to kilograms for small support
-            // vees, but we don't support them yet
+            float roundWeight = TestEntity.CEIL_HALFTON;
+            if (entity.isSupportVehicle() && entity.getWeight() < 5) {
+                roundWeight = TestEntity.CEIL_KILO;
+            }
             float weight = cargoTonnage / 20f;
-            return (float) (Math.ceil(weight * 2.0f)) / 2.0f;
+            return TestEntity.ceil(weight, roundWeight);
         } else if (hasFlag(F_BASIC_FIRECONTROL)) {
             // 5% of weapon weight
             float weaponWeight = 0;
             for (Mounted mount : entity.getWeaponList()) {
                 weaponWeight += mount.getType().getTonnage(entity);
             }
-            // round to half ton TODO: round to kilograms for small support
-            // vees, but we don't support them yet
+            float roundWeight = TestEntity.CEIL_HALFTON;
+            if (entity.isSupportVehicle() && entity.getWeight() < 5) {
+                roundWeight = TestEntity.CEIL_KILO;
+            }
             float weight = weaponWeight / 20f;
-            return (float) (Math.ceil(weight * 2.0f)) / 2.0f;
+            return TestEntity.ceil(weight, roundWeight);
         } else if (hasFlag(F_ADVANCED_FIRECONTROL)) {
             // 10% of weapon weight
             float weaponWeight = 0;
             for (Mounted mount : entity.getWeaponList()) {
                 weaponWeight += mount.getType().getTonnage(entity);
             }
-            // round to half ton TODO: round to kilograms for small support
-            // vees, but we don't support them yet
-            return (float) (Math.ceil(weaponWeight / 20f) * 2.0);
+            float roundWeight = TestEntity.CEIL_HALFTON;
+            if (entity.isSupportVehicle() && entity.getWeight() < 5) {
+                roundWeight = TestEntity.CEIL_KILO;
+            }
+            return TestEntity.ceil(weaponWeight / 10f, roundWeight);
         } else if (hasFlag(F_BOOBY_TRAP)) {
             // 10% of unit weight
-            // round to half ton TODO: round to kilograms for small support
-            // vees, but we don't support them yet
             float weight = entity.getWeight() / 10f;
-            return (float) (Math.ceil(weight * 2.0f)) / 2.0f;
+            float roundWeight = TestEntity.CEIL_HALFTON;
+            if (entity.isSupportVehicle() && entity.getWeight() < 5) {
+                roundWeight = TestEntity.CEIL_KILO;
+            }
+            return TestEntity.ceil(weight, roundWeight);
+            
+        } else if (hasFlag(F_EJECTION_SEAT)) {
+            if (entity.isSupportVehicle() && entity.getWeight() < 5) {
+            	return .1f;
+            } else {
+            	return .5f;
+            }
         } else if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
             float weight = 2;
             for (Mounted mount : entity.getMisc()) {
@@ -1249,8 +1281,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createEnvironmentalSealing());
 
         EquipmentType.addType(MiscType.createFieldKitchen());
-        EquipmentType.addType(MiscType.createAmphibiousChassis());
-        EquipmentType.addType(MiscType.createSnomobileChassis());
+
 
         EquipmentType.addType(MiscType.createImprovedJumpJet());
         EquipmentType.addType(MiscType.createCLImprovedJumpJet());
@@ -1413,15 +1444,11 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISCollapsibleCommandModule());
         EquipmentType.addType(MiscType.createHitch());
         EquipmentType.addType(MiscType.createISFlotationHull());
-        EquipmentType.addType(MiscType.createISLimitedAmphibiousChassis());
-        EquipmentType.addType(MiscType.createISFullyAmphibiousChassis());
-        EquipmentType.addType(MiscType.createISDuneBuggyChassis());
-        EquipmentType.addType(MiscType.createISOffRoadChassis());
         EquipmentType.addType(MiscType.createCLFlotationHull());
+        EquipmentType.addType(MiscType.createISLimitedAmphibiousChassis());
+        EquipmentType.addType(MiscType.createISFullyAmphibiousChassis());    
         EquipmentType.addType(MiscType.createCLLimitedAmphibiousChassis());
         EquipmentType.addType(MiscType.createCLFullyAmphibiousChassis());
-        EquipmentType.addType(MiscType.createCLDuneBuggyChassis());
-        EquipmentType.addType(MiscType.createCLOffRoadChassis());
         EquipmentType.addType(MiscType.createISShoulderTurret());
         EquipmentType.addType(MiscType.createCLShoulderTurret());
         EquipmentType.addType(MiscType.createISHeadTurret());
@@ -1547,18 +1574,36 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISBAMineDispenser());
         EquipmentType.addType(MiscType.createBAMissionEquipStorage());
 
-        // support vee stuff
+        // support vee Chassis stuff
+        EquipmentType.addType(MiscType.createAmphibiousChassis());
+        EquipmentType.addType(MiscType.createArmoredChassis());
+        EquipmentType.addType(MiscType.createBicycleModification());
+        EquipmentType.addType(MiscType.createConvertibleModification());
+        EquipmentType.addType(MiscType.createISDuneBuggyChassis());
+        EquipmentType.addType(MiscType.createCLDuneBuggyChassis());
+        EquipmentType.addType(MiscType.createEnviromentalSealedChassis());
+        EquipmentType.addType(MiscType.createHydroFoilChassisModification());
+        EquipmentType.addType(MiscType.createMonocycleModification());
+        EquipmentType.addType(MiscType.createISOffRoadChassis());
+        EquipmentType.addType(MiscType.createCLOffRoadChassis());
+        EquipmentType.addType(MiscType.createPropChassisModification());
+        EquipmentType.addType(MiscType.createSnomobileChassis());
+        EquipmentType.addType(MiscType.createSTOLChassisMod());
+        EquipmentType.addType(MiscType.createSubmersibleChassisMod());
         EquipmentType.addType(MiscType.createTractorModification());
         EquipmentType.addType(MiscType.createTrailerModification());
-        EquipmentType.addType(MiscType.createArmoredChassis());
+        EquipmentType.addType(MiscType.createUltraLightChassisModification());
+        EquipmentType.addType(MiscType.createVSTOLChassisMod());  
+       
+        
+        // support vee Equipment stuff
         EquipmentType.addType(MiscType.createBasicFireControl());
         EquipmentType.addType(MiscType.createAdvancedFireControl());
         EquipmentType.addType(MiscType.createISMineSweeper());
         EquipmentType.addType(MiscType.createClanMineSweeper());
         EquipmentType.addType(MiscType.createISMobileFieldBase());
         EquipmentType.addType(MiscType.createCLMobileFieldBase());
-        EquipmentType.addType(MiscType.createSTOLChassisMod());
-        EquipmentType.addType(MiscType.createVSTOLChassisMod());
+
         EquipmentType.addType(MiscType.createElectricDischargeArmor());
         EquipmentType.addType(MiscType.createISPrototypeJumpJet());
         EquipmentType.addType(MiscType.createISPrototypeImprovedJumpJet());
@@ -1567,11 +1612,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createBulldozer());
         EquipmentType.addType(MiscType.createExternalStoresHardpoint());
         EquipmentType.addType(MiscType.createManipulator());
-        EquipmentType.addType(MiscType.createPropChassisModification());
-        EquipmentType.addType(MiscType.createUltraLightChassisModification());
-        EquipmentType.addType(MiscType.createMonocycleModification());
-        EquipmentType.addType(MiscType.createBicycleModification());
-        EquipmentType.addType(MiscType.createConvertibleModification());
+
         EquipmentType.addType(MiscType.create20mLadder());
         EquipmentType.addType(MiscType.create40mLadder());
         EquipmentType.addType(MiscType.create60mLadder());
@@ -1730,9 +1771,9 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Tractor";
         misc.setInternalName(misc.name);
-        misc.tonnage = TONNAGE_VARIABLE;
+        misc.tonnage = 0; //accounted as part of the unit Construction
         misc.criticals = 0;
-        misc.cost = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_TRACTOR_MODIFICATION)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -1751,9 +1792,9 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Trailer";
         misc.setInternalName(misc.name);
-        misc.tonnage = TONNAGE_VARIABLE;
+        misc.tonnage = 0; //accounted as part of the unit Construction
         misc.criticals = 0;
-        misc.cost = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_TRAILER_MODIFICATION)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -1775,7 +1816,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("MonocycleChassisMod");
         misc.tonnage = 0;
         misc.criticals = 0;
-        misc.cost = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_MONOCYCLE).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -1796,7 +1837,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("BicycleChassisMod");
         misc.tonnage = 0;
         misc.criticals = 0;
-        misc.cost = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_BICYCLE).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -1810,6 +1851,48 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createHydroFoilChassisModification() {
+        MiscType misc = new MiscType();
+
+        misc.name = "HydroFoil";
+        misc.setInternalName("HydroFoilChassisMod");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
+        misc.flags = misc.flags.or(F_HYDROFOIL).or(F_SUPPORT_TANK_EQUIPMENT)
+                .or(F_CHASSIS_MODIFICATION);
+        misc.bv = 0;
+        misc.tankslots = 0;
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.techRating = RATING_A;
+        return misc;
+    }
+    
+    public static MiscType createSubmersibleChassisMod() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Submersible";
+        misc.setInternalName("SubmersibleChassisMod");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
+        misc.flags = misc.flags.or(F_SUBMERSIBLE).or(F_SUPPORT_TANK_EQUIPMENT)
+                .or(F_CHASSIS_MODIFICATION);
+        misc.bv = 0;
+        misc.tankslots = 0;
+        misc.industrial = true;
+        misc.availRating = new int[] { EquipmentType.RATING_A,
+                EquipmentType.RATING_A, EquipmentType.RATING_A };
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.techRating = RATING_A;
+        return misc;
+    }
+    
     public static MiscType createConvertibleModification() {
         MiscType misc = new MiscType();
 
@@ -1817,7 +1900,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("ConvertibleChassisMod");
         misc.tonnage = 0;
         misc.criticals = 0;
-        misc.cost = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_CONVERTIBLE).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -2987,7 +3070,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 4;
         misc.cost = 75000;
         misc.flags = misc.flags.or(F_CLUB).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);;
+                .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
         misc.subType |= S_COMBINE;
         misc.bv = 5;
         misc.industrial = true;
@@ -3004,10 +3087,10 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Ejection Seat";
         misc.setInternalName(misc.name);
-        misc.tonnage = 0.5f;
+        misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.cost = 0;
-        misc.flags = misc.flags.or(F_EJECTION_SEAT).or(F_MECH_EQUIPMENT);
+        misc.flags = misc.flags.or(F_EJECTION_SEAT).or(F_MECH_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.industrial = true;
         misc.introDate = 1950;
@@ -3022,11 +3105,31 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Armored Chassis";
         misc.setInternalName("Armored Chassis");
-        misc.tonnage = TONNAGE_VARIABLE;
+        misc.tonnage = 0;
         misc.criticals = 0;
-        misc.cost = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.tankslots = 0;
         misc.flags = misc.flags.or(F_ARMORED_CHASSIS).or(F_TANK_EQUIPMENT)
+                .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 1950;
+        misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);
+        misc.availRating = new int[] { RATING_C, RATING_E, RATING_D };
+        misc.techRating = RATING_B;
+
+        return misc;
+    }
+    
+    public static MiscType createEnviromentalSealedChassis() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Enviromental Sealed Chassis";
+        misc.setInternalName("Enviromental Sealed Chassis");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
+        misc.tankslots = 0;
+        misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.introDate = 1950;
@@ -4662,7 +4765,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4687,7 +4790,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 2;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4712,7 +4815,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 3;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4737,7 +4840,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 4;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4762,7 +4865,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 5;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4787,7 +4890,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 6;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4812,7 +4915,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 7;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4837,7 +4940,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 8;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4862,7 +4965,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 9;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4887,7 +4990,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 10;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4912,7 +5015,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 11;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4937,7 +5040,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 12;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4962,7 +5065,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 13;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -4987,7 +5090,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 14;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -5012,7 +5115,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 15;
         misc.bv = 0;
         misc.flags = misc.flags.or(F_COMMUNICATIONS).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         String[] modes = { "Default", "ECCM", "Ghost Targets" };
         misc.setModes(modes);
@@ -5459,6 +5562,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("BASearchlight");
         misc.tonnage = 0.005f;
         misc.criticals = 1;
+        misc.tankslots = 0;
         misc.availRating = new int[] { RATING_A, RATING_A, RATING_A };
         misc.techRating = RATING_A;
         misc.introDate = 1950;
@@ -5867,7 +5971,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.cost = 0;
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
-        misc.flags = misc.flags.or(F_VACUUM_PROTECTION).or(F_TANK_EQUIPMENT);
+        misc.flags = misc.flags.or(F_VACUUM_PROTECTION).or(F_TANK_EQUIPMENT).or(F_SUPPORT_TANK_EQUIPMENT);;
         misc.bv = 0;
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
@@ -5885,7 +5989,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 8;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.spreadable = true;
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.flags = misc.flags.or(F_ENVIRONMENTAL_SEALING)
@@ -6078,7 +6182,6 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         misc.name = "Claw";
         misc.setInternalName("ISClaw");
-        misc.addLookupName("Claw");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
@@ -6100,7 +6203,6 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         misc.name = "Claw (Clan)";
         misc.setInternalName("ClClaw");
-        misc.addLookupName("Claw");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = CRITICALS_VARIABLE;
         misc.cost = COST_VARIABLE;
@@ -7663,6 +7765,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName(misc.name);
         misc.tonnage = 0.25f;
         misc.criticals = 1;
+        misc.tankslots = 0;
         misc.cost = 7500;
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT)
                 .or(F_MECH_EQUIPMENT);
@@ -7902,7 +8005,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.flags = misc.flags.or(MiscType.F_BASIC_FIRECONTROL).or(
-                MiscType.F_SUPPORT_TANK_EQUIPMENT);
+                MiscType.F_SUPPORT_TANK_EQUIPMENT).or(MiscType.F_TANK_EQUIPMENT);
         misc.industrial = true;
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
@@ -7919,7 +8022,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.flags = misc.flags.or(MiscType.F_ADVANCED_FIRECONTROL).or(
-                MiscType.F_SUPPORT_TANK_EQUIPMENT);
+                MiscType.F_SUPPORT_TANK_EQUIPMENT.or(MiscType.F_TANK_EQUIPMENT));
         misc.introDate = 2284;
         misc.techLevel.put(2284, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_C, RATING_D, RATING_D };
@@ -8060,7 +8163,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_LIMITED_AMPHIBIOUS).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -8082,7 +8185,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_FULLY_AMPHIBIOUS).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -8103,7 +8206,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_AMPHIBIOUS).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -8121,10 +8224,10 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "Snowmobile";
         misc.setInternalName("SnowmobileChassis");
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
         misc.flags = misc.flags.or(F_SNOWMOBILE).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -8147,9 +8250,9 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0f;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT)
-                .or(F_CHASSIS_MODIFICATION);
+                .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B };
@@ -8162,16 +8265,16 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createISOffRoadChassis() {
         MiscType misc = new MiscType();
-        misc.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
+        misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         misc.name = "Off-Road";
         misc.setInternalName("ISOffRoadChassis");
         misc.addLookupName("ISOffRoad");
         misc.tonnage = 0f;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_OFF_ROAD).or(F_TANK_EQUIPMENT)
-                .or(F_CHASSIS_MODIFICATION);
+                .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_B,
                 EquipmentType.RATING_B, EquipmentType.RATING_B };
@@ -8184,16 +8287,16 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createCLOffRoadChassis() {
         MiscType misc = new MiscType();
-        misc.techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
+        misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
         misc.name = "Off-Road";
         misc.setInternalName("ClanOffRoadChassis");
         misc.addLookupName("CLOffRoad");
         misc.tonnage = 0f;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_OFF_ROAD).or(F_TANK_EQUIPMENT)
-                .or(F_CHASSIS_MODIFICATION);
+                .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_B, EquipmentType.RATING_B };
@@ -8212,7 +8315,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0f;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_FLOTATION_HULL).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -8234,7 +8337,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_LIMITED_AMPHIBIOUS).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -8256,7 +8359,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = EquipmentType.TONNAGE_VARIABLE;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_FULLY_AMPHIBIOUS).or(F_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -8278,9 +8381,9 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 0f;
         misc.criticals = 0;
         misc.tankslots = 0;
-        misc.cost = EquipmentType.COST_VARIABLE;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_DUNE_BUGGY).or(F_TANK_EQUIPMENT)
-                .or(F_CHASSIS_MODIFICATION);
+                .or(F_CHASSIS_MODIFICATION).or(F_SUPPORT_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_B, EquipmentType.RATING_B };
@@ -8729,7 +8832,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLLookDownRadar() {
         MiscType misc = new MiscType();
         misc.techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
-        misc.name = "Look-Down Rader";
+        misc.name = "Look-Down Radar";
         misc.setInternalName("CLLookDownRadar");
         misc.tonnage = 5f;
         misc.cost = 400000;
@@ -8768,12 +8871,12 @@ public class MiscType extends EquipmentType {
         misc.name = "STOL";
         misc.setInternalName("STOLChassisMod");
         misc.tonnage = 0f;
-        misc.cost = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_STOL_CHASSIS).or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
         misc.tankslots = 0;
-        misc.introDate = 1950;
+        misc.introDate = 1950; 
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_C, RATING_D, RATING_C };
         misc.techRating = RATING_C;
@@ -8786,7 +8889,7 @@ public class MiscType extends EquipmentType {
         misc.name = "VSTOL";
         misc.setInternalName("VSTOLChassisMod");
         misc.tonnage = 0f;
-        misc.cost = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_VSTOL_CHASSIS)
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
@@ -9558,7 +9661,7 @@ public class MiscType extends EquipmentType {
         misc.name = "External Stores Hardpoint";
         misc.setInternalName(misc.name);
         misc.flags = misc.flags.or(F_EXTERNAL_STORES_HARDPOINT).or(
-                F_SUPPORT_TANK_EQUIPMENT);
+                F_SUPPORT_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.industrial = true;
         misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
@@ -9620,6 +9723,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.name = "Prop";
         misc.setInternalName("PropChassisMod");
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.tankslots = 0;
         misc.flags = misc.flags.andNot(F_AERO_EQUIPMENT).or(F_CHASSIS_MODIFICATION)
                 .or(F_PROP);
@@ -9637,6 +9741,7 @@ public class MiscType extends EquipmentType {
         misc.name = "Ultra-Light";
         misc.setInternalName("UltraLightChassisMod");
         misc.tankslots = 0;
+        misc.cost = 0; // Cost accounted as part of unit cost
         misc.flags = misc.flags.or(F_SUPPORT_TANK_EQUIPMENT)
                 .or(F_CHASSIS_MODIFICATION).or(F_ULTRA_LIGHT);
         //Setting this Pre-Spaceflight

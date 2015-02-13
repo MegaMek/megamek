@@ -35,6 +35,10 @@ JI-50 (Q-Vehicle)
 25
 </Armor>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <Front Equipment>
 ISSRM4
 ISSRM4
@@ -69,7 +73,7 @@ IS Level 2
 </year>
 
 <source>
-Jihad
+TRO 3075
 </source>
 
 <internal_type>
@@ -93,5 +97,4 @@ Tracked
 </motion_type>
 
 <transporters>
-TroopSpace:19.5
 </transporters>

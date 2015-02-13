@@ -51,14 +51,18 @@ Wheeled
 9
 </barrating>
 
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
 <Body Equipment>
-Environmental Sealing
+Enviromental Sealed Chassis
 Armored Chassis
 ISOffRoadChassis
 </Body Equipment>
 
 <transporters>
-cargobay:13:1
+cargobay:12.5:1
 </transporters>
 
 <Front Equipment>

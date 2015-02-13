@@ -51,8 +51,14 @@ Wheeled
 7
 </barrating>
 
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
 <Body Equipment>
+ISOffRoadChassis
 PintleTurret
+InfantryHMG (PT)
 </Body Equipment>
 
 <Front Equipment>

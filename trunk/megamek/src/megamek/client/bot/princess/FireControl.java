@@ -261,7 +261,7 @@ public class FireControl {
      */
     @StaticWrapper
     protected Coords getNearestPointInFlightPath(Coords shooterPosition, Aero targetAero) {
-        return Compute.getClosestFlightPath(shooterPosition, targetAero);
+        return Compute.getClosestFlightPath(-1, shooterPosition, targetAero);
     }
 
     /**

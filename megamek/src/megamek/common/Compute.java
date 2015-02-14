@@ -1456,6 +1456,33 @@ public class Compute {
         }
         return finalPos;
     }
+    
+    public static int getClosestFlightPathFacing(int attackerId,
+            Coords aPos, Entity te) {
+
+        Coords finalPos = te.getPosition();
+        if (te.getPlayerPickedPassThrough(attackerId) != null) {
+            finalPos = te.getPlayerPickedPassThrough(attackerId);
+        }
+        int distance = aPos.distance(finalPos);
+        int finalFacing = 0;
+        // don't return zero distance Coords, but rather the Coords immediately
+        // before this
+        // This is necessary to determine angle of attack and arc information
+        // for direct fly-overs
+        for (int i = 0; i < te.getPassedThrough().size(); i++) {
+            Coords c = te.getPassedThrough().get(i);
+            if (!aPos.equals(c)
+                && ((aPos.distance(c) < distance) || (distance == 0))) {
+                finalFacing = te.getPassedThroughFacing().get(i);
+                finalPos = c;
+                distance = aPos.distance(c);
+            } else if (c.equals(finalPos)) {
+                finalFacing = te.getPassedThroughFacing().get(i);
+            }
+        }
+        return finalFacing;
+    }
 
     /**
      * WOR: Need this function to find out where my nova stuff doesn't work.
@@ -3898,8 +3925,11 @@ public class Compute {
         }
 
         if (isGroundToAir(attacker, target) && (null != te)) {
-            return te.sideTable(attackPos, usePrior, te.getFacing(), Compute
-                    .getClosestFlightPath(attacker.getId(), attackPos, te));
+            int facing = Compute.getClosestFlightPathFacing(attacker.getId(),
+                    attackPos, te);
+            Coords pos = Compute.getClosestFlightPath(attacker.getId(),
+                    attackPos, te);
+            return te.sideTable(attackPos, usePrior, facing, pos);
         }
 
         if ((null != te) && (called == CalledShot.CALLED_LEFT)) {

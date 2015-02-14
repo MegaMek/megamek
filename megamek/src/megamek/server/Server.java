@@ -6307,6 +6307,8 @@ public class Server implements Runnable {
         // it may already have some values
         Vector<Coords> passedThrough = entity.getPassedThrough();
         passedThrough.add(curPos);
+        List<Integer> passedThroughFacing = entity.getPassedThroughFacing();
+        passedThroughFacing.add(curFacing);
 
         // Compile the move
         md.compile(game, entity);
@@ -6340,6 +6342,8 @@ public class Server implements Runnable {
             }
             passedThrough.add(entity.getPosition());
             entity.setPassedThrough(passedThrough);
+            passedThroughFacing.add(entity.getFacing());
+            entity.setPassedThroughFacing(passedThroughFacing);
             entity.setDone(true);
             entityUpdate(entity.getId());
             return;
@@ -8059,6 +8063,7 @@ public class Server implements Runnable {
             // through
             if (!curPos.equals(lastPos)) {
                 passedThrough.add(curPos);
+                passedThroughFacing.add(curFacing);
             }
 
             // update lastPos, prevStep, prevFacing & prevHex
@@ -8089,6 +8094,7 @@ public class Server implements Runnable {
 
         // add a list of places passed through
         entity.setPassedThrough(passedThrough);
+        entity.setPassedThroughFacing(passedThroughFacing);
 
         // if we ran with destroyed hip or gyro, we need a psr
         rollTarget = entity.checkRunningWithDamage(overallMoveType);

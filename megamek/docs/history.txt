@@ -5,6 +5,8 @@ v0.41.3-dev
 + Bug: Air-to-ground fire needs to allow the attacker to pick a path on the
     targets flight path if multiple hexes are equidistant (this can matter for
     angle-of-attack calculation)
++ Bug: in Air-to-ground attacks, the end facing of the Aero was being used,
+    instead of the facing at the position in the flight path
 
 v0.41.2-dev (2015-02-12 15:20 UTC)
 + Bug [#4422]: Woods, jungle, and smoke not getting counted for LoS

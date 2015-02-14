@@ -340,6 +340,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     // need to keep a list of areas that this entity has passed through on the
     // current turn
     private Vector<Coords> passedThrough = new Vector<Coords>();
+    private List<Integer> passedThroughFacing = new ArrayList<>();
     /**
      * Stores the player selected hex ground to air targeting.
      * For ground to air, distance to target for the ground unit is determined
@@ -5376,6 +5377,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // reset hexes passed through
         setPassedThrough(new Vector<Coords>());
+        setPassedThroughFacing(new ArrayList<Integer>());
         if (playerPickedPassThrough == null) {
             playerPickedPassThrough = new HashMap<>();
         } else {
@@ -10054,6 +10056,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public Vector<Coords> getPassedThrough() {
         return passedThrough;
+    }
+    
+    public void setPassedThroughFacing(List<Integer> passFacing) {
+        passedThroughFacing = passFacing;
+    }
+
+    public List<Integer> getPassedThroughFacing() {
+        return passedThroughFacing;
     }
 
     public void addPassedThrough(Coords c) {

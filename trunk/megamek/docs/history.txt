@@ -8,6 +8,7 @@ v0.41.3-dev
 + Bug: in Air-to-ground attacks, the end facing of the Aero was being used,
     instead of the facing at the position in the flight path
 + Feature [#1362]: Extras tab in UnitDisplay now shows last targeted unit
++ Bug [#4437]:  ASFs - "Next target" button selects invalid targets 
 
 v0.41.2-dev (2015-02-12 15:20 UTC)
 + Bug [#4422]: Woods, jungle, and smoke not getting counted for LoS

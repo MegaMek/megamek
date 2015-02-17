@@ -3042,13 +3042,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // missiles
         if (!exchangeSwarmTarget) {
 
-            if (!game.getOptions().booleanOption("friendly_fire")) {
+            if (!game.getOptions().booleanOption("friendly_fire") 
+                    && !isStrafing) {
                 // a friendly unit can never be the target of a direct attack.
                 // but we do allow vehicle flamers to cool
                 if ((target.getTargetType() == Targetable.TYPE_ENTITY)
-                    && ((te.getOwnerId() == ae.getOwnerId()) || (te
-                                                                         .getOwner().getTeam() == ae.getOwner()
-                                                                                                    .getTeam()))) {
+                        && ((te.getOwnerId() == ae.getOwnerId()) || (te
+                                .getOwner().getTeam() == ae.getOwner()
+                                .getTeam()))) {
                     if (!(usesAmmo && (atype.getMunitionType() == AmmoType.M_COOLANT))) {
                         return "A friendly unit can never be the target of a direct attack.";
                     }

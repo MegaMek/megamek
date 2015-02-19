@@ -26,7 +26,7 @@
       <key>MainClass</key>
       <string>megamek.MegaMek</string>
       <key>JVMVersion</key>
-      <string>1.3+</string>
+      <string>1.7+</string>
       <key>ClassPath</key>
       <array>
         <string>$JAVAROOT/MegaMek.jar</string>

@@ -355,4 +355,12 @@
 
 	<target name="release" depends="svndev-build, unitfiles-zip, mac-package, nix-package, win-package, source-package, svndev-clean" description="Build the project from SVN and package it as Windows, Mac, Unix, and source-only" />
 
+    <target name="mac-release" depends="svndev-build, mac-package, svndev-clean" description="Build the project from local source and package it as Mac" />
+
+    <target name="win-release" depends="svndev-build, win-package, svndev-clean" description="Build the project from local source and package it as Windows" />
+
+    <target name="nix-release" depends="svndev-build, nix-package, svndev-clean" description="Build the project from local source and package it as Unix" />
+
+    <target name="src-release" depends="svndev-build, source-package, svndev-clean" description="Build the project from local source and package it as source-only" />
+
 </project>

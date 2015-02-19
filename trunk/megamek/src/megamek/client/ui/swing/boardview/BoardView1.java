@@ -1721,6 +1721,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             return;
         }
 
+        final GUIPreferences guip = GUIPreferences.getInstance();
         final IHex hex = game.getBoard().getHex(c);
         final Point hexLoc = getHexLocation(c);
 
@@ -1855,14 +1856,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
         }
 
-        if (GUIPreferences.getInstance().getBoolean(
-                GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
+        if (guip.getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
                 && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)
                 && (game.isPositionIlluminated(c) == IGame.ILLUMINATED_NONE)) {
             scaledImage = getScaledImage(tileManager.getNightFog(), true);
             g.drawImage(scaledImage, drawX, drawY, this);
         }
-        g.setColor(GUIPreferences.getInstance().getMapTextColor());
+        g.setColor(guip.getMapTextColor());
         if (game.getBoard().inSpace()) {
             g.setColor(Color.LIGHT_GRAY);
         }
@@ -1890,8 +1890,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             return;
         }
 
-        // draw hex number
-        if (scale >= 0.5) {
+        // draw hex number unless deactivated or scale factor too small
+        if (guip.getBoolean(GUIPreferences.ADVANCED_SHOW_COORDS)
+                && (scale >= 0.5)) {
             drawCenteredString(c.getBoardNum(), drawX, drawY
                     + (int) (12 * scale), font_hexnum, g);
         }

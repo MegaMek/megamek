@@ -861,9 +861,12 @@ public class CommonSettingsDialog extends ClientDialog implements
     }
 
     public void focusLost(FocusEvent e) {
-        GUIPreferences.getInstance().setValue(
-                "Advanced" + keys.getModel().getElementAt(keysIndex),
-                value.getText());
+        String option = "Advanced" + keys.getModel().getElementAt(keysIndex); 
+        GUIPreferences.getInstance().setValue(option, value.getText());
+        if (option.equals(GUIPreferences.ADVANCED_SHOW_COORDS)) {
+            clientgui.bv.clearHexImageCache();
+            clientgui.bv.repaint();
+        }
     }
 
     private JPanel getTacticalOverlaySettingsPanel() {

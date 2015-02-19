@@ -76,6 +76,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_KEY_REPEAT_DELAY = "AdvancedKeyRepeatDelay";
     public static final String ADVANCED_KEY_REPEAT_RATE = "AdvancedKeyRepeatRate";
     public static final String ADVANCED_SHOW_FPS = "AdvancedShowFPS";
+    public static final String ADVANCED_SHOW_COORDS = "AdvancedShowCoords";
     /* --End advanced settings-- */
 
 
@@ -230,6 +231,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_KEY_REPEAT_DELAY, 0);
         store.setDefault(ADVANCED_KEY_REPEAT_RATE, 20);
         store.setDefault(ADVANCED_SHOW_FPS, "false");
+        store.setDefault(ADVANCED_SHOW_COORDS, "true");    
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");

@@ -16,6 +16,7 @@ v0.41.3-dev
 + Data: New Sprites.
 + Data: New RATs(FM:Lyran,FM:CC,FM:Comstar) Thanks Magnus Kerensky.
 + Feature: Tactical Overlay settings now update board view immediately
++ Patch [#466]: FoV Shading in with stripes
 
 v0.41.2-dev (2015-02-12 15:20 UTC)
 + Bug [#4422]: Woods, jungle, and smoke not getting counted for LoS

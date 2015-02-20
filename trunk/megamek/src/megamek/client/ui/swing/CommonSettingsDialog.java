@@ -858,12 +858,16 @@ public class CommonSettingsDialog extends ClientDialog implements
             stampFormat.setEnabled(stampFilenames.isSelected());
         } else if (source.equals(fovInsideEnabled)) {
             guip.setFovHighlight(fovInsideEnabled.isSelected());
-            clientgui.bv.clearHexImageCache();
-            clientgui.bv.repaint();
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
         } else if (source.equals(fovOutsideEnabled)) {
             guip.setFovDarken(fovOutsideEnabled.isSelected());
-            clientgui.bv.clearHexImageCache();
-            clientgui.bv.repaint();
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
         }
     }
 
@@ -875,19 +879,24 @@ public class CommonSettingsDialog extends ClientDialog implements
         GUIPreferences guip = GUIPreferences.getInstance();          
         if (src.equals(fovHighlightRingsRadii)) {
             guip.setFovHighlightRingsRadii(fovHighlightRingsRadii.getText());
-            clientgui.bv.clearHexImageCache();
-            clientgui.bv.repaint();
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
             return;
         } else if (src.equals(fovHighlightRingsColors)) {
             guip.setFovHighlightRingsColorsHsb(fovHighlightRingsColors.getText());
-            clientgui.bv.clearHexImageCache();
-            clientgui.bv.repaint();
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
             return;
         }
         // For Advanced options
         String option = "Advanced" + keys.getModel().getElementAt(keysIndex); 
         GUIPreferences.getInstance().setValue(option, value.getText());
-        if (option.equals(GUIPreferences.ADVANCED_SHOW_COORDS)) {
+        if (option.equals(GUIPreferences.ADVANCED_SHOW_COORDS)
+                && (clientgui != null) && (clientgui.bv != null)) {
             clientgui.bv.clearHexImageCache();
             clientgui.bv.repaint();
         }
@@ -1326,17 +1335,23 @@ public class CommonSettingsDialog extends ClientDialog implements
         if (evt.getSource().equals(fovHighlightAlpha)) {
             // Need to convert from 0-100 to 0-255
             guip.setFovHighlightAlpha((int) (fovHighlightAlpha.getValue() * 2.55));
-            clientgui.bv.clearHexImageCache();
-            clientgui.bv.repaint();
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
         } else if (evt.getSource().equals(fovDarkenAlpha)) {
             // Need to convert from 0-100 to 0-255
             guip.setFovDarkenAlpha((int) (fovDarkenAlpha.getValue() * 2.55));
-            clientgui.bv.clearHexImageCache();
-            clientgui.bv.repaint();
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
         } else if (evt.getSource().equals(numStripesSlider)) {
             guip.setFovStripes(numStripesSlider.getValue());
-            clientgui.bv.clearHexImageCache();
-            clientgui.bv.repaint();
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
         }
     }
 }

@@ -58,7 +58,7 @@ public class CLLightMG extends MGWeapon {
         this.atClass = CLASS_AC;
         introDate = 3060;
         techLevel.put(3060, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_C };
+        availRating = new int[] { RATING_X, RATING_X, RATING_B };
         techRating = RATING_F;
     }
 

@@ -47,8 +47,8 @@ public class CLStreakSRM6Prototype extends CLPrototypeStreakSRMWeapon {
         maxRange = RANGE_SHORT;
         introDate = 2820;
         extinctDate = 2825;
-        availRating = new int[] { RATING_X, RATING_E, RATING_F };
-        techRating = RATING_F;
+        availRating = new int[] { RATING_X, RATING_F, RATING_X };
+        techRating = RATING_E;
         techLevel.put(2820, techLevel.get(3071));
     }
 }

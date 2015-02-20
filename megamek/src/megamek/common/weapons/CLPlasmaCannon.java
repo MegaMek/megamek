@@ -59,7 +59,7 @@ public class CLPlasmaCannon extends AmmoWeapon {
         atClass = CLASS_PLASMA;
         introDate = 3069;
         techLevel.put(3069, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_D };
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         techRating = RATING_F;
 
     }

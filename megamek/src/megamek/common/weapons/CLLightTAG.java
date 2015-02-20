@@ -49,7 +49,7 @@ public class CLLightTAG extends TAGWeapon {
         cost = 40000;
         introDate = 3054;
         techLevel.put(3054, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         techRating = RATING_F;
         flags = flags.andNot(F_BA_WEAPON).or(F_AERO_WEAPON);
     }

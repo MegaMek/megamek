@@ -654,6 +654,10 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         gs.setShowMapsheets(showMapsheets.isSelected());
 
+        if (gs.getAntiAliasing() != chkAntiAliasing.isSelected()) {
+            clientgui.bv.clearHexImageCache();
+            clientgui.bv.repaint();
+        }
         gs.setAntiAliasing(chkAntiAliasing.isSelected());
 
         gs.setShowDamageLevel(showDamageLevel.isSelected());

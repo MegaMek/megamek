@@ -1785,6 +1785,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         Graphics g = hexImage.getGraphics();
         drawX = 0;
         drawY = 0;
+        
+        if (GUIPreferences.getInstance().getAntiAliasing()) {
+            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+        }
 
         g.drawImage(scaledImage, drawX, drawY, this);
 

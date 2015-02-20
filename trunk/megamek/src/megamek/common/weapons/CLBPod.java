@@ -40,7 +40,7 @@ public class CLBPod extends BPodWeapon {
         this.addLookupName("CLB-Pod");
         introDate = 3068;
         techLevel.put(3068, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        availRating = new int[] { RATING_X, RATING_D, RATING_C };
         techRating = RATING_E;
     }
 }

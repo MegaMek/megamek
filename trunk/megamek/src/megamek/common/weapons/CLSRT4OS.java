@@ -49,7 +49,7 @@ public class CLSRT4OS extends SRTWeapon {
         cost = 30000;
         introDate = 2824;
         techLevel.put(2824, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_C, RATING_B };
+        availRating = new int[] { RATING_X, RATING_B, RATING_B };
         techRating = RATING_F;
     }
 }

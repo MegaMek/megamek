@@ -56,5 +56,11 @@ public class CLPlasmaRifle extends PlasmaMFUKWeapon {
         criticals = 2;
         bv = 400;
         cost = 300000;
+        //Gonna use the same tech info as the Cannon
+        introDate = 3069;
+        techLevel.put(3069, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        techRating = RATING_F;
+        
     }
 }

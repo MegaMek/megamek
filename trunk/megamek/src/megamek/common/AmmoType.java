@@ -4317,7 +4317,7 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(3073, ammo.techLevel.get(3073));
         ammo.techLevel.put(3104, TechConstants.T_CLAN_TW);
         ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
-        ammo.techRating = RATING_F;
+        ammo.techRating = RATING_F; 
 
         return ammo;
     }
@@ -5781,7 +5781,7 @@ public class AmmoType extends EquipmentType {
         ammo.kgPerShot = 150;
         ammo.introDate = 2828;
         ammo.techLevel.put(2828, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_E, RATING_D};
+        ammo.availRating = new int[]{RATING_X, RATING_D, RATING_C};
         ammo.techRating = RATING_E;
 
         return ammo;
@@ -5803,7 +5803,7 @@ public class AmmoType extends EquipmentType {
         ammo.kgPerShot = 150;
         ammo.introDate = 2828;
         ammo.techLevel.put(2828, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_E, RATING_D};
+        ammo.availRating = new int[]{RATING_X, RATING_D, RATING_C};
         ammo.techRating = RATING_E;
 
         return ammo;
@@ -11165,7 +11165,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISGAC2Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_UNOFFICIAL);
         ammo.name = "GAC/2 Ammo";
         ammo.shortName = "GAC/2";
         ammo.setInternalName("IS Ammo GAC/2");
@@ -11177,6 +11176,10 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 22;
         ammo.bv = 12;
         ammo.cost = 1000;
+        ammo.introDate = 3062;
+        ammo.techLevel.put(3062, TechConstants.T_IS_UNOFFICIAL);
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -11184,7 +11187,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISGAC4Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_UNOFFICIAL);
         ammo.name = "GAC/4 Ammo";
         ammo.shortName = "GAC/4";
         ammo.setInternalName("IS Ammo GAC/4");
@@ -11196,6 +11198,10 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 11;
         ammo.bv = 22;
         ammo.cost = 1000;
+        ammo.introDate = 3062;
+        ammo.techLevel.put(3062, TechConstants.T_IS_UNOFFICIAL);
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -11203,7 +11209,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISGAC6Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_UNOFFICIAL);
         ammo.name = "GAC/6 Ammo";
         ammo.shortName = "GAC/6";
         ammo.setInternalName("IS Ammo GAC/6");
@@ -11215,6 +11220,10 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 7;
         ammo.bv = 40;
         ammo.cost = 1000;
+        ammo.introDate = 3062;
+        ammo.techLevel.put(3062, TechConstants.T_IS_UNOFFICIAL);
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        ammo.techRating = RATING_E;
 
         return ammo;
     }
@@ -11222,7 +11231,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISGAC8Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_UNOFFICIAL);
         ammo.name = "GAC/8 Ammo";
         ammo.shortName = "GAC/8";
         ammo.setInternalName("IS Ammo GAC/8");
@@ -11234,6 +11242,10 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 53;
         ammo.cost = 1000;
+        ammo.introDate = 3062;
+        ammo.techLevel.put(3062, TechConstants.T_IS_UNOFFICIAL);
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        ammo.techRating = RATING_E;
 
         return ammo;
     }

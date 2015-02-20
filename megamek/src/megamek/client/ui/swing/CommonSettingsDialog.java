@@ -54,6 +54,8 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
@@ -68,7 +70,8 @@ import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 
 public class CommonSettingsDialog extends ClientDialog implements
-        ActionListener, ItemListener, FocusListener, ListSelectionListener {
+        ActionListener, ItemListener, FocusListener, ListSelectionListener,
+        ChangeListener {
     
     private class PhaseCommandListMouseAdapter extends MouseInputAdapter {
         private boolean mouseDragging = false;
@@ -684,14 +687,6 @@ public class CommonSettingsDialog extends ClientDialog implements
                     .getName());
         }
 
-        // Tactical Overlay Settings
-        gs.setFovHighlight(fovInsideEnabled.isSelected());
-        gs.setFovHighlightAlpha((int) (fovHighlightAlpha.getValue() * 2.55)); // convert from 0-100 to 0-255
-        gs.setFovHighlightRingsRadii( fovHighlightRingsRadii.getText() );
-        gs.setFovHighlightRingsColorsHsb( fovHighlightRingsColors.getText() );
-        gs.setFovDarken(fovOutsideEnabled.isSelected());
-        gs.setFovDarkenAlpha((int) (fovDarkenAlpha.getValue() * 2.55)); // convert from 0-100 to 0-255
-
         ToolTipManager.sharedInstance().setInitialDelay(
                 GUIPreferences.getInstance().getTooltipDelay());
         if (GUIPreferences.getInstance().getTooltipDismissDelay() > 0)
@@ -853,11 +848,20 @@ public class CommonSettingsDialog extends ClientDialog implements
      */
     public void itemStateChanged(ItemEvent event) {
         Object source = event.getItemSelectable();
+        GUIPreferences guip = GUIPreferences.getInstance();
         if (source.equals(keepGameLog)) {
             gameLogFilename.setEnabled(keepGameLog.isSelected());
             // gameLogMaxSize.setEnabled(keepGameLog.isSelected());
         } else if (source.equals(stampFilenames)) {
             stampFormat.setEnabled(stampFilenames.isSelected());
+        } else if (source.equals(fovInsideEnabled)) {
+            guip.setFovHighlight(fovInsideEnabled.isSelected());
+            clientgui.bv.clearHexImageCache();
+            clientgui.bv.repaint();
+        } else if (source.equals(fovOutsideEnabled)) {
+            guip.setFovDarken(fovOutsideEnabled.isSelected());
+            clientgui.bv.clearHexImageCache();
+            clientgui.bv.repaint();
         }
     }
 
@@ -865,6 +869,20 @@ public class CommonSettingsDialog extends ClientDialog implements
     }
 
     public void focusLost(FocusEvent e) {
+        Object src = e.getSource();
+        GUIPreferences guip = GUIPreferences.getInstance();          
+        if (src.equals(fovHighlightRingsRadii)) {
+            guip.setFovHighlightRingsRadii(fovHighlightRingsRadii.getText());
+            clientgui.bv.clearHexImageCache();
+            clientgui.bv.repaint();
+            return;
+        } else if (src.equals(fovHighlightRingsColors)) {
+            guip.setFovHighlightRingsColorsHsb(fovHighlightRingsColors.getText());
+            clientgui.bv.clearHexImageCache();
+            clientgui.bv.repaint();
+            return;
+        }
+        // For Advanced options
         String option = "Advanced" + keys.getModel().getElementAt(keysIndex); 
         GUIPreferences.getInstance().setValue(option, value.getText());
         if (option.equals(GUIPreferences.ADVANCED_SHOW_COORDS)) {
@@ -879,6 +897,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         ArrayList<JComponent> row;
 
         fovInsideEnabled = new JCheckBox(Messages.getString("TacticalOverlaySettingsDialog.FovInsideEnabled")); //$NON-NLS-1$
+        fovInsideEnabled.addItemListener(this);
         row = new ArrayList<JComponent>();
         row.add(fovInsideEnabled);
         comps.add(row);
@@ -889,6 +908,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         fovHighlightAlpha.setPaintTicks(true);
         fovHighlightAlpha.setPaintLabels(true);
         fovHighlightAlpha.setMaximumSize(new Dimension(700, 100));
+        fovHighlightAlpha.addChangeListener(this);
         JLabel highlightAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightAlpha")); //$NON-NLS-1$
         row = new ArrayList<JComponent>();
         row.add(highlightAlphaLabel);
@@ -903,6 +923,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         comps.add(row);
         row=new ArrayList<>();
         fovHighlightRingsRadii= new JTextField((2+1)*7);
+        fovHighlightRingsRadii.addFocusListener(this);
         fovHighlightRingsRadii.setMaximumSize(new Dimension(Integer.MAX_VALUE,fovHighlightRingsRadii.getPreferredSize().height) );
         row.add(fovHighlightRingsRadii);
         comps.add(row);
@@ -913,6 +934,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         comps.add(row);
         row= new ArrayList<>();
         fovHighlightRingsColors= new JTextField(((3+1)*3+1)*7);
+        fovHighlightRingsColors.addFocusListener(this);
         fovHighlightRingsColors.setMaximumSize(new Dimension(Integer.MAX_VALUE,fovHighlightRingsColors.getPreferredSize().height) );
         row.add(fovHighlightRingsColors);
         comps.add(row);
@@ -923,6 +945,7 @@ public class CommonSettingsDialog extends ClientDialog implements
 
 
         fovOutsideEnabled = new JCheckBox(Messages.getString("TacticalOverlaySettingsDialog.FovOutsideEnabled")); //$NON-NLS-1$
+        fovOutsideEnabled.addItemListener(this);
         row = new ArrayList<JComponent>();
         row.add(fovOutsideEnabled);
         comps.add(row);
@@ -933,6 +956,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         fovDarkenAlpha.setPaintTicks(true);
         fovDarkenAlpha.setPaintLabels(true);
         fovDarkenAlpha.setMaximumSize(new Dimension(700, 100));
+        fovDarkenAlpha.addChangeListener(this);
         JLabel darkenAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovDarkenAlpha")); //$NON-NLS-1$
         row = new ArrayList<JComponent>();
         row.add(darkenAlphaLabel);
@@ -1210,5 +1234,21 @@ public class CommonSettingsDialog extends ClientDialog implements
                     "Advanced" + keys.getSelectedValue()));
             keysIndex = keys.getSelectedIndex();
         }
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent evt) {
+        GUIPreferences guip = GUIPreferences.getInstance();
+        if (evt.getSource().equals(fovHighlightAlpha)) {
+            // Need to convert from 0-100 to 0-255
+            guip.setFovHighlightAlpha((int) (fovHighlightAlpha.getValue() * 2.55));
+            clientgui.bv.clearHexImageCache();
+            clientgui.bv.repaint();
+        } else if (evt.getSource().equals(fovDarkenAlpha)) {
+            // Need to convert from 0-100 to 0-255
+            guip.setFovDarkenAlpha((int) (fovDarkenAlpha.getValue() * 2.55));
+            clientgui.bv.clearHexImageCache();
+            clientgui.bv.repaint();
+        }        
     }
 }

@@ -36,11 +36,10 @@ public abstract class ATMWeapon extends MissileWeapon {
         techLevel.put(3071, TechConstants.T_CLAN_TW);
         ammoType = AmmoType.T_ATM;
         atClass = CLASS_ATM;
-        availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D };
         introDate = 3054;
         techLevel.put(3054, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_D };
+        availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_D };
         techRating = RATING_F;
     }
 

@@ -51,9 +51,9 @@ public class CLSmallLaser extends LaserWeapon {
         bv = 9;
         cost = 11250;
         atClass = CLASS_POINT_DEFENSE;
-        introDate = 2400;
-        techLevel.put(2400, techLevel.get(3071));
-        availRating = new int[] { RATING_B, RATING_B, RATING_B };
+        introDate = 2820;
+        techLevel.put(2820, techLevel.get(3071));
+        availRating = new int[] { RATING_X, RATING_D, RATING_C };
         techRating = RATING_E;
     }
 }

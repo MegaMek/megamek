@@ -46,7 +46,7 @@ public class CLNarcIOS extends NarcWeapon {
         flags = flags.or(F_ONESHOT);
         bv = 6;
         cost = 100000;
-        techRating = RATING_B;
+        techRating = RATING_F;
         availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3058;
         techLevel.put(3058, techLevel.get(3071));

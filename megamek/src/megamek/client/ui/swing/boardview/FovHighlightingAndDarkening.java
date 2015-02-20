@@ -167,14 +167,15 @@ class FovHighlightingAndDarkening {
                 }
                 if (!los.canSee() || (dist > visualRange)) {
                     if (darken) {
-                        if (this.boardView1.game.getOptions().booleanOption(
+                        if (boardView1.game.getOptions().booleanOption(
                                 "tacops_sensors")
                                 && (dist > minSensorRange)
                                 && (dist <= maxSensorRange)) {
-                            this.boardView1.drawHexLayer(p, boardGraph,
-                                    transparent_light_gray);
+                            boardView1.drawHexLayer(p, boardGraph,
+                                    transparent_light_gray, false);
                         } else {
-                            this.boardView1.drawHexLayer(p, boardGraph, transparent_gray);
+                            boardView1.drawHexLayer(p, boardGraph,
+                                    transparent_gray, true);
                         }
                     }
                 } else if (highlight) {
@@ -184,7 +185,7 @@ class FovHighlightingAndDarkening {
                         int dt= itR.next();
                         Color ct= itC.next();
                         if (dist <= dt) {
-                            this.boardView1.drawHexLayer(p, boardGraph, ct);
+                            boardView1.drawHexLayer(p, boardGraph, ct, false);
                             break;
                         }
                     }
@@ -192,7 +193,7 @@ class FovHighlightingAndDarkening {
             } else {
                 // Max dist should be >= visual dist, this hex can't be seen
                 if (darken) {
-                    this.boardView1.drawHexLayer(p, boardGraph, transparent_gray);
+                    this.boardView1.drawHexLayer(p, boardGraph, transparent_gray, true);
                 }
             }
         }

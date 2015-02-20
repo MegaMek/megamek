@@ -22,6 +22,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -1284,21 +1285,36 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Draw a layer of a solid color (alpha possible) on the hex at Point p no
      * padding by default
      */
-    void drawHexLayer(Point p, Graphics g, Color col) {
-        drawHexLayer(p, g, col, 0);
+    void drawHexLayer(Point p, Graphics g, Color col, boolean outOfFOV) {
+        drawHexLayer(p, g, col, outOfFOV, 0);
     }
 
     /**
      * Draw a layer of a solid color (alpha possible) on the hex at Point p with
      * some padding around the border
      */
-    private void drawHexLayer(Point p, Graphics g, Color col, double pad) {
-        g.setColor(col);
+    private void drawHexLayer(Point p, Graphics g, Color col, boolean outOfFOV,
+            double pad) {
 
         final double[] x = {0, 21. * scale, 62. * scale, 83. * scale};
         final double[] y = {0, 35. * scale, 36. * scale, 71. * scale};
         g.setColor(col);
 
+        // create stripe effect for FOV darkening but not for colored weapon
+        // ranges
+        int fogStripes = GUIPreferences.getInstance().getFovStripes();
+        if (outOfFOV && (fogStripes > 0) && (g instanceof Graphics2D)) {
+            float lineSpacing = fogStripes;
+            // totally transparent here hurts the eyes
+            Color c2 = new Color(col.getRed() / 2, col.getGreen() / 2,
+                    col.getBlue() / 2, col.getAlpha() / 2); 
+
+            // the numbers make the lines align across hexes
+            GradientPaint gp = new GradientPaint(42.0f / lineSpacing, 0.0f,
+                    col, 104.0f / lineSpacing, 106.0f / lineSpacing, c2, true);
+            ((Graphics2D)g).setPaint(gp);
+        }
+        
         if (pad > 0.1) {
             final double cos60 = 0.5;
             final double cos30 = 0.8660254;
@@ -1307,25 +1323,25 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             final double a = cos60 * pad * scale;
             final double b = cos30 * pad * scale;
 
-            int[] xcoords = {p.x + (int) (x[1] + a), p.x + (int) (x[2] - a),
-                             p.x + (int) (x[3] - pd), p.x + (int) (x[3] - pd),
-                             p.x + (int) (x[2] - a), p.x + (int) (x[1] + a),
-                             p.x + (int) (x[0] + pd), p.x + (int) (x[0] + pd)};
-            int[] ycoords = {p.y + (int) (y[0] + b), p.y + (int) (y[0] + b),
-                             p.y + (int) (y[1]), p.y + (int) (y[2]),
-                             p.y + (int) (y[3] - b), p.y + (int) (y[3] - b),
-                             p.y + (int) (y[2]), p.y + (int) (y[1])};
+            int[] xcoords = { p.x + (int) (x[1] + a), p.x + (int) (x[2] - a),
+                    p.x + (int) (x[3] - pd), p.x + (int) (x[3] - pd),
+                    p.x + (int) (x[2] - a), p.x + (int) (x[1] + a),
+                    p.x + (int) (x[0] + pd), p.x + (int) (x[0] + pd) };
+            int[] ycoords = { p.y + (int) (y[0] + b), p.y + (int) (y[0] + b),
+                    p.y + (int) (y[1]), p.y + (int) (y[2]),
+                    p.y + (int) (y[3] - b), p.y + (int) (y[3] - b),
+                    p.y + (int) (y[2]), p.y + (int) (y[1]) };
 
             g.fillPolygon(xcoords, ycoords, 8);
 
         } else {
 
-            int[] xcoords = {p.x + (int) (x[1]), p.x + (int) (x[2]),
-                             p.x + (int) (x[3]), p.x + (int) (x[3]), p.x + (int) (x[2]),
-                             p.x + (int) (x[1]), p.x + (int) (x[0]), p.x + (int) (x[0])};
-            int[] ycoords = {p.y + (int) (y[0]), p.y + (int) (y[0]),
-                             p.y + (int) (y[1]), p.y + (int) (y[2]), p.y + (int) (y[3]),
-                             p.y + (int) (y[3]), p.y + (int) (y[2]), p.y + (int) (y[1])};
+            int[] xcoords = { p.x + (int) (x[1]), p.x + (int) (x[2]),
+                    p.x + (int) (x[3]), p.x + (int) (x[3]), p.x + (int) (x[2]),
+                    p.x + (int) (x[1]), p.x + (int) (x[0]), p.x + (int) (x[0]) };
+            int[] ycoords = { p.y + (int) (y[0]), p.y + (int) (y[0]),
+                    p.y + (int) (y[1]), p.y + (int) (y[2]), p.y + (int) (y[3]),
+                    p.y + (int) (y[3]), p.y + (int) (y[2]), p.y + (int) (y[1]) };
 
             g.fillPolygon(xcoords, ycoords, 8);
         }

@@ -33,9 +33,10 @@ public class InfantryArchaicVibroAxeWeapon extends InfantryWeapon {
     public InfantryArchaicVibroAxeWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Vibro Axe";
+        name = "Blade (Vibro-axe)";
         setInternalName(name);
         addLookupName("InfantryVibroAxe");
+        addLookupName("Vibro Axe");
         ammoType = AmmoType.T_NA;
         cost = 150;
         bv = 0.39;

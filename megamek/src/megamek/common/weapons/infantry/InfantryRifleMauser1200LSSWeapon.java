@@ -33,9 +33,10 @@ public class InfantryRifleMauser1200LSSWeapon extends InfantryWeapon {
     public InfantryRifleMauser1200LSSWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Mauser 1200 LSS";
+        name = "Laser Rifle (Mauser 1200 LSS)";
         setInternalName(name);
         addLookupName("InfantryMauser1200");
+        addLookupName("Mauser 1200 LSS");
         ammoType = AmmoType.T_NA;
         cost = 10000;
         bv = 5.32;

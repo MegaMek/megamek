@@ -33,9 +33,10 @@ public class InfantryArchaicNeuralWhipWeapon extends InfantryWeapon {
     public InfantryArchaicNeuralWhipWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Neural Whip";
+        name = "Whip (Neural Whip)";
         setInternalName(name);
         addLookupName("InfantryNeuralWhip");
+        addLookupName("Neural Whip");
         ammoType = AmmoType.T_NA;
         cost = 500;
         bv = 0.08;

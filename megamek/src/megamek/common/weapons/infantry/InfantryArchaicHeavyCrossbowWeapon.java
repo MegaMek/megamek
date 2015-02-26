@@ -33,9 +33,10 @@ public class InfantryArchaicHeavyCrossbowWeapon extends InfantryWeapon {
     public InfantryArchaicHeavyCrossbowWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Heavy Crossbow";
+        name = "Crossbow (Heavy)";
         setInternalName(name);
         addLookupName("InfantryHeavyCrossbow");
+        addLookupName("Heavy Crossbow");
         ammoType = AmmoType.T_NA;
         cost = 20;
         bv = 0.02;

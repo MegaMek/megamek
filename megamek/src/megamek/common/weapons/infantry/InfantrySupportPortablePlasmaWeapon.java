@@ -32,12 +32,12 @@ public class InfantrySupportPortablePlasmaWeapon extends InfantryWeapon {
     public InfantrySupportPortablePlasmaWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Portable Plasma Rifle";
+        name = "Plasma Rifle (Man-Portable)";
         setInternalName(name);
         addLookupName("InfantryPlasmaRifle");
         addLookupName("InfantryPlasmaPortable");
         addLookupName("InfantryMPPR");
-        // Plasma Rifle (man-portable), TM p. 351
+        addLookupName("Portable Plasma Rifle");        
         cost = 7500;
         bv = 8.08;
         flags = flags.or(F_DIRECT_FIRE).or(F_PLASMA).or(F_BALLISTIC).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);

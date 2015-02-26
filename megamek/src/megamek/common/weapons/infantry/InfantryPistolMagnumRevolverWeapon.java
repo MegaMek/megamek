@@ -33,9 +33,10 @@ public class InfantryPistolMagnumRevolverWeapon extends InfantryWeapon {
     public InfantryPistolMagnumRevolverWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Magnum Revolver";
+        name = "Revolver (Magnum)";
         setInternalName(name);
         addLookupName("InfantryMagnumRevolverpistol");
+        addLookupName("Magnum Revolver");
         ammoType = AmmoType.T_AC;
         cost = 60;
         bv = 0.17;

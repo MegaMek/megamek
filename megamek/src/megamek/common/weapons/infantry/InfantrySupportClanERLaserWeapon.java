@@ -33,10 +33,11 @@ public class InfantrySupportClanERLaserWeapon extends InfantryWeapon {
     public InfantrySupportClanERLaserWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Infantry Clan ER Laser";
+        name = "Support Laser (ER, Clan)";
         setInternalName(name);
         addLookupName("InfantryClanERLaser");
         addLookupName("InfantryClanERSmallLaser");
+        addLookupName("Infantry Clan ER Laser");
         ammoType = AmmoType.T_NA;
         cost = 11250;
         bv = 10.27;
@@ -46,7 +47,7 @@ public class InfantrySupportClanERLaserWeapon extends InfantryWeapon {
         crew = 2;
         introDate = 2825;
         techLevel.put(2825,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_F,RATING_E};
+        availRating = new int[]{RATING_X,RATING_E,RATING_D};
         techRating = RATING_F;
     }
 }

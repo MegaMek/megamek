@@ -33,9 +33,10 @@ public class InfantryRifleBlazerRifleWeapon extends InfantryWeapon {
     public InfantryRifleBlazerRifleWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Blazer Rifle";
+        name = "Laser Rifle (Blazer)";
         setInternalName(name);
         addLookupName("InfantryBlazerRifle");
+        addLookupName("Infantry Blazer Rifle");
         ammoType = AmmoType.T_NA;
         cost = 2190;
         bv = 1.79;

@@ -33,9 +33,10 @@ public class InfantryRifleShredderHeavyNeedlerWeapon extends InfantryWeapon {
     public InfantryRifleShredderHeavyNeedlerWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Shredder Heavy Needler";
+        name = "Needler Rifle (Shredder Heavy)";
         setInternalName(name);
         addLookupName("InfantryShredder");
+        addLookupName("Shredder Heavy Needler");
         ammoType = AmmoType.T_NA;
         cost = 150;
         bv = 0.31;

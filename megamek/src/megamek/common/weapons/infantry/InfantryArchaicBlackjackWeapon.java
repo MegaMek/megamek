@@ -33,10 +33,11 @@ public class InfantryArchaicBlackjackWeapon extends InfantryWeapon {
     public InfantryArchaicBlackjackWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Blackjack";
+        name = "Club (Blackjack/Sap)";
         setInternalName(name);
         addLookupName("InfantryBlackjack");
         addLookupName("InfantrySap");
+        addLookupName("Blackjack");
         ammoType = AmmoType.T_NA;
         cost = 5;
         bv = 0.05;

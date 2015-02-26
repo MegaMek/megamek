@@ -33,9 +33,10 @@ public class InfantryPistolHawkEagleAutoPistolWeapon extends InfantryWeapon {
     public InfantryPistolHawkEagleAutoPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Hawk Eagle Auto Pistol";
+        name = "Auto-Pistol (Hawk Eagle)";
         setInternalName(name);
         addLookupName("InfantryHawkEagleAutopistol");
+        addLookupName("Hawk Eagle Auto Pistol");
         ammoType = AmmoType.T_AC;
         cost = 100;
         bv = 0.25;

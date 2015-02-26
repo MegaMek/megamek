@@ -33,9 +33,10 @@ public class InfantryPistolClanERLaserPistolWeapon extends InfantryWeapon {
     public InfantryPistolClanERLaserPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Clan ER Laser Pistol";
+        name = "Laser Pistol (ER)";
         setInternalName(name);
         addLookupName("InfantryClanERLaserpistol");
+        addLookupName("Clan ER Laser Pistol");
         ammoType = AmmoType.T_NA;
         cost = 1000;
         bv = 0.61;
@@ -44,7 +45,7 @@ public class InfantryPistolClanERLaserPistolWeapon extends InfantryWeapon {
         infantryRange = 1;
         introDate = 2835;
         techLevel.put(2835,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_F,RATING_E};
+        availRating = new int[]{RATING_X,RATING_D,RATING_C};
         techRating = RATING_F;
     }
 }

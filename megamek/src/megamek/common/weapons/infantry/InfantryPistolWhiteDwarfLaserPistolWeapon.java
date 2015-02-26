@@ -33,9 +33,9 @@ public class InfantryPistolWhiteDwarfLaserPistolWeapon extends InfantryWeapon {
     public InfantryPistolWhiteDwarfLaserPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "White Dwarf Holdout Laser Pistol";
+        name = "Laser Pistol (Intek White Dwarf )";
         setInternalName(name);
-        addLookupName("InfantryNambuAutopistol");
+        addLookupName("White Dwarf Holdout Laser Pistol");
         ammoType = AmmoType.T_NA;
         cost = 250;
         bv = 0.02;

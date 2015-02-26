@@ -33,9 +33,10 @@ public class InfantryArchaicShortBowWeapon extends InfantryWeapon {
     public InfantryArchaicShortBowWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Short Bow";
+        name = "Bow (Shortbow)";
         setInternalName(name);
         addLookupName("InfantryShortbow");
+        addLookupName("Short Bow");
         ammoType = AmmoType.T_NA;
         cost = 10;
         bv = 0.0;

@@ -33,9 +33,10 @@ public class InfantryPistolClanPulseLaserPistolWeapon extends InfantryWeapon {
     public InfantryPistolClanPulseLaserPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Clan Pulse Laser Pistol";
+        name = "Pulse Laser Pistol (Clan)";
         setInternalName(name);
         addLookupName("InfantryClanPulseLaserPistol");
+        addLookupName("Clan Pulse Laser Pistol");
         ammoType = AmmoType.T_NA;
         cost = 1500;
         bv = 0.61;
@@ -44,7 +45,7 @@ public class InfantryPistolClanPulseLaserPistolWeapon extends InfantryWeapon {
         infantryRange = 1;
         introDate = 2840;
         techLevel.put(2840,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_F,RATING_E};
+        availRating = new int[]{RATING_X,RATING_C,RATING_C};
         techRating = RATING_F;
     }
 }

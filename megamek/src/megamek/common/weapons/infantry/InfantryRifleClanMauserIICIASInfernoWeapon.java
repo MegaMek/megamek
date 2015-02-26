@@ -33,9 +33,10 @@ public class InfantryRifleClanMauserIICIASInfernoWeapon extends InfantryWeapon {
     public InfantryRifleClanMauserIICIASInfernoWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Infantry Clan Mauser IIC Inferno";
+        name = "Laser Rifle (Mauser IIC IAS) (Inferno Grenades)";
         setInternalName(name);
         addLookupName("InfantryClanMauserIICIASInferno");
+        addLookupName("Infantry Clan Mauser IIC Inferno");
         ammoType = AmmoType.T_NA;
         cost = 18000;
         bv = 6.45;

@@ -33,9 +33,10 @@ public class InfantryGrenadeMiniWeapon extends InfantryWeapon {
     public InfantryGrenadeMiniWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Mini Grenades";
+        name = "Grenade (Mini) (Non-Inferno)";
         setInternalName(name);
         addLookupName("InfantryMiniGrenade");
+        addLookupName("Mini Grenades");
         ammoType = AmmoType.T_NA;
         cost = 8;
         bv = 0.25;

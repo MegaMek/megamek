@@ -33,9 +33,10 @@ public class InfantrySMGRorynexRM3XXIWeapon extends InfantryWeapon {
     public InfantrySMGRorynexRM3XXIWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Rorynex RM-3/XXI";
+        name = "SMG (Rorynex RM-3/XXI)";
         setInternalName(name);
         addLookupName("InfantryRorynexRM3XXI");
+        addLookupName("Rorynex RM-3/XXI");
         ammoType = AmmoType.T_NA;
         cost = 80;
         bv = 0.18;

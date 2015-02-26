@@ -33,9 +33,10 @@ public class InfantryShotgunPumpActionWeapon extends InfantryWeapon {
     public InfantryShotgunPumpActionWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Pump Action Shotgun";
+        name = "Shotgun (Pump-Action)";
         setInternalName(name);
         addLookupName("InfantryPumpShotgun");
+        addLookupName("Pump Action Shotgun");
         ammoType = AmmoType.T_NA;
         cost = 40;
         bv = 0.07;

@@ -33,9 +33,10 @@ public class InfantryRifleClanMauserIICIASWeapon extends InfantryWeapon {
     public InfantryRifleClanMauserIICIASWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Infantry Clan Mauser IIC";
+        name = "Laser Rifle (Mauser IIC IAS)";
         setInternalName(name);
         addLookupName("InfantryClanMauserIICIAS");
+        addLookupName("Infantry Clan Mauser IIC");
         ammoType = AmmoType.T_NA;
         cost = 18000;
         bv = 9.82;

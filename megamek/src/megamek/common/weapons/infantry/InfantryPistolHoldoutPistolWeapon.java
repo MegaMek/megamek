@@ -33,9 +33,10 @@ public class InfantryPistolHoldoutPistolWeapon extends InfantryWeapon {
     public InfantryPistolHoldoutPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Holdout Pistol";
+        name = "Pistol (Hold-Out)";
         setInternalName(name);
         addLookupName("InfantryHoldoutpistol");
+        addLookupName("Holdout Pistol");
         ammoType = AmmoType.T_AC;
         cost = 20;
         bv = 0.03;

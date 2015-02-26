@@ -21,31 +21,31 @@ import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
 /**
- * @author Sebastian Brocks
+ * @author Ben Grills
  */
-public class InfantryLRMWeapon extends InfantryWeapon {
+public class InfantryPistolMartialEagleMachinePistolWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -966926675003846938L;
+    private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryLRMWeapon() {
+    public InfantryPistolMartialEagleMachinePistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "LRM Launcher";
+        name = "Machine Pistol (Martial Eagle)";
         setInternalName(name);
-        addLookupName("InfantryLRM");
-        ammoType = AmmoType.T_NA;
-        cost = 2000;
-        bv = 3.44;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
-        setModes(new String[] { "", "Indirect" });
-        infantryDamage = 0.48;
-        infantryRange = 3;
-        introDate = 3057;
-        techLevel.put(3057,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_X,RATING_D};
+        addLookupName("InfantryMartialEaglepistol");
+        addLookupName("Martial Eagle Machine Pistol");  
+        ammoType = AmmoType.T_AC;
+        cost = 180;
+        bv = 0.23;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        infantryDamage = 0.25;
+        infantryRange = 0;
+        introDate = 3045;
+        techLevel.put(3045,techLevel.get(3071));
+        availRating = new int[]{RATING_X,RATING_F,RATING_D};
         techRating = RATING_D;
     }
 }

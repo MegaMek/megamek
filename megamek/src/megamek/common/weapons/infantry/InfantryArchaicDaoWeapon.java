@@ -33,9 +33,10 @@ public class InfantryArchaicDaoWeapon extends InfantryWeapon {
     public InfantryArchaicDaoWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Dao";
+        name = "Blade (Dao)";
         setInternalName(name);
         addLookupName("InfantryDaoSword");
+        addLookupName("Dao");
         ammoType = AmmoType.T_NA;
         cost = 200;
         bv = 0.04;

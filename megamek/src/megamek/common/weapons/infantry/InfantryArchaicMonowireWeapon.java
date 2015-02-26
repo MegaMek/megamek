@@ -33,9 +33,10 @@ public class InfantryArchaicMonowireWeapon extends InfantryWeapon {
     public InfantryArchaicMonowireWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Monowire";
+        name = "Whip (Monowire)";
         setInternalName(name);
         addLookupName("InfantryMonowire");
+        addLookupName("Monowire");
         ammoType = AmmoType.T_NA;
         cost = 200;
         bv = 0.32;

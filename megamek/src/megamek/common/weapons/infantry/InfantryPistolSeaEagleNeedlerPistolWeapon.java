@@ -33,9 +33,10 @@ public class InfantryPistolSeaEagleNeedlerPistolWeapon extends InfantryWeapon {
     public InfantryPistolSeaEagleNeedlerPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Sea Eagle Needler Pistol";
+        name = "Needler Pistol (Sea Eagle)";
         setInternalName(name);
         addLookupName("InfantrySeaEagleNeedler");
+        addLookupName("Sea Eagle Needler Pistolr");
         ammoType = AmmoType.T_AC;
         cost = 110;
         bv = 0.10;

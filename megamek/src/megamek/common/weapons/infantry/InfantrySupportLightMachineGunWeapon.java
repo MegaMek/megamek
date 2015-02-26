@@ -33,10 +33,11 @@ public class InfantrySupportLightMachineGunWeapon extends InfantryWeapon {
     public InfantrySupportLightMachineGunWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Light Machine Gun";
+        name = "Machine Gun (Light)";
         setInternalName(name);
         addLookupName("InfantryLMG");
         addLookupName("InfantryLightMachineGun");
+        addLookupName("Infantry Light Machine Gun");
         ammoType = AmmoType.T_NA;
         cost = 400;
         bv = 1.50;

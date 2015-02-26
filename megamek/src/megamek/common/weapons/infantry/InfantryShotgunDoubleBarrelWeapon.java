@@ -33,9 +33,10 @@ public class InfantryShotgunDoubleBarrelWeapon extends InfantryWeapon {
     public InfantryShotgunDoubleBarrelWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Double Barrel Shotgun";
+        name = "Shotgun (Double-Barrel)";
         setInternalName(name);
         addLookupName("InfantryDoubleShotgun");
+        addLookupName("Double Barrel Shotgun");
         ammoType = AmmoType.T_NA;
         cost = 30;
         bv = 0.03;

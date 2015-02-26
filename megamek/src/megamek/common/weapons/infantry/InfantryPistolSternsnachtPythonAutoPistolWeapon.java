@@ -33,9 +33,10 @@ public class InfantryPistolSternsnachtPythonAutoPistolWeapon extends InfantryWea
     public InfantryPistolSternsnachtPythonAutoPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Sternsnacht Python AutoPistol";
+        name = "Auto-Pistol (Sternsnacht Python)";
         setInternalName(name);
         addLookupName("InfantrySternsnachtPython");
+        addLookupName("Sternsnacht Python AutoPistol");
         ammoType = AmmoType.T_AC;
         cost = 125;
         bv = 0.26;

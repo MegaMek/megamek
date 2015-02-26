@@ -33,9 +33,10 @@ public class InfantrySMGRuganWeapon extends InfantryWeapon {
     public InfantrySMGRuganWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Rugan SMG";
+        name = "SMG (Rugan)";
         setInternalName(name);
         addLookupName("InfantryRuganSMG");
+        addLookupName("Rugan SMG");
         ammoType = AmmoType.T_NA;
         cost = 100;
         bv = 0.18;

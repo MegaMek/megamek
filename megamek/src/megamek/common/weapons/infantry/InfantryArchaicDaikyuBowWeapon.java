@@ -33,9 +33,10 @@ public class InfantryArchaicDaikyuBowWeapon extends InfantryWeapon {
     public InfantryArchaicDaikyuBowWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Daikyu";
+        name = "Bow (Daikyu)";
         setInternalName(name);
         addLookupName("InfantryDaikyuBow");
+        addLookupName("Daikyu Bow");
         ammoType = AmmoType.T_NA;
         cost = 30;
         bv = 0.01;

@@ -33,9 +33,10 @@ public class InfantryRifleFederatedLongWeapon extends InfantryWeapon {
     public InfantryRifleFederatedLongWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Federated Long Rifle";
+        name = "Rifle (Federated Long)";
         setInternalName(name);
         addLookupName("InfantryFederatedLongRifle");
+        addLookupName("Federated Long Rifle");
         ammoType = AmmoType.T_NA;
         cost = 120;
         bv = 1.07;

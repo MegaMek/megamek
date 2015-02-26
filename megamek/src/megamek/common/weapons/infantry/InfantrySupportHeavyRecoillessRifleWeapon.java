@@ -33,10 +33,11 @@ public class InfantrySupportHeavyRecoillessRifleWeapon extends InfantryWeapon {
     public InfantrySupportHeavyRecoillessRifleWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Heavy Recoilless Rifle";
+        name = "Recoilless Rifle (Heavy)";
         setInternalName(name);
         addLookupName("InfantryHRR");
         addLookupName("InfantryHeavyRecoillessRifle");
+        addLookupName("Infantry Heavy Recoilless Rifle");
         ammoType = AmmoType.T_NA;
         cost = 3000;
         bv = 2.91;

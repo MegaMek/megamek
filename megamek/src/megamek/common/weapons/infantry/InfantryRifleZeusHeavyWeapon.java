@@ -33,9 +33,10 @@ public class InfantryRifleZeusHeavyWeapon extends InfantryWeapon {
     public InfantryRifleZeusHeavyWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Zeus Heavy Rifle";
+        name = "Rifle (Zeus Heavy)";
         setInternalName(name);
         addLookupName("InfantryZeusHeavyRifle");
+        addLookupName("Zeus Heavy Rifle");
         ammoType = AmmoType.T_NA;
         cost = 200;
         bv = 0.67;

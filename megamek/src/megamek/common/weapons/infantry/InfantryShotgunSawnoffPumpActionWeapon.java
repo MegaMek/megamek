@@ -33,9 +33,10 @@ public class InfantryShotgunSawnoffPumpActionWeapon extends InfantryWeapon {
     public InfantryShotgunSawnoffPumpActionWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Pump Action Sawed-Off Shotgun";
+        name = "Shotgun (Pump-Action, Sawed Off)";
         setInternalName(name);
         addLookupName("InfantryPumpSawnOff");
+        addLookupName("Pump Action Sawed-Off Shotgun");
         ammoType = AmmoType.T_NA;
         cost = 40;
         bv = 0.07;

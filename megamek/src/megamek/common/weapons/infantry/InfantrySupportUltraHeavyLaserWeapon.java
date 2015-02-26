@@ -33,10 +33,11 @@ public class InfantrySupportUltraHeavyLaserWeapon extends InfantryWeapon {
     public InfantrySupportUltraHeavyLaserWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Infantry Ultra-Heavy Support Laser";
+        name = "Support Laser (Ultra-Heavy)";
         setInternalName(name);
         addLookupName("InfantryUltraHeavyLaser");
         addLookupName("InfantryHeavyMediumLaser");
+        addLookupName("Infantry Ultra-Heavy Support Laser");
         ammoType = AmmoType.T_NA;
         cost = 100000;
         bv = 20.31;

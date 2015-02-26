@@ -33,9 +33,10 @@ public class InfantrySMGImperator2894A1Weapon extends InfantryWeapon {
     public InfantrySMGImperator2894A1Weapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Imperator 2894A1 SMG";
+        name = "SMG (Imperator 2894A1)";
         setInternalName(name);
         addLookupName("InfantryImperator2894A1");
+        addLookupName("Imperator 2894A1 SMG");
         ammoType = AmmoType.T_NA;
         cost = 100;
         bv = 0.20;

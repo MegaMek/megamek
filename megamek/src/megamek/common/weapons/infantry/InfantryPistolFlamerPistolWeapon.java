@@ -33,9 +33,10 @@ public class InfantryPistolFlamerPistolWeapon extends InfantryWeapon {
     public InfantryPistolFlamerPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Flamer Pistol";
+        name = "Pistol (Flamer)";
         setInternalName(name);
         addLookupName("InfantryFlamerpistol");
+        addLookupName("Flamer Pistol");
         ammoType = AmmoType.T_NA;
         cost = 50;
         bv = 0.31;

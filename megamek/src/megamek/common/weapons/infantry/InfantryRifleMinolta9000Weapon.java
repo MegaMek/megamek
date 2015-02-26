@@ -33,9 +33,10 @@ public class InfantryRifleMinolta9000Weapon extends InfantryWeapon {
     public InfantryRifleMinolta9000Weapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Minolta 9000 Advanced Sniper System";
+        name = "Rifle (Minolta 9000)";
         setInternalName(name);
         addLookupName("InfantryMinolta9000");
+        addLookupName("Minolta 9000 Advanced Sniper System");
         ammoType = AmmoType.T_NA;
         cost = 1000;
         bv = 1.79;

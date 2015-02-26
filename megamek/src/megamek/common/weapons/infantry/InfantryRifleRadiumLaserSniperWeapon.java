@@ -32,10 +32,11 @@ public class InfantryRifleRadiumLaserSniperWeapon extends InfantryWeapon {
 
     public InfantryRifleRadiumLaserSniperWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Radium Sniper Rifle";
+        techLevel.put(3071,TechConstants.T_IS_EXPERIMENTAL);
+        name = "Rifle (Radium Sniper)";
         setInternalName(name);
         addLookupName("InfantryRadiumSniper");
+        addLookupName("Radium Sniper Rifle");
         ammoType = AmmoType.T_NA;
         cost = 9500;
         bv = 2.58;
@@ -46,6 +47,7 @@ public class InfantryRifleRadiumLaserSniperWeapon extends InfantryWeapon {
         techLevel.put(2583,techLevel.get(3071));
         extinctDate = 2607;
         reintroDate = 3062;
+        techLevel.put(3071,TechConstants.T_IS_ADVANCED);
         availRating = new int[]{RATING_F,RATING_X,RATING_F};
         techRating = RATING_E;
     }

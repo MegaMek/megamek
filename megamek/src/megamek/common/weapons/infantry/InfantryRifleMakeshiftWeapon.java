@@ -33,9 +33,10 @@ public class InfantryRifleMakeshiftWeapon extends InfantryWeapon {
     public InfantryRifleMakeshiftWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Makeshift Rifle";
+        name = "Rifle (Makeshift)";
         setInternalName(name);
         addLookupName("InfantryMakeshiftRifle");
+        addLookupName("Makeshift Rifle");
         ammoType = AmmoType.T_NA;
         cost = 20;
         bv = 0.09;

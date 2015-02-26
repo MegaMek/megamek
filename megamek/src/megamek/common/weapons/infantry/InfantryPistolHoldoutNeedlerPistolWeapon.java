@@ -33,9 +33,10 @@ public class InfantryPistolHoldoutNeedlerPistolWeapon extends InfantryWeapon {
     public InfantryPistolHoldoutNeedlerPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Holdout Needler Pistol";
+        name = "Needler Pistol (Hold-Out)";
         setInternalName(name);
         addLookupName("InfantryHoldoutNeedlerpistol");
+        addLookupName("Holdout Needler Pistol");
         ammoType = AmmoType.T_AC;
         cost = 20;
         bv = 0.10;

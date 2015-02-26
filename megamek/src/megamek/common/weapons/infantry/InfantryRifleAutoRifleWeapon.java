@@ -33,12 +33,13 @@ public class InfantryRifleAutoRifleWeapon extends InfantryWeapon {
     public InfantryRifleAutoRifleWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Auto Rifle";
+        name = "Auto-Rifle";
         setInternalName(name);
         addLookupName("InfantryAssaultRifle");
         addLookupName("Auto Rifle");
         addLookupName("Infantry Automatic Rifle");
         addLookupName("InfantryAutoRifle");
+        addLookupName("Infantry Auto Rifle");
         ammoType = AmmoType.T_NA;
         cost = 80;
         bv = 1.59;

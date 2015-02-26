@@ -19,38 +19,34 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
+
 /**
  * @author Sebastian Brocks
  */
-public class InfantryPortableMGWeapon extends InfantryWeapon {
+public class InfantrySupportLightSRMWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = 3434311797513896108L;
+    private static final long serialVersionUID = -5311681183178942222L;
 
-    public InfantryPortableMGWeapon() {
+    public InfantrySupportLightSRMWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
-        name = "Infantry Portable MG";
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+        name = "SRM Launcher (Light)";
         setInternalName(name);
-        addLookupName("InfantryMGPortable");
-        addLookupName("InfantryMG");
+        addLookupName("InfantrySRMLight");
+        addLookupName("InfantrySRM");
+        addLookupName("Light SRM Launcher");
         ammoType = AmmoType.T_NA;
-        cost = 1000;
-        bv = 1.99;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);
-        infantryDamage = 0.65;
-        infantryRange = 1;
-        damage = 1;
-        minimumRange = 0;
-        shortRange = 1;
-        mediumRange = 2;
-        longRange = 3;
-        extremeRange = 4;
-        introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_B,RATING_B,RATING_B};
+        cost = 1500;
+        bv = 2.91;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_SUPPORT);
+        infantryDamage = 0.57;
+        infantryRange = 2;
+        introDate = 2370;
+        techLevel.put(2370,techLevel.get(3071));
+        availRating = new int[]{RATING_C,RATING_C,RATING_D};
         techRating = RATING_C;
     }
 }

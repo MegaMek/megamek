@@ -33,9 +33,10 @@ public class InfantryShotgunAvengerCCWWeapon extends InfantryWeapon {
     public InfantryShotgunAvengerCCWWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Avenger Crowd Control Weapon";
+        name = "Shotgun (Avenger CCW)";
         setInternalName(name);
         addLookupName("InfantryAvengerCCW");
+        addLookupName("Avenger Crowd Control Weapon");
         ammoType = AmmoType.T_NA;
         cost = 345;
         bv = 0.30;

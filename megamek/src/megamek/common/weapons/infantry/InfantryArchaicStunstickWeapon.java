@@ -33,9 +33,10 @@ public class InfantryArchaicStunstickWeapon extends InfantryWeapon {
     public InfantryArchaicStunstickWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Stun Stick";
+        name = "Stunstick";
         setInternalName(name);
         addLookupName("InfantryStunstick");
+        addLookupName("Stun Stick");
         ammoType = AmmoType.T_NA;
         cost = 200;
         bv = 0.06;

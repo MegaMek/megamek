@@ -33,10 +33,11 @@ public class InfantrySupportClanSemiPortableERLaserWeapon extends InfantryWeapon
     public InfantrySupportClanSemiPortableERLaserWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Infantry Clan Semi-Portable ER Laser";
+        name = "Support Laser (ER, Semi-Portable)";
         setInternalName(name);
         addLookupName("InfantryClanERMicroLaser");
         addLookupName("InfantryClanSemiPortableERLaser");
+        addLookupName("Infantry Clan Semi-Portable ER Laser");
         ammoType = AmmoType.T_NA;
         cost = 10000;
         bv = 5.02;

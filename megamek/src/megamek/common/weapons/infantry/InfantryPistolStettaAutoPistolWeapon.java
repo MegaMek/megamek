@@ -21,31 +21,31 @@ import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
 /**
- * @author Sebastian Brocks
+ * @author Ben Grills
  */
-public class InfantryLightSRMWeapon extends InfantryWeapon {
+public class InfantryPistolStettaAutoPistolWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -5311681183178942222L;
+    private static final long serialVersionUID = -3164871600230559641L;
 
-    public InfantryLightSRMWeapon() {
+    public InfantryPistolStettaAutoPistolWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Light SRM Launcher";
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        name = "Auto-Pistol (Stetta)";
         setInternalName(name);
-        addLookupName("InfantrySRMLight");
-        addLookupName("InfantrySRM");
-        ammoType = AmmoType.T_NA;
-        cost = 1500;
-        bv = 2.91;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_SUPPORT);
-        infantryDamage = 0.57;
-        infantryRange = 2;
-        introDate = 2370;
-        techLevel.put(2370,techLevel.get(3071));
-        availRating = new int[]{RATING_C,RATING_C,RATING_D};
-        techRating = RATING_C;
+        addLookupName("InfantryStettaAutopistol");
+        addLookupName("Stetta AutoPistol");
+        ammoType = AmmoType.T_AC;
+        cost = 150;
+        bv = 0.16;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
+        infantryDamage = 0.17;
+        infantryRange = 0;
+        introDate = 3010;
+        techLevel.put(3010,techLevel.get(3071));
+        availRating = new int[]{RATING_X,RATING_F,RATING_C};
+        techRating = RATING_D;
     }
 }

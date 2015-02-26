@@ -33,10 +33,11 @@ public class InfantrySupportMagshotGaussRifleWeapon extends InfantryWeapon {
     public InfantrySupportMagshotGaussRifleWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Infantry Magshot Gauss Rifle";
+        name = "Gauss Rifle (Magshot)";
         setInternalName(name);
         addLookupName("InfantryMagshot");
         addLookupName("InfantryMagshotGaussRifle");
+        addLookupName("Infantry Magshot Gauss Rifle");
         ammoType = AmmoType.T_NA;
         cost = 8500;
         bv = 3.78;

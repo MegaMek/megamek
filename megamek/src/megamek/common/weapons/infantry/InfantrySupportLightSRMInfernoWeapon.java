@@ -20,32 +20,35 @@ package megamek.common.weapons.infantry;
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
+
 /**
- * @author Ben Grills
+ * @author Sebastian Brocks
  */
-public class InfantryPistolClanMakeshiftPistolWeapon extends InfantryWeapon {
+public class InfantrySupportLightSRMInfernoWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 7788576728727248931L;
 
-    public InfantryPistolClanMakeshiftPistolWeapon() {
+    public InfantrySupportLightSRMInfernoWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Makeshift Pistol(Clan)";
+        name = "SRM Launcher (Light) - Inferno";
         setInternalName(name);
-        addLookupName("ClanInfantryMakeshiftpistol");
-        ammoType = AmmoType.T_AC;
-        cost = 15;
-        bv = 0.02;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        infantryDamage = 0.02;
-        infantryRange = 0;
-        introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        extinctDate = 2800;
-        availRating = new int[]{RATING_X,RATING_C,RATING_E};
-        techRating = RATING_B;
+        addLookupName("InfantrySRMLightInferno");
+        addLookupName("Light SRM (Inferno)");
+        ammoType = AmmoType.T_NA;
+        cost = 1500;
+        bv = 1.74;
+        flags = flags.or(F_DIRECT_FIRE).or(F_INFERNO).or(F_MISSILE).or(F_INF_SUPPORT);
+        infantryDamage = 0.34;
+        infantryRange = 2;
+        String[] modeStrings = { "Damage", "Heat" };
+        setModes(modeStrings);
+        introDate = 2370;
+        techLevel.put(2370,techLevel.get(3071));
+        availRating = new int[]{RATING_C,RATING_C,RATING_D};
+        techRating = RATING_C;
     }
 }

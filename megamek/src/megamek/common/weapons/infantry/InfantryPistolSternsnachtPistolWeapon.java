@@ -33,10 +33,11 @@ public class InfantryPistolSternsnachtPistolWeapon extends InfantryWeapon {
     public InfantryPistolSternsnachtPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Sternsnacht Heavy Pistol";
+        name = "Pistol (Sternsnacht Heavy [Claymore])";
         setInternalName(name);
         addLookupName("InfantrySternsnachtpistol");
         addLookupName("InfantryClaymorePistol");
+        addLookupName("Sternsnacht Heavy Pistol");
         ammoType = AmmoType.T_AC;
         cost = 200;
         bv = 0.08;

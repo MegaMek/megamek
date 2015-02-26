@@ -33,7 +33,7 @@ public class InfantryRifleFederatedBarrettM61ALaserInfernoWeapon extends Infantr
     public InfantryRifleFederatedBarrettM61ALaserInfernoWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Federated Barrett M61A Inferno";
+        name = "Laser Rifle (Federated-Barrett M61A) (Inferno Grenades)";
         setInternalName(name);
         addLookupName("InfantryFederatedBarrettM61AInferno");
         ammoType = AmmoType.T_NA;

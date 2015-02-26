@@ -33,9 +33,10 @@ public class InfantrySMGGuntherMP20Weapon extends InfantryWeapon {
     public InfantrySMGGuntherMP20Weapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Gunther MP-20";
+        name = "SMG (Gunther MP-20)";
         setInternalName(name);
         addLookupName("InfantryGuntherMP20");
+        addLookupName("Gunther MP-20");
         ammoType = AmmoType.T_NA;
         cost = 125;
         bv = 0.30;

@@ -34,10 +34,11 @@ public class InfantrySupportStandardSRMInfernoWeapon extends InfantryWeapon {
     public InfantrySupportStandardSRMInfernoWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Infantry Two-Shot SRM Launcher (Inferno)";
+        name = "SRM Launcher (Std, Two-Shot) - Inferno";
         setInternalName(name);
         addLookupName("InfantryStandardSRMInferno");
         addLookupName("Infantry2ShotSRMInferno");
+        addLookupName("Infantry Two-Shot SRM Launcher (Inferno)");
         ammoType = AmmoType.T_NA;
         cost = 1500;
         bv = 3.48;

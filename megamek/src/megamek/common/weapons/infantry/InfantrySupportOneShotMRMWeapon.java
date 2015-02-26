@@ -33,10 +33,11 @@ public class InfantrySupportOneShotMRMWeapon extends InfantryWeapon {
     public InfantrySupportOneShotMRMWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Infantry One-Shot MRM Launcher";
+        name = "MRM Launcher (One-Shot)";
         setInternalName(name);
         addLookupName("InfantryMRM");
         addLookupName("InfantryOneShotMRM");
+        addLookupName("Infantry One-Shot MRM Launcher");
         ammoType = AmmoType.T_NA;
         cost = 2500;
         bv = 2.71;

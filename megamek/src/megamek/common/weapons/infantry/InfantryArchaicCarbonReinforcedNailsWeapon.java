@@ -33,9 +33,10 @@ public class InfantryArchaicCarbonReinforcedNailsWeapon extends InfantryWeapon {
     public InfantryArchaicCarbonReinforcedNailsWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Carbon Reinforced Fingernails";
+        name = "Blade (Carbon-Reinforced Nails)";
         setInternalName(name);
         addLookupName("InfantryCarbonFingernails");
+        addLookupName("Carbon Reinforced Fingernails");
         ammoType = AmmoType.T_NA;
         cost = 1000;
         bv = 0.02;

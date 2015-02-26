@@ -33,11 +33,12 @@ public class InfantryRifleThunderstrokeIIWeapon extends InfantryWeapon {
     public InfantryRifleThunderstrokeIIWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Thunderstroke II";
+        name = "Gauss Rifle (Thunderstroke II)";
         setInternalName(name);
         addLookupName("InfantryTStroke2");
         addLookupName("InfantryThunderstroke2");
         addLookupName("InfantryThunderStrokeII");
+        addLookupName("Thunderstroke II");
         ammoType = AmmoType.T_AC;
         cost = 3500;
         bv = 2.71;

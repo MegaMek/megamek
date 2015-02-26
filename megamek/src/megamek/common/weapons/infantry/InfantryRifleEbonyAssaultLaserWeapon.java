@@ -33,9 +33,10 @@ public class InfantryRifleEbonyAssaultLaserWeapon extends InfantryWeapon {
     public InfantryRifleEbonyAssaultLaserWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_ADVANCED);
-        name = "Infantry Ebony Assault Laser Rifle";
+        name = "Laser Rifle (Ebony Assault)";
         setInternalName(name);
         addLookupName("InfantryEbonyAssaultLaser");
+        addLookupName("Infantry Ebony Assault Laser Rifle");
         ammoType = AmmoType.T_NA;
         cost = 8500;
         bv = 1.07;

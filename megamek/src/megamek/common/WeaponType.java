@@ -998,8 +998,8 @@ public class WeaponType extends EquipmentType {
 
         // Infantry Level 1 Weapons
         EquipmentType.addType(new InfantryRifleLaserWeapon());
-        EquipmentType.addType(new InfantryLRMWeapon());
-        EquipmentType.addType(new InfantryLightSRMInfernoWeapon());
+        EquipmentType.addType(new InfantrySupportLRMWeapon());
+        EquipmentType.addType(new InfantrySupportLightSRMInfernoWeapon());
         EquipmentType.addType(new InfantrySupportPortableFlamerWeapon());
         EquipmentType.addType(new InfantryTWFlamerWeapon());
         // Infantry Archaic Weapons
@@ -1060,11 +1060,11 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryPistolMagnumRevolverWeapon());
         EquipmentType.addType(new InfantryPistolMakeshiftPistolWeapon());
         EquipmentType.addType(new InfantryPistolMandrakeGaussPistolWeapon());
-        EquipmentType.addType(new InfantrySMGMartialEagleMachinePistolWeapon());
+        EquipmentType.addType(new InfantryPistolMartialEagleMachinePistolWeapon());
         EquipmentType.addType(new InfantryPistolMauserAutoPistolWeapon());
         EquipmentType.addType(new InfantryPistolMauserNeedlerPistolWeapon());
         EquipmentType.addType(new InfantryPistolMagnumAutoPistolWeapon());
-        EquipmentType.addType(new InfantrySMGMydronAutoPistolWeapon());
+        EquipmentType.addType(new InfantryPistolMydronAutoPistolWeapon());
         EquipmentType.addType(new InfantryPistolNakjimaLaserPistolWeapon());
         EquipmentType.addType(new InfantryPistolNambuAutoPistolWeapon());
         EquipmentType.addType(new InfantryPistolNeedlerPistolWeapon());
@@ -1077,7 +1077,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryPistolSpitballGasPistolWeapon());
         EquipmentType.addType(new InfantryPistolSternsnachtPistolWeapon());
         EquipmentType.addType(new InfantryPistolSternsnachtPythonAutoPistolWeapon());
-        EquipmentType.addType(new InfantrySMGStettaAutoPistolWeapon());
+        EquipmentType.addType(new InfantryPistolStettaAutoPistolWeapon());
         EquipmentType.addType(new InfantryPistolSunbeamLaserPistolWeapon());
         EquipmentType.addType(new InfantryPistolSunbeamNovaLaserPistolWeapon());
         EquipmentType.addType(new InfantryPistolTKEnforcerAutoPistolWeapon());
@@ -1136,7 +1136,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryShotgunSawnoffDoubleBarrelWeapon());
         EquipmentType.addType(new InfantryShotgunSawnoffPumpActionWeapon());
         // Infantry Support Weapons
-        EquipmentType.addType(new InfantryPortableMGWeapon());
+        EquipmentType.addType(new InfantrySupportPortableMGWeapon());
         EquipmentType.addType(new InfantrySupportMk1LightAAWeapon());
         EquipmentType.addType(new InfantrySupportMk2PortableAAWeapon());
         EquipmentType.addType(new InfantrySupportClanBearhunterAutocannonWeapon());
@@ -1182,7 +1182,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySupportStandardSRMInfernoWeapon());
         EquipmentType.addType(new InfantrySupportHeavySRMWeapon());
         EquipmentType.addType(new InfantrySupportHeavySRMInfernoWeapon());
-        EquipmentType.addType(new InfantryLightSRMWeapon());
+        EquipmentType.addType(new InfantrySupportLightSRMWeapon());
         EquipmentType.addType(new InfantrySupportLaserWeapon());
         EquipmentType.addType(new InfantrySupportERLaserWeapon());
         EquipmentType.addType(new InfantrySupportClanERLaserWeapon());

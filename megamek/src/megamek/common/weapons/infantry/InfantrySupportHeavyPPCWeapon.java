@@ -33,10 +33,11 @@ public class InfantrySupportHeavyPPCWeapon extends InfantryWeapon {
     public InfantrySupportHeavyPPCWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Support PPC";
+        name = "Particle Cannon (Support)";
         setInternalName(name);
         addLookupName("InfantrySupportPPC");
         addLookupName("InfantryHeavyPPC");
+        addLookupName("Infantry Support PPC");
         ammoType = AmmoType.T_NA;
         cost = 45000;
         bv = 11.32;

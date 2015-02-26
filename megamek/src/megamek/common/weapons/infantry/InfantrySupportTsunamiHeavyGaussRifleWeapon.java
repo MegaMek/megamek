@@ -33,10 +33,11 @@ public class InfantrySupportTsunamiHeavyGaussRifleWeapon extends InfantryWeapon 
     public InfantrySupportTsunamiHeavyGaussRifleWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Infantry Tsunami Heavy Gauss Rifle";
+        name = "Gauss Rifle (Tsunami Heavy)";
         setInternalName(name);
         addLookupName("InfantryTsunamiHeavyGaussRifle");
         addLookupName("InfantryTsunamiGauss");
+        addLookupName("Infantry Tsunami Heavy Gauss Rifle");
         ammoType = AmmoType.T_NA;
         cost = 5500;
         bv = 3.22;

@@ -33,9 +33,10 @@ public class InfantryRifleFederatedBarrettM42BInfernoWeapon extends InfantryWeap
     public InfantryRifleFederatedBarrettM42BInfernoWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Federated Barrett M42B Inferno";
+        name = "Rifle (Federated-Barrett M42B) (Inferno Grenades)";
         setInternalName(name);
         addLookupName("InfantryFederatedBarrettM42BInferno");
+        addLookupName("Federated Barrett M42B Inferno");
         ammoType = AmmoType.T_NA;
         cost = 1385;
         bv = 2.3;

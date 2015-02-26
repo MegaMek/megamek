@@ -33,9 +33,10 @@ public class InfantryPistolNakjimaLaserPistolWeapon extends InfantryWeapon {
     public InfantryPistolNakjimaLaserPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Nakjima Laser Pistol";
+        name = "Laser Pistol (Nakjima)";
         setInternalName(name);
         addLookupName("InfantryNakjimalaserpistol");
+        addLookupName("Nakjima Laser Pistol");
         ammoType = AmmoType.T_NA;
         cost = 750;
         bv = 0.55;

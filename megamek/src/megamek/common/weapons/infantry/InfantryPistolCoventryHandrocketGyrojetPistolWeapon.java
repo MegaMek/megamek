@@ -33,9 +33,10 @@ public class InfantryPistolCoventryHandrocketGyrojetPistolWeapon extends Infantr
     public InfantryPistolCoventryHandrocketGyrojetPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Coventry Handrocket";
+        name = "Gyrojet Pistol (Coventry Handrocket)";
         setInternalName(name);
         addLookupName("InfantryCoventryHandrocketGyrojetpistol");
+        addLookupName("Coventry Handrocket");
         ammoType = AmmoType.T_AC;
         cost = 250;
         bv = 0.43;

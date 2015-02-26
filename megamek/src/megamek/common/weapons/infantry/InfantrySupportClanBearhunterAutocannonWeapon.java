@@ -33,10 +33,11 @@ public class InfantrySupportClanBearhunterAutocannonWeapon extends InfantryWeapo
     public InfantrySupportClanBearhunterAutocannonWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Infantry Bearhunter Super-Heavy Autocannon";
+        name = "Autocannon (Bearhunter)";
         setInternalName(name);
         addLookupName("InfantryBearhunter");
         addLookupName("InfantryBearhunterAutocannon");
+        addLookupName("Infantry Bearhunter Super-Heavy Autocannon");
         ammoType = AmmoType.T_NA;
         cost = 3000;
         bv = 2.13;

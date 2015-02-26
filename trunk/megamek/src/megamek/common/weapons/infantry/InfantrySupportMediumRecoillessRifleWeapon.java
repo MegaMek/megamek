@@ -33,10 +33,11 @@ public class InfantrySupportMediumRecoillessRifleWeapon extends InfantryWeapon {
     public InfantrySupportMediumRecoillessRifleWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Medium Recoilless Rifle";
+        name = "Recoilless Rifle (Medium)";
         setInternalName(name);
         addLookupName("InfantryMRR");
         addLookupName("InfantryMediumRecoillessRifle");
+        addLookupName("Infantry Medium Recoilless Rifle");
         ammoType = AmmoType.T_NA;
         cost = 2000;
         bv = 2.71;

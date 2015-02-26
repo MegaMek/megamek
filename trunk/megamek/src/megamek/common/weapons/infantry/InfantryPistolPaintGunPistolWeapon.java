@@ -33,9 +33,10 @@ public class InfantryPistolPaintGunPistolWeapon extends InfantryWeapon {
     public InfantryPistolPaintGunPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Paint Gun LGB-46R";
+        name = "Paint Gun (LGB-46R)";
         setInternalName(name);
         addLookupName("InfantryPaintGun");
+        addLookupName("Paint Gun LGB-46R");
         ammoType = AmmoType.T_NA;
         cost = 50;
         bv = 0;

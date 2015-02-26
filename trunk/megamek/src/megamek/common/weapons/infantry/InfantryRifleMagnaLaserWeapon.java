@@ -33,9 +33,10 @@ public class InfantryRifleMagnaLaserWeapon extends InfantryWeapon {
     public InfantryRifleMagnaLaserWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Magna Laser Rifle";
+        name = "Laser Rifle (Magna)";
         setInternalName(name);
         addLookupName("InfantryMagnaLaser");
+        addLookupName("Magna Laser Rifle");
         ammoType = AmmoType.T_NA;
         cost = 1500;
         bv = 1.33;

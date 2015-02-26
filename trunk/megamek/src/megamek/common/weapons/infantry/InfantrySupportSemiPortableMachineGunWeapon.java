@@ -33,11 +33,12 @@ public class InfantrySupportSemiPortableMachineGunWeapon extends InfantryWeapon 
     public InfantrySupportSemiPortableMachineGunWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Semi Portable Machine Gun";
+        name = "Machine Gun (Semi-Portable)";
         setInternalName(name);
         addLookupName("InfantryMMG");
         addLookupName("InfantryMG");
         addLookupName("InfantryMachineGun");
+        addLookupName("Infantry Semi Portable Machine Gun");
         ammoType = AmmoType.T_NA;
         cost = 1100;
         bv = 2.29;

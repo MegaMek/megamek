@@ -19,33 +19,39 @@ package megamek.common.weapons.infantry;
 
 import megamek.common.AmmoType;
 import megamek.common.TechConstants;
-
 /**
- * @author Ben Grills
+ * @author Sebastian Brocks
  */
-public class InfantryArchaicSingleStunStaffWeapon extends InfantryWeapon {
+public class InfantrySupportPortableMGWeapon extends InfantryWeapon {
 
     /**
      *
      */
-    private static final long serialVersionUID = -3164871600230559641L;
+    private static final long serialVersionUID = 3434311797513896108L;
 
-    public InfantryArchaicSingleStunStaffWeapon() {
+    public InfantrySupportPortableMGWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Staff (Stun Staff, Single-End)";
+        techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
+        name = "Machine Gun (Portable)";
         setInternalName(name);
-        addLookupName("InfantrySingleStunStaff");
-        addLookupName("Single Ended Stun Staff");
+        addLookupName("InfantryMGPortable");
+        addLookupName("Infantry MG Portable");
+        addLookupName("InfantryMG");
         ammoType = AmmoType.T_NA;
-        cost = 300;
-        bv = 0.06;
-        flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
-        infantryDamage = 0.07;
-        infantryRange = 0;
+        cost = 1000;
+        bv = 1.99;
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);
+        infantryDamage = 0.65;
+        infantryRange = 1;
+        damage = 1;
+        minimumRange = 0;
+        shortRange = 1;
+        mediumRange = 2;
+        longRange = 3;
+        extremeRange = 4;
         introDate = 1950;
         techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_A,RATING_C,RATING_A};
+        availRating = new int[]{RATING_B,RATING_B,RATING_B};
         techRating = RATING_C;
     }
 }

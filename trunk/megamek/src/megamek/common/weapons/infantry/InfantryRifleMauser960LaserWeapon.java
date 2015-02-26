@@ -33,9 +33,10 @@ public class InfantryRifleMauser960LaserWeapon extends InfantryWeapon {
     public InfantryRifleMauser960LaserWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Mauser 960 Assault System";
+        name = "Laser Rifle (Mauser 960)";
         setInternalName(name);
         addLookupName("InfantryMauser960");
+        addLookupName("Mauser 960 Assault System");
         ammoType = AmmoType.T_NA;
         cost = 8000;
         bv = 4.75;

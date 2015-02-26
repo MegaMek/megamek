@@ -33,9 +33,10 @@ public class InfantryRifleHeavyGyrojetGunWeapon extends InfantryWeapon {
     public InfantryRifleHeavyGyrojetGunWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Heavy Gyrojet Gun";
+        name = "Gyrojet Gun (Heavy)";
         setInternalName(name);
         addLookupName("InfantryHeavyGyrojetGun");
+        addLookupName("Heavy Gyrojet Gun");
         ammoType = AmmoType.T_NA;
         cost = 2500;
         bv = 1.07;

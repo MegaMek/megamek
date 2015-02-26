@@ -33,9 +33,10 @@ public class InfantryPistolPulseLaserPistolWeapon extends InfantryWeapon {
     public InfantryPistolPulseLaserPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Pulse Laser Pistol";
+        name = "Pulse Laser Pistol (IS)";
         setInternalName(name);
         addLookupName("InfantryPulseLaserpistol");
+        addLookupName("Pulse Laser Pistol");
         ammoType = AmmoType.T_NA;
         cost = 1000;
         bv = 0.13;

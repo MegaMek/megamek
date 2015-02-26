@@ -33,9 +33,10 @@ public class InfantrySupportMk1LightAAWeapon extends InfantryWeapon {
     public InfantrySupportMk1LightAAWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Mk 1 Light AA Weapon";
+        name = "AA Weapon (Mk. 1, Light)";
         setInternalName(name);
         addLookupName("InfantryMk1LightAA");
+        addLookupName("Infantry Mk 1 Light AA Weapon");
         ammoType = AmmoType.T_NA;
         cost = 1000;
         bv = 0.70;

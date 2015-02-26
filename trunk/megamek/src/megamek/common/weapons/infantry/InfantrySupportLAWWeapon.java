@@ -33,9 +33,10 @@ public class InfantrySupportLAWWeapon extends InfantryWeapon {
     public InfantrySupportLAWWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry LAW";
+        name = "Rocket Launcher (LAW)";
         setInternalName(name);
         addLookupName("InfantryLAW");
+        addLookupName("Infantry LAW");
         addLookupName("InfantryLightAntitankWeapon");
         ammoType = AmmoType.T_NA;
         cost = 350;

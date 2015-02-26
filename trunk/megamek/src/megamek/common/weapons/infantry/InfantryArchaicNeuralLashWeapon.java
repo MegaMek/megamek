@@ -33,9 +33,10 @@ public class InfantryArchaicNeuralLashWeapon extends InfantryWeapon {
     public InfantryArchaicNeuralLashWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Neural Lash";
+        name = "Whip (Neural Lash)";
         setInternalName(name);
         addLookupName("InfantryNeuralLash");
+        addLookupName("Neural Lash");
         ammoType = AmmoType.T_NA;
         cost = 750;
         bv = 0.08;

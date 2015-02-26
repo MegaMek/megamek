@@ -33,9 +33,10 @@ public class InfantryPistolHoldOutLaserPistolWeapon extends InfantryWeapon {
     public InfantryPistolHoldOutLaserPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Holdout Laser Pistol";
+        name = "Laser Pistol (Hold-Out)";
         setInternalName(name);
         addLookupName("InfantryHoldoutLaserpistol");
+        addLookupName("Holdout Laser Pistol");
         ammoType = AmmoType.T_NA;
         cost = 100;
         bv = 0.13;

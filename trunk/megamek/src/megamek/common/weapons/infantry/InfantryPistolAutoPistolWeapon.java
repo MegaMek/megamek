@@ -33,9 +33,10 @@ public class InfantryPistolAutoPistolWeapon extends InfantryWeapon {
     public InfantryPistolAutoPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Auto Pistol";
+        name = "Auto-Pistol";
         setInternalName(name);
         addLookupName("InfantryAutopistol");
+        addLookupName("Auto Pistol");
         ammoType = AmmoType.T_AC;
         cost = 50;
         bv = 0.19;

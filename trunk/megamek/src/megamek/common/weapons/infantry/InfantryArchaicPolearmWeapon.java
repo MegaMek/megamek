@@ -33,9 +33,10 @@ public class InfantryArchaicPolearmWeapon extends InfantryWeapon {
     public InfantryArchaicPolearmWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Polearm";
+        name = "Staff (Pole Arm)";
         setInternalName(name);
         addLookupName("InfantryPolearm");
+        addLookupName("Polearm");
         ammoType = AmmoType.T_NA;
         cost = 50;
         bv = 0.04;

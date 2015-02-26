@@ -33,9 +33,10 @@ public class InfantryRifleFederatedBarrettM42BWeapon extends InfantryWeapon {
     public InfantryRifleFederatedBarrettM42BWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Federated Barrett M42B";
+        name = "Rifle (Federated-Barrett M42B)";
         setInternalName(name);
         addLookupName("InfantryFederatedBarrettM42B");
+        addLookupName("Federated Barrett M42B");
         ammoType = AmmoType.T_NA;
         cost = 1385;
         bv = 3.12;

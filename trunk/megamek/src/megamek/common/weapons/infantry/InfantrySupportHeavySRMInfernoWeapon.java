@@ -34,9 +34,10 @@ public class InfantrySupportHeavySRMInfernoWeapon extends InfantryWeapon {
     public InfantrySupportHeavySRMInfernoWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Infantry Heavy SRM Launcher (Inferno)";
+        name = "SRM Launcher (Hvy, One-Shot) - Inferno";
         setInternalName(name);
         addLookupName("InfantryHeavySRMInferno");
+        addLookupName("Infantry Heavy SRM Launcher (Inferno)");
         ammoType = AmmoType.T_NA;
         cost = 3000;
         bv = 1.74;

@@ -33,8 +33,9 @@ public class InfantryPistolSunbeamNovaLaserPistolWeapon extends InfantryWeapon {
     public InfantryPistolSunbeamNovaLaserPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Sunbeam Nova Laser Pistol";
+        name = "Laser Pistol (Sunbeam Nova)";
         setInternalName(name);
+        addLookupName("InfantrySunbeamNovapistol");
         addLookupName("InfantrySunbeamNovapistol");
         ammoType = AmmoType.T_NA;
         cost = 1250;

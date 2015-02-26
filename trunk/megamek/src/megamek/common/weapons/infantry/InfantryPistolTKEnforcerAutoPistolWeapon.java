@@ -33,9 +33,10 @@ public class InfantryPistolTKEnforcerAutoPistolWeapon extends InfantryWeapon {
     public InfantryPistolTKEnforcerAutoPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "TK Enforcer Auto Pistol";
+        name = "Pistol (TK Enforcer Semi-Auto)";
         setInternalName(name);
         addLookupName("InfantryTKEnforcerAutopistol");
+        addLookupName("TK Enforcer Auto Pistol");
         ammoType = AmmoType.T_AC;
         cost = 110;
         bv = 0.18;

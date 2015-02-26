@@ -33,9 +33,10 @@ public class InfantrySMGKA23SubgunWeapon extends InfantryWeapon {
     public InfantrySMGKA23SubgunWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "KA-23 Subgun";
+        name = "SMG (KA-23 Subgun)";
         setInternalName(name);
         addLookupName("InfantryKA23");
+        addLookupName("KA-23 Subgun");
         ammoType = AmmoType.T_NA;
         cost = 350;
         bv = 0.20;

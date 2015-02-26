@@ -33,9 +33,10 @@ public class InfantryPistolNambuAutoPistolWeapon extends InfantryWeapon {
     public InfantryPistolNambuAutoPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Nambu Auto Pistol";
+        name = "Auto-Pistol (Nambu)";
         setInternalName(name);
         addLookupName("InfantryNambuAutopistol");
+        addLookupName("Nambu Auto Pistol");
         ammoType = AmmoType.T_AC;
         cost = 75;
         bv = 0.19;

@@ -33,10 +33,11 @@ public class InfantrySupportLightRecoillessRifleInfernoWeapon extends InfantryWe
     public InfantrySupportLightRecoillessRifleInfernoWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Inferno Light Recoilless Rifle";
+        name = "Recoilless Rifle (Light) - Inferno";
         setInternalName(name);
         addLookupName("InfantryInfernoLRR");
         addLookupName("InfantryLightRecoillessRifleInferno");
+        addLookupName("Infantry Inferno Light Recoilless Rifle");
         ammoType = AmmoType.T_NA;
         cost = 300;
         bv = 0.97;

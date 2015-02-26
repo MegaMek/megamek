@@ -33,9 +33,10 @@ public class InfantryShotgunSawnoffDoubleBarrelWeapon extends InfantryWeapon {
     public InfantryShotgunSawnoffDoubleBarrelWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Double Barrel Sawed-off Shotgun";
+        name = "Shotgun (Double-Barrel, Sawed Off)";
         setInternalName(name);
         addLookupName("InfantryDoubleSawnOff");
+        addLookupName("Double Barrel Sawed-off Shotgun");
         ammoType = AmmoType.T_NA;
         cost = 30;
         bv = 0.03;

@@ -33,9 +33,10 @@ public class InfantrySupportPulseLaserWeapon extends InfantryWeapon {
     public InfantrySupportPulseLaserWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Support Pulse Laser";
+        name = "Support Pulse Laser";
         setInternalName(name);
         addLookupName("InfantrySupportPulseLaser");
+        addLookupName("Infantry Support Pulse Laser");
         addLookupName("InfantrySmallPulseLaser");
         ammoType = AmmoType.T_NA;
         cost = 16000;

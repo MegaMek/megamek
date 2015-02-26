@@ -33,9 +33,10 @@ public class InfantryPistolMauserNeedlerPistolWeapon extends InfantryWeapon {
     public InfantryPistolMauserNeedlerPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "M&G Flechette Pistol";
+        name = "Needler Pistol (M&G Flechette)";
         setInternalName(name);
         addLookupName("InfantryMauserneedlerpistol");
+        addLookupName("M&G Flechette Pistol");
         ammoType = AmmoType.T_AC;
         cost = 100;
         bv = 0.10;

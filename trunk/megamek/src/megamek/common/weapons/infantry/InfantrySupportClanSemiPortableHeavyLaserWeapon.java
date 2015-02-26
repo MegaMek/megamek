@@ -33,10 +33,11 @@ public class InfantrySupportClanSemiPortableHeavyLaserWeapon extends InfantryWea
     public InfantrySupportClanSemiPortableHeavyLaserWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Infantry Clan Semi-Portable Heavy laser";
+        name = "Support Laser (Heavy, Semi-Portable)";
         setInternalName(name);
         addLookupName("InfantryClanSemiPortableHeavyLaser");
         addLookupName("InfantryClanHeavySmallLaser");
+        addLookupName("Infantry Clan Semi-Portable Heavy laser");
         ammoType = AmmoType.T_NA;
         cost = 20000;
         bv = 7.53;

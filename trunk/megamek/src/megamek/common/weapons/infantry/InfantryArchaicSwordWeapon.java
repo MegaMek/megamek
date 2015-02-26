@@ -33,9 +33,10 @@ public class InfantryArchaicSwordWeapon extends InfantryWeapon {
     public InfantryArchaicSwordWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Sword";
+        name = "Blade (Sword)";
         setInternalName(name);
         addLookupName("InfantrySword");
+        addLookupName("Infantry Sword");
         ammoType = AmmoType.T_NA;
         cost = 30;
         bv = 0.06;

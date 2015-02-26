@@ -33,9 +33,10 @@ public class InfantryArchaicShurikenWeapon extends InfantryWeapon {
     public InfantryArchaicShurikenWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Shuriken";
+        name = "Blade (Shuriken)";
         setInternalName(name);
         addLookupName("InfantryShuriken");
+        addLookupName("Shuriken");
         ammoType = AmmoType.T_NA;
         cost = 5;
         bv = 0;

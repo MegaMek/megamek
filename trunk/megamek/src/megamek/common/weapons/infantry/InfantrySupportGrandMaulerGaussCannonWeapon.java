@@ -33,10 +33,11 @@ public class InfantrySupportGrandMaulerGaussCannonWeapon extends InfantryWeapon 
     public InfantrySupportGrandMaulerGaussCannonWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Infantry Grand Mauler Gauss Cannon";
+        name = "Gauss Cannon (Grand Mauler)";
         setInternalName(name);
         addLookupName("InfantryGrandMaulerGaussCannon");
         addLookupName("InfantryGrandMauler");
+        addLookupName("Infantry Grand Mauler Gauss Cannon");
         ammoType = AmmoType.T_NA;
         cost = 5000;
         bv = 3.22;

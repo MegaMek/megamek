@@ -33,9 +33,10 @@ public class InfantryArchaicClanVibroSwordWeapon extends InfantryWeapon {
     public InfantryArchaicClanVibroSwordWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Clan Vibro Sword";
+        name = "Blade (Vibro-sword, Clan)";
         setInternalName(name);
         addLookupName("InfantryClanVibroSword");
+        addLookupName("Clan Vibro Sword");
         ammoType = AmmoType.T_NA;
         cost = 500;
         bv = 0.34;

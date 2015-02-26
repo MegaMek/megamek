@@ -33,10 +33,11 @@ public class InfantrySupportHellboreAssaultLaserWeapon extends InfantryWeapon {
     public InfantrySupportHellboreAssaultLaserWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Infantry Hellbore Assault Laser";
+        name = "Laser (Hellbore Assault)";
         setInternalName(name);
         addLookupName("InfantryHellbore");
         addLookupName("InfantryHellboreAssaultLaser");
+        addLookupName("Infantry Hellbore Assault Laser");
         ammoType = AmmoType.T_NA;
         cost = 2500;
         bv = 3.22;

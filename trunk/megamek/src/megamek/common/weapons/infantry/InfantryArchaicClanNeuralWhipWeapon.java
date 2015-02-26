@@ -32,10 +32,11 @@ public class InfantryArchaicClanNeuralWhipWeapon extends InfantryWeapon {
 
     public InfantryArchaicClanNeuralWhipWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Clan Neural Whip";
+        techLevel.put(3071,TechConstants.T_CLAN_TW);
+        name = "Whip (Neural Whip, Clan)";
         setInternalName(name);
         addLookupName("CLInfantryNeuralWhip");
+        addLookupName("Clan Neural Whip");
         ammoType = AmmoType.T_NA;
         cost = 500;
         bv = 0.08;

@@ -33,10 +33,11 @@ public class InfantrySupportDragonsbaneDisposablePulseLaserWeapon extends Infant
     public InfantrySupportDragonsbaneDisposablePulseLaserWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Infantry Dragonsbane Disposable Pulse Laser";
+        name = "Pulse Laser (Dragonsbane)";
         setInternalName(name);
         addLookupName("InfantryDragonsbane");
         addLookupName("InfantryDragonsbanePulseLaser");
+        addLookupName("Infantry Dragonsbane Disposable Pulse Laser");
         ammoType = AmmoType.T_NA;
         cost = 5000;
         bv = 5.08;

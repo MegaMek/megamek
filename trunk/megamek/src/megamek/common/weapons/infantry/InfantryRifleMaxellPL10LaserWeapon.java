@@ -33,9 +33,10 @@ public class InfantryRifleMaxellPL10LaserWeapon extends InfantryWeapon {
     public InfantryRifleMaxellPL10LaserWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Maxell PL10 Laser Rifle";
+        name = "Laser Rifle (Maxell PL-10)";
         setInternalName(name);
         addLookupName("InfantryMaxellPL10Laser");
+        addLookupName("Maxell PL10 Laser Rifle");
         ammoType = AmmoType.T_NA;
         cost = 2000;
         bv = 1.33;

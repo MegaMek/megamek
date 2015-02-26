@@ -33,9 +33,10 @@ public class InfantryArchaicDoubleStunStaffWeapon extends InfantryWeapon {
     public InfantryArchaicDoubleStunStaffWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Double Ended Stun Staff";
+        name = "Staff (Stun Staff, Double-End)";
         setInternalName(name);
         addLookupName("InfantryDoubleStunStaff");
+        addLookupName("Double Ended Stun Staff");
         ammoType = AmmoType.T_NA;
         cost = 500;
         bv = 0.06;

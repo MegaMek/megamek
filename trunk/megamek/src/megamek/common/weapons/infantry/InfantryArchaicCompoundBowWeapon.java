@@ -33,9 +33,10 @@ public class InfantryArchaicCompoundBowWeapon extends InfantryWeapon {
     public InfantryArchaicCompoundBowWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Compound Bow";
+        name = "Bow (Compound)";
         setInternalName(name);
         addLookupName("InfantryCompoundBow");
+        addLookupName("Compound Bow");
         ammoType = AmmoType.T_NA;
         cost = 15;
         bv = 0.01;
@@ -44,8 +45,6 @@ public class InfantryArchaicCompoundBowWeapon extends InfantryWeapon {
         infantryRange = 0;
         introDate = 1950;
         techLevel.put(1950,techLevel.get(3071));
-
-
         availRating =new int[]{RATING_B,RATING_A,RATING_A};
         techRating = RATING_C;
 

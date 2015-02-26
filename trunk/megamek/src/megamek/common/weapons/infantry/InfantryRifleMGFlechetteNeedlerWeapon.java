@@ -33,9 +33,10 @@ public class InfantryRifleMGFlechetteNeedlerWeapon extends InfantryWeapon {
     public InfantryRifleMGFlechetteNeedlerWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "M&G Flechette Rifle";
+        name = "Needler Rifle (M&G Flechette)";
         setInternalName(name);
         addLookupName("InfantryMGFlechette");
+        addLookupName("M&G Flechette Rifle");
         ammoType = AmmoType.T_NA;
         cost = 200;
         bv = 0.10;

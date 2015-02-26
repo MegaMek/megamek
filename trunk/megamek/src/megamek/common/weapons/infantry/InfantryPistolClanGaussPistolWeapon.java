@@ -44,7 +44,7 @@ public class InfantryPistolClanGaussPistolWeapon extends InfantryWeapon {
         infantryRange = 0;
         introDate = 2850;
         techLevel.put(2850,techLevel.get(3071));
-        availRating = new int[]{RATING_X,RATING_F,RATING_E};
+        availRating = new int[]{RATING_X,RATING_D,RATING_D};
         techRating = RATING_F;
     }
 }

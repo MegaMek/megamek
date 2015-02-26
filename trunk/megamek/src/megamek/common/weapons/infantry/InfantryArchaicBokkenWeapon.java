@@ -33,9 +33,10 @@ public class InfantryArchaicBokkenWeapon extends InfantryWeapon {
     public InfantryArchaicBokkenWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Bokken";
+        name = "Blade (Bokken)";
         setInternalName(name);
         addLookupName("InfantryBokken");
+        addLookupName("Bokken");
         ammoType = AmmoType.T_NA;
         cost = 15;
         bv = 0.04;

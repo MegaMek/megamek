@@ -33,10 +33,11 @@ public class InfantrySupportLightRecoillessRifleWeapon extends InfantryWeapon {
     public InfantrySupportLightRecoillessRifleWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Light Recoilless Rifle";
+        name = "Recoilless Rifle (Light)";
         setInternalName(name);
         addLookupName("InfantryLRR");
         addLookupName("InfantryLightRecoillessRifle");
+        addLookupName("Infantry Light Recoilless Rifle");
         ammoType = AmmoType.T_NA;
         cost = 300;
         bv = 2.45;

@@ -472,6 +472,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
+            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
 
         // Which building takes the damage?

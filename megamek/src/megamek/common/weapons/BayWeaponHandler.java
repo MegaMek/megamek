@@ -147,6 +147,7 @@ public class BayWeaponHandler extends WeaponHandler {
 
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
+            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
 
         // Which building takes the damage?
@@ -338,6 +339,7 @@ public class BayWeaponHandler extends WeaponHandler {
 
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
+            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());

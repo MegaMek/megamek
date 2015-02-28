@@ -595,6 +595,7 @@ public class CLIATMHandler extends ATMHandler {
 
             if (entityTarget != null) {
                 ae.setLastTarget(entityTarget.getId());
+                ae.setLastTargetDisplayName(entityTarget.getDisplayName());
             }
 
             // Which building takes the damage?

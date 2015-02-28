@@ -4151,9 +4151,7 @@ public class UnitDisplay extends JPanel {
             }
             
             if (en.getLastTarget() != Entity.NONE) {
-                Entity enLastTarget = clientgui.getClient().getGame()
-                        .getEntity(en.getLastTarget());
-                lastTargetR.setText(enLastTarget.getDisplayName());
+                lastTargetR.setText(en.getLastTargetDisplayName());
             } else {
                 lastTargetR.setText(Messages.getString("MechDisplay.None"));
             }            

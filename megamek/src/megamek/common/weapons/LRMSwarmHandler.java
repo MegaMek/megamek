@@ -70,6 +70,7 @@ public class LRMSwarmHandler extends LRMHandler {
 
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
+            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
 
         // Which building takes the damage?
@@ -310,6 +311,7 @@ public class LRMSwarmHandler extends LRMHandler {
         }
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
+            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
 
         Entity swarmTarget = Compute.getSwarmMissileTarget(game, ae.getId(),

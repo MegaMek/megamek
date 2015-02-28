@@ -612,6 +612,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     // convenience
 
     protected int lastTarget = Entity.NONE;
+    protected String lastTargetDisplayName = "";
 
     /**
      * the entity id of our current spot-target
@@ -9595,6 +9596,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getLastTarget() {
         return lastTarget;
+    }
+    
+    public void setLastTargetDisplayName(String name) {
+        lastTargetDisplayName = name;
+    }
+
+    public String getLastTargetDisplayName() {
+        return lastTargetDisplayName;
     }
 
     /**

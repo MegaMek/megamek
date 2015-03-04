@@ -61,7 +61,7 @@ class StepSprite extends Sprite {
     @Override
     public void prepare() {
         // create image for buffer
-        Image tempImage = new BufferedImage(bounds.width, bounds.height,
+        Image tempImage = new BufferedImage(BoardView1.HEX_W, BoardView1.HEX_H,
                 BufferedImage.TYPE_INT_ARGB);
         Graphics graph = tempImage.getGraphics();
         
@@ -73,7 +73,7 @@ class StepSprite extends Sprite {
 
         // fill with key color
         graph.setColor(new Color(0,0,0,0));
-        graph.fillRect(0, 0, bounds.width, bounds.height);
+        graph.fillRect(0, 0, BoardView1.HEX_W, BoardView1.HEX_H);
 
         // setup some variables
         final Point stepPos = bv.getHexLocation(step.getPosition());

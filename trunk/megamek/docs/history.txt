@@ -23,6 +23,7 @@ v0.41.3-dev
 + Data: XTRO Most Wanted Units/Unit Fixes.
 + Bug [#4462]: Infantry with support lasers incorrectly labeled as "Heavy Laser"
 + Bug [#4474]: NPE in 0.41.3 r11674 UnitDisplay$ExtraPanel.displayMech
++ Patch [#468]: Anti-Aliasing for the StepSprites
 
 v0.41.2-dev (2015-02-12 15:20 UTC)
 + Bug [#4422]: Woods, jungle, and smoke not getting counted for LoS

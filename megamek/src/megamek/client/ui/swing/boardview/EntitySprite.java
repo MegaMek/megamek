@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -233,7 +234,7 @@ class EntitySprite extends Sprite {
                     && !((entity instanceof Aero)
                             && ((Aero) entity).isSpheroid()
                             && !this.bv.game.getBoard().inSpace())) {
-                graph.drawPolygon(this.bv.facingPolys[entity.getFacing()]);
+            	((Graphics2D) graph).draw(this.bv.facingPolys[entity.getFacing()]);
             }
 
             // determine secondary facing for non-mechs & flipped arms
@@ -246,12 +247,13 @@ class EntitySprite extends Sprite {
             // draw red secondary facing arrow if necessary
             if ((secFacing != -1) && (secFacing != entity.getFacing())) {
                 graph.setColor(Color.red);
-                graph.drawPolygon(this.bv.facingPolys[secFacing]);
+                //graph.drawPolygon(this.bv.facingPolys[secFacing]);
+                ((Graphics2D) graph).draw(this.bv.facingPolys[secFacing]);
             }
             if ((entity instanceof Aero) && this.bv.game.useVectorMove()) {
                 for (int head : entity.getHeading()) {
                     graph.setColor(Color.red);
-                    graph.drawPolygon(this.bv.facingPolys[head]);
+                    ((Graphics2D) graph).draw(this.bv.facingPolys[head]);
                 }
             }
 

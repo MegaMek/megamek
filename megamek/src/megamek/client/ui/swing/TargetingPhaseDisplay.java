@@ -326,7 +326,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             refreshAll();
             cacheVisibleTargets();
 
-            if (!clientgui.bv.isMovingUnits()) {
+            if (!clientgui.bv.isMovingUnits() && !ce().isOffBoard()) {
                 clientgui.bv.centerOnHex(ce().getPosition());
             }
 

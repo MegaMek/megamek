@@ -300,4 +300,9 @@ public class SpecialHexDisplay implements Serializable {
             return false;
         }
     }
+    
+    public String toString() {
+        return "SHD: " + type.name() + ", " + "round " + round + ", by "
+                + owner.getName();
+    }
 }

@@ -303,6 +303,23 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             if (charge) {
                 result.add(mp.clone().addStep(stepType));
             }
+            
+            Coords pos;
+            int elevation;
+            if (last != null) {
+                pos = last.getPosition();
+                elevation = last.getElevation();
+            } else {
+                pos = entity.getPosition();
+                elevation = entity.getElevation();
+            }                
+             
+            if (entity.canGoUp(elevation, pos)) {
+                result.add(mp.clone().addStep(MoveStepType.UP));
+            }
+            if (entity.canGoDown(elevation, pos)) {
+                result.add(mp.clone().addStep(MoveStepType.DOWN));
+            }            
 
             return result;
         }

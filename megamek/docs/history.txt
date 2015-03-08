@@ -32,6 +32,7 @@ v0.41.3-dev
 + Bug: AR10 ammo BV should be in total compared to launcher BV, not for each
     type of missile seperately
 + Bug: PPC w/ capacitor has wrong BV when combined with drone operating system
++ Bug [#4467]: Incorrect popup text when mousing over hexes targetted by artillery
 
 v0.41.2-dev (2015-02-12 15:20 UTC)
 + Bug [#4422]: Woods, jungle, and smoke not getting counted for LoS

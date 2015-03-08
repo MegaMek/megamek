@@ -11645,7 +11645,7 @@ public class Server implements Runnable {
                     new SpecialHexDisplay(
                             SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
                             SpecialHexDisplay.NO_ROUND, getPlayer(playerId),
-                            "ArtyAutoHit Hex, for "
+                            "Artillery auto hit hex, for "
                             + getPlayer(playerId).getName(),
                             SpecialHexDisplay.SHD_OBSCURED_TEAM));
         }

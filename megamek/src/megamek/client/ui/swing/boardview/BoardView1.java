@@ -4312,9 +4312,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (s == null) {
                 s = Messages.getString("BoardView1.Artillery");
             }
-            txt.append(Messages.getString(
-                    "BoardView1.ArtilleryAttack", new Object[]{s, //$NON-NLS-1$
-                                                               new Integer(aaa.turnsTilHit)}));
+            txt.append(Messages.getString("BoardView1.ArtilleryAttack", //$NON-NLS-1$
+                    new Object[] { s, new Integer(aaa.turnsTilHit) }));
             txt.append("<br>"); //$NON-NLS-1$
         }
 
@@ -4343,10 +4342,23 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         final Collection<SpecialHexDisplay> shdList = game.getBoard()
-                                                          .getSpecialHexDisplay(mcoords);
+                .getSpecialHexDisplay(mcoords);
+        final Phase currPhase = game.getPhase();
+        int round = game.getRoundCount();
         if (shdList != null) {
+            boolean isHexAutoHit = localPlayer.getArtyAutoHitHexes().contains(
+                    mcoords);
             for (SpecialHexDisplay shd : shdList) {
-                if (!shd.isObscured(localPlayer)) {
+                boolean isTypeAutoHit = shd.getType() 
+                        == SpecialHexDisplay.Type.ARTILLERY_AUTOHIT;
+                // Don't draw if this SHD is obscured from this player
+                // The SHD list may also contain stale SHDs, so don't show 
+                // tooltips for SHDs that aren't drawn.
+                // The exception is auto hits.  There will be an icon for auto
+                // hits, so we need to draw a tooltip
+                if (!shd.isObscured(localPlayer)
+                        && (shd.drawNow(currPhase, round, localPlayer) 
+                                || (isHexAutoHit && isTypeAutoHit))) {
                     if (shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE) {
                         if (localPlayer.equals(shd.getOwner())) {
                             txt.append("Note: ");

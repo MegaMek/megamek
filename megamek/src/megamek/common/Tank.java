@@ -1407,10 +1407,6 @@ public class Tank extends Entity {
             WeaponType wtype = (WeaponType) mounted.getType();
             double dBV = wtype.getBV(this);
 
-            if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
-                dBV *= 0.8;
-            }
-
             // don't count destroyed equipment
             if (mounted.isDestroyed()) {
                 continue;
@@ -1437,6 +1433,7 @@ public class Tank extends Entity {
                 }
             }
 
+
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
                 double mgaBV = 0;
@@ -1448,6 +1445,11 @@ public class Tank extends Entity {
                     }
                 }
                 dBV = mgaBV * 0.67;
+            }
+
+
+            if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
+                dBV *= 0.8;
             }
 
             bvText.append(weaponName);

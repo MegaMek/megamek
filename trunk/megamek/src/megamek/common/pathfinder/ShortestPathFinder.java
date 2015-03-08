@@ -124,12 +124,13 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
 
             // We have to be standing to be able to move
             // Maybe I should replace this extra condition with a flag in node(?)
-            boolean vprone= v.getFinalProne(), eprone= e.getFinalProne();
-            if( vprone != eprone )
+            boolean vprone = v.getFinalProne(), eprone = e.getFinalProne();
+            if (vprone != eprone)
                 return vprone ? e : null;
-            if( !(v.getEntity() instanceof Tank)){
-                boolean vhdown= v.getFinalHullDown(), ehdown= e.getFinalHullDown();
-                if( vhdown != ehdown )
+            if (!(v.getEntity() instanceof Tank)) {
+                boolean vhdown = v.getFinalHullDown(), ehdown = e
+                        .getFinalHullDown();
+                if (vhdown != ehdown)
                     return vhdown ? e : null;
             }
 
@@ -176,7 +177,8 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
                     return dd;
                 } else {
                     // Pick the shortest path
-                    int hexesMovedDiff =first.getHexesMoved() - second.getHexesMoved(); 
+                    int hexesMovedDiff = first.getHexesMoved()
+                            - second.getHexesMoved();
                     if (hexesMovedDiff != 0) {
                         return hexesMovedDiff;
                     }
@@ -184,7 +186,8 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
                     return (first.length() - second.length());
                 }
             }else if(first.getEntity().getWalkMP()==0) {
-                //current implementation of movement cost allows a 0mp moves for units with 0 mp.
+                // current implementation of movement cost allows a 0mp moves
+                // for units with 0 mp.
             }else{
                 boolean backwards = stepType == MoveStepType.BACKWARDS;
                 h1 = first.getFinalCoords().distance(destination)

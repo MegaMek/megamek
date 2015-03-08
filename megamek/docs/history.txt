@@ -28,6 +28,7 @@ v0.41.3-dev
 + Patch [#469]: StepSprite text gets lost at lower scales
 + Patch [#470]: Updated movement and facing arrows (StepSprite/EntitySprite)
 + Data: New Sprites and Neoancient RATs
++ Bug: M-Pod should be defensive BV for tanks
 
 v0.41.2-dev (2015-02-12 15:20 UTC)
 + Bug [#4422]: Woods, jungle, and smoke not getting counted for LoS

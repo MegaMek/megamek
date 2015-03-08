@@ -33,6 +33,7 @@ v0.41.3-dev
     type of missile seperately
 + Bug: PPC w/ capacitor has wrong BV when combined with drone operating system
 + Bug [#4467]: Incorrect popup text when mousing over hexes targetted by artillery
++ Bug [#4468]: Path planner doesn't know about elevation change steps
 
 v0.41.2-dev (2015-02-12 15:20 UTC)
 + Bug [#4422]: Woods, jungle, and smoke not getting counted for LoS

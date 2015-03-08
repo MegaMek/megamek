@@ -1204,7 +1204,7 @@ public class Tank extends Entity {
 
             if (((etype instanceof WeaponType) && (etype
                     .hasFlag(WeaponType.F_AMS) || etype
-                    .hasFlag(WeaponType.F_B_POD)))) {
+                    .hasFlag(WeaponType.F_B_POD) || etype.hasFlag(WeaponType.F_M_POD)))) {
                 bvText.append(startRow);
                 bvText.append(startColumn);
                 bvText.append(etype.getName());
@@ -1421,6 +1421,9 @@ public class Tank extends Entity {
                 continue;
             }
             if (wtype.hasFlag(WeaponType.F_B_POD)) {
+                continue;
+            }
+            if (wtype.hasFlag(WeaponType.F_M_POD)) {
                 continue;
             }
             String weaponName = wtype.getName();
@@ -2412,7 +2415,7 @@ public class Tank extends Entity {
             for (int c = 0; c < structCostIdx; c++) {
                 costs[structCostIdx] += costs[c];
             }
-            double techRatingMultiplier = 0.5 + getStructuralTechRating() * 0.25;
+            double techRatingMultiplier = 0.5 + (getStructuralTechRating() * 0.25);
             costs[structCostIdx] *= techRatingMultiplier;
         } else {
             // IS has no variations, no Endo etc.
@@ -3169,7 +3172,7 @@ public class Tank extends Entity {
                     continue;
                 }
             }
-            if (!(mount.getType() instanceof AmmoType || Arrays.asList(
+            if (!((mount.getType() instanceof AmmoType) || Arrays.asList(
                     EquipmentType.armorNames).contains(
                     mount.getType().getName()))) {
                 usedSlots += mount.getType().getTankslots(this);

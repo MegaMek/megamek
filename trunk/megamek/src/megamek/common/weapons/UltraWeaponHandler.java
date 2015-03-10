@@ -106,10 +106,9 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         bSalvo = true;
 
         if ((howManyShots == 1)
-            || (game.getOptions().booleanOption("uac_tworolls") && ((wtype
-                                                                             .getAmmoType() == AmmoType.T_AC_ULTRA)
-                                                                    || (wtype
-                                                                                                                                .getAmmoType() == AmmoType.T_AC_ULTRA_THB)))) {
+                || (game.getOptions().booleanOption("uac_tworolls") && ((wtype
+                        .getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
+                        .getAmmoType() == AmmoType.T_AC_ULTRA_THB)))) {
             return 1;
         }
 
@@ -161,9 +160,6 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
                 || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
                 r.messageId = 3160;
-                if (!game.getOptions().booleanOption("uac_tworolls")) {
-                    weapon.setHit(true);
-                }
             } else {
                 r.messageId = 3170;
             }

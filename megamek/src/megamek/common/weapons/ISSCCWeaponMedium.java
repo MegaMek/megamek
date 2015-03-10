@@ -1,13 +1,13 @@
 /* MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * 
- *  This program is free software; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the Free 
- *  Software Foundation; either version 2 of the License, or (at your option) 
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
  *  any later version.
- * 
- *  This program is distributed in the hope that it will be useful, but 
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY 
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
 /*
@@ -23,32 +23,32 @@ import megamek.common.TechConstants;
  */
 public class ISSCCWeaponMedium extends SubCapitalCannonWeapon {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 8756042527483383101L;
 
     /**
-     * 
+     *
      */
     public ISSCCWeaponMedium() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
-        this.name = "Medium Sub-Capital Cannon";
-        this.setInternalName(this.name);
-        this.addLookupName("MediumSCC");
-        this.heat = 30;
-        this.damage = 5;
-        this.rackSize = 5;
-        this.shortRange = 11;
-        this.mediumRange = 22;
-        this.longRange = 33;
-        this.extremeRange = 44;
-        this.tonnage = 500.0f;
-        this.bv = 1901;
-        this.cost = 780000;
-        this.shortAV = 5;
-        this.medAV = 5;
-        this.maxRange = RANGE_MED;
+        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
+        name = "Medium Sub-Capital Cannon";
+        setInternalName(name);
+        addLookupName("MediumSCC");
+        heat = 30;
+        damage = 5;
+        rackSize = 5;
+        shortRange = 11;
+        mediumRange = 22;
+        longRange = 33;
+        extremeRange = 44;
+        tonnage = 500.0f;
+        bv = 708;
+        cost = 780000;
+        shortAV = 5;
+        medAV = 5;
+        maxRange = RANGE_MED;
         introDate = 3068;
         techLevel.put(3068, techLevel.get(3071));
         techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);

@@ -606,9 +606,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 }
             }
             if (game.getOptions().booleanOption("uac_tworolls")
-                && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
-                                                                             .getAmmoType() == AmmoType.T_AC_ULTRA_THB))
-                && (i == 2)) {
+                    && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) 
+                            || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB))
+                    && (i == 2)) {
                 // Jammed weapon doesn't get 2nd shot...
                 if (isJammed) {
                     r = new Report(9905);

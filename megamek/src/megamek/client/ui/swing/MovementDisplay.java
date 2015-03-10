@@ -1728,17 +1728,17 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (null == ce) {
             return;
         }
+        GameOptions opts = clientgui.getClient().getGame().getOptions();
         setUnjamEnabled(ce.canUnjamRAC()
-                        && ((gear == MovementDisplay.GEAR_LAND)
-                            || (gear == MovementDisplay.GEAR_TURN)
-                            || (gear == MovementDisplay.GEAR_BACKUP))
-                        && ((cmd.getMpUsed() <= ce.getWalkMP()) || (cmd.getLastStep()
-                                                                       .isOnlyPavement() && (cmd.getMpUsed() <= (ce
-                                                                                                                         .getWalkMP() + 1))))
-                        && !(clientgui.getClient().getGame().getOptions()
-                                      .booleanOption("tacops_tank_crews")
-                             && (cmd.getMpUsed() > 0) && (ce instanceof Tank) && (ce
-                                                                                          .getCrew().getSize() < 2)));
+                && ((gear == MovementDisplay.GEAR_LAND)
+                        || (gear == MovementDisplay.GEAR_TURN) 
+                        || (gear == MovementDisplay.GEAR_BACKUP))
+                && ((cmd.getMpUsed() <= ce.getWalkMP()) 
+                        || (cmd.getLastStep().isOnlyPavement() 
+                                && (cmd.getMpUsed() <= (ce.getWalkMP() + 1))))
+                && !(opts.booleanOption("tacops_tank_crews")
+                        && (cmd.getMpUsed() > 0) && (ce instanceof Tank) 
+                        && (ce.getCrew().getSize() < 2)));
     }
 
     private void updateSearchlightButton() {

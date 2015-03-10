@@ -1442,13 +1442,16 @@ public class Compute {
         if (te.getPlayerPickedPassThrough(attackerId) != null) {
             finalPos = te.getPlayerPickedPassThrough(attackerId);
         }
-        int distance = aPos.distance(finalPos);
+        int distance = Integer.MAX_VALUE;
+        if (finalPos != null) {
+            distance = aPos.distance(finalPos);
+        }
         // don't return zero distance Coords, but rather the Coords immediately
         // before this
         // This is necessary to determine angle of attack and arc information
         // for direct fly-overs
         for (Coords c : te.getPassedThrough()) {
-            if (!aPos.equals(c)
+            if (!aPos.equals(c) && (c != null)
                 && ((aPos.distance(c) < distance) || (distance == 0))) {
                 finalPos = c;
                 distance = aPos.distance(c);
@@ -1464,15 +1467,18 @@ public class Compute {
         if (te.getPlayerPickedPassThrough(attackerId) != null) {
             finalPos = te.getPlayerPickedPassThrough(attackerId);
         }
-        int distance = aPos.distance(finalPos);
-        int finalFacing = 0;
+        int distance = Integer.MAX_VALUE;
+        if (finalPos != null) {
+            distance = aPos.distance(finalPos);
+        }
+        int finalFacing = te.getFacing();
         // don't return zero distance Coords, but rather the Coords immediately
         // before this
         // This is necessary to determine angle of attack and arc information
         // for direct fly-overs
         for (int i = 0; i < te.getPassedThrough().size(); i++) {
             Coords c = te.getPassedThrough().get(i);
-            if (!aPos.equals(c)
+            if (!aPos.equals(c) && (c != null)
                 && ((aPos.distance(c) < distance) || (distance == 0))) {
                 finalFacing = te.getPassedThroughFacing().get(i);
                 finalPos = c;

@@ -36,6 +36,7 @@ v0.41.3-dev
 + Bug [#4468]: Path planner doesn't know about elevation change steps
 + Bug [#4471]: TargetingDisplay centers display on off-board units
 + Bug [#4476]: Unjam UAC Unofficial Option Not Working
++ Bug: Potential NPE in Compute.getClosestFlightPath
 
 v0.41.2-dev (2015-02-12 15:20 UTC)
 + Bug [#4422]: Woods, jungle, and smoke not getting counted for LoS

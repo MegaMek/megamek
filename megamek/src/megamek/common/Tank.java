@@ -1447,25 +1447,12 @@ public class Tank extends Entity {
                 dBV = mgaBV * 0.67;
             }
 
-
-            if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
-                dBV *= 0.8;
-            }
-
             bvText.append(weaponName);
             bvText.append(" ");
             bvText.append(dBV);
 
             // artemis bumps up the value
-            // as do PPC capacitors
             if (mounted.getLinkedBy() != null) {
-                // check to see if the weapon is a PPC and has a Capacitor
-                // attached to it
-                if (wtype.hasFlag(WeaponType.F_PPC)) {
-                    dBV += ((MiscType) mounted.getLinkedBy().getType()).getBV(
-                            this, mounted);
-                    weaponName = weaponName.concat(" with Capacitor");
-                }
                 Mounted mLinker = mounted.getLinkedBy();
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
@@ -1483,6 +1470,11 @@ public class Tank extends Entity {
                     bvText.append(" x 1.15 Apollo");
                 }
             }
+            if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
+                dBV *= 0.8;
+                bvText.append(" x 0.8 Drone OS");
+            }
+
 
             // and we'll add the tcomp here too
             if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
@@ -1527,6 +1519,10 @@ public class Tank extends Entity {
                 }
             }
             bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(dBV);
+            bvText.append(endColumn);
+
             bvText.append(endRow);
 
             bvText.append(startRow);

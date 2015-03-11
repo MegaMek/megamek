@@ -17,7 +17,7 @@ Zou Heavy Battle Armor
 </Name>
 
 <Model>
-(Standard)
+(C3)
 </Model>
 
 <year>
@@ -46,7 +46,8 @@ Jump
 
 <Squad Equipment>
 BABattleClaw:LA
-ISBAMediumLaser:RA
+ISBAMediumRecoillessRifle:RA
+BattleArmorC3:Body
 IS BA Reflective:LA
 IS BA Reflective:Body
 IS BA Reflective:RA

@@ -8,15 +8,15 @@ Era:3054
 Rules Level:2
 
 Mass:65
-Engine:260 XL Engine
-Structure:Standard
+Engine:260 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
-Heat Sinks:10 Double
+Heat Sinks:10 Single
 Walk MP:4
 Jump MP:0
 
-Armor:Ferro-Fibrous
+Armor:Ferro-Fibrous(Inner Sphere)
 LA Armor:8
 RA Armor:8
 LT Armor:17
@@ -29,10 +29,11 @@ RTL Armor:5
 RTR Armor:5
 RTC Armor:5
 
-Weapons:3
-1 ISGaussRifle, Right Arm, Ammo:48
-1 ISGaussRifle, Left Arm
-2 ISERMediumLaser, Center Torso
+Weapons:4
+Gauss Rifle, Left Arm
+Gauss Rifle, Right Arm
+Medium Laser, Center Torso
+Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -44,9 +45,9 @@ ISGaussRifle
 ISGaussRifle
 ISGaussRifle
 ISGaussRifle
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Arm:
 Shoulder
@@ -58,36 +59,36 @@ ISGaussRifle
 ISGaussRifle
 ISGaussRifle
 ISGaussRifle
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISGauss Ammo
-ISGauss Ammo
-ISGauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
 ISCASE
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISGauss Ammo
-ISGauss Ammo
-ISGauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
 ISCASE
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 
 Center Torso:
@@ -101,8 +102,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERMediumLaser
-ISERMediumLaser
+Medium Laser
+Medium Laser
 
 Head:
 Life Support
@@ -145,3 +146,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
+

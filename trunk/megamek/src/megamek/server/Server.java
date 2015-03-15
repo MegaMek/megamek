@@ -16779,10 +16779,8 @@ public class Server implements Runnable {
                     continue;
                 }
 
-                // Engine hits cause excess heat for fighters
-                if (!((entity instanceof SmallCraft) || (entity instanceof Jumpship))) {
-                    entity.heatBuildup += 2 * a.getEngineHits();
-                }
+                // engine hits add a lot of heat, provided the engine is on
+                entity.heatBuildup += entity.getEngineCritHeat();
 
                 // Combat computers help manage heat
                 if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {

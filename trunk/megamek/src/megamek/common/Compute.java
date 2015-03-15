@@ -4462,11 +4462,9 @@ public class Compute {
      * @return The base <code>ToHitData</code> of the attack.
      */
     public static ToHitData getLegAttackBaseToHit(Entity attacker,
-                                                  Entity defender, IGame game) {
-        int men = 0;
-        int base = TargetRoll.IMPOSSIBLE;
+            Entity defender, IGame game) {
         String reason = "Non Infantry not allowed to do AM attacks.";
-
+        ToHitData toReturn = null;
         boolean alreadyPerformingOther = false;
         for (Enumeration<EntityAction> actions = game.getActions(); actions
                 .hasMoreElements(); ) {
@@ -4502,37 +4500,43 @@ public class Compute {
         // Handle BattleArmor attackers.
         else if (attacker instanceof BattleArmor) {
             BattleArmor inf = (BattleArmor) attacker;
-
-            men = inf.getShootingStrength();
+            toReturn = new ToHitData(inf.getCrew().getPiloting(), "anti-mech skill");
+            int men = inf.getShootingStrength();
+            int modifier = TargetRoll.IMPOSSIBLE;
             if (men >= 4) {
-                base = inf.getCrew().getPiloting();
+                modifier = 0;
             } else if (men >= 3) {
-                base = inf.getCrew().getPiloting() + 2;
+                modifier = 2;
             } else if (men >= 2) {
-                base = inf.getCrew().getPiloting() + 5;
+                modifier = 5;
             } else if (men >= 1) {
-                base = inf.getCrew().getPiloting() + 7;
+                modifier = 7;
             }
-            reason = men + " trooper(s) active";
-
+            toReturn.addModifier(modifier, men + " trooper(s) active");
         } else if (attacker instanceof Infantry) {
             // Non-BattleArmor infantry need many more men.
             Infantry inf = (Infantry) attacker;
-            men = inf.getShootingStrength();
+            toReturn = new ToHitData(inf.getCrew().getPiloting(), "anti-mech skill");
+            int men = inf.getShootingStrength();
+            int modifier = TargetRoll.IMPOSSIBLE;
             if (men >= 22) {
-                base = inf.getCrew().getPiloting();
+                modifier = 0;
             } else if (men >= 16) {
-                base = inf.getCrew().getPiloting() + 2;
+                modifier = 2;
             } else if (men >= 10) {
-                base = inf.getCrew().getPiloting() + 5;
+                modifier = 5;
             } else if (men >= 5) {
-                base = inf.getCrew().getPiloting() + 7;
+                modifier = 7;
             }
-            reason = men + " men alive";
+            toReturn.addModifier(modifier, men + " trooper(s) active");
         }
-        ToHitData toReturn = new ToHitData(base, reason.toString(),
-                                           ToHitData.HIT_KICK, ToHitData.SIDE_FRONT);
-        if (base == TargetRoll.IMPOSSIBLE) {
+        
+        // If the swarm is impossible, ToHitData wasn't created
+        if (toReturn == null) {
+            toReturn = new ToHitData(TargetRoll.IMPOSSIBLE, reason.toString(),
+                    ToHitData.HIT_KICK, ToHitData.SIDE_FRONT);
+        }
+        if (toReturn.getValue() == TargetRoll.IMPOSSIBLE) {
             return toReturn;
         }
         toReturn = Compute.getAntiMechMods(toReturn, (Infantry) attacker,
@@ -4549,9 +4553,8 @@ public class Compute {
      * @return The base <code>ToHitData</code> of the mek.
      */
     public static ToHitData getSwarmMekBaseToHit(Entity attacker,
-                                                 Entity defender, IGame game) {
-        int men = 0;
-        int base = TargetRoll.IMPOSSIBLE;
+            Entity defender, IGame game) {
+        ToHitData toReturn = null;
         String reason = "Non Infantry not allowed to do AM attacks.";
 
         boolean alreadyPerformingOther = false;
@@ -4594,28 +4597,34 @@ public class Compute {
         // Handle BattleArmor attackers.
         else if (attacker instanceof BattleArmor) {
             BattleArmor inf = (BattleArmor) attacker;
-
-            men = inf.getShootingStrength();
+            toReturn = new ToHitData(inf.getCrew().getPiloting(), "anti-mech skill");
+            int men = inf.getShootingStrength();
+            int modifier = TargetRoll.IMPOSSIBLE;
             if (men >= 4) {
-                base = inf.getCrew().getPiloting() + 2;
+                modifier = 2;
             } else if (men >= 1) {
-                base = inf.getCrew().getPiloting() + 5;
+                modifier = 5;
             }
-            reason = men + " trooper(s) active";
+            toReturn.addModifier(modifier, men + " trooper(s) active");
         }
         // Non-BattleArmor infantry need many more men.
         else if (attacker instanceof Infantry) {
             Infantry inf = (Infantry) attacker;
-            men = inf.getShootingStrength();
+            toReturn = new ToHitData(inf.getCrew().getPiloting(), "anti-mech skill");
+            int men = inf.getShootingStrength();
+            int modifier = TargetRoll.IMPOSSIBLE;
             if (men >= 22) {
-                base = inf.getCrew().getPiloting() + 2;
+                modifier = 2;
             } else if (men >= 16) {
-                base = inf.getCrew().getPiloting() + 5;
+                modifier = 5;
             }
-            reason = men + " men alive";
+            toReturn.addModifier(modifier, men + " trooper(s) active");
         }
-        ToHitData toReturn = new ToHitData(base, reason.toString());
-        if (base == TargetRoll.IMPOSSIBLE) {
+        // If the swarm is impossible, ToHitData wasn't created
+        if (toReturn == null) {
+            toReturn = new ToHitData(TargetRoll.IMPOSSIBLE, reason.toString());
+        }
+        if (toReturn.getValue() == TargetRoll.IMPOSSIBLE) {
             return toReturn;
         }
         toReturn = Compute.getAntiMechMods(toReturn, (Infantry) attacker,

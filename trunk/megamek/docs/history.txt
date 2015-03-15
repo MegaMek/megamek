@@ -40,6 +40,8 @@ v0.41.3-dev
 + Bug: wrong BV for medium SCC
 + Bug: capacitor being added twice for tank ppc BV
 + Bug [#4480]: Vehicle damage threshold rule prevents criticals when IS is hit
++ Bug [#4495]: ASFs : Cluster hit weapons still causing multiple critical hits
+    per weapon on a to hit roll of 12 (was listed as fixed) 
 
 v0.41.2-dev (2015-02-12 15:20 UTC)
 + Bug [#4422]: Woods, jungle, and smoke not getting counted for LoS

@@ -850,6 +850,7 @@ public class CLIATMHandler extends ATMHandler {
                                        nCluster, bldgAbsorbs);
                     server.creditKill(entityTarget, ae);
                     hits -= nCluster;
+                    firstHit = false;
                     // do IMP stuff here!
                     if ((entityTarget instanceof Mech)
                         || (entityTarget instanceof Aero)

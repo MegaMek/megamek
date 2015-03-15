@@ -703,6 +703,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                             nCluster, bldgAbsorbs);
                     server.creditKill(entityTarget, ae);
                     hits -= nCluster;
+                    firstHit = false;
                 }
             } // Handle the next cluster.
         } else { // We missed, but need to handle special miss cases

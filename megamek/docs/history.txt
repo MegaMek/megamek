@@ -45,6 +45,8 @@ v0.41.3-dev
 + Bug [#4483]: ASFs : Extra heat from engine hits not shown during firing phase
 + All non-mechanized Infantry can now make anti-mech attacks, previously they
     had to have anti-mech training, which is a restriction no longer in TW
++ Feature: UnitDisplay Pilot tab now says Anti-Mech instead of Piloting for
+    infantry
 
 v0.41.2-dev (2015-02-12 15:20 UTC)
 + Bug [#4422]: Woods, jungle, and smoke not getting counted for LoS

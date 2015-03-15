@@ -215,51 +215,17 @@
     <background_image>tile.gif</background_image>
   </UI_Element>
 
-
   
 
     <!-- Defines default buttons -->
   <UI_Element>
     <name>defaultButton</name>
     <!-- Specification of border images -->
-    <border>
-      <corner_top_left>button_top_left.png</corner_top_left>
-      <corner_top_right>button_top_right.png</corner_top_right>
-      <corner_bottom_left>button_bottom_left.png</corner_bottom_left>
-      <corner_bottom_right>button_bottom_right.png</corner_bottom_right>
-      <!-- Border lines: these images will be tiled -->
-      <edge>
-        <edgeIcon>
-          <icon>button_top_line.png</icon>
-          <tiled>true</tiled>
-        </edgeIcon>
-        <edgeName>top</edgeName>
-      </edge>
-      <edge>
-        <edgeIcon>
-          <icon>button_bottom_line.png</icon>
-          <tiled>true</tiled>
-        </edgeIcon>
-        <edgeName>bottom</edgeName>
-      </edge>
-      <edge>
-        <edgeIcon>
-          <icon>button_left_line.png</icon>
-          <tiled>true</tiled>
-        </edgeIcon>
-        <edgeName>left</edgeName>
-      </edge>
-      <edge>
-        <edgeIcon>
-          <icon>button_right_line.png</icon>
-          <tiled>true</tiled>
-        </edgeIcon>
-        <edgeName>right</edgeName>
-      </edge>
-    </border>
+    <no_border>true</no_border>
+    <tile_background>false</tile_background>
     <!-- Specification of background image -->
-    <background_image>monitor_bg.png</background_image>
-    <background_image>monitor_bg_pressed.png</background_image>
+    <background_image>SpaceD/buttonNormal.png</background_image>
+    <background_image>SpaceD/buttonPushed.png</background_image>
   </UI_Element>
 
 </skin>

@@ -2446,7 +2446,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("NC3");
         misc.setInternalName("NC3Unit");
         misc.setInternalName("ISNC3Unit");
-        misc.addLookupName("IS Navel C3");
+        misc.addLookupName("IS Naval C3");
         misc.tonnage = 6;
         misc.criticals = 1;
         misc.cost = 250000;

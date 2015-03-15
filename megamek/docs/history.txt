@@ -49,6 +49,9 @@ v0.41.3-dev
     infantry
 + Bug: Updated UnitDisplay Weapon tab to-hit details for swarm and leg attacks:
     it now follows the same format as regular weapons attacks
++ Bug [#4494]: "Navel C3"
++ Data: New Sprites and unit Fix.
+
 
 v0.41.2-dev (2015-02-12 15:20 UTC)
 + Bug [#4422]: Woods, jungle, and smoke not getting counted for LoS

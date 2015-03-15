@@ -235,6 +235,7 @@ public class LRMSwarmHandler extends LRMHandler {
                         nCluster, bldgAbsorbs);
                 server.creditKill(entityTarget, ae);
                 hits -= nCluster;
+                firstHit = false;
             }
         } // Handle the next cluster.
         Report.addNewline(vPhaseReport);

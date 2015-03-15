@@ -1289,7 +1289,7 @@ public class Infantry extends Entity {
 
 
     public boolean canAttackMeks() {
-        return !isMechanized() && isAntiMek();
+        return !isMechanized();
     }
 
     @Override

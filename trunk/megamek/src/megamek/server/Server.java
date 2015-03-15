@@ -20137,14 +20137,14 @@ public class Server implements Runnable {
                 // If we're using optional tank damage thresholds, setup our hit
                 // effects now...
                 if ((te instanceof Tank)
-                    && game.getOptions()
-                           .booleanOption("vehicles_threshold")
-                    && !((te instanceof VTOL) || (te instanceof GunEmplacement))) {
+                        && game.getOptions()
+                                .booleanOption("vehicles_threshold")
+                        && !((te instanceof VTOL) || (te instanceof GunEmplacement))) {
                     int thresh = (int) Math.ceil((game.getOptions()
-                                                      .booleanOption("vehicles_threshold_variable") ? te
-                                                          .getArmor(hit) : te.getOArmor(hit))
-                                                 / game.getOptions().intOption(
-                            "vehicles_threshold_divisor"));
+                            .booleanOption("vehicles_threshold_variable") ? te
+                            .getArmor(hit) : te.getOArmor(hit))
+                            / game.getOptions().intOption(
+                                    "vehicles_threshold_divisor"));
 
                     // adjust for hardened armor
                     if (hardenedArmor
@@ -20154,9 +20154,7 @@ public class Server implements Runnable {
                         thresh *= 2;
                     }
 
-                    if ((damage > thresh)
-                            || (te.getArmor(hit) < damage)
-                            || damageIS) {
+                    if ((damage > thresh) || (te.getArmor(hit) < damage)) {
                         hit.setEffect(((Tank) te).getPotCrit());
                         ((Tank) te).setOverThresh(true);
                         // TACs from the hit location table
@@ -20313,6 +20311,16 @@ public class Server implements Runnable {
                 if ((tmpDamageHold > 0) && isPlatoon) {
                     damage = tmpDamageHold;
                 }
+            }
+            
+            // For optional tank damage thresholds, the overthresh flag won't
+            // be set if IS is damaged, so set it here.
+            if ((te instanceof Tank)
+                    && ((te.getArmor(hit) < 1) || damageIS)
+                    && game.getOptions().booleanOption("vehicles_threshold")
+                    && !((te instanceof VTOL) 
+                            || (te instanceof GunEmplacement))) {
+                ((Tank) te).setOverThresh(true);
             }
 
             // is there damage remaining?
@@ -23674,8 +23682,8 @@ public class Server implements Runnable {
         // now look up on vehicle crits table
         int critType = t.getCriticalEffect(roll, loc, damagedByFire);
         if ((critType == Tank.CRIT_NONE)
-            && (game.getOptions().booleanOption("vehicles_threshold") && !t
-                .getOverThresh())) {
+                && game.getOptions().booleanOption("vehicles_threshold")
+                && !t.getOverThresh()) {
             r = new Report(6006);
             r.subject = t.getId();
             r.newlines = 0;
@@ -23687,7 +23695,7 @@ public class Server implements Runnable {
             && t.hasQuirk("fragile_fuel") && (Compute.d6(2) > 9)) {
             // BOOM!!
             vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0,
-                                                                   Tank.CRIT_FUEL_TANK), true, damage, false));
+                    Tank.CRIT_FUEL_TANK), true, damage, false));
         }
         return vDesc;
     }

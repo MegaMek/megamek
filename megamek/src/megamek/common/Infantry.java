@@ -101,11 +101,6 @@ public class Infantry extends Entity {
     private static final String[] LOCATION_ABBRS = { "MEN", "FGUN" };
     private static final String[] LOCATION_NAMES = { "Men" , "Field Guns"};
 
-    /**
-     * Identify this platoon as anti-mek trained.
-     */
-    private boolean antiMek = false;
-
     public int turnsLayingExplosives = -1;
 
     public static final int DUG_IN_NONE = 0;
@@ -131,6 +126,10 @@ public class Infantry extends Entity {
     public static final String SWARM_MEK = "SwarmMek";
     public static final String SWARM_WEAPON_MEK = "SwarmWeaponMek";
     public static final String STOP_SWARM = "StopSwarm";
+    
+    public static final int ANTI_MECH_SKILL_UNTRAINED = 8;
+    public static final int ANTI_MECH_SKILL_FOOT = 5;
+    public static final int ANTI_MECH_SKILL_JUMP = 6;
 
     @Override
     public String[] getLocationAbbrs() {
@@ -647,7 +646,7 @@ public class Infantry extends Entity {
         wbv = wbv * (men/squadsize);
         //if anti-mek then double this
         //TODO: need to factor archaic weapons out of this
-        if(isAntiMek()) {
+        if(isAntiMekTrained()) {
             wbv *= 2;
         }
         //add in field gun BV
@@ -669,7 +668,7 @@ public class Infantry extends Entity {
         // and then factor in pilot
         double pilotFactor = 1;
         if (!ignorePilot) {
-            pilotFactor = getCrew().getBVSkillMultiplier(isAntiMek(), game);
+            pilotFactor = getCrew().getBVSkillMultiplier(isAntiMekTrained(), game);
         }
         return (int) Math.round((bv) * pilotFactor);
 
@@ -785,7 +784,7 @@ public class Infantry extends Entity {
     public double getCost(boolean ignoreAmmo) {
         double multiplier = 1;
 
-        if (isAntiMek()) {
+        if (isAntiMekTrained()) {
             multiplier = 5;
         }
 
@@ -1031,12 +1030,70 @@ public class Infantry extends Entity {
         setDugIn(DUG_IN_NONE);
     }
 
-    public void setAntiMek(boolean b) {
-        antiMek = b;
+    /**
+     * Convenience method for setting the anti-mek skill of the unit based on
+     * whether or not they have anti-mek training.  If the input is false, the
+     * anti-mek skill is set to the default untrained value, otherwise it's
+     * set to the default value based on motive type.
+     * 
+     * @param amTraining
+     */
+    public void setAntiMekSkill(boolean amTraining) {
+        if (getCrew() == null) {
+            return;
+        }
+        if (amTraining) {
+            if ((getMovementMode() == EntityMovementMode.INF_MOTORIZED)
+                    || getMovementMode() == EntityMovementMode.INF_JUMP) {
+                getCrew().setPiloting(ANTI_MECH_SKILL_JUMP);
+            } else {
+                getCrew().setPiloting(ANTI_MECH_SKILL_FOOT);
+            }
+        } else {
+            getCrew().setPiloting(ANTI_MECH_SKILL_UNTRAINED);            
+        }
+    }
+    
+    /**
+     * Set the anti-mek skill for this unit.  Since Infantry don't have piloting
+     * the crew's piloting skill is treated as the anti-mek skill.  This is
+     * largely just a convenience method for setting the Crew's piloting skill.
+     * @param amSkill
+     */
+    public void setAntiMekSkill(int amSkill) {
+        if (getCrew() == null) {
+            return;
+        }
+        getCrew().setPiloting(amSkill);
+    }
+    
+    /**
+     * Returns the anti-mek skill for this unit.  Since Infantry don't have 
+     * piloting the crew's piloting skill is treated as the anti-mek skill.  
+     * This is largely just a convenience method for setting the Crew's piloting
+     * skill.
+     * @return
+     */
+    public int getAntiMekSkill() {
+        if (getCrew() == null) {
+            return ANTI_MECH_SKILL_UNTRAINED;
+        } else {
+            return getCrew().getPiloting();
+        }
     }
 
-    public boolean isAntiMek() {
-        return antiMek;
+    /**
+     * Returns true if this unit has anti-mek training.  According to TM pg 155,
+     * any unit that has less than 8 anti-mek skill is assumed to have anti-mek
+     * training.  This implies that the unit carries the requisite equipment for
+     * properly performing anti-mek attacks (and the weight and cost that goes
+     * along with that).
+     * @return
+     */
+    public boolean isAntiMekTrained() {
+        // Anything below the antimech skill default is considered to be AM
+        // trained.  See TM pg 155
+        return getAntiMekSkill() < ANTI_MECH_SKILL_UNTRAINED;
     }
 
     public boolean isMechanized() {
@@ -1288,7 +1345,7 @@ public class Infantry extends Entity {
     }
 
 
-    public boolean canAttackMeks() {
+    public boolean canMakeAntiMekAttacks() {
         return !isMechanized();
     }
 

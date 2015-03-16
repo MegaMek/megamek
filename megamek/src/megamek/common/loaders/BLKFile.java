@@ -643,7 +643,11 @@ public class BLKFile {
                 blk.writeBlockData("Secondary", infantry.getSecondaryWeapon()
                         .getInternalName());
             }
-            blk.writeBlockData("antimek", (new Boolean(infantry.isAntiMek() && !infantry.isMechanized()).toString()));
+            
+            if (infantry.canMakeAntiMekAttacks()) {
+                blk.writeBlockData("antimek", (infantry.getAntiMekSkill() + ""));
+            }
+            
             if (infantry.getDamageDivisor() != 1) {
                 blk.writeBlockData("armordivisor",
                         Double.toString(infantry.getDamageDivisor()));

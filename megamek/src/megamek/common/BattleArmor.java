@@ -785,11 +785,6 @@ public class BattleArmor extends Infantry {
             camoName = name;
         }
 
-        // If the BA can swarm, they're anti-mek.
-        if (Infantry.SWARM_MEK.equals(name)) {
-            setAntiMek(true);
-        }
-
         if (mounted.getType() instanceof ISBAPopUpMineLauncher) {
             if (loc == BattleArmor.LOC_SQUAD) {
                 for (int i = LOC_TROOPER_1; i <= getTroopers();i++) {
@@ -966,7 +961,7 @@ public class BattleArmor extends Infantry {
                     oBV += ammoBV;
                 }
             }
-            if (isAntiMek()) {
+            if (canMakeAntiMekAttacks()) {
                 // all non-missile and non-body mounted direct fire weapons
                 // counted again
                 for (Mounted weapon : getWeaponList()) {
@@ -1055,7 +1050,7 @@ public class BattleArmor extends Infantry {
         // Adjust BV for crew skills.
         double pilotFactor = 1;
         if (!ignorePilot) {
-            pilotFactor = getCrew().getBVSkillMultiplier(isAntiMek(), game);
+            pilotFactor = getCrew().getBVSkillMultiplier(isAntiMekTrained(), game);
         }
 
         int retVal = (int) Math.round(squadBV * pilotFactor);
@@ -1144,6 +1139,12 @@ public class BattleArmor extends Infantry {
 
         // Unit isn't burdened.
         return false;
+    }
+    
+    public boolean canMakeAntiMekAttacks() {
+        return !isBurdened() && canDoMechanizedBA()
+                && (getWeightClass() < EntityWeightClass.WEIGHT_HEAVY) 
+                && getMovementMode() != EntityMovementMode.INF_UMU;
     }
 
     /**

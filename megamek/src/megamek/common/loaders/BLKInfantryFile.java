@@ -157,7 +157,21 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         loadEquipment(t, "Field Guns", Infantry.LOC_FIELD_GUNS);
 
         if (dataFile.exists("antimek")) {
-            t.setAntiMek(true);
+            int[] amSkill = dataFile.getDataAsInt("antimek");
+            // If we just have the tag without values, take defaults
+            if (amSkill.length < 1) {
+                // TM lists AM skill defaults on pg 40
+                if ((t.getMovementMode() == EntityMovementMode.INF_MOTORIZED) 
+                        || (t.getMovementMode() == EntityMovementMode.INF_JUMP)) {
+                    t.setAntiMekSkill(6);
+                } else {
+                    t.setAntiMekSkill(5);
+                }
+            } else {
+                t.setAntiMekSkill(amSkill[0]);
+            }
+        } else {
+            t.setAntiMekSkill(Infantry.ANTI_MECH_SKILL_UNTRAINED);
         }
 
         return t;

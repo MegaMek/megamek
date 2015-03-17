@@ -52,6 +52,7 @@ v0.41.3-dev
 + Bug [#4494]: "Navel C3"
 + Data: New Sprites and unit Fix.
 + Bug [#4454]: Conventional infantry costs are being calculated incorrectly
++ Patch [#474]: Cosmetic Changes to CommonSettingsDialog
 
 
 v0.41.2-dev (2015-02-12 15:20 UTC)

@@ -2634,7 +2634,7 @@ M,3071-Inner Sphere3073-Inner Sphere,3071-IS_TW_Non_Box3073-IS_TW_Non_Box,TSM,IS
 M,3050-Inner Sphere3071-Inner Sphere,3050-IS_TW_Non_Box3071-IS_TW_Non_Box,ISC3SlaveUnit,IS C3 Slave,
 M,3100-Inner Sphere3071-Inner Sphere3073-Inner Sphere,3100-IS_Advanced3071-IS_Experimental3073-IS_Experimental,ISC3BoostedSystemSlaveUnit,IS C3 Boosted System Slave,
 M,3071-Inner Sphere3060-Inner Sphere,3071-IS_TW_Non_Box3060-IS_TW_Non_Box,ISC3iUnit,ISImprovedC3CPU,IS C3i Computer,
-M,3065-Inner Sphere3071-Inner Sphere,3065-IS_TW_Non_Box3071-IS_TW_Non_Box,ISNC3,NC3,NC3Unit,ISNC3Unit,IS Navel C3,
+M,3065-Inner Sphere3071-Inner Sphere,3065-IS_TW_Non_Box3071-IS_TW_Non_Box,ISNC3,NC3,NC3Unit,ISNC3Unit,IS Naval C3,
 M,2598-Inner Sphere3071-Inner Sphere,2598-IS_TW_Non_Box3071-IS_TW_Non_Box,ISArtemisIV,IS Artemis IV FCS,
 M,2820-Clan3071-Clan,2820-Clan_TW3071-Clan_TW,CLArtemisIV,Clan Artemis IV FCS,
 M,2597-Inner Sphere3071-Inner Sphere,2597-IS_TW_Non_Box3071-IS_TW_Non_Box,ISGuardianECMSuite,IS Guardian ECM,ISGuardianECM,IS Guardian ECM Suite,

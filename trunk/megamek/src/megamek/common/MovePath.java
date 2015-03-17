@@ -89,7 +89,7 @@ public class MovePath implements Cloneable, Serializable {
     private transient IGame game;
     private transient Entity entity;
 
-    public static final int DEFAULT_PATHFINDER_TIME_LIMIT = 2000;
+    public static final int DEFAULT_PATHFINDER_TIME_LIMIT = 500;
 
     // is this move path being done using careful movement?
     private boolean careful = true;

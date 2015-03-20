@@ -55,7 +55,7 @@ public class CLLB2XACPrototype extends CLLBXACPrototypeWeapon {
         extAV = 2;
         maxRange = RANGE_EXT;
         techRating = RATING_F;
-        availRating = new int[] { RATING_X, RATING_E, RATING_F };
+        availRating = new int[] { RATING_X, RATING_F, RATING_X };
         introDate = 2820;
         extinctDate = 2826;	
         techLevel.put(2820, techLevel.get(3071));

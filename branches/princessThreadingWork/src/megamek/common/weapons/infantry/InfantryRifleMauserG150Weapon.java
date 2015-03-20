@@ -33,9 +33,10 @@ public class InfantryRifleMauserG150Weapon extends InfantryWeapon {
     public InfantryRifleMauserG150Weapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Mauser and Grey G-150";
+        name = "Rifle (M&G G-150)";
         setInternalName(name);
         addLookupName("InfantryM&GG150");
+        addLookupName("Mauser and Grey G-150");
         ammoType = AmmoType.T_NA;
         cost = 270;
         bv = 1.64;

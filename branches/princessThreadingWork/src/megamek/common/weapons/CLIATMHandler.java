@@ -595,6 +595,7 @@ public class CLIATMHandler extends ATMHandler {
 
             if (entityTarget != null) {
                 ae.setLastTarget(entityTarget.getId());
+                ae.setLastTargetDisplayName(entityTarget.getDisplayName());
             }
 
             // Which building takes the damage?
@@ -849,6 +850,7 @@ public class CLIATMHandler extends ATMHandler {
                                        nCluster, bldgAbsorbs);
                     server.creditKill(entityTarget, ae);
                     hits -= nCluster;
+                    firstHit = false;
                     // do IMP stuff here!
                     if ((entityTarget instanceof Mech)
                         || (entityTarget instanceof Aero)

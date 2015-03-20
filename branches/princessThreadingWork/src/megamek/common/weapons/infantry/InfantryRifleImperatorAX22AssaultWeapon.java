@@ -33,9 +33,10 @@ public class InfantryRifleImperatorAX22AssaultWeapon extends InfantryWeapon {
     public InfantryRifleImperatorAX22AssaultWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Imperator AX-22 Assault Rifle";
+        name = "Rifle (Imperator AX-22 Assault)";
         setInternalName(name);
         addLookupName("InfantryImperatorAX22");
+        addLookupName("Imperator AX-22 Assault Rifle");
         ammoType = AmmoType.T_NA;
         cost = 200;
         bv = 1.59;

@@ -33,9 +33,10 @@ public class InfantryArchaicMedusaWhipWeapon extends InfantryWeapon {
     public InfantryArchaicMedusaWhipWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Medusa Whip";
+        name = "Whip (Medusa)";
         setInternalName(name);
         addLookupName("InfantryClanMedusaWhip");
+        addLookupName("Medusa Whip");
         ammoType = AmmoType.T_NA;
         cost = 2200;
         bv = 0.15;

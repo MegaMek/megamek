@@ -340,6 +340,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     // need to keep a list of areas that this entity has passed through on the
     // current turn
     private Vector<Coords> passedThrough = new Vector<Coords>();
+    private List<Integer> passedThroughFacing = new ArrayList<>();
+    /**
+     * Stores the player selected hex ground to air targeting.
+     * For ground to air, distance to target for the ground unit is determined
+     * by the closest hex in the flight path of the airborne unit.  It's
+     * possible that there are multiple equidistance hexes in the flight path
+     * and in some cases, one of those hexes will be better than the other (ie,
+     * one could be side arc and one rear).  By default, MM picks the first hex,
+     * but the user should be able to distinguish between multiple equi-distant
+     * hexes.
+     */
+    private Map<Integer, Coords> playerPickedPassThrough = new HashMap<>();
     private boolean ramming;
     // to determine what arcs have fired for large craft
     private boolean[] frontArcFired;
@@ -600,6 +612,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     // convenience
 
     protected int lastTarget = Entity.NONE;
+    protected String lastTargetDisplayName = "";
 
     /**
      * the entity id of our current spot-target
@@ -5365,6 +5378,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // reset hexes passed through
         setPassedThrough(new Vector<Coords>());
+        setPassedThroughFacing(new ArrayList<Integer>());
+        if (playerPickedPassThrough == null) {
+            playerPickedPassThrough = new HashMap<>();
+        } else {
+            playerPickedPassThrough.clear();
+        }
 
         resetFiringArcs();
 
@@ -9578,6 +9597,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getLastTarget() {
         return lastTarget;
     }
+    
+    public void setLastTargetDisplayName(String name) {
+        lastTargetDisplayName = name;
+    }
+
+    public String getLastTargetDisplayName() {
+        return lastTargetDisplayName;
+    }
 
     /**
      * @returns whether or not the unit is suffering from Electromagnetic
@@ -10017,6 +10044,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         heading.addElement(curDir);
         return heading;
     }
+    
+    public void setPlayerPickedPassThrough(int attackerId, Coords c) {
+        if (playerPickedPassThrough == null) {
+            playerPickedPassThrough = new HashMap<>();
+        }
+        playerPickedPassThrough.put(attackerId, c);
+    }
+    
+    public Coords getPlayerPickedPassThrough(int attackerId) {
+        if (playerPickedPassThrough == null) {
+            playerPickedPassThrough = new HashMap<>();
+        }
+        return playerPickedPassThrough.get(attackerId);
+    }
 
     public void setPassedThrough(Vector<Coords> pass) {
         passedThrough = pass;
@@ -10024,6 +10065,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public Vector<Coords> getPassedThrough() {
         return passedThrough;
+    }
+    
+    public void setPassedThroughFacing(List<Integer> passFacing) {
+        passedThroughFacing = passFacing;
+    }
+
+    public List<Integer> getPassedThroughFacing() {
+        return passedThroughFacing;
     }
 
     public void addPassedThrough(Coords c) {

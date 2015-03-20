@@ -33,9 +33,10 @@ public class InfantrySupportLaserWeapon extends InfantryWeapon {
     public InfantrySupportLaserWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Support Laser";
+        name = "Support Laser";
         setInternalName(name);
         addLookupName("InfantrySupportLaser");
+        addLookupName("Infantry Support Laser");
         addLookupName("InfantrySmallLaser");
         ammoType = AmmoType.T_NA;
         cost = 10000;

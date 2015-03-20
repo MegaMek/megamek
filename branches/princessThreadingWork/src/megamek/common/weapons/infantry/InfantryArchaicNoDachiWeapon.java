@@ -33,9 +33,10 @@ public class InfantryArchaicNoDachiWeapon extends InfantryWeapon {
     public InfantryArchaicNoDachiWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "No Dachi";
+        name = "Blade (No-Dachi)";
         setInternalName(name);
         addLookupName("InfantryNoDachi");
+        addLookupName("No Dachi");
         ammoType = AmmoType.T_NA;
         cost = 300;
         bv = 0.05;

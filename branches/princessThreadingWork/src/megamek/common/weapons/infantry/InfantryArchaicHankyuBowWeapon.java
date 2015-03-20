@@ -33,9 +33,10 @@ public class InfantryArchaicHankyuBowWeapon extends InfantryWeapon {
     public InfantryArchaicHankyuBowWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Hankyu";
+        name = "Bow (Hankyu)";
         setInternalName(name);
         addLookupName("InfantryHankyuBow");
+        addLookupName("Hankyu");
         ammoType = AmmoType.T_NA;
         cost = 15;
         bv = 0.0;

@@ -33,9 +33,10 @@ public class InfantryPistolSpitballGasPistolWeapon extends InfantryWeapon {
     public InfantryPistolSpitballGasPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Spitball Gas Weapon";
+        name = "Pistol (Spitball Gas Weapon)";
         setInternalName(name);
         addLookupName("InfantrySpitballGaspistol");
+        addLookupName("Spitball Gas Weapon");
         ammoType = AmmoType.T_AC;
         cost = 6;
         bv = 0;

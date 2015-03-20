@@ -402,8 +402,8 @@ public class MiscType extends EquipmentType {
             .shiftLeft(184);
     public static final BigInteger F_SUBMERSIBLE = BigInteger.valueOf(1)
             .shiftLeft(185);
-     
-        
+
+
     // Flag for BattleArmor Modular Equipment Adaptor
     public static final BigInteger F_BA_MEA = BigInteger.valueOf(1)
             .shiftLeft(184);
@@ -620,7 +620,7 @@ public class MiscType extends EquipmentType {
             float weaponWeight = 0;
             // 5% of linked weapons' weight
             for (Mounted m : entity.getWeaponList()) {
-                if (m.isSponsonTurretMounted() && (m.getLocation() == location)) {
+                if (m.isPintleTurretMounted() && (m.getLocation() == location)) {
                     weaponWeight += m.getType().getTonnage(entity);
                 }
             }
@@ -710,10 +710,10 @@ public class MiscType extends EquipmentType {
             return tons;
         } else if (hasFlag(F_VACUUM_PROTECTION)) {
             return (float) Math.ceil(entity.getWeight() / 10.0f);
-                     
+
         } else if (hasFlag(F_DUNE_BUGGY)) {
             return entity.getWeight() / 10.0f;
-            
+
         } else if (hasFlag(F_ENVIRONMENTAL_SEALING)) {
         	if ((entity instanceof SupportTank ) || (entity instanceof LargeSupportTank )
         			|| (entity instanceof FixedWingSupport ) || (entity instanceof SupportVTOL )) {
@@ -721,7 +721,7 @@ public class MiscType extends EquipmentType {
           	} else {
                 return entity.getWeight() / 10.0f;
             }
-            
+
         } else if (hasFlag(F_JUMP_BOOSTER)) {
             return (float) (Math.ceil((entity.getWeight() * entity
                     .getOriginalJumpMP()) / 10.0f) / 2.0);
@@ -762,7 +762,7 @@ public class MiscType extends EquipmentType {
                 }
             }
             float roundWeight = TestEntity.CEIL_HALFTON;
-            if (entity.isSupportVehicle() && entity.getWeight() < 5) {
+            if (entity.isSupportVehicle() && (entity.getWeight() < 5)) {
                 roundWeight = TestEntity.CEIL_KILO;
             }
             float weight = cargoTonnage / 20f;
@@ -774,7 +774,7 @@ public class MiscType extends EquipmentType {
                 weaponWeight += mount.getType().getTonnage(entity);
             }
             float roundWeight = TestEntity.CEIL_HALFTON;
-            if (entity.isSupportVehicle() && entity.getWeight() < 5) {
+            if (entity.isSupportVehicle() && (entity.getWeight() < 5)) {
                 roundWeight = TestEntity.CEIL_KILO;
             }
             float weight = weaponWeight / 20f;
@@ -786,7 +786,7 @@ public class MiscType extends EquipmentType {
                 weaponWeight += mount.getType().getTonnage(entity);
             }
             float roundWeight = TestEntity.CEIL_HALFTON;
-            if (entity.isSupportVehicle() && entity.getWeight() < 5) {
+            if (entity.isSupportVehicle() && (entity.getWeight() < 5)) {
                 roundWeight = TestEntity.CEIL_KILO;
             }
             return TestEntity.ceil(weaponWeight / 10f, roundWeight);
@@ -794,13 +794,13 @@ public class MiscType extends EquipmentType {
             // 10% of unit weight
             float weight = entity.getWeight() / 10f;
             float roundWeight = TestEntity.CEIL_HALFTON;
-            if (entity.isSupportVehicle() && entity.getWeight() < 5) {
+            if (entity.isSupportVehicle() && (entity.getWeight() < 5)) {
                 roundWeight = TestEntity.CEIL_KILO;
             }
             return TestEntity.ceil(weight, roundWeight);
-            
+
         } else if (hasFlag(F_EJECTION_SEAT)) {
-            if (entity.isSupportVehicle() && entity.getWeight() < 5) {
+            if (entity.isSupportVehicle() && (entity.getWeight() < 5)) {
             	return .1f;
             } else {
             	return .5f;
@@ -1100,7 +1100,7 @@ public class MiscType extends EquipmentType {
         	if (entity instanceof Aero) {
         		return 4;
         	}
-        	else if (entity instanceof BipedMech || entity instanceof QuadMech) {
+        	else if ((entity instanceof BipedMech) || (entity instanceof QuadMech)) {
         		return 7;
         	}
 
@@ -1446,7 +1446,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISFlotationHull());
         EquipmentType.addType(MiscType.createCLFlotationHull());
         EquipmentType.addType(MiscType.createISLimitedAmphibiousChassis());
-        EquipmentType.addType(MiscType.createISFullyAmphibiousChassis());    
+        EquipmentType.addType(MiscType.createISFullyAmphibiousChassis());
         EquipmentType.addType(MiscType.createCLLimitedAmphibiousChassis());
         EquipmentType.addType(MiscType.createCLFullyAmphibiousChassis());
         EquipmentType.addType(MiscType.createISShoulderTurret());
@@ -1593,9 +1593,9 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createTractorModification());
         EquipmentType.addType(MiscType.createTrailerModification());
         EquipmentType.addType(MiscType.createUltraLightChassisModification());
-        EquipmentType.addType(MiscType.createVSTOLChassisMod());  
-       
-        
+        EquipmentType.addType(MiscType.createVSTOLChassisMod());
+
+
         // support vee Equipment stuff
         EquipmentType.addType(MiscType.createBasicFireControl());
         EquipmentType.addType(MiscType.createAdvancedFireControl());
@@ -1871,7 +1871,7 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_A;
         return misc;
     }
-    
+
     public static MiscType createSubmersibleChassisMod() {
         MiscType misc = new MiscType();
 
@@ -1892,7 +1892,7 @@ public class MiscType extends EquipmentType {
         misc.techRating = RATING_A;
         return misc;
     }
-    
+
     public static MiscType createConvertibleModification() {
         MiscType misc = new MiscType();
 
@@ -2446,7 +2446,7 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("NC3");
         misc.setInternalName("NC3Unit");
         misc.setInternalName("ISNC3Unit");
-        misc.addLookupName("IS Navel C3");
+        misc.addLookupName("IS Naval C3");
         misc.tonnage = 6;
         misc.criticals = 1;
         misc.cost = 250000;
@@ -2666,7 +2666,7 @@ public class MiscType extends EquipmentType {
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
         misc.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_E, EquipmentType.RATING_D };
+                EquipmentType.RATING_D, EquipmentType.RATING_C };
         misc.introDate = 2832;
         misc.techLevel.put(2832, misc.techLevel.get(3071));
         misc.techRating = RATING_F;
@@ -3119,7 +3119,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createEnviromentalSealedChassis() {
         MiscType misc = new MiscType();
 
@@ -5413,7 +5413,7 @@ public class MiscType extends EquipmentType {
                 .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);;
         misc.bv = 12;
         misc.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_E, EquipmentType.RATING_D };
+                EquipmentType.RATING_D, EquipmentType.RATING_C };
         misc.introDate = 2832;
         misc.techLevel.put(2832, misc.techLevel.get(3071));
         misc.techRating = RATING_E;
@@ -6287,10 +6287,10 @@ public class MiscType extends EquipmentType {
                 .or(F_TANK_EQUIPMENT);
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_E, EquipmentType.RATING_D };
+                EquipmentType.RATING_X, EquipmentType.RATING_E };
         misc.introDate = 2840;
         misc.techLevel.put(2840, misc.techLevel.get(3071));
-        misc.techRating = RATING_F;
+        misc.techRating = RATING_E;
 
         return misc;
     }
@@ -8876,7 +8876,7 @@ public class MiscType extends EquipmentType {
                 .or(F_CHASSIS_MODIFICATION);
         misc.bv = 0;
         misc.tankslots = 0;
-        misc.introDate = 1950; 
+        misc.introDate = 1950;
         misc.techLevel.put(1950, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_C, RATING_D, RATING_C };
         misc.techRating = RATING_C;
@@ -10056,7 +10056,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType createBAMissionEquipStorage() {
         MiscType misc = new MiscType();
 
@@ -10076,7 +10076,7 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
-    
+
     public static MiscType create20mLadder() {
         MiscType misc = new MiscType();
         misc.techLevel.put(1950, TechConstants.T_ALLOWED_ALL);

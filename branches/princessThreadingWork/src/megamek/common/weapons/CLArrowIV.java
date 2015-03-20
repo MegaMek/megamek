@@ -52,8 +52,8 @@ public class CLArrowIV extends ArtilleryWeapon {
         criticals = 12;
         bv = 240;
         cost = 450000;
-        techRating = RATING_F;
-        availRating = new int[] { RATING_X, RATING_E, RATING_D };
+        techRating = RATING_E;
+        availRating = new int[] { RATING_X, RATING_D, RATING_D };
         introDate = 2850;
         techLevel.put(2850, techLevel.get(3071));
 

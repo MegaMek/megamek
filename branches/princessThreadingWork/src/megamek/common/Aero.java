@@ -2515,7 +2515,12 @@ public class Aero extends Entity {
 
     @Override
     public int getEngineCritHeat() {
-        return 0;
+        // Engine hits cause excess heat for fighters, TW pg 240
+        if (!((this instanceof SmallCraft) || (this instanceof Jumpship))) {
+            return 2 * getEngineHits();
+        } else {
+            return 0;
+        }
     }
 
     @Override

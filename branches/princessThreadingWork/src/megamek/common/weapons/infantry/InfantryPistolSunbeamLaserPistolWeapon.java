@@ -33,9 +33,10 @@ public class InfantryPistolSunbeamLaserPistolWeapon extends InfantryWeapon {
     public InfantryPistolSunbeamLaserPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Sunbeam Laser Pistol";
+        name = "Laser Pistol (Sunbeam)";
         setInternalName(name);
         addLookupName("InfantrySunbeamLaserpistol");
+        addLookupName("Sunbeam Laser Pistol");
         ammoType = AmmoType.T_NA;
         cost = 750;
         bv = 0.86;

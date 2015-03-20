@@ -33,9 +33,10 @@ public class InfantryRifleStarKingGyroslugCarbineWeapon extends InfantryWeapon {
     public InfantryRifleStarKingGyroslugCarbineWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Star King Gyroslug Carbine";
+        name = "Gyroslug Carbine (Star King)";
         setInternalName(name);
         addLookupName("InfantryStarKing");
+        addLookupName("Star King Gyroslug Carbine");
         ammoType = AmmoType.T_NA;
         cost = 950;
         bv = 1.07;

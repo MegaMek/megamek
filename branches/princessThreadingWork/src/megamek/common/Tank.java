@@ -1204,7 +1204,7 @@ public class Tank extends Entity {
 
             if (((etype instanceof WeaponType) && (etype
                     .hasFlag(WeaponType.F_AMS) || etype
-                    .hasFlag(WeaponType.F_B_POD)))) {
+                    .hasFlag(WeaponType.F_B_POD) || etype.hasFlag(WeaponType.F_M_POD)))) {
                 bvText.append(startRow);
                 bvText.append(startColumn);
                 bvText.append(etype.getName());
@@ -1407,10 +1407,6 @@ public class Tank extends Entity {
             WeaponType wtype = (WeaponType) mounted.getType();
             double dBV = wtype.getBV(this);
 
-            if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
-                dBV *= 0.8;
-            }
-
             // don't count destroyed equipment
             if (mounted.isDestroyed()) {
                 continue;
@@ -1423,6 +1419,9 @@ public class Tank extends Entity {
             if (wtype.hasFlag(WeaponType.F_B_POD)) {
                 continue;
             }
+            if (wtype.hasFlag(WeaponType.F_M_POD)) {
+                continue;
+            }
             String weaponName = wtype.getName();
             if (mounted.getLinkedBy() != null) {
                 // check to see if the weapon is a PPC and has a Capacitor
@@ -1433,6 +1432,7 @@ public class Tank extends Entity {
                     weaponName = weaponName.concat(" with Capacitor");
                 }
             }
+
 
             // calc MG Array here:
             if (wtype.hasFlag(WeaponType.F_MGA)) {
@@ -1452,15 +1452,7 @@ public class Tank extends Entity {
             bvText.append(dBV);
 
             // artemis bumps up the value
-            // as do PPC capacitors
             if (mounted.getLinkedBy() != null) {
-                // check to see if the weapon is a PPC and has a Capacitor
-                // attached to it
-                if (wtype.hasFlag(WeaponType.F_PPC)) {
-                    dBV += ((MiscType) mounted.getLinkedBy().getType()).getBV(
-                            this, mounted);
-                    weaponName = weaponName.concat(" with Capacitor");
-                }
                 Mounted mLinker = mounted.getLinkedBy();
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
@@ -1478,6 +1470,11 @@ public class Tank extends Entity {
                     bvText.append(" x 1.15 Apollo");
                 }
             }
+            if (hasWorkingMisc(MiscType.F_DRONE_OPERATING_SYSTEM)) {
+                dBV *= 0.8;
+                bvText.append(" x 0.8 Drone OS");
+            }
+
 
             // and we'll add the tcomp here too
             if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
@@ -1522,6 +1519,10 @@ public class Tank extends Entity {
                 }
             }
             bvText.append(endColumn);
+            bvText.append(startColumn);
+            bvText.append(dBV);
+            bvText.append(endColumn);
+
             bvText.append(endRow);
 
             bvText.append(startRow);
@@ -2412,7 +2413,7 @@ public class Tank extends Entity {
             for (int c = 0; c < structCostIdx; c++) {
                 costs[structCostIdx] += costs[c];
             }
-            double techRatingMultiplier = 0.5 + getStructuralTechRating() * 0.25;
+            double techRatingMultiplier = 0.5 + (getStructuralTechRating() * 0.25);
             costs[structCostIdx] *= techRatingMultiplier;
         } else {
             // IS has no variations, no Endo etc.
@@ -3169,7 +3170,7 @@ public class Tank extends Entity {
                     continue;
                 }
             }
-            if (!(mount.getType() instanceof AmmoType || Arrays.asList(
+            if (!((mount.getType() instanceof AmmoType) || Arrays.asList(
                     EquipmentType.armorNames).contains(
                     mount.getType().getName()))) {
                 usedSlots += mount.getType().getTankslots(this);

@@ -36,6 +36,7 @@ public class InfantryArchaicKatanaWeapon extends InfantryWeapon {
         name = "Katana";
         setInternalName(name);
         addLookupName("InfantryKatana");
+        addLookupName("Blade (Katana)");
         ammoType = AmmoType.T_NA;
         cost = 250;
         bv = 0.06;

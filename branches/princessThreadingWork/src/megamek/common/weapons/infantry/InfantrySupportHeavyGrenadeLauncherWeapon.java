@@ -33,9 +33,10 @@ public class InfantrySupportHeavyGrenadeLauncherWeapon extends InfantryWeapon {
     public InfantrySupportHeavyGrenadeLauncherWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Infantry Heavy Grenade Launcher";
+        name = "Grenade Launcher (Heavy)";
         setInternalName(name);
         addLookupName("InfantryHeavyGrenadeLauncher");
+        addLookupName("Infantry Heavy Grenade Launcher");
         ammoType = AmmoType.T_NA;
         cost = 1500;
         bv = 5.38;

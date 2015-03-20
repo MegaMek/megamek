@@ -6,8 +6,13 @@ import java.util.Map;
 
 import megamek.common.Aero;
 import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.IBoard;
 import megamek.common.IGame;
+import megamek.common.IHex;
+import megamek.common.Infantry;
 import megamek.common.MovePath;
+import megamek.common.Terrains;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.Tank;
@@ -119,12 +124,13 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
 
             // We have to be standing to be able to move
             // Maybe I should replace this extra condition with a flag in node(?)
-            boolean vprone= v.getFinalProne(), eprone= e.getFinalProne();
-            if( vprone != eprone )
+            boolean vprone = v.getFinalProne(), eprone = e.getFinalProne();
+            if (vprone != eprone)
                 return vprone ? e : null;
-            if( !(v.getEntity() instanceof Tank)){
-                boolean vhdown= v.getFinalHullDown(), ehdown= e.getFinalHullDown();
-                if( vhdown != ehdown )
+            if (!(v.getEntity() instanceof Tank)) {
+                boolean vhdown = v.getFinalHullDown(), ehdown = e
+                        .getFinalHullDown();
+                if (vhdown != ehdown)
                     return vhdown ? e : null;
             }
 
@@ -144,12 +150,15 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
     public static class MovePathAStarComparator implements Comparator<MovePath> {
         Coords destination;
         MoveStepType stepType;
+        IBoard board;
 
-        public MovePathAStarComparator(Coords destination, MoveStepType stepType) {
+        public MovePathAStarComparator(Coords destination,
+                MoveStepType stepType, IBoard board) {
             if (destination == null)
                 throw new NullPointerException();
             this.destination = destination;
             this.stepType = stepType;
+            this.board = board;
         }
 
         @Override
@@ -168,7 +177,8 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
                     return dd;
                 } else {
                     // Pick the shortest path
-                    int hexesMovedDiff =first.getHexesMoved() - second.getHexesMoved(); 
+                    int hexesMovedDiff = first.getHexesMoved()
+                            - second.getHexesMoved();
                     if (hexesMovedDiff != 0) {
                         return hexesMovedDiff;
                     }
@@ -176,13 +186,18 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
                     return (first.length() - second.length());
                 }
             }else if(first.getEntity().getWalkMP()==0) {
-                //current implementation of movement cost allows a 0mp moves for units with 0 mp.
+                // current implementation of movement cost allows a 0mp moves
+                // for units with 0 mp.
             }else{
                 boolean backwards = stepType == MoveStepType.BACKWARDS;
                 h1 = first.getFinalCoords().distance(destination)
-                        + getFacingDiff(first, destination, backwards);
+                        + getFacingDiff(first, destination, backwards)
+                        + getElevationDiff(first, destination, board,
+                                first.getEntity());
                 h2 = second.getFinalCoords().distance(destination)
-                        + getFacingDiff(second, destination, backwards);
+                        + getFacingDiff(second, destination, backwards)
+                        + getElevationDiff(second, destination, board,
+                                second.getEntity());
             }
 
             int dd = (first.getMpUsed() + h1) - (second.getMpUsed() + h2);
@@ -213,7 +228,7 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         final ShortestPathFinder spf = new ShortestPathFinder(
                 new ShortestPathFinder.MovePathRelaxer(),
                 new ShortestPathFinder.MovePathAStarComparator(destination,
-                        stepType), stepType, game);
+                        stepType, game.getBoard()), stepType, game);
 
         spf.addStopCondition(new DestinationReachedStopCondition(destination));
         spf.addFilter(new MovePathLegalityFilter(game));
@@ -309,4 +324,42 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         }
         return firstFacing;
     }
+    
+    /**
+     * Computes the difference in elevation between the current location and 
+     * the goal location.  This is important for using determining when
+     * elevation change steps should be used.
+     * 
+     * @param mp
+     * @param dest
+     * @param board
+     * @param ent
+     * @return
+     */
+    public static int getElevationDiff(final MovePath mp, Coords dest,
+            IBoard board, Entity ent) {
+        IHex destHex = board.getHex(dest);
+        int currElevation = mp.getFinalElevation();
+        // Get elevation in destination hex, ignoring buildings
+        int destElevation = ent.elevationOccupied(destHex);
+        // If there's a building, we could stand on it
+        if (destHex.containsTerrain(Terrains.BLDG_ELEV)) {
+            // Assume that we stay on same level if building is high enough
+            if (destHex.terrainLevel(Terrains.BLDG_ELEV) >= currElevation) {
+                destElevation = currElevation;
+            }
+        // If there's a bridge, we could stand on it            
+        } else if (destHex.containsTerrain(Terrains.BRIDGE_ELEV)) {
+            // Assume that we stay on same level if bridge is high enough
+            if (destHex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation) {
+                destElevation = currElevation;
+            }
+        }
+        int elevationDiff = Math.abs(currElevation - destElevation);
+        // Infantry elevation changes are doubled 
+        if (ent instanceof Infantry) {
+            elevationDiff *= 2;
+        }
+        return elevationDiff;
+    }    
 }

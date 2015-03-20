@@ -814,7 +814,7 @@ public class MechFileParser {
             }
         }
         // physical attacks for conventional infantry
-        else if ((ent instanceof Infantry) && ((Infantry) ent).canAttackMeks()) {
+        else if ((ent instanceof Infantry) && ((Infantry) ent).canMakeAntiMekAttacks()) {
             try {
                 ent.addEquipment(EquipmentType.get(Infantry.SWARM_MEK),
                         Infantry.LOC_INFANTRY, false,

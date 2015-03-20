@@ -33,9 +33,10 @@ public class InfantryShotgunCombatWeapon extends InfantryWeapon {
     public InfantryShotgunCombatWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Combat Shotgun";
+        name = "Shotgun (Combat)";
         setInternalName(name);
         addLookupName("InfantryCombatShotgun");
+        addLookupName("Combat Shotgun");
         ammoType = AmmoType.T_NA;
         cost = 175;
         bv = 0.25;

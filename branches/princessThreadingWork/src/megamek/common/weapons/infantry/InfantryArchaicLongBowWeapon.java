@@ -33,9 +33,10 @@ public class InfantryArchaicLongBowWeapon extends InfantryWeapon {
     public InfantryArchaicLongBowWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Long Bow";
+        name = "Bow (Long bow)";
         setInternalName(name);
         addLookupName("InfantryLongBow");
+        addLookupName("Long Bow");
         ammoType = AmmoType.T_NA;
         cost = 20;
         bv = 0.01;

@@ -43,7 +43,7 @@ public class Dropship extends SmallCraft {
     public boolean isDockCollarDamaged() {
         return dockCollarDamaged;
     }
-    
+
     @Override
     public boolean isLocationProhibited(Coords c) {
         IHex hex = game.getBoard().getHex(c);
@@ -54,7 +54,7 @@ public class Dropship extends SmallCraft {
             return false;
         }
         // Check prohibited terrain
-        //  treat grounded Dropships like wheeled tanks, 
+        //  treat grounded Dropships like wheeled tanks,
         //   plus buildings are prohibited
         boolean isProhibited = hex.containsTerrain(Terrains.WOODS)
                 || hex.containsTerrain(Terrains.ROUGH)
@@ -65,7 +65,7 @@ public class Dropship extends SmallCraft {
                 || hex.containsTerrain(Terrains.JUNGLE)
                 || (hex.terrainLevel(Terrains.SNOW) > 1)
                 || (hex.terrainLevel(Terrains.GEYSER) == 2);
-        
+
         HashMap<Integer,Integer> elevations = new HashMap<Integer,Integer>();
         elevations.put(hex.getLevel(), 1);
         for (int dir = 0; dir < 6; dir++){
@@ -74,27 +74,27 @@ public class Dropship extends SmallCraft {
             if (secondaryHex != null){
                 isProhibited |= secondaryHex.containsTerrain(Terrains.WOODS)
                         || secondaryHex.containsTerrain(Terrains.ROUGH)
-                        || ((secondaryHex.terrainLevel(Terrains.WATER) > 0) && 
+                        || ((secondaryHex.terrainLevel(Terrains.WATER) > 0) &&
                                 !secondaryHex.containsTerrain(Terrains.ICE))
                         || secondaryHex.containsTerrain(Terrains.RUBBLE)
                         || secondaryHex.containsTerrain(Terrains.MAGMA)
                         || secondaryHex.containsTerrain(Terrains.JUNGLE)
                         || (secondaryHex.terrainLevel(Terrains.SNOW) > 1)
                         || (secondaryHex.terrainLevel(Terrains.GEYSER) == 2);
-                
+
                 int elev = secondaryHex.getLevel();
                 if (elevations.containsKey(elev)){
                     elevations.put(elev, elevations.get(elev)+1);
                 }else{
                     elevations.put(elev,1);
-                }            
+                }
             }
         }
         /*
          * As of 8/2013 there aren't clear restrictions for landed dropships.
-         * We are going to assume that Dropships need to be on fairly level 
-         * terrain.  This means, it can only be on at most 2 different 
-         * elevations that are at most 1 elevation apart.  Additionally, at 
+         * We are going to assume that Dropships need to be on fairly level
+         * terrain.  This means, it can only be on at most 2 different
+         * elevations that are at most 1 elevation apart.  Additionally, at
          * least half of the dropships hexes round down must be on one elevation
          */
         // Whole DS is on one elevation
@@ -103,30 +103,30 @@ public class Dropship extends SmallCraft {
         }
         // DS on more than 2 different elevations
         //  or not on an elevation, what?
-        if (elevations.size() > 2 || elevations.size() == 0){
+        if ((elevations.size() > 2) || (elevations.size() == 0)){
             return true;
         }
-        
+
         Object elevs[] = elevations.keySet().toArray();
         int elev1 = (Integer)elevs[0];
         int elev2 = (Integer)elevs[1];
-        int elevDifference = Math.abs(elev1 - elev2);        
+        int elevDifference = Math.abs(elev1 - elev2);
         int elevMinCount = 2;
         // Check elevation difference and make sure that the counts of different
         //  elevations will allow for a legal deployment to exist
-        if (elevDifference > 1 || elevations.get(elevs[0]) < elevMinCount
-                || elevations.get(elevs[1]) < elevMinCount) {
+        if ((elevDifference > 1) || (elevations.get(elevs[0]) < elevMinCount)
+                || (elevations.get(elevs[1]) < elevMinCount)) {
             return true;
-        }     
-        
+        }
+
         // It's still possible we have a legal deployment, we now have to check
         //  the arrangement of hexes
-        // The way this is done is we start at the hex directly above the 
-        //  central hex and then move around clockwise and compare the two hexes 
+        // The way this is done is we start at the hex directly above the
+        //  central hex and then move around clockwise and compare the two hexes
         //  to see if they share an elevation. We need to have a number of these
         //  adjacencies equal to the number of secondary elevation hexes - 1.
         int numAdjacencies = 0;
-        int centralElev = hex.getLevel();       
+        int centralElev = hex.getLevel();
         int secondElev = centralElev;
         IHex currHex = game.getBoard().getHex(c.translated(5));
         for (int dir = 0; dir < 6; dir++){
@@ -134,21 +134,21 @@ public class Dropship extends SmallCraft {
                 secondElev = currHex.getLevel();
             }
             IHex nextHex = game.getBoard().getHex(c.translated(dir));
-            if (currHex.getLevel() != centralElev &&
-                    currHex.getLevel() == nextHex.getLevel()){
+            if ((currHex.getLevel() != centralElev) &&
+                    (currHex.getLevel() == nextHex.getLevel())){
                 numAdjacencies++;
-            }   
+            }
             currHex = nextHex;
         }
         if (numAdjacencies < (elevations.get(secondElev) - 1)){
             return true;
         }
-        
-        
+
+
         return isProhibited;
-    }  
-        
-   
+    }
+
+
 
     public void setDamageDockCollar(boolean b) {
         dockCollarDamaged = b;
@@ -818,6 +818,10 @@ public class Dropship extends SmallCraft {
                 if (atype.getAmmoType() == AmmoType.T_MML) {
                     key2 = "MML "+atype.getRackSize()+ " Ammo;"+key;
                 }
+                // same for the different AR10 ammos
+                if (atype.getAmmoType() == AmmoType.T_AR10) {
+                    key2 = "AR10 Ammo;"+key;
+                }
                 if (!keys.contains(key2)) {
                     keys.add(key2);
                 }
@@ -1452,7 +1456,7 @@ public class Dropship extends SmallCraft {
      * @see megamek.common.Entity#setPosition(megamek.common.Coords)
      */
     @Override
-    
+
     public void setPosition(Coords position) {
         HashSet<Coords> oldPositions = getOccupiedCoords();
         super.setPosition(position, false);
@@ -1473,7 +1477,7 @@ public class Dropship extends SmallCraft {
         }
         if (game != null) {
             game.updateEntityPositionLookup(this, oldPositions);
-        }       
+        }
     }
 
     @Override
@@ -1658,8 +1662,9 @@ public class Dropship extends SmallCraft {
         }
     }
 
+    @Override
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_SMALL_CRAFT | Entity.ETYPE_DROPSHIP;
     }
-    
+
 }

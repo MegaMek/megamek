@@ -1,7 +1,59 @@
 VERSION HISTORY:
 ----------------
++ Data: New Sprites
++ Bug: Air-to-ground fire needs to allow the attacker to pick a path on the
+    targets flight path if multiple hexes are equidistant (this can matter for
+    angle-of-attack calculation)
++ Bug: in Air-to-ground attacks, the end facing of the Aero was being used,
+    instead of the facing at the position in the flight path
++ Feature [#1362]: Extras tab in UnitDisplay now shows last targeted unit
++ Bug [#4437]:  ASFs - "Next target" button selects invalid targets
++ Bug [#4440]: ASFs - unable to strafe hexes with friendly units
++ Patch [#465]: Advanced option to turn off displaying hex coordinates
++ Bug [#3877]: Compiling with JDK 7 breaks Mac releases
++ Patch [#467]: Antialiasing only works during deployment
++ Data: New Sprites.
++ Data: New RATs(Completes the Field Manuals) Thanks Magnus Kerensky.
++ Feature: Tactical Overlay settings now update board view immediately
++ Patch [#466]: FoV Shading in with stripes
++ Translation(Russian): First pass of Russian translation complete.
++ Bug: Pintle turret weight calculation wrong
++ Data: New Sprites
++ Data: XTRO Most Wanted Units/Unit Fixes.
++ Bug [#4462]: Infantry with support lasers incorrectly labeled as "Heavy Laser"
++ Bug [#4474]: NPE in 0.41.3 r11674 UnitDisplay$ExtraPanel.displayMech
++ Patch [#468]: Anti-aliasing for the StepSprites
++ Feature: Anti-aliasing for CursorSprites
++ Patch [#469]: StepSprite text gets lost at lower scales
++ Patch [#470]: Updated movement and facing arrows (StepSprite/EntitySprite)
++ Data: New Sprites and Neoancient RATs
++ Bug: M-Pod should be defensive BV for tanks
++ Bug: AR10 ammo BV should be in total compared to launcher BV, not for each
+    type of missile seperately
++ Bug: PPC w/ capacitor has wrong BV when combined with drone operating system
++ Bug [#4467]: Incorrect popup text when mousing over hex targeted by artillery
++ Bug [#4468]: Path planner doesn't know about elevation change steps
++ Bug [#4471]: TargetingDisplay centers display on off-board units
++ Bug [#4476]: Unjam UAC Unofficial Option Not Working
++ Bug: Potential NPE in Compute.getClosestFlightPath
++ Bug: wrong BV for medium SCC
++ Bug: capacitor being added twice for tank ppc BV
++ Bug [#4480]: Vehicle damage threshold rule prevents criticals when IS is hit
++ Bug [#4495]: ASFs : Cluster hit weapons still causing multiple critical hits
+    per weapon on a to hit roll of 12 (was listed as fixed)
++ Bug [#4483]: ASFs : Extra heat from engine hits not shown during firing phase
++ All non-mechanized Infantry can now make anti-mech attacks, previously they
+    had to have anti-mech training, which is a restriction no longer in TW
++ Feature: UnitDisplay Pilot tab now says Anti-Mech instead of Piloting for
+    infantry
++ Bug: Updated UnitDisplay Weapon tab to-hit details for swarm and leg attacks:
+    it now follows the same format as regular weapons attacks
++ Bug [#4494]: "Navel C3"
++ Data: New Sprites and unit Fix.
++ Bug [#4454]: Conventional infantry costs are being calculated incorrectly
++ Patch [#474]: Cosmetic Changes to CommonSettingsDialog
++ Reduced default path planner time limit from 2000ms to 500ms
 
-princessThreadingWork
 
 v0.41.2-dev (2015-02-12 15:20 UTC)
 + Bug [#4422]: Woods, jungle, and smoke not getting counted for LoS

@@ -33,9 +33,10 @@ public class InfantrySupportLightMortarInfernoWeapon extends InfantryWeapon {
     public InfantrySupportLightMortarInfernoWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Light Inferno Mortar";
+        name = "Mortar (Light) - Inferno";
         setInternalName(name);
         addLookupName("InfantryLightMortarInferno");
+        addLookupName("Infantry Light Mortar Inferno");
         ammoType = AmmoType.T_NA;
         cost = 1400;
         bv = 0.79;

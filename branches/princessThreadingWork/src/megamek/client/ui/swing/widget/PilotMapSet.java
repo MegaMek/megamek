@@ -32,6 +32,7 @@ import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.Configuration;
 import megamek.common.Crew;
 import megamek.common.Entity;
+import megamek.common.Infantry;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.util.DirectoryItems;
@@ -111,7 +112,7 @@ public class PilotMapSet implements DisplayMapSet {
         getNewYCoord();
 
         pilotL = createLabel(
-                Messages.getString("PilotMapSet.pilotL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+                Messages.getString("PilotMapSet.pilotLAntiMech"), fm, 0, getNewYCoord()); //$NON-NLS-1$
         content.addArea(pilotL);
         pilotR = createLabel(STAR3, fm, pilotL.getSize().width + 5, getYCoord());
         content.addArea(pilotR);
@@ -187,6 +188,11 @@ public class PilotMapSet implements DisplayMapSet {
      */
     public void setEntity(Entity en) {
 
+        if (en instanceof Infantry) {
+            pilotL.setString(Messages.getString("PilotMapSet.pilotLAntiMech"));
+        } else {
+            pilotL.setString(Messages.getString("PilotMapSet.pilotL"));
+        }
         nameL.setString(en.getCrew().getName());
         nickL.setString(en.getCrew().getNickname());
         pilotR.setString(Integer.toString(en.getCrew().getPiloting()));

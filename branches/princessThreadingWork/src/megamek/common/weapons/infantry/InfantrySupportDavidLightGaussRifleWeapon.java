@@ -33,8 +33,9 @@ public class InfantrySupportDavidLightGaussRifleWeapon extends InfantryWeapon {
     public InfantrySupportDavidLightGaussRifleWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Infantry David Light Gauss Rifle";
+        name = "Gauss Rifle, Light (David)";
         setInternalName(name);
+        addLookupName("Infantry David Light Gauss Rifle");
         ammoType = AmmoType.T_NA;
         cost = 6000;
         bv = 4.01;

@@ -33,10 +33,11 @@ public class InfantrySupportPortablePPCWeapon extends InfantryWeapon {
     public InfantrySupportPortablePPCWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Semi-Portable PPC";
+        name = "Particle Cannon (Semi-Portable)";
         setInternalName(name);
         addLookupName("InfantrySemiPortablePPC");
         addLookupName("InfantryManPackPPC");
+        addLookupName("Infantry Semi-Portable PPC");
         ammoType = AmmoType.T_NA;
         cost = 7000;
         bv = 3.68;

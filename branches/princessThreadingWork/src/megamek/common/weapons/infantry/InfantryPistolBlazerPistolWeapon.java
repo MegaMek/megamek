@@ -33,9 +33,10 @@ public class InfantryPistolBlazerPistolWeapon extends InfantryWeapon {
     public InfantryPistolBlazerPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Blazer Pistol";
+        name = "Laser Pistol (Blazer)";
         setInternalName(name);
         addLookupName("InfantryBlazerPistol");
+        addLookupName("Blazer Pistol");
         ammoType = AmmoType.T_NA;
         cost = 3000;
         bv = 0.79;

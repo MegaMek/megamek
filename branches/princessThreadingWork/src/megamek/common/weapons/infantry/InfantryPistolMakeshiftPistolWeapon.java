@@ -32,10 +32,13 @@ public class InfantryPistolMakeshiftPistolWeapon extends InfantryWeapon {
 
     public InfantryPistolMakeshiftPistolWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Makeshift Pistol";
+        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
+        name = "Pistol (Makeshift)";
         setInternalName(name);
         addLookupName("InfantryMakeshiftpistol");
+        addLookupName("Makeshift Pistol");
+        addLookupName("ClanInfantryMakeshiftpistol");
+        addLookupName("Makeshift Pistol(Clan)");
         ammoType = AmmoType.T_AC;
         cost = 15;
         bv = 0.02;

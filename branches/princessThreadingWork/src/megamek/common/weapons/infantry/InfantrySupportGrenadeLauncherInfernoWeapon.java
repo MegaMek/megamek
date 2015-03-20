@@ -33,10 +33,11 @@ public class InfantrySupportGrenadeLauncherInfernoWeapon extends InfantryWeapon 
     public InfantrySupportGrenadeLauncherInfernoWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Inferno Grenade Launcher";
+        name = "Grenade Launcher - Inferno";
         setInternalName(name);
         addLookupName("InfantryGrenadeLauncherInferno");
         addLookupName("InfantryInfernoGrenadeLauncher");
+        addLookupName("Infantry Inferno Grenade Launcher");
         ammoType = AmmoType.T_NA;
         cost = 465;
         bv = 1.04;

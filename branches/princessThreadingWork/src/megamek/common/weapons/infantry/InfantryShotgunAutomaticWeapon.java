@@ -33,9 +33,10 @@ public class InfantryShotgunAutomaticWeapon extends InfantryWeapon {
     public InfantryShotgunAutomaticWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Automatic Shotgun";
+        name = "Auto-Shotgun";
         setInternalName(name);
         addLookupName("InfantryAutoShotgun");
+        addLookupName("Automatic Shotgun");
         ammoType = AmmoType.T_NA;
         cost = 200;
         bv = 0.21;

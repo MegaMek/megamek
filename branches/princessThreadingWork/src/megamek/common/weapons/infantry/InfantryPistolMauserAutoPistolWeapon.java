@@ -33,9 +33,10 @@ public class InfantryPistolMauserAutoPistolWeapon extends InfantryWeapon {
     public InfantryPistolMauserAutoPistolWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "M&G Auto Pistol";
+        name = "Auto-Pistol (M&G)";
         setInternalName(name);
         addLookupName("InfantryMauserAutopistol");
+        addLookupName("M&G Auto Pistol");
         ammoType = AmmoType.T_AC;
         cost = 60;
         bv = 0.16;

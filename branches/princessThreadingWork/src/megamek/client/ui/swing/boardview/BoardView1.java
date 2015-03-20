@@ -22,6 +22,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -30,6 +31,7 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -37,6 +39,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
@@ -261,8 +264,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     // polygons for a few things
     Polygon hexPoly;
-    Polygon[] facingPolys;
-    Polygon[] movementPolys;
+    Shape[] movementPolys;
+    Shape[] facingPolys;
+    Shape UpArrow;
+    Shape DownArrow;
 
     // the player who owns this BoardView's client
     private IPlayer localPlayer = null;
@@ -1284,21 +1289,36 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Draw a layer of a solid color (alpha possible) on the hex at Point p no
      * padding by default
      */
-    void drawHexLayer(Point p, Graphics g, Color col) {
-        drawHexLayer(p, g, col, 0);
+    void drawHexLayer(Point p, Graphics g, Color col, boolean outOfFOV) {
+        drawHexLayer(p, g, col, outOfFOV, 0);
     }
 
     /**
      * Draw a layer of a solid color (alpha possible) on the hex at Point p with
      * some padding around the border
      */
-    private void drawHexLayer(Point p, Graphics g, Color col, double pad) {
-        g.setColor(col);
+    private void drawHexLayer(Point p, Graphics g, Color col, boolean outOfFOV,
+            double pad) {
 
         final double[] x = {0, 21. * scale, 62. * scale, 83. * scale};
         final double[] y = {0, 35. * scale, 36. * scale, 71. * scale};
         g.setColor(col);
 
+        // create stripe effect for FOV darkening but not for colored weapon
+        // ranges
+        int fogStripes = GUIPreferences.getInstance().getFovStripes();
+        if (outOfFOV && (fogStripes > 0) && (g instanceof Graphics2D)) {
+            float lineSpacing = fogStripes;
+            // totally transparent here hurts the eyes
+            Color c2 = new Color(col.getRed() / 2, col.getGreen() / 2,
+                    col.getBlue() / 2, col.getAlpha() / 2); 
+
+            // the numbers make the lines align across hexes
+            GradientPaint gp = new GradientPaint(42.0f / lineSpacing, 0.0f,
+                    col, 104.0f / lineSpacing, 106.0f / lineSpacing, c2, true);
+            ((Graphics2D)g).setPaint(gp);
+        }
+        
         if (pad > 0.1) {
             final double cos60 = 0.5;
             final double cos30 = 0.8660254;
@@ -1307,25 +1327,25 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             final double a = cos60 * pad * scale;
             final double b = cos30 * pad * scale;
 
-            int[] xcoords = {p.x + (int) (x[1] + a), p.x + (int) (x[2] - a),
-                             p.x + (int) (x[3] - pd), p.x + (int) (x[3] - pd),
-                             p.x + (int) (x[2] - a), p.x + (int) (x[1] + a),
-                             p.x + (int) (x[0] + pd), p.x + (int) (x[0] + pd)};
-            int[] ycoords = {p.y + (int) (y[0] + b), p.y + (int) (y[0] + b),
-                             p.y + (int) (y[1]), p.y + (int) (y[2]),
-                             p.y + (int) (y[3] - b), p.y + (int) (y[3] - b),
-                             p.y + (int) (y[2]), p.y + (int) (y[1])};
+            int[] xcoords = { p.x + (int) (x[1] + a), p.x + (int) (x[2] - a),
+                    p.x + (int) (x[3] - pd), p.x + (int) (x[3] - pd),
+                    p.x + (int) (x[2] - a), p.x + (int) (x[1] + a),
+                    p.x + (int) (x[0] + pd), p.x + (int) (x[0] + pd) };
+            int[] ycoords = { p.y + (int) (y[0] + b), p.y + (int) (y[0] + b),
+                    p.y + (int) (y[1]), p.y + (int) (y[2]),
+                    p.y + (int) (y[3] - b), p.y + (int) (y[3] - b),
+                    p.y + (int) (y[2]), p.y + (int) (y[1]) };
 
             g.fillPolygon(xcoords, ycoords, 8);
 
         } else {
 
-            int[] xcoords = {p.x + (int) (x[1]), p.x + (int) (x[2]),
-                             p.x + (int) (x[3]), p.x + (int) (x[3]), p.x + (int) (x[2]),
-                             p.x + (int) (x[1]), p.x + (int) (x[0]), p.x + (int) (x[0])};
-            int[] ycoords = {p.y + (int) (y[0]), p.y + (int) (y[0]),
-                             p.y + (int) (y[1]), p.y + (int) (y[2]), p.y + (int) (y[3]),
-                             p.y + (int) (y[3]), p.y + (int) (y[2]), p.y + (int) (y[1])};
+            int[] xcoords = { p.x + (int) (x[1]), p.x + (int) (x[2]),
+                    p.x + (int) (x[3]), p.x + (int) (x[3]), p.x + (int) (x[2]),
+                    p.x + (int) (x[1]), p.x + (int) (x[0]), p.x + (int) (x[0]) };
+            int[] ycoords = { p.y + (int) (y[0]), p.y + (int) (y[0]),
+                    p.y + (int) (y[1]), p.y + (int) (y[2]), p.y + (int) (y[3]),
+                    p.y + (int) (y[3]), p.y + (int) (y[2]), p.y + (int) (y[1]) };
 
             g.fillPolygon(xcoords, ycoords, 8);
         }
@@ -1721,6 +1741,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             return;
         }
 
+        final GUIPreferences guip = GUIPreferences.getInstance();
         final IHex hex = game.getBoard().getHex(c);
         final Point hexLoc = getHexLocation(c);
 
@@ -1784,6 +1805,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         Graphics g = hexImage.getGraphics();
         drawX = 0;
         drawY = 0;
+        
+        if (GUIPreferences.getInstance().getAntiAliasing()) {
+            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+        }
 
         g.drawImage(scaledImage, drawX, drawY, this);
 
@@ -1855,14 +1881,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
         }
 
-        if (GUIPreferences.getInstance().getBoolean(
-                GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
+        if (guip.getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
                 && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)
                 && (game.isPositionIlluminated(c) == IGame.ILLUMINATED_NONE)) {
             scaledImage = getScaledImage(tileManager.getNightFog(), true);
             g.drawImage(scaledImage, drawX, drawY, this);
         }
-        g.setColor(GUIPreferences.getInstance().getMapTextColor());
+        g.setColor(guip.getMapTextColor());
         if (game.getBoard().inSpace()) {
             g.setColor(Color.LIGHT_GRAY);
         }
@@ -1890,8 +1915,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             return;
         }
 
-        // draw hex number
-        if (scale >= 0.5) {
+        // draw hex number unless deactivated or scale factor too small
+        if (guip.getBoolean(GUIPreferences.ADVANCED_SHOW_COORDS)
+                && (scale >= 0.5)) {
             drawCenteredString(c.getBoardNum(), drawX, drawY
                     + (int) (12 * scale), font_hexnum, g);
         }
@@ -3244,74 +3270,68 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         hexPoly.addPoint(0, 36);
         hexPoly.addPoint(0, 35);
 
+        AffineTransform FacingRotate = new AffineTransform();
+        
         // facing polygons
-        facingPolys = new Polygon[6];
-        facingPolys[0] = new Polygon();
-        facingPolys[0].addPoint(41, 3);
-        facingPolys[0].addPoint(38, 6);
-        facingPolys[0].addPoint(45, 6);
-        facingPolys[0].addPoint(42, 3);
-        facingPolys[1] = new Polygon();
-        facingPolys[1].addPoint(69, 17);
-        facingPolys[1].addPoint(64, 17);
-        facingPolys[1].addPoint(68, 23);
-        facingPolys[1].addPoint(70, 19);
-        facingPolys[2] = new Polygon();
-        facingPolys[2].addPoint(69, 53);
-        facingPolys[2].addPoint(68, 49);
-        facingPolys[2].addPoint(64, 55);
-        facingPolys[2].addPoint(68, 54);
-        facingPolys[3] = new Polygon();
-        facingPolys[3].addPoint(41, 68);
-        facingPolys[3].addPoint(38, 65);
-        facingPolys[3].addPoint(45, 65);
-        facingPolys[3].addPoint(42, 68);
-        facingPolys[4] = new Polygon();
-        facingPolys[4].addPoint(15, 53);
-        facingPolys[4].addPoint(18, 54);
-        facingPolys[4].addPoint(15, 48);
-        facingPolys[4].addPoint(14, 52);
-        facingPolys[5] = new Polygon();
-        facingPolys[5].addPoint(13, 19);
-        facingPolys[5].addPoint(15, 23);
-        facingPolys[5].addPoint(19, 17);
-        facingPolys[5].addPoint(17, 17);
+        Polygon facingPoly_tmp = new Polygon();
+        facingPoly_tmp.addPoint(41, 3);
+        facingPoly_tmp.addPoint(35, 9);
+        facingPoly_tmp.addPoint(41, 7);
+        facingPoly_tmp.addPoint(42, 7);
+        facingPoly_tmp.addPoint(48, 9);
+        facingPoly_tmp.addPoint(42, 3);
+        
+        // create the rotated shapes
+        facingPolys = new Shape[8];
+        for (int f=0;f<6;f++)
+        {
+        	facingPolys[f] = FacingRotate.createTransformedShape(facingPoly_tmp);
+        	FacingRotate.rotate(Math.toRadians(60),HEX_W/2,HEX_H/2);
+        }
 
         // movement polygons
-        movementPolys = new Polygon[8];
-        movementPolys[0] = new Polygon();
-        movementPolys[0].addPoint(41, 65);
-        movementPolys[0].addPoint(38, 68);
-        movementPolys[0].addPoint(45, 68);
-        movementPolys[0].addPoint(42, 65);
-        movementPolys[1] = new Polygon();
-        movementPolys[1].addPoint(17, 48);
-        movementPolys[1].addPoint(12, 48);
-        movementPolys[1].addPoint(16, 54);
-        movementPolys[1].addPoint(17, 49);
-        movementPolys[2] = new Polygon();
-        movementPolys[2].addPoint(18, 19);
-        movementPolys[2].addPoint(17, 15);
-        movementPolys[2].addPoint(13, 21);
-        movementPolys[2].addPoint(17, 20);
-        movementPolys[3] = new Polygon();
-        movementPolys[3].addPoint(41, 6);
-        movementPolys[3].addPoint(38, 3);
-        movementPolys[3].addPoint(45, 3);
-        movementPolys[3].addPoint(42, 6);
-        movementPolys[4] = new Polygon();
-        movementPolys[4].addPoint(67, 15);
-        movementPolys[4].addPoint(66, 19);
-        movementPolys[4].addPoint(67, 20);
-        movementPolys[4].addPoint(71, 20);
-        movementPolys[5] = new Polygon();
-        movementPolys[5].addPoint(69, 55);
-        movementPolys[5].addPoint(66, 50);
-        movementPolys[5].addPoint(67, 49);
-        movementPolys[5].addPoint(72, 48);
+        Polygon movementPoly_tmp = new Polygon();
+        movementPoly_tmp.addPoint(47, 67);
+        movementPoly_tmp.addPoint(48, 66);
+        movementPoly_tmp.addPoint(42, 62);
+        movementPoly_tmp.addPoint(41, 62);
+        movementPoly_tmp.addPoint(35, 66);
+        movementPoly_tmp.addPoint(36, 67);
+        
+        movementPoly_tmp.addPoint(47, 67);
+        movementPoly_tmp.addPoint(45, 68);
+        movementPoly_tmp.addPoint(38, 68);
+        movementPoly_tmp.addPoint(38, 69);
+        movementPoly_tmp.addPoint(45, 69);
+        movementPoly_tmp.addPoint(45, 68);
+        
+        movementPoly_tmp.addPoint(45, 70);
+        movementPoly_tmp.addPoint(38, 70);
+        movementPoly_tmp.addPoint(38, 71);
+        movementPoly_tmp.addPoint(45, 71);
+        movementPoly_tmp.addPoint(45, 68);
 
-        movementPolys[6] = new Polygon(); // up arrow with tail
-        movementPolys[6].addPoint(35, 44);
+        // create the rotated shapes
+        FacingRotate.setToIdentity();  
+        movementPolys = new Shape[8];
+        for (int f=0;f<6;f++)
+        {
+        	movementPolys[f] = FacingRotate.createTransformedShape(movementPoly_tmp);
+        	FacingRotate.rotate(Math.toRadians(60),HEX_W/2,HEX_H/2);
+        }
+        
+        // Up and Down Arrows
+        FacingRotate.setToIdentity();
+        FacingRotate.translate(0, -31);
+        UpArrow = FacingRotate.createTransformedShape(movementPoly_tmp);
+
+        FacingRotate.setToIdentity();
+        FacingRotate.rotate(Math.toRadians(180),HEX_W/2,HEX_H/2);
+        FacingRotate.translate(0, -31);
+        DownArrow = FacingRotate.createTransformedShape(movementPoly_tmp);
+        
+        
+        /*movementPolys[6].addPoint(35, 44);
         movementPolys[6].addPoint(30, 49);
         movementPolys[6].addPoint(33, 49);
         movementPolys[6].addPoint(33, 53);
@@ -3327,7 +3347,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         movementPolys[7].addPoint(37, 44);
         movementPolys[7].addPoint(37, 48);
         movementPolys[7].addPoint(40, 48);
-        movementPolys[7].addPoint(35, 53);
+        movementPolys[7].addPoint(35, 53);*/
     }
 
     synchronized boolean doMoveUnits(long idleTime) {
@@ -4292,9 +4312,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (s == null) {
                 s = Messages.getString("BoardView1.Artillery");
             }
-            txt.append(Messages.getString(
-                    "BoardView1.ArtilleryAttack", new Object[]{s, //$NON-NLS-1$
-                                                               new Integer(aaa.turnsTilHit)}));
+            txt.append(Messages.getString("BoardView1.ArtilleryAttack", //$NON-NLS-1$
+                    new Object[] { s, new Integer(aaa.turnsTilHit) }));
             txt.append("<br>"); //$NON-NLS-1$
         }
 
@@ -4323,10 +4342,23 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         final Collection<SpecialHexDisplay> shdList = game.getBoard()
-                                                          .getSpecialHexDisplay(mcoords);
+                .getSpecialHexDisplay(mcoords);
+        final Phase currPhase = game.getPhase();
+        int round = game.getRoundCount();
         if (shdList != null) {
+            boolean isHexAutoHit = localPlayer.getArtyAutoHitHexes().contains(
+                    mcoords);
             for (SpecialHexDisplay shd : shdList) {
-                if (!shd.isObscured(localPlayer)) {
+                boolean isTypeAutoHit = shd.getType() 
+                        == SpecialHexDisplay.Type.ARTILLERY_AUTOHIT;
+                // Don't draw if this SHD is obscured from this player
+                // The SHD list may also contain stale SHDs, so don't show 
+                // tooltips for SHDs that aren't drawn.
+                // The exception is auto hits.  There will be an icon for auto
+                // hits, so we need to draw a tooltip
+                if (!shd.isObscured(localPlayer)
+                        && (shd.drawNow(currPhase, round, localPlayer) 
+                                || (isHexAutoHit && isTypeAutoHit))) {
                     if (shd.getType() == SpecialHexDisplay.Type.PLAYER_NOTE) {
                         if (localPlayer.equals(shd.getOwner())) {
                             txt.append("Note: ");

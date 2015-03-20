@@ -76,6 +76,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_KEY_REPEAT_DELAY = "AdvancedKeyRepeatDelay";
     public static final String ADVANCED_KEY_REPEAT_RATE = "AdvancedKeyRepeatRate";
     public static final String ADVANCED_SHOW_FPS = "AdvancedShowFPS";
+    public static final String ADVANCED_SHOW_COORDS = "AdvancedShowCoords";
     /* --End advanced settings-- */
 
 
@@ -100,6 +101,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String FOV_HIGHLIGHT_RINGS_COLORS_HSB = "FovHighlightRingsColorsInHSB";
     public static final String FOV_DARKEN = "FovDarken";
     public static final String FOV_DARKEN_ALPHA = "FovDarkenAlpha";
+    public static final String FOV_STRIPES = "FoVFogStripes";
+    public static final String FOV_GRAYSCALE = "FoVFogGrayscale";
     public static final String MAP_TEXT_COLOR = "MapTextColor";
     public static final String MAP_ZOOM_INDEX = "MapZoomIndex";
     public static final String MECH_SELECTOR_INCLUDE_MODEL = "MechSelectorIncludeModel";
@@ -230,6 +233,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_KEY_REPEAT_DELAY, 0);
         store.setDefault(ADVANCED_KEY_REPEAT_RATE, 20);
         store.setDefault(ADVANCED_SHOW_FPS, "false");
+        store.setDefault(ADVANCED_SHOW_COORDS, "true");    
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
@@ -248,6 +252,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(FOV_HIGHLIGHT_ALPHA, 40);
         store.setDefault(FOV_DARKEN,true);
         store.setDefault(FOV_DARKEN_ALPHA, 100);
+        store.setDefault(FOV_STRIPES, 35);
+        store.setDefault(FOV_GRAYSCALE, "false");
         setDefault(MAP_TEXT_COLOR, Color.black);
         store.setDefault(MAP_ZOOM_INDEX, 7);
         store.setDefault(MECH_SELECTOR_INCLUDE_MODEL, true);
@@ -397,6 +403,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getFovDarkenAlpha() {
         return store.getInt(FOV_DARKEN_ALPHA);
+    }
+    
+    public int getFovStripes() {
+        return store.getInt(FOV_STRIPES);
+    }
+    
+    public boolean getFovGrayscale() {
+        return store.getBoolean(FOV_GRAYSCALE);
     }
 
     public Color getMapTextColor() {
@@ -727,6 +741,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setFovDarkenAlpha(int i) {
         store.setValue(FOV_DARKEN_ALPHA,i);
+    }
+    
+    public void setFovStripes(int i) {
+        store.setValue(FOV_STRIPES,i);
+    }
+    
+    public void setFovGrayscale(boolean state) {
+        store.setValue(FOV_GRAYSCALE, state);
     }
 
     public void setMapZoomIndex(int zoomIndex) {

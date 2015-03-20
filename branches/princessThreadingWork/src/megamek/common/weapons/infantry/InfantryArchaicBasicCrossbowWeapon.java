@@ -33,9 +33,10 @@ public class InfantryArchaicBasicCrossbowWeapon extends InfantryWeapon {
     public InfantryArchaicBasicCrossbowWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Crossbow";
+        name = "Crossbow (Basic)";
         setInternalName(name);
         addLookupName("InfantryBasicCrossbow");
+        addLookupName("Crossbow");
         ammoType = AmmoType.T_NA;
         cost = 10;
         bv = 0.01;

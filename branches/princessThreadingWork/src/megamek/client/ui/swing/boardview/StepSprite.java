@@ -3,10 +3,14 @@ package megamek.client.ui.swing.boardview;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
 
 import megamek.client.ui.Messages;
@@ -29,7 +33,7 @@ class StepSprite extends Sprite {
 
     private MoveStep step;
     private Image baseScaleImage;
-
+    
     public StepSprite(BoardView1 boardView1, final MoveStep step) {
         super(boardView1);
         this.step = step;
@@ -58,21 +62,38 @@ class StepSprite extends Sprite {
     @Override
     public void prepare() {
         // create image for buffer
-        Image tempImage = bv.createImage(bounds.width, bounds.height);
+        Image tempImage = new BufferedImage(BoardView1.HEX_W, BoardView1.HEX_H,
+                BufferedImage.TYPE_INT_ARGB);
         Graphics graph = tempImage.getGraphics();
+        
+        if (GUIPreferences.getInstance().getAntiAliasing()) {
+            ((Graphics2D) graph).setRenderingHint(
+                    RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+        }
 
         // fill with key color
-        graph.setColor(new Color(BoardView1.TRANSPARENT));
-        graph.fillRect(0, 0, bounds.width, bounds.height);
+        graph.setColor(new Color(0,0,0,0));
+        graph.fillRect(0, 0, BoardView1.HEX_W, BoardView1.HEX_H);
 
         // setup some variables
         final Point stepPos = bv.getHexLocation(step.getPosition());
         stepPos.translate(-bounds.x, -bounds.y);
-        final Polygon facingPoly = bv.facingPolys[step.getFacing()];
-        final Polygon movePoly = bv.movementPolys[step.getFacing()];
-        Point offsetCostPos;
-        Polygon myPoly;
+        
+        Shape FacingArrow = bv.facingPolys[step.getFacing()];
+        Shape moveArrow = bv.movementPolys[step.getFacing()];
+        
+        AffineTransform StepOffset = new AffineTransform();
+        StepOffset.translate(stepPos.x + 1, stepPos.y + 1);   //when is stepPos ever <> 0?
+        
+        AffineTransform ShadowOffset = new AffineTransform();
+        ShadowOffset.translate(-1,-1);
+        
+        AffineTransform UpDownOffset = new AffineTransform();
+        UpDownOffset.translate(-30,0);
+        
         Color col;
+        Shape CurrentArrow;
         // set color
         switch (step.getMovementType()) {
             case MOVE_RUN:
@@ -115,7 +136,8 @@ class StepSprite extends Sprite {
 
         drawConditions(step, stepPos, graph, col);
 
-        // draw arrows and cost for the step
+        Point offsetCostPos;
+		// draw arrows and cost for the step
         switch (step.getType()) {
             case FORWARDS:
             case SWIM:
@@ -132,14 +154,14 @@ class StepSprite extends Sprite {
             case ACCN:
             case LOOP:
                 // draw arrows showing them entering the next
-                myPoly = new Polygon(movePoly.xpoints, movePoly.ypoints,
-                        movePoly.npoints);
                 graph.setColor(Color.darkGray);
-                myPoly.translate(stepPos.x + 1, stepPos.y + 1);
-                graph.drawPolygon(myPoly);
+                CurrentArrow = StepOffset.createTransformedShape(moveArrow);
+                ((Graphics2D) graph).fill(CurrentArrow);
+                
                 graph.setColor(col);
-                myPoly.translate(-1, -1);
-                graph.drawPolygon(myPoly);
+                CurrentArrow = ShadowOffset.createTransformedShape(CurrentArrow);
+                ((Graphics2D) graph).fill(CurrentArrow);
+                
                 // draw movement cost
                 drawMovementCost(step, stepPos, graph, col, true);
                 drawRemainingVelocity(step, stepPos, graph, true);
@@ -151,15 +173,15 @@ class StepSprite extends Sprite {
             case FORTIFY:
                 // draw arrow indicating dropping prone
                 // also doubles as the descent indication
-                Polygon downPoly = bv.movementPolys[7];
-                myPoly = new Polygon(downPoly.xpoints, downPoly.ypoints,
-                        downPoly.npoints);
                 graph.setColor(Color.darkGray);
-                myPoly.translate(stepPos.x, stepPos.y);
-                graph.drawPolygon(myPoly);
+                CurrentArrow = UpDownOffset.createTransformedShape(bv.DownArrow);
+                CurrentArrow = StepOffset.createTransformedShape(CurrentArrow);
+                ((Graphics2D) graph).fill(CurrentArrow);
+                
                 graph.setColor(col);
-                myPoly.translate(-1, -1);
-                graph.drawPolygon(myPoly);
+                CurrentArrow = ShadowOffset.createTransformedShape(CurrentArrow);
+                ((Graphics2D) graph).fill(CurrentArrow);
+                
                 offsetCostPos = new Point(stepPos.x + 1, stepPos.y + 15);
                 drawMovementCost(step, offsetCostPos, graph, col, false);
                 drawRemainingVelocity(step, stepPos, graph, true);
@@ -169,15 +191,15 @@ class StepSprite extends Sprite {
             case CAREFUL_STAND:
                 // draw arrow indicating standing up
                 // also doubles as the climb indication
-                Polygon upPoly = bv.movementPolys[6];
-                myPoly = new Polygon(upPoly.xpoints, upPoly.ypoints,
-                        upPoly.npoints);
-                graph.setColor(Color.darkGray);
-                myPoly.translate(stepPos.x, stepPos.y);
-                graph.drawPolygon(myPoly);
+            	graph.setColor(Color.darkGray);
+            	CurrentArrow = UpDownOffset.createTransformedShape(bv.UpArrow);
+                CurrentArrow = StepOffset.createTransformedShape(CurrentArrow);
+                ((Graphics2D) graph).fill(CurrentArrow);
+                
                 graph.setColor(col);
-                myPoly.translate(-1, -1);
-                graph.drawPolygon(myPoly);
+                CurrentArrow = ShadowOffset.createTransformedShape(CurrentArrow);
+                ((Graphics2D) graph).fill(CurrentArrow);
+                
                 offsetCostPos = new Point(stepPos.x, stepPos.y + 15);
                 drawMovementCost(step, offsetCostPos, graph, col, false);
                 drawRemainingVelocity(step, stepPos, graph, true);
@@ -231,14 +253,14 @@ class StepSprite extends Sprite {
             case EVADE:
             case ROLL:
                 // draw arrows showing the facing
-                myPoly = new Polygon(facingPoly.xpoints,
-                        facingPoly.ypoints, facingPoly.npoints);
                 graph.setColor(Color.darkGray);
-                myPoly.translate(stepPos.x + 1, stepPos.y + 1);
-                graph.drawPolygon(myPoly);
+                CurrentArrow = StepOffset.createTransformedShape(FacingArrow);
+                ((Graphics2D) graph).fill(CurrentArrow);
+                
                 graph.setColor(col);
-                myPoly.translate(-1, -1);
-                graph.drawPolygon(myPoly);
+                CurrentArrow = ShadowOffset.createTransformedShape(CurrentArrow);
+                ((Graphics2D) graph).fill(CurrentArrow);
+                
                 if (bv.game.useVectorMove()) {
                     drawMovementCost(step, stepPos, graph, col, false);
                 }
@@ -386,12 +408,10 @@ class StepSprite extends Sprite {
                 break;
         }
 
-        baseScaleImage = bv.createImage(new FilteredImageSource(
-                tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT)));
+        baseScaleImage = bv.createImage(tempImage.getSource());
         // create final image
-        image = bv.getScaledImage(bv.createImage(new FilteredImageSource(
-                tempImage.getSource(), new KeyAlphaFilter(
-                        BoardView1.TRANSPARENT))), false);
+        image = bv.getScaledImage(bv.createImage(tempImage.getSource()), false);
+        
         graph.dispose();
         tempImage.flush();
     }
@@ -607,6 +627,7 @@ class StepSprite extends Sprite {
         graph.drawString(costString, costX, stepPos.y + 39);
         graph.setColor(col);
         graph.drawString(costString, costX - 1, stepPos.y + 38);
+        
     }
 
 }

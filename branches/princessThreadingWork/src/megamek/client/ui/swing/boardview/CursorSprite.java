@@ -2,11 +2,13 @@ package megamek.client.ui.swing.boardview;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.image.FilteredImageSource;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 
-import megamek.client.ui.swing.util.KeyAlphaFilter;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Coords;
 
 /**
@@ -32,20 +34,25 @@ class CursorSprite extends Sprite {
     @Override
     public void prepare() {
         // create image for buffer
-        Image tempImage = bv.createImage(bounds.width, bounds.height);
+        Image tempImage = new BufferedImage(bounds.width, bounds.height,
+                BufferedImage.TYPE_INT_ARGB);
         Graphics graph = tempImage.getGraphics();
+        
+        if (GUIPreferences.getInstance().getAntiAliasing()) {
+            ((Graphics2D) graph).setRenderingHint(
+                    RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+        }
 
         // fill with key color
-        graph.setColor(new Color(BoardView1.TRANSPARENT));
+        graph.setColor(new Color(0,0,0,0));
         graph.fillRect(0, 0, bounds.width, bounds.height);
         // draw attack poly
         graph.setColor(color);
         graph.drawPolygon(bv.hexPoly);
 
         // create final image
-        image = bv.getScaledImage(bv
-                .createImage(new FilteredImageSource(tempImage.getSource(),
-                        new KeyAlphaFilter(BoardView1.TRANSPARENT))), false);
+        image = bv.getScaledImage(bv.createImage(tempImage.getSource()), false);
         
         graph.dispose();
         tempImage.flush();

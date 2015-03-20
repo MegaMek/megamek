@@ -3612,6 +3612,7 @@ public class UnitDisplay extends JPanel {
          */
         private static final long serialVersionUID = -4907296187995261075L;
 
+        private JLabel lblLastTarget;
         private JLabel curSensorsL;
         private JLabel narcLabel;
         private JLabel unusedL;
@@ -3621,6 +3622,7 @@ public class UnitDisplay extends JPanel {
         private JTextArea unusedR;
         private JTextArea carrysR;
         private JTextArea heatR;
+        private JTextArea lastTargetR;
         private JTextArea sinksR;
         private JButton sinks2B;
         private JButton dumpBombs;
@@ -3696,6 +3698,16 @@ public class UnitDisplay extends JPanel {
             heatR.setEditable(false);
             heatR.setOpaque(false);
             heatR.setForeground(Color.WHITE);
+            
+            lblLastTarget = new JLabel(
+                    Messages.getString("MechDisplay.LastTarget"),
+                    SwingConstants.CENTER);
+            lblLastTarget.setForeground(Color.WHITE);
+            lblLastTarget.setOpaque(false);
+            lastTargetR = new JTextArea("", 4, 25); //$NON-NLS-1$
+            lastTargetR.setEditable(false);
+            lastTargetR.setOpaque(false);
+            lastTargetR.setForeground(Color.WHITE);
 
             curSensorsL = new JLabel(
                     (Messages.getString("MechDisplay.CurrentSensors"))
@@ -3767,6 +3779,14 @@ public class UnitDisplay extends JPanel {
             c.insets = new Insets(1, 9, 18, 9);
             gridbag.setConstraints(heatR, c);
             add(heatR);
+            
+            c.insets = new Insets(0, 0, 0, 0);
+            gridbag.setConstraints(lblLastTarget, c);
+            add(lblLastTarget);
+            
+            c.insets = new Insets(1, 9, 18, 9);
+            gridbag.setConstraints(lastTargetR, c);
+            add(lastTargetR);
 
             setBackGround();
             onResize();
@@ -4129,6 +4149,12 @@ public class UnitDisplay extends JPanel {
                 curSensorsL.setText((Messages
                         .getString("MechDisplay.CurrentSensors")).concat(" "));
             }
+            
+            if (en.getLastTarget() != Entity.NONE) {
+                lastTargetR.setText(en.getLastTargetDisplayName());
+            } else {
+                lastTargetR.setText(Messages.getString("MechDisplay.None"));
+            }            
 
             onResize();
         } // End public void displayMech( Entity )

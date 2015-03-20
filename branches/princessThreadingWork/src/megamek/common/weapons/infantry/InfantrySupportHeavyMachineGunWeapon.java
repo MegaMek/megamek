@@ -33,7 +33,7 @@ public class InfantrySupportHeavyMachineGunWeapon extends InfantryWeapon {
     public InfantrySupportHeavyMachineGunWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Infantry Heavy Machine Gun";
+        name = "Machine Gun (Support)";
         setInternalName(name);
         addLookupName("InfantryHMG");
         addLookupName("InfantrySupportMG");

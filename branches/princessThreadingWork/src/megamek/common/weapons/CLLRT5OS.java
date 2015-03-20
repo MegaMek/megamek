@@ -50,7 +50,7 @@ public class CLLRT5OS extends LRTWeapon {
         cost = 15000;
         introDate = 2824;
         techLevel.put(2824, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_C, RATING_B };
-        techRating = RATING_C;
+        availRating = new int[] { RATING_X, RATING_B, RATING_B };
+        techRating = RATING_F;
     }
 }

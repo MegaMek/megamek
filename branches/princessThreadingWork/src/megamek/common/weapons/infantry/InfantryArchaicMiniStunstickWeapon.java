@@ -33,7 +33,7 @@ public class InfantryArchaicMiniStunstickWeapon extends InfantryWeapon {
     public InfantryArchaicMiniStunstickWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Mini Stunstick";
+        name = "Stunstick (Mini)";
         setInternalName(name);
         addLookupName("InfantryMiniStunstick");
         ammoType = AmmoType.T_AC;

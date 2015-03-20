@@ -33,9 +33,10 @@ public class InfantrySMGWeapon extends InfantryWeapon {
     public InfantrySMGWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Submachinegun";
+        name = "Submachine Gun";
         setInternalName(name);
         addLookupName("InfantrySMG");
+        addLookupName("Submachinegun");
         ammoType = AmmoType.T_NA;
         cost = 80;
         bv = 0.23;

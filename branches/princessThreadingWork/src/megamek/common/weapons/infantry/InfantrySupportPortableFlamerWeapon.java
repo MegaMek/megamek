@@ -32,11 +32,11 @@ public class InfantrySupportPortableFlamerWeapon extends InfantryWeapon {
     public InfantrySupportPortableFlamerWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_INTRO_BOXSET);
-        name = "Flamer (Man Portable)";
+        name = "Flamer (Man-Pack)";
         setInternalName(name);
         addLookupName("InfantryPortableFlamer");
         addLookupName("Portable Flamer");
-        // Flamer (man-portable), TM p. 300
+        addLookupName("Flamer (man-portable)");
         cost = 100;
         bv = 0.50;
         flags = flags.or(F_DIRECT_FIRE).or(F_FLAMER).or(F_ENERGY).or(F_INF_SUPPORT).or(F_INF_ENCUMBER);

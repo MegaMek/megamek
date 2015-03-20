@@ -33,9 +33,10 @@ public class InfantryRifleTKAssaultWeapon extends InfantryWeapon {
     public InfantryRifleTKAssaultWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "TK Assault Rifle";
+        name = "Rifle (TK Assault)";
         setInternalName(name);
         addLookupName("InfantryTKAssaultRifle");
+        addLookupName("TK Assault Rifle");
         ammoType = AmmoType.T_NA;
         cost = 150;
         bv = 1.34;

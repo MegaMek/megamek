@@ -33,11 +33,12 @@ public class InfantryArchaicDaggerWeapon extends InfantryWeapon {
     public InfantryArchaicDaggerWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Dagger";
+        name = "Blade (Dagger/Knife/Bayonet)";
         setInternalName(name);
         addLookupName("InfantryDagger");
         addLookupName("InfantryKnife");
         addLookupName("InfantryBayonet");
+        addLookupName("Dagger");
         ammoType = AmmoType.T_NA;
         cost = 8;
         bv = 0.02;

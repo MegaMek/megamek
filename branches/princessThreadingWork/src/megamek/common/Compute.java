@@ -1376,8 +1376,8 @@ public class Compute {
                 && (target instanceof Entity)) {
             // distance is determined by closest point on flight path
             distance = attacker.getPosition().distance(
-                    getClosestFlightPath(attacker.getPosition(),
-                                         (Entity) target));
+                    getClosestFlightPath(attacker.getId(),
+                            attacker.getPosition(), (Entity) target));
 
             // if the ground attacker uses weapon bays and we are on a
             // ground map, then we will divide this distance by 16
@@ -1426,22 +1426,68 @@ public class Compute {
         return distance;
     }
 
-    public static Coords getClosestFlightPath(Coords aPos, Entity te) {
+    /**
+     * Returns the closest position along <code>te</codeE>'s flight path to 
+     * <code>aPos</code>.  In the case of multiple equi-distance positions, the
+     * first one is picked unless <code>te</code>'s playerPickedPassThrough
+     * position is non-null.
+     * 
+     * @param aPos
+     * @param te
+     * @return
+     */
+    public static Coords getClosestFlightPath(int attackerId, Coords aPos, Entity te) {
 
         Coords finalPos = te.getPosition();
-        int distance = aPos.distance(finalPos);
+        if (te.getPlayerPickedPassThrough(attackerId) != null) {
+            finalPos = te.getPlayerPickedPassThrough(attackerId);
+        }
+        int distance = Integer.MAX_VALUE;
+        if (finalPos != null) {
+            distance = aPos.distance(finalPos);
+        }
         // don't return zero distance Coords, but rather the Coords immediately
         // before this
         // This is necessary to determine angle of attack and arc information
         // for direct fly-overs
         for (Coords c : te.getPassedThrough()) {
-            if (!aPos.equals(c)
+            if (!aPos.equals(c) && (c != null)
                 && ((aPos.distance(c) < distance) || (distance == 0))) {
                 finalPos = c;
                 distance = aPos.distance(c);
             }
         }
         return finalPos;
+    }
+    
+    public static int getClosestFlightPathFacing(int attackerId,
+            Coords aPos, Entity te) {
+
+        Coords finalPos = te.getPosition();
+        if (te.getPlayerPickedPassThrough(attackerId) != null) {
+            finalPos = te.getPlayerPickedPassThrough(attackerId);
+        }
+        int distance = Integer.MAX_VALUE;
+        if (finalPos != null) {
+            distance = aPos.distance(finalPos);
+        }
+        int finalFacing = te.getFacing();
+        // don't return zero distance Coords, but rather the Coords immediately
+        // before this
+        // This is necessary to determine angle of attack and arc information
+        // for direct fly-overs
+        for (int i = 0; i < te.getPassedThrough().size(); i++) {
+            Coords c = te.getPassedThrough().get(i);
+            if (!aPos.equals(c) && (c != null)
+                && ((aPos.distance(c) < distance) || (distance == 0))) {
+                finalFacing = te.getPassedThroughFacing().get(i);
+                finalPos = c;
+                distance = aPos.distance(c);
+            } else if (c.equals(finalPos)) {
+                finalFacing = te.getPassedThroughFacing().get(i);
+            }
+        }
+        return finalFacing;
     }
 
     /**
@@ -3324,7 +3370,8 @@ public class Compute {
         // if using advanced AA options, then ground-to-air fire determines arc
         // by closest position
         if (isGroundToAir(ae, t) && (t instanceof Entity)) {
-            tPos = getClosestFlightPath(ae.getPosition(), (Entity) t);
+            tPos = getClosestFlightPath(ae.getId(), ae.getPosition(),
+                    (Entity) t);
         }
 
         tPosV.add(tPos);
@@ -3625,7 +3672,8 @@ public class Compute {
             }
             // Ground targets pick the closest path to Aeros (TW pg 107)
             if ((te instanceof Aero) && isGroundToAir(ae, target)) {
-                targetPos = Compute.getClosestFlightPath(ae.getPosition(), te);
+                targetPos = Compute.getClosestFlightPath(ae.getId(),
+                        ae.getPosition(), te);
             }
         }
 
@@ -3883,8 +3931,11 @@ public class Compute {
         }
 
         if (isGroundToAir(attacker, target) && (null != te)) {
-            return te.sideTable(attackPos, usePrior, te.getFacing(),
-                    Compute.getClosestFlightPath(attackPos, te));
+            int facing = Compute.getClosestFlightPathFacing(attacker.getId(),
+                    attackPos, te);
+            Coords pos = Compute.getClosestFlightPath(attacker.getId(),
+                    attackPos, te);
+            return te.sideTable(attackPos, usePrior, facing, pos);
         }
 
         if ((null != te) && (called == CalledShot.CALLED_LEFT)) {
@@ -4411,11 +4462,9 @@ public class Compute {
      * @return The base <code>ToHitData</code> of the attack.
      */
     public static ToHitData getLegAttackBaseToHit(Entity attacker,
-                                                  Entity defender, IGame game) {
-        int men = 0;
-        int base = TargetRoll.IMPOSSIBLE;
+            Entity defender, IGame game) {
         String reason = "Non Infantry not allowed to do AM attacks.";
-
+        ToHitData toReturn = null;
         boolean alreadyPerformingOther = false;
         for (Enumeration<EntityAction> actions = game.getActions(); actions
                 .hasMoreElements(); ) {
@@ -4451,37 +4500,43 @@ public class Compute {
         // Handle BattleArmor attackers.
         else if (attacker instanceof BattleArmor) {
             BattleArmor inf = (BattleArmor) attacker;
-
-            men = inf.getShootingStrength();
+            toReturn = new ToHitData(inf.getCrew().getPiloting(), "anti-mech skill");
+            int men = inf.getShootingStrength();
+            int modifier = TargetRoll.IMPOSSIBLE;
             if (men >= 4) {
-                base = inf.getCrew().getPiloting();
+                modifier = 0;
             } else if (men >= 3) {
-                base = inf.getCrew().getPiloting() + 2;
+                modifier = 2;
             } else if (men >= 2) {
-                base = inf.getCrew().getPiloting() + 5;
+                modifier = 5;
             } else if (men >= 1) {
-                base = inf.getCrew().getPiloting() + 7;
+                modifier = 7;
             }
-            reason = men + " trooper(s) active";
-
+            toReturn.addModifier(modifier, men + " trooper(s) active");
         } else if (attacker instanceof Infantry) {
             // Non-BattleArmor infantry need many more men.
             Infantry inf = (Infantry) attacker;
-            men = inf.getShootingStrength();
+            toReturn = new ToHitData(inf.getCrew().getPiloting(), "anti-mech skill");
+            int men = inf.getShootingStrength();
+            int modifier = TargetRoll.IMPOSSIBLE;
             if (men >= 22) {
-                base = inf.getCrew().getPiloting();
+                modifier = 0;
             } else if (men >= 16) {
-                base = inf.getCrew().getPiloting() + 2;
+                modifier = 2;
             } else if (men >= 10) {
-                base = inf.getCrew().getPiloting() + 5;
+                modifier = 5;
             } else if (men >= 5) {
-                base = inf.getCrew().getPiloting() + 7;
+                modifier = 7;
             }
-            reason = men + " men alive";
+            toReturn.addModifier(modifier, men + " trooper(s) active");
         }
-        ToHitData toReturn = new ToHitData(base, reason.toString(),
-                                           ToHitData.HIT_KICK, ToHitData.SIDE_FRONT);
-        if (base == TargetRoll.IMPOSSIBLE) {
+        
+        // If the swarm is impossible, ToHitData wasn't created
+        if (toReturn == null) {
+            toReturn = new ToHitData(TargetRoll.IMPOSSIBLE, reason.toString(),
+                    ToHitData.HIT_KICK, ToHitData.SIDE_FRONT);
+        }
+        if (toReturn.getValue() == TargetRoll.IMPOSSIBLE) {
             return toReturn;
         }
         toReturn = Compute.getAntiMechMods(toReturn, (Infantry) attacker,
@@ -4498,9 +4553,8 @@ public class Compute {
      * @return The base <code>ToHitData</code> of the mek.
      */
     public static ToHitData getSwarmMekBaseToHit(Entity attacker,
-                                                 Entity defender, IGame game) {
-        int men = 0;
-        int base = TargetRoll.IMPOSSIBLE;
+            Entity defender, IGame game) {
+        ToHitData toReturn = null;
         String reason = "Non Infantry not allowed to do AM attacks.";
 
         boolean alreadyPerformingOther = false;
@@ -4543,28 +4597,34 @@ public class Compute {
         // Handle BattleArmor attackers.
         else if (attacker instanceof BattleArmor) {
             BattleArmor inf = (BattleArmor) attacker;
-
-            men = inf.getShootingStrength();
+            toReturn = new ToHitData(inf.getCrew().getPiloting(), "anti-mech skill");
+            int men = inf.getShootingStrength();
+            int modifier = TargetRoll.IMPOSSIBLE;
             if (men >= 4) {
-                base = inf.getCrew().getPiloting() + 2;
+                modifier = 2;
             } else if (men >= 1) {
-                base = inf.getCrew().getPiloting() + 5;
+                modifier = 5;
             }
-            reason = men + " trooper(s) active";
+            toReturn.addModifier(modifier, men + " trooper(s) active");
         }
         // Non-BattleArmor infantry need many more men.
         else if (attacker instanceof Infantry) {
             Infantry inf = (Infantry) attacker;
-            men = inf.getShootingStrength();
+            toReturn = new ToHitData(inf.getCrew().getPiloting(), "anti-mech skill");
+            int men = inf.getShootingStrength();
+            int modifier = TargetRoll.IMPOSSIBLE;
             if (men >= 22) {
-                base = inf.getCrew().getPiloting() + 2;
+                modifier = 2;
             } else if (men >= 16) {
-                base = inf.getCrew().getPiloting() + 5;
+                modifier = 5;
             }
-            reason = men + " men alive";
+            toReturn.addModifier(modifier, men + " trooper(s) active");
         }
-        ToHitData toReturn = new ToHitData(base, reason.toString());
-        if (base == TargetRoll.IMPOSSIBLE) {
+        // If the swarm is impossible, ToHitData wasn't created
+        if (toReturn == null) {
+            toReturn = new ToHitData(TargetRoll.IMPOSSIBLE, reason.toString());
+        }
+        if (toReturn.getValue() == TargetRoll.IMPOSSIBLE) {
             return toReturn;
         }
         toReturn = Compute.getAntiMechMods(toReturn, (Infantry) attacker,

@@ -33,9 +33,10 @@ public class InfantryArchaicSingleStunStaffWeapon extends InfantryWeapon {
     public InfantryArchaicSingleStunStaffWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Single Ended Stun Staff";
+        name = "Staff (Stun Staff, Single-End)";
         setInternalName(name);
         addLookupName("InfantrySingleStunStaff");
+        addLookupName("Single Ended Stun Staff");
         ammoType = AmmoType.T_NA;
         cost = 300;
         bv = 0.06;

@@ -472,6 +472,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
+            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
 
         // Which building takes the damage?
@@ -702,6 +703,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                             nCluster, bldgAbsorbs);
                     server.creditKill(entityTarget, ae);
                     hits -= nCluster;
+                    firstHit = false;
                 }
             } // Handle the next cluster.
         } else { // We missed, but need to handle special miss cases

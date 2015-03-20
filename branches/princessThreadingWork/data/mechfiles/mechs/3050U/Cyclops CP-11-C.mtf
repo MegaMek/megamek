@@ -8,15 +8,15 @@ Era:3050
 Rules Level:2
 
 Mass:90
-Engine:360 Fusion Engine
-Structure:Standard
+Engine:360 Fusion Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:12 Single
 Walk MP:4
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:15
 RA Armor:15
 LT Armor:24
@@ -29,18 +29,19 @@ RTL Armor:8
 RTR Armor:8
 RTC Armor:11
 
-Weapons:4
-1 ISGaussRifle, Right Torso, Ammo:16
-2 ISMediumLaser, Right Arm
-1 ISSRM4, Center Torso, Ammo:25
-1 ISC3MasterComputer, Left Torso
+Weapons:5
+Medium Laser, Right Arm
+Medium Laser, Left Arm
+C3 Master with TAG, Left Torso
+Gauss Rifle, Right Torso
+SRM 4, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
--Empty-
+Medium Laser
 -Empty-
 -Empty-
 -Empty-
@@ -54,8 +55,8 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumLaser
-ISMediumLaser
+Medium Laser
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -64,11 +65,11 @@ ISMediumLaser
 -Empty-
 
 Left Torso:
-ISC3MasterComputer
-ISC3MasterComputer
-ISC3MasterComputer
-ISC3MasterComputer
-ISC3MasterComputer
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
+ISC3MasterUnit
 -Empty-
 -Empty-
 -Empty-
@@ -85,8 +86,8 @@ ISGaussRifle
 ISGaussRifle
 ISGaussRifle
 ISGaussRifle
-ISGauss Ammo
-ISGauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
 -Empty-
 -Empty-
 -Empty-
@@ -102,8 +103,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISSRM4
-ISSRM4 Ammo
+SRM 4
+IS Ammo SRM-4
 
 Head:
 Life Support
@@ -146,4 +147,5 @@ Foot Actuator
 -Empty-
 -Empty-
 -Empty-
+
 

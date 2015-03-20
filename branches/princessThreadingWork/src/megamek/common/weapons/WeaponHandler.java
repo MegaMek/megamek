@@ -351,6 +351,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
+            ae.setLastTargetDisplayName(entityTarget.getDisplayName());
         }
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
@@ -605,9 +606,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 }
             }
             if (game.getOptions().booleanOption("uac_tworolls")
-                && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
-                                                                             .getAmmoType() == AmmoType.T_AC_ULTRA_THB))
-                && (i == 2)) {
+                    && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) 
+                            || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB))
+                    && (i == 2)) {
                 // Jammed weapon doesn't get 2nd shot...
                 if (isJammed) {
                     r = new Report(9905);

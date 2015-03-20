@@ -32,10 +32,11 @@ public class InfantrySupportMk2PortableAAWeapon extends InfantryWeapon {
 
     public InfantrySupportMk2PortableAAWeapon() {
         super();
-        techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Mk 2 Man-Portable AA Weapon";
+        techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
+        name = "AA Weapon (Mk. 2, Man-Portable)";
         setInternalName(name);
         addLookupName("InfantryMk2PortableAA");
+        addLookupName("Infantry Mk 2 Man-Portable AA Weapon");
         ammoType = AmmoType.T_NA;
         cost = 3500;
         bv = 4.14;

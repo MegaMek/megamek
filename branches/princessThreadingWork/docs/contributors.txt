@@ -93,6 +93,7 @@
      Dave Nawton <hammer-gs@users.sourceforge.net>
      Eddy Cullen <screamingwns@users.sourceforge.net>
      Michael Rowlett <eventsbeyondme@users.sourceforge.net>
+	 Juliez
      
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

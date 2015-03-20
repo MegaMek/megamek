@@ -33,10 +33,11 @@ public class InfantrySupportStandardSRMWeapon extends InfantryWeapon {
     public InfantrySupportStandardSRMWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Two-Shot SRM Launcher";
+        name = "SRM Launcher (Std, Two-Shot)";
         setInternalName(name);
         addLookupName("InfantryStandardSRM");
         addLookupName("Infantry2ShotSRM");
+        addLookupName("Infantry Two-Shot SRM Launcher");
         ammoType = AmmoType.T_NA;
         cost = 1500;
         bv = 5.83;

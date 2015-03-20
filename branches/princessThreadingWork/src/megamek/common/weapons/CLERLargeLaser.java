@@ -58,7 +58,7 @@ public class CLERLargeLaser extends LaserWeapon {
         this.maxRange = RANGE_EXT;
         introDate = 2823;
         techLevel.put(2823, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_F, RATING_D };
+        availRating = new int[] { RATING_X, RATING_D, RATING_C };
         techRating = RATING_F;
     }
 }

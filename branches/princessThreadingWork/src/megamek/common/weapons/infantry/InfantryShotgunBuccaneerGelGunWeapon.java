@@ -33,9 +33,10 @@ public class InfantryShotgunBuccaneerGelGunWeapon extends InfantryWeapon {
     public InfantryShotgunBuccaneerGelGunWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Buccaneer Gel Gun";
+        name = "Gel Gun (Buccaneer)";
         setInternalName(name);
         addLookupName("InfantryBuccaneerGelGun");
+        addLookupName("Buccaneer Gel Gun");
         ammoType = AmmoType.T_NA;
         cost = 200;
         bv = 0.06;

@@ -33,10 +33,11 @@ public class InfantryArchaicHatchetWeapon extends InfantryWeapon {
     public InfantryArchaicHatchetWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Hatchet";
+        name = "Blade (Hatchet/Tomahawk)";
         setInternalName(name);
         addLookupName("InfantryHatchet");
         addLookupName("InfantryTomahawk");
+        addLookupName("Hatchet");
         ammoType = AmmoType.T_NA;
         cost = 10;
         bv = 0.04;

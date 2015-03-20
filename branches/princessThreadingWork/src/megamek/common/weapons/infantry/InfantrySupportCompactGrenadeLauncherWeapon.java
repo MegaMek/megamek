@@ -33,10 +33,11 @@ public class InfantrySupportCompactGrenadeLauncherWeapon extends InfantryWeapon 
     public InfantrySupportCompactGrenadeLauncherWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Compact Grenade Launcher";
+        name = "Grenade Launcher (Compact)";
         setInternalName(name);
         addLookupName("InfantryCompactGL");
         addLookupName("InfantryCompactGrenadeLauncher");
+        addLookupName("Infantry Compact Grenade Launcher");
         ammoType = AmmoType.T_NA;
         cost = 290;
         bv = 0.49;

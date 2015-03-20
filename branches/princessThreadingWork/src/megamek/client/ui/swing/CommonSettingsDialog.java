@@ -15,8 +15,12 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -41,19 +45,23 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
@@ -68,7 +76,8 @@ import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 
 public class CommonSettingsDialog extends ClientDialog implements
-        ActionListener, ItemListener, FocusListener, ListSelectionListener {
+        ActionListener, ItemListener, FocusListener, ListSelectionListener,
+        ChangeListener {
     
     private class PhaseCommandListMouseAdapter extends MouseInputAdapter {
         private boolean mouseDragging = false;
@@ -158,8 +167,19 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JSlider fovHighlightAlpha;
     private JCheckBox fovOutsideEnabled;
     private JSlider fovDarkenAlpha;
+    private JSlider numStripesSlider;
     private JTextField fovHighlightRingsRadii;
     private JTextField fovHighlightRingsColors;
+    
+    // Labels (there to make it possible to disable them)
+    private JLabel darkenAlphaLabel;
+    private JLabel numStripesLabel;
+    private JLabel fovHighlightRingsColorsLabel;
+    private JLabel fovHighlightRingsRadiiLabel;
+    private JLabel highlightAlphaLabel;
+    
+    private JLabel stampFormatLabel;
+    private JLabel gameLogFilenameLabel;
     
     private JComboBox<String> skinFiles;
 
@@ -202,6 +222,9 @@ public class CommonSettingsDialog extends ClientDialog implements
     private static final String UPDATE = "UPDATE"; //$NON-NLS-1$
 
     private static final String[] LOCALE_CHOICES = { "en", "de", "ru" }; //$NON-NLS-1$
+    
+    private static final Dimension LABEL_SPACER = new Dimension(5,0);
+    private static final Dimension DEPENDENT_INSET = new Dimension(25,0);
 
     /**
      * Standard constructor. There is no default constructor for this class.
@@ -230,7 +253,7 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         JPanel tacticalOverlaySettingsPanel = getTacticalOverlaySettingsPanel();
         JScrollPane tacticalOverlaySettingsPane = new JScrollPane(tacticalOverlaySettingsPanel);
-        panTabs.add("Tactical Overlay", tacticalOverlaySettingsPane);
+        panTabs.add("Graphics", tacticalOverlaySettingsPane);
 
         JPanel keyBindPanel = getKeyBindPanel();
         JScrollPane keyBindScrollPane = new JScrollPane(keyBindPanel);
@@ -245,7 +268,7 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         setLayout(new BorderLayout());
         getContentPane().add(panTabs, BorderLayout.CENTER);
-        getContentPane().add(getButtonsPanel(), BorderLayout.SOUTH);
+        getContentPane().add(getButtonsPanel(), BorderLayout.PAGE_END);
 
         // Close this dialog when the window manager says to.
         addWindowListener(new WindowAdapter() {
@@ -284,85 +307,158 @@ public class CommonSettingsDialog extends ClientDialog implements
 
     private JPanel getSettingsPanel() {
 
-        ArrayList<ArrayList<JComponent>> comps = new ArrayList<ArrayList<JComponent>>();
-        ArrayList<JComponent> row;
+        ArrayList<ArrayList<Component>> comps = new ArrayList<ArrayList<Component>>();
+        ArrayList<Component> row;
 
-        // Add the setting controls.
+        // displayLocale settings
+        JLabel displayLocaleLabel = new JLabel(Messages.getString("CommonSettingsDialog.locale")); //$NON-NLS-1$
+        // displayLocale = new JTextField(8);
+        displayLocale = new JComboBox<String>();
+        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.English")); //$NON-NLS-1$
+        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Deutsch")); //$NON-NLS-1$
+        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Russian")); //$NON-NLS-1$
+        displayLocale.setMaximumSize(new Dimension(150,40));
+        row = new ArrayList<>();
+        row.add(displayLocaleLabel);
+        row.add(displayLocale);
+        comps.add(row);
+        
+        // Horizontal Line and Spacer
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 10)));
+        comps.add(row);
+
+        JSeparator Sep = new JSeparator(SwingConstants.HORIZONTAL);
+        row = new ArrayList<>();
+        row.add(Sep);
+        comps.add(row);
+        
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 5)));
+        comps.add(row);
+        // --------------        
+
         minimapEnabled = new JCheckBox(Messages.getString("CommonSettingsDialog.minimapEnabled")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
+        row = new ArrayList<>();
         row.add(minimapEnabled);
         comps.add(row);
-
-        autoEndFiring = new JCheckBox(Messages.getString("CommonSettingsDialog.autoEndFiring")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
-        row.add(autoEndFiring);
+        
+        showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(showDamageLevel);
         comps.add(row);
-
-        autoDeclareSearchlight = new JCheckBox(Messages.getString("CommonSettingsDialog.autoDeclareSearchlight")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
-        row.add(autoDeclareSearchlight);
-        comps.add(row);
-
-        nagForMASC = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForMASC")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
-        row.add(nagForMASC);
-        comps.add(row);
-
-        mouseWheelZoom = new JCheckBox(Messages.getString("CommonSettingsDialog.mouseWheelZoom")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
-        row.add(mouseWheelZoom);
-        comps.add(row);
-
-        mouseWheelZoomFlip = new JCheckBox(Messages.getString("CommonSettingsDialog.mouseWheelZoomFlip")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
-        row.add(mouseWheelZoomFlip);
-        comps.add(row);
-
-        nagForPSR = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForPSR")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
-        row.add(nagForPSR);
-        comps.add(row);
-
-        nagForNoAction = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForNoAction")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
-        row.add(nagForNoAction);
-        comps.add(row);
-
-        animateMove = new JCheckBox(Messages.getString("CommonSettingsDialog.animateMove")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
-        row.add(animateMove);
-        comps.add(row);
-
-        showWrecks = new JCheckBox(Messages.getString("CommonSettingsDialog.showWrecks")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
-        row.add(showWrecks);
-        comps.add(row);
-
-        soundMute = new JCheckBox(Messages.getString("CommonSettingsDialog.soundMute")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
-        row.add(soundMute);
+        
+        showUnitId = new JCheckBox(Messages.getString("CommonSettingsDialog.showUnitId")); //$NON-NLS-1$
+        showUnitId.addItemListener(this);
+        row = new ArrayList<>();
+        row.add(showUnitId);
         comps.add(row);
 
         showMapHexPopup = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapHexPopup")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
+        row = new ArrayList<>();
         row.add(showMapHexPopup);
         comps.add(row);
 
         tooltipDelay = new JTextField(4);
+        tooltipDelay.setMaximumSize(new Dimension(150,40));
         JLabel tooltipDelayLabel = new JLabel(Messages.getString("CommonSettingsDialog.tooltipDelay")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
+        row = new ArrayList<>();
         row.add(tooltipDelayLabel);
         row.add(tooltipDelay);
         comps.add(row);
 
         tooltipDismissDelay = new JTextField(4);
+        tooltipDismissDelay.setMaximumSize(new Dimension(150,40));
         tooltipDismissDelay.setToolTipText(Messages.getString("CommonSettingsDialog.tooltipDismissDelayTooltip"));
         JLabel tooltipDismissDelayLabel = new JLabel(Messages.getString("CommonSettingsDialog.tooltipDismissDelay")); //$NON-NLS-1$
         tooltipDismissDelayLabel.setToolTipText(Messages.getString("CommonSettingsDialog.tooltipDismissDelayTooltip"));
-        row = new ArrayList<JComponent>();
+        row = new ArrayList<>();
         row.add(tooltipDismissDelayLabel);
         row.add(tooltipDismissDelay);
         comps.add(row);
+        
+        soundMute = new JCheckBox(Messages.getString("CommonSettingsDialog.soundMute")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(soundMute);
+        comps.add(row);
+        
+        JLabel maxPathfinderTimeLabel = new JLabel(Messages.getString("CommonSettingsDialog.pathFiderTimeLimit"));
+        maxPathfinderTime = new JTextField(5);
+        maxPathfinderTime.setMaximumSize(new Dimension(150,40));
+        row = new ArrayList<>();
+        row.add(maxPathfinderTimeLabel);
+        row.add(maxPathfinderTime);
+        comps.add(row);
+
+        // Horizontal Line and Spacer
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 10)));
+        comps.add(row);
+
+        Sep = new JSeparator(SwingConstants.HORIZONTAL);
+        row = new ArrayList<>();
+        row.add(Sep);
+        comps.add(row);
+        
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 5)));
+        comps.add(row);
+        // --------------
+        
+        nagForMASC = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForMASC")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(nagForMASC);
+        comps.add(row);
+
+        nagForPSR = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForPSR")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(nagForPSR);
+        comps.add(row);
+
+        nagForNoAction = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForNoAction")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(nagForNoAction);
+        comps.add(row);
+        
+        getFocus = new JCheckBox(Messages.getString("CommonSettingsDialog.getFocus")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(getFocus);
+        comps.add(row);
+
+        mouseWheelZoom = new JCheckBox(Messages.getString("CommonSettingsDialog.mouseWheelZoom")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(mouseWheelZoom);
+        comps.add(row);
+
+        mouseWheelZoomFlip = new JCheckBox(Messages.getString("CommonSettingsDialog.mouseWheelZoomFlip")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(mouseWheelZoomFlip);
+        comps.add(row);
+        
+        autoEndFiring = new JCheckBox(Messages.getString("CommonSettingsDialog.autoEndFiring")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(autoEndFiring);
+        comps.add(row);
+
+        autoDeclareSearchlight = new JCheckBox(Messages.getString("CommonSettingsDialog.autoDeclareSearchlight")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(autoDeclareSearchlight);
+        comps.add(row);
+
+        // Horizontal Line and Spacer
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 10)));
+        comps.add(row);
+
+        Sep = new JSeparator(SwingConstants.HORIZONTAL);
+        row = new ArrayList<>();
+        row.add(Sep);
+        comps.add(row);
+        
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 5)));
+        comps.add(row);
+        // --------------        
 
         JLabel unitStartCharLabel = new JLabel(Messages.getString("CommonSettingsDialog.protoMechUnitCodes")); //$NON-NLS-1$
         unitStartChar = new JComboBox<String>();
@@ -372,121 +468,80 @@ public class CommonSettingsDialog extends ClientDialog implements
         unitStartChar.addItem("\u0391, \u0392, \u0393, \u0394..."); //$NON-NLS-1$
         // Add option for "alpha, beta, gamma, delta..."
         unitStartChar.addItem("\u03B1, \u03B2, \u03B3, \u03B4..."); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
+        unitStartChar.setMaximumSize(new Dimension(150,40));
+        row = new ArrayList<>();
         row.add(unitStartCharLabel);
         row.add(unitStartChar);
-        comps.add(row);
-
-        JLabel maxPathfinderTimeLabel = new JLabel(Messages.getString("CommonSettingsDialog.pathFiderTimeLimit"));
-        maxPathfinderTime = new JTextField(5);
-        row = new ArrayList<JComponent>();
-        row.add(maxPathfinderTimeLabel);
-        row.add(maxPathfinderTime);
-        comps.add(row);
-
-        getFocus = new JCheckBox(Messages.getString("CommonSettingsDialog.getFocus")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
-        row.add(getFocus);
         comps.add(row);
 
         // player-specific settings
         defaultAutoejectDisabled = new JCheckBox(Messages.getString("CommonSettingsDialog.defaultAutoejectDisabled")); //$NON-NLS-1$
         defaultAutoejectDisabled.addItemListener(this);
-        row = new ArrayList<JComponent>();
+        row = new ArrayList<>();
         row.add(defaultAutoejectDisabled);
         comps.add(row);
 
         useAverageSkills = new JCheckBox(Messages.getString("CommonSettingsDialog.useAverageSkills")); //$NON-NLS-1$
         useAverageSkills.addItemListener(this);
-        row = new ArrayList<JComponent>();
+        row = new ArrayList<>();
         row.add(useAverageSkills);
         comps.add(row);
 
         generateNames = new JCheckBox(Messages.getString("CommonSettingsDialog.generateNames")); //$NON-NLS-1$
         generateNames.addItemListener(this);
-        row = new ArrayList<JComponent>();
+        row = new ArrayList<>();
         row.add(generateNames);
         comps.add(row);
-
-        showUnitId = new JCheckBox(Messages.getString("CommonSettingsDialog.showUnitId")); //$NON-NLS-1$
-        showUnitId.addItemListener(this);
-        row = new ArrayList<JComponent>();
-        row.add(showUnitId);
+        
+        // Horizontal Line and Spacer
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 10)));
         comps.add(row);
+
+        Sep = new JSeparator(SwingConstants.HORIZONTAL);
+        row = new ArrayList<>();
+        row.add(Sep);
+        comps.add(row);
+        
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 5)));
+        comps.add(row);
+        // --------------  
 
         // client-side gameLog settings
         keepGameLog = new JCheckBox(Messages.getString("CommonSettingsDialog.keepGameLog")); //$NON-NLS-1$
         keepGameLog.addItemListener(this);
-        row = new ArrayList<JComponent>();
+        row = new ArrayList<>();
         row.add(keepGameLog);
         comps.add(row);
 
-        JLabel gameLogFilenameLabel = new JLabel(Messages.getString("CommonSettingsDialog.logFileName")); //$NON-NLS-1$
+        gameLogFilenameLabel = new JLabel(Messages.getString("CommonSettingsDialog.logFileName")); //$NON-NLS-1$
         gameLogFilename = new JTextField(15);
-        row = new ArrayList<JComponent>();
+        gameLogFilename.setMaximumSize(new Dimension(250,40));
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(gameLogFilenameLabel);
         row.add(gameLogFilename);
         comps.add(row);
-
-        JLabel tileSetChoiceLabel = new JLabel(Messages.getString("CommonSettingsDialog.tileset")); //$NON-NLS-1$
-        tileSetChoice = new JComboBox<String>(); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
-        row.add(tileSetChoiceLabel);
-        row.add(tileSetChoice);
+        
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 5)));
         comps.add(row);
 
         stampFilenames = new JCheckBox(Messages.getString("CommonSettingsDialog.stampFilenames")); //$NON-NLS-1$
         stampFilenames.addItemListener(this);
-        row = new ArrayList<JComponent>();
+        row = new ArrayList<>();
         row.add(stampFilenames);
         comps.add(row);
 
-        JLabel stampFormatLabel = new JLabel(Messages.getString("CommonSettingsDialog.stampFormat")); //$NON-NLS-1$
+        stampFormatLabel = new JLabel(Messages.getString("CommonSettingsDialog.stampFormat")); //$NON-NLS-1$
         stampFormat = new JTextField(15);
         stampFormat.setMaximumSize(new Dimension(15*13,40));
-        row = new ArrayList<JComponent>();
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(stampFormatLabel);
         row.add(stampFormat);
         comps.add(row);
-
-        // displayLocale settings
-        JLabel displayLocaleLabel = new JLabel(Messages.getString("CommonSettingsDialog.locale")); //$NON-NLS-1$
-        // displayLocale = new JTextField(8);
-        displayLocale = new JComboBox<String>();
-        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.English")); //$NON-NLS-1$
-        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Deutsch")); //$NON-NLS-1$
-        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Russian")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
-        row.add(displayLocaleLabel);
-        row.add(displayLocale);
-        comps.add(row);
-
-        // showMapsheets setting
-        showMapsheets = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapsheets")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
-        row.add(showMapsheets);
-        comps.add(row);
-
-        chkAntiAliasing = new JCheckBox(Messages.getString(
-                "CommonSettingsDialog.antiAliasing")); //$NON-NLS-1$
-        chkAntiAliasing.setToolTipText(Messages.getString(
-                "CommonSettingsDialog.antiAliasingToolTip"));
-        row = new ArrayList<JComponent>();
-        row.add(chkAntiAliasing);
-        comps.add(row);
-
-        // showMapsheets setting
-        showDamageLevel = new JCheckBox(Messages.getString("CommonSettingsDialog.showDamageLevel")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
-        row.add(showDamageLevel);
-        comps.add(row);
-        
-        skinFiles = new JComboBox<String>();
-        JLabel skinFileLabel = new JLabel(Messages.getString("CommonSettingsDialog.skinFile")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
-        row.add(skinFileLabel);
-        row.add(skinFiles);
-        comps.add(row);        
 
         return createSettingsPanel(comps);
     }
@@ -597,6 +652,22 @@ public class CommonSettingsDialog extends ClientDialog implements
         fovHighlightRingsColors.setText( gs.getFovHighlightRingsColorsHsb() );
         fovOutsideEnabled.setSelected(gs.getFovDarken());
         fovDarkenAlpha.setValue((int) ((100./255.) * gs.getFovDarkenAlpha()));
+        numStripesSlider.setValue(gs.getFovStripes());
+        
+        fovHighlightAlpha.setEnabled(fovInsideEnabled.isSelected());
+        fovHighlightRingsRadii.setEnabled(fovInsideEnabled.isSelected());
+        fovHighlightRingsColors.setEnabled(fovInsideEnabled.isSelected());
+        fovDarkenAlpha.setEnabled(fovOutsideEnabled.isSelected());
+        numStripesSlider.setEnabled(fovOutsideEnabled.isSelected());
+        
+        darkenAlphaLabel.setEnabled(fovOutsideEnabled.isSelected());
+        numStripesLabel.setEnabled(fovOutsideEnabled.isSelected());
+        fovHighlightRingsColorsLabel.setEnabled(fovInsideEnabled.isSelected());
+        fovHighlightRingsRadiiLabel.setEnabled(fovInsideEnabled.isSelected());
+        highlightAlphaLabel.setEnabled(fovInsideEnabled.isSelected());
+        
+        stampFormatLabel.setEnabled(stampFilenames.isSelected());
+        gameLogFilenameLabel.setEnabled(keepGameLog.isSelected());
 
         getFocus.setSelected(gs.getFocus());
         super.setVisible(visible);
@@ -654,6 +725,10 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         gs.setShowMapsheets(showMapsheets.isSelected());
 
+        if (gs.getAntiAliasing() != chkAntiAliasing.isSelected()) {
+            clientgui.bv.clearHexImageCache();
+            clientgui.bv.repaint();
+        }
         gs.setAntiAliasing(chkAntiAliasing.isSelected());
 
         gs.setShowDamageLevel(showDamageLevel.isSelected());
@@ -679,14 +754,6 @@ public class CommonSettingsDialog extends ClientDialog implements
             cs.setMapTileset(tileSets[tileSetChoice.getSelectedIndex()]
                     .getName());
         }
-
-        // Tactical Overlay Settings
-        gs.setFovHighlight(fovInsideEnabled.isSelected());
-        gs.setFovHighlightAlpha((int) (fovHighlightAlpha.getValue() * 2.55)); // convert from 0-100 to 0-255
-        gs.setFovHighlightRingsRadii( fovHighlightRingsRadii.getText() );
-        gs.setFovHighlightRingsColorsHsb( fovHighlightRingsColors.getText() );
-        gs.setFovDarken(fovOutsideEnabled.isSelected());
-        gs.setFovDarkenAlpha((int) (fovDarkenAlpha.getValue() * 2.55)); // convert from 0-100 to 0-255
 
         ToolTipManager.sharedInstance().setInitialDelay(
                 GUIPreferences.getInstance().getTooltipDelay());
@@ -849,11 +916,37 @@ public class CommonSettingsDialog extends ClientDialog implements
      */
     public void itemStateChanged(ItemEvent event) {
         Object source = event.getItemSelectable();
+        GUIPreferences guip = GUIPreferences.getInstance();
         if (source.equals(keepGameLog)) {
             gameLogFilename.setEnabled(keepGameLog.isSelected());
+            stampFormatLabel.setEnabled(stampFilenames.isSelected());
+            gameLogFilenameLabel.setEnabled(keepGameLog.isSelected());
             // gameLogMaxSize.setEnabled(keepGameLog.isSelected());
         } else if (source.equals(stampFilenames)) {
             stampFormat.setEnabled(stampFilenames.isSelected());
+            stampFormatLabel.setEnabled(stampFilenames.isSelected());
+        } else if (source.equals(fovInsideEnabled)) {
+            guip.setFovHighlight(fovInsideEnabled.isSelected());
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
+            fovHighlightAlpha.setEnabled(fovInsideEnabled.isSelected());
+            fovHighlightRingsRadii.setEnabled(fovInsideEnabled.isSelected());
+            fovHighlightRingsColors.setEnabled(fovInsideEnabled.isSelected());
+            fovHighlightRingsColorsLabel.setEnabled(fovInsideEnabled.isSelected());
+            fovHighlightRingsRadiiLabel.setEnabled(fovInsideEnabled.isSelected());
+            highlightAlphaLabel.setEnabled(fovInsideEnabled.isSelected());
+        } else if (source.equals(fovOutsideEnabled)) {
+            guip.setFovDarken(fovOutsideEnabled.isSelected());
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
+            fovDarkenAlpha.setEnabled(fovOutsideEnabled.isSelected());
+            numStripesSlider.setEnabled(fovOutsideEnabled.isSelected());
+            darkenAlphaLabel.setEnabled(fovOutsideEnabled.isSelected());
+            numStripesLabel.setEnabled(fovOutsideEnabled.isSelected());
         }
     }
 
@@ -861,63 +954,217 @@ public class CommonSettingsDialog extends ClientDialog implements
     }
 
     public void focusLost(FocusEvent e) {
-        GUIPreferences.getInstance().setValue(
-                "Advanced" + keys.getModel().getElementAt(keysIndex),
-                value.getText());
+        Object src = e.getSource();
+        GUIPreferences guip = GUIPreferences.getInstance();          
+        if (src.equals(fovHighlightRingsRadii)) {
+            guip.setFovHighlightRingsRadii(fovHighlightRingsRadii.getText());
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
+            return;
+        } else if (src.equals(fovHighlightRingsColors)) {
+            guip.setFovHighlightRingsColorsHsb(fovHighlightRingsColors.getText());
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
+            return;
+        }
+        // For Advanced options
+        String option = "Advanced" + keys.getModel().getElementAt(keysIndex); 
+        GUIPreferences.getInstance().setValue(option, value.getText());
+        if (option.equals(GUIPreferences.ADVANCED_SHOW_COORDS)
+                && (clientgui != null) && (clientgui.bv != null)) {
+            clientgui.bv.clearHexImageCache();
+            clientgui.bv.repaint();
+        }
     }
 
     private JPanel getTacticalOverlaySettingsPanel() {
 
-        ArrayList<ArrayList<JComponent>> comps = new ArrayList<ArrayList<JComponent>>();
-        ArrayList<JComponent> row;
+        ArrayList<ArrayList<Component>> comps = new ArrayList<ArrayList<Component>>();
+        ArrayList<Component> row;
+        
+        // Anti-Aliasing
+        chkAntiAliasing = new JCheckBox(Messages.getString(
+                "CommonSettingsDialog.antiAliasing")); //$NON-NLS-1$
+        chkAntiAliasing.setToolTipText(Messages.getString(
+                "CommonSettingsDialog.antiAliasingToolTip"));
+        row = new ArrayList<>();
+        row.add(chkAntiAliasing);
+        comps.add(row);
+        
+        // Animate Moves
+        animateMove = new JCheckBox(Messages.getString("CommonSettingsDialog.animateMove")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(animateMove);
+        comps.add(row);
 
+        // Show Wrecks
+        showWrecks = new JCheckBox(Messages.getString("CommonSettingsDialog.showWrecks")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(showWrecks);
+        comps.add(row);     
+        
+        // Show Mapsheet borders
+        showMapsheets = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapsheets")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(showMapsheets);
+        comps.add(row);
+        
+        // Skin
+        skinFiles = new JComboBox<String>();
+        skinFiles.setMaximumSize(new Dimension(400,skinFiles.getMaximumSize().height));
+        JLabel skinFileLabel = new JLabel(Messages.getString("CommonSettingsDialog.skinFile")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(skinFileLabel);
+        row.add(skinFiles);
+        comps.add(row);   
+        
+        // Spacer
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 5)));
+        comps.add(row);
+
+        // Tileset
+        JLabel tileSetChoiceLabel = new JLabel(Messages.getString("CommonSettingsDialog.tileset")); //$NON-NLS-1$
+        tileSetChoice = new JComboBox<String>(); //$NON-NLS-1$
+        tileSetChoice.setMaximumSize(new Dimension(400,tileSetChoice.getMaximumSize().height));
+        row = new ArrayList<>();
+        row.add(tileSetChoiceLabel);
+        row.add(Box.createHorizontalStrut(15));
+        row.add(tileSetChoice);
+        comps.add(row);
+        
+        // Horizontal Line and Spacer
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 10)));
+        comps.add(row);
+
+        JSeparator highlightSep = new JSeparator(SwingConstants.HORIZONTAL);
+        row = new ArrayList<>();
+        row.add(highlightSep);
+        comps.add(row);
+        
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 5)));
+        comps.add(row);
+        
+        // Highlighting Radius inside FoV
+        //
+        // Highlight inside Check box
         fovInsideEnabled = new JCheckBox(Messages.getString("TacticalOverlaySettingsDialog.FovInsideEnabled")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
+        fovInsideEnabled.addItemListener(this);
+        row = new ArrayList<>();
         row.add(fovInsideEnabled);
         comps.add(row);
 
+        // Add some vertical spacing
+        row = new ArrayList<>();
+        row.add(Box.createVerticalStrut(2));
+        comps.add(row);
+
+        // Inside Opaqueness slider
         fovHighlightAlpha = new JSlider();
         fovHighlightAlpha.setMajorTickSpacing(20);
         fovHighlightAlpha.setMinorTickSpacing(5);
         fovHighlightAlpha.setPaintTicks(true);
         fovHighlightAlpha.setPaintLabels(true);
-        fovHighlightAlpha.setMaximumSize(new Dimension(700, 100));
-        JLabel highlightAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightAlpha")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
+        fovHighlightAlpha.setMaximumSize(new Dimension(250, 100));
+        fovHighlightAlpha.addChangeListener(this);
+        // Label
+        highlightAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightAlpha")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(highlightAlphaLabel);
         comps.add(row);
+        
+        // Add some vertical spacing
         row = new ArrayList<>();
+        row.add(Box.createVerticalStrut(1));
+        comps.add(row);
+        
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(fovHighlightAlpha);
         comps.add(row);
+        
+        // Add some vertical spacing
+        row = new ArrayList<>();
+        row.add(Box.createVerticalStrut(3));
+        comps.add(row);
 
-        row= new ArrayList<>();
-        JLabel fovHighlightRingsRadiiLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightRingsRadii")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        fovHighlightRingsRadiiLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightRingsRadii")); //$NON-NLS-1$
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(fovHighlightRingsRadiiLabel);
         comps.add(row);
-        row=new ArrayList<>();
+        
+        // Add some vertical spacing
+        row = new ArrayList<>();
+        row.add(Box.createVerticalStrut(2));
+        comps.add(row);
+        
+        row = new ArrayList<>();
         fovHighlightRingsRadii= new JTextField((2+1)*7);
-        fovHighlightRingsRadii.setMaximumSize(new Dimension(Integer.MAX_VALUE,fovHighlightRingsRadii.getPreferredSize().height) );
+        fovHighlightRingsRadii.addFocusListener(this);
+        fovHighlightRingsRadii.setMaximumSize(new Dimension(100,fovHighlightRingsRadii.getPreferredSize().height) );
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(fovHighlightRingsRadii);
         comps.add(row);
 
+        // Add some vertical spacing
+        row = new ArrayList<>();
+        row.add(Box.createVerticalStrut(2));
+        comps.add(row);
+        
         row= new ArrayList<>();
-        JLabel fovHighlightRingsColorsLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightRingsColors")); //$NON-NLS-1$
+        fovHighlightRingsColorsLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovHighlightRingsColors")); //$NON-NLS-1$
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(fovHighlightRingsColorsLabel);
         comps.add(row);
-        row= new ArrayList<>();
-        fovHighlightRingsColors= new JTextField(((3+1)*3+1)*7);
-        fovHighlightRingsColors.setMaximumSize(new Dimension(Integer.MAX_VALUE,fovHighlightRingsColors.getPreferredSize().height) );
+                
+        // Add some vertical spacing
+        row = new ArrayList<>();
+        row.add(Box.createVerticalStrut(2));
+        comps.add(row);
+        
+        row = new ArrayList<>();
+        fovHighlightRingsColors= new JTextField(50);//      ((3+1)*3+1)*7);
+        fovHighlightRingsColors.addFocusListener(this);
+        fovHighlightRingsColors.setMaximumSize(new Dimension(200,fovHighlightRingsColors.getPreferredSize().height) );
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(fovHighlightRingsColors);
+        row.add(Box.createHorizontalGlue());
         comps.add(row);
 
-        row= new ArrayList<>();
-        row.add(new JLabel(" "));//$NON-NLS-1$
+        // Horizontal Line and Spacer
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 10)));
         comps.add(row);
 
-
+        JSeparator OutSideSep = new JSeparator(SwingConstants.HORIZONTAL);
+        row = new ArrayList<>();
+        row.add(OutSideSep);
+        comps.add(row);
+        
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 5)));
+        comps.add(row);
+        
+        // Outside FoV Darkening
+        //
+        // Activation Checkbox
         fovOutsideEnabled = new JCheckBox(Messages.getString("TacticalOverlaySettingsDialog.FovOutsideEnabled")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
+        fovOutsideEnabled.addItemListener(this);
+        row = new ArrayList<>();
         row.add(fovOutsideEnabled);
+        comps.add(row);
+        
+        // Add some vertical spacing
+        row = new ArrayList<>();
+        row.add(Box.createVerticalStrut(1));
         comps.add(row);
 
         fovDarkenAlpha = new JSlider();
@@ -925,15 +1172,54 @@ public class CommonSettingsDialog extends ClientDialog implements
         fovDarkenAlpha.setMinorTickSpacing(5);
         fovDarkenAlpha.setPaintTicks(true);
         fovDarkenAlpha.setPaintLabels(true);
-        fovDarkenAlpha.setMaximumSize(new Dimension(700, 100));
-        JLabel darkenAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovDarkenAlpha")); //$NON-NLS-1$
-        row = new ArrayList<JComponent>();
+        fovDarkenAlpha.setMaximumSize(new Dimension(250, 100));
+        fovDarkenAlpha.addChangeListener(this);
+        darkenAlphaLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovDarkenAlpha")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(4,0)));
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(darkenAlphaLabel);
         comps.add(row);
+        
+        // Add some vertical spacing
         row = new ArrayList<>();
+        row.add(Box.createVerticalStrut(2));
+        comps.add(row);
+        
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(fovDarkenAlpha);
         comps.add(row);
-
+        
+        // Add some vertical spacing
+        row = new ArrayList<>();
+        row.add(Box.createVerticalStrut(2));
+        comps.add(row);
+        
+        numStripesSlider = new JSlider(0, 50);
+        numStripesSlider.setMajorTickSpacing(10);
+        numStripesSlider.setMinorTickSpacing(5);
+        numStripesSlider.setPaintTicks(true);
+        numStripesSlider.setPaintLabels(true);
+        numStripesSlider.setMaximumSize(new Dimension(250, 100));
+        numStripesSlider.addChangeListener(this);
+        numStripesLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovStripes")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(4,0)));
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
+        row.add(numStripesLabel);
+        comps.add(row);
+        
+        row = new ArrayList<>();
+        row.add(Box.createVerticalStrut(1));
+        comps.add(row);
+        
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(4,0)));
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
+        row.add(numStripesSlider);
+        comps.add(row);
+        
         return createSettingsPanel(comps);
     }
 
@@ -949,22 +1235,40 @@ public class CommonSettingsDialog extends ClientDialog implements
         //  second column will hold text fields for modifiers, the third
         //  column holds text fields for keys, and the fourth has a checkbox for
         //  isRepeatable.
-        JPanel keyBinds = new JPanel(new GridLayout(0,4,5,5));
-
+        JPanel keyBinds = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = gbc.gridy = 0;
+        gbc.insets = new Insets(0,10,5,10);
+        
         // Create header: labels for describing what each column does
         JLabel headers = new JLabel("Name");
         headers.setToolTipText("The name of the action");
-        keyBinds.add(headers);
+        keyBinds.add(headers, gbc);
+        gbc.gridx++;
         headers = new JLabel("Modifier");
         headers.setToolTipText("The modifier key, like shift, ctrl, alt");
-        keyBinds.add(headers);
+        keyBinds.add(headers, gbc);
+        gbc.gridx++;
         headers = new JLabel("Key");
         headers.setToolTipText("The key");
-        keyBinds.add(headers);
+        keyBinds.add(headers, gbc);
+        gbc.gridx++;
         headers = new JLabel("Repeatable?");
         headers.setToolTipText("Should this action repeat rapidly " +
                 "when the key is held down?");
-        keyBinds.add(headers);
+        keyBinds.add(headers, gbc);
+        gbc.gridy++;
+        gbc.gridx = 0;
+        gbc.gridwidth = 4;
+        
+        gbc.fill = GridBagConstraints.BOTH;
+        JSeparator sep = new JSeparator(SwingConstants.HORIZONTAL);
+        keyBinds.add(sep,gbc);
+        
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.gridy++;
+        gbc.gridwidth = 1;
+        
 
         // Create maps to retrieve the text fields for saving
         int numBinds = KeyCommandBind.values().length;
@@ -978,9 +1282,12 @@ public class CommonSettingsDialog extends ClientDialog implements
                     Messages.getString("KeyBinds.cmdNames." + kcb.cmd));
             name.setToolTipText(
                     Messages.getString("KeyBinds.cmdDesc." + kcb.cmd));
-            keyBinds.add(name);
+            gbc.anchor = GridBagConstraints.EAST;
+            keyBinds.add(name, gbc);
+            gbc.gridx++;
+            gbc.anchor = GridBagConstraints.CENTER;
 
-            final JTextField modifiers = new JTextField(15);
+            final JTextField modifiers = new JTextField(10);
             modifiers.setText(KeyEvent.getKeyModifiersText(kcb.modifiers));
             for (KeyListener kl : modifiers.getKeyListeners()){
                 modifiers.removeKeyListener(kl);
@@ -1010,9 +1317,10 @@ public class CommonSettingsDialog extends ClientDialog implements
                 }
 
             });
-            keyBinds.add(modifiers);
+            keyBinds.add(modifiers, gbc);
+            gbc.gridx++;
             cmdModifierMap.put(kcb.cmd, modifiers);
-            final JTextField key  = new JTextField(15);
+            final JTextField key  = new JTextField(10);
             key.setName(kcb.cmd);
             key.setText(KeyEvent.getKeyText(kcb.key));
             // Update how typing in the text field works
@@ -1042,12 +1350,15 @@ public class CommonSettingsDialog extends ClientDialog implements
                 }
 
             });
-            keyBinds.add(key);
+            keyBinds.add(key, gbc);
+            gbc.gridx++;
 
             JCheckBox repeatable = new JCheckBox("Repeatable?");
             repeatable.setSelected(kcb.isRepeatable);
             cmdRepeatableMap.put(kcb.cmd,repeatable);
-            keyBinds.add(repeatable);
+            keyBinds.add(repeatable, gbc);
+            gbc.gridx = 0;
+            gbc.gridy++;
         }
         return keyBinds;
     }
@@ -1158,19 +1469,27 @@ public class CommonSettingsDialog extends ClientDialog implements
         return buttonOrderPanel;
     }
 
-    private JPanel createSettingsPanel(ArrayList<ArrayList<JComponent>> comps) {
+    private JPanel createSettingsPanel(ArrayList<ArrayList<Component>> comps) {
         JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        for (ArrayList<JComponent> cs : comps) {
-            JPanel subPanel = new JPanel();
-            subPanel.setLayout(new BoxLayout(subPanel, BoxLayout.X_AXIS));
-            for (JComponent c : cs) {
-                subPanel.add(c);
+        panel.setLayout(new BorderLayout());
+        Box innerpanel = new Box(BoxLayout.PAGE_AXIS);
+        for (ArrayList<Component> cs : comps) {
+            Box subPanel = new Box(BoxLayout.LINE_AXIS);
+            for (Component c : cs) {
+                if (c instanceof JLabel) {
+                    subPanel.add(Box.createRigidArea(LABEL_SPACER));
+                    subPanel.add(c);
+                    subPanel.add(Box.createRigidArea(LABEL_SPACER));
+                } else {
+                    subPanel.add(c);    
+                }
             }
-            subPanel.add(Box.createHorizontalGlue());
-            panel.add(subPanel);
+            subPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            innerpanel.add(subPanel);
         }
-        panel.add(Box.createVerticalGlue());
+        innerpanel.add(Box.createVerticalGlue());
+        innerpanel.setBorder(new EmptyBorder(10,10,10,10));
+        panel.add(innerpanel,BorderLayout.PAGE_START);
         return panel;
     }
 
@@ -1202,6 +1521,32 @@ public class CommonSettingsDialog extends ClientDialog implements
             value.setText(GUIPreferences.getInstance().getString(
                     "Advanced" + keys.getSelectedValue()));
             keysIndex = keys.getSelectedIndex();
+        }
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent evt) {
+        GUIPreferences guip = GUIPreferences.getInstance();
+        if (evt.getSource().equals(fovHighlightAlpha)) {
+            // Need to convert from 0-100 to 0-255
+            guip.setFovHighlightAlpha((int) (fovHighlightAlpha.getValue() * 2.55));
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
+        } else if (evt.getSource().equals(fovDarkenAlpha)) {
+            // Need to convert from 0-100 to 0-255
+            guip.setFovDarkenAlpha((int) (fovDarkenAlpha.getValue() * 2.55));
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
+        } else if (evt.getSource().equals(numStripesSlider)) {
+            guip.setFovStripes(numStripesSlider.getValue());
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
         }
     }
 }

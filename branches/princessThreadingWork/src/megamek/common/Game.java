@@ -588,11 +588,19 @@ public class Game implements Serializable, IGame {
             // Even if friendly fire is acceptable, do not shoot yourself
             // Enemy units not on the board can not be shot.
             if ((otherEntity.getPosition() != null)
-                && !otherEntity.isOffBoard()
-                && otherEntity.isTargetable()
-                && (entity.isEnemyOf(otherEntity) || (friendlyFire && (entity
-                                                                               .getId() != otherEntity.getId())))) {
-                ents.add(otherEntity);
+                    && !otherEntity.isOffBoard()
+                    && otherEntity.isTargetable()
+                    && (entity.isEnemyOf(otherEntity) || (friendlyFire && (entity
+                            .getId() != otherEntity.getId())))) {
+                // Air to Ground - target must be on flight path
+                if (Compute.isAirToGround(entity, otherEntity)) {
+                    if (entity.getPassedThrough().contains(
+                            otherEntity.getPosition())) {
+                        ents.add(otherEntity);
+                    }                
+                } else {
+                    ents.add(otherEntity);
+                }
             }
         }
 

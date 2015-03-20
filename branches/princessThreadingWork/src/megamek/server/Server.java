@@ -6307,6 +6307,8 @@ public class Server implements Runnable {
         // it may already have some values
         Vector<Coords> passedThrough = entity.getPassedThrough();
         passedThrough.add(curPos);
+        List<Integer> passedThroughFacing = entity.getPassedThroughFacing();
+        passedThroughFacing.add(curFacing);
 
         // Compile the move
         md.compile(game, entity);
@@ -6340,6 +6342,8 @@ public class Server implements Runnable {
             }
             passedThrough.add(entity.getPosition());
             entity.setPassedThrough(passedThrough);
+            passedThroughFacing.add(entity.getFacing());
+            entity.setPassedThroughFacing(passedThroughFacing);
             entity.setDone(true);
             entityUpdate(entity.getId());
             return;
@@ -8059,6 +8063,7 @@ public class Server implements Runnable {
             // through
             if (!curPos.equals(lastPos)) {
                 passedThrough.add(curPos);
+                passedThroughFacing.add(curFacing);
             }
 
             // update lastPos, prevStep, prevFacing & prevHex
@@ -8089,6 +8094,7 @@ public class Server implements Runnable {
 
         // add a list of places passed through
         entity.setPassedThrough(passedThrough);
+        entity.setPassedThroughFacing(passedThroughFacing);
 
         // if we ran with destroyed hip or gyro, we need a psr
         rollTarget = entity.checkRunningWithDamage(overallMoveType);
@@ -11639,7 +11645,7 @@ public class Server implements Runnable {
                     new SpecialHexDisplay(
                             SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
                             SpecialHexDisplay.NO_ROUND, getPlayer(playerId),
-                            "ArtyAutoHit Hex, for "
+                            "Artillery auto hit hex, for "
                             + getPlayer(playerId).getName(),
                             SpecialHexDisplay.SHD_OBSCURED_TEAM));
         }
@@ -11711,6 +11717,20 @@ public class Server implements Runnable {
                 player.addMinefields(minefields);
             }
         }
+    }
+    
+    /**
+     * Client has sent an update indicating that a ground unit is firing at
+     * an airborne unit and is overriding the default select for the position
+     * in the flight path.
+     * @param packet
+     * @param connId
+     */
+    private void receiveGroundToAirHexSelectPacket(Packet packet, int connId) {
+        Integer targetId = (Integer)packet.getObject(0);
+        Integer attackerId = (Integer)packet.getObject(1);
+        Coords pos = (Coords)packet.getObject(2);
+        game.getEntity(targetId).setPlayerPickedPassThrough(attackerId, pos);
     }
 
     /**
@@ -16759,10 +16779,8 @@ public class Server implements Runnable {
                     continue;
                 }
 
-                // Engine hits cause excess heat for fighters
-                if (!((entity instanceof SmallCraft) || (entity instanceof Jumpship))) {
-                    entity.heatBuildup += 2 * a.getEngineHits();
-                }
+                // engine hits add a lot of heat, provided the engine is on
+                entity.heatBuildup += entity.getEngineCritHeat();
 
                 // Combat computers help manage heat
                 if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
@@ -20117,14 +20135,14 @@ public class Server implements Runnable {
                 // If we're using optional tank damage thresholds, setup our hit
                 // effects now...
                 if ((te instanceof Tank)
-                    && game.getOptions()
-                           .booleanOption("vehicles_threshold")
-                    && !((te instanceof VTOL) || (te instanceof GunEmplacement))) {
+                        && game.getOptions()
+                                .booleanOption("vehicles_threshold")
+                        && !((te instanceof VTOL) || (te instanceof GunEmplacement))) {
                     int thresh = (int) Math.ceil((game.getOptions()
-                                                      .booleanOption("vehicles_threshold_variable") ? te
-                                                          .getArmor(hit) : te.getOArmor(hit))
-                                                 / game.getOptions().intOption(
-                            "vehicles_threshold_divisor"));
+                            .booleanOption("vehicles_threshold_variable") ? te
+                            .getArmor(hit) : te.getOArmor(hit))
+                            / game.getOptions().intOption(
+                                    "vehicles_threshold_divisor"));
 
                     // adjust for hardened armor
                     if (hardenedArmor
@@ -20134,9 +20152,7 @@ public class Server implements Runnable {
                         thresh *= 2;
                     }
 
-                    if ((damage > thresh)
-                            || (te.getArmor(hit) < damage)
-                            || damageIS) {
+                    if ((damage > thresh) || (te.getArmor(hit) < damage)) {
                         hit.setEffect(((Tank) te).getPotCrit());
                         ((Tank) te).setOverThresh(true);
                         // TACs from the hit location table
@@ -20293,6 +20309,16 @@ public class Server implements Runnable {
                 if ((tmpDamageHold > 0) && isPlatoon) {
                     damage = tmpDamageHold;
                 }
+            }
+            
+            // For optional tank damage thresholds, the overthresh flag won't
+            // be set if IS is damaged, so set it here.
+            if ((te instanceof Tank)
+                    && ((te.getArmor(hit) < 1) || damageIS)
+                    && game.getOptions().booleanOption("vehicles_threshold")
+                    && !((te instanceof VTOL) 
+                            || (te instanceof GunEmplacement))) {
+                ((Tank) te).setOverThresh(true);
             }
 
             // is there damage remaining?
@@ -23654,8 +23680,8 @@ public class Server implements Runnable {
         // now look up on vehicle crits table
         int critType = t.getCriticalEffect(roll, loc, damagedByFire);
         if ((critType == Tank.CRIT_NONE)
-            && (game.getOptions().booleanOption("vehicles_threshold") && !t
-                .getOverThresh())) {
+                && game.getOptions().booleanOption("vehicles_threshold")
+                && !t.getOverThresh()) {
             r = new Report(6006);
             r.subject = t.getId();
             r.newlines = 0;
@@ -23667,7 +23693,7 @@ public class Server implements Runnable {
             && t.hasQuirk("fragile_fuel") && (Compute.d6(2) > 9)) {
             // BOOM!!
             vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0,
-                                                                   Tank.CRIT_FUEL_TANK), true, damage, false));
+                    Tank.CRIT_FUEL_TANK), true, damage, false));
         }
         return vDesc;
     }
@@ -27968,6 +27994,9 @@ public class Server implements Runnable {
             case Packet.COMMAND_ENTITY_ATTACK:
                 receiveAttack(packet, connId);
                 break;
+            case Packet.COMMAND_ENTITY_GTA_HEX_SELECT:
+                receiveGroundToAirHexSelectPacket(packet, connId);
+                break;                
             case Packet.COMMAND_ENTITY_ADD:
                 receiveEntityAdd(packet, connId);
                 resetPlayersDone();

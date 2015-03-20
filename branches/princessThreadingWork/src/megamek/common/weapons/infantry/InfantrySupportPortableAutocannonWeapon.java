@@ -33,10 +33,11 @@ public class InfantrySupportPortableAutocannonWeapon extends InfantryWeapon {
     public InfantrySupportPortableAutocannonWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Semi Portable Autocannon";
+        name = "Autocannon (Semi-Portable)";
         setInternalName(name);
         addLookupName("InfantryPortableAutocannon");
         addLookupName("InfantrySemiPortableAutocannon");
+        addLookupName("Infantry Semi Portable Autocannon");
         ammoType = AmmoType.T_NA;
         cost = 2000;
         bv = 2.35;

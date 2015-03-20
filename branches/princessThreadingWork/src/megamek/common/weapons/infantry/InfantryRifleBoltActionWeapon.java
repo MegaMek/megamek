@@ -33,9 +33,10 @@ public class InfantryRifleBoltActionWeapon extends InfantryWeapon {
     public InfantryRifleBoltActionWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_ALLOWED_ALL);
-        name = "Infantry Bolt Action Rifle";
+        name = "Rifle (Bolt-Action)";
         setInternalName(name);
         addLookupName("InfantryBoltActionRifle");
+        addLookupName("Infantry Bolt Action Rifle");
         ammoType = AmmoType.T_NA;
         cost = 60;
         bv = 0.43;

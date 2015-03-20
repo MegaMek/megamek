@@ -1,9 +1,0 @@
-Neoancient Taurian 2780 Medium Vehicles D
-@Neoancient Davion 2765 Medium Vehicles F,7
-@Neoancient Liao 2765 Medium Vehicles F,4
-@Neoancient Star League 2765 Medium Vehicles C,7
-Condor Heavy Hover Tank (Standard),80
-Goblin Medium Tank (Standard),60
-Korvin Tank KRV-3,40
-Maxim Heavy Hover Transport (Standard),100
-Thor Artillery Vehicle (Standard),20

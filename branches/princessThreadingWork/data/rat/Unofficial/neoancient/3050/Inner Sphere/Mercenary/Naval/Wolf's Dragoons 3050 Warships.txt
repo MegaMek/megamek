@@ -1,8 +1,0 @@
-Neoancient Wolf's Dragoons 3050 Warships
-Aegis Heavy Cruiser (Clan),100
-Congress Frigate (2542),50
-Congress Frigate (Clan),50
-Lola III Destroyer (2662),100
-Lola III Destroyer (Clan),100
-Sovetskii Soyuz Heavy Cruiser (2742),100
-Vincent Corvette Mk 42,100

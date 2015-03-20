@@ -1,9 +1,0 @@
-Neoancient Periphery 2860 Light Aerospace Fighters F
-Centurion CNT-1D,1
-Centurion CNT-2D,1
-Cheetah F-10,1
-Sabre SB-27,2
-Seydlitz SYD-21,4
-Sholagar SL-21,1
-Sparrowhawk SPR-H5,2
-Thrush TR-7,1

@@ -1,9 +1,0 @@
-Neoancient Davion 2765 Warships
-Aegis Heavy Cruiser (2582),2
-Baron Destroyer (Standard),1
-Congress D Frigate (Standard),2
-Davion Destroyer Block II,3
-Defender Battlecruiser (Standard),1
-Robinson Transport Block I,1
-Robinson Transport Block II,2
-Vincent Corvette Mk 39,2

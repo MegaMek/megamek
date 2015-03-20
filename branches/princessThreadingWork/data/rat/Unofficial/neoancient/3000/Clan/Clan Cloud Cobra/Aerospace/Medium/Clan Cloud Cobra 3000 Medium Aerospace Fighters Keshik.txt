@@ -1,8 +1,0 @@
-Neoancient Clan Cloud Cobra 3000 Medium Aerospace Fighters Keshik
-@Neoancient Clan Coyote 2950 Medium Aerospace Fighters Keshik,1
-Tyre (Standard),26
-Tyre 2,16
-Visigoth A,88
-Visigoth B,88
-Visigoth C,75
-Visigoth Prime,100

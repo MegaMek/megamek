@@ -1,9 +1,0 @@
-Neoancient General 2700 Heavy Meks F
-Archer ARC-2R,88
-Champion CHP-1N,21
-Marauder MAD-1R,15
-Orion ON1-K,100
-Ostroc OSR-2C,90
-Ostsol OTL-4D,80
-Thunderbolt TDR-5S,100
-Warhammer WHM-6R,80

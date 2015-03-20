@@ -1,9 +1,0 @@
-Neoancient Clan Coyote 3060 Warships
-Cameron Battlecruiser (Clan),50
-Essex Destroyer (Clan),50
-Liberator Cruiser (Standard),50
-Lola III Destroyer (Clan),100
-Nightlord Battleship (Standard),50
-Potemkin Troop Cruiser (Clan),100
-Sovetskii Soyuz Heavy Cruiser (Clan),100
-Texas Battleship (Clan),50

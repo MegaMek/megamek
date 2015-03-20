@@ -1,8 +1,0 @@
-Neoancient Canopus 3067 BattleArmor
-@Neoancient Clan Smoke Jaguar 3060 BattleArmor,1
-@Neoancient Marik 3060 BattleArmor,8
-IS Standard Battle Armor [Flamer],87
-IS Standard Battle Armor [LRR],100
-IS Standard Battle Armor [Laser],75
-IS Standard Battle Armor [MG],100
-IS Standard Battle Armor [SRM],67

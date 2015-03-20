@@ -1,8 +1,0 @@
-Neoancient Canopus 2700 Light Vehicles F
-@Neoancient Liao 2700 Light Vehicles F,1
-@Neoancient Marik 2700 Light Vehicles F,9
-@Neoancient Star League 2700 Light Vehicles C,1
-Cyrano Gunship (Standard),100
-Flatbed Truck (AC),56
-Packrat LRPV PKR-T5,33
-Skulker Wheeled Scout Tank (Standard),33

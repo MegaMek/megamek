@@ -1,9 +1,0 @@
-Neoancient St. Ives 3028 Heavy Aerospace Fighters D
-@Neoancient Liao 3000 Heavy Aerospace Fighters F,12
-Chippewa CHP-W5,34
-Eagle EGL-R10,30
-Eagle EGL-R6,60
-Eagle EGL-R9,30
-Thunderbird TRB-D36,84
-Transgressor TR-13,100
-Transgressor TR-14 'AC',63

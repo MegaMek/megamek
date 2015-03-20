@@ -1,6 +1,0 @@
-Neoancient Canopus 3060 BattleArmor
-@Neoancient Marik 3055 BattleArmor,9
-IS Standard Battle Armor [Flamer],88
-IS Standard Battle Armor [Laser],75
-IS Standard Battle Armor [MG],100
-IS Standard Battle Armor [SRM],88

@@ -1,8 +1,0 @@
-Neoancient Clan Blood Spirit 3060 ProtoMeks
-Centaur (Standard),14
-Gorgon (Standard),58
-Harpy (Standard),47
-Hydra (Standard),31
-Minotaur (Standard),100
-Roc (Standard),97
-Satyr (Standard),26

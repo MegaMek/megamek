@@ -1,7 +1,0 @@
-Neoancient Clan Burrock 3050 Warships
-Aegis Heavy Cruiser (Clan),50
-Essex Destroyer (Clan),50
-Fredasa Corvette Raider (Standard),50
-Lola III Destroyer (Clan),100
-Vincent Corvette Mk 42,100
-York Destroyer Carrier (Standard),100

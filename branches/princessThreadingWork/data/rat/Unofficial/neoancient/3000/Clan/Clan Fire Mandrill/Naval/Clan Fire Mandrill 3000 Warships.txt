@@ -1,7 +1,0 @@
-Neoancient Clan Fire Mandrill 3000 Warships
-Aegis Heavy Cruiser (Clan),33
-Essex Destroyer (Clan),33
-Lola III Destroyer (Clan),100
-Sovetskii Soyuz Heavy Cruiser (Clan),33
-Vincent Corvette Mk 39,25
-Vincent Corvette Mk 42,25

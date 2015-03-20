@@ -1,9 +1,0 @@
-Neoancient Circinus 2815 Assault Vehicles A
-@Neoancient Marik 2780 Assault Vehicles B,9
-@Neoancient Steiner 2780 Assault Vehicles B,13
-Demolisher Heavy Tank (Standard Mk. I),57
-Partisan Heavy Tank (Standard),60
-Puma Assault Tank PAT-005,57
-Rhino Fire Support Tank (MG),38
-Rhino Fire Support Tank (Standard),53
-Schrek PPC Carrier (Standard),100

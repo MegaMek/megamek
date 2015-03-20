@@ -1,8 +1,0 @@
-Neoancient Pentagon 2815 Medium Vehicles
-Chaparral Missile Artillery Tank (Standard),82
-Kanga Medium Hovertank (AC),65
-Kanga Medium Hovertank (Standard),33
-Thor Artillery Vehicle (AC),65
-Zephyr Hovertank (Royal),25
-Zephyr Hovertank (SRM2),13
-Zephyr Hovertank (Standard),100

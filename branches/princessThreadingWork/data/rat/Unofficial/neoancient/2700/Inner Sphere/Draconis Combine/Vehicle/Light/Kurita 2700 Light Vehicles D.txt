@@ -1,9 +1,0 @@
-Neoancient Kurita 2700 Light Vehicles D
-@Neoancient Davion 2700 Light Vehicles F,2
-@Neoancient Star League 2700 Light Vehicles C,5
-@Neoancient Steiner 2700 Light Vehicles F,2
-Chevalier Light Tank (Standard),38
-Cyrano Gunship (Standard),75
-Flatbed Truck (AC),42
-Packrat LRPV PKR-T5,38
-Skulker Wheeled Scout Tank (Standard),100

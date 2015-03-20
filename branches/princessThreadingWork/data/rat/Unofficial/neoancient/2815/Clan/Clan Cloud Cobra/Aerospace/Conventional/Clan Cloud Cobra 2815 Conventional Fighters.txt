@@ -1,5 +1,0 @@
-Neoancient Clan Cloud Cobra 2815 Conventional Fighters
-Heavy Strike Fighter Meteor,100
-Light Strike Fighter Comet,40
-Light Strike Fighter Owl,40
-Light Strike Fighter Owl II,20

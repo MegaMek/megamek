@@ -1,8 +1,0 @@
-Neoancient Mercenary 3067 Jumpships
-Invader Jumpship (PPC),88
-Invader Jumpship (Standard),88
-Merchant Jumpship (Standard),100
-Monolith Jumpship (Standard),17
-Scout JumpShip (Standard),83
-Star Lord JumpShip (Standard),33
-Tramp JumpShip (Standard),100

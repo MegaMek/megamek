@@ -1,8 +1,0 @@
-Neoancient Periphery 3050 Jumpships
-Invader Jumpship (PPC),100
-Invader Jumpship (Standard),100
-Merchant Jumpship (Standard),100
-Monolith Jumpship (Standard),17
-Scout JumpShip (Standard),33
-Star Lord JumpShip (Standard),33
-Tramp JumpShip (Standard),83

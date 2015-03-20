@@ -1,9 +1,0 @@
-Neoancient Liao 2830 Warships
-Aegis Heavy Cruiser (2372),100
-Baron Destroyer (Standard),67
-Black Lion I-Battlecruiser,33
-Carson Destroyer (Standard),33
-Du Shi Wang Battleship (Standard),33
-Lola I Destroyer (Standard),67
-Soyal Heavy Cruiser (Standard),67
-Vigilant Corvette (Standard),67

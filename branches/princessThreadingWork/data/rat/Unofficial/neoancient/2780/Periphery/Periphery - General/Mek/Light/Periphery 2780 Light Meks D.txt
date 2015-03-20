@@ -1,8 +1,0 @@
-Neoancient Periphery 2780 Light Meks D
-Commando COM-2D,45
-Firestarter FS9-H,100
-Hermes HER-1S,51
-Javelin JVN-10N,60
-Panther PNT-9R,45
-Spider SDR-5V,34
-UrbanMech UM-R60,13

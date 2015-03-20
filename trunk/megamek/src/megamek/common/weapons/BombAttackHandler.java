@@ -196,15 +196,14 @@ public class BombAttackHandler extends WeaponHandler {
                 if (type == BombType.B_INFERNO) {
                     server.deliverBombInferno(drop, ae, subjectId, vPhaseReport);
                 } else if (type == BombType.B_THUNDER) {
-                    server.deliverThunderMinefield(drop, subjectId, 20,
-                            ae.getId());
+                    server.deliverThunderMinefield(drop, ae.getOwner().getId(),
+                            20, ae.getId());
                     ArrayList<Coords> hexes = Compute.coordsAtRange(drop, 1);
                     for (Coords c : hexes) {
-                        server.deliverThunderMinefield(c, subjectId, 20,
-                                ae.getId());
+                        server.deliverThunderMinefield(c,
+                                ae.getOwner().getId(), 20, ae.getId());
                     }
                 } else {
-
                     server.deliverBombDamage(drop, type, subjectId, ae,
                             vPhaseReport);
                 }

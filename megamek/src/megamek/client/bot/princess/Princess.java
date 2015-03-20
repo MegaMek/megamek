@@ -13,6 +13,7 @@
  */
 package megamek.client.bot.princess;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -55,6 +56,7 @@ import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.logging.LogLevel;
 import megamek.common.logging.Logger;
+import megamek.common.net.Packet;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
 
@@ -86,6 +88,13 @@ public class Princess extends BotClient {
         super(name, host, port);
         logger.setVerbosity(verbosity);
         setBehaviorSettings(BehaviorSettingsFactory.getInstance(logger).DEFAULT_BEHAVIOR);
+        
+        // Start-up precog now, so that it can instantiate its game instance,
+        // and it will stay up-to date.
+        precognition = new Precognition(this);
+        precogThread = new Thread(precognition, "Princess-precognition ("
+                + getName() + ")");
+        precogThread.start();
     }
 
     public void setVerbosity(LogLevel level) {
@@ -1010,13 +1019,7 @@ public class Princess extends BotClient {
             pathSearcher.ranker = pathRanker;
             fireControl = new FireControl(this);
             pathRanker.setFireControl(fireControl);
-            precognition = new Precognition(this, game);
-            precognition.updateGame(getGame());
             pathRanker.setPathEnumerator(precognition.getPathEnumerator());
-
-            precogThread = new Thread(precognition, "Princess-precognition ("
-                                                    + getName() + ")");
-            precogThread.start();
 
             // Pick up any turrets and add their buildings to the strategic targets list.
             Enumeration<Building> buildings = getGame().getBoard().getBuildings();
@@ -1165,4 +1168,25 @@ public class Princess extends BotClient {
             log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
         }
     }
+    
+    protected void handlePacket(Packet c) {
+        final String METHOD_NAME = "handlePacket()";
+        StringBuilder msg = new StringBuilder("Received packet, cmd: "
+                + c.getCommand());
+        try {
+            super.handlePacket(c);
+            getPrecognition().handlePacket(c);
+        }
+        finally {
+            log(getClass(), METHOD_NAME, LogLevel.TRACE, msg);
+        }
+    }
+    
+    /**
+     * sends a load game file to the server
+     */
+    public void sendLoadGame(File f) {
+        precognition.resetGame();
+        super.sendLoadGame(f);
+    }    
 }

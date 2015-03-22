@@ -6725,7 +6725,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 150000;
         misc.setModes(new String[] { "Off", "Charge" });
         misc.flags = misc.flags.or(F_PPC_CAPACITOR).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.setInstantModeSwitch(false);
         misc.explosive = true;
         misc.bv = 0;
@@ -6756,7 +6756,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 150000;
         misc.setModes(new String[] { "Off", "Charge" });
         misc.flags = misc.flags.or(F_PPC_CAPACITOR).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_VTOL_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.setInstantModeSwitch(false);
         misc.explosive = true;
         // misc.bv = 88;

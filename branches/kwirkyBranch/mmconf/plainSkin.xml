@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+  This is the default skin for Megamek 
+  
+  New skins can be created by specifying UI_Element tags 
+
+  The defaultElement UI_Element specifies the default border to be used by UI 
+    components
+
+  The defaultButton UI_Element specifies the default border and background 
+    images to use for Megamek buttons.  The first image is the base default 
+   image and the second image is the pressed image 
+ 
+  NOTE: All locations should be in data/images/widgets  
+-->
+<skin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:noNamespaceSchemaLocation="skinSchema.xsl">
+
+  <!-- Defines default borders used in Megamek -->
+  <UI_Element>
+      <name>defaultElement</name>
+      <plain/>
+  </UI_Element>
+  
+    <!-- Defines default buttons -->
+  <UI_Element>
+      <name>defaultButton</name>
+      <plain/>
+  </UI_Element>
+
+</skin>

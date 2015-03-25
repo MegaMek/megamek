@@ -1,0 +1,12 @@
+3062 House Marik - Aerospace
+Transgressor TR-13,1
+Corsair CSR-V14,2
+Cheetah F-11,3
+Riever F-700,4
+Transit TR-11,5
+Stingray F-92,6
+Cheetah F-11,5
+Shiva SHV-O,4
+Stingray F-92,3
+Stingray F-94,2
+Riever F-700a,1

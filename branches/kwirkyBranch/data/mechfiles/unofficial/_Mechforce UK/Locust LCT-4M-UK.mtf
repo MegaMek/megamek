@@ -1,0 +1,148 @@
+Version:1.0
+Locust
+LCT-4M-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3060
+Rules Level:2
+
+Mass:20
+Engine:160 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:8
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:4
+RA Armor:4
+LT Armor:5
+RT Armor:5
+CT Armor:6
+HD Armor:8
+LL Armor:5
+RL Armor:5
+RTL Armor:2
+RTR Armor:2
+RTC Armor:2
+
+Weapons:3
+4 ISERSmallLaser, Right Arm
+4 ISERSmallLaser, Left Arm
+1 ISMediumLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISERSmallLaser
+ISERSmallLaser
+ISERSmallLaser
+ISERSmallLaser
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISERSmallLaser
+ISERSmallLaser
+ISERSmallLaser
+ISERSmallLaser
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+
+Right Torso:
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo-Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

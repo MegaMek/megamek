@@ -1,0 +1,154 @@
+Version:1.2
+Phoenix Hawk
+PXH-7S
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3067
+Source:Civil War
+Rules Level:2
+
+Mass:45
+Engine:270 Light Engine
+Structure:Endo Steel
+Myomer:Standard
+Ejection:Full Head Ejection System
+
+Heat Sinks:10 Double
+Walk MP:6
+Jump MP:6
+
+Armor:Ferro-Fibrous(Inner Sphere)
+LA Armor:14
+RA Armor:14
+LT Armor:16
+RT Armor:16
+CT Armor:21
+HD Armor:9
+LL Armor:22
+RL Armor:22
+RTL Armor:6
+RTR Armor:6
+RTC Armor:7
+
+Weapons:6
+Medium Laser, Left Arm
+Medium Laser, Left Arm
+Large Pulse Laser, Right Arm
+Medium Laser, Left Torso
+Medium Laser, Right Torso
+Small Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Medium Laser
+Medium Laser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISLargePulseLaser
+ISLargePulseLaser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Medium Laser
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Medium Laser
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMASC
+ISMASC
+
+Head:
+Life Support
+Sensors
+Cockpit
+Small Laser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,0 +1,98 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Silverfin Coastal Cutter
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2302
+</year>
+
+<source>
+TRO VAr
+</source>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+40
+</tonnage>
+
+<motion_type>
+Hydrofoil
+</motion_type>
+
+<transporters>
+CargoSpace:1:1
+</transporters>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<armor>
+4
+4
+4
+2
+3
+</armor>
+
+<barrating>
+7
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<Body Equipment>
+HydroFoilChassisMod
+Advanced Fire Control
+ISSRT2 Ammo
+ISMG Ammo Full
+</Body Equipment>
+
+<Front Equipment>
+SRT 2
+SRT 2
+Searchlight
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+Lifeboat (Maritime)
+</Rear Equipment>
+
+<Turret Equipment>
+ISMG
+Searchlight
+</Turret Equipment>
+

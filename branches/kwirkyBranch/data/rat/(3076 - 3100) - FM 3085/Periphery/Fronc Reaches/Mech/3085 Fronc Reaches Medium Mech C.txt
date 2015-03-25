@@ -1,0 +1,12 @@
+3085 Fronc Reaches Medium Mech C
+Hunchback HBK-4G,1
+Phoenix Hawk PXH-1,2
+Assassin ASN-23,3
+Whitworth WTH-2,4
+Vindicator VND-1R,5
+Griffin GRF-1N,6
+Enforcer ENF-4R,5
+Vindicator VND-3L,4
+Marshal MHL-X1,3
+Griffin GRF-1N,2
+Centurion CN9-A,1

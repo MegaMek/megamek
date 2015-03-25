@@ -1,0 +1,155 @@
+Version:1.0
+War Dog
+WR-DG-3-WDR-UK
+
+Config:Biped
+TechBase:Mixed (Clan Chassis)
+Era:3060
+Rules Level:4
+
+Mass:75
+Engine:300 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:13 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:22
+RA Armor:22
+LT Armor:22
+RT Armor:22
+CT Armor:32
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:8
+RTR Armor:8
+RTC Armor:8
+
+Weapons:10
+1 CLGaussRifle, Right Arm, Ammo:24
+1 CLLargePulseLaser, Left Arm
+1 CLMediumPulseLaser, Right Torso
+1 CLMediumPulseLaser, Left Torso
+1 CLAntiMissileSystem, Left Torso, Ammo:24
+1 CLECMSuite, Center Torso
+1 ISC3SlaveUnit, Center Torso
+1 CLSmallPulseLaser, Head (R)
+1 CLStreakSRM6, Left Leg, Ammo:30
+1 CLStreakSRM6, Right Leg
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLLargePulseLaser
+CLLargePulseLaser
+CLDouble Heat Sink
+CLDouble Heat Sink
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGauss Ammo
+CLGauss Ammo
+CLGauss Ammo
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLMediumPulseLaser
+CLAntiMissileSystem
+CLAMS Ammo
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLMediumPulseLaser
+CLStreakSRM6 Ammo
+CLStreakSRM6 Ammo
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLECMSuite
+ISC3SlaveUnit
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLSmallPulseLaser (R)
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLStreakSRM6
+CLStreakSRM6
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLStreakSRM6
+CLStreakSRM6
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

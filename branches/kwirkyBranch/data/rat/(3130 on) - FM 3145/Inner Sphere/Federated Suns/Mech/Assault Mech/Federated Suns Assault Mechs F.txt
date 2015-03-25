@@ -1,0 +1,12 @@
+Federated Suns Assault Mechs F
+Longbow LGB-8V,1
+Victor VTR-10D,2
+Emperor EMP-6D,3
+Goliath GOL-5D,4
+Warlord BLR-2G,5
+Stalker STK-7D,6
+Sunder SD1-O,5
+Atlas III AS7-D3,4
+Longbow LGB-13C,3
+Pendragon PDG-1R,2
+Sagittaire SGT-10X,1

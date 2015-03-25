@@ -1,0 +1,12 @@
+Mercenaries Medium A 'Mech
+Firestarter FS9-O,1
+Vindicator VND-5L,2
+Cronus CNS-5M,3
+Cobra CBR-02,4
+Hunchback HBK-5S,5
+Wolverine WVR-8K,6
+Sentry SNT-04,5
+Lynx LNX-9Q,4
+Starslayer STY-3D,3
+Cicada CDA-3F,2
+Blackjack BJ2-O,1

@@ -1,0 +1,150 @@
+Version:1.0
+Cheetah
+GTX-6Q-UK
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3055
+Rules Level:2
+
+Mass:25
+Engine:275 XL Engine
+Structure:Endo Steel
+Myomer:MASC
+
+Heat Sinks:10 Single
+Walk MP:11
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:5
+RA Armor:5
+LT Armor:6
+RT Armor:6
+CT Armor:8
+HD Armor:5
+LL Armor:6
+RL Armor:6
+RTL Armor:2
+RTR Armor:2
+RTC Armor:2
+
+Weapons:5
+1 ISMediumLaser, Right Arm
+1 ISMediumLaser, Left Arm
+1 ISSmallLaser, Right Torso
+1 ISGuardianECM, Left Torso
+1 ISBeagleActiveProbe, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISMediumLaser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISMediumLaser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISGuardianECM
+ISGuardianECM
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Endo-Steel
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISSmallLaser
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISBeagleActiveProbe
+ISBeagleActiveProbe
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISMASC
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

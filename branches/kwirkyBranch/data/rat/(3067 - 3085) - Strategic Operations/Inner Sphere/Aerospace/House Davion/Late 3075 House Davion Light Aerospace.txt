@@ -1,0 +1,12 @@
+Davion Light Aerospace Late 3075
+Thrush TR-7,1
+Dagger DARO-1B,2
+Seydlitz SYD-Z1,3
+Seydlitz SYD-Z2A,4
+Sparrowhawk SPR-6D,5
+Sparrowhawk SPR-H5,6
+Centurion CNT-1D,5
+Dagger DARO-1,4
+Dagger DARO-1A,3
+Sabre SB-27,2
+Sholagar SL-21L,1

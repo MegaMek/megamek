@@ -1,0 +1,12 @@
+Goliath Scorpion Front-Line Heavy Aerospace (FMU)
+Sabutai Prime,1
+Jengiz C,2
+Scytha A,3
+Kirghiz A,4
+Jengiz Prime,5
+Scytha B,6
+Scytha C,5
+Kirghiz Prime,4
+Scytha Prime,3
+Jengiz A,2
+Sabutai C,1

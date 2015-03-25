@@ -1,0 +1,154 @@
+Version:1.0
+Galahad (Glass Spider)
+3
+
+Config:Biped
+TechBase:Clan
+Era:3065
+Source:Civil War
+Rules Level:2
+
+Mass:60
+Engine:240 Fusion (Clan) Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:16 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:20
+RA Armor:20
+LT Armor:20
+RT Armor:20
+CT Armor:30
+HD Armor:9
+LL Armor:28
+RL Armor:28
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:7
+ER PPC, Left Arm
+ER PPC, Right Arm
+Medium Pulse Laser, Left Torso
+Medium Pulse Laser, Left Torso
+Heavy Medium Laser, Right Torso
+Heavy Medium Laser, Right Torso
+Heavy Medium Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERPPC
+CLERPPC
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLERPPC
+CLERPPC
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+CLTargeting Computer
+
+Right Torso:
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo Steel
+Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ferro-Fibrous
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

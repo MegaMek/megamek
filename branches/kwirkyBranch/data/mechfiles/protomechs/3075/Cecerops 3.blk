@@ -1,0 +1,64 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+ProtoMech
+</UnitType>
+<Name>
+Cecerops
+</Name>
+
+<model>
+3
+</model>
+
+<Tonnage>
+3
+</Tonnage>
+
+
+<cruiseMP>
+7
+</cruiseMP>
+
+<Armor>
+2
+5
+1
+1
+4
+</Armor>
+
+<Torso Equipment>
+CLSRM2
+CLSRM2 Ammo (11)
+</Torso Equipment>
+
+<type>
+Clan Level 2
+</type>
+
+<year>
+3067
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+Biped
+</motion_type>

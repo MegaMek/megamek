@@ -1,0 +1,95 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Seahorse Cargo Sub
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2625
+</year>
+
+<source>
+TRO VAr
+</source>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+250
+</tonnage>
+
+<motion_type>
+Submarine
+</motion_type>
+
+<transporters>
+cargobay:84.55:3
+troopspace:.45
+</transporters>
+
+<engine_type>
+1
+</engine_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<armor>
+25
+21
+21
+20
+</armor>
+
+<barrating>
+7
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<Body Equipment>
+SubmersibleChassisMod
+Basic Fire Control
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+ISLRT10 Ammo
+ISLRT10 Ammo
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+ISLRT10
+</Right Equipment>
+
+<Left Equipment>
+ISLRT10
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+
+

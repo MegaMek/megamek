@@ -1,0 +1,49 @@
+Mercenary/Militia Mechs Medium Mechs A
+Nightsky NGS-5S,1
+Shadow Hawk SHD-5M,2
+Hunchback HBK-5N,3
+Chameleon CLN-7W,4
+Cronus CNS-5M,5
+Apollo APL-1M,6
+Strider SR1-O,5
+Strider SR1-OA,5
+Strider SR1-OB,5
+Strider SR1-OC,5
+Strider SR1-OD,5
+Strider SR1-OE,5
+Strider SR1-OF,5
+Strider SR1-OG,5
+Strider SR1-OR,5
+Wraith TR2,4
+Firestarter FS9-O,3
+Firestarter FS9-OA,3
+Firestarter FS9-OB,3
+Firestarter FS9-OC,3
+Firestarter FS9-OD,3
+Firestarter FS9-OE,3
+Firestarter FS9-OF,3
+Firestarter FS9-OG,3
+Firestarter FS9-OH,3
+Firestarter FS9-OR,3
+Firestarter FS9-OX,3
+Firestarter FS9-OU,3
+Blackjack BJ2-O,2
+Blackjack BJ2-OA,2
+Blackjack BJ2-OB,2
+Blackjack BJ2-OC,2
+Blackjack BJ2-OD,2
+Blackjack BJ2-OE,2
+Blackjack BJ2-OF,2
+Blackjack BJ2-OR,2
+Blackjack BJ2-OX,2
+Blackjack BJ2-OU,2
+Ryoken (Stormcrow) Prime,1
+Ryoken (Stormcrow) A,1
+Ryoken (Stormcrow) B,1
+Ryoken (Stormcrow) C,1
+Ryoken (Stormcrow) D,1
+Ryoken (Stormcrow) E,1
+Ryoken (Stormcrow) F,1
+Ryoken (Stormcrow) G,1
+Ryoken (Stormcrow) H,1
+Ryoken (Stormcrow) I,1

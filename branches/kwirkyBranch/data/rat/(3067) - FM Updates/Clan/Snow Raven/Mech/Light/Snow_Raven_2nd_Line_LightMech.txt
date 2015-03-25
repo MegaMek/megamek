@@ -1,0 +1,12 @@
+Snow Raven 2nd-Line Light Mechs (FMU)
+Uller (Kit Fox) D,1
+Dasher (Fire Moth) B,2
+Jenner IIC (Standard),3
+Uller (Kit Fox) Prime,4
+Baboon (Howler) (Standard),5
+Vixen (Incubus) (Standard),6
+Peregrine (Horned Owl) (Standard),5
+Locust IIC (Standard),4
+Dasher (Fire Moth) Prime,3
+Puma (Adder) A,2
+Mongoose MON-66,1

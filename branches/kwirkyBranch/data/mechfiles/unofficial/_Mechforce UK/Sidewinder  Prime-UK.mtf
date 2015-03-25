@@ -1,0 +1,152 @@
+Version:1.0
+Sidewinder
+Prime-UK
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3058
+Rules Level:2
+
+Mass:75
+Engine:300 XL Engine
+Structure:Endo Steel
+Myomer:MASC
+
+Heat Sinks:12 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Ferro-Fibrous
+LA Armor:24
+RA Armor:24
+LT Armor:24
+RT Armor:24
+CT Armor:34
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:7
+RTR Armor:7
+RTC Armor:8
+
+Weapons:7
+1 CLGaussRifle, Right Arm, Ammo:16
+1 CLLargePulseLaser, Left Arm
+1 CLMediumPulseLaser, Left Arm
+1 CLAntiMissileSystem, Left Arm, Ammo:24
+1 CLLRM10, Right Torso, Ammo:24
+1 CLLRM10, Left Torso
+1 CLMediumPulseLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLLargePulseLaser
+CLLargePulseLaser
+Ferro-Fibrous
+CLMediumPulseLaser
+Ferro-Fibrous
+CLAntiMissileSystem
+CLAMS Ammo
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Jump Jet
+Jump Jet
+CLLRM10
+CLArtemisIV
+CLLRM10 Ammo (Clan) Artemis-capable
+CLLRM10 Ammo (Clan) Artemis-capable
+Ferro-Fibrous
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLMASC
+CLMASC
+CLMASC
+Jump Jet
+Ferro-Fibrous
+Jump Jet
+CLLRM10
+CLArtemisIV
+CLGauss Ammo
+CLGauss Ammo
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLMediumPulseLaser
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

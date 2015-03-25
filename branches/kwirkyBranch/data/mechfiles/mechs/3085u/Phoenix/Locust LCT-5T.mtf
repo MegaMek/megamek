@@ -1,0 +1,156 @@
+Version:1.0
+Locust
+LCT-5T
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3070
+Source:Jihad
+Rules Level:2
+
+Mass:20
+Engine:160 XL Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Single
+Walk MP:8
+Jump MP:0
+
+Armor:Ferro-Fibrous(Inner Sphere)
+LA Armor:6
+RA Armor:6
+LT Armor:8
+RT Armor:8
+CT Armor:9
+HD Armor:9
+LL Armor:8
+RL Armor:8
+RTL Armor:2
+RTR Armor:2
+RTC Armor:3
+
+Weapons:9
+Light Machine Gun, Left Arm
+Light Machine Gun, Left Arm
+Light Machine Gun, Left Arm
+Light Machine Gun Array, Left Arm
+Light Machine Gun, Right Arm
+Light Machine Gun, Right Arm
+Light Machine Gun, Right Arm
+Light Machine Gun Array, Right Arm
+ER Medium Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Light Machine Gun
+Light Machine Gun
+Light Machine Gun
+ISLMGA
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Light Machine Gun
+Light Machine Gun
+Light Machine Gun
+ISLMGA
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+Heat Sink
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+Heat Sink
+IS Light Machine Gun Ammo - Half
+ISCASE
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERMediumLaser
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

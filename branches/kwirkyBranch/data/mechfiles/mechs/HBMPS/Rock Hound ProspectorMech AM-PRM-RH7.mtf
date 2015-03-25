@@ -1,0 +1,148 @@
+Version:1.0
+Rock Hound ProspectorMech
+AM-PRM-RH7
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3042
+Rules Level:2
+
+Mass:40
+Engine:160 Fuel Cell Engine(IS)
+Structure:IS Industrial
+Myomer:Standard
+
+Heat Sinks:2 Single
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:10
+RA Armor:10
+LT Armor:10
+RT Armor:10
+CT Armor:12
+HD Armor:8
+LL Armor:13
+RL Armor:13
+RTL Armor:6
+RTR Armor:6
+RTC Armor:6
+
+Weapons:2
+SRM 4, Left Torso
+SRM 4, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Lift Hoist
+Lift Hoist
+Lift Hoist
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+MiningDrill
+MiningDrill
+MiningDrill
+MiningDrill
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+SRM 4
+IS Ammo SRM-4
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+SRM 4
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Searchlight
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Ejection Seat
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

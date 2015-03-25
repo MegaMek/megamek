@@ -1,0 +1,12 @@
+Clan Ghost Bear Heavy Aerospace Late 3075
+Kirghiz B,1
+Xerxes 1,2
+Jengiz D,3
+Kirghiz Prime,4
+Jengiz Prime,5
+Sabutai A,6
+Jengiz A,5
+Kirghiz A,4
+Jengiz B,3
+Scytha Prime,2
+Hydaspes (Standard),1

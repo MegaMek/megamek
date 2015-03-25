@@ -1,0 +1,151 @@
+Version:1.0
+Thunderbolt
+TDR-5SE
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2910
+Rules Level:1
+
+Mass:65
+Engine:260 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:17 Single
+Walk MP:4
+Jump MP:4
+
+Armor:Standard
+LA Armor:20
+RA Armor:20
+LT Armor:24
+RT Armor:24
+CT Armor:30
+HD Armor:9
+LL Armor:29
+RL Armor:29
+RTL Armor:6
+RTR Armor:6
+RTC Armor:11
+
+Weapons:5
+Large Laser, Right Arm
+LRM 10, Left Torso
+Medium Laser, Left Torso
+Medium Laser, Left Torso
+Medium Laser, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Large Laser
+Large Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Jump Jet
+Jump Jet
+LRM 10
+LRM 10
+Medium Laser
+Medium Laser
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Heat Sink
+Heat Sink
+Heat Sink
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Ammo LRM-10
+IS Ammo LRM-10
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

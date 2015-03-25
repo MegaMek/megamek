@@ -1,0 +1,118 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+FixedWingSupport
+</UnitType>
+
+<Name>
+Zugvogel Omni Support Aircraft
+</Name>
+
+<Model>
+Prime
+</Model>
+
+<Tonnage>
+200
+</Tonnage>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<Armor>
+51
+51
+51
+51
+</Armor>
+
+<barrating>
+10
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
+<Nose Equipment>
+ISLRM15
+ISLRM15
+ISMediumPulseLaser
+ISLAC2
+ISLAC2
+</Nose Equipment>
+
+<Aft Equipment>
+ISLightGaussRifle
+</Aft Equipment>
+
+<Body Equipment>
+Advanced Fire Control
+Armored Chassis
+STOLChassisMod
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLRM15 Ammo
+ISLAC2 Ammo
+ISLAC2 Ammo
+ISLightGauss Ammo
+ISCASE
+</Body Equipment>
+
+<heatsinks>
+4
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+369
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3086
+</year>
+
+<source>
+TRO 3085
+</source>
+
+<internal_type>
+0				
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>				
+0		
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+cargobay:23.5:1
+</transporters>
+
+<omni>
+</omni>

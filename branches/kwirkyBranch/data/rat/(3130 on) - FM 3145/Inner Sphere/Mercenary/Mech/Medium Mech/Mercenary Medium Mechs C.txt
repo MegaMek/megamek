@@ -1,0 +1,12 @@
+Mercenary Medium Mechs C
+Eisenfaust EFT-7X,1
+Rook NH-2,2
+Mongrel MGL-T1,3
+Calliope CAL-1MAF,4
+Ghost GST-10,5
+Hatchetman HCT-7S,6
+Legionnaire LGN-2D,5
+Mongoose II MON-267,4
+Violator VT-U1,3
+Shockwave SKW-2F,2
+Night Stalker NSR-K1,1

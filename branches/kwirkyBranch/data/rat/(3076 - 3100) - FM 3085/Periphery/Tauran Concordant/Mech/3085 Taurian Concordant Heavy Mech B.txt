@@ -1,0 +1,12 @@
+3085 Taurian Concordant Heavy Mech B
+Warhammer WHM-6R,1
+Archer ARC-2R,2
+Thunderbolt TDR-5S,3
+Warhammer WHM-6R,4
+Archer ARC-2R,5
+Rifleman RFL-9T,6
+Thunderbolt TDR-5Sb,5
+Archer ARC-6W,4
+Cataphract CTF-1X,3
+Warhammer WHM-10T,2
+Marauder MAD-2R,1

@@ -1,0 +1,152 @@
+Version:1.0
+Crusader
+CRD-8S
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3066
+Source:Civil War
+Rules Level:2
+
+Mass:65
+Engine:260 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:4
+
+Armor:Standard(Inner Sphere)
+LA Armor:17
+RA Armor:17
+LT Armor:19
+RT Armor:19
+CT Armor:25
+HD Armor:9
+LL Armor:25
+RL Armor:25
+RTL Armor:6
+RTR Armor:6
+RTC Armor:8
+
+Weapons:5
+LRM 10, Left Arm
+Medium Laser, Left Arm
+LRM 10, Right Arm
+Medium Laser, Right Arm
+Heavy Gauss Rifle, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+LRM 10
+LRM 10
+Medium Laser
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+LRM 10
+LRM 10
+Medium Laser
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Ammo LRM-10
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISCASE
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

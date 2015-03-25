@@ -1,0 +1,12 @@
+3034 House Davion Mech - Medium B
+Assassin ASN-101,1
+Whitworth WTH-1S,2
+Vulcan VL-5T,3
+Griffin GRF-1N,4
+Centurion CN9-A,5
+Enforcer ENF-4R,6
+Phoenix Hawk PXH-1D,5
+Shadow Hawk SHD-2D,4
+Blackjack BJ-1DB,3
+Blackjack BJ-1DC,2
+Assassin ASN-21,1

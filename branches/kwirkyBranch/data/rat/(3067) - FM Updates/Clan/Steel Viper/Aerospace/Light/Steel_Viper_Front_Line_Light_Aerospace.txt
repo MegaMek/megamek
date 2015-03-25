@@ -1,0 +1,12 @@
+Steel Viper Front-Line Light Aerospace (FMU)
+Sulla C,1
+Avar Prime,2
+Batu A,3
+Bashkir C,4
+Avar C,5
+Sulla Prime,6
+Bashkir B,5
+Batu Prime,4
+Bashkir Prime,3
+Issus (Standard),2
+Vandal C,1

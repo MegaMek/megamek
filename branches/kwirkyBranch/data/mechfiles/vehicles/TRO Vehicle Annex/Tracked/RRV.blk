@@ -1,0 +1,97 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+RRV 'Rock Rover' Half-Track
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2619
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+troopspace:1.0
+cargobay:1.054:1
+standardseats:.225:3
+</transporters>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor>
+3
+3
+3
+1
+1
+</armor>
+
+<barrating>
+8
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<Body Equipment>
+AmphibiousChassis
+Advanced Fire Control
+PintleTurret
+</Body Equipment>
+
+<Front Equipment>
+BASearchlight
+</Front Equipment>
+
+<Right Equipment>
+InfantryAssaultRifle (PT)
+</Right Equipment>
+
+<Left Equipment>
+InfantryAssaultRifle (PT)
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+InfantrySupportLaser
+</Turret Equipment>
+
+<source>
+TRO VAr
+</source>
+
+<tonnage>
+4.0
+</tonnage>
+

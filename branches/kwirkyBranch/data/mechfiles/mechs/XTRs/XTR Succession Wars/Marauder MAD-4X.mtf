@@ -1,0 +1,151 @@
+Version:1.0
+Marauder
+MAD-4X
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3039
+Source:XTR Succession Wars
+Rules Level:4
+
+Mass:75
+Engine:300 Fusion Engine(IS)
+Structure:Endo Steel Prototype
+Myomer:Standard
+
+Heat Sinks:18 Single
+Walk MP:4
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:22
+RA Armor:22
+LT Armor:20
+RT Armor:20
+CT Armor:35
+HD Armor:9
+LL Armor:19
+RL Armor:19
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:4
+Blazer Cannon, Left Arm
+Blazer Cannon, Right Arm
+SRM 6, Left Torso
+SRM 6, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+Blazer Cannon
+Blazer Cannon
+Blazer Cannon
+Blazer Cannon
+Endo Steel Prototype
+Endo Steel Prototype
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+Blazer Cannon
+Blazer Cannon
+Blazer Cannon
+Blazer Cannon
+Endo Steel Prototype
+Endo Steel Prototype
+
+Left Torso:
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+SRM 6
+SRM 6
+IS Ammo SRM-6
+Endo Steel Prototype
+Endo Steel Prototype
+Endo Steel Prototype
+
+Right Torso:
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+ISDoubleHeatSinkPrototype
+SRM 6
+SRM 6
+IS Ammo SRM-6
+Endo Steel Prototype
+Endo Steel Prototype
+Endo Steel Prototype
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Endo Steel Prototype
+Endo Steel Prototype
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel Prototype
+Endo Steel Prototype
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel Prototype
+Endo Steel Prototype
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,0 +1,58 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+Field Gun Infantry
+</Name>
+<Model>
+Motorized Batteries
+</Model>
+<squad_size>
+10
+</squad_size>
+<squadn>
+3
+</squadn>
+<Primary>
+Auto Rifle
+</Primary>
+<Secondary>
+InfantryHeavyPPC
+</Secondary>
+<secondn>
+2
+</secondn>
+<Field Guns Equipment>
+ISLAC5
+ISLAC5 Ammo
+ISLAC5
+ISLAC5 Ammo
+ISLAC5
+ISLAC5 Ammo
+ISLAC5
+ISLAC5 Ammo
+ISLAC5
+ISLAC5 Ammo
+ISLAC5
+ISLAC5 Ammo
+</Field Guns Equipment>
+<type>
+IS Level 3
+</type>
+<year>
+2500
+</year>
+<era>
+Age of War
+</era>
+<motion_type>
+Motorized
+</motion_type>

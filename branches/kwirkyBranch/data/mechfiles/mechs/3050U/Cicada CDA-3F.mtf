@@ -1,0 +1,148 @@
+Version:1.0
+Cicada
+CDA-3F
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3052
+Rules Level:2
+
+Mass:40
+Engine:320 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:8
+Jump MP:8
+
+Armor:Ferro-Fibrous
+LA Armor:8
+RA Armor:8
+LT Armor:15
+RT Armor:15
+CT Armor:15
+HD Armor:9
+LL Armor:15
+RL Armor:15
+RTL Armor:5
+RTR Armor:5
+RTC Armor:6
+
+Weapons:3
+1 ISMediumLaser, Right Torso
+1 ISMediumLaser, Left Torso
+1 ISERPPC, Left Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+ISERPPC
+ISERPPC
+ISERPPC
+Jump Jet
+Jump Jet
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISMediumLaser
+Jump Jet
+Jump Jet
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Ferro-Fibrous
+Ferro-Fibrous
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Jump Jet
+Jump Jet
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

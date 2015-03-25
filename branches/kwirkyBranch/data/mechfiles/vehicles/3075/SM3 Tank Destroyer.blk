@@ -1,0 +1,100 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+Tank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+SM3 Tank Destroyer
+</Name>
+
+<Model>
+SM3
+</Model>
+
+<year>
+3074
+</year>
+
+<source>
+Civil War
+</source>
+
+<type>
+Clan Level 2
+</type>
+
+<tonnage>
+50.0
+</tonnage>
+
+<motion_type>
+Hover
+</motion_type>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<internal_type>
+-1
+</internal_type>
+
+<armor>
+43
+29
+29
+19
+24
+</armor>
+
+<Body Equipment>
+Clan Light Machine Gun Ammo - Half
+Clan Gauss Ammo
+Clan Gauss Ammo
+Clan Gauss Ammo
+Clan Gauss Ammo
+</Body Equipment>
+
+<Front Equipment>
+CLMediumPulseLaser
+CLGaussRifle
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+CLCASE
+</Rear Equipment>
+
+<Turret Equipment>
+CLLightMG
+CLLightMG
+CLLightMG
+CLLightMG
+</Turret Equipment>
+

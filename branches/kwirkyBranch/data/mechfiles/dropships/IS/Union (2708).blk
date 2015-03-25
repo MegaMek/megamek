@@ -1,0 +1,270 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+
+Dropship
+
+</UnitType>
+
+<Name>
+
+Union
+
+</Name>
+
+<Model>
+
+(2708)
+
+</Model>
+
+<Tonnage>
+
+3600
+
+</Tonnage>
+
+<SafeThrust>
+
+3
+
+</SafeThrust>
+
+<Armor>
+
+180
+
+180
+
+180
+
+100
+
+</Armor>
+
+<Nose Equipment>
+
+ISPPC
+
+ISAC5
+
+ISAC5
+
+ISAC5 Ammo
+
+ISLRM20
+
+ISLRM20
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISMediumLaser
+
+ISMediumLaser
+
+</Nose Equipment>
+
+<Left Side Equipment>
+
+ISPPC
+
+ISAC5
+
+ISAC5
+
+ISAC5 Ammo
+
+ISAC5 Ammo
+
+ISLRM20
+
+ISLRM20
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+(R) ISLargeLaser
+
+(R) ISMediumLaser
+
+(R) ISMediumLaser
+
+</Left Side Equipment>
+
+<Right Side Equipment> 
+
+ISPPC
+
+ISAC5
+
+ISAC5
+
+ISAC5 Ammo
+
+ISAC5 Ammo
+
+ISLRM20
+
+ISLRM20
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLRM20 Ammo
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+(R) ISLargeLaser
+
+(R) ISMediumLaser
+
+(R) ISMediumLaser
+
+</Right Side Equipment>
+
+<Aft Equipment> 
+
+ISLargeLaser
+
+ISMediumLaser
+
+ISMediumLaser
+
+</Aft Equipment>
+
+<structural_integrity>
+
+11
+
+</structural_integrity>
+
+<heatsinks>
+
+90
+
+</heatsinks>
+
+<sink_type>
+
+0
+
+</sink_type>
+
+<fuel>
+
+6450
+
+</fuel>
+
+<type>
+
+IS Level 2
+
+</type>
+
+<year>
+
+2708
+
+</year>
+
+<internal_type>
+
+0
+
+</internal_type>
+
+<armor_type>
+
+0
+
+</armor_type>
+
+<engine_type>
+
+0
+
+</engine_type>
+
+<motion_type>
+
+spheroid
+
+</motion_type>
+
+
+
+<transporters>
+
+MechBay:4:2
+
+MechBay:8:2
+
+ASFBay:2:2
+
+CargoBay:74:2
+
+</transporters>
+
+<escape_pod>
+
+7
+
+</escape_pod>
+
+<life_boat>
+
+0
+
+</life_boat>
+
+<crew>
+
+42
+
+</crew>
+
+<passengers>
+
+0
+
+</passengers>

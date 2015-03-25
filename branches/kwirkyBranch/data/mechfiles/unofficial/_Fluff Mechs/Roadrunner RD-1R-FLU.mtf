@@ -1,0 +1,147 @@
+Version:1.0
+Roadrunner
+RD-1R-FLU
+
+Config:Biped
+TechBase:Clan
+Era:3050
+Rules Level:3
+
+Mass:15
+Engine:210 XL Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:14
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:3
+RA Armor:3
+LT Armor:2
+RT Armor:2
+CT Armor:3
+HD Armor:3
+LL Armor:3
+RL Armor:3
+RTL Armor:2
+RTR Armor:2
+RTC Armor:2
+
+Weapons:2
+1 CLERMediumLaser, Right Arm
+1 CLERMediumLaser, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERMediumLaser
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+CLERMediumLaser
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDouble Heat Sink
+CLDouble Heat Sink
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Ferro-Fibrous
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Endo Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo Steel
+Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

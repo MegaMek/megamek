@@ -1,0 +1,12 @@
+Wolf Empire Second Line Light Mechs
+Icestorm (Standard),1
+Locust IIC 4,2
+Incubus II (Standard),3
+Jenner IIC (Standard),4
+Locust IIC 5,5
+Locust IIC (Standard),6
+Jackalope JLP-BD,5
+Bear Cub (Standard),4
+Eyrie (Standard),3
+Locust IIC 6,2
+Parash (Standard),1

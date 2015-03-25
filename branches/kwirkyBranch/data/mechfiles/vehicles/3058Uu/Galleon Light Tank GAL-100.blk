@@ -1,0 +1,60 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Tank
+</UnitType>
+<Name>
+Galleon Light Tank
+</Name>
+<Model>
+GAL-100
+</Model>
+<Tonnage>
+30
+</Tonnage>
+<cruiseMP>
+6
+</cruiseMP>
+<Armor>
+11
+10
+10
+11
+14
+</Armor>
+<Turret Equipment>
+ISMediumLaser
+</Turret Equipment>
+<Right Equipment>
+ISSmallLaser
+</Right Equipment>
+<Left Equipment>
+ISSmallLaser
+</Left Equipment>
+<type>
+IS Level 1
+</type>
+<year>
+2692
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+1
+</engine_type>
+<motion_type>
+Tracked
+</motion_type>
+<source>
+Succession Wars
+</source>

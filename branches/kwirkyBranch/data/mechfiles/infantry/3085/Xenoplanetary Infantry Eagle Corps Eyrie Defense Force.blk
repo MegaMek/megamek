@@ -1,0 +1,48 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Infantry
+</UnitType>
+<Name>
+Xenoplanetary Infantry
+</Name>
+<Model>
+Eagle Corps Eyrie Defense Force
+</Model>
+<squad_size>
+7
+</squad_size>
+<squadn>
+4
+</squadn>
+<Primary>
+InfantryGyroslugRifle
+</Primary>
+<Secondary>
+InfantryERLaser
+</Secondary>
+<secondn>
+2
+</secondn>
+<spacesuit>
+</spacesuit>
+<encumberingarmor>
+</encumberingarmor>
+<type>
+IS Level 3
+</type>
+<year>
+2600
+</year>
+<era>
+Star League
+</era>
+<motion_type>
+Leg
+</motion_type>

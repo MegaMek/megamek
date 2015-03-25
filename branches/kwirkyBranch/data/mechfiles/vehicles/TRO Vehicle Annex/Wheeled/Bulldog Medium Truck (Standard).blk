@@ -1,0 +1,89 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Bulldog Medium Truck
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3020
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+1
+1
+1
+1
+</armor>
+
+<barrating>
+2
+</barrating>
+
+<structural_tech_rating>
+1
+</structural_tech_rating>
+
+<Body Equipment>
+</Body Equipment>
+
+<Front Equipment>
+BASearchlight
+BASearchlight
+BASearchlight
+BASearchlight
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<transporters>
+cargobay:1.617:1
+standardseats:.3:1
+</transporters>
+
+<source>
+TRO VAr
+</source>
+
+<tonnage>
+3.0
+</tonnage>
+

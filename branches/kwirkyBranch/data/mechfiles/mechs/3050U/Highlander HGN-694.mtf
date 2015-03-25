@@ -1,0 +1,151 @@
+Version:1.0
+Highlander
+HGN-694
+
+Config:Biped
+TechBase:Inner Sphere
+Era:3062
+Source:RS:3050Uu-C
+Rules Level:2
+
+Mass:90
+Engine:270 Light Engine(IS)
+Structure:IS Endo-Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:30
+RA Armor:30
+LT Armor:28
+RT Armor:28
+CT Armor:42
+HD Armor:9
+LL Armor:38
+RL Armor:38
+RTL Armor:10
+RTR Armor:10
+RTC Armor:16
+
+Weapons:4
+Large Laser, Right Torso
+Large Laser, Right Torso
+Heavy Gauss Rifle, Center Torso
+Gauss Rifle, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+ISGaussRifle
+IS Endo-Steel
+IS Endo-Steel
+IS Endo-Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+ISCASE
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Large Laser
+Large Laser
+Large Laser
+Large Laser
+IS Gauss Ammo
+IS Gauss Ammo
+IS Gauss Ammo
+ISCASE
+IS Endo-Steel
+IS Endo-Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISHeavyGaussRifle
+ISHeavyGaussRifle
+
+Head:
+Life Support
+Sensors
+Cockpit
+IS Endo-Steel
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo-Steel
+IS Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Endo-Steel
+IS Endo-Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

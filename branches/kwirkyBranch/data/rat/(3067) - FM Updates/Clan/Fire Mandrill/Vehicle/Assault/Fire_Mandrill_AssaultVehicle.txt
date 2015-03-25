@@ -1,0 +1,12 @@
+Clan Fire Mandrill Assault Vehicles (FMU)
+Morrigu Fire Support Vehicle (Standard),1
+Puma Assault Tank PAT-001,2
+Morrigu Fire Support Vehicle (Laser),3
+Demolisher Heavy Tank (Clan),4
+Morrigu Fire Support Vehicle (Laser),5
+Morrigu Fire Support Vehicle (Standard),6
+Demolisher Heavy Tank (Clan),5
+Huitzilopochtli Assault Tank 'Huey' (Standard),4
+Morrigu Fire Support Vehicle (Standard),3
+Huitzilopochtli Assault Tank 'Huey' (Standard),2
+Demolisher Heavy Tank (Clan),1

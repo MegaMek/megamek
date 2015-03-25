@@ -1,0 +1,159 @@
+Version:1.0
+Stalker
+STK-3Fk
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2750
+Source:ER 2750
+Rules Level:5
+
+Mass:85
+Engine:255 Fusion Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+
+Heat Sinks:18 Double
+Walk MP:3
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:23
+RA Armor:23
+LT Armor:25
+RT Armor:25
+CT Armor:36
+HD Armor:9
+LL Armor:25
+RL Armor:25
+RTL Armor:7
+RTR Armor:7
+RTC Armor:11
+
+Weapons:12
+LRM 10, Left Arm
+Medium Laser, Left Arm
+LRM 10, Right Arm
+Medium Laser, Right Arm
+Large Laser, Left Torso
+Streak SRM 2, Left Torso
+Streak SRM 2, Left Torso
+Large Laser, Right Torso
+Streak SRM 2, Right Torso
+Streak SRM 2, Right Torso
+Medium Laser, Left Torso
+Medium Laser, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+LRM 10
+LRM 10
+ISArtemisIV
+Medium Laser
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+LRM 10
+LRM 10
+ISArtemisIV
+Medium Laser
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+
+Left Torso:
+Large Laser
+Large Laser
+ISStreakSRM2
+ISStreakSRM2
+Medium Laser
+IS Ammo LRM-10 Artemis-capable
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+
+Right Torso:
+Large Laser
+Large Laser
+ISStreakSRM2
+ISStreakSRM2
+Medium Laser
+IS Ammo LRM-10 Artemis-capable
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+IS Streak SRM 2 Ammo
+IS Streak SRM 2 Ammo
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -1,0 +1,12 @@
+clan Fire Mandrill Front-Line Light Aerospace (FMU)
+Avar B,1
+Vandal Prime,2
+Batu Prime,3
+Bashkir A,4
+Batu A,5
+Sulla A,6
+Batu C,5
+Sulla Prime,4
+Batu B,3
+Vandal B,2
+Avar Prime,1

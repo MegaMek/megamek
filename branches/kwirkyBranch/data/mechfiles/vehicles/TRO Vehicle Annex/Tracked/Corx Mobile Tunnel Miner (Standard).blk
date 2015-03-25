@@ -1,0 +1,110 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+LargeSupportTank
+</UnitType>
+
+<Name>
+Corx Mobile Tunnel Miner
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2420
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<engine_type>
+7
+</engine_type>
+
+<armor>
+16
+3
+3
+3
+3
+3
+6
+</armor>
+
+<barrating>
+5
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
+<Body Equipment>
+Enviromental Sealed Chassis
+</Body Equipment>
+
+<Front Equipment>
+Searchlight
+Searchlight
+Tank Sprayer
+Tank Sprayer
+Tank Sprayer
+Rock Cutter
+</Front Equipment>
+
+<Front Right Equipment>
+Tank Sprayer
+</Front Right Equipment>
+
+<Front Left Equipment>
+Tank Sprayer
+</Front Left Equipment>
+
+<Rear Right Equipment>
+</Rear Right Equipment>
+
+<Rear Left Equipment>
+</Rear Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Small Laser
+Small Laser
+Searchlight
+Searchlight
+MiningDrill
+</Turret Equipment>
+
+<transporters>
+liquidcargobay:25.925:1
+</transporters>
+
+<source>
+TRO VAr
+</source>
+
+<tonnage>
+200.0
+</tonnage>
+

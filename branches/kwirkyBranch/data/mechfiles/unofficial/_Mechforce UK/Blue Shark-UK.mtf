@@ -1,0 +1,153 @@
+Version:1.0
+Blue Shark
+BESK-UK
+
+Config:Biped
+TechBase:Clan
+Era:3058
+Rules Level:2
+
+Mass:75
+Engine:300 Fusion Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:16 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Ferro-Fibrous
+LA Armor:24
+RA Armor:24
+LT Armor:24
+RT Armor:24
+CT Armor:34
+HD Armor:9
+LL Armor:32
+RL Armor:32
+RTL Armor:8
+RTR Armor:8
+RTC Armor:12
+
+Weapons:8
+1 CLERMediumLaser, Right Arm
+1 CLMediumPulseLaser, Right Arm
+1 CLERMediumLaser, Left Arm
+1 CLMediumPulseLaser, Left Arm
+1 CLATM12, Right Torso, Ammo:30
+1 CLATM12, Left Torso
+2 CLERSmallLaser, Center Torso
+1 CLERSmallLaser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+CLMediumPulseLaser
+-Empty-
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+CLERMediumLaser
+CLMediumPulseLaser
+-Empty-
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+
+Left Torso:
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12 ER Ammo
+CLATM12 Ammo
+CLATM12 HE Ammo
+CLDouble Heat Sink
+CLDouble Heat Sink
+Endo Steel
+Endo Steel
+
+Right Torso:
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12 ER Ammo
+CLATM12 Ammo
+CLATM12 HE Ammo
+CLDouble Heat Sink
+CLDouble Heat Sink
+Endo Steel
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLERSmallLaser
+CLERSmallLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLERSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

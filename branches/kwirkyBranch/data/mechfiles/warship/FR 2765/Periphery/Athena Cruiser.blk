@@ -1,0 +1,231 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Athena Cruiser
+</Name>
+<Model>
+(Standard)
+</Model>
+<Tonnage>
+50000
+</Tonnage>
+<SafeThrust>
+2
+</SafeThrust>
+<Armor>
+70
+68
+68
+68
+68
+70
+</Armor>
+
+<Nose Equipment>
+(B) NAC30
+NAC30
+NAC30 Ammo:20
+(B) NAC30
+NAC30
+NAC30 Ammo:20
+</Nose Equipment>
+
+<Front Left Side Equipment>
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+(B) WhiteShark
+WhiteShark
+WhiteShark Ammo:20
+(B) WhiteShark
+WhiteShark
+WhiteShark Ammo:20
+(B) WhiteShark
+WhiteShark
+WhiteShark Ammo:20
+</Front Left Side Equipment>
+
+<Front Right Side Equipment>
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+(B) WhiteShark
+WhiteShark
+WhiteShark Ammo:20
+(B) WhiteShark
+WhiteShark
+WhiteShark Ammo:20
+(B) WhiteShark
+WhiteShark
+WhiteShark Ammo:20
+</Front Right Side Equipment>
+
+<Left Broadside Equipment>
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+</Left Broadside Equipment>
+
+<Right Broadside Equipment>
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+</Right Broadside Equipment>
+
+<Aft Left Side Equipment>
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+(B) WhiteShark
+WhiteShark
+WhiteShark Ammo:20
+(B) WhiteShark
+WhiteShark
+WhiteShark Ammo:20
+(B) WhiteShark
+WhiteShark
+WhiteShark Ammo:20
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment> 
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+(B) WhiteShark
+WhiteShark
+WhiteShark Ammo:20
+(B) WhiteShark
+WhiteShark
+WhiteShark Ammo:20
+(B) WhiteShark
+WhiteShark
+WhiteShark Ammo:200
+</Aft Right Side Equipment>
+
+<Aft Equipment> 
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+(B) NAC30
+NAC30
+NAC30 Ammo:20
+(B) NAC30
+NAC30
+NAC30 Ammo:20
+(B) WhiteShark
+WhiteShark
+WhiteShark Ammo:20
+(B) WhiteShark
+WhiteShark
+WhiteShark Ammo:20
+(B) WhiteShark
+WhiteShark
+WhiteShark Ammo:200
+</Aft Equipment>
+
+<structural_integrity>
+90
+</structural_integrity>
+<heatsinks>
+7000
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+5000
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+2569
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+<engine_type>
+0
+</engine_type>
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+SmallCraftBay:22:5
+CargoBay:26317:2
+infantrybay:4:5
+</transporters>
+<docking_collar>
+0
+</docking_collar>
+<grav_deck>
+2
+</grav_deck>
+<escape_pod>
+100
+</escape_pod>
+<life_boat>
+100
+</life_boat>
+<crew>
+512
+</crew>
+<passengers>
+300
+</passengers>

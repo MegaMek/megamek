@@ -1,0 +1,12 @@
+3085 Mercenary Heavy Mech B
+Brahma BRM-5A,1
+Marauder MAD-3R,2
+Thanatos TNS-4S,3
+Bandersnatch BNDR-01Ar,4
+War Dog WR-DG-02FC,5
+Gallowglas GAL-2GLS,6
+Cestus CTS-6Y,5
+Archer ARC-9M,4
+Koschei KSC-5I,3
+Black Hawk-KU BHKU-O,2
+Excalibur EXC-B2,1

@@ -6,23 +6,23 @@
 <project default="all" name="MegaMek" basedir=".">
     <!-- Global properties for this build -->
 
-    <property name="srcdir" value="src"/>
-    <property name="propdir" value="i18n"/>
-    <property name="confdir" value="mmconf"/>
-    <property name="logdir" value="logs"/>
-    <property name="builddir" value="classes"/>
-    <property name="libdir" value="lib"/>
-    <property name="libdir.test" value="lib-test"/>
-    <property name="datadir" value="data"/>
-    <property name="apidocdir" value="apidocs"/>
-    <property name="docdir" value="docs"/>
-    <property name="util" value="packaging_utils"/>
-    <property name="dir.build.teststaging" location="${builddir}/teststaging"/>
-    <property name="dir.build.testreport" location="${builddir}/testreport"/>
-    <property name="dir.test.src" location="unittests"/>
-    <property name="dir.build.test" location="${builddir}/unittests"/>
+    <property name="dir.src.java" value="src"/>
+    <property name="dir.prop" value="i18n"/>
+    <!-- <property name="confdir" value="mmconf"/> confdir not used; proposed change to "dir.conf" or delete -->
+    <property name="dir.log" value="logs"/>
+    <property name="dir.build" value="classes"/>
+    <property name="dir.lib.java" value="lib"/>
+    <property name="dir.lib.test" value="lib-test"/>
+    <property name="dir.data" value="data"/>
+    <property name="dir.apidoc" value="apidocs"/>
+    <!-- <property name="docdir" value="docs"/> docdir not used; proposed change to "dir.docs" or delete -->
+    <!-- <property name="util" value="packaging_utils"/> util not used; proposed change to "dir.util" or delete --> 
+    <property name="dir.build.teststaging" location="${dir.build}/teststaging"/>
+    <property name="dir.build.testreport" location="${dir.build}/testreport"/>
+    <property name="dir.src.test" location="unittests"/>
+    <property name="dir.build.test" location="${dir.build}/unittests"/>
 
-    <property name="timestampfile" value="${logdir}/timestamp"/>
+    <property name="timestampfile" value="${dir.log}/timestamp"/>
     <property name="TinyXMLsrc" value="TinyXML07-src.zip"/>
 
     <!-- Name of the target jarfile and the class containing the main-Method -->
@@ -33,13 +33,13 @@
     <property name="dataclasspath" value="."/>
 
     <path id="classpath">
-        <fileset dir="${libdir}" includes="*.jar"/>
+        <fileset dir="${dir.lib.java}" includes="*.jar"/>
     </path>
 
     <path id="classpath.compile-unittest">
         <path refid="classpath"/>
-        <pathelement location="${builddir}"/>
-        <fileset dir="${libdir.test}"/>
+        <pathelement location="${dir.build}"/>
+        <fileset dir="${dir.lib.test}"/>
     </path>
 
     <path id="classpath.run-unittest">
@@ -69,35 +69,35 @@
         <tstamp/>
 
         <!-- Ensure that the build directory exists. -->
-        <mkdir dir="${builddir}"/>
+        <mkdir dir="${dir.build}"/>
     </target>
 
     <target name="compile" depends="init" description="Compile java sources into class files">
         <!-- compile -->
-        <javac debug="true" debuglevel="lines,source" target="1.7" source="1.7" destdir="${builddir}" srcdir="${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true">
+        <javac debug="true" debuglevel="lines,source" target="1.7" source="1.7" destdir="${dir.build}" srcdir="${dir.src.java}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true">
             <classpath>
                 <pathelement location="${basedir}" />
-                <fileset dir="${libdir}" includes="*.jar" />
+                <fileset dir="${dir.lib.java}" includes="*.jar" />
             </classpath>
         </javac>
         <!-- generate current equipment.txt -->
         <java classname="megamek.MegaMek" fork="true">
             <arg line="-eqdb docs/equipment.txt" />
             <classpath>
-                <pathelement path="${builddir}" />
-                <fileset dir="${libdir}" includes="*.jar" />
+                <pathelement path="${dir.build}" />
+                <fileset dir="${dir.lib.java}" includes="*.jar" />
             </classpath>
         </java>
         <!-- Ensure that the log directory exists. -->
-        <mkdir dir="${logdir}" />
+        <mkdir dir="${dir.log}" />
         <touch file="${timestampfile}" />
     </target>
 
     <target name="jar" depends="unit.test" description="Generates JAR File from compiled sources">
-        <!-- collects all files from the ${builddir} (classes) and generates the jar file in ${basedir} -->
-        <jar basedir="${builddir}" jarfile="${basedir}/${jarfile}">
-            <fileset dir="${propdir}" includes="**/*.properties"/>
-            <fileset dir="${srcdir}" includes="**/*.properties"/>
+        <!-- collects all files from the ${dir.build} (classes) and generates the jar file in ${basedir} -->
+        <jar basedir="${dir.build}" jarfile="${basedir}/${jarfile}">
+            <fileset dir="${dir.prop}" includes="**/*.properties"/>
+            <fileset dir="${dir.src.java}" includes="**/*.properties"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Class-Path" value=". ${jarclasspath}"/>
@@ -107,29 +107,29 @@
     </target>
 
     <target name="run" depends="compile" description="Runs Megamek">
-        <echo message="Running MegaMek from build directory: ${builddir}"/>
+        <echo message="Running MegaMek from build directory: ${dir.build}"/>
         <java classname="megamek.MegaMek" fork="true">
             <classpath>
                 <pathelement path="${basedir}"/>
-                <pathelement path="${builddir}"/>
-                <fileset dir="${libdir}" includes="*.jar"/>
+                <pathelement path="${dir.build}"/>
+                <fileset dir="${dir.lib.java}" includes="*.jar"/>
                 <pathelement path="${basedir}/src/"/>
                 <pathelement path="${basedir}/l10n/"/>
             </classpath>
         </java>
     </target>
 
-    <!-- generates MegaMek API Doc in ${apidocdir} -->
+    <!-- generates MegaMek API Doc in ${dir.apidoc} -->
     <target name="apidoc" description="Generate javadocs for Megamek">
-        <mkdir dir="${apidocdir}"/>
-        <javadoc classpath="${basedir}" destdir="${apidocdir}" package="yes" packagenames="megamek.*"
-                 sourcepath="${srcdir}" windowtitle="MegaMek API"/>
+        <mkdir dir="${dir.apidoc}"/>
+        <javadoc classpath="${basedir}" destdir="${dir.apidoc}" package="yes" packagenames="megamek.*"
+                 sourcepath="${dir.src.java}" windowtitle="MegaMek API"/>
     </target>
 
     <target name="clean" description="Remove all compiled and generated files">
         <!-- Delete the ${build} directory tree -->
-        <delete dir="${builddir}"/>
-        <delete dir="${apidocdir}"/>
+        <delete dir="${dir.build}"/>
+        <delete dir="${dir.apidoc}"/>
         <delete file="${timestampfile}"/>
         <delete file="${jarfile}"/>
         <delete>
@@ -138,7 +138,7 @@
             </fileset>
         </delete>
         <delete>
-            <fileset dir="${datadir}/mechfiles">
+            <fileset dir="${dir.data}/mechfiles">
                 <include name="units.cache"/>
             </fileset>
         </delete>
@@ -149,7 +149,7 @@
     <target name="compileTests" depends="compile" unless="skip.tests"  description="Compile unit tests">
         <delete dir="${dir.build.test}"/>
         <mkdir dir="${dir.build.test}"/>
-        <javac srcdir="${dir.test.src}" destdir="${dir.build.test}" includeantruntime="false" debug="true">
+        <javac srcdir="${dir.src.test}" destdir="${dir.build.test}" includeantruntime="false" debug="true">
             <classpath refid="classpath.compile-unittest"/>
         </javac>
     </target>

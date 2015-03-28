@@ -4,25 +4,29 @@
 <!-- from a command prompt where this file is located -->
 
 <project default="all" name="MegaMek" basedir=".">
-    <!-- Global properties for this build -->
 
-    <property name="dir.src.java" value="src"/>
-    <property name="dir.prop" value="i18n"/>
-    <!-- <property name="confdir" value="mmconf"/> confdir not used; proposed change to "dir.conf" or delete -->
-    <property name="dir.log" value="logs"/>
+<!-- ==================
+     PROPERTIES SECTION
+     ================== -->
+
+    <property name="dir.apidoc" value="apidocs"/>
     <property name="dir.build" value="classes"/>
+    <property name="dir.build.test" location="${dir.build}/unittests"/>
+    <property name="dir.build.testreport" location="${dir.build}/testreport"/>
+    <property name="dir.build.teststaging" location="${dir.build}/teststaging"/>
+    <!-- <property name="confdir" value="mmconf"/> confdir not used; proposed change to "dir.conf" or delete -->
+    <property name="dir.data" value="data"/>
+    <!-- <property name="docdir" value="docs"/> docdir not used; proposed change to "dir.docs" or delete -->
     <property name="dir.lib.java" value="lib"/>
     <property name="dir.lib.test" value="lib-test"/>
-    <property name="dir.data" value="data"/>
-    <property name="dir.apidoc" value="apidocs"/>
-    <!-- <property name="docdir" value="docs"/> docdir not used; proposed change to "dir.docs" or delete -->
-    <!-- <property name="util" value="packaging_utils"/> util not used; proposed change to "dir.util" or delete --> 
-    <property name="dir.build.teststaging" location="${dir.build}/teststaging"/>
-    <property name="dir.build.testreport" location="${dir.build}/testreport"/>
+    <property name="dir.log" value="logs"/>
+    <property name="dir.prop" value="i18n"/>
+    <property name="dir.src.java" value="src"/>
     <property name="dir.src.test" location="unittests"/>
-    <property name="dir.build.test" location="${dir.build}/unittests"/>
+    <!-- <property name="util" value="packaging_utils"/> util not used; proposed change to "dir.util" or delete -->
 
     <property name="timestampfile" value="${dir.log}/timestamp"/>
+
     <property name="TinyXMLsrc" value="TinyXML07-src.zip"/>
 
     <!-- Name of the target jarfile and the class containing the main-Method -->
@@ -32,28 +36,14 @@
     <!-- This is the relative path to the 'data' directory -->
     <property name="dataclasspath" value="."/>
 
-    <path id="classpath">
-        <fileset dir="${dir.lib.java}" includes="*.jar"/>
-    </path>
-
-    <path id="classpath.compile-unittest">
-        <path refid="classpath"/>
-        <pathelement location="${dir.build}"/>
-        <fileset dir="${dir.lib.test}"/>
-    </path>
-
-    <path id="classpath.run-unittest">
-        <path refid="classpath.compile-unittest"/>
-        <pathelement location="${dir.build.test}"/>
-    </path>
+<!-- =================
+     CLASSPATH SECTION
+     ================= -->
 
     <!-- Build the list of the lib/*.jar files to be included in the "Class-Path" attribute of the jar's manifest dynamically.  -->
     <pathconvert pathsep=" " property="jarclasspath">
         <path>
-            <!-- We'll include the jars in the "lib" directory -->
-            <fileset dir="lib/">
-                <include name="*.jar"/>
-            </fileset>
+            <fileset dir="lib/" includes="*.jar" />
         </path>
         <mapper>
             <chainedmapper>
@@ -63,24 +53,33 @@
         </mapper>
     </pathconvert>
 
-    <!-- initializes system before build -->
-    <target name="init">
-        <!-- Create the time stamp -->
-        <tstamp/>
+<!-- ===============
+     TARGETS SECTION
+     =============== -->
 
-        <!-- Ensure that the build directory exists. -->
-        <mkdir dir="${dir.build}"/>
+    <!-- touch a file in dir.log to mark (start of) most recent operation -->
+    <target name="init">
+        <mkdir dir="${dir.log}" />
+        <tstamp/>
+        <touch file="${timestampfile}" />
     </target>
 
-    <target name="compile" depends="init" description="Compile java sources into class files">
-        <!-- compile -->
-        <javac debug="true" debuglevel="lines,source" target="1.7" source="1.7" destdir="${dir.build}" srcdir="${dir.src.java}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true">
+    <target name="compile" depends="init" description="Compile java sources">
+        <mkdir dir="${dir.build}" />
+        <javac debug="true" debuglevel="lines,source" target="1.7" source="1.7"
+               destdir="${dir.build}" srcdir="${dir.src.java}" memoryInitialSize="512m"
+               memoryMaximumSize="512m" fork="true" includeantruntime="false">
             <classpath>
                 <pathelement location="${basedir}" />
                 <fileset dir="${dir.lib.java}" includes="*.jar" />
             </classpath>
         </javac>
-        <!-- generate current equipment.txt -->
+    </target>
+
+    <!-- generate current equipment.txt -->
+    <target name="compile.equp" />
+<!-- Commented-out until it is determined what exactly it is for...
+    <target name="compile.equp" depends="compile.java">
         <java classname="megamek.MegaMek" fork="true">
             <arg line="-eqdb docs/equipment.txt" />
             <classpath>
@@ -88,25 +87,11 @@
                 <fileset dir="${dir.lib.java}" includes="*.jar" />
             </classpath>
         </java>
-        <!-- Ensure that the log directory exists. -->
-        <mkdir dir="${dir.log}" />
-        <touch file="${timestampfile}" />
     </target>
+-->
 
-    <target name="jar" depends="unit.test" description="Generates JAR File from compiled sources">
-        <!-- collects all files from the ${dir.build} (classes) and generates the jar file in ${basedir} -->
-        <jar basedir="${dir.build}" jarfile="${basedir}/${jarfile}">
-            <fileset dir="${dir.prop}" includes="**/*.properties"/>
-            <fileset dir="${dir.src.java}" includes="**/*.properties"/>
-            <manifest>
-                <attribute name="Built-By" value="${user.name}"/>
-                <attribute name="Class-Path" value=". ${jarclasspath}"/>
-                <attribute name="Main-Class" value="${jarmainclass}"/>
-            </manifest>
-        </jar>
-    </target>
-
-    <target name="run" depends="compile" description="Runs Megamek">
+    <!-- Kwirk: 'run' has never done anything meaningful on my system -->
+    <target name="run" depends="compile, compile.equp" description="Build and run Megamek">
         <echo message="Running MegaMek from build directory: ${dir.build}"/>
         <java classname="megamek.MegaMek" fork="true">
             <classpath>
@@ -119,64 +104,109 @@
         </java>
     </target>
 
-    <!-- generates MegaMek API Doc in ${dir.apidoc} -->
-    <target name="apidoc" description="Generate javadocs for Megamek">
-        <mkdir dir="${dir.apidoc}"/>
+    <target name="apidoc" description="Generate javadocs for Megamek" >
+        <mkdir dir="${dir.apidoc}" />
         <javadoc classpath="${basedir}" destdir="${dir.apidoc}" package="yes" packagenames="megamek.*"
-                 sourcepath="${dir.src.java}" windowtitle="MegaMek API"/>
+                 sourcepath="${dir.src.java}" windowtitle="MegaMek API" />
     </target>
 
-    <target name="clean" description="Remove all compiled and generated files">
-        <!-- Delete the ${build} directory tree -->
-        <delete dir="${dir.build}"/>
-        <delete dir="${dir.apidoc}"/>
-        <delete file="${timestampfile}"/>
-        <delete file="${jarfile}"/>
-        <delete>
-            <fileset dir="${basedir}">
-                <include name="**/megamek-*.zip"/>
-            </fileset>
-        </delete>
-        <delete>
-            <fileset dir="${dir.data}/mechfiles">
-                <include name="units.cache"/>
-            </fileset>
-        </delete>
-    </target>
-
-    <target depends="clean, compile, jar" name="all" description="Clean, compile and build a jar"/>
-
-    <target name="compileTests" depends="compile" unless="skip.tests"  description="Compile unit tests">
-        <delete dir="${dir.build.test}"/>
-        <mkdir dir="${dir.build.test}"/>
+    <!-- compile unit tests from source -->
+    <target name="compile.test" depends="compile" unless="skip.tests" >
+        <mkdir dir="${dir.build.test}" />
         <javac srcdir="${dir.src.test}" destdir="${dir.build.test}" includeantruntime="false" debug="true">
-            <classpath refid="classpath.compile-unittest"/>
+            <classpath>
+                <pathelement path="${dir.build}" />
+                <fileset dir="${dir.lib.test}" includes="*.jar" />
+            </classpath>
         </javac>
     </target>
 
-    <target depends="compileTests" name="unit.test" description="Execute unit tests">
+    <!-- clean teststaging and testreport directories -->
+    <target name="-pretest">
         <delete dir="${dir.build.teststaging}"/>
         <delete dir="${dir.build.testreport}"/>
+    </target>
+
+    <!-- Runs all unit tests
+         Loads test reports into teststaging directory
+         Halts build upon error -->
+    <target name="test.halting" depends="compile.test, -pretest">
         <mkdir dir="${dir.build.teststaging}"/>
         <mkdir dir="${dir.build.testreport}"/>
-
-        <junit fork="true" maxmemory="256m" showoutput="true" printsummary="yes" forkmode="once" haltonfailure="true"
-               haltonerror="true" failureproperty="tests.failed" dir=".">
-            <classpath refid="classpath.run-unittest"/>
-            <formatter type="xml" usefile="true"/>
+        <junit fork="true" maxmemory="256m" showoutput="true" 
+               printsummary="true" forkmode="once" haltonfailure="true"
+               haltonerror="true" failureproperty="tests.failed" dir="${basedir}">
+            <classpath>
+                <pathelement path="${dir.build}:${dir.build.test}" />
+                <fileset dir="${dir.lib.java}" includes="*.jar" />
+                <fileset dir="${dir.lib.test}" includes="*.jar" />
+            </classpath>
             <batchtest fork="true" todir="${dir.build.teststaging}">
+                <formatter type="xml" />
                 <fileset dir="${dir.build.test}">
                     <include name="**/*Test.class"/>
                     <include name="**/*Tests.class"/>
                 </fileset>
             </batchtest>
         </junit>
+    </target>
 
+    <!-- Run build-halting test suite, compose results -->
+    <target name="test.report" depends="test.halting">
         <junitreport todir="${dir.build.testreport}">
-            <fileset dir="${dir.build.teststaging}">
-                <include name="TEST-*.xml"/>
-            </fileset>
+            <fileset dir="${dir.build.teststaging}" includes="TEST-*.xml" />
         </junitreport>
+    </target>
+
+    <target name="jar" depends="compile" description="Generate JAR File from compiled sources">
+        <jar basedir="${dir.build}" jarfile="${basedir}/${jarfile}">
+            <fileset dir="${dir.prop}" includes="**/*.properties"/>
+            <fileset dir="${dir.src.java}" includes="**/*.properties"/>
+            <manifest>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Class-Path" value=". ${jarclasspath}"/>
+                <attribute name="Main-Class" value="${jarmainclass}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="clean" description="Remove all compiled and generated files" >
+        <delete dir="${dir.build}" />
+        <delete dir="${dir.apidoc}" />
+        <delete dir="${dir.log}" />
+        <delete file="${jarfile}" />
+        <delete>
+            <!-- ant should have no purview over (generated?) .zip files... -->
+            <fileset dir="${basedir}" includes="**/megamek-*.zip" />
+        </delete>
+        <delete file="${dir.data}/mechfiles/units.cache" />
+        <!-- 
+        <delete>
+            <fileset dir="${dir.data}/mechfiles" includes="units.cache" />
+        </delete>
+        -->
+    </target>
+
+    <target name="all" depends="clean, test.report, jar"
+            description="Clean, compile, run tests, and build a jar" />
+
+    <target name="test" depends="compile.test, -pretest" description="Run tests; configure with -Dtests=pattern (where pattern defaults to *Test)" >
+        <property name="tests" value="*Test" />
+        <property name="test.quiet" value="false" />
+        <mkdir dir="${dir.build.testreport}" />
+        <junit maxmemory="256m" haltonfailure="false"
+                fork="true" forkmode="once">
+            <classpath>
+                <pathelement path="${dir.build}:${dir.build.test}" />
+                <fileset dir="${dir.lib.java}" includes="*.jar" />
+                <fileset dir="${dir.lib.test}" includes="*.jar" />
+            </classpath>
+            <formatter type="brief" usefile="false" unless="${test.quiet}" />
+            <batchtest todir="${dir.build.testreport}" >
+                <formatter type="xml" />
+                <fileset dir="${dir.src.test}" includes="**/${tests}.java" />
+            </batchtest>
+        </junit>
     </target>
 
 </project>

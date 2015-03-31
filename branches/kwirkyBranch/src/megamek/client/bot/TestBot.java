@@ -38,7 +38,7 @@ import megamek.common.Minefield;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.MoveStepType;
 import megamek.common.Protomech;
 import megamek.common.TargetRoll;
 import megamek.common.Terrains;

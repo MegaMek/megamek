@@ -13,8 +13,8 @@ import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.MovePath;
 import megamek.common.Terrains;
-import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
+import megamek.common.MoveStepType;
 import megamek.common.Tank;
 
 /**

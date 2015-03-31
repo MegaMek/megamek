@@ -31,6 +31,7 @@ import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
+import megamek.common.MoveStepType;
 import megamek.common.PilotingRollData;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;

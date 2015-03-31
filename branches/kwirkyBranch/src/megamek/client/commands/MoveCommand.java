@@ -20,7 +20,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.MovePath;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.MoveStepType;
 
 /**
  * @author dirk

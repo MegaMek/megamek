@@ -36,7 +36,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import megamek.common.Building.BasementType;
 import megamek.common.IGame.Phase;
-import megamek.common.MovePath.MoveStepType;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;

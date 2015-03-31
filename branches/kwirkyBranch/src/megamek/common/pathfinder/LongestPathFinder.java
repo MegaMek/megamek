@@ -13,9 +13,9 @@ import megamek.common.Coords;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.MovePath;
-import megamek.common.Tank;
-import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
+import megamek.common.MoveStepType;
+import megamek.common.Tank;
 
 /**
  * Path finder that specialises in finding paths that can enter a single hex

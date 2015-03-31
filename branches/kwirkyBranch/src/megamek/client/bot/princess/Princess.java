@@ -47,6 +47,7 @@ import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
+import megamek.common.MoveStepType;
 import megamek.common.PilotingRollData;
 import megamek.common.Tank;
 import megamek.common.Targetable;
@@ -728,9 +729,9 @@ public class Princess extends BotClient {
                 return true;
             }
 
-            MovePath.MoveStepType type = (getBooleanOption("tacops_careful_stand") ?
-                                          MovePath.MoveStepType.CAREFUL_STAND :
-                                          MovePath.MoveStepType.GET_UP);
+            MoveStepType type = (getBooleanOption("tacops_careful_stand") ?
+                                          MoveStepType.CAREFUL_STAND :
+                                          MoveStepType.GET_UP);
             MoveStep getUp = new MoveStep(movePath, type);
 
             // If our odds to get up are equal to or worse than the threshold, consider ourselves immobile.
@@ -741,7 +742,7 @@ public class Princess extends BotClient {
         }
 
         // How likely are we to get unstuck.
-        MovePath.MoveStepType type = MovePath.MoveStepType.FORWARDS;
+        MoveStepType type = MoveStepType.FORWARDS;
         MoveStep walk = new MoveStep(movePath, type);
         IHex hex = getHex(mech.getPosition());
         PilotingRollData target = mech.checkBogDown(walk, hex, mech.getPriorPosition(), mech.getPosition(),
@@ -795,7 +796,7 @@ public class Princess extends BotClient {
                 // If this entity is falling back, able to flee the board, on its home edge, and must flee, do so.
                 if (mustFleeBoard(entity)) {
                     MovePath mp = new MovePath(game, entity);
-                    mp.addStep(MovePath.MoveStepType.FLEE);
+                    mp.addStep(MoveStepType.FLEE);
                     return mp;
                 }
 
@@ -805,7 +806,7 @@ public class Princess extends BotClient {
                     log(getClass(), METHOD_NAME, LogLevel.INFO, msg);
                     sendChat(msg);
                     MovePath mp = new MovePath(game, entity);
-                    mp.addStep(MovePath.MoveStepType.EJECT);
+                    mp.addStep(MoveStepType.EJECT);
                     return mp;
                 }
             }

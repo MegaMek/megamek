@@ -84,7 +84,7 @@ import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.WeaponOrderHandler;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.MoveStepType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEndEvent;

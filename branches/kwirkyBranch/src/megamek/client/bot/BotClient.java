@@ -58,6 +58,7 @@ import megamek.common.Minefield;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
+import megamek.common.MoveStepType;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
@@ -790,9 +791,9 @@ public abstract class BotClient extends Client {
 
         // Start the path assuming forward movement, but if the unit is jump-capable, use jump movement.
         MovePath pathToCenter = new MovePath(game, entity);
-        MovePath.MoveStepType type = MovePath.MoveStepType.FORWARDS;
+        MoveStepType type = MoveStepType.FORWARDS;
         if (entity.getOriginalJumpMP() > 0) {
-            type = MovePath.MoveStepType.START_JUMP;
+            type = MoveStepType.START_JUMP;
         }
 
         // Check the cache to see if we've already tested this hex for this movement mode.

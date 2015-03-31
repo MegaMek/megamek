@@ -22,7 +22,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.MovePath;
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.MoveStepType;
 
 public class PathSearcher {
 
@@ -130,7 +130,7 @@ public class PathSearcher {
                     if (!p.getLastStep().isLegal()) {
                         continue; // don't make illegal moves
                     }
-                    if (p.getLastStep().getType() == MovePath.MoveStepType.GET_UP) {
+                    if (p.getLastStep().getType() == MoveStepType.GET_UP) {
                         if (p.getLastStep().getMpUsed() > sp.path.getEntity()
                                                                  .getRunMP()) {
                             continue; // ignore if I'm out of MP

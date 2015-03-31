@@ -30,6 +30,7 @@ import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
+import megamek.common.MoveStepType;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
@@ -123,7 +124,7 @@ public class BasicPathRankerTest {
 
         // Test a normal flight.
         MoveStep mockLastStep = Mockito.mock(MoveStep.class);
-        Mockito.when(mockLastStep.getType()).thenReturn(MovePath.MoveStepType.FORWARDS);
+        Mockito.when(mockLastStep.getType()).thenReturn(MoveStepType.FORWARDS);
         MovePath mockPath = Mockito.mock(MovePath.class);
         Mockito.when(mockPath.getFinalVelocity()).thenReturn(10);
         Mockito.when(mockPath.getFinalAltitude()).thenReturn(10);
@@ -131,7 +132,7 @@ public class BasicPathRankerTest {
         Assert.assertNull(testRanker.doAeroSpecificRanking(mockPath, false));
 
         // Test a stall
-        Mockito.when(mockLastStep.getType()).thenReturn(MovePath.MoveStepType.FORWARDS);
+        Mockito.when(mockLastStep.getType()).thenReturn(MoveStepType.FORWARDS);
         Mockito.when(mockPath.getFinalVelocity()).thenReturn(0);
         Mockito.when(mockPath.getFinalAltitude()).thenReturn(10);
         RankedPath expected = new RankedPath(-1000d, mockPath, "stall");
@@ -139,7 +140,7 @@ public class BasicPathRankerTest {
         Assert.assertNull(testRanker.doAeroSpecificRanking(mockPath, true));
 
         // Test a crash.
-        Mockito.when(mockLastStep.getType()).thenReturn(MovePath.MoveStepType.FORWARDS);
+        Mockito.when(mockLastStep.getType()).thenReturn(MoveStepType.FORWARDS);
         Mockito.when(mockPath.getFinalVelocity()).thenReturn(10);
         Mockito.when(mockPath.getFinalAltitude()).thenReturn(0);
         expected = new RankedPath(-10000d, mockPath, "crash");
@@ -147,7 +148,7 @@ public class BasicPathRankerTest {
         assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath, true));
 
         // Test flying off the board.
-        Mockito.when(mockLastStep.getType()).thenReturn(MovePath.MoveStepType.RETURN);
+        Mockito.when(mockLastStep.getType()).thenReturn(MoveStepType.RETURN);
         Mockito.when(mockPath.getFinalVelocity()).thenReturn(10);
         Mockito.when(mockPath.getFinalAltitude()).thenReturn(10);
         expected = new RankedPath(-5d, mockPath, "off-board");

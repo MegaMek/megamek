@@ -29,7 +29,7 @@ import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Vector;
 
-import megamek.common.MovePath.MoveStepType;
+import megamek.common.MoveStepType;
 import megamek.common.options.OptionsConstants;
 
 /**

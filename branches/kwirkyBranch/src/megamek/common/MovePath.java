@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import megamek.common.MoveStepType;
 import megamek.common.pathfinder.AbstractPathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
@@ -52,10 +53,6 @@ public class MovePath implements Cloneable, Serializable {
 
     protected void setEntity(Entity entity) {
         this.entity = entity;
-    }
-
-    public enum MoveStepType {
-        NONE, FORWARDS, BACKWARDS, TURN_LEFT, TURN_RIGHT, GET_UP, GO_PRONE, START_JUMP, CHARGE, DFA, FLEE, LATERAL_LEFT, LATERAL_RIGHT, LATERAL_LEFT_BACKWARDS, LATERAL_RIGHT_BACKWARDS, UNJAM_RAC, LOAD, UNLOAD, EJECT, CLEAR_MINEFIELD, UP, DOWN, SEARCHLIGHT, LAY_MINE, HULL_DOWN, CLIMB_MODE_ON, CLIMB_MODE_OFF, SWIM, DIG_IN, FORTIFY, SHAKE_OFF_SWARMERS, TAKEOFF, VTAKEOFF, LAND, ACC, DEC, EVADE, SHUTDOWN, STARTUP, SELF_DESTRUCT, ACCN, DECN, ROLL, OFF, RETURN, LAUNCH, THRUST, YAW, CRASH, RECOVER, RAM, HOVER, MANEUVER, LOOP, CAREFUL_STAND, JOIN, DROP, VLAND, MOUNT, UNDOCK;
     }
 
     public static class Key {
@@ -323,7 +320,7 @@ public class MovePath implements Cloneable, Serializable {
         if (steps.size() > 0) {
             final MoveStep step1 = getStep(steps.size() - 1);
 
-            if (step1.getType() == MovePath.MoveStepType.START_JUMP) {
+            if (step1.getType() == MoveStepType.START_JUMP) {
                 getEntity().setIsJumpingNow(false);
             }
 
@@ -585,10 +582,10 @@ public class MovePath implements Cloneable, Serializable {
                 }
                 // we've returned, anything other than the following 4 types are
                 // illegal
-                if ((step.getType() != MovePath.MoveStepType.TURN_LEFT)
-                        && (step.getType() != MovePath.MoveStepType.TURN_RIGHT)
-                        && (step.getType() != MovePath.MoveStepType.UNLOAD)
-                        && (step.getType() != MovePath.MoveStepType.GO_PRONE)) {
+                if ((step.getType() != MoveStepType.TURN_LEFT)
+                        && (step.getType() != MoveStepType.TURN_RIGHT)
+                        && (step.getType() != MoveStepType.UNLOAD)
+                        && (step.getType() != MoveStepType.GO_PRONE)) {
                     // we only need to identify the first illegal move
                     step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
                     break;
@@ -625,7 +622,7 @@ public class MovePath implements Cloneable, Serializable {
         final MoveStep step3 = getStep(index + 2);
 
         if (step1.oppositeTurn(step3)
-                && ((step2.getType() == MovePath.MoveStepType.BACKWARDS) || (step2.getType() == MovePath.MoveStepType.FORWARDS))) {
+                && ((step2.getType() == MoveStepType.BACKWARDS) || (step2.getType() == MoveStepType.FORWARDS))) {
             final MoveStepType stepType = step1.getType();
             final MoveStepType direction = step2.getType();
             // remove all old steps
@@ -681,7 +678,7 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     /**
-     * Returns the direction (either MovePath.MoveStepType.TURN_LEFT or
+     * Returns the direction (either MoveStepType.TURN_LEFT or
      * MoveStepType.TURN_RIGHT) that the destination facing lies in.
      */
     public static MoveStepType getDirection(final int facing, final int destFacing) {
@@ -729,7 +726,7 @@ public class MovePath implements Cloneable, Serializable {
         if (steps.size() > 0) {
             boolean jump = false;
             for (MoveStep step : steps) {
-                if (step.getType() == MovePath.MoveStepType.START_JUMP) {
+                if (step.getType() == MoveStepType.START_JUMP) {
                     jump = true;
                 }
             }
@@ -853,8 +850,8 @@ public class MovePath implements Cloneable, Serializable {
                 }
             } else {
                 if ((getLastStep().getVelocityLeft() > 0) && !getGame().useVectorMove()
-                        && !(getLastStep().getType() == MovePath.MoveStepType.FLEE
-                        || getLastStep().getType() == MovePath.MoveStepType.EJECT)) {
+                        && !(getLastStep().getType() == MoveStepType.FLEE
+                        || getLastStep().getType() == MoveStepType.EJECT)) {
                     return false;
                 }
             }
@@ -1039,15 +1036,15 @@ public class MovePath implements Cloneable, Serializable {
 //            final MovePath right = clone();
 //
 //            // From here, we can move F, LF, RF, LLF, RRF, and RRRF.
-//            result.add(clone().addStep(MovePath.MoveStepType.FORWARDS));
+//            result.add(clone().addStep(MoveStepType.FORWARDS));
 //            for (int turn = 0; turn < 2; turn++) {
-//                left.addStep(MovePath.MoveStepType.TURN_LEFT);
-//                right.addStep(MovePath.MoveStepType.TURN_RIGHT);
-//                result.add(left.clone().addStep(MovePath.MoveStepType.FORWARDS));
-//                result.add(right.clone().addStep(MovePath.MoveStepType.FORWARDS));
+//                left.addStep(MoveStepType.TURN_LEFT);
+//                right.addStep(MoveStepType.TURN_RIGHT);
+//                result.add(left.clone().addStep(MoveStepType.FORWARDS));
+//                result.add(right.clone().addStep(MoveStepType.FORWARDS));
 //            }
-//            right.addStep(MovePath.MoveStepType.TURN_RIGHT);
-//            result.add(right.addStep(MovePath.MoveStepType.FORWARDS));
+//            right.addStep(MoveStepType.TURN_RIGHT);
+//            result.add(right.addStep(MoveStepType.FORWARDS));
 //
 //            // We've got all our next steps.
 //            return result;
@@ -1061,15 +1058,15 @@ public class MovePath implements Cloneable, Serializable {
             MovePath right = clone();
 
             // From here, we can move F, LF, RF, LLF, RRF, and RRRF.
-            result.add((clone()).addStep(MovePath.MoveStepType.FORWARDS));
+            result.add((clone()).addStep(MoveStepType.FORWARDS));
             for (int turn = 0; turn < 2; turn++) {
-                left.addStep(MovePath.MoveStepType.TURN_LEFT);
-                right.addStep(MovePath.MoveStepType.TURN_RIGHT);
-                result.add(left.clone().addStep(MovePath.MoveStepType.FORWARDS));
-                result.add(right.clone().addStep(MovePath.MoveStepType.FORWARDS));
+                left.addStep(MoveStepType.TURN_LEFT);
+                right.addStep(MoveStepType.TURN_RIGHT);
+                result.add(left.clone().addStep(MoveStepType.FORWARDS));
+                result.add(right.clone().addStep(MoveStepType.FORWARDS));
             }
-            right.addStep(MovePath.MoveStepType.TURN_RIGHT);
-            result.add(right.addStep(MovePath.MoveStepType.FORWARDS));
+            right.addStep(MoveStepType.TURN_RIGHT);
+            result.add(right.addStep(MoveStepType.FORWARDS));
 
             // We've got all our next steps.
             return result;
@@ -1080,46 +1077,46 @@ public class MovePath implements Cloneable, Serializable {
         //  be prone.
         if (getFinalProne() || (getFinalHullDown() && !(getEntity() instanceof Tank))) {
             if ((last != null) && (last.getType() != MoveStepType.TURN_RIGHT)) {
-                result.add(clone().addStep(MovePath.MoveStepType.TURN_LEFT));
+                result.add(clone().addStep(MoveStepType.TURN_LEFT));
             }
             if ((last != null) && (last.getType() != MoveStepType.TURN_LEFT)) {
-                result.add(clone().addStep(MovePath.MoveStepType.TURN_RIGHT));
+                result.add(clone().addStep(MoveStepType.TURN_RIGHT));
             }
 
             if (getEntity().isCarefulStand()) {
-                result.add(clone().addStep(MovePath.MoveStepType.CAREFUL_STAND));
+                result.add(clone().addStep(MoveStepType.CAREFUL_STAND));
             } else {
-                result.add(clone().addStep(MovePath.MoveStepType.GET_UP));
+                result.add(clone().addStep(MoveStepType.GET_UP));
             }
             return result;
         }
         if (canShift()) {
-            if (forward && (!backward || ((last == null) || (last.getType() != MovePath.MoveStepType.LATERAL_LEFT)))) {
+            if (forward && (!backward || ((last == null) || (last.getType() != MoveStepType.LATERAL_LEFT)))) {
                 result.add(clone().addStep(MoveStepType.LATERAL_RIGHT));
             }
-            if (forward && (!backward || ((last == null) || (last.getType() != MovePath.MoveStepType.LATERAL_RIGHT)))) {
-                result.add(clone().addStep(MovePath.MoveStepType.LATERAL_LEFT));
+            if (forward && (!backward || ((last == null) || (last.getType() != MoveStepType.LATERAL_RIGHT)))) {
+                result.add(clone().addStep(MoveStepType.LATERAL_LEFT));
             }
             if (backward
-                    && (!forward || ((last == null) || (last.getType() != MovePath.MoveStepType.LATERAL_LEFT_BACKWARDS)))) {
-                result.add(clone().addStep(MovePath.MoveStepType.LATERAL_RIGHT_BACKWARDS));
+                    && (!forward || ((last == null) || (last.getType() != MoveStepType.LATERAL_LEFT_BACKWARDS)))) {
+                result.add(clone().addStep(MoveStepType.LATERAL_RIGHT_BACKWARDS));
             }
             if (backward
-                    && (!forward || ((last == null) || (last.getType() != MovePath.MoveStepType.LATERAL_RIGHT_BACKWARDS)))) {
-                result.add(clone().addStep(MovePath.MoveStepType.LATERAL_LEFT_BACKWARDS));
+                    && (!forward || ((last == null) || (last.getType() != MoveStepType.LATERAL_RIGHT_BACKWARDS)))) {
+                result.add(clone().addStep(MoveStepType.LATERAL_LEFT_BACKWARDS));
             }
         }
-        if (forward && (!backward || ((last == null) || (last.getType() != MovePath.MoveStepType.BACKWARDS)))) {
-            result.add(clone().addStep(MovePath.MoveStepType.FORWARDS));
+        if (forward && (!backward || ((last == null) || (last.getType() != MoveStepType.BACKWARDS)))) {
+            result.add(clone().addStep(MoveStepType.FORWARDS));
         }
-        if ((last == null) || (last.getType() != MovePath.MoveStepType.TURN_LEFT)) {
-            result.add(clone().addStep(MovePath.MoveStepType.TURN_RIGHT));
+        if ((last == null) || (last.getType() != MoveStepType.TURN_LEFT)) {
+            result.add(clone().addStep(MoveStepType.TURN_RIGHT));
         }
-        if ((last == null) || (last.getType() != MovePath.MoveStepType.TURN_RIGHT)) {
-            result.add(clone().addStep(MovePath.MoveStepType.TURN_LEFT));
+        if ((last == null) || (last.getType() != MoveStepType.TURN_RIGHT)) {
+            result.add(clone().addStep(MoveStepType.TURN_LEFT));
         }
-        if (backward && (!forward || ((last == null) || (last.getType() != MovePath.MoveStepType.FORWARDS)))) {
-            result.add(clone().addStep(MovePath.MoveStepType.BACKWARDS));
+        if (backward && (!forward || ((last == null) || (last.getType() != MoveStepType.FORWARDS)))) {
+            result.add(clone().addStep(MoveStepType.BACKWARDS));
         }
         return result;
     }

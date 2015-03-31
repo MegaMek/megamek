@@ -18,10 +18,10 @@ import megamek.common.EntityMovementType;
 import megamek.common.Facing;
 import megamek.common.IGame;
 import megamek.common.ManeuverType;
-import megamek.common.Tank;
-import megamek.common.MovePath.MoveStepType;
-import megamek.common.MoveStep;
 import megamek.common.MovePath;
+import megamek.common.MoveStep;
+import megamek.common.MoveStepType;
+import megamek.common.Tank;
 
 /**
  * Generic implementation of AbstractPathFinder when we restrict graph nodes to

@@ -21,8 +21,8 @@ import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
 import megamek.common.MiscType;
 import megamek.common.MoveStep;
+import megamek.common.MoveStepType;
 import megamek.common.Tank;
-import megamek.common.MovePath.MoveStepType;
 
 /**
  * Sprite for a step in a movement path. Only one sprite should exist for

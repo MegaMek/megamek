@@ -58,6 +58,7 @@ v0.41.3-dev
 + Bug [#4502]: Thunder bombs create minefields with incorrect owners
 + Data: New Sprites and Infantry unit fixes.
 + Bug [MML#176] PPC capacitors does not appear in equipment list for aeros
++ Data: New Sprites and adding HTP:Tortuga Units.
 
 
 v0.41.2-dev (2015-02-12 15:20 UTC)

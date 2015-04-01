@@ -39,16 +39,21 @@ E
 
 <Nose Equipment>
 CLActiveProbe
+CLHAG40 Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
 CLHAG40
+CLHAG40 Ammo
+CLHAG40 Ammo
 CLHAG40 Ammo
 CLHeavyMediumLaser
 </Left Wing Equipment>
 
 <Right Wing Equipment> 
 CLHAG40
+CLHAG40 Ammo
+CLHAG40 Ammo
 CLHAG40 Ammo
 CLHeavyMediumLaser
 </Right Wing Equipment>

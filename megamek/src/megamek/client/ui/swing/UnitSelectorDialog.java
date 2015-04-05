@@ -59,6 +59,7 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
+import megamek.common.Infantry;
 import megamek.common.MechFileParser;
 import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
@@ -646,7 +647,12 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
             int piloting = skills[1];
 
             e.getCrew().setGunnery(gunnery);
-            e.getCrew().setPiloting(piloting);
+            // For infantry, piloting doubles as antimek skill, and this is
+            // set based on whether the unit has antimek training, which gets
+            // set in the BLK file, so we should ignore the defaults
+            if (!(e instanceof Infantry)) {
+                e.getCrew().setPiloting(piloting);
+            }
         }
         if(cs.generateNames()) {
             e.getCrew().setName(client.getRandomNameGenerator().generate());

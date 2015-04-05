@@ -1177,18 +1177,6 @@ public class Protomech extends Entity {
             }
         }
         if (amsAmmoBV > 0) {
-            bvText.append(startRow);
-            bvText.append(startColumn);
-
-            bvText.append("AMS Ammo (to a maximum of AMS BV)");
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append(endColumn);
-            bvText.append(startColumn);
-            bvText.append("+");
-            bvText.append(Math.min(amsBV, amsAmmoBV));
-            bvText.append(endColumn);
-            bvText.append(endRow);
             dEquipmentBV += Math.min(amsBV, amsAmmoBV);
         }
         dbv += dEquipmentBV;

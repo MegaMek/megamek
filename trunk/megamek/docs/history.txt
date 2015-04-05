@@ -59,6 +59,7 @@ v0.41.3-dev
 + Data: New Sprites and Infantry unit fixes.
 + Bug [MML#176] PPC capacitors does not appear in equipment list for aeros
 + Data: New Sprites and adding HTP:Tortuga Units.
++ Bug: Potential NPE computing BV for Protomechs with AMS 
 
 
 v0.41.2-dev (2015-02-12 15:20 UTC)

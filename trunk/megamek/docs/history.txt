@@ -64,6 +64,9 @@ v0.41.3-dev
 + Patch [#476]: Coordinates from Point (more accurate mouse click point to hex
     conversion)
 + Patch [#475]: Minimap - display visible area, minimize bug fix, enable AA
++ Updated how BLKInfantryLoader handles the antimek tag: an empty tag now
+    designates that the unit is AM trained and will get the default AM skill for
+    the unit type, previously it would get an AM skill of 0
 
 
 v0.41.2-dev (2015-02-12 15:20 UTC)

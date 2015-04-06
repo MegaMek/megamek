@@ -2000,6 +2000,20 @@ public class BattleArmor extends Infantry {
     }
 
     public int getMaximumJumpMP() {
+        return getMaximumJumpMP(false);
+    }
+    
+    /**
+     * Returns the maximum jump MP that this BA can have.
+     * 
+     * @param ignoreEquipment
+     *            If true, bonuses from equipment like partial wing and jump
+     *            booster are ignored. This is important for construction
+     *            purposes, where we shouldn't allow the JSpinner to select
+     *            these values.
+     * @return
+     */
+    public int getMaximumJumpMP(boolean ignoreEquipment) {
         if(chassisType == CHASSIS_TYPE_QUAD) {
             return 0;
         }
@@ -2040,8 +2054,9 @@ public class BattleArmor extends Infantry {
 
         // Partial wings and jump boosters add 1 jump MP and can increase it
         //  over the max and they cannot be used together
-        if (hasWorkingMisc(MiscType.F_JUMP_BOOSTER)
-                || hasWorkingMisc(MiscType.F_PARTIAL_WING)){
+        if (!ignoreEquipment 
+                && (hasWorkingMisc(MiscType.F_JUMP_BOOSTER)
+                        || hasWorkingMisc(MiscType.F_PARTIAL_WING))){
             max++;
         }
 

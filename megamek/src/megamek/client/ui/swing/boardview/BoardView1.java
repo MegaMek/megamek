@@ -2276,6 +2276,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     Point getHexLocation(Coords c) {
         return getHexLocation(c.getX(), c.getY());
     }
+    
+    Polygon getHexPolygon(Coords c) {
+        Polygon poly = new Polygon();
+        for (int n=0; n<hexPoly.npoints; n++) {
+            poly.addPoint((int)(hexPoly.xpoints[n]*scale), (int)(hexPoly.ypoints[n]*scale));
+        }
+        poly.translate(getHexLocation(c).x,getHexLocation(c).y);
+        return poly;
+    }
 
     /**
      * Returns the absolute position of the centre of the hex graphic
@@ -2307,16 +2316,33 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // We must account for the board translation to add padding
         p.x -= HEX_W;
         p.y -= HEX_H;
-        final int x = (p.x) / (int) (HEX_WC * scale);
-        final int y = ((p.y) - ((x & 1) == 1 ? (int) ((HEX_H / 2) * scale) : 0))
-                      / (int) (HEX_H * scale);
-        Coords cOriginal = new Coords(x, y);
+
+        // base values
+        int x = p.x / (int) (HEX_WC * scale);
+        int y = p.y / (int) (HEX_H * scale);
+        // correction for the displaced odd columns
+        if ((float) p.y / (scale * HEX_H) - y < 0.5)
+            y -= x % 2;
+
+        // check the surrounding hexes if they contain p
+        // checking at most 3 hexes would be sufficient
+        // but which ones? This is failsafer.
+        Coords cc = new Coords(x, y);
+        if (!getHexPolygon(cc).contains(p)) {
+            boolean hasMatch = false;
+            for (int dir = 0; dir < 6 && !hasMatch; dir++) {
+                Coords cn = cc.translated(dir);
+                if (getHexPolygon(cn).contains(p)) {
+                    cc = cn;
+                    hasMatch = true;
+                }
+            }
+        }
+        
         if (useIsometric()) {
             // When using isometric rendering, a lower hex can obscure the
-            // normal hex.
-            // Iterate over all hexes from highest to lowest, looking for a hex
-            // that
-            // falls within the selected mouse click point.
+            // normal hex. Iterate over all hexes from highest to lowest, 
+            // looking for a hex that contains the selected mouse click point.
             final int minElev = Math.min(0, game.getBoard().getMinElevation());
             final int maxElev = Math.max(0, game.getBoard().getMaxElevation());
             final int delta = (int) Math
@@ -2326,21 +2352,24 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                                                            .getHeight());
             for (int elev = maxElev; elev >= minElev; elev--) {
                 for (int i = minHexSpan; i <= maxHexSpan; i++) {
-                    Coords c1 = new Coords(x, i);
-                    Point pAlt = getHexLocation(c1);
-                    IHex hexAlt = game.getBoard().getHex(c1);
-                    if ((p.y > pAlt.y) && (p.y < (pAlt.y + HEX_H))
-                        && (hexAlt != null)
-                        && (hexAlt.getLevel() == elev)) {
-                        // This hex's location falls under the point the user
-                        // selected.
-                        return c1;
+                    for (int dx = -1; dx < 2; dx++) {
+                        Coords c1 = new Coords(x + dx, i);
+                        IHex hexAlt = game.getBoard().getHex(c1);
+                        if (getHexPolygon(c1).contains(p) && (hexAlt != null)
+                                && (hexAlt.getLevel() == elev)) {
+                            // Return immediately with highest hex found.
+                            return c1;
+                        }
                     }
                 }
             }
+            // nothing found
+            return new Coords(-1,-1);
         }
-        return cOriginal;
-
+        else {
+        	// not Isometric
+            return cc;
+        }
     }
 
     public void redrawMovingEntity(Entity entity, Coords position, int facing,

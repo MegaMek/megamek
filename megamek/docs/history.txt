@@ -67,6 +67,7 @@ v0.41.3-dev
 + Updated how BLKInfantryLoader handles the antimek tag: an empty tag now
     designates that the unit is AM trained and will get the default AM skill for
     the unit type, previously it would get an AM skill of 0
++ Bug [#4518]: VTOL Chin turret weight not being calulated
 
 
 v0.41.2-dev (2015-02-12 15:20 UTC)

@@ -1,6 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -15,16 +15,20 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Stroke;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -233,6 +237,7 @@ public class MiniMap extends JPanel {
         if (m_mapImage != null) {
             g.drawImage(m_mapImage, 0, 0, this);
             // drawBox(g); this would be a nice place to draw a visible-area box
+            paintBVSection(g); // Happy to oblige
         }
     }
 
@@ -453,6 +458,11 @@ public class MiniMap extends JPanel {
                 yTemp = SCROLL_PANE_HEIGHT;
             }
         }
+        
+        if (minimized) {
+        	yTemp = 14;
+        }
+        
         setSize(xTemp, yTemp);
         setPreferredSize(new Dimension(xTemp, yTemp));
         if (m_dialog instanceof JDialog) {
@@ -526,6 +536,13 @@ public class MiniMap extends JPanel {
         }
 
         Graphics g = m_mapImage.getGraphics();
+        // Activate AA
+        if (GUIPreferences.getInstance().getAntiAliasing()) {
+            ((Graphics2D)g).setRenderingHint(
+                    RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+        }
+        
         Color oldColor = g.getColor();
         // g.setColor(BACKGROUND);
         // g.fillRect(0, 0, getSize().width, getSize().height);
@@ -533,6 +550,12 @@ public class MiniMap extends JPanel {
         if (!minimized) {
             roadHexIndexes.removeAllElements();
             Graphics gg = terrainBuffer.getGraphics();
+            // Activate AA
+            if (GUIPreferences.getInstance().getAntiAliasing()) {
+                ((Graphics2D)gg).setRenderingHint(
+                        RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
+            }
             for (int j = 0; j < m_board.getWidth(); j++) {
                 for (int k = 0; k < m_board.getHeight(); k++) {
                     IHex h = m_board.getHex(j, k);
@@ -595,7 +618,7 @@ public class MiniMap extends JPanel {
                         }
                     }
                 }
-
+                
                 // draw declared fire
                 if ((IGame.Phase.PHASE_FIRING == m_game.getPhase())
                     || (IGame.Phase.PHASE_PHYSICAL == m_game.getPhase())) {
@@ -629,6 +652,38 @@ public class MiniMap extends JPanel {
         }
 
         repaint();
+    }
+    
+    private void paintBVSection(Graphics g) {
+    	if (minimized) return;
+    	double[] relSize = m_bview.getVisibleArea();
+    	Color sc = g.getColor();
+    	Stroke sbs = ((Graphics2D) g).getStroke();
+    	
+    	// thicker but translucent rect
+    	g.setColor(new Color(100,100,160,80));
+    	((Graphics2D) g).setStroke(new BasicStroke(zoom+2));
+    	
+    	g.drawRect(
+    			(int)(relSize[0]*             (hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth())+leftMargin,
+    			(int)(relSize[1]*2*hexSideByCos30[zoom]*m_board.getHeight())+topMargin,
+    			(int)((relSize[2]-relSize[0])*(hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth()),
+    			(int)((relSize[3]-relSize[1])*2*hexSideByCos30[zoom]*m_board.getHeight()));
+    	
+    	// thin less translucent rect
+    	g.setColor(new Color(255,255,255,180));
+    	((Graphics2D) g).setStroke(new BasicStroke(zoom/2));
+
+    	g.drawRect(
+    			(int)(relSize[0]*(hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth())+leftMargin,
+    			(int)(relSize[1]*2*hexSideByCos30[zoom]*m_board.getHeight())+topMargin,
+    			(int)((relSize[2]-relSize[0])*(hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth()),
+    			(int)((relSize[3]-relSize[1])*2*hexSideByCos30[zoom]*m_board.getHeight()));
+    	
+    	// restore values
+    	((Graphics2D) g).setStroke(sbs);
+    	g.setColor(sc);
+    	
     }
 
     /**
@@ -1318,33 +1373,31 @@ public class MiniMap extends JPanel {
     }
 
     void processMouseClick(int x, int y, MouseEvent me) {
-        if (y > (getSize().height - 14)) {
+        if (y > (getSize().height - 14) && !dragging) {
+        	if (minimized) {
+        		setSize(getSize().width, heightBufer);
+        		m_mapImage = createImage(getSize().width, heightBufer);
+        		minimized = false;
+    			initializeMap();
+        	} else {
+        		if (x < 14) {
+        			zoomIn();
+        		} else if ((x < 28) && (zoom > 2)) {
+        			heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0
+        					: heightDisplayMode;
+        			initializeMap();
+        		} else if (x > (getSize().width - 14)) {
+        			zoomOut();
+        		} else {
+        			// Minimize button
+        			heightBufer = getSize().height;
+        			setSize(getSize().width, 14);
+        			m_mapImage = createImage(Math.max(1, getSize().width), 14);
 
-            if (x < 14) {
-                zoomIn();
-            } else if ((x < 28) && (zoom > 2)) {
-                heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0
-                                                                        : heightDisplayMode;
-                initializeMap();
-            } else if (x > (getSize().width - 14)) {
-                zoomOut();
-            } else {
-                if (minimized) {
-                    // m_dialog.setResizable(true);
-                    setSize(getSize().width, heightBufer);
-                    m_mapImage = createImage(getSize().width, heightBufer);
-                } else {
-                    heightBufer = getSize().height;
-                    setSize(getSize().width, 14);
-                    m_mapImage = createImage(Math.max(1, getSize().width), 14);
-                    // m_dialog.setResizable(false);
-                }
-                minimized = !minimized;
-                if (m_dialog instanceof JDialog) {
-                    ((JDialog) m_dialog).pack();
-                }
-                drawMap();
-            }
+        			minimized = true;
+        			initializeMap();
+        		}  
+        	}
         } else if (m_bview != null) {
             if ((x < margin) || (x > (getSize().width - leftMargin))
                 || (y < topMargin)
@@ -1355,8 +1408,11 @@ public class MiniMap extends JPanel {
                 m_bview
                         .checkLOS(translateCoords(x - leftMargin, y - topMargin));
             } else {
-                m_bview.centerOnHex(translateCoords(x - leftMargin, y
-                                                                    - topMargin));
+            	m_bview.centerOnPointRel(
+            			((double)(x - leftMargin))/(double)((hexSideBySin30[zoom] + hexSide[zoom])*m_board.getWidth()),
+            			((double)(y - topMargin))/(double)(2 * hexSideByCos30[zoom]*m_board.getHeight()));
+            	repaint();
+            	//drawMap(); MUCH SLOWER
             }
         }
     }
@@ -1430,6 +1486,11 @@ public class MiniMap extends JPanel {
     BoardViewListener boardViewListener = new BoardViewListenerAdapter() {
         @Override
         public void hexCursor(BoardViewEvent b) {
+            update();
+        }
+        
+        @Override
+        public void hexMoused(BoardViewEvent b) {
             update();
         }
 

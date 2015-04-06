@@ -63,6 +63,7 @@ v0.41.3-dev
 + Bug: Infantry antimek training was getting overriden by default piloting skill
 + Patch [#476]: Coordinates from Point (more accurate mouse click point to hex
     conversion)
++ Patch [#475]: Minimap - display visible area, minimize bug fix, enable AA
 
 
 v0.41.2-dev (2015-02-12 15:20 UTC)

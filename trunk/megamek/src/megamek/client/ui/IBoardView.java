@@ -67,6 +67,8 @@ public interface IBoardView extends MechDisplayListener {
     public void zoomOut();
     public boolean toggleIsometric();
     public void centerOnHex(Coords position);
+    public void centerOnPointRel(double xrel, double yrel);
+    public double[] getVisibleArea();
 
     // it's a hack that the popup is Object, but we use this interface
     // for both AWT and swing, and AWT's PopupMenu and Swing's JPopupMenu

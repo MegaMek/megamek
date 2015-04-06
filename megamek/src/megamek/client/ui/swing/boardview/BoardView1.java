@@ -462,7 +462,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         }
                     }
                 }
-
+                pingMinimap();
             }
         });
 
@@ -708,6 +708,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     public void performAction() {
                         controller.stopRepeating(KeyCommandBind.SCROLL_SOUTH);
                         vbar.setValue((int) (vbar.getValue() - (HEX_H * scale)));
+                        pingMinimap();
                     }
 
                 });
@@ -729,6 +730,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     public void performAction() {
                         controller.stopRepeating(KeyCommandBind.SCROLL_NORTH);
                         vbar.setValue((int) (vbar.getValue() + (HEX_H * scale)));
+                        pingMinimap();
                     }
 
                 });
@@ -750,6 +752,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     public void performAction() {
                         controller.stopRepeating(KeyCommandBind.SCROLL_WEST);
                         hbar.setValue((int) (hbar.getValue() + (HEX_W * scale)));
+                        pingMinimap();
                     }
 
                 });
@@ -771,6 +774,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     public void performAction() {
                         controller.stopRepeating(KeyCommandBind.SCROLL_EAST);
                         hbar.setValue((int) (hbar.getValue() - (HEX_W * scale)));
+                        pingMinimap();
                     }
 
                 });
@@ -946,6 +950,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         Rectangle viewRect = scrollpane.getVisibleRect();
         if ((bvBgBuffer == null) || (bvBgBuffer.getWidth() != viewRect.getWidth())
             || (bvBgBuffer.getHeight() != viewRect.getHeight())) {
+        	pingMinimap();
             bvBgBuffer = new BufferedImage((int) viewRect.getWidth(),
                                            (int) viewRect.getHeight(), BufferedImage.TYPE_INT_RGB);
             Graphics bgGraph = bvBgBuffer.getGraphics();
@@ -2738,6 +2743,59 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         hscroll.setValue(hexPoint.x - (hscroll.getVisibleAmount() / 2));
         repaint();
     }
+    
+    /**
+     * Centers the board to a point
+     * @param xrel the x position relative to board width.
+     * @param yrel the y position relative to board height.
+     * Both xrel and yrel should be between 0 and 1. 
+     * The method will clip both values to this range. 
+     */
+    public void centerOnPointRel(double xrel, double yrel) {
+    	// restrict both values to between 0 and 1
+    	xrel = Math.max(0,xrel);
+    	xrel = Math.min(1,xrel);
+    	yrel = Math.max(0,yrel);
+    	yrel = Math.min(1,yrel);
+    	Point p = new Point(
+    			(int)((double)boardSize.getWidth()*xrel)+HEX_W,
+    			(int)((double)boardSize.getHeight()*yrel)+HEX_H);
+        JScrollBar vscroll = scrollpane.getVerticalScrollBar();
+        vscroll.setValue(p.y - (vscroll.getVisibleAmount() / 2));
+        JScrollBar hscroll = scrollpane.getHorizontalScrollBar();
+        hscroll.setValue(p.x - (hscroll.getVisibleAmount() / 2));
+        repaint();
+    }
+    
+    /**
+     * Returns the currently visible area of the board.
+     * @return an array of 4 double values indicating the relative size,
+     * where the first two values indicate the x and y position of the upper left
+     * corner of the visible area and the second two values the x and y position of
+     * the lower right corner.
+     * So when the whole board is visible, the values should be 0,0,1,1. 
+     * When the lower right corner of the board is visible 
+     * and 90% of width and height: 0.1,0.1,1,1
+     */
+    public double[] getVisibleArea() {
+    	double[] values = new double[4];
+    	
+    	// adjust for padding
+    	double x = (double)(scrollpane.getViewport().getViewPosition().getX()-HEX_W);
+    	double y = (double)(scrollpane.getViewport().getViewPosition().getY()-HEX_H);
+    	
+        values[0] = x/(double)boardSize.getWidth();
+        values[1] = y/(double)boardSize.getHeight();
+        
+        values[2] = (x+(double)scrollpane.getViewport().getWidth())/(double)(boardSize.getWidth());
+        values[3] = (y+(double)scrollpane.getViewport().getHeight())/(double)(boardSize.getHeight());
+        
+        // the viewport is bigger than the image, but we want only values for the image
+    	// therefore: restrict values to 0 ... 1 
+        for (int i=0;i<4;i++) values[i] = Math.min(1, Math.max(0,values[i]));
+    	
+    	return values;
+    }
 
     /**
      * Clears the old movement data and draws the new. Since it's less expensive
@@ -4522,6 +4580,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     public void refreshDisplayables() {
         repaint();
+    }
+    
+    private void pingMinimap() {
+    	// send the minimap a hex moused event to make it 
+        // update the visible area rectangle
+        BoardViewEvent bve = new BoardViewEvent(this,BoardViewEvent.BOARD_HEX_DRAGGED); 
+        if (boardListeners != null) {
+            for (BoardViewListener l : boardListeners) l.hexMoused(bve);
+        }
     }
 
     public void showPopup(Object popup, Coords c) {

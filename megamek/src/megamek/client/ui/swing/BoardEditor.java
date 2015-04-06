@@ -157,7 +157,7 @@ public class BoardEditor extends JComponent implements ItemListener,
             @Override
             public void hexMoused(BoardViewEvent b) {
                 Coords c = b.getCoords();
-                if (c.equals(lastClicked)) {
+                if ((c == null) || c.equals(lastClicked)) {
                     return;
                 }
                 lastClicked = c;

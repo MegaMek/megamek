@@ -655,7 +655,9 @@ public class MiniMap extends JPanel {
     }
     
     private void paintBVSection(Graphics g) {
-    	if (minimized) return;
+    	if (minimized || (m_bview == null)) {
+    	    return;
+    	}
     	double[] relSize = m_bview.getVisibleArea();
     	Color sc = g.getColor();
     	Stroke sbs = ((Graphics2D) g).getStroke();

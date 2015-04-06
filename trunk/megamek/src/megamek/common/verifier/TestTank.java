@@ -109,20 +109,15 @@ public class TestTank extends TestEntity {
     }
 
     public float getTankWeightTurret() {
-        if (tank instanceof VTOL) {
-            /*HACK: Prevents VTOL mast-mounted gear from being also counted as
-             * turret-mounted (courtesy of Tank.LOC_TURRET and VTOL.LOC_ROTOR
-             * both resolving to the same int value of 5). This will have to be
-             * handled differently once we get around to implementing VTOL chin
-             * turrets, however. */
-            return 0.0f;
-        }
         float weight = 0f;
+        
         for (Mounted m : tank.getEquipment()) {
-            if ((m.getLocation() == tank.getLocTurret()) && !(m.getType() instanceof AmmoType)) {
+            if ((m.getLocation() == tank.getLocTurret()) 
+                    && !(m.getType() instanceof AmmoType)) {
                 weight += m.getType().getTonnage(tank);
             }
         }
+        
         // Turrets weight 10% of the weight of weapons in them
         weight = weight / 10.0f;
         if (tank.isSupportVehicle()) {
@@ -139,7 +134,8 @@ public class TestTank extends TestEntity {
     public float getTankWeightDualTurret() {
         float weight = 0f;
         for (Mounted m : tank.getEquipment()) {
-            if ((m.getLocation() == tank.getLocTurret2()) && !(m.getType() instanceof AmmoType)) {
+            if ((m.getLocation() == tank.getLocTurret2()) 
+                    && !(m.getType() instanceof AmmoType)) {
                 weight += m.getType().getTonnage(tank);
             }
         }

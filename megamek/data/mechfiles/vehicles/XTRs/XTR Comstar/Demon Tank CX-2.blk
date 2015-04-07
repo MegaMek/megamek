@@ -57,6 +57,7 @@ ISImprovedHeavyGauss Ammo
 ISImprovedHeavyGauss Ammo
 ISImprovedHeavyGauss Ammo
 ISImprovedHeavyGauss Ammo
+ISVehicularMineDispenser
 </Body Equipment>
 
 <Front Equipment>
@@ -65,12 +66,10 @@ ISImprovedHeavyGaussRifle
 
 <Right Equipment>
 Medium Laser(ST)
-ISSponsonTurret
 </Right Equipment>
 
 <Left Equipment>
 Medium Laser(ST)
-ISSponsonTurret
 </Left Equipment>
 
 <Rear Equipment>

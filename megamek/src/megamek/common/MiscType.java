@@ -721,6 +721,21 @@ public class MiscType extends EquipmentType {
           	} else {
                 return entity.getWeight() / 10.0f;
             }
+        	
+        //Per TO Pg 413 Mechanical Jump Boosters weight is 2 times jump movement.  
+        //but Mechanical Boosters only add 1 Jump MP.  So the weight calculations 
+        //below are calculated according to that 1 Jump MP they give.
+        } else if (hasFlag(F_MECHANICAL_JUMP_BOOSTER)) {
+      	if((entity.getWeightClass() == EntityWeightClass.WEIGHT_ULTRA_LIGHT) 
+      			|| (entity.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT)) {
+      			return  2.0f *.025f;
+        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
+        		return  2.0f *.05f;
+        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
+        		return  2.0f *.125f;     			
+        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT) {
+        		return  2.0f *.250f;      	
+        }
 
         } else if (hasFlag(F_JUMP_BOOSTER)) {
             return (float) (Math.ceil((entity.getWeight() * entity
@@ -930,6 +945,19 @@ public class MiscType extends EquipmentType {
                     && (hasSubType(MiscType.S_LANCE))) {
                 costValue = (int) Math.ceil(entity.getWeight() * 150);
             }
+            
+	        } else if (hasFlag(F_MECHANICAL_JUMP_BOOSTER)) {
+	      	if((entity.getWeightClass() == EntityWeightClass.WEIGHT_ULTRA_LIGHT) 
+	      			|| (entity.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT)) {
+	      			return  1 * 50000;
+	        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
+	        		return  1 * 75000;
+	        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
+	        		return  1 * 100000;     			
+	        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT) {
+	        		return  1 * 300000;      	
+	        }
+	      	
             if (isArmored) {
                 double armoredCost = costValue;
 
@@ -9080,6 +9108,8 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("CLDroneCarrierControlSystem");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.cost = COST_VARIABLE;
+        misc.criticals = 1;
+        misc.tankslots = 1;
         misc.flags = misc.flags.or(F_DRONE_CARRIER_CONTROL)
                 .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
         misc.availRating = new int[] { EquipmentType.RATING_X,
@@ -9099,6 +9129,8 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("ISDroneCarrierControlSystem");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.cost = COST_VARIABLE;
+        misc.criticals = 1;
+        misc.tankslots = 1;
         misc.flags = misc.flags.or(F_DRONE_CARRIER_CONTROL)
                 .or(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
         misc.availRating = new int[] { EquipmentType.RATING_E,
@@ -9156,6 +9188,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.cost = COST_VARIABLE;
         misc.criticals = 1;
+        misc.tankslots = 1;
         misc.flags = misc.flags.or(F_DRONE_OPERATING_SYSTEM)
                 .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_MECH_EQUIPMENT);
         misc.availRating = new int[] { EquipmentType.RATING_E,
@@ -9175,6 +9208,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.cost = COST_VARIABLE;
         misc.criticals = 1;
+        misc.tankslots = 1;
         misc.flags = misc.flags.or(F_DRONE_OPERATING_SYSTEM)
                 .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_MECH_EQUIPMENT);
         misc.availRating = new int[] { EquipmentType.RATING_E,
@@ -9471,6 +9505,8 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         misc.name = "Mechanical Jump Booster";
         misc.setInternalName("ISMechanicalJumpBooster");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.cost = COST_VARIABLE;
         misc.techRating = RATING_E;
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
         misc.introDate = 3070;
@@ -9485,6 +9521,8 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         misc.name = "Mechanical Jump Booster";
         misc.setInternalName("CLMechanicalJumpBooster");
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.cost = COST_VARIABLE;
         misc.techRating = RATING_E;
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
         misc.introDate = 3084;

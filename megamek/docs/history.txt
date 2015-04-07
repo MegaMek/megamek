@@ -69,6 +69,7 @@ v0.41.3-dev
     the unit type, previously it would get an AM skill of 0
 + Bug [#4518]: VTOL Chin turret weight not being calculated
 + Data: Couple of Unit fixes and New Sprites.
++ Made Endo Steel and Endo Composite variable criticals, for super heavies
 
 
 v0.41.2-dev (2015-02-12 15:20 UTC)

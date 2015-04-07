@@ -1104,6 +1104,20 @@ public class MiscType extends EquipmentType {
         		return 7;
         	}
 
+        } else if (hasFlag(F_ENDO_STEEL)) {
+            if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
+                return 7;
+            } else {
+                return 14;
+            }
+            // Clan Endo Steel doesn't have variable crits
+        } else if (hasFlag(F_ENDO_COMPOSITE)) {
+            if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
+                return 4;
+            } else {
+                return 7;
+            }
+            // Clan Endo Composite doesn't have variable crits
         }
         // right, well I'll just guess then
         return 1;
@@ -4596,7 +4610,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("IS Endo-Steel");
         misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = 14;
+        misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_ENDO_STEEL);
@@ -4627,7 +4641,7 @@ public class MiscType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F };
         misc.techRating = RATING_E;
         misc.tonnage = TONNAGE_VARIABLE;
-        misc.criticals = 7;
+        misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags = misc.flags.or(F_ENDO_COMPOSITE);

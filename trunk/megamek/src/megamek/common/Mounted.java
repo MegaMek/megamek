@@ -673,36 +673,10 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * Returns how many shots the weapon is using
      */
     public int getCurrentShots() {
-        final WeaponType wtype = (WeaponType) getType();
-        int nShots = 1;
-        // figure out # of shots for variable-shot weapons
-        if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
-                .getAmmoType() == AmmoType.T_AC_ULTRA_THB))
-                && curMode().equals("Ultra")) {
-            nShots = 2;
-        }
-        // sets number of shots for AC rapid mode
-        else if (((wtype.getAmmoType() == AmmoType.T_AC) || (wtype
-                .getAmmoType() == AmmoType.T_LAC))
-                && wtype.hasModes()
-                && curMode().equals("Rapid")) {
-            nShots = 2;
-        } else if ((wtype.getAmmoType() == AmmoType.T_AC_ROTARY)
-                || wtype.getInternalName().equals(BattleArmor.MINE_LAUNCHER)) {
-            if (curMode().equals("2-shot")) {
-                nShots = 2;
-            } else if (curMode().equals("3-shot")) {
-                nShots = 3;
-            } else if (curMode().equals("4-shot")) {
-                nShots = 4;
-            } else if (curMode().equals("5-shot")) {
-                nShots = 5;
-            } else if (curMode().equals("6-shot")) {
-                nShots = 6;
-            }
-        }
+        WeaponType wtype = (WeaponType) getType();
+        int nShots = getNumShots(wtype, curMode(), false);
         // sets number of shots for MG arrays
-        else if (wtype.hasFlag(WeaponType.F_MGA)) {
+        if (wtype.hasFlag(WeaponType.F_MGA)) {
             nShots = 0;
             for(int eqn : getBayWeapons()) {
                 Mounted m = entity.getEquipment(eqn);
@@ -719,6 +693,43 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
                 }
             }
         }
+        return nShots;
+    }
+    
+    /**
+     * Returns how many shots a weapon type would use.  This can be used without
+     * an instantiation of Mounted, which is useful for computing Aero heat.
+     * If ignoreMode is true, then mode can be null. 
+     */
+    public static int getNumShots(WeaponType wtype, EquipmentMode mode,
+            boolean ignoreMode) {
+        int nShots = 1;
+        // figure out # of shots for variable-shot weapons
+        if (((wtype.getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
+                .getAmmoType() == AmmoType.T_AC_ULTRA_THB))
+                && (ignoreMode || mode.equals("Ultra"))) {
+            nShots = 2;
+        }
+        // sets number of shots for AC rapid mode
+        else if (((wtype.getAmmoType() == AmmoType.T_AC) || (wtype
+                .getAmmoType() == AmmoType.T_LAC))
+                && wtype.hasModes()
+                && (ignoreMode || mode.equals("Rapid"))) {
+            nShots = 2;
+        } else if ((wtype.getAmmoType() == AmmoType.T_AC_ROTARY)
+                || wtype.getInternalName().equals(BattleArmor.MINE_LAUNCHER)) {
+            if ((mode != null) && mode.equals("2-shot")) {
+                nShots = 2;
+            } else if ((mode != null) && mode.equals("3-shot")) {
+                nShots = 3;
+            } else if ((mode != null) && mode.equals("4-shot")) {
+                nShots = 4;
+            } else if ((mode != null) && mode.equals("5-shot")) {
+                nShots = 5;
+            } else if ((ignoreMode || mode.equals("6-shot"))) {
+                nShots = 6;
+            }
+        }        
         return nShots;
     }
 

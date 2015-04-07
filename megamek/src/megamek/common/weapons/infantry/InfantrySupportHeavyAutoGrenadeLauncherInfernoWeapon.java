@@ -33,7 +33,7 @@ public class InfantrySupportHeavyAutoGrenadeLauncherInfernoWeapon extends Infant
     public InfantrySupportHeavyAutoGrenadeLauncherInfernoWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_CLAN_TW);
-        name = "Grenade Launcher (Heavy Auto)";
+        name = "Grenade Launcher (Heavy Auto)-Inferno";
         setInternalName(name);
         addLookupName("InfantryHeavyAutoGrenadeLauncherInferno");
         addLookupName("nfantry Inferno Heavy Auto Grenade Launcher");

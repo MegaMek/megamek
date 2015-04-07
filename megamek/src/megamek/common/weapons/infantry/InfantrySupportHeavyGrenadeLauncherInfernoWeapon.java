@@ -33,7 +33,7 @@ public class InfantrySupportHeavyGrenadeLauncherInfernoWeapon extends InfantryWe
     public InfantrySupportHeavyGrenadeLauncherInfernoWeapon() {
         super();
         techLevel.put(3071,TechConstants.T_IS_TW_NON_BOX);
-        name = "Grenade Launcher (Heavy)";
+        name = "Grenade Launcher (Heavy)-Inferno";
         setInternalName(name);
         addLookupName("InfantryHeavyGrenadeLauncherInferno");
         addLookupName("Infantry Heavy Inferno Grenade Launcher");

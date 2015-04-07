@@ -18,6 +18,7 @@ import java.text.NumberFormat;
 import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
+import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
@@ -289,7 +290,7 @@ public class Infantry extends Entity {
     @Override
     public boolean isLocationProhibited(Coords c) {
         IHex hex = game.getBoard().getHex(c);
-        //Taharqa: waiting to hear back from Welshie but I am goign to assume that units pulling artillery
+        //Taharqa: waiting to hear back from Welshie but I am going to assume that units pulling artillery
         //should be treated as wheeled rather than motorized because otherwise mechanized units face fewer
         //terrain restrictions when pulling field artillery
 
@@ -777,106 +778,43 @@ public class Infantry extends Entity {
         return roll;
     }
 
-    /**
-     * @return The cost in C-Bills of the Infantry in question.
-     */
+     
+  /**
+  * This combines the old getCost and getAlternativeCost methods into a revised getCost Method.  
+    *this better considers AntiMek training and Weapons and armor costs.  
+  */
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double multiplier = 1;
-
-        if (isAntiMekTrained()) {
-            multiplier = 5;
-        }
-
-        switch (getMovementMode()){
-            case INF_UMU:
-                multiplier *= 2.0;
-            case INF_LEG:
-                multiplier *= 1.0;
-                break;
-            case INF_MOTORIZED:
-                multiplier *= 1.6;
-                break;
-            case INF_JUMP:
-                multiplier *= 2.6;
-                break;
-            case HOVER:
-                multiplier *= 3.2;
-                break;
-            case WHEELED:
-                multiplier *= 3.2;
-                break;
-            case TRACKED:
-                multiplier *= 3.2;
-                break;
-            default:
-                break;
-        }
-
-        int weaponCost = 0;
+        double multiplier = 1;	 //Cost Multiplier per TM
+        double pweaponCost = 0;  //Primary Weapon Cost
+        double sweaponCost = 0; // Secondary Weapon Cost
+        double armorcost = 0; //Armor Cost
+        double cost = 0; //Total Final Cost of Platoon or Squad.
+        double primarySquad = 0; //Number of Troopers with Primary Weapon Only
+        double secondSquad = 0; //Number oif Troopers with Secondary Weapon Only.
+        
+        //Weapon Cost Calculation
         if(null != primaryW) {
-        weaponCost += Math.sqrt(primaryW.getCost(this, false, -1)) * (squadsize - secondn) * squadn;
-        }
-        if(null != secondW) {
-        weaponCost += Math.sqrt(secondW.getCost(this, false, -1)) * secondn * squadn;
-        }
-
-        //TODO: add in armor cost - a little tricky because we don't track exact armor
-
-        double cost = 2000 * weaponCost * multiplier;
-        //add in field gun costs
-        for (Mounted mounted : getEquipment()) {
-            if(mounted.getLocation() == LOC_FIELD_GUNS) {
-                cost += mounted.getType().getCost(this, false, mounted.getLocation());
-            }
-        }
-
-        return cost;
-    }
-
-    @Override
-    public double getAlternateCost() {
-        double cost = 0;
-        if(null != primaryW) {
-            cost += primaryW.getCost(this, false, -1) * (squadsize - secondn);
-        }
-        if(null != secondW) {
-            cost += secondW.getCost(this, false, -1) * secondn;
-        }
-        cost = cost / squadsize;
-        cost *= menStarting;
-        //Add in motive type costs
-        switch (getMovementMode()){
-            case INF_UMU:
-                cost += 17888 * 1 * menStarting;
-                break;
-            case INF_LEG:
-                break;
-            case INF_MOTORIZED:
-                cost += 17888 * 0.6 * menStarting;
-                break;
-            case INF_JUMP:
-                cost += 17888 * 1.6 * menStarting;
-                break;
-            case HOVER:
-                cost += 17888 * 2.2 * 5 * Math.ceil(menStarting/5.0);
-                break;
-            case WHEELED:
-                cost += 17888 * 2.2 * 6 * Math.ceil(menStarting/6.0);
-                break;
-            case TRACKED:
-                cost += 17888 * 2.2 * 7 * Math.ceil(menStarting/7.0);
-                break;
-            default:
-                break;
-        }
-        //add in infantry armor
-        long armorprice = 0;
+	    	pweaponCost += Math.sqrt(primaryW.getCost(this, false, -1)) * 2000;
+	    }
+	    if(null != secondW) {
+	    	sweaponCost += Math.sqrt(secondW.getCost(this, false, -1)) * 2000;  
+	    }
+       
+	    //Determining Break down of who would have primary and secondary weapons.
+	    primarySquad = (squadsize - secondn) * squadn;
+	    secondSquad = menStarting - primarySquad;
+	    
+	    //Squad Cost with just the weapons.
+	    cost = (primarySquad * pweaponCost) + (secondSquad * sweaponCost);
+	    
+	    
+        //add in infantry armor cost
         if(damageDivisor > 1) {
             if(isArmorEncumbering()) {
-                armorprice += 1600;
+                armorcost += 1600;
             } else {
-                armorprice += 4300;
+            	armorcost += 4300;
             }
         }
         int nSneak = 0;
@@ -891,31 +829,68 @@ public class Infantry extends Entity {
         }
 
         if(hasDEST()) {
-            armorprice += 50000;
+        	armorcost += 50000;
         }
         else if(nSneak == 1) {
-            armorprice += 7000;
+        	armorcost += 7000;
         }
         else if(nSneak == 2) {
-            armorprice += 21000;
+        	armorcost += 21000;
         }
         else if(nSneak == 3) {
-            armorprice += 28000;
+        	armorcost += 28000;
         }
 
         if(hasSpaceSuit()) {
-            armorprice += 5000;
+        	armorcost += 5000;
         }
-        cost += armorprice * menStarting;
+        
+        //Cost of armor on a per man basis added
+        cost += (armorcost * menStarting);
+        
+
+        //Anti-Mek Trained Multiplier
+        if (isAntiMekTrained()) {
+            multiplier = 5;
+        }
+
+        //Add in motive type costs
+        switch (getMovementMode()){
+	        case INF_UMU:
+	            multiplier *= 2.0;
+	        case INF_LEG:
+	            multiplier *= 1.0;
+	            break;
+	        case INF_MOTORIZED:
+	            multiplier *= 1.6;
+	            break;
+	        case INF_JUMP:
+	            multiplier *= 2.6;
+	            break;
+	        case HOVER:
+	            multiplier *= 3.2;
+	            break;
+	        case WHEELED:
+	            multiplier *= 3.2;
+	            break;
+	        case TRACKED:
+	            multiplier *= 3.2;
+	            break;
+	        default:
+	            break;
+        }
+
+        cost = cost * multiplier;
 
         //add in field gun costs
         for (Mounted mounted : getEquipment()) {
             if(mounted.getLocation() == LOC_FIELD_GUNS) {
-                cost += mounted.getType().getCost(this, false, mounted.getLocation());
+                cost += Math.floor(mounted.getType().getCost(this, false, mounted.getLocation()));
             }
         }
         return cost;
     }
+
 
     @Override
     public boolean doomedInVacuum() {
@@ -1354,19 +1329,24 @@ public class Infantry extends Entity {
         float ton;
         switch (getMovementMode()) {
             case INF_MOTORIZED:
-                ton = (float) (men * 0.21);
+                ton = (float) (men * 0.195);
                 break;
             case HOVER:
             case TRACKED:
             case WHEELED:
-                ton = (men * 1);
+                ton = (float) (men * .085);
                 break;
             case INF_JUMP:
-                ton = (float) (men * 0.18);
+                ton = (float) (men * 0.165);
                 break;
             case INF_LEG:
             default:
-                ton = (float) (men * 0.1);
+                ton = (float) (men * 0.085);
+        }
+        
+        if(isAntiMekTrained()) {
+        		ton += (float) (men * .015);
+        	        	
         }
 
         //add in field gun weight
@@ -1375,10 +1355,9 @@ public class Infantry extends Entity {
                 ton += mounted.getType().getTonnage(this);
             }
         }
-        return ton;
+        return TestEntity.round(ton, TestEntity.CEIL_QUARTERTON);
 
     }
-
     public String getArmorDesc() {
         StringBuffer sArmor = new StringBuffer();
         sArmor.append(getDamageDivisor());

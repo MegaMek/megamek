@@ -52,6 +52,7 @@ import megamek.common.EntityMovementType;
 import megamek.common.EntitySelector;
 import megamek.common.FighterSquadron;
 import megamek.common.GameTurn;
+import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
@@ -4044,8 +4045,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 pos = last.getPosition();
                 distance = last.getDistance();
             }
-            int ceil = clientgui.getClient().getGame().getBoard().getHex(pos)
-                    .ceiling();
+            IBoard board = clientgui.getClient().getGame().getBoard();
+            // On Atmospheric maps, elevations are treated as altitudes, so
+            // hex ceiling is the ground
+            int ceil = board.getHex(pos).ceiling();
+            // On the ground map, Aeros ignore hex elevations
+            if (board.onGround()) {
+                ceil = 0;
+            }
             choiceDialog.checkPerformability(vel, altitude, ceil, a.isVSTOL(),
                     distance, clientgui.getClient().getGame(), cmd);
             choiceDialog.setVisible(true);

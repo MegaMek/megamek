@@ -318,7 +318,11 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         // If the user did chose to open...
         if (JFileChooser.APPROVE_OPTION == option) {
             // Get the file that was selected and return it.
-            return fileChooser.getSelectedFile();
+            if (fileChooser.getSelectedFile().getPath().endsWith(extension)) {
+                return fileChooser.getSelectedFile();
+            } else {
+                return new File(fileChooser.getSelectedFile() + extension);
+            }            
         }
         return null;
     }
@@ -355,8 +359,10 @@ public class RandomMapDialog extends JDialog implements ActionListener {
         }
 
         // Have the user choose a file to save the new settings to.
-        File selectedFile = fileBrowser(Messages.getString("RandomMapDialog.FileLoadDialog"),
-                                        "data" + File.separator + "boards", null, ".xml", "(*.xml)", true);
+        File selectedFile = fileBrowser(
+                Messages.getString("RandomMapDialog.FileSaveDialog"), "data"
+                        + File.separator + "boards", null, ".xml", "(*.xml)",
+                true);
 
         // If no file was selected, we're done.
         if (selectedFile == null) {

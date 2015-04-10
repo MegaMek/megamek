@@ -82,6 +82,7 @@ v0.41.3-dev
     configured map size doesn't exist
 + Bug [#4501]: ASF : rolling twice to unjam UAC 20
 + Bug [#4453]: ASF unable to use split S for unknown reason
++ Bug [#4519]: Cannot Jump Over Water (Path finding)
 
 
 v0.41.2-dev (2015-02-12 15:20 UTC)

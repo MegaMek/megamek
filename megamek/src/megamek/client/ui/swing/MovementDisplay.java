@@ -3661,6 +3661,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             } else  if (clientgui.doYesNoDialog(title, msg)) {
                 cmd.addStep(MoveStepType.UNJAM_RAC);
                 ready();
+                // If ready() fires, it will call endMyTurn, which sets cen to
+                // Entity.NONE.  If this doesn't happen, it means that the
+                // ready() was cancelled (ie, not all Velocity is spent), if it
+                // is cancelled we have to ensure the UNJAM_RAC step is removed,
+                // otherwise it can fire multiple times.
+                if (cen != Entity.NONE) {
+                    cmd.removeLastStep();
+                }
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_SEARCHLIGHT.getCmd())) {
             cmd.addStep(MoveStepType.SEARCHLIGHT);

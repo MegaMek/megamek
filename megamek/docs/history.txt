@@ -80,6 +80,7 @@ v0.41.3-dev
 + Bug: Generated Map Settigns Save Dialog now adds .xml extension if not present
 + Bug: Generated Map Settings Dialog now sets Map Size drop down to 'Custom' if
     configured map size doesn't exist
++ Bug [#4501] ASF : rolling twice to unjam UAC 20
 
 
 

@@ -225,7 +225,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                 }
             }
 
-            Minefield mf;
+            Minefield mf = null;
             if (sea && !(deployM || deployI)) {
                 clientgui
                         .doAlertDialog(
@@ -244,33 +244,42 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                 }
                 MineDensityDialog mfd = new MineDensityDialog(clientgui.frame);
                 mfd.setVisible(true);
-
-                mf = Minefield.createMinefield(coords, p.getId(),
-                        Minefield.TYPE_CONVENTIONAL, mfd.getDensity(), sea,
-                        depth);
-                p.setNbrMFConventional(p.getNbrMFConventional() - 1);
+                
+                if (mfd.getDensity() > 0) {
+                    mf = Minefield.createMinefield(coords, p.getId(),
+                            Minefield.TYPE_CONVENTIONAL, mfd.getDensity(), sea,
+                            depth);
+                    p.setNbrMFConventional(p.getNbrMFConventional() - 1);
+                }
             } else if (deployC) {
                 MineDensityDialog mfd = new MineDensityDialog(clientgui.frame);
                 mfd.setVisible(true);
 
-                mf = Minefield.createMinefield(coords, p.getId(),
-                        Minefield.TYPE_COMMAND_DETONATED, mfd.getDensity(),
-                        sea, depth);
-                p.setNbrMFCommand(p.getNbrMFCommand() - 1);
+                if (mfd.getDensity() > 0) {
+                    mf = Minefield.createMinefield(coords, p.getId(),
+                            Minefield.TYPE_COMMAND_DETONATED, mfd.getDensity(),
+                            sea, depth);
+                    p.setNbrMFCommand(p.getNbrMFCommand() - 1);
+                }
             } else if (deployA) {
                 MineDensityDialog mfd = new MineDensityDialog(clientgui.frame);
                 mfd.setVisible(true);
 
-                mf = Minefield.createMinefield(coords, p.getId(),
-                        Minefield.TYPE_ACTIVE, mfd.getDensity());
-                p.setNbrMFActive(p.getNbrMFActive() - 1);
+                if (mfd.getDensity() > 0) {
+                    mf = Minefield.createMinefield(coords, p.getId(),
+                            Minefield.TYPE_ACTIVE, mfd.getDensity());
+                    p.setNbrMFActive(p.getNbrMFActive() - 1);
+                }
             } else if (deployI) {
                 MineDensityDialog mfd = new MineDensityDialog(clientgui.frame);
                 mfd.setVisible(true);
 
-                mf = Minefield.createMinefield(coords, p.getId(),
-                        Minefield.TYPE_INFERNO, mfd.getDensity(), sea, depth);
-                p.setNbrMFInferno(p.getNbrMFInferno() - 1);
+                if (mfd.getDensity() > 0) {
+                    mf = Minefield.createMinefield(coords, p.getId(),
+                            Minefield.TYPE_INFERNO, mfd.getDensity(), sea,
+                            depth);
+                    p.setNbrMFInferno(p.getNbrMFInferno() - 1);
+                }
             } else if (deployV) {
                 MineDensityDialog mfd = new MineDensityDialog(clientgui.frame);
                 mfd.setVisible(true);
@@ -279,16 +288,20 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
                         clientgui.frame);
                 vsd.setVisible(true);
 
-                mf = Minefield.createMinefield(coords, p.getId(),
-                        Minefield.TYPE_VIBRABOMB, mfd.getDensity(), vsd
-                                .getSetting());
-                p.setNbrMFVibra(p.getNbrMFVibra() - 1);
+                if (mfd.getDensity() > 0) {
+                    mf = Minefield.createMinefield(coords, p.getId(),
+                            Minefield.TYPE_VIBRABOMB, mfd.getDensity(),
+                            vsd.getSetting());
+                    p.setNbrMFVibra(p.getNbrMFVibra() - 1);
+                }
             } else {
                 return;
             }
-            clientgui.getClient().getGame().addMinefield(mf);
-            deployedMinefields.addElement(mf);
-            clientgui.bv.refreshDisplayables();
+            if (mf != null) {
+                clientgui.getClient().getGame().addMinefield(mf);
+                deployedMinefields.addElement(mf);
+            }
+            clientgui.bv.refreshDisplayables();            
         }
 
         if ((p.getNbrMFConventional() == 0) && (p.getNbrMFCommand() == 0)

@@ -1421,8 +1421,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
             if (shiftheld || (gear == MovementDisplay.GEAR_TURN)) {
                 butDone.setText("<html><b>"
-                                + Messages.getString("MovementDisplay.Move")
-                                + "</b></html>"); //$NON-NLS-1$
+                        + Messages.getString("MovementDisplay.Move")
+                        + "</b></html>"); //$NON-NLS-1$
 
                 // Set the button's label to "Done"
                 // if the entire move is impossible.
@@ -1430,8 +1430,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 possible.clipToPossible();
                 if (possible.length() == 0) {
                     butDone.setText("<html><b>"
-                                    + Messages.getString("MovementDisplay.Done")
-                                    + "</b></html>");
+                            + Messages.getString("MovementDisplay.Done")
+                            + "</b></html>");
                     //$NON-NLS-1$
                 }
                 return;
@@ -1440,7 +1440,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 // check if target is valid
                 final Targetable target = chooseTarget(b.getCoords());
                 if ((target == null) || target.equals(ce)
-                    || !(target instanceof Aero)) {
+                        || !(target instanceof Aero)) {
                     clientgui.doAlertDialog(
                             Messages.getString("MovementDisplay.CantRam"), //$NON-NLS-1$
                             Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$
@@ -1451,7 +1451,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 // check if it's a valid ram
                 // First I need to add moves to the path if advanced
                 if ((ce instanceof Aero)
-                    && clientgui.getClient().getGame().useVectorMove()) {
+                        && clientgui.getClient().getGame().useVectorMove()) {
                     cmd.clipToPossible();
                     // cmd = addSteps(cmd, ce, clientgui.getClient());
                 }
@@ -1459,42 +1459,42 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.RAM);
 
                 ToHitData toHit = new RamAttackAction(cen,
-                                                      target.getTargetType(), target.getTargetId(),
-                                                      target.getPosition()).toHit(clientgui.getClient()
-                                                                                           .getGame(), cmd);
+                        target.getTargetType(), target.getTargetId(),
+                        target.getPosition()).toHit(clientgui.getClient()
+                        .getGame(), cmd);
                 if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
 
                     // Determine how much damage the charger will take.
                     Aero ta = (Aero) target;
                     Aero ae = (Aero) ce;
                     int toAttacker = RamAttackAction.getDamageTakenBy(ae, ta,
-                                                                      cmd.getSecondFinalPosition(ae.getPosition()),
-                                                                      cmd.getHexesMoved(), ta.getCurrentVelocity());
+                            cmd.getSecondFinalPosition(ae.getPosition()),
+                            cmd.getHexesMoved(), ta.getCurrentVelocity());
                     int toDefender = RamAttackAction.getDamageFor(ae, ta,
-                                                                  cmd.getSecondFinalPosition(ae.getPosition()),
-                                                                  cmd.getHexesMoved(), ta.getCurrentVelocity());
+                            cmd.getSecondFinalPosition(ae.getPosition()),
+                            cmd.getHexesMoved(), ta.getCurrentVelocity());
 
                     // Ask the player if they want to charge.
                     if (clientgui
                             .doYesNoDialog(
                                     Messages.getString(
                                             "MovementDisplay.RamDialog.title",
-                                            new Object[]{target
-                                                                 .getDisplayName()}), //$NON-NLS-1$
+                                            new Object[] { target
+                                                    .getDisplayName() }), //$NON-NLS-1$
                                     Messages.getString(
-                                            "MovementDisplay.RamDialog.message", new Object[]{ //$NON-NLS-1$
-                                                                                               toHit.getValueAsString(),
-                                                                                               new Double(
-                                                                                                       Compute.oddsAbove(
-                                                                                                               toHit.getValue(),
-                                                                                                               ce().getCrew()
-                                                                                                                   .getOptions()
-                                                                                                                   .booleanOption(
-                                                                                                                           OptionsConstants.PILOT_APTITUDE_PILOTING))),
-                                                                                               toHit.getDesc(),
-                                                                                               new Integer(toDefender),
-                                                                                               toHit.getTableDesc(),
-                                                                                               new Integer(toAttacker)}))) {
+                                            "MovementDisplay.RamDialog.message", new Object[] { //$NON-NLS-1$
+                                                    toHit.getValueAsString(),
+                                                    new Double(
+                                                            Compute.oddsAbove(
+                                                                    toHit.getValue(),
+                                                                    ce().getCrew()
+                                                                            .getOptions()
+                                                                            .booleanOption(
+                                                                                    OptionsConstants.PILOT_APTITUDE_PILOTING))),
+                                                    toHit.getDesc(),
+                                                    new Integer(toDefender),
+                                                    toHit.getTableDesc(),
+                                                    new Integer(toAttacker) }))) {
                         // if they answer yes, charge the target.
                         cmd.getLastStep().setTarget(target);
                         ready();
@@ -1523,19 +1523,19 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
                 // check if it's a valid charge
                 ToHitData toHit = new ChargeAttackAction(cen,
-                                                         target.getTargetType(), target.getTargetId(),
-                                                         target.getPosition()).toHit(clientgui.getClient()
-                                                                                              .getGame(), cmd);
+                        target.getTargetType(), target.getTargetId(),
+                        target.getPosition()).toHit(clientgui.getClient()
+                        .getGame(), cmd);
                 if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
                     // Determine how much damage the charger will take.
                     int toAttacker = 0;
                     if (target.getTargetType() == Targetable.TYPE_ENTITY) {
                         Entity te = (Entity) target;
                         toAttacker = ChargeAttackAction.getDamageTakenBy(ce,
-                                                                         te,
-                                                                         clientgui.getClient().getGame().getOptions()
-                                                                                  .booleanOption("tacops_charge_damage"), //$NON-NLS-1$
-                                                                         cmd.getHexesMoved());
+                                te,
+                                clientgui.getClient().getGame().getOptions()
+                                        .booleanOption("tacops_charge_damage"), //$NON-NLS-1$
+                                cmd.getHexesMoved());
                     } else if ((target.getTargetType() == Targetable.TYPE_FUEL_TANK)
                                || (target.getTargetType() == Targetable.TYPE_BUILDING)) {
                         Building bldg = clientgui.getClient().getGame()
@@ -1549,29 +1549,29 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             .doYesNoDialog(
                                     Messages.getString(
                                             "MovementDisplay.ChargeDialog.title",
-                                            new Object[]{target
-                                                                 .getDisplayName()}), //$NON-NLS-1$
+                                            new Object[] { target
+                                                    .getDisplayName() }), //$NON-NLS-1$
                                     Messages.getString(
                                             "MovementDisplay.ChargeDialog.message",
-                                            new Object[]{//$NON-NLS-1$
-                                                         toHit.getValueAsString(),
-                                                         new Double(
-                                                                 Compute.oddsAbove(toHit
-                                                                                           .getValue())),
-                                                         toHit.getDesc(),
-                                                         new Integer(
-                                                                 ChargeAttackAction
-                                                                         .getDamageFor(
-                                                                                 ce,
-                                                                                 clientgui
-                                                                                         .getClient()
-                                                                                         .getGame()
-                                                                                         .getOptions()
-                                                                                         .booleanOption(
-                                                                                                 "tacops_charge_damage"),
-                                                                                 cmd.getHexesMoved())),
-                                                         toHit.getTableDesc(),
-                                                         new Integer(toAttacker)}))) {
+                                            new Object[] {//$NON-NLS-1$
+                                                    toHit.getValueAsString(),
+                                                    new Double(
+                                                            Compute.oddsAbove(toHit
+                                                                    .getValue())),
+                                                    toHit.getDesc(),
+                                                    new Integer(
+                                                            ChargeAttackAction
+                                                                    .getDamageFor(
+                                                                            ce,
+                                                                            clientgui
+                                                                                    .getClient()
+                                                                                    .getGame()
+                                                                                    .getOptions()
+                                                                                    .booleanOption(
+                                                                                            "tacops_charge_damage"),
+                                                                            cmd.getHexesMoved())),
+                                                    toHit.getTableDesc(),
+                                                    new Integer(toAttacker) }))) {
                         // if they answer yes, charge the target.
                         cmd.getLastStep().setTarget(target);
                         ready();
@@ -1607,25 +1607,25 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             .doYesNoDialog(
                                     Messages.getString(
                                             "MovementDisplay.DFADialog.title",
-                                            new Object[]{target
-                                                                 .getDisplayName()}), //$NON-NLS-1$
+                                            new Object[] { target
+                                                    .getDisplayName() }), //$NON-NLS-1$
                                     Messages.getString(
-                                            "MovementDisplay.DFADialog.message", new Object[]{//$NON-NLS-1$
-                                                                                              toHit.getValueAsString(),
-                                                                                              new Double(
-                                                                                                      Compute.oddsAbove(toHit
-                                                                                                                                .getValue())),
-                                                                                              toHit.getDesc(),
-                                                                                              new Integer(
-                                                                                                      DfaAttackAction
-                                                                                                              .getDamageFor(
-                                                                                                                      ce,
-                                                                                                                      (target instanceof Infantry)
-                                                                                                                      && !(target instanceof BattleArmor))),
-                                                                                              toHit.getTableDesc(),
-                                                                                              new Integer(
-                                                                                                      DfaAttackAction
-                                                                                                              .getDamageTakenBy(ce))}))) {
+                                            "MovementDisplay.DFADialog.message", new Object[] {//$NON-NLS-1$
+                                                    toHit.getValueAsString(),
+                                                    new Double(
+                                                            Compute.oddsAbove(toHit
+                                                                    .getValue())),
+                                                    toHit.getDesc(),
+                                                    new Integer(
+                                                            DfaAttackAction
+                                                                    .getDamageFor(
+                                                                            ce,
+                                                                            (target instanceof Infantry)
+                                                                                    && !(target instanceof BattleArmor))),
+                                                    toHit.getTableDesc(),
+                                                    new Integer(
+                                                            DfaAttackAction
+                                                                    .getDamageTakenBy(ce)) }))) {
                         // if they answer yes, DFA the target
                         cmd.getLastStep().setTarget(target);
                         ready();

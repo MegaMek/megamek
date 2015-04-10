@@ -3784,20 +3784,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         checkLOS(c);
                     } else {
                         processBoardViewEvent(new BoardViewEvent(this, c, null,
-                                                                 BoardViewEvent.BOARD_HEX_CLICKED, modifiers));
+                                BoardViewEvent.BOARD_HEX_CLICKED, modifiers));
                     }
                     break;
                 case BOARD_HEX_DOUBLECLICK:
                     processBoardViewEvent(new BoardViewEvent(this, c, null,
-                                                             BoardViewEvent.BOARD_HEX_DOUBLECLICKED, modifiers));
+                            BoardViewEvent.BOARD_HEX_DOUBLECLICKED, modifiers));
                     break;
                 case BOARD_HEX_DRAG:
                     processBoardViewEvent(new BoardViewEvent(this, c, null,
-                                                             BoardViewEvent.BOARD_HEX_DRAGGED, modifiers));
+                            BoardViewEvent.BOARD_HEX_DRAGGED, modifiers));
                     break;
                 case BOARD_HEX_POPUP:
                     processBoardViewEvent(new BoardViewEvent(this, c, null,
-                                                             BoardViewEvent.BOARD_HEX_POPUP, modifiers));
+                            BoardViewEvent.BOARD_HEX_POPUP, modifiers));
                     break;
             }
         }

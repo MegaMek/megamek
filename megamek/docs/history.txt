@@ -76,6 +76,11 @@ v0.41.3-dev
 + Bug [#4513]: NPE in 0.41.3 r11674 Infantry.isLocationProhibited caused by Vee
 + Bug [#4506]: Deploying minefields - trying to cancel the minefield deploys the
     minefield with 0 density
++ Bug: Generated Map Settings Save dialog says Load
++ Bug: Generated Map Settigns Save Dialog now adds .xml extension if not present
++ Bug: Generated Map Settings Dialog now sets Map Size drop down to 'Custom' if
+    configured map size doesn't exist
+
 
 
 v0.41.2-dev (2015-02-12 15:20 UTC)

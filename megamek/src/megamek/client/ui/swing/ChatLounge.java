@@ -1166,14 +1166,19 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         comboMapSizes.removeActionListener(this);
         int items = comboMapSizes.getItemCount();
 
+        boolean mapSizeSelected = false;
         for (int i = 0; i < (items - 1); i++) {
             BoardDimensions size = (BoardDimensions) comboMapSizes.getItemAt(i);
 
             if ((size.width() == mapSettings.getBoardWidth())
                     && (size.height() == mapSettings.getBoardHeight())) {
                 comboMapSizes.setSelectedIndex(i);
+                mapSizeSelected = true;
             }
-
+        }
+        // If we didn't select a size, select the last item: 'Custom Size'
+        if (!mapSizeSelected) {
+            comboMapSizes.setSelectedIndex(items - 1);
         }
         comboMapSizes.addActionListener(this);
 

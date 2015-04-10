@@ -73,6 +73,7 @@ v0.41.3-dev
 + Bug [#4454] Final Fix for Infantry Costs.
 + Bug [MML#147] BA mechanical jump boosters take up no weight
 + Bug: Infantry Weights adjusted to take into account AntiMek Equipment.
++ Bug [#4513]: NPE in 0.41.3 r11674 Infantry.isLocationProhibited caused by Vee
 
 
 v0.41.2-dev (2015-02-12 15:20 UTC)

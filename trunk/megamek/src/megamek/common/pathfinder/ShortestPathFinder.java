@@ -338,6 +338,10 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
      */
     public static int getElevationDiff(final MovePath mp, Coords dest,
             IBoard board, Entity ent) {
+        // We can ignore this if we're jumping
+        if (mp.isJumping()) {
+            return 0;
+        }
         IHex destHex = board.getHex(dest);
         int currElevation = mp.getFinalElevation();
         // Get elevation in destination hex, ignoring buildings

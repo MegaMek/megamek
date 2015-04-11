@@ -34,6 +34,7 @@ import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Building.BasementType;
 import megamek.common.IGame.Phase;
 import megamek.common.MovePath.MoveStepType;
@@ -752,7 +753,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Determines the sort order for weapons in the UnitDisplay weapon list.
      */
-    private WeaponSortOrder weaponSortOrder = WeaponSortOrder.DEFAULT;
+    private WeaponSortOrder weaponSortOrder;
 
     /**
      * Maps a weapon id to a user-specified index, used to get a custom ordering
@@ -793,6 +794,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         impThisTurn = 0;
         impLastTurn = 0;
 
+        weaponSortOrder = WeaponSortOrder.values()[GUIPreferences.getInstance()
+                .getDefaultWeaponSortOrder()];
     }
 
     protected void initMilitary() {

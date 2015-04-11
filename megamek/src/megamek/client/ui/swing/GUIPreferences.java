@@ -19,6 +19,7 @@ import java.awt.Color;
 import javax.swing.ToolTipManager;
 
 import megamek.client.ui.swing.util.ColorParser;
+import megamek.common.Entity;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
 
@@ -167,6 +168,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_UNIT_OVERVIEW = "ShowUnitOverview";
     public static final String SHOW_DAMAGE_LEVEL = "ShowDamageLevel";
     public static final String SKIN_FILE = "SkinFile";
+    public static final String DEFAULT_WEAP_SORT_ORDER = "DefaultWeaponSortOrder";
     
     // RAT dialog preferences
     public static String RAT_TECH_LEVEL = "RATTechLevel";
@@ -321,7 +323,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(RAT_YEAR_MIN, "2500");
         store.setDefault(RAT_YEAR_MAX, "3100");
         store.setDefault(RAT_PAD_BV, false);
-        store.setDefault(RAT_SELECTED_RAT, "");        
+        store.setDefault(RAT_SELECTED_RAT, "");
+        
+        store.setDefault(DEFAULT_WEAP_SORT_ORDER,
+                Entity.WeaponSortOrder.DEFAULT.ordinal());
         
     }
 
@@ -666,6 +671,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public String getSkinFile() {
         return store.getString(SKIN_FILE);
     }
+    
+    public int getDefaultWeaponSortOrder() {
+        return store.getInt(DEFAULT_WEAP_SORT_ORDER);
+    }
 
     public void setAntiAliasing(boolean state){
         store.setValue(ANTIALIASING, state);
@@ -986,6 +995,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public void setSkinFile(String s) {
         store.setValue(SKIN_FILE, s);
+    }
+    
+    public void setDefaultWeaponSortOrder(int i) {
+        store.setValue(DEFAULT_WEAP_SORT_ORDER, i);
     }
 
     public int getRATTechLevel() {

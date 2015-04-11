@@ -70,6 +70,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
 import megamek.common.Configuration;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.KeyBindParser;
 import megamek.common.preference.IClientPreferences;
@@ -140,6 +141,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox soundMute;
     private JCheckBox showMapHexPopup;
     private JCheckBox chkAntiAliasing;
+    private JComboBox<String> defaultWeaponSortOrder;
     private JTextField tooltipDelay;
     private JTextField tooltipDismissDelay;
     private JComboBox<String> unitStartChar;
@@ -444,6 +446,25 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<>();
         row.add(autoDeclareSearchlight);
         comps.add(row);
+        
+        JLabel defaultSortOrderLabel = new JLabel(Messages.getString("CommonSettingsDialog.defaultWeaponSortOrder")); //$NON-NLS-1$
+        String toolTip = Messages
+                .getString("CommonSettingsDialog.defaultWeaponSortOrderTooltip");
+        defaultSortOrderLabel.setToolTipText(toolTip);
+        defaultWeaponSortOrder = new JComboBox<>();
+        defaultWeaponSortOrder.setToolTipText(toolTip);
+        for (Entity.WeaponSortOrder s : Entity.WeaponSortOrder.values()) {
+            // Skip custom: it doesn't make sense as a default.
+            if (s.equals(Entity.WeaponSortOrder.CUSTOM)) {
+                continue;
+            }
+            String entry = "MechDisplay.WeaponSortOrder." + s.i18nEntry;
+            defaultWeaponSortOrder.addItem(Messages.getString(entry));
+        }
+        row = new ArrayList<>();
+        row.add(defaultSortOrderLabel);
+        row.add(defaultWeaponSortOrder);
+        comps.add(row);
 
         // Horizontal Line and Spacer
         row = new ArrayList<>();
@@ -567,6 +588,8 @@ public class CommonSettingsDialog extends ClientDialog implements
         showMapHexPopup.setSelected(gs.getShowMapHexPopup());
         tooltipDelay.setText(Integer.toString(gs.getTooltipDelay()));
         tooltipDismissDelay.setText(Integer.toString(gs.getTooltipDismissDelay()));
+        
+        defaultWeaponSortOrder.setSelectedIndex(gs.getDefaultWeaponSortOrder());
 
         mouseWheelZoom.setSelected(gs.getMouseWheelZoom());
         mouseWheelZoomFlip.setSelected(gs.getMouseWheelZoomFlip());
@@ -690,6 +713,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setMinimapEnabled(minimapEnabled.isSelected());
         gs.setAutoEndFiring(autoEndFiring.isSelected());
         gs.setAutoDeclareSearchlight(autoDeclareSearchlight.isSelected());
+        gs.setDefaultWeaponSortOrder(defaultWeaponSortOrder.getSelectedIndex());
         gs.setNagForMASC(nagForMASC.isSelected());
         gs.setNagForPSR(nagForPSR.isSelected());
         gs.setNagForNoAction(nagForNoAction.isSelected());

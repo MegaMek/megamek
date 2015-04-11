@@ -43,6 +43,13 @@
       </KeyBind>
 
       <KeyBind>
+        <command>toggleIso</command>
+        <keyCode>84</keyCode> <!-- T -->
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
         <command>toggleChat</command>
         <keyCode>10</keyCode> <!-- Enter -->
         <modifier>0</modifier>          

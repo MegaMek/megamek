@@ -86,6 +86,7 @@ v0.41.3-dev
 + Bug: Possible to see moving unsee enemies units with double-blind, sensors and
     Show Movement option
 + Bug: Sensor return icons displayed info it shouldn't (like facing, prone, etc)
++ Bug: Added missing default keybind for Toggle Isometric (it's now T)
 
 
 v0.41.2-dev (2015-02-12 15:20 UTC)

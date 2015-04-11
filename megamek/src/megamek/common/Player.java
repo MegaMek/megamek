@@ -550,4 +550,8 @@ public final class Player extends TurnOrdered implements IPlayer {
         }
         return units;
     }
+    
+    public String toString() {
+        return "Player " + getId() + " (" + getName() + ")";
+    }
 }

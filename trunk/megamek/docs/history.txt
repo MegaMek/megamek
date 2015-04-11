@@ -85,6 +85,7 @@ v0.41.3-dev
 + Bug [#4519]: Cannot Jump Over Water (Path finding)
 + Bug: Possible to see moving unsee enemies units with double-blind, sensors and
     Show Movement option
++ Bug: Sensor return icons displayed info it shouldn't (like facing, prone, etc)
 
 
 v0.41.2-dev (2015-02-12 15:20 UTC)

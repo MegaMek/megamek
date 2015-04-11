@@ -160,7 +160,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             return;
         }
         
-        if ((ce() != null) &&ce().isWeapOrderChanged()) {
+        if ((ce() != null) && ce().isWeapOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
 

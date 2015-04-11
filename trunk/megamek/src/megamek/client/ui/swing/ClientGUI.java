@@ -774,6 +774,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                         ent.getModel(), ent.getWeaponSortOrder(),
                         ent.getCustomWeaponOrder());
                 getMenuBar().updateSaveWeaponOrderMenuItem();
+                client.sendEntityWeaponOrderUpdate(ent);
             }
         }
 

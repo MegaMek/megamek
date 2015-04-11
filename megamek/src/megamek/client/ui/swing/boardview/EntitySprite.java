@@ -20,6 +20,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.GunEmplacement;
+import megamek.common.IBoard;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -154,10 +155,12 @@ class EntitySprite extends Sprite {
      */
     @Override
     public void prepare() {
+        final IBoard board = bv.game.getBoard();
+        
         // figure out size
         String shortName = entity.getShortName();
         if (entity.getMovementMode() == EntityMovementMode.VTOL) {
-            shortName = shortName.concat(" (FL: ")
+            shortName = shortName.concat(" (FL: ") //$NON-NLS-1$
                     .concat(Integer.toString(entity.getElevation()))
                     .concat(")");
         }
@@ -166,7 +169,7 @@ class EntitySprite extends Sprite {
         }
         int face = entity.isCommander() ? Font.ITALIC : Font.PLAIN;
         if (onlyDetectedBySensors()) {
-            shortName = Messages.getString("BoardView1.sensorReturn") ;
+            shortName = Messages.getString("BoardView1.sensorReturn"); //$NON-NLS-1$
             face = Font.PLAIN;
         }
         Font font = new Font("SansSerif", face, 10); //$NON-NLS-1$
@@ -176,11 +179,11 @@ class EntitySprite extends Sprite {
 
         // create image for buffer
         Image tempImage;
-        Graphics graph;
+        Graphics2D graph;
         try {
             tempImage = this.bv.createImage(bounds.width, bounds.height);
             // fill with key color
-            graph = tempImage.getGraphics();
+            graph = (Graphics2D)tempImage.getGraphics();
         } catch (NullPointerException ex) {
             // argh! but I want it!
             return;
@@ -226,16 +229,32 @@ class EntitySprite extends Sprite {
             graph.drawString(shortName, tempRect.x + 1,
                     (tempRect.y + tempRect.height) - 1);
 
+           
+            // Past here, everything is drawing status that shouldn't be seen
+            // on a sensor return, so we'll just quit here
+            if (onlyDetectedBySensors()) {
+                // create final image
+                image = bv.getScaledImage(bv
+                        .createImage(new FilteredImageSource(tempImage
+                                .getSource(), new KeyAlphaFilter(
+                                BoardView1.TRANSPARENT))), false);
+
+                graph.dispose();
+                tempImage.flush();
+                return;
+            }
+            
             // draw facing
             graph.setColor(Color.white);
+            boolean isInfantry = (entity instanceof Infantry);
+            boolean isAero = (entity instanceof Aero);                
             if ((entity.getFacing() != -1)
-                    && !((entity instanceof Infantry)
-                            && !((Infantry) entity).hasFieldGun())
-                    && !((entity instanceof Aero)
-                            && ((Aero) entity).isSpheroid()
-                            && !this.bv.game.getBoard().inSpace())) {
-            	((Graphics2D) graph).draw(this.bv.facingPolys[entity.getFacing()]);
+                    && !(isInfantry && !((Infantry) entity).hasFieldGun())
+                    && !(isAero && ((Aero) entity).isSpheroid() && !board
+                            .inSpace())) {
+                graph.draw(bv.facingPolys[entity.getFacing()]);
             }
+
 
             // determine secondary facing for non-mechs & flipped arms
             int secFacing = entity.getFacing();
@@ -248,12 +267,12 @@ class EntitySprite extends Sprite {
             if ((secFacing != -1) && (secFacing != entity.getFacing())) {
                 graph.setColor(Color.red);
                 //graph.drawPolygon(this.bv.facingPolys[secFacing]);
-                ((Graphics2D) graph).draw(this.bv.facingPolys[secFacing]);
+                graph.draw(this.bv.facingPolys[secFacing]);
             }
             if ((entity instanceof Aero) && this.bv.game.useVectorMove()) {
                 for (int head : entity.getHeading()) {
                     graph.setColor(Color.red);
-                    ((Graphics2D) graph).draw(this.bv.facingPolys[head]);
+                    graph.draw(this.bv.facingPolys[head]);
                 }
             }
 
@@ -274,7 +293,7 @@ class EntitySprite extends Sprite {
 
             // draw elevation/altitude if non-zero
             if (entity.isAirborne()) {
-                if (!this.bv.game.getBoard().inSpace()) {
+                if (!board.inSpace()) {
                     graph.setColor(Color.darkGray);
                     graph.drawString(Integer.toString(entity.getAltitude())
                             + "A", 26, 15);

@@ -147,6 +147,7 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.options.GameOptions;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -3871,7 +3872,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         @Override
         public void gameEntityChange(GameEntityChangeEvent e) {
-            Vector<UnitLocation> mp = e.getMovePath();
+            final Vector<UnitLocation> mp = e.getMovePath();
+            final Entity en = e.getEntity();
+            final GameOptions gopts = game.getOptions();
+            GUIPreferences guip = GUIPreferences.getInstance();
+            
+                    
             updateEcmList();
             if (e.getEntity().hasActiveECM()) {
                 // this might disrupt c3/c3i lines, so redraw all
@@ -3880,12 +3886,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 refreshMoveVectors();
             }
-            if ((mp != null) && (mp.size() > 0)
-                && GUIPreferences.getInstance().getShowMoveStep()
-                && !game.getOptions().booleanOption("simultaneous_movement")) {
-                addMovingUnit(e.getEntity(), mp);
+            if ((mp != null) && (mp.size() > 0) && guip.getShowMoveStep()
+                    && !gopts.booleanOption("simultaneous_movement")) {
+                if ((localPlayer == null)
+                        || !game.getOptions().booleanOption("double_blind")
+                        || !en.getOwner().isEnemyOf(localPlayer)
+                        || en.isVisibleToEnemy()) {
+                    addMovingUnit(en, mp);
+                }
             } else {
-                redrawEntity(e.getEntity(), e.getOldEntity());
+                redrawEntity(en, e.getOldEntity());
             }
         }
 

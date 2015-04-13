@@ -15,7 +15,7 @@ Myomer:Standard
 Cockpit:Torso-Mounted Cockpit
 Gyro:Standard Gyro
 
-Heat Sinks:19 Double
+Heat Sinks:21 Double
 Base Chassis Heat Sinks:10
 Walk MP:3
 Jump MP:0
@@ -35,15 +35,15 @@ RTC Armor:12
 
 Weapons:4
 Large Pulse Laser, Left Arm
-Large Pulse Laser, Right Torso
 Large Pulse Laser, Right Arm
 Large Pulse Laser, Left Torso
+Large Pulse Laser, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Lower Arm Actuator
-Hand Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
@@ -56,8 +56,8 @@ Clan Ferro-Lamellor
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Lower Arm Actuator
-Hand Actuator
+CLDoubleHeatSink
+CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink
 CLDoubleHeatSink

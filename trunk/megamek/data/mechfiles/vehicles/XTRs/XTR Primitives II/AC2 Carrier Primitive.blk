@@ -9,7 +9,7 @@ MAM0
 </Version>
 
 <UnitType>
-Tank
+SupportTank
 </UnitType>
 
 <Name>
@@ -21,7 +21,7 @@ AC/2 Carrier
 </Model>
 
 <year>
-2300
+2440
 </year>
 
 <type>
@@ -41,11 +41,15 @@ Tracked
 </engine_type>
 
 <armor>
-20
-20
-20
+22
+22
+22
 12
 </armor>
+
+<barrating>
+6
+</barrating>
 
 <structural_tech_rating>
 3

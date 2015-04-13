@@ -89,6 +89,7 @@ v0.41.3-dev
 + Bug: Added missing default keybind for Toggle Isometric (it's now T)
 + Feature: Added ability to select default weapon sort order in client settings
 + Save Weapon Sort Order menu item now sends the Entity's sort order to the server
++ Added a defaultSkinScrollBars.xml, for the default skin with scroll bars
 
 
 v0.41.2-dev (2015-02-12 15:20 UTC)

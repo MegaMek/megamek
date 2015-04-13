@@ -90,7 +90,7 @@ v0.41.3-dev
 + Feature: Added ability to select default weapon sort order in client settings
 + Save Weapon Sort Order menu item now sends the Entity's sort order to the server
 + Added a defaultSkinScrollBars.xml, for the default skin with scroll bars
-
++ Data: New Sprites and some unit fixed.
 
 v0.41.2-dev (2015-02-12 15:20 UTC)
 + Bug [#4422]: Woods, jungle, and smoke not getting counted for LoS

@@ -20845,11 +20845,6 @@ public class Server implements Runnable {
                         r.indent(3);
                         vDesc.addElement(r);
 
-                        // ... but page 21 of the Ask The Precentor Martial FAQ
-                        // www.classicbattletech.com/PDF/AskPMForumArchiveandFAQ.pdf
-                        // says that the damage counts for making PSRs.
-                        te.damageThisPhase += damage;
-
                         // The target takes no more damage from the explosion.
                         damage = 0;
                     } else if (damage > 0) {

@@ -63,7 +63,7 @@ import megamek.server.DedicatedServer;
  */
 public class MegaMek {
 
-    public static String VERSION = "0.41.3-dev"; //$NON-NLS-1$
+    public static String VERSION = "0.41.3"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager
             .getClientPreferences().getLogDirectory()
             + File.separator
@@ -212,6 +212,7 @@ public class MegaMek {
             PrintStream ps = new PrintStream(
                     new BufferedOutputStream(new FileOutputStream(sLogDir
                             + File.separator + logFileName) {
+                        @Override
                         public void flush() throws IOException {
                             super.flush();
                             getFD().sync();

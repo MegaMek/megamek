@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.41.3-dev
+v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites
 + Bug: Air-to-ground fire needs to allow the attacker to pick a path on the
     targets flight path if multiple hexes are equidistant (this can matter for

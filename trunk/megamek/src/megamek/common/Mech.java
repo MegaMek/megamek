@@ -228,6 +228,8 @@ public abstract class Mech extends Entity {
     private boolean isGrappleAttacker = false;
 
     private int grappledSide = Entity.GRAPPLE_BOTH;
+    
+    private boolean grappledThisRound = false;
 
     private boolean shouldDieAtEndOfTurnBecauseOfWater = false;
 
@@ -503,6 +505,8 @@ public abstract class Mech extends Entity {
         }
         levelsFallen = 0;
         checkForCrit = false;
+        
+        grappledThisRound = false;
     } // End public void newRound()
 
     /**
@@ -6648,10 +6652,22 @@ public abstract class Mech extends Entity {
     public int getGrappled() {
         return grappled_id;
     }
+    
+    public boolean isGrappledThisRound() {
+        return grappledThisRound;
+    }
+    
+    public void setGrappledThisRound(boolean grappled) {
+        grappledThisRound = grappled;
+    }
 
     @Override
     public boolean isEligibleForMovement() {
-        if (grappled_id != Entity.NONE) {
+        // For normal grapples, neither unit can move
+        // If the grapple is caused by a chain whip, then the attacker can move
+        // (this breaks the grapple), TO pg 289
+        if ((grappled_id != Entity.NONE)
+                && (!isChainWhipGrappled() || !isGrappleAttacker())) {
             return false;
         }
         return super.isEligibleForMovement();

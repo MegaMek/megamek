@@ -112,6 +112,8 @@ public class Protomech extends Entity {
     private int grappled_id = Entity.NONE;
 
     private boolean isGrappleAttacker = false;
+    
+    private boolean grappledThisRound = false;
 
     private boolean edpCharged = true;
 
@@ -353,6 +355,9 @@ public class Protomech extends Entity {
             }
         }
         setSecondaryFacing(getFacing());
+        
+        grappledThisRound = false;
+        
         super.newRound(roundNumber);
 
     } // End public void newRound()
@@ -2017,10 +2022,22 @@ public class Protomech extends Entity {
     public int getGrappled() {
         return grappled_id;
     }
+    
+    public boolean isGrappledThisRound() {
+        return grappledThisRound;
+    }
+    
+    public void setGrappledThisRound(boolean grappled) {
+        grappledThisRound = grappled;
+    }
 
     @Override
     public boolean isEligibleForMovement() {
-        if (grappled_id != Entity.NONE) {
+        // For normal grapples, neither unit can move
+        // If the grapple is caused by a chain whip, then the attacker can move
+        // (this breaks the grapple), TO pg 289
+        if ((grappled_id != Entity.NONE)
+                && (!isChainWhipGrappled() || !isGrappleAttacker())) {
             return false;
         }
         return super.isEligibleForMovement();

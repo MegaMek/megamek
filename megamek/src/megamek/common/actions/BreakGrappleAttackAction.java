@@ -69,6 +69,11 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
         if ((impossible != null) && !impossible.equals("Locked in Grapple")) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
+        
+        if ((ae.getGrappled() != Entity.NONE) && ae.isChainWhipGrappled()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, 
+                    "cannot break free from a chain whip grapple");
+        }
 
         ToHitData toHit;
 

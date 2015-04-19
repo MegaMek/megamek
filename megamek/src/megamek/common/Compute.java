@@ -308,13 +308,13 @@ public class Compute {
 
                     // If the entering entity is a mech,
                     // then any other mech in the hex is a violation.
-                    // Unless grappled
+                    // Unless grappled (but chain whip grapples don't count)
                     // grounded small craft are treated as mechs for purposes
                     // of stacking
                     if (isMech
-                        && (((inHex instanceof Mech) && (((Mech) inHex)
-                                                                 .getGrappled() != entering.getId())) || (inHex
-                                                                                                                  instanceof SmallCraft))) {
+                            && (((inHex instanceof Mech) && (inHex
+                                    .getGrappled() != entering.getId() || inHex
+                                    .isChainWhipGrappled())) || (inHex instanceof SmallCraft))) {
                         return inHex;
                     }
 

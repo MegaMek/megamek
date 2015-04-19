@@ -446,6 +446,23 @@ class EntitySprite extends Sprite {
                 graph.setColor(Color.yellow);
                 graph.drawString(
                         Messages.getString("BoardView1.LOCKED"), 21, 38); //$NON-NLS-1$
+            } else if ((entity.getGrappled() != Entity.NONE) 
+                    && entity.isGrappleAttacker()) {
+             // draw "GRAPPLED"
+                graph.setColor(Color.black);
+                graph.drawString(
+                        Messages.getString("BoardView1.GRAPPLER"), 22, 39); //$NON-NLS-1$
+                graph.setColor(Color.red);
+                graph.drawString(
+                        Messages.getString("BoardView1.GRAPPLER"), 21, 38); //$NON-NLS-1$
+            } else if ((entity.getGrappled() != Entity.NONE) ) {
+             // draw "GRAPPLED"
+                graph.setColor(Color.black);
+                graph.drawString(
+                        Messages.getString("BoardView1.GRAPPLED"), 22, 39); //$NON-NLS-1$
+                graph.setColor(Color.red);
+                graph.drawString(
+                        Messages.getString("BoardView1.GRAPPLED"), 21, 38); //$NON-NLS-1$
             }
 
             // If this unit is shutdown, say so.

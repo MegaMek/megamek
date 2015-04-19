@@ -1854,9 +1854,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (tint != null) {
                 Color origColor = g.getColor();
                 g.setColor(tint);
-                g.fillPolygon(hexPoly);
+                AffineTransform sc = new AffineTransform();
+                sc.scale(scale, scale);
+                ((Graphics2D)g).fill(sc.createTransformedShape(hexPoly));
                 g.setColor(origColor);
-                Image staticImage = tileManager.getEcmStaticImage(tint);
+                Image staticImage = getScaledImage(tileManager.getEcmStaticImage(tint), false);
                 g.drawImage(staticImage, drawX, drawY,
                         staticImage.getWidth(null),
                         staticImage.getHeight(null), this);
@@ -1868,7 +1870,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (tint != null) {
                 Color origColor = g.getColor();
                 g.setColor(tint);
-                g.fillPolygon(hexPoly);
+                AffineTransform sc = new AffineTransform();
+                sc.scale(scale, scale);
+                ((Graphics2D)g).fill(sc.createTransformedShape(hexPoly));
                 g.setColor(origColor);
             }
         }

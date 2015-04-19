@@ -54,17 +54,31 @@ public class GrappleAttackAction extends PhysicalAttackAction {
      * To-hit number
      */
     public static ToHitData toHit(IGame game, int attackerId, Targetable target) {
-        return toHit(game, attackerId, target, Entity.GRAPPLE_BOTH);
+        return toHit(game, attackerId, target, Entity.GRAPPLE_BOTH, false);
     }
 
+    /**
+     * Calculates ToHitData for a grapple attack.
+     * 
+     * @param game
+     * @param attackerId
+     * @param target
+     * @param grappleSide
+     * @param isChainWhip
+     *            Flag that determines if the attack is coming from a chain
+     *            whip. If true, ignore illegal cases, as this comes from a
+     *            bonus attack for a chain whip, and the attack should never be
+     *            illegal. See TO pg 289.
+     * @return
+     */
     public static ToHitData toHit(IGame game, int attackerId,
-            Targetable target, int grappleSide) {
+            Targetable target, int grappleSide, boolean isChainWhip) {
         final Entity ae = game.getEntity(attackerId);
         Entity te = (Entity) target;
 
         ToHitData toHit = checkIllegal(game, ae, target, grappleSide);
         
-        if (toHit != null) {
+        if ((toHit != null) && !isChainWhip) {
             return toHit;
         }
         
@@ -76,7 +90,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
 
         setCommonModifiers(toHit, game, ae, target);
 
-        if (ae instanceof Mech && grappleSide == Entity.GRAPPLE_BOTH) {
+        if ((ae instanceof Mech) && grappleSide == Entity.GRAPPLE_BOTH) {
             // damaged or missing actuators
             if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, Mech.LOC_LARM)) {
                 toHit.addModifier(2, "Left upper arm actuator destroyed");
@@ -135,7 +149,7 @@ public class GrappleAttackAction extends PhysicalAttackAction {
 
         }
 
-        if (grappleSide != Entity.GRAPPLE_BOTH && (ae instanceof Mech)) {
+        if ((grappleSide != Entity.GRAPPLE_BOTH) && (ae instanceof Mech)) {
             Mech attacker = (Mech) ae;
             Mech teMech = (te instanceof Mech) ? (Mech)te : null;
             if (attacker.hasTSM() && (attacker.heat >= 9)
@@ -148,11 +162,11 @@ public class GrappleAttackAction extends PhysicalAttackAction {
         // Weight class difference
         int wmod = te.getWeightClass() - ae.getWeightClass();
 
-        if (te instanceof Protomech && !(ae instanceof Protomech)) {
+        if ((te instanceof Protomech) && !(ae instanceof Protomech)) {
             wmod = ae.getWeightClass() * -1;
-        } else if (ae instanceof Protomech && !(te instanceof Protomech)) {
+        } else if ((ae instanceof Protomech) && !(te instanceof Protomech)) {
             wmod = te.getWeightClass();
-        } else if (te instanceof Protomech && ae instanceof Protomech) {
+        } else if ((te instanceof Protomech) && (ae instanceof Protomech)) {
             wmod = 0;
         }
 

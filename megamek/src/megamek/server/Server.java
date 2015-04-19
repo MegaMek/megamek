@@ -2754,6 +2754,7 @@ public class Server implements Runnable {
                 resolveSinkVees();
                 cleanupDestroyedNarcPods();
                 checkForFlawedCooling();
+                checkForChainWhipGrappleChecks();
                 // check phase report
                 if (vPhaseReport.size() > 1) {
                     game.addReports(vPhaseReport);
@@ -4693,6 +4694,25 @@ public class Server implements Runnable {
 
         // looks like mostly everything's okay
         processMovement(entity, md, losCache);
+        
+        // The attacker may choose to break a chain whip grapple by expending MP
+        if ((entity.getGrappled() != Entity.NONE)
+                && entity.isChainWhipGrappled() && entity.isGrappleAttacker()
+                && (md.getMpUsed() > 0)) {
+            
+            Entity te = game.getEntity(entity.getGrappled());
+            Report r = new Report(4316);
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            r.addDesc(te);
+            addReport(r);
+            
+            entity.setGrappled(Entity.NONE, false);
+            te.setGrappled(Entity.NONE, false);
+            
+            entityUpdate(entity.getId());
+            entityUpdate(te.getId());
+        }
 
         // check the LOS of any telemissiles owned by this entity
         for (int missileId : entity.getTMTracker().getMissiles()) {
@@ -14886,19 +14906,19 @@ public class Server implements Runnable {
         }
 
         if (((MiscType) caa.getClub().getType())
-                    .hasSubType(MiscType.S_CHAIN_WHIP) && (te instanceof Mech)) {
+                .hasSubType(MiscType.S_CHAIN_WHIP) && (te instanceof Mech)) {
             addNewLines();
 
             int loc = hit.getLocation();
             int toHitNumber = toHit.getValue();
 
             if (((loc == Mech.LOC_LLEG) || (loc == Mech.LOC_RLEG))
-                && (!te.hasActiveShield(loc) && !te.hasPassiveShield(loc))) {
+                    && (!te.hasActiveShield(loc) && !te.hasPassiveShield(loc))) {
 
                 roll = Compute.d6(2);
 
                 if ((((Mech) ae).hasTSM() && (ae.heat >= 9))
-                    && (!((Mech) te).hasTSM() || ((((Mech) te).hasTSM()) && (te.heat < 9)))) {
+                        && (!((Mech) te).hasTSM() || ((((Mech) te).hasTSM()) && (te.heat < 9)))) {
                     toHitNumber -= 2;
                 }
 
@@ -14919,7 +14939,7 @@ public class Server implements Runnable {
                     addReport(r);
 
                     game.addPSR(new PilotingRollData(te.getId(), 3,
-                                                     "Snared by chain whip"));
+                            "Snared by chain whip"));
                 } else {
                     r = new Report(2357);
                     r.subject = ae.getId();
@@ -14927,12 +14947,18 @@ public class Server implements Runnable {
                     addReport(r);
                 }
             } else if (((loc == Mech.LOC_RARM) || (loc == Mech.LOC_LARM))
-                       && (!te.hasActiveShield(loc) && !te.hasPassiveShield(loc) && !te
-                    .hasNoDefenseShield(loc))) {
+                    && (!te.hasActiveShield(loc) && !te.hasPassiveShield(loc) && !te
+                            .hasNoDefenseShield(loc))) {
                 GrappleAttackAction gaa = new GrappleAttackAction(ae.getId(),
-                                                                  te.getId());
+                        te.getId());
+                int grappleSide;
+                if (caa.getClub().getLocation() == Mech.LOC_RARM) {
+                    grappleSide = Entity.GRAPPLE_RIGHT;
+                } else {
+                    grappleSide = Entity.GRAPPLE_LEFT;
+                }
                 ToHitData grappleHit = GrappleAttackAction.toHit(game,
-                                                                 ae.getId(), target);
+                        ae.getId(), target, grappleSide, true);
                 PhysicalResult grappleResult = new PhysicalResult();
                 grappleResult.aaa = gaa;
                 grappleResult.toHit = grappleHit;
@@ -14940,9 +14966,9 @@ public class Server implements Runnable {
                 resolveGrappleAttack(
                         grappleResult,
                         lastEntityId,
+                        grappleSide,
                         hit.getLocation() == Mech.LOC_RARM ? Entity.GRAPPLE_RIGHT
-                                                           : Entity.GRAPPLE_LEFT);
-
+                                : Entity.GRAPPLE_LEFT);                                
             }
         }
 
@@ -15190,11 +15216,26 @@ public class Server implements Runnable {
      * Handle a grapple attack
      */
     private void resolveGrappleAttack(PhysicalResult pr, int lastEntityId) {
-        resolveGrappleAttack(pr, lastEntityId, Entity.GRAPPLE_BOTH);
+        resolveGrappleAttack(pr, lastEntityId, Entity.GRAPPLE_BOTH,
+                Entity.GRAPPLE_BOTH);
     }
 
+    /**
+     * Resolves a grapple attack.
+     * 
+     * @param pr
+     * @param lastEntityId
+     * @param aeGrappleSide
+     *            The side that the attacker is grappling with. For normal
+     *            grapples this will be both, for chain whip grapples this will
+     *            be the arm with the chain whip in it.
+     * @param teGrappleSide
+     *            The that the the target is grappling with. For normal grapples
+     *            this will be both, for chain whip grapples this will be the
+     *            arm that is being whipped.
+     */
     private void resolveGrappleAttack(PhysicalResult pr, int lastEntityId,
-                                      int grappleSide) {
+                                      int aeGrappleSide, int teGrappleSide) {
         final GrappleAttackAction paa = (GrappleAttackAction) pr.aaa;
         final Entity ae = game.getEntity(paa.getEntityId());
         // PLEASE NOTE: buildings are *never* the target of a "push".
@@ -15257,14 +15298,20 @@ public class Server implements Runnable {
         // we hit...
         ae.setGrappled(te.getId(), true);
         te.setGrappled(ae.getId(), false);
-        Coords pos = te.getPosition();
-        ae.setPosition(pos);
-        ae.setElevation(te.getElevation());
-        te.setFacing((ae.getFacing() + 3) % 6);
-        addReport(doSetLocationsExposure(ae, game.getBoard().getHex(pos),
-                                         false, ae.getElevation()));
-        ae.setGrappleSide(grappleSide);
-        te.setGrappleSide(grappleSide);
+        ae.setGrappledThisRound(true);
+        te.setGrappledThisRound(true);
+        // For normal grapples, AE moves into targets hex.
+        if (aeGrappleSide == Entity.GRAPPLE_BOTH) {
+            Coords pos = te.getPosition();
+            ae.setPosition(pos);
+            ae.setElevation(te.getElevation());
+            te.setFacing((ae.getFacing() + 3) % 6);
+            addReport(doSetLocationsExposure(ae, game.getBoard().getHex(pos),
+                    false, ae.getElevation()));
+        }
+        
+        ae.setGrappleSide(aeGrappleSide);
+        te.setGrappleSide(teGrappleSide);
 
         r = new Report(4040);
         r.subject = ae.getId();
@@ -17968,6 +18015,65 @@ public class Server implements Runnable {
         }
 
         return out;
+    }
+
+    /**
+     * For chain whip grapples, a roll needs to be made at the end of the
+     * physical phase to maintain the grapple.
+     */
+    private void checkForChainWhipGrappleChecks() {
+        for (Entity ae : game.getEntitiesVector()) {
+            if ((ae.getGrappled() != Entity.NONE) && ae.isChainWhipGrappled()
+                    && ae.isGrappleAttacker() && !ae.isGrappledThisRound()) {
+                Entity te = game.getEntity(ae.getGrappled());
+                ToHitData grappleHit = GrappleAttackAction.toHit(game,
+                        ae.getId(), te, ae.getGrappleSide(), true);
+                int roll = Compute.d6(2);
+
+                Report r = new Report(4317);
+                r.subject = ae.getId();
+                r.indent();
+                r.addDesc(ae);
+                r.addDesc(te);                
+                r.newlines = 0;
+                addReport(r);
+                
+                if (grappleHit.getValue() == TargetRoll.IMPOSSIBLE) {
+                    r = new Report(4300);
+                    r.subject = ae.getId();
+                    r.add(grappleHit.getDesc());
+                    addReport(r);
+                    return;
+                }
+                
+                // report the roll
+                r = new Report(4025);
+                r.subject = ae.getId();
+                r.add(grappleHit.getValue());
+                r.add(roll);
+                r.newlines = 0;
+                addReport(r);
+
+                // do we hit?
+                if (roll >= grappleHit.getValue()) {
+                    // hit
+                    r = new Report(4040);
+                    r.subject = ae.getId();
+                    addReport(r);
+                    // Nothing else to do
+                    return;
+                }
+
+                // miss
+                r = new Report(4035);
+                r.subject = ae.getId();
+                addReport(r);
+                
+                // Need to break grapple
+                ae.setGrappled(Entity.NONE, false);
+                te.setGrappled(Entity.NONE, false);
+            }
+        }
     }
 
     /**

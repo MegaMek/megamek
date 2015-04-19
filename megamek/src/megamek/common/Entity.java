@@ -10249,7 +10249,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void setGrappled(int id, boolean attacker) {
-        // TODO?
+        // This is implemented in subclasses.  Do nothing in general.
     }
 
     public boolean isGrappleAttacker() {
@@ -10258,6 +10258,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getGrappled() {
         return Entity.NONE;
+    }
+    
+    public boolean isChainWhipGrappled() {
+        return getGrappleSide() != Entity.GRAPPLE_BOTH;
+    }
+    
+    public boolean isGrappledThisRound() {
+        return false;
+    }
+    
+    public void setGrappledThisRound(boolean grappled) {
+        // Do nothing here, set in base classes
     }
 
     public void setGameOptions() {

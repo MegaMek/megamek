@@ -1338,7 +1338,7 @@ public class Infantry extends Entity {
             case HOVER:
             case TRACKED:
             case WHEELED:
-                ton = (float) (men * .085);
+                ton = (float) (men * 1);
                 break;
             case INF_JUMP:
                 ton = (float) (men * 0.165);

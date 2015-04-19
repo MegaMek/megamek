@@ -425,6 +425,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             desc.insert(0, "j ");
         } else if (fired) {
             desc.insert(0, "- ");
+        } else if (isPendingDump()) {
+            desc.insert(0, "d ");
         }
         if (rearMounted) {
             desc.append(" (R)");

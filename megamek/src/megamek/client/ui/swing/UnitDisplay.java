@@ -3179,22 +3179,22 @@ public class UnitDisplay extends JPanel {
                     ((DefaultListModel<String>) slotList.getModel()); 
             slotModel.removeAllElements();
             
+            String hotLoaded = Messages.getString("MechDisplay.isHotLoaded"); //$NON-NLS-1$
             // We need to display equipment for Protos
             String eqString = Messages.getString("MechDisplay.Equipment");
             if ((en instanceof Protomech)
                     && eqString.equals(locList.getSelectedValue())) {
                 for (Mounted m : en.getEquipment()) {
                     StringBuffer sb = new StringBuffer(32);
-                    sb.append((m.isDestroyed() || m.isMissing()) ? "*" //$NON-NLS-1$
-                            : "") //$NON-NLS-1$
-                            .append(m.isBreached() ? "x" : "") //$NON-NLS-1$ //$NON-NLS-2$
-                            .append(m.getDesc());
+                    sb.append(m.getDesc());
 
                     if (m.isHotLoaded()) {
-                        sb.append(Messages.getString("MechDisplay.isHotLoaded")); //$NON-NLS-1$
+                        sb.append(hotLoaded);
                     }
                     if (m.getType().hasModes()) {
-                        sb.append(" (").append(m.curMode().getDisplayableName()).append(')'); //$NON-NLS-1$  //$NON-NLS-2$
+                        sb.append(" ("); //$NON-NLS-1$
+                        sb.append(m.curMode().getDisplayableName());
+                        sb.append(')'); //$NON-NLS-1$
                         if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType()).isShield()) {
                             sb.append(" " //$NON-NLS-1$
@@ -3216,9 +3216,12 @@ public class UnitDisplay extends JPanel {
                 } else {
                     switch (cs.getType()) {
                         case CriticalSlot.TYPE_SYSTEM:
-                            sb.append(
-                                    (cs.isDestroyed() || cs.isMissing()) ? "*" : "")//$NON-NLS-1$ //$NON-NLS-2$
-                                    .append(cs.isBreached() ? "x" : ""); //$NON-NLS-1$ //$NON-NLS-2$
+                            if (cs.isDestroyed() || cs.isMissing()) {
+                                sb.append("*"); //$NON-NLS-1$
+                            }
+                            if (cs.isBreached()) {
+                                sb.append("x"); //$NON-NLS-1$
+                            }
                             // Protomechs have different system names.
                             if (en instanceof Protomech) {
                                 sb.append(Protomech.systemNames[cs.getIndex()]);
@@ -3229,28 +3232,26 @@ public class UnitDisplay extends JPanel {
                             break;
                         case CriticalSlot.TYPE_EQUIPMENT:
                             Mounted m = cs.getMount();
-                            sb.append(
-                                    (cs.isDestroyed() || cs.isMissing()) ? "*" //$NON-NLS-1$
-                                            : "") //$NON-NLS-1$
-                                    .append(cs.isBreached() ? "x" : "") //$NON-NLS-1$ //$NON-NLS-2$
-                                    .append(m.getDesc());
+                            sb.append(m.getDesc());
 
                             if (cs.getMount2() != null) {
-                                sb.append(" ").append(cs.getMount2().getDesc()); //$NON-NLS-1$
+                                sb.append(" ");
+                                sb.append(cs.getMount2().getDesc()); //$NON-NLS-1$
                             }
                             if (m.isHotLoaded()) {
-                                sb.append(Messages
-                                        .getString("MechDisplay.isHotLoaded")); //$NON-NLS-1$
+                                sb.append(hotLoaded);
                             }
                             if (m.getType().hasModes()) {
-                                sb.append(" (").append(m.curMode().getDisplayableName()).append(')'); //$NON-NLS-1$  //$NON-NLS-2$
+                                sb.append(" ("); //$NON-NLS-1$
+                                sb.append(m.curMode().getDisplayableName());
+                                sb.append(')'); //$NON-NLS-1$
                                 if ((m.getType() instanceof MiscType)
                                         && ((MiscType) m.getType()).isShield()) {
-                                    sb.append(" "  //$NON-NLS-1$
+                                    sb.append(" " //$NON-NLS-1$
                                             + m.getDamageAbsorption(en, loc)
-                                            + '/'  //$NON-NLS-1$
+                                            + '/' //$NON-NLS-1$
                                             + m.getCurrentDamageCapacity(en,
-                                                    loc) + ')');  //$NON-NLS-1$
+                                                    loc) + ')'); //$NON-NLS-1$
                                 }
                             }
                             break;
@@ -3402,12 +3403,18 @@ public class UnitDisplay extends JPanel {
                 }
                 
                 // Check for BA dumping SRM launchers
-                if ((en instanceof BattleArmor) && (!m.isMissing()) 
+                if ((en instanceof BattleArmor) && (!m.isMissing())
                         && m.isBodyMounted()
                         && m.getType().hasFlag(WeaponType.F_MISSILE)
                         && (m.getLinked() != null)
                         && (m.getLinked().getUsableShotsLeft() > 0)) {
-                    
+                    boolean isDumping = !m.isPendingDump();
+                    m.setPendingDump(isDumping);
+                    clientgui.getClient().sendModeChange(en.getId(),
+                            en.getEquipmentNum(m), isDumping ? -1 : 0);
+                    int selIdx = slotList.getSelectedIndex();
+                    displaySlots();
+                    slotList.setSelectedIndex(selIdx);
                 }
                 
                 if (((!(m.getType() instanceof AmmoType) 
@@ -3459,7 +3466,10 @@ public class UnitDisplay extends JPanel {
                 if (bConfirmed) {
                     m.setPendingDump(bDumping);
                     clientgui.getClient().sendModeChange(en.getId(),
-                                                         en.getEquipmentNum(m), bDumping ? -1 : 0);
+                            en.getEquipmentNum(m), bDumping ? -1 : 0);
+                    int selIdx = slotList.getSelectedIndex();
+                    displaySlots();
+                    slotList.setSelectedIndex(selIdx);
                 }
             }
             onResize();

@@ -1,9 +1,10 @@
 VERSION HISTORY:
 ----------------
 v0.41.4-dev (SVN)
-+ Bug: UnitDisplay System Tab would double up on satus modifiers, like * and j
++ Bug: UnitDisplay System Tab would double up on status modifiers, like * and j
 + Bug [#4475]: BA body mounted missile launchers cannot be jettisoned
 + Patch [#477]: Bug fix for ECM drawing
++ Bug [#4521] Mechanized Infantry weight calculation wrong
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

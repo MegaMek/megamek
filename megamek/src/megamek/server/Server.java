@@ -25556,6 +25556,26 @@ public class Server implements Runnable {
                                 ammo.setMissing(true);
                             }
                         }
+                    // Check for jettisoning missiles
+                    } else if (m.isBodyMounted() && m.isPendingDump()
+                            && m.getType().hasFlag(WeaponType.F_MISSILE)
+                            && (m.getLinked() != null)
+                            && (m.getLinked().getUsableShotsLeft() > 0)) {
+                        m.setMissing(true);
+                        r = new Report(5116);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
+                        r.add(m.getName());
+                        addReport(r);
+                        m.setPendingDump(false);
+                        // Dump all ammo related to this launcher
+                        // BA burdened is based on whether the launcher has
+                        // ammo left
+                        while ((m.getLinked() != null) 
+                                && (m.getLinked().getUsableShotsLeft() > 0)) {
+                            m.getLinked().setMissing(true);
+                            entity.loadWeapon(m);
+                        }
                     }
                 }
             }
@@ -26875,8 +26895,16 @@ public class Server implements Runnable {
         }
 
         try {
+            // Check for BA dumping body mounted missile launchers
+            if ((e instanceof BattleArmor) && (!m.isMissing())
+                    && m.isBodyMounted()
+                    && m.getType().hasFlag(WeaponType.F_MISSILE)
+                    && (m.getLinked() != null)
+                    && (m.getLinked().getUsableShotsLeft() > 0)
+                    && (mode <= 0)) {
+                m.setPendingDump(mode == -1);
             // a mode change for ammo means dumping or hotloading
-            if ((m.getType() instanceof AmmoType)
+            } else if ((m.getType() instanceof AmmoType)
                 && !m.getType().hasInstantModeSwitch() && (mode <= 0)) {
                 m.setPendingDump(mode == -1);
             } else if ((m.getType() instanceof WeaponType) && m.isDWPMounted()

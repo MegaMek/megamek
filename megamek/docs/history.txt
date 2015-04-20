@@ -7,6 +7,8 @@ v0.41.4-dev (SVN)
 + Bug [#4521] Mechanized Infantry weight calculation wrong
 + Bug [#4478]: Chain Whip Grapple Issues
 + Feature: Grappled/Grappling units now have text drawn over the unit icon
++ Bug [#4486]: ASFs - Altitude changes do not take effect when flying off the
+    map and returning
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

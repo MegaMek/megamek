@@ -218,7 +218,7 @@ public class Compute {
      * entity is the entity causing the violation.
      */
     public static Entity stackingViolation(IGame game, int enteringId,
-                                           Coords coords) {
+            Coords coords) {
         Entity entering = game.getEntity(enteringId);
         if (entering == null) {
             return null;
@@ -231,7 +231,13 @@ public class Compute {
      * unit probably occupy some other position on the board.
      */
     public static Entity stackingViolation(IGame game, Entity entering,
-                                           Coords dest, Entity transport) {
+            Coords dest, Entity transport) {
+        return stackingViolation(game, entering, entering.getElevation(), dest,
+                transport);
+    }
+    
+    public static Entity stackingViolation(IGame game, Entity entering,
+            int elevation, Coords dest, Entity transport) {
         // no stacking violations on the low-atmosphere and space maps
         if (!game.getBoard().onGround()) {
             return null;
@@ -243,11 +249,11 @@ public class Compute {
         }
 
         boolean isMech = (entering instanceof Mech)
-                         || (entering instanceof SmallCraft);
+                || (entering instanceof SmallCraft);
         boolean isLargeSupport = (entering instanceof LargeSupportTank)
-                                 || (entering instanceof Dropship)
-                                 || ((entering instanceof Mech) && ((Mech) entering)
-                .isSuperHeavy());
+                || (entering instanceof Dropship)
+                || ((entering instanceof Mech) && ((Mech) entering)
+                        .isSuperHeavy());
 
         boolean isDropship = entering instanceof Dropship;
         boolean isInfantry = entering instanceof Infantry;
@@ -261,11 +267,11 @@ public class Compute {
             }
         }
         for (Coords coords : positions) {
-            int thisLowStackingLevel = entering.getElevation();
+            int thisLowStackingLevel = elevation;
             if ((coords != null) && (entering.getPosition() != null)) {
                 thisLowStackingLevel = entering.calcElevation(game.getBoard()
-                                                                  .getHex(entering.getPosition()), game.getBoard()
-                                                                                                       .getHex(coords));
+                        .getHex(entering.getPosition()), game.getBoard()
+                        .getHex(coords));
             }
             int thisHighStackingLevel = thisLowStackingLevel;
             // mechs only occupy one level of a building
@@ -290,7 +296,7 @@ public class Compute {
                 // Only do all this jazz if they're close enough together on lvl
                 // to interfere.
                 if ((thisLowStackingLevel <= highStackingLevel)
-                    && (thisHighStackingLevel >= lowStackingLevel)) {
+                        && (thisHighStackingLevel >= lowStackingLevel)) {
                     // Don't compare the entering entity to itself.
                     if (inHex.equals(entering)) {
                         continue;
@@ -325,7 +331,7 @@ public class Compute {
                         return inHex;
                     }
                     if (((inHex instanceof LargeSupportTank)
-                         || (inHex instanceof Dropship) || ((inHex instanceof Mech) && ((Mech) inHex)
+                            || (inHex instanceof Dropship) || ((inHex instanceof Mech) && ((Mech) inHex)
                             .isSuperHeavy())) && !isInfantry) {
                         return inHex;
                     }

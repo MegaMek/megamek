@@ -10408,7 +10408,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void setGrappleSide(int side) {
-        // TODO?
+        // This is implemented in subclasses, do nothing in general
     }
 
     public int getGrappleSide() {
@@ -10602,7 +10602,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void addCoolantFailureAmount(int amount) {
-        // TODO?
+        // This is implemented in subclasses, do nothing in general
     }
 
     /**

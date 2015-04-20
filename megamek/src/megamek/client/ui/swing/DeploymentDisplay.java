@@ -38,6 +38,7 @@ import megamek.common.Coords;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
+import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
@@ -441,44 +442,42 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         boolean shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
 
         // check for a deployment
+        final IBoard board = clientgui.getClient().getGame().getBoard();
         Coords moveto = b.getCoords();
+        Building bldg = board.getBuildingAt(moveto);
+        String title, msg;
         if ((ce().getPosition() != null) && (shiftheld || turnMode)) { // turn
             ce().setFacing(ce().getPosition().direction(moveto));
             ce().setSecondaryFacing(ce().getFacing());
             clientgui.bv.redrawEntity(ce());
             turnMode = false;
-        } else if (ce().isBoardProhibited(
-                clientgui.getClient().getGame().getBoard().getType())) {
+        } else if (ce().isBoardProhibited(board.getType())) {
             // check if this type of unit can be on the given type of map
-            JOptionPane
-                    .showMessageDialog(
-                            clientgui,
-                            Messages.getString("DeploymentDisplay.alertDialog.title"), //$NON-NLS-1$
-                            Messages.getString(
-                                    "DeploymentDisplay.wrongMapType", new Object[] { ce().getShortName(), Board.getTypeName(clientgui.getClient().getGame().getBoard().getType()) }), JOptionPane.WARNING_MESSAGE); //$NON-NLS-1$
+            title = Messages.getString("DeploymentDisplay.alertDialog.title");  //$NON-NLS-1$
+            msg = Messages.getString(
+                    "DeploymentDisplay.wrongMapType",
+                    new Object[] {
+                            ce().getShortName(),
+                            Board.getTypeName(board.getType()) }); 
+            JOptionPane.showMessageDialog(clientgui, msg, title,
+                    JOptionPane.WARNING_MESSAGE);
             return;
-        } else if (!(clientgui.getClient().getGame().getBoard()
-                .isLegalDeployment(moveto, ce().getStartingPos()) || assaultDropPreference)
+        } else if (!(board.isLegalDeployment(moveto, ce().getStartingPos()) || assaultDropPreference)
                 || ce().isLocationProhibited(moveto)) {
-            JOptionPane
-                    .showMessageDialog(
-                            clientgui.frame,
-                            Messages.getString(
-                                    "DeploymentDisplay.cantDeployInto", new Object[] { ce().getShortName(), moveto.getBoardNum() }), Messages.getString("DeploymentDisplay.alertDialog.title") //$NON-NLS-1$
-                            , JOptionPane.ERROR_MESSAGE);
+            msg = Messages.getString("DeploymentDisplay.cantDeployInto",
+                    new Object[] { ce().getShortName(), moveto.getBoardNum() });
+            title = Messages.getString("DeploymentDisplay.alertDialog.title"); //$NON-NLS-1$
+            JOptionPane.showMessageDialog(clientgui.frame, msg, title,
+                    JOptionPane.ERROR_MESSAGE);
             return;
-        } else if ((ce() instanceof Aero)
-                && clientgui.getClient().getGame().getBoard().inAtmosphere()
-                && (ce().getElevation() <= clientgui.getClient().getGame()
-                        .getBoard().getHex(moveto).ceiling())) {
-            // make sure aeros don't end up at a lower elevation than the
-            // current hex
-            JOptionPane
-                    .showMessageDialog(
-                            clientgui.frame,
-                            Messages.getString(
-                                    "DeploymentDisplay.elevationTooLow", new Object[] { ce().getShortName(), moveto.getBoardNum() }), Messages.getString("DeploymentDisplay.alertDialog.title") //$NON-NLS-1$
-                            , JOptionPane.ERROR_MESSAGE);
+        } else if ((ce() instanceof Aero) && board.inAtmosphere()
+                && (ce().getElevation() <= board.getHex(moveto).ceiling())) {
+            // Ensure aeros don't end up at lower elevation than the current hex
+            title = Messages.getString("DeploymentDisplay.alertDialog.title"); //$NON-NLS-1$
+            msg = Messages.getString("DeploymentDisplay.elevationTooLow",
+                    new Object[] { ce().getShortName(), moveto.getBoardNum() });
+            JOptionPane.showMessageDialog(clientgui.frame, msg, title,
+                    JOptionPane.ERROR_MESSAGE);
             return;
         } else if (Compute.stackingViolation(clientgui.getClient().getGame(),
                 ce().getId(), moveto) != null) {
@@ -487,14 +486,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         } else {
             // check for buildings and if found ask what level they want to
             // deploy at
-            Building bldg = clientgui.getClient().getGame().getBoard()
-                    .getBuildingAt(moveto);
-            if ((null != bldg)
-                    && !(ce() instanceof Aero) && !(ce() instanceof VTOL)) {
-                if (clientgui.getClient().getGame().getBoard().getHex(moveto)
-                        .containsTerrain(Terrains.BLDG_ELEV)) {
-                    int height = clientgui.getClient().getGame().getBoard()
-                            .getHex(moveto).terrainLevel(Terrains.BLDG_ELEV);
+            if ((null != bldg) && !(ce() instanceof Aero)
+                    && !(ce() instanceof VTOL)) {
+                if (board.getHex(moveto).containsTerrain(Terrains.BLDG_ELEV)) {
+                    int height = board.getHex(moveto).terrainLevel(
+                            Terrains.BLDG_ELEV);
                     String[] floors = new String[height + 1];
                     for (int loop = 1; loop <= height; loop++) {
                         floors[loop - 1] = Messages
@@ -503,14 +499,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     }
                     floors[height] = Messages
                             .getString("DeploymentDisplay.top");
-                    String input = (String) JOptionPane
-                            .showInputDialog(
-                                    clientgui,
-                                    Messages.getString(
-                                            "DeploymentDisplay.floorsDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
-                                    Messages.getString("DeploymentDisplay.floorsDialog.title"), //$NON-NLS-1$
-                                    JOptionPane.QUESTION_MESSAGE, null, floors,
-                                    null);
+                    msg = Messages
+                            .getString(
+                                    "DeploymentDisplay.floorsDialog.message", new Object[] { ce().getShortName() }); //$NON-NLS-1$;
+                    title = Messages
+                            .getString("DeploymentDisplay.floorsDialog.title"); //$NON-NLS-1$
+                    String input = (String) JOptionPane.showInputDialog(
+                            clientgui, msg, title,
+                            JOptionPane.QUESTION_MESSAGE, null, floors, null);
                     if (input != null) {
                         for (int loop = 0; loop < floors.length; loop++) {
                             if (input.equals(floors[loop])) {
@@ -521,10 +517,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     } else {
                         ce().setElevation(0);
                     }
-                } else if (clientgui.getClient().getGame().getBoard()
-                        .getHex(moveto).containsTerrain(Terrains.BRIDGE_ELEV)) {
-                    int height = clientgui.getClient().getGame().getBoard()
-                            .getHex(moveto).terrainLevel(Terrains.BRIDGE_ELEV);
+                } else if (board.getHex(moveto).containsTerrain(
+                        Terrains.BRIDGE_ELEV)) {
+                    int height = board.getHex(moveto).terrainLevel(
+                            Terrains.BRIDGE_ELEV);
                     String[] floors = new String[2];
                     floors[0] = Messages
                             .getString("DeploymentDisplay.belowbridge");
@@ -542,21 +538,18 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         if (input.equals(floors[1])) {
                             ce().setElevation(height);
                         } else {
-                            IHex deployhex = clientgui.getClient().getGame()
-                                    .getBoard().getHex(moveto);
+                            IHex deployhex = board.getHex(moveto);
                             ce().setElevation(
                                     deployhex.floor() - deployhex.surface());
                         }
                     } else {
-                        IHex deployhex = clientgui.getClient().getGame()
-                                .getBoard().getHex(moveto);
+                        IHex deployhex = board.getHex(moveto);
                         ce().setElevation(
                                 deployhex.floor() - deployhex.surface());
                     }
                 }
             } else if (!(ce() instanceof Aero)) {
-                IHex deployhex = clientgui.getClient().getGame().getBoard()
-                        .getHex(moveto);
+                IHex deployhex = board.getHex(moveto);
                 // hovers and naval units go on the surface
                 if ((ce().getMovementMode() == EntityMovementMode.NAVAL)
                         || (ce().getMovementMode() == EntityMovementMode.SUBMARINE)

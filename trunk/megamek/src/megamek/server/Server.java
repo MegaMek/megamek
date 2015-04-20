@@ -6534,6 +6534,7 @@ public class Server implements Runnable {
 
                 if (step.getType() == MoveStepType.RETURN) {
                     a.setCurrentVelocity(md.getFinalVelocity());
+                    a.setAltitude(curAltitude);
                     processLeaveMap(entity, curFacing, true,
                                     Compute.roundsUntilReturn(game, entity));
                     return;
@@ -6541,6 +6542,7 @@ public class Server implements Runnable {
 
                 if (step.getType() == MoveStepType.OFF) {
                     a.setCurrentVelocity(md.getFinalVelocity());
+                    a.setAltitude(curAltitude);
                     processLeaveMap(entity, curFacing, true, -1);
                     return;
                 }

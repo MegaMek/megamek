@@ -442,9 +442,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         boolean shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
 
         // check for a deployment
-        final IBoard board = clientgui.getClient().getGame().getBoard();
         Coords moveto = b.getCoords();
-        Building bldg = board.getBuildingAt(moveto);
+        final IBoard board = clientgui.getClient().getGame().getBoard();
+        final IGame game = clientgui.getClient().getGame();
+        final IHex deployhex = board.getHex(moveto);
+        final Building bldg = board.getBuildingAt(moveto);
+        boolean isAero = ce() instanceof Aero;
+        boolean isVTOL = ce() instanceof VTOL;
         String title, msg;
         if ((ce().getPosition() != null) && (shiftheld || turnMode)) { // turn
             ce().setFacing(ce().getPosition().direction(moveto));
@@ -470,7 +474,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             JOptionPane.showMessageDialog(clientgui.frame, msg, title,
                     JOptionPane.ERROR_MESSAGE);
             return;
-        } else if ((ce() instanceof Aero) && board.inAtmosphere()
+        } else if (isAero && board.inAtmosphere()
                 && (ce().getElevation() <= board.getHex(moveto).ceiling())) {
             // Ensure aeros don't end up at lower elevation than the current hex
             title = Messages.getString("DeploymentDisplay.alertDialog.title"); //$NON-NLS-1$
@@ -479,86 +483,34 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             JOptionPane.showMessageDialog(clientgui.frame, msg, title,
                     JOptionPane.ERROR_MESSAGE);
             return;
-        } else if (Compute.stackingViolation(clientgui.getClient().getGame(),
-                ce().getId(), moveto) != null) {
+        } else if ((Compute.stackingViolation(game, ce().getId(), moveto) != null)
+                && (bldg == null)) {
             // check if deployed unit violates stacking
             return;
         } else {
             // check for buildings and if found ask what level they want to
             // deploy at
-            if ((null != bldg) && !(ce() instanceof Aero)
-                    && !(ce() instanceof VTOL)) {
-                if (board.getHex(moveto).containsTerrain(Terrains.BLDG_ELEV)) {
-                    int height = board.getHex(moveto).terrainLevel(
-                            Terrains.BLDG_ELEV);
-                    String[] floors = new String[height + 1];
-                    for (int loop = 1; loop <= height; loop++) {
-                        floors[loop - 1] = Messages
-                                .getString("DeploymentDisplay.floor")
-                                + Integer.toString(loop);
+            if ((null != bldg) && !isAero && !isVTOL) {
+                if (deployhex.containsTerrain(Terrains.BLDG_ELEV)) {
+                    boolean success = processBuildingDeploy(moveto);
+                    if (!success) {
+                        return;
                     }
-                    floors[height] = Messages
-                            .getString("DeploymentDisplay.top");
-                    msg = Messages
-                            .getString(
-                                    "DeploymentDisplay.floorsDialog.message", new Object[] { ce().getShortName() }); //$NON-NLS-1$;
-                    title = Messages
-                            .getString("DeploymentDisplay.floorsDialog.title"); //$NON-NLS-1$
-                    String input = (String) JOptionPane.showInputDialog(
-                            clientgui, msg, title,
-                            JOptionPane.QUESTION_MESSAGE, null, floors, null);
-                    if (input != null) {
-                        for (int loop = 0; loop < floors.length; loop++) {
-                            if (input.equals(floors[loop])) {
-                                ce().setElevation(loop);
-                                break;
-                            }
-                        }
-                    } else {
-                        ce().setElevation(0);
-                    }
-                } else if (board.getHex(moveto).containsTerrain(
-                        Terrains.BRIDGE_ELEV)) {
-                    int height = board.getHex(moveto).terrainLevel(
-                            Terrains.BRIDGE_ELEV);
-                    String[] floors = new String[2];
-                    floors[0] = Messages
-                            .getString("DeploymentDisplay.belowbridge");
-                    floors[1] = Messages
-                            .getString("DeploymentDisplay.topbridge");
-                    String input = (String) JOptionPane
-                            .showInputDialog(
-                                    clientgui,
-                                    Messages.getString(
-                                            "DeploymentDisplay.bridgeDialog.message", new Object[] { ce().getShortName() }), //$NON-NLS-1$
-                                    Messages.getString("DeploymentDisplay.bridgeDialog.title"), //$NON-NLS-1$
-                                    JOptionPane.QUESTION_MESSAGE, null, floors,
-                                    null);
-                    if (input != null) {
-                        if (input.equals(floors[1])) {
-                            ce().setElevation(height);
-                        } else {
-                            IHex deployhex = board.getHex(moveto);
-                            ce().setElevation(
-                                    deployhex.floor() - deployhex.surface());
-                        }
-                    } else {
-                        IHex deployhex = board.getHex(moveto);
-                        ce().setElevation(
-                                deployhex.floor() - deployhex.surface());
+                } else if (deployhex.containsTerrain(Terrains.BRIDGE_ELEV)) {
+                    boolean success = processBridgeDeploy(moveto);
+                    if (!success) {
+                        return;
                     }
                 }
-            } else if (!(ce() instanceof Aero)) {
-                IHex deployhex = board.getHex(moveto);
+            } else if (!isAero) {
                 // hovers and naval units go on the surface
                 if ((ce().getMovementMode() == EntityMovementMode.NAVAL)
                         || (ce().getMovementMode() == EntityMovementMode.SUBMARINE)
                         || (ce().getMovementMode() == EntityMovementMode.HYDROFOIL)
                         || (ce().getMovementMode() == EntityMovementMode.HOVER)) {
                     ce().setElevation(0);
-                } else if (ce() instanceof VTOL) {
-                    // VTOLs go to elevation 1... unless they were set in the
-                    // Lounge.
+                } else if (isVTOL) {
+                    // VTOLs go to elevation 1... unless set in the Lounge.
                     if (ce().getElevation() < 1) {
                         ce().setElevation(1);
                     }
@@ -571,10 +523,79 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             ce().setPosition(moveto);
 
             clientgui.bv.redrawEntity(ce());
+            clientgui.bv.repaint();
             butDone.setEnabled(true);
         }
         if (!shiftheld) {
             clientgui.getBoardView().select(moveto);
+        }
+    }
+    
+    private boolean processBuildingDeploy(Coords moveto) {
+        final IBoard board = clientgui.getClient().getGame().getBoard();
+        final IGame game = clientgui.getClient().getGame();
+
+        int height = board.getHex(moveto).terrainLevel(Terrains.BLDG_ELEV);
+        ArrayList<String> floorNames = new ArrayList<String>(height + 1);
+
+        for (int loop = 0; loop < height; loop++) {
+            if (Compute.stackingViolation(game, ce(), loop, moveto, null) == null) {
+                floorNames.add(Messages.getString("DeploymentDisplay.floor")
+                        + Integer.toString(loop + 1));
+            }
+        }
+        if (Compute.stackingViolation(game, ce(), height, moveto, null) == null) {
+            floorNames.add(Messages.getString("DeploymentDisplay.top"));
+        }
+        // No valid floors to deploy on
+        if (floorNames.size() < 1) {
+            return false;
+        }
+        String msg = Messages
+                .getString(
+                        "DeploymentDisplay.floorsDialog.message", new Object[] { ce().getShortName() }); //$NON-NLS-1$;
+        String title = Messages
+                .getString("DeploymentDisplay.floorsDialog.title"); //$NON-NLS-1$
+        String input = (String) JOptionPane.showInputDialog(clientgui, msg,
+                title, JOptionPane.QUESTION_MESSAGE, null,
+                floorNames.toArray(), floorNames.get(0));
+        if (input != null) {
+            for (int i = 0; i < floorNames.size(); i++) {
+                if (input.equals(floorNames.get(i))) {
+                    ce().setElevation(i);
+                    break;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    private boolean processBridgeDeploy(Coords moveto) {
+        final IBoard board = clientgui.getClient().getGame().getBoard();
+        final IHex deployhex = board.getHex(moveto);
+
+        int height = board.getHex(moveto).terrainLevel(Terrains.BRIDGE_ELEV);
+        String[] floors = new String[2];
+        floors[0] = Messages.getString("DeploymentDisplay.belowbridge");
+        floors[1] = Messages.getString("DeploymentDisplay.topbridge");
+        String title = Messages
+                .getString("DeploymentDisplay.bridgeDialog.title"); //$NON-NLS-1$
+        String msg = Messages
+                .getString(
+                        "DeploymentDisplay.bridgeDialog.message", new Object[] { ce().getShortName() }); //$NON-NLS-1$
+        String input = (String) JOptionPane.showInputDialog(clientgui, msg,
+                title, JOptionPane.QUESTION_MESSAGE, null, floors, null);
+        if (input != null) {
+            if (input.equals(floors[1])) {
+                ce().setElevation(height);
+            } else {
+                ce().setElevation(deployhex.floor() - deployhex.surface());
+            }
+            return true;
+        } else {
+            return false;
         }
     }
 

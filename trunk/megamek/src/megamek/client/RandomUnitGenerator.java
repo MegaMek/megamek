@@ -215,7 +215,8 @@ public class RandomUnitGenerator implements Serializable {
 
             // READ IN RATS
             if (ratFile.isDirectory()) {
-                if (ratFile.getName().toLowerCase().equals("_svn") || ratFile.getName().toLowerCase().equals(".svn")) {
+                if (ratFile.getName().toLowerCase().equals("_svn") 
+                        || ratFile.getName().toLowerCase().equals(".svn")) {
                     // This is a Subversion work directory. Lets ignore it.
                     continue;
                 }
@@ -422,8 +423,12 @@ public class RandomUnitGenerator implements Serializable {
             dispose = false;
             rug.loader = new Thread(new Runnable() {
                 public void run() {
+                    long start = System.currentTimeMillis();
                     rug.populateUnits();
-
+                    long end = System.currentTimeMillis();
+                    System.out.println("Loaded Rats in: " + (end - start)
+                            + "ms.");
+                    System.out.flush();
                 }
             }, "Random Unit Generator unit populator");
             rug.loader.setPriority(Thread.NORM_PRIORITY - 1);

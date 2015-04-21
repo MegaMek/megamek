@@ -12,6 +12,7 @@ v0.41.4-dev (SVN)
 + Bug [#4469]: Unable to deploy units on different building levels if there are
     already 2 units present in the hex
 + Bug [#4522]: Exception in thread "Packet Pump" using r11761 (Grapple issue?)
++ Data: New Sprites.
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

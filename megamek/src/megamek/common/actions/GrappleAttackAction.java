@@ -74,13 +74,14 @@ public class GrappleAttackAction extends PhysicalAttackAction {
     public static ToHitData toHit(IGame game, int attackerId,
             Targetable target, int grappleSide, boolean isChainWhip) {
         final Entity ae = game.getEntity(attackerId);
-        Entity te = (Entity) target;
-
+        
         ToHitData toHit = checkIllegal(game, ae, target, grappleSide);
         
         if ((toHit != null) && !isChainWhip) {
             return toHit;
         }
+        
+        Entity te = (Entity) target;
         
         // Set the base BTH
         int base = ae.getCrew().getPiloting();

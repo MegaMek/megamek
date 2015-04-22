@@ -2027,7 +2027,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             g.drawLine(x1, y1, x2, y2);
         }
 
-        fovHighlightingAndDarkening.draw(g, c, drawX, drawY, saveBoardImage);
+        boolean hasLoS = fovHighlightingAndDarkening.draw(g, c, drawX, drawY,
+                saveBoardImage);
 
         // draw mapsheet borders
         if (GUIPreferences.getInstance().getShowMapsheets()) {
@@ -2073,6 +2074,25 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
             g.setColor(Color.black);
         }
+        
+        if (!hasLoS && guip.getFovGrayscale()) {
+            // write in grayscale (does not support alpha)
+            BufferedImage GrayedOut = new BufferedImage(imgWidth, imgHeight,
+                    BufferedImage.TYPE_BYTE_GRAY);
+            Graphics gG = GrayedOut.getGraphics();
+            gG.drawImage(hexImage, 0, 0, null);
+            gG.dispose();
+
+            // initialize clipping shape for Gray Visifog, this will leave
+            // isometric shapes intact as only the hexagon is overwritten in
+            // grayscale
+            AffineTransform t = new AffineTransform();
+            t.scale(scale, scale);
+            g.setClip(t.createTransformedShape(hexPoly));
+
+            // write back to hexImage
+            g.drawImage(GrayedOut, drawX, drawY, null);
+        }        
 
         cacheEntry = new HexImageCacheEntry(hexImage);
         if (!dontCache) {

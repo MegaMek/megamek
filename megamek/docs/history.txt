@@ -15,6 +15,7 @@ v0.41.4-dev (SVN)
 + Data: New Sprites.
 + Bug: Protomech BV - Speed Factor was rounded to 3 decimal places instead of 2
 + Bug [4523] BV Calculation Error for AP Gauss Ammo on ProtoMechs
++ Patch [#466]: Fov Grayscale option (grays out hexes without LoS)
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

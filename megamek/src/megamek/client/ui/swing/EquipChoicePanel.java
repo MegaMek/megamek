@@ -759,13 +759,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                             .booleanOption("tacops_hotload")) { //$NON-NLS-1$
                 continue;
             }
-            // Protomechs need special choice panels.
             MunitionChoicePanel mcp;
-            if (entity instanceof Protomech) {
-                mcp = new ProtomechMunitionChoicePanel(m, vTypes);
-            } else {
-                mcp = new MunitionChoicePanel(m, vTypes);
-            }
+            mcp = new MunitionChoicePanel(m, vTypes);
             panMunitions.add(mcp, GBC.eol());
             m_vMunitions.add(mcp);
         }
@@ -1245,9 +1240,18 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         }
 
         /**
-         * When a Protomech selects ammo, you need to adjust the shots on the unit
-         * for the weight of the selected munition.
-         */
+     * When a Protomech selects ammo, you need to adjust the shots on the unit
+     * for the weight of the selected munition.
+     * 
+     * @deprecated I don't see any purpose for this anymore, but I can't tell
+     *             why it was originally added. Using this for Protomechs ends
+     *             up adjusting the ammo incorrectly. It is true that Protos use
+     *             ammo as kg/shot, and they aren't restricted to the max per
+     *             shots per slot, but this really doesn't handle that.  Really,
+     *             we need a ProtomechVerifier to ensure users don't add more 
+     *             ammo than the Proto can support.
+     */
+        @Deprecated
         class ProtomechMunitionChoicePanel extends MunitionChoicePanel {
             /**
              *

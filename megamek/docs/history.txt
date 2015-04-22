@@ -18,6 +18,7 @@ v0.41.4-dev (SVN)
 + Patch [#466]: Fov Grayscale option (grays out hexes without LoS)
 + Patch [#472]: Hex Slopes as addittion to shadows
 + Patch [#473]: Hex Base Textures bigger than 84x72
++ Bug [#4346]: ProtoMech Ammo Issues
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

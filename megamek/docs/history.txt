@@ -13,6 +13,7 @@ v0.41.4-dev (SVN)
     already 2 units present in the hex
 + Bug [#4522]: Exception in thread "Packet Pump" using r11761 (Grapple issue?)
 + Data: New Sprites.
++ Bug: Protomech BV - Speed Factor was rounded to 3 decimal places instead of 2
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

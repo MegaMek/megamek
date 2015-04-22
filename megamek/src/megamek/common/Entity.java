@@ -6310,22 +6310,25 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             case MOVE_RUN:
             case MOVE_VTOL_WALK:
             case MOVE_VTOL_RUN:
-                if (step.getMpUsed() > (int) Math
-                        .ceil(getOriginalWalkMP() * 1.5)) {
+                int maxSafeMP = (int) Math.ceil(getOriginalWalkMP() * 1.5);
+                if ((this instanceof Tank) && gotPavementBonus) {
+                    maxSafeMP++;
+                }
+                if (step.getMpUsed() > maxSafeMP) {
                     roll.append(new PilotingRollData(getId(), 0,
-                                                     "used more MPs than at 1G possible"));
+                            "used more MPs than at 1G possible"));
                 } else {
                     roll.addModifier(TargetRoll.CHECK_FALSE,
-                                     "Check false: Entity did not use more MPs walking/running than possible at 1G");
+                            "Check false: Entity did not use more MPs walking/running than possible at 1G");
                 }
                 break;
             case MOVE_JUMP:
                 if (step.getMpUsed() > getJumpMP(false)) {
                     roll.append(new PilotingRollData(getId(), 0,
-                                                     "used more MPs than at 1G possible"));
+                            "used more MPs than at 1G possible"));
                 } else {
                     roll.addModifier(TargetRoll.CHECK_FALSE,
-                                     "Check false: Entity did not use more MPs jumping than possible at 1G");
+                            "Check false: Entity did not use more MPs jumping than possible at 1G");
                 }
                 break;
             default:

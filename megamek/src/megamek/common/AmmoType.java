@@ -8772,7 +8772,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 40;
         ammo.bv = 3;
         ammo.cost = 1000;
-        ammo.kgPerShot = 40;
+        ammo.kgPerShot = 25;
         ammo.availRating = new int[]{EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_D};
         ammo.introDate = 3069;

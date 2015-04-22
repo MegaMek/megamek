@@ -170,6 +170,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox fovOutsideEnabled;
     private JSlider fovDarkenAlpha;
     private JSlider numStripesSlider;
+    private JCheckBox fovGrayscaleEnabled;
     private JTextField fovHighlightRingsRadii;
     private JTextField fovHighlightRingsColors;
     
@@ -676,12 +677,14 @@ public class CommonSettingsDialog extends ClientDialog implements
         fovOutsideEnabled.setSelected(gs.getFovDarken());
         fovDarkenAlpha.setValue((int) ((100./255.) * gs.getFovDarkenAlpha()));
         numStripesSlider.setValue(gs.getFovStripes());
+        fovGrayscaleEnabled.setSelected(gs.getFovGrayscale());
         
         fovHighlightAlpha.setEnabled(fovInsideEnabled.isSelected());
         fovHighlightRingsRadii.setEnabled(fovInsideEnabled.isSelected());
         fovHighlightRingsColors.setEnabled(fovInsideEnabled.isSelected());
         fovDarkenAlpha.setEnabled(fovOutsideEnabled.isSelected());
         numStripesSlider.setEnabled(fovOutsideEnabled.isSelected());
+        fovGrayscaleEnabled.setEnabled(fovOutsideEnabled.isSelected());
         
         darkenAlphaLabel.setEnabled(fovOutsideEnabled.isSelected());
         numStripesLabel.setEnabled(fovOutsideEnabled.isSelected());
@@ -971,6 +974,13 @@ public class CommonSettingsDialog extends ClientDialog implements
             numStripesSlider.setEnabled(fovOutsideEnabled.isSelected());
             darkenAlphaLabel.setEnabled(fovOutsideEnabled.isSelected());
             numStripesLabel.setEnabled(fovOutsideEnabled.isSelected());
+            fovGrayscaleEnabled.setEnabled(fovOutsideEnabled.isSelected());
+        } else if (source.equals(fovGrayscaleEnabled)) {
+            guip.setFovGrayscale(fovGrayscaleEnabled.isSelected());
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
         }
     }
 
@@ -1217,7 +1227,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         
         // Add some vertical spacing
         row = new ArrayList<>();
-        row.add(Box.createVerticalStrut(2));
+        row.add(Box.createVerticalStrut(4));
         comps.add(row);
         
         numStripesSlider = new JSlider(0, 50);
@@ -1227,7 +1237,8 @@ public class CommonSettingsDialog extends ClientDialog implements
         numStripesSlider.setPaintLabels(true);
         numStripesSlider.setMaximumSize(new Dimension(250, 100));
         numStripesSlider.addChangeListener(this);
-        numStripesLabel = new JLabel(Messages.getString("TacticalOverlaySettingsDialog.FovStripes")); //$NON-NLS-1$
+        numStripesLabel = new JLabel(
+                Messages.getString("TacticalOverlaySettingsDialog.FovStripes")); //$NON-NLS-1$
         row = new ArrayList<>();
         row.add(Box.createRigidArea(new Dimension(4,0)));
         row.add(Box.createRigidArea(DEPENDENT_INSET));
@@ -1243,6 +1254,19 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(Box.createRigidArea(DEPENDENT_INSET));
         row.add(numStripesSlider);
         comps.add(row);
+        
+        row = new ArrayList<>();
+        row.add(Box.createVerticalStrut(3));
+        comps.add(row);
+        
+        row = new ArrayList<>();
+        fovGrayscaleEnabled = new JCheckBox(
+                Messages.getString("TacticalOverlaySettingsDialog.FovGrayscale")); //$NON-NLS-1$
+        fovGrayscaleEnabled.addItemListener(this);
+        row.add(Box.createRigidArea(new Dimension(4,0)));
+        row.add(Box.createRigidArea(DEPENDENT_INSET));
+        row.add(fovGrayscaleEnabled);
+        comps.add(row);   
         
         return createSettingsPanel(comps);
     }

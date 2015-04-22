@@ -40,6 +40,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
@@ -1829,6 +1830,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 g.drawImage(scaledImage, drawX, drawY, this);
             }
         }
+        
+        // Elevation Shadow in this hex when a higher one is adjacent
+        if (guip.getBoolean(GUIPreferences.ADVANCED_SHOW_HEX_SHADOWS))   
+        {
+	    	for (int dir=0;dir<6;dir++) {
+	    		Shape ShadowShape = getElevationShadowArea(c, dir);
+	    		GradientPaint gpl = getElevationShadowGP(c, dir);
+	    		if (ShadowShape != null && gpl != null) {
+	    			((Graphics2D)g).setPaint(gpl);
+	    			((Graphics2D)g).fill(getElevationShadowArea(c, dir));
+	    		}
+		    }
+        }
 
         List<Image> orthos = tileManager.orthoFor(hex);
         if (orthos != null) {
@@ -2281,6 +2295,70 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         } else {
             return (srcHex.floor() != destHex.floor());
         }
+    }
+    
+    /**
+     * Generates a Shape drawing area for the hex shadow effect in a lower hex
+     * when a higher hex is found in direction. 
+     */
+    private final Shape getElevationShadowArea(Coords src, int direction) {
+        final IHex srcHex = game.getBoard().getHex(src);
+        final IHex destHex = game.getBoard().getHexInDir(src, direction);
+        
+        // When at the board edge, create a shadow in hexes of level < 0
+        if (destHex == null)
+        {
+        	if (srcHex.getLevel() >= 0) return null; 
+        }
+        else
+        {
+        	// no shadow area when the current hex is not lower than the next hex in direction
+        	if (srcHex.getLevel() >= destHex.getLevel()) return null;
+        }
+
+        Polygon ShadowPoly = new Polygon();
+        ShadowPoly.addPoint(21, -1);
+        ShadowPoly.addPoint(63, -1);
+        ShadowPoly.addPoint(84, 36);
+        ShadowPoly.addPoint(0, 36);
+        
+        AffineTransform t = new AffineTransform();
+        t.scale(scale,scale);
+        t.rotate(Math.toRadians(direction*60),HEX_W/2,HEX_H/2);
+        
+        return(t.createTransformedShape(ShadowPoly));
+    }
+    
+    /**
+     * Generates a fill gradient which is rotated and aligned properly for 
+     * the drawing area for a hex shadow effect in a lower hex.
+     */
+    private final GradientPaint getElevationShadowGP(Coords src, int direction) {
+        final IHex srcHex = game.getBoard().getHex(src);
+        final IHex destHex = game.getBoard().getHexInDir(src, direction);
+        
+        if (destHex == null) return null;  
+        
+        int ldiff = destHex.getLevel()-srcHex.getLevel();
+        // the shadow strength depends on the level difference,
+        // but only to a maximum difference of 3 levels
+        ldiff = Math.min(ldiff*5,15);
+        
+    	Color c1 = new Color(30,30,50,255); // dark end of shadow
+    	Color c2 = new Color(50,50,70,0);   // light end of shadow
+
+        Point2D p1 = new Point2D.Double(41.5,-25+ldiff);
+        Point2D p2 = new Point2D.Double(41.5,8.0+ldiff);
+        
+        AffineTransform t = new AffineTransform();
+        t.scale(scale,scale);
+        t.rotate(Math.toRadians(direction*60),41.5,35.5);
+        t.transform(p1,p1);
+        t.transform(p2,p2);
+        
+		//GradientPaint gpl = new GradientPaint(p1,c1,p2,c2);
+		
+        return(new GradientPaint(p1,c1,p2,c2));
     }
 
     /**

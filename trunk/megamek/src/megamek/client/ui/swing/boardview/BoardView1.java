@@ -1778,6 +1778,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // draw picture
         Image baseImage = tileManager.baseFor(hex);
+        
+        // check if this is a standard tile image 84x72 or something different
+        boolean standardTile = (baseImage.getHeight(null) == HEX_H)
+                && (baseImage.getWidth(null) == HEX_W);
+        
         Image scaledImage = getScaledImage(baseImage, true);
 
         if (animatedImages.contains(baseImage.hashCode())) {
@@ -1787,6 +1792,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int imgHeight, imgWidth;
         imgWidth = scaledImage.getWidth(null);
         imgHeight = scaledImage.getHeight(null);
+        
+        // do not make larger than hex images even when the input image is big
+        int origImgWidth = imgWidth; // save for later, needed for large tiles
+        int origImgHeight = imgHeight;
+        
+        imgWidth = Math.min(imgWidth,(int)(HEX_W*scale));
+        imgHeight = Math.min(imgHeight,(int)(HEX_H*scale));
+        
         if (useIsometric()) {
             int largestLevelDiff = 0;
             for (int dir = 0; dir < 6; dir++) {
@@ -1817,8 +1830,55 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
         }
+        
+        if (standardTile) { // is the image hex-sized, 84*72?
+            g.drawImage(scaledImage, drawX, drawY, this);
+        } else { // Draw image for a texture larger than a hex
+            Graphics2D g2d = (Graphics2D) g;
 
-        g.drawImage(scaledImage, drawX, drawY, this);
+            AffineTransform t = new AffineTransform();
+            // without the 1.02 unwanted hex borders will remain
+            t.scale(scale * 1.02, scale * 1.02); 
+            Shape clipShape = t.createTransformedShape(hexPoly);
+
+            Shape saveclip = g2d.getClip();
+            g2d.setClip(clipShape);
+
+            Point p1SRC = getHexLocationLargeTile(c.getX(), c.getY());
+            p1SRC.x = p1SRC.x % origImgWidth;
+            p1SRC.y = p1SRC.y % origImgHeight;
+            Point p2SRC = new Point((int) (p1SRC.x + HEX_W * scale),
+                    (int) (p1SRC.y + HEX_H * scale));
+            Point p2DST = new Point((int) (HEX_W * scale),
+                    (int) (HEX_H * scale));
+            // paint the right slice from the big pic
+            g.drawImage(scaledImage, 0, 0, p2DST.x, p2DST.y, p1SRC.x, p1SRC.y,
+                    p2SRC.x, p2SRC.y, null); 
+
+            // Handle wrapping of the image
+            if (p2SRC.x > origImgWidth && p2SRC.y <= origImgHeight) {
+                g.drawImage(scaledImage, origImgWidth - p1SRC.x, 0, p2DST.x,
+                        p2DST.y, 0, p1SRC.y, p2SRC.x - origImgWidth, p2SRC.y,
+                        null); // paint addtl slice on the left side
+            } else if (p2SRC.x <= origImgWidth && p2SRC.y > origImgHeight) {
+                g.drawImage(scaledImage, 0, origImgHeight - p1SRC.y, p2DST.x,
+                        p2DST.y, p1SRC.x, 0, p2SRC.x, p2SRC.y - origImgHeight,
+                        null); // paint addtl slice on the top
+            } else if (p2SRC.x > origImgWidth && p2SRC.y > origImgHeight) {
+                g.drawImage(scaledImage, origImgWidth - p1SRC.x, 0, p2DST.x,
+                        p2DST.y, 0, p1SRC.y, p2SRC.x - origImgWidth, p2SRC.y,
+                        null); // paint addtl slice on the top
+                g.drawImage(scaledImage, 0, origImgHeight - p1SRC.y, p2DST.x,
+                        p2DST.y, p1SRC.x, 0, p2SRC.x, p2SRC.y - origImgHeight,
+                        null); // paint addtl slice on the left side
+             // paint addtl slice on the top left side
+                g.drawImage(scaledImage, origImgWidth - p1SRC.x,
+                        origImgHeight - p1SRC.y, p2DST.x, p2DST.y, 0, 0,
+                        p2SRC.x - origImgWidth, p2SRC.y - origImgHeight, null); 
+            }
+
+            g2d.setClip(saveclip);
+        }
 
         List<Image> supers = tileManager.supersFor(hex);
         if (supers != null) {
@@ -2380,6 +2440,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return new Point(x * (int) (HEX_WC * scale), ypos
                                                      + (int) elevationAdjust);
     }
+    
+    /**
+     * For large tile texture: Returns the absolute position of the upper-left
+     * hand corner of the hex graphic When using large tiles multiplying the
+     * rounding errors from the (int) cast must be avoided however this cannot
+     * be used for small tiles as it will make gaps appear between hexes This
+     * will not factor in Isometric as this would be incorrect for large tiles
+     */
+    private Point getHexLocationLargeTile(int x, int y) {
+        int ypos = (int) (y * HEX_H * scale)
+                + ((x & 1) == 1 ? (int) ((HEX_H / 2) * scale) : 0);
+        return new Point((int) (x * HEX_WC * scale), ypos);
+    }
 
     Point getHexLocation(Coords c) {
         return getHexLocation(c.getX(), c.getY());
@@ -2387,10 +2460,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     
     Polygon getHexPolygon(Coords c) {
         Polygon poly = new Polygon();
-        for (int n=0; n<hexPoly.npoints; n++) {
-            poly.addPoint((int)(hexPoly.xpoints[n]*scale), (int)(hexPoly.ypoints[n]*scale));
+        for (int n = 0; n < hexPoly.npoints; n++) {
+            poly.addPoint((int) (hexPoly.xpoints[n] * scale),
+                    (int) (hexPoly.ypoints[n] * scale));
         }
-        poly.translate(getHexLocation(c).x,getHexLocation(c).y);
+        poly.translate(getHexLocation(c).x, getHexLocation(c).y);
         return poly;
     }
 

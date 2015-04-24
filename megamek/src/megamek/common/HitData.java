@@ -57,6 +57,8 @@ public class HitData {
      * cluster weapons).
      */
     private boolean firstHit = true;
+    
+    private boolean ignoreInfantryDoubleDamage = false;
 
 
     public HitData(int location) {
@@ -256,5 +258,13 @@ public class HitData {
 
     public void setFirstHit(boolean firstHit) {
         this.firstHit = firstHit;
+    }
+
+    public boolean isIgnoreInfantryDoubleDamage() {
+        return ignoreInfantryDoubleDamage;
+    }
+
+    public void setIgnoreInfantryDoubleDamage(boolean ignoreInfantryDoubleDamage) {
+        this.ignoreInfantryDoubleDamage = ignoreInfantryDoubleDamage;
     }
 }

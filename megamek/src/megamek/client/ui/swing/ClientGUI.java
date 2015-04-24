@@ -78,6 +78,8 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityListFile;
 import megamek.common.IGame;
+import megamek.common.Jumpship;
+import megamek.common.SmallCraft;
 import megamek.common.IGame.Phase;
 import megamek.common.IPlayer;
 import megamek.common.MechSummaryCache;
@@ -1430,7 +1432,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     	// the movement turn are considered selectable
                     	entity.setDone(true);
                     	entity.setUnloaded(true);
-                    	if (entity instanceof Aero) {
+                        if ((entity instanceof Aero)
+                                && !((entity instanceof SmallCraft) 
+                                        || (entity instanceof Jumpship))) {
                     	    ((Aero)entity).applyBombs();
                     	}
                     }

@@ -4123,19 +4123,25 @@ public class Server implements Runnable {
      * Have the unloader unload the indicated unit. The unit being unloaded may
      * or may not gain a turn
      *
-     * @param unloader   - the <code>Entity</code> that is unloading the unit.
-     * @param unloaded   - the <code>Targetable</code> unit being unloaded.
-     * @param pos        - the <code>Coords</code> for the unloaded unit.
-     * @param facing     - the <code>int</code> facing for the unloaded unit.
-     * @param elevation  - the <code>int</code> elevation at which to unload, if both
-     *                   loader and loaded units use VTOL movement.
-     * @param evacuation - a <code>boolean</code> indicating whether this unit is being
-     *                   unloaded as a result of its carrying units destruction
+     * @param unloader
+     *            - the <code>Entity</code> that is unloading the unit.
+     * @param unloaded
+     *            - the <code>Targetable</code> unit being unloaded.
+     * @param pos
+     *            - the <code>Coords</code> for the unloaded unit.
+     * @param facing
+     *            - the <code>int</code> facing for the unloaded unit.
+     * @param elevation
+     *            - the <code>int</code> elevation at which to unload, if both
+     *            loader and loaded units use VTOL movement.
+     * @param evacuation
+     *            - a <code>boolean</code> indicating whether this unit is being
+     *            unloaded as a result of its carrying units destruction
      * @return <code>true</code> if the unit was successfully unloaded,
-     * <code>false</code> if the unit isn't carried in unloader.
+     *         <code>false</code> if the unit isn't carried in unloader.
      */
     private boolean unloadUnit(Entity unloader, Targetable unloaded,
-                               Coords pos, int facing, int elevation, boolean evacuation) {
+            Coords pos, int facing, int elevation, boolean evacuation) {
 
         // We can only unload Entities.
         Entity unit = null;
@@ -4184,7 +4190,14 @@ public class Server implements Runnable {
                         break;
                     }
                     elevation--;
-                    unit.moved = EntityMovementType.MOVE_JUMP;
+                    // If unit is landed, the while loop breaks before here
+                    // And unit.moved will be MOVE_NONE
+                    // If we can jump, use jump
+                    if (unit.getJumpMP() > 0) {
+                        unit.moved = EntityMovementType.MOVE_JUMP;
+                    } else { // Otherwise, use walk trigger check for ziplines
+                        unit.moved = EntityMovementType.MOVE_WALK;
+                    }
                 }
                 if (!unit.isElevationValid(elevation, hex)) {
                     return false;
@@ -4213,6 +4226,58 @@ public class Server implements Runnable {
             // unit elevation is relative to the surface
             unit.setElevation(hex.floor() - hex.surface());
         }
+        
+        // Check for zip lines PSR -- MOVE_WALK implies ziplines
+        if (unit.moved == EntityMovementType.MOVE_WALK) {
+            if (game.getOptions().booleanOption("tacops_ziplines")
+                    && (unit instanceof Infantry)
+                    && !((Infantry) unit).isMechanized()) {
+                
+               // Handle zip lines
+                PilotingRollData psr = getEjectModifiers(game, unit, false,
+                        unit.getPosition(), "Anti-mek skill");
+                int roll = Compute.d6(2);
+                
+                // Report ziplining
+                Report r = new Report(9920);
+                r.subject = unit.getId();
+                r.addDesc(unit);
+                r.newlines = 0;
+                addReport(r);
+                
+                // Report TN
+                r = new Report(9921);
+                r.subject = unit.getId();
+                r.add(psr.getValue());
+                r.add(psr.getDesc());
+                r.add(roll);
+                r.newlines = 0;
+                addReport(r);
+                
+                if (roll < psr.getValue()) { // Failure!
+                    r = new Report(9923);
+                    r.subject = unit.getId();
+                    r.add(psr.getValue());
+                    r.add(roll);
+                    addReport(r);
+                    
+                    HitData hit = unit.rollHitLocation(ToHitData.HIT_NORMAL,
+                            ToHitData.SIDE_FRONT);
+                    hit.setIgnoreInfantryDoubleDamage(true);                    
+                    addReport(damageEntity(unit, hit, 5));
+                } else { //  Report success
+                    r = new Report(9922);
+                    r.subject = unit.getId();
+                    r.add(psr.getValue());
+                    r.add(roll);
+                    addReport(r);
+                }   
+                addNewLines();
+            } else {
+                return false;
+            }
+        }
+        
         addReport(doSetLocationsExposure(unit, hex, false, unit.getElevation()));
 
         // unlike other unloaders, entities unloaded from droppers can still
@@ -19373,9 +19438,9 @@ public class Server implements Runnable {
      * @return a <code>Vector</code> of <code>Report</code>s
      */
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage,
-                                       boolean ammoExplosion, DamageType bFrag, boolean damageIS,
-                                       boolean areaSatArty, boolean throughFront, boolean underWater,
-                                       boolean nukeS2S) {
+            boolean ammoExplosion, DamageType bFrag, boolean damageIS,
+            boolean areaSatArty, boolean throughFront, boolean underWater,
+            boolean nukeS2S) {
 
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
@@ -19596,8 +19661,9 @@ public class Server implements Runnable {
 
         // Is the infantry in the open?
         if (isPlatoon && !te.isDestroyed() && !te.isDoomed()
-            && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)
-            && !te.getCrew().getOptions().booleanOption("dermal_armor")) {
+                && !hit.isIgnoreInfantryDoubleDamage()
+                && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)
+                && !te.getCrew().getOptions().booleanOption("dermal_armor")) {
             te_hex = game.getBoard().getHex(te.getPosition());
             if ((te_hex != null) && !te_hex.containsTerrain(Terrains.WOODS)
                 && !te_hex.containsTerrain(Terrains.JUNGLE)
@@ -30245,86 +30311,11 @@ public class Server implements Runnable {
         // Mek pilots may get hurt during ejection,
         // and run around the board afterwards.
         if (entity instanceof Mech) {
-            PilotingRollData rollTarget = new PilotingRollData(entity.getId(),
-                                                               entity.getCrew().getPiloting(), "ejecting");
-            if (entity.isProne()) {
-                rollTarget.addModifier(5, "Mech is prone");
-            }
-            if (entity.getCrew().isUnconscious()) {
-                rollTarget.addModifier(3, "pilot unconscious");
-            }
-            if (autoEject) {
-                rollTarget.addModifier(1, "automatic ejection");
-            }
-            if (entity.getInternal(Mech.LOC_HEAD) < entity
-                    .getOInternal(Mech.LOC_HEAD)) {
-                rollTarget.addModifier(entity.getOInternal(Mech.LOC_HEAD)
-                                       - entity.getInternal(Mech.LOC_HEAD),
-                                       "Head Internal Structure Damage");
-            }
+            PilotingRollData rollTarget = getEjectModifiers(game, entity,
+                    autoEject);
             int facing = entity.getFacing();
             Coords targetCoords = entity.getPosition().translated(
                     (facing + 3) % 6);
-            IHex targetHex = game.getBoard().getHex(targetCoords);
-            if (targetHex != null) {
-                if ((targetHex.terrainLevel(Terrains.WATER) > 0)
-                    && !targetHex.containsTerrain(Terrains.ICE)) {
-                    rollTarget.addModifier(-1, "landing in water");
-                } else if (targetHex.containsTerrain(Terrains.ROUGH)) {
-                    rollTarget.addModifier(0, "landing in rough");
-                } else if (targetHex.containsTerrain(Terrains.RUBBLE)) {
-                    rollTarget.addModifier(0, "landing in rubble");
-                } else if (targetHex.terrainLevel(Terrains.WOODS) == 1) {
-                    rollTarget.addModifier(2, "landing in light woods");
-                } else if (targetHex.terrainLevel(Terrains.WOODS) == 2) {
-                    rollTarget.addModifier(3, "landing in heavy woods");
-                } else if (targetHex.terrainLevel(Terrains.WOODS) == 3) {
-                    rollTarget.addModifier(4, "landing in ultra heavy woods");
-                } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 1) {
-                    rollTarget.addModifier(3, "landing in light jungle");
-                } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 2) {
-                    rollTarget.addModifier(5, "landing in heavy jungle");
-                } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 3) {
-                    rollTarget.addModifier(7, "landing in ultra heavy jungle");
-                } else if (targetHex.terrainLevel(Terrains.BLDG_ELEV) > 0) {
-                    rollTarget.addModifier(
-                            targetHex.terrainLevel(Terrains.BLDG_ELEV),
-                            "landing in a building");
-                } else {
-                    rollTarget.addModifier(-2, "landing in clear terrain");
-                }
-            } else {
-                rollTarget.addModifier(-2, "landing off the board");
-            }
-
-            if (game.getPlanetaryConditions().getGravity() == 0) {
-                rollTarget.addModifier(3, "Zero-G");
-            } else if (game.getPlanetaryConditions().getGravity() < .8) {
-                rollTarget.addModifier(2, "Low-G");
-            } else if (game.getPlanetaryConditions().getGravity() > 1.2) {
-                rollTarget.addModifier(2, "High-G");
-            }
-
-            if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_VACUUM) {
-                rollTarget.addModifier(3, "Vacuum");
-            } else if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_VHIGH) {
-                rollTarget.addModifier(2, "Very High Atmosphere Pressure");
-            } else if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_TRACE) {
-                rollTarget.addModifier(2, "Trace atmosphere");
-            }
-
-            if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
-                || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM)
-                || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_DOWNPOUR)
-                || (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_STRONG_GALE)) {
-                rollTarget.addModifier(2, "Bad Weather");
-            }
-
-            if ((game.getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM)
-                || ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) && (game
-                                                                                                                  .getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_STRONG_GALE))) {
-                rollTarget.addModifier(3, "Really Bad Weather");
-            }
 
             if (autoEject) {
                 r = new Report(6395);
@@ -30415,8 +30406,8 @@ public class Server implements Runnable {
                     entityUpdate(pilot.getId());
                     // check if the pilot lands in a minefield
                     vDesc.addAll(doEntityDisplacementMinefieldCheck(pilot,
-                                                                    entity.getPosition(), targetCoords,
-                                                                    entity.getElevation()));
+                            entity.getPosition(), targetCoords,
+                            entity.getElevation()));
                 } else {
                     // ejects safely
                     r = new Report(6410);
@@ -30512,6 +30503,97 @@ public class Server implements Runnable {
                     IEntityRemovalConditions.REMOVE_EJECTED));
         }
         return vDesc;
+    }
+    
+    public static PilotingRollData getEjectModifiers(IGame game,
+            Entity entity, boolean autoEject) {
+        int facing = entity.getFacing();
+        Coords targetCoords = entity.getPosition().translated((facing + 3) % 6);
+        return getEjectModifiers(game, entity, autoEject, targetCoords,
+                "ejecting");
+    }
+    
+    public static PilotingRollData getEjectModifiers(IGame game, Entity entity,
+            boolean autoEject, Coords targetCoords, String desc) {
+        PilotingRollData rollTarget = new PilotingRollData(entity.getId(),
+                entity.getCrew().getPiloting(), desc);
+        if (entity.isProne()) {
+            rollTarget.addModifier(5, "Mech is prone");
+        }
+        if (entity.getCrew().isUnconscious()) {
+            rollTarget.addModifier(3, "pilot unconscious");
+        }
+        if (autoEject) {
+            rollTarget.addModifier(1, "automatic ejection");
+        }
+        if (entity.getInternal(Mech.LOC_HEAD) < entity
+                .getOInternal(Mech.LOC_HEAD)) {
+            rollTarget.addModifier(
+                    entity.getOInternal(Mech.LOC_HEAD)
+                            - entity.getInternal(Mech.LOC_HEAD),
+                    "Head Internal Structure Damage");
+        }
+        IHex targetHex = game.getBoard().getHex(targetCoords);
+        if (targetHex != null) {
+            if ((targetHex.terrainLevel(Terrains.WATER) > 0)
+                    && !targetHex.containsTerrain(Terrains.ICE)) {
+                rollTarget.addModifier(-1, "landing in water");
+            } else if (targetHex.containsTerrain(Terrains.ROUGH)) {
+                rollTarget.addModifier(0, "landing in rough");
+            } else if (targetHex.containsTerrain(Terrains.RUBBLE)) {
+                rollTarget.addModifier(0, "landing in rubble");
+            } else if (targetHex.terrainLevel(Terrains.WOODS) == 1) {
+                rollTarget.addModifier(2, "landing in light woods");
+            } else if (targetHex.terrainLevel(Terrains.WOODS) == 2) {
+                rollTarget.addModifier(3, "landing in heavy woods");
+            } else if (targetHex.terrainLevel(Terrains.WOODS) == 3) {
+                rollTarget.addModifier(4, "landing in ultra heavy woods");
+            } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 1) {
+                rollTarget.addModifier(3, "landing in light jungle");
+            } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 2) {
+                rollTarget.addModifier(5, "landing in heavy jungle");
+            } else if (targetHex.terrainLevel(Terrains.JUNGLE) == 3) {
+                rollTarget.addModifier(7, "landing in ultra heavy jungle");
+            } else if (targetHex.terrainLevel(Terrains.BLDG_ELEV) > 0) {
+                rollTarget.addModifier(
+                        targetHex.terrainLevel(Terrains.BLDG_ELEV),
+                        "landing in a building");
+            } else {
+                rollTarget.addModifier(-2, "landing in clear terrain");
+            }
+        } else {
+            rollTarget.addModifier(-2, "landing off the board");
+        }
+
+        if (game.getPlanetaryConditions().getGravity() == 0) {
+            rollTarget.addModifier(3, "Zero-G");
+        } else if (game.getPlanetaryConditions().getGravity() < .8) {
+            rollTarget.addModifier(2, "Low-G");
+        } else if (game.getPlanetaryConditions().getGravity() > 1.2) {
+            rollTarget.addModifier(2, "High-G");
+        }
+
+        if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_VACUUM) {
+            rollTarget.addModifier(3, "Vacuum");
+        } else if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_VHIGH) {
+            rollTarget.addModifier(2, "Very High Atmosphere Pressure");
+        } else if (game.getPlanetaryConditions().getAtmosphere() == PlanetaryConditions.ATMO_TRACE) {
+            rollTarget.addModifier(2, "Trace atmosphere");
+        }
+
+        if ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
+                || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_ICE_STORM)
+                || (game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_DOWNPOUR)
+                || (game.getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_STRONG_GALE)) {
+            rollTarget.addModifier(2, "Bad Weather");
+        }
+
+        if ((game.getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM)
+                || ((game.getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) && (game
+                        .getPlanetaryConditions().getWindStrength() == PlanetaryConditions.WI_STRONG_GALE))) {
+            rollTarget.addModifier(3, "Really Bad Weather");
+        }
+        return rollTarget;
     }
 
     /**

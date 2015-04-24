@@ -2309,6 +2309,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 canUnloadHere = true;
                 break;
             }
+            // Zip lines, TO pg 219
+            if (game.getOptions().booleanOption("tacops_ziplines")
+                    && (ce() instanceof VTOL) && (en instanceof Infantry) 
+                    && !((Infantry)en).isMechanized()) {
+                canUnloadHere = true;
+                break;
+            }
         }
         // Disable the "Unload" button if we're in the wrong
         // gear or if the entity is not transporting units.

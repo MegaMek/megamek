@@ -2261,11 +2261,10 @@ public class Compute {
     /**
      * Target movement modifer for the specified delta_distance
      */
-
     public static ToHitData getTargetMovementModifier(int distance,
-                                                      boolean jumped, boolean isVTOL, IGame game) {
+            boolean jumped, boolean isVTOL, IGame game) {
         ToHitData toHit = new ToHitData();
-        if (distance == 0) {
+        if (distance == 0 && !jumped) {
             return toHit;
         }
 
@@ -2303,7 +2302,7 @@ public class Compute {
         }
 
         if (jumped) {
-            if (isVTOL) {
+            if (isVTOL && (distance > 0)) {
                 toHit.addModifier(1, "target VTOL used MPs");
             } else {
                 toHit.addModifier(1, "target jumped");

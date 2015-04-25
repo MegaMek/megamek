@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.text.NumberFormat;
+import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
@@ -112,6 +113,8 @@ public class Infantry extends Entity {
     public static final int DUG_IN_FORTIFYING2 = 4; // no protection, can't
     // attack
     private int dugIn = DUG_IN_NONE;
+    
+    private boolean isTakingCover = false;
 
     // Public and Protected constants, constructors, and methods.
 
@@ -956,6 +959,8 @@ public class Infantry extends Entity {
                 dugIn = DUG_IN_NONE;
             }
         }
+        
+        setTakingCover(false);
         super.newRound(roundNumber);
     }
 
@@ -1535,6 +1540,52 @@ public class Infantry extends Entity {
         roll.addModifier(TargetRoll.CHECK_FALSE,
                          "Infantry cannot fall");
         return roll;
-    }    
+    }
+    
+    /**
+     * Determines if there is valid cover for an infantry unit to utilize the
+     * Using Non-Infantry as Cover rules (TO pg 108).
+     * @param game
+     * @param position
+     * @return
+     */
+    public static boolean hasValidCover(IGame game, Coords pos, int elevation) {
+        // Can't do anything if we don't have a position
+        // If elevation > 0, we're either flying, or in a building
+        // In either case, we shouldn't be allowed to take cover
+        if ((pos == null) || (elevation > 0)) {
+            return false;
+        }
+        boolean hasMovedEntity = false;
+        // First, look for ground untis in the same hex that have already moved
+        for (Entity e : game.getEntitiesVector(pos)) {
+            if (e.isDone() && !(e instanceof Infantry) 
+                    && (e.getElevation() == elevation)) {
+                hasMovedEntity = true;
+                break;
+            }
+        }
+        // If we didn't find anything, check for wrecks
+        // The rules don't explicitly cover this, but it makes sense
+        if (!hasMovedEntity) {
+            Enumeration<Entity> wrecks = game.getWreckedEntities();
+            while (wrecks.hasMoreElements()) {
+                Entity e = wrecks.nextElement();
+                if (pos.equals(e.getPosition()) 
+                        && !(e instanceof Infantry)) {
+                    hasMovedEntity = true;
+                }
+            }
+        }
+        return hasMovedEntity;
+    }
+
+    public boolean isTakingCover() {
+        return isTakingCover;
+    }
+
+    public void setTakingCover(boolean isTakingCover) {
+        this.isTakingCover = isTakingCover;
+    }
     
 } // End class Infantry

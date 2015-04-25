@@ -7215,6 +7215,18 @@ public class Server implements Runnable {
                     // other movement clears dug in status
                     inf.setDugIn(Infantry.DUG_IN_NONE);
                 }
+                
+                if (step.getType() == MoveStepType.TAKE_COVER) {
+                    if (Infantry.hasValidCover(game, step.getPosition(),
+                            step.getElevation())) {
+                        inf.setTakingCover(true);
+                    } else {
+                        sendServerChat(entity.getDisplayName()
+                                + " failed to take cover: "
+                                + "no valid unit found in "
+                                + step.getPosition());
+                    }
+                }
             }
 
             // set last step parameters

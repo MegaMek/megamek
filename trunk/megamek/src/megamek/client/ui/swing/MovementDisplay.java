@@ -148,8 +148,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_HULL_DOWN("moveHullDown", CMD_MECH | CMD_TANK), //$NON-NLS-1$
         MOVE_CLIMB_MODE("moveClimbMode", CMD_MECH | CMD_TANK | CMD_INF), //$NON-NLS-1$
         MOVE_SWIM("moveSwim", CMD_MECH), //$NON-NLS-1$
-        MOVE_DIG_IN("moveDigIn", CMD_INF), //$NON-NLS-1$
-        MOVE_FORTIFY("moveFortify", CMD_INF), //$NON-NLS-1$
         MOVE_SHAKE_OFF("moveShakeOff", CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_MODE_MECH("moveModeMech", CMD_NONE), //$NON-NLS-1$
         MOVE_MODE_AIRMECH("moveModeAirmech", CMD_NONE), //$NON-NLS-1$
@@ -160,6 +158,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_SHUTDOWN("moveShutDown", CMD_NON_INF), //$NON-NLS-1$
         MOVE_STARTUP("moveStartup", CMD_NON_INF), //$NON-NLS-1$
         MOVE_SELF_DESTRUCT("moveSelfDestruct", CMD_NON_INF), //$NON-NLS-1$
+        // Infantry only
+        MOVE_DIG_IN("moveDigIn", CMD_INF), //$NON-NLS-1$
+        MOVE_FORTIFY("moveFortify", CMD_INF), //$NON-NLS-1$
+        MOVE_TAKE_COVER("moveTakeCover", CMD_INF), //$NON-NLS-1$
         // Aero Movement
         MOVE_ACC("MoveAccelerate", CMD_AERO), //$NON-NLS-1$
         MOVE_DEC("MoveDecelerate", CMD_AERO), //$NON-NLS-1$
@@ -644,7 +646,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * Sets the buttons to their proper states
      */
     private void updateButtons() {
-        final IGame game = clientgui.getClient().getGame();
+        final GameOptions gOpts = clientgui.getClient().getGame().getOptions();
         final Entity ce = ce();
         boolean isMech = (ce instanceof Mech);
         boolean isInfantry = (ce instanceof Infantry);
@@ -713,8 +715,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             setEjectEnabled(true);
             // no turning for spheroids in atmosphere
             if ((((Aero) ce).isSpheroid() || clientgui.getClient().getGame()
-                                                      .getPlanetaryConditions().isVacuum())
-                && !clientgui.getClient().getGame().getBoard().inSpace()) {
+                    .getPlanetaryConditions().isVacuum())
+                    && !clientgui.getClient().getGame().getBoard().inSpace()) {
                 setTurnEnabled(false);
             }
         }
@@ -732,15 +734,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateHoverButton();
         updateManeuverButton();
 
+        // Infantry - Fortify
         if (isInfantry
             && ce.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_VIBROSHOVEL)) {
             getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(true);
         } else {
             getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(false);
         }
-        if (isInfantry
-            && clientgui.getClient().getGame().getOptions()
-                        .booleanOption("tacops_dig_in")) {
+        // Infantry - Digging in
+        if (isInfantry && gOpts.booleanOption("tacops_dig_in")) {
             // Allow infantry to dig in if they aren't currently dug in
             int dugInState = ((Infantry) ce).getDugIn();
             getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(
@@ -748,13 +750,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else {
             getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
         }
+        // Infantry - Take Cover
+        updateTakeCoverButton();
+        
         getBtn(MoveCommand.MOVE_SHAKE_OFF).setEnabled(
                 (ce instanceof Tank)
                 && (ce.getSwarmAttackerId() != Entity.NONE));
 
         setLayMineEnabled(ce.canLayMine());
         setFleeEnabled(ce.canFlee());
-        if (game.getOptions().booleanOption("vehicles_can_eject")
+        if (gOpts.booleanOption("vehicles_can_eject")
                 && (ce instanceof Tank)) { //$NON-NLS-1$
             // Vehicle don't have ejection systems so crews abandon, and must 
             // enter a valid hex, if they cannot they can't abandon TO pg 197
@@ -1666,9 +1671,34 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             updateThrustButton();
             updateRollButton();
             updateTurnButton();
+            updateTakeCoverButton();
             checkFuel();
             checkOOC();
             checkAtmosphere();
+        }
+    }
+    
+    private void updateTakeCoverButton() {
+        final IGame game = clientgui.getClient().getGame();
+        final GameOptions gOpts = game.getOptions();
+        boolean isInfantry = (ce() instanceof Infantry);
+        
+        // Infantry - Taking Cover
+        if (isInfantry && gOpts.booleanOption("tacops_take_cover")) {
+            // Determine the current position of the infantry
+            Coords pos;
+            int elevation;
+            if (cmd == null) {
+                pos = ce().getPosition();
+                elevation = ce().getElevation();
+            } else {
+                pos = cmd.getFinalCoords();
+                elevation = cmd.getFinalElevation();
+            }
+            getBtn(MoveCommand.MOVE_TAKE_COVER).setEnabled(
+                    Infantry.hasValidCover(game, pos, elevation));
+        } else {
+            getBtn(MoveCommand.MOVE_TAKE_COVER).setEnabled(false);
         }
     }
 
@@ -3980,6 +4010,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_FORTIFY.getCmd())) {
             cmd.addStep(MoveStepType.FORTIFY);
             clientgui.bv.drawMovementData(ce(), cmd);
+        } else if (actionCmd.equals(MoveCommand.MOVE_TAKE_COVER.getCmd())) {
+            cmd.addStep(MoveStepType.TAKE_COVER);
+            clientgui.bv.drawMovementData(ce(), cmd);
         } else if (actionCmd.equals(MoveCommand.MOVE_SHAKE_OFF.getCmd())) {
             cmd.addStep(MoveStepType.SHAKE_OFF_SWARMERS);
             clientgui.bv.drawMovementData(ce(), cmd);
@@ -4283,6 +4316,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateSpeedButtons();
         updateThrustButton();
         updateRollButton();
+        updateTakeCoverButton();
         checkFuel();
         checkOOC();
         checkAtmosphere();

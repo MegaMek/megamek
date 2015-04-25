@@ -171,6 +171,7 @@ class StepSprite extends Sprite {
             case DOWN:
             case DIG_IN:
             case FORTIFY:
+            case TAKE_COVER:
                 // draw arrow indicating dropping prone
                 // also doubles as the descent indication
                 graph.setColor(Color.darkGray);

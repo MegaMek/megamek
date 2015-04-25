@@ -2148,6 +2148,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     + "the 3 adjacent hexes of their firing arc!");
             }
         }
+        
+        if ((te instanceof Infantry) && ((Infantry)te).isTakingCover()) {
+            if (te.getPosition().direction(ae.getPosition()) == te.getFacing()) {
+                toHit.addModifier(+3, "firing through cover");
+            }
+        }
+        
+        if ((ae instanceof Infantry) && ((Infantry)ae).isTakingCover()) {
+            if (ae.getPosition().direction(te.getPosition()) == ae.getFacing()) {
+                toHit.addModifier(+1, "firing through cover");
+            }
+        }
 
         // okay!
         return toHit;
@@ -2761,6 +2773,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         if (ae.getTsempEffect() == TSEMPWeapon.TSEMP_EFFECT_INTERFERENCE) {
             toHit.addModifier(+2, "attacker has TSEMP interference");
+        }
+        
+        if ((te instanceof Infantry) && ((Infantry)te).isTakingCover()) {
+            if (te.getPosition().direction(ae.getPosition()) == te.getFacing()) {
+                toHit.addModifier(+3, "firing through cover");
+            }
+        }
+        
+        if ((ae instanceof Infantry) && ((Infantry)ae).isTakingCover()) {
+            if (ae.getPosition().direction(te.getPosition()) == ae.getFacing()) {
+                toHit.addModifier(+1, "firing through cover");
+            }
         }
 
         // okay!

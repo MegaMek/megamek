@@ -249,7 +249,8 @@ class EntitySprite extends Sprite {
             boolean isInfantry = (entity instanceof Infantry);
             boolean isAero = (entity instanceof Aero);                
             if ((entity.getFacing() != -1)
-                    && !(isInfantry && !((Infantry) entity).hasFieldGun())
+                    && !(isInfantry && !((Infantry) entity).hasFieldGun()
+                            && !((Infantry) entity).isTakingCover())
                     && !(isAero && ((Aero) entity).isSpheroid() && !board
                             .inSpace())) {
                 graph.draw(bv.facingPolys[entity.getFacing()]);
@@ -561,6 +562,12 @@ class EntitySprite extends Sprite {
                     graph.drawString("Working", 23, 71); //$NON-NLS-1$
                     graph.setColor(Color.red);
                     graph.drawString("Working", 22, 70); //$NON-NLS-1$
+                } else if (((Infantry)entity).isTakingCover()) {
+                    graph.setColor(Color.black);
+                    String msg = Messages.getString("BoardView1.TAKINGCOVER");
+                    graph.drawString(msg, 23, 71); //$NON-NLS-1$
+                    graph.setColor(Color.red);
+                    graph.drawString(msg, 22, 70); //$NON-NLS-1$
                 }
             }
 
@@ -689,20 +696,40 @@ class EntitySprite extends Sprite {
 
     @Override
     public String[] getTooltip() {
-        String[] tipStrings = new String[4];
-        StringBuffer buffer;
-
+        boolean infTakingCover = (entity instanceof Infantry)
+                && ((Infantry) entity).isTakingCover();
+        
+        StringBuffer buffer = new StringBuffer();;
+        String[] tipStrings;
+        int numTipStrings = 4;
+        int tipStringIdx = 0;
+        
+        if (infTakingCover) {
+            numTipStrings++;
+        }
+        tipStrings = new String[numTipStrings];
+          
         if (onlyDetectedBySensors()) {
             tipStrings = new String[1];
             tipStrings[0] = Messages.getString("BoardView1.sensorReturn");
             return tipStrings;
         }
 
-        buffer = new StringBuffer();
+        
+        // Unit information
         buffer.append(entity.getChassis()).append(" (") //$NON-NLS-1$
                 .append(entity.getOwner().getName()).append(")"); //$NON-NLS-1$
-        tipStrings[0] = buffer.toString();
+        tipStrings[tipStringIdx++] = buffer.toString();
 
+        // Infantry taking cover
+        if (infTakingCover) {
+            buffer = new StringBuffer();
+            String msg = Messages.getString("BoardView1.TakingCover");
+            buffer.append("(").append(msg).append(")");
+            tipStrings[tipStringIdx++] = buffer.toString();
+        }
+        
+        // Nickname
         boolean hasNick = ((null != entity.getCrew().getNickname()) && !entity
                 .getCrew().getNickname().equals(""));
         buffer = new StringBuffer();
@@ -711,6 +738,8 @@ class EntitySprite extends Sprite {
             buffer.append(" '").append(entity.getCrew().getNickname())
                     .append("'");
         }
+        
+        // Piloting/Gunnery Info
         buffer.append(" (").append(entity.getCrew().getGunnery())
                 .append("/") //$NON-NLS-1$
                 .append(entity.getCrew().getPiloting()).append(")")
@@ -727,7 +756,7 @@ class EntitySprite extends Sprite {
         if (isMD) {
             buffer.append(Messages.getString("BoardView1.md")); //$NON-NLS-1$
         }
-        tipStrings[1] = buffer.toString();
+        tipStrings[tipStringIdx++] = buffer.toString();
 
         GunEmplacement ge = null;
         if (entity instanceof GunEmplacement) {
@@ -776,7 +805,7 @@ class EntitySprite extends Sprite {
                     .append(Messages.getString("BoardView1.done"))
                     .append(")");
         }
-        tipStrings[2] = buffer.toString();
+        tipStrings[tipStringIdx++] = buffer.toString();
 
         buffer = new StringBuffer();
         if (ge == null) {
@@ -791,7 +820,7 @@ class EntitySprite extends Sprite {
          * Messages.getString("BoardView1.turretArmor")) //$NON-NLS-1$
          * .append(ge.getCurrentTurretArmor()); }
          */
-        tipStrings[3] = buffer.toString();
+        tipStrings[tipStringIdx++] = buffer.toString();
 
         return tipStrings;
     }

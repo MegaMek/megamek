@@ -701,7 +701,11 @@ public class FighterSquadron extends Aero {
                         // throw new LocationFullException(ex.getMessage());
                     }
                 }
-                if (type != BombType.B_TAG) {
+                // If the bomb was added as a weapon, don't add the ammo
+                // The ammo will end up never getting removed from the squadron
+                // because it doesn't count as a weapon.
+                if ((type != BombType.B_TAG) 
+                        && (null == BombType.getBombWeaponName(type))) {
                     try {
                         addEquipment(EquipmentType.get(BombType
                                 .getBombInternalName(type)), LOC_NOSE, false);

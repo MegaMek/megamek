@@ -4916,12 +4916,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                if (tracker.isErrorAny()) {
+                    return null;
+                }
                 tracker.removeImage(base);
             }
             int width = (int) (base.getWidth(null) * scale);
             int height = (int) (base.getHeight(null) * scale);
 
-            // TODO: insert a check that width and height are > 0.
+            if ((width < 1) || (height < 1)) {
+                return null;
+            }
 
             scaled = scale(base, width, height);
             tracker.addImage(scaled, 1);
@@ -4946,7 +4951,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private Image scale(Image img, int width, int height) {
         ImageFilter filter;
         filter = new ImprovedAveragingScaleFilter(img.getWidth(null),
-                                                  img.getHeight(null), width, height);
+                img.getHeight(null), width, height);
 
         ImageProducer prod;
         prod = new FilteredImageSource(img.getSource(), filter);

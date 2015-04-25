@@ -91,6 +91,7 @@ public class MoveStep implements Serializable {
     private boolean isRunProhibited = false;
     private boolean isStackingViolation = false;
     private boolean isDiggingIn = false;
+    private boolean isTakingCover = false;
     private MovePath parent = null;
 
     /*
@@ -1939,6 +1940,25 @@ public class MoveStep implements Serializable {
             }
             isDiggingIn = true;
             movementType = EntityMovementType.MOVE_NONE;
+        }
+        
+        // Taking cover should happen as the last action
+        if (prev.isTakingCover) {
+            return;
+        }
+        
+        if (type == MoveStepType.TAKE_COVER) {
+            // Only Infantry can take cover
+            if (!isInfantry) {
+                return;
+            }
+            // If there's no valid cover, it's illegal
+            if (!Infantry.hasValidCover(game, getPosition(), getElevation())) {
+                return;
+            }
+            isTakingCover = true;
+            movementType = prev.getMovementType();
+            return;
         }
 
         // WIGEs can take off on their first step

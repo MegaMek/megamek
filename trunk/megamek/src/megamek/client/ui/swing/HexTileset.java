@@ -535,8 +535,13 @@ public class HexTileset {
             images = new Vector<Image>();
             for (int i = 0; i < filenames.size(); i++) {
                 String filename = filenames.elementAt(i);
+                File imgFile = new File(Configuration.hexesDir(), filename);
+                if (!imgFile.exists()) {
+                    System.err.println("Error loading image for tileset!  "
+                            + "File does not exist: " + imgFile.getPath());
+                }
                 images.addElement(comp.getToolkit().getImage(
-                        new File(Configuration.hexesDir(), filename).toString()
+                        imgFile.toString()
                 ));
             }
         }

@@ -4761,7 +4761,7 @@ public class Compute {
      * otherwise.
      */
     public static boolean canMoveOnPavement(IGame game, Coords src,
-                                            Coords dest, MovePath movePath) {
+            Coords dest, MovePath movePath) {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHex(dest);
         final int src2destDir = src.direction(dest);
@@ -4770,9 +4770,9 @@ public class Compute {
 
         // We may be moving in the same hex.
         if (src.equals(dest)
-            && (srcHex.containsTerrain(Terrains.PAVEMENT)
-                || srcHex.containsTerrain(Terrains.ROAD) || srcHex
-                .containsTerrain(Terrains.BRIDGE))) {
+                && (srcHex.containsTerrain(Terrains.PAVEMENT)
+                        || srcHex.containsTerrain(Terrains.ROAD) || srcHex
+                            .containsTerrain(Terrains.BRIDGE))) {
             result = true;
         }
 
@@ -4780,11 +4780,11 @@ public class Compute {
         // hex is also a pavement hex or has a road or bridge that exits
         // into the source hex and the entity is climbing onto the bridge.
         else if (srcHex.containsTerrain(Terrains.PAVEMENT)
-                 && (destHex.containsTerrain(Terrains.PAVEMENT)
-                     || destHex.containsTerrainExit(Terrains.ROAD,
-                                                    dest2srcDir) || (destHex.containsTerrainExit(
-                Terrains.BRIDGE, dest2srcDir) && movePath
-                                                                             .getFinalClimbMode()))) {
+                && (destHex.containsTerrain(Terrains.PAVEMENT)
+                        || destHex.containsTerrainExit(Terrains.ROAD,
+                                dest2srcDir) || (destHex.containsTerrainExit(
+                        Terrains.BRIDGE, dest2srcDir) && movePath
+                        .getFinalClimbMode()))) {
             result = true;
         }
 
@@ -4792,13 +4792,13 @@ public class Compute {
         // bridge) that exits into the destination hex, and the dest hex has
         // pavement or a corresponding exit to the src hex
         else if ((srcHex.containsTerrainExit(Terrains.ROAD, src2destDir) || (srcHex
-                                                                                     .containsTerrainExit(Terrains.BRIDGE, src2destDir) && (movePath
-                                                                                                                                                    .getLastStep().getElevation() == srcHex
-                                                                                                                                                    .terrainLevel(Terrains.BRIDGE_ELEV))))
-                 && (destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir)
-                     || (destHex.containsTerrainExit(Terrains.BRIDGE,
-                                                     dest2srcDir) && movePath.getFinalClimbMode()) || destHex
-                             .containsTerrain(Terrains.PAVEMENT))) {
+                .containsTerrainExit(Terrains.BRIDGE, src2destDir) && (movePath
+                .getLastStep().getElevation() == srcHex
+                .terrainLevel(Terrains.BRIDGE_ELEV))))
+                && (destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir)
+                        || (destHex.containsTerrainExit(Terrains.BRIDGE,
+                                dest2srcDir) && movePath.getFinalClimbMode()) || destHex
+                            .containsTerrain(Terrains.PAVEMENT))) {
             result = true;
         }
 

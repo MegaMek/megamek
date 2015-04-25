@@ -2942,26 +2942,21 @@ public class UnitDisplay extends JPanel {
 
             locList = new JList<String>(new DefaultListModel<String>());
             locList.setOpaque(false);
-            locList.addListSelectionListener(this);
 
             slotList = new JList<String>(new DefaultListModel<String>());
             slotList.setOpaque(false);
-            slotList.addListSelectionListener(this);
 
             unitList = new JList<String>(new DefaultListModel<String>());
             unitList.setOpaque(false);
-            unitList.addListSelectionListener(this);
 
             m_chMode = new JComboBox<String>();
             m_chMode.addItem("   "); //$NON-NLS-1$
             m_chMode.setEnabled(false);
-            m_chMode.addItemListener(this);
 
             m_bDumpAmmo = new JButton(
                     Messages.getString("MechDisplay.m_bDumpAmmo")); //$NON-NLS-1$
             m_bDumpAmmo.setEnabled(false);
             m_bDumpAmmo.setActionCommand("dump"); //$NON-NLS-1$
-            m_bDumpAmmo.addActionListener(this);
 
             modeLabel = new JLabel(
                     Messages.getString("MechDisplay.modeLabel"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -3063,6 +3058,8 @@ public class UnitDisplay extends JPanel {
 
             setBackGround();
             onResize();
+            
+            addListeners();
         }
 
         @Override
@@ -3108,13 +3105,11 @@ public class UnitDisplay extends JPanel {
                 return null;
             }
             if (cs.getMount2() != null) {
-                ChoiceDialog choiceDialog = new ChoiceDialog(
-                        clientgui.frame,
-                        Messages.getString(
-                                "MechDisplay.SelectMulti.title"),
-                        Messages.getString(
-                                "MechDisplay.SelectMulti.question"),
-                        new String[]{cs.getMount().getName(), cs.getMount2().getName()}, true);
+                ChoiceDialog choiceDialog = new ChoiceDialog(clientgui.frame,
+                        Messages.getString("MechDisplay.SelectMulti.title"),
+                        Messages.getString("MechDisplay.SelectMulti.question"),
+                        new String[] { cs.getMount().getName(),
+                                cs.getMount2().getName() }, true);
                 choiceDialog.setVisible(true);
                 if (choiceDialog.getAnswer() == true) {
                     // load up the choices
@@ -3144,22 +3139,24 @@ public class UnitDisplay extends JPanel {
             en = newEntity;
             entities.clear();
             entities.add(newEntity);
-            ((DefaultListModel<String>) unitList.getModel()).removeAllElements();
-            ((DefaultListModel<String>) unitList.getModel()).addElement(Messages
-                                                                                .getString("MechDisplay.Ego"));
+            removeListeners();
+            ((DefaultListModel<String>) unitList.getModel())
+                    .removeAllElements();
+            ((DefaultListModel<String>) unitList.getModel())
+                    .addElement(Messages.getString("MechDisplay.Ego"));
             for (Entity loadee : newEntity.getLoadedUnits()) {
-                ((DefaultListModel<String>) unitList.getModel()).addElement(loadee
-                                                                                    .getModel());
+                ((DefaultListModel<String>) unitList.getModel())
+                        .addElement(loadee.getModel());
                 entities.add(loadee);
             }
             unitList.setSelectedIndex(0);
             displayLocations();
-            displaySlots();
+            addListeners();
         }
 
         private void displayLocations() {
-            DefaultListModel<String> locModel = 
-                    ((DefaultListModel<String>) locList.getModel()); 
+            DefaultListModel<String> locModel = ((DefaultListModel<String>) locList
+                    .getModel());
             locModel.removeAllElements();
             for (int i = 0; i < en.locations(); i++) {
                 if (en.getNumberOfCriticals(i) > 0) {
@@ -3270,209 +3267,233 @@ public class UnitDisplay extends JPanel {
         // ItemListener
         //
         public void itemStateChanged(ItemEvent ev) {
-            if (ev.getSource().equals(m_chMode)
-                    && (ev.getStateChange() == ItemEvent.SELECTED)
-                    && (clientgui != null)) {
-                Mounted m = getSelectedEquipment();
-                CriticalSlot cs = getSelectedCritical();
-                if ((m != null) && m.getType().hasModes()) {
-                    int nMode = m_chMode.getSelectedIndex();
-                    if (nMode >= 0) {
+            removeListeners();
+            try {
+                if (ev.getSource().equals(m_chMode)
+                        && (ev.getStateChange() == ItemEvent.SELECTED)
+                        && (clientgui != null)) {
+                    Mounted m = getSelectedEquipment();
+                    CriticalSlot cs = getSelectedCritical();
+                    if ((m != null) && m.getType().hasModes()) {
+                        int nMode = m_chMode.getSelectedIndex();
+                        if (nMode >= 0) {
 
-                        if ((m.getType() instanceof MiscType)
-                                && ((MiscType) m.getType()).isShield()
-                                && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_FIRING)) {
-                            clientgui.systemMessage(Messages.getString(
-                                    "MechDisplay.ShieldModePhase", null));//$NON-NLS-1$
-                            return;
-                        }
+                            if ((m.getType() instanceof MiscType)
+                                    && ((MiscType) m.getType()).isShield()
+                                    && (clientgui.getClient().getGame()
+                                            .getPhase() != IGame.Phase.PHASE_FIRING)) {
+                                clientgui.systemMessage(Messages.getString(
+                                        "MechDisplay.ShieldModePhase", null));//$NON-NLS-1$
+                                return;
+                            }
 
-                        if ((m.getType() instanceof MiscType)
-                                && ((MiscType) m.getType()).isVibroblade()
-                                && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_PHYSICAL)) {
-                            clientgui.systemMessage(Messages.getString(
-                                    "MechDisplay.VibrobladeModePhase", null));//$NON-NLS-1$
-                            return;
-                        }
-
-                        if ((m.getType() instanceof MiscType)
-                                && ((MiscType) m.getType())
-                                        .hasSubType(MiscType.S_RETRACTABLE_BLADE)
-                                && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
-                            clientgui.systemMessage(Messages.getString(
-                                    "MechDisplay.RetractableBladeModePhase",
-                                    null));//$NON-NLS-1$
-                            return;
-                        }
-
-                        // Can only charge a capacitor if the weapon has not
-                        // been fired.
-                        if ((m.getType() instanceof MiscType)
-                                && (m.getLinked() != null)
-                                && ((MiscType) m.getType())
-                                        .hasFlag(MiscType.F_PPC_CAPACITOR)
-                                && m.getLinked().isUsedThisRound()
-                                && (nMode == 1)) {
-                            clientgui.systemMessage(Messages.getString(
-                                    "MechDisplay.CapacitorCharging", null));//$NON-NLS-1$
-                            return;
-                        }
-                        m.setMode(nMode);
-                        // send the event to the server
-                        clientgui.getClient().sendModeChange(en.getId(),
-                                en.getEquipmentNum(m), nMode);
-
-                        // notify the player
-                        if (m.canInstantSwitch(nMode)) {
-                            clientgui
-                                    .systemMessage(Messages
-                                            .getString(
-                                                    "MechDisplay.switched",
-                                                    new Object[] {
-                                                            m.getName(),
-                                                            m.curMode()
-                                                                    .getDisplayableName() }));//$NON-NLS-1$
-                            int weap = wPan.getSelectedWeaponNum();
-                            wPan.displayMech(en);
-                            wPan.selectWeapon(weap);
-                            // displaySlots();
-                        } else {
-                            if (IGame.Phase.PHASE_DEPLOYMENT == clientgui
-                                    .getClient().getGame().getPhase()) {
+                            if ((m.getType() instanceof MiscType)
+                                    && ((MiscType) m.getType()).isVibroblade()
+                                    && (clientgui.getClient().getGame()
+                                            .getPhase() != IGame.Phase.PHASE_PHYSICAL)) {
                                 clientgui
                                         .systemMessage(Messages
                                                 .getString(
-                                                        "MechDisplay.willSwitchAtStart",
+                                                        "MechDisplay.VibrobladeModePhase", null));//$NON-NLS-1$
+                                return;
+                            }
+
+                            if ((m.getType() instanceof MiscType)
+                                    && ((MiscType) m.getType())
+                                            .hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                                    && (clientgui.getClient().getGame()
+                                            .getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
+                                clientgui
+                                        .systemMessage(Messages
+                                                .getString(
+                                                        "MechDisplay.RetractableBladeModePhase",
+                                                        null));//$NON-NLS-1$
+                                return;
+                            }
+
+                            // Can only charge a capacitor if the weapon has not
+                            // been fired.
+                            if ((m.getType() instanceof MiscType)
+                                    && (m.getLinked() != null)
+                                    && ((MiscType) m.getType())
+                                            .hasFlag(MiscType.F_PPC_CAPACITOR)
+                                    && m.getLinked().isUsedThisRound()
+                                    && (nMode == 1)) {
+                                clientgui.systemMessage(Messages.getString(
+                                        "MechDisplay.CapacitorCharging", null));//$NON-NLS-1$
+                                return;
+                            }
+                            m.setMode(nMode);
+                            // send the event to the server
+                            clientgui.getClient().sendModeChange(en.getId(),
+                                    en.getEquipmentNum(m), nMode);
+
+                            // notify the player
+                            if (m.canInstantSwitch(nMode)) {
+                                clientgui
+                                        .systemMessage(Messages
+                                                .getString(
+                                                        "MechDisplay.switched",
                                                         new Object[] {
                                                                 m.getName(),
-                                                                m.pendingMode()
-                                                                        .getDisplayableName() }));
-                                //$NON-NLS-1$
+                                                                m.curMode()
+                                                                        .getDisplayableName() }));//$NON-NLS-1$
+                                int weap = wPan.getSelectedWeaponNum();
+                                wPan.displayMech(en);
+                                wPan.selectWeapon(weap);
+                                // displaySlots();
                             } else {
-                                clientgui
-                                        .systemMessage(Messages
-                                                .getString(
-                                                        "MechDisplay.willSwitchAtEnd",
-                                                        new Object[] {
-                                                                m.getName(),
-                                                                m.pendingMode()
-                                                                        .getDisplayableName() }));
-                                //$NON-NLS-1$
+                                if (IGame.Phase.PHASE_DEPLOYMENT == clientgui
+                                        .getClient().getGame().getPhase()) {
+                                    clientgui
+                                            .systemMessage(Messages
+                                                    .getString(
+                                                            "MechDisplay.willSwitchAtStart",
+                                                            new Object[] {
+                                                                    m.getName(),
+                                                                    m.pendingMode()
+                                                                            .getDisplayableName() }));
+                                    //$NON-NLS-1$
+                                } else {
+                                    clientgui
+                                            .systemMessage(Messages
+                                                    .getString(
+                                                            "MechDisplay.willSwitchAtEnd",
+                                                            new Object[] {
+                                                                    m.getName(),
+                                                                    m.pendingMode()
+                                                                            .getDisplayableName() }));
+                                    //$NON-NLS-1$
+                                }
                             }
                         }
-                    }
-                } else if ((cs != null)
-                        && (cs.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                    int nMode = m_chMode.getSelectedIndex();
-                    if (nMode >= 0) {
-                        if ((cs.getIndex() == Mech.SYSTEM_COCKPIT)
-                                && en.hasEiCockpit() && (en instanceof Mech)) {
-                            Mech mech = (Mech) en;
-                            mech.setCockpitStatus(nMode);
-                            clientgui.getClient().sendSystemModeChange(
-                                    en.getId(), Mech.SYSTEM_COCKPIT, nMode);
-                            if (mech.getCockpitStatus() == mech
-                                    .getCockpitStatusNextRound()) {
-                                clientgui.systemMessage(Messages.getString(
-                                        "MechDisplay.switched",
-                                        new Object[] { "Cockpit",
-                                                m_chMode.getSelectedItem() }));
-                                //$NON-NLS-1$
-                            } else {
-                                clientgui.systemMessage(Messages.getString(
-                                        "MechDisplay.willSwitchAtEnd",
-                                        new Object[] { "Cockpit",
-                                                m_chMode.getSelectedItem() }));
-                                //$NON-NLS-1$
+                    } else if ((cs != null)
+                            && (cs.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                        int nMode = m_chMode.getSelectedIndex();
+                        if (nMode >= 0) {
+                            if ((cs.getIndex() == Mech.SYSTEM_COCKPIT)
+                                    && en.hasEiCockpit()
+                                    && (en instanceof Mech)) {
+                                Mech mech = (Mech) en;
+                                mech.setCockpitStatus(nMode);
+                                clientgui.getClient().sendSystemModeChange(
+                                        en.getId(), Mech.SYSTEM_COCKPIT, nMode);
+                                if (mech.getCockpitStatus() == mech
+                                        .getCockpitStatusNextRound()) {
+                                    clientgui
+                                            .systemMessage(Messages
+                                                    .getString(
+                                                            "MechDisplay.switched",
+                                                            new Object[] {
+                                                                    "Cockpit",
+                                                                    m_chMode.getSelectedItem() }));
+                                    //$NON-NLS-1$
+                                } else {
+                                    clientgui
+                                            .systemMessage(Messages
+                                                    .getString(
+                                                            "MechDisplay.willSwitchAtEnd",
+                                                            new Object[] {
+                                                                    "Cockpit",
+                                                                    m_chMode.getSelectedItem() }));
+                                    //$NON-NLS-1$
+                                }
                             }
                         }
                     }
                 }
+                onResize();
+            } finally {
+                addListeners();
             }
-            onResize();
         }
 
         // ActionListener
         public void actionPerformed(ActionEvent ae) {
-            if ((clientgui != null) && "dump".equals(ae.getActionCommand())) { //$NON-NLS-1$
-                Mounted m = getSelectedEquipment();
-                boolean bOwner = clientgui.getClient().getLocalPlayer()
-                        .equals(en.getOwner());
-                if ((m == null) || !bOwner) {
-                    return;
-                }
-                
-                // Check for BA dumping SRM launchers
-                if ((en instanceof BattleArmor) && (!m.isMissing())
-                        && m.isBodyMounted()
-                        && m.getType().hasFlag(WeaponType.F_MISSILE)
-                        && (m.getLinked() != null)
-                        && (m.getLinked().getUsableShotsLeft() > 0)) {
-                    boolean isDumping = !m.isPendingDump();
-                    m.setPendingDump(isDumping);
-                    clientgui.getClient().sendModeChange(en.getId(),
-                            en.getEquipmentNum(m), isDumping ? -1 : 0);
-                    int selIdx = slotList.getSelectedIndex();
-                    displaySlots();
-                    slotList.setSelectedIndex(selIdx);
-                }
-                
-                if (((!(m.getType() instanceof AmmoType) 
-                        || (m.getUsableShotsLeft() <= 0)) && !m.isDWPMounted())
-                        || (m.isDWPMounted() && (m.isMissing() == true))) {
-                    return;
-                }
-
-                boolean bDumping;
-                boolean bConfirmed;
-
-                if (m.isPendingDump()) {
-                    bDumping = false;
-                    if (m.getType() instanceof AmmoType) {
-                        String title = Messages
-                                .getString("MechDisplay.CancelDumping.title"); //$NON-NLS-1$
-                        String body = Messages
-                                .getString(
-                                        "MechDisplay.CancelDumping.message", new Object[]{m.getName()}); //$NON-NLS-1$
-                        bConfirmed = clientgui.doYesNoDialog(title, body);
-                    } else {
-                        String title = Messages
-                                .getString("MechDisplay.CancelJettison.title"); //$NON-NLS-1$
-                        String body = Messages
-                                .getString(
-                                        "MechDisplay.CancelJettison.message", new Object[]{m.getName()}); //$NON-NLS-1$
-                        bConfirmed = clientgui.doYesNoDialog(title, body);
-                    }
-                } else {
-                    bDumping = true;
-                    if (m.getType() instanceof AmmoType) {
-                        String title = Messages
-                                .getString("MechDisplay.Dump.title"); //$NON-NLS-1$
-                        String body = Messages
-                                .getString(
-                                        "MechDisplay.Dump.message", new Object[]{m.getName()}); //$NON-NLS-1$
-                        bConfirmed = clientgui.doYesNoDialog(title, body);
-                    } else {
-                        String title = Messages
-                                .getString("MechDisplay.Jettison.title"); //$NON-NLS-1$
-                        String body = Messages
-                                .getString(
-                                        "MechDisplay.Jettison.message", new Object[]{m.getName()}); //$NON-NLS-1$
-                        bConfirmed = clientgui.doYesNoDialog(title, body);
+            removeListeners();
+            try {
+                if ((clientgui != null) && "dump".equals(ae.getActionCommand())) { //$NON-NLS-1$
+                    Mounted m = getSelectedEquipment();
+                    boolean bOwner = clientgui.getClient().getLocalPlayer()
+                            .equals(en.getOwner());
+                    if ((m == null) || !bOwner) {
+                        return;
                     }
 
-                }
+                    // Check for BA dumping SRM launchers
+                    if ((en instanceof BattleArmor) && (!m.isMissing())
+                            && m.isBodyMounted()
+                            && m.getType().hasFlag(WeaponType.F_MISSILE)
+                            && (m.getLinked() != null)
+                            && (m.getLinked().getUsableShotsLeft() > 0)) {
+                        boolean isDumping = !m.isPendingDump();
+                        m.setPendingDump(isDumping);
+                        clientgui.getClient().sendModeChange(en.getId(),
+                                en.getEquipmentNum(m), isDumping ? -1 : 0);
+                        int selIdx = slotList.getSelectedIndex();
+                        displaySlots();
+                        slotList.setSelectedIndex(selIdx);
+                    }
 
-                if (bConfirmed) {
-                    m.setPendingDump(bDumping);
-                    clientgui.getClient().sendModeChange(en.getId(),
-                            en.getEquipmentNum(m), bDumping ? -1 : 0);
-                    int selIdx = slotList.getSelectedIndex();
-                    displaySlots();
-                    slotList.setSelectedIndex(selIdx);
+                    if (((!(m.getType() instanceof AmmoType) || (m
+                            .getUsableShotsLeft() <= 0)) && !m.isDWPMounted())
+                            || (m.isDWPMounted() && (m.isMissing() == true))) {
+                        return;
+                    }
+
+                    boolean bDumping;
+                    boolean bConfirmed;
+
+                    if (m.isPendingDump()) {
+                        bDumping = false;
+                        if (m.getType() instanceof AmmoType) {
+                            String title = Messages
+                                    .getString("MechDisplay.CancelDumping.title"); //$NON-NLS-1$
+                            String body = Messages
+                                    .getString(
+                                            "MechDisplay.CancelDumping.message", new Object[] { m.getName() }); //$NON-NLS-1$
+                            bConfirmed = clientgui.doYesNoDialog(title, body);
+                        } else {
+                            String title = Messages
+                                    .getString("MechDisplay.CancelJettison.title"); //$NON-NLS-1$
+                            String body = Messages
+                                    .getString(
+                                            "MechDisplay.CancelJettison.message", new Object[] { m.getName() }); //$NON-NLS-1$
+                            bConfirmed = clientgui.doYesNoDialog(title, body);
+                        }
+                    } else {
+                        bDumping = true;
+                        if (m.getType() instanceof AmmoType) {
+                            String title = Messages
+                                    .getString("MechDisplay.Dump.title"); //$NON-NLS-1$
+                            String body = Messages
+                                    .getString(
+                                            "MechDisplay.Dump.message", new Object[] { m.getName() }); //$NON-NLS-1$
+                            bConfirmed = clientgui.doYesNoDialog(title, body);
+                        } else {
+                            String title = Messages
+                                    .getString("MechDisplay.Jettison.title"); //$NON-NLS-1$
+                            String body = Messages
+                                    .getString(
+                                            "MechDisplay.Jettison.message", new Object[] { m.getName() }); //$NON-NLS-1$
+                            bConfirmed = clientgui.doYesNoDialog(title, body);
+                        }
+
+                    }
+
+                    if (bConfirmed) {
+                        m.setPendingDump(bDumping);
+                        clientgui.getClient().sendModeChange(en.getId(),
+                                en.getEquipmentNum(m), bDumping ? -1 : 0);
+                        int selIdx = slotList.getSelectedIndex();
+                        displaySlots();
+                        slotList.setSelectedIndex(selIdx);
+                    }
                 }
+                onResize();
+            } finally {
+                addListeners();
             }
-            onResize();
         }
 
         private void setBackGround() {
@@ -3556,120 +3577,149 @@ public class UnitDisplay extends JPanel {
             if (event.getValueIsAdjusting()) {
                 return;
             }
-            if (event.getSource().equals(unitList)) {
-                if (null != getSelectedEntity()) {
-                    en = getSelectedEntity();
+            removeListeners();
+            try {
+                if (event.getSource().equals(unitList)) {
+                    if (null != getSelectedEntity()) {
+                        en = getSelectedEntity();
+                        ((DefaultComboBoxModel<String>) m_chMode.getModel())
+                                .removeAllElements();
+                        m_chMode.setEnabled(false);
+                        displayLocations();
+                    }
+                } else if (event.getSource().equals(locList)) {
                     ((DefaultComboBoxModel<String>) m_chMode.getModel())
                             .removeAllElements();
                     m_chMode.setEnabled(false);
-                    displayLocations();
-                }
-            } else if (event.getSource().equals(locList)) {
-                ((DefaultComboBoxModel<String>) m_chMode.getModel())
-                        .removeAllElements();
-                m_chMode.setEnabled(false);
-                displaySlots();
-            } else if (event.getSource().equals(slotList) && (clientgui != null)) {
+                    displaySlots();
+                } else if (event.getSource().equals(slotList)
+                        && (clientgui != null)) {
 
-                m_bDumpAmmo.setEnabled(false);
-                m_chMode.setEnabled(false);
-                Mounted m = getSelectedEquipment();
-                boolean carryingBAsOnBack = false;
-                if ((en instanceof Mech)
-                        && ((en.getExteriorUnitAt(Mech.LOC_CT, true) != null)
-                                || (en.getExteriorUnitAt(Mech.LOC_LT, true) != null) || (en
-                                .getExteriorUnitAt(Mech.LOC_RT, true) != null))) {
-                    carryingBAsOnBack = true;
-                }
-
-                boolean invalidEnvironment = false;
-                if ((en instanceof Mech)
-                    && (en.getLocationStatus(Mech.LOC_CT) > ILocationExposureStatus.NORMAL)) {
-                    invalidEnvironment = true;
-                }
-
-                if ((en instanceof Tank)
-                    && (en.getLocationStatus(Tank.LOC_REAR) > ILocationExposureStatus.NORMAL)) {
-                    invalidEnvironment = true;
-                }
-
-                boolean bOwner = clientgui.getClient().getLocalPlayer()
-                                          .equals(en.getOwner());
-                if ((m != null)
-                        && bOwner
-                        && (m.getType() instanceof AmmoType)
-                        && !m.getType().hasInstantModeSwitch()
-                        && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_DEPLOYMENT)
-                        && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)
-                        && (m.getUsableShotsLeft() > 0)
-                        && !m.isDumping()
-                        && en.isActive()
-                        && (clientgui.getClient().getGame().getOptions()
-                                .intOption("dumping_from_round") <= clientgui
-                                .getClient().getGame().getRoundCount())
-                        && !carryingBAsOnBack && !invalidEnvironment) {
-                    m_bDumpAmmo.setEnabled(true);
-                } else if ((m != null) && bOwner
-                        && (m.getType() instanceof WeaponType)
-                        && !m.isMissing() && m.isDWPMounted()) {
-                    m_bDumpAmmo.setEnabled(true);
-                // Allow dumping of body-mounted missile launchers on BA
-                } else if ((m != null) && bOwner && (en instanceof BattleArmor)
-                        && (m.getType() instanceof WeaponType)
-                        && !m.isMissing()
-                        && m.isBodyMounted() 
-                        && m.getType().hasFlag(WeaponType.F_MISSILE)
-                        && (m.getLinked() != null)
-                        && (m.getLinked().getUsableShotsLeft() > 0)) {
-                    m_bDumpAmmo.setEnabled(true);                
-                } else if ((m != null) && bOwner && m.getType().hasModes()) {
-                    if (!m.isInoperable()
-                        && (en.isActive() || ((en instanceof Aero) && ((Aero) en)
-                            .isInASquadron())) && m.isModeSwitchable()) {
-                        m_chMode.setEnabled(true);
+                    m_bDumpAmmo.setEnabled(false);
+                    m_chMode.setEnabled(false);
+                    Mounted m = getSelectedEquipment();
+                    boolean carryingBAsOnBack = false;
+                    if ((en instanceof Mech)
+                            && ((en.getExteriorUnitAt(Mech.LOC_CT, true) != null)
+                                    || (en.getExteriorUnitAt(Mech.LOC_LT, true) != null) || (en
+                                    .getExteriorUnitAt(Mech.LOC_RT, true) != null))) {
+                        carryingBAsOnBack = true;
                     }
-                    if (!m.isInoperable() && (m.getType() instanceof MiscType)
-                        && m.getType().hasFlag(MiscType.F_STEALTH)
-                        && m.isModeSwitchable()) {
-                        m_chMode.setEnabled(true);
-                    }// if the maxtech eccm option is not set then the ECM
-                    // should not show anything.
-                    if (m.getType().hasFlag(MiscType.F_ECM)
-                        && !clientgui.getClient().getGame().getOptions()
-                                     .booleanOption("tacops_eccm")) {
-                        ((DefaultComboBoxModel<String>) m_chMode.getModel())
-                                .removeAllElements();
-                        return;
+
+                    boolean invalidEnvironment = false;
+                    if ((en instanceof Mech)
+                            && (en.getLocationStatus(Mech.LOC_CT) > ILocationExposureStatus.NORMAL)) {
+                        invalidEnvironment = true;
                     }
-                    ((DefaultComboBoxModel<String>) m_chMode.getModel())
-                            .removeAllElements();
-                    for (Enumeration<EquipmentMode> e = m.getType().getModes(); e
-                            .hasMoreElements(); ) {
-                        EquipmentMode em = e.nextElement();
-                        m_chMode.removeItemListener(this);
-                        m_chMode.addItem(em.getDisplayableName());
-                        m_chMode.addItemListener(this);
+
+                    if ((en instanceof Tank)
+                            && (en.getLocationStatus(Tank.LOC_REAR) > ILocationExposureStatus.NORMAL)) {
+                        invalidEnvironment = true;
                     }
-                    m_chMode.setSelectedItem(m.curMode().getDisplayableName());
-                } else {
-                    CriticalSlot cs = getSelectedCritical();
-                    if ((cs != null)
-                        && (cs.getType() == CriticalSlot.TYPE_SYSTEM)) {
-                        if ((cs.getIndex() == Mech.SYSTEM_COCKPIT)
-                            && en.hasEiCockpit() && (en instanceof Mech)) {
+
+                    boolean bOwner = clientgui.getClient().getLocalPlayer()
+                            .equals(en.getOwner());
+                    if ((m != null)
+                            && bOwner
+                            && (m.getType() instanceof AmmoType)
+                            && !m.getType().hasInstantModeSwitch()
+                            && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_DEPLOYMENT)
+                            && (clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)
+                            && (m.getUsableShotsLeft() > 0)
+                            && !m.isDumping()
+                            && en.isActive()
+                            && (clientgui.getClient().getGame().getOptions()
+                                    .intOption("dumping_from_round") <= clientgui
+                                    .getClient().getGame().getRoundCount())
+                            && !carryingBAsOnBack && !invalidEnvironment) {
+                        m_bDumpAmmo.setEnabled(true);
+                    } else if ((m != null) && bOwner
+                            && (m.getType() instanceof WeaponType)
+                            && !m.isMissing() && m.isDWPMounted()) {
+                        m_bDumpAmmo.setEnabled(true);
+                        // Allow dumping of body-mounted missile launchers on BA
+                    } else if ((m != null) && bOwner
+                            && (en instanceof BattleArmor)
+                            && (m.getType() instanceof WeaponType)
+                            && !m.isMissing() && m.isBodyMounted()
+                            && m.getType().hasFlag(WeaponType.F_MISSILE)
+                            && (m.getLinked() != null)
+                            && (m.getLinked().getUsableShotsLeft() > 0)) {
+                        m_bDumpAmmo.setEnabled(true);
+                    } else if ((m != null) && bOwner && m.getType().hasModes()) {
+                        if (!m.isInoperable()
+                                && (en.isActive() || ((en instanceof Aero) && ((Aero) en)
+                                        .isInASquadron()))
+                                && m.isModeSwitchable()) {
+                            m_chMode.setEnabled(true);
+                        }
+                        if (!m.isInoperable()
+                                && (m.getType() instanceof MiscType)
+                                && m.getType().hasFlag(MiscType.F_STEALTH)
+                                && m.isModeSwitchable()) {
+                            m_chMode.setEnabled(true);
+                        }// if the maxtech eccm option is not set then the ECM
+                         // should not show anything.
+                        if (m.getType().hasFlag(MiscType.F_ECM)
+                                && !clientgui.getClient().getGame()
+                                        .getOptions()
+                                        .booleanOption("tacops_eccm")) {
                             ((DefaultComboBoxModel<String>) m_chMode.getModel())
                                     .removeAllElements();
-                            m_chMode.setEnabled(true);
-                            m_chMode.addItem("EI Off");
-                            m_chMode.addItem("EI On");
-                            m_chMode.addItem("Aimed shot");
-                            m_chMode.setSelectedItem(new Integer(((Mech) en)
-                                                                         .getCockpitStatusNextRound()));
+                            return;
+                        }
+                        ((DefaultComboBoxModel<String>) m_chMode.getModel())
+                                .removeAllElements();
+                        for (Enumeration<EquipmentMode> e = m.getType()
+                                .getModes(); e.hasMoreElements();) {
+                            EquipmentMode em = e.nextElement();
+                            m_chMode.removeItemListener(this);
+                            m_chMode.addItem(em.getDisplayableName());
+                            m_chMode.addItemListener(this);
+                        }
+                        m_chMode.setSelectedItem(m.curMode()
+                                .getDisplayableName());
+                    } else {
+                        CriticalSlot cs = getSelectedCritical();
+                        if ((cs != null)
+                                && (cs.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                            if ((cs.getIndex() == Mech.SYSTEM_COCKPIT)
+                                    && en.hasEiCockpit()
+                                    && (en instanceof Mech)) {
+                                ((DefaultComboBoxModel<String>) m_chMode
+                                        .getModel()).removeAllElements();
+                                m_chMode.setEnabled(true);
+                                m_chMode.addItem("EI Off");
+                                m_chMode.addItem("EI On");
+                                m_chMode.addItem("Aimed shot");
+                                m_chMode.setSelectedItem(new Integer(
+                                        ((Mech) en).getCockpitStatusNextRound()));
+                            }
                         }
                     }
                 }
+                onResize();
+            } finally {
+                addListeners();
             }
-            onResize();
+        }
+        
+        private void addListeners() {
+            locList.addListSelectionListener(this);
+            slotList.addListSelectionListener(this);
+            unitList.addListSelectionListener(this);
+            
+            m_chMode.addItemListener(this);
+            m_bDumpAmmo.addActionListener(this);
+        }
+        
+        private void removeListeners() {
+            locList.removeListSelectionListener(this);
+            slotList.removeListSelectionListener(this);
+            unitList.removeListSelectionListener(this);
+            
+            m_chMode.removeItemListener(this);
+            m_bDumpAmmo.removeActionListener(this);
         }
     }
 

@@ -27,6 +27,7 @@ v0.41.4-dev (SVN)
 + Feature [#1253]: TacOps Using Non-Infantry Units as Cover
 + Changes to action listeners in UnitDisplay.Systems tab
 + Bug [#4461]: ASF squadrons have ghost ammo after firing anti-ship missles
++ Bug [#4443]: Unable to deploy vehicles into heavy woods with roads
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

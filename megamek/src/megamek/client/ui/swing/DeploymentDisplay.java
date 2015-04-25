@@ -42,6 +42,7 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
+import megamek.common.Tank;
 import megamek.common.Terrains;
 import megamek.common.Transporter;
 import megamek.common.VTOL;
@@ -449,6 +450,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         final Building bldg = board.getBuildingAt(moveto);
         boolean isAero = ce() instanceof Aero;
         boolean isVTOL = ce() instanceof VTOL;
+        boolean isTankOnPavement = (ce() instanceof Tank)
+                && (deployhex.containsTerrain(Terrains.PAVEMENT) || deployhex
+                        .containsTerrain(Terrains.ROAD));
         String title, msg;
         if ((ce().getPosition() != null) && (shiftheld || turnMode)) { // turn
             ce().setFacing(ce().getPosition().direction(moveto));
@@ -467,7 +471,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     JOptionPane.WARNING_MESSAGE);
             return;
         } else if (!(board.isLegalDeployment(moveto, ce().getStartingPos()) || assaultDropPreference)
-                || ce().isLocationProhibited(moveto)) {
+                || (ce().isLocationProhibited(moveto) && !isTankOnPavement)) {
             msg = Messages.getString("DeploymentDisplay.cantDeployInto",
                     new Object[] { ce().getShortName(), moveto.getBoardNum() });
             title = Messages.getString("DeploymentDisplay.alertDialog.title"); //$NON-NLS-1$

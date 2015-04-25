@@ -35,7 +35,7 @@ super * "swamp:2" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_3.png;swam
 super * "swamp:3" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_3.png;swamp/swamp_3.png"
 
 super * "rough:1" "" "hq_boring/rough_0.png;hq_boring/rough_1.png;hq_boring/rough_2.png"
-super * "rough:2" "" "hq_boring/ultra_rough.png"
+super * "rough:2" "" "transparent/ultra_rough.png"
 
 super * "woods:1;fluff:12" "" "boring/orchard.png"
 super * "woods:1" "" "hq_boring/lf0.png;hq_boring/lf1.png;hq_boring/lf2.png;hq_boring/lf3.png"

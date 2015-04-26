@@ -867,10 +867,20 @@ public class MegaMekGUI implements IMegaMekGUI {
      */
     private static CommonHelpDialog showHelp(JFrame frame, String filename) {
         Locale l = Locale.getDefault();
-        File helpfile = new File("docs" + File.separator + filename + '-'
-                + l.getDisplayLanguage(Locale.ENGLISH) + ".txt"); //$NON-NLS-1$
-        if (!helpfile.exists()) {
-            helpfile = new File("docs" + File.separator + filename + ".txt"); //$NON-NLS-1$
+        File helpfile;
+        if (!filename.contains(".txt")) { //$NON-NLS-1$
+            helpfile = new File("docs" + File.separator + filename + '-'  //$NON-NLS-1$  //$NON-NLS-2$
+                    + l.getDisplayLanguage(Locale.ENGLISH) + ".txt"); //$NON-NLS-1$
+            if (!helpfile.exists()) {
+                helpfile = new File("docs" + File.separator + filename + ".txt"); //$NON-NLS-1$
+            }
+        } else {
+            String localeFileName = filename.replace(".txt", //$NON-NLS-1$
+                    "-" + l.getDisplayLanguage(Locale.ENGLISH) + ".txt"); //$NON-NLS-1$
+            helpfile = new File(localeFileName);
+            if (!helpfile.exists()) {
+                helpfile = new File(filename);
+            }
         }
         return new CommonHelpDialog(frame, helpfile);
     }

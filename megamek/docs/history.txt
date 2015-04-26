@@ -29,6 +29,7 @@ v0.41.4-dev (SVN)
 + Bug [#4461]: ASF squadrons have ghost ammo after firing anti-ship missles
 + Bug [#4443]: Unable to deploy vehicles into heavy woods with roads
 + Bug [#4441]: Zooming out to scale<1 freezes the boardview
++ Bug [#4525]: help file not found
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

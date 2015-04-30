@@ -772,12 +772,15 @@ public class Precognition implements Runnable {
         getGame().removeEntities(entityIds, condition);
     }
 
+    @SuppressWarnings("unchecked")
     protected void receiveEntityVisibilityIndicator(Packet packet) {
         Entity e = getGame().getEntity(packet.getIntValue(0));
         if (e != null) { // we may not have this entity due to double blind
             e.setEverSeenByEnemy(packet.getBooleanValue(1));
             e.setVisibleToEnemy(packet.getBooleanValue(2));
             e.setDetectedByEnemy(packet.getBooleanValue(3));
+            e.setWhoCanSee((Vector<IPlayer>)packet.getObject(4));
+            e.setWhoCanDetect((Vector<IPlayer>)packet.getObject(5));
             // this next call is only needed sometimes, but we'll just
             // call it everytime
             getGame().processGameEvent(new GameEntityChangeEvent(this, e));

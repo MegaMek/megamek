@@ -2821,8 +2821,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if ((localPlayer != null)
                 && game.getOptions().booleanOption("double_blind")
                 && entity.getOwner().isEnemyOf(localPlayer)
-                && !entity.isVisibleToEnemy()
-                && !entity.isDetectedByEnemy()) {
+                && !entity.hasSeenEntity(localPlayer)
+                && !entity.hasDetectedEntity(localPlayer)) {
                 continue;
             }
             if (entity.getSecondaryPositions().isEmpty()) {
@@ -4067,7 +4067,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 if ((localPlayer == null)
                         || !game.getOptions().booleanOption("double_blind")
                         || !en.getOwner().isEnemyOf(localPlayer)
-                        || en.isVisibleToEnemy()) {
+                        || en.hasSeenEntity(localPlayer)) {
                     addMovingUnit(en, mp);
                 }
             } else {

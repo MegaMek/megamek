@@ -566,6 +566,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Check to see who has seen this Entity Used for Double Blind Reports.
      */
     private Vector<IPlayer> entitySeenBy = new Vector<IPlayer>();
+    
+    /**
+     * Check to see what players have detected this entity with sensors, for
+     * double blind play.
+     */
+    private Vector<IPlayer> entityDetectedBy = new Vector<IPlayer>();
 
     /**
      * Whether this entity is captured or not.
@@ -8183,18 +8189,94 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public Vector<IPlayer> getWhoCanSee() {
         return entitySeenBy;
     }
+    
+    public void setWhoCanSee(Vector<IPlayer> entitySeenBy) {
+        this.entitySeenBy = entitySeenBy;
+    }
 
     public void clearSeenBy() {
         entitySeenBy.clear();
     }
 
+    /**
+     * Returns true if the the given player can see this Entity, including 
+     * teammates if team_vision is on.
+     *  
+     */
     public boolean hasSeenEntity(IPlayer p) {
+        // A Player can always see their own 'mechs
+        if (getOwner().equals(p)) {
+            return true;
+        }
+        
         if ((p != null) && entitySeenBy.contains(p)) {
             return true;
         }
-
+        // If team vision, see if any players on team can see
+        if (game.getOptions().booleanOption("team_vision")) {
+            for (IPlayer teammate : game.getPlayersVector()) {
+                if ((teammate.getTeam() == p.getTeam())
+                        && entitySeenBy.contains(teammate)) {
+                    return true;
+                }
+            }
+        }
+        // Can't see
         return false;
     }
+    
+    public void addBeenDetectedBy(IPlayer p) {
+        // This is for saved-game backwards compatibility
+        if (entityDetectedBy == null) {
+            entityDetectedBy = new Vector<IPlayer>();
+        }
+        if ((p != null) && !entityDetectedBy.contains(p)) {
+            entityDetectedBy.add(p);
+        }
+    }
+
+    public Vector<IPlayer> getWhoCanDetect() {
+        return entityDetectedBy;
+    }
+    
+    public void setWhoCanDetect(Vector<IPlayer> entityDetectedBy) {
+        this.entityDetectedBy = entityDetectedBy;
+    }
+
+    public void clearDetectedBy() {
+        // This is for saved-game backwards compatibility
+        if (entityDetectedBy == null) {
+            entityDetectedBy = new Vector<IPlayer>();
+        }
+        entityDetectedBy.clear();
+    }
+
+    /**
+     * Returns true if the the given player can see this Entity, including 
+     * teammates if team_vision is on.
+     *  
+     */
+    public boolean hasDetectedEntity(IPlayer p) {
+        // This is for saved-game backwards compatibility
+        if (entityDetectedBy == null) {
+            entityDetectedBy = new Vector<IPlayer>();
+        }
+        
+        if ((p != null) && entityDetectedBy.contains(p)) {
+            return true;
+        }
+        // If team vision, see if any players on team can see
+        if (game.getOptions().booleanOption("team_vision")) {
+            for (IPlayer teammate : game.getPlayersVector()) {
+                if ((teammate.getTeam() == p.getTeam())
+                        && entityDetectedBy.contains(teammate)) {
+                    return true;
+                }
+            }
+        }
+        // Can't see
+        return false;
+    }    
 
     protected int applyGravityEffectsOnMP(int MP) {
         int result = MP;

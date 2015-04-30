@@ -452,8 +452,9 @@ public class MapMenu extends JPopupMenu {
             // Only add the unit if it's actually visible
             //  With double blind on, the game may unseen units
             if (!sensors || !doubleBlind || alliedUnit 
-                    || entity.isVisibleToEnemy()
-                    || (sensorsDetectAll && entity.isDetectedByEnemy())) {
+                    || entity.hasSeenEntity(localPlayer)
+                    || (sensorsDetectAll 
+                            && entity.hasDetectedEntity(localPlayer))) {
                 menu.add(viewJMenuItem(entity));
             }
         }

@@ -31,6 +31,7 @@ v0.41.4-dev (SVN)
 + Bug [#4441]: Zooming out to scale<1 freezes the boardview
 + Bug [#4525]: help file not found
 + Data: New Sprites/XTRO Republic I Units.
++ Bug [#4528]: Issues with visibility/detection in multi-team double blind
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

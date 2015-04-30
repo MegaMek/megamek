@@ -819,8 +819,8 @@ public class MiniMap extends JPanel {
                 height = h.floor();
             } else if (heightDisplayMode == SHOW_TOTAL_HEIGHT) {
                 height = ((h.getTerrain(Terrains.BUILDING) != null) || (h
-                                                                                .getTerrain(Terrains.FUEL_TANK) != null)) ? h.ceiling()
-                                                                                                                          : h.floor();
+                        .getTerrain(Terrains.FUEL_TANK) != null)) ? h.ceiling()
+                        : h.floor();
             }
             if (height != 0) {
                 g.drawString(height + "", baseX + 5, baseY + 5); //$NON-NLS-1$
@@ -880,8 +880,8 @@ public class MiniMap extends JPanel {
      */
     private void paintAttack(Graphics g, AttackAction attack) {
         Entity source = m_game.getEntity(attack.getEntityId());
-        Targetable target = m_game.getTarget(attack.getTargetType(), attack
-                .getTargetId());
+        Targetable target = m_game.getTarget(attack.getTargetType(),
+                attack.getTargetId());
         // sanity check...
         if ((null == source) || (null == target)) {
             return;
@@ -895,8 +895,8 @@ public class MiniMap extends JPanel {
         if (attack instanceof WeaponAttackAction) {
             WeaponAttackAction waa = (WeaponAttackAction) attack;
             if ((attack.getTargetType() == Targetable.TYPE_HEX_ARTILLERY)
-                && (waa.getEntity(m_game).getOwner().getId() != m_client
-                    .getLocalPlayer().getId())) {
+                    && (waa.getEntity(m_game).getOwner().getId() != m_client
+                            .getLocalPlayer().getId())) {
                 return;
             }
         }
@@ -905,22 +905,20 @@ public class MiniMap extends JPanel {
         int[] xPoints = new int[4];
         int[] yPoints = new int[4];
 
-        xPoints[0] = ((source.getPosition().getX()
-                       * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin
-                      + ((int) 1.5 * hexSide[zoom])) - 2;
-        yPoints[0] = (((2 * source.getPosition().getY()) + 1 + (source.getPosition().getX() % 2))
-                      * hexSideByCos30[zoom]) + topMargin;
-        xPoints[1] = ((target.getPosition().getX()
-                       * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin
-                      + ((int) 1.5 * hexSide[zoom])) - 2;
-        yPoints[1] = (((2 * target.getPosition().getY()) + 1 + (target.getPosition().getX() % 2))
-                      * hexSideByCos30[zoom]) + topMargin;
+        xPoints[0] = ((source.getPosition().getX() * (hexSide[zoom] + hexSideBySin30[zoom]))
+                + leftMargin + ((int) 1.5 * hexSide[zoom])) - 2;
+        yPoints[0] = (((2 * source.getPosition().getY()) + 1 + (source
+                .getPosition().getX() % 2)) * hexSideByCos30[zoom]) + topMargin;
+        xPoints[1] = ((target.getPosition().getX() * (hexSide[zoom] + hexSideBySin30[zoom]))
+                + leftMargin + ((int) 1.5 * hexSide[zoom])) - 2;
+        yPoints[1] = (((2 * target.getPosition().getY()) + 1 + (target
+                .getPosition().getX() % 2)) * hexSideByCos30[zoom]) + topMargin;
         xPoints[2] = xPoints[1] + 2;
         xPoints[3] = xPoints[0] + 2;
         if (((source.getPosition().getX() > target.getPosition().getX()) && (source
-                                                                                     .getPosition().getY() < target.getPosition().getY()))
-            || ((source.getPosition().getX() < target.getPosition().getX()) && (source
-                                                                                        .getPosition().getY() > target.getPosition().getY()))) {
+                .getPosition().getY() < target.getPosition().getY()))
+                || ((source.getPosition().getX() < target.getPosition().getX()) && (source
+                        .getPosition().getY() > target.getPosition().getY()))) {
             yPoints[3] = yPoints[0] + 2;
             yPoints[2] = yPoints[1] + 2;
         } else {
@@ -934,18 +932,18 @@ public class MiniMap extends JPanel {
 
         // if this is mutual fire, draw a half-and-half line
         for (Enumeration<EntityAction> iter = m_game.getActions(); iter
-                .hasMoreElements(); ) {
+                .hasMoreElements();) {
             EntityAction action = iter.nextElement();
             if (action instanceof AttackAction) {
                 AttackAction otherAttack = (AttackAction) action;
                 if ((attack.getEntityId() == otherAttack.getTargetId())
-                    && (otherAttack.getEntityId() == attack.getTargetId())) {
+                        && (otherAttack.getEntityId() == attack.getTargetId())) {
                     // attackTarget _must_ be an entity since it's shooting back
                     // (?)
                     Entity attackTarget = m_game.getEntity(otherAttack
-                                                                   .getEntityId());
+                            .getEntityId());
                     g.setColor(PlayerColors.getColor(attackTarget.getOwner()
-                                                                 .getColorIndex()));
+                            .getColorIndex()));
 
                     xPoints[0] = xPoints[3];
                     yPoints[0] = yPoints[3];
@@ -953,10 +951,13 @@ public class MiniMap extends JPanel {
                     yPoints[1] = yPoints[2];
                     xPoints[2] = xPoints[1] + 2;
                     xPoints[3] = xPoints[0] + 2;
-                    if (((source.getPosition().getX() > target.getPosition().getX()) && (source
-                                                                                                 .getPosition().getY() < target.getPosition().getY()))
-                        || ((source.getPosition().getX() < target.getPosition().getX()) && (source
-                                                                                                    .getPosition().getY() > target.getPosition().getY()))) {
+                    if (((source.getPosition().getX() > target.getPosition()
+                            .getX()) && (source.getPosition().getY() < target
+                            .getPosition().getY()))
+                            || ((source.getPosition().getX() < target
+                                    .getPosition().getX()) && (source
+                                    .getPosition().getY() > target
+                                    .getPosition().getY()))) {
                         yPoints[3] = yPoints[0] + 2;
                         yPoints[2] = yPoints[1] + 2;
                     } else {
@@ -975,11 +976,10 @@ public class MiniMap extends JPanel {
     }
 
     private void paintUnit(Graphics g, Entity entity, boolean border) {
-        int baseX = (entity.getPosition().getX()
-                     * (hexSide[zoom] + hexSideBySin30[zoom])) + leftMargin
-                    + hexSide[zoom];
-        int baseY = (((2 * entity.getPosition().getY()) + 1 + (entity.getPosition().getX() % 2))
-                     * hexSideByCos30[zoom]) + topMargin;
+        int baseX = (entity.getPosition().getX() * (hexSide[zoom] + hexSideBySin30[zoom]))
+                + leftMargin + hexSide[zoom];
+        int baseY = (((2 * entity.getPosition().getY()) + 1 + (entity
+                .getPosition().getX() % 2)) * hexSideByCos30[zoom]) + topMargin;
         int[] xPoints;
         int[] yPoints;
 
@@ -1073,7 +1073,7 @@ public class MiniMap extends JPanel {
         g.fillPolygon(xPoints, yPoints, xPoints.length);
 
         Entity se = clientgui == null ? null : m_game.getEntity(clientgui
-                                                                        .getSelectedEntityNum());
+                .getSelectedEntityNum());
         if (entity == se) {
             Color w = new Color(255, 255, 255);
             Color b = new Color(0, 0, 0);

@@ -662,10 +662,12 @@ class EntitySprite extends Sprite {
                 "sensors_detect_all");
         boolean doubleBlind = bv.game.getOptions().booleanOption(
                 "double_blind");
+        boolean hasVisual = entity.hasSeenEntity(bv.getLocalPlayer());
+        boolean hasDetected = entity.hasDetectedEntity(bv.getLocalPlayer());
 
         if (sensors && doubleBlind && !sensorsDetectAll
                 && !trackThisEntitiesVisibilityInfo(entity)
-                && entity.isDetectedByEnemy() && !entity.isVisibleToEnemy()) {
+                && hasDetected && !hasVisual) {
             return true;
         } else {
             return false;

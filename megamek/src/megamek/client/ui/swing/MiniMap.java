@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -136,6 +137,7 @@ public class MiniMap extends JPanel {
     // unit representation
     private Vector<int[]> roadHexIndexes = new Vector<int[]>();
     private int zoom = GUIPreferences.getInstance().getMinimapZoom();
+    private int[] fontSize = {6, 8, 10, 12, 14, 16};
     private int[] hexSide = {3, 5, 6, 8, 10, 12};
     private int[] hexSideByCos30 = {3, 4, 5, 7, 9, 10};
     private int[] hexSideBySin30 = {2, 2, 3, 4, 5, 6};
@@ -976,6 +978,15 @@ public class MiniMap extends JPanel {
     }
 
     private void paintUnit(Graphics g, Entity entity, boolean border) {
+        boolean sensors = m_game.getOptions().booleanOption(
+                "tacops_sensors");
+        boolean sensorsDetectAll = m_game.getOptions().booleanOption(
+                "sensors_detect_all");
+        boolean doubleBlind = m_game.getOptions().booleanOption(
+                "double_blind");
+        boolean hasVisual = entity.hasSeenEntity(m_bview.getLocalPlayer());
+        boolean hasDetected = entity.hasDetectedEntity(m_bview.getLocalPlayer());
+        
         int baseX = (entity.getPosition().getX() * (hexSide[zoom] + hexSideBySin30[zoom]))
                 + leftMargin + hexSide[zoom];
         int baseY = (((2 * entity.getPosition().getY()) + 1 + (entity
@@ -983,7 +994,20 @@ public class MiniMap extends JPanel {
         int[] xPoints;
         int[] yPoints;
 
-        if (entity instanceof Mech) {
+        if (sensors && doubleBlind && !sensorsDetectAll
+                && hasDetected && !hasVisual) { // Sensor Return
+            String sensorReturn = "?";           
+            Font font = new Font("SansSerif", Font.BOLD, fontSize[zoom]); //$NON-NLS-1$            
+            int width = getFontMetrics(font).stringWidth(sensorReturn) / 2;
+            int height = getFontMetrics(font).getHeight() / 2 - 2;
+            g.setFont(font);
+            g.setColor(Color.RED);
+            g.drawString(sensorReturn, baseX - width, baseY + height);
+            return;
+        } else if (doubleBlind && !hasVisual) { // Unseen Unit
+            // Do nothing
+            return;
+        } else if (entity instanceof Mech) {
             xPoints = new int[3];
             yPoints = new int[3];
             xPoints[0] = baseX;

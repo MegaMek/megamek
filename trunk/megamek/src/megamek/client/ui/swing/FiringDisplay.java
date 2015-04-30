@@ -62,6 +62,7 @@ import megamek.common.IGame;
 import megamek.common.IGame.Phase;
 import megamek.common.IHex;
 import megamek.common.INarcPod;
+import megamek.common.IPlayer;
 import megamek.common.IdealHex;
 import megamek.common.LargeSupportTank;
 import megamek.common.LosEffects;
@@ -611,6 +612,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
 
         IGame game = clientgui.getClient().getGame();
+        IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
         if (!GUIPreferences.getInstance().getFiringSolutions()) {
             return;
         }
@@ -621,8 +623,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
             if ((target.getId() != cen)
                 && (friendlyFire || enemyTarget)
-                && (!enemyTarget || target.isVisibleToEnemy()
-                    || target.isDetectedByEnemy())
+                && (!enemyTarget || target.hasSeenEntity(localPlayer)
+                    || target.hasDetectedEntity(localPlayer))
                 && target.isTargetable()) {
                 ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
                 thd.setLocation(target.getPosition());

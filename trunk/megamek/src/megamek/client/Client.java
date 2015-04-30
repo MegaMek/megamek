@@ -980,12 +980,15 @@ public class Client implements IClientCommandHandler {
         game.removeEntities(entityIds, condition);
     }
 
+    @SuppressWarnings("unchecked")
     protected void receiveEntityVisibilityIndicator(Packet packet) {
         Entity e = game.getEntity(packet.getIntValue(0));
         if (e != null) { // we may not have this entity due to double blind
             e.setEverSeenByEnemy(packet.getBooleanValue(1));
             e.setVisibleToEnemy(packet.getBooleanValue(2));
             e.setDetectedByEnemy(packet.getBooleanValue(3));
+            e.setWhoCanSee((Vector<IPlayer>)packet.getObject(4));
+            e.setWhoCanDetect((Vector<IPlayer>)packet.getObject(5));
             // this next call is only needed sometimes, but we'll just
             // call it everytime
             game.processGameEvent(new GameEntityChangeEvent(this, e));

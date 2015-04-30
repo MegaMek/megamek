@@ -12211,15 +12211,14 @@ public class Server implements Runnable {
         for (Entity entity : game.getEntitiesVector()) {
             // We are hidden once again!
             entity.clearSeenBy();
+            entity.clearDetectedBy();
             // Handle visual spotting
             for (IPlayer p : whoCanSee(entity, false, losCache)) {
                 entity.addBeenSeenBy(p);
             }
             // Handle detection by sensors
             for (IPlayer p : whoCanDetect(entity, allECMInfo, losCache)) {
-                if (!entity.hasSeenEntity(p)) {
-                    entity.addBeenSeenBy(p);
-                }
+                    entity.addBeenDetectedBy(p);
             }
         }
     }
@@ -26749,8 +26748,10 @@ public class Server implements Runnable {
             boolean previousDetectedValue = e.isDetectedByEnemy();
             e.setVisibleToEnemy(false);
             e.setDetectedByEnemy(false);
-            Vector<IPlayer> vCanSee = whoCanSee(e, false, losCache);
             e.clearSeenBy();
+            e.clearDetectedBy();
+            Vector<IPlayer> vCanSee = whoCanSee(e, false, losCache);            
+            // Who can See this unit?
             for (IPlayer p : vCanSee) {
                 if (e.getOwner().isEnemyOf(p) && !p.isObserver()) {
                     e.setVisibleToEnemy(true);
@@ -26760,17 +26761,15 @@ public class Server implements Runnable {
                 }
                 e.addBeenSeenBy(p);
             }
-            // If the unit isn't visible, is it detected by sensors?
-            if (!e.isDetectedByEnemy()) {
-                Vector<IPlayer> vCanDetect = whoCanDetect(e, allECMInfo,
-                        losCache);
-                for (IPlayer p : vCanDetect) {
-                    if (e.getOwner().isEnemyOf(p) && !p.isObserver()) {
-                        e.setDetectedByEnemy(true);
-                    }
-                    e.addBeenSeenBy(p);
+            // Who can Detect this unit?
+            Vector<IPlayer> vCanDetect = whoCanDetect(e, allECMInfo, losCache);
+            for (IPlayer p : vCanDetect) {
+                if (e.getOwner().isEnemyOf(p) && !p.isObserver()) {
+                    e.setDetectedByEnemy(true);
                 }
+                e.addBeenDetectedBy(p);
             }
+            
             // If this unit wasn't previously visible and is now visible, it's
             // possible that the enemy's client doesn't know about the unit
             if ((!previousVisibleValue && e.isVisibleToEnemy())
@@ -27916,6 +27915,8 @@ public class Server implements Runnable {
         data[1] = Boolean.valueOf(e.isEverSeenByEnemy());
         data[2] = Boolean.valueOf(e.isVisibleToEnemy());
         data[3] = Boolean.valueOf(e.isDetectedByEnemy());
+        data[4] = e.getWhoCanSee();
+        data[5] = e.getWhoCanDetect();
         send(new Packet(Packet.COMMAND_ENTITY_VISIBILITY_INDICATOR, data));
     }
 

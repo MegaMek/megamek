@@ -4505,7 +4505,8 @@ public class Compute {
         // Handle BattleArmor attackers.
         else if (attacker instanceof BattleArmor) {
             BattleArmor inf = (BattleArmor) attacker;
-            toReturn = new ToHitData(inf.getCrew().getPiloting(), "anti-mech skill");
+            toReturn = new ToHitData(inf.getCrew().getPiloting(),
+                    "anti-mech skill", ToHitData.HIT_KICK, ToHitData.SIDE_FRONT);
             int men = inf.getShootingStrength();
             int modifier = TargetRoll.IMPOSSIBLE;
             if (men >= 4) {
@@ -4521,7 +4522,8 @@ public class Compute {
         } else if (attacker instanceof Infantry) {
             // Non-BattleArmor infantry need many more men.
             Infantry inf = (Infantry) attacker;
-            toReturn = new ToHitData(inf.getCrew().getPiloting(), "anti-mech skill");
+            toReturn = new ToHitData(inf.getCrew().getPiloting(),
+                    "anti-mech skill", ToHitData.HIT_KICK, ToHitData.SIDE_FRONT);
             int men = inf.getShootingStrength();
             int modifier = TargetRoll.IMPOSSIBLE;
             if (men >= 22) {
@@ -4545,7 +4547,7 @@ public class Compute {
             return toReturn;
         }
         toReturn = Compute.getAntiMechMods(toReturn, (Infantry) attacker,
-                                           defender);
+                defender);
         return toReturn;
     }
 

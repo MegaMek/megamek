@@ -33,6 +33,7 @@ v0.41.4-dev (SVN)
 + Data: New Sprites/XTRO Republic I Units.
 + Bug [#4528]: Issues with visibility/detection in multi-team double blind
 + Bug: Minimap would still draw unit icons for sensor returns
++ Bug [#4527]: Infantry leg attacks hit non-leg locations
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

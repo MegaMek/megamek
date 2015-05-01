@@ -34,6 +34,7 @@ v0.41.4-dev (SVN)
 + Bug [#4528]: Issues with visibility/detection in multi-team double blind
 + Bug: Minimap would still draw unit icons for sensor returns
 + Bug [#4527]: Infantry leg attacks hit non-leg locations
++ Bug: NPE in Entity.canGoUp and canGoDown for Princess movement planning
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

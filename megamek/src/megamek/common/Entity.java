@@ -1658,6 +1658,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * water/treeline? assuming passed elevation.
      */
     public boolean canGoDown(int assumedElevation, Coords assumedPos) {
+        if (!getGame().getBoard().contains(assumedPos)) {
+            return false;
+        }
         boolean inWaterOrWoods = false;
         IHex hex = getGame().getBoard().getHex(assumedPos);
         int assumedAlt = assumedElevation + hex.surface();
@@ -1728,6 +1731,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * elevation.
      */
     public boolean canGoUp(int assumedElevation, Coords assumedPos) {
+        // Could have a hex off the board
+        if (!getGame().getBoard().contains(assumedPos)) {
+            return false;
+        }
         IHex hex = getGame().getBoard().getHex(assumedPos);
         int assumedAlt = assumedElevation + hex.surface();
         int maxAlt = hex.surface();

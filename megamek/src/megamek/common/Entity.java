@@ -8211,6 +8211,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *  
      */
     public boolean hasSeenEntity(IPlayer p) {
+        // No double blind - everyone sees everything
+        if ((game == null) || !game.getOptions().booleanOption("double_blind")) {
+            return true;
+        }
+        // Null players see nothing
+        if (p == null) {
+            return false;
+        }
         // A Player can always see their own 'mechs
         if (getOwner().equals(p)) {
             return true;
@@ -8264,6 +8272,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      *  
      */
     public boolean hasDetectedEntity(IPlayer p) {
+        // No sensors - no one detects anything
+        if ((game == null)
+                || !game.getOptions().booleanOption("tacops_sensors")) {
+            return false;
+        }
+        // Null players detect nothing
+        if (p == null) {
+            return false;
+        }
         // This is for saved-game backwards compatibility
         if (entityDetectedBy == null) {
             entityDetectedBy = new Vector<IPlayer>();

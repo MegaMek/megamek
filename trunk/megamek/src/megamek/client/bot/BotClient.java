@@ -115,7 +115,8 @@ public abstract class BotClient extends Client {
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
                 if (isMyTurn()
-                    && (e.getPlayer().getId() == localPlayerNumber)) {
+                        && (e.getPlayer() != null) 
+                        && (e.getPlayer().getId() == localPlayerNumber)) {
                     // Run bot's turn processing in a separate thread.
                     // So calling thread is free to process the other actions.
                     Thread worker = new Thread(new CalculateBotTurn(),

@@ -331,7 +331,7 @@ public class Client implements IClientCommandHandler {
             }
             if (!host.equals("localhost")) { //$NON-NLS-1$
                 game.processGameEvent(new GamePlayerDisconnectedEvent(this,
-                                                                      getLocalPlayer()));
+                        getLocalPlayer()));
             }
         }
     }

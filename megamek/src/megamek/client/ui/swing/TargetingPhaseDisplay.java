@@ -1036,8 +1036,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                 endMyTurn();
                 if (e.getPlayer() != null) {
                     setStatusBarText(Messages.getString(
-                            "TargetingPhaseDisplay.its_others_turn",
-                            new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
+                            "TargetingPhaseDisplay.its_others_turn", //$NON-NLS-1$
+                            new Object[] { e.getPlayer().getName() }));
                 }
 
             }

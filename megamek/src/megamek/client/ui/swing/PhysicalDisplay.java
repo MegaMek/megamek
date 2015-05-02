@@ -28,7 +28,6 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
-
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
@@ -1600,9 +1599,15 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         .getString("PhysicalDisplay.its_your_turn")); //$NON-NLS-1$
             } else {
                 endMyTurn();
+                String playerName;
+                if (e.getPlayer() != null) {
+                    playerName = e.getPlayer().getName();
+                } else {
+                    playerName = "Unknown";
+                }
                 setStatusBarText(Messages.getString(
-                        "PhysicalDisplay.its_others_turn", new Object[] { e
-                                .getPlayer().getName() })); //$NON-NLS-1$
+                        "PhysicalDisplay.its_others_turn", //$NON-NLS-1$
+                        new Object[] { playerName }));
             }
         } else {
             System.err

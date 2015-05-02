@@ -287,7 +287,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Shuts down threads and sockets
      */
-    public void die() {
+    public synchronized void die() {
         // If we're still connected, tell the server that we're going down.
         if (connected) {
             // Stop listening for in coming packets, this should be done before
@@ -323,7 +323,7 @@ public class Client implements IClientCommandHandler {
     /**
      * The client has become disconnected from the server
      */
-    protected synchronized void disconnected() {
+    protected void disconnected() {
         if (!disconnectFlag) {
             disconnectFlag = true;
             if (connected) {

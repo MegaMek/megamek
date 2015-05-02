@@ -1053,7 +1053,7 @@ public class Princess extends BotClient {
     }
 
     @Override
-    public void die() {
+    public synchronized void die() {
         super.die();
         if (precognition != null) {
             precognition.signalDone();
@@ -1188,5 +1188,13 @@ public class Princess extends BotClient {
     public void sendLoadGame(File f) {
         precognition.resetGame();
         super.sendLoadGame(f);
-    }    
+    }
+    
+    protected void disconnected() {
+        if (precognition != null) {
+            precognition.signalDone();
+            precogThread.interrupt();
+        }
+        super.disconnected();
+    }
 }

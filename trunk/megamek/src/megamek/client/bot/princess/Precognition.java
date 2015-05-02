@@ -310,7 +310,7 @@ public class Precognition implements Runnable {
 
         try {
             getWaitWhenDone().set(true);
-            while (!getWaiting().get()) {
+            while (!getWaiting().get() && !getDone().get()) {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException ignored) {
@@ -360,6 +360,10 @@ public class Precognition implements Runnable {
         try {
             pause();
             for (Entity entity : getGame().getEntitiesVector()) {
+                // If Precog is done, just exit
+                if (getDone().get()) {
+                    return;
+                }
                 if (!entity.isDeployed() || entity.isOffBoard()) {
                     continue;
                 }
@@ -376,6 +380,11 @@ public class Precognition implements Runnable {
                 }
             }
             while (!getDirtyUnits().isEmpty()) {
+                // If Precog is done, just exit
+                if (getDone().get()) {
+                    return;
+                }
+                
                 Integer entityId = getDirtyUnits().pollFirst();
                 Entity entity = getGame().getEntity(entityId);
                 if (entity != null) {

@@ -2157,7 +2157,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 };
                 replaceCommands.add(args);
             }
-
         } else {
             for (String player : playersToReplace) {
                 args = new String[]{
@@ -2167,6 +2166,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 replaceCommands.add(args);
             }
         }
+        botClient.die();
         for (String[] cmd : replaceCommands) {
             util.addBot(cmd, client.getGame(), client.getHost(), client.getPort());
         }

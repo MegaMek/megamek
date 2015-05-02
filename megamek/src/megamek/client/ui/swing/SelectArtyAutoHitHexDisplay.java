@@ -253,9 +253,15 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
             setStatusBarText(Messages
                     .getString("SelectArtyAutoHitHexDisplay.its_your_turn")); //$NON-NLS-1$
         } else {
-            setStatusBarText(Messages
-                    .getString(
-                            "SelectArtyAutoHitHexDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
+            String playerName;
+            if (e.getPlayer() != null) {
+                playerName = e.getPlayer().getName();
+            } else {
+                playerName = "Unknown";
+            }
+            setStatusBarText(Messages.getString(
+                    "SelectArtyAutoHitHexDisplay.its_others_turn", //$NON-NLS-1$
+                    new Object[] { playerName }));
         }
     }
 

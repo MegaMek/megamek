@@ -1857,9 +1857,15 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                         .getString("FiringDisplay.its_your_turn")); //$NON-NLS-1$
             } else {
                 endMyTurn();
+                String playerName;
+                if (e.getPlayer() != null) {
+                    playerName = e.getPlayer().getName();
+                } else {
+                    playerName = "Unknown";
+                }
                 setStatusBarText(Messages.getString(
-                        "FiringDisplay.its_others_turn", new Object[] { e
-                                .getPlayer().getName() })); //$NON-NLS-1$
+                        "FiringDisplay.its_others_turn", //$NON-NLS-1$
+                        new Object[] { playerName }));
             }
         }
     }

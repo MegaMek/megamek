@@ -387,9 +387,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     .getString("DeploymentDisplay.its_your_turn")); //$NON-NLS-1$
         } else {
             endMyTurn();
+            String playerName;
+            if (e.getPlayer() != null) {
+                playerName = e.getPlayer().getName();
+            } else {
+                playerName = "Unknown";
+            }
             setStatusBarText(Messages.getString(
                     "DeploymentDisplay.its_others_turn", //$NON-NLS-1$
-                    new Object[] { e.getPlayer().getName() }));
+                    new Object[] { playerName }));
         }
         
     }

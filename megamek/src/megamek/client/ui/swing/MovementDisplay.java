@@ -3520,9 +3520,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 setStatusBarText(Messages
                         .getString("MovementDisplay.waitForAnother")); //$NON-NLS-1$
             } else {
+                String playerName;
+                if (e.getPlayer() != null) {
+                    playerName = e.getPlayer().getName();
+                } else {
+                    playerName = "Unknown";
+                }
                 setStatusBarText(Messages.getString(
-                        "MovementDisplay.its_others_turn", new Object[] { e
-                                .getPlayer().getName() })); //$NON-NLS-1$
+                        "MovementDisplay.its_others_turn", //$NON-NLS-1$
+                        new Object[] { playerName }));
             }
         }
     }

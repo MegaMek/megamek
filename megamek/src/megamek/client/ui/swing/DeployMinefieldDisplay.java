@@ -383,9 +383,14 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
             setStatusBarText(Messages
                     .getString("DeployMinefieldDisplay.its_your_turn")); //$NON-NLS-1$
         } else {
-            setStatusBarText(Messages
-                    .getString(
-                            "DeployMinefieldDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
+            String playerName;
+            if (e.getPlayer() != null) {
+                playerName = e.getPlayer().getName();
+            } else {
+                playerName = "Unknown";
+            }
+            setStatusBarText(Messages.getString("DeployMinefieldDisplay." //$NON-NLS-1$
+                    + "its_others_turn", new Object[] { playerName })); //$NON-NLS-1$
         }
     }
 

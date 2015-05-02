@@ -157,8 +157,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     public void selectEntity(int en) {
         // hmm, sometimes this gets called when there's no ready entities?
         if (clientgui.getClient().getGame().getEntity(en) == null) {
-            System.err
-                    .println("DeploymentDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
+            disableButtons();
+            setNextEnabled(true);
+            System.err.println("DeploymentDisplay: " //$NON-NLS-1$
+                    + "tried to select non-existant entity: " + en); //$NON-NLS-1$
             return;
         }
         
@@ -175,16 +177,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
         cen = en;
         clientgui.setSelectedEntityNum(en);
-        setTurnEnabled(true);
-        butDone.setEnabled(false);
-        List<Entity> loadableUnits = getLoadableEntities();
-        setLoadEnabled(loadableUnits.size() > 0);
-        setUnloadEnabled(ce().getLoadedUnits().size() > 0);
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
-        clientgui.getBoardView().markDeploymentHexesFor(ce());
         // RACE : if player clicks fast enough, ce() is null.
         if (null != ce()) {
+            setTurnEnabled(true);
+            butDone.setEnabled(false);
+            clientgui.getBoardView().markDeploymentHexesFor(ce());
             // set facing according to starting position
             switch (ce().getStartingPos()) {
                 case Board.START_W:
@@ -234,12 +233,22 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         .getString("DeploymentDisplay.AssaultDropOn")); //$NON-NLS-1$
                 assaultDropPreference = false;
             }
+            
+            List<Entity> loadableUnits = getLoadableEntities();
+            setLoadEnabled(loadableUnits.size() > 0);
+            setUnloadEnabled(ce().getLoadedUnits().size() > 0);
+            
+            setNextEnabled(true);
+            setRemoveEnabled(true);
 
             clientgui.mechD.displayEntity(ce());
             clientgui.mechD.showPanel("movement"); //$NON-NLS-1$
 
             // Update the menu bar.
             clientgui.getMenuBar().setEntity(ce());
+        } else {
+            disableButtons();
+            setNextEnabled(true);
         }
     }
 
@@ -282,7 +291,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      */
     private void disableButtons() {
         for (DeployCommand cmd : DeployCommand.values()){
-        setButtonEnabled(cmd, false);
+            setButtonEnabled(cmd, false);
         }
         butDone.setEnabled(false);
         setLoadEnabled(false);

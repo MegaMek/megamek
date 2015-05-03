@@ -13419,10 +13419,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getMaxWeaponRange() {
-
+        // Aeros on the ground map must shoot along their flight path, giving
+        // them effectively 0 range
+        if (((ETYPE_AERO & getEntityType()) == ETYPE_AERO) && isAirborne() 
+                && game.getBoard().onGround()) {
+            return 0;
+        }
+        
         int maxRange = 0;
-        if ((ETYPE_MECH == getEntityType()) || (ETYPE_INFANTRY == getEntityType()) ||
-            (ETYPE_PROTOMECH == getEntityType())) {
+        if ((ETYPE_MECH == getEntityType())
+                || (ETYPE_INFANTRY == getEntityType())
+                || (ETYPE_PROTOMECH == getEntityType())) {
             // account for physical attacks.
             maxRange = 1;
         }
@@ -13433,8 +13440,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
 
             WeaponType type = (WeaponType) weapon.getType();
-            int range = (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE) ? type.getExtremeRange() :
-                         type.getLongRange());
+            int range = (game.getOptions().booleanOption(
+                    OptionsConstants.AC_TAC_OPS_RANGE) ? type.getExtremeRange()
+                    : type.getLongRange());
             if (range > maxRange) {
                 maxRange = range;
             }

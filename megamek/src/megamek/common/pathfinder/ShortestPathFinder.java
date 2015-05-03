@@ -254,6 +254,18 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         spf.addFilter(new MovePathLegalityFilter(game));
         return spf;
     }
+    
+    public static ShortestPathFinder newInstanceOfOneToAllAero(
+            final MoveStepType stepType, final IGame game) {
+        final ShortestPathFinder spf =
+                new ShortestPathFinder(
+                        new ShortestPathFinder.MovePathRelaxer(),
+                        new ShortestPathFinder.MovePathMPCostComparator(),
+                        stepType, game);
+        spf.addFilter(new MovePathVelocityFilter());
+        spf.addFilter(new MovePathLegalityFilter(game));
+        return spf;
+    }
 
     /**
      * Constructs a greedy algorithms. It considers only the moves end closer to

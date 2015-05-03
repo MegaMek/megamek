@@ -232,6 +232,42 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
             return firstDist - secondDist;
         }
     }
+    
+    /**
+     * A MovePath comparator that compares remaining velocity points.  Aeros
+     * need to spend all of their remaining velocity, so we want to explore
+     * points that expend the velocity first.
+     * 
+     * We want to order paths with lower remaining velocities higher.
+     */
+    public static class MovePathVelocityCostComparator implements
+            Comparator<MovePath> {
+        @Override
+        public int compare(final MovePath first, final MovePath second) {
+            boolean firstFlyoff = first.contains(MoveStepType.OFF)
+                    || first.contains(MoveStepType.RETURN);
+            int velFirst = first.getFinalVelocity();
+            // If we are flying off, treat this as 0 remaining velocity
+            if (firstFlyoff) {
+                velFirst = 0;
+            }
+            boolean secondFlyoff = second.contains(MoveStepType.OFF)
+                    || second.contains(MoveStepType.RETURN); 
+            int velSecond = second.getFinalVelocity();
+            // If we are flying off, treat this as 0 remaining velocity
+            if (secondFlyoff) {
+                velSecond = 0;
+            }
+            
+            // If both paths are flying off, compare on number of steps 
+            // Shorter paths are better
+            if (firstFlyoff && secondFlyoff) {
+                return first.length() - second.length();
+            } else {
+                return velFirst - velSecond;
+            }
+        }
+    }
 
     /**
      * Functional Interface for {@link #getAdjacent(MovePath)}
@@ -362,6 +398,11 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
          */
         @Override
         public Collection<MovePath> getAdjacent(MovePath mp) {
+            // These steps are terminal, and shouldn't have anything after them
+            if (mp.contains(MoveStepType.RETURN)
+                    || mp.contains(MoveStepType.OFF)) {
+                return new ArrayList<MovePath>();
+            }
             Collection<MovePath> result = super.getAdjacent(mp);
             // fly off of edge of board
             Coords c = mp.getFinalCoords();

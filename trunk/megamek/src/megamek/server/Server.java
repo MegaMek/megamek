@@ -27910,7 +27910,7 @@ public class Server implements Runnable {
     }
 
     public void sendVisibilityIndicator(Entity e) {
-        final Object[] data = new Object[4];
+        final Object[] data = new Object[6];
         data[0] = new Integer(e.getId());
         data[1] = Boolean.valueOf(e.isEverSeenByEnemy());
         data[2] = Boolean.valueOf(e.isVisibleToEnemy());

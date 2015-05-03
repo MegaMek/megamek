@@ -2750,6 +2750,11 @@ public class MoveStep implements Serializable {
             throw new IllegalArgumentException(buf.toString());
         }
 
+        // Assault dropping units cannot move
+        if (entity.isAssaultDropInProgress()) {
+            return false;
+        }
+        
         // If we're a tank and immobile, check if we try to unjam
         // or eject and the crew is not unconscious
         if ((entity instanceof Tank)

@@ -16754,7 +16754,7 @@ public class Server implements Runnable {
         PilotingRollData psr = new PilotingRollData(psrEntity.getId(), mod,
                                                     reason);
         if (psrEntity.hasQuirk(OptionsConstants.QUIRK_POS_STABLE)) {
-            psr.addModifier(-1, "stable");
+            psr.addModifier(-1, "stable", false);
         }
         if (game.getOptions().booleanOption("tacops_physical_psr")) {
 

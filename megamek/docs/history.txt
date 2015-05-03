@@ -41,6 +41,7 @@ v0.41.4-dev (SVN)
 + Bug: ReplacePlayer Dialog creates additional superfluous bot clients
 + Bug [#4400]: Game Frozen when Kicking Princess
 + Bug [#4529]: Princess gets stuck with assault dropped units
++ Bug [#4530]: Stable quirk PSR mod applied more than once when...
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

@@ -202,6 +202,24 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
 
         }
     }
+    
+    /**
+     * This filter removes paths that have spent all of of the Aeros current
+     * velocity.
+     * 
+     * @author arlith
+     *
+     */
+    public static class MovePathVelocityFilter extends Filter<MovePath> {
+
+        public MovePathVelocityFilter() {
+        }
+
+        @Override
+        public boolean shouldStay(MovePath mp) {
+            return mp.getFinalVelocity() >= 0;
+        }
+    }    
 
     /**
      * A MovePath comparator that compares movement points spent.

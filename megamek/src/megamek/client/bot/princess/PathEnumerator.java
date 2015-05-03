@@ -173,8 +173,10 @@ public class PathEnumerator {
         try {
 
             // Record it's current position.
-            getLastKnownLocations().put(mover.getId(), CoordFacingCombo.createCoordFacingCombo(mover.getPosition(),
-                                                                                               mover.getFacing()));
+            getLastKnownLocations().put(
+                    mover.getId(),
+                    CoordFacingCombo.createCoordFacingCombo(
+                            mover.getPosition(), mover.getFacing()));
 
             // Clear out any already calculated paths.
             getUnitPaths().remove(mover.getId());
@@ -184,20 +186,32 @@ public class PathEnumerator {
             if (mover instanceof Aero) {
 
                 // Get the shortest paths possible.
-                ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(mover.getWalkMP(),
-                                                                                  MoveStepType.FORWARDS,
-                                                                                  getGame());
-                spf.setAdjacencyMap(new MovePathFinder.NextStepsExtendedAdjacencyMap(MoveStepType.FORWARDS));
+                ShortestPathFinder spf = ShortestPathFinder
+                        .newInstanceOfOneToAllAero(MoveStepType.FORWARDS,
+                                getGame());
+                spf.setAdjacencyMap(new MovePathFinder.NextStepsExtendedAdjacencyMap(
+                        MoveStepType.FORWARDS));
 
                 // Make sure we accelerate to avoid stalling as needed.
                 MovePath startPath = new MovePath(getGame(), mover);
-                for (int velocity = startPath.getFinalVelocity(); velocity < 4; velocity++) {
-                    startPath.addStep(MoveStepType.ACC);
+                // This is kind of a hack, if we're on a ground map, each time
+                // we accelerate, that's 16 ground MP, so if we accelerate a
+                // a lot, we'll be here forever, so cap the amount of velocity
+                int maxVel = Math.min(4, mover.getWalkMP());
+                int startVel = startPath.getFinalVelocity();
+                // If we're already moving at a high velocity, don't acc
+                if (startVel >= maxVel) {
+                    // Generate the paths and add them to our list.
+                    spf.run(startPath);
+                    paths.addAll(spf.getAllComputedPathsUncategorized());
                 }
-
-                // Generate the paths and add them to our list.
-                spf.run(startPath);
-                paths.addAll(spf.getAllComputedPathsUncategorized());
+                // Check different accelerations
+                for (int velocity = startVel; velocity < maxVel; velocity++) {
+                    startPath.addStep(MoveStepType.ACC);
+                    // Generate the paths and add them to our list.
+                    spf.run(startPath);
+                    paths.addAll(spf.getAllComputedPathsUncategorized());
+                }
 
                 // Remove illegal paths.
                 Filter<MovePath> filter = new Filter<MovePath>() {
@@ -212,23 +226,25 @@ public class PathEnumerator {
 
                 //add running moves
                 // todo: Will this cause Princess to never use MASC?
-                LongestPathFinder lpf = LongestPathFinder.newInstanceOfLongestPath(mover.getRunMPwithoutMASC(),
-                                                                                   MoveStepType.FORWARDS,
-                                                                                   getGame());
+                LongestPathFinder lpf = LongestPathFinder
+                        .newInstanceOfLongestPath(mover.getRunMPwithoutMASC(),
+                                MoveStepType.FORWARDS, getGame());
                 lpf.run(new MovePath(game, mover));
                 paths.addAll(lpf.getLongestComputedPaths());
 
                 //add walking moves
-                lpf = LongestPathFinder.newInstanceOfLongestPath(mover.getWalkMP(), MoveStepType.BACKWARDS, getGame());
+                lpf = LongestPathFinder.newInstanceOfLongestPath(
+                        mover.getWalkMP(), MoveStepType.BACKWARDS, getGame());
                 lpf.run(new MovePath(getGame(), mover));
                 paths.addAll(lpf.getLongestComputedPaths());
 
                 //add jumping moves
                 if (mover.getJumpMP() > 0) {
-                    ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(mover.getJumpMP(),
-                                                                                      MoveStepType.FORWARDS,
-                                                                                      getGame());
-                    spf.run((new MovePath(game, mover)).addStep(MoveStepType.START_JUMP));
+                    ShortestPathFinder spf = ShortestPathFinder
+                            .newInstanceOfOneToAll(mover.getJumpMP(),
+                                    MoveStepType.FORWARDS, getGame());
+                    spf.run((new MovePath(game, mover))
+                            .addStep(MoveStepType.START_JUMP));
                     paths.addAll(spf.getAllComputedPathsUncategorized());
                 }
 
@@ -240,9 +256,10 @@ public class PathEnumerator {
                     @Override
                     public boolean shouldStay(MovePath movePath) {
                         boolean isLegal = movePath.isMoveLegal();
-                        return isLegal && (Compute.stackingViolation(getGame(),
-                                                                     mover.getId(),
-                                                                     movePath.getFinalCoords()) == null);
+                        return isLegal
+                                && (Compute.stackingViolation(getGame(),
+                                        mover.getId(),
+                                        movePath.getFinalCoords()) == null);
                     }
                 };
                 paths = new ArrayList<>(filter.doFilter(paths));
@@ -254,7 +271,8 @@ public class PathEnumerator {
 
             // calculate bounding area for move
             ConvexBoardArea myArea = new ConvexBoardArea(owner);
-            myArea.addCoordFacingCombos(getUnitPotentialLocations().get(mover.getId()).iterator());
+            myArea.addCoordFacingCombos(getUnitPotentialLocations().get(
+                    mover.getId()).iterator());
             getUnitMovableAreas().put(mover.getId(), myArea);
         } finally {
             getOwner().methodEnd(getClass(), METHOD_NAME);

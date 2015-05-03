@@ -44,6 +44,7 @@ v0.41.4-dev (SVN)
 + Bug [#4530]: Stable quirk PSR mod applied more than once when...
 + Princess now considers airborne aeros on ground maps to have a max weapon
     range of 0, to account for flight paths
++ Bug [#4434]: Princess Small Craft not Moving on Ground Map
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

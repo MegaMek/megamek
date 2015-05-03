@@ -336,6 +336,10 @@ public class MoveStep implements Serializable {
                 return "Landing";
             case VLAND:
                 return "Vertical Landing";
+            case ACC:
+                return "Acc";
+            case MANEUVER:
+                return "Maneuver";
             default:
                 return "???";
         }

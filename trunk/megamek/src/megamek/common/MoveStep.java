@@ -340,6 +340,10 @@ public class MoveStep implements Serializable {
                 return "Acc";
             case MANEUVER:
                 return "Maneuver";
+            case RETURN:
+                return "Fly Off (Return)";
+            case OFF:
+                return "Fly Off";
             default:
                 return "???";
         }

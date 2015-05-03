@@ -137,6 +137,31 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
             return comparator.compare(e, v) < 0 ? e : null;
         }
     }
+    
+    /**
+     * Relaxes edge based on the supplied comparator, with special
+     * considerations for flying off the map (since this will likely always look
+     * back to the comparator).
+     * 
+     */
+    public static class AeroMovePathRelaxer
+            implements AbstractPathFinder.EdgeRelaxer<MovePath, MovePath> {
+        @Override
+        public MovePath doRelax(MovePath v, MovePath e, Comparator<MovePath> comparator) {
+            if (v == null)
+                return e;
+            
+            // Consider flying off more important.  If we have a fly-off step
+            // it's unlikely that any other move path is going to be better,
+            // as they are likely to require a risky maneuver
+            if ((e.getLastStep().getType() == MoveStepType.OFF)
+                    || (e.getLastStep().getType() == MoveStepType.RETURN)) {
+                return e;
+            }
+            
+            return comparator.compare(e, v) < 0 ? e : null;
+        }
+    }    
 
     /**
      * A MovePath comparator that compares movement points spent and distance to
@@ -259,8 +284,8 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
             final MoveStepType stepType, final IGame game) {
         final ShortestPathFinder spf =
                 new ShortestPathFinder(
-                        new ShortestPathFinder.MovePathRelaxer(),
-                        new ShortestPathFinder.MovePathMPCostComparator(),
+                        new ShortestPathFinder.AeroMovePathRelaxer(),
+                        new ShortestPathFinder.MovePathVelocityCostComparator(),
                         stepType, game);
         spf.addFilter(new MovePathVelocityFilter());
         spf.addFilter(new MovePathLegalityFilter(game));

@@ -35,7 +35,7 @@ Griffin GRF-2N,8
 Griffin GRF-3M,46
 Grim Reaper GRM-R-PR29,17
 Hatchetman HCT-3F,26
-Hatchetman HCT-3NH,12
+Hatchetman HCT-3F,12
 Hatchetman HCT-5S,35
 Hermes II HER-2S,12
 Hermes II HER-4K 'Hermes III',11

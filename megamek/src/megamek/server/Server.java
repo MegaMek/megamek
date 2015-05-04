@@ -23015,7 +23015,11 @@ public class Server implements Runnable {
             if (en instanceof Protomech) {
                 int numHit = ((Protomech) en).getCritsHit(loc);
                 if ((cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_A)
-                    && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_B)) {
+                    && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_B)
+                    && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_C)
+                    && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_D)
+                    && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_E)
+                    && (cs.getIndex() != Protomech.SYSTEM_TORSO_WEAPON_F)) {
                     r = new Report(6225);
                     r.subject = en.getId();
                     r.indent(3);

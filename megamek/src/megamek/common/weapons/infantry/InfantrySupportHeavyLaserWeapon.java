@@ -36,6 +36,7 @@ public class InfantrySupportHeavyLaserWeapon extends InfantryWeapon {
         name = "Support Laser (Heavy)";
         setInternalName(name);
         addLookupName("InfantryHeavyLaser");
+        addLookupName("Infantry Heavy Laser");
         addLookupName("InfantryMediumLaser");
         ammoType = AmmoType.T_NA;
         cost = 40000;

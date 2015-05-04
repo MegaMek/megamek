@@ -41,7 +41,7 @@ Griffin GRF-1DS,19
 Griffin GRF-1N,15
 Griffin GRF-3M,13
 Grim Reaper GRM-R-PR29,17
-Hatchetman HCT-3NH,18
+Hatchetman HCT-3F,18
 Hatchetman HCT-5S,12
 Hermes II HER-4K 'Hermes III',18
 Hunchback HBK-4G,11

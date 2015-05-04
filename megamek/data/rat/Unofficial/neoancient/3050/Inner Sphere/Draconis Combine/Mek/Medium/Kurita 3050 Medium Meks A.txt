@@ -15,7 +15,7 @@ Dervish DV-6M,100
 Griffin GRF-1DS,88
 Griffin GRF-1N,74
 Hatchetman HCT-3F,66
-Hatchetman HCT-3NH,29
+Hatchetman HCT-3F,29
 Hermes II HER-4K 'Hermes III',42
 Hunchback HBK-4G,40
 Hunchback HBK-4H,12

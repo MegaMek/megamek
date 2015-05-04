@@ -15,7 +15,7 @@ Crab CRB-27,3
 Dervish DV-6M,100
 Griffin GRF-1N,80
 Hatchetman HCT-3F,5
-Hatchetman HCT-3NH,5
+Hatchetman HCT-3F,5
 Hermes II HER-4K 'Hermes III',42
 Hunchback HBK-4G,38
 Hunchback HBK-4H,9

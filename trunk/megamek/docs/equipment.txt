@@ -584,7 +584,7 @@ W,2370-IS/Clan3071-IS/Clan,2370-(allowed to all)3071-(allowed to all),SRM Launch
 W,3071-IS/Clan2380-IS/Clan,3071-(allowed to all)2380-(allowed to all),Support Laser,InfantrySupportLaser,Infantry Support Laser,InfantrySmallLaser,
 W,3071-Inner Sphere3060-Inner Sphere,3071-IS_TW_Non_Box3060-IS_TW_Non_Box,Support Laser (ER, IS),InfantryERLaser,InfantryERSmallLaser,Infantry ER Laser,
 W,3071-Clan2825-Clan,3071-Clan_TW2825-Clan_TW,Support Laser (ER, Clan),InfantryClanERLaser,InfantryClanERSmallLaser,Infantry Clan ER Laser,
-W,2405-(Unknown Technology Base)3071-(Unknown Technology Base),2405-All_IS3071-All_IS,Support Laser (Heavy),InfantryHeavyLaser,InfantryMediumLaser,
+W,2405-(Unknown Technology Base)3071-(Unknown Technology Base),2405-All_IS3071-All_IS,Support Laser (Heavy),InfantryHeavyLaser,Infantry Heavy Laser,InfantryMediumLaser,
 W,3071-Inner Sphere3060-Inner Sphere,3071-IS_TW_Non_Box3060-IS_TW_Non_Box,Support Laser (ER Heavy, IS),InfantryERHeavyLaser,InfantryERMediumLaser,Infantry ER Heavy Laser,
 W,3071-Clan2827-Clan,3071-Clan_TW2827-Clan_TW,Support Laser (ER Heavy, Clan),InfantryClanERHeavyLaser,InfantryClanERMediumLaser,Infantry Clan ER Heavy Laser,
 W,3071-Clan3061-Clan,3071-Clan_TW3061-Clan_TW,Support Laser (Heavy, Semi-Portable),InfantryClanSemiPortableHeavyLaser,InfantryClanHeavySmallLaser,Infantry Clan Semi-Portable Heavy laser,

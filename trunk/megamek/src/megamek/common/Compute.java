@@ -2061,7 +2061,7 @@ public class Compute {
         // current target is secondary
 
         // Stealthed Mechs can't be secondary targets (TW, pg. 142)
-        if (((target instanceof Tank) || (target instanceof Mech))
+        if (((target instanceof Tank) || (target instanceof Mech) || (target instanceof Aero))
             && ((Entity) target).isStealthActive()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                                  "Can't target unit with active stealth armor as " +

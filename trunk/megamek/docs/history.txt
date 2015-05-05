@@ -49,6 +49,7 @@ v0.41.4-dev (SVN)
 + Bug [#4451]: ASF free facing changes incorrect on ground maps
 + Bug: Potential NPE applying Protomech critical hits
 + Data: New Sprites/RAT fixes
++ Patches [#479]: V. Stealth, Reflec, Reactive armor for Aeros
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

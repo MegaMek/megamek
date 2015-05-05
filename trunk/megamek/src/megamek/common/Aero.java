@@ -3148,6 +3148,146 @@ public class Aero extends Entity {
         return 1;
     }
 
+    /**
+     * Determine if this unit has an active and working stealth system. (stealth
+     * can be active and not working when under ECCM)
+     * <p/>
+     * Sub-classes are encouraged to override this method.
+     *
+     * @return <code>true</code> if this unit has a stealth system that is
+     *         currently active, <code>false</code> if there is no stealth
+     *         system or if it is inactive.
+     */
+    @Override
+    public boolean isStealthActive() {
+        // Try to find a Mek Stealth system.
+        for (Mounted mEquip : getMisc()) {
+            MiscType mtype = (MiscType) mEquip.getType();
+            if (mtype.hasFlag(MiscType.F_STEALTH)) {
+
+                if (mEquip.curMode().equals("On")
+                        && hasActiveECM()) {
+                    // Return true if the mode is "On" and ECM is working
+                    return true;
+                }
+            }
+        }
+        // No Mek Stealth or system inactive. Return false.
+        return false;
+    }
+
+    /**
+     * Determine if this unit has an active and working stealth system. (stealth
+     * can be active and not working when under ECCM)
+     * <p/>
+     * Sub-classes are encouraged to override this method.
+     *
+     * @return <code>true</code> if this unit has a stealth system that is
+     *         currently active, <code>false</code> if there is no stealth
+     *         system or if it is inactive.
+     */
+    @Override
+    public boolean isStealthOn() {
+        // Try to find a Mek Stealth system.
+        for (Mounted mEquip : getMisc()) {
+            MiscType mtype = (MiscType) mEquip.getType();
+            if (mtype.hasFlag(MiscType.F_STEALTH)) {
+                if (mEquip.curMode().equals("On")) {
+                    // Return true if the mode is "On"
+                    return true;
+                }
+            }
+        }
+        // No Mek Stealth or system inactive. Return false.
+        return false;
+    }
+
+    /**
+     * Determine the stealth modifier for firing at this unit from the given
+     * range. If the value supplied for <code>range</code> is not one of the
+     * <code>Entity</code> class range constants, an
+     * <code>IllegalArgumentException</code> will be thrown.
+     * <p/>
+     * Sub-classes are encouraged to override this method.
+     *
+     * @param range
+     *            - an <code>int</code> value that must match one of the
+     *            <code>Compute</code> class range constants.
+     * @param ae
+     *            - entity making the attack
+     * @return a <code>TargetRoll</code> value that contains the stealth
+     *         modifier for the given range.
+     */
+    @Override
+    public TargetRoll getStealthModifier(int range, Entity ae) {
+        TargetRoll result = null;
+
+        boolean isInfantry = (ae instanceof Infantry)
+                && !(ae instanceof BattleArmor);
+        // Stealth or null sig must be active.
+        if (!isStealthActive()) {
+            result = new TargetRoll(0, "stealth not active");
+        }
+        // Determine the modifier based upon the range.
+        // Infantry do not ignore Chameleon LPS!!!
+        else {
+            switch (range) {
+                case RangeType.RANGE_MINIMUM:
+                case RangeType.RANGE_SHORT:
+                    if (!isInfantry) {
+                        result = new TargetRoll(0, "stealth");
+                    } else {
+                        result = new TargetRoll(0, "infantry ignore stealth");
+                    }
+                    break;
+                case RangeType.RANGE_MEDIUM:
+                    if (!isInfantry) {
+                        result = new TargetRoll(1, "stealth");
+                    } else {
+                        result = new TargetRoll(0, "infantry ignore stealth");
+                    }
+                    break;
+                case RangeType.RANGE_LONG:
+                case RangeType.RANGE_EXTREME:
+                case RangeType.RANGE_LOS:
+                    if (!isInfantry) {
+                        result = new TargetRoll(2, "stealth");
+                    } else {
+                        result = new TargetRoll(0, "infantry ignore stealth");
+                    }
+                    break;
+                case RangeType.RANGE_OUT:
+                    break;
+                default:
+                    throw new IllegalArgumentException(
+                            "Unknown range constant: " + range);
+            }
+        }
+
+        // Return the result.
+        return result;
+
+    } // End public TargetRoll getStealthModifier( char )
+
+    @Override
+    public void setArmorType(int armType) {
+        setArmorType(armType, true);
+    }
+
+    public void setArmorType(int armType, boolean addMount) {
+        super.setArmorType(armType);
+        if ((armType == EquipmentType.T_ARMOR_STEALTH_VEHICLE) && addMount) {
+            try {
+                this.addEquipment(EquipmentType.get(EquipmentType
+                        .getArmorTypeName(
+                                EquipmentType.T_ARMOR_STEALTH_VEHICLE, false)),
+                        LOC_AFT);
+            } catch (LocationFullException e) {
+                // this should never happen
+            }
+        }
+    }
+
     @Override
     public boolean isLocationProhibited(Coords c) {
         IHex hex = game.getBoard().getHex(c);

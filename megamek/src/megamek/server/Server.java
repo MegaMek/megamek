@@ -16907,6 +16907,14 @@ public class Server implements Runnable {
                 // engine hits add a lot of heat, provided the engine is on
                 entity.heatBuildup += entity.getEngineCritHeat();
 
+                // If an Aero had an active Stealth suite, add 10 heat.
+                if (entity.isStealthOn()) {
+                    entity.heatBuildup += 10;
+                    r = new Report(5015);
+                    r.subject = entity.getId();
+                    addReport(r);
+                }
+
                 // Combat computers help manage heat
                 if (entity.hasQuirk(OptionsConstants.QUIRK_POS_COMBAT_COMPUTER)) {
                     int reduce = Math.min(entity.heatBuildup, 4);
@@ -17301,8 +17309,7 @@ public class Server implements Runnable {
             entity.heatBuildup += entity.getEngineCritHeat();
 
             // If a Mek had an active Stealth suite, add 10 heat.
-            if (((entity instanceof Mech) || (entity instanceof Aero))
-                && entity.isStealthOn()) {
+            if (((entity instanceof Mech)) && entity.isStealthOn()) {
                 entity.heatBuildup += 10;
                 r = new Report(5015);
                 r.subject = entity.getId();
@@ -19575,17 +19582,15 @@ public class Server implements Runnable {
             ferroLamellorArmor = true;
         }
 
-        if ((((te instanceof Mech) || (te instanceof Tank)) && (te
-                                                                        .getArmorType(hit.getLocation()) ==
-                                                                EquipmentType.T_ARMOR_REFLECTIVE))
+        if ((((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                    && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REFLECTIVE))
             || (isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REFLECTIVE))) {
             reflectiveArmor = true; // note that BA reflec receives
             // "all of the bonuses but none of the drawbacks"
         }
 
-        if ((((te instanceof Mech) || (te instanceof Tank)) && (te
-                                                                        .getArmorType(hit.getLocation()) ==
-                                                                EquipmentType.T_ARMOR_REACTIVE))
+        if ((((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
+                    && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_REACTIVE))
             || (isBattleArmor && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BA_REACTIVE))) {
             reactiveArmor = true; // note that BA reactive receives
             // "all of the bonuses but none of the drawbacks"

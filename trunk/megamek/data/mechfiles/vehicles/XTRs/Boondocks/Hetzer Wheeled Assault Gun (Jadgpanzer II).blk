@@ -45,7 +45,7 @@ Wheeled
 </cruiseMP>
 
 <armor_type>
-8
+22
 </armor_type>
 
 <armor_tech>
@@ -60,7 +60,6 @@ Wheeled
 </armor>
 
 <Body Equipment>
-Stealth
 ISSponsonTurret
 IS Ultra AC/20 Ammo
 IS Ultra AC/20 Ammo

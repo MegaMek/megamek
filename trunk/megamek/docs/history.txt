@@ -50,6 +50,9 @@ v0.41.4-dev (SVN)
 + Bug: Potential NPE applying Protomech critical hits
 + Data: New Sprites/RAT fixes
 + Patches [#479]: V. Stealth, Reflec, Reactive armor for Aeros
++ Patches [#399]: Stefan Amaris battleship arc fix
++ Patches [#400]: 3067Uu Clan Omnis need Omni flag set
++ Patches [#401]: Vehicle Stealth cleanup
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

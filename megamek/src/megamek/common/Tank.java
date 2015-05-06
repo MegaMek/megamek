@@ -3487,6 +3487,14 @@ public class Tank extends Entity {
             }
             return true;
         }
+        
+        if (isPermanentlyImmobilized(true)) {
+            if (PreferenceManager.getClientPreferences().debugOutputOn()) {
+                System.out
+                        .println(getDisplayName() + " CRIPPLED: Immobilized.");
+            }
+            return true;
+        }
 
         // If this is not a military vehicle, we don't need to do a weapon
         // check.

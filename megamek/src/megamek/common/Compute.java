@@ -1507,143 +1507,45 @@ public class Compute {
     }
 
     /**
-     * Attempts to find a C3 spotter that is closer to the target than the
-     * attacker.
+     * find a c3, c3i, or nova spotter that is closer to the target than the attacker.
      *
-     * @return A closer C3 spotter, or the attack if no spotters are found
+     * @param game
+     * @param attacker
+     * @param target
+     * @return A closer C3/C3i/Nova spotter, or the attacker if no spotters are found
      */
     private static Entity findC3Spotter(IGame game, Entity attacker,
-                                        Targetable target) {
-        // TODO: underwater units can't spot for overwater units and vice versa
-        if (!attacker.hasC3() && !attacker.hasC3i()) {
-            // if we have nova CEWS we still want to continue.
-            if (!attacker.hasActiveNovaCEWS()) {
-                return attacker;
-            }
-        }
-        if (attacker.hasC3i()) {
-            return Compute.findC3iSpotter(game, attacker, target);
-        }
-        if (attacker.hasActiveNovaCEWS()) {
-            return Compute.findNovaSpotter(game, attacker, target);
-        }
-
-        Entity c3spotter = attacker;
-        int c3range = attacker.getPosition().distance(target.getPosition());
-
-        for (Entity friend : game.getEntitiesVector()) {
-
-            // TODO : can units being transported be used for C3 spotting? For
-            // now we'll say no.
-            if (attacker.equals(friend) || !friend.isActive()
-                || !attacker.onSameC3NetworkAs(friend)
-                || !friend.isDeployed()
-                || (friend.getTransportId() != Entity.NONE)) {
-                continue; // useless to us...
-            }
-
-            int buddyRange = Compute.effectiveDistance(game, friend, target,
-                                                       false);
-            if (buddyRange < c3range) {
-                c3range = buddyRange;
-                c3spotter = friend;
-            }
-        }
-        return c3spotter;
-    }
-
-    /**
-     * find a c3i spotter that is closer to the target than the attacker.
-     *
-     * @param game
-     * @param attacker
-     * @param target
-     * @return
-     */
-    private static Entity findC3iSpotter(IGame game, Entity attacker,
-                                         Targetable target) {
-        if (!attacker.hasC3() && !attacker.hasC3i()) {
+            Targetable target) {
+        // no available C3-like system
+        if (!attacker.hasC3() && !attacker.hasC3i()
+                && !attacker.hasActiveNovaCEWS()) {
             return attacker;
         }
-        Entity c3spotter = attacker;
 
         ArrayList<Entity> network = new ArrayList<Entity>();
 
         for (Entity friend : game.getEntitiesVector()) {
 
             if (attacker.equals(friend)
-                || !attacker.onSameC3NetworkAs(friend, true)
-                || !friend.isDeployed()) {
+                    || !attacker.onSameC3NetworkAs(friend, true)
+                    || !friend.isDeployed()
+                    || (friend.getTransportId() != Entity.NONE)) {
                 continue; // useless to us...
             }
 
-            int buddyRange = Compute.effectiveDistance(game, friend, target,
-                                                       false);
-
-            boolean added = false;
-            // but everyone in the C3i network into a list and sort it by range.
-            for (int pos = 0; pos < network.size(); pos++) {
-                if ((Compute.effectiveDistance(game, network.get(pos), target,
-                                               false) >= buddyRange)
-                    && Compute.canSee(game, friend, target)) {
-                    network.add(pos, friend);
-                    added = true;
-                    break;
-                }
-            }
-
-            if (!added) {
-                network.add(friend);
-            }
-        }
-
-        int position = 0;
-        for (Entity spotter : network) {
-
-            for (int count = position++; count < network.size(); count++) {
-                if (Compute.canCompleteNodePath(spotter, attacker, network,
-                                                count)) {
-                    return spotter;
-                }
-            }
-        }
-        return c3spotter;
-    }
-
-    /**
-     * find a nova spotter that is closer to the target than the attacker. WOR:
-     * Nova CEWS uses this function too, since its the same principle.
-     *
-     * @param game
-     * @param attacker
-     * @param target
-     * @return
-     */
-    private static Entity findNovaSpotter(IGame game, Entity attacker,
-                                          Targetable target) {
-        if (!attacker.hasActiveNovaCEWS()) {
-            return attacker;
-        }
-        Entity c3spotter = attacker;
-
-        ArrayList<Entity> network = new ArrayList<Entity>();
-
-        for (Entity friend : game.getEntitiesVector()) {
-
-            if (attacker.equals(friend)
-                || !attacker.onSameC3NetworkAs(friend, true)
-                || !friend.isDeployed()) {
-                continue; // useless to us...
+            // Must have LoS, Compute.canSee considers sensors and visual range
+            if (!LosEffects.calculateLos(game, friend.getId(), target).canSee()) {
+                continue;
             }
 
             int buddyRange = Compute.effectiveDistance(game, friend, target,
-                                                       false);
+                    false);
 
             boolean added = false;
-            // but everyone in the C3i network into a list and sort it by range.
+            // put everyone in the C3 network into a list and sort it by range.
             for (int pos = 0; pos < network.size(); pos++) {
                 if (Compute.effectiveDistance(game, network.get(pos), target,
-                                              false) >= buddyRange) {
+                        false) >= buddyRange) {
                     network.add(pos, friend);
                     added = true;
                     break;
@@ -1655,64 +1557,39 @@ public class Compute {
             }
         }
 
+        // ensure network connectivity
         int position = 0;
         for (Entity spotter : network) {
-
             for (int count = position++; count < network.size(); count++) {
-                if (Compute.canCompleteNodePathNova(spotter, attacker, network,
-                                                    count)) {
+                if (Compute.canCompleteNodePath(spotter, attacker, network,
+                        count)) {
                     return spotter;
                 }
             }
         }
-        return c3spotter;
+
+        return attacker;
     }
 
     private static boolean canCompleteNodePath(Entity start, Entity end,
-                                               ArrayList<Entity> network, int startPosition) {
+            ArrayList<Entity> network, int startPosition) {
 
         Entity spotter = network.get(startPosition);
 
         // Last position cannot get to this one. go to the next person
         if (ComputeECM.isAffectedByECM(spotter, start.getPosition(),
-                                       spotter.getPosition())) {
+                spotter.getPosition())) {
             return false;
         }
 
         if (!ComputeECM.isAffectedByECM(spotter, spotter.getPosition(),
-                                        end.getPosition())) {
+                end.getPosition())) {
             return true;
         }
 
         for (++startPosition; startPosition < network.size(); startPosition++) {
             if (Compute.canCompleteNodePath(spotter, end, network,
-                                            startPosition)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static boolean canCompleteNodePathNova(Entity start, Entity end,
-                                                   ArrayList<Entity> network, int startPosition) {
-
-        Entity spotter = network.get(startPosition);
-
-        // Last position cannot get to this one. go to the next person
-        if (ComputeECM.isAffectedByECM(spotter, start.getPosition(),
-                                       spotter.getPosition())) {
-            return false;
-        }
-
-        if (!ComputeECM.isAffectedByECM(spotter, spotter.getPosition(),
-                                        end.getPosition())) {
-            return true;
-        }
-
-        for (++startPosition; startPosition < network.size(); startPosition++) {
-            if (Compute.canCompleteNodePathNova(spotter, end, network,
-                                                startPosition)) {
+                    startPosition)) {
                 return true;
             }
         }

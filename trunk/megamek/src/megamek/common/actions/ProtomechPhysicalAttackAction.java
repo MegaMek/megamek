@@ -15,19 +15,17 @@
 package megamek.common.actions;
 
 import megamek.common.BattleArmor;
-import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
-import megamek.common.GunEmplacement;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.Infantry;
 import megamek.common.IPlayer;
+import megamek.common.Mech;
 import megamek.common.Protomech;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
-import megamek.common.Terrains;
 import megamek.common.ToHitData;
 
 /**
@@ -61,18 +59,22 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         } else {
             toReturn = 3;
         }
-        if (((Protomech)entity).isEDPCharged() && (target instanceof Infantry) && !(target instanceof BattleArmor)) {
+        if (((Protomech) entity).isEDPCharged() && (target instanceof Infantry)
+                && !(target instanceof BattleArmor)) {
             toReturn++;
-            //TODO: add another +1 to damage if target is cybernetically enhanced
+            // TODO: add another +1 to damage if target is cybernetically
+            // enhanced
         }
         // underwater damage is half, round up (see bug 1110692)
-        if (entity.getLocationStatus(Protomech.LOC_TORSO) == ILocationExposureStatus.WET) {
+        if (entity.getLocationStatus(Protomech.LOC_TORSO) 
+                == ILocationExposureStatus.WET) {
             toReturn = (int) Math.ceil(toReturn * 0.5f);
         }
-        if(null != entity.getCrew() && entity.getCrew().getOptions().booleanOption("melee_master")) {
+        if ((null != entity.getCrew())
+                && entity.getCrew().getOptions().booleanOption("melee_master")) {
             toReturn *= 2;
         }
-        return toReturn;
+  return toReturn;
     }
 
     public ToHitData toHit(IGame game) {
@@ -101,7 +103,8 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
                             || ((((Entity)target).getOwner().getTeam() != IPlayer.TEAM_NONE)
                                     && (ae.getOwner().getTeam() != IPlayer.TEAM_NONE)
                                     && (ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit can never be the target of a direct attack.");
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit "
+                        + "can never be the target of a direct attack.");
             }
         }
 
@@ -114,13 +117,9 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         final int targetHeight = target.relHeight() + targHex.getLevel();
         final int targetElevation = target.getElevation()
                 + targHex.getLevel();
-        final boolean targetInBuilding = Compute.isInBuilding(game, te);
-
+        
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, te);
-        Building bldg = null;
-        if (targetInBuilding) {
-            bldg = game.getBoard().getBuildingAt(te.getPosition());
-        }
+        
         ToHitData toHit;
 
         // can't target yourself
@@ -149,8 +148,9 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
 
         // check range
         final int range = ae.getPosition().distance(target.getPosition());
-        if (range > 1) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in range");
+        if (range != 0) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Target must be in same hex");
         }
 
         // check elevation
@@ -164,39 +164,6 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         if ((te != null) && te.isMakingDfa()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is making a DFA attack");
-        }
-
-        // can only target targets in adjacent hexes, not in same hex
-        if (range == 0) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Target not in adjacent hex");
-        }
-
-        // check facing
-        // Don't check arc for stomping infantry or tanks.
-        if ((0 != range)
-                && !Compute.isInArc(ae.getPosition(), ae.getFacing(), target, Compute.ARC_FORWARD)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
-        }
-
-        // Can't target units in buildings (from the outside).
-        if ((0 != range) && targetInBuilding) {
-            if (!Compute.isInBuilding(game, ae)) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "Target is inside building");
-            } else if (!game.getBoard().getBuildingAt(ae.getPosition()).equals(
-                    bldg)) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE,
-                        "Target is inside differnt building");
-            }
-        }
-
-        // Attacks against adjacent buildings automatically hit.
-        if ((target.getTargetType() == Targetable.TYPE_BUILDING)
-                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)
-                || (target instanceof GunEmplacement)) {
-            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                    "Targeting adjacent building.");
         }
 
         // Can't target woods or ignite a building with a physical.
@@ -234,12 +201,6 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
             toHit.addModifier(-2, "target prone and adjacent");
         }
 
-        // water partial cover?
-        if ((te.height() > 0) && (te.getElevation() == -1)
-                && (targHex.terrainLevel(Terrains.WATER) == te.height())) {
-            toHit.addModifier(3, "target has partial cover");
-        }
-
         // target immobile
         toHit.append(Compute.getImmobileMod(te));
 
@@ -247,17 +208,10 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
 
         Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
-        // elevation
-        if (attackerElevation < targetHeight) {
+        // Standing 'mechs use kick table
+        if ((te instanceof Mech) && !te.isProne()) {
             toHit.setHitTable(ToHitData.HIT_KICK);
-        } else if (te.height() > 0) {
-            toHit.setHitTable(ToHitData.HIT_PUNCH);
-        } else {
-            toHit.setHitTable(ToHitData.HIT_NORMAL);
-        }
-
-        // factor in target side
-        toHit.setSideTable(Compute.targetSideTable(ae, te));
+        } // Everything else uses the standard table, which is default
 
         // done!
         return toHit;

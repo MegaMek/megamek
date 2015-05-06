@@ -54,6 +54,7 @@ v0.41.4-dev (SVN)
 + Patches [#400]: 3067Uu Clan Omnis need Omni flag set
 + Patches [#401]: Vehicle Stealth cleanup
 + Feature: Player list width in ChatterBox now resizable
++ Bug [#4354]: Princess bot refusing to eject immobilized tanks
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

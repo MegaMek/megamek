@@ -19914,7 +19914,7 @@ public class Server implements Runnable {
                 // check to see if this detroyed the entity
                 if (a.getCapArmor() <= 0) {
                     vDesc.addAll(destroyEntity(te,
-                                               "structural integrity collapse"));
+                            "structural integrity collapse"));
                     a.setCapArmor(0);
                 }
                 damage = 0;
@@ -31623,10 +31623,10 @@ public class Server implements Runnable {
      * @param variableDamage if true, treat damage as the number of six-sided dice to roll
      */
     public Vector<Integer> artilleryDamageHex(Coords coords,
-                                              Coords attackSource, int damage, AmmoType ammo, int subjectId,
-                                              Entity killer, Entity exclude, boolean flak, int altitude,
-                                              Vector<Report> vPhaseReport, boolean asfFlak,
-                                              Vector<Integer> alreadyHit, boolean variableDamage) {
+            Coords attackSource, int damage, AmmoType ammo, int subjectId,
+            Entity killer, Entity exclude, boolean flak, int altitude,
+            Vector<Report> vPhaseReport, boolean asfFlak,
+            Vector<Integer> alreadyHit, boolean variableDamage) {
 
         // TODO: pass in a vector of unit ids that give units already hit and
         // then pass it out
@@ -31736,7 +31736,8 @@ public class Server implements Runnable {
             if (flak) {
                 // Check: is entity not a VTOL in flight or an ASF
                 if (!((entity instanceof VTOL)
-                      || (entity.getMovementMode() == EntityMovementMode.VTOL) || (entity instanceof Aero))) {
+                        || (entity.getMovementMode() == EntityMovementMode.VTOL) 
+                        || (entity instanceof Aero))) {
                     continue;
                 }
                 // Check: is entity at correct elevation?
@@ -31793,9 +31794,8 @@ public class Server implements Runnable {
 
                     // wheeled and hover tanks take movement critical
                     if ((entity instanceof Tank)
-                        && ((entity.getMovementMode() == EntityMovementMode.WHEELED)
-                                || (entity.getMovementMode() == EntityMovementMode.HOVER)
-                    )) {
+                            && ((entity.getMovementMode() == EntityMovementMode.WHEELED) || (entity
+                                    .getMovementMode() == EntityMovementMode.HOVER))) {
                         r = new Report(6480);
                         r.subject = entity.getId();
                         r.addDesc(entity);
@@ -31803,14 +31803,14 @@ public class Server implements Runnable {
                         r.add(0);
                         vPhaseReport.add(r);
                         vPhaseReport.addAll(vehicleMotiveDamage((Tank) entity,
-                                                                0));
+                                0));
                         continue;
                     }
                     // only infantry and support vees with bar < 5 are affected
                     if ((entity instanceof BattleArmor)
-                        || ((entity instanceof SupportTank)
-                            && !entity.hasPatchworkArmor()
-                            && (entity.getBARRating(1) > 4))) {
+                            || ((entity instanceof SupportTank)
+                                && !entity.hasPatchworkArmor()
+                                && (entity.getBARRating(1) > 4))) {
                         continue;
                     }
                     if (entity instanceof Infantry) {
@@ -31818,7 +31818,7 @@ public class Server implements Runnable {
                         hits *= 2;
                     } else {
                         if ((entity.getBARRating(1) < 5)
-                            && !entity.hasPatchworkArmor()) {
+                                && !entity.hasPatchworkArmor()) {
                             switch (ammo.getAmmoType()) {
                                 case AmmoType.T_LONG_TOM:
                                     // hack: check if damage is still at 4, so
@@ -31908,21 +31908,21 @@ public class Server implements Runnable {
                     if (entity.getInternal(loc) > 0) {
                         HitData hit = new HitData(loc);
                         vPhaseReport.addAll(damageEntity(entity, hit, hits,
-                                                         false, DamageType.NONE, false, true, false));
+                                false, DamageType.NONE, false, true, false));
                     }
                 }
             } else {
                 while (hits > 0) {
                     int damageToDeal = Math.min(cluster, hits);
                     HitData hit = entity.rollHitLocation(toHit.getHitTable(),
-                                                         toHit.getSideTable());
+                            toHit.getSideTable());
                     // per a rules question, for patchwork armor, we do this:
                     if (specialCaseFlechette && !(entity instanceof Infantry)) {
                         damageToDeal *= (5 - entity.getBARRating(hit
-                                                                         .getLocation()));
+                                .getLocation()));
                     }
                     vPhaseReport.addAll(damageEntity(entity, hit, damageToDeal,
-                                                     false, DamageType.NONE, false, true, false));
+                            false, DamageType.NONE, false, true, false));
                     hits -= Math.min(cluster, hits);
                 }
             }
@@ -31951,9 +31951,9 @@ public class Server implements Runnable {
      *                     attack, -1 otherwise
      */
     public void artilleryDamageArea(Coords centre, Coords attackSource,
-                                    AmmoType ammo, int subjectId, Entity killer, boolean flak,
-                                    int altitude, boolean mineClear, Vector<Report> vPhaseReport,
-                                    boolean asfFlak, int attackingBA) {
+            AmmoType ammo, int subjectId, Entity killer, boolean flak,
+            int altitude, boolean mineClear, Vector<Report> vPhaseReport,
+            boolean asfFlak, int attackingBA) {
         int damage = ammo.getRackSize();
         int falloff = 10;
         if (ammo.getAmmoType() == AmmoType.T_CRUISE_MISSILE) {
@@ -31994,43 +31994,54 @@ public class Server implements Runnable {
                 falloff = damage;
             }
         artilleryDamageArea(centre, attackSource, ammo, subjectId, killer,
-                            damage, falloff, flak, altitude, vPhaseReport, asfFlak);
+                damage, falloff, flak, altitude, vPhaseReport, asfFlak);
     }
 
     /**
      * Deals area-saturation damage to an area of the board. Used for artillery,
      * bombs, or anything else with linear decreas in damage
      *
-     * @param centre       The hex on which damage is centred
-     * @param attackSource The position the attack came from
-     * @param ammo         The ammo type doing the damage
-     * @param subjectId    Subject for reports
-     * @param killer       Who should be credited with kills
-     * @param damage       Damage at ground zero
-     * @param falloff      Reduction in damage for each hex of distance
-     * @param flak         Flak, hits flying units only, instead of flyers being immune
-     * @param altitude     Absolute altitude for flak attack
-     * @param vPhaseReport The Vector of Reports for the phasereport
-     * @param asfFlak      Is this flak against ASF?
+     * @param centre
+     *            The hex on which damage is centred
+     * @param attackSource
+     *            The position the attack came from
+     * @param ammo
+     *            The ammo type doing the damage
+     * @param subjectId
+     *            Subject for reports
+     * @param killer
+     *            Who should be credited with kills
+     * @param damage
+     *            Damage at ground zero
+     * @param falloff
+     *            Reduction in damage for each hex of distance
+     * @param flak
+     *            Flak, hits flying units only, instead of flyers being immune
+     * @param altitude
+     *            Absolute altitude for flak attack
+     * @param vPhaseReport
+     *            The Vector of Reports for the phasereport
+     * @param asfFlak
+     *            Is this flak against ASF?
      */
     public void artilleryDamageArea(Coords centre, Coords attackSource,
-                                    AmmoType ammo, int subjectId, Entity killer, int damage,
-                                    int falloff, boolean flak, int altitude,
-                                    Vector<Report> vPhaseReport, boolean asfFlak) {
+            AmmoType ammo, int subjectId, Entity killer, int damage,
+            int falloff, boolean flak, int altitude,
+            Vector<Report> vPhaseReport, boolean asfFlak) {
         Vector<Integer> alreadyHit = new Vector<Integer>();
         for (int ring = 0; damage > 0; ring++, damage -= falloff) {
             ArrayList<Coords> hexes = Compute.coordsAtRange(centre, ring);
             for (Coords c : hexes) {
                 alreadyHit = artilleryDamageHex(c, attackSource, damage, ammo,
-                                                subjectId, killer, null, flak, altitude, vPhaseReport,
-                                                asfFlak, alreadyHit, false);
+                        subjectId, killer, null, flak, altitude, vPhaseReport,
+                        asfFlak, alreadyHit, false);
             }
             attackSource = centre; // all splash comes from ground zero
         }
     }
 
     public void deliverBombDamage(Coords centre, int type, int subjectId,
-                                  Entity killer, Vector<Report> vPhaseReport) {
+            Entity killer, Vector<Report> vPhaseReport) {
         int range = 0;
         int damage = 10;
         if (type == BombType.B_CLUSTER) {
@@ -32040,14 +32051,14 @@ public class Server implements Runnable {
         Vector<Integer> alreadyHit = new Vector<Integer>();
 
         alreadyHit = artilleryDamageHex(centre, centre, damage, null,
-                                        subjectId, killer, null, false, 0, vPhaseReport, false,
-                                        alreadyHit, false);
+                subjectId, killer, null, false, 0, vPhaseReport, false,
+                alreadyHit, false);
         if (range > 0) {
             ArrayList<Coords> hexes = Compute.coordsAtRange(centre, range);
             for (Coords c : hexes) {
                 alreadyHit = artilleryDamageHex(c, centre, damage, null,
-                                                subjectId, killer, null, false, 0, vPhaseReport, false,
-                                                alreadyHit, false);
+                        subjectId, killer, null, false, 0, vPhaseReport, false,
+                        alreadyHit, false);
             }
         }
     }

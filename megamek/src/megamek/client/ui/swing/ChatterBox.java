@@ -29,6 +29,7 @@ import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -58,6 +59,7 @@ public class ChatterBox implements KeyListener {
     JScrollPane scrPlayers;
     private JTextField inputField;
     private JButton butDone;
+    private JSplitPane playerChatSplit;
 
     public LinkedList<String> history;
     public int historyBookmark = -1;
@@ -132,11 +134,16 @@ public class ChatterBox implements KeyListener {
         chatPanel = new JPanel(new BorderLayout());
         chatPanel.setLayout(new GridBagLayout());
 
+        playerChatSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true,
+                scrPlayers, new JScrollPane(chatArea));
+        playerChatSplit.setResizeWeight(0.01);
+        
         JPanel subPanel = new JPanel(new BorderLayout());
         subPanel.setPreferredSize(new Dimension(284,100));
         subPanel.setMinimumSize(new Dimension(284,100));
-        subPanel.add(new JScrollPane(chatArea), BorderLayout.CENTER);
-        subPanel.add(scrPlayers, BorderLayout.WEST);
+        //subPanel.add(new JScrollPane(chatArea), BorderLayout.CENTER);
+        //subPanel.add(scrPlayers, BorderLayout.WEST);
+        subPanel.add(playerChatSplit, BorderLayout.CENTER);
         subPanel.add(inputField, BorderLayout.SOUTH);
 
         GridBagConstraints gbc = new GridBagConstraints();

@@ -57,6 +57,7 @@ v0.41.4-dev (SVN)
 + Bug [#4354]: Princess bot refusing to eject immobilized tanks
 + Bug: "Damage this phase" from ammo explosions accounts for reduction by
     standard CASE but not CASE II.
++ Bug [#4180]: Client Crash Associated with Fighter Squadrons
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

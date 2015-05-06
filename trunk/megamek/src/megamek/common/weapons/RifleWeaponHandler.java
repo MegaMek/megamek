@@ -77,6 +77,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
             hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(),
                                      waa.getAimedLocation(), waa.getAimingMode(),
                                      toHit.getCover());
+            hit.setAttackerId(getAttackerId());
             if (!(te instanceof BattleArmor)
                 && !(te instanceof Infantry)
                 && (!te.hasBARArmor(hit.getLocation()) || (te

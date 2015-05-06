@@ -72,6 +72,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
                 toHit.getSideTable(), waa.getAimedLocation(),
                 waa.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);
+        hit.setAttackerId(getAttackerId());
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                 .getCover(), Compute.targetSideTable(ae, entityTarget, weapon
                 .getCalledShot().getCall()))) {

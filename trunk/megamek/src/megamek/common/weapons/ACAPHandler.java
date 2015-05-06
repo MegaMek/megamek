@@ -104,14 +104,15 @@ public class ACAPHandler extends AmmoWeaponHandler {
      */
     @Override
     protected void handleEntityDamage(Entity entityTarget,
-                                      Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-                                      int bldgAbsorbs) {
+            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+            int bldgAbsorbs) {
         AmmoType atype = (AmmoType) weapon.getLinked().getType();
         int nDamage;
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
-                                                   toHit.getSideTable(), waa.getAimedLocation(),
-                                                   waa.getAimingMode(), toHit.getCover());
+                toHit.getSideTable(), waa.getAimedLocation(),
+                waa.getAimingMode(), toHit.getCover());
         hit.setGeneralDamageType(generalDamageType);
+        hit.setAttackerId(getAttackerId());
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                 .getCover(), Compute.targetSideTable(ae, entityTarget, weapon
                 .getCalledShot().getCall()))) {

@@ -53,6 +53,11 @@ public class HitData {
     //probably not the best place for this, but I don't want to add another parameter to damageEntity
     private int singleAV = -1;
     /**
+     * Keeps track of the Entity originating this hit, if any
+     */
+    private int attackerId = Entity.NONE;
+    
+    /**
      * Does this HitData represent the first hit in a series of hits (ie, 
      * cluster weapons).
      */
@@ -266,5 +271,13 @@ public class HitData {
 
     public void setIgnoreInfantryDoubleDamage(boolean ignoreInfantryDoubleDamage) {
         this.ignoreInfantryDoubleDamage = ignoreInfantryDoubleDamage;
+    }
+
+    public int getAttackerId() {
+        return attackerId;
+    }
+
+    public void setAttackerId(int attackerId) {
+        this.attackerId = attackerId;
     }
 }

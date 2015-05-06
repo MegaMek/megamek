@@ -1539,6 +1539,10 @@ public class UnitDisplay extends JPanel {
                 currentHeatBuildup += 6;
             }
 
+            if (((en instanceof Mech) || (en instanceof Aero)) && en.hasActiveNovaCEWS()) {
+                currentHeatBuildup += 2;
+            }
+
             // update weapon list
             weaponList.setModel(new WeaponListModel(en));
             ((DefaultComboBoxModel<String>) m_chAmmo.getModel()).removeAllElements();
@@ -2450,6 +2454,38 @@ public class UnitDisplay extends JPanel {
                     wMedR.setText("4 - 6"); //$NON-NLS-1$
                     wLongR.setText("7 - 9"); //$NON-NLS-1$
                     wExtR.setText("10 - 12"); //$NON-NLS-1$
+                }
+            } else if (atype.getAmmoType() == AmmoType.T_IATM) {
+                if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
+                    wMinR.setText("4"); //$NON-NLS-1$
+                    wShortR.setText("1 - 9"); //$NON-NLS-1$
+                    wMedR.setText("10 - 18"); //$NON-NLS-1$
+                    wLongR.setText("19 - 27"); //$NON-NLS-1$
+                    wExtR.setText("28 - 36"); //$NON-NLS-1$
+                } else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+                    wMinR.setText("---"); //$NON-NLS-1$
+                    wShortR.setText("1 - 3"); //$NON-NLS-1$
+                    wMedR.setText("4 - 6"); //$NON-NLS-1$
+                    wLongR.setText("7 - 9"); //$NON-NLS-1$
+                    wExtR.setText("10 - 12"); //$NON-NLS-1$
+                } else if (atype.getMunitionType() == AmmoType.M_IATM_IIW) {
+                    wMinR.setText("4"); //$NON-NLS-1$
+                    wShortR.setText("1 - 5"); //$NON-NLS-1$
+                    wMedR.setText("6 - 10"); //$NON-NLS-1$
+                    wLongR.setText("11 - 15"); //$NON-NLS-1$
+                    wExtR.setText("16 - 20"); //$NON-NLS-1$
+                } else if (atype.getMunitionType() == AmmoType.M_IATM_IMP) {
+                    wMinR.setText("---"); //$NON-NLS-1$
+                    wShortR.setText("1 - 3"); //$NON-NLS-1$
+                    wMedR.setText("4 - 6"); //$NON-NLS-1$
+                    wLongR.setText("7 - 9"); //$NON-NLS-1$
+                    wExtR.setText("10 - 12"); //$NON-NLS-1$
+                } else /* standard */ {
+                    wMinR.setText("4"); //$NON-NLS-1$
+                    wShortR.setText("1 - 5"); //$NON-NLS-1$
+                    wMedR.setText("6 - 10"); //$NON-NLS-1$
+                    wLongR.setText("11 - 15"); //$NON-NLS-1$
+                    wExtR.setText("16 - 20"); //$NON-NLS-1$
                 }
             }
 

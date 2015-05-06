@@ -1163,6 +1163,11 @@ public class Server implements Runnable {
             game.removePlayer(player.getId());
             send(new Packet(Packet.COMMAND_PLAYER_REMOVE, new Integer(
                     player.getId())));
+            // Prevent situation where all players but the disconnected one
+            // are done, and the disconnecting player causes the game to start
+            if (phase == IGame.Phase.PHASE_LOUNGE) {
+                resetActivePlayersDone();
+            }
         } else {
             player.setGhost(true);
             player.setDone(true);

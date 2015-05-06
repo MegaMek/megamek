@@ -2459,7 +2459,11 @@ public class Aero extends Entity {
                 r = new Report(7072, Report.PUBLIC);
                 r.addDesc(killer);
             } else {
-                r = new Report(7073, Report.PUBLIC);
+                if (this instanceof FighterSquadron) {
+                    r = new Report(7076, Report.PUBLIC);
+                } else {
+                    r = new Report(7073, Report.PUBLIC);
+                }
             }
             vDesc.addElement(r);
         } else if (getCrew().isEjected()){

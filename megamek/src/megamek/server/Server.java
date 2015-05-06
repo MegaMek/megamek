@@ -6578,7 +6578,7 @@ public class Server implements Runnable {
                             // check for destruction
                             if (a.getSI() == 0) {
                                 addReport(destroyEntity(entity,
-                                                        "Structural Integrity Collapse", false));
+                                        "Structural Integrity Collapse", false));
                             }
                         }
                     }
@@ -19297,11 +19297,11 @@ public class Server implements Runnable {
      * Resolve any potential fatal damage to Capital Fighter after each
      * individual attacker is finished
      */
-    private Vector<Report> checkFatalThresholds(int cen) {
+    private Vector<Report> checkFatalThresholds(int nextAE, int prevAE) {
         Vector<Report> vDesc = new Vector<Report>();
         for (Iterator<Entity> e = game.getEntities(); e.hasNext();) {
             Entity en = e.next();
-            if (!en.isCapitalFighter() || (cen == Entity.NONE)) {
+            if (!en.isCapitalFighter() || (nextAE == Entity.NONE)) {
                 continue;
             }
             Aero ship = (Aero) en;
@@ -19316,10 +19316,12 @@ public class Server implements Runnable {
                                 / divisor);
                 if (roll > 9) {
                     vDesc.addAll(destroyEntity(ship, "fatal damage threshold"));
+                    if (prevAE != Entity.NONE) {
+                        creditKill(ship, game.getEntity(prevAE));
+                    }
                 }
             }
             ship.setCurrentDamage(0);
-
         }
         return vDesc;
     }
@@ -19489,6 +19491,7 @@ public class Server implements Runnable {
             new_hit.setCapital(hit.isCapital());
             new_hit.setCapMisCritMod(hit.getCapMisCritMod());
             new_hit.setSingleAV(hit.getSingleAV());
+            new_hit.setAttackerId(hit.getAttackerId());
             return damageEntity(fighter, new_hit, damage, ammoExplosion, bFrag,
                                 damageIS, areaSatArty, throughFront, underWater, nukeS2S);
         }
@@ -19914,8 +19917,11 @@ public class Server implements Runnable {
                 // check to see if this detroyed the entity
                 if (a.getCapArmor() <= 0) {
                     vDesc.addAll(destroyEntity(te,
-                            "structural integrity collapse"));
+                            "Structural Integrity Collapse"));
                     a.setCapArmor(0);
+                    if (hit.getAttackerId() != Entity.NONE) {
+                        creditKill(a, game.getEntity(hit.getAttackerId()));
+                    }
                 }
                 damage = 0;
                 // check for crits
@@ -20599,8 +20605,11 @@ public class Server implements Runnable {
                     // check to see if this would destroy the ASF
                     if (a.getSI() <= 0) {
                         vDesc.addAll(destroyEntity(te,
-                                                   "structural integrity collapse"));
+                                "Structural Integrity Collapse"));
                         a.setSI(0);
+                        if (hit.getAttackerId() != Entity.NONE) {
+                            creditKill(a, game.getEntity(hit.getAttackerId()));
+                        }
                     }
                     checkAeroCrits(vDesc, a, hit, damage_orig, critThresh,
                                    critSI, ammoExplosion, nukeS2S);
@@ -23946,8 +23955,11 @@ public class Server implements Runnable {
                 vDesc.addElement(r);
                 if (a.getSI() <= 0) {
                     vDesc.addAll(destroyEntity(a,
-                                               "structural integrity collapse"));
+                            "Structural Integrity Collapse"));
                     a.setSI(0);
+                    if (hit.getAttackerId() != Entity.NONE) {
+                        creditKill(a, game.getEntity(hit.getAttackerId()));
+                    }
                 } else if (!critSI) {
                     critSI = true;
                 }
@@ -29943,8 +29955,13 @@ public class Server implements Runnable {
      * @param attacker The <code>Entity</code> that did the killing.
      */
     public void creditKill(Entity target, Entity attacker) {
+        // Kills should be credited for each individual fighter, instead of the
+        // squadron
+        if (target instanceof FighterSquadron) {
+            return;
+        }
         if ((target.isDoomed() || target.getCrew().isDoomed())
-            && !target.getGaveKillCredit()) {
+            && !target.getGaveKillCredit() && (attacker != null)) {
             attacker.addKill(target);
         }
     }
@@ -32237,7 +32254,8 @@ public class Server implements Runnable {
                     // if this is a new attacker then resolve any
                     // standard-to-cap damage
                     // from previous
-                    handleAttackReports.addAll(checkFatalThresholds(aId));
+                    handleAttackReports.addAll(checkFatalThresholds(aId,
+                            lastAttackerId));
                     // report who is firing
                     if (ah.isStrafing()) {
                         r = new Report(3101);
@@ -32266,7 +32284,8 @@ public class Server implements Runnable {
             }
         }
         // resolve standard to capital one more time
-        handleAttackReports.addAll(checkFatalThresholds(lastAttackerId));
+        handleAttackReports.addAll(checkFatalThresholds(lastAttackerId,
+                lastAttackerId));
         if (handleAttackReports.size() > 0) {
             Report.addNewline(handleAttackReports);
         }

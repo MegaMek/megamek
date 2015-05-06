@@ -143,10 +143,12 @@ public class FireProcessor extends DynamicTerrainProcessor {
                     //only check spread for fires that didn't start this turn
                     if(currentHex.getFireTurn() > 0) {
                         //optional rule, woods burn down
+                        Vector<Report> burnReports = null;
                         if ((currentHex.containsTerrain(Terrains.WOODS) || currentHex
                                 .containsTerrain(Terrains.JUNGLE))
-                                && game.getOptions().booleanOption("woods_burn_down")) {
-                            burnDownWoods(currentCoords);
+                                && game.getOptions().booleanOption(
+                                        "woods_burn_down")) {
+                            burnReports = burnDownWoods(currentCoords);
                         }
                         //report and check for fire spread
                         r = new Report(5125, Report.PUBLIC);
@@ -160,6 +162,9 @@ public class FireProcessor extends DynamicTerrainProcessor {
                         }
                         r.add(currentCoords.getBoardNum());
                         vPhaseReport.addElement(r);
+                        if (burnReports != null) {
+                            vPhaseReport.addAll(burnReports);
+                        }
                         spreadFire(currentXCoord, currentYCoord, windDirection,
                                 windStrength);
                     }
@@ -214,14 +219,27 @@ public class FireProcessor extends DynamicTerrainProcessor {
 
     } // End the ResolveFire() method
 
-    public void burnDownWoods(Coords coords) {
+    public Vector<Report> burnDownWoods(Coords coords) {
+        Vector<Report> burnReports = new Vector<>();
         int burnDamage = 5;
         try {
             burnDamage = game.getOptions().intOption("woods_burn_down_amount");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        vPhaseReport.addAll(server.tryClearHex(coords, burnDamage, Entity.NONE));
+        // Report that damage applied to terrain
+        Report r = new Report(3383, Report.PUBLIC);
+        r.indent(1);
+        r.add(burnDamage);
+        burnReports.addElement(r);
+        
+        Vector<Report> newReports = 
+                server.tryClearHex(coords, burnDamage, Entity.NONE);
+        for (Report nr : newReports) {
+            nr.indent(2);
+        }
+        burnReports.addAll(newReports);
+        return burnReports;
     }
 
     /**

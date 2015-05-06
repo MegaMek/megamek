@@ -9447,6 +9447,16 @@ public class Server implements Runnable {
                 // fall through
             case Targetable.TYPE_HEX_CLEAR:
             case Targetable.TYPE_HEX_IGNITE:
+                // Report that damage applied to terrain, if there's TF to damage
+                IHex h = game.getBoard().getHex(t.getPosition());
+                if ((h != null) && h.hasTerrainfactor()) {
+                    r = new Report(3384);
+                    r.indent(2);
+                    r.subject = ae.getId();
+                    r.add(t.getPosition().getBoardNum());
+                    r.add(missiles * 4);
+                    vPhaseReport.addElement(r);
+                }
                 vPhaseReport.addAll(tryClearHex(t.getPosition(), missiles * 4,
                                                 ae.getId()));
                 tryIgniteHex(t.getPosition(), ae.getId(), false, true,
@@ -31629,8 +31639,25 @@ public class Server implements Runnable {
 
         Report r;
 
+        // Non-flak artillery damages terrain
         if (!flak) {
-            vPhaseReport.addAll(tryClearHex(coords, damage * 2, subjectId));
+            // Report that damage applied to terrain, if there's TF to damage
+            IHex h = game.getBoard().getHex(coords);
+            if ((h != null) && h.hasTerrainfactor()) {
+                r = new Report(3384);
+                r.indent(2);
+                r.subject = subjectId;
+                r.add(coords.getBoardNum());
+                r.add(damage * 2);
+                vPhaseReport.addElement(r);
+            }
+            // Update hex and report any changes
+            Vector<Report> newReports = 
+                    tryClearHex(coords, damage * 2, subjectId);
+            for (Report nr : newReports) {
+                nr.indent(3);
+            }
+            vPhaseReport.addAll(newReports);
         }
         Building bldg = game.getBoard().getBuildingAt(coords);
         int bldgAbsorbs = 0;

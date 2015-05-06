@@ -156,6 +156,12 @@ public interface IHex extends Cloneable {
     public abstract boolean hasPavement();
 
     /**
+     * Returns true if this hex has a terrain with a non-zero terrain factor
+     * @return
+     */
+    public boolean hasTerrainfactor();
+    
+    /**
      * @return <code>true</code> if the specified terrain is represented in
      *         the hex at any level.
      * @param type terrain to check

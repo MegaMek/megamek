@@ -63,6 +63,7 @@ v0.41.4-dev (SVN)
 + Bug [#4533]: C3/C3i/Nova LOS requirement
 + Patch [#480]: UnitDisplay updates for WoR Tech
 + Bug [#4511]: Kill count and squadrons - no kills recorded
++ Bug [#4512]: Disconnecting players in the lounge no reset Done state
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

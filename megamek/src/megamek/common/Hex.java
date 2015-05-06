@@ -358,6 +358,19 @@ public class Hex implements IHex, Serializable {
 
         return depth;
     }
+    
+    /**
+     * Returns true if this hex has a terrain with a non-zero terrain factor
+     * @return
+     */
+    public boolean hasTerrainfactor() {
+        for (int type : hsTerrains) {
+            if (terrains[type].getTerrainFactor() > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /*
      * (non-Javadoc)

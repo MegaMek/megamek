@@ -20604,7 +20604,6 @@ public class Server implements Runnable {
                 // Then they lose all their armor if its less then the
                 // explosion damage.
                 if (ammoExplosion && te.hasCASEII(hit.getLocation())) {
-                    te.damageThisPhase += damage;
                     // 1 point of damage goes to IS
                     damage--;
                     // Remaining damage prevented by CASE II
@@ -20644,6 +20643,8 @@ public class Server implements Runnable {
                     } else {
                         damage = 0;
                     }
+
+                    te.damageThisPhase += damage;
 
                     int roll = Compute.d6(2);
                     r = new Report(6127);

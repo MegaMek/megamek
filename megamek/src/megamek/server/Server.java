@@ -24704,6 +24704,7 @@ public class Server implements Runnable {
                 int mechWarriorId = iter.nextElement();
                 Entity mw = game.getEntity(mechWarriorId);
                 mw.setDestroyed(true);
+                // We can safely remove these, as they can't be targeted
                 game.removeEntity(mw.getId(), condition);
                 entityUpdate(mw.getId());
                 send(createRemoveEntityPacket(mw.getId(), condition));
@@ -24763,6 +24764,7 @@ public class Server implements Runnable {
                         other.setDestroyed(true);
                         // We need to unload the unit, since it's ID goes away
                         entity.unload(other);
+                        // Safe to remove, as they aren't targeted
                         game.moveToGraveyard(other.getId());
                         send(createRemoveEntityPacket(other.getId(), condition));
                         r = new Report(6370);
@@ -24780,6 +24782,7 @@ public class Server implements Runnable {
                         other.setDestroyed(true);
                         // We need to unload the unit, since it's ID goes away
                         entity.unload(other);
+                        // Safe to remove, as they aren't targeted
                         game.moveToGraveyard(other.getId());
                         send(createRemoveEntityPacket(other.getId(), condition));
                         r = new Report(6375);
@@ -24812,9 +24815,10 @@ public class Server implements Runnable {
                 if ((transport instanceof FighterSquadron)
                     && (((FighterSquadron) transport).getFighters().size() < 1)) {
                     transport.setDestroyed(true);
-                    game.moveToGraveyard(transport.getId());
-                    entityUpdate(transport.getId());
-                    send(createRemoveEntityPacket(transport.getId(), condition));
+                    // Can't remove this here, otherwise later attacks will fail
+                    //game.moveToGraveyard(transport.getId());
+                    //entityUpdate(transport.getId());
+                    //send(createRemoveEntityPacket(transport.getId(), condition));
                     r = new Report(6365);
                     r.subject = transport.getId();
                     r.addDesc(transport);

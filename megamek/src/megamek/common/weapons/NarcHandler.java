@@ -130,6 +130,7 @@ public class NarcHandler extends MissileWeaponHandler {
                 waa.getAimingMode(), toHit.getCover());
             }
         }
+        hit.setAttackerId(getAttackerId());
         
         // Catch Protomech near-misses here.
         if (entityTarget instanceof Protomech

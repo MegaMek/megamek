@@ -924,6 +924,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         hit.setBoxCars(roll == 12);
         hit.setCapMisCritMod(getCapMisMod());
         hit.setFirstHit(firstHit);
+        hit.setAttackerId(getAttackerId());
         if (weapon.isWeaponGroup()) {
             hit.setSingleAV(attackValue);
         }

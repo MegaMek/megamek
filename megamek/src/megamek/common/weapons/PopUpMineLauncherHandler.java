@@ -96,6 +96,7 @@ public class PopUpMineLauncherHandler extends AmmoWeaponHandler {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                 toHit.getSideTable(), waa.getAimedLocation(),
                 waa.getAimingMode(), toHit.getCover());
+        hit.setAttackerId(getAttackerId());
         if (target instanceof Mech) {
             hit = new HitData(Mech.LOC_CT);
         } else { // te instanceof Tank

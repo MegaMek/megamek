@@ -157,6 +157,8 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
                     hit = entTarget.rollHitLocation(toHit.getHitTable(),
                             toHit.getSideTable(), waa.getAimedLocation(),
                             waa.getAimingMode(), toHit.getCover());
+                    hit.setAttackerId(getAttackerId());
+                    
                     Vector<Report> dmgReports = new Vector<Report>();
                     // Infantry take 2D6 burst damage
                     if (!inBuilding && (entTarget instanceof Infantry) 

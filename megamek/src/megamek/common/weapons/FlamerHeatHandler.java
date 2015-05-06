@@ -62,6 +62,7 @@ public class FlamerHeatHandler extends WeaponHandler {
             hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                     toHit.getSideTable(), waa.getAimedLocation(),
                     waa.getAimingMode(), toHit.getCover());
+            hit.setAttackerId(getAttackerId());
 
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                     .getCover(), Compute.targetSideTable(ae, entityTarget,

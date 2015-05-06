@@ -61,6 +61,7 @@ v0.41.4-dev (SVN)
 + Bug [#4403]: Cannot Use ReplacePlayer GUI with Strategic Targets
 + Bug [#4479]: Poor reporting of when TerrainFactor is damaged
 + Bug [#4533]: C3/C3i/Nova LOS requirement
++ Patch [#480]: UnitDisplay updates for WoR Tech 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

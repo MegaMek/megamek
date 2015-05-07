@@ -8906,9 +8906,9 @@ public class Server implements Runnable {
     public void deliverThunderAugMinefield(Coords coords, int playerId,
                                            int damage, int entityId) {
         Coords mfCoord = null;
-        // divide damage in half
-        damage = (damage / 2) + (damage % 2);
         for (int dir = 0; dir < 7; dir++) {
+            // Divide base damage per hex in half.
+            int hexDamage = (damage / 2) + (damage % 2);
             switch (dir) {
                 case 6:
                     // The targeted hex.
@@ -8940,19 +8940,19 @@ public class Server implements Runnable {
                 if (minefield == null) {
                     // Nope. Create a new Thunder minefield
                     minefield = Minefield.createMinefield(mfCoord, playerId,
-                                                          Minefield.TYPE_CONVENTIONAL, damage);
+                                                          Minefield.TYPE_CONVENTIONAL, hexDamage);
                     game.addMinefield(minefield);
                     checkForRevealMinefield(minefield, game.getEntity(entityId));
                 } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
                     // Yup. Replace the old one.
                     removeMinefield(minefield);
-                    damage += minefield.getDensity();
+                    hexDamage += minefield.getDensity();
 
                     // Damage from Thunder minefields are capped.
-                    if (damage > Minefield.MAX_DAMAGE) {
-                        damage = Minefield.MAX_DAMAGE;
+                    if (hexDamage > Minefield.MAX_DAMAGE) {
+                        hexDamage = Minefield.MAX_DAMAGE;
                     }
-                    minefield.setDensity(damage);
+                    minefield.setDensity(hexDamage);
                     game.addMinefield(minefield);
                     checkForRevealMinefield(minefield, game.getEntity(entityId));
                 }

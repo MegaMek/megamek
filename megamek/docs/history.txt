@@ -66,6 +66,8 @@ v0.41.4-dev (SVN)
 + Bug [#4512]: Disconnecting players in the lounge no reset Done state
 + Bug [#4514]: Updates for protomech frenzy errata
 + Bug: Math off for overlapping Thunder-Augmented hexes.
++ Bug [#4537]: Firing more LRMs than you have swarm ammo still does swarm
+    attacks 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

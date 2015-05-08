@@ -96,6 +96,7 @@ public class LRMSwarmHandler extends LRMHandler {
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
+            return false;
         } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
             r = new Report(3140);
             r.newlines = 0;

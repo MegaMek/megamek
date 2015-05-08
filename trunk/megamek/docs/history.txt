@@ -68,6 +68,7 @@ v0.41.4-dev (SVN)
 + Bug: Math off for overlapping Thunder-Augmented hexes.
 + Bug [#4537]: Firing more LRMs than you have swarm ammo still does swarm
     attacks 
++ Bug: Battle armor with mechanical jump boosters has negative C-bill cost.
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

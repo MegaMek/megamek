@@ -944,19 +944,21 @@ public class MiscType extends EquipmentType {
             } else if (hasFlag(MiscType.F_CLUB)
                     && (hasSubType(MiscType.S_LANCE))) {
                 costValue = (int) Math.ceil(entity.getWeight() * 150);
+            } else if (hasFlag(F_MECHANICAL_JUMP_BOOSTER)) {
+                switch (entity.getWeightClass()) {
+                    case EntityWeightClass.WEIGHT_ASSAULT:
+                        costValue = 300000;
+                        break;
+                    case EntityWeightClass.WEIGHT_HEAVY:
+                        costValue = 150000;
+                        break;
+                    case EntityWeightClass.WEIGHT_MEDIUM:
+                        costValue = 75000;
+                        break;
+                    default:
+                        costValue = 50000;
+                }
             }
-            
-	        } else if (hasFlag(F_MECHANICAL_JUMP_BOOSTER)) {
-	      	if((entity.getWeightClass() == EntityWeightClass.WEIGHT_ULTRA_LIGHT) 
-	      			|| (entity.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT)) {
-	      			return  1 * 50000;
-	        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
-	        		return  1 * 75000;
-	        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
-	        		return  1 * 100000;     			
-	        } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT) {
-	        		return  1 * 300000;      	
-	        }
 	      	
             if (isArmored) {
                 double armoredCost = costValue;

@@ -111,7 +111,7 @@ abstract class Sprite implements ImageObserver {
      * Since most sprites being drawn correspond to something in the game,
      * this returns a little info for a tooltip.
      */
-    public String[] getTooltip() {
+    public StringBuffer getTooltip() {
         return null;
     }
 }

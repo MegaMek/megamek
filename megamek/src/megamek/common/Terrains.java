@@ -145,51 +145,51 @@ public class Terrains implements ITerrainFactory {
         switch(type) {
             case(WOODS):
                 if(level == 1) {
-                    return "light woods";
+                    return "Light woods";
                 }
                 if(level == 2) {
-                    return "heavy woods";
+                    return "Heavy woods";
                 }
                 if(level == 3) {
-                    return "ultra-heavy woods";
+                    return "Ultra-heavy woods";
                 }
-                return "woods (unknown)";
+                return "Woods (unknown)";
             case(ROUGH):
                 if(level == 1) {
-                    return "rough";
+                    return "Rough";
                 }
                 if(level == 2) {
-                    return "ultra rough";
+                    return "Ultra rough";
                 }
-                return "rough (unknown)";
+                return "Rough (unknown)";
             case(RUBBLE):
                 if(level < 6) {
-                    return "rubble";
+                    return "Rubble";
                 }
                 if(level > 5) {
-                    return "ultra rubble";
+                    return "Ultra rubble";
                 }
-                return "rubble (unknown)";
+                return "Rubble (unknown)";
             case(WATER):
-                return "water (depth " + level + ")";
+                return "Water (depth " + level + ")";
             case(PAVEMENT):
-                return "pavement";
+                return "Pavement";
             case(ROAD):
-                return "road";
+                return "Road";
             case(FIRE):
                 if(level == 1) {
-                    return "fire";
+                    return "Fire";
                 }
                 if(level == 2 || level == 3 || level == 4) {
-                    return "inferno fire";
+                    return "Inferno fire";
                 }
-                return "fire (unknown)";
+                return "Fire (unknown)";
             case(SMOKE):
                 if(level == SmokeCloud.SMOKE_LIGHT) {
-                    return "light smoke";
+                    return "Light smoke";
                 }
                 if(level == SmokeCloud.SMOKE_HEAVY) {
-                    return "heavy smoke";
+                    return "Heavy smoke";
                 }
                 if(level == SmokeCloud.SMOKE_LI_LIGHT) {
                     return "LASER inhibiting smoke";
@@ -200,103 +200,103 @@ public class Terrains implements ITerrainFactory {
                 if(level == SmokeCloud.SMOKE_CHAFF_LIGHT) {
                     return "Chaff (ECM)";
                 }
-                return "smoke (unknown)";
+                return "Smoke (unknown)";
             case(SWAMP):
                 if(level == 1) {
-                    return "swamp";
+                    return "Swamp";
                 }
                 if((level == 2) || (level == 3)) {
-                    return "quicksand";
+                    return "Quicksand";
                 }
-                return "swamp";
+                return "Swamp";
             case(ICE):
-                return "ice";
+                return "Ice";
             case(FORTIFIED):
-                return "improved position";
+                return "Improved position";
             case(GEYSER):
                 if(level == 1) {
-                    return "dormant";
+                    return "Dormant";
                 }
                 if(level == 2) {
-                    return "active";
+                    return "Active";
                 }
                 if(level == 3) {
-                    return "magma vent";
+                    return "Magma vent";
                 }
-                return "geyser (unknown)";
+                return "Geyser (unknown)";
             case(JUNGLE):
                 if(level == 1) {
-                    return "light jungle";
+                    return "Light jungle";
                 }
                 if(level == 2) {
-                    return "heavy jungle";
+                    return "Heavy jungle";
                 }
                 if(level == 3) {
-                    return "ultra-heavy jungle";
+                    return "Ultra-heavy jungle";
                 }
-                return "jungle (unknown)";
+                return "Jungle (unknown)";
             case(MAGMA):
                 if(level == 1) {
-                    return "magma crust";
+                    return "Magma crust";
                 }
                 if(level == 2) {
-                    return "magma liquid";
+                    return "Magma liquid";
                 }
-                return "magma (unknown)";
+                return "Magma (unknown)";
             case(MUD):
-                return "mud";
+                return "Mud";
             case(RAPIDS):
                 if(level == 1) {
-                    return "rapids";
+                    return "Rapids";
                 }
                 if(level == 2) {
-                    return "torrent";
+                    return "Torrent";
                 }
-                return "rapids (unknown)";
+                return "Rapids (unknown)";
             case(SAND):
-                return "sand";
+                return "Sand";
             case(SNOW):
                 if(level == 1) {
-                    return "thin snow";
+                    return "Thin snow";
                 }
                 if(level == 2) {
-                    return "heavy snow";
+                    return "Heavy snow";
                 }
-                return "snow (unknown)";
+                return "Snow (unknown)";
             case(TUNDRA):
-                return "tundra";
+                return "Tundra";
             case(SPACE):
-                return "space";
+                return "Space";
             case(SCREEN):
-                return "screen";
+                return "Screen";
             case(FIELDS):
-                return "planted fields";
+                return "Planted fields";
             case(INDUSTRIAL):
-                return "heavy industrial zone (height " + level + ")";
+                return "Heavy industrial zone (height " + level + ")";
             case(IMPASSABLE):
-                return "impassable terrain";
+                return "Impassable terrain";
             case(ELEVATOR):
-                return "elevator";
+                return "Elevator";
             case(METAL_CONTENT):
                 if(level < 1) {
-                    return "no metal content";
+                    return "No metal content";
                 }
                 if(level == 1) {
-                    return "very low metal content";
+                    return "Very low metal content";
                 }
                 if(level == 2) {
-                    return "low metal content";
+                    return "Low metal content";
                 }
                 if((level == 3) || (level == 4)) {
-                    return "medium metal content";
+                    return "Medium metal content";
                 }
                 if((level == 5) || (level == 6)) {
-                    return "high metal content";
+                    return "High metal content";
                 }
                 if((level == 7) || (level == 8)) {
-                    return "very high metal content";
+                    return "Very high metal content";
                 }
-                return "extreme high metal content";
+                return "Extremely high metal content";
             default:
                 return null;
         }

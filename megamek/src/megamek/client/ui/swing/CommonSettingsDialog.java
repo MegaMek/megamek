@@ -140,6 +140,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox showWrecks;
     private JCheckBox soundMute;
     private JCheckBox showMapHexPopup;
+    private JCheckBox showWpsinTT;
     private JCheckBox chkAntiAliasing;
     private JComboBox<String> defaultWeaponSortOrder;
     private JTextField tooltipDelay;
@@ -356,12 +357,31 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<>();
         row.add(showUnitId);
         comps.add(row);
+        
+        // Horizontal Line and Spacer
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 10)));
+        comps.add(row);
 
+        Sep = new JSeparator(SwingConstants.HORIZONTAL);
+        row = new ArrayList<>();
+        row.add(Sep);
+        comps.add(row);
+        
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 5)));
+        comps.add(row);
+        // --------------        
+
+        // Tooltip Stuff
+        //
+        // Show Terrain in the TT
         showMapHexPopup = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapHexPopup")); //$NON-NLS-1$
         row = new ArrayList<>();
         row.add(showMapHexPopup);
         comps.add(row);
 
+        // Popup Delay and Dismiss Delay
         tooltipDelay = new JTextField(4);
         tooltipDelay.setMaximumSize(new Dimension(150,40));
         JLabel tooltipDelayLabel = new JLabel(Messages.getString("CommonSettingsDialog.tooltipDelay")); //$NON-NLS-1$
@@ -379,6 +399,26 @@ public class CommonSettingsDialog extends ClientDialog implements
         row.add(tooltipDismissDelayLabel);
         row.add(tooltipDismissDelay);
         comps.add(row);
+        
+        showWpsinTT = new JCheckBox(Messages.getString("CommonSettingsDialog.showWpsinTT")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        row.add(showWpsinTT);
+        comps.add(row);
+        
+        // Horizontal Line and Spacer
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 10)));
+        comps.add(row);
+
+        Sep = new JSeparator(SwingConstants.HORIZONTAL);
+        row = new ArrayList<>();
+        row.add(Sep);
+        comps.add(row);
+        
+        row = new ArrayList<>();
+        row.add(Box.createRigidArea(new Dimension(0, 5)));
+        comps.add(row);
+        // --------------        
         
         soundMute = new JCheckBox(Messages.getString("CommonSettingsDialog.soundMute")); //$NON-NLS-1$
         row = new ArrayList<>();
@@ -589,6 +629,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         showMapHexPopup.setSelected(gs.getShowMapHexPopup());
         tooltipDelay.setText(Integer.toString(gs.getTooltipDelay()));
         tooltipDismissDelay.setText(Integer.toString(gs.getTooltipDismissDelay()));
+        showWpsinTT.setSelected(gs.getShowWpsinTT());
         
         defaultWeaponSortOrder.setSelectedIndex(gs.getDefaultWeaponSortOrder());
 
@@ -724,6 +765,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setShowWrecks(showWrecks.isSelected());
         gs.setSoundMute(soundMute.isSelected());
         gs.setShowMapHexPopup(showMapHexPopup.isSelected());
+        gs.setShowWpsinTT(showWpsinTT.isSelected());
         gs.setTooltipDelay(Integer.parseInt(tooltipDelay.getText()));
         gs.setTooltipDismissDelay(Integer.parseInt(tooltipDismissDelay.getText()));
         cs.setUnitStartChar(((String) unitStartChar.getSelectedItem())

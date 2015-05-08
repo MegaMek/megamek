@@ -4384,19 +4384,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 getArtilleryAttacksAtLocation(mcoords);
         final Mounted curWeapon = getSelectedArtilleryWeapon();
 
-        if (GUIPreferences.getInstance().getShowMapHexPopup()
-            && game.getBoard().contains(mcoords)) {
+        if (game.getBoard().contains(mcoords)) 
             mhex = game.getBoard().getHex(mcoords);
-        }
 
         txt.append("<html>"); //$NON-NLS-1$
 
-        // are we on a hex?
-        if (mhex != null) {
-            txt.append(Messages.getString("BoardView1.Hex") + //$NON-NLS-1$
-                       mcoords.getBoardNum());
-            txt.append(Messages.getString("BoardView1.level") + //$NON-NLS-1$
-                       mhex.getLevel());
+        // Hex Terrain
+        if (GUIPreferences.getInstance().getShowMapHexPopup() && (mhex != null)) {
+	
+            txt.append("<TABLE BORDER=0 BGCOLOR=#DDFFDD width=100%><TR><TD>");
+        	
+            txt.append(Messages.getString("BoardView1.Tooltip.Hex",
+                    new Object[] { mcoords.getBoardNum(), mhex.getLevel() }));
             txt.append("<br>"); //$NON-NLS-1$
 
             // cycle through the terrains and report types found
@@ -4409,70 +4408,59 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     int ttl = mhex.getTerrain(terType).getLevel();
                     String name = Terrains.getDisplayName(terType, ttl);
                     if (tf > 0) {
-                        name = name + " (" + tf + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                        name = name + " (TF: " + tf + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                     }
-                    if (null != name) {
+                    if (name != null) {
                         txt.append(name);
                         txt.append("<br>"); //$NON-NLS-1$
                     }
                 }
             }
-
-            // Do we have a building?
+            txt.append("</TD></TR></TABLE>");
+            
+            // Fuel Tank
             if (mhex.containsTerrain(Terrains.FUEL_TANK)) {
-                // Get the building.
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
-                StringBuffer buf = new StringBuffer(
-                        Messages.getString("BoardView1.Height")); //$NON-NLS-1$
-                // Each hex of a building has its own elevation.
-                buf.append(mhex.terrainLevel(Terrains.FUEL_TANK_ELEV));
-                buf.append(" "); //$NON-NLS-1$
-                buf.append(bldg.toString());
-                buf.append(Messages.getString("BoardView1.CF")); //$NON-NLS-1$
-                buf.append(bldg.getCurrentCF(mcoords));
-                txt.append(buf.toString());
-                txt.append("<br>"); //$NON-NLS-1$
+                txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD>");
+                txt.append(Messages.getString("BoardView1.Tooltip.Bridge", new Object[] {
+                        mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
+                        bldg.toString(),
+                        bldg.getCurrentCF(mcoords),
+                }));
+                txt.append("</TD></TR></TABLE>");
             }
+            
+            // Building
             if (mhex.containsTerrain(Terrains.BUILDING)) {
-                // Get the building.
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
                 // in the map editor, the building might not exist
                 if (bldg != null) {
-                    StringBuffer buf = new StringBuffer(
-                            Messages.getString("BoardView1.Height")); //$NON-NLS-1$
-                    // Each hex of a building has its own elevation.
-                    buf.append(mhex.terrainLevel(Terrains.BLDG_ELEV));
-                    buf.append(" "); //$NON-NLS-1$
-                    buf.append(bldg.toString());
-                    buf.append(Messages.getString("BoardView1.CF")); //$NON-NLS-1$
-                    buf.append(bldg.getCurrentCF(mcoords));
-                    buf.append(Messages.getString("BoardView1.BldgArmor")); //$NON-NLS-1$
-                    buf.append(bldg.getArmor(mcoords));
-                    buf.append(Messages.getString("BoardView1.BldgBasement"));
-                    buf.append(bldg.getBasement(mcoords).getDesc());
-                    if (bldg.getBasementCollapsed(mcoords)) {
-                        buf.append(Messages
-                                           .getString("BoardView1.BldgBasementCollapsed")); //$NON-NLS-1$
-                    }
-                    txt.append(buf.toString());
-                    txt.append("<br>"); //$NON-NLS-1$
+                    txt.append("<TABLE BORDER=0 BGCOLOR=#CCCC99 width=100%><TR><TD>");
+                    txt.append(Messages.getString("BoardView1.Tooltip.Building", new Object[] {
+                            mhex.terrainLevel(Terrains.BLDG_ELEV),
+                            bldg.toString(),
+                            bldg.getCurrentCF(mcoords),
+                            bldg.getArmor(mcoords),
+                            bldg.getBasement(mcoords).getDesc()       
+                    }));
+                    
+                    if (bldg.getBasementCollapsed(mcoords)) 
+                        txt.append(Messages.getString("BoardView1.BldgBasementCollapsed"));
+
+                    txt.append("</TD></TR></TABLE>");
                 }
             }
-
-            // Do we have a bridge?
+            
+            // Bridge
             if (mhex.containsTerrain(Terrains.BRIDGE)) {
-                // Get the building.
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
-                StringBuffer buf = new StringBuffer(
-                        Messages.getString("BoardView1.Height")); //$NON-NLS-1$
-                // Each hex of a building has its own elevation.
-                buf.append(mhex.terrainLevel(Terrains.BRIDGE_ELEV));
-                buf.append(" "); //$NON-NLS-1$
-                buf.append(bldg.toString());
-                buf.append(Messages.getString("BoardView1.CF")); //$NON-NLS-1$
-                buf.append(bldg.getCurrentCF(mcoords));
-                txt.append(buf.toString());
-                txt.append("<br>"); //$NON-NLS-1$
+                txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD>");
+                txt.append(Messages.getString("BoardView1.Tooltip.Bridge", new Object[] {
+                        mhex.terrainLevel(Terrains.BRIDGE_ELEV),
+                        bldg.toString(),
+                        bldg.getCurrentCF(mcoords),
+                }));
+                txt.append("</TD></TR></TABLE>");
             }
 
             if (game.containsMinefield(mcoords)) {
@@ -4528,69 +4516,101 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // check if it's on any flares
         for (FlareSprite fSprite : flareSprites) {
             if (fSprite.isInside(point)) {
-                final String[] flareStrings = fSprite.getTooltip();
-                for (String entString : flareStrings) {
-                    txt.append(entString);
-                    txt.append("<br>"); //$NON-NLS-1$
-                }
+                txt.append(fSprite.getTooltip().toString());
             }
         }
-
-        // check if it's on any entities
-        for (EntitySprite eSprite : entitySprites) {
-            if (eSprite.isInside(point)) {
-                final String[] entityStrings = eSprite.getTooltip();
-                for (String entString : entityStrings) {
-                    txt.append(entString);
-                    txt.append("<br>"); //$NON-NLS-1$
-                }
-                if ((ecmCenters != null)
-                        && ecmCenters.containsKey(eSprite.getPosition())) {
-                    txt.append(Messages.getString("BoardView1.ecmSource")); //$NON-NLS-1$
-                    txt.append("<br>"); //$NON-NLS-1$
-                }
-                if ((eccmCenters != null)
-                        && eccmCenters.containsKey(eSprite.getPosition())) {
-                    txt.append(Messages.getString("BoardView1.eccmSource")); //$NON-NLS-1$
-                    txt.append("<br>"); //$NON-NLS-1$
-                }
-            }
-        }
-
+        
         // check if it's on any attacks
         for (AttackSprite aSprite : attackSprites) {
             if (aSprite.isInside(point)) {
-                final String[] attackStrings = aSprite.getTooltip();
-                for (String attString : attackStrings) {
-                    txt.append(attString);
-                    txt.append("<br>"); //$NON-NLS-1$
-                }
+                txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD>");
+                txt.append(aSprite.getTooltip().toString());
+                txt.append("</TD></TR></TABLE>");
             }
         }
 
-        // check artillery attacks
+        // Entity tooltips
+        int entityCount = 0;
+        // Maximum number of entities to show in the tooltip
+        int maxShown = 4; 
+        
+        for (EntitySprite eSprite : entitySprites) {
+            if (eSprite.isInside(point)) {
+                entityCount++;
+                
+                // List only the first four units
+                if (entityCount <= maxShown) {
+                    // Table to add a bar to the left of an entity in
+                    // the player's color
+                    txt.append("<hr style=width:90%>");
+                    txt.append("<TABLE><TR><TD bgcolor=#");
+                    txt.append(eSprite.getPlayerColor());
+                    txt.append(" width=6></TD><TD>");
+
+                    // TT generated by Sprite
+                    txt.append(eSprite.getTooltip());
+
+                    // ECM and ECCM source
+                    if ((ecmCenters != null)
+                            && ecmCenters.containsKey(eSprite.getPosition())) {
+                        txt.append("<br><FONT SIZE=-2><img src=file:"
+                                + Configuration.widgetsDir()
+                                + "/Tooltip/ECM.png>&nbsp;");
+                        txt.append(Messages.getString("BoardView1.ecmSource")); //$NON-NLS-1$
+                        txt.append("</FONT>");
+                    }
+                    if ((eccmCenters != null)
+                            && eccmCenters.containsKey(eSprite.getPosition())) {
+                        txt.append("<br><FONT SIZE=-2><img src=file:"
+                                + Configuration.widgetsDir()
+                                + "/Tooltip/ECM.png>&nbsp;");
+                        txt.append(Messages.getString("BoardView1.eccmSource")); //$NON-NLS-1$
+                        txt.append("</FONT>");
+                    }
+                    txt.append("</TD></TR></TABLE>");
+                } 
+            }
+        }
+        // Info block if there are more than 4 units in that hex
+        if (entityCount > maxShown)
+        {
+            txt.append("<TABLE BORDER=0 BGCOLOR=#000060 width=100%><TR><TD><FONT COLOR=WHITE>There ");
+            if (entityCount-maxShown == 1) 
+                txt.append("is 1 more<BR>unit");
+            else 
+                txt.append("are "+(entityCount-maxShown)+" more<BR>units");
+            txt.append(" in this hex...</FONT>");
+            txt.append("</TD></TR></TABLE>");
+        }
+
+        // Artillery attacks
         for (ArtilleryAttackAction aaa : artilleryAttacks) {
-            final Entity ae = game.getEntity(aaa.getEntityId());
-            String s = null;
-            if (ae != null) {
+            // Default texts if no real names can be found
+            String wpName = Messages.getString("BoardView1.Artillery");
+            String ammoName = "Unknown";
+
+            // Get real weapon and ammo name
+            final Entity artyEnt = game.getEntity(aaa.getEntityId());
+            if (artyEnt != null) {
                 if (aaa.getWeaponId() > -1) {
-                    Mounted weap = ae.getEquipment(aaa.getWeaponId());
-                    s = weap.getName();
+                    wpName = artyEnt.getEquipment(aaa.getWeaponId()).getName();
                     if (aaa.getAmmoId() > -1) {
-                        Mounted ammo = ae.getEquipment(aaa.getAmmoId());
-                        s += " (" + ammo.getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                        ammoName =  artyEnt.getEquipment(aaa.getAmmoId()).getName();
                     }
                 }
             }
-            if (s == null) {
-                s = Messages.getString("BoardView1.Artillery");
-            }
-            txt.append(Messages.getString("BoardView1.ArtilleryAttack", //$NON-NLS-1$
-                    new Object[] { s, new Integer(aaa.turnsTilHit) }));
-            txt.append("<br>"); //$NON-NLS-1$
+            
+            txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD>");
+            if (aaa.turnsTilHit == 1)
+                txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttack1", 
+                        new Object[] { wpName, ammoName }));
+            else
+                txt.append(Messages.getString("BoardView1.Tooltip.ArtilleryAttackN", 
+                        new Object[] { wpName, ammoName, aaa.turnsTilHit }));
+            txt.append("</TD></TR></TABLE>");
         }
 
-        // check artillery fire adjustment
+        // Artillery fire adjustment
         if ((curWeapon != null) && (selectedEntity != null)) {
             // process targetted hexes
             int amod = 0;

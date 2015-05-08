@@ -10,24 +10,34 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageObserver;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyAlphaFilter;
+import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Aero;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
+import megamek.common.EntityMovementType;
 import megamek.common.GunEmplacement;
+import megamek.common.IGame.Phase;
 import megamek.common.IBoard;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.Mech;
+import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.Tank;
+import megamek.common.TechConstants;
+import megamek.common.WeaponType;
 import megamek.common.options.PilotOptions;
 import megamek.common.preference.PreferenceManager;
+
 
 /**
  * Sprite for an entity. Changes whenever the entity changes. Consists of an
@@ -564,7 +574,7 @@ class EntitySprite extends Sprite {
                     graph.drawString("Working", 22, 70); //$NON-NLS-1$
                 } else if (((Infantry)entity).isTakingCover()) {
                     graph.setColor(Color.black);
-                    String msg = Messages.getString("BoardView1.TAKINGCOVER");
+                    String msg = Messages.getString("BoardView1.TakingCover");
                     graph.drawString(msg, 23, 71); //$NON-NLS-1$
                     graph.setColor(Color.red);
                     graph.drawString(msg, 22, 70); //$NON-NLS-1$
@@ -695,135 +705,271 @@ class EntitySprite extends Sprite {
     public Coords getPosition() {
         return entity.getPosition();
     }
-
+    
+    private StringBuffer tooltipString;
+    private final boolean BR = true;
+    private final boolean NOBR = false;
+    
+    /**
+     * Adds a resource string to the entity tooltip
+     * 
+     * @param ttSName The resource string name. "BoardView1.Tooltip." will be added in front, so
+     * "Pilot" will retrieve BoardView1.Tooltip.Pilot
+     * @param startBR = true will start the string with a &lt;BR&gt;; The constants BR and NOBR can be used here. 
+     * @param ttO a list of Objects to insert into the {x} places in the resource.
+     */
+    private void addToTT(String ttSName, boolean startBR, Object... ttO) {
+        if (startBR == BR) tooltipString.append("<BR>");
+        if (ttO != null)
+        tooltipString.append(Messages.getString(
+                "BoardView1.Tooltip."+ttSName,
+                ttO));
+        else
+            tooltipString.append(Messages.getString(
+                    "BoardView1.Tooltip."+ttSName));
+    }
+    
+    /**
+     * Adds a resource string to the entity tooltip
+     * 
+     * @param ttSName The resource string name. "BoardView1.Tooltip." will be added in front, so
+     * "Pilot" will retrieve BoardView1.Tooltip.Pilot
+     * @param startBR = true will start the string with a &lt;BR&gt;; The constants BR and NOBR can be used here. 
+     */
+    private void addToTT(String ttSName, boolean startBR) {
+        addToTT(ttSName, startBR, (Object[]) null);
+    }
+    
     @Override
-    public String[] getTooltip() {
-        boolean infTakingCover = (entity instanceof Infantry)
-                && ((Infantry) entity).isTakingCover();
+    public StringBuffer getTooltip() {
         
-        StringBuffer buffer = new StringBuffer();;
-        String[] tipStrings;
-        int numTipStrings = 4;
-        int tipStringIdx = 0;
-        
-        if (infTakingCover) {
-            numTipStrings++;
-        }
-        tipStrings = new String[numTipStrings];
-          
-        if (onlyDetectedBySensors()) {
-            tipStrings = new String[1];
-            tipStrings[0] = Messages.getString("BoardView1.sensorReturn");
-            return tipStrings;
-        }
+        // Tooltip info for a sensor blip
+        if (onlyDetectedBySensors())
+            return new StringBuffer(Messages.getString("BoardView1.sensorReturn"));
 
+        // No sensor blip...
+        Infantry thisInfantry = null;
+        if (entity instanceof Infantry) thisInfantry = (Infantry) entity;
+        GunEmplacement thisGunEmp = null;
+        if (entity instanceof GunEmplacement) thisGunEmp = (GunEmplacement) entity;
+        Aero thisAero = null;
+        if (entity instanceof Aero) thisAero = (Aero) entity;
         
-        // Unit information
-        buffer.append(entity.getChassis()).append(" (") //$NON-NLS-1$
-                .append(entity.getOwner().getName()).append(")"); //$NON-NLS-1$
-        tipStrings[tipStringIdx++] = buffer.toString();
+        tooltipString = new StringBuffer();
 
-        // Infantry taking cover
-        if (infTakingCover) {
-            buffer = new StringBuffer();
-            String msg = Messages.getString("BoardView1.TakingCover");
-            buffer.append("(").append(msg).append(")");
-            tipStrings[tipStringIdx++] = buffer.toString();
-        }
+        // Unit Chassis and Player
+        addToTT("Unit", NOBR,
+                Integer.toHexString(PlayerColors.getColorRGB(
+                        entity.getOwner().getColorIndex())), 
+                entity.getChassis(), 
+                entity.getOwner().getName());
         
-        // Nickname
-        boolean hasNick = ((null != entity.getCrew().getNickname()) && !entity
-                .getCrew().getNickname().equals(""));
-        buffer = new StringBuffer();
-        buffer.append(Messages.getString("BoardView1.pilot"));
-        if (hasNick) {
-            buffer.append(" '").append(entity.getCrew().getNickname())
-                    .append("'");
-        }
+        // Pilot Info
+        // Nickname > Name > "Pilot"
+        String pnameStr = "Pilot";
+
+        if ((entity.getCrew().getName() != null)
+                && !entity.getCrew().getName().equals("")) 
+            pnameStr = entity.getCrew().getName();
         
-        // Piloting/Gunnery Info
-        buffer.append(" (").append(entity.getCrew().getGunnery())
-                .append("/") //$NON-NLS-1$
-                .append(entity.getCrew().getPiloting()).append(")")
-                .append("; ").append(entity.getCrew().getStatusDesc());
+        if ((entity.getCrew().getNickname() != null)
+                && !entity.getCrew().getNickname().equals("")) 
+            pnameStr = "'" + entity.getCrew().getNickname() + "'";
+
+        addToTT("Pilot", BR,
+                pnameStr, 
+                entity.getCrew().getGunnery(), 
+                entity.getCrew().getPiloting());
+
+        // Pilot Status
+        if (!entity.getCrew().getStatusDesc().equals(""))
+            addToTT("PilotStatus", NOBR, 
+                    entity.getCrew().getStatusDesc());
+        
+        // Pilot Advantages
         int numAdv = entity.getCrew().countOptions(
                 PilotOptions.LVL3_ADVANTAGES);
-        boolean isMD = entity.getCrew().countOptions(
-                PilotOptions.MD_ADVANTAGES) > 0;
-        if (numAdv > 0) {
-            buffer.append(" <") //$NON-NLS-1$
-                    .append(numAdv)
-                    .append(Messages.getString("BoardView1.advs")); //$NON-NLS-1$
+        if (numAdv == 1) 
+            addToTT("Adv1", NOBR, numAdv);
+        else if (numAdv > 1) 
+            addToTT("Advs", NOBR, numAdv);
+        
+        // Pilot Manei Domini
+        if ((entity.getCrew().countOptions(
+                PilotOptions.MD_ADVANTAGES) > 0)) 
+            addToTT("MD", NOBR);
+        
+        // Unit movement ability
+        if (thisGunEmp == null) {
+            addToTT("Movement", BR, entity.getWalkMP(), entity.getRunMPasString());
+            if (entity.getJumpMP() > 0) tooltipString.append("/" + entity.getJumpMP());
         }
-        if (isMD) {
-            buffer.append(Messages.getString("BoardView1.md")); //$NON-NLS-1$
-        }
-        tipStrings[tipStringIdx++] = buffer.toString();
 
-        GunEmplacement ge = null;
-        if (entity instanceof GunEmplacement) {
-            ge = (GunEmplacement) entity;
+        // Heat, not shown for units with 999 heat sinks (vehicles)
+        if (entity.getHeatCapacity() != 999) {
+            if (entity.heat == 0) 
+                addToTT("Heat0", BR);
+            else 
+                addToTT("Heat", BR, entity.heat);
         }
 
-        buffer = new StringBuffer();
-        if (ge == null) {
-            buffer.append(Messages.getString("BoardView1.move")) //$NON-NLS-1$
-                    .append(entity.getMovementAbbr(entity.moved))
-                    .append(":") //$NON-NLS-1$
-                    .append(entity.delta_distance)
-                    .append(" (+") //$NON-NLS-1$
-                    .append(Compute.getTargetMovementModifier(this.bv.game,
-                            entity.getId()).getValue()).append(")") //$NON-NLS-1$
-                    .append(entity.isEvading() ? Messages
-                            .getString("BoardView1.Evade") : "")//$NON-NLS-1$ //$NON-NLS-2$
-                    .append(";") //$NON-NLS-1$
-                    .append(Messages.getString("BoardView1.Heat")) //$NON-NLS-1$
-                    .append(entity.heat);
-            if (entity.isCharging()) {
-                buffer.append(" ") //$NON-NLS-1$
-                        .append(Messages.getString("BoardView1.charge1")); //$NON-NLS-1$
-            }
-            if (entity.isMakingDfa()) {
-                buffer.append(" ") //$NON-NLS-1$
-                        .append(Messages.getString("BoardView1.DFA1")); //$NON-NLS-1$
-            }
-        } else {
-            if (ge.isTurret() && ge.isTurretLocked(ge.getLocTurret())) {
-                buffer.append(Messages.getString("BoardView1.TurretLocked"));
-                if (ge.getFirstWeapon() == -1) {
-                    buffer.append(",");
-                    buffer.append(Messages
-                            .getString("BoardView1.WeaponsDestroyed"));
+        // Actual Movement
+        if (thisGunEmp == null) {
+            // In the Movement Phase, unit not done
+            if (!entity.isDone() && this.bv.game.getPhase() == Phase.PHASE_MOVEMENT) {
+                // "Has not yet moved" only during movement phase
+                addToTT("NotYetMoved", BR);
+                
+            // In the Movement Phase, unit is done - or in the Firing Phase
+            } else if (
+                    (entity.isDone() && this.bv.game.getPhase() == Phase.PHASE_MOVEMENT) 
+                    || this.bv.game.getPhase() == Phase.PHASE_FIRING) {
+                
+                // Unit didn't move
+                if (entity.moved == EntityMovementType.MOVE_NONE) {
+                    addToTT("NoMove", BR);
+                    
+                // Unit did move
+                } else {
+                    // Colored arrow
+                    // get the color resource
+                    String guipName = "AdvancedMoveDefaultColor";
+                    if ((entity.moved == EntityMovementType.MOVE_RUN)
+                            || (entity.moved == EntityMovementType.MOVE_VTOL_RUN)
+                            || (entity.moved == EntityMovementType.MOVE_OVER_THRUST)) 
+                        guipName = "AdvancedMoveRunColor";
+                    else if (entity.moved == EntityMovementType.MOVE_SPRINT) 
+                        guipName = "AdvancedMoveSprintColor";
+                    else if (entity.moved == EntityMovementType.MOVE_JUMP) 
+                        guipName = "AdvancedMoveJumpColor";
+
+                    // HTML color String from Preferences
+                    String moveTypeColor = Integer
+                            .toHexString(GUIPreferences.getInstance()
+                                    .getColor(guipName).getRGB() & 0xFFFFFF);
+
+                    // Arrow
+                    addToTT("Arrow", BR, moveTypeColor);
+
+                    // Actual movement and modifier
+                    addToTT("MovementF", NOBR,
+                            entity.getMovementString(entity.moved),
+                            entity.delta_distance,
+                            Compute.getTargetMovementModifier(this.bv.game,entity.getId()).getValue());
                 }
-            } else if (ge.getFirstWeapon() == -1) {
-                buffer.append(Messages
-                        .getString("BoardView1.WeaponsDestroyed"));
-            } else {
-                buffer.append(Messages.getString("BoardView1.Operational"));
+                // Special Moves
+                if (entity.isEvading()) 
+                    addToTT("Evade", NOBR);
+                
+                if ((thisInfantry != null) && (thisInfantry.isTakingCover())) 
+                    addToTT("TakingCover", NOBR);
+
+                if (entity.isCharging()) 
+                    addToTT("Charging", NOBR);
+                
+                if (entity.isMakingDfa()) 
+                    addToTT("DFA", NOBR);
             }
         }
-        if (entity.isDone()) {
-            buffer.append(" (")
-                    .append(Messages.getString("BoardView1.done"))
-                    .append(")");
+        
+        // ASF Velocity
+        if (thisAero != null) {
+            addToTT("AeroVelocity", BR, thisAero.getCurrentVelocity());
         }
-        tipStrings[tipStringIdx++] = buffer.toString();
-
-        buffer = new StringBuffer();
-        if (ge == null) {
-            buffer.append(Messages.getString("BoardView1.Armor")) //$NON-NLS-1$
-                    .append(entity.getTotalArmor())
-                    .append(Messages.getString("BoardView1.internal")) //$NON-NLS-1$
-                    .append(entity.getTotalInternal());
+            
+        // Gun Emplacement Status
+        if (thisGunEmp != null) {  
+            if (thisGunEmp.isTurret() && thisGunEmp.isTurretLocked(thisGunEmp.getLocTurret())) 
+                addToTT("TurretLocked", BR);
         }
-        /*
-         * else { buffer.append(Messages.getString("BoardView1.cf"))
-         * //$NON-NLS-1$ .append(ge.getCurrentCF()).append(
-         * Messages.getString("BoardView1.turretArmor")) //$NON-NLS-1$
-         * .append(ge.getCurrentTurretArmor()); }
-         */
-        tipStrings[tipStringIdx++] = buffer.toString();
+       
+        // Unit Immobile
+        if ((thisGunEmp == null) && (entity.isImmobile()))
+            addToTT("Immobile", BR);
+        
+        // Weapon List
+        if (GUIPreferences.getInstance()
+                .getBoolean(GUIPreferences.SHOW_WPS_IN_TT)) {
 
-        return tipStrings;
+            ArrayList<Mounted> weapons = entity.getWeaponList();
+            HashMap<String, Integer> wpNames = new HashMap<String,Integer>();
+
+            // Gather names, counts, Clan/IS
+            // When clan then the number will be stored as negative
+            for (Mounted curWp: weapons) {
+                if (wpNames.containsKey(curWp.getDesc())) {
+                    int number = wpNames.get(curWp.getDesc());
+                    if (number > 0) 
+                        wpNames.put(curWp.getDesc(), number + 1);
+                    else 
+                        wpNames.put(curWp.getDesc(), number - 1);
+                } else {
+                    WeaponType wpT = ((WeaponType)curWp.getType());
+
+                    if (entity.isClan() && TechConstants.isClan(wpT.getTechLevel(entity.getYear()))) 
+                        wpNames.put(curWp.getDesc(), -1);
+                    else
+                        wpNames.put(curWp.getDesc(), 1);
+                }
+            }
+
+            // Print to Tooltip
+            tooltipString.append("<FONT SIZE=\"-2\">");
+
+            for (Entry<String, Integer> entry : wpNames.entrySet()) {
+                // Check if weapon is destroyed, text gray and strikethrough if so, remove the "x "/"*"
+                // Also remove "+", means currently selected for firing
+                boolean wpDest = false;
+                String nameStr = entry.getKey();
+                if (entry.getKey().startsWith("x ")) { 
+                    nameStr = entry.getKey().substring(2, entry.getKey().length());
+                    wpDest = true;
+                }
+
+                if (entry.getKey().startsWith("*")) { 
+                    nameStr = entry.getKey().substring(1, entry.getKey().length());
+                    wpDest = true;
+                }
+
+                if (entry.getKey().startsWith("+")) { 
+                    nameStr = entry.getKey().substring(1, entry.getKey().length());
+                    nameStr = nameStr.concat(" <I>(Firing)</I>");
+                }
+
+                // normal coloring 
+                tooltipString.append("<FONT COLOR=#8080FF>");
+                // but: color gray and strikethrough when weapon destroyed
+                if (wpDest) tooltipString.append("<FONT COLOR=#a0a0a0><S>");
+
+                String clanStr = "";
+                if (entry.getValue() < 0) clanStr = Messages.getString("BoardView1.Tooltip.Clan");
+
+                // when more than 5 weapons are present, they will be grouped
+                // and listed with a multiplier
+                if (weapons.size() > 5) {
+                    addToTT("WeaponN", BR, Math.abs(entry.getValue()), clanStr, nameStr);
+
+                } else { // few weapons: list each weapon separately
+                    for (int i = 0; i < Math.abs(entry.getValue()); i++) {
+                        addToTT("Weapon", BR, Math.abs(entry.getValue()), clanStr, nameStr);
+                    }
+                }
+                // Weapon destroyed? End strikethrough
+                if (wpDest) tooltipString.append("</S>");
+                tooltipString.append("</FONT>"); 
+            }
+            tooltipString.append("</FONT>");
+        }
+        return tooltipString;
+    }
+    
+    public String getPlayerColor() {
+        if (onlyDetectedBySensors()) {
+            return "C0C0C0";
+        } else {
+            return Integer.toHexString(PlayerColors.getColorRGB(entity
+                    .getOwner().getColorIndex()));
+        }
     }
 }
+

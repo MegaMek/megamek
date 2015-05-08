@@ -46,10 +46,8 @@ class FlareSprite extends Sprite {
     }
 
     @Override
-    public String[] getTooltip() {
-        String[] tipStrings = new String[1];
-        tipStrings[0] = Messages.getString("BoardView1.flare", 
-                new Object []{flare.turnsToBurn});
-        return tipStrings;
+    public StringBuffer getTooltip() {
+        return new StringBuffer(Messages.getString("BoardView1.flare", 
+                new Object [] {flare.turnsToBurn} ));
     }
 }

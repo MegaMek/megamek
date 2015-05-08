@@ -152,6 +152,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String RULER_SIZE_WIDTH = "RulerSizeWidth";
     public static final String SCROLL_SENSITIVITY = "ScrollSensitivity";
     public static final String SHOW_MAPHEX_POPUP = "ShowMapHexPopup";
+    public static final String SHOW_WPS_IN_TT = "ShowWpsinTT";
     public static final String SHOW_MOVE_STEP = "ShowMoveStep";
     public static final String SHOW_WRECKS = "ShowWrecks";
     public static final String SOUND_BING_FILENAME = "SoundBingFilename";
@@ -237,7 +238,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_KEY_REPEAT_RATE, 20);
         store.setDefault(ADVANCED_SHOW_FPS, "false");
         store.setDefault(ADVANCED_SHOW_COORDS, "true");
-        store.setDefault(ADVANCED_SHOW_HEX_SHADOWS, "false");
+        store.setDefault(ADVANCED_SHOW_HEX_SHADOWS, "false");    
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
         store.setDefault(FOV_HIGHLIGHT_RINGS_COLORS_HSB, "0.3 1.0 1.0 ; 0.45 1.0 1.0 ; 0.6 1.0 1.0 ; 0.75 1.0 1.0 ; 0.9 1.0 1.0 ; 1.05 1.0 1.0 ");
@@ -310,6 +311,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(WINDOW_SIZE_HEIGHT, 600);
         store.setDefault(WINDOW_SIZE_WIDTH, 800);
         store.setDefault(SHOW_MAPSHEETS, false);
+        store.setDefault(SHOW_WPS_IN_TT, false);
         store.setDefault(USE_ISOMETRIC, false);
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
         store.setDefault(SHOW_DAMAGE_LEVEL, false);
@@ -612,6 +614,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getShowMapHexPopup() {
         return store.getBoolean(SHOW_MAPHEX_POPUP);
+    }
+    
+    public boolean getShowWpsinTT() {
+        return store.getBoolean(SHOW_WPS_IN_TT);
     }
 
     public boolean getShowMoveStep() {
@@ -925,6 +931,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setShowMapHexPopup(boolean state) {
         store.setValue(SHOW_MAPHEX_POPUP, state);
+    }
+    
+    public void setShowWpsinTT(boolean state) {
+        store.setValue(SHOW_WPS_IN_TT, state);
     }
 
     public void setShowMoveStep(boolean state) {

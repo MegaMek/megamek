@@ -7,7 +7,6 @@ import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.PlayerColors;
@@ -400,14 +399,17 @@ class AttackSprite extends Sprite {
     }
 
     @Override
-    public String[] getTooltip() {
-        String[] tipStrings = new String[1 + weaponDescs.size()];
-        int tip = 1;
-        tipStrings[0] = attackerDesc
-                + " " + Messages.getString("BoardView1.on") + " " + targetDesc; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        for (Iterator<String> i = weaponDescs.iterator(); i.hasNext();) {
-            tipStrings[tip++] = i.next();
+    public StringBuffer getTooltip() {
+        StringBuffer tipString = new StringBuffer();
+        tipString.append("<FONT COLOR=#");
+        tipString.append(Integer.toHexString(attackColor.getRGB()&0xFFFFFF));
+        tipString.append(">");
+        tipString.append(attackerDesc
+                + "<BR>&nbsp;&nbsp;" + Messages.getString("BoardView1.on") + " " + targetDesc); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        tipString.append("</FONT>");
+        for (String wpD: weaponDescs) {
+            tipString.append("<BR>"+wpD);
         }
-        return tipStrings;
+        return tipString;
     }
 }

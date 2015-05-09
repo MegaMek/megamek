@@ -74,6 +74,8 @@ v0.41.4-dev (SVN)
 + Patch [#403]: Drake Strike Fighter (XTR Boondocks)
 + Patch [#404]: Tiamat variants appear as aerodyne
 + Data: New Sprites,Unit Fixes,and New Map
++ Bug: If pressing a repeating key (like scrolling) when Done is clicked, scroll
+    command gets stuck repeating
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

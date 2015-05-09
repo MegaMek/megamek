@@ -610,6 +610,7 @@ public class Princess extends BotClient {
                     }
                     PhysicalInfo right_kick = new PhysicalInfo(
                             hitter, e, PhysicalAttackType.RIGHT_KICK, game, this, false);
+                    fireControl.calculateUtility(right_kick);
                     if (right_kick.getUtility() > 0) {
                         if ((best_attack == null)
                             || (right_kick.getUtility() > best_attack.getUtility())) {
@@ -618,6 +619,7 @@ public class Princess extends BotClient {
                     }
                     PhysicalInfo left_kick = new PhysicalInfo(
                             hitter, e, PhysicalAttackType.LEFT_KICK, game, this, false);
+                    fireControl.calculateUtility(left_kick);
                     if (left_kick.getUtility() > 0) {
                         if ((best_attack == null)
                             || (left_kick.getUtility() > best_attack.getUtility())) {

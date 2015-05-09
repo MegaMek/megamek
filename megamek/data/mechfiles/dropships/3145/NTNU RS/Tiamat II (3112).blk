@@ -15,7 +15,7 @@ Dropship
 </UnitType>
 
 <Name>
-Tiamat Pocket Warship
+Tiamat II
 </Name>
 
 <Model>
@@ -23,7 +23,7 @@ Tiamat Pocket Warship
 </Model>
 
 <motion_type>
-Spheroid
+spheroid
 </motion_type>
 
 <type>

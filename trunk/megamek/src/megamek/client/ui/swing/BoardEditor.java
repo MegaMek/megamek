@@ -221,6 +221,10 @@ public class BoardEditor extends JComponent implements ItemListener,
             public void windowClosing(WindowEvent e) {
                 frame.setVisible(false);
                 setMapVisible(false);
+                if (controller != null) {
+                    controller.removeAllActions();
+                    controller.boardEditor = null;
+                }
             }
         });
     }

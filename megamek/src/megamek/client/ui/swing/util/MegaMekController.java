@@ -220,6 +220,11 @@ public class MegaMekController implements KeyEventDispatcher {
         keyRepeatTimer.scheduleAtFixedRate(tt, delay, period);
 	}
 	
+	/**
+	 * Stops the repeat timer task for the given KeyCommandBind.
+	 * 
+	 * @param kcb
+	 */
 	public void stopRepeating(KeyCommandBind kcb){
 		// If we're not repeating, there's nothing to cancel
 		if (!repeatingTasks.containsKey(kcb)){
@@ -227,6 +232,16 @@ public class MegaMekController implements KeyEventDispatcher {
 		}
 		repeatingTasks.get(kcb).cancel();
         repeatingTasks.remove(kcb);
+	}
+	
+	/**
+	 * Stop all repeat timers.
+	 */
+	public void stopAllRepeating() {
+	    for (KeyCommandBind kcb : repeatingTasks.keySet()) {
+	        repeatingTasks.get(kcb).cancel();
+	        repeatingTasks.remove(kcb);
+	    }	    
 	}
 
 }

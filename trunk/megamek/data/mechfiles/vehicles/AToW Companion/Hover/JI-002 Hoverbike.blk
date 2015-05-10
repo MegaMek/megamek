@@ -1,0 +1,95 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+JI-002 HoverBike
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3050
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Hover
+</motion_type>
+
+<cruiseMP>
+11
+</cruiseMP>
+
+<engine_type>
+11
+</engine_type>
+
+<armor>
+1
+1
+1
+1
+</armor>
+
+<barrating>
+8
+</barrating>
+
+<structural_tech_rating>
+5
+</structural_tech_rating>
+
+<Body Equipment>
+Armored Chassis
+BicycleChassisMod
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<transporters>
+cargobay:.020:1
+pillionseats:.025:1
+standardseats:.025:1
+</transporters>
+
+<source>
+AToW Companion
+</source>
+
+<tonnage>
+.5
+</tonnage>
+
+<range>
+1000
+</range>
+
+<history>
+These units have no weights in AToW.  The weights are estimates.  The units are considered unofficial until weights are given.
+</history>

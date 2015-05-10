@@ -55,7 +55,7 @@ public class InfantrySupportMagPulseHarpoonWeapon extends InfantryWeapon {
 /**
 Any vehicular unit (including battle armor, ProtoMechs, Combat Vehicles and BattleMechs)
 successfully struck by a shot from a MagPulse harpoon gun will suffer electronic interference
-sufficient enough to cause a –1 roll modifier for all Gunnery and Sensor Operations Skill Checks 
+sufficient enough to cause a -1 roll modifier for all Gunnery and Sensor Operations Skill Checks 
 by its pilot for 10 seconds (1 Total Warfare combat turn), in addition to any physical 
 damage the weapon delivers. These effects are notcumulative, and are not enhanced
 by multiple harpoon hits at the same time.

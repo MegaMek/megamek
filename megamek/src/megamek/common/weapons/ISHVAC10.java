@@ -48,6 +48,7 @@ public class ISHVAC10 extends HVACWeapon {
         medAV = 10;
         longAV = 10;
         maxRange = RANGE_LONG;
+        explosionDamage = 10;
         techRating = RATING_D;
         availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3060;

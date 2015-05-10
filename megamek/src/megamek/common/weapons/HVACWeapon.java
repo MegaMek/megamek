@@ -39,7 +39,6 @@ public abstract class HVACWeapon extends ACWeapon {
         super();
         techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         techLevel.put(3079, TechConstants.T_IS_ADVANCED);
-        explosionDamage = damage;
         ammoType = AmmoType.T_HYPER_VELOCITY;
         techRating = RATING_D;
     }

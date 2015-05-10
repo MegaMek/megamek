@@ -78,6 +78,7 @@ v0.41.4-dev (SVN)
     command gets stuck repeating
 + Bug: Opening board editor before playing a game could break key binds
 + Princess now evaluates (and executes) kicks.
++ Bug: HVAC explosions do no actual damage.
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

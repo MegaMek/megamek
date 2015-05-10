@@ -4069,6 +4069,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         || !en.getOwner().isEnemyOf(localPlayer)
                         || en.hasSeenEntity(localPlayer)) {
                     addMovingUnit(en, mp);
+                } else {
+                    // Redraw entity, so sensor return is in the right location
+                    redrawEntity(en, e.getOldEntity());
                 }
             } else {
                 redrawEntity(en, e.getOldEntity());

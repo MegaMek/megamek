@@ -762,9 +762,25 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createCLATM12Ammo());
         EquipmentType.addType(AmmoType.createCLATM12ERAmmo());
         EquipmentType.addType(AmmoType.createCLATM12HEAmmo());
+        EquipmentType.addType(AmmoType.createCLStreakLRM1Ammo());
+        EquipmentType.addType(AmmoType.createCLStreakLRM2Ammo());
+        EquipmentType.addType(AmmoType.createCLStreakLRM3Ammo());
+        EquipmentType.addType(AmmoType.createCLStreakLRM4Ammo());
         EquipmentType.addType(AmmoType.createCLStreakLRM5Ammo());
+        EquipmentType.addType(AmmoType.createCLStreakLRM6Ammo());
+        EquipmentType.addType(AmmoType.createCLStreakLRM7Ammo());
+        EquipmentType.addType(AmmoType.createCLStreakLRM8Ammo());
+        EquipmentType.addType(AmmoType.createCLStreakLRM9Ammo());
         EquipmentType.addType(AmmoType.createCLStreakLRM10Ammo());
+        EquipmentType.addType(AmmoType.createCLStreakLRM11Ammo());
+        EquipmentType.addType(AmmoType.createCLStreakLRM12Ammo());
+        EquipmentType.addType(AmmoType.createCLStreakLRM13Ammo());
+        EquipmentType.addType(AmmoType.createCLStreakLRM14Ammo());
         EquipmentType.addType(AmmoType.createCLStreakLRM15Ammo());
+        EquipmentType.addType(AmmoType.createCLStreakLRM16Ammo());
+        EquipmentType.addType(AmmoType.createCLStreakLRM17Ammo());
+        EquipmentType.addType(AmmoType.createCLStreakLRM18Ammo());
+        EquipmentType.addType(AmmoType.createCLStreakLRM19Ammo());
         EquipmentType.addType(AmmoType.createCLStreakLRM20Ammo());
         EquipmentType.addType(AmmoType.createCLSRT1Ammo());
         EquipmentType.addType(AmmoType.createCLSRT2Ammo());
@@ -6904,6 +6920,106 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
+    
+    private static AmmoType createCLStreakLRM1Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "Streak LRM 1 Ammo";
+        ammo.shortName = "Streak LRM 1";
+        ammo.setInternalName("Clan Streak LRM 1 Ammo");
+        ammo.addLookupName("CLStreakLRM1 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.shots = 1;
+		ammo.kgPerShot = 20;
+        ammo.bv = 0;
+        ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.techRating = RATING_F;
+
+        return ammo;
+    }
+	
+	    private static AmmoType createCLStreakLRM2Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "Streak LRM 2 Ammo";
+        ammo.shortName = "Streak LRM 2";
+        ammo.setInternalName("Clan Streak LRM 2 Ammo");
+        ammo.addLookupName("CLStreakLRM2 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.shots = 1;
+		ammo.kgPerShot = 20;
+        ammo.bv = 0;
+        ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.techRating = RATING_F;
+
+        return ammo;
+    }
+	
+	    private static AmmoType createCLStreakLRM3Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "Streak LRM 3 Ammo";
+        ammo.shortName = "Streak LRM 3";
+        ammo.setInternalName("Clan Streak LRM 3 Ammo");
+        ammo.addLookupName("CLStreakLRM3 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.shots = 1;
+		ammo.kgPerShot = 20;
+        ammo.bv = 0;
+        ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.techRating = RATING_F;
+
+        return ammo;
+    }
+	
+	    private static AmmoType createCLStreakLRM4Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "Streak LRM 4 Ammo";
+        ammo.shortName = "Streak LRM 4";
+        ammo.setInternalName("Clan Streak LRM 4 Ammo");
+        ammo.addLookupName("CLStreakLRM4 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.shots = 1;
+		ammo.kgPerShot = 20;
+        ammo.bv = 0;
+        ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.techRating = RATING_F;
+
+        return ammo;
+    }
 
 
     private static AmmoType createCLStreakLRM5Ammo() {
@@ -6920,6 +7036,106 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.shots = 24;
         ammo.bv = 11;
+        ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.techRating = RATING_F;
+
+        return ammo;
+    }
+    
+    private static AmmoType createCLStreakLRM6Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "Streak LRM 6 Ammo";
+        ammo.shortName = "Streak LRM 6";
+        ammo.setInternalName("Clan Streak LRM 6 Ammo");
+        ammo.addLookupName("CLStreakLRM6 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.shots = 1;
+		ammo.kgPerShot = 20;
+        ammo.bv = 0;
+        ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.techRating = RATING_F;
+
+        return ammo;
+    }
+	
+	    private static AmmoType createCLStreakLRM7Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "Streak LRM 7 Ammo";
+        ammo.shortName = "Streak LRM 7";
+        ammo.setInternalName("Clan Streak LRM 7 Ammo");
+        ammo.addLookupName("CLStreakLRM7 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 7;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.shots = 1;
+		ammo.kgPerShot = 20;
+        ammo.bv = 0;
+        ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.techRating = RATING_F;
+
+        return ammo;
+    }
+	
+	    private static AmmoType createCLStreakLRM8Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "Streak LRM 8 Ammo";
+        ammo.shortName = "Streak LRM 8";
+        ammo.setInternalName("Clan Streak LRM 8 Ammo");
+        ammo.addLookupName("CLStreakLRM8 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 8;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.shots = 1;
+		ammo.kgPerShot = 20;
+        ammo.bv = 0;
+        ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.techRating = RATING_F;
+
+        return ammo;
+    }
+	
+	    private static AmmoType createCLStreakLRM9Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "Streak LRM 9 Ammo";
+        ammo.shortName = "Streak LRM 9";
+        ammo.setInternalName("Clan Streak LRM 9 Ammo");
+        ammo.addLookupName("CLStreakLRM9 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 9;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.shots = 1;
+		ammo.kgPerShot = 20;
+        ammo.bv = 0;
         ammo.cost = 60000;
         ammo.introDate = 3057;
         ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
@@ -6953,6 +7169,106 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
+    
+    private static AmmoType createCLStreakLRM11Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "Streak LRM 11 Ammo";
+        ammo.shortName = "Streak LRM 11";
+        ammo.setInternalName("Clan Streak LRM 11 Ammo");
+        ammo.addLookupName("CLStreakLRM11 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 11;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.shots = 1;
+		ammo.kgPerShot = 20;
+        ammo.bv = 0;
+        ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.techRating = RATING_F;
+
+        return ammo;
+    }
+	
+	    private static AmmoType createCLStreakLRM12Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "Streak LRM 12 Ammo";
+        ammo.shortName = "Streak LRM 12";
+        ammo.setInternalName("Clan Streak LRM 12 Ammo");
+        ammo.addLookupName("CLStreakLRM12 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 12;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.shots = 1;
+		ammo.kgPerShot = 20;
+        ammo.bv = 0;
+        ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.techRating = RATING_F;
+
+        return ammo;
+    }
+	
+	    private static AmmoType createCLStreakLRM13Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "Streak LRM 13 Ammo";
+        ammo.shortName = "Streak LRM 13";
+        ammo.setInternalName("Clan Streak LRM 13 Ammo");
+        ammo.addLookupName("CLStreakLRM13 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 13;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.shots = 1;
+		ammo.kgPerShot = 20;
+        ammo.bv = 0;
+        ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.techRating = RATING_F;
+
+        return ammo;
+    }
+	
+	    private static AmmoType createCLStreakLRM14Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "Streak LRM 14 Ammo";
+        ammo.shortName = "Streak LRM 14";
+        ammo.setInternalName("Clan Streak LRM 14 Ammo");
+        ammo.addLookupName("CLStreakLRM14 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 14;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.shots = 1;
+		ammo.kgPerShot = 20;
+        ammo.bv = 0;
+        ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.techRating = RATING_F;
+
+        return ammo;
+    }
 
     private static AmmoType createCLStreakLRM15Ammo() {
         AmmoType ammo = new AmmoType();
@@ -6968,6 +7284,106 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM_STREAK;
         ammo.shots = 8;
         ammo.bv = 32;
+        ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.techRating = RATING_F;
+
+        return ammo;
+    }
+    
+    private static AmmoType createCLStreakLRM16Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "Streak LRM 16 Ammo";
+        ammo.shortName = "Streak LRM 16";
+        ammo.setInternalName("Clan Streak LRM 16 Ammo");
+        ammo.addLookupName("CLStreakLRM16 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 16;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.shots = 1;
+		ammo.kgPerShot = 20;
+        ammo.bv = 0;
+        ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.techRating = RATING_F;
+
+        return ammo;
+    }
+	
+	    private static AmmoType createCLStreakLRM17Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "Streak LRM 17 Ammo";
+        ammo.shortName = "Streak LRM 17";
+        ammo.setInternalName("Clan Streak LRM 17 Ammo");
+        ammo.addLookupName("CLStreakLRM17 mmo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 17;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.shots = 1;
+		ammo.kgPerShot = 20;
+        ammo.bv = 0;
+        ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.techRating = RATING_F;
+
+        return ammo;
+    }
+	
+	    private static AmmoType createCLStreakLRM18Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "Streak LRM 18 Ammo";
+        ammo.shortName = "Streak LRM 18";
+        ammo.setInternalName("Clan Streak LRM 18 Ammo");
+        ammo.addLookupName("CLStreakLRM18 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 18;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.shots = 1;
+		ammo.kgPerShot = 20;
+        ammo.bv = 0;
+        ammo.cost = 60000;
+        ammo.introDate = 3057;
+        ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F};
+        ammo.techRating = RATING_F;
+
+        return ammo;
+    }
+	
+	    private static AmmoType createCLStreakLRM19Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.name = "Streak LRM 19 Ammo";
+        ammo.shortName = "Streak LRM 19";
+        ammo.setInternalName("Clan Streak LRM 19 Ammo");
+        ammo.addLookupName("CLStreakLRM19 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 19;
+        ammo.ammoType = AmmoType.T_LRM_STREAK;
+		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.shots = 1;
+		ammo.kgPerShot = 20;
+        ammo.bv = 0;
         ammo.cost = 60000;
         ammo.introDate = 3057;
         ammo.techLevel.put(3079, TechConstants.T_CLAN_TW);

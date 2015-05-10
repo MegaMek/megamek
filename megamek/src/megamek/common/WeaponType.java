@@ -749,13 +749,46 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLLRM10OS());
         EquipmentType.addType(new CLLRM15OS());
         EquipmentType.addType(new CLLRM20OS());
+        
+        EquipmentType.addType(new CLStreakLRM1());
+        EquipmentType.addType(new CLStreakLRM2());
+        EquipmentType.addType(new CLStreakLRM3());
+        EquipmentType.addType(new CLStreakLRM4());
         EquipmentType.addType(new CLStreakLRM5());
+        EquipmentType.addType(new CLStreakLRM6());
+        EquipmentType.addType(new CLStreakLRM7());
+        EquipmentType.addType(new CLStreakLRM8());
+        EquipmentType.addType(new CLStreakLRM9());
         EquipmentType.addType(new CLStreakLRM10());
+        EquipmentType.addType(new CLStreakLRM11());
+        EquipmentType.addType(new CLStreakLRM12());
+        EquipmentType.addType(new CLStreakLRM13());
+        EquipmentType.addType(new CLStreakLRM14());
         EquipmentType.addType(new CLStreakLRM15());
+        EquipmentType.addType(new CLStreakLRM16());
+        EquipmentType.addType(new CLStreakLRM17());
+        EquipmentType.addType(new CLStreakLRM18());
+        EquipmentType.addType(new CLStreakLRM19());
         EquipmentType.addType(new CLStreakLRM20());
+        EquipmentType.addType(new CLStreakLRM1OS());
+        EquipmentType.addType(new CLStreakLRM2OS());
+        EquipmentType.addType(new CLStreakLRM3OS());
+        EquipmentType.addType(new CLStreakLRM4OS());
         EquipmentType.addType(new CLStreakLRM5OS());
+        EquipmentType.addType(new CLStreakLRM6OS());
+        EquipmentType.addType(new CLStreakLRM7OS());
+        EquipmentType.addType(new CLStreakLRM8OS());
+        EquipmentType.addType(new CLStreakLRM9OS());
         EquipmentType.addType(new CLStreakLRM10OS());
+        EquipmentType.addType(new CLStreakLRM11OS());
+        EquipmentType.addType(new CLStreakLRM12OS());
+        EquipmentType.addType(new CLStreakLRM13OS());
+        EquipmentType.addType(new CLStreakLRM14OS());
         EquipmentType.addType(new CLStreakLRM15OS());
+        EquipmentType.addType(new CLStreakLRM16OS());
+        EquipmentType.addType(new CLStreakLRM17OS());
+        EquipmentType.addType(new CLStreakLRM18OS());
+        EquipmentType.addType(new CLStreakLRM19OS());
         EquipmentType.addType(new CLStreakLRM20OS());
         EquipmentType.addType(new ISExtendedLRM5());
         EquipmentType.addType(new ISExtendedLRM10());
@@ -1002,6 +1035,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySupportLightSRMInfernoWeapon());
         EquipmentType.addType(new InfantrySupportPortableFlamerWeapon());
         EquipmentType.addType(new InfantryTWFlamerWeapon());
+        
         // Infantry Archaic Weapons
         EquipmentType.addType(new InfantryArchaicAxeWeapon());
         EquipmentType.addType(new InfantryArchaicBasicCrossbowWeapon());
@@ -1040,8 +1074,17 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryArchaicVibroSwordWeapon());
         EquipmentType.addType(new InfantryArchaicWakizashiWeapon());
         EquipmentType.addType(new InfantryArchaicWhipWeapon());
+        EquipmentType.addType(new InfantryArchaicYumiBowWeapon());
+        EquipmentType.addType(new InfantryArchaicPrimitiveBowWeapon());
+        EquipmentType.addType(new InfantryArchaicBladeArchaicSwordWeapon());
+        EquipmentType.addType(new InfantryArchaicBladeZweihanderSwordWeapon());
+        EquipmentType.addType(new InfantryArchaicBladeJoustingLanceWeapon());
+        EquipmentType.addType(new InfantryArchaicWhipWeapon());
+        EquipmentType.addType(new InfantryArchaicShockStaffWeapon());
+        
         // Infantry Pistols
         EquipmentType.addType(new InfantryPistolAutoPistolWeapon());
+        EquipmentType.addType(new InfantryPistolAutoPistolNissanWeapon());
         EquipmentType.addType(new InfantryPistolBlazerPistolWeapon());
         EquipmentType.addType(new InfantryPistolClanERLaserPistolWeapon());
         EquipmentType.addType(new InfantryPistolClanGaussPistolWeapon());
@@ -1083,6 +1126,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryPistolTKEnforcerAutoPistolWeapon());
         EquipmentType.addType(new InfantryPistolTranqGunWeapon());
         EquipmentType.addType(new InfantryPistolWhiteDwarfLaserPistolWeapon());
+        EquipmentType.addType(new InfantryPistoMachinePistolSPEC7AWeapon());
+    	EquipmentType.addType(new InfantryPistolVintageWeapon());
 
         // Infantry Rifles
         EquipmentType.addType(new InfantryRifleAutoRifleWeapon());
@@ -1125,6 +1170,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryRifleThunderstrokeWeapon());
         EquipmentType.addType(new InfantryRifleTKAssaultWeapon());
         EquipmentType.addType(new InfantryRifleZeusHeavyWeapon());
+		EquipmentType.addType(new InfantryRifleVintageWeapon());		
+		EquipmentType.addType(new InfantryRifleVSPLaserWeapon());
+        
         // Infantry Shotguns
         EquipmentType.addType(new InfantryShotgunAutomaticWeapon());
         EquipmentType.addType(new InfantryShotgunAvengerCCWWeapon());
@@ -1135,7 +1183,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryShotgunPumpActionWeapon());
         EquipmentType.addType(new InfantryShotgunSawnoffDoubleBarrelWeapon());
         EquipmentType.addType(new InfantryShotgunSawnoffPumpActionWeapon());
-        // Infantry Support Weapons
+        EquipmentType.addType(new InfantryShotgunWakazashiWeapon());      
+      
+         // Infantry Support Weapons
         EquipmentType.addType(new InfantrySupportPortableMGWeapon());
         EquipmentType.addType(new InfantrySupportMk1LightAAWeapon());
         EquipmentType.addType(new InfantrySupportMk2PortableAAWeapon());
@@ -1168,7 +1218,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySupportPortablePPCWeapon());
         EquipmentType.addType(new InfantrySupportHeavyPPCWeapon());
         EquipmentType.addType(new InfantrySupportPortablePlasmaWeapon());
-
         EquipmentType.addType(new InfantrySupportDragonsbaneDisposablePulseLaserWeapon());
         EquipmentType.addType(new InfantrySupportHeavyRecoillessRifleWeapon());
         EquipmentType.addType(new InfantrySupportHeavyRecoillessRifleInfernoWeapon());
@@ -1196,12 +1245,21 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySupportHeavyPulseLaserWeapon());
         EquipmentType.addType(new InfantrySupportClanSemiPortablePulseLaserWeapon());
         EquipmentType.addType(new InfantrySupportUltraHeavyLaserWeapon());
+        EquipmentType.addType(new InfantrySupportVintageMGWeapon());
+        EquipmentType.addType(new InfantrySupportVintageMiniGunWeapon());
+        EquipmentType.addType(new InfantrySupportVintageGatlingGunWeapon());
+        EquipmentType.addType(new InfantrySupportWireGuidedMissileWeapon());
+        EquipmentType.addType(new InfantrySupportGungnirHeavyGaussWeapon());
+        EquipmentType.addType(new InfantrySupportMagPulseHarpoonWeapon());
+        EquipmentType.addType(new InfantrySupportSnubNoseSupportPPCWeapon());
+        
         // Infantry Grenade Weapons
         EquipmentType.addType(new InfantryGrenadeInfernoWeapon());
         EquipmentType.addType(new InfantryGrenadeMicroWeapon());
         EquipmentType.addType(new InfantryGrenadeMiniInfernoWeapon());
         EquipmentType.addType(new InfantryGrenadeRAGWeapon());
         EquipmentType.addType(new InfantryGrenadeStandardWeapon());
+        
         // Infantry SMG Weapons
         EquipmentType.addType(new InfantrySMGClanGaussWeapon());
         EquipmentType.addType(new InfantrySMGGuntherMP20Weapon());
@@ -1210,6 +1268,20 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySMGRorynexRM3XXIWeapon());
         EquipmentType.addType(new InfantrySMGRuganWeapon());
         EquipmentType.addType(new InfantrySMGWeapon());
+        
+        // Prosthetic Weapon from ATOW Companion
+        EquipmentType.addType(new InfantryProstheticLaserWeapon());
+        EquipmentType.addType(new InfantryProstheticBallisticWeapon());
+        EquipmentType.addType(new InfantryProstheticDartgunWeapon());
+        EquipmentType.addType(new InfantryProstheticNeedlerWeapon());
+        EquipmentType.addType(new InfantryProstheticShotgunWeapon());
+        EquipmentType.addType(new InfantryProstheticSonicStunnerWeapon());
+        EquipmentType.addType(new InfantryProstheticSMGWeapon());
+        EquipmentType.addType(new InfantryProstheticBladeWeapon());
+        EquipmentType.addType(new InfantryProstheticNeedleWeapon());
+        EquipmentType.addType(new InfantryProstheticShockerWeapon());
+        EquipmentType.addType(new InfantryProstheticVibroBladeWeapon());
+        EquipmentType.addType(new InfantryProstheticClimbingClawsWeapon());	
 
         EquipmentType.addType(new ISFireExtinguisher());
         EquipmentType.addType(new CLFireExtinguisher());

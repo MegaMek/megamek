@@ -41,7 +41,6 @@ Submarine
 </motion_type>
 
 <transporters>
-SubmersibleChassisMod
 troopspace:1.5
 steeragequarters:10:2
 lightvehiclebay:1:1
@@ -72,6 +71,7 @@ cargobay:3:1
 </structural_tech_rating>
 
 <Body Equipment>
+SubmersibleChassisMod
 Lifeboat (Maritime)
 Lifeboat (Maritime)
 Lifeboat (Maritime)

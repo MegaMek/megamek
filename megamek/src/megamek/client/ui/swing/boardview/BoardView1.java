@@ -90,6 +90,7 @@ import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
+import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.MegamekBorder;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
@@ -1007,6 +1008,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if ((en_Deployer != null) && !useIsometric()) {
             drawDeployment(g);
         }
+        
+        if (game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
+            drawAllDeployment(g);
+        }
 
         // draw Flare Sprites
         drawSprites(g, flareSprites);
@@ -1247,6 +1252,41 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 Coords c = new Coords(j + drawX, i + drawY);
                 if (board.isLegalDeployment(c, en_Deployer.getStartingPos())) {
                     drawHexBorder(getHexLocation(c), g, Color.yellow);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Draw indicators for the deployment zones of all players
+     */
+    private void drawAllDeployment(Graphics g) {
+        Rectangle view = g.getClipBounds();
+        // only update visible hexes
+        int drawX = (view.x / (int) (HEX_WC * scale)) - 1;
+        int drawY = (view.y / (int) (HEX_H * scale)) - 1;
+
+        int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
+        int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
+
+        IBoard board = game.getBoard();
+        // loop through the hexes
+        for (int i = 0; i < drawHeight; i++) {
+            for (int j = 0; j < drawWidth; j++) {
+                Coords c = new Coords(j + drawX, i + drawY);
+                Enumeration<IPlayer> allP = game.getPlayers();
+                IPlayer cp;
+                int pCount = 0;
+                int bThickness = 1 + 6 / game.getNoOfPlayers();
+                // loop through all players
+                while (allP.hasMoreElements()) {
+                    cp = allP.nextElement();
+                    if (board.isLegalDeployment(c, cp.getStartingPos())) {
+                        Color bC = new Color(PlayerColors.getColorRGB(cp.getColorIndex()));
+                        drawHexBorder(getHexLocation(c), g, bC, bThickness
+                                * pCount, bThickness);
+                        pCount++;
+                    }
                 }
             }
         }
@@ -4515,6 +4555,33 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
 
         }
+        
+        // Show the player(s) that may deploy here 
+        // in the artillery autohit designation phase
+        if (game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
+            Enumeration<IPlayer> allP = game.getPlayers();
+            IPlayer cp;
+            boolean foundPlayer = false;
+            // loop through all players
+            while (allP.hasMoreElements())
+            {
+                cp = allP.nextElement();
+                if (game.getBoard().isLegalDeployment(mcoords, cp.getStartingPos())) {
+                    if (!foundPlayer) {
+                        foundPlayer = true;
+                        txt.append("<TABLE BORDER=0 width=100%><TR><TD>");
+                        txt.append("Deployment Hex for Players:<BR>");
+                    }
+                    txt.append("<B><FONT COLOR=#");
+                    txt.append(Integer.toHexString(PlayerColors.getColorRGB(cp.getColorIndex())));
+                    txt.append(">&nbsp;&nbsp;");
+                    txt.append(cp.getName());
+                    txt.append("</FONT></B><BR>");
+                }
+            }
+            if (foundPlayer) txt.append("</TD></TR></TABLE>");
+        }
+        
 
         // check if it's on any flares
         for (FlareSprite fSprite : flareSprites) {

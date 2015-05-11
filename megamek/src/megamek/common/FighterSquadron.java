@@ -968,4 +968,24 @@ public class FighterSquadron extends Aero {
         return getFighter(0).getEngine();
     }
     
+    /**
+     * Get the movement mode of the entity, based on consensus.
+     */
+    public EntityMovementMode getMovementMode() {
+        if (fighters.size() < 1) {
+            return EntityMovementMode.NONE;
+        }
+        EntityMovementMode moveMode = game.getEntity(fighters.get(0))
+                .getMovementMode();
+        for (Integer fId : fighters) {
+            Entity fighter = game.getEntity(fId);
+            if (moveMode != fighter.getMovementMode()) {
+                System.out.println("Error: Fighter squadron movement mode "
+                        + "doesn't agree!");
+                return EntityMovementMode.NONE;
+            }
+        }
+        return moveMode;
+    }
+    
 }

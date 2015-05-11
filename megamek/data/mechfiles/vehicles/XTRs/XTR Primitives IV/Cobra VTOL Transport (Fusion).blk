@@ -9,7 +9,7 @@ MAM0
 </Version>
 
 <UnitType>
-VTOL
+SupportVTOL
 </UnitType>
 
 <Name>
@@ -53,7 +53,7 @@ troopspace:9.5
 </armor>
 
 <barrating>
-5
+6
 </barrating>
 
 <structural_tech_rating>

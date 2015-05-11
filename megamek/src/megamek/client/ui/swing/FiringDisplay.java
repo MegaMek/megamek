@@ -2549,6 +2549,25 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         Targetable choice = null;
         Iterator<Entity> choices;
 
+        int wn = clientgui.mechD.wPan.getSelectedWeaponNum();
+        Mounted weap = ce().getEquipment(wn);
+        if ((weap.getLinked() != null) 
+                && (weap.getLinked().getType() instanceof AmmoType)) {
+            AmmoType aType = (AmmoType)weap.getLinked().getType();
+            // Mek mortar flares should default to deliver flare
+            if ((aType.getAmmoType() == AmmoType.T_MEK_MORTAR) 
+                    && (aType.getMunitionType() == AmmoType.M_FLARE)) {
+                return new HexTarget(pos, game.getBoard(),
+                        Targetable.TYPE_FLARE_DELIVER);
+            // Certain mek mortar types should target hexes
+            } else if ((aType.getAmmoType() == AmmoType.T_MEK_MORTAR) 
+                && ((aType.getMunitionType() == AmmoType.M_AIRBURST)
+                        || (aType.getMunitionType() == AmmoType.M_ANTI_PERSONNEL)
+                        || (aType.getMunitionType() == AmmoType.M_SMOKE_WARHEAD))) {
+                    return new HexTarget(pos, game.getBoard(),
+                            Targetable.TYPE_HEX_CLEAR);
+                }
+        }
         // Get the available choices, depending on friendly fire
         if (friendlyFire) {
             choices = game.getEntities(pos);

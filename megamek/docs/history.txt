@@ -89,6 +89,7 @@ v0.41.4-dev (SVN)
     clicked for certain weapon/ammo combos (ie, certain mek mortars only target
     hexes, so they should target Hex: Clear regardless of a hex's occupants)
 + Fixed some ammo type flag entries that were wrong
++ Bug [#4446]: Aerospace squadrons can't change altitude in atmosphere
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

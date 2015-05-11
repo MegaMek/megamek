@@ -2457,20 +2457,21 @@ public class Server implements Runnable {
         if (!game.hasMoreTurns()) {
             return false;
         }
-        for (Iterator<Entity> e = game.getEntities(); e.hasNext(); ) {
+        for (Iterator<Entity> e = game.getEntities(); e.hasNext();) {
             Entity entity = e.next();
             for (Mounted m : entity.getAmmo()) {
                 AmmoType atype = (AmmoType) m.getType();
                 if (((atype.getAmmoType() == AmmoType.T_LRM)
-                     || (atype.getAmmoType() == AmmoType.T_MML) || (atype
-                                                                            .getAmmoType() == AmmoType.T_NLRM))
-                    && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)) {
+                        || (atype.getAmmoType() == AmmoType.T_MML) 
+                        || (atype.getAmmoType() == AmmoType.T_NLRM)
+                        || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
+                        && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)) {
                     return true;
                 }
                 if (((atype.getAmmoType() == AmmoType.T_ARROW_IV)
-                     || (atype.getAmmoType() == AmmoType.T_LONG_TOM) || (atype
-                                                                                 .getAmmoType() == AmmoType.T_SNIPER))
-                    && (atype.getMunitionType() == AmmoType.M_HOMING)) {
+                        || (atype.getAmmoType() == AmmoType.T_LONG_TOM) || (atype
+                        .getAmmoType() == AmmoType.T_SNIPER))
+                        && (atype.getMunitionType() == AmmoType.M_HOMING)) {
                     return true;
                 }
             }
@@ -9159,6 +9160,11 @@ public class Server implements Runnable {
         Flare flare = new Flare(coords, 5, radius, Flare.F_DRIFTING);
         game.addFlare(flare);
     }
+    
+    public void deliverMortarFlare(Coords coords, int duration) {
+        Flare flare = new Flare(coords, duration, 1, Flare.F_IGNITED);
+        game.addFlare(flare);
+    }
 
     /**
      * deliver missile smoke
@@ -9181,6 +9187,16 @@ public class Server implements Runnable {
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_LIGHT, 3);
+        sendChangedHex(coords);
+    }
+    
+    public void deliverSmokeMortar(Coords coords, Vector<Report> vPhaseReport,
+            int duration) {
+        Report r = new Report(5185, Report.PUBLIC);
+        r.indent(2);
+        r.add(coords.getBoardNum());
+        vPhaseReport.add(r);
+        createSmoke(coords, SmokeCloud.SMOKE_HEAVY, duration);
         sendChangedHex(coords);
     }
 
@@ -25206,10 +25222,9 @@ public class Server implements Runnable {
                 }
                 // coolant pods and flamer coolant ammo don't explode from heat
                 if ((atype.getAmmoType() == AmmoType.T_COOLANT_POD)
-                    || (((atype.getAmmoType() == AmmoType.T_VEHICLE_FLAMER) || (atype
-                                                                                        .getAmmoType() == AmmoType
-                                                                                        .T_HEAVY_FLAMER)) && (atype
-                                                                                                                      .getMunitionType() == AmmoType.M_COOLANT))) {
+                        || (((atype.getAmmoType() == AmmoType.T_VEHICLE_FLAMER) 
+                                || (atype.getAmmoType() == AmmoType.T_HEAVY_FLAMER)) 
+                                && (atype.getMunitionType() == AmmoType.M_COOLANT))) {
                     continue;
                 }
                 // ignore empty, destroyed, or missing bins
@@ -31649,10 +31664,6 @@ public class Server implements Runnable {
             Entity killer, Entity exclude, boolean flak, int altitude,
             Vector<Report> vPhaseReport, boolean asfFlak,
             Vector<Integer> alreadyHit, boolean variableDamage) {
-
-        // TODO: pass in a vector of unit ids that give units already hit and
-        // then pass it out
-        // an updated one. Don't apply damage to a unit if it is already hit.
 
         IHex hex = game.getBoard().getHex(coords);
         if (hex == null) {

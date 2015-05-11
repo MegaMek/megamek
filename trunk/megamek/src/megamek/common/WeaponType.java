@@ -133,6 +133,8 @@ public class WeaponType extends EquipmentType {
 
     public static final BigInteger F_CWS = BigInteger.valueOf(1).shiftLeft(59);
     
+    public static final BigInteger F_MEK_MORTAR = BigInteger.valueOf(1).shiftLeft(60);
+    
     // add maximum range for AT2
     public static final int RANGE_SHORT = RangeType.RANGE_SHORT;
     public static final int RANGE_MED = RangeType.RANGE_MEDIUM;

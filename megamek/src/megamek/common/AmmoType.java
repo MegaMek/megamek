@@ -291,7 +291,16 @@ public class AmmoType extends EquipmentType {
 
     // Number 57 is used for iATMs IMP ammo in the ATM section above.
     // and 58 for IIW
-
+    
+    // Mek mortar munitions
+    public static final long M_AIRBURST = 1l << 59;
+    public static final long M_ANTI_PERSONNEL = 1l << 60;
+    // The rest were already defined
+    // Flare
+    // Semi-guided
+    // Smoke
+    
+    
     /*
      * public static final String[] MUNITION_NAMES = { "Standard", "Cluster",
      * "Armor Piercing", "Flechette", "Incendiary", "Incendiary", "Precision",
@@ -1120,7 +1129,6 @@ public class AmmoType extends EquipmentType {
         base = AmmoType.createISAPMortar8Ammo();
         mortarAmmos.add(base);
 
-        // TODO add more Mek Mortar Ammo later.
         base = AmmoType.createCLAPMortar1Ammo();
         clanMortarAmmos.add(base);
         base = AmmoType.createCLAPMortar2Ammo();
@@ -1129,7 +1137,29 @@ public class AmmoType extends EquipmentType {
         clanMortarAmmos.add(base);
         base = AmmoType.createCLAPMortar8Ammo();
         clanMortarAmmos.add(base);
+        
+        // Create the munition types for IS Mek mortars
+        munitions.clear();
+        munitions.add(new MunitionMutator("Airburst", 1, M_AIRBURST, 2544, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Anti-personnel", 1, M_ANTI_PERSONNEL, 2531, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Flare", 1, M_FLARE, 2536, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Semi-Guided", 1, M_SEMIGUIDED, 3064, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD, 2531, TechConstants.T_IS_TW_NON_BOX));
+        
+        // Walk through both the base types and the
+        // mutators, and create munition types.
+        AmmoType.createMunitions(mortarAmmos, munitions);
+        
+     // Create the munition types for Clan Mek mortars
+        munitions.clear();
+        munitions.add(new MunitionMutator("Airburst", 1, M_AIRBURST, 2544, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Anti-personnel", 1, M_ANTI_PERSONNEL, 2531, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Flare", 1, M_FLARE, 2536, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD, 2531, TechConstants.T_CLAN_ADVANCED));
 
+        AmmoType.createMunitions(clanMortarAmmos, munitions);
+        
+        // Long range Torpedo
         base = AmmoType.createISLRT5Ammo();
         lrtAmmos.add(base);
         base = AmmoType.createISLRT10Ammo();
@@ -12049,6 +12079,7 @@ public class AmmoType extends EquipmentType {
          */
         public AmmoType createMunitionType(AmmoType base) {
             StringBuffer nameBuf;
+            StringBuffer internalName;
             int index;
 
             // Create an uninitialized munition object.
@@ -12159,13 +12190,34 @@ public class AmmoType extends EquipmentType {
 
                     munition.shortName = 
                             base.shortName.replace("Fragmentation", name);
-                    StringBuffer internalName = new StringBuffer(
-                            base.getInternalName());
+                    internalName = new StringBuffer(base.getInternalName());
                     munition.setInternalName(internalName.insert(
                             internalName.lastIndexOf("Ammo"), name + " ")
                             .toString());
                     munition.addBeforeString(base, "Ammo", name + " ");
                     break;
+                case AmmoType.T_MEK_MORTAR:
+                    // Replace "Shaped Charge" with the submunition name
+                    munition.name = base.name.replace("Shaped Charge", name);
+                    munition.subMunitionBegin = base.subMunitionBegin;
+                    munition.subMunitionLength = name.length();                    
+                    String abr = "SC";
+                    if (type == AmmoType.M_AIRBURST) {
+                        abr = "AB";
+                    } else if (type == AmmoType.M_ANTI_PERSONNEL) { 
+                        abr = "AP";
+                    } else if (type == AmmoType.M_FLARE) {
+                        abr = "FL";
+                    } else if (type == AmmoType.M_SMOKE_WARHEAD) {
+                        abr = "SM";
+                    } else if (type == AmmoType.M_SEMIGUIDED) {
+                        abr = "SG";
+                    }
+                    munition.shortName = base.shortName.replace("SC", abr);
+                    internalName = new StringBuffer(base.getInternalName()
+                            .replace("SC", abr));                    
+                    munition.setInternalName(internalName.toString());
+                    break;                    
                 case AmmoType.T_LONG_TOM:
                 case AmmoType.T_SNIPER:
                 case AmmoType.T_THUMPER:
@@ -12440,8 +12492,13 @@ public class AmmoType extends EquipmentType {
     }
 
     public String getSubMunitionName() {
-        return shortName.substring(subMunitionBegin, subMunitionBegin
-                + subMunitionLength);
+        if (ammoType == T_MEK_MORTAR) {
+            return name.substring(subMunitionBegin, subMunitionBegin
+                    + subMunitionLength);
+        } else {
+            return shortName.substring(subMunitionBegin, subMunitionBegin
+                    + subMunitionLength);
+        }
     }
 
     /**

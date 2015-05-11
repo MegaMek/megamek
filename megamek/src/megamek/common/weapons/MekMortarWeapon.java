@@ -35,7 +35,8 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
         damage = DAMAGE_BY_CLUSTERTABLE;
         setModes(new String[] { "", "Indirect" });
         atClass = CLASS_NONE;
-        flags = flags.or(F_MECH_WEAPON).or(F_MISSILE).or(F_TANK_WEAPON);
+        flags = flags.or(F_MEK_MORTAR).or(F_MECH_WEAPON).or(F_MISSILE)
+                .or(F_TANK_WEAPON);
         infDamageClass = WEAPON_CLUSTER_MISSILE;
     }
 
@@ -50,6 +51,22 @@ public abstract class MekMortarWeapon extends AmmoWeapon {
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
+        
+        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
+                .getEquipment(waa.getWeaponId()).getLinked().getType();
+        if (atype.getMunitionType() == AmmoType.M_AIRBURST) {
+            return new MekMortarAirburstHandler(toHit, waa, game, server);
+        } else if (atype.getMunitionType() == AmmoType.M_ANTI_PERSONNEL) {
+            return new MekMortarAntiPersonnelHandler(toHit, waa, game, server);
+        } else if (atype.getMunitionType() == AmmoType.M_FLARE) {
+            return new MekMortarFlareHandler(toHit, waa, game, server);
+        } else if (atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
+            // Semi-guided works like shaped-charge, but can benefit from tag
+            return new MekMortarHandler(toHit, waa, game, server);
+        } else if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
+            return new MekMortarSmokeHandler(toHit, waa, game, server);
+        }
+        // If it doesn't match other types, it's the default armor-piercing
         return new MekMortarHandler(toHit, waa, game, server);
     }
 }

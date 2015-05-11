@@ -465,8 +465,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if ((spotter == null)
                     && (atype != null)
                     && ((atype.getAmmoType() == AmmoType.T_LRM)
-                            || (atype.getAmmoType() == AmmoType.T_MML) || (atype
-                            .getAmmoType() == AmmoType.T_NLRM))
+                            || (atype.getAmmoType() == AmmoType.T_MML) 
+                            || (atype.getAmmoType() == AmmoType.T_NLRM)
+                            || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
                     && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)) {
                 for (TagInfo ti : game.getTagInfo()) {
                     if (target.getTargetId() == ti.target.getTargetId()) {
@@ -1536,21 +1537,22 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // target movement
         if (te != null) {
             ToHitData thTemp = Compute.getTargetMovementModifier(game,
-                                                                 target.getTargetId());
+                    target.getTargetId());
             toHit.append(thTemp);
             toSubtract += thTemp.getValue();
 
             // semiguided ammo negates this modifier, if TAG succeeded
             if ((atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_LRM)
-                    || (atype.getAmmoType() == AmmoType.T_MML) || (atype
-                                                                           .getAmmoType() == AmmoType.T_NLRM))
+                    || (atype.getAmmoType() == AmmoType.T_MML)
+                    || (atype.getAmmoType() == AmmoType.T_NLRM)
+                    || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
                 && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
                 && (te.getTaggedBy() != -1)) {
                 int nAdjust = thTemp.getValue();
                 if (nAdjust > 0) {
                     toHit.append(new ToHitData(-nAdjust,
-                                               "Semi-guided ammo vs tagged target"));
+                            "Semi-guided ammo vs tagged target"));
                 }
             }
             // precision ammo reduces this modifier
@@ -1581,10 +1583,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             // semiguided ammo negates this modifier, if TAG succeeded
             if ((atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_LRM)
-                    || (atype.getAmmoType() == AmmoType.T_MML) || (atype
-                                                                           .getAmmoType() == AmmoType.T_NLRM))
-                && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)
-                    ) {
+                    || (atype.getAmmoType() == AmmoType.T_MML) 
+                    || (atype.getAmmoType() == AmmoType.T_NLRM)
+                    || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
+                    && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)) {
                 boolean targetTagged = false;
                 // If this is an entity, we can see if it's tagged
                 if (te != null) {
@@ -1598,15 +1600,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
 
                 if (targetTagged) {
-                    toHit.addModifier(-1, "semiguided ignores spotter " +
-                                          "movement & indirect fire penalties");
+                    toHit.addModifier(-1, "semiguided ignores spotter "
+                            + "movement & indirect fire penalties");
                 }
             } else if (!narcSpotter && (spotter != null)) {
                 toHit.append(Compute.getSpotterMovementModifier(game,
-                                                                spotter.getId()));
+                        spotter.getId()));
                 if (spotter.isAttackingThisTurn()) {
                     toHit.addModifier(1,
-                                      "spotter is making an attack this turn");
+                            "spotter is making an attack this turn");
                 }
             }
         }
@@ -1617,9 +1619,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // target terrain, not applicable when delivering minefields or bombs
         if (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
             toHit.append(Compute.getTargetTerrainModifier(game, target,
-                                                          eistatus, inSameBuilding, underWater));
+                    eistatus, inSameBuilding, underWater));
             toSubtract += Compute.getTargetTerrainModifier(game, target,
-                                                           eistatus, inSameBuilding, underWater).getValue();
+                    eistatus, inSameBuilding, underWater).getValue();
         }
 
         // target in water?
@@ -1690,9 +1692,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         toHit.append(Compute.getDamageWeaponMods(ae, weapon));
 
         // target immobile
-        if (!(wtype instanceof ArtilleryCannonWeapon)) {
+        boolean mekMortarMunitionsIgnoreImmobile = 
+                weapon.getType().hasFlag(WeaponType.F_MEK_MORTAR)
+                && (atype != null)
+                && ((atype.getMunitionType() == AmmoType.M_ANTI_PERSONNEL) 
+                        || (atype.getMunitionType() == AmmoType.M_AIRBURST));
+        if (!(wtype instanceof ArtilleryCannonWeapon) 
+                && !mekMortarMunitionsIgnoreImmobile) {
             ToHitData immobileMod = Compute.getImmobileMod(target, aimingAt,
-                                                           aimingMode);
+                    aimingMode);
             // grounded dropships are treated as immobile as well for purpose of
             // the mods
             if ((null != te) && !te.isAirborne() && !te.isSpaceborne()
@@ -2957,10 +2965,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return "Weapon can't deliver minefields";
         }
         if ((target.getTargetType() == Targetable.TYPE_FLARE_DELIVER)
-            && !(usesAmmo
-                 && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype
-                                                                         .getAmmoType() == AmmoType.T_MML)) && (atype
-                                                                                                                        .getMunitionType() == AmmoType.M_FLARE))) {
+                && !(usesAmmo
+                        && ((atype.getAmmoType() == AmmoType.T_LRM) 
+                                || (atype.getAmmoType() == AmmoType.T_MML)
+                                || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR)) 
+                                && (atype.getMunitionType() == AmmoType.M_FLARE))) {
             return "Weapon can't deliver flares";
         }
         if ((game.getPhase() == IGame.Phase.PHASE_TARGETING)
@@ -3690,8 +3699,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
             if ((spotter == null) && (atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_LRM)
-                    || (atype.getAmmoType() == AmmoType.T_MML) || (atype
-                                                                           .getAmmoType() == AmmoType.T_NLRM))
+                    || (atype.getAmmoType() == AmmoType.T_MML) 
+                    || (atype.getAmmoType() == AmmoType.T_NLRM)
+                    || (atype.getAmmoType() == AmmoType.T_MEK_MORTAR))
                 && (atype.getMunitionType() == AmmoType.M_SEMIGUIDED)) {
                 for (TagInfo ti : game.getTagInfo()) {
                     if (target.getTargetId() == ti.target.getTargetId()) {
@@ -4039,14 +4049,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // hull down cannot fire any leg weapons
         if (ae.isHullDown()) {
             if (((ae instanceof BipedMech) && ((weapon.getLocation() == Mech.LOC_LLEG) || (weapon
-                                                                                                   .getLocation() ==
-                                                                                           Mech.LOC_RLEG)))
-                || ((ae instanceof QuadMech) && ((weapon.getLocation() == Mech.LOC_LLEG)
-                                                 || (weapon.getLocation() == Mech.LOC_RLEG)
-                                                 || (weapon.getLocation() == Mech.LOC_LARM) || (weapon
-                                                                                                        .getLocation
-                                                                                                                () ==
-                                                                                                Mech.LOC_RARM)))) {
+                    .getLocation() == Mech.LOC_RLEG)))
+                    || ((ae instanceof QuadMech) && ((weapon.getLocation() == Mech.LOC_LLEG)
+                            || (weapon.getLocation() == Mech.LOC_RLEG)
+                            || (weapon.getLocation() == Mech.LOC_LARM) || (weapon
+                            .getLocation() == Mech.LOC_RARM)))) {
                 return "Leg weapons cannot be fired while hull down.";
             }
         }
@@ -4192,6 +4199,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (!ae.getPosition().translated(ae.getFacing(), distance).equals(
                     target.getPosition())) {
                 return "Mass Driver is not firing to front";
+            }
+        }
+        
+        // Some Mek mortar ammo types can only be aimed at a hex
+        if (weapon.getType().hasFlag(WeaponType.F_MEK_MORTAR) && (atype != null)
+                && ((atype.getMunitionType() == AmmoType.M_ANTI_PERSONNEL)
+                        || (atype.getMunitionType() == AmmoType.M_AIRBURST)
+                        || (atype.getMunitionType() == AmmoType.M_FLARE)
+                        || (atype.getMunitionType() == AmmoType.M_SMOKE))) {
+            if (!(target instanceof HexTarget)) {
+                return atype.getSubMunitionName()
+                        + " munitions must target a hex!";
             }
         }
 

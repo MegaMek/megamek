@@ -969,14 +969,25 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             int rackSize = atype.getRackSize();
             int damagePerShot = atype.getDamagePerShot();
 
+            long mType = atype.getMunitionType();
             // both Dead-Fire and Tandem-charge SRM's do 3 points of damage per
             // shot when critted
             // Dead-Fire LRM's do 2 points of damage per shot when critted.
-            if ((atype.getMunitionType() == AmmoType.M_DEAD_FIRE)
-                    || (atype.getMunitionType() == AmmoType.M_TANDEM_CHARGE)) {
+            if ((mType == AmmoType.M_DEAD_FIRE)
+                    || (mType == AmmoType.M_TANDEM_CHARGE)) {
                 damagePerShot++;
             } else if (atype.getAmmoType() == AmmoType.T_TASER) {
                 damagePerShot = 6;
+            }
+            
+            if (atype.getAmmoType() == AmmoType.T_MEK_MORTAR) {
+                if ((mType == AmmoType.M_AIRBURST) 
+                        || (mType == AmmoType.M_FLARE) 
+                        || (mType == AmmoType.M_SMOKE)) {
+                    damagePerShot = 1;
+                } else {
+                    damagePerShot = 2;
+                }
             }
 
             return damagePerShot * rackSize * shotsLeft;

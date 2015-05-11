@@ -277,12 +277,12 @@ public class AmmoType extends EquipmentType {
     // TODO: implement all of these except coolant
     // water should also be used for vehicle flamers
     // TO page 361-363
-    public static final long M_WATER = 11 << 48;
-    public static final long M_PAINT_OBSCURANT = 11 << 49;
-    public static final long M_OIL_SLICK = 11 << 50;
-    public static final long M_ANTI_FLAME_FOAM = 11 << 51;
-    public static final long M_CORROSIVE = 11 << 52;
-    public static final long M_COOLANT = 11 << 53;
+    public static final long M_WATER = 1l << 48;
+    public static final long M_PAINT_OBSCURANT = 1l << 49;
+    public static final long M_OIL_SLICK = 1l << 50;
+    public static final long M_ANTI_FLAME_FOAM = 1l << 51;
+    public static final long M_CORROSIVE = 1l << 52;
+    public static final long M_COOLANT = 1l << 53;
 
     // vehicular grenade launcher
     public static final long M_CHAFF = 1l << 54;

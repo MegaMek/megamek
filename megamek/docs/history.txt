@@ -84,6 +84,7 @@ v0.41.4-dev (SVN)
 + Feature [#1382]: Single-Tube Increments for Streak LRMs
 + Feature [#1383]: Add Infantry Equipment from HB:Kurita
 + Data: Unit Fixes
++ Feature [#1261]: Alternative ammunition types for Mech Mortars
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

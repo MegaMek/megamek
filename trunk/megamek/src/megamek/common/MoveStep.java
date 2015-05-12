@@ -2542,6 +2542,18 @@ public class MoveStep implements Serializable {
                 return;
             }
         }
+        
+        // Units carrying mechanized BA can't jump, VTOL, or WiGe
+        if (entity.getExternalUnits().size() > 0) {
+            if ((movementType == EntityMovementType.MOVE_JUMP)
+                    || (movementType == EntityMovementType.MOVE_VTOL_WALK)
+                    || (movementType == EntityMovementType.MOVE_VTOL_RUN)
+                    || ((entity.getMovementMode() == EntityMovementMode.WIGE)
+                        && (getElevation() != 0))) {
+                movementType = EntityMovementType.MOVE_ILLEGAL;
+                return;
+            }            
+        }
     }
 
     public int getTotalHeat() {

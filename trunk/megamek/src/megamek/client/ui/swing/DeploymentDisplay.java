@@ -532,7 +532,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     // VTOLs go to elevation 1... unless set in the Lounge.
                     // or if mechanized BA, since VTOL movement is then illegal
                     if ((ce().getElevation() < 1) 
-                            && (ce().getExternalUnits().size() < 0)) {
+                            && (ce().getExternalUnits().size() <= 0)) {
                         ce().setElevation(1);
                     }
                 } else {

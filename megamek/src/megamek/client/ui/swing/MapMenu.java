@@ -18,7 +18,10 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -51,10 +54,12 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import megamek.common.WeaponComparatorDamage;
 import megamek.common.WeaponType;
 import megamek.common.actions.BAVibroClawAttackAction;
 import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.GrappleAttackAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.CLFireExtinguisher;
 import megamek.common.weapons.ISFireExtinguisher;
 
@@ -793,41 +798,34 @@ public class MapMenu extends JPopupMenu {
             public void actionPerformed(ActionEvent e) {
                 try {
                     FiringDisplay panel = (FiringDisplay) currentPanel;
-                    int Weapons = myEntity.getWeaponList().size();
-                    // Energy Weapons
-                    for (int pos = 0; pos < Weapons; pos++) {
-                        int weaponNum = gui.mechD.wPan.getSelectedWeaponNum();
-                        Mounted mounted = myEntity.getEquipment(weaponNum);
-
-                        if (mounted.getType().hasFlag(WeaponType.F_ENERGY)
-                            && (mounted.usedInPhase() == IGame.Phase.PHASE_UNKNOWN)) {
-                            panel.fire();
-                        } else {
-                            panel.nextWeapon();
-                        }
+                    // Get all weapons
+                    ArrayList<Mounted> weapons = myEntity.getWeaponList();
+                    // We will need to map a Mounted to it's weapon number
+                    HashMap<Mounted, Integer> weapToId = 
+                            new HashMap<Mounted, Integer>();
+                    for (Mounted weapon : weapons) {
+                        weapToId.put(weapon, myEntity.getEquipmentNum(weapon));
                     }
-                    // Ballistic Weapons
-                    for (int pos = 0; pos < Weapons; pos++) {
-                        int weaponNum = gui.mechD.wPan.getSelectedWeaponNum();
-                        Mounted mounted = myEntity.getEquipment(weaponNum);
-
-                        if (mounted.getType().hasFlag(WeaponType.F_BALLISTIC)
-                            && (mounted.usedInPhase() == IGame.Phase.PHASE_UNKNOWN)) {
-                            panel.fire();
-                        } else {
-                            panel.nextWeapon();
+                    // Sort weapons from high damage to low
+                    Collections.sort(weapons, new WeaponComparatorDamage(false));
+                    
+                    Targetable target = panel.getTarget();
+                    for (Mounted weapon : weapons) {
+                        // If the weapon has been used at all this turn, ignore
+                        if (weapon.usedInPhase() != IGame.Phase.PHASE_UNKNOWN) {
+                            continue;
                         }
-                    }
-                    // Missile Weapons
-                    for (int pos = 0; pos < Weapons; pos++) {
-                        int weaponNum = gui.mechD.wPan.getSelectedWeaponNum();
-                        Mounted mounted = myEntity.getEquipment(weaponNum);
-
-                        if (mounted.getType().hasFlag(WeaponType.F_MISSILE)
-                                && mounted.usedInPhase() == IGame.Phase.PHASE_UNKNOWN) {
+                        int weaponNum = weapToId.get(weapon);
+                        // Used to determine if attack is valid
+                        WeaponAttackAction waa = new WeaponAttackAction(
+                                myEntity.getId(), target.getTargetType(),
+                                target.getTargetId(), weaponNum);
+                        // Only fire weapons that have a chance to hit
+                        int toHitVal = waa.toHit(game).getValue(); 
+                        if ((toHitVal != TargetRoll.IMPOSSIBLE)
+                                && (toHitVal <= 12)) {
+                            gui.mechD.wPan.selectWeapon(weaponNum);
                             panel.fire();
-                        } else {
-                            panel.nextWeapon();
                         }
                     }
                 } catch (Exception ex) {

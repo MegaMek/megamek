@@ -11660,7 +11660,7 @@ public class Server implements Runnable {
             // sky!
             entity.setAssaultDropInProgress(true);
         } else if ((entity instanceof VTOL) 
-                && (entity.getExternalUnits().size() < 0)) {
+                && (entity.getExternalUnits().size() <= 0)) {
             // We should let players pick, but this simplifies a lot.
             // Only do it for VTOLs, though; assume everything else is on the
             // ground.

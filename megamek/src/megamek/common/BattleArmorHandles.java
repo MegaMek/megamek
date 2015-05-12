@@ -311,7 +311,10 @@ import java.util.Vector;
 
     public final List<Entity> getExternalUnits() {
         ArrayList<Entity> rv = new ArrayList<Entity>(1);
-        rv.add(game.getEntity(troopers));
+        Entity e = game.getEntity(troopers);
+        if (e != null) {
+            rv.add(game.getEntity(troopers));
+        }
         return rv;
     }
 

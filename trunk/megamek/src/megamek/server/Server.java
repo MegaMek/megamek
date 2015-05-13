@@ -19807,6 +19807,9 @@ public class Server implements Runnable {
             case ACID:
                 if (isFerroFibrousTarget || reactiveArmor || reflectiveArmor
                     || ferroLamellorArmor || bar5) {
+                    if (te.getArmor(hit) <= 0) {
+                        break; // hitting IS, not acid-affected armor
+                    }
                     damage = te.getArmor(hit) >= 3 ? 3 : te.getArmor(hit);
                     r = new Report(6061);
                     r.subject = te_n;

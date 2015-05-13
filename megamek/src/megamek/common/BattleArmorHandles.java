@@ -38,7 +38,7 @@ import java.util.Vector;
     /**
      * The troopers being carried.
      */
-    protected int troopers = -1;
+    protected int troopers = Entity.NONE;
     transient IGame game;
 
     /**
@@ -131,7 +131,7 @@ import java.util.Vector;
         }
 
         // We must have enough space for the new troopers.
-        else if (-1 != troopers) {
+        else if (troopers != Entity.NONE) {
             result = false;
         }
 
@@ -175,7 +175,7 @@ import java.util.Vector;
     public final Vector<Entity> getLoadedUnits() {
         // Return a list of our carried troopers.
         Vector<Entity> units = new Vector<Entity>(1);
-        if (-1 != troopers) {
+        if (troopers != Entity.NONE) {
             units.addElement(game.getEntity(troopers));
         }
         return units;
@@ -198,7 +198,7 @@ import java.util.Vector;
         }
 
         // Remove the troopers.
-        troopers = -1;
+        troopers = Entity.NONE;
         return true;
     }
 
@@ -211,11 +211,11 @@ import java.util.Vector;
      * @see megamek.common.BattleArmorHandles#getUnusedString()
      */
     public final String getUnusedString() {
-        return getVacancyString(-1 != troopers);
+        return getVacancyString(troopers != Entity.NONE);
     }
 
     public double getUnused(){
-        if (troopers == -1){
+        if (troopers == Entity.NONE){
             return 1;
         } else {
             return 0;
@@ -223,7 +223,7 @@ import java.util.Vector;
     }
 
     public void resetTransporter() {
-    	troopers = -1;
+    	troopers = Entity.NONE;
     }
     
     /**
@@ -311,8 +311,7 @@ import java.util.Vector;
 
     public final List<Entity> getExternalUnits() {
         ArrayList<Entity> rv = new ArrayList<Entity>(1);
-        Entity e = game.getEntity(troopers);
-        if (e != null) {
+        if (troopers != Entity.NONE) {
             rv.add(game.getEntity(troopers));
         }
         return rv;

@@ -382,7 +382,8 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         IHex destHex = board.getHex(dest);
         int currElevation = mp.getFinalElevation();
         // Get elevation in destination hex, ignoring buildings
-        int destElevation = ent.elevationOccupied(destHex);
+        int destElevation = ent.elevationOccupied(destHex,
+                mp.getFinalElevation());
         // If there's a building, we could stand on it
         if (destHex.containsTerrain(Terrains.BLDG_ELEV)) {
             // Assume that we stay on same level if building is high enough

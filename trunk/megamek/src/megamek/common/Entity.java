@@ -2316,6 +2316,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * surface of the water
      */
     public int elevationOccupied(IHex hex) {
+        return elevationOccupied(hex, getElevation());
+    }
+     
+    public int elevationOccupied(IHex hex, int elevation) {
         if (hex == null) {
             return 0;
         }
@@ -2324,8 +2328,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return hex.surface() + elevation;
         } else if (((movementMode == EntityMovementMode.HOVER)
                     || (movementMode == EntityMovementMode.NAVAL)
-                    || (movementMode == EntityMovementMode.HYDROFOIL) || hex
-                .containsTerrain(Terrains.ICE))
+                    || (movementMode == EntityMovementMode.HYDROFOIL) 
+                    || hex.containsTerrain(Terrains.ICE))
                    && hex.containsTerrain(Terrains.WATER)) {
             return hex.surface();
         } else {

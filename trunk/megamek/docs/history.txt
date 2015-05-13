@@ -94,6 +94,7 @@ v0.41.4-dev (SVN)
 + Bug [#4496]: Right-click Alpha strike weapon selection is sub-optimal
 + Bug [#4593]: Revision 11839 (no jumping et al. carrying battle armor)
     inadvertantly broke the movement modes altogether.
++ Bug [#4540]: WiGEs cannot lift off and move in the same turn
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

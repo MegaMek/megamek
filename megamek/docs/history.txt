@@ -96,6 +96,7 @@ v0.41.4-dev (SVN)
     inadvertantly broke the movement modes altogether.
 + Bug [#4540]: WiGEs cannot lift off and move in the same turn
 + Patch [#482]: Acid (AX) SRM ammo should damage IS
++ Bug: Fluff Image heuristics for units with "/" always fail
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

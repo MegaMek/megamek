@@ -1969,9 +1969,11 @@ public class MoveStep implements Serializable {
             return;
         }
 
-        // WIGEs can take off on their first step
+        // WIGEs can take off on their first step...
         if (isFirstStep() && (type == MoveStepType.UP)
-                && (entity.getMovementMode() == EntityMovementMode.WIGE)) {
+                && (entity.getMovementMode() == EntityMovementMode.WIGE)
+                // ...provided they can pay the MP cost.
+                && (entity.getRunMP() >= 5)) {
             movementType = EntityMovementType.MOVE_WALK;
         }
         // WIGEs need to be able to land too..

@@ -407,10 +407,10 @@ public class MiscType extends EquipmentType {
     // Flag for BattleArmor Modular Equipment Adaptor
     public static final BigInteger F_BA_MEA = BigInteger.valueOf(1)
             .shiftLeft(186);
-    
+
     //Flag for Infantry Equipment
     public static final BigInteger F_INF_EQUIPMENT = BigInteger.valueOf(1)
-            .shiftLeft(186);
+            .shiftLeft(187);
 
 
     // Secondary Flags for Physical Weapons
@@ -725,20 +725,20 @@ public class MiscType extends EquipmentType {
           	} else {
                 return entity.getWeight() / 10.0f;
             }
-        	
-        //Per TO Pg 413 Mechanical Jump Boosters weight is 2 times jump movement.  
-        //but Mechanical Boosters only add 1 Jump MP.  So the weight calculations 
+
+        //Per TO Pg 413 Mechanical Jump Boosters weight is 2 times jump movement.
+        //but Mechanical Boosters only add 1 Jump MP.  So the weight calculations
         //below are calculated according to that 1 Jump MP they give.
         } else if (hasFlag(F_MECHANICAL_JUMP_BOOSTER)) {
-      	if((entity.getWeightClass() == EntityWeightClass.WEIGHT_ULTRA_LIGHT) 
+      	if((entity.getWeightClass() == EntityWeightClass.WEIGHT_ULTRA_LIGHT)
       			|| (entity.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT)) {
       			return  2.0f *.025f;
         } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
         		return  2.0f *.05f;
         } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
-        		return  2.0f *.125f;     			
+        		return  2.0f *.125f;
         } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT) {
-        		return  2.0f *.250f;      	
+        		return  2.0f *.250f;
         }
 
         } else if (hasFlag(F_JUMP_BOOSTER)) {
@@ -963,7 +963,7 @@ public class MiscType extends EquipmentType {
                         costValue = 50000;
                 }
             }
-	      	
+
             if (isArmored) {
                 double armoredCost = costValue;
 
@@ -1681,7 +1681,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createLightFluidSuctionSystemMech());
         EquipmentType.addType(MiscType.createLightFluidSuctionSystem());
         EquipmentType.addType(MiscType.createFluidSuctionSystem());
-        
+
         //Infantry Equipment Packs
 //        EquipmentType.addType(MiscType.createAblativeStandardInfArmor());
 //        EquipmentType.addType(MiscType.createAblativeConcealedInfArmor());
@@ -1735,7 +1735,7 @@ public class MiscType extends EquipmentType {
 //        EquipmentType.addType(MiscType.createSneakCamoECMInfArmor());
 //        EquipmentType.addType(MiscType.createSneakIRECMInfArmor());
 //        EquipmentType.addType(MiscType.createSneakThreeSystemInfArmor());
-      
+
     }
 
     public static MiscType createHeatSink() {
@@ -10288,12 +10288,12 @@ public class MiscType extends EquipmentType {
                 .or(F_SUPPORT_TANK_EQUIPMENT).or(F_LIFEBOAT);
         return misc;
     }
-    
+
 //    //====================  Infantry Armor Kits ==========================
 //
 //	public static MiscType createAblativeStandardInfArmor() {
 //	    MiscType misc = new MiscType();
-//	
+//
 //	    misc.techLevel.put(3071, TechConstants.T_ALL);
 //	    misc.name = "Ablative, Standard";
 //	    misc.setInternalName(misc.name);
@@ -10311,10 +10311,10 @@ public class MiscType extends EquipmentType {
 //	    misc.introDate = 2300;
 //	    misc.techLevel.put(2300, misc.techLevel.get(3071));
 //	    misc.techRating = RATING_D;
-//	
+//
 //	    return misc;
 //	}
-//	    
+//
 //	public static MiscType createAblativeConcealedInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10338,7 +10338,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createAblativeFlakStandardArmorInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10362,7 +10362,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //	public static MiscType createAblativeFlakConcealedArmorInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10386,7 +10386,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    	
+//
 //	public static MiscType createBallisicPlateStandardInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10410,7 +10410,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    	
+//
 //	public static MiscType createBallisicPlateConcealedInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10434,7 +10434,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    	
+//
 //	public static MiscType createClothingFatiguesInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10458,7 +10458,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//	
+//
 //	public static MiscType createClothingLeatherHideInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10482,7 +10482,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//	
+//
 //	public static MiscType createClothingLightInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10506,7 +10506,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//	
+//
 //	public static MiscType createEngineeringSuitInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10530,7 +10530,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//	
+//
 //	public static MiscType createEnvironmentSuitLightInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10554,7 +10554,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//	
+//
 //	public static MiscType createEnvironmentSuitHostileInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10578,7 +10578,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//	
+//
 //	public static MiscType createEnvironmentSuitMarineInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10602,7 +10602,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//	
+//
 //	public static MiscType createFlakStandardInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10626,7 +10626,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//	
+//
 //	public static MiscType createFlakConcealedInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10650,7 +10650,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//	
+//
 //	public static MiscType createHeatSuitInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10674,7 +10674,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//	
+//
 //	public static MiscType createMechWarriorCombatSuitInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10698,7 +10698,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//	
+//
 //	public static MiscType createMechWarriorCoolingSuitInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10722,7 +10722,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//	
+//
 //	public static MiscType createMechWarriorCoolingVestInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10746,7 +10746,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//	
+//
 //	public static MiscType createMyomerSuitInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10794,7 +10794,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//	
+//
 //	public static MiscType createParkaInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10817,7 +10817,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//	
+//
 // 	public static MiscType createNeoChainMailInfArmor() {
 //        MiscType misc = new MiscType();
 //        misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
@@ -10840,7 +10840,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-// 	
+//
 // 	public static MiscType createSnowSuitInfArmor() {
 //        MiscType misc = new MiscType();
 //        misc.techLevel.put(3071, TechConstants.T_ALL);
@@ -10863,7 +10863,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-// 	
+//
 // 	public static MiscType createSpaceSuitInfArmor() {
 //        MiscType misc = new MiscType();
 //        misc.techLevel.put(3071, TechConstants.T_ALL);
@@ -10885,7 +10885,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-// 	
+//
 // 	public static MiscType createSpacesuitCombatInfArmor() {
 //        MiscType misc = new MiscType();
 //        misc.techLevel.put(3071, TechConstants.T_ALL);
@@ -10910,7 +10910,7 @@ public class MiscType extends EquipmentType {
 //    }
 //
 // 	//Faction Armor Kits
-// 	
+//
 // 	public static MiscType createCapellanConfederationInfArmor() {
 //        MiscType misc = new MiscType();
 //        misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
@@ -10933,7 +10933,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-// 	
+//
 // 	public static MiscType createClanInfArmor() {
 //        MiscType misc = new MiscType();
 //        misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
@@ -10956,8 +10956,8 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-// 	
-//    
+//
+//
 //    public static MiscType createComstarInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -10981,7 +10981,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createDraconisCombineInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11005,7 +11005,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createFedSunsInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11029,7 +11029,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createFedComInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11054,7 +11054,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createFedSunsLateInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11079,7 +11079,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createFRRInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11103,7 +11103,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createFWLEarlyInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11127,7 +11127,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createFWLLateInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11151,7 +11151,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//	
+//
 //    public static MiscType createLyranInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11175,7 +11175,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createLyranLateInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11199,7 +11199,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createCanopusInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11223,7 +11223,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createMarianInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11247,7 +11247,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createTaurianInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11271,7 +11271,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createWoBInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11295,7 +11295,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createGenericInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11319,7 +11319,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createSLDFInfArmor() {
 //        MiscType misc = new MiscType();
 //        //Stats converted from ATOW
@@ -11343,10 +11343,10 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createSpaceDockRepairSuitInfArmor() {
 //        MiscType misc = new MiscType();
-//        
+//
 //        misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
 //        misc.name = "Space Dock Repair Suit";
 //        misc.setInternalName(misc.name);
@@ -11367,7 +11367,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //// Sneak Suits
 //    public static MiscType createDESTInfArmor() {
 //        MiscType misc = new MiscType();
@@ -11392,7 +11392,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createSneakCamoSystemInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11416,7 +11416,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createSneakIRSystemInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11440,7 +11440,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createSneakECMSystemInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11464,7 +11464,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createSneakCamoIRInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11488,7 +11488,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createSneakCamoECMInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11512,7 +11512,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createSneakIRECMInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11536,7 +11536,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-//    
+//
 //    public static MiscType createSneakThreeSystemInfArmor() {
 //        MiscType misc = new MiscType();
 //
@@ -11560,7 +11560,7 @@ public class MiscType extends EquipmentType {
 //
 //        return misc;
 //    }
-        
+
 	@Override
     public String toString() {
         return "MiscType: " + name;

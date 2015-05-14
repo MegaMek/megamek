@@ -953,7 +953,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         loadedUnits = ce.getLoadedUnits();
         if (ce instanceof Aero) {
-            loadedUnits.addAll(ce.getUnitsUnloadableFromBays());
+            for (Entity e : ce.getUnitsUnloadableFromBays()) {
+                if (!loadedUnits.contains(e)) {
+                    loadedUnits.add(e);
+                }
+            }
         }
 
         updateLoadButtons();
@@ -2557,7 +2561,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             System.err
                     .println("MovementDisplay#getUnloadedUnit() called without loaded units."); //$NON-NLS-1$
         }
-
         // If we have multiple choices, display a selection dialog.
         else if (loadedUnits.size() > 1) {
             String input = (String) JOptionPane

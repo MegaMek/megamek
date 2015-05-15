@@ -973,6 +973,10 @@ public class Compute {
 
         // Additional checks for LOS range and some weapon types, TO 85
         if (range == RangeType.RANGE_LOS) {
+            // Swarm or leg attacks can't use LoS range
+            if (isSwarmOrLegAttack) {
+                range = RangeType.RANGE_OUT;
+            }
             int longRange = wtype.getRanges(weapon)[RangeType.RANGE_LONG];
             // No Missiles or Direct Fire Ballistics with range < 13 
             if (wtype.hasFlag(WeaponType.F_MISSILE)
@@ -995,10 +999,17 @@ public class Compute {
 
         // if aero and greater than max range then swith to range_out
         if ((ae.isAirborne() || (ae.usesWeaponBays() && game.getBoard()
-                                                            .onGround())) && (range > maxRange)) {
+                .onGround())) && (range > maxRange)) {
             range = RangeType.RANGE_OUT;
         }
 
+        // Swarm/Leg attacks need to  be impossible, not auto-fail, so that the
+        // attack can't even be attempted
+        if (isSwarmOrLegAttack && (range != RangeType.RANGE_MINIMUM)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Swarm/Leg attacks can "
+                            + "only target units in the same hex!");
+        }
         // short circuit if at zero range or out of range
         if ((range == RangeType.RANGE_OUT) && !isWeaponInfantry) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL,

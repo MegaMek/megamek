@@ -102,6 +102,7 @@ v0.41.4-dev (SVN)
     movement doesn't cover _this_).
 + Patch [#483]: Artillery icons not scaling
 + Patch [#481]: Hotkey for deploy zone highlighting in arty auto hit phase
++ Bug [#4543]: Infantry attempt to Swarm from great distance
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

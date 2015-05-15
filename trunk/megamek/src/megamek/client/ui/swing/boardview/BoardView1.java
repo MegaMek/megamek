@@ -1523,7 +1523,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int drawWidth = (view.width / (int) (HEX_WC * scale)) + 3;
         int drawHeight = (view.height / (int) (HEX_H * scale)) + 3;
 
-        Image scaledImage;
+        Image artyIconImage;
 
         // Draw incoming artillery sprites - requires server to update client's
         // view of game
@@ -1536,9 +1536,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 && (c.getY() >= drawY) && (c.getY() <= (drawY + drawHeight))) {
 
                 Point p = getHexLocation(c);
-                scaledImage = tileManager
+                artyIconImage = tileManager
                         .getArtilleryTarget(TilesetManager.ARTILLERY_INCOMING);
-                g.drawImage(scaledImage, p.x, p.y, this);
+                g.drawImage(getScaledImage(artyIconImage, true), p.x, p.y, this);
             }
         }
 
@@ -1551,9 +1551,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     && (c.getY() >= drawY) && (c.getY() <= (drawY + drawHeight))) {
 
                     Point p = getHexLocation(c);
-                    scaledImage = tileManager
+                    artyIconImage = tileManager
                             .getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT);
-                    g.drawImage(scaledImage, p.x, p.y, this);
+                    g.drawImage(getScaledImage(artyIconImage, true), p.x, p.y, this);
                 }
             }
         }
@@ -1572,13 +1572,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     // draw the crosshairs
                     if (attackMod.getModifier() == TargetRoll.AUTOMATIC_SUCCESS) {
                         // predesignated or already hit
-                        scaledImage = tileManager
+                        artyIconImage = tileManager
                                 .getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT);
                     } else {
-                        scaledImage = tileManager
+                        artyIconImage = tileManager
                                 .getArtilleryTarget(TilesetManager.ARTILLERY_ADJUSTED);
                     }
-                    g.drawImage(scaledImage, p.x, p.y, this);
+                    g.drawImage(getScaledImage(artyIconImage, true), p.x, p.y, this);
                 }
             }
         }

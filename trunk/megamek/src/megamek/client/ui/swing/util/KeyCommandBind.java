@@ -53,7 +53,8 @@ public enum KeyCommandBind {
 	// Undo an action, such as a move step in the movement phase
 	UNDO("undo",false),
 	MOVE_ENVELOPE("movementEnvelope",false),
-	CENTER_ON_SELECTED("centerOnSelected",false);
+	CENTER_ON_SELECTED("centerOnSelected",false),
+	AUTO_ARTY_DEPLOYMENT_ZONE("autoArtyDeployZone",false);
 	
 	/**
 	 * The command associated with this binding.

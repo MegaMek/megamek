@@ -22,6 +22,9 @@ import java.util.Hashtable;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.util.CommandAction;
+import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.common.Coords;
 import megamek.common.IBoard;
@@ -93,7 +96,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         clientgui.getClient().getGame().addGameListener(this);
 
         clientgui.getBoardView().addBoardViewListener(this);
-
+        
         setupStatusBar(Messages
                 .getString("SelectArtyAutoHitHexDisplay.waitingArtillery")); //$NON-NLS-1$
 
@@ -122,6 +125,8 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         layoutScreen();
 
         setupButtonPanel();
+        
+        registerKeyCommands();
     }
 
     protected ArrayList<MegamekButton> getButtonList() {
@@ -337,5 +342,52 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
         clientgui.getClient().getGame().removeGameListener(this);
         clientgui.getBoardView().removeBoardViewListener(this);
     }
+
+    /**
+     * Register all of the <code>CommandAction</code>s for this panel display.
+     */
+    private void registerKeyCommands() {
+        MegaMekController controller = clientgui.controller;
+
+        final StatusBarPhaseDisplay display = this;
+        // Register the action for AUTO_ARTY_DEPLOYMENT_ZONE
+        controller.registerCommandAction(KeyCommandBind.AUTO_ARTY_DEPLOYMENT_ZONE.cmd,
+                new CommandAction() {
+
+            @Override
+            public boolean shouldPerformAction() {
+                if (!clientgui.getClient().isMyTurn()
+                        || clientgui.bv.getChatterBoxActive()
+                        || display.isIgnoringEvents()
+                        || !display.isVisible()) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            private boolean thisKeyPressed = false;
+            
+            @Override
+            public void performAction() {
+                if (!thisKeyPressed) {
+                    clientgui.bv.showAllDeployment = !clientgui.bv.showAllDeployment;
+                    clientgui.bv.repaint();
+                }
+                thisKeyPressed = true;
+            }
+            
+            @Override
+            public void releaseAction() {
+                thisKeyPressed = false;
+            }
+            
+            @Override
+            public boolean hasReleaseAction() {
+                return true;
+            }
+        });
+    }
+    
 
 }

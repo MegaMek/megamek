@@ -33,6 +33,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
@@ -375,6 +376,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     * Cache that stores hex images for different coords
     */
     ImageCache<Coords, HexImageCacheEntry> hexImageCache;
+    
+    
+    /**
+     * Keeps track of whether all deployment zones should
+     * be shown in the Arty Auto Hit Designation phase
+     */
+    public boolean showAllDeployment = false;
 
     /**
      * Construct a new board view for the specified game
@@ -1009,7 +1017,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             drawDeployment(g);
         }
         
-        if (game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
+        if ((game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES)
+                && (showAllDeployment)) {
             drawAllDeployment(g);
         }
 
@@ -1277,13 +1286,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 Enumeration<IPlayer> allP = game.getPlayers();
                 IPlayer cp;
                 int pCount = 0;
-                int bThickness = 1 + 6 / game.getNoOfPlayers();
+                int bThickness = 1 + 10 / game.getNoOfPlayers();
                 // loop through all players
                 while (allP.hasMoreElements()) {
                     cp = allP.nextElement();
                     if (board.isLegalDeployment(c, cp.getStartingPos())) {
                         Color bC = new Color(PlayerColors.getColorRGB(cp.getColorIndex()));
-                        drawHexBorder(getHexLocation(c), g, bC, bThickness
+                        drawHexBorder(getHexLocation(c), g, bC, (bThickness+2)
                                 * pCount, bThickness);
                         pCount++;
                     }
@@ -4558,19 +4567,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         
         // Show the player(s) that may deploy here 
         // in the artillery autohit designation phase
-        if (game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
+        if ((game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) && (mhex != null)) {
+            txt.append("<TABLE BORDER=0 width=100%><TR><TD>");
             Enumeration<IPlayer> allP = game.getPlayers();
-            IPlayer cp;
             boolean foundPlayer = false;
             // loop through all players
             while (allP.hasMoreElements())
             {
-                cp = allP.nextElement();
+                IPlayer cp = allP.nextElement();
                 if (game.getBoard().isLegalDeployment(mcoords, cp.getStartingPos())) {
                     if (!foundPlayer) {
                         foundPlayer = true;
-                        txt.append("<TABLE BORDER=0 width=100%><TR><TD>");
-                        txt.append("Deployment Hex for Players:<BR>");
+                        txt.append(Messages.getString("BoardView1.Tooltip.ArtyAutoHeader"));
                     }
                     txt.append("<B><FONT COLOR=#");
                     txt.append(Integer.toHexString(PlayerColors.getColorRGB(cp.getColorIndex())));
@@ -4579,7 +4587,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     txt.append("</FONT></B><BR>");
                 }
             }
-            if (foundPlayer) txt.append("</TD></TR></TABLE>");
+            if (foundPlayer) txt.append("<BR>");
+
+            // Add a hint with keybind that the zones can be shown graphically
+            String keybindText = KeyEvent.getKeyModifiersText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").modifiers);
+            if (!keybindText.isEmpty()) keybindText += "+";
+            keybindText += KeyEvent.getKeyText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").key);
+            txt.append(Messages.getString("BoardView1.Tooltip.ArtyAutoHint", 
+                    new Object[] { keybindText }));
+            
+            txt.append("</TD></TR></TABLE>");
         }
         
 

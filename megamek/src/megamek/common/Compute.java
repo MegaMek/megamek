@@ -1005,7 +1005,7 @@ public class Compute {
 
         // Swarm/Leg attacks need to  be impossible, not auto-fail, so that the
         // attack can't even be attempted
-        if (isSwarmOrLegAttack && (range != RangeType.RANGE_MINIMUM)) {
+        if (isSwarmOrLegAttack && (distance > 0)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Swarm/Leg attacks can "
                             + "only target units in the same hex!");

@@ -160,7 +160,7 @@ public class Game implements Serializable, IGame {
     private VictoryFactory vf = new SpaghettiVictoryFactory();
 
     // smoke clouds
-    private ArrayList<SmokeCloud> smokeCloudList = new ArrayList<SmokeCloud>();
+    private List<SmokeCloud> smokeCloudList = new CopyOnWriteArrayList<>();
 
     transient private Vector<GameListener> gameListeners = new Vector<GameListener>();
 

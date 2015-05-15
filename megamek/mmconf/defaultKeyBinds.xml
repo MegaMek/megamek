@@ -162,4 +162,11 @@
         <isRepeatable>false</isRepeatable>
       </KeyBind>
 
+      <KeyBind>
+        <command>autoArtyDeployZone</command>
+        <keyCode>90</keyCode> <!-- Spacebar -->
+        <modifier>1</modifier>          
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
 </KeyBindings>

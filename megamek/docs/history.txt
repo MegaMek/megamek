@@ -104,7 +104,8 @@ v0.41.4-dev (SVN)
 + Patch [#481]: Hotkey for deploy zone highlighting in arty auto hit phase
 + Bug [#4543]: Infantry attempt to Swarm from great distance
 + Bug [#4545]: Exception in thread "Princess-precognition (Princess)"
-    java.util.ConcurrentModificationException 
+    java.util.ConcurrentModificationException
++ Data: New Sprites.
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

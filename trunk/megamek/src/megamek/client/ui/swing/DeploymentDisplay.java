@@ -230,7 +230,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     && ce().getGame().getOptions()
                             .booleanOption("assault_drop")) {
             buttons.get(DeployCommand.DEPLOY_ASSAULTDROP).setText(Messages
-                        .getString("DeploymentDisplay.AssaultDropOn")); //$NON-NLS-1$
+                        .getString("DeploymentDisplay.AssaultDrop")); //$NON-NLS-1$
                 assaultDropPreference = false;
             }
             

@@ -114,4 +114,12 @@ abstract class Sprite implements ImageObserver {
     public StringBuffer getTooltip() {
         return null;
     }
+    
+    public boolean isHidden() {
+        return hidden;
+    }
+    
+    public void setHidden(boolean h) {
+        hidden = h;
+    }
 }

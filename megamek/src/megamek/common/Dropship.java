@@ -45,7 +45,7 @@ public class Dropship extends SmallCraft {
     }
 
     @Override
-    public boolean isLocationProhibited(Coords c) {
+    public boolean isLocationProhibited(Coords c, int currElevation) {
         IHex hex = game.getBoard().getHex(c);
         if (isAirborne()) {
             if (hex.containsTerrain(Terrains.IMPASSABLE)) {

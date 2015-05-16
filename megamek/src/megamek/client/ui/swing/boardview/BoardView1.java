@@ -4759,6 +4759,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         txt.append("</html>"); //$NON-NLS-1$
+        // Check to see if the tool tip is completely empty
+        if (txt.toString().equals("<html></html>")) {
+            // Returning null prevents the tooltip from being displayed
+            // This prevents a small blue tooltip rectangle being drawn at the
+            // edge of the board
+            return null;
+        }
         return txt.toString();
     }
 

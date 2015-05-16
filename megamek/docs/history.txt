@@ -110,6 +110,7 @@ v0.41.4-dev (SVN)
 + Patch [#484]: Dashed lines for MovementEnvelope and HexSprite clean-up
 + Bug: CursorSprites were being drawn off the board in the far upper left.
     Mostly, you could see a red highlighted hex when zoomed out
++ Bug: Empty tooltip displayed near board edge
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

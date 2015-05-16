@@ -1555,8 +1555,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
 
-            if (next.containsTerrain(Terrains.BUILDING)
-                || current.containsTerrain(Terrains.BUILDING)) {
+            if ((next.containsTerrain(Terrains.BUILDING)
+                || current.containsTerrain(Terrains.BUILDING))
+                && (getMovementMode() != EntityMovementMode.WIGE)) {
                 int bldcur = Math.max(-current.depth(true),
                                       current.terrainLevel(Terrains.BLDG_ELEV));
                 int bldnex = Math.max(-next.depth(true),
@@ -2342,6 +2343,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * terrain.
      */
     public boolean isLocationProhibited(Coords c) {
+        return isLocationProhibited(c, getElevation());
+    }
+        
+    /**
+     * Returns true if the specified hex contains some sort of prohibited 
+     * terrain if the Entity is at the specified elevation.  Elevation generally
+     * only matters for units like WiGEs or VTOLs.
+     * 
+     * @param c
+     * @param currElevation
+     * @return
+     */
+    public boolean isLocationProhibited(Coords c, int currElevation) {
         IHex hex = game.getBoard().getHex(c);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;

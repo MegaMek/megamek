@@ -1154,7 +1154,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         for (HexSprite sprite : spriteArrayList) {
             Coords cp = sprite.getPosition();
             if (cp.equals(c) && view.intersects(sprite.getBounds())
-                && !sprite.hidden) {
+                && !sprite.isHidden()) {
                 if (!sprite.isReady()) {
                     sprite.prepare();
                 }
@@ -1181,7 +1181,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         for (IsometricSprite sprite : spriteArrayList) {
             Coords cp = sprite.getPosition();
             if (cp.equals(c) && view.intersects(sprite.getBounds())
-                && !sprite.hidden) {
+                && !sprite.isHidden()) {
                 if (!sprite.isReady()) {
                     sprite.prepare();
                 }
@@ -1203,12 +1203,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * @param spriteArrayList The complete list of all IsometricSprite on the board.
      */
     private synchronized void drawIsometricWreckSpritesForHex(Coords c,
-                                                              Graphics g, ArrayList<IsometricWreckSprite> spriteArrayList) {
+            Graphics g, ArrayList<IsometricWreckSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricWreckSprite sprite : spriteArrayList) {
             Coords cp = sprite.getEntity().getPosition();
             if (cp.equals(c) && view.intersects(sprite.getBounds())
-                && !sprite.hidden) {
+                && !sprite.isHidden()) {
                 if (!sprite.isReady()) {
                     sprite.prepare();
                 }
@@ -1232,7 +1232,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             ArrayList<IsometricSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricSprite sprite : spriteArrayList) {
-            if (view.intersects(sprite.getBounds()) && !sprite.hidden) {
+            if (view.intersects(sprite.getBounds()) && !sprite.isHidden()) {
                 if (!sprite.isReady()) {
                     sprite.prepare();
                 }
@@ -1247,7 +1247,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     private final void drawSprite(Graphics g, Sprite sprite) {
         Rectangle view = g.getClipBounds();
-        if (view.intersects(sprite.getBounds()) && !sprite.hidden) {
+        if (view.intersects(sprite.getBounds()) && !sprite.isHidden()) {
             if (!sprite.isReady()) {
                 sprite.prepare();
             }
@@ -3108,14 +3108,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     // Mark the previous elevation change sprite hidden
                     // so that we can draw a new one in it's place without
                     // having overlap.
-                    pathSprites.get(pathSprites.size() - 1).hidden = true;
+                    pathSprites.get(pathSprites.size() - 1).setHidden(true);
                 }
 
                 // for advanced movement, we always need to hide prior
                 // because costs will overlap and we only want the current
                 // facing
                 if ((previousStep != null) && game.useVectorMove()) {
-                    pathSprites.get(pathSprites.size() - 1).hidden = true;
+                    pathSprites.get(pathSprites.size() - 1).setHidden(true);
                 }
 
                 pathSprites.add(new StepSprite(this, step));

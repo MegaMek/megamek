@@ -108,6 +108,8 @@ v0.41.4-dev (SVN)
 + Data: New Sprites.
 + Patch [#484]: Allow tab key to be bound to a command
 + Patch [#484]: Dashed lines for MovementEnvelope and HexSprite clean-up
++ Bug: CursorSprites were being drawn off the board in the far upper left.
+    Mostly, you could see a red highlighted hex when zoomed out
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

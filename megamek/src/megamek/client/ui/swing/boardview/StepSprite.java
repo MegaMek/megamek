@@ -17,11 +17,13 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyAlphaFilter;
 import megamek.common.Aero;
+import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
 import megamek.common.MiscType;
 import megamek.common.MoveStep;
 import megamek.common.Tank;
+import megamek.common.VTOL;
 import megamek.common.MovePath.MoveStepType;
 
 /**
@@ -578,9 +580,13 @@ class StepSprite extends Sprite {
         StringBuffer costStringBuf = new StringBuffer();
         costStringBuf.append(step.getMpUsed());
 
+        Entity e = step.getParent().getEntity();
+        
         // If the step is using a road bonus, mark it.
         if (step.isOnlyPavement()
-                && (step.getParent().getEntity() instanceof Tank)) {
+                && (e instanceof Tank)
+                && !(e instanceof VTOL)
+                && (e.getMovementMode() != EntityMovementMode.WIGE)) {
             costStringBuf.append("+"); //$NON-NLS-1$
         }
 
@@ -603,10 +609,11 @@ class StepSprite extends Sprite {
             costStringBuf.append("+]"); //$NON-NLS-1$
         }
 
-        if ((step.getMovementType() == EntityMovementType.MOVE_VTOL_WALK)
-                || (step.getMovementType() == EntityMovementType.MOVE_VTOL_RUN)
-                || (step.getMovementType() == EntityMovementType.MOVE_SUBMARINE_WALK)
-                || (step.getMovementType() == EntityMovementType.MOVE_SUBMARINE_RUN)) {
+        EntityMovementType moveType = step.getMovementType();
+        if ((moveType == EntityMovementType.MOVE_VTOL_WALK)
+                || (moveType == EntityMovementType.MOVE_VTOL_RUN)
+                || (moveType == EntityMovementType.MOVE_SUBMARINE_WALK)
+                || (moveType == EntityMovementType.MOVE_SUBMARINE_RUN)) {
             costStringBuf.append("{").append(step.getElevation())
                     .append("}");
         }

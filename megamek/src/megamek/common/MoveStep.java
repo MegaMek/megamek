@@ -2140,6 +2140,7 @@ public class MoveStep implements Serializable {
                     movementType = EntityMovementType.MOVE_WALK;
                 }
             } else if ((entity instanceof Tank) && !(entity instanceof VTOL)
+                    && (parent.getEntity().getMovementMode() != EntityMovementMode.WIGE)
                     && isOnlyPavement() && (getMpUsed() == (tmpWalkMP + 1))) {
                 // store if we got the pavement Bonus for end of phase
                 // gravity psr

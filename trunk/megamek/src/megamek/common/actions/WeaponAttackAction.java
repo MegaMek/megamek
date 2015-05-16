@@ -390,8 +390,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     && te.isINarcedBy(ae.getOwner().getTeam())
                     && (atype != null)
                     && ((atype.getAmmoType() == AmmoType.T_LRM)
-                            || (atype.getAmmoType() == AmmoType.T_MML) || (atype
-                            .getAmmoType() == AmmoType.T_SRM))
+                            || (atype.getAmmoType() == AmmoType.T_MML)
+                            || (atype.getAmmoType() == AmmoType.T_SRM)
+                            || (atype.getAmmoType() == AmmoType.T_NLRM))
                     && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)) {
                 isINarcGuided = true;
             }

@@ -217,8 +217,9 @@ public class LRMHandler extends MissileWeaponHandler {
             bTargetECMAffected = ComputeECM.isAffectedByECM(ae,
                     target.getPosition(), target.getPosition());
             if (((atype.getAmmoType() == AmmoType.T_LRM)
-                    || (atype.getAmmoType() == AmmoType.T_SRM) || (atype
-                    .getAmmoType() == AmmoType.T_MML))
+                    || (atype.getAmmoType() == AmmoType.T_SRM)
+                    || (atype.getAmmoType() == AmmoType.T_MML)
+                    || (atype.getAmmoType() == AmmoType.T_NLRM))
                     && (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE)
                     && ((weapon.curMode() == null) || !weapon.curMode().equals(
                             "Indirect"))) {

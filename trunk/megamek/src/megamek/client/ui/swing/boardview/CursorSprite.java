@@ -62,6 +62,10 @@ class CursorSprite extends Sprite {
         bounds.setLocation(-100, -100);
         hexLoc = new Coords(-2, -2);
     }
+    
+    public boolean isOffScreen() {
+        return !bv.game.getBoard().contains(hexLoc);
+    }
 
     public void setHexLocation(Coords hexLoc) {
         this.hexLoc = hexLoc;
@@ -83,5 +87,9 @@ class CursorSprite extends Sprite {
 
     public void setColor(Color color) {
         this.color = color;
+    }
+    
+    public boolean isHidden() {
+        return hidden || isOffScreen();
     }
 }

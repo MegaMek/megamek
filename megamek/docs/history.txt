@@ -113,6 +113,7 @@ v0.41.4-dev (SVN)
 + Bug: Empty tooltip displayed near board edge
 + Bug [#4546]: Loading infantry during deployment and changing sensors could
     cause server to crash
++ Bug: Assault Drop button had missing i18n entry in DeploymentDisplay
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

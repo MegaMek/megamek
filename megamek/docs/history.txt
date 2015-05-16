@@ -118,6 +118,7 @@ v0.41.4-dev (SVN)
 + Bug: WiGEs could benefit from "road bonus" to MP
 + Bug: VTOLs and WiGEs would have StepSprites with "road bonus" indicator
 + Bug [#4544]: WiGEs that just took off couldn't drop down elevations properly
++ Bug: Narc/iNarc bonuses not applied to compatible NLRM ammo.
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

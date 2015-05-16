@@ -1449,6 +1449,11 @@ public class CommonSettingsDialog extends ClientDialog implements
             keyBinds.add(repeatable, gbc);
             gbc.gridx = 0;
             gbc.gridy++;
+            
+            // deactivate TABbing through fields here so TAB can be caught as a keybind
+            modifiers.setFocusTraversalKeysEnabled(false);
+            key.setFocusTraversalKeysEnabled(false);
+            repeatable.setFocusTraversalKeysEnabled(false);
         }
         return keyBinds;
     }

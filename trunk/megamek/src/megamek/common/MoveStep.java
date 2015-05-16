@@ -2957,7 +2957,7 @@ public class MoveStep implements Serializable {
         if ((movementType != EntityMovementType.MOVE_JUMP)
                 && (nMove != EntityMovementMode.VTOL)) {
             if ((((srcAlt - destAlt) > 0) && ((srcAlt - destAlt) > entity
-                    .getMaxElevationDown()))
+                    .getMaxElevationDown(srcAlt)))
                     || (((destAlt - srcAlt) > 0) && ((destAlt - srcAlt) > entity
                     .getMaxElevationChange()))) {
                 // System.err.println("jump VTOL check failed");

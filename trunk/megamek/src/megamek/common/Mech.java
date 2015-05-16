@@ -5037,7 +5037,7 @@ public abstract class Mech extends Entity {
     }
 
     @Override
-    public int getMaxElevationDown() {
+    public int getMaxElevationDown(int currElevation) {
         if (game.getOptions().booleanOption("tacops_leaping")) {
             return 999;
         }

@@ -115,6 +115,8 @@ v0.41.4-dev (SVN)
     cause server to crash
 + Bug: Assault Drop button had missing i18n entry in DeploymentDisplay
 + Bug [#4548]: Infantry Field Guns should not have secondary target modifier
++ Bug: WiGEs could benefit from "road bonus" to MP
++ Bug: VTOLs and WiGEs would have StepSprites with "road bonus" indicator
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

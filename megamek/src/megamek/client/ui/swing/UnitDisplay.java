@@ -4336,37 +4336,35 @@ public class UnitDisplay extends JPanel {
 
         public void itemStateChanged(ItemEvent ev) {
             if ((ev.getItemSelectable() == chSensors) && (clientgui != null)) {
+                int sensorIdx = chSensors.getSelectedIndex();
                 Entity en = clientgui.getClient().getGame().getEntity(myMechId);
-                en.setNextSensor(en.getSensors().elementAt(
-                        chSensors.getSelectedIndex()));
+                Sensor s = en.getSensors().elementAt(sensorIdx);
+                en.setNextSensor(s);
                 refreshSensorChoices(en);
-                clientgui
-                        .systemMessage(Messages
-                                               .getString(
-                                                       "MechDisplay.willSwitchAtEnd", new Object[]{"Active Sensors", en.getSensors().elementAt(chSensors.getSelectedIndex()).getDisplayName()}));//$NON-NLS-1$
-                clientgui.getClient().sendUpdateEntity(
-                        clientgui.getClient().getGame().getEntity(myMechId));
+                String sensorMsg = Messages.getString(
+                        "MechDisplay.willSwitchAtEnd", new Object[] { //$NON-NLS-1$
+                                "Active Sensors", s.getDisplayName() }); //$NON-NLS-1$
+                clientgui.systemMessage(sensorMsg);
+                clientgui.getClient().sendSensorChange(myMechId, sensorIdx);
             }
         }
 
         public void actionPerformed(ActionEvent ae) {
             if ("changeSinks".equals(ae.getActionCommand()) && !dontChange && (clientgui != null)) { //$NON-NLS-1$
                 prompt = new Slider(clientgui.frame,
-                                    Messages.getString("MechDisplay.changeSinks"),
-                                    Messages.getString("MechDisplay.changeSinks"), sinks,
-                                    0,
-                                    ((Mech) clientgui.getClient().getGame().getEntity(myMechId))
-                                            .getNumberOfSinks());
+                        Messages.getString("MechDisplay.changeSinks"),
+                        Messages.getString("MechDisplay.changeSinks"), sinks,
+                        0, ((Mech) clientgui.getClient().getGame()
+                                .getEntity(myMechId)).getNumberOfSinks());
                 if (!prompt.showDialog()) {
                     return;
                 }
                 clientgui.menuBar.actionPerformed(ae);
-                int helper = prompt.getValue();
+                int numActiveSinks = prompt.getValue();
 
                 ((Mech) clientgui.getClient().getGame().getEntity(myMechId))
-                        .setActiveSinksNextRound(helper);
-                clientgui.getClient().sendUpdateEntity(
-                        clientgui.getClient().getGame().getEntity(myMechId));
+                        .setActiveSinksNextRound(numActiveSinks);
+                clientgui.getClient().sendSinksChange(myMechId, numActiveSinks);
                 displayMech(clientgui.getClient().getGame().getEntity(myMechId));
             }
         }

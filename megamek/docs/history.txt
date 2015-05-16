@@ -106,6 +106,7 @@ v0.41.4-dev (SVN)
 + Bug [#4545]: Exception in thread "Princess-precognition (Princess)"
     java.util.ConcurrentModificationException
 + Data: New Sprites.
++ Patch [#484]: Allow tab key to be bound to a command
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

@@ -444,6 +444,9 @@ public class Tank extends Entity {
         if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
             return true;
         }
+        
+        boolean hasFlotationHull = hasWorkingMisc(MiscType.F_FLOTATION_HULL);
+        boolean isAmphibious = hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
 
         switch (movementMode) {
             case TRACKED:
@@ -451,7 +454,7 @@ public class Tank extends Entity {
                     return (hex.terrainLevel(Terrains.WOODS) > 1)
                             || ((hex.terrainLevel(Terrains.WATER) > 0)
                                     && !hex.containsTerrain(Terrains.ICE)
-                                    && !hasWorkingMisc(MiscType.F_FLOTATION_HULL) && !hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
+                                    && !hasFlotationHull && !isAmphibious)
                             || hex.containsTerrain(Terrains.JUNGLE)
                             || (hex.terrainLevel(Terrains.MAGMA) > 1)
                             || (hex.terrainLevel(Terrains.ROUGH) > 1);
@@ -459,7 +462,7 @@ public class Tank extends Entity {
                     return (hex.terrainLevel(Terrains.WOODS) > 1)
                             || ((hex.terrainLevel(Terrains.WATER) > 0)
                                     && !hex.containsTerrain(Terrains.ICE)
-                                    && !hasWorkingMisc(MiscType.F_FLOTATION_HULL) && !hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
+                                    && !hasFlotationHull && !isAmphibious)
                             || hex.containsTerrain(Terrains.JUNGLE)
                             || (hex.terrainLevel(Terrains.MAGMA) > 1);
                 }
@@ -469,7 +472,7 @@ public class Tank extends Entity {
                             || hex.containsTerrain(Terrains.ROUGH)
                             || ((hex.terrainLevel(Terrains.WATER) > 0)
                                     && !hex.containsTerrain(Terrains.ICE)
-                                    && !hasWorkingMisc(MiscType.F_FLOTATION_HULL) && !hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
+                                    && !hasFlotationHull && !isAmphibious)
                             || hex.containsTerrain(Terrains.RUBBLE)
                             || hex.containsTerrain(Terrains.MAGMA)
                             || hex.containsTerrain(Terrains.JUNGLE)
@@ -480,7 +483,7 @@ public class Tank extends Entity {
                             || hex.containsTerrain(Terrains.ROUGH)
                             || ((hex.terrainLevel(Terrains.WATER) > 0)
                                     && !hex.containsTerrain(Terrains.ICE)
-                                    && !hasWorkingMisc(MiscType.F_FLOTATION_HULL) && !hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS))
+                                    && !hasFlotationHull && !isAmphibious)
                             || hex.containsTerrain(Terrains.RUBBLE)
                             || hex.containsTerrain(Terrains.MAGMA)
                             || hex.containsTerrain(Terrains.JUNGLE)
@@ -2043,15 +2046,15 @@ public class Tank extends Entity {
     }
 
     @Override
-    public int getMaxElevationDown() {
+    public int getMaxElevationDown(int currElevation) {
         // WIGEs can go down as far as they want
         // 50 is a pretty arbitrary max amount, but that's also the
         // highest elevation for VTOLs, so I'll just use that
-        if ((getElevation() > 0)
+        if ((currElevation > 0)
                 && (getMovementMode() == EntityMovementMode.WIGE)) {
             return 50;
         }
-        return super.getMaxElevationDown();
+        return super.getMaxElevationDown(currElevation);
     }
 
     /**

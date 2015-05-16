@@ -6800,6 +6800,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * by default, entities can move as far down as they can move up
      */
     public int getMaxElevationDown() {
+        return getMaxElevationDown(getElevation());
+    }
+    
+    /**
+     * Returns the maximum number of downard elevation changes a unit can make.
+     * For some units (namely, WiGEs), this can depend upon their current
+     * elevation (since elevation determines if the WiGEs is using WiGE movement
+     * or not).
+     *  
+     * @param currElevation
+     * @return
+     */
+    public int getMaxElevationDown(int currElevation) {
         return getMaxElevationChange();
     }
 

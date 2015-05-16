@@ -291,15 +291,17 @@ public class Infantry extends Entity {
      * Infantry can not enter water unless they have UMU mp or hover.
      */
     @Override
-    public boolean isLocationProhibited(Coords c) {
+    public boolean isLocationProhibited(Coords c, int currElevation) {
         // Coords off the board aren't legal
         if (!game.getBoard().contains(c)) {
             return true;
         }
         IHex hex = game.getBoard().getHex(c);
-        //Taharqa: waiting to hear back from Welshie but I am going to assume that units pulling artillery
-        //should be treated as wheeled rather than motorized because otherwise mechanized units face fewer
-        //terrain restrictions when pulling field artillery
+        // Taharqa: waiting to hear back from Welshie but I am going to assume
+        // that units pulling artillery
+        // should be treated as wheeled rather than motorized because otherwise
+        // mechanized units face fewer
+        // terrain restrictions when pulling field artillery
 
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
@@ -312,7 +314,8 @@ public class Infantry extends Entity {
         }
 
         if (hex.terrainLevel(Terrains.WOODS) > 0) {
-            if ((hex.terrainLevel(Terrains.WOODS) > 1) && (getMovementMode() == EntityMovementMode.TRACKED)) {
+            if ((hex.terrainLevel(Terrains.WOODS) > 1)
+                    && (getMovementMode() == EntityMovementMode.TRACKED)) {
                 return true;
             }
             if ((getMovementMode() == EntityMovementMode.HOVER)
@@ -322,7 +325,8 @@ public class Infantry extends Entity {
             }
         }
 
-        if (hex.containsTerrain(Terrains.ROUGH) || hex.containsTerrain(Terrains.RUBBLE)) {
+        if (hex.containsTerrain(Terrains.ROUGH)
+                || hex.containsTerrain(Terrains.RUBBLE)) {
             if ((getMovementMode() == EntityMovementMode.WHEELED)
                     || hasActiveFieldArtillery()) {
                 return true;

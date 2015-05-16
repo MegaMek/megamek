@@ -306,6 +306,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
         boolean isAttackerInfantry = ae instanceof Infantry;
         boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
+        boolean isWeaponFieldGuns = isAttackerInfantry
+                && (weapon.getLocation() == Infantry.LOC_FIELD_GUNS);
         // 2003-01-02 BattleArmor MG and Small Lasers have unlimited ammo.
         // 2002-09-16 Infantry weapons have unlimited ammo.
         final boolean usesAmmo = (wtype.getAmmoType() != AmmoType.T_NA)
@@ -1677,10 +1679,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         // secondary targets modifier,
         // if this is not a iNarc Nemesis confused attack
+        // Inf field guns don't get secondary target mods, TO pg 311 
         if (!isNemesisConfused && !wtype.hasFlag(WeaponType.F_ALT_BOMB)
-                && !isStrafing) {
+                && !isWeaponFieldGuns && !isStrafing) {
             toHit.append(Compute.getSecondaryTargetMod(game, ae, target,
-                                                       exchangeSwarmTarget));
+                    exchangeSwarmTarget));
         }
 
         // heat

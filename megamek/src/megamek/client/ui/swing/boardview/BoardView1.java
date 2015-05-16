@@ -3173,26 +3173,58 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         GUIPreferences guip = GUIPreferences.getInstance();
         for (Coords loc : mvEnvData.keySet()) {
             Color spriteColor = null;
+            int mvType = -1;
             if (gear == MovementDisplay.GEAR_JUMP) {
                 if (mvEnvData.get(loc) <= jump) {
                     spriteColor = guip
                             .getColor(GUIPreferences.ADVANCED_MOVE_JUMP_COLOR);
+                    mvType = 1;
                 }
             } else {
                 if (mvEnvData.get(loc) <= walk) {
                     spriteColor = guip
                             .getColor(GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+                    mvType = 2;
+                    
                 } else if (mvEnvData.get(loc) <= run) {
                     spriteColor = guip
                             .getColor(GUIPreferences.ADVANCED_MOVE_RUN_COLOR);
+                    mvType = 3;
                 } else {
                     spriteColor = guip
                             .getColor(GUIPreferences.ADVANCED_MOVE_SPRINT_COLOR);
+                    mvType = 4;
                 }
             }
+            
+            // Next: check the adjacent hexes and find
+            // those with the same movement type,
+            // send this to the Sprite so it paints only
+            // the borders of the movement type areas
+            int mvAdjType;
+            int edgesToPaint = 0;
+            // cycle through hexes
+            for (int dir = 0; dir < 6; dir++) {
+                mvAdjType = 0;
+                Coords adjacentHex = loc.translated(dir);
+                // get the movement type
+                Integer Adjmv = mvEnvData.get(adjacentHex);
+                if (Adjmv != null) {
+                    if (gear == MovementDisplay.GEAR_JUMP) {
+                        if (Adjmv <= jump) mvAdjType = 1;
+                    } else {
+                        if (Adjmv <= walk) mvAdjType = 2;
+                        else if (Adjmv <= run) mvAdjType = 3;
+                        else mvAdjType = 4;
+                    }
+                }
+                // other movement type: paint a border in this direction
+                if (mvAdjType != mvType) edgesToPaint += (1 << dir); 
+            }
+
             if (spriteColor != null) {
                 MovementEnvelopeSprite mvSprite = new MovementEnvelopeSprite(
-                        this, spriteColor, loc);
+                        this, spriteColor, loc, edgesToPaint);
                 moveEnvSprites.add(mvSprite);
             }
         }

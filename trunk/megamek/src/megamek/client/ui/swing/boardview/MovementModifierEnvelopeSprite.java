@@ -1,18 +1,12 @@
-/**
- * 
- */
 package megamek.client.ui.swing.boardview;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.awt.image.FilteredImageSource;
 import java.util.EnumMap;
 
-import megamek.client.ui.swing.util.KeyAlphaFilter;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Compute;
 import megamek.common.Facing;
 import megamek.common.MovePath;
@@ -27,14 +21,18 @@ import megamek.common.VTOL;
  * 
  */
 public class MovementModifierEnvelopeSprite extends HexSprite {
+    
+    private final static Color fontColor = Color.BLACK;
+    private final static float fontSize = 9;
 
-    private Color color;
-    private Color fillColor;
-    private Color fontColor;
-    private Facing facing;
+    private final Color color;
+    private final Point.Float textPos;
+    private final Facing facing;
+    private final String modifier;
+
     static EnumMap<Facing, Polygon> borders = new EnumMap<>(Facing.class);
     static EnumMap<Facing, Point> borderMidPoints = new EnumMap<>(Facing.class);
-    private int modifier;
+    
     static {
         initBorderPolygons();
     }
@@ -86,15 +84,17 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
         super(boardView1, mp.getFinalCoords());
 
         facing = Facing.valueOfInt(mp.getFinalFacing());
-        bounds = new Rectangle(bv.getHexLocation(loc), bv.hex_size);
-        modifier = Compute.getTargetMovementModifier(mp.getHexesMoved(),
+        
+        int modi = Compute.getTargetMovementModifier(mp.getHexesMoved(),
                 mp.isJumping(),
                 mp.getEntity() instanceof VTOL,
                 boardView1.game).getValue();
-        float hue = 0.7f - 0.15f * modifier;
+        float hue = 0.7f - 0.15f * modi;
         color = new Color(Color.HSBtoRGB(hue, 1, 1));
-        fillColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), 255);
-        fontColor = Color.BLACK;
+        modifier = String.format("%+d", modi);
+
+        Point sp = borderMidPoints.get(facing);
+        textPos = new Point.Float(sp.x-fontSize/2, sp.y+fontSize/2-1);
     }
 
     /*
@@ -104,36 +104,28 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
      */
     @Override
     public void prepare() {
+        // adjust bounds (image size) to board zoom
         updateBounds();
+        
         // create image for buffer
-        Image tempImage = bv.createImage(bounds.width, bounds.height);
-        Graphics graph = tempImage.getGraphics();
+        createNewImage();
+        Graphics2D graph = (Graphics2D)image.getGraphics();
+        GUIPreferences.AntiAliasifSet(graph);
 
-        // fill with key color
-        graph.setPaintMode();
-        graph.setColor(new Color(BoardView1.TRANSPARENT));
-        graph.fillRect(0, 0, bounds.width, bounds.height);
+        // scale the following draws according to board zoom
+        graph.scale(bv.scale, bv.scale);
 
-        // draw polygon at the border
-        graph.setColor(fillColor);
+        // colored polygon at the hex border
+        graph.setColor(color);
         graph.fillPolygon(borders.get(facing));
 
-        // draw a movement modifier
-        Point sp = borderMidPoints.get(facing);
-        int fontSize = 8;
-        sp = (Point) (sp.clone());
-        sp.translate(-fontSize / 2, fontSize / 2);
-        String s = String.format("%+d", modifier);
-        graph.setColor(fontColor);
-        graph.setFont(graph.getFont().deriveFont(((Integer) fontSize).floatValue()));
-        graph.drawString(s, sp.x, sp.y);
+        // draw the movement modifier if it's readable
+        if (fontSize * bv.scale > 4) {
+            graph.setColor(fontColor);
+            graph.setFont(graph.getFont().deriveFont(fontSize));
+            graph.drawString(modifier, textPos.x, textPos.y);
+        }
 
-        // create final image
-        image = bv.getScaledImage(bv.createImage(new FilteredImageSource(
-                tempImage.getSource(), new KeyAlphaFilter(
-                        BoardView1.TRANSPARENT))), false);
         graph.dispose();
-        tempImage.flush();
-
     }
 }

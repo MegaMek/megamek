@@ -27182,6 +27182,33 @@ public class Server implements Runnable {
         }
 
     }
+    
+    /**
+     * Receive and process an Entity Sensor Change Packet
+     * @param c
+     * @param connIndex
+     */
+    private void receiveEntitySensorChange(Packet c, int connIndex) {
+        int entityId = c.getIntValue(0);
+        int sensorId = c.getIntValue(1);
+        Entity e = game.getEntity(entityId);
+        e.setNextSensor(e.getSensors().elementAt(sensorId));
+    }
+    
+    /**
+     * Receive and process an Entity Heat Sinks Change Packet
+     * @param c
+     * @param connIndex
+     */
+    private void receiveEntitySinksChange(Packet c, int connIndex) {
+        int entityId = c.getIntValue(0);
+        int numSinks = c.getIntValue(1);
+        Entity e = game.getEntity(entityId);
+        if (e instanceof Mech) {
+            ((Mech)e).setActiveSinksNextRound(numSinks);
+        }
+    }
+    
 
     /**
      * receive and process an entity nova network mode change packet
@@ -28282,6 +28309,12 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_ENTITY_MODECHANGE:
                 receiveEntityModeChange(packet, connId);
+                break;
+            case Packet.COMMAND_ENTITY_SENSORCHANGE:
+                receiveEntitySensorChange(packet, connId);
+                break;
+            case Packet.COMMAND_ENTITY_SINKSCHANGE:
+                receiveEntitySinksChange(packet, connId);
                 break;
             case Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE:
                 receiveEntityNovaNetworkModeChange(packet, connId);

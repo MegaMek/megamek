@@ -608,6 +608,22 @@ public class Client implements IClientCommandHandler {
                          new Integer(nAmmo)};
         send(new Packet(Packet.COMMAND_ENTITY_AMMOCHANGE, data));
     }
+    
+    /**
+     * Send sensor-change data to the server
+     */
+    public void sendSensorChange(int nEntity, int nSensor) {
+        Object[] data = {new Integer(nEntity), new Integer(nSensor)};
+        send(new Packet(Packet.COMMAND_ENTITY_SENSORCHANGE, data));
+    }
+    
+    /**
+     * Send sinks-change data to the server
+     */
+    public void sendSinksChange(int nEntity, int activeSinks) {
+        Object[] data = {new Integer(nEntity), new Integer(activeSinks)};
+        send(new Packet(Packet.COMMAND_ENTITY_SINKSCHANGE, data));
+    }
 
     /**
      * Send movement data for the given entity to the server.

@@ -119,8 +119,8 @@ public class SupportTank extends Tank {
             case SUBMARINE:
                 return (hex.terrainLevel(Terrains.WATER) <= 0);
             case WIGE:
-                return (hex.containsTerrain(Terrains.WOODS) || hex
-                        .containsTerrain(Terrains.BUILDING));
+                return (hex.containsTerrain(Terrains.WOODS) 
+                        || (hex.terrainLevel(Terrains.BLDG_ELEV) > elevation));
             default:
                 return false;
         }

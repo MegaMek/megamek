@@ -15,6 +15,9 @@
 package megamek.client.ui.swing;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
 import javax.swing.ToolTipManager;
 
@@ -1119,6 +1122,19 @@ public class GUIPreferences extends PreferenceStoreProxy {
             }
         }
         return Color.black;
+    }
+    
+    /**
+     * Activates AntiAliasing for the <code>Graphics</code> graph
+     * if AA is activated in the Client settings. 
+     * @param graph Graphics context to activate AA for
+     */
+    public static void AntiAliasifSet(Graphics graph) {
+        if (getInstance().getAntiAliasing()) {
+            ((Graphics2D)graph).setRenderingHint(
+                    RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+        }
     }
 
 }

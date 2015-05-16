@@ -2,13 +2,11 @@ package megamek.client.ui.swing.boardview;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Stroke;
-import java.awt.image.FilteredImageSource;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 
-import megamek.client.ui.swing.util.KeyAlphaFilter;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Coords;
 
 /**
@@ -16,7 +14,18 @@ import megamek.common.Coords;
  */
 class MovementEnvelopeSprite extends HexSprite {
 
-    Color drawColor;
+    private final Color drawColor;
+    private static Shape drawShape; 
+    
+    static {
+        // creates the Shape that is drawn in each hex of the movement envelope
+        AffineTransform scaleCenter = new AffineTransform();
+        scaleCenter.translate(BoardView1.HEX_W/2, BoardView1.HEX_H/2);
+        scaleCenter.scale(0.9, 0.9);
+        scaleCenter.translate(-BoardView1.HEX_W/2, -BoardView1.HEX_H/2);
+        drawShape = scaleCenter.createTransformedShape(BoardView1.hexPoly);
+    }
+
     public MovementEnvelopeSprite(BoardView1 boardView1, Color c, Coords l) {
         super(boardView1, l);
         drawColor = c;
@@ -24,26 +33,23 @@ class MovementEnvelopeSprite extends HexSprite {
 
     @Override
     public void prepare() {
+        // adjust bounds (image size) to board zoom
         updateBounds();
+        
         // create image for buffer
-        Image tempImage = bv.createImage(bounds.width, bounds.height);
-        Graphics graph = tempImage.getGraphics();
+        createNewImage();
+        Graphics2D graph = (Graphics2D)image.getGraphics();
+        GUIPreferences.AntiAliasifSet(graph);
 
-        // fill with key color
-        graph.setColor(new Color(BoardView1.TRANSPARENT));
-        graph.fillRect(0, 0, bounds.width, bounds.height);
-        // draw attack poly
+        // scale the following draws according to board zoom
+        graph.scale(bv.scale, bv.scale);
+
+        // colored hex border
         graph.setColor(drawColor);
-        Stroke st = ((Graphics2D) graph).getStroke();
-        ((Graphics2D) graph).setStroke(new BasicStroke(2));
-        graph.drawPolygon(bv.hexPoly);
-        ((Graphics2D) graph).setStroke(st);
+        graph.setStroke(new BasicStroke(1.5f, BasicStroke.CAP_BUTT,
+            BasicStroke.JOIN_MITER, 10.0f, new float[] { 5.0f } , 0.0f));
+        graph.draw(drawShape);
 
-        // create final image
-        image = bv.getScaledImage(bv.createImage(new FilteredImageSource(
-                tempImage.getSource(), new KeyAlphaFilter(
-                        BoardView1.TRANSPARENT))), false);
         graph.dispose();
-        tempImage.flush();
     }
 }

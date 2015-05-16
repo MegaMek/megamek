@@ -1,6 +1,9 @@
 package megamek.client.ui.swing.boardview;
 
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.awt.Transparency;
 
 import megamek.common.Coords;
 
@@ -25,9 +28,25 @@ public abstract class HexSprite extends Sprite {
     }
 
     protected void updateBounds() {
-        bounds = new Rectangle(this.bv.hexPoly.getBounds().width,
-                this.bv.hexPoly.getBounds().height);
-        bounds.setLocation(this.bv.getHexLocation(loc));
+        bounds = new Rectangle(
+                (int)(BoardView1.HEX_W*bv.scale),
+                (int)(BoardView1.HEX_H*bv.scale));
+        bounds.setLocation(bv.getHexLocation(loc));
+    }
+    
+    /**
+     * Creates a new empty transparent image for this HexSprite. The
+     * size follows the current values of <code>bounds</code>. 
+     */
+    protected void createNewImage() {
+        GraphicsConfiguration config = 
+                GraphicsEnvironment.getLocalGraphicsEnvironment().
+                getDefaultScreenDevice().getDefaultConfiguration();
+
+        // a compatible image should be ideal for blitting to the screen
+        image = config.createCompatibleImage(
+                bounds.width, bounds.height,
+                Transparency.TRANSLUCENT);
     }
 
 }

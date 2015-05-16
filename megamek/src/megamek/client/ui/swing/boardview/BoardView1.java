@@ -267,7 +267,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     TilesetManager tileManager = null;
 
     // polygons for a few things
-    Polygon hexPoly;
+    static Polygon hexPoly;
+    static {
+        // hex polygon
+        hexPoly = new Polygon();
+        hexPoly.addPoint(21, 0);
+        hexPoly.addPoint(62, 0);
+        hexPoly.addPoint(83, 35);
+        hexPoly.addPoint(83, 36);
+        hexPoly.addPoint(62, 71);
+        hexPoly.addPoint(21, 71);
+        hexPoly.addPoint(0, 36);
+        hexPoly.addPoint(0, 35);
+    }
+    
     Shape[] movementPolys;
     Shape[] facingPolys;
     Shape UpArrow;
@@ -3571,17 +3584,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Initializes the various overlay polygons with their vertices.
      */
-    public void initPolys() {
-        // hex polygon
-        hexPoly = new Polygon();
-        hexPoly.addPoint(21, 0);
-        hexPoly.addPoint(62, 0);
-        hexPoly.addPoint(83, 35);
-        hexPoly.addPoint(83, 36);
-        hexPoly.addPoint(62, 71);
-        hexPoly.addPoint(21, 71);
-        hexPoly.addPoint(0, 36);
-        hexPoly.addPoint(0, 35);
+    public void initPolys() {        
 
         AffineTransform FacingRotate = new AffineTransform();
         

@@ -435,7 +435,7 @@ public class Tank extends Entity {
      * Tanks have all sorts of prohibited terrain.
      */
     @Override
-    public boolean isLocationProhibited(Coords c) {
+    public boolean isLocationProhibited(Coords c, int currElevation) {
         IHex hex = game.getBoard().getHex(c);
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
@@ -508,8 +508,9 @@ public class Tank extends Entity {
             case SUBMARINE:
                 return (hex.terrainLevel(Terrains.WATER) <= 0);
             case WIGE:
-                return (hex.containsTerrain(Terrains.WOODS) 
-                        || (hex.terrainLevel(Terrains.BLDG_ELEV) > elevation));
+                return hex.containsTerrain(Terrains.WOODS)
+                        || (hex.containsTerrain(Terrains.BUILDING) && (hex
+                                .terrainLevel(Terrains.BLDG_ELEV) != currElevation));
             default:
                 return false;
         }

@@ -2338,7 +2338,7 @@ public class MoveStep implements Serializable {
                 if (target instanceof Entity) {
                     Entity other = (Entity) target;
                     if ((null != Compute.stackingViolation(game, other, curPos,
-                            entity)) || other.isLocationProhibited(curPos)) {
+                            entity)) || other.isLocationProhibited(curPos, getElevation())) {
                         movementType = EntityMovementType.MOVE_ILLEGAL;
                     }
                 } else {
@@ -3067,7 +3067,7 @@ public class MoveStep implements Serializable {
         // restrictions are lifted when moving along a road or bridge,
         // or when flying. Naval movement does not have the pavement
         // exemption.
-        if (entity.isLocationProhibited(dest)
+        if (entity.isLocationProhibited(dest, getElevation())
                 && (!isPavementStep() || (nMove == EntityMovementMode.NAVAL)
                 || (nMove == EntityMovementMode.HYDROFOIL) || (nMove == EntityMovementMode.SUBMARINE))
                 && (movementType != EntityMovementType.MOVE_VTOL_WALK)
@@ -3087,7 +3087,7 @@ public class MoveStep implements Serializable {
         // We need extra checking for dropships, due to secondary positions
         // if the Dropship is taking off, movetype will be safe thrust
         if ((entity instanceof Dropship) && !entity.isAirborne()
-                && isPavementStep() && entity.isLocationProhibited(dest)
+                && isPavementStep() && entity.isLocationProhibited(dest, getElevation())
                 && (movementType != EntityMovementType.MOVE_SAFE_THRUST)) {
             for (int dir = 0; dir < 6; dir++) {
                 Coords secondaryCoords = dest.translated(dir);
@@ -3113,7 +3113,7 @@ public class MoveStep implements Serializable {
         if ((movementType != EntityMovementType.MOVE_JUMP)
                 && (movementType != EntityMovementType.MOVE_VTOL_WALK)
                 && (movementType != EntityMovementType.MOVE_VTOL_RUN)
-                && entity.isLocationProhibited(src) && !isPavementStep) {
+                && entity.isLocationProhibited(src, getElevation()) && !isPavementStep) {
             // System.err.println("in restriced terrain");
             return false;
         }

@@ -680,6 +680,12 @@ public interface IGame {
      * get the list of smokeclouds
      */
     public abstract List<SmokeCloud> getSmokeCloudList();
+    
+    /**
+     * Remove a list of smoke clouds
+     * @param cloudsToRemove
+     */
+    public abstract void removeSmokeClouds(List<SmokeCloud> cloudsToRemove);
 
     /**
      * Returns the first entity at the given coordinate, if any. Only returns

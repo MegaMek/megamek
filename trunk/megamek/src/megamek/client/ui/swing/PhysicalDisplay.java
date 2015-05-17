@@ -305,7 +305,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             selectEntity(clientgui.getClient().getFirstEntityNum());
             setNextEnabled(true);
             butDone.setEnabled(true);
-            buttons.get(PhysicalCommand.PHYSICAL_MORE).setEnabled(true);
+            if (numButtonGroups > 1)
+                buttons.get(PhysicalCommand.PHYSICAL_MORE).setEnabled(true);
         }
         clientgui.getBoardView().select(null);
     }

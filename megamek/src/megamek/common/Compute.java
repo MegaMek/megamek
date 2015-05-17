@@ -1518,12 +1518,14 @@ public class Compute {
     }
 
     /**
-     * find a c3, c3i, or nova spotter that is closer to the target than the attacker.
+     * find a c3, c3i, or nova spotter that is closer to the target than the
+     * attacker.
      *
      * @param game
      * @param attacker
      * @param target
-     * @return A closer C3/C3i/Nova spotter, or the attacker if no spotters are found
+     * @return A closer C3/C3i/Nova spotter, or the attacker if no spotters are
+     *         found
      */
     private static Entity findC3Spotter(IGame game, Entity attacker,
             Targetable target) {
@@ -1535,6 +1537,7 @@ public class Compute {
 
         ArrayList<Entity> network = new ArrayList<Entity>();
 
+        // Compute friends in network
         for (Entity friend : game.getEntitiesVector()) {
 
             if (attacker.equals(friend)
@@ -1569,11 +1572,13 @@ public class Compute {
         }
 
         // ensure network connectivity
+        List<ECMInfo> allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
+                .getEntitiesVector());
         int position = 0;
         for (Entity spotter : network) {
             for (int count = position++; count < network.size(); count++) {
                 if (Compute.canCompleteNodePath(spotter, attacker, network,
-                        count)) {
+                        count, allECMInfo)) {
                     return spotter;
                 }
             }
@@ -1582,25 +1587,53 @@ public class Compute {
         return attacker;
     }
 
+    /**
+     * Looks through the network list to ensure that the given Entity is
+     * connected to the network.
+     * 
+     * @param start
+     * @param end
+     * @param network
+     * @param startPosition
+     * @return
+     */
     private static boolean canCompleteNodePath(Entity start, Entity end,
-            ArrayList<Entity> network, int startPosition) {
+            ArrayList<Entity> network, int startPosition, List<ECMInfo> allECMInfo) {
 
         Entity spotter = network.get(startPosition);
 
-        // Last position cannot get to this one. go to the next person
-        if (ComputeECM.isAffectedByECM(spotter, start.getPosition(),
-                spotter.getPosition())) {
+        // ECMInfo for line between spotter's position and start's position
+        ECMInfo spotterStartECM = ComputeECM.getECMEffects(spotter,
+                start.getPosition(), spotter.getPosition(), allECMInfo);
+
+        // Check for ECM between spotter and start
+        boolean isC3BDefeated = start.hasBoostedC3()
+                && (spotterStartECM != null) && spotterStartECM.isAngelECM();
+        boolean isNovaDefeated = start.hasNovaCEWS()
+                && (spotterStartECM != null) && spotterStartECM.isNovaECM();
+        boolean isC3Defeated = !(start.hasBoostedC3() || start.hasNovaCEWS())
+                && (spotterStartECM != null) && spotterStartECM.isECM();
+        if (isC3BDefeated || isNovaDefeated || isC3Defeated) {
             return false;
         }
 
-        if (!ComputeECM.isAffectedByECM(spotter, spotter.getPosition(),
-                end.getPosition())) {
+        // ECMInfo for line between spotter's position and end's position
+        ECMInfo spotterEndECM = ComputeECM.getECMEffects(spotter,
+                spotter.getPosition(), end.getPosition(), allECMInfo);
+        isC3BDefeated = start.hasBoostedC3() && (spotterStartECM != null)
+                && spotterEndECM.isAngelECM();
+        isNovaDefeated = start.hasNovaCEWS() && (spotterStartECM != null)
+                && spotterEndECM.isNovaECM();
+        isC3Defeated = !(start.hasBoostedC3() || start.hasNovaCEWS())
+                && (spotterStartECM != null) && spotterEndECM.isECM();
+        // If there's no ECM between spotter and end, we're done
+        if (!(isC3BDefeated || isNovaDefeated || isC3Defeated)) {
             return true;
         }
 
         for (++startPosition; startPosition < network.size(); startPosition++) {
             if (Compute.canCompleteNodePath(spotter, end, network,
-                    startPosition)) {
+                    startPosition, allECMInfo)) {
                 return true;
             }
         }

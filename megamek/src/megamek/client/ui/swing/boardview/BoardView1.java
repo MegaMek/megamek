@@ -3318,10 +3318,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 if (fe.getPosition() == null) {
                     return;
                 }
+                ECMInfo ecmInfo = ComputeECM.getECMEffects(e, e.getPosition(),
+                        fe.getPosition(), null);
                 if (e.onSameC3NetworkAs(fe)
                     && !fe.equals(e)
-                    && !ComputeECM.isAffectedByECM(e, e.getPosition(),
-                                                   fe.getPosition())) {
+                    && (ecmInfo != null)
+                    && !ecmInfo.isNovaECM()) {
                     c3Sprites.add(new C3Sprite(this, e, fe));
                 }
             }
@@ -3335,14 +3337,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             boolean blocked = false;
             if (e.hasBoostedC3() && eMaster.hasBoostedC3()) {
                 blocked = ComputeECM.isAffectedByAngelECM(e, e.getPosition(),
-                                                          eMaster.getPosition())
-                          || ComputeECM.isAffectedByAngelECM(eMaster,
-                                                             eMaster.getPosition(), eMaster.getPosition());
+                        eMaster.getPosition())
+                        || ComputeECM.isAffectedByAngelECM(eMaster,
+                                eMaster.getPosition(), eMaster.getPosition());
             } else {
                 blocked = ComputeECM.isAffectedByECM(e, e.getPosition(),
-                                                     eMaster.getPosition())
-                          || ComputeECM.isAffectedByECM(eMaster,
-                                                        eMaster.getPosition(), eMaster.getPosition());
+                        eMaster.getPosition())
+                        || ComputeECM.isAffectedByECM(eMaster,
+                                eMaster.getPosition(), eMaster.getPosition());
             }
 
             if (!blocked) {

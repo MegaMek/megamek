@@ -122,6 +122,7 @@ v0.41.4-dev (SVN)
 + Bug [#4544]: Airborne WiGE movement blocked by level 1 buildings
 + Patch [#485]: Movement Envelope (Borders)
 + Patch [#486]: Setting for number of action buttons per row
++ Bug [#4534]: Nova and C3B were being blocked by normal ECM
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

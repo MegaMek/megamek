@@ -71,6 +71,13 @@ public class ECMInfo implements Comparable<Object> {
      */    
     private int angelECCMStrength = 0;
     
+    /**
+     * Indicates whether the ECM strength includes ECM from a Nova CEWS.  From
+     * what I can see, Nova ECM acts like regular ECM, except that it's the
+     * only ECM that can disrupt the Nova C3i system.
+     */
+    private boolean isECMNova = false;
+    
     public ECMInfo() {
     }
     
@@ -166,6 +173,7 @@ public class ECMInfo implements Comparable<Object> {
         if (((other.owner == null) || owner.isEnemyOf(other.owner))) {
             strength += other.strength;
             angelStrength += other.angelStrength;
+            isECMNova |= other.isECMNova;
         // Allied ECCM
         } else if ((other.owner != null) && !owner.isEnemyOf(other.owner)) {
             eccmStrength += other.eccmStrength;
@@ -189,6 +197,7 @@ public class ECMInfo implements Comparable<Object> {
         } else if ((other.owner != null) && !owner.isEnemyOf(other.owner)) {
             strength += other.strength;
             angelStrength += other.angelStrength;
+            isECMNova |= other.isECMNova;
         }          
     }
     
@@ -205,7 +214,11 @@ public class ECMInfo implements Comparable<Object> {
         if (angelStrength != 0) {
             strengthString = ", aS: " + angelStrength;
         } else if (strength != 0){
-            strengthString = ", s: " + strength;
+            if (isECMNova) {
+                strengthString = ", nS: " + strength;
+            } else {
+                strengthString = ", s: " + strength;
+            }
         }
         
         if (angelECCMStrength != 0) {
@@ -245,9 +258,10 @@ public class ECMInfo implements Comparable<Object> {
        boolean strMatch = (strength == other.strength) 
                && (angelStrength == other.angelStrength) 
                && (eccmStrength == other.eccmStrength) 
-               && (angelECCMStrength == other.angelECCMStrength); 
+               && (angelECCMStrength == other.angelECCMStrength);
+       boolean novaMatch = isECMNova == other.isECMNova;
        boolean rangeMatch = range == other.range;
-       return ownersMatch && posMatch && strMatch && rangeMatch;
+       return ownersMatch && posMatch && strMatch && rangeMatch && novaMatch;
     }
     
     /**
@@ -384,5 +398,17 @@ public class ECMInfo implements Comparable<Object> {
 
     public void setDirection(int direction) {
         this.direction = direction;
+    }
+
+    public boolean isNovaECM() {
+        return isECM() && isECMNova;
+    }
+    
+    public boolean isNova() {
+        return isECMNova;
+    }
+
+    public void setECMNova(boolean isECMNova) {
+        this.isECMNova = isECMNova;
     }
 }

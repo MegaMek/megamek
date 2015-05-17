@@ -2343,7 +2343,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * terrain.
      */
     public boolean isLocationProhibited(Coords c) {
-        return isLocationProhibited(c, getElevation());
+        return isLocationProhibited(c, elevation);
     }
         
     /**

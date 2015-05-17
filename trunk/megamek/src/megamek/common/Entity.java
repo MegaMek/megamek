@@ -5276,10 +5276,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (ignoreECM) {
                 return true;
             }
-            return !(ComputeECM.isAffectedByECM(e, e.getPosition(),
-                                                e.getPosition()))
-                   && !(ComputeECM.isAffectedByECM(this, getPosition(),
-                                                   getPosition()));
+            ECMInfo srcInfo = ComputeECM.getECMEffects(e, e.getPosition(),
+                    e.getPosition(), null);
+            ECMInfo dstInfo = ComputeECM.getECMEffects(this, getPosition(),
+                    getPosition(), null);
+            return !((srcInfo != null) && srcInfo.isNovaECM()) 
+                    && !((dstInfo != null) && dstInfo.isNovaECM());
         }
 
         // simple sanity check - do they both have C3, and are they both on the
@@ -10820,6 +10822,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     range = 3;
                 }
                 newInfo = new ECMInfo(range, 1, this);
+                newInfo.setECMNova(m.getType().hasFlag(MiscType.F_NOVA));
             }
             // In some type of ECM mode...
             if (newInfo != null) {

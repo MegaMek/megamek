@@ -653,7 +653,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // boolean isProtomech = (ce instanceof Protomech);
         boolean isAero = (ce instanceof Aero);
 
-        getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
+        if (numButtonGroups > 1)
+            getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
         setWalkEnabled(!ce.isImmobile()
                        && ((ce.getWalkMP() > 0) || (ce.getRunMP() > 0))
                        && !ce.isStuck());
@@ -801,7 +802,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         butDone.setEnabled(true);
         setNextEnabled(true);
         setForwardIniEnabled(true);
-        getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
+        if (numButtonGroups > 1)
+            getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
         if (!clientgui.bv.isMovingUnits()) {
             clientgui.setDisplayVisible(true);
         }
@@ -3220,7 +3222,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         if (a.isOutControlTotal() && a.isAirborne()) {
             disableButtons();
             butDone.setEnabled(true);
-            getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
+            if (numButtonGroups > 1)
+                getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
             getBtn(MoveCommand.MOVE_NEXT).setEnabled(true);
             setForwardIniEnabled(true);
             getBtn(MoveCommand.MOVE_LAUNCH).setEnabled(true);

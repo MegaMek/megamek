@@ -3390,6 +3390,12 @@ public class Game implements Serializable, IGame {
     public List<SmokeCloud> getSmokeCloudList() {
         return smokeCloudList;
     }
+    
+    public void removeSmokeClouds(List<SmokeCloud> cloudsToRemove) {
+        for (SmokeCloud cloud : cloudsToRemove) {
+            smokeCloudList.remove(cloud);
+        }
+    }
 
     /**
      * Updates the map that maps a position to the list of Entity's in that

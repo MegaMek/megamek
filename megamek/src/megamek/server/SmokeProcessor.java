@@ -14,7 +14,8 @@
  */
 package megamek.server;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Coords;
@@ -51,19 +52,16 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
      * Remove any empty clouds from the array
      */
     public void removeEmptyClouds() {
-        Iterator<SmokeCloud> clouds = server.getSmokeCloudList().iterator();
-
-        while ( clouds.hasNext() ) {
-            SmokeCloud cloud = clouds.next();
-
+        List<SmokeCloud> cloudsToRemove = new ArrayList<>();
+        for (SmokeCloud cloud: server.getSmokeCloudList()) {
             if ( cloud.getCoordsList().size() < 1 ) {
-                clouds.remove();
+                cloudsToRemove.add(cloud);
             }else if ( cloud.getSmokeLevel() < 1 ) {
                 server.removeSmokeTerrain(cloud);
-                clouds.remove();
+                cloudsToRemove.add(cloud);
             }
-
         }
+        server.getGame().removeSmokeClouds(cloudsToRemove);
     }
 
     /**

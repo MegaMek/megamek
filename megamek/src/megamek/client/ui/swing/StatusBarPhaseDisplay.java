@@ -38,6 +38,8 @@ import megamek.client.Client;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
+import megamek.common.preference.IPreferenceChangeListener;
+import megamek.common.preference.PreferenceChangeEvent;
 
 /**
  * This is a parent class for the button display for each phase.  Every phase 
@@ -50,7 +52,7 @@ import megamek.client.ui.swing.widget.SkinXMLHandler;
  *
  */
 public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
-        implements ActionListener, KeyListener {
+        implements ActionListener, KeyListener, IPreferenceChangeListener {
 
     private static final long serialVersionUID = 639696875125581395L;
     
@@ -97,8 +99,9 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     //   child class
     protected int numButtonGroups;
     // How any buttons are in each group
-    protected int buttonsPerGroup = 10;
-    protected int buttonsPerRow = 5;
+    protected int buttonsPerRow = GUIPreferences.getInstance().getInt(
+            GUIPreferences.ADVANCED_BUTTONS_PER_ROW);
+    protected int buttonsPerGroup = 2 * buttonsPerRow;
     
 
     protected StatusBarPhaseDisplay() {
@@ -128,6 +131,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         panButtons = new JPanel();      
         panButtons.setOpaque(false);        
         panButtons.setLayout(new GridBagLayout());
+        
+        GUIPreferences.getInstance().addPreferenceChangeListener(this);
     }
     
     
@@ -285,15 +290,25 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         return false;
     }
     
-@Override
-public void keyPressed(KeyEvent evt) {
-}
+    @Override
+    public void keyPressed(KeyEvent evt) {
+    }
 
-@Override
-public void keyReleased(KeyEvent evt) {
-}
+    @Override
+    public void keyReleased(KeyEvent evt) {
+    }
 
-@Override
-public void keyTyped(KeyEvent evt) {
-}
+    @Override
+    public void keyTyped(KeyEvent evt) {
+    }
+
+    public void preferenceChange(PreferenceChangeEvent e) {
+        if (e.getName().equals(GUIPreferences.ADVANCED_BUTTONS_PER_ROW)) {
+            buttonsPerRow = GUIPreferences.getInstance().getInt(
+                    GUIPreferences.ADVANCED_BUTTONS_PER_ROW);
+            buttonsPerGroup = 2 * buttonsPerRow;
+            setupButtonPanel();
+        }
+    }
+
 }

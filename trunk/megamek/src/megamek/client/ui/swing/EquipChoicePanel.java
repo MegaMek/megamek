@@ -1527,6 +1527,10 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 if (entity.hasC3i() != e.hasC3i()) {
                     continue;
                 }
+                // likewise can't connect c3 to nova
+                if (entity.hasNovaCEWS() != e.hasNovaCEWS()) {
+                    continue;
+                }
                 // maximum depth of a c3 network is 2 levels.
                 Entity eCompanyMaster = e.getC3Master();
                 if ((eCompanyMaster != null)

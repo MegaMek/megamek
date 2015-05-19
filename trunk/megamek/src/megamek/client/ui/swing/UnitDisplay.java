@@ -3231,9 +3231,11 @@ public class UnitDisplay extends JPanel {
                         sb.append(hotLoaded);
                     }
                     if (m.getType().hasModes()) {
-                        sb.append(" ("); //$NON-NLS-1$
-                        sb.append(m.curMode().getDisplayableName());
-                        sb.append(')'); //$NON-NLS-1$
+                        if (m.curMode().getDisplayableName().length() > 0) {
+                            sb.append(" ("); //$NON-NLS-1$
+                            sb.append(m.curMode().getDisplayableName());
+                            sb.append(')'); //$NON-NLS-1$
+                        }
                         if (!m.pendingMode().equals("None")) { //$NON-NLS-1$
                             sb.append(" (next turn, "); //$NON-NLS-1$
                             sb.append(m.pendingMode().getDisplayableName());
@@ -3286,9 +3288,11 @@ public class UnitDisplay extends JPanel {
                                 sb.append(hotLoaded);
                             }
                             if (m.getType().hasModes()) {
-                                sb.append(" ("); //$NON-NLS-1$
-                                sb.append(m.curMode().getDisplayableName());
-                                sb.append(')'); //$NON-NLS-1$
+                                if (m.curMode().getDisplayableName().length() > 0) {
+                                    sb.append(" ("); //$NON-NLS-1$
+                                    sb.append(m.curMode().getDisplayableName());
+                                    sb.append(')'); //$NON-NLS-1$
+                                }
                                 if (!m.pendingMode().equals("None")) { //$NON-NLS-1$
                                     sb.append(" (next turn, "); //$NON-NLS-1$
                                     sb.append(m.pendingMode().getDisplayableName());

@@ -128,6 +128,7 @@ v0.41.4-dev (SVN)
 + Patches [#405/#406/#407/#408/#409] - Various Source Updates.
 + Bug [#4459]: Mode name issues with Bracketing Fire and AAA fire
 + Bug [#4450]: Pending modes not reflected in UnitDisplay System & Weapons tabs
++ Bug: UnitDisplay System tab would display "()" for equipment in "Normal" mode
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

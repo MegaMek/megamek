@@ -3422,6 +3422,9 @@ public class UnitDisplay extends JPanel {
                                     //$NON-NLS-1$
                                 }
                             }
+                            int loc = slotList.getSelectedIndex();
+                            displaySlots();
+                            slotList.setSelectedIndex(loc);
                         }
                     } else if ((cs != null)
                             && (cs.getType() == CriticalSlot.TYPE_SYSTEM)) {
@@ -3729,9 +3732,7 @@ public class UnitDisplay extends JPanel {
                         for (Enumeration<EquipmentMode> e = m.getType()
                                 .getModes(); e.hasMoreElements();) {
                             EquipmentMode em = e.nextElement();
-                            m_chMode.removeItemListener(this);
                             m_chMode.addItem(em.getDisplayableName());
-                            m_chMode.addItemListener(this);
                         }
                         m_chMode.setSelectedItem(m.curMode()
                                 .getDisplayableName());

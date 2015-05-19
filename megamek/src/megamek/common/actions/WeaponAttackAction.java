@@ -2988,7 +2988,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
         if (isArtilleryDirect
             && ae.isAirborne()) {
-            return "Airborne units cannot make direct-Fire artillery attacks";
+            return "Airborne aerospace units cannot make direct-fire artillery attacks";
         }
 
         if (isArtilleryDirect
@@ -3060,12 +3060,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                        && !isArtilleryFLAK) {
                 return "Weapon must make artillery attacks.";
             }
-            if (ae.isAirborne() || ae.isAirborneVTOLorWIGE()) {
+            if (ae.isAirborne()) {
                 if (isArtilleryDirect) {
-                    return "Flying units can't make direct-fire artillery attacks";
+                    return "Airborne aerospace units can't make direct-fire artillery attacks";
                 } else if (isArtilleryIndirect
                            && (wtype.getAmmoType() != AmmoType.T_ARROW_IV)) {
-                    return "Flying units can't fire non-Arrow-IV artillery.";
+                    return "Airborne aerospace units can't fire non-Arrow-IV artillery.";
                 }
             }
         } else {

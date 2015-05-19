@@ -7594,12 +7594,19 @@ public class Server implements Runnable {
                     } else if (lastHex.terrainLevel(Terrains.MAGMA) == 2) {
                         heat += 5;
                     }
+                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
+                        heat /= 2;
+                    }
                     entity.heatFromExternal += heat;
                     r = new Report(2115);
                     r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(heat);
                     addReport(r);
+                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
+                        r = new Report(5550);
+                        addReport(r);
+                    }
                 }
             }
 
@@ -17389,13 +17396,20 @@ public class Server implements Runnable {
                     50, -30) != 0)
                 && !((Mech) entity).hasLaserHeatSinks()) {
                 if (game.getPlanetaryConditions().getTemperature() > 50) {
-                    entity.heatFromExternal += game.getPlanetaryConditions()
-                                                   .getTemperatureDifference(50, -30);
+                    int heatToAdd = game.getPlanetaryConditions()
+                                        .getTemperatureDifference(50, -30);
+                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
+                        heatToAdd /= 2;
+                    }
+                    entity.heatFromExternal += heatToAdd;
                     r = new Report(5020);
                     r.subject = entity.getId();
-                    r.add(game.getPlanetaryConditions()
-                              .getTemperatureDifference(50, -30));
+                    r.add(heatToAdd);
                     addReport(r);
+                    if (((Mech) entity).hasIntactHeatDissipatingArmor()) {
+                        r = new Report(5550);
+                        addReport(r);
+                    }
                 } else {
                     entity.heatFromExternal -= game.getPlanetaryConditions()
                                                    .getTemperatureDifference(50, -30);
@@ -17413,18 +17427,39 @@ public class Server implements Runnable {
                 if (entityHex.containsTerrain(Terrains.FIRE)
                     && (entityHex.getFireTurn() > 0)
                     && (entity.getElevation() <= 1)) {
-                    entity.heatFromExternal += 5;
+                    int heatToAdd = 5;
+                    if ((entity instanceof Mech)
+                        && ((Mech) entity).hasIntactHeatDissipatingArmor()) {
+                        heatToAdd /= 2;
+                    }
+                    entity.heatFromExternal += heatToAdd;
                     r = new Report(5030);
+                    r.add(heatToAdd);
                     r.subject = entity.getId();
                     addReport(r);
+                    if ((entity instanceof Mech)
+                        && ((Mech) entity).hasIntactHeatDissipatingArmor()) {
+                        r = new Report(5550);
+                        addReport(r);
+                    }
                 }
                 int magma = entityHex.terrainLevel(Terrains.MAGMA);
                 if ((magma > 0) && (entity.getElevation() == 0)) {
-                    entity.heatFromExternal += 5 * magma;
+                    int heatToAdd = 5 * magma;
+                    if ((entity instanceof Mech)
+                        && ((Mech) entity).hasIntactHeatDissipatingArmor()) {
+                        heatToAdd /= 2;
+                    }
+                    entity.heatFromExternal += heatToAdd;
                     r = new Report(5032);
                     r.subject = entity.getId();
-                    r.add(5 * magma);
+                    r.add(heatToAdd);
                     addReport(r);
+                    if ((entity instanceof Mech)
+                        && ((Mech) entity).hasIntactHeatDissipatingArmor()) {
+                        r = new Report(5550);
+                        addReport(r);
+                    }
                 }
             }
 

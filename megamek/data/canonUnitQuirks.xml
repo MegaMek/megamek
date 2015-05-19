@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <unitQuirks xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="unitQuirksSchema.xsl">
+    <!-- BEGIN Era Digest Age of War -->
+    <unit>
+        <chassis>Marsden</chassis>
+        <model>I</model>
+        <quirk>easy_maintain</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Estevez MBT</chassis>
+        <model>all</model>
+        <quirk>gas_hog</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Hector</chassis>
+        <model>all</model>
+        <quirk>bad_rep</quirk>
+        <quirk>exp_actuator</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Firebird</chassis>
+        <model>FR-1</model>
+        <quirk>atmo_instability</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <!-- END Era Digest Age of War -->
     <unit>
         <chassis>Atlas</chassis>
         <model>all</model>

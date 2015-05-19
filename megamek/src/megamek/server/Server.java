@@ -19605,6 +19605,7 @@ public class Server implements Runnable {
         boolean reflectiveArmor = false;
         boolean reactiveArmor = false;
         boolean ballisticArmor = false;
+        boolean impactArmor = false;
         boolean bar5 = te.getBARRating(hit.getLocation()) <= 5;
 
         if (((te instanceof Mech) || (te instanceof Tank))
@@ -19634,6 +19635,11 @@ public class Server implements Runnable {
         if (((te instanceof Mech) || (te instanceof Tank) || (te instanceof Aero))
             && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_BALLISTIC_REINFORCED)) {
             ballisticArmor = true;
+        }
+
+        if ((te instanceof Mech)
+            && (te.getArmorType(hit.getLocation()) == EquipmentType.T_ARMOR_IMPACT_RESISTANT)) {
+            impactArmor = true;
         }
 
         // TACs from the hit location table
@@ -20311,6 +20317,16 @@ public class Server implements Runnable {
                     tmpDamageHold = damage;
                     damage = Math.max(1, damage / 2);
                     r = new Report(6088);
+                    r.subject = te_n;
+                    r.indent(3);
+                    r.add(damage);
+                    vDesc.addElement(r);
+                } else if (impactArmor
+                           && (hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL)) {
+                    tmpDamageHold = damage;
+                    damage -= (int) Math.ceil((double) damage / 3);
+                    damage = Math.max(1, damage);
+                    r = new Report(6089);
                     r.subject = te_n;
                     r.indent(3);
                     r.add(damage);
@@ -21147,6 +21163,8 @@ public class Server implements Runnable {
                     // against BAR or reflective armor, we get a +2 mod
                     int critMod = te.hasBARArmor(hit.getLocation()) ? 2 : 0;
                     critMod += (reflectiveArmor && !isBattleArmor) ? 2 : 0; // BA
+                    // against impact armor, we get a +1 mod
+                    critMod += impactArmor ? 1 : 0;
                     // reflec
                     // has
                     // no
@@ -24471,6 +24489,14 @@ public class Server implements Runnable {
                     r.indent(3);
                     vDesc.addElement(r);
                     target -= 2;
+                }
+                // Impact-resistant armor easier to breach
+                if ((entity.getArmorType(loc) == EquipmentType.T_ARMOR_IMPACT_RESISTANT)) {
+                    r = new Report(6344);
+                    r.subject = entity.getId();
+                    r.indent(3);
+                    vDesc.addElement(r);
+                    target += 1;
                 }
                 breachroll = Compute.d6(2);
                 r = new Report(6345);

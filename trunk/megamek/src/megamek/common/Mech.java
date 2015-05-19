@@ -8099,4 +8099,20 @@ public abstract class Mech extends Entity {
         }
         return false;
     }
+
+    /**
+     * Check whether a mech has intact heat-dissipating armor in every location
+     * thus protecting it from external heat sources like fires or magma
+     *
+     * @return True/False
+     */
+    public boolean hasIntactHeatDissipatingArmor() {
+        for (int loc = 0; loc < locations(); ++loc) {
+            if ((getArmor(loc) < 1)
+                || (getArmorType(loc) != EquipmentType.T_ARMOR_HEAT_DISSIPATING)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

@@ -1514,8 +1514,12 @@ public class UnitDisplay extends JPanel {
                 if (!((Mech) en).hasLaserHeatSinks()) {
                     // extreme temperatures.
                     if ((game != null) && (game.getPlanetaryConditions().getTemperature() > 0)) {
-                        currentHeatBuildup += game.getPlanetaryConditions()
-                                                  .getTemperatureDifference(50, -30);
+                        int buildup = game.getPlanetaryConditions()
+                                          .getTemperatureDifference(50, -30);
+                        if (((Mech) en).hasIntactHeatDissipatingArmor()) {
+                            buildup /= 2;
+                        }
+                        currentHeatBuildup += buildup;
                     } else if (game != null) {
                         currentHeatBuildup -= game.getPlanetaryConditions()
                                                   .getTemperatureDifference(50, -30);
@@ -1527,12 +1531,28 @@ public class UnitDisplay extends JPanel {
                 IHex hex = game.getBoard().getHex(position);
                 if (hex.containsTerrain(Terrains.FIRE)
                     && (hex.getFireTurn() > 0)) {
-                    currentHeatBuildup += 5; // standing in fire
+                    // standing in fire
+                    if ((en instanceof Mech)
+                        && ((Mech) en).hasIntactHeatDissipatingArmor()) {
+                        currentHeatBuildup += 2;
+                    } else {
+                        currentHeatBuildup += 5;
+                    }
                 }
                 if (hex.terrainLevel(Terrains.MAGMA) == 1) {
-                    currentHeatBuildup += 5;
+                    if ((en instanceof Mech)
+                        && ((Mech) en).hasIntactHeatDissipatingArmor()) {
+                        currentHeatBuildup += 2;
+                    } else {
+                        currentHeatBuildup += 5;
+                    }
                 } else if (hex.terrainLevel(Terrains.MAGMA) == 2) {
-                    currentHeatBuildup += 10;
+                    if ((en instanceof Mech)
+                        && ((Mech) en).hasIntactHeatDissipatingArmor()) {
+                        currentHeatBuildup += 5;
+                    } else {
+                        currentHeatBuildup += 10;
+                    }
                 }
             }
             if ((((en instanceof Mech) || (en instanceof Aero)) && en.isStealthActive())

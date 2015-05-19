@@ -133,6 +133,7 @@
      Brock Peterman <bh-21@users.sourceforge.net>
      DarkISI
      Dave Nawton <hammer-gs@users.sourceforge.net>
+     Phoenixstorm
 
   Updates to the Ant build file:
      Robert Schuster <thebohemian@users.sourceforge.net>
@@ -198,6 +199,9 @@
      Dervishx5
      Adam Werner
      Michael "Spartan10590" Rehrig
+     Scintilla
+     Michael Rehrig
+     
      
   Camo Pack
   	 SeaVea

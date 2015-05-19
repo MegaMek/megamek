@@ -784,7 +784,13 @@ public class UnitDisplay extends JPanel {
             // Fire Mode - lots of things have variable modes
             if (wtype.hasModes()) {
                 wn.append(' ');
+                
                 wn.append(mounted.curMode().getDisplayableName());
+                if (!mounted.pendingMode().equals("None")) {
+                    wn.append(" (next turn, ");
+                    wn.append(mounted.pendingMode().getDisplayableName());
+                    wn.append(')');
+                }
             }
             if ((game != null)
                     && game.getOptions().booleanOption("tacops_called_shots")) { //$NON-NLS-1$
@@ -3228,6 +3234,11 @@ public class UnitDisplay extends JPanel {
                         sb.append(" ("); //$NON-NLS-1$
                         sb.append(m.curMode().getDisplayableName());
                         sb.append(')'); //$NON-NLS-1$
+                        if (!m.pendingMode().equals("None")) { //$NON-NLS-1$
+                            sb.append(" (next turn, "); //$NON-NLS-1$
+                            sb.append(m.pendingMode().getDisplayableName());
+                            sb.append(')'); //$NON-NLS-1$
+                        }
                         if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType()).isShield()) {
                             sb.append(" " //$NON-NLS-1$
@@ -3278,6 +3289,11 @@ public class UnitDisplay extends JPanel {
                                 sb.append(" ("); //$NON-NLS-1$
                                 sb.append(m.curMode().getDisplayableName());
                                 sb.append(')'); //$NON-NLS-1$
+                                if (!m.pendingMode().equals("None")) { //$NON-NLS-1$
+                                    sb.append(" (next turn, "); //$NON-NLS-1$
+                                    sb.append(m.pendingMode().getDisplayableName());
+                                    sb.append(')'); //$NON-NLS-1$
+                                }
                                 if ((m.getType() instanceof MiscType)
                                         && ((MiscType) m.getType()).isShield()) {
                                     sb.append(" " //$NON-NLS-1$

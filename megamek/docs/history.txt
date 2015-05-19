@@ -126,6 +126,8 @@ v0.41.4-dev (SVN)
 + Bug [#4550]: C3 shouldn't offer to connect to Nova
 + Patch [#487]: Impact-resistant armor effects from FM 3145
 + Patches [#405/#406/#407/#408/#409] - Various Source Updates.
++ Bug [#4459]: Mode name issues with Bracketing Fire and AAA fire
++ Bug [#4450]: Pending modes not reflected in UnitDisplay System & Weapons tabs
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

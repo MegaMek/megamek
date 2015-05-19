@@ -28,6 +28,516 @@
         <quirk>obsolete</quirk>
     </unit>
     <!-- END Era Digest Age of War -->
+    <!-- BEGIN XTRO Primitives II-->
+    <unit>
+        <chassis>Wasp</chassis>
+        <model>WSP-1</model>
+        <quirk>weak_legs</quirk>
+        <quirk>hard_pilot</quirk>
+    </unit>
+    <unit>
+        <chassis>Icarus</chassis>
+        <model>ICR-1X</model>
+        <quirk>difficult_maintain</quirk>
+        <quirk>ext_twist</quirk>
+        <quirk>poor_performance</quirk>
+        <quirk>prototype</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Gladiator</chassis>
+        <model>GLD-1R</model>
+        <quirk>cowl</quirk>
+        <quirk>bad_rep</quirk>
+        <quirk>poor_work</quirk>
+        <quirk>poor_sealing</quirk>
+        <quirk>unbalanced</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Crossbow</chassis>
+        <model>CRS-X</model>
+        <quirk>prototype</quirk>
+        <quirk>poor_target_long</quirk>
+        <quirk>obsolete</quirk>
+        <weaponQuirk>
+            <weaponQuirkName>poor_cooling</weaponQuirkName>
+            <location>RT</location>
+            <slot>1</slot>
+            <weaponName>ISLargeLaser</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Battleaxe</chassis>
+        <model>BKX-1X</model>
+        <quirk>prototype</quirk>
+        <quirk>poor_performance</quirk>
+        <quirk>hard_pilot</quirk>
+    </unit>
+    <unit>
+        <chassis>Banshee</chassis>
+        <model>BNC-1E</model>
+        <quirk>bad_rep</quirk>
+        <quirk>easy_maintain</quirk>
+        <quirk>distracting</quirk>
+    </unit>
+    <unit>
+        <chassis>Strike Falcon Attack VTOL</chassis>
+        <quirk>easy_pilot</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Randolph Support Vehicle</chassis>
+        <quirk>easy_maintain</quirk>
+        <quirk>mod_weapons</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>LTV-4 Hover Tank</chassis>
+        <quirk>easy_maintain</quirk>
+        <quirk>low_profile</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>AC/2 Carrier</chassis>
+        <model>(Primitive)</model>
+        <quirk>easy_maintain</quirk>
+        <quirk>low_profile</quirk>
+        <quirk>fast_reload</quirk>
+        <quirk>poor_performance</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>LRM Carrier</chassis>
+        <model>(Primitive)</model>
+        <quirk>easy_maintain</quirk>
+        <quirk>low_profile</quirk>
+        <quirk>fast_reload</quirk>
+        <quirk>poor_performance</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>SRM Carrier</chassis>
+        <model>(Primitive)</model>
+        <quirk>easy_maintain</quirk>
+        <quirk>low_profile</quirk>
+        <quirk>fast_reload</quirk>
+        <quirk>poor_performance</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Mosquito Light Fighter</chassis>
+        <quirk>atmo_flyer</quirk>
+        <quirk>easy_maintain</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Ares Landing Craft</chassis>
+        <model>Mk.I</model>
+        <quirk>atmo_flyer</quirk>
+        <quirk>easy_maintain</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Ares Close Assault Landing Craft</chassis>
+        <model>Mk.II</model>
+        <quirk>atmo_flyer</quirk>
+        <quirk>easy_maintain</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Ares Assault Craft</chassis>
+        <model>Mk.III</model>
+        <quirk>atmo_flyer</quirk>
+        <quirk>easy_maintain</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Black Eagle</chassis>
+        <model>(Standard)</model>
+        <quirk>easy_maintain</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <!-- END XTRO Primitives II-->
+    <!-- BEGIN XTRO Primitives III-->
+    <unit>
+        <chassis>Firebee</chassis>
+        <model>FRB-1E (WAM-B)</model>
+        <quirk>difficult_maintain</quirk>
+        <quirk>ext_twist</quirk>
+        <quirk>non_standard</quirk>
+        <quirk>poor_work</quirk>
+        <quirk>weak_legs</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Eisenfaust</chassis>
+        <model>EFT-2</model>
+        <quirk>bad_rep</quirk>
+        <quirk>poor_performance</quirk>
+        <quirk>prototype</quirk>
+        <quirk>obsolete</quirk>
+        <weaponQuirk>
+            <weaponQuirkName>poor_cooling</weaponQuirkName>
+            <location>LA</location>
+            <slot>5</slot>
+            <weaponName>ISLargeLaser</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Dervish</chassis>
+        <model>DV-1S</model>
+        <quirk>easy_maintain</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Bellerophon</chassis>
+        <model>BEL-1X</model>
+        <quirk>cowl</quirk>
+        <quirk>prototype</quirk>
+        <quirk>unbalanced</quirk>
+        <quirk>obsolete</quirk>
+        <weaponQuirk>
+            <weaponQuirkName>em_interference</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>ISLargeLaser</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>em_interference</weaponQuirkName>
+            <location>RA</location>
+            <slot>6</slot>
+            <weaponName>ISLargeLaser</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Thunderbolt</chassis>
+        <model>TDR-1C</model>
+        <quirk>difficult_maintain</quirk>
+        <quirk>multi_trac</quirk>
+        <quirk>poor_work</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Longbow</chassis>
+        <model>LGB-0C</model>
+        <quirk>cramped_cockpit</quirk>
+        <quirk>ext_twist</quirk>
+        <quirk>imp_com</quirk>
+        <quirk>searchlight</quirk>
+        <quirk>weak_legs</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Carter Medical Emergency Response Vehicle</chassis>
+        <model>(Standard)</model>
+        <quirk>easy_maintain</quirk>
+        <quirk>gas_hog</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Korvin Tank</chassis>
+        <model>KVN-2</model>
+        <quirk>easy_maintain</quirk>
+        <quirk>hard_pilot</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Alacorn Heavy Tank</chassis>
+        <model>Mk I</model>
+        <quirk>difficult_maintain</quirk>
+        <quirk>imp_com</quirk>
+        <quirk>poor_performance</quirk>
+        <quirk>trailer_hitch</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Alacorn Heavy Tank</chassis>
+        <model>Mk I</model>
+        <quirk>difficult_maintain</quirk>
+        <quirk>imp_com</quirk>
+        <quirk>poor_performance</quirk>
+        <quirk>trailer_hitch</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Caravan Heavy Transport</chassis>
+        <model>(Standard)</model>
+        <quirk>atmo_flyer</quirk>
+        <quirk>easy_maintain</quirk>
+        <quirk>fragile_fuel</quirk>
+        <quirk>gas_hog</quirk>
+        <quirk>no_eject</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Vendetta Medium Fighter</chassis>
+        <model>(Standard)</model>
+        <quirk>atmo_flyer</quirk>
+        <quirk>cramped_cockpit</quirk>
+        <quirk>difficult_eject</quirk>
+        <quirk>variable_range_short</quirk>
+        <quirk>weak_undercarriage</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Czar Dropship</chassis>
+        <model>(Standard)</model>
+        <quirk>atmo_instability</quirk>
+        <quirk>difficult_maintain</quirk>
+        <quirk>docking_arms</quirk>
+        <quirk>imp_target_short</quirk>
+        <quirk>sensor_ghosts</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Liberty Jumpship</chassis>
+        <model>(Standard)</model>
+        <quirk>difficult_maintain</quirk>
+        <quirk>docking_arms</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <!-- END XTRO Primitives III-->
+    <!-- BEGIN XTRO Primitives IV-->
+    <unit>
+        <chassis>Toro</chassis>
+        <model>TR-A-1</model>
+        <quirk>cramped_cockpit</quirk>
+        <quirk>low_profile</quirk>
+        <quirk>obsolete</quirk>
+        <weaponQuirk>
+            <weaponQuirkName>poor_cooling</weaponQuirkName>
+            <location>LA</location>
+            <slot>4</slot>
+            <weaponName>ISLargeLaser</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Swordsman</chassis>
+        <model>SWD-1</model>
+        <quirk>bad_rep</quirk>
+        <quirk>obsolete</quirk>
+        <quirk>poor_work</quirk>
+        <quirk>searchlight</quirk>
+        <weaponQuirk>
+            <weaponQuirkName>accurate</weaponQuirkName>
+            <location>LT</location>
+            <slot>2</slot>
+            <weaponName>Autocannon/5</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>ammo_feed_problems</weaponQuirkName>
+            <location>LT</location>
+            <slot>6</slot>
+            <weaponName>Autocannon/5</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Swordsman</chassis>
+        <model>SWD-1</model>
+        <quirk>bad_rep</quirk>
+        <quirk>obsolete</quirk>
+        <quirk>searchlight</quirk>
+        <weaponQuirk>
+            <weaponQuirkName>accurate</weaponQuirkName>
+            <location>LT</location>
+            <slot>2</slot>
+            <weaponName>Autocannon/5</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Rifleman</chassis>
+        <model>RFL-1N</model>
+        <quirk>anti_air</quirk>
+        <quirk>obsolete</quirk>
+        <quirk>searchlight</quirk>
+    </unit>
+    <unit>
+        <chassis>Rifleman</chassis>
+        <model>RFL-2N</model>
+        <quirk>anti_air</quirk>
+        <quirk>obsolete</quirk>
+        <quirk>searchlight</quirk>
+    </unit>
+    <unit>
+        <chassis>Griffin</chassis>
+        <model>GRF-1A</model>
+        <quirk>obsolete</quirk>
+        <quirk>poor_sealing</quirk>
+        <weaponQuirk>
+            <weaponQuirkName>jettison_capable</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>PPCp</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>imp_cooling</weaponQuirkName>
+            <location>RA</location>
+            <slot>4</slot>
+            <weaponName>PPCp</weaponName>
+        </weaponQuirk>
+    </unit>EMP-1A
+    <unit>
+        <chassis>Emperor</chassis>
+        <model>EMP-1A</model>
+        <quirk>bad_rep</quirk>
+        <quirk>command_mech</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Xanthos</chassis>
+        <model>XNT-2O</model>
+        <quirk>bad_rep</quirk>
+        <quirk>obsolete</quirk>
+        <quirk>poor_performance</quirk>
+        <quirk>pro_actuator</quirk>
+        <quirk>prototype</quirk>
+        <quirk>unbalanced</quirk>
+    </unit>
+    <unit>
+        <chassis>Chi-Ha Infantry Combat Vehicle</chassis>
+        <model>(Original)</model>
+        <quirk>low_profile</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Chi-Ha Infantry Combat Vehicle</chassis>
+        <model>(Standard)</model>
+        <quirk>low_profile</quirk>
+    </unit>
+    <unit>
+        <chassis>Cobra VTOL Transport</chassis>
+        <model>(Standard)</model>
+        <quirk>non_standard</quirk>
+        <quirk>obsolete</quirk>
+        <quirk>vtol_rotor</quirk>
+    </unit>
+    <unit>
+        <chassis>Cobra VTOL Transport</chassis>
+        <model>(Fusion)</model>
+        <quirk>non_standard</quirk>
+        <quirk>obsolete</quirk>
+        <quirk>vtol_rotor</quirk>
+    </unit>
+    <unit>
+        <chassis>Sturmblitz Assault Gun</chassis>
+        <model>(Standard)</model>
+        <quirk>distracting</quirk>
+        <quirk>easy_maintain</quirk>
+        <quirk>obsolete</quirk>
+        <quirk>variable_range_long</quirk>
+    </unit>
+    <unit>
+        <chassis>Mustang Fighter</chassis>
+        <model>(Standard)</model>
+        <quirk>atmo_flyer</quirk>
+        <quirk>easy_maintain</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>Hammerhead</chassis>
+        <model>HMR-HA</model>
+        <quirk>atmo_flyer</quirk>
+        <quirk>obsolete</quirk>
+        <quirk>poor_life_support</quirk>
+        <quirk>weak_undercarriage</quirk>
+    </unit>
+    <unit>
+        <chassis>Hammerhead</chassis>
+        <model>HMR-HC</model>
+        <quirk>atmo_flyer</quirk>
+        <quirk>obsolete</quirk>
+        <quirk>poor_life_support</quirk>
+        <quirk>weak_undercarriage</quirk>
+    </unit>
+    <unit>
+        <chassis>Intrepid Assault Craft</chassis>
+        <model>(2331)</model>
+        <quirk>atmo_instability</quirk>
+        <quirk>obsolete</quirk>
+        <weaponQuirk>
+            <weaponQuirkName>imp_cooling</weaponQuirkName>
+            <location>RW</location>
+            <weaponName>ISLargeLaser</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>imp_cooling</weaponQuirkName>
+            <location>LW</location>
+            <weaponName>ISLargeLaser</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Intrepid Assault Craft</chassis>
+        <model>(2478)</model>
+        <quirk>atmo_instability</quirk>
+        <quirk>obsolete</quirk>
+        <weaponQuirk>
+            <weaponQuirkName>imp_cooling</weaponQuirkName>
+            <location>RW</location>
+            <weaponName>ISLargeLaser</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>imp_cooling</weaponQuirkName>
+            <location>LW</location>
+            <weaponName>ISLargeLaser</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>DroST IIa Transport</chassis>
+        <model>(2445)</model>
+        <quirk>atmo_instability</quirk>
+        <quirk>docking_arms</quirk>
+        <quirk>easy_maintain</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>DroST IIa Transport</chassis>
+        <model>(2470)</model>
+        <quirk>atmo_instability</quirk>
+        <quirk>easy_maintain</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>DroST IIb Transport</chassis>
+        <model>(2445)</model>
+        <quirk>atmo_instability</quirk>
+        <quirk>docking_arms</quirk>
+        <quirk>easy_maintain</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <unit>
+        <chassis>DroST IIb Transport</chassis>
+        <model>(2470)</model>
+        <quirk>atmo_instability</quirk>
+        <quirk>easy_maintain</quirk>
+        <quirk>obsolete</quirk>
+    </unit>
+    <!-- END XTRO Primitives IV-->
+    <!-- BEGIN XTRO Clans-->
+    <unit>
+        <chassis>Cougar</chassis>
+        <model>XR</model>
+        <quirk>unbalanced</quirk>
+        <quirk>prototype</quirk>
+        <quirk>mod_weapons</quirk>
+    </unit>
+    <!-- END XTRO Clans-->
+    <!-- BEGIN XTRO Periphery-->
+    <!-- END XTRO Periphery-->
+    <!-- BEGIN XTRO Comstar-->
+    <!-- END XTRO Comstar-->
+    <!-- BEGIN XTRO Gunslingers-->
+    <!-- END XTRO Gunslingers-->
+    <!-- BEGIN XTRO Phantoms-->
+    <!-- END XTRO Phantoms-->
+    <!-- BEGIN XTRO Succession Wars-->
+    <!-- END XTRO Succession Wars-->
+    <!-- BEGIN XTRO Boondoggles-->
+    <!-- END XTRO Boondoggles-->
+    <!-- BEGIN XTRO Most Wanted-->
+    <!-- END XTRO Most Wanted-->
+    <!-- BEGIN XTRO Republic I-->
+    <!-- END XTRO Republic I-->
     <unit>
         <chassis>Atlas</chassis>
         <model>all</model>

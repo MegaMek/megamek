@@ -28,6 +28,7 @@ import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.Report;
+import megamek.common.TagInfo;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -97,9 +98,38 @@ public class BombAttackHandler extends WeaponHandler {
         Coords drop;
         // now go through the payload and drop the bombs one at a time
         for (int type = 0; type < payload.length; type++) {
+            // to hit, adjusted for bomb-type specific rules
+            ToHitData typeModifiedToHit = new ToHitData();
+            typeModifiedToHit.append(toHit);
+            typeModifiedToHit.setHitTable(toHit.getHitTable());
+            typeModifiedToHit.setSideTable(toHit.getSideTable());
+
+            // currently, only type of bomb with type-specific to-hit mods
+            boolean laserGuided = false;
+            if (type == BombType.B_LG) {
+                for (TagInfo ti : game.getTagInfo()) {
+                    if (target.getTargetId() == ti.target.getTargetId()) {
+                        typeModifiedToHit.addModifier(-2,
+                                "laser-guided bomb against tagged target");
+                        laserGuided = true;
+                        break;
+                    }
+                }
+            }
+
             for (int i = 0; i < payload[type]; i++) {
                 // Report weapon attack and its to-hit value.
-                Report r = new Report(3120);
+                Report r;
+
+                if (laserGuided) {
+                    r = new Report(3433);
+                    r.indent();
+                    r.newlines = 1;
+                    r.subject = subjectId;
+                    vPhaseReport.addElement(r);
+                }
+
+                r = new Report(3120);
                 r.indent();
                 r.newlines = 0;
                 r.subject = subjectId;
@@ -111,30 +141,30 @@ public class BombAttackHandler extends WeaponHandler {
 
                 r.add(target.getDisplayName(), true);
                 vPhaseReport.addElement(r);
-                if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+                if (typeModifiedToHit.getValue() == TargetRoll.IMPOSSIBLE) {
                     r = new Report(3135);
                     r.subject = subjectId;
-                    r.add(toHit.getDesc());
+                    r.add(typeModifiedToHit.getDesc());
                     vPhaseReport.addElement(r);
                     return false;
-                } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
+                } else if (typeModifiedToHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
                     r = new Report(3140);
                     r.newlines = 0;
                     r.subject = subjectId;
-                    r.add(toHit.getDesc());
+                    r.add(typeModifiedToHit.getDesc());
                     vPhaseReport.addElement(r);
-                } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
+                } else if (typeModifiedToHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
                     r = new Report(3145);
                     r.newlines = 0;
                     r.subject = subjectId;
-                    r.add(toHit.getDesc());
+                    r.add(typeModifiedToHit.getDesc());
                     vPhaseReport.addElement(r);
                 } else {
                     // roll to hit
                     r = new Report(3150);
                     r.newlines = 0;
                     r.subject = subjectId;
-                    r.add(toHit.getValue());
+                    r.add(typeModifiedToHit.getValue());
                     vPhaseReport.addElement(r);
                 }
 
@@ -146,9 +176,10 @@ public class BombAttackHandler extends WeaponHandler {
                 vPhaseReport.addElement(r);
 
                 // do we hit?
-                bMissed = roll < toHit.getValue();
+                bMissed = roll < typeModifiedToHit.getValue();
                 // Set Margin of Success/Failure.
-                toHit.setMoS(roll - Math.max(2, toHit.getValue()));
+                typeModifiedToHit.setMoS(
+                        roll - Math.max(2, typeModifiedToHit.getValue()));
 
                 if (!bMissed) {
                     r = new Report(3190);
@@ -172,7 +203,7 @@ public class BombAttackHandler extends WeaponHandler {
                     r.newlines = 1;
                     vPhaseReport.add(r);
                 } else {
-                    drop = Compute.scatter(coords, -toHit.getMoS());
+                    drop = Compute.scatter(coords, -typeModifiedToHit.getMoS());
                     if (game.getBoard().contains(drop)) {
                         // misses and scatters to another hex
                         r = new Report(6698);

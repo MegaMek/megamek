@@ -134,6 +134,7 @@ v0.41.4-dev (SVN)
 + New Sprites
 + Bug: Airborne ground units not allowed to make  direct-fire artillery attacks.
 + Patch [#488]: Environmental heat sources and heat-dissipating armor
++ Patch [#4551]: TSEMP "every other turn" should be per weapon, not per entity
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

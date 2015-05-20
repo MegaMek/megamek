@@ -50,6 +50,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     private boolean jammedThisPhase = false;
     private boolean useless = false;
     private boolean fired = false; // Only true for used OS stuff and TSEMP.
+    private boolean tsempDowntime = false; // Needed for "every other turn"
+                                           // TSEMP.
     private boolean rapidfire = false; // MGs in rapid-fire mode
     private boolean kindRapidFire = false; // Reduced jam chance for rapid fired
                                            // ACs.
@@ -1066,6 +1068,14 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public void setFired(boolean val) {
         fired = val;
+    }
+
+    public boolean isTSEMPDowntime() { // is this the "downtime" turn for TSEMP?
+        return tsempDowntime;
+    }
+
+    public void setTSEMPDowntime(boolean val) {
+        tsempDowntime = val;
     }
 
     /**

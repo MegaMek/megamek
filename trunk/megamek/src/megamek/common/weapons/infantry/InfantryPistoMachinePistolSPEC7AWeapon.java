@@ -36,7 +36,7 @@ public class InfantryPistoMachinePistolSPEC7AWeapon extends InfantryWeapon {
         name = "MP (H-T Spec-7a)";
         setInternalName(name);
         addLookupName("SPEC7A");
-        ammoType = AmmoType.T_AC;
+        ammoType = AmmoType.T_NA;
         cost = 190;
         bv = 0.19;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);

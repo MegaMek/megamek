@@ -37,7 +37,7 @@ public class InfantryPistolSternsnachtPythonAutoPistolWeapon extends InfantryWea
         setInternalName(name);
         addLookupName("InfantrySternsnachtPython");
         addLookupName("Sternsnacht Python AutoPistol");
-        ammoType = AmmoType.T_AC;
+        ammoType = AmmoType.T_NA;
         cost = 125;
         bv = 0.26;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);

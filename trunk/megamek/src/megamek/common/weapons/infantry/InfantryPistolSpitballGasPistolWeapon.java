@@ -37,7 +37,7 @@ public class InfantryPistolSpitballGasPistolWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantrySpitballGaspistol");
         addLookupName("Spitball Gas Weapon");
-        ammoType = AmmoType.T_AC;
+        ammoType = AmmoType.T_NA;
         cost = 6;
         bv = 0;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);

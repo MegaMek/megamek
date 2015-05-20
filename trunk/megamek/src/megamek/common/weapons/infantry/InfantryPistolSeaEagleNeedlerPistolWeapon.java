@@ -37,7 +37,7 @@ public class InfantryPistolSeaEagleNeedlerPistolWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantrySeaEagleNeedler");
         addLookupName("Sea Eagle Needler Pistolr");
-        ammoType = AmmoType.T_AC;
+        ammoType = AmmoType.T_NA;
         cost = 110;
         bv = 0.10;
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_BALLISTIC);

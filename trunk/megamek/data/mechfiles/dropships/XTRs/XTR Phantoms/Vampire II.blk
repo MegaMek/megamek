@@ -6,9 +6,11 @@
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Dropship
 </UnitType>
+
 <Name>
 Vampire
 </Name>
@@ -20,9 +22,11 @@ II
 <Tonnage>
 600
 </Tonnage>
+
 <SafeThrust>
 4
 </SafeThrust>
+
 <Armor>
 151
 151
@@ -45,7 +49,6 @@ IS Laser AMS
 IS Laser AMS
 </Left Side Equipment>
 
-
 <Right Side Equipment> 
 IS X-Pulse Large Laser
 IS X-Pulse Large Laser
@@ -61,12 +64,15 @@ ISERLargeLaser
 <structural_integrity>
 7
 </structural_integrity>
+
 <heatsinks>
 94
 </heatsinks>
+
 <sink_type>
 1
 </sink_type>
+
 <fuel>
 2660
 </fuel>
@@ -103,9 +109,11 @@ CargoBay:7:1
 <escape_pod>
 0
 </escape_pod>
+
 <life_boat>
 0
 </life_boat>
+
 <crew>
 41
 </crew>
@@ -113,3 +121,7 @@ CargoBay:7:1
 <passengers>
 0
 </passengers>
+
+<source>
+XTRO Phantoms - Jihad
+</source>

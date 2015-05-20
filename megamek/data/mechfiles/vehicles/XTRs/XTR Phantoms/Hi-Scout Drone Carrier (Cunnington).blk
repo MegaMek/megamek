@@ -13,15 +13,15 @@ Tank
 </UnitType>
 
 <Name>
-Danai Support Vehicle
+Hi-Scout Drone Carrier
 </Name>
 
 <Model>
-Arrow
+(Cunnington)
 </Model>
 
 <year>
-3076
+3077
 </year>
 
 <type>
@@ -29,42 +29,46 @@ IS Level 4
 </type>
 
 <motion_type>
-Wheeled
+Tracked
 </motion_type>
+
+<transporters>
+cargobay:13.5:1
+</transporters>
 
 <cruiseMP>
 4
 </cruiseMP>
 
 <engine_type>
-0
+2
 </engine_type>
 
-<armor_type>
-22
-</armor_type>
-
-<armor_tech>
-7
-</armor_tech>
-
 <armor>
-31
-19
-19
-16
-27
+22
+22
+22
+22
 </armor>
 
 <Body Equipment>
-ISArrowIV Ammo
-ISArrowIV Ammo
-ISGuardianECMSuite
-ISMagshotGR Ammo
+ISC3Sensors
+ISC3Sensors
+ISC3Sensors
+ISAngelECMSuite
+ISC3MasterBoostedSystemUnit
+ISDroneCarrierControlSystem
+ISDroneExtra
+ISDroneExtra
+ISDroneExtra
+ISDroneExtra
+ISDroneExtra
+ISDroneExtra
+ISLimitedAmphibiousChassis
 </Body Equipment>
 
 <Front Equipment>
-ISArrowIVSystem
+RemoteSensorDispenser
 </Front Equipment>
 
 <Right Equipment>
@@ -74,20 +78,14 @@ ISArrowIVSystem
 </Left Equipment>
 
 <Rear Equipment>
+ISC3RemoteSensorLauncher
 </Rear Equipment>
 
-<Turret Equipment>
-ISMagshotGR
-ISMagshotGR
-ISMagshotGR
-ISMagshotGR
-</Turret Equipment>
-
 <source>
-XTRO Periphery - Jihad
+XTRO Phantoms - Jihad
 </source>
 
 <tonnage>
-45.0
+60.0
 </tonnage>
 

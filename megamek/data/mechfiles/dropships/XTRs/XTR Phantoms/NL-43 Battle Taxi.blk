@@ -6,21 +6,27 @@
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 SmallCraft
 </UnitType>
+
 <Name>
 Battle Taxi
 </Name>
+
 <Model>
 NL-43
 </Model>
+
 <Tonnage>
 100
 </Tonnage>
+
 <SafeThrust>
 6
 </SafeThrust>
+
 <Armor>
 105
 55
@@ -99,5 +105,5 @@ CargoBay:2:0
 </passengers>
 
 <source>
-XTR:Phantom
+XTRO Phantoms - Jihad
 </source>

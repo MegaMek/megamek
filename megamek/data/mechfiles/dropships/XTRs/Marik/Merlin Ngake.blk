@@ -10,21 +10,15 @@
 #Write the version number just in case...
 
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Dropship
-
 </UnitType>
 
 <Name>
-
 Merlin
-
 </Name>
 
 <model>
@@ -130,7 +124,9 @@ IS Level 4
 spheroid
 </motion_type>
 
-
+<source>
+XTRO Marik - Jihad
+</source>
 
 <transporters>
 CargoBay:150:2

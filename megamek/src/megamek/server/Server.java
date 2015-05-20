@@ -2482,13 +2482,6 @@ public class Server implements Runnable {
                     return true;
                 }
             }
-            for (Mounted b : entity.getBombs()) {
-                if (!b.isDestroyed()
-                    && (b.getUsableShotsLeft() > 0)
-                    && (((BombType) b.getType()).getBombType() == BombType.B_LG)) {
-                    return true;
-                }
-            }
         }
         // loop through all current attacks
         // if there are any that use homing ammo, we are playable

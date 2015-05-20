@@ -5487,12 +5487,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // TSEMPs can fire every other round, so if we didn't fire last
         //  round and the TSEMP isn't one-shot, reset it's fired state
-        if (!isFiredTsempThisTurn() && hasFiredTsemp()) {
+        if (hasFiredTsemp()) {
             for (Mounted m : getWeaponList()) {
                 if (m.getType().hasFlag(WeaponType.F_TSEMP)
-                    && !m.getType().hasFlag(WeaponType.F_ONESHOT)
-                    && m.isFired()) {
-                    m.setFired(false);
+                    && !m.getType().hasFlag(WeaponType.F_ONESHOT)) {
+                    if (m.isTSEMPDowntime()) {
+                        m.setFired(false);
+                        m.setTSEMPDowntime(false);
+                    } else if (m.isFired()) {
+                        m.setTSEMPDowntime(true);
+                    }
                 }
             }
         }

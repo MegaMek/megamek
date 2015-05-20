@@ -81,7 +81,7 @@
      shijima <shijima@users.sourceforge.net>
      vult <vult@users.sourceforge.net>
      Deric "Netzilla" Page <dericpage@users.sourceforge.net>
-     Dylan Myers <ralgith-erian@users.sourceforge.net>
+     Dylan "Ralgith" Myers <ralgith-erian@users.sourceforge.net>
      Gil Hamilton <iarei@users.sourceforge.net>
      Neth <neoneth@users.sourceforge.net>
      GruetzDark <gruetzdark@users.sourceforge.net>
@@ -89,11 +89,12 @@
      Gil Hamilton <iarei@users.sourceforge.net>
      Nathan Erwin <nderwin@users.sourceforge.net>
      David Armendariz <darm88@users.sourceforge.net>
-     Nicholas Walczak <arlith@users.sourceforge.net>
-     Dave Nawton <hammer-gs@users.sourceforge.net>
+     Nicholas "Arlith" Walczak <arlith@users.sourceforge.net>
+     Dave "Hammer" Nawton <hammer-gs@users.sourceforge.net>
      Eddy Cullen <screamingwns@users.sourceforge.net>
      Michael Rowlett <eventsbeyondme@users.sourceforge.net>
-	 Juliez
+	 Juliez <juliez@users.sourceforge.net>
+	 Derrick Turk <derrickturk@users.sourceforge.net>
      
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

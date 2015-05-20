@@ -38,7 +38,7 @@ public class InfantryPistolSternsnachtPistolWeapon extends InfantryWeapon {
         addLookupName("InfantrySternsnachtpistol");
         addLookupName("InfantryClaymorePistol");
         addLookupName("Sternsnacht Heavy Pistol");
-        ammoType = AmmoType.T_AC;
+        ammoType = AmmoType.T_NA;
         cost = 200;
         bv = 0.08;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);

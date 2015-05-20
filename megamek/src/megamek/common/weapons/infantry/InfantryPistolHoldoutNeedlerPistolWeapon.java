@@ -37,7 +37,7 @@ public class InfantryPistolHoldoutNeedlerPistolWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryHoldoutNeedlerpistol");
         addLookupName("Holdout Needler Pistol");
-        ammoType = AmmoType.T_AC;
+        ammoType = AmmoType.T_NA;
         cost = 20;
         bv = 0.10;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);

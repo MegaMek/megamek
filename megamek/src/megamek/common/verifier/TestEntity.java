@@ -808,7 +808,7 @@ public abstract class TestEntity implements TestEntityOption {
                         }
                     }
                 }
-                if (m.getLocation() != Tank.LOC_FRONT) {
+                if ((m.getLocation() != Tank.LOC_FRONT) && (m.getLocation() != Tank.LOC_REAR)) {
                     illegal = true;
                     buff.append("bulldozer must be mounted in front");
                 }

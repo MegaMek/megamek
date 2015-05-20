@@ -36,7 +36,7 @@ public class InfantryArchaicMiniStunstickWeapon extends InfantryWeapon {
         name = "Stunstick (Mini)";
         setInternalName(name);
         addLookupName("InfantryMiniStunstick");
-        ammoType = AmmoType.T_AC;
+        ammoType = AmmoType.T_NA;
         cost = 50;
         bv = 0.05;
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);

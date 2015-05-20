@@ -37,7 +37,7 @@ public class InfantryPistolHawkEagleAutoPistolWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryHawkEagleAutopistol");
         addLookupName("Hawk Eagle Auto Pistol");
-        ammoType = AmmoType.T_AC;
+        ammoType = AmmoType.T_NA;
         cost = 100;
         bv = 0.25;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);

@@ -37,7 +37,7 @@ public class InfantryPistolAutoPistolNissanWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryAutopistolNissan");
         addLookupName("Auto Pistol Nissan");
-        ammoType = AmmoType.T_AC;
+        ammoType = AmmoType.T_NA;
         cost = 250;
         bv = 0.19;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);

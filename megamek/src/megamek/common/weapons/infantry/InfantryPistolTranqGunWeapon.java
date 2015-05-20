@@ -36,7 +36,7 @@ public class InfantryPistolTranqGunWeapon extends InfantryWeapon {
         name = "Tranq Gun";
         setInternalName(name);
         addLookupName("InfantryTranquilizerGun");
-        ammoType = AmmoType.T_AC;
+        ammoType = AmmoType.T_NA;
         cost = 30;
         bv = 0.13;
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_DIRECT_FIRE).or(F_BALLISTIC);

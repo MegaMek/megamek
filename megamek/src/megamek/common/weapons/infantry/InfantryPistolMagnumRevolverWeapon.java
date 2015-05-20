@@ -37,7 +37,7 @@ public class InfantryPistolMagnumRevolverWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryMagnumRevolverpistol");
         addLookupName("Magnum Revolver");
-        ammoType = AmmoType.T_AC;
+        ammoType = AmmoType.T_NA;
         cost = 60;
         bv = 0.17;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);

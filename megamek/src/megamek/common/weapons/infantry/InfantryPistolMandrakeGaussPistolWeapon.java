@@ -37,7 +37,7 @@ public class InfantryPistolMandrakeGaussPistolWeapon extends InfantryWeapon {
         setInternalName(name);
         addLookupName("InfantryMandrakeGaussPistol");
         addLookupName("IMandrake Holdout Gauss Pistol");
-        ammoType = AmmoType.T_AC;
+        ammoType = AmmoType.T_NA;
         cost = 750;
         bv = 0.02;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);

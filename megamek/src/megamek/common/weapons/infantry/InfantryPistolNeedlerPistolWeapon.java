@@ -36,7 +36,7 @@ public class InfantryPistolNeedlerPistolWeapon extends InfantryWeapon {
         name = "Needler Pistol";
         setInternalName(name);
         addLookupName("InfantryNeedlerpistol");
-        ammoType = AmmoType.T_AC;
+        ammoType = AmmoType.T_NA;
         cost = 50;
         bv = 0.21;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_INF_NONPENETRATING).or(F_BALLISTIC);

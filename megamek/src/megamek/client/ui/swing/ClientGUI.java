@@ -70,6 +70,7 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Aero;
@@ -2170,6 +2171,18 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         for (String[] cmd : replaceCommands) {
             util.addBot(cmd, client.getGame(), client.getHost(), client.getPort());
         }
+    }
+    
+    /**
+     * Returns the panel for the current phase.  The ClientGUI is split into
+     * the main panel (view) at the top, which takes up the majority of the view
+     * and the the "current panel" which has different controls  based on the
+     * phase.
+     * 
+     * @return
+     */
+    public JComponent getCurrentPanel() {
+        return curPanel;
     }
 
 }

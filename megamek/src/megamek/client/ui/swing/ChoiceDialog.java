@@ -266,8 +266,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
      * @param isSingle - a <code>boolean</code> that identifies that
      * @param max - the maximum number of choices that can be made
      */
-    /* package */
-    ChoiceDialog(JFrame parent, String title, String question,
+    public ChoiceDialog(JFrame parent, String title, String question,
             String[] choices, boolean isSingle, int max) {
         super(parent, title, true);
         initialize(parent, question, choices, isSingle, max);
@@ -285,8 +284,7 @@ public class ChoiceDialog extends JDialog implements ActionListener {
      * @param choices - an array of <code>String</code>s to be displayed.
      * @param isSingle - a <code>boolean</code> that identifies that
      */
-    /* package */
-    ChoiceDialog(JFrame parent, String title, String question,
+    public ChoiceDialog(JFrame parent, String title, String question,
             String[] choices, boolean isSingle) {
         super(parent, title, true);
         initialize(parent, question, choices, isSingle, -1);

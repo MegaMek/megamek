@@ -210,6 +210,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                 DialogOptionComponent comp = comps.get(0);
                 if (comp.hasChanged()) {
                     changed.addElement(comp.changedOption());
+                    comp.setOptionChanged(false);
                 }
             }
         }
@@ -788,23 +789,26 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             File gameOptsFile = selectGameOptionsFile(false);
             if (gameOptsFile != null) {
                 options.loadOptions(gameOptsFile, false);
-                ArrayList<DialogOptionComponent> changed = 
-                        new ArrayList<DialogOptionComponent>();
+                ArrayList<IOption> changed = new ArrayList<>();
                 for (List<DialogOptionComponent> comps : optionComps.values()) {
                     // Each option in the list should have the same value, so
                     //  picking the first is fine
                     if (comps.size() > 0) {
                         DialogOptionComponent comp = comps.get(0);
                         if (comp.hasChanged()) {
-                            changed.add(comp);
+                            changed.add(comp.getOption());
                         }
                     }
                 }
                 refreshOptions();
                 // We need to ensure that the IOption for the component doesn't
                 // match, otherwise send() won't send updates to the server
-                for (DialogOptionComponent comp : changed) {
-                    comp.getOption().clearValue();
+                for (IOption opt : changed) {
+                    String name = opt.getName();
+                    List<DialogOptionComponent> comps = optionComps.get(name);
+                    if (comps.size() > 0) {
+                        comps.get(0).setOptionChanged(true);
+                    }
                 }
             }
             return;

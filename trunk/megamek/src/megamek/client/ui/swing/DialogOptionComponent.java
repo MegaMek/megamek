@@ -53,6 +53,11 @@ public class DialogOptionComponent extends JPanel implements
     private JTextField textField;
     private JLabel label;
     private DialogOptionListener dialogOptionListener;
+    
+    /**
+     * Value used to force a change
+     */
+    private boolean hasOptionChanged = false;
 
     public DialogOptionComponent(DialogOptionListener parent, IOption option) {
         this(parent, option, true);
@@ -166,8 +171,13 @@ public class DialogOptionComponent extends JPanel implements
         sb.append("</html>");
         return sb.toString();
     }
+    
     public boolean hasChanged() {
-        return !option.getValue().equals(getValue());
+        return !option.getValue().equals(getValue()) || hasOptionChanged;
+    }
+    
+    public void setOptionChanged(boolean v) {
+        hasOptionChanged = v;
     }
 
     public Object getValue() {

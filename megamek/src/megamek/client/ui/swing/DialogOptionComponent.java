@@ -261,6 +261,19 @@ public class DialogOptionComponent extends JPanel implements
         choice.addItem(value);
     }
 
+    public boolean isDefaultValue() {
+        switch (option.getType()) {
+            case IOption.BOOLEAN:
+                return checkbox.isSelected() == ((Boolean) option.getDefault())
+                        .booleanValue();
+            case IOption.CHOICE:
+                // Assume first choice is always default
+                return choice.getSelectedIndex() == 0;
+            default:
+                return textField.getText().equals(String.valueOf(option.getDefault()));
+        }        
+    }
+    
     public void resetToDefault() {
         switch (option.getType()) {
             case IOption.BOOLEAN:

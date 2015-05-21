@@ -240,7 +240,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
     private void resetToDefaults() {
         for (List<DialogOptionComponent> comps : optionComps.values()) {
             for (DialogOptionComponent comp : comps) {
-                if (comp.hasChanged()) {
+                if (!comp.isDefaultValue()) {
                     comp.resetToDefault();
                 }
             }

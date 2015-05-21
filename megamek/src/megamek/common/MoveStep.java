@@ -2546,8 +2546,9 @@ public class MoveStep implements Serializable {
             }
         }
         
-        // Units carrying mechanized BA can't jump, VTOL, or WiGe
-        if (entity.getExternalUnits().size() > 0) {
+        // Vehicles carrying mechanized BA can't jump, VTOL, or WiGe
+        if (entity instanceof Tank
+                && entity.getExternalUnits().size() > 0) {
             if ((movementType == EntityMovementType.MOVE_JUMP)
                     || (movementType == EntityMovementType.MOVE_VTOL_WALK)
                     || (movementType == EntityMovementType.MOVE_VTOL_RUN)

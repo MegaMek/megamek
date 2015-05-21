@@ -1549,7 +1549,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Targets something
      */
-    void target(Targetable t) {
+    public void target(Targetable t) {
         if (ce() == null) {
             return;
         }
@@ -1591,7 +1591,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Targets something
      */
-    protected void updateTarget() {
+    public void updateTarget() {
         setFireEnabled(false);
         IGame game = clientgui.getClient().getGame();
         // allow spotting

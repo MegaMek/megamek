@@ -41,6 +41,9 @@ public class LargeSupportTank extends SupportTank {
             "RRRS", "RRLS", "RR", "TU", "TU2" };
 
     private static String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
+            "Front Left", "Rear Right", "Rear Left", "Rear", "Turret"};
+    
+    private static String[] LOCATION_NAMES_DUAL_TURRET = { "Body", "Front", "Front Right",
             "Front Left", "Rear Right", "Rear Left", "Rear", "Rear Turret",
             "Front Turret" };
 
@@ -54,7 +57,11 @@ public class LargeSupportTank extends SupportTank {
 
     @Override
     public String[] getLocationNames() {
-        return LOCATION_NAMES;
+        if (hasNoDualTurret()) {
+            return LOCATION_NAMES;
+        } else {
+            return LOCATION_NAMES_DUAL_TURRET;
+        }
     }
 
     @Override

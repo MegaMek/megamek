@@ -141,6 +141,8 @@ v0.41.4-dev (SVN)
 + Bug: Fixing extra code committed in error.
 + Patches [#415 to #424] - Various Source and quirks updates.
 + Patch [#489]: HarJel II/III repair systems
++ Bug: VTOLs and large support vehicles could be hit and destroyed by aimed shots
+    to imaginary dual turrets (which VTOLs can't even mount, anyway).
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

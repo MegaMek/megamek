@@ -32,10 +32,12 @@ public class VTOL extends Tank {
     public static final int LOC_TURRET_2 = 7;
     public static final int LOC_NUM = 8;
 
+    // VTOLs can have at most one (chin) turret, sponsons don't count and dual
+    // turrets aren't allowed.
     private static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR",
-            "RO", "TU", "TU2" };
+            "RO", "TU" };
     private static String[] LOCATION_NAMES = { "Body", "Front", "Right",
-            "Left", "Rear", "Rotor", "Turret", "Turret 2" };
+            "Left", "Rear", "Rotor", "Turret"};
 
     // critical hits
     public static final int CRIT_COPILOT = 15;

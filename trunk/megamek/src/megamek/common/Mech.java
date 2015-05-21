@@ -194,6 +194,9 @@ public abstract class Mech extends Entity {
 
     private boolean[] rearHardenedArmorDamaged;
 
+    // for Harjel II/III
+    private boolean[] armorDamagedThisTurn;
+
     private int sinksOn = -1;
 
     private int sinksOnNextRound = -1;
@@ -261,6 +264,7 @@ public abstract class Mech extends Entity {
         rearArmor = new int[locations()];
         orig_rearArmor = new int[locations()];
         rearHardenedArmorDamaged = new boolean[locations()];
+        armorDamagedThisTurn = new boolean[locations()];
 
         for (int i = 0; i < locations(); i++) {
             if (!hasRearArmor(i)) {
@@ -507,6 +511,11 @@ public abstract class Mech extends Entity {
         checkForCrit = false;
         
         grappledThisRound = false;
+
+        // clear HarJel "took damage this turn" flags
+        for (int loc = 0; loc < locations(); ++loc) {
+            setArmorDamagedThisTurn(loc, false);
+        }
     } // End public void newRound()
 
     /**
@@ -1824,6 +1833,24 @@ public abstract class Mech extends Entity {
         } else {
             return hardenedArmorDamaged[hit.getLocation()];
         }
+    }
+
+    /**
+     * did the armor in this location take damage which did not destroy it
+     * at least once this turn?
+     * this is used to decide whether to trigger Harjel II/III
+     */
+    public void setArmorDamagedThisTurn(int loc, boolean tookdamage) {
+        armorDamagedThisTurn[loc] = tookdamage;
+    }
+
+    /**
+     * did the armor in this location take damage which did not destroy it
+     * at least once this turn?
+     * this is used to decide whether to trigger Harjel II/III
+     */
+    public boolean isArmorDamagedThisTurn(int loc) {
+        return armorDamagedThisTurn[loc];
     }
 
     /**
@@ -6605,9 +6632,6 @@ public abstract class Mech extends Entity {
      * @return a <code>boolean</code> value indicating a present HarJel system
      */
     public boolean hasHarJelIIIn(int loc) {
-        if (loc == Mech.LOC_HEAD) {
-            return false;
-        }
         for (Mounted mounted : getMisc()) {
             if ((mounted.getLocation() == loc) && mounted.isReady()
                     && (mounted.getType().hasFlag(MiscType.F_HARJEL_II))) {
@@ -6625,9 +6649,6 @@ public abstract class Mech extends Entity {
      * @return a <code>boolean</code> value indicating a present HarJel system
      */
     public boolean hasHarJelIIIIn(int loc) {
-        if (loc == Mech.LOC_HEAD) {
-            return false;
-        }
         for (Mounted mounted : getMisc()) {
             if ((mounted.getLocation() == loc) && mounted.isReady()
                     && (mounted.getType().hasFlag(MiscType.F_HARJEL_III))) {

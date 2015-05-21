@@ -2321,6 +2321,7 @@ public class Server implements Runnable {
                 addReport(checkForTraitors());
                 // write End Phase header
                 addReport(new Report(5005, Report.PUBLIC));
+                resolveHarjelRepairs();
                 checkForSuffocation();
                 game.getPlanetaryConditions().determineWind();
                 send(createPlanetaryConditionsPacket());
@@ -17977,6 +17978,126 @@ public class Server implements Runnable {
         }
     }
 
+    /*
+     * Resolve HarJel II/III repairs for Mechs so equipped.
+     */
+    private void resolveHarjelRepairs()
+    {
+        Report r;
+        for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
+            Entity entity = i.next();
+            if (!(entity instanceof Mech)) {
+                continue;
+            }
+
+            Mech me = (Mech) entity;
+            for (int loc = 0; loc < me.locations(); ++loc) {
+                boolean harjelII = me.hasHarJelIIIn(loc); // false implies HarJel III
+                if ((harjelII || me.hasHarJelIIIIn(loc))
+                    && me.isArmorDamagedThisTurn(loc)) {
+                    if (me.hasRearArmor(loc)) {
+                        // must have at least one remaining armor in location
+                        if (!((me.getArmor(loc) > 0)
+                            || (me.getArmor(loc, true) > 0))) {
+                            continue;
+                        }
+
+                        int toRepair = harjelII ? 2 : 4;
+                        int frontRepair, rearRepair;
+                        int desiredFrontRepair, desiredRearRepair;
+
+                        Mounted harjel = null;
+                        // find harjel item
+                        // don't need to check ready or worry about null,
+                        // we already know there is one, it's ready,
+                        // and there can be at most one in a given location
+                        for (Mounted m: me.getMisc()) {
+                            if ((m.getLocation() == loc)
+                                && (m.getType().hasFlag(MiscType.F_HARJEL_II)
+                                    || m.getType().hasFlag(MiscType.F_HARJEL_III))) {
+                                harjel = m;
+                            }
+                        }
+
+                        if (harjelII) {
+                            if (harjel.curMode().equals(MiscType.S_HARJEL_II_1F1R)) {
+                                desiredFrontRepair = 1;
+                            } else if (harjel.curMode().equals(MiscType.S_HARJEL_II_2F0R)) {
+                                desiredFrontRepair = 2;
+                            } else { // 0F2R
+                                desiredFrontRepair = 0;
+                            }
+                        } else { // HarJel III
+                            if (harjel.curMode().equals(MiscType.S_HARJEL_III_2F2R)) {
+                                desiredFrontRepair = 2;
+                            } else if (harjel.curMode().equals(MiscType.S_HARJEL_III_4F0R)) {
+                                desiredFrontRepair = 4;
+                            } else if (harjel.curMode().equals(MiscType.S_HARJEL_III_3F1R)) {
+                                desiredFrontRepair = 3;
+                            } else if (harjel.curMode().equals(MiscType.S_HARJEL_III_1F3R)) {
+                                desiredFrontRepair = 1;
+                            } else { // 0F4R
+                                desiredFrontRepair = 0;
+                            }
+                        }
+                        desiredRearRepair = toRepair - desiredFrontRepair;
+
+                        int availableFrontRepair = me.getOArmor(loc) - me.getArmor(loc);
+                        int availableRearRepair = me.getOArmor(loc, true)
+                                - me.getArmor(loc, true);
+                        frontRepair = Math.min(availableFrontRepair, desiredFrontRepair);
+                        rearRepair = Math.min(availableRearRepair, desiredRearRepair);
+                        int surplus = desiredFrontRepair - frontRepair;
+                        if (surplus > 0) { // we couldn't use all the points we wanted in front
+                            rearRepair = Math.min(availableRearRepair,
+                                    rearRepair + surplus);
+                        } else {
+                            surplus = desiredRearRepair - rearRepair;
+                            // try to move any excess points from rear to front
+                            frontRepair = Math.min(availableFrontRepair,
+                                    frontRepair + surplus);
+                        }
+
+                        if (frontRepair > 0) {
+                            me.setArmor(me.getArmor(loc) + frontRepair, loc);
+                            r = new Report(harjelII ? 9850 : 9851);
+                            r.subject = me.getId();
+                            r.addDesc(entity);
+                            r.add(frontRepair);
+                            r.add(me.getLocationAbbr(loc));
+                            addReport(r);
+                        }
+                        if (rearRepair > 0) {
+                            me.setArmor(me.getArmor(loc, true) + rearRepair,
+                                    loc, true);
+                            r = new Report(harjelII ? 9850 : 9851);
+                            r.subject = me.getId();
+                            r.addDesc(entity);
+                            r.add(rearRepair);
+                            r.add(me.getLocationAbbr(loc) + " (R)");
+                            addReport(r);
+                        }
+                    } else {
+                        // must have at least one remaining armor in location
+                        if (!(me.getArmor(loc) > 0)) {
+                            continue;
+                        }
+                        int toRepair = harjelII ? 2 : 4;
+                        toRepair = Math.min(toRepair,
+                                me.getOArmor(loc) - me.getArmor(loc));
+                        me.setArmor(me.getArmor(loc) + toRepair, loc);
+                        r = new Report(harjelII ? 9850 : 9851);
+                        r.subject = me.getId();
+                        r.addDesc(entity);
+                        r.add(toRepair);
+                        r.add(me.getLocationAbbr(loc));
+                        addReport(r);
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Resolve Flaming Damage for the given Entity Taharqa: This is now updated
      * to TacOps rules which is much more lenient So I have change the name to
@@ -20507,6 +20628,14 @@ public class Server implements Runnable {
                                 hit);
                     } else {
                         te.setArmor(te.getArmor(hit) - damage, hit);
+                    }
+
+                    // set "armor damage" flag for HarJel II/III
+                    // we only care about this if there is armor remaining,
+                    // so don't worry about the case where damage exceeds
+                    // armorThreshold
+                    if ((te instanceof Mech) && (damage > 0)) {
+                        ((Mech) te).setArmorDamagedThisTurn(hit.getLocation(), true);
                     }
 
                     // if the armor is hardened, any penetrating crits are
@@ -23484,6 +23613,20 @@ public class Server implements Runnable {
             if ((eqType instanceof MiscType)
                 && eqType.hasFlag(MiscType.F_HARJEL)) {
                 vDesc.addAll(breachLocation(en, loc, null, true));
+            }
+
+            // HarJel II/III hits trigger another possible critical hit on 
+            // the same location
+            // it's like an ammunition explosion---a secondary effect
+            if (secondaryEffects && (eqType instanceof MiscType)
+                && (eqType.hasFlag(MiscType.F_HARJEL_II)
+                || eqType.hasFlag(MiscType.F_HARJEL_III))
+                && !hitBefore) {
+                r = new Report(9852);
+                r.subject = en.getId();
+                r.indent(2);
+                vDesc.addElement(r);
+                vDesc.addAll(criticalEntity(en, loc, false, 0, 0));
             }
 
             // If the item is the ECM suite of a Mek Stealth system

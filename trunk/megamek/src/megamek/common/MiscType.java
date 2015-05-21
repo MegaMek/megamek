@@ -449,6 +449,16 @@ public class MiscType extends EquipmentType {
     public static final String S_PASSIVE_SHIELD = "Passive";
     public static final String S_NO_SHIELD = "None";
 
+    public static final String S_HARJEL_II_2F0R = "2F/0R";
+    public static final String S_HARJEL_II_1F1R = "1F/1R";
+    public static final String S_HARJEL_II_0F2R = "0F/2R";
+
+    public static final String S_HARJEL_III_4F0R = "4F/0R";
+    public static final String S_HARJEL_III_3F1R = "3F/1R";
+    public static final String S_HARJEL_III_2F2R = "2F/2R";
+    public static final String S_HARJEL_III_1F3R = "1F/3R";
+    public static final String S_HARJEL_III_0F4R = "0F/4R";
+
     // Secondary damage for hand weapons.
     // These are differentiated from Physical Weapons using the F_CLUB flag
     // because the following weapons are treated as a punch attack, while
@@ -9974,6 +9984,9 @@ public class MiscType extends EquipmentType {
         misc.cost = 240000;
         misc.flags = misc.flags.or(F_HARJEL_II).or(F_MECH_EQUIPMENT);
         misc.bv = -1;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { S_HARJEL_II_1F1R, S_HARJEL_II_2F0R, S_HARJEL_II_0F2R };
+        misc.setModes(modes);
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_X, RATING_F };
         misc.introDate = 3120;
@@ -9992,6 +10005,10 @@ public class MiscType extends EquipmentType {
         misc.cost = 360000;
         misc.flags = misc.flags.or(F_HARJEL_III).or(F_MECH_EQUIPMENT);
         misc.bv = -2;
+        misc.setInstantModeSwitch(true);
+        String[] modes = { S_HARJEL_III_2F2R, S_HARJEL_III_4F0R, S_HARJEL_III_3F1R,
+                S_HARJEL_III_1F3R, S_HARJEL_III_0F4R };
+        misc.setModes(modes);
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_X, RATING_F };
         misc.introDate = 3137;

@@ -865,11 +865,52 @@ public abstract class TestEntity implements TestEntityOption {
             }
 
         }
+        if (!(getEntity() instanceof Mech) && (hasHarjelII || hasHarjelIII)) {
+            buff.append("Cannot mount HarJel repair system on non-Mech\n");
+            illegal = true;
+        }
         if (getEntity() instanceof Mech) {
             Mech mech = (Mech) getEntity();
             if (hasHarjelII && hasHarjelIII) {
                 illegal = true;
                 buff.append("Can't mix HarJel II and HarJel III");
+            }
+            if (hasHarjelII || hasHarjelIII) {
+                if (mech.isIndustrial()) {
+                    buff.append("Cannot mount HarJel repair system on IndustrialMech\n");
+                    illegal = true;
+                }
+                // note: should check for pod mount on Omni here, but we don't
+                // track equipment fixed vs pod-mount status
+                for (int loc = 0; loc < mech.locations(); ++loc) {
+                    int count = 0;
+                    for (Mounted m : mech.getMisc()) {
+                        if ((m.getLocation() == loc)
+                            && (m.getType().hasFlag(MiscType.F_HARJEL_II)
+                             || m.getType().hasFlag(MiscType.F_HARJEL_III))) {
+                            ++count;
+                        }
+                    }
+                    if (count > 1) {
+                        buff.append("Cannot mount multiple HarJel repair systems in a location\n");
+                        illegal = true;
+                    }
+                    if (count == 1) {
+                        int armor = mech.getArmorType(loc);
+                        switch (armor) {
+                            case EquipmentType.T_ARMOR_STANDARD:
+                            case EquipmentType.T_ARMOR_FERRO_FIBROUS:
+                            case EquipmentType.T_ARMOR_LIGHT_FERRO:
+                            case EquipmentType.T_ARMOR_HEAVY_FERRO:
+                            case EquipmentType.T_ARMOR_HEAVY_INDUSTRIAL:
+                                // these armors are legal with HarJel
+                                break;
+                            default:
+                                buff.append("Cannot mount HarJel repair system in location with this armor type\n");
+                                illegal = true;
+                        }
+                    }
+                }
             }
             if (mech.hasWorkingWeapon(WeaponType.F_TASER)) {
                 switch (mech.getEngine().getEngineType()) {

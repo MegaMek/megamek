@@ -683,7 +683,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     /**
      * Targets something
      */
-    protected void updateTarget() {
+    public void updateTarget() {
         setFireEnabled(false);
 
         // update target panel

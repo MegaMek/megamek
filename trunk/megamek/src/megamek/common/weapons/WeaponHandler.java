@@ -91,7 +91,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected int nweaponsHit; // for capital fighters/fighter squadrons
     protected boolean secondShot = false;
     protected int numRapidFireHits;
-    protected String sSalvoType = " shots(s) ";
+    protected String sSalvoType = " shot(s) ";
     protected int nSalvoBonus = 0;
     /**
      * Keeps track of whether we are processing the first hit in a series of

@@ -220,6 +220,7 @@ public class MekMortarAirburstHandler extends AmmoWeaponHandler {
                     hit.setCapMisCritMod(getCapMisMod());
                     hit.setFirstHit(firstHit);
                     hit.setAttackerId(getAttackerId());
+                    hit.setBurstFire(true);
                     newReports = server.damageEntity(target, hit, damage);
                     adjustReports(newReports);
                     vPhaseReport.addAll(newReports);

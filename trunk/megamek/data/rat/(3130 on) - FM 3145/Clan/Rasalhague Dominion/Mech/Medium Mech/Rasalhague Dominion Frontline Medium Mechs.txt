@@ -1,8 +1,8 @@
 Rasalhague Dominion Frontline Medium Mechs
 Ursus (Standard),1
-Beowulf IIC,2
+Beowulf IIC (Standard),2
 Ursus II (Standard),3
-Beowulf IIC,4
+Beowulf IIC (Standard),4
 Grendel (Mongrel) Prime,5
 Ursus (Standard),6
 Ryoken (Stormcrow) Prime,5

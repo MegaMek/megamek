@@ -150,6 +150,7 @@ v0.41.4-dev (SVN)
 + Feature: Added "All Equipment" and "All Weapons" to locations list in
     UnitDisplay Systems tab
 + Bug [#4552]: Swarming and target destruction - errata
++ Data: Various fixes to RATs/Mechfiles/Canon Quirks.
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

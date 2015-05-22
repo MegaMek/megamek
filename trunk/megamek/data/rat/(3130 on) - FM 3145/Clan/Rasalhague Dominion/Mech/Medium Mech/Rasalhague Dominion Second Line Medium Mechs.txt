@@ -9,4 +9,4 @@ Shadow Hawk SHD-12C,5
 Ursus II (Standard),4
 Black Hawk (Standard),3
 Ursus (Standard),2
-Beowulf IIC,1
+Beowulf IIC (Standard),1

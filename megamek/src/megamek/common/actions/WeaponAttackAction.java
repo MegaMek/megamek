@@ -88,7 +88,7 @@ import megamek.common.weapons.VariableSpeedPulseLaserWeapon;
  * Represents intention to fire a weapon at the target.
  */
 public class WeaponAttackAction extends AbstractAttackAction implements
-                                                             Serializable {
+        Serializable {
     /**
      *
      */

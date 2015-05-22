@@ -154,6 +154,7 @@ v0.41.4-dev (SVN)
 + Bug: CASE II erroneously flagged as legal vehicle equipment.
 + Bug: Mek Mortar Anti-Personnel ammo implemented according to current errata
 + Bug: Errata - Infantry field guns share ammo across guns
++ Bug [#4549]: Displacing units off the map can cause "no unit to move" error
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

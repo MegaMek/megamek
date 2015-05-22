@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import megamek.common.GameTurn.SpecificEntityTurn;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
@@ -2163,6 +2164,21 @@ public class Game implements Serializable, IGame {
                 break;
             }
         }
+    }
+    
+    public int removeSpecificEntityTurnsFor(Entity entity) {
+        List<GameTurn> turnsToRemove = new ArrayList<GameTurn>();
+        
+        for (GameTurn turn : turnVector) {
+            if (turn instanceof SpecificEntityTurn) {
+                int turnOwner = ((SpecificEntityTurn) turn).getEntityNum();
+                if (entity.getId() == turnOwner) {
+                    turnsToRemove.add(turn);
+                }
+            }
+        }
+        turnVector.removeAll(turnsToRemove);
+        return turnsToRemove.size();
     }
 
     /**

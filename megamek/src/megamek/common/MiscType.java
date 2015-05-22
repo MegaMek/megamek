@@ -2227,7 +2227,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_CASEII).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+                .or(F_AERO_EQUIPMENT);
         misc.cost = 175000;
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_X,
@@ -2251,7 +2251,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_CASEII).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
+                .or(F_AERO_EQUIPMENT);
         misc.cost = 175000;
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_X,

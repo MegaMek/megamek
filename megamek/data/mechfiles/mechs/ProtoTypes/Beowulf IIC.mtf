@@ -1,6 +1,6 @@
 Version:1.0
-Beowulf
-IIC
+Beowulf IIC
+(Standard)
 
 Config:Biped
 TechBase:Clan
@@ -10,7 +10,7 @@ Rules Level:4
 
 Mass:45
 Engine:270 XL (Clan) Engine(IS)
-Structure:Standard
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:12 Double
@@ -58,7 +58,7 @@ Hand Actuator
 CLERLargePulseLaser
 CLERLargePulseLaser
 CLERLargePulseLaser
-Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -70,9 +70,9 @@ Fusion Engine
 Jump Jet
 Jump Jet
 Jump Jet
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -86,9 +86,9 @@ Jump Jet
 Jump Jet
 CLMASC
 CLMASC
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 -Empty-
 

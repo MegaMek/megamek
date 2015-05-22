@@ -1078,6 +1078,8 @@
         <quirk>obsolete</quirk>
     </unit>
     <!-- END XTRO Succession Wars-->
+    <!-- BEGIN XTRO Boondoggles-->
+    <!-- END XTRO Boondoggles-->
     <!-- BEGIN XTRO Most Wanted-->
     <unit>
         <chassis>Fireball</chassis>
@@ -1179,6 +1181,762 @@
     <!-- END XTRO Most Wanted-->
     <!-- BEGIN XTRO Republic I-->
     <!-- END XTRO Republic I-->
+	<!-- BEGIN TRO Prototypes-->
+		<unit>
+		<chassis>Aithon Assault Transport</chassis>
+		<model>(Standard)</model>
+		<quirk>distracting</quirk>
+		<quirk>trailer_hitch</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Apollo</chassis>
+		<model>APL-4M</model>
+		<quirk>difficult_maintain</quirk>
+		<quirk>fast_reload</quirk>
+	</unit>
+	<unit>
+		<chassis>Axman</chassis>
+		<model>AXM-6T</model>
+		<quirk>pro_actuator</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Bandit Hovercraft</chassis>
+		<model>Mk 2</model>
+		<quirk>bad_rep</quirk>
+		<quirk>mod_weapons</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Beowulf IIC</chassis>
+		<model>(Standard)</model>
+		<quirk>bad_rep</quirk>
+		<quirk>exp_actuator</quirk>
+		<quirk>ext_twist</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>em_interference</weaponQuirkName>
+			<location>RA</location>
+			<slot>5</slot>
+			<weaponName>CLERLargePulseLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>em_interference</weaponQuirkName>
+			<location>LA</location>
+			<slot>5</slot>
+			<weaponName>CLERMediumPulseLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>em_interference</weaponQuirkName>
+			<location>LA </location>
+			<slot>7</slot>
+			<weaponName>CLERMediumPulseLaser</weaponName>
+		</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Brigand</chassis>
+		<model>LDT-XPR2</model>
+		<quirk>easy_pilot</quirk>
+		<quirk>easy_maintain</quirk>
+	</unit>
+	<unit>
+		<chassis>Brigand</chassis>
+		<model>LDT-XPR3</model>
+		<quirk>easy_pilot</quirk>
+		<quirk>easy_maintain</quirk>
+	</unit>
+	<unit>
+		<chassis>Brigand</chassis>
+		<model>LDT-XPR4</model>
+		<quirk>easy_pilot</quirk>
+		<quirk>easy_maintain</quirk>
+	</unit>
+	<unit>
+		<chassis>Brigand</chassis>
+		<model>LDT-XPR5</model>
+		<quirk>easy_pilot</quirk>
+		<quirk>easy_maintain</quirk>
+	</unit>
+	<unit>
+		<chassis>Cavalry Attack Helicopter</chassis>
+		<model>(Infiltrator)</model>
+		<quirk>hard_pilot</quirk>
+		<quirk>easy_maintain</quirk>
+	</unit>
+	<unit>
+		<chassis>Challenger MBT</chassis>
+		<model>Mk. XV</model>
+		<quirk>poor_performance</quirk>
+		<quirk>trailer_hitch</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Cheetah</chassis>
+		<model>OF-17A-R</model>
+		<quirk>mod_weapons</quirk>
+		<quirk>imp_life_support</quirk>
+	</unit>
+	<unit>
+		<chassis>Claymore</chassis>
+		<model>V3</model>
+		<quirk>bad_rep</quirk>
+		<quirk>atmo_flyer</quirk>
+	</unit>
+	<unit>
+		<chassis>Corax</chassis>
+		<model>C</model>
+		<quirk>bad_rep</quirk>
+		<quirk>mod_weapons</quirk>
+	</unit>
+	<unit>
+		<chassis>Corsair</chassis>
+		<model>CSR-12D</model>
+		<quirk>weak_undercarriage</quirk>
+		<quirk>easy_maintain</quirk>
+	</unit>
+	<unit>
+		<chassis>Deep Lord MilitiaMech</chassis>
+		<model>RCL-Z1M</model>
+		<quirk>pro_actuator</quirk>
+		<quirk>imp_life_support</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>5</slot>
+			<weaponName>Mace</weaponName>
+		</weaponQuirk>
+	</unit>
+	<unit>
+	<chassis>Dola</chassis>
+	<model>DOL-1A1</model>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>5</slot>
+			<weaponName>Sword</weaponName>
+		</weaponQuirk>
+	</unit>
+	<unit>
+	<chassis>Dola</chassis>
+	<model>DOL-1A2 'Yoh Ti Ts'angs'</model>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>5</slot>
+			<weaponName>ISSmallVibroblade</weaponName>
+		</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Drake Medium Stealth Fighter</chassis>
+		<model>(Standard)</model>
+		<quirk>atmo_flyer</quirk>
+		<quirk>non_standard</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+	<unit>
+		<chassis>Elemental II Battle Armor</chassis>
+		<model>(Standard)</model>
+		<quirk>easy_maintain</quirk>
+	</unit>
+	<unit>
+		<chassis>Enyo Strike Tank</chassis>
+		<model>(ER Pulse)</model>
+		<quirk>bad_rep</quirk>
+		<quirk>poor_sealing</quirk>
+		<quirk>imp_target_short</quirk>
+		<quirk>trailer_hitch</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Foxhound Gunboat</chassis>
+		<model>TIG-40</model>
+		<quirk>difficult_maintain</quirk>
+		<quirk>hard_pilot</quirk>
+		<quirk>non_standard</quirk>
+		<quirk>imp_target_long</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Fulcrum Heavy HoverTank</chassis>
+		<model>(Hybrid)</model>
+		<quirk>non_standard</quirk>
+		<quirk>easy_maintain</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Garuda Heavy VTOL</chassis>
+		<model>(Standard)</model>
+		<quirk>non_standard</quirk>
+		<quirk>searchlight</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Gladiator Exoskeleton</chassis>
+		<model>all</model>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+	<unit>
+		<chassis>Grasshopper</chassis>
+		<model>GHR-7P</model>
+		<quirk>non_standard</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Gray Death Strike Armor</chassis>
+		<model>(Standard)</model>
+		<quirk>distracting</quirk>
+	</unit>
+	<unit>
+		<chassis>Hatamoto-Kaeru</chassis>
+		<model>HTM-35K</model>
+		<quirk>difficult_maintain</quirk>
+		<quirk>non_standard</quirk>
+	</unit>
+	<unit>
+		<chassis>Hauberk Battle Armor</chassis>
+		<model>Commando</model>
+		<quirk>easy_maintain</quirk>
+	</unit>
+	<unit>
+		<chassis>Heavy NLRM Carrier</chassis>
+		<model>(Standard)</model>
+		<quirk>difficult_maintain</quirk>
+		<quirk>trailer_hitch</quirk>
+	</unit>
+	<unit>
+		<chassis>Hephaestus Jump Tank</chassis>
+		<model>(AP)</model>
+		<quirk>difficult_maintain</quirk>
+		<quirk>hard_pilot</quirk>
+		<quirk>non_standard</quirk>
+		<quirk>distracting</quirk>
+	</unit>
+	<unit>
+		<chassis>Hephaestus Jump Tank</chassis>
+		<model>(Standard)</model>
+		<quirk>difficult_maintain</quirk>
+		<quirk>hard_pilot</quirk>
+		<quirk>non_standard</quirk>
+		<quirk>distracting</quirk>
+	</unit>
+	<unit>
+		<chassis>Hiryo Armored Infantry Transport</chassis>
+		<model>'BloodHound'</model>
+		<quirk>difficult_maintain</quirk>
+		<quirk>non_standard</quirk>
+		<quirk>easy_pilot</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Hunchback</chassis>
+		<model>HBK-7R</model>
+		<quirk>bad_rep</quirk>
+		<quirk>poor_sealing</quirk>
+	</unit>
+	<unit>
+	<chassis>Hunter Light Support Tank</chassis>
+	<model>(Amphibious)</model>
+	<quirk>gas_hog</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>accurate</weaponQuirkName>
+			<slot>0</slot>
+			<location>FR</location>
+			<weaponName>ISLRT10</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>accurate</weaponQuirkName>
+			<slot>0</slot>
+			<location>TU</location>
+			<weaponName>ISEnhancedLRM10</weaponName>
+		</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Hydaspes 3</chassis>
+		<model>3</model>
+		<quirk>difficult_eject</quirk>
+		<quirk>imp_life_support</quirk>
+		<quirk>multi_trac</quirk>
+	</unit>
+	<unit>
+		<chassis>Incubus II</chassis>
+		<model>(Standard)</model>
+		<quirk>cramped_cockpit</quirk>
+		<quirk>reinforced_legs</quirk>
+	</unit>
+	<unit>
+		<chassis>Lexan Surveillance VTOL</chassis>
+		<model>(Production)</model>
+		<quirk>bad_rep</quirk>
+		<quirk>vtol_rotor</quirk>
+		<quirk>imp_sensors</quirk>
+	</unit>
+	<unit>
+		<chassis>Lucifer III</chassis>
+		<model>LCR-3</model>
+		<quirk>difficult_eject</quirk>
+		<quirk>easy_pilot</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Lung Wang</chassis>
+		<model>P2</model>
+		<quirk>atmo_instability</quirk>
+		<quirk>weak_undercarriage</quirk>
+		<quirk>imp_com</quirk>
+	</unit>
+	<unit>
+		<chassis>Mad Cat III</chassis>
+		<model>(Eve)</model>
+		<quirk>bad_rep</quirk>
+		<quirk>difficult_maintain</quirk>
+		<quirk>imp_com</quirk>
+	</unit>
+	<unit>
+		<chassis>Mad Cat III</chassis>
+		<model>(Standard)</model>
+		<quirk>bad_rep</quirk>
+		<quirk>difficult_maintain</quirk>
+		<quirk>imp_com</quirk>
+	</unit>
+	<unit>
+		<chassis>Mad Cat III</chassis>
+		<model>2</model>
+		<quirk>bad_rep</quirk>
+		<quirk>difficult_maintain</quirk>
+		<quirk>imp_com</quirk>
+	</unit>
+	<unit>
+		<chassis>Mad Cat III</chassis>
+		<model>3</model>
+		<quirk>bad_rep</quirk>
+		<quirk>difficult_maintain</quirk>
+		<quirk>imp_com</quirk>
+	</unit>
+	<unit>
+		<chassis>Mad Cat III</chassis>
+		<model>4</model>
+		<quirk>bad_rep</quirk>
+		<quirk>difficult_maintain</quirk>
+		<quirk>imp_com</quirk>
+	</unit>
+	<unit>
+		<chassis>Mad Cat III</chassis>
+		<model>5</model>
+		<quirk>bad_rep</quirk>
+		<quirk>difficult_maintain</quirk>
+		<quirk>imp_com</quirk>
+	</unit>
+	<unit>
+		<chassis>Mad Cat Mk II</chassis>
+		<model>Enhanced</model>
+		<quirk>pro_actuator</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Merlin</chassis>
+		<model>R1</model>
+		<quirk>non_standard</quirk>
+	</unit>
+	<unit>
+		<chassis>Minotaur</chassis>
+		<model>P2</model>
+		<quirk>ext_twist</quirk>
+	</unit>
+	<unit>
+		<chassis>Myrmidon Medium Tank</chassis>
+		<model>(Anti-Infantry)</model>
+		<quirk>poor_work</quirk>
+		<quirk>trailer_hitch</quirk>
+		<quirk>rumble_seat</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>accurate</weaponQuirkName>
+			<location>Turret</location>
+			<weaponName>ISERLargeLaser</weaponName>
+		</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Nishikigoi Support Aircraft</chassis>
+		<model>Koi Variant</model>
+		<quirk>imp_com</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Nuberu Anti Aircraft Tank</chassis>
+		<model>(Standard)</model>
+		<quirk>gas_hog</quirk>
+		<quirk>anti_air</quirk>
+		<quirk>trailer_hitch</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Nuberu Anti Aircraft Tank 2 Numantia</chassis>
+		<model>Numantia'</model>
+		<quirk>gas_hog</quirk>
+		<quirk>anti_air</quirk>
+		<quirk>trailer_hitch</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Ontos Heavy Tank</chassis>
+		<model>HEAT</model>
+		<quirk>trailer_hitch</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Orion</chassis>
+		<model>ON3-M</model>
+		<quirk>difficult_eject</quirk>
+		<quirk>easy_maintain</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Pandarus</chassis>
+		<model>LFA-1A</model>
+		<quirk>poor_target_short</quirk>
+		<quirk>imp_target_long</quirk>
+		<quirk>easy_maintain</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Patron MilitiaMech</chassis>
+		<model>PTN-2M</model>
+		<quirk>pro_actuator</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>ammo_feed_problems</weaponQuirkName>
+			<location>RA</location>
+			<slot>5</slot>
+			<weaponName>ISLightMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>ammo_feed_problems</weaponQuirkName>
+			<location>RA</location>
+			<slot>6</slot>
+			<weaponName>ISLightMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>ammo_feed_problems</weaponQuirkName>
+			<location>LA </location>
+			<slot>5</slot>
+			<weaponName>ISLightMG</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>ammo_feed_problems</weaponQuirkName>
+			<location>LA</location>
+			<slot>6</slot>
+			<weaponName>Light MG</weaponName>
+		</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Pegasus Scout Hover Tank</chassis>
+		<model>X-Pulse</model>
+		<quirk>hard_pilot</quirk>
+		<quirk>imp_com</quirk>
+	</unit>
+	<unit>
+		<chassis>Pendragon</chassis>
+		<model>PDG-1R</model>
+		<quirk>no_arms</quirk>
+		<quirk>difficult_maintain</quirk>
+		<quirk>imp_target_long</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Persepolis</chassis>
+		<model>(Standard)</model>
+		<quirk>difficult_eject</quirk>
+		<quirk>poor_performance</quirk>
+		<quirk>poor_work</quirk>
+			<weaponQuirk>
+				<weaponQuirkName>accurate</weaponQuirkName>
+				<location>Nose</location>
+				<weaponName>CLERLargeLaser</weaponName>
+			</weaponQuirk>
+			<weaponQuirk>
+				<weaponQuirkName>accurate</weaponQuirkName>
+				<location>Nose</location>
+				<weaponName>CLERLargeLaser</weaponName>
+			</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Phalanx Support Tank</chassis>
+		<model>(Production)</model>
+		<quirk>difficult_maintain</quirk>
+		<quirk>trailer_hitch</quirk>
+			<weaponQuirk>
+				<weaponQuirkName>inaccurate</weaponQuirkName>
+				<location>Front</location>
+				<weaponName>ISMG</weaponName>
+			</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Planetlifter Tactical Support</chassis>
+		<model>(Standard)</model>
+		<quirk>imp_com</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Po Heavy Tank</chassis>
+		<model>(HV)</model>
+		<quirk>poor_sealing</quirk>
+		<quirk>trailer_hitch</quirk>
+		<quirk>rumble_seat</quirk>
+		<quirk>easy_maintain</quirk>
+	</unit>
+	<unit>
+		<chassis>Procyon</chassis>
+		<model>(Quad)</model>
+		<quirk>hard_pilot</quirk>
+		<quirk>distracting</quirk>
+	</unit>
+	<unit>
+		<chassis>Quickdraw</chassis>
+		<model>QKD-8P</model>
+		<quirk>hyper_actuator</quirk>
+	</unit>
+	<unit>
+		<chassis>Rapier</chassis>
+		<model>RPR-300S</model>
+		<quirk>difficult_maintain</quirk>
+		<quirk>hard_pilot</quirk>
+		<quirk>imp_target_long</quirk>
+		<quirk>non_standard</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Rogue Bear Heavy Battle Armor</chassis>
+		<model>(Hybrid)</model>
+		<quirk>easy_maintain</quirk>
+		<quirk>non_standard</quirk>
+	</unit>
+	<unit>
+		<chassis>Rommel Tank</chassis>
+		<model>(Howitzer) Production</model>
+		<quirk>poor_target_short</quirk>
+		<quirk>distracting</quirk>
+		<quirk>trailer_hitch</quirk>
+	</unit>
+	<unit>
+		<chassis>Sabre</chassis>
+		<model>SB-31D</model>
+		<quirk>cramped_cockpit</quirk>
+		<quirk>atmo_flyer</quirk>
+	</unit>
+	<unit>
+		<chassis>Satyr</chassis>
+		<model>XP</model>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+	<unit>
+		<chassis>Sea Skimmer Hydrofoil</chassis>
+		<model>(ELRM)</model>
+		<quirk>poor_performance</quirk>
+		<quirk>searchlight</quirk>
+			<weaponQuirk>
+				<weaponQuirkName>accurate</weaponQuirkName>
+				<slot>0</slot>
+				<location>TU</location>
+				<weaponName>ISExtendedLRM10</weaponName>
+			</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>SeaBuster Strike Fighter</chassis>
+		<model>(Standard)</model>
+		<quirk>hard_pilot</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Skulker Wheeled Scout Tank Mk II</chassis>
+		<model>(Standard)</model>
+		<quirk>poor_performance</quirk>
+		<quirk>trailer_hitch</quirk>
+			<weaponQuirk>
+				<weaponQuirkName>accurate</weaponQuirkName>
+				<slot>0</slot>
+				<location>FR</location>
+				<weaponName>ISMediumLaser</weaponName>
+			</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Sokar Urban Combat Unit</chassis>
+		<model>(Standard)</model>
+		<quirk>gas_hog</quirk>
+		<quirk>poor_work</quirk>
+		<quirk>imp_target_short</quirk>
+		<quirk>trailer_hitch</quirk>
+	</unit>
+	<unit>
+		<chassis>Spindrift Aquatic SecurityMech</chassis>
+		<model>SDT-1A</model>
+		<quirk>no_eject</quirk>
+		<quirk>multi_trac</quirk>
+	</unit>
+	<unit>
+		<chassis>Stiletto</chassis>
+		<model>STO-6S</model>
+		<quirk>bad_rep</quirk>
+		<quirk>difficult_eject</quirk>
+		<quirk>multi_trac</quirk>
+	</unit>
+	<unit>
+		<chassis>Stinger IIC</chassis>
+		<model>(Standard)</model>
+		<quirk>cramped_cockpit</quirk>
+		<quirk>difficult_eject</quirk>
+		<quirk>combat_computer</quirk>
+	</unit>
+	<unit>
+		<chassis>Stinger IIC</chassis>
+		<model>2</model>
+		<quirk>cramped_cockpit</quirk>
+		<quirk>difficult_eject</quirk>
+		<quirk>combat_computer</quirk>
+	</unit>
+	<unit>
+		<chassis>Suzaku</chassis>
+		<model>SU-14</model>
+		<quirk>atmo_flyer</quirk>
+		<quirk>rumble_seat</quirk>
+			<weaponQuirk>
+				<weaponQuirkName>no_cooling</weaponQuirkName>
+				<slot>0</slot>
+				<location>Aft</location>
+				<weaponName>ISLaserAMS</weaponName>
+			</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Sylph Battle Armor</chassis>
+		<model>(Enhanced)</model>
+		<quirk>hard_pilot</quirk>
+			<weaponQuirk>
+				<weaponQuirkName>accurate</weaponQuirkName>
+				<slot>3</slot>
+				<location>Point</location>
+				<weaponName>CLBAERMicroLaser</weaponName>
+			</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Thumper Artillery Vehicle</chassis>
+		<model>Angel</model>
+		<quirk>trailer_hitch</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Thunder</chassis>
+		<model>THR-C4</model>
+		<quirk>hard_pilot</quirk>
+		<quirk>easy_maintain</quirk>
+		<quirk>reinforced_legs</quirk>
+	</unit>
+	<unit>
+		<chassis>Thunderbolt IIC</chassis>
+		<model>(Standard)</model>
+		<quirk>difficult_maintain</quirk>
+		<quirk>mod_weapons</quirk>
+		<quirk>pro_actuator</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Ti Ts'ang</chassis>
+		<model>TSG-9DDC</model>
+		<quirk>difficult_maintain</quirk>
+		<quirk>non_standard</quirk>
+		<quirk>imp_life_support</quirk>
+		<quirk>pro_actuator</quirk>
+		<quirk>rumble_seat</quirk>
+			<weaponQuirk>
+				<weaponQuirkName>jettison_capable</weaponQuirkName>
+				<location>RA</location>
+
+				<weaponName>Lance</weaponName>
+			</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Transit</chassis>
+		<model>TR-13G</model>
+		<quirk>hard_pilot</quirk>
+		<quirk>atmo_flyer</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Trebuchet</chassis>
+		<model>TBT-K7R</model>
+		<quirk>bad_rep</quirk>
+		<quirk>non_standard</quirk>
+		<quirk>easy_maintain</quirk>
+		<quirk>fast_reload</quirk>
+			<weaponQuirk>
+				<weaponQuirkName>jettison_capable</weaponQuirkName>
+				<location>RA</location>
+				<slot>5</slot>
+				<weaponName>ChainWhip</weaponName>
+			</weaponQuirk>
+			<weaponQuirk>
+				<weaponQuirkName>exposed_linkage</weaponQuirkName>
+				<location>LA</location>
+				<slot>5</slot>
+				<weaponName>ISMekTaser</weaponName>
+			</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Tyre</chassis>
+		<model>3</model>
+		<quirk>bad_rep</quirk>
+		<quirk>atmo_instability</quirk>
+		<quirk>rumble_seat</quirk>
+	</unit>
+	<unit>
+		<chassis>Umbra</chassis>
+		<model>RF-1</model>
+		<quirk>easy_maintain</quirk>
+		<quirk>mod_weapons</quirk>
+	</unit>
+	<unit>
+		<chassis>Ursus</chassis>
+		<model>3</model>
+		<quirk>cramped_cockpit</quirk>
+		<quirk>pro_actuator</quirk>
+	</unit>
+	<unit>
+		<chassis>Vedette Medium Tank</chassis>
+		<model>V7</model>
+		<quirk>poor_work</quirk>
+		<quirk>Trailer_Hitch</quirk>
+	</unit>
+	<unit>
+		<chassis>Vengeance</chassis>
+		<model>DC</model>
+		<quirk>unstreamlined</quirk>
+	</unit>
+	<unit>
+		<chassis>Vidar Heavy Defense Tank</chassis>
+		<model>(Standard)</model>
+		<quirk>bad_rep</quirk>
+		<quirk>poor_performance</quirk>
+		<quirk>trailer_hitch</quirk>
+	</unit>
+	<unit>
+		<chassis>Void Medium Battle Armor</chassis>
+		<model>(Minelayer)</model>
+		<quirk>poor_target_long</quirk>
+	</unit>
+	<unit>
+		<chassis>Warrior Stealth Helicopter</chassis>
+		<model>S-9</model>
+		<quirk>easy_pilot</quirk>
+		<quirk>easy_maintain</quirk>
+	</unit>
+	<unit>
+		<chassis>Wildkatze</chassis>
+		<model>WKT-1S</model>
+		<quirk>easy_pilot</quirk>
+	</unit>
+	<unit>
+		<chassis>Wolf Trap (Tora)</chassis>
+		<model>WFT-2B</model>
+		<quirk>easy_pilot</quirk>
+		<quirk>easy_maintain</quirk>
+	</unit>
+	<!-- END TRO Prototypes-->
     <unit>
         <chassis>Atlas</chassis>
         <model>all</model>

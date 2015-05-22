@@ -926,6 +926,15 @@ public interface IGame {
      * Used when a turn is played out of order
      */
     public abstract GameTurn removeFirstTurnFor(Entity entity);
+    
+    /**
+     * Removes any turns that can only be taken by the specified entity.  Useful
+     * if the specified Entity is being removed from the game to ensure any
+     * turns that only it can take are gone.
+     * @param entity
+     * @return The number of turns returned
+     */
+    public abstract int removeSpecificEntityTurnsFor(Entity entity);
 
     /**
      * Check each player for the presence of a Battle Armor squad equipped with

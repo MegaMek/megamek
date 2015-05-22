@@ -1794,12 +1794,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 m_chAmmo.addActionListener(this);
             }
         } else {
-            if (!(entity instanceof Infantry)
-                || (entity instanceof BattleArmor)) {
-                m_chAmmo.setEnabled(true);
-            } else {
-                m_chAmmo.setEnabled(false);
-            }
+            m_chAmmo.setEnabled(true);
             vAmmo = new ArrayList<Mounted>();
             int nCur = -1;
             int i = 0;

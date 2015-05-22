@@ -15,15 +15,14 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.AmmoType;
+import megamek.common.BattleArmor;
+import megamek.common.Building;
 import megamek.common.Compute;
-import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
-import megamek.common.Mounted;
 import megamek.common.Report;
-import megamek.common.TargetRoll;
+import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -32,11 +31,12 @@ import megamek.server.Server;
  * @author arlith
  */
 public class MekMortarAntiPersonnelHandler extends AmmoWeaponHandler {
-
     /**
      *
      */
     private static final long serialVersionUID = -2073773899108954657L;
+    
+    String sSalvoType = " shell(s) ";
 
     /**
      * @param t
@@ -44,132 +44,106 @@ public class MekMortarAntiPersonnelHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public MekMortarAntiPersonnelHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public MekMortarAntiPersonnelHandler(ToHitData t, WeaponAttackAction w,
+            IGame g, Server s) {
         super(t, w, g, s);
     }
 
     /*
      * (non-Javadoc)
-     *
-     * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     @Override
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
-        if (!cares(phase)) {
-            return true;
-        }
+    protected int calcHits(Vector<Report> vPhaseReport) {
+        boolean targetHex = (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
+                || (target.getTargetType() == Targetable.TYPE_HEX_IGNITE);
+        int missilesHit;
+        int nMissilesModifier = getClusterModifiers(true);
 
-        Coords targetPos = target.getPosition();
-
-        Mounted ammoUsed = ae.getEquipment(waa.getAmmoId());
-        final AmmoType atype = ammoUsed == null ? null : (AmmoType) ammoUsed
-                .getType();
-        
-        if ((atype == null) 
-                || (atype.getMunitionType() != AmmoType.M_ANTI_PERSONNEL)) {
-            System.err.println("MekMortarFlareHandler: "
-                    + "not using anti-personnel ammo!");
-            return true;
-        }
-
-
-        // Report weapon attack and its to-hit value.
-        Report r = new Report(3120);
-        r.indent();
-        r.newlines = 0;
-        r.subject = subjectId;
-        if (wtype != null) {
-            r.add(wtype.getName() + " " + atype.getSubMunitionName());
+        if (targetHex) {
+            missilesHit = wtype.getRackSize();
         } else {
-            r.add("Error: From Nowhwere");
+            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+                    nMissilesModifier);
         }
 
-        r.add(target.getDisplayName(), true);
-        vPhaseReport.addElement(r);
-        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
-            r = new Report(3135);
+        if (missilesHit > 0) {
+            Report r = new Report(3325);
             r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
-            return false;
-        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
-            r = new Report(3140);
+            r.add(missilesHit);
+            r.add(sSalvoType);
+            if ((target instanceof Infantry)
+                    && !(target instanceof BattleArmor)) {
+                r.add("");
+            } else {
+                r.add(toHit.getTableDesc());
+            }
             r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
-            r = new Report(3145);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit.getDesc());
-            vPhaseReport.addElement(r);
-        } else {
-            // roll to hit
-            r = new Report(3150);
-            r.newlines = 0;
-            r.subject = subjectId;
-            r.add(toHit.getValue());
-            vPhaseReport.addElement(r);
-        }
-
-        // dice have been rolled, thanks
-        r = new Report(3155);
-        r.newlines = 0;
-        r.subject = subjectId;
-        r.add(roll);
-        vPhaseReport.addElement(r);
-
-        // do we hit?
-        bMissed = roll < toHit.getValue();
-        // Set Margin of Success/Failure.
-        toHit.setMoS(roll - Math.max(2, toHit.getValue()));
-        
-        // Report hit
-        r = new Report(3190);
-        r.subject = subjectId;
-        r.add(targetPos.getBoardNum());
-        vPhaseReport.addElement(r);
-        
-        // Report amount of damage
-        r = new Report(9940);
-        r.subject = subjectId;
-        r.indent(2);
-        r.newlines++;
-        r.add(wtype.getName() + " " + atype.getSubMunitionName());
-        r.add(wtype.getRackSize());
-        vPhaseReport.addElement(r);
-        
-        Vector<Report> newReports;
-        int numRounds = wtype.getRackSize();
-        for (Entity target : game.getEntitiesVector(targetPos)) {
-             for (int i = 0; i < numRounds; i++) {
-                hit = target.rollHitLocation(toHit.getHitTable(),
-                        toHit.getSideTable(), waa.getAimedLocation(),
-                        waa.getAimingMode(), toHit.getCover());
-                hit.setGeneralDamageType(generalDamageType);
-                hit.setCapital(wtype.isCapital());
-                hit.setBoxCars(roll == 12);
-                hit.setCapMisCritMod(getCapMisMod());
-                hit.setFirstHit(firstHit);
-                hit.setAttackerId(getAttackerId());
-                if (target instanceof Infantry) {
-                    int damage = (int) Math.ceil(Compute.d6());
-                    newReports = server.damageEntity(target, hit, damage);
+            if (nMissilesModifier != 0) {
+                if (nMissilesModifier > 0) {
+                    r = new Report(3340);
                 } else {
-                    newReports = server.damageEntity(target, hit, 1);
+                    r = new Report(3341);
                 }
-                for (Report nr : newReports) {
-                    nr.indent();
-                }
-                if (newReports.size() > 0) {
-                    newReports.get(newReports.size() - 1).newlines++;
-                }
-                vPhaseReport.addAll(newReports);
+                r.subject = subjectId;
+                r.add(nMissilesModifier);
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
             }
         }
+        Report r = new Report(3345);
+        r.subject = subjectId;
+        vPhaseReport.addElement(r);
+        bSalvo = true;
+        return missilesHit;
+    }
+
+    /**
+     * Calculate the clustering of the hits
+     * 
+     * @return a <code>int</code> value saying how much hits are in each cluster
+     *         of damage.
+     */
+    @Override
+    protected int calcnCluster() {
+        return 1;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
+     */
+    @Override
+    protected int calcDamagePerHit() {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+            int damage;
+            int numDice = 1;
+            if (bDirect) {
+                numDice += (toHit.getMoS() / 3);
+            }
+            damage = Compute.d6(numDice);
+            if (bGlancing) {
+                damage /= 2;
+            }
+            // Burst fire damage rounds up
+            return (int) Math.ceil(damage);
+        }
+        return 1;
+    }
+    
+    protected void handleEntityDamage(Entity entityTarget,
+            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+            int bldgAbsorbs) {
+        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
+                nCluster, bldgAbsorbs);
         
-        return false;
+        // We need to roll damage for each hit against infantry
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+            nDamPerHit = calcDamagePerHit();
+        }
     }
 
 }

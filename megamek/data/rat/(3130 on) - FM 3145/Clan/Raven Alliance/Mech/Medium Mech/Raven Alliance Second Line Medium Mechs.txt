@@ -7,6 +7,6 @@ Clint IIC 2,5
 Dark Crow 3,6
 Goshawk II (Standard),5
 Ursus II (Standard),4
-Beowulf IIC,3
+Beowulf IIC (Standard),3
 Goshawk II (Standard),2
 Shadow Hawk IIC 7,1

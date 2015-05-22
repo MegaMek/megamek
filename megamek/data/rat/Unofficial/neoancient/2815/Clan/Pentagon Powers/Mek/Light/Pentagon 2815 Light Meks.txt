@@ -1,7 +1,7 @@
 Neoancient Pentagon 2815 Light Meks
 Carbine CON-1 ConstructionMech (RL),40
-Crosscut ED-X2M ForestryMech(Flamer),25
-Crosscut ED-X2M2 ForestryMech(Rocket),25
+Crosscut ED-X2 (Flamer),25
+Crosscut ED-X2 (RL),25
 Falcon FLC-4N,28
 Falcon FLC-4Nb,3
 Falcon FLC-4Nb-PP,14
@@ -11,8 +11,8 @@ Firefly FFL-3PP2,46
 Firefly FFL-3PP3,46
 Firefly FFL-3SLE,62
 Firestarter FS9-H,42
-Harvester Ant KIC-3 Agromech(LRM),22
-Harvester Ant KIC-3 Agromech(MG),19
+Harvester Ant KIC-3M-B AgroMech MOD,22
+Harvester Ant KIC-3M AgroMech MOD,19
 Hermes HER-1S,32
 Hermes HER-1Sb,5
 Hussar HSR-200-D,72
@@ -28,8 +28,8 @@ Night Hawk NTK-2Q,60
 Ostscout OTT-7J,40
 Ostscout OTT-7Jb,6
 Panther PNT-9R,53
-Powerman XI LoaderMech (Laser),20
-Powerman XI LoaderMech (SRM),20
+Powerman SC XI-M LoaderMech MOD,20
+Powerman SC XI-M-B LoaderMech MOD,20
 Sling SL-1G,25
 Sling SL-1H,13
 Spector SPR-4F,10

@@ -8,5 +8,5 @@ Pegasus Scout Hover Tank (3058 Upgrade), 6
 Cavalry Attack Helicopter (Standard), 5
 Striker Light Tank (3061 Upgrade), 4
 Hawk Moth II Gunship (Standard), 3
-Skulker Wheeled Scout Tank MK 2 (Standard), 2
+Skulker Wheeled Scout Tank Mk II (Standard), 2
 Balac Strike VTOL (LRM), 1

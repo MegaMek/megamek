@@ -1,8 +1,8 @@
 Neoancient Pentagon 2815 Medium Meks
 Assassin ASN-21,60
 Blackjack BJ-1,53
-Buster XV HaulerMech (AC),44
-Buster XV HaulerMech (PPC),33
+Buster BC XV-M HaulerMech MOD,44
+Buster BC XV-M-B HaulerMech MOD,33
 Cicada CDA-2A,47
 Clint CLNT-2-3T,40
 Crab CRB-27,61

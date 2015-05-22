@@ -4838,7 +4838,6 @@ public class Server implements Runnable {
         IHex curHex = game.getBoard().getHex(start);
         Report r;
         int skidDistance = 0; // actual distance moved
-        ArrayList<Entity> avoidedChargeUnits = new ArrayList<Entity>();
         while (!entity.isDoomed() && (distance > 0)) {
             nextPos = curPos.translated(direction);
             // Is the next hex off the board?
@@ -5188,6 +5187,7 @@ public class Server implements Runnable {
             // ASSUMPTION: hurt EVERYONE in the hex.
             Iterator<Entity> targets = game.getEntities(nextPos);
             if (targets.hasNext()) {
+                ArrayList<Entity> avoidedChargeUnits = new ArrayList<Entity>();
                 boolean skidChargeHit = false;
                 while (targets.hasNext()) {
                     Entity target = targets.next();
@@ -5209,7 +5209,7 @@ public class Server implements Runnable {
                             continue;
                         } else if (target instanceof Protomech) {
                             if (target != Compute.stackingViolation(game,
-                                                                    entity, nextPos, null)) {
+                                    entity, nextPos, null)) {
                                 r = new Report(2420);
                                 r.subject = target.getId();
                                 r.addDesc(target);
@@ -5381,7 +5381,7 @@ public class Server implements Runnable {
 
                 for (Entity e : avoidedChargeUnits) {
                     GameTurn newTurn = new GameTurn.SpecificEntityTurn(e
-                                                                               .getOwner().getId(), e.getId());
+                            .getOwner().getId(), e.getId());
                     game.insertNextTurn(newTurn);
                     send(createTurnVectorPacket());
                 }
@@ -5404,9 +5404,8 @@ public class Server implements Runnable {
                 // ASSUMPTION: you don't charge the building
                 // if Tanks or Mechs were charged.
                 int chargeDamage = ChargeAttackAction.getDamageFor(entity, game
-                                                                           .getOptions().booleanOption
-                                                                                   ("tacops_charge_damage"),
-                                                                   entity.delta_distance);
+                        .getOptions().booleanOption("tacops_charge_damage"),
+                        entity.delta_distance);
                 if (!bldgSuffered) {
                     Vector<Report> reports = damageBuilding(bldg, chargeDamage,
                                                             nextPos);
@@ -5497,19 +5496,19 @@ public class Server implements Runnable {
 
                 // If the prohibited terrain is water, entity is destroyed
                 if ((nextHex.terrainLevel(Terrains.WATER) > 0)
-                    && (entity instanceof Tank)
-                    && (entity.getMovementMode() != EntityMovementMode.HOVER)
-                    && (entity.getMovementMode() != EntityMovementMode.WIGE)) {
+                        && (entity instanceof Tank)
+                        && (entity.getMovementMode() != EntityMovementMode.HOVER)
+                        && (entity.getMovementMode() != EntityMovementMode.WIGE)) {
                     addReport(destroyEntity(entity,
-                                            "skidded into a watery grave", false, true));
+                            "skidded into a watery grave", false, true));
                 }
 
                 // otherwise, damage is weight/5 in 5pt clusters
                 int damage = ((int) entity.getWeight() + 4) / 5;
                 while (damage > 0) {
                     addReport(damageEntity(entity, entity.rollHitLocation(
-                                                   ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT),
-                                           Math.min(5, damage)));
+                            ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT),
+                            Math.min(5, damage)));
                     damage -= 5;
                 }
                 // and unit is immobile
@@ -11231,18 +11230,27 @@ public class Server implements Runnable {
      * fall. Rolls are added to the piloting roll list.
      */
     private Vector<Report> doEntityDisplacement(Entity entity, Coords src,
-                                                Coords dest, PilotingRollData roll) {
+            Coords dest, PilotingRollData roll) {
         Vector<Report> vPhaseReport = new Vector<Report>();
         Report r;
         if (!game.getBoard().contains(dest)) {
-            // set position anyway, for pushes moving through and stuff like
-            // that
+            // set position anyway, for pushes moving through, stuff like that
             entity.setPosition(dest);
             if (!entity.isDoomed()) {
+                // Make sure there aren't any specific entity turns for entity
+                int turnsRemoved = game.removeSpecificEntityTurnsFor(entity);
+                // May need to remove a turn for this Entity
+                if ((game.getPhase() == Phase.PHASE_MOVEMENT)
+                        && !entity.isDone() && (turnsRemoved == 0)) {
+                    game.removeTurnFor(entity);
+                    send(createTurnVectorPacket());
+                } else if (turnsRemoved > 0) {
+                    send(createTurnVectorPacket());
+                }
                 game.removeEntity(entity.getId(),
-                                  IEntityRemovalConditions.REMOVE_PUSHED);
+                        IEntityRemovalConditions.REMOVE_PUSHED);
                 send(createRemoveEntityPacket(entity.getId(),
-                                              IEntityRemovalConditions.REMOVE_PUSHED));
+                        IEntityRemovalConditions.REMOVE_PUSHED));
                 // entity forced from the field
                 r = new Report(2230);
                 r.subject = entity.getId();
@@ -11272,7 +11280,7 @@ public class Server implements Runnable {
             }
             if (!(entity.isAirborneVTOLorWIGE())) {
                 vPhaseReport.addAll(doEntityFallsInto(entity,
-                                                      entity.getElevation(), src, dest, roll, true));
+                        entity.getElevation(), src, dest, roll, true));
             } else {
                 entity.setPosition(dest);
             }
@@ -11420,11 +11428,11 @@ public class Server implements Runnable {
                 if (result < roll.getValue()) {
                     r.choose(false);
                     Vector<Report> newReports = doEntityDisplacement(violation,
-                                                                     dest, dest.translated(direction),
-                                                                     new PilotingRollData(violation.getId(),
-                                                                                          TargetRoll.AUTOMATIC_FAIL,
-                                                                                          "failed to step out of a " +
-                                                                                          "domino effect"));
+                            dest, dest.translated(direction),
+                            new PilotingRollData(violation.getId(),
+                                    TargetRoll.AUTOMATIC_FAIL,
+                                    "failed to step out of a "
+                                            + "domino effect"));
                     for (Report newReport : newReports) {
                         newReport.indent(3);
                     }
@@ -11445,8 +11453,8 @@ public class Server implements Runnable {
                             if (cfrType != Packet.COMMAND_CFR_DOMINO_EFFECT) {
                                 System.err
                                         .println("Excepted a "
-                                                 + "COMMAND_CFR_DOMINO_EFFECT CFR packet, "
-                                                 + "received: " + cfrType);
+                                                + "COMMAND_CFR_DOMINO_EFFECT CFR packet, "
+                                                + "received: " + cfrType);
                                 throw new IllegalStateException();
                             }
                             MovePath mp = (MovePath) rp.packet.getData()[1];
@@ -11481,9 +11489,9 @@ public class Server implements Runnable {
                             }
                         } else { // If no responses, treat as no action
                             vPhaseReport.addAll(doEntityDisplacement(violation,
-                                                                     dest, dest.translated(direction),
-                                                                     new PilotingRollData(violation.getId(), 0,
-                                                                                          "domino effect")));
+                                    dest, dest.translated(direction),
+                                    new PilotingRollData(violation.getId(), 0,
+                                            "domino effect")));
                         }
                     }
                 }
@@ -11494,9 +11502,9 @@ public class Server implements Runnable {
                 r.addDesc(violation);
                 vPhaseReport.add(r);
                 vPhaseReport.addAll(doEntityDisplacement(violation, dest, dest
-                                                                 .translated(direction),
-                                                         new PilotingRollData(violation.getId(), 0,
-                                                                              "domino effect")));
+                        .translated(direction),
+                        new PilotingRollData(violation.getId(), 0,
+                                "domino effect")));
 
             }
             // Update the violating entity's postion on the client,

@@ -2563,7 +2563,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             // Certain mek mortar types should target hexes
             } else if ((aType.getAmmoType() == AmmoType.T_MEK_MORTAR) 
                 && ((aType.getMunitionType() == AmmoType.M_AIRBURST)
-                        || (aType.getMunitionType() == AmmoType.M_ANTI_PERSONNEL)
                         || (aType.getMunitionType() == AmmoType.M_SMOKE_WARHEAD))) {
                     return new HexTarget(pos, game.getBoard(),
                             Targetable.TYPE_HEX_CLEAR);

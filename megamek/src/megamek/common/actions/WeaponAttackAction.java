@@ -1699,8 +1699,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         boolean mekMortarMunitionsIgnoreImmobile = 
                 weapon.getType().hasFlag(WeaponType.F_MEK_MORTAR)
                 && (atype != null)
-                && ((atype.getMunitionType() == AmmoType.M_ANTI_PERSONNEL) 
-                        || (atype.getMunitionType() == AmmoType.M_AIRBURST));
+                && (atype.getMunitionType() == AmmoType.M_AIRBURST);
         if (!(wtype instanceof ArtilleryCannonWeapon) 
                 && !mekMortarMunitionsIgnoreImmobile) {
             ToHitData immobileMod = Compute.getImmobileMod(target, aimingAt,
@@ -4208,8 +4207,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         
         // Some Mek mortar ammo types can only be aimed at a hex
         if (weapon.getType().hasFlag(WeaponType.F_MEK_MORTAR) && (atype != null)
-                && ((atype.getMunitionType() == AmmoType.M_ANTI_PERSONNEL)
-                        || (atype.getMunitionType() == AmmoType.M_AIRBURST)
+                && ((atype.getMunitionType() == AmmoType.M_AIRBURST)
                         || (atype.getMunitionType() == AmmoType.M_FLARE)
                         || (atype.getMunitionType() == AmmoType.M_SMOKE))) {
             if (!(target instanceof HexTarget)) {

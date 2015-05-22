@@ -147,6 +147,8 @@ v0.41.4-dev (SVN)
     to their default values
 + Bug: GameOptionsDialog Load could fail to update options in certain situations
 + Bug: Meks carrying mechanized battle armor can't jump.
++ Feature: Added "All Equipment" and "All Weapons" to locations list in
+    UnitDisplay Systems tab
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

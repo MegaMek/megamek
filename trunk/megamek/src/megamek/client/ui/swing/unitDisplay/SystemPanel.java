@@ -22,6 +22,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -50,8 +51,14 @@ import megamek.common.WeaponType;
 /**
  * This class shows the critical hits and systems for a mech
  */
-class SystemPanel extends PicMap implements ItemListener,
-                                                    ActionListener, ListSelectionListener {
+class SystemPanel extends PicMap implements ItemListener, ActionListener,
+        ListSelectionListener {
+    
+    private static int LOC_ALL_EQUIP = 0;
+    private static int LOC_ALL_WEAPS = 1;
+    private static int LOC_SPACER = 2;
+    private static int LOC_OFFSET = 3;
+    
     /**
      * 
      */
@@ -97,9 +104,11 @@ class SystemPanel extends PicMap implements ItemListener,
 
         locList = new JList<String>(new DefaultListModel<String>());
         locList.setOpaque(false);
+        locList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         slotList = new JList<String>(new DefaultListModel<String>());
         slotList.setOpaque(false);
+        slotList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         unitList = new JList<String>(new DefaultListModel<String>());
         unitList.setOpaque(false);
@@ -233,13 +242,14 @@ class SystemPanel extends PicMap implements ItemListener,
     }
 
     private CriticalSlot getSelectedCritical() {
-        String eqString = Messages.getString("MechDisplay.Equipment");
-        if ((en instanceof Protomech)
-                && eqString.equals(locList.getSelectedValue())) {
+        if ((locList.getSelectedIndex() == LOC_ALL_EQUIP)
+                || (locList.getSelectedIndex() == LOC_ALL_WEAPS)
+                || (locList.getSelectedIndex() == LOC_SPACER)) {
             return null;
         }
         int loc = locList.getSelectedIndex();
         int slot = slotList.getSelectedIndex();
+        loc -= LOC_OFFSET;
         if ((loc == -1) || (slot == -1)) {
             return null;
         }
@@ -247,11 +257,21 @@ class SystemPanel extends PicMap implements ItemListener,
     }
 
     private Mounted getSelectedEquipment() {
-        String eqString = Messages.getString("MechDisplay.Equipment");
-        if ((en instanceof Protomech)
-                && eqString.equals(locList.getSelectedValue())) {
-            return en.getEquipment(slotList.getSelectedIndex());
+        if ((locList.getSelectedIndex() == LOC_ALL_EQUIP)) {
+            if (slotList.getSelectedIndex() != -1) { 
+                return en.getMisc().get(slotList.getSelectedIndex());
+            } else {
+                return null;
+            }
         }
+        if (locList.getSelectedIndex() == LOC_ALL_WEAPS) {
+            if (slotList.getSelectedIndex() != -1) { 
+                return en.getWeaponList().get(slotList.getSelectedIndex());
+            } else {
+                return null;
+            }
+        }
+        
         final CriticalSlot cs = getSelectedCritical();
         if ((cs == null) || (this.unitDisplay.clientgui == null)) {
             return null;
@@ -313,13 +333,16 @@ class SystemPanel extends PicMap implements ItemListener,
         DefaultListModel<String> locModel = ((DefaultListModel<String>) locList
                 .getModel());
         locModel.removeAllElements();
-        for (int i = 0; i < en.locations(); i++) {
-            if (en.getNumberOfCriticals(i) > 0) {
-                locModel.insertElementAt(en.getLocationName(i), i);
+        locModel.insertElementAt(
+                Messages.getString("MechDisplay.AllEquipment"), LOC_ALL_EQUIP);
+        locModel.insertElementAt(
+                Messages.getString("MechDisplay.AllWeapons"), LOC_ALL_WEAPS);
+        locModel.insertElementAt("-----", LOC_SPACER);
+        for (int loc = 0; loc < en.locations(); loc++) {
+            int idx = loc + LOC_OFFSET;
+            if (en.getNumberOfCriticals(loc) > 0) {
+                locModel.insertElementAt(en.getLocationName(loc), idx);
             }
-        }
-        if ((en instanceof Protomech) && (en.getEquipment().size() > 0)) {
-            locModel.addElement(Messages.getString("MechDisplay.Equipment"));
         }
         locList.setSelectedIndex(0);
         displaySlots();
@@ -329,44 +352,31 @@ class SystemPanel extends PicMap implements ItemListener,
         int loc = locList.getSelectedIndex();
         DefaultListModel<String> slotModel = 
                 ((DefaultListModel<String>) slotList.getModel()); 
-        slotModel.removeAllElements();
+        slotModel.removeAllElements();        
         
-        String hotLoaded = Messages.getString("MechDisplay.isHotLoaded"); //$NON-NLS-1$
-        // We need to display equipment for Protos
-        String eqString = Messages.getString("MechDisplay.Equipment");
-        if ((en instanceof Protomech)
-                && eqString.equals(locList.getSelectedValue())) {
-            for (Mounted m : en.getEquipment()) {
-                StringBuffer sb = new StringBuffer(32);
-                sb.append(m.getDesc());
-
-                if (m.isHotLoaded()) {
-                    sb.append(hotLoaded);
-                }
-                if (m.getType().hasModes()) {
-                    if (m.curMode().getDisplayableName().length() > 0) {
-                        sb.append(" ("); //$NON-NLS-1$
-                        sb.append(m.curMode().getDisplayableName());
-                        sb.append(')'); //$NON-NLS-1$
-                    }
-                    if (!m.pendingMode().equals("None")) { //$NON-NLS-1$
-                        sb.append(" (next turn, "); //$NON-NLS-1$
-                        sb.append(m.pendingMode().getDisplayableName());
-                        sb.append(')'); //$NON-NLS-1$
-                    }
-                    if ((m.getType() instanceof MiscType)
-                            && ((MiscType) m.getType()).isShield()) {
-                        sb.append(" " //$NON-NLS-1$
-                                + m.getDamageAbsorption(en, loc) + '/' //$NON-NLS-1$
-                                + m.getCurrentDamageCapacity(en, loc) + ')'); //$NON-NLS-1$
-                    }
-                }
-                slotModel.addElement(sb.toString());
+        // Display all Equipment
+        if (loc == LOC_ALL_EQUIP) {
+            for (Mounted m : en.getMisc()) {
+                slotModel.addElement(getMountedDisplay(m, loc));
             }
             return;
         }
         
+        // Display all Weapons
+        if (loc == LOC_ALL_WEAPS) {
+            for (Mounted m : en.getWeaponList()) {
+                slotModel.addElement(getMountedDisplay(m, loc));
+            }
+            return;
+        }
+        
+        // Display nothing for a spacer
+        if (loc == LOC_SPACER) {
+            return;
+        }        
+
         // Standard location handling
+        loc -= LOC_OFFSET;
         for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
             final CriticalSlot cs = en.getCritical(loc, i);
             StringBuffer sb = new StringBuffer(32);
@@ -390,36 +400,7 @@ class SystemPanel extends PicMap implements ItemListener,
                         }
                         break;
                     case CriticalSlot.TYPE_EQUIPMENT:
-                        Mounted m = cs.getMount();
-                        sb.append(m.getDesc());
-
-                        if (cs.getMount2() != null) {
-                            sb.append(" ");
-                            sb.append(cs.getMount2().getDesc()); //$NON-NLS-1$
-                        }
-                        if (m.isHotLoaded()) {
-                            sb.append(hotLoaded);
-                        }
-                        if (m.getType().hasModes()) {
-                            if (m.curMode().getDisplayableName().length() > 0) {
-                                sb.append(" ("); //$NON-NLS-1$
-                                sb.append(m.curMode().getDisplayableName());
-                                sb.append(')'); //$NON-NLS-1$
-                            }
-                            if (!m.pendingMode().equals("None")) { //$NON-NLS-1$
-                                sb.append(" (next turn, "); //$NON-NLS-1$
-                                sb.append(m.pendingMode().getDisplayableName());
-                                sb.append(')'); //$NON-NLS-1$
-                            }
-                            if ((m.getType() instanceof MiscType)
-                                    && ((MiscType) m.getType()).isShield()) {
-                                sb.append(" " //$NON-NLS-1$
-                                        + m.getDamageAbsorption(en, loc)
-                                        + '/' //$NON-NLS-1$
-                                        + m.getCurrentDamageCapacity(en,
-                                                loc) + ')'); //$NON-NLS-1$
-                            }
-                        }
+                        sb.append(getMountedDisplay(cs.getMount(), loc, cs));
                         break;
                     default:
                 }
@@ -430,6 +411,46 @@ class SystemPanel extends PicMap implements ItemListener,
             slotModel.addElement(sb.toString());
         }
         onResize();
+    }
+    
+    private String getMountedDisplay(Mounted m, int loc) {
+        return getMountedDisplay(m, loc, null);
+    }
+    
+    private String getMountedDisplay(Mounted m, int loc, CriticalSlot cs) {
+        String hotLoaded = Messages.getString("MechDisplay.isHotLoaded"); //$NON-NLS-1$
+        StringBuffer sb = new StringBuffer();
+        
+        sb.append(m.getDesc());
+
+        if ((cs != null) && cs.getMount2() != null) {
+            sb.append(" "); //$NON-NLS-1$
+            sb.append(cs.getMount2().getDesc()); //$NON-NLS-1$
+        }
+        if (m.isHotLoaded()) {
+            sb.append(hotLoaded);
+        }
+        if (m.getType().hasModes()) {
+            if (m.curMode().getDisplayableName().length() > 0) {
+                sb.append(" ("); //$NON-NLS-1$
+                sb.append(m.curMode().getDisplayableName());
+                sb.append(')'); //$NON-NLS-1$
+            }
+            if (!m.pendingMode().equals("None")) { //$NON-NLS-1$
+                sb.append(" (next turn, "); //$NON-NLS-1$
+                sb.append(m.pendingMode().getDisplayableName());
+                sb.append(')'); //$NON-NLS-1$
+            }
+            if ((m.getType() instanceof MiscType)
+                    && ((MiscType) m.getType()).isShield()) {
+                sb.append(" " //$NON-NLS-1$
+                        + m.getDamageAbsorption(en, loc)
+                        + '/' //$NON-NLS-1$
+                        + m.getCurrentDamageCapacity(en,
+                                loc) + ')'); //$NON-NLS-1$
+            }
+        }
+        return sb.toString();
     }
 
     //
@@ -789,8 +810,10 @@ class SystemPanel extends PicMap implements ItemListener,
                     invalidEnvironment = true;
                 }
 
-                boolean bOwner = this.unitDisplay.clientgui.getClient().getLocalPlayer()
-                        .equals(en.getOwner());
+                ((DefaultComboBoxModel<String>) m_chMode.getModel())
+                        .removeAllElements();
+                boolean bOwner = this.unitDisplay.clientgui.getClient()
+                        .getLocalPlayer().equals(en.getOwner());
                 if ((m != null)
                         && bOwner
                         && (m.getType() instanceof AmmoType)
@@ -836,12 +859,8 @@ class SystemPanel extends PicMap implements ItemListener,
                             && !this.unitDisplay.clientgui.getClient().getGame()
                                     .getOptions()
                                     .booleanOption("tacops_eccm")) {
-                        ((DefaultComboBoxModel<String>) m_chMode.getModel())
-                                .removeAllElements();
                         return;
                     }
-                    ((DefaultComboBoxModel<String>) m_chMode.getModel())
-                            .removeAllElements();
                     for (Enumeration<EquipmentMode> e = m.getType()
                             .getModes(); e.hasMoreElements();) {
                         EquipmentMode em = e.nextElement();
@@ -856,8 +875,6 @@ class SystemPanel extends PicMap implements ItemListener,
                         if ((cs.getIndex() == Mech.SYSTEM_COCKPIT)
                                 && en.hasEiCockpit()
                                 && (en instanceof Mech)) {
-                            ((DefaultComboBoxModel<String>) m_chMode
-                                    .getModel()).removeAllElements();
                             m_chMode.setEnabled(true);
                             m_chMode.addItem("EI Off");
                             m_chMode.addItem("EI On");

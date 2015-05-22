@@ -151,6 +151,7 @@ v0.41.4-dev (SVN)
     UnitDisplay Systems tab
 + Bug [#4552]: Swarming and target destruction - errata
 + Data: Various fixes to RATs/Mechfiles/Canon Quirks.
++ Bug: CASE II erroneously flagged as legal vehicle equipment.
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

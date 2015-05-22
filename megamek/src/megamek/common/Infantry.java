@@ -968,30 +968,6 @@ public class Infantry extends Entity {
         super.newRound(roundNumber);
     }
 
-    @Override
-    public boolean loadWeapon(Mounted mounted, Mounted mountedAmmo) {
-        if (!(this instanceof BattleArmor)) {
-            // field guns don't share ammo, and infantry weapons dont have ammo
-            if ((mounted.getLinked() != null)
-                    || (mountedAmmo.getLinkedBy() != null)) {
-                return false;
-            }
-        }
-        return super.loadWeapon(mounted, mountedAmmo);
-    }
-
-    @Override
-    public boolean loadWeaponWithSameAmmo(Mounted mounted, Mounted mountedAmmo) {
-        if (!(this instanceof BattleArmor)) {
-            // field guns don't share ammo, and infantry weapons dont have ammo
-            if ((mounted.getLinked() != null)
-                    || (mountedAmmo.getLinkedBy() != null)) {
-                return false;
-            }
-        }
-        return super.loadWeaponWithSameAmmo(mounted, mountedAmmo);
-    }
-
     public void setDugIn(int i) {
         dugIn = i;
     }

@@ -25103,19 +25103,8 @@ public class Server implements Runnable {
                 r.subject = swarmerId;
                 r.addDesc(swarmer);
                 vDesc.addElement(r);
-                if ((entity instanceof Mech) && !entity.isProne()) {
-                    // Swarming infantry take a 2d6 point hit.
-                    // ASSUMPTION : damage should not be doubled.
-                    r = new Report(2335);
-                    r.subject = swarmer.getId();
-                    r.addDesc(swarmer);
-                    vDesc.add(r);
-                    vDesc.addAll(damageEntity(swarmer, swarmer.rollHitLocation(
-                                                      ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT),
-                                              Compute.d6(2)));
-                    Report.addNewline(vPhaseReport);
-                }
-
+                // Swarming infantry shouldn't take damage when their target dies
+                // http://bg.battletech.com/forums/total-warfare/swarming-question
                 entityUpdate(swarmerId);
             }
 

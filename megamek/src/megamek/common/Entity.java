@@ -3851,7 +3851,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * The number of critical slots that are destroyed in the component.
+     * The number of critical slots that are destroyed or breached in the
+     * location or missing along with it (if it was blown off).
      */
     public int getBadCriticals(int type, int index, int loc) {
         int hits = 0;
@@ -3869,7 +3870,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             //  need to get the Mounted that is mounted in that index and
             //  compare types.  Superheavies may have two Mounted in each crit
             if ((ccs != null) && (ccs.getType() == type)) {
-                if (ccs.isDestroyed() || ccs.isBreached()) {
+                if (ccs.isDestroyed() || ccs.isBreached() || ccs.isMissing()) {
                     if ((type == CriticalSlot.TYPE_SYSTEM) && (ccs.getIndex() == index)) {
                         hits++;
                     } else if ((type == CriticalSlot.TYPE_EQUIPMENT) && (m.equals(ccs.getMount()) || m.equals(ccs

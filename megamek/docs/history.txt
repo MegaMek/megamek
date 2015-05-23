@@ -155,6 +155,10 @@ v0.41.4-dev (SVN)
 + Bug: Mek Mortar Anti-Personnel ammo implemented according to current errata
 + Bug: Errata - Infantry field guns share ammo across guns
 + Bug [#4549]: Displacing units off the map can cause "no unit to move" error
++ Changed Entity.getBadCriticals() to count missing slots along with destroyed/
+    breached ones.
++ Bug: Considering physical attacks against headless 'Mechs still on the map
+    caused Princess to go into an infinite loop.
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

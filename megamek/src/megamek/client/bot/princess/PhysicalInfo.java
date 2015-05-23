@@ -225,7 +225,10 @@ public class PhysicalInfo {
         Mech targetMech = (Mech) getTarget();
         for (int i = 0; i <= 7; i++) {
             int hitLoc = i;
-            while (targetMech.isLocationBad(hitLoc) && (hitLoc != Mech.LOC_CT)) {
+            while (targetMech.isLocationBad(hitLoc) && (hitLoc != Mech.LOC_CT)
+                    // Need to account for still-active 'Mechs with destroyed
+                    // heads so as not to spin into an endless loop.
+                    && (hitLoc != Mech.LOC_HEAD)) {
                 if (hitLoc > 7) {
                     hitLoc = 0;
                 }

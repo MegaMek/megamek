@@ -521,7 +521,8 @@ public class Game implements Serializable, IGame {
     public int getLiveEntitiesOwnedBy(IPlayer player) {
         int count = 0;
         for (Entity entity : entities) {
-            if (entity.getOwner().equals(player) && !entity.isDestroyed()) {
+            if (entity.getOwner().equals(player) && !entity.isDestroyed()
+                    && !entity.isCarcass()) {
                 count++;
             }
         }
@@ -537,6 +538,7 @@ public class Game implements Serializable, IGame {
         int count = 0;
         for (Entity entity : entities) {
             if (entity.getOwner().equals(player) && !entity.isDestroyed()
+                && !entity.isCarcass()
                 && !entity.isOffBoard() && !entity.isCaptured()) {
                 count++;
             }
@@ -552,6 +554,7 @@ public class Game implements Serializable, IGame {
         int count = 0;
         for (Entity entity : entities) {
             if (entity.getOwner().equals(player) && !entity.isDestroyed()
+                && !entity.isCarcass()
                 && entity.isCommander() && !entity.isOffBoard()
                 && !entity.isCaptured()) {
                 count++;
@@ -569,6 +572,7 @@ public class Game implements Serializable, IGame {
             if (entity.getCrew().getOptions().booleanOption("tactical_genius")
                 && entity.getOwner().equals(player)
                 && !entity.isDestroyed() && entity.isDeployed()
+                && !entity.isCarcass()
                 && !entity.getCrew().isUnconscious()) {
                 return true;
             }

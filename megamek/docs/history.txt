@@ -161,6 +161,9 @@ v0.41.4-dev (SVN)
     caused Princess to go into an infinite loop.
 + Bug: Piloting penalty for head loss on 'Mechs with torso-mounted cockpits not
     applied to same-phase PSRs.
++ Bug: Vehicles with dead crews not counted as destroyed for victory purposes.
+    (Partial fix -- works for "last man standing" and BV victories, but not yet
+    with kill counts.)
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

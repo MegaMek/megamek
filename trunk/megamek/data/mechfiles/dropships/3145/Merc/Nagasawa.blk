@@ -1,18 +1,11 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
@@ -170,5 +163,5 @@ CargoBay:207:1
 </passengers>
 
 <source>
-TRO 3145 Merc
+TRO 3145 Mercenaries - Dark Ages
 </source>

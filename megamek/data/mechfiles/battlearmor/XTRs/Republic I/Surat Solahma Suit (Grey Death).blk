@@ -13,11 +13,11 @@ BattleArmor
 </UnitType>
 
 <Name>
-'Surat' Solahma Suit
+'Surat' (Grey Death) Solahma Suit
 </Name>
 
 <Model>
-(Grey Death)
+(Standard)
 </Model>
 
 <year>
@@ -67,7 +67,7 @@ LegAttack
 </Trooper 4 Equipment>
 
 <source>
-XTR Republic I
+XTRO Republic I - Early Republic
 </source>
 
 <chassis>

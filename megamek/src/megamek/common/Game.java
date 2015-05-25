@@ -1122,7 +1122,7 @@ public class Game implements Serializable, IGame {
                 wrecks.addElement(entity);
             }
         }
-
+        
         return wrecks.elements();
     }
 
@@ -1157,6 +1157,22 @@ public class Game implements Serializable, IGame {
         }
 
         return smithereens.elements();
+    }
+    
+    /**
+     * Returns an enumeration of "carcass" entities, i.e., vehicles with dead
+     * crews that are still on the map.
+     */
+    public Enumeration<Entity> getCarcassEntities() {
+        Vector<Entity> carcasses = new Vector<Entity>();
+        
+        for (Entity entity : entities) {
+            if (entity.isCarcass()) {
+                carcasses.addElement(entity);
+            }
+        }
+        
+        return carcasses.elements();
     }
 
     /**

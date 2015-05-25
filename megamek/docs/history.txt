@@ -165,7 +165,9 @@ v0.41.4-dev (SVN)
     (Partial fix -- works for "last man standing" and BV victories, but not yet
     with kill counts.)
 + Patches [#425 to #428] - Various Source and quirks updates.
-
++ Kill count victory now counts vehicles with dead crew as kills. (This still
+    only counts kills MegaMek actually credits a specific player with, so "pilot
+    errors" may slip through the cracks.)
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

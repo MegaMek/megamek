@@ -591,6 +591,11 @@ public interface IGame {
     public abstract Enumeration<Entity> getDevastatedEntities();
 
     /**
+     * Returns an enumeration of "carcass" entities, i.e., vehicles with dead
+     * crews that are still on the map.
+     */
+    public abstract Enumeration<Entity> getCarcassEntities();
+    /**
      * Return the current number of entities in the game.
      */
     public abstract int getNoOfEntities();

@@ -168,6 +168,8 @@ v0.41.4-dev (SVN)
 + Kill count victory now counts vehicles with dead crew as kills. (This still
     only counts kills MegaMek actually credits a specific player with, so "pilot
     errors" may slip through the cracks.)
++ Bug: TacOps Vehicle Arcs option had no effect on dual forward and VTOL chin
+    turrets.
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

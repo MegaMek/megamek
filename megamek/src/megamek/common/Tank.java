@@ -687,6 +687,11 @@ public class Tank extends Entity {
                 }
                 return Compute.ARC_FORWARD;
             case LOC_TURRET_2:
+                // Doubles as chin turret location for VTOLs, for which
+                // Tank.LOC_TURRET == magic number 5 == VTOL.LOC_ROTOR.
+                if (game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                    return Compute.ARC_TURRET;
+                }
                 return Compute.ARC_FORWARD;
             case LOC_RIGHT:
                 if (mounted.isSponsonTurretMounted()) {

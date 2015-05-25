@@ -48,45 +48,10 @@ public class KillCountVictory implements Victory, Serializable {
         Hashtable<Integer,Integer> killsTeam = new Hashtable<Integer,Integer>();
         // Stores the number of kills for players no on a team
         Hashtable<Integer,Integer> killsPlayer = new Hashtable<Integer,Integer>();
-        for (Enumeration<Entity> wreckedEnum = game.getWreckedEntities();
-                wreckedEnum.hasMoreElements();)
-        {
-            Entity wreck = wreckedEnum.nextElement();
-            Entity killer = game.getEntity(wreck.getKillerId());
-            
-            if (killer == null){
-                continue;
-            }            
-            
-            int team = killer.getOwner().getTeam();
-            // Friendly fire doesn't count
-            if (team == wreck.getOwner().getTeam()){
-                continue;
-            }
-            if (team != Player.TEAM_NONE){
-                Integer kills = killsTeam.get(team);
-                if (kills == null){
-                    kills = 1;
-                } else {
-                    kills++;
-                }
-                killsTeam.put(team, kills);
-            } else {
-                Integer player = killer.getOwner().getId();
-                // Friendly fire doesn't count
-                if (wreck.getOwner().getId() == player){
-                    continue;
-                }
-                Integer kills = killsPlayer.get(player);
-                if (kills == null){
-                    kills = 1;
-                } else {
-                    kills++;
-                }
-                killsPlayer.put(player, kills);
-            }
-        }
-            
+        
+        updateKillTables(game, killsTeam, killsPlayer, game.getWreckedEntities());
+        updateKillTables(game, killsTeam, killsPlayer, game.getCarcassEntities());
+        
         boolean teamHasHighestKills = true;
         int highestKillsId = -1;
         int killCount = 0;
@@ -123,5 +88,48 @@ public class KillCountVictory implements Victory, Serializable {
         if (victory)
             return vr;
         return new SimpleNoResult();
+    }
+    
+    private void updateKillTables(IGame game,
+            Hashtable<Integer, Integer> teamKills,
+            Hashtable<Integer, Integer> playerKills,
+            Enumeration<Entity> victims) {
+        while (victims.hasMoreElements())
+        {
+            Entity wreck = victims.nextElement();
+            Entity killer = game.getEntity(wreck.getKillerId());
+            
+            if (killer == null){
+                continue;
+            }            
+            
+            int team = killer.getOwner().getTeam();
+            // Friendly fire doesn't count
+            if (team == wreck.getOwner().getTeam()){
+                continue;
+            }
+            if (team != Player.TEAM_NONE){
+                Integer kills = teamKills.get(team);
+                if (kills == null){
+                    kills = 1;
+                } else {
+                    kills++;
+                }
+                teamKills.put(team, kills);
+            } else {
+                Integer player = killer.getOwner().getId();
+                // Friendly fire doesn't count
+                if (wreck.getOwner().getId() == player){
+                    continue;
+                }
+                Integer kills = playerKills.get(player);
+                if (kills == null){
+                    kills = 1;
+                } else {
+                    kills++;
+                }
+                playerKills.put(player, kills);
+            }
+        }
     }
 }

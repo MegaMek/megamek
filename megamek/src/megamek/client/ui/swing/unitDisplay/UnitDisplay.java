@@ -31,6 +31,7 @@ import megamek.client.event.MechDisplayListener;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.widget.MechPanelTabStrip;
 import megamek.common.Entity;
+import megamek.common.annotations.Nullable;
 
 /**
  * Displays the info for a mech. This is also a sort of interface for special
@@ -53,15 +54,20 @@ public class UnitDisplay extends JPanel {
     public WeaponPanel wPan;
     private SystemPanel sPan;
     private ExtraPanel ePan;
-    ClientGUI clientgui;
+    private ClientGUI clientgui;
 
     private Entity currentlyDisplaying;
     private ArrayList<MechDisplayListener> eventListeners = new ArrayList<MechDisplayListener>();
 
     /**
      * Creates and lays out a new mech display.
+     * 
+     * @param clientgui
+     *            The ClientGUI for the GUI that is creating this UnitDisplay.
+     *            This could be null, if there is no ClientGUI, such as with
+     *            MekWars.
      */
-    public UnitDisplay(ClientGUI clientgui) {
+    public UnitDisplay(@Nullable ClientGUI clientgui) {
         super(new GridBagLayout());
         this.clientgui = clientgui;
 
@@ -100,7 +106,7 @@ public class UnitDisplay extends JPanel {
 
     @Override
     protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,
-                                        int condition, boolean pressed) {
+            int condition, boolean pressed) {
         if (clientgui != null) {
             clientgui.getCurrentPanel().dispatchEvent(e);
         }
@@ -205,11 +211,18 @@ public class UnitDisplay extends JPanel {
                     break;
                 default:
                     System.err.println("unknown event " + event.getType()
-                                       + " in processMechDisplayEvent");
+                            + " in processMechDisplayEvent");
                     break;
             }
         }
     }
 
-    
+    /**
+     * Returns the UnitDisplay's ClientGUI reference, which can be null.
+     * @return
+     */
+    @Nullable
+    public ClientGUI getClientGUI() {
+        return clientgui;
+    }
 }

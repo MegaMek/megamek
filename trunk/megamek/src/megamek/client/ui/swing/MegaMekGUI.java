@@ -64,6 +64,7 @@ import megamek.common.KeyBindParser;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummaryCache;
 import megamek.common.Player;
+import megamek.common.QuirksHandler;
 import megamek.common.WeaponOrderHandler;
 import megamek.common.logging.LogLevel;
 import megamek.common.logging.Logger;
@@ -903,12 +904,21 @@ public class MegaMekGUI implements IMegaMekGUI {
      */
     static void quit() {
         PreferenceManager.getInstance().save();
+        
         try {
             WeaponOrderHandler.saveWeaponOrderFile();
         } catch (IOException e) {
             System.out.println("Error saving custom weapon orders!");
             e.printStackTrace();
         }
+        
+        try {
+            QuirksHandler.saveCustomQuirksList();
+        } catch (IOException e) {
+            System.out.println("Error saving quirks override!");
+            e.printStackTrace();
+        }
+        
         System.exit(0);
     }
 

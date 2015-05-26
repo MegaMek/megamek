@@ -27,8 +27,10 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ChoiceDialog;
+import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.widget.BackGroundDrawer;
 import megamek.client.ui.swing.widget.PMUtil;
 import megamek.client.ui.swing.widget.PicMap;
@@ -273,14 +275,14 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
         }
         
         final CriticalSlot cs = getSelectedCritical();
-        if ((cs == null) || (this.unitDisplay.clientgui == null)) {
+        if ((cs == null) || (unitDisplay.getClientGUI() == null)) {
             return null;
         }
         if (cs.getType() == CriticalSlot.TYPE_SYSTEM) {
             return null;
         }
         if (cs.getMount2() != null) {
-            ChoiceDialog choiceDialog = new ChoiceDialog(this.unitDisplay.clientgui.frame,
+            ChoiceDialog choiceDialog = new ChoiceDialog(unitDisplay.getClientGUI().frame,
                     Messages.getString("MechDisplay.SelectMulti.title"),
                     Messages.getString("MechDisplay.SelectMulti.question"),
                     new String[] { cs.getMount().getName(),
@@ -459,9 +461,12 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
     public void itemStateChanged(ItemEvent ev) {
         removeListeners();
         try {
+            ClientGUI clientgui = unitDisplay.getClientGUI();
+            if (clientgui == null) {
+                return;
+            }
             if (ev.getSource().equals(m_chMode)
-                    && (ev.getStateChange() == ItemEvent.SELECTED)
-                    && (this.unitDisplay.clientgui != null)) {
+                    && (ev.getStateChange() == ItemEvent.SELECTED)) {
                 Mounted m = getSelectedEquipment();
                 CriticalSlot cs = getSelectedCritical();
                 if ((m != null) && m.getType().hasModes()) {
@@ -470,30 +475,28 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
 
                         if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType()).isShield()
-                                && (this.unitDisplay.clientgui.getClient().getGame()
+                                && (clientgui.getClient().getGame()
                                         .getPhase() != IGame.Phase.PHASE_FIRING)) {
-                            this.unitDisplay.clientgui.systemMessage(Messages.getString(
+                            clientgui.systemMessage(Messages.getString(
                                     "MechDisplay.ShieldModePhase", null));//$NON-NLS-1$
                             return;
                         }
 
                         if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType()).isVibroblade()
-                                && (this.unitDisplay.clientgui.getClient().getGame()
-                                        .getPhase() != IGame.Phase.PHASE_PHYSICAL)) {
-                            this.unitDisplay.clientgui
-                                    .systemMessage(Messages
-                                            .getString(
-                                                    "MechDisplay.VibrobladeModePhase", null));//$NON-NLS-1$
+                                && (clientgui.getClient().getGame().getPhase() 
+                                        != IGame.Phase.PHASE_PHYSICAL)) {
+                            clientgui.systemMessage(Messages.getString(
+                                    "MechDisplay.VibrobladeModePhase", null));//$NON-NLS-1$
                             return;
                         }
 
                         if ((m.getType() instanceof MiscType)
                                 && ((MiscType) m.getType())
                                         .hasSubType(MiscType.S_RETRACTABLE_BLADE)
-                                && (this.unitDisplay.clientgui.getClient().getGame()
+                                && (clientgui.getClient().getGame()
                                         .getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
-                            this.unitDisplay.clientgui
+                            clientgui
                                     .systemMessage(Messages
                                             .getString(
                                                     "MechDisplay.RetractableBladeModePhase",
@@ -509,18 +512,18 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                                         .hasFlag(MiscType.F_PPC_CAPACITOR)
                                 && m.getLinked().isUsedThisRound()
                                 && (nMode == 1)) {
-                            this.unitDisplay.clientgui.systemMessage(Messages.getString(
+                            clientgui.systemMessage(Messages.getString(
                                     "MechDisplay.CapacitorCharging", null));//$NON-NLS-1$
                             return;
                         }
                         m.setMode(nMode);
                         // send the event to the server
-                        this.unitDisplay.clientgui.getClient().sendModeChange(en.getId(),
+                        clientgui.getClient().sendModeChange(en.getId(),
                                 en.getEquipmentNum(m), nMode);
 
                         // notify the player
                         if (m.canInstantSwitch(nMode)) {
-                            this.unitDisplay.clientgui
+                            clientgui
                                     .systemMessage(Messages
                                             .getString(
                                                     "MechDisplay.switched",
@@ -533,9 +536,9 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                             this.unitDisplay.wPan.selectWeapon(weap);
                             // displaySlots();
                         } else {
-                            if (IGame.Phase.PHASE_DEPLOYMENT == this.unitDisplay.clientgui
+                            if (IGame.Phase.PHASE_DEPLOYMENT == clientgui
                                     .getClient().getGame().getPhase()) {
-                                this.unitDisplay.clientgui
+                                clientgui
                                         .systemMessage(Messages
                                                 .getString(
                                                         "MechDisplay.willSwitchAtStart",
@@ -545,7 +548,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                                                                         .getDisplayableName() }));
                                 //$NON-NLS-1$
                             } else {
-                                this.unitDisplay.clientgui
+                                clientgui
                                         .systemMessage(Messages
                                                 .getString(
                                                         "MechDisplay.willSwitchAtEnd",
@@ -569,11 +572,11 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                                 && (en instanceof Mech)) {
                             Mech mech = (Mech) en;
                             mech.setCockpitStatus(nMode);
-                            this.unitDisplay.clientgui.getClient().sendSystemModeChange(
+                            clientgui.getClient().sendSystemModeChange(
                                     en.getId(), Mech.SYSTEM_COCKPIT, nMode);
                             if (mech.getCockpitStatus() == mech
                                     .getCockpitStatusNextRound()) {
-                                this.unitDisplay.clientgui
+                                clientgui
                                         .systemMessage(Messages
                                                 .getString(
                                                         "MechDisplay.switched",
@@ -582,7 +585,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                                                                 m_chMode.getSelectedItem() }));
                                 //$NON-NLS-1$
                             } else {
-                                this.unitDisplay.clientgui
+                                clientgui
                                         .systemMessage(Messages
                                                 .getString(
                                                         "MechDisplay.willSwitchAtEnd",
@@ -605,9 +608,13 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
     public void actionPerformed(ActionEvent ae) {
         removeListeners();
         try {
-            if ((this.unitDisplay.clientgui != null) && "dump".equals(ae.getActionCommand())) { //$NON-NLS-1$
+            ClientGUI clientgui = unitDisplay.getClientGUI();
+            if (clientgui == null) {
+                return;
+            }
+            if ("dump".equals(ae.getActionCommand())) { //$NON-NLS-1$
                 Mounted m = getSelectedEquipment();
-                boolean bOwner = this.unitDisplay.clientgui.getClient().getLocalPlayer()
+                boolean bOwner = clientgui.getClient().getLocalPlayer()
                         .equals(en.getOwner());
                 if ((m == null) || !bOwner) {
                     return;
@@ -621,7 +628,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                         && (m.getLinked().getUsableShotsLeft() > 0)) {
                     boolean isDumping = !m.isPendingDump();
                     m.setPendingDump(isDumping);
-                    this.unitDisplay.clientgui.getClient().sendModeChange(en.getId(),
+                    clientgui.getClient().sendModeChange(en.getId(),
                             en.getEquipmentNum(m), isDumping ? -1 : 0);
                     int selIdx = slotList.getSelectedIndex();
                     displaySlots();
@@ -645,14 +652,14 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                         String body = Messages
                                 .getString(
                                         "MechDisplay.CancelDumping.message", new Object[] { m.getName() }); //$NON-NLS-1$
-                        bConfirmed = this.unitDisplay.clientgui.doYesNoDialog(title, body);
+                        bConfirmed = clientgui.doYesNoDialog(title, body);
                     } else {
                         String title = Messages
                                 .getString("MechDisplay.CancelJettison.title"); //$NON-NLS-1$
                         String body = Messages
                                 .getString(
                                         "MechDisplay.CancelJettison.message", new Object[] { m.getName() }); //$NON-NLS-1$
-                        bConfirmed = this.unitDisplay.clientgui.doYesNoDialog(title, body);
+                        bConfirmed = clientgui.doYesNoDialog(title, body);
                     }
                 } else {
                     bDumping = true;
@@ -662,21 +669,21 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                         String body = Messages
                                 .getString(
                                         "MechDisplay.Dump.message", new Object[] { m.getName() }); //$NON-NLS-1$
-                        bConfirmed = this.unitDisplay.clientgui.doYesNoDialog(title, body);
+                        bConfirmed = clientgui.doYesNoDialog(title, body);
                     } else {
                         String title = Messages
                                 .getString("MechDisplay.Jettison.title"); //$NON-NLS-1$
                         String body = Messages
                                 .getString(
                                         "MechDisplay.Jettison.message", new Object[] { m.getName() }); //$NON-NLS-1$
-                        bConfirmed = this.unitDisplay.clientgui.doYesNoDialog(title, body);
+                        bConfirmed = clientgui.doYesNoDialog(title, body);
                     }
 
                 }
 
                 if (bConfirmed) {
                     m.setPendingDump(bDumping);
-                    this.unitDisplay.clientgui.getClient().sendModeChange(en.getId(),
+                    clientgui.getClient().sendModeChange(en.getId(),
                             en.getEquipmentNum(m), bDumping ? -1 : 0);
                     int selIdx = slotList.getSelectedIndex();
                     displaySlots();
@@ -786,8 +793,9 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                 m_chMode.setEnabled(false);
                 displaySlots();
             } else if (event.getSource().equals(slotList)
-                    && (this.unitDisplay.clientgui != null)) {
+                    && (unitDisplay.getClientGUI() != null)) {
 
+                Client client = unitDisplay.getClientGUI().getClient();
                 m_bDumpAmmo.setEnabled(false);
                 m_chMode.setEnabled(false);
                 Mounted m = getSelectedEquipment();
@@ -812,20 +820,18 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
 
                 ((DefaultComboBoxModel<String>) m_chMode.getModel())
                         .removeAllElements();
-                boolean bOwner = this.unitDisplay.clientgui.getClient()
-                        .getLocalPlayer().equals(en.getOwner());
+                boolean bOwner = client.getLocalPlayer().equals(en.getOwner());
                 if ((m != null)
                         && bOwner
                         && (m.getType() instanceof AmmoType)
                         && !m.getType().hasInstantModeSwitch()
-                        && (this.unitDisplay.clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_DEPLOYMENT)
-                        && (this.unitDisplay.clientgui.getClient().getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)
+                        && (client.getGame().getPhase() != IGame.Phase.PHASE_DEPLOYMENT)
+                        && (client.getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)
                         && (m.getUsableShotsLeft() > 0)
                         && !m.isDumping()
                         && en.isActive()
-                        && (this.unitDisplay.clientgui.getClient().getGame().getOptions()
-                                .intOption("dumping_from_round") <= this.unitDisplay.clientgui
-                                .getClient().getGame().getRoundCount())
+                        && (client.getGame().getOptions().intOption("dumping_from_round") 
+                                <= client.getGame().getRoundCount())
                         && !carryingBAsOnBack && !invalidEnvironment) {
                     m_bDumpAmmo.setEnabled(true);
                 } else if ((m != null) && bOwner
@@ -856,9 +862,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                     }// if the maxtech eccm option is not set then the ECM
                      // should not show anything.
                     if (m.getType().hasFlag(MiscType.F_ECM)
-                            && !this.unitDisplay.clientgui.getClient().getGame()
-                                    .getOptions()
-                                    .booleanOption("tacops_eccm")) {
+                            && !client.getGame().getOptions().booleanOption("tacops_eccm")) {
                         return;
                     }
                     for (Enumeration<EquipmentMode> e = m.getType()

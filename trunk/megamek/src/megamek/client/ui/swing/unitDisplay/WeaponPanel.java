@@ -21,6 +21,7 @@ import javax.swing.AbstractListModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
@@ -34,6 +35,7 @@ import javax.swing.event.MouseInputAdapter;
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.FiringDisplay;
 import megamek.client.ui.swing.TargetingPhaseDisplay;
 import megamek.client.ui.swing.widget.BackGroundDrawer;
@@ -72,7 +74,7 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  * This class contains the all the gizmos for firing the mech's weapons.
  */
 public class WeaponPanel extends PicMap implements ListSelectionListener,
-                                            ActionListener {
+        ActionListener {
     
     /**
      * Mouse adaptor for the weapon list.  Supports rearranging the weapons
@@ -133,7 +135,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                     Mounted m = srcModel.getWeaponAt(i);
                     ent.setCustomWeaponOrder(m, i);
                 }
-                unitDisplay.clientgui.getMenuBar().updateSaveWeaponOrderMenuItem();
+                if (unitDisplay.getClientGUI() != null) {
+                    unitDisplay.getClientGUI().getMenuBar()
+                            .updateSaveWeaponOrderMenuItem();
+                }
             }
         }
     }
@@ -234,7 +239,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         public String getElementAt(int index) {
             final Mounted mounted = weapons.get(index);
             final WeaponType wtype = (WeaponType) mounted.getType();
-            final IGame game = unitDisplay.clientgui.getClient().getGame();
+            IGame game = null;
+            if (unitDisplay.getClientGUI() != null) {
+                game = unitDisplay.getClientGUI().getClient().getGame();
+            }
 
             StringBuffer wn = new StringBuffer(mounted.getDesc());
             wn.append(" ["); //$NON-NLS-1$
@@ -921,8 +929,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         // Grab a copy of the game.
         IGame game = null;
 
-        if (unitDisplay.clientgui != null) {
-            game = unitDisplay.clientgui.getClient().getGame();
+        if (unitDisplay.getClientGUI() != null) {
+            game = unitDisplay.getClientGUI().getClient().getGame();
         }
 
         // update pointer to weapons
@@ -934,12 +942,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             max_ext_heat = 15; // Standard value specified in TW p.159
         }
 
-        int currentHeatBuildup = (en.heat // heat from last round
-                                  + en.getEngineCritHeat() // heat engine crits will add
-                                  + Math.min(max_ext_heat, en.heatFromExternal) // heat from external sources
-                                  + en.heatBuildup // heat we're building up this round
-                                 )
-                                 - Math.min(9, en.coolFromExternal); // cooling from external
+        int currentHeatBuildup = (en.heat // heat from last round                
+                + en.getEngineCritHeat() // heat engine crits will add
+                + Math.min(max_ext_heat, en.heatFromExternal) // heat from external sources
+                + en.heatBuildup) // heat we're building up this round
+                - Math.min(9, en.coolFromExternal); // cooling from external
         // sources
         if (en instanceof Mech) {
             if (en.infernos.isStillBurning()) { // hit with inferno ammo
@@ -1646,7 +1653,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             wDamR.setText(damage.toString());
         } else if (wtype.hasFlag(WeaponType.F_ENERGY)
                    && wtype.hasModes()
-                   && (unitDisplay.clientgui != null) && unitDisplay.clientgui.getClient().getGame().getOptions().booleanOption(
+                   && (unitDisplay.getClientGUI() != null) && unitDisplay.getClientGUI().getClient().getGame().getOptions().booleanOption(
                 "tacops_energy_weapons")) {
             if (mounted.hasChargedCapacitor() != 0) {
                 if (mounted.hasChargedCapacitor() == 1) {
@@ -1682,10 +1689,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         //  susceptible to CWS, for those that aren't the ranges are 1/2/3
         if (wtype.hasFlag(WeaponType.F_CWS)) {
             Entity target = null;
-            if ((unitDisplay.clientgui != null)
-                && (unitDisplay.clientgui.getCurrentPanel() instanceof FiringDisplay)) {
+            if ((unitDisplay.getClientGUI() != null)
+                && (unitDisplay.getClientGUI().getCurrentPanel() instanceof FiringDisplay)) {
                 Targetable t =
-                        ((FiringDisplay) unitDisplay.clientgui.getCurrentPanel()).getTarget();
+                        ((FiringDisplay) unitDisplay.getClientGUI().getCurrentPanel()).getTarget();
                 if (t instanceof Entity) {
                     target = (Entity) t;
                 }
@@ -2239,12 +2246,16 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         if (event.getSource().equals(weaponList)) {
             m_chBayWeapon.removeAllItems();
             displaySelected();
-
+            
+            // Can't do anythign if ClientGUI is null
+            if (unitDisplay.getClientGUI() == null) {
+                return;
+            }
+            
+            JComponent currPanel = unitDisplay.getClientGUI().getCurrentPanel();
             // When in the Firing Phase, update the targeting information.
-            // TODO: make this an accessor function instead of a member
-            // access.
-            if ((unitDisplay.clientgui != null) && (unitDisplay.clientgui.getCurrentPanel() instanceof FiringDisplay)) {
-                FiringDisplay firingDisplay = ((FiringDisplay) unitDisplay.clientgui.getCurrentPanel());
+            if (currPanel instanceof FiringDisplay) {
+                FiringDisplay firingDisplay = (FiringDisplay)currPanel;
 
                 Mounted mounted = null;
                 if (weaponList.getSelectedIndex() != -1) {
@@ -2259,20 +2270,21 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 } else {
                     firingDisplay.updateTarget();
                 }
-            } else if ((unitDisplay.clientgui != null) && (unitDisplay.clientgui.getCurrentPanel() instanceof TargetingPhaseDisplay)) {
-                ((TargetingPhaseDisplay) unitDisplay.clientgui.getCurrentPanel()).updateTarget();
+            } else if (currPanel instanceof TargetingPhaseDisplay) {
+                ((TargetingPhaseDisplay) currPanel).updateTarget();
             }
         }
         onResize();
     }
 
     public void actionPerformed(ActionEvent ev) {
+        ClientGUI clientgui = unitDisplay.getClientGUI();
         if (ev.getSource().equals(m_chAmmo)
                 && (m_chAmmo.getSelectedIndex() != -1)
-                && (unitDisplay.clientgui != null)) {
+                && (clientgui != null)) {
             // only change our own units
-            if (!unitDisplay.clientgui.getClient().getLocalPlayer()
-                          .equals(entity.getOwner())) {
+            if (!clientgui.getClient().getLocalPlayer()
+                    .equals(entity.getOwner())) {
                 return;
             }
             int n = weaponList.getSelectedIndex();
@@ -2302,7 +2314,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                     if (bWeap.getType().equals(sWeap.getType())) {
                         entity.loadWeapon(bWeap, mAmmo);
                         // Alert the server of the update.
-                        unitDisplay.clientgui.getClient().sendAmmoChange(
+                        clientgui.getClient().sendAmmoChange(
                                 entity.getId(),
                                 entity.getEquipmentNum(bWeap),
                                 entity.getEquipmentNum(mAmmo));
@@ -2311,7 +2323,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             } else {
                 entity.loadWeapon(mWeap, mAmmo);
                 // Alert the server of the update.
-                unitDisplay.clientgui.getClient().sendAmmoChange(entity.getId(),
+                clientgui.getClient().sendAmmoChange(entity.getId(),
                         entity.getEquipmentNum(mWeap),
                         entity.getEquipmentNum(mAmmo));
             }
@@ -2342,12 +2354,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             }
 
             // When in the Firing Phase, update the targeting information.
-            // TODO: make this an accessor function instead of a member
-            // access.
-            if (unitDisplay.clientgui.getCurrentPanel() instanceof FiringDisplay) {
-                ((FiringDisplay) unitDisplay.clientgui.getCurrentPanel()).updateTarget();
-            } else if (unitDisplay.clientgui.getCurrentPanel() instanceof TargetingPhaseDisplay) {
-                ((TargetingPhaseDisplay) unitDisplay.clientgui.getCurrentPanel()).updateTarget();
+            if (clientgui.getCurrentPanel() instanceof FiringDisplay) {
+                ((FiringDisplay) clientgui.getCurrentPanel()).updateTarget();
+            } else if (clientgui.getCurrentPanel() instanceof TargetingPhaseDisplay) {
+                ((TargetingPhaseDisplay) clientgui.getCurrentPanel()).updateTarget();
             }
             displaySelected();
         } else if (ev.getSource().equals(m_chBayWeapon)
@@ -2384,7 +2394,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             entity.setWeaponSortOrder(Entity.WeaponSortOrder.DEFAULT);
             weapComparator = new WeaponComparatorNum(entity);
         }
-        unitDisplay.clientgui.getMenuBar().updateSaveWeaponOrderMenuItem();
+        if (unitDisplay.getClientGUI() != null) {
+            unitDisplay.getClientGUI().getMenuBar()
+                    .updateSaveWeaponOrderMenuItem();
+        }
         ((WeaponListModel)weaponList.getModel()).sort(weapComparator);
     }
 }

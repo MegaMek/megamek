@@ -170,6 +170,7 @@ v0.41.4-dev (SVN)
     errors" may slip through the cracks.)
 + Bug: TacOps Vehicle Arcs option had no effect on dual forward and VTOL chin
     turrets.
++ Bug: VSPL anti-infantry damage included general +2 pulse bonus.
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

@@ -3481,9 +3481,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     changeEntityOwner(e, id);
                 }
             } else if (command.equalsIgnoreCase("SAVE_QUIRKS_ALL")) {
-                QuirksHandler.addCustomQuirk(entity, false);
+                for (Entity e : entities) {
+                    QuirksHandler.addCustomQuirk(e, false);
+                }
             }  else if (command.equalsIgnoreCase("SAVE_QUIRKS_MODEL")) {
-                QuirksHandler.addCustomQuirk(entity, true);
+                for (Entity e : entities) {
+                    QuirksHandler.addCustomQuirk(e, true);
+                }
             }
 
         }
@@ -3880,9 +3884,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     }
                 }
                 
-                if (isQuirksEnabled
-                        && ((entity.countQuirks() > 0) 
-                                || entity.countWeaponQuirks() > 0)) {
+                boolean hasQuirks = true;
+                for (Entity ent : entities) {
+                    hasQuirks &= (ent.countQuirks() > 0)
+                            || (ent.countWeaponQuirks() > 0);
+                }
+                if (isQuirksEnabled && hasQuirks) {
                     menuItem = new JMenuItem("Save Quirks for Chassis");
                     menuItem.setActionCommand("SAVE_QUIRKS_ALL");
                     menuItem.addActionListener(this);

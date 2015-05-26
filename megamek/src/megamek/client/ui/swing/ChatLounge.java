@@ -109,6 +109,7 @@ import megamek.common.MapSettings;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
+import megamek.common.QuirksHandler;
 import megamek.common.Tank;
 import megamek.common.Transporter;
 import megamek.common.UnitType;
@@ -1500,7 +1501,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 for (Enumeration<IOptionGroup> advGroups = weapon.getQuirks()
                         .getGroups(); advGroups.hasMoreElements();) {
                     IOptionGroup advGroup = advGroups.nextElement();
-                    if (entity.countQuirks(advGroup.getKey()) > 0) {
+                    if (weapon.countQuirks() > 0) {
                         value += "<b>" + weapon.getDesc() + "</b><br>";
                         for (Enumeration<IOption> advs = advGroup.getOptions(); advs
                                 .hasMoreElements();) {
@@ -3479,6 +3480,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 for (Entity e : entities) {
                     changeEntityOwner(e, id);
                 }
+            } else if (command.equalsIgnoreCase("SAVE_QUIRKS_ALL")) {
+                QuirksHandler.addCustomQuirk(entity, false);
+            }  else if (command.equalsIgnoreCase("SAVE_QUIRKS_MODEL")) {
+                QuirksHandler.addCustomQuirk(entity, true);
             }
 
         }
@@ -3530,6 +3535,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     .get(entity.getOwner().getName()) != null;
             boolean blindDrop = clientgui.getClient().getGame().getOptions()
                     .booleanOption("blind_drop");
+            boolean isQuirksEnabled = clientgui.getClient().getGame().getOptions()
+                    .booleanOption("stratops_quirks");
             boolean allLoaded = true;
             boolean allUnloaded = true;
             boolean allCapFighter = true;
@@ -3871,6 +3878,19 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         menu.setEnabled((isOwner || isBot) && canSwap);
                         popup.add(menu);
                     }
+                }
+                
+                if (isQuirksEnabled
+                        && ((entity.countQuirks() > 0) 
+                                || entity.countWeaponQuirks() > 0)) {
+                    menuItem = new JMenuItem("Save Quirks for Chassis");
+                    menuItem.setActionCommand("SAVE_QUIRKS_ALL");
+                    menuItem.addActionListener(this);
+                    popup.add(menuItem);
+                    menuItem = new JMenuItem("Save Quirks for Chassis/Model");
+                    menuItem.setActionCommand("SAVE_QUIRKS_MODEL");
+                    menuItem.addActionListener(this);
+                    popup.add(menuItem);
                 }
 
                 popup.show(e.getComponent(), e.getX(), e.getY());

@@ -496,6 +496,7 @@ public class Client implements IClientCommandHandler {
                     QuirksHandler.initQuirksList();
                 } catch (IOException e) {
                     System.out.println(e);
+                    e.printStackTrace();
                 }
                 RandomNameGenerator.initialize();
                 MechSummaryCache.getInstance().addListener(

@@ -172,6 +172,8 @@ v0.41.4-dev (SVN)
     turrets.
 + Bug: VSPL anti-infantry damage included general +2 pulse bonus.
 + Refactoring of code in unitDisplay package
++ Feature: Unit quirks can now be saved to the mmconf/unitQuirksOverride.xml via
+    a right-click menu item in the ChatLounge
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

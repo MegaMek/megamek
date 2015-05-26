@@ -11451,6 +11451,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         return count;
     }
+    
+    public int countWeaponQuirks() {
+        int count = 0;
+
+        if ((null == game)
+            || !game.getOptions().booleanOption("stratops_quirks")) {
+            return count;
+        }
+        
+        for (Mounted m : getEquipment()) {
+            count += m.countQuirks();
+        }
+        return count;
+    }
 
     public int countPartialRepairs() {
         int count = 0;
@@ -13180,7 +13194,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // Get a list of quirks for this entity.
         List<QuirkEntry> quirks = QuirksHandler.getQuirks(getChassis(),
-                                                          getModel());
+                getModel());
 
         // If this unit has no quirks, we do not need to proceed further.
         if ((quirks == null) || quirks.isEmpty()) {

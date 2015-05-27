@@ -50,8 +50,9 @@ public class WeaponComparatorRange implements Comparator<Mounted> {
             }
             int ranges1[] = weap1.getRanges(obj1);
             int ranges2[] = weap2.getRanges(obj2);
-            // Pick the weapon with the smallest
-            for (int r = 0; r < ranges1.length; r++) {
+            // Start by comparing the short range brackets (*not* the minimum
+            // ranges at index 0), then work outwards from there as needed.
+            for (int r = 1; r < ranges1.length; r++) {
                 if (ranges1[r] < ranges2[r]) {
                     return -1 * ascending;
                 } else if (ranges1[r] > ranges2[r]) {

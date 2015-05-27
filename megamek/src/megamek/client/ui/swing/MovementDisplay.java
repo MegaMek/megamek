@@ -1263,7 +1263,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     private void currentMove(Coords dest) {
         if (shiftheld || (gear == GEAR_TURN)) {
             cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false);
-        } else if (((gear == GEAR_LAND) || (gear == GEAR_JUMP))
+        } else if ((gear == GEAR_JUMP)
                    && (ce().getJumpType() == Mech.JUMP_BOOSTER)) {
             // Jumps with mechanical jump boosters are special
             Coords src;
@@ -1280,35 +1280,35 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             switch (dir) {
                 case 0:
                     cmd.findSimplePathTo(dest, MoveStepType.FORWARDS,
-                                         src.direction(dest), ce().getFacing());
+                            src.direction(dest), ce().getFacing());
                     break;
                 case 1:
                     cmd.findSimplePathTo(dest, MoveStepType.LATERAL_RIGHT,
-                                         src.direction(dest), ce().getFacing());
+                            src.direction(dest), ce().getFacing());
                     break;
                 case 2:
                     // TODO: backwards lateral shifts are switched:
                     // LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
-                    cmd.findSimplePathTo(dest, MoveStepType.LATERAL_LEFT_BACKWARDS,
-                                         src.direction(dest), ce().getFacing());
+                    cmd.findSimplePathTo(dest,
+                            MoveStepType.LATERAL_LEFT_BACKWARDS,
+                            src.direction(dest), ce().getFacing());
                     break;
                 case 3:
                     cmd.findSimplePathTo(dest, MoveStepType.BACKWARDS,
-                                         src.direction(dest), ce().getFacing());
+                            src.direction(dest), ce().getFacing());
                     break;
                 case 4:
                     // TODO: backwards lateral shifts are switched:
                     // LATERAL_LEFT_BACKWARDS moves back+right and vice-versa
                     cmd.findSimplePathTo(dest,
-                                         MoveStepType.LATERAL_RIGHT_BACKWARDS,
-                                         src.direction(dest), ce().getFacing());
+                            MoveStepType.LATERAL_RIGHT_BACKWARDS,
+                            src.direction(dest), ce().getFacing());
                     break;
                 case 5:
                     cmd.findSimplePathTo(dest, MoveStepType.LATERAL_LEFT,
-                                         src.direction(dest), ce().getFacing());
+                            src.direction(dest), ce().getFacing());
                     break;
             }
-
         } else if ((gear == GEAR_LAND) || (gear == GEAR_JUMP)) {
             cmd.findPathTo(dest, MoveStepType.FORWARDS);
         } else if (gear == GEAR_BACKUP) {

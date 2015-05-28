@@ -3167,7 +3167,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 String file = pilot.getPortraitFileName();
 
                 // Return a null if the player has selected no portrait file.
-                if ((null == category) || (null == file)) {
+                if ((null == category) || (null == file) || (null == portraits)) {
                     return;
                 }
 

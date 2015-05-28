@@ -146,6 +146,7 @@ import megamek.common.TeleMissile;
 import megamek.common.Terrain;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import megamek.common.TripodMech;
 import megamek.common.TurnOrdered;
 import megamek.common.TurnVectors;
 import megamek.common.UnitLocation;
@@ -10513,6 +10514,11 @@ public class Server implements Runnable {
                             .addAll(breachCheck(entity, Mech.LOC_RARM, hex));
                     vPhaseReport
                             .addAll(breachCheck(entity, Mech.LOC_LARM, hex));
+                }
+                if (entity instanceof TripodMech) {
+                    entity.setLocationStatus(Mech.LOC_CLEG,
+                            ILocationExposureStatus.WET);
+                    vPhaseReport.addAll(breachCheck(entity, Mech.LOC_CLEG, hex));
                 }
             } else {
                 for (int loop = 0; loop < entity.locations(); loop++) {

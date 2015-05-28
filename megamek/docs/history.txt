@@ -177,6 +177,7 @@ v0.41.4-dev (SVN)
 + Bug: Quad Meks with mechanical JJs path strangely (lots of lateral shifts)
 + Changed by-range weapon sorting to disregard *minimum* ranges (still going 
     short > medium > long range brackets otherwise).
++ Bug: Chain whip special attack effects treat all Meks as bipeds.
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

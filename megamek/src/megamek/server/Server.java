@@ -15045,7 +15045,7 @@ public class Server implements Runnable {
             int loc = hit.getLocation();
             int toHitNumber = toHit.getValue();
 
-            if (((loc == Mech.LOC_LLEG) || (loc == Mech.LOC_RLEG))
+            if (((Mech) te).locationIsLeg(loc)
                     && (!te.hasActiveShield(loc) && !te.hasPassiveShield(loc))) {
 
                 roll = Compute.d6(2);

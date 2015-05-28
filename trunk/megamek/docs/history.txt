@@ -179,6 +179,8 @@ v0.41.4-dev (SVN)
     short > medium > long range brackets otherwise).
 + Bug: Chain whip special attack effects treat all Meks as bipeds.
 + Bug: Tripods not checking for center leg exposure in level 1 water.
++ Bug: Chain whip special attack effects applied to already-destroyed limbs.
++ Bug: Chain whips unable to grapple ProtoMeks.
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

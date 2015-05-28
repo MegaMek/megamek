@@ -15044,15 +15044,43 @@ public class Server implements Runnable {
                                              "was hit by wrecking ball"));
         }
 
+        // Chain whips can entangle 'Mech and ProtoMech limbs. This
+        // implementation assumes that in order to do so the limb must still
+        // have some structure left, so if the whip hits and destroys a
+        // location in the same attack no special effects take place.
         if (((MiscType) caa.getClub().getType())
-                .hasSubType(MiscType.S_CHAIN_WHIP) && (te instanceof Mech)) {
+                .hasSubType(MiscType.S_CHAIN_WHIP)
+                && (te instanceof Mech || te instanceof Protomech)) {
             addNewLines();
 
             int loc = hit.getLocation();
             int toHitNumber = toHit.getValue();
 
-            if (((Mech) te).locationIsLeg(loc)
-                    && (!te.hasActiveShield(loc) && !te.hasPassiveShield(loc))) {
+            boolean mightTrip = (te instanceof Mech)
+                    && ((Mech) te).locationIsLeg(loc)
+                    && !te.isLocationBad(loc)
+                    && !te.isLocationDoomed(loc)
+                    && !te.hasActiveShield(loc)
+                    && !te.hasPassiveShield(loc);
+
+            boolean mightGrapple = ((te instanceof Mech)
+                    && (loc == Mech.LOC_LARM || loc == Mech.LOC_RARM)
+                    && !te.isLocationBad(loc)
+                    && !te.isLocationDoomed(loc)
+                    && !te.hasActiveShield(loc)
+                    && !te.hasPassiveShield(loc)
+                    && !te.hasNoDefenseShield(loc))
+                    || ((te instanceof Protomech)
+                        && (loc == Protomech.LOC_LARM || loc == Protomech.LOC_RARM
+                            || loc == Protomech.LOC_LEG)
+                        // Only check location status after confirming we did
+                        // hit a limb -- Protos have no actual near-miss
+                        // "location" and will throw an exception if it's
+                        // referenced here.
+                        && !te.isLocationBad(loc)
+                        && !te.isLocationDoomed(loc));
+            
+            if (mightTrip) {
 
                 roll = Compute.d6(2);
 
@@ -15085,9 +15113,7 @@ public class Server implements Runnable {
                     r.newlines = 0;
                     addReport(r);
                 }
-            } else if (((loc == Mech.LOC_RARM) || (loc == Mech.LOC_LARM))
-                    && (!te.hasActiveShield(loc) && !te.hasPassiveShield(loc) && !te
-                            .hasNoDefenseShield(loc))) {
+            } else if (mightGrapple) {
                 GrappleAttackAction gaa = new GrappleAttackAction(ae.getId(),
                         te.getId());
                 int grappleSide;

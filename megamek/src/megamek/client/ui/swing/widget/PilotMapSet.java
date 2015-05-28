@@ -376,7 +376,7 @@ public class PilotMapSet implements DisplayMapSet {
         String file = pilot.getPortraitFileName();
 
         // Return a null if the player has selected no portrait file.
-        if ((null == category) || (null == file)) {
+        if ((null == category) || (null == file) || (null == portraits) ) {
             return null;
         }
 

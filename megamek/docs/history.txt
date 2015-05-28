@@ -67,7 +67,7 @@ v0.41.4-dev (SVN)
 + Bug [#4514]: Updates for protomech frenzy errata
 + Bug: Math off for overlapping Thunder-Augmented hexes.
 + Bug [#4537]: Firing more LRMs than you have swarm ammo still does swarm
-    attacks 
+    attacks
 + Bug: Battle armor with mechanical jump boosters has negative C-bill cost.
 + Patch [#478]: Enhancements to Board Tooltips
 + Patch [#402]: V. Stealth Cleanup Pt. 2
@@ -137,7 +137,7 @@ v0.41.4-dev (SVN)
 + Patch [#4551]: TSEMP "every other turn" should be per weapon, not per entity
 + Bug:Some Infantry weapons have the wrong Ammotype.
 + Patch [#1377]: Implement Laser-Guided Bomb Munition
-+ Bug: [#4435]: Rear Mounted Bulldozer? 
++ Bug: [#4435]: Rear Mounted Bulldozer?
 + Bug: Fixing extra code committed in error.
 + Patches [#415 to #424] - Various Source and quirks updates.
 + Patch [#489]: HarJel II/III repair systems
@@ -175,12 +175,13 @@ v0.41.4-dev (SVN)
 + Feature: Unit quirks can now be saved to the mmconf/unitQuirksOverride.xml via
     a right-click menu item in the ChatLounge
 + Bug: Quad Meks with mechanical JJs path strangely (lots of lateral shifts)
-+ Changed by-range weapon sorting to disregard *minimum* ranges (still going 
++ Changed by-range weapon sorting to disregard *minimum* ranges (still going
     short > medium > long range brackets otherwise).
 + Bug: Chain whip special attack effects treat all Meks as bipeds.
 + Bug: Tripods not checking for center leg exposure in level 1 water.
 + Bug: Chain whip special attack effects applied to already-destroyed limbs.
 + Bug: Chain whips unable to grapple ProtoMeks.
++ Bug: Portraits object getting referenced after being set to null.
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

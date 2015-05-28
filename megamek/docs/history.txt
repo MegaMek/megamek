@@ -178,6 +178,7 @@ v0.41.4-dev (SVN)
 + Changed by-range weapon sorting to disregard *minimum* ranges (still going 
     short > medium > long range brackets otherwise).
 + Bug: Chain whip special attack effects treat all Meks as bipeds.
++ Bug: Tripods not checking for center leg exposure in level 1 water.
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

@@ -9813,7 +9813,7 @@ public class Server implements Runnable {
      * @return - <code>true</code> if the entity set off any mines
      */
     private boolean enterMinefield(Entity entity, Coords c, int curElev,
-                                   boolean isOnGround, Vector<Report> vMineReport, int target) {
+            boolean isOnGround, Vector<Report> vMineReport, int target) {
         Report r;
         boolean trippedMine = false;
         // flying units cannot trip a mine
@@ -10084,8 +10084,8 @@ public class Server implements Runnable {
      * Checks to see if an entity sets off any vibrabombs.
      */
     private boolean checkVibrabombs(Entity entity, Coords coords,
-                                    boolean displaced, Coords lastPos, Coords curPos,
-                                    Vector<Report> vMineReport) {
+            boolean displaced, Coords lastPos, Coords curPos,
+            Vector<Report> vMineReport) {
 
         boolean boom = false;
         // Only mechs can set off vibrabombs.
@@ -11536,12 +11536,12 @@ public class Server implements Runnable {
     }
 
     private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity,
-                                                              Coords src, Coords dest, int elev) {
+            Coords src, Coords dest, int elev) {
         Vector<Report> vPhaseReport = new Vector<Report>();
         boolean boom = checkVibrabombs(entity, dest, true, vPhaseReport);
         if (game.containsMinefield(dest)) {
             boom = enterMinefield(entity, dest, elev, true, vPhaseReport)
-                   || boom;
+                    || boom;
         }
         if (boom) {
             resetMines();
@@ -11551,19 +11551,19 @@ public class Server implements Runnable {
     }
 
     private Vector<Report> doEntityDisplacementBogDownCheck(Entity entity,
-                                                            Coords c, int elev) {
+            Coords c, int elev) {
         Vector<Report> vReport = new Vector<Report>();
         Report r;
         IHex destHex = game.getBoard().getHex(c);
         int bgMod = destHex.getBogDownModifier(entity.getMovementMode(),
-                                               entity instanceof LargeSupportTank);
+                entity instanceof LargeSupportTank);
         if ((bgMod != TargetRoll.AUTOMATIC_SUCCESS)
-            && (entity.getMovementMode() != EntityMovementMode.HOVER)
-            && (entity.getMovementMode() != EntityMovementMode.WIGE)
-            && (elev == 0)) {
+                && (entity.getMovementMode() != EntityMovementMode.HOVER)
+                && (entity.getMovementMode() != EntityMovementMode.WIGE)
+                && (elev == 0)) {
             PilotingRollData roll = entity.getBasePilotingRoll();
             roll.append(new PilotingRollData(entity.getId(), bgMod,
-                                             "avoid bogging down"));
+                    "avoid bogging down"));
             int stuckroll = Compute.d6(2);
             if (stuckroll < roll.getValue()) {
                 entity.setStuck(true);

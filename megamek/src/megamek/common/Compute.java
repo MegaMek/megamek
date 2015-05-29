@@ -43,6 +43,7 @@ import megamek.common.weapons.ArtilleryCannonWeapon;
 import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.HAGWeapon;
 import megamek.common.weapons.InfantryAttack;
+import megamek.common.weapons.MekMortarWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.Server;
 import megamek.server.SmokeCloud;
@@ -821,11 +822,10 @@ public class Compute {
                                || (wtype.getAmmoType() == AmmoType.T_TBOLT_10)
                                || (wtype.getAmmoType() == AmmoType.T_TBOLT_15)
                                || (wtype.getAmmoType() == AmmoType.T_TBOLT_20)
-                               || (wtype.getAmmoType() == AmmoType.T_IATM) || (wtype
-                                                                                       .getAmmoType() == AmmoType
-                                                                                       .T_LRM_TORPEDO)) && weapon
-                                      .curMode()
-                                      .equals("Indirect"))
+                               || (wtype.getAmmoType() == AmmoType.T_IATM) 
+                               || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
+                               || (wtype.getAmmoType() == AmmoType.T_MEK_MORTAR)) 
+                               && weapon.curMode().equals("Indirect"))
                              || (wtype instanceof ArtilleryCannonWeapon);
         boolean useExtremeRange = game.getOptions().booleanOption(
                 OptionsConstants.AC_TAC_OPS_RANGE);
@@ -1047,15 +1047,16 @@ public class Compute {
             && LosEffects.calculateLos(game, ae.getId(), target).canSee()
             && (!game.getOptions().booleanOption("double_blind") || Compute
                 .canSee(game, ae, target))
-            && !(wtype instanceof ArtilleryCannonWeapon)) {
+            && !(wtype instanceof ArtilleryCannonWeapon)
+            && !(wtype instanceof MekMortarWeapon)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                 "Indirect fire impossible with direct LOS");
+                    "Indirect fire impossible with direct LOS");
         }
 
         int c3dist = Compute.effectiveDistance(game, c3spotter, target, false);
         // C3 can't benefit from LOS range
         int c3range = RangeType.rangeBracket(c3dist, weaponRanges,
-                                             useExtremeRange, false);
+                useExtremeRange, false);
 
         /*
          * Tac Ops Extreme Range Rule p. 85 if the weapons normal range is

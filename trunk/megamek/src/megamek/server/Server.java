@@ -9783,17 +9783,22 @@ public class Server implements Runnable {
      * Check for any detonations when an entity enters a minefield, except a
      * vibrabomb.
      *
-     * @param entity      - the <code>entity</code> who entered the minefield
-     * @param c           - the <code>Coords</code> of the minefield
-     * @param curElev     - an <code>int</code> for the elevation of the entity entering
-     *                    the minefield (used for underwater sea mines)
-     * @param isOnGround  - <code>true</code> if the entity is not in the middle of a
-     *                    jump
-     * @param vMineReport - the report vector that reports will be added to
+     * @param entity
+     *            - the <code>entity</code> who entered the minefield
+     * @param c
+     *            - the <code>Coords</code> of the minefield
+     * @param curElev
+     *            - an <code>int</code> for the elevation of the entity entering
+     *            the minefield (used for underwater sea mines)
+     * @param isOnGround
+     *            - <code>true</code> if the entity is not in the middle of a
+     *            jump
+     * @param vMineReport
+     *            - the report vector that reports will be added to
      * @return - <code>true</code> if the entity set off any mines
      */
     private boolean enterMinefield(Entity entity, Coords c, int curElev,
-                                   boolean isOnGround, Vector<Report> vMineReport) {
+            boolean isOnGround, Vector<Report> vMineReport) {
         return enterMinefield(entity, c, curElev, isOnGround, vMineReport, -1);
     }
 
@@ -9801,15 +9806,21 @@ public class Server implements Runnable {
      * Check for any detonations when an entity enters a minefield, except a
      * vibrabomb.
      *
-     * @param entity      - the <code>entity</code> who entered the minefield
-     * @param c           - the <code>Coords</code> of the minefield
-     * @param curElev     - an <code>int</code> for the elevation of the entity entering
-     *                    the minefield (used for underwater sea mines)
-     * @param isOnGround  - <code>true</code> if the entity is not in the middle of a
-     *                    jump
-     * @param vMineReport - the report vector that reports will be added to
-     * @param target      - the <code>int</code> target number for detonation. If this
-     *                    will be determined by density, it should be -1
+     * @param entity
+     *            - the <code>entity</code> who entered the minefield
+     * @param c
+     *            - the <code>Coords</code> of the minefield
+     * @param curElev
+     *            - an <code>int</code> for the elevation of the entity entering
+     *            the minefield (used for underwater sea mines)
+     * @param isOnGround
+     *            - <code>true</code> if the entity is not in the middle of a
+     *            jump
+     * @param vMineReport
+     *            - the report vector that reports will be added to
+     * @param target
+     *            - the <code>int</code> target number for detonation. If this
+     *            will be determined by density, it should be -1
      * @return - <code>true</code> if the entity set off any mines
      */
     private boolean enterMinefield(Entity entity, Coords c, int curElev,
@@ -9820,7 +9831,18 @@ public class Server implements Runnable {
         if (curElev > 0) {
             return false;
         }
+        
+        // Check for Mine sweepers
+        Mounted minesweeper = null;
+        for (Mounted m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_MINESWEEPER) && m.isReady()
+                    && (m.getArmorValue() > 0)) {
+                minesweeper = m;
+                break; // Can only have one minesweeper
+            }
+        }
 
+        Vector<Minefield> fieldsToRemove = new Vector<>();
         // loop through mines in this hex
         for (Minefield mf : game.getMinefields(c)) {
 
@@ -9839,6 +9861,90 @@ public class Server implements Runnable {
                     continue;
                 }
             }
+            
+            // Check for mine-sweeping.  Vibra mines handled elsewhere
+            if ((minesweeper != null) 
+                    && ((mf.getType() == Minefield.TYPE_CONVENTIONAL) 
+                            || (mf.getType() == Minefield.TYPE_ACTIVE) 
+                            || (mf.getType() == Minefield.TYPE_INFERNO))) {
+                // Check to see if the minesweeper clears
+                int roll = Compute.d6(2);
+   
+                // Report minefield roll
+                if (doBlind()) { // only report if DB, otherwise all players see
+                r = new Report(2152);
+                r.player = mf.getPlayerId();
+                r.add(Minefield.getDisplayableName(mf.getType()));
+                r.add(mf.getCoords().getBoardNum());
+                r.add(roll);
+                r.newlines = 0;
+                vMineReport.add(r);
+                }
+                
+                if (roll >= 6) {
+                    // Report hit
+                    if (doBlind()) {
+                        r = new Report(5543);
+                        r.player = mf.getPlayerId();
+                        vMineReport.add(r);
+                    }
+                    
+                    // Clear the minefield
+                    r = new Report(2158);
+                    r.subject = entity.getId();
+                    r.add(entity.getShortName(), true);
+                    r.add(Minefield.getDisplayableName(mf.getType()), true);
+                    r.add(mf.getCoords().getBoardNum(), true);
+                    r.indent();
+                    vMineReport.add(r);
+                    fieldsToRemove.add(mf);
+                    
+                    // Handle armor value damage
+                    int remainingAV = minesweeper.getArmorValue() - 6;
+                    minesweeper.setArmorValue(Math.max(remainingAV, 0));
+                    
+                    r = new Report(2161);
+                    r.indent(2);
+                    r.subject = entity.getId();
+                    r.add(entity.getShortName(), true);
+                    r.add(6);
+                    r.add(Math.max(remainingAV, 0));
+                    vMineReport.add(r);
+                    
+                    if (remainingAV <= 0) {
+                        minesweeper.setDestroyed(true);
+                    }
+                    // Check for damage transfer                    
+                    if (remainingAV < 0) {
+                        int damage = Math.abs(remainingAV);
+                        r = new Report(2162);
+                        r.indent(2);
+                        r.subject = entity.getId();
+                        r.add(damage, true);
+                        vMineReport.add(r);
+                        
+                        // Damage is dealt to the location of minesweeper
+                        HitData hit = new HitData(minesweeper.getLocation());
+                        Vector<Report> damageReports = damageEntity(entity,
+                                hit, damage);
+                        for (Report r1 : damageReports) {
+                            r1.indent(1);
+                        }
+                        vMineReport.addAll(damageReports);
+                    }
+                    Report.addNewline(vMineReport);
+                    // If the minefield is cleared, we're done processing it
+                    continue;
+                } else {
+                    // Report miss
+                    if (doBlind()) {
+                        r = new Report(5542);
+                        r.player = mf.getPlayerId();
+                        vMineReport.add(r);
+                    }
+                }
+            }
+            
             // check whether we have an active mine
             if ((mf.getType() == Minefield.TYPE_ACTIVE) && isOnGround) {
                 continue;
@@ -9861,9 +9967,36 @@ public class Server implements Runnable {
                     target = 12;
                 }
             }
-
-            if (Compute.d6(2) < target) {
-                continue;
+            
+            int roll = Compute.d6(2);
+            
+            // Report minefield roll
+            if (doBlind()) { // Only do if DB, otherwise all players will see 
+                r = new Report(2151);
+                r.player = mf.getPlayerId();
+                r.add(Minefield.getDisplayableName(mf.getType()));
+                r.add(mf.getCoords().getBoardNum());
+                r.add(target);
+                r.add(roll);
+                r.newlines = 0;
+                vMineReport.add(r);
+            }
+            
+            if (roll < target) {
+                // Report miss
+                if (doBlind()) { 
+                    r = new Report(2217);
+                    r.player = mf.getPlayerId();
+                    vMineReport.add(r);               
+                    continue;
+                }
+            }
+            
+            // Report hit
+            if (doBlind()) { 
+                r = new Report(2270);
+                r.player = mf.getPlayerId();
+                vMineReport.add(r);
             }
 
             // apply damage
@@ -9876,31 +10009,43 @@ public class Server implements Runnable {
                 r.subject = entity.getId();
                 r.add(entity.getShortName(), true);
                 r.add(mf.getCoords().getBoardNum(), true);
+                r.indent();
                 vMineReport.add(r);
                 vMineReport.addAll(deliverInfernoMissiles(entity, entity,
-                                                          mf.getDensity() / 2));
+                        mf.getDensity() / 2));
             } else {
                 r = new Report(2150);
                 r.subject = entity.getId();
                 r.add(entity.getShortName(), true);
                 r.add(mf.getCoords().getBoardNum(), true);
+                r.indent();
                 vMineReport.add(r);
                 int damage = mf.getDensity();
                 while (damage > 0) {
                     int cur_damage = Math.min(5, damage);
                     damage = damage - cur_damage;
-                    HitData hit = entity.rollHitLocation(
-                            Minefield.TO_HIT_TABLE, Minefield.TO_HIT_SIDE);
+                    HitData hit;
+                    if (minesweeper == null) {
+                        hit = entity.rollHitLocation(Minefield.TO_HIT_TABLE,
+                                Minefield.TO_HIT_SIDE);
+                    } else { // Minesweepers cause mines to hit minesweeper loc
+                        hit = new HitData(minesweeper.getLocation());
+                    }
                     vMineReport.addAll(damageEntity(entity, hit, cur_damage));
                 }
                 if (entity instanceof Tank) {
                     vMineReport.addAll(vehicleMotiveDamage((Tank) entity, 2));
                 }
+                Report.addNewline(vMineReport);
             }
 
             // check the direct reduction
             mf.checkReduction(0, true);
             revealMinefield(mf);
+        }
+        
+        for (Minefield mf : fieldsToRemove) {
+            removeMinefield(mf);
         }
 
         return trippedMine;
@@ -9981,16 +10126,22 @@ public class Server implements Runnable {
      * attempt to clear a minefield We don't actually remove the minefield here,
      * because if this is called up from within a loop, that will cause problems
      *
-     * @param mf           - a <code>Minefield</code> to clear
-     * @param en           - <code>entity</code> doing the clearing
-     * @param target       - <code>int</code> needed to roll for a successful clearance
-     * @param botch        - <code>int</code> that indicates an accidental detonation
-     * @param vClearReport - The report collection to report to
-     * @param indent       - The nubmer of indents for the report
+     * @param mf
+     *            - a <code>Minefield</code> to clear
+     * @param en
+     *            - <code>entity</code> doing the clearing
+     * @param target
+     *            - <code>int</code> needed to roll for a successful clearance
+     * @param botch
+     *            - <code>int</code> that indicates an accidental detonation
+     * @param vClearReport
+     *            - The report collection to report to
+     * @param indent
+     *            - The nubmer of indents for the report
      * @return <code>true</code> if clearance successful
      */
     public boolean clearMinefield(Minefield mf, Entity en, int target,
-                                  int botch, Vector<Report> vClearReport, int indent) {
+            int botch, Vector<Report> vClearReport, int indent) {
         Report r;
         int roll = Compute.d6(2);
         if (roll >= target) {
@@ -10086,14 +10237,89 @@ public class Server implements Runnable {
     private boolean checkVibrabombs(Entity entity, Coords coords,
             boolean displaced, Coords lastPos, Coords curPos,
             Vector<Report> vMineReport) {
-
+        int mass = (int) entity.getWeight();
+        
+        // Check for Mine sweepers
+        Mounted minesweeper = null;
+        for (Mounted m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_MINESWEEPER) && m.isReady()
+                    && (m.getArmorValue() > 0)) {
+                minesweeper = m;
+                break; // Can only have one minesweeper
+            }
+        }
+        
+        // Check for minesweepers sweeping VB minefields
+        if (minesweeper != null) {
+            Vector<Minefield> fieldsToRemove = new Vector<>();
+            for (Minefield mf : game.getVibrabombs()) {
+                // Ignore mines if they aren't in this position
+                if (!mf.getCoords().equals(coords)) {
+                    continue;
+                }
+                
+                // Minesweepers on units within 9 tons of the vibrafield setting
+                // automatically clear the minefield
+                if (Math.abs(mass - mf.getSetting()) < 10) {
+                    // Clear the minefield
+                    Report r;
+                    r = new Report(2158);
+                    r.subject = entity.getId();
+                    r.add(entity.getShortName(), true);
+                    r.add(Minefield.getDisplayableName(mf.getType()), true);
+                    r.add(mf.getCoords().getBoardNum(), true);
+                    r.indent();
+                    vMineReport.add(r);
+                    fieldsToRemove.add(mf);
+                    
+                    // Handle armor value damage
+                    int remainingAV = minesweeper.getArmorValue() - 10;
+                    minesweeper.setArmorValue(Math.max(remainingAV, 0));
+                    
+                    r = new Report(2161);
+                    r.indent(2);
+                    r.subject = entity.getId();
+                    r.add(entity.getShortName(), true);
+                    r.add(10);
+                    r.add(Math.max(remainingAV, 0));
+                    vMineReport.add(r);
+                    
+                    if (remainingAV <= 0) {
+                        minesweeper.setDestroyed(true);
+                    }
+                    // Check for damage transfer                    
+                    if (remainingAV < 0) {
+                        int damage = Math.abs(remainingAV);
+                        r = new Report(2162);
+                        r.indent(2);
+                        r.subject = entity.getId();
+                        r.add(damage, true);
+                        vMineReport.add(r);
+                        
+                        // Damage is dealt to the location of minesweeper
+                        HitData hit = new HitData(minesweeper.getLocation());
+                        Vector<Report> damageReports = damageEntity(entity,
+                                hit, damage);
+                        for (Report r1 : damageReports) {
+                            r1.indent(1);
+                        }
+                        vMineReport.addAll(damageReports);
+                        entity.applyDamage();
+                    }
+                    Report.addNewline(vMineReport);
+                }
+            }
+            for (Minefield mf : fieldsToRemove) {
+                removeMinefield(mf);
+            }
+        }
+            
+        
         boolean boom = false;
         // Only mechs can set off vibrabombs.
         if (!(entity instanceof Mech)) {
             return boom;
-        }
-
-        int mass = (int) entity.getWeight();
+        }        
 
         Enumeration<Minefield> e = game.getVibrabombs().elements();
 

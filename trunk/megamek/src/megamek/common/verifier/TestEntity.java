@@ -748,6 +748,7 @@ public abstract class TestEntity implements TestEntityOption {
     public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
         boolean illegal = false;
         int fieldKitchenCount = 0;
+        int minesweeperCount = 0;
         boolean hasSponsonTurret = false;
         boolean hasHarjelII = false;
         boolean hasHarjelIII = false;
@@ -773,6 +774,9 @@ public abstract class TestEntity implements TestEntityOption {
             }
             if (m.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
                 fieldKitchenCount++;
+            }
+            if (m.getType().hasFlag(MiscType.F_MINESWEEPER)) {
+                minesweeperCount++;
             }
             if (m.getType().hasFlag(MiscType.F_SPONSON_TURRET)) {
                 hasSponsonTurret = true;
@@ -847,6 +851,10 @@ public abstract class TestEntity implements TestEntityOption {
             }
         }
 
+        if (minesweeperCount > 1) {
+            buff.append("Unit has more than one minesweeper!\n");
+            illegal = true;
+        }
         if (fieldKitchenCount > 3) {
             buff.append("Unit has more than three Field Kitchens\n");
             illegal = true;

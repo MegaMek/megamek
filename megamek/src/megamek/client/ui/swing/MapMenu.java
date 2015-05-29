@@ -170,6 +170,25 @@ public class MapMenu extends JPopupMenu {
                     itemCount++;
                 }
 
+            } else if (currentPanel instanceof TargetingPhaseDisplay) {
+                
+                if (itemCount > 0) {
+                    addSeparator();
+                    itemCount++;
+                }
+                    
+                menu = createTorsoTwistMenu();
+                if (menu.getItemCount() > 0) {
+                    this.add(menu);
+                    itemCount++;
+                }
+
+                menu = createRotateTurretMenu();
+                if (menu.getItemCount() > 0) {
+                    this.add(menu);
+                    itemCount++;
+                }
+                
             } else if ((currentPanel instanceof FiringDisplay)) {
 
                 if (itemCount > 0) {
@@ -194,11 +213,13 @@ public class MapMenu extends JPopupMenu {
                     this.add(menu);
                     itemCount++;
                 }
+                
                 menu = createRotateTurretMenu();
                 if (menu.getItemCount() > 0) {
                     this.add(menu);
                     itemCount++;
                 }
+                
             } else if ((currentPanel instanceof PhysicalDisplay)) {
                 menu = createPhysicalMenu(false);
 

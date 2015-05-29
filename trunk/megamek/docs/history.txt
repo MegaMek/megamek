@@ -185,6 +185,7 @@ v0.41.4-dev (SVN)
 + Bug: Mek mortars could gain benefits from C3 systems while indirect firing
 + Patch [#494]: (Princess) Infantry Damage Prediction Fix
 + Patch [#493]: Graphical updates to FiringSolutionSprite
++ Patch [#491]: board zoom centering
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

@@ -26,8 +26,6 @@ import java.awt.FontMetrics;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Point;
@@ -36,7 +34,6 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Toolkit;
-import java.awt.Transparency;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -184,7 +181,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     private static final float[] ZOOM_FACTORS = {0.30f, 0.41f, 0.50f, 0.60f,
                                                  0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f};
-
+    
     // Set to TRUE to draw hexes with isometric elevation.
     private boolean drawIsometric = GUIPreferences.getInstance()
                                                   .getIsometricEnabled();
@@ -423,6 +420,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent we) {
                 Point mousePoint = we.getPoint();
+                Point dispPoint = new Point();
+                dispPoint.setLocation(mousePoint.x + getBounds().x,
+                        mousePoint.y + getBounds().y);
                 for (int i = 0; i < displayables.size(); i++) {
                     IDisplayable disp = displayables.get(i);
                     if (!(disp instanceof ChatterBox2)) {
@@ -436,9 +436,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     drawDimension.setSize(width, height);
                     // we need to adjust the point, because it should be against
                     // the displayable dimension
-                    Point dispPoint = new Point();
-                    dispPoint.setLocation(mousePoint.x + getBounds().x,
-                                          mousePoint.y + getBounds().y);
                     if (disp.isMouseOver(dispPoint, drawDimension)) {
                         ChatterBox2 cb2 = (ChatterBox2) disp;
                         if (we.getWheelRotation() > 0) {
@@ -450,6 +447,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         return;
                     }
                 }
+                // calculate a few things to reposition the map
+                Coords zoomCenter = getCoordsAt(we.getPoint());
+                Point hexL = getCentreHexLocation(zoomCenter);
+                Point inhexDelta = new Point(we.getPoint());
+                inhexDelta.translate(-HEX_W, -HEX_H);
+                inhexDelta.translate(-hexL.x, -hexL.y);
+                double ihdx = ((double)inhexDelta.x)/((double)HEX_W)/scale;
+                double ihdy = ((double)inhexDelta.y)/((double)HEX_H)/scale;
+                int oldzoomIndex = zoomIndex;
+                
                 if (GUIPreferences.getInstance().getMouseWheelZoom()) {
                     boolean zoomIn = ((we.getWheelRotation() > 0) && !GUIPreferences
                             .getInstance().getMouseWheelZoomFlip())
@@ -460,6 +467,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     } else {
                         zoomOut();
                     }
+                    if (zoomIndex != oldzoomIndex)
+                        adjustVisiblePosition(zoomCenter, dispPoint, ihdx, ihdy);
+                    
                 } else {
                     if (we.isControlDown()) {
                         boolean zoomIn = ((we.getWheelRotation() > 0) && !GUIPreferences
@@ -471,6 +481,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         } else {
                             zoomIn();
                         }
+                        if (zoomIndex != oldzoomIndex)
+                            adjustVisiblePosition(zoomCenter, dispPoint, ihdx, ihdy);
                     } else if (we.isShiftDown()) {
                         int notches = we.getWheelRotation();
                         if (notches < 0) {
@@ -2978,7 +2990,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         repaint(oldBounds);
         repaint(cursor.getBounds());
     }
-
+    
     public void centerOnHex(Coords c) {
         if (null == c) {
             return;
@@ -2986,10 +2998,27 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // the scrollbars auto-correct if we try to set a value that's out of
         // bounds
         Point hexPoint = getCentreHexLocation(c);
+        // correct for upper left board padding
+        hexPoint.translate(HEX_W, HEX_H);
         JScrollBar vscroll = scrollpane.getVerticalScrollBar();
         vscroll.setValue(hexPoint.y - (vscroll.getVisibleAmount() / 2));
         JScrollBar hscroll = scrollpane.getHorizontalScrollBar();
         hscroll.setValue(hexPoint.x - (hscroll.getVisibleAmount() / 2));
+        pingMinimap();
+        repaint();
+    }
+    
+    private void adjustVisiblePosition(Coords c, Point dispPoint, double ihdx, double ihdy) {
+        if ((c == null) || (dispPoint == null)) return;
+        
+        Point hexPoint = getCentreHexLocation(c);
+        // correct for upper left board padding
+        hexPoint.translate(HEX_W, HEX_H);
+        JScrollBar hscroll = scrollpane.getHorizontalScrollBar();
+        hscroll.setValue(hexPoint.x-dispPoint.x+(int)(ihdx*scale*HEX_W));
+        JScrollBar vscroll = scrollpane.getVerticalScrollBar();
+        vscroll.setValue(hexPoint.y-dispPoint.y+(int)(ihdy*scale*HEX_H));
+        pingMinimap();
         repaint();
     }
     
@@ -5097,6 +5126,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Changes hex dimensions and refreshes the map with the new scale
      */
     private void zoom() {
+        
         checkZoomIndex();
         scale = ZOOM_FACTORS[zoomIndex];
         GUIPreferences.getInstance().setMapZoomIndex(zoomIndex);
@@ -5126,6 +5156,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             sprite.prepare();
         }
         this.setSize(boardSize);
+
         clearHexImageCache();
         repaint();
     }

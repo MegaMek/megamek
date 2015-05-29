@@ -9988,8 +9988,8 @@ public class Server implements Runnable {
                     r = new Report(2217);
                     r.player = mf.getPlayerId();
                     vMineReport.add(r);               
-                    continue;
                 }
+                continue;
             }
             
             // Report hit
@@ -10034,7 +10034,12 @@ public class Server implements Runnable {
                     vMineReport.addAll(damageEntity(entity, hit, cur_damage));
                 }
                 if (entity instanceof Tank) {
-                    vMineReport.addAll(vehicleMotiveDamage((Tank) entity, 2));
+                    // Tanks check for motive system damage from minefields as
+                    // from a side hit even though the damage proper hits the
+                    // front above; exact side doesn't matter, though.
+                    Tank tank = (Tank) entity;
+                    vMineReport.addAll(vehicleMotiveDamage(tank,
+                            tank.getMotiveSideMod(ToHitData.SIDE_LEFT)));
                 }
                 Report.addNewline(vMineReport);
             }

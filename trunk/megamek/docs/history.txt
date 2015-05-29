@@ -191,6 +191,10 @@ v0.41.4-dev (SVN)
 + Patch [#495]: Princess shoots at buildings with infantry in them
 + Bug [#4234]: Minesweeper vehicle equipment implemented
 + Added minefield reports that can only be seen by minefield owner in DB
++ Bug: Minefield motive system damage check still applies side penalty with
+    TacOps vehicle effectiveness in effect.
++ Bug: Minefields always triggered upon entering regardless of roll outside
+    double blind.
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

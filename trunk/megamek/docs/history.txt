@@ -186,6 +186,8 @@ v0.41.4-dev (SVN)
 + Patch [#494]: (Princess) Infantry Damage Prediction Fix
 + Patch [#493]: Graphical updates to FiringSolutionSprite
 + Patch [#491]: board zoom centering
++ Added torso twist and turret rotation context menu entries to targeting phase
+    display.
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

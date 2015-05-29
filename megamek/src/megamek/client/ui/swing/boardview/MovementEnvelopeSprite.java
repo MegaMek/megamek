@@ -64,7 +64,7 @@ class MovementEnvelopeSprite extends HexSprite {
         updateBounds();
         
         // create image for buffer
-        createNewImage();
+        image = createNewHexImage();
         Graphics2D graph = (Graphics2D)image.getGraphics();
         GUIPreferences.AntiAliasifSet(graph);
 

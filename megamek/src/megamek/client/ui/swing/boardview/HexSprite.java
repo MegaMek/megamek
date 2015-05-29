@@ -2,6 +2,7 @@ package megamek.client.ui.swing.boardview;
 
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Transparency;
 
@@ -38,14 +39,13 @@ public abstract class HexSprite extends Sprite {
      * Creates a new empty transparent image for this HexSprite. The
      * size follows the current values of <code>bounds</code>. 
      */
-    protected void createNewImage() {
-        GraphicsConfiguration config = 
-                GraphicsEnvironment.getLocalGraphicsEnvironment().
-                getDefaultScreenDevice().getDefaultConfiguration();
+    protected Image createNewHexImage() {
+        GraphicsConfiguration config = GraphicsEnvironment
+                .getLocalGraphicsEnvironment().getDefaultScreenDevice()
+                .getDefaultConfiguration();
 
         // a compatible image should be ideal for blitting to the screen
-        image = config.createCompatibleImage(
-                bounds.width, bounds.height,
+        return config.createCompatibleImage(bounds.width, bounds.height,
                 Transparency.TRANSLUCENT);
     }
 

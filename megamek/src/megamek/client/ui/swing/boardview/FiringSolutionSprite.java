@@ -1,155 +1,127 @@
 package megamek.client.ui.swing.boardview;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.font.GlyphVector;
-import java.awt.image.FilteredImageSource;
+import java.awt.geom.AffineTransform;
 
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.util.KeyAlphaFilter;
 import megamek.common.Coords;
 import megamek.common.TargetRoll;
 
 /**
  * Sprite for displaying generic firing information. This is used for
+ * the firing phase and displays either range and target modifier or
+ * a big red X if the target cannot be hit.
  */
-class FiringSolutionSprite extends Sprite {
+class FiringSolutionSprite extends HexSprite {
+    
+    // control values
+    // for modifier and range
+    private static final int fontSizeSmall = 25;
+    private static final int fontSizeRange = 20;
+    private static final Color fontColor = Color.CYAN;
+    // for the big X
+    private static final int fontSizeLarge = 40;
+    private static final Color xColor = Color.RED;
+    
+    // calculated statics
+    // text positions
+    private static Point centerHex = new Point(BoardView1.HEX_W / 2,
+            BoardView1.HEX_H / 2);
+    private static Point firstLine = new Point(BoardView1.HEX_W / 2 - 2,
+            BoardView1.HEX_H / 4 + 2);
+    private static Point secondLine = new Point(BoardView1.HEX_W / 2 + 9,
+            BoardView1.HEX_H * 3 / 4 - 2);
 
-    private int toHitMod, range;
-    private Coords loc;
-    private Image baseScaleImage;
+    // sprite object data
+    private String range;
+    private String toHitMod;
+    private boolean noHitPossible = false;
+    private Shape finalHex;
 
     public FiringSolutionSprite(BoardView1 boardView1, final int thm,
             final int r, final Coords l) {
-        super(boardView1);
-        toHitMod = thm;
-        loc = l;
-        range = r;
-        bounds = new Rectangle(bv.getHexLocation(loc), bv.hex_size);
-        image = null;
-        baseScaleImage = null;
-    }
+        super(boardView1, l);
+        updateBounds();
+        
+        // modifier
+        toHitMod = Integer.toString(thm);
+        if (thm >= 0) toHitMod = "+" + toHitMod;
+        if ((thm == TargetRoll.IMPOSSIBLE)
+                || (thm == TargetRoll.AUTOMATIC_FAIL)) 
+            noHitPossible = true;
+        
+        // range
+        range = Integer.toString(r);
 
-    /**
-     * Refreshes this StepSprite's image to handle changes in the zoom
-     * level.
-     */
-    public void refreshZoomLevel() {
-
-        if (baseScaleImage == null) {
-            return;
-        }
-
-        image = bv.getScaledImage(bv
-                .createImage(new FilteredImageSource(
-                        baseScaleImage.getSource(), new KeyAlphaFilter(
-                                BoardView1.TRANSPARENT))), false);
+        // create the small hex shape
+        AffineTransform at = AffineTransform.getTranslateInstance((r > 9) ? 25
+                : 30, secondLine.y + 2);
+        at.scale(0.17, 0.17);
+        at.translate(-BoardView1.HEX_W/2, -BoardView1.HEX_H/2);
+        finalHex = at.createTransformedShape(BoardView1.hexPoly);
     }
 
     @Override
     public void prepare() {
-        // create image for buffer
-        Image tempImage = bv.createImage(bounds.width, bounds.height);
-        Graphics graph = tempImage.getGraphics();
-
-        // fill with key color
-        graph.setColor(new Color(BoardView1.TRANSPARENT));
-        graph.fillRect(0, 0, bounds.width, bounds.height);
-
-        // Draw firing information
-        Point p = bv.getHexLocation(loc);
-        p.translate(-bounds.x, -bounds.y);
-        graph.setFont(getFiringFont());
-
-        if ((toHitMod != TargetRoll.IMPOSSIBLE)
-                && (toHitMod != TargetRoll.AUTOMATIC_FAIL)) {
-            int xOffset = 25;
-            int yOffset = 30;
-            FontMetrics metrics = graph.getFontMetrics();
-            // Draw to-hit modifier
-
-            String modifier;
-            if (toHitMod >= 0) {
-                modifier = "+" + toHitMod;
-            } else {
-                modifier = "" + toHitMod;
-            }
-            Graphics2D g2 = (Graphics2D) graph;
-            GlyphVector gv = getFiringFont().createGlyphVector(
-                    g2.getFontRenderContext(), modifier);
-            g2.translate(xOffset, yOffset);
-            for (int i = 0; i < modifier.length(); i++){
-                Shape gs = gv.getGlyphOutline(i);
-                g2.setPaint(GUIPreferences.getInstance().getColor(
-                        GUIPreferences.ADVANCED_FIRE_SOLN_CANSEE_COLOR));
-                g2.fill(gs); // Fill the shape
-                g2.setPaint(Color.black); // Switch to solid black
-                g2.draw(gs); // And draw the outline
-            }
-            g2.translate(-13, metrics.getHeight());
-            yOffset += metrics.getHeight();
-            modifier = "rng: " + range;
-            gv = getFiringFont().createGlyphVector(
-                    g2.getFontRenderContext(), modifier);
-            for (int i = 0; i < modifier.length(); i++){
-                Shape gs = gv.getGlyphOutline(i);
-                g2.setPaint(GUIPreferences.getInstance().getColor(
-                        GUIPreferences.ADVANCED_FIRE_SOLN_CANSEE_COLOR));
-                g2.fill(gs); // Fill the shape
-                g2.setPaint(Color.black); // Switch to solid black
-                g2.draw(gs); // And draw the outline
-            }
-        } else {
-            String modifier = "X";
-            Graphics2D g2 = (Graphics2D) graph;
-            GlyphVector gv = getFiringFont().createGlyphVector(
-                    g2.getFontRenderContext(), modifier);
-            g2.translate(35, 39);
-            for (int i = 0; i < modifier.length(); i++){
-                Shape gs = gv.getGlyphOutline(i);
-                g2.setPaint(GUIPreferences.getInstance().getColor(
-                        GUIPreferences.ADVANCED_FIRE_SOLN_NOSEE_COLOR));
-                g2.fill(gs); // Fill the shape
-                g2.setPaint(Color.black); // Switch to solid black
-                g2.draw(gs); // And draw the outline
-            }
-        }
-
-        // graph.setColor(drawColor);
-        // graph.drawPolygon(hexPoly);
-
-        baseScaleImage = bv.createImage(new FilteredImageSource(
-                tempImage.getSource(), new KeyAlphaFilter(BoardView1.TRANSPARENT)));
-        // create final image
-        image = bv.getScaledImage(bv.createImage(new FilteredImageSource(
-                tempImage.getSource(), new KeyAlphaFilter(
-                        BoardView1.TRANSPARENT))), false);
+        // adjust bounds (image size) to board zoom
+        updateBounds();
         
-        graph.dispose();
-        tempImage.flush();
-    }
-
-    @Override
-    public Rectangle getBounds() {
-        bounds = new Rectangle(bv.getHexLocation(loc), bv.hex_size);
-        return bounds;
-    }
-
-    public Font getFiringFont() {
-
+        // create image for buffer
+        image = createNewHexImage();
+        Graphics2D graph = (Graphics2D)image.getGraphics();
+        GUIPreferences.AntiAliasifSet(graph);
+        
+        // scale the following draws according to board zoom
+        graph.scale(bv.scale, bv.scale);
+        
+        // get the right font
         String fontName = GUIPreferences.getInstance().getString(
                 GUIPreferences.ADVANCED_MOVE_FONT_TYPE);
         int fontStyle = GUIPreferences.getInstance().getInt(
                 GUIPreferences.ADVANCED_MOVE_FONT_STYLE);
-        int fontSize = 16;
+        
+        if (noHitPossible) {  
+            // write big red X
+            graph.setFont(new Font(fontName, fontStyle, (int)(fontSizeLarge)));
+            if (bv.scale > 0.7) {
+                // better translucent, the X is so big
+                bv.drawOutlineText(graph, "X", centerHex, 
+                        fontSizeLarge, xColor, true, Color.BLACK);
+            } else {
+                // better readable at small scale
+                bv.drawCenteredText(graph, "X", centerHex, xColor, false);
+            }
+        } else {    
+            // hittable: write modifier and range
+            Font textFont = new Font(fontName, fontStyle, fontSizeSmall);
+            Font rangeFont = new Font(fontName, fontStyle, fontSizeRange);
+            
+            // shadows
+            bv.drawTextShadow(graph, toHitMod, firstLine, textFont);
+            bv.drawTextShadow(graph, range, secondLine, rangeFont);
+            
+            // text
+            bv.drawCenteredText(graph, toHitMod, firstLine, fontColor, false,
+                    textFont);
+            bv.drawCenteredText(graph, range, secondLine, fontColor, false,
+                    rangeFont);
 
-        return new Font(fontName, fontStyle, fontSize);
+            // a small hex shape for distance
+            // fill blueish
+            graph.setColor(new Color(80,80,80,140));
+            graph.fill(finalHex);
+            // hex border
+            graph.setStroke(new BasicStroke(1.5f));
+            graph.setColor(fontColor);
+            graph.draw(finalHex);
+        }
+        
+        graph.dispose();
     }
+
 }

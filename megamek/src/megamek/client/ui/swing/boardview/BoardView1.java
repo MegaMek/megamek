@@ -16,6 +16,7 @@
 package megamek.client.ui.swing.boardview;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -25,6 +26,8 @@ import java.awt.FontMetrics;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Point;
@@ -33,6 +36,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Toolkit;
+import java.awt.Transparency;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -40,6 +44,7 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -251,7 +256,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     private ArrayList<MovementEnvelopeSprite> moveEnvSprites = new ArrayList<>();
     private ArrayList<MovementModifierEnvelopeSprite> moveModEnvSprites = new ArrayList<>();
-
+    
     // vector of sprites for all firing lines
     ArrayList<AttackSprite> attackSprites = new ArrayList<AttackSprite>();
 
@@ -396,7 +401,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * be shown in the Arty Auto Hit Designation phase
      */
     public boolean showAllDeployment = false;
-
+    
+    
     /**
      * Construct a new board view for the specified game
      */
@@ -412,6 +418,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
         ourTask = scheduleRedrawTimer();// call only once
+        clearSprites();
         addMouseListener(this);
         addMouseWheelListener(new MouseWheelListener() {
             public void mouseWheelMoved(MouseWheelEvent we) {
@@ -1078,6 +1085,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 drawHexBorder(getHexLocation(c), g, Color.yellow, 0, 3);
             }
         }
+        
 
         // draw the ruler line
         if (rulerStart != null) {
@@ -1151,15 +1159,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private synchronized void drawHexSpritesForHex(Coords c,
                                                    Graphics g, ArrayList<? extends HexSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
+        
         for (HexSprite sprite : spriteArrayList) {
             Coords cp = sprite.getPosition();
             if (cp.equals(c) && view.intersects(sprite.getBounds())
-                && !sprite.isHidden()) {
+                    && !sprite.isHidden()) {
                 if (!sprite.isReady()) {
                     sprite.prepare();
                 }
                 sprite.drawOnto(g, sprite.getBounds().x, sprite.getBounds().y,
-                                this, false);
+                        this, false);
             }
         }
     }
@@ -1251,6 +1260,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (!sprite.isReady()) {
                 sprite.prepare();
             }
+            
             sprite.drawOnto(g, sprite.getBounds().x, sprite.getBounds().y, this);
         }
     }
@@ -3246,7 +3256,113 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         moveModEnvSprites.clear();
         repaint();
     }
-
+    
+    /**
+     * Draws the given <code>text</code> in the currently active font of the Graphics <code>g2D</code>
+     * at font size <code>fontSize</code>. The text is centered in both 
+     * x and y directions around the position <code>pos</code>. The text is colored with 
+     * the given <code>color</code>, made translucent if the flag is set. The outline of the text
+     * will be dark gray.
+     * @param g2D the graphics to draw to, as <code>Graphics2D</code>
+     * @param text the string to write
+     * @param pos the board pixel position
+     * @param fontSize the font size. This will be scaled by the current board zoom
+     * @param color the color to draw the text in
+     * @param translucent (optional)  makes the text translucent if set to true. Defaults to false
+     * @param cOutline (optional) the color of the outline. Defaults to Color.DARK_GRAY
+     */
+    public void drawOutlineText(Graphics2D g2D, String text, Point pos,
+            float fontSize, Color color, boolean translucent, Color cOutline) {
+        g2D.setFont(g2D.getFont().deriveFont(fontSize));
+        FontMetrics fm = g2D.getFontMetrics(g2D.getFont());
+        // Center the text around pos
+        int cx = pos.x - (fm.stringWidth(text) / 2);
+        int cy = pos.y + (fm.getAscent() - fm.getDescent()) / 2;
+        
+        // get text shape and position it
+        GlyphVector gv = g2D.getFont().createGlyphVector(g2D.getFontRenderContext(), text);
+        Shape shape = gv.getOutline();
+        shape = AffineTransform.getTranslateInstance(cx,cy).
+                createTransformedShape(shape);
+        
+        // text area fill
+        if (translucent) 
+            color = new Color(color.getRGB() & 0x00FFFFFF | 0xA0000000, true);
+        g2D.setColor(color);
+        g2D.fill(shape);
+        
+        // outline
+        g2D.setStroke(new BasicStroke(0.5f));
+        Color lineColor = cOutline;
+        if (translucent) 
+            lineColor = new Color(lineColor.getRGB() & 0x00FFFFFF | 0xA0000000, true);
+        g2D.setColor(lineColor);
+        g2D.draw(shape);
+    }
+    
+    public void drawOutlineText(Graphics2D g2D, String text, Point pos,
+            float fontSize, Color color, boolean translucent) {
+        drawOutlineText(g2D, text, pos, fontSize, color, translucent, Color.DARK_GRAY);
+    }
+    
+    public void drawOutlineText(Graphics2D g2D, String text, Point pos,
+            float fontSize, Color color) {
+        drawOutlineText(g2D, text, pos, fontSize, color, false, Color.DARK_GRAY);
+    }
+    
+    public void drawTextShadow(Graphics2D g2D, String text, Point pos,
+            Font font) {
+        g2D.setFont(font);
+        // to keep the shadow always 1 px wide,
+        // counteract the current graph scaling
+        double scX = g2D.getTransform().getScaleX();
+        double scY = g2D.getTransform().getScaleY();
+        
+        drawCenteredText(g2D, text, (float)pos.x+(1.0f)/(float)scX,(float)pos.y, Color.BLACK, false);
+        drawCenteredText(g2D, text, (float)pos.x-(1.0f)/(float)scX,(float)pos.y, Color.BLACK, false);
+        drawCenteredText(g2D, text, (float)pos.x,(float)pos.y+(1.0f)/(float)scY, Color.BLACK, false);
+        drawCenteredText(g2D, text, (float)pos.x,(float)pos.y-(1.0f)/(float)scY, Color.BLACK, false);
+    }
+    
+    public void drawCenteredText(Graphics2D g2D, String text, Point pos,
+            Color color, boolean translucent) {
+        FontMetrics fm = g2D.getFontMetrics(g2D.getFont());
+        // Center the text around pos
+        int cx = pos.x - (fm.stringWidth(text) / 2);
+        int cy = pos.y - fm.getAscent()/2-fm.getDescent() / 2+fm.getAscent();
+        
+        if (translucent) 
+            color = new Color(color.getRGB() & 0x00FFFFFF | 0xA0000000, true);
+        g2D.setColor(color);
+        g2D.drawString(text, cx, cy);
+    }
+    
+    // This method is used to draw text shadows even when the g2D is scaled
+    public void drawCenteredText(Graphics2D g2D, String text, float posx, float posy,
+            Color color, boolean translucent) {
+        FontMetrics fm = g2D.getFontMetrics(g2D.getFont());
+        // Center the text around pos
+        float cx = posx - (fm.stringWidth(text) / 2);
+        float cy = posy - fm.getAscent()/2-fm.getDescent() / 2+fm.getAscent();
+        
+        if (translucent) 
+            color = new Color(color.getRGB() & 0x00FFFFFF | 0xA0000000, true);
+        g2D.setColor(color);
+        g2D.drawString(text, cx, cy);
+    }
+    
+    public void drawCenteredText(Graphics2D g2D, String text, Point pos,
+            Color color, boolean translucent, Font font) {
+        g2D.setFont(font);
+        drawCenteredText(g2D, text, pos, color, translucent);
+    }
+    
+    public void drawCenteredText(Graphics2D g2D, String text, Point pos,
+            Color color, boolean translucent, int fontSize) {
+        g2D.setFont(g2D.getFont().deriveFont(fontSize));
+        drawCenteredText(g2D, text, pos, color, translucent);
+    }
+    
     public void setLocalPlayer(IPlayer p) {
         localPlayer = p;
     }
@@ -5007,7 +5123,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             sprite.refreshZoomLevel();
         }
         for (FiringSolutionSprite sprite : firingSprites) {
-            sprite.refreshZoomLevel();
+            sprite.prepare();
         }
         this.setSize(boardSize);
         clearHexImageCache();
@@ -5113,6 +5229,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         drawIsometric = !drawIsometric;
         clearHexImageCache();
         updateBoard();
+        for (MovementEnvelopeSprite sprite: moveEnvSprites)
+            sprite.updateBounds();
+        for (MovementModifierEnvelopeSprite sprite: moveModEnvSprites)
+            sprite.updateBounds();
         repaint();
         return drawIsometric;
     }
@@ -5196,4 +5316,5 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public Polygon getHexPoly() {
         return hexPoly;
     }
+
 }

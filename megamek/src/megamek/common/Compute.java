@@ -2801,12 +2801,10 @@ public class Compute {
                         if ((g.getEntity(waa.getTargetId())
                               .getSwarmAttackerId() == Entity.NONE)
                             && (g.getEntity(waa.getTargetId()) instanceof Mech)) {
-                            /*
-                             * fDamage = 1.5f inf_attacker
-                             * .getDamage(inf_attacker .getShootingStrength());
-                             */
-                            // TODO: Fix me
-                            fDamage = 4;
+
+                            fDamage = 1.5f 
+                                    * (float)inf_attacker.getDamagePerTrooper() 
+                                    * inf_attacker.getShootingStrength();
                         }
                         // Otherwise, call it 0 damage
                         else {
@@ -2815,14 +2813,10 @@ public class Compute {
                     } else {
                         // conventional weapons; field guns should be handled
                         // under the standard weapons section
-                        /*
-                         * fDamage = 0.6f inf_attacker.getDamage(inf_attacker
-                         * .getShootingStrength());
-                         */
-                        // TODO: Fix me
-                        fDamage = 2;
+                        fDamage = 0.6f 
+                                * (float)inf_attacker.getDamagePerTrooper() 
+                                * inf_attacker.getShootingStrength();
                     }
-
                 } else {
                     // Battle armor units conducting swarm attack
                     if (wt.getInternalName() == Infantry.SWARM_MEK) {
@@ -2845,6 +2839,15 @@ public class Compute {
             }
 
         }
+
+        // Need to adjust damage if the target is infantry.
+        if ((g.getEntity(waa.getTargetId()) instanceof Infantry)
+            && !(g.getEntity(waa.getTargetId()) instanceof BattleArmor)) {
+            fDamage = directBlowInfantryDamage(fDamage, 0,
+                    wt.getInfantryDamageClass(), ((Infantry) (g.getEntity(waa
+                            .getTargetId()))).isMechanized());
+        }
+
         fDamage *= fChance;
 
         // Conventional infantry take double damage in the open

@@ -36,6 +36,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
 import megamek.common.Coords;
+import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.IGame;
@@ -883,6 +884,35 @@ public class Princess extends BotClient {
                 }
             }
             // -----------------------------------------------------------------------
+
+            // Pick up on any infantry/BA in buildings post-movement and shoot
+            // their buildings, similar to the turret check
+            // pre-movement(infantry can move so we only set target buildings
+            // after they do).
+            Enumeration<Building> buildings = game.getBoard().getBuildings();
+            while (buildings.hasMoreElements()) {
+                Building bldg = buildings.nextElement();
+                Enumeration<Coords> bldgCoords = bldg.getCoords();
+                while (bldgCoords.hasMoreElements()) {
+                    Coords coords = bldgCoords.nextElement();
+                    for (Entity entity : game.getEntitiesVector(coords)) {
+                        BuildingTarget bt = new BuildingTarget(coords,
+                                game.getBoard(), false);
+                        // Want to target buildings with hostile infantry/BA
+                        // inside them, since there's no other way to attack
+                        // them.
+                        if (isEnemyInfantry(entity, coords)
+                                && Compute.isInBuilding(game, entity)) {
+                            fireControl.getAdditionalTargets().add(bt);
+                            sendChat("Building in Hex "
+                                    + coords.toFriendlyString()
+                                    + " designated target due to"
+                                    + " infantry inside building.");
+                        }
+                    }
+                }
+            }
+
         } finally {
             methodEnd(getClass(), METHOD_NAME);
         }
@@ -1052,6 +1082,13 @@ public class Princess extends BotClient {
                && entity.getOwner().isEnemyOf(getLocalPlayer())
                && !getStrategicBuildingTargets().contains(coords)
                && (entity.getCrew() != null) && !entity.getCrew().isDead();
+    }
+
+    private boolean isEnemyInfantry(Entity entity, Coords coords) {
+        return (entity instanceof Infantry
+                || entity instanceof BattleArmor)
+                && entity.getOwner().isEnemyOf(getLocalPlayer())
+                && !getStrategicBuildingTargets().contains(coords);
     }
 
     @Override

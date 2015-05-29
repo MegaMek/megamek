@@ -188,6 +188,7 @@ v0.41.4-dev (SVN)
 + Patch [#491]: board zoom centering
 + Added torso twist and turret rotation context menu entries to targeting phase
     display.
++ Patch [#495]: Princess shoots at buildings with infantry in them
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

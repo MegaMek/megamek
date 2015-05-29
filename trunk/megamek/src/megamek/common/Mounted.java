@@ -123,6 +123,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     private int mineType = MINE_NONE;
     // vibrabomb mine setting
     private int vibraSetting = 20;
+    
+    /**
+     * Armor value, used for applicable equipment types like minesweepers.
+     */
+    private int armorValue = 0;
 
     private IGame.Phase phase = IGame.Phase.PHASE_UNKNOWN;
 
@@ -183,13 +188,13 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
         if ((type instanceof MiscType) && type.hasFlag(MiscType.F_MINE)) {
             mineType = MINE_CONVENTIONAL;
-          //Used to keep track of the # of mines
+            // Used to keep track of the # of mines
             shotsLeft = 1;
         }
         if ((type instanceof MiscType) &&
                 type.hasFlag(MiscType.F_VEHICLE_MINE_DISPENSER)) {
             mineType = MINE_CONVENTIONAL;
-            //Used to keep track of the # of mines
+            // Used to keep track of the # of mines
             shotsLeft = 2;
         }
         if ((type instanceof MiscType)
@@ -204,6 +209,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             baseDamageCapacity = shield.baseDamageCapacity;
             damageTaken = shield.damageTaken;
         }
+        if ((type instanceof MiscType) 
+                && type.hasFlag(MiscType.F_MINESWEEPER)) {
+            armorValue = 30;
+        }
+        
         quirks.initialize();
     }
 
@@ -1675,5 +1685,13 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public void setSquadSupportWeapon(boolean squadSupportWeapon) {
         this.squadSupportWeapon = squadSupportWeapon;
+    }
+
+    public int getArmorValue() {
+        return armorValue;
+    }
+
+    public void setArmorValue(int armorValue) {
+        this.armorValue = armorValue;
     }
 }

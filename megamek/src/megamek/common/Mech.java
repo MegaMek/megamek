@@ -6935,13 +6935,12 @@ public abstract class Mech extends Entity {
      */
     @Override
     public Vector<Report> doCheckEngineStallRoll(Vector<Report> vPhaseReport) {
-        if (isIndustrial()
-                && (getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
+        if (getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) {
             Report r = new Report(2280);
             r.addDesc(this);
             r.subject = getId();
             r.add(1);
-            r.add("ICE-Engine Industrial Mech failed a PSR");
+            r.add("ICE-Engine 'Mech failed a PSR");
             vPhaseReport.add(r);
             r = new Report(2285);
             r.subject = getId();
@@ -6995,7 +6994,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public void checkUnstall(Vector<Report> vPhaseReport) {
-        if (stalled && !stalledThisTurn && isIndustrial()
+        if (stalled && !stalledThisTurn
                 && (getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
             Report r = new Report(2280);
             r.addDesc(this);

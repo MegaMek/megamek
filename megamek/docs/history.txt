@@ -197,6 +197,7 @@ v0.41.4-dev (SVN)
     double blind.
 + Bug: No heat buildup for ICE- and fuel cell-powered BattleMechs getting up
     (only Industrials get heat-free ground movement).
++ Ruling: Engine stalls for ICE 'Mechs are for Industrials and BattleMechs both.
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

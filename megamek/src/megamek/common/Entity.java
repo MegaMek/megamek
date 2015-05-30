@@ -11319,8 +11319,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * possibly do a ICE-Engine stall PSR, only industrialmechs will actually do
-     * such a roll
+     * possibly do a ICE-Engine stall PSR (only intended for Mechs, both
+     * Industrial and Battle).
      *
      * @param vPhaseReport the <code>Vector<Report></code> containing the phase reports
      * @return a Vector<Report> containing the passed in reports, and any

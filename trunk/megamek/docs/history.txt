@@ -195,6 +195,8 @@ v0.41.4-dev (SVN)
     TacOps vehicle effectiveness in effect.
 + Bug: Minefields always triggered upon entering regardless of roll outside
     double blind.
++ Bug: No heat buildup for ICE- and fuel cell-powered BattleMechs getting up
+    (only Industrials get heat-free ground movement).
 
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)

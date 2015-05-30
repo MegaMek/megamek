@@ -6973,8 +6973,12 @@ public class Server implements Runnable {
             rollTarget = entity.checkGetUp(step);
 
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                if ((entity.getEngine().getEngineType() != Engine.FUEL_CELL)
-                    && (entity.getEngine().getEngineType() != Engine.COMBUSTION_ENGINE)) {
+                // Unless we're an ICE- or fuel cell-powered IndustrialMech,
+                // standing up builds heat.
+                if ((entity instanceof Mech)
+                    && !(((Mech) entity).isIndustrial()
+                        && ((entity.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
+                            || (entity.getEngine().getEngineType() == Engine.FUEL_CELL)))) {
                     entity.heatBuildup += 1;
                 }
                 entity.setProne(false);

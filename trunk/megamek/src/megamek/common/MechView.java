@@ -174,9 +174,7 @@ public class MechView {
                         + " hits)</font>");
             }
             if (isMech){
-                CriticalSlot engineSlot =
-                        entity.getCritical(Mech.LOC_CT,Mech.SYSTEM_ENGINE);
-                if ((engineSlot != null) && engineSlot.isArmored()){
+                if (entity.hasArmoredEngine()) {
                     sBasic.append(" (armored)");
                 }
             }
@@ -219,14 +217,12 @@ public class MechView {
                 sBasic.append("<font color='red'> (" + aMech.damagedHeatSinks()
                         + " damaged)</font>");
             }
-            CriticalSlot cpSlot =
-                    aMech.getCritical(Mech.LOC_HEAD, Mech.SYSTEM_COCKPIT);
             if ((aMech.getCockpitType() != Mech.COCKPIT_STANDARD)
-                    || ((cpSlot != null) && cpSlot.isArmored())) {
+                    || aMech.hasArmoredCockpit()) {
                 sBasic.append("<br>"); //$NON-NLS-1$
                 sBasic.append(Messages.getString("MechView.Cockpit"));
                 sBasic.append(aMech.getCockpitTypeString());
-                if ((cpSlot != null) && cpSlot.isArmored()){
+                if (aMech.hasArmoredCockpit()){
                     sBasic.append(" (armored)");
                 }
             }
@@ -237,9 +233,7 @@ public class MechView {
                 sBasic.append("<font color='red'> (" + aMech.getGyroHits()
                         + " hits)</font>");
             }
-            CriticalSlot gyroSlot =
-                    aMech.getCritical(Mech.LOC_CT, Mech.SYSTEM_GYRO);
-            if ((gyroSlot != null) && gyroSlot.isArmored()){
+            if (aMech.hasArmoredGyro()){
                 sBasic.append(" (armored)");
             }
             sBasic.append("<br>");

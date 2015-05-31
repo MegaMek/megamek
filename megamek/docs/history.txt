@@ -169,37 +169,36 @@ v0.41.4-dev (SVN)
     only counts kills MegaMek actually credits a specific player with, so "pilot
     errors" may slip through the cracks.)
 + Bug: TacOps Vehicle Arcs option had no effect on dual forward and VTOL chin
-    turrets.
+    turrets
 + Bug: VSPL anti-infantry damage included general +2 pulse bonus.
 + Refactoring of code in unitDisplay package
 + Feature: Unit quirks can now be saved to the mmconf/unitQuirksOverride.xml via
     a right-click menu item in the ChatLounge
 + Bug: Quad Meks with mechanical JJs path strangely (lots of lateral shifts)
 + Changed by-range weapon sorting to disregard *minimum* ranges (still going
-    short > medium > long range brackets otherwise).
-+ Bug: Chain whip special attack effects treat all Meks as bipeds.
-+ Bug: Tripods not checking for center leg exposure in level 1 water.
-+ Bug: Chain whip special attack effects applied to already-destroyed limbs.
-+ Bug: Chain whips unable to grapple ProtoMeks.
-+ Bug: Portraits object getting referenced after being set to null.
+    short > medium > long range brackets otherwise)
++ Bug: Chain whip special attack effects treat all Meks as bipeds
++ Bug: Tripods not checking for center leg exposure in level 1 water
++ Bug: Chain whip special attack effects applied to already-destroyed limbs
++ Bug: Chain whips unable to grapple ProtoMeks
++ Bug: Portraits object getting referenced after being set to null
 + Bug: Mek mortars could gain benefits from C3 systems while indirect firing
 + Patch [#494]: (Princess) Infantry Damage Prediction Fix
 + Patch [#493]: Graphical updates to FiringSolutionSprite
 + Patch [#491]: board zoom centering
 + Added torso twist and turret rotation context menu entries to targeting phase
-    display.
+    display
 + Patch [#495]: Princess shoots at buildings with infantry in them
 + Bug [#4234]: Minesweeper vehicle equipment implemented
 + Added minefield reports that can only be seen by minefield owner in DB
 + Bug: Minefield motive system damage check still applies side penalty with
-    TacOps vehicle effectiveness in effect.
+    TacOps vehicle effectiveness in effect
 + Bug: Minefields always triggered upon entering regardless of roll outside
-    double blind.
+    double blind
 + Bug: No heat buildup for ICE- and fuel cell-powered BattleMechs getting up
-    (only Industrials get heat-free ground movement).
-+ Ruling: Engine stalls for ICE 'Mechs are for Industrials and BattleMechs both.
-+ Bug: MechView armored cockpit/engine identification not working as intended.
-
+    (only Industrials get heat-free ground movement)
++ Ruling: Engine stalls for ICE 'Mechs are for Industrials and BattleMechs both
++ Bug: MechView armored cockpit/engine identification not working as intended
 
 v0.41.3 (2014-04-18, 12:52 UTC+2)
 + Data: New Sprites

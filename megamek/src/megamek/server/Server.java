@@ -30547,10 +30547,21 @@ public class Server implements Runnable {
                     caa.getClub(),
                     (caa.getTarget(game) instanceof Infantry)
                     && !(caa.getTarget(game) instanceof BattleArmor));
-            if ((caa.getTargetType() == Targetable.TYPE_BUILDING)
-                && caa.getClub().getType()
-                      .hasSubType(MiscType.S_WRECKING_BALL)) {
-                damage += Compute.d6(4);
+            if (caa.getTargetType() == Targetable.TYPE_BUILDING) {
+                EquipmentType clubType = caa.getClub().getType();
+                if (clubType.hasSubType(MiscType.S_BACKHOE)
+                        || clubType.hasSubType(MiscType.S_CHAINSAW)
+                        || clubType.hasSubType(MiscType.S_MINING_DRILL)
+                        || clubType.hasSubType(MiscType.S_PILE_DRIVER)) {
+                    damage += Compute.d6(1);
+                } else if (clubType.hasSubType(MiscType.S_DUAL_SAW)) {
+                    damage += Compute.d6(2);
+                } else if (clubType.hasSubType(MiscType.S_ROCK_CUTTER)) {
+                    damage += Compute.d6(3);
+                }
+                else if (clubType.hasSubType(MiscType.S_WRECKING_BALL)) {
+                    damage += Compute.d6(4);
+                }
             }
         } else if (aaa instanceof DfaAttackAction) {
             DfaAttackAction daa = (DfaAttackAction) aaa;

@@ -6,27 +6,34 @@
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 SmallCraft
 </UnitType>
+
 <Name>
 Caerleon
 </Name>
+
 <Model>
 (Standard)
 </Model>
+
 <Tonnage>
 195
 </Tonnage>
+
 <SafeThrust>
 4
 </SafeThrust>
+
 <Armor>
 107
 99
 99
 86
 </Armor>
+
 <Nose Equipment>
 ISLightGaussRifle
 ISLightGaussRifle
@@ -108,6 +115,6 @@ CargoBay:4.5:1
 </passengers>
 
 <source>
-TRO 3145 FWL
+TRO 3145 Free Worlds League - Early Republic
 </source>
 

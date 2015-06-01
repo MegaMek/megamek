@@ -307,7 +307,12 @@ public class QuirksHandler {
 
                 // Add the unit to the default quirks list.
                 if (quirkList.isEmpty()) {
-                    log.append("No quirks found for ").append(unitId);
+                    log.append("\n\t\tNo quirks found for ");
+                    if (unitId.length() > 0) {
+                        log.append(unitId);
+                    } else {
+                        log.append("<BlankUnitId>");
+                    }
                 }
                 quirkMap.put(unitId, quirkList);
             }

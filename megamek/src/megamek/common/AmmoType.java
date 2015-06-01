@@ -1263,12 +1263,10 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Heat-Seeking", 2, M_HEAT_SEEKING, 2820, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("(Clan) Tandem-Charge", 2, M_TANDEM_CHARGE, 2757, TechConstants.T_CLAN_EXPERIMENTAL));
         munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE_WARHEAD, 2820, TechConstants.T_CLAN_ADVANCED));
-
-
-        //munitions.add(new MunitionMutator("(Clan) Listen-Kill", 1,M_LISTEN_KILL, TechConstants.T_CLAN_EXPERIMENTAL));
-        //munitions.add(new MunitionMutator("(Clan) Anti-TSM", 1, M_ANTI_TSM,TechConstants.T_CLAN_EXPERIMENTAL));
-        //munitions.add(new MunitionMutator("(Clan) Acid", 2, M_AX_HEAD,TechConstants.T_CLAN_EXPERIMENTAL));
-        //munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,TechConstants.T_CLAN_UNOFFICIAL));
+        munitions.add(new MunitionMutator("(Clan) Listen-Kill", 1,M_LISTEN_KILL,3050, TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("(Clan) Anti-TSM", 1, M_ANTI_TSM,3050,TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("(Clan) Acid", 2, M_AX_HEAD,3053,TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,3055,TechConstants.T_CLAN_UNOFFICIAL));
 
         // Walk through both the base types and the
         // mutators, and create munition types.

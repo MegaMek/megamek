@@ -1252,29 +1252,29 @@
 		<quirk>no_arms</quirk>
         <quirk>no_twist</quirk>
 	</unit>
-    <unit>
+	<unit>
 		<chassis>Beowulf IIC</chassis>
 		<model>PR</model>
 		<quirk>ext_twist</quirk>
 		<quirk>bad_rep</quirk>
-        <quirk>exp_actuator</quirk>
-        <weaponQuirk>
+		<quirk>exp_actuator</quirk>
+		<weaponQuirk>
 			<weaponQuirkName>em_interference</weaponQuirkName>
 			<location>RA</location>
 			<slot>5</slot>
-			<weaponName>CLERLargePulseLaser</weaponName>
+			<weaponName>ER Large Laser</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>em_interference</weaponQuirkName>
 			<location>LA</location>
-			<slot>4</slot>
-			<weaponName>CLERMediumPulseLaser</weaponName>
+			<slot>5</slot>
+			<weaponName>ER Medium Pulse Laser</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>em_interference</weaponQuirkName>
-			<location>LA </location>
-			<slot>6</slot>
-			<weaponName>CLERMediumPulseLaser</weaponName>
+			<location>LA</location>
+			<slot>7</slot>
+			<weaponName>ER Medium Pulse Laser</weaponName>
 		</weaponQuirk>
 	</unit>
     <unit>
@@ -2747,72 +2747,202 @@
     <!-- END TRO 3145 Federated Suns-->
     <!-- BEGIN TRO 3145 Free Worlds League-->
     <unit>
-        <chassis></chassis>
-        <model></model>
-        <quirk></quirk>
+        <chassis>Xiphos Assault Battle Armor</chassis>
+        <model>all</model>
+        <quirk>imp_com</quirk>
     </unit>
     <unit>
-        <chassis></chassis>
-        <model></model>
-        <quirk></quirk>
+        <chassis>Red Kite Attack VTOL</chassis>
+        <model>(Standard)</model>
+        <quirk>vtol_rotor</quirk>
+        <weaponQuirk>
+            <weaponQuirkName>ammo_feed_problems</weaponQuirkName>
+            <location>TU</location>
+            <slot>0</slot>
+            <weaponName>CLMediumChemLaser</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>ammo_feed_problems</weaponQuirkName>
+            <location>TU</location>
+            <slot>1</slot>
+            <weaponName>CLMediumChemLaser</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>ammo_feed_problems</weaponQuirkName>
+            <location>TU</location>
+            <slot>2</slot>
+            <weaponName>CLMediumChemLaser</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>ammo_feed_problems</weaponQuirkName>
+            <location>TU</location>
+            <slot>3</slot>
+            <weaponName>CLMediumChemLaser</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>ammo_feed_problems</weaponQuirkName>
+            <location>FR</location>
+            <slot>0</slot>
+            <weaponName>CLMediumChemLaser</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>ammo_feed_problems</weaponQuirkName>
+            <location>FR</location>
+            <slot>1</slot>
+            <weaponName>CLMediumChemLaser</weaponName>
+        </weaponQuirk>
     </unit>
     <unit>
-        <chassis></chassis>
-        <model></model>
-        <quirk></quirk>
+        <chassis>R10 Mechanized ICV</chassis>
+        <model>all</model>
+        <quirk>easy_maintain</quirk>
+        <quirk>poor_target_long</quirk>
     </unit>
     <unit>
-        <chassis></chassis>
-        <model></model>
-        <quirk></quirk>
+        <chassis>Partisan AA Vehicle</chassis>
+        <model>all</model>
+        <quirk>anti_air</quirk>
     </unit>
     <unit>
-        <chassis></chassis>
-        <model></model>
-        <quirk></quirk>
+        <chassis>Bardiche Heavy Strike Tank</chassis>
+        <model>all</model>
+        <quirk>power_reverse</quirk>
+        <quirk>poor_sealing</quirk>
     </unit>
     <unit>
-        <chassis></chassis>
-        <model></model>
-        <quirk></quirk>
+        <chassis>Bulwark Assault Vehicle</chassis>
+        <model>(Standard)</model>
+        <weaponQuirk>
+            <weaponQuirkName>accurate</weaponQuirkName>
+            <location>FR</location>
+            <slot>0</slot>
+            <weaponName>ISImprovedHeavyGaussRifle</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>exposed_linkage</weaponQuirkName>
+            <location>FR</location>
+            <slot>0</slot>
+            <weaponName>ISImprovedHeavyGaussRifle</weaponName>
+        </weaponQuirk>
     </unit>
     <unit>
-        <chassis></chassis>
-        <model></model>
-        <quirk></quirk>
+        <chassis>Bulwark Assault Vehicle</chassis>
+        <model>(Original)</model>
+        <weaponQuirk>
+            <weaponQuirkName>accurate</weaponQuirkName>
+            <location>FR</location>
+            <slot>0</slot>
+            <weaponName>ISHeavyGaussRifle</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>exposed_linkage</weaponQuirkName>
+            <location>FR</location>
+            <slot>0</slot>
+            <weaponName>ISHeavyGaussRifle</weaponName>
+        </weaponQuirk>
     </unit>
     <unit>
-        <chassis></chassis>
-        <model></model>
-        <quirk></quirk>
+        <chassis>Gambit</chassis>
+        <model>all</model>
+        <quirk>hyper_actuator</quirk>
     </unit>
     <unit>
-        <chassis></chassis>
-        <model></model>
-        <quirk></quirk>
+        <chassis>Havoc</chassis>
+        <model>HVC-P6</model>
+        <quirk>imp_target_short</quirk>
     </unit>
     <unit>
-        <chassis></chassis>
-        <model></model>
-        <quirk></quirk>
+        <chassis>Violator</chassis>
+        <model>all</model>
+        <quirk>distracting</quirk>
+        <quirk>easy_maintain</quirk>
     </unit>
     <unit>
-        <chassis></chassis>
-        <model></model>
-        <quirk></quirk>
+        <chassis>Sarath</chassis>
+        <model>all</model>
+        <quirk>distracting</quirk>
+        <quirk>compact_mech</quirk>
+        <quirk>bad_rep</quirk>
     </unit>
     <unit>
-        <chassis></chassis>
-        <model></model>
-        <quirk></quirk>
+        <chassis>Anzu</chassis>
+        <model>all</model>
+        <quirk>multi_trac</quirk>
+        <quirk>imp_life_support</quirk>
     </unit>
     <unit>
-        <chassis></chassis>
-        <model></model>
-        <quirk></quirk>
+        <chassis>Carronade</chassis>
+        <model>CRN-7M</model>
+        <quirk>fast_reload</quirk>
+    </unit>
+    <unit>
+        <chassis>Neanderthal</chassis>
+        <model>all</model>
+        <quirk>stable</quirk>
+        <quirk>distracting</quirk>
+        <quirk>non_standard</quirk>
+    </unit>
+    <unit>
+        <chassis>Stalker II</chassis>
+        <model>STK-9A</model>
+        <quirk>combat_computer</quirk>
+        <quirk>pro_actuator</quirk>
+        <quirk>no_arms</quirk>
+    </unit>
+    <unit>
+        <chassis>Juliano</chassis>
+        <model>JLN-5A</model>
+        <quirk>combat_computer</quirk>
+    </unit>
+    <unit>
+        <chassis>Picaroon</chassis>
+        <model>CSR-F100</model>
+        <quirk>easy_maintain</quirk>
+        <quirk>atmo_instability</quirk>
+    </unit>
+    <unit>
+        <chassis>Aquila</chassis>
+        <model>AQA-1M</model>
+        <weaponQuirk>
+            <weaponQuirkName>accurate</weaponQuirkName>
+            <location>NOS</location>
+            <slot>0</slot>
+            <weaponName>ISLightGaussRifle</weaponName>
+        </weaponQuirk>
+        <weaponQuirk>
+            <weaponQuirkName>accurate</weaponQuirkName>
+            <location>NOS</location>
+            <slot>1</slot>
+            <weaponName>ISLightGaussRifle</weaponName>
+        </weaponQuirk>
+    </unit>
+    <unit>
+        <chassis>Shikra</chassis>
+        <model>SKR-4M</model>
+        <quirk>difficult_maintain</quirk>
+        <quirk>non_standard</quirk>
+    </unit>
+    <unit>
+        <chassis>Caerleon</chassis>
+        <model>(Standard)</model>
+        <quirk>easy_maintain</quirk>
+        <quirk>fast_reload</quirk>
+        <quirk>atmo_instability</quirk>
+    </unit>
+    <unit>
+        <chassis>Seleucus Infantry Transport</chassis>
+        <model>(Standard)</model>
+        <quirk>atmo_flyer</quirk>
+        <quirk>difficult_maintain</quirk>
+        <quirk>non_standard</quirk>
+    </unit>
+    <unit>
+        <chassis>Gorgon Carrier</chassis>
+        <model>(Standard)</model>
+        <quirk>internal_bomb</quirk>
     </unit>
     <!-- END TRO 3145 Free Worlds League-->
-     <!-- BEGIN TRO 3145 Lyran Commonwealth-->
+    <!-- BEGIN TRO 3145 Lyran Commonwealth-->
     <unit>
         <chassis>Fenrir II Assault Battle Armor</chassis>
         <model>all</model>
@@ -3298,6 +3428,12 @@
 		<quirk>rumble_seat</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>LT</location>
+			<slot>7</slot>
+			<weaponName>ER Large Laser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
 			<location>LA</location>
 			<slot>4</slot>
 			<weaponName>Ultra AC/5</weaponName>
@@ -3329,6 +3465,7 @@
 			<weaponName>Ultra AC/10</weaponName>
 		</weaponQuirk>
 	</unit>
+
     <unit>
         <chassis>Kodiak II</chassis>
         <model>all</model>

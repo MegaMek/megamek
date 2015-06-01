@@ -3074,6 +3074,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
 
         public Entity getEntityAt(int row) {
+            if (row < 0) {
+                return null;
+            }
             return data.get(row);
         }
 
@@ -3093,6 +3096,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 Component c = this;
                 setText(getValueAt(row, column).toString(), isSelected);
                 Entity entity = getEntityAt(row);
+                if (null == entity) {
+                    return null;
+                }
                 boolean isOwner = entity.getOwner().equals(
                         clientgui.getClient().getLocalPlayer());
                 boolean blindDrop = clientgui.getClient().getGame()
@@ -3532,6 +3538,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             Vector<Entity> entities = new Vector<Entity>();
             for (int i = 0; i < rows.length; i++) {
                 entities.add(mekModel.getEntityAt(rows[i]));
+            }
+            if (null == entity) {
+                return;
             }
             boolean isOwner = entity.getOwner().equals(
                     clientgui.getClient().getLocalPlayer());

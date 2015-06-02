@@ -174,7 +174,7 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public String getWindDirName() {
-            return dirNames[windDirection];
+            return Messages.getString("PlanetaryConditions." + dirNames[windDirection]);
     }
 
     public String getLightCurrentName() {

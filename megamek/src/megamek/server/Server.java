@@ -20967,7 +20967,6 @@ public class Server implements Runnable {
                     damage -= absorbed;
                     r = new Report(6090);
                     r.subject = te_n;
-                    r.newlines = 0;
                     r.indent(3);
                     vDesc.addElement(r);
                     if (te instanceof GunEmplacement) {
@@ -21203,7 +21202,7 @@ public class Server implements Runnable {
                                                                                  .LOC_REAR));
                     }
                     r.subject = te_n;
-                    r.indent(2);
+                    r.indent(3);
                     vDesc.add(r);
                     damage = 0;
                     int critIndex;
@@ -21226,12 +21225,20 @@ public class Server implements Runnable {
                         && ((Mech) te).hasCompositeStructure()) {
                         tmpDamageHold = damage;
                         damage *= 2;
+                        r = new Report(6091);
+                        r.subject = te_n;
+                        r.indent(3);
+                        vDesc.add(r);
                     }
                     if ((te instanceof Mech)
                         && ((Mech) te).hasReinforcedStructure()) {
                         tmpDamageHold = damage;
                         damage /= 2;
                         damage += tmpDamageHold % 2;
+                        r = new Report(6092);
+                        r.subject = te_n;
+                        r.indent(3);
+                        vDesc.add(r);
                     }
                     if ((te.getInternal(hit) > damage) && (damage > 0)) {
                         // internal structure absorbs all damage
@@ -21241,13 +21248,15 @@ public class Server implements Runnable {
                             crits++;
                         }
                         tookInternalDamage = true;
-                        te.damageThisPhase += damage;
+                        // Alternate structures don't affect our damage total
+                        // for later PSR purposes, so use the previously stored
+                        // value here as necessary.
+                        te.damageThisPhase += (tmpDamageHold > -1) ?
+                                tmpDamageHold : damage;
                         damage = 0;
                         r = new Report(6100);
                         r.subject = te_n;
-                        if (!prevArmorDamage) {
-                            r.indent(3);
-                        }
+                        r.indent(3);
                         // Infantry platoons have men not "Internals".
                         if (isPlatoon) {
                             r.messageId = 6095;

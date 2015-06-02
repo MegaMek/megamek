@@ -238,16 +238,26 @@ public class LRMHandler extends MissileWeaponHandler {
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
 
+        int rackSize = wtype.getRackSize();
+        boolean minRangeELRMAttack = false;
+        
+        // ELRMs only hit with half their rack size rounded up at minimum range.
+        if (wtype instanceof ExtendedLRMWeapon
+                && (nRange <= wtype.getMinimumRange())) {
+            rackSize = rackSize / 2 + rackSize % 2;
+            minRangeELRMAttack = true;
+        }
+        
         if (allShotsHit()) {
-            missilesHit = wtype.getRackSize();
+            missilesHit = rackSize;
         } else {
             if (ae instanceof BattleArmor) {
-                missilesHit = Compute.missilesHit(wtype.getRackSize()
+                missilesHit = Compute.missilesHit(rackSize
                         * ((BattleArmor) ae).getShootingStrength(),
                         nMissilesModifier, weapon.isHotLoaded(), false,
                         advancedAMS && amsEnganged);
             } else {
-                missilesHit = Compute.missilesHit(wtype.getRackSize(),
+                missilesHit = Compute.missilesHit(rackSize,
                         nMissilesModifier, weapon.isHotLoaded(), false,
                         advancedAMS && amsEnganged);
             }
@@ -269,6 +279,12 @@ public class LRMHandler extends MissileWeaponHandler {
                 }
                 r.subject = subjectId;
                 r.add(nMissilesModifier);
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            }
+            if (minRangeELRMAttack) {
+                r = new Report(3342);
+                r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             }

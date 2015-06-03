@@ -6,9 +6,11 @@
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Rogue Bear Heavy Battle Armor
 </Name>
@@ -20,21 +22,27 @@ Rogue Bear Heavy Battle Armor
 <chassis>
 biped
 </chassis>
+
 <weightclass>
 3
 </weightclass>
+
 <Trooper Count>
 5
 </Trooper Count>
+
 <cruiseMP>
 1
 </cruiseMP>
+
 <jumpingMP>
 2
 </jumpingMP>
+
 <Armor>
 13
 </Armor>
+
 <Point Equipment>
 Clan BA Machine Gun:LA
 Clan BA Machine Gun:RA
@@ -43,22 +51,27 @@ BASRM3 Ammo:Body:Shots4#
 BABattleClawVibro:LA
 BABattleClawVibro:RA
 </Point Equipment>
+
 <type>
 Clan Level 2
 </type>
+
 <year>
 3073
 </year>
+
 <motion_type>
 Jump
 </motion_type>
 
 <source>
-TRO:3075
+TRO 3075 - Jihad
 </source>
+
 <armor_type>
 28
 </armor_type>
+
 <armor_tech>
 2
 </armor_tech>

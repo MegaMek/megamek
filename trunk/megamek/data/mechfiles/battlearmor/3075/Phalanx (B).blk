@@ -6,30 +6,39 @@
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Phalanx Battle Armor
 </Name>
+
 <Model>
 (B)
 </Model>
+
 <chassis>
 biped
 </chassis>
+
 <weightclass>
 3
 </weightclass>
+
 <Trooper Count>
 4
 </Trooper Count>
+
 <cruiseMP>
 2
 </cruiseMP>
+
 <Armor>
 7
 </Armor>
+
 <Squad Equipment>
 ISBASRM4:Body
 BA-SRM4 Ammo:Body
@@ -55,21 +64,27 @@ ISBATaser:RA
 <Trooper 4 Equipment>
 ISBATaser:RA
 </Trooper 4 Equipment>
+
 <type>
 IS Level 3
 </type>
+
 <year>
 3065
 </year>
+
 <motion_type>
 Leg
 </motion_type>
+
 <source>
-TRO 3075
+TRO 3075 - Civil War
 </source>
+
 <armor_type>
 33
 </armor_type>
+
 <armor_tech>
 3
 </armor_tech>

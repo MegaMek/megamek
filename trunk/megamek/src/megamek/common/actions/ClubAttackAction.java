@@ -300,17 +300,6 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
                                      "Shield not in passive mode");
             }
-        } else if (clubType.hasSubType(MiscType.S_FLAIL)) {
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM,
-                                     club.getLocation())) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                     "Upper actuator destroyed");
-            }
-            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM,
-                                     club.getLocation())) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                     "Lower actuator destroyed");
-            }
         } else {
             // check if location is present
             if (ae.isLocationBad(club.getLocation())) {
@@ -460,30 +449,15 @@ public class ClubAttackAction extends PhysicalAttackAction {
             if (armMounted && !ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM,
                                                    club.getLocation())) {
                 toHit.addModifier(2, "Upper arm actuator destroyed");
-                if ((clubType.hasSubType(MiscType.S_LANCE))) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                         "Unable to use lance with upper arm actuator " +
-                                         "missing or destroyed");
-                }
             }
             if (armMounted && !ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM,
                                                    club.getLocation())) {
                 toHit.addModifier(2, "Lower arm actuator missing or destroyed");
-                if ((clubType.hasSubType(MiscType.S_LANCE))) {
-                    return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                         "Unable to use lance with lower arm actuator " +
-                                         "missing or destroyed");
-                }
             }
             // Rules state +2 bth if your using a club with claws.
             if (hasClaws
                 && (clubType.hasSubType(MiscType.S_CLUB))) {
                 toHit.addModifier(2, "Mek has claws");
-            }
-            if ((clubType.hasSubType(MiscType.S_LANCE))
-                && (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM,
-                                         club.getLocation()) || !ae.hasWorkingSystem(
-                    Mech.ACTUATOR_UPPER_ARM, club.getLocation()))) {
             }
             if (ae.hasFunctionalArmAES(club.getLocation())) {
                 toHit.addModifier(-1, "AES modifer");
@@ -509,13 +483,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
             }
         } else {
             if (attackerElevation == targetElevation) {
-                if (shield) {
-                    toHit.setHitTable(ToHitData.HIT_PUNCH);
-                } else {
-                    toHit.setHitTable(aimTable);
-                    if (aimTable != ToHitData.HIT_NORMAL) {
-                        toHit.addModifier(4, "called shot");
-                    }
+                toHit.setHitTable(aimTable);
+                if (aimTable != ToHitData.HIT_NORMAL) {
+                    toHit.addModifier(4, "called shot");
                 }
             } else if (attackerElevation < targetElevation) {
                 if (target.getHeight() == 0) {

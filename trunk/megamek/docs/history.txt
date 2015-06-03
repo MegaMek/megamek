@@ -11,6 +11,10 @@ v0.41.5-dev (SVN)
 + Bug: Extended LRMs hitting with full rack size at minimum range.
 + Translation: Added capability to translate wind direction.
 + Patches [#437 to #441] - Various Source updates and new sprites.
++ Bug: Lances and flails failing outright from arm actuator damage rather than
+    accruing penalties.
++ Bug: Shield bashes auto-punching instead of being aimable as per hatchet
+    rules.
 
 v0.41.4 (2015-05-31 16:45 UTC)
 + Bug: UnitDisplay System Tab would double up on status modifiers, like * and j

@@ -1404,7 +1404,13 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                                 || club.getType().hasSubType(
                                         MiscType.S_CHAIN_WHIP)
                                 || club.getType().hasSubType(
-                                        MiscType.S_RETRACTABLE_BLADE)) {
+                                        MiscType.S_RETRACTABLE_BLADE)
+                                || club.getType().hasSubType(
+                                        MiscType.S_SHIELD_LARGE)
+                                || club.getType().hasSubType(
+                                        MiscType.S_SHIELD_MEDIUM)
+                                || club.getType().hasSubType(
+                                        MiscType.S_SHIELD_SMALL)) {
                             canAim = true;
                         }
                     }

@@ -6,9 +6,11 @@
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Shedu Assault Battle Armor
 </Name>
@@ -20,18 +22,23 @@ Shedu Assault Battle Armor
 <chassis>
 quad
 </chassis>
+
 <weightclass>
 4
 </weightclass>
+
 <Trooper Count>
 6
 </Trooper Count>
+
 <cruiseMP>
 3
 </cruiseMP>
+
 <Armor>
 15
 </Armor>
+
 <Squad Equipment>
 ISDetachableWeaponPack:Body
 ISBASupportPPC:Body
@@ -43,21 +50,27 @@ IS BA Advanced:Body
 IS BA Advanced:Body
 IS BA Advanced:Body
 </Squad Equipment>
+
 <type>
 IS Level 3
 </type>
+
 <year>
 3074
 </year>
+
 <motion_type>
 Leg
 </motion_type>
+
 <source>
-TRO 3075
+TRO 3075 - Jihad
 </source>
+
 <armor_type>
 30
 </armor_type>
+
 <armor_tech>
 3
 </armor_tech>

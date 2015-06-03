@@ -6,9 +6,11 @@
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Corona Heavy Battle Armor
 </Name>
@@ -20,18 +22,23 @@ Corona Heavy Battle Armor
 <chassis>
 biped
 </chassis>
+
 <weightclass>
 3
 </weightclass>
+
 <Trooper Count>
 5
 </Trooper Count>
+
 <cruiseMP>
 2
 </cruiseMP>
+
 <Armor>
 8
 </Armor>
+
 <Point Equipment>
 CLBAMediumPulseLaser:Body
 BABattleClaw:LA
@@ -39,22 +46,27 @@ BABasicManipulator:RA
 BAAPMount:RA
 InfantryAssaultRifle:RA:APM
 </Point Equipment>
+
 <type>
 Clan Level 2
 </type>
+
 <year>
 3060
 </year>
+
 <motion_type>
 Leg
 </motion_type>
 
 <source>
-TRO:3075
+TRO 3075 - Clan Invasion
 </source>
+
 <armor_type>
 28
 </armor_type>
+
 <armor_tech>
 2
 </armor_tech>

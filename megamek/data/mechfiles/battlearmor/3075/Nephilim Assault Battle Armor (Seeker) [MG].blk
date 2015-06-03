@@ -6,30 +6,39 @@
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Nephilim Assault Battle Armor
 </Name>
+
 <Model>
 (Seeker) [MG]
 </Model>
+
 <chassis>
 biped
 </chassis>
+
 <weightclass>
 4
 </weightclass>
+
 <Trooper Count>
 6
 </Trooper Count>
+
 <cruiseMP>
 2
 </cruiseMP>
+
 <Armor>
 16
 </Armor>
+
 <Squad Equipment>
 ISBAMachine Gun:RA
 ISBASRM3:Body
@@ -45,22 +54,27 @@ IS BA Mimetic:RA
 IS BA Mimetic:RA
 IS BA Mimetic:LA
 </Squad Equipment>
+
 <type>
 IS Level 2
 </type>
+
 <year>
 3071
 </year>
+
 <motion_type>
 leg
 </motion_type>
 
 <source>
-TRO 3075
+TRO 3075 - Jihad
 </source>
+
 <armor_type>
 36
 </armor_type>
+
 <armor_tech>
 3
 </armor_tech>

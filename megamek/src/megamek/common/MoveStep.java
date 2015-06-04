@@ -2775,7 +2775,7 @@ public class MoveStep implements Serializable {
         }
 
         // Assault dropping units cannot move
-        if (entity.isAssaultDropInProgress()) {
+        if (entity.isAssaultDropInProgress() || entity.isDropping()) {
             return false;
         }
         

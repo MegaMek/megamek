@@ -16,6 +16,7 @@ v0.41.5-dev (SVN)
 + Bug: Shield bashes auto-punching instead of being aimable as per hatchet
     rules.
 + Bug [#4557]: Landed VTOLs get zip-line PSR warning unloading non-jump inf
++ Bug [#4558]: Sensor returns can be targeted in firing phase (revealing info)
 
 v0.41.4 (2015-05-31 16:45 UTC)
 + Bug: UnitDisplay System Tab would double up on status modifiers, like * and j

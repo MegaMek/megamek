@@ -32,6 +32,13 @@ public class Messages {
     private Messages() {
     }
 
+    /**
+     * Returns the translated value given the key for that value in the
+     * common Resource Bundle directory.
+     *
+     * @param key
+     * @return
+     */
     public static String getString(String key) {
         try {
             return RESOURCE_BUNDLE.getString(key);

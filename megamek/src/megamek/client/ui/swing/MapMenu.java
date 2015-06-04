@@ -1125,15 +1125,35 @@ public class MapMenu extends JPopupMenu {
         }
 
         final boolean isFiringDisplay = (currentPanel instanceof FiringDisplay);
-        final boolean isTargetingDisplay =
-                (currentPanel instanceof TargetingPhaseDisplay);
+        final boolean isTargetingDisplay = (currentPanel instanceof TargetingPhaseDisplay);
         final boolean canStartFires = client.getGame().getOptions()
-                                            .booleanOption("tacops_start_fire");  //$NON-NLS-1$
+                .booleanOption("tacops_start_fire"); //$NON-NLS-1$
+        
+        boolean sensors = game.getOptions().booleanOption(
+                "tacops_sensors");
+        boolean sensorsDetectAll = game.getOptions().booleanOption(
+                "sensors_detect_all");
+        boolean doubleBlind = game.getOptions().booleanOption(
+                "double_blind");
+        
+        IPlayer localPlayer = client.getLocalPlayer();
+        int localTeam = localPlayer.getTeam();
 
 
         // Add menu item to target each entity in the coords
         for (Entity entity : client.getGame().getEntitiesVector(coords)) {
-            menu.add(TargetMenuItem(entity));
+            boolean alliedUnit = 
+                    !entity.getOwner().isEnemyOf(localPlayer)
+                    || (entity.getOwner().getTeam() == localTeam 
+                        && game.getOptions().booleanOption("team_vision"));
+            // Only add the unit if it's actually visible
+            //  With double blind on, the game may unseen units
+            if (!sensors || !doubleBlind || alliedUnit 
+                    || entity.hasSeenEntity(localPlayer)
+                    || (sensorsDetectAll 
+                            && entity.hasDetectedEntity(localPlayer))) {
+                menu.add(TargetMenuItem(entity));
+            }
         }
 
         IHex h = board.getHex(coords);

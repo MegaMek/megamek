@@ -3864,18 +3864,18 @@ public class Server implements Runnable {
         if (!abbreviatedReport) {
             // Wind direction and strength
             Report rWindDir = new Report(1025, Report.PUBLIC);
-            rWindDir.add(game.getPlanetaryConditions().getWindDirName());
+            rWindDir.add(game.getPlanetaryConditions().getWindDirName(),"Messages");
             rWindDir.newlines = 0;
             Report rWindStr = new Report(1030, Report.PUBLIC);
-            rWindStr.add(game.getPlanetaryConditions().getWindCurrentName());
+            rWindStr.add(game.getPlanetaryConditions().getWindCurrentName(),"Messages");
             rWindStr.newlines = 0;
             Report rWeather = new Report(1031, Report.PUBLIC);
-            rWeather.add(game.getPlanetaryConditions().getWeatherCurrentName());
+            rWeather.add(game.getPlanetaryConditions().getWeatherCurrentName(),"Messages");
             rWeather.newlines = 0;
             Report rLight = new Report(1032, Report.PUBLIC);
-            rLight.add(game.getPlanetaryConditions().getLightCurrentName());
+            rLight.add(game.getPlanetaryConditions().getLightCurrentName(),"Messages");
             Report rVis = new Report(1033, Report.PUBLIC);
-            rVis.add(game.getPlanetaryConditions().getFogCurrentName());
+            rVis.add(game.getPlanetaryConditions().getFogCurrentName(),"Messages");
             addReport(rWindDir);
             addReport(rWindStr);
             addReport(rWeather);

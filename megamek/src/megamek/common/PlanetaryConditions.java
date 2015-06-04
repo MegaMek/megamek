@@ -174,27 +174,27 @@ public class PlanetaryConditions implements Serializable {
     }
 
     public String getWindDirName() {
-            return Messages.getString("PlanetaryConditions." + dirNames[windDirection]);
+        return "PlanetaryConditions." + dirNames[windDirection];
     }
 
     public String getLightCurrentName() {
-        return Messages.getString("PlanetaryConditions." + lightNames[lightConditions]);
+        return "PlanetaryConditions." + lightNames[lightConditions];
     }
 
     public String getWeatherCurrentName() {
-        return Messages.getString("PlanetaryConditions." + weatherNames[weatherConditions]);
+        return "PlanetaryConditions." + weatherNames[weatherConditions];
     }
 
     public String getWindCurrentName() {
-        return Messages.getString("PlanetaryConditions." + windNames[windStrength]);
+        return "PlanetaryConditions." + windNames[windStrength];
     }
 
     public String getAtmosphereCurrentName() {
-        return Messages.getString("PlanetaryConditions." + atmoNames[atmosphere]);
+        return "PlanetaryConditions." + atmoNames[atmosphere];
     }
 
     public String getFogCurrentName() {
-        return Messages.getString("PlanetaryConditions." + fogNames[fog]);
+        return "PlanetaryConditions." + fogNames[fog];
     }
 
     /**

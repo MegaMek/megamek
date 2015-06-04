@@ -120,6 +120,9 @@ public class Report implements Serializable {
     /** The data values to fill in the report with. */
     private Vector<String> tagData = new Vector<String>();
 
+    /** How to translate the tagData or not at all. */
+    private String tagTranslate = null;
+
     /**
      * How this report is handled when double-blind play is in effect. See
      * constants below for more details.
@@ -199,6 +202,7 @@ public class Report implements Serializable {
         indentation = r.indentation;
         newlines = r.newlines;
         tagData = (Vector<String>) r.tagData.clone();
+        tagTranslate = r.tagTranslate;
         type = r.type;
         subject = r.subject;
         obscuredIndexes = (Hashtable<Integer, Boolean>) r.obscuredIndexes
@@ -233,7 +237,6 @@ public class Report implements Serializable {
             obscuredIndexes.put(new Integer(tagData.size()),
                     new Boolean(true));
         }
-
         tagData.addElement(String.valueOf(data));
     }
 
@@ -246,6 +249,21 @@ public class Report implements Serializable {
      */
     public void add(String data) {
         add(data, true);
+        tagTranslate = null;
+    }
+
+    /**
+     * Add the given string to the list of data that will be substituted for the
+     * &lt;data&gt; tags in the report. The order in which items are added must
+     * match the order of the tags in the report text. The second string
+     * argument sets the translation flag to the string value.
+     *
+     * @param data the String to be substituted
+     * @param translate the common Resource Bundle to be used for translation
+     */
+    public void add(String data, String translate) {
+        add(data, true);
+        tagTranslate = translate;
     }
 
     /**
@@ -364,6 +382,12 @@ public class Report implements Serializable {
             String value = tagData.elementAt(index);
             if (value == null) {
                 return Report.OBSCURED_STRING;
+            } else if (tagTranslate != null) {
+                // Each common Resource Bundle is found below
+                if (tagTranslate.equals("Messages")) {
+                    return Messages.getString(value);
+                // Others ifs will be here.
+                }
             }
             return value;
         } catch (ArrayIndexOutOfBoundsException e) {

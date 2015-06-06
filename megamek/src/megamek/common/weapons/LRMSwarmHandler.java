@@ -297,6 +297,32 @@ public class LRMSwarmHandler extends LRMHandler {
 
     /*
      * (non-Javadoc)
+     *
+     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
+     *
+     * This needs to override the superclass method because in case of swarm
+     * the damage to adjacent infantry should be based on the missiles left over,
+     * not the total rack size.
+     */
+    @Override
+    protected int calcDamagePerHit() {
+        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
+            int missiles = waa.isSwarmingMissiles() ? waa.getSwarmMissiles()
+                    : wtype.getRackSize();
+            double toReturn = Compute.directBlowInfantryDamage(
+                    missiles, bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized());
+            if (bGlancing) {
+                toReturn /= 2;
+            }
+            return (int) Math.floor(toReturn);
+        }
+        return 1;
+    }
+
+    /*
+     * (non-Javadoc)
      * 
      * @see
      * megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common
@@ -393,22 +419,9 @@ public class LRMSwarmHandler extends LRMHandler {
             if (allShotsHit()) {
                 missilesHit = swarmMissilesLeft;
             } else {
-                int swarmsForHitTable = 5;
-                if ((swarmMissilesLeft > 5) && (swarmMissilesLeft <= 10)) {
-                    swarmsForHitTable = 10;
-                } else if ((swarmMissilesLeft > 10)
-                        && (swarmMissilesLeft <= 15)) {
-                    swarmsForHitTable = 15;
-                } else if ((swarmMissilesLeft > 15)
-                        && (swarmMissilesLeft <= 20)) {
-                    swarmsForHitTable = 20;
-                }
-                missilesHit = Compute.missilesHit(swarmsForHitTable,
+                missilesHit = Compute.missilesHit(swarmMissilesLeft,
                         nMissilesModifier, weapon.isHotLoaded(), false,
                         advancedAMS && amsEnganged);
-                if (missilesHit > swarmMissilesLeft) {
-                    missilesHit = swarmMissilesLeft;
-                }
             }
         } else {
             missilesHit = allShotsHit() ? wtype.getRackSize() : Compute

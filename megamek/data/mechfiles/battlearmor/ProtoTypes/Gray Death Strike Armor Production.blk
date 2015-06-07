@@ -6,27 +6,35 @@
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Gray Death Strike Armor
 </Name>
+
 <Model>
 (Standard)
 </Model>
+
 <chassis>
 biped
 </chassis>
+
 <weightclass>
 2
 </weightclass>
+
 <Trooper Count>
 4
 </Trooper Count>
+
 <cruiseMP>
 3
 </cruiseMP>
+
 <Armor>
 9
 </Armor>
@@ -46,15 +54,19 @@ ISBALightTAG:RA
 BABasicManipulator:LA
 BABasicManipulator:RA
 </Squad Equipment>
+
 <type>
 IS Level 2
 </type>
+
 <year>
-3085
+3080
 </year>
+
 <motion_type>
 Leg
 </motion_type>
+
 <source>
-TRO Prototypes
+TRO Prototypes - Jihad
 </source>

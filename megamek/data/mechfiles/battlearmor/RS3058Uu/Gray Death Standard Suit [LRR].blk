@@ -9,24 +9,31 @@ MAM0
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Gray Death Standard Suit
 </Name>
+
 <Model>
 [LRR]
 </Model>
+
 <chassis>
 biped
 </chassis>
+
 <weightclass>
 2
 </weightclass>
+
 <Trooper Count>
 4
 </Trooper Count>
+
 <cruiseMP>
 3
 </cruiseMP>
+
 <Armor>
 9
 </Armor>
@@ -42,18 +49,23 @@ BAAPMount:LA
 InfantryAssaultRifle:LA:APM
 ISImprovedSensors:Body
 </Squad Equipment>
+
 <type>
 IS Level 2
 </type>
+
 <year>
 3069
 </year>
+
 <motion_type>
 Leg
 </motion_type>
+
 <source>
-TRO 3058 Upgrade
+TRO 3058U - Jihad
 </source>
+
 <armor_tech>
 3
 </armor_tech>

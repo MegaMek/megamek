@@ -6,30 +6,39 @@
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Achileus Light Battle Armor
 </Name>
+
 <Model>
 [MG]
 </Model>
+
 <Trooper Count>
 4
 </Trooper Count>
+
 <chassis>
 biped
 </chassis>
+
 <weightclass>
 1
 </weightclass>
+
 <cruiseMP>
 1
 </cruiseMP>
+
 <jumpingMP>
 3
 </jumpingMP>
+
 <Armor>
 6
 </Armor>
@@ -50,18 +59,23 @@ IS BA Stealth (Improved):Body
 IS BA Stealth (Improved):Body
 IS BA Stealth (Improved):Body
 </Squad Equipment>
+
 <type>
 IS Level 2
 </type>
+
 <year>
 3057
 </year>
+
 <motion_type>
 Jump
 </motion_type>
+
 <source>
-TRO 3058 Upgrade
+TRO 3058U - Clan Invasion
 </source>
+
 <armor_tech>
 3
 </armor_tech>

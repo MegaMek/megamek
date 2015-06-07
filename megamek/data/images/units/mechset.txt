@@ -1575,8 +1575,12 @@ chassis "Buster BC XV-M HaulerMech" "mechs/Buster.gif"
 chassis "Buster BC XV-M-W HaulerMech" "mechs/Buster.gif"
 chassis "Buster BC XXI HaulerMech" "mechs/Buster.gif"
 chassis "Cadaver" "mechs/Cadaver.gif"
+
 chassis "Caesar" "mechs/caesar.gif"
-exact "Caeasar CES-4S" "mechs/caesar_ces4s.gif"
+exact "Caesar CES-3S" "mechs/Caesar CES-3S.gif"
+exact "Caesar CES-4R" "mechs/Caesar CES-4R.gif"
+exact "Caesar CES-4S" "mechs/Caesar CES-4S.gif"
+
 exact "Calliope CAL-1MAF" "mechs/Calliope.gif"
 chassis "Canis" "mechs/Canis.gif"
 exact  "Canis 2" "mechs/Canis 2.gif"

@@ -6,30 +6,39 @@
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Raiden Battle Armor
 </Name>
+
 <Model>
 [MRM]
 </Model>
+
 <chassis>
 biped
 </chassis>
+
 <weightclass>
 2
 </weightclass>
+
 <Trooper Count>
 4
 </Trooper Count>
+
 <cruiseMP>
 1
 </cruiseMP>
+
 <jumpingMP>
 3
 </jumpingMP>
+
 <Armor>
 9
 </Armor>
@@ -39,21 +48,27 @@ ISBAMRM1:RA
 ISMRM1 Ammo:Body:Shots4#
 BABattleClaw:RA
 </Squad Equipment>
+
 <type>
 IS Level 2
 </type>
+
 <year>
 3064
 </year>
+
 <motion_type>
 Jump
 </motion_type>
+
 <armor_type>
 28
 </armor_type>
+
 <source>
-TRO 3058 Upgrade
+TRO 3058U - Civil War
 </source>
+
 <armor_tech>
 3
 </armor_tech>

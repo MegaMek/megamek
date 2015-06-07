@@ -304,10 +304,11 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_GAS_HOG)
                     || qName.equals(OptionsConstants.QUIRK_POS_RUMBLE_SEAT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_POOR_PERFORMANCE)
-                    || qName.equals(OptionsConstants.QUIRK_POS_DISTRACTING)
                     || qName.equals(OptionsConstants.QUIRK_POS_POWER_REVERSE)
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMPACT)
+                    || qName.equals(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS)   
+                    || qName.equals(OptionsConstants.QUIRK_POS_PRO_ACTUATOR)                    
                     || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST)) {
                 return false;
             }
@@ -365,6 +366,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_POWER_REVERSE)
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMPACT)
+                    || qName.equals(OptionsConstants.QUIRK_POS_PRO_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST)) {
                 return false;
             }
@@ -410,6 +412,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_POWER_REVERSE)
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
                     || qName.equals(OptionsConstants.QUIRK_POS_COMPACT)
+                    || qName.equals(OptionsConstants.QUIRK_POS_PRO_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST)) {
                 return false;
             }
@@ -479,6 +482,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_POOR_TARG_L)
                     || qName.equals(OptionsConstants.QUIRK_NEG_POOR_WORK)
                     || qName.equals(OptionsConstants.QUIRK_NEG_PROTOTYPE)
+                    || qName.equals(OptionsConstants.QUIRK_POS_PRO_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_NEG_SENSOR_GHOSTS))
             		{
                 return true;

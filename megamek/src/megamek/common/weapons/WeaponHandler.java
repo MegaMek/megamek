@@ -1023,11 +1023,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 vPhaseReport.addElement(r);
             }
         }
-        // If a BA squad is shooting at conventional infantry, damage may need
-        // to be
-        // rerolled for the next attack (if any).
-        if ((ae instanceof BattleArmor) && (target instanceof Infantry)
-                && !(target instanceof BattleArmor)) {
+        // If a BA squad is shooting at infantry, damage may be random and need
+        // to be rerolled for the next hit (if any) from the same attack.
+        if ((ae instanceof BattleArmor) && (target instanceof Infantry)) {
             nDamPerHit = calcDamagePerHit();
         }
     }

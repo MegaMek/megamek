@@ -2552,7 +2552,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         int wn = clientgui.mechD.wPan.getSelectedWeaponNum();
         Mounted weap = ce().getEquipment(wn);
-        if ((weap.getLinked() != null) 
+        
+        // Check for weapon/ammo types that should automatically target hexes
+        if ((weap != null) && (weap.getLinked() != null) 
                 && (weap.getLinked().getType() instanceof AmmoType)) {
             AmmoType aType = (AmmoType)weap.getLinked().getType();
             // Mek mortar flares should default to deliver flare

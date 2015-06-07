@@ -44,7 +44,7 @@ public class ISEnhancedLRM15 extends EnhancedLRMWeapon {
         tonnage = 9.0f;
         criticals = 6;
         bv = 157;
-        cost = 157000;
+        cost = 218750;
         shortAV = 9;
         medAV = 9;
         longAV = 9;

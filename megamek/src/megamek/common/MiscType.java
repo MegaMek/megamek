@@ -2485,8 +2485,9 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
-        misc.name = "Emergency C3 Master";
+        misc.name = "C3 Emergency Master";
         misc.setInternalName("ISC3EmergencyMaster");
+        misc.setInternalName("Emergency C3 Master");
         misc.tonnage = 2;
         misc.criticals = 2;
         misc.cost = 2800000;

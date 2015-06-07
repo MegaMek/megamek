@@ -25,6 +25,9 @@ v0.41.5-dev (SVN)
     not number of missiles left.
 + Bug: Swarm LRMs still using BMR rules to decide cluster table column for
     secondary attacks.
++ Data: New Sprites/Updated Quirks file.
++ Bug: [#4559] Snub-nose Support PPC incorrect data
++ Bug: Fixed Couple of Naming errors in Quirks and Misctype. 
 
 v0.41.4 (2015-05-31 16:45 UTC)
 + Bug: UnitDisplay System Tab would double up on status modifiers, like * and j

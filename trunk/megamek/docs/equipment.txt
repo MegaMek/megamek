@@ -3050,7 +3050,7 @@ M,2200-Inner Sphere3071-Inner Sphere,2200-IS_Advanced3071-IS_Advanced,ISNavalTug
 M,3071-Inner Sphere,3071-IS_Advanced,ISSpaceMineDispenser,
 M,3071-Clan,3071-Clan_Advanced,CLSpaceMineDispenser,
 M,3067-Inner Sphere3084-Inner Sphere,3067-IS_Experimental3084-IS_Advanced,IS Vehicular Stealth,IS Vehicular Stealth Armor,
-M,3099-Inner Sphere3071-Inner Sphere,3099-IS_Advanced3071-IS_Experimental,ISC3EmergencyMaster,
+M,3099-Inner Sphere3071-Inner Sphere,3099-IS_Advanced3071-IS_Experimental,ISC3EmergencyMaster,Emergency C3 Master,
 M,3070-Clan,3070-Clan_Experimental,NovaCEWS,Nova CEWS,NovaCEWS,CLNCEWS,
 M,2710-(Unknown Technology Base),2710-All_IS,IS BA Standard,
 M,2868-Clan,2868-Clan_TW,Clan BA Standard,

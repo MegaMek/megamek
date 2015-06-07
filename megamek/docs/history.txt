@@ -28,7 +28,9 @@ v0.41.5-dev (SVN)
 + Data: New Sprites/Updated Quirks file.
 + Bug: [#4559] Snub-nose Support PPC incorrect data
 + Bug: Fixed Couple of Naming errors in Quirks and Misctype.
-+ Errata: ELRM/NLRM-15 C-bill costs. 
++ Errata: ELRM/NLRM-15 C-bill costs.
++ Bug: NPE in FiringDisplay.chooseTarget
+
 
 v0.41.4 (2015-05-31 16:45 UTC)
 + Bug: UnitDisplay System Tab would double up on status modifiers, like * and j

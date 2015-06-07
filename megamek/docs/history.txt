@@ -32,6 +32,8 @@ v0.41.5-dev (SVN)
 + Bug: NPE in FiringDisplay.chooseTarget
 + Data: New Sprites
 + Patches [#442 to #444] - Various Source
++ Bug: Random damage for special BA vs. BA weapons repeated for successive hits
+    from the same attack, not rolled individually.
 
 
 v0.41.4 (2015-05-31 16:45 UTC)

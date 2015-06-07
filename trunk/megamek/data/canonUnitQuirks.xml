@@ -578,7 +578,40 @@
 		<quirk>imp_com</quirk>
 	</unit>
 	<!-- End Liberation of Terra Vol 2-->
-    <!-- BEGIN XTRO Clans-->
+    <!-- BEGIN Jihad:Final reckoning-->	
+	<unit>
+		<chassis>Yurei</chassis>
+		<model>all</model>
+		<quirk>non_standard</quirk>
+	</unit>
+	<unit>
+		<chassis>Waneta</chassis>
+		<model>all</model>
+		<quirk>non_standard</quirk>
+	</unit>
+	<unit>
+		<chassis>Tortoise II</chassis>
+		<model>all</model>
+		<quirk>difficult_maintain</quirk>
+		<quirk>hard_pilot</quirk>
+		<quirk>prototype</quirk>
+	</unit>
+	<unit>
+		<chassis>Pwwka</chassis>
+		<model>all</model>
+		<quirk>non_standard</quirk>
+	</unit>
+	<unit>
+		<chassis>'OMEGA'</chassis>
+		<model>all</model>
+		<quirk>command_mech</quirk>
+		<quirk>distracting</quirk>
+		<quirk>rumble_seat</quirk>
+		<quirk>hard_pilot</quirk>
+		<quirk>prototype</quirk>
+	</unit>	
+	<!-- END Jihad:Final reckoning-->	
+ 	<!-- BEGIN XTRO Clans-->
     <unit>
         <chassis>Cougar</chassis>
         <model>XR</model>
@@ -2084,6 +2117,127 @@
 		<quirk>easy_maintain</quirk>
 	</unit>
 	<!-- END TRO Prototypes-->
+	<!-- BEGIN XTRO Republic II-->
+	<unit>
+		<chassis>Penthesilea</chassis>
+		<model>PEN-3H</model>
+		<weaponQuirk>
+			<weaponQuirkName>em_interference</weaponQuirkName>
+			<location>RA</location>
+			<slot>3</slot>
+			<weaponName>Bombast Laser</weaponName>
+		</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Awesome</chassis>
+		<model>AWS-11R</model>
+		<quirk>battle_fists</quirk>
+		<quirk>distracting</quirk>
+		<quirk>poor_performance</quirk>
+	</unit>
+	<unit>
+		<chassis>UrbanMech</chassis>
+		<model>UM-R93</model>
+		<quirk>ext_twist</quirk>
+		<quirk>low_profile</quirk>
+		<quirk>no_arms</quirk>
+	</unit>
+	<unit>
+		<chassis>Orca</chassis>
+		<model>OC-1X</model>
+		<quirk>distracting</quirk>
+		<quirk>rumble_seat</quirk>
+		<quirk>hard_pilot</quirk>
+		<quirk>obsolete</quirk>
+		<quirk>poor_performance</quirk>
+		<quirk>prototype</quirk>
+	</unit>
+	<unit>
+		<chassis>Tortoise II</chassis>
+		<model>all</model>
+		<quirk>difficult_maintain</quirk>
+		<quirk>hard_pilot</quirk>
+		<quirk>prototype</quirk>
+	</unit>
+	<unit>
+		<chassis>Persepolis 2</chassis>
+		<model>(Standard)</model>
+		<quirk>difficult_eject</quirk>
+		<quirk>poor_performance</quirk>
+		<quirk>poor_work</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>accurate</weaponQuirkName>
+			<location>NOS</location>
+			<slot>0</slot>
+			<weaponName>ER Large Laser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>accurate</weaponQuirkName>
+			<location>NOS</location>
+			<slot>1</slot>
+			<weaponName>ER Large Laser</weaponName>
+		</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Hornet</chassis>
+		<model>HNT-181</model>
+		<quirk>low_profile</quirk>
+		<quirk>no_arms</quirk>
+		<quirk>no_twist</quirk>
+	</unit>
+	<unit>
+		<chassis>Hornet</chassis>
+		<model>HNT-182</model>
+		<quirk>low_profile</quirk>
+		<quirk>no_arms</quirk>
+		<quirk>no_twist</quirk>
+	</unit>
+	<unit>
+		<chassis>Hunchback</chassis>
+		<model>HBK-7S</model>
+		<quirk>battle_fists</quirk>
+	</unit>
+	<unit>
+		<chassis>Thunderbird II</chassis>
+		<model>all</model>
+		<quirk>fast_reload</quirk>
+	</unit>
+	<unit>
+		<chassis>Blade</chassis>
+		<model>BLD-XR</model>
+		<quirk>easy_maintain</quirk>
+		<quirk>pro_actuator</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RA</location>
+			<slot>5</slot>
+			<weaponName>LAC/2</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>static_feed</weaponQuirkName>
+			<location>RA</location>
+			<slot>5</slot>
+			<weaponName>LAC/2</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>LA</location>
+			<slot>5</slot>
+			<weaponName>LAC/2</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>static_feed</weaponQuirkName>
+			<location>LA</location>
+			<slot>5</slot>
+			<weaponName>LAC/2</weaponName>
+		</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Hatamoto-Ku</chassis>
+		<model>HTM-27W2</model>
+		<quirk>multi_trac</quirk>
+	</unit>
+	<!-- END XTRO Republic II-->
     <!-- BEGIN TRO 3145 Mercenaries-->
     <unit>
 		<chassis>Spectre Stealth Battle Armor</chassis>

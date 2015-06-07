@@ -6,30 +6,39 @@
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Infiltrator Mk. II Battle Armor
 </Name>
+
 <Model>
 (Sensor)
 </Model>
+
 <chassis>
 biped
 </chassis>
+
 <weightclass>
 2
 </weightclass>
+
 <Trooper Count>
 4
 </Trooper Count>
+
 <cruiseMP>
 1
 </cruiseMP>
+
 <jumpingMP>
 3
 </jumpingMP>
+
 <Armor>
 6
 </Armor>
@@ -54,18 +63,23 @@ IS BA Stealth:RA
 IS BA Stealth:LA
 IS BA Stealth:LA
 </Squad Equipment>
+
 <type>
 IS Level 2
 </type>
+
 <year>
 3063
 </year>
+
 <motion_type>
 Jump
 </motion_type>
+
 <source>
-TRO 3058 Upgrade
+TRO 3058U - Civil War
 </source>
+
 <armor_tech>
 3
 </armor_tech>

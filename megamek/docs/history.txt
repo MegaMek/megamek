@@ -30,6 +30,8 @@ v0.41.5-dev (SVN)
 + Bug: Fixed Couple of Naming errors in Quirks and Misctype.
 + Errata: ELRM/NLRM-15 C-bill costs.
 + Bug: NPE in FiringDisplay.chooseTarget
++ Data: New Sprites
++ Patches [#442 to #444] - Various Source
 
 
 v0.41.4 (2015-05-31 16:45 UTC)

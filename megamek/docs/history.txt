@@ -36,7 +36,7 @@ v0.41.5-dev (SVN)
     from the same attack, not rolled individually.
 + Patch [#445] TRO 3085 BattleArmor Source Fixes
 + Data: New Sprites/HB HK and TP:Irian 
-
++ RFE [#1169] IS ammo in Clan Arrow IV (Ammo added as unofficial) 
 
 v0.41.4 (2015-05-31 16:45 UTC)
 + Bug: UnitDisplay System Tab would double up on status modifiers, like * and j

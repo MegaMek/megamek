@@ -6,27 +6,35 @@
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Ravager Assault Battle Armor
 </Name>
+
 <Model>
 (Standard)
 </Model>
+
 <chassis>
 biped
 </chassis>
+
 <weightclass>
 4
 </weightclass>
+
 <Trooper Count>
 4
 </Trooper Count>
+
 <cruiseMP>
 2
 </cruiseMP>
+
 <Armor>
 18
 </Armor>
@@ -45,15 +53,19 @@ BARL1:Body
 BARL1:Body
 BABattleClaw:LA
 </Squad Equipment>
+
 <type>
 IS Level 2
 </type>
+
 <year>
 3084
 </year>
+
 <motion_type>
 Leg
 </motion_type>
+
 <source>
-TRO 3085
+TRO 3085 - Jihad
 </source>

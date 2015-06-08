@@ -34,6 +34,8 @@ v0.41.5-dev (SVN)
 + Patches [#442 to #444] - Various Source
 + Bug: Random damage for special BA vs. BA weapons repeated for successive hits
     from the same attack, not rolled individually.
++ Patch [#445] TRO 3085 BattleArmor Source Fixes
++ Data: New Sprites/HB HK and TP:Irian 
 
 
 v0.41.4 (2015-05-31 16:45 UTC)

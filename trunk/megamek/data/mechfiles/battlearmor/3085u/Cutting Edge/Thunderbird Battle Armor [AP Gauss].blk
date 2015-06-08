@@ -6,30 +6,39 @@
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 BattleArmor
 </UnitType>
+
 <Name>
 Thunderbird Battle Armor
 </Name>
+
 <Model>
 [AP Gauss]
 </Model>
+
 <chassis>
 biped
 </chassis>
+
 <weightclass>
 3
 </weightclass>
+
 <Trooper Count>
 5
 </Trooper Count>
+
 <cruiseMP>
 1
 </cruiseMP>
+
 <jumpingMP>
 2
 </jumpingMP>
+
 <Armor>
 10
 </Armor>
@@ -48,15 +57,19 @@ CLBAJumpBooster:Body
 BABasicManipulator:RA
 BAHeavyBattleClawVibro:LA
 </Point Equipment>
+
 <type>
 Clan Level 2
 </type>
+
 <year>
 3086
 </year>
+
 <motion_type>
 Jump
 </motion_type>
+
 <source>
-TRO 3085
+TRO 3085 - Early Republic
 </source>

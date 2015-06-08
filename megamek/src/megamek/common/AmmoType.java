@@ -1384,7 +1384,10 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER, 2850, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM, 2850, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("Homing", 1, M_HOMING, 2850, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Inferno-IV", 1, M_INFERNO_IV, 3055, TechConstants.T_CLAN_UNOFFICIAL));
+        munitions.add(new MunitionMutator("Laser Inhibiting", 1, M_LASER_INHIB, 3052, TechConstants.T_CLAN_UNOFFICIAL));
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, 2850, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Vibrabomb-IV", 1, M_VIBRABOMB_IV, 3065, TechConstants.T_CLAN_UNOFFICIAL));
         munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M, 2850, TechConstants.T_CLAN_EXPERIMENTAL));
         munitions.add(new MunitionMutator("Flare", 1, M_FLARE, 2850, TechConstants.T_CLAN_ADVANCED));
 

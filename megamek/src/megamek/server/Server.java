@@ -27940,22 +27940,26 @@ public class Server implements Runnable {
 
                 } // End added-Protomech
 
-                if (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
-                    endCurrentTurn(entity); // do this to prevent deployment
-                    // hanging. Only do this during
-                    // deployment.
-                } else {
+                if (game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT) {
                     // if a unit is removed during deployment just keep going
                     // without adjusting the turn vector.
                     game.removeTurnFor(entity);
                 }
                 game.removeEntity(entityId,
-                                  IEntityRemovalConditions.REMOVE_NEVER_JOINED);
+                        IEntityRemovalConditions.REMOVE_NEVER_JOINED);
 
             }
         }
         send(createRemoveEntityPacket(ids,
-                                      IEntityRemovalConditions.REMOVE_NEVER_JOINED));
+                IEntityRemovalConditions.REMOVE_NEVER_JOINED));
+
+        // Prevents deployment hanging. Only do this during deployment.
+        if (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
+            for (Integer entityId : ids) {
+                final Entity entity = game.getEntity(entityId);
+                endCurrentTurn(entity); 
+            }
+        }
     }
 
     /**

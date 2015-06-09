@@ -107,9 +107,6 @@ public class UnitDisplay extends JPanel {
     @Override
     protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,
             int condition, boolean pressed) {
-        if (clientgui != null) {
-            clientgui.getCurrentPanel().dispatchEvent(e);
-        }
         if (!e.isConsumed()) {
             return super.processKeyBinding(ks, e, condition, pressed);
         } else {

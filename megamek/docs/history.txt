@@ -38,6 +38,7 @@ v0.41.5-dev (SVN)
 + Data: New Sprites/HB HK and TP:Irian 
 + RFE [#1169] IS ammo in Clan Arrow IV (Ammo added as unofficial)
 + Feature: Added weapon ranges to weapon list tool tip entry
++ Bug: Potential StackOverflowException in UnitDisplay.processKeyBinding
 
 v0.41.4 (2015-05-31 16:45 UTC)
 + Bug: UnitDisplay System Tab would double up on status modifiers, like * and j

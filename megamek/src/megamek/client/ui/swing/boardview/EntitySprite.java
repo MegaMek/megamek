@@ -32,9 +32,11 @@ import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
+import megamek.common.RangeType;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
+import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.preference.PreferenceManager;
 
@@ -897,19 +899,48 @@ class EntitySprite extends Sprite {
             // Gather names, counts, Clan/IS
             // When clan then the number will be stored as negative
             for (Mounted curWp: weapons) {
-                if (wpNames.containsKey(curWp.getDesc())) {
-                    int number = wpNames.get(curWp.getDesc());
+                String weapDesc = curWp.getDesc();
+                // Append ranges
+                WeaponType wtype = (WeaponType)curWp.getType();
+                int ranges[];
+                if (entity instanceof Aero) {
+                    ranges = wtype.getATRanges();
+                } else {
+                    ranges = wtype.getRanges(curWp);
+                }
+                String rangeString = "(";
+                if ((ranges[RangeType.RANGE_MINIMUM] != WeaponType.WEAPON_NA) 
+                        && (ranges[RangeType.RANGE_MINIMUM] != 0)) {
+                    rangeString += ranges[RangeType.RANGE_MINIMUM] + "/";
+                } else {
+                    rangeString += "-/";
+                }
+                int maxRange = RangeType.RANGE_LONG;
+                if (bv.game.getOptions().booleanOption(
+                        OptionsConstants.AC_TAC_OPS_RANGE)) {
+                    maxRange = RangeType.RANGE_EXTREME;
+                }
+                for (int i = RangeType.RANGE_SHORT; i <= maxRange; i++) {
+                    rangeString += ranges[i];
+                    if (i != maxRange) {
+                        rangeString += "/";
+                    }
+                }
+                
+                weapDesc += rangeString + ")";
+                if (wpNames.containsKey(weapDesc)) {
+                    int number = wpNames.get(weapDesc);
                     if (number > 0) 
-                        wpNames.put(curWp.getDesc(), number + 1);
+                        wpNames.put(weapDesc, number + 1);
                     else 
-                        wpNames.put(curWp.getDesc(), number - 1);
+                        wpNames.put(weapDesc, number - 1);
                 } else {
                     WeaponType wpT = ((WeaponType)curWp.getType());
 
                     if (entity.isClan() && TechConstants.isClan(wpT.getTechLevel(entity.getYear()))) 
-                        wpNames.put(curWp.getDesc(), -1);
+                        wpNames.put(weapDesc, -1);
                     else
-                        wpNames.put(curWp.getDesc(), 1);
+                        wpNames.put(weapDesc, 1);
                 }
             }
 

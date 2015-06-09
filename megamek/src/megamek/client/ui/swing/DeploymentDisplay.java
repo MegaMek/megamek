@@ -356,7 +356,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void remove() {
         disableButtons();
         clientgui.getClient().sendDeleteEntity(cen);
-        beginMyTurn();
+        cen = Entity.NONE;
     }
 
     /**

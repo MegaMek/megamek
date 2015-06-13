@@ -3439,11 +3439,18 @@ public abstract class Mech extends Entity {
         bvText.append(tmmRan);
         bvText.append(endColumn);
         bvText.append(endRow);
-        // use UMU for JJ, unless we have more jump MP than UMU (then we have
-        // mechanical jumpboosters)
-        int jumpCheck = Math.max(getActiveUMUCount(), getJumpMP(false, true));
-        int tmmJumped = Compute.getTargetMovementModifier(jumpCheck, true,
-                false, game).getValue();
+        
+        // Calculate modifiers for jump and UMU movement where applicable.
+        final int jumpMP = getJumpMP(false, true);
+        final int tmmJumped = (jumpMP > 0) ? Compute.
+                getTargetMovementModifier(jumpMP, true, false, game).getValue()
+                : 0;
+
+        final int umuMP = getActiveUMUCount();
+        final int tmmUMU = (umuMP > 0) ? Compute.
+                getTargetMovementModifier(umuMP, false, false, game).getValue()
+                : 0;
+
         bvText.append(startRow);
         bvText.append(startColumn);
 
@@ -3456,8 +3463,20 @@ public abstract class Mech extends Entity {
         bvText.append(tmmJumped);
         bvText.append(endColumn);
         bvText.append(endRow);
+        
+        bvText.append("Target Movement Modifer For UMUs");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
 
-        double targetMovementModifier = Math.max(tmmRan, tmmJumped);
+        bvText.append(tmmUMU);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        double targetMovementModifier = Math.max(tmmRan, Math.max(tmmJumped,
+                tmmUMU));
+
         bvText.append(startRow);
         bvText.append(startColumn);
 
@@ -4584,7 +4603,7 @@ public abstract class Mech extends Entity {
 
         double speedFactor = Math
                 .pow(1 + ((((double) runMP + (Math
-                        .round((double) jumpCheck / 2))) - 5) / 10), 1.2);
+                        .round(Math.max(jumpMP, umuMP) / 2.0))) - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         bvText.append(startRow);

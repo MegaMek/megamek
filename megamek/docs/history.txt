@@ -40,6 +40,9 @@ v0.41.5-dev (SVN)
 + Feature: Added weapon ranges to weapon list tool tip entry
 + Bug: Potential StackOverflowException in UnitDisplay.processKeyBinding
 + Bug [#4561]: NPE When Using Remove button in Deploy phase
++ Bug: Non-jumping units still considered to potentially jump 0 MP for defensive
+    BV purposes (and getting the +1 for jump movement that way).
++ Small general jump/UMU BV cleanup.
 
 v0.41.4 (2015-05-31 16:45 UTC)
 + Bug: UnitDisplay System Tab would double up on status modifiers, like * and j

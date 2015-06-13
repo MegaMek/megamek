@@ -1344,8 +1344,9 @@ public class Tank extends Entity {
                 getRunMP(false, true, true), this instanceof VTOL,
                 this instanceof VTOL, game).getValue();
         // for the future, when we implement jumping tanks
-        double tmmJumped = Compute.getTargetMovementModifier(getJumpMP(), true,
-                false, game).getValue();
+        double tmmJumped = (getJumpMP() > 0) ? Compute.
+                getTargetMovementModifier(getJumpMP(), true, false, game).
+                getValue() : 0;
         if (hasStealth()) {
             tmmRan += 2;
             tmmJumped += 2;
@@ -1803,8 +1804,8 @@ public class Tank extends Entity {
             runMP = 1;
         }
         double speedFactor = Math
-                .pow(1 + (((runMP + (Math.round((double) getJumpMP(false) / 2))) - 5) / 10),
-                        1.2);
+                .pow(1 + (((runMP + (Math.round(getJumpMP(false) / 2.0))) - 5)
+                 / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         obv = weaponBV * speedFactor;

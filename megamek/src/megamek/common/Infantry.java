@@ -614,8 +614,19 @@ public class Infantry extends Entity {
         dbv = men * 1.5 * getDamageDivisor();
         int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true), false, false, game)
                 .getValue();
-        int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(false), true, false, game).getValue();
-        double targetMovementModifier = Math.max(tmmRan, tmmJumped);
+
+        final int jumpMP = getJumpMP(false);
+        final int tmmJumped = (jumpMP > 0) ? Compute.
+                getTargetMovementModifier(jumpMP, true, false, game).getValue()
+                : 0;
+
+        final int umuMP = getActiveUMUCount();
+        final int tmmUMU = (umuMP > 0) ? Compute.
+                getTargetMovementModifier(umuMP, false, false, game).getValue()
+                : 0;
+
+        double targetMovementModifier = Math.max(tmmRan, Math.max(tmmJumped,
+                tmmUMU));
         double tmmFactor = 1 + (targetMovementModifier / 10);
         if(hasDEST()) {
             tmmFactor += 0.1;
@@ -639,10 +650,10 @@ public class Infantry extends Entity {
         // http://forums.classicbattletech.com/index.php/topic,20468.0.html
         double speedFactor;
         double speedFactorTableLookup = getRunMP(false, true, true)
-                + Math.round((double) getJumpMP(false) / 2);
+                + Math.round(Math.max(jumpMP, umuMP) / 2.0);
         if (speedFactorTableLookup > 25) {
             speedFactor = Math.pow(1 + ((((double) walkMP
-                    + (Math.round((double) getJumpMP(false) / 2))) - 5) / 10), 1.2);
+                + (Math.round(Math.max(jumpMP, umuMP) / 2.0))) - 5) / 10), 1.2);
         } else {
             speedFactor = Math
                     .pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);

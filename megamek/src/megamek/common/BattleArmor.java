@@ -895,8 +895,9 @@ public class BattleArmor extends Infantry {
                     game).getValue();
             // get jump MP, ignoring burden
             int rawJump = getJumpMP(false, true, true);
-            int tmmJumped = Compute.getTargetMovementModifier(rawJump, true,
-                    false, game).getValue();
+            int tmmJumped = (rawJump > 0) ? Compute.
+                    getTargetMovementModifier(rawJump, true, false, game).
+                    getValue() : 0;
             double targetMovementModifier = Math.max(tmmRan, tmmJumped);
             double tmmFactor = 1 + (targetMovementModifier / 10) + 0.1;
             if (hasCamoSystem) {

@@ -1217,8 +1217,19 @@ public class Protomech extends Entity {
 
         // adjust for target movement modifier
         double tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true, true), false, false, game).getValue();
-        double tmmJumped = Compute.getTargetMovementModifier(getJumpMP(), true, false, game).getValue();
-        double tmmFactor = 1 + (Math.max(tmmRan, tmmJumped) / 10) + 0.1;
+        
+        final int jumpMP = getJumpMP(false);
+        final int tmmJumped = (jumpMP > 0) ? Compute.
+                getTargetMovementModifier(jumpMP, true, false, game).getValue()
+                : 0;
+
+        final int umuMP = getActiveUMUCount();
+        final int tmmUMU = (umuMP > 0) ? Compute.
+                getTargetMovementModifier(umuMP, false, false, game).getValue()
+                : 0;
+
+        double tmmFactor = 1 + (Math.max(tmmRan, Math.max(tmmJumped, tmmUMU))
+                / 10.0) + 0.1;
         // Round to 4 decimal places, just to cut off some numeric error
         tmmFactor = Math.round(tmmFactor * 1000) / 1000.0;
         dbv *= tmmFactor;
@@ -1240,6 +1251,17 @@ public class Protomech extends Entity {
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append(tmmJumped);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(endRow);
+        
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Target Movement Modifer For UMUs");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(tmmUMU);
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -1542,7 +1564,7 @@ public class Protomech extends Entity {
         // adjust further for speed factor
         double speedFactor = Math
                 .pow(1 + ((((double) getRunMP(false, true, true) + (Math
-                        .round((double) getJumpMP(false) / 2))) - 5) / 10), 1.2);
+                        .round(Math.max(jumpMP, umuMP) / 2.0))) - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         obv = weaponBV * speedFactor;

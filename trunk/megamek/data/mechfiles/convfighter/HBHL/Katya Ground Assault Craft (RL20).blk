@@ -42,9 +42,11 @@ IS Light Machine Gun Ammo - Half
 RL10
 RL10
 </Nose Equipment>
+
 <Left Wing Equipment>
 RL20
 </Left Wing Equipment>
+
 <Right Wing Equipment>
 RL20
 </Right Wing Equipment>
@@ -73,7 +75,7 @@ IS Level 2
 </year>
 
 <source>
-HB:House Liao
+HB:House Liao - Civil War
 </source>
 
 <internal_type>

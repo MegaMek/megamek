@@ -13,7 +13,7 @@ ConvFighter
 </UnitType>
 
 <Name>
-Drake Medium Strike Fighter
+Bullet Suicide Drone
 </Name>
 
 <Model>
@@ -21,7 +21,7 @@ Drake Medium Strike Fighter
 </Model>
 
 <Tonnage>
-35
+20
 </Tonnage>
 
 <SafeThrust>
@@ -29,44 +29,30 @@ Drake Medium Strike Fighter
 </SafeThrust>
 
 <Armor>
-10
-8
-8
-6
+7
+5
+5
+3
 </Armor>
 
 <Nose Equipment>
-ISERSmallLaser
-ISMML3
-ISMML3
-IS MML-3 LRM Ammo
-IS MML-3 SRM Ammo
-ISModularArmor
+ISSRM2
+ISSRM2 Ammo
+ISBoobyTrap
+ISDroneOperatingSystem
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISModularArmor
 </Left Wing Equipment>
 
-<Right Wing Equipment>
-ISModularArmor
+<Right Wing Equipment> 
 </Right Wing Equipment>
 
 <Aft Equipment>
-ISGuardianECMSuite
-ISModularArmor
 </Aft Equipment>
 
-<heatsinks>
-12
-</heatsinks>
-
-<sink_type>
-0
-</sink_type>
-
 <fuel>
-480
+320
 </fuel>
 
 <type>
@@ -74,25 +60,33 @@ IS Level 4
 </type>
 
 <year>
-3073
+3080
 </year>
 
 <source>
-XTR Boondocks
+TRO Prototypes - Jihad
 </source>
 
 <internal_type>
-0				
+0
 </internal_type>
 
 <armor_type>
-22
+0
 </armor_type>
 
-<engine_type>				
-0
+<engine_type>
+1
 </engine_type>
 
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
 <motion_type>
-Aerodyne
+aerodyne
 </motion_type>

@@ -46,8 +46,8 @@ public class CLERMediumPulseLaser extends PulseLaserWeapon {
         longRange = 14;
         extremeRange = 18;
         waterShortRange = 3;
-        waterMediumRange = 5;
-        waterLongRange = 8;
+        waterMediumRange = 6;
+        waterLongRange = 9;
         waterExtremeRange = 10;
         tonnage = 2.0f;
         criticals = 2;

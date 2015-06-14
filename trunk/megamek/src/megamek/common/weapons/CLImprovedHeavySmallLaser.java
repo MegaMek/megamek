@@ -48,7 +48,7 @@ public class CLImprovedHeavySmallLaser extends LaserWeapon {
         waterShortRange = 1;
         waterMediumRange = 2;
         waterLongRange = 2;
-        waterExtremeRange = 4;
+        waterExtremeRange = 2;
         tonnage = 0.5f;
         criticals = 1;
         bv = 19;

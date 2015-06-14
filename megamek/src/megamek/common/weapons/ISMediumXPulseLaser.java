@@ -46,9 +46,9 @@ public class ISMediumXPulseLaser extends PulseLaserWeapon {
         longRange = 9;
         extremeRange = 12;
         waterShortRange = 2;
-        waterMediumRange = 3;
-        waterLongRange = 4;
-        waterExtremeRange = 6;
+        waterMediumRange = 4;
+        waterLongRange = 6;
+        waterExtremeRange = 8;
         maxRange = RANGE_SHORT;
         shortAV = 6;
         tonnage = 2.0f;

@@ -45,10 +45,10 @@ public class ISLargeXPulseLaser extends PulseLaserWeapon {
         mediumRange = 10;
         longRange = 15;
         extremeRange = 20;
-        waterShortRange = 2;
-        waterMediumRange = 5;
-        waterLongRange = 7;
-        waterExtremeRange = 10;
+        waterShortRange = 3;
+        waterMediumRange = 6;
+        waterLongRange = 9;
+        waterExtremeRange = 12;
         tonnage = 7.0f;
         criticals = 2;
         bv = 178;

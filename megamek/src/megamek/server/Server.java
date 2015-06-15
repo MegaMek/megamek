@@ -20497,11 +20497,15 @@ public class Server implements Runnable {
                 }
             }
 
+            // So might modular armor, if the location mounts any.
             if (!ammoExplosion
                 && !damageIS
                 && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
-                damage = te.getDamageReductionFromModularArmor(hit, damage,
-                                                               vDesc);
+                int damageNew = te.getDamageReductionFromModularArmor(hit,
+                        damage, vDesc);
+                int damageDiff = damage - damageNew;
+                te.damageThisPhase += damageDiff;
+                damage = damageNew;
             }
 
             // Destroy searchlights on 7+ (torso hits on mechs)

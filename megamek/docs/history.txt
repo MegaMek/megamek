@@ -45,6 +45,8 @@ v0.41.5-dev (SVN)
 + Small general jump/UMU BV cleanup.
 + Data: New Sprites/Sources Fixes.
 + Bug: Several TacOps laser underwater ranges incorrect.
++ Bug: Unconscious pilots still making shutdown/startup rolls.
++ Bug: Quad 'Mechs randomly getting -2 to shutdown/startup checks.
 
 v0.41.4 (2015-05-31 16:45 UTC)
 + Bug: UnitDisplay System Tab would double up on status modifiers, like * and j

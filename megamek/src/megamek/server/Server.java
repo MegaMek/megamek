@@ -17364,40 +17364,48 @@ public class Server implements Runnable {
                             r.addDesc(entity);
                             addReport(r);
                         } else if (!(entity.isManualShutdown())) {
-                            // roll for startup
-                            int startup = (4 + (((entity.heat - 14) / 4) * 2))
-                                          - hotDogMod;
-                            if (mtHeat) {
-                                startup -= 5;
-                                switch (entity.getCrew().getPiloting()) {
-                                    case 0:
-                                    case 1:
-                                        startup -= 2;
-                                        break;
-                                    case 2:
-                                    case 3:
-                                        startup -= 1;
-                                        break;
-                                    case 6:
-                                    case 7:
-                                        startup += 1;
-                                        break;
-                                }
-                            }
-                            int suroll = entity.getCrew().rollPilotingSkill();
-                            r = new Report(5050);
-                            r.subject = entity.getId();
-                            r.addDesc(entity);
-                            r.add(startup);
-                            r.add(suroll);
-                            if (suroll >= startup) {
-                                // start 'er back up
-                                entity.setShutDown(false);
-                                r.choose(true);
+                            // If the pilot is KO and we need to roll, auto-fail.
+                            if (!entity.getCrew().isActive()) {
+                                r = new Report(5049);
+                                r.subject = entity.getId();
+                                r.addDesc(entity);
+                                addReport(r);
                             } else {
-                                r.choose(false);
+                                // roll for startup
+                                int startup = (4 + (((entity.heat - 14) / 4) * 2))
+                                              - hotDogMod;
+                                if (mtHeat) {
+                                    startup -= 5;
+                                    switch (entity.getCrew().getPiloting()) {
+                                        case 0:
+                                        case 1:
+                                            startup -= 2;
+                                            break;
+                                        case 2:
+                                        case 3:
+                                            startup -= 1;
+                                            break;
+                                        case 6:
+                                        case 7:
+                                            startup += 1;
+                                            break;
+                                    }
+                                }
+                                int suroll = entity.getCrew().rollPilotingSkill();
+                                r = new Report(5050);
+                                r.subject = entity.getId();
+                                r.addDesc(entity);
+                                r.add(startup);
+                                r.add(suroll);
+                                if (suroll >= startup) {
+                                    // start 'er back up
+                                    entity.setShutDown(false);
+                                    r.choose(true);
+                                } else {
+                                    r.choose(false);
+                                }
+                                addReport(r);
                             }
-                            addReport(r);
                         }
                     } else {
                         // if we're shutdown by a BA taser, we might activate
@@ -17427,41 +17435,50 @@ public class Server implements Runnable {
                         // okay, now mark shut down
                         entity.setShutDown(true);
                     } else if (entity.heat >= 14) {
-                        int shutdown = (4 + (((entity.heat - 14) / 4) * 2))
-                                       - hotDogMod;
-                        if (mtHeat) {
-                            shutdown -= 5;
-                            switch (entity.getCrew().getPiloting()) {
-                                case 0:
-                                case 1:
-                                    shutdown -= 2;
-                                    break;
-                                case 2:
-                                case 3:
-                                    shutdown -= 1;
-                                    break;
-                                case 6:
-                                case 7:
-                                    shutdown += 1;
-                                    break;
-                            }
-                        }
-                        int sdroll = Compute.d6(2);
-                        r = new Report(5060);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        r.add(shutdown);
-                        r.add(sdroll);
-                        if (sdroll >= shutdown) {
-                            // avoided
-                            r.choose(true);
+                        // Again, pilot KO means shutdown is automatic.
+                        if (!entity.getCrew().isActive()) {
+                            r = new Report(5056);
+                            r.subject = entity.getId();
+                            r.addDesc(entity);
                             addReport(r);
-                        } else {
-                            // shutting down...
-                            r.choose(false);
-                            addReport(r);
-                            // okay, now mark shut down
                             entity.setShutDown(true);
+                        } else {
+                            int shutdown = (4 + (((entity.heat - 14) / 4) * 2))
+                                           - hotDogMod;
+                            if (mtHeat) {
+                                shutdown -= 5;
+                                switch (entity.getCrew().getPiloting()) {
+                                    case 0:
+                                    case 1:
+                                        shutdown -= 2;
+                                        break;
+                                    case 2:
+                                    case 3:
+                                        shutdown -= 1;
+                                        break;
+                                    case 6:
+                                    case 7:
+                                        shutdown += 1;
+                                        break;
+                                }
+                            }
+                            int sdroll = Compute.d6(2);
+                            r = new Report(5060);
+                            r.subject = entity.getId();
+                            r.addDesc(entity);
+                            r.add(shutdown);
+                            r.add(sdroll);
+                            if (sdroll >= shutdown) {
+                                // avoided
+                                r.choose(true);
+                                addReport(r);
+                            } else {
+                                // shutting down...
+                                r.choose(false);
+                                addReport(r);
+                                // okay, now mark shut down
+                                entity.setShutDown(true);
+                            }
                         }
                     }
                 }
@@ -17927,42 +17944,47 @@ public class Server implements Runnable {
                         r.addDesc(entity);
                         addReport(r);
                     } else if (!(entity.isManualShutdown())) {
-                        // roll for startup
-                        int startup = (4 + (((entity.heat - 14) / 4) * 2))
-                                      - hotDogMod;
-                        if (mtHeat) {
-                            startup -= 5;
-                            switch (entity.getCrew().getPiloting()) {
-                                case 0:
-                                case 1:
-                                    startup -= 2;
-                                    break;
-                                case 2:
-                                case 3:
-                                    startup -= 1;
-                                    break;
-                                case 6:
-                                case 7:
-                                    startup += 1;
-                            }
-                            if (entity instanceof QuadMech) {
-                                startup -= 2;
-                            }
-                        }
-                        int suroll = Compute.d6(2);
-                        r = new Report(5050);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        r.add(startup);
-                        r.add(suroll);
-                        if (suroll >= startup) {
-                            // start 'er back up
-                            entity.setShutDown(false);
-                            r.choose(true);
+                        // If the pilot is KO and we need to roll, auto-fail.
+                        if (!entity.getCrew().isActive()) {
+                            r = new Report(5049);
+                            r.subject = entity.getId();
+                            r.addDesc(entity);
+                            addReport(r);
                         } else {
-                            r.choose(false);
+                            // roll for startup
+                            int startup = (4 + (((entity.heat - 14) / 4) * 2))
+                                          - hotDogMod;
+                            if (mtHeat) {
+                                startup -= 5;
+                                switch (entity.getCrew().getPiloting()) {
+                                    case 0:
+                                    case 1:
+                                        startup -= 2;
+                                        break;
+                                    case 2:
+                                    case 3:
+                                        startup -= 1;
+                                        break;
+                                    case 6:
+                                    case 7:
+                                        startup += 1;
+                                }
+                            }
+                            int suroll = Compute.d6(2);
+                            r = new Report(5050);
+                            r.subject = entity.getId();
+                            r.addDesc(entity);
+                            r.add(startup);
+                            r.add(suroll);
+                            if (suroll >= startup) {
+                                // start 'er back up
+                                entity.setShutDown(false);
+                                r.choose(true);
+                            } else {
+                                r.choose(false);
+                            }
+                            addReport(r);
                         }
-                        addReport(r);
                     }
                 } else {
                     // if we're shutdown by a BA taser, we might activate
@@ -17995,47 +18017,53 @@ public class Server implements Runnable {
                     // okay, now mark shut down
                     entity.setShutDown(true);
                 } else if (entity.heat >= 14) {
-                    int shutdown = (4 + (((entity.heat - 14) / 4) * 2))
-                                   - hotDogMod;
-                    if (mtHeat) {
-                        shutdown -= 5;
-                        switch (entity.getCrew().getPiloting()) {
-                            case 0:
-                            case 1:
-                                shutdown -= 2;
-                                break;
-                            case 2:
-                            case 3:
-                                shutdown -= 1;
-                                break;
-                            case 6:
-                            case 7:
-                                shutdown += 1;
-                        }
-                        if (entity instanceof QuadMech) {
-                            shutdown -= 2;
-                        }
-                    }
-                    int sdroll = Compute.d6(2);
-                    r = new Report(5060);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(shutdown);
-                    r.add(sdroll);
-                    if (sdroll >= shutdown) {
-                        // avoided
-                        r.choose(true);
+                    // Again, pilot KO means shutdown is automatic.
+                    if (!entity.getCrew().isActive()) {
+                        r = new Report(5056);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
                         addReport(r);
-                    } else {
-                        // shutting down...
-                        r.choose(false);
-                        addReport(r);
-                        // add a piloting roll and resolve immediately
-                        game.addPSR(new PilotingRollData(entity.getId(), 3,
-                                                         "reactor shutdown"));
-                        addReport(resolvePilotingRolls());
-                        // okay, now mark shut down
                         entity.setShutDown(true);
+                    } else {
+                        int shutdown = (4 + (((entity.heat - 14) / 4) * 2))
+                                       - hotDogMod;
+                        if (mtHeat) {
+                            shutdown -= 5;
+                            switch (entity.getCrew().getPiloting()) {
+                                case 0:
+                                case 1:
+                                    shutdown -= 2;
+                                    break;
+                                case 2:
+                                case 3:
+                                    shutdown -= 1;
+                                    break;
+                                case 6:
+                                case 7:
+                                    shutdown += 1;
+                            }
+                        }
+                        int sdroll = Compute.d6(2);
+                        r = new Report(5060);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
+                        r.add(shutdown);
+                        r.add(sdroll);
+                        if (sdroll >= shutdown) {
+                            // avoided
+                            r.choose(true);
+                            addReport(r);
+                        } else {
+                            // shutting down...
+                            r.choose(false);
+                            addReport(r);
+                            // add a piloting roll and resolve immediately
+                            game.addPSR(new PilotingRollData(entity.getId(), 3,
+                                                             "reactor shutdown"));
+                            addReport(resolvePilotingRolls());
+                            // okay, now mark shut down
+                            entity.setShutDown(true);
+                        }
                     }
                 }
             }

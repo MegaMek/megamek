@@ -1988,6 +1988,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     toHit.addModifier(+3, "called shot, right");
                     break;
             }
+            // If we're making a called shot with swarm LRMs, then the penalty
+            // only applies to the original attack.
+            if (call != CalledShot.CALLED_NONE) {
+                toSubtract += 3;
+            }
         }
 
         // change hit table for surface vessels hit by underwater attacks
@@ -2085,6 +2090,18 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     underWater));
             toHit.setCover(LosEffects.COVER_NONE);
             distance = Compute.effectiveDistance(game, ae, oldTarget);
+            
+            // We might not attack the new target from the same side as the
+            // old, so recalculate; the attack *direction* is still traced from
+            // the original source.
+            toHit.setSideTable(Compute.targetSideTable(ae, oldTarget));
+            
+            // Secondary swarm LRM attacks are never called shots even if the
+            // initial one was.
+            if (weapon.getCalledShot().getCall() != CalledShot.CALLED_NONE) {
+                weapon.getCalledShot().reset();
+                toHit.setHitTable(ToHitData.HIT_NORMAL);
+            }
 
             LosEffects swarmlos;
             // If te is null, then the original target was a building

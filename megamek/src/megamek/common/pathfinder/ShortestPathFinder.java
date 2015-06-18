@@ -217,10 +217,12 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
                 boolean backwards = stepType == MoveStepType.BACKWARDS;
                 h1 = first.getFinalCoords().distance(destination)
                         + getFacingDiff(first, destination, backwards)
+                        + getLevelDiff(first, destination, board)
                         + getElevationDiff(first, destination, board,
                                 first.getEntity());
                 h2 = second.getFinalCoords().distance(destination)
                         + getFacingDiff(second, destination, backwards)
+                        + getLevelDiff(second, destination, board)
                         + getElevationDiff(second, destination, board,
                                 second.getEntity());
             }
@@ -360,6 +362,26 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
             firstFacing++;
         }
         return firstFacing;
+    }
+    
+    /**
+     * Computes the difference in levels between the current location and the
+     * goal location. This prevents the heuristic from under-estimating when a
+     * unit is on top of a hill.
+     * 
+     * @param mp
+     * @param dest
+     * @param board
+     * @return
+     */
+    public static int getLevelDiff(final MovePath mp, Coords dest, IBoard board) {
+        // Ignore level differences if we're not on the ground
+        if (mp.getFinalElevation() != 0) {
+            return 0;
+        }
+        IHex currHex = board.getHex(mp.getFinalCoords());
+        IHex destHex = board.getHex(dest);
+        return Math.abs(destHex.getLevel() - currHex.getLevel());        
     }
     
     /**

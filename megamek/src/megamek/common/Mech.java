@@ -1549,10 +1549,13 @@ public abstract class Mech extends Entity {
      */
     public String getHeatSinkTypeName() {
         for (Mounted m : getMisc()) {
+            // The MiscType name for compact heat sinks is formatted differently
+            if (m.getType().hasFlag(MiscType.F_COMPACT_HEAT_SINK)) {
+                return "Compact Heat Sink";
+            }
             if (m.getType().hasFlag(MiscType.F_HEAT_SINK)
                     || m.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                    || m.getType().hasFlag(MiscType.F_LASER_HEAT_SINK)
-                    || m.getType().hasFlag(MiscType.F_COMPACT_HEAT_SINK)) {
+                    || m.getType().hasFlag(MiscType.F_LASER_HEAT_SINK)) {
                 return m.getName();
             }
         }

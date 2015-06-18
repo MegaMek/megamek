@@ -791,7 +791,7 @@ class EntitySprite extends Sprite {
         // Pilot Advantages
         int numAdv = entity.getCrew().countOptions(
                 PilotOptions.LVL3_ADVANTAGES);
-        if (numAdv == 1) 
+        if (numAdv == 1)
             addToTT("Adv1", NOBR, numAdv);
         else if (numAdv > 1) 
             addToTT("Advs", NOBR, numAdv);
@@ -806,6 +806,10 @@ class EntitySprite extends Sprite {
             addToTT("Movement", BR, entity.getWalkMP(), entity.getRunMPasString());
             if (entity.getJumpMP() > 0) tooltipString.append("/" + entity.getJumpMP());
         }
+        
+        // Armor and Internals
+        addToTT("ArmorInternals", BR, entity.getTotalArmor(),
+                entity.getTotalInternal());
 
         // Heat, not shown for units with 999 heat sinks (vehicles)
         if (entity.getHeatCapacity() != 999) {

@@ -3053,6 +3053,10 @@ public class Aero extends Entity {
         boolean explosiveFound = false;
         EquipmentType clCase = EquipmentType.get("CLCASE");
         for (int i = 0; i < locations(); i++) {
+            // Ignore wings location: it's not a valid loc to put equipment in
+            if (i == LOC_WINGS) {
+                continue;
+            }
             explosiveFound = false;
             for (Mounted m : getEquipment()) {
                 if (m.getType().isExplosive(m) && (m.getLocation() == i)) {

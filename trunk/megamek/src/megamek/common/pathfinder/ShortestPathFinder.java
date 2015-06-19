@@ -379,6 +379,10 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         if (mp.getFinalElevation() != 0) {
             return 0;
         }
+        // Jumping should ignore level differences
+        if (mp.isJumping()) {
+            return 0;
+        }
         IHex currHex = board.getHex(mp.getFinalCoords());
         IHex destHex = board.getHex(dest);
         return Math.abs(destHex.getLevel() - currHex.getLevel());        

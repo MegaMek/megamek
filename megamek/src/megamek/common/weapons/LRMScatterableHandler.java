@@ -58,10 +58,20 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
             Entity entityTarget) {
         Coords coords = target.getPosition();
         AmmoType atype = (AmmoType) ammo.getType();
+        long amType = atype.getMunitionType();
+        boolean mineDelivery = amType == AmmoType.M_THUNDER
+                || amType == AmmoType.M_THUNDER_ACTIVE
+                || amType == AmmoType.M_THUNDER_AUGMENTED
+                || amType == AmmoType.M_THUNDER_INFERNO
+                || amType == AmmoType.M_THUNDER_VIBRABOMB;
+        int whoReport = Report.PUBLIC;
         // only report to player if mine delivery
-        int whoReport = Report.PLAYER;
-        if (atype.getMunitionType() == AmmoType.M_FLARE) {
-            whoReport = Report.PUBLIC;
+        if (mineDelivery) {
+            whoReport = Report.PLAYER;
+        }
+        int density = atype.getRackSize();
+        if (amType == AmmoType.M_THUNDER_AUGMENTED) {
+            density = density / 2 + density % 2;
         }
         if (!bMissed) {
             Report r = new Report(3190, whoReport);
@@ -70,13 +80,25 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
             r.add(coords.getBoardNum());
             vPhaseReport.addElement(r);
         } else {
-            // according to
-            // http://www.classicbattletech.com/forums/index.php/topic,41188.0.html
-            // scatterable LRMs scatter like dive bombing
-            coords = Compute.scatterDiveBombs(coords);
+            // Per TacOps errata 3.4, thunder munitions scatter like artillery,
+            // i.e. by MoF; for simplicity's sake, we'll for now treat other
+            // LRM attacks using this handler the same.
+            coords = Compute.scatter(coords, -toHit.getMoS());
+            if (mineDelivery) {
+                density -= 5;
+                // If density drops to 0 or less, we're done here.
+                if (density <= 0) {
+                    Report r = new Report(3198, whoReport);
+                    r.subject = subjectId;
+                    r.player = ae.getOwnerId();
+                    vPhaseReport.addElement(r);
+                    return true;
+                }
+            }
             if (game.getBoard().contains(coords)) {
                 // misses and scatters to another hex
-                Report r = new Report(3195, whoReport);
+                int reportNr = mineDelivery ? 3197 : 3195;
+                Report r = new Report(reportNr, whoReport);
                 r.subject = subjectId;
                 r.add(coords.getBoardNum());
                 vPhaseReport.addElement(r);
@@ -85,26 +107,26 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
                 Report r = new Report(3200);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
-                return !bMissed;
+                return true;
             }
         }
 
         // Handle the thunder munitions.
         if (atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED) {
             server.deliverThunderAugMinefield(coords, ae.getOwner().getId(),
-                    atype.getRackSize(), ae.getId());
+                    density, ae.getId());
         } else if (atype.getMunitionType() == AmmoType.M_THUNDER) {
             server.deliverThunderMinefield(coords, ae.getOwner().getId(),
-                    atype.getRackSize(), ae.getId());
+                    density, ae.getId());
         } else if (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO) {
-            server.deliverThunderInfernoMinefield(coords,
-                    ae.getOwner().getId(), atype.getRackSize(), ae.getId());
+            server.deliverThunderInfernoMinefield(coords, ae.getOwner().getId(),
+                    density, ae.getId());
         } else if (atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) {
             server.deliverThunderVibraMinefield(coords, ae.getOwner().getId(),
-                    atype.getRackSize(), waa.getOtherAttackInfo(), ae.getId());
+                    density, waa.getOtherAttackInfo(), ae.getId());
         } else if (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE) {
             server.deliverThunderActiveMinefield(coords, ae.getOwner().getId(),
-                    atype.getRackSize(), ae.getId());
+                    density, ae.getId());
         }
         return true;
     }

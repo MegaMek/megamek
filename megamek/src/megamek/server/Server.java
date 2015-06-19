@@ -8922,13 +8922,17 @@ public class Server implements Runnable {
     /**
      * Delivers a thunder-aug shot to the targetted hex area. Thunder-Augs are 7
      * hexes, though, so...
+     * 
+     * @param damage The per-hex density of the incoming minefield; that is,
+     *      the final value with any modifiers (such as halving and rounding
+     *      just for <em>being</em> T-Aug) already applied.
      */
     public void deliverThunderAugMinefield(Coords coords, int playerId,
                                            int damage, int entityId) {
         Coords mfCoord = null;
         for (int dir = 0; dir < 7; dir++) {
-            // Divide base damage per hex in half.
-            int hexDamage = (damage / 2) + (damage % 2);
+            // May need to reset here for each new hex.
+            int hexDamage = damage;
             switch (dir) {
                 case 6:
                     // The targeted hex.

@@ -53,6 +53,7 @@ v0.41.5-dev (SVN)
 + Bug [#4567]: Pathplanner A* heuristic underestimates path cost in certain
     situations
 + Bug [#4560]: Compact Heat Sink displayed incorrectly in unit preview tab
++ Errata: Thunder minefields scatter by MoF and lose density if they do.
 
 v0.41.4 (2015-05-31 16:45 UTC)
 + Bug: UnitDisplay System Tab would double up on status modifiers, like * and j

@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
 MAM0
 </Version>
@@ -210,5 +208,6 @@ CLAMS
 CLAMS Ammo:72
 </Aft Equipment>
 
-
-
+<source>
+H:Wars of the Republic Era - Early Republic
+</source>

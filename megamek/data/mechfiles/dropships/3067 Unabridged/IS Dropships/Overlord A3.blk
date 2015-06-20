@@ -4,7 +4,6 @@
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
 MAM0
 </Version>
@@ -159,6 +158,10 @@ IS Level 2
 <year>
 3058
 </year>
+
+<source>
+TRO 3067 - Clan Invasion
+</source>
 
 <internal_type>
 0

@@ -1,14 +1,9 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
 MAM0
 </Version>
@@ -141,6 +136,10 @@ IS Level 2
 <year>
 2698
 </year>
+
+<source>
+H:Liberation of Terra I - Star League
+</source>
 
 <internal_type>
 0

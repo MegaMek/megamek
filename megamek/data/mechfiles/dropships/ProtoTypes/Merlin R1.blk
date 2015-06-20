@@ -2,13 +2,16 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Dropship
 </UnitType>
+
 <Name>
 Merlin
 </Name>
@@ -20,15 +23,18 @@ R1
 <Tonnage>
 2500
 </Tonnage>
+
 <SafeThrust>
 6
 </SafeThrust>
+
 <Armor>
 250
 200
 200
 230
 </Armor>
+
 <Nose Equipment>
 SCL1
 SCL1
@@ -66,33 +72,47 @@ ISLargeXPulseLaser
 IS Laser AMS
 IS Laser AMS
 </Aft Equipment>
+
 <structural_integrity>
 20
 </structural_integrity>
+
 <heatsinks>
 140
 </heatsinks>
+
 <sink_type>
 1
 </sink_type>
+
 <fuel>
 5600
 </fuel>
+
 <type>
 IS Level 3
 </type>
+
 <year>
 3082
 </year>
+
+<source>
+TRO Prototypes - Jihad
+</source>
+
 <internal_type>
 0
 </internal_type>
+
 <armor_type>
 0
 </armor_type>
+
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 spheroid
 </motion_type>
@@ -101,15 +121,19 @@ spheroid
 ASFBay:2:2
 CargoBay:163:3
 </transporters>
+
 <escape_pod>
 2
 </escape_pod>
+
 <life_boat>
 0
 </life_boat>
+
 <crew>
 17
 </crew>
+
 <passengers>
 0
 </passengers>

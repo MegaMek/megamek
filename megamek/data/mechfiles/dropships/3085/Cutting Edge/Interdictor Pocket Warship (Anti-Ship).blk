@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
 MAM0
 </Version>
@@ -154,8 +152,12 @@ IS Level 3
 </type>
 
 <year>
-3074
+3075
 </year>
+
+<source>
+TRO 3085 - Jihad
+</source>
 
 <internal_type>
 0
@@ -172,8 +174,6 @@ IS Level 3
 <motion_type>
 aerodyne
 </motion_type>
-
-
 
 <transporters>
 SmallCraftBay:2:2
@@ -196,7 +196,3 @@ BattleArmorBay:36:1
 <passengers>
 0
 </passengers>
-
-<source>
-TRO 3085
-</source>

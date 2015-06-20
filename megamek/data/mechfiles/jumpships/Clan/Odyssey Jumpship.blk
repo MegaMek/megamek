@@ -2,22 +2,28 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Jumpship
 </UnitType>
+
 <Name>
 Odyssey Jumpship
 </Name>
+
 <Model>
 (Standard)
 </Model>
+
 <Tonnage>
 345000
 </Tonnage>
+
 <Armor>
 15
 14
@@ -26,6 +32,7 @@ Odyssey Jumpship
 15
 13
 </Armor>
+
 <Nose Equipment>
 CLGaussRifle
 CLGaussRifle
@@ -35,6 +42,7 @@ CLLargePulseLaser
 CLMediumPulseLaser
 CLMediumPulseLaser
 </Nose Equipment>
+
 <Front Left Side Equipment>
 CLERLargeLaser
 CLMediumPulseLaser
@@ -43,6 +51,7 @@ Clan AMS
 Clan AMS
 Clan AMS Ammo:48
 </Front Left Side Equipment>
+
 <Front Right Side Equipment>
 CLERLargeLaser
 CLMediumPulseLaser
@@ -51,6 +60,7 @@ Clan AMS
 Clan AMS
 Clan AMS Ammo:48
 </Front Right Side Equipment>
+
 <Aft Left Side Equipment>
 CLLargePulseLaser
 CLMediumPulseLaser
@@ -59,6 +69,7 @@ Clan AMS
 Clan AMS
 Clan AMS Ammo:48
 </Aft Left Side Equipment>
+
 <Aft Right Side Equipment> 
 CLLargePulseLaser
 CLMediumPulseLaser
@@ -67,33 +78,46 @@ Clan AMS
 Clan AMS
 Clan AMS Ammo:48
 </Aft Right Side Equipment>
+
 <Aft Equipment> 
 CLERLargeLaser
 CLLargePulseLaser
 CLMediumPulseLaser
 CLMediumPulseLaser
 </Aft Equipment>
+
 <structural_integrity>
 1
 </structural_integrity>
+
 <heatsinks>
 136
 </heatsinks>
+
 <sink_type>
 0
 </sink_type>
+
 <fuel>
 2500
 </fuel>
+
 <type>
 Clan Level 2
 </type>
+
 <year>
 2887
 </year>
+
+<source>
+TRO 3057r - Succession Wars
+</source>
+
 <internal_type>
 0
 </internal_type>
+
 <armor_type>
 0
 </armor_type>
@@ -103,24 +127,31 @@ CargoBay:418:1
 BattleArmorBay:10:2
 SmallCraftBay:1:1
 </transporters>
+
 <docking_collar>
 4
 </docking_collar>
+
 <grav_deck>
 2
 </grav_deck>
+
 <escape_pod>
 0
 </escape_pod>
+
 <life_boat>
 3
 </life_boat>
+
 <crew>
 51
 </crew>
+
 <passengers>
 0
 </passengers>
+
 <lithium-fusion>
 1
 </lithium-fusion>

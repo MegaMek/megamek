@@ -2,25 +2,32 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Dropship
 </UnitType>
+
 <Name>
 Titan
 </Name>
+
 <Model>
 (Monitor)
 </Model>
+
 <Tonnage>
 12000
 </Tonnage>
+
 <SafeThrust>
 5
 </SafeThrust>
+
 <Armor>
 350
 345
@@ -29,7 +36,6 @@ Titan
 </Armor>
 
 <Nose Equipment>
-</Nose Equipment>
 KillerWhale
 KillerWhale
 KillerWhale
@@ -46,6 +52,8 @@ CLERLargeLaser
 CLERLargeLaser
 CLERLargeLaser
 ClanMobileHPG
+</Nose Equipment>
+
 <Left Side Equipment>
 CLLRM20
 Artemis V
@@ -87,46 +95,64 @@ Clan Laser AMS
 <structural_integrity>
 18
 </structural_integrity>
+
 <heatsinks>
 195
 </heatsinks>
+
 <sink_type>
 1
 </sink_type>
+
 <fuel>
 5400
 </fuel>
+
 <type>
 Clan Level 3
 </type>
+
 <year>
-3075
+3086
 </year>
+
+<source>
+TRO Prototypes - Early Republic
+</source>
+
 <internal_type>
 0
 </internal_type>
+
 <armor_type>
 1
 </armor_type>
+
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 aerodyne
 </motion_type>
+
 <transporters>
 ASFBay:10:5
 CargoBay:1881:2
 </transporters>
+
 <escape_pod>
 4
 </escape_pod>
+
 <life_boat>
 4
 </life_boat>
+
 <crew>
 58
 </crew>
+
 <passengers>
 0
 </passengers>

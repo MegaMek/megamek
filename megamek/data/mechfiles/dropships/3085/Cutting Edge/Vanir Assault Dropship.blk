@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
 MAM0
 </Version>
@@ -15,7 +13,7 @@ Dropship
 </UnitType>
 
 <source>
-TRO 3085
+TRO 3085 - Jihad
 </source>
 
 <Name>
@@ -261,6 +259,3 @@ Clan AMS
 Clan AMS
 Clan AMS Ammo:216
 </Aft Equipment>
-
-
-

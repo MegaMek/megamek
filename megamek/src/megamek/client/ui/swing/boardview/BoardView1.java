@@ -109,6 +109,9 @@ import megamek.common.Entity;
 import megamek.common.Flare;
 import megamek.common.IBoard;
 import megamek.common.IGame;
+import megamek.common.Mech;
+import megamek.common.QuadMech;
+import megamek.common.TripodMech;
 import megamek.common.IGame.Phase;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
@@ -153,6 +156,7 @@ import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
@@ -180,7 +184,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     static final int HEX_ELEV = 12;
 
     private static final float[] ZOOM_FACTORS = {0.30f, 0.41f, 0.50f, 0.60f,
-                                                 0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f};
+                                                 0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f, 3f};
     
     // Set to TRUE to draw hexes with isometric elevation.
     private boolean drawIsometric = GUIPreferences.getInstance()
@@ -265,6 +269,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     // vector of sprites for aero flyover lines
     private ArrayList<FlyOverSprite> flyOverSprites = new ArrayList<FlyOverSprite>();
+    
+    // List of sprites for the weapon field of fire
+    private ArrayList<HexSprite> FieldofFireSprites = new ArrayList<>();
+    private boolean showFieldofFire = true;
+    public int[][] fieldofFireRanges = { new int[5], new int[5] };
+    public int fieldofFireWpArc;
+    public Entity fieldofFireUnit;
+    public int fieldofFireWpLoc;
+    // int because it acts as an array index
+    public int fieldofFireWpUnderwater = 0;
+    private static final String[] rangeTexts = { "min", "S", "M", "L", "E" };
 
     TilesetManager tileManager = null;
 
@@ -821,6 +836,27 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
 
                 });
+        
+        // Register the action for Showing the Field of Fire
+        controller.registerCommandAction(KeyCommandBind.FIELD_FIRE.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (shouldIgnoreKeyCommands()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        showFieldofFire = !showFieldofFire;
+                        repaint();
+                    }
+
+                });
     }
 
     private boolean shouldIgnoreKeyCommands() {
@@ -1022,6 +1058,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (guip.getShowWrecks() && !useIsometric()) {
             drawSprites(g, wreckSprites);
         }
+        
+        // Field of Fire
+        if (!useIsometric() && showFieldofFire) {
+            drawSprites(g, FieldofFireSprites);
+        }
 
         if ((game.getPhase() == Phase.PHASE_MOVEMENT) && !useIsometric()) {
             drawSprites(g, moveEnvSprites);
@@ -1085,7 +1126,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // draw movement, if valid
         drawSprites(g, pathSprites);
-
+        
         // draw firing solution sprites, but only during the firing phase
         if ((game.getPhase() == Phase.PHASE_FIRING) ||
             (game.getPhase() == Phase.PHASE_OFFBOARD)) {
@@ -1094,7 +1135,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         if (game.getPhase() == Phase.PHASE_FIRING) {
             for (Coords c : strafingCoords) {
-                drawHexBorder(getHexLocation(c), g, Color.yellow, 0, 3);
+                drawHexBorder(g, getHexLocation(c), Color.yellow, 0, 3);
             }
         }
         
@@ -1295,7 +1336,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             for (int j = 0; j < drawWidth; j++) {
                 Coords c = new Coords(j + drawX, i + drawY);
                 if (board.isLegalDeployment(c, en_Deployer.getStartingPos())) {
-                    drawHexBorder(getHexLocation(c), g, Color.yellow);
+                    drawHexBorder(g, getHexLocation(c), Color.yellow);
                 }
             }
         }
@@ -1327,7 +1368,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     cp = allP.nextElement();
                     if (board.isLegalDeployment(c, cp.getStartingPos())) {
                         Color bC = new Color(PlayerColors.getColorRGB(cp.getColorIndex()));
-                        drawHexBorder(getHexLocation(c), g, bC, (bThickness+2)
+                        drawHexBorder(g, getHexLocation(c), bC, (bThickness+2)
                                 * pCount, bThickness);
                         pCount++;
                     }
@@ -1390,9 +1431,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     private void drawHexLayer(Point p, Graphics g, Color col, boolean outOfFOV,
             double pad) {
-
-        final double[] x = {0, 21. * scale, 62. * scale, 83. * scale};
-        final double[] y = {0, 35. * scale, 36. * scale, 71. * scale};
         g.setColor(col);
 
         // create stripe effect for FOV darkening but not for colored weapon
@@ -1410,112 +1448,39 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             ((Graphics2D)g).setPaint(gp);
         }
         
-        if (pad > 0.1) {
-            final double cos60 = 0.5;
-            final double cos30 = 0.8660254;
-
-            final double pd = pad * scale;
-            final double a = cos60 * pad * scale;
-            final double b = cos30 * pad * scale;
-
-            int[] xcoords = { p.x + (int) (x[1] + a), p.x + (int) (x[2] - a),
-                    p.x + (int) (x[3] - pd), p.x + (int) (x[3] - pd),
-                    p.x + (int) (x[2] - a), p.x + (int) (x[1] + a),
-                    p.x + (int) (x[0] + pd), p.x + (int) (x[0] + pd) };
-            int[] ycoords = { p.y + (int) (y[0] + b), p.y + (int) (y[0] + b),
-                    p.y + (int) (y[1]), p.y + (int) (y[2]),
-                    p.y + (int) (y[3] - b), p.y + (int) (y[3] - b),
-                    p.y + (int) (y[2]), p.y + (int) (y[1]) };
-
-            g.fillPolygon(xcoords, ycoords, 8);
-
-        } else {
-
-            int[] xcoords = { p.x + (int) (x[1]), p.x + (int) (x[2]),
-                    p.x + (int) (x[3]), p.x + (int) (x[3]), p.x + (int) (x[2]),
-                    p.x + (int) (x[1]), p.x + (int) (x[0]), p.x + (int) (x[0]) };
-            int[] ycoords = { p.y + (int) (y[0]), p.y + (int) (y[0]),
-                    p.y + (int) (y[1]), p.y + (int) (y[2]), p.y + (int) (y[3]),
-                    p.y + (int) (y[3]), p.y + (int) (y[2]), p.y + (int) (y[1]) };
-
-            g.fillPolygon(xcoords, ycoords, 8);
-        }
+        ((Graphics2D)g).fill(
+                AffineTransform.getTranslateInstance(p.x, p.y).createTransformedShape(
+                AffineTransform.getScaleInstance(scale, scale).createTransformedShape(
+                        HexDrawUtilities.getHexFullBorderLine(pad))));
+    }
+    
+    private void drawHexBorder(Graphics g, Color col, double pad,
+            double linewidth) {
+        drawHexBorder(g, new Point(0,0), col, pad, linewidth);
+    }
+    
+    public void drawHexBorder(Graphics g, Point p, Color col, double pad,
+            double linewidth) {
+        g.setColor(col);
+        ((Graphics2D)g).fill(
+                AffineTransform.getTranslateInstance(p.x, p.y).createTransformedShape(
+                AffineTransform.getScaleInstance(scale, scale).createTransformedShape(
+                HexDrawUtilities.getHexFullBorderArea(linewidth, pad))));
     }
 
     /**
      * Draw an outline around the hex at Point p no padding and a width of 1
      */
-    private void drawHexBorder(Point p, Graphics g, Color col) {
-        drawHexBorder(p, g, col, 0);
+    private void drawHexBorder(Graphics g, Point p, Color col) {
+        drawHexBorder(g, p, col, 0);
     }
 
     /**
      * Draw an outline around the hex at Point p padded around the border by pad
      * and a line-width of 1
      */
-    private void drawHexBorder(Point p, Graphics g, Color col, double pad) {
-        drawHexBorder(p, g, col, pad, 1);
-    }
-
-    /**
-     * Draw a thick outline around the hex at Coords c padded around the border
-     * by pad and a line-width of linewidth
-     */
-    void drawHexBorder(Point p, Graphics g, Color col, double pad,
-                       double linewidth) {
-
-        g.setColor(col);
-
-        final double[] x = {0, 21. * scale, 62. * scale, 83. * scale};
-        final double[] y = {0, 35. * scale, 36. * scale, 71. * scale};
-
-        final double cos60 = 0.5;
-        final double cos30 = 0.8660254;
-
-        final double pd = pad * scale;
-        final double a = cos60 * pd;
-        final double b = cos30 * pd;
-
-        if (linewidth < 1.5) {
-
-            int[] xcoords = {p.x + (int) (x[1] + a), p.x + (int) (x[2] - a),
-                             p.x + (int) (x[3] - pd), p.x + (int) (x[3] - pd),
-                             p.x + (int) (x[2] - a), p.x + (int) (x[1] + a),
-                             p.x + (int) (x[0] + pd), p.x + (int) (x[0] + pd)};
-            int[] ycoords = {p.y + (int) (y[0] + b), p.y + (int) (y[0] + b),
-                             p.y + (int) (y[1]), p.y + (int) (y[2]),
-                             p.y + (int) (y[3] - b), p.y + (int) (y[3] - b),
-                             p.y + (int) (y[2]), p.y + (int) (y[1])};
-
-            g.drawPolygon(xcoords, ycoords, 8);
-
-        } else {
-
-            final double pl = (pad * scale) + (linewidth * scale);
-            final double c = cos60 * pl;
-            final double d = cos30 * pl;
-
-            int[] xcoords = {p.x + (int) (x[1] + a), p.x + (int) (x[2] - a),
-                             p.x + (int) (x[3] - pd), p.x + (int) (x[3] - pd),
-                             p.x + (int) (x[2] - a), p.x + (int) (x[1] + a),
-                             p.x + (int) (x[0] + pd), p.x + (int) (x[0] + pd),
-                             p.x + (int) (x[1] + a), p.x + (int) (x[1] + c),
-                             p.x + (int) (x[0] + pl), p.x + (int) (x[0] + pl),
-                             p.x + (int) (x[1] + c), p.x + (int) (x[2] - c),
-                             p.x + (int) (x[3] - pl), p.x + (int) (x[3] - pl),
-                             p.x + (int) (x[2] - c), p.x + (int) (x[1] + c)};
-            int[] ycoords = {p.y + (int) (y[0] + b), p.y + (int) (y[0] + b),
-                             p.y + (int) (y[1]), p.y + (int) (y[2]),
-                             p.y + (int) (y[3] - b), p.y + (int) (y[3] - b),
-                             p.y + (int) (y[2]), p.y + (int) (y[1]),
-                             p.y + (int) (y[0] + b), p.y + (int) (y[0] + d),
-                             p.y + (int) (y[1]), p.y + (int) (y[2]),
-                             p.y + (int) (y[3] - d), p.y + (int) (y[3] - d),
-                             p.y + (int) (y[2]), p.y + (int) (y[1]),
-                             p.y + (int) (y[0] + d), p.y + (int) (y[0] + d)};
-
-            g.fillPolygon(xcoords, ycoords, 18);
-        }
+    private void drawHexBorder(Graphics g, Point p, Color col, double pad) {
+        drawHexBorder(g, p, col, pad, 1);
     }
 
     /**
@@ -1780,12 +1745,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         IHex hex = board.getHex(c);
                         if ((hex != null) && (hex.getLevel() == x)) {
                             drawHex(c, g, saveBoardImage);
+                            if (showFieldofFire)
+                                drawHexSpritesForHex(c, g, FieldofFireSprites);
                             drawHexSpritesForHex(c, g, moveEnvSprites);
                             drawHexSpritesForHex(c, g, moveModEnvSprites);
                             if ((en_Deployer != null)
                                     && board.isLegalDeployment(c,
                                             en_Deployer.getStartingPos())) {
-                                drawHexBorder(getHexLocation(c), g,
+                                drawHexBorder(g, getHexLocation(c),
                                         Color.yellow);
                             }
                         }
@@ -2038,14 +2005,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (ecmCenters != null) {
             Color tint = ecmCenters.get(c);
             if (tint != null) {
-                drawHexBorder(new Point(0, 0), g, tint.darker(), 5, 10);
+                drawHexBorder(g, tint.darker(), 5, 10);
             }
         }
         // Highlight hexes that contain the source of an ECCM field
         if (eccmCenters != null) {
             Color tint = eccmCenters.get(c);
             if (tint != null) {
-                drawHexBorder(new Point(0, 0), g, tint.darker(), 5, 10);
+                drawHexBorder(g, tint.darker(), 5, 10);
             }
         }
 
@@ -2460,17 +2427,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         	if (srcHex.getLevel() >= destHex.getLevel()) return null;
         }
 
-        Polygon ShadowPoly = new Polygon();
-        ShadowPoly.addPoint(21, -1);
-        ShadowPoly.addPoint(63, -1);
-        ShadowPoly.addPoint(84, 36);
-        ShadowPoly.addPoint(0, 36);
-        
-        AffineTransform t = new AffineTransform();
-        t.scale(scale,scale);
-        t.rotate(Math.toRadians(direction*60),HEX_W/2,HEX_H/2);
-        
-        return(t.createTransformedShape(ShadowPoly));
+        return(AffineTransform.getScaleInstance(scale, scale).createTransformedShape(
+                HexDrawUtilities.getHexBorderArea(direction, HexDrawUtilities.CUT_BORDER, 36)));
     }
     
     /**
@@ -2500,8 +2458,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         t.transform(p1,p1);
         t.transform(p2,p2);
         
-		//GradientPaint gpl = new GradientPaint(p1,c1,p2,c2);
-		
         return(new GradientPaint(p1,c1,p2,c2));
     }
 
@@ -2542,17 +2498,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return getHexLocation(c.getX(), c.getY());
     }
     
-    Polygon getHexPolygon(Coords c) {
-        Polygon poly = new Polygon();
-        for (int n = 0; n < hexPoly.npoints; n++) {
-            poly.addPoint((int) (hexPoly.xpoints[n] * scale),
-                    (int) (hexPoly.ypoints[n] * scale));
-        }
-        poly.translate(getHexLocation(c).x, getHexLocation(c).y);
-        return poly;
-    }
-
-    /**
+     /**
      * Returns the absolute position of the centre of the hex graphic
      */
     private Point getCentreHexLocation(int x, int y) {
@@ -2593,12 +2539,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // check the surrounding hexes if they contain p
         // checking at most 3 hexes would be sufficient
         // but which ones? This is failsafer.
-        Coords cc = new Coords(x, y);
-        if (!getHexPolygon(cc).contains(p)) {
+        Coords cc = new Coords(x, y); 
+        if (!HexDrawUtilities.getHexFull(getHexLocation(cc),scale).contains(p)) {
             boolean hasMatch = false;
             for (int dir = 0; dir < 6 && !hasMatch; dir++) {
                 Coords cn = cc.translated(dir);
-                if (getHexPolygon(cn).contains(p)) {
+                if (HexDrawUtilities.getHexFull(getHexLocation(cn),scale).contains(p)) {
                     cc = cn;
                     hasMatch = true;
                 }
@@ -2621,7 +2567,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     for (int dx = -1; dx < 2; dx++) {
                         Coords c1 = new Coords(x + dx, i);
                         IHex hexAlt = game.getBoard().getHex(c1);
-                        if (getHexPolygon(c1).contains(p) && (hexAlt != null)
+                        if (HexDrawUtilities.getHexFull(getHexLocation(c1),scale).contains(p) 
+                                && (hexAlt != null)
                                 && (hexAlt.getLevel() == elev)) {
                             // Return immediately with highest hex found.
                             return c1;
@@ -4381,6 +4328,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         c3Sprites.clear();
         flyOverSprites.clear();
         movementSprites.clear();
+        FieldofFireSprites.clear();
     }
 
     public synchronized void updateBoard() {
@@ -5146,6 +5094,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         for (Sprite spr : moveModEnvSprites) {
             spr.prepare();
         }
+        for (Sprite spr : FieldofFireSprites) {
+            spr.prepare();
+        }
 
         updateFontSizes();
         updateBoard();
@@ -5258,6 +5209,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     public boolean toggleIsometric() {
         drawIsometric = !drawIsometric;
+        for (Sprite spr : moveEnvSprites) spr.prepare();
+        for (Sprite spr : moveModEnvSprites) spr.prepare();
+        for (Sprite spr : FieldofFireSprites) spr.prepare();
         clearHexImageCache();
         updateBoard();
         for (MovementEnvelopeSprite sprite: moveEnvSprites)
@@ -5348,4 +5302,159 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return hexPoly;
     }
 
+    public void clearFieldofF() {
+        fieldofFireWpArc = -1;
+        fieldofFireUnit = null;
+        FieldofFireSprites.clear();
+        repaint();
+    }
+    
+    // this is called from MovementDisplay and checks if 
+    // the unit ends up underwater
+    public void setWeaponFieldofFire(Entity ce, MovePath cmd) {
+        // if lack of data: clear and return
+        if ((fieldofFireUnit == null) 
+            || (ce == null) 
+            || (cmd == null)) {
+            clearFieldofF();
+            return;
+        }
+
+        // If the field of fire is not dispalyed
+        // for the active unit, then don't change anything
+        if (fieldofFireUnit.equals(ce)) {
+            
+            fieldofFireWpUnderwater = 0;
+            // check if the weapon ends up underwater
+            IHex hex = game.getBoard().getHex(cmd.getFinalCoords());
+            
+            if ((hex.terrainLevel(Terrains.WATER) > 0) && !cmd.isJumping() 
+                    && (cmd.getFinalElevation() < 0)) {
+                if ((fieldofFireUnit instanceof Mech) && !fieldofFireUnit.isProne()
+                        && (hex.terrainLevel(Terrains.WATER) == 1)) {
+                    if ((fieldofFireWpLoc == Mech.LOC_RLEG)
+                        || (fieldofFireWpLoc == Mech.LOC_LLEG))
+                        fieldofFireWpUnderwater = 1;
+                    
+                    if (fieldofFireUnit instanceof QuadMech) {
+                        if ((fieldofFireWpLoc == Mech.LOC_RARM)
+                            || (fieldofFireWpLoc == Mech.LOC_LARM))
+                            fieldofFireWpUnderwater = 1;
+                    }
+                    if (fieldofFireUnit instanceof TripodMech) {
+                        if (fieldofFireWpLoc == Mech.LOC_CLEG)
+                            fieldofFireWpUnderwater = 1;
+                    }
+                } else {
+                    fieldofFireWpUnderwater = 1;
+                }
+            } 
+            setWeaponFieldofFire(cmd.getFinalFacing(), cmd.getFinalCoords());
+        }
+    }
+    
+    // prepares the sprites for a field of fire
+    public void setWeaponFieldofFire(int fac, Coords c) {
+        if (fieldofFireUnit == null) {
+            clearFieldofF();
+            return;
+        }
+
+        // Do not display anything for offboard units
+        if (fieldofFireUnit.isOffBoard()) {
+            clearFieldofF();
+            return;
+        }
+        
+        // check if extreme range is used
+        int maxrange = 4;
+        if (game.getOptions().
+                booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)) maxrange = 5;
+        
+        // create the lists of hexes
+        List<Set<Coords>> fieldFire = new ArrayList<Set<Coords>>(5);
+        int range = 1;
+        // for all available range brackets Min/S/M/L/E ...
+        for (int bracket = 0; bracket < maxrange; bracket++) {
+            fieldFire.add(new HashSet<Coords>());
+            // Add all hexes up to the weapon range to separate lists
+            while (range<=fieldofFireRanges[fieldofFireWpUnderwater][bracket]) {
+                fieldFire.get(bracket).addAll(Compute.coordsAtRange(c, range));
+                range++;
+                if (range>100) break; // only to avoid hangs
+            }
+
+            // Remove hexes that are not on the board or not in the arc
+            for (Iterator<Coords> iterator = fieldFire.get(bracket).iterator(); iterator.hasNext();) {
+                Coords h = iterator.next();
+                if (!game.getBoard().contains(h) 
+                        || !Compute.isInArc(c, fac, h, fieldofFireWpArc)) {
+                    iterator.remove();
+                }
+            }
+        }
+        
+        // create the sprites
+        //
+        FieldofFireSprites.clear();
+
+        // for all available range brackets Min/S/M/L/E ...
+        for (int bracket = 0; bracket < fieldFire.size(); bracket++) {
+            if (fieldFire.get(bracket) == null) continue;
+            for (Coords loc : fieldFire.get(bracket)) {
+                // check surrounding hexes
+                int edgesToPaint = 0;
+                for (int dir = 0; dir < 6; dir++) {
+                    Coords adjacentHex = loc.translated(dir);
+                    if (!fieldFire.get(bracket).contains(adjacentHex)) edgesToPaint += (1 << dir);
+                }
+                // create sprite if there's a border to paint
+                if (edgesToPaint > 0) {
+                    FieldofFireSprite ffSprite = new FieldofFireSprite(
+                            this, bracket, loc, edgesToPaint);
+                    FieldofFireSprites.add(ffSprite);
+                }
+            }
+            // Add range markers (m, S, M, L, E)
+            // this looks for a hex in the middle of the range bracket;
+            // if outside the board, nearer hexes will be tried until
+            // the inner edge of the range bracket is reached
+            // the directions tested are those that fall between the
+            // hex facings because this makes for a better placement
+            // ... most of the time...
+            
+            // The directions[][] is used to make the marker placement
+            // fairly symmetrical to the unit facing which a simple for 
+            // loop over the hex facings doesn't do
+            int[][] directions = { {0,1},{0,5},{3,2},{3,4},{1,2},{5,4} };
+            // don't paint too many "min" markers
+            int numMinMarkers = 0; 
+            for (int[] dir: directions) {
+                // find the middle of the range bracket
+                int rangeend = Math.max(fieldofFireRanges[fieldofFireWpUnderwater][bracket],0);
+                int rangebegin = 1; 
+                if (bracket>0) 
+                    rangebegin = Math.max(fieldofFireRanges[fieldofFireWpUnderwater][bracket-1]+1,1);
+                int dist = (rangeend + rangebegin)/2;
+                // translate to the middle of the range bracket
+                Coords mark = c.translated((dir[0]+fac)%6,(dist+1)/2)
+                        .translated((dir[1]+fac)%6,dist/2);
+                // traverse back to the unit until a hex is onboard
+                while (!game.getBoard().contains(mark)) 
+                    mark = Coords.nextHex(mark, c);
+                
+                // add a text range marker if the found position is good
+                if (game.getBoard().contains(mark) && fieldFire.get(bracket).contains(mark)
+                        && ((bracket > 0) || (numMinMarkers < 2))) {
+                    TextMarkerSprite tS = new TextMarkerSprite(this, mark, 
+                            rangeTexts[bracket], FieldofFireSprite.fieldofFireColors[bracket]);
+                    FieldofFireSprites.add(tS);
+                    if (bracket == 0) numMinMarkers++;
+                }
+            }
+        }
+        
+        repaint();
+    }
+    
 }

@@ -1,10 +1,10 @@
 package megamek.client.ui.swing.boardview;
 
+import static megamek.client.ui.swing.boardview.HexDrawUtilities.*;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Polygon;
-import java.util.EnumMap;
+import java.awt.geom.Point2D;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Compute;
@@ -24,57 +24,12 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
     
     private final static Color fontColor = Color.BLACK;
     private final static float fontSize = 9;
+    private final static double borderW = 15;
+    private final static double inset = 1;
 
     private final Color color;
-    private final Point.Float textPos;
     private final Facing facing;
     private final String modifier;
-
-    static EnumMap<Facing, Polygon> borders = new EnumMap<>(Facing.class);
-    static EnumMap<Facing, Point> borderMidPoints = new EnumMap<>(Facing.class);
-    
-    static {
-        initBorderPolygons();
-    }
-
-    private static void initBorderPolygons() {
-        Polygon hexPoly = new Polygon();
-        hexPoly.addPoint(21, 0);
-        hexPoly.addPoint(62, 0);
-        hexPoly.addPoint(83, 35);
-        hexPoly.addPoint(62, 71);
-        hexPoly.addPoint(21, 71);
-        hexPoly.addPoint(0, 35);
-
-        int y[] = hexPoly.ypoints;
-        int x[] = hexPoly.xpoints;
-        for (Facing f : Facing.values()) {
-            Polygon poly = new Polygon();
-            Point p1 = new Point(x[f.getIntValue()], y[f.getIntValue()]);
-            Facing f2 = f.getNextClockwise();
-            Point p2 = new Point(x[f2.getIntValue()], y[f2.getIntValue()]);
-            poly.addPoint(p1.x, p1.y);
-            poly.addPoint(p2.x, p2.y);
-
-            Point hmp = new Point(41, 35);
-            Point p3 = new Point((p2.x * 6 + hmp.x * 4) / 10, (p2.y * 6 + hmp.y * 4) / 10);
-            Point p4 = new Point((p1.x * 6 + hmp.x * 4) / 10, (p1.y * 6 + hmp.y * 4) / 10);
-            poly.addPoint(p3.x, p3.y);
-            poly.addPoint(p4.x, p4.y);
-            borders.put(f, poly);
-
-            //calculation of middle point of the polygon
-            int pmpX = 0;
-            for (int i = 0; i < poly.npoints; i++)
-                pmpX += poly.xpoints[i];
-            pmpX /= poly.npoints;
-            int pmpY = 0;
-            for (int i = 0; i < poly.npoints; i++)
-                pmpY += poly.ypoints[i];
-            pmpY /= poly.npoints;
-            borderMidPoints.put(f, new Point(pmpX, pmpY));
-        }
-    }
 
     /**
      * @param boardView1
@@ -92,9 +47,6 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
         float hue = 0.7f - 0.15f * modi;
         color = new Color(Color.HSBtoRGB(hue, 1, 1));
         modifier = String.format("%+d", modi);
-
-        Point sp = borderMidPoints.get(facing);
-        textPos = new Point.Float(sp.x-fontSize/2, sp.y+fontSize/2-1);
     }
 
     /*
@@ -117,13 +69,13 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
 
         // colored polygon at the hex border
         graph.setColor(color);
-        graph.fillPolygon(borders.get(facing));
+        graph.fill(getHexBorderArea(facing.getIntValue(), CUT_INSIDE, borderW, inset));
 
         // draw the movement modifier if it's readable
         if (fontSize * bv.scale > 4) {
-            graph.setColor(fontColor);
             graph.setFont(graph.getFont().deriveFont(fontSize));
-            graph.drawString(modifier, textPos.x, textPos.y);
+            Point2D.Double pos = getHexBorderAreaMid(facing.getIntValue(), borderW, inset);
+            bv.drawCenteredText(graph, modifier, (float)pos.x, (float)pos.y, fontColor, false);
         }
 
         graph.dispose();

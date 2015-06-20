@@ -54,7 +54,8 @@ public enum KeyCommandBind {
 	UNDO("undo",false),
 	MOVE_ENVELOPE("movementEnvelope",false),
 	CENTER_ON_SELECTED("centerOnSelected",false),
-	AUTO_ARTY_DEPLOYMENT_ZONE("autoArtyDeployZone",false);
+	AUTO_ARTY_DEPLOYMENT_ZONE("autoArtyDeployZone",false),
+	FIELD_FIRE("fieldOfFire",false);
 	
 	/**
 	 * The command associated with this binding.

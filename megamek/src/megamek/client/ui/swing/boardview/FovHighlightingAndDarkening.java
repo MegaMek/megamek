@@ -160,7 +160,7 @@ class FovHighlightingAndDarkening {
             int maxSensorRange = 0;
 
             if (dist == 0) {
-                this.boardView1.drawHexBorder(p, boardGraph, selected_color,
+                this.boardView1.drawHexBorder(boardGraph, p, selected_color,
                         pad, lw);
             } else if (dist < max_dist) {
                 LosEffects los = getCachedLosEffects(src, c);

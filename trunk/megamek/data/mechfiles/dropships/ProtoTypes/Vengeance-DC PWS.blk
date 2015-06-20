@@ -2,31 +2,39 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Dropship
 </UnitType>
+
 <Name>
 Vengeance
 </Name>
+
 <Model>
 DC
 </Model>
+
 <Tonnage>
 11400
 </Tonnage>
+
 <SafeThrust>
 4
 </SafeThrust>
+
 <Armor>
 400
 300
 300
 198
 </Armor>
+
 <Nose Equipment>
 ISSmallNavalCommScannerSuite
 Piranha
@@ -51,6 +59,7 @@ IS Anti-Missile System
 IS Anti-Missile System
 ISAMS Ammo:60
 </Nose Equipment>
+
 <Left Side Equipment>
 Piranha
 Piranha
@@ -119,30 +128,43 @@ ISERMediumLaser
 <structural_integrity>
 17
 </structural_integrity>
+
 <heatsinks>
 148
 </heatsinks>
+
 <sink_type>
 1
 </sink_type>
+
 <fuel>
 18000
 </fuel>
+
 <type>
 IS Level 3
 </type>
+
 <year>
 3083
 </year>
+
+<source>
+TRO Prototypes - Jihad
+</source>
+
 <internal_type>
 0
 </internal_type>
+
 <armor_type>
 6
 </armor_type>
+
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 aerodyne
 </motion_type>
@@ -157,12 +179,11 @@ CargoBay:390:1
 <escape_pod>
 33
 </escape_pod>
+
 <life_boat>
 0
 </life_boat>
+
 <crew>
 203
 </crew>
-
-
-

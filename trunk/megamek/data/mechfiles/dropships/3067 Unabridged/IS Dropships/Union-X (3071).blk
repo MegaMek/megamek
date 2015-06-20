@@ -1,60 +1,38 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Dropship
-
 </UnitType>
 
 <Name>
-
 Union-X
-
 </Name>
 
 <Model>
-
 (3071)
-
 </Model>
 
 <Tonnage>
-
 3700
-
 </Tonnage>
 
 <SafeThrust>
-
 3
-
 </SafeThrust>
 
 <Armor>
-
 190
-
 180
-
 180
-
 179
-
 </Armor>
 
 <Nose Equipment>
@@ -124,65 +102,48 @@ ISHeavyPPC
 </Aft Equipment>
 
 <structural_integrity>
-
 12
-
 </structural_integrity>
 
 <heatsinks>
-
 120
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 6000
-
 </fuel>
 
 <type>
-
 IS Level 2
-
 </type>
 
 <year>
-
 3071
-
 </year>
 
+<source>
+TRO 3067 - Jihad
+</source>
+
 <internal_type>
-
 0
-
 </internal_type>
 
 <armor_type>
-
 19
 </armor_type>
 
 <engine_type>
-
 0
-
 </engine_type>
 
 <motion_type>
-
 spheroid
-
 </motion_type>
-
-
 
 <transporters>
 ASFBay:4:2
@@ -193,25 +154,17 @@ heavyvehiclebay:4:4
 </transporters>
 
 <escape_pod>
-
 5
-
 </escape_pod>
 
 <life_boat>
-
 0
-
 </life_boat>
 
 <crew>
-
 137
-
 </crew>
 
 <passengers>
-
 0
-
 </passengers>

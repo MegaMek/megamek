@@ -2,22 +2,28 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Jumpship
 </UnitType>
+
 <Name>
 Merchant Jumpship
 </Name>
+
 <Model>
 (Standard)
 </Model>
+
 <Tonnage>
 120000
 </Tonnage>
+
 <Armor>
 4
 5
@@ -26,39 +32,57 @@ Merchant Jumpship
 4
 4
 </Armor>
+
 <Nose Equipment>
 </Nose Equipment>
+
 <Front Left Side Equipment>
 </Front Left Side Equipment>
+
 <Front Right Side Equipment> 
 </Front Right Side Equipment>
+
 <Aft Left Side Equipment>
 </Aft Left Side Equipment>
+
 <Aft Right Side Equipment> 
 </Aft Right Side Equipment>
+
 <Aft Equipment> 
 </Aft Equipment>
+
 <structural_integrity>
 1
 </structural_integrity>
+
 <heatsinks>
 99
 </heatsinks>
+
 <sink_type>
 0
 </sink_type>
+
 <fuel>
 425
 </fuel>
+
 <type>
 IS Level 2
 </type>
+
 <year>
 2503
 </year>
+
+<source>
+TRO 3057r - Age of War
+</source>
+
 <internal_type>
 0
 </internal_type>
+
 <armor_type>
 0
 </armor_type>
@@ -68,21 +92,27 @@ SmallCraftBay:2:2
 CargoBay:330:1
 CargoBay:327:1
 </transporters>
+
 <docking_collar>
 2
 </docking_collar>
+
 <grav_deck>
 1
 </grav_deck>
+
 <escape_pod>
 4
 </escape_pod>
+
 <life_boat>
 0
 </life_boat>
+
 <crew>
 31
 </crew>
+
 <passengers>
 0
 </passengers>

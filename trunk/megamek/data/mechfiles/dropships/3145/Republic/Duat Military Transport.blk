@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
 MAM0
 </Version>
@@ -233,4 +231,3 @@ ISLaserAMS
 <source>
 TRO 3145 Republic of the Sphere - Dark Ages
 </source>
-

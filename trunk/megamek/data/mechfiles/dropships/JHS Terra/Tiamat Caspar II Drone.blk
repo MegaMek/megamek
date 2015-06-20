@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
 MAM0
 </Version>
@@ -84,6 +82,10 @@ IS Level 4
 asfbay:6:6
 CargoBay:143:1
 </transporters>
+
+<source>
+Jihad Hot Spots: Terra - Jihad
+</source>
 
 <escape_pod>
 0

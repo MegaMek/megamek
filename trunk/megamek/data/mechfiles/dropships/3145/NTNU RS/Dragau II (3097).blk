@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
 MAM0
 </Version>
@@ -173,7 +171,5 @@ ISAMS Ammo:72
 </history>
 
 <source>
-RS 3145 NTNU
+RS 3145 NTNU - Early Republic
 </source>
-
-

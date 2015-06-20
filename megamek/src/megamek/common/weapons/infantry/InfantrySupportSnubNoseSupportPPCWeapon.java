@@ -44,9 +44,9 @@ public class InfantrySupportSnubNoseSupportPPCWeapon extends InfantryWeapon {
         infantryDamage = 1.58;
         infantryRange = 5;
         crew = 3;
-        introDate = 1950;
-        techLevel.put(1950,techLevel.get(3071));
-        availRating = new int[]{RATING_A,RATING_A,RATING_A};
-        techRating = RATING_C;
+        introDate = 3082;
+        techLevel.put(3082,techLevel.get(3071));
+        availRating = new int[]{RATING_X,RATING_X,RATING_F};
+        techRating = RATING_F;
     }
 }

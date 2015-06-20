@@ -1,54 +1,34 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Dropship
-
 </UnitType>
 
 <Name>
-
 Model 96C 'Howdah'
-
 </Name>
 
 <Tonnage>
-
 15000
-
 </Tonnage>
 
 <SafeThrust>
-
 5
-
 </SafeThrust>
 
 <Armor>
-
 371
-
 325
-
 325
-
 279
-
 </Armor>
 
 <Nose Equipment>
@@ -149,6 +129,10 @@ IS Level 2
 <year>
 2695
 </year>
+
+<source>
+H:Liberation of Terra I - Star League
+</source>
 
 <internal_type>
 0

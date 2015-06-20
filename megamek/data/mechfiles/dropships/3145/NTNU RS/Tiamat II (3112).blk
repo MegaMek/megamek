@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
 MAM0
 </Version>
@@ -253,5 +251,6 @@ ScreenLauncher Ammo:20
 ISNC3
 </Aft Equipment>
 
-
-
+<source>
+RS 3145 NTNU - Late Republic
+</source>

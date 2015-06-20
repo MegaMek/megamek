@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
 MAM0
 </Version>
@@ -33,6 +31,10 @@ Clan Level 3
 <year>
 3083
 </year>
+
+<source>
+TRO 3085 - Jihad
+</source>
 
 <Tonnage>
 8500
@@ -191,6 +193,3 @@ CLATM12 Ammo:30
 CLATM12 ER Ammo:30
 CLATM12 HE Ammo:30
 </Aft Equipment>
-
-
-

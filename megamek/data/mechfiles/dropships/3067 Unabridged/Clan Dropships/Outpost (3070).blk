@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
 MAM0
 </Version>
@@ -145,6 +143,10 @@ Clan Level 2
 <year>
 3070
 </year>
+
+<source>
+TRO 3067 - Jihad
+</source>
 
 <internal_type>
 0

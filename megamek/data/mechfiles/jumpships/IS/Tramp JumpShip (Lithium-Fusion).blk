@@ -2,22 +2,28 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Jumpship
 </UnitType>
+
 <Name>
 Tramp JumpShip
 </Name>
+
 <Model>
 (Lithium-Fusion)
 </Model>
+
 <Tonnage>
 250000
 </Tonnage>
+
 <Armor>
 3
 3
@@ -26,6 +32,7 @@ Tramp JumpShip
 2
 3
 </Armor>
+
 <Nose Equipment>
 ISERLargeLaser
 ISERLargeLaser
@@ -34,6 +41,7 @@ IS AMS
 IS AMS Ammo
 IS AMS Ammo
 </Nose Equipment>
+
 <Front Left Side Equipment>
 ISERLargeLaser
 IS AMS
@@ -41,6 +49,7 @@ IS AMS
 IS AMS Ammo
 IS AMS Ammo
 </Front Left Side Equipment>
+
 <Front Right Side Equipment> 
 ISERLargeLaser
 IS AMS
@@ -48,6 +57,7 @@ IS AMS
 IS AMS Ammo
 IS AMS Ammo
 </Front Right Side Equipment>
+
 <Aft Left Side Equipment>
 ISERLargeLaser
 IS AMS
@@ -55,6 +65,7 @@ IS AMS
 IS AMS Ammo
 IS AMS Ammo
 </Aft Left Side Equipment>
+
 <Aft Right Side Equipment> 
 ISERLargeLaser
 IS AMS
@@ -62,6 +73,7 @@ IS AMS
 IS AMS Ammo
 IS AMS Ammo
 </Aft Right Side Equipment>
+
 <Aft Equipment> 
 ISERLargeLaser
 ISERLargeLaser
@@ -70,27 +82,39 @@ IS AMS
 IS AMS Ammo
 IS AMS Ammo
 </Aft Equipment>
+
 <structural_integrity>
 1
 </structural_integrity>
+
 <heatsinks>
 122
 </heatsinks>
+
 <sink_type>
 0
 </sink_type>
+
 <fuel>
 1250
 </fuel>
+
 <type>
 IS Level 2
 </type>
+
 <year>
-2754
+2755
 </year>
+
+<source>
+TRO 3057r - Star League
+</source>
+
 <internal_type>
 0
 </internal_type>
+
 <armor_type>
 0
 </armor_type>
@@ -100,24 +124,31 @@ SmallCraftBay:2:2
 CargoBay:171.5:1
 CargoBay:171.5:1
 </transporters>
+
 <docking_collar>
 3
 </docking_collar>
+
 <grav_deck>
 1
 </grav_deck>
+
 <escape_pod>
 5
 </escape_pod>
+
 <life_boat>
 0
 </life_boat>
+
 <crew>
 33
 </crew>
+
 <passengers>
 0
 </passengers>
+
 <lithium-fusion>
 1
 </lithium-fusion>

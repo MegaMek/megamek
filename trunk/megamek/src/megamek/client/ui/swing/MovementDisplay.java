@@ -63,6 +63,7 @@ import megamek.common.Minefield;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
+import megamek.common.IGame.Phase;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
@@ -311,8 +312,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         shiftheld = false;
         clientgui.getBoardView().addBoardViewListener(this);
         clientgui.getClient().getGame().setupTeams();
-        setupStatusBar(Messages
-                               .getString("MovementDisplay.waitingForMovementPhase")); //$NON-NLS-1$
+        setupStatusBar(Messages.getString("MovementDisplay.waitingForMovementPhase")); //$NON-NLS-1$
 
         // Create all of the buttons
         buttons = new Hashtable<MoveCommand, MegamekButton>(
@@ -336,7 +336,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setupButtonPanel();
 
         clientgui.bv.addKeyListener(this);
-
+        
         registerKeyCommands();
     }
 
@@ -632,6 +632,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else {
             setStatusBarText(yourTurnMsg);
         }
+        clientgui.bv.clearFieldofF();
     }
 
     private MegamekButton getBtn(MoveCommand c) {
@@ -802,6 +803,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         butDone.setEnabled(true);
         setNextEnabled(true);
         setForwardIniEnabled(true);
+        clientgui.bv.clearFieldofF();
         if (numButtonGroups > 1)
             getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
         if (!clientgui.bv.isMovingUnits()) {
@@ -929,6 +931,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         // create new current and considered paths
         cmd = new MovePath(clientgui.getClient().getGame(), ce);
+        clientgui.bv.setWeaponFieldofFire(ce, cmd);
 
         // set to "walk," or the equivalent
         gear = MovementDisplay.GEAR_LAND;
@@ -994,6 +997,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             clear();
         } else {
             clientgui.bv.drawMovementData(ce(), cmd);
+            clientgui.bv.setWeaponFieldofFire(ce(), cmd);
 
             // Set the button's label to "Done"
             // if the entire move is impossible.
@@ -1379,6 +1383,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd = lPath;
             }
         }
+        clientgui.bv.setWeaponFieldofFire(ce(), cmd);
     }
 
     //
@@ -4761,4 +4766,22 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                        && !(cmd.isJumping() && (ce instanceof Mech) && (ce
                                                                                 .getJumpType() == Mech.JUMP_BOOSTER)));
     }
+    
+    public void FieldofFire(Entity unit, int[][] ranges, int arc, int loc) {
+        // do nothing here outside the movement phase
+        if (!(clientgui.getClient().getGame().getPhase() == Phase.PHASE_MOVEMENT)) return;
+        
+        clientgui.bv.fieldofFireUnit = unit;
+        clientgui.bv.fieldofFireRanges = ranges;
+        clientgui.bv.fieldofFireWpArc = arc;
+        clientgui.bv.fieldofFireWpLoc = loc;
+        
+        // If the unit is the current unit, then work with
+        // the current considered movement
+        if (unit.equals(ce())) 
+            clientgui.bv.setWeaponFieldofFire(ce(), cmd);
+        else
+            clientgui.bv.setWeaponFieldofFire(unit.getFacing(), unit.getPosition());
+    }
+    
 }

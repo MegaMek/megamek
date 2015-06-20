@@ -58,6 +58,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
+import megamek.common.IGame.Phase;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
@@ -187,7 +188,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         layoutScreen();
 
         setupButtonPanel();
-
+        
         MegaMekController controller = clientgui.controller;
         final StatusBarPhaseDisplay display = this;
         // Register the action for TWIST_LEFT
@@ -1243,4 +1244,18 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             updateTarget();
         }
     }
+    
+    public void FieldofFire(Entity unit, int[][] ranges, int arc, int loc, int facing) {
+        // do nothing here outside the arty targeting phase
+        if (!(clientgui.getClient().getGame().getPhase() == Phase.PHASE_TARGETING)) return;
+        
+        clientgui.bv.fieldofFireUnit = unit;
+        clientgui.bv.fieldofFireRanges = ranges;
+        clientgui.bv.fieldofFireWpArc = arc;
+        clientgui.bv.fieldofFireWpLoc = loc;
+        
+        clientgui.bv.setWeaponFieldofFire(facing, unit.getPosition());
+    }
+    
+    
 }

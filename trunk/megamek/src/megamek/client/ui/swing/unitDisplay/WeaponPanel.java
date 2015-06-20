@@ -37,6 +37,7 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.FiringDisplay;
+import megamek.client.ui.swing.MovementDisplay;
 import megamek.client.ui.swing.TargetingPhaseDisplay;
 import megamek.client.ui.swing.widget.BackGroundDrawer;
 import megamek.client.ui.swing.widget.PMUtil;
@@ -1844,8 +1845,169 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         }
 
         // send event to other parts of the UI which care
+        setFieldofFire(mounted);
         unitDisplay.processMechDisplayEvent(new MechDisplayEvent(this, entity, mounted));
         onResize();
+    }
+    
+    // this gathers all the range data 
+    // it is a boiled down version of displaySelected,
+    // updateAttackValues, updateRangeDisplayforAmmo
+    private void setFieldofFire(Mounted mounted) {
+        // No field of fire without ClientGUI
+        if (unitDisplay.getClientGUI() == null) 
+            return;
+        
+        ClientGUI gui = unitDisplay.getClientGUI();
+
+        WeaponType wtype = (WeaponType) mounted.getType();
+        int[][] ranges = new int[2][5];
+        ranges[0] = wtype.getRanges(mounted);
+
+        AmmoType atype = null;
+        if (mounted.getLinked() != null) 
+            atype = (AmmoType) mounted.getLinked().getType();
+
+        // gather underwater ranges
+        ranges[1] = wtype.getWRanges();
+        if (atype != null) {
+            if ((wtype.getAmmoType() == AmmoType.T_SRM)
+                    || (wtype.getAmmoType() == AmmoType.T_MRM)
+                    || (wtype.getAmmoType() == AmmoType.T_LRM)
+                    || (wtype.getAmmoType() == AmmoType.T_MML)) {
+                if (atype.getMunitionType() == AmmoType.M_TORPEDO) {
+                    ranges[1] = wtype.getRanges(mounted);
+                } else if (atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE) {
+                    ranges[1] = wtype.getRanges(mounted);
+                }
+            }
+        }
+
+        // Infantry range types 4+ are simplified to 
+        // the usual range types as displaying 5 range circles
+        // would be visual overkill (and besides this makes
+        // things easier)
+        if (wtype instanceof InfantryWeapon) {
+            InfantryWeapon inftype = (InfantryWeapon) wtype;
+            int iR = inftype.getInfantryRange();
+            ranges[0] = 
+                    new int[] { 0, iR, iR * 2, iR * 3, 0 };
+        }
+
+        // Artillery gets fixed ranges, 100 as an arbitrary
+        // large range for the targeting phase and
+        // 6 to 17 in the other phases as it will be
+        // direct fire then
+        if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
+            if (gui.getCurrentPanel() instanceof TargetingPhaseDisplay) {
+                ranges[0] = new int[] { 0, 0, 0, 100, 0 };  
+                ranges[1] = new int[] { 0, 0, 0, 0, 0 };
+            } else {
+                ranges[0] = new int[] { 6, 0, 0, 17, 0 };  
+                ranges[1] = new int[] { 0, 0, 0, 0, 0 };
+            }
+        }
+
+        // Override for the various ATM and MML ammos
+        if (atype != null) {
+            if (atype.getAmmoType() == AmmoType.T_ATM) {
+                if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) 
+                    ranges[0] = new int[] { 4, 9, 18, 27, 36 }; 
+                else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) 
+                    ranges[0] = new int[] { 0, 3, 6, 9, 12 };
+                else 
+                    ranges[0] = new int[] { 4, 5, 10, 15, 20 };
+            } 
+            else if (atype.getAmmoType() == AmmoType.T_MML) {
+                if (atype.hasFlag(AmmoType.F_MML_LRM)) 
+                    ranges[0] = new int[] { 6, 7, 14, 21, 28 };
+                else 
+                    ranges[0] = new int[] { 0, 3, 6, 9, 12 };
+            } else if (atype.getAmmoType() == AmmoType.T_IATM) {
+                if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) 
+                    ranges[0] = new int[] { 4, 9, 18, 27, 36 };
+                else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) 
+                    ranges[0] = new int[] { 0, 3, 6, 9, 12 };
+                else if (atype.getMunitionType() == AmmoType.M_IATM_IMP) 
+                    ranges[0] = new int[] { 0, 3, 6, 9, 12 };
+                else  
+                    ranges[0] = new int[] { 4, 5, 10, 15, 20 };
+            }
+        }
+
+        // No minimum range for hotload
+        if ((mounted.getLinked() != null) && mounted.getLinked().isHotLoaded()) {
+            ranges[0][0] = 0;
+        }
+
+        // Aero
+        if (entity.isAirborne() 
+                || entity.usesWeaponBays()) {
+
+            // prepare fresh ranges, no underwater
+            ranges[0] = new int[] { 0, 0, 0, 0, 0 };  
+            ranges[1] = new int[] { 0, 0, 0, 0, 0 };
+            int maxr = WeaponType.RANGE_SHORT;
+
+            maxr = WeaponType.RANGE_SHORT;
+            // In the WeaponPanel, when the weapon is out of ammo
+            // or otherwise nonfunctional, SHORT range will be listed;
+            // the field of fire is instead disabled
+            // Here as well as in WeaponPanel, choosing a specific ammo
+            // only works for the current player's units
+            if (!mounted.isBreached() && !mounted.isMissing() 
+                    && !mounted.isDestroyed() && !mounted.isJammed() 
+                    && ((mounted.getLinked() == null) 
+                            || (mounted.getLinked().getUsableShotsLeft() > 0))) {
+                maxr = wtype.getMaxRange(mounted);
+
+                if (atype != null) {
+                    if (atype.getAmmoType() == AmmoType.T_ATM) {
+                        if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
+                            maxr = WeaponType.RANGE_EXT;
+                        } else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+                            maxr = WeaponType.RANGE_SHORT;
+                        }
+                    } else if (atype.getAmmoType() == AmmoType.T_MML) {
+                        if (!atype.hasFlag(AmmoType.F_MML_LRM)) {
+                            maxr = WeaponType.RANGE_SHORT; 
+                        }
+                    } 
+                }
+
+                // set the standard ranges, depending on capital or no
+                boolean isCap = wtype.isCapital();
+                ranges[0][0] = 0;
+                ranges[0][1] = isCap ? 12 : 6;
+                if (maxr > WeaponType.RANGE_SHORT) 
+                    ranges[0][2] = isCap ? 24 : 12;
+                if (maxr > WeaponType.RANGE_MED)
+                    ranges[0][3] = isCap ? 40 : 20;
+                if (maxr > WeaponType.RANGE_LONG) 
+                    ranges[0][4] = isCap ? 50 : 25;
+            }
+        }
+        
+        // pass all this to the Displays
+        int arc = entity.getWeaponArc(entity.getEquipmentNum(mounted));
+        int loc = mounted.getLocation();
+        
+        if (gui.getCurrentPanel() instanceof FiringDisplay) {
+            // twisting
+            int facing = entity.getFacing();
+            if (entity.isSecondaryArcWeapon(entity.getEquipmentNum(mounted))) 
+                facing = entity.getSecondaryFacing();
+            ((FiringDisplay) gui.getCurrentPanel()).FieldofFire(entity, ranges, arc, loc, facing);
+        } else if (gui.getCurrentPanel() instanceof TargetingPhaseDisplay) {
+            // twisting
+            int facing = entity.getFacing();
+            if (entity.isSecondaryArcWeapon(entity.getEquipmentNum(mounted))) 
+                facing = entity.getSecondaryFacing();
+            ((TargetingPhaseDisplay) gui.getCurrentPanel()).FieldofFire(entity, ranges, arc, loc, facing);
+        } else if (gui.getCurrentPanel() instanceof MovementDisplay) {
+            // no twisting here
+            ((MovementDisplay)gui.getCurrentPanel()).FieldofFire(entity, ranges, arc, loc);
+        }
     }
 
     private String formatAmmo(Mounted m) {
@@ -2272,6 +2434,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 }
             } else if (currPanel instanceof TargetingPhaseDisplay) {
                 ((TargetingPhaseDisplay) currPanel).updateTarget();
+            }
+            
+            // Tell the <Phase>Display to update the 
+            // firing arc info when a weapon has been de-selected
+            if (weaponList.getSelectedIndex() == -1) {
+                unitDisplay.getClientGUI().bv.clearFieldofF();
             }
         }
         onResize();

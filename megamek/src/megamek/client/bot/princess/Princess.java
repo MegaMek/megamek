@@ -76,6 +76,11 @@ public class Princess extends BotClient {
     private double moveEvaluationTimeEstimate = 0;
     private Precognition precognition;
     private Thread precogThread;
+    /**
+     * Mapping to hold the damage allocated to each targetable, stored by ID.
+     * Used to allocate damage more intelligently and avoid overkill.
+     */
+    private ConcurrentHashMap<Integer, Double> damageMap = new ConcurrentHashMap<>(); 
     private final Set<Coords> strategicBuildingTargets = new HashSet<>();
     private boolean fallBack = false;
     protected ChatProcessor chatProcessor = new ChatProcessor();
@@ -170,6 +175,18 @@ public class Princess extends BotClient {
 
     public FireControl getFireControl() {
         return fireControl;
+    }
+
+    public ConcurrentHashMap<Integer,Double> getDamageMap() {
+        return damageMap;
+    }
+
+    public double getDamageAlreadyAssigned(Targetable target) {
+        Integer targetId = new Integer(target.getTargetId());
+        if(damageMap.containsKey(targetId)) {
+            return damageMap.get(targetId);
+        }
+        return 0.0; // If we have no entry, return zero
     }
 
     public BehaviorSettings getBehaviorSettings() {
@@ -311,6 +328,11 @@ public class Princess extends BotClient {
 
                 log(getClass(), METHOD_NAME, LogLevel.INFO, shooter.getDisplayName() + " - Best Firing Plan: " +
                                                             plan.getDebugDescription(LogLevel.DEBUG == getVerbosity()));
+
+                // Add expected damage from the chosen FiringPlan to the damageMap for the target enemy.
+                Integer targetId = new Integer(plan.getTarget().getTargetId());
+                Double newDamage = damageMap.get(targetId)+plan.getExpectedDamage();
+                damageMap.replace(targetId,newDamage);
 
                 // tell the game I want to fire
                 sendAttackData(shooter.getId(), plan.getEntityActionVector());
@@ -913,6 +935,16 @@ public class Princess extends BotClient {
                 }
             }
 
+            //Next, collect the ID's of each potential target and store them in the damageMap for allocating damage during firing.
+
+            //Reset the map generated during the movement phase- The available targets may have changed during that time(ejections, enemies fleeing, etc).
+            damageMap.clear();
+            //Now add an ID for each possible target.
+            List<Targetable> potentialTargets = fireControl.getAllTargetableEnemyEntities(getLocalPlayer(), getGame());
+            for (Targetable target : potentialTargets) {
+                damageMap.put(new Integer(target.getTargetId()), new Double(0));
+            }
+
         } finally {
             methodEnd(getClass(), METHOD_NAME);
         }
@@ -1028,6 +1060,18 @@ public class Princess extends BotClient {
                     }
                 }
             }
+
+            //Next, collect the ID's of each potential target and store them in the damageMap for allocating damage during movement.
+            //Right now, this doesn't get filled because I can't find where FiringPlans for potential move paths are calculated(pretty sure they are, though). This needs to be fixed at some point.
+
+            //Reset last round's damageMap
+            damageMap.clear();
+            //Now add an ID for each possible target.
+            List<Targetable> potentialTargets = fireControl.getAllTargetableEnemyEntities(getLocalPlayer(), getGame());
+            for (Targetable target : potentialTargets) {
+                damageMap.put(new Integer(target.getTargetId()), new Double(0));
+            }
+
         } finally {
             methodEnd(getClass(), METHOD_NAME);
         }

@@ -34,6 +34,7 @@ import megamek.common.EquipmentType;
 import megamek.common.FixedWingSupport;
 import megamek.common.GunEmplacement;
 import megamek.common.IGame;
+import megamek.common.IPlayer;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.LargeSupportTank;
@@ -77,6 +78,7 @@ public class FireControl {
     private static double OVERHEAT_DISUTILITY_AERO = 50.0; // Aeros *really* don't want to overheat.
     private static double EJECTED_PILOT_DISUTILITY = 1000.0;
     private static double CIVILIAN_TARGET_DISUTILITY = 250.0;
+    private static double TARGET_HP_FRACTION_DEALT_UTILITY = -30.0;
 
     protected static double COMMANDER_UTILITY = 0.5;
     protected static double SUB_COMMANDER_UTILITY = 0.25;
@@ -1175,6 +1177,7 @@ public class FireControl {
         utility += DAMAGE_UTILITY * firingPlan.getExpectedDamage();
         utility += CRITICAL_UTILITY * firingPlan.getExpectedCriticals();
         utility += KILL_UTILITY * firingPlan.getKillProbability();
+        utility += TARGET_HP_FRACTION_DEALT_UTILITY * calcDamageAllocationUtility(firingPlan.getTarget(), firingPlan.getExpectedDamage());
         utility -= calcCivilianTargetDisutility(firingPlan.getTarget());
         utility *= modifier;
         utility -= (shooterIsAero ? OVERHEAT_DISUTILITY_AERO : OVERHEAT_DISUTILITY) * overheat;
@@ -1250,6 +1253,37 @@ public class FireControl {
                entity.isUsingSpotlight() || entity.hasBAP() || entity.hasActiveECM() || entity.hasActiveECCM() ||
                entity.hasQuirk(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS) || entity.hasEiCockpit() ||
                (initBonus > 0);
+    }
+
+    /**
+     * Calculates the utility value for doing the given amount of damage to the given target, taking into account damage already applied to this unit by other units belonging to this player(not including allied players!)
+     * This utility term is intended to function as a penalty for overkilling targets with fire from multiple units. As such, below certain(high) thresholds, the term does nothing. 
+     * Only when doing >50% of a target's HP this round is a weight against this FiringPlan applied.
+     * In theory, since this term scales linearly independently of the numeric damage dealt to a target, this term will have a larger effect on low-damage units and a smaller effect on high-damage units, which is probably okay for now(since really high damage units tend to overkill as a matter of course more often).
+     * In practice, this utility term results in Princess concentrating her fire enough to reliably kill/cripple targets without falling into serious overkill.
+     */
+    public double calcDamageAllocationUtility(Targetable target, double expectedDamage) {
+
+        double existingDamage = owner.getDamageAlreadyAssigned(target);
+        int targetHP = Compute.getTargetTotalHP(owner.getGame(), target);
+        double damageFraction = (existingDamage + expectedDamage) / ((double)targetHP);
+        double previousDamageFraction = existingDamage / ((double)targetHP);
+        //double currentDamageFraction = expectedDamage / ((double)targetHP);
+
+        //Do not shoot at units we already expect to deal more than their total HP of damage to!
+        if (previousDamageFraction >= 1.0 ) {
+            return 100; 
+
+            //In cases that are not generally overkill(less than 50% of the target's total HP in damage), target as normal(don't want to spread damage in these cases).
+            //Also want to disregard damage allocation weighting if the target is a building or infantry/BA(as they don't die until you do 100% damage to them normally).
+        } else if (damageFraction < 0.5 
+                   || target.getTargetType() == Targetable.TYPE_BUILDING 
+                   || owner.getGame().getEntity(target.getTargetId()) instanceof Infantry 
+                   || owner.getGame().getEntity(target.getTargetId()) instanceof BattleArmor) {
+            return 0;
+        }
+        //In the remaining case(0.5<=damage), return the fraction of target HP dealt as the penalty scaling factor(multiplied by the weight value to produce a penalty).
+        return damageFraction;
     }
 
     /**
@@ -1837,6 +1871,35 @@ public class FireControl {
                 if (effects.canSee()) {
                     targetableEnemyList.add(entity);
                 }
+            }
+        }
+
+        // Add in potential building targets and the like.
+        targetableEnemyList.addAll(getAdditionalTargets());
+
+        return targetableEnemyList;
+    }
+
+    /**
+     * Variation on getTargetableEnemyEntities.
+     * Returns all possible enemy targets, regardless of LOS status.
+     * @param player The player from whose perspective enemies are determined.
+     * @param game    The game being played.
+     * @return A list of potential targets.
+     */
+    List<Targetable> getAllTargetableEnemyEntities(IPlayer player, IGame game) {
+        List<Targetable> targetableEnemyList = new ArrayList<>();
+
+        // Go through every unit in the game.
+        for (Entity entity : game.getEntitiesVector()) {
+
+            // If they are my enemy and on the board, they're a target.
+            if (entity.getOwner().isEnemyOf(player)
+                && (entity.getPosition() != null)
+                && !entity.isOffBoard()
+                && entity.isTargetable()
+                && (entity.getCrew() != null) && !entity.getCrew().isDead()) {
+                targetableEnemyList.add(entity);
             }
         }
 

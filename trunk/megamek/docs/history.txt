@@ -57,6 +57,7 @@ v0.41.5-dev (SVN)
 + Patches [#449 to #458] - Various Source Updates
 + Folder Name Clean up.  Where possible removing the extra XTR reference.
 + Data: New Sprites
++ Patch [#497]: Make Princess avoid overkilling targets
 
 v0.41.4 (2015-05-31 16:45 UTC)
 + Bug: UnitDisplay System Tab would double up on status modifiers, like * and j

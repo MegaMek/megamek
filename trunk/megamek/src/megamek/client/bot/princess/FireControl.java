@@ -78,6 +78,7 @@ public class FireControl {
     private static double OVERHEAT_DISUTILITY_AERO = 50.0; // Aeros *really* don't want to overheat.
     private static double EJECTED_PILOT_DISUTILITY = 1000.0;
     private static double CIVILIAN_TARGET_DISUTILITY = 250.0;
+    private static double TARGET_POTENTIAL_DAMAGE_UTILITY = 1.0;
     private static double TARGET_HP_FRACTION_DEALT_UTILITY = -30.0;
 
     protected static double COMMANDER_UTILITY = 0.5;
@@ -1177,6 +1178,8 @@ public class FireControl {
         utility += DAMAGE_UTILITY * firingPlan.getExpectedDamage();
         utility += CRITICAL_UTILITY * firingPlan.getExpectedCriticals();
         utility += KILL_UTILITY * firingPlan.getKillProbability();
+        // Multiply the combined damage/crit/kill utility for a target by a log-scaled factor based on the target's damage potential.
+        utility *= calcTargetPotentialDamageMultiplier(firingPlan.getTarget());
         utility += TARGET_HP_FRACTION_DEALT_UTILITY * calcDamageAllocationUtility(firingPlan.getTarget(), firingPlan.getExpectedDamage());
         utility -= calcCivilianTargetDisutility(firingPlan.getTarget());
         utility *= modifier;
@@ -1287,6 +1290,33 @@ public class FireControl {
     }
 
     /**
+     * Calculates the potential damage that the target could theoretically deliver as a measure of it's potential "threat" to any allied unit on the board, thus prioritizing highly damaging enemies over less damaging ones.
+     * For now, this works by simply getting the max damage of the target at range=1, ignoring to-hit, heat, etc.
+     */
+    private double calcTargetPotentialDamage(Targetable target) {
+        if (!(target instanceof Entity)) {
+            return 0;
+        }
+        Entity entity = (Entity) target;
+        return getMaxDamageAtRange(entity,1,false,false);
+    }
+
+    /**
+     * Calculates the logarithmic scaling factor for target damage potential in the utility equation, using the target's potential damage, the weight value TARGET_POTENTIAL_DAMAGE_UTILITY, and Princess's self-preservation value.
+     * This is mostly here to not clutter up the utility calculation method with all this extra math.
+     */
+    private double calcTargetPotentialDamageMultiplier(Targetable target) {
+        double target_damage = calcTargetPotentialDamage(target);
+        if( target_damage == 0.0 ) { // Do not calculate for zero damage units.
+            return 1.0;
+        }
+        double self_preservation = owner.getBehaviorSettings().getSelfPreservationValue();
+        double max_self_preservation =  owner.getBehaviorSettings().getSelfPreservationValue(10); // the preservation value of the highest index, i.e. the max value.
+        double preservation_scaling_factor = max_self_preservation / self_preservation; // Because the variance in log value for large numbers is smaller, we need to make a big self-preservation value become a small multiplicative factor, and vice versa.
+        return Math.log10(TARGET_POTENTIAL_DAMAGE_UTILITY * preservation_scaling_factor * target_damage + 10); // Add 10 to make the multiplier scale from 1 upwards(1 being a target that does 0 damage)).
+    }
+        
+    /**
      * calculates the 'utility' of a physical action.
      *
      * @param physicalInfo The {@link PhysicalInfo} to be calculated.
@@ -1302,6 +1332,7 @@ public class FireControl {
         double utility = DAMAGE_UTILITY * physicalInfo.getExpectedDamage();
         utility += CRITICAL_UTILITY * physicalInfo.getExpectedCriticals();
         utility += KILL_UTILITY * physicalInfo.getKillProbability();
+        utility *= calcTargetPotentialDamageMultiplier(physicalInfo.getTarget());
         utility -= (physicalInfo.getTarget() instanceof MechWarrior) ? EJECTED_PILOT_DISUTILITY : 0;
         utility += calcCommandUtility(physicalInfo.getTarget());
         utility += calcStrategicBuildingTargetUtility(physicalInfo.getTarget());

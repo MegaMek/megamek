@@ -505,7 +505,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
 
     /**
-     * Selects an entity, by number, for movement.
+     * Selects an entity, by number, for firing.
      */
     public void selectEntity(int en) {
         // clear any previously considered attacks
@@ -644,6 +644,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (!clientgui.bv.isMovingUnits()) {
             clientgui.setDisplayVisible(true);
         }
+        clientgui.bv.clearFieldofF();
 
         selectEntity(clientgui.getClient().getFirstEntityNum());
 
@@ -2692,5 +2693,17 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
         return isConsecutive && isInaLine;
     }
-
+    
+    public void FieldofFire(Entity unit, int[][] ranges, int arc, int loc, int facing) {
+        // do nothing here outside the movement phase
+        if (!(clientgui.getClient().getGame().getPhase() == Phase.PHASE_FIRING)) return;
+        
+        clientgui.bv.fieldofFireUnit = unit;
+        clientgui.bv.fieldofFireRanges = ranges;
+        clientgui.bv.fieldofFireWpArc = arc;
+        clientgui.bv.fieldofFireWpLoc = loc;
+        
+        clientgui.bv.setWeaponFieldofFire(facing, unit.getPosition());
+    }
+    
 }

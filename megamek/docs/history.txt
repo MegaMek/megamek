@@ -59,6 +59,7 @@ v0.41.5-dev (SVN)
 + Data: New Sprites
 + Patch [#497]: Make Princess avoid overkilling targets
 + Patch [#496]: Make Princess prioritize high-damage targets
++ Patch [#492]: Individual weapon field of fire
 
 v0.41.4 (2015-05-31 16:45 UTC)
 + Bug: UnitDisplay System Tab would double up on status modifiers, like * and j

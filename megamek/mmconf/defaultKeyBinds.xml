@@ -164,7 +164,14 @@
 
       <KeyBind>
         <command>autoArtyDeployZone</command>
-        <keyCode>90</keyCode> <!-- Spacebar -->
+        <keyCode>90</keyCode> <!-- Shift-Spacebar -->
+        <modifier>1</modifier>          
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>fieldOfFire</command>
+        <keyCode>82</keyCode> <!-- Shift-R -->
         <modifier>1</modifier>          
         <isRepeatable>false</isRepeatable>
       </KeyBind>

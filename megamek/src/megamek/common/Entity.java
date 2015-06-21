@@ -8338,7 +8338,32 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         // Can't see
         return false;
-    }    
+    }  
+    
+    /**
+     * Returns whether this Entity is a sensor return to the given player.
+     * 
+     * @param spotter
+     *            The player trying to view this unit
+     * @return True if the given player can only see this Entity as a sensor
+     *         return
+     */
+    public boolean isSensorReturn(IPlayer spotter) {
+        boolean alliedUnit = 
+                !getOwner().isEnemyOf(spotter)
+                || (getOwner().getTeam() == spotter.getTeam() 
+                    && game.getOptions().booleanOption("team_vision"));
+        
+        boolean sensors = game.getOptions().booleanOption(
+                "tacops_sensors");
+        boolean sensorsDetectAll = game.getOptions().booleanOption(
+                "sensors_detect_all");
+        boolean doubleBlind = game.getOptions().booleanOption(
+                "double_blind");
+        
+        return sensors && doubleBlind && !alliedUnit && !sensorsDetectAll 
+                && !hasSeenEntity(spotter) && hasDetectedEntity(spotter);
+    }
 
     protected int applyGravityEffectsOnMP(int MP) {
         int result = MP;

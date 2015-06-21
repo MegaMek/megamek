@@ -2582,7 +2582,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         List<Targetable> targets = new ArrayList<Targetable>();
         while (choices.hasNext()) {
             choice = choices.next();
-            if (!ce().equals(choice)) {
+            boolean isSensorReturn = false;
+            if (choice instanceof Entity) {
+                isSensorReturn = ((Entity) choice).isSensorReturn(clientgui
+                        .getClient().getLocalPlayer());
+            }
+            if (!ce().equals(choice) && !isSensorReturn) {
                 targets.add(choice);
             }
         }

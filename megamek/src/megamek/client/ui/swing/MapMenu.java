@@ -458,29 +458,13 @@ public class MapMenu extends JPopupMenu {
     private JMenu createViewMenu() {
         JMenu menu = new JMenu("View");
         IGame game = client.getGame();
-        
-        boolean sensors = game.getOptions().booleanOption(
-                "tacops_sensors");
-        boolean sensorsDetectAll = game.getOptions().booleanOption(
-                "sensors_detect_all");
-        boolean doubleBlind = game.getOptions().booleanOption(
-                "double_blind");
                 
         IPlayer localPlayer = client.getLocalPlayer();
-        int localTeam = localPlayer.getTeam();
         
         for (Entity entity : game.getEntitiesVector(coords, true)) {
-            boolean alliedUnit = 
-                    !entity.getOwner().isEnemyOf(localPlayer)
-                    || (entity.getOwner().getTeam() == localTeam 
-                        && game.getOptions().booleanOption("team_vision"));
-
             // Only add the unit if it's actually visible
             //  With double blind on, the game may unseen units
-            if (!sensors || !doubleBlind || alliedUnit 
-                    || entity.hasSeenEntity(localPlayer)
-                    || (sensorsDetectAll 
-                            && entity.hasDetectedEntity(localPlayer))) {
+            if (!entity.isSensorReturn(localPlayer)) {
                 menu.add(viewJMenuItem(entity));
             }
         }
@@ -1129,29 +1113,13 @@ public class MapMenu extends JPopupMenu {
         final boolean canStartFires = client.getGame().getOptions()
                 .booleanOption("tacops_start_fire"); //$NON-NLS-1$
         
-        boolean sensors = game.getOptions().booleanOption(
-                "tacops_sensors");
-        boolean sensorsDetectAll = game.getOptions().booleanOption(
-                "sensors_detect_all");
-        boolean doubleBlind = game.getOptions().booleanOption(
-                "double_blind");
-        
         IPlayer localPlayer = client.getLocalPlayer();
-        int localTeam = localPlayer.getTeam();
-
-
+        
         // Add menu item to target each entity in the coords
         for (Entity entity : client.getGame().getEntitiesVector(coords)) {
-            boolean alliedUnit = 
-                    !entity.getOwner().isEnemyOf(localPlayer)
-                    || (entity.getOwner().getTeam() == localTeam 
-                        && game.getOptions().booleanOption("team_vision"));
             // Only add the unit if it's actually visible
-            //  With double blind on, the game may unseen units
-            if (!sensors || !doubleBlind || alliedUnit 
-                    || entity.hasSeenEntity(localPlayer)
-                    || (sensorsDetectAll 
-                            && entity.hasDetectedEntity(localPlayer))) {
+            //  With double blind on, the game may have unseen units
+            if (!entity.isSensorReturn(localPlayer)) {
                 menu.add(TargetMenuItem(entity));
             }
         }

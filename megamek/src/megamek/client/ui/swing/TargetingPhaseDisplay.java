@@ -917,27 +917,17 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         if (isIgnoringEvents()) {
             return;
         }
+        final Client client = clientgui.getClient();
 
-        if (clientgui.getClient().isMyTurn() && (b.getCoords() != null)
+        if (client.isMyTurn() && (b.getCoords() != null)
                 && (ce() != null) && !b.getCoords().equals(ce().getPosition())) {
-            boolean friendlyFire = clientgui.getClient().getGame().getOptions()
-                    .booleanOption("friendly_fire"); //$NON-NLS-1$
             if (shiftheld) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
             } else if (phase == IGame.Phase.PHASE_TARGETING) {
                 target(new HexTarget(b.getCoords(), ce().getGame().getBoard(),
                         Targetable.TYPE_HEX_ARTILLERY));
-            } else if (friendlyFire
-                    && (clientgui.getClient().getGame()
-                            .getFirstEntity(b.getCoords()) != null)) {
-                target(clientgui.getClient().getGame()
-                        .getFirstEntity(b.getCoords()));
-            } else if (clientgui.getClient().getGame()
-                    .getFirstEnemyEntity(b.getCoords(), ce()) != null) {
-                target(clientgui.getClient().getGame()
-                        .getFirstEnemyEntity(b.getCoords(), ce()));
-            } else if (ce().hasTAG() && phase == IGame.Phase.PHASE_OFFBOARD) {
+            } else {
                 target(chooseTarget(b.getCoords()));
             }
         }
@@ -968,7 +958,12 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         List<Targetable> targets = new ArrayList<Targetable>();
         while (choices.hasNext()) {
             choice = choices.next();
-            if (!ce().equals(choice)) {
+            boolean isSensorReturn = false;
+            if (choice instanceof Entity) {
+                isSensorReturn = ((Entity) choice).isSensorReturn(clientgui
+                        .getClient().getLocalPlayer());
+            }
+            if (!ce().equals(choice) && !isSensorReturn) {
                 targets.add(choice);
             }
         }

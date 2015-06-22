@@ -49,6 +49,7 @@ import megamek.common.Coords;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.GameTurn;
+import megamek.common.IPlayer;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.HexTarget;
@@ -956,15 +957,17 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         // Convert the choices into a List of targets.
         List<Targetable> targets = new ArrayList<Targetable>();
+        final IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
         while (choices.hasNext()) {
-            choice = choices.next();
+            Targetable t = choices.next();
             boolean isSensorReturn = false;
-            if (choice instanceof Entity) {
-                isSensorReturn = ((Entity) choice).isSensorReturn(clientgui
-                        .getClient().getLocalPlayer());
+            boolean isVisible = true;
+            if (t instanceof Entity) {
+                isSensorReturn = ((Entity) t).isSensorReturn(localPlayer);
+                isVisible = ((Entity) t).hasSeenEntity(localPlayer);
             }
-            if (!ce().equals(choice) && !isSensorReturn) {
-                targets.add(choice);
+            if (!ce().equals(t) && !isSensorReturn && isVisible) {
+                targets.add(t);
             }
         }
 

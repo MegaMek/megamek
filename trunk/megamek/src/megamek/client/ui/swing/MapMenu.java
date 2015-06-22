@@ -464,7 +464,8 @@ public class MapMenu extends JPopupMenu {
         for (Entity entity : game.getEntitiesVector(coords, true)) {
             // Only add the unit if it's actually visible
             //  With double blind on, the game may unseen units
-            if (!entity.isSensorReturn(localPlayer)) {
+            if (!entity.isSensorReturn(localPlayer)
+                    && entity.hasSeenEntity(localPlayer)) {
                 menu.add(viewJMenuItem(entity));
             }
         }
@@ -1119,7 +1120,8 @@ public class MapMenu extends JPopupMenu {
         for (Entity entity : client.getGame().getEntitiesVector(coords)) {
             // Only add the unit if it's actually visible
             //  With double blind on, the game may have unseen units
-            if (!entity.isSensorReturn(localPlayer)) {
+            if (!entity.isSensorReturn(localPlayer)
+                    && entity.hasSeenEntity(localPlayer)) {
                 menu.add(TargetMenuItem(entity));
             }
         }

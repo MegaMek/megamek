@@ -596,6 +596,7 @@ public class Game implements Serializable, IGame {
                     && !otherEntity.isOffBoard()
                     && otherEntity.isTargetable()
                     && !otherEntity.isSensorReturn(entity.getOwner())
+                    && otherEntity.hasSeenEntity(entity.getOwner())
                     && (entity.isEnemyOf(otherEntity) || (friendlyFire && (entity
                             .getId() != otherEntity.getId())))) {
                 // Air to Ground - target must be on flight path

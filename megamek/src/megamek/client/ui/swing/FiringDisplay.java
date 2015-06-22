@@ -2580,15 +2580,17 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         // Convert the choices into a List of targets.
         List<Targetable> targets = new ArrayList<Targetable>();
+        final IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
         while (choices.hasNext()) {
-            choice = choices.next();
+            Targetable t = choices.next();
             boolean isSensorReturn = false;
-            if (choice instanceof Entity) {
-                isSensorReturn = ((Entity) choice).isSensorReturn(clientgui
-                        .getClient().getLocalPlayer());
+            boolean isVisible = true;
+            if (t instanceof Entity) {
+                isSensorReturn = ((Entity) t).isSensorReturn(localPlayer);
+                isVisible = ((Entity) t).hasSeenEntity(localPlayer);
             }
-            if (!ce().equals(choice) && !isSensorReturn) {
-                targets.add(choice);
+            if (!ce().equals(t) && !isSensorReturn && isVisible) {
+                targets.add(t);
             }
         }
         

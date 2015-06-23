@@ -61,6 +61,7 @@ v0.41.5-dev (SVN)
 + Patch [#496]: Make Princess prioritize high-damage targets
 + Patch [#492]: Individual weapon field of fire
 + Bug [#4572]: Clicking a hex can give targeting information for unseen units
++ Bug [#4574]: Missing entry for Prototype Ferro-Aluminum
 
 v0.41.4 (2015-05-31 16:45 UTC)
 + Bug: UnitDisplay System Tab would double up on status modifiers, like * and j

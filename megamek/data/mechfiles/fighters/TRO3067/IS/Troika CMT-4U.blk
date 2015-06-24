@@ -1,149 +1,106 @@
-
+#building block data file
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-
-1
-
+MAM0
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Troika
-
 </Name>
 
 <Model>
-
 CMT-4U
-
 </Model>
 
-<Tonnage>
+<year>
+3066
+</year>
 
-65
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 6
-
 </SafeThrust>
 
-<Armor>
-
-74
-
-52
-
-52
-
-46
-
-</Armor>
-
-<Nose Equipment>
-
-ISRocketLauncher20
-
-ISRocketLauncher20
-
-ISRocketLauncher20
-
-ISRocketLauncher20
-
-ISRocketLauncher20
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISERPPC
-
-ISERMediumLaser
-
-ISRocketLauncher15
-
-ISRocketLauncher15
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-ISERPPC
-
-ISERMediumLaser
-
-ISRocketLauncher15
-
-ISRocketLauncher15
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 19
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 480
-
 </fuel>
 
-<type>
-
-IS
-
-</type>
-
-<year>
-
-3066
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
-
 19
 </armor_type>
 
-<engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-2
+<armor>
+74
+52
+52
+46
+</armor>
 
-</engine_type>
+<Nose Equipment>
+RL20
+RL20
+RL20
+RL20
+RL20
+</Nose Equipment>
 
-<motion_type>
+<Left Wing Equipment>
+ISERPPC
+ISERMediumLaser
+RL15
+RL15
+</Left Wing Equipment>
 
-aerodyne
+<Right Wing Equipment>
+ISERPPC
+ISERMediumLaser
+RL15
+RL15
+</Right Wing Equipment>
 
-</motion_type>
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO 3067 - Civil War
+</source>
+
+<tonnage>
+65.0
+</tonnage>
+

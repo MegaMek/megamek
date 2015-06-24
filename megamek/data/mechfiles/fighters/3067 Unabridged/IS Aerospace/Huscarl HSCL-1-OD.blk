@@ -1,57 +1,71 @@
-
+#building block data file
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-
-1
-
+MAM0
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Huscarl
-
 </Name>
 
 <Model>
-
 HSCL-1-OD
-
 </Model>
 
-<Tonnage>
+<year>
+3068
+</year>
 
-75
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 5
-
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
 
+<heatsinks>
+19
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<omni>
+1
+</omni>
+
+<armor>
 70
-
 59
-
 59
-
 52
-
-</Armor>
+</armor>
 
 <Nose Equipment>
 ISLargePulseLaser
@@ -81,60 +95,11 @@ ISSmallPulseLaser
 ISERMediumLaser
 </Aft Equipment>
 
-<heatsinks>
+<source>
+TRO 3067 - Jihad
+</source>
 
-19
+<tonnage>
+75.0
+</tonnage>
 
-</heatsinks>
-
-<sink_type>
-
-1
-
-</sink_type>
-
-<fuel>
-
-400
-
-</fuel>
-
-<type>
-
-IS
-
-</type>
-
-<year>
-
-3068
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-0
-
-</armor_type>
-
-<engine_type>
-
-2
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
-
-<omni>
-
-</omni>

@@ -1,157 +1,112 @@
-
+#building block data file
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-
-1
-
+MAM0
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Shiva
-
 </Name>
 
 <Model>
-
 SHV-OC
-
 </Model>
 
-<Tonnage>
+<year>
+3060
+</year>
 
-85
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 5
-
 </SafeThrust>
 
-<Armor>
-
-60
-
-42
-
-42
-
-35
-
-</Armor>
-
-<Nose Equipment>
-
-ISERMediumLaser
-
-ISERMediumLaser
-
-ISERSmallLaser
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISERPPC
-
-ISLightGaussRifle
-
-ISLightGauss Ammo
-
-ISLightGauss Ammo
-
-ISERMediumLaser
-
-ISERMediumLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-ISERPPC
-
-ISLightGaussRifle
-
-ISLightGauss Ammo
-
-ISLightGauss Ammo
-
-ISERMediumLaser
-
-ISERMediumLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 22
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS
-
-</type>
-
-<year>
-
-3060
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
-
 19
 </armor_type>
 
-<engine_type>
-
-2
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
+<armor_tech>
+-1
+</armor_tech>
 
 <omni>
-
+1
 </omni>
+
+<armor>
+60
+42
+42
+35
+</armor>
+
+<Nose Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISERSmallLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERPPC
+ISLightGaussRifle
+IS Light Gauss Ammo
+IS Light Gauss Ammo
+ISERMediumLaser
+ISERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERPPC
+ISLightGaussRifle
+IS Light Gauss Ammo
+IS Light Gauss Ammo
+ISERMediumLaser
+ISERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO 3067 - Clan Invasion
+</source>
+
+<tonnage>
+85.0
+</tonnage>
+

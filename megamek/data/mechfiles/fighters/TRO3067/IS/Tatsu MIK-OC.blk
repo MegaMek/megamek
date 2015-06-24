@@ -1,152 +1,101 @@
-
+#building block data file
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-
-1
-
+MAM0
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Tatsu
-
 </Name>
 
 <Model>
-
 MIK-OC
-
 </Model>
 
-<Tonnage>
+<year>
+3063
+</year>
 
-70
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 5
-
 </SafeThrust>
 
-<Armor>
-
-86
-
-69
-
-69
-
-40
-
-</Armor>
-
-<Nose Equipment>
-
-ISStreakSRM6
-
-ISStreakSRM6
-
-ISStreakSRM6 Ammo
-
-ISStreakSRM6 Ammo
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISMRM40
-
-ISMRM40 Ammo
-
-ISMRM40 Ammo
-
-ISMRM40 Ammo
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-ISMRM40
-
-ISMRM40 Ammo
-
-ISMRM40 Ammo
-
-ISMRM40 Ammo
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 10
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS
-
-</type>
-
-<year>
-
-3063
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-0
-
-</armor_type>
-
 <engine_type>
-
 2
-
 </engine_type>
 
-<motion_type>
-
-aerodyne
-
-</motion_type>
-
 <omni>
-
+1
 </omni>
+
+<armor>
+86
+69
+69
+40
+</armor>
+
+<Nose Equipment>
+ISStreakSRM6
+ISStreakSRM6
+IS Streak SRM 6 Ammo
+IS Streak SRM 6 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+MRM 40
+IS MRM 40 Ammo
+IS MRM 40 Ammo
+IS MRM 40 Ammo
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+MRM 40
+IS MRM 40 Ammo
+IS MRM 40 Ammo
+IS MRM 40 Ammo
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO 3067 - Civil War
+</source>
+
+<tonnage>
+70.0
+</tonnage>
+

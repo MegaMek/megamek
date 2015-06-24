@@ -1,61 +1,75 @@
-
+#building block data file
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-
-1
-
+MAM0
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Defiance
-
 </Name>
 
 <Model>
-
 DFC-OD
-
 </Model>
 
-<Tonnage>
+<year>
+3072
+</year>
 
-55
+<type>
+IS Level 3
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 6
-
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
 
+<heatsinks>
+11
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<omni>
+1
+</omni>
+
+<armor>
 75
-
 60
-
 60
-
 45
-
-</Armor>
+</armor>
 
 <Nose Equipment>
-ISThunderbolt10
-ISThunderbolt10 Ammo
+Thunderbolt 10
+IS Ammo Thunderbolt-10
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -69,60 +83,11 @@ ISLargeVSPLaser
 <Aft Equipment>
 </Aft Equipment>
 
-<heatsinks>
+<source>
+TRO 3067 - Jihad
+</source>
 
-11
+<tonnage>
+55.0
+</tonnage>
 
-</heatsinks>
-
-<sink_type>
-
-1
-
-</sink_type>
-
-<fuel>
-
-400
-
-</fuel>
-
-<type>
-
-IS Level 3
-
-</type>
-
-<year>
-
-3072
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-0
-
-</armor_type>
-
-<engine_type>
-
-2
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
-
-<omni>
-
-</omni>

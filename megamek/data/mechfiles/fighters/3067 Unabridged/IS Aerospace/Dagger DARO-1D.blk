@@ -1,60 +1,82 @@
-
+#building block data file
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-
-1
-
+MAM0
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Dagger
-
 </Name>
 
 <Model>
-
 DARO-1D
-
 </Model>
 
-<Tonnage>
+<year>
+3068
+</year>
 
-45
+<type>
+IS Level 3
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 7
-
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
 
+<heatsinks>
+12
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
 76
-
 62
-
 62
-
 50
-
-</Armor>
+</armor>
 
 <Nose Equipment>
-ISBeagleActiveProbe
+BeagleActiveProbe
 ISERMediumLaser
 ISMediumPulseLaser
 ISMediumPulseLaser
@@ -65,68 +87,20 @@ ISMediumPulseLaser
 ISMediumPulseLaser
 </Left Wing Equipment>
 
-<Right Wing Equipment> 
+<Right Wing Equipment>
 ISMediumPulseLaser
 ISMediumPulseLaser
 </Right Wing Equipment>
 
 <Aft Equipment>
-ISGuardianECM
+ISGuardianECMSuite
 </Aft Equipment>
 
-<heatsinks>
+<source>
+TRO 3067 - Jihad
+</source>
 
-12
+<tonnage>
+45.0
+</tonnage>
 
-</heatsinks>
-
-<sink_type>
-
-1
-
-</sink_type>
-
-<fuel>
-
-400
-
-</fuel>
-
-<type>
-
-IS Level 3
-
-</type>
-
-<year>
-
-3068
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-19
-</armor_type>
-
-<engine_type>
-
-2
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
-
-<omni>
-
-</omni>

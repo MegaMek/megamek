@@ -1,135 +1,99 @@
-
+#building block data file
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-
-1
-
+MAM0
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Oni
-
 </Name>
 
 <Model>
-
 ON-1
-
 </Model>
 
-<Tonnage>
+<year>
+3066
+</year>
 
-55
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 7
-
 </SafeThrust>
 
-<Armor>
-
-37
-
-30
-
-30
-
-28
-
-</Armor>
-
-<Nose Equipment>
-
-ISMRM30
-
-ISMRM30 Ammo
-
-ISMRM30 Ammo
-
-ISERSmallLaser
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISERLargeLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-ISERLargeLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 13
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 320
-
 </fuel>
 
-<type>
-
-IS Level 2
-
-</type>
-
-<year>
-
-3066
-
-</year>
-
-<internal_type>
-
+<engine_type>
 0
-
-</internal_type>
+</engine_type>
 
 <armor_type>
-
 19
 </armor_type>
 
-<engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-0
+<armor>
+37
+30
+30
+28
+</armor>
 
-</engine_type>
+<Nose Equipment>
+MRM 30
+IS MRM 30 Ammo
+IS MRM 30 Ammo
+ISERSmallLaser
+</Nose Equipment>
 
-<motion_type>
+<Left Wing Equipment>
+ISERLargeLaser
+</Left Wing Equipment>
 
-aerodyne
+<Right Wing Equipment>
+ISERLargeLaser
+</Right Wing Equipment>
 
-</motion_type>
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO 3067 - Civil War
+</source>
+
+<tonnage>
+55.0
+</tonnage>
+

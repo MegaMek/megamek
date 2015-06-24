@@ -1,132 +1,99 @@
-
+#building block data file
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-
-1
-
+MAM0
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Troika
-
 </Name>
 
 <Model>
-
 CMT-6T
-
 </Model>
 
-<Tonnage>
+<year>
+3079
+</year>
 
-65
+<type>
+IS Level 3
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 6
-
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
 
+<heatsinks>
+17
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+480
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 74
-
 52
-
 52
-
 46
-
-</Armor>
+</armor>
 
 <Nose Equipment>
-ISHeavyPPC
-ISRocketLauncher10
+RL10
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISRocketLauncher10
-ISSmallVSPLaser
-ISSmallVSPLaser
-ISSmallVSPLaser
+RL10
 </Left Wing Equipment>
 
-<Right Wing Equipment> 
-ISRocketLauncher10
-ISSmallVSPLaser
-ISSmallVSPLaser
-ISSmallVSPLaser
+<Right Wing Equipment>
+RL10
 </Right Wing Equipment>
 
 <Aft Equipment>
-IS AMS
+ISAntiMissileSystem
 ISAMS Ammo
 ISCASE
 </Aft Equipment>
 
-<heatsinks>
+<source>
+TRO 3067 - Jihad
+</source>
 
-17
+<tonnage>
+65.0
+</tonnage>
 
-</heatsinks>
-
-<sink_type>
-
-1
-
-</sink_type>
-
-<fuel>
-
-480
-
-</fuel>
-
-<type>
-
-IS Level 3
-
-</type>
-
-<year>
-
-3079
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-19
-</armor_type>
-
-<engine_type>
-
-2
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>

@@ -1,152 +1,101 @@
-
+#building block data file
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-
-1
-
+MAM0
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Tatsu
-
 </Name>
 
 <Model>
-
 MIK-O
-
 </Model>
 
-<Tonnage>
+<year>
+3063
+</year>
 
-70
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 5
-
 </SafeThrust>
 
-<Armor>
-
-86
-
-69
-
-69
-
-40
-
-</Armor>
-
-<Nose Equipment>
-
-ISMRM10
-
-ISMRM10 Ammo
-
-ISERMediumLaser
-
-ISERMediumLaser
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISLargePulseLaser
-
-ISMediumPulseLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-ISLargePulseLaser
-
-ISMediumPulseLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-ISMRM30
-
-ISMRM30 Ammo
-
-ISMRM30 Ammo
-
-ISMRM30 Ammo
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 14
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS
-
-</type>
-
-<year>
-
-3063
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-0
-
-</armor_type>
-
 <engine_type>
-
 2
-
 </engine_type>
 
-<motion_type>
-
-aerodyne
-
-</motion_type>
-
 <omni>
-
+1
 </omni>
+
+<armor>
+86
+69
+69
+40
+</armor>
+
+<Nose Equipment>
+MRM 10
+IS MRM 10 Ammo
+ISERMediumLaser
+ISERMediumLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISLargePulseLaser
+ISMediumPulseLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISLargePulseLaser
+ISMediumPulseLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+MRM 30
+IS MRM 30 Ammo
+IS MRM 30 Ammo
+IS MRM 30 Ammo
+</Aft Equipment>
+
+<source>
+TRO 3067 - Civil War
+</source>
+
+<tonnage>
+70.0
+</tonnage>
+

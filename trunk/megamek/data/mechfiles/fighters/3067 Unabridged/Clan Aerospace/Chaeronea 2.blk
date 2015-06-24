@@ -1,74 +1,101 @@
-
 #building block data file
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Aero
 </UnitType>
+
 <Name>
 Chaeronea
 </Name>
+
 <Model>
 2
 </Model>
-<Tonnage>
-25
-</Tonnage>
+
+<year>
+2883
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
 <SafeThrust>
 11
 </SafeThrust>
-<Armor>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+240
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
 22
 20
 20
-19
-</Armor>
+18
+</armor>
+
 <Nose Equipment>
 </Nose Equipment>
+
 <Left Wing Equipment>
 CLERMediumLaser
 CLERMediumLaser
 </Left Wing Equipment>
+
 <Right Wing Equipment>
 CLERMediumLaser
-CLERMediumLaser 
+CLERMediumLaser
 </Right Wing Equipment>
+
 <Aft Equipment>
 </Aft Equipment>
-<heatsinks>
-10
-</heatsinks>
-<sink_type>
-1
-</sink_type>
-<fuel>
-240
-</fuel>
-<type>
-Clan Level 2
-</type>
-<armor_tech>
-2
-</armor_tech>
-<year>
-2883
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-19
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-aerodyne
-</motion_type>
-<omni>
-</omni>
+
+<source>
+TRO 3067 - Succession Wars
+</source>
+
+<tonnage>
+25.0
+</tonnage>
+

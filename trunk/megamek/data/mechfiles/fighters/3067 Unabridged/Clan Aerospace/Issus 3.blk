@@ -1,59 +1,79 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Issus
-
 </Name>
 
 <Model>
 3
 </Model>
 
-<Tonnage>
+<year>
+3080
+</year>
 
-40
+<type>
+Clan Level 3
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 8
-
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
 
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+560
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+6
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
 28
-
 23
-
 23
-
 22
-
-</Armor>
+</armor>
 
 <Nose Equipment>
 CLERLargeLaser
@@ -65,71 +85,18 @@ CLInfraredImager
 CLERMediumLaser
 </Left Wing Equipment>
 
-<Right Wing Equipment> 
+<Right Wing Equipment>
 CLERMediumLaser
 </Right Wing Equipment>
 
 <Aft Equipment>
-
 </Aft Equipment>
 
-<heatsinks>
+<source>
+TRO 3067 - Jihad
+</source>
 
-10
+<tonnage>
+40.0
+</tonnage>
 
-</heatsinks>
-
-<sink_type>
-
-1
-
-</sink_type>
-
-<fuel>
-
-560
-
-</fuel>
-
-<type>
-
-Clan Level 3
-
-</type>
-
-<armor_tech>
-6
-</armor_tech>
-
-<year>
-
-3080
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-19
-</armor_type>
-
-<engine_type>
-
-0
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
-
-<omni>
-
-</omni>

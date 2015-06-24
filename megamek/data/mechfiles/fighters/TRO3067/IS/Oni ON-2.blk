@@ -1,63 +1,81 @@
-
+#building block data file
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-
-1
-
+MAM0
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Oni
-
 </Name>
 
 <Model>
-
 ON-2
-
 </Model>
 
-<Tonnage>
+<year>
+3078
+</year>
 
-55
+<type>
+IS Level 3
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 7
-
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
 
+<heatsinks>
+13
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 37
-
 30
-
 30
-
 28
-
-</Armor>
+</armor>
 
 <Nose Equipment>
-ISMRM40
-IS MRM Apollo FCS
-ISMRM40 Ammo
-ISMRM40 Ammo
+MRM 40
+ISApollo
+IS MRM 40 Ammo
+IS MRM 40 Ammo
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -66,7 +84,7 @@ ISERMediumLaser
 ISERMediumLaser
 </Left Wing Equipment>
 
-<Right Wing Equipment> 
+<Right Wing Equipment>
 ISERMediumLaser
 ISERMediumLaser
 ISERMediumLaser
@@ -76,55 +94,11 @@ ISERMediumLaser
 ISGuardianECMSuite
 </Aft Equipment>
 
-<heatsinks>
+<source>
+TRO 3067 - Jihad
+</source>
 
-13
+<tonnage>
+55.0
+</tonnage>
 
-</heatsinks>
-
-<sink_type>
-
-1
-
-</sink_type>
-
-<fuel>
-
-320
-
-</fuel>
-
-<type>
-
-IS Level 3
-
-</type>
-
-<year>
-
-3078
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-19
-</armor_type>
-
-<engine_type>
-
-0
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>

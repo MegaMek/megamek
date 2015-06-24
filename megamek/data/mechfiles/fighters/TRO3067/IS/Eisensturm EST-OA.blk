@@ -1,143 +1,105 @@
-
+#building block data file
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-
-1
-
+MAM0
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Eisensturm
-
 </Name>
 
 <Model>
-
 EST-OA
-
 </Model>
 
-<Tonnage>
+<year>
+3066
+</year>
 
-95
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 6
-
 </SafeThrust>
 
-<Armor>
-
-110
-
-85
-
-85
-
-69
-
-</Armor>
-
-<Nose Equipment>
-
-ISHeavyGaussRifle
-
-ISHeavyGauss Ammo
-
-ISHeavyGauss Ammo
-
-ISHeavyGauss Ammo 
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISERLargeLaser
-
-ISERLargeLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-ISERLargeLaser
-
-ISERLargeLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 16
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS
-
-</type>
-
-<year>
-
-3066
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
-
 19
 </armor_type>
 
-<engine_type>
-
-2
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
+<armor_tech>
+-1
+</armor_tech>
 
 <omni>
-
+1
 </omni>
+
+<armor>
+110
+85
+85
+69
+</armor>
+
+<Nose Equipment>
+ISHeavyGaussRifle
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERLargeLaser
+ISERLargeLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERLargeLaser
+ISERLargeLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO 3067 - Civil War
+</source>
+
+<tonnage>
+95.0
+</tonnage>
+

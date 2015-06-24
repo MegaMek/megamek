@@ -1,143 +1,105 @@
-
+#building block data file
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-
-1
-
+MAM0
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Dagger
-
 </Name>
 
 <Model>
-
 DARO-1
-
 </Model>
 
-<Tonnage>
+<year>
+3062
+</year>
 
-45
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 7
-
 </SafeThrust>
 
-<Armor>
-
-76
-
-62
-
-62
-
-50
-
-</Armor>
-
-<Nose Equipment>
-
-ISRotaryAC5
-
-ISRotaryAC5 Ammo
-
-ISRotaryAC5 Ammo
-
-ISRotaryAC5 Ammo
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISERMediumLaser
-
-ISERMediumLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-ISERMediumLaser
-
-ISERMediumLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 11
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS
-
-</type>
-
-<year>
-
-3062
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
-
 19
 </armor_type>
 
-<engine_type>
-
-2
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
+<armor_tech>
+-1
+</armor_tech>
 
 <omni>
-
+1
 </omni>
+
+<armor>
+76
+62
+62
+50
+</armor>
+
+<Nose Equipment>
+ISRotaryAC5
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO 3067 - Civil War
+</source>
+
+<tonnage>
+45.0
+</tonnage>
+

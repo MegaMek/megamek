@@ -1,165 +1,114 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Hydaspes
-
 </Name>
 
 <Model>
-
 2
-
 </Model>
 
-<Tonnage>
+<year>
+3064
+</year>
 
-95
+<type>
+Clan Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 5
-
 </SafeThrust>
 
-<Armor>
-
-138
-
-106
-
-106
-
-82
-
-</Armor>
-
-<Nose Equipment>
-
-CLHeavyMediumLaser
-
-CLHeavyMediumLaser
-
-CLTargeting Computer
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-CLHeavyLargeLaser
-
-CLATM9
-
-CLATM9
-
-CLATM9 Ammo
-
-CLATM9 Ammo
-
-CLATM9 Ammo
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-CLHeavyLargeLaser
-
-CLATM9
-
-CLATM9
-
-CLATM9 Ammo
-
-CLATM9 Ammo
-
-CLATM9 Ammo
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 25
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 640
-
 </fuel>
 
-<type>
+<engine_type>
+2
+</engine_type>
 
-Clan Level 2
-
-</type>
+<armor_type>
+19
+</armor_type>
 
 <armor_tech>
 2
 </armor_tech>
 
-<year>
-
-3064
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-19
-</armor_type>
-
-<engine_type>
-
-2
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
-
 <omni>
-
+1
 </omni>
+
+<armor>
+138
+106
+106
+82
+</armor>
+
+<Nose Equipment>
+CLHeavyMediumLaser
+CLHeavyMediumLaser
+CLTargeting Computer
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLHeavyLargeLaser
+CLATM9
+CLATM9
+Clan Ammo ATM-9
+Clan Ammo ATM-9
+Clan Ammo ATM-9
+CLCASE
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLHeavyLargeLaser
+CLATM9
+CLATM9
+Clan Ammo ATM-9
+Clan Ammo ATM-9
+Clan Ammo ATM-9
+CLCASE
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO 3067 - Civil War
+</source>
+
+<tonnage>
+95.0
+</tonnage>
+

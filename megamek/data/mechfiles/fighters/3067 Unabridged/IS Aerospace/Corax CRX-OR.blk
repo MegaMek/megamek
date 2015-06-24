@@ -1,10 +1,11 @@
-
+#building block data file
 <BlockVersion>
-2
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-1
+MAM0
 </Version>
 
 <UnitType>
@@ -19,39 +20,25 @@ Corax
 CRX-OR
 </Model>
 
-<Tonnage>
-30
-</Tonnage>
+<year>
+3076
+</year>
+
+<type>
+Mixed (IS Chassis) Experimental
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 9
 </SafeThrust>
 
-<Armor>
-44
-33
-33
-26
-</Armor>
-
-<Nose Equipment>
-CLERMediumLaser
-CLERMediumLaser
-CLERMediumLaser
-Clan Streak SRM 4 Ammo
-</Nose Equipment>
-
-<Left Wing Equipment>
-Clan Streak SRM 4
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-Clan Streak SRM 4
-</Right Wing Equipment>
-
-<Aft Equipment>
-CLTargeting Computer
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 10
@@ -65,33 +52,45 @@ CLTargeting Computer
 400
 </fuel>
 
-<type>
-Mixed (IS Chassis) Experimental
-</type>
-
-<armor_tech>
-7
-</armor_tech>
-
-<year>
-3076
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
 <engine_type>
 2
 </engine_type>
 
-<motion_type>
-aerodyne
-</motion_type>
-
 <omni>
+1
 </omni>
+
+<armor>
+44
+33
+33
+26
+</armor>
+
+<Nose Equipment>
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+Clan Streak SRM 4 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLStreakSRM4
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLStreakSRM4
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLTargeting Computer
+</Aft Equipment>
+
+<source>
+TRO 3067 - Jihad
+</source>
+
+<tonnage>
+30.0
+</tonnage>
+

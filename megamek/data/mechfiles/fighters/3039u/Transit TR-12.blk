@@ -1,194 +1,97 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-
-
 #Write the version number just in case...
-
 <Version>
-
 MAM0
-
 </Version>
 
-
-
 <UnitType>
-
 Aero
-
 </UnitType>
 
-
-
 <Name>
-
 Transit
-
 </Name>
 
-
-
 <Model>
-
 TR-12
-
 </Model>
 
-
-
 <Tonnage>
-
 50
-
 </Tonnage>
 
-
-
 <SafeThrust>
-
 7
-
 </SafeThrust>
 
-
-
 <Armor>
-
 69
-
 39
-
 39
-
 37
-
 </Armor>
 
-
-
 <Nose Equipment>
-
 ISLBXAC20
-
 ISERMediumLaser
-
 ISERMediumLaser
-
 ISLBXAC20 CL Ammo
-
 ISLBXAC20 CL Ammo
-
 ISLBXAC20 CL Ammo
-
 ISLBXAC20 CL Ammo
-
 </Nose Equipment>
 
-
-
 <Left Wing Equipment>
-
 ISERMediumLaser
-
 </Left Wing Equipment>
 
-
-
 <Right Wing Equipment>
-
 ISERMediumLaser
-
 </Right Wing Equipment>
 
-
-
 <Aft Equipment>
-
 </Aft Equipment>
 
-
-
 <heatsinks>
-
 12
-
 </heatsinks>
 
-
-
 <sink_type>
-
 1
-
 </sink_type>
 
-
-
 <fuel>
-
 400
-
 </fuel>
 
-
-
 <type>
-
 IS Level 2
-
 </type>
 
-
-
 <year>
-
 3063
-
 </year>
 
-
-
 <source>
-
-Civil War
-
+TRO 3039 - Civil War
 </source>
 
-
-
 <internal_type>
-
 0				
-
 </internal_type>
 
-
-
 <armor_type>
-
 0
-
 </armor_type>
 
-
-
 <engine_type>				
-
 2
-
 </engine_type>
 
-
-
 <motion_type>
-
 aerodyne
-
 </motion_type>

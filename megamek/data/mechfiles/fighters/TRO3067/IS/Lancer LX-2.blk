@@ -1,134 +1,90 @@
-
+#building block data file
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-
-1
-
+MAM0
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Lancer
-
 </Name>
 
 <Model>
-
 LX-2
-
 </Model>
 
-<Tonnage>
+<year>
+3064
+</year>
 
-50
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 7
-
 </SafeThrust>
 
-<Armor>
-
-38
-
-33
-
-33
-
-32
-
-</Armor>
-
-<Nose Equipment>
-
-ISLRM10
-
-ISArtemisIV
-
-ISLRM10 Ammo Artemis-capable
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISLargePulseLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-ISLargePulseLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 10
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS
-
-</type>
-
-<year>
-
-3064
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-0
-
-</armor_type>
-
 <engine_type>
-
 0
-
 </engine_type>
 
-<motion_type>
+<armor>
+38
+33
+33
+32
+</armor>
 
-aerodyne
+<Nose Equipment>
+LRM 10
+ISArtemisIV
+IS Ammo LRM-10 Artemis-capable
+</Nose Equipment>
 
-</motion_type>
+<Left Wing Equipment>
+ISLargePulseLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISLargePulseLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO 3067 - Civil War
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+

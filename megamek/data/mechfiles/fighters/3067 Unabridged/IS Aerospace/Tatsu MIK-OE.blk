@@ -1,57 +1,71 @@
-
+#building block data file
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-
-1
-
+MAM0
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Tatsu
-
 </Name>
 
 <Model>
-
 MIK-OE
-
 </Model>
 
-<Tonnage>
+<year>
+3075
+</year>
 
-70
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 5
-
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
 
+<heatsinks>
+18
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<omni>
+1
+</omni>
+
+<armor>
 86
-
 69
-
 69
-
 40
-
-</Armor>
+</armor>
 
 <Nose Equipment>
 ISAntiMissileSystem
@@ -66,72 +80,23 @@ ISPlasmaRifleAmmo
 
 <Left Wing Equipment>
 ISERMediumLaser
-ISSnubNosedPPC
+ISSNPPC
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 ISERMediumLaser
-ISSnubNosedPPC
+ISSNPPC
 </Right Wing Equipment>
 
 <Aft Equipment>
 ISGuardianECMSuite
 </Aft Equipment>
 
-<heatsinks>
+<source>
+TRO 3067 - Jihad
+</source>
 
-18
+<tonnage>
+70.0
+</tonnage>
 
-</heatsinks>
-
-<sink_type>
-
-1
-
-</sink_type>
-
-<fuel>
-
-400
-
-</fuel>
-
-<type>
-
-IS Level 2
-
-</type>
-
-<year>
-
-3075
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-0
-
-</armor_type>
-
-<engine_type>
-
-2
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
-
-<omni>
-
-</omni>

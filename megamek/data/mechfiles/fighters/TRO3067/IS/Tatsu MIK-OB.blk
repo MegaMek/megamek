@@ -1,162 +1,106 @@
-
+#building block data file
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-
-1
-
+MAM0
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Tatsu
-
 </Name>
 
 <Model>
-
 MIK-OB
-
 </Model>
 
-<Tonnage>
+<year>
+3063
+</year>
 
-70
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 5
-
 </SafeThrust>
 
-<Armor>
-
-86
-
-69
-
-69
-
-40
-
-</Armor>
-
-<Nose Equipment>
-
-ISLBXAC10
-
-ISLBXAC10 CL Ammo
-
-ISLBXAC10 CL Ammo
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISLRM15
-
-ISArtemisIV
-
-ISLRM15 Ammo Artemis-capable
-
-ISLRM15 Ammo Artemis-capable
-
-ISLRM15 Ammo Artemis-capable
-
-ISERMediumLaser
-
-ISERMediumLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-ISLRM15
-
-ISArtemisIV
-
-ISLRM15 Ammo Artemis-capable
-
-ISLRM15 Ammo Artemis-capable
-
-ISLRM15 Ammo Artemis-capable
-
-ISERMediumLaser
-
-ISERMediumLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 12
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS
-
-</type>
-
-<year>
-
-3063
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-0
-
-</armor_type>
-
 <engine_type>
-
 2
-
 </engine_type>
 
-<motion_type>
-
-aerodyne
-
-</motion_type>
-
 <omni>
-
+1
 </omni>
+
+<armor>
+86
+69
+69
+40
+</armor>
+
+<Nose Equipment>
+ISLBXAC10
+IS LB 10-X Cluster Ammo
+IS LB 10-X Cluster Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+LRM 15
+ISArtemisIV
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+ISERMediumLaser
+ISERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+LRM 15
+ISArtemisIV
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+ISERMediumLaser
+ISERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO 3067 - Civil War
+</source>
+
+<tonnage>
+70.0
+</tonnage>
+

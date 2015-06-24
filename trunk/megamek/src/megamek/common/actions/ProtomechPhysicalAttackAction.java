@@ -183,29 +183,32 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         toHit.append(Compute.getAttackerMovementModifier(game, attackerId));
 
         // target movement
-        toHit.append(Compute.getTargetMovementModifier(game, targetId));
+        if (targetId != Entity.NONE) {
+            toHit.append(Compute.getTargetMovementModifier(game, targetId));
+        }
 
         // attacker terrain
         toHit.append(Compute.getAttackerTerrainModifier(game, attackerId));
 
         // target terrain
-        toHit.append(Compute.getTargetTerrainModifier(game, te, 0, inSameBuilding));
-
-        // attacker is spotting
-        if (ae.isSpotting()) {
-            toHit.addModifier(+1, "attacker is spotting");
-        }
+        if (te != null) {
+            toHit.append(Compute.getTargetTerrainModifier(game, te, 0,
+                    inSameBuilding));
+        }        
 
         // target prone
-        if (te.isProne()) {
+        if ((te != null) && te.isProne()) {
             toHit.addModifier(-2, "target prone and adjacent");
         }
 
         // target immobile
-        toHit.append(Compute.getImmobileMod(te));
+        if (te != null) {
+            toHit.append(Compute.getImmobileMod(te));
+        }
 
         toHit.append(nightModifiers(game, target, null, ae, false));
 
+        // te can be null for this
         Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
         // Standing 'mechs use kick table

@@ -645,7 +645,7 @@ W,3071-IS/Clan1950-IS/Clan,3071-(allowed to all)1950-(allowed to all),Vintage Ga
 W,3071-IS/Clan1950-IS/Clan,3071-(allowed to all)1950-(allowed to all),Wire-Guided Missile Launcher,InfantryWireGuidedMissileLauncher,WireGuidedMissileLauncher,
 W,3080-Inner Sphere3071-Inner Sphere,3080-IS_TW_Non_Box3071-IS_TW_Non_Box,Gungnir Heavy Support Gauss Rifle,InfantryGungnirHeavySupportGaussRifle,GungnirHeavySupportGaussRifle,
 W,3071-Inner Sphere3079-Inner Sphere,3071-IS_TW_Non_Box3079-IS_TW_Non_Box,Magpulse Harpoon Gun,InfantryMagpulseHarpoonGun,MagpulseHarpoonGun,
-W,3071-Inner Sphere1950-Inner Sphere,3071-IS_TW_Non_Box1950-IS_TW_Non_Box,Snub-Nose Support PPC,InfantrySnubNoseSupportPPC,SnubNoseSupportPPC,
+W,3082-Inner Sphere3071-Inner Sphere,3082-IS_TW_Non_Box3071-IS_TW_Non_Box,Snub-Nose Support PPC,InfantrySnubNoseSupportPPC,SnubNoseSupportPPC,
 W,3071-IS/Clan,3071-(allowed to all),Grenade (Inferno),InfantryInfernoGrenade,Inferno Grenades,
 W,3071-IS/Clan1950-IS/Clan,3071-(allowed to all)1950-(allowed to all),Grenade (Micro),InfantryMicroGrenade,Micro Grenades,
 W,3071-IS/Clan,3071-(allowed to all),Grenade (Mini) (Inferno),InfantryMiniInfernoGrenade,Mini Inferno Grenades,

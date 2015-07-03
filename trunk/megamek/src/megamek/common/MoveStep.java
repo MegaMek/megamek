@@ -690,11 +690,7 @@ public class MoveStep implements Serializable {
                 // Infantry in immobilized transporters get
                 // a special "unload stranded" game turn.
                 hasEverUnloaded = true;
-                if (entity instanceof Aero) {
-                    setMp(0);
-                } else {
-                    setMp(1);
-                }
+                setMp(0);
                 break;
             case LOAD:
                 setMp(1);
@@ -2095,7 +2091,6 @@ public class MoveStep implements Serializable {
             if ((stepType != MoveStepType.TURN_LEFT)
                     && (stepType != MoveStepType.TURN_RIGHT)
                     && (stepType != MoveStepType.GET_UP)
-                    && (stepType != MoveStepType.UNLOAD)
                     && (stepType != MoveStepType.LOAD)
                     && (stepType != MoveStepType.CAREFUL_STAND)
                     && (stepType != MoveStepType.HULL_DOWN)
@@ -2320,6 +2315,8 @@ public class MoveStep implements Serializable {
                             movementType = EntityMovementType.MOVE_WALK;
                         }
                     }
+                } else {
+                    movementType = prev.getMovementType();
                 }
 
                 // Prone Meks are able to unload, if they have the MP.

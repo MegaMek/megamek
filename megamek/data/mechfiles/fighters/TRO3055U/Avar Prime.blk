@@ -1,128 +1,62 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Avar
-
 </Name>
 
 <Model>
-
 Prime
-
 </Model>
 
-<Tonnage>
+<year>
+2878
+</year>
 
-35
+<type>
+Clan Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 10
-
 </SafeThrust>
 
-<Armor>
-
-42
-
-32
-
-32
-
-28
-
-</Armor>
-
-<Nose Equipment>
-
-CLStreakSRM6
-
-CLStreakSRM6 Ammo
-
-CLMediumPulseLaser
-
-CLERLargeLaser
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-CLMediumPulseLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-CLMediumPulseLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment> 
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 10
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 240
-
 </fuel>
 
-<type>
-
-Clan Level 2
-
-</type>
-
-<year>
-
-2878
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
-
 19
 </armor_type>
 
@@ -130,19 +64,41 @@ Clan Level 2
 2
 </armor_tech>
 
-
-<engine_type>
-
-2
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
-
 <omni>
-
+1
 </omni>
+
+<armor>
+42
+32
+32
+28
+</armor>
+
+<Nose Equipment>
+CLStreakSRM6
+Clan Streak SRM 6 Ammo
+CLMediumPulseLaser
+CLERLargeLaser
+CLCASE
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLMediumPulseLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLMediumPulseLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO 3055u - Succession Wars
+</source>
+
+<tonnage>
+35.0
+</tonnage>
+

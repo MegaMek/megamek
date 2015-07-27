@@ -65,8 +65,12 @@ v0.41.5-dev (SVN)
 + Bug [#4575]: NPE in Compute.getTargetMovementModifier for Protomechs inside
     building during physical phase
 + Data: New Sprites
-+ Patches [#459 to #4661] - Various Source Updates
++ Patches [#459 to #461] - Various Source Updates
 + Bug [#4579]: Dismounting infantry shouldn't cost MP
++ Bug [#4580]: Incorrect crew size for infantry support MG
++ Data: New Sprites
++ Patches [#462 to #471] - Various Source Updates
++ Added construction data for IO equipment
 
 v0.41.4 (2015-05-31 16:45 UTC)
 + Bug: UnitDisplay System Tab would double up on status modifiers, like * and j

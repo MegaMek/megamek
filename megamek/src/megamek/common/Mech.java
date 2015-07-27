@@ -37,6 +37,7 @@ import megamek.common.weapons.EnergyWeapon;
 import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.HVACWeapon;
 import megamek.common.weapons.ISMekTaser;
+import megamek.common.weapons.ISRISCHyperLaser;
 import megamek.common.weapons.LBXACWeapon;
 import megamek.common.weapons.PPCWeapon;
 import megamek.common.weapons.TSEMPWeapon;
@@ -779,6 +780,19 @@ public abstract class Mech extends Entity {
         for (Mounted m : getEquipment()) {
             if ((m.getType() instanceof MiscType)
                     && m.getType().hasFlag(MiscType.F_TSM)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * does this mech have SCM?
+     */
+    public boolean hasSCM() {
+        for (Mounted m : getEquipment()) {
+            if ((m.getType() instanceof MiscType)
+                    && m.getType().hasFlag(MiscType.F_SCM)) {
                 return true;
             }
         }
@@ -3098,7 +3112,7 @@ public abstract class Mech extends Entity {
         double amsAmmoBV = 0;
         for (Mounted mounted : getAmmo()) {
             AmmoType atype = (AmmoType) mounted.getType();
-            if (atype.getAmmoType() == AmmoType.T_AMS) {
+            if ((atype.getAmmoType() == AmmoType.T_AMS) || (atype.getAmmoType() == AmmoType.T_APDS)) {
                 amsAmmoBV += atype.getBV(this);
             }
         }
@@ -3120,6 +3134,8 @@ public abstract class Mech extends Entity {
                     || ((etype instanceof MiscType) && (etype
                             .hasFlag(MiscType.F_ECM)
                             || etype.hasFlag(MiscType.F_BAP)
+                            || etype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)
+                            || etype.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)
                             || etype.hasFlag(MiscType.F_AP_POD)
                             || etype.hasFlag(MiscType.F_MASS)
                             || etype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
@@ -3137,7 +3153,7 @@ public abstract class Mech extends Entity {
                 if (etype instanceof WeaponType) {
                     WeaponType wtype = (WeaponType) etype;
                     if (wtype.hasFlag(WeaponType.F_AMS)
-                            && (wtype.getAmmoType() == AmmoType.T_AMS)) {
+                            && ((wtype.getAmmoType() == AmmoType.T_AMS) || (wtype.getAmmoType() == AmmoType.T_APDS))) {
                         amsBV += bv;
                     }
                 }
@@ -3216,18 +3232,6 @@ public abstract class Mech extends Entity {
             if (!etype.isExplosive(mounted, true)) {
                 continue;
             }
-            // PPCs with capacitors subtract 1
-            if (etype instanceof PPCWeapon) {
-                if (mounted.getLinkedBy() != null) {
-                    toSubtract = 1;
-                } else {
-                    continue;
-                }
-            }
-            if ((etype instanceof MiscType)
-                    && etype.hasFlag(MiscType.F_PPC_CAPACITOR)) {
-                toSubtract = 1;
-            }
 
             // don't count oneshot ammo
             if (loc == LOC_NONE) {
@@ -3279,10 +3283,26 @@ public abstract class Mech extends Entity {
                     || (etype instanceof CLImprovedHeavyLargeLaser)
                     || (etype instanceof CLImprovedHeavyMediumLaser)
                     || (etype instanceof CLImprovedHeavySmallLaser)
+                    || (etype instanceof ISRISCHyperLaser)
                     || (etype instanceof TSEMPWeapon)
                     || (etype instanceof ISMekTaser)) {
                 toSubtract = 1;
             }
+
+         // PPCs with capacitors subtract 1
+            if (etype instanceof PPCWeapon) {
+                if (mounted.getLinkedBy() != null) {
+                    toSubtract = 1;
+                } else {
+                    continue;
+                }
+            }
+            if ((etype instanceof MiscType)
+                    && (etype.hasFlag(MiscType.F_PPC_CAPACITOR)
+                            || etype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
+                toSubtract = 1;
+            }
+
             if ((etype instanceof MiscType)
                     && etype.hasFlag(MiscType.F_BLUE_SHIELD)) {
                 // blue shield needs to be special cased, because it's one
@@ -3633,7 +3653,11 @@ public abstract class Mech extends Entity {
             mechHeatEfficiency -= getJumpHeat(getJumpMP(false, true));
             bvText.append(" - Jump Heat ");
         } else {
-            mechHeatEfficiency -= getRunHeat();
+            int runHeat = getRunHeat();
+            if (hasSCM()) {
+                runHeat = 0;
+            }
+            mechHeatEfficiency -= runHeat;
             bvText.append(" - Run Heat ");
         }
         if (hasStealth()) {
@@ -3738,6 +3762,11 @@ public abstract class Mech extends Entity {
                         && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
                     dBV *= 1.15;
                     name = name.concat(" with Apollo");
+                }
+                if ((mLinker.getType() instanceof MiscType)
+                        && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                    dBV *= 1.25;
+                    name = name.concat(" with RISC Laser Pulse Module");
                 }
             }
 
@@ -3939,10 +3968,23 @@ public abstract class Mech extends Entity {
                 weaponHeat *= 6;
             }
 
+
+            String name = wtype.getName();
+
+
+            // RISC laser pulse module adds 2 heat
+            if ((wtype.hasFlag(WeaponType.F_LASER)) && (mounted.getLinkedBy() != null)
+                    && (mounted.getLinkedBy().getType() instanceof MiscType)
+                    && (mounted.getLinkedBy().getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
+                name = name.concat(" with RISC Laser Pulse Module");
+                weaponHeat += 2;
+            }
+
             // laser insulator reduce heat by 1, to a minimum of 1
             if (wtype.hasFlag(WeaponType.F_LASER)
                     && (mounted.getLinkedBy() != null)
                     && !mounted.getLinkedBy().isInoperable()
+                    && (mounted.getLinkedBy().getType() instanceof MiscType)
                     && mounted.getLinkedBy().getType()
                             .hasFlag(MiscType.F_LASER_INSULATOR)) {
                 weaponHeat -= 1;
@@ -3957,9 +3999,6 @@ public abstract class Mech extends Entity {
                     || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)) {
                 weaponHeat *= 0.5;
             }
-
-            String name = wtype.getName();
-
             // check to see if the weapon is a PPC and has a Capacitor attached
             // to it
             if (wtype.hasFlag(WeaponType.F_PPC)
@@ -4030,6 +4069,11 @@ public abstract class Mech extends Entity {
                         && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
                     dBV *= 1.15;
                     weaponName = weaponName.concat(" with Apollo");
+                }
+                if ((mLinker.getType() instanceof MiscType)
+                        && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                    dBV *= 1.25;
+                    weaponName = weaponName.concat(" with RISC Laser Pulse Module");
                 }
             }
             // if linked to AES, multiply by 1.25
@@ -4346,6 +4390,8 @@ public abstract class Mech extends Entity {
             if (mtype.hasFlag(MiscType.F_ECM)
                     || mtype.hasFlag(MiscType.F_BAP)
                     || mtype.hasFlag(MiscType.F_AP_POD)
+                    || mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)
+                    || mtype.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)
                     || mtype.hasFlag(MiscType.F_MASS)
                     || mtype.hasFlag(MiscType.F_HEAVY_BRIDGE_LAYER)
                     || mtype.hasFlag(MiscType.F_MEDIUM_BRIDGE_LAYER)
@@ -4416,7 +4462,7 @@ public abstract class Mech extends Entity {
             }
 
             // don't count AMS, it's defensive
-            if (atype.getAmmoType() == AmmoType.T_AMS) {
+            if ((atype.getAmmoType() == AmmoType.T_AMS) || (atype.getAmmoType() == AmmoType.T_APDS)) {
                 continue;
             }
 
@@ -4490,7 +4536,7 @@ public abstract class Mech extends Entity {
         bvText.append(startRow);
         bvText.append(startColumn);
 
-        bvText.append("Toal Ammo BV: ");
+        bvText.append("Total Ammo BV: ");
         bvText.append(endColumn);
         bvText.append(startColumn);
         bvText.append(endColumn);
@@ -4791,7 +4837,7 @@ public abstract class Mech extends Entity {
         costs[i++] = cockpitCost;
         costs[i++] = 50000;// life support
         costs[i++] = weight * 2000;// sensors
-        int muscCost = hasTSM() ? 16000 : 2000;
+        int muscCost = hasSCM() ? 10000 : hasTSM() ? 16000 : 2000;
         costs[i++] = muscCost * weight;// musculature
         costs[i++] = EquipmentType.getStructureCost(structureType) * weight;// IS
         costs[i++] = getActuatorCost();// arm and/or leg actuators
@@ -5930,6 +5976,8 @@ public abstract class Mech extends Entity {
             sb.append("Triple-Strength");
         } else if (hasIndustrialTSM()) {
             sb.append("Industrial Triple-Strength");
+        } else if (hasSCM()) {
+            sb.append("Super-Cooled");
         } else {
             sb.append("Standard");
         }

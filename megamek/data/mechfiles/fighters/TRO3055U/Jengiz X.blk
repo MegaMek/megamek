@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -22,48 +20,25 @@ Jengiz
 X
 </Model>
 
-<Tonnage>
-80
-</Tonnage>
+<year>
+3075
+</year>
+
+<type>
+Clan Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-85
-63
-63
-48
-</Armor>
-
-<Nose Equipment>
-CLRotaryAC5
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-</Nose Equipment>
-
-<Left Wing Equipment>
-CLRotaryAC5
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLImprovedMediumHeavyLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-CLRotaryAC5
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLRotaryAC5 Ammo
-CLImprovedMediumHeavyLaser
-</Right Wing Equipment>
-
-<Aft Equipment>
-CLERMediumLaser
-CLWatchdogECM
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 20
@@ -77,33 +52,65 @@ CLWatchdogECM
 320
 </fuel>
 
-<type>
-Clan Level 4
-</type>
-
-<armor_tech>
-8
-</armor_tech>
-
-<year>
-3075
-</year>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
+<armor_tech>
+8
+</armor_tech>
 
 <omni>
+1
 </omni>
+
+<armor>
+85
+63
+63
+48
+</armor>
+
+<Nose Equipment>
+CLRotaryAC5
+CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo
+CLCASE
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLRotaryAC5
+CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo
+CLImprovedMediumHeavyLaser
+CLCASE
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLRotaryAC5
+CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo
+CLImprovedMediumHeavyLaser
+CLCASE
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLERMediumLaser
+WatchdogECMSuite
+</Aft Equipment>
+
+<source>
+TRO 3055u - Jihad
+</source>
+
+<tonnage>
+80.0
+</tonnage>
+

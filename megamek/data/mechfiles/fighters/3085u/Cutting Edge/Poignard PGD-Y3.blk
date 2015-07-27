@@ -1,143 +1,100 @@
-
+#building block data file
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-
-1
-
+MAM0
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Poignard
-
 </Name>
 
 <Model>
-
 PGD-Y3
-
 </Model>
 
-<Tonnage>
+<year>
+3083
+</year>
 
-35
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 9
-
 </SafeThrust>
 
-<Armor>
-
-70
-
-50
-
-50
-
-28
-
-</Armor>
-
-<Nose Equipment>
-
-ISLAC5
-
-ISLAC5 Ammo
-
-ISSmallPulseLaser
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISERMediumLaser
-
-ISERMediumLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-ISERMediumLaser
-
-ISERMediumLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 11
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 320
-
 </fuel>
 
-<type>
-
-IS Level 2
-
-</type>
-
-<year>
-
-3083
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
-
 20
 </armor_type>
 
-<engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-2
+<armor>
+70
+50
+50
+28
+</armor>
 
-</engine_type>
+<Nose Equipment>
+Light Auto Cannon/5
+IS Ammo LAC/5
+ISSmallPulseLaser
+</Nose Equipment>
 
-<motion_type>
+<Left Wing Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Left Wing Equipment>
 
-aerodyne
+<Right Wing Equipment>
+ISERMediumLaser
+ISERMediumLaser
+</Right Wing Equipment>
 
-</motion_type>
+<Aft Equipment>
+</Aft Equipment>
 
-<Source>
+<source>
+TRO 3085 - Jihad
+</source>
 
-Dark Age
+<tonnage>
+35.0
+</tonnage>
 
-</Source>

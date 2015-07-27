@@ -1,187 +1,99 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-
-
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
-
-
 <UnitType>
-
 Aero
-
 </UnitType>
 
-
-
 <Name>
-
 Hellcat II
-
 </Name>
 
-
-
 <Model>
-
 HCT-213C
-
 </Model>
 
-
-
-<Tonnage>
-
-50
-
-</Tonnage>
-
-
-
-<SafeThrust>
-
-7
-
-</SafeThrust>
-
-
-
-<Armor>
-
-68
-
-51
-
-51
-
-45
-
-</Armor>
-
-
-
-<Nose Equipment>
-
-ISMediumPulseLaser
-
-ISMediumPulseLaser
-
-BeagleActiveProbe
-
-</Nose Equipment>
-
-
-
-<Left Wing Equipment>
-
-ISLargePulseLaser
-
-</Left Wing Equipment>
-
-
-
-<Right Wing Equipment>
-
-ISLargePulseLaser
-
-</Right Wing Equipment>
-
-
-
-<Aft Equipment>
-
-IS Medium Laser
-
-</Aft Equipment>
-
-
-
-<heatsinks>
-
-13
-
-</heatsinks>
-
-
-
-<sink_type>
-
-1
-
-</sink_type>
-
-
-
-<fuel>
-
-400
-
-</fuel>
-
-
-
-<type>
-
-IS Level 2
-
-</type>
-
-
-
 <year>
-
 2724
-
 </year>
 
+<type>
+IS Level 2
+</type>
 
+<motion_type>
+Aerodyne
+</motion_type>
 
-<source>
+<SafeThrust>
+7
+</SafeThrust>
 
-Op Klondyke
+<cockpit_type>
+0
+</cockpit_type>
 
-</source>
+<heatsinks>
+13
+</heatsinks>
 
+<sink_type>
+1
+</sink_type>
 
+<fuel>
+400
+</fuel>
 
-<internal_type>
-
-0				
-
-</internal_type>
-
-
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
-
 19
 </armor_type>
 
+<armor_tech>
+-1
+</armor_tech>
 
+<armor>
+68
+51
+51
+45
+</armor>
 
-<engine_type>				
+<Nose Equipment>
+ISMediumPulseLaser
+ISMediumPulseLaser
+BeagleActiveProbe
+</Nose Equipment>
 
-2
+<Left Wing Equipment>
+ISLargePulseLaser
+</Left Wing Equipment>
 
-</engine_type>
+<Right Wing Equipment>
+ISLargePulseLaser
+</Right Wing Equipment>
 
+<Aft Equipment>
+Medium Laser
+</Aft Equipment>
 
+<source>
+H:Operation Klondyke - Star League
+</source>
 
-<motion_type>
+<tonnage>
+50.0
+</tonnage>
 
-aerodyne
-
-</motion_type>

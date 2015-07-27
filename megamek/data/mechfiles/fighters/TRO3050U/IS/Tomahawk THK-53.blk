@@ -1,141 +1,99 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Tomahawk
-
 </Name>
 
 <Model>
-
 THK-53
-
 </Model>
 
-<Tonnage>
+<year>
+2650
+</year>
 
-45
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 8
-
 </SafeThrust>
 
-<Armor>
-
-58
-
-46
-
-46
-
-38
-
-</Armor>
-
-<Nose Equipment> 
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISMediumLaser
-
-ISMediumLaser
-
-ISMediumLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-ISMediumLaser
-
-ISMediumLaser
-
-ISMediumLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment> 
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 16
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS Level 2
-
-</type>
-
-<year>
-
-2650
-
-</year>
-
-<internal_type>
-
+<engine_type>
 0
-
-</internal_type>
+</engine_type>
 
 <armor_type>
-
 19
 </armor_type>
 
-<engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-0
+<armor>
+58
+46
+46
+38
+</armor>
 
-</engine_type>
+<Nose Equipment>
+</Nose Equipment>
 
-<motion_type>
+<Left Wing Equipment>
+Medium Laser
+Medium Laser
+Medium Laser
+</Left Wing Equipment>
 
-aerodyne
+<Right Wing Equipment>
+Medium Laser
+Medium Laser
+Medium Laser
+</Right Wing Equipment>
 
-</motion_type>
+<Aft Equipment>
+</Aft Equipment>
 
-
+<source>
+TRO 3050u - Star League
+</source>
+
+<tonnage>
+45.0
+</tonnage>
+

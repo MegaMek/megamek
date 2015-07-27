@@ -1,9 +1,9 @@
+#building block data file
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,36 +20,25 @@ Trident
 TRN-3U
 </Model>
 
-<Tonnage>
-20
-</Tonnage>
+<year>
+2812
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 12
 </SafeThrust>
 
-<Armor>
-9
-9
-9
-5
-</Armor>
-
-<Nose Equipment>
-ISMediumLaser 
-</Nose Equipment>
-
-<Left Wing Equipment> 
-ISMediumLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISMediumLaser 
-</Right Wing Equipment>
-
-<Aft Equipment> 
-ISSmallLaser
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 10
@@ -63,26 +52,38 @@ ISSmallLaser
 240
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<year>
-2812
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
 <engine_type>
 0
 </engine_type>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+9
+9
+9
+5
+</armor>
+
+<Nose Equipment>
+Medium Laser
+</Nose Equipment>
+
+<Left Wing Equipment>
+Medium Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Medium Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+Small Laser
+</Aft Equipment>
+
+<source>
+TRO 3050u - Succession Wars
+</source>
+
+<tonnage>
+20.0
+</tonnage>
+

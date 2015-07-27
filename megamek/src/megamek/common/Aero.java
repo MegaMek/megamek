@@ -466,7 +466,7 @@ public class Aero extends Entity {
 
     public void autoSetCapArmor() {
         double divisor = 10.0;
-        if(null != game && game.getOptions().booleanOption("aero_sanity")) {
+        if((null != game) && game.getOptions().booleanOption("aero_sanity")) {
             divisor = 1.0;
         }
         capitalArmor_orig = (int) Math.round(getTotalOArmor() / divisor);
@@ -475,7 +475,7 @@ public class Aero extends Entity {
 
     public void autoSetFatalThresh() {
         int baseThresh = 2;
-        if(null != game && game.getOptions().booleanOption("aero_sanity")) {
+        if((null != game) && game.getOptions().booleanOption("aero_sanity")) {
             baseThresh = 20;
         }
         fatalThresh = Math.max(baseThresh, (int) Math.ceil(capitalArmor / 4.0));
@@ -626,9 +626,9 @@ public class Aero extends Entity {
             } else {
                 return 10;
             }
-        } else if (getEntityType() == Entity.ETYPE_WARSHIP ||
-                getEntityType() == Entity.ETYPE_JUMPSHIP ||
-                getEntityType() == Entity.ETYPE_SPACE_STATION) {
+        } else if ((getEntityType() == Entity.ETYPE_WARSHIP) ||
+                (getEntityType() == Entity.ETYPE_JUMPSHIP) ||
+                (getEntityType() == Entity.ETYPE_SPACE_STATION)) {
             if (getWeight() < 110000){
                 return 10;
             } else if (getWeight() < 250000){
@@ -1784,6 +1784,11 @@ public class Aero extends Entity {
                     dBV *= 1.15;
                     name = name.concat(" with Apollo");
                 }
+                if ((mLinker.getType() instanceof MiscType)
+                        && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                    dBV *= 1.25;
+                    name = name.concat(" with RISC Laser Pulse Module");
+                }
             }
 
             // and we'll add the tcomp here too
@@ -2384,7 +2389,7 @@ public class Aero extends Entity {
         int atmoCond = game.getPlanetaryConditions().getAtmosphere();
         // add in atmospheric effects later
         if (!(game.getBoard().inSpace()
-                || atmoCond == PlanetaryConditions.ATMO_VACUUM)
+                || (atmoCond == PlanetaryConditions.ATMO_VACUUM))
                 && isAirborne()) {
             prd.addModifier(+2, "Atmospheric operations");
 
@@ -2559,7 +2564,7 @@ public class Aero extends Entity {
 
     public int getThresh(int loc) {
         if(isCapitalFighter()) {
-            if(null != game && game.getOptions().booleanOption("aero_sanity")) {
+            if((null != game) && game.getOptions().booleanOption("aero_sanity")) {
                 if (game.getOptions().booleanOption("variable_damage_thresh")) {
                     return (int)Math.round(getCapArmor() / 40.0)+1;
                 } else {

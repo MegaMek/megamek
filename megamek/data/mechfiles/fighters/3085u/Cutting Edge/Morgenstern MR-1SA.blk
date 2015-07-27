@@ -1,147 +1,104 @@
-
+#building block data file
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-
-1
-
+MAM0
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Morgenstern
-
 </Name>
 
 <Model>
-
 MR-1SA
-
 </Model>
 
-<Tonnage>
+<year>
+3086
+</year>
 
-70
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 6
-
 </SafeThrust>
 
-<Armor>
-
-93
-
-71
-
-71
-
-51
-
-</Armor>
-
-<Nose Equipment>
-
-ISERPPC
-
-ISPlasmaRifle
-
-ISPlasmaRifle
-
-ISPlasmaRifle Ammo
-
-ISPlasmaRifle Ammo
-
-ISPlasmaRifle Ammo
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-ISERMediumLaser
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 18
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 320
-
 </fuel>
 
-<type>
-
-IS Level 2
-
-</type>
-
-<year>
-
-3086
-
-</year>
-
-<internal_type>
-
+<engine_type>
 0
-
-</internal_type>
+</engine_type>
 
 <armor_type>
-
 19
 </armor_type>
 
-<engine_type>
-
-0
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
+<armor_tech>
+-1
+</armor_tech>
 
 <omni>
-
+1
 </omni>
 
-<Source>
+<armor>
+93
+71
+71
+51
+</armor>
 
-Dark Age
+<Nose Equipment>
+ISERPPC
+ISPlasmaRifle
+ISPlasmaRifle
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+</Nose Equipment>
 
-</Source>
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISERMediumLaser
+</Aft Equipment>
+
+<source>
+TRO 3085 - Early Republic
+</source>
+
+<tonnage>
+70.0
+</tonnage>
+

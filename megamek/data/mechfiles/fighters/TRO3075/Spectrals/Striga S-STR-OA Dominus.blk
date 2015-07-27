@@ -1,170 +1,106 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Striga
-
 </Name>
 
 <Model>
-
 S-STR-OA Dominus
-
 </Model>
 
-<Tonnage>
+<year>
+3072
+</year>
 
-85
+<type>
+IS Level 3
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 6
-
 </SafeThrust>
 
-<Armor>
-
-100
-
-76
-
-76
-
-70
-
-</Armor>
-
-<Nose Equipment>
-
-ISHeavyPPC
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISRotaryAC5
-
-ISRotaryAC5 Ammo
-
-ISRotaryAC5 Ammo
-
-ISRotaryAC5 Ammo
-
-ISStreakSRM4
-
-ISStreakSRM4 Ammo
-
-CASE
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-ISRotaryAC5
-
-ISRotaryAC5 Ammo
-
-ISRotaryAC5 Ammo
-
-ISRotaryAC5 Ammo
-
-ISStreakSRM4
-
-</Right Wing Equipment>
-
-<Aft Equipment> 
-
-</Aft Equipment>
+<cockpit_type>
+1
+</cockpit_type>
 
 <heatsinks>
-
 13
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS Level 3
-
-</type>
-
-<armor_tech>
-5
-</armor_tech>
-
-<year>
-
-3072
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<cockpit_type>
+<armor_tech>
+5
+</armor_tech>
 
-1
+<armor>
+100
+76
+76
+70
+</armor>
 
-</cockpit_type>
+<Nose Equipment>
+Heavy PPC
+</Nose Equipment>
 
-<engine_type>
+<Left Wing Equipment>
+ISRotaryAC5
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISStreakSRM4
+IS Streak SRM 4 Ammo
+ISCASE
+</Left Wing Equipment>
 
-2
+<Right Wing Equipment>
+ISRotaryAC5
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISStreakSRM4
+</Right Wing Equipment>
 
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
+<Aft Equipment>
+</Aft Equipment>
 
 <source>
-TRO 3067
+TRO 3075 - Jihad
 </source>
 
-
-
+<tonnage>
+85.0
+</tonnage>
 

@@ -158,7 +158,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      *  For BA weapons, is this in a detachable weapon pack?
      */
     private boolean isDWPMounted = false;
-    
+
     /**
      * Does this Mounted represent a weapon that is mounted in an anti-personnel
      * weapon mount?
@@ -170,7 +170,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     // called shots status, sort of like another mode
     private CalledShot called = new CalledShot();
-    
+
     /**
      * Flag that keeps track of whether this <code>Mounted</code> is mounted as
      * a squad support weapon on <code>BattleArmor</code>.
@@ -1064,6 +1064,9 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             if (mtype.hasFlag(MiscType.F_JUMP_JET) && mtype.hasSubType(MiscType.S_PROTOTYPE) && mtype.hasSubType(MiscType.S_IMPROVED)) {
                 return 10;
             }
+            if (mtype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                return 2;
+            }
             return 0;
         }
         // um, otherwise, I'm not sure
@@ -1441,7 +1444,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setDWPMounted(boolean dwpMounted) {
         isDWPMounted = dwpMounted;
     }
-    
+
     public boolean isAPMMounted() {
         return isAPMMounted;
     }
@@ -1668,11 +1671,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setBaMountLoc(int baMountLoc) {
         this.baMountLoc = baMountLoc;
     }
-    
+
     /**
-     * Returns true if this Mounted is a one-shot launcher of some kind 
+     * Returns true if this Mounted is a one-shot launcher of some kind
      * otherwise returns false.
-     * 
+     *
      * @return
      */
     public boolean isOneShot(){

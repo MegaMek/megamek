@@ -200,6 +200,12 @@ public class TestTank extends TestEntity {
             if (mtype.hasFlag(MiscType.F_MOBILE_HPG)) {
                 heat += 20;
             }
+            if (mtype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                heat += 2;
+            }
+            if (mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)||mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)) {
+                heat += 12;
+            }
         }
         return heat;
     }

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,36 +20,25 @@ Cheetah
 OF-17A-R
 </Model>
 
-<Tonnage>
-25
-</Tonnage>
+<year>
+3080
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 12
 </SafeThrust>
 
-<Armor>
-11
-11
-11
-7
-</Armor>
-
-<Nose Equipment>
-ISGuardianECMSuite
-ISHypersprectralImager
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
-
-<Aft Equipment>
-Small Laser
-Small Laser
-</Aft Equipment>
+<cockpit_type>
+1
+</cockpit_type>
 
 <heatsinks>
 10
@@ -63,34 +52,47 @@ Small Laser
 320
 </fuel>
 
-<type>
-IS Level 4
-</type>
-
-<year>
-3080
-</year>
-
-<source>
-TRO:Prototypes
-</source>
-
-<internal_type>
-0				
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 22
 </armor_type>
 
-<engine_type>				
-2
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+11
+11
+11
+7
+</armor>
 
-<cockpit_type>
-1
-</cockpit_type>
+<Nose Equipment>
+ISGuardianECMSuite
+ISHypersprectralImager
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+IS Vehicular Stealth
+Small Laser
+Small Laser
+</Aft Equipment>
+
+<source>
+TRO Prototypes - Jihad
+</source>
+
+<tonnage>
+25.0
+</tonnage>
+

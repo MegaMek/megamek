@@ -303,7 +303,7 @@ public class MechFileParser {
                 for (Mounted mWeapon : ent.getTotalWeaponList()) {
                     // Can only link APM mounted weapons that aren't linked
                     if (!mWeapon.isAPMMounted()
-                            || mWeapon.getLinkedBy() != null) {
+                            || (mWeapon.getLinkedBy() != null)) {
                         continue;
                     }
 
@@ -352,6 +352,36 @@ public class MechFileParser {
                             "Unable to match Artemis to launcher for "+ent.getShortName());
                 }
             } // End link-Artemis
+            // Link RISC Laser Pulse Module to their lasers
+            else if ((m.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE) && (m.getLinked() == null))) {
+
+                // link up to a weapon in the same location
+                for (Mounted mWeapon : ent.getTotalWeaponList()) {
+                    WeaponType wtype = (WeaponType) mWeapon.getType();
+
+                    // only IS lasers that are not pulse are allows
+                    if (wtype.hasFlag(WeaponType.F_PULSE) || TechConstants.isClan(wtype.getTechLevel(ent.getYear()))) {
+                        continue;
+                    }
+
+                    // already linked?
+                    if (mWeapon.getLinkedBy() != null) {
+                        continue;
+                    }
+
+                    // check location
+                    if (mWeapon.getLocation() == m.getLocation()) {
+                        m.setLinked(mWeapon);
+                        break;
+                    }
+                }
+
+                if (m.getLinked() == null) {
+                    // huh. this shouldn't happen
+                    throw new EntityLoadingException(
+                            "Unable to match RISC Laser Pulse Model to laser for "+ent.getShortName());
+                }
+            } // End link-RISC laser pulse module
             else if ((m.getType().hasFlag(MiscType.F_STEALTH) || m.getType()
                     .hasFlag(MiscType.F_VOIDSIG))
                     && (m.getLinked() == null)
@@ -589,7 +619,7 @@ public class MechFileParser {
 
                             // Check for PPC that isn't crosslinked
                             if (!bayWeapType.hasFlag(WeaponType.F_PPC) ||
-                                    bayMountedWeapon.getCrossLinkedBy() != null){
+                                    (bayMountedWeapon.getCrossLinkedBy() != null)){
                                 continue;
                             }
 
@@ -614,7 +644,7 @@ public class MechFileParser {
 
                     // Check for PPC that isn't crosslinked
                     if (!wtype.hasFlag(WeaponType.F_PPC) ||
-                            mWeapon.getCrossLinkedBy() != null){
+                            (mWeapon.getCrossLinkedBy() != null)) {
                         continue;
                     }
 
@@ -626,7 +656,8 @@ public class MechFileParser {
                                 || (mWeapon.getType() instanceof ISLightPPC)
                                 || (mWeapon.getType() instanceof ISHeavyPPC)
                                 || (mWeapon.getType() instanceof ISERPPC)
-                                || (mWeapon.getType() instanceof ISSnubNosePPC)) {
+                                || (mWeapon.getType() instanceof ISSnubNosePPC)
+                                || (mWeapon.getType() instanceof CLERPPC && ent.getYear() >= 3101)) {
 
                             m.setCrossLinked(mWeapon);
                             break;
@@ -652,7 +683,7 @@ public class MechFileParser {
                 if (ammo.isDWPMounted()){
                     // First, make sure every valid DWP weapon has ammo
                     for (Mounted weapon : ent.getWeaponList()){
-                        if (weapon.isDWPMounted() && weapon.getLinked() == null
+                        if (weapon.isDWPMounted() && (weapon.getLinked() == null)
                                 && AmmoType.isAmmoValid(ammo,
                                         (WeaponType)weapon.getType())){
                             weapon.setLinked(ammo);

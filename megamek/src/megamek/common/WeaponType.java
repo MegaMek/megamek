@@ -1606,6 +1606,10 @@ public class WeaponType extends EquipmentType {
 
         EquipmentType.addType(new ISTSEMPCannon());
         EquipmentType.addType(new ISTSEMPOneShot());
+
+        EquipmentType.addType(new ISAPDS());
+        EquipmentType.addType(new ISBAAPDS());
+        EquipmentType.addType(new ISRISCHyperLaser());
     }
 
     public int getExplosionDamage() {

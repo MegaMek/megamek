@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,32 +20,25 @@ Zero
 ZRO-CX-3
 </Model>
 
-<Tonnage>
-35
-</Tonnage>
+<year>
+3073
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
-61
-28
-28
-43
-</Armor>
-
-<Nose Equipment>
-ISERPPC
-ISPPCCapacitor
-ISEnhancedLRM5
-</Nose Equipment>
-
-<Left Wing Equipment>
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-</Right Wing Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 10
@@ -59,30 +52,37 @@ ISEnhancedLRM5
 400
 </fuel>
 
-<type>
-IS Level 4
-</type>
+<engine_type>
+0
+</engine_type>
 
-<year>
-3073
-</year>
+<armor>
+61
+28
+28
+43
+</armor>
+
+<Nose Equipment>
+ISERPPC
+PPC Capacitor
+Enhanced LRM 5
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
 
 <source>
 XTRO ComStar - Jihad
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+35.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

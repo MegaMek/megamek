@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -22,49 +20,25 @@ Scytha
 X
 </Model>
 
-<Tonnage>
-90
-</Tonnage>
+<year>
+3074
+</year>
+
+<type>
+Clan Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
-89
-66
-66
-47
-</Armor>
-
-<Nose Equipment>
-CLImprovedHeavyLargeLaser
-Clan Coolant Pod
-Clan Coolant Pod
-Clan Coolant Pod
-</Nose Equipment>
-
-<Left Wing Equipment>
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-Clan Coolant Pod
-Clan Coolant Pod
-Clan Coolant Pod
-Clan Coolant Pod
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-CLImprovedHeavyLargeLaser
-CLImprovedHeavyLargeLaser
-Clan Coolant Pod
-Clan Coolant Pod
-Clan Coolant Pod
-Clan Coolant Pod
-</Right Wing Equipment>
-
-<Aft Equipment>
-CLWatchdogECM
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 30
@@ -78,33 +52,66 @@ CLWatchdogECM
 320
 </fuel>
 
-<type>
-Clan Level 4
-</type>
-
-<armor_tech>
-8
-</armor_tech>
-
-<year>
-3074
-</year>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
+<armor_tech>
+8
+</armor_tech>
 
 <omni>
+1
 </omni>
+
+<armor>
+89
+66
+66
+47
+</armor>
+
+<Nose Equipment>
+CLImprovedHeavyLargeLaser
+Clan Coolant Pod
+Clan Coolant Pod
+Clan Coolant Pod
+CLCASE
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLImprovedHeavyLargeLaser
+CLImprovedHeavyLargeLaser
+Clan Coolant Pod
+Clan Coolant Pod
+Clan Coolant Pod
+Clan Coolant Pod
+CLCASE
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLImprovedHeavyLargeLaser
+CLImprovedHeavyLargeLaser
+Clan Coolant Pod
+Clan Coolant Pod
+Clan Coolant Pod
+Clan Coolant Pod
+CLCASE
+</Right Wing Equipment>
+
+<Aft Equipment>
+WatchdogECMSuite
+</Aft Equipment>
+
+<source>
+TRO 3055u - Jihad
+</source>
+
+<tonnage>
+90.0
+</tonnage>
+

@@ -2,80 +2,109 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Aero
 </UnitType>
+
 <Name>
 Chippewa
 </Name>
+
 <Model>
 CHP-W7 (Manfred)
 </Model>
-<Tonnage>
-90
-</Tonnage>
+
+<year>
+3068
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
 <SafeThrust>
 5
 </SafeThrust>
-<Armor>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+20
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 61
 43
 43
 41
-</Armor>
+</armor>
+
 <Nose Equipment>
 ISHeavyGaussRifle
-ISLRM15
-ISMediumLaser
-ISMediumLaser
-ISSRM6
+LRM 15
+Medium Laser
+Medium Laser
+SRM 6
 ISHeavyGauss Ammo
 ISHeavyGauss Ammo
 ISHeavyGauss Ammo
 ISHeavyGauss Ammo
 ISHeavyGauss Ammo
-ISLRM15 Ammo
-ISLRM15 Ammo
-ISSRM6 Ammo
+IS Ammo LRM-15
+IS Ammo LRM-15
+IS Ammo SRM-6
 </Nose Equipment>
-<Right Wing Equipment>
-ISLargePulseLaser
-</Right Wing Equipment>
+
 <Left Wing Equipment>
 ISLargePulseLaser
 </Left Wing Equipment>
+
+<Right Wing Equipment>
+ISLargePulseLaser
+</Right Wing Equipment>
+
 <Aft Equipment>
 ISSmallPulseLaser
 ISSmallPulseLaser
 </Aft Equipment>
-<heatsinks>
-20
-</heatsinks>
-<sink_type>
-1
-</sink_type>
-<fuel>
-400
-</fuel>
-<type>
-IS Level 2
-</type>
-<year>
-3068
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-19
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-aerodyne
-</motion_type>
+
+<source>
+RS Unique Fighters - Jihad
+</source>
+
+<tonnage>
+90.0
+</tonnage>
+

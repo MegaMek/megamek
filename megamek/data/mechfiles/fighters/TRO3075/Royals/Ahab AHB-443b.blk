@@ -1,171 +1,113 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Ahab
-
 </Name>
 
 <Model>
-
 AHB-443b
-
 </Model>
 
-<Tonnage>
+<year>
+2703
+</year>
 
-90
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 5
-
 </SafeThrust>
 
-<Armor>
-
-84
-
-59
-
-59
-
-46
-
-</Armor>
-
-<Nose Equipment>
-
-ISERLargeLaser
-
-ISNarcBeacon
-
-IS Narc Missile Beacon Ammo
-
-IS Narc Missile Beacon Ammo
-
-IS Narc Missile Beacon Ammo
-
-IS Narc Missile Beacon Ammo
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISLRM20
-
-ISLRM20 Ammo
-
-ISLRM20 Ammo
-
-ISLRM20 Ammo
-
-ISSRM6
-
-ISSRM6 Ammo
-
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-
-ISLRM20
-
-
-
-ISLRM20 Ammo
-
-ISLRM20 Ammo
-
-ISLRM20 Ammo
-
-ISSRM6
-
-ISSRM6 Ammo
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-ISMediumLaser
-
-ISMediumLaser
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 14
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS Level 2
-
-</type>
-
-<year>
-
-2703
-
-</year>
-
-<internal_type>
-
+<engine_type>
 0
-
-</internal_type>
+</engine_type>
 
 <armor_type>
-
 19
 </armor_type>
 
-<engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-0
+<armor>
+92
+66
+66
+53
+</armor>
 
-</engine_type>
+<Nose Equipment>
+ISERLargeLaser
+ISNarcBeacon
+ISNarc Pods
+ISNarc Pods
+ISNarc Pods
+ISNarc Pods
+</Nose Equipment>
 
-<motion_type>
+<Left Wing Equipment>
+LRM 20
+SRM 6
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo SRM-6
+</Left Wing Equipment>
 
-aerodyne
+<Right Wing Equipment>
+LRM 20
+SRM 6
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo SRM-6
+</Right Wing Equipment>
 
-</motion_type>
+<Aft Equipment>
+Medium Laser
+Medium Laser
+</Aft Equipment>
 
+<source>
+TRO 3075 - Star League
+</source>
+
+<tonnage>
+90.0
+</tonnage>
 

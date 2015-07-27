@@ -2,7 +2,8 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,43 +20,25 @@ Lightning
 LTN-G16D
 </Model>
 
-<Tonnage>
-50
-</Tonnage>
+<year>
+3068
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
-65
-36
-36
-33
-</Armor>
-
-<Nose Equipment>
-ISRotaryAC2
-ISRotaryAC2
-ISRotaryAC2 Ammo
-ISRotaryAC2 Ammo
-ISRotaryAC2 Ammo
-ISMediumLaser
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISERMediumLaser
-ISMediumPulseLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISERMediumLaser
-ISMediumPulseLaser
-</Right Wing Equipment>
-
-<Aft Equipment>
-ISMediumLaser
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 11
@@ -69,30 +52,53 @@ ISMediumLaser
 400
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<year>
-3068
-</year>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+65
+36
+36
+33
+</armor>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Nose Equipment>
+ISRotaryAC2
+ISRotaryAC2
+ISRotaryAC2 Ammo
+ISRotaryAC2 Ammo
+ISRotaryAC2 Ammo
+Medium Laser
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERMediumLaser
+ISMediumPulseLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERMediumLaser
+ISMediumPulseLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+Medium Laser
+</Aft Equipment>
+
+<source>
+TRO 3075 - Jihad
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+

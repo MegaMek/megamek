@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -22,45 +20,25 @@ Sabutai
 E
 </Model>
 
-<Tonnage>
-75
-</Tonnage>
+<year>
+3071
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
-62
-45
-45
-40
-</Armor>
-
-<Nose Equipment>
-CLActiveProbe
-CLHAG40 Ammo
-</Nose Equipment>
-
-<Left Wing Equipment>
-CLHAG40
-CLHAG40 Ammo
-CLHAG40 Ammo
-CLHAG40 Ammo
-CLHeavyMediumLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-CLHAG40
-CLHAG40 Ammo
-CLHAG40 Ammo
-CLHAG40 Ammo
-CLHeavyMediumLaser
-</Right Wing Equipment>
-
-<Aft Equipment> 
-CLHeavySmallLaser
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 15
@@ -74,33 +52,61 @@ CLHeavySmallLaser
 400
 </fuel>
 
-<type>
-Clan Level 2
-</type>
-
-<armor_tech>
+<engine_type>
 2
-</armor_tech>
-
-<year>
-3071
-</year>
-
-<internal_type>
-0
-</internal_type>
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
+<armor_tech>
 2
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
+</armor_tech>
 
 <omni>
+1
 </omni>
+
+<armor>
+62
+45
+45
+40
+</armor>
+
+<Nose Equipment>
+CLActiveProbe
+HAG/40 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLHAG40
+HAG/40 Ammo
+HAG/40 Ammo
+HAG/40 Ammo
+CLHeavyMediumLaser
+CLCASE
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLHAG40
+HAG/40 Ammo
+HAG/40 Ammo
+HAG/40 Ammo
+CLHeavyMediumLaser
+CLCASE
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLHeavySmallLaser
+</Aft Equipment>
+
+<source>
+TRO 3055u - Jihad
+</source>
+
+<tonnage>
+75.0
+</tonnage>
+

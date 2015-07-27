@@ -1,163 +1,106 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Rusalka
-
 </Name>
 
 <Model>
-
 S-RSL-O Invictus
-
 </Model>
 
-<Tonnage>
+<year>
+3071
+</year>
 
-65
+<type>
+IS Level 3
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 7
-
 </SafeThrust>
 
-<Armor>
-
-70
-
-50
-
-50
-
-45
-
-</Armor>
-
-<Nose Equipment>
-
-ISERPPC
-
-ISLRM15
-
-ISLRM15 Ammo Artemis-capable
-
-ISLRM15 Ammo Artemis-capable
-
-ISArtemisIV
-
-CASE
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISERMediumLaser
-
-ISERMediumLaser
-
-ISMediumPulseLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-ISERMediumLaser
-
-ISERMediumLaser
-
-ISMediumPulseLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment> 
-
-ISERSmallLaser
-
-</Aft Equipment>
+<cockpit_type>
+1
+</cockpit_type>
 
 <heatsinks>
-
 18
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS Level 3
-
-</type>
-
-<year>
-
-3071
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
-
 19
 </armor_type>
 
-<cockpit_type>
+<armor_tech>
+-1
+</armor_tech>
 
-1
+<armor>
+70
+50
+50
+45
+</armor>
 
-</cockpit_type>
+<Nose Equipment>
+ISERPPC
+LRM 15
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+ISArtemisIV
+ISCASE
+</Nose Equipment>
 
-<engine_type>
+<Left Wing Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISMediumPulseLaser
+</Left Wing Equipment>
 
-2
+<Right Wing Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISMediumPulseLaser
+</Right Wing Equipment>
 
-</engine_type>
+<Aft Equipment>
+ISERSmallLaser
+</Aft Equipment>
 
-<motion_type>
+<source>
+TRO 3075 - Jihad
+</source>
 
-aerodyne
-
-</motion_type>
-
-
-
+<tonnage>
+65.0
+</tonnage>
 

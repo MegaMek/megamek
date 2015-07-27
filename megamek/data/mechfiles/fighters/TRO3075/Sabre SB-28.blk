@@ -36,6 +36,10 @@ Aerodyne
 11
 </SafeThrust>
 
+<cockpit_type>
+0
+</cockpit_type>
+
 <heatsinks>
 10
 </heatsinks>
@@ -83,7 +87,7 @@ Medium Laser
 </Aft Equipment>
 
 <source>
-RS 3075 Unabridged
+TRO 3075 - Star League
 </source>
 
 <tonnage>

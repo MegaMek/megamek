@@ -87,6 +87,7 @@ Clan Ultra AC/20 Ammo
 Clan Ultra AC/20 Ammo
 Clan Ultra AC/20 Ammo
 Clan Ultra AC/20 Ammo
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -101,7 +102,7 @@ WatchdogECMSuite
 </Aft Equipment>
 
 <source>
-TRO 3145 NT NU
+TRO 3145 NTNU - Late Republic
 </source>
 
 <tonnage>

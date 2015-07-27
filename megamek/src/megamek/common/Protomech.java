@@ -1169,8 +1169,10 @@ public class Protomech extends Entity {
             if (((etype instanceof WeaponType) && etype
                     .hasFlag(WeaponType.F_AMS))
                     || ((etype instanceof MiscType) && (etype
-                            .hasFlag(MiscType.F_ECM) || etype
-                            .hasFlag(MiscType.F_BAP)))) {
+                            .hasFlag(MiscType.F_ECM)
+                            || etype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)
+                            || etype.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)
+                            || etype.hasFlag(MiscType.F_BAP)))) {
                 dEquipmentBV += etype.getBV(this);
             }
             if (etype instanceof WeaponType) {
@@ -1351,14 +1353,14 @@ public class Protomech extends Entity {
                     dBV *= 1.3;
                     name = name.concat(" with Artemis V");
                 }
-            }
-
-            if (mounted.getLinkedBy() != null) {
-                Mounted mLinker = mounted.getLinkedBy();
                 if ((mLinker.getType() instanceof MiscType)
                         && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
                     dBV *= 1.15;
                     name = name.concat(" with Apollo");
+                }
+                if ((mLinker.getType() instanceof MiscType)
+                        && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                    dBV *= 1.25;
                 }
             }
 
@@ -1516,6 +1518,8 @@ public class Protomech extends Entity {
 
             if (mtype.hasFlag(MiscType.F_ECM)
                     || mtype.hasFlag(MiscType.F_AP_POD)
+                    || mtype.hasFlag(MiscType.F_VIRAL_JAMMER_DECOY)
+                    || mtype.hasFlag(MiscType.F_VIRAL_JAMMER_HOMING)
                     || mtype.hasFlag(MiscType.F_BAP)
                     || mtype.hasFlag(MiscType.F_TARGCOMP)) {
                 // weapons
@@ -1729,7 +1733,7 @@ public class Protomech extends Entity {
         
         int finalBV;
         if (useGeometricMeanBV()) {
-            finalBV = (int)Math.round(2 * Math.sqrt(obv * dbv) + xbv);
+            finalBV = (int)Math.round((2 * Math.sqrt(obv * dbv)) + xbv);
             if (finalBV == 0) {
                 finalBV = (int)Math.round(dbv + obv);
             }
@@ -2250,7 +2254,8 @@ public class Protomech extends Entity {
     public void setEngineHit(boolean b) {
         engineHit = b;
     }
-    
+
+    @Override
     public long getEntityType(){
         return Entity.ETYPE_PROTOMECH;
     }

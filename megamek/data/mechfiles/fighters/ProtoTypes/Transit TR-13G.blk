@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,26 +20,54 @@ Transit
 TR-13G
 </Model>
 
-<Tonnage>
-50
-</Tonnage>
+<year>
+3081
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor>
 65
 35
 35
 33
-</Armor>
+</armor>
 
 <Nose Equipment>
 ISLongTomCannon
-ISLongTomCannon Ammo
-ISLongTomCannon Ammo
-ISLongTomCannon Ammo
+ISLongTomCannonAmmo
+ISLongTomCannonAmmo
+ISLongTomCannonAmmo
 ISERMediumLaser
 ISERMediumLaser
 </Nose Equipment>
@@ -55,42 +83,11 @@ ISERMediumLaser
 <Aft Equipment>
 </Aft Equipment>
 
-<heatsinks>
-10
-</heatsinks>
-
-<sink_type>
-1
-</sink_type>
-
-<fuel>
-400
-</fuel>
-
-<type>
-IS Level 4
-</type>
-
-<year>
-3093
-</year>
-
 <source>
-TRO:Prototypes
+TRO Prototypes - Jihad
 </source>
 
-<internal_type>
-0				
-</internal_type>
+<tonnage>
+50.0
+</tonnage>
 
-<armor_type>
-0
-</armor_type>
-
-<engine_type>				
-2
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

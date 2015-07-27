@@ -1,161 +1,113 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Sabutai
-
 </Name>
 
 <Model>
-
 A
-
 </Model>
 
-<Tonnage>
+<year>
+3048
+</year>
 
-75
+<type>
+Clan Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 6
-
 </SafeThrust>
 
-<Armor>
-
-62
-
-45
-
-45
-
-40
-
-</Armor>
-
-<Nose Equipment>
-
-CLLBXAC20
-
-CLLBXAC20 CL Ammo
-
-CLLBXAC20 CL Ammo
-
-CLLBXAC20 CL Ammo
-
-CLERSmallLaser
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-CLUltraAC20 
-
-CLUltraAC20 Ammo
-
-CLERSmallLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-CLUltraAC20
-
-CLUltraAC20 Ammo
-
-CLERSmallLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment> 
-
-CLERMediumLaser
-
-CLERMediumLaser
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 15
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 240
-
 </fuel>
 
-<type>
+<engine_type>
+2
+</engine_type>
 
-Clan Level 2
-
-</type>
+<armor_type>
+19
+</armor_type>
 
 <armor_tech>
 2
 </armor_tech>
 
-<year>
-
-3048
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-19
-</armor_type>
-
-<engine_type>
-
-2
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
-
 <omni>
-
+1
 </omni>
+
+<armor>
+62
+45
+45
+40
+</armor>
+
+<Nose Equipment>
+CLLBXAC20
+Clan LB 20-X Cluster Ammo
+Clan LB 20-X Cluster Ammo
+Clan LB 20-X Cluster Ammo
+CLERSmallLaser
+CLCASE
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLUltraAC20
+Clan Ultra AC/20 Ammo
+CLERSmallLaser
+CLCASE
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLUltraAC20
+Clan Ultra AC/20 Ammo
+CLERSmallLaser
+CLCASE
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLERMediumLaser
+CLERMediumLaser
+</Aft Equipment>
+
+<source>
+TRO 3055u - Succession Wars
+</source>
+
+<tonnage>
+75.0
+</tonnage>
+

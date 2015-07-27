@@ -1,148 +1,101 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Hellcat II
-
 </Name>
 
 <Model>
-
 HCT-215
-
 </Model>
 
-<Tonnage>
+<year>
+3070
+</year>
 
-50
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 7
-
 </SafeThrust>
 
-<Armor>
-
-81
-
-59
-
-59
-
-39
-
-</Armor>
-
-<Nose Equipment>
-
-ISBeagleActiveProbe
-
-ISLightPPC
-
-ISERMediumLaser
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISLightPPC
-
-ISLightPPC
-
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-
-ISLightPPC
-
-ISLightPPC 
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-ISERMediumLaser
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 15
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS Level 2
-
-</type>
-
-<armor_tech>
-1
-</armor_tech>
-
-<year>
-
-3070
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 20
 </armor_type>
 
-<engine_type>
+<armor_tech>
+1
+</armor_tech>
 
-2
+<armor>
+81
+59
+59
+39
+</armor>
 
-</engine_type>
+<Nose Equipment>
+BeagleActiveProbe
+Light PPC
+ISERMediumLaser
+</Nose Equipment>
 
-<motion_type>
+<Left Wing Equipment>
+Light PPC
+Light PPC
+</Left Wing Equipment>
 
-aerodyne
+<Right Wing Equipment>
+Light PPC
+Light PPC
+</Right Wing Equipment>
 
-</motion_type>
+<Aft Equipment>
+ISERMediumLaser
+</Aft Equipment>
 
+<source>
+TRO 3050u - Jihad
+</source>
+
+<tonnage>
+50.0
+</tonnage>
 

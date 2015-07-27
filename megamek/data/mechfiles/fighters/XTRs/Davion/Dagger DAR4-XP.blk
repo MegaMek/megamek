@@ -1,68 +1,96 @@
+#building block data file
 <BlockVersion>
-2
-</BlockVersion>
-<Version>
 1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
 </Version>
+
 <UnitType>
 Aero
 </UnitType>
+
 <Name>
 Dagger
 </Name>
+
 <Model>
 DAR4-XP
 </Model>
-<Tonnage>
-45
-</Tonnage>
+
+<year>
+3070
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
 <SafeThrust>
 8
 </SafeThrust>
-<Armor>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+11
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+3
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
 77
 62
 62
 49
-</Armor>
+</armor>
+
 <Nose Equipment>
-ISBinaryLaserCannon
+Blazer Cannon
 </Nose Equipment>
+
 <Left Wing Equipment>
-ISMediumVariableSpeedLaser
+ISMediumVSPLaser
 </Left Wing Equipment>
-<Right Wing Equipment> 
-ISMediumVariableSpeedLaser
+
+<Right Wing Equipment>
+ISMediumVSPLaser
 </Right Wing Equipment>
+
 <Aft Equipment>
 </Aft Equipment>
-<heatsinks>
-11
-</heatsinks>
-<sink_type>
-1
-</sink_type>
-<fuel>
-400
-</fuel>
-<type>
-IS Level 4
-</type>
-<year>
-3070
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-19
-</armor_type>
-<armor_tech>
-1
-</armor_tech>
-<engine_type>
-3
-</engine_type>
-<motion_type>
-aerodyne
-</motion_type>
+
+<source>
+XTRO Davion - Jihad
+</source>
+
+<tonnage>
+45.0
+</tonnage>
+

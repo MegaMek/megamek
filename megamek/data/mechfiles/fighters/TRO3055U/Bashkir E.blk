@@ -1,68 +1,87 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Bashkir
-
 </Name>
 
 <Model>
-
 E
-
 </Model>
 
-<Tonnage>
+<year>
+3071
+</year>
 
-20
+<type>
+Clan Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 13
-
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
 
+<heatsinks>
+11
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+240
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
 19
+</armor_type>
 
+<armor_tech>
+2
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+19
 17
-
 17
-
 14
-
-</Armor>
+</armor>
 
 <Nose Equipment>
 CLMG
 CLMG
 CLMG
 CLMGA
-Clan Ammo MG - Half
+Clan Machine Gun Ammo - Half
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -77,67 +96,14 @@ CLERSmallLaser
 CLERSmallLaser
 </Right Wing Equipment>
 
-<Aft Equipment> 
-
+<Aft Equipment>
 </Aft Equipment>
 
-<heatsinks>
+<source>
+TRO 3055u - Jihad
+</source>
 
-11
+<tonnage>
+20.0
+</tonnage>
 
-</heatsinks>
-
-<sink_type>
-
-1
-
-</sink_type>
-
-<fuel>
-
-240
-
-</fuel>
-
-<type>
-
-Clan Level 2
-
-</type>
-
-<armor_tech>
-2
-</armor_tech>
-
-<year>
-
-3071
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-19
-</armor_type>
-
-<engine_type>
-
-2
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
-
-<omni>
-
-</omni>

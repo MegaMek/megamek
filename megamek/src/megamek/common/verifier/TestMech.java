@@ -293,6 +293,12 @@ public class TestMech extends TestEntity {
                 return false;
             }
         }
+        if (mt.hasFlag(MiscType.F_DRONE_CONTROL_CONSOLE)) {
+            if (mounted.getLocation() != Mech.LOC_HEAD) {
+                buff.append("Drone Control Console must be mounted in head");
+                return false;
+            }
+        }
         if (mt.hasFlag(MiscType.F_MOBILE_HPG)) {
             if ((countCriticalSlotsFromEquipInLocation(entity, mounted,
                     Mech.LOC_LARM) > 0)

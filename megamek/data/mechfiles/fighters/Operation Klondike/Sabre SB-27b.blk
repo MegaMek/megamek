@@ -1,181 +1,99 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-
-
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
-
-
 <UnitType>
-
 Aero
-
 </UnitType>
 
-
-
 <Name>
-
 Sabre
-
 </Name>
 
-
-
 <Model>
-
 SB-27b
-
 </Model>
 
-
-
-<Tonnage>
-
-25
-
-</Tonnage>
-
-
-
-<SafeThrust>
-
-11
-
-</SafeThrust>
-
-
-
-<Armor>
-
-30
-
-28
-
-28
-
-21
-
-</Armor>
-
-
-
-<Nose Equipment>
-
-Medium Laser
-
-Medium Laser
-
-</Nose Equipment>
-
-
-
-<Left Wing Equipment>
-
-Medium Laser
-
-Medium Laser
-
-</Left Wing Equipment>
-
-
-
-<Right Wing Equipment>
-
-Medium Laser
-
-Medium Laser
-
-</Right Wing Equipment>
-
-
-
-<heatsinks>
-
-10
-
-</heatsinks>
-
-
-
-<sink_type>
-
-1
-
-</sink_type>
-
-
-
-<fuel>
-
-400
-
-</fuel>
-
-
-
-<type>
-
-IS Level 2
-
-</type>
-
-
-
 <year>
-
 2722
-
 </year>
 
+<type>
+IS Level 2
+</type>
 
+<motion_type>
+Aerodyne
+</motion_type>
 
-<source>
+<SafeThrust>
+11
+</SafeThrust>
 
-Star League
+<cockpit_type>
+0
+</cockpit_type>
 
-</source>
+<heatsinks>
+10
+</heatsinks>
 
+<sink_type>
+1
+</sink_type>
 
+<fuel>
+400
+</fuel>
 
-<internal_type>
-
-0				
-
-</internal_type>
-
-
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
-
 19
 </armor_type>
 
+<armor_tech>
+-1
+</armor_tech>
 
+<armor>
+30
+28
+28
+21
+</armor>
 
-<engine_type>				
+<Nose Equipment>
+Medium Laser
+Medium Laser
+</Nose Equipment>
 
-2
+<Left Wing Equipment>
+Medium Laser
+Medium Laser
+</Left Wing Equipment>
 
-</engine_type>
+<Right Wing Equipment>
+Medium Laser
+Medium Laser
+</Right Wing Equipment>
 
+<Aft Equipment>
+</Aft Equipment>
 
+<source>
+TRO 3075 - Star League
+</source>
 
-<motion_type>
+<tonnage>
+25.0
+</tonnage>
 
-aerodyne
-
-</motion_type>

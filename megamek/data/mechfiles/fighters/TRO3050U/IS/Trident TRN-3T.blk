@@ -1,68 +1,44 @@
-
+#building block data file
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Trident
-
 </Name>
 
 <Model>
-
 TRN-3T
-
 </Model>
 
-<Tonnage>
+<year>
+2717
+</year>
 
-20
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 12
 </SafeThrust>
 
-<Armor>
-10
-10
-10
-5
-</Armor>
-
-<Nose Equipment>
-ISMediumLaser 
-</Nose Equipment>
-
-<Left Wing Equipment> 
-ISMediumLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISMediumLaser 
-</Right Wing Equipment>
-
-<Aft Equipment> 
-ISSmallLaser
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 10
@@ -76,26 +52,46 @@ ISSmallLaser
 240
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<year>
-2717
-</year>
-
-<internal_type>
+<engine_type>
 0
-</internal_type>
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-0
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+10
+10
+10
+5
+</armor>
+
+<Nose Equipment>
+Medium Laser
+</Nose Equipment>
+
+<Left Wing Equipment>
+Medium Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Medium Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+Small Laser
+</Aft Equipment>
+
+<source>
+TRO 3050u - Star League
+</source>
+
+<tonnage>
+20.0
+</tonnage>
+

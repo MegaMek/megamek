@@ -1,9 +1,9 @@
+#building block data file
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,36 +20,25 @@ Trident
 TRN-3V
 </Model>
 
-<Tonnage>
-20
-</Tonnage>
+<year>
+3069
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 12
 </SafeThrust>
 
-<Armor>
-12
-11
-11
-5
-</Armor>
-
-<Nose Equipment>
-ISMediumPulseLaser
-</Nose Equipment>
-
-<Left Wing Equipment> 
-ISERMediumLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISERMediumLaser
-</Right Wing Equipment>
-
-<Aft Equipment> 
-ISERSmallLaser
-</Aft Equipment>
+<cockpit_type>
+1
+</cockpit_type>
 
 <heatsinks>
 10
@@ -63,31 +52,46 @@ ISERSmallLaser
 240
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<year>
-3069
-</year>
-
-<internal_type>
+<engine_type>
 0
-</internal_type>
+</engine_type>
 
 <armor_type>
 20
 </armor_type>
 
-<engine_type>
-0
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+12
+11
+11
+5
+</armor>
 
-<history>
-During the Jihad unconfirmed reports of Tridents without any recognizable cockpit assemblies were uncovered as part of supposed experiments by the Word of Blake to develop a high performance teleoperated fighter.  Build based on RS 3050Uu -Clans and SL
-</history>
+<Nose Equipment>
+ISMediumPulseLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISERSmallLaser
+</Aft Equipment>
+
+<source>
+TRO 3050u - Jihad
+</source>
+
+<tonnage>
+20.0
+</tonnage>
 

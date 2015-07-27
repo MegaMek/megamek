@@ -1,82 +1,44 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Thunderbird
-
 </Name>
 
 <Model>
-
 TRB-D56
-
 </Model>
 
-<Tonnage>
+<year>
+3074
+</year>
 
-100
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-106
-78
-78
-51
-</Armor>
-
-<Nose Equipment>
-ISUltraAC10
-ISHeavyPPC
-ISUltraAC10 Ammo
-ISUltraAC10 Ammo
-</Nose Equipment>
-
-<Right Wing Equipment>
-ISERMediumLaser
-ISLRM20
-ISArtemisIV
-IS Ammo LRM-20 Artemis-capable
-IS Ammo LRM-20 Artemis-capable
-</Right Wing Equipment>
-
-<Left Wing Equipment>
-ISERMediumLaser
-ISLRM20
-ISArtemisIV
-IS Ammo LRM-20 Artemis-capable
-IS Ammo LRM-20 Artemis-capable
-</Left Wing Equipment>
-
-<Aft Equipment>
-ISERSmallLaser
-ISERSmallLaser
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 20
@@ -90,26 +52,58 @@ ISERSmallLaser
 400
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<year>
-3074
-</year>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+106
+78
+78
+51
+</armor>
+
+<Nose Equipment>
+ISUltraAC10
+Heavy PPC
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERMediumLaser
+LRM 20
+ISArtemisIV
+IS Ammo LRM-20 Artemis-capable
+IS Ammo LRM-20 Artemis-capable
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERMediumLaser
+LRM 20
+ISArtemisIV
+IS Ammo LRM-20 Artemis-capable
+IS Ammo LRM-20 Artemis-capable
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISERSmallLaser
+ISERSmallLaser
+</Aft Equipment>
+
+<source>
+TRO 3075 - Jihad
+</source>
+
+<tonnage>
+100.0
+</tonnage>
+

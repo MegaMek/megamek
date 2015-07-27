@@ -1,185 +1,120 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Ostrogoth
-
 </Name>
 
 <Model>
-
 C
-
 </Model>
 
-<Tonnage>
+<year>
+3078
+</year>
 
-75
+<type>
+Clan Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 7
-
 </SafeThrust>
 
-<Armor>
-
-77
-
-61
-
-61
-
-41
-
-</Armor>
-
-<Nose Equipment>
-
-CLLRM15
-
-CLLRM15 Ammo (Clan) Artemis-capable
-
-CLLRM15 Ammo (Clan) Artemis-capable
-
-Clan Artemis IV FCS
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-CLLRM15
-
-CLLRM15
-
-CLLRM15 Ammo (Clan) Artemis-capable
-
-CLLRM15 Ammo (Clan) Artemis-capable
-
-CLLRM15 Ammo (Clan) Artemis-capable
-
-
-
-Clan Artemis IV FCS
-
-Clan Artemis IV FCS
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-CLLRM15
-
-CLLRM15
-
-CLLRM15 Ammo (Clan) Artemis-capable
-
-CLLRM15 Ammo (Clan) Artemis-capable
-
-CLLRM15 Ammo (Clan) Artemis-capable
-
-
-
-Clan Artemis IV FCS
-
-Clan Artemis IV FCS
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-CLERSmallLaser 
-
-CLECMSuite
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 12
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
+<engine_type>
+2
+</engine_type>
 
-Clan Level 2
-
-</type>
+<armor_type>
+19
+</armor_type>
 
 <armor_tech>
 2
 </armor_tech>
 
-<year>
-
-3078
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-19
-</armor_type>
-
-<engine_type>
-
-2
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
-
 <omni>
-
+1
 </omni>
 
+<armor>
+77
+61
+61
+41
+</armor>
+
+<Nose Equipment>
+CLLRM15
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+CLArtemisIV
+CLCASE
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLLRM15
+CLLRM15
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+CLArtemisIV
+CLArtemisIV
+CLCASE
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLLRM15
+CLLRM15
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+CLArtemisIV
+CLArtemisIV
+CLCASE
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLERSmallLaser
+CLECMSuite
+</Aft Equipment>
+
 <source>
-
-Jihad
-
+TRO 3085 - Jihad
 </source>
+
+<tonnage>
+75.0
+</tonnage>
+

@@ -3,7 +3,7 @@
 1
 </BlockVersion>
 
-#Write the version number just in case...
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -20,38 +20,25 @@ Star Dagger
 S-2
 </Model>
 
-<Tonnage>
-30
-</Tonnage>
+<year>
+3077
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 8
 </SafeThrust>
 
-<Armor>
-22
-15
-15
-12
-</Armor>
-
-<Nose Equipment>
-ISMediumLaser
-ISSmallLaser
-IS Machine Gun Ammo
-</Nose Equipment>
-
-<Left Wing Equipment>
-IS Machine Gun
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-IS Machine Gun
-</Right Wing Equipment>
-
-<Aft Equipment>
-IS Machine Gun
-</Aft Equipment>
+<cockpit_type>
+3
+</cockpit_type>
 
 <heatsinks>
 10
@@ -65,34 +52,48 @@ IS Machine Gun
 400
 </fuel>
 
-<type>
-IS Level 5
-</type>
-
-<year>
-3077
-</year>
-
-<source>
-XTRO RetroTech - Jihad
-</source>
-
-<internal_type>
-0				
-</internal_type>
+<engine_type>
+0
+</engine_type>
 
 <armor_type>
 17
 </armor_type>
 
-<engine_type>				
-0
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+22
+15
+15
+12
+</armor>
 
-<cockpit_type>
-3
-</cockpit_type>
+<Nose Equipment>
+Medium Laser
+Small Laser
+IS Ammo MG - Full
+</Nose Equipment>
+
+<Left Wing Equipment>
+Machine Gun
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Machine Gun
+</Right Wing Equipment>
+
+<Aft Equipment>
+Machine Gun
+</Aft Equipment>
+
+<source>
+XTRO RetroTech - Jihad
+</source>
+
+<tonnage>
+30.0
+</tonnage>
+

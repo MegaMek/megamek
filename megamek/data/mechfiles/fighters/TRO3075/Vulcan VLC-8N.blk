@@ -94,6 +94,10 @@ IS Light Gauss Ammo
 ISERMediumLaser
 </Aft Equipment>
 
+<source>
+TRO 3075 - Jihad
+</source>
+
 <tonnage>
 80.0
 </tonnage>

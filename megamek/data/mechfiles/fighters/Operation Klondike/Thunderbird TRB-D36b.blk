@@ -1,205 +1,108 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-
-
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
-
-
 <UnitType>
-
 Aero
-
 </UnitType>
 
-
-
 <Name>
-
 Thunderbird
-
 </Name>
 
-
-
 <Model>
-
 TRB-D36b
-
 </Model>
 
-
-
-<Tonnage>
-
-100
-
-</Tonnage>
-
-
-
-<SafeThrust>
-
-5
-
-</SafeThrust>
-
-
-
-<Armor>
-
-82
-
-57
-
-57
-
-45
-
-</Armor>
-
-
-
-<Nose Equipment>
-
-ISERLargeLaser
-
-ISMediumLaser
-
-ISMediumLaser
-
-</Nose Equipment>
-
-
-
-<Left Wing Equipment>
-
-ISGaussRifle
-
-IS Gauss Ammo
-
-IS Gauss Ammo
-
-ISERLargeLaser
-
-ISMediumLaser
-
-</Left Wing Equipment>
-
-
-
-<Right Wing Equipment>
-
-ISGaussRifle
-
-IS Gauss Ammo
-
-IS Gauss Ammo
-
-ISERLargeLaser
-
-ISMediumLaser
-
-</Right Wing Equipment>
-
-
-
-<Aft Equipment>
-
-ISMediumLaser
-
-ISMediumLaser
-
-</Aft Equipment>
-
-
-
-<heatsinks>
-
-24
-
-</heatsinks>
-
-
-
-<sink_type>
-
-1
-
-</sink_type>
-
-
-
-<fuel>
-
-400
-
-</fuel>
-
-
-
-<type>
-
-IS Level 2
-
-</type>
-
-
-
 <year>
-
 2715
-
 </year>
 
+<type>
+IS Level 2
+</type>
 
+<motion_type>
+Aerodyne
+</motion_type>
 
-<source>
+<SafeThrust>
+5
+</SafeThrust>
 
-Op Klondyke
+<cockpit_type>
+0
+</cockpit_type>
 
-</source>
+<heatsinks>
+24
+</heatsinks>
 
+<sink_type>
+1
+</sink_type>
 
+<fuel>
+400
+</fuel>
 
-<internal_type>
-
-0				
-
-</internal_type>
-
-
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
-
 19
 </armor_type>
 
+<armor_tech>
+-1
+</armor_tech>
 
+<armor>
+82
+57
+57
+45
+</armor>
 
-<engine_type>				
+<Nose Equipment>
+ISERLargeLaser
+Medium Laser
+Medium Laser
+</Nose Equipment>
 
-2
+<Left Wing Equipment>
+ISGaussRifle
+IS Gauss Ammo
+IS Gauss Ammo
+ISERLargeLaser
+Medium Laser
+</Left Wing Equipment>
 
-</engine_type>
+<Right Wing Equipment>
+ISGaussRifle
+IS Gauss Ammo
+IS Gauss Ammo
+ISERLargeLaser
+Medium Laser
+</Right Wing Equipment>
 
+<Aft Equipment>
+Medium Laser
+Medium Laser
+</Aft Equipment>
 
+<source>
+H:Operation Klondyke - Star League
+</source>
 
-<motion_type>
+<tonnage>
+100.0
+</tonnage>
 
-aerodyne
-
-</motion_type>

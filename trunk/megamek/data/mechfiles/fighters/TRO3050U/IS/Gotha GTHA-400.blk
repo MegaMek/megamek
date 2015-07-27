@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -22,42 +20,25 @@ Gotha
 GTHA-400
 </Model>
 
-<Tonnage>
-60
-</Tonnage>
+<year>
+3019
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-70
-48
-48
-42
-</Armor>
-
-<Nose Equipment>
-ISPPC
-ISMediumLaser
-ISMediumLaser
-ISLRM15 Ammo
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISLRM15
-ISSmallLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISLRM15
-ISSmallLaser
-</Right Wing Equipment>
-
-<Aft Equipment>
-ISMediumLaser
-ISMediumLaser
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 14
@@ -71,26 +52,44 @@ ISMediumLaser
 480
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<year>
-3019
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
 <engine_type>
 0
 </engine_type>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+70
+48
+48
+42
+</armor>
+
+<Nose Equipment>
+PPC
+Medium Laser
+Medium Laser
+IS Ammo LRM-15
+</Nose Equipment>
+
+<Left Wing Equipment>
+LRM 15
+Small Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+LRM 15
+Small Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<source>
+TRO 3050u - Succession Wars
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+

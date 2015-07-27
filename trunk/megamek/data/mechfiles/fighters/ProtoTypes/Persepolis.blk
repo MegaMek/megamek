@@ -21,7 +21,7 @@ Persepolis
 </Model>
 
 <year>
-3085
+3082
 </year>
 
 <type>
@@ -35,6 +35,10 @@ Aerodyne
 <SafeThrust>
 6
 </SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 20
@@ -70,8 +74,7 @@ Aerodyne
 <Nose Equipment>
 CLERLargeLaser
 CLERLargeLaser
-CLImprovedMediumHeavyLaser
-CLImprovedMediumHeavyLaser
+CLCASE
 CLCASE
 </Nose Equipment>
 
@@ -80,6 +83,7 @@ CLStreakLRM20
 Clan Streak LRM 20 Ammo
 Clan Streak LRM 20 Ammo
 CLCASE
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
@@ -87,16 +91,16 @@ CLStreakLRM20
 Clan Streak LRM 20 Ammo
 Clan Streak LRM 20 Ammo
 CLCASE
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
-CLImprovedSmallHeavyLaser
-CLImprovedSmallHeavyLaser
+CLCASE
 CLCASE
 </Aft Equipment>
 
 <source>
-TRO:Prototypes
+TRO Prototypes - Jihad
 </source>
 
 <tonnage>

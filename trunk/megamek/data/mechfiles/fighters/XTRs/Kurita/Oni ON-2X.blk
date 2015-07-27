@@ -24,10 +24,6 @@ ON-2X
 3077
 </year>
 
-<source>
-XTRO Kurita - Jihad
-</source>
-
 <type>
 IS Level 4
 </type>
@@ -39,6 +35,10 @@ Aerodyne
 <SafeThrust>
 7
 </SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 15
@@ -88,9 +88,14 @@ ISERMediumLaser
 </Right Wing Equipment>
 
 <Aft Equipment>
+IS Vehicular Stealth
 ISMediumPulseLaser
 ISAngelECMSuite
 </Aft Equipment>
+
+<source>
+XTRO Kurita - Jihad
+</source>
 
 <tonnage>
 55.0

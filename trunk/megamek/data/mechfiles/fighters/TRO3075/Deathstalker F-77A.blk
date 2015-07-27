@@ -1,73 +1,44 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Deathstalker
-
 </Name>
 
 <Model>
 F-77A
 </Model>
 
-<Tonnage>
-80
-</Tonnage>
+<year>
+3073
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-55
-41
-41
-31
-
-</Armor>
-
-<Nose Equipment>
-ISUltraAC10
-ISUltraAC10 Ammo
-ISUltraAC10 Ammo
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISERLargeLaser 
-ISERLargeLaser 
-ISERMediumLaser 
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-ISERLargeLaser 
-ISERLargeLaser 
-ISERMediumLaser 
-</Right Wing Equipment>
-
-<Aft Equipment>
-ISERSmallLaser
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 25
@@ -81,30 +52,44 @@ ISERSmallLaser
 400
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<year>
-3073
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
 <engine_type>
 4
 </engine_type>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+55
+41
+41
+31
+</armor>
 
+<Nose Equipment>
+ISUltraAC10
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
+</Nose Equipment>
 
+<Left Wing Equipment>
+ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+</Left Wing Equipment>
 
+<Right Wing Equipment>
+ISERLargeLaser
+ISERLargeLaser
+Medium Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISERSmallLaser
+</Aft Equipment>
+
+<source>
+TRO 3075 - Jihad
+</source>
+
+<tonnage>
+80.0
+</tonnage>
 

@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -22,53 +20,25 @@ Sabutai
 X
 </Model>
 
-<Tonnage>
-75
-</Tonnage>
+<year>
+3066
+</year>
+
+<type>
+Clan Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
-62
-45
-45
-40
-</Armor>
-
-<Nose Equipment>
-CLLRM20
-CLArtemisV
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-</Nose Equipment>
-
-<Left Wing Equipment>
-CLLRM20
-CLArtemisV
-CLLRM20
-CLArtemisV
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-CLLRM20
-CLArtemisV
-CLLRM20
-CLArtemisV
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-Clan Ammo LRM-20 (Clan) Artemis V-capable
-</Right Wing Equipment>
-
-<Aft Equipment> 
-CLECMSuite
-ClMediumPulseLaser
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 15
@@ -82,33 +52,70 @@ ClMediumPulseLaser
 240
 </fuel>
 
-<type>
-Clan Level 4
-</type>
-
-<armor_tech>
-8
-</armor_tech>
-
-<year>
-3066
-</year>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
+<armor_tech>
+8
+</armor_tech>
 
 <omni>
+1
 </omni>
+
+<armor>
+62
+45
+45
+40
+</armor>
+
+<Nose Equipment>
+CLLRM20
+CLArtemisV
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+CLCASE
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLLRM20
+CLArtemisV
+CLLRM20
+CLArtemisV
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+CLCASE
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLLRM20
+CLArtemisV
+CLLRM20
+CLArtemisV
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+Clan Ammo LRM-20 (Clan) Artemis V-capable
+CLCASE
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLECMSuite
+CLMediumPulseLaser
+</Aft Equipment>
+
+<source>
+TRO 3055u - Civil War
+</source>
+
+<tonnage>
+75.0
+</tonnage>
+

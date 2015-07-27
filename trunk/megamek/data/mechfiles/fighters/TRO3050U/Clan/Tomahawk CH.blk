@@ -1,139 +1,96 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Tomahawk
-
 </Name>
 
 <Model>
-
 CH
-
 </Model>
 
-<Tonnage>
+<year>
+3064
+</year>
 
-45
+<type>
+Clan Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 8
-
 </SafeThrust>
 
-<Armor>
-
-72
-
-52
-
-52
-
-35
-
-</Armor>
-
-<Nose Equipment> 
-
-CLHeavySmallLaser
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-CLHeavyLargeLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-CLHeavyLargeLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment> 
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 13
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
+<engine_type>
+0
+</engine_type>
 
-Clan Level 2
-
-</type>
+<armor_type>
+19
+</armor_type>
 
 <armor_tech>
 2
 </armor_tech>
 
-<year>
+<armor>
+72
+52
+52
+35
+</armor>
 
-3064
+<Nose Equipment>
+CLHeavySmallLaser
+</Nose Equipment>
 
-</year>
+<Left Wing Equipment>
+CLHeavyLargeLaser
+</Left Wing Equipment>
 
-<internal_type>
+<Right Wing Equipment>
+CLHeavyLargeLaser
+</Right Wing Equipment>
 
-0
+<Aft Equipment>
+</Aft Equipment>
 
-</internal_type>
+<source>
+TRO 3050u - Civil War
+</source>
 
-<armor_type>
+<tonnage>
+45.0
+</tonnage>
 
-19
-</armor_type>
-
-<engine_type>
-
-0
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
-
-

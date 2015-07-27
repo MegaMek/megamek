@@ -1,148 +1,97 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Shade
-
 </Name>
 
 <Model>
-
 S-HA-O Invictus
-
 </Model>
 
-<Tonnage>
+<year>
+3072
+</year>
 
-35
+<type>
+IS Level 3
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 9
-
 </SafeThrust>
 
-<Armor>
-
-40
-
-28
-
-28
-
-20
-
-</Armor>
-
-<Nose Equipment>
-
-ISHeavyPPC
-
-ISMediumPulseLaser 
-
-ISMediumPulseLaser
-
-ISGuardianECM
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-</Right Wing Equipment>
-
-<Aft Equipment> 
-
-</Aft Equipment>
+<cockpit_type>
+1
+</cockpit_type>
 
 <heatsinks>
-
 10
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS Level 3
-
-</type>
-
-<armor_tech>
-5
-</armor_tech>
-
-<year>
-
-3072
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<cockpit_type>
+<armor_tech>
+5
+</armor_tech>
 
-1
+<armor>
+40
+28
+28
+20
+</armor>
 
-</cockpit_type>
+<Nose Equipment>
+Heavy PPC
+ISMediumPulseLaser
+ISMediumPulseLaser
+ISGuardianECMSuite
+</Nose Equipment>
 
-<engine_type>
+<Left Wing Equipment>
+</Left Wing Equipment>
 
-2
+<Right Wing Equipment>
+</Right Wing Equipment>
 
-</engine_type>
+<Aft Equipment>
+</Aft Equipment>
 
-<motion_type>
+<source>
+TRO 3075 - Jihad
+</source>
 
-aerodyne
-
-</motion_type>
-
-
-
+<tonnage>
+35.0
+</tonnage>
 

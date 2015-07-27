@@ -1,77 +1,44 @@
-
+#building block data file
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-
-1
-
+MAM0
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Troika
-
 </Name>
 
 <Model>
-
-(Viktor)
-
+CMT-3TV (Viktor)
 </Model>
 
-<Tonnage>
+<year>
+3074
+</year>
 
-65
+<type>
+Mixed (IS Chassis) Experimental
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 6
-
 </SafeThrust>
 
-<Armor>
-
-74
-
-52
-
-52
-
-46
-
-</Armor>
-
-<Nose Equipment>
-CLStreakLRM20
-CLStreakLRM20 Ammo
-CLStreakLRM20 Ammo
-CLStreakLRM20 Ammo
-</Nose Equipment>
-
-<Left Wing Equipment>
-CLERPPC
-CLMediumPulseLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-CLERPPC
-CLMediumPulseLaser
-</Right Wing Equipment>
-
-<Aft Equipment>
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 17
@@ -85,30 +52,50 @@ CLMediumPulseLaser
 480
 </fuel>
 
-<type>
-Mixed (IS Chassis) Experimental
-</type>
-
-<year>
-3074
-</year>
-
-<source>
-XTRO Liao - Jihad
-</source>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>2
+<armor>
+74
+52
+52
+46
+</armor>
+
+<Nose Equipment>
+CLStreakLRM20
+Clan Streak LRM 20 Ammo
+Clan Streak LRM 20 Ammo
+Clan Streak LRM 20 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLERPPC
+CLMediumPulseLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLERPPC
+CLMediumPulseLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+XTRO Liao - Jihad
+</source>
+
+<tonnage>
+65.0
+</tonnage>
+

@@ -1,148 +1,95 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Ironsides
-
 </Name>
 
 <Model>
-
 IRN-SD1
-
 </Model>
 
-<Tonnage>
+<year>
+2613
+</year>
 
-65
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 6
-
 </SafeThrust>
 
-<Armor>
-
-61
-
-36
-
-36
-
-51
-
-</Armor>
-
-<Nose Equipment>
-
-ISPPC
-
-ISPPC
-
-ISSRM6
-
-ISSRM6 Ammo
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISSRM6
-
-ISSRM6
-
-ISMediumLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-
-ISSRM6
-
-ISSRM6
-
-ISMediumLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 10
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS Level 2
-
-</type>
-
-<year>
-
-2613
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-0
-
-</armor_type>
-
 <engine_type>
-
 0
-
 </engine_type>
 
-<motion_type>
+<armor>
+61
+36
+36
+51
+</armor>
 
-aerodyne
+<Nose Equipment>
+PPC
+PPC
+SRM 6
+IS Ammo SRM-6
+</Nose Equipment>
 
-</motion_type>
+<Left Wing Equipment>
+SRM 6
+SRM 6
+Medium Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+SRM 6
+SRM 6
+Medium Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO 3050u - Star League
+</source>
+
+<tonnage>
+65.0
+</tonnage>
+

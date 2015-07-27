@@ -2,7 +2,8 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,20 +20,56 @@ Tomahawk
 CX-11
 </Model>
 
-<Tonnage>
-45
-</Tonnage>
+<year>
+3074
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 8
 </SafeThrust>
 
-<Armor>
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+12
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+3
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 47
 33
 33
 31
-</Armor>
+</armor>
 
 <Nose Equipment>
 ISERSmallLaser
@@ -51,42 +88,11 @@ ISLaserInsulator
 <Aft Equipment>
 </Aft Equipment>
 
-<heatsinks>
-12
-</heatsinks>
-
-<sink_type>
-1
-</sink_type>
-
-<fuel>
-400
-</fuel>
-
-<type>
-IS Level 4
-</type>
-
-<year>
-3074
-</year>
-
 <source>
 XTRO ComStar - Jihad
 </source>
 
-<internal_type>
-0
-</internal_type>
+<tonnage>
+45.0
+</tonnage>
 
-<armor_type>
-3
-</armor_type>
-
-<engine_type>
-0
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>

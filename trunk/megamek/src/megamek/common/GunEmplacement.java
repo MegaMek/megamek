@@ -227,6 +227,10 @@ public class GunEmplacement extends Tank {
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS_V)) {
                     dBV *= 1.3;
                 }
+                if ((mLinker.getType() instanceof MiscType)
+                        && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                    dBV *= 1.25;
+                }
             }
 
             if (mounted.getLinkedBy() != null) {

@@ -3,7 +3,6 @@
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
 MAM0
 </Version>
@@ -80,6 +79,10 @@ IS Level 4
 <year>
 3072
 </year>
+
+<source>
+JHS:Terra - Jihad
+</source>
 
 <internal_type>
 0

@@ -2,74 +2,100 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Aero
 </UnitType>
+
 <Name>
 Issus
 </Name>
+
 <Model>
 (Erika)
 </Model>
-<Tonnage>
-40
-</Tonnage>
-<SafeThrust>
-8
-</SafeThrust>
-<Armor>
-40
-30
-30
-15
-</Armor>
-<Nose Equipment>
-CLERSmallLaser
-CLStreakSRM6
-CLStreakSRM6 Ammo
-CLCASE
-</Nose Equipment>
-<Left Wing Equipment>
-CLERLargeLaser
-</Left Wing Equipment>
-<Right Wing Equipment> 
-CLERLargeLaser
-</Right Wing Equipment>
-<Aft Equipment>
-</Aft Equipment>
-<heatsinks>
-12
-</heatsinks>
-<sink_type>
-1
-</sink_type>
-<fuel>
-400
-</fuel>
+
+<year>
+3065
+</year>
+
 <type>
 Clan Level 2
 </type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+8
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+12
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
 
 <armor_tech>
 2
 </armor_tech>
 
-<year>
-3065
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-19
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+40
+30
+30
+15
+</armor>
+
+<Nose Equipment>
+CLERSmallLaser
+CLStreakSRM6
+Clan Streak SRM 6 Ammo
+CLCASE
+CLCASE
+CLCASE
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLERLargeLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLERLargeLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+RS Unique Fighters - Civil War
+</source>
+
+<tonnage>
+40.0
+</tonnage>
+

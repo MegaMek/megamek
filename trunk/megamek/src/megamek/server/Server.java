@@ -25673,7 +25673,25 @@ public class Server implements Runnable {
             if (((AmmoType) mounted.getType()).isCapital()) {
                 hit.setCapital(true);
             }
+        }
 
+        // exploding RISC laser pulse module should cause no normal crits, just
+        // automatically crit the first uncritted crit of the laser it's
+        // attached to
+        if ((mounted.getType() instanceof MiscType)  && mounted.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+            hit.setEffect(HitData.EFFECT_NO_CRITICALS);
+            Mounted laser = mounted.getLinkedBy();
+            if (en instanceof Mech) {
+                for (int slot = 0; slot < en.getNumberOfCriticals(laser.getLocation()); slot++) {
+                    CriticalSlot cs = en.getCritical(laser.getLocation(), slot);
+                    if ((cs.getType() == CriticalSlot.TYPE_EQUIPMENT) && cs.getMount().equals(laser) && cs.isHittable()) {
+                        cs.setHit(true);
+                        cs.setRepairable(true);
+                        break;
+                    }
+                }
+            }
+            laser.setHit(true);
         }
 
         mounted.setShotsLeft(0);

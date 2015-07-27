@@ -1,137 +1,96 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Spad
-
 </Name>
 
 <Model>
-
 SPD-503
-
 </Model>
 
-<Tonnage>
+<year>
+2760
+</year>
 
-30
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 7
-
 </SafeThrust>
 
-<Armor>
-
-50
-
-29
-
-29
-
-35
-
-</Armor>
-
-<Nose Equipment>
-
-ISLargePulseLaser
-
-ISMediumPulseLaser
-
-ISMediumPulseLaser 
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-</Right Wing Equipment>
-
-<Aft Equipment> 
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 10
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS Level 2
-
-</type>
-
-<year>
-
-2760
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
-
 19
 </armor_type>
 
-<engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-2
+<armor>
+50
+29
+29
+35
+</armor>
 
-</engine_type>
+<Nose Equipment>
+ISLargePulseLaser
+ISMediumPulseLaser
+ISMediumPulseLaser
+</Nose Equipment>
 
-<motion_type>
+<Left Wing Equipment>
+</Left Wing Equipment>
 
-aerodyne
+<Right Wing Equipment>
+</Right Wing Equipment>
 
-</motion_type>
+<Aft Equipment>
+</Aft Equipment>
 
+<source>
+TRO 3050u - Star League
+</source>
 
-
+<tonnage>
+30.0
+</tonnage>
 

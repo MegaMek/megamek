@@ -1,18 +1,11 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
@@ -27,35 +20,25 @@ Sabre
 SB-26
 </Model>
 
-<Tonnage>
-25
-</Tonnage>
+<year>
+2314
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 9
 </SafeThrust>
 
-<Armor>
-19
-15
-15
-15
-</Armor>
-
-<Nose Equipment>
-ISMediumLaser 
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISMediumLaser 
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-ISMediumLaser
-</Right Wing Equipment>
-
-<Aft Equipment> 
-</Aft Equipment>
+<cockpit_type>
+3
+</cockpit_type>
 
 <heatsinks>
 10
@@ -69,34 +52,45 @@ ISMediumLaser
 160
 </fuel>
 
-<type>
-IS Level 5
-</type>
-
-<armor_tech>
-9
-</armor_tech>
-
-<year>
-2314
-</year>
-
-<internal_type>
+<engine_type>
 0
-</internal_type>
+</engine_type>
 
 <armor_type>
 17
 </armor_type>
 
-<engine_type>
-0
-</engine_type>
+<armor_tech>
+9
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+19
+15
+15
+15
+</armor>
 
-<cockpit_type>
-3
-</cockpit_type>
+<Nose Equipment>
+Medium Laser
+</Nose Equipment>
+
+<Left Wing Equipment>
+Medium Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Medium Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO 3075 - Age of War
+</source>
+
+<tonnage>
+25.0
+</tonnage>
+

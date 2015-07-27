@@ -36,6 +36,10 @@ Aerodyne
 7
 </SafeThrust>
 
+<cockpit_type>
+0
+</cockpit_type>
+
 <heatsinks>
 10
 </heatsinks>
@@ -85,7 +89,7 @@ ISERMediumLaser
 </Aft Equipment>
 
 <source>
-TRO 3050U
+TRO 3050u - Jihad
 </source>
 
 <tonnage>

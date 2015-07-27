@@ -1,152 +1,96 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Eagle
-
 </Name>
 
 <Model>
-
 EGL-R10
-
 </Model>
 
-<Tonnage>
+<year>
+2684
+</year>
 
-75
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 6
-
 </SafeThrust>
 
-<Armor>
-
-80
-
-52
-
-52
-
-40
-
-</Armor>
-
-<Nose Equipment>
-
-ISLargeLaser
-
-ISMediumLaser
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISMediumLaser
-
-ISMediumLaser
-
-ISMediumLaser
-
-ISMediumLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-
-ISMediumLaser
-
-ISMediumLaser
-
-ISMediumLaser
-
-ISMediumLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-ISMediumLaser
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 29
-
 </heatsinks>
 
 <sink_type>
-
 0
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS Level 2
-
-</type>
-
-<year>
-
-2684
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-0
-
-</armor_type>
-
 <engine_type>
-
 0
-
 </engine_type>
 
-<motion_type>
+<armor>
+80
+52
+52
+40
+</armor>
 
-aerodyne
+<Nose Equipment>
+Large Laser
+Medium Laser
+</Nose Equipment>
 
-</motion_type>
+<Left Wing Equipment>
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Left Wing Equipment>
 
+<Right Wing Equipment>
+Medium Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+Medium Laser
+</Aft Equipment>
+
+<source>
+TRO 3075 - Succession Wars
+</source>
+
+<tonnage>
+75.0
+</tonnage>
 

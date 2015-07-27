@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -22,40 +20,25 @@ Lucifer III
 LCR-3
 </Model>
 
-<Tonnage>
-65
-</Tonnage>
+<year>
+3086
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-119
-86
-86
-85
-</Armor>
-
-<Nose Equipment>
-ISBombastLaser
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISExtendedLRM10
-ELRM 10 Ammo
-ELRM 10 Ammo
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-ISExtendedLRM10
-ELRM 10 Ammo
-ELRM 10 Ammo
-</Right Wing Equipment>
-
-<Aft Equipment>
-ISMediumXPulseLaser
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 13
@@ -69,26 +52,50 @@ ISMediumXPulseLaser
 400
 </fuel>
 
-<type>
-IS Level 4
-</type>
-
-<year>
-3086
-</year>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+119
+86
+86
+85
+</armor>
+
+<Nose Equipment>
+Bombast Laser
+</Nose Equipment>
+
+<Left Wing Equipment>
+Extended LRM 10
+IS Ammo Extended LRM-10
+IS Ammo Extended LRM-10
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Extended LRM 10
+IS Ammo Extended LRM-10
+IS Ammo Extended LRM-10
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISMediumXPulseLaser
+</Aft Equipment>
+
+<source>
+TRO Prototypes - Early Republic
+</source>
+
+<tonnage>
+65.0
+</tonnage>
+

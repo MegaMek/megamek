@@ -2,71 +2,92 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Aero
 </UnitType>
+
 <Name>
 Stingray
 </Name>
+
 <Model>
 F-92 (Michael)
 </Model>
-<Tonnage>
-60
-</Tonnage>
+
+<year>
+3068
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
 <SafeThrust>
 6
 </SafeThrust>
-<Armor>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+13
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
 71
 59
 59
 59
-</Armor>
+</armor>
+
 <Nose Equipment>
 ISLargePulseLaser
 ISTargeting Computer
 </Nose Equipment>
+
 <Left Wing Equipment>
 ISMediumPulseLaser
 ISMediumPulseLaser
-(R) ISMediumLaser
+Medium Laser
 </Left Wing Equipment>
+
 <Right Wing Equipment>
 ISMediumPulseLaser
 ISMediumPulseLaser
-(R) ISMediumLaser
+Medium Laser
 </Right Wing Equipment>
+
 <Aft Equipment>
 </Aft Equipment>
-<heatsinks>
-13
-</heatsinks>
-<sink_type>
-1
-</sink_type>
-<fuel>
-400
-</fuel>
-<type>
-IS Level 2
-</type>
-<year>
-3068
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-aerodyne
-</motion_type>
+
+<source>
+RS Unique Fighters - Jihad
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+

@@ -1,149 +1,100 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Starfire
-
 </Name>
 
 <Model>
-
 SF-1X
-
 </Model>
 
-<Tonnage>
+<year>
+3030
+</year>
 
-55
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 7
-
 </SafeThrust>
 
-<Armor>
-
-42
-
-31
-
-31
-
-21
-
-</Armor>
-
-<Nose Equipment>
-
-ISUltraAC5 
-
-ISUltraAC5 Ammo
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISMediumLaser 
-
-ISMediumLaser 
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-ISMediumLaser
-
-ISMediumLaser 
-
-</Right Wing Equipment>
-
-<Aft Equipment> 
-
-ISSmallLaser 
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 20
-
 </heatsinks>
 
 <sink_type>
-
 0
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS Level 2
-
-</type>
-
-<year>
-
-3030
-
-</year>
-
-<internal_type>
-
+<engine_type>
 0
-
-</internal_type>
+</engine_type>
 
 <armor_type>
-
 19
 </armor_type>
 
-<engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-0
+<armor>
+42
+31
+31
+21
+</armor>
 
-</engine_type>
+<Nose Equipment>
+ISUltraAC5
+IS Ultra AC/5 Ammo
+</Nose Equipment>
 
-<motion_type>
+<Left Wing Equipment>
+Medium Laser
+Medium Laser
+</Left Wing Equipment>
 
-aerodyne
+<Right Wing Equipment>
+Medium Laser
+Medium Laser
+</Right Wing Equipment>
 
-</motion_type>
+<Aft Equipment>
+Small Laser
+</Aft Equipment>
 
 <source>
-XTRO Succession Wars I
+XTRO Succession Wars I - Succession Wars
 </source>
 
-
-
+<tonnage>
+55.0
+</tonnage>
 

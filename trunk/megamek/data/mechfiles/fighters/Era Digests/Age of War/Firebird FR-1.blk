@@ -2,79 +2,98 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Aero
 </UnitType>
+
 <Name>
 Firebird
 </Name>
+
 <Model>
 FR-1
 </Model>
-<Tonnage>
-45
-</Tonnage>
+
+<year>
+2400
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
 <SafeThrust>
 5
 </SafeThrust>
-<Armor>
+
+<cockpit_type>
+3
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+240
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+17
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
 12
 9
 9
 7
-</Armor>
+</armor>
+
 <Nose Equipment>
-ISAC2
-ISAC2 Ammo
+Autocannon/2
+IS Ammo AC/2
 </Nose Equipment>
 
 <Left Wing Equipment>
-ISLRM10
-ISLRM10 Ammo
+LRM 10
+IS Ammo LRM-10
 </Left Wing Equipment>
 
 <Right Wing Equipment>
-ISLRM10
-ISLRM10 Ammo
+LRM 10
+IS Ammo LRM-10
 </Right Wing Equipment>
 
 <Aft Equipment>
 </Aft Equipment>
 
-<heatsinks>
-10
-</heatsinks>
-<sink_type>
-0
-</sink_type>
-<fuel>
-240
-</fuel>
-<type>
-IS Level 5
-</type>
-<year>
-2400
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-17
-</armor_type>
-<engine_type>
-0
-</engine_type>
-<motion_type>
-aerodyne
-</motion_type>
-<cockpit_type>
-3
-</cockpit_type>
 <source>
-Era Digest: Age of War
+ED: Age of War - Age of War
 </source>
+
+<tonnage>
+45.0
+</tonnage>
+

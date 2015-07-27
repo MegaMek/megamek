@@ -1,164 +1,103 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Ahab
-
 </Name>
 
 <Model>
-
 AHB-X
-
 </Model>
 
-<Tonnage>
+<year>
+2697
+</year>
 
-90
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 5
-
 </SafeThrust>
 
-<Armor>
-
-84
-
-59
-
-59
-
-46
-
-</Armor>
-
-<Nose Equipment>
-
-ISLargeLaser
-
-ISMediumLaser
-
-ISMediumLaser
-
-ISMediumLaser
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISLRM20
-
-ISLRM20 Ammo
-
-ISLRM20 Ammo
-
-ISLRM20 Ammo
-
-ISSRM6
-
-ISSRM6 Ammo
-
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-
-ISLRM20
-
-ISLRM20 Ammo
-
-ISLRM20 Ammo
-
-ISLRM20 Ammo
-
-ISSRM6
-
-ISSRM6 Ammo
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-ISMediumLaser
-
-ISMediumLaser
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 18
-
 </heatsinks>
 
 <sink_type>
-
 0
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS Level 2
-
-</type>
-
-<year>
-
-2697
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-0
-
-</armor_type>
-
 <engine_type>
-
 0
-
 </engine_type>
 
-<motion_type>
+<armor>
+84
+59
+59
+46
+</armor>
 
-aerodyne
+<Nose Equipment>
+Large Laser
+Medium Laser
+Medium Laser
+Medium Laser
+</Nose Equipment>
 
-</motion_type>
+<Left Wing Equipment>
+LRM 20
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-20
+SRM 6
+IS Ammo SRM-6
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+LRM 20
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo LRM-20
+SRM 6
+IS Ammo SRM-6
+</Right Wing Equipment>
+
+<Aft Equipment>
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<source>
+TRO 3050u - Star League
+</source>
+
+<tonnage>
+90.0
+</tonnage>
+

@@ -1,137 +1,97 @@
-
 #building block data file
-
-
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Rogue
-
 </Name>
 
 <Model>
-
 RGU-133LP
-
 </Model>
 
-<Tonnage>
+<year>
+3055
+</year>
 
-40
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 7
-
 </SafeThrust>
 
-<Armor>
-
-30
-
-27
-
-27
-
-14
-
-</Armor>
-
-<Nose Equipment>
-
-ISMediumPulseLaser
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISLargePulseLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-
-ISLargePulseLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-ISMediumPulseLaser
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 10
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS
-
-</type>
-
-<year>
-
-3055
-
-</year>
-
-<internal_type>
-
+<engine_type>
 0
-
-</internal_type>
+</engine_type>
 
 <armor_type>
-
 19
 </armor_type>
 
-<engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-0
+<armor>
+30
+27
+27
+14
+</armor>
 
-</engine_type>
+<Nose Equipment>
+ISMediumPulseLaser
+</Nose Equipment>
 
-<motion_type>
+<Left Wing Equipment>
+ISLargePulseLaser
+</Left Wing Equipment>
 
-aerodyne
+<Right Wing Equipment>
+ISLargePulseLaser
+</Right Wing Equipment>
 
-</motion_type>
+<Aft Equipment>
+ISMediumPulseLaser
+</Aft Equipment>
+
+<source>
+TRO 3050u - Clan Invasion
+</source>
+
+<tonnage>
+40.0
+</tonnage>
+

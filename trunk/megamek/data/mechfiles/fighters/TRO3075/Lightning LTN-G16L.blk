@@ -2,7 +2,8 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -19,39 +20,25 @@ Lightning
 LTN-G16L
 </Model>
 
-<Tonnage>
-50
-</Tonnage>
+<year>
+3067
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 6
 </SafeThrust>
 
-<Armor>
-65
-36
-36
-33
-</Armor>
-
-<Nose Equipment>
-ISUltraAC20
-ISUltraAC20 Ammo
-ISUltraAC20 Ammo
-ISERMediumLaser
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISERMediumLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISERMediumLaser
-</Right Wing Equipment>
-
-<Aft Equipment>
-ISMediumLaser
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 13
@@ -65,30 +52,49 @@ ISMediumLaser
 400
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<year>
-3067
-</year>
-
-<internal_type>
+<engine_type>
 0
-</internal_type>
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-0
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+65
+36
+36
+33
+</armor>
 
-<cockpit_type>
-0
-</cockpit_type>
+<Nose Equipment>
+ISUltraAC20
+IS Ultra AC/20 Ammo
+IS Ultra AC/20 Ammo
+ISERMediumLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERMediumLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERMediumLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+Medium Laser
+</Aft Equipment>
+
+<source>
+TRO 3075 - Civil War
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+

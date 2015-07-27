@@ -1,144 +1,100 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Rapier
-
 </Name>
 
 <Model>
-
 RPR-300
-
 </Model>
 
-<Tonnage>
+<year>
+3074
+</year>
 
-85
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 6
-
 </SafeThrust>
 
-<Armor>
-
-78
-
-58
-
-58
-
-38
-
-</Armor>
-
-<Nose Equipment>
-
-ISHeavyGaussRifle
-
-ISHeavyGauss Ammo
-
-ISHeavyGauss Ammo
-
-ISHeavyGauss Ammo
-
-ISHeavyGauss Ammo
-ISPPC
-ISPPC
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 11
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
+<engine_type>
+0
+</engine_type>
 
-IS Level 2
-
-</type>
+<armor_type>
+19
+</armor_type>
 
 <armor_tech>
 1
 </armor_tech>
 
-<year>
+<armor>
+78
+58
+58
+38
+</armor>
 
-3074
+<Nose Equipment>
+ISHeavyGaussRifle
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
+PPC
+PPC
+</Nose Equipment>
 
-</year>
+<Left Wing Equipment>
+</Left Wing Equipment>
 
-<internal_type>
+<Right Wing Equipment>
+</Right Wing Equipment>
 
-0
+<Aft Equipment>
+</Aft Equipment>
 
-</internal_type>
+<source>
+TRO 3050u - Jihad
+</source>
 
-<armor_type>
-
-19
-</armor_type>
-
-<engine_type>
-
-0
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
-
+<tonnage>
+85.0
+</tonnage>
 

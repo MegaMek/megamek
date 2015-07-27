@@ -1,197 +1,104 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-
-
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
-
-
 <UnitType>
-
 Aero
-
 </UnitType>
 
-
-
 <Name>
-
 Stuka
-
 </Name>
 
-
-
 <Model>
-
 STU-K5b
-
 </Model>
 
-
-
-<Tonnage>
-
-100
-
-</Tonnage>
-
-
-
-<SafeThrust>
-
-5
-
-</SafeThrust>
-
-
-
-<Armor>
-
-87
-
-60
-
-60
-
-52
-
-</Armor>
-
-
-
-<Nose Equipment>
-
-ISAC20
-
-ISAC20 Ammo
-
-ISAC20 Ammo
-
-ISAC20 Ammo
-
-ISMediumLaser
-
-</Nose Equipment>
-
-
-
-<Left Wing Equipment>
-
-ISPPC
-
-ISPPC
-
-</Left Wing Equipment>
-
-
-
-<Right Wing Equipment>
-
-ISPPC
-
-ISPPC
-
-</Right Wing Equipment>
-
-
-
-<Aft Equipment>
-
-ISMediumLaser
-
-ISMediumLaser
-
-</Aft Equipment>
-
-
-
-<heatsinks>
-
-30
-
-</heatsinks>
-
-
-
-<sink_type>
-
-1
-
-</sink_type>
-
-
-
-<fuel>
-
-400
-
-</fuel>
-
-
-
-<type>
-
-IS Level 2
-
-</type>
-
-
-
 <year>
-
 2709
-
 </year>
 
+<type>
+IS Level 2
+</type>
 
+<motion_type>
+Aerodyne
+</motion_type>
 
-<source>
+<SafeThrust>
+5
+</SafeThrust>
 
-Op Klondyke
+<cockpit_type>
+0
+</cockpit_type>
 
-</source>
+<heatsinks>
+30
+</heatsinks>
 
+<sink_type>
+1
+</sink_type>
 
+<fuel>
+400
+</fuel>
 
-<internal_type>
-
-0				
-
-</internal_type>
-
-
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
-
 19
 </armor_type>
 
+<armor_tech>
+-1
+</armor_tech>
 
+<armor>
+87
+60
+60
+52
+</armor>
 
-<engine_type>				
+<Nose Equipment>
+Autocannon/20
+IS Ammo AC/20
+IS Ammo AC/20
+IS Ammo AC/20
+Medium Laser
+</Nose Equipment>
 
-2
+<Left Wing Equipment>
+PPC
+PPC
+</Left Wing Equipment>
 
-</engine_type>
+<Right Wing Equipment>
+PPC
+PPC
+</Right Wing Equipment>
 
+<Aft Equipment>
+Medium Laser
+Medium Laser
+</Aft Equipment>
 
+<source>
+H:Operation Klondyke - Star League
+</source>
 
-<motion_type>
+<tonnage>
+100.0
+</tonnage>
 
-aerodyne
-
-</motion_type>

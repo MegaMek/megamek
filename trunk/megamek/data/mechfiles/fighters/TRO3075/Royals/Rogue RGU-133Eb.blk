@@ -1,147 +1,101 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Rogue
-
 </Name>
 
 <Model>
-
 RGU-133Eb
-
 </Model>
 
-<Tonnage>
+<year>
+2710
+</year>
 
-40
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 7
-
 </SafeThrust>
 
-<Armor>
-
-30
-
-27
-
-27
-
-14
-
-</Armor>
-
-<Nose Equipment>
-
-ISMediumPulseLaser
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISLRM15
-
-ISArtemisIV
-
-ISLRM15 Ammo Artemis-capable
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-ISLRM15
-
-ISArtemisIV
-
-ISLRM15 Ammo Artemis-capable
-
-</Right Wing Equipment>
-
-<Aft Equipment> 
-
-ISMediumPulseLaser
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 10
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS Level 2
-
-</type>
-
-<year>
-
-2710
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
-
 19
 </armor_type>
 
-<engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-2
+<armor>
+30
+27
+27
+14
+</armor>
 
-</engine_type>
+<Nose Equipment>
+ISMediumPulseLaser
+</Nose Equipment>
 
-<motion_type>
+<Left Wing Equipment>
+LRM 15
+ISArtemisIV
+IS Ammo LRM-15 Artemis-capable
+</Left Wing Equipment>
 
-aerodyne
+<Right Wing Equipment>
+LRM 15
+ISArtemisIV
+IS Ammo LRM-15 Artemis-capable
+</Right Wing Equipment>
 
-</motion_type>
+<Aft Equipment>
+ISMediumPulseLaser
+</Aft Equipment>
 
+<source>
+TRO 3075 - Star League
+</source>
 
-
+<tonnage>
+40.0
+</tonnage>
 

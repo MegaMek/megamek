@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -22,44 +20,25 @@ Jengiz
 E
 </Model>
 
-<Tonnage>
-80
-</Tonnage>
+<year>
+3064
+</year>
+
+<type>
+Clan Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-85
-63
-63
-48
-</Armor>
-
-<Nose Equipment>
-CLECMSuite
-CLERSmallLaser
-</Nose Equipment>
-
-<Left Wing Equipment>
-CLERLargeLaser
-CLERLargeLaser
-CLERLargeLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-CLERLargeLaser
-CLERLargeLaser
-CLERLargeLaser
-</Right Wing Equipment>
-
-<Aft Equipment>
-CLStreakSRM2 (IOS)
-CLStreakSRM2 (IOS)
-CLStreakSRM2 (IOS)
-CLStreakSRM2 (IOS)
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 36
@@ -73,33 +52,58 @@ CLStreakSRM2 (IOS)
 320
 </fuel>
 
-<type>
-Clan Level 3
-</type>
-
-<armor_tech>
-6
-</armor_tech>
-
-<year>
-3064
-</year>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
+<armor_tech>
+6
+</armor_tech>
 
 <omni>
+1
 </omni>
+
+<armor>
+85
+63
+63
+48
+</armor>
+
+<Nose Equipment>
+CLECMSuite
+CLERSmallLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLStreakSRM2 (IOS)
+CLStreakSRM2 (IOS)
+CLStreakSRM2 (IOS)
+CLStreakSRM2 (IOS)
+</Aft Equipment>
+
+<source>
+TRO 3055u - Civil War
+</source>
+
+<tonnage>
+80.0
+</tonnage>
+

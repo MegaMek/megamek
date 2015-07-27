@@ -80,10 +80,12 @@ Aerodyne
 
 <Left Wing Equipment>
 CLImprovedHeavyLargeLaser
+CLCASE
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 CLImprovedHeavyLargeLaser
+CLCASE
 </Right Wing Equipment>
 
 <Aft Equipment>
@@ -91,7 +93,7 @@ WatchdogECMSuite
 </Aft Equipment>
 
 <source>
-RS 3145 NT NU
+TRO 3145 NTNU - Late Republic
 </source>
 
 <tonnage>

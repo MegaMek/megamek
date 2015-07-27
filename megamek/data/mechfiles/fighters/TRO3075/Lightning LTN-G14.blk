@@ -36,6 +36,10 @@ Aerodyne
 5
 </SafeThrust>
 
+<cockpit_type>
+0
+</cockpit_type>
+
 <heatsinks>
 13
 </heatsinks>
@@ -85,6 +89,10 @@ Medium Laser
 <Aft Equipment>
 Medium Laser
 </Aft Equipment>
+
+<source>
+TRO 3075 - Age of War
+</source>
 
 <tonnage>
 50.0

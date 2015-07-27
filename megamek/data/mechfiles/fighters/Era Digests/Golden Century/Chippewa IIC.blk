@@ -1,174 +1,113 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Chippewa IIC
-
 </Name>
 
-<model>
+<Model>
 (Standard)
-</model>
+</Model>
 
-<Tonnage>
+<year>
+2861
+</year>
 
-90
+<type>
+Clan Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 5
-
 </SafeThrust>
 
-<Armor>
-
-92
-
-62
-
-62
-
-43
-
-</Armor>
-
-<Nose Equipment>
-
-CLLRM15
-
-CLArtemisIV
-
-CLLRM15
-
-CLArtemisIV
-
-CLLRM15 Ammo (Clan) Artemis-capable
-
-CLLRM15 Ammo (Clan) Artemis-capable
-
-CLLRM15 Ammo (Clan) Artemis-capable
-
-CLLRM15 Ammo (Clan) Artemis-capable
-
-CLStreakSRM4
-
-CLStreakSRM4 Ammo
-
-CLERMediumLaser
-
-CLERMediumLaser
-
-CLTargeting Computer
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-CLERLargeLaser
-
-CLERLargeLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-
-CLERLargeLaser
-
-CLERLargeLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-CLERSmallLaser
-
-CLERSmallLaser
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 25
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
+<engine_type>
+0
+</engine_type>
 
-Clan Level 2
-
-</type>
+<armor_type>
+19
+</armor_type>
 
 <armor_tech>
 2
 </armor_tech>
 
-<year>
+<armor>
+92
+62
+62
+43
+</armor>
 
-2861
+<Nose Equipment>
+CLLRM15
+CLArtemisIV
+CLLRM15
+CLArtemisIV
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+Clan Ammo LRM-15 (Clan) Artemis-capable
+CLStreakSRM4
+Clan Streak SRM 4 Ammo
+CLERMediumLaser
+CLERMediumLaser
+CLTargeting Computer
+CLCASE
+</Nose Equipment>
 
-</year>
+<Left Wing Equipment>
+CLERLargeLaser
+CLERLargeLaser
+</Left Wing Equipment>
 
-<Source>
+<Right Wing Equipment>
+CLERLargeLaser
+CLERLargeLaser
+</Right Wing Equipment>
 
-ED:Golden Age
+<Aft Equipment>
+CLERSmallLaser
+CLERSmallLaser
+</Aft Equipment>
 
+<source>
+ED:Golden Age - Succession Wars
 </source>
 
-<internal_type>
+<tonnage>
+90.0
+</tonnage>
 
-0
-
-</internal_type>
-
-<armor_type>
-
-19
-
-</armor_type>
-
-<engine_type>
-
-0
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>

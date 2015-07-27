@@ -1,24 +1,15 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
@@ -104,7 +95,3 @@ XTRO Kurita - Jihad
 <motion_type>
 aerodyne
 </motion_type>
-
-
-
-

@@ -81,6 +81,7 @@ CLImprovedHeavyLargeLaser
 CLTargeting Computer
 Clan Gauss Ammo
 Clan Gauss Ammo
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -94,7 +95,7 @@ CLECMSuite
 </Aft Equipment>
 
 <source>
-RS 3145 NT NU
+TRO 3145 NTNU - Late Republic
 </source>
 
 <tonnage>

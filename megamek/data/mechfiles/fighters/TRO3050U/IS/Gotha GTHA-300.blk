@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -22,40 +20,25 @@ Gotha
 GTHA-300
 </Model>
 
-<Tonnage>
-60
-</Tonnage>
+<year>
+2657
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 4
 </SafeThrust>
 
-<Armor>
-90
-70
-70
-56
-</Armor>
-<Nose Equipment>
-ISPPC
-ISMediumLaser
-ISLRM15 Ammo
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISLRM15
-ISSmallLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-ISLRM15
-ISSmallLaser
-</Right Wing Equipment>
-
-<Aft Equipment>
-ISMediumLaser
-ISMediumLaser
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 14
@@ -69,31 +52,52 @@ ISMediumLaser
 480
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<armor_tech>
-3
-</armor_tech>
-
-
-<year>
-2657
-</year>
-
-<internal_type>
+<engine_type>
 0
-</internal_type>
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
-0
-</engine_type>
+<armor_tech>
+3
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+90
+70
+70
+56
+</armor>
+
+<Nose Equipment>
+PPC
+Medium Laser
+IS Ammo LRM-15
+Medium Laser
+</Nose Equipment>
+
+<Left Wing Equipment>
+LRM 15
+Small Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+LRM 15
+Small Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<source>
+TRO 3050u - Star League
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+

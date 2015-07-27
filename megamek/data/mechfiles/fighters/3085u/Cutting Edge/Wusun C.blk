@@ -36,6 +36,10 @@ Aerodyne
 8
 </SafeThrust>
 
+<cockpit_type>
+0
+</cockpit_type>
+
 <heatsinks>
 21
 </heatsinks>
@@ -93,7 +97,7 @@ CLHeavyMediumLaser
 </Aft Equipment>
 
 <source>
-Dark Age
+TRO 3085 - Jihad
 </source>
 
 <tonnage>

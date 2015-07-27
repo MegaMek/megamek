@@ -1,153 +1,107 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Batu
-
 </Name>
 
 <Model>
-
 C
-
 </Model>
 
-<Tonnage>
+<year>
+2987
+</year>
 
-40
+<type>
+Clan Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 9
-
 </SafeThrust>
 
-<Armor>
-
-50
-
-38
-
-38
-
-27
-
-</Armor>
-
-<Nose Equipment>
-
-CLGaussRifle
-
-CLGauss Ammo
-
-CLERMediumLaser
-
-CLERMediumLaser
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-CLERSmallLaser
-
-CLERSmallLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-CLERSmallLaser
-
-CLERSmallLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment> 
-
-CLERMediumLaser
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 10
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 240
-
 </fuel>
 
-<type>
+<engine_type>
+2
+</engine_type>
 
-Clan Level 2
-
-</type>
+<armor_type>
+19
+</armor_type>
 
 <armor_tech>
 2
 </armor_tech>
 
-<year>
-
-2987
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-19
-</armor_type>
-
-<engine_type>
-
-2
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
-
 <omni>
-
+1
 </omni>
+
+<armor>
+50
+38
+38
+27
+</armor>
+
+<Nose Equipment>
+CLGaussRifle
+Clan Gauss Ammo
+CLERMediumLaser
+CLERMediumLaser
+CLCASE
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLERSmallLaser
+CLERSmallLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLERSmallLaser
+CLERSmallLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLERMediumLaser
+</Aft Equipment>
+
+<source>
+TRO 3055u - Succession Wars
+</source>
+
+<tonnage>
+40.0
+</tonnage>
+

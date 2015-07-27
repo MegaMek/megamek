@@ -734,6 +734,10 @@ public class Dropship extends SmallCraft {
                             && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
                         dBV *= 1.15;
                     }
+                    if ((mLinker.getType() instanceof MiscType)
+                            && mLinker.getType().hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                        dBV *= 1.25;
+                    }
                 }
                 // add up BV of ammo-using weapons for each type of weapon,
                 // to compare with ammo BV later for excessive ammo BV rule

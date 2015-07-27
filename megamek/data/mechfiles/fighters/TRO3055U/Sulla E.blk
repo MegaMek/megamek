@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -22,40 +20,25 @@ Sulla
 E
 </Model>
 
-<Tonnage>
-45
-</Tonnage>
+<year>
+3069
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 9
 </SafeThrust>
 
-<Armor>
-46
-41
-41
-35
-</Armor>
-
-<Nose Equipment>
-CLPlasmaCannon
-CLPlasmaCannon Ammo
-</Nose Equipment>
-
-<Left Wing Equipment>
-CLPlasmaCannon
-CLPlasmaCannon Ammo
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-CLPlasmaCannon
-CLPlasmaCannon Ammo
-</Right Wing Equipment>
-
-<Aft Equipment> 
-CLERSmallLaser
-CLTargeting Computer
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 13
@@ -69,33 +52,54 @@ CLTargeting Computer
 400
 </fuel>
 
-<type>
-Clan Level 2
-</type>
-
-<armor_tech>
+<engine_type>
 2
-</armor_tech>
-
-<year>
-3069
-</year>
-
-<internal_type>
-0
-</internal_type>
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
+<armor_tech>
 2
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
+</armor_tech>
 
 <omni>
+1
 </omni>
+
+<armor>
+46
+41
+41
+35
+</armor>
+
+<Nose Equipment>
+CLPlasmaCannon
+CLPlasmaCannonAmmo
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLPlasmaCannon
+CLPlasmaCannonAmmo
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLPlasmaCannon
+CLPlasmaCannonAmmo
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLERSmallLaser
+CLTargeting Computer
+</Aft Equipment>
+
+<source>
+TRO 3055u - Jihad
+</source>
+
+<tonnage>
+45.0
+</tonnage>
+

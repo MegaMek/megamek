@@ -25,7 +25,7 @@ SB-29
 </year>
 
 <type>
-IS Level 2
+IS Level 3
 </type>
 
 <motion_type>
@@ -53,7 +53,7 @@ Aerodyne
 </fuel>
 
 <engine_type>
-0
+4
 </engine_type>
 
 <armor_type>
@@ -68,7 +68,7 @@ Aerodyne
 21
 17
 17
-16
+17
 </armor>
 
 <Nose Equipment>
@@ -87,7 +87,7 @@ ISERMediumLaser
 </Aft Equipment>
 
 <source>
-TRO 3075
+TRO 3075 - Jihad
 </source>
 
 <tonnage>

@@ -577,6 +577,12 @@ public abstract class TestEntity implements TestEntityOption {
                     fTons += wt.getTonnage(getEntity());
                 }
             }
+            for (Mounted mo : getEntity().getMisc()) {
+                MiscType mt2 = (MiscType) mo.getType();
+                if (mt2.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
+                    fTons += mt.getTonnage(getEntity());
+                }
+            }
             float weight = 0.0f;
             if (mt.getInternalName().equals("ISTargeting Computer")) {
                 weight = TestEntity.ceil(fTons / 4.0f,

@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -22,48 +20,25 @@ Turk
 E
 </Model>
 
-<Tonnage>
-50
-</Tonnage>
+<year>
+3075
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 7
 </SafeThrust>
 
-<Armor>
-48
-44
-44
-46
-</Armor>
-
-<Nose Equipment>
-CLGaussRifle
-CLGauss Ammo
-CLGauss Ammo
-CLPlasmaCannon
-CLPlasmaCannon Ammo
-CLHeavyMG Ammo (100)
-</Nose Equipment>
-
-<Left Wing Equipment>
-CLHeavyMG
-CLHeavyMG
-CLHeavyMG
-CLHMGA
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-CLHeavyMG
-CLHeavyMG
-CLHeavyMG
-CLHMGA
-</Right Wing Equipment>
-
-<Aft Equipment> 
-CLECMSuite
-CLERSmallLaser
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 12
@@ -77,33 +52,63 @@ CLERSmallLaser
 400
 </fuel>
 
-<type>
-Clan Level 2
-</type>
-
-<armor_tech>
+<engine_type>
 2
-</armor_tech>
-
-<year>
-3075
-</year>
-
-<internal_type>
-0
-</internal_type>
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
+<armor_tech>
 2
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
+</armor_tech>
 
 <omni>
+1
 </omni>
+
+<armor>
+48
+44
+44
+46
+</armor>
+
+<Nose Equipment>
+CLGaussRifle
+Clan Gauss Ammo
+Clan Gauss Ammo
+CLPlasmaCannon
+CLPlasmaCannonAmmo
+Clan Heavy Machine Gun Ammo - Full
+CLCASE
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLHeavyMG
+CLHeavyMG
+CLHeavyMG
+Clan Heavy Machine Gun Array
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLHeavyMG
+CLHeavyMG
+CLHeavyMG
+Clan Heavy Machine Gun Array
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLECMSuite
+CLERSmallLaser
+</Aft Equipment>
+
+<source>
+TRO 3055u - Jihad
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+

@@ -130,7 +130,8 @@ public class AmmoType extends EquipmentType {
     public static final int T_LMASS = 100;
     public static final int T_MMASS = 101;
     public static final int T_HMASS = 102;
-    public static final int NUM_TYPES = 103;
+    public static final int T_APDS = 103;
+    public static final int NUM_TYPES = 104;
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
@@ -416,7 +417,7 @@ public class AmmoType extends EquipmentType {
     public boolean isCapital() {
         return capital;
     }
-    
+
     public double getKgPerShot() {
         return kgPerShot;
     }
@@ -1210,6 +1211,8 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISLightRifleAmmo());
         EquipmentType.addType(AmmoType.createISMediumRifleAmmo());
         EquipmentType.addType(AmmoType.createISHeavyRifleAmmo());
+
+        EquipmentType.addType(AmmoType.createISAPDSAmmo());
 
         base = AmmoType.createCLLRT5Ammo();
         clanLrtAmmos.add(base);
@@ -3624,6 +3627,27 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel.put(2617, ammo.techLevel.get(3067));
         ammo.extinctDate = 2796;
         ammo.reintroDate = 3040;
+        ammo.techRating = RATING_E;
+
+        return ammo;
+    }
+
+    private static AmmoType createISAPDSAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3137, TechConstants.T_IS_ADVANCED);
+        ammo.name = "APDS Ammo";
+        ammo.shortName = "APDS";
+        ammo.setInternalName("ISAPDS Ammo");
+        ammo.damagePerShot = 1; // only used for ammo crits
+        ammo.rackSize = 2; // only used for ammo crits
+        ammo.ammoType = AmmoType.T_APDS;
+        ammo.shots = 12;
+        ammo.bv = 22;
+        ammo.cost = 2000;
+        ammo.availRating = new int[]{EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_X, RATING_E};
+        ammo.introDate = 3137;
         ammo.techRating = RATING_E;
 
         return ammo;
@@ -9936,7 +9960,7 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-    
+
     private static AmmoType createCLHeavyNGaussAmmo() {
         AmmoType ammo = new AmmoType();
 
@@ -12255,7 +12279,7 @@ public class AmmoType extends EquipmentType {
 
             // Make sure the tech level is now correct.
             if (!techLevel.isEmpty()) {
-                munition.techLevel = this.techLevel;
+                munition.techLevel = techLevel;
             } else {
                 munition.techLevel = base.techLevel;
             }

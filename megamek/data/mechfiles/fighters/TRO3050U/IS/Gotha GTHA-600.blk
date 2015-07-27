@@ -1,137 +1,60 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Gotha
-
 </Name>
 
 <Model>
-
 GTHA-600
-
 </Model>
 
-<Tonnage>
+<year>
+3067
+</year>
 
-60
+<type>
+IS Level 3
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 6
-
 </SafeThrust>
 
-<Armor>
-
-76
-
-54
-
-54
-
-48
-
-</Armor>
-
-<Nose Equipment>
-
-ISSNPPC
-
-ISERMediumLaser
-
-ISERMediumLaser
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISSRM6
-
-ISSRM6
-
-ISSRM6 Ammo
-
-ISSmallLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-
-ISSRM6
-
-ISSRM6
-
-ISSRM6 Ammo
-
-ISSmallLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-ISMediumLaser
-
-ISMediumLaser
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 14
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 480
-
 </fuel>
 
-<type>
-
-IS Level 2
-
-</type>
-
-<year>
-
-3067
-
-</year>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+4
+</engine_type>
 
 <armor_type>
 19
@@ -141,10 +64,43 @@ IS Level 2
 3
 </armor_tech>
 
-<engine_type>
-4
-</engine_type>
+<armor>
+76
+54
+54
+48
+</armor>
 
-<motion_type>
-aerodyne
-</motion_type>
+<Nose Equipment>
+ISERMediumLaser
+ISERMediumLaser
+ISSNPPC
+</Nose Equipment>
+
+<Left Wing Equipment>
+SRM 6
+SRM 6
+Small Laser
+IS Ammo SRM-6
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Small Laser
+SRM 6
+SRM 6
+IS Ammo SRM-6
+</Right Wing Equipment>
+
+<Aft Equipment>
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<source>
+TRO 3050u - Star League
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+

@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -22,39 +20,25 @@ Vandal
 E
 </Model>
 
-<Tonnage>
-30
-</Tonnage>
+<year>
+3064
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 14
 </SafeThrust>
 
-<Armor>
-29
-20
-20
-17
-</Armor>
-
-<Nose Equipment>
-CLActiveProbe
-</Nose Equipment>
-
-<Left Wing Equipment>
-CLERMicroLaser
-CLERMicroLaser
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-CLERMicroLaser
-CLERMicroLaser
-</Right Wing Equipment>
-
-<Aft Equipment> 
-RemoteSensorDispenser
-RemoteSensorDispenser
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 10
@@ -68,33 +52,53 @@ RemoteSensorDispenser
 240
 </fuel>
 
-<type>
-Clan Level 2
-</type>
-
-<armor_tech>
+<engine_type>
 2
-</armor_tech>
-
-<year>
-3064
-</year>
-
-<internal_type>
-0
-</internal_type>
+</engine_type>
 
 <armor_type>
 19
 </armor_type>
 
-<engine_type>
+<armor_tech>
 2
-</engine_type>
-
-<motion_type>
-aerodyne
-</motion_type>
+</armor_tech>
 
 <omni>
+1
 </omni>
+
+<armor>
+29
+20
+20
+17
+</armor>
+
+<Nose Equipment>
+CLActiveProbe
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLERMicroLaser
+CLERMicroLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLERMicroLaser
+CLERMicroLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+RemoteSensorDispenser
+RemoteSensorDispenser
+</Aft Equipment>
+
+<source>
+TRO 3055u - Civil War
+</source>
+
+<tonnage>
+30.0
+</tonnage>
+

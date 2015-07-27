@@ -36,6 +36,10 @@ Aerodyne
 8
 </SafeThrust>
 
+<cockpit_type>
+0
+</cockpit_type>
+
 <heatsinks>
 10
 </heatsinks>
@@ -79,6 +83,7 @@ HAG/40 Ammo
 HAG/40 Ammo
 CLTargeting Computer
 CLCASE
+CLCASE
 </Nose Equipment>
 
 <Left Wing Equipment>
@@ -91,7 +96,7 @@ CLCASE
 </Aft Equipment>
 
 <source>
-Dark Age
+TRO 3085 - Jihad
 </source>
 
 <tonnage>

@@ -1,155 +1,108 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Jagatai
-
 </Name>
 
 <Model>
-
 D
-
 </Model>
 
-<Tonnage>
+<year>
+3065
+</year>
 
-70
+<type>
+Clan Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 6
-
 </SafeThrust>
 
-<Armor>
-
-65
-
-50
-
-50
-
-46
-
-</Armor>
-
-<Nose Equipment>
-
-CLATM12
-
-CLATM12
-
-CLATM12 Ammo
-
-CLATM12 Ammo
-
-CLATM12 Ammo
-
-CLGaussRifle
-
-CLGauss Ammo
-
-CLGauss Ammo
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-CLERLargeLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-CLERLargeLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment> 
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 15
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 320
-
 </fuel>
 
-<type>
+<engine_type>
+2
+</engine_type>
 
-Clan Level 2
-
-</type>
+<armor_type>
+19
+</armor_type>
 
 <armor_tech>
 2
 </armor_tech>
 
-<year>
-
-3065
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-19
-</armor_type>
-
-<engine_type>
-
-2
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>
-
 <omni>
-
+1
 </omni>
+
+<armor>
+65
+50
+50
+46
+</armor>
+
+<Nose Equipment>
+CLATM12
+CLATM12
+Clan Ammo ATM-12
+Clan Ammo ATM-12
+Clan Ammo ATM-12
+CLGaussRifle
+Clan Gauss Ammo
+Clan Gauss Ammo
+CLCASE
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLERLargeLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLERLargeLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO 3055u - Civil War
+</source>
+
+<tonnage>
+70.0
+</tonnage>
+

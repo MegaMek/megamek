@@ -1,81 +1,44 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Thunderbird
-
 </Name>
 
 <Model>
-
 TRB-D46
-
 </Model>
 
-<Tonnage>
+<year>
+2724
+</year>
 
-100
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 5
 </SafeThrust>
 
-<Armor>
-95
-76
-76
-57
-</Armor>
-
-<Nose Equipment>
-ISERLargeLaser
-</Nose Equipment>
-
-<Right Wing Equipment>
-ISERLargeLaser
-ISLRM15
-ISArtemisIV
-ISMediumLaser
-IS Ammo LRM-15 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
-</Right Wing Equipment>
-
-<Left Wing Equipment>
-ISERLargeLaser
-ISLRM15
-ISArtemisIV
-ISMediumLaser
-IS Ammo LRM-15 Artemis-capable
-IS Ammo LRM-15 Artemis-capable
-</Left Wing Equipment>
-
-<Aft Equipment>
-ISMediumLaser
-ISMediumLaser
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 24
@@ -89,26 +52,49 @@ ISMediumLaser
 400
 </fuel>
 
-<type>
-IS Level 2
-</type>
-
-<year>
-2724
-</year>
-
-<internal_type>
-0
-</internal_type>
-
-<armor_type>
-0
-</armor_type>
-
 <engine_type>
 0
 </engine_type>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+95
+76
+76
+57
+</armor>
+
+<Nose Equipment>
+ISERLargeLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERLargeLaser
+LRM 15
+ISArtemisIV
+Medium Laser
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERLargeLaser
+LRM 15
+ISArtemisIV
+Medium Laser
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+</Right Wing Equipment>
+
+<Aft Equipment>
+Medium Laser
+Medium Laser
+</Aft Equipment>
+
+<source>
+TRO 3075 - Star League
+</source>
+
+<tonnage>
+100.0
+</tonnage>
+

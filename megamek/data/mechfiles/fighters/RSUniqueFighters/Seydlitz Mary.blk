@@ -1,68 +1,86 @@
+#building block data file
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Aero
 </UnitType>
+
 <Name>
 Seydlitz
 </Name>
+
 <Model>
 (Mary) 'Yari'
 </Model>
-<Tonnage>
-20
-</Tonnage>
+
+<year>
+3069
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
 <SafeThrust>
 11
 </SafeThrust>
-<Armor>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor>
 19
 14
 14
 9
-</Armor>
+</armor>
+
 <Nose Equipment>
 ISSNPPC
 </Nose Equipment>
-<Left Wing Equipment> 
+
+<Left Wing Equipment>
 </Left Wing Equipment>
-<Right Wing Equipment> 
+
+<Right Wing Equipment>
 </Right Wing Equipment>
-<Aft Equipment> 
+
+<Aft Equipment>
 </Aft Equipment>
-<heatsinks>
-10
-</heatsinks>
-<sink_type>
-0
-</sink_type>
-<fuel>
-320
-</fuel>
-<type>
-IS Level 2
-</type>
-<year>
-3069
-</year>
-<internal_type>
-0
-</internal_type>
-<armor_type>
-0
-</armor_type>
-<engine_type>
-2
-</engine_type>
-<motion_type>
-aerodyne
-</motion_type>
 
 <source>
-RS:Unique Fighters
+RS Unique Fighters - Jihad
 </source>
+
+<tonnage>
+20.0
+</tonnage>
+

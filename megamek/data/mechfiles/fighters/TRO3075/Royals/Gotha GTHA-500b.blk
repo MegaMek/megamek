@@ -1,155 +1,105 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Gotha
-
 </Name>
 
 <Model>
-
 GTHA-500b
-
 </Model>
 
-<Tonnage>
+<year>
+2703
+</year>
 
-60
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 5
-
 </SafeThrust>
 
-<Armor>
-
-76
-
-54
-
-54
-
-48
-
-</Armor>
-
-<Nose Equipment>
-
-ISLargePulseLaser
-
-ISMediumLaser
-
-ISMediumLaser
-
-ISLRM15 Ammo Artemis-capable
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISLRM15
-
-ISArtemisIV
-
-ISSmallLaser
-
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-
-ISLRM15
-
-ISArtemisIV
-
-ISSmallLaser
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-ISMediumLaser
-
-ISMediumLaser
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 12
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 480
-
 </fuel>
 
-<type>
+<engine_type>
+0
+</engine_type>
 
-IS Level 2
-
-</type>
+<armor_type>
+19
+</armor_type>
 
 <armor_tech>
 3
 </armor_tech>
 
-<year>
+<armor>
+76
+54
+54
+48
+</armor>
 
-2703
+<Nose Equipment>
+ISLargePulseLaser
+Medium Laser
+Medium Laser
+IS Ammo LRM-15 Artemis-capable
+</Nose Equipment>
 
-</year>
+<Left Wing Equipment>
+LRM 15
+ISArtemisIV
+Small Laser
+</Left Wing Equipment>
 
-<internal_type>
+<Right Wing Equipment>
+LRM 15
+ISArtemisIV
+Small Laser
+</Right Wing Equipment>
 
-0
+<Aft Equipment>
+Medium Laser
+Medium Laser
+</Aft Equipment>
 
-</internal_type>
+<source>
+TRO 3075 - Star League
+</source>
 
-<armor_type>
+<tonnage>
+60.0
+</tonnage>
 
-19
-</armor_type>
-
-<engine_type>
-
-0
-
-</engine_type>
-
-<motion_type>
-
-aerodyne
-
-</motion_type>

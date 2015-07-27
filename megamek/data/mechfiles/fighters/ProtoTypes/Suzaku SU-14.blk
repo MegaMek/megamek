@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
@@ -22,40 +20,25 @@ Suzaku
 SU-14
 </Model>
 
-<Tonnage>
-75
-</Tonnage>
+<year>
+3082
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
 7
 </SafeThrust>
 
-<Armor>
-66
-58
-58
-56
-</Armor>
-
-<Nose Equipment>
-ISMRM20
-ISMRM20 Ammo
-ISMRM20 Ammo
-</Nose Equipment>
-
-<Left Wing Equipment>
-ISERPPC
-ISERPPCCapacitor
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-ISERPPC
-ISERPPCCapacitor
-</Right Wing Equipment>
-
-<Aft Equipment>
-IS Laser AMS
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
 20
@@ -69,26 +52,50 @@ IS Laser AMS
 320
 </fuel>
 
-<type>
-IS Level 4
-</type>
-
-<year>
-3082
-</year>
-
-<internal_type>
-0
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
 20
 </armor_type>
 
-<engine_type>
-2
-</engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-<motion_type>
-aerodyne
-</motion_type>
+<armor>
+66
+58
+58
+56
+</armor>
+
+<Nose Equipment>
+MRM 20
+IS MRM 20 Ammo
+IS MRM 20 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERPPC
+PPC Capacitor
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERPPC
+PPC Capacitor
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISLaserAntiMissileSystem
+</Aft Equipment>
+
+<source>
+TRO Prototypes - Jihad
+</source>
+
+<tonnage>
+75.0
+</tonnage>
+

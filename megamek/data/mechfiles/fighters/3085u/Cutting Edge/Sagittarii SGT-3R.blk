@@ -1,141 +1,99 @@
-
+#building block data file
 <BlockVersion>
-
-2
-
+1
 </BlockVersion>
 
+##Write the version number just in case...
 <Version>
-
-1
-
+MAM0
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Sagittarii
-
 </Name>
 
 <Model>
-
 SGT-3R
-
 </Model>
 
-<Tonnage>
+<year>
+3085
+</year>
 
-45
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 8
-
 </SafeThrust>
 
-<Armor>
-
-67
-
-55
-
-55
-
-51
-
-</Armor>
-
-<Nose Equipment>
-
-ISHPPC
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-ISMML5
-
-ISMML5 LRM Ammo 
-
-</Left Wing Equipment>
-
-<Right Wing Equipment> 
-
-ISMML5
-
-ISMML5 LRM Ammo
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-ISMML5 SRM Ammo
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 10
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 320
-
 </fuel>
 
-<type>
-
-IS Level 2
-
-</type>
-
-<year>
-
-3085
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
+<engine_type>
+2
+</engine_type>
 
 <armor_type>
-
 20
 </armor_type>
 
-<engine_type>
+<armor_tech>
+-1
+</armor_tech>
 
-2
+<armor>
+67
+55
+55
+51
+</armor>
 
-</engine_type>
+<Nose Equipment>
+Heavy PPC
+</Nose Equipment>
 
-<motion_type>
+<Left Wing Equipment>
+ISMML5
+IS Ammo MML-5 LRM
+</Left Wing Equipment>
 
-aerodyne
+<Right Wing Equipment>
+ISMML5
+IS Ammo MML-5 LRM
+</Right Wing Equipment>
 
-</motion_type>
+<Aft Equipment>
+IS Ammo MML-5 SRM
+</Aft Equipment>
 
-<Source>
+<source>
+TRO 3085 - Jihad
+</source>
 
-Dark Age
+<tonnage>
+45.0
+</tonnage>
 
-</Source>

@@ -1,142 +1,92 @@
-
 #building block data file
-
 <BlockVersion>
-
 1
-
 </BlockVersion>
 
-#Write the version number just in case...
-
+##Write the version number just in case...
 <Version>
-
 MAM0
-
 </Version>
 
 <UnitType>
-
 Aero
-
 </UnitType>
 
 <Name>
-
 Rapier
-
 </Name>
 
 <Model>
-
 RPR-100
-
 </Model>
 
-<Tonnage>
+<year>
+2596
+</year>
 
-85
+<type>
+IS Level 2
+</type>
 
-</Tonnage>
+<motion_type>
+Aerodyne
+</motion_type>
 
 <SafeThrust>
-
 6
-
 </SafeThrust>
 
-<Armor>
-
-63
-
-40
-
-40
-
-49
-
-</Armor>
-
-<Nose Equipment>
-
-ISAC20
-
-ISAC20 Ammo
-
-ISAC20 Ammo
-
-ISPPC
-
-ISPPC
-
-ISLRM10
-
-ISLRM10 Ammo
-
-</Nose Equipment>
-
-<Left Wing Equipment>
-
-</Left Wing Equipment>
-
-<Right Wing Equipment>
-
-</Right Wing Equipment>
-
-<Aft Equipment>
-
-</Aft Equipment>
+<cockpit_type>
+0
+</cockpit_type>
 
 <heatsinks>
-
 12
-
 </heatsinks>
 
 <sink_type>
-
 1
-
 </sink_type>
 
 <fuel>
-
 400
-
 </fuel>
 
-<type>
-
-IS Level 2
-
-</type>
-
-<year>
-
-2596
-
-</year>
-
-<internal_type>
-
-0
-
-</internal_type>
-
-<armor_type>
-
-0
-
-</armor_type>
-
 <engine_type>
-
 0
-
 </engine_type>
 
-<motion_type>
+<armor>
+63
+40
+40
+49
+</armor>
 
-aerodyne
+<Nose Equipment>
+Autocannon/20
+IS Ammo AC/20
+IS Ammo AC/20
+PPC
+PPC
+LRM 10
+IS Ammo LRM-10
+</Nose Equipment>
 
-</motion_type>
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO 3050u - Star League
+</source>
+
+<tonnage>
+85.0
+</tonnage>
+

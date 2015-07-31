@@ -72,6 +72,7 @@ v0.41.5-dev (SVN)
 + Data: New Sprites
 + Patches [#462 to #471] - Various Source Updates
 + Added construction data for IO equipment
++ don't set repairable status in Entity.damageSystem (for MHQ bug 890]
 
 v0.41.4 (2015-05-31 16:45 UTC)
 + Bug: UnitDisplay System Tab would double up on status modifiers, like * and j
@@ -272,7 +273,7 @@ v0.41.4 (2015-05-31 16:45 UTC)
     (only Industrials get heat-free ground movement)
 + Ruling: Engine stalls for ICE 'Mechs are for Industrials and BattleMechs both
 + Bug: MechView armored cockpit/engine identification not working as intended
-+ Bug [#4563]: Mouse-over info no longer shows the unit´s remaining armor and
++ Bug [#4563]: Mouse-over info no longer shows the unit��s remaining armor and
     structure points
 + Bug [#4569]: Aero.addClanCase adds Case to Aero.LOC_WINGS
 
@@ -4193,7 +4194,7 @@ v0.35.18 (2010-08-31, 21:32 UTC+2)
 + allow to set deployment time in MUL
 + Bug 3038007: artillery cannon damage
 + new chatbox now keeps text from report chatbox, and vice versa
-+ Bug: BA weapons mounted just on trooper 1 should have 360�� firing arc
++ Bug: BA weapons mounted just on trooper 1 should have 360������ firing arc
 + Bug: Not all infantry flamers able to deal heat
 + Patch 3014518: Show reports from top
 + Patch 3014527: "All IS" and "All Clan" techlevels
@@ -4456,7 +4457,7 @@ v0.35.13 (2010-03-13, 02:15 UTC+1)
 + put infantry weapons in a subfolder
 + Bug 2967104: MFUK Plasma Rifle not working correctly
 + Bug 2960996: fuel cell heat when moving
-+��Bug: standing up with ICE or fuel cell engine should not cost heat
++������Bug: standing up with ICE or fuel cell engine should not cost heat
 + Bug 2959992: [RANDOM] Map is the same as [SURPRISE] Map
 + Bug 2957367: Ferro-Lamellor armor prevents pilot damage on head hit
 + Bug 2939613: HVACs bugged
@@ -5119,7 +5120,7 @@ v0.33.45 (0.34.0 Release Candidate 2) (2008-04-16, 14:34 UTC+2)
 + Bug: BA improved sensors counting as light active probes for BV purposes
 + Bug: BA BV calculation not disregarding "burden" by non-fired missiles for
     speedfactor calculation
-+ Bug: Clan Medium B��r BA should not have heavy battle claws (magnetic)
++ Bug: Clan Medium B������r BA should not have heavy battle claws (magnetic)
 + Bug: Clan SRM 5 BV wrong
 + Bug: Djinn and Djinn (Stealth) BA should not have heavy battle claws
     (magnetic)
@@ -6020,7 +6021,7 @@ v0.33.28 (2008-06-17, 18:19 GMT+2)
 + air-breather fuel efficiency option
 + Aero special maneuvers in atmosphere
 + damage to Aero if launched in atmosphere at velocity > 2
-+ Optional 3D interface, thanks to J��rg Walter
++ Optional 3D interface, thanks to J������rg Walter
  To use this, Java 3d needs to be installed on your machine
  (https://java3d.dev.java.net/binary-builds.html) Then, run MegaMek with the
   commandline parameter
@@ -8104,7 +8105,7 @@ v0.29.84 (2005-07-18 8:45am) RELEASE CANDIDATE!
 + Bug 1239194, Patch 1239221: iNarc Ammo doesn't load from TDB units.
 + Patch 1238506: David Light Gauss Rifle (Combat Equipment).
 + Bug 1237582: when targeting woods, modifier for target being in woods.
-+ In extreme temperatues below -30��, heat display in MechDisplay was wrong.
++ In extreme temperatues below -30������, heat display in MechDisplay was wrong.
 + Patch 1239296: Bot works again with battle armor weapons.
 + Bug 1239367: NPE after deployment with offboard units in double blind games.
 + Bug 1239105: Unload now works as first and only step.

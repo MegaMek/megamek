@@ -13471,7 +13471,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if (nhits < hits) {
                     cs.setHit(true);
                     cs.setDestroyed(true);
-                    cs.setRepairable(true);
                     nhits++;
                 } else {
                     cs.setHit(false);

@@ -73,6 +73,8 @@ v0.41.5-dev (SVN)
 + Patches [#462 to #471] - Various Source Updates
 + Added construction data for IO equipment
 + don't set repairable status in Entity.damageSystem (for MHQ bug 890]
++ Data: New Sprites and restoring missing sprites caused by SF crash.
++ Data: Fixes to Mech Files and RAT Fixes.
 
 v0.41.4 (2015-05-31 16:45 UTC)
 + Bug: UnitDisplay System Tab would double up on status modifiers, like * and j

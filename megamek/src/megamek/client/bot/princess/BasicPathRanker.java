@@ -194,9 +194,16 @@ public class BasicPathRanker extends PathRanker {
         }
     }
 
-    protected RankedPath doAeroSpecificRanking(MovePath movePath, boolean vtol) {
+    protected RankedPath doAeroSpecificRanking(MovePath movePath, boolean vtol,
+            boolean isSpheroid) {
         // stalling is bad.
-        if (movePath.getFinalVelocity() == 0 && !vtol) {
+        if (movePath.getFinalVelocity() == 0 && !vtol && !isSpheroid) {
+            return new RankedPath(-1000d, movePath, "stall");
+        }
+        // Spheroids only stall if they don't move
+        if (isSpheroid && (movePath.getFinalNDown() == 0)
+                && (movePath.getMpUsed() == 0)
+                && !movePath.contains(MoveStepType.VLAND)) {
             return new RankedPath(-1000d, movePath, "stall");
         }
 
@@ -436,7 +443,9 @@ public class BasicPathRanker extends PathRanker {
         try {
 
             if (movingUnit instanceof Aero || movingUnit instanceof VTOL) {
-                RankedPath aeroRankedPath = doAeroSpecificRanking(path, (movingUnit instanceof VTOL));
+                boolean isVTOL = (movingUnit instanceof VTOL);
+                boolean isSpheroid = ((Aero)movingUnit).isSpheroid();
+                RankedPath aeroRankedPath = doAeroSpecificRanking(path, isVTOL, isSpheroid);
                 if (aeroRankedPath != null) {
                     return aeroRankedPath;
                 }
@@ -469,7 +478,10 @@ public class BasicPathRanker extends PathRanker {
                 }
 
                 EntityEvaluationResponse eval;
-                if ((!enemy.isSelectableThisTurn()) || enemy.isImmobile()) { //For units that have already moved
+                // TODO: Always consider Aeros to have moved, as right now we
+                // don't try to predict their movement.
+                if ((!enemy.isSelectableThisTurn()) || enemy.isImmobile()
+                        || (enemy instanceof Aero)) { //For units that have already moved
                     eval = evaluateMovedEnemy(enemy, pathCopy, game);
                 } else { //for units that have not moved this round
                     eval = evaluateUnmovedEnemy(enemy, path, extremeRange, losRange);

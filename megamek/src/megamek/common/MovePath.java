@@ -483,6 +483,16 @@ public class MovePath implements Cloneable, Serializable {
         }
         return 0;
     }
+    
+    public int getFinalVelocityLeft() {
+        if (getLastStep() != null) {
+            return getLastStep().getVelocityLeft();
+        }
+        if (getEntity() instanceof Aero) {
+            return ((Aero) getEntity()).getCurrentVelocity();
+        }
+        return 0;
+    }
 
     public int getFinalNDown() {
         if (getLastStep() != null) {

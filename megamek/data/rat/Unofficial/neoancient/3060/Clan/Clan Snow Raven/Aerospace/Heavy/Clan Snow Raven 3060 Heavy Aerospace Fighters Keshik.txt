@@ -21,4 +21,4 @@ Sabutai A,71
 Sabutai B,62
 Sabutai C,53
 Sabutai Prime,80
-Xerxes 1,46
+Xerxes (Standard),46

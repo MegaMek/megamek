@@ -26,4 +26,4 @@ Scytha A,30
 Scytha B,30
 Scytha C,30
 Scytha Prime,35
-Xerxes 1,44
+Xerxes (Standard),44

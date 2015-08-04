@@ -2,13 +2,16 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 ProtoMech
 </UnitType>
+
 <Name>
 Delphyne
 </Name>
@@ -36,6 +39,7 @@ Delphyne
 4
 10
 </Armor>
+
 <Torso Equipment>
 CLERMediumLaser
 </Torso Equipment>
@@ -68,3 +72,6 @@ Clan
 Biped
 </motion_type>
 
+<source>
+TRO 3075 - Jihad
+</source>

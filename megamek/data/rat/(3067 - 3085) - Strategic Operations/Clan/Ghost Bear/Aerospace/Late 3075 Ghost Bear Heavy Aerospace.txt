@@ -1,6 +1,6 @@
 Clan Ghost Bear Heavy Aerospace Late 3075
 Kirghiz B,1
-Xerxes 1,2
+Xerxes (Standard),2
 Jengiz D,3
 Kirghiz Prime,4
 Jengiz Prime,5

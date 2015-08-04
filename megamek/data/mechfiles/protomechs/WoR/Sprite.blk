@@ -2,16 +2,20 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 ProtoMech
 </UnitType>
+
 <Name>
 Sprite
 </Name>
+
 <Model>
 (Standard)
 </Model>
@@ -35,7 +39,6 @@ Sprite
 6
 14
 </Armor>
-
 
 <Left Arm Equipment>
 CLLRM5
@@ -78,5 +81,5 @@ Biped
 </motion_type>
 
 <source>
-WoR
+Wars of Reaving - Jihad
 </source>

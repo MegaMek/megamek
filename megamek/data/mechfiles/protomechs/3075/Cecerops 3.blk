@@ -2,13 +2,16 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 ProtoMech
 </UnitType>
+
 <Name>
 Cecerops
 </Name>
@@ -20,7 +23,6 @@ Cecerops
 <Tonnage>
 3
 </Tonnage>
-
 
 <cruiseMP>
 7
@@ -44,7 +46,7 @@ Clan Level 2
 </type>
 
 <year>
-3067
+3072
 </year>
 
 <internal_type>
@@ -62,3 +64,7 @@ Clan Level 2
 <motion_type>
 Biped
 </motion_type>
+
+<source>
+TRO 3075 - Jihad
+</source>

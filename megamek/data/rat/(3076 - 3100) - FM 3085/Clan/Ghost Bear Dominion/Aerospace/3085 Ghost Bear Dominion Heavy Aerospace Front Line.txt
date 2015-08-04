@@ -2,7 +2,7 @@
 Slayer SL-15K,1
 Huscarl HSCL-1-O,2
 Hydaspes (Standard),3
-Xerxes 1,4
+Xerxes (Standard),4
 Jengiz Prime,5
 Huscarl HSCL-1-O,6
 Kirghiz Prime,5

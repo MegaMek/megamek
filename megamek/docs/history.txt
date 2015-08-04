@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.41.6-dev (SVN)
+
 v0.41.5 (2015-08-04 10:10 UTC)
 + Bug: Backhoe, Chainsaw, Dual Saw, Mining Drill, Pile Driver, and Rock Cutter
     not applying bonus damage vs. buildings.

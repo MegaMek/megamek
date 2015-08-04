@@ -22,21 +22,20 @@ Diggs Drone Control Tank (Standard)|
 Zephyr Hovertank (Omnidrone) C|
 Condor Multi-Purpose Tank (Reactive)|
 Zephyr Hovertank (Omnidrone) B|
-Demon Tank CX-2|
-Lightning Attack Hovercraft CX-3|
-Fury Command Tank CX-17|
+Condor Heavy Hover Tank (Fission)|
+Soarece Superheavy MBT (Standard)|
+J. Edgar Light Hover Tank (Cell)|
+Buffalo Drone Bomb (Standard)|
+Kestrel VTOL (Scout)|
+Ferret Light Scout VTOL 'Fermi'|
+Packrat LRPV 'Gespenst'|
+SM1 Tank Destroyer (Telos)|
+Hi-Scout Drone Carrier (Cunnington)|
 Heavy LRM Carrier (EN Variant)|
 Goblin Medium Tank X|
 Sea Hunter Maritime Tank (Standard)|
 Lexan Surveillance Helo (Standard)|
 Jagdpanzer II (Standard)|
-LRM Carrier (Primitive)|
-Randolph Support Vehicle (Standard)|
-AC/2 Carrier (Primitive)|
-Mosquito Light Fighter (Standard)|
-SRM Carrier (Primitive)|
-LTV-4 Hover Tank (Standard)|
-Strike Falcon Attack VTOL (Standard)|
 Centipede Scout Car Commando|
 Demolisher Heavy Tank II-X|
 Rommel Tank (Howitzer) Prototype|
@@ -44,15 +43,6 @@ Enyo Strike Tank XR|
 Athena Combat Vehicle XR|
 Galleon Light Tank Maxwell|
 Thumper Artillery Vehicle Maxwell|
-White Tip Submarine (Standard)|
-Humming Bird VTOL (Rescue)|
-Nike Air Defense Platform (Standard)|
-Barouche Military Transport (Standard)|
-Hwacha Urban Combat Vehicle HW1|
-Ferret Light Scout VTOL 'Fermi'|
-Packrat LRPV 'Gespenst'|
-SM1 Tank Destroyer (Telos)|
-Hi-Scout Drone Carrier (Cunnington)|
 Partisan Hull Defense (Standard)|
 Maxim Flanker (Standard)|
 SturmFeur “Kalki” Cruise Missile Launcher (Standard)|
@@ -61,6 +51,16 @@ Sea Skimmer Hydrofoil 'Sniper'|
 Tokugawa Heavy Tank Yumi|
 Hiryo Armored Infantry Transport 'Hound'|
 Pegasus Scout Hover Tank X|
+LRM Carrier (Primitive)|
+Randolph Support Vehicle (Standard)|
+AC/2 Carrier (Primitive)|
+Mosquito Light Fighter (Standard)|
+SRM Carrier (Primitive)|
+LTV-4 Hover Tank (Standard)|
+Strike Falcon Attack VTOL (Standard)|
+Demon Tank CX-2|
+Lightning Attack Hovercraft CX-3|
+Fury Command Tank CX-17|
 Dreadnought Mk II Land Trailer Configuration #4|
 Danai Support Vehicle Arrow|
 Dreadnought Mk II Land Trailer Configuration #1|
@@ -80,9 +80,19 @@ Vedette Medium Tank V-G7X|
 Manticore 'The Ballista'|
 Minion Advanced Tactical Vehicle 'Silver Bullet'|
 Bandit Hovercraft 'Warthog'|
+Cobra VTOL Transport (Fusion)|
+Cobra VTOL Transport (Standard)|
+Chi-Ha Infantry Combat Vehicle (Standard)|
+Chi-Ha Infantry Combat Vehicle (Original)|
+Sturmblitz Assault Gun (Standard)|
 Regulator Hovertank (Alan)|
 Po Heavy Tank (HV Prototype)|
 Scorpion Light Tank (Minesweeper Prototype)|
+White Tip Submarine (Standard)|
+Humming Bird VTOL (Rescue)|
+Nike Air Defense Platform (Standard)|
+Barouche Military Transport (Standard)|
+Hwacha Urban Combat Vehicle HW1|
 Myrmidon Medium Tank P (Tate)|
 Striker Light Tank 'Wet Striker'|
 Ontos Heavy Tank X 'All-Aspect Assault Tank'|
@@ -96,16 +106,6 @@ Armored Personnel Carrier (Wheeled Primitive)|
 Challenger MBT XVc|
 Cavalry Attack Helicopter Cadence Rain|
 Fulcrum Heavy HoverTank X|
-Cobra VTOL Transport (Fusion)|
-Cobra VTOL Transport (Standard)|
-Chi-Ha Infantry Combat Vehicle (Standard)|
-Chi-Ha Infantry Combat Vehicle (Original)|
-Sturmblitz Assault Gun (Standard)|
-Condor Heavy Hover Tank (Fission)|
-Soarece Superheavy MBT (Standard)|
-J. Edgar Light Hover Tank (Cell)|
-Buffalo Drone Bomb (Standard)|
-Kestrel VTOL (Scout)|
 Buffel Engineering Support Vehicle VII (Cargo)|
 Buffel Engineering Support Vehicle VIII (Standard)|
 O-65 'Oppie' Hazardous Materials Recovery Vehicle O-65 HMRV|
@@ -958,6 +958,7 @@ Crow Scout Helicopter (C3)|
 Hiryo Armored Infantry Transport (MRM)|
 Saxon APC (Laser)|
 Merkava Heavy Tank Mk VIII|
+Cobra Transport VTOL (Original)|
 Sabaku Kaze Heavy Scout Hover Tank (Standard)|
 JES I Tactical Missile Carrier (Standard)|
 SM1A Tank Destroyer SM1A|
@@ -1190,6 +1191,8 @@ Ontos Heavy Tank HEAT|
 Enyo Strike Tank (ER Pulse)|
 Pegasus Scout Hover Tank X-Pulse|
 Nuberu Anti Aircraft Tank (Standard)|
+Obuzaabaa Tactical Vehicle (Standard)|
+Sasayaku Control Transport (Standard)|
 Marksman Artillery Vehicle (AC)|
 Von Luckner Heavy Tank (Star League)|
 Flatbed Truck (RL)|
@@ -1240,6 +1243,7 @@ Minion Advanced Tactical Vehicle (TAG)|
 Manteuffel Attack Tank Prime|
 Musketeer Hover Tank (Standard)|
 Tsuru VIP Aircraft (Standard)|
+Drake Medium Strike Fighter (Standard)|
 Planetlifter Support Aircraft (Standard)|
 Mustang Fighter (Standard)|
 Hurricane Conventional Fighter (Standard)|
@@ -1290,8 +1294,8 @@ Heavy Strike Fighter Inseki|
 Heavy Strike Fighter Meteor-U|
 MechBuster (LB-X)|
 Drake Medium Stealth Fighter (Standard)|
-Drake Medium Strike Fighter (Standard)|
 SeaBuster Strike Fighter (Standard)|
+Bullet Suicide Drone (Standard)|
 Planetlifter Tactical Support (Standard)|
 Bluehawk Combat Support Fighter MSF-42|
 Protector Combat Support Fighter ASF-23|
@@ -1302,7 +1306,6 @@ Seydlitz SYD-45X 'Starling'|
 Slayer SL-CX1|
 Deathstalker XF-78|
 Sangihe Shrike-Thrush 'Nanook'|
-Drake Medium Strike Fighter (Standard)|
 Rapier RPR-300X|
 Scytha XR|
 Ammon XR|
@@ -1322,13 +1325,14 @@ Hellcat II HCT-213BC (Herman)|
 Hammerhead HMR-HA|
 Hammerhead HMR-HC|
 Transit TR-13X 'Glare'|
-Troika (Viktor)|
+Troika CMT-3TV (Viktor)|
 Sparrowhawk SPR-DH|
 Malaika BAM-1A1|
 Star Dagger S-2|
 Chippewa CHP-X-P (Gladstone)|
 Lightning LTN-G16-P (Branson)|
 Vulcan VLC-3N|
+Persepolis 2 (Standard)|
 Dagger DAR4-XP|
 Corsair CSR-X12 Rigid Night|
 Banshee BSE-X2|
@@ -1493,7 +1497,7 @@ Ammon 2|
 Xerxes 3|
 Chaeronea 4|
 Hydaspes 2|
-Xerxes 1|
+Xerxes (Standard)|
 Issus 2|
 Defiance DFC-OD|
 Tatsu MIK-OD|
@@ -1582,7 +1586,7 @@ Spad SPD-503|
 Tomahawk THK-63|
 Ironsides IRN-SD3|
 Tomahawk CH|
-Tomahawk 'C'|
+Tomahawk C|
 Swift C|
 Transgressor TR-16|
 Stuka STU-K10|
@@ -1704,13 +1708,14 @@ Thunderbird TRB-D46|
 Sabre SB-29|
 Hellcat HCT-213D|
 Thunderbird TRB-D50|
+Typhoon TFN-5H|
 Deathstalker F-77|
 Lightning LTN-G16L|
 Starfire SF-1X|
 Centurion CNT-3S|
+Typhoon TFN-2A|
 Lightning LTN-G14|
 Lightning LTN-G16T|
-Typhoon TFN-5H|
 Eagle EGL-R1|
 Eagle EGL-R11|
 Vulcan VLC-6N|
@@ -1720,7 +1725,6 @@ Eagle EGL-R9|
 Sabre SB-28|
 Eagle EGL-R6|
 Thunderbird TRB-D56|
-Typhoon TFN-3M|
 Hellcat HCT-213S|
 Thunderbird TRB-D36|
 Lightning LTN-G16S|
@@ -1733,11 +1737,10 @@ Hammerhead HMR-HDb|
 Trident TRN-3Tb|
 Ahab AHB-443b|
 Vulcan VLC-8N|
-Typhoon TFN-3A|
 Hellcat HCT-213R|
 Sabre SB-26|
 Eagle EGL-R10|
-Typhoon TFN-2A|
+Typhoon TFN-3M|
 Sabre SB-27|
 Centurion CNT-2D|
 Vulcan VLC-5N|
@@ -1745,6 +1748,7 @@ Lightning LTN-G16O|
 Centurion CNT-1D|
 Deathstalker F-77A|
 Hellcat HCT-313|
+Typhoon TFN-3A|
 Lightning LTN-G16D|
 Star Dagger S-2B|
 Thrush TR-5|
@@ -1954,6 +1958,8 @@ Foot Platoon (Rifle AA)|
 Motorized Platoon (Rifle AA)|
 Mechanized Wheeled Platoon (Rifle AA)|
 Mechanized Tracked Platoon (Rifle AA)|
+Dragonstar Assault Transport (3060)|
+Dragonstar Passenger Transport (Standard)|
 Ares Attack Craft Mark IX|
 Foxhound Gunboat TIG-40|
 DropShuttle K-1C|
@@ -1992,8 +1998,11 @@ Kanazuchi Assault Battle Armor 'Cyclops'|
 Gladiator Exoskeleton 'The Spider'|
 IS Standard Battle Armor 'Hive'|
 'Surat' (Grey Death) Solahma Suit (Standard)|
-Kobold Battle Armor X-C3|
-Hurricane PA (L) P17|
+Purifier Battle Armor Terra [ERSL]|
+Purifier Battle Armor Terra [MRR]|
+Purifier Battle Armor Terra [SPL]|
+Tornado PA(L) G17|
+Purifier Battle Armor Terra [AP Gauss]|
 Gray Death Strike Armor (Prototype)|
 Fenrir Battle Armor 'Longshot'|
 Sylph Battle Armor XR|
@@ -2001,16 +2010,18 @@ Elemental II Battle Armor X|
 Rogue Bear Heavy Battle Armor HR|
 Longinus Battle Armor 'Hacked' [MG]|
 Longinus Battle Armor 'Hacked' [David]|
-Purifier Battle Armor Terra [ERSL]|
-Purifier Battle Armor Terra [MRR]|
-Purifier Battle Armor Terra [SPL]|
-Tornado PA(L) G17|
-Purifier Battle Armor Terra [AP Gauss]|
 Void Medium Battle Armor Caltrop|
 Kage Light Battle Armor C|
+Kobold Battle Armor X-C3|
+Hurricane PA (L) P17|
 Ailette Rescue PA(L)|
 Trinity Medium Battle Armor (Ying Long BC3)[David]|
 Fa Shih Battle Armor 2 [MG]|
+Tortoise II (C3)|
+Tortoise II (LRM)|
+Thunderbird II BattleArmor|
+Tortoise II (aSRM)|
+Tortoise II (SRM)|
 Infiltrator Mk. II Battle Armor Coral Intent|
 Hauberk Battle Armor U15|
 Salrilla Exoskeleton [Mine Clearance]|
@@ -2088,10 +2099,10 @@ Nighthawk PA(L) Mk. XXX|
 Purifier Adaptive Battle Armor [Narc] (RAF)|
 Cuchulainn Support Armor (IS Model)|
 GD Infiltrator Suit (Sensors)|
-GD Infiltrator Suit (Mine)|
+GD Infiltrator Suit (Mines)|
 Fenrir II Assault Battle Armor (AI)|
 GD Infiltrator Suit (Firedrake)|
-GD Infiltrator Suit (Light TAG)|
+GD Infiltrator Suit (TAG)|
 Fenrir II Assault Battle Armor (SRM)|
 GD Infiltrator Suit (Remote Sensors)|
 Cuchulainn Support Armor (Clan Model)|
@@ -2114,22 +2125,20 @@ Black Wolf Battle Armor [LBX]|
 Buraq Fast Battle Armor (Hunter-Killer)|
 Constable Pacification Suit (TAG)|
 Ogre Battle Armor (Interdictor)|
-Leonidas Battle Armor (Improved Sensors)|
+Leonidas Battle Armor (Sensor)|
 Leonidas Battle Armor (MG)|
 Leonidas Battle Armor (FireDrake)|
 Xiphos Assault Battle Armor (B)|
 Xiphos Assault Battle Armor (C)|
 Ogre Battle Armor (Standard)|
 Xiphos Assault Battle Armor (A)|
-Leonidas Battle Armor (Light TAG)|
-Leonidas Battle Armor (David LGR)|
+Leonidas Battle Armor (TAG)|
+Leonidas Battle Armor (David)|
 Zou Heavy Battle Armor (C3)|
 Oni Battle Armor [MRR]|
 Oni Battle Armor [PPC]|
 Oni Battle Armor [Narc]|
-Zou Heavy Battle Armor (C3)|
 Kishi Ceremonial Armor (Standard)|
-Zou Heavy Battle Armor (Standard)|
 Zou Heavy Battle Armor (Standard)|
 Oni Battle Armor [Bearhunter]|
 Marauder Battle Armor (Standard)|
@@ -2167,10 +2176,10 @@ Rogue Bear Heavy Battle Armor (Upgrade)|
 Infiltrator Mk. II Battle Armor (Marine)|
 Simian Battle Armor (LRR)|
 Simian Battle Armor (Flamer)|
-Quirinus Battle Armor (Grenade Launcher)|
-Simian Battle Armor (Small Laser)|
+Quirinus Battle Armor (GL)|
+Simian Battle Armor (SL)|
 Simian Battle Armor (Heavy MG)|
-Quirinus Battle Armor (David LGR)|
+Quirinus Battle Armor (David)|
 Quirinus Battle Armor (MG)|
 Centaur Battle Armor (Standard)|
 Taranis Battle Armor (Standard)|
@@ -2440,23 +2449,26 @@ Turret LRM|
 SRM Turret SRM4|
 Czar Dropship (Standard)|
 Castrum Pocket WarShip (Standard)|
+Vampire II|
+Battle Taxi NL-43|
+Claymore Interceptor|
+Merlin Ngake|
+Nekohono'o (HQ)|
 Ares Close Assault Landing Craft Mk.II|
 Black Eagle (Standard)|
 Ares Assault Craft Mk.III|
 Ares Landing Craft Mk.I|
-Claymore Interceptor|
-Merlin Ngake|
-Vampire II|
-Battle Taxi NL-43|
-Nekohono'o (HQ)|
 Vengeance Danai Centrella|
-Lung Wang 'Predator'|
-Leopard PA-Class Dropship|
-Conquistador 'Blockade Runner'|
 DroST IIa Transport (2445)|
 DroST IIb Transport (2445)|
 DroST IIb Transport (2470)|
 DroST IIa Transport (2470)|
+Lung Wang 'Predator'|
+Leopard PA-Class Dropship|
+Conquistador 'Blockade Runner'|
+Gaajian System Patrol Boat (2485)|
+Hoshiryokou (Standard)|
+Gaajian System Patrol Boat (3060)|
 Dragau II Assault Interceptor (Standard)|
 Tiamat Pocket Warship (Standard)|
 Arondight Pocket Warship (Refit)|
@@ -2465,84 +2477,17 @@ Taihou Assault Dropship (Standard)|
 Isegrim Assault DropShip (Standard)|
 Arondight Pocket Warship (SCC)|
 Vanir Assault Dropship (Standard)|
+Interdictor Pocket Warship (Standard)|
+Arondight Pocket Warship (Standard)|
 Aesir Assault Dropship (Standard)|
+Interdictor Pocket Warship (SCC)|
 Nekohono'o (SCL)|
 Rose (Bara no Ryu) (Hive)|
-Jumbo (Standard)|
-Monarch (Standard)|
-Overlord (3056)|
-Confederate (2602)|
-Mammoth (Standard)|
-Claymore (Standard)|
-Kuan Ti (Standard)|
-Triumph (2593)|
-Princess Luxury Liner (Cargo)|
-Triumph (3057)|
-Nekohono'o (Standard)|
-Aurora (Standard)|
-Overlord (2762)|
-Fury (2638)|
-Achilles (3055)|
-Mule (Star League Pocket Warship)|
-Condor (3054)|
-Gazelle (3055)|
-Leopard CV (2581)|
-Okinawa (Standard)|
-Hannibal (Standard)|
-Lion (2595)|
-Lung Wang (Standard)|
-Cargomaster (Standard)|
-Aurora (CV)|
-Behemoth (Standard)|
-Fury (3056)|
-Interdictor Pocket Warship (Standard)|
-Vampire (Standard)|
-Fortress (3058)|
-Avenger (2816)|
 Trojan (Blockade Runner)|
-Arondight Pocket Warship (Standard)|
-Fortress (2613)|
-Union (3055)|
-Confederate (2703)|
-Vengeance (3056)|
-Union (2708)|
-Seeker (3054)|
-Excalibur (Pocket Warship)|
-Hamilcar (Standard)|
-Gazelle (2531)|
-Nagumo (Standard)|
-Leopard CV (3054)|
-Excalibur (3056)|
-Avenger (3048)|
-Cargoking (Standard)|
-Condor (2801)|
-Vengeance (2682)|
-Intruder (3056)|
-Achilles (2582)|
-Intruder (2655)|
 Danais (Standard)|
-Mule (Standard)|
-Colossus Mk I|
-Aqueduct Liquid Carrier (Standard)|
-Mule (Armored Pocket Warship)|
-Leopard (3056)|
-Mule (Pocket Warship)|
-Hercules (Standard)|
-Seeker (2815)|
-Rose (Bara no Ryu) (Standard)|
-Leopard (2537)|
-Interdictor Pocket Warship (SCC)|
-Model 97 'Octopus' (Standard)|
-Manatee (Standard)|
-Vulture (Standard)|
-Excalibur (2786)|
-Buccaneer (Standard)|
-Model 96 'Elephant' (Standard)|
-Dictator (Standard)|
-Titan (2647)|
-Leopard 'Pocket Warship'|
-Princess Luxury Liner (Standard)|
-Union 'Pocket Warship'|
+Jumbo (Standard)|
+Cargomaster (Standard)|
+Cargoking (Standard)|
 Model 96C 'Howdah'|
 Lee (2756)|
 M3 Drone|
@@ -2552,6 +2497,7 @@ Dragau Assault Interceptor (CASPAR II Drone)|
 Cockatrice Monitor Platform (Drone)|
 Polaris (Standard)|
 Union-X (3071)|
+Nekohono'o (Standard)|
 Conquistador (3063)|
 Merlin (3063)|
 Assault Triumph (3062)|
@@ -2560,7 +2506,10 @@ Conquistador (Avalon One)|
 Overlord A3A|
 Overlord A3|
 Union-X (3065)|
+Arcadia (3066)|
+Outpost (3063)|
 Arcadia (3080)|
+Mercer (3065)|
 Outpost (3070)|
 Trutzburg (Standard)|
 Gorgon Carrier (Standard)|
@@ -2574,29 +2523,90 @@ Duat Military Transport (Standard)|
 Aurora (Tanker)|
 Vulture (Cargo)|
 Dictator (Command)|
+Aurora (Standard)|
+Model 96 'Elephant' Mk I|
+Mule (Star League Pocket Warship)|
 Aurora (Gunship)|
+Aurora (CV)|
 Pentagon Mk I|
 Aurora (Vehicle)|
+Vampire (Standard)|
 Aurora (Cargo)|
 Colossus (Standard)|
 Pentagon (Standard)|
+Excalibur (Pocket Warship)|
 Aurora (BA)|
 Pentagon 'Pocket Warship'|
+Colossus Mk I|
+Mule (Armored Pocket Warship)|
+Mule (Pocket Warship)|
 Pentagon (2751)|
 Aurora (Combined Arms)|
 Manatee (Cargo)|
+Manatee (Standard)|
+Vulture (Standard)|
+Model 96 'Elephant' (Standard)|
+Dictator (Standard)|
+Leopard 'Pocket Warship'|
+Union 'Pocket Warship'|
 Lung Wang P2|
 Vengeance DC|
 Outpost (Defender)|
 Titan (Monitor)|
 Merlin R1|
 Claymore V3|
+Monarch (Standard)|
+Overlord (3056)|
+Confederate (2602)|
+Mammoth (Standard)|
+Claymore (Standard)|
+Kuan Ti (Standard)|
+Triumph (2593)|
+Triumph (3057)|
+Overlord (2762)|
+Fury (2638)|
+Achilles (3055)|
+Condor (3054)|
+Gazelle (3055)|
+Leopard CV (2581)|
+Okinawa (Standard)|
+Hannibal (Standard)|
+Lion (2595)|
+Lung Wang (Standard)|
+Behemoth (Standard)|
+Fury (3056)|
+Fortress (3058)|
+Avenger (2816)|
+Fortress (2613)|
+Union (3055)|
+Confederate (2703)|
+Vengeance (3056)|
+Union (2708)|
+Seeker (3054)|
+Hamilcar (Standard)|
+Gazelle (2531)|
+Nagumo (Standard)|
+Leopard CV (3054)|
+Excalibur (3056)|
+Avenger (3048)|
+Condor (2801)|
+Vengeance (2682)|
+Intruder (3056)|
+Achilles (2582)|
+Intruder (2655)|
+Mule (Standard)|
+Leopard (3056)|
+Hercules (Standard)|
+Seeker (2815)|
+Rose (Bara no Ryu) (Standard)|
+Leopard (2537)|
+Model 97 'Octopus' (Standard)|
+Excalibur (2786)|
+Buccaneer (Standard)|
+Titan (2647)|
 Noruff (Standard)|
 Union C|
-Arcadia (3066)|
 Lion (Clan)|
-Outpost (3063)|
-Mercer (3065)|
 Miraborg (Standard)|
 Titan (Clan)|
 Lion (Wolf's Dragoons 3052)|
@@ -2605,6 +2615,9 @@ Carrier (Standard)|
 Overlord C|
 Confederate (Clan)|
 Broadsword (Standard)|
+Princess Luxury Liner (Cargo)|
+Aqueduct Liquid Carrier (Standard)|
+Princess Luxury Liner (Standard)|
 Pompier Firemech GM-FL|
 Black Knight BL-X-KNT 'Red Reaper'|
 Huron Warrior HUR-WO-RX4|
@@ -2620,48 +2633,41 @@ Valiant VLT-3E|
 Hatchetman HCT-7R|
 Beowulf IIC PR|
 Enforcer III ENF-7D|
-Roadrunner RD-1R|
-Tessen TSN-X-4|
-Grim Reaper GRM-R (Einar)|
-Highlander HGN-641-X-2|
-Exterminator EXT-6CS|
-Celerity CLR-02-X-D|
-Beowulf BEO-X-7a|
+Roadrunner (Emerald Harrier) RD-1R|
+Kiso Command Mech K-3N-KRHQ|
+Flea FLE-14|
+Super-Wasp WSP-2A-X|
+Super-Griffin GRF-2N-X|
+Cataphract CTF-0X|
+Zeus ZEU-6Y|
+Marauder MAD-4X|
 Grasshopper GHR-7X|
 Hoplite HOP-4X|
 Wolfhound WLF-2X|
 Annihilator ANH-2AX|
+Chameleon CLN-7VQ 'Q-'Mech'|
+Wight WGT-4NC 'Dezgra'|
+Warlord BLR-2XC|
+Grand Titan T-IT-N14R 'Vengeance'|
 Spindrift Aquatic SecurityMech SDT-1|
 Merlin MLN-SX|
 Whitworth WTH-5S|
-Gladiator GLD-1R|
-Icarus ICR-1X|
-Banshee BNC-1E|
-Wasp WSP-1|
-Crossbow CRS-X|
-BattleAxe BKX-1X|
 Banshee BNC-11X|
 Stiletto STO-6X|
 Slagmaiden SLG-X|
 Stealth STH-5X|
 Axman AXM-6X|
 Barghest BGS-4X|
+Cougar XR|
+Kraken-XR (Standard)|
+Ha Otoko-HR (Standard)|
+Ursus PR|
 Pandarus LFA-1X|
 Jackal JA-KL-1579|
 Sarissa MN1-D|
 Awesome AWS-11M|
 Orion ON3-MX|
 Hermes II HER-7S|
-Rook NH-1X 'Rook-X'|
-Pathfinder PFF-2T|
-Patron MilitiaMech PTN-2|
-Pathfinder PFF-2|
-Centurion CN9-H|
-HawkWolf HWK-3F|
-Chameleon CLN-7VQ 'Q-'Mech'|
-Wight WGT-4NC 'Dezgra'|
-Warlord BLR-2XC|
-Grand Titan T-IT-N14R 'Vengeance'|
 Quickdraw QKD-8X|
 Arbiter SecurityMech ARB-001|
 Charger CGR-1X1|
@@ -2672,6 +2678,18 @@ Banzai BNZ-X|
 Wolf Trap (Tora) WFT-2X 'Bear Trap'|
 Hatamoto-Kaeru HTM-35X|
 No-Dachi NDA-3X|
+Gladiator GLD-1R|
+Icarus ICR-1X|
+Banshee BNC-1E|
+Wasp WSP-1|
+Crossbow CRS-X|
+BattleAxe BKX-1X|
+Tessen TSN-X-4|
+Grim Reaper GRM-R (Einar)|
+Highlander HGN-641-X-2|
+Exterminator EXT-6CS|
+Celerity CLR-02-X-D|
+Beowulf BEO-X-7a|
 Dig Lord RCL-Z1 Armed MiningMech|
 Trebuchet TBT-XK7|
 Atlas AS7-00 (Jurn)|
@@ -2685,16 +2703,27 @@ Wraith TR2-X 'Alexander'|
 Crosscut ED-XX 'Ichabod'|
 Spatha SP2-X 'Warlord'|
 Valiant VAL-NT-JX 'Hot Knife'|
+Warhammer WHM-X7 'The Lich'|
 Juggernaut JG-R9TX1 'Leapin' Lil'|
-Cougar XR|
-Kraken-XR (Standard)|
-Ha Otoko-HR (Standard)|
-Ursus PR|
+Griffin GRF-1A|
+Emperor EMP-1A|
+Rifleman RFL-1N|
+Swordsman SWD-1|
+Toro TR-A-1|
+Swordsman SWD-2|
+Xanthos XNT-2O|
+Rifleman RFL-2N|
 Dola DOL-1A|
 Vindicator VND-3LD (Dao)|
 Ti Ts'ang TSG-9DDC 'Prototype'|
 Pillager PLG-4X 'Anvil'|
 Raven X RVN-3X|
+Rook NH-1X 'Rook-X'|
+Pathfinder PFF-2T|
+Patron MilitiaMech PTN-2|
+Pathfinder PFF-2|
+Centurion CN9-H|
+HawkWolf HWK-3F|
 Commando COM-7S2 (Freyr)|
 Daimyo DMO-1K2 (Al-Shahab)|
 Hellspawn HSN-7D2 (Halperin)|
@@ -2704,26 +2733,21 @@ Kyudo KY2-D-01|
 Helepolis HEP-1H|
 Shadow Hawk SHD-1R|
 Commando COM-1A|
+Hatamoto-Ku HTM-27W2|
+Orca OC-1X|
+Hornet HNT-182|
+UrbanMech UM-R93|
+Blade BLD-XR|
+Penthesilea PEN-3H|
+Hornet HNT-181|
+Awesome AWS-11R|
+Hunchback HBK-7S|
+Prefect PRF-1C|
 Enforcer III ENF-7X MUSE COMPACT|
 Pendragon PDG-1X MUSE RED|
 Devastator DVS-X10 MUSE EARTH|
 Legionnaire LGN-2X1 MUSE FIRE|
 Rifleman RFL-X3 MUSE WIND|
-Griffin GRF-1A|
-Emperor EMP-1A|
-Rifleman RFL-1N|
-Swordsman SWD-1|
-Toro TR-A-1|
-Swordsman SWD-2|
-Xanthos XNT-2O|
-Rifleman RFL-2N|
-Kiso Command Mech K-3N-KRHQ|
-Flea FLE-14|
-Super-Wasp WSP-2A-X|
-Super-Griffin GRF-2N-X|
-Cataphract CTF-0X|
-Zeus ZEU-6Y|
-Marauder MAD-4X|
 Reptar MilitiaMech EPT-C-1|
 Arana MilitiaMech ARA-S-1|
 Exterminator EXT-4A|
@@ -2731,6 +2755,10 @@ Dragoon AEM-04|
 Dragoon AEM-01|
 Dragoon AEM-03|
 Dragoon AEM-02|
+Snake (Arthur)|
+Men Shen (Li)|
+Duan Gung (Vaughn)|
+Sha Yu (Bulldog)|
 Thunderbolt TDR-10M (Salazar)|
 Phoenix Hawk PXH-4L (Sante)|
 Javelin JVN-11D (Farrell)|
@@ -2780,6 +2808,7 @@ Cauldron-Born (Ebon Jaguar) (Samantha)|
 Grasshopper (Reynolds)|
 Kodiak (Cale)|
 Dasher (Fire Moth) (Aletha)|
+Vanquisher VQR-2A (Pravuil)|
 Victor VTR-9B (Li)|
 Annihilator ANH-1E|
 Brigand LDT-XPR4|
@@ -2802,6 +2831,8 @@ Nightstar NSR-9J (Brubaker)|
 BattleMaster BLR-3M (Rogers)|
 Griffin GRF-1E2 'Sparky 2.0'|
 Grim Reaper GRM-R-PR62A|
+Inquisitor II ITW-200|
+Marauder II MAD-6S|
 Man O' War (Gargoyle) (Conal)|
 BattleMaster BLR-1G (Red Corsair)|
 Atlas AS7-D (Danielle)|
@@ -4285,6 +4316,8 @@ Malice MAL-XT|
 Celerity CLR-03-OD|
 Lament LMT-2R|
 Jackalope JLP-BD|
+Revenant UBM-2R3|
+Revenant UBM-2R|
 Night Stalker NSR-K4|
 Ares ARS-V1 Zeus|
 Lament LMT-3R|
@@ -4299,6 +4332,7 @@ Kheper KPH-7R|
 Celerity CLR-03-OC|
 Celerity CLR-03-OB|
 Poseidon PSD-V2|
+Revenant UBM-2R2|
 Malice MAL-XP|
 Doloire DLR-OC|
 Night Stalker NSR-K3|
@@ -4309,8 +4343,10 @@ Celerity CLR-03-OA|
 Jackalope JLP-KW 'Wolpertinger'|
 Lament LMT-3C|
 Malice MAL-XV|
+Revenant UBM-2R7|
 Doloire DLR-O|
 Doloire DLR-OB|
+Revenant UBM-2R4|
 Night Stalker NSR-K1|
 Lament LMT-4RC|
 Ares ARS-V1C Aphrodite|
@@ -5338,7 +5374,7 @@ Falcon FLC-4Nb (Saho)|
 Hoplite HOP-4Cb|
 Crosscut ED-X2 (RL)|
 Crosscut ED-X2 (Flamer)|
-Carbine CON-1 ConstructionMech|
+Carbine CON-1 ConstructionMech (Standard)|
 Annihilator C 'Gausszilla'|
 Thunderbolt TDR-5Sb|
 Imp IMP-1C|
@@ -5843,6 +5879,7 @@ Feng Huang Cruiser (Upgrade)|
 M5 Capital Drone (Caspar)|
 M5C Capital Drone (Caspar)|
 Naga Destroyer (Caspar II Control Ship)|
+Kimagure Pursuit Cruiser (Surprise)|
 Suffren Destroyer (Standard)|
 Dante Frigate (Standard)|
 Agamemnon Heavy Cruiser (Standard)|
@@ -5863,7 +5900,6 @@ Fox Corvette (Standard)|
 Robinson Transport Block I|
 Faslane Yardship (Standard)|
 Bug-Eye Surveillance Ship (Standard)|
-Kimagure Pursuit Cruiser (Surprise)|
 Cameron Battlecruiser (2688)|
 Monsoon Battleship (Standard)|
 Avatar Heavy Cruiser (Standard)|

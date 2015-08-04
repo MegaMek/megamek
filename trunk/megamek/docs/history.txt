@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.41.5-dev (SVN)
+v0.41.5 (2015-08-04 10:10 UTC)
 + Bug: Backhoe, Chainsaw, Dual Saw, Mining Drill, Pile Driver, and Rock Cutter
     not applying bonus damage vs. buildings.
 + Bug: Clan Special Ammo's for missiles should be enabled.
@@ -35,7 +35,7 @@ v0.41.5-dev (SVN)
 + Bug: Random damage for special BA vs. BA weapons repeated for successive hits
     from the same attack, not rolled individually.
 + Patch [#445] TRO 3085 BattleArmor Source Fixes
-+ Data: New Sprites/HB HK and TP:Irian 
++ Data: New Sprites/HB HK and TP:Irian
 + RFE [#1169] IS ammo in Clan Arrow IV (Ammo added as unofficial)
 + Feature: Added weapon ranges to weapon list tool tip entry
 + Bug: Potential StackOverflowException in UnitDisplay.processKeyBinding

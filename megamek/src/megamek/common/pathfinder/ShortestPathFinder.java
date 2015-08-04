@@ -151,14 +151,6 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
             if (v == null)
                 return e;
             
-            // Consider flying off more important.  If we have a fly-off step
-            // it's unlikely that any other move path is going to be better,
-            // as they are likely to require a risky maneuver
-            if ((e.getLastStep().getType() == MoveStepType.OFF)
-                    || (e.getLastStep().getType() == MoveStepType.RETURN)) {
-                return e;
-            }
-            
             return comparator.compare(e, v) < 0 ? e : null;
         }
     }    
@@ -282,12 +274,24 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         return spf;
     }
     
-    public static ShortestPathFinder newInstanceOfOneToAllAero(
+    public static ShortestPathFinder newInstanceOfOneToAllAerodyne(
             final MoveStepType stepType, final IGame game) {
         final ShortestPathFinder spf =
                 new ShortestPathFinder(
                         new ShortestPathFinder.AeroMovePathRelaxer(),
                         new ShortestPathFinder.MovePathVelocityCostComparator(),
+                        stepType, game);
+        spf.addFilter(new MovePathVelocityFilter());
+        spf.addFilter(new MovePathLegalityFilter(game));
+        return spf;
+    }
+    
+    public static ShortestPathFinder newInstanceOfOneToAllSpheroid(
+            final MoveStepType stepType, final IGame game) {
+        final ShortestPathFinder spf =
+                new ShortestPathFinder(
+                        new ShortestPathFinder.AeroMovePathRelaxer(),
+                        new ShortestPathFinder.MovePathLengthComparator(),
                         stepType, game);
         spf.addFilter(new MovePathVelocityFilter());
         spf.addFilter(new MovePathLegalityFilter(game));

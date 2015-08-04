@@ -128,32 +128,32 @@ public class BasicPathRankerTest {
         Mockito.when(mockPath.getFinalVelocity()).thenReturn(10);
         Mockito.when(mockPath.getFinalAltitude()).thenReturn(10);
         Mockito.when(mockPath.getLastStep()).thenReturn(mockLastStep);
-        Assert.assertNull(testRanker.doAeroSpecificRanking(mockPath, false));
+        Assert.assertNull(testRanker.doAeroSpecificRanking(mockPath, false, false));
 
         // Test a stall
         Mockito.when(mockLastStep.getType()).thenReturn(MovePath.MoveStepType.FORWARDS);
         Mockito.when(mockPath.getFinalVelocity()).thenReturn(0);
         Mockito.when(mockPath.getFinalAltitude()).thenReturn(10);
         RankedPath expected = new RankedPath(-1000d, mockPath, "stall");
-        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath, false));
-        Assert.assertNull(testRanker.doAeroSpecificRanking(mockPath, true));
+        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath, false, false));
+        Assert.assertNull(testRanker.doAeroSpecificRanking(mockPath, true, false));
 
         // Test a crash.
         Mockito.when(mockLastStep.getType()).thenReturn(MovePath.MoveStepType.FORWARDS);
         Mockito.when(mockPath.getFinalVelocity()).thenReturn(10);
         Mockito.when(mockPath.getFinalAltitude()).thenReturn(0);
         expected = new RankedPath(-10000d, mockPath, "crash");
-        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath, false));
-        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath, true));
+        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath, false, false));
+        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath, true, false));
 
         // Test flying off the board.
         Mockito.when(mockLastStep.getType()).thenReturn(MovePath.MoveStepType.RETURN);
         Mockito.when(mockPath.getFinalVelocity()).thenReturn(10);
         Mockito.when(mockPath.getFinalAltitude()).thenReturn(10);
         expected = new RankedPath(-5d, mockPath, "off-board");
-        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath, false));
+        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath, false, false));
         expected = new RankedPath(-5000d, mockPath, "off-board");
-        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath, true));
+        assertRankedPathEquals(expected, testRanker.doAeroSpecificRanking(mockPath, true, false));
     }
 
     @Test

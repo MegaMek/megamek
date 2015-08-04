@@ -223,6 +223,8 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
 
     /**
      * A MovePath comparator that compares movement points spent.
+     * 
+     * Order paths with fewer used MP first.
      */
     public static class MovePathMPCostComparator implements Comparator<MovePath> {
         @Override
@@ -234,11 +236,29 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
     }
     
     /**
-     * A MovePath comparator that compares remaining velocity points.  Aeros
-     * need to spend all of their remaining velocity, so we want to explore
-     * points that expend the velocity first.
+     * A MovePath comparator that compares number of steps. Generally used for
+     * spheroids, which don't have the same velocity expenditure restrictions as
+     * Aerodynes, however they can't compare based on MP like ground units.
+     * Spheroids should be able to safely compare based upon path length.
      * 
-     * We want to order paths with lower remaining velocities higher.
+     * Order paths with fewer steps first.
+     */
+    public static class MovePathLengthComparator implements
+            Comparator<MovePath> {
+        @Override
+        public int compare(final MovePath first, final MovePath second) {
+            final int firstSteps = first.getStepVector().size();
+            final int secondSteps = second.getStepVector().size();
+            return firstSteps - secondSteps;
+        }
+    }
+    
+    /**
+     * A MovePath comparator that compares remaining velocity points.  Aerodynes
+     * need to spend all of their remaining velocity, so should explore
+     * paths that expend the velocity first.
+     * 
+     * Order paths with lower remaining velocities higher.
      */
     public static class MovePathVelocityCostComparator implements
             Comparator<MovePath> {
@@ -246,14 +266,14 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
         public int compare(final MovePath first, final MovePath second) {
             boolean firstFlyoff = first.contains(MoveStepType.OFF)
                     || first.contains(MoveStepType.RETURN);
-            int velFirst = first.getFinalVelocity();
+            int velFirst = first.getFinalVelocityLeft();
             // If we are flying off, treat this as 0 remaining velocity
             if (firstFlyoff) {
                 velFirst = 0;
             }
             boolean secondFlyoff = second.contains(MoveStepType.OFF)
                     || second.contains(MoveStepType.RETURN); 
-            int velSecond = second.getFinalVelocity();
+            int velSecond = second.getFinalVelocityLeft();
             // If we are flying off, treat this as 0 remaining velocity
             if (secondFlyoff) {
                 velSecond = 0;

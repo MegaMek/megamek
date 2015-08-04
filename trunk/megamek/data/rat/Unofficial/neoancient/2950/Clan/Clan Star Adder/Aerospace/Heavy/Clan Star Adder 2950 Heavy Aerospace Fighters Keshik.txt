@@ -15,4 +15,4 @@ Kirghiz Prime,100
 Rapier RPR-100b,1
 Stuka STU-K5b,1
 Stuka STU-K5b2,1
-Xerxes 1,20
+Xerxes (Standard),20

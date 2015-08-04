@@ -15,4 +15,4 @@ Kirghiz A,71
 Kirghiz B,71
 Kirghiz C,41
 Kirghiz Prime,81
-Xerxes 1,42
+Xerxes (Standard),42

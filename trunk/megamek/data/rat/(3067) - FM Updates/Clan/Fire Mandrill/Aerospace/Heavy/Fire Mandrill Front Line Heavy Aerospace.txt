@@ -1,5 +1,5 @@
 clan Fire Mandrill Front-Line Heavy Aerospace (FMU)
-Xerxes 1,1
+Xerxes (Standard),1
 Jengiz A,2
 Scytha C,3
 Kirghiz A,4

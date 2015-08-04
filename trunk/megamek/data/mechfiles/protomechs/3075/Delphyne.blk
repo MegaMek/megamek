@@ -2,19 +2,24 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 ProtoMech
 </UnitType>
+
 <Name>
 Delphyne
 </Name>
+
 <Model>
 (Standard)
 </Model>
+
 <Tonnage>
 9
 </Tonnage>
@@ -22,9 +27,11 @@ Delphyne
 <cruiseMP>
 5
 </cruiseMP>
+
 <jumpingMP>
 5
 </jumpingMP>
+
 <Armor>
 6
 18
@@ -32,25 +39,35 @@ Delphyne
 4
 10
 </Armor>
+
 <Torso Equipment>
 CLMediumPulseLaser
 </Torso Equipment>
+
 <type>
 Clan
 </type>
+
 <year>
 3065
 </year>
+
 <internal_type>
 0
 </internal_type>
+
 <armor_type>
 0
 </armor_type>
+
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 Biped
 </motion_type>
 
+<source>
+TRO 3075 - Civil War
+</source>

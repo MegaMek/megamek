@@ -2,6 +2,7 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
@@ -71,3 +72,7 @@ quad
 <quad>
 true
 </quad>
+
+<source>
+Wars of Reaving - Jihad
+</source>

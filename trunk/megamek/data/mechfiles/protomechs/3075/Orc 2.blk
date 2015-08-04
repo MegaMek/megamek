@@ -2,19 +2,24 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 ProtoMech
 </UnitType>
+
 <Name>
 Orc
 </Name>
+
 <model>
 2
 </model>
+
 <Tonnage>
 4
 </Tonnage>
@@ -22,6 +27,7 @@ Orc
 <cruiseMP>
 6
 </cruiseMP>
+
 <Armor>
 4
 7
@@ -29,33 +35,46 @@ Orc
 2
 5
 </Armor>
+
 <Torso Equipment>
 CLMG
 CLMG Ammo (10)
 CLLRM2 Ammo (3)
 CLLRM2 Ammo (3)
 </Torso Equipment>
+
 <Right Arm Equipment>
 CLLRM2
 </Right Arm Equipment>
+
 <Left Arm Equipment>
 CLLRM2
 </Left Arm Equipment>
+
 <type>
 Clan
 </type>
+
 <year>
 3067
 </year>
+
 <internal_type>
 0
 </internal_type>
+
 <armor_type>
 0
 </armor_type>
+
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 Biped
 </motion_type>
+
+<source>
+TRO 3075 - Civil War
+</source>

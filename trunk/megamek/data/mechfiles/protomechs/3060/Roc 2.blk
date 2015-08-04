@@ -2,28 +2,36 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 ProtoMech
 </UnitType>
+
 <Name>
 Roc
 </Name>
+
 <Model>
 2
 </Model>
+
 <Tonnage>
 7
 </Tonnage>
+
 <cruiseMP>
 5
 </cruiseMP>
+
 <jumpingMP>
 5
 </jumpingMP>
+
 <Armor>
 2
 6
@@ -32,28 +40,35 @@ Roc
 4
 3
 </Armor>
+
 <Main Gun Equipment>
 CLHeavyMediumLaser
 </Main Gun Equipment>
+
 <type>
 Clan
 </type>
+
 <year>
 3062
 </year>
+
 <internal_type>
 0
 </internal_type>
+
 <armor_type>
 0
 </armor_type>
+
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 Biped
 </motion_type>
 
 <source>
-Civil War
+TRO 3060 - Civil War
 </source>

@@ -2,6 +2,7 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
@@ -22,7 +23,6 @@ Erinyes
 <Tonnage>
 2
 </Tonnage>
-
 
 <cruiseMP>
 5
@@ -65,3 +65,6 @@ Clan
 Biped
 </motion_type>
 
+<source>
+TRO 3075 - Jihad
+</source>

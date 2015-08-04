@@ -2,6 +2,7 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
@@ -78,5 +79,5 @@ Biped
 </motion_type>
 
 <source>
-TRO 3145 Mercenaries - Dark Ages
+TRO 3145 Mercenaries - Late Republic
 </source>

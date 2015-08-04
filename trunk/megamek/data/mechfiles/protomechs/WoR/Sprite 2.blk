@@ -2,13 +2,16 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 ProtoMech
 </UnitType>
+
 <Name>
 Sprite
 </Name>
@@ -70,9 +73,8 @@ Biped
 </motion_type>
 
 <source>
-WoR
+Wars of Reaving - Jihad
 </source>
-
 <history>
 The unit is overweight and will likely need the TAG removed.  Once we get an official ruling I'll change the unit.
 </history> 

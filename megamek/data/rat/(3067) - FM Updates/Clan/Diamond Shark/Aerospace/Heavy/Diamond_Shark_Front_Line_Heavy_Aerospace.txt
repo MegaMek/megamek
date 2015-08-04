@@ -1,5 +1,5 @@
 Diamond_Shark Front-Line Heavy Aerospace (FMU)
-Xerxes 1,1
+Xerxes (Standard),1
 Jengiz Prime,2
 Scytha Prime,3
 Kirghiz Prime,4

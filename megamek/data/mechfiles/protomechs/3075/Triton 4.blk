@@ -2,13 +2,16 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 ProtoMech
 </UnitType>
+
 <Name>
 Triton
 </Name>
@@ -20,7 +23,6 @@ Triton
 <Tonnage>
 8
 </Tonnage>
-
 
 <cruiseMP>
 4
@@ -74,5 +76,6 @@ Clan Level 2
 Biped
 </motion_type>
 
-
-
+<source>
+TRO 3075 - Jihad
+</source>

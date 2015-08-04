@@ -2,19 +2,24 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 ProtoMech
 </UnitType>
+
 <Name>
 Procyon
 </Name>
+
 <model>
 2
 </model>
+
 <Tonnage>
 5
 </Tonnage>
@@ -22,6 +27,7 @@ Procyon
 <cruiseMP>
 5
 </cruiseMP>
+
 <Armor>
 4
 10
@@ -29,26 +35,37 @@ Procyon
 2
 6
 </Armor>
+
 <Torso Equipment>
 CLLRM4
 CLLRM4
 CLLRM4 Ammo (6)
 </Torso Equipment>
+
 <type>
 Clan
 </type>
+
 <year>
 3064
 </year>
+
 <internal_type>
 0
 </internal_type>
+
 <armor_type>
 0
 </armor_type>
+
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 Biped
 </motion_type>
+
+<source>
+TRO 3075 - Civil War
+</source>

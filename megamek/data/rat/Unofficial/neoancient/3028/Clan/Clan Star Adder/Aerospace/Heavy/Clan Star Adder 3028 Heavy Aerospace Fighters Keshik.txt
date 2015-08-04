@@ -4,4 +4,4 @@ Kirghiz A,75
 Kirghiz B,75
 Kirghiz C,50
 Kirghiz Prime,100
-Xerxes 1,16
+Xerxes (Standard),16

@@ -1,5 +1,5 @@
 Clan Wolf Heavy Aerospace Late 3075
-Xerxes 1,1
+Xerxes (Standard),1
 Jengiz D,2
 Scytha Prime,3
 Kirghiz Prime,4

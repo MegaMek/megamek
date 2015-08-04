@@ -27,4 +27,4 @@ Stuka STU-K5b,2
 Stuka STU-K5b2,1
 Thunderbird TRB-D36b,1
 Thunderbird TRB-D46,1
-Xerxes 1,31
+Xerxes (Standard),31

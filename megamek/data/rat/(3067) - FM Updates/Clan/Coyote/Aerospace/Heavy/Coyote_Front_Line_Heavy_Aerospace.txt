@@ -2,7 +2,7 @@ Coyote Front-Line Heavy ASF (FMU)
 Scytha Prime,1
 Sabutai C,2
 Sabutai C,3
-Xerxes 1,4
+Xerxes (Standard),4
 Sabutai A,5
 Scytha Prime,6
 Kirghiz C,5

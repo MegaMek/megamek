@@ -2921,6 +2921,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         }
 
+        if (wtype.hasFlag(WeaponType.F_TSEMP)
+                && wtype.hasFlag(WeaponType.F_ONESHOT) && weapon.isFired()) {
+            return "One shot TSEMP cannon expended";
+        }
+        
         if (wtype.hasFlag(WeaponType.F_TSEMP) && weapon.isFired()) {
             return "TSEMP cannon recharging";
         }

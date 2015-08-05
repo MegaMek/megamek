@@ -642,18 +642,19 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                                  "swarming", ToHitData.HIT_SWARM_CONVENTIONAL,
                                  side);
         } else if (isArtilleryFLAK) {
-            toHit = new ToHitData(9, "artillery Flak");
+            toHit = new ToHitData(ae.getCrew().getGunnery(), "gunnery skill");
+            toHit.addModifier(3, "artillery flak attack");
             if ((te != null) && te.isAirborne()) {
                 if (te.getAltitude() > 3) {
                     if (te.getAltitude() > 9) {
                         toHit.addModifier(TargetRoll.IMPOSSIBLE,
-                                          "airborne aerospace at altitude > 10");
+                                "airborne aerospace at altitude > 10");
                     } else if (te.getAltitude() > 6) {
                         toHit.addModifier(2,
-                                          "airborne aerospace at altitude 7-9");
+                                "airborne aerospace at altitude 7-9");
                     } else if (te.getAltitude() > 3) {
                         toHit.addModifier(1,
-                                          "airborne aerospace at altitude 4-6.");
+                                "airborne aerospace at altitude 4-6.");
                     }
                 }
             }

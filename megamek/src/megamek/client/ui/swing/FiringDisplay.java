@@ -181,7 +181,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     
     private boolean isStrafing = false;
     
-    ArrayList<Coords> strafingCoords = new ArrayList<Coords>(5);
+    /**
+     * Keeps track of the Coords that are in a strafing run.
+     */
+    private ArrayList<Coords> strafingCoords = new ArrayList<Coords>(5);
 
     /**
      * Creates and lays out a new firing phase display for the specified
@@ -2660,6 +2663,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             return false;
         }
         Aero a = (Aero)ce();
+        
+        // Can't update strafe hexes after weapons are fired, otherwise we'd
+        // have to have a way to update the attacks vector
+        if (attacks.size() > 0) {
+            return false;
+        }
         
         // Can only strafe hexes that were flown over
         if (!a.passedThrough(newCoord)) {

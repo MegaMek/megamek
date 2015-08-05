@@ -78,9 +78,9 @@ public class FireControl {
     private static double OVERHEAT_DISUTILITY_AERO = 50.0; // Aeros *really* don't want to overheat.
     private static double EJECTED_PILOT_DISUTILITY = 1000.0;
     private static double CIVILIAN_TARGET_DISUTILITY = 250.0;
-    private static double TARGET_POTENTIAL_DAMAGE_UTILITY = 1.0;
     private static double TARGET_HP_FRACTION_DEALT_UTILITY = -30.0;
 
+    protected static double TARGET_POTENTIAL_DAMAGE_UTILITY = 1.0;
     protected static double COMMANDER_UTILITY = 0.5;
     protected static double SUB_COMMANDER_UTILITY = 0.25;
     protected static double STRATEGIC_TARGET_UTILITY = 0.5;
@@ -1293,7 +1293,7 @@ public class FireControl {
      * Calculates the potential damage that the target could theoretically deliver as a measure of it's potential "threat" to any allied unit on the board, thus prioritizing highly damaging enemies over less damaging ones.
      * For now, this works by simply getting the max damage of the target at range=1, ignoring to-hit, heat, etc.
      */
-    private double calcTargetPotentialDamage(Targetable target) {
+    public double calcTargetPotentialDamage(Targetable target) {
         if (!(target instanceof Entity)) {
             return 0;
         }
@@ -1434,6 +1434,17 @@ public class FireControl {
         // cycle through my weapons
         for (Mounted weapon : shooter.getWeaponList()) {
             WeaponFireInfo shoot = buildWeaponFireInfo(shooter, shooterState, target, targetState, weapon, game, true);
+
+            // If I am a zero move infantry unit that moved, don't include any weapons.
+            if (shooter instanceof Infantry && shooter.getWalkMP() == 0 && ! (shooterState.getMovementType() == EntityMovementType.MOVE_NONE)) {
+                continue;
+            }
+
+            //If I am an infantry field gun unit that moved, don't include my field guns.
+            if (shooter instanceof Infantry && ! (shooterState.getMovementType() == EntityMovementType.MOVE_NONE) && shoot.getWeapon().getLocation() == Infantry.LOC_FIELD_GUNS) {
+                continue;
+            }
+
             if (shoot.getProbabilityToHit() > 0) {
                 myPlan.add(shoot);
             }
@@ -1586,13 +1597,49 @@ public class FireControl {
         int heatTolerance = calcHeatTolerance(shooter, isAero);
 
         // How many plans do I need to compute?
-        FiringPlan[] bestPlans = new FiringPlan[maxHeat + 1];
+        FiringPlan [] bestPlans;
+        if (shooter instanceof Infantry || shooter instanceof BattleArmor) {
+            bestPlans = new FiringPlan[maxHeat + 4];
+        } else {
+            bestPlans = new FiringPlan[maxHeat + 1];
+        }
 
         // First plan is a plan that fires only heatless weapons.
         // The remaining plans will build at least some heat.
         bestPlans[0] = new FiringPlan(target);
         FiringPlan nonZeroHeatOptions = new FiringPlan(target);
+        FiringPlan swarmAttack = new FiringPlan(target);
+        FiringPlan legAttack = new FiringPlan(target);
+        FiringPlan fieldGuns = new FiringPlan(target);
+        double fieldGunMassAlreadyFired = 0.0; //We need to track the tonnage of field guns being fired, because trying to fire more than the current possible total(# of men left) results in nothing being fired.
         for (WeaponFireInfo weaponFireInfo : alphaStrike) {
+
+            //Leg and swarm attacks can't be mixed with any other attacks, so we have to consider each of those separately.
+            if (shooter instanceof Infantry || shooter instanceof BattleArmor) { 
+                if (((WeaponType) weaponFireInfo.getWeapon().getType()).getInternalName().equals(Infantry.LEG_ATTACK)) {
+                    legAttack.add(weaponFireInfo);
+                    continue;
+                }
+                else if (((WeaponType) weaponFireInfo.getWeapon().getType()).getInternalName().equals(Infantry.SWARM_MEK)) {
+                    swarmAttack.add(weaponFireInfo);
+                    continue;
+                }
+                // We probably shouldn't consider stopping swarm attacks, since Princess isn't smart enough to recognize the rare situations when this is a good idea(e.g. planning to put lots of allied fire on the swarm target next turn, target is likely to explode and ammo explosion splash damage is on, etc).
+                else if (((WeaponType) weaponFireInfo.getWeapon().getType()) instanceof StopSwarmAttack) {
+                    continue;
+                }
+                else if (! (shooter instanceof BattleArmor) && weaponFireInfo.getWeapon().getLocation() == Infantry.LOC_FIELD_GUNS) {
+                    double fieldGunMass = weaponFireInfo.getWeapon().getType().getTonnage(shooter);
+                    //Only fire field guns up until we no longer have the men to fire more, since going over that limit results in nothing firing.
+                    //In theory we could adapt the heat system to handle this(with tonnage as heat and shooting strength as heat capacity, no heat tolerance).
+                    //This would behave much better for units with mixed type field guns, but given that those are rare, this should serve for now.
+                    if(fieldGunMassAlreadyFired + fieldGunMass <= ((Infantry)shooter).getShootingStrength()) {
+                        fieldGuns.add(weaponFireInfo);
+                        fieldGunMassAlreadyFired += fieldGunMass;
+                    }
+                    continue;
+                }
+            }
             if (weaponFireInfo.getHeat() == 0) {
                 bestPlans[0].add(weaponFireInfo);
             } else {
@@ -1600,6 +1647,16 @@ public class FireControl {
             }
         }
         calculateUtility(bestPlans[0], heatTolerance, isAero);
+
+        if(shooter instanceof Infantry || shooter instanceof BattleArmor) {
+            calculateUtility(swarmAttack, heatTolerance, isAero);
+            calculateUtility(legAttack, heatTolerance, isAero);         
+            calculateUtility(fieldGuns, heatTolerance, isAero);
+            //Add these plans to the end of the list.
+            bestPlans[maxHeat + 1] = swarmAttack;
+            bestPlans[maxHeat + 2] = legAttack;
+            bestPlans[maxHeat + 3] = fieldGuns;
+        }
 
         // build up heat table
         for (int heatLevel = 1; heatLevel <= maxHeat; heatLevel++) {
@@ -1645,7 +1702,8 @@ public class FireControl {
 
         // Start with an alpha strike.
         FiringPlan alphaStrike = getFullFiringPlan(shooter, target, ammoConservation, game);
-        if (shooter.getHeatCapacity() == 999) {
+        //Although they don't track heat, infantry/BA do need to make tradeoffs between firing different weapons, because swarm/leg attacks are mutually exclusive with normal firing, so we treat them similarly to heat-tracking units.
+        if (shooter.getHeatCapacity() == 999 && !(shooter instanceof Infantry) && !(shooter instanceof BattleArmor)) {
             return alphaStrike; // No need to worry about heat if the unit doesn't track it.
         }
 
@@ -1678,7 +1736,8 @@ public class FireControl {
 
         // Start with an alpha strike.  If it falls under our heat limit, use it.
         FiringPlan alphaStrike = guessFullFiringPlan(shooter, shooterState, target, targetState, game);
-        if (alphaStrike.getHeat() <= maxHeat) {
+        //Infantry and BA may have alternative options, so we need to consider different firing options.
+        if (alphaStrike.getHeat() <= maxHeat && !(shooter instanceof Infantry) && !(shooter instanceof BattleArmor)) {
             return alphaStrike;
         }
 
@@ -1704,7 +1763,8 @@ public class FireControl {
         FiringPlan alphaStrike = guessFullFiringPlan(shooter, shooterState, target, targetState, game);
 
         // If we don't track heat, use the alpha.
-        if (shooter.getHeatCapacity() == 999) {
+        //Although they don't track heat, infantry/BA do need to make tradeoffs between firing different weapons, because swarm/leg attacks are mutually exclusive with normal firing, so we treat them similarly to heat-tracking units.
+        if (shooter.getHeatCapacity() == 999 && !(shooter instanceof Infantry) && !(shooter instanceof BattleArmor)) {
             return alphaStrike;
         }
 

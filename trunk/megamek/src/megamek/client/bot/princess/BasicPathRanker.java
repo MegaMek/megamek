@@ -304,6 +304,12 @@ public class BasicPathRanker extends PathRanker {
             return 0;
         }
 
+        // If I am an infantry unit that cannot both move and fire, and I am moving, I can't do damage.
+        boolean isZeroMpInfantry =  me instanceof Infantry && (me.getWalkMP() == 0);
+        if (isZeroMpInfantry && path.getMpUsed() > 0) {
+            return 0;
+        }
+
         FiringPlan myFiringPlan;
         if (path.getEntity() instanceof Aero) {
             myFiringPlan = getFireControl().guessFullAirToGroundPlan(path.getEntity(), enemy,

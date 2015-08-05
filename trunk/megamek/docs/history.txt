@@ -10,6 +10,7 @@ v0.41.6-dev (SVN)
 + Patch [#499]: Updated to-hit mods for Artillery Flak, per current errata
 + Bug: Errata - Field Artillery/LB-X allowed flak attacks against airborne units
 + Patch [#498]: Fix infantry trying to shoot and swarm at the same time
++ Bug [#4573]: One-shot TSEMPs allowed to fire more than once
 
 v0.41.5 (2015-08-04 10:10 UTC)
 + Bug: Backhoe, Chainsaw, Dual Saw, Mining Drill, Pile Driver, and Rock Cutter

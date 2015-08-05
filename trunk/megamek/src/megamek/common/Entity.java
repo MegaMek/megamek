@@ -3020,7 +3020,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
 
             // one-shot launchers need their single shot of ammo added.
-            if (mounted.getType().hasFlag(WeaponType.F_ONESHOT)) {
+            if (mounted.getType().hasFlag(WeaponType.F_ONESHOT)
+                    && (AmmoType.getOneshotAmmo(mounted) != null)) {
                 Mounted m = new Mounted(this, AmmoType.getOneshotAmmo(mounted));
                 m.setShotsLeft(1);
                 mounted.setLinked(m);

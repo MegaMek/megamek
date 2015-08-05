@@ -295,7 +295,6 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
     public static class NextStepsAdjacencyMap implements AdjacencyMap<MovePath> {
         protected final MoveStepType stepType;
         protected final boolean backwardsStep;
-        protected final boolean charge;
 
         /**
          * @param stepType
@@ -303,7 +302,6 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
         public NextStepsAdjacencyMap(MoveStepType stepType) {
             this.stepType = stepType;
             backwardsStep = stepType == MoveStepType.BACKWARDS;
-            charge = (stepType == MoveStepType.CHARGE) || (stepType == MoveStepType.DFA);
         }
 
         /**
@@ -372,10 +370,6 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                 result.add(mp.clone().addStep(MoveStepType.BACKWARDS));
             } else {
                 result.add(mp.clone().addStep(MoveStepType.FORWARDS));
-            }
-
-            if (charge) {
-                result.add(mp.clone().addStep(stepType));
             }
             
             Coords pos;

@@ -1176,6 +1176,19 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     setFireEnabled(false);
                 }
             }
+            Targetable hexTarget = new HexTarget(c, game.getBoard(),
+                    HexTarget.TYPE_HEX_CLEAR);
+            toHit = WeaponAttackAction.toHit(game, cen, hexTarget, weaponId,
+                    Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE, true);
+            if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)
+                    || (toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
+                setFireEnabled(false);
+                if (toHitBuff.length() < 1) {
+                    toHitBuff.append(toHit.getDesc());
+                }
+            }
+            // Could check legality on buildings, but I don't believe there are
+            // any weapons that are still legal that aren't legal on buildings            
         }
         clientgui.mechD.wPan.toHitText.setText(toHitBuff.toString());
     }

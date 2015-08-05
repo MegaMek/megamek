@@ -24,6 +24,7 @@ import java.util.List;
 
 import megamek.client.ui.SharedUtility;
 import megamek.common.Aero;
+import megamek.common.Infantry;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -136,6 +137,11 @@ public class PathRanker {
         boolean inRange = (maxRange >= startingTargetDistance);
         HomeEdge homeEdge = owner.getHomeEdge();
         boolean fleeing = owner.isFallingBack(mover);
+        //Infantry with zero move or with field guns cannot move and shoot, so we want to take that into account for path ranking.
+        boolean isZeroMoveInfantry = mover instanceof Infantry && (mover.getWalkMP() == 0 || ((Infantry)mover).hasFieldGun());
+        if (isZeroMoveInfantry) {
+            startingPathList.add(new MovePath(game, mover)); //If we can't move and still fire, we want to consider not moving.
+        }
 
         for (MovePath path : startingPathList) {
             StringBuilder msg = new StringBuilder("Validating Path: ").append(path.toString());

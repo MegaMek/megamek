@@ -2828,7 +2828,7 @@ public class Compute {
             // as well
             if (attacker instanceof Infantry) {
                 if (wt.getInternalName() == Infantry.LEG_ATTACK) {
-                    fDamage = 10.0f; // Actually 5, but the chance of crits
+                    fDamage = 20.0f; // Actually 5, but the chance of crits
                     // deserves a boost
                 }
 
@@ -2865,7 +2865,7 @@ public class Compute {
                             && (g.getEntity(waa.getTargetId()) instanceof Mech)) {
                             // Overestimated, but the chance at crits and head
                             // shots deserves a boost
-                            fDamage = 5.0f * ba_attacker.getShootingStrength();
+                            fDamage = 10.0f * ba_attacker.getShootingStrength();
                         }
                         // Otherwise, call it 0 damage
                         else {

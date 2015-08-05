@@ -8,6 +8,7 @@ v0.41.6-dev (SVN)
 + Bug: Strafing hexes selected after weapons fired don't target those hexes
 + Bug: Strafing weapon legality not checked if strafe hexes don't contain units
 + Patch [#499]: Updated to-hit mods for Artillery Flak, per current errata
++ Bug: Errata - Field Artillery/LB-X allowed flak attacks against airborne units
 
 v0.41.5 (2015-08-04 10:10 UTC)
 + Bug: Backhoe, Chainsaw, Dual Saw, Mining Drill, Pile Driver, and Rock Cutter

@@ -179,6 +179,12 @@ public class EntityListFile {
                     && (entity.getInternalForReal(loc) <= 0)) {
                 isDestroyed = true;
             }
+            
+            //exact zeroes for BA should not be treated as destroyed as MHQ uses this to signify
+            //suits without pilots
+            if(entity instanceof BattleArmor && entity.getInternalForReal(loc) >= 0) {
+            	isDestroyed = false;
+            }
 
             // Record damage to armor and internal structure.
             // Destroyed locations have lost all their armor and IS.

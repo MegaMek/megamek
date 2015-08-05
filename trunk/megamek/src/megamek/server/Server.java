@@ -7267,7 +7267,7 @@ public class Server implements Runnable {
 
             // when first entering a building, we need to roll what type
             // of basement it has
-            if (isOnGround && curHex.containsTerrain(Terrains.BLDG_ELEV)) {
+            if (isOnGround && curHex.containsTerrain(Terrains.BUILDING)) {
                 Building bldg = game.getBoard().getBuildingAt(curPos);
                 if (bldg.rollBasement(curPos, game.getBoard(), vPhaseReport)) {
                     sendChangedHex(curPos);

@@ -4243,6 +4243,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         }
 
+        if (weapon.getType().hasFlag(WeaponType.F_PPC) 
+                && (weapon.getLinkedBy() != null)
+                && weapon.getLinkedBy().getType().hasFlag(MiscType.F_PPC_CAPACITOR)
+                && weapon.getLinkedBy().pendingMode().equals("Charge")) {
+            return "PPCs with charging capacitors cannot fire!";
+        }
+        
         return null;
     }
 

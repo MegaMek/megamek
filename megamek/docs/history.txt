@@ -6,6 +6,7 @@ v0.41.6-dev (SVN)
 + Changed EntityListFile so zero internal on BattleArmor does not get reported
     as destroyed for MHQ
 + Bug: Strafing hexes selected after weapons fired don't target those hexes
++ Bug: Strafing weapon legality not checked if strafe hexes don't contain units
 
 v0.41.5 (2015-08-04 10:10 UTC)
 + Bug: Backhoe, Chainsaw, Dual Saw, Mining Drill, Pile Driver, and Rock Cutter

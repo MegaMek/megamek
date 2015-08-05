@@ -54,7 +54,7 @@ public class ElevatorProcessor extends DynamicTerrainProcessor {
         if (elevators[roll].positions.size() == 0)
             return;
 
-        Report r = new Report(5290);
+        Report r = new Report(5290, Report.PUBLIC);
         vPhaseReport.add(r);
 
         ITerrainFactory tf = Terrains.getTerrainFactory();

@@ -430,6 +430,9 @@ public class AmmoType extends EquipmentType {
      */
     public static AmmoType getOneshotAmmo(Mounted mounted) {
         WeaponType wt = (WeaponType) mounted.getType();
+        if (wt.getAmmoType() == -1) {
+            return null;
+        }
         Vector<AmmoType> vAmmo = AmmoType.getMunitionsFor(wt.getAmmoType());
         AmmoType at = null;
         for (int i = 0; i < vAmmo.size(); i++) {

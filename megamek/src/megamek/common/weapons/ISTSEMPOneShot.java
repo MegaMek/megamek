@@ -27,7 +27,7 @@ public class ISTSEMPOneShot extends TSEMPWeapon {
     public ISTSEMPOneShot() {
         super();
         techLevel.put(3095,TechConstants.T_IS_EXPERIMENTAL);
-        flags.or(F_ONESHOT);
+        flags = flags.or(F_ONESHOT);
         cost = 500000;
         bv = 98;
         name = "TSEMP One-Shot";

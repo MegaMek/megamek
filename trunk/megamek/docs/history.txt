@@ -3,7 +3,9 @@ VERSION HISTORY:
 v0.41.6-dev (SVN)
 + Bug [#4587]: "Packet Pump" Error during Princess Movement
 + Bug [#4584]: Vehicle Unable to Charge
-+ Changed EntityListFile so zero internal on BattleArmor does not get reported as destroyed for MHQ
++ Changed EntityListFile so zero internal on BattleArmor does not get reported
+    as destroyed for MHQ
++ Bug: Strafing hexes selected after weapons fired don't target those hexes
 
 v0.41.5 (2015-08-04 10:10 UTC)
 + Bug: Backhoe, Chainsaw, Dual Saw, Mining Drill, Pile Driver, and Rock Cutter

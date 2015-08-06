@@ -12,6 +12,9 @@ v0.41.6-dev (SVN)
 + Patch [#498]: Fix infantry trying to shoot and swarm at the same time
 + Bug [#4573]: One-shot TSEMPs allowed to fire more than once
 + Bug [#4570]: PPCs can fire with charging capacitor (capacitor remains charged)
++ re-implemented Infantry.getAlternateCost for MHQ
++ corrected some errors in BattleArmor.getCost
++ removed costs from BA Armor Misc Types because it was leading to double-counting costs
 
 v0.41.5 (2015-08-04 10:10 UTC)
 + Bug: Backhoe, Chainsaw, Dual Saw, Mining Drill, Pile Driver, and Rock Cutter

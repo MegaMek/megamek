@@ -1343,6 +1343,13 @@ public class BattleArmor extends Infantry {
 
     public double getCost(boolean ignoreAmmo, boolean includeTrainingAndClan) {
 
+    	int bob;
+    	if(this.getChassis().equals("Longinus Battle Armor") 
+    			&& this.getModel().equals("[Flamer]")
+    			&& !includeTrainingAndClan) {
+    		bob = 1;
+    	}
+    	
         double cost = 0;
         switch (weightClass) {
             case EntityWeightClass.WEIGHT_MEDIUM:
@@ -1380,32 +1387,40 @@ public class BattleArmor extends Infantry {
         long manipulatorCost = 0;
         for (Mounted mounted : getEquipment()) {
             if ((mounted.getType() instanceof MiscType)
-                    && ((MiscType) mounted.getType())
-                            .hasFlag(MiscType.F_BA_MANIPULATOR)) {
-
+                    && ((MiscType) mounted.getType()).hasFlag(MiscType.F_BA_MANIPULATOR)) {
+            	long itemCost = (long) mounted.getType().getCost(this,
+                        mounted.isArmored(), mounted.getLocation());
+                manipulatorCost += itemCost;
             }
-            long itemCost = (long) mounted.getType().getCost(this,
-                    mounted.isArmored(), mounted.getLocation());
-            manipulatorCost += itemCost;
+            
         }
         cost += manipulatorCost;
 
         double baseArmorCost = 10000;
-        // TODO: how do I get standard advanced?
-        // TODO: stealth prototype
-        for (Mounted m : getMisc()) {
-            if (m.getType().getName().equals(BASIC_STEALTH_ARMOR)) {
-                baseArmorCost = 12000;
-                break;
-            } else if (m.getType().getName().equals(STANDARD_STEALTH_ARMOR)
-                    || m.getType().getName().equals(MIMETIC_ARMOR)) {
-                baseArmorCost = 15000;
-                break;
-            } else if (m.getType().getName().equals(IMPROVED_STEALTH_ARMOR)) {
-                baseArmorCost = 20000;
-                break;
-            }
+        switch(getArmorType(LOC_TROOPER_1)) {
+	        case EquipmentType.T_ARMOR_BA_STANDARD_ADVANCED:
+	            baseArmorCost = 12500;
+	            break;
+	        case EquipmentType.T_ARMOR_BA_MIMETIC:
+	        case EquipmentType.T_ARMOR_BA_STEALTH:
+	        	baseArmorCost =  15000;
+	        	break;
+	        case EquipmentType.T_ARMOR_BA_STEALTH_BASIC:
+	        	baseArmorCost =  12000;
+	        	break;
+	        case EquipmentType.T_ARMOR_BA_STEALTH_IMP:
+	        	baseArmorCost =  20000;
+	        	break;
+	        case EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE:
+	        	baseArmorCost =  50000;
+	        	break;
+	        case EquipmentType.T_ARMOR_BA_FIRE_RESIST:
+	        case EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE:
+	        case EquipmentType.T_ARMOR_BA_STANDARD:
+	        default:
+	        	baseArmorCost =  10000;       
         }
+
         cost += (baseArmorCost * getOArmor(LOC_TROOPER_1));
 
         // training cost and clan mod

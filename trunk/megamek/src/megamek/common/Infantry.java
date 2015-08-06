@@ -873,7 +873,7 @@ public class Infantry extends Entity {
 
         //Anti-Mek Trained Multiplier
         if (isAntiMekTrained()) {
-            multiplier = 5;
+            multiplier = 1;
         }
 
         //Add in motive type costs
@@ -908,6 +908,52 @@ public class Infantry extends Entity {
         for (Mounted mounted : getEquipment()) {
             if(mounted.getLocation() == LOC_FIELD_GUNS) {
                 cost += Math.floor(mounted.getType().getCost(this, false, mounted.getLocation()));
+            }
+        }
+        return cost;
+    }
+    
+    /**
+     * The alternate cost here is used by MekHQ to create costs that reflect just the cost of 
+     * equipment. The motive costs here are based on the costs associated with an auto-rifle
+     * platoon.
+     */
+    @Override
+    public double getAlternateCost() {
+    	double cost = 0;
+        if(null != primaryW) {
+            cost += primaryW.getCost(this, false, -1) * (squadsize - secondn);
+        }
+        if(null != secondW) {
+            cost += secondW.getCost(this, false, -1) * secondn;
+        }
+        cost = cost / squadsize;
+        //Add in motive type costs
+        switch (getMovementMode()){
+	        case INF_UMU:
+	            cost += 17888 * 1;
+	            break;
+	        case INF_LEG:
+	            break;
+	        case INF_MOTORIZED:
+	        	cost += 17888 * 0.6;
+	            break;
+	        case INF_JUMP:
+	        	cost += 17888 * 1.6;
+	            break;
+	        case HOVER:
+	        case WHEELED:
+	        case TRACKED:
+	        	cost += 17888 * 2.2;
+	            break;
+	        default:
+	            break;
+        }
+        cost *= menStarting;
+        //add in field gun costs
+        for (Mounted mounted : getEquipment()) {
+            if(mounted.getLocation() == LOC_FIELD_GUNS) {
+                cost += mounted.getType().getCost(this, false, -1);
             }
         }
         return cost;

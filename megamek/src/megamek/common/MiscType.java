@@ -3383,7 +3383,6 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.cost = 10000;
         //Going to assume the IS lost this with Exodus and was reintroduced in the 3050s
         misc.introDate = 2710;
         misc.extinctDate = 2784;
@@ -3409,7 +3408,6 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.cost = 10000;
         misc.introDate = 2868;
         misc.techLevel.put(2868, TechConstants.T_CLAN_TW);
         misc.techRating = RATING_E;
@@ -3471,7 +3469,6 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.cost = 12500;
         misc.introDate = 3057;
         misc.techLevel.put(3057, TechConstants.T_ALL_IS);
         misc.techRating = RATING_E;
@@ -3491,7 +3488,6 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.cost = 12500;
         misc.introDate = 3057;
         misc.techLevel.put(3057, TechConstants.T_CLAN_UNOFFICIAL);
         misc.techRating = RATING_E;
@@ -3512,7 +3508,6 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_FIRE_RESISTANT).or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.cost = 10000;
         misc.introDate = 3058;
         misc.techLevel.put(3058, TechConstants.T_ALL_CLAN);
         misc.techRating = RATING_E;
@@ -3532,7 +3527,6 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_FIRE_RESISTANT).or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.cost = 10000;
         misc.introDate = 3058;
         misc.techLevel.put(3058, TechConstants.T_IS_UNOFFICIAL);
         misc.techRating = RATING_E;
@@ -3552,7 +3546,6 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.cost = 50000;
         //Since this is supposed to mimic the SL Era Stealth Basic,
         //I'm going to use it as SL Era Prototype that is rediscovered in 3050.
         misc.introDate = 2710;
@@ -3576,7 +3569,6 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.cost = 50000;
         //Since this is supposed to mimic the SL Era Stealth Basic,
         //I'm going to use it as Clan Unofficial Prototype.
         misc.introDate = 2820;
@@ -3598,7 +3590,6 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.cost = 12000;
         misc.introDate = 2710;
         misc.techLevel.put(2710, TechConstants.T_IS_TW_NON_BOX);
         misc.extinctDate = 2770;
@@ -3620,7 +3611,6 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.cost = 12000;
         misc.introDate = 2820;
         misc.techLevel.put(2820, TechConstants.T_CLAN_TW);
         misc.techRating = RATING_E;
@@ -3640,7 +3630,6 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.cost = 15000;
         misc.introDate = 2720;
         misc.techLevel.put(2720, TechConstants.T_IS_TW_NON_BOX);
         misc.extinctDate = 2770;
@@ -3662,7 +3651,6 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.cost = 15000;
         misc.introDate = 2720;
         misc.techLevel.put(2720, TechConstants.T_CLAN_TW);
         misc.extinctDate = 2770;
@@ -3683,7 +3671,6 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.cost = 20000;
         misc.introDate = 3057;
         misc.techLevel.put(3057, TechConstants.T_IS_TW_NON_BOX);
         misc.techRating = RATING_E;
@@ -3702,7 +3689,6 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.cost = 20000;
         misc.introDate = 3057;
         misc.techLevel.put(3057, TechConstants.T_CLAN_TW);
         misc.techRating = RATING_E;
@@ -3724,7 +3710,6 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_STEALTH).or(F_VISUAL_CAMO)
                 .or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.cost = 15000;
         misc.introDate = 3061;
         misc.techLevel.put(3061, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
@@ -3745,7 +3730,6 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_STEALTH).or(F_VISUAL_CAMO)
                 .or(F_BA_EQUIPMENT);
         misc.bv = 0;
-        misc.cost = 15000;
         misc.introDate = 2850;
         misc.techLevel.put(2850, misc.techLevel.get(3071));
         misc.availRating = new int[] { RATING_X, RATING_E, RATING_E };
@@ -4085,7 +4069,6 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Simple Camo");
         misc.tonnage = .2f;
         misc.criticals = 2;
-        misc.cost = 200000;
         misc.hittable = false;
         misc.flags = misc.flags.or(F_STEALTH).or(F_VISUAL_CAMO)
                 .or(F_BA_EQUIPMENT).andNot(F_MECH_EQUIPMENT)

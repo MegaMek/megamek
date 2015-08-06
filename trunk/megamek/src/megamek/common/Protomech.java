@@ -604,7 +604,7 @@ public class Protomech extends Entity {
     public boolean isSecondaryArcWeapon(int weaponId) {
         // for quads, only the main gun weapons can rotate
         if (isQuad()) {
-            return getWeaponList().get(weaponId).getLocation() == LOC_MAINGUN;
+            return getEquipment(weaponId).getLocation() == LOC_MAINGUN;
         }
         return true;
     }

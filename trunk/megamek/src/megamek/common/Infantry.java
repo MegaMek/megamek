@@ -792,10 +792,20 @@ public class Infantry extends Entity {
         PilotingRollData roll = new PilotingRollData(getId(), 5,
                 "entering boggy terrain");
         int bgMod = curHex.getBogDownModifier(getMovementMode(), false);
-        if (!lastPos.equals(curPos) && (bgMod != TargetRoll.AUTOMATIC_SUCCESS) && (step.getMovementType() != EntityMovementType.MOVE_JUMP) && (getMovementMode() != EntityMovementMode.HOVER) && (getMovementMode() != EntityMovementMode.VTOL) && (getMovementMode() != EntityMovementMode.WIGE) && (step.getElevation() == 0) && !isPavementStep) {
-            roll.append(new PilotingRollData(getId(), bgMod, "avoid bogging down"));
+        final boolean onBridge = (curHex.terrainLevel(Terrains.BRIDGE) > 0)
+                && (getElevation() == curHex.terrainLevel(Terrains.BRIDGE_ELEV));
+        if (!lastPos.equals(curPos) && (bgMod != TargetRoll.AUTOMATIC_SUCCESS)
+                && (step.getMovementType() != EntityMovementType.MOVE_JUMP)
+                && (getMovementMode() != EntityMovementMode.HOVER)
+                && (getMovementMode() != EntityMovementMode.VTOL)
+                && (getMovementMode() != EntityMovementMode.WIGE)
+                && (step.getElevation() == 0) && !isPavementStep && !onBridge) {
+            roll.append(new PilotingRollData(getId(), bgMod,
+                    "avoid bogging down"));
         } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Not entering bog-down terrain, or jumping/hovering over such terrain");
+            roll.addModifier(TargetRoll.CHECK_FALSE,
+                    "Check false: Not entering bog-down terrain, "
+                            + "or jumping/hovering over such terrain");
         }
         return roll;
     }

@@ -7989,22 +7989,20 @@ public class Server implements Runnable {
             }
             // moving backwards over elevation change
             if (((step.getType() == MoveStepType.BACKWARDS)
-                 || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step
-                                                                                        .getType() == MoveStepType
-                                                                                        .LATERAL_RIGHT_BACKWARDS))
-                && !(md.isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER))
-                && ((lastHex.getLevel() + entity.calcElevation(curHex,
-                                                                   lastHex, step.getElevation(),
-                                                                   md.getFinalClimbMode(), false)) != (curHex
-                                                                                                               .getLevel() + entity.getElevation()))
-                && !(entity instanceof VTOL)
-                && !(md.getFinalClimbMode()
-                     && curHex.containsTerrain(Terrains.BRIDGE) && ((curHex
-                                                                             .terrainLevel(Terrains.BRIDGE_ELEV) +
-                                                                     curHex
-                                                                             .getLevel()) == (prevHex.getLevel() + (prevHex
-                                                                                                                                    .containsTerrain(Terrains.BRIDGE) ? prevHex
-                                                                                                                                    .terrainLevel(Terrains.BRIDGE_ELEV) : 0))))) {
+                    || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) 
+                    || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
+                    && !(md.isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER))
+                    && ((lastHex.getLevel() + entity.calcElevation(curHex,
+                            lastHex, step.getElevation(),
+                            md.getFinalClimbMode(), false)) != (curHex
+                            .getLevel() + entity.getElevation()))
+                    && !(entity instanceof VTOL)
+                    && !(md.getFinalClimbMode()
+                            && curHex.containsTerrain(Terrains.BRIDGE) && ((curHex
+                            .terrainLevel(Terrains.BRIDGE_ELEV) + curHex
+                            .getLevel()) == (prevHex.getLevel() + (prevHex
+                            .containsTerrain(Terrains.BRIDGE) ? prevHex
+                            .terrainLevel(Terrains.BRIDGE_ELEV) : 0))))) {
 
                 if ((entity instanceof Mech)
                     && (curHex.getLevel() < game.getBoard()
@@ -25892,9 +25890,8 @@ public class Server implements Runnable {
                 .terrainLevel(Terrains.BRIDGE_ELEV))) {
             fallOntoBridge = true;
         }
-        int bridgeHeight = fallHex.terrainLevel(Terrains.BRIDGE_ELEV)
-                           + fallHex.depth(true);
-        int buildingHeight = fallHex.terrainLevel(Terrains.BLDG_ELEV);
+        int bridgeElev = fallHex.terrainLevel(Terrains.BRIDGE_ELEV);
+        int buildingElev = fallHex.terrainLevel(Terrains.BLDG_ELEV);
         int damageHeight = fallHeight;
         int newElevation = 0;
 
@@ -25902,13 +25899,13 @@ public class Server implements Runnable {
         // collapses
         boolean checkCollapse = false;
 
-        if ((entity.relHeight() >= buildingHeight)
-            && (buildingHeight >= 0)) {
+        if ((entity.relHeight() >= buildingElev)
+            && (buildingElev >= 0)) {
             // fallHeight should already reflect this
-            newElevation = buildingHeight;
+            newElevation = buildingElev;
             checkCollapse = true;
-        } else if (fallOntoBridge && (entity.relHeight() >= bridgeHeight)
-                   && (bridgeHeight >= 0)) {
+        } else if (fallOntoBridge && (entity.relHeight() >= bridgeElev)
+                && (bridgeElev >= 0)) {
             // fallHeight should already reflect this
             waterDepth = 0;
             newElevation = fallHex.terrainLevel(Terrains.BRIDGE_ELEV);

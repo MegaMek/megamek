@@ -6489,17 +6489,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * down. If so, returns the target roll for the piloting skill check.
      */
     public PilotingRollData checkBogDown(MoveStep step, IHex curHex,
-                                         Coords lastPos, Coords curPos, int lastElev, boolean isPavementStep) {
+            Coords lastPos, Coords curPos, int lastElev, boolean isPavementStep) {
         PilotingRollData roll = getBasePilotingRoll(step.getParent()
-                                                        .getLastStepMovementType());
+                .getLastStepMovementType());
         int bgMod = curHex.getBogDownModifier(getMovementMode(),
-                                              this instanceof LargeSupportTank);
+                this instanceof LargeSupportTank);
         if ((!lastPos.equals(curPos) || (step.getElevation() != lastElev))
-            && (bgMod != TargetRoll.AUTOMATIC_SUCCESS)
-            && (step.getMovementType() != EntityMovementType.MOVE_JUMP)
-            && (step.getElevation() == 0) && !isPavementStep) {
+                && (bgMod != TargetRoll.AUTOMATIC_SUCCESS)
+                && (step.getMovementType() != EntityMovementType.MOVE_JUMP)
+                && (step.getElevation() == 0) && !isPavementStep) {
             roll.append(new PilotingRollData(getId(), bgMod,
-                                             "avoid bogging down"));
+                    "avoid bogging down"));
             if ((this instanceof Mech) && ((Mech) this).isSuperHeavy()) {
                 roll.addModifier(1, "superheavy mech avoiding bogging down");
             }

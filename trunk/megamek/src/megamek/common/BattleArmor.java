@@ -1141,10 +1141,10 @@ public class BattleArmor extends Infantry {
         // Unit isn't burdened.
         return false;
     }
-    
+
     public boolean canMakeAntiMekAttacks() {
         return !isBurdened() && canDoMechanizedBA()
-                && (getWeightClass() < EntityWeightClass.WEIGHT_HEAVY) 
+                && (getWeightClass() < EntityWeightClass.WEIGHT_HEAVY)
                 && getMovementMode() != EntityMovementMode.INF_UMU;
     }
 
@@ -1343,13 +1343,11 @@ public class BattleArmor extends Infantry {
 
     public double getCost(boolean ignoreAmmo, boolean includeTrainingAndClan) {
 
-    	int bob;
-    	if(this.getChassis().equals("Longinus Battle Armor") 
+    	if(this.getChassis().equals("Longinus Battle Armor")
     			&& this.getModel().equals("[Flamer]")
     			&& !includeTrainingAndClan) {
-    		bob = 1;
     	}
-    	
+
         double cost = 0;
         switch (weightClass) {
             case EntityWeightClass.WEIGHT_MEDIUM:
@@ -1392,7 +1390,7 @@ public class BattleArmor extends Infantry {
                         mounted.isArmored(), mounted.getLocation());
                 manipulatorCost += itemCost;
             }
-            
+
         }
         cost += manipulatorCost;
 
@@ -1418,7 +1416,7 @@ public class BattleArmor extends Infantry {
 	        case EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE:
 	        case EquipmentType.T_ARMOR_BA_STANDARD:
 	        default:
-	        	baseArmorCost =  10000;       
+	        	baseArmorCost =  10000;
         }
 
         cost += (baseArmorCost * getOArmor(LOC_TROOPER_1));
@@ -2018,10 +2016,10 @@ public class BattleArmor extends Infantry {
     public int getMaximumJumpMP() {
         return getMaximumJumpMP(false);
     }
-    
+
     /**
      * Returns the maximum jump MP that this BA can have.
-     * 
+     *
      * @param ignoreEquipment
      *            If true, bonuses from equipment like partial wing and jump
      *            booster are ignored. This is important for construction
@@ -2070,7 +2068,7 @@ public class BattleArmor extends Infantry {
 
         // Partial wings and jump boosters add 1 jump MP and can increase it
         //  over the max and they cannot be used together
-        if (!ignoreEquipment 
+        if (!ignoreEquipment
                 && (hasWorkingMisc(MiscType.F_JUMP_BOOSTER)
                         || hasWorkingMisc(MiscType.F_PARTIAL_WING))){
             max++;

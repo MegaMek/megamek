@@ -114,6 +114,10 @@ public class EntityListFile {
                 output.append("\" quirks=\"");
                 output.append(String.valueOf(mount.getQuirkList("::")));
             }
+            if(mount.isAnyMissingTroopers()) {
+            	output.append("\" trooperMiss=\"");
+                output.append(String.valueOf(mount.getMissingTrooperString()));
+            }
         }
         if (isHit) {
             output.append("\" isHit=\"");
@@ -326,6 +330,15 @@ public class EntityListFile {
                         haveSlot = true;
                     }
 
+                    // Record trooper missing equipment on BattleArmor
+                    else if(null != mount && mount.isAnyMissingTroopers()) {
+                    	thisLoc.append(EntityListFile.formatSlot(
+                                String.valueOf(loop + 1), mount, slot.isHit(),
+                                slot.isDestroyed(), slot.isRepairable(),
+                                slot.isMissing(), indentLvl+1));
+                        haveSlot = true;
+                    }
+                    
                 } // End have-slot
 
             } // Check the next slot in this location

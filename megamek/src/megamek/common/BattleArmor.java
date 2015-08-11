@@ -2372,6 +2372,24 @@ public class BattleArmor extends Infantry {
         this.clanExoWithoutHarjel = clanExoWithoutHarjel;
     }
 
+    @Override
+    public String getLocationDamage(int loc) {
+        String toReturn = "";
+        if(getInternal(loc)<0) {
+        	return toReturn;
+        }
+        boolean first = true;
+        for(Mounted m : getEquipment()) {
+        	if(m.isMissingForTrooper(loc)) {
+        		if (!first) {
+                    toReturn += ", ";
+                }
+        		toReturn += m.getName();
+        		first = false;
+        	}
+        }
+        return toReturn;
+    }
 
 
 } // End public class BattleArmor extends Infantry implements Serializable

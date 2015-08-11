@@ -86,6 +86,7 @@ public class MULParser {
     private static final String EDGE = "edge";
     private static final String IMPLANTS = "implants";
     private static final String QUIRKS = "quirks";
+    private static final String TROOPER_MISS = "trooperMiss";
     private static final String DRIVER = "driver";
     private static final String COMMANDER = "commander";
     private static final String DEPLOYMENT = "deployment";
@@ -984,6 +985,7 @@ public class MULParser {
         String repairable = (slotTag.getAttribute(IS_REPAIRABLE).equals("") ? "true" : slotTag.getAttribute(IS_REPAIRABLE));
         String munition = slotTag.getAttribute(MUNITION);
         String quirks = slotTag.getAttribute(QUIRKS);
+        String trooperMiss = slotTag.getAttribute(TROOPER_MISS);
         String rfmg = slotTag.getAttribute(RFMG);
 
         // Did we find required attributes?
@@ -1169,6 +1171,18 @@ public class MULParser {
                             warning.append("Error restoring quirk: ")
                                     .append(quirk).append(".\n");
                         }
+                    }
+                }
+                
+                // trooper missing equipment
+                if ((null != trooperMiss) && (trooperMiss.trim().length() > 0)) {
+                    StringTokenizer st = new StringTokenizer(trooperMiss,
+                            "::");
+                    int i = BattleArmor.LOC_TROOPER_1;
+                    while (st.hasMoreTokens() && i <= BattleArmor.LOC_TROOPER_6) {
+                        String tmiss = st.nextToken();
+                        mounted.setMissingForTrooper(i, Boolean.parseBoolean(tmiss));
+                        i++;
                     }
                 }
 

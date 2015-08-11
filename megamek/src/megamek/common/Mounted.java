@@ -124,6 +124,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     // vibrabomb mine setting
     private int vibraSetting = 20;
     
+    //These arrays are used to track individual missing modular components on BA for MHQ
+    //in MM they probably shouldn't need to be touched. They are used to keep track of 
+    //whether a modular mount is in use or not for a particular trooper. 
+    private boolean[] missingForTrooper = {false, false, false, false, false, false};
+    
     /**
      * Armor value, used for applicable equipment types like minesweepers.
      */
@@ -212,8 +217,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         if ((type instanceof MiscType) 
                 && type.hasFlag(MiscType.F_MINESWEEPER)) {
             armorValue = 30;
-        }
-        
+        }       
+                
         quirks.initialize();
     }
 
@@ -1696,5 +1701,38 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
 
     public void setArmorValue(int armorValue) {
         this.armorValue = armorValue;
+    }
+    
+    public void setMissingForTrooper(int trooper, boolean b) {
+    	trooper = trooper-BattleArmor.LOC_TROOPER_1;
+    	if(trooper < 0 || trooper >= missingForTrooper.length) {
+    		return;
+    	}
+    	missingForTrooper[trooper] = b;
+    }
+    
+    public boolean isMissingForTrooper(int trooper) {
+    	trooper = trooper-BattleArmor.LOC_TROOPER_1;
+    	if(trooper < 0 || trooper >= missingForTrooper.length) {
+    		return false;
+    	}
+    	return missingForTrooper[trooper];
+    }
+    
+    public boolean isAnyMissingTroopers() {
+    	for(int i = 0; i < missingForTrooper.length; i++) {
+    		if(missingForTrooper[i]) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    public String getMissingTrooperString() {
+    	StringBuffer missings = new StringBuffer();
+    	for(int i = 0; i < missingForTrooper.length; i++) {
+    		missings.append(missingForTrooper[i]).append("::");
+    	}
+    	return missings.toString();
     }
 }

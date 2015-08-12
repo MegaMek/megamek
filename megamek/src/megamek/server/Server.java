@@ -12770,6 +12770,9 @@ public class Server implements Runnable {
                 Entity ae = game.getEntity(waa.getEntityId());
                 Mounted m = ae.getEquipment(waa.getWeaponId());
                 Weapon w = (Weapon) m.getType();
+                // Track attacks original target, for things like swarm LRMs
+                waa.setOriginalTargetId(waa.getTargetId());
+                waa.setOriginalTargetType(waa.getTargetType());
                 AttackHandler ah = w.fire(waa, game, this);
                 if (ah != null) {
                     ah.setStrafing(waa.isStrafing());

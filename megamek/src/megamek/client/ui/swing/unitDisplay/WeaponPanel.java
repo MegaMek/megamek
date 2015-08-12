@@ -1985,6 +1985,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                     ranges[0][3] = isCap ? 40 : 20;
                 if (maxr > WeaponType.RANGE_LONG) 
                     ranges[0][4] = isCap ? 50 : 25;
+                
+                final IGame game = unitDisplay.getClientGUI().getClient().getGame();
+                if (game.getBoard().onGround()) {
+                    ranges[0][1] *= 8;
+                    ranges[0][2] *= 8;
+                    ranges[0][3] *= 8;
+                    ranges[0][4] *= 8;
+                }
             }
         }
         

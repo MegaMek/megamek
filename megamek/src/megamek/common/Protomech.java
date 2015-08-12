@@ -249,7 +249,7 @@ public class Protomech extends Entity {
     }
 
     @Override
-    public int getWalkMP(boolean gravity, boolean ignoreheat) {
+    public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         if (isEngineHit()) {
             return 0;
         }
@@ -2115,6 +2115,9 @@ public class Protomech extends Entity {
 
     @Override
     public int getEngineHits() {
+    	if(this.isEngineHit()) {
+    		return 1;
+    	}
         return 0;
     }
 
@@ -2267,5 +2270,4 @@ public class Protomech extends Entity {
                          "Protomechs cannot fall");
         return roll;
     }   
-    
 }

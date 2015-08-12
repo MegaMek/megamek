@@ -100,8 +100,29 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     private int otherAttackInfo = -1; //
     private boolean nemesisConfused;
     private boolean swarmingMissiles;
+    /**
+     * Keeps track of the ID of the current primary target for a swarm missile
+     * attack.
+     */
     private int oldTargetId = -1;
+    
+    /**
+     * Keeps track of the Targetable type for the current primary target for a
+     * swarm missile attack.
+     */
     private int oldTargetType;
+    
+    /**
+     * Keeps track of the ID of the original target for a swarm missile attack.
+     */
+    private int originalTargetId = Entity.NONE;
+    
+    /**
+     * Keeps track of the type of the original target for a swarm missile
+     * attack.
+     */
+    private int originalTargetType;
+    
     private int swarmMissiles = 0;
 
     // bomb stuff
@@ -229,6 +250,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 getAimedLocation(), getAimingMode(), nemesisConfused,
                 swarmingMissiles,
                 game.getTarget(getOldTargetType(), getOldTargetId()),
+                game.getTarget(getOriginalTargetType(), getOriginalTargetId()),
                 isStrafing());
     }
 
@@ -238,6 +260,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 getAimedLocation(), getAimingMode(), nemesisConfused,
                 swarmingMissiles,
                 game.getTarget(getOldTargetType(), getOldTargetId()),
+                game.getTarget(getOriginalTargetType(), getOriginalTargetId()),
                 isStrafing(), allECMInfo);
     }
 
@@ -245,23 +268,23 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             Targetable target, int weaponId, boolean isStrafing) {
         return WeaponAttackAction.toHit(game, attackerId, target, weaponId,
                 Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE, false, false,
-                null, isStrafing);
+                null, null, isStrafing);
     }
 
     public static ToHitData toHit(IGame game, int attackerId,
             Targetable target, int weaponId, int aimingAt, int aimingMode,
             boolean isStrafing) {
         return WeaponAttackAction.toHit(game, attackerId, target, weaponId,
-                aimingAt, aimingMode, false, false, null, isStrafing);
+                aimingAt, aimingMode, false, false, null, null, isStrafing);
     }
 
     private static ToHitData toHit(IGame game, int attackerId,
             Targetable target, int weaponId, int aimingAt, int aimingMode,
             boolean isNemesisConfused, boolean exchangeSwarmTarget,
-            Targetable oldTarget, boolean isStrafing) {
+            Targetable oldTarget, Targetable originalTarget, boolean isStrafing) {
         return WeaponAttackAction.toHit(game, attackerId, target, weaponId,
                 aimingAt, aimingMode, isNemesisConfused, exchangeSwarmTarget,
-                oldTarget, isStrafing, null);
+                oldTarget, originalTarget, isStrafing, null);
     }
 
     /**
@@ -270,7 +293,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     private static ToHitData toHit(IGame game, int attackerId,
             Targetable target, int weaponId, int aimingAt, int aimingMode,
             boolean isNemesisConfused, boolean exchangeSwarmTarget,
-            Targetable oldTarget, boolean isStrafing,
+            Targetable oldTarget, Targetable originalTarget, boolean isStrafing,
             List<ECMInfo> allECMInfo) {
         final Entity ae = game.getEntity(attackerId);
         final Mounted weapon = ae.getEquipment(weaponId);
@@ -280,25 +303,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         final WeaponType wtype = (WeaponType) weapon.getType();
+        Targetable swarmSecondaryTarget = target;
+        Targetable swarmPrimaryTarget = oldTarget;
         if (exchangeSwarmTarget) {
-            // Quick check, is the new target out of range for the weapon?
-            int range = RangeType.rangeBracket(
-                    ae.getPosition().distance(target.getPosition()),
-                    wtype.getRanges(weapon),
-                    game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE),
-                    game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE));
-            if (range == RangeType.RANGE_OUT) {
-                return new ToHitData(TargetRoll.AUTOMATIC_FAIL,
-                                     "swarm target out of range");
-            }
             // this is a swarm attack against a new target
-            // first, exchange old and new targets to get all mods
-            // as if firing against old target.
+            // first, exchange original and new targets to get all mods
+            // as if firing against original target.
             // at the end of this function, we remove target terrain
             // and movement mods, and add those for the new target
             Targetable tempTarget = target;
-            target = oldTarget;
-            oldTarget = tempTarget;
+            target = originalTarget;
+            originalTarget = tempTarget;
         }
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -402,11 +417,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         ToHitData toHit;
         String reason = WeaponAttackAction.toHitIsImpossible(game, ae, target,
-                weapon, atype, wtype, ttype, exchangeSwarmTarget, usesAmmo, te,
-                isTAG, isInferno, isAttackerInfantry, isIndirect, attackerId,
-                weaponId, isArtilleryIndirect, ammo, isArtilleryFLAK,
-                targetInBuilding, isArtilleryDirect, isTargetECMAffected,
-                isStrafing);
+                swarmPrimaryTarget, swarmSecondaryTarget, weapon, atype, wtype,
+                ttype, exchangeSwarmTarget, usesAmmo, te, isTAG, isInferno,
+                isAttackerInfantry, isIndirect, attackerId, weaponId,
+                isArtilleryIndirect, ammo, isArtilleryFLAK, targetInBuilding,
+                isArtilleryDirect, isTargetECMAffected, isStrafing);
         if (reason != null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, reason);
         }
@@ -503,7 +518,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         ToHitData losMods;
 
         if (!isIndirect || (spotter == null)) {
-            los = LosEffects.calculateLos(game, attackerId, target);
+            if (!exchangeSwarmTarget) {
+                los = LosEffects.calculateLos(game, attackerId, target);
+            } else {
+                // Swarm should draw LoS between targets, not attacker, since
+                // we don't want LoS to be blocked
+                if (swarmPrimaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
+                    los = LosEffects.calculateLos(game,
+                            swarmPrimaryTarget.getTargetId(),
+                            swarmSecondaryTarget);
+                } else {
+                    los = LosEffects.calculateLos(game,
+                            swarmSecondaryTarget.getTargetId(),
+                            swarmPrimaryTarget);
+                }
+            }
 
             if (ae.hasActiveEiCockpit()) {
                 if (los.getLightWoods() > 0) {
@@ -530,7 +559,23 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                         "Torpedos must follow water their entire LOS");
             }
         } else {
-            los = LosEffects.calculateLos(game, spotter.getId(), target, true);
+            if (!exchangeSwarmTarget) {
+                los = LosEffects.calculateLos(game, spotter.getId(), target,
+                        true);
+            } else {
+                // Swarm should draw LoS between targets, not attacker, since
+                // we don't want LoS to be blocked
+                if (swarmPrimaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
+                    los = LosEffects.calculateLos(game,
+                            swarmPrimaryTarget.getTargetId(),
+                            swarmSecondaryTarget);
+                } else {
+                    los = LosEffects.calculateLos(game,
+                            swarmSecondaryTarget.getTargetId(),
+                            swarmPrimaryTarget);
+                }
+            }
+
             // do not count attacker partial cover in indirect fire
             los.setAttackerCover(LosEffects.COVER_NONE);
 
@@ -1684,8 +1729,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // Inf field guns don't get secondary target mods, TO pg 311 
         if (!isNemesisConfused && !wtype.hasFlag(WeaponType.F_ALT_BOMB)
                 && !isWeaponFieldGuns && !isStrafing) {
-            toHit.append(Compute.getSecondaryTargetMod(game, ae, target,
-                    exchangeSwarmTarget));
+            toHit.append(Compute.getSecondaryTargetMod(game, ae, target));
         }
 
         // heat
@@ -2082,21 +2126,22 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // add those for new target.
         if (exchangeSwarmTarget) {
             toHit.addModifier(-toSubtract, "original target mods");
-            toHit.append(Compute
-                                 .getImmobileMod(oldTarget, aimingAt, aimingMode));
-            toHit.append(Compute.getTargetTerrainModifier(
-                    game,
-                    game.getTarget(oldTarget.getTargetType(),
-                                   oldTarget.getTargetId()), eistatus, inSameBuilding,
-                    underWater));
+            toHit.append(Compute.getImmobileMod(swarmSecondaryTarget, aimingAt,
+                    aimingMode));
+            toHit.append(Compute.getTargetTerrainModifier(game, game.getTarget(
+                    swarmSecondaryTarget.getTargetType(),
+                    swarmSecondaryTarget.getTargetId()), eistatus,
+                    inSameBuilding, underWater));
             toHit.setCover(LosEffects.COVER_NONE);
-            distance = Compute.effectiveDistance(game, ae, oldTarget);
-            
+            distance = Compute
+                    .effectiveDistance(game, ae, swarmSecondaryTarget);
+
             // We might not attack the new target from the same side as the
             // old, so recalculate; the attack *direction* is still traced from
             // the original source.
-            toHit.setSideTable(Compute.targetSideTable(ae, oldTarget));
-            
+            toHit.setSideTable(Compute
+                    .targetSideTable(ae, swarmSecondaryTarget));
+
             // Secondary swarm LRM attacks are never called shots even if the
             // initial one was.
             if (weapon.getCalledShot().getCall() != CalledShot.CALLED_NONE) {
@@ -2105,12 +2150,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
 
             LosEffects swarmlos;
-            // If te is null, then the original target was a building
-            if (te == null) {
+            // TO makes it seem like the terrain modifers should be between the
+            // attacker and the secondary target, but we have received rules
+            // clarifications on the old forums indicating that this is correct
+            if (swarmPrimaryTarget.getTargetType() != Targetable.TYPE_ENTITY) {
                 swarmlos = LosEffects.calculateLos(game,
-                                                   oldTarget.getTargetId(), target);
+                        swarmSecondaryTarget.getTargetId(), target);
             } else {
-                swarmlos = LosEffects.calculateLos(game, te.getId(), oldTarget);
+                swarmlos = LosEffects.calculateLos(game,
+                        swarmPrimaryTarget.getTargetId(), swarmSecondaryTarget);
             }
 
             // reset cover
@@ -2124,27 +2172,28 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
             // target in water?
-            targHex = game.getBoard().getHex(oldTarget.getPosition());
-            targEl = oldTarget.relHeight();
+            targHex = game.getBoard()
+                    .getHex(swarmSecondaryTarget.getPosition());
+            targEl = swarmSecondaryTarget.relHeight();
 
-            if (oldTarget.getTargetType() == Targetable.TYPE_ENTITY) {
-                Entity oldEnt = game.getEntity(oldTarget.getTargetId());
+            if (swarmSecondaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
+                Entity oldEnt = game.getEntity(swarmSecondaryTarget
+                        .getTargetId());
                 toHit.append(Compute.getTargetMovementModifier(game,
-                                                               oldEnt.getId()));
+                        oldEnt.getId()));
                 // target in partial water
-                if ((oldTarget.getTargetType() == Targetable.TYPE_ENTITY)
-                    && targHex.containsTerrain(Terrains.WATER)
-                    && (targHex.terrainLevel(Terrains.WATER) == 1)
-                    && (targEl == 0) && (oldEnt.height() > 0)) {
+                if (targHex.containsTerrain(Terrains.WATER)
+                        && (targHex.terrainLevel(Terrains.WATER) == 1)
+                        && (targEl == 0) && (oldEnt.height() > 0)) {
                     toHit.setCover(toHit.getCover()
-                                   | LosEffects.COVER_HORIZONTAL);
+                            | LosEffects.COVER_HORIZONTAL);
                 }
                 // Prone
                 if (oldEnt.isProne()) {
                     // easier when point-blank
                     if (distance <= 1) {
                         proneMod = new ToHitData(-2,
-                                                 "target prone and adjacent");
+                                "target prone and adjacent");
                     } else {
                         // Harder at range.
                         proneMod = new ToHitData(1, "target prone and at range");
@@ -2153,13 +2202,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 // I-Swarm bonus
                 toHit.append(proneMod);
                 if (!isECMAffected
-                    && (atype != null)
-                    && !oldEnt.isEnemyOf(ae)
-                    && !(oldEnt.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                                Mech.SYSTEM_SENSORS, Mech.LOC_HEAD) > 0)
-                    && (atype.getMunitionType() == AmmoType.M_SWARM_I)) {
+                        && (atype != null)
+                        && !oldEnt.isEnemyOf(ae)
+                        && !(oldEnt.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                                Mech.SYSTEM_SENSORS, Mech.LOC_HEAD) > 0)
+                        && (atype.getMunitionType() == AmmoType.M_SWARM_I)) {
                     toHit.addModifier(+2,
-                                      "Swarm-I at friendly unit with intact sensors");
+                            "Swarm-I at friendly unit with intact sensors");
                 }
             }
         }
@@ -2821,13 +2870,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     }
 
     private static String toHitIsImpossible(IGame game, Entity ae,
-                                            Targetable target, Mounted weapon, AmmoType atype,
-                                            WeaponType wtype, int ttype, boolean exchangeSwarmTarget,
-                                            boolean usesAmmo, Entity te, boolean isTAG, boolean isInferno,
-                                            boolean isAttackerInfantry, boolean isIndirect, int attackerId,
-                                            int weaponId, boolean isArtilleryIndirect, Mounted ammo,
-                                            boolean isArtilleryFLAK, boolean targetInBuilding,
-                                            boolean isArtilleryDirect, boolean isTargetECMAffected, boolean isStrafing) {
+            Targetable target, Targetable swarmPrimaryTarget,
+            Targetable swarmSecondaryTarget, Mounted weapon, AmmoType atype,
+            WeaponType wtype, int ttype, boolean exchangeSwarmTarget,
+            boolean usesAmmo, Entity te, boolean isTAG, boolean isInferno,
+            boolean isAttackerInfantry, boolean isIndirect, int attackerId,
+            int weaponId, boolean isArtilleryIndirect, Mounted ammo,
+            boolean isArtilleryFLAK, boolean targetInBuilding,
+            boolean isArtilleryDirect, boolean isTargetECMAffected,
+            boolean isStrafing) {
         boolean isHoming = false;
         ToHitData toHit = null;
 
@@ -3760,7 +3811,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         LosEffects los;
         ToHitData losMods;
         if (!isIndirect || (isIndirect && (spotter == null))) {
-            los = LosEffects.calculateLos(game, attackerId, target);
+            if (!exchangeSwarmTarget) {
+                los = LosEffects.calculateLos(game, attackerId, target);
+            } else {
+                // Swarm should draw LoS between targets, not attacker, since
+                // we don't want LoS to be blocked
+                if (swarmPrimaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
+                    los = LosEffects.calculateLos(game,
+                            swarmPrimaryTarget.getTargetId(),
+                            swarmSecondaryTarget);
+                } else {
+                    los = LosEffects.calculateLos(game,
+                            swarmSecondaryTarget.getTargetId(),
+                            swarmPrimaryTarget);
+                }                
+            }
 
             if (ae.hasActiveEiCockpit()) {
                 if (los.getLightWoods() > 0) {
@@ -3776,7 +3841,22 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
             losMods = los.losModifiers(game, eistatus, underWater);
         } else {
-            los = LosEffects.calculateLos(game, spotter.getId(), target);
+            if (!exchangeSwarmTarget) {
+                los = LosEffects.calculateLos(game, spotter.getId(), target);
+            } else {
+                // Swarm should draw LoS between targets, not attacker, since
+                // we don't want LoS to be blocked
+                if (swarmPrimaryTarget.getTargetType() == Targetable.TYPE_ENTITY) {
+                    los = LosEffects.calculateLos(game,
+                            swarmPrimaryTarget.getTargetId(),
+                            swarmSecondaryTarget);
+                } else {
+                    los = LosEffects.calculateLos(game,
+                            swarmSecondaryTarget.getTargetId(),
+                            swarmPrimaryTarget);
+                }
+            }
+            
             // do not count attacker partial cover in indirect fire
             los.setAttackerCover(LosEffects.COVER_NONE);
 
@@ -3802,7 +3882,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         // if LOS is blocked, block the shot
         if ((losMods.getValue() == TargetRoll.IMPOSSIBLE)
-            && !isArtilleryIndirect) {
+                && !isArtilleryIndirect) {
             return losMods.getDesc();
         }
 
@@ -4330,6 +4410,22 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     public int getOldTargetType() {
         return oldTargetType;
     }
+    
+    public void setOriginalTargetId(int id) {
+        originalTargetId = id;
+    }
+
+    public int getOriginalTargetId() {
+        return originalTargetId;
+    }
+
+    public void setOriginalTargetType(int t) {
+        originalTargetType = t;
+    }
+
+    public int getOriginalTargetType() {
+        return originalTargetType;
+    }    
 
     public int getSwarmMissiles() {
         return swarmMissiles;

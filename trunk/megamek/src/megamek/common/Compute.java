@@ -1887,12 +1887,7 @@ public class Compute {
      * @author Ben
      */
     public static ToHitData getSecondaryTargetMod(IGame game, Entity attacker,
-                                                  Targetable target) {
-        return Compute.getSecondaryTargetMod(game, attacker, target, false);
-    }
-
-    public static ToHitData getSecondaryTargetMod(IGame game, Entity attacker,
-                                                  Targetable target, boolean isSwarm) {
+            Targetable target) {
 
         // large craft do not get secondary target mod
         // http://www.classicbattletech.com/forums/index.php/topic,37661.0.html

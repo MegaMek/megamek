@@ -22,6 +22,7 @@ v0.41.6-dev (SVN)
     when checking quads.
 + additions to Mounted to account for each troopers equipment in MHQ
 + Data: New Sprites and Mechset fixes.
++ Bug [#4571]: Tertiary Swarm LRM attacks suddenly blocked by lack of LOS again 
 
 v0.41.5 (2015-08-04 10:10 UTC)
 + Bug: Backhoe, Chainsaw, Dual Saw, Mining Drill, Pile Driver, and Rock Cutter

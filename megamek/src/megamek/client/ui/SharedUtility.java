@@ -322,6 +322,7 @@ public class SharedUtility {
                         && (entity instanceof VTOL)
                         && (entity.getElevation() > 0)
                         && (targ instanceof Infantry)
+                        && (((Entity)targ).getJumpMP() < 1)
                         && !((Infantry) targ).isMechanized()) {
                     rollTarget = Server.getEjectModifiers(game, (Entity) targ,
                             false, entity.getPosition(), "zip lining");

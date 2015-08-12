@@ -21,7 +21,7 @@ v0.41.6-dev (SVN)
 + Bug: Possible IndexOutOfBoundsException in ProtoMech.isSecondaryArcWeapon()
     when checking quads.
 + additions to Mounted to account for each troopers equipment in MHQ
-+ Data: New Sprites and Mechset fixes.
++ Data: New Sprites and Mechset fixes. 
 + Bug [#4571]: Tertiary Swarm LRM attacks suddenly blocked by lack of LOS again 
 + Bug: KeyBinds non-functional and all set to -1 if defaultKeyBind.xml not found
 + Bug: Firing arcs for Aeros on ground map not multiplied by 8
@@ -30,6 +30,7 @@ v0.41.6-dev (SVN)
 + Bug: Fixed a number of case-mismatches in mechset and wreckset
 + Bug: Artillery flak attacks use gunnery skill, even if artillery skill is on
 + Bug [#4590]: Jump Infantry Forced to Use Zip Line
++ TESTING
 
 v0.41.5 (2015-08-04 10:10 UTC)
 + Bug: Backhoe, Chainsaw, Dual Saw, Mining Drill, Pile Driver, and Rock Cutter

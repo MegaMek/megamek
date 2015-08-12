@@ -28,6 +28,7 @@ v0.41.6-dev (SVN)
 + Bug [#4583]: Using VGLs, target information lost when cycling through weapons
 + Feature: Added MechSetTest tool to check for errors in mechset and wreckset
 + Bug: Fixed a number of case-mismatches in mechset and wreckset
++ Bug: Artillery flak attacks use gunnery skill, even if artillery skill is on
 
 v0.41.5 (2015-08-04 10:10 UTC)
 + Bug: Backhoe, Chainsaw, Dual Saw, Mining Drill, Pile Driver, and Rock Cutter

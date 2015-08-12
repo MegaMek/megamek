@@ -21,6 +21,7 @@ v0.41.6-dev (SVN)
 + Bug: Possible IndexOutOfBoundsException in ProtoMech.isSecondaryArcWeapon()
     when checking quads.
 + additions to Mounted to account for each troopers equipment in MHQ
++ Data: New Sprites and Mechset fixes.
 
 v0.41.5 (2015-08-04 10:10 UTC)
 + Bug: Backhoe, Chainsaw, Dual Saw, Mining Drill, Pile Driver, and Rock Cutter

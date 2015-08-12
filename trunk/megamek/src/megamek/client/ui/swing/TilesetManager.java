@@ -70,7 +70,7 @@ import megamek.common.util.DirectoryItems;
  * @author Ben
  */
 public class TilesetManager implements IPreferenceChangeListener, ITilesetManager {
-    private static final String DIR_NAME_WRECKS = "wrecks"; //$NON-NLS-1$
+    public static final String DIR_NAME_WRECKS = "wrecks"; //$NON-NLS-1$
 
     private static final String FILENAME_DEFAULT_HEX_SET = "defaulthexset.txt"; //$NON-NLS-1$
     private static final String FILENAME_NIGHT_IMAGE = new File("transparent", "night.png").toString();  //$NON-NLS-1$  //$NON-NLS-2$

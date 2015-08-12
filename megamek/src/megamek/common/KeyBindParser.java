@@ -15,6 +15,7 @@
 
 package megamek.common;
 
+import java.awt.event.KeyEvent;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -154,13 +155,20 @@ public class KeyBindParser {
 					" xsi:noNamespaceSchemaLocation=\"keyBindingSchema.xsl\">\n");
 			
 			for (KeyCommandBind kcb : KeyCommandBind.values()){
-				output.write("<KeyBind>\n");
-				output.write("    <command>"+kcb.cmd+"</command>\n");
-				output.write("    <keyCode>"+kcb.key+"</keyCode>\n");
-				output.write("    <modifier>"+kcb.modifiers+"</modifier>\n");
-				output.write("    <isRepeatable>"+kcb.isRepeatable
+				output.write("    <KeyBind>\n");
+				output.write("         <command>"+kcb.cmd+"</command> ");
+				String keyTxt = "";
+				if (kcb.modifiers != 0) {
+				    keyTxt = KeyEvent.getKeyModifiersText(kcb.modifiers);
+				    keyTxt += "-";
+				}
+				keyTxt += KeyEvent.getKeyText(kcb.key);
+				output.write("<!-- " + keyTxt + " -->\n");
+				output.write("        <keyCode>"+kcb.key+"</keyCode>\n");
+				output.write("        <modifier>"+kcb.modifiers+"</modifier>\n");
+				output.write("        <isRepeatable>"+kcb.isRepeatable
 						+"</isRepeatable>\n");
-				output.write("</KeyBind>\n");
+				output.write("    </KeyBind>\n");
 				output.write("\n");
 			}
 			

@@ -24,38 +24,38 @@ import java.util.ArrayList;
  *
  */
 public enum KeyCommandBind {
-	SCROLL_NORTH("scrollN",true),
-	SCROLL_SOUTH("scrollS",true),
-	SCROLL_EAST("scrollE",true),
-	SCROLL_WEST("scrollW",true),
+	SCROLL_NORTH("scrollN",true, 87, 0), // Default: W
+	SCROLL_SOUTH("scrollS",true, 83, 0), // Default: S
+	SCROLL_EAST("scrollE",true, 68, 0),  // Default: D
+	SCROLL_WEST("scrollW",true, 65, 0),  // Default: A
 	// Toggles isometric view on/off
-	TOGGLE_ISO("toggleIso",false),
+	TOGGLE_ISO("toggleIso",false, 84, 0),// Default: T
 	// Activates chat box
-    TOGGLE_CHAT("toggleChat",false),
+    TOGGLE_CHAT("toggleChat",false, 10, 0), // Default: Enter
 	// Activates chat box and adds the command character (/)
-	TOGGLE_CHAT_CMD("toggleChatCmd", false),
+	TOGGLE_CHAT_CMD("toggleChatCmd", false, 47, 0), // Default: /
 	// Change facing one hexside to the left
-	TURN_LEFT("turnLeft",false),
+	TURN_LEFT("turnLeft",false, 65, 1), // Default: Shift-A
 	// Change facing one hexside to the right
-	TURN_RIGHT("turnRight",false),
+	TURN_RIGHT("turnRight",false, 68, 1), // Default: Shift-D
 	// Change facing one hexside to the left
-	TWIST_LEFT("twistLeft",false),
+	TWIST_LEFT("twistLeft",false, 65, 1), // Default: Shift-A
 	// Change facing one hexside to the right
-	TWIST_RIGHT("twistRight",false),
+	TWIST_RIGHT("twistRight",false, 68, 1), // Default: Shift-D
 	// Fire the currently selected weapon
-	FIRE("fire", false),
-	NEXT_WEAPON("nextWeapon", false),
-	PREV_WEAPON("prevWeapon", false),
-	NEXT_UNIT("nextUnit", false),
-	PREV_UNIT("prevUnit", false),
-	NEXT_TARGET("nextTarget", false),
-	PREV_TARGET("prevTarget", false),
+	FIRE("fire", false, 70, 0), // Default: F
+	NEXT_WEAPON("nextWeapon", false, 81, 1), // Default: Q
+	PREV_WEAPON("prevWeapon", false, 69, 1), // Default: E
+	NEXT_UNIT("nextUnit", false, 67, 0), // Default: C
+	PREV_UNIT("prevUnit", false, 90, 0), // Default: Z
+	NEXT_TARGET("nextTarget", false, 81, 1), // Default: Shift-Q
+	PREV_TARGET("prevTarget", false, 69, 1), // Default: Shift-E
 	// Undo an action, such as a move step in the movement phase
-	UNDO("undo",false),
-	MOVE_ENVELOPE("movementEnvelope",false),
-	CENTER_ON_SELECTED("centerOnSelected",false),
-	AUTO_ARTY_DEPLOYMENT_ZONE("autoArtyDeployZone",false),
-	FIELD_FIRE("fieldOfFire",false);
+	UNDO("undo",false, 8, 0), // Default: Backspace
+	MOVE_ENVELOPE("movementEnvelope",false, 82, 0), // Default: R
+	CENTER_ON_SELECTED("centerOnSelected",false, 32, 0), // Default: Space
+	AUTO_ARTY_DEPLOYMENT_ZONE("autoArtyDeployZone",false, 90, 1), // Default: Shift-Z
+	FIELD_FIRE("fieldOfFire",false, 82, 1); // Default: Shift-R
 	
 	/**
 	 * The command associated with this binding.
@@ -82,10 +82,10 @@ public enum KeyCommandBind {
 	 */
 	public boolean isRepeatable;
 	
-	private KeyCommandBind(String c, boolean r){
+	private KeyCommandBind(String c, boolean r, int k, int m){
 		cmd = c;
-		key = -1;
-		modifiers = 0;
+		key = k;
+		modifiers = m;
 		isRepeatable = r;
 	}
 	

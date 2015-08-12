@@ -25,6 +25,7 @@ v0.41.6-dev (SVN)
 + Bug [#4571]: Tertiary Swarm LRM attacks suddenly blocked by lack of LOS again 
 + Bug: KeyBinds non-functional and all set to -1 if defaultKeyBind.xml not found
 + Bug: Firing arcs for Aeros on ground map not multiplied by 8
++ Bug [#4583]: Using VGLs, target information lost when cycling through weapons
 
 v0.41.5 (2015-08-04 10:10 UTC)
 + Bug: Backhoe, Chainsaw, Dual Saw, Mining Drill, Pile Driver, and Rock Cutter

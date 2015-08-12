@@ -337,6 +337,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
     private static final long serialVersionUID = -5728839963281503332L;
     private JComboBox<String> weapSortOrder;
     public JList<String> weaponList;
+    /**
+     * Keep track of the previous target, used for certain weapons (like VGLs)
+     * that will force a target.  With this, we can restore the previous target
+     * after the forced target.
+     */
+    private Targetable prevTarget = null;
     private JComboBox<String> m_chAmmo;
     public JComboBox<String> m_chBayWeapon;
 
@@ -2432,13 +2438,31 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                     mounted = ((WeaponListModel) weaponList.getModel())
                             .getWeaponAt(weaponList.getSelectedIndex());
                 }
+                Mounted prevMounted = null;
+                if (event.getLastIndex() != -1) {
+                    prevMounted = ((WeaponListModel) weaponList.getModel())
+                            .getWeaponAt(event.getLastIndex());
+                }
                 // Some weapons have a specific target, which gets handled
                 // in the target method
                 if (mounted != null
                         && mounted.getType().hasFlag(WeaponType.F_VGL)) {
+                    // Store previous target, if it's a weapon that doesn't 
+                    // have a forced target
+                    if ((prevMounted != null)
+                            && !prevMounted.getType().hasFlag(WeaponType.F_VGL)) {
+                        prevTarget = firingDisplay.getTarget();
+                    }                    
                     firingDisplay.target(null);
                 } else {
-                    firingDisplay.updateTarget();
+                    if (prevTarget != null) {
+                        firingDisplay.target(prevTarget);
+                        unitDisplay.getClientGUI().getBoardView()
+                                .select(prevTarget.getPosition());
+                        prevTarget = null;
+                    } else {
+                        firingDisplay.updateTarget();
+                    }
                 }
             } else if (currPanel instanceof TargetingPhaseDisplay) {
                 ((TargetingPhaseDisplay) currPanel).updateTarget();

@@ -31187,8 +31187,9 @@ public class Server implements Runnable {
         if (autoEject) {
             rollTarget.addModifier(1, "automatic ejection");
         }
-        if (entity.getInternal(Mech.LOC_HEAD) < entity
-                .getOInternal(Mech.LOC_HEAD)) {
+        if ((entity instanceof Mech)
+                && entity.getInternal(Mech.LOC_HEAD) < entity
+                        .getOInternal(Mech.LOC_HEAD)) {
             rollTarget.addModifier(
                     entity.getOInternal(Mech.LOC_HEAD)
                             - entity.getInternal(Mech.LOC_HEAD),

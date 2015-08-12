@@ -687,7 +687,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                                  "swarming", ToHitData.HIT_SWARM_CONVENTIONAL,
                                  side);
         } else if (isArtilleryFLAK) {
-            toHit = new ToHitData(ae.getCrew().getGunnery(), "gunnery skill");
+            if (game.getOptions().booleanOption("artillery_skill")) {
+                toHit = new ToHitData(ae.getCrew().getArtillery(),
+                        "artillery skill");
+            } else {
+                toHit = new ToHitData(ae.getCrew().getGunnery(),
+                        "gunnery skill");
+            }
             toHit.addModifier(3, "artillery flak attack");
             if ((te != null) && te.isAirborne()) {
                 if (te.getAltitude() > 3) {

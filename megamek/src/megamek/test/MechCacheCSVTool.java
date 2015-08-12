@@ -31,7 +31,7 @@ import megamek.common.TechConstants;
 
 /**
  * This class provides a utility to read in all of the data/mechfiles and print
- * that data out into a CVS format.
+ * that data out into a CSV format.
  * 
  * @author arlith
  *

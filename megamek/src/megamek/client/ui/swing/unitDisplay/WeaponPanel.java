@@ -107,6 +107,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
 
         @Override
         public void mouseDragged(MouseEvent e) {
+            removeListeners();
+            
             Object src = e.getSource();
             // Check to see if we are in a state we care about
             if (!mouseDragging || !(src instanceof JList)) {
@@ -127,9 +129,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 if (weapSortOrder.getSelectedIndex() != customId) {
                     // Set the order to custom
                     ent.setWeaponSortOrder(Entity.WeaponSortOrder.CUSTOM);
-                    weapSortOrder.removeActionListener(WeaponPanel.this);
                     weapSortOrder.setSelectedIndex(customId);
-                    weapSortOrder.addActionListener(WeaponPanel.this);
                 }
                 // Update custom order
                 for (int i = 0; i < srcModel.getSize(); i++) {
@@ -141,6 +141,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                             .updateSaveWeaponOrderMenuItem();
                 }
             }
+            addListeners();
         }
     }
     
@@ -425,7 +426,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             String entry = "MechDisplay.WeaponSortOrder." + s.i18nEntry;
             weapSortOrder.addItem(Messages.getString(entry));
         }
-        weapSortOrder.addActionListener(this);
         add(weapSortOrder,
                 GBC.eol().insets(15, 9, 15, 1)
                    .fill(GridBagConstraints.HORIZONTAL)
@@ -435,7 +435,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
 
         // weapon list
         weaponList = new JList<String>(new DefaultListModel<String>());
-        weaponList.addListSelectionListener(this);
         WeaponListMouseAdapter mouseAdapter = new WeaponListMouseAdapter();
         weaponList.addMouseListener(mouseAdapter);
         weaponList.addMouseMotionListener(mouseAdapter);
@@ -460,14 +459,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         wAmmo.setOpaque(false);
         wAmmo.setForeground(Color.WHITE);
         m_chAmmo = new JComboBox<String>();
-        m_chAmmo.addActionListener(this);
 
         wBayWeapon = new JLabel(
                 Messages.getString("MechDisplay.Weapon"), SwingConstants.LEFT); //$NON-NLS-1$
         wBayWeapon.setOpaque(false);
         wBayWeapon.setForeground(Color.WHITE);
         m_chBayWeapon = new JComboBox<String>();
-        m_chBayWeapon.addActionListener(this);
 
         add(wBayWeapon, GBC.std().insets(15, 1, 1, 1).gridy(gridy).gridx(0));
 
@@ -830,6 +827,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                .gridheight(2));
         gridy++;
 
+        addListeners();
+        
         setBackGround();
         onResize();
     }
@@ -932,7 +931,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
      * fix the ammo when it's added
      */
     public void displayMech(Entity en) {
-
+        removeListeners();
+        
         // Grab a copy of the game.
         IGame game = null;
 
@@ -1180,6 +1180,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             wExtR.setVisible(false);
         }
         onResize();
+        addListeners();
     }
 
     public int getSelectedEntityId() {
@@ -1255,12 +1256,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         return -1;
     }
 
-    /**
-     * Selects the next valid weapon in the weapon list.
-     *
-     * @return The weaponId for the selected weapon
-     */
-    public int selectNextWeapon() {
+    public int getNextWeaponListIdx() {
         int selected = weaponList.getSelectedIndex();
         // In case nothing was selected
         if (selected == -1) {
@@ -1282,22 +1278,15 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                     .getWeaponAt(selected);
         } while (!hasLooped && !entity.isWeaponValidForPhase(selectedWeap));
 
-        weaponList.setSelectedIndex(selected);
-        weaponList.ensureIndexIsVisible(selected);
         if ((selected >= 0) && (selected < entity.getWeaponList().size())
                 && !hasLooped) {
-            return entity.getEquipmentNum(selectedWeap);
+            return selected;
         } else {
             return -1;
-        }
+        } 
     }
-
-    /**
-     * Selects the prevous valid weapon in the weapon list.
-     *
-     * @return The weaponId for the selected weapon
-     */
-    public int selectPrevWeapon() {
+    
+    public int getPrevWeaponListIdx() {
         int selected = weaponList.getSelectedIndex();
         // In case nothing was selected
         if (selected == -1) {
@@ -1318,11 +1307,53 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                     .getWeaponAt(selected);
         } while (!hasLooped && !entity.isWeaponValidForPhase(selectedWeap));
 
-        weaponList.setSelectedIndex(selected);
-        weaponList.ensureIndexIsVisible(selected);
         if ((selected >= 0) && (selected < entity.getWeaponList().size())
                 && !hasLooped) {
-            return entity.getEquipmentNum(selectedWeap);
+            return selected;
+        } else {
+            return -1;
+        }
+    }
+    
+    public int getNextWeaponNum() {
+        int selected = getNextWeaponListIdx();
+        if ((selected >= 0) && (selected < entity.getWeaponList().size())) {
+            return entity.getEquipmentNum(((WeaponListModel) weaponList
+                    .getModel()).getWeaponAt(selected));
+        } else {
+            return -1;
+        }
+    }
+    
+    /**
+     * Selects the next valid weapon in the weapon list.
+     *
+     * @return The weaponId for the selected weapon
+     */
+    public int selectNextWeapon() {
+        int selected = getNextWeaponListIdx();
+        weaponList.setSelectedIndex(selected);
+        weaponList.ensureIndexIsVisible(selected);
+        if ((selected >= 0) && (selected < entity.getWeaponList().size())) {
+            return entity.getEquipmentNum(((WeaponListModel) weaponList
+                    .getModel()).getWeaponAt(selected));
+        } else {
+            return -1;
+        }
+    }
+
+    /**
+     * Selects the prevous valid weapon in the weapon list.
+     *
+     * @return The weaponId for the selected weapon
+     */
+    public int selectPrevWeapon() {
+        int selected = getPrevWeaponListIdx();
+        weaponList.setSelectedIndex(selected);
+        weaponList.ensureIndexIsVisible(selected);
+        if ((selected >= 0) && (selected < entity.getWeaponList().size())) {
+            return entity.getEquipmentNum(((WeaponListModel) weaponList
+                    .getModel()).getWeaponAt(selected));
         } else {
             return -1;
         }
@@ -1333,6 +1364,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
      * displays the selected item from the list in the weapon display panel.
      */
     private void displaySelected() {
+        removeListeners();
         // short circuit if not selected
         if (weaponList.getSelectedIndex() == -1) {
             ((DefaultComboBoxModel<String>) m_chAmmo.getModel())
@@ -1803,9 +1835,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             m_chAmmo.setEnabled(false);
             Mounted mountedAmmo = mounted.getLinked();
             if (mountedAmmo != null) {
-                m_chAmmo.removeActionListener(this);
                 m_chAmmo.addItem(formatAmmo(mountedAmmo));
-                m_chAmmo.addActionListener(this);
             }
         } else {
             m_chAmmo.setEnabled(true);
@@ -1835,9 +1865,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                     && (atype.getRackSize() == wtype.getRackSize())) {
 
                     vAmmo.add(mountedAmmo);
-                    m_chAmmo.removeActionListener(this);
                     m_chAmmo.addItem(formatAmmo(mountedAmmo));
-                    m_chAmmo.addActionListener(this);
                     if ((mounted.getLinked() != null) &&
                         mounted.getLinked().equals(mountedAmmo)) {
                         nCur = i;
@@ -1854,6 +1882,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         setFieldofFire(mounted);
         unitDisplay.processMechDisplayEvent(new MechDisplayEvent(this, entity, mounted));
         onResize();
+        addListeners();
     }
     
     // this gathers all the range data 
@@ -2420,10 +2449,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             return;
         }
         if (event.getSource().equals(weaponList)) {
-            m_chBayWeapon.removeAllItems();
             displaySelected();
             
-            // Can't do anythign if ClientGUI is null
+            // Can't do anything if ClientGUI is null
             if (unitDisplay.getClientGUI() == null) {
                 return;
             }
@@ -2434,14 +2462,16 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 FiringDisplay firingDisplay = (FiringDisplay)currPanel;
 
                 Mounted mounted = null;
+                WeaponListModel weaponModel = (WeaponListModel) weaponList
+                        .getModel();
                 if (weaponList.getSelectedIndex() != -1) {
-                    mounted = ((WeaponListModel) weaponList.getModel())
-                            .getWeaponAt(weaponList.getSelectedIndex());
+                    mounted = weaponModel.getWeaponAt(weaponList
+                            .getSelectedIndex());
                 }
                 Mounted prevMounted = null;
-                if (event.getLastIndex() != -1) {
-                    prevMounted = ((WeaponListModel) weaponList.getModel())
-                            .getWeaponAt(event.getLastIndex());
+                if ((event.getLastIndex() != -1) 
+                        && (event.getLastIndex() < weaponModel.getSize())) {
+                    prevMounted = weaponModel.getWeaponAt(event.getLastIndex());
                 }
                 // Some weapons have a specific target, which gets handled
                 // in the target method
@@ -2599,5 +2629,21 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                     .updateSaveWeaponOrderMenuItem();
         }
         ((WeaponListModel)weaponList.getModel()).sort(weapComparator);
+    }
+    
+    private void addListeners() {
+        weapSortOrder.addActionListener(this);
+        m_chAmmo.addActionListener(this);
+        m_chBayWeapon.addActionListener(this);
+        
+        weaponList.addListSelectionListener(this);
+    }
+    
+    private void removeListeners() {
+        weapSortOrder.removeActionListener(this);
+        m_chAmmo.removeActionListener(this);
+        m_chBayWeapon.removeActionListener(this);
+        
+        weaponList.removeListSelectionListener(this);
     }
 }

@@ -1377,7 +1377,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         mounted.setUsedThisRound(true);
 
         // find the next available weapon
-        int nextWeapon = clientgui.mechD.wPan.selectNextWeapon();
+        int nextWeapon = clientgui.mechD.wPan.getNextWeaponNum();
 
         // we fired a weapon, can't clear turret jams or weapon jams anymore
         updateClearTurret();

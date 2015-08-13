@@ -30,8 +30,8 @@ v0.41.6-dev (SVN)
 + Bug: Fixed a number of case-mismatches in mechset and wreckset
 + Bug: Artillery flak attacks use gunnery skill, even if artillery skill is on
 + Bug [#4590]: Jump Infantry Forced to Use Zip Line
-+ TESTING
 + minor changes to Protomechs for MHQ purposes, should not affect MM
++ Data: New Sprites and Mechset fixes. 
 
 v0.41.5 (2015-08-04 10:10 UTC)
 + Bug: Backhoe, Chainsaw, Dual Saw, Mining Drill, Pile Driver, and Rock Cutter

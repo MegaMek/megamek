@@ -33,6 +33,7 @@ v0.41.6-dev (SVN)
 + minor changes to Protomechs for MHQ purposes, should not affect MM
 + Data: New Sprites and Mechset fixes.
 + Bug [#4591]: Firing causes weapons to vanish
++ Bug: EquipmentType.equals does not properly override Object.equals
 
 v0.41.5 (2015-08-04 10:10 UTC)
 + Bug: Backhoe, Chainsaw, Dual Saw, Mining Drill, Pile Driver, and Rock Cutter

@@ -821,9 +821,14 @@ public class EquipmentType {
         return armorPointMultipliers[inArmor];
     }
 
-    public boolean equals(EquipmentType e) {
+    @Override
+    public boolean equals(Object e) {
+    	if(null == e || !(e instanceof EquipmentType)) {
+    		return false;
+    	}
         try {
-            if ((e != null) && internalName.equals(e.internalName)) {
+        	EquipmentType et = (EquipmentType)e;
+            if (internalName.equals(et.internalName)) {
                 return true;
             }
         } catch (Exception ex) {

@@ -12398,6 +12398,9 @@ public class AmmoType extends EquipmentType {
             }
             if (munition.getMunitionType() == AmmoType.M_HOMING) {
                 cost = 15000;
+                // Allow Homing munitions to instantly switch between modes
+                munition.instantModeSwitch = true;
+                munition.setModes(new String[] { "Homing", "Non-Homing" });
             }
             if (munition.getMunitionType() == AmmoType.M_FASCAM) {
                 cost *= 1.5;

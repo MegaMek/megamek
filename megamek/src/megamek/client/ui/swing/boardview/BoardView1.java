@@ -2845,6 +2845,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             addFlyOverPath(entity);
         }
 
+        updateEcmList();
         scheduleRedraw();
     }
 

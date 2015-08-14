@@ -344,6 +344,8 @@ public class MoveStep implements Serializable {
                 return "Fly Off (Return)";
             case OFF:
                 return "Fly Off";
+            case FLEE:
+                return "Flee";
             default:
                 return "???";
         }

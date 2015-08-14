@@ -1605,18 +1605,23 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
             if ((getMovementMode() != EntityMovementMode.NAVAL)
-                && (getMovementMode() != EntityMovementMode.HYDROFOIL)
-                && (next.containsTerrain(Terrains.BRIDGE) || current
-                    .containsTerrain(Terrains.BRIDGE))) {
-                int brdnex = Math.max(-(next.depth(true)),
-                                      next.terrainLevel(Terrains.BRIDGE_ELEV));
-                if (Math.abs((next.surface() + brdnex)
-                             - (current.surface() + assumedElevation)) <= getMaxElevationChange()) {
+                    && (getMovementMode() != EntityMovementMode.HYDROFOIL)
+                    && (next.containsTerrain(Terrains.BRIDGE) || current
+                            .containsTerrain(Terrains.BRIDGE))) {
+                int bridgeElev;
+                if (next.containsTerrain(Terrains.BRIDGE)) {
+                    bridgeElev = next.terrainLevel(Terrains.BRIDGE_ELEV);
+                } else {
+                    bridgeElev = 0;
+                }
+                int elevDiff = Math.abs((next.surface() + bridgeElev)
+                        - (current.surface() + assumedElevation)); 
+                if (elevDiff <= getMaxElevationChange()) {
                     // bridge is reachable at least
                     if (climb || !isElevationValid(retVal, next)) {
                         // use bridge if you can't use the base terrain or if
                         // you prefer to by climb mode
-                        retVal = brdnex;
+                        retVal = bridgeElev;
                     }
                 }
             }

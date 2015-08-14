@@ -2240,11 +2240,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // We need to adjust the height based on several cases
         int elevOffset = oHex.terrainLevel(Terrains.BRIDGE_ELEV);
-        // Negative elevation drops the hex down, so we need to compensate
-        int level = oHex.getLevel();
-        if (level < 0) {
-            elevOffset += -1 * level;
-        }
 
         int orthX = oHexLoc.x;
         int orthY = oHexLoc.y - (int) (HEX_ELEV * scale * elevOffset);

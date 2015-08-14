@@ -408,6 +408,9 @@ public class BombType extends AmmoType {
         bomb.ammoType = AmmoType.T_ARROW_IV_BOMB;
         bomb.bombType = BombType.B_HOMING;
         bomb.munitionType = AmmoType.M_HOMING;
+        // Allow Homing munitions to instantly switch between modes
+        bomb.instantModeSwitch = true;
+        bomb.setModes(new String[] { "Homing", "Non-Homing" });
         bomb.flags = bomb.flags.or(AmmoType.F_SPACE_BOMB);
         bomb.shots = 1;
         bomb.bv = 0;

@@ -444,7 +444,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (atype != null) {
             munition = atype.getMunitionType();
         }
-        if (munition == AmmoType.M_HOMING) {
+        if (munition == AmmoType.M_HOMING && ammo.curMode().equals("Homing")) {
             // target type checked later because its different for
             // direct/indirect (BMRr p77 on board arrow IV)
             isHoming = true;
@@ -3130,7 +3130,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (atype != null) {
                 munition = atype.getMunitionType();
             }
-            if (munition == AmmoType.M_HOMING) {
+            if (munition == AmmoType.M_HOMING
+                    && ammo.curMode().equals("Homing")) {
                 // target type checked later because its different for
                 // direct/indirect (BMRr p77 on board arrow IV)
                 isHoming = true;

@@ -41,7 +41,12 @@ public class ECMInfo implements Comparable<Object> {
      * The id of the owning player, used to determine information about who
      * are allies and enemies when looking at other <code>ECMInfo</code>s.
      */
-    private IPlayer owner;
+    private IPlayer owner = null;
+    
+    /**
+     * The Entity that is generating the ECM field.
+     */
+    private Entity owningEntity = null;
     
     /**
      * The strength of the ECM field, counted in number of fields.  This could
@@ -89,15 +94,15 @@ public class ECMInfo implements Comparable<Object> {
     }
     
     public ECMInfo(int range, double strength, Entity e) {
+        owningEntity = e;
         owner = e.getOwner();
         pos = e.getPosition();        
         this.range = range;
-        this.strength = strength;
+        this.strength = strength;        
     }
     
     public ECMInfo(int range, Coords pos, IPlayer owner, double strength,
             int angelStrength) {
-
         this.range = range;
         this.pos = pos;
         this.owner = owner;
@@ -410,5 +415,13 @@ public class ECMInfo implements Comparable<Object> {
 
     public void setECMNova(boolean isECMNova) {
         this.isECMNova = isECMNova;
+    }
+
+    public Entity getEntity() {
+        return owningEntity;
+    }
+
+    public void setEntity(Entity owningEntity) {
+        this.owningEntity = owningEntity;
     }
 }

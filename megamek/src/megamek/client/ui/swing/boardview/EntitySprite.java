@@ -57,8 +57,14 @@ class EntitySprite extends Sprite {
     private Rectangle modelRect;
 
     private int secondaryPos;
+    
+    /**
+     * Keep track of ECM state, as it's too expensive to compute on the fly.
+     */
+    private boolean isAffectedByECM = false;
 
-    public EntitySprite(BoardView1 boardView1, final Entity entity, int secondaryPos, Image radarBlipImage) {
+    public EntitySprite(BoardView1 boardView1, final Entity entity,
+            int secondaryPos, Image radarBlipImage) {
         super(boardView1);
         this.entity = entity;
         this.radarBlipImage = radarBlipImage;
@@ -582,6 +588,15 @@ class EntitySprite extends Sprite {
                     graph.drawString(msg, 22, 70); //$NON-NLS-1$
                 }
             }
+            
+            // Notify ECM effects
+            if (isAffectedByECM()) {
+                graph.setColor(Color.black);
+                String msg = Messages.getString("BoardView1.Jammed");
+                graph.drawString(msg, 22, 51); //$NON-NLS-1$
+                graph.setColor(Color.red);
+                graph.drawString(msg, 21, 50); //$NON-NLS-1$
+            }
 
             // Lets draw our armor and internal status bars
             int baseBarLength = 23;
@@ -893,6 +908,11 @@ class EntitySprite extends Sprite {
         if ((thisGunEmp == null) && (entity.isImmobile()))
             addToTT("Immobile", BR);
         
+        // Jammed by ECM
+        if (isAffectedByECM()) {
+            addToTT("Jammed", BR);
+        }
+        
         // Weapon List
         if (GUIPreferences.getInstance()
                 .getBoolean(GUIPreferences.SHOW_WPS_IN_TT)) {
@@ -1004,6 +1024,19 @@ class EntitySprite extends Sprite {
         } else {
             return Integer.toHexString(PlayerColors.getColorRGB(entity
                     .getOwner().getColorIndex()));
+        }
+    }
+
+    public boolean isAffectedByECM() {
+        return isAffectedByECM;
+    }
+
+    public void setAffectedByECM(boolean isAffectedByECM) {
+        boolean changed = isAffectedByECM != this.isAffectedByECM;
+        this.isAffectedByECM = isAffectedByECM;
+        // We need to prepare the icon again if the value changed
+        if (changed) {
+            prepare();
         }
     }
 }

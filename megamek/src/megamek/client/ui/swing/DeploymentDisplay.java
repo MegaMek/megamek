@@ -494,7 +494,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     JOptionPane.ERROR_MESSAGE);
             return;
         } else if (isAero && board.inAtmosphere()
-                && (ce().getElevation() <= board.getHex(moveto).ceiling())) {
+                && (ce().getElevation() <= board.getHex(moveto).ceiling(true))) {
             // Ensure aeros don't end up at lower elevation than the current hex
             title = Messages.getString("DeploymentDisplay.alertDialog.title"); //$NON-NLS-1$
             msg = Messages.getString("DeploymentDisplay.elevationTooLow",

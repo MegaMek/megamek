@@ -1824,7 +1824,7 @@ public class MoveStep implements Serializable {
             if ((type == MoveStepType.FORWARDS)
                     && game.getBoard().inAtmosphere() && !a.isOutControl()) {
                 IHex desth = game.getBoard().getHex(getPosition());
-                if (altitude <= desth.ceiling()) {
+                if (altitude <= desth.ceiling(true)) {
                     return; // can't fly into a cliff face or woods (unless out
                     // of control)
                 }

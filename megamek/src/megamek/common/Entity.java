@@ -1697,7 +1697,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             case SPHEROID:
                 assumedAlt = assumedElevation;
                 if (game.getBoard().inAtmosphere()) {
-                    minAlt = hex.ceiling() + 1;
+                    minAlt = hex.ceiling(true) + 1;
                 } else if (game.getBoard().onGround() && isAirborne()) {
                     minAlt = 1;
                 }
@@ -11639,7 +11639,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         if (game.getBoard().inAtmosphere()) {
             return (1 == (getAltitude() - game.getBoard().getHex(getPosition())
-                                              .ceiling()));
+                    .ceiling(true)));
         }
         if (game.getBoard().onGround()) {
             return 1 == getAltitude();

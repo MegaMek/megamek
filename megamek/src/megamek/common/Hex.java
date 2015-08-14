@@ -271,12 +271,16 @@ public class Hex implements IHex, Serializable {
      * @see megamek.common.IHex#ceiling()
      */
     public int ceiling() {
+        return ceiling(false);
+    }
+    
+    public int ceiling(boolean inAtmosphere) {
         int maxFeature = 0;
 
         //TODO: maxfeature should really be a method in Terrain.java
 
         //planted fields rise one level above the terrain
-        if (containsTerrain(Terrains.FIELDS)) {
+        if (containsTerrain(Terrains.FIELDS) && !inAtmosphere) {
             maxFeature = 1;
         }
 
@@ -284,26 +288,34 @@ public class Hex implements IHex, Serializable {
         // N.B. VTOLs are allowed to enter smoke.
         if (containsTerrain(Terrains.WOODS) ||
                 containsTerrain(Terrains.JUNGLE)) {
-            maxFeature = 2;
+            if (inAtmosphere) {
+                maxFeature = 1;
+            } else {
+                maxFeature = 2;
+            }
         }
         //not so fast ultra jungles and woods are three levels high
         if((terrainLevel(Terrains.WOODS) > 2) ||
                 (terrainLevel(Terrains.JUNGLE) > 2)) {
-            maxFeature = 3;
+            if (inAtmosphere) {
+                maxFeature = 1;
+            } else {
+                maxFeature = 3;
+            }
         }
 
         //account for heavy industrial zones, which can vary in height
-        if (maxFeature < terrainLevel(Terrains.INDUSTRIAL)) {
+        if (maxFeature < terrainLevel(Terrains.INDUSTRIAL) && !inAtmosphere) {
             maxFeature = terrainLevel(Terrains.INDUSTRIAL);
         }
 
         // Account for buildings.
-        if (maxFeature < terrainLevel(Terrains.BLDG_ELEV)) {
+        if (maxFeature < terrainLevel(Terrains.BLDG_ELEV) && !inAtmosphere) {
             maxFeature = terrainLevel(Terrains.BLDG_ELEV);
         }
 
         // Account for bridges.
-        if (maxFeature < terrainLevel(Terrains.BRIDGE_ELEV)) {
+        if (maxFeature < terrainLevel(Terrains.BRIDGE_ELEV) && !inAtmosphere) {
             maxFeature = terrainLevel(Terrains.BRIDGE_ELEV);
         }
 

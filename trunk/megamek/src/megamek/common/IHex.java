@@ -123,9 +123,20 @@ public interface IHex extends Cloneable {
 
     /**
      * @return the highest level that features in this hex extend to. Above this
-     *         level is assumed to be air.
+     *         level is assumed to be air.  This assumes a ground map.
      */
     public abstract int ceiling();
+    
+    /**
+     * 
+     * @param inAtmosphere
+     *            Determines if the ceiling should be determined for an
+     *            atmospheric map (eg, altitudes) or ground map (eg, levels)
+     * @return the highest level or altitude (depending on flag) that features
+     *         in this hex extend to. Above this level is assumed to be air.
+     * 
+     */
+    public abstract int ceiling(boolean inAtmosphere);
 
     /**
      * @return the surface level of the hex. Equal to getLevel().

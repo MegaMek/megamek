@@ -4105,7 +4105,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             IBoard board = clientgui.getClient().getGame().getBoard();
             // On Atmospheric maps, elevations are treated as altitudes, so
             // hex ceiling is the ground
-            int ceil = board.getHex(pos).ceiling();
+            int ceil = board.getHex(pos).ceiling(board.inAtmosphere());
             // On the ground map, Aeros ignore hex elevations
             if (board.onGround()) {
                 ceil = 0;

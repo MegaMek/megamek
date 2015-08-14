@@ -234,17 +234,25 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private boolean shouldScroll = false;
 
     // entity sprites
-    private ArrayList<EntitySprite> entitySprites = new ArrayList<EntitySprite>();
-    private ArrayList<IsometricSprite> isometricSprites = new ArrayList<IsometricSprite>();
+    private List<EntitySprite> entitySprites = new ArrayList<EntitySprite>();
+    private List<IsometricSprite> isometricSprites = new ArrayList<IsometricSprite>();
 
     private ArrayList<FlareSprite> flareSprites = new ArrayList<FlareSprite>();
     /**
-     * A Map that maps an Entity ID and a list of secondary positions to a
-     * Sprite. Note that the key is a List where the first entry will be the
-     * Entity ID and the subsequent entries (if any) will be secondary
-     * positions.
+     * A Map that maps an Entity ID and a secondary position to a Sprite. Note
+     * that the key is a List where the first entry will be the Entity ID and
+     * the second entry will be which secondary position the sprite belongs to;
+     * if the Entity has no secondary positions, the first element will be the
+     * ID and the second element will be -1.
      */
     private Map<List<Integer>, EntitySprite> entitySpriteIds = new HashMap<>();
+    /**
+     * A Map that maps an Entity ID and a secondary position to a Sprite. Note
+     * that the key is a List where the first entry will be the Entity ID and
+     * the second entry will be which secondary position the sprite belongs to;
+     * if the Entity has no secondary positions, the first element will be the
+     * ID and the second element will be -1.
+     */
     private Map<List<Integer>, IsometricSprite> isometricSpriteIds = new HashMap<>();
 
     // sprites for the three selection cursors
@@ -1244,7 +1252,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * @param spriteArrayList The complete list of all IsometricSprite on the board.
      */
     private synchronized void drawIsometricSpritesForHex(Coords c, Graphics g,
-                                                         ArrayList<IsometricSprite> spriteArrayList) {
+            List<IsometricSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricSprite sprite : spriteArrayList) {
             Coords cp = sprite.getPosition();
@@ -1297,7 +1305,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * for all sprites.
      */
     private final void drawIsometricSprites(Graphics g,
-            ArrayList<IsometricSprite> spriteArrayList) {
+            List<IsometricSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricSprite sprite : spriteArrayList) {
             if (view.intersects(sprite.getBounds()) && !sprite.isHidden()) {
@@ -2652,6 +2660,26 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
+     * Convenience method for returning a Key value for the entitySpriteIds and
+     * isometricSprite maps. The List contains as the first element the Entity
+     * ID and as the second element it's location ID: either -1 if the Entity
+     * has no secondary locations, or the index of its secondary location.
+     * 
+     * @param entityId
+     *            The Entity ID
+     * @param secondaryLoc
+     *            the secondary loc index, or -1 for Entitys without secondary
+     *            positions
+     * @return
+     */
+    private List<Integer> getIdAndLoc(Integer entityId, int secondaryLoc) {
+        List<Integer> idLoc = new ArrayList<Integer>(2);
+        idLoc.add(entityId);
+        idLoc.add(secondaryLoc);
+        return idLoc;
+    }
+     
+    /**
      * Clears the sprite for an entity and prepares it to be re-drawn. Replaces
      * the old sprite with the new! Takes a reference to the Entity object
      * before changes, in case it contained important state information, like
@@ -2664,50 +2692,63 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             oldEntity = entity;
         }
 
+        // If the entity we are updating doesn't have a position, ensure we
+        // remove all of its old sprites
         if (entity.getPosition() == null) {
-            for (Iterator<EntitySprite> spriteIter = entitySprites.iterator(); spriteIter
-                    .hasNext();) {
+            Iterator<EntitySprite> spriteIter;
+            
+            // Remove Entity Sprites
+            spriteIter = entitySprites.iterator();
+            while (spriteIter.hasNext()) {
                 EntitySprite sprite = spriteIter.next();
                 if (sprite.entity.equals(entity)) {
                     spriteIter.remove();
                 }
             }
-            for (Iterator<EntitySprite> spriteIter = entitySpriteIds.values()
-                    .iterator(); spriteIter.hasNext();) {
+            
+            //  Update ID -> Sprite map
+            spriteIter = entitySpriteIds.values().iterator();
+            while (spriteIter.hasNext()) {
                 EntitySprite sprite = spriteIter.next();
                 if (sprite.entity.equals(entity)) {
                     spriteIter.remove();
                 }
             }
-            for (Iterator<IsometricSprite> spriteIter = isometricSprites
-                    .iterator(); spriteIter.hasNext();) {
-                IsometricSprite sprite = spriteIter.next();
+            
+            Iterator<IsometricSprite> isoSpriteIter;
+            
+            // Remove IsometricSprites
+            isoSpriteIter = isometricSprites.iterator();
+            while (isoSpriteIter.hasNext()) {
+                IsometricSprite sprite = isoSpriteIter.next();
                 if (sprite.entity.equals(entity)) {
-                    spriteIter.remove();
+                    isoSpriteIter.remove();
                 }
             }
-            for (Iterator<IsometricSprite> spriteIter = isometricSpriteIds
-                    .values().iterator(); spriteIter.hasNext();) {
-                IsometricSprite sprite = spriteIter.next();
+            
+            // Update ID -> Iso Sprite Map
+            isoSpriteIter  = isometricSpriteIds.values().iterator();
+            while (isoSpriteIter.hasNext()) {
+                IsometricSprite sprite = isoSpriteIter.next();
                 if (sprite.entity.equals(entity)) {
-                    spriteIter.remove();
+                    isoSpriteIter.remove();
                 }
             }
         }
 
+        // Create a copy of the sprite list
         ArrayList<EntitySprite> newSprites = new ArrayList<>(entitySprites);
-        HashMap<List<Integer>, EntitySprite> newSpriteIds = new HashMap<>(
-                entitySpriteIds);
-        ArrayList<IsometricSprite> isoSprites = new ArrayList<>(
-                isometricSprites);
-        HashMap<List<Integer>, IsometricSprite> newIsoSpriteIds = new HashMap<>(
-                isometricSpriteIds);
+        HashMap<List<Integer>, EntitySprite> newSpriteIds = 
+                new HashMap<>(entitySpriteIds);
+        ArrayList<IsometricSprite> isoSprites = 
+                new ArrayList<>(isometricSprites);
+        HashMap<List<Integer>, IsometricSprite> newIsoSpriteIds = 
+                new HashMap<>(isometricSpriteIds);
 
-        ArrayList<Integer> temp = new ArrayList<Integer>();
-        temp.add(entityId);
-        temp.add(-1);
-        EntitySprite sprite = entitySpriteIds.get(temp);
-        IsometricSprite isoSprite = isometricSpriteIds.get(temp);
+        // Remove the sprites we are going to update
+        EntitySprite sprite = entitySpriteIds.get(getIdAndLoc(entityId, -1));
+        IsometricSprite isoSprite = isometricSpriteIds.get(getIdAndLoc(
+                entityId, -1));
         if (sprite != null) {
             newSprites.remove(sprite);
         }
@@ -2715,71 +2756,63 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             isoSprites.remove(isoSprite);
         }
         for (int secondaryPos : oldEntity.getSecondaryPositions().keySet()) {
-            temp = new ArrayList<Integer>();
-            temp.add(entityId);
-            temp.add(secondaryPos);
-            sprite = entitySpriteIds.get(temp);
+            sprite = entitySpriteIds.get(getIdAndLoc(entityId, secondaryPos));
             if (sprite != null) {
                 newSprites.remove(sprite);
             }
-            isoSprite = isometricSpriteIds.get(temp);
+            isoSprite = isometricSpriteIds.get(getIdAndLoc(entityId,
+                    secondaryPos));
             if (isoSprite != null) {
                 isoSprites.remove(isoSprite);
             }
-
         }
 
+        // Create the new sprites
         Coords position = entity.getPosition();
         if (position != null) {
+            // Add new EntitySprite
             // If no secondary positions, add a sprite for the central position
             if (entity.getSecondaryPositions().isEmpty()) {
                 sprite = new EntitySprite(this, entity, -1, radarBlipImage);
                 newSprites.add(sprite);
-                temp = new ArrayList<Integer>();
-                temp.add(entityId);
-                temp.add(-1);
-                newSpriteIds.put(temp, sprite);
+                newSpriteIds.put(getIdAndLoc(entityId, -1), sprite);
             } else { // Add all secondary position sprites, which includes a
                 // sprite for the central hex
                 for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
                     sprite = new EntitySprite(this, entity, secondaryPos,
                             radarBlipImage);
                     newSprites.add(sprite);
-                    temp = new ArrayList<Integer>();
-                    temp.add(entityId);
-                    temp.add(secondaryPos);
-                    newSpriteIds.put(temp, sprite);
+                    newSpriteIds.put(getIdAndLoc(entityId, secondaryPos),
+                            sprite);
                 }
             }
 
+            // Add new IsometricSprite
             // If no secondary positions, add a sprite for the central position
             if (entity.getSecondaryPositions().isEmpty()) {
                 isoSprite = new IsometricSprite(this, entity, -1,
                         radarBlipImage);
                 isoSprites.add(isoSprite);
-                temp = new ArrayList<Integer>();
-                temp.add(entityId);
-                temp.add(-1);
-                newIsoSpriteIds.put(temp, isoSprite);
+                newIsoSpriteIds.put(getIdAndLoc(entityId, -1), isoSprite);
             } else { // Add all secondary position sprites, which includes a
                 // sprite for the central hex
                 for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
                     isoSprite = new IsometricSprite(this, entity, secondaryPos,
                             radarBlipImage);
                     isoSprites.add(isoSprite);
-                    temp = new ArrayList<Integer>();
-                    temp.add(entityId);
-                    temp.add(secondaryPos);
-                    newIsoSpriteIds.put(temp, isoSprite);
+                    newIsoSpriteIds.put(getIdAndLoc(entityId, secondaryPos),
+                            isoSprite);
                 }
             }
         }
 
+        // Update Sprite state with new collections
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
         isometricSprites = isoSprites;
         isometricSpriteIds = newIsoSpriteIds;
 
+        // Remove C3 sprites
         for (Iterator<C3Sprite> i = c3Sprites.iterator(); i.hasNext(); ) {
             final C3Sprite c3sprite = i.next();
             if ((c3sprite.entityId == entity.getId())
@@ -2787,17 +2820,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 i.remove();
             }
         }
-        // WOR
+        
+        // Update C3 link, if necessary
         if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS()) {
             addC3Link(entity);
         }
 
-        for (Iterator<FlyOverSprite> i = flyOverSprites.iterator(); i.hasNext(); ) {
-            final FlyOverSprite flyOverSprite = i.next();
+        // Remove Flyover Sprites
+        Iterator<FlyOverSprite> flyOverIt = flyOverSprites.iterator();
+        while (flyOverIt.hasNext()) {
+            final FlyOverSprite flyOverSprite = flyOverIt.next();
             if (flyOverSprite.getEntityId() == entity.getId()) {
-                i.remove();
+                flyOverIt.remove();
             }
         }
+        
+        // Add Flyover path, if necessary
         if (entity.isAirborne() && (entity.getPassedThrough().size() > 1)) {
             addFlyOverPath(entity);
         }
@@ -2809,14 +2847,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Clears all old entity sprites out of memory and sets up new ones.
      */
     void redrawAllEntities() {
-        ArrayList<EntitySprite> newSprites = new ArrayList<EntitySprite>(
-                game.getNoOfEntities());
-        ArrayList<IsometricSprite> newIsometricSprites = new ArrayList<>(
-                game.getNoOfEntities());
-        HashMap<List<Integer>, EntitySprite> newSpriteIds = new HashMap<>(
-                game.getNoOfEntities());
-        HashMap<List<Integer>, IsometricSprite> newIsoSpriteIds = new HashMap<>(
-                game.getNoOfEntities());
+        int numEntities = game.getNoOfEntities();
+        List<EntitySprite> newSprites = new ArrayList<EntitySprite>(numEntities);
+        List<IsometricSprite> newIsometricSprites = new ArrayList<>(numEntities);
+        Map<List<Integer>, EntitySprite> newSpriteIds = new HashMap<>(
+                numEntities);
+        Map<List<Integer>, IsometricSprite> newIsoSpriteIds = new HashMap<>(
+                numEntities);
 
         ArrayList<WreckSprite> newWrecks = new ArrayList<>();
         ArrayList<IsometricWreckSprite> newIsometricWrecks = new ArrayList<>();
@@ -2862,37 +2899,28 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 EntitySprite sprite = new EntitySprite(this, entity, -1,
                         radarBlipImage);
                 newSprites.add(sprite);
-                ArrayList<Integer> temp = new ArrayList<Integer>();
-                temp.add(entity.getId());
-                temp.add(-1);
-                newSpriteIds.put(temp, sprite);
+                newSpriteIds.put(getIdAndLoc(entity.getId(), -1), sprite);
                 IsometricSprite isosprite = new IsometricSprite(this, entity,
                         -1, radarBlipImage);
                 newIsometricSprites.add(isosprite);
-                temp = new ArrayList<Integer>();
-                temp.add(entity.getId());
-                temp.add(-1);
-                newIsoSpriteIds.put(temp, isosprite);
+                newIsoSpriteIds.put(getIdAndLoc(entity.getId(), -1), isosprite);
             } else {
                 for (int secondaryPos : entity.getSecondaryPositions().keySet()) {
                     EntitySprite sprite = new EntitySprite(this, entity,
                             secondaryPos, radarBlipImage);
                     newSprites.add(sprite);
-                    ArrayList<Integer> temp = new ArrayList<Integer>();
-                    temp.add(entity.getId());
-                    temp.add(secondaryPos);
-                    newSpriteIds.put(temp, sprite);
+                    newSpriteIds.put(getIdAndLoc(entity.getId(), secondaryPos),
+                            sprite);
 
                     IsometricSprite isosprite = new IsometricSprite(this,
                             entity, secondaryPos, radarBlipImage);
                     newIsometricSprites.add(isosprite);
-                    temp = new ArrayList<Integer>();
-                    temp.add(entity.getId());
-                    temp.add(secondaryPos);
-                    newIsoSpriteIds.put(temp, isosprite);
+                    newIsoSpriteIds.put(
+                            getIdAndLoc(entity.getId(), secondaryPos),
+                            isosprite);
                 }
             }
-            // WOR
+
             if (entity.hasC3() || entity.hasC3i() || entity.hasActiveNovaCEWS()) {
                 addC3Link(entity);
             }

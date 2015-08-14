@@ -483,6 +483,15 @@ public class BoardEditor extends JComponent implements ItemListener,
      */
     private void addSetTerrain() {
         ITerrain toAdd = enteredTerrain();
+        if (((toAdd.getType() == Terrains.BLDG_ELEV) 
+                || (toAdd.getType() == Terrains.BRIDGE_ELEV))
+                && toAdd.getLevel() < 0) {
+            JOptionPane.showMessageDialog(frame,
+                    Messages.getString("BoardEditor.BridgeBuildingElevError"), //$NON-NLS-1$
+                    Messages.getString("BoardEditor.invalidTerrainTitle"), //$NON-NLS-1$ 
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         curHex.addTerrain(toAdd);
         refreshTerrainList();
         repaintWorkingHex();

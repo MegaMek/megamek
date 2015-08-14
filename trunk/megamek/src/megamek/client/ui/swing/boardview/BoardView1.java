@@ -2944,6 +2944,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         wreckSprites = newWrecks;
         isometricWreckSprites = newIsometricWrecks;
 
+        // Update ECM list, to ensure that Sprites are updated with ECM info
+        updateEcmList();
+        
         scheduleRedraw();
     }
 
@@ -4436,6 +4439,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (e.getPosition() == null) {
                 continue;
             }
+            // If this unit isn't spotted somehow, it's ECM doesn't show up
+            if ((localPlayer != null)
+                    && game.getOptions().booleanOption("double_blind")
+                    && e.getOwner().isEnemyOf(localPlayer)
+                    && !e.hasSeenEntity(localPlayer)
+                    && !e.hasDetectedEntity(localPlayer)) {
+                continue;
+            }
+            
             final Color ecmColor = ECMEffects.getECMColor(e.getOwner());
             // Update ECM center information
             if (e.getECMInfo() != null) {
@@ -4445,12 +4457,32 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (e.getECCMInfo() != null) {
                 newECCMCenters.put(e.getPosition(), ecmColor);
             }
+            // Update Entity sprite's ECM status
+            int secondaryIdx = -1;
+            if (e.getSecondaryPositions().size() > 0) {
+                secondaryIdx = 0;
+            }
+            EntitySprite eSprite = entitySpriteIds.get(getIdAndLoc(e.getId(),
+                    secondaryIdx));
+            if (eSprite != null) {
+                Coords pos = e.getPosition();
+                eSprite.setAffectedByECM(ComputeECM.isAffectedByECM(e, pos,
+                        pos, allEcmInfo));
+            }
         }
 
         // Next, determine what E(C)CM effects each Coord
         Map<Coords, ECMEffects> ecmAffectedCoords =
                 new HashMap<Coords, ECMEffects>();
         for (ECMInfo ecmInfo : allEcmInfo) {
+            // Can't see ECM field of unspotted unit
+            if ((ecmInfo.getEntity() != null) && (localPlayer != null)
+                    && game.getOptions().booleanOption("double_blind")
+                    && ecmInfo.getEntity().getOwner().isEnemyOf(localPlayer)
+                    && !ecmInfo.getEntity().hasSeenEntity(localPlayer)
+                    && !ecmInfo.getEntity().hasDetectedEntity(localPlayer)) {
+                continue;
+            }
             final Coords ecmPos = ecmInfo.getPos();
             final int range = ecmInfo.getRange();
 

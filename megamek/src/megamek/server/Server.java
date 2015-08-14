@@ -5819,7 +5819,7 @@ public class Server implements Runnable {
         // if we're off the map, assume hex ceiling 0
         int ceiling = 0;
         if (game.getBoard().getHex(pos) != null) {
-            ceiling = game.getBoard().getHex(pos).ceiling();
+            ceiling = game.getBoard().getHex(pos).ceiling(true);
         }
         return ceiling >= altitude;
     }
@@ -11960,9 +11960,9 @@ public class Server implements Runnable {
                 // make sure that entity is above the level of the hex if in
                 // atmosphere
                 if (game.getBoard().inAtmosphere()
-                    && (a.getAltitude() <= hex.ceiling())) {
+                    && (a.getAltitude() <= hex.ceiling(true))) {
                     // you can't be grounded on low atmosphere map
-                    a.setAltitude(hex.ceiling() + 1);
+                    a.setAltitude(hex.ceiling(true) + 1);
                 }
             }
         } else if (entity.getMovementMode() == EntityMovementMode.SUBMARINE) {

@@ -824,7 +824,6 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                 if ((m != null)
                         && bOwner
                         && (m.getType() instanceof AmmoType)
-                        && !m.getType().hasInstantModeSwitch()
                         && (client.getGame().getPhase() != IGame.Phase.PHASE_DEPLOYMENT)
                         && (client.getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)
                         && (m.getUsableShotsLeft() > 0)
@@ -847,8 +846,9 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                         && (m.getLinked() != null)
                         && (m.getLinked().getUsableShotsLeft() > 0)) {
                     m_bDumpAmmo.setEnabled(true);
-                } else if ((m != null) && bOwner && m.getType().hasModes()) {
-                    if (!m.isInoperable()
+                }
+                if ((m != null) && bOwner && m.getType().hasModes()) {
+                    if (!m.isInoperable() && !m.isDumping()
                             && (en.isActive() || ((en instanceof Aero) && ((Aero) en)
                                     .isInASquadron()))
                             && m.isModeSwitchable()) {

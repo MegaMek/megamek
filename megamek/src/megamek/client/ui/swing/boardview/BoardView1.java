@@ -2595,10 +2595,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     public void redrawMovingEntity(Entity entity, Coords position, int facing,
-                                   int elevation) {
+            int elevation) {
         Integer entityId = new Integer(entity.getId());
-        EntitySprite sprite = entitySpriteIds.get(entityId);
-        IsometricSprite isoSprite = isometricSpriteIds.get(entityId);
+        List<Integer> spriteKey = getIdAndLoc(entityId, -1);
+        EntitySprite sprite = entitySpriteIds.get(spriteKey);
+        IsometricSprite isoSprite = isometricSpriteIds.get(spriteKey);
+        // We can ignore secondary locations for now, as we don't have moving
+        // multi-location entitys (will need to change for mobile structures)
 
         ArrayList<EntitySprite> newSprites;
         ArrayList<IsometricSprite> isoSprites;
@@ -2610,6 +2613,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             newSpriteIds = new HashMap<>(entitySpriteIds);
 
             newSprites.remove(sprite);
+            newSpriteIds.remove(spriteKey);
 
             entitySprites = newSprites;
             entitySpriteIds = newSpriteIds;
@@ -2620,6 +2624,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             newIsoSpriteIds = new HashMap<>(isometricSpriteIds);
 
             isoSprites.remove(isoSprite);
+            newIsoSpriteIds.remove(spriteKey);
 
             isometricSprites = isoSprites;
             isometricSpriteIds = newIsoSpriteIds;
@@ -3826,7 +3831,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         boolean movingSomething = false;
 
         if (movingUnits.size() > 0) {
-
             moveWait += idleTime;
 
             if (moveWait > GUIPreferences.getInstance().getInt(
@@ -3843,7 +3847,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                         if (ge != null) {
                             redrawMovingEntity(move.entity, loc.getCoords(),
-                                               loc.getFacing(), loc.getElevation());
+                                    loc.getFacing(), loc.getElevation());
                         }
                         move.path.remove(0);
                     } else {
@@ -3865,7 +3869,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     movingEntitySprites.clear();
                     ghostEntitySprites.clear();
                     processBoardViewEvent(new BoardViewEvent(this,
-                                                             BoardViewEvent.FINISHED_MOVING_UNITS));
+                            BoardViewEvent.FINISHED_MOVING_UNITS));
                 }
             }
         }

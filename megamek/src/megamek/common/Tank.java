@@ -3444,29 +3444,29 @@ public class Tank extends Entity {
     }
 
     @Override
-    public boolean isCrippled() {
-        if (getArmor(LOC_FRONT) < 1) {
+    public boolean isCrippled(boolean checkCrew) {
+        if (getArmor(LOC_FRONT) < 1 && getOArmor(LOC_FRONT) > 0) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Front armor destroyed.");
             }
             return true;
         }
-        if (getArmor(LOC_RIGHT) < 1) {
+        if (getArmor(LOC_RIGHT) < 1 && getOArmor(LOC_RIGHT) > 0) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Right armor destroyed.");
             }
             return true;
         }
-        if (getArmor(LOC_LEFT) < 1) {
+        if (getArmor(LOC_LEFT) < 1 && getOArmor(LOC_LEFT) > 0) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Left armor destroyed.");
             }
             return true;
         }
-        if (!hasNoTurret() && (getArmor(getLocTurret()) < 1)) {
+        if (!hasNoTurret() && (getArmor(getLocTurret()) < 1 && getOArmor(getLocTurret()) > 0)) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Turret destroyed.");
@@ -3474,14 +3474,14 @@ public class Tank extends Entity {
             return true;
         }
 
-        if (!hasNoDualTurret() && (getArmor(getLocTurret2()) < 1)) {
+        if (!hasNoDualTurret() && (getArmor(getLocTurret2()) < 1 && getOArmor(getLocTurret2()) > 0)) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Front Turret destroyed.");
             }
             return true;
         }
-        if (getArmor(LOC_REAR) < 1) {
+        if (getArmor(LOC_REAR) < 1 && getOArmor(LOC_REAR) > 0) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Rear armor destroyed.");
@@ -3489,7 +3489,7 @@ public class Tank extends Entity {
             return true;
         }
         
-        if (isPermanentlyImmobilized(true)) {
+        if (isPermanentlyImmobilized(checkCrew)) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out
                         .println(getDisplayName() + " CRIPPLED: Immobilized.");
@@ -3517,8 +3517,8 @@ public class Tank extends Entity {
     }
 
     @Override
-    public boolean isCrippled(boolean checkCrew) {
-        return isCrippled();
+    public boolean isCrippled() {
+        return isCrippled(true);
     }
 
     @Override
@@ -3527,7 +3527,7 @@ public class Tank extends Entity {
             return true;
         }
 
-        if (getArmorRemainingPercent() <= 0.33) {
+        if (getArmorRemainingPercent() <= 0.33 && getArmorRemainingPercent() != IArmorState.ARMOR_NA) {
             return true;
         }
 
@@ -3549,7 +3549,7 @@ public class Tank extends Entity {
 
     @Override
     public boolean isDmgModerate() {
-        if (getArmorRemainingPercent() <= 0.67) {
+        if (getArmorRemainingPercent() <= 0.67 && getArmorRemainingPercent() != IArmorState.ARMOR_NA) {
             return true;
         }
 
@@ -3576,7 +3576,7 @@ public class Tank extends Entity {
             return true;
         }
 
-        if (getArmorRemainingPercent() <= 0.8) {
+        if (getArmorRemainingPercent() <= 0.8 && getArmorRemainingPercent() != IArmorState.ARMOR_NA) {
             return true;
         }
 

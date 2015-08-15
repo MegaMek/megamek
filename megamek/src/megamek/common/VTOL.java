@@ -275,14 +275,18 @@ public class VTOL extends Tank {
      *
      * @param roll the final dice roll
      * @param loc the hit location
+     * @param damagedByFire whether or not the critical was caused by fire,
+     *      which is distinct from damage for unofficial thresholding purposes.
      * @return a critical type
      */
     @Override
-    public int getCriticalEffect(int roll, int loc) {
+    public int getCriticalEffect(int roll, int loc, boolean damagedByFire) {
         if (roll > 12) {
             roll = 12;
         }
-        if (roll < 6) {
+        if ((roll < 6)
+                || (game.getOptions().booleanOption("vehicles_threshold")
+                        && !getOverThresh() && !damagedByFire)) {
             return CRIT_NONE;
         }
         for (int i = 0; i < 2; i++) {

@@ -2702,24 +2702,10 @@ public class Tank extends Entity {
      * get the type of critical caused by a critical roll, taking account of
      * existing damage
      *
-     * @param roll
-     *            the final dice roll
-     * @param loc
-     *            the hit location
-     * @return a critical type
-     */
-    public int getCriticalEffect(int roll, int loc) {
-        return getCriticalEffect(roll, loc, false);
-    }
-
-    /**
-     * get the type of critical caused by a critical roll, taking account of
-     * existing damage
-     *
-     * @param roll
-     *            the final dice roll
-     * @param loc
-     *            the hit location
+     * @param roll the final dice roll
+     * @param loc the hit location
+     * @param damagedByFire whether or not the critical was caused by fire,
+     *      which is distinct from damage for unofficial thresholding purposes.
      * @return a critical type
      */
     public int getCriticalEffect(int roll, int loc, boolean damagedByFire) {

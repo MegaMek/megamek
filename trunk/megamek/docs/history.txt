@@ -44,6 +44,7 @@ v0.41.6-dev (SVN)
 + Bug: ClassCastException (VTOL to Aero) in BasicPathRanker.rankPath() when
     trying to handle VTOLs.
 + Bug [#4594]: VTOL critical hits rolled on ground vehicle table.
++ Bug: Dug-in field gunners would fail to fire if secondary arc changed
 
 v0.41.5 (2015-08-04 10:10 UTC)
 + Bug: Backhoe, Chainsaw, Dual Saw, Mining Drill, Pile Driver, and Rock Cutter

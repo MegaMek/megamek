@@ -424,56 +424,56 @@ public class SuperHeavyTank extends Tank {
 
     @Override
     public boolean isCrippled() {
-        if (getArmor(LOC_FRONT) < 1) {
+        if (getArmor(LOC_FRONT) < 1 && getOArmor(LOC_FRONT) > 0) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Front armor destroyed.");
             }
             return true;
         }
-        if (getArmor(LOC_FRONTRIGHT) < 1) {
+        if (getArmor(LOC_FRONTRIGHT) < 1 && getOArmor(LOC_FRONTRIGHT) > 0) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Front Right armor destroyed.");
             }
             return true;
         }
-        if (getArmor(LOC_FRONTLEFT) < 1) {
+        if (getArmor(LOC_FRONTLEFT) < 1 && getOArmor(LOC_FRONTLEFT) > 0) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Front Left armor destroyed.");
             }
             return true;
         }
-        if (getArmor(LOC_REARRIGHT) < 1) {
+        if (getArmor(LOC_REARRIGHT) < 1 && getOArmor(LOC_REARRIGHT) > 0) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Rear Right armor destroyed.");
             }
             return true;
         }
-        if (getArmor(LOC_REARLEFT) < 1) {
+        if (getArmor(LOC_REARLEFT) < 1 && getOArmor(LOC_REARLEFT) > 0) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Rear Left armor destroyed.");
             }
             return true;
         }
-        if (!hasNoTurret() && (getArmor(LOC_TURRET) < 1)) {
+        if (!hasNoTurret() && (getArmor(LOC_TURRET) < 1 && getOArmor(LOC_TURRET) > 0)) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Turret armor destroyed.");
             }
             return true;
         }
-        if (!hasNoDualTurret() && (getArmor(LOC_TURRET_2) < 1)) {
+        if (!hasNoDualTurret() && (getArmor(LOC_TURRET_2) < 1 && getOArmor(LOC_TURRET_2) > 0)) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Front Turret armor destroyed.");
             }
             return true;
         }
-        if (getArmor(LOC_REAR) < 1) {
+        if (getArmor(LOC_REAR) < 1 && getOArmor(LOC_REAR) > 0) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Rear armor destroyed.");

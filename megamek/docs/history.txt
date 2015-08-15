@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.41.6-dev (SVN)
+v0.41.6 (2015-08-15 19:40 UTC)
 + Bug [#4587]: "Packet Pump" Error during Princess Movement
 + Bug [#4584]: Vehicle Unable to Charge
 + Changed EntityListFile so zero internal on BattleArmor does not get reported

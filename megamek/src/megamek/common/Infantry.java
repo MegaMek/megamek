@@ -174,7 +174,7 @@ public class Infantry extends Entity {
      */
     @Override
     public boolean canChangeSecondaryFacing() {
-        return (dugIn == DUG_IN_NONE) && !hasActiveFieldArtillery();
+        return !hasActiveFieldArtillery();
     }
 
     /**

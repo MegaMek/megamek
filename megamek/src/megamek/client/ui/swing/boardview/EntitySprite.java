@@ -668,7 +668,7 @@ class EntitySprite extends Sprite {
             return false;
         }
         if (this.bv.game.getOptions().booleanOption("double_blind") //$NON-NLS-1$
-                && ((e.getOwner().getId() == this.bv.getLocalPlayer().getId()) || (this.bv.game
+                && ((e.getOwner().getId() == this.bv.getLocalPlayer().getId()) || (bv.game
                         .getOptions().booleanOption("team_vision") //$NON-NLS-1$
                 && (e.getOwner().getTeam() == this.bv.getLocalPlayer().getTeam())))) {
             return true;
@@ -913,6 +913,21 @@ class EntitySprite extends Sprite {
             addToTT("Jammed", BR);
         }
         
+        if (bv.game.getOptions().booleanOption("double_blind")) {
+            StringBuffer playerList = new StringBuffer();
+            boolean teamVision = bv.game.getOptions().booleanOption(
+                    "team_vision");
+            for (IPlayer player : entity.getWhoCanSee()) {
+                if (player.isEnemyOf(entity.getOwner()) || !teamVision) {
+                    playerList.append(player.getName());
+                    playerList.append(", ");
+                }
+            }
+            if (playerList.length() > 1) {
+                playerList.delete(playerList.length() - 2, playerList.length());
+                addToTT("SeenBy", BR, playerList.toString());
+            }            
+        }
         // Weapon List
         if (GUIPreferences.getInstance()
                 .getBoolean(GUIPreferences.SHOW_WPS_IN_TT)) {

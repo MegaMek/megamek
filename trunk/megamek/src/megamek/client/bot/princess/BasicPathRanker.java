@@ -450,7 +450,7 @@ public class BasicPathRanker extends PathRanker {
 
             if (movingUnit instanceof Aero || movingUnit instanceof VTOL) {
                 boolean isVTOL = (movingUnit instanceof VTOL);
-                boolean isSpheroid = ((Aero)movingUnit).isSpheroid();
+                boolean isSpheroid = isVTOL ? false : ((Aero)movingUnit).isSpheroid();
                 RankedPath aeroRankedPath = doAeroSpecificRanking(path, isVTOL, isSpheroid);
                 if (aeroRankedPath != null) {
                     return aeroRankedPath;

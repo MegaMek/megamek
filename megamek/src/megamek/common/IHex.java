@@ -137,6 +137,16 @@ public interface IHex extends Cloneable {
      * 
      */
     public abstract int ceiling(boolean inAtmosphere);
+    
+    /**
+     * Returns the elevation or altitude of the terrain feature that rises the
+     * highest above the surface of the hex. For example, if the hex is on the
+     * ground map and contains woods, this would return 2.
+     * 
+     * @param inAtmo Determines if altitudes or elevations are returned
+     * @return
+     */
+    public abstract int maxTerrainFeatureElevation(boolean inAtmo);
 
     /**
      * @return the surface level of the hex. Equal to getLevel().

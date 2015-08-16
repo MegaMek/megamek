@@ -275,51 +275,19 @@ public class Hex implements IHex, Serializable {
     }
     
     public int ceiling(boolean inAtmosphere) {
+        return level + maxTerrainFeatureElevation(inAtmosphere);
+    }
+
+    public int maxTerrainFeatureElevation(boolean inAtmo) {
         int maxFeature = 0;
-
-        //TODO: maxfeature should really be a method in Terrain.java
-
-        //planted fields rise one level above the terrain
-        if (containsTerrain(Terrains.FIELDS) && !inAtmosphere) {
-            maxFeature = 1;
-        }
-
-        // Account for woods. They are 2 levels high
-        // N.B. VTOLs are allowed to enter smoke.
-        if (containsTerrain(Terrains.WOODS) ||
-                containsTerrain(Terrains.JUNGLE)) {
-            if (inAtmosphere) {
-                maxFeature = 1;
-            } else {
-                maxFeature = 2;
+        int featureElev;
+        for (Integer terrainType : hsTerrains) {
+            featureElev = terrains[terrainType].getTerrainElevation(inAtmo);
+            if (featureElev > maxFeature) {
+                maxFeature = featureElev;
             }
         }
-        //not so fast ultra jungles and woods are three levels high
-        if((terrainLevel(Terrains.WOODS) > 2) ||
-                (terrainLevel(Terrains.JUNGLE) > 2)) {
-            if (inAtmosphere) {
-                maxFeature = 1;
-            } else {
-                maxFeature = 3;
-            }
-        }
-
-        //account for heavy industrial zones, which can vary in height
-        if (maxFeature < terrainLevel(Terrains.INDUSTRIAL) && !inAtmosphere) {
-            maxFeature = terrainLevel(Terrains.INDUSTRIAL);
-        }
-
-        // Account for buildings.
-        if (maxFeature < terrainLevel(Terrains.BLDG_ELEV) && !inAtmosphere) {
-            maxFeature = terrainLevel(Terrains.BLDG_ELEV);
-        }
-
-        // Account for bridges.
-        if (maxFeature < terrainLevel(Terrains.BRIDGE_ELEV) && !inAtmosphere) {
-            maxFeature = terrainLevel(Terrains.BRIDGE_ELEV);
-        }
-
-        return level + maxFeature;
+        return maxFeature;
     }
 
     /*

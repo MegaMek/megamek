@@ -438,4 +438,49 @@ public class Terrains implements ITerrainFactory {
             return 0;
         }
     }
+
+    
+    /**
+     * Returns the number of elevations or altitudes above the hex level a given
+     * terrainType rises.
+     * 
+     * @param terrainType
+     * @param inAtmosphere
+     *            Flag that determines whether elevations or altitudes should be
+     *            returned.
+     * @return The number of altitudes or elevations the given terrain type
+     *         rises above the hex level.
+     */
+    public static int getTerrainElevation(int terrainType, int terrainLevel,
+            boolean inAtmosphere) {
+        // Handle altitudes
+        if (inAtmosphere) {
+            switch (terrainType) {
+                case WOODS:
+                case JUNGLE:
+                    return 1;
+                default:
+                    return 0;
+            }
+        }
+        // Handle elevations
+        switch (terrainType) {
+            case INDUSTRIAL:
+            case BLDG_ELEV:
+            case BRIDGE_ELEV:
+                return terrainLevel;
+            case WOODS:
+            case JUNGLE:
+                if (terrainLevel > 2) {
+                    return 3; 
+                } else {
+                    return 2;
+                }
+            case FIELDS:
+                return 1;
+            default:
+                return 0;
+        }
+    }
+
 }

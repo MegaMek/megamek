@@ -30,6 +30,11 @@ public class Terrain implements ITerrain, Serializable {
      */
     private static final long serialVersionUID = -7624691566755134033L;
     private final int type;
+    /**
+     * Terrain level, which is used to indicate varying severity of terrain
+     * types (ie, Light Woods vs Heavy woods). Not to be confused with Hex
+     * levels.
+     */
     private int level;
     private boolean exitsSpecified = false;
     private int exits;
@@ -106,6 +111,10 @@ public class Terrain implements ITerrain, Serializable {
 
     public void setTerrainFactor(int tf) {
         terrainFactor = tf;
+    }
+
+    public int getTerrainElevation(boolean inAtmosphere) {
+        return Terrains.getTerrainElevation(type, level, inAtmosphere);
     }
 
     public int getExits() {

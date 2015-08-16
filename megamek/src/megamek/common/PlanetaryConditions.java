@@ -172,29 +172,29 @@ public class PlanetaryConditions implements Serializable {
         }
         throw new IllegalArgumentException("Unknown fog condition");
     }
-
-    public String getWindDirName() {
-        return "PlanetaryConditions." + dirNames[windDirection];
+    
+    public String getWindDirDisplayableName() {
+        return getWindDisplayableName(windDirection);
     }
 
-    public String getLightCurrentName() {
-        return "PlanetaryConditions." + lightNames[lightConditions];
+    public String getLightDisplayableName() {
+        return getLightDisplayableName(lightConditions);
     }
 
-    public String getWeatherCurrentName() {
-        return "PlanetaryConditions." + weatherNames[weatherConditions];
+    public String getWeatherDisplayableName() {
+        return getWeatherDisplayableName(weatherConditions);
     }
 
-    public String getWindCurrentName() {
-        return "PlanetaryConditions." + windNames[windStrength];
+    public String getWindDisplayableName() {
+        return getWindDisplayableName(windStrength);
     }
 
-    public String getAtmosphereCurrentName() {
-        return "PlanetaryConditions." + atmoNames[atmosphere];
+    public String getAtmosphereDisplayableName() {
+        return getAtmosphereDisplayableName(atmosphere);
     }
 
-    public String getFogCurrentName() {
-        return "PlanetaryConditions." + fogNames[fog];
+    public String getFogDisplayableName() {
+        return getFogDisplayableName(fog);
     }
 
     /**

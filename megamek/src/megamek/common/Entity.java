@@ -6065,7 +6065,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             || (moveType == EntityMovementType.MOVE_OVER_THRUST)) {
             int lightPenalty = conditions.getLightPilotPenalty();
             if (lightPenalty > 0) {
-                roll.addModifier(lightPenalty, conditions.getLightCurrentName());
+                roll.addModifier(lightPenalty,
+                        conditions.getLightDisplayableName());
             }
         }
 
@@ -6075,7 +6076,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             && !game.getBoard().inSpace()
             && ((null == crew) || !crew.getOptions().booleanOption(
                 "allweather"))) {
-            roll.addModifier(weatherMod, conditions.getWeatherCurrentName());
+            roll.addModifier(weatherMod, conditions.getWeatherDisplayableName());
         }
 
         // check wind conditions for all entities
@@ -6084,7 +6085,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             && !game.getBoard().inSpace()
             && ((null == crew) || !crew.getOptions().booleanOption(
                 "allweather"))) {
-            roll.addModifier(windMod, conditions.getWindCurrentName());
+            roll.addModifier(windMod, conditions.getWindDisplayableName());
         }
 
         // check gravity conditions for all entities

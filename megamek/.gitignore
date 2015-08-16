@@ -7,3 +7,6 @@
 /MegaMek.jar
 /*.diff
 /logs
+/data/mechfiles/units.cache
+/mmconf/clientsettings.xml
+

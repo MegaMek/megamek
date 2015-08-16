@@ -1573,7 +1573,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 int bldnex = Math.max(-next.depth(true),
                                       next.terrainLevel(Terrains.BLDG_ELEV));
                 if (((assumedElevation == bldcur)
-                     && (climbMode || isJumpingNow) && (this instanceof Mech))
+                     && (climb || isJumpingNow) && (this instanceof Mech))
                     || (retVal > bldnex)) {
                     retVal = bldnex;
                 } else if ((bldnex + next.surface())
@@ -1582,7 +1582,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                             next.terrainLevel(Terrains.BLDG_BASEMENT_TYPE);
                     int collapsedBasement =
                             next.terrainLevel(Terrains.BLDG_BASE_COLLAPSED);
-                    if (climbMode || isJumpingNow) {
+                    if (climb || isJumpingNow) {
                         retVal = bldnex + next.surface();
                     // If the basement is collapsed, there is no level 0
                     } else if ((assumedElevation == 0)
@@ -1596,7 +1596,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         retVal -= next.surface();
                     }
                 } else if (elevation == -(current.depth(true))) {
-                    if (climbMode || isJumpingNow) {
+                    if (climb || isJumpingNow) {
                         retVal = bldnex + next.surface();
                     } else if ((current
                                         .terrainLevel(Terrains.BLDG_BASEMENT_TYPE) > BasementType.NONE

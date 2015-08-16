@@ -45,6 +45,16 @@ public interface ITerrain {
      * set terrain factor
      */
     public abstract void setTerrainFactor(int tf);
+    
+    /**
+     * Returns the number of altitudes/elevations this Terrain is above the
+     * surface of a hex.
+     * 
+     * @param inAtmosphere
+     *            Determines whether altitudes or elevations are returned.
+     * @return
+     */
+    public abstract int getTerrainElevation(boolean inAtmosphere);
 
     /**
      * @return exits

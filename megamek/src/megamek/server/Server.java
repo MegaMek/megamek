@@ -8754,11 +8754,14 @@ public class Server implements Runnable {
                         entity.setElevation(0);
                     }
                 } else {
-                    // we didn't land, so we go to elevation 1
+                    // we didn't land, so we go to elevation 1 above the terrain
+                    // features
                     // it might have been higher than one due to the extra MPs
                     // it can spend to stay higher during movement, but should
                     // end up at one
-                    entity.setElevation(1);
+                    IHex hex = game.getBoard().getHex(curPos);
+                    entity.setElevation(1 + hex.maxTerrainFeatureElevation(game
+                            .getBoard().inAtmosphere()));
                 }
             }
             entity.setDone(true);

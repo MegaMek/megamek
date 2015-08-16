@@ -1506,7 +1506,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * to be at w/r/t it's new hex.
      */
     public int calcElevation(IHex current, IHex next, int assumedElevation,
-                             boolean climb, boolean wigeEndClimbPrevious) {
+            boolean climb, boolean wigeEndClimbPrevious) {
         int retVal = assumedElevation;
         if (this instanceof Aero) {
             return retVal;
@@ -1552,6 +1552,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         }
                     }
                     retVal -= waterLevel;
+                }
+            }
+            
+            // Airborne WiGEs remain 1 elevation above underlying terrain
+            if ((getMovementMode() == EntityMovementMode.WIGE) 
+                    && (assumedElevation > 0)) {
+                if ((next.ceiling() - assumedElevation) 
+                        <= getMaxElevationChange()) {
+                    retVal = 1 + next.maxTerrainFeatureElevation(game
+                            .getBoard().inAtmosphere());
                 }
             }
 

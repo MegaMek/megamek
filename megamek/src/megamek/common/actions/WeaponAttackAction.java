@@ -1293,8 +1293,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // weather mods (not in space)
         int weatherMod = game.getPlanetaryConditions().getWeatherHitPenalty(ae);
         if ((weatherMod != 0) && !game.getBoard().inSpace()) {
-            weatherToHitMods.addModifier(weatherMod, game.getPlanetaryConditions()
-                                                         .getWeatherCurrentName());
+            weatherToHitMods.addModifier(weatherMod, game
+                    .getPlanetaryConditions().getWeatherDisplayableName());
         }
 
         // wind mods (not in space)
@@ -2571,7 +2571,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         int weatherMod = game.getPlanetaryConditions().getWeatherHitPenalty(ae);
         if ((weatherMod != 0) && !game.getBoard().inSpace()) {
             toHit.addModifier(weatherMod, game.getPlanetaryConditions()
-                                              .getWeatherCurrentName());
+                    .getWeatherDisplayableName());
         }
 
         // Electro-Magnetic Interference

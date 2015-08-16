@@ -174,7 +174,7 @@ public class SharedUtility {
 
             int lightPenalty = entity.getGame().getPlanetaryConditions().getLightPilotPenalty();
             if(lightPenalty > 0) {
-                rollTarget.addModifier(lightPenalty, entity.getGame().getPlanetaryConditions().getLightCurrentName());
+                rollTarget.addModifier(lightPenalty, entity.getGame().getPlanetaryConditions().getLightDisplayableName());
             }
 
             //check if we are moving recklessly

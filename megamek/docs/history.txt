@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.41.7-dev (SVN)
 + Bug [#4544]: Airborne WiGE movement blocked by level 1 buildings
++ Bug [#4595]: Bad translation for PlanetaryConditions internationalization
 
 v0.41.6 (2015-08-15 19:40 UTC)
 + Bug [#4587]: "Packet Pump" Error during Princess Movement

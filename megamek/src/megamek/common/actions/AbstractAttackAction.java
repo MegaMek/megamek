@@ -111,7 +111,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
         night_modifier = game.getPlanetaryConditions().getLightHitPenalty(
                 isWeapon);
         toHit.addModifier(night_modifier, game.getPlanetaryConditions()
-                .getLightCurrentName());
+                .getLightDisplayableName());
 
         boolean illuminated = false;
         if (te != null) {

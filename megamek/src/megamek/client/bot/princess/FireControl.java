@@ -16,6 +16,7 @@ package megamek.client.bot.princess;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -1844,8 +1845,13 @@ public class FireControl {
 
         // Get the best firing plan that falls under our heat limit.
         FiringPlan heatPlans[] = calcFiringPlansUnderHeat(shooter, alphaStrike);
-        
-        return heatPlans[maxHeat];
+        Arrays.sort(heatPlans);
+        if (heatPlans.length > 0) {
+            return heatPlans[0];
+        } else {
+            // Return a do nothing plan
+            return new FiringPlan(target);
+        }
     }
 
     /**

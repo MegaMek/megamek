@@ -599,8 +599,8 @@ public class BasicPathRanker extends PathRanker {
                 for (Entity f : friends) {
                     double damage = fireControl
                             .guessBestFiringPlanUnderHeatWithTwists(e, null, f,
-                                                                    null, (e.getHeatCapacity() - e.heat) + 5, game)
-                            .getExpectedDamage();
+                                    null, (e.getHeatCapacity() - e.heat) + 5,
+                                    game).getExpectedDamage();
                     if (damage > max_damage) {
                         max_damage = damage;
                     }

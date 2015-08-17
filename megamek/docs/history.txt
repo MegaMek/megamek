@@ -5,6 +5,7 @@ v0.41.7-dev (SVN)
 + Bug [#4595]: Bad translation for PlanetaryConditions internationalization
 + Bug [#4593]: Mech in climb mode ends up on top of building post DFA
 + Bug [#4531]: Issues with Protomechs and individual initiative
++ Bug [#4598]: BestFiringPlanUnderHeat Error
 
 v0.41.6 (2015-08-15 19:40 UTC)
 + Bug [#4587]: "Packet Pump" Error during Princess Movement

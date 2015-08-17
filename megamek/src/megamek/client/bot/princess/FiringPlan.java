@@ -34,7 +34,8 @@ import java.util.Vector;
  * @lastEditBy Deric "Netzilla" Page (deric dot page at usa dot net)
  * @since: 12/18/13 1:20 pM
  */
-public class FiringPlan extends ArrayList<WeaponFireInfo> {
+public class FiringPlan extends ArrayList<WeaponFireInfo> implements
+        Comparable<FiringPlan> {
 
     private static final long serialVersionUID = 8938385222775928559L;
 
@@ -299,5 +300,13 @@ public class FiringPlan extends ArrayList<WeaponFireInfo> {
             out.append(wfi.getWeapon().getName());
         }
         return out.toString();
+    }
+
+    /**
+     * Compares to FiringPlans based on utility.  Higher utility is better.
+     */
+    @Override
+    public int compareTo(FiringPlan other) {
+        return (int)(getUtility() - other.getUtility() + 0.5);
     }
 }

@@ -66,8 +66,9 @@ import megamek.common.weapons.StopSwarmAttack;
 import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
- * FireControl selects which weapons a unit wants to fire and at whom Pay attention to the difference between "guess"
- * and "get". Guess will be much faster, but inaccurate
+ * FireControl selects which weapons a unit wants to fire and at whom Pay
+ * attention to the difference between "guess" and "get". Guess will be much
+ * faster, but inaccurate
  */
 public class FireControl {
 
@@ -678,23 +679,28 @@ public class FireControl {
     }
 
     /**
-     * Makes an educated guess as to the to hit modifier with a weapon attack.  Does not actually place unit into
-     * desired position, because that is exceptionally slow. Most of this is copied from WeaponAttack.
+     * Makes an educated guess as to the to hit modifier with a weapon attack.
+     * Does not actually place unit into desired position, because that is
+     * exceptionally slow. Most of this is copied from WeaponAttack.
      *
-     * @param shooter      The {@link Entity} doing the shooting.
-     * @param shooterState The {@link EntityState} of the unit doing the shooting.
-     * @param target       The {@link Targetable} being shot at.
-     * @param targetState  The {@link EntityState} of the unit being shot at.
-     * @param weapon       The weapon being fired as a {@link Mounted} object.
-     * @param game         The {@link IGame being played.}
-     * @return The to hit modifiers for the given weapon firing at the given target as a {@link ToHitData} object.
+     * @param shooter
+     *            The {@link Entity} doing the shooting.
+     * @param shooterState
+     *            The {@link EntityState} of the unit doing the shooting.
+     * @param target
+     *            The {@link Targetable} being shot at.
+     * @param targetState
+     *            The {@link EntityState} of the unit being shot at.
+     * @param weapon
+     *            The weapon being fired as a {@link Mounted} object.
+     * @param game
+     *            The {@link IGame being played.}
+     * @return The to hit modifiers for the given weapon firing at the given
+     *         target as a {@link ToHitData} object.
      */
     public ToHitData guessToHitModifierForWeapon(Entity shooter,
-                                                 @Nullable EntityState shooterState,
-                                                 Targetable target,
-                                                 @Nullable EntityState targetState,
-                                                 Mounted weapon,
-                                                 IGame game) {
+            @Nullable EntityState shooterState, Targetable target,
+            @Nullable EntityState targetState, Mounted weapon, IGame game) {
 
         if (shooterState == null) {
             shooterState = new EntityState(shooter);
@@ -786,8 +792,8 @@ public class FireControl {
         }
 
         // Get the mods that apply to all attacks.
-        ToHitData baseMods = guessToHitModifierHelperForAnyAttack(shooter, shooterState, target, targetState, distance,
-                                                                  game);
+        ToHitData baseMods = guessToHitModifierHelperForAnyAttack(shooter,
+                shooterState, target, targetState, distance, game);
         if (baseMods.getValue() == TargetRoll.IMPOSSIBLE || baseMods.getValue() == TargetRoll.AUTOMATIC_FAIL) {
             return baseMods;
         }
@@ -949,23 +955,35 @@ public class FireControl {
     }
 
     /**
-     * Makes an educated guess as to the to hit modifier by an aerospace unit flying on a ground map doing a strike
-     * attack on a unit
+     * Makes an educated guess as to the to hit modifier by an aerospace unit
+     * flying on a ground map doing a strike attack on a unit
      *
-     * @param shooter               The {@link Entity} doing the shooting.
-     * @param shooterState          The {@link EntityState} of the unit doing the shooting.
-     * @param target                The {@link megamek.common.Targetable} being shot at.
-     * @param targetState           The {@link megamek.client.bot.princess.EntityState} of the unit being shot at.
-     * @param flightPath            The path the shooter is taking.
-     * @param weapon                The weapon being fired as a {@link megamek.common.Mounted} object.
-     * @param game                  The {@link megamek.common.IGame being played.}
-     * @param assumeUnderFlightPlan Set TRUE to assume that the target falls under the given flight path.
-     * @return The to hit modifiers for the given weapon firing at the given target as a {@link ToHitData} object.
+     * @param shooter
+     *            The {@link Entity} doing the shooting.
+     * @param shooterState
+     *            The {@link EntityState} of the unit doing the shooting.
+     * @param target
+     *            The {@link megamek.common.Targetable} being shot at.
+     * @param targetState
+     *            The {@link megamek.client.bot.princess.EntityState} of the
+     *            unit being shot at.
+     * @param flightPath
+     *            The path the shooter is taking.
+     * @param weapon
+     *            The weapon being fired as a {@link megamek.common.Mounted}
+     *            object.
+     * @param game
+     *            The {@link megamek.common.IGame being played.}
+     * @param assumeUnderFlightPlan
+     *            Set TRUE to assume that the target falls under the given
+     *            flight path.
+     * @return The to hit modifiers for the given weapon firing at the given
+     *         target as a {@link ToHitData} object.
      */
-    public ToHitData guessAirToGroundStrikeToHitModifier(Entity shooter, @Nullable EntityState shooterState,
-                                                         Targetable target, @Nullable EntityState targetState,
-                                                         MovePath flightPath, Mounted weapon, IGame game,
-                                                         boolean assumeUnderFlightPlan) {
+    public ToHitData guessAirToGroundStrikeToHitModifier(Entity shooter,
+            @Nullable EntityState shooterState, Targetable target,
+            @Nullable EntityState targetState, MovePath flightPath,
+            Mounted weapon, IGame game, boolean assumeUnderFlightPlan) {
 
         if (targetState == null) {
             targetState = new EntityState(target);
@@ -1027,13 +1045,18 @@ public class FireControl {
     }
 
     /**
-     * Mostly for debugging, this returns a non-null string that describes how the guess has failed to be perfectly
-     * accurate. or null if perfectly accurate
+     * Mostly for debugging, this returns a non-null string that describes how
+     * the guess has failed to be perfectly accurate. or null if perfectly
+     * accurate
      *
-     * @param shooter The unit doing the shooting.
-     * @param target  The unit being shot at.
-     * @param weapon  The weapon being fired.
-     * @param game    The game being played.
+     * @param shooter
+     *            The unit doing the shooting.
+     * @param target
+     *            The unit being shot at.
+     * @param weapon
+     *            The weapon being fired.
+     * @param game
+     *            The game being played.
      * @return A description of the differences or NULL if there are none.
      */
     String checkGuess(Entity shooter, Targetable target, Mounted weapon, IGame game) {
@@ -1065,18 +1088,25 @@ public class FireControl {
     }
 
     /**
-     * Mostly for debugging, this returns a non-null string that describes how the guess on a physical attack failed
-     * to be perfectly accurate, or null if accurate
+     * Mostly for debugging, this returns a non-null string that describes how
+     * the guess on a physical attack failed to be perfectly accurate, or null
+     * if accurate
      *
-     * @param shooter    The unit doing the shooting.
-     * @param target     The unit being shot at.
-     * @param attackType The attack being made.
-     * @param game       The game being played.
+     * @param shooter
+     *            The unit doing the shooting.
+     * @param target
+     *            The unit being shot at.
+     * @param attackType
+     *            The attack being made.
+     * @param game
+     *            The game being played.
      * @return A description of the differences or NULL if there are none.
      */
-    String checkGuessPhysical(Entity shooter, Targetable target, PhysicalAttackType attackType, IGame game) {
+    String checkGuessPhysical(Entity shooter, Targetable target,
+            PhysicalAttackType attackType, IGame game) {
 
-        // This really should only be done for debugging purposes.  Regular play should avoid the overhead.
+        // This really should only be done for debugging purposes. Regular play
+        // should avoid the overhead.
         if (!LogLevel.DEBUG.equals(owner.getVerbosity())) {
             return null;
         }
@@ -1107,11 +1137,14 @@ public class FireControl {
     }
 
     /**
-     * Mostly for debugging, this returns a non-null string that describes how  any possible guess has failed to be
-     * perfectly accurate. or null if  perfect
+     * Mostly for debugging, this returns a non-null string that describes how
+     * any possible guess has failed to be perfectly accurate. or null if
+     * perfect
      *
-     * @param shooter The unit doing the shooting.
-     * @param game    The game being played.
+     * @param shooter
+     *            The unit doing the shooting.
+     * @param game
+     *            The game being played.
      * @return A description of the differences or NULL if there are none.
      */
     String checkAllGuesses(Entity shooter, IGame game) {
@@ -1156,12 +1189,16 @@ public class FireControl {
     }
 
     /**
-     * calculates the 'utility' of a firing plan. override this function if you have a better idea about what firing
-     * plans are good
+     * calculates the 'utility' of a firing plan. override this function if you
+     * have a better idea about what firing plans are good
      *
-     * @param firingPlan        The {@link FiringPlan} to be calculated.
-     * @param overheatTolerance How much overheat we're willing to forgive.
-     * @param shooterIsAero     Set TRUE if the shooter is an Aero unit.  Overheating Aeros take stiffer penalties.
+     * @param firingPlan
+     *            The {@link FiringPlan} to be calculated.
+     * @param overheatTolerance
+     *            How much overheat we're willing to forgive.
+     * @param shooterIsAero
+     *            Set TRUE if the shooter is an Aero unit. Overheating Aeros
+     *            take stiffer penalties.
      */
     void calculateUtility(FiringPlan firingPlan, int overheatTolerance, boolean shooterIsAero) {
         int overheat = 0;
@@ -1259,11 +1296,20 @@ public class FireControl {
     }
 
     /**
-     * Calculates the utility value for doing the given amount of damage to the given target, taking into account damage already applied to this unit by other units belonging to this player(not including allied players!)
-     * This utility term is intended to function as a penalty for overkilling targets with fire from multiple units. As such, below certain(high) thresholds, the term does nothing. 
-     * Only when doing >50% of a target's HP this round is a weight against this FiringPlan applied.
-     * In theory, since this term scales linearly independently of the numeric damage dealt to a target, this term will have a larger effect on low-damage units and a smaller effect on high-damage units, which is probably okay for now(since really high damage units tend to overkill as a matter of course more often).
-     * In practice, this utility term results in Princess concentrating her fire enough to reliably kill/cripple targets without falling into serious overkill.
+     * Calculates the utility value for doing the given amount of damage to the
+     * given target, taking into account damage already applied to this unit by
+     * other units belonging to this player(not including allied players!) This
+     * utility term is intended to function as a penalty for overkilling targets
+     * with fire from multiple units. As such, below certain(high) thresholds,
+     * the term does nothing. Only when doing >50% of a target's HP this round
+     * is a weight against this FiringPlan applied. In theory, since this term
+     * scales linearly independently of the numeric damage dealt to a target,
+     * this term will have a larger effect on low-damage units and a smaller
+     * effect on high-damage units, which is probably okay for now(since really
+     * high damage units tend to overkill as a matter of course more often). In
+     * practice, this utility term results in Princess concentrating her fire
+     * enough to reliably kill/cripple targets without falling into serious
+     * overkill.
      */
     public double calcDamageAllocationUtility(Targetable target, double expectedDamage) {
 
@@ -1277,8 +1323,12 @@ public class FireControl {
         if (previousDamageFraction >= 1.0 ) {
             return 100; 
 
-            //In cases that are not generally overkill(less than 50% of the target's total HP in damage), target as normal(don't want to spread damage in these cases).
-            //Also want to disregard damage allocation weighting if the target is a building or infantry/BA(as they don't die until you do 100% damage to them normally).
+            // In cases that are not generally overkill(less than 50% of the
+            // target's total HP in damage), target as normal(don't want to
+            // spread damage in these cases).
+            // Also want to disregard damage allocation weighting if the target
+            // is a building or infantry/BA(as they don't die until you do 100%
+            // damage to them normally).
         } else if (damageFraction < 0.5 
                    || target.getTargetType() == Targetable.TYPE_BUILDING 
                    || owner.getGame().getEntity(target.getTargetId()) instanceof Infantry 
@@ -1290,8 +1340,11 @@ public class FireControl {
     }
 
     /**
-     * Calculates the potential damage that the target could theoretically deliver as a measure of it's potential "threat" to any allied unit on the board, thus prioritizing highly damaging enemies over less damaging ones.
-     * For now, this works by simply getting the max damage of the target at range=1, ignoring to-hit, heat, etc.
+     * Calculates the potential damage that the target could theoretically
+     * deliver as a measure of it's potential "threat" to any allied unit on the
+     * board, thus prioritizing highly damaging enemies over less damaging ones.
+     * For now, this works by simply getting the max damage of the target at
+     * range=1, ignoring to-hit, heat, etc.
      */
     public double calcTargetPotentialDamage(Targetable target) {
         if (!(target instanceof Entity)) {
@@ -1302,8 +1355,11 @@ public class FireControl {
     }
 
     /**
-     * Calculates the logarithmic scaling factor for target damage potential in the utility equation, using the target's potential damage, the weight value TARGET_POTENTIAL_DAMAGE_UTILITY, and Princess's self-preservation value.
-     * This is mostly here to not clutter up the utility calculation method with all this extra math.
+     * Calculates the logarithmic scaling factor for target damage potential in
+     * the utility equation, using the target's potential damage, the weight
+     * value TARGET_POTENTIAL_DAMAGE_UTILITY, and Princess's self-preservation
+     * value. This is mostly here to not clutter up the utility calculation
+     * method with all this extra math.
      */
     private double calcTargetPotentialDamageMultiplier(Targetable target) {
         double target_damage = calcTargetPotentialDamage(target);
@@ -1343,21 +1399,32 @@ public class FireControl {
     }
 
     /**
-     * Creates a new {@link WeaponFireInfo} object containing data about firing the given weapon at the given target.
+     * Creates a new {@link WeaponFireInfo} object containing data about firing
+     * the given weapon at the given target.
      *
-     * @param shooter      The unit doing the shooting.
-     * @param shooterState The current state of the shooter.
-     * @param target       The target being fired on.
-     * @param targetState  The current state of the target.
-     * @param weapon       The weapon being fired.
-     * @param game         The game being played.
-     * @param guessToHit   Set TRUE to estimate the odds to hit rather than doing the full calculation.
+     * @param shooter
+     *            The unit doing the shooting.
+     * @param shooterState
+     *            The current state of the shooter.
+     * @param target
+     *            The target being fired on.
+     * @param targetState
+     *            The current state of the target.
+     * @param weapon
+     *            The weapon being fired.
+     * @param game
+     *            The game being played.
+     * @param guessToHit
+     *            Set TRUE to estimate the odds to hit rather than doing the
+     *            full calculation.
      * @return The resulting {@link WeaponFireInfo}.
      */
-    protected WeaponFireInfo buildWeaponFireInfo(Entity shooter, EntityState shooterState, Targetable target,
-                                                 EntityState targetState, Mounted weapon, IGame game,
-                                                 boolean guessToHit) {
-        return new WeaponFireInfo(shooter, shooterState, target, targetState, weapon, game, guessToHit, owner);
+    protected WeaponFireInfo buildWeaponFireInfo(Entity shooter,
+            EntityState shooterState, Targetable target,
+            EntityState targetState, Mounted weapon, IGame game,
+            boolean guessToHit) {
+        return new WeaponFireInfo(shooter, shooterState, target, targetState,
+                weapon, game, guessToHit, owner);
     }
 
     /**
@@ -1374,11 +1441,12 @@ public class FireControl {
      * @param guessToHit            Set TRUE to estimate the odds to hit rather than doing the full calculation.
      * @return The resulting {@link WeaponFireInfo}.
      */
-    protected WeaponFireInfo buildWeaponFireInfo(Entity shooter, MovePath flightPath, Targetable target,
-                                                 EntityState targetState, Mounted weapon, IGame game,
-                                                 boolean assumeUnderFlightPath, boolean guessToHit) {
-        return new WeaponFireInfo(shooter, flightPath, target, targetState, weapon, game, assumeUnderFlightPath,
-                                  guessToHit, owner);
+    protected WeaponFireInfo buildWeaponFireInfo(Entity shooter,
+            MovePath flightPath, Targetable target, EntityState targetState,
+            Mounted weapon, IGame game, boolean assumeUnderFlightPath,
+            boolean guessToHit) {
+        return new WeaponFireInfo(shooter, flightPath, target, targetState,
+                weapon, game, assumeUnderFlightPath, guessToHit, owner);
     }
 
     /**
@@ -1397,18 +1465,25 @@ public class FireControl {
     }
 
     /**
-     * Creates a firing plan that fires all weapons with nonzero to hit value at a target ignoring heat, and using
-     * best guess from different states. Does not change facing.
+     * Creates a firing plan that fires all weapons with nonzero to hit value at
+     * a target ignoring heat, and using best guess from different states. Does
+     * not change facing.
      *
-     * @param shooter      The unit doing the shooting.
-     * @param shooterState The current state of the shooter.
-     * @param target       The unit being fired on.
-     * @param targetState  The current state of the target.
-     * @param game         The game being played.
+     * @param shooter
+     *            The unit doing the shooting.
+     * @param shooterState
+     *            The current state of the shooter.
+     * @param target
+     *            The unit being fired on.
+     * @param targetState
+     *            The current state of the target.
+     * @param game
+     *            The game being played.
      * @return The {@link FiringPlan} containing all weapons to be fired.
      */
-    FiringPlan guessFullFiringPlan(Entity shooter, @Nullable EntityState shooterState, Targetable target,
-                                   @Nullable EntityState targetState, IGame game) {
+    FiringPlan guessFullFiringPlan(Entity shooter,
+            @Nullable EntityState shooterState, Targetable target,
+            @Nullable EntityState targetState, IGame game) {
         final String METHOD_NAME = "guessFullFiringPlan(Entity, EntityState, Targetable, EntityState, IGame)";
 
         if (shooterState == null) {
@@ -1435,13 +1510,17 @@ public class FireControl {
         for (Mounted weapon : shooter.getWeaponList()) {
             WeaponFireInfo shoot = buildWeaponFireInfo(shooter, shooterState, target, targetState, weapon, game, true);
 
-            // If I am a zero move infantry unit that moved, don't include any weapons.
-            if (shooter instanceof Infantry && shooter.getWalkMP() == 0 && ! (shooterState.getMovementType() == EntityMovementType.MOVE_NONE)) {
+            // If zero move infantry unit that moved, don't include any weapons
+            if ((shooter instanceof Infantry)
+                    && (shooter.getWalkMP() == 0)
+                    && !(shooterState.getMovementType() == EntityMovementType.MOVE_NONE)) {
                 continue;
             }
 
-            //If I am an infantry field gun unit that moved, don't include my field guns.
-            if (shooter instanceof Infantry && ! (shooterState.getMovementType() == EntityMovementType.MOVE_NONE) && shoot.getWeapon().getLocation() == Infantry.LOC_FIELD_GUNS) {
+            //If infantry field gun unit that moved, don't include field guns
+            if ((shooter instanceof Infantry)
+                    && !(shooterState.getMovementType() == EntityMovementType.MOVE_NONE)
+                    && (shoot.getWeapon().getLocation() == Infantry.LOC_FIELD_GUNS)) {
                 continue;
             }
 
@@ -1467,9 +1546,9 @@ public class FireControl {
      *                              than going through the full calculation.
      * @return The {@link FiringPlan} containing all weapons to be fired.
      */
-    FiringPlan guessFullAirToGroundPlan(Entity shooter, Targetable target, @Nullable EntityState targetState,
-                                        MovePath flightPath, IGame game,
-                                        boolean assumeUnderFlightPath) {
+    FiringPlan guessFullAirToGroundPlan(Entity shooter, Targetable target,
+            @Nullable EntityState targetState, MovePath flightPath, IGame game,
+            boolean assumeUnderFlightPath) {
         final String METHOD_NAME = "guessFullAirToGroundPlan(Entity, Targetable, EntityState, MovePath, IGame, " +
                                    "boolean)";
 
@@ -1577,10 +1656,13 @@ public class FireControl {
     }
 
     /**
-     * Creates an array that gives the 'best' firing plan (the maximum utility) under the heat of the index
+     * Creates an array that gives the 'best' firing plan (the maximum utility)
+     * under the heat of the index
      *
-     * @param shooter     The unit doing the shooting.
-     * @param alphaStrike The alpha strike plan.
+     * @param shooter
+     *            The unit doing the shooting.
+     * @param alphaStrike
+     *            The alpha strike plan.
      * @return
      */
     FiringPlan[] calcFiringPlansUnderHeat(Entity shooter, FiringPlan alphaStrike) {
@@ -1690,21 +1772,31 @@ public class FireControl {
     }
 
     /*
-     * Gets the 'best' firing plan, using heat as a disutility. No twisting is done
-     *
+     * Gets the 'best' firing plan, using heat as a disutility. No twisting is
+     * done
+     * 
      * @param shooter The unit doing the shooting.
+     * 
      * @param target The unit being shot at.
+     * 
      * @param game The game currently being played.
+     * 
      * @return the 'best' firing plan, using heat as a disutility.
      */
     FiringPlan getBestFiringPlan(Entity shooter, Targetable target, IGame game,
-                                 Map<Mounted, Double> ammoConservation) {
+            Map<Mounted, Double> ammoConservation) {
 
         // Start with an alpha strike.
-        FiringPlan alphaStrike = getFullFiringPlan(shooter, target, ammoConservation, game);
-        //Although they don't track heat, infantry/BA do need to make tradeoffs between firing different weapons, because swarm/leg attacks are mutually exclusive with normal firing, so we treat them similarly to heat-tracking units.
-        if (shooter.getHeatCapacity() == 999 && !(shooter instanceof Infantry) && !(shooter instanceof BattleArmor)) {
-            return alphaStrike; // No need to worry about heat if the unit doesn't track it.
+        FiringPlan alphaStrike = getFullFiringPlan(shooter, target,
+                ammoConservation, game);
+        // Although they don't track heat, infantry/BA do need to make tradeoffs
+        // between firing different weapons, because swarm/leg attacks are
+        // mutually exclusive with normal firing, so we treat them similarly to
+        // heat-tracking units.
+        if (shooter.getHeatCapacity() == 999 && !(shooter instanceof Infantry)
+                && !(shooter instanceof BattleArmor)) {
+            return alphaStrike; // No need to worry about heat if the unit
+                                // doesn't track it.
         }
 
         // Get all the best plans that generate less heat than an alpha strike.
@@ -1717,54 +1809,76 @@ public class FireControl {
     /**
      * Guesses the 'best' firing plan under a certain heat No twisting is done
      *
-     * @param shooter      The unit doing the shooting.
-     * @param shooterState The current state of the shooting unit.
-     * @param target       The unit being shot at.
-     * @param targetState  The current state of the target unit.
-     * @param maxHeat      How much heat we're willing to tolerate.
-     * @param game         The game currently being played.
+     * @param shooter
+     *            The unit doing the shooting.
+     * @param shooterState
+     *            The current state of the shooting unit.
+     * @param target
+     *            The unit being shot at.
+     * @param targetState
+     *            The current state of the target unit.
+     * @param maxHeat
+     *            How much heat we're willing to tolerate.
+     * @param game
+     *            The game currently being played.
      * @return the 'best' firing plan under a certain heat.
      */
-    FiringPlan guessBestFiringPlanUnderHeat(Entity shooter, @Nullable EntityState shooterState, Targetable target,
-                                            @Nullable EntityState targetState, int maxHeat,
-                                            IGame game) {
+    FiringPlan guessBestFiringPlanUnderHeat(Entity shooter,
+            @Nullable EntityState shooterState, Targetable target,
+            @Nullable EntityState targetState, int maxHeat, IGame game) {
 
         // can't have less than zero heat
         if (maxHeat < 0) {
             maxHeat = 0;
         }
 
-        // Start with an alpha strike.  If it falls under our heat limit, use it.
-        FiringPlan alphaStrike = guessFullFiringPlan(shooter, shooterState, target, targetState, game);
-        //Infantry and BA may have alternative options, so we need to consider different firing options.
-        if (alphaStrike.getHeat() <= maxHeat && !(shooter instanceof Infantry) && !(shooter instanceof BattleArmor)) {
+        // Start with an alpha strike. If it falls under our heat limit, use it.
+        FiringPlan alphaStrike = guessFullFiringPlan(shooter, shooterState,
+                target, targetState, game);
+        // Infantry and BA may have alternative options, so we need to consider
+        // different firing options.
+        if (alphaStrike.getHeat() <= maxHeat && !(shooter instanceof Infantry)
+                && !(shooter instanceof BattleArmor)) {
             return alphaStrike;
         }
 
         // Get the best firing plan that falls under our heat limit.
         FiringPlan heatPlans[] = calcFiringPlansUnderHeat(shooter, alphaStrike);
+        
         return heatPlans[maxHeat];
     }
 
     /**
-     * Guesses the 'best' firing plan, using heat as a disutility. No twisting is done
+     * Guesses the 'best' firing plan, using heat as a disutility. No twisting
+     * is done
      *
-     * @param shooter      The unit doing the shooting.
-     * @param shooterState The current state of the shooting unit.
-     * @param target       The unit being shot at.
-     * @param targetState  The current state of the target unit.
-     * @param game         The game currently being played.
+     * @param shooter
+     *            The unit doing the shooting.
+     * @param shooterState
+     *            The current state of the shooting unit.
+     * @param target
+     *            The unit being shot at.
+     * @param targetState
+     *            The current state of the target unit.
+     * @param game
+     *            The game currently being played.
      * @return the 'best' firing plan, using heat as a disutility.
      */
-    FiringPlan guessBestFiringPlan(Entity shooter, @Nullable EntityState shooterState, Targetable target,
-                                   @Nullable EntityState targetState, IGame game) {
+    FiringPlan guessBestFiringPlan(Entity shooter,
+            @Nullable EntityState shooterState, Targetable target,
+            @Nullable EntityState targetState, IGame game) {
 
         // Start with an alpha strike.
-        FiringPlan alphaStrike = guessFullFiringPlan(shooter, shooterState, target, targetState, game);
+        FiringPlan alphaStrike = guessFullFiringPlan(shooter, shooterState,
+                target, targetState, game);
 
         // If we don't track heat, use the alpha.
-        //Although they don't track heat, infantry/BA do need to make tradeoffs between firing different weapons, because swarm/leg attacks are mutually exclusive with normal firing, so we treat them similarly to heat-tracking units.
-        if (shooter.getHeatCapacity() == 999 && !(shooter instanceof Infantry) && !(shooter instanceof BattleArmor)) {
+        // Although they don't track heat, infantry/BA do need to make tradeoffs
+        // between firing different weapons, because swarm/leg attacks are
+        // mutually exclusive with normal firing, so we treat them similarly to
+        // heat-tracking units.
+        if (shooter.getHeatCapacity() == 999 && !(shooter instanceof Infantry)
+                && !(shooter instanceof BattleArmor)) {
             return alphaStrike;
         }
 
@@ -1773,8 +1887,8 @@ public class FireControl {
         return getBestFiringPlanUnderHeat(target, shooter, allPlans);
     }
 
-    private FiringPlan getBestFiringPlanUnderHeat(Targetable target, Entity shooter,
-                                                  FiringPlan[] allPlans) {
+    private FiringPlan getBestFiringPlanUnderHeat(Targetable target,
+            Entity shooter, FiringPlan[] allPlans) {
 
         // Determine the best plan taking into account our heat tolerance.
         FiringPlan bestPlan = new FiringPlan(target);
@@ -1791,21 +1905,27 @@ public class FireControl {
     }
 
     /**
-     * Gets the 'best' firing plan using heat as disutiltiy includes the option of twisting
+     * Gets the 'best' firing plan using heat as disutiltiy includes the option
+     * of twisting
      *
-     * @param shooter The unit doing the shooting.
-     * @param target  The unit being shot at.
-     * @param game    The game currently being played.
-     * @return the 'best' firing plan using heat as disutiltiy includes the option of twisting
+     * @param shooter
+     *            The unit doing the shooting.
+     * @param target
+     *            The unit being shot at.
+     * @param game
+     *            The game currently being played.
+     * @return the 'best' firing plan using heat as disutiltiy includes the
+     *         option of twisting
      */
-    FiringPlan getBestFiringPlanWithTwists(Entity shooter, Targetable target, IGame game,
-                                           Map<Mounted, Double> ammoConservation) {
+    FiringPlan getBestFiringPlanWithTwists(Entity shooter, Targetable target,
+            IGame game, Map<Mounted, Double> ammoConservation) {
 
         // Keep track of our original facing so we can go back to it.
         int originalFacing = shooter.getSecondaryFacing();
 
         // Get the best plan without any twists.
-        FiringPlan noTwistPlan = getBestFiringPlan(shooter, target, game, ammoConservation);
+        FiringPlan noTwistPlan = getBestFiringPlan(shooter, target, game,
+                ammoConservation);
 
         // If we can't change facing, we're done.
         if (!shooter.canChangeSecondaryFacing()) {
@@ -1849,13 +1969,13 @@ public class FireControl {
      * @param game         The game currently being played.
      * @return the 'best' firing plan under a certain heat includes the option  of twisting.
      */
-    FiringPlan guessBestFiringPlanUnderHeatWithTwists(Entity shooter, @Nullable EntityState shooterState,
-                                                      Targetable target, @Nullable EntityState targetState,
-                                                      int maxHeat, IGame game) {
+    FiringPlan guessBestFiringPlanUnderHeatWithTwists(Entity shooter,
+            @Nullable EntityState shooterState, Targetable target,
+            @Nullable EntityState targetState, int maxHeat, IGame game) {
 
         // Get the best plan without any twists.
-        FiringPlan noTwistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState,
-                                                              maxHeat, game);
+        FiringPlan noTwistPlan = guessBestFiringPlanUnderHeat(shooter,
+                shooterState, target, targetState, maxHeat, game);
 
         // If we can't change facing, we're done.
         if (!shooter.canChangeSecondaryFacing()) {
@@ -1867,14 +1987,14 @@ public class FireControl {
 
         // Turn to the right.
         shooter.setSecondaryFacing(correctFacing(originalFacing + 1));
-        FiringPlan rightTwistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState,
-                                                                 maxHeat, game);
+        FiringPlan rightTwistPlan = guessBestFiringPlanUnderHeat(shooter,
+                shooterState, target, targetState, maxHeat, game);
         rightTwistPlan.setTwist(1);
 
         // Turn to the left.
         shooter.setSecondaryFacing(correctFacing(originalFacing - 1));
-        FiringPlan leftTwistPlan = guessBestFiringPlanUnderHeat(shooter, shooterState, target, targetState,
-                                                                maxHeat, game);
+        FiringPlan leftTwistPlan = guessBestFiringPlanUnderHeat(shooter,
+                shooterState, target, targetState, maxHeat, game);
         leftTwistPlan.setTwist(-1);
 
         // todo extended torso twist.
@@ -1896,11 +2016,13 @@ public class FireControl {
     /**
      * Guesses the 'best' firing plan under a certain heat includes the option of twisting
      */
-    FiringPlan guessBestFiringPlanWithTwists(Entity shooter, @Nullable EntityState shooterState, Targetable target,
-                                             @Nullable EntityState targetState, IGame game) {
+    FiringPlan guessBestFiringPlanWithTwists(Entity shooter,
+            @Nullable EntityState shooterState, Targetable target,
+            @Nullable EntityState targetState, IGame game) {
 
         // Get the best plan without any twists.
-        FiringPlan noTwistPlan = guessBestFiringPlan(shooter, shooterState, target, targetState, game);
+        FiringPlan noTwistPlan = guessBestFiringPlan(shooter, shooterState,
+                target, targetState, game);
 
         // If we can't change facing, we're done.
         if (!shooter.canChangeSecondaryFacing()) {
@@ -1912,13 +2034,14 @@ public class FireControl {
 
         // Turn to the right.
         shooter.setSecondaryFacing(correctFacing(originalFacing + 1));
-        FiringPlan rightTwistPlan = guessBestFiringPlan(shooter, shooterState, target, targetState,
-                                                        game);
+        FiringPlan rightTwistPlan = guessBestFiringPlan(shooter, shooterState,
+                target, targetState, game);
         rightTwistPlan.setTwist(1);
 
         // Turn to the left.
         shooter.setSecondaryFacing(correctFacing(originalFacing - 1));
-        FiringPlan leftTwistPlan = guessBestFiringPlan(shooter, shooterState, target, targetState, game);
+        FiringPlan leftTwistPlan = guessBestFiringPlan(shooter, shooterState,
+                target, targetState, game);
         leftTwistPlan.setTwist(-1);
 
         // todo extended torso twist.

@@ -3310,9 +3310,37 @@ public class Server implements Runnable {
                 entity.incrementOtherTurns();
             }
         }
+
+        List<Entity> entities;
+        // If the protos move multi option isn't on, protos move as a unit
+        // Need to adjust entities vector otherwise we'll have too many turns
+        // when first proto in a unit moves, new turns get added so rest of the
+        // unit will move
+        boolean protosMoveMulti = game.getOptions().booleanOption(
+                "protos_move_multi");
+        if (!protosMoveMulti) {
+            entities = new ArrayList<>(game.getEntitiesVector().size());
+            Set<Character> movedUnits = new HashSet<Character>();
+            for (Entity e : game.getEntitiesVector()) {
+                // This only effects Protos for the time being
+                if (!(e instanceof Protomech)) {
+                    entities.add(e);
+                    continue;
+                }
+                char unitNumber = e.getUnitNumber();
+                if ((unitNumber == Entity.NONE)
+                        || !movedUnits.contains(unitNumber)) {
+                    entities.add(e);
+                    if (unitNumber != Entity.NONE) {
+                        movedUnits.add(unitNumber);
+                    }
+                }
+            }
+        } else {
+            entities = game.getEntitiesVector();
+        }
         // Now, generate the global order of all teams' turns.
-        TurnVectors team_order = TurnOrdered.generateTurnOrder(
-                game.getEntitiesVector(), game);
+        TurnVectors team_order = TurnOrdered.generateTurnOrder(entities, game);
 
         // See if there are any loaded units stranded on immobile transports.
         Iterator<Entity> strandedUnits = game
@@ -3329,24 +3357,31 @@ public class Server implements Runnable {
         Vector<GameTurn> turns;
 
         if (strandedUnits.hasNext()
-            && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
+                && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
             // Add a game turn to unload stranded units, if this
             // is the movement phase.
             turns = new Vector<GameTurn>(team_order.getTotalTurns()
-                                         + team_order.getEvenTurns() + 1);
+                    + team_order.getEvenTurns() + 1);
             turns.addElement(new GameTurn.UnloadStrandedTurn(strandedUnits));
         } else {
             // No stranded units.
             turns = new Vector<GameTurn>(team_order.getTotalTurns()
-                                         + team_order.getEvenTurns());
+                    + team_order.getEvenTurns());
         }
 
         // add the turns (this is easy)
         while (team_order.hasMoreElements()) {
             Entity e = (Entity) team_order.nextElement();
             if (e.isSelectableThisTurn()) {
-                turns.addElement(new GameTurn.SpecificEntityTurn(
-                        e.getOwnerId(), e.getId()));
+                if (!protosMoveMulti && (e instanceof Protomech)
+                        && (e.getUnitNumber() != Entity.NONE)) {
+                    turns.addElement(new GameTurn.UnitNumberTurn(
+                            e.getOwnerId(), e.getUnitNumber()));
+                } else {
+                    turns.addElement(new GameTurn.SpecificEntityTurn(e
+                            .getOwnerId(), e.getId()));
+                }
+
             }
         }
 

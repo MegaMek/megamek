@@ -2646,4 +2646,12 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         
         weaponList.removeListSelectionListener(this);
     }
+
+    public Targetable getPrevTarget() {
+        return prevTarget;
+    }
+
+    public void setPrevTarget(Targetable prevTarget) {
+        this.prevTarget = prevTarget;
+    }
 }

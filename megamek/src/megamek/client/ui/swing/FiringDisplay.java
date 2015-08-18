@@ -1392,6 +1392,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         // otherwise, display firing info for the next weapon
         clientgui.mechD.wPan.displayMech(ce());
+        Mounted nextMounted = ce().getEquipment(nextWeapon);
+        if (!mounted.getType().hasFlag(WeaponType.F_VGL)
+                && (nextMounted != null)
+                && nextMounted.getType().hasFlag(WeaponType.F_VGL)) {
+            clientgui.mechD.wPan.setPrevTarget(target);
+        }
         clientgui.mechD.wPan.selectWeapon(nextWeapon);
         updateTarget();
 

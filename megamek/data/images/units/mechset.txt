@@ -3214,8 +3214,13 @@ chassis "Shiro" "mechs/Shiro.gif"
 chassis "Shockwave" "mechs/Shockwave.gif"
 exact "Shockwave SKW-6H" "mechs/Shockwave SKW-6H.gif"
 exact "Shockwave SKW-8X" "mechs/Shockwave SKW-8X.gif"
-chassis "Shogun C" "mechs/Shogun.gif"
+
+
 chassis "Shogun" "mechs/Shogun.gif"
+exact "Shogun SHG-2H" "mechs/Shogun SHG-2H.gif"
+exact "Shogun C" "mechs/Shogun C.gif"
+
+
 chassis "Shootist" "mechs/shootist2.gif"
 chassis "Short Bow" "mechs/shortbow.gif"
 #chassis "Shrew" " .gif"

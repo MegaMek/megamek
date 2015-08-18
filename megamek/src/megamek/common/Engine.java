@@ -773,7 +773,7 @@ public class Engine implements Serializable {
             }
             return TechConstants.T_IS_TW_NON_BOX;
         } else {
-            return TechConstants.T_INTRO_BOXSET;
+            return TechConstants.T_ALLOWED_ALL;
         }
     }
 

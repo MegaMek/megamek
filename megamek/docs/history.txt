@@ -9,6 +9,7 @@ v0.41.7-dev (SVN)
 + Bug [#4597]: Vehicular Grenade Launcher Error
 + Bug [#4588]: Field Guns jamming in Rapid mode
 + Bug [#4599]: Sensor returns could be targeted in some instances
++ Bug: standard fusion engines should be tech type T_ALLOWED ALL not T_INTRO_BOXSET
 
 v0.41.6 (2015-08-15 19:40 UTC)
 + Bug [#4587]: "Packet Pump" Error during Princess Movement

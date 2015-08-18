@@ -78,7 +78,7 @@ public class RACHandler extends UltraWeaponHandler {
             default:
                 break;
         }
-        if (jams) {
+        if (jams && !(ae instanceof Infantry)) {
             Report r = new Report(3160);
             r.subject = subjectId;
             r.add(" shot(s)");

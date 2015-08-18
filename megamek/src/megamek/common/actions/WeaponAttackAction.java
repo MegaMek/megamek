@@ -3901,7 +3901,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             && !Compute.inSensorRange(game, ae, target, null)
             && !isArtilleryIndirect && !isIndirect) {
             boolean networkSee = false;
-            if (ae.hasC3() || ae.hasC3i()) {
+            if (ae.hasC3() || ae.hasC3i() || ae.hasActiveNovaCEWS()) {
                 // c3 units can fire if any other unit in their network is in
                 // visual or sensor range
                 for (Entity en : game.getEntitiesVector()) {

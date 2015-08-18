@@ -1467,10 +1467,16 @@ public class MapMenu extends JPopupMenu {
     private void selectTarget() {
         Vector<Entity> list = new Vector<Entity>();
 
+        IPlayer localPlayer = client.getLocalPlayer();
+        boolean friendlyFire = (game.getOptions()
+                .booleanOption("friendly_fire"));
+
         for (Entity en : game.getEntitiesVector(coords)) {
-            if (en.isEnemyOf(myEntity)
-                || (game.getOptions().booleanOption("friendly_fire") && !en
-                    .equals(myEntity))) {
+            // Only add the unit if it's actually visible
+            //  With double blind on, the game may have unseen units
+            if ((en.isEnemyOf(myEntity) || friendlyFire) && !en.equals(myEntity)
+                    && !en.isSensorReturn(localPlayer)
+                    && en.hasSeenEntity(localPlayer)) {
                 list.add(en);
             }
         }

@@ -86,6 +86,12 @@ public class Compute {
     public static final int ARC_PINTLE_TURRET_RIGHT = 29;
     public static final int ARC_PINTLE_TURRET_FRONT = 30;
     public static final int ARC_PINTLE_TURRET_REAR = 31;
+    public static final int ARC_HEXSIDE_0 = 32;
+    public static final int ARC_HEXSIDE_1 = 33;
+    public static final int ARC_HEXSIDE_2 = 34;
+    public static final int ARC_HEXSIDE_3 = 35;
+    public static final int ARC_HEXSIDE_4 = 36;
+    public static final int ARC_HEXSIDE_5 = 37;
 
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
 
@@ -3310,10 +3316,6 @@ public class Compute {
             facing = ae.getSecondaryFacing()
                      + (ae.getEquipment(weaponId).getFacing() % 6);
         }
-        if (ae.getEquipment(weaponId).getType().hasFlag(WeaponType.F_VGL)) {
-            facing = ae.getSecondaryFacing()
-                     + (ae.getEquipment(weaponId).getFacing() % 6);
-        }
         Coords aPos = ae.getPosition();
         Vector<Coords> tPosV = new Vector<Coords>();
         Coords tPos = t.getPosition();
@@ -3561,6 +3563,36 @@ public class Compute {
                     break;
                 case ARC_PINTLE_TURRET_REAR:
                     if ((fa >= 90) && (fa <= 270)) {
+                        return true;
+                    }
+                    break;
+                case ARC_HEXSIDE_0:
+                    if ((fa >= 330) && (fa <= 30)) {
+                        return true;
+                    }
+                    break;
+                case ARC_HEXSIDE_1:
+                    if ((fa >= 30) && (fa <= 90)) {
+                        return true;
+                    }
+                    break;
+                case ARC_HEXSIDE_2:
+                    if ((fa >= 90) && (fa <= 150)) {
+                        return true;
+                    }
+                    break;
+                case ARC_HEXSIDE_3:
+                    if ((fa >= 150) && (fa <= 210)) {
+                        return true;
+                    }
+                    break;
+                case ARC_HEXSIDE_4:
+                    if ((fa >= 210) && (fa <= 270)) {
+                        return true;
+                    }
+                    break;
+                case ARC_HEXSIDE_5:
+                    if ((fa >= 270) && (fa <= 330)) {
                         return true;
                     }
                     break;

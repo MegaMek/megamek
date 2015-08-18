@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import megamek.common.CriticalSlot;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -67,7 +68,7 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
         if (kindRapidFire) {
             jamLevel = 2;
         }
-        if ((roll <= jamLevel) && (howManyShots == 2)) {
+        if ((roll <= jamLevel) && (howManyShots == 2) && !(ae instanceof Infantry)) {
             if (roll > 2 || kindRapidFire) {
                 Report r = new Report(3161);
                 r.subject = subjectId;

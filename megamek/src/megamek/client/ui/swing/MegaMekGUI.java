@@ -58,6 +58,7 @@ import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.skinEditor.SkinEditorMainGUI;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.common.Compute;
 import megamek.common.Configuration;
@@ -197,6 +198,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         JButton connectB;
         JButton botB;
         JButton editB;
+        JButton skinEditB;
         JButton scenB;
         JButton loadB;
         JButton quitB;
@@ -221,6 +223,9 @@ public class MegaMekGUI implements IMegaMekGUI {
         editB = new JButton(Messages.getString("MegaMek.MapEditor.label")); //$NON-NLS-1$
         editB.setActionCommand("fileBoardNew"); //$NON-NLS-1$
         editB.addActionListener(actionListener);
+        skinEditB = new JButton(Messages.getString("MegaMek.SkinEditor.label")); //$NON-NLS-1$
+        skinEditB.setActionCommand("fileSkinNew"); //$NON-NLS-1$
+        skinEditB.addActionListener(actionListener);        
         quitB = new JButton(Messages.getString("MegaMek.Quit.label")); //$NON-NLS-1$
         quitB.setActionCommand("quit"); //$NON-NLS-1$
         quitB.addActionListener(actionListener);
@@ -280,6 +285,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         c.gridy++;
         addBag(editB, gridbag, c);
         c.gridy++;
+        addBag(skinEditB, gridbag, c);
+        c.gridy++;
         addBag(quitB, gridbag, c);
         frame.validate();
     }
@@ -306,6 +313,13 @@ public class MegaMekGUI implements IMegaMekGUI {
         controller.boardEditor = editor;
         launch(editor.getFrame());
         editor.boardNew();
+    }
+    
+    void showSkinEditor() {
+        SkinEditorMainGUI skinEditor = new SkinEditorMainGUI();
+        skinEditor.initialize();
+        skinEditor.switchPanel(IGame.Phase.PHASE_MOVEMENT);
+        launch(skinEditor.getFrame());        
     }
 
     /**
@@ -971,6 +985,9 @@ public class MegaMekGUI implements IMegaMekGUI {
         public void actionPerformed(ActionEvent ev) {
             if ("fileBoardNew".equalsIgnoreCase(ev.getActionCommand())) { //$NON-NLS-1$
                 showEditor();
+            }
+            if ("fileSkinNew".equalsIgnoreCase(ev.getActionCommand())) { //$NON-NLS-1$
+                showSkinEditor();
             }
             if ("fileBoardOpen".equalsIgnoreCase(ev.getActionCommand())) { //$NON-NLS-1$
                 showEditorOpen();

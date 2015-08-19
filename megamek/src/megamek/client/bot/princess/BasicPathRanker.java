@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import megamek.client.bot.princess.BotGeometry.ConvexBoardArea;
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
 import megamek.client.bot.princess.BotGeometry.HexLine;
 import megamek.common.Aero;
@@ -67,7 +68,6 @@ public class BasicPathRanker extends PathRanker {
 
     private FireControl fireControl;
     private PathEnumerator pathEnumerator;
-    private Princess owner;
 
     // the best damage enemies could expect were I not here. Used to determine whether they will target me.
     private Map<Integer, Double> bestDamageByEnemies;
@@ -76,13 +76,12 @@ public class BasicPathRanker extends PathRanker {
         super(owningPrincess);
         final String METHOD_NAME = "BasicPathRanker(Princess)";
         bestDamageByEnemies = new TreeMap<>();
-        owner = owningPrincess;
-        owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, "Using " + owner.getBehaviorSettings().getDescription() +
-                                                           " behavior");
-    }
-
-    protected Princess getOwner() {
-        return owner;
+        getOwner().log(
+                getClass(),
+                METHOD_NAME,
+                LogLevel.DEBUG,
+                "Using " + getOwner().getBehaviorSettings().getDescription()
+                        + " behavior");
     }
 
     public FireControl getFireControl() {
@@ -102,7 +101,11 @@ public class BasicPathRanker extends PathRanker {
     }
 
     protected Coords getClosestCoordsTo(int unitId, Coords location) {
-        return pathEnumerator.getUnitMovableAreas().get(unitId).getClosestCoordsTo(location);
+    	ConvexBoardArea box = pathEnumerator.getUnitMovableAreas().get(unitId);
+    	if (box == null) {
+    		return null;
+    	}
+        return box.getClosestCoordsTo(location);
     }
 
     protected boolean isInMyLoS(Entity unit, HexLine leftBounds, HexLine rightBounds) {
@@ -150,7 +153,7 @@ public class BasicPathRanker extends PathRanker {
             if (enemy instanceof Aero) {
                 return returnResponse;
             }
-
+            
             Coords finalCoords = path.getFinalCoords();
             int myFacing = path.getFinalFacing();
             Coords behind = finalCoords.translated((myFacing + 3) % 6);
@@ -168,11 +171,11 @@ public class BasicPathRanker extends PathRanker {
             HexLine leftBounds;
             HexLine rightBounds;
             if (path.getEntity().canChangeSecondaryFacing()) {
-                leftBounds = new HexLine(behind, (myFacing + 2) % 6, owner);
-                rightBounds = new HexLine(behind, (myFacing + 4) % 6, owner);
+                leftBounds = new HexLine(behind, (myFacing + 2) % 6, getOwner());
+                rightBounds = new HexLine(behind, (myFacing + 4) % 6, getOwner());
             } else {
-                leftBounds = new HexLine(behind, (myFacing + 1) % 6, owner);
-                rightBounds = new HexLine(behind, (myFacing + 5) % 6, owner);
+                leftBounds = new HexLine(behind, (myFacing + 1) % 6, getOwner());
+                rightBounds = new HexLine(behind, (myFacing + 5) % 6, getOwner());
             }
             boolean inMyLos = isInMyLoS(enemy, leftBounds, rightBounds);
             if (inMyLos) {
@@ -190,7 +193,7 @@ public class BasicPathRanker extends PathRanker {
             }
             return returnResponse;
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -235,7 +238,7 @@ public class BasicPathRanker extends PathRanker {
 
     private double calculateFallMod(double successProbability, StringBuilder formula) {
         double pilotingFailure = (1 - successProbability);
-        double fallShame = owner.getBehaviorSettings().getFallShameValue();
+        double fallShame = getOwner().getBehaviorSettings().getFallShameValue();
         double fallMod = pilotingFailure * (pilotingFailure == 1 ? -1000 : fallShame);
         formula.append("fall mod [").append(LOG_DECIMAL.format(fallMod)).append(" = ")
                .append(LOG_DECIMAL.format(pilotingFailure)).append(" * ").append(LOG_DECIMAL.format(fallShame))
@@ -266,22 +269,22 @@ public class BasicPathRanker extends PathRanker {
             targetState = new EntityState(path);
         }
 
-        return getFireControl().guessBestFiringPlanUnderHeatWithTwists(enemy, shooterState, path.getEntity(),
-                                                                       targetState,
-                                                                       (enemy.getHeatCapacity() - enemy.heat) + 5,
-                                                                       game).getUtility();
+        return getFireControl().guessBestFiringPlanUnderHeatWithTwists(enemy,
+                shooterState, path.getEntity(), targetState,
+                (enemy.getHeatCapacity() - enemy.heat) + 5, game).getUtility();
     }
 
-    protected double calculateKickDamagePotential(Entity enemy, MovePath path, IGame game) {
+    protected double calculateKickDamagePotential(Entity enemy, MovePath path,
+            IGame game) {
 
         if (!(enemy instanceof Mech)) {
             return 0.0;
         }
 
         // if they can kick me, and probably hit, they probably will.
-        PhysicalInfo theirKick = new PhysicalInfo(enemy, null, path.getEntity(),
-                                                  new EntityState(path), PhysicalAttackType.RIGHT_KICK, game, owner,
-                                                  true);
+        PhysicalInfo theirKick = new PhysicalInfo(enemy, null,
+                path.getEntity(), new EntityState(path),
+                PhysicalAttackType.RIGHT_KICK, game, getOwner(), true);
 
         if (theirKick.getProbabilityToHit() <= 0.5) {
             return 0.0;
@@ -289,7 +292,8 @@ public class BasicPathRanker extends PathRanker {
         return theirKick.getExpectedDamageOnHit() * theirKick.getProbabilityToHit();
     }
 
-    protected double calculateMyDamagePotential(MovePath path, Entity enemy, int distance, IGame game) {
+    protected double calculateMyDamagePotential(MovePath path, Entity enemy,
+            int distance, IGame game) {
         Entity me = path.getEntity();
 
         // If I don't have range, I can't do damage.
@@ -327,8 +331,8 @@ public class BasicPathRanker extends PathRanker {
         }
 
         PhysicalInfo myKick = new PhysicalInfo(path.getEntity(),
-                                               new EntityState(path), enemy, null, PhysicalAttackType.RIGHT_KICK,
-                                               game, owner, true);
+                new EntityState(path), enemy, null,
+                PhysicalAttackType.RIGHT_KICK, game, getOwner(), true);
         if (myKick.getProbabilityToHit() <= 0.5) {
             return 0;
         }
@@ -441,7 +445,7 @@ public class BasicPathRanker extends PathRanker {
                                List<Entity> enemies, Coords friendsCoords) {
         final String METHOD_NAME = "rankPath(MovePath, IGame, Targetable, int, double, int, int, List<Entity>, Coords)";
 
-        owner.methodBegin(getClass(), METHOD_NAME);
+        getOwner().methodBegin(getClass(), METHOD_NAME);
 
         Entity movingUnit = path.getEntity();
         StringBuilder formula = new StringBuilder("Calculation: {");
@@ -483,6 +487,12 @@ public class BasicPathRanker extends PathRanker {
                     continue;
                 }
 
+                //skip broken enemies
+                if (getOwner().getHonorUtil().isEnemyBroken(enemy.getId(),
+                        enemy.getOwnerId(), getOwner().getForcedWithdrawal())) {
+                	continue;
+                }
+
                 EntityEvaluationResponse eval;
                 // TODO: Always consider Aeros to have moved, as right now we
                 // don't try to predict their movement.
@@ -518,7 +528,7 @@ public class BasicPathRanker extends PathRanker {
                 if (path.getEntity() instanceof Mech) {
                     PhysicalInfo myKick = new PhysicalInfo(
                             path.getEntity(), new EntityState(path), target, null,
-                            PhysicalAttackType.RIGHT_KICK, game, owner, true);
+                            PhysicalAttackType.RIGHT_KICK, game, getOwner(), true);
                     double expectedKickDamage = myKick.getExpectedDamageOnHit() * myKick.getProbabilityToHit();
                     if (expectedKickDamage > maximumPhysicalDamage) {
                         maximumPhysicalDamage = expectedKickDamage;
@@ -572,7 +582,7 @@ public class BasicPathRanker extends PathRanker {
 
             return new RankedPath(utility, pathCopy, formula.toString());
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            getOwner().methodEnd(getClass(), METHOD_NAME);
         }
 
     }
@@ -588,12 +598,12 @@ public class BasicPathRanker extends PathRanker {
     @Override
     public void initUnitTurn(Entity unit, IGame game) {
         final String METHOD_NAME = "initUnitTurn(Entity, IGame)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        getOwner().methodBegin(getClass(), METHOD_NAME);
 
         try {
             bestDamageByEnemies.clear();
-            List<Entity> enemies = getEnemies(unit, game);
-            ArrayList<Entity> friends = getFriends(unit, game);
+            List<Entity> enemies = getOwner().getEnemyEntities();
+            List<Entity> friends = getOwner().getFriendEntities();
             for (Entity e : enemies) {
                 double max_damage = 0;
                 for (Entity f : friends) {
@@ -609,7 +619,7 @@ public class BasicPathRanker extends PathRanker {
                 bestDamageByEnemies.put(e.getId(), max_damage);
             }
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -640,7 +650,7 @@ public class BasicPathRanker extends PathRanker {
      */
     public double distanceToClosestEnemy(Entity me, Coords position, IGame game) {
         final String METHOD_NAME = "distanceToClosestEnemy(Entity, Coords, IGame)";
-        owner.methodBegin(BasicPathRanker.class, METHOD_NAME);
+        getOwner().methodBegin(BasicPathRanker.class, METHOD_NAME);
 
         try {
             Entity closest = findClosestEnemy(me, position, game);
@@ -649,7 +659,7 @@ public class BasicPathRanker extends PathRanker {
             }
             return closest.getPosition().distance(position);
         } finally {
-            owner.methodEnd(BasicPathRanker.class, METHOD_NAME);
+            getOwner().methodEnd(BasicPathRanker.class, METHOD_NAME);
         }
     }
 
@@ -658,7 +668,7 @@ public class BasicPathRanker extends PathRanker {
      */
     public int distanceToClosestEdge(Coords position, IGame game) {
         final String METHOD_NAME = "distanceToClosestEdge(Coords, IGame)";
-        owner.methodBegin(BasicPathRanker.class, METHOD_NAME);
+        getOwner().methodBegin(BasicPathRanker.class, METHOD_NAME);
 
         try {
             int width = game.getBoard().getWidth();
@@ -675,7 +685,7 @@ public class BasicPathRanker extends PathRanker {
             }
             return minimum;
         } finally {
-            owner.methodEnd(BasicPathRanker.class, METHOD_NAME);
+            getOwner().methodEnd(BasicPathRanker.class, METHOD_NAME);
         }
     }
 
@@ -691,7 +701,7 @@ public class BasicPathRanker extends PathRanker {
     @Override
     public int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
         final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
-        owner.methodBegin(BasicPathRanker.class, METHOD_NAME);
+        getOwner().methodBegin(BasicPathRanker.class, METHOD_NAME);
 
         try {
             String msg = "Getting distance to home edge: " + homeEdge.toString();
@@ -718,16 +728,16 @@ public class BasicPathRanker extends PathRanker {
                     break;
                 }
                 default: {
-                    owner.log(getClass(), METHOD_NAME, LogLevel.WARNING, "Invalid home edge.  Defaulting to NORTH.");
+                    getOwner().log(getClass(), METHOD_NAME, LogLevel.WARNING, "Invalid home edge.  Defaulting to NORTH.");
                     distance = position.getY();
                 }
             }
 
             msg += " -> " + distance;
-            owner.log(BasicPathRanker.class, METHOD_NAME, msg);
+            getOwner().log(BasicPathRanker.class, METHOD_NAME, msg);
             return distance;
         } finally {
-            owner.methodEnd(BasicPathRanker.class, METHOD_NAME);
+            getOwner().methodEnd(BasicPathRanker.class, METHOD_NAME);
         }
     }
 

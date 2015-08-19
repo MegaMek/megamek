@@ -629,7 +629,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         };
         addMouseMotionListener(mouseMotionListener);
 
-        registerKeyboardCommands(this, controller);
+        if (controller != null) {
+            registerKeyboardCommands(this, controller);
+        }
 
         // setAutoscrolls(true);
 

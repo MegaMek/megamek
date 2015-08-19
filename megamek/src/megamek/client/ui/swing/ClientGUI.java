@@ -124,6 +124,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String VIEW_ZOOM_IN = "viewZoomIn"; //$NON-NLS-1$
     public static final String VIEW_ZOOM_OUT = "viewZoomOut"; //$NON-NLS-1$
     public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric"; //$NON-NLS-1$
+    public static final String VIEW_TOGGLE_FIELD_OF_FIRE = "viewToggleFieldOfFire"; //$NON-NLS-1$
     public static final String VIEW_TOGGLE_FOV_DARKEN = "viewToggleFovDarken"; //$NON-NLS-1$
     public static final String VIEW_TOGGLE_FOV_HIGHLIGHT = "viewToggleFovHighlight"; //$NON-NLS-1$
     public static final String VIEW_TOGGLE_FIRING_SOLUTIONS = "viewToggleFiringSolutions"; //$NON-NLS-1$
@@ -738,22 +739,31 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         } else if (event.getActionCommand().equals(VIEW_ZOOM_OUT)) {
             bv.zoomOut();
         } else if (event.getActionCommand().equals(VIEW_TOGGLE_ISOMETRIC)) {
-            GUIPreferences.getInstance().setIsometricEnabled(bv.toggleIsometric());
+            GUIPreferences.getInstance().setIsometricEnabled(
+                    bv.toggleIsometric());
         } else if (event.getActionCommand().equals(VIEW_TOGGLE_FOV_HIGHLIGHT)) {
-            GUIPreferences.getInstance().setFovHighlight(!GUIPreferences.getInstance().getFovHighlight());
+            GUIPreferences.getInstance().setFovHighlight(
+                    !GUIPreferences.getInstance().getFovHighlight());
             bv.refreshDisplayables();
             if (client.getGame().getPhase() == Phase.PHASE_MOVEMENT) {
                 bv.clearHexImageCache();
             }
+        } else if (event.getActionCommand().equals(VIEW_TOGGLE_FIELD_OF_FIRE)) {
+            GUIPreferences.getInstance().setShowFieldOfFire(
+                    !GUIPreferences.getInstance().getShowFieldOfFire());
+            bv.repaint();
         } else if (event.getActionCommand().equals(VIEW_TOGGLE_FOV_DARKEN)) {
-            GUIPreferences.getInstance().setFovDarken(!GUIPreferences.getInstance().getFovDarken());
+            GUIPreferences.getInstance().setFovDarken(
+                    !GUIPreferences.getInstance().getFovDarken());
             bv.refreshDisplayables();
             if (client.getGame().getPhase() == Phase.PHASE_MOVEMENT) {
                 bv.clearHexImageCache();
             }
-        } else if (event.getActionCommand().equals(VIEW_TOGGLE_FIRING_SOLUTIONS)) {
-            GUIPreferences.getInstance().setFiringSolutions(!GUIPreferences.getInstance().getFiringSolutions());
-            if (!GUIPreferences.getInstance().getFiringSolutions()){
+        } else if (event.getActionCommand()
+                .equals(VIEW_TOGGLE_FIRING_SOLUTIONS)) {
+            GUIPreferences.getInstance().setFiringSolutions(
+                    !GUIPreferences.getInstance().getFiringSolutions());
+            if (!GUIPreferences.getInstance().getFiringSolutions()) {
                 bv.clearFiringSolutionData();
             } else {
                 if (curPanel instanceof FiringDisplay) {

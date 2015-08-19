@@ -285,8 +285,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private ArrayList<FlyOverSprite> flyOverSprites = new ArrayList<FlyOverSprite>();
     
     // List of sprites for the weapon field of fire
-    private ArrayList<HexSprite> FieldofFireSprites = new ArrayList<>();
-    private boolean showFieldofFire = true;
+    private ArrayList<HexSprite> fieldofFireSprites = new ArrayList<>();
     public int[][] fieldofFireRanges = { new int[5], new int[5] };
     public int fieldofFireWpArc;
     public Entity fieldofFireUnit;
@@ -866,7 +865,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                     @Override
                     public void performAction() {
-                        showFieldofFire = !showFieldofFire;
+                        GUIPreferences guip = GUIPreferences.getInstance();
+                        guip.setShowFieldOfFire(!guip.getShowFieldOfFire());
                         repaint();
                     }
 
@@ -1074,8 +1074,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         
         // Field of Fire
-        if (!useIsometric() && showFieldofFire) {
-            drawSprites(g, FieldofFireSprites);
+        if (!useIsometric()
+                && GUIPreferences.getInstance().getShowFieldOfFire()) {
+            drawSprites(g, fieldofFireSprites);
         }
 
         if ((game.getPhase() == Phase.PHASE_MOVEMENT) && !useIsometric()) {
@@ -1759,8 +1760,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         IHex hex = board.getHex(c);
                         if ((hex != null) && (hex.getLevel() == x)) {
                             drawHex(c, g, saveBoardImage);
-                            if (showFieldofFire)
-                                drawHexSpritesForHex(c, g, FieldofFireSprites);
+                            if (GUIPreferences.getInstance()
+                                    .getShowFieldOfFire()) {
+                                drawHexSpritesForHex(c, g, fieldofFireSprites);
+                            }
                             drawHexSpritesForHex(c, g, moveEnvSprites);
                             drawHexSpritesForHex(c, g, moveModEnvSprites);
                             if ((en_Deployer != null)
@@ -4366,7 +4369,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         c3Sprites.clear();
         flyOverSprites.clear();
         movementSprites.clear();
-        FieldofFireSprites.clear();
+        fieldofFireSprites.clear();
     }
 
     public synchronized void updateBoard() {
@@ -5161,7 +5164,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         for (Sprite spr : moveModEnvSprites) {
             spr.prepare();
         }
-        for (Sprite spr : FieldofFireSprites) {
+        for (Sprite spr : fieldofFireSprites) {
             spr.prepare();
         }
 
@@ -5278,7 +5281,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         drawIsometric = !drawIsometric;
         for (Sprite spr : moveEnvSprites) spr.prepare();
         for (Sprite spr : moveModEnvSprites) spr.prepare();
-        for (Sprite spr : FieldofFireSprites) spr.prepare();
+        for (Sprite spr : fieldofFireSprites) spr.prepare();
         clearHexImageCache();
         updateBoard();
         for (MovementEnvelopeSprite sprite: moveEnvSprites)
@@ -5372,7 +5375,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void clearFieldofF() {
         fieldofFireWpArc = -1;
         fieldofFireUnit = null;
-        FieldofFireSprites.clear();
+        fieldofFireSprites.clear();
         repaint();
     }
     
@@ -5463,7 +5466,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         
         // create the sprites
         //
-        FieldofFireSprites.clear();
+        fieldofFireSprites.clear();
 
         // for all available range brackets Min/S/M/L/E ...
         for (int bracket = 0; bracket < fieldFire.size(); bracket++) {
@@ -5479,7 +5482,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 if (edgesToPaint > 0) {
                     FieldofFireSprite ffSprite = new FieldofFireSprite(
                             this, bracket, loc, edgesToPaint);
-                    FieldofFireSprites.add(ffSprite);
+                    fieldofFireSprites.add(ffSprite);
                 }
             }
             // Add range markers (m, S, M, L, E)
@@ -5515,7 +5518,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         && ((bracket > 0) || (numMinMarkers < 2))) {
                     TextMarkerSprite tS = new TextMarkerSprite(this, mark, 
                             rangeTexts[bracket], FieldofFireSprite.fieldofFireColors[bracket]);
-                    FieldofFireSprites.add(tS);
+                    fieldofFireSprites.add(tS);
                     if (bracket == 0) numMinMarkers++;
                 }
             }

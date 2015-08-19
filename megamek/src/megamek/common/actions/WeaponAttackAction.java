@@ -3898,7 +3898,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // direct fire
         if (game.getOptions().booleanOption("double_blind")
             && !Compute.inVisualRange(game, ae, target)
-            && !Compute.inSensorRange(game, ae, target, null)
+            && !(Compute.inSensorRange(game, ae, target, null) // Can shoot at something in sensor range
+                    && (te != null) && te.hasSeenEntity(ae.getOwner())) // if it has been spotted by another unit
             && !isArtilleryIndirect && !isIndirect) {
             boolean networkSee = false;
             if (ae.hasC3() || ae.hasC3i() || ae.hasActiveNovaCEWS()) {
@@ -3913,7 +3914,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
             if (!networkSee) {
-                return "outside of visual and sensor range";
+                if (!Compute.inSensorRange(game, ae, target, null)) {
+                    return "outside of visual and sensor range";
+                } else {
+                    return "target has not been spotted";
+                }
             }
         }
 

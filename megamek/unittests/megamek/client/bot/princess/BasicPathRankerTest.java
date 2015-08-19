@@ -1032,9 +1032,7 @@ public class BasicPathRankerTest {
         IGame mockGame = Mockito.mock(IGame.class);
 
         BasicPathRanker testRanker = Mockito.spy(new BasicPathRanker(mockPrincess));
-        Mockito.doReturn(enemyList)
-               .when(testRanker)
-               .getEnemies(Mockito.any(Entity.class), Mockito.any(IGame.class));
+        Mockito.doReturn(enemyList).when(mockPrincess).getEnemyEntities();
 
         Entity expected = enemyMech;
         Entity actual = testRanker.findClosestEnemy(me, position, mockGame);

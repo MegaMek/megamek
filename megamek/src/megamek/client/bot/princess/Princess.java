@@ -878,7 +878,7 @@ public class Princess extends BotClient {
                 return new MovePath(game, entity);
             }
             log(getClass(), METHOD_NAME, "Path ranking took " + Long.toString(stop_time - startTime) + " millis");
-            RankedPath bestpath = PathRanker.getBestPath(rankedpaths);
+            RankedPath bestpath = getPathRanker().getBestPath(rankedpaths);
             log(getClass(), METHOD_NAME, LogLevel.INFO, "Best Path: " + bestpath.path.toString() + "  Rank: "
                                                         + bestpath.rank);
             return bestpath.path;
@@ -1280,4 +1280,17 @@ public class Princess extends BotClient {
         }
         super.disconnected();
     }
+
+	public int getHighestEnemyInitiativeId() {
+		int highestEnemyInitiativeBonus = -1;
+		int highestEnemyInitiativeId = -1;
+		for (Entity entity : getEnemyEntities()) {
+			int initBonus = entity.getHQIniBonus() + entity.getMDIniBonus() + entity.getQuirkIniBonus();
+	        if (initBonus > highestEnemyInitiativeBonus) {
+	            highestEnemyInitiativeBonus = initBonus;
+	            highestEnemyInitiativeId = entity.getId();
+	        }
+		}
+		return highestEnemyInitiativeId;
+	}
 }

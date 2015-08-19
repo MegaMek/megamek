@@ -38,11 +38,9 @@ import megamek.common.logging.LogLevel;
 import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 
-public class PathRanker {
+public abstract class PathRanker {
 
-    private static Princess owner;
-    private int highestEnemyInitiativeBonus = 0;
-    private int highestEnemyInitiativeId = -1;
+    private Princess owner;
 
     public PathRanker(Princess princess) {
         owner = princess;
@@ -53,27 +51,25 @@ public class PathRanker {
      * Rankers that extend this class should override this function
      */
     public RankedPath rankPath(MovePath path, IGame game) {
-        double fallTolerance = owner.getBehaviorSettings().getFallShameIndex() / 10d;
+        double fallTolerance = getOwner().getBehaviorSettings().getFallShameIndex() / 10d;
         Entity me = path.getEntity();
-        int homeDistance = distanceToHomeEdge(me.getPosition(), owner.getHomeEdge(), game);
+        int homeDistance = distanceToHomeEdge(me.getPosition(), getOwner().getHomeEdge(), game);
         int maxWeaponRange = me.getMaxWeaponRange();
-        List<Entity> enemies = getEnemies(me, game);
-        List<Entity> friends = getFriends(me, game);
+        List<Entity> enemies = getOwner().getEnemyEntities();
+        List<Entity> friends = getOwner().getFriendEntities();
         Coords allyCenter = calcAllyCenter(me.getId(), friends, game);
 
         return rankPath(path, game, maxWeaponRange, fallTolerance, homeDistance, enemies, allyCenter);
     }
 
-    public RankedPath rankPath(MovePath path, IGame game, int maxRange, double fallTolerance, int distanceHome,
-                               List<Entity> enemies, Coords friendsCoords) {
-        return null;
-    }
+    abstract RankedPath rankPath(MovePath path, IGame game, int maxRange, double fallTolerance, int distanceHome,
+                               List<Entity> enemies, Coords friendsCoords);
 
     public ArrayList<RankedPath> rankPaths(List<MovePath> movePaths, IGame game, int maxRange,
                                            double fallTollerance, int startingHomeDistance,
                                            List<Entity> enemies, List<Entity> friends) {
         final String METHOD_NAME = "rankPaths(ArrayList<MovePath>, IGame)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        getOwner().methodBegin(getClass(), METHOD_NAME);
 
         try {
             // No point in ranking an empty list.
@@ -83,7 +79,7 @@ public class PathRanker {
 
             // Let's try to whittle down this list.
             List<MovePath> validPaths = validatePaths(movePaths, game, maxRange, fallTollerance, startingHomeDistance);
-            owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, "Validated " + validPaths.size() + " out of " +
+            getOwner().log(getClass(), METHOD_NAME, LogLevel.DEBUG, "Validated " + validPaths.size() + " out of " +
                                                                movePaths.size() + " possible paths.");
 
             Coords allyCenter = calcAllyCenter(movePaths.get(0).getEntity().getId(), friends, game);
@@ -99,14 +95,14 @@ public class PathRanker {
                 BigDecimal percent = count.divide(numberPaths, 2, RoundingMode.DOWN).multiply(new BigDecimal(100))
                                           .round(new MathContext(0, RoundingMode.DOWN));
                 if ((percent.compareTo(interval) >= 0)
-                    && (LogLevel.INFO.getLevel() <= owner.getVerbosity().getLevel())) {
-                    owner.sendChat("... " + percent.intValue() + "% complete.");
+                    && (LogLevel.INFO.getLevel() <= getOwner().getVerbosity().getLevel())) {
+                    getOwner().sendChat("... " + percent.intValue() + "% complete.");
                     interval = percent.add(new BigDecimal(5));
                 }
             }
             return returnPaths;
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -135,8 +131,8 @@ public class PathRanker {
 
         List<MovePath> returnPaths = new ArrayList<>(startingPathList.size());
         boolean inRange = (maxRange >= startingTargetDistance);
-        HomeEdge homeEdge = owner.getHomeEdge();
-        boolean fleeing = owner.isFallingBack(mover);
+        HomeEdge homeEdge = getOwner().getHomeEdge();
+        boolean fleeing = getOwner().isFallingBack(mover);
         //Infantry with zero move or with field guns cannot move and shoot, so we want to take that into account for path ranking.
         boolean isZeroMoveInfantry = mover instanceof Infantry && (mover.getWalkMP() == 0 || ((Infantry)mover).hasFieldGun());
         if (isZeroMoveInfantry) {
@@ -184,7 +180,7 @@ public class PathRanker {
                 returnPaths.add(path);
 
             } finally {
-                owner.log(getClass(), METHOD_NAME, logLevel, msg.toString());
+                getOwner().log(getClass(), METHOD_NAME, logLevel, msg.toString());
             }
         }
 
@@ -196,9 +192,9 @@ public class PathRanker {
         return returnPaths;
     }
 
-    public static RankedPath getBestPath(List<RankedPath> ps) {
+    public RankedPath getBestPath(List<RankedPath> ps) {
         final String METHOD_NAME = "getBestPath(ArrayList<Rankedpath>)";
-        owner.methodBegin(PathRanker.class, METHOD_NAME);
+        getOwner().methodBegin(PathRanker.class, METHOD_NAME);
 
         try {
             if (ps.size() == 0) {
@@ -206,7 +202,7 @@ public class PathRanker {
             }
             return Collections.max(ps);
         } finally {
-            owner.methodEnd(PathRanker.class, METHOD_NAME);
+            getOwner().methodEnd(PathRanker.class, METHOD_NAME);
         }
     }
 
@@ -224,12 +220,12 @@ public class PathRanker {
      */
     Entity findClosestEnemy(Entity me, Coords position, IGame game) {
         final String METHOD_NAME = "findClosestEnemy(Entity, Coords, IGame)";
-        owner.methodBegin(PathRanker.class, METHOD_NAME);
+        getOwner().methodBegin(PathRanker.class, METHOD_NAME);
 
         try {
             int range = 9999;
             Entity closest = null;
-            List<Entity> enemies = getEnemies(me, game);
+            List<Entity> enemies = getOwner().getEnemyEntities();
             for (Entity e : enemies) {
                 // Skip airborne aero units as they're further away than they seem and hard to catch.
                 if (e instanceof Aero && e.isAirborne()) {
@@ -249,60 +245,7 @@ public class PathRanker {
             }
             return closest;
         } finally {
-            owner.methodEnd(PathRanker.class, METHOD_NAME);
-        }
-    }
-
-    /**
-     * Get all the enemies of a unit
-     */
-    List<Entity> getEnemies(Entity myunit, IGame game) {
-        final String METHOD_NAME = "getEnemies(Entity, IGame)";
-        owner.methodBegin(PathRanker.class, METHOD_NAME);
-
-        try {
-            ArrayList<Entity> enemies = new ArrayList<>();
-            for (Entity entity : game.getEntitiesVector()) {
-                if (entity.getOwner().isEnemyOf(myunit.getOwner()) &&
-                    (entity.getPosition() != null) &&
-                    !entity.isOffBoard() &&
-                    (entity.getCrew() != null) &&
-                    !entity.getCrew().isDead() &&
-                    !owner.getHonorUtil().isEnemyBroken(entity.getId(), entity.getOwnerId(),
-                                                        owner.getForcedWithdrawal())) {
-                    enemies.add(entity);
-                    int initBonus = entity.getHQIniBonus() + entity.getMDIniBonus() + entity.getQuirkIniBonus();
-                    if (initBonus > highestEnemyInitiativeBonus) {
-                        highestEnemyInitiativeBonus = initBonus;
-                        highestEnemyInitiativeId = entity.getId();
-                    }
-                }
-            }
-            return enemies;
-        } finally {
-            owner.methodEnd(PathRanker.class, METHOD_NAME);
-        }
-    }
-
-    /**
-     * Get all the friends of a unit
-     */
-    ArrayList<Entity> getFriends(Entity myunit, IGame game) {
-        final String METHOD_NAME = "filterPathsLessThan(ArrayList<Rankedpath>, double)";
-        owner.methodBegin(getClass(), METHOD_NAME);
-
-        try {
-            ArrayList<Entity> friends = new ArrayList<>();
-            for (Entity entity : game.getEntitiesVector()) {
-                if (!entity.getOwner().isEnemyOf(myunit.getOwner())
-                    && (entity.getPosition() != null) && !entity.isOffBoard()
-                    && (!entity.equals(myunit))) {
-                    friends.add(entity);
-                }
-            }
-            return friends;
-        } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            getOwner().methodEnd(PathRanker.class, METHOD_NAME);
         }
     }
 
@@ -356,7 +299,7 @@ public class PathRanker {
 
     public int distanceToHomeEdge(Coords position, HomeEdge homeEdge, IGame game) {
         final String METHOD_NAME = "distanceToHomeEdge(Coords, HomeEdge, IGame)";
-        owner.methodBegin(getClass(), METHOD_NAME);
+        getOwner().methodBegin(getClass(), METHOD_NAME);
 
         try {
             Coords edgeCoords;
@@ -377,7 +320,7 @@ public class PathRanker {
                 edgeCoords = new Coords(boardWidth, position.getY());
             } else {
                 msg.append("Default");
-                owner.log(getClass(), METHOD_NAME, LogLevel.WARNING, "Invalid home edge.  Defaulting to NORTH.");
+                getOwner().log(getClass(), METHOD_NAME, LogLevel.WARNING, "Invalid home edge.  Defaulting to NORTH.");
                 edgeCoords = new Coords(boardWidth / 2, 0);
             }
             msg.append(edgeCoords.toFriendlyString());
@@ -385,10 +328,10 @@ public class PathRanker {
             int distance = edgeCoords.distance(position);
             msg.append(" dist = ").append(NumberFormat.getInstance().format(distance));
 
-            owner.log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.toString());
+            getOwner().log(getClass(), METHOD_NAME, LogLevel.DEBUG, msg.toString());
             return distance;
         } finally {
-            owner.methodEnd(getClass(), METHOD_NAME);
+            getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
 
@@ -494,7 +437,7 @@ public class PathRanker {
         Coords center = new Coords(xCenter, yCenter);
 
         if (!game.getBoard().contains(center)) {
-            owner.log(getClass(), "calcAllyCenter(int, List<Entity>, IGame)", LogLevel.ERROR, "Center of ally group " +
+            getOwner().log(getClass(), "calcAllyCenter(int, List<Entity>, IGame)", LogLevel.ERROR, "Center of ally group " +
                                                                                               center.toFriendlyString() + " not within board boundaries.");
             return null;
         }
@@ -502,7 +445,7 @@ public class PathRanker {
         return center;
     }
 
-    public int getHighestEnemyInitiativeId() {
-        return highestEnemyInitiativeId;
+    protected Princess getOwner() {
+        return owner;
     }
 }

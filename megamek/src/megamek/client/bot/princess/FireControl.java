@@ -1285,7 +1285,7 @@ public class FireControl {
 
     private boolean isCommander(Entity entity) {
         return entity.isCommander() || entity.hasC3M() || entity.hasC3i() || entity.hasC3MM() ||
-               (owner.getPathRanker().getHighestEnemyInitiativeId() == entity.getId());
+               (owner.getHighestEnemyInitiativeId() == entity.getId());
     }
 
     private boolean isSubCommander(Entity entity) {

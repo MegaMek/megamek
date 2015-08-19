@@ -8278,8 +8278,23 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (getOwner().equals(p)) {
             return true;
         }
-        
-        if ((p != null) && entitySeenBy.contains(p)) {
+
+        // If a player can see all, it sees this
+        if (p.canSeeAll()) {
+            return true;
+        }
+
+        // Observers can see units spotted by an enemy
+        if (p.isObserver()) {
+            for (IPlayer other : entitySeenBy) {
+                if (other.isEnemyOf(getOwner())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        if (entitySeenBy.contains(p)) {
             return true;
         }
         // If team vision, see if any players on team can see
@@ -8340,8 +8355,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (entityDetectedBy == null) {
             entityDetectedBy = new Vector<IPlayer>();
         }
-        
-        if ((p != null) && entityDetectedBy.contains(p)) {
+
+        // Observers can detect units detected by an enemy
+        if (p.isObserver()) {
+            for (IPlayer other : entityDetectedBy) {
+                if (other.isEnemyOf(getOwner())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        if (entityDetectedBy.contains(p)) {
             return true;
         }
         // If team vision, see if any players on team can see

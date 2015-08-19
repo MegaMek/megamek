@@ -155,6 +155,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String RULER_SIZE_HEIGHT = "RulerSizeHeight";
     public static final String RULER_SIZE_WIDTH = "RulerSizeWidth";
     public static final String SCROLL_SENSITIVITY = "ScrollSensitivity";
+    public static final String SHOW_FIELD_OF_FIRE = "ShowFieldOfFire";
     public static final String SHOW_MAPHEX_POPUP = "ShowMapHexPopup";
     public static final String SHOW_WPS_IN_TT = "ShowWpsinTT";
     public static final String SHOW_MOVE_STEP = "ShowMoveStep";
@@ -307,6 +308,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(RULER_SIZE_HEIGHT, 300);
         store.setDefault(RULER_SIZE_WIDTH, 500);
         store.setDefault(SCROLL_SENSITIVITY, 3);
+        store.setDefault(SHOW_FIELD_OF_FIRE, true);
         store.setDefault(SHOW_MAPHEX_POPUP, true);
         store.setDefault(SHOW_MOVE_STEP, true);
         store.setDefault(SHOW_WRECKS, true);
@@ -615,6 +617,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getScrollSensitivity() {
         return store.getInt(SCROLL_SENSITIVITY);
+    }
+
+    public boolean getShowFieldOfFire() {
+        return store.getBoolean(SHOW_FIELD_OF_FIRE);
     }
 
     public boolean getShowMapHexPopup() {
@@ -932,6 +938,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setScrollSensitivity(int i) {
         store.setValue(SCROLL_SENSITIVITY, i);
+    }
+
+    public void setShowFieldOfFire(boolean state) {
+        store.setValue(SHOW_FIELD_OF_FIRE, state);
     }
 
     public void setShowMapHexPopup(boolean state) {

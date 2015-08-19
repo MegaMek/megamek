@@ -90,6 +90,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JMenuItem viewZoomIn;
     private JMenuItem viewZoomOut;
     private JCheckBoxMenuItem toggleIsometric;
+    private JCheckBoxMenuItem toggleFieldOfFire;
     private JCheckBoxMenuItem toggleFovHighlight;
     private JCheckBoxMenuItem toggleFovDarken;
     private JCheckBoxMenuItem toggleFiringSolutions;
@@ -384,6 +385,14 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         toggleFovHighlight.addActionListener(this);
         toggleFovHighlight.setActionCommand(ClientGUI.VIEW_TOGGLE_FOV_HIGHLIGHT);
         menu.add(toggleFovHighlight);
+        toggleFieldOfFire = new JCheckBoxMenuItem(Messages
+                .getString("CommonMenuBar.viewToggleFieldOfFire")); //$NON-NLS-1$
+        toggleFieldOfFire.addActionListener(this);
+        toggleFieldOfFire.setState(GUIPreferences.getInstance().getShowFieldOfFire());
+        toggleFieldOfFire.setActionCommand(ClientGUI.VIEW_TOGGLE_FIELD_OF_FIRE);
+        toggleFieldOfFire.setToolTipText(Messages
+                .getString("CommonMenuBar.viewToggleFieldOfFireToolTip"));
+        menu.add(toggleFieldOfFire);
         toggleFiringSolutions = new JCheckBoxMenuItem(Messages
                 .getString("CommonMenuBar.viewToggleFiringSolutions")); //$NON-NLS-1$
         toggleFiringSolutions.setToolTipText(Messages
@@ -1390,8 +1399,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(GUIPreferences.USE_ISOMETRIC)) {
             toggleIsometric.setSelected((Boolean)e.getNewValue());
+        } else if (e.getName().equals(GUIPreferences.SHOW_FIELD_OF_FIRE)) {
+            toggleFieldOfFire.setSelected((Boolean)e.getNewValue());
         }
-        
     }
 
     public void die() {

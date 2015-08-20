@@ -1,6 +1,6 @@
 /*
- * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2006 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2015 Nicholas Walczak (walczak@cs.umn.edu)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -18,6 +18,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -32,11 +33,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -46,7 +48,6 @@ import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 
 import megamek.client.TimerSingleton;
-
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IBoardView;
@@ -77,28 +78,30 @@ import megamek.common.util.Distractable;
 
 public class SkinEditorMainGUI extends JPanel implements WindowListener,
         BoardViewListener, ActionListener, ComponentListener {
-    
+
     /**
      * 
      */
     private static final long serialVersionUID = 5625499617779156289L;
-    
+
     private static final String FILENAME_ICON_16X16 = "megamek-icon-16x16.png"; //$NON-NLS-1$
     private static final String FILENAME_ICON_32X32 = "megamek-icon-32x32.png"; //$NON-NLS-1$
     private static final String FILENAME_ICON_48X48 = "megamek-icon-48x48.png"; //$NON-NLS-1$
     private static final String FILENAME_ICON_256X256 = "megamek-icon-256x256.png"; //$NON-NLS-1$
-    
+
     // a frame, to show stuff in
-    public JFrame frame;
+    private JFrame frame;
 
     // A menu bar to contain all actions.
     protected CommonMenuBar menuBar;
 
-    public BoardView1 bv;
+    private BoardView1 bv;
     private Component bvc;
+    private JDialog skinSpecEditorD;
+    private SkinSpecEditor skinSpecEditor;
 
     protected JComponent curPanel;
-    public ChatLounge chatlounge;
+    private ChatLounge chatlounge;
 
     /**
      * Map each phase to the name of the card for the main display area.
@@ -124,7 +127,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
      * The <code>JPanel</code> containing the secondary display area.
      */
     private JPanel panSecondary = new JPanel();
-    
+
     private StatusBarPhaseDisplay currPhaseDisplay;
 
     /**
@@ -136,7 +139,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
      * Map phase component names to phase component objects.
      */
     HashMap<String, JComponent> phaseComponents = new HashMap<String, JComponent>();
-    
+
     public SkinEditorMainGUI() {
         super(new BorderLayout());
         this.addComponentListener(this);
@@ -160,7 +163,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         frame = new JFrame(Messages.getString("ClientGUI.title")); //$NON-NLS-1$
         frame.setJMenuBar(menuBar);
         Rectangle virtualBounds = new Rectangle();
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsEnvironment ge = GraphicsEnvironment
+                .getLocalGraphicsEnvironment();
         GraphicsDevice[] gs = ge.getScreenDevices();
         for (GraphicsDevice gd : gs) {
             GraphicsConfiguration[] gc = gd.getConfigurations();
@@ -173,10 +177,12 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
             int y = GUIPreferences.getInstance().getWindowPosY();
             int w = GUIPreferences.getInstance().getWindowSizeWidth();
             int h = GUIPreferences.getInstance().getWindowSizeHeight();
-            if ((x < virtualBounds.getMinX()) || ((x + w) > virtualBounds.getMaxX())) {
+            if ((x < virtualBounds.getMinX())
+                    || ((x + w) > virtualBounds.getMaxX())) {
                 x = 0;
             }
-            if ((y < virtualBounds.getMinY()) || ((y + h) > virtualBounds.getMaxY())) {
+            if ((y < virtualBounds.getMinY())
+                    || ((y + h) > virtualBounds.getMaxY())) {
                 y = 0;
             }
             if (w > virtualBounds.getWidth()) {
@@ -190,22 +196,22 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         } else {
             frame.setSize(800, 600);
         }
-        frame.setMinimumSize(new Dimension(640,480));
+        frame.setMinimumSize(new Dimension(640, 480));
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
         List<Image> iconList = new ArrayList<Image>();
         iconList.add(frame.getToolkit().getImage(
-                new File(Configuration.miscImagesDir(), FILENAME_ICON_16X16).toString()
-        ));
+                new File(Configuration.miscImagesDir(), FILENAME_ICON_16X16)
+                        .toString()));
         iconList.add(frame.getToolkit().getImage(
-                new File(Configuration.miscImagesDir(), FILENAME_ICON_32X32).toString()
-        ));
+                new File(Configuration.miscImagesDir(), FILENAME_ICON_32X32)
+                        .toString()));
         iconList.add(frame.getToolkit().getImage(
-                new File(Configuration.miscImagesDir(), FILENAME_ICON_48X48).toString()
-        ));
+                new File(Configuration.miscImagesDir(), FILENAME_ICON_48X48)
+                        .toString()));
         iconList.add(frame.getToolkit().getImage(
-                new File(Configuration.miscImagesDir(), FILENAME_ICON_256X256).toString()
-        ));
+                new File(Configuration.miscImagesDir(), FILENAME_ICON_256X256)
+                        .toString()));
         frame.setIconImages(iconList);
     }
 
@@ -221,6 +227,28 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         frame.validate();
     }
 
+    public void updateBorder() {
+        phaseComponents.clear();
+        panMain.removeAll();
+        panSecondary.removeAll();
+        mainNames.clear();
+        secondaryNames.clear();
+
+        try {
+            bv = new BoardView1(new Game(), null);
+            bv.setPreferredSize(getSize());
+            bvc = bv.getComponent();
+            bvc.setName("BoardView");
+        } catch (IOException e) {
+            e.printStackTrace();
+            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), //$NON-NLS-1$
+                    Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$
+            die();
+        }
+        switchPanel(IGame.Phase.PHASE_MOVEMENT);
+        frame.validate();
+    }
+
     /**
      * Have the client register itself as a listener wherever it's needed.
      * <p/>
@@ -231,6 +259,11 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
      * is created.
      */
     public void initialize() {
+        phaseComponents.clear();
+        panMain.removeAll();
+        panSecondary.removeAll();
+        mainNames.clear();
+        secondaryNames.clear();
         menuBar = new CommonMenuBar(null);
         initializeFrame();
         try {
@@ -239,11 +272,9 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
             bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");
-            bv.addBoardViewListener(this);
-
         } catch (Exception e) {
             e.printStackTrace();
-            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"),  //$NON-NLS-1$
+            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), //$NON-NLS-1$
                     Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$
             die();
         }
@@ -265,7 +296,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         int y;
         int h;
         int w;
-        
+        skinSpecEditorD = new JDialog(frame,
+                Messages.getString("SkinEditor.SkinEditorDialog.Title"), false); //$NON-NLS-1$
         x = GUIPreferences.getInstance().getDisplayPosX();
         y = GUIPreferences.getInstance().getDisplayPosY();
         h = GUIPreferences.getInstance().getDisplaySizeHeight();
@@ -277,7 +309,27 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         if ((y + h) > gd.getDisplayMode().getHeight()) {
             y = 0;
             h = Math.min(h, gd.getDisplayMode().getHeight());
-        }  
+        }
+        skinSpecEditorD.setLocation(x, y);
+        skinSpecEditorD.setSize(w, h);
+        skinSpecEditorD.setResizable(true);
+        skinSpecEditorD.addWindowListener(this);
+        skinSpecEditor = new SkinSpecEditor(this);
+        skinSpecEditorD.add(skinSpecEditor);
+        skinSpecEditorD.setVisible(true);
+
+        x = GUIPreferences.getInstance().getDisplayPosX();
+        y = GUIPreferences.getInstance().getDisplayPosY();
+        h = GUIPreferences.getInstance().getDisplaySizeHeight();
+        w = GUIPreferences.getInstance().getDisplaySizeWidth();
+        if ((x + w) > gd.getDisplayMode().getWidth()) {
+            x = 0;
+            w = Math.min(w, gd.getDisplayMode().getWidth());
+        }
+        if ((y + h) > gd.getDisplayMode().getHeight()) {
+            y = 0;
+            h = Math.min(h, gd.getDisplayMode().getHeight());
+        }
         frame.setVisible(true);
     }
 
@@ -378,11 +430,13 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         switch (phase) {
             case PHASE_LOUNGE:
                 // reset old report tabs and images, if any
-                ReportDisplay rD = (ReportDisplay) phaseComponents.get(String.valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
+                ReportDisplay rD = (ReportDisplay) phaseComponents.get(String
+                        .valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
                 if (rD != null) {
                     rD.resetTabs();
                 }
-                //ChatLounge cl = (ChatLounge) phaseComponents.get(String.valueOf(IGame.Phase.PHASE_LOUNGE));
+                //ChatLounge cl = (ChatLounge) phaseComponents.get(
+                //        String.valueOf(IGame.Phase.PHASE_LOUNGE));
                 //cb.setDoneButton(cl.butDone);
                 //cl.add(cb.getComponent(), BorderLayout.SOUTH);
                 getBoardView().getTilesetManager().reset();
@@ -403,9 +457,11 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
             case PHASE_PHYSICAL_REPORT:
             case PHASE_END_REPORT:
             case PHASE_VICTORY:
-                rD = (ReportDisplay) phaseComponents.get(String.valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
+                rD = (ReportDisplay) phaseComponents.get(String
+                        .valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
                 //cb.setDoneButton(rD.butDone);
-                //rD.add(cb.getComponent(), GBC.eol().fill(GridBagConstraints.HORIZONTAL));
+                //rD.add(cb.getComponent(), GBC.eol().fill(
+                //        GridBagConstraints.HORIZONTAL));
                 break;
             default:
                 break;
@@ -460,13 +516,15 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
                 panMain.add(component, main);
                 break;
             case PHASE_STARTING_SCENARIO:
-                component = new JLabel(Messages.getString("ClientGUI.StartingScenario")); //$NON-NLS-1$
+                component = new JLabel(
+                        Messages.getString("ClientGUI.StartingScenario")); //$NON-NLS-1$
                 main = "JLabel-StartingScenario"; //$NON-NLS-1$
                 component.setName(main);
                 panMain.add(component, main);
                 break;
             case PHASE_EXCHANGE:
-                component = new JLabel(Messages.getString("ClientGUI.TransmittingData")); //$NON-NLS-1$
+                component = new JLabel(
+                        Messages.getString("ClientGUI.TransmittingData")); //$NON-NLS-1$
                 main = "JLabel-Exchange"; //$NON-NLS-1$
                 component.setName(main);
                 panMain.add(component, main);
@@ -575,15 +633,18 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
             case PHASE_END_REPORT:
             case PHASE_VICTORY:
                 // Try to reuse the ReportDisplay for other phases...
-                component = phaseComponents.get(String.valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
+                component = phaseComponents.get(String
+                        .valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
                 if (component == null) {
                     // no ReportDisplay to reuse -- get a new one
-                    component = initializePanel(IGame.Phase.PHASE_INITIATIVE_REPORT);
+                    component = initializePanel(
+                            IGame.Phase.PHASE_INITIATIVE_REPORT);
                 }
                 main = "ReportDisplay"; //$NON-NLS-1$
                 break;
             default:
-                component = new JLabel(Messages.getString("ClientGUI.waitingOnTheServer")); //$NON-NLS-1$
+                component = new JLabel(
+                        Messages.getString("ClientGUI.waitingOnTheServer")); //$NON-NLS-1$
                 main = "JLabel-Default"; //$NON-NLS-1$
                 secondary = main;
                 component.setName(main);
@@ -601,7 +662,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
      * Sets the visibility of the entity display window
      */
     public void setDisplayVisible(boolean visible) {
-          if (visible) {
+        skinSpecEditorD.setVisible(visible);
+        if (visible) {
             frame.requestFocus();
         }
     }
@@ -612,12 +674,15 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
      * Pops up a dialog box giving the player a series of choices that are not
      * mutually exclusive.
      *
-     * @param title    the <code>String</code> title of the dialog box.
-     * @param question the <code>String</code> question that has a "Yes" or "No"
-     *                 answer. The question will be split across multiple line on the
-     *                 '\n' characters.
-     * @param choices  the array of <code>String</code> choices that the player can
-     *                 select from.
+     * @param title
+     *            the <code>String</code> title of the dialog box.
+     * @param question
+     *            the <code>String</code> question that has a "Yes" or "No"
+     *            answer. The question will be split across multiple line on the
+     *            '\n' characters.
+     * @param choices
+     *            the array of <code>String</code> choices that the player can
+     *            select from.
      * @return The array of the <code>int</code> indexes of the from the input
      *         array that match the selected choices. If no choices were
      *         available, if the player did not select a choice, or if the
@@ -652,10 +717,12 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     /**
      * Pops up a dialog box asking a yes/no question
      *
-     * @param title    the <code>String</code> title of the dialog box.
-     * @param question the <code>String</code> question that has a "Yes" or "No"
-     *                 answer. The question will be split across multiple line on the
-     *                 '\n' characters.
+     * @param title
+     *            the <code>String</code> title of the dialog box.
+     * @param question
+     *            the <code>String</code> question that has a "Yes" or "No"
+     *            answer. The question will be split across multiple line on the
+     *            '\n' characters.
      * @return <code>true</code> if yes
      */
     public boolean doYesNoDialog(String title, String question) {
@@ -669,10 +736,12 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
      * <p/>
      * The player will be given a chance to not show the dialog again.
      *
-     * @param title    the <code>String</code> title of the dialog box.
-     * @param question the <code>String</code> question that has a "Yes" or "No"
-     *                 answer. The question will be split across multiple line on the
-     *                 '\n' characters.
+     * @param title
+     *            the <code>String</code> title of the dialog box.
+     * @param question
+     *            the <code>String</code> question that has a "Yes" or "No"
+     *            answer. The question will be split across multiple line on the
+     *            '\n' characters.
      * @return the <code>ConfirmDialog</code> containing the player's responses.
      *         The dialog will already have been shown to the player, and is
      *         only being returned so the calling function can see the answer to
@@ -688,7 +757,12 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     // WindowListener
     //
     public void windowActivated(WindowEvent windowEvent) {
-        // ignored
+        // TODO: this is a kludge to fix a window iconify issue
+        // For some reason when I click on the window button, the main UI 
+        // window doesn't deiconify.  This fix doesn't allow me to iconify the
+        // window by clicking the window button, but it's better than the
+        // alternative
+        frame.setState(Frame.NORMAL);
     }
 
     public void windowClosed(WindowEvent windowEvent) {
@@ -696,7 +770,10 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     }
 
     public void windowClosing(WindowEvent windowEvent) {
-
+        if (windowEvent.getWindow().equals(skinSpecEditorD)) {
+            setDisplayVisible(false);
+            die();
+        }
     }
 
     public void windowDeactivated(WindowEvent windowEvent) {
@@ -704,7 +781,12 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     }
 
     public void windowDeiconified(WindowEvent windowEvent) {
-        // ignored
+        // TODO: this is a kludge to fix a window iconify issue
+        // For some reason when I click on the window button, the main UI 
+        // window doesn't deiconify.  This fix doesn't allow me to iconify the
+        // window by clicking the window button, but it's better than the
+        // alternative
+        frame.setState(Frame.NORMAL);
     }
 
     public void windowIconified(WindowEvent windowEvent) {
@@ -730,7 +812,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
             camo = bv.getTilesetManager().getPlayerCamo(player);
         }
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
-        bp.setIcon(new ImageIcon(bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp)));
+        bp.setIcon(new ImageIcon(bv.getTilesetManager().loadPreviewImage(
+                entity, camo, tint, bp)));
     }
 
    
@@ -786,10 +869,9 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
 	}
 
     /**
-     * Returns the panel for the current phase.  The ClientGUI is split into
-     * the main panel (view) at the top, which takes up the majority of the view
-     * and the the "current panel" which has different controls  based on the
-     * phase.
+     * Returns the panel for the current phase. The ClientGUI is split into the
+     * main panel (view) at the top, which takes up the majority of the view and
+     * the the "current panel" which has different controls based on the phase.
      * 
      * @return
      */

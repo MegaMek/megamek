@@ -16,6 +16,7 @@ v0.41.7-dev (SVN)
 + Bug: BoardView1.redrawEntity could draw an EntitySprite for unspotted units
 + Bug: Observers aren't able to see units in double-blind games
 + Bug [#4427]: getClosestCoordsTo Error
++ setOriginalShots in BLKBattleArmor loader for MHQ
 
 v0.41.6 (2015-08-15 19:40 UTC)
 + Bug [#4587]: "Packet Pump" Error during Princess Movement

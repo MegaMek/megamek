@@ -225,6 +225,7 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
                         if (numShots != 0 && m != null 
                                 && (m.getType() instanceof AmmoType)){
                             m.setShotsLeft(numShots);
+                            m.setOriginalShots(numShots);
                         }
                         m.setAPMMounted(apmMounted);
                         m.setSquadSupportWeapon(sswMounted);

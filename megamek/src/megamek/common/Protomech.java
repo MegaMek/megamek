@@ -874,6 +874,7 @@ public class Protomech extends Entity {
             // Damn protomech ammo; nasty hack, should be cleaner
             if (-1 != shots) {
                 mounted.setShotsLeft(shots);
+                mounted.setOriginalShots(shots);
                 super.addEquipment(mounted, loc, rearMounted);
                 return;
             }

@@ -300,8 +300,8 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
                 Messages.getString("SkinEditor.SkinEditorDialog.Title"), false); //$NON-NLS-1$
         x = GUIPreferences.getInstance().getDisplayPosX();
         y = GUIPreferences.getInstance().getDisplayPosY();
-        h = GUIPreferences.getInstance().getDisplaySizeHeight();
-        w = GUIPreferences.getInstance().getDisplaySizeWidth();
+        h = 480;
+        w = 640;
         if ((x + w) > gd.getDisplayMode().getWidth()) {
             x = 0;
             w = Math.min(w, gd.getDisplayMode().getWidth());

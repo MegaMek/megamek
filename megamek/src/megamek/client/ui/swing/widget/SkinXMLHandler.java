@@ -1,3 +1,17 @@
+/*
+ * MegaMek - Copyright (C) 2000,2001,2002,2003,2004,2006 Ben Mazur (bmazur@sev.org)
+ * Copyright © 2015 Nicholas Walczak (walczak@cs.umn.edu)
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ */
 package megamek.client.ui.swing.widget;
 
 import java.awt.Color;
@@ -5,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -313,6 +328,14 @@ public class SkinXMLHandler {
         return getSkin(component,false);
     }
     
+    /**
+     * Returns the list of components that have SkinSpecifications.
+     * @return
+     */
+    public synchronized static Set<String> getSkinnedComponents() {
+        return skinSpecs.keySet();
+    }
+
     /**
      * Get a <code>SkinSpecification</code> for a given component.
      * 

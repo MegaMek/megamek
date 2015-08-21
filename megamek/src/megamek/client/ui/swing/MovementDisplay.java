@@ -331,7 +331,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     "PhaseDisplayButton");
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(false);
+            if (clientgui != null) {
+                newButton.setEnabled(false);
+            } else {
+                newButton.setEnabled(true);
+            }
             buttons.put(cmd, newButton);
         }
 

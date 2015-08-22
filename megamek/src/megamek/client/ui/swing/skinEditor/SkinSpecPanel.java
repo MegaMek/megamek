@@ -435,7 +435,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
      */
     public void updateSkinSpec(SkinSpecification skinSpec, boolean enableBorders) {
 
-        skinSpec.noBorder = enableBorders;
+        skinSpec.noBorder = !enableBorders;
         skinSpec.tl_corner = tlCorner.path.get(0).getText();
         skinSpec.tr_corner = trCorner.path.get(0).getText();
         skinSpec.bl_corner = blCorner.path.get(0).getText();
@@ -445,29 +445,29 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
         skinSpec.topEdge.clear();
         skinSpec.topShouldTile.clear();
         for (int i = 0; i < topEdge.path.size(); i++) {
-            skinSpec.topEdge.add(topEdge.path.get(0).getText());
-            skinSpec.topShouldTile.add(topEdge.tiled.get(0).isSelected());
+            skinSpec.topEdge.add(topEdge.path.get(i).getText());
+            skinSpec.topShouldTile.add(topEdge.tiled.get(i).isSelected());
         }
         // Bottom Edge
         skinSpec.bottomEdge.clear();
         skinSpec.bottomShouldTile.clear();
         for (int i = 0; i < bottomEdge.path.size(); i++) {
-            skinSpec.bottomEdge.add(bottomEdge.path.get(0).getText());
-            skinSpec.bottomShouldTile.add(bottomEdge.tiled.get(0).isSelected());
+            skinSpec.bottomEdge.add(bottomEdge.path.get(i).getText());
+            skinSpec.bottomShouldTile.add(bottomEdge.tiled.get(i).isSelected());
         }
         // Left Edge
         skinSpec.leftEdge.clear();
         skinSpec.leftShouldTile.clear();
         for (int i = 0; i < leftEdge.path.size(); i++) {
-            skinSpec.leftEdge.add(leftEdge.path.get(0).getText());
-            skinSpec.leftShouldTile.add(leftEdge.tiled.get(0).isSelected());
+            skinSpec.leftEdge.add(leftEdge.path.get(i).getText());
+            skinSpec.leftShouldTile.add(leftEdge.tiled.get(i).isSelected());
         }
         // Right Edge
         skinSpec.rightEdge.clear();
         skinSpec.rightShouldTile.clear();
         for (int i = 0; i < rightEdge.path.size(); i++) {
-            skinSpec.rightEdge.add(rightEdge.path.get(0).getText());
-            skinSpec.rightShouldTile.add(rightEdge.tiled.get(0).isSelected());
+            skinSpec.rightEdge.add(rightEdge.path.get(i).getText());
+            skinSpec.rightShouldTile.add(rightEdge.tiled.get(i).isSelected());
         }
 
         // Background

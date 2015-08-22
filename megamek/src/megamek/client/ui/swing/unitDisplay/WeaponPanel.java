@@ -1077,6 +1077,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         }
         weapSortOrder.setSelectedIndex(entity.getWeaponSortOrder()
                 .ordinal());
+        setWeaponComparator(weapSortOrder.getSelectedIndex());
 
         if (en.hasDamagedRHS() && hasFiredWeapons) {
             currentHeatBuildup++;

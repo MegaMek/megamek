@@ -1143,7 +1143,9 @@ public class Client implements IClientCommandHandler {
      * send the message to the server
      */
     protected void send(Packet packet) {
-        connection.send(packet);
+        if (connection != null) {
+            connection.send(packet);
+        }
     }
 
     /**

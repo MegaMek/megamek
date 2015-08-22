@@ -35,6 +35,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -52,15 +54,16 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
 
     /**
      * A UI widget for displaying information related to a border widget (image
-     * path and whether the image is tiled or not).  Also supports a flag to
+     * path and whether the image is tiled or not). Also supports a flag to
      * determine if the image should be allowed to tile (ie, corners should
      * never be tiled)
-     *  
+     * 
      * @author arlith
      *
      */
-    private class BorderElement extends JPanel implements ActionListener {
-        
+    private class BorderElement extends JPanel implements ActionListener,
+            DocumentListener {
+
         /**
          * 
          */
@@ -114,7 +117,9 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
                     new Object[] { Configuration.widgetsDir().getPath() }));
             newPathLbl.addActionListener(this);
             pathLbl.add(newPathLbl);
-            path.add(new JTextField(imgPath, TEXTFIELD_COLS));
+            JTextField newPath = new JTextField(imgPath, TEXTFIELD_COLS);
+            newPath.getDocument().addDocumentListener(this);
+            path.add(newPath);
             JCheckBox newTiled = new JCheckBox(
                     Messages.getString("SkinEditor.Tiled"), //$NON-NLS-1$
                     false);
@@ -174,7 +179,9 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
                     .getString("SkinEditor.PathToolTip")); //$NON-NLS-1$
             newPathLbl.addActionListener(this);
             pathLbl.add(newPathLbl); //$NON-NLS-1$
-            path.add(new JTextField(imgPath, TEXTFIELD_COLS));
+            JTextField newPath = new JTextField(imgPath, TEXTFIELD_COLS);
+            newPath.getDocument().addDocumentListener(this);
+            path.add(newPath);
             JCheckBox newTiled = new JCheckBox(
                     Messages.getString("SkinEditor.Tiled"), //$NON-NLS-1$
                     isTiled);
@@ -246,6 +253,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            skinPanel.notifySkinChanges();
             if (e.getSource().equals(addButton)) {
                 addPathRow("", false, true);
                 for (JButton removeButton : removeButtons) {
@@ -253,15 +261,17 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
                 }
                 layoutPanel();
                 skinPanel.signalValidate();
-            } else{
+            } else {
                 // Did we press a remove button?
                 for (int i = 0; i < removeButtons.size(); i++) {
                     // Find the button pressed, and remove the entry
                     if (e.getSource().equals(removeButtons.get(i))) {
                         // Remove Listeners
                         pathLbl.get(i).removeActionListener(this);
+                        path.get(i).getDocument().removeDocumentListener(this);
                         tiled.get(i).removeActionListener(this);
                         removeButtons.get(i).removeActionListener(this);
+
                         // Remove UI elements
                         pathLbl.remove(i);
                         path.remove(i);
@@ -306,8 +316,23 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
             // Set text
             path.get(pathIdx).setText(relativePath);
         }
+
+        @Override
+        public void changedUpdate(DocumentEvent arg0) {
+            skinPanel.notifySkinChanges();
+        }
+
+        @Override
+        public void insertUpdate(DocumentEvent arg0) {
+            skinPanel.notifySkinChanges();
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent arg0) {
+            skinPanel.notifySkinChanges();
+        }
     }
-    
+
     /**
      * Essentially the same thing as the BorderElement, but used for backgrounds
      * where each background image shares the same shouldTile state.
@@ -331,6 +356,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
         public void actionPerformed(ActionEvent e) {
             boolean tiledChecked = false;
             boolean newValue = false;
+            skinPanel.notifySkinChanges();
             if (e.getSource().equals(addButton)) {
                 addPathRow("", tiled.get(0).isSelected(), true);
                 for (JButton removeButton : removeButtons) {
@@ -592,6 +618,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
     
     @Override
     public void actionPerformed(ActionEvent e) {
+        notifySkinChanges();
         if (e.getSource().equals(colorButton)) {
             Color newColor = JColorChooser.showDialog(this,
                     Messages.getString("SkinEditor.ColorChoice"), //$NON-NLS-1$
@@ -622,6 +649,10 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
 
     public void signalValidate() {
         skinEditor.validate();
+    }
+
+    public void notifySkinChanges() {
+        skinEditor.notifySkinChanges();
     }
 
 }

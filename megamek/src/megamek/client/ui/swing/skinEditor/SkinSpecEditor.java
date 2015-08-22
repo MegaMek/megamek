@@ -33,6 +33,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -102,6 +103,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         super(new GridBagLayout());
         this.mainGUI = mainGUI;
         
+        skinSpecCompList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         skinSpecCompList.setMinimumSize(new Dimension(100, 50));
         skinSpecCompList.setMinimumSize(new Dimension(100, 50));
         
@@ -249,6 +251,8 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
             return;            
         }
         
+        saveSkinButton.setEnabled(false);
+
         SkinSpecification skinSpec = SkinXMLHandler.getSkin(skinSpecCompList
                 .getSelectedValue());
         
@@ -265,7 +269,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         
         revalidate();
         addListeners();
-    }   
+    }
 
 
     @Override
@@ -304,7 +308,34 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
             }
         } else if (e.getSource().equals(enableBorders)) {
             skinEditPanel.setEnabled(enableBorders.isSelected());
+        } else if (e.getSource().equals(resetSkinButton)) {
+            setupSkinEditPanel();
+        } else if (e.getSource().equals(saveSkinButton)) {
+            saveSkinButton.setEnabled(false);
+            String currComp = (String) skinSpecCompList.getSelectedValue();
+            SkinSpecification skinSpec = SkinXMLHandler.getSkin(currComp);
+            skinEditPanel.updateSkinSpec(skinSpec, enableBorders.isSelected());
+            SkinXMLHandler.writeSkinToFile((String) currSkinCombo
+                    .getSelectedItem());
+            mainGUI.updateBorder();
+        } else if (e.getSource().equals(addCompButton)) {
+            String msg = Messages.getString("SkinEditor.AddCompMsg");
+            String title = Messages.getString("SkinEditor.AddCompTitle");
+            String newComp = JOptionPane.showInputDialog(this, msg, title,
+                    JOptionPane.QUESTION_MESSAGE);
+            if (newComp == null) {
+                return;
+            }
+            SkinXMLHandler.addNewComp(newComp);
         }
+    }
+
+    /**
+     * Notifies the SkinSpecEditor that a change has been made to the currently
+     * selected component's SkinSpecification.
+     */
+    public void notifySkinChanges() {
+        saveSkinButton.setEnabled(true);
     }
 
 }

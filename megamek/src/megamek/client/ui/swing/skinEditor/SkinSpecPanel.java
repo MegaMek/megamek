@@ -146,24 +146,24 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
             super(new GridBagLayout());
             this.skinPanel = skinPanel;
             setBorder(BorderFactory.createTitledBorder(
-                    BorderFactory.createEmptyBorder(), elementName, 
+                    BorderFactory.createEmptyBorder(), elementName,
                     TitledBorder.LEFT, TitledBorder.TOP));
-            
+
             displayTiled = true;
             boolean removeEnabled = imgPath.size() > 1;
-            assert(imgPath.size() == isTiled.size());
+            assert (imgPath.size() == isTiled.size());
             for (int i = 0; i < imgPath.size(); i++) {
                 addPathRow(imgPath.get(i), isTiled.get(i), removeEnabled);
             }
             addButton.setToolTipText(Messages
                     .getString("SkinEditor.AddButtonToolTip")); //$NON-NLS-1$
-            addButton.setMargin(new Insets(1,1,1,1));
+            addButton.setMargin(new Insets(1, 1, 1, 1));
             addButton.setMaximumSize(new Dimension(40, 14));
             addButton.setPreferredSize(new Dimension(40, 14));
             addButton.addActionListener(this);
             layoutPanel();
         }
-        
+
         /**
          * Used for BorderElements that have multiple entries, this method adds
          * a row of PathButton, Path text field, tiled checkbox and remove
@@ -201,11 +201,10 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
             removeButtons.add(newRemoveButton);
         }
 
-
         void layoutPanel() {
             removeAll();
             GridBagConstraints gbc = new GridBagConstraints();
-            gbc.insets = new Insets(1,1,1,1);
+            gbc.insets = new Insets(1, 1, 1, 1);
             gbc.anchor = GridBagConstraints.WEST;
             gbc.gridx = gbc.gridy = 0;
             if (displayTiled) {
@@ -213,11 +212,12 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
                 gbc.gridy++;
             }
             for (int i = 0; i < path.size(); i++) {
-                gbc.gridx = 0; gbc.gridwidth = 1;
+                gbc.gridx = 0;
+                gbc.gridwidth = 1;
                 gbc.weightx = 0;
                 gbc.fill = GridBagConstraints.NONE;
                 add(pathLbl.get(i), gbc);
-                
+
                 gbc.gridx++;
                 gbc.weightx = 1;
                 gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -238,7 +238,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
                 gbc.gridy++;
             }
         }
-        
+
         @Override
         public void setEnabled(boolean en) {
             super.setEnabled(en);
@@ -500,15 +500,15 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
         gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 0, 4, 0);
-        
+
         JPanel borderPanel = new JPanel(new GridBagLayout());
-        //borderPanel.setLayout(new BoxLayout(borderPanel, BoxLayout.Y_AXIS));
+        // borderPanel.setLayout(new BoxLayout(borderPanel, BoxLayout.Y_AXIS));
         borderPanel.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.BLACK),
                 Messages.getString("SkinEditor.Borders"), TitledBorder.TOP, //$NON-NLS-1$
                 TitledBorder.DEFAULT_POSITION));
         borderPanel.setEnabled(enableBorders);
-        
+
         // Top Left Corner
         tlCorner = new BorderElement(this,
                 Messages.getString("SkinEditor.TLC"), //$NON-NLS-1$
@@ -526,21 +526,20 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
         gbc.gridy++;
         // Bottom Left Corner
         blCorner = new BorderElement(this,
-                Messages.getString("SkinEditor.BLC"),  //$NON-NLS-1$
+                Messages.getString("SkinEditor.BLC"), //$NON-NLS-1$
                 skinSpec.bl_corner);
         blCorner.setEnabled(enableBorders);
         borderPanel.add(blCorner, gbc);
         gbc.gridx++;
         // Bottom Right Corner
         brCorner = new BorderElement(this,
-                Messages.getString("SkinEditor.BRC"),  //$NON-NLS-1$
+                Messages.getString("SkinEditor.BRC"), //$NON-NLS-1$
                 skinSpec.br_corner);
         brCorner.setEnabled(enableBorders);
         borderPanel.add(brCorner, gbc);
         gbc.gridy++;
         gbc.gridx = 0;
-        
-        
+
         // Top Edge
         topEdge = new BorderElement(this,
                 Messages.getString("SkinEditor.TopEdge"), //$NON-NLS-1$
@@ -548,7 +547,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
         topEdge.setEnabled(enableBorders);
         borderPanel.add(topEdge, gbc);
         gbc.gridx++;
-        
+
         // Bottom Edge
         bottomEdge = new BorderElement(this,
                 Messages.getString("SkinEditor.BottomEdge"), //$NON-NLS-1$
@@ -574,8 +573,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
         borderPanel.add(rightEdge, gbc);
         gbc.gridy++;
         gbc.gridx = 0;
-        
-        
+
         gbc.gridx = gbc.gridy = 0;
         add(borderPanel, gbc);
 
@@ -585,37 +583,36 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
 
         gbc.gridy++;
         add(background, gbc);
-        
+
         JPanel misc = new JPanel(new GridBagLayout());
         gbc.gridy++;
         add(misc, gbc);
-        
+
         gbc.gridx = gbc.gridy = 0;
         gbc.fill = GridBagConstraints.NONE;
         misc.add(showScrollBars);
-        
+
         JPanel glue = new JPanel();
         glue.add(colorLbl);
         glue.add(colorButton);
         gbc.gridy++;
         misc.add(glue, gbc);
-        
+
         colorButton.setForeground(skinSpec.fontColor);
         colorButton.setBackground(skinSpec.fontColor);
-        
+
         revalidate();
         addListeners();
-    }   
-
+    }
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
         if (e.getValueIsAdjusting()) {
             return;
         }
-        
+
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         notifySkinChanges();

@@ -323,7 +323,11 @@ public class SkinXMLHandler {
         }        
         return skinSpec;        
     }
-    
+
+    public static void writeSkinToFile(String path) {
+
+    }
+
     public static SkinSpecification getSkin(String component){
         return getSkin(component,false);
     }
@@ -362,6 +366,22 @@ public class SkinXMLHandler {
             }
         }
         return spec;
+    }
+
+    /**
+     * Adds a new component to the SkinSpecs map.
+     *
+     * @param component
+     */
+    public synchronized static void addNewComp(String component) {
+        if (skinSpecs == null ){
+            boolean rv = initSkinXMLHandler();
+            if (!rv) {
+                return ;
+            }
+        }
+        SkinSpecification newSpec = new SkinSpecification();
+        skinSpecs.put(component, newSpec);
     }
 
 }

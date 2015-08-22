@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FilenameFilter;
 
+import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -62,9 +63,21 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
     /**
      * Adds a new SkinSpecification
      */
-    private JButton addButton = 
+    private JButton addButton =
             new JButton(Messages.getString("SkinEditor.AddButton")); //$NON-NLS-1$
-    
+
+    private JButton addCompButton =
+            new JButton(Messages.getString("SkinEditor.AddCompButton")); //$NON-NLS-1$
+
+    private JButton removeCompButton =
+            new JButton(Messages.getString("SkinEditor.RemoveCompButton")); //$NON-NLS-1$
+
+    private JButton saveSkinButton =
+            new JButton(Messages.getString("SkinEditor.SaveSkinButton")); //$NON-NLS-1$
+
+    private JButton resetSkinButton =
+            new JButton(Messages.getString("SkinEditorResestSkinButton")); //$NON-NLS-1$
+
     /**
      * Lists all SkinSpecifications for the current skin.
      */
@@ -78,7 +91,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
     /**
      * Panel that holds UI widgets for editing the selected skin spec.
      */
-    private SkinSpecPanel skinEditPanel = new SkinSpecPanel();
+    private SkinSpecPanel skinEditPanel = new SkinSpecPanel(this);
 
     /**************************************************************************/
     
@@ -92,11 +105,16 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         skinSpecCompList.setMinimumSize(new Dimension(100, 50));
         skinSpecCompList.setMinimumSize(new Dimension(100, 50));
         
+        addCompButton.setToolTipText(Messages
+                .getString("SkinEditor.AddCompButtonToolTip")); //$NON-NLS-1$
+
         JScrollPane compListScroll = new JScrollPane(skinSpecCompList);
         JScrollPane editPanelScroll = new JScrollPane(skinEditPanel,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         
+        JPanel tmpHolding;
+
         enableBorders.setToolTipText(Messages
                 .getString("SkinEditor.EnableBordersToolTip")); //$NON-NLS-1$
         // layout main panel
@@ -108,21 +126,33 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         c.weighty = 0.0;
         c.gridx = 0; c.gridy = 0;
         
-        add(currSkinCombo, c);
+        tmpHolding = new JPanel();
+        tmpHolding.add(currSkinCombo);
+        tmpHolding.add(addButton);
+
+        add(tmpHolding, c);
+
+        tmpHolding = new JPanel();
+        tmpHolding.add(addCompButton);
+        tmpHolding.add(removeCompButton);
+        tmpHolding.add(Box.createHorizontalStrut(10));
+        tmpHolding.add(saveSkinButton);
+        tmpHolding.add(resetSkinButton);
+
         c.gridy++;
         c.fill = GridBagConstraints.NONE;
-        add(addButton, c);
-        
+        add(tmpHolding, c);
+
         c.gridy++;
         c.fill = GridBagConstraints.HORIZONTAL;
         add(compListScroll, c);
-        
+
         c.gridy++;
         c.weightx = 1.0;
         c.anchor = GridBagConstraints.CENTER;
         c.fill = GridBagConstraints.NONE;
         add(enableBorders, c);
-        
+
         c.gridy++;
         c.weightx = 1.0;
         c.fill = GridBagConstraints.BOTH;
@@ -143,6 +173,11 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         
         enableBorders.addActionListener(this);
         currSkinCombo.addActionListener(this);
+        addButton.addActionListener(this);
+        addCompButton.addActionListener(this);
+        removeCompButton.addActionListener(this);
+        saveSkinButton.addActionListener(this);
+        resetSkinButton.addActionListener(this);
     }
     
     /**
@@ -153,6 +188,11 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         
         enableBorders.removeActionListener(this);
         currSkinCombo.removeActionListener(this);
+        addButton.removeActionListener(this);
+        addCompButton.removeActionListener(this);
+        removeCompButton.removeActionListener(this);
+        saveSkinButton.removeActionListener(this);
+        resetSkinButton.removeActionListener(this);
     }
     
     /**

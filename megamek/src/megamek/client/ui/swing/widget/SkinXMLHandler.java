@@ -15,8 +15,12 @@
 package megamek.client.ui.swing.widget;
 
 import java.awt.Color;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Set;
@@ -40,6 +44,31 @@ import org.w3c.dom.NodeList;
  */
 public class SkinXMLHandler {
     
+    public static String SKIN_FOOTER = "</skin>";
+    public static String SKIN_HEADER;
+
+    static {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        sb.append("<!--\n");
+        sb.append("  This is the default skin for Megamek\n");
+        sb.append("\n");
+        sb.append("  New skins can be created by specifying UI_Element tags\n");
+        sb.append("\n");
+        sb.append("  The defaultElement UI_Element specifies the default border to be used by UI\n");
+        sb.append("    components\n");
+        sb.append("\n");
+        sb.append("  The defaultButton UI_Element specifies the default border and background\n");
+        sb.append("   images to use for Megamek buttons.  The first image is the base default\n");
+        sb.append("   image and the second image is the pressed image\n");
+        sb.append("\n");
+        sb.append("  NOTE: All locations should be in data/images/widgets\n");
+        sb.append("-->\n");
+        sb.append("<skin xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+        sb.append("    xsi:noNamespaceSchemaLocation=\"skinSchema.xsl\">\n");
+        SKIN_HEADER = sb.toString();
+    }
+
     /**
      * The XML name tag value for the default component border
      */
@@ -254,13 +283,13 @@ public class SkinXMLHandler {
     /**
      *  Create a new SkinSpecification and populate it from the supplied border
      *  tag
-     *  
+     *
      * @param border
      * @return
      */
     private static SkinSpecification parseBorderTag(Element border){
         SkinSpecification skinSpec = new SkinSpecification();
-        
+
         // Parse Corner Icons
         skinSpec.tr_corner = border.getElementsByTagName(TR_CORNER).
                 item(0).getTextContent();
@@ -270,7 +299,7 @@ public class SkinXMLHandler {
                 item(0).getTextContent();
         skinSpec.bl_corner = border.getElementsByTagName(BL_CORNER).
                 item(0).getTextContent();
-        
+
         // Parse Edge Icons from Edge tag
         NodeList edgeNodes = border.getElementsByTagName(EDGE);
         for (int i = 0; i < edgeNodes.getLength(); i++){
@@ -286,7 +315,7 @@ public class SkinXMLHandler {
                         .getElementsByTagName(ICON).item(0).getTextContent();
                 String tiled = ((Element) edgeIcons.item(j))
                         .getElementsByTagName(TILED).item(0).getTextContent();
-                
+
                 if (icon == null){
                     System.err.println("Missing <" + ICON + "> tag");
                     continue;
@@ -298,15 +327,15 @@ public class SkinXMLHandler {
                 icons.add(icon);
                 shouldTile.add(tiled.equalsIgnoreCase("true"));
             }
-            
+
             String edgeName = ((Element) edgeNodes.item(i))
                     .getElementsByTagName(EDGE_NAME).item(0).getTextContent();
-            
+
             if (edgeName == null){
                 System.err.println("Missing <" + EDGE_NAME + "> tag");
                 continue;
             }
-            
+
             if (edgeName.equals("top")){
                 skinSpec.topEdge = icons;
                 skinSpec.topShouldTile = shouldTile;
@@ -324,14 +353,198 @@ public class SkinXMLHandler {
         return skinSpec;        
     }
 
-    public static void writeSkinToFile(String path) {
+    public static void writeSkinToFile(String filename) {
+        String userDir = System.getProperty("user.dir");
+        if (!userDir.endsWith(File.separator)) {
+            userDir += File.separator;
+        }
+        String filePath = userDir + "mmconf" + File.separator
+                + filename;
 
+        Writer output = null;
+        try {
+            output = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(filePath)));
+            output.write(SKIN_HEADER);
+            for (String component : skinSpecs.keySet()) {
+                writeSkinComponent(component, output);
+            }
+            output.write(SKIN_FOOTER);
+            output.close();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
     }
+
+    /**
+     * Convenience method for writing out the UI_ELEMENT tag.
+     * @param component
+     * @param out
+     * @throws IOException
+     */
+    private static void writeSkinComponent(String component, Writer out)
+            throws IOException {
+        out.write("\t<" + UI_ELEMENT + ">\n");
+
+        // Write Component name
+        out.write("\t\t<" + NAME + ">");
+        out.write(component);
+        out.write("</" + NAME + ">\n");
+
+        SkinSpecification skinSpec = getSkin(component);
+
+        // Write Border
+        out.write("\t\t<" + NO_BORDER + ">");
+        out.write(((Boolean)skinSpec.noBorder).toString());
+        out.write("</" + NO_BORDER + ">\n");
+        writeBorder(skinSpec, out);
+
+        // Write background
+        for (String bgImg : skinSpec.backgrounds) {
+            out.write("\t\t<" + BACKGROUND_IMAGE + ">");
+            out.write(bgImg);
+            out.write("</" + BACKGROUND_IMAGE + ">\n");
+        }
+        out.write("\t\t<" + TILE_BACKGROUND + ">");
+        out.write(((Boolean)skinSpec.tileBackground).toString());
+        out.write("</" + TILE_BACKGROUND + ">\n");
+
+        // Write color
+        out.write("\t\t<" + FONT_COLOR + ">");
+        out.write("#"
+                + Integer.toHexString(skinSpec.fontColor.getRGB()).substring(2));
+        out.write("</" + FONT_COLOR + ">\n");
+
+        // Write show scroll bars
+        out.write("\t\t<" + SHOW_SCROLL_BARS + ">");
+        out.write(((Boolean)skinSpec.showScrollBars).toString());
+        out.write("</" + SHOW_SCROLL_BARS + ">\n");
+
+        // Close UI_ELEMENT tag
+        out.write("\t</" + UI_ELEMENT + ">\n\n");
+    }
+
+    /**
+     * Convenience method for writing out the BORDER element.
+     *
+     * @param skinSpec
+     * @param out
+     * @throws IOException
+     */
+    private static void writeBorder(SkinSpecification skinSpec, Writer out)
+            throws IOException {
+        out.write("\t\t<!-- Specification of border images -->\n");
+        out.write("\t\t<" + BORDER + ">\n");
+
+        out.write("\t\t\t<!-- Corner images -->\n");
+        // Top Left Corner
+        out.write("\t\t\t<" + TL_CORNER + ">");
+        out.write(skinSpec.tl_corner);
+        out.write("</" + TL_CORNER + ">\n");
+        // Top Right Corner
+        out.write("\t\t\t<" + TR_CORNER + ">");
+        out.write(skinSpec.tr_corner);
+        out.write("</" + TR_CORNER + ">\n");
+        // Bottom Left Corner
+        out.write("\t\t\t<" + BL_CORNER + ">");
+        out.write(skinSpec.bl_corner);
+        out.write("</" + BL_CORNER + ">\n");
+        // Bottom Right Corner
+        out.write("\t\t\t<" + BR_CORNER + ">");
+        out.write(skinSpec.br_corner);
+        out.write("</" + BR_CORNER + ">\n");
+
+        // Edges
+        out.write("\t\t\t<!-- Border lines: these images will be tiled -->\n");
+        out.write("\t\t\t<" + EDGE + ">\n");
+        // Top Edge
+        out.write("\t\t\t\t<" + EDGE_ICON + ">\n");
+        for (int i = 0; i < skinSpec.topEdge.size(); i++) {
+            // Edge Icon
+            out.write("\t\t\t\t\t<" + ICON + ">");
+            out.write(skinSpec.topEdge.get(i));
+            out.write("</" + ICON + ">\n");
+            // Tile state of icon
+            out.write("\t\t\t\t\t<" + TILED + ">");
+            out.write(((Boolean)skinSpec.topShouldTile.get(i)).toString());
+            out.write("</" + TILED + ">\n");
+        }
+        out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
+        out.write("\t\t\t\t<" + EDGE_NAME + ">");
+        out.write("top");
+        out.write("</" + EDGE_NAME + ">\n");
+
+        out.write("\t\t\t</" + EDGE + ">\n");
+
+        // Bottom Edge
+        out.write("\t\t\t<" + EDGE + ">\n");
+        out.write("\t\t\t\t<" + EDGE_ICON + ">\n");
+        for (int i = 0; i < skinSpec.bottomEdge.size(); i++) {
+            // Edge Icon
+            out.write("\t\t\t\t\t<" + ICON + ">");
+            out.write(skinSpec.bottomEdge.get(i));
+            out.write("</" + ICON + ">\n");
+            // Tile state of icon
+            out.write("\t\t\t\t\t<" + TILED + ">");
+            out.write(((Boolean)skinSpec.bottomShouldTile.get(i)).toString());
+            out.write("</" + TILED + ">\n");
+        }
+        out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
+        out.write("\t\t\t\t<" + EDGE_NAME + ">");
+        out.write("bottom");
+        out.write("</" + EDGE_NAME + ">\n");
+
+        out.write("\t\t\t</" + EDGE + ">\n");
+
+        // Left Edge
+        out.write("\t\t\t<" + EDGE + ">\n");
+        out.write("\t\t\t\t<" + EDGE_ICON + ">\n");
+        for (int i = 0; i < skinSpec.leftEdge.size(); i++) {
+            // Edge Icon
+            out.write("\t\t\t\t\t<" + ICON + ">");
+            out.write(skinSpec.leftEdge.get(i));
+            out.write("</" + ICON + ">\n");
+            // Tile state of icon
+            out.write("\t\t\t\t\t<" + TILED + ">");
+            out.write(((Boolean)skinSpec.leftShouldTile.get(i)).toString());
+            out.write("</" + TILED + ">\n");
+        }
+        out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
+        out.write("\t\t\t\t<" + EDGE_NAME + ">");
+        out.write("left");
+        out.write("</" + EDGE_NAME + ">\n");
+
+        out.write("\t\t\t</" + EDGE + ">\n");
+
+        // Right Edge
+        out.write("\t\t\t<" + EDGE + ">\n");
+        out.write("\t\t\t\t<" + EDGE_ICON + ">\n");
+        for (int i = 0; i < skinSpec.rightEdge.size(); i++) {
+            // Edge Icon
+            out.write("\t\t\t\t\t<" + ICON + ">");
+            out.write(skinSpec.rightEdge.get(i));
+            out.write("</" + ICON + ">\n");
+            // Tile state of icon
+            out.write("\t\t\t\t\t<" + TILED + ">");
+            out.write(((Boolean)skinSpec.rightShouldTile.get(i)).toString());
+            out.write("</" + TILED + ">\n");
+        }
+        out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
+        out.write("\t\t\t\t<" + EDGE_NAME + ">");
+        out.write("right");
+        out.write("</" + EDGE_NAME + ">\n");
+
+        out.write("\t\t\t</" + EDGE + ">\n");
+
+        out.write("\t\t</" + BORDER + ">\n");
+    }
+
 
     public static SkinSpecification getSkin(String component){
         return getSkin(component,false);
     }
-    
+
     /**
      * Returns the list of components that have SkinSpecifications.
      * @return

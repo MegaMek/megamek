@@ -20,6 +20,8 @@ v0.41.7-dev (SVN)
 + setOriginalShots for Protos
 + Bug [#4603]: Weapon Order always revert to default
 + Data: New Sprites
++ Bug: Direct/Glancing Blow applies both cluster and damage modifier to rapid-
+    fire autocannons (should be cluster only in rapid-fire modes).
 
 v0.41.6 (2015-08-15 19:40 UTC)
 + Bug [#4587]: "Packet Pump" Error during Princess Movement

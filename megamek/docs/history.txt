@@ -24,6 +24,7 @@ v0.41.7-dev (SVN)
 + Bug: Direct/Glancing Blow applies both cluster and damage modifier to rapid-
     fire autocannons (should be cluster only in rapid-fire modes).
 + Bug [#4606]: Careful Stand doesn't end movement on failure
++ Bug: Hammerhead, roll, half roll, maneuvers allowed free facing changes
 
 v0.41.6 (2015-08-15 19:40 UTC)
 + Bug [#4587]: "Packet Pump" Error during Princess Movement

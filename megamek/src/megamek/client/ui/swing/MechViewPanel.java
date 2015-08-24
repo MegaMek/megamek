@@ -135,6 +135,11 @@ public class MechViewPanel extends JPanel {
         setMech(entity,mechView);
     }
     
+    public void setMech(Entity entity, boolean useAlternateCost) {
+        MechView mechView = new MechView(entity, false, useAlternateCost);
+        setMech(entity,mechView);
+    }
+    
     public void reset() {
         txtMek.setText("");
         lblMek.setIcon(null);

@@ -52,6 +52,10 @@ public class MechView {
     StringBuffer sFluff = new StringBuffer("");
 
     public MechView(Entity entity, boolean showDetail) {
+    	this(entity, showDetail, false);
+    }
+    
+    public MechView(Entity entity, boolean showDetail, boolean useAlternateCost) {
         this.entity = entity;
         isMech = entity instanceof Mech;
         isInf = entity instanceof Infantry;
@@ -109,7 +113,11 @@ public class MechView {
                 null == entity.getCrew())));
         sHead.append("<br>"); //$NON-NLS-1$
         sHead.append("Cost: ");
-        sHead.append(dFormatter.format(entity.getCost(false)));
+        if(useAlternateCost) {
+        	sHead.append(dFormatter.format(entity.getAlternateCost()));
+        } else {
+        	sHead.append(dFormatter.format(entity.getCost(false)));
+        }
         sHead.append(" C-bills");
         sHead.append("<br>"); //$NON-NLS-1$
         if (!entity.getSource().equals("")){

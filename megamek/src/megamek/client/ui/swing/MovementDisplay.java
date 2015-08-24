@@ -3862,7 +3862,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
 
             if (opts.booleanOption("tacops_careful_stand")
-                    && (ce.getWalkMP() > 2)) {
+                    && ((ce.getWalkMP() - ce.mpUsed) > 2)) {
                 ConfirmDialog response = clientgui
                         .doYesNoBotherDialog(
                                 Messages.getString("MovementDisplay.CarefulStand.title"),//$NON-NLS-1$

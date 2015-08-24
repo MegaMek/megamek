@@ -7021,7 +7021,7 @@ public class Server implements Runnable {
                 wasProne = false;
                 game.resetPSRs(entity);
                 entityFellWhileAttemptingToStand = !doSkillCheckInPlace(entity,
-                                                                        rollTarget);
+                        rollTarget);
             }
             // did the entity just fall?
             if (entityFellWhileAttemptingToStand) {
@@ -8748,7 +8748,7 @@ public class Server implements Runnable {
         // another turn and so doesn't reliably tell us.
         if (!(game.getOptions().booleanOption("falls_end_movement")
               && (entity instanceof Mech) && !wasProne && entity.isProne())
-            && fellDuringMovement
+            && (fellDuringMovement && !entity.isCarefulStand()) // Careful standing takes up the whole turn
             && !turnOver
             && (entity.mpUsed < entity.getRunMP())
             && entity.isSelectableThisTurn() && !entity.isDoomed()) {

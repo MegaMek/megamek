@@ -41,6 +41,9 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      */
     private static final long serialVersionUID = 7551194199079004134L;
     int howManyShots;
+    private final boolean twoRollsUltra; // Tracks whether or not this is an
+        // ultra AC using the unofficial "two rolls" rule. Can be final because
+        // this isn't really going to change over the course of a game.
 
     /**
      * @param t
@@ -50,6 +53,9 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
     public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
                               Server s) {
         super(t, w, g, s);
+        twoRollsUltra = game.getOptions().booleanOption("uac_tworolls")
+                && ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA)
+                    || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB));
     }
 
     /*
@@ -105,10 +111,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
         bSalvo = true;
 
-        if ((howManyShots == 1)
-                || (game.getOptions().booleanOption("uac_tworolls") && ((wtype
-                        .getAmmoType() == AmmoType.T_AC_ULTRA) || (wtype
-                        .getAmmoType() == AmmoType.T_AC_ULTRA_THB)))) {
+        if (howManyShots == 1 || twoRollsUltra) {
             return 1;
         }
 
@@ -187,11 +190,14 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             }
             // plus 1 for cluster
             toReturn++;
-        } else if (bDirect) {
+            
+        // Cluster bonuses or penalties can't apply to "two rolls" UACs, so
+        // if we have one, modify the damage per hit directly.
+        } else if (bDirect && (howManyShots == 1 || twoRollsUltra)) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
 
-        if (bGlancing) {
+        if (bGlancing && (howManyShots == 1 || twoRollsUltra)) {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
 

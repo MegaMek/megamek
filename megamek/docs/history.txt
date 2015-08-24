@@ -19,6 +19,10 @@ v0.41.7-dev (SVN)
 + setOriginalShots in BLKBattleArmor loader for MHQ
 + setOriginalShots for Protos
 + Bug [#4603]: Weapon Order always revert to default
++ Data: New Sprites
++ MechView constructor that allows for display of alterate costs
++ Bug: Direct/Glancing Blow applies both cluster and damage modifier to rapid-
+    fire autocannons (should be cluster only in rapid-fire modes).
 + Bug [#4606]: Careful Stand doesn't end movement on failure
 
 v0.41.6 (2015-08-15 19:40 UTC)

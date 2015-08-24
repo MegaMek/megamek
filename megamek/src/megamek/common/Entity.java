@@ -6009,7 +6009,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // add planetary condition modifiers
         roll = addConditionBonuses(roll, moveType);
 
-        if (isCarefulStand()) {
+        if (isCarefulStand() && ((getWalkMP() - mpUsed) > 2)) {
             roll.addModifier(-2, "careful stand");
         }
 

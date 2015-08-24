@@ -3434,13 +3434,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         cmd.addManeuver(type);
         switch (type) {
             case (ManeuverType.MAN_HAMMERHEAD):
-                cmd.addStep(MoveStepType.YAW, true, true);
+                // Don't consider a maneuver, so it doesn't get a free turns
+                cmd.addStep(MoveStepType.YAW, true, false);
                 return true;
             case (ManeuverType.MAN_HALF_ROLL):
-                cmd.addStep(MoveStepType.ROLL, true, true);
+                // Don't consider a maneuver, so it doesn't get a free turns
+                cmd.addStep(MoveStepType.ROLL, true, false);
                 return true;
             case (ManeuverType.MAN_BARREL_ROLL):
-                cmd.addStep(MoveStepType.DEC, true, true);
+                // Don't consider a maneuver, so it doesn't get a free turns
+                cmd.addStep(MoveStepType.DEC, true, false);
                 return true;
             case (ManeuverType.MAN_IMMELMAN):
                 gear = MovementDisplay.GEAR_IMMEL;

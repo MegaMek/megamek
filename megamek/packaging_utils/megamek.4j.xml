@@ -1,7 +1,7 @@
 <launch4jConfig>
   <headerType>gui</headerType>
-  <jar>../svndev/MegaMek.jar</jar>
-  <outfile>../svndev/MegaMek.exe</outfile>
+  <jar>../pkgdir/MegaMek.jar</jar>
+  <outfile>../pkgdir/MegaMek.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>

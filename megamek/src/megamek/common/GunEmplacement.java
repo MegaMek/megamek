@@ -465,6 +465,11 @@ public class GunEmplacement extends Tank {
     }
 
     @Override
+    public boolean isCrippled(boolean checkCrew) {
+        return isCrippled();
+    }
+
+    @Override
     public boolean isCrippled() {
         if (isMilitary() && !hasViableWeapons()) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {

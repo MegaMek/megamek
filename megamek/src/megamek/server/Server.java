@@ -1,7 +1,7 @@
 /*
  * MegaMek -
  * Copyright (C) 2000,2001,2002,2003,2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright �� 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright ������ 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -23061,6 +23061,21 @@ public class Server implements Runnable {
                         vDesc.addAll(explodeEquipment(t, loc, weapon));
                     }
                     weapon.setHit(true);
+                    //Taharqa: We should also damage the critical slot, or 
+                    //MM and MHQ won't remember that this weapon is damaged on the MUL
+                    //file
+                    for (int i = 0; i < t.getNumberOfCriticals(loc); i++) {
+                        CriticalSlot slot1 = t.getCritical(loc, i);
+                        if ((slot1 == null) || 
+                                (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                            continue;
+                        }
+                        Mounted mounted = slot1.getMount();
+                        if (mounted.equals(weapon)) {
+                            t.hitAllCriticals(loc, i);
+                            break;
+                        }
+                    }                  
                     break;
                 }
                 case Tank.CRIT_WEAPON_JAM: {
@@ -23429,6 +23444,43 @@ public class Server implements Runnable {
                             vDesc.addAll(explodeEquipment(a, loc, weapon));
                         }
                         weapon.setHit(true);
+                        //Taharqa: We should also damage the critical slot, or 
+                        //MM and MHQ won't remember that this weapon is damaged on the MUL
+                        //file
+                        for (int i = 0; i < a.getNumberOfCriticals(loc); i++) {
+                            CriticalSlot slot1 = a.getCritical(loc, i);
+                            if ((slot1 == null) || 
+                                    (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                                continue;
+                            }
+                            Mounted mounted = slot1.getMount();
+                            if (mounted.equals(weapon)) {
+                                a.hitAllCriticals(loc, i);
+                                break;
+                            }
+                        }
+                        //if this is a weapons bay then also hit all the other weapons
+                        for(int wId : weapon.getBayWeapons()) {
+                        	Mounted bayWeap = a.getEquipment(wId);
+                        	if(null != bayWeap) {
+                        		bayWeap.setHit(true);
+                        		//Taharqa: We should also damage the critical slot, or 
+                                //MM and MHQ won't remember that this weapon is damaged on the MUL
+                                //file
+                        		for (int i = 0; i < a.getNumberOfCriticals(loc); i++) {
+                                    CriticalSlot slot1 = a.getCritical(loc, i);
+                                    if ((slot1 == null) || 
+                                            (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
+                                        continue;
+                                    }
+                                    Mounted mounted = slot1.getMount();
+                                    if (mounted.equals(bayWeap)) {
+                                        a.hitAllCriticals(loc, i);
+                                        break;
+                                    }
+                                }
+                        	}
+                        }
                     } else {
                         r = new Report(9155);
                         r.subject = a.getId();

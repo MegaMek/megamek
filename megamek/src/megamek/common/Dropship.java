@@ -1464,7 +1464,7 @@ public class Dropship extends SmallCraft {
     public void setPosition(Coords position) {
         HashSet<Coords> oldPositions = getOccupiedCoords();
         super.setPosition(position, false);
-        if ((getAltitude() == 0) && !game.getBoard().inSpace()
+        if ((getAltitude() == 0) && (null != game) && !game.getBoard().inSpace()
                 && (position != null)) {
             secondaryPositions.put(0, position);
             secondaryPositions.put(1, position.translated(getFacing()));

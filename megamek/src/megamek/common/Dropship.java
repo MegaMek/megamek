@@ -44,6 +44,19 @@ public class Dropship extends SmallCraft {
         return dockCollarDamaged;
     }
 
+    public String getCritDamageString() {
+    	String toReturn = super.getCritDamageString();
+    	boolean first = toReturn.isEmpty();
+    	if(isDockCollarDamaged()) {
+    		if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Docking Collar";
+            first = false;
+    	}
+    	return toReturn;
+    }
+    
     @Override
     public boolean isLocationProhibited(Coords c, int currElevation) {
         IHex hex = game.getBoard().getHex(c);

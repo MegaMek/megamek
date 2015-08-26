@@ -31,6 +31,7 @@ v0.41.7-dev (SVN)
 + Bug [#4605]: Escape doesn't seem to work occassionally
 + detailed weapon bay description in MechView
 + Bug: weapon criticals on vehicles and aeros do not damage the critical slot
++ Bug: thruster and dropship collar crits not showing in MechView
 
 v0.41.6 (2015-08-15 19:40 UTC)
 + Bug [#4587]: "Packet Pump" Error during Princess Movement

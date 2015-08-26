@@ -4057,6 +4057,20 @@ public class Aero extends Entity {
             toReturn += "Landing Gear";
             first = false;
         }
+        if(getLeftThrustHits()>0) {
+        	if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Left Thruster (" + getLeftThrustHits() + ")";
+            first = false;
+        }
+        if(getRightThrustHits()>0) {
+        	if (!first) {
+                toReturn += ", ";
+            }
+            toReturn += "Right Thruster (" + getRightThrustHits() + ")";
+            first = false;
+        }        
         return toReturn;
     }
 

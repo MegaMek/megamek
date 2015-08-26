@@ -636,6 +636,7 @@ public class MechView {
             sWeapons.append("</td>"); //$NON-NLS-1$
 
             int heat = wtype.getHeat();
+            int bWeapDamaged = 0;
             if (wtype instanceof BayWeapon) {
                 // loop through weapons in bay and add up heat
                 heat = 0;
@@ -645,34 +646,76 @@ public class MechView {
                         continue;
                     }
                     heat = heat + ((WeaponType) m.getType()).getHeat();
+                    if(m.isDestroyed()) {
+                    	bWeapDamaged++;
+                    }
                 }
             }
             sWeapons.append("<td align='right'>").append(heat).append("</td>"); //$NON-NLS-1$ //$NON-NLS-2$
+            
+            if(wtype instanceof BayWeapon && bWeapDamaged > 0 && !showDetail) {
+            	sWeapons.append("<td><font color='red'>("
+                        + bWeapDamaged + Messages.getString("MechView.WeaponDamage") + ")</font><td>");
+            } else {
+                sWeapons.append("<td></td>"); //$NON-NLS-1$
+            }
+            sWeapons.append("</tr>");           
 
-            // if this is a weapon bay, then cycle through weapons and ammo
-            /*
-             * if((wtype instanceof BayWeapon) && showDetail) { for(int wId :
-             * mounted.getBayWeapons()) { Mounted m = entity.getEquipment(wId);
-             * if(null == m) { continue; }
-             *
-             * WeaponType newwtype = (WeaponType)m.getType();
-             *
-             * sWeapons.append("  ") .append( m.getDesc() );
-             *
-             * if (entity.isClan() &&
-             * m.getType().getInternalName().substring(0,2).equals("IS")) {
-             * //$NON-NLS-1$ sWeapons.append(Messages.getString("MechView.IS"));
-             * //$NON-NLS-1$ } if (!entity.isClan() &&
-             * m.getType().getInternalName().substring(0,2).equals("CL")) {
-             * //$NON-NLS-1$
-             * sWeapons.append(Messages.getString("MechView.Clan"));
-             * //$NON-NLS-1$ } if (newwtype.hasFlag(WeaponType.F_ONESHOT)) {
-             * sWeapons.append(" <") //$NON-NLS-1$
-             * .append(mounted.getLinked().getDesc()) .append(">");
-             * //$NON-NLS-1$ }
-             *
-             * sWeapons.append("<br>"); //$NON-NLS-1$ } }
-             */
+            // if this is a weapon bay, then cycle through weapons and ammo           
+            if((wtype instanceof BayWeapon) && showDetail) { 
+            	for(int wId : mounted.getBayWeapons()) { 
+            		Mounted m = entity.getEquipment(wId);
+            		if(null == m) { 
+            			continue; 
+            		} 
+            		  
+            		if (m.isDestroyed()) {
+            			if (m.isRepairable()) {
+            				sWeapons.append("<tr bgcolor='yellow'>");
+            			} else {
+            				sWeapons.append("<tr bgcolor='red'>");
+            			}
+            		} else {
+            			sWeapons.append("<tr>");
+            		}
+            		sWeapons.append("<td>").append("&nbsp;&nbsp;>" + m.getDesc()); //$NON-NLS-1$
+            		if (entity.isClan()
+            				&& !TechConstants.isClan(m.getType().getTechLevel(entity.getYear()))) {
+            			sWeapons.append(Messages.getString("MechView.IS")); //$NON-NLS-1$
+            		}
+            		if (!entity.isClan()
+            				&& TechConstants.isClan(m.getType().getTechLevel(entity.getYear()))) {
+            			sWeapons.append(Messages.getString("MechView.Clan")); //$NON-NLS-1$
+            		}
+            		sWeapons.append("</td>");    
+            		sWeapons.append("</tr>");  
+            	}
+            	for(int aId : mounted.getBayAmmo()) {
+            		Mounted m = entity.getEquipment(aId);
+            		if(null == m) { 
+            			continue; 
+            		}
+            		// Ignore ammo for one-shot launchers
+                    if ((m.getLinkedBy() != null)
+                            && m.getLinkedBy().isOneShot()){
+                        continue;
+                    }
+                    if (m.isDestroyed()) {
+                        sWeapons.append("<tr bgcolor='red'>");
+                    } else if (m.getUsableShotsLeft() < 1) {
+                        sWeapons.append("<tr bgcolor='yellow'>");
+                    } else {
+                        sWeapons.append("<tr>");
+                    }
+                    if (mounted.getLocation() != Entity.LOC_NONE) {
+                        sWeapons.append("<td>").append("&nbsp;&nbsp;>" + m.getName()).append("</td>");
+                        sWeapons.append("<td align='right'>")
+                                .append(m.getBaseShotsLeft()).append("</td>");
+                        sWeapons.append("<td></td>");
+                    }
+            		sWeapons.append("</tr>");  
+            	}
+            }
         }
         sWeapons.append("</table>"); //$NON-NLS-1$
         return sWeapons.toString();

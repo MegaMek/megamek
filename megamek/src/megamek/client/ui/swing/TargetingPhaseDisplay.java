@@ -413,6 +413,27 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                         jumpToPrevTarget();
                     }
                 });
+
+        // Register the action for CLEAR
+        controller.registerCommandAction(KeyCommandBind.CANCEL.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        clear();
+                    }
+                });
         
     }
 

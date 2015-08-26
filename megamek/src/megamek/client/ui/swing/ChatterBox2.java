@@ -38,6 +38,9 @@ import megamek.client.Client;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.util.CommandAction;
+import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.PMUtil;
 import megamek.common.Configuration;
 import megamek.common.event.GameEntityChangeEvent;
@@ -123,7 +126,8 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
     private FontMetrics fm;
 
-    public ChatterBox2(ClientGUI client, IBoardView boardview) {
+    public ChatterBox2(ClientGUI client, IBoardView boardview,
+            MegaMekController controller) {
         this.client = client.getClient();
         client.getClient().getGame().addGameListener(new GameListenerAdapter() {
             @Override
@@ -167,6 +171,34 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
         resizebutton = toolkit.getImage(new File(Configuration.widgetsDir(), 
         		FILENAME_BUTTON_RESIZE).toString());
         PMUtil.setImage(resizebutton, client);
+
+        registerKeyboardCommands(controller);
+    }
+
+    private void registerKeyboardCommands(MegaMekController controller) {
+        if (controller == null) {
+            return;
+        }
+
+        // Register the action for CLEAR
+        controller.registerCommandAction(KeyCommandBind.CANCEL.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!bv.getChatterBoxActive()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        clearMessage();
+                        slideDown();
+                    }
+                });
     }
 
     public boolean isReleased() {

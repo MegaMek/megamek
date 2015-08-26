@@ -132,6 +132,10 @@ public class MegaMekController implements KeyEventDispatcher {
                         startRepeating(kcb, action);
                     } else {
                         action.performAction();
+                        // Exclusive actions are only performed once
+                        if (kcb.isExclusive) {
+                            break; // Stop processing the rest of the actions
+                        }
                     }
                 }
 

@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.41.8-dev (SVN)
+
 v0.41.7 (2015-08-26 21:30 UTC)
 + Bug [#4544]: Airborne WiGE movement blocked by level 1 buildings
 + Bug [#4595]: Bad translation for PlanetaryConditions internationalization

@@ -390,7 +390,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 die();
             }
         });
-        cb2 = new ChatterBox2(this, bv);
+        cb2 = new ChatterBox2(this, bv, controller);
         bv.addDisplayable(cb2);
         bv.addKeyListener(cb2);
         uo = new UnitOverview(this);

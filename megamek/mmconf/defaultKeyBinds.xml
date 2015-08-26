@@ -176,4 +176,11 @@
         <isRepeatable>false</isRepeatable>
       </KeyBind>
 
+      <KeyBind>
+        <command>cancel</command>
+        <keyCode>27</keyCode> <!-- Escape -->
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
 </KeyBindings>

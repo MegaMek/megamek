@@ -55,7 +55,9 @@ public enum KeyCommandBind {
 	MOVE_ENVELOPE("movementEnvelope",false, 82, 0), // Default: R
 	CENTER_ON_SELECTED("centerOnSelected",false, 32, 0), // Default: Space
 	AUTO_ARTY_DEPLOYMENT_ZONE("autoArtyDeployZone",false, 90, 1), // Default: Shift-Z
-	FIELD_FIRE("fieldOfFire",false, 82, 1); // Default: Shift-R
+	FIELD_FIRE("fieldOfFire",false, 82, 1), // Default: Shift-R
+	// Used to cancel moves/fires/chatterbox
+	CANCEL("cancel", false, 27, 0, true); // Default: Escape
 	
 	/**
 	 * The command associated with this binding.
@@ -76,6 +78,13 @@ public enum KeyCommandBind {
 	public int modifiers;
 	
 	/**
+	 * Defines if an action is exclusive, which means that only one
+	 * CommandAction will be performed for each key press.  The CommandAction
+	 * that is performed will be the first one encountered.
+	 */
+	public boolean isExclusive = false;
+
+	/**
 	 * A flag that determines whether this binding is repeatable.  If a bind is
 	 * repeatable then when the key is pressed the action will be added to a 
 	 * timer and will be repeated until the key is released.
@@ -89,6 +98,14 @@ public enum KeyCommandBind {
 		isRepeatable = r;
 	}
 	
+	private KeyCommandBind(String c, boolean r, int k, int m, boolean e){
+        cmd = c;
+        key = k;
+        modifiers = m;
+        isRepeatable = r;
+        isExclusive = e;
+    }
+
 	public static ArrayList<KeyCommandBind> getBindByKey(int keycode, int modifiers){
 		ArrayList<KeyCommandBind> binds = new ArrayList<KeyCommandBind>();
 		for (KeyCommandBind bind : values()){

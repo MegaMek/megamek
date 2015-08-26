@@ -499,6 +499,27 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     }
                 });
 
+        // Register the action for CLEAR
+        controller.registerCommandAction(KeyCommandBind.CANCEL.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        clear();
+                    }
+                });
+
     }
 
     /**
@@ -3434,13 +3455,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         cmd.addManeuver(type);
         switch (type) {
             case (ManeuverType.MAN_HAMMERHEAD):
-                cmd.addStep(MoveStepType.YAW, true, true);
+                // Don't consider a maneuver, so it doesn't get a free turns
+                cmd.addStep(MoveStepType.YAW, true, false);
                 return true;
             case (ManeuverType.MAN_HALF_ROLL):
-                cmd.addStep(MoveStepType.ROLL, true, true);
+                // Don't consider a maneuver, so it doesn't get a free turns
+                cmd.addStep(MoveStepType.ROLL, true, false);
                 return true;
             case (ManeuverType.MAN_BARREL_ROLL):
-                cmd.addStep(MoveStepType.DEC, true, true);
+                // Don't consider a maneuver, so it doesn't get a free turns
+                cmd.addStep(MoveStepType.DEC, true, false);
                 return true;
             case (ManeuverType.MAN_IMMELMAN):
                 gear = MovementDisplay.GEAR_IMMEL;
@@ -3862,7 +3886,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
 
             if (opts.booleanOption("tacops_careful_stand")
-                    && (ce.getWalkMP() > 2)) {
+                    && ((ce.getWalkMP() - ce.mpUsed) > 2)) {
                 ConfirmDialog response = clientgui
                         .doYesNoBotherDialog(
                                 Messages.getString("MovementDisplay.CarefulStand.title"),//$NON-NLS-1$

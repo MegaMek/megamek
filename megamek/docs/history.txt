@@ -21,6 +21,14 @@ v0.41.7-dev (SVN)
 + Bug [#4603]: Weapon Order always revert to default
 + Data: New Sprites
 + MechView constructor that allows for display of alterate costs
++ Bug: Direct/Glancing Blow applies both cluster and damage modifier to rapid-
+    fire autocannons (should be cluster only in rapid-fire modes).
++ Bug [#4606]: Careful Stand doesn't end movement on failure
++ Bug: Hammerhead, roll, half roll, maneuvers allowed free facing changes
++ Bug [#4608]: Added more hotkeys for targeting phase (similar to firing phase)
++ Bug [#4607]: Check for "crippled" condition doesn't work for GunEmplacement
+    instances
++ Bug [#4605]: Escape doesn't seem to work occassionally
 + detailed weapon bay description in MechView
 + Bug: weapon criticals on vehicles and aeros do not damage the critical slot
 

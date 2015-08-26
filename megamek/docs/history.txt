@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.41.7-dev (SVN)
+v0.41.7 (2015-08-26 21:30 UTC)
 + Bug [#4544]: Airborne WiGE movement blocked by level 1 buildings
 + Bug [#4595]: Bad translation for PlanetaryConditions internationalization
 + Bug [#4593]: Mech in climb mode ends up on top of building post DFA
@@ -9,7 +9,7 @@ v0.41.7-dev (SVN)
 + Bug [#4597]: Vehicular Grenade Launcher Error
 + Bug [#4588]: Field Guns jamming in Rapid mode
 + Bug [#4599]: Sensor returns could be targeted in some instances
-+ Bug: standard fusion engines should be tech type T_ALLOWED ALL not 
++ Bug: standard fusion engines should be tech type T_ALLOWED ALL not
     T_INTRO_BOXSET
 + Bug [#4599]: Princess could shoot at sensor returns
 + Feature [#1394]: Firing Arc Feature should have Option and Save

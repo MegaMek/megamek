@@ -266,6 +266,23 @@ public class MULParser {
         // Make sure we've got an Entity
         if (entity == null){
             warning.append("Failed to load entity!");
+            //This will get hit by EjectedCrews and Mechwarriors, but we still want their pilots
+            //so try to find them
+            NodeList nl = entityNode.getChildNodes();
+            for (int i = 0; i < nl.getLength(); i++) {
+                Node currNode = nl.item(i);
+                if (currNode.getParentNode() != entityNode) {
+                    continue;
+                }
+                int nodeType = currNode.getNodeType();
+                if (nodeType == Node.ELEMENT_NODE) {
+                    Element currEle = (Element)currNode;
+                    String nodeName = currNode.getNodeName();
+                    if (nodeName.equalsIgnoreCase(PILOT)){
+                        parsePilot(currEle, entity);
+                    } 
+                }
+            }
             return;
         }
         

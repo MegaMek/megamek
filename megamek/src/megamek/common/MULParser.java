@@ -1885,7 +1885,7 @@ public class MULParser {
      * @return
      */
     public Vector<Entity> getSalvage(){
-        return entities;
+        return salvage;
     }
     
     /**
@@ -1894,7 +1894,7 @@ public class MULParser {
      * @return
      */
     public Vector<Entity> getDevastated(){
-        return entities;
+        return devastated;
     }
     
     /**
@@ -1903,7 +1903,7 @@ public class MULParser {
      * @return
      */
     public Vector<Entity> getEjections(){
-        return entities;
+        return ejections;
     }
     
     /**

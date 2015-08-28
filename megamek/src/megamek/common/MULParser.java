@@ -253,7 +253,7 @@ public class MULParser {
      * 
      * @param entityNode
      */
-    private void parseEntity(Element entityNode){
+    private void parseEntity(Element entityNode) {
         Entity entity = null;
         
         // We need to get a new Entity, use the chassis and model to create one
@@ -264,10 +264,15 @@ public class MULParser {
         entity = getEntity(chassis, model);
         
         // Make sure we've got an Entity
-        if (entity == null){
-            warning.append("Failed to load entity!");
-            //This will get hit by EjectedCrews and Mechwarriors, but we still want their pilots
-            //so try to find them
+        if (entity == null) {
+            
+            // Ejected crews/mechwarriros will not have the chassis of their
+            // owning unit, instead a name that reflects their origin
+            // (like "Vehicle Crew").  This will fail to be found by getEntity
+            // but we still need to parse the Pilot tag
+            
+            // Search the child node list for a pilot tag
+            boolean foundPilot = false;
             NodeList nl = entityNode.getChildNodes();
             for (int i = 0; i < nl.getLength(); i++) {
                 Node currNode = nl.item(i);
@@ -280,8 +285,12 @@ public class MULParser {
                     String nodeName = currNode.getNodeName();
                     if (nodeName.equalsIgnoreCase(PILOT)){
                         parsePilot(currEle, entity);
+                        foundPilot = true;
                     } 
                 }
+            }
+            if (!foundPilot) {
+                warning.append("Failed to load entity!");
             }
             return;
         }

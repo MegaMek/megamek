@@ -119,6 +119,12 @@ public class SkinXMLHandler {
      * @throws IOException
      */
     public synchronized static boolean initSkinXMLHandler(String fileName) {
+
+        if (fileName == null) {
+            System.out.println("ERROR: Bad skin specification file: " +
+                    "null filename!");
+            return false;
+        }
         
         File file = new File(Configuration.configDir(), fileName);
         if (!file.exists() || !file.isFile()) {

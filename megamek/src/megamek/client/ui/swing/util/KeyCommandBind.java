@@ -44,12 +44,12 @@ public enum KeyCommandBind {
 	TWIST_RIGHT("twistRight",false, 68, 1), // Default: Shift-D
 	// Fire the currently selected weapon
 	FIRE("fire", false, 70, 0), // Default: F
-	NEXT_WEAPON("nextWeapon", false, 81, 1), // Default: Q
-	PREV_WEAPON("prevWeapon", false, 69, 1), // Default: E
+	NEXT_WEAPON("nextWeapon", false, 69, 0), // Default: Q
+	PREV_WEAPON("prevWeapon", false, 81, 0), // Default: E
 	NEXT_UNIT("nextUnit", false, 67, 0), // Default: C
 	PREV_UNIT("prevUnit", false, 90, 0), // Default: Z
-	NEXT_TARGET("nextTarget", false, 81, 1), // Default: Shift-Q
-	PREV_TARGET("prevTarget", false, 69, 1), // Default: Shift-E
+	NEXT_TARGET("nextTarget", false, 69, 1), // Default: Shift-Q
+	PREV_TARGET("prevTarget", false, 81, 1), // Default: Shift-E
 	// Undo an action, such as a move step in the movement phase
 	UNDO("undo",false, 8, 0), // Default: Backspace
 	MOVE_ENVELOPE("movementEnvelope",false, 82, 0), // Default: R

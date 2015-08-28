@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.41.8-dev (SVN)
 + Bug: EjectedCrew entities not getting pilot processed in by MulParser
++ Bug: Key binds will now function when parsing defaultKeyBinds.xml fails
 
 v0.41.7 (2015-08-26 21:30 UTC)
 + Bug [#4544]: Airborne WiGE movement blocked by level 1 buildings

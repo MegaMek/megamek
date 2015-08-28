@@ -157,6 +157,10 @@ public class MegaMekController implements KeyEventDispatcher {
     public synchronized void registerKeyCommandBind(KeyCommandBind kcb) {
         keyCmdSet.add(kcb);
     }
+    
+    public synchronized void removeAllKeyCommandBinds() {
+        keyCmdSet.clear();
+    }
 
     public synchronized void registerCommandAction(String cmd,
             CommandAction action) {

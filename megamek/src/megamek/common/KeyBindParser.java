@@ -59,6 +59,7 @@ public class KeyBindParser {
 		// Get the path to the default bindings file.
         File file = new File(Configuration.configDir(), DEFAULT_BINDINGS_FILE);
         if (!file.exists() || !file.isFile()) {
+            registerDefaultKeyBinds(controller);
             return;
         }
 
@@ -138,7 +139,21 @@ public class KeyBindParser {
         } catch (Exception e) {
             System.err.println("Error parsing key bindings!");
             e.printStackTrace(System.err);
+            controller.removeAllKeyCommandBinds();
+            registerDefaultKeyBinds(controller);
         }
+	}
+	
+	/**
+	 * Each KeyCommand has a built-in default; if now key binding file can be
+	 * found, we should register those defaults.
+	 * 
+	 * @param controller
+	 */
+	public static void registerDefaultKeyBinds(MegaMekController controller) {
+	    for (KeyCommandBind kcb : KeyCommandBind.values()) {
+	        controller.registerKeyCommandBind(kcb);
+	    }
 	}
 	
 	/**

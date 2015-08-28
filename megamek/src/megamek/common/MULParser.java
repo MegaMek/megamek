@@ -28,6 +28,10 @@ public class MULParser {
     /**
      * The names of the various elements recognized by this parser.
      */
+    private static final String RECORD = "record";
+    private static final String SALVAGE = "salvage";
+    private static final String DEVASTATED = "devastated";
+    private static final String EJECTIONS = "ejections";
     private static final String UNIT = "unit";
     private static final String ENTITY = "entity";
     private static final String PILOT = "pilot";
@@ -148,9 +152,25 @@ public class MULParser {
     
     
     /**
-     * Stores all of the Entity's read in.
+     * Stores all of the living Entity's read in.
      */
     Vector<Entity> entities;
+    
+    /**
+     * Stores all the salvage entities read in 
+     */
+    Vector<Entity> salvage;
+    
+    /**
+     * Stores all the devastated entities read in 
+     */
+    Vector<Entity> devastated;
+    
+    /**
+     * Stores all the ejected entities read in 
+     */
+    Vector<Entity> ejections;
+    
     
     /**
      * Keep a separate list of pilot/crews parsed becasue dismounted pilots may
@@ -163,6 +183,9 @@ public class MULParser {
     public MULParser(){
         warning = new StringBuffer();
         entities = new Vector<Entity>();
+        salvage = new Vector<Entity>();
+        devastated = new Vector<Entity>();
+        ejections = new Vector<Entity>();
         pilots = new Vector<Crew>();
     }
     
@@ -177,6 +200,9 @@ public class MULParser {
 
         // Clear the entities.
         entities.removeAllElements();
+        salvage.removeAllElements();
+        devastated.removeAllElements();
+        ejections.removeAllElements();
         pilots.removeAllElements();
         
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -208,12 +234,14 @@ public class MULParser {
         }
         
         String nodeName = element.getNodeName();
-        if (nodeName.equalsIgnoreCase(UNIT)){
-            parseUnit(element);
+        if(nodeName.equalsIgnoreCase(RECORD)) {
+        	parseRecord(element);
+        } else if (nodeName.equalsIgnoreCase(UNIT)){
+            parseUnit(element, entities);
         } else if (nodeName.equalsIgnoreCase(ENTITY)){
-            parseEntity(element);
+            parseEntity(element, entities);
         } else {
-            warning.append("Error: root element isn't a Unit or Entity tag! " +
+            warning.append("Error: root element isn't a Record, Unit, or Entity tag! " +
             		"Nothing to parse!\n");
         }
     }
@@ -222,7 +250,44 @@ public class MULParser {
      * Parse a Unit tag.  Unit tags will contain a list of Entity tags.
      * @param unitNode
      */
-    private void parseUnit(Element unitNode){
+    private void parseRecord(Element unitNode){
+        NodeList nl = unitNode.getChildNodes();
+        
+        // Iterate through the children, looking for Entity tags
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node currNode = nl.item(i);
+
+            if (currNode.getParentNode() != unitNode) {
+                continue;
+            }
+            int nodeType = currNode.getNodeType();
+            if (nodeType == Node.ELEMENT_NODE) {
+                String nodeName = currNode.getNodeName();
+                if (nodeName.equalsIgnoreCase(UNIT)){
+                    parseUnit((Element)currNode, entities);
+                } else if (nodeName.equalsIgnoreCase(SALVAGE)){
+                    parseUnit((Element)currNode, salvage);
+                } else if (nodeName.equalsIgnoreCase(DEVASTATED)){
+                    parseUnit((Element)currNode, devastated);
+                } else if (nodeName.equalsIgnoreCase(EJECTIONS)){
+                    parseUnit((Element)currNode, ejections);
+                } else if (nodeName.equalsIgnoreCase(ENTITY)){
+                    parseUnit((Element)currNode, entities);
+                } else if (nodeName.equalsIgnoreCase(PILOT)){
+                    parsePilot((Element)currNode);
+                } 
+            } else {
+                continue;
+            }
+        }
+    }
+    
+    /**
+     * Parse a Unit tag.  Unit tags will contain a list of Entity tags.
+     * @param unitNode
+     * @param Vector<Entity> list - which list to add found entities too
+     */
+    private void parseUnit(Element unitNode, Vector<Entity> list){
         NodeList nl = unitNode.getChildNodes();
         
         // Iterate through the children, looking for Entity tags
@@ -236,7 +301,7 @@ public class MULParser {
             if (nodeType == Node.ELEMENT_NODE) {
                 String nodeName = currNode.getNodeName();
                 if (nodeName.equalsIgnoreCase(ENTITY)){
-                    parseEntity((Element)currNode);
+                    parseEntity((Element)currNode, list);
                 } else if (nodeName.equalsIgnoreCase(PILOT)){
                     parsePilot((Element)currNode);
                 } 
@@ -252,8 +317,9 @@ public class MULParser {
      * and they may also contain some number of location tags.
      * 
      * @param entityNode
+     * @param Vector<Entity> list - which list to add found entities too
      */
-    private void parseEntity(Element entityNode) {
+    private void parseEntity(Element entityNode, Vector<Entity> list) {
         Entity entity = null;
         
         // We need to get a new Entity, use the chassis and model to create one
@@ -348,7 +414,7 @@ public class MULParser {
         }
         
         //Now we should be done setting up the Entity, add it to the list
-        entities.add(entity);
+        list.add(entity);
     }
     
     /**
@@ -360,6 +426,17 @@ public class MULParser {
      */
     private Entity getEntity(String chassis, String model){
         Entity newEntity = null;
+        
+        //first check for ejected mechwarriors and vee crews
+        /*TODO: this is not working right yet because you cant pass null players
+         *to the constructors.
+        if(chassis.equals(EjectedCrew.VEE_EJECT_NAME)) {
+        	return new EjectedCrew(new Crew(1), null, null);
+        } else if(chassis.equals(EjectedCrew.MW_EJECT_NAME)) {
+        	return new MechWarrior(new Crew(1), null, null);
+        }
+        */
+        
         // Did we find required attributes?
         if ((chassis == null) || (chassis.length() == 0)) {
             warning.append("Could not find chassis for Entity.\n");
@@ -1794,11 +1871,38 @@ public class MULParser {
     }
     
     /**
-     * Returns a list of all of the Entity's parsed from the input, should be
+     * Returns a list of all of the surviving Entity's parsed from the input, should be
      * called after <code>parse</code>.
      * @return
      */
     public Vector<Entity> getEntities(){
+        return entities;
+    }
+    
+    /**
+     * Returns a list of all of the salvaged Entity's parsed from the input, should be
+     * called after <code>parse</code>.
+     * @return
+     */
+    public Vector<Entity> getSalvage(){
+        return entities;
+    }
+    
+    /**
+     * Returns a list of all of the devastated Entity's parsed from the input, should be
+     * called after <code>parse</code>.
+     * @return
+     */
+    public Vector<Entity> getDevastated(){
+        return entities;
+    }
+    
+    /**
+     * Returns a list of all of the ejected Entity's parsed from the input, should be
+     * called after <code>parse</code>.
+     * @return
+     */
+    public Vector<Entity> getEjections(){
         return entities;
     }
     

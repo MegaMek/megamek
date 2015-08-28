@@ -19,11 +19,14 @@ public class EjectedCrew extends Infantry {
     
     private static final long serialVersionUID = 8136710237585797372L;
     
+    public static final String VEE_EJECT_NAME = "Vehicle Crew";
+    public static final String MW_EJECT_NAME = "MechWarrior";
+
     public EjectedCrew(Entity originalRide) {
         super();
         setCrew(originalRide.getCrew());
         System.out.println("Ejecting crew size: " + originalRide.getCrew().getSize());
-        setChassis("Vehicle Crew");
+        setChassis(VEE_EJECT_NAME);
         setModel(originalRide.getCrew().getName());
         //setWeight(1); // Copied from original MechWarrior code, but does this really do anything?
 
@@ -54,7 +57,7 @@ public class EjectedCrew extends Infantry {
     public EjectedCrew(Crew crew, IPlayer owner, IGame game) {
         super();
         setCrew(crew);
-        setChassis("Vehicle Crew");
+        setChassis(VEE_EJECT_NAME);
         setModel(crew.getName());
         //setWeight(1);
 

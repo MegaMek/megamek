@@ -33,7 +33,7 @@ public class MechWarrior extends EjectedCrew {
      */
     public MechWarrior(Entity originalRide) {
         super(originalRide);
-        setChassis("MechWarrior");
+        setChassis(EjectedCrew.MW_EJECT_NAME);
     }
     
     public MechWarrior(Crew crew, IPlayer owner, IGame game) {

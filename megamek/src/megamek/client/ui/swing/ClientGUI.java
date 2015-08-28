@@ -1,6 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2000,2001,2002,2003,2004 Ben Mazur (bmazur@sev.org)
- * Copyright © 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
+ * Copyright �� 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -1538,6 +1538,48 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             }
         }
     }
+    
+    protected void saveVictoryList() {
+    	String filename = client.getLocalPlayer().getName();
+    	
+        // Build the "save unit" dialog, if necessary.
+        if (dlgSaveList == null) {
+            dlgSaveList = new JFileChooser(".");
+            dlgSaveList.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+            dlgSaveList.setDialogTitle(Messages.getString("ClientGUI.saveUnitListFileDialog.title"));
+            FileNameExtensionFilter filter = new FileNameExtensionFilter("Mul Files", "mul");
+            dlgSaveList.setFileFilter(filter);
+        }
+        // Default to the player's name.
+        dlgSaveList.setSelectedFile(new File(filename + ".mul")); //$NON-NLS-1$
+
+        int returnVal = dlgSaveList.showSaveDialog(frame);
+        if ((returnVal != JFileChooser.APPROVE_OPTION) || (dlgSaveList.getSelectedFile() == null)) {
+            // I want a file, y'know!
+            return;
+        }
+
+        // Did the player select a file?
+        File unitFile = dlgSaveList.getSelectedFile();
+        if (unitFile != null) {
+            if (!(unitFile.getName().toLowerCase().endsWith(".mul") //$NON-NLS-1$
+                    || unitFile.getName().toLowerCase().endsWith(".xml"))) { //$NON-NLS-1$
+                try {
+                    unitFile = new File(unitFile.getCanonicalPath() + ".mul"); //$NON-NLS-1$
+                } catch (IOException ie) {
+                    // nothing needs to be done here
+                    return;
+                }
+            }
+            try {
+                // Save the player's entities to the file.
+                EntityListFile.saveTo(unitFile, getClient());
+            } catch (IOException excep) {
+                excep.printStackTrace(System.err);
+                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage()); //$NON-NLS-1$
+            }
+        }
+    }
 
     //
     // WindowListener
@@ -1742,7 +1784,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     Messages.getString("ClientGUI.SaveUnitsDialog.message"))) { //$NON-NLS-1$
 
                 // Allow the player to save the units to a file.
-                saveListFile(living);
+                saveVictoryList();
             } // End user-wants-a-MUL
 
             // save all destroyed units in a separate "salvage MUL"

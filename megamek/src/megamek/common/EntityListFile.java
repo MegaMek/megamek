@@ -23,10 +23,12 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
 import megamek.MegaMek;
+import megamek.client.Client;
 import megamek.common.options.PilotOptions;
 
 /**
@@ -460,7 +462,166 @@ public class EntityListFile {
         output.write(CommonConstants.NL);
         output.write(CommonConstants.NL);
 
-        // Walk through the list of entities.
+        try {
+        	writeEntityList(output, list);
+        } catch(IOException exception) {
+        	throw exception;
+        }
+        
+
+        // Finish writing.
+        output.write("</unit>");
+        output.write(CommonConstants.NL);
+        output.flush();
+        output.close();
+    }
+    
+    /**
+     * Save the entities from the game of client to the given file. This will create
+     * separate sections for salvage, devastated, and ejected crews in addition 
+     * to the surviving units
+     * <p/>
+     * The <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
+     * other campaign-related information are retained but data specific to a
+     * particular game is ignored.
+     *
+     * @param file
+     *            - The current contents of the file will be discarded and all
+     *            <code>Entity</code>s in the list will be written to the file.
+     * @param client
+     *            - a <code>Client</code> containing the <code>Game</code>s to be used
+     * @throws IOException
+     *             is thrown on any error.
+     */
+    public static void saveTo(File file, Client client)
+            throws IOException {
+
+    	if(null == client.getGame()) {
+    		return;
+    	}
+    	
+        // Open up the file. Produce UTF-8 output.
+        Writer output = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(file), "UTF-8"));
+
+        // Output the doctype and header stuff.
+        output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        output.write(CommonConstants.NL);
+        output.write(CommonConstants.NL);
+        output.write("<record version=\"" + MegaMek.VERSION + "\" >");
+        
+        //keep track of ejections separately
+        ArrayList<Entity> ejections = new ArrayList<Entity>();
+        
+        // Make a list of the player's living units, including retreateds
+        ArrayList<megamek.common.Entity> living = client.getGame().getPlayerEntities(client.getLocalPlayer(), false);
+
+        // Be sure to include all units that have retreated.
+        for (Enumeration<Entity> iter = client.getGame().getRetreatedEntities(); iter.hasMoreElements(); ) {
+            Entity ent = iter.nextElement();
+            if (ent.getOwnerId() == client.getLocalPlayer().getId()) {
+                living.add(ent);
+            }
+        }
+        
+        //clear out ejections
+        ArrayList<Entity> newLiving = new ArrayList<Entity>();
+        for(Entity e : living) {
+        	if(e instanceof EjectedCrew) {
+        		ejections.add(e);
+        	} else {
+        		newLiving.add(e);
+        	}
+        }
+        living = newLiving;
+        
+        // save all destroyed units in a separate "salvage MUL"
+        ArrayList<Entity> salvage = new ArrayList<Entity>();
+        ArrayList<Entity> devastated = new ArrayList<Entity>();
+        Enumeration<Entity> graveyard = client.getGame().getGraveyardEntities();
+        while (graveyard.hasMoreElements()) {
+            Entity entity = graveyard.nextElement();
+            if(entity instanceof EjectedCrew) {
+            	if(entity.isSalvage()) {
+            		ejections.add(entity);
+            	}
+            }
+            else if (entity.isSalvage()) {
+                salvage.add(entity);
+            } else {
+            	devastated.add(entity);
+            }
+        }
+        
+        if(!living.isEmpty()) {
+	        output.write(CommonConstants.NL);
+	        output.write(indentStr(1) + "<unit>");
+	        output.write(CommonConstants.NL);
+	        output.write(CommonConstants.NL);
+	        try {
+	        	writeEntityList(output, living);
+	        } catch(IOException exception) {
+	        	throw exception;
+	        }
+	        // Finish writing.
+	        output.write(indentStr(1) + "</unit>");
+	        output.write(CommonConstants.NL);
+        }
+        
+        if(!salvage.isEmpty()) {
+	        output.write(CommonConstants.NL);
+	        output.write(indentStr(1) + "<salvage>");
+	        output.write(CommonConstants.NL);
+	        output.write(CommonConstants.NL);
+	        try {
+	        	writeEntityList(output, salvage);
+	        } catch(IOException exception) {
+	        	throw exception;
+	        }
+	        // Finish writing.
+	        output.write(indentStr(1) + "</salvage>");
+	        output.write(CommonConstants.NL);
+        }
+        
+        if(!devastated.isEmpty()) {
+	        output.write(CommonConstants.NL);
+	        output.write(indentStr(1) + "<devastated>");
+	        output.write(CommonConstants.NL);
+	        output.write(CommonConstants.NL);
+	        try {
+	        	writeEntityList(output, devastated);
+	        } catch(IOException exception) {
+	        	throw exception;
+	        }
+	        // Finish writing.
+	        output.write(indentStr(1) + "</devastated>");
+	        output.write(CommonConstants.NL);
+        }
+        
+        if(!ejections.isEmpty()) {
+	        output.write(CommonConstants.NL);
+	        output.write(indentStr(1) + "<ejections>");
+	        output.write(CommonConstants.NL);
+	        output.write(CommonConstants.NL);
+	        try {
+	        	writeEntityList(output, ejections);
+	        } catch(IOException exception) {
+	        	throw exception;
+	        }
+	        // Finish writing.
+	        output.write(indentStr(1) + "</ejections>");
+	        output.write(CommonConstants.NL);
+        }
+        
+        // Finish writing.
+        output.write("</record>");
+        output.write(CommonConstants.NL);
+        output.flush();
+        output.close();
+    }
+    
+    private static void writeEntityList(Writer output, ArrayList<Entity> list) throws IOException {
+    	// Walk through the list of entities.
         Iterator<Entity> items = list.iterator();
         while (items.hasNext()) {
             final Entity entity = items.next();
@@ -468,7 +629,7 @@ public class EntityListFile {
             if (entity instanceof FighterSquadron) {
                 continue;
             }
-            int indentLvl = 1;
+            int indentLvl = 2;
 
             // Start writing this entity to the file.
             output.write(indentStr(indentLvl) + "<entity chassis=\"");
@@ -785,12 +946,6 @@ public class EntityListFile {
             output.write(CommonConstants.NL);
 
         } // Handle the next entity
-
-        // Finish writing.
-        output.write("</unit>");
-        output.write(CommonConstants.NL);
-        output.flush();
-        output.close();
     }
 
     private static String getTurretLockedString(Tank e) {

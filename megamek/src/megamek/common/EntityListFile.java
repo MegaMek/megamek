@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.UUID;
 import java.util.Vector;
 
 import megamek.MegaMek;
@@ -187,7 +186,7 @@ public class EntityListFile {
                     && (entity.getInternalForReal(loc) <= 0)) {
                 isDestroyed = true;
             }
-            
+
             //exact zeroes for BA should not be treated as destroyed as MHQ uses this to signify
             //suits without pilots
             if(entity instanceof BattleArmor && entity.getInternalForReal(loc) >= 0) {
@@ -342,7 +341,7 @@ public class EntityListFile {
                                 slot.isMissing(), indentLvl+1));
                         haveSlot = true;
                     }
-                    
+
                 } // End have-slot
 
             } // Check the next slot in this location
@@ -469,7 +468,7 @@ public class EntityListFile {
         } catch(IOException exception) {
         	throw exception;
         }
-        
+
 
         // Finish writing.
         output.write("</unit>");
@@ -477,10 +476,10 @@ public class EntityListFile {
         output.flush();
         output.close();
     }
-    
+
     /**
      * Save the entities from the game of client to the given file. This will create
-     * separate sections for salvage, devastated, and ejected crews in addition 
+     * separate sections for salvage, devastated, and ejected crews in addition
      * to the surviving units
      * <p/>
      * The <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
@@ -501,7 +500,7 @@ public class EntityListFile {
     	if(null == client.getGame()) {
     		return;
     	}
-    	
+
         // Open up the file. Produce UTF-8 output.
         Writer output = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream(file), "UTF-8"));
@@ -511,10 +510,10 @@ public class EntityListFile {
         output.write(CommonConstants.NL);
         output.write(CommonConstants.NL);
         output.write("<record version=\"" + MegaMek.VERSION + "\" >");
-        
+
         // Make a list of the player's surviving units
         ArrayList<Entity> living = client.getGame().getPlayerEntities(client.getLocalPlayer(), false);
-        
+
         // Be sure to include all units that have retreated.
         for (Enumeration<Entity> iter = client.getGame().getRetreatedEntities(); iter.hasMoreElements(); ) {
             Entity ent = iter.nextElement();
@@ -522,19 +521,19 @@ public class EntityListFile {
                 living.add(ent);
             }
         }
-        
+
         // separate out salvage and devastated units and record kills if possible
         ArrayList<Entity> salvage = new ArrayList<Entity>();
         ArrayList<Entity> devastated = new ArrayList<Entity>();
         Hashtable<String, String> kills = new Hashtable<String, String>();
-        
+
         //salvageable stuff
         Enumeration<Entity> graveyard = client.getGame().getGraveyardEntities();
         while (graveyard.hasMoreElements()) {
             Entity entity = graveyard.nextElement();
             if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
 	            Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
-	            if(null != killer 
+	            if(null != killer
 	            		&& !killer.getExternalIdAsString().equals("-1")
 	            		&& killer.getOwnerId() == client.getLocalPlayer().getId()) {
 	            	kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
@@ -544,14 +543,14 @@ public class EntityListFile {
             }
             salvage.add(entity);
         }
-        
+
         //look for surviving enemy entities who cannot escape and add them to salvage
         Iterator<Entity> entities = client.getGame().getEntities();
         while(entities.hasNext()) {
         	Entity entity = entities.next();
         	if(entity.getOwner().isEnemyOf(client.getLocalPlayer()) && !entity.canEscape()) {
                  Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
-                 if(null != killer 
+                 if(null != killer
                  		&& !killer.getExternalIdAsString().equals("-1")
                  		&& killer.getOwnerId() == client.getLocalPlayer().getId()) {
                  	kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
@@ -561,14 +560,14 @@ public class EntityListFile {
         		salvage.add(entity);
         	}
         }
-        
+
         //devastated units
         Enumeration<Entity> devastation = client.getGame().getDevastatedEntities();
         while (devastation.hasMoreElements()) {
             Entity entity = devastation.nextElement();
             if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
 	            Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
-	            if(null != killer 
+	            if(null != killer
 	            		&& !killer.getExternalIdAsString().equals("-1")
 	            		&& killer.getOwnerId() == client.getLocalPlayer().getId()) {
 	            	kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
@@ -578,7 +577,7 @@ public class EntityListFile {
             }
             devastated.add(entity);
         }
-        
+
         if(!living.isEmpty()) {
 	        output.write(CommonConstants.NL);
 	        output.write(indentStr(1) + "<survivors>");
@@ -593,7 +592,7 @@ public class EntityListFile {
 	        output.write(indentStr(1) + "</survivors>");
 	        output.write(CommonConstants.NL);
         }
-        
+
         if(!salvage.isEmpty()) {
 	        output.write(CommonConstants.NL);
 	        output.write(indentStr(1) + "<salvage>");
@@ -608,7 +607,7 @@ public class EntityListFile {
 	        output.write(indentStr(1) + "</salvage>");
 	        output.write(CommonConstants.NL);
         }
-        
+
         if(!devastated.isEmpty()) {
 	        output.write(CommonConstants.NL);
 	        output.write(indentStr(1) + "<devastated>");
@@ -623,7 +622,7 @@ public class EntityListFile {
 	        output.write(indentStr(1) + "</devastated>");
 	        output.write(CommonConstants.NL);
         }
-        
+
         if(!kills.isEmpty()) {
         	output.write(CommonConstants.NL);
 	        output.write(indentStr(1) + "<kills>");
@@ -638,14 +637,14 @@ public class EntityListFile {
 	        output.write(indentStr(1) + "</kills>");
 	        output.write(CommonConstants.NL);
         }
-        
+
         // Finish writing.
         output.write("</record>");
         output.write(CommonConstants.NL);
         output.flush();
         output.close();
     }
-    
+
     private static void writeKills(Writer output, Hashtable<String,String> kills) throws IOException {
     	int indentLvl = 2;
     	for(String killed : kills.keySet()) {
@@ -657,7 +656,7 @@ public class EntityListFile {
             output.write(CommonConstants.NL);
     	}
     }
-    
+
     private static void writeEntityList(Writer output, ArrayList<Entity> list) throws IOException {
     	// Walk through the list of entities.
         Iterator<Entity> items = list.iterator();

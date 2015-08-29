@@ -29,9 +29,9 @@ public class MULParser {
      * The names of the various elements recognized by this parser.
      */
     private static final String RECORD = "record";
+    private static final String SURVIVORS = "survivors";
     private static final String SALVAGE = "salvage";
     private static final String DEVASTATED = "devastated";
-    private static final String EJECTIONS = "ejections";
     private static final String UNIT = "unit";
     private static final String ENTITY = "entity";
     private static final String PILOT = "pilot";
@@ -152,9 +152,15 @@ public class MULParser {
     
     
     /**
-     * Stores all of the living Entity's read in.
+     * Stores all of the  Entity's read in. This is for general use saving and loading to the chat lounge
      */
     Vector<Entity> entities;
+    
+    /**
+     * Stores all of the  surviving Entity's read in. 
+     */
+    Vector<Entity> survivors;
+    
     
     /**
      * Stores all the salvage entities read in 
@@ -167,12 +173,6 @@ public class MULParser {
     Vector<Entity> devastated;
     
     /**
-     * Stores all the ejected entities read in 
-     */
-    Vector<Entity> ejections;
-    
-    
-    /**
      * Keep a separate list of pilot/crews parsed becasue dismounted pilots may
      * need to be read separately
      */
@@ -183,9 +183,9 @@ public class MULParser {
     public MULParser(){
         warning = new StringBuffer();
         entities = new Vector<Entity>();
+        survivors = new Vector<Entity>();
         salvage = new Vector<Entity>();
         devastated = new Vector<Entity>();
-        ejections = new Vector<Entity>();
         pilots = new Vector<Crew>();
     }
     
@@ -200,9 +200,9 @@ public class MULParser {
 
         // Clear the entities.
         entities.removeAllElements();
+        survivors.removeAllElements();
         salvage.removeAllElements();
         devastated.removeAllElements();
-        ejections.removeAllElements();
         pilots.removeAllElements();
         
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -265,12 +265,12 @@ public class MULParser {
                 String nodeName = currNode.getNodeName();
                 if (nodeName.equalsIgnoreCase(UNIT)){
                     parseUnit((Element)currNode, entities);
+                } else if (nodeName.equalsIgnoreCase(SURVIVORS)){
+                    parseUnit((Element)currNode, survivors);
                 } else if (nodeName.equalsIgnoreCase(SALVAGE)){
                     parseUnit((Element)currNode, salvage);
                 } else if (nodeName.equalsIgnoreCase(DEVASTATED)){
                     parseUnit((Element)currNode, devastated);
-                } else if (nodeName.equalsIgnoreCase(EJECTIONS)){
-                    parseUnit((Element)currNode, ejections);
                 } else if (nodeName.equalsIgnoreCase(ENTITY)){
                     parseUnit((Element)currNode, entities);
                 } else if (nodeName.equalsIgnoreCase(PILOT)){
@@ -331,34 +331,7 @@ public class MULParser {
         
         // Make sure we've got an Entity
         if (entity == null) {
-            
-            // Ejected crews/mechwarriros will not have the chassis of their
-            // owning unit, instead a name that reflects their origin
-            // (like "Vehicle Crew").  This will fail to be found by getEntity
-            // but we still need to parse the Pilot tag
-            
-            // Search the child node list for a pilot tag
-            boolean foundPilot = false;
-            NodeList nl = entityNode.getChildNodes();
-            for (int i = 0; i < nl.getLength(); i++) {
-                Node currNode = nl.item(i);
-                if (currNode.getParentNode() != entityNode) {
-                    continue;
-                }
-                int nodeType = currNode.getNodeType();
-                if (nodeType == Node.ELEMENT_NODE) {
-                    Element currEle = (Element)currNode;
-                    String nodeName = currNode.getNodeName();
-                    if (nodeName.equalsIgnoreCase(PILOT)){
-                        parsePilot(currEle, entity);
-                        foundPilot = true;
-                    } 
-                }
-            }
-            if (!foundPilot) {
-                warning.append("Failed to load entity!");
-            }
-            return;
+        	warning.append("Failed to load entity!");
         }
         
         // Set the attributes for the entity
@@ -428,14 +401,11 @@ public class MULParser {
         Entity newEntity = null;
         
         //first check for ejected mechwarriors and vee crews
-        /*TODO: this is not working right yet because you cant pass null players
-         *to the constructors.
         if(chassis.equals(EjectedCrew.VEE_EJECT_NAME)) {
-        	return new EjectedCrew(new Crew(1), null, null);
+        	return new EjectedCrew();
         } else if(chassis.equals(EjectedCrew.MW_EJECT_NAME)) {
-        	return new MechWarrior(new Crew(1), null, null);
+        	return new MechWarrior();
         }
-        */
         
         // Did we find required attributes?
         if ((chassis == null) || (chassis.length() == 0)) {
@@ -1871,12 +1841,29 @@ public class MULParser {
     }
     
     /**
-     * Returns a list of all of the surviving Entity's parsed from the input, should be
-     * called after <code>parse</code>.
+     * Returns a list of all of the  Entity's parsed from the input, should be
+     * called after <code>parse</code>. This is for entities that we want to be loaded
+     * into the chat lounge, so functional
      * @return
      */
     public Vector<Entity> getEntities(){
-        return entities;
+    	Vector<Entity> toReturn = entities;
+    	for(Entity e : survivors) {
+    		if(e instanceof EjectedCrew) {
+    			continue;
+    		}
+    		toReturn.add(e);
+    	}
+        return toReturn;
+    }
+    
+    /**
+     * Returns a list of all of the salvaged Entity's parsed from the input, should be
+     * called after <code>parse</code>.
+     * @return
+     */
+    public Vector<Entity> getSurvivors(){
+        return survivors;
     }
     
     /**
@@ -1896,16 +1883,7 @@ public class MULParser {
     public Vector<Entity> getDevastated(){
         return devastated;
     }
-    
-    /**
-     * Returns a list of all of the ejected Entity's parsed from the input, should be
-     * called after <code>parse</code>.
-     * @return
-     */
-    public Vector<Entity> getEjections(){
-        return ejections;
-    }
-    
+ 
     /**
      * Returns a list of all of the Pilots parsed from the input, should be 
      * called after <code>parse</code>.

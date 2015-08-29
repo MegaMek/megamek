@@ -38,9 +38,17 @@ public class MechWarrior extends EjectedCrew {
     
     public MechWarrior(Crew crew, IPlayer owner, IGame game) {
         super(crew, owner, game);
-        setChassis("MechWarrior");
+        setChassis(EjectedCrew.MW_EJECT_NAME);
     }
 
+    /**
+     * This constructor is so MULParser can load these entities
+     */
+    public MechWarrior() {
+    	super();
+    	setChassis(EjectedCrew.MW_EJECT_NAME);
+    }
+    
     /*
      * (non-Javadoc)
      *

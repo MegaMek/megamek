@@ -510,9 +510,6 @@ public class EntityListFile {
         output.write(CommonConstants.NL);
         output.write("<record version=\"" + MegaMek.VERSION + "\" >");
         
-        //keep track of ejections separately
-        ArrayList<Entity> ejections = new ArrayList<Entity>();
-        
         // Make a list of the player's living units, including retreateds
         ArrayList<megamek.common.Entity> living = client.getGame().getPlayerEntities(client.getLocalPlayer(), false);
 
@@ -524,29 +521,13 @@ public class EntityListFile {
             }
         }
         
-        //clear out ejections
-        ArrayList<Entity> newLiving = new ArrayList<Entity>();
-        for(Entity e : living) {
-        	if(e instanceof EjectedCrew) {
-        		ejections.add(e);
-        	} else {
-        		newLiving.add(e);
-        	}
-        }
-        living = newLiving;
-        
         // save all destroyed units in a separate "salvage MUL"
         ArrayList<Entity> salvage = new ArrayList<Entity>();
         ArrayList<Entity> devastated = new ArrayList<Entity>();
         Enumeration<Entity> graveyard = client.getGame().getGraveyardEntities();
         while (graveyard.hasMoreElements()) {
             Entity entity = graveyard.nextElement();
-            if(entity instanceof EjectedCrew) {
-            	if(entity.isSalvage()) {
-            		ejections.add(entity);
-            	}
-            }
-            else if (entity.isSalvage()) {
+            if (entity.isSalvage()) {
                 salvage.add(entity);
             } else {
             	devastated.add(entity);
@@ -555,7 +536,7 @@ public class EntityListFile {
         
         if(!living.isEmpty()) {
 	        output.write(CommonConstants.NL);
-	        output.write(indentStr(1) + "<unit>");
+	        output.write(indentStr(1) + "<survivors>");
 	        output.write(CommonConstants.NL);
 	        output.write(CommonConstants.NL);
 	        try {
@@ -564,7 +545,7 @@ public class EntityListFile {
 	        	throw exception;
 	        }
 	        // Finish writing.
-	        output.write(indentStr(1) + "</unit>");
+	        output.write(indentStr(1) + "</survivors>");
 	        output.write(CommonConstants.NL);
         }
         
@@ -595,21 +576,6 @@ public class EntityListFile {
 	        }
 	        // Finish writing.
 	        output.write(indentStr(1) + "</devastated>");
-	        output.write(CommonConstants.NL);
-        }
-        
-        if(!ejections.isEmpty()) {
-	        output.write(CommonConstants.NL);
-	        output.write(indentStr(1) + "<ejections>");
-	        output.write(CommonConstants.NL);
-	        output.write(CommonConstants.NL);
-	        try {
-	        	writeEntityList(output, ejections);
-	        } catch(IOException exception) {
-	        	throw exception;
-	        }
-	        // Finish writing.
-	        output.write(indentStr(1) + "</ejections>");
 	        output.write(CommonConstants.NL);
         }
         

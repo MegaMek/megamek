@@ -514,7 +514,7 @@ public class EntityListFile {
         
         // Make a list of the player's living units, including retreateds
         ArrayList<megamek.common.Entity> living = client.getGame().getPlayerEntities(client.getLocalPlayer(), false);
-
+        
         // Be sure to include all units that have retreated.
         for (Enumeration<Entity> iter = client.getGame().getRetreatedEntities(); iter.hasMoreElements(); ) {
             Entity ent = iter.nextElement();
@@ -530,6 +530,23 @@ public class EntityListFile {
         Enumeration<Entity> graveyard = client.getGame().getGraveyardEntities();
         while (graveyard.hasMoreElements()) {
             Entity entity = graveyard.nextElement();
+            Entity killer = client.getGame().getEntity(entity.getKillerId());
+            if(null != killer 
+            		&& !killer.getExternalIdAsString().equals("-1")
+            		&& killer.getOwnerId() == client.getLocalPlayer().getId()) {
+            	kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
+            }
+            entity.getKillerId();
+            if (entity.isSalvage()) {
+                salvage.add(entity);
+            } else {
+            	devastated.add(entity);
+            }
+        }
+        
+        Enumeration<Entity> devastation = client.getGame().getDevastatedEntities();
+        while (devastation.hasMoreElements()) {
+            Entity entity = devastation.nextElement();
             Entity killer = client.getGame().getEntity(entity.getKillerId());
             if(null != killer 
             		&& !killer.getExternalIdAsString().equals("-1")

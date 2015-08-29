@@ -24,7 +24,9 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.UUID;
 import java.util.Vector;
 
 import megamek.MegaMek;
@@ -524,9 +526,17 @@ public class EntityListFile {
         // save all destroyed units in a separate "salvage MUL"
         ArrayList<Entity> salvage = new ArrayList<Entity>();
         ArrayList<Entity> devastated = new ArrayList<Entity>();
+        Hashtable<String, String> kills = new Hashtable<String, String>();
         Enumeration<Entity> graveyard = client.getGame().getGraveyardEntities();
         while (graveyard.hasMoreElements()) {
             Entity entity = graveyard.nextElement();
+            Entity killer = client.getGame().getEntity(entity.getKillerId());
+            if(null != killer 
+            		&& !killer.getExternalIdAsString().equals("-1")
+            		&& killer.getOwnerId() == client.getLocalPlayer().getId()) {
+            	kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
+            }
+            entity.getKillerId();
             if (entity.isSalvage()) {
                 salvage.add(entity);
             } else {
@@ -579,11 +589,38 @@ public class EntityListFile {
 	        output.write(CommonConstants.NL);
         }
         
+        if(!kills.isEmpty()) {
+        	output.write(CommonConstants.NL);
+	        output.write(indentStr(1) + "<kills>");
+	        output.write(CommonConstants.NL);
+	        output.write(CommonConstants.NL);
+	        try {
+	        	writeKills(output, kills);
+	        } catch(IOException exception) {
+	        	throw exception;
+	        }
+        	 // Finish writing.
+	        output.write(indentStr(1) + "</kills>");
+	        output.write(CommonConstants.NL);
+        }
+        
         // Finish writing.
         output.write("</record>");
         output.write(CommonConstants.NL);
         output.flush();
         output.close();
+    }
+    
+    private static void writeKills(Writer output, Hashtable<String,String> kills) throws IOException {
+    	int indentLvl = 2;
+    	for(String killed : kills.keySet()) {
+    		output.write(indentStr(indentLvl) + "<kill killed=\"");
+            output.write(killed.replaceAll("\"", "&quot;"));
+            output.write("\" killer=\"");
+            output.write(kills.get(killed));
+            output.write("\"/>");
+            output.write(CommonConstants.NL);
+    	}
     }
     
     private static void writeEntityList(Writer output, ArrayList<Entity> list) throws IOException {

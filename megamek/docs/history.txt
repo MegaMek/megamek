@@ -6,6 +6,7 @@ v0.41.8-dev (SVN)
 + Mul files created at end of game now include information about salvage, devastated, and ejected entities
 + MULParser can now read EjectedCrew entities
 + removed separate ejection vector from MULParser
++ Added kill records to the MUL file
 
 v0.41.7 (2015-08-26 21:30 UTC)
 + Bug [#4544]: Airborne WiGE movement blocked by level 1 buildings

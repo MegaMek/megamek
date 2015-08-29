@@ -1,6 +1,7 @@
 package megamek.common;
 
 import java.io.InputStream;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -35,6 +36,8 @@ public class MULParser {
     private static final String UNIT = "unit";
     private static final String ENTITY = "entity";
     private static final String PILOT = "pilot";
+    private static final String KILLS = "kills";
+    private static final String KILL = "kill";
     private static final String LOCATION = "location";
     private static final String ARMOR = "armor";
     private static final String SLOT = "slot";
@@ -137,6 +140,8 @@ public class MULParser {
     private static final String BA_APM_TYPE_NAME = "baAPMTypeName";
     private static final String BA_MEA_MOUNT_LOC = "baMEAMountLoc";
     private static final String BA_MEA_TYPE_NAME = "baMEATypeName";
+    private static final String KILLED = "killed";
+    private static final String KILLER = "killer";
 
     /**
      * Special values recognized by this parser.
@@ -178,6 +183,13 @@ public class MULParser {
      */
     private Vector<Crew> pilots;
     
+    /**
+     * A hashtable containing the names of killed units as the key and the external id
+     * of the killer as the value
+     */
+    private Hashtable<String, String> kills;
+    
+    
     StringBuffer warning;
     
     public MULParser(){
@@ -186,6 +198,7 @@ public class MULParser {
         survivors = new Vector<Entity>();
         salvage = new Vector<Entity>();
         devastated = new Vector<Entity>();
+        kills = new Hashtable<String, String>();
         pilots = new Vector<Crew>();
     }
     
@@ -204,7 +217,7 @@ public class MULParser {
         salvage.removeAllElements();
         devastated.removeAllElements();
         pilots.removeAllElements();
-        
+        kills.clear();
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         Document xmlDoc = null;
 
@@ -271,6 +284,8 @@ public class MULParser {
                     parseUnit((Element)currNode, salvage);
                 } else if (nodeName.equalsIgnoreCase(DEVASTATED)){
                     parseUnit((Element)currNode, devastated);
+                } else if (nodeName.equalsIgnoreCase(KILLS)){
+                    parseKills((Element)currNode);
                 } else if (nodeName.equalsIgnoreCase(ENTITY)){
                     parseUnit((Element)currNode, entities);
                 } else if (nodeName.equalsIgnoreCase(PILOT)){
@@ -304,6 +319,36 @@ public class MULParser {
                     parseEntity((Element)currNode, list);
                 } else if (nodeName.equalsIgnoreCase(PILOT)){
                     parsePilot((Element)currNode);
+                } 
+            } else {
+                continue;
+            }
+        }
+    }
+    
+    /**
+     * Parse a kills tag.  
+     * @param unitNode
+     */
+    private void parseKills(Element killNode){
+        NodeList nl = killNode.getChildNodes();
+        
+        // Iterate through the children, looking for Entity tags
+        for (int i = 0; i < nl.getLength(); i++) {
+            Node currNode = nl.item(i);
+
+            if (currNode.getParentNode() != killNode) {
+                continue;
+            }
+            int nodeType = currNode.getNodeType();
+            if (nodeType == Node.ELEMENT_NODE) {
+                String nodeName = currNode.getNodeName();
+                if (nodeName.equalsIgnoreCase(KILL)){
+                	String killed =  ((Element)currNode).getAttribute(KILLED);
+                    String killer = ((Element)currNode).getAttribute(KILLER);
+                    if(null != killed && null != killer && !killed.isEmpty() && !killer.isEmpty()) {
+                    	kills.put(killed, killer);
+                    }
                 } 
             } else {
                 continue;
@@ -1892,6 +1937,15 @@ public class MULParser {
      */
     public Vector<Crew> getPilots() {
         return pilots;
+    }
+    
+    /**
+     * Returns the kills hashtable
+     * 
+     * @return
+     */
+    public Hashtable<String, String> getKills() {
+        return kills;
     }
     
     /**

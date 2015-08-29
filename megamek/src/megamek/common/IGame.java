@@ -609,6 +609,11 @@ public interface IGame {
      * Returns the entity with the given id number, if any.
      */
     public abstract Entity getEntity(int id);
+    
+    /**
+     * looks for an entity by id number even if out of the game
+     */
+    public abstract Entity getEntityFromAllSources(int id);
 
     /**
      * Adds a collection of new Entities.  Only one GameEntityNewEvent is

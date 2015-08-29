@@ -1232,6 +1232,21 @@ public class Game implements Serializable, IGame {
         return entityIds.get(new Integer(id));
     }
 
+    /**
+     * looks for an entity by id number even if out of the game
+     */
+    public Entity getEntityFromAllSources(int id) {
+    	Entity en = getEntity(id);
+    	if(null == en) {
+    		for (Entity entity : vOutOfGame) {
+    			if(entity.getId() == id) {
+    				return entity;
+    			}
+    		}
+    	}
+    	return en;
+    }
+    
     public void addEntities(List<Entity> entities) {
         for (int i = 0; i < entities.size(); i++) {
             addEntity(entities.get(i), false);

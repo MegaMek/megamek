@@ -512,8 +512,8 @@ public class EntityListFile {
         output.write(CommonConstants.NL);
         output.write("<record version=\"" + MegaMek.VERSION + "\" >");
         
-        // Make a list of the player's living units, including retreateds
-        ArrayList<megamek.common.Entity> living = client.getGame().getPlayerEntities(client.getLocalPlayer(), false);
+        // Make a list of the player's surviving units
+        ArrayList<Entity> living = client.getGame().getPlayerEntities(client.getLocalPlayer(), false);
         
         // Be sure to include all units that have retreated.
         for (Enumeration<Entity> iter = client.getGame().getRetreatedEntities(); iter.hasMoreElements(); ) {
@@ -523,42 +523,60 @@ public class EntityListFile {
             }
         }
         
-        // save all destroyed units in a separate "salvage MUL"
+        // separate out salvage and devastated units and record kills if possible
         ArrayList<Entity> salvage = new ArrayList<Entity>();
         ArrayList<Entity> devastated = new ArrayList<Entity>();
         Hashtable<String, String> kills = new Hashtable<String, String>();
+        
+        //salvageable stuff
         Enumeration<Entity> graveyard = client.getGame().getGraveyardEntities();
         while (graveyard.hasMoreElements()) {
             Entity entity = graveyard.nextElement();
-            Entity killer = client.getGame().getEntity(entity.getKillerId());
-            if(null != killer 
-            		&& !killer.getExternalIdAsString().equals("-1")
-            		&& killer.getOwnerId() == client.getLocalPlayer().getId()) {
-            	kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
+            if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
+	            Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
+	            if(null != killer 
+	            		&& !killer.getExternalIdAsString().equals("-1")
+	            		&& killer.getOwnerId() == client.getLocalPlayer().getId()) {
+	            	kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
+	            } else {
+	            	kills.put(entity.getDisplayName(), "None");
+	            }
             }
-            entity.getKillerId();
-            if (entity.isSalvage()) {
-                salvage.add(entity);
-            } else {
-            	devastated.add(entity);
-            }
+            salvage.add(entity);
         }
         
+        //look for surviving enemy entities who cannot escape and add them to salvage
+        Iterator<Entity> entities = client.getGame().getEntities();
+        while(entities.hasNext()) {
+        	Entity entity = entities.next();
+        	if(entity.getOwner().isEnemyOf(client.getLocalPlayer()) && !entity.canEscape()) {
+                 Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
+                 if(null != killer 
+                 		&& !killer.getExternalIdAsString().equals("-1")
+                 		&& killer.getOwnerId() == client.getLocalPlayer().getId()) {
+                 	kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
+                 } else {
+                 	kills.put(entity.getDisplayName(), "None");
+                 }
+        		salvage.add(entity);
+        	}
+        }
+        
+        //devastated units
         Enumeration<Entity> devastation = client.getGame().getDevastatedEntities();
         while (devastation.hasMoreElements()) {
             Entity entity = devastation.nextElement();
-            Entity killer = client.getGame().getEntity(entity.getKillerId());
-            if(null != killer 
-            		&& !killer.getExternalIdAsString().equals("-1")
-            		&& killer.getOwnerId() == client.getLocalPlayer().getId()) {
-            	kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
+            if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
+	            Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
+	            if(null != killer 
+	            		&& !killer.getExternalIdAsString().equals("-1")
+	            		&& killer.getOwnerId() == client.getLocalPlayer().getId()) {
+	            	kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
+	            } else {
+	            	kills.put(entity.getDisplayName(), "None");
+	            }
             }
-            entity.getKillerId();
-            if (entity.isSalvage()) {
-                salvage.add(entity);
-            } else {
-            	devastated.add(entity);
-            }
+            devastated.add(entity);
         }
         
         if(!living.isEmpty()) {

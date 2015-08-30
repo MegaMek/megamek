@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.41.8-dev (SVN)
+v0.41.8 (2015-08-30 16:10 UTC)
 + Bug: EjectedCrew entities not getting pilot processed in by MulParser
 + Bug: Key binds will now function when parsing defaultKeyBinds.xml fails
 + Mul files created at end of game now include information about salvage, devastated, and ejected entities

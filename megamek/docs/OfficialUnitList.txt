@@ -2750,7 +2750,6 @@ Legionnaire LGN-2X1 MUSE FIRE|
 Rifleman RFL-X3 MUSE WIND|
 Reptar MilitiaMech EPT-C-1|
 Arana MilitiaMech ARA-S-1|
-Exterminator EXT-4A|
 Dragoon AEM-04|
 Dragoon AEM-01|
 Dragoon AEM-03|
@@ -4456,6 +4455,7 @@ Black Hawk (Nova) A|
 Mad Cat (Timber Wolf) D|
 Fenris (Ice Ferret) E|
 Wyvern WVE-5N|
+Exterminator EXT-4A|
 Ryoken (Stormcrow) F|
 Flea 'Fire Ant'|
 Guillotine GLT-6WB|

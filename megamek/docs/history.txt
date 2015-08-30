@@ -11,6 +11,7 @@ v0.41.8-dev (SVN)
 + MUL file puts enemy units that can't escape into the salvage pile
 + Data: New Sprites
 + Data: Source file changes (Mechs TRO 3039)
++ Bug: Fixing broken unit test from change in Mech Data directory.
 
 v0.41.7 (2015-08-26 21:30 UTC)
 + Bug [#4544]: Airborne WiGE movement blocked by level 1 buildings

@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.41.9 (git)
 + Bug: Wind direction was actually wind strength
++ Data: New Sprites
 
 v0.41.8 (2015-09-01 12:10 UTC)
 + Bug: EjectedCrew entities not getting pilot processed in by MulParser

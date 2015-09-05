@@ -152,6 +152,13 @@ public class PlanetaryConditions implements Serializable {
         throw new IllegalArgumentException("Unknown weather condition");
     }
 
+    public static String getWindDirDisplayableName(int type) {
+        if ((type >= 0) && (type < WI_SIZE)) {
+            return Messages.getString("PlanetaryConditions." + dirNames[type]);
+        }
+        throw new IllegalArgumentException("Unknown wind direction");
+    }
+
     public static String getWindDisplayableName(int type) {
         if ((type >= 0) && (type < WI_SIZE)) {
             return Messages.getString("PlanetaryConditions." + windNames[type]);
@@ -174,7 +181,7 @@ public class PlanetaryConditions implements Serializable {
     }
     
     public String getWindDirDisplayableName() {
-        return getWindDisplayableName(windDirection);
+        return getWindDirDisplayableName(windDirection);
     }
 
     public String getLightDisplayableName() {

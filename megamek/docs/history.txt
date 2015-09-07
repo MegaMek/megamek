@@ -2,9 +2,12 @@ VERSION HISTORY:
 ----------------
 v0.41.9 (git)
 + Bug: Infantry BLK files with true/false for antimek fail to load
++ Bug: Wind direction was actually wind strength
++ Data: New Sprites
++ Bug [#4619] Mech Icon not displayed in MM and new sprites
 + Bug: Ghost targets option doesn't work without ECCM
 
-v0.41.8 (2015-08-30 16:10 UTC)
+v0.41.8 (2015-09-01 12:10 UTC)
 + Bug: EjectedCrew entities not getting pilot processed in by MulParser
 + Bug: Key binds will now function when parsing defaultKeyBinds.xml fails
 + Mul files created at end of game now include information about salvage, devastated, and ejected entities
@@ -15,7 +18,8 @@ v0.41.8 (2015-08-30 16:10 UTC)
 + MUL file puts enemy units that can't escape into the salvage pile
 + Data: New Sprites
 + Data: Source file changes (Mechs TRO 3039)
-+ Bug: Fixing broken unit test from change in Mech Data directory.
++ Bug: Fixing broken unit test from change in Mech Data directory
++ Bug: Infantry BLK files with true/false for antimek fail to load
 
 v0.41.7 (2015-08-26 21:30 UTC)
 + Bug [#4544]: Airborne WiGE movement blocked by level 1 buildings

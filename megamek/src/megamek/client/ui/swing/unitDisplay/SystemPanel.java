@@ -862,7 +862,8 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                     }// if the maxtech eccm option is not set then the ECM
                      // should not show anything.
                     if (m.getType().hasFlag(MiscType.F_ECM)
-                            && !client.getGame().getOptions().booleanOption("tacops_eccm")) {
+                            && !(client.getGame().getOptions().booleanOption("tacops_eccm")
+                                    || client.getGame().getOptions().booleanOption("tacops_ghost_target"))) {
                         return;
                     }
                     for (Enumeration<EquipmentMode> e = m.getType()

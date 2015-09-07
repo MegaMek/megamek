@@ -10608,7 +10608,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if (gameOpts.booleanOption("tacops_ghost_target")) {
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                         modes.add("ECM & Ghost Targets");
-                        modes.add("ECCM & Ghost Targets");
+                        if (gameOpts.booleanOption("tacops_eccm")) {
+                            modes.add("ECCM & Ghost Targets");
+                        }
                     } else {
                         modes.add("Ghost Targets");
                     }

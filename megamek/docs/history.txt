@@ -4,6 +4,7 @@ v0.41.9 (git)
 + Bug: Wind direction was actually wind strength
 + Data: New Sprites
 + Bug [#4619] Mech Icon not displayed in MM and new sprites
++ ExternalIds added to all entities and crews in constructor for better end game tracking
 
 v0.41.8 (2015-09-01 12:10 UTC)
 + Bug: EjectedCrew entities not getting pilot processed in by MulParser

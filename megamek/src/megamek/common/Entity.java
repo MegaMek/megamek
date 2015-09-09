@@ -802,6 +802,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         weaponSortOrder = WeaponSortOrder.values()[GUIPreferences.getInstance()
                 .getDefaultWeaponSortOrder()];
+        
+        //set a random UUID for external ID, this will help us sort enemy salvage and prisoners in MHQ
+        //and should have no effect on MM (but need to make sure it doesnt screw up MekWars)
+        externalId = UUID.randomUUID().toString();
     }
 
     protected void initMilitary() {

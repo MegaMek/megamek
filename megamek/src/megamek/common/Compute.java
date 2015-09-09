@@ -5730,8 +5730,6 @@ public class Compute {
                 		ntroopers++;
                 	}
                 }
-                
-                
             }
             return ntroopers;
         } else if (entity instanceof Infantry) {

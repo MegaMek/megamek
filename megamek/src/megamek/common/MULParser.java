@@ -522,8 +522,13 @@ public class MULParser {
         
         // Was never deployed
         try {
-            boolean wasNeverDeployed =
+        	String ndeploy = entityTag.getAttribute(NEVER_DEPLOYED);
+        	boolean wasNeverDeployed =
                     Boolean.parseBoolean(entityTag.getAttribute(NEVER_DEPLOYED));
+        	if(null == ndeploy || ndeploy.isEmpty()) {
+        		//this will default to false above, but we want it to default to true
+        		wasNeverDeployed = true;
+        	}            
             entity.setNeverDeployed(wasNeverDeployed);
         } catch (Exception e) {
             entity.setNeverDeployed(true);

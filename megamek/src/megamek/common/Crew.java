@@ -16,6 +16,7 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.Enumeration;
+import java.util.UUID;
 import java.util.Vector;
 
 import megamek.common.options.IOption;
@@ -168,6 +169,10 @@ public class Crew implements Serializable {
         fatigue = 0;
 
         options.initialize();
+        
+        //set a random UUID for external ID, this will help us sort enemy salvage and prisoners in MHQ
+        //and should have no effect on MM (but need to make sure it doesnt screw up MekWars)
+        externalId = UUID.randomUUID().toString();
     }
 
     public String getName() {

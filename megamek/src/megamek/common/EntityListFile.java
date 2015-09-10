@@ -708,6 +708,10 @@ public class EntityListFile {
                 output.write("\" camoFileName=\"");
                 output.write(entity.getCamoFileName());
             }
+            if(entity instanceof MechWarrior && !((MechWarrior)entity).getPickedUpByExternalIdAsString().equals("-1")) {
+            	output.write("\" pickUpId=\"");
+                output.write(((MechWarrior)entity).getPickedUpByExternalIdAsString());
+            }
             output.write("\">");
             output.write(CommonConstants.NL);
 

@@ -112,12 +112,12 @@ public class MechView {
         sHead.append(dFormatter.format(entity.calculateBattleValue(false,
                 null == entity.getCrew())));
         sHead.append("<br>"); //$NON-NLS-1$
+        double cost = entity.getCost(false);
         sHead.append("Cost: ");
-        if(useAlternateCost) {
-        	sHead.append(dFormatter.format(entity.getAlternateCost()));
-        } else {
-        	sHead.append(dFormatter.format(entity.getCost(false)));
+        if(useAlternateCost && entity.getAlternateCost() > 0) {
+        	cost = entity.getAlternateCost();
         }
+    	sHead.append(dFormatter.format(cost));
         sHead.append(" C-bills");
         sHead.append("<br>"); //$NON-NLS-1$
         if (!entity.getSource().equals("")){

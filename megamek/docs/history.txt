@@ -8,6 +8,7 @@ v0.41.9 (git)
 + Bug: neverDeployed in MULParser defaulting to false when tag is missing
 + Bug: ejected crews are having isEjected set to false on the turn after ejection
 + additional conditions for Entity.canEscape to handle immobilized units and legged/hipped mechs
++ Bug: some costs reported as -1 when using alternateCost option in MechView 
 
 v0.41.8 (2015-09-01 12:10 UTC)
 + Bug: EjectedCrew entities not getting pilot processed in by MulParser

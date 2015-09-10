@@ -76,6 +76,7 @@ public class MULParser {
     private static final String SIZE = "size";
     
     private static final String EXT_ID = "externalId";
+    private static final String PICKUP_ID = "pickUpId";
     private static final String NICK = "nick";
     private static final String CAT_PORTRAIT = "portraitCat";
     private static final String FILE_PORTRAIT = "portraitFile";
@@ -566,6 +567,16 @@ public class MULParser {
         }
         entity.setExternalIdAsString(extId);
 
+        // external id
+        if(entity instanceof MechWarrior) {
+	        String pickUpId = entityTag.getAttribute(PICKUP_ID);
+	        if ((null == pickUpId) || (pickUpId.length() == 0)) {
+	        	pickUpId = "-1";
+	        }
+	        ((MechWarrior)entity).setPickedUpByExternalId(pickUpId);
+        }
+
+        
         // quirks
         String quirks = entityTag.getAttribute(QUIRKS);
         if ((null != quirks) && (quirks.trim().length() > 0)) {

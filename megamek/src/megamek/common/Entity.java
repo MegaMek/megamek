@@ -12980,14 +12980,24 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * This method returns a true if the unit can reasonably escape from the
      * board. It can be used to determine whether some non-destroyed units
-     * should be considered possible salvage. The default is to only return true
-     * for inactive crews.
+     * should be considered possible salvage. 
      *
      * @return
      */
-    public boolean canEscape() {
-        return (null != getCrew()) && !getCrew().isUnconscious()
-               && !getCrew().isDead();
+    public boolean canEscape() {    	
+    	if(null == getCrew()) {
+    		return false;
+    	}
+    	//if the crew is unconscious, dead, or ejected, no escape
+    	if(getCrew().isUnconscious() 
+    			|| getCrew().isDead() 
+    			|| (getCrew().isEjected() && !(this instanceof EjectedCrew))) {
+    		return false;
+    	}
+    	
+    	//what else? If its permaneantly immobilized or shutdown it can't escape
+    	//TODO: should stalled and stuck be here?
+        return !isPermanentlyImmobilized(false) && !isShutDown();
     }
 
     /**

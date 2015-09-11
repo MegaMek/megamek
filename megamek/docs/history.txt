@@ -11,6 +11,7 @@ v0.41.9 (git)
 + Bug: some costs reported as -1 when using alternateCost option in MechView 
 + Added MechWarrior pick up external ID to MUL input/output
 + Data: New Sprites
++ Bug: null entities still attempt to be parsed in MULParser
 
 v0.41.8 (2015-09-01 12:10 UTC)
 + Bug: EjectedCrew entities not getting pilot processed in by MulParser

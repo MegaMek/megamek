@@ -378,6 +378,7 @@ public class MULParser {
         // Make sure we've got an Entity
         if (entity == null) {
         	warning.append("Failed to load entity!");
+        	return;
         }
         
         // Set the attributes for the entity

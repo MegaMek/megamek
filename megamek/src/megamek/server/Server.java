@@ -25340,19 +25340,6 @@ public class Server implements Runnable {
             condition = IEntityRemovalConditions.REMOVE_DEVASTATED;
         }
 
-        // if the unit is conventional infantry, then give its crew six hits
-        // this will help us identify dead ejected pilots in the MUL files
-        if ((entity instanceof Infantry) && !(entity instanceof BattleArmor)
-            && (null != entity.getCrew())) {
-            // this won't actually work if the crew is considered ejected,
-            // which it will be on the turn of its ejection. We can safely
-            // turn isEjected to false, because since the pilot is dead, it
-            // really
-            // doesn't matter what happens to it next.
-            entity.getCrew().setEjected(false);
-            entity.getCrew().setDead(true);
-        }
-
         // Destroy the entity, unless it's already destroyed.
         if (!entity.isDoomed() && !entity.isDestroyed()) {
             r = new Report(6365);

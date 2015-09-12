@@ -131,11 +131,14 @@ public class EjectedCrew extends Infantry {
         this.originalRideExternalId = Integer.toString(originalRideExternalId);
     }
 
-    @Override
+    /*@Override
+     * Taharqa: I don't think this should be here and I can't find a place where it is 
+     * actually necessary. If you set this crew as unejected it will carry on to the original unit
+     * and the after battle MULs and processing will be wrong
     public void newRound(int number) {
         super.newRound(number);
         getCrew().setEjected(false);
-    }
+    }*/
 
     /**
      * Because they deploy in their vehicles rather than as infantry, crews

@@ -544,20 +544,15 @@ public class EntityListFile {
             salvage.add(entity);
         }
 
-        //look for surviving enemy entities who cannot escape and add them to salvage
+        //look for surviving enemy entities and add them to the possible salvage
         Iterator<Entity> entities = client.getGame().getEntities();
         while(entities.hasNext()) {
         	Entity entity = entities.next();
-        	if(entity.getOwner().isEnemyOf(client.getLocalPlayer()) && !entity.canEscape()) {
-                 Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
-                 if(null != killer
-                 		&& !killer.getExternalIdAsString().equals("-1")
-                 		&& killer.getOwnerId() == client.getLocalPlayer().getId()) {
-                 	kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
-                 } else {
+        	if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
+                 if(!entity.canEscape()) {
                  	kills.put(entity.getDisplayName(), "None");
                  }
-        		salvage.add(entity);
+                 salvage.add(entity);
         	}
         }
 
@@ -712,6 +707,10 @@ public class EntityListFile {
             if (null != entity.getCamoFileName()) {
                 output.write("\" camoFileName=\"");
                 output.write(entity.getCamoFileName());
+            }
+            if(entity instanceof MechWarrior && !((MechWarrior)entity).getPickedUpByExternalIdAsString().equals("-1")) {
+            	output.write("\" pickUpId=\"");
+                output.write(((MechWarrior)entity).getPickedUpByExternalIdAsString());
             }
             output.write("\">");
             output.write(CommonConstants.NL);

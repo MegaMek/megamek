@@ -466,8 +466,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         boolean isAero = ce() instanceof Aero;
         boolean isVTOL = ce() instanceof VTOL;
         boolean isTankOnPavement = (ce() instanceof Tank)
-                && (deployhex.containsTerrain(Terrains.PAVEMENT) || deployhex
-                        .containsTerrain(Terrains.ROAD));
+                && (deployhex.containsTerrain(Terrains.PAVEMENT)
+                        || deployhex.containsTerrain(Terrains.ROAD)
+                        || deployhex.containsTerrain(Terrains.BRIDGE_ELEV));
         String title, msg;
         if ((ce().getPosition() != null) && (shiftheld || turnMode)) { // turn
             ce().setFacing(ce().getPosition().direction(moveto));
@@ -485,7 +486,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             JOptionPane.showMessageDialog(clientgui, msg, title,
                     JOptionPane.WARNING_MESSAGE);
             return;
-        } else if (!(board.isLegalDeployment(moveto, ce().getStartingPos()) || assaultDropPreference)
+        } else if (!(board.isLegalDeployment(moveto, ce().getStartingPos()) 
+                    || assaultDropPreference)
                 || (ce().isLocationProhibited(moveto) && !isTankOnPavement)) {
             msg = Messages.getString("DeploymentDisplay.cantDeployInto",
                     new Object[] { ce().getShortName(), moveto.getBoardNum() });
@@ -572,11 +574,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (floorNames.size() < 1) {
             return false;
         }
-        String msg = Messages
-                .getString(
-                        "DeploymentDisplay.floorsDialog.message", new Object[] { ce().getShortName() }); //$NON-NLS-1$;
-        String title = Messages
-                .getString("DeploymentDisplay.floorsDialog.title"); //$NON-NLS-1$
+        String i18nString = "DeploymentDisplay.floorsDialog.message"; //$NON-NLS-1$;
+        String msg = Messages.getString(i18nString, new Object[] { ce()
+                .getShortName() });
+        i18nString = "DeploymentDisplay.floorsDialog.title"; //$NON-NLS-1$
+        String title = Messages.getString(i18nString);
         String input = (String) JOptionPane.showInputDialog(clientgui, msg,
                 title, JOptionPane.QUESTION_MESSAGE, null,
                 floorNames.toArray(), floorNames.get(0));
@@ -598,18 +600,22 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         final IHex deployhex = board.getHex(moveto);
 
         int height = board.getHex(moveto).terrainLevel(Terrains.BRIDGE_ELEV);
-        String[] floors = new String[2];
-        floors[0] = Messages.getString("DeploymentDisplay.belowbridge");
-        floors[1] = Messages.getString("DeploymentDisplay.topbridge");
+        List<String> floors = new ArrayList<>(2);
+        if (!ce().isLocationProhibited(moveto)) {
+            floors.add(Messages.getString("DeploymentDisplay.belowbridge"));
+        }
+        floors.add(Messages.getString("DeploymentDisplay.topbridge"));
+        
+        String i18nString = "DeploymentDisplay.bridgeDialog.title"; 
         String title = Messages
-                .getString("DeploymentDisplay.bridgeDialog.title"); //$NON-NLS-1$
-        String msg = Messages
-                .getString(
-                        "DeploymentDisplay.bridgeDialog.message", new Object[] { ce().getShortName() }); //$NON-NLS-1$
+                .getString(i18nString); //$NON-NLS-1$
+        i18nString = "DeploymentDisplay.bridgeDialog.message"; //$NON-NLS-1$
+        String msg = Messages.getString(i18nString, new Object[] { ce()
+                .getShortName() });
         String input = (String) JOptionPane.showInputDialog(clientgui, msg,
-                title, JOptionPane.QUESTION_MESSAGE, null, floors, null);
+                title, JOptionPane.QUESTION_MESSAGE, null, floors.toArray(), null);
         if (input != null) {
-            if (input.equals(floors[1])) {
+            if (input.equals(Messages.getString("DeploymentDisplay.topbridge"))) {
                 ce().setElevation(height);
             } else {
                 ce().setElevation(deployhex.floor() - deployhex.surface());

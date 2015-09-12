@@ -17,6 +17,7 @@ v0.41.9 (git)
 + Bug [#4623]: Cargo Bay and Bomb Bay missing
 + Bug [#4620]: Bombs attacks for Aeros now computed at the start of every round
 + Bug [#4615]: Vehicle Cannot Deploy On Bridge Over Water
++ Bug [#4617]: Space Battle Aero Ejection Issue
 
 v0.41.8 (2015-09-01 12:10 UTC)
 + Bug: EjectedCrew entities not getting pilot processed in by MulParser

@@ -5,6 +5,14 @@ v0.41.9 (git)
 + Bug: Wind direction was actually wind strength
 + Data: New Sprites
 + Bug [#4619] Mech Icon not displayed in MM and new sprites
++ ExternalIds added to all entities and crews in constructor for better end game tracking
++ Bug: neverDeployed in MULParser defaulting to false when tag is missing
++ Bug: ejected crews are having isEjected set to false on the turn after ejection
++ additional conditions for Entity.canEscape to handle immobilized units and legged/hipped mechs
++ Bug: some costs reported as -1 when using alternateCost option in MechView 
++ Added MechWarrior pick up external ID to MUL input/output
++ Data: New Sprites
++ Bug: null entities still attempt to be parsed in MULParser
 + Bug: Ghost targets option doesn't work without ECCM
 
 v0.41.8 (2015-09-01 12:10 UTC)

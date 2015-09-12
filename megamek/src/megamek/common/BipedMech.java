@@ -84,7 +84,7 @@ public class BipedMech extends Mech {
 
         return canFlip;
     }
-
+    
     @Override
     public int getWalkMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         int wmp = getOriginalWalkMP();

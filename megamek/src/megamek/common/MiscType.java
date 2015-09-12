@@ -7185,7 +7185,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7207,7 +7207,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7229,7 +7229,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 2;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7251,7 +7251,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 2;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7273,7 +7273,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 3;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7295,7 +7295,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 3;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7317,7 +7317,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 4;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7339,7 +7339,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 4;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7361,7 +7361,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 5;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7383,7 +7383,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 5;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7405,7 +7405,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 6;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7427,7 +7427,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 6;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7449,7 +7449,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 7;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7471,7 +7471,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 7;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7493,7 +7493,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 8;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7515,7 +7515,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 8;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7537,7 +7537,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 9;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7559,7 +7559,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 9;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7581,7 +7581,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 10;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7603,7 +7603,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 10;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7625,7 +7625,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 11;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7647,7 +7647,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 11;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7669,7 +7669,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_LIQUID_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,
@@ -7691,7 +7691,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.cost = 0;
         misc.flags = misc.flags.or(F_LIQUID_CARGO).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT);
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
         misc.industrial = true;
         misc.availRating = new int[] { EquipmentType.RATING_A,

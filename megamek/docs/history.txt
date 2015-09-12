@@ -14,6 +14,7 @@ v0.41.9 (git)
 + Data: New Sprites
 + Bug: null entities still attempt to be parsed in MULParser
 + Bug: Ghost targets option doesn't work without ECCM
++ Bug [#4623]: Cargo Bay and Bomb Bay missing
 
 v0.41.8 (2015-09-01 12:10 UTC)
 + Bug: EjectedCrew entities not getting pilot processed in by MulParser

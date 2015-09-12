@@ -728,6 +728,46 @@ public class Aero extends Entity {
         // get new random whofirst
         setWhoFirst();
 
+        // Remove all bomb attacks
+        List<Mounted> bombAttacksToRemove = new ArrayList<>();
+        EquipmentType spaceBomb = EquipmentType.get(SPACE_BOMB_ATTACK);
+        EquipmentType altBomb = EquipmentType.get(ALT_BOMB_ATTACK);
+        EquipmentType diveBomb = EquipmentType.get(DIVE_BOMB_ATTACK);
+        for (Mounted eq : equipmentList) {
+            if ((eq.getType() == spaceBomb) || (eq.getType() == altBomb)
+                    || (eq.getType() == diveBomb)) {
+                bombAttacksToRemove.add(eq);
+            }
+        }
+        equipmentList.removeAll(bombAttacksToRemove);
+        weaponList.removeAll(bombAttacksToRemove);
+        totalWeaponList.removeAll(bombAttacksToRemove);
+        weaponGroupList.removeAll(bombAttacksToRemove);
+        weaponBayList.removeAll(bombAttacksToRemove);
+
+        // Add the space bomb attack
+        if (game.getOptions().booleanOption("stratops_space_bomb")
+                && game.getBoard().inSpace()
+                && (getBombs(AmmoType.F_SPACE_BOMB).size() > 0)) {
+            try {
+                addEquipment(spaceBomb, LOC_NOSE, false);
+            } catch (LocationFullException ex) {
+            }
+        }
+        // Add ground bomb attacks
+        int numGroundBombs = getBombs(AmmoType.F_GROUND_BOMB).size();
+        if (!game.getBoard().inSpace() && (numGroundBombs > 0)) {
+            try {
+                addEquipment(diveBomb, LOC_NOSE, false);
+            } catch (LocationFullException ex) {
+            }
+            for (int i = 0; i < Math.min(10, numGroundBombs); i++) {
+                try {
+                    addEquipment(altBomb, LOC_NOSE, false);
+                } catch (LocationFullException ex) {
+                }
+            }
+        }
     }
 
     /**
@@ -3345,29 +3385,34 @@ public class Aero extends Entity {
     // produce bombs
     public void applyBombs() {
         int loc = LOC_NOSE;
-        boolean loadedABomb = false;
         for (int type = 0; type < BombType.B_NUM; type++) {
             for (int i = 0; i < bombChoices[type]; i++) {
-                if ((type == BombType.B_ALAMO) && !game.getOptions().booleanOption("at2_nukes")) {
+                if ((type == BombType.B_ALAMO)
+                        && !game.getOptions().booleanOption("at2_nukes")) {
                     continue;
                 }
-                if ((type > BombType.B_TAG) && !game.getOptions().booleanOption("allow_advanced_ammo")) {
+                if ((type > BombType.B_TAG)
+                        && !game.getOptions().booleanOption(
+                                "allow_advanced_ammo")) {
                     continue;
                 }
 
                 // some bombs need an associated weapon and if so
                 // they need a weapon for each bomb
-                if ((null != BombType.getBombWeaponName(type)) && (type != BombType.B_ARROW) && (type != BombType.B_HOMING)) {
+                if ((null != BombType.getBombWeaponName(type))
+                        && (type != BombType.B_ARROW)
+                        && (type != BombType.B_HOMING)) {
                     try {
-                        addBomb(EquipmentType.get(BombType.getBombWeaponName(type)), loc);
+                        addBomb(EquipmentType.get(BombType
+                                .getBombWeaponName(type)), loc);
                     } catch (LocationFullException ex) {
                         // throw new LocationFullException(ex.getMessage());
                     }
                 }
                 if (type != BombType.B_TAG) {
                     try {
-                        addEquipment(EquipmentType.get(BombType.getBombInternalName(type)), loc, false);
-                        loadedABomb = true;
+                        addEquipment(EquipmentType.get(BombType
+                                .getBombInternalName(type)), loc, false);
                     } catch (LocationFullException ex) {
                         // throw new LocationFullException(ex.getMessage());
                     }
@@ -3375,33 +3420,6 @@ public class Aero extends Entity {
             }
             // Clear out the bomb choice once the bombs are loaded
             bombChoices[type] = 0;
-        }
-        // add the space bomb attack
-        // TODO: I don't know where else to put this (where do infantry attacks
-        // get added)
-        if (game.getOptions().booleanOption("stratops_space_bomb") &&
-                loadedABomb && game.getBoard().inSpace() &&
-                (getBombs(AmmoType.F_SPACE_BOMB).size() > 0)) {
-            try {
-                addEquipment(EquipmentType.get(SPACE_BOMB_ATTACK), LOC_NOSE, false);
-            } catch (LocationFullException ex) {
-                // throw new LocationFullException(ex.getMessage());
-            }
-        }
-        if (loadedABomb && !game.getBoard().inSpace() &&
-                (getBombs(AmmoType.F_GROUND_BOMB).size() > 0)) {
-            try {
-                addEquipment(EquipmentType.get(DIVE_BOMB_ATTACK), LOC_NOSE, false);
-            } catch (LocationFullException ex) {
-                // throw new LocationFullException(ex.getMessage());
-            }
-            for (int i = 0; i < Math.min(10, getBombs(AmmoType.F_GROUND_BOMB).size()); i++) {
-                try {
-                    addEquipment(EquipmentType.get(ALT_BOMB_ATTACK), LOC_NOSE, false);
-                } catch (LocationFullException ex) {
-                    // throw new LocationFullException(ex.getMessage());
-                }
-            }
         }
 
         updateWeaponGroups();

@@ -13,3 +13,5 @@
 /bin/
 /*.mul
 /apidocs/
+/mmconf/*.properties
+/mmconf/*.properties.bak

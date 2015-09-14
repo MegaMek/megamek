@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.41.9 (git)
+v0.41.9 (2014-09-14 01:25 UTC)
 + Bug: Infantry BLK files with true/false for antimek fail to load
 + Bug: Wind direction was actually wind strength
 + Data: New Sprites
@@ -9,7 +9,7 @@ v0.41.9 (git)
 + Bug: neverDeployed in MULParser defaulting to false when tag is missing
 + Bug: ejected crews are having isEjected set to false on the turn after ejection
 + additional conditions for Entity.canEscape to handle immobilized units and legged/hipped mechs
-+ Bug: some costs reported as -1 when using alternateCost option in MechView 
++ Bug: some costs reported as -1 when using alternateCost option in MechView
 + Added MechWarrior pick up external ID to MUL input/output
 + Data: New Sprites
 + Bug: null entities still attempt to be parsed in MULParser

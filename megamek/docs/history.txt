@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.41.10 (git)
+
 v0.41.9 (2014-09-14 01:25 UTC)
 + Bug: Infantry BLK files with true/false for antimek fail to load
 + Bug: Wind direction was actually wind strength

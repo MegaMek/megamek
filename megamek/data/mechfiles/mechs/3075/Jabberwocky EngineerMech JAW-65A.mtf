@@ -1,50 +1,48 @@
-Version:1.0
-Jabberwocky MilitiaMech
-JAW-67
+Version:1.1
+Jabberwocky EngineerMech
+JAW-65A
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3076
-Source:RS VA
+Era:2549
+Source:RS 3075 Unabrided
 Rules Level:2
 
 Mass:50
-Engine:200 Fusion Engine(IS)
+Engine:150 Fuel Cell Engine(IS)
 Structure:IS Industrial
-Myomer:Industrial Triple-Strength
+Myomer:Standard
+Cockpit:Industrial Cockpit
+Gyro:Standard Gyro
 
-Heat Sinks:11 Single
-Walk MP:4
-Jump MP:3
+Heat Sinks:8 Single
+Walk MP:3
+Jump MP:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:16
-RA Armor:16
-LT Armor:13
-RT Armor:13
-CT Armor:18
-HD Armor:9
-LL Armor:16
-RL Armor:16
-RTL Armor:6
-RTR Armor:6
-RTC Armor:7
+Armor:Industrial (Inner Sphere)
+LA Armor:3
+RA Armor:3
+LT Armor:3
+RT Armor:3
+CT Armor:5
+HD Armor:4
+LL Armor:4
+RL Armor:4
+RTL Armor:1
+RTR Armor:1
+RTC Armor:1
 
-Weapons:4
-Medium Laser, Left Arm
-Medium Laser, Right Torso
-Large Laser, Right Arm
-LRM 5, Left Torso
+Weapons:0
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Medium Laser
+Spot Welder
 Environmental Sealing
-Industrial TSM
-Industrial TSM
-Industrial TSM
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -54,38 +52,38 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Heat Sink
-Large Laser
-Large Laser
+Salvage Arm
+Salvage Arm
 Environmental Sealing
-Industrial TSM
-Industrial TSM
-Industrial TSM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
 Left Torso:
 Heat Sink
-Jump Jet
-LRM 5
-IS Ammo LRM-5
-Searchlight
 Environmental Sealing
-Industrial TSM
-Industrial TSM
-Industrial TSM
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Right Torso:
 Heat Sink
-Jump Jet
-Medium Laser
+Lift Hoist (R)
+Lift Hoist (R)
+Lift Hoist (R)
 Environmental Sealing
-Industrial TSM
-Industrial TSM
-Industrial TSM
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -103,8 +101,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
 Environmental Sealing
+-Empty-
 
 Head:
 Life Support
@@ -125,8 +123,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+Tracks
 Environmental Sealing
--Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -139,8 +137,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+Tracks
 Environmental Sealing
--Empty-
 -Empty-
 -Empty-
 -Empty-

@@ -889,10 +889,9 @@ public class MULParser {
                 crew.setEjected(Boolean.parseBoolean(ejected));
             }
 
-            if ((null == extId) || (extId.length() == 0)) {
-                extId = "-1";
-            }
-            crew.setExternalIdAsString(extId);
+            if ((null != extId) && (extId.length() > 0)) {
+            	crew.setExternalIdAsString(extId);
+            }           
 
             pilots.add(crew);
             if (null != entity) {

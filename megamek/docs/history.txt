@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.41.10 (git)
 + Data: New Sprites and unit file.
++ only replace pilot external ID in MULParser if not null or zero length
 
 v0.41.9 (2014-09-14 01:25 UTC)
 + Bug: Infantry BLK files with true/false for antimek fail to load

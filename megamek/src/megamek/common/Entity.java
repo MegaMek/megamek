@@ -9025,6 +9025,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if (arg) {
                 illuminated = true;
             }
+        } else {
+            spotlightIsActive = false;
         }
     }
 

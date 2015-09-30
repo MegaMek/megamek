@@ -5,6 +5,8 @@ v0.41.10 (git)
 + only replace pilot external ID in MULParser if not null or zero length
 + Data: New Sprites.
 + Bug [#4627]; Unit with destroyed searchlight still illuminated
++ Bug [#4629]: Mech Shield continues to absorb damage after arm is destroyed
+
 
 v0.41.9 (2014-09-14 01:25 UTC)
 + Bug: Infantry BLK files with true/false for antimek fail to load

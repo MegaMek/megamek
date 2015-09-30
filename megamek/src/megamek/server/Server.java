@@ -21382,18 +21382,17 @@ public class Server implements Runnable {
                         // corresponding arm is not yet destroyed, add
                         // it as a club to that hex (p.35 BMRr)
                         if ((te instanceof Mech)
-                            && (((hit.getLocation() == Mech.LOC_RT) && (te
-                                                                                .getInternal(Mech.LOC_RARM) > 0)) ||
-                                ((hit
-                                          .getLocation() == Mech.LOC_LT) && (te
-                                                                                     .getInternal(Mech.LOC_LARM) > 0)
-                                ))) {
-                            int blownOffLocation = -1; // good initial value?
+                                && (((hit.getLocation() == Mech.LOC_RT)
+                                        && (te.getInternal(Mech.LOC_RARM) > 0))
+                                    || ((hit.getLocation() == Mech.LOC_LT)
+                                        && (te.getInternal(Mech.LOC_LARM) > 0)))) {
+                            int blownOffLocation;
                             if (hit.getLocation() == Mech.LOC_RT) {
                                 blownOffLocation = Mech.LOC_RARM;
                             } else {
                                 blownOffLocation = Mech.LOC_LARM;
                             }
+                            te.destroyLocation(blownOffLocation, true);
                             r = new Report(6120);
                             r.subject = te_n;
                             r.add(te.getLocationName(blownOffLocation));

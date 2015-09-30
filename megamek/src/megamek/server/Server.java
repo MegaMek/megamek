@@ -11165,7 +11165,7 @@ public class Server implements Runnable {
      * pass.
      */
     private int doSkillCheckWhileMoving(Entity entity, int entityElevation,
-                                        Coords src, Coords dest, PilotingRollData roll, boolean isFallRoll) {
+            Coords src, Coords dest, PilotingRollData roll, boolean isFallRoll) {
         boolean fallsInPlace;
 
         // Start the info for this roll.
@@ -11190,7 +11190,7 @@ public class Server implements Runnable {
         addReport(r);
 
         // roll
-        final int diceRoll = Compute.d6(2);
+        final int diceRoll = entity.getCrew().rollPilotingSkill();
         r = new Report(2185);
         r.subject = entity.getId();
         r.add(roll.getValueAsString());
@@ -26221,7 +26221,7 @@ public class Server implements Runnable {
                 vPhaseReport.addAll(damageCrew(entity, 1));
                 Report.addNewline(vPhaseReport);
             } else {
-                int diceRoll = Compute.d6(2);
+                int diceRoll = entity.getCrew().rollPilotingSkill();
                 r = new Report(2325);
                 r.subject = entity.getId();
                 r.addDesc(entity);

@@ -4166,7 +4166,8 @@ public class Server implements Runnable {
 
     private boolean unloadUnit(Entity unloader, Targetable unloaded,
                                Coords pos, int facing, int elevation) {
-        return unloadUnit(unloader, unloaded, pos, facing, elevation, false);
+        return unloadUnit(unloader, unloaded, pos, facing, elevation, false,
+                false);
     }
 
     /**
@@ -4191,7 +4192,8 @@ public class Server implements Runnable {
      *         <code>false</code> if the unit isn't carried in unloader.
      */
     private boolean unloadUnit(Entity unloader, Targetable unloaded,
-            Coords pos, int facing, int elevation, boolean evacuation) {
+            Coords pos, int facing, int elevation, boolean evacuation,
+            boolean duringDeployment) {
 
         // We can only unload Entities.
         Entity unit = null;
@@ -4343,6 +4345,12 @@ public class Server implements Runnable {
             // unit uses half of walk mp and is treated as moving one hex
             unit.mpUsed = unit.getOriginalWalkMP() / 2;
             unit.delta_distance = 1;
+        }
+
+        // If we unloaded during deployment, allow a turn
+        if (duringDeployment) {
+            unit.setUnloaded(false);
+            unit.setDone(false);
         }
 
         // Update the unloaded unit.
@@ -11896,12 +11904,12 @@ public class Server implements Runnable {
         if (game.isPhaseSimultaneous()) {
             turn = game.getTurnForPlayer(connId);
         }
-        if ((turn == null) || !turn.isValid(connId, entity, game)
-            || !(game.getBoard().isLegalDeployment(coords,
-                                                   entity.getStartingPos()) || (assaultDrop
-                                                                                && game.getOptions().booleanOption
-                ("assault_drop") && entity
-                                                                                        .canAssaultDrop()))) {
+        if ((turn == null)
+                || !turn.isValid(connId, entity, game)
+                || !(game.getBoard().isLegalDeployment(coords,
+                        entity.getStartingPos()) || (assaultDrop
+                        && game.getOptions().booleanOption("assault_drop") && entity
+                            .canAssaultDrop()))) {
             String msg = "error: server got invalid deployment packet from "
                          + "connection " + connId;
             if (entity != null) {
@@ -11926,6 +11934,53 @@ public class Server implements Runnable {
 
         endCurrentTurn(entity);
     }
+
+    /**
+     * Used when an Entity that was loaded in another Entity in the Lounge is
+     * unloaded during deployment.
+     * @param packet
+     * @param connId
+     */
+    private void receiveDeploymentUnload(Packet packet, int connId) {
+        Entity loader = game.getEntity(packet.getIntValue(0));
+        Entity loaded = game.getEntity(packet.getIntValue(1));
+
+        // can this player/entity act right now?
+        GameTurn turn = game.getTurn();
+        if (game.isPhaseSimultaneous()) {
+            turn = game.getTurnForPlayer(connId);
+        }
+        if ((turn == null)
+                || !turn.isValid(connId, loader, game)) {
+            String msg = "error: server got invalid deployment unload packet "
+                    + "from connection " + connId;
+            if (loader != null) {
+                msg += ", Entity: " + loader.getShortName();
+            } else {
+                msg += ", Entity was null!";
+            }
+            System.err.println(msg);
+            send(connId, createTurnVectorPacket());
+            send(connId, createTurnIndexPacket());
+            return;
+        }
+
+        // Unload and call entityUpdate
+        unloadUnit(loader, loaded, null, 0, 0, false, true);
+
+        // Need to update the loader
+        entityUpdate(loader.getId());
+
+        // Now need to add a turn for the unloaded unit, to be taken immediately
+        // Turn forced to be immediate to avoid messy turn ordering issues
+        // (aka, how do we add the turn with individual initiative?)
+        game.insertTurnAfter(new GameTurn.SpecificEntityTurn(
+                loaded.getOwnerId(), loaded.getId()), game.getTurnIndex() - 1);
+        //game.insertNextTurn(new GameTurn.SpecificEntityTurn(
+        //        loaded.getOwnerId(), loaded.getId()));
+        send(createTurnVectorPacket());
+    }
+
 
     /**
      * Process a deployment packet by... deploying the entity! We load any other
@@ -25455,7 +25510,7 @@ public class Server implements Runnable {
                     else {
                         // The other unit survives.
                         unloadUnit(entity, other, curPos, curFacing,
-                                   entity.getElevation(), true);
+                                   entity.getElevation(), true, false);
                     }
 
                 } // Handle the next transported unit.
@@ -27668,9 +27723,8 @@ public class Server implements Runnable {
         Entity entity = (Entity) c.getObject(0);
         Entity oldEntity = game.getEntity(entity.getId());
         if ((oldEntity != null)
-            && ((oldEntity.getOwner() == getPlayer(connIndex)) || (oldEntity
-                                                                           .getOwner().getTeam() == getPlayer
-                                                                           (connIndex).getTeam()))) {
+                && ((oldEntity.getOwner() == getPlayer(connIndex)) || (oldEntity
+                        .getOwner().getTeam() == getPlayer(connIndex).getTeam()))) {
             game.setEntity(entity.getId(), entity);
             entityUpdate(entity.getId());
             // In the chat lounge, notify players of customizing of unit
@@ -28909,6 +28963,9 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_ENTITY_DEPLOY:
                 receiveDeployment(packet, connId);
+                break;
+            case Packet.COMMAND_ENTITY_DEPLOY_UNLOAD:
+                receiveDeploymentUnload(packet, connId);
                 break;
             case Packet.COMMAND_DEPLOY_MINEFIELDS:
                 receiveDeployMinefields(packet, connId);

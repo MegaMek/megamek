@@ -7,6 +7,7 @@ v0.41.10 (git)
 + Bug [#4627]; Unit with destroyed searchlight still illuminated
 + Bug [#4629]: Mech Shield continues to absorb damage after arm is destroyed
 + Bug [#4630]: NatAp:Piloting not always rolling 3D6
++ Bug [#4625]: Unloaded Infantry Vanished During Deployment
 
 
 v0.41.9 (2014-09-14 01:25 UTC)

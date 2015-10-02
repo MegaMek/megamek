@@ -8,6 +8,7 @@ v0.41.10 (git)
 + Bug [#4629]: Mech Shield continues to absorb damage after arm is destroyed
 + Bug [#4630]: NatAp:Piloting not always rolling 3D6
 + Bug [#4625]: Unloaded Infantry Vanished During Deployment
++ Bug [#4628]: Battle Value of the Void-Signature System
 
 
 v0.41.9 (2014-09-14 01:25 UTC)

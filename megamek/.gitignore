@@ -9,7 +9,7 @@
 /logs
 /data/mechfiles/units.cache
 /mmconf/clientsettings.xml
-/mmconf/gameoptions.xml
+/mmconf/*gameoptions.xml
 /bin/
 /*.mul
 /apidocs/

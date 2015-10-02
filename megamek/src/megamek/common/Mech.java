@@ -3548,21 +3548,28 @@ public abstract class Mech extends Entity {
 
         }
         if (hasVoidSig()) {
-            targetMovementModifier += 3;
             bvText.append(startRow);
             bvText.append(startColumn);
 
-            bvText.append("Void Sig +3");
+            bvText.append("Void Sig");
             bvText.append(endColumn);
             bvText.append(startColumn);
 
             bvText.append(endColumn);
             bvText.append(startColumn);
-
-            bvText.append("+3");
+            
+            if (targetMovementModifier < 3) {
+                targetMovementModifier = 3;
+                bvText.append("3");
+            } else if (targetMovementModifier == 3) {
+                targetMovementModifier++;
+                bvText.append("+1");
+            } else {
+                bvText.append("-");
+            }
+            
             bvText.append(endColumn);
             bvText.append(endRow);
-
         }
         double tmmFactor = 1 + (targetMovementModifier / 10);
         dbv *= tmmFactor;
@@ -3663,6 +3670,18 @@ public abstract class Mech extends Entity {
         if (hasStealth()) {
             mechHeatEfficiency -= 10;
             bvText.append(" - Stealth Heat ");
+        }
+        if (hasChameleonShield()) {
+            mechHeatEfficiency -= 6;
+            bvText.append(" - Chameleon LPS Heat ");
+        }
+        if (hasNullSig()) {
+            mechHeatEfficiency -= 10;
+            bvText.append(" - Null-signature system Heat ");
+        }
+        if (hasVoidSig()) {
+            mechHeatEfficiency -= 10;
+            bvText.append(" - Void-signature system Heat ");
         }
 
         bvText.append(endColumn);

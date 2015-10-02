@@ -719,8 +719,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     clientgui.mechD.displayEntity(ce());
                     setUnloadEnabled(true);
                 }
-            } // End have-choices
-            else {
+            } else { // End have-choices
                 JOptionPane.showMessageDialog(clientgui.frame, Messages
                         .getString("DeploymentDisplay.alertDialog1.message",
                                 new Object[] { ce().getShortName() }), Messages
@@ -756,7 +755,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                             lobbyLoaded.remove(loaded.getId());
                             loader.setLoadedKeepers(lobbyLoaded);
                             client.sendUpdateEntity(loader);
-                            client.sendUpdateEntity(loaded);    
+                            client.sendUpdateEntity(loaded);
                         }
                         setLoadEnabled(getLoadableEntities().size() > 0);
                     } else {

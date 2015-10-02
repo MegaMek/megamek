@@ -11945,11 +11945,24 @@ public class Server implements Runnable {
         Entity loader = game.getEntity(packet.getIntValue(0));
         Entity loaded = game.getEntity(packet.getIntValue(1));
 
+        if (game.getPhase() != Phase.PHASE_DEPLOYMENT) {
+            String msg = "error: server received deployment unload packet "
+                    + "outside of deployment phase from connection " + connId;
+            if (loader != null) {
+                msg += ", Entity: " + loader.getShortName();
+            } else {
+                msg += ", Entity was null!";
+            }
+            System.err.println(msg);
+            return;
+        }
+
         // can this player/entity act right now?
         GameTurn turn = game.getTurn();
         if (game.isPhaseSimultaneous()) {
             turn = game.getTurnForPlayer(connId);
         }
+
         if ((turn == null)
                 || !turn.isValid(connId, loader, game)) {
             String msg = "error: server got invalid deployment unload packet "

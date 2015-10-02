@@ -867,6 +867,14 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
+     * Sends an "update entity" packet
+     */
+    public void sendDeploymentUnload(Entity loader, Entity loaded) {
+        Object data[] = {loader.getId(), loaded.getId()};
+        send(new Packet(Packet.COMMAND_ENTITY_DEPLOY_UNLOAD, data));
+    }
+
+    /**
      * Sends an "update custom initiative" packet
      */
     public void sendCustomInit(IPlayer player) {

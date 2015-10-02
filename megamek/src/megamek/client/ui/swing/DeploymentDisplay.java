@@ -752,10 +752,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         // Unit loaded in the lobby?  Server needs updating
                         if (loader.getLoadedKeepers().contains(loaded.getId())) {
                             Vector<Integer> lobbyLoaded = loader.getLoadedKeepers();
-                            lobbyLoaded.remove(loaded.getId());
+                            lobbyLoaded.removeElement(loaded.getId());
                             loader.setLoadedKeepers(lobbyLoaded);
-                            client.sendUpdateEntity(loader);
-                            client.sendUpdateEntity(loaded);
+                            client.sendDeploymentUnload(loader, loaded);
+                            // Need to take turn for unloaded unit, so select it
+                            selectEntity(loaded.getId());
                         }
                         setLoadEnabled(getLoadableEntities().size() > 0);
                     } else {

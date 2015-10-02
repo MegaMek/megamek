@@ -4222,9 +4222,12 @@ public class Server implements Runnable {
         unit.setSecondaryFacing(facing);
 
         IHex hex = game.getBoard().getHex(pos);
-        boolean isBridge = hex.containsTerrain(Terrains.PAVEMENT);
+        boolean isBridge = (hex != null)
+                && hex.containsTerrain(Terrains.PAVEMENT);
 
-        if (unloader.getMovementMode() == EntityMovementMode.VTOL) {
+        if (hex == null) {
+            unit.setElevation(elevation);
+        } else if (unloader.getMovementMode() == EntityMovementMode.VTOL) {
             if (unit.getMovementMode() == EntityMovementMode.VTOL) {
                 // Flying units onload to the same elevation as the flying
                 // transport
@@ -10753,14 +10756,21 @@ public class Server implements Runnable {
     /**
      * Set the locationsexposure of an entity
      *
-     * @param entity    The <code>Entity</code> who's exposure is being set
-     * @param hex       The <code>IHex</code> the entity is in
-     * @param isJump    a <code>boolean</code> value wether the entity is jumping
-     * @param elevation the elevation the entity should be at.
+     * @param entity
+     *            The <code>Entity</code> who's exposure is being set
+     * @param hex
+     *            The <code>IHex</code> the entity is in
+     * @param isJump
+     *            a <code>boolean</code> value wether the entity is jumping
+     * @param elevation
+     *            the elevation the entity should be at.
      */
     public Vector<Report> doSetLocationsExposure(Entity entity, IHex hex,
-                                                 boolean isJump, int elevation) {
+            boolean isJump, int elevation) {
         Vector<Report> vPhaseReport = new Vector<Report>();
+        if (hex == null) {
+            return vPhaseReport;
+        }
         if ((hex.terrainLevel(Terrains.WATER) > 0) && !isJump
             && (elevation < 0)) {
             if ((entity instanceof Mech) && !entity.isProne()

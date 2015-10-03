@@ -126,4 +126,5 @@ public class GunEmplacementMapSet implements DisplayMapSet {
     private void translateAreas() {
     
     }
+
 }

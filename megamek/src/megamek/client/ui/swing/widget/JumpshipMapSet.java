@@ -26,6 +26,7 @@ import java.util.Vector;
 import javax.swing.JComponent;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.Jumpship;
@@ -42,6 +43,8 @@ public class JumpshipMapSet implements DisplayMapSet{
     private PMValueLabel[] vLabels = new PMValueLabel[13];
     private Vector<BackGroundDrawer>  bgDrawers = new Vector<BackGroundDrawer>();
     private PMAreasGroup content = new PMAreasGroup();
+    
+    UnitDisplay unitDisplay;
 
     //private static final int INT_STR_OFFSET = 4;
     //Polygons for all areas
@@ -72,7 +75,8 @@ public class JumpshipMapSet implements DisplayMapSet{
 
 
 
-    public JumpshipMapSet(JComponent c){
+    public JumpshipMapSet(JComponent c, UnitDisplay unitDisplay) {
+        this.unitDisplay = unitDisplay;
         comp = c;
         setAreas();
         setLabels();
@@ -146,13 +150,20 @@ public class JumpshipMapSet implements DisplayMapSet{
     }
 
     private void setAreas(){
-        areas[Jumpship.LOC_NOSE] = new PMSimplePolygonArea(noseArmor);
-        areas[Jumpship.LOC_FLS] = new PMSimplePolygonArea(leftFSArmor);
-        areas[Jumpship.LOC_FRS] = new PMSimplePolygonArea(rightFSArmor);
-        areas[Jumpship.LOC_ALS] = new PMSimplePolygonArea(leftASArmor);
-        areas[Jumpship.LOC_ARS] = new PMSimplePolygonArea(rightASArmor);
-        areas[Jumpship.LOC_AFT] = new PMSimplePolygonArea(aftArmor);
-        areas[6] = new PMSimplePolygonArea(Structure);
+        areas[Jumpship.LOC_NOSE] = new PMSimplePolygonArea(noseArmor,
+                unitDisplay, Jumpship.LOC_NOSE);
+        areas[Jumpship.LOC_FLS] = new PMSimplePolygonArea(leftFSArmor,
+                unitDisplay, Jumpship.LOC_FLS);
+        areas[Jumpship.LOC_FRS] = new PMSimplePolygonArea(rightFSArmor,
+                unitDisplay, Jumpship.LOC_FRS);
+        areas[Jumpship.LOC_ALS] = new PMSimplePolygonArea(leftASArmor,
+                unitDisplay, Jumpship.LOC_ALS);
+        areas[Jumpship.LOC_ARS] = new PMSimplePolygonArea(rightASArmor,
+                unitDisplay, Jumpship.LOC_ARS);
+        areas[Jumpship.LOC_AFT] = new PMSimplePolygonArea(aftArmor,
+                unitDisplay, Jumpship.LOC_AFT);
+        areas[6] = new PMSimplePolygonArea(Structure, unitDisplay,
+                Jumpship.LOC_NOSE);
     }
 
     private void setLabels(){

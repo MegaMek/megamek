@@ -78,7 +78,7 @@ public class UnitDisplay extends JPanel {
         displayP.add("movement", mPan); //$NON-NLS-1$
         pPan = new PilotPanel();
         displayP.add("pilot", pPan); //$NON-NLS-1$
-        aPan = new ArmorPanel(clientgui != null ? clientgui.getClient().getGame() : null);
+        aPan = new ArmorPanel(clientgui != null ? clientgui.getClient().getGame() : null, this);
         displayP.add("armor", aPan); //$NON-NLS-1$
         wPan = new WeaponPanel(this);
         displayP.add("weapons", wPan); //$NON-NLS-1$
@@ -182,6 +182,16 @@ public class UnitDisplay extends JPanel {
         } else if ("extras".equals(s)) { //$NON-NLS-1$
             tabStrip.setTab(5);
         }
+    }
+    
+    /**
+     * Used to force the display to the Systems tab, on a specific location
+     * @param loc
+     */
+    public void showSpecificSystem(int loc) {
+        ((CardLayout) displayP.getLayout()).show(displayP, "systems");
+        tabStrip.setTab(3);
+        sPan.selectLocation(loc);
     }
 
     /**

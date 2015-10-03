@@ -28,6 +28,7 @@ import javax.swing.JComponent;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.Mech;
@@ -43,6 +44,8 @@ public class ArmlessMechMapSet implements DisplayMapSet {
     // some index offset values required
     private static final int REAR_AREA_OFFSET = 7;
     private static final int INT_STRUCTURE_OFFSET = 11;
+    
+    private UnitDisplay unitDisplay;
 
     // Array of polygonal areas - parts of mech body.
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[19];
@@ -133,7 +136,8 @@ public class ArmlessMechMapSet implements DisplayMapSet {
     private static final Font FONT_VALUE = new Font(
             "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
 
-    public ArmlessMechMapSet(JComponent c) {
+    public ArmlessMechMapSet(JComponent c, UnitDisplay unitDisplay) {
+        this.unitDisplay = unitDisplay;
         comp = c;
         setAreas();
         setLabels();
@@ -188,30 +192,36 @@ public class ArmlessMechMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[Mech.LOC_HEAD] = new PMSimplePolygonArea(head);
-        areas[Mech.LOC_CT] = new PMSimplePolygonArea(centralTorso);
-        areas[Mech.LOC_RT] = new PMSimplePolygonArea(rightTorso);
-        areas[Mech.LOC_LT] = new PMSimplePolygonArea(leftTorso);
-        areas[Mech.LOC_RLEG] = new PMSimplePolygonArea(rightLeg);
-        areas[Mech.LOC_LLEG] = new PMSimplePolygonArea(leftLeg);
+        areas[Mech.LOC_HEAD] = new PMSimplePolygonArea(head, unitDisplay,
+                Mech.LOC_HEAD);
+        areas[Mech.LOC_CT] = new PMSimplePolygonArea(centralTorso, unitDisplay,
+                Mech.LOC_CT);
+        areas[Mech.LOC_RT] = new PMSimplePolygonArea(rightTorso, unitDisplay,
+                Mech.LOC_RT);
+        areas[Mech.LOC_LT] = new PMSimplePolygonArea(leftTorso, unitDisplay,
+                Mech.LOC_LT);
+        areas[Mech.LOC_RLEG] = new PMSimplePolygonArea(rightLeg, unitDisplay,
+                Mech.LOC_RLEG);
+        areas[Mech.LOC_LLEG] = new PMSimplePolygonArea(leftLeg, unitDisplay,
+                Mech.LOC_LLEG);
         areas[REAR_AREA_OFFSET + Mech.LOC_CT] = new PMSimplePolygonArea(
-                rearCentralTorso);
+                rearCentralTorso, unitDisplay, Mech.LOC_CT);
         areas[REAR_AREA_OFFSET + Mech.LOC_RT] = new PMSimplePolygonArea(
-                rearRightTorso);
+                rearRightTorso, unitDisplay, Mech.LOC_RT);
         areas[REAR_AREA_OFFSET + Mech.LOC_LT] = new PMSimplePolygonArea(
-                rearLeftTorso);
+                rearLeftTorso, unitDisplay, Mech.LOC_LT);
         areas[INT_STRUCTURE_OFFSET + Mech.LOC_HEAD] = new PMSimplePolygonArea(
-                intStHead);
+                intStHead, unitDisplay, Mech.LOC_HEAD);
         areas[INT_STRUCTURE_OFFSET + Mech.LOC_CT] = new PMSimplePolygonArea(
-                inStCentralTorso);
+                inStCentralTorso, unitDisplay, Mech.LOC_CT);
         areas[INT_STRUCTURE_OFFSET + Mech.LOC_RT] = new PMSimplePolygonArea(
-                inStRightTorso);
+                inStRightTorso, unitDisplay, Mech.LOC_RT);
         areas[INT_STRUCTURE_OFFSET + Mech.LOC_LT] = new PMSimplePolygonArea(
-                inStLeftTorso);
+                inStLeftTorso, unitDisplay, Mech.LOC_LT);
         areas[INT_STRUCTURE_OFFSET + Mech.LOC_RLEG] = new PMSimplePolygonArea(
-                inStRightLeg);
+                inStRightLeg, unitDisplay, Mech.LOC_RLEG);
         areas[INT_STRUCTURE_OFFSET + Mech.LOC_LLEG] = new PMSimplePolygonArea(
-                inStLeftLeg);
+                inStLeftLeg, unitDisplay, Mech.LOC_LLEG);
         heatImage = comp.createImage(10, 120);
         drawHeatControl(0);
         heatHotArea = new PMPicPolygonalArea(heatControl, heatImage);
@@ -392,4 +402,5 @@ public class ArmlessMechMapSet implements DisplayMapSet {
             g.drawRect(0, y, 10, steps);
         }
     }
+
 }

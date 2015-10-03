@@ -27,6 +27,7 @@ import javax.swing.JComponent;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.SuperHeavyTank;
@@ -37,6 +38,8 @@ import megamek.common.SuperHeavyTank;
  */
 public class SuperHeavyTankMapSet implements DisplayMapSet {
 
+    private UnitDisplay unitDisplay;
+    
     private JComponent comp;
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[15];
     private PMSimpleLabel[] labels = new PMSimpleLabel[16];
@@ -122,7 +125,8 @@ public class SuperHeavyTankMapSet implements DisplayMapSet {
     private static final Font FONT_VALUE = new Font(
             "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
 
-    public SuperHeavyTankMapSet(JComponent c) {
+    public SuperHeavyTankMapSet(JComponent c, UnitDisplay unitDisplay) {
+        this.unitDisplay = unitDisplay;
         comp = c;
         setAreas();
         setLabels();
@@ -173,20 +177,20 @@ public class SuperHeavyTankMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[1] = new PMSimplePolygonArea(frontArmor);
-        areas[2] = new PMSimplePolygonArea(rightFrontArmor);
-        areas[3] = new PMSimplePolygonArea(leftFrontArmor);
-        areas[4] = new PMSimplePolygonArea(rightRearArmor);
-        areas[5] = new PMSimplePolygonArea(leftRearArmor);
-        areas[6] = new PMSimplePolygonArea(rearArmor);
-        areas[7] = new PMSimplePolygonArea(turretArmor);
-        areas[8] = new PMSimplePolygonArea(frontIS);
-        areas[9] = new PMSimplePolygonArea(rightFrontIS);
-        areas[10] = new PMSimplePolygonArea(leftFrontIS);
-        areas[11] = new PMSimplePolygonArea(rightRearIS);
-        areas[12] = new PMSimplePolygonArea(leftRearIS);
-        areas[13] = new PMSimplePolygonArea(rearIS);
-        areas[14] = new PMSimplePolygonArea(turretIS);
+        areas[1] = new PMSimplePolygonArea(frontArmor, unitDisplay, SuperHeavyTank.LOC_FRONT);
+        areas[2] = new PMSimplePolygonArea(rightFrontArmor, unitDisplay, SuperHeavyTank.LOC_FRONTRIGHT);
+        areas[3] = new PMSimplePolygonArea(leftFrontArmor, unitDisplay, SuperHeavyTank.LOC_FRONTLEFT);
+        areas[4] = new PMSimplePolygonArea(rightRearArmor, unitDisplay, SuperHeavyTank.LOC_REARRIGHT);
+        areas[5] = new PMSimplePolygonArea(leftRearArmor, unitDisplay, SuperHeavyTank.LOC_REARLEFT);
+        areas[6] = new PMSimplePolygonArea(rearArmor, unitDisplay, SuperHeavyTank.LOC_REAR);
+        areas[7] = new PMSimplePolygonArea(turretArmor, unitDisplay, SuperHeavyTank.LOC_TURRET);
+        areas[8] = new PMSimplePolygonArea(frontIS, unitDisplay, SuperHeavyTank.LOC_FRONT);
+        areas[9] = new PMSimplePolygonArea(rightFrontIS, unitDisplay, SuperHeavyTank.LOC_FRONTRIGHT);
+        areas[10] = new PMSimplePolygonArea(leftFrontIS, unitDisplay, SuperHeavyTank.LOC_FRONTLEFT);
+        areas[11] = new PMSimplePolygonArea(rightRearIS, unitDisplay, SuperHeavyTank.LOC_REARRIGHT);
+        areas[12] = new PMSimplePolygonArea(leftRearIS, unitDisplay, SuperHeavyTank.LOC_REARLEFT);
+        areas[13] = new PMSimplePolygonArea(rearIS, unitDisplay, SuperHeavyTank.LOC_REAR);
+        areas[14] = new PMSimplePolygonArea(turretIS, unitDisplay, SuperHeavyTank.LOC_TURRET);
     }
 
     private void setLabels() {
@@ -306,4 +310,5 @@ public class SuperHeavyTankMapSet implements DisplayMapSet {
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
     }
+
 }

@@ -330,6 +330,10 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
         displayLocations();
         addListeners();
     }
+    
+    public void selectLocation(int loc) {
+        locList.setSelectedIndex(loc + LOC_OFFSET);
+    }
 
     private void displayLocations() {
         DefaultListModel<String> locModel = ((DefaultListModel<String>) locList

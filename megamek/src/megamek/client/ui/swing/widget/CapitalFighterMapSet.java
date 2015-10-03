@@ -70,7 +70,7 @@ public class CapitalFighterMapSet implements DisplayMapSet{
     
     private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
  
-    public CapitalFighterMapSet(JComponent c){
+    public CapitalFighterMapSet(JComponent c) {
         comp = c;
         setAreas();
         setLabels();

@@ -29,6 +29,12 @@ public class CheckBVTeamCommand extends ServerCommand {
 
     @Override
     public void run(int connId, String[] args) {
+        boolean suppressEnemyBV = server.getGame().getOptions()
+                .booleanOption("suppress_double_blind_bv")
+                && server.getGame().getOptions().booleanOption("double_blind");
+        // Connection Ids match player Ids
+        IPlayer requestingPlayer = server.getGame().getPlayer(connId);
+        
         server.sendServerChat(connId, "Remaining BV:");
         Enumeration<Team> teamEnum = server.getGame().getTeams();
         while (teamEnum.hasMoreElements()) {
@@ -36,10 +42,14 @@ public class CheckBVTeamCommand extends ServerCommand {
             int initialTeamBV = 0;
             int currentTeamBV = 0;
             Enumeration<IPlayer> playersEnum = team.getPlayers();
+            boolean enemyTeam = false;
             while (playersEnum.hasMoreElements()) {
                 IPlayer player = playersEnum.nextElement();
                 initialTeamBV += player.getInitialBV();
                 currentTeamBV += player.getBV();
+                if (player.isEnemyOf(requestingPlayer)) {
+                    enemyTeam = true;
+                }
             }
             double percentage = 0;
             if (initialTeamBV != 0) {
@@ -47,8 +57,12 @@ public class CheckBVTeamCommand extends ServerCommand {
             }
             StringBuffer cb = new StringBuffer();
             cb.append(team.toString()).append(": ");
-            cb.append(currentTeamBV).append("/").append(initialTeamBV);
-            cb.append(String.format(" (%1$3.2f%%)",percentage));
+            if (suppressEnemyBV && enemyTeam) {
+                cb.append(" Enemy BV suppressed");
+            } else {
+                cb.append(currentTeamBV).append("/").append(initialTeamBV);
+                cb.append(String.format(" (%1$3.2f%%)",percentage));
+            }
             server.sendServerChat(connId, cb.toString());
         }
         server.sendServerChat(connId, "end list");

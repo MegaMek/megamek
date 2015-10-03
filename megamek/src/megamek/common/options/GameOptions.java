@@ -109,6 +109,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, "double_blind", false); //$NON-NLS-1$
         addOption(advancedRules, "tacops_sensors", false); //$NON-NLS-1$
         addOption(advancedRules, "supress_all_double_blind_messages", false); //$NON-NLS-1$
+        addOption(advancedRules, "suppress_double_blind_bv", false); //$NON-NLS-1$
         addOption(advancedRules, "team_vision", true); //$NON-NLS-1$
         addOption(advancedRules, "tacops_bap", false); //$NON-NLS-1$
         addOption(advancedRules, "tacops_eccm", false); //$NON-NLS-1$

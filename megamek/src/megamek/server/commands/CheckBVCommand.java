@@ -28,7 +28,13 @@ public class CheckBVCommand extends ServerCommand {
 
     @Override
     public void run(int connId, String[] args) {
-        server.sendServerChat(connId, "Remaining BV:");
+        boolean suppressEnemyBV = server.getGame().getOptions()
+                .booleanOption("suppress_double_blind_bv")
+                && server.getGame().getOptions().booleanOption("double_blind");
+        // Connection Ids match player Ids
+        IPlayer requestingPlayer = server.getGame().getPlayer(connId);
+        
+        server.sendServerChat(connId, "Remaining BV:");        
         for (Enumeration<IPlayer> i = server.getGame().getPlayers(); i
                 .hasMoreElements();) {
             IPlayer player = i.nextElement();
@@ -38,8 +44,12 @@ public class CheckBVCommand extends ServerCommand {
                 percentage = ((player.getBV() + 0.0) / player.getInitialBV()) * 100;
             }
             cb.append(player.getName()).append(": ");
-            cb.append(player.getBV()).append("/").append(player.getInitialBV());
-            cb.append(String.format(" (%1$3.2f%%)",percentage));
+            if (suppressEnemyBV && player.isEnemyOf(requestingPlayer)) {
+                cb.append(" Enemy BV suppressed");
+            } else {
+                cb.append(player.getBV()).append("/").append(player.getInitialBV());
+                cb.append(String.format(" (%1$3.2f%%)",percentage));
+            }
             server.sendServerChat(connId, cb.toString());
         }
         server.sendServerChat(connId, "end list");

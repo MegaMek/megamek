@@ -74,6 +74,8 @@ class ArmorPanel extends PicMap {
     private int minLeftMargin;
     private int minBottomMargin;
     private int minRightMargin;
+    
+    private UnitDisplay unitDisplay;
 
     private static final int minTankTopMargin = 8;
     private static final int minTankLeftMargin = 8;
@@ -90,30 +92,31 @@ class ArmorPanel extends PicMap {
 
     private IGame game;
 
-    ArmorPanel(IGame g) {
+    ArmorPanel(IGame g, UnitDisplay unitDisplay) {
         game = g;
+        this.unitDisplay = unitDisplay;
     }
 
     @Override
     public void addNotify() {
         super.addNotify();
-        tank = new TankMapSet(this);
-        mech = new MechMapSet(this);
+        tank = new TankMapSet(this, unitDisplay);
+        mech = new MechMapSet(this, unitDisplay);
         infantry = new InfantryMapSet(this);
         battleArmor = new BattleArmorMapSet(this);
-        proto = new ProtomechMapSet(this);
-        vtol = new VTOLMapSet(this);
-        quad = new QuadMapSet(this);
-        tripod = new TripodMechMapSet(this);
+        proto = new ProtomechMapSet(this, unitDisplay);
+        vtol = new VTOLMapSet(this, unitDisplay);
+        quad = new QuadMapSet(this, unitDisplay);
+        tripod = new TripodMechMapSet(this, unitDisplay);
         gunEmplacement = new GunEmplacementMapSet(this);
-        armless = new ArmlessMechMapSet(this);
-        largeSupportTank = new LargeSupportTankMapSet(this);
-        superHeavyTank = new SuperHeavyTankMapSet(this);
-        aero = new AeroMapSet(this);
+        armless = new ArmlessMechMapSet(this, unitDisplay);
+        largeSupportTank = new LargeSupportTankMapSet(this, unitDisplay);
+        superHeavyTank = new SuperHeavyTankMapSet(this, unitDisplay);
+        aero = new AeroMapSet(this, unitDisplay);
         capFighter = new CapitalFighterMapSet(this);
-        sphere = new SpheroidMapSet(this);
-        jump = new JumpshipMapSet(this);
-        warship = new WarshipMapSet(this);
+        sphere = new SpheroidMapSet(this, unitDisplay);
+        jump = new JumpshipMapSet(this, unitDisplay);
+        warship = new WarshipMapSet(this, unitDisplay);
         squad = new SquadronMapSet(this, game);
     }
 

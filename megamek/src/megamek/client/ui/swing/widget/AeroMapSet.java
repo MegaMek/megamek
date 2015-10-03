@@ -26,6 +26,7 @@ import java.util.Vector;
 import javax.swing.JComponent;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Entity;
@@ -44,6 +45,8 @@ public class AeroMapSet implements DisplayMapSet {
     private PMValueLabel[] vLabels = new PMValueLabel[11];
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private PMAreasGroup content = new PMAreasGroup();
+    
+    private UnitDisplay unitDisplay;
 
     // private static final int INT_STR_OFFSET = 4;
     // Polygons for all areas
@@ -70,7 +73,8 @@ public class AeroMapSet implements DisplayMapSet {
     private static final Font FONT_VALUE = new Font(
             "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
 
-    public AeroMapSet(JComponent c) {
+    public AeroMapSet(JComponent c, UnitDisplay unitDisplay) {
+        this.unitDisplay = unitDisplay;
         comp = c;
         setAreas();
         setLabels();
@@ -157,11 +161,16 @@ public class AeroMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[Aero.LOC_NOSE] = new PMSimplePolygonArea(noseArmor);
-        areas[Aero.LOC_RWING] = new PMSimplePolygonArea(rightWingArmor);
-        areas[Aero.LOC_LWING] = new PMSimplePolygonArea(leftWingArmor);
-        areas[Aero.LOC_AFT] = new PMSimplePolygonArea(aftArmor);
-        areas[4] = new PMSimplePolygonArea(Structure);
+        areas[Aero.LOC_NOSE] = new PMSimplePolygonArea(noseArmor, unitDisplay,
+                Aero.LOC_NOSE);
+        areas[Aero.LOC_RWING] = new PMSimplePolygonArea(rightWingArmor,
+                unitDisplay, Aero.LOC_RWING);
+        areas[Aero.LOC_LWING] = new PMSimplePolygonArea(leftWingArmor,
+                unitDisplay, Aero.LOC_LWING);
+        areas[Aero.LOC_AFT] = new PMSimplePolygonArea(aftArmor, unitDisplay,
+                Aero.LOC_AFT);
+        areas[4] = new PMSimplePolygonArea(Structure, unitDisplay,
+                Aero.LOC_NOSE);
     }
 
     private void setLabels() {

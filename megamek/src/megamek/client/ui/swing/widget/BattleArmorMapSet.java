@@ -37,7 +37,7 @@ import megamek.common.Entity;
  */
 
 public class BattleArmorMapSet implements DisplayMapSet {
-
+    
     // Picture with figure
     private Image battleArmorImage;
     // Images that shows how much armor + 1 internal damage left.

@@ -9,6 +9,8 @@ v0.41.10 (git)
 + Bug [#4630]: NatAp:Piloting not always rolling 3D6
 + Bug [#4625]: Unloaded Infantry Vanished During Deployment
 + Bug [#4628]: Battle Value of the Void-Signature System
++ Feature [#555]: Double-clicking locations in Armor tab selects that location
+    in Systems tab
 
 
 v0.41.9 (2014-09-14 01:25 UTC)

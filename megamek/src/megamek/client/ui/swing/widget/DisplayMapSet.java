@@ -28,4 +28,5 @@ public interface DisplayMapSet {
     public Vector<BackGroundDrawer> getBackgroundDrawers();
 
     public void setEntity(Entity e);
+
 }

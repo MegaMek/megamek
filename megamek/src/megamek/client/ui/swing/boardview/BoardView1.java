@@ -4334,13 +4334,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             refreshAttacks();
+
+            // Clear some information regardless of what phase it is
+            clearFiringSolutionData();
+            clearMovementEnvelope();
+
             switch (e.getNewPhase()) {
                 case PHASE_MOVEMENT:
                     refreshMoveVectors();
                 case PHASE_FIRING:
                     clearAllMoveVectors();
-                    clearFiringSolutionData();
-                    clearMovementEnvelope();
                 case PHASE_PHYSICAL:
                     refreshAttacks();
                     break;

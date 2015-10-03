@@ -555,6 +555,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         if (!clientgui.bv.isMovingUnits()) {
             clientgui.setDisplayVisible(true);
         }
+        clientgui.bv.clearFieldofF();
 
         selectEntity(clientgui.getClient().getFirstEntityNum());
 
@@ -608,6 +609,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
         clientgui.bv.clearMovementData();
+        clientgui.bv.clearFieldofF();
         disableButtons();
 
     }

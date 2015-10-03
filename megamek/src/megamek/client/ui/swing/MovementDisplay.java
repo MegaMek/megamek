@@ -858,6 +858,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         clientgui.getBoardView().cursor(null);
         clientgui.getBoardView().selectEntity(null);
         clientgui.bv.clearMovementData();
+        clientgui.bv.clearFieldofF();
     }
 
     /**

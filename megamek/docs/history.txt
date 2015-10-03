@@ -12,6 +12,7 @@ v0.41.10 (git)
 + Feature [#555]: Double-clicking locations in Armor tab selects that location
     in Systems tab
 + Bug [#4292]: Double blind, enemy BV never shown (now game option to show bv)
++ Bug: Movement Envelop and Firing Arcs sometimes remain between phases/turns
 
 
 v0.41.9 (2014-09-14 01:25 UTC)

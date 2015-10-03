@@ -2356,7 +2356,7 @@ public class Server implements Runnable {
                     IPlayer player = players2.nextElement();
                     Report r = new Report();
                     r.type = Report.PUBLIC;
-                    if (doBlind()) {
+                    if (doBlind() && suppressBlindBV()) {
                         r.type = Report.PLAYER;
                         r.player = player.getId();
                     }
@@ -26911,6 +26911,10 @@ public class Server implements Runnable {
         return game.getOptions().booleanOption("double_blind")
                && game.getPhase()
                       .isDuringOrAfter(IGame.Phase.PHASE_DEPLOYMENT);
+    }
+
+    private boolean suppressBlindBV() {
+        return game.getOptions().booleanOption("suppress_double_blind_bv");
     }
 
     /**

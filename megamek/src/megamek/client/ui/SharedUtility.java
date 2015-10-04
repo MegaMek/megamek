@@ -231,7 +231,7 @@ public class SharedUtility {
                             rollTarget = entity.checkMovedTooFast(step);
                             checkNag(rollTarget, nagReport, psrList);
                         } else if (game.getPlanetaryConditions().getGravity() > 1) {
-                            rollTarget = entity.getBasePilotingRoll(step.getParent().getLastStepMovementType());
+                            rollTarget = entity.getBasePilotingRoll(md.getLastStepMovementType());
                             entity.addPilotingModifierForTerrain(rollTarget, step);
                             rollTarget.append(new PilotingRollData(entity.getId(), 0, "jumped in high gravity"));
                             SharedUtility.checkNag(rollTarget, nagReport, psrList);

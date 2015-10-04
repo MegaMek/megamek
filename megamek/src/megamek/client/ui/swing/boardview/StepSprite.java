@@ -210,7 +210,7 @@ class StepSprite extends Sprite {
             case CLIMB_MODE_ON:
                 // draw climb mode indicator
                 String climb;
-                if (step.getParent().getEntity().getMovementMode() == EntityMovementMode.WIGE) {
+                if (step.getEntity().getMovementMode() == EntityMovementMode.WIGE) {
                     climb = Messages.getString("BoardView1.WIGEClimb"); //$NON-NLS-1$
                 } else {
                     climb = Messages.getString("BoardView1.Climb"); //$NON-NLS-1$
@@ -230,7 +230,7 @@ class StepSprite extends Sprite {
             case CLIMB_MODE_OFF:
                 // cancel climb mode indicator
                 String climboff;
-                if (step.getParent().getEntity().getMovementMode() == EntityMovementMode.WIGE) {
+                if (step.getEntity().getMovementMode() == EntityMovementMode.WIGE) {
                     climboff = Messages
                             .getString("BoardView1.WIGEClimbOff"); //$NON-NLS-1$
                 } else {
@@ -514,12 +514,12 @@ class StepSprite extends Sprite {
             return;
         }
 
-        if (!step.getParent().getEntity().isAirborne()
-                || !(step.getParent().getEntity() instanceof Aero)) {
+        if (!step.getEntity().isAirborne()
+                || !(step.getEntity() instanceof Aero)) {
             return;
         }
 
-        if (((Aero) step.getParent().getEntity()).isSpheroid()) {
+        if (((Aero) step.getEntity()).isSpheroid()) {
             return;
         }
 
@@ -580,7 +580,7 @@ class StepSprite extends Sprite {
         StringBuffer costStringBuf = new StringBuffer();
         costStringBuf.append(step.getMpUsed());
 
-        Entity e = step.getParent().getEntity();
+        Entity e = step.getEntity();
         
         // If the step is using a road bonus, mark it.
         if (step.isOnlyPavement()
@@ -602,7 +602,7 @@ class StepSprite extends Sprite {
         }
 
         if (step.isUsingMASC()
-                && !step.getParent().getEntity()
+                && !step.getEntity()
                         .hasWorkingMisc(MiscType.F_JET_BOOSTER)) {
             costStringBuf.append("["); //$NON-NLS-1$
             costStringBuf.append(step.getTargetNumberMASC());
@@ -618,7 +618,7 @@ class StepSprite extends Sprite {
                     .append("}");
         }
 
-        if (step.getParent().getEntity().isAirborne()) {
+        if (step.getEntity().isAirborne()) {
             costStringBuf.append("{").append(step.getAltitude())
                     .append("}");
         }

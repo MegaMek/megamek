@@ -3386,6 +3386,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             && ((wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER) || (wtype instanceof ScreenLauncherBayWeapon))) {
             return "Screen launchers may only target hexes";
         }
+        
+        if (!(target instanceof HexTarget) && (atype != null)
+                && (atype.getMunitionType() == AmmoType.M_MINE_CLEARANCE)) {
+            return "Mine clearance munitions may only target hexes!";
+        }
 
         // Some weapons can't cause fires, but Infernos always can.
         if ((vf_cool || (wtype.hasFlag(WeaponType.F_NO_FIRES) && !isInferno))

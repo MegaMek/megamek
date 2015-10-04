@@ -84,6 +84,9 @@ public abstract class LRMWeapon extends MissileWeapon {
         if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
             return new LRMSmokeWarheadHandler(toHit, waa, game, server);
         }
+        if (atype.getMunitionType() == AmmoType.M_MINE_CLEARANCE) {
+            return new MissileMineClearanceHandler(toHit, waa, game, server);
+        }
         return new LRMHandler(toHit, waa, game, server);
     }
 }

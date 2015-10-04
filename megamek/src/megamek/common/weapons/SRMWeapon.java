@@ -75,6 +75,9 @@ public abstract class SRMWeapon extends MissileWeapon {
         if (atype.getMunitionType() == AmmoType.M_SMOKE_WARHEAD) {
             return new SRMSmokeWarheadHandler(toHit, waa, game, server);
         }
+        if (atype.getMunitionType() == AmmoType.M_MINE_CLEARANCE) {
+            return new MissileMineClearanceHandler(toHit, waa, game, server);
+        }
         return new SRMHandler(toHit, waa, game, server);
 
     }

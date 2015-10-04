@@ -227,6 +227,8 @@ public class AmmoType extends EquipmentType {
     public static final long M_TANDEM_CHARGE = 1l << 16;
     public static final long M_ARTEMIS_V_CAPABLE = 1l << 17;
     public static final long M_SMOKE_WARHEAD = 1l << 18;
+    // Mine Clearance munition type defined later, to maintain order
+    
     // LRM Munition Types
     // Incendiary is special, though...
     // FIXME - I'm not implemented!!!
@@ -300,6 +302,9 @@ public class AmmoType extends EquipmentType {
     // Flare
     // Semi-guided
     // Smoke
+    
+    // More SRM+LRM Munitions types
+    public static final long M_MINE_CLEARANCE = 1l << 61;
     
     
     /*
@@ -1253,6 +1258,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Heat-Seeking", 2, M_HEAT_SEEKING, 2340, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Tandem-Charge", 2, M_TANDEM_CHARGE, 2757, TechConstants.T_IS_EXPERIMENTAL));
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD, 2333, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Mine Clearance", 1, M_MINE_CLEARANCE, 3069, TechConstants.T_IS_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1273,6 +1279,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Anti-TSM", 1, M_ANTI_TSM,3050,TechConstants.T_CLAN_EXPERIMENTAL));
         munitions.add(new MunitionMutator("(Clan) Acid", 2, M_AX_HEAD,3053,TechConstants.T_CLAN_EXPERIMENTAL));
         munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,3055,TechConstants.T_CLAN_UNOFFICIAL));
+        munitions.add(new MunitionMutator("(Clan) Mine Clearance", 1, M_MINE_CLEARANCE, 3069, TechConstants.T_CLAN_UNOFFICIAL));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1323,6 +1330,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Heat-Seeking", 2, M_HEAT_SEEKING, 2340, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Follow The Leader", 2, M_FOLLOW_THE_LEADER, 3053, TechConstants.T_IS_EXPERIMENTAL));
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD, 2333, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Mine Clearance", 1, M_MINE_CLEARANCE, 3069, TechConstants.T_IS_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1350,6 +1358,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Listen-Kill", 1, M_LISTEN_KILL,3055,TechConstants.T_CLAN_EXPERIMENTAL));
         munitions.add(new MunitionMutator("(Clan) Anti-TSM", 1, M_ANTI_TSM,3055,TechConstants.T_CLAN_EXPERIMENTAL));
         munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,3055,TechConstants.T_CLAN_UNOFFICIAL));
+        munitions.add(new MunitionMutator("(Clan) Mine Clearance", 1, M_MINE_CLEARANCE, 3069, TechConstants.T_CLAN_UNOFFICIAL));
 
         // Walk through both the base types and the
         // mutators, and create munition types.

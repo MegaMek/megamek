@@ -2600,18 +2600,22 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if ((weap != null) && (weap.getLinked() != null) 
                 && (weap.getLinked().getType() instanceof AmmoType)) {
             AmmoType aType = (AmmoType)weap.getLinked().getType();
+            long munitionType = aType.getMunitionType();
             // Mek mortar flares should default to deliver flare
             if ((aType.getAmmoType() == AmmoType.T_MEK_MORTAR) 
-                    && (aType.getMunitionType() == AmmoType.M_FLARE)) {
+                    && (munitionType == AmmoType.M_FLARE)) {
                 return new HexTarget(pos, game.getBoard(),
                         Targetable.TYPE_FLARE_DELIVER);
             // Certain mek mortar types should target hexes
-            } else if ((aType.getAmmoType() == AmmoType.T_MEK_MORTAR) 
-                && ((aType.getMunitionType() == AmmoType.M_AIRBURST)
-                        || (aType.getMunitionType() == AmmoType.M_SMOKE_WARHEAD))) {
-                    return new HexTarget(pos, game.getBoard(),
-                            Targetable.TYPE_HEX_CLEAR);
-                }
+            } else if ((aType.getAmmoType() == AmmoType.T_MEK_MORTAR)
+                    && ((munitionType == AmmoType.M_AIRBURST) 
+                            || (munitionType == AmmoType.M_SMOKE_WARHEAD))) {
+                return new HexTarget(pos, game.getBoard(),
+                        Targetable.TYPE_HEX_CLEAR);
+            } else if (munitionType == AmmoType.M_MINE_CLEARANCE) {
+                return new HexTarget(pos, game.getBoard(),
+                        Targetable.TYPE_HEX_CLEAR);
+            }
         }
         // Get the available choices, depending on friendly fire
         if (friendlyFire) {

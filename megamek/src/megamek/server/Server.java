@@ -6501,7 +6501,7 @@ public class Server implements Runnable {
         MoveStep prevStep = null;
 
         Vector<UnitLocation> movePath = new Vector<UnitLocation>();
-
+        EntityMovementType lastStepMoveType = md.getLastStepMovementType();
         for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
             final MoveStep step = i.nextElement();
             wasProne = entity.isProne();
@@ -7110,8 +7110,8 @@ public class Server implements Runnable {
             // check for charge
             if (step.getType() == MoveStepType.CHARGE) {
                 if (entity.canCharge()) {
-                    checkExtremeGravityMovement(entity, step, curPos,
-                                                cachedGravityLimit);
+                    checkExtremeGravityMovement(entity, step, lastStepMoveType,
+                            curPos, cachedGravityLimit);
                     Targetable target = step.getTarget(game);
                     if (target != null) {
                         ChargeAttackAction caa = new ChargeAttackAction(
@@ -7148,8 +7148,8 @@ public class Server implements Runnable {
             // check for dfa
             if (step.getType() == MoveStepType.DFA) {
                 if (entity.canDFA()) {
-                    checkExtremeGravityMovement(entity, step, curPos,
-                                                cachedGravityLimit);
+                    checkExtremeGravityMovement(entity, step, lastStepMoveType,
+                            curPos, cachedGravityLimit);
                     Targetable target = step.getTarget(game);
                     DfaAttackAction daa = new DfaAttackAction(entity.getId(),
                                                               target.getTargetType(), target.getTargetId(),
@@ -7295,14 +7295,14 @@ public class Server implements Runnable {
 
             // set last step parameters
             curPos = step.getPosition();
-            if (!((entity.getJumpType() == Mech.JUMP_BOOSTER) && step
-                    .getParent().isJumping())) {
+            if (!((entity.getJumpType() == Mech.JUMP_BOOSTER) 
+                    && step.isJumping())) {
                 curFacing = step.getFacing();
             }
             // check if a building PSR will be needed later, before setting the
             // new elevation
             int buildingMove = entity.checkMovementInBuilding(step, prevStep,
-                                                              curPos, lastPos);
+                    curPos, lastPos);
             curVTOLElevation = step.getElevation();
             curAltitude = step.getAltitude();
             curElevation = step.getElevation();
@@ -7685,8 +7685,8 @@ public class Server implements Runnable {
             }
             // check for extreme gravity movement
             if (!i.hasMoreElements() && !firstStep) {
-                checkExtremeGravityMovement(entity, step, curPos,
-                                            cachedGravityLimit);
+                checkExtremeGravityMovement(entity, step, lastStepMoveType,
+                        curPos, cachedGravityLimit);
             }
             // check for minefields. have to check both new hex and new
             // elevation
@@ -8125,9 +8125,8 @@ public class Server implements Runnable {
                         reason = "entering";
                     }
                     passBuildingWall(entity, bldgEntered, lastPos, curPos,
-                                     distance, reason, step.isThisStepBackwards(), step
-                                    .getParent().getLastStepMovementType(),
-                                     true);
+                            distance, reason, step.isThisStepBackwards(),
+                            lastStepMoveType, true);
                     addAffectedBldg(bldgEntered, collapsed);
                 }
 
@@ -30996,15 +30995,24 @@ public class Server implements Runnable {
     /**
      * Add any extreme gravity PSRs the entity gets due to its movement
      *
-     * @param entity                 The <code>Entity</code> to check.
-     * @param step                   The last <code>MoveStep</code> of this entity
-     * @param curPos                 The current <code>Coords</code> of this entity
-     * @param cachedMaxMPExpenditure Server checks run/jump MP at start of move, as appropriate,
-     *                               caches to avoid mid-move change in MP causing erroneous grav
-     *                               check
+     * @param entity
+     *            The <code>Entity</code> to check.
+     * @param step
+     *            The last <code>MoveStep</code> of this entity
+     * @param moveType
+     *            The movement type for the MovePath the supplied MoveStep comes
+     *            from. This generally comes from the last step in the move
+     *            path.
+     * @param curPos
+     *            The current <code>Coords</code> of this entity
+     * @param cachedMaxMPExpenditure
+     *            Server checks run/jump MP at start of move, as appropriate,
+     *            caches to avoid mid-move change in MP causing erroneous grav
+     *            check
      */
     private void checkExtremeGravityMovement(Entity entity, MoveStep step,
-                                             Coords curPos, int cachedMaxMPExpenditure) {
+            EntityMovementType moveType, Coords curPos,
+            int cachedMaxMPExpenditure) {
         PilotingRollData rollTarget;
         if (game.getPlanetaryConditions().getGravity() != 1) {
             if (entity instanceof Mech) {
@@ -31030,8 +31038,7 @@ public class Server implements Runnable {
                                                           .checkMovedTooFast(step));
                     } else if (game.getPlanetaryConditions().getGravity() > 1) {
                         // jumping in high g is bad for your legs
-                        rollTarget = entity.getBasePilotingRoll(step
-                                                                        .getParent().getLastStepMovementType());
+                        rollTarget = entity.getBasePilotingRoll(moveType);
                         entity.addPilotingModifierForTerrain(rollTarget, step);
                         rollTarget.append(new PilotingRollData(entity.getId(),
                                                                0, "jumped in high gravity"));

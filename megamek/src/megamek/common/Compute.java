@@ -394,15 +394,15 @@ public class Compute {
      * @return true if a piloting skill roll is needed to traverse the terrain
      */
     public static boolean isPilotingSkillNeeded(IGame game, int entityId,
-                                                Coords src, Coords dest, EntityMovementType movementType,
-                                                boolean isTurning, boolean prevStepIsOnPavement, int srcElevation,
-                                                int destElevation, MovePath path) {
+            Coords src, Coords dest, EntityMovementType movementType,
+            boolean isTurning, boolean prevStepIsOnPavement, int srcElevation,
+            int destElevation, MoveStep moveStep) {
         final Entity entity = game.getEntity(entityId);
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHex(dest);
         final boolean isInfantry = (entity instanceof Infantry);
         final boolean isPavementStep = Compute.canMoveOnPavement(game, src,
-                                                                 dest, path);
+                dest, moveStep);
         int delta_alt = (destElevation + destHex.getLevel())
                         - (srcElevation + srcHex.getLevel());
 
@@ -4754,7 +4754,7 @@ public class Compute {
      * otherwise.
      */
     public static boolean canMoveOnPavement(IGame game, Coords src,
-            Coords dest, MovePath movePath) {
+            Coords dest, MoveStep moveStep) {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHex(dest);
         final int src2destDir = src.direction(dest);
@@ -4768,7 +4768,6 @@ public class Compute {
                             .containsTerrain(Terrains.BRIDGE))) {
             result = true;
         }
-
         // If the source is a pavement hex, then see if the destination
         // hex is also a pavement hex or has a road or bridge that exits
         // into the source hex and the entity is climbing onto the bridge.
@@ -4776,21 +4775,18 @@ public class Compute {
                 && (destHex.containsTerrain(Terrains.PAVEMENT)
                         || destHex.containsTerrainExit(Terrains.ROAD,
                                 dest2srcDir) || (destHex.containsTerrainExit(
-                        Terrains.BRIDGE, dest2srcDir) && movePath
-                        .getFinalClimbMode()))) {
+                        Terrains.BRIDGE, dest2srcDir) && moveStep.climbMode()))) {
             result = true;
         }
-
         // See if the source hex has a road or bridge (and the entity is on the
         // bridge) that exits into the destination hex, and the dest hex has
         // pavement or a corresponding exit to the src hex
         else if ((srcHex.containsTerrainExit(Terrains.ROAD, src2destDir) || (srcHex
-                .containsTerrainExit(Terrains.BRIDGE, src2destDir) && (movePath
-                .getLastStep().getElevation() == srcHex
+                .containsTerrainExit(Terrains.BRIDGE, src2destDir) && (moveStep.getElevation() == srcHex
                 .terrainLevel(Terrains.BRIDGE_ELEV))))
                 && (destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir)
                         || (destHex.containsTerrainExit(Terrains.BRIDGE,
-                                dest2srcDir) && movePath.getFinalClimbMode()) || destHex
+                                dest2srcDir) && moveStep.climbMode()) || destHex
                             .containsTerrain(Terrains.PAVEMENT))) {
             result = true;
         }

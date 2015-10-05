@@ -459,7 +459,7 @@ public class MovePath implements Cloneable, Serializable {
         int maxElev = 0;
         for (MoveStep step : steps) {
             maxElev = Math.max(maxElev,
-                               getGame().getBoard().getHex(step.getPosition()).getLevel());
+                    getGame().getBoard().getHex(step.getPosition()).getLevel());
         }
         return maxElev;
     }

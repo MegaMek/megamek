@@ -360,25 +360,6 @@ public class MoveStep implements Serializable {
     }
 
     /**
-     * get a copy of this MoveStep's parent, but only upto this step
-     *
-     * @return
-     */
-    public MovePath getParentUpToThisStep() {
-        Vector<MoveStep> steps = new Vector<MoveStep>();
-        MovePath toReturn = new MovePath(getGame(), getEntity());
-        for (Enumeration<MoveStep> e = parent.getSteps(); ; e.hasMoreElements()) {
-            MoveStep step = e.nextElement();
-            steps.add(step);
-            if (step.equals(this)) {
-                break;
-            }
-        }
-        toReturn.addSteps(steps, false);
-        return toReturn;
-    }
-
-    /**
      * Set the target of the current step.
      *
      * @param target - the <code>Targetable</code> that is the target of this step.
@@ -432,7 +413,7 @@ public class MoveStep implements Serializable {
 
         // Check for pavement movement.
         if (Compute.canMoveOnPavement(game, prev.getPosition(), getPosition(),
-                getParentUpToThisStep())) {
+                this)) {
             setPavementStep(true);
         } else {
             setPavementStep(false);
@@ -704,7 +685,7 @@ public class MoveStep implements Serializable {
             case TURN_RIGHT:
                 // Check for pavement movement.
                 if (Compute.canMoveOnPavement(game, prev.getPosition(),
-                        getPosition(), getParentUpToThisStep())) {
+                        getPosition(), this)) {
                     setPavementStep(true);
                 } else {
                     setPavementStep(false);
@@ -2485,7 +2466,7 @@ public class MoveStep implements Serializable {
         int prevEl = prev.getElevation();
         danger |= Compute.isPilotingSkillNeeded(game, entity.getId(), lastPos,
                 curPos, movementType, isTurning, prevStepOnPavement, prevEl,
-                getElevation(), getParentUpToThisStep());
+                getElevation(), this);
 
         // jumping into heavy woods is danger
         if (game.getOptions().booleanOption("psr_jump_heavy_woods")) {

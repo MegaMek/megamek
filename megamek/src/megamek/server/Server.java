@@ -5532,8 +5532,7 @@ public class Server implements Runnable {
             // N.B. can skid along roads.
             if ((entity.isLocationProhibited(start) || entity
                     .isLocationProhibited(nextPos))
-                && !Compute.canMoveOnPavement(game, curPos, nextPos,
-                                              step.getParentUpToThisStep())) {
+                    && !Compute.canMoveOnPavement(game, curPos, nextPos, step)) {
                 // Update report.
                 r = new Report(2040);
                 r.subject = entity.getId();
@@ -5609,8 +5608,7 @@ public class Server implements Runnable {
                     curPos,
                     nextPos,
                     step.getElevation(),
-                    Compute.canMoveOnPavement(game, curPos, nextPos,
-                                              step.getParentUpToThisStep()));
+                    Compute.canMoveOnPavement(game, curPos, nextPos, step));
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 // Taharqa: According to TacOps, you automatically stick if you
                 // are skidding, (pg. 63)

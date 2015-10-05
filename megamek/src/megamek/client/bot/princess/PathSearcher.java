@@ -127,7 +127,7 @@ public class PathSearcher {
             for (WeightedPath sp : start_paths) {
                 List<MovePath> nextmoves = sp.path.getNextMoves(backward, forward);
                 for (MovePath p : nextmoves) {
-                    if (!p.getLastStep().isLegal()) {
+                    if (!p.getLastStep().isLegal(p)) {
                         continue; // don't make illegal moves
                     }
                     if (p.getLastStep().getType() == MovePath.MoveStepType.GET_UP) {

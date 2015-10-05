@@ -113,7 +113,7 @@ public class ManeuverType {
                     for (int i = 0; i < 8; i++){
                         tmpMp.addStep(MoveStepType.FORWARDS,true,true);
                     }                    
-                    return tmpMp.getLastStep().isLegal();
+                    return tmpMp.getLastStep().isLegal(tmpMp);
                 }else{
                     return true;
                 }

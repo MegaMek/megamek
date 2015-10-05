@@ -4879,7 +4879,7 @@ public class Server implements Runnable {
      * @return true if the entity was removed from play
      */
     private boolean processSkid(Entity entity, Coords start, int elevation,
-                                int direction, int distance, MoveStep step) {
+                                int direction, int distance, MoveStep step, EntityMovementType moveType) {
         Coords nextPos = start;
         Coords curPos = nextPos;
         IHex curHex = game.getBoard().getHex(start);
@@ -5604,6 +5604,7 @@ public class Server implements Runnable {
             // is the next hex a swamp?
             PilotingRollData rollTarget = entity.checkBogDown(
                     step,
+                    moveType,
                     nextHex,
                     curPos,
                     nextPos,
@@ -5623,7 +5624,7 @@ public class Server implements Runnable {
                 addReport(checkQuickSand(nextPos));
                 // check for accidental stacking violation
                 Entity violation = Compute.stackingViolation(game,
-                                                             entity.getId(), curPos);
+                        entity.getId(), curPos);
                 if (violation != null) {
                     // target gets displaced, because of low elevation
                     Coords targetDest = Compute.getValidDisplacement(game,
@@ -7014,7 +7015,7 @@ public class Server implements Runnable {
             }
 
             // check piloting skill for getting up
-            rollTarget = entity.checkGetUp(step);
+            rollTarget = entity.checkGetUp(step, overallMoveType);
 
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 // Unless we're an ICE- or fuel cell-powered IndustrialMech,
@@ -7428,7 +7429,8 @@ public class Server implements Runnable {
                     }
 
                     if (processSkid(entity, curPos, prevStep.getElevation(),
-                                    skidDirection, skidDistance, prevStep)) {
+                            skidDirection, skidDistance, prevStep,
+                            lastStepMoveType)) {
                         return;
                     }
 
@@ -7482,8 +7484,9 @@ public class Server implements Runnable {
                             addReport(r);
 
                             if (processSkid(entity, lastPos,
-                                            prevStep.getElevation(), skidDirection,
-                                            sideslipDistance, prevStep)) {
+                                    prevStep.getElevation(), skidDirection,
+                                    sideslipDistance, prevStep,
+                                    lastStepMoveType)) {
                                 return;
                             }
 
@@ -7510,16 +7513,16 @@ public class Server implements Runnable {
 
             // check if we've moved into rubble
             boolean isLastStep = step.equals(md.getLastStep());
-            rollTarget = entity.checkRubbleMove(step, curHex, lastPos, curPos,
-                                                isLastStep);
+            rollTarget = entity.checkRubbleMove(step, overallMoveType, curHex,
+                    lastPos, curPos, isLastStep);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 doSkillCheckWhileMoving(entity, lastElevation, lastPos, curPos,
                                         rollTarget, true);
             }
 
             // check if we are using reckless movement
-            rollTarget = entity.checkRecklessMove(step, curHex, lastPos,
-                                                  curPos, prevHex);
+            rollTarget = entity.checkRecklessMove(step, overallMoveType,
+                    curHex, lastPos, curPos, prevHex);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 if (entity instanceof Mech) {
                     doSkillCheckWhileMoving(entity, lastElevation, lastPos,
@@ -7591,8 +7594,8 @@ public class Server implements Runnable {
             }
 
             // check if we've moved into a swamp
-            rollTarget = entity.checkBogDown(step, curHex, lastPos, curPos,
-                                             lastElevation, isPavementStep);
+            rollTarget = entity.checkBogDown(step, lastStepMoveType, curHex,
+                    lastPos, curPos, lastElevation, isPavementStep);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 if (0 < doSkillCheckWhileMoving(entity, lastElevation, lastPos,
                                                 curPos, rollTarget, false)) {
@@ -7749,8 +7752,8 @@ public class Server implements Runnable {
             }
 
             // check if we've moved into water
-            rollTarget = entity.checkWaterMove(step, curHex, lastPos, curPos,
-                                               isPavementStep);
+            rollTarget = entity.checkWaterMove(step, lastStepMoveType, curHex,
+                    lastPos, curPos, isPavementStep);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 // Swarmers need special handling.
                 final int swarmerId = entity.getSwarmAttackerId();
@@ -8167,7 +8170,7 @@ public class Server implements Runnable {
             // dropping prone intentionally?
             if (step.getType() == MoveStepType.GO_PRONE) {
                 mpUsed = step.getMpUsed();
-                rollTarget = entity.checkDislodgeSwarmers(step);
+                rollTarget = entity.checkDislodgeSwarmers(step, overallMoveType);
                 if (rollTarget.getValue() == TargetRoll.CHECK_FALSE) {
                     // Not being swarmed
                     entity.setProne(true);
@@ -31022,8 +31025,8 @@ public class Server implements Runnable {
                     if (step.getMpUsed() > cachedMaxMPExpenditure) {
                         // We moved too fast, let's make PSR to see if we get
                         // damage
-                        game.addExtremeGravityPSR(entity
-                                                          .checkMovedTooFast(step));
+                        game.addExtremeGravityPSR(entity.checkMovedTooFast(
+                                step, moveType));
                     }
                 } else if (step.getMovementType() == EntityMovementType.MOVE_JUMP) {
                     System.err.println("gravity move check jump: "
@@ -31032,8 +31035,8 @@ public class Server implements Runnable {
                     if (step.getMpUsed() > cachedMaxMPExpenditure) {
                         // We jumped too far, let's make PSR to see if we get
                         // damage
-                        game.addExtremeGravityPSR(entity
-                                                          .checkMovedTooFast(step));
+                        game.addExtremeGravityPSR(entity.checkMovedTooFast(
+                                step, moveType));
                     } else if (game.getPlanetaryConditions().getGravity() > 1) {
                         // jumping in high g is bad for your legs
                         rollTarget = entity.getBasePilotingRoll(moveType);
@@ -31052,14 +31055,14 @@ public class Server implements Runnable {
                     // more MPs because it was moving along a road.
                     if ((step.getMpUsed() > cachedMaxMPExpenditure)
                         && !step.isOnlyPavement()) {
-                        game.addExtremeGravityPSR(entity
-                                                          .checkMovedTooFast(step));
+                        game.addExtremeGravityPSR(entity.checkMovedTooFast(
+                                step, moveType));
                     } else if (step.getMpUsed() > (cachedMaxMPExpenditure + 1)) {
                         // If the tank was moving on a road, he got a +1 bonus.
                         // N.B. The Ask Precentor Martial forum said that a 4/6
                         // tank on a road can move 5/7, **not** 5/8.
-                        game.addExtremeGravityPSR(entity
-                                                          .checkMovedTooFast(step));
+                        game.addExtremeGravityPSR(entity.checkMovedTooFast(
+                                step, moveType));
                     } // End tank-has-road-bonus
                 }
             }

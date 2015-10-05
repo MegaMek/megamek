@@ -6105,41 +6105,41 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Checks if the entity is getting up. If so, returns the target roll for
      * the piloting skill check.
      */
-    public PilotingRollData checkGetUp(MoveStep step) {
+    public PilotingRollData checkGetUp(MoveStep step,
+            EntityMovementType moveType) {
 
         if ((step == null)
-            || ((step.getType() != MoveStepType.GET_UP) && (step.getType() != MoveStepType.CAREFUL_STAND))) {
+            || ((step.getType() != MoveStepType.GET_UP) 
+                    && (step.getType() != MoveStepType.CAREFUL_STAND))) {
             return new PilotingRollData(id, TargetRoll.CHECK_FALSE,
-                                        "Check false: Entity is not attempting to get up.");
+                    "Check false: Entity is not attempting to get up.");
         }
 
-        PilotingRollData roll = getBasePilotingRoll(step.getParent()
-                                                        .getLastStepMovementType());
+        PilotingRollData roll = getBasePilotingRoll(moveType);
 
         if (this instanceof BipedMech) {
             if ((((Mech) this).countBadLegs() >= 1)
-                && (isLocationBad(Mech.LOC_LARM) && isLocationBad(Mech.LOC_RARM))) {
+                    && (isLocationBad(Mech.LOC_LARM) 
+                            && isLocationBad(Mech.LOC_RARM))) {
                 roll.addModifier(TargetRoll.IMPOSSIBLE,
-                                 "can't get up with destroyed leg and arms");
+                        "can't get up with destroyed leg and arms");
                 return roll;
             }
         }
 
         if (isHullDown() && (this instanceof QuadMech)) {
             roll.addModifier(TargetRoll.AUTOMATIC_SUCCESS,
-                             "getting up from hull down");
+                    "getting up from hull down");
             return roll;
         }
 
         if (!needsRollToStand()
-            && (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                                Mech.LOC_CT) < 2)) {
-            roll.addModifier(
-                    TargetRoll.AUTOMATIC_SUCCESS,
-                    "\n"
+                && (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
+                        Mech.LOC_CT) < 2)) {
+            roll.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "\n"
                     + getDisplayName()
-                    + " does not need to make a piloting skill check to stand up because it has all four of " +
-                    "its legs.");
+                    + " does not need to make a piloting skill check "
+                    + "to stand up because it has all four of " + "its legs.");
             return roll;
         }
 
@@ -6221,12 +6221,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Checks if an entity is passing through certain terrain while not moving
      * carefully
      */
-    public PilotingRollData checkRecklessMove(MoveStep step, IHex curHex,
-                                              Coords lastPos, Coords curPos, IHex prevHex) {
-        PilotingRollData roll = getBasePilotingRoll(step.getParent()
-                                                        .getLastStepMovementType());
+    public PilotingRollData checkRecklessMove(MoveStep step,
+            EntityMovementType moveType, IHex curHex, Coords lastPos,
+            Coords curPos, IHex prevHex) {
+        PilotingRollData roll = getBasePilotingRoll(moveType);
         // no need to go further if movement is careful
-        if (step.getParent().isCareful()) {
+        if (step.isCareful()) {
             roll.addModifier(TargetRoll.CHECK_FALSE, "moving carefully");
             return roll;
         }
@@ -6245,7 +6245,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // we need to make this check on the first move forward and anytime the
         // hex is not clear or is a level change
         if ((isFoggy || isDark) && !lastPos.equals(curPos)
-            && lastPos.equals(step.getParent().getEntity().getPosition())) {
+            && lastPos.equals(step.getEntity().getPosition())) {
             roll.append(new PilotingRollData(getId(), 0, "moving recklessly"));
         }
         // FIXME: no perfect solution in the current code to determine if hex is
@@ -6360,9 +6360,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param step
      * @return
      */
-    public PilotingRollData checkMovedTooFast(MoveStep step) {
-        PilotingRollData roll = getBasePilotingRoll(step.getParent()
-                                                        .getLastStepMovementType());
+    public PilotingRollData checkMovedTooFast(MoveStep step,
+            EntityMovementType moveType) {
+        PilotingRollData roll = getBasePilotingRoll(moveType);
         addPilotingModifierForTerrain(roll, step);
         switch (step.getMovementType()) {
             case MOVE_WALK:
@@ -6378,7 +6378,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                             "used more MPs than at 1G possible"));
                 } else {
                     roll.addModifier(TargetRoll.CHECK_FALSE,
-                            "Check false: Entity did not use more MPs walking/running than possible at 1G");
+                            "Check false: Entity did not use more "
+                            + "MPs walking/running than possible at 1G");
                 }
                 break;
             case MOVE_JUMP:
@@ -6387,7 +6388,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                             "used more MPs than at 1G possible"));
                 } else {
                     roll.addModifier(TargetRoll.CHECK_FALSE,
-                            "Check false: Entity did not use more MPs jumping than possible at 1G");
+                            "Check false: Entity did not use more "
+                            + "MPs jumping than possible at 1G");
                 }
                 break;
             default:
@@ -6400,9 +6402,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * roll for the piloting skill check.
      */
     public PilotingRollData checkSkid(EntityMovementType moveType,
-                                      IHex prevHex, EntityMovementType overallMoveType,
-                                      MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos,
-                                      Coords curPos, boolean isInfantry, int distance) {
+            IHex prevHex, EntityMovementType overallMoveType,
+            MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos,
+            Coords curPos, boolean isInfantry, int distance) {
 
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         addPilotingModifierForTerrain(roll, lastPos);
@@ -6478,10 +6480,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Checks if the entity is moving into rubble. If so, returns the target
      * roll for the piloting skill check.
      */
-    public PilotingRollData checkRubbleMove(MoveStep step, IHex curHex,
-                                            Coords lastPos, Coords curPos, boolean isLastStep) {
-        PilotingRollData roll = getBasePilotingRoll(step.getParent()
-                                                        .getLastStepMovementType());
+    public PilotingRollData checkRubbleMove(MoveStep step,
+            EntityMovementType moveType, IHex curHex, Coords lastPos,
+            Coords curPos, boolean isLastStep) {
+        PilotingRollData roll = getBasePilotingRoll(moveType);
         addPilotingModifierForTerrain(roll, curPos);
 
         if (!lastPos.equals(curPos)
@@ -6508,10 +6510,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Checks if the entity is moving into a hex that might cause it to bog
      * down. If so, returns the target roll for the piloting skill check.
      */
-    public PilotingRollData checkBogDown(MoveStep step, IHex curHex,
-            Coords lastPos, Coords curPos, int lastElev, boolean isPavementStep) {
-        PilotingRollData roll = getBasePilotingRoll(step.getParent()
-                .getLastStepMovementType());
+    public PilotingRollData checkBogDown(MoveStep step,
+            EntityMovementType moveType, IHex curHex, Coords lastPos,
+            Coords curPos, int lastElev, boolean isPavementStep) {
+        PilotingRollData roll = getBasePilotingRoll(moveType);
         int bgMod = curHex.getBogDownModifier(getMovementMode(),
                 this instanceof LargeSupportTank);
         if ((!lastPos.equals(curPos) || (step.getElevation() != lastElev))
@@ -6536,8 +6538,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Checks if the entity is moving into depth 1+ water. If so, returns the
      * target roll for the piloting skill check.
      */
-    public PilotingRollData checkWaterMove(MoveStep step, IHex curHex,
-                                           Coords lastPos, Coords curPos, boolean isPavementStep) {
+    public PilotingRollData checkWaterMove(MoveStep step,
+            EntityMovementType moveType, IHex curHex, Coords lastPos,
+            Coords curPos, boolean isPavementStep) {
         if ((curHex.terrainLevel(Terrains.WATER) > 0)
             && (step.getElevation() < 0) && !lastPos.equals(curPos)
             && (step.getMovementType() != EntityMovementType.MOVE_JUMP)
@@ -6551,10 +6554,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             && (getMovementMode() != EntityMovementMode.QUAD_SWIM)
             && (getMovementMode() != EntityMovementMode.WIGE)
             && !isPavementStep) {
-            return checkWaterMove(curHex.terrainLevel(Terrains.WATER), step
-                    .getParent().getLastStepMovementType());
+            return checkWaterMove(curHex.terrainLevel(Terrains.WATER), moveType);
         }
-        return checkWaterMove(0, step.getParent().getLastStepMovementType());
+        return checkWaterMove(0, moveType);
     }
 
     /**
@@ -6591,19 +6593,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Checks if the entity is being swarmed. If so, returns the target roll for
      * the piloting skill check to dislodge them.
      */
-    public PilotingRollData checkDislodgeSwarmers(MoveStep step) {
+    public PilotingRollData checkDislodgeSwarmers(MoveStep step,
+            EntityMovementType moveType) {
 
         // If we're not being swarmed, return CHECK_FALSE
         if (Entity.NONE == getSwarmAttackerId()) {
             return new PilotingRollData(getId(), TargetRoll.CHECK_FALSE,
-                                        "Check false: No swarmers attached");
+                    "Check false: No swarmers attached");
         }
 
         // append the reason modifier
-        PilotingRollData roll = getBasePilotingRoll(step.getParent()
-                                                        .getLastStepMovementType());
+        PilotingRollData roll = getBasePilotingRoll(moveType);
         roll.append(new PilotingRollData(getId(), 0,
-                                         "attempting to dislodge swarmers by dropping prone"));
+                "attempting to dislodge swarmers by dropping prone"));
         addPilotingModifierForTerrain(roll, step);
 
         return roll;

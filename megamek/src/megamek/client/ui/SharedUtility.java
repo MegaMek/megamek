@@ -112,7 +112,7 @@ public class SharedUtility {
             }
 
             // check piloting skill for getting up
-            rollTarget = entity.checkGetUp(step);
+            rollTarget = entity.checkGetUp(step, overallMoveType);
             checkNag(rollTarget, nagReport, psrList);
 
             // set most step parameters
@@ -168,8 +168,8 @@ public class SharedUtility {
 
             // check if we've moved into rubble
             boolean isLastStep = md.getLastStep().equals(step);
-            rollTarget = entity.checkRubbleMove(step, curHex, lastPos, curPos,
-                    isLastStep);
+            rollTarget = entity.checkRubbleMove(step, overallMoveType, curHex,
+                    lastPos, curPos, isLastStep);
             checkNag(rollTarget, nagReport, psrList);
 
             int lightPenalty = entity.getGame().getPlanetaryConditions().getLightPilotPenalty();
@@ -178,7 +178,8 @@ public class SharedUtility {
             }
 
             //check if we are moving recklessly
-            rollTarget = entity.checkRecklessMove(step, curHex, lastPos, curPos, prevHex);
+            rollTarget = entity.checkRecklessMove(step, overallMoveType,
+                    curHex, lastPos, curPos, prevHex);
             checkNag(rollTarget, nagReport, psrList);
 
             // check for crossing ice
@@ -187,7 +188,8 @@ public class SharedUtility {
             }
 
             // check if we've moved into water
-            rollTarget = entity.checkWaterMove(step, curHex, lastPos, curPos, isPavementStep);
+            rollTarget = entity.checkWaterMove(step, overallMoveType, curHex,
+                    lastPos, curPos, isPavementStep);
             checkNag(rollTarget, nagReport, psrList);
 
             // check for non-mech entering a fire
@@ -213,7 +215,8 @@ public class SharedUtility {
             }
 
             // check if we've moved into swamp
-            rollTarget = entity.checkBogDown(step, curHex, lastPos, curPos, lastElevation, isPavementStep);
+            rollTarget = entity.checkBogDown(step, overallMoveType, curHex,
+                    lastPos, curPos, lastElevation, isPavementStep);
             checkNag(rollTarget, nagReport, psrList);
 
             // check if we used more MPs than the Mech/Vehicle would have in
@@ -223,12 +226,12 @@ public class SharedUtility {
                     if ((step.getMovementType() == EntityMovementType.MOVE_WALK) || (step.getMovementType() == EntityMovementType.MOVE_VTOL_WALK) || (step.getMovementType() == EntityMovementType.MOVE_RUN) || (step.getMovementType() == EntityMovementType.MOVE_VTOL_RUN)) {
                         //TODO: need to adjust for sprinting, but game options are not passed
                         if (step.getMpUsed() > entity.getRunMP(false, false, false)) {
-                            rollTarget = entity.checkMovedTooFast(step);
+                            rollTarget = entity.checkMovedTooFast(step, overallMoveType);
                             checkNag(rollTarget, nagReport, psrList);
                         }
                     } else if (step.getMovementType() == EntityMovementType.MOVE_JUMP) {
                         if (step.getMpUsed() > entity.getJumpMP(false)) {
-                            rollTarget = entity.checkMovedTooFast(step);
+                            rollTarget = entity.checkMovedTooFast(step, overallMoveType);
                             checkNag(rollTarget, nagReport, psrList);
                         } else if (game.getPlanetaryConditions().getGravity() > 1) {
                             rollTarget = entity.getBasePilotingRoll(md.getLastStepMovementType());
@@ -238,7 +241,7 @@ public class SharedUtility {
                         }
                     } else if (step.getMovementType() == EntityMovementType.MOVE_SPRINT) {
                         if (step.getMpUsed() > entity.getSprintMP(false, false, false)) {
-                            rollTarget = entity.checkMovedTooFast(step);
+                            rollTarget = entity.checkMovedTooFast(step, overallMoveType);
                             checkNag(rollTarget, nagReport, psrList);
                         }
                     }
@@ -248,14 +251,14 @@ public class SharedUtility {
                         // For Tanks, we need to check if the tank had more MPs
                         // because it was moving along a road
                         if ((step.getMpUsed() > entity.getRunMP(false, false, false)) && !step.isOnlyPavement()) {
-                            rollTarget = entity.checkMovedTooFast(step);
+                            rollTarget = entity.checkMovedTooFast(step, overallMoveType);
                             checkNag(rollTarget, nagReport, psrList);
                         }
                         // If the tank was moving on a road, he got a +1 bonus.
                         // N.B. The Ask Precentor Martial forum said that a 4/6
                         // tank on a road can move 5/7, **not** 5/8.
                         else if (step.getMpUsed() > (entity.getRunMP(false, false, false) + 1)) {
-                            rollTarget = entity.checkMovedTooFast(step);
+                            rollTarget = entity.checkMovedTooFast(step, overallMoveType);
                             checkNag(rollTarget, nagReport, psrList);
                         }
                     }
@@ -280,7 +283,7 @@ public class SharedUtility {
             }
 
             if (step.getType() == MoveStepType.GO_PRONE) {
-                rollTarget = entity.checkDislodgeSwarmers(step);
+                rollTarget = entity.checkDislodgeSwarmers(step, overallMoveType);
                 checkNag(rollTarget, nagReport, psrList);
             }
 

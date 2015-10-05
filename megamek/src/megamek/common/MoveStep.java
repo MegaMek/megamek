@@ -24,7 +24,6 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.Vector;
@@ -93,6 +92,21 @@ public class MoveStep implements Serializable {
     private boolean isDiggingIn = false;
     private boolean isTakingCover = false;
     private MovePath parent = null;
+    /**
+     * The Entity that is taking this MoveStep.
+     */
+    private Entity entity = null;
+
+    /**
+     * Determines if this MoveStep is part of a MovePath that is jumping.
+     */
+    private boolean isJumpingPath = false;
+
+    /**
+     * Determines if this MoveStep is part of a MovePath that is moving
+     * carefully.
+     */
+    private boolean isCarefulPath = true;
 
     /*
      * Aero related stuf
@@ -157,6 +171,11 @@ public class MoveStep implements Serializable {
     public MoveStep(MovePath path, MoveStepType type) {
         this.type = type;
         parent = path;
+        if (path != null) {
+            entity = path.getEntity();
+            isJumpingPath = path.isJumping();
+            isCarefulPath = path.isCareful();
+        }
         if ((type == MoveStepType.UNLOAD) || (type == MoveStepType.LAUNCH)
                 || (type == MoveStepType.DROP) || (type == MoveStepType.UNDOCK)) {
             hasEverUnloaded = true;
@@ -276,6 +295,9 @@ public class MoveStep implements Serializable {
 
     void setParent(MovePath path) {
         parent = path;
+        entity = path.getEntity();
+        isJumpingPath = path.isJumping();
+        isCarefulPath = path.isCareful();
     }
 
     @Override
@@ -353,10 +375,6 @@ public class MoveStep implements Serializable {
 
     public MoveStepType getType() {
         return type;
-    }
-
-    public MovePath getParent() {
-        return parent;
     }
 
     /**
@@ -663,8 +681,10 @@ public class MoveStep implements Serializable {
 
         // Is this the first step?
         if (prev == null) {
-            prev = new MoveStep(parent, MoveStepType.FORWARDS);
+            prev = new MoveStep(null, MoveStepType.FORWARDS);
             prev.setFromEntity(entity, game);
+            prev.isCarefulPath = isCareful();
+            prev.isJumpingPath = isJumping();
             setFirstStep(prev.mpUsed == 0); // Bug 1519330 - its not a first
             // step when continuing after a fall
         }
@@ -1078,6 +1098,7 @@ public class MoveStep implements Serializable {
      * @param entity
      */
     public void setFromEntity(Entity entity, IGame game) {
+        this.entity = entity;
         position = entity.getPosition();
         facing = entity.getFacing();
         // elevation
@@ -1758,8 +1779,8 @@ public class MoveStep implements Serializable {
                 if ((entity instanceof Jumpship)
                         && !(entity instanceof Warship)
                         && !isFirstStep()
-                        && (prev.getParent().contains(MoveStepType.TURN_LEFT) || prev
-                        .getParent().contains(MoveStepType.TURN_RIGHT))) {
+                        && (prev.parent.contains(MoveStepType.TURN_LEFT) || prev
+                        .parent.contains(MoveStepType.TURN_RIGHT))) {
                     return;
                 }
 
@@ -3504,19 +3525,23 @@ public class MoveStep implements Serializable {
     }
 
     public Entity getEntity() {
-        return parent.getEntity();
+        return entity;
     }
 
     public IGame getGame() {
-        return parent.getGame();
+        if (getEntity() != null) {
+            return getEntity().getGame();
+        } else {
+            return null;
+        }
     }
 
     public boolean isJumping() {
-        return parent.isJumping();
+        return isJumpingPath;
     }
 
     public boolean isCareful() {
-        return parent.isCareful();
+        return isCarefulPath;
     }
 
 }

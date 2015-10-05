@@ -17,6 +17,7 @@ import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EntityMovementType;
 import megamek.common.GameTurn;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -27,6 +28,7 @@ import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Tank;
 import megamek.common.logging.LogLevel;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -494,10 +496,10 @@ public class PrincessTest {
         Mockito.when(mockMech.isStuck()).thenReturn(false);
         Mockito.when(mockMech.isStalled()).thenReturn(false);
         Mockito.when(mockMech.cannotStandUpFromHullDown()).thenReturn(false);
-        Mockito.when(mockMech.checkGetUp(Mockito.any(MoveStep.class))).thenReturn(mockPilotingRollData);
+        Mockito.when(mockMech.checkGetUp(Mockito.any(MoveStep.class), Mockito.any(EntityMovementType.class))).thenReturn(mockPilotingRollData);
         Mockito.when(mockMech.getPosition()).thenReturn(mockPosiiton);
         Mockito.when(mockMech.getPriorPosition()).thenReturn(mockPriorPosition);
-        Mockito.when(mockMech.checkBogDown(Mockito.any(MoveStep.class), Mockito.eq(mockHex),
+        Mockito.when(mockMech.checkBogDown(Mockito.any(MoveStep.class), Mockito.any(EntityMovementType.class), Mockito.eq(mockHex),
                                            Mockito.eq(mockPriorPosition), Mockito.eq(mockPosiiton), Mockito.anyInt(),
                                            Mockito.anyBoolean()))
                .thenReturn(mockPilotingRollData);

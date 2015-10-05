@@ -881,9 +881,10 @@ public class TripodMech extends Mech {
     }
 
     @Override
-    public PilotingRollData checkGetUp(MoveStep step) {
+    public PilotingRollData checkGetUp(MoveStep step,
+            EntityMovementType moveType) {
 
-        PilotingRollData roll = super.checkGetUp(step);
+        PilotingRollData roll = super.checkGetUp(step, moveType);
 
         if (roll.getValue() != TargetRoll.CHECK_FALSE) {
             addStandingPenalties(roll);

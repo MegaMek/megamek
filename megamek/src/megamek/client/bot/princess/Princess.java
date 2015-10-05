@@ -759,7 +759,8 @@ public class Princess extends BotClient {
             MoveStep getUp = new MoveStep(movePath, type);
 
             // If our odds to get up are equal to or worse than the threshold, consider ourselves immobile.
-            PilotingRollData target = mech.checkGetUp(getUp);
+            PilotingRollData target = mech.checkGetUp(getUp,
+                    movePath.getLastStepMovementType());
             log(getClass(), METHOD_NAME, LogLevel.INFO,
                 "Need to roll " + target.getValue() + " to stand and our tolerance is " + threshold);
             return (target.getValue() >= threshold);
@@ -769,8 +770,10 @@ public class Princess extends BotClient {
         MovePath.MoveStepType type = MovePath.MoveStepType.FORWARDS;
         MoveStep walk = new MoveStep(movePath, type);
         IHex hex = getHex(mech.getPosition());
-        PilotingRollData target = mech.checkBogDown(walk, hex, mech.getPriorPosition(), mech.getPosition(),
-                                                    hex.getLevel(), false);
+        PilotingRollData target = mech.checkBogDown(walk,
+                movePath.getLastStepMovementType(), hex,
+                mech.getPriorPosition(), mech.getPosition(), hex.getLevel(),
+                false);
         log(getClass(), METHOD_NAME, LogLevel.INFO,
             "Need to roll " + target.getValue() + " to get unstuck and our tolerance is " + threshold);
         return (target.getValue() >= threshold);

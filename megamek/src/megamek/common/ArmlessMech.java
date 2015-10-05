@@ -79,8 +79,9 @@ public class ArmlessMech extends BipedMech {
      * Checks if the entity is getting up. If so, returns the target roll for
      * the piloting skill check.
      */
-    public PilotingRollData checkGetUp(MoveStep step, int overallMoveType) {
-        PilotingRollData roll = super.checkGetUp(step);
+    public PilotingRollData checkGetUp(MoveStep step,
+            EntityMovementType moveType) {
+        PilotingRollData roll = super.checkGetUp(step, moveType);
         roll.addModifier(4, "armless Mech");
         return roll;
     }

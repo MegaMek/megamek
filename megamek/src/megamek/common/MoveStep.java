@@ -3493,7 +3493,9 @@ public class MoveStep implements Serializable {
     }
 
     public boolean isJumping() {
-        return isJumpingPath;
+        // Need to consider if our type is START_JUMP, as when adding a
+        // START_JUMP step, the MovePath may not be considered jumping yet
+        return isJumpingPath || (type == MoveStepType.START_JUMP);
     }
 
     public boolean isCareful() {

@@ -91,7 +91,7 @@ public class MoveStep implements Serializable {
     private boolean isStackingViolation = false;
     private boolean isDiggingIn = false;
     private boolean isTakingCover = false;
-    private MovePath parent = null;
+    
     /**
      * The Entity that is taking this MoveStep.
      */
@@ -170,7 +170,6 @@ public class MoveStep implements Serializable {
      */
     public MoveStep(MovePath path, MoveStepType type) {
         this.type = type;
-        parent = path;
         if (path != null) {
             entity = path.getEntity();
             isJumpingPath = path.isJumping();
@@ -293,8 +292,12 @@ public class MoveStep implements Serializable {
         this.mf = mf;
     }
 
-    void setParent(MovePath path) {
-        parent = path;
+    /**
+     * Updates some state of the MoveStep that's inherited from a MovePath.
+     * 
+     * @param path
+     */
+    void updateFromMovePath(MovePath path) {
         entity = path.getEntity();
         isJumpingPath = path.isJumping();
         isCarefulPath = path.isCareful();
@@ -1038,11 +1041,11 @@ public class MoveStep implements Serializable {
         }
     }
 
-    public void setElevation(int el) {
+    protected void setElevation(int el) {
         elevation = el;
     }
 
-    public void setAltitude(int alt) {
+    protected void setAltitude(int alt) {
         altitude = alt;
     }
 
@@ -1343,16 +1346,17 @@ public class MoveStep implements Serializable {
     }
 
     /**
-     * Determine if this is a legal step.
+     * Determine if this is a legal step as part of the supplied MovePath.
      *
+     * @param path  A MovePath that contains this step.
      * @return <code>true</code> if the step is legal. <code>false</code>
      *         otherwise.
      */
-    public boolean isLegal() {
+    public boolean isLegal(MovePath path) {
         // A step is legal if it's static movement type is not illegal,
         // and it is either a valid end position, or not an end position.
         return ((movementType != EntityMovementType.MOVE_ILLEGAL)
-                && (!isEndPos() || isLegalEndPos()));
+                && (!isEndPos(path) || isLegalEndPos()));
     }
 
     /**
@@ -1361,13 +1365,7 @@ public class MoveStep implements Serializable {
      * @return the <code>int</code> constant for this step's movement type.
      */
     public EntityMovementType getMovementType() {
-        EntityMovementType moveType = movementType;
-        // If this step's position is the end of the path, and it is not
-        // a valid end postion, then the movement type is "illegal".
-        if (isEndPos() && !isLegalEndPos()) {
-            moveType = EntityMovementType.MOVE_ILLEGAL;
-        }
-        return moveType;
+        return movementType;
     }
 
     /**
@@ -1435,18 +1433,18 @@ public class MoveStep implements Serializable {
         return moreUpdates;
     }
     
-    public boolean isEndPos() {
+    public boolean isEndPos(MovePath path) {
         // A step that is illegal is always the end of the path.
         if (EntityMovementType.MOVE_ILLEGAL == movementType) {
             return true;
         }
         
-        if (parent == null) {
+        if (path == null) {
             return true;
         }
         
         // A step is an end position if it is the last legal step.
-        Vector<MoveStep> steps = parent.getStepVector();
+        Vector<MoveStep> steps = path.getStepVector();
         for (int i = steps.size() - 1; i > 0; i--) {
             MoveStep step = steps.get(i);
             boolean stepMatch = this.equals(step);
@@ -1459,8 +1457,8 @@ public class MoveStep implements Serializable {
                 return true;
             }
         }
-        // Shouldn't reach here, since this step should be in the step list
-        return true;        
+        // Shouldn't reach here, since this step is assumed be in the step list
+        return false;        
     }
 
     /**
@@ -1533,49 +1531,49 @@ public class MoveStep implements Serializable {
     /**
      * @param i
      */
-    public void setDistance(int i) {
+    protected void setDistance(int i) {
         distance = i;
     }
 
     /**
      * @param i
      */
-    public void setLeapDistance(int i) {
+    protected void setLeapDistance(int i) {
         leapDistance = i;
     }
 
     /**
      * @param i
      */
-    public void setFacing(int i) {
+    protected void setFacing(int i) {
         facing = i;
     }
 
     /**
      * @param b
      */
-    public void setFirstStep(boolean b) {
+    protected void setFirstStep(boolean b) {
         firstStep = b;
     }
 
     /**
      * @param b
      */
-    public void setHasJustStood(boolean b) {
+    protected void setHasJustStood(boolean b) {
         hasJustStood = b;
     }
 
     /**
      * @param b
      */
-    public void setPavementStep(boolean b) {
+    protected void setPavementStep(boolean b) {
         isPavementStep = b;
     }
 
     /**
      * @param b
      */
-    public void setProne(boolean b) {
+    protected void setProne(boolean b) {
         isProne = b;
     }
 
@@ -1584,15 +1582,15 @@ public class MoveStep implements Serializable {
      *
      * @param b is this entity flying?
      */
-    public void setFlying(boolean b) {
+    protected void setFlying(boolean b) {
         isFlying = b;
     }
 
-    public void setHullDown(boolean b) {
+    protected void setHullDown(boolean b) {
         isHullDown = b;
     }
 
-    public void setClimbMode(boolean b) {
+    protected void setClimbMode(boolean b) {
         climbMode = b;
         getEntity().setClimbMode(b);
     }
@@ -1600,14 +1598,14 @@ public class MoveStep implements Serializable {
     /**
      * @param b
      */
-    public void setTurning(boolean b) {
+    protected void setTurning(boolean b) {
         isTurning = b;
     }
 
     /**
      * @param b
      */
-    public void setUnloaded(boolean b) {
+    protected void setUnloaded(boolean b) {
         isUnloaded = b;
         if (b) {
             hasEverUnloaded = true;
@@ -1617,7 +1615,7 @@ public class MoveStep implements Serializable {
     /**
      * @param b
      */
-    public void setUsingMASC(boolean b) {
+    protected void setUsingMASC(boolean b) {
         isUsingMASC = b;
     }
 
@@ -1628,34 +1626,34 @@ public class MoveStep implements Serializable {
         movementType = i;
     }
 
-    public void setEvading(boolean b) {
+    protected void setEvading(boolean b) {
         isEvading = b;
     }
 
-    public void setShuttingDown(boolean b) {
+    protected void setShuttingDown(boolean b) {
         isShuttingDown = b;
     }
 
-    public void setStartingUp(boolean b) {
+    protected void setStartingUp(boolean b) {
         isStartingUp = b;
     }
 
-    public void setSelfDestructing(boolean b) {
+    protected void setSelfDestructing(boolean b) {
         isSelfDestructing = b;
     }
 
     /**
      * @param b
      */
-    public void setOnlyPavement(boolean b) {
+    protected void setOnlyPavement(boolean b) {
         onlyPavement = b;
     }
 
-    public void setTargetNumberMASC(int i) {
+    protected void setTargetNumberMASC(int i) {
         targetNumberMASC = i;
     }
 
-    public void setThisStepBackwards(boolean b) {
+    protected void setThisStepBackwards(boolean b) {
         thisStepBackwards = b;
     }
 
@@ -1671,11 +1669,11 @@ public class MoveStep implements Serializable {
      *
      * @param i the mp for this step.
      */
-    public void setMp(int i) {
+    protected void setMp(int i) {
         mp = i;
     }
 
-    void setRunProhibited(boolean isRunProhibited) {
+    protected void setRunProhibited(boolean isRunProhibited) {
         this.isRunProhibited = isRunProhibited;
     }
 
@@ -1683,7 +1681,7 @@ public class MoveStep implements Serializable {
         return isRunProhibited;
     }
 
-    void setStackingViolation(boolean isStackingViolation) {
+    protected void setStackingViolation(boolean isStackingViolation) {
         this.isStackingViolation = isStackingViolation;
     }
 
@@ -1693,6 +1691,9 @@ public class MoveStep implements Serializable {
 
     /**
      * This function checks that a step is legal. And adjust the movement type.
+     * This only checks for things that can make this step by itself illegal.
+     * Things that can make a step illegal as part of a movement path are
+     * considered in MovePath.addStep.
      *
      * @param game
      * @param entity
@@ -1775,15 +1776,6 @@ public class MoveStep implements Serializable {
 
             // **Space turning limits**//
             if (game.getBoard().inSpace()) {
-                // if jumpships turn, they can't do anything else
-                if ((entity instanceof Jumpship)
-                        && !(entity instanceof Warship)
-                        && !isFirstStep()
-                        && (prev.parent.contains(MoveStepType.TURN_LEFT) || prev
-                        .parent.contains(MoveStepType.TURN_RIGHT))) {
-                    return;
-                }
-
                 // space stations can only turn and launch space craft
                 if ((entity instanceof SpaceStation)
                         && !((type == MoveStepType.TURN_LEFT)
@@ -2010,10 +2002,7 @@ public class MoveStep implements Serializable {
         }
         // check for evasion
         if (type == MoveStepType.EVADE) {
-            if ((parent.contains(MoveStepType.BACKWARDS))
-                    || entity.hasHipCrit()
-                    || ((type == MoveStepType.BACKWARDS) && parent
-                    .contains(MoveStepType.EVADE))) {
+            if (entity.hasHipCrit()) {
                 movementType = EntityMovementType.MOVE_ILLEGAL;
                 return;
             }
@@ -2215,22 +2204,6 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
-        // We need to ensure the jump is in a straight-line (can't steer)
-        if (isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER)
-                && (parent.length() > 2)) {
-            Coords firstPos = parent.getStep(0).getPosition();
-            Coords secondPos = parent.getStep(1).getPosition();
-            Coords currPos = getPosition();
-            double tolerance = .00001;
-            double initialDir = firstPos.radian(secondPos);
-            double currentDir = firstPos.radian(currPos);
-            if ((currentDir > (initialDir + tolerance))
-                    || (currentDir < (initialDir - tolerance))) {
-                movementType = EntityMovementType.MOVE_ILLEGAL;
-            }
-
-        }
-
         // going prone from hull down is legal and costs 0
         if ((getMp() == 0) && (stepType == MoveStepType.GO_PRONE)
                 && isHullDown()) {
@@ -2366,8 +2339,8 @@ public class MoveStep implements Serializable {
         if (isUnjammingRAC
                 && ((movementType == EntityMovementType.MOVE_RUN)
                 || (movementType == EntityMovementType.MOVE_SPRINT)
-                || (movementType == EntityMovementType.MOVE_VTOL_RUN) || parent
-                .isJumping())) {
+                || (movementType == EntityMovementType.MOVE_VTOL_RUN) 
+                || isJumping())) {
             movementType = EntityMovementType.MOVE_ILLEGAL;
         }
 
@@ -2434,23 +2407,15 @@ public class MoveStep implements Serializable {
         }
 
         // TO p.325 - Mine dispensers
+        if ((type == MoveStepType.LAY_MINE) && !entity.canLayMine()) {
+            movementType = EntityMovementType.MOVE_ILLEGAL;
+            return;
+        }
+        
         if ((type == MoveStepType.LAY_MINE) && entity.canLayMine()) {
             //All vechs may only lay mines on its first or last step.
             //BA additionaly have to use Jump or VTOL movement.
-            if (isFirstStep())
-                movementType = prev.movementType;
-            else {
-                //check if there were no mines dispensed in the first steps.
-                boolean mineDispensed = false;
-                for (MoveStep step : parent.getStepVector()) {
-                    if (!step.isFirstStep())
-                        break;
-                    if (step.getType() == MoveStepType.LAY_MINE)
-                        mineDispensed = true;
-                }
-                if (!mineDispensed)
-                    movementType = prev.movementType;
-            }
+            movementType = prev.movementType;
 
             if (entity instanceof BattleArmor &&
                     !((prev.movementType == EntityMovementType.MOVE_JUMP)
@@ -2463,6 +2428,7 @@ public class MoveStep implements Serializable {
             movementType = EntityMovementType.MOVE_ILLEGAL;
             return;
         }
+
 
         if (stepType == MoveStepType.MOUNT) {
             movementType = EntityMovementType.MOVE_WALK;
@@ -2488,16 +2454,6 @@ public class MoveStep implements Serializable {
         danger |= Compute.isPilotingSkillNeeded(game, entity.getId(), lastPos,
                 curPos, movementType, isTurning, prevStepOnPavement, prevEl,
                 getElevation(), this);
-
-        // jumping into heavy woods is danger
-        if (game.getOptions().booleanOption("psr_jump_heavy_woods")) {
-            if (isJumping()
-                    && isEndPos()
-                    && game.getBoard().getHex(curPos)
-                    .containsTerrain(Terrains.WOODS, 2)) {
-                danger = true;
-            }
-        }
 
         // getting up is also danger
         if (stepType == MoveStepType.GET_UP) {
@@ -3201,11 +3157,11 @@ public class MoveStep implements Serializable {
         return mineToLay;
     }
 
-    public void setMineToLay(int mineId) {
+    protected void setMineToLay(int mineId) {
         mineToLay = mineId;
     }
 
-    public void setVelocity(int vel) {
+    protected void setVelocity(int vel) {
         velocity = vel;
     }
 
@@ -3213,7 +3169,7 @@ public class MoveStep implements Serializable {
         return velocity;
     }
 
-    public void setVelocityN(int vel) {
+    protected void setVelocityN(int vel) {
         velocityN = vel;
     }
 
@@ -3221,7 +3177,7 @@ public class MoveStep implements Serializable {
         return velocityN;
     }
 
-    public void setVelocityLeft(int vel) {
+    protected void setVelocityLeft(int vel) {
         velocityLeft = vel;
     }
 
@@ -3282,7 +3238,7 @@ public class MoveStep implements Serializable {
         return (((6 + velocity) - 11) + thrustCost);
     }
 
-    public void setNTurns(int turns) {
+    protected void setNTurns(int turns) {
         nTurns = turns;
     }
 
@@ -3290,7 +3246,7 @@ public class MoveStep implements Serializable {
         return nTurns;
     }
 
-    public void setNMoved(int moved) {
+    protected void setNMoved(int moved) {
         nMoved = moved;
     }
 
@@ -3298,7 +3254,7 @@ public class MoveStep implements Serializable {
         return nMoved;
     }
 
-    public void setNRolls(int rolls) {
+    protected void setNRolls(int rolls) {
         nRolls = rolls;
     }
 
@@ -3306,7 +3262,7 @@ public class MoveStep implements Serializable {
         return nRolls;
     }
 
-    public void setOffBoard(boolean b) {
+    protected void setOffBoard(boolean b) {
         offBoard = b;
     }
 
@@ -3318,7 +3274,7 @@ public class MoveStep implements Serializable {
         return mv;
     }
 
-    public void setVectors(int[] v) {
+    protected void setVectors(int[] v) {
         if (v.length != 6) {
             return;
         }
@@ -3330,7 +3286,7 @@ public class MoveStep implements Serializable {
         return freeTurn;
     }
 
-    public void setFreeTurn(boolean b) {
+    protected void setFreeTurn(boolean b) {
         freeTurn = b;
     }
 
@@ -3338,7 +3294,7 @@ public class MoveStep implements Serializable {
         return nStraight;
     }
 
-    public void setNStraight(int i) {
+    protected void setNStraight(int i) {
         nStraight = i;
     }
 
@@ -3440,7 +3396,7 @@ public class MoveStep implements Serializable {
 
     }
 
-    public void setNDown(int i) {
+    protected void setNDown(int i) {
         nDown = i;
     }
 
@@ -3452,7 +3408,7 @@ public class MoveStep implements Serializable {
         return recoveryUnit;
     }
 
-    public void setRecoveryUnit(int i) {
+    protected void setRecoveryUnit(int i) {
         recoveryUnit = i;
     }
 

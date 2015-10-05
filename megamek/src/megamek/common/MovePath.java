@@ -232,10 +232,6 @@ public class MovePath implements Cloneable, Serializable {
 
         steps.addElement(step);
 
-        // transform lateral shifts for quads or maneuverability aces
-        if (canShift()) {
-//            transformLateralShift();
-        }
         final MoveStep prev = getStep(steps.size() - 2);
 
         if (compile) {
@@ -264,7 +260,59 @@ public class MovePath implements Cloneable, Serializable {
                 }
             }
         }
+        
+        // Can't move backwards and Evade
+        if (contains(MoveStepType.BACKWARDS) && contains(MoveStepType.EVADE)) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+        }
+        
+        // If jumpships turn, they can't do anything else 
+        if (game.getBoard().inSpace()
+                && (entity instanceof Jumpship)
+                && !(entity instanceof Warship)
+                && !step.isFirstStep()
+                && (contains(MoveStepType.TURN_LEFT) 
+                        || contains(MoveStepType.TURN_RIGHT))) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+        }
+        
+        // We need to ensure the jump is in a straight-line (can't steer)
+        if (isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER)
+                && (length() > 2)) {
+            Coords firstPos = getStep(0).getPosition();
+            Coords secondPos = getStep(1).getPosition();
+            Coords currPos = step.getPosition();
+            double tolerance = .00001;
+            double initialDir = firstPos.radian(secondPos);
+            double currentDir = firstPos.radian(currPos);
+            if ((currentDir > (initialDir + tolerance))
+                    || (currentDir < (initialDir - tolerance))) {
+                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            }
+        }
+        
+        // Ensure we only lay one mine
+        if ((step.getType() == MoveStepType.LAY_MINE)) {
+            boolean containsOtherLayMineStep = false;
+            for (int i = 0; i < steps.size() - 1; i++) {
+                if (steps.get(i).getType() == MoveStepType.LAY_MINE) {
+                    containsOtherLayMineStep = true;
+                }
+            }
+            if (containsOtherLayMineStep) {
+                step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
+            }
+        }
 
+        // jumping into heavy woods is danger
+        if (game.getOptions().booleanOption("psr_jump_heavy_woods")) {
+            if (isJumping() && step.isEndPos(this)
+                    && game.getBoard().getHex(step.getPosition())
+                    .containsTerrain(Terrains.WOODS, 2)) {
+                step.setDanger(true);
+            }
+        }
+        
         if (shouldMechanicalJumpCauseFallDamage()) {
             step.setDanger(true);
         }
@@ -272,7 +320,7 @@ public class MovePath implements Cloneable, Serializable {
         // If the new step is legal and is a different position than
         // the previous step, then update the older steps, letting
         // them know that they are no longer the end of the path.
-        if (step.isLegal() && (null != prev) && !land.equals(prev.getPosition())) {
+        if (step.isLegal(this) && (null != prev) && !land.equals(prev.getPosition())) {
 
             // Loop through the steps from back to front.
             // Stop looping when the step says to, or we run out of steps.
@@ -332,7 +380,8 @@ public class MovePath implements Cloneable, Serializable {
 
         // Find the new last step in the path.
         int index = steps.size() - 1;
-        while ((index >= 0) && getStep(index).setEndPos(true) && !getStep(index).isLegal()) {
+        while ((index >= 0) && getStep(index).setEndPos(true)
+                && !getStep(index).isLegal(this)) {
             index--;
         }
     }
@@ -562,7 +611,7 @@ public class MovePath implements Cloneable, Serializable {
         Enumeration<MoveStep> i = steps.elements();
         MoveStep step = i.nextElement();
         // Make sure the parent path of the step is correct
-        step.setParent(this);
+        step.updateFromMovePath(this);
         // Can't move out of a hex with an enemy unit unless we started
         // there, BUT we're allowed to turn, unload, or go prone.
         if (Compute.isEnemyIn(getGame(), getEntity(),
@@ -574,7 +623,7 @@ public class MovePath implements Cloneable, Serializable {
             while (i.hasMoreElements()) {
                 step = i.nextElement();
                 // Make sure the parent path of the step is correct
-                step.setParent(this);
+                step.updateFromMovePath(this);
                 if (!left) {
                     if (!step.getPosition().equals(getEntity().getPosition())
                         || !(step.getElevation() == getEntity().getElevation())) {
@@ -838,7 +887,7 @@ public class MovePath implements Cloneable, Serializable {
             this.steps = finPath.steps;
             // Ensure that the parent for each step is correct
             for (MoveStep step : steps) {
-                step.setParent(this);
+                step.updateFromMovePath(this);
             }
         } else {
             System.out.println("Error: " +
@@ -875,12 +924,12 @@ public class MovePath implements Cloneable, Serializable {
         }
 
         if (getLastStep().getType() == MoveStepType.CHARGE) {
-            return getSecondLastStep().isLegal();
+            return getSecondLastStep().isLegal(this);
         }
         if (getLastStep().getType() == MoveStepType.RAM) {
-            return getSecondLastStep().isLegal();
+            return getSecondLastStep().isLegal(this);
         }
-        return getLastStep().isLegal();
+        return getLastStep().isLegal(this);
     }
 
     /**

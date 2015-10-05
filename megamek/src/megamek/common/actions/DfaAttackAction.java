@@ -168,7 +168,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         md.compile(game, ae);
         for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
             final MoveStep step = i.nextElement();
-            if (!step.isLegal()) {
+            if (!step.isLegal(md)) {
                 break;
             }
             if (step.getType() == MoveStepType.DFA) {

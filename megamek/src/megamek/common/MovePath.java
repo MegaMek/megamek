@@ -335,6 +335,10 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     public void compile(final IGame g, final Entity en) {
+        compile(g, en, true);
+    }
+
+    public void compile(final IGame g, final Entity en, boolean clip) {
         setGame(g);
         setEntity(en);
         final Vector<MoveStep> temp = new Vector<MoveStep>(steps);
@@ -364,7 +368,9 @@ public class MovePath implements Cloneable, Serializable {
             }
             this.addStep(step);
         }
-        clipToPossible();
+        if (clip) {
+            clipToPossible();
+        }
     }
 
     public void removeLastStep() {
@@ -880,6 +886,7 @@ public class MovePath implements Cloneable, Serializable {
             }
         }
         if (finPath != null) {
+            finPath.compile(game, entity, false);
             this.steps = finPath.steps;
         } else {
             System.out.println("Error: " +

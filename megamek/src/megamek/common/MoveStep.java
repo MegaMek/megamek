@@ -292,17 +292,6 @@ public class MoveStep implements Serializable {
         this.mf = mf;
     }
 
-    /**
-     * Updates some state of the MoveStep that's inherited from a MovePath.
-     * 
-     * @param path
-     */
-    void updateFromMovePath(MovePath path) {
-        entity = path.getEntity();
-        isJumpingPath = path.isJumping();
-        isCarefulPath = path.isCareful();
-    }
-
     @Override
     public String toString() {
         switch (type) {

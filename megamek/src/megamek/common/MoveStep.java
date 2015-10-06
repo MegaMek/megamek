@@ -32,7 +32,9 @@ import megamek.common.MovePath.MoveStepType;
 import megamek.common.options.OptionsConstants;
 
 /**
- * A single step in the entity's movment.
+ * A single step in the entity's movment.  Since the path planner uses shallow
+ * copies of MovePaths, multiple paths may share the same MoveStep, so this
+ * class needs to be agnostic of what path it belongs to.
  */
 public class MoveStep implements Serializable {
     /**

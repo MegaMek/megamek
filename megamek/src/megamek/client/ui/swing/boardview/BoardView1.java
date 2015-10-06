@@ -97,7 +97,6 @@ import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.MegamekBorder;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.client.ui.swing.widget.SkinXMLHandler;
-import megamek.common.Aero;
 import megamek.common.ArtilleryTracker;
 import megamek.common.Building;
 import megamek.common.Compute;
@@ -3071,12 +3070,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * Clears the old movement data and draws the new. Since it's less expensive
-     * to check for and reuse old step sprites than to make a whole new one, we
-     * do that.
+     * Clears the old movement data and draws the new.
      */
     public void drawMovementData(Entity entity, MovePath md) {
-        ArrayList<StepSprite> temp = pathSprites;
         MoveStep previousStep = null;
 
         clearMovementData();
@@ -3122,38 +3118,26 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         for (Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
             final MoveStep step = i.nextElement();
-            // check old movement path for reusable step sprites
-            boolean found = false;
-            for (StepSprite sprite : temp) {
-                if (sprite.getStep().canReuseSprite(step)
-                    && !(entity instanceof Aero)) {
-                    pathSprites.add(sprite);
-                    found = true;
-                }
+            if ((null != previousStep)
+                && ((step.getType() == MoveStepType.UP)
+                    || (step.getType() == MoveStepType.DOWN)
+                    || (step.getType() == MoveStepType.ACC)
+                    || (step.getType() == MoveStepType.DEC)
+                    || (step.getType() == MoveStepType.ACCN)
+                    || (step.getType() == MoveStepType.DECN))) {
+                // Mark the previous elevation change sprite hidden
+                // so that we can draw a new one in it's place without
+                // having overlap.
+                pathSprites.get(pathSprites.size() - 1).setHidden(true);
             }
-            if (!found) {
-                if ((null != previousStep)
-                    && ((step.getType() == MoveStepType.UP)
-                        || (step.getType() == MoveStepType.DOWN)
-                        || (step.getType() == MoveStepType.ACC)
-                        || (step.getType() == MoveStepType.DEC)
-                        || (step.getType() == MoveStepType.ACCN)
-                        || (step.getType() == MoveStepType.DECN))) {
-                    // Mark the previous elevation change sprite hidden
-                    // so that we can draw a new one in it's place without
-                    // having overlap.
-                    pathSprites.get(pathSprites.size() - 1).setHidden(true);
-                }
 
-                // for advanced movement, we always need to hide prior
-                // because costs will overlap and we only want the current
-                // facing
-                if ((previousStep != null) && game.useVectorMove()) {
-                    pathSprites.get(pathSprites.size() - 1).setHidden(true);
-                }
-
-                pathSprites.add(new StepSprite(this, step));
+            // for advanced movement, we always need to hide prior
+            // because costs will overlap and we only want the current
+            // facing
+            if ((previousStep != null) && game.useVectorMove()) {
+                pathSprites.get(pathSprites.size() - 1).setHidden(true);
             }
+            pathSprites.add(new StepSprite(this, step));           
             previousStep = step;
         }
         repaint(100);

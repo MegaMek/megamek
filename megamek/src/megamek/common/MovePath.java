@@ -610,8 +610,6 @@ public class MovePath implements Cloneable, Serializable {
         final Vector<MoveStep> goodSteps = new Vector<MoveStep>();
         Enumeration<MoveStep> i = steps.elements();
         MoveStep step = i.nextElement();
-        // Make sure the parent path of the step is correct
-        step.updateFromMovePath(this);
         // Can't move out of a hex with an enemy unit unless we started
         // there, BUT we're allowed to turn, unload, or go prone.
         if (Compute.isEnemyIn(getGame(), getEntity(),
@@ -622,8 +620,6 @@ public class MovePath implements Cloneable, Serializable {
             boolean returned = false;
             while (i.hasMoreElements()) {
                 step = i.nextElement();
-                // Make sure the parent path of the step is correct
-                step.updateFromMovePath(this);
                 if (!left) {
                     if (!step.getPosition().equals(getEntity().getPosition())
                         || !(step.getElevation() == getEntity().getElevation())) {
@@ -885,10 +881,6 @@ public class MovePath implements Cloneable, Serializable {
         }
         if (finPath != null) {
             this.steps = finPath.steps;
-            // Ensure that the parent for each step is correct
-            for (MoveStep step : steps) {
-                step.updateFromMovePath(this);
-            }
         } else {
             System.out.println("Error: " +
             		"Unable to find a path to the destination hex!");

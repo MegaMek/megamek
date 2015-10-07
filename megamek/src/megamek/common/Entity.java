@@ -8118,17 +8118,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void setDeployRound(int deployRound) {
         this.deployRound = deployRound;
         // also set this for any transported units
-        // TODO: currently this doesn't work in the chat lounge, because the
-        // entity updates to the server
-        // dont update the transported units for that entity. We should fix that
-        // but it doesn't seem to matter
-        // if deployment rounds are not the same for transporters.
         for (Transporter transport : getTransports()) {
             for (Entity e : transport.getLoadedUnits()) {
                 e.setDeployRound(deployRound);
             }
         }
 
+        // Entity's that deploy after the start can set their own deploy zone
+        // If the deployRound is being set back to 0, make sure we reset the
+        // starting position (START_NONE implies inheritance from owning player)
+        if (deployRound == 0) {
+            setStartingPos(Board.START_NONE);
+        }
     }
 
     /**
@@ -11694,7 +11695,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getStartingPos() {
-        if (startingPos == Board.START_NONE) {
+        return getStartingPos(true);
+    }
+    
+    public int getStartingPos(boolean inheritFromOwner) {
+        if (inheritFromOwner && startingPos == Board.START_NONE) {
             return owner.getStartingPos();
         }
         return startingPos;

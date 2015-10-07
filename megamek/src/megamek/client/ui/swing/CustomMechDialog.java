@@ -188,10 +188,15 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     private ArrayList<Entity> entityUnitNum = new ArrayList<Entity>();
 
-    private JLabel labDeployment = new JLabel(
+    private JLabel labDeploymentRound = new JLabel(
             Messages.getString("CustomMechDialog.labDeployment"), SwingConstants.RIGHT); //$NON-NLS-1$
 
-    private JComboBox<String> choDeployment = new JComboBox<String>();
+    private JLabel labDeploymentZone = new JLabel(
+            Messages.getString("CustomMechDialog.labDeploymentZone"), SwingConstants.RIGHT); //$NON-NLS-1$
+
+    private JComboBox<String> choDeploymentRound = new JComboBox<String>();
+    
+    private JComboBox<String> choDeploymentZone = new JComboBox<String>();
 
     private JLabel labDeployShutdown = new JLabel(
             Messages.getString("CustomMechDialog.labDeployShutdown"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -516,8 +521,16 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             panDeploy.add(fldStartHeight, GBC.eol());
         }
 
-        panDeploy.add(labDeployment, GBC.std());
-        panDeploy.add(choDeployment, GBC.eol());
+        choDeploymentRound.addItemListener(this);
+        labDeploymentZone.setToolTipText(Messages
+                .getString("CustomMechDialog.deployZoneToolTip")); //$NON-NLS-1$
+        choDeploymentZone.setToolTipText(Messages
+                .getString("CustomMechDialog.deployZoneToolTip")); //$NON-NLS-1$
+
+        panDeploy.add(labDeploymentRound, GBC.std());
+        panDeploy.add(choDeploymentRound, GBC.eol());
+        panDeploy.add(labDeploymentZone, GBC.std());
+        panDeploy.add(choDeploymentZone, GBC.eol());
         if (clientgui.getClient().getGame().getOptions()
                 .booleanOption("begin_shutdown")
                 && !(entity instanceof Infantry)
@@ -626,7 +639,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             fldTough.setEnabled(false);
             fldInit.setEnabled(false);
             fldCommandInit.setEnabled(false);
-            choDeployment.setEnabled(false);
+            choDeploymentRound.setEnabled(false);
             chDeployShutdown.setEnabled(false);
             chDeployProne.setEnabled(false);
             chDeployHullDown.setEnabled(false);
@@ -861,25 +874,62 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     }
 
     private void refreshDeployment() {
-        choDeployment.removeAllItems();
-        choDeployment.addItem(Messages
+        choDeploymentRound.removeItemListener(this);
+        
+        choDeploymentRound.removeAllItems();
+        choDeploymentRound.addItem(Messages
                 .getString("CustomMechDialog.StartOfGame")); //$NON-NLS-1$
 
         if (entity.getDeployRound() < 1) {
-            choDeployment.setSelectedIndex(0);
+            choDeploymentRound.setSelectedIndex(0);
         }
 
         for (int i = 1; i <= 40; i++) {
-            choDeployment.addItem(Messages
+            choDeploymentRound.addItem(Messages
                     .getString("CustomMechDialog.AfterRound") + i); //$NON-NLS-1$
 
             if (entity.getDeployRound() == i) {
-                choDeployment.setSelectedIndex(i);
+                choDeploymentRound.setSelectedIndex(i);
             }
         }
         if (entity.getTransportId() != Entity.NONE) {
-            choDeployment.setEnabled(false);
+            choDeploymentRound.setEnabled(false);
         }
+        
+        choDeploymentZone.removeAllItems();
+        choDeploymentZone.addItem(Messages
+                .getString("CustomMechDialog.useOwners")); //$NON-NLS-1$
+        choDeploymentZone.addItem(Messages
+                .getString("CustomMechDialog.deployAny")); //$NON-NLS-1$
+        choDeploymentZone.addItem(Messages
+                .getString("CustomMechDialog.deployNW")); //$NON-NLS-1$
+        choDeploymentZone.addItem(Messages
+                .getString("CustomMechDialog.deployN")); //$NON-NLS-1$
+        choDeploymentZone.addItem(Messages
+                .getString("CustomMechDialog.deployNE")); //$NON-NLS-1$
+        choDeploymentZone.addItem(Messages
+                .getString("CustomMechDialog.deployE")); //$NON-NLS-1$
+        choDeploymentZone.addItem(Messages
+                .getString("CustomMechDialog.deploySE")); //$NON-NLS-1$
+        choDeploymentZone.addItem(Messages
+                .getString("CustomMechDialog.deployS")); //$NON-NLS-1$
+        choDeploymentZone.addItem(Messages
+                .getString("CustomMechDialog.deploySW")); //$NON-NLS-1$
+        choDeploymentZone.addItem(Messages
+                .getString("CustomMechDialog.deployW")); //$NON-NLS-1$
+        choDeploymentZone.addItem(Messages
+                .getString("CustomMechDialog.deployEdge")); //$NON-NLS-1$
+        choDeploymentZone.addItem(Messages
+                .getString("CustomMechDialog.deployCenter")); //$NON-NLS-1$
+        
+        if (entity.getDeployRound() == 0) {
+            choDeploymentZone.setEnabled(false);
+        } else {
+            choDeploymentZone.setEnabled(true);
+        }
+        choDeploymentZone.setSelectedIndex(entity.getStartingPos(false) + 1);
+        
+        choDeploymentRound.addItemListener(this);
     }
 
     /**
@@ -1110,10 +1160,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 client.sendUpdateEntity(other);
             }
 
-            // Set the entity's deployment round.
+            // Set the entity's deployment position and round.
             // entity.setDeployRound((choDeployment.getSelectedIndex() ==
             // 0?0:choDeployment.getSelectedIndex()+1));
-            entity.setDeployRound(choDeployment.getSelectedIndex());
+            entity.setStartingPos(choDeploymentZone.getSelectedIndex() - 1);
+            entity.setDeployRound(choDeploymentRound.getSelectedIndex());            
 
             // Should the entity begin the game shutdown?
             if (chDeployShutdown.isSelected()
@@ -1224,6 +1275,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         if (itemEvent.getSource().equals(chDeployHullDown)) {
             chDeployProne.setSelected(false);
             return;
+        }
+        if (itemEvent.getSource().equals(choDeploymentRound)) {
+            if (choDeploymentRound.getSelectedIndex() == 0) {
+                choDeploymentZone.setEnabled(false);
+                choDeploymentZone.setSelectedIndex(0);
+            } else {
+                choDeploymentZone.setEnabled(true);
+            }
         }
     }
 

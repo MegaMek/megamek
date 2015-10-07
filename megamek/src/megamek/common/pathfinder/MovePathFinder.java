@@ -166,7 +166,7 @@ public class MovePathFinder<C> extends AbstractPathFinder<MovePathFinder.CoordsW
                     return true;
                 } else {
                     MoveStep lastStep = edge.getLastStep();
-                    return (lastStep == null) || lastStep.getMovementType() != EntityMovementType.MOVE_ILLEGAL;
+                    return (lastStep == null) || lastStep.getMovementType(true) != EntityMovementType.MOVE_ILLEGAL;
                 }
             }
             Coords previousPosition;

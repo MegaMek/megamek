@@ -248,7 +248,7 @@ public class RamAttackAction extends AbstractAttackAction {
         md.compile(game, ae);
         for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
             final MoveStep step = i.nextElement();
-            if (step.getMovementType() == EntityMovementType.MOVE_ILLEGAL) {
+            if (step.getMovementType(md.isEndStep(step)) == EntityMovementType.MOVE_ILLEGAL) {
                 break;
             }
             if (step.getType() == MoveStepType.RAM) {
@@ -265,7 +265,7 @@ public class RamAttackAction extends AbstractAttackAction {
                     "Could not reach target with movement");
         }
         
-        return toHit(game, target, ramSrc, ramEl, priorSrc, ramStep.getMovementType());
+        return toHit(game, target, ramSrc, ramEl, priorSrc, ramStep.getMovementType(true));
     }
 
     /**

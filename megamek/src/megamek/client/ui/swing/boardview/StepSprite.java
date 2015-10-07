@@ -34,11 +34,14 @@ import megamek.common.MovePath.MoveStepType;
 class StepSprite extends Sprite {
 
     private MoveStep step;
+    boolean isLastStep = false;
     private Image baseScaleImage;
     
-    public StepSprite(BoardView1 boardView1, final MoveStep step) {
+    public StepSprite(BoardView1 boardView1, final MoveStep step,
+            boolean isLastStep) {
         super(boardView1);
         this.step = step;
+        this.isLastStep = isLastStep;
 
         // step is the size of the hex that this step is in
         bounds = new Rectangle(bv.getHexLocation(step.getPosition()), bv.hex_size);
@@ -97,7 +100,7 @@ class StepSprite extends Sprite {
         Color col;
         Shape CurrentArrow;
         // set color
-        switch (step.getMovementType()) {
+        switch (step.getMovementType(isLastStep)) {
             case MOVE_RUN:
             case MOVE_VTOL_RUN:
             case MOVE_OVER_THRUST:
@@ -165,7 +168,7 @@ class StepSprite extends Sprite {
                 ((Graphics2D) graph).fill(CurrentArrow);
                 
                 // draw movement cost
-                drawMovementCost(step, stepPos, graph, col, true);
+                drawMovementCost(step, isLastStep, stepPos, graph, col, true);
                 drawRemainingVelocity(step, stepPos, graph, true);
                 break;
             case GO_PRONE:
@@ -186,7 +189,7 @@ class StepSprite extends Sprite {
                 ((Graphics2D) graph).fill(CurrentArrow);
                 
                 offsetCostPos = new Point(stepPos.x + 1, stepPos.y + 15);
-                drawMovementCost(step, offsetCostPos, graph, col, false);
+                drawMovementCost(step, isLastStep, offsetCostPos, graph, col, false);
                 drawRemainingVelocity(step, stepPos, graph, true);
                 break;
             case GET_UP:
@@ -204,7 +207,7 @@ class StepSprite extends Sprite {
                 ((Graphics2D) graph).fill(CurrentArrow);
                 
                 offsetCostPos = new Point(stepPos.x, stepPos.y + 15);
-                drawMovementCost(step, offsetCostPos, graph, col, false);
+                drawMovementCost(step, isLastStep, offsetCostPos, graph, col, false);
                 drawRemainingVelocity(step, stepPos, graph, true);
                 break;
             case CLIMB_MODE_ON:
@@ -265,7 +268,7 @@ class StepSprite extends Sprite {
                 ((Graphics2D) graph).fill(CurrentArrow);
                 
                 if (bv.game.useVectorMove()) {
-                    drawMovementCost(step, stepPos, graph, col, false);
+                    drawMovementCost(step, isLastStep, stepPos, graph, col, false);
                 }
                 break;
             case LOAD:
@@ -388,7 +391,7 @@ class StepSprite extends Sprite {
                 graph.drawString(hover, hoverX, hoverY + 1);
                 graph.setColor(col);
                 graph.drawString(hover, hoverX - 1, hoverY);
-                drawMovementCost(step, stepPos, graph, col, false);
+                drawMovementCost(step, isLastStep, stepPos, graph, col, false);
                 break;
             case LAND:
                 // announce land
@@ -574,8 +577,8 @@ class StepSprite extends Sprite {
         }
     }
 
-    private void drawMovementCost(MoveStep step, Point stepPos,
-            Graphics graph, Color col, boolean shiftFlag) {
+    private void drawMovementCost(MoveStep step, boolean isLastStep,
+            Point stepPos, Graphics graph, Color col, boolean shiftFlag) {
         String costString = null;
         StringBuffer costStringBuf = new StringBuffer();
         costStringBuf.append(step.getMpUsed());
@@ -609,7 +612,7 @@ class StepSprite extends Sprite {
             costStringBuf.append("+]"); //$NON-NLS-1$
         }
 
-        EntityMovementType moveType = step.getMovementType();
+        EntityMovementType moveType = step.getMovementType(isLastStep);
         if ((moveType == EntityMovementType.MOVE_VTOL_WALK)
                 || (moveType == EntityMovementType.MOVE_VTOL_RUN)
                 || (moveType == EntityMovementType.MOVE_SUBMARINE_WALK)

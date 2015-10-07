@@ -306,9 +306,9 @@ public class MovePath implements Cloneable, Serializable {
 
         // jumping into heavy woods is danger
         if (game.getOptions().booleanOption("psr_jump_heavy_woods")) {
-            if (isJumping() && step.isEndPos(this)
-                    && game.getBoard().getHex(step.getPosition())
-                    .containsTerrain(Terrains.WOODS, 2)) {
+            if (game.getBoard().getHex(step.getPosition())
+                    .containsTerrain(Terrains.WOODS, 2)
+                    && isJumping() && step.isEndPos(this)) {
                 step.setDanger(true);
             }
         }
@@ -571,7 +571,7 @@ public class MovePath implements Cloneable, Serializable {
         if (getLastStep() == null) {
             return EntityMovementType.MOVE_NONE;
         }
-        return getLastStep().getMovementType();
+        return getLastStep().getMovementType(true);
     }
 
     public Vector<MoveStep> getStepVector() {
@@ -599,7 +599,7 @@ public class MovePath implements Cloneable, Serializable {
     public void printAllSteps() {
         System.out.println("*Steps*");
         for (int i = 0; i < steps.size(); i++) {
-            System.out.println("  " + i + ": " + getStep(i) + ", " + getStep(i).getMovementType());
+            System.out.println("  " + i + ": " + getStep(i) + ", " + getStep(i).getMovementType(i == (steps.size() - 1)));
         }
     }
 
@@ -659,7 +659,7 @@ public class MovePath implements Cloneable, Serializable {
         i = steps.elements();
         while (i.hasMoreElements()) {
             step = i.nextElement();
-            if (step.getMovementType() != EntityMovementType.MOVE_ILLEGAL) {
+            if (step.getMovementType(isEndStep(step)) != EntityMovementType.MOVE_ILLEGAL) {
                 goodSteps.addElement(step);
             } else {
                 break;
@@ -1353,5 +1353,12 @@ public class MovePath implements Cloneable, Serializable {
     public void replaceSteps(Vector<MoveStep> path) {
         steps.clear();
         addSteps(path, true);
+    }
+    
+    public boolean isEndStep(MoveStep step) {
+        if (step == null) {
+            return false;
+        }
+        return step.isEndPos(this);
     }
 }

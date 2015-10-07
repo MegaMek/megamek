@@ -6237,7 +6237,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         boolean isDark = game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK;
 
         // if we are jumping, then no worries
-        if (step.getMovementType() == EntityMovementType.MOVE_JUMP) {
+        if (moveType == EntityMovementType.MOVE_JUMP) {
             roll.addModifier(TargetRoll.CHECK_FALSE, "jumping is not reckless?");
             return roll;
         }
@@ -6364,7 +6364,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             EntityMovementType moveType) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
         addPilotingModifierForTerrain(roll, step);
-        switch (step.getMovementType()) {
+        switch (moveType) {
             case MOVE_WALK:
             case MOVE_RUN:
             case MOVE_VTOL_WALK:
@@ -6487,7 +6487,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         addPilotingModifierForTerrain(roll, curPos);
 
         if (!lastPos.equals(curPos)
-            && ((step.getMovementType() != EntityMovementType.MOVE_JUMP)
+            && ((moveType != EntityMovementType.MOVE_JUMP)
                 || isLastStep)
             && (curHex.terrainLevel(Terrains.RUBBLE) > 0)
             && (this instanceof Mech)) {
@@ -6518,7 +6518,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 this instanceof LargeSupportTank);
         if ((!lastPos.equals(curPos) || (step.getElevation() != lastElev))
                 && (bgMod != TargetRoll.AUTOMATIC_SUCCESS)
-                && (step.getMovementType() != EntityMovementType.MOVE_JUMP)
+                && (moveType != EntityMovementType.MOVE_JUMP)
                 && (step.getElevation() == 0) && !isPavementStep) {
             roll.append(new PilotingRollData(getId(), bgMod,
                     "avoid bogging down"));
@@ -6543,7 +6543,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             Coords curPos, boolean isPavementStep) {
         if ((curHex.terrainLevel(Terrains.WATER) > 0)
             && (step.getElevation() < 0) && !lastPos.equals(curPos)
-            && (step.getMovementType() != EntityMovementType.MOVE_JUMP)
+            && (moveType != EntityMovementType.MOVE_JUMP)
             && (getMovementMode() != EntityMovementMode.HOVER)
             && (getMovementMode() != EntityMovementMode.VTOL)
             && (getMovementMode() != EntityMovementMode.NAVAL)
@@ -6632,12 +6632,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         if ((this instanceof Infantry)
-            && (step.getMovementType() != EntityMovementType.MOVE_JUMP)) {
+            && (step.getMovementType(false) != EntityMovementType.MOVE_JUMP)) {
             return 0;
         }
 
         if ((this instanceof Protomech) && (prevStep != null)
-            && (prevStep.getMovementType() == EntityMovementType.MOVE_JUMP)) {
+            && (prevStep.getMovementType(false) == EntityMovementType.MOVE_JUMP)) {
             return 0;
         }
 
@@ -6659,7 +6659,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else if (((step.getElevation() == curHex
                 .terrainLevel(Terrains.BLDG_ELEV)) || (step.getElevation() == curHex
                 .terrainLevel(Terrains.BRIDGE_ELEV)))
-                   && (step.getMovementType() != EntityMovementType.MOVE_JUMP)) {
+                   && (step.getMovementType(false) != EntityMovementType.MOVE_JUMP)) {
             rv += 4;
         }
         // check previous hex for building

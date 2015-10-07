@@ -271,9 +271,9 @@ public class TestBot extends BotClient {
         // add an unjam action
         if (min.getLastStep() != null) {
             if (min.getCEntity().entity.canUnjamRAC()) {
-                if ((min.getLastStep().getMovementType() == EntityMovementType.MOVE_WALK)
-                    || (min.getLastStep().getMovementType() == EntityMovementType.MOVE_VTOL_WALK)
-                    || (min.getLastStep().getMovementType() == EntityMovementType.MOVE_NONE)) {
+                if ((min.getLastStep().getMovementType(true) == EntityMovementType.MOVE_WALK)
+                    || (min.getLastStep().getMovementType(true) == EntityMovementType.MOVE_VTOL_WALK)
+                    || (min.getLastStep().getMovementType(true) == EntityMovementType.MOVE_NONE)) {
                     // Cycle through all available weapons, only unjam if the
                     // jam(med)
                     // RACs count for a significant portion of possible damage
@@ -1915,9 +1915,9 @@ public class TestBot extends BotClient {
         // add an unjam action
         if (min.getLastStep() != null) {
             if (min.getCEntity().entity.canUnjamRAC()) {
-                if ((min.getLastStep().getMovementType() == EntityMovementType.MOVE_WALK)
-                    || (min.getLastStep().getMovementType() == EntityMovementType.MOVE_VTOL_WALK)
-                    || (min.getLastStep().getMovementType() == EntityMovementType.MOVE_NONE)) {
+                if ((min.getLastStep().getMovementType(true) == EntityMovementType.MOVE_WALK)
+                    || (min.getLastStep().getMovementType(true) == EntityMovementType.MOVE_VTOL_WALK)
+                    || (min.getLastStep().getMovementType(true) == EntityMovementType.MOVE_NONE)) {
                     // Cycle through all available weapons, only unjam if the
                     // jam(med)
                     // RACs count for a significant portion of possible damage

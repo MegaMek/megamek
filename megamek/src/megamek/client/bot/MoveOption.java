@@ -190,7 +190,7 @@ public class MoveOption extends MovePath {
         super.addStep(step_type);
         MoveStep current = getLastStep();
         // running with gyro or hip hit is dangerous!
-        PilotingRollData rollTarget = getEntity().checkRunningWithDamage(current.getMovementType());
+        PilotingRollData rollTarget = getEntity().checkRunningWithDamage(current.getMovementType(true));
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             getStep(0).setDanger(true);
             current.setDanger(true);
@@ -227,7 +227,7 @@ public class MoveOption extends MovePath {
         }
         int heat = last.getTotalHeat();
         int move = 0;
-        switch (last.getMovementType()) {
+        switch (last.getMovementType(true)) {
         case MOVE_WALK:
         case MOVE_VTOL_WALK:
             move = 1;
@@ -267,7 +267,7 @@ public class MoveOption extends MovePath {
         }
         boolean isClan = getEntity().isClan();
         if ((last == null)
-                || (last.getMovementType() == EntityMovementType.MOVE_ILLEGAL)) {
+                || (last.getMovementType(true) == EntityMovementType.MOVE_ILLEGAL)) {
             return false;
         }
         if ((last.getType() != MoveStepType.FORWARDS)

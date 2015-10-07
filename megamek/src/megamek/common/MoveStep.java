@@ -1355,8 +1355,14 @@ public class MoveStep implements Serializable {
      *
      * @return the <code>int</code> constant for this step's movement type.
      */
-    public EntityMovementType getMovementType() {
-        return movementType;
+    public EntityMovementType getMovementType(boolean isLastStep) {
+        EntityMovementType moveType = movementType;
+        // If this step's position is the end of the path, and it is not
+        // a valid end postion, then the movement type is "illegal".
+        if (isLastStep && !isLegalEndPos()) {
+            moveType = EntityMovementType.MOVE_ILLEGAL;
+        }
+        return moveType;
     }
 
     /**
@@ -1424,6 +1430,14 @@ public class MoveStep implements Serializable {
         return moreUpdates;
     }
     
+    /**
+     * Returns true if a step is considered to be in an end position for the
+     * given MovePath. A step is in an end position if it is the last legal
+     * step, or is an illegal step past the last legal step.
+     * 
+     * @param path
+     * @return
+     */
     public boolean isEndPos(MovePath path) {
         // A step that is illegal is always the end of the path.
         if (EntityMovementType.MOVE_ILLEGAL == movementType) {
@@ -1436,11 +1450,17 @@ public class MoveStep implements Serializable {
         
         // A step is an end position if it is the last legal step.
         Vector<MoveStep> steps = path.getStepVector();
-        for (int i = steps.size() - 1; i > 0; i--) {
+        // Starting from the end, each step is considered the last step until
+        // we find a legal last step
+        boolean lastStep = true;
+        for (int i = steps.size() - 1; i >= 0; i--) {
             MoveStep step = steps.get(i);
             boolean stepMatch = this.equals(step);
+            if (lastStep) {
+                lastStep &= step.getMovementType(true) == EntityMovementType.MOVE_ILLEGAL;
+            }
             // If there is a legal step after us, we're not the end
-            if ((step.movementType != EntityMovementType.MOVE_ILLEGAL) 
+            if ((step.getMovementType(lastStep) != EntityMovementType.MOVE_ILLEGAL)
                     && !stepMatch) {
                 return false;
             // If we found the current step, no need to check the others
@@ -1691,7 +1711,7 @@ public class MoveStep implements Serializable {
      * @param prev
      */
     private void compileIllegal(final IGame game, final Entity entity,
-                                final MoveStep prev) {
+            final MoveStep prev) {
         final MoveStepType stepType = getType();
         final boolean isInfantry = entity instanceof Infantry;
 
@@ -1753,7 +1773,7 @@ public class MoveStep implements Serializable {
             // can't let players do an illegal move and use that to go less than
             // velocity
             if (!isFirstStep()
-                    && (prev.getMovementType() == EntityMovementType.MOVE_ILLEGAL)) {
+                    && (prev.getMovementType(false) == EntityMovementType.MOVE_ILLEGAL)) {
                 return;
             }
 
@@ -1948,7 +1968,7 @@ public class MoveStep implements Serializable {
                 return;
             }
             isTakingCover = true;
-            movementType = prev.getMovementType();
+            movementType = prev.getMovementType(false);
             return;
         }
 
@@ -2284,7 +2304,7 @@ public class MoveStep implements Serializable {
                         }
                     }
                 } else {
-                    movementType = prev.getMovementType();
+                    movementType = prev.getMovementType(false);
                 }
 
                 // Prone Meks are able to unload, if they have the MP.
@@ -2643,8 +2663,8 @@ public class MoveStep implements Serializable {
             }
             // non-flying Infantry and ground vehicles are charged double.
             if ((isInfantry
-                    && !((getMovementType() == EntityMovementType.MOVE_VTOL_WALK)
-                            || (getMovementType() == EntityMovementType.MOVE_VTOL_RUN)))
+                    && !((getMovementType(false) == EntityMovementType.MOVE_VTOL_WALK)
+                            || (getMovementType(false) == EntityMovementType.MOVE_VTOL_RUN)))
                     || ((moveMode == EntityMovementMode.TRACKED)
                             || (moveMode == EntityMovementMode.WHEELED)
                             || (moveMode == EntityMovementMode.HOVER))) {
@@ -2777,7 +2797,7 @@ public class MoveStep implements Serializable {
             // they can only jump onto a building or out of it
             if (src.equals(dest) && (srcAlt != destAlt)
                     && (entity instanceof Protomech)
-                    && (getMovementType() == EntityMovementType.MOVE_JUMP)) {
+                    && (getMovementType(false) == EntityMovementType.MOVE_JUMP)) {
                 // System.err
                 // .println("no jumping inside buildings to change levels");
                 return false;

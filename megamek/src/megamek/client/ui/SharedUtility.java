@@ -97,7 +97,7 @@ public class SharedUtility {
             boolean isPavementStep = step.isPavementStep();
 
             // stop for illegal movement
-            if (step.getMovementType() == EntityMovementType.MOVE_ILLEGAL) {
+            if (step.getMovementType(md.isEndStep(step)) == EntityMovementType.MOVE_ILLEGAL) {
                 break;
             }
 
@@ -116,7 +116,7 @@ public class SharedUtility {
             checkNag(rollTarget, nagReport, psrList);
 
             // set most step parameters
-            moveType = step.getMovementType();
+            moveType = step.getMovementType(md.isEndStep(step));
             distance = step.getDistance();
 
             // set last step parameters
@@ -147,15 +147,15 @@ public class SharedUtility {
             }
 
             //check for leap
-            if(!lastPos.equals(curPos) && (step.getMovementType() != EntityMovementType.MOVE_JUMP)
+            if(!lastPos.equals(curPos) && (moveType != EntityMovementType.MOVE_JUMP)
                     && (entity instanceof Mech) && game.getOptions().booleanOption("tacops_leaping")) {
                 int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getLevel()) - (curElevation + curHex.getLevel());
                 if(leapDistance > 2) {
-                    rollTarget = entity.getBasePilotingRoll(step.getMovementType());
+                    rollTarget = entity.getBasePilotingRoll(moveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
                     rollTarget.append(new PilotingRollData(entity.getId(), 2 * leapDistance, "leaping (leg damage)"));
                     SharedUtility.checkNag(rollTarget, nagReport, psrList);
-                    rollTarget = entity.getBasePilotingRoll(step.getMovementType());
+                    rollTarget = entity.getBasePilotingRoll(moveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
                     rollTarget.append(new PilotingRollData(entity.getId(), leapDistance, "leaping (fall)"));
                     SharedUtility.checkNag(rollTarget, nagReport, psrList);
@@ -223,13 +223,16 @@ public class SharedUtility {
             // normal gravity
             if (!i.hasMoreElements() && !firstStep) {
                 if ((entity instanceof Mech) || (entity instanceof VTOL)) {
-                    if ((step.getMovementType() == EntityMovementType.MOVE_WALK) || (step.getMovementType() == EntityMovementType.MOVE_VTOL_WALK) || (step.getMovementType() == EntityMovementType.MOVE_RUN) || (step.getMovementType() == EntityMovementType.MOVE_VTOL_RUN)) {
+                    if ((moveType == EntityMovementType.MOVE_WALK)
+                            || (moveType == EntityMovementType.MOVE_VTOL_WALK)
+                            || (moveType == EntityMovementType.MOVE_RUN)
+                            || (moveType == EntityMovementType.MOVE_VTOL_RUN)) {
                         //TODO: need to adjust for sprinting, but game options are not passed
                         if (step.getMpUsed() > entity.getRunMP(false, false, false)) {
                             rollTarget = entity.checkMovedTooFast(step, overallMoveType);
                             checkNag(rollTarget, nagReport, psrList);
                         }
-                    } else if (step.getMovementType() == EntityMovementType.MOVE_JUMP) {
+                    } else if (moveType == EntityMovementType.MOVE_JUMP) {
                         if (step.getMpUsed() > entity.getJumpMP(false)) {
                             rollTarget = entity.checkMovedTooFast(step, overallMoveType);
                             checkNag(rollTarget, nagReport, psrList);
@@ -239,14 +242,17 @@ public class SharedUtility {
                             rollTarget.append(new PilotingRollData(entity.getId(), 0, "jumped in high gravity"));
                             SharedUtility.checkNag(rollTarget, nagReport, psrList);
                         }
-                    } else if (step.getMovementType() == EntityMovementType.MOVE_SPRINT) {
+                    } else if (moveType == EntityMovementType.MOVE_SPRINT) {
                         if (step.getMpUsed() > entity.getSprintMP(false, false, false)) {
                             rollTarget = entity.checkMovedTooFast(step, overallMoveType);
                             checkNag(rollTarget, nagReport, psrList);
                         }
                     }
                 } else if (entity instanceof Tank) {
-                    if ((step.getMovementType() == EntityMovementType.MOVE_WALK) || (step.getMovementType() == EntityMovementType.MOVE_VTOL_WALK) || (step.getMovementType() == EntityMovementType.MOVE_RUN) || (step.getMovementType() == EntityMovementType.MOVE_VTOL_RUN)) {
+                    if ((moveType == EntityMovementType.MOVE_WALK)
+                            || (moveType == EntityMovementType.MOVE_VTOL_WALK)
+                            || (moveType == EntityMovementType.MOVE_RUN)
+                            || (moveType == EntityMovementType.MOVE_VTOL_RUN)) {
 
                         // For Tanks, we need to check if the tank had more MPs
                         // because it was moving along a road

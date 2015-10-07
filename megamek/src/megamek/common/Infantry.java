@@ -795,7 +795,7 @@ public class Infantry extends Entity {
         final boolean onBridge = (curHex.terrainLevel(Terrains.BRIDGE) > 0)
                 && (getElevation() == curHex.terrainLevel(Terrains.BRIDGE_ELEV));
         if (!lastPos.equals(curPos) && (bgMod != TargetRoll.AUTOMATIC_SUCCESS)
-                && (step.getMovementType() != EntityMovementType.MOVE_JUMP)
+                && (step.getMovementType(false) != EntityMovementType.MOVE_JUMP)
                 && (getMovementMode() != EntityMovementMode.HOVER)
                 && (getMovementMode() != EntityMovementMode.VTOL)
                 && (getMovementMode() != EntityMovementMode.WIGE)

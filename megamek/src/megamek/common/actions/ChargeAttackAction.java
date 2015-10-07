@@ -418,7 +418,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         md.compile(game, ae);
         for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
             final MoveStep step = i.nextElement();
-            if (step.getMovementType() == EntityMovementType.MOVE_ILLEGAL) {
+            if (step.getMovementType(md.isEndStep(step)) == EntityMovementType.MOVE_ILLEGAL) {
                 break;
             }
             if (step.getType() == MoveStepType.CHARGE) {
@@ -462,7 +462,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
                 target,
                 chargeSrc,
                 chargeEl,
-                chargeStep.getMovementType(),
+                chargeStep.getMovementType(true),
                 false,
                 md.contains(MoveStepType.GET_UP)
                 || md.contains(MoveStepType.CAREFUL_STAND));

@@ -1347,7 +1347,7 @@ public class MoveStep implements Serializable {
         // A step is legal if it's static movement type is not illegal,
         // and it is either a valid end position, or not an end position.
         return ((movementType != EntityMovementType.MOVE_ILLEGAL)
-                && (!isEndPos(path) || isLegalEndPos()));
+                && (isLegalEndPos() || !isEndPos(path)));
     }
 
     /**

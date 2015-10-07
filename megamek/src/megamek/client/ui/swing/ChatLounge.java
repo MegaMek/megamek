@@ -1592,11 +1592,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
 
         if (entity.isOffBoard()) {
-            value += " (" + Messages.getString("ChatLounge.deploysOffBoard") + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+            value += " (" + Messages.getString("ChatLounge.deploysOffBoard") + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         } else if (entity.getDeployRound() > 0) {
-            value += " (" + Messages.getString("ChatLounge.deploysAfterRound")
-                    + entity.getDeployRound() + ")";
-            //$NON-NLS-1$ //$NON-NLS-2$
+            value += " (" + Messages.getString("ChatLounge.deploysAfterRound") //$NON-NLS-1$ //$NON-NLS-2$
+                    + entity.getDeployRound();
+            if (entity.getStartingPos(false) != Board.START_NONE) {
+                value += Messages.getString("ChatLounge.deploysAfterZone") //$NON-NLS-1$
+                        + IStartingPositions.START_LOCATION_NAMES[entity
+                                .getStartingPos(false)];
+            }
+             //$NON-NLS-2$
+            value += ")"; //$NON-NLS-1$
         }
         return value;
     }
@@ -1691,7 +1697,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             value += Messages.getString("ChatLounge.deploysOffBoard"); //$NON-NLS-1$ //$NON-NLS-2$
         } else if (entity.getDeployRound() > 0) {
             value += Messages.getString("ChatLounge.deploysAfterRound") + entity.getDeployRound(); //$NON-NLS-1$
-            //$NON-NLS-2$
+            if (entity.getStartingPos(false) != Board.START_NONE) {
+                value += Messages.getString("ChatLounge.deploysAfterZone") //$NON-NLS-1$
+                        + IStartingPositions.START_LOCATION_NAMES[entity
+                                .getStartingPos(false)];
+            }
         }
         if (!entity.isDesignValid()) {
             value += Messages.getString("ChatLounge.invalidDesign");
@@ -2110,6 +2120,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if (editable && cmd.isOkay()) {
             // send changes
             c.sendUpdateEntity(entity);
+
+            // Changing state to a transporting unit can update state of 
+            // transported units, so update those as well
+            for (Transporter transport : entity.getTransports()) {
+                for (Entity loaded : transport.getLoadedUnits()) {
+                    c.sendUpdateEntity(loaded);
+                }
+            }
 
             // Customizations to a Squadron can effect the fighters
             if (entity instanceof FighterSquadron) {

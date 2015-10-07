@@ -674,6 +674,8 @@ public class EntityListFile {
             output.write(String.valueOf(entity.isCommander()));
             output.write("\" deployment=\"");
             output.write(String.valueOf(entity.getDeployRound()));
+            output.write("\" deploymentZone=\"");
+            output.write(String.valueOf(entity.getStartingPos()));
             output.write("\" neverDeployed=\"");
             output.write(String.valueOf(entity.wasNeverDeployed()));
             if (entity instanceof Aero){

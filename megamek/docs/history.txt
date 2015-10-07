@@ -15,6 +15,7 @@ v0.41.10 (git)
 + Bug: Movement Envelop and Firing Arcs sometimes remain between phases/turns
 + Bug [#4234]: Added Mine Clearance missile munitions
 + Bug [#4219]: Issues with stacking violations and MovePaths
++ Bug [#4507]: Units can now set deployment zone if deploying after round 1
 
 
 v0.41.9 (2014-09-14 01:25 UTC)

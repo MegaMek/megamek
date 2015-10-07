@@ -98,6 +98,7 @@ public class MULParser {
     private static final String DRIVER = "driver";
     private static final String COMMANDER = "commander";
     private static final String DEPLOYMENT = "deployment";
+    private static final String DEPLOYMENT_ZONE = "deploymentZone";
     private static final String NEVER_DEPLOYED = "neverDeployed";
     private static final String VELOCITY = "velocity";
     private static final String ALTITUDE = "altitude";
@@ -521,6 +522,17 @@ public class MULParser {
         } catch (Exception e) {
             entity.setDeployRound(0);
         }
+        
+     // deployment round
+        try {
+            int deployZone = 
+                    Integer.parseInt(entityTag.getAttribute(DEPLOYMENT_ZONE));
+            entity.setStartingPos(deployZone);
+        } catch (Exception e) {
+            entity.setDeployRound(Board.START_NONE);
+        }
+        
+        
         
         // Was never deployed
         try {

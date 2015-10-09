@@ -421,6 +421,8 @@ public class MiscType extends EquipmentType {
             .valueOf(1).shiftLeft(191);
     public static final BigInteger F_RISC_LASER_PULSE_MODULE = BigInteger
             .valueOf(1).shiftLeft(192);
+    public static final BigInteger F_REMOTE_DRONE_COMMAND_CONSOLE = BigInteger
+            .valueOf(1).shiftLeft(193);
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1727,8 +1729,9 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createRISCViralJammerHoming());
         EquipmentType.addType(MiscType.createDroneControlConsole());
         EquipmentType.addType(MiscType.createRISCLaserPulseModule());
+        EquipmentType.addType(MiscType.createISRemoteDroneCommandConsole());
 
-        //Infantry Equipment Packs        
+        //Infantry Equipment Packs
 //        EquipmentType.addType(MiscType.createAblativeStandardInfArmor());
 //        EquipmentType.addType(MiscType.createAblativeConcealedInfArmor());
 //        EquipmentType.addType(MiscType.createAblativeFlakStandardArmorInfArmor());
@@ -9305,6 +9308,21 @@ public class MiscType extends EquipmentType {
         misc.introDate = 2000;
         misc.techLevel.put(2000, misc.techLevel.get(3071));
         misc.techRating = RATING_C;
+        return misc;
+    }
+
+    public static MiscType createISRemoteDroneCommandConsole() {
+        MiscType misc = new MiscType();
+        misc.techLevel.put(3140, TechConstants.T_IS_ADVANCED);
+        misc.name = "Remote Drone Command Console";
+        misc.setInternalName("ISRemoteDroneCommandConsole");
+        misc.tonnage = 2;
+        misc.criticals = 1;
+        misc.cost = 50000;
+        misc.flags = misc.flags.or(F_MECH_EQUIPMENT).or(F_AERO_EQUIPMENT).or(F_REMOTE_DRONE_COMMAND_CONSOLE);
+        misc.introDate = 3140;
+        misc.techRating = RATING_E;
+        misc.availRating = new int[] {RATING_X,RATING_X,RATING_X,RATING_F};
         return misc;
     }
 

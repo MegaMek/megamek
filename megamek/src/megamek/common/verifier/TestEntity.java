@@ -207,9 +207,9 @@ public abstract class TestEntity implements TestEntityOption {
 
     /**
      * Used to round values up based on the specified type.
-     * 
+     *
      * @param f     Value to round
-     * @param type  Specifies the number of decimals to round to, see 
+     * @param type  Specifies the number of decimals to round to, see
      *              TestEntity.CEIL_TON, etc.
      * @return      Rounded value
      */
@@ -223,13 +223,13 @@ public abstract class TestEntity implements TestEntityOption {
         }
         return TestEntity.ceil(f, type);
     }
-    
+
     public static float floor(float f, float type) {
         return (float) Math.floor(f * type) / type;
     }
-    
+
     public static float round(float f, float type) {
-        return (float) Math.round(f * type) / type;
+        return Math.round(f * type) / type;
     }
 
     protected static String makeWeightString(float weight) {
@@ -465,7 +465,7 @@ public abstract class TestEntity implements TestEntityOption {
             }
 
             // Bombs on ASF don't count!
-            if (getEntity() instanceof Aero && m.getType() instanceof BombType) {
+            if ((getEntity() instanceof Aero) && (m.getType() instanceof BombType)) {
                 continue;
             }
 
@@ -850,7 +850,7 @@ public abstract class TestEntity implements TestEntityOption {
                 if (m.getType().hasFlag(MiscType.F_HARJEL)
                         && ((m.getLocation() == Tank.LOC_BODY)
                                 || ((getEntity() instanceof VTOL)
-                                    && m.getLocation() == VTOL.LOC_ROTOR))) {
+                                    && (m.getLocation() == VTOL.LOC_ROTOR)))) {
                     illegal = true;
                     buff.append("Unable to load harjel in body or rotor.\n");
                 }
@@ -1033,6 +1033,22 @@ public abstract class TestEntity implements TestEntityOption {
                         }
                     }
                 }
+                if (m.getType().hasFlag(MiscType.F_REMOTE_DRONE_COMMAND_CONSOLE)) {
+                    if (mech.getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE) {
+                        buff.append("cockpit command console can't be combined with remote drone command console");
+                        illegal = true;
+                    }
+                    if ((mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) && (m.getLocation() != Mech.LOC_CT)) {
+                        buff.append("remote drone command console must be placed in same location as cockpit");
+                        illegal = true;
+                    } else {
+                        if (m.getLocation() != Mech.LOC_HEAD) {
+                            buff.append("remote drone command console must be placed in same location as cockpit");
+                            illegal = true;
+                        }
+                    }
+
+                }
             }
 
             if (mech.hasNullSig()) {
@@ -1076,6 +1092,10 @@ public abstract class TestEntity implements TestEntityOption {
                 illegal = true;
             }
             if (mech.isIndustrial()) {
+                if (mech.hasMisc(MiscType.F_SCM)) {
+                    buff.append("industrial mech can't mount normal SCM\n");
+                    illegal = true;
+                }
                 if (mech.hasTSM()) {
                     buff.append("industrial mech can't mount normal TSM\n");
                     illegal = true;
@@ -1128,6 +1148,14 @@ public abstract class TestEntity implements TestEntityOption {
                     buff.append("standard mech can't mount environmental sealing\n");
                     illegal = true;
                 }
+            }
+            if (mech.hasMASC() && mech.hasMisc(MiscType.F_SCM)) {
+                buff.append("can't combine SCM and MASC\n");
+                illegal = true;
+            }
+            if (mech.hasTSM() && mech.hasMisc(MiscType.F_SCM)) {
+                buff.append("can't combine SCM and TSM\n");
+                illegal = true;
             }
             if (mech.isPrimitive()) {
                 if (mech.isOmni()) {
@@ -1189,10 +1217,10 @@ public abstract class TestEntity implements TestEntityOption {
                 if (((mounted.getType().hasFlag(MiscType.F_HARJEL))
                         || mounted.getType().hasFlag(MiscType.F_HARJEL_II)
                         || mounted.getType().hasFlag(MiscType.F_HARJEL_III))
-                        && ((mounted.getLocation() == Mech.LOC_CT && mech
-                            .getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
-                            || (mounted.getLocation() == Mech.LOC_HEAD && mech
-                            .getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED))) {
+                        && (((mounted.getLocation() == Mech.LOC_CT) && (mech
+                            .getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED))
+                            || ((mounted.getLocation() == Mech.LOC_HEAD) && (mech
+                            .getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED)))) {
                     illegal = true;
                     buff.append("Harjel can't be mounted in a location with a "
                             + "cockpit!");
@@ -1416,7 +1444,7 @@ class Structure {
 
     public Structure() {
     }
-    
+
     public Structure(int structureType, boolean superHeavy,
             EntityMovementMode movementMode) {
         this.structureType = structureType;

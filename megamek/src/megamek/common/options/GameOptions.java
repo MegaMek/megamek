@@ -31,6 +31,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.CommonConstants;
+import megamek.common.TechConstants;
 
 /**
  * Contains the options determining play in the current game.
@@ -73,7 +74,6 @@ public class GameOptions extends AbstractOptions {
         addOption(base, "flamer_heat", true); //$NON-NLS-1$
         addOption(base, "indirect_fire", true); //$NON-NLS-1$
         addOption(base, "breeze", false); //$NON-NLS-1$
-        addOption(base, "year", 3145); //$NON-NLS-1$
         addOption(base, "random_basements", true); //$NON-NLS-1$
         addOption(base, "auto_ams", true); //$NON-NLS-1$
 
@@ -93,11 +93,9 @@ public class GameOptions extends AbstractOptions {
 
         IBasicOptionGroup allowed = addGroup("allowedUnits"); //$NON-NLS-1$
         addOption(allowed, "canon_only", false); //$NON-NLS-1$
-        addOption(allowed, "allow_advanced_units", false);
+        addOption(allowed, "year", 3145); //$NON-NLS-1$
+        addOption(allowed, "techlevel", IOption.CHOICE, TechConstants.T_SIMPLE_NAMES[TechConstants.T_SIMPLE_STANDARD]); //$NON-NLS-1$
         addOption(allowed, "allow_illegal_units", false); //$NON-NLS-1$
-        addOption(allowed, "allow_advanced_ammo", false); //$NON-NLS-1$
-        addOption(allowed, "allow_experimental_ammo", false); //$NON-NLS-1$
-        addOption(allowed, "is_eq_limits", true); //$NON-NLS-1$
         addOption(allowed, "clan_ignore_eq_limits", false); //$NON-NLS-1$
         addOption(allowed, "no_clan_physical", false); //$NON-NLS-1$
         addOption(allowed, "allow_nukes", false); //$NON-NLS-1$

@@ -80,8 +80,6 @@ WindowListener, TreeSelectionListener {
 
     private MechSearchFilter searchFilter;
 
-    private boolean includeMaxTech;
-
     private JLabel m_labelPlayer = new JLabel(Messages
             .getString("RandomArmyDialog.Player"), SwingConstants.RIGHT); //$NON-NLS-1$
 
@@ -181,7 +179,7 @@ WindowListener, TreeSelectionListener {
         m_chkPad.setSelected(guip.getRATPadBV());
         m_chkCanon.setSelected(m_client.getGame().getOptions().booleanOption(
         "canon_only"));
-        updateTechChoice(true);
+        updateTechChoice();
 
         // construct the buttons panel
         m_pButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
@@ -585,17 +583,32 @@ WindowListener, TreeSelectionListener {
         }
     }
 
-    private void updateTechChoice(boolean force) {
-        boolean maxTechOption = m_client.getGame().getOptions().booleanOption(
-        "allow_advanced_units");
-        int maxTech = (maxTechOption ? TechConstants.SIZE
-                : TechConstants.SIZE_LEVEL_2);
-        if ((includeMaxTech == maxTechOption) && !force) {
-            return;
+    private void updateTechChoice() {
+        int gameTL = TechConstants.getSimpleLevel(m_client.getGame()
+                .getOptions().stringOption("techlevel"));
+        int maxTech = 0;
+        switch (gameTL) {
+            case TechConstants.T_SIMPLE_INTRO:
+                maxTech = TechConstants.T_INTRO_BOXSET;
+                break;
+            case TechConstants.T_SIMPLE_STANDARD:
+                maxTech = TechConstants.T_TW_ALL;
+                break;
+            case TechConstants.T_SIMPLE_ADVANCED:
+                maxTech = TechConstants.T_CLAN_ADVANCED;
+                break;
+            case TechConstants.T_SIMPLE_EXPERIMENTAL:
+                maxTech = TechConstants.T_ALL;
+                break;
+            case TechConstants.T_SIMPLE_UNOFFICIAL:
+                maxTech = TechConstants.T_ALL;
+                break;
+            default:
+                maxTech = TechConstants.T_TW_ALL;
         }
-        includeMaxTech = maxTechOption;
+
         m_chType.removeAllItems();
-        for (int i = 0; i < maxTech; i++) {
+        for (int i = 0; i <= maxTech; i++) {
             m_chType.addItem(TechConstants.getLevelDisplayableName(i));
         }
         int savedSelection = GUIPreferences.getInstance().getRATTechLevel();
@@ -671,7 +684,7 @@ WindowListener, TreeSelectionListener {
     public void setVisible(boolean show) {
         if (show) {
             updatePlayerChoice();
-            updateTechChoice(false);
+            updateTechChoice();
             updateRATs();
         }
         super.setVisible(show);

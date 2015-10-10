@@ -65,6 +65,11 @@ public class DialogOptionComponent extends JPanel implements
 
     public DialogOptionComponent(DialogOptionListener parent, IOption option,
             boolean editable) {
+        this(parent, option, editable, false);
+    }
+
+    public DialogOptionComponent(DialogOptionListener parent, IOption option,
+            boolean editable, boolean choiceLabelFirst) {
         dialogOptionListener = parent;
         this.option = option;
 
@@ -112,11 +117,19 @@ public class DialogOptionComponent extends JPanel implements
                     choice.setEnabled(false);
                 }
 
-                gbc.gridx = gbc.gridy = 0;
-                add(label, gbc);
-                gbc.gridx++;
-                gbc.weightx = 1.0;
-                add(choice, gbc);
+                if (choiceLabelFirst) {
+                    gbc.gridx = gbc.gridy = 0;
+                    add(choice, gbc);
+                    gbc.gridx++;
+                    gbc.weightx = 1.0;
+                    add(label, gbc);
+                } else {
+                    gbc.gridx = gbc.gridy = 0;
+                    add(label, gbc);
+                    gbc.gridx++;
+                    gbc.weightx = 1.0;
+                    add(choice, gbc);
+                }
                 break;
             default:
                 textField = new JTextField(option.stringValue(), option

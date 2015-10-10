@@ -85,18 +85,17 @@ public class EntityVerifier implements MechSummaryCache.Listener {
     }
 
     public boolean checkEntity(Entity entity, String fileString, boolean verbose) {
-        return checkEntity(entity, fileString, verbose, false);
+        return checkEntity(entity, fileString, verbose, entity.getTechLevel());
     }
 
     public boolean checkEntity(Entity entity, String fileString,
-            boolean verbose, boolean ignoreAmmo) {
-        return checkEntity(entity, fileString, verbose, ignoreAmmo, false);
+            boolean verbose, int ammoTechLvl) {
+        return checkEntity(entity, fileString, verbose, ammoTechLvl, false);
     }
     
     public boolean checkEntity(Entity entity, String fileString,
-            boolean verbose, boolean ignoreAmmo, boolean failsOnly) {
+            boolean verbose, int ammoTechLvl, boolean failsOnly) {
         boolean retVal = false;
-
         TestEntity testEntity = null;
         if (entity instanceof Mech) {
             testEntity = new TestMech((Mech) entity, mechOption, fileString);
@@ -131,7 +130,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
 
         if (verbose) {
             StringBuffer buff = new StringBuffer();
-            boolean valid = testEntity.correctEntity(buff, ignoreAmmo);
+            boolean valid = testEntity.correctEntity(buff, ammoTechLvl);
             if (!valid || !failsOnly){
                 if (valid) {
                     System.out.println("---Entity is valid---");
@@ -144,7 +143,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
             }
         } else {
             StringBuffer buff = new StringBuffer();
-            if (testEntity.correctEntity(buff, ignoreAmmo)) {
+            if (testEntity.correctEntity(buff, ammoTechLvl)) {
                 retVal = true;
             } else {
                 System.out.println(testEntity.getName());
@@ -196,7 +195,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                     continue;
                 }
                 if (!checkEntity(entity, ms[i].getSourceFile().toString(),
-                        loadingVerbosity,false,failsOnly)) {
+                        loadingVerbosity,entity.getTechLevel(),failsOnly)) {
                     failures++;
                 }
             }

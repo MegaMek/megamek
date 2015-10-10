@@ -481,7 +481,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                 maxTech = TechConstants.T_CLAN_ADVANCED;
                 break;
             case TechConstants.T_SIMPLE_EXPERIMENTAL:
-                maxTech = TechConstants.T_ALL;
+                maxTech = TechConstants.T_CLAN_EXPERIMENTAL;
                 break;
             case TechConstants.T_SIMPLE_UNOFFICIAL:
                 maxTech = TechConstants.T_ALL;

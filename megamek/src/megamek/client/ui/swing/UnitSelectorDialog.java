@@ -467,8 +467,14 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
     private void  updateTypeCombo() {
         comboType.removeActionListener(this);
         int selectedIndex = comboType.getSelectedIndex();
-        int gameTL = TechConstants.getSimpleLevel(client.getGame().getOptions()
-                .stringOption("techlevel"));
+        int gameTL;
+        if (client != null) {
+            gameTL = TechConstants.getSimpleLevel(client.getGame().getOptions()
+                    .stringOption("techlevel"));
+        } else {
+            gameTL = TechConstants.T_SIMPLE_UNOFFICIAL;
+        }
+
         int maxTech = 0;
         switch (gameTL) {
             case TechConstants.T_SIMPLE_INTRO:

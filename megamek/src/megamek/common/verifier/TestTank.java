@@ -261,11 +261,11 @@ public class TestTank extends TestEntity {
 
     @Override
     public boolean correctEntity(StringBuffer buff) {
-        return correctEntity(buff, true);
+        return correctEntity(buff, getEntity().getTechLevel());
     }
 
     @Override
-    public boolean correctEntity(StringBuffer buff, boolean ignoreAmmo) {
+    public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
         boolean correct = true;
         if (skip()) {
             return true;
@@ -341,7 +341,7 @@ public class TestTank extends TestEntity {
         if (showFailedEquip() && hasFailedEquipment(buff)) {
             correct = false;
         }
-        if (hasIllegalTechLevels(buff, ignoreAmmo)) {
+        if (hasIllegalTechLevels(buff, ammoTechLvl)) {
             correct = false;
         }
         if (hasIllegalEquipmentCombinations(buff)) {

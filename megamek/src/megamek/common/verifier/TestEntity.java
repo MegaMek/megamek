@@ -85,7 +85,7 @@ public abstract class TestEntity implements TestEntityOption {
 
     public abstract boolean correctEntity(StringBuffer buff);
 
-    public abstract boolean correctEntity(StringBuffer buff, boolean ignoreAmmo);
+    public abstract boolean correctEntity(StringBuffer buff, int ammoTechLvl);
 
     public abstract StringBuffer printEntity();
 
@@ -704,19 +704,21 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public boolean hasIllegalTechLevels(StringBuffer buff) {
-        return hasIllegalTechLevels(buff, true);
+        return hasIllegalTechLevels(buff, getEntity().getTechLevel());
     }
 
-    public boolean hasIllegalTechLevels(StringBuffer buff, boolean ignoreAmmo) {
+    public boolean hasIllegalTechLevels(StringBuffer buff, int ammoTechLvl) {
         boolean retVal = false;
         int eTechLevel = getEntity().getTechLevel();
         for (Mounted mounted : getEntity().getEquipment()) {
             EquipmentType nextE = mounted.getType();
-            if ((ignoreAmmo) && (nextE instanceof AmmoType)) {
+            int eqTechLvl = nextE.getTechLevel(getEntity().getTechLevelYear());
+            boolean mixedTech = getEntity().isMixedTech();
+            if (nextE instanceof AmmoType) {
+                if (!TechConstants.isLegal(ammoTechLvl, eqTechLvl, mixedTech))
                 continue;
-            } else if (!(TechConstants.isLegal(eTechLevel,
-                    nextE.getTechLevel(getEntity().getTechLevelYear()), true,
-                    getEntity().isMixedTech()))) {
+            } else if (!(TechConstants.isLegal(eTechLevel, eqTechLvl, true,
+                    mixedTech))) {
                 if (!retVal) {
                     buff.append("Equipment illegal at unit's tech level:\n");
                 }

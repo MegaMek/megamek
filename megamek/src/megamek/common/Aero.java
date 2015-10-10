@@ -3385,6 +3385,8 @@ public class Aero extends Entity {
     // produce bombs
     public void applyBombs() {
         int loc = LOC_NOSE;
+        int gameTL = TechConstants.getSimpleLevel(game.getOptions()
+                .stringOption("techlevel"));
         for (int type = 0; type < BombType.B_NUM; type++) {
             for (int i = 0; i < bombChoices[type]; i++) {
                 if ((type == BombType.B_ALAMO)
@@ -3392,8 +3394,7 @@ public class Aero extends Entity {
                     continue;
                 }
                 if ((type > BombType.B_TAG)
-                        && !game.getOptions().booleanOption(
-                                "allow_advanced_ammo")) {
+                        && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
                     continue;
                 }
 

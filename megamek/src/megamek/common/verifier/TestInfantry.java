@@ -108,7 +108,7 @@ public class TestInfantry extends TestEntity {
 	}
 
 	@Override
-	public boolean correctEntity(StringBuffer buff, boolean ignoreAmmo) {
+	public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
 		return false;
 	}
 

@@ -25,6 +25,7 @@ v0.41.10 (git)
 + Bug [#4632]: Move-multi options can cause "No units to move" after skids
 + Bug [#3900]: trailers should have control systems optional
 + Bug [#4149]: Issues with Superheavies and water partial cover
++ Bug [#4566]: Vibrabomb Report Problems
 
 
 v0.41.9 (2014-09-14 01:25 UTC)

@@ -677,6 +677,19 @@ public class BLKFile {
         if (t.getUseManualBV()) {
             blk.writeBlockData("bv", t.getManualBV());
         }
+
+        if ((t instanceof Tank) && t.isOmni()) {
+            Tank tank = (Tank) t;
+            if (tank.getBaseChassisTurretWeight() >= 0) {
+                blk.writeBlockData("baseChassisTurretWeight",
+                        tank.getBaseChassisTurretWeight());
+            }
+            if (tank.getBaseChassisTurret2Weight() >= 0) {
+                blk.writeBlockData("baseChassisTurret2Weight",
+                        tank.getBaseChassisTurret2Weight());
+            }
+        }
+
         return blk;
     }
 

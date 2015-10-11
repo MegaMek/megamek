@@ -226,6 +226,16 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         }
         t.setArmorTonnage(t.getArmorWeight());
 
+        if (dataFile.exists("baseChassisTurretWeight")) {
+            t.setBaseChassisTurretWeight(dataFile
+                    .getDataAsFloat("baseChassisTurretWeight")[0]);
+        }
+
+        if (dataFile.exists("baseChassisTurret2Weight")) {
+            t.setBaseChassisTurret2Weight(dataFile
+                    .getDataAsFloat("baseChassisTurret2Weight")[0]);
+        }
+
         return t;
     }
 }

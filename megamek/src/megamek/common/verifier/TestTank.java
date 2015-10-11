@@ -110,16 +110,22 @@ public class TestTank extends TestEntity {
 
     public float getTankWeightTurret() {
         float weight = 0f;
-        
-        for (Mounted m : tank.getEquipment()) {
-            if ((m.getLocation() == tank.getLocTurret()) 
-                    && !(m.getType() instanceof AmmoType)) {
-                weight += m.getType().getTonnage(tank);
+
+        // For omni vees, the base chassis sets a turret weight
+        if (tank.isOmni() && tank.getBaseChassisTurretWeight() >= 0) {
+            weight = tank.getBaseChassisTurretWeight();
+        } else {
+            // For non-omnis, count up the weight of eq in the turret
+            for (Mounted m : tank.getEquipment()) {
+                if ((m.getLocation() == tank.getLocTurret())
+                        && !(m.getType() instanceof AmmoType)) {
+                    weight += m.getType().getTonnage(tank);
+                }
             }
+            // Turrets weight 10% of the weight of weapons in them
+            weight = weight / 10.0f;
         }
-        
-        // Turrets weight 10% of the weight of weapons in them
-        weight = weight / 10.0f;
+
         if (tank.isSupportVehicle()) {
             if (getEntity().getWeight() < 5) {
                 return TestEntity.ceil(weight, CEIL_KILO);
@@ -133,13 +139,22 @@ public class TestTank extends TestEntity {
 
     public float getTankWeightDualTurret() {
         float weight = 0f;
-        for (Mounted m : tank.getEquipment()) {
-            if ((m.getLocation() == tank.getLocTurret2()) 
-                    && !(m.getType() instanceof AmmoType)) {
-                weight += m.getType().getTonnage(tank);
+
+        // For omni vees, the base chassis sets a turret weight
+        if (tank.isOmni() && tank.getBaseChassisTurret2Weight() >= 0) {
+            weight = tank.getBaseChassisTurret2Weight();
+        } else {
+            // For non-omnis, count up the weight of eq in the turret
+            for (Mounted m : tank.getEquipment()) {
+                if ((m.getLocation() == tank.getLocTurret2())
+                        && !(m.getType() instanceof AmmoType)) {
+                    weight += m.getType().getTonnage(tank);
+                }
             }
+            // Turrets weight 10% of the weight of weapons in them
+            weight = weight / 10.0f;
         }
-        return TestEntity.ceilMaxHalf(weight / 10.0f, getWeightCeilingTurret());
+        return TestEntity.ceilMaxHalf(weight, getWeightCeilingTurret());
     }
 
     public float getTankWeightLifting() {

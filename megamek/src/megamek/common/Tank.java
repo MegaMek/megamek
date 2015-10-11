@@ -139,6 +139,12 @@ public class Tank extends Entity {
     private boolean commanderHitPS = false;
     private boolean crewHitPS = false;
 
+    /**
+     * Keeps track of the base weight of the turret for omni tanks.
+     */
+    private float baseChassisTurretWeight = -1;
+    private float baseChassisTurret2Weight = -1;
+
     public int getPotCrit() {
         return potCrit;
     }
@@ -3652,5 +3658,21 @@ public class Tank extends Entity {
         return game.getOptions().booleanOption("vehicles_can_eject")
                 && getCrew().isActive()
                 && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
+    }
+
+    public float getBaseChassisTurretWeight() {
+        return baseChassisTurretWeight;
+    }
+
+    public void setBaseChassisTurretWeight(float baseChassisTurretWeight) {
+        this.baseChassisTurretWeight = baseChassisTurretWeight;
+    }
+
+    public float getBaseChassisTurret2Weight() {
+        return baseChassisTurret2Weight;
+    }
+
+    public void setBaseChassisTurret2Weight(float baseChassisTurret2Weight) {
+        this.baseChassisTurret2Weight = baseChassisTurret2Weight;
     }
 }

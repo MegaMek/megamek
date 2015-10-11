@@ -370,44 +370,45 @@ public class GameOptions extends AbstractOptions {
 
                 if (null != tempOption) {
                     if (!tempOption.getValue().toString()
-                                   .equals(value.toString())) {
+                            .equals(value.toString())) {
                         try {
                             switch (tempOption.getType()) {
                                 case IOption.STRING:
+                                case IOption.CHOICE:
                                     tempOption.setValue((String) value);
                                     break;
 
                                 case IOption.BOOLEAN:
                                     tempOption.setValue(new Boolean(value
-                                                                            .toString()));
+                                            .toString()));
                                     break;
 
                                 case IOption.INTEGER:
                                     tempOption.setValue(new Integer(value
-                                                                            .toString()));
+                                            .toString()));
                                     break;
 
                                 case IOption.FLOAT:
                                     tempOption.setValue(new Float(value
-                                                                          .toString()));
+                                            .toString()));
                                     break;
                             }
                             if (print) {
                                 System.out.println("Set option '" + name //$NON-NLS-1$
-                                                   + "' to '" + value + "'."); //$NON-NLS-1$ //$NON-NLS-2$
+                                        + "' to '" + value + "'."); //$NON-NLS-1$ //$NON-NLS-2$
                             }
 
                             option = tempOption;
                         } catch (IllegalArgumentException iaEx) {
-                            System.out
-                                    .println("Error trying to load option '" + name + "' with a value of '" + value +
-                                             "'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                            System.out.println("Error trying to load option '"
+                                    + name + "' with a value of '" + value
+                                    + "'."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                         }
                     }
                 } else {
-                    System.out
-                            .println("Invalid option '" + name + "' when trying to load options file.");
-                            //$NON-NLS-1$ //$NON-NLS-2$
+                    System.out.println("Invalid option '" + name
+                            + "' when trying to load options file.");
+                    //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
         }

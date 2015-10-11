@@ -138,7 +138,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private JButton butOptions;
     private JLabel lblMapSummary;
     private JLabel lblGameYear;
-    private JLabel lblTechLevel;
 
     private JTabbedPane panTabs;
     private JPanel panMain;
@@ -253,10 +252,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         lblGameYear.setToolTipText(Messages
                 .getString("ChatLounge.GameYearLabelToolTip"));
 
-        lblTechLevel = new JLabel("");
-        lblTechLevel.setToolTipText(Messages
-                .getString("ChatLounge.TechLevelLabelToolTip"));
-
         butCompact = new JToggleButton(
                 Messages.getString("ChatLounge.butCompact")); //$NON-NLS-1$
         butCompact.addActionListener(this);
@@ -291,7 +286,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         refreshMapSummaryLabel();
         refreshGameYearLabel();
-        refreshTechLevelLabel();
 
         if (GUIPreferences.getInstance().getChatLoungeTabs()) {
             add(panTabs, BorderLayout.CENTER);
@@ -621,11 +615,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.fill = GridBagConstraints.NONE;
         c.insets = new Insets(0, 0, 0, 20);
         panel1.add(lblGameYear, c);
-        c.gridx = 2;
-        panel1.add(lblTechLevel, c);
         c.insets = new Insets(0, 0, 0, 0);
         c.fill = GridBagConstraints.VERTICAL;
-        c.gridx = 3;
+        c.gridx = 2;
         c.gridy = 0;
         c.weightx = 0;
         c.weighty = 0.0;
@@ -2637,7 +2629,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         refreshBoardsAvailable();
         refreshMapSummaryLabel();
         refreshGameYearLabel();
-        refreshTechLevelLabel();
     }
 
     public void refreshMapSummaryLabel() {
@@ -2676,15 +2667,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 + clientgui.getClient().getGame().getOptions()
                         .intOption("year"); //$NON-NLS-1$
         lblGameYear.setText(txt);
-    }
-
-    public void refreshTechLevelLabel() {
-        String txt = Messages.getString("ChatLounge.TechLevel"); //$NON-NLS-1$
-        txt = txt
-                + " " //$NON-NLS-1$
-                + clientgui.getClient().getGame().getOptions()
-                        .stringOption("techlevel"); //$NON-NLS-1$
-        lblTechLevel.setText(txt);
     }
 
     @Override

@@ -636,7 +636,7 @@ public class MegaMek {
                             }
 
                             if (testEntity != null) {
-                                testEntity.correctEntity(sb);
+                                testEntity.correctEntity(sb, true);
                             }
                         }
                         System.err.println(sb.toString());

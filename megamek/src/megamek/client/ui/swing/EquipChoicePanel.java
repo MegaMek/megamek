@@ -21,7 +21,6 @@ import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
@@ -633,14 +632,70 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         clientgui.getClient().getGame().getOptions();
                 int atTechLvl = 
                         atCheck.getTechLevel(gameOpts.intOption("year"));
-
-                int techlvl = Arrays.binarySearch(TechConstants.T_SIMPLE_NAMES,
-                        gameOpts.stringOption("techlevel")); //$NON-NLS-1$
-                techlvl = Math.max(0, techlvl);
-                int legalLevel = TechConstants.convertFromSimplelevel(techlvl,
-                        entity.isClan());
-                boolean bTechMatch = TechConstants.isLegal(legalLevel,
+                int entTechLvl = entity.getTechLevel();
+                boolean bTechMatch = TechConstants.isLegal(entTechLvl,
                         atTechLvl, true, entity.isMixedTech());
+
+                // allow all lvl2 IS units to use level 1 ammo
+                // lvl1 IS units don't need to be allowed to use lvl1 ammo,
+                // because there is no special lvl1 ammo, therefore it doesn't
+                // need to show up in this display.
+                if (!bTechMatch
+                        && (entTechLvl == TechConstants.T_IS_TW_NON_BOX)
+                        && (atTechLvl == TechConstants.T_INTRO_BOXSET)) {
+                    bTechMatch = true;
+                }
+
+                // if is_eq_limits is unchecked allow l1 guys to use l2 stuff
+                if (!gameOpts.booleanOption("is_eq_limits") //$NON-NLS-1$
+                        && (entTechLvl == TechConstants.T_INTRO_BOXSET)
+                        && (atTechLvl == TechConstants.T_IS_TW_NON_BOX)) {
+                    bTechMatch = true;
+                }
+
+                // Possibly allow advanced/experimental ammos, possibly not.
+                if (gameOpts.booleanOption("allow_experimental_ammo")) {
+                    if (!gameOpts.booleanOption("is_eq_limits")) {
+                        if (((entTechLvl == TechConstants.T_CLAN_TW) 
+                                || (entTechLvl == TechConstants.T_CLAN_ADVANCED))
+                            && ((atTechLvl == TechConstants.T_CLAN_ADVANCED)
+                                || (atTechLvl == TechConstants.T_CLAN_EXPERIMENTAL) 
+                                || (atTechLvl == TechConstants.T_CLAN_UNOFFICIAL))) {
+                            bTechMatch = true;
+                        }
+                        if (((entTechLvl == TechConstants.T_INTRO_BOXSET)
+                                || (entTechLvl == TechConstants.T_IS_TW_NON_BOX) 
+                                || (entTechLvl == TechConstants.T_IS_ADVANCED))
+                            && ((atTechLvl == TechConstants.T_IS_ADVANCED)
+                                || (atTechLvl == TechConstants.T_IS_EXPERIMENTAL) 
+                                || (atTechLvl == TechConstants.T_IS_UNOFFICIAL))) {
+                            bTechMatch = true;
+                        }
+                    }
+                } else if (gameOpts.booleanOption("allow_advanced_ammo")) {
+                    if (!gameOpts.booleanOption("is_eq_limits")) {
+                        if (((entTechLvl == TechConstants.T_CLAN_TW) 
+                                || (entTechLvl == TechConstants.T_CLAN_ADVANCED))
+                            && (atTechLvl == TechConstants.T_CLAN_ADVANCED)) {
+                            bTechMatch = true;
+                        }
+                        if (((entTechLvl == TechConstants.T_INTRO_BOXSET)
+                                || (entTechLvl == TechConstants.T_IS_TW_NON_BOX) 
+                                || (entTechLvl == TechConstants.T_IS_ADVANCED))
+                            && (atTechLvl == TechConstants.T_IS_ADVANCED)) {
+                            bTechMatch = true;
+                        }
+                    }
+                } else if ((atTechLvl == TechConstants.T_IS_ADVANCED)
+                        || (atTechLvl == TechConstants.T_CLAN_ADVANCED)) {
+                    bTechMatch = false;
+                }
+
+                // allow mixed Tech Mechs to use both IS and Clan ammo of any
+                // level (since mixed tech is always level 3)
+                if (entity.isMixedTech()) {
+                    bTechMatch = true;
+                }
 
                 // If clan_ignore_eq_limits is unchecked,
                 // do NOT allow Clans to use IS-only ammo.

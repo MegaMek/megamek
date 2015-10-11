@@ -102,7 +102,6 @@ import megamek.common.IArmorState;
 import megamek.common.IBoard;
 import megamek.common.IEntityRemovalConditions;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.IGame.Phase;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
@@ -27586,8 +27585,8 @@ public class Server implements Runnable {
 
             if (testEntity != null) {
                 StringBuffer sb = new StringBuffer();
-                if (testEntity.correctEntity(sb,
-                        TechConstants.getSimpleLevel(game))) {
+                if (testEntity.correctEntity(sb, !game.getOptions()
+                        .booleanOption("is_eq_limits"))) {
                     entity.setDesignValid(true);
                 } else {
                     System.err.println(sb);

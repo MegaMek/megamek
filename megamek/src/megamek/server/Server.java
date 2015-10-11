@@ -8973,12 +8973,13 @@ public class Server implements Runnable {
      * Delivers a thunder-aug shot to the targetted hex area. Thunder-Augs are 7
      * hexes, though, so...
      * 
-     * @param damage The per-hex density of the incoming minefield; that is,
-     *      the final value with any modifiers (such as halving and rounding
-     *      just for <em>being</em> T-Aug) already applied.
+     * @param damage
+     *            The per-hex density of the incoming minefield; that is, the
+     *            final value with any modifiers (such as halving and rounding
+     *            just for <em>being</em> T-Aug) already applied.
      */
     public void deliverThunderAugMinefield(Coords coords, int playerId,
-                                           int damage, int entityId) {
+            int damage, int entityId) {
         Coords mfCoord = null;
         for (int dir = 0; dir < 7; dir++) {
             // May need to reset here for each new hex.
@@ -8998,7 +8999,7 @@ public class Server implements Runnable {
             if (game.getBoard().contains(mfCoord)) {
                 Minefield minefield = null;
                 Enumeration<Minefield> minefields = game.getMinefields(mfCoord)
-                                                        .elements();
+                        .elements();
                 // Check if there already are Thunder minefields in the hex.
                 while (minefields.hasMoreElements()) {
                     Minefield mf = minefields.nextElement();
@@ -9014,7 +9015,7 @@ public class Server implements Runnable {
                 if (minefield == null) {
                     // Nope. Create a new Thunder minefield
                     minefield = Minefield.createMinefield(mfCoord, playerId,
-                                                          Minefield.TYPE_CONVENTIONAL, hexDamage);
+                            Minefield.TYPE_CONVENTIONAL, hexDamage);
                     game.addMinefield(minefield);
                     checkForRevealMinefield(minefield, game.getEntity(entityId));
                 } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
@@ -9044,10 +9045,10 @@ public class Server implements Runnable {
      * @param damage
      */
     public void deliverThunderMinefield(Coords coords, int playerId,
-                                        int damage, int entityId) {
+            int damage, int entityId) {
         Minefield minefield = null;
         Enumeration<Minefield> minefields = game.getMinefields(coords)
-                                                .elements();
+                .elements();
         // Check if there already are Thunder minefields in the hex.
         while (minefields.hasMoreElements()) {
             Minefield mf = minefields.nextElement();
@@ -9060,7 +9061,7 @@ public class Server implements Runnable {
         // Create a new Thunder minefield
         if (minefield == null) {
             minefield = Minefield.createMinefield(coords, playerId,
-                                                  Minefield.TYPE_CONVENTIONAL, damage);
+                    Minefield.TYPE_CONVENTIONAL, damage);
             game.addMinefield(minefield);
             checkForRevealMinefield(minefield, game.getEntity(entityId));
         } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
@@ -9069,7 +9070,7 @@ public class Server implements Runnable {
             int oldDamage = minefield.getDensity();
             damage += oldDamage;
             damage = damage > Minefield.MAX_DAMAGE ? Minefield.MAX_DAMAGE
-                                                   : damage;
+                    : damage;
             minefield.setDensity(damage);
             game.addMinefield(minefield);
             checkForRevealMinefield(minefield, game.getEntity(entityId));
@@ -9084,10 +9085,10 @@ public class Server implements Runnable {
      * @param damage
      */
     public void deliverThunderInfernoMinefield(Coords coords, int playerId,
-                                               int damage, int entityId) {
+            int damage, int entityId) {
         Minefield minefield = null;
         Enumeration<Minefield> minefields = game.getMinefields(coords)
-                                                .elements();
+                .elements();
         // Check if there already are Thunder minefields in the hex.
         while (minefields.hasMoreElements()) {
             Minefield mf = minefields.nextElement();
@@ -9100,7 +9101,7 @@ public class Server implements Runnable {
         // Create a new Thunder Inferno minefield
         if (minefield == null) {
             minefield = Minefield.createMinefield(coords, playerId,
-                                                  Minefield.TYPE_INFERNO, damage);
+                    Minefield.TYPE_INFERNO, damage);
             game.addMinefield(minefield);
             checkForRevealMinefield(minefield, game.getEntity(entityId));
         } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
@@ -9109,7 +9110,7 @@ public class Server implements Runnable {
             int oldDamage = minefield.getDensity();
             damage += oldDamage;
             damage = damage > Minefield.MAX_DAMAGE ? Minefield.MAX_DAMAGE
-                                                   : damage;
+                    : damage;
             minefield.setDensity(damage);
             game.addMinefield(minefield);
             checkForRevealMinefield(minefield, game.getEntity(entityId));
@@ -9120,12 +9121,12 @@ public class Server implements Runnable {
      * Delivers an artillery FASCAM shot to the targetted hex area.
      */
     public void deliverFASCAMMinefield(Coords coords, int playerId, int damage,
-                                       int entityId) {
+            int entityId) {
         // Only if this is on the board...
         if (game.getBoard().contains(coords)) {
             Minefield minefield = null;
             Enumeration<Minefield> minefields = game.getMinefields(coords)
-                                                    .elements();
+                    .elements();
             // Check if there already are Thunder minefields in the hex.
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
@@ -9137,7 +9138,7 @@ public class Server implements Runnable {
             // Did we find a Thunder minefield in the hex?
             if (minefield == null) {
                 minefield = Minefield.createMinefield(coords, playerId,
-                                                      Minefield.TYPE_CONVENTIONAL, damage);
+                        Minefield.TYPE_CONVENTIONAL, damage);
                 game.addMinefield(minefield);
                 checkForRevealMinefield(minefield, game.getEntity(entityId));
             } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
@@ -9146,7 +9147,7 @@ public class Server implements Runnable {
                 int oldDamage = minefield.getDensity();
                 damage += oldDamage;
                 damage = damage > Minefield.MAX_DAMAGE ? Minefield.MAX_DAMAGE
-                                                       : damage;
+                        : damage;
                 minefield.setDensity(damage);
                 game.addMinefield(minefield);
                 checkForRevealMinefield(minefield, game.getEntity(entityId));
@@ -9158,10 +9159,10 @@ public class Server implements Runnable {
      * Adds a Thunder-Active minefield to the hex.
      */
     public void deliverThunderActiveMinefield(Coords coords, int playerId,
-                                              int damage, int entityId) {
+            int damage, int entityId) {
         Minefield minefield = null;
         Enumeration<Minefield> minefields = game.getMinefields(coords)
-                                                .elements();
+                .elements();
         // Check if there already are Thunder minefields in the hex.
         while (minefields.hasMoreElements()) {
             Minefield mf = minefields.nextElement();
@@ -9174,7 +9175,7 @@ public class Server implements Runnable {
         // Create a new Thunder-Active minefield
         if (minefield == null) {
             minefield = Minefield.createMinefield(coords, playerId,
-                                                  Minefield.TYPE_ACTIVE, damage);
+                    Minefield.TYPE_ACTIVE, damage);
             game.addMinefield(minefield);
             checkForRevealMinefield(minefield, game.getEntity(entityId));
         } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
@@ -9183,7 +9184,7 @@ public class Server implements Runnable {
             int oldDamage = minefield.getDensity();
             damage += oldDamage;
             damage = damage > Minefield.MAX_DAMAGE ? Minefield.MAX_DAMAGE
-                                                   : damage;
+                    : damage;
             minefield.setDensity(damage);
             game.addMinefield(minefield);
             checkForRevealMinefield(minefield, game.getEntity(entityId));
@@ -9194,10 +9195,10 @@ public class Server implements Runnable {
      * Adds a Thunder-Vibrabomb minefield to the hex.
      */
     public void deliverThunderVibraMinefield(Coords coords, int playerId,
-                                             int damage, int sensitivity, int entityId) {
+            int damage, int sensitivity, int entityId) {
         Minefield minefield = null;
         Enumeration<Minefield> minefields = game.getMinefields(coords)
-                                                .elements();
+                .elements();
         // Check if there already are Thunder minefields in the hex.
         while (minefields.hasMoreElements()) {
             Minefield mf = minefields.nextElement();
@@ -9210,7 +9211,7 @@ public class Server implements Runnable {
         // Create a new Thunder-Vibra minefield
         if (minefield == null) {
             minefield = Minefield.createMinefield(coords, playerId,
-                                                  Minefield.TYPE_VIBRABOMB, damage, sensitivity);
+                    Minefield.TYPE_VIBRABOMB, damage, sensitivity);
             game.addVibrabomb(minefield);
             checkForRevealMinefield(minefield, game.getEntity(entityId));
         } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
@@ -9219,7 +9220,7 @@ public class Server implements Runnable {
             int oldDamage = minefield.getDensity();
             damage += oldDamage;
             damage = damage > Minefield.MAX_DAMAGE ? Minefield.MAX_DAMAGE
-                                                   : damage;
+                    : damage;
             minefield.setDensity(damage);
             game.addVibrabomb(minefield);
             checkForRevealMinefield(minefield, game.getEntity(entityId));

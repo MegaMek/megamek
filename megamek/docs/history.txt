@@ -22,6 +22,7 @@ v0.41.10 (git)
 + Bug [#4057]: track turret weight for omnitanks correctly
 + Construction data for Remote Drone Command Console
 + verifier for RISC super-cooled myomer
++ Bug [#4632]: Move-multi options can cause "No units to move" after skids
 
 
 v0.41.9 (2014-09-14 01:25 UTC)

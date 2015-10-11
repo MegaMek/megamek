@@ -5426,10 +5426,11 @@ public class Server implements Runnable {
                     // back earlier for the other targets
                     entity.setPosition(nextPos);
                 }
-
                 for (Entity e : avoidedChargeUnits) {
                     GameTurn newTurn = new GameTurn.SpecificEntityTurn(e
                             .getOwner().getId(), e.getId());
+                    // Prevents adding extra turns for multi-turns
+                    newTurn.setMultiTurn(true);
                     game.insertNextTurn(newTurn);
                     send(createTurnVectorPacket());
                 }
@@ -8022,6 +8023,8 @@ public class Server implements Runnable {
                         dropshipStillUnloading = true;
                         GameTurn newTurn = new GameTurn.SpecificEntityTurn(
                                 entity.getOwner().getId(), entity.getId());
+                        // Need to set the new turn's multiTurn state
+                        newTurn.setMultiTurn(true);
                         game.insertNextTurn(newTurn);
                     }
                     // ok add another turn for the unloaded entity so that it
@@ -8030,6 +8033,8 @@ public class Server implements Runnable {
                         GameTurn newTurn = new GameTurn.SpecificEntityTurn(
                                 ((Entity) unloaded).getOwner().getId(),
                                 ((Entity) unloaded).getId());
+                        // Need to set the new turn's multiTurn state
+                        newTurn.setMultiTurn(true);
                         game.insertNextTurn(newTurn);
                     }
                     // brief everybody on the turn update
@@ -8767,14 +8772,10 @@ public class Server implements Runnable {
             && entity.isSelectableThisTurn() && !entity.isDoomed()) {
             entity.applyDamage();
             entity.setDone(false);
-            GameTurn currentTurn  = game.getTurn();
-            if (game.isPhaseSimultaneous()) {
-                currentTurn = game.getTurnForPlayer(entity.getOwnerId());
-            }
             GameTurn newTurn = new GameTurn.SpecificEntityTurn(entity
                     .getOwner().getId(), entity.getId());
             // Need to set the new turn's multiTurn state
-            newTurn.setMultiTurn(currentTurn.isMultiTurn());
+            newTurn.setMultiTurn(true);
             game.insertNextTurn(newTurn);
             // brief everybody on the turn update
             send(createTurnVectorPacket());

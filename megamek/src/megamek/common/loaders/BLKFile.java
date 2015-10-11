@@ -690,6 +690,13 @@ public class BLKFile {
             }
         }
 
+        if (t instanceof Tank) {
+            Tank tank = (Tank) t;
+            if (tank.hasNoControlSystems()) {
+                blk.writeBlockData("hasNoControlSystems", 1);
+            }
+        }
+
         return blk;
     }
 

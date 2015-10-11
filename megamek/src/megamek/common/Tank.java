@@ -145,6 +145,12 @@ public class Tank extends Entity {
     private float baseChassisTurretWeight = -1;
     private float baseChassisTurret2Weight = -1;
 
+    /**
+     * Keeps track of whether this vehicle has control systems.  Trailers aren't
+     * required to have control systems.
+     */
+    private boolean hasNoControlSystems = false;
+
     public int getPotCrit() {
         return potCrit;
     }
@@ -3674,5 +3680,13 @@ public class Tank extends Entity {
 
     public void setBaseChassisTurret2Weight(float baseChassisTurret2Weight) {
         this.baseChassisTurret2Weight = baseChassisTurret2Weight;
+    }
+
+    public boolean hasNoControlSystems() {
+        return hasNoControlSystems;
+    }
+
+    public void setHasNoControlSystems(boolean hasNoControlSystems) {
+        this.hasNoControlSystems = hasNoControlSystems;
     }
 }

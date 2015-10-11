@@ -23,6 +23,7 @@ v0.41.10 (git)
 + Construction data for Remote Drone Command Console
 + verifier for RISC super-cooled myomer
 + Bug [#4632]: Move-multi options can cause "No units to move" after skids
++ Bug [#3900]: trailers should have control systems optional
 
 
 v0.41.9 (2014-09-14 01:25 UTC)

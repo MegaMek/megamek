@@ -236,6 +236,10 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
                     .getDataAsFloat("baseChassisTurret2Weight")[0]);
         }
 
+        if (dataFile.exists("hasNoControlSystems")) {
+            t.setHasNoControlSystems(true);
+        }
+
         return t;
     }
 }

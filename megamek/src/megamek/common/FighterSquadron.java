@@ -677,8 +677,6 @@ public class FighterSquadron extends Aero {
         }
 
         // Now that we know our bomb choices, load 'em
-        int gameTL = TechConstants.getSimpleLevel(game.getOptions()
-                .stringOption("techlevel"));
         for (int type = 0; type < BombType.B_NUM; type++) {
             for (int i = 0; i < bombChoices[type]; i++) {
                 if ((type == BombType.B_ALAMO)
@@ -686,7 +684,8 @@ public class FighterSquadron extends Aero {
                     continue;
                 }
                 if ((type > BombType.B_TAG)
-                        && (gameTL < TechConstants.T_SIMPLE_ADVANCED)) {
+                        && !game.getOptions().booleanOption(
+                                "allow_advanced_ammo")) {
                     continue;
                 }
 

@@ -736,11 +736,11 @@ public class TestAero extends TestEntity {
 
     @Override
     public boolean correctEntity(StringBuffer buff) {
-        return correctEntity(buff, aero.getTechLevel());
+        return correctEntity(buff, true);
     }
 
     @Override
-    public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
+    public boolean correctEntity(StringBuffer buff, boolean ignoreAmmo) {
         boolean correct = true;
         
         // We only support Convetional Fighters and ASF
@@ -788,7 +788,7 @@ public class TestAero extends TestEntity {
         }
         
         correct &= correctControlSystems(buff);
-        correct &= !hasIllegalTechLevels(buff, ammoTechLvl);
+        correct &= !hasIllegalTechLevels(buff, ignoreAmmo);
         correct &= !hasIllegalEquipmentCombinations(buff);
         correct &= correctHeatSinks(buff);
         

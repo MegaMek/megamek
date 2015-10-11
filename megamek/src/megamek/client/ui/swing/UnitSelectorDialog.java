@@ -283,9 +283,15 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         c.anchor = GridBagConstraints.WEST;
         panelFilterBtns.add(lblType, c);
 
+        DefaultComboBoxModel<String> techModel = new DefaultComboBoxModel<String>();
+        for (int i = 0; i < TechConstants.SIZE; i++) {
+            techModel.addElement(TechConstants.getLevelDisplayableName(i));
+        }
+        techModel.setSelectedItem(TechConstants.getLevelDisplayableName(0));
+        comboType.setModel(techModel);
         comboType.setMinimumSize(new java.awt.Dimension(200, 27));
         comboType.setPreferredSize(new java.awt.Dimension(200, 27));
-        updateTypeCombo();
+        comboType.addActionListener(this);
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 2;
@@ -462,51 +468,6 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         getContentPane().add(panelOKBtns, c);
 
         pack();
-    }
-
-    private void  updateTypeCombo() {
-        comboType.removeActionListener(this);
-        int selectedIndex = comboType.getSelectedIndex();
-        int gameTL;
-        if (client != null) {
-            gameTL = TechConstants.getSimpleLevel(client.getGame().getOptions()
-                    .stringOption("techlevel"));
-        } else {
-            gameTL = TechConstants.T_SIMPLE_UNOFFICIAL;
-        }
-
-        int maxTech = 0;
-        switch (gameTL) {
-            case TechConstants.T_SIMPLE_INTRO:
-                maxTech = TechConstants.T_INTRO_BOXSET;
-                break;
-            case TechConstants.T_SIMPLE_STANDARD:
-                maxTech = TechConstants.T_TW_ALL;
-                break;
-            case TechConstants.T_SIMPLE_ADVANCED:
-                maxTech = TechConstants.T_CLAN_ADVANCED;
-                break;
-            case TechConstants.T_SIMPLE_EXPERIMENTAL:
-                maxTech = TechConstants.T_CLAN_EXPERIMENTAL;
-                break;
-            case TechConstants.T_SIMPLE_UNOFFICIAL:
-                maxTech = TechConstants.T_ALL;
-                break;
-            default:
-                maxTech = TechConstants.T_TW_ALL;
-        }
-
-        DefaultComboBoxModel<String> techModel = new DefaultComboBoxModel<String>();
-        for (int i = 0; i <= maxTech; i++) {
-            techModel.addElement(TechConstants.getLevelDisplayableName(i));
-        }
-        techModel.setSelectedItem(TechConstants.getLevelDisplayableName(0));
-        comboType.setModel(techModel);
-
-        if (selectedIndex < comboType.getItemCount()) {
-            comboType.setSelectedIndex(selectedIndex);
-        }
-        comboType.addActionListener(this);
     }
 
     void select(boolean close) {
@@ -746,15 +707,11 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
 
      @Override
      public void setVisible(boolean visible) {
-         updateTypeCombo();
-
          if (visible){
              GUIPreferences guip = GUIPreferences.getInstance();
              comboUnitType.setSelectedIndex(guip.getMechSelectorUnitType());
              comboWeight.setSelectedIndex(guip.getMechSelectorWeightClass());
-             if (guip.getMechSelectorRulesLevel() < comboType.getItemCount()) {
-                 comboType.setSelectedIndex(guip.getMechSelectorRulesLevel());
-             }
+             comboType.setSelectedIndex(guip.getMechSelectorRulesLevel());
          }
          asd.clearValues();
          searchFilter=null;

@@ -63,7 +63,6 @@ import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.Mech;
 import megamek.common.Tank;
-import megamek.common.TechConstants;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
@@ -394,7 +393,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
 
     private void addOption(JPanel groupPanel, IOption option) {
         DialogOptionComponent optionComp = new DialogOptionComponent(this,
-                option, true, true);
+                option);
 
         groupPanel.add(optionComp);
         maxOptionWidth = Math.max(maxOptionWidth,
@@ -506,12 +505,12 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             } else {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals("techlevel")) {
-            for (String tlName : TechConstants.T_SIMPLE_NAMES) {
-                optionComp.addValue(tlName);
+        } else if (option.getName().equals("allow_advanced_ammo")) {
+            if ((options.getOption("allow_experimental_ammo")).booleanValue()) {
+                optionComp.setEditable(false);
+            } else {
+                optionComp.setEditable(editable);
             }
-            optionComp.setSelected(option.stringValue());
-            optionComp.setEditable(editable);
         } else {
             optionComp.setEditable(editable);
         }
@@ -722,6 +721,15 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
+            }
+        }
+        if (option.getName().equals("allow_experimental_ammo")) {
+            comps = optionComps.get("allow_advanced_ammo"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+                if (state){
+                    comp_i.setSelected(state);
+                }
             }
         }
         if (option.getName().equals("ba_grab_bars")) {

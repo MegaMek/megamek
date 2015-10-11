@@ -29,8 +29,7 @@ package megamek.common;
 public class TechConstants {
 
     /*
-     * These can apply to entities or individual pieces of equipment.  These
-     * values incorporate a tech level as well as a tech base.
+     * These can apply to entities or individual pieces of equipment
      */
     public static final int T_ALLOWED_ALL = -2;
     public static final int T_TECH_UNKNOWN = -1;
@@ -38,6 +37,7 @@ public class TechConstants {
     public static final int T_IS_TW_NON_BOX = 1;
     public static final int T_CLAN_TW = 2;
 
+    // These two are only for filtering selections in the MechSelectorDialog
     public static final int T_IS_TW_ALL = 3;
     public static final int T_TW_ALL = 4;
 
@@ -66,21 +66,6 @@ public class TechConstants {
 
     public static final int SIZE = T_NAMES.length;
 
-    /**
-     * These simple versions don't incorporate tech base (clan/is), and just
-     * represent a rules level.
-     */
-    public static final int T_SIMPLE_INTRO = 0;
-    public static final int T_SIMPLE_STANDARD = 1;
-    public static final int T_SIMPLE_ADVANCED = 2;
-    public static final int T_SIMPLE_EXPERIMENTAL = 3;
-    public static final int T_SIMPLE_UNOFFICIAL = 4;
-
-    public static final String[] T_SIMPLE_NAMES = { "Intro", "Standard",
-            "Advanced", "Experimental", "Unofficial" };
-
-    public static final int SIMPLE_SIZE = T_SIMPLE_NAMES.length;
-
     // This translates the integer above into a simple level number.
     // The "all" selections return -1, since they don't apply to
     // individual units.
@@ -100,12 +85,6 @@ public class TechConstants {
         throw new IllegalArgumentException("Unknown tech level");
     }
 
-    /**
-     * Get the displayable name for the given tech level.
-     *
-     * @param level
-     * @return
-     */
     public static String getLevelDisplayableName(int level) {
         if ((level >= 0) && (level < SIZE)) {
             return Messages.getString("TechLevel." + T_NAMES[level]);
@@ -113,102 +92,6 @@ public class TechConstants {
         throw new IllegalArgumentException("Unknown tech level");
     }
 
-    /**
-     * Return the numeric value for a simple level name. This is necessary
-     * because the options get stored as Strings instead of ints, but it's
-     * easier to compare ints.
-     *
-     * @param simpleLevel
-     * @return
-     */
-    public static int getSimpleLevel(String simpleLevel) {
-        for (int i = 0; i < SIMPLE_SIZE; i++) {
-            if (T_SIMPLE_NAMES[i].equals(simpleLevel)) {
-                return i;
-            }
-        }
-        return 0;
-    }
-
-    /**
-     * Return the numeric value for a simple level name. This is necessary
-     * because the options get stored as Strings instead of ints, but it's
-     * easier to compare ints.
-     *
-     * @param simpleLevel
-     * @return
-     */
-    public static int getTechLevel(String techLevel) {
-        for (int i = 0; i < SIZE; i++) {
-            if (T_NAMES[i].equals(techLevel)) {
-                return i;
-            }
-        }
-        return 0;
-    }
-
-    /**
-     * Returns the Game's tech level as an integer.
-     *
-     * @param game
-     * @return
-     */
-    public static int getSimpleLevel(IGame game) {
-        return getSimpleLevel(game.getOptions().stringOption("techlevel"));
-    }
-
-    /**
-     * Given a simple tech level and a tech base, convert to the lvl+base format
-     *
-     * @param simpleTechLvl
-     * @param isClan
-     * @return
-     */
-    public static int convertFromSimplelevel(int simpleTechLvl, boolean isClan) {
-        int legalLevel;
-        switch (simpleTechLvl) {
-            case TechConstants.T_SIMPLE_INTRO:
-                legalLevel = TechConstants.T_INTRO_BOXSET;
-                break;
-            case TechConstants.T_SIMPLE_STANDARD:
-                if (isClan) {
-                    legalLevel = TechConstants.T_CLAN_TW;
-                } else {
-                    legalLevel = TechConstants.T_IS_TW_NON_BOX;
-                }
-                break;
-            case TechConstants.T_SIMPLE_ADVANCED:
-                if (isClan) {
-                    legalLevel = TechConstants.T_CLAN_ADVANCED;
-                } else {
-                    legalLevel = TechConstants.T_IS_ADVANCED;
-                }
-                break;
-            case TechConstants.T_SIMPLE_EXPERIMENTAL:
-                if (isClan) {
-                    legalLevel = TechConstants.T_CLAN_EXPERIMENTAL;
-                } else {
-                    legalLevel = TechConstants.T_IS_EXPERIMENTAL;
-                }
-                break;
-            case TechConstants.T_SIMPLE_UNOFFICIAL:
-                if (isClan) {
-                    legalLevel = TechConstants.T_CLAN_UNOFFICIAL;
-                } else {
-                    legalLevel = TechConstants.T_IS_UNOFFICIAL;
-                }
-                break;
-            default:
-                legalLevel = TechConstants.T_INTRO_BOXSET;
-
-        }
-        return legalLevel;
-    }
-
-    /**
-     * Returns true if the equipment is legal for a unit with the paired tech
-     * levels; Returns false if it is not.
-     */
     public static boolean isLegal(int entityTechlevel, int equipmentTechlevel,
             boolean mixed) {
         return TechConstants.isLegal(entityTechlevel, equipmentTechlevel,

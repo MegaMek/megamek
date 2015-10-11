@@ -19,6 +19,7 @@ v0.41.10 (git)
 + Bug [#4448]: Moved Game Year option to Allowed Units and Equipment tab
 + Bug [#4448]: Added Tech Level option in Allowed Units and Equipment tab
 + Bug [#4448]: Removed several redudant options from Alowed Units and Equipment
++ Bug [#4057]: track turret weight for omnitanks correctly
 
 
 v0.41.9 (2014-09-14 01:25 UTC)

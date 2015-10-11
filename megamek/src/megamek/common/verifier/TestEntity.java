@@ -859,6 +859,56 @@ public abstract class TestEntity implements TestEntityOption {
             }
         }
 
+        // Ensure that omni tank turrets aren't overloaded
+        if ((getEntity() instanceof Tank) && getEntity().isOmni()) {
+            Tank tank = (Tank) getEntity();
+            // Check to see if the base chassis turret weight is set
+            float turretWeight = 0;
+            float turret2Weight = 0;
+            for (Mounted m : tank.getEquipment()) {
+                if ((m.getLocation() == tank.getLocTurret2())
+                        && !(m.getType() instanceof AmmoType)) {
+                    turret2Weight += m.getType().getTonnage(tank);
+                }
+                if ((m.getLocation() == tank.getLocTurret())
+                        && !(m.getType() instanceof AmmoType)) {
+                    turretWeight += m.getType().getTonnage(tank);
+                }
+            }
+            turretWeight *= 0.1f;
+            turret2Weight *= 0.1f;
+            if (tank.isSupportVehicle()) {
+                if (getEntity().getWeight() < 5) {
+                    turretWeight = TestEntity.ceil(turretWeight, CEIL_KILO);
+                    turret2Weight = TestEntity.ceil(turret2Weight, CEIL_KILO);
+                } else {
+                    turretWeight = TestEntity.ceil(turretWeight, CEIL_HALFTON);
+                    turret2Weight = TestEntity.ceil(turret2Weight, CEIL_HALFTON);
+                }
+            } else {
+                turretWeight = TestEntity.ceil(turretWeight,
+                        getWeightCeilingTurret());
+                turret2Weight = TestEntity.ceil(turret2Weight,
+                        getWeightCeilingTurret());
+            }
+            if (tank.getBaseChassisTurretWeight() >= 0
+                    && turretWeight > tank.getBaseChassisTurretWeight()) {
+                buff.append("Unit has more weight in the turret than allowed "
+                        + "by base chassis!  Current weight: " + turretWeight
+                        + ", base chassis turret weight: "
+                        + tank.getBaseChassisTurretWeight() + "\n");
+                illegal = true;
+            }
+            if (tank.getBaseChassisTurret2Weight() >= 0
+                    && turret2Weight > tank.getBaseChassisTurret2Weight()) {
+                buff.append("Unit has more weight in the second turret than "
+                        + "allowed by base chassis!  Current weight: "
+                        + turret2Weight + ", base chassis turret weight: "
+                        + tank.getBaseChassisTurret2Weight() + "\n");
+                illegal = true;
+            }
+        }
+
         if (minesweeperCount > 1) {
             buff.append("Unit has more than one minesweeper!\n");
             illegal = true;

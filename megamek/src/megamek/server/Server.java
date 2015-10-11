@@ -9212,6 +9212,7 @@ public class Server implements Runnable {
         if (minefield == null) {
             minefield = Minefield.createMinefield(coords, playerId,
                     Minefield.TYPE_VIBRABOMB, damage, sensitivity);
+            game.addMinefield(minefield);
             game.addVibrabomb(minefield);
             checkForRevealMinefield(minefield, game.getEntity(entityId));
         } else if (minefield.getDensity() < Minefield.MAX_DAMAGE) {
@@ -9222,6 +9223,7 @@ public class Server implements Runnable {
             damage = damage > Minefield.MAX_DAMAGE ? Minefield.MAX_DAMAGE
                     : damage;
             minefield.setDensity(damage);
+            game.addMinefield(minefield);
             game.addVibrabomb(minefield);
             checkForRevealMinefield(minefield, game.getEntity(entityId));
         }

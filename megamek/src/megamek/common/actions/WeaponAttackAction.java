@@ -452,7 +452,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         int targEl;
 
         if (te == null) {
-            targEl = game.getBoard().getHex(target.getPosition()).floor();
+            targEl = -game.getBoard().getHex(target.getPosition()).depth();
         } else {
             targEl = te.relHeight();
         }
@@ -1681,15 +1681,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         // target in water?
         IHex targHex = game.getBoard().getHex(target.getPosition());
+        int partialWaterLevel = 1;
+        if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+            partialWaterLevel = 2;
+        }
         if ((te != null)
             && targHex.containsTerrain(Terrains.WATER)
-            && (targHex.terrainLevel(Terrains.WATER) == 1) && (targEl == 0)
-            && (te.height() > 0)) { // target
-            // in
-            // partial
-            // water
+                && (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel)
+                && (targEl == 0)
+            && (te.height() > 0)) { // target in partial water 
             los.setTargetCover(los.getTargetCover()
-                               | LosEffects.COVER_HORIZONTAL);
+                    | LosEffects.COVER_HORIZONTAL);
             losMods = los.losModifiers(game, eistatus, underWater);
         }
 
@@ -2188,8 +2190,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 toHit.append(Compute.getTargetMovementModifier(game,
                         oldEnt.getId()));
                 // target in partial water
+                partialWaterLevel = 1;
+                if ((te instanceof Mech) && ((Mech) te).isSuperHeavy()) {
+                    partialWaterLevel = 2;
+                }
                 if (targHex.containsTerrain(Terrains.WATER)
-                        && (targHex.terrainLevel(Terrains.WATER) == 1)
+                        && (targHex.terrainLevel(Terrains.WATER) == partialWaterLevel)
                         && (targEl == 0) && (oldEnt.height() > 0)) {
                     toHit.setCover(toHit.getCover()
                             | LosEffects.COVER_HORIZONTAL);

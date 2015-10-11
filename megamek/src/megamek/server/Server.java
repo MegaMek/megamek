@@ -10784,8 +10784,12 @@ public class Server implements Runnable {
         }
         if ((hex.terrainLevel(Terrains.WATER) > 0) && !isJump
             && (elevation < 0)) {
+            int partialWaterLevel = 1;
+            if ((entity instanceof Mech) && ((Mech) entity).isSuperHeavy()) {
+                partialWaterLevel = 2;
+            }
             if ((entity instanceof Mech) && !entity.isProne()
-                && (hex.terrainLevel(Terrains.WATER) == 1)) {
+                && (hex.terrainLevel(Terrains.WATER) <= partialWaterLevel)) {
                 for (int loop = 0; loop < entity.locations(); loop++) {
                     if (game.getPlanetaryConditions().isVacuum()) {
                         entity.setLocationStatus(loop,

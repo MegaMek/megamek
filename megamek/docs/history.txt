@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.41.11-git
++ Data: New Sprites.
 
 v0.41.10 (2015-10-12 00:11 UTC)
 + Data: New Sprites and unit file.

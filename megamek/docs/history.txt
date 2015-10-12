@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.41.10 (git)
+v0.41.10 (2015-10-12 00:11 UTC)
 + Data: New Sprites and unit file.
 + only replace pilot external ID in MULParser if not null or zero length
 + Data: New Sprites.

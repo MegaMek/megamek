@@ -9,7 +9,7 @@ MAM0
 </Version>
 
 <UnitType>
-SupportTank
+Tank
 </UnitType>
 
 <Name>
@@ -84,6 +84,9 @@ RS 3039 Unabriged
 <tonnage>
 10.0
 </tonnage>
+
+<hasnocontrolsystems>
+</hasnocontrolsystems>
 
 <History>
 This unit is not a playable as trailers are not coded for MM. Use Mobile Long Tom Artillery (Unofficial) (+ Carriage) to be playable.

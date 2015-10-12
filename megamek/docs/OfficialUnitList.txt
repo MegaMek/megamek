@@ -5039,6 +5039,7 @@ Seraph C-SRP-OA Dominus|
 Defiance DFN-3C|
 Xanthos XNT-4O|
 Gladiator (Keller)|
+Jabberwocky EngineerMech JAW-65A|
 Seraph C-SRP-OD Luminos|
 Grigori C-GRG-O (Tamiel)|
 Patron I LoaderMech|

@@ -1178,11 +1178,21 @@ public class LosEffects {
                     || (jungleLevel != ITerrain.LEVEL_NONE)) {
                 // Regular smoke/woods/jungle rise 2 levels above the hex level
                 int terrainEl = hexEl + 2;
-                if (((terrainEl > ai.attackAbsHeight) && (terrainEl > ai.targetAbsHeight))
-                        || ((terrainEl > ai.attackAbsHeight) && (ai.attackPos
-                                .distance(coords) == 1))
-                        || ((terrainEl > ai.targetAbsHeight) && (ai.targetPos
-                                .distance(coords) == 1))) {
+                boolean affectsLoS;
+                if (diagramLoS) {
+                    affectsLoS = terrainEl > (ai.targetAbsHeight
+                            * ai.attackPos.distance(coords) + ai.attackAbsHeight
+                            * ai.targetPos.distance(coords))
+                            / (ai.targetPos.distance(coords) + ai.attackPos
+                                    .distance(coords));
+                } else {
+                    affectsLoS = ((terrainEl > ai.attackAbsHeight) && (terrainEl > ai.targetAbsHeight))
+                            || ((terrainEl > ai.attackAbsHeight) && (ai.attackPos
+                                    .distance(coords) == 1))
+                            || ((terrainEl > ai.targetAbsHeight) && (ai.targetPos
+                                    .distance(coords) == 1));
+                }
+                if (affectsLoS) {
                     // smoke and woods stack for LOS so check them both
                     if ((smokeLevel == SmokeCloud.SMOKE_LIGHT)
                             || (smokeLevel == SmokeCloud.SMOKE_LI_LIGHT)
@@ -1202,12 +1212,20 @@ public class LosEffects {
                 
                 // Ultra woods/jungle rise 3 levels above the hex level
                 terrainEl = hexEl + 3;
-                if (((terrainEl > ai.attackAbsHeight) && (terrainEl > ai.targetAbsHeight))
-                        || ((terrainEl > ai.attackAbsHeight) && (ai.attackPos
-                                .distance(coords) == 1))
-                        || ((terrainEl > ai.targetAbsHeight) && (ai.targetPos
-                                .distance(coords) == 1))) {
-
+                if (diagramLoS) {
+                    affectsLoS = terrainEl > (ai.targetAbsHeight
+                            * ai.attackPos.distance(coords) + ai.attackAbsHeight
+                            * ai.targetPos.distance(coords))
+                            / (ai.targetPos.distance(coords) + ai.attackPos
+                                    .distance(coords));
+                } else {
+                    affectsLoS = ((terrainEl > ai.attackAbsHeight) && (terrainEl > ai.targetAbsHeight))
+                            || ((terrainEl > ai.attackAbsHeight) && (ai.attackPos
+                                    .distance(coords) == 1))
+                            || ((terrainEl > ai.targetAbsHeight) && (ai.targetPos
+                                    .distance(coords) == 1));
+                }
+                if (affectsLoS) {
                     if ((woodsLevel == 3) || (jungleLevel == 3)) {
                         los.ultraWoods++;
                     }

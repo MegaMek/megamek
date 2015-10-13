@@ -967,7 +967,7 @@ public class BattleArmor extends Infantry {
                 // counted again
                 for (Mounted weapon : getWeaponList()) {
                     // infantry weapons don't count at all
-                    if (weapon.getType().hasFlag(WeaponType.F_INFANTRY)) {
+                    if (weapon.getType().hasFlag(WeaponType.F_INFANTRY) || weapon.getType().hasFlag(WeaponType.F_AMS)) {
                         continue;
                     }
                     if (weapon.getLocation() == LOC_SQUAD) {
@@ -1142,10 +1142,11 @@ public class BattleArmor extends Infantry {
         return false;
     }
 
+    @Override
     public boolean canMakeAntiMekAttacks() {
         return !isBurdened() && canDoMechanizedBA()
                 && (getWeightClass() < EntityWeightClass.WEIGHT_HEAVY)
-                && getMovementMode() != EntityMovementMode.INF_UMU;
+                && (getMovementMode() != EntityMovementMode.INF_UMU);
     }
 
     /**
@@ -1343,8 +1344,8 @@ public class BattleArmor extends Infantry {
 
     public double getCost(boolean ignoreAmmo, boolean includeTrainingAndClan) {
 
-    	if(this.getChassis().equals("Longinus Battle Armor")
-    			&& this.getModel().equals("[Flamer]")
+    	if(getChassis().equals("Longinus Battle Armor")
+    			&& getModel().equals("[Flamer]")
     			&& !includeTrainingAndClan) {
     	}
 

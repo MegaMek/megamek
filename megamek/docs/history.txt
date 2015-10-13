@@ -3,6 +3,8 @@ VERSION HISTORY:
 v0.41.11-git
 + Data: New Sprites.
 + Bug [#4635]: Diagramming LOS struggles with terrain elevation
++ Bug: BA APDS counting for both offensive and defensive BV when BA can make
+    anti-mech attacks
 
 v0.41.10 (2015-10-12 00:11 UTC)
 + Data: New Sprites and unit file.

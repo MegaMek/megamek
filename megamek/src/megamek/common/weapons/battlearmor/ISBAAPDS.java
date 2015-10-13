@@ -15,9 +15,10 @@
  * Created on Sep 25, 2004
  *
  */
-package megamek.common.weapons;
+package megamek.common.weapons.battlearmor;
 
 import megamek.common.TechConstants;
+import megamek.common.weapons.Weapon;
 
 /**
  * @author Sebastian Brocks

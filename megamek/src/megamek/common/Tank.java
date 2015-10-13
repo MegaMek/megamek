@@ -456,7 +456,7 @@ public class Tank extends Entity {
         if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
             return true;
         }
-        
+
         boolean hasFlotationHull = hasWorkingMisc(MiscType.F_FLOTATION_HULL);
         boolean isAmphibious = hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
 
@@ -1223,7 +1223,7 @@ public class Tank extends Entity {
         double amsAmmoBV = 0;
         for (Mounted mounted : getAmmo()) {
             AmmoType atype = (AmmoType) mounted.getType();
-            if (atype.getAmmoType() == AmmoType.T_AMS) {
+            if ((atype.getAmmoType() == AmmoType.T_AMS) || (atype.getAmmoType() == AmmoType.T_APDS)) {
                 amsAmmoBV += atype.getBV(this);
             }
         }
@@ -1251,8 +1251,8 @@ public class Tank extends Entity {
                 bvText.append(endRow);
                 dEquipmentBV += etype.getBV(this);
                 WeaponType wtype = (WeaponType) etype;
-                if (wtype.hasFlag(WeaponType.F_AMS)
-                        && (wtype.getAmmoType() == AmmoType.T_AMS)) {
+                if ((wtype.hasFlag(WeaponType.F_AMS)
+                        && (wtype.getAmmoType() == AmmoType.T_AMS)) || (wtype.getAmmoType() == AmmoType.T_APDS)) {
                     amsBV += etype.getBV(this);
                 }
             } else if (((etype instanceof MiscType) && (etype
@@ -1628,7 +1628,7 @@ public class Tank extends Entity {
             }
 
             // don't count AMS, it's defensive
-            if (atype.getAmmoType() == AmmoType.T_AMS) {
+            if ((atype.getAmmoType() == AmmoType.T_AMS) || (atype.getAmmoType() == AmmoType.T_APDS)) {
                 continue;
             }
 
@@ -3472,28 +3472,28 @@ public class Tank extends Entity {
 
     @Override
     public boolean isCrippled(boolean checkCrew) {
-        if (getArmor(LOC_FRONT) < 1 && getOArmor(LOC_FRONT) > 0) {
+        if ((getArmor(LOC_FRONT) < 1) && (getOArmor(LOC_FRONT) > 0)) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Front armor destroyed.");
             }
             return true;
         }
-        if (getArmor(LOC_RIGHT) < 1 && getOArmor(LOC_RIGHT) > 0) {
+        if ((getArmor(LOC_RIGHT) < 1) && (getOArmor(LOC_RIGHT) > 0)) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Right armor destroyed.");
             }
             return true;
         }
-        if (getArmor(LOC_LEFT) < 1 && getOArmor(LOC_LEFT) > 0) {
+        if ((getArmor(LOC_LEFT) < 1) && (getOArmor(LOC_LEFT) > 0)) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Left armor destroyed.");
             }
             return true;
         }
-        if (!hasNoTurret() && (getArmor(getLocTurret()) < 1 && getOArmor(getLocTurret()) > 0)) {
+        if (!hasNoTurret() && ((getArmor(getLocTurret()) < 1) && (getOArmor(getLocTurret()) > 0))) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Turret destroyed.");
@@ -3501,21 +3501,21 @@ public class Tank extends Entity {
             return true;
         }
 
-        if (!hasNoDualTurret() && (getArmor(getLocTurret2()) < 1 && getOArmor(getLocTurret2()) > 0)) {
+        if (!hasNoDualTurret() && ((getArmor(getLocTurret2()) < 1) && (getOArmor(getLocTurret2()) > 0))) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Front Turret destroyed.");
             }
             return true;
         }
-        if (getArmor(LOC_REAR) < 1 && getOArmor(LOC_REAR) > 0) {
+        if ((getArmor(LOC_REAR) < 1) && (getOArmor(LOC_REAR) > 0)) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out.println(getDisplayName()
                         + " CRIPPLED: Rear armor destroyed.");
             }
             return true;
         }
-        
+
         if (isPermanentlyImmobilized(checkCrew)) {
             if (PreferenceManager.getClientPreferences().debugOutputOn()) {
                 System.out
@@ -3554,7 +3554,7 @@ public class Tank extends Entity {
             return true;
         }
 
-        if (getArmorRemainingPercent() <= 0.33 && getArmorRemainingPercent() != IArmorState.ARMOR_NA) {
+        if ((getArmorRemainingPercent() <= 0.33) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
             return true;
         }
 
@@ -3576,7 +3576,7 @@ public class Tank extends Entity {
 
     @Override
     public boolean isDmgModerate() {
-        if (getArmorRemainingPercent() <= 0.67 && getArmorRemainingPercent() != IArmorState.ARMOR_NA) {
+        if ((getArmorRemainingPercent() <= 0.67) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
             return true;
         }
 
@@ -3603,7 +3603,7 @@ public class Tank extends Entity {
             return true;
         }
 
-        if (getArmorRemainingPercent() <= 0.8 && getArmorRemainingPercent() != IArmorState.ARMOR_NA) {
+        if ((getArmorRemainingPercent() <= 0.8) && (getArmorRemainingPercent() != IArmorState.ARMOR_NA)) {
             return true;
         }
 

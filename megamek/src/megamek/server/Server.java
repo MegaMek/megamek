@@ -102,7 +102,6 @@ import megamek.common.IArmorState;
 import megamek.common.IBoard;
 import megamek.common.IEntityRemovalConditions;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.IGame.Phase;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
@@ -143,6 +142,7 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Team;
+import megamek.common.TechConstants;
 import megamek.common.TeleMissile;
 import megamek.common.Terrain;
 import megamek.common.Terrains;
@@ -2324,6 +2324,7 @@ public class Server implements Runnable {
                 // write End Phase header
                 addReport(new Report(5005, Report.PUBLIC));
                 resolveHarjelRepairs();
+                resolveEmergencyCoolantSystem();
                 checkForSuffocation();
                 game.getPlanetaryConditions().determineWind();
                 send(createPlanetaryConditionsPacket());
@@ -7298,7 +7299,7 @@ public class Server implements Runnable {
 
             // set last step parameters
             curPos = step.getPosition();
-            if (!((entity.getJumpType() == Mech.JUMP_BOOSTER) 
+            if (!((entity.getJumpType() == Mech.JUMP_BOOSTER)
                     && step.isJumping())) {
                 curFacing = step.getFacing();
             }
@@ -8043,7 +8044,7 @@ public class Server implements Runnable {
             }
             // moving backwards over elevation change
             if (((step.getType() == MoveStepType.BACKWARDS)
-                    || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) 
+                    || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
                     || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
                     && !(md.isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER))
                     && ((lastHex.getLevel() + entity.calcElevation(curHex,
@@ -8972,7 +8973,7 @@ public class Server implements Runnable {
     /**
      * Delivers a thunder-aug shot to the targetted hex area. Thunder-Augs are 7
      * hexes, though, so...
-     * 
+     *
      * @param damage
      *            The per-hex density of the incoming minefield; that is, the
      *            final value with any modifiers (such as halving and rounding
@@ -15416,7 +15417,7 @@ public class Server implements Runnable {
         // location in the same attack no special effects take place.
         if (((MiscType) caa.getClub().getType())
                 .hasSubType(MiscType.S_CHAIN_WHIP)
-                && (te instanceof Mech || te instanceof Protomech)) {
+                && ((te instanceof Mech) || (te instanceof Protomech))) {
             addNewLines();
 
             int loc = hit.getLocation();
@@ -15430,15 +15431,15 @@ public class Server implements Runnable {
                     && !te.hasPassiveShield(loc);
 
             boolean mightGrapple = ((te instanceof Mech)
-                    && (loc == Mech.LOC_LARM || loc == Mech.LOC_RARM)
+                    && ((loc == Mech.LOC_LARM) || (loc == Mech.LOC_RARM))
                     && !te.isLocationBad(loc)
                     && !te.isLocationDoomed(loc)
                     && !te.hasActiveShield(loc)
                     && !te.hasPassiveShield(loc)
                     && !te.hasNoDefenseShield(loc))
                     || ((te instanceof Protomech)
-                        && (loc == Protomech.LOC_LARM || loc == Protomech.LOC_RARM
-                            || loc == Protomech.LOC_LEG)
+                        && ((loc == Protomech.LOC_LARM) || (loc == Protomech.LOC_RARM)
+                            || (loc == Protomech.LOC_LEG))
                         // Only check location status after confirming we did
                         // hit a limb -- Protos have no actual near-miss
                         // "location" and will throw an exception if it's
@@ -17261,6 +17262,9 @@ public class Server implements Runnable {
             if (entity.hasDamagedRHS() && entity.weaponFired()) {
                 entity.heatBuildup += 1;
             }
+            if ((entity instanceof Mech) && ((Mech)entity).hasDamagedCoolantSystem() && entity.weaponFired()) {
+                entity.heatBuildup += 1;
+            }
 
             int radicalHSBonus = 0;
             Vector<Report> rhsReports = new Vector<Report>();
@@ -18412,11 +18416,34 @@ public class Server implements Runnable {
         }
     }
 
+    private void resolveEmergencyCoolantSystem() {
+        for (Entity e : game.getEntitiesVector()) {
+            if ((e instanceof Mech) && e.hasWorkingMisc(MiscType.F_EMERGENCY_COOLANT_SYSTEM)
+                    && (e.heat > 13)) {
+                Mech mech = (Mech)e;
+                Vector<Report> vDesc = new Vector<Report>();
+                HashMap<Integer, List<CriticalSlot>> crits = new HashMap<Integer, List<CriticalSlot>>();
+                if (!(mech.doRISCEmergencyCoolantCheckFor(vDesc, crits))) {
+                    mech.heat -= 6 + mech.getCoolantSystemMOS();
+                    Report r = new Report(5027);
+                    r.add(6+mech.getCoolantSystemMOS());
+                    vDesc.add(r);
+                }
+                addReport(vDesc);
+                for (Integer loc : crits.keySet()) {
+                    List<CriticalSlot> lcs = crits.get(loc);
+                    for (CriticalSlot cs : lcs) {
+                        addReport(applyCriticalHit(mech, loc, cs, true, 0, false));
+                    }
+                }
+            }
+        }
+    }
+
     /*
      * Resolve HarJel II/III repairs for Mechs so equipped.
      */
-    private void resolveHarjelRepairs()
-    {
+    private void resolveHarjelRepairs() {
         Report r;
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             Entity entity = i.next();
@@ -23148,12 +23175,12 @@ public class Server implements Runnable {
                         vDesc.addAll(explodeEquipment(t, loc, weapon));
                     }
                     weapon.setHit(true);
-                    //Taharqa: We should also damage the critical slot, or 
+                    //Taharqa: We should also damage the critical slot, or
                     //MM and MHQ won't remember that this weapon is damaged on the MUL
                     //file
                     for (int i = 0; i < t.getNumberOfCriticals(loc); i++) {
                         CriticalSlot slot1 = t.getCritical(loc, i);
-                        if ((slot1 == null) || 
+                        if ((slot1 == null) ||
                                 (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                             continue;
                         }
@@ -23162,7 +23189,7 @@ public class Server implements Runnable {
                             t.hitAllCriticals(loc, i);
                             break;
                         }
-                    }                  
+                    }
                     break;
                 }
                 case Tank.CRIT_WEAPON_JAM: {
@@ -23531,12 +23558,12 @@ public class Server implements Runnable {
                             vDesc.addAll(explodeEquipment(a, loc, weapon));
                         }
                         weapon.setHit(true);
-                        //Taharqa: We should also damage the critical slot, or 
+                        //Taharqa: We should also damage the critical slot, or
                         //MM and MHQ won't remember that this weapon is damaged on the MUL
                         //file
                         for (int i = 0; i < a.getNumberOfCriticals(loc); i++) {
                             CriticalSlot slot1 = a.getCritical(loc, i);
-                            if ((slot1 == null) || 
+                            if ((slot1 == null) ||
                                     (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                                 continue;
                             }
@@ -23548,15 +23575,15 @@ public class Server implements Runnable {
                         }
                         //if this is a weapons bay then also hit all the other weapons
                         for(int wId : weapon.getBayWeapons()) {
-                        	Mounted bayWeap = a.getEquipment(wId);
-                        	if(null != bayWeap) {
-                        		bayWeap.setHit(true);
-                        		//Taharqa: We should also damage the critical slot, or 
+                            Mounted bayWeap = a.getEquipment(wId);
+                            if(null != bayWeap) {
+                                bayWeap.setHit(true);
+                                //Taharqa: We should also damage the critical slot, or
                                 //MM and MHQ won't remember that this weapon is damaged on the MUL
                                 //file
-                        		for (int i = 0; i < a.getNumberOfCriticals(loc); i++) {
+                                for (int i = 0; i < a.getNumberOfCriticals(loc); i++) {
                                     CriticalSlot slot1 = a.getCritical(loc, i);
-                                    if ((slot1 == null) || 
+                                    if ((slot1 == null) ||
                                             (slot1.getType() == CriticalSlot.TYPE_SYSTEM)) {
                                         continue;
                                     }
@@ -23566,7 +23593,7 @@ public class Server implements Runnable {
                                         break;
                                     }
                                 }
-                        	}
+                            }
                         }
                     } else {
                         r = new Report(9155);
@@ -24103,6 +24130,11 @@ public class Server implements Runnable {
                 mounted.setHit(false);
             } else {
                 mounted.setHit(true);
+            }
+
+            if ((eqType instanceof MiscType)
+                    && eqType.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+                ((Mech)en).setHasDamagedCoolantSystem(true);
             }
 
             if ((eqType instanceof MiscType)
@@ -28178,7 +28210,7 @@ public class Server implements Runnable {
         if (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
             for (Integer entityId : ids) {
                 final Entity entity = game.getEntity(entityId);
-                endCurrentTurn(entity); 
+                endCurrentTurn(entity);
             }
         }
     }
@@ -31300,7 +31332,7 @@ public class Server implements Runnable {
             if (!crew.isLocationProhibited(entity.getPosition())) {
                 legalPosition = entity.getPosition();
             } else {
-                for (int dir = 0; dir < 6 && legalPosition == null; dir++) {
+                for (int dir = 0; (dir < 6) && (legalPosition == null); dir++) {
                     Coords adjCoords = entity.getPosition().translated(dir);
                     if (!crew.isLocationProhibited(adjCoords)) {
                         legalPosition = adjCoords;
@@ -31366,8 +31398,8 @@ public class Server implements Runnable {
             rollTarget.addModifier(1, "automatic ejection");
         }
         if ((entity instanceof Mech)
-                && entity.getInternal(Mech.LOC_HEAD) < entity
-                        .getOInternal(Mech.LOC_HEAD)) {
+                && (entity.getInternal(Mech.LOC_HEAD) < entity
+                        .getOInternal(Mech.LOC_HEAD))) {
             rollTarget.addModifier(
                     entity.getOInternal(Mech.LOC_HEAD)
                             - entity.getInternal(Mech.LOC_HEAD),

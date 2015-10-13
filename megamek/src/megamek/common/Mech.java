@@ -23,6 +23,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -232,7 +234,7 @@ public abstract class Mech extends Entity {
     private boolean isGrappleAttacker = false;
 
     private int grappledSide = Entity.GRAPPLE_BOTH;
-    
+
     private boolean grappledThisRound = false;
 
     private boolean shouldDieAtEndOfTurnBecauseOfWater = false;
@@ -248,6 +250,19 @@ public abstract class Mech extends Entity {
     private int levelsFallen = 0;
 
     private boolean fullHeadEject = false;
+
+    protected static int[] EMERGENCY_COOLANT_SYSTEM_FAILURE = {3, 5, 7, 10, 13, 13, 13};
+
+    // nCoolantSystemLevel is the # of turns RISC emergency coolant system has been used previously
+    protected int nCoolantSystemLevel = 0;
+
+    protected boolean bCoolantWentUp = false;
+
+    protected boolean bUsedCoolantSystem = false; // Has emergency coolant system been used?
+
+    protected boolean bDamagedCoolantSystem = false; // is the emergency coolant system damaged?
+
+    protected int nCoolantSystemMOS = 0;
 
     /**
      * Construct a new, blank, mech.
@@ -492,6 +507,23 @@ public abstract class Mech extends Entity {
         // Clear the MASC flag
         usedMASC = false;
 
+        // If emergency cooling system was used last turn, increment the counter,
+        // otherwise decrement. Then, clear the counter
+        if (bUsedCoolantSystem) {
+            nCoolantSystemLevel++;
+            bCoolantWentUp = true;
+        } else {
+            nCoolantSystemLevel = Math.max(0, nCoolantSystemLevel - 1);
+            if (bCoolantWentUp) {
+                nCoolantSystemLevel = Math.max(0, nCoolantSystemLevel - 1);
+                bCoolantWentUp = false;
+            }
+        }
+
+        // Clear the coolant system flag
+        bUsedCoolantSystem = false;
+
+
         setSecondaryFacing(getFacing());
 
         // set heat sinks
@@ -510,7 +542,7 @@ public abstract class Mech extends Entity {
         }
         levelsFallen = 0;
         checkForCrit = false;
-        
+
         grappledThisRound = false;
 
         // clear HarJel "took damage this turn" flags
@@ -927,7 +959,8 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getWalkHeat() {
-        return engine.getWalkHeat(this);
+        int extra = bDamagedCoolantSystem?1:0;
+        return extra + engine.getWalkHeat(this);
     }
 
     /**
@@ -996,7 +1029,8 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getRunHeat() {
-        return engine.getRunHeat(this);
+        int extra = bDamagedCoolantSystem?1:0;
+        return extra + engine.getRunHeat(this);
     }
 
     /*
@@ -1100,7 +1134,8 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getSprintHeat() {
-        return engine.getSprintHeat();
+        int extra = bDamagedCoolantSystem?1:0;
+        return extra + engine.getSprintHeat();
     }
 
     /**
@@ -1309,6 +1344,8 @@ public abstract class Mech extends Entity {
     @Override
     public int getJumpHeat(int movedMP) {
 
+        int extra = bDamagedCoolantSystem?1:0;
+
         // don't count movement granted by Partial Wing
         for (Mounted mount : getMisc()) {
             if (mount.getType().hasFlag(MiscType.F_PARTIAL_WING)) {
@@ -1319,16 +1356,17 @@ public abstract class Mech extends Entity {
 
         switch (getJumpType()) {
             case JUMP_IMPROVED:
-                return engine.getJumpHeat((movedMP / 2) + (movedMP % 2));
+                return extra + engine.getJumpHeat((movedMP / 2) + (movedMP % 2));
             case JUMP_PROTOTYPE_IMPROVED:
                 // min 6 heat, otherwise 2xJumpMp, XTRO:Succession Wars pg17
-                return Math.max(6, engine.getJumpHeat(movedMP * 2));
+                return extra + Math.max(6, engine.getJumpHeat(movedMP * 2));
             case JUMP_BOOSTER:
             case JUMP_DISPOSABLE:
+                return extra;
             case JUMP_NONE:
                 return 0;
             default:
-                return engine.getJumpHeat(movedMP);
+                return extra + engine.getJumpHeat(movedMP);
         }
     }
 
@@ -3299,7 +3337,8 @@ public abstract class Mech extends Entity {
             }
             if ((etype instanceof MiscType)
                     && (etype.hasFlag(MiscType.F_PPC_CAPACITOR)
-                            || etype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE))) {
+                            || etype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)
+                            || etype.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM))) {
                 toSubtract = 1;
             }
 
@@ -3462,7 +3501,7 @@ public abstract class Mech extends Entity {
         bvText.append(tmmRan);
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         // Calculate modifiers for jump and UMU movement where applicable.
         final int jumpMP = getJumpMP(false, true);
         final int tmmJumped = (jumpMP > 0) ? Compute.
@@ -3486,7 +3525,7 @@ public abstract class Mech extends Entity {
         bvText.append(tmmJumped);
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         bvText.append("Target Movement Modifer For UMUs");
         bvText.append(endColumn);
         bvText.append(startColumn);
@@ -3496,7 +3535,7 @@ public abstract class Mech extends Entity {
         bvText.append(tmmUMU);
         bvText.append(endColumn);
         bvText.append(endRow);
-        
+
         double targetMovementModifier = Math.max(tmmRan, Math.max(tmmJumped,
                 tmmUMU));
 
@@ -3557,7 +3596,7 @@ public abstract class Mech extends Entity {
 
             bvText.append(endColumn);
             bvText.append(startColumn);
-            
+
             if (targetMovementModifier < 3) {
                 targetMovementModifier = 3;
                 bvText.append("3");
@@ -3567,7 +3606,7 @@ public abstract class Mech extends Entity {
             } else {
                 bvText.append("-");
             }
-            
+
             bvText.append(endColumn);
             bvText.append(endRow);
         }
@@ -3654,6 +3693,10 @@ public abstract class Mech extends Entity {
                     .ceil((getNumberOfSinks() * coolantPods) / 5);
             bvText.append(" + Coolant Pods ");
         }
+        if (hasWorkingMisc(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+            mechHeatEfficiency += 4;
+            bvText.append(" + RISC Emergency Coolant System");
+        }
 
         if ((getJumpMP(false, true) > 0)
                 && (getJumpHeat(getJumpMP(false, true)) > getRunHeat())) {
@@ -3691,6 +3734,11 @@ public abstract class Mech extends Entity {
         if (coolantPods > 0) {
             bvText.append(" + ");
             bvText.append(Math.ceil((getNumberOfSinks() * coolantPods) / 5));
+        }
+
+        if (hasWorkingMisc(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+            mechHeatEfficiency += 4;
+            bvText.append(" + 4");
         }
 
         bvText.append(" - ");
@@ -6762,11 +6810,13 @@ public abstract class Mech extends Entity {
     public int getGrappled() {
         return grappled_id;
     }
-    
+
+    @Override
     public boolean isGrappledThisRound() {
         return grappledThisRound;
     }
-    
+
+    @Override
     public void setGrappledThisRound(boolean grappled) {
         grappledThisRound = grappled;
     }
@@ -8006,11 +8056,11 @@ public abstract class Mech extends Entity {
         }
         return count;
     }
-    
+
     @Override
-    public boolean canEscape() {    	
+    public boolean canEscape() {
     	int hipHits = 0;
-    	int legsDestroyed = 0;  	
+    	int legsDestroyed = 0;
     	for (int i = 0; i < locations(); i++) {
             if (locationIsLeg(i)) {
                 if (!isLocationBad(i)) {
@@ -8022,14 +8072,14 @@ public abstract class Mech extends Entity {
                 }
             }
         }
-    	//there is room for debate here but I think most people would agree that a 
-    	//legged biped mech (and a double legged quad mech) or a hipped mech are not 
-    	//escapable, although technically they still have as much MP as foot infantry which 
+    	//there is room for debate here but I think most people would agree that a
+    	//legged biped mech (and a double legged quad mech) or a hipped mech are not
+    	//escapable, although technically they still have as much MP as foot infantry which
     	//can escape. We could also consider creating options to control this.
-    	if((this instanceof BipedMech && legsDestroyed > 0)
-    			|| legsDestroyed > 1 || hipHits > 0) {
+    	if(((this instanceof BipedMech) && (legsDestroyed > 0))
+    			|| (legsDestroyed > 1) || (hipHits > 0)) {
     		return false;
-    	}    	
+    	}
     	return super.canEscape();
     }
 
@@ -8250,4 +8300,99 @@ public abstract class Mech extends Entity {
         }
         return true;
     }
+
+
+    /**
+     * return if a RISC emergency coolant failed its roll
+     * @param vDesc
+     * @param vCriticals
+     * @return
+     */
+    public boolean doRISCEmergencyCoolantCheckFor(Vector<Report> vDesc,
+            HashMap<Integer, List<CriticalSlot>> vCriticals) {
+        Mounted coolantSystem = null;
+        for (Mounted misc : getMisc()) {
+            if (misc.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)
+                    && !misc.isInoperable()) {
+                coolantSystem = misc;
+            }
+        }
+        if (coolantSystem != null) {
+            boolean bFailure = false;
+            int nRoll = Compute.d6(2);
+            bUsedCoolantSystem = true;
+            Report r = new Report(2365);
+            r.subject = getId();
+            r.addDesc(this);
+            r.add(coolantSystem.getName());
+            vDesc.addElement(r);
+            r = new Report(2370);
+            r.subject = getId();
+            r.indent();
+            r.add(EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel]);
+            r.add(nRoll);
+
+            if (nRoll < EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel]) {
+                // uh oh
+                bFailure = true;
+                r.choose(false);
+                vDesc.addElement(r);
+                // do the damage.
+                // hit and auto crit to first engine crit in this location,
+                // or the transfer location, if there's no hittable engine slot
+                // in this location
+                coolantSystem.setHit(true);
+                bDamagedCoolantSystem = true;
+                int loc = coolantSystem.getLocation();
+                boolean found = false;
+                for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+                    CriticalSlot crit = getCritical(loc, i);
+                    if ((crit != null)
+                        && crit.isHittable()
+                        && (crit.getType() == CriticalSlot.TYPE_SYSTEM)
+                        && (crit.getIndex() == Mech.SYSTEM_ENGINE)) {
+                        vCriticals.put(new Integer(loc),
+                                new LinkedList<CriticalSlot>());
+                        vCriticals.get(new Integer(loc)).add(crit);
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    loc = this.getTransferLocation(loc);
+                    for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+                        CriticalSlot crit = getCritical(loc, i);
+                        if ((crit != null)
+                            && crit.isHittable()
+                            && (crit.getType() == CriticalSlot.TYPE_SYSTEM)
+                            && (crit.getIndex() == Mech.SYSTEM_ENGINE)) {
+                            vCriticals.put(new Integer(loc),
+                                    new LinkedList<CriticalSlot>());
+                            vCriticals.get(new Integer(loc)).add(crit);
+                            break;
+                        }
+                    }
+                }
+            } else {
+                r.choose(true);
+                vDesc.addElement(r);
+                nCoolantSystemMOS = nRoll - EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel];
+            }
+            return bFailure;
+        }
+        return false;
+    }
+
+    public boolean hasDamagedCoolantSystem() {
+        return bDamagedCoolantSystem;
+    }
+
+    public void setHasDamagedCoolantSystem(boolean hit) {
+        bDamagedCoolantSystem = hit;
+    }
+
+    public int getCoolantSystemMOS() {
+        return nCoolantSystemMOS;
+    }
+
 }

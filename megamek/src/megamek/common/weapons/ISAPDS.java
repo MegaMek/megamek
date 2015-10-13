@@ -35,7 +35,7 @@ public class ISAPDS extends AmmoWeapon {
     public ISAPDS() {
         super();
         techLevel.put(3137, TechConstants.T_IS_ADVANCED);
-        name = "Advanced Point Defense System";
+        name = "RISC Advanced Point Defense System";
         setInternalName("ISAPDS");
         heat = 2;
         rackSize = 2;

@@ -123,12 +123,12 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     private int mineType = MINE_NONE;
     // vibrabomb mine setting
     private int vibraSetting = 20;
-    
+
     //These arrays are used to track individual missing modular components on BA for MHQ
-    //in MM they probably shouldn't need to be touched. They are used to keep track of 
-    //whether a modular mount is in use or not for a particular trooper. 
+    //in MM they probably shouldn't need to be touched. They are used to keep track of
+    //whether a modular mount is in use or not for a particular trooper.
     private boolean[] missingForTrooper = {false, false, false, false, false, false};
-    
+
     /**
      * Armor value, used for applicable equipment types like minesweepers.
      */
@@ -214,11 +214,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             baseDamageCapacity = shield.baseDamageCapacity;
             damageTaken = shield.damageTaken;
         }
-        if ((type instanceof MiscType) 
+        if ((type instanceof MiscType)
                 && type.hasFlag(MiscType.F_MINESWEEPER)) {
             armorValue = 30;
-        }       
-                
+        }
+
         quirks.initialize();
     }
 
@@ -509,7 +509,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         if (isDumping()) {
             desc.append(" (dumping)");
         }
-        
+
         if (isArmored()){
             desc.append(" (armored)");
         }
@@ -519,7 +519,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public boolean isReady() {
         return isReady(false);
     }
-    
+
     public boolean isReady(boolean isStrafing) {
         return (!usedThisRound || isStrafing) && !destroyed && !missing
                 && !jammed && !useless && !fired
@@ -621,7 +621,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public boolean jammedThisPhase() {
         return jammedThisPhase;
     }
-    
+
     /**
      * Clear all jam statuses - used by MHQ, because phase resetting doesn't work
      */
@@ -714,11 +714,11 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
         }
         return nShots;
     }
-    
+
     /**
      * Returns how many shots a weapon type would use.  This can be used without
      * an instantiation of Mounted, which is useful for computing Aero heat.
-     * If ignoreMode is true, then mode can be null. 
+     * If ignoreMode is true, then mode can be null.
      */
     public static int getNumShots(WeaponType wtype, EquipmentMode mode,
             boolean ignoreMode) {
@@ -748,7 +748,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             } else if ((ignoreMode || mode.equals("6-shot"))) {
                 nShots = 6;
             }
-        }        
+        }
         return nShots;
     }
 
@@ -996,10 +996,10 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             } else if (atype.getAmmoType() == AmmoType.T_TASER) {
                 damagePerShot = 6;
             }
-            
+
             if (atype.getAmmoType() == AmmoType.T_MEK_MORTAR) {
-                if ((mType == AmmoType.M_AIRBURST) 
-                        || (mType == AmmoType.M_FLARE) 
+                if ((mType == AmmoType.M_AIRBURST)
+                        || (mType == AmmoType.M_FLARE)
                         || (mType == AmmoType.M_SMOKE)) {
                     damagePerShot = 1;
                 } else {
@@ -1072,6 +1072,10 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
             if (mtype.hasFlag(MiscType.F_RISC_LASER_PULSE_MODULE)) {
                 return 2;
             }
+
+            if (mtype.hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+                return 5;
+            }
             return 0;
         }
         // um, otherwise, I'm not sure
@@ -1105,7 +1109,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public boolean canFire() {
         return canFire(false);
     }
-    
+
     public boolean canFire(boolean isStrafing) {
 
         // Equipment operational?
@@ -1702,23 +1706,23 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     public void setArmorValue(int armorValue) {
         this.armorValue = armorValue;
     }
-    
+
     public void setMissingForTrooper(int trooper, boolean b) {
     	trooper = trooper-BattleArmor.LOC_TROOPER_1;
-    	if(trooper < 0 || trooper >= missingForTrooper.length) {
+    	if((trooper < 0) || (trooper >= missingForTrooper.length)) {
     		return;
     	}
     	missingForTrooper[trooper] = b;
     }
-    
+
     public boolean isMissingForTrooper(int trooper) {
     	trooper = trooper-BattleArmor.LOC_TROOPER_1;
-    	if(trooper < 0 || trooper >= missingForTrooper.length) {
+    	if((trooper < 0) || (trooper >= missingForTrooper.length)) {
     		return false;
     	}
     	return missingForTrooper[trooper];
     }
-    
+
     public boolean isAnyMissingTroopers() {
     	for(int i = 0; i < missingForTrooper.length; i++) {
     		if(missingForTrooper[i]) {
@@ -1727,7 +1731,7 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     	}
     	return false;
     }
-    
+
     public String getMissingTrooperString() {
     	StringBuffer missings = new StringBuffer();
     	for(int i = 0; i < missingForTrooper.length; i++) {

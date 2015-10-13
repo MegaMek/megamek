@@ -423,6 +423,9 @@ public class MiscType extends EquipmentType {
             .valueOf(1).shiftLeft(192);
     public static final BigInteger F_REMOTE_DRONE_COMMAND_CONSOLE = BigInteger
             .valueOf(1).shiftLeft(193);
+    public static final BigInteger F_EMERGENCY_COOLANT_SYSTEM = BigInteger
+            .valueOf(1).shiftLeft(194);
+
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -1724,12 +1727,13 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createLightFluidSuctionSystem());
         EquipmentType.addType(MiscType.createFluidSuctionSystem());
 
-        EquipmentType.addType(MiscType.createISSuperCooledMyomer());
+        EquipmentType.addType(MiscType.createRISCSuperCooledMyomer());
         EquipmentType.addType(MiscType.createRISCViralJammerDecoy());
         EquipmentType.addType(MiscType.createRISCViralJammerHoming());
         EquipmentType.addType(MiscType.createDroneControlConsole());
         EquipmentType.addType(MiscType.createRISCLaserPulseModule());
         EquipmentType.addType(MiscType.createISRemoteDroneCommandConsole());
+        EquipmentType.addType(MiscType.createRISCEmergencyCoolantSystem());
 
         //Infantry Equipment Packs
 //        EquipmentType.addType(MiscType.createAblativeStandardInfArmor());
@@ -10366,7 +10370,7 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createISSuperCooledMyomer() {
+    public static MiscType createRISCSuperCooledMyomer() {
         MiscType misc = new MiscType();
 
         misc.techLevel.put(3132, TechConstants.T_IS_EXPERIMENTAL);
@@ -10418,6 +10422,23 @@ public class MiscType extends EquipmentType {
         return misc;
         // FIXME: implement game rules, only BV and construction rules
         // implemented
+    }
+
+    public static MiscType createRISCEmergencyCoolantSystem() {
+        MiscType misc = new MiscType();
+        misc.name = "RISC Emergency Coolant System";
+        misc.setInternalName("ISRISCEmergencyCoolantSystem");
+        misc.tonnage = 2;
+        misc.criticals = 1;
+        misc.cost = 460000;
+        misc.flags = misc.flags.or(F_EMERGENCY_COOLANT_SYSTEM)
+                .or(F_MECH_EQUIPMENT);
+        misc.techLevel.put(3136, TechConstants.T_IS_EXPERIMENTAL);
+        misc.techRating = RATING_F;
+        misc.availRating = new int[] { RATING_X, RATING_X, RATING_X, RATING_F };
+        misc.introDate = 3136;
+        misc.explosive = true;
+        return misc;
     }
 
     public static MiscType createMaritimeLifeboat() {

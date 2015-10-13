@@ -715,8 +715,9 @@ public abstract class TestEntity implements TestEntityOption {
             int eqTechLvl = nextE.getTechLevel(getEntity().getTechLevelYear());
             boolean mixedTech = getEntity().isMixedTech();
             if (nextE instanceof AmmoType) {
-                if (!TechConstants.isLegal(ammoTechLvl, eqTechLvl, mixedTech))
-                continue;
+                if (!TechConstants.isLegal(ammoTechLvl, eqTechLvl, mixedTech)) {
+                    continue;
+                }
             } else if (!(TechConstants.isLegal(eTechLevel, eqTechLvl, true,
                     mixedTech))) {
                 if (!retVal) {
@@ -760,25 +761,35 @@ public abstract class TestEntity implements TestEntityOption {
         boolean hasSponsonTurret = false;
         boolean hasHarjelII = false;
         boolean hasHarjelIII = false;
+        boolean hasCoolantPod = false;
+        int emergencyCoolantCount = 0;
+        for (Mounted m : getEntity().getAmmo()) {
+            if (((AmmoType)m.getType()).getAmmoType() == AmmoType.T_COOLANT_POD) {
+                hasCoolantPod = true;
+            }
+        }
         for (Mounted m : getEntity().getMisc()) {
             if (m.getType().hasFlag(MiscType.F_LIGHT_FLUID_SUCTION_SYSTEM)) {
                 if ((getEntity() instanceof Mech) && !((Mech)getEntity()).isIndustrial()) {
                     illegal = true;
-                    buff.append("BattleMech can't mount light fluid suction system");
+                    buff.append("BattleMech can't mount light fluid suction system\n");
                 }
                 if (getEntity() instanceof Protomech) {
                     illegal = true;
-                    buff.append("ProtoMech can't mount light fluid suction system");
+                    buff.append("ProtoMech can't mount light fluid suction system\n");
                 }
                 if ((getEntity() instanceof Tank) && (m.getLocation() == Tank.LOC_BODY)) {
                     illegal = true;
-                    buff.append("Vehicle must not mount light fluid suction system in body");
+                    buff.append("Vehicle must not mount light fluid suction system in body\n");
                 }
+            }
+            if (m.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM)) {
+                emergencyCoolantCount++;
             }
             if (m.getType().hasFlag(MiscType.F_VOIDSIG)
                     && !getEntity().hasWorkingMisc(MiscType.F_ECM)) {
                 illegal = true;
-                buff.append("void signature system needs ECM suite");
+                buff.append("void signature system needs ECM suite\n");
             }
             if (m.getType().hasFlag(MiscType.F_FIELD_KITCHEN)) {
                 fieldKitchenCount++;
@@ -815,19 +826,19 @@ public abstract class TestEntity implements TestEntityOption {
                                     || m2.getType().hasSubType(
                                             MiscType.S_WRECKING_BALL)) {
                                 illegal = true;
-                                buff.append("bulldozer in same location as prohibited physical weapon");
+                                buff.append("bulldozer in same location as prohibited physical weapon\n");
                             }
                         }
                     }
                 }
                 if ((m.getLocation() != Tank.LOC_FRONT) && (m.getLocation() != Tank.LOC_REAR)) {
                     illegal = true;
-                    buff.append("bulldozer must be mounted in front");
+                    buff.append("bulldozer must be mounted in front\n");
                 }
                 if ((getEntity().getMovementMode() != EntityMovementMode.TRACKED)
                         && (getEntity().getMovementMode() != EntityMovementMode.WHEELED)) {
                     illegal = true;
-                    buff.append("bulldozer must be mounted in unit with tracked or wheeled movement mode");
+                    buff.append("bulldozer must be mounted in unit with tracked or wheeled movement mode\n");
                 }
             }
 
@@ -836,14 +847,14 @@ public abstract class TestEntity implements TestEntityOption {
             for (Mounted m : getEntity().getMisc()) {
                 if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
                     if (hasSponsonTurret) {
-                        buff.append("can't combine vehicular jump jets and sponson turret");
+                        buff.append("can't combine vehicular jump jets and sponson turret\n");
                         illegal = true;
                     }
                     if ((getEntity().getMovementMode() != EntityMovementMode.HOVER)
                             && (getEntity().getMovementMode() != EntityMovementMode.WHEELED)
                             && (getEntity().getMovementMode() != EntityMovementMode.TRACKED)
                             && (getEntity().getMovementMode() != EntityMovementMode.WIGE)) {
-                        buff.append("jump jets only possible on vehicles with hover, wheeled, tracked, or Wing-in-Ground Effect movement mode");
+                        buff.append("jump jets only possible on vehicles with hover, wheeled, tracked, or Wing-in-Ground Effect movement mode\n");
                         illegal = true;
                     }
                 }
@@ -891,16 +902,16 @@ public abstract class TestEntity implements TestEntityOption {
                 turret2Weight = TestEntity.ceil(turret2Weight,
                         getWeightCeilingTurret());
             }
-            if (tank.getBaseChassisTurretWeight() >= 0
-                    && turretWeight > tank.getBaseChassisTurretWeight()) {
+            if ((tank.getBaseChassisTurretWeight() >= 0)
+                    && (turretWeight > tank.getBaseChassisTurretWeight())) {
                 buff.append("Unit has more weight in the turret than allowed "
                         + "by base chassis!  Current weight: " + turretWeight
                         + ", base chassis turret weight: "
                         + tank.getBaseChassisTurretWeight() + "\n");
                 illegal = true;
             }
-            if (tank.getBaseChassisTurret2Weight() >= 0
-                    && turret2Weight > tank.getBaseChassisTurret2Weight()) {
+            if ((tank.getBaseChassisTurret2Weight() >= 0)
+                    && (turret2Weight > tank.getBaseChassisTurret2Weight())) {
                 buff.append("Unit has more weight in the second turret than "
                         + "allowed by base chassis!  Current weight: "
                         + turret2Weight + ", base chassis turret weight: "
@@ -917,6 +928,15 @@ public abstract class TestEntity implements TestEntityOption {
             buff.append("Unit has more than three Field Kitchens\n");
             illegal = true;
         }
+
+        if (hasCoolantPod && (emergencyCoolantCount > 0)) {
+            buff.append("Unit has coolant pod and RISC emergency coolant system\n");
+            illegal = true;
+        }
+        if (emergencyCoolantCount > 1) {
+            buff.append("Unit has more than one RISC emergency coolant system\n");
+            illegal = true;
+        }
         if (getEntity() instanceof Tank) {
             Tank tank = (Tank) getEntity();
             if ((tank.getMovementMode() == EntityMovementMode.VTOL)
@@ -924,7 +944,7 @@ public abstract class TestEntity implements TestEntityOption {
                     || (tank.getMovementMode() == EntityMovementMode.HOVER)) {
                 for (int i = 0; i < tank.locations(); i++) {
                     if (tank.getArmorType(i) == EquipmentType.T_ARMOR_HARDENED) {
-                        buff.append("Hardened armor can't be mounted on WiGE/Hover/Wheeled vehicles");
+                        buff.append("Hardened armor can't be mounted on WiGE/Hover/Wheeled vehicles\n");
                         illegal = true;
                     }
                 }
@@ -939,7 +959,7 @@ public abstract class TestEntity implements TestEntityOption {
             Mech mech = (Mech) getEntity();
             if (hasHarjelII && hasHarjelIII) {
                 illegal = true;
-                buff.append("Can't mix HarJel II and HarJel III");
+                buff.append("Can't mix HarJel II and HarJel III\n");
             }
             if (hasHarjelII || hasHarjelIII) {
                 if (mech.isIndustrial()) {
@@ -993,7 +1013,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (mech.hasFullHeadEject()) {
                 if ((mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
                         || (mech.getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE)) {
-                    buff.append("full head ejection system incompatible with cockpit type");
+                    buff.append("full head ejection system incompatible with cockpit type\n");
                     illegal = true;
                 }
             }
@@ -1015,7 +1035,7 @@ public abstract class TestEntity implements TestEntityOption {
                     }
                 }
                 if (count > 1) {
-                    buff.append("only one sword/vibroblade per arm");
+                    buff.append("only one sword/vibroblade per arm\n");
                     illegal = true;
                 }
             }
@@ -1087,19 +1107,23 @@ public abstract class TestEntity implements TestEntityOption {
                 }
                 if (m.getType().hasFlag(MiscType.F_REMOTE_DRONE_COMMAND_CONSOLE)) {
                     if (mech.getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE) {
-                        buff.append("cockpit command console can't be combined with remote drone command console");
+                        buff.append("cockpit command console can't be combined with remote drone command console\n");
                         illegal = true;
                     }
                     if ((mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) && (m.getLocation() != Mech.LOC_CT)) {
-                        buff.append("remote drone command console must be placed in same location as cockpit");
+                        buff.append("remote drone command console must be placed in same location as cockpit\n");
                         illegal = true;
                     } else {
                         if (m.getLocation() != Mech.LOC_HEAD) {
-                            buff.append("remote drone command console must be placed in same location as cockpit");
+                            buff.append("remote drone command console must be placed in same location as cockpit\n");
                             illegal = true;
                         }
                     }
 
+                }
+                if (m.getType().hasFlag(MiscType.F_EMERGENCY_COOLANT_SYSTEM) && !mech.hasWorkingSystem(Mech.SYSTEM_ENGINE, m.getLocation())) {
+                    buff.append("RISC emergency coolant system must be mounted in location with engine crit\n");
+                    illegal = true;
                 }
             }
 

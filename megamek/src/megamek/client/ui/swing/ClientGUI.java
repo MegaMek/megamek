@@ -901,6 +901,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 ((Distractable) component).removeAllListeners();
             }
         } // Handle the next component
+        phaseComponents.clear();
+
         frame.removeAll();
         frame.setVisible(false);
         try {

@@ -745,16 +745,45 @@ public class Engine implements Serializable {
         return cost;
     }
 
-    public int getTechType() {
+    /**
+     * Return the tech type (tech level + tech base) for the current engine.
+     *
+     * @param year
+     * @return
+     */
+    public int getTechType(int year) {
+        boolean isLarge = hasFlag(LARGE_ENGINE);
+        boolean isClan = hasFlag(CLAN_ENGINE);
         int level = 1;
         switch (engineType) {
             case FISSION:
             case FUEL_CELL:
             case XL_ENGINE:
             case LIGHT_ENGINE:
-                level = 2;
-                break;
+                if (isClan) {
+                    return TechConstants.T_CLAN_UNOFFICIAL;
+                }
+                if (isLarge) {
+                    if (year < 3064) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year < 3065) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else {
+                        return TechConstants.T_IS_ADVANCED;
+                    }
+                } else {
+                    if (year < 3055) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year < 3062) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else if (year < 3067){
+                        return TechConstants.T_IS_ADVANCED;
+                    } else {
+                        return TechConstants.T_IS_TW_NON_BOX;
+                    }
+                }
             case XXL_ENGINE:
+                
             case COMPACT_ENGINE:
                 level = 3;
                 break;

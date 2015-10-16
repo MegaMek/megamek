@@ -16878,14 +16878,14 @@ public class Server implements Runnable {
             if (ae.isProne()) {
                 // attacker prone during weapons phase
                 addReport(doEntityFall(ae, daa.getTargetPos(), 2, 3,
-                                       ae.getBasePilotingRoll(), false));
+                        ae.getBasePilotingRoll(), false));
 
             } else {
                 // same effect as successful DFA
                 ae.setElevation(ae.calcElevation(aeHex, teHex, 0, false, false));
                 addReport(doEntityDisplacement(ae, ae.getPosition(),
-                                               daa.getTargetPos(), new PilotingRollData(ae.getId(), 4,
-                                                                                        "executed death from above")));
+                        daa.getTargetPos(), new PilotingRollData(ae.getId(), 4,
+                                "executed death from above")));
             }
             return;
         }
@@ -16905,8 +16905,8 @@ public class Server implements Runnable {
             // entity isn't DFAing any more
             ae.setDisplacementAttack(null);
             addReport(doEntityFallsInto(ae, ae.getElevation(),
-                                        ae.getPosition(), daa.getTargetPos(),
-                                        ae.getBasePilotingRoll(), true));
+                    ae.getPosition(), daa.getTargetPos(),
+                    ae.getBasePilotingRoll(), true));
             return;
         }
 
@@ -16957,7 +16957,7 @@ public class Server implements Runnable {
         if (roll < toHit.getValue()) {
             Coords dest = te.getPosition();
             Coords targetDest = Compute.getPreferredDisplacement(game,
-                                                                 te.getId(), dest, direction);
+                    te.getId(), dest, direction);
             // miss
             r = new Report(4035);
             r.subject = ae.getId();
@@ -16974,17 +16974,18 @@ public class Server implements Runnable {
                 addReport(r);
                 // entity isn't DFAing any more
                 ae.setDisplacementAttack(null);
-                addReport(doEntityFall(ae, dest, 2, 3,
-                                       ae.getBasePilotingRoll(), false), 1);
+                addReport(
+                        doEntityFall(ae, dest, 2, 3, ae.getBasePilotingRoll(),
+                                false), 1);
                 Entity violation = Compute.stackingViolation(game, ae.getId(),
-                                                             dest);
+                        dest);
                 if (violation != null) {
                     // target gets displaced
                     targetDest = Compute.getValidDisplacement(game,
-                                                              violation.getId(), dest, direction);
+                            violation.getId(), dest, direction);
                     vPhaseReport.addAll(doEntityDisplacement(violation, dest,
-                                                             targetDest, new PilotingRollData(violation.getId(),
-                                                                                              0, "domino effect")));
+                            targetDest, new PilotingRollData(violation.getId(),
+                                    0, "domino effect")));
                     // Update the violating entity's postion on the client.
                     if (!game.getOutOfGameEntitiesVector().contains(violation)) {
                         entityUpdate(violation.getId());
@@ -16995,7 +16996,7 @@ public class Server implements Runnable {
                 // Tanks suffer an ammo/power plant hit.
                 // TODO : a Mech suffers a Head Blown Off crit.
                 addReport(destroyEntity(ae, "impossible displacement",
-                                        ae instanceof Mech, ae instanceof Mech));
+                        ae instanceof Mech, ae instanceof Mech));
             }
             return;
         }
@@ -17089,47 +17090,47 @@ public class Server implements Runnable {
             if (spikeDamage > 0) {
                 if (ae instanceof QuadMech) {
                     addReport(damageEntity(ae, new HitData(Mech.LOC_LARM),
-                                           (spikeDamage + 2) / 4, false, DamageType.NONE,
-                                           false, false, false));
+                            (spikeDamage + 2) / 4, false, DamageType.NONE,
+                            false, false, false));
                     addReport(damageEntity(ae, new HitData(Mech.LOC_RARM),
-                                           (spikeDamage + 2) / 4, false, DamageType.NONE,
-                                           false, false, false));
+                            (spikeDamage + 2) / 4, false, DamageType.NONE,
+                            false, false, false));
                     if (spikeDamage > 2) {
                         addReport(damageEntity(ae, new HitData(Mech.LOC_LLEG),
-                                               spikeDamage / 4, false, DamageType.NONE, false,
-                                               false, false));
+                                spikeDamage / 4, false, DamageType.NONE, false,
+                                false, false));
                         addReport(damageEntity(ae, new HitData(Mech.LOC_RLEG),
-                                               spikeDamage / 4, false, DamageType.NONE, false,
-                                               false, false));
+                                spikeDamage / 4, false, DamageType.NONE, false,
+                                false, false));
                     }
                 } else {
                     addReport(damageEntity(ae, new HitData(Mech.LOC_LLEG),
-                                           spikeDamage / 2, false, DamageType.NONE, false,
-                                           false, false));
+                            spikeDamage / 2, false, DamageType.NONE, false,
+                            false, false));
                     addReport(damageEntity(ae, new HitData(Mech.LOC_RLEG),
-                                           spikeDamage / 2, false, DamageType.NONE, false,
-                                           false, false));
+                            spikeDamage / 2, false, DamageType.NONE, false,
+                            false, false));
                 }
             }
             if (target instanceof VTOL) {
                 // destroy rotor
                 addReport(applyCriticalHit(te, VTOL.LOC_ROTOR,
-                                           new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                                                            VTOL.CRIT_ROTOR_DESTROYED), false, 0, false));
+                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                                VTOL.CRIT_ROTOR_DESTROYED), false, 0, false));
             }
             // Target entities are pushed away or destroyed.
             Coords targetDest = Compute.getValidDisplacement(game, te.getId(),
-                                                             dest, direction);
+                    dest, direction);
             if (targetDest != null) {
                 addReport(doEntityDisplacement(te, dest, targetDest,
-                                               new PilotingRollData(te.getId(), 2,
-                                                                    "hit by death from above")));
+                        new PilotingRollData(te.getId(), 2,
+                                "hit by death from above")));
             } else {
                 // ack! automatic death! Tanks
                 // suffer an ammo/power plant hit.
                 // TODO : a Mech suffers a Head Blown Off crit.
                 addReport(destroyEntity(te, "impossible displacement",
-                                        te instanceof Mech, te instanceof Mech));
+                        te instanceof Mech, te instanceof Mech));
             }
 
             // entity isn't DFAing any more

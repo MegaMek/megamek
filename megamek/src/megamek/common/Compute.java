@@ -604,7 +604,7 @@ public class Compute {
      * @return valid displacement coords, or null if none
      */
     public static Coords getValidDisplacement(IGame game, int entityId,
-                                              Coords src, int direction) {
+            Coords src, int direction) {
         // check the surrounding hexes, nearest to the original direction first
         int[] offsets = {0, 1, 5, 2, 4, 3};
         int range = 1;

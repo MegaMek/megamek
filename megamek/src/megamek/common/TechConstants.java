@@ -380,4 +380,32 @@ public class TechConstants {
                 return T_TECH_UNKNOWN;
         }
     }
+
+    /**
+     * Return the tech level of the given gyro. This is necessary because gyros
+     * are systems and hence don't have MiscType entries.
+     * 
+     * @param gyroType
+     * @param isClan
+     * @param year
+     * @return
+     */
+    public static int getGyroTechLevel(int gyroType, boolean isClan, int year) {
+        return T_ALLOWED_ALL;
+    }
+
+    /**
+     * Return the tech level of the given cockpit. THis is necessary because
+     * cockpits are systems and hence don't have MiscType entries.
+     * 
+     * @param gyroType
+     * @param entityType
+     * @param isClan
+     * @param year
+     * @return
+     */
+    public static int getCockpitTechLevel(int cockpitType, long entityType,
+            boolean isClan, int year) {
+        return T_ALLOWED_ALL;
+    }
 }

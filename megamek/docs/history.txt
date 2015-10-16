@@ -7,6 +7,7 @@ v0.41.11-git
     anti-mech attacks
 + Bug: APDS ammo counting for both offensive and defensive BV for tanks
 + Added RISC Emergency Coolant System
++ Bug [#4637]: Princess NPE in Precognition
 
 v0.41.10 (2015-10-12 00:11 UTC)
 + Data: New Sprites and unit file.

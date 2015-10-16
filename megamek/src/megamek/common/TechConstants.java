@@ -76,7 +76,7 @@ public class TechConstants {
     public static final int T_SIMPLE_EXPERIMENTAL = 3;
     public static final int T_SIMPLE_UNOFFICIAL = 4;
 
-    public static final String[] T_SIMPLE_NAMES = { "Intro", "Standard",
+    public static final String[] T_SIMPLE_NAMES = { "Introductory", "Standard",
             "Advanced", "Experimental", "Unofficial" };
 
     public static final int SIMPLE_SIZE = T_SIMPLE_NAMES.length;

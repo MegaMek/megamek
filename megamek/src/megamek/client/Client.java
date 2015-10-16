@@ -301,7 +301,6 @@ public class Client implements IClientCommandHandler {
 
         if (connection != null) {
             connection.close();
-            connection = null;
         }
 
         for (int i = 0; i < closeClientListeners.size(); i++) {

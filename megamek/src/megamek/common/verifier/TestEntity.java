@@ -710,13 +710,18 @@ public abstract class TestEntity implements TestEntityOption {
     public boolean hasIllegalTechLevels(StringBuffer buff, int ammoTechLvl) {
         boolean retVal = false;
         int eTechLevel = getEntity().getTechLevel();
+        int eTLYear = getEntity().getTechLevelYear();
+        boolean mixedTech = getEntity().isMixedTech();
         for (Mounted mounted : getEntity().getEquipment()) {
             EquipmentType nextE = mounted.getType();
-            int eqTechLvl = nextE.getTechLevel(getEntity().getTechLevelYear());
-            boolean mixedTech = getEntity().isMixedTech();
+            int eqTechLvl = nextE.getTechLevel(eTLYear);
             if (nextE instanceof AmmoType) {
                 if (!TechConstants.isLegal(ammoTechLvl, eqTechLvl, mixedTech)) {
-                    continue;
+                    if (!retVal) {
+                        buff.append("Equipment illegal at unit's tech level:\n");
+                    }
+                    retVal = true;
+                    buff.append(nextE.getName()).append("\n");
                 }
             } else if (!(TechConstants.isLegal(eTechLevel, eqTechLvl, true,
                     mixedTech))) {
@@ -727,6 +732,45 @@ public abstract class TestEntity implements TestEntityOption {
                 buff.append(nextE.getName()).append("\n");
             }
         }
+        // Check cockpit TL
+        int cockpitTL;
+        int cockpitType;
+        if (getEntity() instanceof Aero) {
+            cockpitType =  ((Aero) getEntity()).getCockpitType();
+            cockpitTL = TechConstants.getCockpitTechLevel(
+                    cockpitType, Entity.ETYPE_AERO,
+                    getEntity().isClan(), eTLYear);
+            if (!TechConstants.isLegal(eTechLevel, cockpitTL, mixedTech)) {
+                buff.append("Cockpit is illegal at unit's tech level: ");
+                buff.append(Mech.getCockpitDisplayString(cockpitType));
+                buff.append("\n");
+                retVal = true;
+            }
+        } else if (getEntity() instanceof Mech) {
+            Mech mech = (Mech) getEntity();
+            cockpitType = mech.getCockpitType();
+            cockpitTL = TechConstants.getCockpitTechLevel(cockpitType,
+                    mech.getEntityType(), mech.isClan(), eTLYear);
+            int gyroType = mech.getGyroType();
+            int gyroTL = TechConstants.getGyroTechLevel(gyroType,
+                    mech.isClan(), eTLYear);
+            if (!TechConstants.isLegal(eTechLevel, cockpitTL, mixedTech)) {
+                buff.append("Cockpit is illegal at unit's tech level: ");
+                buff.append(Mech.getCockpitDisplayString(cockpitType));
+                buff.append("\n");
+                retVal = true;
+            }
+            if (!TechConstants.isLegal(eTechLevel, gyroTL, mixedTech)) {
+                buff.append("Gyro is illegal at unit's tech level: ");
+                buff.append(Mech.getGyroDisplayString(gyroType));
+                buff.append("\n");
+                retVal = true;
+            }
+        }
+        if (getEntity().getEngine() != null) {
+            
+        }
+
         return retVal;
     }
 

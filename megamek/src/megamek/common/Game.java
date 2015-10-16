@@ -1627,9 +1627,11 @@ public class Game implements Serializable, IGame {
     public Entity getAffaTarget(Coords c, Entity ignore) {
         Vector<Entity> vector = new Vector<Entity>();
         if (board.contains(c)) {
+            IHex hex = board.getHex(c);
             for (Entity entity : getEntitiesVector(c)) {
                 if (entity.isTargetable()
-                    && (entity.getElevation() == 0)
+                    && ((entity.getElevation() == 0) // Standing on hex surface 
+                            || (entity.getElevation() == -hex.depth())) // Standing on hex floor
                     && (entity.getAltitude() == 0)
                     && !(entity instanceof Infantry) && (entity != ignore)) {
                     vector.addElement(entity);

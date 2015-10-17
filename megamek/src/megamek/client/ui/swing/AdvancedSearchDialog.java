@@ -1166,7 +1166,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
             case COL_LONG:
                 return wp.getLongRange();
             case COL_LEVEL:
-                return TechConstants.getLevelName(wp.getTechLevel(gameYear));
+                    return TechConstants.getSimpleLevelName(TechConstants
+                            .convertFromNormalToSimple(wp
+                                    .getTechLevel(gameYear)));
             case COL_INTERNAL_NAME:
                 return wp.getInternalName();
             default:
@@ -1279,7 +1281,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
             case COL_COST:
                 return eq.getRawCost();
             case COL_LEVEL:
-                return TechConstants.getLevelName(eq.getTechLevel(gameYear));
+                    return TechConstants.getSimpleLevelName(TechConstants
+                            .convertFromNormalToSimple(eq
+                                    .getTechLevel(gameYear)));
             case COL_INTERNAL_NAME:
                 return eq.getInternalName();
             default:

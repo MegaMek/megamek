@@ -755,153 +755,147 @@ public class Engine implements Serializable {
         boolean isLarge = hasFlag(LARGE_ENGINE);
         boolean isClan = hasFlag(CLAN_ENGINE);
         boolean isSV = hasFlag(SUPPORT_VEE_ENGINE);
-        int level = 1;
         switch (engineType) {
-	        case NORMAL_ENGINE:
-	        	if ((isClan) && (isLarge)) {
-	        		if (year <=2630) {
-	        			return TechConstants.T_CLAN_UNOFFICIAL;
-	        		} else if (year <=3080) {
-	        			return TechConstants.T_CLAN_EXPERIMENTAL;
-	        		} else if (year <=3120) {
-	        			return TechConstants.T_CLAN_ADVANCED;
-	        		} else {
-	        			return TechConstants.T_CLAN_TW;
-	        		}
-	        	}
-	        	if (isClan) {
-	        		return TechConstants.T_CLAN_TW;
-	        	}
-	        	if (isSV) {
-	        		return TechConstants.T_ALLOWED_ALL;
-	        	}
-	        	if (year <=2285) {
-	        		return TechConstants.T_IS_UNOFFICIAL;
-	        	} else {
-	        		return TechConstants.T_INTRO_BOXSET;
-	        	}
-	        	
-	        	
-	        case XL_ENGINE:
-	        	if ((isClan) && (isLarge)) {
-	        		if (year <=2845) {
-	        			return TechConstants.T_CLAN_UNOFFICIAL;
-	        		} else if (year <=3075) {
-	        			return TechConstants.T_CLAN_EXPERIMENTAL;
-	        		} else {
-	        			return TechConstants.T_CLAN_ADVANCED;
-	        		}
-	        	}
-	        	if (isClan) {
-	        		if (year <=2819) {
-	        			return TechConstants.T_CLAN_UNOFFICIAL;
-	        		} else if (year <=2827) {
-	        			return TechConstants.T_CLAN_EXPERIMENTAL;
-	        		} else if (year <=2829){
-	        			return TechConstants.T_CLAN_ADVANCED;
-	        		} else {
-	        			return TechConstants.T_CLAN_TW;
-	        		}
-	        	}
-	        	//The IS Large XL engine is actually extinct 
-	        	//in 2822 and returns as IS Experimental in 3054.
-	        	if (isLarge) {
-	        		if (year <=2630) {
-	        			return TechConstants.T_IS_UNOFFICIAL;
-   	        		} else if (year <=3080) {
-	        			return TechConstants.T_IS_EXPERIMENTAL;
-	        		} else {
-	        			return TechConstants.T_IS_ADVANCED;
-	        		}
-	        	//The regular XL engine is extinct in 2865 but
-	        	//returns as experimental in 3035
-	        	} else {
-	           		if (year <=2556) {
-	        			return TechConstants.T_IS_UNOFFICIAL;
-	        		} else if (year <=2579) {
-	        			return TechConstants.T_IS_EXPERIMENTAL;
-	        		} else if (year <=3045) {
-	        			return TechConstants.T_IS_ADVANCED;
-	        		} else {
-	        			return TechConstants.T_IS_TW_NON_BOX;
-	        		}
-	        	}
-     	
-   	        case XXL_ENGINE:
-	        	if ((isClan) && (isLarge)) {
-	        		if (year <=3055) {
-	        			return TechConstants.T_CLAN_UNOFFICIAL;
-	        		} else if (year <= 3125){
-	        			return TechConstants.T_CLAN_EXPERIMENTAL;
-	        			
-	        		} else {
-	        			return TechConstants.T_CLAN_ADVANCED;
-	        		}
-	        	}
-	        	if (isClan) {
-	        		if (year <= 2949) {
-	        			return TechConstants.T_CLAN_UNOFFICIAL;
-	        		} else if (year <= 3079) {
-	        			return TechConstants.T_CLAN_EXPERIMENTAL;
-	        		} else {
-	        			return TechConstants.T_CLAN_ADVANCED;
-	        		}
-	        	}
-	        	if (isLarge) {
-	        		if (year <=3058) {
-	        			return TechConstants.T_IS_UNOFFICIAL;
-	        		} else if (year <=3130) {
-	        			return TechConstants.T_IS_EXPERIMENTAL;
-	        		} else {
-	        			if (year <= 3050) {
-	        				return TechConstants.T_IS_EXPERIMENTAL;
-	        			} else if (year <= 3105) {
-	        				return TechConstants.T_IS_ADVANCED;
-	        			}
-	        		}
-	        	}
-        		   	        		
-   	        case FISSION:
-        		if (isClan) {
-        			return TechConstants.T_CLAN_UNOFFICIAL;
-        		}
-        		if (isSV) {
-        			return TechConstants.T_ALLOWED_ALL;
-        		}
-        		if (isLarge) {
-        			return TechConstants.T_IS_UNOFFICIAL;
-        		} else {
-        			if (year <= 2470) {
-        				return TechConstants.T_IS_EXPERIMENTAL;
-        			} else if (year <= 2882) {
-        				return TechConstants.T_IS_ADVANCED;
-        			} else if (year <= 3079) {
-        				return TechConstants.T_IS_TW_NON_BOX;
-        			}      			
-        		}
-        		
-            case FUEL_CELL:
-            	if (isSV) {
-            		return TechConstants.T_ALLOWED_ALL;
-            	}
-            	if (isClan) {
-        			if (year <= 3078 ) {
-        				return TechConstants.T_CLAN_ADVANCED;
-        			} else {
-        				return TechConstants.T_CLAN_TW;
-        			}
-            	} else {
-                    if (year <= 2285) {
+            case NORMAL_ENGINE:
+                if ((isClan) && (isLarge)) {
+                    if (year <= 2630) {
+                        return TechConstants.T_CLAN_UNOFFICIAL;
+                    } else if (year <= 3080) {
+                        return TechConstants.T_CLAN_EXPERIMENTAL;
+                    } else if (year <= 3120) {
+                        return TechConstants.T_CLAN_ADVANCED;
+                    } else {
+                        return TechConstants.T_CLAN_TW;
+                    }
+                }
+                if (isClan) {
+                    return TechConstants.T_CLAN_TW;
+                }
+                if (isSV) {
+                    return TechConstants.T_ALLOWED_ALL;
+                }
+                if (year <= 2285) {
+                    return TechConstants.T_IS_UNOFFICIAL;
+                } else {
+                    return TechConstants.T_INTRO_BOXSET;
+                }
+            case XL_ENGINE:
+                if ((isClan) && (isLarge)) {
+                    if (year <= 2845) {
+                        return TechConstants.T_CLAN_UNOFFICIAL;
+                    } else if (year <= 3075) {
+                        return TechConstants.T_CLAN_EXPERIMENTAL;
+                    } else {
+                        return TechConstants.T_CLAN_ADVANCED;
+                    }
+                }
+                if (isClan) {
+                    if (year <= 2819) {
+                        return TechConstants.T_CLAN_UNOFFICIAL;
+                    } else if (year <= 2827) {
+                        return TechConstants.T_CLAN_EXPERIMENTAL;
+                    } else if (year <= 2829) {
+                        return TechConstants.T_CLAN_ADVANCED;
+                    } else {
+                        return TechConstants.T_CLAN_TW;
+                    }
+                }
+                // The IS Large XL engine is actually extinct
+                // in 2822 and returns as IS Experimental in 3054.
+                if (isLarge) {
+                    if (year <= 2630) {
                         return TechConstants.T_IS_UNOFFICIAL;
-                    } else if (year <= 2470) {
+                    } else if (year <= 3080) {
                         return TechConstants.T_IS_EXPERIMENTAL;
-                    } else if (year <= 3078){
+                    } else {
+                        return TechConstants.T_IS_ADVANCED;
+                    }
+                    // The regular XL engine is extinct in 2865 but
+                    // returns as experimental in 3035
+                } else {
+                    if (year <= 2556) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year <= 2579) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else if (year <= 3045) {
                         return TechConstants.T_IS_ADVANCED;
                     } else {
                         return TechConstants.T_IS_TW_NON_BOX;
                     }
-           		}
-            	
+                }
+            case XXL_ENGINE:
+                if ((isClan) && (isLarge)) {
+                    if (year <= 3055) {
+                        return TechConstants.T_CLAN_UNOFFICIAL;
+                    } else if (year <= 3125) {
+                        return TechConstants.T_CLAN_EXPERIMENTAL;
+
+                    } else {
+                        return TechConstants.T_CLAN_ADVANCED;
+                    }
+                }
+                if (isClan) {
+                    if (year <= 2949) {
+                        return TechConstants.T_CLAN_UNOFFICIAL;
+                    } else if (year <= 3079) {
+                        return TechConstants.T_CLAN_EXPERIMENTAL;
+                    } else {
+                        return TechConstants.T_CLAN_ADVANCED;
+                    }
+                }
+                if (isLarge) {
+                    if (year <= 3058) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year <= 3130) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else {
+                        if (year <= 3050) {
+                            return TechConstants.T_IS_EXPERIMENTAL;
+                        } else if (year <= 3105) {
+                            return TechConstants.T_IS_ADVANCED;
+                        }
+                    }
+                }
+            case FISSION:
+                if (isClan) {
+                    return TechConstants.T_CLAN_UNOFFICIAL;
+                }
+                if (isSV) {
+                    return TechConstants.T_ALLOWED_ALL;
+                }
+                if (isLarge) {
+                    return TechConstants.T_IS_UNOFFICIAL;
+                } else {
+                    if (year <= 2470) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else if (year <= 2882) {
+                        return TechConstants.T_IS_ADVANCED;
+                    } else if (year <= 3079) {
+                        return TechConstants.T_IS_TW_NON_BOX;
+                    }
+                }
+            case FUEL_CELL:
+                if (isSV) {
+                    return TechConstants.T_ALLOWED_ALL;
+                }
+                if (isClan) {
+                    if (year <= 3078) {
+                        return TechConstants.T_CLAN_ADVANCED;
+                    } else {
+                        return TechConstants.T_CLAN_TW;
+                    }
+                } else {
+                    if (year <= 2285) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year <= 2470) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else if (year <= 3078) {
+                        return TechConstants.T_IS_ADVANCED;
+                    } else {
+                        return TechConstants.T_IS_TW_NON_BOX;
+                    }
+                }
+
             case LIGHT_ENGINE:
                 if (isClan) {
                     return TechConstants.T_CLAN_UNOFFICIAL;
@@ -919,64 +913,63 @@ public class Engine implements Serializable {
                         return TechConstants.T_IS_UNOFFICIAL;
                     } else if (year < 3062) {
                         return TechConstants.T_IS_EXPERIMENTAL;
-                    } else if (year < 3067){
+                    } else if (year < 3067) {
                         return TechConstants.T_IS_ADVANCED;
                     } else {
                         return TechConstants.T_IS_TW_NON_BOX;
                     }
                 }
-                
+
             case COMBUSTION_ENGINE:
-            	if (isSV){
-            		return TechConstants.T_ALLOWED_ALL;
-            	}
-            	if (isClan) {
-            		if (year <=2630) {
-            			return TechConstants.T_CLAN_UNOFFICIAL;
-            		} else if (year <=3080) {
-            			return TechConstants.T_CLAN_EXPERIMENTAL;
-              		} else {
-              			return TechConstants.T_CLAN_TW;
-              		}
-            		
-            	}
-            	if (isLarge) {
-            		if (year <=2630) {
-            			return TechConstants.T_IS_UNOFFICIAL;
-            		} else if (year <=3080) {
-            			return TechConstants.T_IS_EXPERIMENTAL;
-              		} else {
-              			return TechConstants.T_IS_TW_NON_BOX;
-              		}
-            	} else {
-            		return TechConstants.T_ALLOWED_ALL;
-            	} 
+                if (isSV) {
+                    return TechConstants.T_ALLOWED_ALL;
+                }
+                if (isClan) {
+                    if (year <= 2630) {
+                        return TechConstants.T_CLAN_UNOFFICIAL;
+                    } else if (year <= 3080) {
+                        return TechConstants.T_CLAN_EXPERIMENTAL;
+                    } else {
+                        return TechConstants.T_CLAN_TW;
+                    }
+
+                }
+                if (isLarge) {
+                    if (year <= 2630) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year <= 3080) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else {
+                        return TechConstants.T_IS_TW_NON_BOX;
+                    }
+                } else {
+                    return TechConstants.T_ALLOWED_ALL;
+                }
             case MAGLEV:
-            	return TechConstants.T_ALLOWED_ALL;
+                return TechConstants.T_ALLOWED_ALL;
             case STEAM:
-            	return TechConstants.T_ALLOWED_ALL;
+                return TechConstants.T_ALLOWED_ALL;
             case BATTERY:
-            	return TechConstants.T_ALLOWED_ALL;
+                return TechConstants.T_ALLOWED_ALL;
             case SOLAR:
-            	return TechConstants.T_ALLOWED_ALL;
+                return TechConstants.T_ALLOWED_ALL;
             case COMPACT_ENGINE:
-            	if (isClan) 
-            	{
-            		return TechConstants.T_CLAN_UNOFFICIAL;
-            	} else {
-            		if (year <=3060) {
-            			return TechConstants.T_IS_UNOFFICIAL;
-            		} else if (year <= 3068) {
-            			return TechConstants.T_IS_EXPERIMENTAL;
-            		} else if (year <= 3072) {
-            			return TechConstants.T_IS_ADVANCED;
-            		} else {
-            			return TechConstants.T_IS_TW_NON_BOX;
-            		}
-            	}   	
-        
-               break;
-            }
+                if (isClan) {
+                    return TechConstants.T_CLAN_UNOFFICIAL;
+                } else {
+                    if (year <= 3060) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year <= 3068) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else if (year <= 3072) {
+                        return TechConstants.T_IS_ADVANCED;
+                    } else {
+                        return TechConstants.T_IS_TW_NON_BOX;
+                    }
+                }
+        }
+        return TechConstants.T_TECH_UNKNOWN;
+    }
     
 
     public int getEngineType() {

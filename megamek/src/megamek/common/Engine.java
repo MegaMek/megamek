@@ -800,28 +800,30 @@ public class Engine implements Serializable {
                         return TechConstants.T_CLAN_TW;
                     }
                 }
-                // The IS Large XL engine is actually extinct
-                // in 2822 and returns as IS Experimental in 3054.
                 if (isLarge) {
-                    if (year <= 2630) {
-                        return TechConstants.T_IS_UNOFFICIAL;
-                    } else if (year <= 3080) {
-                        return TechConstants.T_IS_EXPERIMENTAL;
-                    } else {
-                        return TechConstants.T_IS_ADVANCED;
-                    }
-                    // The regular XL engine is extinct in 2865 but
-                    // returns as experimental in 3035
+                	if (year <= 2630) {
+                		return TechConstants.T_IS_UNOFFICIAL;
+                		} else if (year <= 2822) {
+                		return TechConstants.T_IS_ADVANCED;
+                		} else if (year <= 3053) {
+                		return TechConstants.T_IS_UNOFFICIAL;
+                		} else if (year <= 3080) {
+                		return TechConstants.T_IS_EXPERIMENTAL;
+                		} else {
+                		return TechConstants.T_IS_ADVANCED;
+                		}
                 } else {
-                    if (year <= 2556) {
-                        return TechConstants.T_IS_UNOFFICIAL;
-                    } else if (year <= 2579) {
-                        return TechConstants.T_IS_EXPERIMENTAL;
-                    } else if (year <= 3045) {
-                        return TechConstants.T_IS_ADVANCED;
-                    } else {
-                        return TechConstants.T_IS_TW_NON_BOX;
-                    }
+                	if (year <= 2556) {
+                		return TechConstants.T_IS_UNOFFICIAL;
+                		} else if (year <= 2579) {
+                		return TechConstants.T_IS_ADVANCED;
+                		} else if (year <= 2865) {
+                		return TechConstants.T_IS_UNOFFICIAL;
+                		} else if (year <= 3035) {
+                		return TechConstants.T_IS_EXPERIMENTAL;
+                		} else if (year <=3045){
+                		return TechConstants.T_IS_TW_NON_BOX;
+                		}
                 }
             case XXL_ENGINE:
                 if ((isClan) && (isLarge)) {

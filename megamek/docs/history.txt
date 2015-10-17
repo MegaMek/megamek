@@ -11,6 +11,7 @@ v0.41.11-git
 + Bug [#4636]: Type filter in Unit selection missing 'All', unless 'unofficial'
     is selected in game options
 + Bug: Accidental fall from above check fails when target is standing in water
++ Bug: AdvancedSearchDialog query doesn't clear when UnitSelectorDialog closed
 
 v0.41.10 (2015-10-12 00:11 UTC)
 + Data: New Sprites and unit file.

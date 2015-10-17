@@ -295,8 +295,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         panelFilterBtns.add(lblType, c);
 
         JScrollPane tlScroll = new JScrollPane(lstTechLevel);
-        tlScroll.setMinimumSize(new Dimension(200, 90));
-        tlScroll.setPreferredSize(new Dimension(200, 90));
+        tlScroll.setMinimumSize(new Dimension(300, 100));
+        tlScroll.setPreferredSize(new Dimension(300, 100));
         updateTypeCombo();
         c = new GridBagConstraints();
         c.gridx = 1;
@@ -319,8 +319,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         comboWeight.setModel(weightModel);
         comboWeight.setSelectedItem(Messages
                 .getString("MechSelectorDialog.All"));
-        comboWeight.setMinimumSize(new java.awt.Dimension(200, 27));
-        comboWeight.setPreferredSize(new java.awt.Dimension(200, 27));
+        comboWeight.setMinimumSize(new java.awt.Dimension(300, 27));
+        comboWeight.setPreferredSize(new java.awt.Dimension(300, 27));
         comboWeight.addActionListener(this);
         c = new GridBagConstraints();
         c.gridx = 1;
@@ -345,8 +345,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         unitTypeModel.addElement(Messages
                 .getString("MechSelectorDialog.SupportVee"));
         comboUnitType.setModel(unitTypeModel);
-        comboUnitType.setMinimumSize(new java.awt.Dimension(200, 27));
-        comboUnitType.setPreferredSize(new java.awt.Dimension(200, 27));
+        comboUnitType.setMinimumSize(new java.awt.Dimension(300, 27));
+        comboUnitType.setPreferredSize(new java.awt.Dimension(300, 27));
         comboUnitType.addActionListener(this);
         c = new GridBagConstraints();
         c.gridx = 1;
@@ -355,8 +355,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         panelFilterBtns.add(comboUnitType, c);
 
         txtFilter.setText("");
-        txtFilter.setMinimumSize(new java.awt.Dimension(200, 28));
-        txtFilter.setPreferredSize(new java.awt.Dimension(200, 28));
+        txtFilter.setMinimumSize(new java.awt.Dimension(300, 28));
+        txtFilter.setPreferredSize(new java.awt.Dimension(300, 28));
         txtFilter.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
                 filterUnits();

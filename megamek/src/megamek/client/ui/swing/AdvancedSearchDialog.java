@@ -610,11 +610,15 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
             if ((tblWeapons.getSelectedRow() >= 0) && lastTokIsOperation){
                 tblEquipment.clearSelection();
                 btnAdd.setEnabled(true);
+            } else if (tblWeapons.getSelectedRow() >= 0) {
+                tblEquipment.clearSelection();
             }
         }else if (evt.getSource().equals(tblEquipment.getSelectionModel())){
             if ((tblEquipment.getSelectedRow() >= 0) && lastTokIsOperation){
                 tblWeapons.clearSelection();
                 btnAdd.setEnabled(true);
+            } else if (tblEquipment.getSelectedRow() >= 0) {
+                tblWeapons.clearSelection();
             }
         }
     }

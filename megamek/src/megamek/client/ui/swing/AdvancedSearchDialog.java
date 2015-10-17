@@ -974,6 +974,10 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
         cboCockpitType.setSelectedIndex(0);
         cboInternalsType.setSelectedIndex(0);
         mechFilter = null;
+        filterToks.clear();
+        btnBack.setEnabled(false);
+        disableOperationButtons();
+        enableSelectionButtons();
     }
 
     /**

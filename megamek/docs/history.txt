@@ -14,6 +14,7 @@ v0.41.11-git
 + Bug: AdvancedSearchDialog query doesn't clear when UnitSelectorDialog closed
 + Bug: AdvancedSearchDialog, possible to select weapon & eq table simultaneously
 + Feature: AdvancedSearchDialog now uses simple tech level displayable names
++ Bug [#4638]: Aero advanced ammunition always unavailable
 
 v0.41.10 (2015-10-12 00:11 UTC)
 + Data: New Sprites and unit file.

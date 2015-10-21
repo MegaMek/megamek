@@ -415,8 +415,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         GridBagLayout gbl = new GridBagLayout();
         panBombs.setLayout(gbl);
 
-        m_bombs = new BombChoicePanel((Aero) entity, client.getGame().getOptions().booleanOption("at2_nukes"),
-                client.getGame().getOptions().booleanOption("allow_advanced_ammo"));
+        int techlvl = Arrays.binarySearch(TechConstants.T_SIMPLE_NAMES, client
+                .getGame().getOptions().stringOption("techlevel")); //$NON-NLS-1$
+        boolean allowNukes = client.getGame().getOptions()
+                .booleanOption("at2_nukes"); //$NON-NLS-1$
+        m_bombs = new BombChoicePanel((Aero) entity, allowNukes,
+                techlvl >= TechConstants.T_SIMPLE_ADVANCED);
         panBombs.add(m_bombs, GBC.std());
     }
 

@@ -74,8 +74,9 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
             b_labels[type] = new JLabel();
             b_choices[type] = new JComboBox<String>();
 
-            for (int x = 0; x <= Math.max(Math.round(availBombPoints
-                                                     / BombType.getBombCost(type)), bombChoices[type]); x++) {
+            for (int x = 0; x <= Math.max(
+                    Math.round(availBombPoints / BombType.getBombCost(type)),
+                    bombChoices[type]); x++) {
                 b_choices[type].addItem(Integer.toString(x));
             }
 

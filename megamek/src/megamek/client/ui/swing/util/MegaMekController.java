@@ -81,6 +81,11 @@ public class MegaMekController implements KeyEventDispatcher {
      */
     protected Map<KeyCommandBind, TimerTask> repeatingTasks;
 
+    /**
+     * should we ignore key presses?
+     */
+    protected boolean ignoreKeyPresses = false;
+
     public MegaMekController() {
         keyCmdSet = new HashSet<KeyCommandBind>();
         cmdActionMap = new HashMap<String, ArrayList<CommandAction>>();
@@ -93,7 +98,8 @@ public class MegaMekController implements KeyEventDispatcher {
 
         // Don't consider hotkeys when the clientgui has a dialog visible
         if (((clientgui != null) && clientgui.shouldIgnoreHotKeys())
-                || ((boardEditor != null) && boardEditor.shouldIgnoreHotKeys())) {
+                || ((boardEditor != null) && boardEditor.shouldIgnoreHotKeys())
+                || ignoreKeyPresses) {
             return false;
         }
 
@@ -157,7 +163,7 @@ public class MegaMekController implements KeyEventDispatcher {
     public synchronized void registerKeyCommandBind(KeyCommandBind kcb) {
         keyCmdSet.add(kcb);
     }
-    
+
     public synchronized void removeAllKeyCommandBinds() {
         keyCmdSet.clear();
     }
@@ -252,6 +258,15 @@ public class MegaMekController implements KeyEventDispatcher {
             repeatingTasks.get(kcb).cancel();
             repeatingTasks.remove(kcb);
         }
+    }
+
+    /**
+     * Set wether we should ignore key presses or nor
+     *
+     * @param ignoreKeyPresses
+     */
+    public void setIgnoreKeyPresses(boolean ignoreKeyPresses) {
+        this.ignoreKeyPresses = ignoreKeyPresses;
     }
 
 }

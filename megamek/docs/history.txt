@@ -16,7 +16,8 @@ v0.41.11-git
 + Feature: AdvancedSearchDialog now uses simple tech level displayable names
 + Bug [#4638]: Aero advanced ammunition always unavailable
 + Bug: listSaves command was looking for .sav and not updated .sav.gz
-+ Added function to possibly ignore key presses, used from MekWars 
++ Added function to possibly ignore key presses, used from MekWars
++ Data: New Sprites.
 
 v0.41.10 (2015-10-12 00:11 UTC)
 + Data: New Sprites and unit file.

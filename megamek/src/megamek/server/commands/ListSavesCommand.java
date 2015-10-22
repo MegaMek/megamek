@@ -46,13 +46,19 @@ public class ListSavesCommand extends ServerCommand {
         }
         server.sendServerChat(connId, "Listing all saved games...");
         File[] saveGames = sDir.listFiles();
+        boolean listedAFile = false;
         for (int i = 0; i < saveGames.length; i++) {
             if (saveGames[i].isFile()) {
                 File save = saveGames[i];
-                if (save.getName().endsWith(".sav")) {
+                if (save.getName().endsWith(".sav")
+                        || save.getName().endsWith(".sav.gz")) {
                     server.sendServerChat("  " + save.getName());
+                    listedAFile = true;
                 }
             }
+        }
+        if (!listedAFile) {
+            server.sendServerChat("No saved games!");
         }
     }
 }

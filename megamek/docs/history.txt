@@ -19,6 +19,7 @@ v0.41.11-git
 + Added function to possibly ignore key presses, used from MekWars
 + Data: New Sprites.
 + Bug: /load command requires players to disconnect/reconnect after game loads
++ Bug [#4638]: Advanced Aero Rules Broken in 41.10 (specfically with Evade)
 
 v0.41.10 (2015-10-12 00:11 UTC)
 + Data: New Sprites and unit file.

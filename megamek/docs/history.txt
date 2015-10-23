@@ -18,6 +18,7 @@ v0.41.11-git
 + Bug: listSaves command was looking for .sav and not updated .sav.gz
 + Added function to possibly ignore key presses, used from MekWars
 + Data: New Sprites.
++ Bug: /load command requires players to disconnect/reconnect after game loads
 
 v0.41.10 (2015-10-12 00:11 UTC)
 + Data: New Sprites and unit file.

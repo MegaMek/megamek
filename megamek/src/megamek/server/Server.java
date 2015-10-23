@@ -932,38 +932,7 @@ public class Server implements Runnable {
 
         // add and validate the player info
         if (!returning) {
-            int team = IPlayer.TEAM_UNASSIGNED;
-            if (game.getPhase() == Phase.PHASE_LOUNGE) {
-                team = IPlayer.TEAM_NONE;
-                for (IPlayer p : game.getPlayersVector()) {
-                    if (p.getTeam() > team) {
-                        team = p.getTeam();
-                    }
-                }
-                team++;
-            }
-            IPlayer newPlayer = new Player(connId, name);
-            int colorInd = newPlayer.getColorIndex();
-            Enumeration<IPlayer> players = game.getPlayers();
-            while (players.hasMoreElements()
-                   && (colorInd < IPlayer.colorNames.length)) {
-                final IPlayer p = players.nextElement();
-                if (p.getId() == newPlayer.getId()) {
-                    continue;
-                }
-                if (p.getColorIndex() == colorInd) {
-                    colorInd++;
-                }
-            }
-            if (colorInd == -1) {
-                colorInd = 0;
-            }
-            newPlayer.setColorIndex(colorInd);
-            newPlayer.setCamoCategory(IPlayer.NO_CAMO);
-            newPlayer.setCamoFileName(IPlayer.colorNames[colorInd]);
-            newPlayer.setTeam(Math.min(team, 5));
-            game.addPlayer(connId, newPlayer);
-            validatePlayerInfo(connId);
+            addNewPlayer(connId, name);
         }
 
         // if it is not the lounge phase, this player becomes an observer
@@ -987,7 +956,7 @@ public class Server implements Runnable {
 
         try {
             InetAddress[] addresses = InetAddress.getAllByName(InetAddress
-                                                                       .getLocalHost().getHostName());
+                    .getLocalHost().getHostName());
             for (InetAddress addresse : addresses) {
                 sendServerChat(connId,
                                "Machine IP is " + addresse.getHostAddress());
@@ -1023,7 +992,7 @@ public class Server implements Runnable {
      * Sends a player the info they need to look at the current phase. This is
      * triggered when a player first connects to the server.
      */
-    private void sendCurrentInfo(int connId) {
+    public void sendCurrentInfo(int connId) {
         // why are these two outside the player != null check below?
         transmitAllPlayerConnects(connId);
         send(connId, createGameSettingsPacket());
@@ -1099,6 +1068,45 @@ public class Server implements Runnable {
         } else {
             send(connId, createEntitiesPacket());
         }
+    }
+
+    /**
+     * Adds a new player to the game
+     */
+    private IPlayer addNewPlayer(int connId, String name) {
+        int team = IPlayer.TEAM_UNASSIGNED;
+        if (game.getPhase() == Phase.PHASE_LOUNGE) {
+            team = IPlayer.TEAM_NONE;
+            for (IPlayer p : game.getPlayersVector()) {
+                if (p.getTeam() > team) {
+                    team = p.getTeam();
+                }
+            }
+            team++;
+        }
+        IPlayer newPlayer = new Player(connId, name);
+        int colorInd = newPlayer.getColorIndex();
+        Enumeration<IPlayer> players = game.getPlayers();
+        while (players.hasMoreElements()
+               && (colorInd < IPlayer.colorNames.length)) {
+            final IPlayer p = players.nextElement();
+            if (p.getId() == newPlayer.getId()) {
+                continue;
+            }
+            if (p.getColorIndex() == colorInd) {
+                colorInd++;
+            }
+        }
+        if (colorInd == -1) {
+            colorInd = 0;
+        }
+        newPlayer.setColorIndex(colorInd);
+        newPlayer.setCamoCategory(IPlayer.NO_CAMO);
+        newPlayer.setCamoFileName(IPlayer.colorNames[colorInd]);
+        newPlayer.setTeam(Math.min(team, 5));
+        game.addPlayer(connId, newPlayer);
+        validatePlayerInfo(connId);
+        return newPlayer;
     }
 
     /**
@@ -1374,6 +1382,22 @@ public class Server implements Runnable {
      * successfull
      */
     public boolean loadGame(File f) {
+        return loadGame(f, true);
+    }
+
+    /**
+     * load the game
+     *
+     * @param f
+     *            The <code>File</code> to load
+     * @param sendInfo
+     *            Determines whether the connections should be updated with
+     *            current info. This may be false if some reconnection remapping
+     *            needs to be done first.
+     * @return A <code>boolean</code> value wether or not the loading was
+     *         successfull
+     */
+    public boolean loadGame(File f, boolean sendInfo) {
         System.out.println("s: loading saved game file '" + f + '\'');
         IGame newGame;
         try {
@@ -1387,11 +1411,102 @@ public class Server implements Runnable {
         }
 
         setGame(newGame);
+
+        if (!sendInfo) {
+            return true;
+        }
+
         // update all the clients with the new game info
         for (IConnection conn : connections) {
             sendCurrentInfo(conn.getId());
         }
         return true;
+    }
+
+    /**
+     * When the load command is used, there is a list of already connected
+     * players which have assigned names and player id numbers with the id
+     * numbers matching the connection numbers. When a new game is loaded, this
+     * mapping may need to be updated. This method takes a map of player names
+     * to their current ids, and uses the list of players to figure out what the
+     * current ids should change to.
+     *
+     * @param nameToIdMap
+     *            This maps a player name to the current connection ID
+     * @param idToNameMap
+     *            This maps a current conn ID to a player name, and is just the
+     *            inverse mapping from nameToIdMap
+     */
+    public void remapConnIds(Map<String, Integer> nameToIdMap,
+            Map<Integer, String> idToNameMap) {
+        // Keeps track of connections without Ids
+        List<IConnection> unassignedConns = new ArrayList<>();
+       // Keep track of which ids are used
+        Set<Integer> usedPlayerIds = new HashSet<>();
+        Set<String> currentPlayerNames = new HashSet<>();
+        for (IPlayer p : game.getPlayersVector()) {
+            currentPlayerNames.add(p.getName());
+        }
+        // Map the old connection Id to new value
+        Map<Integer,Integer> connIdRemapping = new HashMap<>();
+        for (IPlayer p : game.getPlayersVector()) {
+            // Check to see if this player was already connected
+            Integer oldId = nameToIdMap.get(p.getName());
+            if ((oldId != null) && (oldId != p.getId())) {
+                connIdRemapping.put(oldId, p.getId());
+            }
+            // If the old and new Ids match, make sure we remove ghost status
+            if ((oldId != null) && (oldId == p.getId())) {
+                p.setGhost(false);
+            }
+            // Check to see if this player's Id is taken
+            String oldName = idToNameMap.get(p.getId());
+            if ((oldName != null) && !oldName.equals(p.getName())) {
+                // If this name doesn't belong to a current player, unassign it
+                if (!currentPlayerNames.contains(oldName)) {
+                    unassignedConns.add(connectionIds.get(p.getId()));
+                    // Make sure we don't add this to unassigned conns twice
+                    connectionIds.remove(p.getId());
+                }
+                // If it does belong to a current player, it'll get handled
+                // when that player comes up
+            }
+            // Keep track of what Ids are used
+            usedPlayerIds.add(p.getId());
+        }
+
+        // Remap old connection Ids to new ones
+        for (Integer currConnId : connIdRemapping.keySet()) {
+            Integer newId = connIdRemapping.get(currConnId);
+            IConnection conn = connectionIds.get(currConnId);
+            conn.setId(newId);
+            // If this Id is used, make sure we reassign that connection
+            if (connectionIds.containsKey(newId)) {
+                unassignedConns.add(connectionIds.get(newId));
+            }
+            // Map the new Id
+            connectionIds.put(newId, conn);
+
+            game.getPlayer(newId).setGhost(false);
+            send(newId, new Packet(Packet.COMMAND_LOCAL_PN, new Integer(newId)));
+        }
+
+        // It's possible we have players not in the saved game, add 'em
+        for (IConnection conn : unassignedConns) {
+            int newId = 0;
+            while (usedPlayerIds.contains(newId)) {
+                newId++;
+            }
+            String name = idToNameMap.get(conn.getId());
+            conn.setId(newId);
+            IPlayer newPlayer = addNewPlayer(newId, name);
+            newPlayer.setObserver(true);
+            connectionIds.put(newId,  conn);
+            send(newId, new Packet(Packet.COMMAND_LOCAL_PN, new Integer(newId)));
+        }
+
+        // Ensure all clients are up-to-date on player info
+        transmitAllPlayerUpdates();
     }
 
     /**

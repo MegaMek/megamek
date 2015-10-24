@@ -38,6 +38,7 @@ public class ISBAAPDS extends Weapon {
         name = "RISC Advanced Point Defense System";
         setInternalName("ISBAAPDS");
         tonnage = 0.35f;
+        criticals = 2;
         bv = 7;
         longRange = 3;
         flags = flags.or(F_BA_WEAPON)

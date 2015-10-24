@@ -74,8 +74,7 @@ public class SRMAntiTSMHandler extends SRMHandler {
         } else {
             // anti tsm hit with half the normal number, round up
             missilesHit = Compute.missilesHit(wtype.getRackSize(),
-                    nMissilesModifier, weapon.isHotLoaded(), false, advancedAMS
-                            && amsEngaged);
+                    nMissilesModifier, weapon.isHotLoaded(), false, isAdvancedAMS());
             missilesHit = (int) Math.ceil((double) missilesHit / 2);
         }
         Report r = new Report(3325);

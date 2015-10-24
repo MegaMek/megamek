@@ -545,5 +545,10 @@ public class HexTileset {
                 ));
             }
         }
+
+        @Override
+        public String toString() {
+            return "HexTileset: " + hex.toString();
+        }
     }
 }

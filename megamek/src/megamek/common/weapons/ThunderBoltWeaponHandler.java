@@ -87,7 +87,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         getAMSHitsMod(vPhaseReport);
         bSalvo = true;
-        if (amsEnganged) {
+        if (amsEngaged) {
             Report r = new Report(3235);
             r.subject = subjectId;
             vPhaseReport.add(r);

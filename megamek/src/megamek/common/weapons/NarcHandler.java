@@ -59,7 +59,7 @@ public class NarcHandler extends MissileWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         bSalvo = true;
         getAMSHitsMod(vPhaseReport);
-        if (amsEnganged) {
+        if (amsEngaged) {
             Report r = new Report(3235);
             r.subject = subjectId;
             vPhaseReport.add(r);

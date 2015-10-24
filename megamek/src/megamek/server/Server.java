@@ -27654,9 +27654,8 @@ public class Server implements Runnable {
         List<Entity> vAllEntities = game.getEntitiesVector();
         for (int x = 0; x < vAllEntities.size(); x++) {
             Entity e = vAllEntities.get(x);
-            boolean previousVisibleValue = e.isVisibleToEnemy();
-            boolean previousSeenValue = e.isEverSeenByEnemy();
-            boolean previousDetectedValue = e.isDetectedByEnemy();
+            Vector<IPlayer> whoCouldSee = new Vector<>(e.getWhoCanSee());
+            Vector<IPlayer> whoCouldDetect =  new Vector<>(e.getWhoCanDetect());
             e.setVisibleToEnemy(false);
             e.setDetectedByEnemy(false);
             e.clearSeenBy();
@@ -27681,14 +27680,28 @@ public class Server implements Runnable {
                 e.addBeenDetectedBy(p);
             }
 
-            // If this unit wasn't previously visible and is now visible, it's
-            // possible that the enemy's client doesn't know about the unit
-            if ((!previousVisibleValue && e.isVisibleToEnemy())
-                || (!previousDetectedValue && e.isDetectedByEnemy())) {
-                entityUpdate(e.getId(), new Vector<UnitLocation>(), false, losCache);
-            } else if ((previousVisibleValue != e.isVisibleToEnemy())
-                       || (previousSeenValue != e.isEverSeenByEnemy())
-                       || (previousDetectedValue != e.isDetectedByEnemy())) {
+            // If a client can now see/detect this entity, but couldn't before,
+            // then the client needs to be updated with the Entity
+            boolean hasClientWithoutEntity = false;
+            for (IPlayer p : vCanSee) {
+                if (!whoCouldSee.contains(p) && !whoCouldDetect.contains(p)) {
+                    hasClientWithoutEntity = true;
+                    break;
+                }
+            }
+            if (!hasClientWithoutEntity) {
+                for (IPlayer p : vCanDetect) {
+                    if (!whoCouldSee.contains(p)
+                            && !whoCouldDetect.contains(p)) {
+                        hasClientWithoutEntity = true;
+                        break;
+                    }
+                }
+            }
+            if (hasClientWithoutEntity) {
+                entityUpdate(e.getId(), new Vector<UnitLocation>(), false,
+                        losCache);
+            } else {
                 sendVisibilityIndicator(e);
             }
         }

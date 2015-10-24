@@ -425,13 +425,12 @@ public class LRMSwarmHandler extends LRMHandler {
             } else {
                 missilesHit = Compute.missilesHit(swarmMissilesLeft,
                         nMissilesModifier, weapon.isHotLoaded(), false,
-                        advancedAMS && amsEngaged);
+                        isAdvancedAMS());
             }
         } else {
             missilesHit = allShotsHit() ? wtype.getRackSize() : Compute
                     .missilesHit(wtype.getRackSize(), nMissilesModifier,
-                            weapon.isHotLoaded(), false, advancedAMS
-                                    && amsEngaged);
+                            weapon.isHotLoaded(), false, isAdvancedAMS());
             swarmMissilesLeft = wtype.getRackSize();
         }
         swarmMissilesNowLeft = swarmMissilesLeft - missilesHit;

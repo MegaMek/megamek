@@ -275,11 +275,11 @@ public class SRMInfernoHandler extends SRMHandler {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
                         * ((BattleArmor) ae).getShootingStrength(),
                         nMissilesModifier, weapon.isHotLoaded(), false,
-                        advancedAMS && amsEngaged);
+                        isAdvancedAMS());
             } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
                         nMissilesModifier, weapon.isHotLoaded(), false,
-                        advancedAMS && amsEngaged);
+                        isAdvancedAMS());
             }
         }
 

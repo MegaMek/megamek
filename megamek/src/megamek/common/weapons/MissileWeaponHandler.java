@@ -226,11 +226,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
                         * shootingStrength,
                         nMissilesModifier, weapon.isHotLoaded(), false,
-                        advancedAMS && amsEngaged);
+                        isAdvancedAMS());
             } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
                         nMissilesModifier, weapon.isHotLoaded(), false,
-                        advancedAMS && amsEngaged);
+                        isAdvancedAMS());
             }
         }
 
@@ -776,5 +776,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     @Override
     protected boolean canDoDirectBlowDamage() {
         return false;
+    }
+
+    /**
+     *
+     * @return
+     */
+    protected boolean isAdvancedAMS() {
+        return advancedAMS && amsEngaged;
     }
 }

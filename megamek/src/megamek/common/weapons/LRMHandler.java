@@ -255,11 +255,11 @@ public class LRMHandler extends MissileWeaponHandler {
                 missilesHit = Compute.missilesHit(rackSize
                         * ((BattleArmor) ae).getShootingStrength(),
                         nMissilesModifier, weapon.isHotLoaded(), false,
-                        advancedAMS && amsEngaged);
+                        isAdvancedAMS());
             } else {
                 missilesHit = Compute.missilesHit(rackSize,
                         nMissilesModifier, weapon.isHotLoaded(), false,
-                        advancedAMS && amsEngaged);
+                        isAdvancedAMS());
             }
         }
 

@@ -2489,7 +2489,7 @@ public class Compute {
      * damage
      */
     public static WeaponAttackAction getHighestExpectedDamage(IGame g,
-                                                              List<WeaponAttackAction> vAttacks, boolean assumeHit) {
+            List<WeaponAttackAction> vAttacks, boolean assumeHit) {
         float fHighest = -1.0f;
         WeaponAttackAction waaHighest = null;
         for (int x = 0, n = vAttacks.size(); x < n; x++) {
@@ -2504,9 +2504,9 @@ public class Compute {
     }
 
     // store these as constants since the tables will never change
-    private static float[] expectedHitsByRackSize = {0.0f, 1.0f, 1.58f, 2.0f,
-                                                     2.63f, 3.17f, 4.0f, 4.49f, 4.98f, 5.47f, 6.31f, 7.23f, 8.14f,
-                                                     8.59f, 9.04f, 9.5f, 10.1f, 10.8f, 11.42f, 12.1f, 12.7f};
+    private static float[] expectedHitsByRackSize = { 0.0f, 1.0f, 1.58f, 2.0f,
+            2.63f, 3.17f, 4.0f, 4.49f, 4.98f, 5.47f, 6.31f, 7.23f, 8.14f,
+            8.59f, 9.04f, 9.5f, 10.1f, 10.8f, 11.42f, 12.1f, 12.7f };
 
     /*
      * | No Modifier | +2 (Artemis, Narc) | -2 (HAG, AMS v Art)| -4 (AMS) | |
@@ -2555,8 +2555,8 @@ public class Compute {
      * sizes, etc.
      */
     public static float getExpectedDamage(IGame g, WeaponAttackAction waa,
-                                          boolean assumeHit) {
-        return Compute.getExpectedDamage(g,  waa, assumeHit, null);
+            boolean assumeHit) {
+        return Compute.getExpectedDamage(g, waa, assumeHit, null);
     }
     
     /**

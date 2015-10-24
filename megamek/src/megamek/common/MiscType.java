@@ -5835,8 +5835,7 @@ public class MiscType extends EquipmentType {
         misc.name = "BattleMech Neural Interface Unit";
         misc.setInternalName("BABattleMechNIU");
         misc.tonnage = 0.1f;
-        // should take 2 slots
-        misc.criticals = 0;
+        misc.criticals = 2;
         misc.hittable = false;
         misc.introDate = 3078;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BATTLEMECH_NIU);

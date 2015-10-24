@@ -158,12 +158,22 @@ public abstract class Mech extends Entity {
     public static final int COCKPIT_TRIPOD = 10;
 
     public static final int COCKPIT_INTERFACE = 11;
+    
+    //I've added these but they need to be reviewed by Arlith.
+    
+    public static final int COCKPIT_VRRP = 12;
+    
+    public static final int COCKPIT_QUADVEE = 13;
+    
+    public static final int COCKPIT_SUPERHEAVY_INDUSTRIAL = 14;
 
     public static final String[] COCKPIT_STRING = { "Standard Cockpit",
             "Small Cockpit", "Command Console", "Torso-Mounted Cockpit",
             "Dual Cockpit", "Industrial Cockpit", "Primitive Cockpit",
             "Primitive Industrial Cockpit", "Superheavy Cockpit",
-            "Superheavy Tripod Cockpit", "Tripod Cockpit", "Interface Cockpit" };
+            "Superheavy Tripod Cockpit", "Tripod Cockpit", "Interface Cockpit",
+            "Virtual Reality Piloting Pod", "QuadVee Cockpit", 
+            "Superheavy Industrial Cockpit" };
 
     public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Small",
             "Command Console", "Torso Mounted", "Dual", "Industrial",

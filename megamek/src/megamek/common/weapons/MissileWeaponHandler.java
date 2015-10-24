@@ -48,7 +48,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
      *
      */
     private static final long serialVersionUID = -4801130911083653548L;
-    boolean amsEnganged = false;
+    boolean amsEngaged = false;
     boolean advancedAMS = false;
 
 
@@ -226,11 +226,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
                         * shootingStrength,
                         nMissilesModifier, weapon.isHotLoaded(), false,
-                        advancedAMS && amsEnganged);
+                        advancedAMS && amsEngaged);
             } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
                         nMissilesModifier, weapon.isHotLoaded(), false,
-                        advancedAMS && amsEnganged);
+                        advancedAMS && amsEngaged);
             }
         }
 
@@ -378,7 +378,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
 
         // Report any AMS action.
-        if (amsEnganged) {
+        if (amsEngaged) {
             Report r = new Report(3230);
             r.indent();
             r.subject = subjectId;
@@ -405,7 +405,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 for (int x = 0; x < lCounters.size(); x++) {
                     Mounted counter = lCounters.get(x);
                     if (counter.getType().hasFlag(WeaponType.F_AMS)
-                            && !amsEnganged) {
+                            && !amsEngaged) {
 
                         Mounted mAmmo = counter.getLinked();
                         if (!(counter.getType() instanceof WeaponType)
@@ -442,7 +442,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
                         // set the ams as having fired
                         counter.setUsedThisRound(true);
-                        amsEnganged = true;
+                        amsEngaged = true;
                         Report r = new Report(3350);
                         r.subject = entityTarget.getId();
                         r.newlines = 0;

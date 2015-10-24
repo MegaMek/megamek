@@ -76,7 +76,7 @@ public class SRMInfernoHandler extends SRMHandler {
         server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
 
         // Report any AMS action.
-        if (amsEnganged) {
+        if (amsEngaged) {
             Report r = new Report(3230);
             r.indent();
             r.subject = subjectId;
@@ -275,11 +275,11 @@ public class SRMInfernoHandler extends SRMHandler {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
                         * ((BattleArmor) ae).getShootingStrength(),
                         nMissilesModifier, weapon.isHotLoaded(), false,
-                        advancedAMS && amsEnganged);
+                        advancedAMS && amsEngaged);
             } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
                         nMissilesModifier, weapon.isHotLoaded(), false,
-                        advancedAMS && amsEnganged);
+                        advancedAMS && amsEngaged);
             }
         }
 

@@ -67,7 +67,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
         }
         bSalvo = true;
         if (ae instanceof BattleArmor) {
-            if (amsEnganged) {
+            if (amsEngaged) {
                 return Compute.missilesHit(
                         ((BattleArmor) ae).getShootingStrength(), -2);
             }
@@ -75,7 +75,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
                     .missilesHit(((BattleArmor) ae).getShootingStrength());
         }
 
-        if (amsEnganged) {
+        if (amsEngaged) {
             Report r = new Report(3235);
             r.subject = subjectId;
             vPhaseReport.add(r);

@@ -1464,6 +1464,11 @@ public class Client implements IClientCommandHandler {
                         cfrEvt.setAmsEquipNum((int) c.getData()[2]);
                         cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
                         break;
+                    case Packet.COMMAND_CFR_APDS_ASSIGN:
+                        cfrEvt.setEntityId((int) c.getData()[1]);
+                        cfrEvt.setApdsDists((List<Integer>) c.getData()[2]);
+                        cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
+                        break;
                 }
                 game.processGameEvent(cfrEvt);
                 break;
@@ -1505,6 +1510,12 @@ public class Client implements IClientCommandHandler {
         send(packet);
     }
 
+    public void sendAPDSAssignCFRResponse(Integer waaIndex) {
+        Object data[] = { Packet.COMMAND_CFR_APDS_ASSIGN, waaIndex };
+        Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
+        send(packet);
+    }
+
     /**
      * Perform a dump of the current memory usage.
      * <p/>
@@ -1512,8 +1523,9 @@ public class Client implements IClientCommandHandler {
      * systems. You can activate it by changing the "memorydumpon" setting to
      * "true" in the clientsettings.xml file.
      *
-     * @param where - a <code>String</code> indicating which part of the game is
-     *              making this call.
+     * @param where
+     *            - a <code>String</code> indicating which part of the game is
+     *            making this call.
      */
     private void memDump(String where) {
         if (PreferenceManager.getClientPreferences().memoryDumpOn()) {

@@ -1841,7 +1841,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         @Override
 		public void gameClientFeedbackRquest(GameCFREvent evt) {
             Entity e = client.getGame().getEntity(evt.getEntityId());
-            
+            Object result;
         	switch (evt.getCFRType()){
 	        	case Packet.COMMAND_CFR_DOMINO_EFFECT:		        	
 		        	// If the client connects to a game as a bot, it's possible
@@ -1926,7 +1926,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                             new Object[] { e.getDisplayName() });
                     msg = Messages.getString("CFRAMSAssign.Message",
                             new Object[] { e.getDisplayName() });
-	        	    Object result = JOptionPane.showInputDialog(frame, msg, title, 
+                    result = JOptionPane.showInputDialog(frame, msg, title,
                             JOptionPane.QUESTION_MESSAGE, null, 
                            amsOptions.toArray(), null);
                     // If they closed it, assume no action
@@ -1935,6 +1935,41 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     } else {
                         client.sendAMSAssignCFRResponse(
                                 amsOptions.indexOf(result) - 1);                 
+                    }
+                    break;
+	        	case Packet.COMMAND_CFR_APDS_ASSIGN:
+                    ArrayList<String> apdsOptions = new ArrayList<>();
+                    apdsOptions.add("None");
+                    Iterator<Integer> distIt = evt.getApdsDists().iterator();
+                    for (WeaponAttackAction waa : evt.getWAAs()) {
+                        Entity ae = waa.getEntity(client.getGame());
+                        int dist = distIt.next();
+                        String waaMsg;
+                        if (ae != null) {
+                            Mounted weapon = ae.getEquipment(waa.getWeaponId());
+                            waaMsg = weapon.getDesc() + " from "
+                                    + ae.getDisplayName() + " (distance: "
+                                    + dist + ")";
+                        } else {
+                            waaMsg = "Missiles from unknown attacker";
+                        }
+                        apdsOptions.add(waaMsg);
+                    }
+
+                    optionType = JOptionPane.OK_CANCEL_OPTION;
+                    title = Messages.getString("CFRAPDSAssign.Title",
+                            new Object[] { e.getDisplayName() });
+                    msg = Messages.getString("CFRAPDSAssign.Message",
+                            new Object[] { e.getDisplayName() });
+                    result = JOptionPane.showInputDialog(frame, msg, title,
+                            JOptionPane.QUESTION_MESSAGE, null,
+                            apdsOptions.toArray(), null);
+                    // If they closed it, assume no action
+                    if ((result == null) || result.equals("None")) {
+                        client.sendAPDSAssignCFRResponse(null);
+                    } else {
+                        client.sendAPDSAssignCFRResponse(
+                                apdsOptions.indexOf(result) - 1);
                     }
                     break;
         	}

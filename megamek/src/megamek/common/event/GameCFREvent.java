@@ -42,7 +42,9 @@ public class GameCFREvent extends GameEvent {
 	 * The equipment number for the AMS used in AMS_ASSIGN CFRs.
 	 */
 	private int amsEquipNum;
-	
+
+	private List<Integer> apdsDists;
+
 	/**
 	 * List of WeaponAttackActions that can have an AMS assigned to them for 
 	 * AMS_ASSIGN CFRs.
@@ -67,17 +69,20 @@ public class GameCFREvent extends GameEvent {
     }
     
     public String getEventName() {
-    	String evtName = "Client Feedback Request, ";
-    	switch (cfrType) {
-        	case Packet.COMMAND_CFR_DOMINO_EFFECT:
-        	    evtName += " stepping out of a domino effect for Entity Id " 
-        	            + eId;
-        	    break;
-        	case Packet.COMMAND_CFR_AMS_ASSIGN:
-        	    evtName += " assigning AMS for Entity Id " + eId;
-        	    break;
-    	}
-    	return evtName;
+        String evtName = "Client Feedback Request, ";
+        switch (cfrType) {
+            case Packet.COMMAND_CFR_DOMINO_EFFECT:
+                evtName += " stepping out of a domino effect for Entity Id "
+                        + eId;
+                break;
+            case Packet.COMMAND_CFR_AMS_ASSIGN:
+                evtName += " assigning AMS for Entity Id " + eId;
+                break;
+            case Packet.COMMAND_CFR_APDS_ASSIGN:
+                evtName += " assigning APDS for Entity Id " + eId;
+                break;
+        }
+        return evtName;
     }
 
     @Override
@@ -114,5 +119,13 @@ public class GameCFREvent extends GameEvent {
 
     public void setWAAs(List<WeaponAttackAction> waas) {
         this.waas = waas;
+    }
+
+    public List<Integer> getApdsDists() {
+        return apdsDists;
+    }
+
+    public void setApdsDists(List<Integer> apdsDist) {
+        this.apdsDists = apdsDist;
     }
 }

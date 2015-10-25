@@ -294,6 +294,11 @@ public class Precognition implements Runnable {
                         cfrEvt.setAmsEquipNum((int) c.getData()[2]);
                         cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
                         break;
+                    case Packet.COMMAND_CFR_APDS_ASSIGN:
+                        cfrEvt.setEntityId((int) c.getData()[1]);
+                        cfrEvt.setApdsDists((List<Integer>) c.getData()[2]);
+                        cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
+                        break;
                 }
                 getGame().processGameEvent(cfrEvt);
                 break;

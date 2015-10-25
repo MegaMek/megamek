@@ -11954,6 +11954,13 @@ public class Server implements Runnable {
                                 e.getId(), e.getEquipmentNum(ams), waas }));
     }
 
+    private void sendAPDSAssignCFR(Entity e, List<Integer> apdsDists,
+            List<WeaponAttackAction> waas) {
+        send(e.getOwnerId(), new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
+                new Object[] { Packet.COMMAND_CFR_APDS_ASSIGN, e.getId(),
+                apdsDists, waas }));
+    }
+
     private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity,
             Coords src, Coords dest, int elev) {
         Vector<Report> vPhaseReport = new Vector<Report>();
@@ -12627,12 +12634,18 @@ public class Server implements Runnable {
     }
 
     /**
-     * Auto-target active AMS systems
+     * Determine which missile attack actions could be affected by AMS, and
+     * assign AMS (and APDS) to those attacks.
      */
     private void assignAMS() {
 
-        // sort all missile-based attacks by the target
-        Hashtable<Entity, Vector<WeaponHandler>> htAttacks = new Hashtable<Entity, Vector<WeaponHandler>>();
+        // Get all of the coords that would be protected by APDS
+        Hashtable<Coords, List<Mounted> > apdsCoords = getAPDSProtectedCoords();
+
+        // Map target to a list of missile attacks directed at it
+        Hashtable<Entity, Vector<WeaponHandler>> htAttacks = new Hashtable<>();
+        // Keep track of each APDS, and which attacks it could affect
+        Hashtable<Mounted, Vector<WeaponHandler>> apdsTargets = new Hashtable<>();
         for (AttackHandler ah : game.getAttacksVector()) {
             WeaponHandler wh = (WeaponHandler) ah;
             WeaponAttackAction waa = wh.waa;
@@ -12663,78 +12676,282 @@ public class Server implements Runnable {
                     htAttacks.put(target, v);
                 }
                 v.addElement(wh);
+                // Keep track of what weapon attacks could be affected by APDS
+                for (Mounted apds : apdsCoords.get(target.getPosition())) {
+                    // APDS only affects attacks against friendly units
+                    if (target.isEnemyOf(apds.getEntity())) {
+                        continue;
+                    }
+                    Vector<WeaponHandler> handlerList = apdsTargets.get(apds);
+                    if (handlerList == null) {
+                        handlerList = new Vector<>();
+                        apdsTargets.put(apds, handlerList);
+                    }
+                    handlerList.add(wh);
+                }
             }
         }
 
-        // let each target assign its AMS
+
+        // Let each target assign its AMS
         for (Entity e : htAttacks.keySet()) {
             Vector<WeaponHandler> vAttacks = htAttacks.get(e);
             // Allow MM to automatically assign AMS targets
             if (game.getOptions().booleanOption("auto_ams")) {
                 e.assignAMS(vAttacks);
             } else { // Allow user to manually assign targets
-                // Current AMS targets: each attack can only be targeted once
-                HashSet<WeaponAttackAction> amsTargets =
-                        new HashSet<WeaponAttackAction>();
-                // Pick assignment for each active AMS
-                for (Mounted ams : e.getActiveAMS()) {
-                    // Create a list of valid assignments for this AMS
-                    ArrayList<WeaponAttackAction> vAttacksInArc =
-                            new ArrayList<WeaponAttackAction>(vAttacks.size());
-                    for (WeaponHandler wr : vAttacks) {
-                        if (!amsTargets.contains(wr.waa)
-                                && Compute.isInArc(game, e.getId(),
-                                        e.getEquipmentNum(ams),
-                                        game.getEntity(wr.waa.getEntityId()))) {
-                            vAttacksInArc.add(wr.waa);
-                        }
+                manuallyAssignAMSTarget(e, vAttacks);
+            }
+        }
+
+        // Let each APDS assign itself to an attack
+        Set<WeaponAttackAction> targetedAttacks = new HashSet<>();
+        for (Mounted apds : apdsTargets.keySet()) {
+            List<WeaponHandler> potentialTargets = apdsTargets.get(apds);
+            // Ensure we only target each attack once
+            List<WeaponHandler> targetsToRemove = new ArrayList<>();
+            for (WeaponHandler wh : potentialTargets) {
+                if (targetedAttacks.contains(wh.getWaa())) {
+                    targetsToRemove.add(wh);
+                }
+            }
+            potentialTargets.removeAll(targetsToRemove);
+            WeaponAttackAction targetedWAA;
+            // Assign APDS to an attack
+            if (game.getOptions().booleanOption("auto_ams")) {
+                targetedWAA = apds.assignAPDS(potentialTargets);
+            } else { // Allow user to manually assign targets
+                targetedWAA = manuallyAssignAPDSTarget(apds, potentialTargets);
+            }
+            if (targetedWAA != null) {
+                targetedAttacks.add(targetedWAA);
+            }
+        }
+    }
+
+    /**
+     * Convenience method for determining which missile attack will be targeted
+     * with AMS on the supplied Entity
+     *
+     * @param e
+     *            The Entity with AMS
+     * @param vAttacks
+     *            List of missile attacks directed at e
+     */
+    private WeaponAttackAction manuallyAssignAPDSTarget(Mounted apds,
+            List<WeaponHandler> vAttacks) {
+        Entity e = apds.getEntity();
+        if (e == null) {
+            return null;
+        }
+
+        // Create a list of valid assignments for this APDS
+        List<WeaponAttackAction> vAttacksInArc = new ArrayList<>(
+                vAttacks.size());
+        for (WeaponHandler wr : vAttacks) {
+            boolean isInArc = Compute.isInArc(e.getGame(), e.getId(),
+                    e.getEquipmentNum(apds),
+                    game.getEntity(wr.waa.getEntityId()));
+            boolean isInRange = e.getPosition().distance(
+                    wr.getWaa().getTarget(game).getPosition()) <= 3;
+            if (isInArc && isInRange) {
+                vAttacksInArc.add(wr.waa);
+            }
+        }
+
+        // If there are no valid attacks left, don't bother
+        if (vAttacksInArc.size() < 1) {
+            return null;
+        }
+
+        WeaponAttackAction targetedWAA = null;
+
+        if (apds.curMode().equals("Automatic")) {
+            targetedWAA = Compute.getHighestExpectedDamage(game,
+                    vAttacksInArc, true);
+        } else {
+            // Send a client feedback request
+            List<Integer> apdsDists = new ArrayList<>();
+            for (WeaponAttackAction waa : vAttacksInArc) {
+                apdsDists.add(waa.getTarget(game).getPosition()
+                        .distance(e.getPosition()));
+            }
+            sendAPDSAssignCFR(e, apdsDists, vAttacksInArc);
+            synchronized (cfrPacketQueue) {
+                try {
+                    cfrPacketQueue.wait();
+                } catch (InterruptedException ex) {
+                    // Do nothing
+                }
+                if (cfrPacketQueue.size() > 0) {
+                    ReceivedPacket rp = cfrPacketQueue.poll();
+                    int cfrType = (int) rp.packet.getData()[0];
+                    // Make sure we got the right type of response
+                    if (cfrType != Packet.COMMAND_CFR_APDS_ASSIGN) {
+                        System.err.println("Expected a "
+                                + "COMMAND_CFR_AMS_ASSIGN CFR "
+                                + "packet, received: " + cfrType);
+                        throw new IllegalStateException();
                     }
-
-                    // If there are no valid attacks left, don't bother
-                    if (vAttacksInArc.size() < 1) {
-                        continue;
-                    }
-
-                    WeaponAttackAction targetedWAA = null;
-
-                    if (ams.curMode().equals("Automatic")) {
-                        targetedWAA = Compute.getHighestExpectedDamage(game,
-                                vAttacksInArc, true);
-                    } else {
-                        // Send a client feedback request
-                        sendAMSAssignCFR(e, ams, vAttacksInArc);
-                        synchronized (cfrPacketQueue) {
-                            try {
-                                cfrPacketQueue.wait();
-                            } catch (InterruptedException ex) {
-                                // Do nothing
-                            }
-                            if (cfrPacketQueue.size() > 0) {
-                                ReceivedPacket rp = cfrPacketQueue.poll();
-                                int cfrType = (int) rp.packet.getData()[0];
-                                // Make sure we got the right type of response
-                                if (cfrType != Packet.COMMAND_CFR_AMS_ASSIGN) {
-                                    System.err.println("Excepted a "
-                                            + "COMMAND_CFR_AMS_ASSIGN CFR "
-                                            + "packet, received: " + cfrType);
-                                    throw new IllegalStateException();
-                                }
-                                Integer waaIndex =
-                                        (Integer)rp.packet.getData()[1];
-                                if (waaIndex != null) {
-                                    targetedWAA = vAttacksInArc.get(waaIndex);
-                                }
-                            }
-                        }
-                    }
-
-                    if (targetedWAA != null) {
-                        targetedWAA.addCounterEquipment(ams);
-                        amsTargets.add(targetedWAA);
+                    Integer waaIndex =
+                            (Integer)rp.packet.getData()[1];
+                    if (waaIndex != null) {
+                        targetedWAA = vAttacksInArc.get(waaIndex);
                     }
                 }
             }
         }
+
+        if (targetedWAA != null) {
+            targetedWAA.addCounterEquipment(apds);
+            return targetedWAA;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Convenience method for determining which missile attack will be targeted
+     * with AMS on the supplied Entity
+     *
+     * @param e
+     *            The Entity with AMS
+     * @param vAttacks
+     *            List of missile attacks directed at e
+     */
+    private void manuallyAssignAMSTarget(Entity e,
+            Vector<WeaponHandler> vAttacks) {
+        // Current AMS targets: each attack can only be targeted once
+        HashSet<WeaponAttackAction> amsTargets =
+                new HashSet<WeaponAttackAction>();
+        // Pick assignment for each active AMS
+        for (Mounted ams : e.getActiveAMS()) {
+            // Skip APDS
+            if (ams.isAPDS()) {
+                continue;
+            }
+            // Create a list of valid assignments for this AMS
+            ArrayList<WeaponAttackAction> vAttacksInArc =
+                    new ArrayList<WeaponAttackAction>(vAttacks.size());
+            for (WeaponHandler wr : vAttacks) {
+                if (!amsTargets.contains(wr.waa)
+                        && Compute.isInArc(game, e.getId(),
+                                e.getEquipmentNum(ams),
+                                game.getEntity(wr.waa.getEntityId()))) {
+                    vAttacksInArc.add(wr.waa);
+                }
+            }
+
+            // If there are no valid attacks left, don't bother
+            if (vAttacksInArc.size() < 1) {
+                continue;
+            }
+
+            WeaponAttackAction targetedWAA = null;
+
+            if (ams.curMode().equals("Automatic")) {
+                targetedWAA = Compute.getHighestExpectedDamage(game,
+                        vAttacksInArc, true);
+            } else {
+                // Send a client feedback request
+                sendAMSAssignCFR(e, ams, vAttacksInArc);
+                synchronized (cfrPacketQueue) {
+                    try {
+                        cfrPacketQueue.wait();
+                    } catch (InterruptedException ex) {
+                        // Do nothing
+                    }
+                    if (cfrPacketQueue.size() > 0) {
+                        ReceivedPacket rp = cfrPacketQueue.poll();
+                        int cfrType = (int) rp.packet.getData()[0];
+                        // Make sure we got the right type of response
+                        if (cfrType != Packet.COMMAND_CFR_AMS_ASSIGN) {
+                            System.err.println("Expected a "
+                                    + "COMMAND_CFR_AMS_ASSIGN CFR "
+                                    + "packet, received: " + cfrType);
+                            throw new IllegalStateException();
+                        }
+                        Integer waaIndex =
+                                (Integer)rp.packet.getData()[1];
+                        if (waaIndex != null) {
+                            targetedWAA = vAttacksInArc.get(waaIndex);
+                        }
+                    }
+                }
+            }
+
+            if (targetedWAA != null) {
+                targetedWAA.addCounterEquipment(ams);
+                amsTargets.add(targetedWAA);
+            }
+        }
+    }
+
+    /**
+     * Convenience method for computing a mapping of which Coords are
+     * "protected" by an APDS. Protection implies that the coords is within the
+     * range/arc of an active APDS.
+     *
+     * @return
+     */
+    private Hashtable<Coords, List<Mounted>> getAPDSProtectedCoords() {
+        // Get all of the coords that would be protected by APDS
+        Hashtable<Coords, List<Mounted>> apdsCoords = new Hashtable<>();
+        for (Entity e : game.getEntitiesVector()) {
+            // Ignore Entitys without positions
+            if (e.getPosition() == null) {
+                continue;
+            }
+            Coords origPos = e.getPosition();
+            for (Mounted ams : e.getActiveAMS()) {
+                // Ignore non-APDS AMS
+                if (!ams.isAPDS()) {
+                    continue;
+                }
+                // Add the current hex as a defended location
+                List<Mounted> apdsList = apdsCoords.get(origPos);
+                if (apdsList == null) {
+                    apdsList = new ArrayList<>();
+                    apdsCoords.put(origPos, apdsList);
+                }
+                apdsList.add(ams);
+                // Add each coords that is within arc/range as protected
+                int maxDist = 3;
+                if (e instanceof BattleArmor) {
+                    int numTroopers = ((BattleArmor) e)
+                            .getNumberActiverTroopers();
+                    switch (numTroopers) {
+                        case 1:
+                            maxDist = 1;
+                            break;
+                        case 2:
+                        case 3:
+                            maxDist = 2;
+                            break;
+                    // Anything above is the same as the default
+                    }
+                }
+                for (int dist = 1; dist <= maxDist; dist++) {
+                    for (int dir = 0; dir <= 5; dir++) {
+                        Coords pos = e.getPosition().translated(dir, dist);
+                        // Check that we're in the right arc
+                        if (Compute.isInArc(game, e.getId(), e
+                                .getEquipmentNum(ams),
+                                new HexTarget(pos, game.getBoard(),
+                                        HexTarget.TYPE_HEX_CLEAR))) {
+                            apdsList = apdsCoords.get(pos);
+                            if (apdsList == null) {
+                                apdsList = new ArrayList<>();
+                                apdsCoords.put(pos, apdsList);
+                            }
+                            apdsList.add(ams);
+                        }
+                    }
+                }
+
+            }
+        }
+        return apdsCoords;
     }
 
     /**

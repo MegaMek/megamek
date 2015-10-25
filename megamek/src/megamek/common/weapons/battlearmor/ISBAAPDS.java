@@ -49,6 +49,5 @@ public class ISBAAPDS extends Weapon {
         introDate = 3134;
         availRating = new int[] { RATING_X, RATING_X, RATING_X, RATING_E };
         techRating = RATING_E;
-        //TODO: game rules need to be implemented
     }
 }

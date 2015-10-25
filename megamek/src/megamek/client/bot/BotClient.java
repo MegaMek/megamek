@@ -155,6 +155,14 @@ public abstract class BotClient extends Client {
                                     evt.getWAAs(), true);
                         sendAMSAssignCFRResponse(evt.getWAAs().indexOf(waa));
                         break;
+                    case Packet.COMMAND_CFR_APDS_ASSIGN:
+                        // Picks the WAA with the highest expected damage,
+                        //  essentially same as if the auto_ams option was on
+                        waa =
+                            Compute.getHighestExpectedDamage(game,
+                                    evt.getWAAs(), true);
+                        sendAPDSAssignCFRResponse(evt.getWAAs().indexOf(waa));
+                        break;
                 }
             }
 

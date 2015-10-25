@@ -159,8 +159,6 @@ public abstract class Mech extends Entity {
 
     public static final int COCKPIT_INTERFACE = 11;
     
-    //I've added these but they need to be reviewed by Arlith.
-    
     public static final int COCKPIT_VRRP = 12;
     
     public static final int COCKPIT_QUADVEE = 13;

@@ -22,6 +22,7 @@ v0.41.11-git
 + Bug [#4638]: Advanced Aero Rules Broken in 41.10 (specfically with Evade)
 + Bug: Issues with updating double-blind visuals information
 + Feature: Implemented RISC APDS
++ New Sprites/Couple of unit fixes.
 
 v0.41.10 (2015-10-12 00:11 UTC)
 + Data: New Sprites and unit file.

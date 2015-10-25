@@ -176,7 +176,8 @@ public abstract class Mech extends Entity {
     public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Small",
             "Command Console", "Torso Mounted", "Dual", "Industrial",
             "Primitive", "Primitive Industrial", "Superheavy",
-            "Superheavy Tripod", "Tripod", "Interface" };
+            "Superheavy Tripod", "Tripod", "Interface", "VRRP", "Quadvee",
+            "Superheavy Industrial" };
 
     public static final String FULL_HEAD_EJECT_STRING = "Full Head Ejection System";
 
@@ -5942,6 +5943,15 @@ public abstract class Mech extends Entity {
                 break;
             case COCKPIT_INTERFACE:
                 inName = "COCKPIT_INTERFACE";
+                break;
+            case COCKPIT_VRRP:
+                inName = "COCKPIT_VRRP";
+                break;
+            case COCKPIT_QUADVEE:
+                inName = "COCKPIT_QUADVEE";
+                break;
+            case COCKPIT_SUPERHEAVY_INDUSTRIAL:
+                inName = "COCKPIT_SUPERHEAVY_INDUSTRIAL";
                 break;
             default:
                 inName = "COCKPIT_UNKNOWN";

@@ -768,7 +768,13 @@ public abstract class TestEntity implements TestEntityOption {
             }
         }
         if (getEntity().getEngine() != null) {
-            
+            int engineTL = getEntity().getEngine().getTechType(eTLYear);
+            if (!TechConstants.isLegal(eTechLevel, engineTL, mixedTech)) {
+                buff.append("Engine is illegal at unit's tech level: ");
+                buff.append(getEntity().getEngine().getShortEngineName());
+                buff.append("\n");
+                retVal = true;
+            }
         }
 
         return retVal;

@@ -12640,7 +12640,7 @@ public class Server implements Runnable {
     private void assignAMS() {
 
         // Get all of the coords that would be protected by APDS
-        Hashtable<Coords, List<Mounted> > apdsCoords = getAPDSProtectedCoords();
+        Hashtable<Coords, List<Mounted>> apdsCoords = getAPDSProtectedCoords();
 
         // Map target to a list of missile attacks directed at it
         Hashtable<Entity, Vector<WeaponHandler>> htAttacks = new Hashtable<>();
@@ -12677,17 +12677,20 @@ public class Server implements Runnable {
                 }
                 v.addElement(wh);
                 // Keep track of what weapon attacks could be affected by APDS
-                for (Mounted apds : apdsCoords.get(target.getPosition())) {
-                    // APDS only affects attacks against friendly units
-                    if (target.isEnemyOf(apds.getEntity())) {
-                        continue;
+                if (apdsCoords.containsKey(target.getPosition())) {
+                    for (Mounted apds : apdsCoords.get(target.getPosition())) {
+                        // APDS only affects attacks against friendly units
+                        if (target.isEnemyOf(apds.getEntity())) {
+                            continue;
+                        }
+                        Vector<WeaponHandler> handlerList = apdsTargets
+                                .get(apds);
+                        if (handlerList == null) {
+                            handlerList = new Vector<>();
+                            apdsTargets.put(apds, handlerList);
+                        }
+                        handlerList.add(wh);
                     }
-                    Vector<WeaponHandler> handlerList = apdsTargets.get(apds);
-                    if (handlerList == null) {
-                        handlerList = new Vector<>();
-                        apdsTargets.put(apds, handlerList);
-                    }
-                    handlerList.add(wh);
                 }
             }
         }

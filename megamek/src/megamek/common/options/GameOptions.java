@@ -93,7 +93,7 @@ public class GameOptions extends AbstractOptions {
 
         IBasicOptionGroup allowed = addGroup("allowedUnits"); //$NON-NLS-1$
         addOption(allowed, "canon_only", false); //$NON-NLS-1$
-        addOption(allowed, "year", 3145); //$NON-NLS-1$
+        addOption(allowed, "year", 3150); //$NON-NLS-1$
         addOption(allowed, "techlevel", IOption.CHOICE, TechConstants.T_SIMPLE_NAMES[TechConstants.T_SIMPLE_STANDARD]); //$NON-NLS-1$
         addOption(allowed, "allow_illegal_units", false); //$NON-NLS-1$
         addOption(allowed, "clan_ignore_eq_limits", false); //$NON-NLS-1$

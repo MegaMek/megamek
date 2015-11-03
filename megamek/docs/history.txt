@@ -24,6 +24,7 @@ v0.41.11-git
 + Feature: Implemented RISC APDS
 + New Sprites/Couple of unit fixes.
 + Feature [#1407]: Default tripod icon
++ Default game year set to 3150
 
 v0.41.10 (2015-10-12 00:11 UTC)
 + Data: New Sprites and unit file.

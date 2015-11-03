@@ -53,6 +53,12 @@ public class TestBattleArmor extends TestEntity {
     public static int NUM_SHOTS_PER_CRIT = 4;
 
     /**
+     * BA Tube Artillery gets to be special and has 8 shots per-crit and comes
+     * in 2-shot clips.
+     */
+    public static int NUM_SHOTS_PER_CRIT_TA = 8;
+
+    /**
      * An enumeration that keeps track of the legal armors for BattleArmor. Each
      * entry consists of the type, which corresponds to the types defined in
      * <code>EquipmentType</code>.

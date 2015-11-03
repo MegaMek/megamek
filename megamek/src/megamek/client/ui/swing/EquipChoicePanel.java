@@ -1033,10 +1033,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 m_num_shots = new JComboBox<String>();
                 int shotsPerTon = curType.getShots();
                 // BattleArmor always have a certain number of shots per slot
+                int stepSize = 1;
                 if (entity instanceof BattleArmor){
-                    shotsPerTon = TestBattleArmor.NUM_SHOTS_PER_CRIT;
+                    if (curType.getAmmoType() == AmmoType.T_BA_TUBE) {
+                        shotsPerTon = TestBattleArmor.NUM_SHOTS_PER_CRIT_TA;
+                        stepSize = 2;
+                    } else {
+                        shotsPerTon = TestBattleArmor.NUM_SHOTS_PER_CRIT;
+                    }
                 }
-                for (int i = 0; i <= shotsPerTon; i++){
+                for (int i = 0; i <= shotsPerTon; i += stepSize){
                     m_num_shots.addItem(i);
                 }
                 m_num_shots.setSelectedItem(m_mounted.getBaseShotsLeft());

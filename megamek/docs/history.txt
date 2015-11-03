@@ -26,6 +26,7 @@ v0.41.11-git
 + Feature [#1407]: Default tripod icon
 + Default game year set to 3150
 + Errata: BA Tube Artillery should allow up to 8 shots per crit, in 2-shot clips
++ New Sprites
 
 v0.41.10 (2015-10-12 00:11 UTC)
 + Data: New Sprites and unit file.

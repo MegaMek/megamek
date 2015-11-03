@@ -47,6 +47,7 @@ import megamek.common.SmallCraft;
 import megamek.common.SpaceStation;
 import megamek.common.Tank;
 import megamek.common.TeleMissile;
+import megamek.common.TripodMech;
 import megamek.common.Warship;
 
 /**
@@ -64,6 +65,7 @@ public class MechTileset {
     private String ASSAULT_STRING = "default_assault"; //$NON-NLS-1$
     private String SUPER_HEAVY_MECH_STRING = "default_super_heavy_mech"; //$NON-NLS-1$
     private String QUAD_STRING = "default_quad"; //$NON-NLS-1$
+    private String TRIPOD_STRING = "default_tripod"; //$NON-NLS-1$
     private String TRACKED_STRING = "default_tracked"; //$NON-NLS-1$
     private String TRACKED_HEAVY_STRING = "default_tracked_heavy"; //$NON-NLS-1$
     private String TRACKED_ASSAULT_STRING = "default_tracked_assault"; //$NON-NLS-1$
@@ -111,6 +113,7 @@ public class MechTileset {
     private MechEntry default_assault;
     private MechEntry default_super_heavy_mech;
     private MechEntry default_quad;
+    private MechEntry default_tripod;
     private MechEntry default_tracked;
     private MechEntry default_tracked_heavy;
     private MechEntry default_tracked_assault;
@@ -243,6 +246,9 @@ public class MechTileset {
             return default_proto;
         }
         // mech, by weight
+        if (entity instanceof TripodMech) {
+            return default_tripod;
+        }
         if (entity instanceof Mech) {
             if (entity.getMovementMode() == EntityMovementMode.QUAD) {
                 return default_quad;
@@ -435,6 +441,7 @@ public class MechTileset {
         default_assault = exact.get(ASSAULT_STRING.toUpperCase());
         default_super_heavy_mech = exact.get(SUPER_HEAVY_MECH_STRING.toUpperCase());
         default_quad = exact.get(QUAD_STRING.toUpperCase());
+        default_tripod = exact.get(TRIPOD_STRING.toUpperCase());
         default_tracked = exact.get(TRACKED_STRING.toUpperCase());
         default_tracked_heavy = exact.get(TRACKED_HEAVY_STRING.toUpperCase());
         default_tracked_assault = exact.get(TRACKED_ASSAULT_STRING

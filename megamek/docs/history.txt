@@ -27,6 +27,7 @@ v0.41.11-git
 + Default game year set to 3150
 + Errata: BA Tube Artillery should allow up to 8 shots per crit, in 2-shot clips
 + New Sprites
++ Bug [#4644]: Player names not visible if player color is selected as "white"
 
 v0.41.10 (2015-10-12 00:11 UTC)
 + Data: New Sprites and unit file.

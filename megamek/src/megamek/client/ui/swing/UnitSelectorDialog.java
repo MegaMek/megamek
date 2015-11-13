@@ -209,6 +209,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         panelMekView.setPreferredSize(new java.awt.Dimension(300, 600));
 
         lstTechLevel = new JList<String>();
+        lstTechLevel.setToolTipText(Messages
+                .getString("MechSelectorDialog.m_labelType.ToolTip")); //$NON-NLS-1$
         tlLstToIdx = new HashMap<>();
         comboWeight = new JComboBox<String>();
         comboUnitType = new JComboBox<String>();
@@ -222,13 +224,15 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         btnResetSearch = new JButton();
 
         lblType = new JLabel(
-                Messages.getString("MechSelectorDialog.m_labelType"));
+                Messages.getString("MechSelectorDialog.m_labelType")); //$NON-NLS-1$
+        lblType.setToolTipText(Messages
+                .getString("MechSelectorDialog.m_labelType.ToolTip")); //$NON-NLS-1$
         lblWeight = new JLabel(
-                Messages.getString("MechSelectorDialog.m_labelWeightClass"));
+                Messages.getString("MechSelectorDialog.m_labelWeightClass")); //$NON-NLS-1$
         lblUnitType = new JLabel(
-                Messages.getString("MechSelectorDialog.m_labelUnitType"));
+                Messages.getString("MechSelectorDialog.m_labelUnitType")); //$NON-NLS-1$
         lblFilter = new JLabel(
-                Messages.getString("MechSelectorDialog.m_labelFilter"));
+                Messages.getString("MechSelectorDialog.m_labelFilter")); //$NON-NLS-1$
         lblImage = new JLabel();
         lblPlayer = new JLabel(
                 Messages.getString("MechSelectorDialog.m_labelPlayer"), SwingConstants.RIGHT); //$NON-NLS-1$

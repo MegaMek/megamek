@@ -32,6 +32,7 @@ v0.41.11-git
 + Bug: Added missing i18n entries for Cancel key
 + Added tooltip to Type list in UntiSelectorDialog
 + Added KeyBind for "Done" action
++ Bug: Minimap still visible after using /reset command
 
 v0.41.10 (2015-10-12 00:11 UTC)
 + Data: New Sprites and unit file.

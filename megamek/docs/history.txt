@@ -29,6 +29,7 @@ v0.41.11-git
 + New Sprites
 + Bug [#4644]: Player names not visible if player color is selected as "white"
 + Bug: FiringSprites from previous Firing phase still drawn in Targeting phase
++ Bug: Added missing i18n entries for Cancel key
 
 v0.41.10 (2015-10-12 00:11 UTC)
 + Data: New Sprites and unit file.

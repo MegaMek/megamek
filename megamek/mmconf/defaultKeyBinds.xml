@@ -183,4 +183,11 @@
         <isRepeatable>false</isRepeatable>
       </KeyBind>
 
+      <KeyBind>
+        <command>done</command>
+        <keyCode>10</keyCode> <!-- Ctrl-Enter -->
+        <modifier>2</modifier>
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
 </KeyBindings>

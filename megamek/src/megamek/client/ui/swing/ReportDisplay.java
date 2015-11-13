@@ -60,6 +60,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
      * clientgui.getClient().
      */
     public ReportDisplay(ClientGUI clientgui) {
+        super(clientgui);
         butDone = new MegamekButton("","PhaseDisplayDoneButton");
         butDone.setActionCommand("doneButton");
         butDone.addActionListener(new AbstractAction() {
@@ -71,7 +72,6 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
                 }
             }
         });
-        this.clientgui = clientgui;
         clientgui.getClient().getGame().addGameListener(this);
 
         // Create a tabbed panel to hold our reports.

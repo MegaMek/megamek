@@ -85,7 +85,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
      * clientgui.getClient().
      */
     public DeployMinefieldDisplay(ClientGUI clientgui) {
-        this.clientgui = clientgui;
+        super(clientgui);
         clientgui.getClient().getGame().addGameListener(this);
 
         setupStatusBar(Messages

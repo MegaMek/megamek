@@ -57,7 +57,8 @@ public enum KeyCommandBind {
 	AUTO_ARTY_DEPLOYMENT_ZONE("autoArtyDeployZone",false, 90, 1), // Default: Shift-Z
 	FIELD_FIRE("fieldOfFire",false, 82, 1), // Default: Shift-R
 	// Used to cancel moves/fires/chatterbox
-	CANCEL("cancel", false, 27, 0, true); // Default: Escape
+	CANCEL("cancel", false, 27, 0, true), // Default: Escape
+	DONE("done", false, 10, 2, true); // Default: Ctrl-Enter
 	
 	/**
 	 * The command associated with this binding.

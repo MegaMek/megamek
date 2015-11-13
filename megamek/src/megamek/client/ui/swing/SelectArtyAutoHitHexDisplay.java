@@ -92,7 +92,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
      * clientgui.getClient().
      */
     public SelectArtyAutoHitHexDisplay(ClientGUI clientgui) {
-        this.clientgui = clientgui;
+        super(clientgui);
         clientgui.getClient().getGame().addGameListener(this);
 
         clientgui.getBoardView().addBoardViewListener(this);

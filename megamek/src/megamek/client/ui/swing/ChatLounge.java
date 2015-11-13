@@ -226,7 +226,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * Creates a new chat lounge for the clientgui.getClient().
      */
     public ChatLounge(ClientGUI clientgui) {
-        this.clientgui = clientgui;
+        super(clientgui);
 
         // Create a tabbed panel to hold our components.
         panTabs = new JTabbedPane();

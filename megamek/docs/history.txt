@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.41.12-git
+
 v0.41.11 (2015-11-15 16:50 UTC)
 + Data: New Sprites.
 + Bug [#4635]: Diagramming LOS struggles with terrain elevation

@@ -2382,6 +2382,7 @@ Gladiator Battle Armor S|
 Rogue Bear Heavy Battle Armor (Hybrid)|
 Void Medium Battle Armor (Minelayer)|
 Elemental II Battle Armor (Standard)|
+Machina Domini Interface Armor (Standard)|
 M9 Pavise SDS Battle Station|
 Drake SDS Control Station (Standard)|
 Snowden Mining Station Mk I|

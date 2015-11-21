@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.41.12-git
 + Bug: Minimap still visible after using /reset command
++ Bug: Icarus II unit icon not showing up
 
 v0.41.11 (2015-11-15 16:50 UTC)
 + Data: New Sprites.

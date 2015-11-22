@@ -772,12 +772,14 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
              comboWeight.setSelectedIndex(guip.getMechSelectorWeightClass());
              String option = guip.getMechSelectorRulesLevels().replaceAll("\\[", "");
              option = option.replaceAll("\\]", "");
-             String[] strSelections = option.split("[,]");
-             int[] intSelections = new int[strSelections.length];
-             for (int i = 0; i < strSelections.length; i++) {
-                 intSelections[i] = Integer.parseInt(strSelections[i].trim());
+             if (option.length() > 0) {
+                 String[] strSelections = option.split("[,]");
+                 int[] intSelections = new int[strSelections.length];
+                 for (int i = 0; i < strSelections.length; i++) {
+                     intSelections[i] = Integer.parseInt(strSelections[i].trim());
+                 }
+                 lstTechLevel.setSelectedIndices(intSelections);
              }
-             lstTechLevel.setSelectedIndices(intSelections);
          }
          asd.clearValues();
          searchFilter=null;

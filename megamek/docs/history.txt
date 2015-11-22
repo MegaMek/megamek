@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.41.12-git
 + Bug: Minimap still visible after using /reset command
++ Bug [#4648]: "add a combat unit" stops working after you close the window
 
 v0.41.11 (2015-11-15 16:50 UTC)
 + Data: New Sprites.

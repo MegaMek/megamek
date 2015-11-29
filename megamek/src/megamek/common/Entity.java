@@ -1860,6 +1860,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
             if (hex.containsTerrain(Terrains.BUILDING)) {
+                // Any unit can fall into a basement
+                if ((assumedAlt < 0) && (hex.depth(true) > 0)) {
+                    return true;
+                }
                 // Mechs, protos and infantry can occupy any floor in the
                 // building
                 if ((this instanceof Mech) || (this instanceof Protomech)

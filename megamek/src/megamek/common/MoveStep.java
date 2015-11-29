@@ -1143,6 +1143,9 @@ public class MoveStep implements Serializable {
             }
             isRolled = false;// a.isRolled();
             nStraight = a.getStraightMoves();
+            if (dueFreeTurn()) {
+                setFreeTurn(true);
+            }
         }
 
         EntityMovementMode nMove = entity.getMovementMode();

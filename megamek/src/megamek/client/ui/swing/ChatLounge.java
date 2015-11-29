@@ -2554,7 +2554,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             previewGameBoard();
         } else if (ev.getSource().equals(butMapSize)
                 || ev.getSource().equals(butSpaceSize)) {
-            MapDimensionsDialog mdd = new MapDimensionsDialog(clientgui);
+            MapDimensionsDialog mdd = new MapDimensionsDialog(clientgui,
+                    mapSettings);
             mdd.setVisible(true);
         } else if (ev.getSource().equals(comboMapSizes)) {
             if ((comboMapSizes.getSelectedItem() != null)

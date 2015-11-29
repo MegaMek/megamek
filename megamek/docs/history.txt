@@ -9,6 +9,7 @@ v0.41.12-git
 + Dropship cost summary now properly displayed
 + Bug [#4655]: Vehicles falling into basements cannot move
 + Bug: Basement collapsed i18n entry for tooltip incorrect
++ Bug [#4645]: Map switches from [GENERATED] to [SURPRISE] with Map Size button
 
 v0.41.11 (2015-11-15 16:50 UTC)
 + Data: New Sprites.

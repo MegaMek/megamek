@@ -28,7 +28,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.Vector;
 
 import megamek.common.util.BuildingTemplate;
 
@@ -396,12 +395,16 @@ public class MapSettings implements Serializable {
 
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
-
-        boardsSelected.clear();
-        // TODO make sure that nobody actualyl depends on .size()...
-        Vector<String> nullElements = new Vector<String>();
-        nullElements.setSize(mapWidth * mapHeight);
-        boardsSelected.addAll(nullElements);
+        // Create null entries for everything that isn't surprise or generated
+        for (int i = 0; i < boardsSelected.size(); i++) {
+            if (!boardsSelected.get(i).equals(BOARD_GENERATED)
+                    && !boardsSelected.get(i).equals(BOARD_SURPRISE)) {
+                boardsSelected.set(i, null);
+            }
+        }
+        while (boardsSelected.size() < (mapWidth * mapHeight)) {
+            boardsSelected.add(null);
+        }
     }
 
     public Iterator<String> getBoardsSelected() {
@@ -468,9 +471,20 @@ public class MapSettings implements Serializable {
      */
     public void removeUnavailable() {
         for (int i = 0; i < boardsSelected.size(); i++) {
-            if ((boardsSelected.get(i) == null) || (boardsAvailable.size() == 0)
-                    || (boardsAvailable.indexOf(boardsSelected.get(i).startsWith(Board.BOARD_REQUEST_ROTATION)?boardsSelected.get(i).substring(Board.BOARD_REQUEST_ROTATION.length()):boardsSelected.get(i)) == -1)) {
+            // If board is already null or no boards available, remove board
+            if ((boardsSelected.get(i) == null)
+                    || (boardsAvailable.size() == 0)) {
                 boardsSelected.set(i, null);
+            } else { // Otherwise, if the name isn't available, remove it
+                String boardName = boardsSelected.get(i);
+                if (boardsSelected.get(i).startsWith(
+                        Board.BOARD_REQUEST_ROTATION)) {
+                    boardName = boardName
+                            .substring(Board.BOARD_REQUEST_ROTATION.length());
+                }
+                if (boardsAvailable.indexOf(boardName) == -1) {
+                    boardsSelected.set(i, null);
+                }
             }
         }
     }
@@ -487,12 +501,6 @@ public class MapSettings implements Serializable {
         this.boardsAvailable = boardsAvailable;
     }
 
-    /*
-     * TODO??? public void setBridgeCF(int cf) { if (cf>0) { // only set if
-     * greater zero. Check for option is done in server. for (Enumeration
-     * eboards=boardsSelected.elements(); eboards.hasMoreElements(); ) { Board
-     * board=(Board)eboards.nextElement(); board.setBridgeCF(cf); } } }
-     */
     /**
      * Checks, if the Mapgenerator parameters are all valid. If not they are
      * changed to valid values.

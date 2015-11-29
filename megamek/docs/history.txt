@@ -7,6 +7,7 @@ v0.41.12-git
 + Data: New Sprites, OTP Capellan Crusades, unit fixes.
 + Bug [#4650]: ASFs not getting free turn between game turns
 + Dropship cost summary now properly displayed
++ Bug [#4655]: Vehicles falling into basements cannot move
 
 v0.41.11 (2015-11-15 16:50 UTC)
 + Data: New Sprites.

@@ -14,6 +14,7 @@
  */
 package megamek.common;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -215,31 +216,32 @@ public class Dropship extends SmallCraft {
 
     @Override
     public double getCost(boolean ignoreAmmo) {
-
+        double[] costs = new double[18];
+        int costIdx = 0;
         double cost = 0;
 
         // add in controls
         // bridge
-        cost += 200000 + (10 * weight);
+        costs[costIdx++] += 200000 + (10 * weight);
         // computer
-        cost += 200000;
+        costs[costIdx++] += 200000;
         // life support
-        cost += 5000 * (getNCrew() + getNPassenger());
+        costs[costIdx++] += 5000 * (getNCrew() + getNPassenger());
         // sensors
-        cost += 80000;
+        costs[costIdx++] += 80000;
         // fcs
-        cost += 100000;
+        costs[costIdx++] += 100000;
         // gunnery/control systems
-        cost += 10000 * getArcswGuns();
+        costs[costIdx++] += 10000 * getArcswGuns();
 
         // structural integrity
-        cost += 100000 * getSI();
+        costs[costIdx++] += 100000 * getSI();
 
         // additional flight systems (attitude thruster and landing gear)
-        cost += 25000 + (10 * getWeight());
+        costs[costIdx++] += 25000 + (10 * getWeight());
 
         // docking collar
-        cost += 10000;
+        costs[costIdx++] += 10000;
 
         // engine
         double engineMultiplier = 0.065;
@@ -247,23 +249,23 @@ public class Dropship extends SmallCraft {
             engineMultiplier = 0.061;
         }
         double engineWeight = getOriginalWalkMP() * weight * engineMultiplier;
-        cost += engineWeight * 1000;
+        costs[costIdx++] += engineWeight * 1000;
         // drive unit
-        cost += (500 * getOriginalWalkMP() * weight) / 100.0;
+        costs[costIdx++] += (500 * getOriginalWalkMP() * weight) / 100.0;
 
         // fuel tanks
-        cost += (200 * getFuel()) / getFuelPerTon();
+        costs[costIdx++] += (200 * getFuel()) / getFuelPerTon();
 
         // armor
-        cost += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
+        costs[costIdx++] += getArmorWeight() * EquipmentType.getArmorCost(armorType[0]);
 
         // heat sinks
         int sinkCost = 2000 + (4000 * getHeatType());// == HEAT_DOUBLE ? 6000:
         // 2000;
-        cost += sinkCost * getHeatSinks();
+        costs[costIdx++] += sinkCost * getHeatSinks();
 
         // weapons
-        cost += getWeaponsAndEquipmentCost(ignoreAmmo);
+        costs[costIdx++] += getWeaponsAndEquipmentCost(ignoreAmmo);
 
         // get bays
         int baydoors = 0;
@@ -280,20 +282,92 @@ public class Dropship extends SmallCraft {
             }
         }
 
-        cost += bayCost + (baydoors * 1000);
+        costs[costIdx++] += bayCost + (baydoors * 1000);
 
         // life boats and escape pods
-        cost += 5000 * (getLifeBoats() + getEscapePods());
+        costs[costIdx++] += 5000 * (getLifeBoats() + getEscapePods());
 
         double weightMultiplier = 36.0;
         if (isSpheroid()) {
             weightMultiplier = 28.0;
         }
 
-        return Math.round(cost * weightMultiplier);
-
+        // Sum Costs
+        for (int i = 0; i < costIdx; i++) {
+            cost += costs[i];
+        }
+        
+        costs[costIdx++] = -weightMultiplier; // Negative indicates multiplier
+        cost = Math.round(cost * weightMultiplier);
+        addCostDetails(cost, costs);
+        return cost;
     }
 
+    private void addCostDetails(double cost, double[] costs) {
+        bvText = new StringBuffer();
+        String[] left = { "Bridge", "Computer", "Life Support", "Sensors",
+                "FCS", "Gunner/Control Systems", "Structural Integrity",
+                "Additional Flight Systems", "Docking Collar", "Engine",
+                "Drive Unit", "Fuel Tanks", "Armor", "Heat Sinks",
+                "Weapons/Equipment", "Bays", "Life Boats/Escape Pods",
+                "Weight Multiplier" };
+
+        NumberFormat commafy = NumberFormat.getInstance();
+
+        bvText.append("<HTML><BODY><CENTER><b>Cost Calculations For ");
+        bvText.append(getChassis());
+        bvText.append(" ");
+        bvText.append(getModel());
+        bvText.append("</b></CENTER>");
+        bvText.append(nl);
+
+        bvText.append(startTable);
+        // find the maximum length of the columns.
+        for (int l = 0; l < left.length; l++) {
+
+            if (l == 14) {
+                getWeaponsAndEquipmentCost(true);
+            } else {
+                bvText.append(startRow);
+                bvText.append(startColumn);
+                bvText.append(left[l]);
+                bvText.append(endColumn);
+                bvText.append(startColumn);
+
+                if (costs[l] == 0) {
+                    bvText.append("N/A");
+                } else if (costs[l] < 0) {
+                    bvText.append("x ");
+                    bvText.append(commafy.format(-costs[l]));
+                } else {
+                    bvText.append(commafy.format(costs[l]));
+
+                }
+                bvText.append(endColumn);
+                bvText.append(endRow);
+            }
+        }
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append("-------------");
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(startRow);
+        bvText.append(startColumn);
+        bvText.append("Total Cost:");
+        bvText.append(endColumn);
+        bvText.append(startColumn);
+        bvText.append(commafy.format(cost));
+        bvText.append(endColumn);
+        bvText.append(endRow);
+
+        bvText.append(endTable);
+        bvText.append("</BODY></HTML>");
+    }
+    
     private String getArcName(int loc) {
         if (loc < locations()) {
             return getLocationName(loc);

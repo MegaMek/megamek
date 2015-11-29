@@ -8,6 +8,7 @@ v0.41.12-git
 + Bug [#4650]: ASFs not getting free turn between game turns
 + Dropship cost summary now properly displayed
 + Bug [#4655]: Vehicles falling into basements cannot move
++ Bug: Basement collapsed i18n entry for tooltip incorrect
 
 v0.41.11 (2015-11-15 16:50 UTC)
 + Data: New Sprites.

@@ -4689,9 +4689,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             bldg.getBasement(mcoords).getDesc()       
                     }));
                     
-                    if (bldg.getBasementCollapsed(mcoords)) 
-                        txt.append(Messages.getString("BoardView1.BldgBasementCollapsed"));
-
+                    if (bldg.getBasementCollapsed(mcoords)) {
+                        txt.append(Messages
+                                .getString("BoardView1.Tooltip.BldgBasementCollapsed"));
+                    }
                     txt.append("</TD></TR></TABLE>");
                 }
             }

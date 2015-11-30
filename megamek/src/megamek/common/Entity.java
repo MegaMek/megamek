@@ -9645,7 +9645,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             Aero a = (Aero) this;
             // Handle spheroids in atmosphere or on the ground differently
             if (a.isSpheroid() && (game != null) && !game.getBoard().inSpace()) {
-                fa = effectivePos.degree(src);
                 if ((fa >= 0) && (fa < 180)) {
                     return ToHitData.SIDE_RIGHT;
                 }

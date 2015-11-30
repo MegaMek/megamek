@@ -12,6 +12,7 @@ v0.41.12-git
 + Bug [#4645]: Map switches from [GENERATED] to [SURPRISE] with Map Size button
 + Bug [#4656]: isInSameBuilding Error
 + Feature: Adding facing arrow for landed dropships
++ Bug [#4653]: Attacks against landed Dropships potentially use wrong side table
 
 v0.41.11 (2015-11-15 16:50 UTC)
 + Data: New Sprites.

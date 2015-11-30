@@ -26456,7 +26456,7 @@ public class Server implements Runnable {
             newElevation = entity.getElevation();
         }
         // HACK: if the dest hex is water, assume that the fall height given is
-        // to the floor of the hex, and modifiy it so that it's to the surface
+        // to the floor of the hex, and modify it so that it's to the surface
         else if (waterDepth > 0) {
             damageHeight = fallHeight - waterDepth;
             newElevation = -waterDepth;
@@ -26465,30 +26465,34 @@ public class Server implements Runnable {
         // from above
         if (intoBasement) {
             Building bldg = game.getBoard().getBuildingAt(fallPos);
-            if ((bldg.getBasement(fallPos) != BasementType.NONE)
-                && (bldg.getBasement(fallPos) != BasementType.ONE_DEEP_NORMALINFONLY)
+            BasementType bsmnt = bldg.getBasement(fallPos);
+            if ((bsmnt != BasementType.NONE)
+                && (bsmnt != BasementType.ONE_DEEP_NORMALINFONLY)
                 && (entity.getElevation() == 0)
                 && (bldg.getBasementCollapsed(fallPos) == true)) {
 
                 if (fallHex.depth(true) == 0) {
                     System.err.println(" Entity " + entity.getDisplayName()
-                                       + " is falling into a depth " + fallHex.depth(true)
-                                       + " basement -- not allowed!!");
+                            + " is falling into a depth " + fallHex.depth(true)
+                            + " basement -- not allowed!!");
                     return vPhaseReport;
                 }
-                damageHeight = bldg.getBasement(fallPos).getDepth();
+                damageHeight = bsmnt.getDepth();
 
                 newElevation = newElevation - damageHeight;
 
                 handlingBasement = true;
-                if ((bldg.getBasement(fallPos) == BasementType.TWO_DEEP_FEET)
-                    || (bldg.getBasement(fallPos) == BasementType.ONE_DEEP_FEET)) {
-                    damageTable = ToHitData.HIT_KICK;
-                } else if ((bldg.getBasement(fallPos) == BasementType.TWO_DEEP_HEAD)
-                           || (bldg.getBasement(fallPos) == BasementType.ONE_DEEP_HEAD)) {
-                    damageTable = ToHitData.HIT_PUNCH;
-                } else {
-                    damageTable = ToHitData.HIT_NORMAL;
+                // May have to adjust hit table for 'mechs
+                if (entity instanceof Mech) {
+                    if ((bsmnt == BasementType.TWO_DEEP_FEET)
+                            || (bsmnt == BasementType.ONE_DEEP_FEET)) {
+                        damageTable = ToHitData.HIT_KICK;
+                    } else if ((bsmnt == BasementType.TWO_DEEP_HEAD)
+                            || (bsmnt == BasementType.ONE_DEEP_HEAD)) {
+                        damageTable = ToHitData.HIT_PUNCH;
+                    } else {
+                        damageTable = ToHitData.HIT_NORMAL;
+                    }
                 }
             }
         }
@@ -26538,6 +26542,16 @@ public class Server implements Runnable {
                     dice = 1;
                 }
                 damage = damage * Compute.d6(dice);
+            }
+        }
+        // Different rules (pg 151 of TW) for Tanks
+        if (entity instanceof Tank) {
+            // Falls from less than 1 elevation don't damage combat vehicles
+            if (damageHeight < 2) {
+                damage = 0;
+            } else { // Falls from >= 2 elevations damage like crashing VTOLs
+                // Ends up being the regular damage: weight / 10 * (height + 1)
+                // And this was already computed
             }
         }
         // calculate damage for hitting the ground, but only if we actually fell
@@ -26598,13 +26612,16 @@ public class Server implements Runnable {
             entity.setProne(true);
         }
         entity.setPosition(fallPos);
-        entity.setFacing((entity.getFacing() + (facing)) % 6);
-        entity.setSecondaryFacing(entity.getFacing());
         entity.setElevation(newElevation);
+        // Only 'mechs change facing when they fall
+        if (entity instanceof Mech) {
+            entity.setFacing((entity.getFacing() + (facing)) % 6);
+            entity.setSecondaryFacing(entity.getFacing());
+        }
 
         // if falling into a bog-down hex, the entity automatically gets stuck
         if (fallHex.getBogDownModifier(entity.getMovementMode(),
-                                       entity instanceof LargeSupportTank) != TargetRoll.AUTOMATIC_SUCCESS) {
+                entity instanceof LargeSupportTank) != TargetRoll.AUTOMATIC_SUCCESS) {
             entity.setStuck(true);
             r = new Report(2081);
             r.subject = entity.getId();

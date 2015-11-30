@@ -4798,16 +4798,16 @@ public class Compute {
      * Determines whether the attacker and the target are in the same building.
      *
      * @return true if the target can and does occupy the same building, false
-     * otherwise.
+     *         otherwise.
      */
     public static boolean isInSameBuilding(IGame game, Entity attacker,
-                                           Targetable target) {
+            Targetable target) {
         if (!(target instanceof Entity)) {
             return false;
         }
         Entity targetEntity = (Entity) target;
         if (!Compute.isInBuilding(game, attacker)
-            || !Compute.isInBuilding(game, targetEntity)) {
+                || !Compute.isInBuilding(game, targetEntity)) {
             return false;
         }
 
@@ -4898,6 +4898,11 @@ public class Compute {
 
         // The entity can't be inside of a building that isn't there.
         if (!curHex.containsTerrain(Terrains.BLDG_ELEV)) {
+            return false;
+        }
+
+        // The entity can't be inside of a building that isn't there.
+        if (!curHex.containsTerrain(Terrains.BUILDING)) {
             return false;
         }
 

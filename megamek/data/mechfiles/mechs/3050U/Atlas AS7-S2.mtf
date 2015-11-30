@@ -5,8 +5,8 @@ AS7-S2
 Config:Biped
 TechBase:Inner Sphere
 Era:3061
+Source:TRO 3050 - Clan Invasion
 Rules Level:2
-source:TRO 3067
 
 Mass:100
 Engine:300 Light Engine

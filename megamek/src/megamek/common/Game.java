@@ -773,6 +773,9 @@ public class Game implements Serializable, IGame {
             case PHASE_LOUNGE:
                 reset();
                 break;
+            case PHASE_TARGETING:
+                resetActions();
+                break;
             case PHASE_MOVEMENT:
                 resetActions();
                 break;
@@ -1627,9 +1630,11 @@ public class Game implements Serializable, IGame {
     public Entity getAffaTarget(Coords c, Entity ignore) {
         Vector<Entity> vector = new Vector<Entity>();
         if (board.contains(c)) {
+            IHex hex = board.getHex(c);
             for (Entity entity : getEntitiesVector(c)) {
                 if (entity.isTargetable()
-                    && (entity.getElevation() == 0)
+                    && ((entity.getElevation() == 0) // Standing on hex surface 
+                            || (entity.getElevation() == -hex.depth())) // Standing on hex floor
                     && (entity.getAltitude() == 0)
                     && !(entity instanceof Infantry) && (entity != ignore)) {
                     vector.addElement(entity);
@@ -1648,13 +1653,15 @@ public class Game implements Serializable, IGame {
      * Returns an <code>Enumeration</code> of the enemy's active entities at the
      * given coordinates.
      *
-     * @param c             the <code>Coords</code> of the hex being examined.
-     * @param currentEntity the <code>Entity</code> whose enemies are needed.
+     * @param c
+     *            the <code>Coords</code> of the hex being examined.
+     * @param currentEntity
+     *            the <code>Entity</code> whose enemies are needed.
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the given
-     * coordinates who are enemies of the given unit.
+     *         coordinates who are enemies of the given unit.
      */
     public Iterator<Entity> getEnemyEntities(final Coords c,
-                                                final Entity currentEntity) {
+            final Entity currentEntity) {
         // Use an EntitySelector to avoid walking the entities vector twice.
         return getSelectedEntities(new EntitySelector() {
             private Coords coords = c;
@@ -1662,7 +1669,7 @@ public class Game implements Serializable, IGame {
 
             public boolean accept(Entity entity) {
                 if (coords.equals(entity.getPosition())
-                    && entity.isTargetable() && entity.isEnemyOf(friendly)) {
+                        && entity.isTargetable() && entity.isEnemyOf(friendly)) {
                     return true;
                 }
                 return false;
@@ -1674,13 +1681,15 @@ public class Game implements Serializable, IGame {
      * Returns an <code>Enumeration</code> of friendly active entities at the
      * given coordinates.
      *
-     * @param c             the <code>Coords</code> of the hex being examined.
-     * @param currentEntity the <code>Entity</code> whose friends are needed.
+     * @param c
+     *            the <code>Coords</code> of the hex being examined.
+     * @param currentEntity
+     *            the <code>Entity</code> whose friends are needed.
      * @return an <code>Enumeration</code> of <code>Entity</code>s at the given
-     * coordinates who are friends of the given unit.
+     *         coordinates who are friends of the given unit.
      */
     public Iterator<Entity> getFriendlyEntities(final Coords c,
-                                                   final Entity currentEntity) {
+            final Entity currentEntity) {
         // Use an EntitySelector to avoid walking the entities vector twice.
         return getSelectedEntities(new EntitySelector() {
             private Coords coords = c;
@@ -1688,7 +1697,7 @@ public class Game implements Serializable, IGame {
 
             public boolean accept(Entity entity) {
                 if (coords.equals(entity.getPosition())
-                    && entity.isTargetable() && !entity.isEnemyOf(friendly)) {
+                        && entity.isTargetable() && !entity.isEnemyOf(friendly)) {
                     return true;
                 }
                 return false;

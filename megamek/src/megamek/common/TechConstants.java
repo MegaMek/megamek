@@ -76,7 +76,7 @@ public class TechConstants {
     public static final int T_SIMPLE_EXPERIMENTAL = 3;
     public static final int T_SIMPLE_UNOFFICIAL = 4;
 
-    public static final String[] T_SIMPLE_NAMES = { "Intro", "Standard",
+    public static final String[] T_SIMPLE_NAMES = { "Introductory", "Standard",
             "Advanced", "Experimental", "Unofficial" };
 
     public static final int SIMPLE_SIZE = T_SIMPLE_NAMES.length;
@@ -107,8 +107,27 @@ public class TechConstants {
      * @return
      */
     public static String getLevelDisplayableName(int level) {
+        if (level == T_ALLOWED_ALL) {
+            return Messages.getString("TechLevel.T_ALLOWED_ALL");
+        }
+        if (level == T_TECH_UNKNOWN) {
+            return Messages.getString("TechLevel.T_TECH_UNKNOWN");
+        }
         if ((level >= 0) && (level < SIZE)) {
             return Messages.getString("TechLevel." + T_NAMES[level]);
+        }
+        throw new IllegalArgumentException("Unknown tech level");
+    }
+
+    public static String getSimpleLevelName(int level) {
+        if (level == T_ALLOWED_ALL) {
+            return Messages.getString("TechLevel.T_ALLOWED_ALL");
+        }
+        if (level == T_TECH_UNKNOWN) {
+            return Messages.getString("TechLevel.T_TECH_UNKNOWN");
+        }
+        if ((level >= 0) && (level < SIMPLE_SIZE)) {
+            return T_SIMPLE_NAMES[level];
         }
         throw new IllegalArgumentException("Unknown tech level");
     }
@@ -203,6 +222,17 @@ public class TechConstants {
 
         }
         return legalLevel;
+    }
+
+    public static int convertFromNormalToSimple(int techLevel) {
+        if (techLevel == T_ALLOWED_ALL) {
+            return T_ALLOWED_ALL;
+        }
+        if (techLevel == T_TECH_UNKNOWN) {
+            return T_TECH_UNKNOWN;
+        }
+        int simpleTL = Integer.parseInt(T_SIMPLE_LEVEL[techLevel]) - 1;
+        return simpleTL;
     }
 
     /**

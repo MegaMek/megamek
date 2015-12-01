@@ -218,4 +218,9 @@ public class Option implements IOption, Serializable {
             info = owner.getOptionInfo(name);
         }
     }
+    
+    @Override
+    public String toString() {
+        return "Option - " + getName() + ": " + getValue();
+    }
 }

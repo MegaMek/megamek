@@ -604,7 +604,7 @@ public class Compute {
      * @return valid displacement coords, or null if none
      */
     public static Coords getValidDisplacement(IGame game, int entityId,
-                                              Coords src, int direction) {
+            Coords src, int direction) {
         // check the surrounding hexes, nearest to the original direction first
         int[] offsets = {0, 1, 5, 2, 4, 3};
         int range = 1;
@@ -642,7 +642,7 @@ public class Compute {
      * @return valid displacement coords, or null if none
      */
     public static Coords getPreferredDisplacement(IGame game, int entityId,
-                                                  Coords src, int direction) {
+            Coords src, int direction) {
         final Entity entity = game.getEntity(entityId);
         int highestElev = Integer.MIN_VALUE;
         Coords highest = null;
@@ -657,7 +657,7 @@ public class Compute {
             if (Compute.isValidDisplacement(game, entityId, src, dest)
                 && game.getBoard().contains(dest)) {
                 Iterator<Entity> entities = game.getFriendlyEntities(dest,
-                                                                     game.getEntity(entityId));
+                        game.getEntity(entityId));
                 if (entities.hasNext()) {
                     // friendly unit here, try next hex
                     continue;
@@ -2489,7 +2489,7 @@ public class Compute {
      * damage
      */
     public static WeaponAttackAction getHighestExpectedDamage(IGame g,
-                                                              List<WeaponAttackAction> vAttacks, boolean assumeHit) {
+            List<WeaponAttackAction> vAttacks, boolean assumeHit) {
         float fHighest = -1.0f;
         WeaponAttackAction waaHighest = null;
         for (int x = 0, n = vAttacks.size(); x < n; x++) {
@@ -2504,9 +2504,9 @@ public class Compute {
     }
 
     // store these as constants since the tables will never change
-    private static float[] expectedHitsByRackSize = {0.0f, 1.0f, 1.58f, 2.0f,
-                                                     2.63f, 3.17f, 4.0f, 4.49f, 4.98f, 5.47f, 6.31f, 7.23f, 8.14f,
-                                                     8.59f, 9.04f, 9.5f, 10.1f, 10.8f, 11.42f, 12.1f, 12.7f};
+    private static float[] expectedHitsByRackSize = { 0.0f, 1.0f, 1.58f, 2.0f,
+            2.63f, 3.17f, 4.0f, 4.49f, 4.98f, 5.47f, 6.31f, 7.23f, 8.14f,
+            8.59f, 9.04f, 9.5f, 10.1f, 10.8f, 11.42f, 12.1f, 12.7f };
 
     /*
      * | No Modifier | +2 (Artemis, Narc) | -2 (HAG, AMS v Art)| -4 (AMS) | |
@@ -2555,8 +2555,8 @@ public class Compute {
      * sizes, etc.
      */
     public static float getExpectedDamage(IGame g, WeaponAttackAction waa,
-                                          boolean assumeHit) {
-        return Compute.getExpectedDamage(g,  waa, assumeHit, null);
+            boolean assumeHit) {
+        return Compute.getExpectedDamage(g, waa, assumeHit, null);
     }
     
     /**
@@ -4798,16 +4798,16 @@ public class Compute {
      * Determines whether the attacker and the target are in the same building.
      *
      * @return true if the target can and does occupy the same building, false
-     * otherwise.
+     *         otherwise.
      */
     public static boolean isInSameBuilding(IGame game, Entity attacker,
-                                           Targetable target) {
+            Targetable target) {
         if (!(target instanceof Entity)) {
             return false;
         }
         Entity targetEntity = (Entity) target;
         if (!Compute.isInBuilding(game, attacker)
-            || !Compute.isInBuilding(game, targetEntity)) {
+                || !Compute.isInBuilding(game, targetEntity)) {
             return false;
         }
 
@@ -4898,6 +4898,11 @@ public class Compute {
 
         // The entity can't be inside of a building that isn't there.
         if (!curHex.containsTerrain(Terrains.BLDG_ELEV)) {
+            return false;
+        }
+
+        // The entity can't be inside of a building that isn't there.
+        if (!curHex.containsTerrain(Terrains.BUILDING)) {
             return false;
         }
 

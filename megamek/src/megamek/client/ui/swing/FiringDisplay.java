@@ -191,7 +191,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
      * clientgui.getClient().
      */
     public FiringDisplay(final ClientGUI clientgui) {
-        this.clientgui = clientgui;
+        super(clientgui);
         clientgui.getClient().getGame().addGameListener(this);
 
         clientgui.getBoardView().addBoardViewListener(this);
@@ -1085,7 +1085,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         // close aimed shot display, if any
         ash.closeDialog();
 
-        if (ce().isWeapOrderChanged()) {
+        if ((ce() != null) && ce().isWeapOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
         endMyTurn();

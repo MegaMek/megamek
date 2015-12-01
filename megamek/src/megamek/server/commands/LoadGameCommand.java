@@ -21,7 +21,12 @@
 package megamek.server.commands;
 
 import java.io.File;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
+import megamek.common.IPlayer;
+import megamek.common.net.IConnection;
 import megamek.server.Server;
 
 /**
@@ -66,8 +71,23 @@ public class LoadGameCommand extends ServerCommand {
     private void load(File f, int connId) {
         server.sendServerChat(server.getPlayer(connId).getName()
                 + " loaded a new game.");
-        if(!server.loadGame(f)) {
+        // Keep track of the current id to name mapping
+        Map<String, Integer> nameToIdMap = new HashMap<>();
+        Map<Integer, String> idToNameMap = new HashMap<>();
+        for (IPlayer p: server.getGame().getPlayersVector()) {
+            nameToIdMap.put(p.getName(), p.getId());
+            idToNameMap.put(p.getId(), p.getName());
+        }
+        if(!server.loadGame(f, false)) {
             server.sendServerChat(f.getName() + " could not be loaded");
+        } else {
+            server.remapConnIds(nameToIdMap, idToNameMap);
+            // update all the clients with the new game info
+            Enumeration<IConnection> connEnum = server.getConnections();
+            while (connEnum.hasMoreElements()) {
+                IConnection conn = connEnum.nextElement();
+                server.sendCurrentInfo(conn.getId());
+            }
         }
     }
 

@@ -262,7 +262,8 @@ public class MovePath implements Cloneable, Serializable {
         }
         
         // Can't move backwards and Evade
-        if (contains(MoveStepType.BACKWARDS) && contains(MoveStepType.EVADE)) {
+        if (!entity.isAirborne() && contains(MoveStepType.BACKWARDS)
+                && contains(MoveStepType.EVADE)) {
             step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
         }
         

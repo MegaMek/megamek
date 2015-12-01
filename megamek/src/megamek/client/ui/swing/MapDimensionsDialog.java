@@ -55,7 +55,7 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
      */
     private static final long serialVersionUID = -6941422625466067948L;
 
-    private ClientGUI client;
+    private ClientGUI clientGUI;
     private MapSettings mapSettings;
     
     private JPanel panMapSize = new JPanel();
@@ -75,11 +75,11 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
     
-    public MapDimensionsDialog(ClientGUI client) {
-        super(client.frame, Messages
+    public MapDimensionsDialog(ClientGUI clientGUI, MapSettings mapSettings) {
+        super(clientGUI.frame, Messages
                 .getString("MapDimensionsDialog.MapDimensions"), true); //$NON-NLS-1$
-        this.client = client;
-        mapSettings = (MapSettings) client.getClient().getMapSettings().clone();
+        this.clientGUI = clientGUI;
+        this.mapSettings = (MapSettings)mapSettings.clone();
      
         setupMapSize();
         setupButtons();
@@ -112,9 +112,11 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         
         pack();
         setResizable(false);
-        setLocation(client.frame.getLocation().x + client.frame.getSize().width
-                / 2 - getSize().width / 2, client.frame.getLocation().y
-                + client.frame.getSize().height / 2 - getSize().height / 2);     
+        setLocation(clientGUI.frame.getLocation().x
+                + clientGUI.frame.getSize().width / 2 - getSize().width / 2,
+                clientGUI.frame.getLocation().y
+                        + clientGUI.frame.getSize().height / 2
+                        - getSize().height / 2);
     }
     
     private void setupMapSize() {
@@ -284,7 +286,7 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
             mapWidth = (Integer) spnMapWidth.getModel().getValue();
             mapHeight = (Integer) spnMapHeight.getModel().getValue();
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(client.frame, Messages
+            JOptionPane.showMessageDialog(clientGUI.frame, Messages
                     .getString("BoardSelectionDialog.InvalidNumberOfmaps"),
                     Messages.getString("BoardSelectionDialog.InvalidMapSize"),
                     JOptionPane.ERROR_MESSAGE);
@@ -294,7 +296,7 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         // check settings
         if ((boardWidth <= 0) || (boardHeight <= 0) || (mapWidth <= 0)
                 || (mapHeight <= 0)) {
-            JOptionPane.showMessageDialog(client.frame, Messages
+            JOptionPane.showMessageDialog(clientGUI.frame, Messages
                     .getString("BoardSelectionDialog.MapSizeMustBeGreateter0"),
                     Messages.getString("BoardSelectionDialog.InvalidMapSize"),
                     JOptionPane.ERROR_MESSAGE);
@@ -303,7 +305,7 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
 
         mapSettings.setBoardSize(boardWidth, boardHeight);
         mapSettings.setMapSize(mapWidth, mapHeight);
-        client.getClient().sendMapDimensions(mapSettings);
+        clientGUI.getClient().sendMapDimensions(mapSettings);
     }
     
     

@@ -104,7 +104,8 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
     protected int buttonsPerGroup = 2 * buttonsPerRow;
     
 
-    protected StatusBarPhaseDisplay() {
+    protected StatusBarPhaseDisplay(ClientGUI cg) {
+        super(cg);
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
             KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0), "clearButton");
 

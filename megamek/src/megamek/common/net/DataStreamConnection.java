@@ -142,6 +142,11 @@ class DataStreamConnection extends AbstractConnection {
         }
     }
 
+    @Override
+    public String toString() {
+        return "DataStreamConnection Id " + getId();
+    }
+
     private static class NetworkPacket implements INetworkPacket {
 
         /**

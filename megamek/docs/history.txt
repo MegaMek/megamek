@@ -1,6 +1,21 @@
 VERSION HISTORY:
 ----------------
-v0.41.11-git
+v0.41.12-git
++ Bug: Minimap still visible after using /reset command
++ Bug: Icarus II unit icon not showing up
++ Bug [#4648]: "add a combat unit" stops working after you close the window
++ Data: New Sprites, OTP Capellan Crusades, unit fixes.
++ Bug [#4650]: ASFs not getting free turn between game turns
++ Dropship cost summary now properly displayed
++ Bug [#4655]: Vehicles falling into basements cannot move
++ Bug: Basement collapsed i18n entry for tooltip incorrect
++ Bug [#4645]: Map switches from [GENERATED] to [SURPRISE] with Map Size button
++ Bug [#4656]: isInSameBuilding Error
++ Feature: Adding facing arrow for landed dropships
++ Bug [#4653]: Attacks against landed Dropships potentially use wrong side table
++ Bug [#4654]: Vehicles falling into basements: facing and damage issues
+
+v0.41.11 (2015-11-15 16:50 UTC)
 + Data: New Sprites.
 + Bug [#4635]: Diagramming LOS struggles with terrain elevation
 + Bug: BA APDS counting for both offensive and defensive BV when BA can make
@@ -8,6 +23,31 @@ v0.41.11-git
 + Bug: APDS ammo counting for both offensive and defensive BV for tanks
 + Added RISC Emergency Coolant System
 + Bug [#4637]: Princess NPE in Precognition
++ Bug [#4636]: Type filter in Unit selection missing 'All', unless 'unofficial'
+    is selected in game options
++ Bug: Accidental fall from above check fails when target is standing in water
++ Bug: AdvancedSearchDialog query doesn't clear when UnitSelectorDialog closed
++ Bug: AdvancedSearchDialog, possible to select weapon & eq table simultaneously
++ Feature: AdvancedSearchDialog now uses simple tech level displayable names
++ Bug [#4638]: Aero advanced ammunition always unavailable
++ Bug: listSaves command was looking for .sav and not updated .sav.gz
++ Added function to possibly ignore key presses, used from MekWars
++ Data: New Sprites.
++ Bug: /load command requires players to disconnect/reconnect after game loads
++ Bug [#4638]: Advanced Aero Rules Broken in 41.10 (specfically with Evade)
++ Bug: Issues with updating double-blind visuals information
++ Feature: Implemented RISC APDS
++ New Sprites/Couple of unit fixes.
++ Feature [#1407]: Default tripod icon
++ Default game year set to 3150
++ Errata: BA Tube Artillery should allow up to 8 shots per crit, in 2-shot clips
++ New Sprites
++ Bug [#4644]: Player names not visible if player color is selected as "white"
++ Bug: FiringSprites from previous Firing phase still drawn in Targeting phase
++ Bug: Added missing i18n entries for Cancel key
++ Added tooltip to Type list in UntiSelectorDialog
++ Added KeyBind for "Done" action
++ New Sprites
 
 v0.41.10 (2015-10-12 00:11 UTC)
 + Data: New Sprites and unit file.

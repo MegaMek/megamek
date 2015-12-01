@@ -111,6 +111,7 @@ import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.QuirksHandler;
 import megamek.common.Tank;
+import megamek.common.TechConstants;
 import megamek.common.Transporter;
 import megamek.common.UnitType;
 import megamek.common.event.GameCFREvent;
@@ -225,7 +226,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * Creates a new chat lounge for the clientgui.getClient().
      */
     public ChatLounge(ClientGUI clientgui) {
-        this.clientgui = clientgui;
+        super(clientgui);
 
         // Create a tabbed panel to hold our components.
         panTabs = new JTabbedPane();
@@ -2553,7 +2554,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             previewGameBoard();
         } else if (ev.getSource().equals(butMapSize)
                 || ev.getSource().equals(butSpaceSize)) {
-            MapDimensionsDialog mdd = new MapDimensionsDialog(clientgui);
+            MapDimensionsDialog mdd = new MapDimensionsDialog(clientgui,
+                    mapSettings);
             mdd.setVisible(true);
         } else if (ev.getSource().equals(comboMapSizes)) {
             if ((comboMapSizes.getSelectedItem() != null)
@@ -2679,11 +2681,18 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     }
 
     public void refreshTechLevelLabel() {
+        String tlString;
+        IOption tlOpt = clientgui.getClient().getGame().getOptions()
+                .getOption("techlevel");
+        if (tlOpt != null) {
+            tlString = tlOpt.stringValue();
+
+        } else {
+            tlString = TechConstants
+                    .getLevelDisplayableName(TechConstants.T_TECH_UNKNOWN);
+        }
         String txt = Messages.getString("ChatLounge.TechLevel"); //$NON-NLS-1$
-        txt = txt
-                + " " //$NON-NLS-1$
-                + clientgui.getClient().getGame().getOptions()
-                        .stringOption("techlevel"); //$NON-NLS-1$
+        txt = txt + " " + tlString; //$NON-NLS-1$
         lblTechLevel.setText(txt);
     }
 

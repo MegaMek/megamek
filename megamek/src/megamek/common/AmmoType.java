@@ -8242,7 +8242,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_BA_TUBE;
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
-        ammo.shots = 1;
+        ammo.shots = 2;
         ammo.bv = 4;
         ammo.kgPerShot = 15;
         ammo.introDate = 3075;

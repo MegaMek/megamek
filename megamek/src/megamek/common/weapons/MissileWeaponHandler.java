@@ -48,7 +48,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
      *
      */
     private static final long serialVersionUID = -4801130911083653548L;
-    boolean amsEnganged = false;
+    boolean amsEngaged = false;
+    boolean apdsEngaged = false;
     boolean advancedAMS = false;
 
 
@@ -226,11 +227,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
                         * shootingStrength,
                         nMissilesModifier, weapon.isHotLoaded(), false,
-                        advancedAMS && amsEnganged);
+                        isAdvancedAMS());
             } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
                         nMissilesModifier, weapon.isHotLoaded(), false,
-                        advancedAMS && amsEnganged);
+                        isAdvancedAMS());
             }
         }
 
@@ -378,8 +379,16 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
 
         // Report any AMS action.
-        if (amsEnganged) {
+        if (amsEngaged) {
             Report r = new Report(3230);
+            r.indent();
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+        }
+
+        // Report any APDS action.
+        if (apdsEngaged) {
+            Report r = new Report(3231);
             r.indent();
             r.subject = subjectId;
             vPhaseReport.addElement(r);
@@ -395,64 +404,131 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     }
 
     protected int getAMSHitsMod(Vector<Report> vPhaseReport) {
-        Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
-                : null;
-        if (entityTarget != null) {
-            // any AMS attacks by the target?
-            ArrayList<Mounted> lCounters = waa.getCounterEquipment();
-            if (null != lCounters) {
-                // resolve AMS counter-fire
-                for (int x = 0; x < lCounters.size(); x++) {
-                    Mounted counter = lCounters.get(x);
-                    if (counter.getType().hasFlag(WeaponType.F_AMS)
-                            && !amsEnganged) {
-
-                        Mounted mAmmo = counter.getLinked();
-                        if (!(counter.getType() instanceof WeaponType)
-                                || !counter.isReady() || counter.isMissing()
-                                // no AMS when a shield in the AMS location
-                                || (entityTarget.hasShield() && entityTarget
-                                        .hasActiveShield(counter.getLocation(),
-                                                false))
-                                // shutdown means no AMS
-                                || entityTarget.isShutDown()
-                                // AMS only fires against attacks coming into
-                                // the
-                                // arc the ams is covering
-                                || !Compute.isInArc(game, entityTarget.getId(),
-                                        entityTarget.getEquipmentNum(counter),
-                                        ae)) {
-                            continue;
-                        }
-
-                        // build up some heat (assume target is ams owner)
-                        if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
-                            entityTarget.heatBuildup += Compute.d6(counter
-                                    .getCurrentHeat());
-                        } else {
-                            entityTarget.heatBuildup += counter
-                                    .getCurrentHeat();
-                        }
-
-                        // decrement the ammo
-                        if (mAmmo != null) {
-                            mAmmo.setShotsLeft(Math.max(0,
-                                    mAmmo.getBaseShotsLeft() - 1));
-                        }
-
-                        // set the ams as having fired
-                        counter.setUsedThisRound(true);
-                        amsEnganged = true;
-                        Report r = new Report(3350);
-                        r.subject = entityTarget.getId();
-                        r.newlines = 0;
-                        vPhaseReport.add(r);
-                        return -4;
+        if ((target == null)
+                || (target.getTargetType() != Targetable.TYPE_ENTITY)) {
+            return 0;
+        }
+        int apdsMod = 0;
+        int amsMod = 0;
+        Entity entityTarget = (Entity) target;
+        // any AMS attacks by the target?
+        ArrayList<Mounted> lCounters = waa.getCounterEquipment();
+        if (null != lCounters) {
+            // resolve AMS counter-fire
+            // for (int x = 0; x < lCounters.size(); x++) {
+            for (Mounted counter : lCounters) {
+                boolean isAMS = counter.getType().hasFlag(WeaponType.F_AMS);
+                if (isAMS && counter.isAPDS() && !apdsEngaged) {
+                    Mounted mAmmo = counter.getLinked();
+                    Entity apdsEnt = counter.getEntity();
+                    boolean isInArc;
+                    // If the apdsUnit is the target, use attacker for arc
+                    if (entityTarget.equals(apdsEnt)) {
+                        isInArc = Compute.isInArc(game, apdsEnt.getId(),
+                                apdsEnt.getEquipmentNum(counter),
+                                ae);
+                    } else { // Otherwise, the attack target must be in arc
+                        isInArc = Compute.isInArc(game, apdsEnt.getId(),
+                                apdsEnt.getEquipmentNum(counter),
+                                entityTarget);
                     }
+                    if (!(counter.getType() instanceof WeaponType)
+                            || !counter.isReady() || counter.isMissing()
+                            // no AMS when a shield in the AMS location
+                            || (apdsEnt.hasShield() && apdsEnt.hasActiveShield(
+                                    counter.getLocation(), false))
+                            // shutdown means no AMS
+                            || apdsEnt.isShutDown()
+                            // AMS only fires vs attacks in arc covered by ams
+                            || !isInArc) {
+                        continue;
+                    }
+
+                    // build up some heat (assume target is ams owner)
+                    if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
+                        entityTarget.heatBuildup += Compute.d6(counter
+                                .getCurrentHeat());
+                    } else {
+                        entityTarget.heatBuildup += counter.getCurrentHeat();
+                    }
+
+                    // decrement the ammo
+                    if (mAmmo != null) {
+                        mAmmo.setShotsLeft(Math.max(0,
+                                mAmmo.getBaseShotsLeft() - 1));
+                    }
+
+                    // Determine Modifier
+                    int dist = target.getPosition().distance(
+                            apdsEnt.getPosition());
+                    int minApdsMod = -4;
+                    if (apdsEnt instanceof BattleArmor) {
+                        int numTroopers = ((BattleArmor) apdsEnt)
+                                .getNumberActiverTroopers();
+                        switch (numTroopers) {
+                            case 1:
+                                minApdsMod = -2;
+                                break;
+                            case 2:
+                            case 3:
+                                minApdsMod = -3;
+                                break;
+                            default: // 4+
+                                minApdsMod = -4;
+                        }
+                    }
+                    apdsMod = Math.min(minApdsMod + dist, 0);
+
+                    // set the ams as having fired
+                    counter.setUsedThisRound(true);
+                    apdsEngaged = true;
+                    Report r = new Report(3351);
+                    r.subject = entityTarget.getId();
+                    r.add(apdsMod);
+                    r.newlines = 0;
+                    vPhaseReport.add(r);
+                } else if (isAMS && !amsEngaged) {
+                    Mounted mAmmo = counter.getLinked();
+                    if (!(counter.getType() instanceof WeaponType)
+                            || !counter.isReady() || counter.isMissing()
+                            // no AMS when a shield in the AMS location
+                            || (entityTarget.hasShield() && entityTarget
+                                    .hasActiveShield(counter.getLocation(),
+                                            false))
+                            // shutdown means no AMS
+                            || entityTarget.isShutDown()
+                            // AMS only fires vs attacks in arc covered by ams
+                            || !Compute.isInArc(game, entityTarget.getId(),
+                                    entityTarget.getEquipmentNum(counter), ae)) {
+                        continue;
+                    }
+
+                    // build up some heat (assume target is ams owner)
+                    if (counter.getType().hasFlag(WeaponType.F_HEATASDICE)) {
+                        entityTarget.heatBuildup += Compute.d6(counter
+                                .getCurrentHeat());
+                    } else {
+                        entityTarget.heatBuildup += counter.getCurrentHeat();
+                    }
+
+                    // decrement the ammo
+                    if (mAmmo != null) {
+                        mAmmo.setShotsLeft(Math.max(0,
+                                mAmmo.getBaseShotsLeft() - 1));
+                    }
+
+                    // set the ams as having fired
+                    counter.setUsedThisRound(true);
+                    amsEngaged = true;
+                    Report r = new Report(3350);
+                    r.subject = entityTarget.getId();
+                    r.newlines = 0;
+                    vPhaseReport.add(r);
+                    amsMod = -4;
                 }
             }
         }
-        return 0;
+        return apdsMod + amsMod;
     }
 
     /*
@@ -776,5 +852,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     @Override
     protected boolean canDoDirectBlowDamage() {
         return false;
+    }
+
+    /**
+     *
+     * @return
+     */
+    protected boolean isAdvancedAMS() {
+        return advancedAMS && (amsEngaged || apdsEngaged);
     }
 }

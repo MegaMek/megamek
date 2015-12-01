@@ -76,12 +76,20 @@ public class SRMInfernoHandler extends SRMHandler {
         server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
 
         // Report any AMS action.
-        if (amsEnganged) {
+        if (amsEngaged) {
             Report r = new Report(3230);
             r.indent();
             r.subject = subjectId;
             vPhaseReport.addElement(r);
         }
+
+        // Report any APDS action.
+        if (apdsEngaged) {
+            Report r = new Report(3231);
+            r.indent();
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+        }        
 
         // BMRr, pg. 51: "All shots that were aimed at a target inside
         // a building and miss do full damage to the building instead."
@@ -275,11 +283,11 @@ public class SRMInfernoHandler extends SRMHandler {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
                         * ((BattleArmor) ae).getShootingStrength(),
                         nMissilesModifier, weapon.isHotLoaded(), false,
-                        advancedAMS && amsEnganged);
+                        isAdvancedAMS());
             } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
                         nMissilesModifier, weapon.isHotLoaded(), false,
-                        advancedAMS && amsEnganged);
+                        isAdvancedAMS());
             }
         }
 

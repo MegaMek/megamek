@@ -1860,6 +1860,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 }
             }
             if (hex.containsTerrain(Terrains.BUILDING)) {
+                // Any unit can fall into a basement
+                if ((assumedAlt < 0) && (hex.depth(true) > 0)) {
+                    return true;
+                }
                 // Mechs, protos and infantry can occupy any floor in the
                 // building
                 if ((this instanceof Mech) || (this instanceof Protomech)
@@ -5648,8 +5652,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
 
             // Make sure ammo is loaded
+            boolean baAPDS = (this instanceof BattleArmor)
+                    && (weapon.getType().getInternalName().equals("ISBAAPDS"));
             Mounted ammo = weapon.getLinked();
-            if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY))
+            if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY)) && !baAPDS
                 && ((ammo == null) || (ammo.getUsableShotsLeft() == 0)
                     || ammo.isDumping())) {
                 loadWeapon(weapon);
@@ -5657,7 +5663,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
 
             // try again
-            if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY))
+            if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY)) && !baAPDS
                 && ((ammo == null) || (ammo.getUsableShotsLeft() == 0)
                     || ammo.isDumping())) {
                 // No ammo for this AMS.
@@ -5676,19 +5682,23 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         HashSet<WeaponAttackAction> targets = new HashSet<WeaponAttackAction>();
         for (Mounted ams : getActiveAMS()) {
+            // Ignore APDS, it gets assigned elsewhere
+            if (ams.isAPDS()) {
+                continue;
+            }
             // make a new vector of only incoming attacks in arc
-            Vector<WeaponAttackAction> vAttacksInArc =
-                    new Vector<WeaponAttackAction>(vAttacks.size());
+            Vector<WeaponAttackAction> vAttacksInArc = new Vector<WeaponAttackAction>(
+                    vAttacks.size());
             for (WeaponHandler wr : vAttacks) {
                 if (!targets.contains(wr.waa)
-                    && Compute.isInArc(game, getId(), getEquipmentNum(ams),
-                                       game.getEntity(wr.waa.getEntityId()))) {
+                        && Compute.isInArc(game, getId(), getEquipmentNum(ams),
+                                game.getEntity(wr.waa.getEntityId()))) {
                     vAttacksInArc.addElement(wr.waa);
                 }
             }
             // find the most dangerous salvo by expected damage
             WeaponAttackAction waa = Compute.getHighestExpectedDamage(game,
-                                                                      vAttacksInArc, true);
+                    vAttacksInArc, true);
             if (waa != null) {
                 waa.addCounterEquipment(ams);
                 targets.add(waa);
@@ -9635,7 +9645,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             Aero a = (Aero) this;
             // Handle spheroids in atmosphere or on the ground differently
             if (a.isSpheroid() && (game != null) && !game.getBoard().inSpace()) {
-                fa = effectivePos.degree(src);
                 if ((fa >= 0) && (fa < 180)) {
                     return ToHitData.SIDE_RIGHT;
                 }
@@ -10870,6 +10879,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             } else {
                 return null;
             }
+        }
+
+        // ASF ECM only has an effect if the unit is NOE
+        if (isAirborne() && !isNOE()) {
+            return null;
         }
 
         ECMInfo bestInfo = null;

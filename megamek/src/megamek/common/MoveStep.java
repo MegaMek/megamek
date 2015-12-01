@@ -362,6 +362,8 @@ public class MoveStep implements Serializable {
                 return "Fly Off";
             case FLEE:
                 return "Flee";
+            case EVADE:
+                return "Evade";
             default:
                 return "???";
         }
@@ -1141,6 +1143,9 @@ public class MoveStep implements Serializable {
             }
             isRolled = false;// a.isRolled();
             nStraight = a.getStraightMoves();
+            if (dueFreeTurn()) {
+                setFreeTurn(true);
+            }
         }
 
         EntityMovementMode nMove = entity.getMovementMode();

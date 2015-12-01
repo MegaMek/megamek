@@ -1,96 +1,97 @@
 Version:1.0
-Caesar
-CES-4S
+Clint
+CLNT-5U
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3064
+Era:3062
+Source:TRO 3050 - Civil War
 Rules Level:2
-source:TRO 3067
 
-Mass:70
-Engine:280 Light Engine
+Mass:40
+Engine:240 Light Engine
 Structure:Endo Steel
 Myomer:Standard
 
 Heat Sinks:12 Double
-Walk MP:4
-Jump MP:0
+Walk MP:6
+Jump MP:6
 
 Armor:Standard Armor
-LA Armor:19
-RA Armor:19
-LT Armor:22
-RT Armor:22
-CT Armor:28
+LA Armor:11
+RA Armor:11
+LT Armor:14
+RT Armor:14
+CT Armor:16
 HD Armor:9
-LL Armor:27
-RL Armor:27
-RTL Armor:6
-RTR Armor:6
-RTC Armor:7
+LL Armor:19
+RL Armor:19
+RTL Armor:5
+RTR Armor:5
+RTC Armor:5
 
-Weapons:4
-1 ISLargePulseLaser, Right Arm
-2 ISMediumPulseLaser, Left Arm
-1 ISHeavyGaussRifle, Right Torso, Ammo:12
+Weapons:5
+1 ISERLargeLaser, Right Arm
 2 ISERMediumLaser, Left Torso
+1 ISC3SlaveUnit, Left Torso
+1 ISERMediumLaser, Center Torso
+1 ISTAG, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumPulseLaser
-ISMediumPulseLaser
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
 Endo-Steel
 Endo-Steel
 Endo-Steel
--Empty-
--Empty-
+Endo-Steel
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Hand Actuator
-ISLargePulseLaser
-ISLargePulseLaser
+ISERLargeLaser
+ISERLargeLaser
 ISDouble Heat Sink
 ISDouble Heat Sink
 ISDouble Heat Sink
 Endo-Steel
 Endo-Steel
 Endo-Steel
+-Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
+Jump Jet
 ISERMediumLaser
 ISERMediumLaser
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
-ISHeavyGauss Ammo
+ISC3SlaveUnit
 Endo-Steel
 Endo-Steel
 Endo-Steel
+-Empty-
 -Empty-
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISHeavyGaussRifle (Split)
-ISHeavyGaussRifle (Split)
-ISHeavyGaussRifle (Split)
-ISHeavyGaussRifle (Split)
-ISHeavyGaussRifle (Split)
-ISHeavyGaussRifle (Split)
-ISHeavyGaussRifle (Split)
-ISHeavyGaussRifle (Split)
-ISHeavyGaussRifle (Split)
-ISCASE
+Jump Jet
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+-Empty-
+-Empty-
 
 Center Torso:
 Fusion Engine
@@ -103,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISHeavyGaussRifle (Split)
-ISHeavyGaussRifle (Split)
+ISERMediumLaser
+ISTAG
 
 Head:
 Life Support
@@ -125,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+Jump Jet
+Jump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -139,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+Jump Jet
+Jump Jet
 -Empty-
 -Empty-
 -Empty-

@@ -1,78 +1,78 @@
 Version:1.0
-Centurion
-CN9-D5
+Commando
+COM-7S
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3062
+Era:3060
+Source:TRO 3050 - Clan Invasion
 Rules Level:2
-source:TRO 3067
 
-Mass:50
-Engine:300 XL Engine
+Mass:25
+Engine:150 Light Engine
 Structure:Endo Steel
-Myomer:MASC
+Myomer:Standard
 
 Heat Sinks:10 Double
 Walk MP:6
 Jump MP:0
 
 Armor:Standard Armor
-LA Armor:16
-RA Armor:16
-LT Armor:17
-RT Armor:17
-CT Armor:22
-HD Armor:9
-LL Armor:18
-RL Armor:18
-RTL Armor:6
-RTR Armor:6
-RTC Armor:7
+LA Armor:5
+RA Armor:5
+LT Armor:7
+RT Armor:7
+CT Armor:8
+HD Armor:5
+LL Armor:6
+RL Armor:6
+RTL Armor:2
+RTR Armor:2
+RTC Armor:3
 
 Weapons:3
-1 ISRotaryAC5, Right Arm, Ammo:60
-2 ISERMediumLaser, Center Torso
-1 ISC3SlaveUnit, Head
+2 ISStreakSRM2, Right Arm, Ammo:50
+2 ISERMediumLaser, Left Arm
+1 ISSRM4, Center Torso, Ammo:25
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
--Empty-
--Empty-
--Empty-
--Empty-
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERMediumLaser
+ISERMediumLaser
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-ISRotaryAC5
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Hand Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISStreakSRM2
+ISStreakSRM2
+-Empty-
+-Empty-
+-Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-Fusion Engine
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISMASC
-ISMASC
-ISMASC
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
 Endo-Steel
 Endo-Steel
 Endo-Steel
@@ -80,16 +80,16 @@ Endo-Steel
 Right Torso:
 Fusion Engine
 Fusion Engine
-Fusion Engine
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
-ISRotaryAC5 Ammo
+ISSRM4 Ammo Artemis-capable
+ISStreakSRM2 Ammo
 ISCASE
 Endo-Steel
 Endo-Steel
 Endo-Steel
 Endo-Steel
--Empty-
+Endo-Steel
+Endo-Steel
+Endo-Steel
 
 Center Torso:
 Fusion Engine
@@ -102,14 +102,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERMediumLaser
-ISERMediumLaser
+ISSRM4
+ISArtemisIV
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISC3SlaveUnit
+-Empty-
 Sensors
 Life Support
 -Empty-

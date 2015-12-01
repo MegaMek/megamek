@@ -2855,7 +2855,6 @@ public class Server implements Runnable {
                 resolveOnlyWeaponAttacks();
                 assignAMS();
                 handleAttacks();
-                resolveAeroElevationLoss();
                 resolveScheduledNukes();
                 applyBuildingDamage();
                 checkForPSRFromDamage();
@@ -12513,6 +12512,14 @@ public class Server implements Runnable {
                         } // end found-available-b-pod
                     } // Check the next piece of equipment on the target.
                 } // End check-for-available-ap-pod
+
+                // Keep track of altitude loss for weapon attacks
+                if (entity instanceof Aero) {
+                    Aero aero = (Aero) entity;
+                    if (waa.getAltitudeLoss(game) > aero.getAltLoss()) {
+                        aero.setAltLoss(waa.getAltitudeLoss(game));
+                    }
+                }
             }
 
             // If attacker breaks grapple, defender may counter
@@ -12609,6 +12616,21 @@ public class Server implements Runnable {
             }
         }
 
+        // Apply altitude loss
+        if (entity instanceof Aero) {
+            Aero aero = (Aero) entity;
+            if (aero.getAltLoss() > 0) {
+                Report r = new Report(9095);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                r.add(aero.getAltLoss());
+                addReport(r);
+                aero.setAltitude(aero.getAltitude() - aero.getAltLoss());
+                aero.resetAltLoss();
+                entityUpdate(entity.getId());
+            }
+        }
+
         // Unless otherwise stated,
         // this entity is done for the round.
         if (setDone) {
@@ -12627,8 +12649,7 @@ public class Server implements Runnable {
             }
         } else {
             // update all players on the attacks. Don't worry about pushes being
-            // a
-            // "charge" attack. It doesn't matter to the client.
+            // a "charge" attack. It doesn't matter to the client.
             send(p);
         }
     }
@@ -13240,12 +13261,6 @@ public class Server implements Runnable {
                     ah.setStrafing(waa.isStrafing());
                     ah.setStrafingFirstShot(waa.isStrafingFirstShot());
                     game.addAttack(ah);
-                    // check for aero elevation loss
-                    if ((ae instanceof Aero)
-                        && (waa.getAltitudeLoss(game) > ((Aero) ae)
-                            .getAltLoss())) {
-                        ((Aero) ae).setAltLoss(waa.getAltitudeLoss(game));
-                    }
                 }
             }
         }
@@ -26813,29 +26828,6 @@ public class Server implements Runnable {
         }
         return doEntityFall(entity, entity.getPosition(), entity.getElevation()
                 + (!fallToSurface ? currHex.depth(true) : -toSubtract), roll);
-    }
-
-    /**
-     * loops through aeros in game and checks for any elevation loss due to
-     * weapons firing
-     */
-    private void resolveAeroElevationLoss() {
-        Report r;
-        for (Entity entity : game.getEntitiesVector()) {
-            if (entity instanceof Aero) {
-                Aero a = (Aero) entity;
-                if (a.getAltLoss() > 0) {
-                    r = new Report(9095);
-                    r.subject = entity.getId();
-                    r.addDesc(entity);
-                    r.add(a.getAltLoss());
-                    addReport(r);
-                    a.setAltitude(a.getAltitude() - a.getAltLoss());
-                    a.resetAltLoss();
-                    entityUpdate(entity.getId());
-                }
-            }
-        }
     }
 
     /**

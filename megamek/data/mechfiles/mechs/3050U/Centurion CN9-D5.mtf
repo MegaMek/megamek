@@ -1,96 +1,94 @@
 Version:1.0
-Clint
-CLNT-5U
+Centurion
+CN9-D5
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
+Source:TRO 3050 - Civil War
 Rules Level:2
-source:TRO 3067
 
-Mass:40
-Engine:240 Light Engine
+Mass:50
+Engine:300 XL Engine
 Structure:Endo Steel
-Myomer:Standard
+Myomer:MASC
 
-Heat Sinks:12 Double
+Heat Sinks:10 Double
 Walk MP:6
-Jump MP:6
+Jump MP:0
 
 Armor:Standard Armor
-LA Armor:11
-RA Armor:11
-LT Armor:14
-RT Armor:14
-CT Armor:16
+LA Armor:16
+RA Armor:16
+LT Armor:17
+RT Armor:17
+CT Armor:22
 HD Armor:9
-LL Armor:19
-RL Armor:19
-RTL Armor:5
-RTR Armor:5
-RTC Armor:5
+LL Armor:18
+RL Armor:18
+RTL Armor:6
+RTR Armor:6
+RTC Armor:7
 
-Weapons:5
-1 ISERLargeLaser, Right Arm
-2 ISERMediumLaser, Left Torso
-1 ISC3SlaveUnit, Left Torso
-1 ISERMediumLaser, Center Torso
-1 ISTAG, Center Torso
+Weapons:3
+1 ISRotaryAC5, Right Arm, Ammo:60
+2 ISERMediumLaser, Center Torso
+1 ISC3SlaveUnit, Head
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
 Endo-Steel
 Endo-Steel
 Endo-Steel
 Endo-Steel
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISERLargeLaser
-ISERLargeLaser
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
+ISRotaryAC5
 Endo-Steel
 Endo-Steel
 Endo-Steel
--Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-ISERMediumLaser
-ISERMediumLaser
-ISC3SlaveUnit
+Fusion Engine
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISMASC
+ISMASC
+ISMASC
 Endo-Steel
 Endo-Steel
 Endo-Steel
--Empty-
--Empty-
--Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-Jump Jet
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+Fusion Engine
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISCASE
 Endo-Steel
 Endo-Steel
 Endo-Steel
--Empty-
--Empty-
+Endo-Steel
 -Empty-
 
 Center Torso:
@@ -105,13 +103,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 ISERMediumLaser
-ISTAG
+ISERMediumLaser
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo-Steel
+ISC3SlaveUnit
 Sensors
 Life Support
 -Empty-
@@ -126,8 +124,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +138,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-

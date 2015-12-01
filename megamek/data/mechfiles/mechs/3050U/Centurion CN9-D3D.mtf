@@ -1,19 +1,20 @@
 Version:1.0
 Centurion
-CN9-D4D
+CN9-D3D
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3066
+Era:3060
+Source:TRO 3050 - Clan Invasion
 Rules Level:2
 
 Mass:50
-Engine:250 XL Engine
+Engine:300 XL Engine
 Structure:Endo Steel
 Myomer:MASC
 
 Heat Sinks:10 Single
-Walk MP:5
+Walk MP:6
 Jump MP:0
 
 Armor:Ferro-Fibrous
@@ -30,18 +31,18 @@ RTR Armor:5
 RTC Armor:6
 
 Weapons:3
-1 ISLightGaussRifle, Right Arm, Ammo:16
+1 ISLightGaussRifle, Right Arm, Ammo:32
 1 ISERMediumLaser, Right Torso
-1 ISLRM15, Left Torso, Ammo:16
+1 ISLRM10, Left Torso, Ammo:12
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
 ISMASC
 ISMASC
 ISMASC
-Ferro-Fibrous
-Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -58,7 +59,7 @@ ISLightGaussRifle
 ISLightGaussRifle
 ISLightGaussRifle
 ISLightGauss Ammo
-Endo-Steel
+ISLightGauss Ammo
 Endo-Steel
 Endo-Steel
 
@@ -66,12 +67,12 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISLRM15
-ISLRM15
-ISLRM15
-ISArtemisIV
-ISLRM15 Ammo Artemis-capable
-ISLRM15 Ammo Artemis-capable
+ISLRM10
+ISLRM10
+ISLRM10 Ammo
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -101,7 +102,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Ferro-Fibrous
+Endo-Steel
 Endo-Steel
 
 Head:

@@ -14,6 +14,7 @@ v0.41.12-git
 + Feature: Adding facing arrow for landed dropships
 + Bug [#4653]: Attacks against landed Dropships potentially use wrong side table
 + Bug [#4654]: Vehicles falling into basements: facing and damage issues
++ Bug [#4050]: Game-year based Tech Levels for Engines/Gyros/Cockpits
 
 v0.41.11 (2015-11-15 16:50 UTC)
 + Data: New Sprites.

@@ -932,38 +932,7 @@ public class Server implements Runnable {
 
         // add and validate the player info
         if (!returning) {
-            int team = IPlayer.TEAM_UNASSIGNED;
-            if (game.getPhase() == Phase.PHASE_LOUNGE) {
-                team = IPlayer.TEAM_NONE;
-                for (IPlayer p : game.getPlayersVector()) {
-                    if (p.getTeam() > team) {
-                        team = p.getTeam();
-                    }
-                }
-                team++;
-            }
-            IPlayer newPlayer = new Player(connId, name);
-            int colorInd = newPlayer.getColorIndex();
-            Enumeration<IPlayer> players = game.getPlayers();
-            while (players.hasMoreElements()
-                   && (colorInd < IPlayer.colorNames.length)) {
-                final IPlayer p = players.nextElement();
-                if (p.getId() == newPlayer.getId()) {
-                    continue;
-                }
-                if (p.getColorIndex() == colorInd) {
-                    colorInd++;
-                }
-            }
-            if (colorInd == -1) {
-                colorInd = 0;
-            }
-            newPlayer.setColorIndex(colorInd);
-            newPlayer.setCamoCategory(IPlayer.NO_CAMO);
-            newPlayer.setCamoFileName(IPlayer.colorNames[colorInd]);
-            newPlayer.setTeam(Math.min(team, 5));
-            game.addPlayer(connId, newPlayer);
-            validatePlayerInfo(connId);
+            addNewPlayer(connId, name);
         }
 
         // if it is not the lounge phase, this player becomes an observer
@@ -987,7 +956,7 @@ public class Server implements Runnable {
 
         try {
             InetAddress[] addresses = InetAddress.getAllByName(InetAddress
-                                                                       .getLocalHost().getHostName());
+                    .getLocalHost().getHostName());
             for (InetAddress addresse : addresses) {
                 sendServerChat(connId,
                                "Machine IP is " + addresse.getHostAddress());
@@ -1023,7 +992,7 @@ public class Server implements Runnable {
      * Sends a player the info they need to look at the current phase. This is
      * triggered when a player first connects to the server.
      */
-    private void sendCurrentInfo(int connId) {
+    public void sendCurrentInfo(int connId) {
         // why are these two outside the player != null check below?
         transmitAllPlayerConnects(connId);
         send(connId, createGameSettingsPacket());
@@ -1099,6 +1068,45 @@ public class Server implements Runnable {
         } else {
             send(connId, createEntitiesPacket());
         }
+    }
+
+    /**
+     * Adds a new player to the game
+     */
+    private IPlayer addNewPlayer(int connId, String name) {
+        int team = IPlayer.TEAM_UNASSIGNED;
+        if (game.getPhase() == Phase.PHASE_LOUNGE) {
+            team = IPlayer.TEAM_NONE;
+            for (IPlayer p : game.getPlayersVector()) {
+                if (p.getTeam() > team) {
+                    team = p.getTeam();
+                }
+            }
+            team++;
+        }
+        IPlayer newPlayer = new Player(connId, name);
+        int colorInd = newPlayer.getColorIndex();
+        Enumeration<IPlayer> players = game.getPlayers();
+        while (players.hasMoreElements()
+               && (colorInd < IPlayer.colorNames.length)) {
+            final IPlayer p = players.nextElement();
+            if (p.getId() == newPlayer.getId()) {
+                continue;
+            }
+            if (p.getColorIndex() == colorInd) {
+                colorInd++;
+            }
+        }
+        if (colorInd == -1) {
+            colorInd = 0;
+        }
+        newPlayer.setColorIndex(colorInd);
+        newPlayer.setCamoCategory(IPlayer.NO_CAMO);
+        newPlayer.setCamoFileName(IPlayer.colorNames[colorInd]);
+        newPlayer.setTeam(Math.min(team, 5));
+        game.addPlayer(connId, newPlayer);
+        validatePlayerInfo(connId);
+        return newPlayer;
     }
 
     /**
@@ -1374,6 +1382,22 @@ public class Server implements Runnable {
      * successfull
      */
     public boolean loadGame(File f) {
+        return loadGame(f, true);
+    }
+
+    /**
+     * load the game
+     *
+     * @param f
+     *            The <code>File</code> to load
+     * @param sendInfo
+     *            Determines whether the connections should be updated with
+     *            current info. This may be false if some reconnection remapping
+     *            needs to be done first.
+     * @return A <code>boolean</code> value wether or not the loading was
+     *         successfull
+     */
+    public boolean loadGame(File f, boolean sendInfo) {
         System.out.println("s: loading saved game file '" + f + '\'');
         IGame newGame;
         try {
@@ -1387,11 +1411,102 @@ public class Server implements Runnable {
         }
 
         setGame(newGame);
+
+        if (!sendInfo) {
+            return true;
+        }
+
         // update all the clients with the new game info
         for (IConnection conn : connections) {
             sendCurrentInfo(conn.getId());
         }
         return true;
+    }
+
+    /**
+     * When the load command is used, there is a list of already connected
+     * players which have assigned names and player id numbers with the id
+     * numbers matching the connection numbers. When a new game is loaded, this
+     * mapping may need to be updated. This method takes a map of player names
+     * to their current ids, and uses the list of players to figure out what the
+     * current ids should change to.
+     *
+     * @param nameToIdMap
+     *            This maps a player name to the current connection ID
+     * @param idToNameMap
+     *            This maps a current conn ID to a player name, and is just the
+     *            inverse mapping from nameToIdMap
+     */
+    public void remapConnIds(Map<String, Integer> nameToIdMap,
+            Map<Integer, String> idToNameMap) {
+        // Keeps track of connections without Ids
+        List<IConnection> unassignedConns = new ArrayList<>();
+       // Keep track of which ids are used
+        Set<Integer> usedPlayerIds = new HashSet<>();
+        Set<String> currentPlayerNames = new HashSet<>();
+        for (IPlayer p : game.getPlayersVector()) {
+            currentPlayerNames.add(p.getName());
+        }
+        // Map the old connection Id to new value
+        Map<Integer,Integer> connIdRemapping = new HashMap<>();
+        for (IPlayer p : game.getPlayersVector()) {
+            // Check to see if this player was already connected
+            Integer oldId = nameToIdMap.get(p.getName());
+            if ((oldId != null) && (oldId != p.getId())) {
+                connIdRemapping.put(oldId, p.getId());
+            }
+            // If the old and new Ids match, make sure we remove ghost status
+            if ((oldId != null) && (oldId == p.getId())) {
+                p.setGhost(false);
+            }
+            // Check to see if this player's Id is taken
+            String oldName = idToNameMap.get(p.getId());
+            if ((oldName != null) && !oldName.equals(p.getName())) {
+                // If this name doesn't belong to a current player, unassign it
+                if (!currentPlayerNames.contains(oldName)) {
+                    unassignedConns.add(connectionIds.get(p.getId()));
+                    // Make sure we don't add this to unassigned conns twice
+                    connectionIds.remove(p.getId());
+                }
+                // If it does belong to a current player, it'll get handled
+                // when that player comes up
+            }
+            // Keep track of what Ids are used
+            usedPlayerIds.add(p.getId());
+        }
+
+        // Remap old connection Ids to new ones
+        for (Integer currConnId : connIdRemapping.keySet()) {
+            Integer newId = connIdRemapping.get(currConnId);
+            IConnection conn = connectionIds.get(currConnId);
+            conn.setId(newId);
+            // If this Id is used, make sure we reassign that connection
+            if (connectionIds.containsKey(newId)) {
+                unassignedConns.add(connectionIds.get(newId));
+            }
+            // Map the new Id
+            connectionIds.put(newId, conn);
+
+            game.getPlayer(newId).setGhost(false);
+            send(newId, new Packet(Packet.COMMAND_LOCAL_PN, new Integer(newId)));
+        }
+
+        // It's possible we have players not in the saved game, add 'em
+        for (IConnection conn : unassignedConns) {
+            int newId = 0;
+            while (usedPlayerIds.contains(newId)) {
+                newId++;
+            }
+            String name = idToNameMap.get(conn.getId());
+            conn.setId(newId);
+            IPlayer newPlayer = addNewPlayer(newId, name);
+            newPlayer.setObserver(true);
+            connectionIds.put(newId,  conn);
+            send(newId, new Packet(Packet.COMMAND_LOCAL_PN, new Integer(newId)));
+        }
+
+        // Ensure all clients are up-to-date on player info
+        transmitAllPlayerUpdates();
     }
 
     /**
@@ -11839,6 +11954,13 @@ public class Server implements Runnable {
                                 e.getId(), e.getEquipmentNum(ams), waas }));
     }
 
+    private void sendAPDSAssignCFR(Entity e, List<Integer> apdsDists,
+            List<WeaponAttackAction> waas) {
+        send(e.getOwnerId(), new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
+                new Object[] { Packet.COMMAND_CFR_APDS_ASSIGN, e.getId(),
+                apdsDists, waas }));
+    }
+
     private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity,
             Coords src, Coords dest, int elev) {
         Vector<Report> vPhaseReport = new Vector<Report>();
@@ -12512,12 +12634,18 @@ public class Server implements Runnable {
     }
 
     /**
-     * Auto-target active AMS systems
+     * Determine which missile attack actions could be affected by AMS, and
+     * assign AMS (and APDS) to those attacks.
      */
     private void assignAMS() {
 
-        // sort all missile-based attacks by the target
-        Hashtable<Entity, Vector<WeaponHandler>> htAttacks = new Hashtable<Entity, Vector<WeaponHandler>>();
+        // Get all of the coords that would be protected by APDS
+        Hashtable<Coords, List<Mounted>> apdsCoords = getAPDSProtectedCoords();
+
+        // Map target to a list of missile attacks directed at it
+        Hashtable<Entity, Vector<WeaponHandler>> htAttacks = new Hashtable<>();
+        // Keep track of each APDS, and which attacks it could affect
+        Hashtable<Mounted, Vector<WeaponHandler>> apdsTargets = new Hashtable<>();
         for (AttackHandler ah : game.getAttacksVector()) {
             WeaponHandler wh = (WeaponHandler) ah;
             WeaponAttackAction waa = wh.waa;
@@ -12548,78 +12676,285 @@ public class Server implements Runnable {
                     htAttacks.put(target, v);
                 }
                 v.addElement(wh);
+                // Keep track of what weapon attacks could be affected by APDS
+                if (apdsCoords.containsKey(target.getPosition())) {
+                    for (Mounted apds : apdsCoords.get(target.getPosition())) {
+                        // APDS only affects attacks against friendly units
+                        if (target.isEnemyOf(apds.getEntity())) {
+                            continue;
+                        }
+                        Vector<WeaponHandler> handlerList = apdsTargets
+                                .get(apds);
+                        if (handlerList == null) {
+                            handlerList = new Vector<>();
+                            apdsTargets.put(apds, handlerList);
+                        }
+                        handlerList.add(wh);
+                    }
+                }
             }
         }
 
-        // let each target assign its AMS
+
+        // Let each target assign its AMS
         for (Entity e : htAttacks.keySet()) {
             Vector<WeaponHandler> vAttacks = htAttacks.get(e);
             // Allow MM to automatically assign AMS targets
             if (game.getOptions().booleanOption("auto_ams")) {
                 e.assignAMS(vAttacks);
             } else { // Allow user to manually assign targets
-                // Current AMS targets: each attack can only be targeted once
-                HashSet<WeaponAttackAction> amsTargets =
-                        new HashSet<WeaponAttackAction>();
-                // Pick assignment for each active AMS
-                for (Mounted ams : e.getActiveAMS()) {
-                    // Create a list of valid assignments for this AMS
-                    ArrayList<WeaponAttackAction> vAttacksInArc =
-                            new ArrayList<WeaponAttackAction>(vAttacks.size());
-                    for (WeaponHandler wr : vAttacks) {
-                        if (!amsTargets.contains(wr.waa)
-                                && Compute.isInArc(game, e.getId(),
-                                        e.getEquipmentNum(ams),
-                                        game.getEntity(wr.waa.getEntityId()))) {
-                            vAttacksInArc.add(wr.waa);
-                        }
+                manuallyAssignAMSTarget(e, vAttacks);
+            }
+        }
+
+        // Let each APDS assign itself to an attack
+        Set<WeaponAttackAction> targetedAttacks = new HashSet<>();
+        for (Mounted apds : apdsTargets.keySet()) {
+            List<WeaponHandler> potentialTargets = apdsTargets.get(apds);
+            // Ensure we only target each attack once
+            List<WeaponHandler> targetsToRemove = new ArrayList<>();
+            for (WeaponHandler wh : potentialTargets) {
+                if (targetedAttacks.contains(wh.getWaa())) {
+                    targetsToRemove.add(wh);
+                }
+            }
+            potentialTargets.removeAll(targetsToRemove);
+            WeaponAttackAction targetedWAA;
+            // Assign APDS to an attack
+            if (game.getOptions().booleanOption("auto_ams")) {
+                targetedWAA = apds.assignAPDS(potentialTargets);
+            } else { // Allow user to manually assign targets
+                targetedWAA = manuallyAssignAPDSTarget(apds, potentialTargets);
+            }
+            if (targetedWAA != null) {
+                targetedAttacks.add(targetedWAA);
+            }
+        }
+    }
+
+    /**
+     * Convenience method for determining which missile attack will be targeted
+     * with AMS on the supplied Entity
+     *
+     * @param e
+     *            The Entity with AMS
+     * @param vAttacks
+     *            List of missile attacks directed at e
+     */
+    private WeaponAttackAction manuallyAssignAPDSTarget(Mounted apds,
+            List<WeaponHandler> vAttacks) {
+        Entity e = apds.getEntity();
+        if (e == null) {
+            return null;
+        }
+
+        // Create a list of valid assignments for this APDS
+        List<WeaponAttackAction> vAttacksInArc = new ArrayList<>(
+                vAttacks.size());
+        for (WeaponHandler wr : vAttacks) {
+            boolean isInArc = Compute.isInArc(e.getGame(), e.getId(),
+                    e.getEquipmentNum(apds),
+                    game.getEntity(wr.waa.getEntityId()));
+            boolean isInRange = e.getPosition().distance(
+                    wr.getWaa().getTarget(game).getPosition()) <= 3;
+            if (isInArc && isInRange) {
+                vAttacksInArc.add(wr.waa);
+            }
+        }
+
+        // If there are no valid attacks left, don't bother
+        if (vAttacksInArc.size() < 1) {
+            return null;
+        }
+
+        WeaponAttackAction targetedWAA = null;
+
+        if (apds.curMode().equals("Automatic")) {
+            targetedWAA = Compute.getHighestExpectedDamage(game,
+                    vAttacksInArc, true);
+        } else {
+            // Send a client feedback request
+            List<Integer> apdsDists = new ArrayList<>();
+            for (WeaponAttackAction waa : vAttacksInArc) {
+                apdsDists.add(waa.getTarget(game).getPosition()
+                        .distance(e.getPosition()));
+            }
+            sendAPDSAssignCFR(e, apdsDists, vAttacksInArc);
+            synchronized (cfrPacketQueue) {
+                try {
+                    cfrPacketQueue.wait();
+                } catch (InterruptedException ex) {
+                    // Do nothing
+                }
+                if (cfrPacketQueue.size() > 0) {
+                    ReceivedPacket rp = cfrPacketQueue.poll();
+                    int cfrType = (int) rp.packet.getData()[0];
+                    // Make sure we got the right type of response
+                    if (cfrType != Packet.COMMAND_CFR_APDS_ASSIGN) {
+                        System.err.println("Expected a "
+                                + "COMMAND_CFR_AMS_ASSIGN CFR "
+                                + "packet, received: " + cfrType);
+                        throw new IllegalStateException();
                     }
-
-                    // If there are no valid attacks left, don't bother
-                    if (vAttacksInArc.size() < 1) {
-                        continue;
-                    }
-
-                    WeaponAttackAction targetedWAA = null;
-
-                    if (ams.curMode().equals("Automatic")) {
-                        targetedWAA = Compute.getHighestExpectedDamage(game,
-                                vAttacksInArc, true);
-                    } else {
-                        // Send a client feedback request
-                        sendAMSAssignCFR(e, ams, vAttacksInArc);
-                        synchronized (cfrPacketQueue) {
-                            try {
-                                cfrPacketQueue.wait();
-                            } catch (InterruptedException ex) {
-                                // Do nothing
-                            }
-                            if (cfrPacketQueue.size() > 0) {
-                                ReceivedPacket rp = cfrPacketQueue.poll();
-                                int cfrType = (int) rp.packet.getData()[0];
-                                // Make sure we got the right type of response
-                                if (cfrType != Packet.COMMAND_CFR_AMS_ASSIGN) {
-                                    System.err.println("Excepted a "
-                                            + "COMMAND_CFR_AMS_ASSIGN CFR "
-                                            + "packet, received: " + cfrType);
-                                    throw new IllegalStateException();
-                                }
-                                Integer waaIndex =
-                                        (Integer)rp.packet.getData()[1];
-                                if (waaIndex != null) {
-                                    targetedWAA = vAttacksInArc.get(waaIndex);
-                                }
-                            }
-                        }
-                    }
-
-                    if (targetedWAA != null) {
-                        targetedWAA.addCounterEquipment(ams);
-                        amsTargets.add(targetedWAA);
+                    Integer waaIndex =
+                            (Integer)rp.packet.getData()[1];
+                    if (waaIndex != null) {
+                        targetedWAA = vAttacksInArc.get(waaIndex);
                     }
                 }
             }
         }
+
+        if (targetedWAA != null) {
+            targetedWAA.addCounterEquipment(apds);
+            return targetedWAA;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Convenience method for determining which missile attack will be targeted
+     * with AMS on the supplied Entity
+     *
+     * @param e
+     *            The Entity with AMS
+     * @param vAttacks
+     *            List of missile attacks directed at e
+     */
+    private void manuallyAssignAMSTarget(Entity e,
+            Vector<WeaponHandler> vAttacks) {
+        // Current AMS targets: each attack can only be targeted once
+        HashSet<WeaponAttackAction> amsTargets =
+                new HashSet<WeaponAttackAction>();
+        // Pick assignment for each active AMS
+        for (Mounted ams : e.getActiveAMS()) {
+            // Skip APDS
+            if (ams.isAPDS()) {
+                continue;
+            }
+            // Create a list of valid assignments for this AMS
+            ArrayList<WeaponAttackAction> vAttacksInArc =
+                    new ArrayList<WeaponAttackAction>(vAttacks.size());
+            for (WeaponHandler wr : vAttacks) {
+                if (!amsTargets.contains(wr.waa)
+                        && Compute.isInArc(game, e.getId(),
+                                e.getEquipmentNum(ams),
+                                game.getEntity(wr.waa.getEntityId()))) {
+                    vAttacksInArc.add(wr.waa);
+                }
+            }
+
+            // If there are no valid attacks left, don't bother
+            if (vAttacksInArc.size() < 1) {
+                continue;
+            }
+
+            WeaponAttackAction targetedWAA = null;
+
+            if (ams.curMode().equals("Automatic")) {
+                targetedWAA = Compute.getHighestExpectedDamage(game,
+                        vAttacksInArc, true);
+            } else {
+                // Send a client feedback request
+                sendAMSAssignCFR(e, ams, vAttacksInArc);
+                synchronized (cfrPacketQueue) {
+                    try {
+                        cfrPacketQueue.wait();
+                    } catch (InterruptedException ex) {
+                        // Do nothing
+                    }
+                    if (cfrPacketQueue.size() > 0) {
+                        ReceivedPacket rp = cfrPacketQueue.poll();
+                        int cfrType = (int) rp.packet.getData()[0];
+                        // Make sure we got the right type of response
+                        if (cfrType != Packet.COMMAND_CFR_AMS_ASSIGN) {
+                            System.err.println("Expected a "
+                                    + "COMMAND_CFR_AMS_ASSIGN CFR "
+                                    + "packet, received: " + cfrType);
+                            throw new IllegalStateException();
+                        }
+                        Integer waaIndex =
+                                (Integer)rp.packet.getData()[1];
+                        if (waaIndex != null) {
+                            targetedWAA = vAttacksInArc.get(waaIndex);
+                        }
+                    }
+                }
+            }
+
+            if (targetedWAA != null) {
+                targetedWAA.addCounterEquipment(ams);
+                amsTargets.add(targetedWAA);
+            }
+        }
+    }
+
+    /**
+     * Convenience method for computing a mapping of which Coords are
+     * "protected" by an APDS. Protection implies that the coords is within the
+     * range/arc of an active APDS.
+     *
+     * @return
+     */
+    private Hashtable<Coords, List<Mounted>> getAPDSProtectedCoords() {
+        // Get all of the coords that would be protected by APDS
+        Hashtable<Coords, List<Mounted>> apdsCoords = new Hashtable<>();
+        for (Entity e : game.getEntitiesVector()) {
+            // Ignore Entitys without positions
+            if (e.getPosition() == null) {
+                continue;
+            }
+            Coords origPos = e.getPosition();
+            for (Mounted ams : e.getActiveAMS()) {
+                // Ignore non-APDS AMS
+                if (!ams.isAPDS()) {
+                    continue;
+                }
+                // Add the current hex as a defended location
+                List<Mounted> apdsList = apdsCoords.get(origPos);
+                if (apdsList == null) {
+                    apdsList = new ArrayList<>();
+                    apdsCoords.put(origPos, apdsList);
+                }
+                apdsList.add(ams);
+                // Add each coords that is within arc/range as protected
+                int maxDist = 3;
+                if (e instanceof BattleArmor) {
+                    int numTroopers = ((BattleArmor) e)
+                            .getNumberActiverTroopers();
+                    switch (numTroopers) {
+                        case 1:
+                            maxDist = 1;
+                            break;
+                        case 2:
+                        case 3:
+                            maxDist = 2;
+                            break;
+                    // Anything above is the same as the default
+                    }
+                }
+                for (int dist = 1; dist <= maxDist; dist++) {
+                    for (int dir = 0; dir <= 5; dir++) {
+                        Coords pos = e.getPosition().translated(dir, dist);
+                        // Check that we're in the right arc
+                        if (Compute.isInArc(game, e.getId(), e
+                                .getEquipmentNum(ams),
+                                new HexTarget(pos, game.getBoard(),
+                                        HexTarget.TYPE_HEX_CLEAR))) {
+                            apdsList = apdsCoords.get(pos);
+                            if (apdsList == null) {
+                                apdsList = new ArrayList<>();
+                                apdsCoords.put(pos, apdsList);
+                            }
+                            apdsList.add(ams);
+                        }
+                    }
+                }
+
+            }
+        }
+        return apdsCoords;
     }
 
     /**
@@ -16878,14 +17213,14 @@ public class Server implements Runnable {
             if (ae.isProne()) {
                 // attacker prone during weapons phase
                 addReport(doEntityFall(ae, daa.getTargetPos(), 2, 3,
-                                       ae.getBasePilotingRoll(), false));
+                        ae.getBasePilotingRoll(), false));
 
             } else {
                 // same effect as successful DFA
                 ae.setElevation(ae.calcElevation(aeHex, teHex, 0, false, false));
                 addReport(doEntityDisplacement(ae, ae.getPosition(),
-                                               daa.getTargetPos(), new PilotingRollData(ae.getId(), 4,
-                                                                                        "executed death from above")));
+                        daa.getTargetPos(), new PilotingRollData(ae.getId(), 4,
+                                "executed death from above")));
             }
             return;
         }
@@ -16905,8 +17240,8 @@ public class Server implements Runnable {
             // entity isn't DFAing any more
             ae.setDisplacementAttack(null);
             addReport(doEntityFallsInto(ae, ae.getElevation(),
-                                        ae.getPosition(), daa.getTargetPos(),
-                                        ae.getBasePilotingRoll(), true));
+                    ae.getPosition(), daa.getTargetPos(),
+                    ae.getBasePilotingRoll(), true));
             return;
         }
 
@@ -16957,7 +17292,7 @@ public class Server implements Runnable {
         if (roll < toHit.getValue()) {
             Coords dest = te.getPosition();
             Coords targetDest = Compute.getPreferredDisplacement(game,
-                                                                 te.getId(), dest, direction);
+                    te.getId(), dest, direction);
             // miss
             r = new Report(4035);
             r.subject = ae.getId();
@@ -16974,17 +17309,18 @@ public class Server implements Runnable {
                 addReport(r);
                 // entity isn't DFAing any more
                 ae.setDisplacementAttack(null);
-                addReport(doEntityFall(ae, dest, 2, 3,
-                                       ae.getBasePilotingRoll(), false), 1);
+                addReport(
+                        doEntityFall(ae, dest, 2, 3, ae.getBasePilotingRoll(),
+                                false), 1);
                 Entity violation = Compute.stackingViolation(game, ae.getId(),
-                                                             dest);
+                        dest);
                 if (violation != null) {
                     // target gets displaced
                     targetDest = Compute.getValidDisplacement(game,
-                                                              violation.getId(), dest, direction);
+                            violation.getId(), dest, direction);
                     vPhaseReport.addAll(doEntityDisplacement(violation, dest,
-                                                             targetDest, new PilotingRollData(violation.getId(),
-                                                                                              0, "domino effect")));
+                            targetDest, new PilotingRollData(violation.getId(),
+                                    0, "domino effect")));
                     // Update the violating entity's postion on the client.
                     if (!game.getOutOfGameEntitiesVector().contains(violation)) {
                         entityUpdate(violation.getId());
@@ -16995,7 +17331,7 @@ public class Server implements Runnable {
                 // Tanks suffer an ammo/power plant hit.
                 // TODO : a Mech suffers a Head Blown Off crit.
                 addReport(destroyEntity(ae, "impossible displacement",
-                                        ae instanceof Mech, ae instanceof Mech));
+                        ae instanceof Mech, ae instanceof Mech));
             }
             return;
         }
@@ -17089,47 +17425,47 @@ public class Server implements Runnable {
             if (spikeDamage > 0) {
                 if (ae instanceof QuadMech) {
                     addReport(damageEntity(ae, new HitData(Mech.LOC_LARM),
-                                           (spikeDamage + 2) / 4, false, DamageType.NONE,
-                                           false, false, false));
+                            (spikeDamage + 2) / 4, false, DamageType.NONE,
+                            false, false, false));
                     addReport(damageEntity(ae, new HitData(Mech.LOC_RARM),
-                                           (spikeDamage + 2) / 4, false, DamageType.NONE,
-                                           false, false, false));
+                            (spikeDamage + 2) / 4, false, DamageType.NONE,
+                            false, false, false));
                     if (spikeDamage > 2) {
                         addReport(damageEntity(ae, new HitData(Mech.LOC_LLEG),
-                                               spikeDamage / 4, false, DamageType.NONE, false,
-                                               false, false));
+                                spikeDamage / 4, false, DamageType.NONE, false,
+                                false, false));
                         addReport(damageEntity(ae, new HitData(Mech.LOC_RLEG),
-                                               spikeDamage / 4, false, DamageType.NONE, false,
-                                               false, false));
+                                spikeDamage / 4, false, DamageType.NONE, false,
+                                false, false));
                     }
                 } else {
                     addReport(damageEntity(ae, new HitData(Mech.LOC_LLEG),
-                                           spikeDamage / 2, false, DamageType.NONE, false,
-                                           false, false));
+                            spikeDamage / 2, false, DamageType.NONE, false,
+                            false, false));
                     addReport(damageEntity(ae, new HitData(Mech.LOC_RLEG),
-                                           spikeDamage / 2, false, DamageType.NONE, false,
-                                           false, false));
+                            spikeDamage / 2, false, DamageType.NONE, false,
+                            false, false));
                 }
             }
             if (target instanceof VTOL) {
                 // destroy rotor
                 addReport(applyCriticalHit(te, VTOL.LOC_ROTOR,
-                                           new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                                                            VTOL.CRIT_ROTOR_DESTROYED), false, 0, false));
+                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                                VTOL.CRIT_ROTOR_DESTROYED), false, 0, false));
             }
             // Target entities are pushed away or destroyed.
             Coords targetDest = Compute.getValidDisplacement(game, te.getId(),
-                                                             dest, direction);
+                    dest, direction);
             if (targetDest != null) {
                 addReport(doEntityDisplacement(te, dest, targetDest,
-                                               new PilotingRollData(te.getId(), 2,
-                                                                    "hit by death from above")));
+                        new PilotingRollData(te.getId(), 2,
+                                "hit by death from above")));
             } else {
                 // ack! automatic death! Tanks
                 // suffer an ammo/power plant hit.
                 // TODO : a Mech suffers a Head Blown Off crit.
                 addReport(destroyEntity(te, "impossible displacement",
-                                        te instanceof Mech, te instanceof Mech));
+                        te instanceof Mech, te instanceof Mech));
             }
 
             // entity isn't DFAing any more
@@ -26120,7 +26456,7 @@ public class Server implements Runnable {
             newElevation = entity.getElevation();
         }
         // HACK: if the dest hex is water, assume that the fall height given is
-        // to the floor of the hex, and modifiy it so that it's to the surface
+        // to the floor of the hex, and modify it so that it's to the surface
         else if (waterDepth > 0) {
             damageHeight = fallHeight - waterDepth;
             newElevation = -waterDepth;
@@ -26129,30 +26465,34 @@ public class Server implements Runnable {
         // from above
         if (intoBasement) {
             Building bldg = game.getBoard().getBuildingAt(fallPos);
-            if ((bldg.getBasement(fallPos) != BasementType.NONE)
-                && (bldg.getBasement(fallPos) != BasementType.ONE_DEEP_NORMALINFONLY)
+            BasementType bsmnt = bldg.getBasement(fallPos);
+            if ((bsmnt != BasementType.NONE)
+                && (bsmnt != BasementType.ONE_DEEP_NORMALINFONLY)
                 && (entity.getElevation() == 0)
                 && (bldg.getBasementCollapsed(fallPos) == true)) {
 
                 if (fallHex.depth(true) == 0) {
                     System.err.println(" Entity " + entity.getDisplayName()
-                                       + " is falling into a depth " + fallHex.depth(true)
-                                       + " basement -- not allowed!!");
+                            + " is falling into a depth " + fallHex.depth(true)
+                            + " basement -- not allowed!!");
                     return vPhaseReport;
                 }
-                damageHeight = bldg.getBasement(fallPos).getDepth();
+                damageHeight = bsmnt.getDepth();
 
                 newElevation = newElevation - damageHeight;
 
                 handlingBasement = true;
-                if ((bldg.getBasement(fallPos) == BasementType.TWO_DEEP_FEET)
-                    || (bldg.getBasement(fallPos) == BasementType.ONE_DEEP_FEET)) {
-                    damageTable = ToHitData.HIT_KICK;
-                } else if ((bldg.getBasement(fallPos) == BasementType.TWO_DEEP_HEAD)
-                           || (bldg.getBasement(fallPos) == BasementType.ONE_DEEP_HEAD)) {
-                    damageTable = ToHitData.HIT_PUNCH;
-                } else {
-                    damageTable = ToHitData.HIT_NORMAL;
+                // May have to adjust hit table for 'mechs
+                if (entity instanceof Mech) {
+                    if ((bsmnt == BasementType.TWO_DEEP_FEET)
+                            || (bsmnt == BasementType.ONE_DEEP_FEET)) {
+                        damageTable = ToHitData.HIT_KICK;
+                    } else if ((bsmnt == BasementType.TWO_DEEP_HEAD)
+                            || (bsmnt == BasementType.ONE_DEEP_HEAD)) {
+                        damageTable = ToHitData.HIT_PUNCH;
+                    } else {
+                        damageTable = ToHitData.HIT_NORMAL;
+                    }
                 }
             }
         }
@@ -26202,6 +26542,16 @@ public class Server implements Runnable {
                     dice = 1;
                 }
                 damage = damage * Compute.d6(dice);
+            }
+        }
+        // Different rules (pg 151 of TW) for Tanks
+        if (entity instanceof Tank) {
+            // Falls from less than 1 elevation don't damage combat vehicles
+            if (damageHeight < 2) {
+                damage = 0;
+            } else { // Falls from >= 2 elevations damage like crashing VTOLs
+                // Ends up being the regular damage: weight / 10 * (height + 1)
+                // And this was already computed
             }
         }
         // calculate damage for hitting the ground, but only if we actually fell
@@ -26262,13 +26612,16 @@ public class Server implements Runnable {
             entity.setProne(true);
         }
         entity.setPosition(fallPos);
-        entity.setFacing((entity.getFacing() + (facing)) % 6);
-        entity.setSecondaryFacing(entity.getFacing());
         entity.setElevation(newElevation);
+        // Only 'mechs change facing when they fall
+        if (entity instanceof Mech) {
+            entity.setFacing((entity.getFacing() + (facing)) % 6);
+            entity.setSecondaryFacing(entity.getFacing());
+        }
 
         // if falling into a bog-down hex, the entity automatically gets stuck
         if (fallHex.getBogDownModifier(entity.getMovementMode(),
-                                       entity instanceof LargeSupportTank) != TargetRoll.AUTOMATIC_SUCCESS) {
+                entity instanceof LargeSupportTank) != TargetRoll.AUTOMATIC_SUCCESS) {
             entity.setStuck(true);
             r = new Report(2081);
             r.subject = entity.getId();
@@ -27538,9 +27891,8 @@ public class Server implements Runnable {
         List<Entity> vAllEntities = game.getEntitiesVector();
         for (int x = 0; x < vAllEntities.size(); x++) {
             Entity e = vAllEntities.get(x);
-            boolean previousVisibleValue = e.isVisibleToEnemy();
-            boolean previousSeenValue = e.isEverSeenByEnemy();
-            boolean previousDetectedValue = e.isDetectedByEnemy();
+            Vector<IPlayer> whoCouldSee = new Vector<>(e.getWhoCanSee());
+            Vector<IPlayer> whoCouldDetect =  new Vector<>(e.getWhoCanDetect());
             e.setVisibleToEnemy(false);
             e.setDetectedByEnemy(false);
             e.clearSeenBy();
@@ -27565,14 +27917,28 @@ public class Server implements Runnable {
                 e.addBeenDetectedBy(p);
             }
 
-            // If this unit wasn't previously visible and is now visible, it's
-            // possible that the enemy's client doesn't know about the unit
-            if ((!previousVisibleValue && e.isVisibleToEnemy())
-                || (!previousDetectedValue && e.isDetectedByEnemy())) {
-                entityUpdate(e.getId(), new Vector<UnitLocation>(), false, losCache);
-            } else if ((previousVisibleValue != e.isVisibleToEnemy())
-                       || (previousSeenValue != e.isEverSeenByEnemy())
-                       || (previousDetectedValue != e.isDetectedByEnemy())) {
+            // If a client can now see/detect this entity, but couldn't before,
+            // then the client needs to be updated with the Entity
+            boolean hasClientWithoutEntity = false;
+            for (IPlayer p : vCanSee) {
+                if (!whoCouldSee.contains(p) && !whoCouldDetect.contains(p)) {
+                    hasClientWithoutEntity = true;
+                    break;
+                }
+            }
+            if (!hasClientWithoutEntity) {
+                for (IPlayer p : vCanDetect) {
+                    if (!whoCouldSee.contains(p)
+                            && !whoCouldDetect.contains(p)) {
+                        hasClientWithoutEntity = true;
+                        break;
+                    }
+                }
+            }
+            if (hasClientWithoutEntity) {
+                entityUpdate(e.getId(), new Vector<UnitLocation>(), false,
+                        losCache);
+            } else {
                 sendVisibilityIndicator(e);
             }
         }

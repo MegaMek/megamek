@@ -219,6 +219,15 @@ class EntitySprite extends Sprite {
                         0, 0, this);
             }
         }
+
+        boolean isInfantry = (entity instanceof Infantry);
+        boolean isAero = (entity instanceof Aero);
+        if ((isAero && ((Aero) entity).isSpheroid() && !board.inSpace())
+                && (secondaryPos == 1)) {
+            graph.setColor(Color.white);
+            graph.draw(bv.facingPolys[entity.getFacing()]);
+        }
+
         if ((secondaryPos == -1) || (secondaryPos == 6)) {
             // draw box with shortName
             Color text, bkgd, bord;
@@ -264,8 +273,6 @@ class EntitySprite extends Sprite {
             
             // draw facing
             graph.setColor(Color.white);
-            boolean isInfantry = (entity instanceof Infantry);
-            boolean isAero = (entity instanceof Aero);                
             if ((entity.getFacing() != -1)
                     && !(isInfantry && !((Infantry) entity).hasFieldGun()
                             && !((Infantry) entity).isTakingCover())
@@ -273,7 +280,6 @@ class EntitySprite extends Sprite {
                             .inSpace())) {
                 graph.draw(bv.facingPolys[entity.getFacing()]);
             }
-
 
             // determine secondary facing for non-mechs & flipped arms
             int secFacing = entity.getFacing();

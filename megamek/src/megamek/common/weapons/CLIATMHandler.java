@@ -263,19 +263,18 @@ public class CLIATMHandler extends ATMHandler {
                 missilesHit = wtype.getRackSize();
             } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(), amsMod,
-                                                  weapon.isHotLoaded(), allShotsHit(), advancedAMS
-                                                                                       && amsEnganged);
+                                                  weapon.isHotLoaded(), allShotsHit(), isAdvancedAMS());
             }
         } else {
             if (ae instanceof BattleArmor) {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
                                                   * ((BattleArmor) ae).getShootingStrength(),
                                                   nMissilesModifier, weapon.isHotLoaded(), false,
-                                                  advancedAMS && amsEnganged);
+                                                  isAdvancedAMS());
             } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
                                                   nMissilesModifier, weapon.isHotLoaded(), false,
-                                                  advancedAMS && amsEnganged);
+                                                  isAdvancedAMS());
             }
         }
 

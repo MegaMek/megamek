@@ -157,7 +157,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      * clientgui.getClient().
      */
     public TargetingPhaseDisplay(final ClientGUI clientgui, boolean offboard) {
-        this.clientgui = clientgui;
+        super(clientgui);
         phase = offboard ? IGame.Phase.PHASE_OFFBOARD
                 : IGame.Phase.PHASE_TARGETING;
         shiftheld = false;
@@ -708,7 +708,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         // Clear the menu bar.
         clientgui.getMenuBar().setEntity(null);
-        if (ce().isWeapOrderChanged()) {
+        if ((ce() != null) && ce().isWeapOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
         endMyTurn();

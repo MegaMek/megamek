@@ -38,6 +38,7 @@ public class ISBAAPDS extends Weapon {
         name = "RISC Advanced Point Defense System";
         setInternalName("ISBAAPDS");
         tonnage = 0.35f;
+        criticals = 2;
         bv = 7;
         longRange = 3;
         flags = flags.or(F_BA_WEAPON)
@@ -48,6 +49,5 @@ public class ISBAAPDS extends Weapon {
         introDate = 3134;
         availRating = new int[] { RATING_X, RATING_X, RATING_X, RATING_E };
         techRating = RATING_E;
-        //TODO: game rules need to be implemented
     }
 }

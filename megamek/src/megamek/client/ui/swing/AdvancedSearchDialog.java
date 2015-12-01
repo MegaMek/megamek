@@ -610,11 +610,15 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
             if ((tblWeapons.getSelectedRow() >= 0) && lastTokIsOperation){
                 tblEquipment.clearSelection();
                 btnAdd.setEnabled(true);
+            } else if (tblWeapons.getSelectedRow() >= 0) {
+                tblEquipment.clearSelection();
             }
         }else if (evt.getSource().equals(tblEquipment.getSelectionModel())){
             if ((tblEquipment.getSelectedRow() >= 0) && lastTokIsOperation){
                 tblWeapons.clearSelection();
                 btnAdd.setEnabled(true);
+            } else if (tblEquipment.getSelectedRow() >= 0) {
+                tblWeapons.clearSelection();
             }
         }
     }
@@ -974,6 +978,10 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
         cboCockpitType.setSelectedIndex(0);
         cboInternalsType.setSelectedIndex(0);
         mechFilter = null;
+        filterToks.clear();
+        btnBack.setEnabled(false);
+        disableOperationButtons();
+        enableSelectionButtons();
     }
 
     /**
@@ -1158,7 +1166,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
             case COL_LONG:
                 return wp.getLongRange();
             case COL_LEVEL:
-                return TechConstants.getLevelName(wp.getTechLevel(gameYear));
+                    return TechConstants.getSimpleLevelName(TechConstants
+                            .convertFromNormalToSimple(wp
+                                    .getTechLevel(gameYear)));
             case COL_INTERNAL_NAME:
                 return wp.getInternalName();
             default:
@@ -1271,7 +1281,9 @@ public class AdvancedSearchDialog extends JDialog implements ActionListener,
             case COL_COST:
                 return eq.getRawCost();
             case COL_LEVEL:
-                return TechConstants.getLevelName(eq.getTechLevel(gameYear));
+                    return TechConstants.getSimpleLevelName(TechConstants
+                            .convertFromNormalToSimple(eq
+                                    .getTechLevel(gameYear)));
             case COL_INTERNAL_NAME:
                 return eq.getInternalName();
             default:

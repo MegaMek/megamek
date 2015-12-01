@@ -304,9 +304,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * clientgui.getClient().
      */
     public MovementDisplay(final ClientGUI clientgui) {
-        super();
+        super(clientgui);
 
-        this.clientgui = clientgui;
         clientgui.getClient().getGame().addGameListener(this);
         gear = MovementDisplay.GEAR_LAND;
         shiftheld = false;

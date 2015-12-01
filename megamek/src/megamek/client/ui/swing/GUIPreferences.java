@@ -121,7 +121,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MECH_SELECTOR_SHOW_ADVANCED = "MechSelectorShowAdvanced";
     public static final String MECH_SELECTOR_UNIT_TYPE= "MechSelectorUnitType";
     public static final String MECH_SELECTOR_WEIGHT_CLASS= "MechSelectorWeightClass";
-    public static final String MECH_SELECTOR_RULES_LEVEL= "MechSelectorRuleType";
+    public static final String MECH_SELECTOR_RULES_LEVELS= "MechSelectorRuleType";
     public static final String MECH_SELECTOR_SIZE_HEIGHT = "MechSelectorSizeHeight";
     public static final String MECH_SELECTOR_SIZE_WIDTH = "MechSelectorSizeWidth";
     public static final String MINI_REPORT_POS_X = "MiniReportPosX";
@@ -276,7 +276,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MECH_SELECTOR_INCLUDE_COST, true);
         store.setDefault(MECH_SELECTOR_UNIT_TYPE,0);
         store.setDefault(MECH_SELECTOR_WEIGHT_CLASS,15);
-        store.setDefault(MECH_SELECTOR_RULES_LEVEL,13);
+        store.setDefault(MECH_SELECTOR_RULES_LEVELS,"[0]");
         store.setDefault(MECH_SELECTOR_SHOW_ADVANCED, false);
         store.setDefault(MECH_SELECTOR_SIZE_HEIGHT,600);
         store.setDefault(MECH_SELECTOR_SIZE_WIDTH,800);
@@ -477,8 +477,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getInt(MECH_SELECTOR_WEIGHT_CLASS);
     }
 
-    public int getMechSelectorRulesLevel(){
-        return store.getInt(MECH_SELECTOR_RULES_LEVEL);
+    public String getMechSelectorRulesLevels(){
+        return store.getString(MECH_SELECTOR_RULES_LEVELS);
     }
 
 
@@ -823,8 +823,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(MECH_SELECTOR_WEIGHT_CLASS,weightClass);
     }
 
-    public void setMechSelectorRulesLevel(int rulesLevel){
-        store.setValue(MECH_SELECTOR_RULES_LEVEL,rulesLevel);
+    public void setMechSelectorRulesLevels(String rulesLevels){
+        store.setValue(MECH_SELECTOR_RULES_LEVELS,rulesLevels);
     }
 
 

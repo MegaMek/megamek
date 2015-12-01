@@ -23,8 +23,10 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
@@ -32,6 +34,7 @@ import megamek.common.options.WeaponQuirks;
 import megamek.common.weapons.AmmoBayWeapon;
 import megamek.common.weapons.AmmoWeapon;
 import megamek.common.weapons.GaussWeapon;
+import megamek.common.weapons.WeaponHandler;
 
 /**
  * This describes equipment mounted on a mech.
@@ -1738,5 +1741,52 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     		missings.append(missingForTrooper[i]).append("::");
     	}
     	return missings.toString();
+    }
+
+    /**
+     * Assign APDS systems to the most dangerous incoming missile attacks. This
+     * should only be called once per turn, or AMS will get extra attacks
+     */
+    public WeaponAttackAction assignAPDS(List<WeaponHandler> vAttacks) {
+        // Shouldn't have null entity, but if we do...
+        if (getEntity() == null) {
+            return null;
+        }
+
+        // Ensure we only target attacks in our arc & range
+        List<WeaponAttackAction> vAttacksInArc = new Vector<>(vAttacks.size());
+        for (WeaponHandler wr : vAttacks) {
+            boolean isInArc = Compute.isInArc(getEntity().getGame(),
+                    getEntity().getId(), getEntity().getEquipmentNum(this),
+                    getEntity().getGame().getEntity(wr.waa.getEntityId()));
+            boolean isInRange = getEntity().getPosition().distance(
+                    wr.getWaa().getTarget(getEntity().getGame()).getPosition()) <= 3;
+            if (isInArc && isInRange) {
+                vAttacksInArc.add(wr.waa);
+            }
+        }
+        // find the most dangerous salvo by expected damage
+        WeaponAttackAction waa = Compute.getHighestExpectedDamage(getEntity()
+                .getGame(), vAttacksInArc, true);
+        if (waa != null) {
+            waa.addCounterEquipment(this);
+            return waa;
+        }
+        return null;
+    }
+
+    /**
+     * Returns true if this Mounted is an APDS.
+     * @return
+     */
+    public boolean isAPDS() {
+        if ((getEntity() instanceof BattleArmor)
+                && getType().getInternalName().equals("ISBAAPDS")) {
+            return true;
+        } else if (getType() instanceof WeaponType) {
+            return ((WeaponType)getType()).getAmmoType() == AmmoType.T_APDS;
+        } else {
+            return false;
+        }
     }
 }

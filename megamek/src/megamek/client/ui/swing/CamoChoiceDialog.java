@@ -444,12 +444,16 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
             return new ImageIcon(image);
         } catch (Exception err) {
             // Print the stack trace and display the message.
-            err.printStackTrace();
-            JOptionPane
-                    .showMessageDialog(
-                            frame,
-                            err.getMessage(),
-                            Messages.getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            System.out.println("Tried to load camo that doesn't exist: "
+                    + actualCat + item);
+            //err.printStackTrace();
+            if (this.isVisible()) {
+                JOptionPane
+                        .showMessageDialog(
+                                frame,
+                                err.getMessage(),
+                                Messages.getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            }
             return null;
         }
     }

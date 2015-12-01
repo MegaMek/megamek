@@ -148,9 +148,8 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
      * clientgui.getClient().
      */
     public PhysicalDisplay(ClientGUI clientgui) {
-        super();
+        super(clientgui);
 
-        this.clientgui = clientgui;
         clientgui.getClient().getGame().addGameListener(this);
 
         clientgui.getBoardView().addBoardViewListener(this);

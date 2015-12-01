@@ -16,19 +16,17 @@ package megamek.client.ui.swing;
 
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URI;
 
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.KeyStroke;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.ui.swing.util.CommandAction;
+import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.widget.MegamekBorder;
 import megamek.client.ui.swing.widget.MegamekButton;
 import megamek.client.ui.swing.widget.SkinSpecification;
@@ -76,7 +74,8 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
     
     ImageIcon backgroundIcon = null;
 
-    protected AbstractPhaseDisplay() {
+    protected AbstractPhaseDisplay(ClientGUI cg) {
+        this.clientgui = cg;
         SkinSpecification pdSkinSpec = 
                 SkinXMLHandler.getSkin(SkinXMLHandler.PHASEDISPLAY);
         
@@ -116,25 +115,31 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
                 }
             }
         });
-        
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,
-                                        InputEvent.CTRL_DOWN_MASK),
-                                        "doneButton");
 
-        getActionMap().put("doneButton", new AbstractAction() {
-            private static final long serialVersionUID = -5034474968902280850L;
+        final AbstractPhaseDisplay display = this;
+        // Register the action for DONE
+        clientgui.controller.registerCommandAction(KeyCommandBind.DONE.cmd,
+                new CommandAction() {
 
-            public void actionPerformed(ActionEvent e) {
-                if (isIgnoringEvents()) {
-                    return;
-                }
-                if (clientgui.getClient().isMyTurn() || 
-                        (clientgui.getClient().getGame().getTurn() == null)) {
-                    ready();
-                }
-            }
-        });
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if ((!clientgui.getClient().isMyTurn() && (clientgui
+                                .getClient().getGame().getTurn() != null))
+                                || clientgui.bv.getChatterBoxActive()
+                                || display.isIgnoringEvents()
+                                || !display.isVisible()
+                                || !butDone.isEnabled()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        ready();
+                    }
+                });
     }
     
     protected void paintComponent(Graphics g) {

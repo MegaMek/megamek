@@ -25,6 +25,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.DefaultComboBoxModel;
@@ -36,6 +38,7 @@ import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -51,6 +54,8 @@ import javax.swing.SortOrder;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
@@ -80,7 +85,7 @@ import megamek.common.preference.PreferenceManager;
  * is used for advanced searching.
  */
 public class UnitSelectorDialog extends JDialog implements Runnable,
-    KeyListener, ActionListener {
+    KeyListener, ActionListener, ListSelectionListener {
 
     /**
      *
@@ -93,7 +98,12 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
     private JButton btnShowBV;
     private JButton btnAdvSearch;
     private JButton btnResetSearch;
-    private JComboBox<String> comboType;
+    private JList<String> lstTechLevel;
+    /**
+     * We need to map the selected index of lstTechLevel to the actual TL it
+     * belongs to
+     */
+    private Map<Integer, Integer> tlLstToIdx;
     private JComboBox<String> comboUnitType;
     private JComboBox<String> comboWeight;
     private JLabel lblFilter;
@@ -198,7 +208,10 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         panelMekView.setMinimumSize(new java.awt.Dimension(300, 500));
         panelMekView.setPreferredSize(new java.awt.Dimension(300, 600));
 
-        comboType = new JComboBox<String>();
+        lstTechLevel = new JList<String>();
+        lstTechLevel.setToolTipText(Messages
+                .getString("MechSelectorDialog.m_labelType.ToolTip")); //$NON-NLS-1$
+        tlLstToIdx = new HashMap<>();
         comboWeight = new JComboBox<String>();
         comboUnitType = new JComboBox<String>();
         txtFilter = new JTextField();
@@ -211,13 +224,15 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         btnResetSearch = new JButton();
 
         lblType = new JLabel(
-                Messages.getString("MechSelectorDialog.m_labelType"));
+                Messages.getString("MechSelectorDialog.m_labelType")); //$NON-NLS-1$
+        lblType.setToolTipText(Messages
+                .getString("MechSelectorDialog.m_labelType.ToolTip")); //$NON-NLS-1$
         lblWeight = new JLabel(
-                Messages.getString("MechSelectorDialog.m_labelWeightClass"));
+                Messages.getString("MechSelectorDialog.m_labelWeightClass")); //$NON-NLS-1$
         lblUnitType = new JLabel(
-                Messages.getString("MechSelectorDialog.m_labelUnitType"));
+                Messages.getString("MechSelectorDialog.m_labelUnitType")); //$NON-NLS-1$
         lblFilter = new JLabel(
-                Messages.getString("MechSelectorDialog.m_labelFilter"));
+                Messages.getString("MechSelectorDialog.m_labelFilter")); //$NON-NLS-1$
         lblImage = new JLabel();
         lblPlayer = new JLabel(
                 Messages.getString("MechSelectorDialog.m_labelPlayer"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -273,8 +288,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         c.weighty = 1.0;
         selectionPanel.add(scrTableUnits, c);
 
-        panelFilterBtns.setMinimumSize(new java.awt.Dimension(300, 120));
-        panelFilterBtns.setPreferredSize(new java.awt.Dimension(300, 120));
+        panelFilterBtns.setMinimumSize(new java.awt.Dimension(300, 180));
+        panelFilterBtns.setPreferredSize(new java.awt.Dimension(300, 180));
         panelFilterBtns.setLayout(new GridBagLayout());
 
         c = new GridBagConstraints();
@@ -283,14 +298,15 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         c.anchor = GridBagConstraints.WEST;
         panelFilterBtns.add(lblType, c);
 
-        comboType.setMinimumSize(new java.awt.Dimension(200, 27));
-        comboType.setPreferredSize(new java.awt.Dimension(200, 27));
+        JScrollPane tlScroll = new JScrollPane(lstTechLevel);
+        tlScroll.setMinimumSize(new Dimension(300, 100));
+        tlScroll.setPreferredSize(new Dimension(300, 100));
         updateTypeCombo();
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 2;
         c.anchor = GridBagConstraints.WEST;
-        panelFilterBtns.add(comboType, c);
+        panelFilterBtns.add(tlScroll, c);
 
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -307,8 +323,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         comboWeight.setModel(weightModel);
         comboWeight.setSelectedItem(Messages
                 .getString("MechSelectorDialog.All"));
-        comboWeight.setMinimumSize(new java.awt.Dimension(200, 27));
-        comboWeight.setPreferredSize(new java.awt.Dimension(200, 27));
+        comboWeight.setMinimumSize(new java.awt.Dimension(300, 27));
+        comboWeight.setPreferredSize(new java.awt.Dimension(300, 27));
         comboWeight.addActionListener(this);
         c = new GridBagConstraints();
         c.gridx = 1;
@@ -333,8 +349,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         unitTypeModel.addElement(Messages
                 .getString("MechSelectorDialog.SupportVee"));
         comboUnitType.setModel(unitTypeModel);
-        comboUnitType.setMinimumSize(new java.awt.Dimension(200, 27));
-        comboUnitType.setPreferredSize(new java.awt.Dimension(200, 27));
+        comboUnitType.setMinimumSize(new java.awt.Dimension(300, 27));
+        comboUnitType.setPreferredSize(new java.awt.Dimension(300, 27));
         comboUnitType.addActionListener(this);
         c = new GridBagConstraints();
         c.gridx = 1;
@@ -343,8 +359,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         panelFilterBtns.add(comboUnitType, c);
 
         txtFilter.setText("");
-        txtFilter.setMinimumSize(new java.awt.Dimension(200, 28));
-        txtFilter.setPreferredSize(new java.awt.Dimension(200, 28));
+        txtFilter.setMinimumSize(new java.awt.Dimension(300, 28));
+        txtFilter.setPreferredSize(new java.awt.Dimension(300, 28));
         txtFilter.getDocument().addDocumentListener(new DocumentListener() {
             public void changedUpdate(DocumentEvent e) {
                 filterUnits();
@@ -387,7 +403,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.NORTHWEST;
         c.weightx = 0.0;
-        c.insets = new java.awt.Insets(10, 10, 10, 0);
+        c.insets = new java.awt.Insets(10, 10, 5, 0);
         selectionPanel.add(panelFilterBtns, c);
 
         panelSearchBtns.setLayout(new GridBagLayout());
@@ -465,8 +481,8 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
     }
 
     private void  updateTypeCombo() {
-        comboType.removeActionListener(this);
-        int selectedIndex = comboType.getSelectedIndex();
+        lstTechLevel.removeListSelectionListener(this);
+        int[] selectedIndices = lstTechLevel.getSelectedIndices();
         int gameTL;
         if (client != null) {
             gameTL = TechConstants.getSimpleLevel(client.getGame().getOptions()
@@ -490,23 +506,28 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                 maxTech = TechConstants.T_CLAN_EXPERIMENTAL;
                 break;
             case TechConstants.T_SIMPLE_UNOFFICIAL:
-                maxTech = TechConstants.T_ALL;
+                maxTech = TechConstants.T_CLAN_UNOFFICIAL;
                 break;
             default:
-                maxTech = TechConstants.T_TW_ALL;
+                maxTech = TechConstants.T_CLAN_UNOFFICIAL;
         }
 
+        tlLstToIdx.clear();
         DefaultComboBoxModel<String> techModel = new DefaultComboBoxModel<String>();
-        for (int i = 0; i <= maxTech; i++) {
-            techModel.addElement(TechConstants.getLevelDisplayableName(i));
+        int selectionIdx = 0;
+        for (int tl = 0; tl <= maxTech; tl++) {
+            if ((tl != TechConstants.T_IS_TW_ALL)
+                    && (tl != TechConstants.T_TW_ALL)) {
+                tlLstToIdx.put(selectionIdx, tl);
+                techModel.addElement(TechConstants.getLevelDisplayableName(tl));
+                selectionIdx++;
+            }
         }
         techModel.setSelectedItem(TechConstants.getLevelDisplayableName(0));
-        comboType.setModel(techModel);
+        lstTechLevel.setModel(techModel);
 
-        if (selectedIndex < comboType.getItemCount()) {
-            comboType.setSelectedIndex(selectedIndex);
-        }
-        comboType.addActionListener(this);
+        lstTechLevel.setSelectedIndices(selectedIndices);
+        lstTechLevel.addListSelectionListener(this);
     }
 
     void select(boolean close) {
@@ -533,49 +554,46 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
 
     void filterUnits() {
         RowFilter<MechTableModel, Integer> unitTypeFilter = null;
-        final int nType = comboType.getSelectedIndex();
+
+        ArrayList<Integer> tlLvls = new ArrayList<>();
+        for (Integer selectedIdx : lstTechLevel.getSelectedIndices()) {
+            tlLvls.add(tlLstToIdx.get(selectedIdx));
+        }
+        final Integer[] nTypes = new Integer[tlLvls.size()];
+        tlLvls.toArray(nTypes);
         final int nClass = comboWeight.getSelectedIndex();
         final int nUnit = comboUnitType.getSelectedIndex() - 1;
         final boolean checkSupportVee = comboUnitType.getSelectedItem().equals(
                 Messages.getString("MechSelectorDialog.SupportVee"));
+        final boolean cannonOnly = (null != client)
+                && client.getGame().getOptions().booleanOption("canon_only");
         //If current expression doesn't parse, don't update.
         try {
             unitTypeFilter = new RowFilter<MechTableModel,Integer>() {
                 @Override
                 public boolean include(Entry<? extends MechTableModel, ? extends Integer> entry) {
                     MechTableModel mechModel = entry.getModel();
-                    MechSummary mech = mechModel.getMechSummary(entry.getIdentifier());
-                    int year = null != client ? client.getGame().getOptions().intOption("year") : 999999;
+                    MechSummary mech = mechModel.getMechSummary(entry
+                            .getIdentifier());
+                    int year = (null != client) ? client.getGame().getOptions()
+                            .intOption("year") : 999999;
+                    boolean techLevelMatch = false;
+                    for (int tl : nTypes) {
+                        if (mech.getType() == tl) {
+                            techLevelMatch = true;
+                        }
+                    }
                     if (/* Weight */
                             ((nClass == EntityWeightClass.SIZE) || (mech.getWeightClass() == nClass)) &&
                             /*Canon*/
-                            ((null != client && !client.getGame().getOptions().booleanOption("canon_only")) || mech.isCanon() || useAlternate) &&
+                            (!cannonOnly || mech.isCanon() || useAlternate) &&
                             /*Technology Level*/
-                            ((nType == TechConstants.T_ALL)
-                                || (nType == mech.getType())
-                                || ((nType == TechConstants.T_IS_TW_ALL)
-                                    && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
-                                     || (mech.getType() == TechConstants.T_INTRO_BOXSET)))
-                                || ((nType == TechConstants.T_TW_ALL)
-                                    && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
-                                     || (mech.getType() <= TechConstants.T_INTRO_BOXSET)
-                                     || (mech.getType() <= TechConstants.T_CLAN_TW)))
-                                || ((nType == TechConstants.T_ALL_IS)
-                                    && ((mech.getType() <= TechConstants.T_IS_TW_NON_BOX)
-                                     || (mech.getType() == TechConstants.T_INTRO_BOXSET)
-                                     || (mech.getType() == TechConstants.T_IS_ADVANCED)
-                                     || (mech.getType() == TechConstants.T_IS_EXPERIMENTAL)
-                                     || (mech.getType() == TechConstants.T_IS_UNOFFICIAL)))
-                                || ((nType == TechConstants.T_ALL_CLAN)
-                                    && ((mech.getType() == TechConstants.T_CLAN_TW)
-                                     || (mech.getType() == TechConstants.T_CLAN_ADVANCED)
-                                     || (mech.getType() == TechConstants.T_CLAN_EXPERIMENTAL)
-                                     || (mech.getType() == TechConstants.T_CLAN_UNOFFICIAL))))
+                            (techLevelMatch)
                             && ((nUnit == -1) 
                                     || (!checkSupportVee && mech.getUnitType().equals(UnitType.getTypeName(nUnit)))
                                     || (checkSupportVee && mech.isSupport()))
                             /*Advanced Search*/
-                            && ((searchFilter==null) || MechSearchFilter.isMatch(mech, searchFilter))
+                            && ((searchFilter == null) || MechSearchFilter.isMatch(mech, searchFilter))
                             && !(mech.getYear() > year)) {
                         if(txtFilter.getText().length() > 0) {
                             String text = txtFilter.getText();
@@ -752,8 +770,15 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
              GUIPreferences guip = GUIPreferences.getInstance();
              comboUnitType.setSelectedIndex(guip.getMechSelectorUnitType());
              comboWeight.setSelectedIndex(guip.getMechSelectorWeightClass());
-             if (guip.getMechSelectorRulesLevel() < comboType.getItemCount()) {
-                 comboType.setSelectedIndex(guip.getMechSelectorRulesLevel());
+             String option = guip.getMechSelectorRulesLevels().replaceAll("\\[", "");
+             option = option.replaceAll("\\]", "");
+             if (option.length() > 0) {
+                 String[] strSelections = option.split("[,]");
+                 int[] intSelections = new int[strSelections.length];
+                 for (int i = 0; i < strSelections.length; i++) {
+                     intSelections[i] = Integer.parseInt(strSelections[i].trim());
+                 }
+                 lstTechLevel.setSelectedIndices(intSelections);
              }
          }
          asd.clearValues();
@@ -762,7 +787,6 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
          if (!useAlternate) {
              updatePlayerChoice();
          }
-         //FIXME: this is not updating the table when canonicity is selected/deselected until user clicks it
          filterUnits();
          super.setVisible(visible);
      }
@@ -774,7 +798,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
              GUIPreferences guip = GUIPreferences.getInstance();
              guip.setMechSelectorUnitType(comboUnitType.getSelectedIndex());
              guip.setMechSelectorWeightClass(comboWeight.getSelectedIndex());
-             guip.setMechSelectorRulesLevel(comboType.getSelectedIndex());
+             guip.setMechSelectorRulesLevels(Arrays.toString(lstTechLevel.getSelectedIndices()));
              guip.setMechSelectorSizeHeight(getSize().height);
              guip.setMechSelectorSizeWidth(getSize().width);
          }
@@ -921,8 +945,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
     }
 
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getSource().equals(comboType)
-                || ev.getSource().equals(comboWeight)
+        if (ev.getSource().equals(comboWeight)
                 || ev.getSource().equals(comboUnitType)) {
             filterUnits();
         } else if (ev.getSource().equals(btnSelect)) {
@@ -960,6 +983,16 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         }
     }
 
+    @Override
+    public void valueChanged(ListSelectionEvent evt) {
+        if (evt.getValueIsAdjusting()) {
+            return;
+        }
+        if (evt.getSource().equals(lstTechLevel)) {
+            filterUnits();
+        }
+    }
+
     private void searchFor(String search) {
         for (int i = 0; i < mechs.length; i++) {
             if (mechs[i].getName().toLowerCase().startsWith(search)) {
@@ -982,4 +1015,5 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
     public Entity getChosenEntity() {
         return chosenEntity;
     }
+
  }

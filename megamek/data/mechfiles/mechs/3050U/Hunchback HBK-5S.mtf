@@ -5,8 +5,8 @@ HBK-5S
 Config:Biped
 TechBase:Inner Sphere
 Era:3058
+Source:TRO 3050 - Clan Invasion
 Rules Level:2
-source:TRO 3067
 
 Mass:50
 Engine:200 Light Engine

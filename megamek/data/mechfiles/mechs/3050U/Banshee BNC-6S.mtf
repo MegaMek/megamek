@@ -1,58 +1,52 @@
 Version:1.0
-Black Knight
-BL-6-KNT
+Banshee
+BNC-6S
 
 Config:Biped
 TechBase:Inner Sphere
-Era:2578
-Source:TRO 3050 - Star League
+Era:3062
+Source:TRO 3050 - Civil War
 Rules Level:2
 
-Mass:75
-Engine:300 Fusion Engine
+Mass:95
+Engine:380 Light Engine
 Structure:Endo Steel
 Myomer:Standard
 
-Heat Sinks:20 Single
+Heat Sinks:10 Double
 Walk MP:4
 Jump MP:0
 
 Armor:Standard Armor
-LA Armor:24
-RA Armor:24
-LT Armor:24
-RT Armor:24
-CT Armor:29
+LA Armor:20
+RA Armor:20
+LT Armor:30
+RT Armor:30
+CT Armor:38
 HD Armor:9
-LL Armor:24
-RL Armor:24
-RTL Armor:8
-RTR Armor:8
-RTC Armor:10
+LL Armor:28
+RL Armor:28
+RTL Armor:9
+RTR Armor:9
+RTC Armor:11
 
-Weapons:9
-1 ISPPC, Right Arm
-1 ISLargeLaser, Left Torso
-1 ISLargeLaser, Right Torso
-1 ISMediumLaser, Left Torso
-1 ISMediumLaser, Right Torso
-1 ISMediumLaser, Left Arm
-1 ISMediumLaser, Right Arm
+Weapons:3
+1 ISLBXAC10, Right Torso, Ammo:20
+1 ISHeavyGaussRifle, Left Torso, Ammo:20
 1 ISSmallLaser, Head
-1 ISBeagleActiveProbe, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumLaser
 Endo-Steel
 Endo-Steel
 Endo-Steel
 Endo-Steel
--Empty-
--Empty-
+Endo-Steel
+Endo-Steel
+Endo-Steel
 -Empty-
 
 Right Arm:
@@ -60,42 +54,42 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISPPC
-ISPPC
-ISPPC
-ISMediumLaser
 Endo-Steel
 Endo-Steel
 Endo-Steel
 Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
 
 Left Torso:
-Heat Sink
-Heat Sink
-ISLargeLaser
-ISLargeLaser
-ISMediumLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
--Empty-
--Empty-
--Empty-
--Empty-
+Fusion Engine
+Fusion Engine
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISCASE
 
 Right Torso:
-Heat Sink
-Heat Sink
-ISLargeLaser
-ISLargeLaser
-ISMediumLaser
-Endo-Steel
-Endo-Steel
-Endo-Steel
--Empty-
--Empty-
--Empty-
--Empty-
+Fusion Engine
+Fusion Engine
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10 CL Ammo
+ISLBXAC10 Ammo
+ISHeavyGauss Ammo
+ISCASE
 
 Center Torso:
 Fusion Engine
@@ -108,8 +102,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISBeagleActiveProbe
-ISBeagleActiveProbe
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
 
 Head:
 Life Support
@@ -130,8 +124,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink
-Heat Sink
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
 -Empty-
 -Empty-
 -Empty-
@@ -144,8 +138,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink
-Heat Sink
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
 -Empty-
 -Empty-
 -Empty-

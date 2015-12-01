@@ -1,11 +1,11 @@
 Version:1.0
 Enforcer III
-ENF-6G
+ENF-6T
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3062
-Source:TRO 3060
+Source:TRO 3050 - Civil War
 Rules Level:2
 
 Mass:50
@@ -24,19 +24,15 @@ LT Armor:19
 RT Armor:19
 CT Armor:24
 HD Armor:9
-LL Armor:20
-RL Armor:20
+LL Armor:24
+RL Armor:24
 RTL Armor:5
 RTR Armor:5
 RTC Armor:7
 
-Weapons:6
-ER Medium Laser, Left Torso
-ER Medium Laser, Right Torso
-ER Medium Laser, Center Torso
-ER Small Laser, Head
-Medium Pulse Laser, Right Arm
+Weapons:2
 Gauss Rifle, Right Arm
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -63,33 +59,33 @@ ISGaussRifle
 ISGaussRifle
 ISGaussRifle
 ISGaussRifle
-ISMediumPulseLaser
+-Empty-
 -Empty-
 
 Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERMediumLaser
 Endo Steel
 Endo Steel
 Endo Steel
 Endo Steel
 Endo Steel
--Empty-
--Empty-
+Endo Steel
+Endo Steel
+Endo Steel
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERMediumLaser
 IS Gauss Ammo
 IS Gauss Ammo
-Endo Steel
-Endo Steel
-Endo Steel
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
 -Empty-
 -Empty-
 -Empty-
@@ -112,7 +108,7 @@ Head:
 Life Support
 Sensors
 Cockpit
-ISERSmallLaser
+-Empty-
 Sensors
 Life Support
 -Empty-

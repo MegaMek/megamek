@@ -1,48 +1,49 @@
-Version:1.0
-Grasshopper
-GHR-5J
+Version:1.1
+Grand Dragon
+DRG-5K-DC
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3049
+Era:3050
 Source:TRO 3050 - Clan Invasion
-Rules Level:2
+Rules Level:3
 
-Mass:70
-Engine:280 Fusion Engine
-Structure:Standard
+Mass:60
+Engine:360 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
+Cockpit:Command Console
+Gyro:Standard Gyro
 
-Heat Sinks:22 Single
-Walk MP:4
-Jump MP:4
+Heat Sinks:11 Double
+Walk MP:6
+Jump MP:0
 
-Armor:Standard Armor
-LA Armor:22
-RA Armor:22
-LT Armor:20
-RT Armor:20
-CT Armor:30
+Armor:Standard(Inner Sphere)
+LA Armor:14
+RA Armor:14
+LT Armor:16
+RT Armor:16
+CT Armor:27
 HD Armor:9
-LL Armor:26
-RL Armor:26
-RTL Armor:10
-RTR Armor:10
-RTC Armor:13
+LL Armor:18
+RL Armor:18
+RTL Armor:8
+RTR Armor:8
+RTC Armor:12
 
-Weapons:5
-1 ISERLargeLaser, Center Torso
-1 ISMediumLaser, Right Arm
-1 ISMediumLaser, Left Arm
-1 ISStreakSRM2, Head, Ammo:100
-1 ISAntiMissileSystem, Right Torso, Ammo:12
+Weapons:4
+Medium Laser, Left Arm
+ER PPC, Right Arm
+Medium Laser, Left Torso
+LRM 10, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISMediumLaser
+Medium Laser
 -Empty-
 -Empty-
 -Empty-
@@ -55,9 +56,9 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Hand Actuator
-ISMediumLaser
--Empty-
+ISERPPC
+ISERPPC
+ISERPPC
 -Empty-
 -Empty-
 -Empty-
@@ -66,27 +67,27 @@ ISMediumLaser
 -Empty-
 
 Left Torso:
-Heat Sink
-Heat Sink
-Heat Sink
-Heat Sink
-Heat Sink
-Heat Sink
-Heat Sink
-ISAMS Ammo
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser (R)
+IS Ammo LRM-10
+IS Ammo LRM-10
+ISCASE
+-Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 
 Right Torso:
-Heat Sink
-Heat Sink
-Heat Sink
-Heat Sink
-ISAntiMissileSystem
-ISStreakSRM2 Ammo
-ISStreakSRM2 Ammo
+Fusion Engine
+Fusion Engine
+Fusion Engine
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -104,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERLargeLaser
-ISERLargeLaser
+LRM 10
+LRM 10
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISStreakSRM2
+Cockpit
 Sensors
 Life Support
 -Empty-
@@ -126,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -140,12 +141,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Jump Jet
-Jump Jet
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+-Empty-
+-Empty-
+
 

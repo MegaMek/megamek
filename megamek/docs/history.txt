@@ -16,6 +16,7 @@ v0.41.12-git
 + Bug [#4654]: Vehicles falling into basements: facing and damage issues
 + Bug [#4050]: Game-year based Tech Levels for Engines/Gyros/Cockpits
 + Bug [#4555]: Aeros strike/dive bomb now lose altitude before attacks resolve
++ Updated comment headers in .tileset files for hexes
 
 v0.41.11 (2015-11-15 16:50 UTC)
 + Data: New Sprites.

@@ -103,4 +103,9 @@ package megamek.common;
         // Return our result.
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "ClampMountMech - troopers:" + troopers;
+    }
 } // End package class ClampMountMech implements Transporter

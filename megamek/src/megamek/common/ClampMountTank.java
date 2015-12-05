@@ -132,4 +132,9 @@ package megamek.common;
         return result;
     }
 
+    @Override
+    public String toString() {
+        return "ClampMountTank - troopers:" + troopers;
+    }
+
 } // End package class ClampMountTank extends BattleArmorHandlesTank

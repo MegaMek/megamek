@@ -8812,6 +8812,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
 
+    /**
+     * Returns true if this unit has a ClampMountMech or ClampMountTank that
+     * is currently unloaded.
+     * @return
+     */
+    public boolean hasUnloadedClampMount() {
+        for (Transporter t : transports) {
+            if (((t instanceof ClampMountTank) || (t instanceof ClampMountMech))
+                    && (t.getUnused() > 0)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /*
      * (non-Javadoc)
      *

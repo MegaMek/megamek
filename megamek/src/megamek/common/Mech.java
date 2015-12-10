@@ -158,17 +158,26 @@ public abstract class Mech extends Entity {
     public static final int COCKPIT_TRIPOD = 10;
 
     public static final int COCKPIT_INTERFACE = 11;
+    
+    public static final int COCKPIT_VRRP = 12;
+    
+    public static final int COCKPIT_QUADVEE = 13;
+    
+    public static final int COCKPIT_SUPERHEAVY_INDUSTRIAL = 14;
 
     public static final String[] COCKPIT_STRING = { "Standard Cockpit",
             "Small Cockpit", "Command Console", "Torso-Mounted Cockpit",
             "Dual Cockpit", "Industrial Cockpit", "Primitive Cockpit",
             "Primitive Industrial Cockpit", "Superheavy Cockpit",
-            "Superheavy Tripod Cockpit", "Tripod Cockpit", "Interface Cockpit" };
+            "Superheavy Tripod Cockpit", "Tripod Cockpit", "Interface Cockpit",
+            "Virtual Reality Piloting Pod", "QuadVee Cockpit", 
+            "Superheavy Industrial Cockpit" };
 
     public static final String[] COCKPIT_SHORT_STRING = { "Standard", "Small",
             "Command Console", "Torso Mounted", "Dual", "Industrial",
             "Primitive", "Primitive Industrial", "Superheavy",
-            "Superheavy Tripod", "Tripod", "Interface" };
+            "Superheavy Tripod", "Tripod", "Interface", "VRRP", "Quadvee",
+            "Superheavy Industrial" };
 
     public static final String FULL_HEAD_EJECT_STRING = "Full Head Ejection System";
 
@@ -5934,6 +5943,15 @@ public abstract class Mech extends Entity {
                 break;
             case COCKPIT_INTERFACE:
                 inName = "COCKPIT_INTERFACE";
+                break;
+            case COCKPIT_VRRP:
+                inName = "COCKPIT_VRRP";
+                break;
+            case COCKPIT_QUADVEE:
+                inName = "COCKPIT_QUADVEE";
+                break;
+            case COCKPIT_SUPERHEAVY_INDUSTRIAL:
+                inName = "COCKPIT_SUPERHEAVY_INDUSTRIAL";
                 break;
             default:
                 inName = "COCKPIT_UNKNOWN";

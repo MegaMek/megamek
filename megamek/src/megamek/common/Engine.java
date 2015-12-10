@@ -745,37 +745,234 @@ public class Engine implements Serializable {
         return cost;
     }
 
-    public int getTechType() {
-        int level = 1;
+    /**
+     * Return the tech type (tech level + tech base) for the current engine.
+     *
+     * @param year
+     * @return
+     */
+    public int getTechType(int year) {
+        boolean isLarge = hasFlag(LARGE_ENGINE);
+        boolean isClan = hasFlag(CLAN_ENGINE);
+        boolean isSV = hasFlag(SUPPORT_VEE_ENGINE);
         switch (engineType) {
-            case FISSION:
-            case FUEL_CELL:
+            case NORMAL_ENGINE:
+                if ((isClan) && (isLarge)) {
+                    if (year <= 2630) {
+                        return TechConstants.T_CLAN_UNOFFICIAL;
+                    } else if (year <= 3080) {
+                        return TechConstants.T_CLAN_EXPERIMENTAL;
+                    } else if (year <= 3120) {
+                        return TechConstants.T_CLAN_ADVANCED;
+                    } else {
+                        return TechConstants.T_CLAN_TW;
+                    }
+                }
+                if (isClan) {
+                    return TechConstants.T_CLAN_TW;
+                }
+                if (isSV) {
+                    return TechConstants.T_ALLOWED_ALL;
+                }
+                if (year <= 2285) {
+                    return TechConstants.T_IS_UNOFFICIAL;
+                } else {
+                    return TechConstants.T_INTRO_BOXSET;
+                }
             case XL_ENGINE:
-            case LIGHT_ENGINE:
-                level = 2;
-                break;
+                if ((isClan) && (isLarge)) {
+                    if (year <= 2845) {
+                        return TechConstants.T_CLAN_UNOFFICIAL;
+                    } else if (year <= 3075) {
+                        return TechConstants.T_CLAN_EXPERIMENTAL;
+                    } else {
+                        return TechConstants.T_CLAN_ADVANCED;
+                    }
+                }
+                if (isClan) {
+                    if (year <= 2819) {
+                        return TechConstants.T_CLAN_UNOFFICIAL;
+                    } else if (year <= 2827) {
+                        return TechConstants.T_CLAN_EXPERIMENTAL;
+                    } else if (year <= 2829) {
+                        return TechConstants.T_CLAN_ADVANCED;
+                    } else {
+                        return TechConstants.T_CLAN_TW;
+                    }
+                }
+                if (isLarge) {
+                	if (year <= 2630) {
+                		return TechConstants.T_IS_UNOFFICIAL;
+                		} else if (year <= 2822) {
+                		return TechConstants.T_IS_ADVANCED;
+                		} else if (year <= 3053) {
+                		return TechConstants.T_IS_UNOFFICIAL;
+                		} else if (year <= 3080) {
+                		return TechConstants.T_IS_EXPERIMENTAL;
+                		} else {
+                		return TechConstants.T_IS_ADVANCED;
+                		}
+                } else {
+                	if (year <= 2556) {
+                		return TechConstants.T_IS_UNOFFICIAL;
+                		} else if (year <= 2579) {
+                		return TechConstants.T_IS_ADVANCED;
+                		} else if (year <= 2865) {
+                		return TechConstants.T_IS_UNOFFICIAL;
+                		} else if (year <= 3035) {
+                		return TechConstants.T_IS_EXPERIMENTAL;
+                		} else if (year <=3045){
+                		return TechConstants.T_IS_TW_NON_BOX;
+                		}
+                }
             case XXL_ENGINE:
+                if ((isClan) && (isLarge)) {
+                    if (year <= 3055) {
+                        return TechConstants.T_CLAN_UNOFFICIAL;
+                    } else if (year <= 3125) {
+                        return TechConstants.T_CLAN_EXPERIMENTAL;
+
+                    } else {
+                        return TechConstants.T_CLAN_ADVANCED;
+                    }
+                }
+                if (isClan) {
+                    if (year <= 2949) {
+                        return TechConstants.T_CLAN_UNOFFICIAL;
+                    } else if (year <= 3079) {
+                        return TechConstants.T_CLAN_EXPERIMENTAL;
+                    } else {
+                        return TechConstants.T_CLAN_ADVANCED;
+                    }
+                }
+                if (isLarge) {
+                    if (year <= 3058) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year <= 3130) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else {
+                        if (year <= 3050) {
+                            return TechConstants.T_IS_EXPERIMENTAL;
+                        } else if (year <= 3105) {
+                            return TechConstants.T_IS_ADVANCED;
+                        }
+                    }
+                }
+            case FISSION:
+                if (isClan) {
+                    return TechConstants.T_CLAN_UNOFFICIAL;
+                }
+                if (isSV) {
+                    return TechConstants.T_ALLOWED_ALL;
+                }
+                if (isLarge) {
+                    return TechConstants.T_IS_UNOFFICIAL;
+                } else {
+                    if (year <= 2470) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else if (year <= 2882) {
+                        return TechConstants.T_IS_ADVANCED;
+                    } else if (year <= 3079) {
+                        return TechConstants.T_IS_TW_NON_BOX;
+                    }
+                }
+            case FUEL_CELL:
+                if (isSV) {
+                    return TechConstants.T_ALLOWED_ALL;
+                }
+                if (isClan) {
+                    if (year <= 3078) {
+                        return TechConstants.T_CLAN_ADVANCED;
+                    } else {
+                        return TechConstants.T_CLAN_TW;
+                    }
+                } else {
+                    if (year <= 2285) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year <= 2470) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else if (year <= 3078) {
+                        return TechConstants.T_IS_ADVANCED;
+                    } else {
+                        return TechConstants.T_IS_TW_NON_BOX;
+                    }
+                }
+
+            case LIGHT_ENGINE:
+                if (isClan) {
+                    return TechConstants.T_CLAN_UNOFFICIAL;
+                }
+                if (isLarge) {
+                    if (year < 3064) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year < 3065) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else {
+                        return TechConstants.T_IS_ADVANCED;
+                    }
+                } else {
+                    if (year < 3055) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year < 3062) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else if (year < 3067) {
+                        return TechConstants.T_IS_ADVANCED;
+                    } else {
+                        return TechConstants.T_IS_TW_NON_BOX;
+                    }
+                }
+
+            case COMBUSTION_ENGINE:
+                if (isSV) {
+                    return TechConstants.T_ALLOWED_ALL;
+                }
+                if (isClan) {
+                    if (year <= 2630) {
+                        return TechConstants.T_CLAN_UNOFFICIAL;
+                    } else if (year <= 3080) {
+                        return TechConstants.T_CLAN_EXPERIMENTAL;
+                    } else {
+                        return TechConstants.T_CLAN_TW;
+                    }
+
+                }
+                if (isLarge) {
+                    if (year <= 2630) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year <= 3080) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else {
+                        return TechConstants.T_IS_TW_NON_BOX;
+                    }
+                } else {
+                    return TechConstants.T_ALLOWED_ALL;
+                }
+            case MAGLEV:
+                return TechConstants.T_ALLOWED_ALL;
+            case STEAM:
+                return TechConstants.T_ALLOWED_ALL;
+            case BATTERY:
+                return TechConstants.T_ALLOWED_ALL;
+            case SOLAR:
+                return TechConstants.T_ALLOWED_ALL;
             case COMPACT_ENGINE:
-                level = 3;
-                break;
+                if (isClan) {
+                    return TechConstants.T_CLAN_UNOFFICIAL;
+                } else {
+                    if (year <= 3060) {
+                        return TechConstants.T_IS_UNOFFICIAL;
+                    } else if (year <= 3068) {
+                        return TechConstants.T_IS_EXPERIMENTAL;
+                    } else if (year <= 3072) {
+                        return TechConstants.T_IS_ADVANCED;
+                    } else {
+                        return TechConstants.T_IS_TW_NON_BOX;
+                    }
+                }
         }
-        if (hasFlag(LARGE_ENGINE)) {
-            level = 3;
-        }
-        if (level == 3) {
-            if (hasFlag(CLAN_ENGINE)) {
-                return TechConstants.T_CLAN_ADVANCED;
-            }
-            return TechConstants.T_IS_ADVANCED;
-        } else if (level == 2) {
-            if (hasFlag(CLAN_ENGINE)) {
-                return TechConstants.T_CLAN_TW;
-            }
-            return TechConstants.T_IS_TW_NON_BOX;
-        } else {
-            return TechConstants.T_ALLOWED_ALL;
-        }
+        return TechConstants.T_TECH_UNKNOWN;
     }
+    
 
     public int getEngineType() {
         return engineType;

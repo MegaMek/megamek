@@ -410,4 +410,308 @@ public class TechConstants {
                 return T_TECH_UNKNOWN;
         }
     }
+
+    /**
+     * Return the tech level of the given gyro. This is necessary because gyros
+     * are systems and hence don't have MiscType entries.
+     * 
+     * @param gyroType
+     * @param isClan
+     * @param year
+     * @return
+     */
+    public static int getGyroTechLevel(int gyroType, boolean isClan, int year) {
+        switch (gyroType) {
+            case Mech.GYRO_STANDARD:
+                if (isClan) {
+                    if (year <= 2807) {
+                        return T_CLAN_UNOFFICIAL;
+                    }
+                    return T_CLAN_TW;
+                }
+
+                if (year <= 2295) {
+                    return T_IS_UNOFFICIAL;
+                } else if (year <= 2350) {
+                    return T_IS_EXPERIMENTAL;
+                } else if (year < 2505) {
+                    return T_IS_ADVANCED;
+                } else {
+                    return T_INTRO_BOXSET;
+                }
+            case Mech.GYRO_XL:
+                if (isClan) {
+                    return T_CLAN_UNOFFICIAL;
+                }
+                if (year <= 3050) {
+                    return T_IS_UNOFFICIAL;
+                } else if (year <= 3067) {
+                    return T_IS_EXPERIMENTAL;
+                } else if (year <= 3072) {
+                    return T_IS_ADVANCED;
+                } else {
+                    return T_IS_TW_NON_BOX;
+                }
+
+            case Mech.GYRO_COMPACT:
+                if (isClan) {
+                    return T_CLAN_UNOFFICIAL;
+                }
+                if (year <= 3050) {
+                    return T_IS_UNOFFICIAL;
+                } else if (year <= 3068) {
+                    return T_IS_EXPERIMENTAL;
+                } else if (year <= 3072) {
+                    return T_IS_ADVANCED;
+                } else {
+                    return T_IS_TW_NON_BOX;
+                }
+
+            case Mech.GYRO_HEAVY_DUTY:
+                if (isClan) {
+                    return T_CLAN_UNOFFICIAL;
+                }
+                if (year <= 3050) {
+                    return T_IS_UNOFFICIAL;
+                } else if (year <= 3067) {
+                    return T_IS_EXPERIMENTAL;
+                } else if (year <= 3072) {
+                    return T_IS_ADVANCED;
+                } else {
+                    return T_IS_TW_NON_BOX;
+                }
+
+                // case Mech.GYRO_SUPER_HEAVY - Super heavy gyro should be added
+                // as equipment somewhere.
+                // if (isClan) {
+                // return T_CLAN_UNOFFICIAL;
+                // }
+                // if (year <=2900) {
+                // return T_IS_UNOFFICIAL;
+                // } else if (year <=2940){
+                // return T_IS_EXPERIMENTAL;
+                // } else {
+                // return T_IS_ADVANCED;
+                // }
+
+        }
+
+        return T_TECH_UNKNOWN;
+    }
+
+    /**
+     * Return the tech level of the given cockpit. THis is necessary because
+     * cockpits are systems and hence don't have MiscType entries.
+     * 
+     * @param gyroType
+     * @param entityType
+     * @param isClan
+     * @param year
+     * @return
+     */
+    public static int getCockpitTechLevel(int cockpitType, long entityType,
+            boolean isClan, int year) {
+        switch (cockpitType) {
+            case Mech.COCKPIT_STANDARD:
+                if (isClan) {
+                    if (year <= 2807) {
+                        return T_CLAN_UNOFFICIAL;
+                    }
+                    return T_CLAN_TW;
+                }
+                if (year <= 2463) {
+                    return T_IS_UNOFFICIAL;
+                } else if (year <= 2470) {
+                    return T_IS_EXPERIMENTAL;
+                } else if (year <= 2487) {
+                    return T_IS_ADVANCED;
+                } else {
+                    return T_IS_TW_NON_BOX;
+                }
+            case Mech.COCKPIT_SMALL:
+                if (isClan) {
+                    if (year <= 3080) {
+                        return T_CLAN_UNOFFICIAL;
+                    }
+                    return T_CLAN_ADVANCED;
+                }
+                if (year <= 3060) {
+                    return T_IS_UNOFFICIAL;
+                } else if (year <= 3067) {
+                    return T_IS_EXPERIMENTAL;
+                } else if (year <= 3080) {
+                    return T_IS_ADVANCED;
+                } else {
+                    return T_IS_TW_NON_BOX;
+                }
+            case Mech.COCKPIT_PRIMITIVE:
+                if (isClan) {
+                    if (year <= 2807) {
+                        return T_CLAN_UNOFFICIAL;
+                    }
+                    return T_CLAN_ADVANCED;
+                }
+
+                if (year <= 2425) {
+                    return T_IS_UNOFFICIAL;
+                } else if (year <= 2439) {
+                    return T_IS_EXPERIMENTAL;
+                } else if (year <= 2520) {
+                    return T_IS_ADVANCED;
+                } else {
+                    return T_IS_UNOFFICIAL;
+                }
+            case Mech.COCKPIT_PRIMITIVE_INDUSTRIAL:
+                if (isClan) {
+                    return T_CLAN_UNOFFICIAL;
+                }
+                if (year <= 2295) {
+                    return T_IS_UNOFFICIAL;
+                } else if (year <= 2350) {
+                    return T_IS_EXPERIMENTAL;
+                } else if (year <= 2520) {
+                    return T_IS_ADVANCED;
+                } else {
+                    return T_IS_UNOFFICIAL;
+                }
+            case Mech.COCKPIT_INDUSTRIAL:
+                // Not sure how to handle the Adv. Fire Control One.
+                // With advanced Fire Control becomes Non-Box in 2491
+                if (isClan) {
+                    if (year <= 2807) {
+                        return T_CLAN_UNOFFICIAL;
+                    }
+                    return T_CLAN_TW;
+                }
+                if (year <= 2464) {
+                    return T_IS_UNOFFICIAL;
+                } else if (year <= 2470) {
+                    return T_IS_EXPERIMENTAL;
+                } else if (year <= 2490) {
+                    return T_IS_ADVANCED;
+                } else {
+                    return T_IS_TW_NON_BOX;
+                }
+            case Mech.COCKPIT_TORSO_MOUNTED:
+                if (isClan) {
+                    if (year <= 3055) {
+                        return T_CLAN_UNOFFICIAL;
+                    }
+                    return T_CLAN_EXPERIMENTAL;
+                }
+                if (year <= 3053) {
+                    return T_IS_UNOFFICIAL;
+                } else if (year <= 3075) {
+                    return T_IS_EXPERIMENTAL;
+                } else if (year <= 3100) {
+                    return T_IS_ADVANCED;
+                } else {
+                    return T_IS_TW_NON_BOX;
+                }
+            case Mech.COCKPIT_INTERFACE: // Clan Version
+                if (isClan) {
+                    if (year <= 3078) {
+                        return T_CLAN_UNOFFICIAL;
+                    }
+                    return T_CLAN_EXPERIMENTAL;
+                }
+                if (year <= 3069) {
+                    return T_IS_UNOFFICIAL;
+                } else {
+                    return T_IS_EXPERIMENTAL;
+                }
+            case Mech.COCKPIT_COMMAND_CONSOLE:
+                if (isClan) {
+                    if (year <= 2807) {
+                        return T_CLAN_UNOFFICIAL;
+                    }
+                    return T_CLAN_ADVANCED;
+                }
+                if (year <= 2620) {
+                    return T_IS_UNOFFICIAL;
+                } else if (year <= 2631) {
+                    return T_IS_EXPERIMENTAL;
+                } else if (year <= 2845) {
+                    return T_IS_ADVANCED;
+                } else if (year <= 3025) {
+                    return T_IS_UNOFFICIAL;
+                } else {
+                    return T_IS_ADVANCED;
+                }
+            case Mech.COCKPIT_TRIPOD:
+                if (isClan) {
+                    return T_CLAN_UNOFFICIAL;
+                }
+
+                if (year <= 2585) {
+                    return T_IS_UNOFFICIAL;
+                } else if (year <= 2602) {
+                    return T_IS_EXPERIMENTAL;
+                } else {
+                    return T_IS_ADVANCED;
+                }
+
+            case Mech.COCKPIT_SUPERHEAVY:
+                if (isClan) {
+                    return T_CLAN_UNOFFICIAL;
+                }
+
+                if (year <= 3055) {
+                    return T_IS_UNOFFICIAL;
+                } else if (year <= 3076) {
+                    return T_IS_EXPERIMENTAL;
+                } else {
+                    return T_IS_ADVANCED;
+                }
+            case Mech.COCKPIT_SUPERHEAVY_TRIPOD:
+                if (isClan) {
+                    return T_CLAN_UNOFFICIAL;
+                }
+
+                if (year <= 3125) {
+                    return T_IS_UNOFFICIAL;
+                } else if (year <= 3135) {
+                    return T_IS_EXPERIMENTAL;
+                } else {
+                    return T_IS_ADVANCED;
+                }
+            case Mech.COCKPIT_VRRP:
+                if (isClan) {
+                    return T_CLAN_UNOFFICIAL;
+                }
+
+                if (year <= 3052) {
+                    return T_IS_UNOFFICIAL;
+                } else if (year <= 3055) {
+                    return T_IS_EXPERIMENTAL;
+                } else {
+                    return T_IS_UNOFFICIAL;
+                }
+            case Mech.COCKPIT_QUADVEE:
+                if (isClan) {
+                    if (year <= 3125) {
+                        return T_CLAN_UNOFFICIAL;
+                    } else if (year <= 3135) {
+                        return T_CLAN_EXPERIMENTAL;
+                    } else {
+                        return T_CLAN_ADVANCED;
+                    }
+                }
+                return T_IS_UNOFFICIAL;
+            case Mech.COCKPIT_SUPERHEAVY_INDUSTRIAL:
+                if (isClan) {
+                    return T_CLAN_UNOFFICIAL;
+                }
+
+                if (year <= 2900) {
+                    return T_IS_UNOFFICIAL;
+                } else if (year <= 2940) {
+                    return T_IS_EXPERIMENTAL;
+                } else {
+                    return T_IS_ADVANCED;
+                }
+
+        }
+        return T_TECH_UNKNOWN;
+    }
 }

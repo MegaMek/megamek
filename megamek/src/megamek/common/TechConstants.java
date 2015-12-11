@@ -526,7 +526,7 @@ public class TechConstants {
                 } else if (year <= 2487) {
                     return T_IS_ADVANCED;
                 } else {
-                    return T_IS_TW_NON_BOX;
+                    return T_INTRO_BOXSET;
                 }
             case Mech.COCKPIT_SMALL:
                 if (isClan) {

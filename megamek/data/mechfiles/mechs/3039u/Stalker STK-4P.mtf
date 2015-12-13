@@ -1,4 +1,4 @@
-Version:1.1
+Version:1.0
 Stalker
 STK-4P
 
@@ -7,18 +7,17 @@ TechBase:Inner Sphere
 Era:2998
 Source:TRO 3039 - Succession Wars
 Rules Level:1
-History:FLUFF note In earlier years, the Stalker commonly suffered structural weakness symptomatic of the extreme stress the 85 ton 'Mech's skeleton had to bear, necessitating the lightening of the load by a full ten tons. The 4P was a common solution to this problem; techs simply removed a single LRM-10 in order to keep an otherwise capable 'Mech in service. 
 
-Mass:85
-Engine:225 Fusion Engine
-Structure:Standard
+Mass:75
+Engine:225 Fusion Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:20 Single
 Walk MP:3
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:23
 RA Armor:23
 LT Armor:25
@@ -32,23 +31,23 @@ RTR Armor:7
 RTC Armor:10
 
 Weapons:9
-1 ISMediumLaser, Right Arm
-1 ISMediumLaser, Right Arm
-1 ISMediumLaser, Left Arm
-1 ISMediumLaser, Left Arm
-1 ISLargeLaser, Right Torso
-1 ISLargeLaser, Left Torso
-1 ISLRM10, Right Arm, Ammo:12
-1 ISSRM6, Right Torso, Ammo:30
-1 ISSRM6, Left Torso
+Medium Laser, Left Arm
+Medium Laser, Left Arm
+LRM 10, Right Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+Large Laser, Left Torso
+SRM 6, Left Torso
+Large Laser, Right Torso
+SRM 6, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Heat Sink
 Heat Sink
-ISMediumLaser
-ISMediumLaser
+Medium Laser
+Medium Laser
 -Empty-
 -Empty-
 -Empty-
@@ -60,11 +59,11 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Heat Sink
-ISLRM10
-ISLRM10
-ISLRM10 Ammo
-ISMediumLaser
-ISMediumLaser
+LRM 10
+LRM 10
+IS Ammo LRM-10
+Medium Laser
+Medium Laser
 -Empty-
 -Empty-
 -Empty-
@@ -72,11 +71,11 @@ ISMediumLaser
 
 Left Torso:
 Heat Sink
-ISLargeLaser
-ISLargeLaser
-ISSRM6
-ISSRM6
-ISSRM6 Ammo
+Large Laser
+Large Laser
+SRM 6
+SRM 6
+IS Ammo SRM-6
 -Empty-
 -Empty-
 -Empty-
@@ -86,11 +85,11 @@ ISSRM6 Ammo
 
 Right Torso:
 Heat Sink
-ISLargeLaser
-ISLargeLaser
-ISSRM6
-ISSRM6
-ISSRM6 Ammo
+Large Laser
+Large Laser
+SRM 6
+SRM 6
+IS Ammo SRM-6
 -Empty-
 -Empty-
 -Empty-
@@ -99,16 +98,16 @@ ISSRM6 Ammo
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Heat Sink
 Heat Sink
 
@@ -119,6 +118,12 @@ Cockpit
 -Empty-
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
@@ -127,6 +132,12 @@ Lower Leg Actuator
 Foot Actuator
 Heat Sink
 Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
@@ -135,3 +146,11 @@ Lower Leg Actuator
 Foot Actuator
 Heat Sink
 Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

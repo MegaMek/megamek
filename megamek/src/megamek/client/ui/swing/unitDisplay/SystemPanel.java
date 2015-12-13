@@ -851,10 +851,12 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                         && (m.getLinked().getUsableShotsLeft() > 0)) {
                     m_bDumpAmmo.setEnabled(true);
                 }
+                int round = client.getGame().getRoundCount();
+                boolean inSquadron = ((en instanceof Aero) && ((Aero) en)
+                        .isInASquadron());
                 if ((m != null) && bOwner && m.getType().hasModes()) {
                     if (!m.isInoperable() && !m.isDumping()
-                            && (en.isActive() || ((en instanceof Aero) && ((Aero) en)
-                                    .isInASquadron()))
+                            && (en.isActive() || en.isActive(round) || inSquadron)
                             && m.isModeSwitchable()) {
                         m_chMode.setEnabled(true);
                     }

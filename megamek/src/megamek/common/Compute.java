@@ -3683,9 +3683,9 @@ public class Compute {
     }
 
     public static int getVisualRange(IGame game, Entity ae, LosEffects los,
-                                     boolean teIlluminated) {
+            boolean teIlluminated) {
         int visualRange = game.getPlanetaryConditions().getVisualRange(ae,
-                                                                       teIlluminated);
+                teIlluminated);
         visualRange -= los.getLightSmoke();
         visualRange -= 2 * los.getHeavySmoke();
         visualRange = Math.max(1, visualRange);

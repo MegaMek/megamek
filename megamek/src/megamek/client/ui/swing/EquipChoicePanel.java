@@ -46,6 +46,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Jumpship;
 import megamek.common.LocationFullException;
@@ -608,6 +609,11 @@ public class EquipChoicePanel extends JPanel implements Serializable {
     private void setupMunitions() {
         GridBagLayout gbl = new GridBagLayout();
         panMunitions.setLayout(gbl);
+        IGame game = clientgui.getClient().getGame();
+        IOptions gameOpts = game.getOptions();
+        int gameYear = gameOpts.intOption("year");
+        boolean isClan = entity.isClan();
+
         for (Mounted m : entity.getAmmo()) {
             AmmoType at = (AmmoType) m.getType();
             ArrayList<AmmoType> vTypes = new ArrayList<AmmoType>();
@@ -631,18 +637,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 continue;
             }
 
-            for (int x = 0, n = vAllTypes.size(); x < n; x++) {
-                AmmoType atCheck = vAllTypes.elementAt(x);
-                IOptions gameOpts = 
-                        clientgui.getClient().getGame().getOptions();
-                int atTechLvl = 
-                        atCheck.getTechLevel(gameOpts.intOption("year"));
-
-                int techlvl = Arrays.binarySearch(TechConstants.T_SIMPLE_NAMES,
-                        gameOpts.stringOption("techlevel")); //$NON-NLS-1$
-                techlvl = Math.max(0, techlvl);
-                int legalLevel = TechConstants.convertFromSimplelevel(techlvl,
-                        entity.isClan());
+            for (AmmoType atCheck : vAllTypes) {
+                int atTechLvl = atCheck.getTechLevel(gameYear);
+                int legalLevel = TechConstants.getGameTechLevel(game, isClan);
                 boolean bTechMatch = TechConstants.isLegal(legalLevel,
                         atTechLvl, true, entity.isMixedTech());
 

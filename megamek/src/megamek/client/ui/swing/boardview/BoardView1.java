@@ -4814,9 +4814,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int entityCount = 0;
         // Maximum number of entities to show in the tooltip
         int maxShown = 4; 
-        
+
+        Set<Entity> coordEnts = new HashSet<>(game.getEntitiesVector(mcoords));
         for (EntitySprite eSprite : entitySprites) {
-            if (eSprite.isInside(point)) {
+            if (eSprite.isInside(point) || coordEnts.contains(eSprite.entity)) {
                 entityCount++;
                 
                 // List only the first four units

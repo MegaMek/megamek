@@ -23,6 +23,7 @@ v0.41.12-git
 + Bug [#4660]: AMS message in round report missing a space
 + Bug [#4661]: Equipment modes cannot be set while unit is deploying
 + Bug [#4658]: FoV darken/highlight considers visual range when DB is not on
++ Bug [#4657]: Entity tooltips now displayed on mousing over sprite or hex
 
 v0.41.11 (2015-11-15 16:50 UTC)
 + Data: New Sprites.

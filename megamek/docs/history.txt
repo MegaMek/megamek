@@ -20,6 +20,7 @@ v0.41.12-git
 + Bug: Oddities mounting BA with magclamps in lounge
 + Data: New Sprites and some unit fixes.
 + Feature: Entity tooltips now display current sensor if sensors rules used
++ Bug [#4660]: AMS message in round report missing a space
 
 v0.41.11 (2015-11-15 16:50 UTC)
 + Data: New Sprites.

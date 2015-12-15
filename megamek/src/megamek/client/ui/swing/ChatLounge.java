@@ -3774,10 +3774,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                                         && allUnloaded);
                                 menuDocking.add(menuItem);
                             } else if (allBattleArmor && allHaveMagClamp
-                                    && !loader.isOmni()) {
+                                    && !loader.isOmni()
+                                    // Only load magclamps if applicable
+                                    && loader.hasUnloadedClampMount()
+                                    // Only choose MagClamps as last option
+                                    && (loader.getUnused(entities.get(0)) < 2)) {
                                 for (Transporter t : loader.getTransports()) {
-                                    if (((t instanceof ClampMountMech) || (t instanceof ClampMountTank))
-                                            && allHaveMagClamp) {
+                                    if ((t instanceof ClampMountMech)
+                                            || (t instanceof ClampMountTank)) {
                                         menuItem = new JMenuItem("Onto "
                                                 + loader.getShortName());
                                         menuItem.setActionCommand("LOAD|"
@@ -3862,12 +3866,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                                     && allUnloaded);
                             popup.add(menuClamp);
                         }
+                        boolean hasMounting = menuMounting
+                                .getMenuComponentCount() > 0;
+                        boolean hasSquadrons = menuSquadrons
+                                .getMenuComponentCount() > 0;
+                        boolean hasDocking = menuDocking
+                                .getMenuComponentCount() > 0;
+                        boolean hasLoad = menu.getMenuComponentCount() > 0;
+                        boolean hasClamp = menuClamp.getMenuComponentCount() > 0;
                         if ((menuLoadAll.getMenuComponentCount() > 0)
-                                && !((menuMounting.getMenuComponentCount() > 0)
-                                        || (menuSquadrons
-                                                .getMenuComponentCount() > 0)
-                                        || (menuDocking.getMenuComponentCount() > 0) || (menu
-                                        .getMenuComponentCount() > 0))) {
+                                && !(hasMounting || hasSquadrons || hasDocking
+                                        || hasLoad || hasClamp)) {
                             menuLoadAll.setEnabled((isOwner || isBot)
                                     && allUnloaded);
                             popup.add(menuLoadAll);

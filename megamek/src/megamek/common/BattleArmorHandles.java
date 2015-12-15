@@ -323,7 +323,7 @@ import java.util.Vector;
 
     @Override
     public String toString() {
-        return "";
+        return "BattleArmorHandles - troopers:" + troopers;
     }
 
     public void setGame(IGame game) {

@@ -16,6 +16,14 @@ v0.41.12-git
 + Bug [#4654]: Vehicles falling into basements: facing and damage issues
 + Bug [#4050]: Game-year based Tech Levels for Engines/Gyros/Cockpits
 + Bug [#4555]: Aeros strike/dive bomb now lose altitude before attacks resolve
++ Updated comment headers in .tileset files for hexes
++ Bug: Oddities mounting BA with magclamps in lounge
++ Data: New Sprites and some unit fixes.
++ Feature: Entity tooltips now display current sensor if sensors rules used
++ Bug [#4660]: AMS message in round report missing a space
++ Bug [#4661]: Equipment modes cannot be set while unit is deploying
++ Bug [#4658]: FoV darken/highlight considers visual range when DB is not on
++ Bug [#4657]: Entity tooltips now displayed on mousing over sprite or hex
 
 v0.41.11 (2015-11-15 16:50 UTC)
 + Data: New Sprites.

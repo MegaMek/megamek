@@ -1,4 +1,5 @@
-# suggested hex tileset
+# Same as isometric, except it contains animated tiles
+# Animates tiles will increase resource usage in MegaMek
 #
 # format is:
 # base/super <elevation> <terrains> <theme> <image>
@@ -11,6 +12,11 @@
 #   theme for which this image is used instead.  E.G. "snow"
 # <image> can be a list separated by ; character. In this case, they are shuffled
 #   for each hex painted.
+#
+# Image Size:
+#   Hexes in MegaMek are drawn to be 84x72 pixels.  In general, hex textures follow this size.
+#   The data/images/misc directory contains an example image that shows hex borders to add in creating hex textures.
+#   Textures larger than 84x72 are also supported and can be specified exactly like regular 84x72 images.
 #
 # Important:
 #   when multiple "super" images are used in a hex, the first one in this file is drawn first.

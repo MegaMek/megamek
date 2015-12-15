@@ -742,14 +742,15 @@ class EntitySprite extends Sprite {
      * @param ttO a list of Objects to insert into the {x} places in the resource.
      */
     private void addToTT(String ttSName, boolean startBR, Object... ttO) {
-        if (startBR == BR) tooltipString.append("<BR>");
-        if (ttO != null)
-        tooltipString.append(Messages.getString(
-                "BoardView1.Tooltip."+ttSName,
-                ttO));
-        else
-            tooltipString.append(Messages.getString(
-                    "BoardView1.Tooltip."+ttSName));
+        if (startBR == BR)
+            tooltipString.append("<BR>");
+        if (ttO != null) {
+            tooltipString.append(Messages.getString("BoardView1.Tooltip."
+                    + ttSName, ttO));
+        } else {
+            tooltipString.append(Messages.getString("BoardView1.Tooltip."
+                    + ttSName));
+        }
     }
     
     /**
@@ -919,6 +920,7 @@ class EntitySprite extends Sprite {
             addToTT("Jammed", BR);
         }
         
+        // If DB, add information about who sees this Entity
         if (bv.game.getOptions().booleanOption("double_blind")) {
             StringBuffer playerList = new StringBuffer();
             boolean teamVision = bv.game.getOptions().booleanOption(
@@ -934,6 +936,12 @@ class EntitySprite extends Sprite {
                 addToTT("SeenBy", BR, playerList.toString());
             }            
         }
+
+        // If sensors, display what sensors this unit is using
+        if (bv.game.getOptions().booleanOption("tacops_sensors")) {
+            addToTT("Sensors", BR, entity.getSensorDesc());
+        }
+
         // Weapon List
         if (GUIPreferences.getInstance()
                 .getBoolean(GUIPreferences.SHOW_WPS_IN_TT)) {

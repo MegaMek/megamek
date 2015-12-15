@@ -1277,10 +1277,11 @@ public class Game implements Serializable, IGame {
         }
 
         // Add magnetic clamp mounts
-        if ((entity instanceof Mech) && !entity.isOmni() && !entity.hasBattleArmorHandles()) {
+        if ((entity instanceof Mech) && !entity.isOmni()
+                && !entity.hasBattleArmorHandles()) {
             entity.addTransporter(new ClampMountMech());
-        } else if ((entity instanceof Tank) && !(entity instanceof VTOL) &&
-                   !entity.isOmni() && !entity.hasBattleArmorHandles()) {
+        } else if ((entity instanceof Tank) && !entity.isOmni()
+                && !entity.hasBattleArmorHandles()) {
             entity.addTransporter(new ClampMountTank());
         }
 

@@ -123,6 +123,12 @@ class FovHighlightingAndDarkening {
             final int pad = 0;
             final int lw = 7;
 
+            boolean sensorsOn = boardView1.game.getOptions().booleanOption(
+                    "tacops_sensors");
+            boolean doubleBlindOn = boardView1.game.getOptions().booleanOption(
+                    "double_blind");
+            boolean inclusiveSensorsOn = boardView1.game.getOptions().booleanOption(
+                    "inclusive_sensor_range");
 
             boolean targetIlluminated = false;
             for (Entity target : this.boardView1.game.getEntitiesVector(c)){
@@ -137,7 +143,9 @@ class FovHighlightingAndDarkening {
             final int max_dist;
             // We don't want to have to compute a LoSEffects yet, as that
             //  can be expensive on large viewing areas
-            if (this.boardView1.selectedEntity != null) {
+            if ((boardView1.selectedEntity != null) && doubleBlindOn) {
+                // We can only use this is double blind is on, otherwise visual
+                // range won't effect LoS
                 max_dist = this.boardView1.game.getPlanetaryConditions()
                         .getVisualRange(this.boardView1.selectedEntity,
                                 targetIlluminated);
@@ -165,9 +173,12 @@ class FovHighlightingAndDarkening {
             } else if (dist < max_dist) {
                 LosEffects los = getCachedLosEffects(src, c);
                 if (null != this.boardView1.selectedEntity) {
-                    visualRange = Compute.getVisualRange(this.boardView1.game,
-                            this.boardView1.selectedEntity, los,
-                            targetIlluminated);
+                    if (doubleBlindOn) { // Visual Range only matters in DB
+                        visualRange = Compute.getVisualRange(
+                                this.boardView1.game,
+                                this.boardView1.selectedEntity, los,
+                                targetIlluminated);
+                    }
                     int bracket = Compute.getSensorRangeBracket(
                             this.boardView1.selectedEntity, null,
                             cachedAllECMInfo);
@@ -177,15 +188,17 @@ class FovHighlightingAndDarkening {
 
                     maxSensorRange = bracket * range;
                     minSensorRange = Math.max((bracket - 1) * range, 0);
-                    if (this.boardView1.game.getOptions().booleanOption(
-                            "inclusive_sensor_range")) {
+                    if (inclusiveSensorsOn) {
                         minSensorRange = 0;
                     }
                 }
+                // Visual Range only matters in DB: ensure no effect w/o DB
+                if (!doubleBlindOn) {
+                    visualRange = dist;
+                }
                 if (!los.canSee() || (dist > visualRange)) {
                     if (darken) {
-                        if (boardView1.game.getOptions().booleanOption(
-                                "tacops_sensors")
+                        if (sensorsOn
                                 && (dist > minSensorRange)
                                 && (dist <= maxSensorRange)) {
                             boardView1.drawHexLayer(p, boardGraph,

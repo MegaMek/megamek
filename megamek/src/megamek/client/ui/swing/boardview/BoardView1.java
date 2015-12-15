@@ -4637,9 +4637,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // Hex Terrain
         if (GUIPreferences.getInstance().getShowMapHexPopup() && (mhex != null)) {
 	
-            txt.append("<TABLE BORDER=0 BGCOLOR=#DDFFDD width=100%><TR><TD>");
+            txt.append("<TABLE BORDER=0 BGCOLOR=#DDFFDD width=100%><TR><TD>"); //$NON-NLS-1$
         	
-            txt.append(Messages.getString("BoardView1.Tooltip.Hex",
+            txt.append(Messages.getString("BoardView1.Tooltip.Hex", //$NON-NLS-1$
                     new Object[] { mcoords.getBoardNum(), mhex.getLevel() }));
             txt.append("<br>"); //$NON-NLS-1$
 
@@ -4661,18 +4661,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
                 }
             }
-            txt.append("</TD></TR></TABLE>");
+            txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
             
             // Fuel Tank
             if (mhex.containsTerrain(Terrains.FUEL_TANK)) {
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
-                txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD>");
-                txt.append(Messages.getString("BoardView1.Tooltip.Bridge", new Object[] {
+                txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD>"); //$NON-NLS-1$
+                txt.append(Messages.getString("BoardView1.Tooltip.Bridge", new Object[] { //$NON-NLS-1$
                         mhex.terrainLevel(Terrains.FUEL_TANK_ELEV),
                         bldg.toString(),
                         bldg.getCurrentCF(mcoords),
                 }));
-                txt.append("</TD></TR></TABLE>");
+                txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
             }
             
             // Building
@@ -4680,8 +4680,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
                 // in the map editor, the building might not exist
                 if (bldg != null) {
-                    txt.append("<TABLE BORDER=0 BGCOLOR=#CCCC99 width=100%><TR><TD>");
-                    txt.append(Messages.getString("BoardView1.Tooltip.Building", new Object[] {
+                    txt.append("<TABLE BORDER=0 BGCOLOR=#CCCC99 width=100%><TR><TD>"); //$NON-NLS-1$
+                    txt.append(Messages.getString("BoardView1.Tooltip.Building", new Object[] { //$NON-NLS-1$
                             mhex.terrainLevel(Terrains.BLDG_ELEV),
                             bldg.toString(),
                             bldg.getCurrentCF(mcoords),
@@ -4691,22 +4691,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     
                     if (bldg.getBasementCollapsed(mcoords)) {
                         txt.append(Messages
-                                .getString("BoardView1.Tooltip.BldgBasementCollapsed"));
+                                .getString("BoardView1.Tooltip.BldgBasementCollapsed")); //$NON-NLS-1$
                     }
-                    txt.append("</TD></TR></TABLE>");
+                    txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
                 }
             }
             
             // Bridge
             if (mhex.containsTerrain(Terrains.BRIDGE)) {
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
-                txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD>");
-                txt.append(Messages.getString("BoardView1.Tooltip.Bridge", new Object[] {
+                txt.append("<TABLE BORDER=0 BGCOLOR=#999999 width=100%><TR><TD>"); //$NON-NLS-1$
+                txt.append(Messages.getString("BoardView1.Tooltip.Bridge", new Object[] { //$NON-NLS-1$
                         mhex.terrainLevel(Terrains.BRIDGE_ELEV),
                         bldg.toString(),
                         bldg.getCurrentCF(mcoords),
                 }));
-                txt.append("</TD></TR></TABLE>");
+                txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
             }
 
             if (game.containsMinefield(mcoords)) {
@@ -4762,7 +4762,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // Show the player(s) that may deploy here 
         // in the artillery autohit designation phase
         if ((game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) && (mhex != null)) {
-            txt.append("<TABLE BORDER=0 width=100%><TR><TD>");
+            txt.append("<TABLE BORDER=0 width=100%><TR><TD>"); //$NON-NLS-1$
             Enumeration<IPlayer> allP = game.getPlayers();
             boolean foundPlayer = false;
             // loop through all players
@@ -4772,25 +4772,25 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 if (game.getBoard().isLegalDeployment(mcoords, cp.getStartingPos())) {
                     if (!foundPlayer) {
                         foundPlayer = true;
-                        txt.append(Messages.getString("BoardView1.Tooltip.ArtyAutoHeader"));
+                        txt.append(Messages.getString("BoardView1.Tooltip.ArtyAutoHeader")); //$NON-NLS-1$
                     }
-                    txt.append("<B><FONT COLOR=#");
+                    txt.append("<B><FONT COLOR=#"); //$NON-NLS-1$
                     txt.append(Integer.toHexString(PlayerColors.getColorRGB(cp.getColorIndex())));
-                    txt.append(">&nbsp;&nbsp;");
+                    txt.append(">&nbsp;&nbsp;"); //$NON-NLS-1$
                     txt.append(cp.getName());
-                    txt.append("</FONT></B><BR>");
+                    txt.append("</FONT></B><BR>"); //$NON-NLS-1$
                 }
             }
-            if (foundPlayer) txt.append("<BR>");
+            if (foundPlayer) txt.append("<BR>"); //$NON-NLS-1$
 
             // Add a hint with keybind that the zones can be shown graphically
-            String keybindText = KeyEvent.getKeyModifiersText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").modifiers);
+            String keybindText = KeyEvent.getKeyModifiersText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").modifiers); //$NON-NLS-1$
             if (!keybindText.isEmpty()) keybindText += "+";
-            keybindText += KeyEvent.getKeyText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").key);
-            txt.append(Messages.getString("BoardView1.Tooltip.ArtyAutoHint", 
+            keybindText += KeyEvent.getKeyText(KeyCommandBind.getBindByCmd("autoArtyDeployZone").key); //$NON-NLS-1$
+            txt.append(Messages.getString("BoardView1.Tooltip.ArtyAutoHint",  //$NON-NLS-1$
                     new Object[] { keybindText }));
             
-            txt.append("</TD></TR></TABLE>");
+            txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
         }
         
 
@@ -4804,9 +4804,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // check if it's on any attacks
         for (AttackSprite aSprite : attackSprites) {
             if (aSprite.isInside(point)) {
-                txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD>");
+                txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD>"); //$NON-NLS-1$
                 txt.append(aSprite.getTooltip().toString());
-                txt.append("</TD></TR></TABLE>");
+                txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
             }
         }
 
@@ -4814,19 +4814,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int entityCount = 0;
         // Maximum number of entities to show in the tooltip
         int maxShown = 4; 
-        
+
+        Set<Entity> coordEnts = new HashSet<>(game.getEntitiesVector(mcoords));
         for (EntitySprite eSprite : entitySprites) {
-            if (eSprite.isInside(point)) {
+            if (eSprite.isInside(point) || coordEnts.contains(eSprite.entity)) {
                 entityCount++;
                 
                 // List only the first four units
                 if (entityCount <= maxShown) {
                     // Table to add a bar to the left of an entity in
                     // the player's color
-                    txt.append("<hr style=width:90%>");
-                    txt.append("<TABLE><TR><TD bgcolor=#");
+                    txt.append("<hr style=width:90%>"); //$NON-NLS-1$
+                    txt.append("<TABLE><TR><TD bgcolor=#"); //$NON-NLS-1$
                     txt.append(eSprite.getPlayerColor());
-                    txt.append(" width=6></TD><TD>");
+                    txt.append(" width=6></TD><TD>"); //$NON-NLS-1$
 
                     // TT generated by Sprite
                     txt.append(eSprite.getTooltip());
@@ -4834,21 +4835,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     // ECM and ECCM source
                     if ((ecmCenters != null)
                             && ecmCenters.containsKey(eSprite.getPosition())) {
-                        txt.append("<br><FONT SIZE=-2><img src=file:"
+                        txt.append("<br><FONT SIZE=-2><img src=file:" //$NON-NLS-1$
                                 + Configuration.widgetsDir()
-                                + "/Tooltip/ECM.png>&nbsp;");
+                                + "/Tooltip/ECM.png>&nbsp;"); //$NON-NLS-1$
                         txt.append(Messages.getString("BoardView1.ecmSource")); //$NON-NLS-1$
-                        txt.append("</FONT>");
+                        txt.append("</FONT>"); //$NON-NLS-1$
                     }
                     if ((eccmCenters != null)
                             && eccmCenters.containsKey(eSprite.getPosition())) {
-                        txt.append("<br><FONT SIZE=-2><img src=file:"
+                        txt.append("<br><FONT SIZE=-2><img src=file:" //$NON-NLS-1$
                                 + Configuration.widgetsDir()
-                                + "/Tooltip/ECM.png>&nbsp;");
+                                + "/Tooltip/ECM.png>&nbsp;"); //$NON-NLS-1$
                         txt.append(Messages.getString("BoardView1.eccmSource")); //$NON-NLS-1$
                         txt.append("</FONT>");
                     }
-                    txt.append("</TD></TR></TABLE>");
+                    txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
                 } 
             }
         }

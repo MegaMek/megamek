@@ -22,21 +22,21 @@ Jump MP:0
 Armor:Standard(Inner Sphere)
 LA Armor:32
 RA Armor:32
-LT Armor:29
-RT Armor:29
+LT Armor:30
+RT Armor:30
 CT Armor:44
 HD Armor:9
-LL Armor:39
-RL Armor:39
+LL Armor:38
+RL Armor:38
 RTL Armor:10
 RTR Armor:10
 RTC Armor:15
 
 Weapons:5
-Gauss Rifle, Left Torso
+Heavy PPC, Left Arm
 Light PPC, Left Arm
 Light PPC, Right Arm
-Heavy PPC, Left Arm
+Gauss Rifle, Left Torso
 ER Medium Laser, Head
 
 Left Arm:

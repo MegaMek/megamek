@@ -450,10 +450,10 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
             if ((m.getType() instanceof MiscType)
                     && ((MiscType) m.getType()).isShield()) {
                 sb.append(" " //$NON-NLS-1$
-                        + m.getDamageAbsorption(en, loc)
+                        + m.getDamageAbsorption(en, m.getLocation())
                         + '/' //$NON-NLS-1$
                         + m.getCurrentDamageCapacity(en,
-                                loc) + ')'); //$NON-NLS-1$
+                                m.getLocation()) + ')'); //$NON-NLS-1$
             }
         }
         return sb.toString();

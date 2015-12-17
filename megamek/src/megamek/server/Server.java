@@ -1237,7 +1237,7 @@ public class Server implements Runnable {
                 ghosts.add(p);
             } else {
                 // non-ghosts set their starting positions to any
-                p.setStartingPos(0);
+                p.setStartingPos(Board.START_ANY);
                 send(createPlayerUpdatePacket(p.getId()));
             }
         }

@@ -4816,8 +4816,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int maxShown = 4; 
 
         Set<Entity> coordEnts = new HashSet<>(game.getEntitiesVector(mcoords));
+        Set<Entity> usedSet = new HashSet<Entity>(entitySprites.size());
         for (EntitySprite eSprite : entitySprites) {
-            if (eSprite.isInside(point) || coordEnts.contains(eSprite.entity)) {
+            if ((eSprite.isInside(point) || coordEnts.contains(eSprite.entity))
+                    && !usedSet.contains(eSprite.entity)) {
+                usedSet.add(eSprite.entity);
                 entityCount++;
                 
                 // List only the first four units

@@ -4230,6 +4230,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 clear();
                 cmd.addStep(MoveStepType.VTAKEOFF);
                 ready();
+                clear();
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_LAND.getCmd())) {
             if ((ce() instanceof Aero)

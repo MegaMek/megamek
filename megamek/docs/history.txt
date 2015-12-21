@@ -29,7 +29,8 @@ v0.41.12-git
 + Bug [#4662]: Strafing Error When Targeting Building with Infantry
 + Bug: Answering 'No' to Vertical Takeoff PSR Nag doesn't clear move path
 + Bug: Missing 'in crater' penalty for vertical take-off (TW pg 88)
-+ Bug [#4665]: Landed dropshps unable to takeoff/unload if on prohibited terrain
++ Bug [#4665]: Landed dropships unable to takeoff/unload if on prohibited terrain
++ Data: New Sprites, Unit Fixes, adding XTRO Republic III units
 
 v0.41.11 (2015-11-15 16:50 UTC)
 + Data: New Sprites.

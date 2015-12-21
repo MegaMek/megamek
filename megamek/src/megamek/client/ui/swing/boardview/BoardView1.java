@@ -1234,12 +1234,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         
         for (HexSprite sprite : spriteArrayList) {
             Coords cp = sprite.getPosition();
-            if (cp.equals(c) && view.intersects(sprite.getBounds())
+            // This can potentially be an expensive operation
+            Rectangle spriteBounds = sprite.getBounds();
+            if (cp.equals(c) && view.intersects(spriteBounds)
                     && !sprite.isHidden()) {
                 if (!sprite.isReady()) {
                     sprite.prepare();
                 }
-                sprite.drawOnto(g, sprite.getBounds().x, sprite.getBounds().y,
+                sprite.drawOnto(g, spriteBounds.x, spriteBounds.y,
                         this, false);
             }
         }
@@ -1261,13 +1263,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         Rectangle view = g.getClipBounds();
         for (IsometricSprite sprite : spriteArrayList) {
             Coords cp = sprite.getPosition();
-            if (cp.equals(c) && view.intersects(sprite.getBounds())
+            // This can potentially be an expensive operation
+            Rectangle spriteBounds = sprite.getBounds();
+            if (cp.equals(c) && view.intersects(spriteBounds)
                 && !sprite.isHidden()) {
                 if (!sprite.isReady()) {
                     sprite.prepare();
                 }
-                sprite.drawOnto(g, sprite.getBounds().x, sprite.getBounds().y,
-                                this, false);
+                sprite.drawOnto(g, spriteBounds.x, spriteBounds.y, this, false);
             }
         }
     }
@@ -1313,11 +1316,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             List<IsometricSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricSprite sprite : spriteArrayList) {
-            if (view.intersects(sprite.getBounds()) && !sprite.isHidden()) {
+            // This can potentially be an expensive operation
+            Rectangle spriteBounds = sprite.getBounds();
+            if (view.intersects(spriteBounds) && !sprite.isHidden()) {
                 if (!sprite.isReady()) {
                     sprite.prepare();
                 }
-                sprite.drawOnto(g, sprite.getBounds().x, sprite.getBounds().y,
+                sprite.drawOnto(g, spriteBounds.x, spriteBounds.y,
                                 this, true);
             }
         }
@@ -1328,12 +1333,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     private final void drawSprite(Graphics g, Sprite sprite) {
         Rectangle view = g.getClipBounds();
-        if (view.intersects(sprite.getBounds()) && !sprite.isHidden()) {
+        // This can potentially be an expensive operation
+        Rectangle spriteBounds = sprite.getBounds();
+        if (view.intersects(spriteBounds) && !sprite.isHidden()) {
             if (!sprite.isReady()) {
                 sprite.prepare();
             }
-            
-            sprite.drawOnto(g, sprite.getBounds().x, sprite.getBounds().y, this);
+            sprite.drawOnto(g, spriteBounds.x, spriteBounds.y, this);
         }
     }
 

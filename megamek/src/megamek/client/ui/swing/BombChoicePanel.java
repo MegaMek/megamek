@@ -74,9 +74,10 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
             b_labels[type] = new JLabel();
             b_choices[type] = new JComboBox<String>();
 
-            for (int x = 0; x <= Math.max(
-                    Math.round(availBombPoints / BombType.getBombCost(type)),
-                    bombChoices[type]); x++) {
+            int maxNumBombs = Math.round(availBombPoints
+                    / BombType.getBombCost(type))
+                    + bombChoices[type];
+            for (int x = 0; x <= maxNumBombs; x++) {
                 b_choices[type].addItem(Integer.toString(x));
             }
 
@@ -132,8 +133,10 @@ public class BombChoicePanel extends JPanel implements Serializable, ItemListene
         for (int type = 0; type < BombType.B_NUM; type++) {
             b_choices[type].removeItemListener(this);
             b_choices[type].removeAllItems();
-            for (int x = 0; x <= Math.max(Math.round(availBombPoints
-                                                     / BombType.getBombCost(type)), current[type]); x++) {
+            int maxNumBombs = Math.round(availBombPoints
+                    / BombType.getBombCost(type))
+                    + current[type];
+            for (int x = 0; x <= maxNumBombs; x++) {
                 b_choices[type].addItem(Integer.toString(x));
             }
             b_choices[type].setSelectedIndex(current[type]);

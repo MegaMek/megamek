@@ -33,6 +33,7 @@ v0.41.12-git
 + Data: New Sprites, Unit Fixes, adding XTRO Republic III units
 + Bug [#4667]: Problem with assigning bombs to ASFs in the lobby
 + Bug [#4668]: UnitDisplay/Minimap positions save poorly with multi-monitors
++ Data: New Sprites and unit name fixes.
 
 v0.41.11 (2015-11-15 16:50 UTC)
 + Data: New Sprites.

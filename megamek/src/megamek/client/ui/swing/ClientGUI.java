@@ -284,14 +284,14 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         cb.systemMessage(message);
         cb2.addChatMessage("Megamek: " + message);
     }
-
+    
     /**
-     * Initializes a number of things about this frame.
+     * Returns the 'virtual bounds' of the screen.  That is, the union of the
+     * displayable space on all available screen devices.
+     * 
+     * @return
      */
-    private void initializeFrame() {
-        frame = new JFrame(Messages.getString("ClientGUI.title")); //$NON-NLS-1$
-        menuBar.setGame(client.getGame());
-        frame.setJMenuBar(menuBar);
+    private Rectangle getVirtualBounds() {
         Rectangle virtualBounds = new Rectangle();
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] gs = ge.getScreenDevices();
@@ -301,6 +301,17 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 virtualBounds = virtualBounds.union(element.getBounds());
             }
         }
+        return virtualBounds;
+    }
+
+    /**
+     * Initializes a number of things about this frame.
+     */
+    private void initializeFrame() {
+        frame = new JFrame(Messages.getString("ClientGUI.title")); //$NON-NLS-1$
+        menuBar.setGame(client.getGame());
+        frame.setJMenuBar(menuBar);
+        Rectangle virtualBounds = getVirtualBounds();
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
             int x = GUIPreferences.getInstance().getWindowPosX();
             int y = GUIPreferences.getInstance().getWindowPosY();
@@ -395,7 +406,6 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         bv.addKeyListener(cb2);
         uo = new UnitOverview(this);
         bv.addDisplayable(uo);
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         int x;
         int y;
         int h;
@@ -420,17 +430,18 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 }
             }
         }; //$NON-NLS-1$
+        Rectangle virtualBounds = getVirtualBounds();
         x = GUIPreferences.getInstance().getDisplayPosX();
         y = GUIPreferences.getInstance().getDisplayPosY();
         h = GUIPreferences.getInstance().getDisplaySizeHeight();
         w = GUIPreferences.getInstance().getDisplaySizeWidth();
-        if ((x + w) > gd.getDisplayMode().getWidth()) {
+        if ((x + w) > virtualBounds.getWidth()) {
             x = 0;
-            w = Math.min(w, gd.getDisplayMode().getWidth());
+            w = Math.min(w, (int)virtualBounds.getWidth());
         }
-        if ((y + h) > gd.getDisplayMode().getHeight()) {
+        if ((y + h) > virtualBounds.getHeight()) {
             y = 0;
-            h = Math.min(h, gd.getDisplayMode().getHeight());
+            h = Math.min(h, (int)virtualBounds.getHeight());
         }
         mechW.setLocation(x, y);
         mechW.setSize(w, h);
@@ -447,13 +458,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         y = GUIPreferences.getInstance().getRulerPosY();
         h = GUIPreferences.getInstance().getRulerSizeHeight();
         w = GUIPreferences.getInstance().getRulerSizeWidth();
-        if ((x + w) > gd.getDisplayMode().getWidth()) {
+        if ((x + w) > virtualBounds.getWidth()) {
             x = 0;
-            w = Math.min(w, gd.getDisplayMode().getWidth());
+            w = Math.min(w, (int)virtualBounds.getWidth());
         }
-        if ((y + h) > gd.getDisplayMode().getHeight()) {
+        if ((y + h) > virtualBounds.getHeight()) {
             y = 0;
-            h = Math.min(h, gd.getDisplayMode().getHeight());
+            h = Math.min(h, (int)virtualBounds.getHeight());
         }
         ruler.setLocation(x, y);
         ruler.setSize(w, h);
@@ -490,11 +501,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         h = minimap.getSize().height;
         w = minimap.getSize().width;
-        if (((x + 10) >= gd.getDisplayMode().getWidth()) || ((x + w) < 10)) {
-            x = gd.getDisplayMode().getWidth() - w;
+        if (((x + 10) >= virtualBounds.getWidth()) || ((x + w) < 10)) {
+            x = (int)virtualBounds.getWidth() - w;
         }
-        if (((y + 10) > gd.getDisplayMode().getHeight()) || ((y + h) < 10)) {
-            y = gd.getDisplayMode().getHeight() - h;
+        if (((y + 10) > virtualBounds.getHeight()) || ((y + h) < 10)) {
+            y = (int)virtualBounds.getHeight() - h;
         }
         minimapW.setLocation(x, y);
         minimapW.addWindowListener(this);

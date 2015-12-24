@@ -95,4 +95,6 @@ public interface ITurnOrdered extends Serializable {
      */
     void clearInitiative(boolean bUseInitComp);
     
+    void setInitiative(InitiativeRoll newRoll);
+
 }

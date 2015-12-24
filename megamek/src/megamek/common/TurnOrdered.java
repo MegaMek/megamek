@@ -253,6 +253,11 @@ public abstract class TurnOrdered implements ITurnOrdered {
         return initiative;
     }
 
+    @Override
+    public void setInitiative(InitiativeRoll newRoll) {
+        initiative = newRoll;
+    }
+
     /**
      * Clear the initiative of this object.
      */

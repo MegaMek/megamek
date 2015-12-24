@@ -718,7 +718,7 @@ public abstract class TestEntity implements TestEntityOption {
             if (nextE instanceof AmmoType) {
                 if (!TechConstants.isLegal(ammoTechLvl, eqTechLvl, mixedTech)) {
                     if (!retVal) {
-                        buff.append("Equipment illegal at unit's tech level:\n");
+                        buff.append("Ammo illegal at unit's tech level:\n");
                     }
                     retVal = true;
                     buff.append(nextE.getName()).append("\n");

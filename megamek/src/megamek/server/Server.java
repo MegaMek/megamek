@@ -27985,7 +27985,7 @@ public class Server implements Runnable {
             if (testEntity != null) {
                 StringBuffer sb = new StringBuffer();
                 if (testEntity.correctEntity(sb,
-                        TechConstants.getSimpleLevel(game))) {
+                        TechConstants.getGameTechLevel(game, entity.isClan()))) {
                     entity.setDesignValid(true);
                 } else {
                     System.err.println(sb);

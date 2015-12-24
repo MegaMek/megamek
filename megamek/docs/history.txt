@@ -34,6 +34,7 @@ v0.41.12 (2015-12-23 2:48 UTC)
 + Bug [#4667]: Problem with assigning bombs to ASFs in the lobby
 + Bug [#4668]: UnitDisplay/Minimap positions save poorly with multi-monitors
 + Data: New Sprites and unit name fixes. Update to Canon Quirks.
++ Bug [#4670]: Clan units with ammunition won't load
 
 v0.41.11 (2015-11-15 16:50 UTC)
 + Data: New Sprites.

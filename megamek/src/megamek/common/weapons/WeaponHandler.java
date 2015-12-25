@@ -333,10 +333,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * @return a <code>boolean</code> value indicating whether this should be
      *         kept or not
      */
-    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
+    public boolean handle(IGame.Phase phase, Vector<Report> returnedReports) {
         if (!cares(phase)) {
             return true;
         }
+        Vector<Report> vPhaseReport = new Vector<Report>();
 
         boolean heatAdded = false;
         int numAttacks = 1;
@@ -346,8 +347,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 && !weapon.curMode().equals("Single")) {
             numAttacks = 2;
         }
-
-        insertAttacks(phase, vPhaseReport);
 
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                 : null;
@@ -389,6 +388,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 r.subject = subjectId;
                 r.add(toHit.getDesc());
                 vPhaseReport.addElement(r);
+                returnedReports.addAll(vPhaseReport);
                 return false;
             } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
                 r = new Report(3140);
@@ -470,6 +470,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             // Do we need some sort of special resolution (minefields,
             // artillery,
             if (specialResolution(vPhaseReport, entityTarget) && (i < 2)) {
+                returnedReports.addAll(vPhaseReport);
                 return false;
             }
 
@@ -488,6 +489,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 // necessary.
                 if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
                         vPhaseReport) && (i < 2)) {
+                    returnedReports.addAll(vPhaseReport);
                     return false;
                 }
             }
@@ -635,6 +637,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
         }
         Report.addNewline(vPhaseReport);
+
+        insertAttacks(phase, vPhaseReport);
+
+        returnedReports.addAll(vPhaseReport);
         return false;
     }
 

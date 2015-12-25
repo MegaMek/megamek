@@ -397,7 +397,8 @@ public class MapSettings implements Serializable {
         this.mapHeight = mapHeight;
         // Create null entries for everything that isn't surprise or generated
         for (int i = 0; i < boardsSelected.size(); i++) {
-            if (!boardsSelected.get(i).equals(BOARD_GENERATED)
+            if ((boardsSelected.get(i) != null)
+                    && !boardsSelected.get(i).equals(BOARD_GENERATED)
                     && !boardsSelected.get(i).equals(BOARD_SURPRISE)) {
                 boardsSelected.set(i, null);
             }

@@ -1,6 +1,9 @@
 VERSION HISTORY:
 ----------------
 v0.41.13-git
++ Bug [#4666]: Santa Anna Missiles Incorrect Damage in Space Battles
++ Bug [#4609]: Teleguided missiles fire like normal missiles
+
 
 v0.41.12 (2015-12-23 2:48 UTC)
 + Bug: Minimap still visible after using /reset command

@@ -25042,6 +25042,7 @@ public class Server implements Runnable {
                                                             "Nuclear attack", false);
             game.addControlRoll(nukePSR);
 
+            Report.addNewline(vDesc);
             // need some kind of report
             int nukeroll = Compute.d6(2);
             r = new Report(9145);
@@ -25057,6 +25058,7 @@ public class Server implements Runnable {
                 r = new Report(9146);
                 r.subject = a.getId();
                 r.add(nukeDamage);
+                r.indent(4);
                 r.add(Math.max(a.getSI(), 0));
                 vDesc.addElement(r);
                 if (a.getSI() <= 0) {
@@ -25072,6 +25074,7 @@ public class Server implements Runnable {
             } else {
                 r = new Report(9147);
                 r.subject = a.getId();
+                r.indent(4);
                 vDesc.addElement(r);
             }
         }

@@ -10232,6 +10232,9 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Santa Anna Ammo";
         ammo.setInternalName("Ammo Santa Anna");
         ammo.addLookupName("SantaAnna Ammo");
+        ammo.shortName = "Santa Anna";
+        ammo.subMunitionBegin = 0;
+        ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 100;
         ammo.ammoType = AmmoType.T_KILLER_WHALE;
         ammo.munitionType = AmmoType.M_SANTA_ANNA;
@@ -10251,6 +10254,9 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Clan Santa Anna Ammo";
         ammo.setInternalName("Ammo Clan Santa Anna");
         ammo.addLookupName("CLSantaAnna Ammo");
+        ammo.shortName = "Santa Anna";
+        ammo.subMunitionBegin = 0;
+        ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 100;
         ammo.ammoType = AmmoType.T_KILLER_WHALE;
         ammo.munitionType = AmmoType.M_SANTA_ANNA;
@@ -10564,6 +10570,9 @@ public class AmmoType extends EquipmentType {
         ammo.name = "AR10 Santa Anna Ammo";
         ammo.setInternalName("Ammo AR10 Santa Anna");
         ammo.addLookupName("AR10 SantaAnna Ammo");
+        ammo.shortName = "Santa Anna";
+        ammo.subMunitionBegin = 0;
+        ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 100;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.munitionType = AmmoType.M_SANTA_ANNA;
@@ -10584,6 +10593,9 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Clan AR10 Santa Anna Ammo";
         ammo.setInternalName("Ammo Clan AR10 Santa Anna");
         ammo.addLookupName("CLAR10 SantaAnna Ammo");
+        ammo.shortName = "Santa Anna";
+        ammo.subMunitionBegin = 0;
+        ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 100;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.munitionType = AmmoType.M_SANTA_ANNA;

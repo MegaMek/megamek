@@ -5,8 +5,8 @@ LNC25-04
 Config:Biped
 TechBase:Inner Sphere
 Era:3060
+Source:TRO 3050 - Clan Invasion
 Rules Level:2
-source:TRO 3067
 
 Mass:60
 Engine:360 XL Engine

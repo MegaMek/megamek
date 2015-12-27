@@ -1,19 +1,19 @@
 Version:1.0
 Stalker
-STK-7D
+STK-8S
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3062
+Era:3064
+Source:TRO 3050 - Civil War
 Rules Level:2
-source:TRO 3067
 
 Mass:85
-Engine:255 Fusion Engine
+Engine:255 Light Engine
 Structure:Standard
 Myomer:Standard
 
-Heat Sinks:18 Double
+Heat Sinks:16 Double
 Walk MP:3
 Jump MP:0
 
@@ -30,15 +30,13 @@ RTL Armor:7
 RTR Armor:7
 RTC Armor:11
 
-Weapons:8
-1 ISStreakSRM4, Right Arm, Ammo:25
-1 ISStreakSRM4, Left Arm
-1 ISERPPC, Right Torso
-1 ISMediumPulseLaser, Right Torso
-1 ISERPPC, Left Torso
-1 ISMediumPulseLaser, Left Torso
-2 ISMediumPulseLaser, Center Torso
-1 ISSmallLaser, Head
+Weapons:6
+1 ISERPPC, Right Arm
+1 ISMediumPulseLaser, Right Arm
+1 ISERPPC, Left Arm
+1 ISMediumPulseLaser, Left Arm
+1 ISHeavyGaussRifle, Right Torso, Ammo:12
+2 ISERMediumLaser, Left Torso
 
 Left Arm:
 Shoulder
@@ -49,10 +47,10 @@ ISDouble Heat Sink
 ISDouble Heat Sink
 ISDouble Heat Sink
 ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISStreakSRM4
+ISERPPC
+ISERPPC
+ISERPPC
+ISMediumPulseLaser
 
 Right Arm:
 Shoulder
@@ -63,38 +61,38 @@ ISDouble Heat Sink
 ISDouble Heat Sink
 ISDouble Heat Sink
 ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISStreakSRM4
+ISERPPC
+ISERPPC
+ISERPPC
+ISMediumPulseLaser
 
 Left Torso:
-ISERPPC
-ISERPPC
-ISERPPC
-ISMediumPulseLaser
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
--Empty-
--Empty-
+Fusion Engine
+Fusion Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISERMediumLaser
+ISERMediumLaser
+ISHeavyGauss Ammo
+ISHeavyGauss Ammo
 
 Right Torso:
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISERPPC
-ISERPPC
-ISERPPC
-ISMediumPulseLaser
-ISStreakSRM4 Ammo
-ISCASE
+Fusion Engine
+Fusion Engine
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
+ISHeavyGauss Ammo
 
 Center Torso:
 Fusion Engine
@@ -107,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMediumPulseLaser
-ISMediumPulseLaser
+ISHeavyGaussRifle (Split)
+ISHeavyGaussRifle (Split)
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISSmallLaser
+-Empty-
 Sensors
 Life Support
 -Empty-

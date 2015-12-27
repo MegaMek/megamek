@@ -50,10 +50,10 @@ ISBAFireDrakeNeedler:LA
 ISBATubeArtillery:Body
 ISBATubeArtilleryAmmo:Body:Shots4#
 ISBATubeArtilleryAmmo:Body:Shots4#
-Clan BA Stealth
-Clan BA Stealth
-Clan BA Stealth
-Clan BA Stealth
+Clan BA Stealth:LA
+Clan BA Stealth:LA
+Clan BA Stealth:RA
+Clan BA Stealth:RA
 </Squad Equipment>
 
 <Trooper 1 Equipment>

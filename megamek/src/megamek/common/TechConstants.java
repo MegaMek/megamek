@@ -579,9 +579,7 @@ public class TechConstants {
                         return T_IS_EXPERIMENTAL;
                     } else if (year <= 2520) {
                         return T_IS_ADVANCED;
-                    } else {
-                        return T_IS_UNOFFICIAL;
-                    }
+                    } 
                 case Mech.COCKPIT_PRIMITIVE_INDUSTRIAL:
                     if (isClan) {
                         return T_CLAN_UNOFFICIAL;
@@ -592,9 +590,7 @@ public class TechConstants {
                         return T_IS_EXPERIMENTAL;
                     } else if (year <= 2520) {
                         return T_IS_ADVANCED;
-                    } else {
-                        return T_IS_UNOFFICIAL;
-                    }
+                    } 
                 case Mech.COCKPIT_INDUSTRIAL:
                     // Not sure how to handle the Adv. Fire Control One.
                     // With advanced Fire Control becomes Non-Box in 2491
@@ -737,7 +733,7 @@ public class TechConstants {
         	switch (cockpitType) {
         	case Aero.COCKPIT_PRIMITIVE:
         		 if (isClan) {
-                         return T_CLAN_UNOFFICIAL;
+                         return T_CLAN_ADVANCED;
                      }
      
                  if (year <= 2100) {
@@ -745,7 +741,7 @@ public class TechConstants {
                  } else if (year <= 2295) {
                      return T_IS_EXPERIMENTAL;
                  } else if (year <= 2520) {
-                     return T_IS_UNOFFICIAL;
+                     return T_IS_ADVANCED;
                  }
         	case Aero.COCKPIT_STANDARD:
                 if (isClan) {

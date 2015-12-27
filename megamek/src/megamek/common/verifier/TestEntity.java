@@ -720,7 +720,7 @@ public abstract class TestEntity implements TestEntityOption {
                     if (!retVal) {
                         buff.append("Ammo illegal at unit's tech level (");
                         buff.append(TechConstants
-                                .getLevelDisplayableName(eqTechLvl));
+                                .getLevelDisplayableName(ammoTechLvl));
                         buff.append(", ");
                         buff.append(eTLYear);
                         buff.append("):\n");
@@ -729,7 +729,7 @@ public abstract class TestEntity implements TestEntityOption {
                     buff.append(nextE.getName());
                     buff.append(", (");
                     buff.append(TechConstants
-                            .getLevelDisplayableName(ammoTechLvl));
+                            .getLevelDisplayableName(eqTechLvl));
                     buff.append(")\n");
                 }
             } else if (!(TechConstants.isLegal(eTechLevel, eqTechLvl, true,
@@ -737,7 +737,7 @@ public abstract class TestEntity implements TestEntityOption {
                 if (!retVal) {
                     buff.append("Equipment illegal at unit's tech level ");
                     buff.append(TechConstants
-                            .getLevelDisplayableName(eqTechLvl));
+                            .getLevelDisplayableName(ammoTechLvl));
                     buff.append(", ");
                     buff.append(eTLYear);
                     buff.append("):\n");
@@ -746,7 +746,7 @@ public abstract class TestEntity implements TestEntityOption {
                 buff.append(nextE.getName());
                 buff.append(", (");
                 buff.append(TechConstants
-                        .getLevelDisplayableName(ammoTechLvl));
+                        .getLevelDisplayableName(eqTechLvl));
                 buff.append(")\n");
             }
         }

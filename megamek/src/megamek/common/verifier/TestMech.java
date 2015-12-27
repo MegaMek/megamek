@@ -552,6 +552,12 @@ public class TestMech extends TestEntity {
             return false;
         }
 
+        if (((getMech().getGyroType() == Mech.GYRO_NONE))
+                ) {
+            buff.append("Missing Gyro!.\n");
+            return false;
+        }
+
         return true;
     }
 

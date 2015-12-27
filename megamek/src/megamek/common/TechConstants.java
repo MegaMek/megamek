@@ -513,6 +513,8 @@ public class TechConstants {
                 // } else {
                 // return T_IS_ADVANCED;
                 // }
+            case Mech.GYRO_NONE:
+                return T_ALLOWED_ALL;
 
         }
 

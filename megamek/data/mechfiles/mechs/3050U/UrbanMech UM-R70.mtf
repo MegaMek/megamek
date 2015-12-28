@@ -5,8 +5,8 @@ UM-R70
 Config:Biped
 TechBase:Inner Sphere
 Era:3066
+Source:TRO 3050 - Civil War
 Rules Level:2
-source:TRO 3067
 
 Mass:30
 Engine:60 Fusion Engine

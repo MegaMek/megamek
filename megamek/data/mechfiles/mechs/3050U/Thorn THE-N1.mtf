@@ -5,8 +5,8 @@ THE-N1
 Config:Biped
 TechBase:Inner Sphere
 Era:3051
+Source:TRO 3050 - Clan Invasion
 Rules Level:2
-source:TRO 3067
 
 Mass:20
 Engine:120 XL Engine

@@ -5,6 +5,9 @@ v0.41.13-git
 + Bug [#4609]: Teleguided missiles fire like normal missiles
 + Bug: Potential NPE in MapSettings.setMapSize
 + Bug: Fixes to dates with Engines/Cockpits/equipment.
++ Data: New Sprites, Unit Fixes and Reorganized Small Craft again.
++ Data: New and RATs (ATOW,MW3rd, missing TRO 3085)(Thanks Magnus Kerensky)
++ Bug: Couple of Ammo Date Fixes.
 
 v0.41.12 (2015-12-23 2:48 UTC)
 + Bug: Minimap still visible after using /reset command

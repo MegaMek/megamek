@@ -8415,7 +8415,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.introDate = 3067;
-        ammo.techLevel.put(3071, ammo.techLevel.get(3071));
+        ammo.techLevel.put(3067, ammo.techLevel.get(3071));
         ammo.availRating = new int[]{EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_E};
         ammo.techRating = RATING_E;
@@ -8438,7 +8438,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 5;
         ammo.cost = 2000;
         ammo.introDate = 3067;
-        ammo.techLevel.put(3071, ammo.techLevel.get(3071));
+        ammo.techLevel.put(3067, ammo.techLevel.get(3071));
         ammo.availRating = new int[]{EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_E;

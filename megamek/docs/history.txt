@@ -8,6 +8,7 @@ v0.41.13-git
 + Data: New Sprites, Unit Fixes and Reorganized Small Craft again.
 + Data: New and RATs (ATOW,MW3rd, missing TRO 3085)(Thanks Magnus Kerensky)
 + Bug: Couple of Ammo Date Fixes.
++ Feature: Added unofficial option to not generate smoke from burning woods
 
 v0.41.12 (2015-12-23 2:48 UTC)
 + Bug: Minimap still visible after using /reset command

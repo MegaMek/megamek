@@ -180,6 +180,8 @@ public class FireProcessor extends DynamicTerrainProcessor {
                 IHex currentHex = board.getHex(currentXCoord, currentYCoord);
 
                 if(currentHex.containsTerrain(Terrains.FIRE)) {
+                    Building bldg = game.getBoard().getBuildingAt(
+                            currentCoords);
                     //was the fire started this turn?
                     if(currentHex.getFireTurn() == 0) {
                         //report fire started this round
@@ -188,8 +190,6 @@ public class FireProcessor extends DynamicTerrainProcessor {
                         vPhaseReport.addElement(r);
 
                         // If the hex contains a building, set it on fire.
-                        Building bldg = game.getBoard().getBuildingAt(
-                                currentCoords);
                         if (bldg != null) {
                             bldg.setBurning(true, currentCoords);
                         }
@@ -198,9 +198,15 @@ public class FireProcessor extends DynamicTerrainProcessor {
                     //check for any explosions
                     server.checkExplodeIndustrialZone(currentCoords, vPhaseReport);
 
-                    //Add smoke (unless we are in a tornado)
+                    //Add smoke, unless tornado or optional rules
+                    boolean containsForest = (currentHex
+                            .containsTerrain(Terrains.WOODS) || currentHex
+                            .containsTerrain(Terrains.JUNGLE));
                     boolean bInferno = currentHex.terrainLevel(Terrains.FIRE) == 2;
-                    if (game.getPlanetaryConditions().getWindStrength() < PlanetaryConditions.WI_TORNADO_F13) {
+                    if ((game.getPlanetaryConditions().getWindStrength() < PlanetaryConditions.WI_TORNADO_F13)
+                            && !(game.getOptions().booleanOption(
+                                    "forest_fires_no_smoke")
+                                    && containsForest && (bldg == null))) {
                         ArrayList<Coords> smokeList = new ArrayList<Coords>();
 
                         smokeList.add(new Coords(Coords.xInDir(currentXCoord, currentYCoord, windDirection), Coords.yInDir(currentXCoord, currentYCoord, windDirection)));

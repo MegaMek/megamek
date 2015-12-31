@@ -29,6 +29,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultRowSorter;
 import javax.swing.JButton;
@@ -41,6 +43,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -91,6 +94,9 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
      *
      */
     private static final long serialVersionUID = 8144354264100884817L;
+
+    public static final String CLOSE_ACTION = "closeAction";
+    public static final String SELECT_ACTION = "selectAction";
 
     private JButton btnSelectClose;
     private JButton btnSelect;
@@ -176,6 +182,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
 
         unitModel = new MechTableModel();
         initComponents();
+
         GUIPreferences guip = GUIPreferences.getInstance();
         int width = guip.getMechSelectorSizeWidth();
         int height = guip.getMechSelectorSizeHeight();
@@ -478,6 +485,40 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         getContentPane().add(panelOKBtns, c);
 
         pack();
+
+        // Escape keypress
+        Action closeAction = new AbstractAction() {
+            private static final long serialVersionUID = 2587225044226668664L;
+
+            public void actionPerformed(ActionEvent e) {
+                close();
+            }
+        };
+
+        Action selectAction = new AbstractAction() {
+            private static final long serialVersionUID = 4043951169453748540L;
+
+            public void actionPerformed(ActionEvent e) {
+                select(false);
+            }
+        };
+
+        JRootPane rootPane = getRootPane();
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+        rootPane.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+                .put(escape, CLOSE_ACTION);
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape,
+                CLOSE_ACTION);
+        rootPane.getInputMap(JComponent.WHEN_FOCUSED).put(escape, CLOSE_ACTION);
+        rootPane.getActionMap().put(CLOSE_ACTION, closeAction);
+
+        rootPane.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
+                .put(enter, SELECT_ACTION);
+        rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(enter,
+                SELECT_ACTION);
+        rootPane.getInputMap(JComponent.WHEN_FOCUSED).put(enter, SELECT_ACTION);
+        rootPane.getActionMap().put(SELECT_ACTION, selectAction);
     }
 
     private void  updateTypeCombo() {
@@ -932,6 +973,11 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
                     ActionEvent.ACTION_PERFORMED, ""); //$NON-NLS-1$
             actionPerformed(event);
         }
+        if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            ActionEvent event = new ActionEvent(btnClose,
+                    ActionEvent.ACTION_PERFORMED, ""); //$NON-NLS-1$
+            actionPerformed(event);
+        }
         long curTime = System.currentTimeMillis();
         if ((curTime - lastSearch) > KEY_TIMEOUT) {
             searchBuffer = new StringBuffer();
@@ -953,7 +999,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
         } else if (ev.getSource().equals(btnSelectClose)) {
             select(true);
         } else if (ev.getSource().equals(btnClose)) {
-            setVisible(false);
+            close();
         } else if (ev.getSource().equals(btnShowBV)) {
             JEditorPane tEditorPane = new JEditorPane();
             tEditorPane.setContentType("text/html");
@@ -1014,6 +1060,10 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
      */
     public Entity getChosenEntity() {
         return chosenEntity;
+    }
+
+    private void close() {
+        setVisible(false);
     }
 
  }

@@ -109,8 +109,8 @@ class MovementSprite extends Sprite {
 
     private void makePoly() {
         // make a polygon
-        a = this.bv.getHexLocation(start);
-        t = this.bv.getHexLocation(end);
+        a = bv.getHexLocation(start);
+        t = bv.getHexLocation(end);
         // OK, that is actually not good. I do not like hard coded figures.
         // HEX_W/2 - x distance in pixels from origin of hex bounding box to
         // the center of hex.
@@ -120,16 +120,16 @@ class MovementSprite extends Sprite {
         // directly
         // in the centes of hex and hiding mek under.
 
-        a.x = a.x + (int) ((BoardView1.HEX_W / 2) * this.bv.scale)
-                + (int) Math.round(Math.cos(an) * (int) (18 * this.bv.scale));
-        t.x = (t.x + (int) ((BoardView1.HEX_W / 2) * this.bv.scale))
-                - (int) Math.round(Math.cos(an) * (int) (18 * this.bv.scale));
-        a.y = a.y + (int) ((BoardView1.HEX_H / 2) * this.bv.scale)
-                + (int) Math.round(Math.sin(an) * (int) (18 * this.bv.scale));
+        a.x = a.x + (int) ((BoardView1.HEX_W / 2) * bv.scale)
+                + (int) Math.round(Math.cos(an) * (int) (18 * bv.scale));
+        t.x = (t.x + (int) ((BoardView1.HEX_W / 2) * bv.scale))
+                - (int) Math.round(Math.cos(an) * (int) (18 * bv.scale));
+        a.y = a.y + (int) ((BoardView1.HEX_H / 2) * bv.scale)
+                + (int) Math.round(Math.sin(an) * (int) (18 * bv.scale));
         t.y = (t.y + (int) ((BoardView1.HEX_H / 2) * this.bv.scale))
-                - (int) Math.round(Math.sin(an) * (int) (18 * this.bv.scale));
-        movePoly = new StraightArrowPolygon(a, t, (int) (4 * this.bv.scale),
-                (int) (8 * this.bv.scale), false);
+                - (int) Math.round(Math.sin(an) * (int) (18 * bv.scale));
+        movePoly = new StraightArrowPolygon(a, t, (int) (4 * bv.scale),
+                (int) (8 * bv.scale), false);
     }
 
     @Override

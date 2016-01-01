@@ -669,14 +669,14 @@ class EntitySprite extends Sprite {
      * mechs and teammates mechs (assuming team vision option).
      */
     private boolean trackThisEntitiesVisibilityInfo(Entity e) {
-        IPlayer localPlayer = this.bv.getLocalPlayer();
+        IPlayer localPlayer = bv.getLocalPlayer();
         if (localPlayer == null) {
             return false;
         }
-        if (this.bv.game.getOptions().booleanOption("double_blind") //$NON-NLS-1$
-                && ((e.getOwner().getId() == this.bv.getLocalPlayer().getId()) || (bv.game
+        if (bv.game.getOptions().booleanOption("double_blind") //$NON-NLS-1$
+                && ((e.getOwner().getId() == localPlayer.getId()) || (bv.game
                         .getOptions().booleanOption("team_vision") //$NON-NLS-1$
-                && (e.getOwner().getTeam() == this.bv.getLocalPlayer().getTeam())))) {
+                && (e.getOwner().getTeam() == localPlayer.getTeam())))) {
             return true;
         }
         return false;

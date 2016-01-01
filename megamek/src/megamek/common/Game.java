@@ -419,6 +419,17 @@ public class Game implements Serializable, IGame {
                 }
             }
         }
+
+        // May need to copy state over from previous teams, such as initiative
+        if ((teams != null) && (getPhase() != Phase.PHASE_LOUNGE)) {
+            for (Team newTeam : initTeams) {
+                for (Team oldTeam : teams) {
+                    if (newTeam.equals(oldTeam)) {
+                        newTeam.setInitiative(oldTeam.getInitiative());
+                    }
+                }
+            }
+        }
         teams = initTeams;
     }
 

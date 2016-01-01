@@ -2238,6 +2238,86 @@
 		<quirk>multi_trac</quirk>
 	</unit>
 	<!-- END XTRO Republic II-->
+	<!-- BEGIN XTRO Republic III-->
+		<unit>
+		<chassis>Ryoken III-XP</chassis>
+		<model>all</model>
+		<quirk>non_standard</quirk>
+	</unit>
+	<unit>
+		<chassis>Triskelion</chassis>
+		<model>TRK-4V</model>
+		<quirk>distracting</quirk>
+		<quirk>difficult_eject</quirk>
+		<quirk>prototype</quirk>
+	</unit>
+	<unit>
+		<chassis>Parash</chassis>
+		<model>3</model>
+		<quirk>low_profile</quirk>
+		<quirk>non_standard</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>4</slot>
+			<weaponName>Large Pulse Laser</weaponName>
+		</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Grenadier II Battle Armor</chassis>
+		<model>all</model>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+	<unit>
+		<chassis>Aegis Point Defense Suit</chassis>
+		<model>(Standard)</model>
+		<quirk>imp_com</quirk>
+	</unit>
+	<unit>
+		<chassis>Osprey</chassis>
+		<model>OSP-36</model>
+		<quirk>no_arms</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>inaccurate</weaponQuirkName>
+			<location>RA</location>
+			<slot>5</slot>
+			<weaponName>ER Medium Laser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>inaccurate</weaponQuirkName>
+			<location>LA</location>
+			<slot>5</slot>
+			<weaponName>ER Medium Laser</weaponName>
+		</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Clan Interface Armor</chassis>
+		<model>(Standard)</model>
+		<quirk>non_standard</quirk>
+	</unit>
+	<unit>
+		<chassis>Lich</chassis>
+		<model>UABM-2R</model>
+		<quirk>mod_weapons</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+	<unit>
+		<chassis>Lament</chassis>
+		<model>LMT-2D</model>
+		<quirk>multi_trac</quirk>
+		<quirk>pro_actuator</quirk>
+		<quirk>rumble_seat</quirk>
+		<quirk>difficult_maintain</quirk>
+		<quirk>non_standard</quirk>
+	</unit>
+	<unit>
+		<chassis>Goshawk II</chassis>
+		<model>RISC</model>
+		<quirk>combat_computer</quirk>
+		<quirk>flawed_cooling</quirk>
+		<quirk>prototype</quirk>
+	</unit>
+	<!-- END XTRO Republic III-->
     <!-- BEGIN TRO 3145 Mercenaries-->
     <unit>
 		<chassis>Spectre Stealth Battle Armor</chassis>

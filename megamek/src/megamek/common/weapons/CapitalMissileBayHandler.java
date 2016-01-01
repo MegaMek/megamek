@@ -90,6 +90,12 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
      */
     @Override
     protected void insertAttacks(IGame.Phase phase, Vector<Report> vPhaseReport) {
+        // If there are no other missiles in the bay that aren't inserted
+        // attacks, there will be a spurious "no damage" report
+        if (attackValue < 1) {
+            vPhaseReport.clear();
+        }
+
         for (int wId : insertedAttacks) {
             Mounted bayW = ae.getEquipment(wId);
             WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
@@ -97,9 +103,14 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
             Weapon w = (Weapon) bayW.getType();
             // increase ammo by one, we'll use one that we shouldn't use
             // in the next line
+            Vector<Report> newReports = new Vector<>();
             bayW.getLinked().setShotsLeft(
                     bayW.getLinked().getBaseShotsLeft() + 1);
-            (w.fire(newWaa, game, server)).handle(phase, vPhaseReport);
+            (w.fire(newWaa, game, server)).handle(phase, newReports);
+            for (Report r : newReports) {
+                r.indent();
+            }
+            vPhaseReport.addAll(newReports);
         }
     }
 }

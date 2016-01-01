@@ -1,0 +1,105 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+FixedWingSupport
+</UnitType>
+
+<Name>
+Boomerang Spotter Plane
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2888
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+273
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+0
+0
+0
+0
+</armor>
+
+<barrating>
+2
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<Nose Equipment>
+ISReconCamera
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Body Equipment>
+Ejection Seat
+UltraLightChassisMod
+VSTOLChassisMod
+PropChassisMod
+</Body Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<transporters>
+cargospace:.013:1
+</transporters>
+
+<source>
+TRO 3039 - Early Succession War
+</source>
+
+<tonnage>
+5
+</tonnage>
+

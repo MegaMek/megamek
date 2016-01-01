@@ -718,18 +718,36 @@ public abstract class TestEntity implements TestEntityOption {
             if (nextE instanceof AmmoType) {
                 if (!TechConstants.isLegal(ammoTechLvl, eqTechLvl, mixedTech)) {
                     if (!retVal) {
-                        buff.append("Equipment illegal at unit's tech level:\n");
+                        buff.append("Ammo illegal at unit's tech level (");
+                        buff.append(TechConstants
+                                .getLevelDisplayableName(ammoTechLvl));
+                        buff.append(", ");
+                        buff.append(eTLYear);
+                        buff.append("):\n");
                     }
                     retVal = true;
-                    buff.append(nextE.getName()).append("\n");
+                    buff.append(nextE.getName());
+                    buff.append(", (");
+                    buff.append(TechConstants
+                            .getLevelDisplayableName(eqTechLvl));
+                    buff.append(")\n");
                 }
             } else if (!(TechConstants.isLegal(eTechLevel, eqTechLvl, true,
                     mixedTech))) {
                 if (!retVal) {
-                    buff.append("Equipment illegal at unit's tech level:\n");
+                    buff.append("Equipment illegal at unit's tech level ");
+                    buff.append(TechConstants
+                            .getLevelDisplayableName(ammoTechLvl));
+                    buff.append(", ");
+                    buff.append(eTLYear);
+                    buff.append("):\n");
                 }
                 retVal = true;
-                buff.append(nextE.getName()).append("\n");
+                buff.append(nextE.getName());
+                buff.append(", (");
+                buff.append(TechConstants
+                        .getLevelDisplayableName(eqTechLvl));
+                buff.append(")\n");
             }
         }
         // Check cockpit TL
@@ -741,9 +759,17 @@ public abstract class TestEntity implements TestEntityOption {
                     cockpitType, Entity.ETYPE_AERO,
                     getEntity().isClan(), eTLYear);
             if (!TechConstants.isLegal(eTechLevel, cockpitTL, mixedTech)) {
-                buff.append("Cockpit is illegal at unit's tech level: ");
+                buff.append("Cockpit is illegal at unit's tech level (");
+                buff.append(TechConstants
+                        .getLevelDisplayableName(eTechLevel));
+                buff.append(", ");
+                buff.append(eTLYear);
+                buff.append("): ");
                 buff.append(Mech.getCockpitDisplayString(cockpitType));
-                buff.append("\n");
+                buff.append(" (");
+                buff.append(TechConstants
+                        .getLevelDisplayableName(cockpitTL));
+                buff.append(")\n");
                 retVal = true;
             }
         } else if (getEntity() instanceof Mech) {
@@ -755,21 +781,48 @@ public abstract class TestEntity implements TestEntityOption {
             int gyroTL = TechConstants.getGyroTechLevel(gyroType,
                     mech.isClan(), eTLYear);
             if (!TechConstants.isLegal(eTechLevel, cockpitTL, mixedTech)) {
-                buff.append("Cockpit is illegal at unit's tech level: ");
+                buff.append("Cockpit is illegal at unit's tech level (");
+                buff.append(TechConstants
+                        .getLevelDisplayableName(eTechLevel));
+                buff.append(", ");
+                buff.append(eTLYear);
+                buff.append("): ");
                 buff.append(Mech.getCockpitDisplayString(cockpitType));
-                buff.append("\n");
+                buff.append(" (");
+                buff.append(TechConstants
+                        .getLevelDisplayableName(cockpitTL));
+                buff.append(")\n");
                 retVal = true;
             }
             if (!TechConstants.isLegal(eTechLevel, gyroTL, mixedTech)) {
-                buff.append("Gyro is illegal at unit's tech level: ");
+                buff.append("Gyro is illegal at unit's tech level (");
+                buff.append(TechConstants
+                        .getLevelDisplayableName(eTechLevel));
+                buff.append(", ");
+                buff.append(eTLYear);
+                buff.append("): ");
                 buff.append(Mech.getGyroDisplayString(gyroType));
-                buff.append("\n");
+                buff.append(" (");
+                buff.append(TechConstants
+                        .getLevelDisplayableName(cockpitTL));
+                buff.append(")\n");
                 retVal = true;
             }
         }
         if (getEntity().getEngine() != null) {
             int engineTL = getEntity().getEngine().getTechType(eTLYear);
             if (!TechConstants.isLegal(eTechLevel, engineTL, mixedTech)) {
+                buff.append("Engine is illegal at unit's tech level (");
+                buff.append(TechConstants
+                        .getLevelDisplayableName(eTechLevel));
+                buff.append(", ");
+                buff.append(eTLYear);
+                buff.append("): ");
+                buff.append(getEntity().getEngine().getShortEngineName());
+                buff.append(" (");
+                buff.append(TechConstants
+                        .getLevelDisplayableName(engineTL));
+                buff.append(")\n");
                 buff.append("Engine is illegal at unit's tech level: ");
                 buff.append(getEntity().getEngine().getShortEngineName());
                 buff.append("\n");

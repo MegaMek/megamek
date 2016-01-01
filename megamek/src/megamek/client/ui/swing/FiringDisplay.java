@@ -64,6 +64,7 @@ import megamek.common.IHex;
 import megamek.common.INarcPod;
 import megamek.common.IPlayer;
 import megamek.common.IdealHex;
+import megamek.common.Infantry;
 import megamek.common.LargeSupportTank;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
@@ -1188,6 +1189,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 if (t.isAirborne()) {
                     continue;
                 }
+                // Can't shoot at infantry in the building
+                // Instead, strafe will hit the building, which could damage Inf
+                if (Compute.isInBuilding(game, t) && (t instanceof Infantry)) {
+                    continue;
+                }
+                
                 toHit = WeaponAttackAction.toHit(game, cen, t, weaponId,
                         Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE, true);
                 toHitBuff.append(t.getShortName() + ": ");
@@ -1197,6 +1204,15 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                         || (toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
                     setFireEnabled(false);
                 }
+            }
+            Building bldg = game.getBoard().getBuildingAt(c); 
+            if (bldg != null) {
+                Targetable t = new BuildingTarget(c, game.getBoard(), false);
+                toHit = WeaponAttackAction.toHit(game, cen, t, weaponId,
+                        Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE, true);
+                toHitBuff.append(t.getDisplayName() + ": ");
+                toHitBuff.append(toHit.getDesc());
+                toHitBuff.append("\n");
             }
             Targetable hexTarget = new HexTarget(c, game.getBoard(),
                     HexTarget.TYPE_HEX_CLEAR);
@@ -1323,7 +1339,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 }
                 // Target all ground units (non-airborne, VTOLs still count)
                 for (Entity t : game.getEntitiesVector(c)) {
-                    if (!t.isAirborne()) {
+                    boolean infInBuilding = Compute.isInBuilding(game, t)
+                            && (t instanceof Infantry);
+                    if (!t.isAirborne() && !infInBuilding) {
                         targets.add(t);
                     }
                 }

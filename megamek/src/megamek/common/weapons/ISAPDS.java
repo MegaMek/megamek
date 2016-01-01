@@ -34,7 +34,6 @@ public class ISAPDS extends AmmoWeapon {
      */
     public ISAPDS() {
         super();
-        techLevel.put(3137, TechConstants.T_IS_ADVANCED);
         name = "RISC Advanced Point Defense System";
         setInternalName("ISAPDS");
         heat = 2;
@@ -50,7 +49,9 @@ public class ISAPDS extends AmmoWeapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 200000;
-        introDate = 3137;
+        introDate = 3134;
+        techLevel.put(3134, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3137, TechConstants.T_IS_ADVANCED);
         availRating = new int[] { RATING_X, RATING_X, RATING_X, RATING_E };
         techRating = RATING_E;
     }

@@ -1161,10 +1161,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
 
             // Set the entity's deployment position and round.
-            // entity.setDeployRound((choDeployment.getSelectedIndex() ==
-            // 0?0:choDeployment.getSelectedIndex()+1));
             entity.setStartingPos(choDeploymentZone.getSelectedIndex() - 1);
-            entity.setDeployRound(choDeploymentRound.getSelectedIndex());            
+            entity.setDeployRound(choDeploymentRound.getSelectedIndex());
 
             // Should the entity begin the game shutdown?
             if (chDeployShutdown.isSelected()

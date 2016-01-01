@@ -184,6 +184,8 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         System.out.println(baOption.printOptions());
 
         int failures = 0;
+        int failedMek, failedTank, failedAero, failedBA;
+        failedMek = failedTank = failedAero = failedBA = 0;
         for (int i = 0; i < ms.length; i++) {
             if (ms[i].getUnitType().equals("Mek")
                     || ms[i].getUnitType().equals("Tank")
@@ -197,10 +199,23 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                 if (!checkEntity(entity, ms[i].getSourceFile().toString(),
                         loadingVerbosity,entity.getTechLevel(),failsOnly)) {
                     failures++;
+                    if (ms[i].getUnitType().equals("Mek")) {
+                        failedMek++;
+                    } else if (ms[i].getUnitType().equals("Tank")) {
+                        failedTank++;
+                    } else if (ms[i].getUnitType().equals("Aero")) {
+                        failedAero++;
+                    } else if (ms[i].getUnitType().equals("BattleArmor")) {
+                        failedBA++;
+                    }
                 }
             }
         }
         System.out.println("Total Failures: " + failures);
+        System.out.println("\t Failed Meks: " + failedMek);
+        System.out.println("\t Failed Tanks: " + failedTank);
+        System.out.println("\t Failed Aeros: " + failedAero);
+        System.out.println("\t Failed BA: " + failedBA);
     }
 
     private void readOptions(ParsedXML node) {

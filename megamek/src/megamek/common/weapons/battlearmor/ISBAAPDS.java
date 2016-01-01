@@ -34,7 +34,6 @@ public class ISBAAPDS extends Weapon {
      */
     public ISBAAPDS() {
         super();
-        techLevel.put(3134, TechConstants.T_IS_ADVANCED);
         name = "RISC Advanced Point Defense System";
         setInternalName("ISBAAPDS");
         tonnage = 0.35f;
@@ -47,6 +46,8 @@ public class ISBAAPDS extends Weapon {
         setInstantModeSwitch(false);
         cost = 50000;
         introDate = 3134;
+        techLevel.put(3132, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3134, TechConstants.T_IS_ADVANCED);
         availRating = new int[] { RATING_X, RATING_X, RATING_X, RATING_E };
         techRating = RATING_E;
     }

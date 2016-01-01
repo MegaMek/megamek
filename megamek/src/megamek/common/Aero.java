@@ -2926,7 +2926,31 @@ public class Aero extends Entity {
             roll.addModifier(+2, "Fighter making vertical liftoff");
         }
 
-        // TODO: Taking off from a crater? What constitutes a crater?
+        // Taking off from a crater
+        // TW doesn't define what a crater is, assume it means that the hex
+        // level of all surrounding hexes is greater than what we are sitting on
+        boolean allAdjacentHigher = true;
+        Set<Coords> positions = new HashSet<Coords>(getSecondaryPositions()
+                .values());
+        IHex adjHex;
+        for (Coords currPos : positions) {
+            hex = game.getBoard().getHex(currPos);
+            for (int dir = 0; dir < 6; dir++) {
+                Coords adj = currPos.translated(dir);
+                adjHex = game.getBoard().getHex(adj);
+                if (!positions.contains(adj) && (adjHex != null)
+                        && adjHex.getLevel() <= hex.getLevel()) {
+                    allAdjacentHigher = false;
+                    break;
+                }
+            }
+            if (!allAdjacentHigher) {
+                break;
+            }
+        }
+        if (allAdjacentHigher) {
+            roll.addModifier(+3, "Taking off from crater");
+        }
 
         return roll;
     }

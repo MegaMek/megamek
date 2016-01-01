@@ -204,6 +204,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, "case_pilot_damage", false); //$NON-NLS-1$
         addOption(advancedCombat, "no_forced_primary_targets", false); //$NON-NLS-1$
         addOption(advancedCombat, "full_rotor_hits", false); //$NON-NLS-1$
+        addOption(advancedCombat, "forest_fires_no_smoke", false); //$NON-NLS-1$
 
         IBasicOptionGroup advancedGroundMovement = addGroup("advancedGroundMovement"); //$NON-NLS-1$
         addOption(advancedGroundMovement, "tacops_sprint", false); //$NON-NLS-1$

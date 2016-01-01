@@ -425,8 +425,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * be shown in the Arty Auto Hit Designation phase
      */
     public boolean showAllDeployment = false;
-    
-    
+
+    private long paintCompsStartTime;
+
+    private Rectangle displayablesRect = new Rectangle();
+
+
     /**
      * Construct a new board view for the specified game
      */
@@ -1018,9 +1022,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public synchronized void paintComponent(Graphics g) {
         GUIPreferences guip = GUIPreferences.getInstance();
 
-        long startTime = 0;
         if (guip.getBoolean(GUIPreferences.ADVANCED_SHOW_FPS)) {
-            startTime = System.nanoTime();
+            paintCompsStartTime = System.nanoTime();
         }
 
         if (guip.getAntiAliasing()) {
@@ -1175,14 +1178,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
 
         // draw all the "displayables"
-        Rectangle rect = new Rectangle();
-        rect.x = -getX();
-        rect.y = -getY();
-        rect.width = scrollpane.getViewport().getViewRect().width;
-        rect.height = scrollpane.getViewport().getViewRect().height;
+        if (displayablesRect == null) {
+            displayablesRect = new Rectangle();
+        }
+        displayablesRect.x = -getX();
+        displayablesRect.y = -getY();
+        displayablesRect.width = scrollpane.getViewport().getViewRect().width;
+        displayablesRect.height = scrollpane.getViewport().getViewRect().height;
         for (int i = 0; i < displayables.size(); i++) {
             IDisplayable disp = displayables.get(i);
-            disp.draw(g, rect);
+            disp.draw(g, displayablesRect);
         }
 
         if (guip.getBoolean(GUIPreferences.ADVANCED_SHOW_FPS)) {
@@ -1191,7 +1196,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 totalTime = 0;
                 frameCount = 0;
             } else {
-                totalTime += System.nanoTime() - startTime;
+                totalTime += System.nanoTime() - paintCompsStartTime;
                 frameCount++;
             }
             String s = String.format("%1$5.3f", averageTime / 1000000d);
@@ -1229,12 +1234,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         
         for (HexSprite sprite : spriteArrayList) {
             Coords cp = sprite.getPosition();
-            if (cp.equals(c) && view.intersects(sprite.getBounds())
+            // This can potentially be an expensive operation
+            Rectangle spriteBounds = sprite.getBounds();
+            if (cp.equals(c) && view.intersects(spriteBounds)
                     && !sprite.isHidden()) {
                 if (!sprite.isReady()) {
                     sprite.prepare();
                 }
-                sprite.drawOnto(g, sprite.getBounds().x, sprite.getBounds().y,
+                sprite.drawOnto(g, spriteBounds.x, spriteBounds.y,
                         this, false);
             }
         }
@@ -1256,13 +1263,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         Rectangle view = g.getClipBounds();
         for (IsometricSprite sprite : spriteArrayList) {
             Coords cp = sprite.getPosition();
-            if (cp.equals(c) && view.intersects(sprite.getBounds())
+            // This can potentially be an expensive operation
+            Rectangle spriteBounds = sprite.getBounds();
+            if (cp.equals(c) && view.intersects(spriteBounds)
                 && !sprite.isHidden()) {
                 if (!sprite.isReady()) {
                     sprite.prepare();
                 }
-                sprite.drawOnto(g, sprite.getBounds().x, sprite.getBounds().y,
-                                this, false);
+                sprite.drawOnto(g, spriteBounds.x, spriteBounds.y, this, false);
             }
         }
     }
@@ -1308,11 +1316,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             List<IsometricSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricSprite sprite : spriteArrayList) {
-            if (view.intersects(sprite.getBounds()) && !sprite.isHidden()) {
+            // This can potentially be an expensive operation
+            Rectangle spriteBounds = sprite.getBounds();
+            if (view.intersects(spriteBounds) && !sprite.isHidden()) {
                 if (!sprite.isReady()) {
                     sprite.prepare();
                 }
-                sprite.drawOnto(g, sprite.getBounds().x, sprite.getBounds().y,
+                sprite.drawOnto(g, spriteBounds.x, spriteBounds.y,
                                 this, true);
             }
         }
@@ -1323,12 +1333,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     private final void drawSprite(Graphics g, Sprite sprite) {
         Rectangle view = g.getClipBounds();
-        if (view.intersects(sprite.getBounds()) && !sprite.isHidden()) {
+        // This can potentially be an expensive operation
+        Rectangle spriteBounds = sprite.getBounds();
+        if (view.intersects(spriteBounds) && !sprite.isHidden()) {
             if (!sprite.isReady()) {
                 sprite.prepare();
             }
-            
-            sprite.drawOnto(g, sprite.getBounds().x, sprite.getBounds().y, this);
+            sprite.drawOnto(g, spriteBounds.x, spriteBounds.y, this);
         }
     }
 
@@ -4816,8 +4827,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int maxShown = 4; 
 
         Set<Entity> coordEnts = new HashSet<>(game.getEntitiesVector(mcoords));
+        Set<Entity> usedSet = new HashSet<Entity>(entitySprites.size());
         for (EntitySprite eSprite : entitySprites) {
-            if (eSprite.isInside(point) || coordEnts.contains(eSprite.entity)) {
+            if ((eSprite.isInside(point) || coordEnts.contains(eSprite.entity))
+                    && !usedSet.contains(eSprite.entity)) {
+                usedSet.add(eSprite.entity);
                 entityCount++;
                 
                 // List only the first four units

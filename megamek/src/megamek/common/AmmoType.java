@@ -1396,15 +1396,15 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for clan Arrow IV launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER, 2850, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM, 2850, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("Homing", 1, M_HOMING, 2850, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("Inferno-IV", 1, M_INFERNO_IV, 3055, TechConstants.T_CLAN_UNOFFICIAL));
+        munitions.add(new MunitionMutator("Cluster", 1, M_CLUSTER, 2807, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("FASCAM", 1, M_FASCAM, 2807, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Homing", 1, M_HOMING, 2807, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Inferno-IV", 1, M_INFERNO_IV, 2807, TechConstants.T_CLAN_UNOFFICIAL));
         munitions.add(new MunitionMutator("Laser Inhibiting", 1, M_LASER_INHIB, 3052, TechConstants.T_CLAN_UNOFFICIAL));
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, 2850, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, 2807, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("Vibrabomb-IV", 1, M_VIBRABOMB_IV, 3065, TechConstants.T_CLAN_UNOFFICIAL));
-        munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M, 2850, TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Flare", 1, M_FLARE, 2850, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M, 2807, TechConstants.T_CLAN_EXPERIMENTAL));
+        munitions.add(new MunitionMutator("Flare", 1, M_FLARE, 2807, TechConstants.T_CLAN_ADVANCED));
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -7784,8 +7784,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 30;
         ammo.cost = 10000;
-        ammo.introDate = 2850;
-        ammo.techLevel.put(2850, ammo.techLevel.get(3067));
+        ammo.introDate = 2807;
+        ammo.techLevel.put(2807, ammo.techLevel.get(3067));
         ammo.availRating = new int[]{RATING_X, RATING_E, RATING_D};
         ammo.techRating = RATING_F;
 
@@ -8415,7 +8415,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.introDate = 3067;
-        ammo.techLevel.put(3071, ammo.techLevel.get(3071));
+        ammo.techLevel.put(3067, ammo.techLevel.get(3071));
         ammo.availRating = new int[]{EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_E};
         ammo.techRating = RATING_E;
@@ -8438,7 +8438,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 5;
         ammo.cost = 2000;
         ammo.introDate = 3067;
-        ammo.techLevel.put(3071, ammo.techLevel.get(3071));
+        ammo.techLevel.put(3067, ammo.techLevel.get(3071));
         ammo.availRating = new int[]{EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.techRating = RATING_E;
@@ -10232,6 +10232,9 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Santa Anna Ammo";
         ammo.setInternalName("Ammo Santa Anna");
         ammo.addLookupName("SantaAnna Ammo");
+        ammo.shortName = "Santa Anna";
+        ammo.subMunitionBegin = 0;
+        ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 100;
         ammo.ammoType = AmmoType.T_KILLER_WHALE;
         ammo.munitionType = AmmoType.M_SANTA_ANNA;
@@ -10251,6 +10254,9 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Clan Santa Anna Ammo";
         ammo.setInternalName("Ammo Clan Santa Anna");
         ammo.addLookupName("CLSantaAnna Ammo");
+        ammo.shortName = "Santa Anna";
+        ammo.subMunitionBegin = 0;
+        ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 100;
         ammo.ammoType = AmmoType.T_KILLER_WHALE;
         ammo.munitionType = AmmoType.M_SANTA_ANNA;
@@ -10564,6 +10570,9 @@ public class AmmoType extends EquipmentType {
         ammo.name = "AR10 Santa Anna Ammo";
         ammo.setInternalName("Ammo AR10 Santa Anna");
         ammo.addLookupName("AR10 SantaAnna Ammo");
+        ammo.shortName = "Santa Anna";
+        ammo.subMunitionBegin = 0;
+        ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 100;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.munitionType = AmmoType.M_SANTA_ANNA;
@@ -10584,6 +10593,9 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Clan AR10 Santa Anna Ammo";
         ammo.setInternalName("Ammo Clan AR10 Santa Anna");
         ammo.addLookupName("CLAR10 SantaAnna Ammo");
+        ammo.shortName = "Santa Anna";
+        ammo.subMunitionBegin = 0;
+        ammo.subMunitionLength = ammo.shortName.length();
         ammo.damagePerShot = 100;
         ammo.ammoType = AmmoType.T_AR10;
         ammo.munitionType = AmmoType.M_SANTA_ANNA;

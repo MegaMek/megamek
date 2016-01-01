@@ -3042,6 +3042,10 @@ public class MoveStep implements Serializable {
         // or when flying. Naval movement does not have the pavement
         // exemption.
         if (entity.isLocationProhibited(dest, getElevation())
+                // Units in prohibited terran should still be able to unload
+                && (type != MoveStepType.UNLOAD)
+                // Should allow vertical takeoffs
+                && (type != MoveStepType.VTAKEOFF)
                 && (!isPavementStep() || (nMove == EntityMovementMode.NAVAL)
                 || (nMove == EntityMovementMode.HYDROFOIL) || (nMove == EntityMovementMode.SUBMARINE))
                 && (movementType != EntityMovementType.MOVE_VTOL_WALK)
@@ -3087,6 +3091,10 @@ public class MoveStep implements Serializable {
         if ((movementType != EntityMovementType.MOVE_JUMP)
                 && (movementType != EntityMovementType.MOVE_VTOL_WALK)
                 && (movementType != EntityMovementType.MOVE_VTOL_RUN)
+                // Units in prohibited terran should still be able to unload
+                && (type != MoveStepType.UNLOAD)
+                // Should allow vertical takeoffs
+                && (type != MoveStepType.VTAKEOFF)
                 && entity.isLocationProhibited(src, getElevation()) && !isPavementStep) {
             // System.err.println("in restriced terrain");
             return false;

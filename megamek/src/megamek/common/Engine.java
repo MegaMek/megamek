@@ -816,11 +816,11 @@ public class Engine implements Serializable {
                 	if (year <= 2556) {
                 		return TechConstants.T_IS_UNOFFICIAL;
                 		} else if (year <= 2579) {
-                		return TechConstants.T_IS_ADVANCED;
-                		} else if (year <= 2865) {
-                		return TechConstants.T_IS_UNOFFICIAL;
-                		} else if (year <= 3035) {
                 		return TechConstants.T_IS_EXPERIMENTAL;
+                   		} else if (year <= 2865) {
+                		return TechConstants.T_IS_ADVANCED;
+                   		} else if (year <= 3035) {
+                		return TechConstants.T_IS_UNOFFICIAL;
                 		} else if (year <=3045){
                 		return TechConstants.T_IS_TW_NON_BOX;
                 		}
@@ -927,10 +927,8 @@ public class Engine implements Serializable {
                     return TechConstants.T_ALLOWED_ALL;
                 }
                 if (isClan) {
-                    if (year <= 2630) {
+                    if (year <= 2807) {
                         return TechConstants.T_CLAN_UNOFFICIAL;
-                    } else if (year <= 3080) {
-                        return TechConstants.T_CLAN_EXPERIMENTAL;
                     } else {
                         return TechConstants.T_CLAN_TW;
                     }
@@ -955,6 +953,8 @@ public class Engine implements Serializable {
                 return TechConstants.T_ALLOWED_ALL;
             case SOLAR:
                 return TechConstants.T_ALLOWED_ALL;
+            case NONE:
+            	return TechConstants.T_ALLOWED_ALL;
             case COMPACT_ENGINE:
                 if (isClan) {
                     return TechConstants.T_CLAN_UNOFFICIAL;

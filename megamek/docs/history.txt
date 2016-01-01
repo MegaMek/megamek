@@ -1,6 +1,17 @@
 VERSION HISTORY:
 ----------------
-v0.41.12-git
+v0.41.13-git
++ Bug [#4666]: Santa Anna Missiles Incorrect Damage in Space Battles
++ Bug [#4609]: Teleguided missiles fire like normal missiles
++ Bug: Potential NPE in MapSettings.setMapSize
++ Bug: Fixes to dates with Engines/Cockpits/equipment.
++ Data: New Sprites, Unit Fixes and Reorganized Small Craft again.
++ Data: New and RATs (ATOW,MW3rd, missing TRO 3085)(Thanks Magnus Kerensky)
++ Bug: Couple of Ammo Date Fixes.
++ Feature: Added unofficial option to not generate smoke from burning woods
++ UnitSelectorDialog: Escape/Enter keys now work in a broader set of situations
+
+v0.41.12 (2015-12-23 2:48 UTC)
 + Bug: Minimap still visible after using /reset command
 + Bug: Icarus II unit icon not showing up
 + Bug [#4648]: "add a combat unit" stops working after you close the window
@@ -24,6 +35,18 @@ v0.41.12-git
 + Bug [#4661]: Equipment modes cannot be set while unit is deploying
 + Bug [#4658]: FoV darken/highlight considers visual range when DB is not on
 + Bug [#4657]: Entity tooltips now displayed on mousing over sprite or hex
++ Bug: System Panel 'All Systems' loc display wrong DA/DC for shields
++ Bug [#4663]: Shields DC not considering missing/destroyed hand actuators
++ Bug [#4662]: Strafing Error When Targeting Building with Infantry
++ Bug: Answering 'No' to Vertical Takeoff PSR Nag doesn't clear move path
++ Bug: Missing 'in crater' penalty for vertical take-off (TW pg 88)
++ Bug [#4665]: Landed dropships unable to takeoff/unload if on prohibited terrain
++ Data: New Sprites, Unit Fixes, adding XTRO Republic III units
++ Bug [#4667]: Problem with assigning bombs to ASFs in the lobby
++ Bug [#4668]: UnitDisplay/Minimap positions save poorly with multi-monitors
++ Data: New Sprites and unit name fixes. Update to Canon Quirks.
++ Bug [#4670]: Clan units with ammunition won't load
++ Bug [#4669]: Players connecting mid-game reset initiative
 
 v0.41.11 (2015-11-15 16:50 UTC)
 + Data: New Sprites.

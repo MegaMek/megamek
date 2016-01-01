@@ -4,7 +4,7 @@ Okinawa (Standard),2
 Vengeance (3056),3
 Dragau II Assault Interceptor (Standard),4
 Claymore (Standard),5
-Interdictor Pocket Warship (Republic),6
+Interdictor Pocket Warship (Standard),6
 Union-X (3071),5
 Interdictor Pocket Warship (SCC),4
 Overlord A3,3

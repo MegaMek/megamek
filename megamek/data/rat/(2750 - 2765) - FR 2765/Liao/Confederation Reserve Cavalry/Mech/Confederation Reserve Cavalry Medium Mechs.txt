@@ -1,5 +1,5 @@
 Confederation Reserve Cavalry Medium Mechs
-Chameleon CLN-4V,1
+Chameleon TRC-4B,1
 Cicada CDA-2A,2
 Scorpion SCP-1N,3
 Shadow Hawk SHD-2H,4

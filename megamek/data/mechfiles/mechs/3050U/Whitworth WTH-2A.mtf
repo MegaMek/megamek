@@ -1,19 +1,19 @@
 Version:1.0
 Whitworth
-WTH-1H
+WTH-2A
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3066
+Era:3068
+Source:TRO 3050 - Jihad
 Rules Level:2
-source:TRO 3067
 
 Mass:40
 Engine:160 Fusion Engine
-Structure:Standard
+Structure:Endo Steel
 Myomer:Standard
 
-Heat Sinks:14 Single
+Heat Sinks:10 Double
 Walk MP:4
 Jump MP:4
 
@@ -30,24 +30,25 @@ RTL Armor:6
 RTR Armor:6
 RTC Armor:7
 
-Weapons:5
+Weapons:6
 1 ISMediumLaser, Right Arm
 1 ISMediumLaser, Left Arm
-8 ISRocketLauncher10, Right Torso
-1 ISSRM6, Left Torso, Ammo:15
-1 ISMediumLaser, Head
+2 ISStreakSRM4, Right Torso, Ammo:25
+2 ISStreakSRM4, Left Torso
+1 ISSmallLaser, Head
+1 ISC3SlaveUnit, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Hand Actuator
 ISMediumLaser
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
 -Empty-
 -Empty-
 
@@ -55,42 +56,42 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-Hand Actuator
 ISMediumLaser
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
 -Empty-
 -Empty-
 
 Left Torso:
-Heat Sink
-Heat Sink
-Heat Sink
-ISSRM6
-ISSRM6
-ISSRM6 Ammo
--Empty-
--Empty-
--Empty-
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISStreakSRM4
+ISStreakSRM4
+Endo-Steel
 -Empty-
 -Empty-
 -Empty-
 
 Right Torso:
-Heat Sink
-Heat Sink
-Heat Sink
-ISRocketLauncher10
-ISRocketLauncher10
-ISRocketLauncher10
-ISRocketLauncher10
-ISRocketLauncher10
-ISRocketLauncher10
-ISRocketLauncher10
-ISRocketLauncher10
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISStreakSRM4
+ISStreakSRM4
+ISStreakSRM4 Ammo
+ISCASE
+Endo-Steel
 -Empty-
 
 Center Torso:
@@ -104,14 +105,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Heat Sink
-Heat Sink
+ISC3SlaveUnit
+-Empty-
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISMediumLaser
+ISSmallLaser
 Sensors
 Life Support
 -Empty-

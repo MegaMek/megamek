@@ -4434,7 +4434,7 @@ public class Compute {
         }
 
         // protected/exposed actuator quirk may adjust target roll
-        if (defender.hasQuirk(OptionsConstants.QUIRK_POS_LOW_PROFILE)) {
+        if (defender.hasQuirk(OptionsConstants.QUIRK_POS_PRO_ACTUATOR)) {
             data.addModifier(+1, "protected actuators");
         }
         if (defender.hasQuirk(OptionsConstants.QUIRK_NEG_EXP_ACTUATOR)) {

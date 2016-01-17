@@ -216,9 +216,14 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_IMP_LIFE_SUPPORT)
                     || qName.equals(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)
                     || qName.equals(OptionsConstants.QUIRK_POS_MULTI_TRAC)
-                    || qName.equals(OptionsConstants.QUIRK_POS_LOW_PROFILE)
                     || qName.equals(OptionsConstants.QUIRK_POS_REINFORCED_LEGS)
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
+                    || qName.equals(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS)
+                    || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
+                    || qName.equals(OptionsConstants.QUIRK_POS_COMPACT)
+                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST)
+                    || qName.equals(OptionsConstants.QUIRK_POS_HEAD_EJECT)
+                    || qName.equals(OptionsConstants.QUIRK_POS_PRO_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_NEG_ATMO_INSTABILITY)
                     || qName.equals(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_DIFFICULT_EJECT)
@@ -235,27 +240,31 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_FLAWED_COOLING)
                     || qName.equals(OptionsConstants.QUIRK_NEG_UNSTREAMLINED)
                     || qName.equals(OptionsConstants.QUIRK_NEG_GAS_HOG)
-                    || qName.equals(OptionsConstants.QUIRK_POS_HEAD_EJECT)
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_1)
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_2)
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_3)
                     || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_4)
-                    || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_5)
-                    || qName.equals(OptionsConstants.QUIRK_POS_STABLE)
-                    || qName.equals(OptionsConstants.QUIRK_POS_COMPACT)
-                    || qName.equals(OptionsConstants.QUIRK_POS_BATTLE_FIST)) {
+                    || qName.equals(OptionsConstants.QUIRK_NEG_WEAK_HEAD_5)) {
                 return false;
             }
+            
             if(!en.getEngine().isFusion() && qName.equals(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)) {
                 return false;
             }
+            
             if(qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
                     && (en.getMovementMode() == EntityMovementMode.HOVER)) {
                 return false;
             }
+            
+        	if(qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
+        			&& (en.getMovementMode() == EntityMovementMode.VTOL)) {
+        		return false;
+        	}
+                        
             return true;
         }
-
+              
         if(en instanceof BattleArmor) {
             if(qName.equals(OptionsConstants.QUIRK_POS_ATMO_FLYER)
                     || qName.equals(OptionsConstants.QUIRK_POS_ANTI_AIR)
@@ -273,7 +282,6 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_POS_IMP_TARG_L)
                     || qName.equals(OptionsConstants.QUIRK_POS_INTERNAL_BOMB)
                     || qName.equals(OptionsConstants.QUIRK_POS_MULTI_TRAC)
-                    || qName.equals(OptionsConstants.QUIRK_POS_LOW_PROFILE)
                     || qName.equals(OptionsConstants.QUIRK_POS_LOW_PROFILE)
                     || qName.equals(OptionsConstants.QUIRK_POS_REINFORCED_LEGS)
                     || qName.equals(OptionsConstants.QUIRK_POS_STABLE)

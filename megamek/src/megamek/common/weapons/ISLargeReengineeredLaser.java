@@ -35,7 +35,8 @@ public class ISLargeReengineeredLaser extends ReengineeredLaserWeapon {
         setInternalName(name);
         addLookupName("ISLargeReengineeredLaser");
         addLookupName("ISLargeRELaser");
-        heat = 10;
+        toHitModifier = -1;
+        heat = 9;
         damage = 9;
         shortRange = 5;
         mediumRange = 10;
@@ -47,7 +48,7 @@ public class ISLargeReengineeredLaser extends ReengineeredLaserWeapon {
         waterExtremeRange = 12;
         tonnage = 8.0f;
         criticals = 5;
-        bv = 139;
+        bv = 161;
         cost = 250000;
         shortAV = 9;
         medAV = 9;

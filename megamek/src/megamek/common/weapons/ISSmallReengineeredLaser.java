@@ -29,7 +29,8 @@ public class ISSmallReengineeredLaser extends ReengineeredLaserWeapon {
         setInternalName(name);
         addLookupName("ISSmallReengineeredLaser");
         addLookupName("ISSmallRELaser");
-        heat = 5;
+        toHitModifier = -1;
+        heat = 4;
         damage = 4;
         shortRange = 1;
         mediumRange = 2;
@@ -42,7 +43,7 @@ public class ISSmallReengineeredLaser extends ReengineeredLaserWeapon {
         tonnage = 1.5f;
         criticals = 1;
         flags = flags.or(F_NO_FIRES);
-        bv = 12;
+        bv = 14;
         cost = 25000;
         shortAV = 4;
         maxRange = RANGE_SHORT;

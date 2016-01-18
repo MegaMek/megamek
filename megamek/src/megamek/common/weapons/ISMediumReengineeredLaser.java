@@ -34,7 +34,8 @@ public class ISMediumReengineeredLaser extends ReengineeredLaserWeapon {
         setInternalName(name);
         addLookupName("ISMediumReengineeredLaser");
         addLookupName("ISMediumRELaser");
-        heat = 7;
+        toHitModifier = -1;
+        heat = 6;
         damage = 6;
         shortRange = 3;
         mediumRange = 6;
@@ -46,7 +47,7 @@ public class ISMediumReengineeredLaser extends ReengineeredLaserWeapon {
         waterExtremeRange = 8;
         tonnage = 2.5f;
         criticals = 2;
-        bv = 56;
+        bv = 65;
         cost = 10000;
         shortAV = 6;
         maxRange = RANGE_SHORT;

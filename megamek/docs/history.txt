@@ -6,6 +6,7 @@ v0.41.14-git
 + Bug:Protected Actuators quirk not working when Anti-Mek attacked.
 + Data New Sprites.
 + Bug:Quirks with Quirks (hitch on VTOLs, Actuator quirks on Vees)
++ Errata: Re-Engineered Laser changes.
 
 v0.41.13 (2016-01-01 03:35 UTC)
 + Bug [#4666]: Santa Anna Missiles Incorrect Damage in Space Battles

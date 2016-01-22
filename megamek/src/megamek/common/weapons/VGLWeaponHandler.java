@@ -75,9 +75,9 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
         AmmoType atype = (AmmoType) ammo.getType();
         int facing = weapon.getFacing();
         ArrayList<Coords> affectedCoords = new ArrayList<Coords>(3);
-        affectedCoords.add(ae.getPosition().translated(facing));
-        affectedCoords.add(ae.getPosition().translated((facing + 1) % 6));
-        affectedCoords.add(ae.getPosition().translated((facing + 5) % 6));
+        affectedCoords.add(ae.getPosition().translated(ae.getFacing() + facing));
+        affectedCoords.add(ae.getPosition().translated((ae.getFacing() + facing + 1) % 6));
+        affectedCoords.add(ae.getPosition().translated((ae.getFacing() + facing + 5) % 6));
         
         Report r = new Report(3117);
         r.indent();

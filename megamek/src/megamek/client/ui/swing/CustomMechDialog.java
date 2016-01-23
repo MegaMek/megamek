@@ -420,6 +420,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
 
         if (client.getGame().getOptions().booleanOption("tacops_fatigue")) {
+            labFatigue.setToolTipText(Messages
+                    .getString("CustomMechDialog.labFatigueToolTip"));
             panPilot.add(labFatigue, GBC.std());
             panPilot.add(fldFatigue, GBC.eop());
         }
@@ -603,6 +605,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         fldArtillery.setText(Integer.toString(entity.getCrew().getArtillery()));
         fldArtillery.addActionListener(this);
         fldFatigue.setText(Integer.toString(entity.getCrew().getFatigue()));
+        fldFatigue.setToolTipText(Messages
+                .getString("CustomMechDialog.labFatigueToolTip"));
         fldFatigue.addActionListener(this);
         fldTough.setText(Integer.toString(entity.getCrew().getToughness()));
         fldTough.addActionListener(this);

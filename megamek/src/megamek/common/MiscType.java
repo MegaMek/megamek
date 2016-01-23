@@ -8573,7 +8573,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createCLHeadTurret() {
         MiscType misc = new MiscType();
-        misc.techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
+        misc.techLevel.put(3071, TechConstants.T_CLAN_UNOFFICIAL);
         misc.name = "Head Turret";
         misc.setInternalName("CLHeadTurret");
         misc.tonnage = TONNAGE_VARIABLE;
@@ -8582,10 +8582,9 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_HEAD_TURRET).or(F_MECH_EQUIPMENT);
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_F, EquipmentType.RATING_E };
+                EquipmentType.RATING_F, EquipmentType.RATING_F };
         misc.introDate = 3055;
         misc.techLevel.put(3055, misc.techLevel.get(3071));
-        misc.techLevel.put(3082, TechConstants.T_CLAN_ADVANCED);
         misc.techRating = RATING_C;
         return misc;
     }
@@ -8600,10 +8599,10 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags = misc.flags.or(F_HEAD_TURRET).or(F_MECH_EQUIPMENT);
         misc.bv = 0;
-        misc.availRating = new int[] { EquipmentType.RATING_F,
-                EquipmentType.RATING_F, EquipmentType.RATING_F };
-        misc.introDate = 3055;
-        misc.techLevel.put(3055, misc.techLevel.get(3071));
+        misc.availRating = new int[] { EquipmentType.RATING_X,
+                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        misc.introDate = 3050;
+        misc.techLevel.put(3050, misc.techLevel.get(3071));
         misc.techLevel.put(3082, TechConstants.T_IS_ADVANCED);
         misc.techRating = RATING_C;
         return misc;
@@ -8620,7 +8619,7 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_QUAD_TURRET).or(F_MECH_EQUIPMENT);
         misc.bv = 0;
         misc.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_F, EquipmentType.RATING_D };
+                EquipmentType.RATING_F, EquipmentType.RATING_F };
         misc.introDate = 2820;
         misc.techLevel.put(2820, misc.techLevel.get(3071));
         misc.techLevel.put(3082, TechConstants.T_CLAN_ADVANCED);

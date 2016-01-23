@@ -136,7 +136,7 @@ public class GenerateGenericIconList implements MechSummaryCache.Listener {
         }
         
         System.out.println("\n");
-        System.out.println("Total units with generic icons:" + genericCount);
+        System.out.println("Total units with generic icons: " + genericCount);
         for (String type : typeNameMap.keySet()) {
             System.out.println("\t" + type + " "
                     + typeNameMap.get(type).size());

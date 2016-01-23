@@ -208,7 +208,7 @@ public class MechTileset {
     /**
      * Returns the MechEntry corresponding to the entity
      */
-    private MechEntry entryFor(Entity entity, int secondaryPos) {
+    public MechEntry entryFor(Entity entity, int secondaryPos) {
         // first, check for exact matches
         if (secondaryPos != -1) {
             if (exact.containsKey(entity.getShortNameRaw().toUpperCase()+"_"+secondaryPos)) {
@@ -489,7 +489,7 @@ public class MechTileset {
      * Stores the name, image file name, and image (once loaded) for a mech or
      * other entity
      */
-    private class MechEntry {
+    public class MechEntry {
         private String imageFile;
         private Image image;
 

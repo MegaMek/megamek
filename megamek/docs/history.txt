@@ -11,6 +11,7 @@ v0.41.14-git
 + Bug [#4681]: Fatigue point usage can be confusing
 + Errata: Turret Tech Level Changes
 + Data: New Sprites
++ Bug [#4679]: Entity deploymentZone won't save as -1 in MUL
 
 v0.41.13 (2016-01-01 03:35 UTC)
 + Bug [#4666]: Santa Anna Missiles Incorrect Damage in Space Battles

@@ -520,6 +520,20 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             }
             optionComp.setSelected(option.stringValue());
             optionComp.setEditable(editable);
+        } else if (option.getName().equals("mek_lance_movement")) {
+            // Disable if individual init is on
+            if (!options.getOption("individual_initiative").booleanValue()) {
+                optionComp.setEditable(editable);
+            } else {
+                optionComp.setEditable(false);
+            }
+        } else if (option.getName().equals("vehicle_lance_movement")) {
+            // Disable if individual init is on
+            if (!options.getOption("individual_initiative").booleanValue()) {
+                optionComp.setEditable(editable);
+            } else {
+                optionComp.setEditable(false);
+            }
         } else {
             optionComp.setEditable(editable);
         }
@@ -653,6 +667,16 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                 comp_i.setSelected(false);
             }
             comps = optionComps.get("inf_move_later"); //$NON-NLS-1$
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+                comp_i.setSelected(false);
+            }
+            comps = optionComps.get("mek_lance_movement");
+            for (DialogOptionComponent comp_i : comps) {
+                comp_i.setEditable(!state);
+                comp_i.setSelected(false);
+            }
+            comps = optionComps.get("vehicle_lance_movement");
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);

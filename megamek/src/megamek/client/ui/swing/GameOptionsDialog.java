@@ -406,47 +406,55 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             // usable.
             optionComp.setEditable(false);
         } else if ("inf_deploy_even".equals(option.getName())) { //$NON-NLS-1$
-            if (!(options.getOption("inf_move_even")).booleanValue() //$NON-NLS-1$
+            if ((options.getOption("individual_initiative")).booleanValue() //$NON-NLS-1$
+                    || !(options.getOption("inf_move_even")).booleanValue() //$NON-NLS-1$
                     || !editable) {
                 optionComp.setEditable(false);
             }
         } else if ("inf_move_multi".equals(option.getName())) { //$NON-NLS-1$
-            if ((options.getOption("inf_move_even")).booleanValue() //$NON-NLS-1$
+            if ((options.getOption("individual_initiative")).booleanValue() //$NON-NLS-1$
+                    || (options.getOption("inf_move_even")).booleanValue() //$NON-NLS-1$
                     || (options.getOption("inf_move_later")).booleanValue() //$NON-NLS-1$
                     || !editable) {
                 optionComp.setEditable(false);
             }
         } else if ("inf_move_even".equals(option.getName())) { //$NON-NLS-1$
-            if ((options.getOption("inf_move_multi")).booleanValue() //$NON-NLS-1$
+            if ((options.getOption("individual_initiative")).booleanValue() //$NON-NLS-1$
+                    || (options.getOption("inf_move_multi")).booleanValue() //$NON-NLS-1$
                     || (options.getOption("inf_move_later")).booleanValue() //$NON-NLS-1$
                     || !editable) {
                 optionComp.setEditable(false);
             }
         } else if ("inf_move_later".equals(option.getName())) { //$NON-NLS-1$
-            if ((options.getOption("inf_move_even")).booleanValue() //$NON-NLS-1$
+            if ((options.getOption("individual_initiative")).booleanValue() //$NON-NLS-1$
+                    || (options.getOption("inf_move_even")).booleanValue() //$NON-NLS-1$
                     || (options.getOption("inf_move_multi")).booleanValue() //$NON-NLS-1$
                     || !editable) {
                 optionComp.setEditable(false);
             }
         } else if ("protos_deploy_even".equals(option.getName())) { //$NON-NLS-1$
-            if (!(options.getOption("protos_move_even")).booleanValue() //$NON-NLS-1$
+            if ((options.getOption("individual_initiative")).booleanValue() //$NON-NLS-1$
+                    || !(options.getOption("protos_move_even")).booleanValue() //$NON-NLS-1$
                     || !editable) {
                 optionComp.setEditable(false);
             }
         } else if ("protos_move_multi".equals(option.getName())) { //$NON-NLS-1$
-            if ((options.getOption("protos_move_even")).booleanValue() //$NON-NLS-1$
+            if ((options.getOption("individual_initiative")).booleanValue() //$NON-NLS-1$
+                    || (options.getOption("protos_move_even")).booleanValue() //$NON-NLS-1$
                     || (options.getOption("protos_move_later")).booleanValue() //$NON-NLS-1$
                     || !editable) {
                 optionComp.setEditable(false);
             }
         } else if ("protos_move_even".equals(option.getName())) { //$NON-NLS-1$
-            if ((options.getOption("protos_move_multi")).booleanValue() //$NON-NLS-1$
+            if ((options.getOption("individual_initiative")).booleanValue() //$NON-NLS-1$
+                    || (options.getOption("protos_move_multi")).booleanValue() //$NON-NLS-1$
                     || (options.getOption("protos_move_later")).booleanValue() //$NON-NLS-1$
                     || !editable) {
                 optionComp.setEditable(false);
             }
         } else if ("protos_move_later".equals(option.getName())) { //$NON-NLS-1$
-            if ((options.getOption("protos_move_even")).booleanValue() //$NON-NLS-1$
+            if ((options.getOption("individual_initiative")).booleanValue() //$NON-NLS-1$
+                    || (options.getOption("protos_move_even")).booleanValue() //$NON-NLS-1$
                     || (options.getOption("protos_move_multi")).booleanValue() //$NON-NLS-1$
                     || !editable) {
                 optionComp.setEditable(false);

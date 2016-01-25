@@ -1119,9 +1119,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         int selectedRow = lisBoardsAvailable.getSelectedIndex();
         ((DefaultListModel<String>) lisBoardsAvailable.getModel())
                 .removeAllElements();
-        for (Iterator<String> i = mapSettings.getBoardsAvailable(); i.hasNext();) {
+        for (String s : mapSettings.getBoardsAvailableVector()) {
             ((DefaultListModel<String>) lisBoardsAvailable.getModel())
-                    .addElement(i.next());
+                    .addElement(s);
         }
         if (resetAvailBoardSelection) {
             lisBoardsAvailable.setSelectedIndex(0);

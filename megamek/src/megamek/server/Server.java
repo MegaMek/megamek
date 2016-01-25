@@ -2294,8 +2294,8 @@ public class Server implements Runnable {
         switch (phase) {
             case PHASE_LOUNGE:
                 clearReports();
-                mapSettings.setBoardsAvailableVector(scanForBoards(
-                        mapSettings.getBoardWidth(), mapSettings.getBoardHeight()));
+                mapSettings.setBoardsAvailableVector(scanForBoards(new BoardDimensions(
+                        mapSettings.getBoardWidth(), mapSettings.getBoardHeight())));
                 mapSettings.setNullBoards(DEFAULT_BOARD);
                 send(createMapSettingsPacket());
                 checkForObservers();
@@ -27145,8 +27145,8 @@ public class Server implements Runnable {
      * extension.
      */
     private ArrayList<String> scanForBoardsInDir(final File boardDir,
-                                                 final String basePath, final BoardDimensions dimensions,
-                                                 ArrayList<String> boards) {
+            final String basePath, final BoardDimensions dimensions,
+            ArrayList<String> boards) {
         if (boardDir == null) {
             throw new IllegalArgumentException("must provide searchDir");
         }
@@ -27168,14 +27168,14 @@ public class Server implements Runnable {
             File filepath = new File(boardDir, filename);
             if (filepath.isDirectory()) {
                 scanForBoardsInDir(new File(boardDir, filename), basePath
-                                           .concat(File.separator).concat(filename), dimensions,
-                                   boards);
+                        .concat(File.separator).concat(filename), dimensions,
+                        boards);
             } else {
                 if (filename.endsWith(".board")) { //$NON-NLS-1$
                     if (Board.boardIsSize(filepath, dimensions)) {
                         boards.add(basePath.concat(File.separator)
-                                           .concat(filename.substring(0,
-                                                                      filename.lastIndexOf("."))));
+                                .concat(filename.substring(0,
+                                        filename.lastIndexOf("."))));
                     }
                 }
             }
@@ -27245,21 +27245,6 @@ public class Server implements Runnable {
     /**
      * Scan for map boards with the specified dimensions.
      *
-     * @param boardWidth  The desired board width.
-     * @param boardHeight The desired board height.
-     * @return A list of path names, minus the '.board' extension, relative to
-     * the boards data directory.
-     * @deprecated Use {@link #scanForBoards(BoardDimensions)} instead.
-     */
-    @Deprecated
-    private ArrayList<String> scanForBoards(final int boardWidth,
-                                            final int boardHeight) {
-        return scanForBoards(new BoardDimensions(boardWidth, boardHeight));
-    }
-
-    /**
-     * Scan for map boards with the specified dimensions.
-     *
      * @param dimensions The desired board dimensions.
      * @return A list of path names, minus the '.board' extension, relative to
      * the boards data directory.
@@ -27287,8 +27272,6 @@ public class Server implements Runnable {
                 boards.add(tempList.get(loop));
             }
         }
-
-        // TODO: alphabetize files?
 
         return boards;
     }
@@ -28691,9 +28674,9 @@ public class Server implements Runnable {
                     option.getName());
             if (originalOption != null) {
                 if ("maps_include_subdir".equals(originalOption.getName())) {
-                    mapSettings.setBoardsAvailableVector(scanForBoards(
+                    mapSettings.setBoardsAvailableVector(scanForBoards(new BoardDimensions(
                             mapSettings.getBoardWidth(),
-                            mapSettings.getBoardHeight()));
+                            mapSettings.getBoardHeight())));
                     mapSettings.removeUnavailable();
                     mapSettings.setNullBoards(DEFAULT_BOARD);
                     send(createMapSettingsPacket());
@@ -29469,9 +29452,9 @@ public class Server implements Runnable {
                                        + " changed map settings");
                     }
                     mapSettings = newSettings;
-                    mapSettings.setBoardsAvailableVector(scanForBoards(
+                    mapSettings.setBoardsAvailableVector(scanForBoards(new BoardDimensions(
                             mapSettings.getBoardWidth(),
-                            mapSettings.getBoardHeight()));
+                            mapSettings.getBoardHeight())));
                     mapSettings.removeUnavailable();
                     mapSettings.setNullBoards(DEFAULT_BOARD);
                     mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
@@ -29495,9 +29478,9 @@ public class Server implements Runnable {
                     }
                     mapSettings = newSettings;
                     newSettings = null;
-                    mapSettings.setBoardsAvailableVector(scanForBoards(
+                    mapSettings.setBoardsAvailableVector(scanForBoards(new BoardDimensions(
                             mapSettings.getBoardWidth(),
-                            mapSettings.getBoardHeight()));
+                            mapSettings.getBoardHeight())));
                     mapSettings.removeUnavailable();
                     mapSettings.setNullBoards(DEFAULT_BOARD);
                     mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);

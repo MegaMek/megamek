@@ -15,6 +15,7 @@ v0.41.14-git
 + Bug: It was possible to select mult/even init options with individual init on
 + Bug #4: Disallow simultaneous enabling of Lance Movement and Individual Init
 + Bug [#4577]: ECCM effective beyond its nominal range
++ Bug: Sprinting with low gravity could cause MASC failure checks
 
 v0.41.13 (2016-01-01 03:35 UTC)
 + Bug [#4666]: Santa Anna Missiles Incorrect Damage in Space Battles

@@ -1052,7 +1052,7 @@ public abstract class Mech extends Entity {
         if (hasHipCrit()) {
             return getRunMP();
         }
-        return getSprintMP(false, false, false);
+        return getSprintMP(true, false, false);
     }
 
     /*

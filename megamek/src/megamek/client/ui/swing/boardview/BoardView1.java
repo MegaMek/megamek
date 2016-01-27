@@ -3441,9 +3441,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     return;
                 }
                 if (e.onSameC3NetworkAs(fe)
-                    && !fe.equals(e)
-                    && !ComputeECM.isAffectedByECM(e, e.getPosition(),
-                                                   fe.getPosition())) {
+                        && !fe.equals(e)
+                        && !ComputeECM.isAffectedByECM(e, e.getPosition(),
+                                fe.getPosition())) {
                     c3Sprites.add(new C3Sprite(this, e, fe));
                 }
             }
@@ -3454,7 +3454,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     return;
                 }
                 ECMInfo ecmInfo = ComputeECM.getECMEffects(e, e.getPosition(),
-                        fe.getPosition(), null);
+                        fe.getPosition(), true, null);
                 if (e.onSameC3NetworkAs(fe)
                     && !fe.equals(e)
                     && (ecmInfo != null)

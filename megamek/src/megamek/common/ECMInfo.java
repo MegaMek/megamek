@@ -14,74 +14,222 @@
  */
 package megamek.common;
 
+import java.util.Comparator;
+
 /**
  * A class that keeps track of information related to an ECM field.
  * @author arlith
  *
  */
-public class ECMInfo implements Comparable<Object> {
-    
+public class ECMInfo {
+
+    /**
+     * Compares two ECMInfo to determine which should take precedence, assuming
+     * that the goal is to find the strongest ECM field.
+     *
+     */
+    static public class ECMComparator implements Comparator<ECMInfo> {
+
+        @Override
+        public int compare(ECMInfo o1, ECMInfo o2) {
+            // Compare two ECCMs
+            if (o1.isECCM() && o2.isECCM()) {
+                if (o2.angelECCMStrength > o1.angelECCMStrength) {
+                    return -1;
+                } else if (o2.angelECCMStrength < o1.angelECCMStrength) {
+                    return 1;
+                } else { // Angel strengths are equal
+                    if (o2.eccmStrength > o1.eccmStrength) {
+                        return -1;
+                    } else if (o2.eccmStrength < o1.eccmStrength) {
+                        return 1;
+                    }
+                }
+                // Both angel and regular ECCM strength are equal
+                return 0;
+                // Compare ECCM to ECM
+            } else if (o1.isECCM() && !o2.isECCM()) {
+                if (o2.angelStrength > o1.angelECCMStrength) {
+                    return -1;
+                } else if (o2.angelStrength < o1.angelECCMStrength) {
+                    return 1;
+                } else { // Angel strengths are equal
+                    if (o2.strength > o1.eccmStrength) {
+                        return -1;
+                    } else if (o2.strength < o1.eccmStrength) {
+                        return 1;
+                    }
+                }
+                // Both angel and regular ECCM strength are equal
+                return -1;
+                // Compare ECM to ECCM
+            } else if (!o1.isECCM() && o2.isECCM()) {
+                if (o2.angelECCMStrength > o1.angelStrength) {
+                    return -1;
+                } else if (o2.angelECCMStrength < o1.angelStrength) {
+                    return 1;
+                } else { // Angel strengths are equal
+                    if (o2.eccmStrength > o1.strength) {
+                        return -1;
+                    } else if (o2.eccmStrength < o1.strength) {
+                        return 1;
+                    }
+                }
+                // Both angel and regular ECCM strength are equal
+                return 1;
+            } else { // Compare two ECMs
+                if (o2.angelStrength > o1.angelStrength) {
+                    return -1;
+                } else if (o2.angelStrength < o1.angelStrength) {
+                    return 1;
+                } else { // Angel strengths are equal
+                    if (o2.strength > o1.strength) {
+                        return -1;
+                    } else if (o2.strength < o1.strength) {
+                        return 1;
+                    }
+                }
+                // Both angel and regular strength are equal
+                return 0;
+            }
+        }
+
+    }
+
+    /**
+     * Compares two ECMInfo to determine which should take precedence, assuming
+     * that the goal is to find the strongest ECCM field.
+     *
+     */
+    static public class ECCMComparator implements Comparator<ECMInfo> {
+
+        @Override
+        public int compare(ECMInfo o1, ECMInfo o2) {
+            // Compare two ECCMs
+            if (o1.isECCM() && o2.isECCM()) {
+                if (o2.angelECCMStrength > o1.angelECCMStrength) {
+                    return -1;
+                } else if (o2.angelECCMStrength < o1.angelECCMStrength) {
+                    return 1;
+                } else { // Angel strengths are equal
+                    if (o2.eccmStrength > o1.eccmStrength) {
+                        return -1;
+                    } else if (o2.eccmStrength < o1.eccmStrength) {
+                        return 1;
+                    }
+                }
+                // Both angel and regular ECCM strength are equal
+                return 0;
+            // Compare ECCM to ECM
+            } else if (o1.isECCM() && !o2.isECCM()) {
+                if (o2.angelStrength > o1.angelECCMStrength) {
+                    return -1;
+                } else if (o2.angelStrength < o1.angelECCMStrength) {
+                    return 1;
+                } else { // Angel strengths are equal
+                    if (o2.strength > o1.eccmStrength) {
+                        return -1;
+                    } else if (o2.strength < o1.eccmStrength) {
+                        return 1;
+                    }
+                }
+                // Both angel and regular ECCM strength are equal
+                return 1;
+            // Compare ECM to ECCM
+            } else if (!o1.isECCM() && o2.isECCM()) {
+                if (o2.angelECCMStrength > o1.angelStrength) {
+                    return -1;
+                } else if (o2.angelECCMStrength < o1.angelStrength) {
+                    return 1;
+                } else { // Angel strengths are equal
+                    if (o2.eccmStrength > o1.strength) {
+                        return -1;
+                    } else if (o2.eccmStrength < o1.strength) {
+                        return 1;
+                    }
+                }
+                // Both angel and regular ECCM strength are equal
+                return -1;
+            } else { // Compare two ECMs
+                if (o2.angelStrength > o1.angelStrength) {
+                    return -1;
+                } else if (o2.angelStrength < o1.angelStrength) {
+                    return 1;
+                } else { // Angel strengths are equal
+                    if (o2.strength > o1.strength) {
+                        return -1;
+                    } else if (o2.strength < o1.strength) {
+                        return 1;
+                    }
+                }
+                // Both angel and regular strength are equal
+                return 0;
+            }
+        }
+
+    }
+
     /**
      * The radius of the field.
      */
-    private int range;
+    int range;
     
     /**
      * The center location of the field.
      */
-    private Coords pos;
+    Coords pos;
     
     /**
      * Used in rare cases that E(C)CM is directional, like active probes on
      * Aerospace Fighters in space.
      */
-    private int direction = -1;
+    int direction = -1;
     
     /**
      * The id of the owning player, used to determine information about who
      * are allies and enemies when looking at other <code>ECMInfo</code>s.
      */
-    private IPlayer owner = null;
+    IPlayer owner = null;
     
     /**
      * The Entity that is generating the ECM field.
      */
-    private Entity owningEntity = null;
+    Entity owningEntity = null;
     
     /**
      * The strength of the ECM field, counted in number of fields.  This could
      * be the number of friendly ECM fields, or the number of enemy ECM fields
      * depending upon context.
      */
-    private double strength = 0;
+    double strength = 0;
     
     /**
      * The strength of the Angel ECM field, counted in number of fields.  This
      * is necessay as Angel ECM fields are inherently stronger than those from 
      * other ECM.
      */
-    private int angelStrength = 0;
+    int angelStrength = 0;
     
     /**
      * The strength of the ECCM field, counted in number of fields.  This could
      * be the number of friendly ECCM fields, or the number of enemy ECCM fields
      * depending upon context.
      */
-    private int eccmStrength = 0;
+    int eccmStrength = 0;
     
     /**
      * The strength of the Angel ECCM field, counted in number of fields.  This
      * is necessay as Angel ECCM fields are inherently stronger than those from 
      * other ECCM.
      */    
-    private int angelECCMStrength = 0;
+    int angelECCMStrength = 0;
     
     /**
      * Indicates whether the ECM strength includes ECM from a Nova CEWS.  From
      * what I can see, Nova ECM acts like regular ECM, except that it's the
      * only ECM that can disrupt the Nova C3i system.
      */
-    private boolean isECMNova = false;
+    boolean isECMNova = false;
     
     public ECMInfo() {
     }
@@ -267,78 +415,6 @@ public class ECMInfo implements Comparable<Object> {
        boolean novaMatch = isECMNova == other.isECMNova;
        boolean rangeMatch = range == other.range;
        return ownersMatch && posMatch && strMatch && rangeMatch && novaMatch;
-    }
-    
-    /**
-     * Compares two ECMInfo objects; ordering is based on strength, with Angel
-     * strength trumping regular strength. 
-     */
-    @Override
-    public int compareTo(Object o) {
-        if (!(o instanceof ECMInfo)) {
-            return 1;
-        }
-        ECMInfo other = (ECMInfo)o;
-        // Compare two ECCMs
-        if (isECCM() && other.isECCM()) {
-            if (other.angelECCMStrength > angelECCMStrength) {
-                return -1;
-            } else if (other.angelECCMStrength < angelECCMStrength) {
-                return 1;
-            } else { // Angel strengths are equal
-                if (other.eccmStrength > eccmStrength) {
-                    return -1;
-                } else if (other.eccmStrength < eccmStrength) {
-                    return 1;
-                }
-            }
-            // Both angel and regular ECCM strength are equal
-            return 0;
-        // Compare ECCM to ECM
-        } else if (isECCM() && !other.isECCM()) {
-            if (other.angelStrength > angelECCMStrength) {
-                return -1;
-            } else if (other.angelStrength < angelECCMStrength) {
-                return 1;
-            } else { // Angel strengths are equal
-                if (other.strength > eccmStrength) {
-                    return -1;
-                } else if (other.strength < eccmStrength) {
-                    return 1;
-                }
-            }
-            // Both angel and regular ECCM strength are equal
-            return 0;
-        // Compare ECM to ECCM    
-        } else if (!isECCM() && other.isECCM()) {
-            if (other.angelECCMStrength > angelStrength) {
-                return -1;
-            } else if (other.angelECCMStrength < angelStrength) {
-                return 1;
-            } else { // Angel strengths are equal
-                if (other.eccmStrength > strength) {
-                    return -1;
-                } else if (other.eccmStrength < strength) {
-                    return 1;
-                }
-            }
-            // Both angel and regular ECCM strength are equal
-            return 0;
-        } else { // Compare two ECMs
-            if (other.angelStrength > angelStrength) {
-                return -1;
-            } else if (other.angelStrength < angelStrength) {
-                return 1;
-            } else { // Angel strengths are equal
-                if (other.strength > strength) {
-                    return -1;
-                } else if (other.strength < strength) {
-                    return 1;
-                }
-            }
-            // Both angel and regular strength are equal
-            return 0;
-        }
     }
 
     public int getRange() {

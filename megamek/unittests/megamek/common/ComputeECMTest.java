@@ -428,12 +428,12 @@ public class ComputeECMTest {
         TestCase.assertEquals(false, result);
         result = ComputeECM.isAffectedByECCM(ae, aePos, aePos);
         TestCase.assertEquals(true, result);        
-        
+
     }
     
     /**
      *  Basic tests for ECM on ground maps, includes single enemy single ally
-     *  single hex. 
+     *  multiple hexes.
      */
     @Test
     public void testBasicECMMultiHex() {
@@ -664,7 +664,33 @@ public class ComputeECMTest {
         TestCase.assertEquals(true, result);
         result = ComputeECM.isAffectedByECCM(ae, aePos, targetPos);
         TestCase.assertEquals(false, result);
-        
+
+        // Test whether ECCM range is working properly, on acccount of bug #4577
+        // Basic ECCM for Player
+        //  Enemy has ECM, Player has ECCM, Enemy ECM outside range of ECCM
+        //  Shoud be affected by ECM, no Angel, no ECCM
+        entitiesVector = new Vector<Entity>();
+        Entity enemy1 = Mockito.mock(Mech.class);
+        Coords ecm1Pos = new Coords(14,14);
+        ECMInfo ecm1 = new ECMInfo(6, ecm1Pos, mockEnemy, 1, 0);
+        Mockito.when(enemy1.getOwner()).thenReturn(mockEnemy);
+        Mockito.when(enemy1.getECMInfo()).thenReturn(ecm1);
+        Mockito.when(enemy1.getGame()).thenReturn(mockGame);
+        entitiesVector.add(enemy1);
+        entitiesVector.add(ae);
+        Mockito.when(mockGame.getEntitiesVector()).thenReturn(entitiesVector);
+
+        aeECCM = new ECMInfo(6, aePos, mockPlayer, 0, 0);
+        aeECCM.setECCMStrength(1);
+        Mockito.when(ae.getECCMInfo()).thenReturn(aeECCM);
+        Mockito.when(ae.getECMInfo()).thenReturn(null);
+        result = ComputeECM.isAffectedByECM(ae, aePos, ecm1Pos);
+        TestCase.assertEquals(true, result);
+        result = ComputeECM.isAffectedByAngelECM(ae, aePos, ecm1Pos);
+        TestCase.assertEquals(false, result);
+        result = ComputeECM.isAffectedByECCM(ae, aePos, ecm1Pos);
+        TestCase.assertEquals(true, result);
+
     }
     
     /**

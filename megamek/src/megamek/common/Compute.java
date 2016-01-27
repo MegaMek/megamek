@@ -1606,13 +1606,14 @@ public class Compute {
      * @return
      */
     private static boolean canCompleteNodePath(Entity start, Entity end,
-            ArrayList<Entity> network, int startPosition, List<ECMInfo> allECMInfo) {
+            ArrayList<Entity> network, int startPosition,
+            List<ECMInfo> allECMInfo) {
 
         Entity spotter = network.get(startPosition);
 
         // ECMInfo for line between spotter's position and start's position
         ECMInfo spotterStartECM = ComputeECM.getECMEffects(spotter,
-                start.getPosition(), spotter.getPosition(), allECMInfo);
+                start.getPosition(), spotter.getPosition(), true, allECMInfo);
 
         // Check for ECM between spotter and start
         boolean isC3BDefeated = start.hasBoostedC3()
@@ -1627,7 +1628,7 @@ public class Compute {
 
         // ECMInfo for line between spotter's position and end's position
         ECMInfo spotterEndECM = ComputeECM.getECMEffects(spotter,
-                spotter.getPosition(), end.getPosition(), allECMInfo);
+                spotter.getPosition(), end.getPosition(), true, allECMInfo);
         isC3BDefeated = start.hasBoostedC3() && (spotterStartECM != null)
                 && spotterEndECM.isAngelECM();
         isNovaDefeated = start.hasNovaCEWS() && (spotterStartECM != null)

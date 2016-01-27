@@ -21,6 +21,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -5302,9 +5303,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 return true;
             }
             ECMInfo srcInfo = ComputeECM.getECMEffects(e, e.getPosition(),
-                    e.getPosition(), null);
+                    e.getPosition(), true, null);
             ECMInfo dstInfo = ComputeECM.getECMEffects(this, getPosition(),
-                    getPosition(), null);
+                    getPosition(), true, null);
             return !((srcInfo != null) && srcInfo.isNovaECM()) 
                     && !((dstInfo != null) && dstInfo.isNovaECM());
         }
@@ -10902,6 +10903,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         ECMInfo bestInfo = null;
+        Comparator<ECMInfo> ecmComparator;
+        ecmComparator = new ECMInfo.ECCMComparator();
         for (Mounted m : getMisc()) {
             // Ignore if inoperable
             if (m.isInoperable()) {
@@ -10939,7 +10942,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // In some type of ECM mode...
             if (newInfo != null) {
                 if ((bestInfo == null)
-                    || (newInfo.compareTo(bestInfo) > 0)) {
+                    || (ecmComparator.compare(newInfo, bestInfo) > 0)) {
                     bestInfo = newInfo;
                 }
             }
@@ -10986,6 +10989,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         ECMInfo bestInfo = null;
+        Comparator<ECMInfo> ecmComparator;
+        ecmComparator = new ECMInfo.ECCMComparator();
         for (Mounted m : getMisc()) {
             ECMInfo newInfo = null;
             if (m.getType().hasFlag(MiscType.F_COMMUNICATIONS)
@@ -11028,7 +11033,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // In some type of ECCM mode...
             if (newInfo != null) {
                 if ((bestInfo == null)
-                    || (newInfo.compareTo(bestInfo) > 0)) {
+                    || (ecmComparator.compare(newInfo, bestInfo) > 0)) {
                     bestInfo = newInfo;
                 }
             }

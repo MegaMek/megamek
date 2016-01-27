@@ -17,6 +17,7 @@ package megamek.common;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -60,7 +61,7 @@ public class ComputeECM {
      */
     public static boolean isAffectedByECM(Entity ae, Coords a, Coords b, 
             List<ECMInfo> allECMInfo) {
-        ECMInfo ecmInfo = getECMEffects(ae, a, b, allECMInfo);
+        ECMInfo ecmInfo = getECMEffects(ae, a, b, true, allECMInfo);
         return (ecmInfo != null) && ecmInfo.isECM();
     }
 
@@ -74,7 +75,7 @@ public class ComputeECM {
      * @return
      */
     public static boolean isAffectedByECCM(Entity ae, Coords a, Coords b) {
-        ECMInfo ecmInfo = getECMEffects(ae, a, b, null);
+        ECMInfo ecmInfo = getECMEffects(ae, a, b, false, null);
         return (ecmInfo != null) && ecmInfo.isECCM();
     }
     
@@ -109,7 +110,7 @@ public class ComputeECM {
      */
     public static boolean isAffectedByAngelECM(Entity ae, Coords a, Coords b, 
             List<ECMInfo> allECMInfo) {
-        ECMInfo ecmInfo = getECMEffects(ae, a, b, allECMInfo);
+        ECMInfo ecmInfo = getECMEffects(ae, a, b, true, allECMInfo);
         return (ecmInfo != null) && ecmInfo.isAngelECM();
     }
     
@@ -363,6 +364,8 @@ public class ComputeECM {
      */
     public static List<ECMInfo> computeAllEntitiesECMInfo(
             List<Entity> entities) {
+        Comparator<ECMInfo> ecmComparator;
+        ecmComparator = new ECMInfo.ECCMComparator();
         
         ArrayList<ECMInfo> allEcmInfo = new ArrayList<ECMInfo>(entities.size());
         ArrayList<ECMInfo> allEccmInfo = new ArrayList<ECMInfo>(entities.size());
@@ -403,7 +406,7 @@ public class ComputeECM {
         // Sort the ECM, as we need to take care of the stronger ECM/ECCM first
         // ie; Angel ECCM can counter any number of ECM, however if an angel
         //  ECM counters it first...
-        Collections.sort(allEcmInfo);
+        Collections.sort(allEcmInfo, ecmComparator);
         Collections.reverse(allEcmInfo);
         
         
@@ -471,8 +474,14 @@ public class ComputeECM {
      * @param b
      * @return
      */
-    public static ECMInfo getECMEffects(Entity ae, Coords a, Coords b, 
-            List<ECMInfo> allEcmInfo) {
+    public static ECMInfo getECMEffects(Entity ae, Coords a, Coords b,
+            boolean compareECM, List<ECMInfo> allEcmInfo) {
+        Comparator<ECMInfo> ecmComparator;
+        if (compareECM) {
+            ecmComparator = new ECMInfo.ECMComparator();
+        } else {
+            ecmComparator = new ECMInfo.ECCMComparator();
+        }
         
         if (ae.getGame().getBoard().inSpace()) {
             // normal ECM effects don't apply in space
@@ -506,9 +515,9 @@ public class ComputeECM {
                     affectedInfo.addOpposingECMEffects(ecmInfo);
                 }
             }
-            if ((worstECMEffects == null && affectedInfo != null) ||
-                    (affectedInfo != null 
-                        && affectedInfo.compareTo(worstECMEffects) > 0)) {
+            if ((worstECMEffects == null && affectedInfo != null)
+                    || (affectedInfo != null && ecmComparator.compare(
+                            affectedInfo, worstECMEffects) > 0)) {
                 worstECMEffects = affectedInfo;
             }
         }       

@@ -357,7 +357,8 @@ public class Sensor implements Serializable {
 
         // how many ECM fields are affecting the entity?
         Coords pos = en.getPosition();
-        ECMInfo ecmInfo = ComputeECM.getECMEffects(en, pos, pos, allECMInfo);
+        ECMInfo ecmInfo = ComputeECM.getECMEffects(en, pos, pos, true,
+                allECMInfo);
         double ecm, ecmAngel;
         ecm = ecmAngel = 0;
         if (ecmInfo != null) {

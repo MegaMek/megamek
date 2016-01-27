@@ -14,6 +14,7 @@ v0.41.14-git
 + Bug [#4679]: Entity deploymentZone won't save as -1 in MUL
 + Bug: It was possible to select mult/even init options with individual init on
 + Bug #4: Disallow simultaneous enabling of Lance Movement and Individual Init
++ Bug [#4577]: ECCM effective beyond its nominal range
 
 v0.41.13 (2016-01-01 03:35 UTC)
 + Bug [#4666]: Santa Anna Missiles Incorrect Damage in Space Battles

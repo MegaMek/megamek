@@ -2068,7 +2068,7 @@ public class MoveStep implements Serializable {
         int tmpWalkMP = entity.getWalkMP();
         final int runMP = entity.getRunMP();
         final int runMPnoMASC = entity.getRunMPwithoutMASC();
-        final int sprintMP = entity.getSprintMP();;
+        final int sprintMP = entity.getSprintMP();
         final int sprintMPnoMASC = entity.getSprintMPwithoutMASC();
         final boolean isMASCUsed = entity.isMASCUsed();
         final boolean hasPoorPerformance = entity

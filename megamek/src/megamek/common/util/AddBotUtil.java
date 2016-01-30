@@ -112,11 +112,11 @@ public class AddBotUtil {
                 parsingConfig = false;
                 parsingPlayer = false;
             } else if (parsingBot) {
-                botName += " " + arg;
+                botName += "-" + arg;
             } else if (parsingConfig) {
-                configName += " " + arg;
+                configName += "-" + arg;
             } else if (parsingPlayer) {
-                playerName += " " + arg;
+                playerName += "-" + arg;
             }
         }
 

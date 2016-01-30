@@ -1,0 +1,12 @@
+Free Worlds League States Battle Armor A - 3145
+Longinus Battle Armor [Laser],1
+Achileus Light Battle Armor [Laser],2
+Ogre Battle Armor (Standard),3
+Phalanx Battle Armor (A),4
+Kopis Assault Battle Armor (Anti-Infantry),5
+Kopis Assault Battle Armor 'The Dark Alley',6
+Xiphos Assault Battle Armor (A),5
+Ogre Battle Armor (Interdictor),4
+Phalanx Battle Armor (A),3
+Longinus Battle Armor [Laser],2
+Achileus Light Battle Armor [Laser],1

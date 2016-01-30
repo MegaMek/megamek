@@ -1,0 +1,12 @@
+3145 Clan Jade Falcon Fleet Dropships
+Overlord C,1
+Broadsword (Standard),2
+Carrier (Standard),3
+Miraborg (Standard),4
+Union C,5
+Sassanid (Standard),6
+Carrier (Standard),5
+Overlord C,4
+Noruff (Standard),3
+Isegrim Assault DropShip (Standard),2
+Nagasawa (Standard),1

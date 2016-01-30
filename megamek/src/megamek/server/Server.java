@@ -25109,7 +25109,7 @@ public class Server implements Runnable {
     }
 
     private Vector<Report> criticalAero(Aero a, int loc, int critMod,
-                                        String reason, int target, int damage, boolean isCapital) {
+            String reason, int target, int damage, boolean isCapital) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
@@ -25141,7 +25141,7 @@ public class Server implements Runnable {
         // now look up on vehicle crits table
         int critType = a.getCriticalEffect(roll, target);
         vDesc.addAll(applyCriticalHit(a, loc, new CriticalSlot(0, critType),
-                                      true, damage, isCapital));
+                true, damage, isCapital));
         return vDesc;
     }
 
@@ -25150,8 +25150,9 @@ public class Server implements Runnable {
      * false, a single hit is applied - needed for MaxTech Heat Scale rule.
      */
     public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear,
-                                         int critMod, boolean rollNumber, boolean isCapital, int damage) {
-        return criticalEntity(en, loc, isRear, critMod, rollNumber, isCapital, damage, false);
+            int critMod, boolean rollNumber, boolean isCapital, int damage) {
+        return criticalEntity(en, loc, isRear, critMod, rollNumber, isCapital,
+                damage, false);
     }
 
     /**
@@ -25159,7 +25160,8 @@ public class Server implements Runnable {
      * false, a single hit is applied - needed for MaxTech Heat Scale rule.
      */
     public Vector<Report> criticalEntity(Entity en, int loc, boolean isRear,
-                                         int critMod, boolean rollNumber, boolean isCapital, int damage, boolean damagedByFire) {
+            int critMod, boolean rollNumber, boolean isCapital, int damage,
+            boolean damagedByFire) {
 
         if (en.hasQuirk("poor_work")) {
             critMod += 1;
@@ -25170,7 +25172,7 @@ public class Server implements Runnable {
 
         // Apply modifiers for Anti-penetrative ablation armor
         if ((en.getArmor(loc, isRear) > 0)
-            && (en.getArmorType(loc) == EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION)) {
+                && (en.getArmorType(loc) == EquipmentType.T_ARMOR_ANTI_PENETRATIVE_ABLATION)) {
             critMod -= 2;
         }
 
@@ -25179,7 +25181,7 @@ public class Server implements Runnable {
         }
         if (en instanceof Aero) {
             return criticalAero((Aero) en, loc, critMod, "unknown", 8, damage,
-                                isCapital);
+                    isCapital);
         }
         CriticalSlot slot = null;
         Vector<Report> vDesc = new Vector<Report>();
@@ -25231,13 +25233,13 @@ public class Server implements Runnable {
                 vDesc.addElement(r);
                 return vDesc;
             } else if ((!advancedCrit && (roll >= 8) && (roll <= 9))
-                       || (advancedCrit && (roll >= 9) && (roll <= 10))) {
+                    || (advancedCrit && (roll >= 9) && (roll <= 10))) {
                 hits = 1;
                 r = new Report(6315);
                 r.subject = en.getId();
                 vDesc.addElement(r);
             } else if ((!advancedCrit && (roll >= 10) && (roll <= 11))
-                       || (advancedCrit && (roll >= 11) && (roll <= 12))) {
+                    || (advancedCrit && (roll >= 11) && (roll <= 12))) {
                 hits = 2;
                 r = new Report(6320);
                 r.subject = en.getId();
@@ -25248,7 +25250,7 @@ public class Server implements Runnable {
                 r.subject = en.getId();
                 vDesc.addElement(r);
             } else if ((!advancedCrit && (roll >= 12))
-                       || (advancedCrit && (roll >= 15))) {
+                    || (advancedCrit && (roll >= 15))) {
                 if (en instanceof Protomech) {
                     hits = 3;
                     r = new Report(6325);
@@ -25277,12 +25279,12 @@ public class Server implements Runnable {
                     if (null != hex) {
                         if (!hex.containsTerrain(Terrains.LEGS)) {
                             hex.addTerrain(Terrains.getTerrainFactory()
-                                                   .createTerrain(Terrains.LEGS, 1));
+                                    .createTerrain(Terrains.LEGS, 1));
                         } else {
                             hex.addTerrain(Terrains
-                                                   .getTerrainFactory()
-                                                   .createTerrain(Terrains.LEGS,
-                                                                  hex.terrainLevel(Terrains.LEGS) + 1));
+                                    .getTerrainFactory()
+                                    .createTerrain(Terrains.LEGS,
+                                            hex.terrainLevel(Terrains.LEGS) + 1));
                         }
                     }
                     sendChangedHex(en.getPosition());
@@ -25308,12 +25310,12 @@ public class Server implements Runnable {
                     if (null != hex) {
                         if (!hex.containsTerrain(Terrains.ARMS)) {
                             hex.addTerrain(Terrains.getTerrainFactory()
-                                                   .createTerrain(Terrains.ARMS, 1));
+                                    .createTerrain(Terrains.ARMS, 1));
                         } else {
                             hex.addTerrain(Terrains
-                                                   .getTerrainFactory()
-                                                   .createTerrain(Terrains.ARMS,
-                                                                  hex.terrainLevel(Terrains.ARMS) + 1));
+                                    .getTerrainFactory()
+                                    .createTerrain(Terrains.ARMS,
+                                            hex.terrainLevel(Terrains.ARMS) + 1));
                         }
                     }
                     sendChangedHex(en.getPosition());
@@ -25339,7 +25341,7 @@ public class Server implements Runnable {
                     hits = 3;
                     // industrials get 4 crits on a modified result of 14
                     if ((roll >= 14) && (en instanceof Mech)
-                        && ((Mech) en).isIndustrial()) {
+                            && ((Mech) en).isIndustrial()) {
                         hits = 4;
                     }
                     r = new Report(6325);
@@ -25353,8 +25355,8 @@ public class Server implements Runnable {
 
         // transfer criticals, if needed
         while ((hits > 0) && en.canTransferCriticals(loc)
-               && (en.getTransferLocation(loc) != Entity.LOC_DESTROYED)
-               && (en.getTransferLocation(loc) != Entity.LOC_NONE)) {
+                && (en.getTransferLocation(loc) != Entity.LOC_DESTROYED)
+                && (en.getTransferLocation(loc) != Entity.LOC_NONE)) {
             loc = en.getTransferLocation(loc);
             r = new Report(6335);
             r.subject = en.getId();
@@ -25406,12 +25408,12 @@ public class Server implements Runnable {
                 }
                 // if explosive use edge
                 if ((en instanceof Mech)
-                    && (en.getCrew().hasEdgeRemaining() && en.getCrew()
-                                                             .getOptions()
-                                                             .booleanOption("edge_when_explosion"))
-                    && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
-                    && slot.getMount().getType()
-                           .isExplosive(slot.getMount())) {
+                        && (en.getCrew().hasEdgeRemaining() && en.getCrew()
+                                .getOptions()
+                                .booleanOption("edge_when_explosion"))
+                        && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
+                        && slot.getMount().getType()
+                                .isExplosive(slot.getMount())) {
                     en.getCrew().decreaseEdge();
                     r = new Report(6530);
                     r.subject = en.getId();
@@ -25425,9 +25427,9 @@ public class Server implements Runnable {
                 if (en.getArmorType(loc) == EquipmentType.T_ARMOR_REACTIVE) {
                     Mounted mount = en.getEquipment(slot.getIndex());
                     if ((mount != null)
-                        && (mount.getType() instanceof MiscType)
-                        && ((MiscType) mount.getType())
-                            .hasFlag(MiscType.F_REACTIVE)) {
+                            && (mount.getType() instanceof MiscType)
+                            && ((MiscType) mount.getType())
+                                    .hasFlag(MiscType.F_REACTIVE)) {
                         int roll = Compute.d6(2);
                         r = new Report(6082);
                         r.subject = en.getId();
@@ -25443,10 +25445,10 @@ public class Server implements Runnable {
                             vDesc.addElement(r);
                             vDesc.addElement(r);
                             vDesc.addAll(damageEntity(en, new HitData(loc),
-                                                      en.getArmor(loc)));
+                                    en.getArmor(loc)));
                             if (en.hasRearArmor(loc)) {
                                 vDesc.addAll(damageEntity(en, new HitData(loc,
-                                                                          true), en.getArmor(loc, true)));
+                                        true), en.getArmor(loc, true)));
                             }
                             vDesc.addAll(damageEntity(en, new HitData(loc), 1));
                         } else {
@@ -25455,7 +25457,7 @@ public class Server implements Runnable {
                     }
                 }
                 vDesc.addAll(applyCriticalHit(en, loc, slot, true, damage,
-                                              isCapital));
+                        isCapital));
                 hits--;
             }
 

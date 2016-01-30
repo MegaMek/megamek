@@ -16,3 +16,4 @@
 /mmconf/*.properties
 /mmconf/*.properties.bak
 /*.log
+/classes/

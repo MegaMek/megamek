@@ -17,6 +17,7 @@ v0.41.14-git
 + Bug [#4577]: ECCM effective beyond its nominal range
 + Bug: Sprinting with low gravity could cause MASC failure checks
 + Bug: /replacePlayer wouldn't allow player names with hyphens ("-")
++ Issue #17: Reactive armor critical hits don't work properly
 
 v0.41.13 (2016-01-01 03:35 UTC)
 + Bug [#4666]: Santa Anna Missiles Incorrect Damage in Space Battles

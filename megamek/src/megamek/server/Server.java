@@ -25353,8 +25353,27 @@ public class Server implements Runnable {
             hits = 1;
         }
 
+        // Check if there is the potential for a reactive armor crit
+        // Because reactive armor isn't hittable, the transfer check doesn't
+        // consider it
+        boolean possibleReactiveCrit = (en.getArmor(loc) > 0)
+                && (en.getArmorType(loc) == EquipmentType.T_ARMOR_REACTIVE);
+        boolean locContainsReactiveArmor = false;
+        for (int i = 0; (i < en.getNumberOfCriticals(loc))
+                && possibleReactiveCrit; i++) {
+            CriticalSlot crit = en.getCritical(loc, i);
+            if ((crit != null)
+                    && (crit.getType() == CriticalSlot.TYPE_EQUIPMENT)
+                    && (crit.getMount() != null)
+                    && crit.getMount().getType().hasFlag(MiscType.F_REACTIVE)) {
+                locContainsReactiveArmor = true;
+                break;
+            }
+        }
+        possibleReactiveCrit &= locContainsReactiveArmor;
+
         // transfer criticals, if needed
-        while ((hits > 0) && en.canTransferCriticals(loc)
+        while ((hits > 0) && (en.canTransferCriticals(loc) && !possibleReactiveCrit)
                 && (en.getTransferLocation(loc) != Entity.LOC_DESTROYED)
                 && (en.getTransferLocation(loc) != Entity.LOC_NONE)) {
             loc = en.getTransferLocation(loc);
@@ -25381,10 +25400,22 @@ public class Server implements Runnable {
             int slotIndex = Compute.randomInt(en.getNumberOfCriticals(loc));
             slot = en.getCritical(loc, slotIndex);
 
+            // There are certain special cases, like reactive armor
+            // some crits aren't normally hittable, except in certain cases
+            boolean reactiveArmorCrit = false;
+            if ((slot != null)
+                    && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
+                    && (slot.getMount() != null)) {
+                Mounted eq = slot.getMount();
+                if (eq.getType().hasFlag(MiscType.F_REACTIVE)
+                        && (en.getArmor(loc) > 0)) {
+                    reactiveArmorCrit = true;
+                }
+            }
+
             // Ignore empty or unhitable slots (this
             // includes all previously hit slots).
-
-            if ((slot != null) && slot.isHittable()) {
+            if ((slot != null) && (slot.isHittable() || reactiveArmorCrit)) {
 
                 if (slot.isArmored()) {
                     r = new Report(6710);
@@ -25423,35 +25454,53 @@ public class Server implements Runnable {
                     continue;
                 }
 
-                // check for reactive armor
-                if (en.getArmorType(loc) == EquipmentType.T_ARMOR_REACTIVE) {
-                    Mounted mount = en.getEquipment(slot.getIndex());
+                // check for reactive armor exploding
+                if (reactiveArmorCrit) {
+                    Mounted mount = slot.getMount();
                     if ((mount != null)
-                            && (mount.getType() instanceof MiscType)
-                            && ((MiscType) mount.getType())
-                                    .hasFlag(MiscType.F_REACTIVE)) {
+                            && mount.getType().hasFlag(MiscType.F_REACTIVE)) {
                         int roll = Compute.d6(2);
                         r = new Report(6082);
                         r.subject = en.getId();
                         r.indent(3);
-                        r.newlines = 0;
                         r.add(roll);
                         vDesc.addElement(r);
                         // big budda boom
                         if (roll == 2) {
                             r = new Report(6083);
                             r.subject = en.getId();
-                            r.indent(3);
+                            r.indent(4);
                             vDesc.addElement(r);
-                            vDesc.addElement(r);
-                            vDesc.addAll(damageEntity(en, new HitData(loc),
-                                    en.getArmor(loc)));
+                            Vector<Report> newReports = new Vector<>();
+                            newReports.addAll(damageEntity(en,
+                                    new HitData(loc), en.getArmor(loc)));
                             if (en.hasRearArmor(loc)) {
-                                vDesc.addAll(damageEntity(en, new HitData(loc,
-                                        true), en.getArmor(loc, true)));
+                                newReports.addAll(damageEntity(en, new HitData(
+                                        loc, true), en.getArmor(loc, true)));
                             }
-                            vDesc.addAll(damageEntity(en, new HitData(loc), 1));
+                            newReports.addAll(damageEntity(en,
+                                    new HitData(loc), 1));
+                            for (Report rep : newReports) {
+                                rep.indent(4);
+                            }
+                            vDesc.addAll(newReports);
                         } else {
+                            // If only hittable crits are reactive,
+                            // this crit is absorbed
+                            boolean allHittableCritsReactive = true;
+                            for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
+                                CriticalSlot crit = en.getCritical(loc, i);
+                                if (crit.isHittable()) {
+                                    allHittableCritsReactive = false;
+                                    break;
+                                }
+                                // We must have reactive crits to get to this
+                                // point, so if nothing else is hittable, we
+                                // must only have reactive crits
+                            }
+                            if (allHittableCritsReactive) {
+                                hits--;
+                            }
                             continue;
                         }
                     }

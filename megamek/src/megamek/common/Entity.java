@@ -3801,8 +3801,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int hittable = 0;
 
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
-            if ((getCritical(loc, i) != null)
-                && getCritical(loc, i).isHittable()) {
+            CriticalSlot crit = getCritical(loc, i);
+            if ((crit != null) && getCritical(loc, i).isHittable()) {
+                hittable++;
+            }
+            // Reactive armor criticals in a location with armor should count
+            // as hittable, evne though they aren't actually hittable
+            else if ((crit != null)
+                    && (crit.getType() == CriticalSlot.TYPE_EQUIPMENT)
+                    && (crit.getMount() != null)
+                    && crit.getMount().getType().hasFlag(MiscType.F_REACTIVE)
+                    && (getArmor(loc) > 0)) {
                 hittable++;
             }
         }

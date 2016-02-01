@@ -1,0 +1,12 @@
+3145 Wolf Empire Transport Dropships
+Outpost (3070),1
+Lion (Clan),2
+Overlord C,3
+Broadsword (Standard),4
+Lion (Clan),5
+Union C,6
+Nagasawa (Standard),5
+Overlord C,4
+Lion (Clan),3
+Overlord C,2
+Broadsword (Standard),1

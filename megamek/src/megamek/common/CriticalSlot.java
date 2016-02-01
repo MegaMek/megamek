@@ -24,7 +24,19 @@ public class CriticalSlot implements Serializable {
     public final static int TYPE_SYSTEM = 0;
     public final static int TYPE_EQUIPMENT = 1;
 
+    /**
+     * Determines what the type of this CriticalSlot is, either system or
+     * equipment.  Systems represent core components of a unit that are located
+     * in specific criticals, such as gyros, engines, and cockpits.  Equipment
+     * represents everything else, and will have an entry in an EquipmentType
+     * subclass.
+     */
     private int type;
+
+    /**
+     * Index is only used for system type critical slots.  It is used as an
+     * index into a collection to determine what the system actually is.
+     */
     private int index = -1;
     private Mounted mount;
     private Mounted mount2;

@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.41.14-git
+v0.41.14 (2016-02-02 13:10 UTC)
 + Data New Sprites/Various RAT and Unit Fixes.
 + Data New Sprites/Osts grow hands.
 + Bug:Protected Actuators quirk not working when Anti-Mek attacked.

@@ -1266,6 +1266,7 @@ Torrent Heavy Bomber (Standard)|
 Saroyan Jump Bomber (Standard)|
 Planetlifter Air Transport 'SuperPelican' aka 'Waddle'|
 Planetlifter Air Transport (Standard)|
+Boomerang Spotter Plane (Standard)|
 Medium Strike Fighter Defender II|
 Light Strike Fighter Owl III|
 Light Strike Fighter Angel (Upgrade)|
@@ -1971,6 +1972,7 @@ Lyonesse Escort (Standard)|
 Aquarius Escort M1|
 Mowang Courier (Clandestine)|
 Mowang Courier (Standard)|
+'Astrolux' Staryacht LC-100|
 Intrepid Assault Craft (2331)|
 Intrepid Assault Craft (2478)|
 S7-P Bus 'Scarab'|
@@ -1980,6 +1982,7 @@ Oo-Suzumebachi (Standard)|
 Condottiere Assault Craft (Standard)|
 NL-45 Gunboat (Standard)|
 Zhen Niao (Standard)|
+Ares Attack Craft Mark IX|
 Escape Pod (Standard)|
 DropShuttle K-1C|
 Life Boat (Standard)|
@@ -1991,6 +1994,7 @@ Long-Range Shuttlecraft KR-61C|
 Shuttle ST-46|
 Bus S-7A|
 DropShuttle K-1|
+Tigress Close Patrol Craft TIG-15|
 Groundhog Exoskeleton 'Master Thief'|
 Djinn Battle Armor (Reflective) 'Terrorizer' (SL)|
 Djinn Battle Armor (Reflective) 'Terrorizer' (Flamer)|
@@ -2787,7 +2791,6 @@ Osprey OSP-26 (Lawrence)|
 Thunderbolt TDR-10M (Ilyena)|
 Karhu (Syngman)|
 Prefect PRF-1R (Veronica)|
-Grasshopper GHR-5N|
 Stinger LAM STG-A10|
 Stinger LAM STG-A5|
 Screamer LAM SCR-1X-LAM|
@@ -2812,8 +2815,6 @@ Alfar AL-A1|
 Alfar AL-D1 'Dokkalfar'|
 Talos TLS-1B|
 Atlas AS7-D(C)|
-Hoplite HOP-4B|
-Hoplite HOP-4C|
 Galahad GLH-3D (Laodices)|
 Emperor EMP-6ME 'Mercury Elite'|
 Albatross ALB-5W (Dantalion)|
@@ -2826,11 +2827,11 @@ Fafnir FNR-4A (Peter)|
 Dragon Fire DGR-6FC2 (Gregory)|
 Black Hawk-KU BHKU-O (Albert)|
 Thresher (Edward)|
+Vanquisher VQR-2A (Pravuil)|
 Cauldron-Born (Ebon Jaguar) (Samantha)|
 Grasshopper (Reynolds)|
 Kodiak (Cale)|
 Dasher (Fire Moth) (Aletha)|
-Vanquisher VQR-2A (Pravuil)|
 Victor VTR-9B (Li)|
 Annihilator ANH-1E|
 Brigand LDT-XPR4|
@@ -3597,7 +3598,6 @@ Templar TLR1-OU|
 Rakshasa MDG-1Ar|
 Gallowglas GAL-2GLSA|
 UrbanMech UM-R80|
-JagerMech JM6-DDa|
 Black Hawk-KU BHKU-OU|
 Quickdraw QKD-5Mr|
 Dragon DRG-5Nr|
@@ -3642,7 +3642,6 @@ Talon TLN-6W|
 No-Dachi NDA-2KC|
 Vulcan VT-5Sr|
 UrbanMech UM-AIV|
-Centurion CN9-Da|
 Stalker STK-7C3BS|
 Longbow LGB-8V|
 Jenner JR7-C4|
@@ -3729,7 +3728,6 @@ Duan Gung D9-G10|
 Highlander IIC (Standard)|
 Barghest BGS-3T|
 Snow Fox 3|
-Enforcer III ENF-6G|
 Marshal MHL-X1|
 Sentry SNT-04|
 Nova Cat C|
@@ -3771,7 +3769,6 @@ Arctic Fox AF1E|
 Yu Huang Y-H9G|
 Icestorm 2|
 Helios HEL-C|
-Enforcer III ENF-6T|
 Barghest BGS-7S|
 Blood Asp D|
 Orion IIC (Standard)|
@@ -3808,7 +3805,6 @@ Stalking Spider 2|
 Garm GRM-01A2|
 Pack Hunter 4|
 Sirocco SRC-5C|
-Enforcer III ENF-6H|
 Thunder Stallion (Standard)|
 Men Shen MS1-OF|
 Stooping Hawk A|
@@ -3925,20 +3921,14 @@ Powerman SC XI-M-B LoaderMech MOD|
 Copper SecurityMech CPK-19|
 Ryoken II (Tassa)|
 Pack Hunter II (Isis)|
-Catapult CPLT-K2K|
 Legionnaire LGN-2D (Raul)|
 Atlas AS7-K2 (Jedra)|
 Mad Cat III 2|
-Catapult CPLT-C2|
-Centurion CN9-D3D|
 Mad Cat III (Dark Age RS)|
 Black Hawk (Standard)|
 Mad Cat III (Eve)|
 Black Hawk 2|
 Yu Huang (Carson)|
-Hatchetman HCT-5DD|
-Centurion CN9-D4D|
-Hatchetman HCT-5D|
 Bakeneko BKN-1K|
 Hellion E|
 Bowman (Standard)|
@@ -4017,7 +4007,6 @@ Thanatos TNS-6S|
 Templar TLR1-OD|
 Gurkha GUR-8G|
 Gurkha GUR-6G|
-Zeus-X ZEU-9WD|
 Archangel C-ANG-O (Berith)|
 Lightray LGH-6W|
 Griffin GRF-6S (Francine II)|
@@ -4027,6 +4016,7 @@ Wolfhound WLF-4WA|
 Griffin GRF-6S (Francine)|
 BattleMaster BLR-4S (Calvin)|
 Firefly FFL-4DA|
+Gallowglas GAL-4GLSA|
 Seraph C-SRP-O (Havalah)|
 Grigori C-GRG-O (Rufus)|
 Deva C-DVA-O (Achilleus)|
@@ -4417,6 +4407,7 @@ Hunchback HBK-5M|
 Koshi (Mist Lynx) B|
 Black Hawk (Nova) H|
 Orion ON1-MD|
+Mercury MCY-102|
 Wolf Trap (Tora) WFT-B|
 Dasher (Fire Moth) F|
 Gladiator (Executioner) C|
@@ -4430,6 +4421,7 @@ Man O' War (Gargoyle) Prime|
 Hatamoto-Chi HTM-28T|
 Fenris (Ice Ferret) D|
 Annihilator ANH-1A|
+Zeus-X ZEU-9WD|
 Centurion CN9-D3|
 Thor (Summoner) C|
 Wolf Trap (Tora) WFT-C|
@@ -4443,16 +4435,19 @@ Cyclops CP-11-A-DC|
 Raven RVN-4LC|
 Hatchetman HCT-6D|
 Gladiator (Executioner) K|
+JagerMech JM6-H|
 JagerMech JM7-D|
 Uller (Kit Fox) W|
 Quickdraw QKD-5M|
 Crockett CRK-5005-1|
+Grand Dragon DRG-5K-DC|
 Gladiator (Executioner) Prime|
 Bombardier BMB-05A|
 Hornet HNT-161|
 Crockett CRK-5003-1|
 Champion C|
 Exterminator EXT-5E|
+Caesar CES-4S|
 Catapult CPLT-K4|
 King Crab KGC-007|
 Awesome AWS-9Q|
@@ -4465,39 +4460,47 @@ Jenner JR7-C|
 Dasher (Fire Moth) A|
 Uller (Kit Fox) Prime|
 Hermes II HER-6D|
+Vindicator VND-4L|
 Ryoken (Stormcrow) C|
 Hoplite C|
 Flea FLE-19|
+Charger CGR-SA5|
 Daishi (Dire Wolf) 'Prometheus'|
 Hatamoto-Hi HTM-C|
 Grasshopper GHR-6K|
 Blackjack BJ-4|
 Koshi (Mist Lynx) P|
+Whitworth WTH-1H|
 Gladiator (Executioner) H|
 Black Hawk (Nova) A|
 Mad Cat (Timber Wolf) D|
 Fenris (Ice Ferret) E|
 Wyvern WVE-5N|
+Guillotine GLT-8D|
 Exterminator EXT-4A|
 Ryoken (Stormcrow) F|
+Stalker STK-8S|
 Flea 'Fire Ant'|
 Guillotine GLT-6WB|
 Panther PNT-14S|
 Koshi (Mist Lynx) E|
+Firefly FFL-4A|
 Hatamoto-Chi HTM-28T (Shin)|
-Crockett CRK-5003-4|
 Thorn THE-N|
 Hermes HER-3S|
 Uller (Kit Fox) F|
+Catapult CPLT-K2K|
 Bombardier BMB-14K|
 Sentinel STN-C|
 Fenris (Ice Ferret) B|
 Hussar HSR-400-D|
 Centurion CN9-D|
+Flashman FLS-9C|
 Thor (Summoner) E|
 Clint CLNT-3-3T|
 Vindicator VND-6L|
 Firefly FFL-4C|
+Sentinel STN-4D|
 Trebuchet TBT-8B|
 Vindicator VND-3L|
 Quickdraw QKD-C|
@@ -4530,9 +4533,11 @@ Commando COM-7B|
 Assassin ASN-30|
 Dasher (Fire Moth) K|
 Awesome AWS-9Ma|
+JagerMech JM6-DDa|
 Mercury MCY-99|
 King Crab KGC-000|
 Hatamoto-Ku HTM-27W|
+Catapult CPLT-C2|
 Guillotine GLT-6WB3|
 Crockett CRK-5004-1|
 Lancelot LNC25-03|
@@ -4545,6 +4550,7 @@ Clint CLNT-2-3UL|
 Mad Cat (Timber Wolf) (Pryde)|
 Black Hawk (Nova) F|
 Lancelot LNC25-05|
+Javelin JVN-11D|
 Shogun SHG-2F (Trisha)|
 Black Hawk (Nova) C|
 Awesome AWS-10KM|
@@ -4552,9 +4558,11 @@ Banshee BNC-5S (Vandergriff)|
 Hussar HSR-200-D|
 Exterminator EXT-4C|
 Vulture (Mad Dog) H|
+Hunchback HBK-5S|
 Uller (Kit Fox) S|
 Mongoose MON-69|
 Hussar HSR-950-D|
+Thorn THE-N1|
 JagerMech JM6-DGr|
 Hussar HSR-900-D|
 Thor (Summoner) G|
@@ -4569,6 +4577,7 @@ Orion ON1-MC|
 Vulture (Mad Dog) B|
 Quickdraw QKD-8K|
 Victor VTR-11D|
+Crab CRB-30|
 Shogun SHG-2F|
 Panther PNT-CA|
 Trebuchet TBT-3C|
@@ -4577,28 +4586,33 @@ Hermes HER-4K|
 Imp IMP-3E|
 Black Knight BL-6-KNT|
 Victor VTR-9D|
+Centurion CN9-D3D|
 Lancelot LNC25-06|
 Loki (Hellbringer) B|
 Victor VTR-9K|
 Firefly C|
 Hatchetman HCT-5K|
 Mercury MCY-104|
+Cataphract CTF-4L|
 Daishi (Dire Wolf) H|
 Black Hawk (Nova) B|
 Highlander HGN-734|
 Puma (Adder) C|
+Clint CLNT-5U|
 Cicada CDA-3F|
 Ryoken (Stormcrow) G|
 Ryoken (Stormcrow) B|
 Firestarter FS9-C|
 Ryoken (Stormcrow) E|
 Vulture (Mad Dog) F|
+Enforcer III ENF-6G|
 Firestarter FS9-S2|
 Awesome AWS-9Q (Klatt)|
 Blackjack BJ-2|
 Javelin JVN-10P|
 Mauler MAL-1K|
 Thor (Summoner) HH|
+Banshee BNC-6S|
 Mauler MAL-1R|
 Exterminator EXT-5F|
 Spider SDR-8M|
@@ -4617,6 +4631,7 @@ Flashman FLS-9M|
 Commando COM-1C|
 Mad Cat (Timber Wolf) S|
 Dasher (Fire Moth) Prime|
+Centurion CN9-D5|
 Thor (Summoner) B|
 Hermes HER-4S|
 Loki (Hellbringer) Prime|
@@ -4624,6 +4639,8 @@ Vulture (Mad Dog) E|
 King Crab KGC-001|
 Victor VTR-10S|
 Cyclops CP-11-C|
+Banshee BNC-7S|
+Raven RVN-4L|
 Raven RVN-3L|
 Kintaro KTO-K|
 Jagermech JM6-DG|
@@ -4644,11 +4661,14 @@ Firestarter FS9-S1|
 Dragonfly (Viper) B|
 Daishi (Dire Wolf) A|
 Hermes HER-3S2|
+Bombardier BMB-14C|
 Orion ON1-M-DC|
 Urbanmech UM-R69|
 Dasher (Fire Moth) C|
+Stalker STK-6M|
 Raven RVN-SR 'Shattered Raven'|
 Masakari (Warhawk) D|
+Wolfhound WLF-3S|
 Katana (Crockett) CRK-5003-CJ|
 Panther PNT-10K|
 Blackjack BJ-3|
@@ -4657,7 +4677,6 @@ Raven RVN-SS 'Shattered Raven'|
 Thug THG-11E|
 Vulcan VT-6M|
 Javelin JVN-11B|
-Dragon DRG-5K-DC|
 Masakari (Warhawk) Prime|
 Hatamoto-Hi HTM-27U|
 Stalker STK-3F (Jamison)|
@@ -4668,12 +4687,12 @@ Ryoken (Stormcrow) I|
 Caesar CES-4R|
 Stalker STK-5S|
 Jenner JR7-C2|
+Grasshopper GHR-5N|
 Dragon DRG-7N|
 Koshi (Mist Lynx) H|
 Hatamoto-Chi HTM-27T|
 Charger CGR-3K|
 Loki (Hellbringer) E|
-Lancelot LNC25-07|
 Cicada CDA-3M|
 Thug THG-13K|
 Thug THG-11E (Reich)|
@@ -4681,6 +4700,7 @@ Koshi (Mist Lynx) A|
 Urbanmech UM-R68|
 Ryoken (Stormcrow) H|
 Quickdraw QKD-5K|
+Commando COM-7S|
 Assassin ASN-99|
 Puma (Adder) H|
 Zeus ZEU-9S|
@@ -4702,6 +4722,7 @@ Axman AXM-2N|
 Man O' War (Gargoyle) M|
 Thorn THE-N2|
 Cataphract CTF-4X|
+Hunchback HBK-5H|
 Uller (Kit Fox) A|
 Daishi (Dire Wolf) 'Widowmaker'|
 Caesar CES-3R|
@@ -4712,18 +4733,21 @@ Zeus ZEU-10WB|
 Mad Cat (Timber Wolf) F|
 Thor (Summoner) A|
 Mad Cat (Timber Wolf) C|
+Zeus ZEU-9T|
 Sentinel STN-3L|
 Axman AXM-4D|
 Firefly FFL-4B|
 Centurion CN10-B|
 Puma (Adder) B|
 Falcon FLC-6C|
+Enforcer III ENF-6T|
 Vulture (Mad Dog) A|
 Hunchback HBK-5P|
 Vulcan VT-5S|
 Catapult CPLT-C4C|
 Zeus ZEU-9S-DC|
 Wolfhound IIC 'Grinner'|
+Catapult CPLT-H2|
 Masakari (Warhawk) B|
 Uller (Kit Fox) C|
 Commando COM-5S|
@@ -4745,13 +4769,17 @@ Mauler MAL-3R|
 Firefly FFL-4D|
 Puma (Adder) E|
 Dasher (Fire Moth) B|
+Catapult CPLT-C5|
 Hermes HER-4WB|
 Firestarter FS9-S|
 Spider SDR-7M|
 Hermes HER-1S|
+Hatchetman HCT-5DD|
 Mad Cat (Timber Wolf) E|
+Whitworth WTH-2A|
 Daishi (Dire Wolf) X|
 Firestarter FS9-S3|
+Atlas AS7-S2|
 Black Knight BL-6b-KNT|
 Atlas AS7-K-DC|
 Thor (Summoner) M|
@@ -4759,6 +4787,7 @@ Banshee BNC-8S|
 Katana (Crockett) CRK-5003-2|
 Uller (Kit Fox) E|
 Puma (Adder) Prime|
+Cyclops CP-11-H|
 Masakari (Warhawk) H|
 Katana (Crockett) CRK-5003-C|
 Daishi (Dire Wolf) D|
@@ -4768,6 +4797,7 @@ Sentinel STN-5WB|
 Imp IMP-2E|
 Orion ON1-MB|
 Whitworth WTH-2|
+Centurion CN9-D4D|
 Koshi (Mist Lynx) D|
 Mad Cat (Timber Wolf) Prime|
 Cyclops CP-12-K|
@@ -4776,6 +4806,8 @@ Daishi (Dire Wolf) S|
 Gladiator (Executioner) A|
 Centurion CN9-YLW2 'Yen Lo Wang'|
 Shogun C|
+Caesar CES-3R (Gertrude)|
+Centurion CN9-Da|
 Puma (Adder) D|
 Commando COM-1B|
 Charger CGR-C|
@@ -4786,6 +4818,7 @@ Bombardier BMB-12D|
 Cataphract CTF-5D|
 Hermes II HER-5ME 'Mercury Elite'|
 Man O' War (Gargoyle) B|
+Commando COM-4H|
 Dragonfly (Viper) I|
 Atlas C|
 King Crab KGC-008|
@@ -4797,8 +4830,11 @@ Dasher (Fire Moth) H|
 Puma (Adder) J|
 Axman AXM-1N|
 Clint CLNT-6S|
+Enforcer III ENF-6H|
 Grasshopper GHR-5J|
+Hunchback HBK-6N|
 Wolfhound WLF-1 (Allard)|
+Stalker STK-7D|
 Grand Dragon DRG-5K|
 Cataphract CTF-3D|
 Black Hawk (Nova) E|
@@ -4809,13 +4845,16 @@ Grand Dragon DRG-C|
 Enforcer ENF-5D|
 Annihilator ANH-2A|
 Javelin JVN-11F|
+Black Knight BL-12-KNT|
 Loki (Hellbringer) C|
 Spider SDR-C|
 Spider SDR-7KC|
 Jenner JR7-K|
+UrbanMech UM-R70|
 Cataphract CTF-3L|
 Loki (Hellbringer) H|
 Cataphract CTF-3LL|
+Panther PNT-12A|
 Spider SDR-7K2|
 Crab CRB-45|
 Ryoken (Stormcrow) (Kotare)|
@@ -4831,6 +4870,7 @@ Masakari (Warhawk) C|
 Thor (Summoner) Q|
 Man O' War (Gargoyle) G|
 Orion ON2-M|
+Hermes II HER-5C|
 Dragonfly (Viper) D|
 Mercury MCY-97|
 Dragonfly (Viper) C|
@@ -4839,20 +4879,25 @@ Mauler MAL-C|
 Gladiator (Executioner) D|
 Fenris (Ice Ferret) Prime|
 Flashman FLS-8K|
+JagerMech JM7-F|
 Flashman FLS-9B|
 Champion CHP-1N|
 Centurion CN9-D9|
+Champion CHP-3P|
 Catapult CPLT-C3|
 Atlas AS7-CM|
 Daishi (Dire Wolf) W|
 Dragonfly (Viper) E|
 Orion ON1-MA|
+Hatchetman HCT-5D|
 Dervish DV-9D|
+Hoplite HOP-4B|
 Vindicator VND-5L|
 Fenris (Ice Ferret) C|
 Kintaro KTO-21|
 Flashman FLS-C|
 Jenner JR7-C3|
+Charger CGR-2A2|
 Victor C|
 Grasshopper GHR-7K 'Gravedigger'|
 Loki (Hellbringer) F|
@@ -4860,6 +4905,7 @@ Fenris (Ice Ferret) H|
 Cyclops CP-11-A|
 Loki (Hellbringer) A|
 Cyclops CP-11-G|
+King Crab KGC-005|
 Mad Cat (Timber Wolf) H|
 Crockett CRK-5003-3|
 Guillotine GLT-3N|
@@ -4870,8 +4916,11 @@ Dervish DV-7D|
 Kintaro KTO-19|
 Uller (Kit Fox) D|
 Flea FLE-20|
+Lancelot LNC25-04|
 Lancelot LNC25-01|
 Javelin JVN-11A 'Fire Javelin'|
+JagerMech JM7-G|
+Hoplite HOP-4C|
 Masakari (Warhawk) A|
 Puma (Adder) A|
 Caesar CES-3S|
@@ -5338,7 +5387,6 @@ Spindrift Aquatic SecurityMech SDT-1A|
 Patron MilitiaMech PTN-2M|
 Grasshopper GHR-7P|
 Thunder THR-C4|
-Stalker STK-6M|
 Pendragon PDG-1R|
 Apollo APL-4M|
 Deep Lord MilitiaMech RCL-Z1M|
@@ -5349,7 +5397,6 @@ Hunchback HBK-7R|
 Thunderbolt IIC (Standard)|
 Mad Cat III X|
 Beowulf IIC (Standard)|
-Hunchback HBK-6N|
 Hatamoto-Kaeru HTM-35K|
 Pandarus LFA-1A|
 Incubus II (Standard)|
@@ -5384,7 +5431,6 @@ Archer ARC-2Rb|
 Hoplite HOP-4Bb|
 Firefly FFL-3PP3|
 Shogun SHG-2H|
-Firefly FFL-4A|
 Marco MR-8E|
 Firefly FFL-3PP|
 Powerman XI LoaderMech (Standard)|
@@ -5629,7 +5675,6 @@ Silver Fox SVR-5Y|
 Vixen (Incubus) 3|
 Morpheus MRP-3W|
 Goshawk (Vapor Eagle) 3|
-Gallowglas GAL-4GLSA|
 Phantom F|
 Berserker BRZ-C3|
 Huron Warrior HUR-WO-R4M|
@@ -5750,34 +5795,24 @@ Space Hound ProspectorMech AM-PRM-SH1|
 Rock Hound ProspectorMech AM-PRM-RH7|
 Rock Hound ProspectorMech AM-PRM-RH7 'Rock Possum'|
 Rock Hound ProspectorMech AM-PRM-RH7A 'Rock Otter'|
-Mercury MCY-102|
 Osiris OSR-4D|
 Mad Cat Mk II (Standard)|
 Stiletto STO-4A|
 Templar TLR1-O (Grayson)|
-JagerMech JM6-H|
 Hellfire 2|
 Lightray LGH-4Y|
-Caesar CES-4S|
 Chimera CMA-C|
 Red Shift RDS-2A|
 Tessen TSN-C3|
-Vindicator VND-4L|
 Brigand LDT-X2|
 Stiletto STO-4B|
 Hellspawn HSN-8E|
-Charger CGR-SA5|
 Perseus P1|
-Whitworth WTH-1H|
 Gurkha GUR-2G|
-Guillotine GLT-8D|
 Chimera CMA-1S|
-Stalker STK-8S|
 Savage Coyote A|
 Scylla (Standard)|
 Gurkha GUR-4G|
-Flashman FLS-9C|
-Sentinel STN-4D|
 Perseus P1A|
 Solitaire (Standard)|
 Hellion A|
@@ -5790,12 +5825,8 @@ Lightray LGH-4W|
 Vanquisher VQR-2A|
 Bloodhound B2-HND|
 Crimson Langur C|
-Javelin JVN-11D|
 Akuma AKU-1XJ|
-Hunchback HBK-5S|
 Arcas (Standard)|
-Thorn THE-N1|
-Crab CRB-30|
 Anubis ABS-3R|
 Crimson Langur Prime|
 Burrock (Standard)|
@@ -5803,13 +5834,10 @@ Templar TLR1-OC|
 Lao Hu LHU-3B|
 Hellspawn HSN-9F|
 Razorback RZK-9T|
-Cataphract CTF-4L|
 Fafnir FNR-5|
-Clint CLNT-5U|
 Uziel UZL-3S|
 Cronus CNS-3M|
 Bloodhound B1-HND|
-Banshee BNC-6S|
 Sagittaire SGT-8R|
 Hellion C|
 Rabid Coyote (Standard)|
@@ -5817,15 +5845,10 @@ Arcas 2|
 Savage Coyote B|
 Akuma AKU-1X|
 Hellion Prime|
-Centurion CN9-D5|
 Uziel UZL-2S|
-Banshee BNC-7S|
 Lao Hu LHU-2B|
 Anubis ABS-3T|
-Raven RVN-4L|
 Fafnir FNR-5B|
-Bombardier BMB-14C|
-Wolfhound WLF-3S|
 Blood Kite 2|
 Tessen TSN-1C|
 Ninja-To NJT-3|
@@ -5833,27 +5856,19 @@ Verfolger VR5-R|
 Ninja-To NJT-2|
 Lobo (Standard)|
 Spirit (Standard)|
-Commando COM-7S|
 Legacy LGC-01|
 Lao Hu LHU-3C|
-Hunchback HBK-5H|
 Crimson Langur B|
 Templar TLR1-O|
-Zeus ZEU-9T|
 Pinion 2|
 Red Shift RDS-2B|
 Brigand LDT-1|
-Catapult CPLT-H2|
 Pinion (Standard)|
 Savage Coyote C|
-Catapult CPLT-C5|
 Templar TLR1-OA|
-Whitworth WTH-2A|
 Vanquisher VQR-2B|
-Atlas AS7-S2|
 Templar TLR1-O (Tancred)|
 Argus AGS-4D|
-Cyclops CP-11-H|
 Hellspawn HSN-7D|
 Cronus CNS-5M|
 Lightray LGH-5W|
@@ -5861,31 +5876,20 @@ Crimson Langur A|
 No-Dachi NDA-2KO|
 Osiris OSR-3D|
 Hellfire (Standard)|
-Commando COM-4H|
 Blue Flame BLF-21|
 Anubis ABS-3L|
-Stalker STK-7D|
 Axman AXM-3S|
 No-Dachi NDA-1K|
-Black Knight BL-12-KNT|
-UrbanMech UM-R70|
-Panther PNT-12A|
 Hellion B|
 Perseus P1B|
 Perseus P1D|
-Hermes II HER-5C|
 Thanatos TNS-4S|
-JagerMech JM7-F|
-Champion CHP-3P|
 Razorback RZK-9S|
-Charger CGR-2A2|
 White Flame WHF-3B|
 Brigand LDT-X1|
 Perseus P1C|
 No-Dachi NDA-2K|
-King Crab KGC-005|
 Savage Coyote Prime|
-Lancelot LNC25-04|
 Sha Yu SYU-2B|
 Samarkand Carrier Block I|
 Kirishima Cruiser (Standard)|

@@ -49,6 +49,7 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -84,6 +85,7 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.BattleArmorHandlesTank;
@@ -110,10 +112,12 @@ import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.QuirksHandler;
+import megamek.common.RangeType;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.Transporter;
 import megamek.common.UnitType;
+import megamek.common.WeaponType;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameEntityRemoveEvent;
@@ -123,6 +127,7 @@ import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
+import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
 import megamek.common.util.BoardUtilities;
@@ -1474,20 +1479,209 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         return value;
 
     }
+    
+    private static StringBuffer tooltipString;
+    private final static boolean BR = true;
+    private final static boolean NOBR = false;
+    
+    /**
+     * Adds a resource string to the entity tooltip
+     * 
+     * @param ttSName The resource string name. "BoardView1.Tooltip." will be added in front, so
+     * "Pilot" will retrieve BoardView1.Tooltip.Pilot
+     * @param startBR = true will start the string with a &lt;BR&gt;; The constants BR and NOBR can be used here. 
+     * @param ttO a list of Objects to insert into the {x} places in the resource.
+     */
+    private static void addToTT(String ttSName, boolean startBR, Object... ttO) {
+        if (startBR == BR)
+            tooltipString.append("<BR>");
+        if (ttO != null) {
+            tooltipString.append(Messages.getString("BoardView1.Tooltip."
+                    + ttSName, ttO));
+        } else {
+            tooltipString.append(Messages.getString("BoardView1.Tooltip."
+                    + ttSName));
+        }
+    }
+    
+    /**
+     * Adds a resource string to the entity tooltip
+     * 
+     * @param ttSName The resource string name. "BoardView1.Tooltip." will be added in front, so
+     * "Pilot" will retrieve BoardView1.Tooltip.Pilot
+     * @param startBR = true will start the string with a &lt;BR&gt;; The constants BR and NOBR can be used here. 
+     */
+    private static void addToTT(String ttSName, boolean startBR) {
+        addToTT(ttSName, startBR, (Object[]) null);
+    }
 
     public static String formatUnitTooltip(Entity entity) {
 
-        String value = "<html>";
-        value += "<b>" + entity.getChassis() + "  " + entity.getModel()
-                + "</b><br>";
-        value += "" + Math.round(entity.getWeight())
-                + Messages.getString("ChatLounge.Tons") + "<br>";
-        value += "" + entity.getTotalArmor() + "/" + entity.getTotalOArmor()
-                + Messages.getString("ChatLounge.armor") + "<br>";
-        value += "" + entity.getTotalInternal() + "/"
-                + entity.getTotalOInternal()
-                + Messages.getString("ChatLounge.internal") + "<br>";
-        value += "<br>";
+        GunEmplacement thisGunEmp = null;
+        if (entity instanceof GunEmplacement) thisGunEmp = (GunEmplacement) entity;
+        
+        tooltipString = new StringBuffer();
+        tooltipString.append("<HTML>");
+
+        // Unit Chassis and Player
+        addToTT("Unit", NOBR,
+                Integer.toHexString(PlayerColors.getColorRGB(
+                        entity.getOwner().getColorIndex())), 
+                entity.getChassis(), 
+                entity.getOwner().getName());
+        
+        // Pilot Info
+        // Nickname > Name > "Pilot"
+        String pnameStr = "Pilot";
+
+        if ((entity.getCrew().getName() != null)
+                && !entity.getCrew().getName().equals("")) 
+            pnameStr = entity.getCrew().getName();
+        
+        if ((entity.getCrew().getNickname() != null)
+                && !entity.getCrew().getNickname().equals("")) 
+            pnameStr = "'" + entity.getCrew().getNickname() + "'";
+
+        addToTT("Pilot", BR,
+                pnameStr, 
+                entity.getCrew().getGunnery(), 
+                entity.getCrew().getPiloting());
+
+        // Pilot Status
+        if (!entity.getCrew().getStatusDesc().equals(""))
+            addToTT("PilotStatus", NOBR, 
+                    entity.getCrew().getStatusDesc());
+        
+        // Pilot Advantages
+        int numAdv = entity.getCrew().countOptions(
+                PilotOptions.LVL3_ADVANTAGES);
+        if (numAdv == 1)
+            addToTT("Adv1", NOBR, numAdv);
+        else if (numAdv > 1) 
+            addToTT("Advs", NOBR, numAdv);
+        
+        // Pilot Manei Domini
+        if ((entity.getCrew().countOptions(
+                PilotOptions.MD_ADVANTAGES) > 0)) 
+            addToTT("MD", NOBR);
+        
+        // Unit movement ability
+        if (thisGunEmp == null) {
+            addToTT("Movement", BR, entity.getWalkMP(), entity.getRunMPasString());
+            if (entity.getJumpMP() > 0) tooltipString.append("/" + entity.getJumpMP());
+        }
+        
+        // Armor and Internals
+        addToTT("ArmorInternals", BR, entity.getTotalArmor()
+                + ((entity.getTotalArmor() != entity.getTotalOArmor())?"/" + entity.getTotalOArmor():""),
+                entity.getTotalInternal() +
+                ((entity.getTotalInternal() != entity.getTotalOInternal())?"/" + entity.getTotalOInternal():""));
+
+        // Weapon List
+        if (GUIPreferences.getInstance()
+                .getBoolean(GUIPreferences.SHOW_WPS_IN_TT)) {
+
+            ArrayList<Mounted> weapons = entity.getWeaponList();
+            HashMap<String, Integer> wpNames = new HashMap<String,Integer>();
+
+            // Gather names, counts, Clan/IS
+            // When clan then the number will be stored as negative
+            for (Mounted curWp: weapons) {
+                String weapDesc = curWp.getDesc();
+                // Append ranges
+                WeaponType wtype = (WeaponType)curWp.getType();
+                int ranges[];
+                if (entity instanceof Aero) {
+                    ranges = wtype.getATRanges();
+                } else {
+                    ranges = wtype.getRanges(curWp);
+                }
+                String rangeString = "(";
+                if ((ranges[RangeType.RANGE_MINIMUM] != WeaponType.WEAPON_NA) 
+                        && (ranges[RangeType.RANGE_MINIMUM] != 0)) {
+                    rangeString += ranges[RangeType.RANGE_MINIMUM] + "/";
+                } else {
+                    rangeString += "-/";
+                }
+                int maxRange = RangeType.RANGE_LONG;
+                
+                if ((entity.getGame() != null) && entity.getGame().getOptions().booleanOption(
+                        OptionsConstants.AC_TAC_OPS_RANGE)) {
+                    maxRange = RangeType.RANGE_EXTREME;
+                }
+                for (int i = RangeType.RANGE_SHORT; i <= maxRange; i++) {
+                    rangeString += ranges[i];
+                    if (i != maxRange) {
+                        rangeString += "/";
+                    }
+                }
+                
+                weapDesc += rangeString + ")";
+                if (wpNames.containsKey(weapDesc)) {
+                    int number = wpNames.get(weapDesc);
+                    if (number > 0) 
+                        wpNames.put(weapDesc, number + 1);
+                    else 
+                        wpNames.put(weapDesc, number - 1);
+                } else {
+                    WeaponType wpT = ((WeaponType)curWp.getType());
+
+                    if (entity.isClan() && TechConstants.isClan(wpT.getTechLevel(entity.getYear()))) 
+                        wpNames.put(weapDesc, -1);
+                    else
+                        wpNames.put(weapDesc, 1);
+                }
+            }
+
+            // Print to Tooltip
+            tooltipString.append("<FONT SIZE=\"-2\">");
+
+            for (Entry<String, Integer> entry : wpNames.entrySet()) {
+                // Check if weapon is destroyed, text gray and strikethrough if so, remove the "x "/"*"
+                // Also remove "+", means currently selected for firing
+                boolean wpDest = false;
+                String nameStr = entry.getKey();
+                if (entry.getKey().startsWith("x ")) { 
+                    nameStr = entry.getKey().substring(2, entry.getKey().length());
+                    wpDest = true;
+                }
+
+                if (entry.getKey().startsWith("*")) { 
+                    nameStr = entry.getKey().substring(1, entry.getKey().length());
+                    wpDest = true;
+                }
+
+                if (entry.getKey().startsWith("+")) { 
+                    nameStr = entry.getKey().substring(1, entry.getKey().length());
+                    nameStr = nameStr.concat(" <I>(Firing)</I>");
+                }
+
+                // normal coloring 
+                tooltipString.append("<FONT COLOR=#8080FF>");
+                // but: color gray and strikethrough when weapon destroyed
+                if (wpDest) tooltipString.append("<FONT COLOR=#a0a0a0><S>");
+
+                String clanStr = "";
+                if (entry.getValue() < 0) clanStr = Messages.getString("BoardView1.Tooltip.Clan");
+
+                // when more than 5 weapons are present, they will be grouped
+                // and listed with a multiplier
+                if (weapons.size() > 5) {
+                    addToTT("WeaponN", BR, Math.abs(entry.getValue()), clanStr, nameStr);
+
+                } else { // few weapons: list each weapon separately
+                    for (int i = 0; i < Math.abs(entry.getValue()); i++) {
+                        addToTT("Weapon", BR, Math.abs(entry.getValue()), clanStr, nameStr);
+                    }
+                }
+                // Weapon destroyed? End strikethrough
+                if (wpDest) tooltipString.append("</S>");
+                tooltipString.append("</FONT>"); 
+            }
+            tooltipString.append("</FONT>");
+        }
+        
+        // Add StratOps quirks, if activated
         if ((entity.getGame() != null)
                 && entity.getGame().getOptions()
                         .booleanOption("stratops_quirks")) {
@@ -1495,13 +1689,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     .getGroups(); advGroups.hasMoreElements();) {
                 IOptionGroup advGroup = advGroups.nextElement();
                 if (entity.countQuirks(advGroup.getKey()) > 0) {
-                    value += "<b>" + advGroup.getDisplayableName() + "</b><br>";
+                    tooltipString.append("<BR><i>" + advGroup.getDisplayableName() + ":</i>");
                     for (Enumeration<IOption> advs = advGroup.getOptions(); advs
                             .hasMoreElements();) {
                         IOption adv = advs.nextElement();
                         if (adv.booleanValue()) {
-                            value += "  " + adv.getDisplayableNameWithValue()
-                                    + "<br>";
+                            tooltipString.append("<BR>&nbsp;" + adv.getDisplayableNameWithValue());
                         }
                     }
                 }
@@ -1511,39 +1704,39 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         .getGroups(); advGroups.hasMoreElements();) {
                     IOptionGroup advGroup = advGroups.nextElement();
                     if (weapon.countQuirks() > 0) {
-                        value += "<b>" + weapon.getDesc() + "</b><br>";
+                        tooltipString.append("<BR><i>" + weapon.getDesc() + ":</i>");
                         for (Enumeration<IOption> advs = advGroup.getOptions(); advs
                                 .hasMoreElements();) {
                             IOption adv = advs.nextElement();
                             if (adv.booleanValue()) {
-                                value += "  "
-                                        + adv.getDisplayableNameWithValue()
-                                        + "<br>";
+                                tooltipString.append("<BR>&nbsp;"
+                                        + adv.getDisplayableNameWithValue());
                             }
                         }
                     }
                 }
             }
         }
+        
+        // Add partial repairs, if activated
         for (Enumeration<IOptionGroup> advGroups = entity.getPartialRepairs()
                 .getGroups(); advGroups.hasMoreElements();) {
             IOptionGroup advGroup = advGroups.nextElement();
             if (entity.countPartialRepairs() > 0) {
-                value += "<b>" + advGroup.getDisplayableName() + "</b><br>";
+                tooltipString.append("<BR><i>" + advGroup.getDisplayableName() + ":</i><br>");
                 for (Enumeration<IOption> advs = advGroup.getOptions(); advs
                         .hasMoreElements();) {
                     IOption adv = advs.nextElement();
                     if (adv.booleanValue()) {
-                        value += "  " + adv.getDisplayableNameWithValue()
-                                + "<br>";
+                        tooltipString.append("&nbsp;" + adv.getDisplayableNameWithValue()
+                                + "<br>");
                     }
                 }
             }
         }
 
-        value += "</html>";
-        return value;
-
+        tooltipString.append("</html>");
+        return tooltipString.toString();
     }
 
     public static String formatUnitCompact(Entity entity, boolean blindDrop) {

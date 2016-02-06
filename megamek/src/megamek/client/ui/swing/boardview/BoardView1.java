@@ -183,7 +183,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     static final int HEX_ELEV = 12;
 
     private static final float[] ZOOM_FACTORS = {0.30f, 0.41f, 0.50f, 0.60f,
-                                                 0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f, 3f};
+                                                 0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f, 1.3f};
+    
+    public static int [] allDirections = new int[] {0,1,2,3,4,5};
     
     // Set to TRUE to draw hexes with isometric elevation.
     private boolean drawIsometric = GUIPreferences.getInstance()
@@ -1830,42 +1832,36 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         final IHex hex = game.getBoard().getHex(c);
         final Point hexLoc = getHexLocation(c);
 
-        int drawX = hexLoc.x;
-        int drawY = hexLoc.y;
-
         // Check the cache to see if we already have the image
         HexImageCacheEntry cacheEntry = hexImageCache.get(c);
         if ((cacheEntry != null) && !cacheEntry.needsUpdating) {
-            boardGraph.drawImage(cacheEntry.hexImage, drawX, drawY, this);
+            boardGraph.drawImage(cacheEntry.hexImage, hexLoc.x, hexLoc.y, this);
             return;
         }
 
-        // Some hex images shouldn't be cached, like if they are animated
-        boolean dontCache = false;
         int level = hex.getLevel();
         int depth = hex.depth(false);
 
         ITerrain basement = hex.getTerrain(Terrains.BLDG_BASEMENT_TYPE);
         if (basement != null) {
             depth = 0;
-
         }
+
         int height = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV),
                               hex.terrainLevel(Terrains.BRIDGE_ELEV));
         height = Math.max(height, hex.terrainLevel(Terrains.INDUSTRIAL));
 
-        // draw picture
+        // get the base tile image
         Image baseImage = tileManager.baseFor(hex);
+        
+        // Some hex images shouldn't be cached, like if they are animated
+        boolean dontCache = animatedImages.contains(baseImage.hashCode());
         
         // check if this is a standard tile image 84x72 or something different
         boolean standardTile = (baseImage.getHeight(null) == HEX_H)
                 && (baseImage.getWidth(null) == HEX_W);
         
         Image scaledImage = getScaledImage(baseImage, true);
-
-        if (animatedImages.contains(baseImage.hashCode())) {
-            dontCache = true;
-        }
 
         int imgHeight, imgWidth;
         imgWidth = scaledImage.getWidth(null);
@@ -1880,7 +1876,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         
         if (useIsometric()) {
             int largestLevelDiff = 0;
-            for (int dir = 0; dir < 6; dir++) {
+            for (int dir: allDirections) {
                 IHex adjHex = game.getBoard().getHexInDir(c, dir);
                 if (adjHex == null) {
                     continue;
@@ -1890,37 +1886,30 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     largestLevelDiff = levelDiff;
                 }
             }
-            imgHeight += HEX_ELEV * scale * Math.abs(largestLevelDiff);
+            imgHeight += HEX_ELEV * scale * largestLevelDiff;
         }
         // If the base image isn't ready, we should signal a repaint and stop
         if ((imgWidth < 0) || (imgHeight < 0)) {
             repaint();
             return;
         }
+        
         Image hexImage = new BufferedImage(imgWidth, imgHeight,
                 BufferedImage.TYPE_INT_ARGB);
 
-        Graphics g = hexImage.getGraphics();
-        drawX = 0;
-        drawY = 0;
-        
-        if (GUIPreferences.getInstance().getAntiAliasing()) {
-            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-        }
+        Graphics2D g = (Graphics2D)(hexImage.getGraphics());
+        GUIPreferences.AntiAliasifSet(g);
         
         if (standardTile) { // is the image hex-sized, 84*72?
-            g.drawImage(scaledImage, drawX, drawY, this);
+            g.drawImage(scaledImage, 0, 0, this);
         } else { // Draw image for a texture larger than a hex
-            Graphics2D g2d = (Graphics2D) g;
-
             AffineTransform t = new AffineTransform();
             // without the 1.02 unwanted hex borders will remain
             t.scale(scale * 1.02, scale * 1.02); 
             Shape clipShape = t.createTransformedShape(hexPoly);
 
-            Shape saveclip = g2d.getClip();
-            g2d.setClip(clipShape);
+            Shape saveclip = g.getClip();
+            g.setClip(clipShape);
 
             Point p1SRC = getHexLocationLargeTile(c.getX(), c.getY());
             p1SRC.x = p1SRC.x % origImgWidth;
@@ -1955,7 +1944,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         p2SRC.x - origImgWidth, p2SRC.y - origImgHeight, null); 
             }
 
-            g2d.setClip(saveclip);
+            g.setClip(saveclip);
         }
 
         List<Image> supers = tileManager.supersFor(hex);
@@ -1965,23 +1954,24 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     dontCache = true;
                 }
                 scaledImage = getScaledImage(image, true);
-                g.drawImage(scaledImage, drawX, drawY, this);
+                g.drawImage(scaledImage, 0, 0, this);
             }
         }
         
         // Elevation Shadow in this hex when a higher one is adjacent
         if (guip.getBoolean(GUIPreferences.ADVANCED_SHOW_HEX_SHADOWS))   
         {
-	    	for (int dir=0;dir<6;dir++) {
+            for (int dir: allDirections) {
 	    		Shape ShadowShape = getElevationShadowArea(c, dir);
 	    		GradientPaint gpl = getElevationShadowGP(c, dir);
 	    		if (ShadowShape != null && gpl != null) {
-	    			((Graphics2D)g).setPaint(gpl);
-	    			((Graphics2D)g).fill(getElevationShadowArea(c, dir));
+	    			g.setPaint(gpl);
+	    			g.fill(getElevationShadowArea(c, dir));
 	    		}
 		    }
         }
 
+        // Orthos (bridges) 
         List<Image> orthos = tileManager.orthoFor(hex);
         if (orthos != null) {
             for (Image image : orthos) {
@@ -1990,13 +1980,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
                 scaledImage = getScaledImage(image, true);
                 if (!useIsometric()) {
-                    g.drawImage(scaledImage, drawX, drawY, this);
+                    g.drawImage(scaledImage, 0, 0, this);
                 }
                 // draw a shadow for bridge hex.
                 if (useIsometric()
                     && (hex.terrainLevel(Terrains.BRIDGE_ELEV) > 0)) {
                     Image shadow = createShadowMask(scaledImage);
-                    g.drawImage(shadow, drawX, drawY, this);
+                    g.drawImage(shadow, 0, 0, this);
                 }
             }
         }
@@ -2008,10 +1998,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 g.setColor(tint);
                 AffineTransform sc = new AffineTransform();
                 sc.scale(scale, scale);
-                ((Graphics2D)g).fill(sc.createTransformedShape(hexPoly));
+                g.fill(sc.createTransformedShape(hexPoly));
                 g.setColor(origColor);
                 Image staticImage = getScaledImage(tileManager.getEcmStaticImage(tint), false);
-                g.drawImage(staticImage, drawX, drawY,
+                g.drawImage(staticImage, 0, 0,
                         staticImage.getWidth(null),
                         staticImage.getHeight(null), this);
             }
@@ -2024,7 +2014,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 g.setColor(tint);
                 AffineTransform sc = new AffineTransform();
                 sc.scale(scale, scale);
-                ((Graphics2D)g).fill(sc.createTransformedShape(hexPoly));
+                g.fill(sc.createTransformedShape(hexPoly));
                 g.setColor(origColor);
             }
         }
@@ -2035,6 +2025,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 drawHexBorder(g, tint.darker(), 5, 10);
             }
         }
+        
         // Highlight hexes that contain the source of an ECCM field
         if (eccmCenters != null) {
             Color tint = eccmCenters.get(c);
@@ -2042,17 +2033,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 drawHexBorder(g, tint.darker(), 5, 10);
             }
         }
-
+        
+        // Darken the hex image if nighttime 
         if (guip.getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
                 && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)
                 && (game.isPositionIlluminated(c) == IGame.ILLUMINATED_NONE)) {
             scaledImage = getScaledImage(tileManager.getNightFog(), true);
-            g.drawImage(scaledImage, drawX, drawY, this);
+            g.drawImage(scaledImage, 0, 0, this);
         }
+        
+        // Set the text color according to Preferences or Light Gray in space
         g.setColor(guip.getMapTextColor());
-        if (game.getBoard().inSpace()) {
+        if (game.getBoard().inSpace()) 
             g.setColor(Color.LIGHT_GRAY);
-        }
 
         // draw special stuff for the hex
         final Collection<SpecialHexDisplay> shdList = game.getBoard()
@@ -2064,7 +2057,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             localPlayer)) {
                         scaledImage = getScaledImage(shd.getType()
                                 .getDefaultImage(), true);
-                        g.drawImage(scaledImage, drawX, drawY, this);
+                        g.drawImage(scaledImage, 0, 0, this);
                     }
                 }
             }
@@ -2072,114 +2065,92 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             System.err.println("Illegal argument exception, probably "
                     + "can't load file.");
             e.printStackTrace();
-            drawCenteredString("Loading Error", drawX, drawY
+            drawCenteredString("Loading Error", 0, 0
                     + (int) (50 * scale), font_note, g);
             return;
         }
 
-        // draw hex number unless deactivated or scale factor too small
+        // write hex coordinate unless deactivated or scale factor too small
         if (guip.getBoolean(GUIPreferences.ADVANCED_SHOW_COORDS)
                 && (scale >= 0.5)) {
-            drawCenteredString(c.getBoardNum(), drawX, drawY
+            drawCenteredString(c.getBoardNum(), 0, 0
                     + (int) (12 * scale), font_hexnum, g);
         }
 
-        // draw terrain level / water depth / building height
+        // write terrain level / water depth / building height
         if (scale > 0.5f) {
-            int ypos = 70;
+            int ypos = HEX_H-2;
             if (level != 0) {
                 drawCenteredString(
                         Messages.getString("BoardView1.LEVEL") + level, //$NON-NLS-1$
-                        drawX, drawY + (int) (ypos * scale), font_elev, g);
+                        0, (int) (ypos * scale), font_elev, g);
                 ypos -= 10;
             }
             if (depth != 0) {
                 drawCenteredString(
                         Messages.getString("BoardView1.DEPTH") + depth, //$NON-NLS-1$
-                        drawX, drawY + (int) (ypos * scale), font_elev, g);
+                        0, (int) (ypos * scale), font_elev, g);
                 ypos -= 10;
             }
             if (height > 0) {
                 g.setColor(GUIPreferences.getInstance().getColor(
-                        "AdvancedBuildingTextColor"));
+                        "AdvancedBuildingTextColor"));                 //$NON-NLS-1$
                 drawCenteredString(
                         Messages.getString("BoardView1.HEIGHT") + height, //$NON-NLS-1$
-                        drawX, drawY + (int) (ypos * scale), font_elev, g);
+                        0, (int) (ypos * scale), font_elev, g);
                 ypos -= 10;
             }
         }
+
+        // Used to make the following draw calls shorter
+        int s21 = (int)(21*scale);
+        int s71 = (int)(71*scale);
+        int s35 = (int)(35*scale);
+        int s36 = (int)(36*scale);
+        int s62 = (int)(62*scale);
+        int s83 = (int)(83*scale);
 
         // draw elevation borders
         Point p1, p2;
         g.setColor(Color.black);
         if (drawElevationLine(c, 0)) {
-            final int x1 = drawX + (int) (21 * scale);
-            final int x2 = drawX + (int) (62 * scale);
-            final int y1 = drawY;
-            final int y2 = drawY;
-
-            p1 = new Point(x2, y2);
-            p2 = new Point(x1, y1);
+            p1 = new Point(s62, 0);
+            p2 = new Point(s21, 0);
             drawIsometricElevation(c, Color.GRAY, p1, p2, 0, g);
-            g.drawLine(x1, y1, x2, y2);
+            g.drawLine(s21, 0, s62, 0);
         }
         if (drawElevationLine(c, 1)) {
-            final int x1 = drawX + (int) (62 * scale);
-            final int x2 = drawX + (int) (83 * scale);
-            final int y1 = drawY;
-            final int y2 = drawY + (int) (35 * scale);
-
-            p1 = new Point(x2, y2);
-            p2 = new Point(x1, y1);
+            p1 = new Point(s83, s35);
+            p2 = new Point(s62, 0);
             drawIsometricElevation(c, Color.DARK_GRAY, p1, p2, 1, g);
-            g.drawLine(x1, y1, x2, y2);
+            g.drawLine(s62, 0, s83, s35);
         }
         if (drawElevationLine(c, 2)) {
-            final int x1 = drawX + (int) (83 * scale);
-            final int x2 = drawX + (int) (62 * scale);
-            final int y1 = drawY + (int) (36 * scale);
-            final int y2 = drawY + (int) (71 * scale);
-
-            p1 = new Point(x1, y1);
-            p2 = new Point(x2, y2);
+            p1 = new Point(s83, s36);
+            p2 = new Point(s62, s71);
             drawIsometricElevation(c, Color.LIGHT_GRAY, p1, p2, 2, g);
-            g.drawLine(x1, y1, x2, y2);
+            g.drawLine(s83, s36, s62, s71);
         }
         if (drawElevationLine(c, 3)) {
-            final int x1 = drawX + (int) (62 * scale);
-            final int x2 = drawX + (int) (21 * scale);
-            final int y1 = drawY + (int) (71 * scale);
-            final int y2 = drawY + (int) (71 * scale);
-
-            p1 = new Point(x2, y2);
-            p2 = new Point(x1, y1);
+            p1 = new Point(s21, s71);
+            p2 = new Point(s62, s71);
             drawIsometricElevation(c, Color.GRAY, p1, p2, 3, g);
-            g.drawLine(x1, y1, x2, y2);
+            g.drawLine(s62, s71, s21, s71);
         }
         if (drawElevationLine(c, 4)) {
-            final int x1 = drawX + (int) (21 * scale);
-            final int x2 = drawX;
-            final int y1 = drawY + (int) (71 * scale);
-            final int y2 = drawY + (int) (36 * scale);
-
-            p1 = new Point(x2, y2);
-            p2 = new Point(x1, y1);
+            p1 = new Point(0, s36);
+            p2 = new Point(s21, s71);
             drawIsometricElevation(c, Color.DARK_GRAY, p1, p2, 4, g);
-            g.drawLine(x1, y1, x2, y2);
+            g.drawLine(s21, s71, 0, s36);
         }
         if (drawElevationLine(c, 5)) {
-            final int x1 = drawX;
-            final int x2 = drawX + (int) (21 * scale);
-            final int y1 = drawY + (int) (35 * scale);
-            final int y2 = drawY;
-
-            p1 = new Point(x1, y1);
-            p2 = new Point(x2, y2);
+            p1 = new Point(0, s35);
+            p2 = new Point(s21, 0);
             drawIsometricElevation(c, Color.LIGHT_GRAY, p1, p2, 5, g);
-            g.drawLine(x1, y1, x2, y2);
+            g.drawLine(0, s35, s21, 0);
         }
 
-        boolean hasLoS = fovHighlightingAndDarkening.draw(g, c, drawX, drawY,
+        boolean hasLoS = fovHighlightingAndDarkening.draw(g, c, 0, 0,
                 saveBoardImage);
 
         // draw mapsheet borders
@@ -2188,40 +2159,26 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     GUIPreferences.ADVANCED_MAPSHEET_COLOR));
             if ((c.getX() % 16) == 0) {
                 // left edge of sheet (edge 4 & 5)
-                g.drawLine(drawX + (int) (21 * scale), drawY
-                        + (int) (71 * scale), drawX, drawY + (int) (36 * scale));
-                g.drawLine(drawX, drawY + (int) (35 * scale), drawX
-                        + (int) (21 * scale), drawY);
+                g.drawLine(s21, s71, 0, s36);
+                g.drawLine(0, s35, s21, 0);
             } else if ((c.getX() % 16) == 15) {
                 // right edge of sheet (edge 1 & 2)
-                g.drawLine(drawX + (int) (62 * scale), drawY, drawX
-                        + (int) (83 * scale), drawY + (int) (35 * scale));
-                g.drawLine(drawX + (int) (83 * scale), drawY
-                        + (int) (36 * scale), drawX + (int) (62 * scale), drawY
-                        + (int) (71 * scale));
+                g.drawLine(s62, 0, s83, s35);
+                g.drawLine(s83, s36, s62, s71);
             }
             if ((c.getY() % 17) == 0) {
                 // top edge of sheet (edge 0 and possible 1 & 5)
-                g.drawLine(drawX + (int) (21 * scale), drawY, drawX
-                        + (int) (62 * scale), drawY);
+                g.drawLine(s21, 0, s62, 0);
                 if ((c.getX() % 2) == 0) {
-                    g.drawLine(drawX + (int) (62 * scale), drawY, drawX
-                            + (int) (83 * scale), drawY + (int) (35 * scale));
-                    g.drawLine(drawX, drawY + (int) (35 * scale), drawX
-                            + (int) (21 * scale), drawY);
+                    g.drawLine(s62, 0, s83, s35);
+                    g.drawLine(0, s35, s21, 0);
                 }
             } else if ((c.getY() % 17) == 16) {
                 // bottom edge of sheet (edge 3 and possible 2 & 4)
-                g.drawLine(drawX + (int) (62 * scale), drawY
-                        + (int) (71 * scale), drawX + (int) (21 * scale), drawY
-                        + (int) (71 * scale));
+                g.drawLine(s62, s71, s21, s71);
                 if ((c.getX() % 2) == 1) {
-                    g.drawLine(drawX + (int) (83 * scale), drawY
-                            + (int) (36 * scale), drawX + (int) (62 * scale),
-                            drawY + (int) (71 * scale));
-                    g.drawLine(drawX + (int) (21 * scale), drawY
-                            + (int) (71 * scale), drawX, drawY
-                            + (int) (36 * scale));
+                    g.drawLine(s83, s36, s62, s71);
+                    g.drawLine(s21, s71, 0, s36);
                 }
             }
             g.setColor(Color.black);
@@ -2243,7 +2200,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             g.setClip(t.createTransformedShape(hexPoly));
 
             // write back to hexImage
-            g.drawImage(GrayedOut, drawX, drawY, null);
+            g.drawImage(GrayedOut, 0, 0, null);
         }        
 
         cacheEntry = new HexImageCacheEntry(hexImage);
@@ -3768,9 +3725,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         
         // create the rotated shapes
         facingPolys = new Shape[8];
-        for (int f=0;f<6;f++)
+        for (int dir: allDirections)
         {
-        	facingPolys[f] = FacingRotate.createTransformedShape(facingPoly_tmp);
+        	facingPolys[dir] = FacingRotate.createTransformedShape(facingPoly_tmp);
         	FacingRotate.rotate(Math.toRadians(60),HEX_W/2,HEX_H/2);
         }
 
@@ -3799,9 +3756,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // create the rotated shapes
         FacingRotate.setToIdentity();  
         movementPolys = new Shape[8];
-        for (int f=0;f<6;f++)
+        for (int dir: allDirections)
         {
-        	movementPolys[f] = FacingRotate.createTransformedShape(movementPoly_tmp);
+        	movementPolys[dir] = FacingRotate.createTransformedShape(movementPoly_tmp);
         	FacingRotate.rotate(Math.toRadians(60),HEX_W/2,HEX_H/2);
         }
         
@@ -3814,25 +3771,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         FacingRotate.rotate(Math.toRadians(180),HEX_W/2,HEX_H/2);
         FacingRotate.translate(0, -31);
         DownArrow = FacingRotate.createTransformedShape(movementPoly_tmp);
-        
-        
-        /*movementPolys[6].addPoint(35, 44);
-        movementPolys[6].addPoint(30, 49);
-        movementPolys[6].addPoint(33, 49);
-        movementPolys[6].addPoint(33, 53);
-        movementPolys[6].addPoint(38, 53);
-        movementPolys[6].addPoint(38, 49);
-        movementPolys[6].addPoint(41, 49);
-        movementPolys[6].addPoint(36, 44);
-        movementPolys[7] = new Polygon(); // down arrow with tail
-        movementPolys[7].addPoint(34, 53);
-        movementPolys[7].addPoint(29, 48);
-        movementPolys[7].addPoint(32, 48);
-        movementPolys[7].addPoint(32, 44);
-        movementPolys[7].addPoint(37, 44);
-        movementPolys[7].addPoint(37, 48);
-        movementPolys[7].addPoint(40, 48);
-        movementPolys[7].addPoint(35, 53);*/
     }
 
     synchronized boolean doMoveUnits(long idleTime) {

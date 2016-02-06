@@ -1001,6 +1001,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 mechW.setVisible(false);
                 setMapVisible(false);
                 break;
+            case PHASE_SET_ARTYAUTOHITHEXES:
             case PHASE_DEPLOY_MINEFIELDS:
             case PHASE_DEPLOYMENT:
             case PHASE_TARGETING:

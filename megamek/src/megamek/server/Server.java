@@ -32151,9 +32151,17 @@ public class Server implements Runnable {
         PilotingRollData rollTarget;
         while (stuckEntities.hasNext()) {
             Entity entity = stuckEntities.next();
-            if ((entity.getPosition() == null) && entity.isDeployed()) {
-                System.out.println("Entity #" + entity.getId()
-                                   + " does not know its position.");
+            if (entity.getPosition() == null) {
+                if (entity.isDeployed()) {
+                    System.out.println("Entity #" + entity.getId()
+                            + " does not know its position.");
+                } else { // If the Entity isn't deployed, then something goofy
+                    // happened.  We'll just unstuck the Entity
+                    entity.setStuck(false);
+                    System.out.println("Entity #" + entity.getId()
+                            + " was stuck in a swamp, but not deployed.  "
+                            + "Stuck state reset");
+                }
                 continue;
             }
             rollTarget = entity.getBasePilotingRoll();

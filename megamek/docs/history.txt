@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.41.15-git
++ Issue #19: doTryUnstuck Error
 
 v0.41.14 (2016-02-02 13:10 UTC)
 + Data New Sprites/Various RAT and Unit Fixes.

@@ -1,0 +1,103 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Wildkatze
+</Name>
+
+<Model>
+WKT-2S
+</Model>
+
+<year>
+3090
+</year>
+
+<type>
+IS Level 5
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+8
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+3
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+51
+39
+39
+31
+</armor>
+
+<Nose Equipment>
+IS Ammo MML-5 SRM
+IS Ammo MML-5 LRM
+ISERLargeLaser
+ISMML5
+IS Ammo MML-5 LRM
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISMML5
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISMML5
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISERMediumLaser
+ISAntiMissileSystem
+ISAMS Ammo
+</Aft Equipment>
+
+<source>
+TRO Prototypes - Jihad
+</source>
+
+<tonnage>
+45.0
+</tonnage>
+

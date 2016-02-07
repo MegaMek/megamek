@@ -254,6 +254,50 @@ public class MapSettings implements Serializable {
         setBoardSize(boardWidth, boardHeight);
         setMapSize(mapWidth, mapHeight);
     }
+    
+    /**
+     * Odious hack to fix cross-platform issues.  The Server generates the list
+     * of available boards and then sends them to the client.  Instead of
+     * storing the boards as a File object, they are stored as lists of Strings.
+     * This means that, a Windows server will generate Windows paths that could
+     * then be sent to non-windows machines.
+     * 
+     * While the available and selected boards should really be stored as lists
+     * of Files, they have infrastructure built up around them and it's far
+     * easier to use this kludgy hack.
+     */
+    public void adjustPathSeparator() {
+        // Windows will happily accept a forward slash in the path, the only
+        // real issue is back-slashes (windows separators) in Linux
+        boolean isWindows = System.getProperty("os.name").contains("Windows");
+        boolean containsWindowsPathSeparator = false;
+        for (String path : boardsAvailable) {
+            if (path.contains("\\")) {
+                containsWindowsPathSeparator = true;
+            }
+            if (containsWindowsPathSeparator) {
+                break;
+            }
+        }
+        
+        if (!isWindows && containsWindowsPathSeparator) {
+            for (int i = 0; i < boardsAvailable.size(); i++) {
+                if (boardsAvailable.get(i) == null) {
+                    continue;
+                }
+                boardsAvailable.set(i, boardsAvailable.get(i)
+                        .replace("\\", "/"));
+            }
+            for (int i = 0; i < boardsSelected.size(); i++) {
+                if (boardsSelected.get(i) == null) {
+                    continue;
+                }
+                boardsSelected.set(i, boardsSelected.get(i)
+                        .replace("\\", "/"));
+            }
+        }
+    }
+   
 
     /** Creates new MapSettings that is a duplicate of another */
     @SuppressWarnings("unchecked")

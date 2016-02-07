@@ -17,3 +17,4 @@
 /mmconf/*.properties.bak
 /*.log
 /classes/
+/mechs.csv

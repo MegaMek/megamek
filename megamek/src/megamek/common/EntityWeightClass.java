@@ -242,7 +242,7 @@ public class EntityWeightClass {
                     break;
                 }
             }
-        } else if (en instanceof SupportTank) {
+        } else if ((en instanceof SupportTank) || (en instanceof SupportVTOL)) {
         	switch (en.getMovementMode()) {
         	case WHEELED:
         		for (i = WEIGHT_SMALL_SUPPORT; i < (wheeledSupportVehicleWeightLimits.length - 1); i++) {

@@ -6,6 +6,7 @@ v0.41.15-git
 + Issue #18: Small Patch: changes lounge tooltip to act similar to board view tt
 + Issue #11: RFE: Open MiniMap during Artillery Designate Targets automatically
 + Added BattleValue field to MechcacheCSVTool
++ Data: New Sprites and Unit Fixes.
 
 v0.41.14 (2016-02-02 13:10 UTC)
 + Data New Sprites/Various RAT and Unit Fixes.

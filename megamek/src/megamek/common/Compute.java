@@ -2023,7 +2023,7 @@ public class Compute {
      * Modifier to attacks due to attacker movement
      */
     public static ToHitData getAttackerMovementModifier(IGame game,
-                                                        int entityId, EntityMovementType movement) {
+            int entityId, EntityMovementType movement) {
         final Entity entity = game.getEntity(entityId);
         ToHitData toHit = new ToHitData();
 
@@ -2034,6 +2034,7 @@ public class Compute {
 
         if ((entity.getMovementMode() == EntityMovementMode.BIPED_SWIM)
             || (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
+            toHit.addModifier(3, "attacker used UMUs");
             return toHit;
         }
 
@@ -2055,8 +2056,6 @@ public class Compute {
             } else {
                 toHit.addModifier(3, "attacker jumped");
             }
-        } else if (movement == EntityMovementType.MOVE_OVER_THRUST) {
-            toHit.addModifier(2, "over thrust used");
         } else if (movement == EntityMovementType.MOVE_SPRINT) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "attacker sprinted");
         }

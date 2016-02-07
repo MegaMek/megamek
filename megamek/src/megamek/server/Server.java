@@ -10853,9 +10853,15 @@ public class Server implements Runnable {
         for (Iterator<Entity> i = game.getEntities(); i.hasNext(); ) {
             Entity entity = i.next();
 
+            if (entity.hasDamagedRHS()) {
+                entity.heatBuildup += 1;
+            }
+
             if ((entity.getMovementMode() == EntityMovementMode.BIPED_SWIM)
                 || (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
-                return;
+                // UMU heat
+                entity.heatBuildup += 1;
+                continue;
             }
 
             // build up heat from movement
@@ -10875,9 +10881,6 @@ public class Server implements Runnable {
                 entity.heatBuildup += entity.getJumpHeat(entity.delta_distance);
             } else if (entity.moved == EntityMovementType.MOVE_SPRINT) {
                 entity.heatBuildup += entity.getSprintHeat();
-            }
-            if (entity.hasDamagedRHS()) {
-                entity.heatBuildup += 1;
             }
         }
     }

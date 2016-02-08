@@ -672,6 +672,17 @@ public class EntityListFile {
             output.write(entity.getMovementModeAsString());
             output.write("\" commander=\"");
             output.write(String.valueOf(entity.isCommander()));
+            output.write("\" offboard=\"");
+            output.write(String.valueOf(entity.isOffBoard()));
+            if (entity.isOffBoard()) {
+                output.write("\" offboard_distance=\"");
+                output.write(String.valueOf(entity.getOffBoardDistance()));
+                output.write("\" offboard_direction=\"");
+                output.write(String.valueOf(entity.getOffBoardDirection()
+                        .getValue()));
+            }
+            output.write("\" hidden=\"");
+            output.write(String.valueOf(entity.isHidden()));
             output.write("\" deployment=\"");
             output.write(String.valueOf(entity.getDeployRound()));
             output.write("\" deploymentZone=\"");

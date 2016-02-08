@@ -9885,10 +9885,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public abstract boolean isNuclearHardened();
 
+    /**
+     * Set the isHidden state of this entity (used for hidden units rules, TW
+     * pg 259).
+     * @param inVal
+     */
     public void setHidden(boolean inVal) {
         isHidden = inVal;
     }
 
+    /**
+     * Returns true if this unit is currently hidden (hidden units, TW pg 259).
+     * @return
+     */
     public boolean isHidden() {
         return isHidden;
     }

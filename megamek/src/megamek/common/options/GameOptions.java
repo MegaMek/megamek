@@ -103,7 +103,7 @@ public class GameOptions extends AbstractOptions {
 
         IBasicOptionGroup advancedRules = addGroup("advancedRules"); //$NON-NLS-1$
         addOption(advancedRules, "minefields", false); //$NON-NLS-1$
-        //        addOption(advancedRules, "hidden_units", false); //$NON-NLS-1$
+        addOption(advancedRules, "hidden_units", false); //$NON-NLS-1$
         addOption(advancedRules, "double_blind", false); //$NON-NLS-1$
         addOption(advancedRules, "tacops_sensors", false); //$NON-NLS-1$
         addOption(advancedRules, "supress_all_double_blind_messages", false); //$NON-NLS-1$

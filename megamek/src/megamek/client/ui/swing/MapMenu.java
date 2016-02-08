@@ -338,7 +338,7 @@ public class MapMenu extends JPopupMenu {
             public void actionPerformed(ActionEvent e) {
                 try {
                     Entity entity = game.getEntity(Integer.parseInt(e
-                                                                            .getActionCommand()));
+                            .getActionCommand()));
                     selectedEntity = entity;
                     if (currentPanel instanceof MovementDisplay) {
                         ((MovementDisplay) currentPanel)

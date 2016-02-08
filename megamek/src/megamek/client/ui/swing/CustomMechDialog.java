@@ -218,6 +218,12 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     private JCheckBox chCommander = new JCheckBox();
 
+    private JLabel labHidden = new JLabel(
+            Messages.getString("CustomMechDialog.labHidden"), //$NON-NLS-1$
+            SwingConstants.RIGHT);
+
+    private JCheckBox chHidden = new JCheckBox();
+
     private JLabel labOffBoard = new JLabel(
             Messages.getString("CustomMechDialog.labOffBoard"), SwingConstants.RIGHT); //$NON-NLS-1$
 
@@ -557,6 +563,13 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         refreshDeployment();
 
+        if (clientgui.getClient().getGame().getOptions()
+                .booleanOption("hidden_units")) {
+            panDeploy.add(labHidden, GBC.std());
+            panDeploy.add(chHidden, GBC.eol());
+            chHidden.setSelected(entity.isHidden());
+        }
+
         if (eligibleForOffBoard) {
             panDeploy.add(labOffBoard, GBC.std());
             panDeploy.add(chOffBoard, GBC.eol());
@@ -648,6 +661,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             chDeployProne.setEnabled(false);
             chDeployHullDown.setEnabled(false);
             chCommander.setEnabled(false);
+            chHidden.setEnabled(false);
             chOffBoard.setEnabled(false);
             choOffBoardDirection.setEnabled(false);
             fldOffBoardDistance.setEnabled(false);
@@ -870,7 +884,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     public void optionClicked(DialogOptionComponent comp, IOption option,
             boolean state) {
-        // TODO : implement me!!!
     }
 
     public boolean isOkay() {
@@ -1092,6 +1105,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                                 Messages.getString("CustomMechDialog.EnterCorrectHeight"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
+
+            entity.setHidden(chHidden.isSelected());
 
             if (chOffBoard.isSelected()) {
                 try {

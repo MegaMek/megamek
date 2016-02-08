@@ -2994,9 +2994,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         clientgui.getBoardView().removeBoardViewListener(this);
     }
 
-    // TODO Is there a better solution?
-    // This is required because the ChatLounge adds the listener to the
-    // MechSummaryCache that must be removed explicitly.
+    /*
+     *  This is required because the ChatLounge adds the listener to the
+     *  MechSummaryCache that must be removed explicitly.
+     */
     public void die() {
         MechSummaryCache.getInstance().removeListener(mechSummaryCacheListener);
     }

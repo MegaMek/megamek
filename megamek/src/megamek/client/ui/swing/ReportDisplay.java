@@ -32,16 +32,20 @@ import javax.swing.JTextPane;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
 
+import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.event.GamePhaseChangeEvent;
 
 public class ReportDisplay extends AbstractPhaseDisplay implements
-		ActionListener {
+		ActionListener, HyperlinkListener {
     /**
      *
      */
@@ -179,17 +183,22 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
             // add as many round tabs as necessary to catch us up
             JTextPane ta;
             // TODO: we should remove the use of client
+            final Client client = clientgui.getClient();
             for (int catchup = phaseTab + 1; catchup <= round; catchup++) {
                 if (tabs.indexOfTab("Round " + catchup) != -1) {
-                    ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs.indexOfTab("Round " + catchup))).getViewport().getView()).setText(
-                            "<pre>" + clientgui.getClient().receiveReport(clientgui.getClient().getGame().getReports(catchup)) + "</pre>");
+                    ((JTextPane) ((JScrollPane) tabs.getComponentAt(tabs
+                            .indexOfTab("Round " + catchup))).getViewport()
+                            .getView()).setText("<pre>"
+                            + client.receiveReport(client.getGame().getReports(
+                                    catchup)) + "</pre>");
                     continue;
                 }
                 String text = roundText;
                 if (catchup != round) {
-                    text = clientgui.getClient().receiveReport(clientgui.getClient().getGame().getReports(catchup));
+                    text = client.receiveReport(client.getGame().getReports(catchup));
                 }
                 ta = new JTextPane();
+                ta.addHyperlinkListener(this);
                 setupStylesheet(ta);
                 ta.setText("<pre>" + text + "</pre>");
                 ta.setEditable(false);
@@ -199,6 +208,7 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
 
             // add the new current phase tab
             ta = new JTextPane();
+            ta.addHyperlinkListener(this);
             setupStylesheet(ta);
             ta.setText("<pre>" + phaseText + "</pre>");
             ta.setEditable(false);
@@ -279,6 +289,27 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
      */
     public void removeAllListeners() {
         clientgui.getClient().getGame().removeGameListener(this);
+    }
+
+    @Override
+    public void hyperlinkUpdate(HyperlinkEvent evt) {
+        if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            String evtDesc = evt.getDescription();
+            if (evtDesc.startsWith("#entity")) {
+                String idString = evtDesc.substring(evtDesc.indexOf(":") + 1);
+                int id;
+                try {
+                    id = Integer.parseInt(idString);
+                } catch (Exception ex) {
+                    id = -1;
+                }
+                Entity ent = clientgui.getClient().getGame().getEntity(id);
+                if (ent != null) {
+                    clientgui.mechD.displayEntity(ent);
+                    clientgui.setDisplayVisible(true);
+                }
+            }
+        }
     }
 
 }

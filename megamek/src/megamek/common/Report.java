@@ -307,7 +307,8 @@ public class Report implements Serializable {
      */
     public void addDesc(Entity entity) {
         if (entity != null) {
-            add(entity.getShortName(), true);
+            add("<font color='0xffffff'><a href=\"#entity:" + entity.getId()
+                    + "\">" + entity.getShortName() + "</a></font>", true);
             String colorcode = Integer.toHexString(PlayerColors.getColor(
                     entity.getOwner().getColorIndex()).getRGB() & 0x00f0f0f0);
             add("<B><font color='" + colorcode + "'>"

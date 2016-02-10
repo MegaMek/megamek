@@ -15,6 +15,8 @@
 
 package megamek.client.ui.swing.util;
 
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 /**
@@ -24,41 +26,41 @@ import java.util.ArrayList;
  *
  */
 public enum KeyCommandBind {
-	SCROLL_NORTH("scrollN",true, 87, 0), // Default: W
-	SCROLL_SOUTH("scrollS",true, 83, 0), // Default: S
-	SCROLL_EAST("scrollE",true, 68, 0),  // Default: D
-	SCROLL_WEST("scrollW",true, 65, 0),  // Default: A
+	SCROLL_NORTH("scrollN",true, KeyEvent.VK_W, 0), // Default: W
+	SCROLL_SOUTH("scrollS",true, KeyEvent.VK_S, 0), // Default: S
+	SCROLL_EAST("scrollE",true, KeyEvent.VK_D, 0),  // Default: D
+	SCROLL_WEST("scrollW",true, KeyEvent.VK_A, 0),  // Default: A
 	// Toggles isometric view on/off
-	TOGGLE_ISO("toggleIso",false, 84, 0),// Default: T
+	TOGGLE_ISO("toggleIso",false, KeyEvent.VK_T, 0),// Default: T
 	// Activates chat box
-    TOGGLE_CHAT("toggleChat",false, 10, 0), // Default: Enter
+    TOGGLE_CHAT("toggleChat",false, KeyEvent.VK_ENTER, 0), // Default: Enter
 	// Activates chat box and adds the command character (/)
-	TOGGLE_CHAT_CMD("toggleChatCmd", false, 47, 0), // Default: /
+	TOGGLE_CHAT_CMD("toggleChatCmd", false, KeyEvent.VK_SLASH, 0), // Default: /
 	// Change facing one hexside to the left
-	TURN_LEFT("turnLeft",false, 65, 1), // Default: Shift-A
+	TURN_LEFT("turnLeft",false, KeyEvent.VK_A, InputEvent.SHIFT_MASK), // Default: Shift-A
 	// Change facing one hexside to the right
-	TURN_RIGHT("turnRight",false, 68, 1), // Default: Shift-D
+	TURN_RIGHT("turnRight",false, KeyEvent.VK_D, InputEvent.SHIFT_MASK), // Default: Shift-D
 	// Change facing one hexside to the left
-	TWIST_LEFT("twistLeft",false, 65, 1), // Default: Shift-A
+	TWIST_LEFT("twistLeft",false, KeyEvent.VK_A, InputEvent.SHIFT_MASK), // Default: Shift-A
 	// Change facing one hexside to the right
-	TWIST_RIGHT("twistRight",false, 68, 1), // Default: Shift-D
+	TWIST_RIGHT("twistRight",false, KeyEvent.VK_D, InputEvent.SHIFT_MASK), // Default: Shift-D
 	// Fire the currently selected weapon
-	FIRE("fire", false, 70, 0), // Default: F
-	NEXT_WEAPON("nextWeapon", false, 69, 0), // Default: Q
-	PREV_WEAPON("prevWeapon", false, 81, 0), // Default: E
-	NEXT_UNIT("nextUnit", false, 67, 0), // Default: C
-	PREV_UNIT("prevUnit", false, 90, 0), // Default: Z
-	NEXT_TARGET("nextTarget", false, 69, 1), // Default: Shift-Q
-	PREV_TARGET("prevTarget", false, 81, 1), // Default: Shift-E
+	FIRE("fire", false, KeyEvent.VK_F, 0), // Default: F
+	NEXT_WEAPON("nextWeapon", false, KeyEvent.VK_E, 0), // Default: E
+	PREV_WEAPON("prevWeapon", false, KeyEvent.VK_Q, 0), // Default: Q
+	NEXT_UNIT("nextUnit", false, KeyEvent.VK_C, 0), // Default: C
+	PREV_UNIT("prevUnit", false, KeyEvent.VK_Z, 0), // Default: Z
+	NEXT_TARGET("nextTarget", false, KeyEvent.VK_E, InputEvent.SHIFT_MASK), // Default: Shift-E
+	PREV_TARGET("prevTarget", false, KeyEvent.VK_Q, InputEvent.SHIFT_MASK), // Default: Shift-Q
 	// Undo an action, such as a move step in the movement phase
-	UNDO("undo",false, 8, 0), // Default: Backspace
-	MOVE_ENVELOPE("movementEnvelope",false, 82, 0), // Default: R
-	CENTER_ON_SELECTED("centerOnSelected",false, 32, 0), // Default: Space
-	AUTO_ARTY_DEPLOYMENT_ZONE("autoArtyDeployZone",false, 90, 1), // Default: Shift-Z
-	FIELD_FIRE("fieldOfFire",false, 82, 1), // Default: Shift-R
+	UNDO("undo",false, KeyEvent.VK_BACK_SPACE, 0), // Default: Backspace
+	MOVE_ENVELOPE("movementEnvelope",false, KeyEvent.VK_R, 0), // Default: R
+	CENTER_ON_SELECTED("centerOnSelected",false, KeyEvent.VK_SPACE, 0), // Default: Space
+	AUTO_ARTY_DEPLOYMENT_ZONE("autoArtyDeployZone",false, KeyEvent.VK_Z, InputEvent.SHIFT_MASK), // Default: Shift-Z
+	FIELD_FIRE("fieldOfFire",false, KeyEvent.VK_R, InputEvent.SHIFT_MASK), // Default: Shift-R
 	// Used to cancel moves/fires/chatterbox
-	CANCEL("cancel", false, 27, 0, true), // Default: Escape
-	DONE("done", false, 10, 2, true); // Default: Ctrl-Enter
+	CANCEL("cancel", false, KeyEvent.VK_ESCAPE, 0, true), // Default: Escape
+	DONE("done", false, KeyEvent.VK_ENTER, InputEvent.CTRL_MASK, true); // Default: Ctrl-Enter
 	
 	/**
 	 * The command associated with this binding.

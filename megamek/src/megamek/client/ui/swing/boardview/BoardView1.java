@@ -666,7 +666,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     private void registerKeyboardCommands(final BoardView1 bv,
-                                          final MegaMekController controller) {
+            final MegaMekController controller) {
         // Register the action for TOGGLE_ISO
         controller.registerCommandAction(KeyCommandBind.TOGGLE_ISO.cmd,
                 new CommandAction() {

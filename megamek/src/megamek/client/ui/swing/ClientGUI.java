@@ -447,7 +447,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         mechW.setSize(w, h);
         mechW.setResizable(true);
         mechW.addWindowListener(this);
-        mechD = new UnitDisplay(this);
+        mechD = new UnitDisplay(this, controller);
         mechD.addMechDisplayListener(bv);
         mechW.add(mechD);
 

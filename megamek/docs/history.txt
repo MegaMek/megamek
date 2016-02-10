@@ -11,6 +11,7 @@ v0.41.15-git
 + Bug [#4683]: EntityWeightClass.getWeightClass doesn't consider SupportVTOL
 + Feature: Unit names in reports are now hyperlinks, clicking them displays unit
 + Help command now lists available commands in alphabetic order
++ Issue #26: Add keybinds for selecting tabs in UnitDisplay
 
 v0.41.14 (2016-02-02 13:10 UTC)
 + Data New Sprites/Various RAT and Unit Fixes.

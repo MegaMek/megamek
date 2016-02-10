@@ -60,7 +60,14 @@ public enum KeyCommandBind {
 	FIELD_FIRE("fieldOfFire",false, KeyEvent.VK_R, InputEvent.SHIFT_MASK), // Default: Shift-R
 	// Used to cancel moves/fires/chatterbox
 	CANCEL("cancel", false, KeyEvent.VK_ESCAPE, 0, true), // Default: Escape
-	DONE("done", false, KeyEvent.VK_ENTER, InputEvent.CTRL_MASK, true); // Default: Ctrl-Enter
+	DONE("done", false, KeyEvent.VK_ENTER, InputEvent.CTRL_MASK, true), // Default: Ctrl-Enter
+	// Used to select the tab in the unit display
+	UD_GENERAL("udGeneral", false, KeyEvent.VK_F1, 0), // Default: F1
+	UD_PILOT("udPilot", false, KeyEvent.VK_F2, 0), // Default: F2
+	UD_ARMOR("udArmor", false, KeyEvent.VK_F3, 0), // Default: F3
+	UD_SYSTEMS("udSystems", false, KeyEvent.VK_F4, 0), // Default: F4
+	UD_WEAPONS("udWeapons", false, KeyEvent.VK_F5, 0), // Default: F5
+	UD_EXTRAS("udExtras", false, KeyEvent.VK_F6, 0); // Default: F6
 	
 	/**
 	 * The command associated with this binding.

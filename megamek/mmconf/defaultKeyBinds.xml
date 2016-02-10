@@ -190,4 +190,46 @@
         <isRepeatable>false</isRepeatable>
       </KeyBind>
 
+      <KeyBind>
+        <command>udGeneral</command>
+        <keyCode>112</keyCode> <!-- F1 -->
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>udPilot</command>
+        <keyCode>113</keyCode> <!-- F2 -->
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>udArmor</command>
+        <keyCode>114</keyCode> <!-- F3 -->
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>udSystems</command>
+        <keyCode>115</keyCode> <!-- F4 -->
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>udWeapons</command>
+        <keyCode>116</keyCode> <!-- F5 -->
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>udExtras</command>
+        <keyCode>117</keyCode> <!-- F6 -->
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
 </KeyBindings>

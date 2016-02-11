@@ -12,6 +12,7 @@ v0.41.15-git
 + Feature: Unit names in reports are now hyperlinks, clicking them displays unit
 + Help command now lists available commands in alphabetic order
 + Issue #26: Add keybinds for selecting tabs in UnitDisplay
++ Issue #27: Shift-letter keys don't appear to work in ChatterBox2
 
 v0.41.14 (2016-02-02 13:10 UTC)
 + Data New Sprites/Various RAT and Unit Fixes.

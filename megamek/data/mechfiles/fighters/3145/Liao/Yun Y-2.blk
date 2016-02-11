@@ -101,5 +101,5 @@ aerodyne
 </cockpit_type>
 
 <transporters>
-infantrybay:4:1
+troopspace:4
 </transporters>

@@ -73,14 +73,21 @@ Aerodyne
 
 <Nose Equipment>
 RL10
+Heavy PPC
 </Nose Equipment>
 
 <Left Wing Equipment>
 RL10
+ISSmallVSPLaser
+ISSmallVSPLaser
+ISSmallVSPLaser
 </Left Wing Equipment>
 
 <Right Wing Equipment>
 RL10
+ISSmallVSPLaser
+ISSmallVSPLaser
+ISSmallVSPLaser
 </Right Wing Equipment>
 
 <Aft Equipment>
@@ -88,6 +95,10 @@ ISAntiMissileSystem
 ISAMS Ammo
 ISCASE
 </Aft Equipment>
+
+<transporters>
+troopspace:4
+</transporters>
 
 <source>
 TRO 3067 - Jihad

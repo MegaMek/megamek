@@ -756,10 +756,10 @@ public class FighterSquadron extends Aero {
      * Determine MAX_SIZE based on game options
      */
     public int getMaxSize() {
-    	if (game.getOptions().booleanOption("allow_large_squadrons")) {
-    		return ALTERNATE_MAX_SIZE;
-    	}
-    	return MAX_SIZE;
+        if (game.getOptions().booleanOption("allow_large_squadrons")) {
+            return ALTERNATE_MAX_SIZE;
+        }
+        return MAX_SIZE;
     }
 
     /*

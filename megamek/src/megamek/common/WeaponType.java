@@ -541,7 +541,7 @@ public class WeaponType extends EquipmentType {
             case (CLASS_CAPITAL_GAUSS):
                 return EquipmentType.get("Capital Gauss Bay");
             case (CLASS_CAPITAL_MD):
-        		return EquipmentType.get("Capital Mass Driver Bay");
+                return EquipmentType.get("Capital Mass Driver Bay");
             case (CLASS_CAPITAL_MISSILE):
                 return EquipmentType.get("Capital Missile Bay");
             case (CLASS_AR10):
@@ -1129,7 +1129,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryPistolTranqGunWeapon());
         EquipmentType.addType(new InfantryPistolWhiteDwarfLaserPistolWeapon());
         EquipmentType.addType(new InfantryPistoMachinePistolSPEC7AWeapon());
-    	EquipmentType.addType(new InfantryPistolVintageWeapon());
+        EquipmentType.addType(new InfantryPistolVintageWeapon());
 
         // Infantry Rifles
         EquipmentType.addType(new InfantryRifleAutoRifleWeapon());
@@ -1172,8 +1172,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryRifleThunderstrokeWeapon());
         EquipmentType.addType(new InfantryRifleTKAssaultWeapon());
         EquipmentType.addType(new InfantryRifleZeusHeavyWeapon());
-		EquipmentType.addType(new InfantryRifleVintageWeapon());		
-		EquipmentType.addType(new InfantryRifleVSPLaserWeapon());
+        EquipmentType.addType(new InfantryRifleVintageWeapon());        
+        EquipmentType.addType(new InfantryRifleVSPLaserWeapon());
         
         // Infantry Shotguns
         EquipmentType.addType(new InfantryShotgunAutomaticWeapon());
@@ -1283,7 +1283,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryProstheticNeedleWeapon());
         EquipmentType.addType(new InfantryProstheticShockerWeapon());
         EquipmentType.addType(new InfantryProstheticVibroBladeWeapon());
-        EquipmentType.addType(new InfantryProstheticClimbingClawsWeapon());	
+        EquipmentType.addType(new InfantryProstheticClimbingClawsWeapon());    
 
         EquipmentType.addType(new ISFireExtinguisher());
         EquipmentType.addType(new CLFireExtinguisher());

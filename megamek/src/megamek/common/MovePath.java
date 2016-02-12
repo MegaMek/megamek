@@ -891,7 +891,7 @@ public class MovePath implements Cloneable, Serializable {
             this.steps = finPath.steps;
         } else {
             System.out.println("Error: " +
-            		"Unable to find a path to the destination hex!");
+                    "Unable to find a path to the destination hex!");
             System.out.println("\tMoving " + getEntity() + "from "
                     + getFinalCoords() + " to " + dest);
         }

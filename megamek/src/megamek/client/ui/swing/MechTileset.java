@@ -507,7 +507,7 @@ public class MechTileset {
             File fin = new File(dir, imageFile);
             if (!fin.exists()) {
                 System.out.println("Warning: MechTileSet is trying to " +
-                		"load a file that doesn't exist: "
+                        "load a file that doesn't exist: "
                         + fin.getPath());
             }
             image = comp.getToolkit().getImage(fin.toString());

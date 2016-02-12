@@ -57,13 +57,13 @@ public class GameEntityNewEvent extends GameEvent {
         return entities.size();
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gameEntityNew(this);
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gameEntityNew(this);
+    }
 
-	@Override
-	public String getEventName() {
-		return "New Entities";
-	}
+    @Override
+    public String getEventName() {
+        return "New Entities";
+    }
 }

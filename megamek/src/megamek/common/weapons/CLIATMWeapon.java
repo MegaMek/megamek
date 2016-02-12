@@ -36,8 +36,8 @@ public abstract class CLIATMWeapon extends MissileWeapon {
         atClass = CLASS_ATM; // Do I need to change this? Streak LRMs still use the CLASS_LRM flag... I think I can leave it.
         this.availRating = new int[]{EquipmentType.RATING_X, EquipmentType.RATING_X,EquipmentType.RATING_F};
         this.introDate = 3070;
-		
-		setModes(new String[] { "", "Indirect" }); // iATMS can IDF
+        
+        setModes(new String[] { "", "Indirect" }); // iATMS can IDF
     }
 
     /*
@@ -51,7 +51,7 @@ public abstract class CLIATMWeapon extends MissileWeapon {
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         
-		// MML does different handlers here. I think I'll go with implementing different ammo in the Handler.
-		return new CLIATMHandler(toHit, waa, game, server);
+        // MML does different handlers here. I think I'll go with implementing different ammo in the Handler.
+        return new CLIATMHandler(toHit, waa, game, server);
     }
 }

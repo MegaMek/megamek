@@ -296,8 +296,8 @@ public class DockingCollar implements Transporter {
     }
     
     public void resetTransporter() {
-    	troops = new Vector<Integer>();
-    	currentSpace = totalSpace;
+        troops = new Vector<Integer>();
+        currentSpace = totalSpace;
     }
     
 } // End package class TroopSpace implements Transporter

@@ -136,7 +136,7 @@ public class BLKSpaceStationFile extends BLKFile implements IMechLoader {
         }
         // BattleStation
         if (dataFile.exists("Battlestation")) {
-        	a.setBattleStation(true);
+            a.setBattleStation(true);
         }
 
         // grav decks

@@ -1,6 +1,6 @@
 /*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * 	Nicholas Walczak (walczak@cs.umn.edu)
+ *     Nicholas Walczak (walczak@cs.umn.edu)
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License as published by the Free
@@ -25,32 +25,32 @@ import megamek.common.net.IConnection;
  */
 public class ConnectionHandler implements Runnable {
 
-	IConnection connection;
-	
-	boolean shouldStop = false;
-	
-	ConnectionHandler(IConnection c){
-		connection = c;
-	}
-	
-	/**
-	 * Called when the IConnection disconnects and signals the thread to stop.
-	 */
-	public void signalStop(){
-		shouldStop = true;
-	}
-	
-	@Override
-	public void run() {
-		while (!shouldStop){
-		    // Write out any queued packets
-		    connection.flush();
-		    // Wait for input
-		    connection.update();			
-			if (connection.isClosed()){
-				shouldStop = true;
-			}
-		}		
-	}
+    IConnection connection;
+    
+    boolean shouldStop = false;
+    
+    ConnectionHandler(IConnection c){
+        connection = c;
+    }
+    
+    /**
+     * Called when the IConnection disconnects and signals the thread to stop.
+     */
+    public void signalStop(){
+        shouldStop = true;
+    }
+    
+    @Override
+    public void run() {
+        while (!shouldStop){
+            // Write out any queued packets
+            connection.flush();
+            // Wait for input
+            connection.update();            
+            if (connection.isClosed()){
+                shouldStop = true;
+            }
+        }        
+    }
 
 }

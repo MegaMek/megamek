@@ -111,9 +111,9 @@ public class Bay implements Transporter {
     }
 
     public void resetTransporter() {
-    	troops = new Vector<Integer>();
-    	currentSpace = totalSpace;
-    	resetCounts();
+        troops = new Vector<Integer>();
+        currentSpace = totalSpace;
+        resetCounts();
     }
     
     /**
@@ -282,7 +282,7 @@ public class Bay implements Transporter {
     }
 
     public double getUnused() {
-    	return currentSpace;
+        return currentSpace;
     }
 
     /**

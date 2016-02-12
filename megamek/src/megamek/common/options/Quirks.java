@@ -257,10 +257,10 @@ public class Quirks extends AbstractOptions {
                 return false;
             }
             
-        	if(qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
-        			&& (en.getMovementMode() == EntityMovementMode.VTOL)) {
-        		return false;
-        	}
+            if(qName.equals(OptionsConstants.QUIRK_POS_TRAILER_HITCH)
+                    && (en.getMovementMode() == EntityMovementMode.VTOL)) {
+                return false;
+            }
                         
             return true;
         }
@@ -492,7 +492,7 @@ public class Quirks extends AbstractOptions {
                     || qName.equals(OptionsConstants.QUIRK_NEG_PROTOTYPE)
                     || qName.equals(OptionsConstants.QUIRK_POS_PRO_ACTUATOR)
                     || qName.equals(OptionsConstants.QUIRK_NEG_SENSOR_GHOSTS))
-            		{
+                    {
                 return true;
             }
             return false;

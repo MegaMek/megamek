@@ -36,13 +36,13 @@ public class GameEndEvent extends GameEvent {
         super(source);
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gameEnd(this);
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gameEnd(this);
+    }
 
-	@Override
-	public String getEventName() {
-		return "Game End";
-	}
+    @Override
+    public String getEventName() {
+        return "Game End";
+    }
 }

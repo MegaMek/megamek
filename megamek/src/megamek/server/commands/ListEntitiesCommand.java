@@ -28,20 +28,20 @@ public class ListEntitiesCommand extends ServerCommand {
      */
     @Override
     public void run(int connId, String[] args) {
-    	IPlayer p = server.getGame().getPlayer(connId);
-    	if(null == p) {
-    		return;
-    	}
-    	for (Entity ent : server.getGame().getEntitiesVector()) {
-	        try {
-	            if(ent.getOwnerId() == connId) {
+        IPlayer p = server.getGame().getPlayer(connId);
+        if(null == p) {
+            return;
+        }
+        for (Entity ent : server.getGame().getEntitiesVector()) {
+            try {
+                if(ent.getOwnerId() == connId) {
                     server.sendServerChat(connId,
                             ent.getId() + " - " + ent.getDisplayName());
-	            }
-	        } catch (NumberFormatException nfe) {
-	        } catch (NullPointerException npe) {
-	        } catch (IndexOutOfBoundsException ioobe) {
-	        }
-	    }
+                }
+            } catch (NumberFormatException nfe) {
+            } catch (NullPointerException npe) {
+            } catch (IndexOutOfBoundsException ioobe) {
+            }
+        }
     }
 }

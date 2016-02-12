@@ -45,7 +45,7 @@ import megamek.common.IGame;
 import megamek.common.event.GamePhaseChangeEvent;
 
 public class ReportDisplay extends AbstractPhaseDisplay implements
-		ActionListener, HyperlinkListener {
+        ActionListener, HyperlinkListener {
     /**
      *
      */

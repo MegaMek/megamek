@@ -92,7 +92,7 @@ public class InfantryWeaponHandler extends WeaponHandler {
         } else if (!(ae instanceof Infantry)) {
             troopersHit = 1;
         } else {
-        	troopersHit = Compute.missilesHit(((Infantry) ae)
+            troopersHit = Compute.missilesHit(((Infantry) ae)
                 .getShootingStrength(), nHitMod, bGlancing);
         }
         double damage = ((InfantryWeapon)wtype).getInfantryDamage();

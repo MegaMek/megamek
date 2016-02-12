@@ -646,7 +646,7 @@ public class Hex implements IHex, Serializable {
     }
     
     public void setCoords(Coords c) {
-    	coords = c;
+        coords = c;
     }
 
 }

@@ -522,7 +522,7 @@ public class Report implements Serializable {
         }
         catch (ArrayIndexOutOfBoundsException ex) {
             System.err.println("Report.addNewline failed, array index out " +
-            		"of bounds");
+                    "of bounds");
         }
     }
 

@@ -58,8 +58,8 @@ public class EjectedCrew extends Infantry {
      * This constructor is so MULParser can load these entities
      */
     public EjectedCrew() {
-    	super();
-    	setCrew(new Crew(1));
+        super();
+        setCrew(new Crew(1));
         setChassis(VEE_EJECT_NAME);
         //this constructor is just so that the MUL parser can read these units in so
         //assign some arbitrarily large number here for the internal so that locations will get 

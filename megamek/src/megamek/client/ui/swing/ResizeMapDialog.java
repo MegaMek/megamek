@@ -54,7 +54,7 @@ import megamek.common.util.StringUtil;
 public class ResizeMapDialog extends JDialog implements ActionListener {
 
     private static final long serialVersionUID = 7758433698878123806L;
-	// Views.
+    // Views.
     private static final String VIEW_BASIC = Messages.getString("RandomMapDialog.Normal");
     private static final String VIEW_ADVANCED = Messages.getString("RandomMapDialog.Advanced");
 
@@ -103,7 +103,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
      */
     public ResizeMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, Client client,
                            MapSettings mapSettings) {
-    	super(parent, Messages.getString("ExpandMapDialog.title"), true);
+        super(parent, Messages.getString("ExpandMapDialog.title"), true);
         this.mapSettings = mapSettings;
         PARENT = parent;
         MAP_SETTINGS_OBSERVER = mapSettingsObserver;
@@ -411,7 +411,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
 
         // Get the general settings from this panel.
         newMapSettings.setBoardSize(mapWestField.getAsInt()+mapEastField.getAsInt()+mapSettings.getBoardWidth(),
-        		mapNorthField.getAsInt()+mapSouthField.getAsInt()+mapSettings.getBoardHeight());
+                mapNorthField.getAsInt()+mapSouthField.getAsInt()+mapSettings.getBoardHeight());
         newMapSettings.setTheme(mapThemeField.getText());
         this.mapSettings = newMapSettings;
 
@@ -443,19 +443,19 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
         }
     }
 
-	public int getExpandNorth() {
-		return mapNorthField.getAsInt();
-	}
+    public int getExpandNorth() {
+        return mapNorthField.getAsInt();
+    }
 
-	public int getExpandEast() {
-		return mapEastField.getAsInt();
-	}
+    public int getExpandEast() {
+        return mapEastField.getAsInt();
+    }
 
-	public int getExpandSouth() {
-		return mapSouthField.getAsInt();
-	}
+    public int getExpandSouth() {
+        return mapSouthField.getAsInt();
+    }
 
-	public int getExpandWest() {
-		return mapWestField.getAsInt();
-	}
+    public int getExpandWest() {
+        return mapWestField.getAsInt();
+    }
 }

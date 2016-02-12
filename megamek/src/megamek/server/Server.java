@@ -31741,7 +31741,7 @@ public class Server implements Runnable {
             // been allowed
             if (legalPosition == null) {
                 System.err.println("Error in Server.ejectEntity: vehicle " +
-                		"crews cannot abandon if there is no legal hex!");
+                        "crews cannot abandon if there is no legal hex!");
                 return vDesc;
             }
             crew.setPosition(legalPosition);

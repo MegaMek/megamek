@@ -33,23 +33,23 @@ public class TraitorCommand extends ServerCommand {
             int pid = Integer.parseInt(args[2]);
             IPlayer player = server.getGame().getPlayer(pid);
             if(null == ent) {
-            	server.sendServerChat(connId, "No such entity");
+                server.sendServerChat(connId, "No such entity");
             }
             else if(ent.getOwner().getId() != connId) {
-            	server.sendServerChat(connId, "You must own an entity to make it switch sides.");
+                server.sendServerChat(connId, "You must own an entity to make it switch sides.");
             }
             else if(null == player) {
-            	server.sendServerChat(connId, "No such player");
+                server.sendServerChat(connId, "No such player");
             }
             else if(player.getTeam() == IPlayer.TEAM_UNASSIGNED) {
                 server.sendServerChat(connId, "Player must be assigned a team!");
             }
             else if(pid == connId) {
-            	server.sendServerChat(connId, "You can't switch to the same side!");
+                server.sendServerChat(connId, "You can't switch to the same side!");
             }
             else {
-            	server.sendServerChat(connId, ent.getDisplayName() + " will switch to " + player.getName() + "'s side at the end of this turn.");
-            	ent.setTraitorId(pid);
+                server.sendServerChat(connId, ent.getDisplayName() + " will switch to " + player.getName() + "'s side at the end of this turn.");
+                ent.setTraitorId(pid);
             }
             
         } catch (NumberFormatException nfe) {

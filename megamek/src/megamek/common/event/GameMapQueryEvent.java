@@ -43,13 +43,13 @@ public class GameMapQueryEvent extends GameEvent {
         return settings;
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gameMapQuery(this);
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gameMapQuery(this);
+    }
 
-	@Override
-	public String getEventName() {
-		return "Game Map Query";
-	}
+    @Override
+    public String getEventName() {
+        return "Game Map Query";
+    }
 }

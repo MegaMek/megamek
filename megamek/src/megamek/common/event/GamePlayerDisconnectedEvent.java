@@ -34,13 +34,13 @@ public class GamePlayerDisconnectedEvent extends GamePlayerEvent {
         super(source, player);
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gamePlayerDisconnected(this);	
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gamePlayerDisconnected(this);    
+    }
 
-	@Override
-	public String getEventName() {
-		return "Game Player Disconnected";
-	}
+    @Override
+    public String getEventName() {
+        return "Game Player Disconnected";
+    }
 }

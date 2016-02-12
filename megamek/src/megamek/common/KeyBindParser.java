@@ -43,20 +43,20 @@ import org.w3c.dom.NodeList;
  */
 public class KeyBindParser {
 
-	/**
-	 * Default path to the key bindings XML file.
-	 */
-	public static String DEFAULT_BINDINGS_FILE = "defaultKeyBinds.xml";
-	
-	//XML tag defines
-	public static String KEY_BIND = "KeyBind";
-	public static String KEY_CODE = "keyCode";
-	public static String KEY_MODIFIER = "modifier";
-	public static String COMMAND = "command";
-	public static String IS_REPEATABLE = "isRepeatable";
-	
-	public static void parseKeyBindings(MegaMekController controller){
-		// Get the path to the default bindings file.
+    /**
+     * Default path to the key bindings XML file.
+     */
+    public static String DEFAULT_BINDINGS_FILE = "defaultKeyBinds.xml";
+    
+    //XML tag defines
+    public static String KEY_BIND = "KeyBind";
+    public static String KEY_CODE = "keyCode";
+    public static String KEY_MODIFIER = "modifier";
+    public static String COMMAND = "command";
+    public static String IS_REPEATABLE = "isRepeatable";
+    
+    public static void parseKeyBindings(MegaMekController controller){
+        // Get the path to the default bindings file.
         File file = new File(Configuration.configDir(), DEFAULT_BINDINGS_FILE);
         if (!file.exists() || !file.isFile()) {
             registerDefaultKeyBinds(controller);
@@ -83,8 +83,8 @@ public class KeyBindParser {
                 Element bindingList = (Element) listOfUnits.item(bindCount);
 
                 // Get the key code
-				Element elem = (Element) bindingList
-						.getElementsByTagName(KEY_CODE).item(0);
+                Element elem = (Element) bindingList
+                        .getElementsByTagName(KEY_CODE).item(0);
                 if (elem == null) {
                     System.err.println("Missing " + KEY_CODE + " element #"
                             + bindCount);
@@ -93,48 +93,48 @@ public class KeyBindParser {
                 int keyCode = Integer.parseInt(elem.getTextContent());
 
                 // Get the modifier.
-				elem = (Element) bindingList
-						.getElementsByTagName(KEY_MODIFIER).item(0);
-				if (elem == null) {
+                elem = (Element) bindingList
+                        .getElementsByTagName(KEY_MODIFIER).item(0);
+                if (elem == null) {
                     System.err.println("Missing " + KEY_MODIFIER + " element #"
                             + bindCount);
                     continue;
                 }
-				int modifiers = Integer.parseInt(elem.getTextContent());
+                int modifiers = Integer.parseInt(elem.getTextContent());
                
                 
-				// Get the command
-				elem = (Element) bindingList
-						.getElementsByTagName(COMMAND).item(0);
-				if (elem == null) {
+                // Get the command
+                elem = (Element) bindingList
+                        .getElementsByTagName(COMMAND).item(0);
+                if (elem == null) {
                     System.err.println("Missing " + COMMAND + " element #"
                             + bindCount);
                     continue;
                 }
-				String command = elem.getTextContent();
-				
-				// Get the isRepeatable
-				elem = (Element) bindingList
-						.getElementsByTagName(IS_REPEATABLE).item(0);
-				if (elem == null) {
+                String command = elem.getTextContent();
+                
+                // Get the isRepeatable
+                elem = (Element) bindingList
+                        .getElementsByTagName(IS_REPEATABLE).item(0);
+                if (elem == null) {
                     System.err.println("Missing " + IS_REPEATABLE + " element #"
                             + bindCount);
                     continue;
                 }
-				boolean isRepeatable = 
-						Boolean.parseBoolean(elem.getTextContent());
-				
-				KeyCommandBind keyBind = KeyCommandBind.getBindByCmd(command);
-				
-				if (keyBind == null){
-					System.err.println("Unknown command: " + command + 
-							", element #" + bindCount);
-				} else {
-					keyBind.key = keyCode;
-					keyBind.modifiers = modifiers;
-					keyBind.isRepeatable = isRepeatable;
-					controller.registerKeyCommandBind(keyBind);
-				}
+                boolean isRepeatable = 
+                        Boolean.parseBoolean(elem.getTextContent());
+                
+                KeyCommandBind keyBind = KeyCommandBind.getBindByCmd(command);
+                
+                if (keyBind == null){
+                    System.err.println("Unknown command: " + command + 
+                            ", element #" + bindCount);
+                } else {
+                    keyBind.key = keyCode;
+                    keyBind.modifiers = modifiers;
+                    keyBind.isRepeatable = isRepeatable;
+                    controller.registerKeyCommandBind(keyBind);
+                }
             }
         } catch (Exception e) {
             System.err.println("Error parsing key bindings!");
@@ -142,59 +142,59 @@ public class KeyBindParser {
             controller.removeAllKeyCommandBinds();
             registerDefaultKeyBinds(controller);
         }
-	}
-	
-	/**
-	 * Each KeyCommand has a built-in default; if now key binding file can be
-	 * found, we should register those defaults.
-	 * 
-	 * @param controller
-	 */
-	public static void registerDefaultKeyBinds(MegaMekController controller) {
-	    for (KeyCommandBind kcb : KeyCommandBind.values()) {
-	        controller.registerKeyCommandBind(kcb);
-	    }
-	}
-	
-	/**
-	 * Write the current keybindings to the default XML file.
-	 */
-	public static void writeKeyBindings(){
-		try {
-			Writer output = new BufferedWriter(new OutputStreamWriter(
-			        new FileOutputStream(new File(Configuration.configDir(), 
-			        		DEFAULT_BINDINGS_FILE))));
-			output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-			output.write("<KeyBindings " +
-					"xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
-					" xsi:noNamespaceSchemaLocation=\"keyBindingSchema.xsl\">\n");
-			
-			for (KeyCommandBind kcb : KeyCommandBind.values()){
-				output.write("    <KeyBind>\n");
-				output.write("         <command>"+kcb.cmd+"</command> ");
-				String keyTxt = "";
-				if (kcb.modifiers != 0) {
-				    keyTxt = KeyEvent.getKeyModifiersText(kcb.modifiers);
-				    keyTxt += "-";
-				}
-				keyTxt += KeyEvent.getKeyText(kcb.key);
-				output.write("<!-- " + keyTxt + " -->\n");
-				output.write("        <keyCode>"+kcb.key+"</keyCode>\n");
-				output.write("        <modifier>"+kcb.modifiers+"</modifier>\n");
-				output.write("        <isRepeatable>"+kcb.isRepeatable
-						+"</isRepeatable>\n");
-				output.write("    </KeyBind>\n");
-				output.write("\n");
-			}
-			
-			output.write("</KeyBindings>");
-			output.close();
-		} catch (IOException e) {
-			System.err.println("Error writing keybindings file!");
-			e.printStackTrace(System.err);
-		}
+    }
+    
+    /**
+     * Each KeyCommand has a built-in default; if now key binding file can be
+     * found, we should register those defaults.
+     * 
+     * @param controller
+     */
+    public static void registerDefaultKeyBinds(MegaMekController controller) {
+        for (KeyCommandBind kcb : KeyCommandBind.values()) {
+            controller.registerKeyCommandBind(kcb);
+        }
+    }
+    
+    /**
+     * Write the current keybindings to the default XML file.
+     */
+    public static void writeKeyBindings(){
+        try {
+            Writer output = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(new File(Configuration.configDir(), 
+                            DEFAULT_BINDINGS_FILE))));
+            output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+            output.write("<KeyBindings " +
+                    "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"" +
+                    " xsi:noNamespaceSchemaLocation=\"keyBindingSchema.xsl\">\n");
+            
+            for (KeyCommandBind kcb : KeyCommandBind.values()){
+                output.write("    <KeyBind>\n");
+                output.write("         <command>"+kcb.cmd+"</command> ");
+                String keyTxt = "";
+                if (kcb.modifiers != 0) {
+                    keyTxt = KeyEvent.getKeyModifiersText(kcb.modifiers);
+                    keyTxt += "-";
+                }
+                keyTxt += KeyEvent.getKeyText(kcb.key);
+                output.write("<!-- " + keyTxt + " -->\n");
+                output.write("        <keyCode>"+kcb.key+"</keyCode>\n");
+                output.write("        <modifier>"+kcb.modifiers+"</modifier>\n");
+                output.write("        <isRepeatable>"+kcb.isRepeatable
+                        +"</isRepeatable>\n");
+                output.write("    </KeyBind>\n");
+                output.write("\n");
+            }
+            
+            output.write("</KeyBindings>");
+            output.close();
+        } catch (IOException e) {
+            System.err.println("Error writing keybindings file!");
+            e.printStackTrace(System.err);
+        }
 
-		
-	}
-	
+        
+    }
+    
 }

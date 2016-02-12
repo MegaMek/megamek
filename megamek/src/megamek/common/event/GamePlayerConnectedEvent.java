@@ -34,13 +34,13 @@ public class GamePlayerConnectedEvent extends GamePlayerEvent {
         super(source, player);
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gamePlayerConnected(this);	
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gamePlayerConnected(this);    
+    }
 
-	@Override
-	public String getEventName() {
-		return "Game Player Connected";
-	}
+    @Override
+    public String getEventName() {
+        return "Game Player Connected";
+    }
 }

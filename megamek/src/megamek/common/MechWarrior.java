@@ -45,8 +45,8 @@ public class MechWarrior extends EjectedCrew {
      * This constructor is so MULParser can load these entities
      */
     public MechWarrior() {
-    	super();
-    	setChassis(EjectedCrew.MW_EJECT_NAME);
+        super();
+        setChassis(EjectedCrew.MW_EJECT_NAME);
     }
     
     /*

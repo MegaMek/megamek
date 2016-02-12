@@ -53,7 +53,7 @@ public class ISBAHeavyGrenadeLauncher extends Weapon {
         bv = 2;
         cost = 4500;
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON)
-        		.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+                .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         introDate = 2100;
         techLevel.put(2100, techLevel.get(3071));
         availRating = new int[] { RATING_X, RATING_B, RATING_A };

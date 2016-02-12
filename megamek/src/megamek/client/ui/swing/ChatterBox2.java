@@ -139,7 +139,7 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                 if (PreferenceManager.getClientPreferences()
                         .getPrintEntityChange()) {
                     addChatMessage("MegaMek: " + e.getNumberOfEntities() + 
-                    		" Entities added.");
+                            " Entities added.");
                 }
             }
 
@@ -157,19 +157,19 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
         Toolkit toolkit = bv.getToolkit();
         upbutton = toolkit.getImage(new File(Configuration.widgetsDir(), 
-        		FILENAME_BUTTON_UP).toString());
+                FILENAME_BUTTON_UP).toString());
         PMUtil.setImage(upbutton, client);
         downbutton = toolkit.getImage(new File(Configuration.widgetsDir(), 
-        		FILENAME_BUTTON_DOWN).toString());
+                FILENAME_BUTTON_DOWN).toString());
         PMUtil.setImage(downbutton, client);
         minbutton = toolkit.getImage(new File(Configuration.widgetsDir(), 
-        		FILENAME_BUTTON_MINIMISE).toString());
+                FILENAME_BUTTON_MINIMISE).toString());
         PMUtil.setImage(minbutton, client);
         maxbutton = toolkit.getImage(new File(Configuration.widgetsDir(), 
-        		FILENAME_BUTTON_MAXIMISE).toString());
+                FILENAME_BUTTON_MAXIMISE).toString());
         PMUtil.setImage(maxbutton, client);
         resizebutton = toolkit.getImage(new File(Configuration.widgetsDir(), 
-        		FILENAME_BUTTON_RESIZE).toString());
+                FILENAME_BUTTON_RESIZE).toString());
         PMUtil.setImage(resizebutton, client);
 
         registerKeyboardCommands(controller);
@@ -260,8 +260,8 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
             }
 
             if ((idleTime > MAX_IDLE_TIME) && !isSliding() && 
-            		GUIPreferences.getInstance().getBoolean(
-            				"AdvancedChatbox2AutoSlidedown")) {
+                    GUIPreferences.getInstance().getBoolean(
+                            "AdvancedChatbox2AutoSlidedown")) {
                 slideDown();
             }
         }
@@ -383,20 +383,20 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
 
         if ((x < DIST_SIDE) || (x > (DIST_SIDE + width)) || (y < yOffset)
                 || (y > (yOffset + height))) {
-        	bv.setChatterBoxActive(false);
+            bv.setChatterBoxActive(false);
             return false;
         }
         isHit = true;
         // Hide button
         if ((x > 9) && (x < 25) && (y > (yOffset + 2)) && (y < (yOffset + 18)) 
-        		&& !isDown()) {
-        	slideDown();
-        	return true;
+                && !isDown()) {
+            slideDown();
+            return true;
         }
         
         bv.setChatterBoxActive(true);
         if (isDown()){
-        	slideUp();
+            slideUp();
         }
 
         // Scroll up
@@ -716,10 +716,10 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     //
     public void keyPressed(KeyEvent ke) {
 
-    	if (!bv.getChatterBoxActive()){
-    		return;
-    	}
-    	
+        if (!bv.getChatterBoxActive()){
+            return;
+        }
+        
         if (ke.isControlDown() && (ke.getKeyCode() == KeyEvent.VK_V)) {
             Transferable content = Toolkit.getDefaultToolkit().
                     getSystemClipboard().getContents(null);
@@ -815,9 +815,9 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
                 bv.setChatterBoxActive(false);
                 break;
             case KeyEvent.VK_ESCAPE:
-            	clearMessage();
-            	bv.setChatterBoxActive(false);
-            	slideDown();
+                clearMessage();
+                bv.setChatterBoxActive(false);
+                slideDown();
                 break;
             case KeyEvent.VK_BACK_SPACE:
                 if ((message == null) || message.equals("")) {
@@ -899,8 +899,8 @@ public class ChatterBox2 implements KeyListener, IDisplayable {
     }
     
     public void clearMessage(){
-    	message = "";
-    	visibleMessage ="";
+        message = "";
+        visibleMessage ="";
     }
 
 }

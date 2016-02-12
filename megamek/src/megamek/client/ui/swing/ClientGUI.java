@@ -142,7 +142,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     private CommonHelpDialog help;
     private CommonSettingsDialog setdlg;
     private String helpFileName = 
-    		Messages.getString("CommonMenuBar.helpFilePath"); //$NON-NLS-1$
+            Messages.getString("CommonMenuBar.helpFilePath"); //$NON-NLS-1$
 
     public MegaMekController controller = null;
     // keep me
@@ -575,12 +575,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
             // Launch the help dialog.
             HelpDialog helpDialog = new HelpDialog(
-            		Messages.getString("ClientGUI.skinningHelpPath.title"), 
-            		helpUrl);
+                    Messages.getString("ClientGUI.skinningHelpPath.title"), 
+                    helpUrl);
             helpDialog.setVisible(true);
         } catch (MalformedURLException e) {
-        	JOptionPane.showMessageDialog(this, e.getMessage(), "ERROR", 
-        			JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, e.getMessage(), "ERROR", 
+                    JOptionPane.ERROR_MESSAGE);
             new Logger().log(getClass(), "showSkinningHowTo", e);
         }
     }
@@ -639,7 +639,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      */
     public void actionPerformed(ActionEvent event) {
         if ("fileGameSave".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-        	ignoreHotKeys = true;
+            ignoreHotKeys = true;
             JFileChooser fc = new JFileChooser("./savegames");
             fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
             fc.setDialogTitle(Messages.getString("ClientGUI.FileSaveDialog.title"));
@@ -660,8 +660,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             ignoreHotKeys = false;
         }
         if ("fileGameSaveServer".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-        	ignoreHotKeys = true;
-        	String filename = (String) JOptionPane.showInputDialog(frame, Messages.getString("ClientGUI.FileSaveServerDialog.message"), Messages.getString("ClientGUI.FileSaveServerDialog.title"), JOptionPane.QUESTION_MESSAGE, null, null, "savegame.sav");
+            ignoreHotKeys = true;
+            String filename = (String) JOptionPane.showInputDialog(frame, Messages.getString("ClientGUI.FileSaveServerDialog.message"), Messages.getString("ClientGUI.FileSaveServerDialog.title"), JOptionPane.QUESTION_MESSAGE, null, null, "savegame.sav");
             client.sendChat("/save " + filename);
             ignoreHotKeys = false;
         }
@@ -675,12 +675,12 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             showHelp();
         }
         if ("fileUnitsSave".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-        	ignoreHotKeys = true;
+            ignoreHotKeys = true;
             doSaveUnit();
             ignoreHotKeys = false;
         }
         if ("fileUnitsOpen".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-        	ignoreHotKeys = true;
+            ignoreHotKeys = true;
             loadListFile();
             ignoreHotKeys = false;
         }
@@ -688,7 +688,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             deleteAllUnits(client);
         }
         if ("fileUnitsReinforce".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-        	ignoreHotKeys = true;
+            ignoreHotKeys = true;
             loadListFile(client.getLocalPlayer(), true);
             ignoreHotKeys = false;
         }
@@ -722,16 +722,16 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             showRoundReport();
         }
         if ("fileBoardSave".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-        	ignoreHotKeys = true;
-        	boardSave();
+            ignoreHotKeys = true;
+            boardSave();
             ignoreHotKeys = false;
         } else if ("fileBoardSaveAs".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-        	ignoreHotKeys = true;
-        	boardSaveAs();
+            ignoreHotKeys = true;
+            boardSaveAs();
             ignoreHotKeys = false;
         } else if ("fileBoardSaveAsImage".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-        	ignoreHotKeys = true;
-        	boardSaveAsImage();
+            ignoreHotKeys = true;
+            boardSaveAsImage();
             ignoreHotKeys = false;
         }
         if ("replacePlayer".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
@@ -1452,22 +1452,22 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 for (Entity entity : loadedUnits) {
                     entity.setOwner(player);
                     if (reinforce) {
-                    	entity.setDeployRound(client.getGame().getRoundCount()+1);
-                    	entity.setGame(client.getGame());
-                    	// Set these to true, otherwise units reinforced in
-                    	// the movement turn are considered selectable
-                    	entity.setDone(true);
-                    	entity.setUnloaded(true);
+                        entity.setDeployRound(client.getGame().getRoundCount()+1);
+                        entity.setGame(client.getGame());
+                        // Set these to true, otherwise units reinforced in
+                        // the movement turn are considered selectable
+                        entity.setDone(true);
+                        entity.setUnloaded(true);
                         if ((entity instanceof Aero)
                                 && !((entity instanceof SmallCraft) 
                                         || (entity instanceof Jumpship))) {
-                    	    ((Aero)entity).applyBombs();
-                    	}
+                            ((Aero)entity).applyBombs();
+                        }
                     }
                 }
                 if (loadedUnits.size() > 0){
-                	client.sendAddEntity(loadedUnits);
-                	addedUnits = true;
+                    client.sendAddEntity(loadedUnits);
+                    addedUnits = true;
                 }                
             } catch (IOException excep) {
                 excep.printStackTrace(System.err);
@@ -1485,11 +1485,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public void deleteAllUnits(Client c) {
         ArrayList<Entity> currentUnits = c.getGame().getPlayerEntities(
                 c.getLocalPlayer(), false);
-    	ArrayList<Integer> ids = new ArrayList<Integer>(currentUnits.size());
-    	for (Entity e : currentUnits){
-    	    ids.add(e.getId());
-    	}
-    	c.sendDeleteEntities(ids);
+        ArrayList<Integer> ids = new ArrayList<Integer>(currentUnits.size());
+        for (Entity e : currentUnits){
+            ids.add(e.getId());
+        }
+        c.sendDeleteEntities(ids);
     }
 
     /**
@@ -1555,8 +1555,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     }
     
     protected void saveVictoryList() {
-    	String filename = client.getLocalPlayer().getName();
-    	
+        String filename = client.getLocalPlayer().getName();
+        
         // Build the "save unit" dialog, if necessary.
         if (dlgSaveList == null) {
             dlgSaveList = new JFileChooser(".");
@@ -1685,21 +1685,21 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
 
 
         public void gamePlayerChange(GamePlayerChangeEvent e){
-        	 if (playerListDialog != null) {
+             if (playerListDialog != null) {
                  playerListDialog.refreshPlayerList();
              }
-        	 if ((curPanel instanceof ReportDisplay) 
-        	         && !client.getLocalPlayer().isDone()) {
+             if ((curPanel instanceof ReportDisplay) 
+                     && !client.getLocalPlayer().isDone()) {
                  ((ReportDisplay) curPanel).resetReadyButton();
-        	 }
+             }
         }
-    	
+        
         @Override
         public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
             JOptionPane.showMessageDialog(frame,
-	    		Messages.getString("ClientGUI.Disconnected.message"), //$NON-NLS-1
-	    		Messages.getString("ClientGUI.Disconnected.title"), //$NON-NLS-1
-	    		JOptionPane.ERROR_MESSAGE);
+                Messages.getString("ClientGUI.Disconnected.message"), //$NON-NLS-1
+                Messages.getString("ClientGUI.Disconnected.title"), //$NON-NLS-1
+                JOptionPane.ERROR_MESSAGE);
             frame.setVisible(false);
             die();
         }
@@ -1852,90 +1852,90 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
         
         @Override
-		public void gameClientFeedbackRquest(GameCFREvent evt) {
+        public void gameClientFeedbackRquest(GameCFREvent evt) {
             Entity e = client.getGame().getEntity(evt.getEntityId());
             Object result;
-        	switch (evt.getCFRType()){
-	        	case Packet.COMMAND_CFR_DOMINO_EFFECT:		        	
-		        	// If the client connects to a game as a bot, it's possible
-		        	//  to have the bot respond AND have the client ask the
-		        	//  player.  This is bad, ignore this if the client is a bot
-		        	if (client instanceof BotClient){
-		        		return;
-		        	}
-		        	MovePath stepForward = new MovePath(client.getGame(), e);
-					MovePath stepBackward = new MovePath(client.getGame(), e);
-					stepForward.addStep(MoveStepType.FORWARDS);
-					stepBackward.addStep(MoveStepType.BACKWARDS);
-					stepForward.compile(client.getGame(), e);
-					stepBackward.compile(client.getGame(), e);
-					
-					String title = Messages.getString("CFRDomino.Title");
-					String msg = Messages.getString("CFRDomino.Message",
-							new Object[] { e.getDisplayName() });
-					int choice;
-					Object options[];
-					MovePath paths[];
-					int optionType;
-					if (stepForward.isMoveLegal() 
-							&& stepBackward.isMoveLegal()){
-						options = new Object[3];
-						paths = new MovePath[3];
-						options[0] = Messages.getString("CFRDomino.Forward",
-								new Object[] { stepForward.getMpUsed() });
-						options[1] = Messages.getString("CFRDomino.Backward",
-								new Object[] { stepForward.getMpUsed() });
-						options[2] = Messages.getString("CFRDomino.NoAction");
-						paths[0] = stepForward;
-						paths[1] = stepBackward;
-						paths[2] = null;
-						optionType = JOptionPane.YES_NO_CANCEL_OPTION;
-					} else if (stepForward.isMoveLegal()){
-						options = new Object[2];
-						paths = new MovePath[2];
-						options[0] = Messages.getString("CFRDomino.Forward",
-								new Object[] { stepForward.getMpUsed() });
-						options[1] = Messages.getString("CFRDomino.NoAction");
-						paths[0] = stepForward;
-						paths[1] = null;
-						optionType = JOptionPane.YES_NO_OPTION;
-					} else { // No request is sent if both moves are illegal
-						options = new Object[2];
-						paths = new MovePath[2];
-						options[0] = Messages.getString("CFRDomino.Backward",
-								new Object[] { stepForward.getMpUsed() });
-						options[1] = Messages.getString("CFRDomino.NoAction");
-						paths[0] = stepBackward;
-						paths[1] = null;
-						optionType = JOptionPane.YES_NO_OPTION;
-					}			
-					choice = JOptionPane.showOptionDialog(frame, msg, title, 
-							optionType, JOptionPane.QUESTION_MESSAGE, null, 
-							options, options[0]);
-					// If they closed it, assume no action
-					if (choice == JOptionPane.CLOSED_OPTION){
-						choice = options.length - 1;
-					}
-					client.sendDominoCFRResponse(paths[choice]);
-	        		break;
-	        	case Packet.COMMAND_CFR_AMS_ASSIGN:
-	        	    ArrayList<String> amsOptions = new ArrayList<>();
-	        	    amsOptions.add("None");
-	        	    for (WeaponAttackAction waa : evt.getWAAs()) {
-	        	        Entity ae = waa.getEntity(client.getGame());
-	        	        String waaMsg;
-	        	        if (ae != null) {
-    	        	        Mounted weapon = ae.getEquipment(waa.getWeaponId());
+            switch (evt.getCFRType()){
+                case Packet.COMMAND_CFR_DOMINO_EFFECT:                    
+                    // If the client connects to a game as a bot, it's possible
+                    //  to have the bot respond AND have the client ask the
+                    //  player.  This is bad, ignore this if the client is a bot
+                    if (client instanceof BotClient){
+                        return;
+                    }
+                    MovePath stepForward = new MovePath(client.getGame(), e);
+                    MovePath stepBackward = new MovePath(client.getGame(), e);
+                    stepForward.addStep(MoveStepType.FORWARDS);
+                    stepBackward.addStep(MoveStepType.BACKWARDS);
+                    stepForward.compile(client.getGame(), e);
+                    stepBackward.compile(client.getGame(), e);
+                    
+                    String title = Messages.getString("CFRDomino.Title");
+                    String msg = Messages.getString("CFRDomino.Message",
+                            new Object[] { e.getDisplayName() });
+                    int choice;
+                    Object options[];
+                    MovePath paths[];
+                    int optionType;
+                    if (stepForward.isMoveLegal() 
+                            && stepBackward.isMoveLegal()){
+                        options = new Object[3];
+                        paths = new MovePath[3];
+                        options[0] = Messages.getString("CFRDomino.Forward",
+                                new Object[] { stepForward.getMpUsed() });
+                        options[1] = Messages.getString("CFRDomino.Backward",
+                                new Object[] { stepForward.getMpUsed() });
+                        options[2] = Messages.getString("CFRDomino.NoAction");
+                        paths[0] = stepForward;
+                        paths[1] = stepBackward;
+                        paths[2] = null;
+                        optionType = JOptionPane.YES_NO_CANCEL_OPTION;
+                    } else if (stepForward.isMoveLegal()){
+                        options = new Object[2];
+                        paths = new MovePath[2];
+                        options[0] = Messages.getString("CFRDomino.Forward",
+                                new Object[] { stepForward.getMpUsed() });
+                        options[1] = Messages.getString("CFRDomino.NoAction");
+                        paths[0] = stepForward;
+                        paths[1] = null;
+                        optionType = JOptionPane.YES_NO_OPTION;
+                    } else { // No request is sent if both moves are illegal
+                        options = new Object[2];
+                        paths = new MovePath[2];
+                        options[0] = Messages.getString("CFRDomino.Backward",
+                                new Object[] { stepForward.getMpUsed() });
+                        options[1] = Messages.getString("CFRDomino.NoAction");
+                        paths[0] = stepBackward;
+                        paths[1] = null;
+                        optionType = JOptionPane.YES_NO_OPTION;
+                    }            
+                    choice = JOptionPane.showOptionDialog(frame, msg, title, 
+                            optionType, JOptionPane.QUESTION_MESSAGE, null, 
+                            options, options[0]);
+                    // If they closed it, assume no action
+                    if (choice == JOptionPane.CLOSED_OPTION){
+                        choice = options.length - 1;
+                    }
+                    client.sendDominoCFRResponse(paths[choice]);
+                    break;
+                case Packet.COMMAND_CFR_AMS_ASSIGN:
+                    ArrayList<String> amsOptions = new ArrayList<>();
+                    amsOptions.add("None");
+                    for (WeaponAttackAction waa : evt.getWAAs()) {
+                        Entity ae = waa.getEntity(client.getGame());
+                        String waaMsg;
+                        if (ae != null) {
+                            Mounted weapon = ae.getEquipment(waa.getWeaponId());
                             waaMsg = weapon.getDesc() + " from "
                                     + ae.getDisplayName();
-	        	        } else {
-	        	            waaMsg = "Missiles from unknown attacker";
-	        	        }
-	        	        amsOptions.add(waaMsg);
-	        	    }
-	        	    
-	        	    optionType = JOptionPane.OK_CANCEL_OPTION;
-	        	    title = Messages.getString("CFRAMSAssign.Title",
+                        } else {
+                            waaMsg = "Missiles from unknown attacker";
+                        }
+                        amsOptions.add(waaMsg);
+                    }
+                    
+                    optionType = JOptionPane.OK_CANCEL_OPTION;
+                    title = Messages.getString("CFRAMSAssign.Title",
                             new Object[] { e.getDisplayName() });
                     msg = Messages.getString("CFRAMSAssign.Message",
                             new Object[] { e.getDisplayName() });
@@ -1943,14 +1943,14 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                             JOptionPane.QUESTION_MESSAGE, null, 
                            amsOptions.toArray(), null);
                     // If they closed it, assume no action
-	        	    if ((result == null) || result.equals("None")) {
+                    if ((result == null) || result.equals("None")) {
                         client.sendAMSAssignCFRResponse(null);
                     } else {
                         client.sendAMSAssignCFRResponse(
                                 amsOptions.indexOf(result) - 1);                 
                     }
                     break;
-	        	case Packet.COMMAND_CFR_APDS_ASSIGN:
+                case Packet.COMMAND_CFR_APDS_ASSIGN:
                     ArrayList<String> apdsOptions = new ArrayList<>();
                     apdsOptions.add("None");
                     Iterator<Integer> distIt = evt.getApdsDists().iterator();
@@ -1985,7 +1985,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                                 apdsOptions.indexOf(result) - 1);
                     }
                     break;
-        	}
+            }
         }
     };
 
@@ -2202,29 +2202,29 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * @return
      */
     public boolean shouldIgnoreHotKeys(){
-    	return ignoreHotKeys 
-    			|| (gameOptionsDialog != null && gameOptionsDialog.isVisible())
-    			|| (about != null && about.isVisible()) 
-    			|| (help != null && help.isVisible()) 
-    			|| (setdlg != null && setdlg.isVisible());
+        return ignoreHotKeys 
+                || (gameOptionsDialog != null && gameOptionsDialog.isVisible())
+                || (about != null && about.isVisible()) 
+                || (help != null && help.isVisible()) 
+                || (setdlg != null && setdlg.isVisible());
     }
 
-	@Override
-	public void componentHidden(ComponentEvent arg0) {
-	}
+    @Override
+    public void componentHidden(ComponentEvent arg0) {
+    }
 
-	@Override
-	public void componentMoved(ComponentEvent arg0) {
-	}
+    @Override
+    public void componentMoved(ComponentEvent arg0) {
+    }
 
-	@Override
-	public void componentResized(ComponentEvent arg0) {
-		bv.setPreferredSize(getSize());		
-	}
+    @Override
+    public void componentResized(ComponentEvent arg0) {
+        bv.setPreferredSize(getSize());        
+    }
 
-	@Override
-	public void componentShown(ComponentEvent arg0) {
-	}
+    @Override
+    public void componentShown(ComponentEvent arg0) {
+    }
 
     void replacePlayer() {
         Set<IPlayer> ghostPlayers = new HashSet<>();

@@ -53,7 +53,7 @@ public class ISBALightMortar extends Weapon {
         cost = 2100;
         criticals = 2;
         flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON)
-        		.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;
+                .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;
         introDate = 1950;
         techLevel.put(1950, techLevel.get(3071));
         availRating = new int[] { RATING_X, RATING_X, RATING_C };

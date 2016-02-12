@@ -8077,9 +8077,9 @@ public abstract class Mech extends Entity {
 
     @Override
     public boolean canEscape() {
-    	int hipHits = 0;
-    	int legsDestroyed = 0;
-    	for (int i = 0; i < locations(); i++) {
+        int hipHits = 0;
+        int legsDestroyed = 0;
+        for (int i = 0; i < locations(); i++) {
             if (locationIsLeg(i)) {
                 if (!isLocationBad(i)) {
                     if (legHasHipCrit(i)) {
@@ -8090,15 +8090,15 @@ public abstract class Mech extends Entity {
                 }
             }
         }
-    	//there is room for debate here but I think most people would agree that a
-    	//legged biped mech (and a double legged quad mech) or a hipped mech are not
-    	//escapable, although technically they still have as much MP as foot infantry which
-    	//can escape. We could also consider creating options to control this.
-    	if(((this instanceof BipedMech) && (legsDestroyed > 0))
-    			|| (legsDestroyed > 1) || (hipHits > 0)) {
-    		return false;
-    	}
-    	return super.canEscape();
+        //there is room for debate here but I think most people would agree that a
+        //legged biped mech (and a double legged quad mech) or a hipped mech are not
+        //escapable, although technically they still have as much MP as foot infantry which
+        //can escape. We could also consider creating options to control this.
+        if(((this instanceof BipedMech) && (legsDestroyed > 0))
+                || (legsDestroyed > 1) || (hipHits > 0)) {
+            return false;
+        }
+        return super.canEscape();
     }
 
     @Override

@@ -61,26 +61,26 @@ import megamek.common.util.DirectoryItems;
 
 public class PortraitChoiceDialog extends JDialog {
 
-	private static final long serialVersionUID = -4495461837182817406L;
-	
-	private JFrame frame;
-	private JButton sourceButton;
-	private JButton btnCancel;
-	private JButton btnSelect;
-	private JComboBox<String> comboCategories;
-	private JScrollPane scrPortraits;
-	private JTable tablePortrait;
-	private DirectoryItems portraits;
-	private PortraitTableModel portraitModel;
-	private String category;
-	private String filename;
-	private PortraitTableMouseAdapter portraitMouseAdapter;
+    private static final long serialVersionUID = -4495461837182817406L;
+    
+    private JFrame frame;
+    private JButton sourceButton;
+    private JButton btnCancel;
+    private JButton btnSelect;
+    private JComboBox<String> comboCategories;
+    private JScrollPane scrPortraits;
+    private JTable tablePortrait;
+    private DirectoryItems portraits;
+    private PortraitTableModel portraitModel;
+    private String category;
+    private String filename;
+    private PortraitTableMouseAdapter portraitMouseAdapter;
 
 
    /** Creates new form CamoChoiceDialog */
    public PortraitChoiceDialog(JFrame parent, JButton button) {
-	   
-	// Initialize our superclass and record our parent frame.
+       
+    // Initialize our superclass and record our parent frame.
        super(parent, Messages
                .getString("PortraitChoiceDialog.select_portrait"), true); //$NON-NLS-1$
        frame = parent;
@@ -178,26 +178,26 @@ public class PortraitChoiceDialog extends JDialog {
        pack();
    }                
 
-	private void cancel() {                                          
-	   setVisible(false);
-	}                                         
+    private void cancel() {                                          
+       setVisible(false);
+    }                                         
 
-	private void select() {                                          
-	   category = portraitModel.getCategory();
-	   if(tablePortrait.getSelectedRow() != -1) {
-	       filename = (String) portraitModel.getValueAt(tablePortrait.getSelectedRow(), 0);
-	   } else {
-	       filename = Crew.PORTRAIT_NONE;
-	   }
-	   sourceButton.setIcon(generateIcon(category, filename));
-	   setVisible(false);
-	}                                         
-	
-	private void comboCategoriesItemStateChanged(java.awt.event.ItemEvent evt) {                                                 
-	   if (evt.getStateChange() == ItemEvent.SELECTED) {
-	       fillTable((String) evt.getItem());
-	   }
-	}                                                
+    private void select() {                                          
+       category = portraitModel.getCategory();
+       if(tablePortrait.getSelectedRow() != -1) {
+           filename = (String) portraitModel.getValueAt(tablePortrait.getSelectedRow(), 0);
+       } else {
+           filename = Crew.PORTRAIT_NONE;
+       }
+       sourceButton.setIcon(generateIcon(category, filename));
+       setVisible(false);
+    }                                         
+    
+    private void comboCategoriesItemStateChanged(java.awt.event.ItemEvent evt) {                                                 
+       if (evt.getStateChange() == ItemEvent.SELECTED) {
+           fillTable((String) evt.getItem());
+       }
+    }                                                
 
    public String getCategory() {
        return category;
@@ -212,15 +212,15 @@ public class PortraitChoiceDialog extends JDialog {
        filename = pilot.getPortraitFileName();
        sourceButton.setIcon(generateIcon(category, filename));
        comboCategories.getModel().setSelectedItem(category);
-   		fillTable(category);
-   		int rowIndex = 0;
-   		for(int i = 0; i < portraitModel.getRowCount(); i++) {
+           fillTable(category);
+           int rowIndex = 0;
+           for(int i = 0; i < portraitModel.getRowCount(); i++) {
            if(((String) portraitModel.getValueAt(i, 0)).equals(filename)) {
                rowIndex = i;
                break;
            }
        }
-       tablePortrait.setRowSelectionInterval(rowIndex, rowIndex); 	
+       tablePortrait.setRowSelectionInterval(rowIndex, rowIndex);     
    }
 
     private void fillTable(String category) {
@@ -237,10 +237,10 @@ public class PortraitChoiceDialog extends JDialog {
 
        // Get the camo names for this category.
        while (portraitNames.hasNext()) {
-    	   String name = portraitNames.next();
-    	   if(!"default.gif".equals(name)) {
+           String name = portraitNames.next();
+           if(!"default.gif".equals(name)) {
                portraitModel.addPortrait(name);
-    	   }
+           }
        }
        if(portraitModel.getRowCount() > 0) {
            tablePortrait.setRowSelectionInterval(0, 0);
@@ -295,8 +295,8 @@ public class PortraitChoiceDialog extends JDialog {
     */
    public class PortraitTableModel extends AbstractTableModel {
 
-	   private static final long serialVersionUID = -992524169822797473L;
-	   private String[] columnNames;
+       private static final long serialVersionUID = -992524169822797473L;
+       private String[] columnNames;
        private String category;
        private ArrayList<String> names;
        private ArrayList<Image> images;
@@ -365,73 +365,73 @@ public class PortraitChoiceDialog extends JDialog {
 
        public class Renderer extends PortraitPanel implements TableCellRenderer {
 
-    	   	private static final long serialVersionUID = 7916914665407121264L;
+               private static final long serialVersionUID = 7916914665407121264L;
 
-			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-	               Component c = this;
-	               setOpaque(true);
-	               String name = getValueAt(row, column).toString();
-	               setText(getValueAt(row, column).toString());
-	               setImage(category, name);
-	               if(isSelected) {
-	                   setBackground(new Color(220,220,220));
-	               } else {
-	                   setBackground(Color.WHITE);
-	               }
-	
-	               return c;
-			}      
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                   Component c = this;
+                   setOpaque(true);
+                   String name = getValueAt(row, column).toString();
+                   setText(getValueAt(row, column).toString());
+                   setImage(category, name);
+                   if(isSelected) {
+                       setBackground(new Color(220,220,220));
+                   } else {
+                       setBackground(Color.WHITE);
+                   }
+    
+                   return c;
+            }      
        }
    }
    
    public class PortraitPanel extends JPanel {
 
-	   private static final long serialVersionUID = -6497926619314613457L;
-	   private JLabel lblImage;
-	    
-	    public PortraitPanel() {
-	    	GridBagConstraints c = new GridBagConstraints();
+       private static final long serialVersionUID = -6497926619314613457L;
+       private JLabel lblImage;
+        
+        public PortraitPanel() {
+            GridBagConstraints c = new GridBagConstraints();
 
-	        lblImage = new JLabel();
+            lblImage = new JLabel();
 
-	        setLayout(new GridBagLayout());
-	        
-	        c = new GridBagConstraints();
-	        c.gridx = 0;
-	        c.gridy = 0;
-	        c.fill = GridBagConstraints.BOTH;
-	        c.weightx = 1.0;
-	        c.weighty = 1.0;
-	        add(lblImage, c);
-	    }
+            setLayout(new GridBagLayout());
+            
+            c = new GridBagConstraints();
+            c.gridx = 0;
+            c.gridy = 0;
+            c.fill = GridBagConstraints.BOTH;
+            c.weightx = 1.0;
+            c.weighty = 1.0;
+            add(lblImage, c);
+        }
 
-	    public void setText(String text) {
-	        lblImage.setText(text);
-	    }
-	    
-	    public void setImage(String category, String name) {
+        public void setText(String text) {
+            lblImage.setText(text);
+        }
+        
+        public void setImage(String category, String name) {
 
-	        if (null == category || null == name) {
-	            return;
-	        }
-	        
-	        if(name.equals(Crew.PORTRAIT_NONE)) {
-	        	name = "default.gif";
-	        }
+            if (null == category || null == name) {
+                return;
+            }
+            
+            if(name.equals(Crew.PORTRAIT_NONE)) {
+                name = "default.gif";
+            }
 
-	        // Try to get the portrait file.
-	        try {
+            // Try to get the portrait file.
+            try {
 
-	            // Translate the root portrait directory name.
-	            if (Crew.ROOT_PORTRAIT.equals(category))
-	                category = ""; //$NON-NLS-1$
-	            Image portrait = (Image) portraits.getItem(category, name);
-	            lblImage.setIcon(new ImageIcon(portrait));
-	        } catch (Exception err) {
-	            err.printStackTrace();
-	        }
-	    }
-	}
+                // Translate the root portrait directory name.
+                if (Crew.ROOT_PORTRAIT.equals(category))
+                    category = ""; //$NON-NLS-1$
+                Image portrait = (Image) portraits.getItem(category, name);
+                lblImage.setIcon(new ImageIcon(portrait));
+            } catch (Exception err) {
+                err.printStackTrace();
+            }
+        }
+    }
 
    public class PortraitTableMouseAdapter extends MouseInputAdapter {
 

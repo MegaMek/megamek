@@ -63,29 +63,29 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
      *
      */
     public static enum DeployCommand implements PhaseCommand {
-	    DEPLOY_NEXT("deployNext"),
-	    DEPLOY_TURN("deployTurn"),    
-	    DEPLOY_LOAD("deployLoad"),
-	    DEPLOY_UNLOAD("deployUnload"),
-	    DEPLOY_REMOVE("deployRemove"),
-	    DEPLOY_ASSAULTDROP("assaultDrop"),
-	    DEPLOY_DOCK("deployDock");  
+        DEPLOY_NEXT("deployNext"),
+        DEPLOY_TURN("deployTurn"),    
+        DEPLOY_LOAD("deployLoad"),
+        DEPLOY_UNLOAD("deployUnload"),
+        DEPLOY_REMOVE("deployRemove"),
+        DEPLOY_ASSAULTDROP("assaultDrop"),
+        DEPLOY_DOCK("deployDock");  
     
-	    public String cmd;
-	    
-	    /**
+        public String cmd;
+        
+        /**
          * Priority that determines this buttons order
          */
         public int priority;
-	    
-	    private DeployCommand(String c){
-	    	cmd = c;
-	    }
-	    
-	    public String getCmd(){
-	    	return cmd;
-	    }
-	    
+        
+        private DeployCommand(String c){
+            cmd = c;
+        }
+        
+        public String getCmd(){
+            return cmd;
+        }
+        
         public int getPriority() {
             return priority;
         }
@@ -93,10 +93,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         public void setPriority(int p) {
             priority = p;
         }
-	    
-	    public String toString(){
+        
+        public String toString(){
             return Messages.getString("DeploymentDisplay." + getCmd());
-	    }
+        }
     }
 
     protected Hashtable<DeployCommand,MegamekButton> buttons;
@@ -117,19 +117,19 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         setupStatusBar(Messages
                 .getString("DeploymentDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
         
-		buttons = new Hashtable<DeployCommand, MegamekButton>(
-				(int) (DeployCommand.values().length * 1.25 + 0.5));
-		for (DeployCommand cmd : DeployCommand.values()) {
-			String title = Messages.getString("DeploymentDisplay."
-					+ cmd.getCmd());
-			MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
-			newButton.addActionListener(this);
-			newButton.setActionCommand(cmd.getCmd());
-			newButton.setEnabled(false);
-			buttons.put(cmd, newButton);
-		}  		
-		numButtonGroups = 
-        		(int)Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
+        buttons = new Hashtable<DeployCommand, MegamekButton>(
+                (int) (DeployCommand.values().length * 1.25 + 0.5));
+        for (DeployCommand cmd : DeployCommand.values()) {
+            String title = Messages.getString("DeploymentDisplay."
+                    + cmd.getCmd());
+            MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
+            newButton.addActionListener(this);
+            newButton.setActionCommand(cmd.getCmd());
+            newButton.setEnabled(false);
+            buttons.put(cmd, newButton);
+        }          
+        numButtonGroups = 
+                (int)Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
 
         butDone.setText("<html><b>" + Messages.getString("DeploymentDisplay.Deploy") + "</b></html>"); //$NON-NLS-1$
         butDone.setEnabled(false);
@@ -692,10 +692,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     }
                     if ((bayChoices.size() > 1) && !(other instanceof Infantry)) {
                         String title = Messages.getString("DeploymentDisplay." + //$NON-NLS-1$
-                        		"loadUnitBayNumberDialog.title"); //$NON-NLS-1$
+                                "loadUnitBayNumberDialog.title"); //$NON-NLS-1$
                         String msg = Messages.getString("DeploymentDisplay." + //$NON-NLS-1$
-                        		"loadUnitBayNumberDialog.message", //$NON-NLS-1$
-                        		new Object[] { ce().getShortName() });
+                                "loadUnitBayNumberDialog.message", //$NON-NLS-1$
+                                new Object[] { ce().getShortName() });
                         String bayString = (String) JOptionPane
                                 .showInputDialog(clientgui, msg, title,
                                         JOptionPane.QUESTION_MESSAGE, null,
@@ -738,7 +738,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                         new Object[] { ce().getShortName(),
                                 ce().getUnusedString() });
                 String title = Messages.getString("DeploymentDisplay." + //$NON-NLS-1$
-                		"unloadUnitDialog.title"); //$NON-NLS-1$
+                        "unloadUnitDialog.title"); //$NON-NLS-1$
                 String input = (String) JOptionPane.showInputDialog(clientgui,
                         msg, title, JOptionPane.QUESTION_MESSAGE, null,
                         SharedUtility.getDisplayArray(choices), null);

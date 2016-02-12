@@ -45,7 +45,7 @@ public class CapitalMDBayWeapon extends AmmoBayWeapon {
         this.cost = 0;
         this.atClass = CLASS_CAPITAL_MD;
         this.capital = true;
-        this.flags = F_MASS_DRIVER;	
+        this.flags = F_MASS_DRIVER;    
         techRating = RATING_D;
         availRating = new int[] { RATING_E, RATING_X, RATING_E };
         introDate = 2715;

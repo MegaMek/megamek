@@ -35,8 +35,8 @@ import megamek.server.Server;
 public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
 
     /**
-	 *
-	 */
+     *
+     */
     private static final long serialVersionUID = -4718048077136686433L;
 
     /**

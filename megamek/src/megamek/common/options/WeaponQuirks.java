@@ -92,10 +92,10 @@ public class WeaponQuirks extends AbstractOptions {
         }
         
         if (en instanceof Protomech) {
-        	if (quirk.getName().equals(OptionsConstants.QUIRK_POS_FAST_RELOAD)
-        		|| quirk.getName().equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)) {
-        		return false;
-        	}
+            if (quirk.getName().equals(OptionsConstants.QUIRK_POS_FAST_RELOAD)
+                || quirk.getName().equals(OptionsConstants.QUIRK_WEAP_NEG_STATIC_FEED)) {
+                return false;
+            }
         }
 
         if (en instanceof Tank || en instanceof BattleArmor || en instanceof Protomech ) {

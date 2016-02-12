@@ -79,11 +79,11 @@ public abstract class InfantryWeapon extends Weapon {
      */
     @Override
     protected AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, IGame game, Server server) {
-    	Mounted m = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
-    	if(null != m && m.curMode().equals("Heat")) {
-    		return new InfantryHeatWeaponHandler(toHit, waa, game, server);
-    	}
-    	return new InfantryWeaponHandler(toHit, waa, game, server);
+        Mounted m = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
+        if(null != m && m.curMode().equals("Heat")) {
+            return new InfantryHeatWeaponHandler(toHit, waa, game, server);
+        }
+        return new InfantryWeaponHandler(toHit, waa, game, server);
     }
 
 }

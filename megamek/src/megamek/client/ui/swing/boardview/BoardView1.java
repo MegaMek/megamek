@@ -2750,6 +2750,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 || entity.hasSeenEntity(localPlayer)
                 || entity.hasDetectedEntity(localPlayer);
 
+        canSee &= (localPlayer == null)
+                || !game.getOptions().booleanOption("hidden_units")
+                || !entity.getOwner().isEnemyOf(localPlayer)
+                || !entity.isHidden();
+
         if ((position != null) && canSee) {
             // Add new EntitySprite
             // If no secondary positions, add a sprite for the central position
@@ -2875,6 +2880,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 && entity.getOwner().isEnemyOf(localPlayer)
                 && !entity.hasSeenEntity(localPlayer)
                 && !entity.hasDetectedEntity(localPlayer)) {
+                continue;
+            }
+            if ((localPlayer != null)
+                    && game.getOptions().booleanOption("hidden_units")
+                    && entity.getOwner().isEnemyOf(localPlayer)
+                    && entity.isHidden()) {
                 continue;
             }
             if (entity.getSecondaryPositions().isEmpty()) {

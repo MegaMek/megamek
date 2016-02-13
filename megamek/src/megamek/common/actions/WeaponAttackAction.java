@@ -2952,7 +2952,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                         if (prevWtype.hasFlag(WeaponType.F_INFANTRY)
                                 && (prevAttack.getWeaponId() != weapId)) {
                             return "BA can only make one " +
-                            		"anti-personnel attack!";
+                                    "anti-personnel attack!";
                         }
                     }
                 }

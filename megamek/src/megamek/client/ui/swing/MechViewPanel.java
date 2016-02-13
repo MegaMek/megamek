@@ -57,7 +57,7 @@ public class MechViewPanel extends JPanel {
     public final static int DEFAULT_HEIGHT = 600;
     
     public MechViewPanel() {
-    	this(DEFAULT_WIDTH, DEFAULT_HEIGHT,true);
+        this(DEFAULT_WIDTH, DEFAULT_HEIGHT,true);
     }
     
     public MechViewPanel(int width, int height) {

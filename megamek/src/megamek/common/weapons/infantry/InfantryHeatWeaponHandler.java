@@ -34,11 +34,11 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
 
   
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 8430370552107061610L;
+     * 
+     */
+    private static final long serialVersionUID = 8430370552107061610L;
 
-	/**
+    /**
      * @param t
      * @param w
      * @param g

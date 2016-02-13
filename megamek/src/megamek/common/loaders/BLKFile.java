@@ -202,14 +202,14 @@ public class BLKFile {
         } else if (code == BLKFile.NONE) {
             return Engine.NONE;
         } else if (code == BLKFile.MAGLEV) {
-        	return Engine.MAGLEV;
+            return Engine.MAGLEV;
         } else if (code == BLKFile.STEAM) {
-        	return Engine.STEAM;
+            return Engine.STEAM;
         } else if (code == BLKFile.BATTERY) {
-        	return Engine.BATTERY;
+            return Engine.BATTERY;
         } else if (code == BLKFile.SOLAR) {
-        	return Engine.SOLAR;
-      	
+            return Engine.SOLAR;
+          
         } else {
             return -1;
         }

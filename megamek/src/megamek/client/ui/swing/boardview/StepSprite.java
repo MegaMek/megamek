@@ -142,7 +142,7 @@ class StepSprite extends Sprite {
         drawConditions(step, stepPos, graph, col);
 
         Point offsetCostPos;
-		// draw arrows and cost for the step
+        // draw arrows and cost for the step
         switch (step.getType()) {
             case FORWARDS:
             case SWIM:
@@ -197,8 +197,8 @@ class StepSprite extends Sprite {
             case CAREFUL_STAND:
                 // draw arrow indicating standing up
                 // also doubles as the climb indication
-            	graph.setColor(Color.darkGray);
-            	CurrentArrow = UpDownOffset.createTransformedShape(bv.UpArrow);
+                graph.setColor(Color.darkGray);
+                CurrentArrow = UpDownOffset.createTransformedShape(bv.UpArrow);
                 CurrentArrow = StepOffset.createTransformedShape(CurrentArrow);
                 ((Graphics2D) graph).fill(CurrentArrow);
                 

@@ -143,7 +143,7 @@ public class BLKSupportVTOLFile extends BLKFile implements IMechLoader {
         // Set the structural tech rating
         if (!dataFile.exists("structural_tech_rating")) {
             throw new EntityLoadingException("Could not find " +
-            		"structural_tech_rating block!");
+                    "structural_tech_rating block!");
         }
         t.setStructuralTechRating(dataFile
                 .getDataAsInt("structural_tech_rating")[0]);

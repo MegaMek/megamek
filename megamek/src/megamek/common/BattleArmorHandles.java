@@ -223,7 +223,7 @@ import java.util.Vector;
     }
 
     public void resetTransporter() {
-    	troopers = Entity.NONE;
+        troopers = Entity.NONE;
     }
     
     /**

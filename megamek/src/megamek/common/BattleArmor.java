@@ -1344,10 +1344,10 @@ public class BattleArmor extends Infantry {
 
     public double getCost(boolean ignoreAmmo, boolean includeTrainingAndClan) {
 
-    	if(getChassis().equals("Longinus Battle Armor")
-    			&& getModel().equals("[Flamer]")
-    			&& !includeTrainingAndClan) {
-    	}
+        if(getChassis().equals("Longinus Battle Armor")
+                && getModel().equals("[Flamer]")
+                && !includeTrainingAndClan) {
+        }
 
         double cost = 0;
         switch (weightClass) {
@@ -1387,7 +1387,7 @@ public class BattleArmor extends Infantry {
         for (Mounted mounted : getEquipment()) {
             if ((mounted.getType() instanceof MiscType)
                     && ((MiscType) mounted.getType()).hasFlag(MiscType.F_BA_MANIPULATOR)) {
-            	long itemCost = (long) mounted.getType().getCost(this,
+                long itemCost = (long) mounted.getType().getCost(this,
                         mounted.isArmored(), mounted.getLocation());
                 manipulatorCost += itemCost;
             }
@@ -1397,27 +1397,27 @@ public class BattleArmor extends Infantry {
 
         double baseArmorCost = 10000;
         switch(getArmorType(LOC_TROOPER_1)) {
-	        case EquipmentType.T_ARMOR_BA_STANDARD_ADVANCED:
-	            baseArmorCost = 12500;
-	            break;
-	        case EquipmentType.T_ARMOR_BA_MIMETIC:
-	        case EquipmentType.T_ARMOR_BA_STEALTH:
-	        	baseArmorCost =  15000;
-	        	break;
-	        case EquipmentType.T_ARMOR_BA_STEALTH_BASIC:
-	        	baseArmorCost =  12000;
-	        	break;
-	        case EquipmentType.T_ARMOR_BA_STEALTH_IMP:
-	        	baseArmorCost =  20000;
-	        	break;
-	        case EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE:
-	        	baseArmorCost =  50000;
-	        	break;
-	        case EquipmentType.T_ARMOR_BA_FIRE_RESIST:
-	        case EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE:
-	        case EquipmentType.T_ARMOR_BA_STANDARD:
-	        default:
-	        	baseArmorCost =  10000;
+            case EquipmentType.T_ARMOR_BA_STANDARD_ADVANCED:
+                baseArmorCost = 12500;
+                break;
+            case EquipmentType.T_ARMOR_BA_MIMETIC:
+            case EquipmentType.T_ARMOR_BA_STEALTH:
+                baseArmorCost =  15000;
+                break;
+            case EquipmentType.T_ARMOR_BA_STEALTH_BASIC:
+                baseArmorCost =  12000;
+                break;
+            case EquipmentType.T_ARMOR_BA_STEALTH_IMP:
+                baseArmorCost =  20000;
+                break;
+            case EquipmentType.T_ARMOR_BA_STEALTH_PROTOTYPE:
+                baseArmorCost =  50000;
+                break;
+            case EquipmentType.T_ARMOR_BA_FIRE_RESIST:
+            case EquipmentType.T_ARMOR_BA_STANDARD_PROTOTYPE:
+            case EquipmentType.T_ARMOR_BA_STANDARD:
+            default:
+                baseArmorCost =  10000;
         }
 
         cost += (baseArmorCost * getOArmor(LOC_TROOPER_1));
@@ -2375,17 +2375,17 @@ public class BattleArmor extends Infantry {
     public String getLocationDamage(int loc) {
         String toReturn = "";
         if(getInternal(loc)<0) {
-        	return toReturn;
+            return toReturn;
         }
         boolean first = true;
         for(Mounted m : getEquipment()) {
-        	if(m.isMissingForTrooper(loc)) {
-        		if (!first) {
+            if(m.isMissingForTrooper(loc)) {
+                if (!first) {
                     toReturn += ", ";
                 }
-        		toReturn += m.getName();
-        		first = false;
-        	}
+                toReturn += m.getName();
+                first = false;
+            }
         }
         return toReturn;
     }

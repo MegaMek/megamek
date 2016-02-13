@@ -2530,16 +2530,16 @@ public class Aero extends Entity {
      */
     @Override
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-    	return getRunMP(gravity, ignoreheat, ignoremodulararmor);
+        return getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
-    	//if aeros are on the ground, they can only move at cruising speed
-    	if (!isAirborne()) {
+        //if aeros are on the ground, they can only move at cruising speed
+        if (!isAirborne()) {
             return getWalkMP(gravity, ignoreheat, ignoremodulararmor);
         }
-    	return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
+        return super.getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
     @Override
@@ -3173,7 +3173,7 @@ public class Aero extends Entity {
      */
     @Override
     public int sideTableRam(Coords src) {
-    	int side = super.sideTableRam(src);
+        int side = super.sideTableRam(src);
         if (game.useVectorMove() && game.getBoard().inSpace()) {
             int newside = chooseSideRam(src);
             if (newside != -1) {
@@ -4101,14 +4101,14 @@ public class Aero extends Entity {
             first = false;
         }
         if(getLeftThrustHits()>0) {
-        	if (!first) {
+            if (!first) {
                 toReturn += ", ";
             }
             toReturn += "Left Thruster (" + getLeftThrustHits() + ")";
             first = false;
         }
         if(getRightThrustHits()>0) {
-        	if (!first) {
+            if (!first) {
                 toReturn += ", ";
             }
             toReturn += "Right Thruster (" + getRightThrustHits() + ")";

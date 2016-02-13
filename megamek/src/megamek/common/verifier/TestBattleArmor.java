@@ -685,7 +685,7 @@ public class TestBattleArmor extends TestEntity {
                 if (link == null) {
                     correct = false;
                     buff.append(m.getName() + " is an infantry weapon but " +
-                    		"has no mount point!\n");
+                            "has no mount point!\n");
                     continue;
                 }
                 // No AP melee weapons
@@ -716,7 +716,7 @@ public class TestBattleArmor extends TestEntity {
                             }
                         } else if (!(m.getType() instanceof InfantryWeapon)) {
                             buff.append(m.getName() + " has the INF_SUPPORT " +
-                            		"flag but is not an InfantryWeapon!\n");
+                                    "flag but is not an InfantryWeapon!\n");
                             correct = false;   
                         }
                     }
@@ -781,21 +781,21 @@ public class TestBattleArmor extends TestEntity {
         
         if (numSSWMs > 1){
             buff.append("Squad has " + numSSWMs + " squad support " +
-            		"weapon mounts, but only 1 is allowed!\n");
+                    "weapon mounts, but only 1 is allowed!\n");
             correct = false;
         }
         
         if (numSSWMs > 0 
                 && ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD){
             buff.append("Quad BattleArmor cannot use squad support " +
-            		"weapon mounts!\n");
+                    "weapon mounts!\n");
             correct = false;
         }
         
         if (numGloveMountedAPWeapons > 1) {
             buff.append("Batle Armor with armored gloves may only mount 1 " +
-            		"additional AP weapon, but " + numGloveMountedAPWeapons 
-            		+ " are mounted!\n");
+                    "additional AP weapon, but " + numGloveMountedAPWeapons 
+                    + " are mounted!\n");
             correct = false;
         }
         
@@ -805,8 +805,8 @@ public class TestBattleArmor extends TestEntity {
                 if (ammo.isSquadSupportWeapon() && 
                         !AmmoType.isAmmoValid(ammo, sswType)){
                     buff.append(ammo.getName() + " is squad support weapon " +
-                    		"mounted, but it is not a legal ammo type for " +
-                    		"the squad support weapon!\n");
+                            "mounted, but it is not a legal ammo type for " +
+                            "the squad support weapon!\n");
                     correct = false;
                 }
             }

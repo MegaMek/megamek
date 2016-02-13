@@ -46,13 +46,13 @@ public class GameReportEvent extends GameEvent {
         return this.report;
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gameReport(this);
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gameReport(this);
+    }
 
-	@Override
-	public String getEventName() {
-		return "Game Report";
-	}
+    @Override
+    public String getEventName() {
+        return "Game Report";
+    }
 }

@@ -58,9 +58,9 @@ public class JoinTeamCommand extends ServerCommand {
             int teamId = Integer.parseInt(args[1]);
             
             if(IPlayer.TEAM_UNASSIGNED == teamId && numEntities != 0) {
-            	server.sendServerChat(connId, "Player must have no more " +
-            			"units to join the unassigned team!");
-            	return;
+                server.sendServerChat(connId, "Player must have no more " +
+                        "units to join the unassigned team!");
+                return;
             }
             String teamString = "join Team " + teamId + ".  ";
             if (teamId == IPlayer.TEAM_UNASSIGNED){

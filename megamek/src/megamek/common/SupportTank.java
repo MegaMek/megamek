@@ -224,14 +224,14 @@ public class SupportTank extends Tank {
                     return 0.008;
                 }
             case NAVAL:
-            	if (getWeight() <5) {
-            		return 0.004;
+                if (getWeight() <5) {
+                    return 0.004;
                 } else {
                     return 0.007;
                 }
             case HYDROFOIL:
-            	if (getWeight() <5) {
-            		return 0.004;
+                if (getWeight() <5) {
+                    return 0.004;
                 } else {
                     return 0.007;
                 }

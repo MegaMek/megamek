@@ -29,6 +29,9 @@ import javax.swing.KeyStroke;
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
 import megamek.client.ui.swing.ClientGUI;
+import megamek.client.ui.swing.util.CommandAction;
+import megamek.client.ui.swing.util.KeyCommandBind;
+import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MechPanelTabStrip;
 import megamek.common.Entity;
 import megamek.common.annotations.Nullable;
@@ -68,6 +71,11 @@ public class UnitDisplay extends JPanel {
      *            MekWars.
      */
     public UnitDisplay(@Nullable ClientGUI clientgui) {
+        this(clientgui, null);
+    }
+        
+    public UnitDisplay(@Nullable ClientGUI clientgui,
+            @Nullable MegaMekController controller) {
         super(new GridBagLayout());
         this.clientgui = clientgui;
 
@@ -102,8 +110,144 @@ public class UnitDisplay extends JPanel {
         addBag(displayP, c);
 
         ((CardLayout) displayP.getLayout()).show(displayP, "movement"); //$NON-NLS-1$
+        
+        if (controller != null) {
+            registerKeyboardCommands(this, controller);
+        }
     }
 
+    /**
+     * Register the keyboard commands that the UnitDisplay should process
+     *
+     * @param ud
+     * @param controller
+     */
+    private void registerKeyboardCommands(final UnitDisplay ud,
+            final MegaMekController controller) {
+        // Display General Tab
+        controller.registerCommandAction(KeyCommandBind.UD_GENERAL.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (ud.isVisible()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        tabStrip.setTab(0);
+                    }
+
+                });
+
+        // Display Pilot Tab
+        controller.registerCommandAction(KeyCommandBind.UD_PILOT.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (ud.isVisible()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        tabStrip.setTab(1);
+                    }
+
+                });
+
+        // Display Armor Tab
+        controller.registerCommandAction(KeyCommandBind.UD_ARMOR.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (ud.isVisible()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        tabStrip.setTab(2);
+                    }
+
+                });
+
+        // Display Systems Tab
+        controller.registerCommandAction(KeyCommandBind.UD_SYSTEMS.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (ud.isVisible()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        tabStrip.setTab(3);
+                    }
+
+                });
+
+        // Display Weapons Tab
+        controller.registerCommandAction(KeyCommandBind.UD_WEAPONS.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (ud.isVisible()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        tabStrip.setTab(4);
+                    }
+
+                });
+
+        // Display Extras Tab
+        controller.registerCommandAction(KeyCommandBind.UD_EXTRAS.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (ud.isVisible()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        tabStrip.setTab(5);
+                    }
+
+                });
+    }
+
+    /**
+     *
+     */
     @Override
     protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,
             int condition, boolean pressed) {
@@ -114,6 +258,11 @@ public class UnitDisplay extends JPanel {
         }
     }
 
+    /**
+     *
+     * @param comp
+     * @param c
+     */
     private void addBag(JComponent comp, GridBagConstraints c) {
         ((GridBagLayout) getLayout()).setConstraints(comp, c);
         add(comp);

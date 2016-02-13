@@ -462,7 +462,7 @@ public class MiniMap extends JPanel {
         }
         
         if (minimized) {
-        	yTemp = 14;
+            yTemp = 14;
         }
         
         setSize(xTemp, yTemp);
@@ -657,37 +657,37 @@ public class MiniMap extends JPanel {
     }
     
     private void paintBVSection(Graphics g) {
-    	if (minimized || (m_bview == null)) {
-    	    return;
-    	}
-    	double[] relSize = m_bview.getVisibleArea();
-    	Color sc = g.getColor();
-    	Stroke sbs = ((Graphics2D) g).getStroke();
-    	
-    	// thicker but translucent rect
-    	g.setColor(new Color(100,100,160,80));
-    	((Graphics2D) g).setStroke(new BasicStroke(zoom+2));
-    	
-    	g.drawRect(
-    			(int)(relSize[0]*             (hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth())+leftMargin,
-    			(int)(relSize[1]*2*hexSideByCos30[zoom]*m_board.getHeight())+topMargin,
-    			(int)((relSize[2]-relSize[0])*(hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth()),
-    			(int)((relSize[3]-relSize[1])*2*hexSideByCos30[zoom]*m_board.getHeight()));
-    	
-    	// thin less translucent rect
-    	g.setColor(new Color(255,255,255,180));
-    	((Graphics2D) g).setStroke(new BasicStroke(zoom/2));
+        if (minimized || (m_bview == null)) {
+            return;
+        }
+        double[] relSize = m_bview.getVisibleArea();
+        Color sc = g.getColor();
+        Stroke sbs = ((Graphics2D) g).getStroke();
+        
+        // thicker but translucent rect
+        g.setColor(new Color(100,100,160,80));
+        ((Graphics2D) g).setStroke(new BasicStroke(zoom+2));
+        
+        g.drawRect(
+                (int)(relSize[0]*             (hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth())+leftMargin,
+                (int)(relSize[1]*2*hexSideByCos30[zoom]*m_board.getHeight())+topMargin,
+                (int)((relSize[2]-relSize[0])*(hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth()),
+                (int)((relSize[3]-relSize[1])*2*hexSideByCos30[zoom]*m_board.getHeight()));
+        
+        // thin less translucent rect
+        g.setColor(new Color(255,255,255,180));
+        ((Graphics2D) g).setStroke(new BasicStroke(zoom/2));
 
-    	g.drawRect(
-    			(int)(relSize[0]*(hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth())+leftMargin,
-    			(int)(relSize[1]*2*hexSideByCos30[zoom]*m_board.getHeight())+topMargin,
-    			(int)((relSize[2]-relSize[0])*(hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth()),
-    			(int)((relSize[3]-relSize[1])*2*hexSideByCos30[zoom]*m_board.getHeight()));
-    	
-    	// restore values
-    	((Graphics2D) g).setStroke(sbs);
-    	g.setColor(sc);
-    	
+        g.drawRect(
+                (int)(relSize[0]*(hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth())+leftMargin,
+                (int)(relSize[1]*2*hexSideByCos30[zoom]*m_board.getHeight())+topMargin,
+                (int)((relSize[2]-relSize[0])*(hexSide[zoom] + hexSideBySin30[zoom])*m_board.getWidth()),
+                (int)((relSize[3]-relSize[1])*2*hexSideByCos30[zoom]*m_board.getHeight()));
+        
+        // restore values
+        ((Graphics2D) g).setStroke(sbs);
+        g.setColor(sc);
+        
     }
 
     /**
@@ -1400,30 +1400,30 @@ public class MiniMap extends JPanel {
 
     void processMouseClick(int x, int y, MouseEvent me) {
         if (y > (getSize().height - 14) && !dragging) {
-        	if (minimized) {
-        		setSize(getSize().width, heightBufer);
-        		m_mapImage = createImage(getSize().width, heightBufer);
-        		minimized = false;
-    			initializeMap();
-        	} else {
-        		if (x < 14) {
-        			zoomIn();
-        		} else if ((x < 28) && (zoom > 2)) {
-        			heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0
-        					: heightDisplayMode;
-        			initializeMap();
-        		} else if (x > (getSize().width - 14)) {
-        			zoomOut();
-        		} else {
-        			// Minimize button
-        			heightBufer = getSize().height;
-        			setSize(getSize().width, 14);
-        			m_mapImage = createImage(Math.max(1, getSize().width), 14);
+            if (minimized) {
+                setSize(getSize().width, heightBufer);
+                m_mapImage = createImage(getSize().width, heightBufer);
+                minimized = false;
+                initializeMap();
+            } else {
+                if (x < 14) {
+                    zoomIn();
+                } else if ((x < 28) && (zoom > 2)) {
+                    heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0
+                            : heightDisplayMode;
+                    initializeMap();
+                } else if (x > (getSize().width - 14)) {
+                    zoomOut();
+                } else {
+                    // Minimize button
+                    heightBufer = getSize().height;
+                    setSize(getSize().width, 14);
+                    m_mapImage = createImage(Math.max(1, getSize().width), 14);
 
-        			minimized = true;
-        			initializeMap();
-        		}  
-        	}
+                    minimized = true;
+                    initializeMap();
+                }  
+            }
         } else if (m_bview != null) {
             if ((x < margin) || (x > (getSize().width - leftMargin))
                 || (y < topMargin)
@@ -1434,11 +1434,11 @@ public class MiniMap extends JPanel {
                 m_bview
                         .checkLOS(translateCoords(x - leftMargin, y - topMargin));
             } else {
-            	m_bview.centerOnPointRel(
-            			((double)(x - leftMargin))/(double)((hexSideBySin30[zoom] + hexSide[zoom])*m_board.getWidth()),
-            			((double)(y - topMargin))/(double)(2 * hexSideByCos30[zoom]*m_board.getHeight()));
-            	repaint();
-            	//drawMap(); MUCH SLOWER
+                m_bview.centerOnPointRel(
+                        ((double)(x - leftMargin))/(double)((hexSideBySin30[zoom] + hexSide[zoom])*m_board.getWidth()),
+                        ((double)(y - topMargin))/(double)(2 * hexSideByCos30[zoom]*m_board.getHeight()));
+                repaint();
+                //drawMap(); MUCH SLOWER
             }
         }
     }

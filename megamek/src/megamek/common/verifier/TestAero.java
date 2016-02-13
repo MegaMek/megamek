@@ -371,9 +371,9 @@ public class TestAero extends TestEntity {
         } else {
             weight = 3.0f;
             if (aero.getCockpitType() == Aero.COCKPIT_SMALL) {
-            	weight = 2.0f;
-        } else if (aero.getCockpitType() == Aero.COCKPIT_COMMAND_CONSOLE){                   	
-            	weight = 6.0f;
+                weight = 2.0f;
+        } else if (aero.getCockpitType() == Aero.COCKPIT_COMMAND_CONSOLE){                       
+                weight = 6.0f;
             } else if (aero.getCockpitType() == Aero.COCKPIT_PRIMITIVE) {
                 weight = 5.0f;
             } 
@@ -715,14 +715,14 @@ public class TestAero extends TestEntity {
             int heatDissipation = 0;
             if (aero.getHeatType() == Aero.HEAT_DOUBLE){
                 buff.append("Conventional fighters may only use single " +
-                		"heatsinks!");
+                        "heatsinks!");
                 return false;
             } 
             heatDissipation = aero.getHeatSinks();
             
             if(maxWeapHeat > heatDissipation) {
                 buff.append("Conventional fighters must be able to " +
-                		"dissipate all heat from energy weapons! \n" +
+                        "dissipate all heat from energy weapons! \n" +
                         "Max energy heat: " + maxWeapHeat + 
                         ", max dissipation: " + heatDissipation);
                 return false;
@@ -750,7 +750,7 @@ public class TestAero extends TestEntity {
                 aero.getEntityType() == Entity.ETYPE_JUMPSHIP ||
                 aero.getEntityType() == Entity.ETYPE_SPACE_STATION){
             System.out.println("TestAero only supports Aerospace Fighters " +
-            		"and Conventional fighters.  Supplied unit was a " + 
+                    "and Conventional fighters.  Supplied unit was a " + 
                     Entity.getEntityTypeName(aero.getEntityType()));
             return true;            
         }

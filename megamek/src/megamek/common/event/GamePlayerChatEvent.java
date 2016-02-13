@@ -44,13 +44,13 @@ public class GamePlayerChatEvent extends GamePlayerEvent {
         return message;
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gamePlayerChat(this);
-	}
-	
-	@Override
-	public String getEventName() {
-		return "Chat";
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gamePlayerChat(this);
+    }
+    
+    @Override
+    public String getEventName() {
+        return "Chat";
+    }
 }

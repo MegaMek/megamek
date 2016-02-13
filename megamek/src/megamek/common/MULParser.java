@@ -254,14 +254,14 @@ public class MULParser {
         
         String nodeName = element.getNodeName();
         if(nodeName.equalsIgnoreCase(RECORD)) {
-        	parseRecord(element);
+            parseRecord(element);
         } else if (nodeName.equalsIgnoreCase(UNIT)){
             parseUnit(element, entities);
         } else if (nodeName.equalsIgnoreCase(ENTITY)){
             parseEntity(element, entities);
         } else {
             warning.append("Error: root element isn't a Record, Unit, or Entity tag! " +
-            		"Nothing to parse!\n");
+                    "Nothing to parse!\n");
         }
     }
     
@@ -350,10 +350,10 @@ public class MULParser {
             if (nodeType == Node.ELEMENT_NODE) {
                 String nodeName = currNode.getNodeName();
                 if (nodeName.equalsIgnoreCase(KILL)){
-                	String killed =  ((Element)currNode).getAttribute(KILLED);
+                    String killed =  ((Element)currNode).getAttribute(KILLED);
                     String killer = ((Element)currNode).getAttribute(KILLER);
                     if(null != killed && null != killer && !killed.isEmpty() && !killer.isEmpty()) {
-                    	kills.put(killed, killer);
+                        kills.put(killed, killer);
                     }
                 } 
             } else {
@@ -382,8 +382,8 @@ public class MULParser {
         
         // Make sure we've got an Entity
         if (entity == null) {
-        	warning.append("Failed to load entity!");
-        	return;
+            warning.append("Failed to load entity!");
+            return;
         }
         
         // Set the attributes for the entity
@@ -454,9 +454,9 @@ public class MULParser {
         
         //first check for ejected mechwarriors and vee crews
         if(chassis.equals(EjectedCrew.VEE_EJECT_NAME)) {
-        	return new EjectedCrew();
+            return new EjectedCrew();
         } else if(chassis.equals(EjectedCrew.MW_EJECT_NAME)) {
-        	return new MechWarrior();
+            return new MechWarrior();
         }
         
         // Did we find required attributes?
@@ -563,13 +563,13 @@ public class MULParser {
         
         // Was never deployed
         try {
-        	String ndeploy = entityTag.getAttribute(NEVER_DEPLOYED);
-        	boolean wasNeverDeployed =
+            String ndeploy = entityTag.getAttribute(NEVER_DEPLOYED);
+            boolean wasNeverDeployed =
                     Boolean.parseBoolean(entityTag.getAttribute(NEVER_DEPLOYED));
-        	if(null == ndeploy || ndeploy.isEmpty()) {
-        		//this will default to false above, but we want it to default to true
-        		wasNeverDeployed = true;
-        	}            
+            if(null == ndeploy || ndeploy.isEmpty()) {
+                //this will default to false above, but we want it to default to true
+                wasNeverDeployed = true;
+            }            
             entity.setNeverDeployed(wasNeverDeployed);
         } catch (Exception e) {
             entity.setNeverDeployed(true);
@@ -609,11 +609,11 @@ public class MULParser {
 
         // external id
         if(entity instanceof MechWarrior) {
-	        String pickUpId = entityTag.getAttribute(PICKUP_ID);
-	        if ((null == pickUpId) || (pickUpId.length() == 0)) {
-	        	pickUpId = "-1";
-	        }
-	        ((MechWarrior)entity).setPickedUpByExternalId(pickUpId);
+            String pickUpId = entityTag.getAttribute(PICKUP_ID);
+            if ((null == pickUpId) || (pickUpId.length() == 0)) {
+                pickUpId = "-1";
+            }
+            ((MechWarrior)entity).setPickedUpByExternalId(pickUpId);
         }
 
         
@@ -929,7 +929,7 @@ public class MULParser {
             }
 
             if ((null != extId) && (extId.length() > 0)) {
-            	crew.setExternalIdAsString(extId);
+                crew.setExternalIdAsString(extId);
             }           
 
             pilots.add(crew);
@@ -1114,7 +1114,7 @@ public class MULParser {
                             .append(" does not start with ")
                             .append(pointsVal)
                             .append(" points of internal structure for " +
-                            		"location: ")
+                                    "location: ")
                             .append(loc).append(".\n");
                 } else {
                     entity.setInternal(pointsVal, loc);
@@ -1503,7 +1503,7 @@ public class MULParser {
             System.err.println(e);
             e.printStackTrace();
             warning.append("Invalid turret lock direction value in " +
-            		"movement tag.\n");
+                    "movement tag.\n");
         }
     }
     
@@ -1523,7 +1523,7 @@ public class MULParser {
             System.err.println(e);
             e.printStackTrace();
             warning.append("Invalid turret2 lock direction value in " +
-            		"movement tag.\n");
+                    "movement tag.\n");
         }
     }
     
@@ -1604,7 +1604,7 @@ public class MULParser {
             ((Jumpship) entity).setSailIntegrity(newIntegrity);
         } catch (Exception e) {
             warning.append("Invalid sail integrity value in sail " +
-            		"integrity tag.\n");
+                    "integrity tag.\n");
         }
     }
     
@@ -1779,7 +1779,7 @@ public class MULParser {
     private void parseBAMEA(Element meaTag, Entity entity){
         if (!(entity instanceof BattleArmor)){
             warning.append("Found a BA MEA tag but Entity is not " +
-            		"BattleArmor!\n");
+                    "BattleArmor!\n");
             return;
         }
         
@@ -1814,7 +1814,7 @@ public class MULParser {
         }
         if (!foundMea){
             warning.append("No modular equipment mount found in specified " +
-            		"location! Location: " + meaMountLoc + "\n");
+                    "location! Location: " + meaMountLoc + "\n");
             return;
         }
         if (meaMountLoc == BattleArmor.MOUNT_LOC_LARM){
@@ -1864,7 +1864,7 @@ public class MULParser {
         // Make sure we got a mount number
         if (mountNumber.length() == 0){
             warning.append("antiPersonnelMount tag does not specify " +
-            		"a baAPMountNum!\n");
+                    "a baAPMountNum!\n");
             return;
         }
         
@@ -1947,13 +1947,13 @@ public class MULParser {
      * @return
      */
     public Vector<Entity> getEntities(){
-    	Vector<Entity> toReturn = entities;
-    	for(Entity e : survivors) {
-    		if(e instanceof EjectedCrew) {
-    			continue;
-    		}
-    		toReturn.add(e);
-    	}
+        Vector<Entity> toReturn = entities;
+        for(Entity e : survivors) {
+            if(e instanceof EjectedCrew) {
+                continue;
+            }
+            toReturn.add(e);
+        }
         return toReturn;
     }
     

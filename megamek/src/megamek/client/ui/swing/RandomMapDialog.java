@@ -55,7 +55,7 @@ import megamek.common.util.StringUtil;
 public class RandomMapDialog extends JDialog implements ActionListener {
 
     private static final long serialVersionUID = 7758433698878123806L;
-	// Views.
+    // Views.
     private static final String VIEW_BASIC = Messages.getString("RandomMapDialog.Normal");
     private static final String VIEW_ADVANCED = Messages.getString("RandomMapDialog.Advanced");
 
@@ -100,7 +100,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
      */
     public RandomMapDialog(JFrame parent, IMapSettingsObserver mapSettingsObserver, Client client,
                            MapSettings mapSettings) {
-    	this(parent, mapSettingsObserver, client, mapSettings, Messages.getString("RandomMapDialog.title"));
+        this(parent, mapSettingsObserver, client, mapSettings, Messages.getString("RandomMapDialog.title"));
     }
     
     /**

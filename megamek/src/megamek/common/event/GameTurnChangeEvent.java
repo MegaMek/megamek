@@ -34,13 +34,13 @@ public class GameTurnChangeEvent extends GamePlayerEvent {
         super(source, player);
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gameTurnChange(this);	
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gameTurnChange(this);    
+    }
 
-	@Override
-	public String getEventName() {
-		return "Turn Change";
-	}
+    @Override
+    public String getEventName() {
+        return "Turn Change";
+    }
 }

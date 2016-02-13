@@ -101,10 +101,10 @@ public class BasicPathRanker extends PathRanker {
     }
 
     protected Coords getClosestCoordsTo(int unitId, Coords location) {
-    	ConvexBoardArea box = pathEnumerator.getUnitMovableAreas().get(unitId);
-    	if (box == null) {
-    		return null;
-    	}
+        ConvexBoardArea box = pathEnumerator.getUnitMovableAreas().get(unitId);
+        if (box == null) {
+            return null;
+        }
         return box.getClosestCoordsTo(location);
     }
 
@@ -490,7 +490,7 @@ public class BasicPathRanker extends PathRanker {
                 //skip broken enemies
                 if (getOwner().getHonorUtil().isEnemyBroken(enemy.getId(),
                         enemy.getOwnerId(), getOwner().getForcedWithdrawal())) {
-                	continue;
+                    continue;
                 }
 
                 EntityEvaluationResponse eval;

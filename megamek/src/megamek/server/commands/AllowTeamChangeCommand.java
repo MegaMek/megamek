@@ -45,7 +45,7 @@ public class AllowTeamChangeCommand extends ServerCommand {
             
             if (!server.isTeamChangeRequestInProgress()){
                 server.sendServerChat(connId, "No vote to change " +
-                		"teams in progress!");
+                        "teams in progress!");
                 return;
             }
             

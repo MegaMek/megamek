@@ -46,25 +46,25 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
      *
      */
     public static enum Command {
-    	DEPLOY_MINE_CONV("deployMineConv"),
-    	DEPLOY_MINE_COM("deployMineCom"),
-    	DEPLOY_MINE_VIBRA("deployMineVibra"),
-    	DEPLOY_MINE_ACTIVE("deployMineActive"),
-    	DEPLOY_MINE_INFERNO("deployMineInferno"),
-    	REMOVE_MINES("removeMines");
+        DEPLOY_MINE_CONV("deployMineConv"),
+        DEPLOY_MINE_COM("deployMineCom"),
+        DEPLOY_MINE_VIBRA("deployMineVibra"),
+        DEPLOY_MINE_ACTIVE("deployMineActive"),
+        DEPLOY_MINE_INFERNO("deployMineInferno"),
+        REMOVE_MINES("removeMines");
     
-	    String cmd;
-	    private Command(String c){
-	    	cmd = c;
-	    }
-	    
-	    public String getCmd(){
-	    	return cmd;
-	    }
-	    
-	    public String toString(){
-	    	return cmd;
-	    }
+        String cmd;
+        private Command(String c){
+            cmd = c;
+        }
+        
+        public String getCmd(){
+            return cmd;
+        }
+        
+        public String toString(){
+            return cmd;
+        }
     }
 
     // buttons
@@ -94,29 +94,29 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         p = clientgui.getClient().getLocalPlayer();
 
         buttons = new Hashtable<Command, MegamekButton>(
-				(int) (Command.values().length * 1.25 + 0.5));
-		for (Command cmd : Command.values()) {
-			String title = Messages.getString("DeployMinefieldDisplay."
-					+ cmd.getCmd());
-			MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
-			newButton.addActionListener(this);
-			newButton.setActionCommand(cmd.getCmd());
-			newButton.setEnabled(false);
-			buttons.put(cmd, newButton);
-		}  		
-		numButtonGroups = 
-        		(int)Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
+                (int) (Command.values().length * 1.25 + 0.5));
+        for (Command cmd : Command.values()) {
+            String title = Messages.getString("DeployMinefieldDisplay."
+                    + cmd.getCmd());
+            MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
+            newButton.addActionListener(this);
+            newButton.setActionCommand(cmd.getCmd());
+            newButton.setEnabled(false);
+            buttons.put(cmd, newButton);
+        }          
+        numButtonGroups = 
+                (int)Math.ceil((buttons.size()+0.0) / buttonsPerGroup);
         
-		butDone.setText(Messages.getString("DeployMinefieldDisplay.Done")); //$NON-NLS-1$
+        butDone.setText(Messages.getString("DeployMinefieldDisplay.Done")); //$NON-NLS-1$
         butDone.setEnabled(false);
-		
+        
         layoutScreen();
         
         setupButtonPanel();
     }
 
     protected ArrayList<MegamekButton> getButtonList(){                
-    	ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();        
+        ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();        
         for (Command cmd : Command.values()){
             buttonList.add(buttons.get(cmd));
         }
@@ -483,46 +483,46 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
     private void setConventionalEnabled(int nbr) {
         buttons.get(Command.DEPLOY_MINE_CONV).setText(Messages.getString(
-        		"DeployMinefieldDisplay." + Command.DEPLOY_MINE_CONV.getCmd(), 
-        		new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+                "DeployMinefieldDisplay." + Command.DEPLOY_MINE_CONV.getCmd(), 
+                new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         buttons.get(Command.DEPLOY_MINE_CONV).setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployConventionalEnabled(nbr);
     }
 
     private void setCommandEnabled(int nbr) {
-    	buttons.get(Command.DEPLOY_MINE_COM).setText(Messages.getString(
-    			"DeployMinefieldDisplay." + Command.DEPLOY_MINE_COM.getCmd(), 
-    			new Object[] { new Integer(nbr) })); //$NON-NLS-1$
-    	buttons.get(Command.DEPLOY_MINE_COM).setEnabled(nbr > 0);
+        buttons.get(Command.DEPLOY_MINE_COM).setText(Messages.getString(
+                "DeployMinefieldDisplay." + Command.DEPLOY_MINE_COM.getCmd(), 
+                new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+        buttons.get(Command.DEPLOY_MINE_COM).setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployCommandEnabled(nbr);
     }
 
     private void setVibrabombEnabled(int nbr) {
-    	buttons.get(Command.DEPLOY_MINE_VIBRA).setText(Messages.getString(
-    			"DeployMinefieldDisplay." + Command.DEPLOY_MINE_VIBRA.getCmd(), 
-    			new Object[] { new Integer(nbr) })); //$NON-NLS-1$
-    	buttons.get(Command.DEPLOY_MINE_VIBRA).setEnabled(nbr > 0);
+        buttons.get(Command.DEPLOY_MINE_VIBRA).setText(Messages.getString(
+                "DeployMinefieldDisplay." + Command.DEPLOY_MINE_VIBRA.getCmd(), 
+                new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+        buttons.get(Command.DEPLOY_MINE_VIBRA).setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployVibrabombEnabled(nbr);
     }
 
     private void setActiveEnabled(int nbr) {
-    	buttons.get(Command.DEPLOY_MINE_ACTIVE).setText(Messages.getString(
-    			"DeployMinefieldDisplay." + Command.DEPLOY_MINE_ACTIVE.getCmd(), 
-    			new Object[] { new Integer(nbr) })); //$NON-NLS-1$
-    	buttons.get(Command.DEPLOY_MINE_ACTIVE).setEnabled(nbr > 0);
+        buttons.get(Command.DEPLOY_MINE_ACTIVE).setText(Messages.getString(
+                "DeployMinefieldDisplay." + Command.DEPLOY_MINE_ACTIVE.getCmd(), 
+                new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+        buttons.get(Command.DEPLOY_MINE_ACTIVE).setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployActiveEnabled(nbr);
     }
 
     private void setInfernoEnabled(int nbr) {
-    	buttons.get(Command.DEPLOY_MINE_INFERNO).setText(Messages.getString(
-    			"DeployMinefieldDisplay." + Command.DEPLOY_MINE_INFERNO.getCmd(), 
-    			new Object[] { new Integer(nbr) })); //$NON-NLS-1$
-    	buttons.get(Command.DEPLOY_MINE_INFERNO).setEnabled(nbr > 0);
+        buttons.get(Command.DEPLOY_MINE_INFERNO).setText(Messages.getString(
+                "DeployMinefieldDisplay." + Command.DEPLOY_MINE_INFERNO.getCmd(), 
+                new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+        buttons.get(Command.DEPLOY_MINE_INFERNO).setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployInfernoEnabled(nbr);
     }
 
     private void setRemoveMineEnabled(boolean enable) {
-    	buttons.get(Command.REMOVE_MINES).setEnabled(enable);
+        buttons.get(Command.REMOVE_MINES).setEnabled(enable);
         // clientgui.getMenuBar().setRemoveMineEnabled(enable);
     }
 

@@ -198,7 +198,7 @@ public class Sensor implements Serializable {
         // null sig
         switch (type) {
             case (TYPE_BAP):
-            case (TYPE_BAPP):	
+            case (TYPE_BAPP):    
             case (TYPE_EW_EQUIPMENT):
                 if (te.isVoidSigActive()) {
                     mod += 6;

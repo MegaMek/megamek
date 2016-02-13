@@ -133,7 +133,7 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
             t.setDEST(true);
         }
         if (dataFile.exists("mountain")) {
-        	t.setMountain(true);
+            t.setMountain(true);
         }
         if (dataFile.exists("encumberingarmor")) {
             t.setArmorEncumbering(true);

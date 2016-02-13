@@ -59,13 +59,13 @@ public class GameBoardNewEvent extends GameEvent {
         return oldBoard;
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gameBoardNew(this);
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gameBoardNew(this);
+    }
 
-	@Override
-	public String getEventName() {
-		return "New Board";
-	}
+    @Override
+    public String getEventName() {
+        return "New Board";
+    }
 }

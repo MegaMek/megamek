@@ -823,11 +823,11 @@ public class EquipmentType {
 
     @Override
     public boolean equals(Object e) {
-    	if(null == e || !(e instanceof EquipmentType)) {
-    		return false;
-    	}
+        if(null == e || !(e instanceof EquipmentType)) {
+            return false;
+        }
         try {
-        	EquipmentType et = (EquipmentType)e;
+            EquipmentType et = (EquipmentType)e;
             if (internalName.equals(et.internalName)) {
                 return true;
             }

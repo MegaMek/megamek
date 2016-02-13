@@ -629,8 +629,8 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
      * Clear all jam statuses - used by MHQ, because phase resetting doesn't work
      */
     public void resetJam() {
-    	jammed = false;
-    	jammedThisPhase = false;
+        jammed = false;
+        jammedThisPhase = false;
     }
 
     /**
@@ -1714,36 +1714,36 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
 
     public void setMissingForTrooper(int trooper, boolean b) {
-    	trooper = trooper-BattleArmor.LOC_TROOPER_1;
-    	if((trooper < 0) || (trooper >= missingForTrooper.length)) {
-    		return;
-    	}
-    	missingForTrooper[trooper] = b;
+        trooper = trooper-BattleArmor.LOC_TROOPER_1;
+        if((trooper < 0) || (trooper >= missingForTrooper.length)) {
+            return;
+        }
+        missingForTrooper[trooper] = b;
     }
 
     public boolean isMissingForTrooper(int trooper) {
-    	trooper = trooper-BattleArmor.LOC_TROOPER_1;
-    	if((trooper < 0) || (trooper >= missingForTrooper.length)) {
-    		return false;
-    	}
-    	return missingForTrooper[trooper];
+        trooper = trooper-BattleArmor.LOC_TROOPER_1;
+        if((trooper < 0) || (trooper >= missingForTrooper.length)) {
+            return false;
+        }
+        return missingForTrooper[trooper];
     }
 
     public boolean isAnyMissingTroopers() {
-    	for(int i = 0; i < missingForTrooper.length; i++) {
-    		if(missingForTrooper[i]) {
-    			return true;
-    		}
-    	}
-    	return false;
+        for(int i = 0; i < missingForTrooper.length; i++) {
+            if(missingForTrooper[i]) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String getMissingTrooperString() {
-    	StringBuffer missings = new StringBuffer();
-    	for(int i = 0; i < missingForTrooper.length; i++) {
-    		missings.append(missingForTrooper[i]).append("::");
-    	}
-    	return missings.toString();
+        StringBuffer missings = new StringBuffer();
+        for(int i = 0; i < missingForTrooper.length; i++) {
+            missings.append(missingForTrooper[i]).append("::");
+        }
+        return missings.toString();
     }
 
     /**

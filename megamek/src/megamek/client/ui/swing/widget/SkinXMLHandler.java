@@ -224,8 +224,8 @@ public class SkinXMLHandler {
             if (!skinSpecs.containsKey(defaultUIElement) 
                     || !skinSpecs.containsKey(defaultButton)) {
                 System.out.println("ERROR: Bad skin specification file: " +
-                		"file doesn't specify " + defaultUIElement + 
-                		" or " + defaultButton + "!");
+                        "file doesn't specify " + defaultUIElement + 
+                        " or " + defaultButton + "!");
                 return false;
             }
         } catch (Exception e) {

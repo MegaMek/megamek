@@ -276,7 +276,7 @@ public class RamAttackAction extends AbstractAttackAction {
        int avel = entity.getCurrentVelocity();
        int tvel = 0;
        if(target instanceof Aero) {
-    	   tvel = ((Aero)target).getCurrentVelocity();
+           tvel = ((Aero)target).getCurrentVelocity();
        }
        return getDamageFor(entity, target, entity.getPriorPosition(), avel, tvel);
    }
@@ -294,7 +294,7 @@ public class RamAttackAction extends AbstractAttackAction {
        int avel = entity.getCurrentVelocity();
        int tvel = 0;
        if(target instanceof Aero) {
-    	   tvel = ((Aero)target).getCurrentVelocity();
+           tvel = ((Aero)target).getCurrentVelocity();
        }
        return getDamageTakenBy(entity, target, entity.getPriorPosition(), avel, tvel);
    }

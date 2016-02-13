@@ -216,7 +216,7 @@ public abstract class AbstractConnection implements IConnection {
     }
     
     public boolean isClosed(){
-    	return (socket == null) || socket.isClosed(); 
+        return (socket == null) || socket.isClosed(); 
     }
 
     /**
@@ -454,10 +454,10 @@ public abstract class AbstractConnection implements IConnection {
                 processPacket(np);
             }
         } catch (SocketException e) {
-        	// Do nothing, happens when the socket closes
+            // Do nothing, happens when the socket closes
             close();
         } catch (EOFException e) {
-        	// Do nothing, happens when the socket closes
+            // Do nothing, happens when the socket closes
             close();
         } catch (IOException e) {
             System.out
@@ -543,7 +543,7 @@ public abstract class AbstractConnection implements IConnection {
     static class SendQueue {
 
         private LinkedList<SendPacket> queue = 
-        		new LinkedList<SendPacket>();
+                new LinkedList<SendPacket>();
         private boolean finished = false;
 
         public void addPacket(SendPacket packet) {

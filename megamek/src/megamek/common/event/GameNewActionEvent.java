@@ -47,13 +47,13 @@ public class GameNewActionEvent extends GameEvent {
         return action;
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gameNewAction(this);	
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gameNewAction(this);    
+    }
 
-	@Override
-	public String getEventName() {
-		return "Game New Action";
-	}
+    @Override
+    public String getEventName() {
+        return "Game New Action";
+    }
 }

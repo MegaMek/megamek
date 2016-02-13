@@ -25,37 +25,37 @@ package megamek.client.ui.swing.util;
  *
  */
 public abstract class CommandAction {
-	
-	/**
-	 * Used to add a condition onto this Action: the default behavior returns
-	 * true but can be overriden to check for certain conditions.  If this
-	 * method returns false, then the <code>MegaMekController</code> will not
-	 * consume the <code>KeyEvent</code>
-	 * @return
-	 */
-	public boolean shouldPerformAction(){
-		return true;
-	}
-	
-	public abstract void performAction();
-	
-	/**
-	 * Returns true if <code>releaseAction</code> should be called when the 
-	 * bound key is released, else false.
-	 * @return
-	 */
-	public boolean hasReleaseAction(){
-		return false;
-	}
-	
-	/**
-	 * Method that gets called when the bound key is released.  Defaults is to
-	 * do nothing.
-	 */
-	public void releaseAction(){
-		
-	}
-	
-	
+    
+    /**
+     * Used to add a condition onto this Action: the default behavior returns
+     * true but can be overriden to check for certain conditions.  If this
+     * method returns false, then the <code>MegaMekController</code> will not
+     * consume the <code>KeyEvent</code>
+     * @return
+     */
+    public boolean shouldPerformAction(){
+        return true;
+    }
+    
+    public abstract void performAction();
+    
+    /**
+     * Returns true if <code>releaseAction</code> should be called when the 
+     * bound key is released, else false.
+     * @return
+     */
+    public boolean hasReleaseAction(){
+        return false;
+    }
+    
+    /**
+     * Method that gets called when the bound key is released.  Defaults is to
+     * do nothing.
+     */
+    public void releaseAction(){
+        
+    }
+    
+    
 
 }

@@ -34,13 +34,13 @@ public class GamePlayerChangeEvent extends GamePlayerEvent {
         super(source, player);
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gamePlayerChange(this);	
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gamePlayerChange(this);    
+    }
 
-	@Override
-	public String getEventName() {
-		return "Status Change";
-	}
+    @Override
+    public String getEventName() {
+        return "Status Change";
+    }
 }

@@ -26,6 +26,7 @@ import java.util.Vector;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.options.GameOptions;
@@ -89,6 +90,39 @@ public interface IGame {
         public boolean isBefore(Phase otherPhase) {
             return compareTo(otherPhase) < 0;
         }
+
+        /**
+         * Get the displayable name for the given Phase.
+         *
+         * @param phase
+         * @return
+         */
+        static public String getDisplayableName(Phase phase) {
+            return Messages.getString("GAME_" + phase.name());
+        }
+
+        /**
+         * Given a displayable name for a phase, return the Phase instance for
+         * that name.  Null will be returned if no match is found or a null
+         * string is passed.
+         *
+         * @param name
+         * @return
+         */
+        @Nullable
+        static public Phase getPhaseFromName(@Nullable String name) {
+            if (name == null) {
+                return null;
+            }
+
+            for (Phase p : values()) {
+                if (name.equals(getDisplayableName(p))) {
+                    return p;
+                }
+            }
+            return null;
+        }
+
     }
 
     // New accessors for external game id

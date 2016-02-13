@@ -57,6 +57,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.Crew;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.EquipmentType;
@@ -947,6 +948,20 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         choDeploymentZone.setSelectedIndex(entity.getStartingPos(false) + 1);
         
         choDeploymentRound.addItemListener(this);
+
+        chHidden.removeActionListener(this);
+        boolean enableHidden = true;
+        // Airborne units can't be hidden
+        if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
+            enableHidden = false;
+        }
+        // Landed dropships can't be hidden
+        if ((entity instanceof Dropship)) {
+            enableHidden = false;
+        }
+        labHidden.setEnabled(enableHidden);
+        chHidden.setEnabled(enableHidden);
+        chHidden.addActionListener(this);
     }
 
     /**
@@ -1021,6 +1036,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
             distance = sl.getValue();
             butOffBoardDistance.setText(Integer.toString(distance));
+            return;
+        }
+
+        if (actionEvent.getSource().equals(chHidden)) {
             return;
         }
 

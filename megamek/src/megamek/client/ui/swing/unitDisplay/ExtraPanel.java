@@ -35,6 +35,7 @@ import megamek.common.ComputeECM;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.IGame;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.INarcPod;
 import megamek.common.IPlayer;
@@ -85,6 +86,11 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
     private int minTopMargin = 8;
     private int minLeftMargin = 8;
+
+    JButton activateHidden = new JButton(
+            Messages.getString("MechDisplay.ActivateHidden.Label"));
+
+    JComboBox<String> activateHiddenPhase = new JComboBox<>();
 
     ExtraPanel(UnitDisplay unitDisplay) {
         this.unitDisplay = unitDisplay;
@@ -167,6 +173,20 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         chSensors = new JComboBox<String>();
         chSensors.addItemListener(this);
 
+        activateHidden.setToolTipText(Messages
+                .getString("MechDisplay.ActivateHidden.ToolTip"));
+        activateHiddenPhase.setToolTipText(Messages
+                .getString("MechDisplay.ActivateHiddenPhase.ToolTip"));
+        activateHidden.addActionListener(this);
+        activateHiddenPhase.addItem(IGame.Phase
+                .getDisplayableName(IGame.Phase.PHASE_MOVEMENT));
+        activateHiddenPhase.addItem(IGame.Phase
+                .getDisplayableName(IGame.Phase.PHASE_FIRING));
+        activateHiddenPhase.addItem(IGame.Phase
+                .getDisplayableName(IGame.Phase.PHASE_PHYSICAL));
+        activateHiddenPhase.addItem(Messages
+                .getString("MechDisplay.ActivateHidden.StopActivating"));
+
         // layout choice panel
         GridBagLayout gridbag;
         GridBagConstraints c;
@@ -235,6 +255,12 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         c.insets = new Insets(1, 9, 18, 9);
         gridbag.setConstraints(lastTargetR, c);
         add(lastTargetR);
+
+        c.insets = new Insets(1, 9, 1, 9);
+        gridbag.setConstraints(activateHidden, c);
+        gridbag.setConstraints(activateHiddenPhase, c);
+        add(activateHidden);
+        add(activateHiddenPhase);
 
         setBackGround();
         onResize();
@@ -599,7 +625,10 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             lastTargetR.setText(en.getLastTargetDisplayName());
         } else {
             lastTargetR.setText(Messages.getString("MechDisplay.None")); //$NON-NLS-1$
-        }            
+        }
+
+        activateHidden.setEnabled(!dontChange && en.isHidden());
+        activateHiddenPhase.setEnabled(!dontChange && en.isHidden());
 
         onResize();
     } // End public void displayMech( Entity )
@@ -647,8 +676,8 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
         }
         if ("changeSinks".equals(ae.getActionCommand()) && !dontChange) { //$NON-NLS-1$
             prompt = new Slider(clientgui.frame,
-                    Messages.getString("MechDisplay.changeSinks"),
-                    Messages.getString("MechDisplay.changeSinks"), sinks,
+                    Messages.getString("MechDisplay.changeSinks"), //$NON-NLS-1$
+                    Messages.getString("MechDisplay.changeSinks"), sinks, //$NON-NLS-1$
                     0, ((Mech) clientgui.getClient().getGame()
                             .getEntity(myMechId)).getNumberOfSinks());
             if (!prompt.showDialog()) {
@@ -661,6 +690,11 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
                     .setActiveSinksNextRound(numActiveSinks);
             clientgui.getClient().sendSinksChange(myMechId, numActiveSinks);
             displayMech(clientgui.getClient().getGame().getEntity(myMechId));
+        } else if (activateHidden.equals(ae.getSource()) && !dontChange) {
+            IGame.Phase activationPhase = IGame.Phase
+                    .getPhaseFromName((String) activateHiddenPhase
+                            .getSelectedItem());
+            clientgui.getClient().sendActivateHidden(myMechId, activationPhase);
         }
     }
 }

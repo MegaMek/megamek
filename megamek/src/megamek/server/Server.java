@@ -2411,6 +2411,14 @@ public class Server implements Runnable {
             case PHASE_PHYSICAL:
             case PHASE_TARGETING:
             case PHASE_OFFBOARD:
+                // Check for activating hidden units
+                if (game.getOptions().booleanOption("hidden_units")) {
+                    for (Entity ent : game.getEntitiesVector()) {
+                        if (ent.getHiddenActivationPhase() == phase) {
+                            ent.setHidden(false);
+                        }
+                    }
+                }
                 // Update visibility indications if using double blind.
                 if (doBlind()) {
                     updateVisibilityIndicator(null);
@@ -3011,6 +3019,14 @@ public class Server implements Runnable {
                 resetGame();
                 break;
             default:
+        }
+
+        // Any hidden units that activated this phase, should clear their
+        // activating phase
+        for (Entity ent : game.getEntitiesVector()) {
+            if (ent.getHiddenActivationPhase() == game.getPhase()) {
+                ent.setHiddeActivationPhase(null);
+            }
         }
     }
 
@@ -28336,9 +28352,23 @@ public class Server implements Runnable {
         int entityId = c.getIntValue(0);
         int numSinks = c.getIntValue(1);
         Entity e = game.getEntity(entityId);
-        if (e instanceof Mech) {
+        if ((e instanceof Mech) && (connIndex == e.getOwnerId())) {
             ((Mech)e).setActiveSinksNextRound(numSinks);
         }
+    }
+
+    private void receiveEntityActivateHidden(Packet c, int connIndex) {
+        int entityId = c.getIntValue(0);
+        IGame.Phase phase = (IGame.Phase)c.getObject(1);
+        Entity e = game.getEntity(entityId);
+        if (connIndex != e.getOwnerId()) {
+            System.out.println("Error: Player " + connIndex
+                    + " tried to activate a hidden unit owned by Player "
+                    + e.getOwnerId());
+            return;
+        }
+        e.setHiddeActivationPhase(phase);
+        entityUpdate(entityId);
     }
 
 
@@ -29454,6 +29484,9 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_ENTITY_SINKSCHANGE:
                 receiveEntitySinksChange(packet, connId);
+                break;
+            case Packet.COMMAND_ENTITY_ACTIVATE_HIDDEN:
+                receiveEntityActivateHidden(packet, connId);
                 break;
             case Packet.COMMAND_ENTITY_NOVA_NETWORK_CHANGE:
                 receiveEntityNovaNetworkModeChange(packet, connId);

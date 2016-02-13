@@ -626,6 +626,14 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
+     * Send activate hidden data to the server
+     */
+    public void sendActivateHidden(int nEntity, IGame.Phase phase) {
+        Object[] data = {new Integer(nEntity), phase};
+        send(new Packet(Packet.COMMAND_ENTITY_ACTIVATE_HIDDEN, data));
+    }
+
+    /**
      * Send movement data for the given entity to the server.
      */
     public void moveEntity(int id, MovePath md) {

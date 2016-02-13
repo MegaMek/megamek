@@ -46,6 +46,7 @@ public class Packet {
     public static final int COMMAND_ENTITY_AMMOCHANGE = 160;
     public static final int COMMAND_ENTITY_SENSORCHANGE = 165;
     public static final int COMMAND_ENTITY_SINKSCHANGE = 166;
+    public static final int COMMAND_ENTITY_ACTIVATE_HIDDEN = 167;
     public static final int COMMAND_ENTITY_SYSTEMMODECHANGE = 170;
 
     public static final int COMMAND_ENTITY_VISIBILITY_INDICATOR = 180;

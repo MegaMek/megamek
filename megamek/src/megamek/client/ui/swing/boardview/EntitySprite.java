@@ -25,6 +25,7 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
 import megamek.common.GunEmplacement;
+import megamek.common.IGame;
 import megamek.common.IGame.Phase;
 import megamek.common.IBoard;
 import megamek.common.IPlayer;
@@ -157,8 +158,9 @@ class EntitySprite extends Sprite {
         boolean translucentHiddenUnits = GUIPreferences.getInstance()
                 .getBoolean(GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS);
 
-        if ((trackThisEntitiesVisibilityInfo(entity)
-                && !entity.isVisibleToEnemy() && translucentHiddenUnits)
+        boolean shouldBeTranslucent = (trackThisEntitiesVisibilityInfo(entity)
+                && !entity.isVisibleToEnemy()) || entity.isHidden();
+        if ((shouldBeTranslucent && translucentHiddenUnits)
                 || (entity.relHeight() < 0)) {
             // create final image with translucency
             drawOnto(g, x, y, observer, true);
@@ -445,6 +447,22 @@ class EntitySprite extends Sprite {
                     graph.drawString(
                             Messages.getString("BoardView1.IMMOBILE"), 17, 38); //$NON-NLS-1$
                 }
+            } else if (entity.isHiddenActivating()) {
+                // draw "ACTIVATING"
+                graph.setColor(Color.darkGray);
+                graph.drawString(
+                        Messages.getString("BoardView1.ACTIVATING"), 18, 39); //$NON-NLS-1$
+                graph.setColor(Color.red);
+                graph.drawString(
+                        Messages.getString("BoardView1.ACTIVATING"), 17, 38); //$NON-NLS-1$
+            } else if (entity.isHidden()) {
+                // draw "HIDDEN"
+                graph.setColor(Color.darkGray);
+                graph.drawString(
+                        Messages.getString("BoardView1.HIDDEN"), 18, 39); //$NON-NLS-1$
+                graph.setColor(Color.red);
+                graph.drawString(
+                        Messages.getString("BoardView1.HIDDEN"), 17, 38); //$NON-NLS-1$
             } else if (entity.isProne()) {
                 // draw "PRONE"
                 graph.setColor(Color.darkGray);
@@ -914,7 +932,15 @@ class EntitySprite extends Sprite {
         // Unit Immobile
         if ((thisGunEmp == null) && (entity.isImmobile()))
             addToTT("Immobile", BR);
-        
+
+        if (entity.isHiddenActivating()) {
+            addToTT("HiddenActivating", BR,
+                    IGame.Phase.getDisplayableName(entity
+                            .getHiddenActivationPhase()));
+        } else if (entity.isHidden()) {
+            addToTT("Hidden", BR);
+        }
+
         // Jammed by ECM
         if (isAffectedByECM()) {
             addToTT("Jammed", BR);

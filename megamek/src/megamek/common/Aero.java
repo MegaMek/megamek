@@ -3380,6 +3380,25 @@ public class Aero extends Entity {
             }
             return false;
         }
+
+        // Additional restrictions for hidden units
+        if (isHidden()) {
+            // Can't deploy in paved hexes
+            if (hex.containsTerrain(Terrains.PAVEMENT)
+                    || hex.containsTerrain(Terrains.ROAD)) {
+                return true;
+            }
+            // Can't deploy on a bridge
+            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation)
+                    && hex.containsTerrain(Terrains.BRIDGE)) {
+                return true;
+            }
+            // Can't deploy on the surface of water
+            if (hex.containsTerrain(Terrains.WATER) && (currElevation == 0)) {
+                return true;
+            }
+        }
+
         // grounded aeros have the same prohibitions as wheeled tanks
         return hex.containsTerrain(Terrains.WOODS)
                 || hex.containsTerrain(Terrains.ROUGH)

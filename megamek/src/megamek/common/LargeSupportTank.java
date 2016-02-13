@@ -434,4 +434,34 @@ public class LargeSupportTank extends SupportTank {
     public long getEntityType(){
         return Entity.ETYPE_TANK | Entity.ETYPE_SUPPORT_TANK | Entity.ETYPE_LARGE_SUPPORT_TANK;
     }
+
+    /**
+     * Tanks have all sorts of prohibited terrain.
+     */
+    @Override
+    public boolean isLocationProhibited(Coords c, int currElevation) {
+        IHex hex = game.getBoard().getHex(c);
+        // Additional restrictions for hidden large support tanks
+        if (isHidden()) {
+            // Can't deploy in paved hexes
+            if (hex.containsTerrain(Terrains.PAVEMENT)
+                    || hex.containsTerrain(Terrains.ROAD)) {
+                return true;
+            }
+            // Can't deploy on a bridge
+            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation)
+                    && hex.containsTerrain(Terrains.BRIDGE)) {
+                return true;
+            }
+            // Can't deploy on the surface of water
+            if (hex.containsTerrain(Terrains.WATER) && (currElevation == 0)) {
+                return true;
+            }
+            // Can't deploy in clear hex
+            if (hex.isClearHex()) {
+                return true;
+            }
+        }
+        return super.isLocationProhibited(c, currElevation);
+    }
 }

@@ -21,7 +21,7 @@ package megamek.common;
  * @author Jay Lawson
  */
 public class SpaceStation extends Jumpship {
-	
+    
 
     /**
      *

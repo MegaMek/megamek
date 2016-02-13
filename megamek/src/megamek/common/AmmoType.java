@@ -6999,9 +6999,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.flags = ammo.flags.or(F_PROTOMECH);        
         ammo.shots = 1;
-		ammo.kgPerShot = 20;
+        ammo.kgPerShot = 20;
         ammo.bv = 0;
         ammo.cost = 60000;
         ammo.introDate = 3057;
@@ -7012,8 +7012,8 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-	
-	    private static AmmoType createCLStreakLRM2Ammo() {
+    
+        private static AmmoType createCLStreakLRM2Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
@@ -7024,9 +7024,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.flags = ammo.flags.or(F_PROTOMECH);        
         ammo.shots = 1;
-		ammo.kgPerShot = 20;
+        ammo.kgPerShot = 20;
         ammo.bv = 0;
         ammo.cost = 60000;
         ammo.introDate = 3057;
@@ -7037,8 +7037,8 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-	
-	    private static AmmoType createCLStreakLRM3Ammo() {
+    
+        private static AmmoType createCLStreakLRM3Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
@@ -7049,9 +7049,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.flags = ammo.flags.or(F_PROTOMECH);        
         ammo.shots = 1;
-		ammo.kgPerShot = 20;
+        ammo.kgPerShot = 20;
         ammo.bv = 0;
         ammo.cost = 60000;
         ammo.introDate = 3057;
@@ -7062,8 +7062,8 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-	
-	    private static AmmoType createCLStreakLRM4Ammo() {
+    
+        private static AmmoType createCLStreakLRM4Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
@@ -7074,9 +7074,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.flags = ammo.flags.or(F_PROTOMECH);        
         ammo.shots = 1;
-		ammo.kgPerShot = 20;
+        ammo.kgPerShot = 20;
         ammo.bv = 0;
         ammo.cost = 60000;
         ammo.introDate = 3057;
@@ -7124,9 +7124,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 6;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.flags = ammo.flags.or(F_PROTOMECH);        
         ammo.shots = 1;
-		ammo.kgPerShot = 20;
+        ammo.kgPerShot = 20;
         ammo.bv = 0;
         ammo.cost = 60000;
         ammo.introDate = 3057;
@@ -7137,8 +7137,8 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-	
-	    private static AmmoType createCLStreakLRM7Ammo() {
+    
+        private static AmmoType createCLStreakLRM7Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
@@ -7149,9 +7149,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 7;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.flags = ammo.flags.or(F_PROTOMECH);        
         ammo.shots = 1;
-		ammo.kgPerShot = 20;
+        ammo.kgPerShot = 20;
         ammo.bv = 0;
         ammo.cost = 60000;
         ammo.introDate = 3057;
@@ -7162,8 +7162,8 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-	
-	    private static AmmoType createCLStreakLRM8Ammo() {
+    
+        private static AmmoType createCLStreakLRM8Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
@@ -7174,9 +7174,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 8;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.flags = ammo.flags.or(F_PROTOMECH);        
         ammo.shots = 1;
-		ammo.kgPerShot = 20;
+        ammo.kgPerShot = 20;
         ammo.bv = 0;
         ammo.cost = 60000;
         ammo.introDate = 3057;
@@ -7187,8 +7187,8 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-	
-	    private static AmmoType createCLStreakLRM9Ammo() {
+    
+        private static AmmoType createCLStreakLRM9Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
@@ -7199,9 +7199,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.flags = ammo.flags.or(F_PROTOMECH);        
         ammo.shots = 1;
-		ammo.kgPerShot = 20;
+        ammo.kgPerShot = 20;
         ammo.bv = 0;
         ammo.cost = 60000;
         ammo.introDate = 3057;
@@ -7248,9 +7248,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 11;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.flags = ammo.flags.or(F_PROTOMECH);        
         ammo.shots = 1;
-		ammo.kgPerShot = 20;
+        ammo.kgPerShot = 20;
         ammo.bv = 0;
         ammo.cost = 60000;
         ammo.introDate = 3057;
@@ -7261,8 +7261,8 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-	
-	    private static AmmoType createCLStreakLRM12Ammo() {
+    
+        private static AmmoType createCLStreakLRM12Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
@@ -7273,9 +7273,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 12;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.flags = ammo.flags.or(F_PROTOMECH);        
         ammo.shots = 1;
-		ammo.kgPerShot = 20;
+        ammo.kgPerShot = 20;
         ammo.bv = 0;
         ammo.cost = 60000;
         ammo.introDate = 3057;
@@ -7286,8 +7286,8 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-	
-	    private static AmmoType createCLStreakLRM13Ammo() {
+    
+        private static AmmoType createCLStreakLRM13Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
@@ -7298,9 +7298,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 13;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.flags = ammo.flags.or(F_PROTOMECH);        
         ammo.shots = 1;
-		ammo.kgPerShot = 20;
+        ammo.kgPerShot = 20;
         ammo.bv = 0;
         ammo.cost = 60000;
         ammo.introDate = 3057;
@@ -7311,8 +7311,8 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-	
-	    private static AmmoType createCLStreakLRM14Ammo() {
+    
+        private static AmmoType createCLStreakLRM14Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
@@ -7323,9 +7323,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 14;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.flags = ammo.flags.or(F_PROTOMECH);        
         ammo.shots = 1;
-		ammo.kgPerShot = 20;
+        ammo.kgPerShot = 20;
         ammo.bv = 0;
         ammo.cost = 60000;
         ammo.introDate = 3057;
@@ -7372,9 +7372,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 16;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.flags = ammo.flags.or(F_PROTOMECH);        
         ammo.shots = 1;
-		ammo.kgPerShot = 20;
+        ammo.kgPerShot = 20;
         ammo.bv = 0;
         ammo.cost = 60000;
         ammo.introDate = 3057;
@@ -7385,8 +7385,8 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-	
-	    private static AmmoType createCLStreakLRM17Ammo() {
+    
+        private static AmmoType createCLStreakLRM17Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
@@ -7397,9 +7397,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 17;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.flags = ammo.flags.or(F_PROTOMECH);        
         ammo.shots = 1;
-		ammo.kgPerShot = 20;
+        ammo.kgPerShot = 20;
         ammo.bv = 0;
         ammo.cost = 60000;
         ammo.introDate = 3057;
@@ -7410,8 +7410,8 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-	
-	    private static AmmoType createCLStreakLRM18Ammo() {
+    
+        private static AmmoType createCLStreakLRM18Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
@@ -7422,9 +7422,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 18;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.flags = ammo.flags.or(F_PROTOMECH);        
         ammo.shots = 1;
-		ammo.kgPerShot = 20;
+        ammo.kgPerShot = 20;
         ammo.bv = 0;
         ammo.cost = 60000;
         ammo.introDate = 3057;
@@ -7435,8 +7435,8 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-	
-	    private static AmmoType createCLStreakLRM19Ammo() {
+    
+        private static AmmoType createCLStreakLRM19Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
@@ -7447,9 +7447,9 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 19;
         ammo.ammoType = AmmoType.T_LRM_STREAK;
-		ammo.flags = ammo.flags.or(F_PROTOMECH);        
+        ammo.flags = ammo.flags.or(F_PROTOMECH);        
         ammo.shots = 1;
-		ammo.kgPerShot = 20;
+        ammo.kgPerShot = 20;
         ammo.bv = 0;
         ammo.cost = 60000;
         ammo.introDate = 3057;
@@ -9996,74 +9996,74 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
-	 private static AmmoType createLightMassDriverAmmo() {
-	        AmmoType ammo = new AmmoType();
+     private static AmmoType createLightMassDriverAmmo() {
+            AmmoType ammo = new AmmoType();
 
-	        ammo.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
-	        ammo.name = "Light Mass Driver Ammo";
-	        ammo.setInternalName("Ammo Light Mass Driver");
-	        ammo.addLookupName("LightMassDriver Ammo");
-	        ammo.damagePerShot = 60;
-	        ammo.ammoType = AmmoType.T_LMASS;
-	        ammo.shots = 1;
-	        ammo.bv = 0;
-	        ammo.cost = 150000;
-	        ammo.ammoRatio = 30;
-	        ammo.capital = true;
-	        ammo.availRating = new int[]{EquipmentType.RATING_E,
-	                EquipmentType.RATING_X, EquipmentType.RATING_E};
-	        ammo.introDate = 2715;
-	        ammo.techLevel.put(2715, ammo.techLevel.get(3067));
-	        ammo.techRating = RATING_D;
+            ammo.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
+            ammo.name = "Light Mass Driver Ammo";
+            ammo.setInternalName("Ammo Light Mass Driver");
+            ammo.addLookupName("LightMassDriver Ammo");
+            ammo.damagePerShot = 60;
+            ammo.ammoType = AmmoType.T_LMASS;
+            ammo.shots = 1;
+            ammo.bv = 0;
+            ammo.cost = 150000;
+            ammo.ammoRatio = 30;
+            ammo.capital = true;
+            ammo.availRating = new int[]{EquipmentType.RATING_E,
+                    EquipmentType.RATING_X, EquipmentType.RATING_E};
+            ammo.introDate = 2715;
+            ammo.techLevel.put(2715, ammo.techLevel.get(3067));
+            ammo.techRating = RATING_D;
 
-	        return ammo;
-	    }
+            return ammo;
+        }
 
-	    private static AmmoType createMediumMassDriverAmmo() {
-	        AmmoType ammo = new AmmoType();
+        private static AmmoType createMediumMassDriverAmmo() {
+            AmmoType ammo = new AmmoType();
 
-	        ammo.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
-	        ammo.name = "Medium Mass Driver Ammo";
-	        ammo.setInternalName("Ammo Medium Mass Driver");
-	        ammo.addLookupName("MediumMassDriver Ammo");
-	        ammo.damagePerShot = 100;
-	        ammo.ammoType = AmmoType.T_MMASS;
-	        ammo.shots = 1;
-	        ammo.bv = 0;
-	        ammo.cost = 300000;
-	        ammo.ammoRatio = 30;
-	        ammo.capital = true;
-	        ammo.availRating = new int[]{EquipmentType.RATING_E,
-	                EquipmentType.RATING_X, EquipmentType.RATING_E};
-	        ammo.introDate = 2715;
-	        ammo.techLevel.put(2715, ammo.techLevel.get(3067));
-	        ammo.techRating = RATING_D;
+            ammo.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
+            ammo.name = "Medium Mass Driver Ammo";
+            ammo.setInternalName("Ammo Medium Mass Driver");
+            ammo.addLookupName("MediumMassDriver Ammo");
+            ammo.damagePerShot = 100;
+            ammo.ammoType = AmmoType.T_MMASS;
+            ammo.shots = 1;
+            ammo.bv = 0;
+            ammo.cost = 300000;
+            ammo.ammoRatio = 30;
+            ammo.capital = true;
+            ammo.availRating = new int[]{EquipmentType.RATING_E,
+                    EquipmentType.RATING_X, EquipmentType.RATING_E};
+            ammo.introDate = 2715;
+            ammo.techLevel.put(2715, ammo.techLevel.get(3067));
+            ammo.techRating = RATING_D;
 
-	        return ammo;
-	    }
+            return ammo;
+        }
 
-	    private static AmmoType createHeavyMassDriverAmmo() {
-	        AmmoType ammo = new AmmoType();
+        private static AmmoType createHeavyMassDriverAmmo() {
+            AmmoType ammo = new AmmoType();
 
-	        ammo.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
-	        ammo.name = "Heavy Mass Driver Ammo";
-	        ammo.setInternalName("Ammo Heavy Mass Driver");
-	        ammo.addLookupName("HeavyMassDriver Ammo");
-	        ammo.damagePerShot = 140;
-	        ammo.ammoType = AmmoType.T_HMASS;
-	        ammo.shots = 1;
-	        ammo.bv = 0;
-	        ammo.cost = 600000;
-	        ammo.ammoRatio = 30;
-	        ammo.capital = true;
-	        ammo.availRating = new int[]{EquipmentType.RATING_E,
-	                EquipmentType.RATING_X, EquipmentType.RATING_E};
-	        ammo.introDate = 2715;
-	        ammo.techLevel.put(2715, ammo.techLevel.get(3067));
-	        ammo.techRating = RATING_D;
+            ammo.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
+            ammo.name = "Heavy Mass Driver Ammo";
+            ammo.setInternalName("Ammo Heavy Mass Driver");
+            ammo.addLookupName("HeavyMassDriver Ammo");
+            ammo.damagePerShot = 140;
+            ammo.ammoType = AmmoType.T_HMASS;
+            ammo.shots = 1;
+            ammo.bv = 0;
+            ammo.cost = 600000;
+            ammo.ammoRatio = 30;
+            ammo.capital = true;
+            ammo.availRating = new int[]{EquipmentType.RATING_E,
+                    EquipmentType.RATING_X, EquipmentType.RATING_E};
+            ammo.introDate = 2715;
+            ammo.techLevel.put(2715, ammo.techLevel.get(3067));
+            ammo.techRating = RATING_D;
 
-	        return ammo;
-	    }
+            return ammo;
+        }
 
     private static AmmoType createKrakenMAmmo() {
         AmmoType ammo = new AmmoType();

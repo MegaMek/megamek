@@ -1047,7 +1047,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         Rectangle viewRect = scrollpane.getVisibleRect();
         if ((bvBgBuffer == null) || (bvBgBuffer.getWidth() != viewRect.getWidth())
             || (bvBgBuffer.getHeight() != viewRect.getHeight())) {
-        	pingMinimap();
+            pingMinimap();
             bvBgBuffer = new BufferedImage((int) viewRect.getWidth(),
                                            (int) viewRect.getHeight(), BufferedImage.TYPE_INT_RGB);
             Graphics bgGraph = bvBgBuffer.getGraphics();
@@ -1962,13 +1962,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (guip.getBoolean(GUIPreferences.ADVANCED_SHOW_HEX_SHADOWS))   
         {
             for (int dir: allDirections) {
-	    		Shape ShadowShape = getElevationShadowArea(c, dir);
-	    		GradientPaint gpl = getElevationShadowGP(c, dir);
-	    		if (ShadowShape != null && gpl != null) {
-	    			g.setPaint(gpl);
-	    			g.fill(getElevationShadowArea(c, dir));
-	    		}
-		    }
+                Shape ShadowShape = getElevationShadowArea(c, dir);
+                GradientPaint gpl = getElevationShadowGP(c, dir);
+                if (ShadowShape != null && gpl != null) {
+                    g.setPaint(gpl);
+                    g.fill(getElevationShadowArea(c, dir));
+                }
+            }
         }
 
         // Orthos (bridges) 
@@ -2398,12 +2398,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // When at the board edge, create a shadow in hexes of level < 0
         if (destHex == null)
         {
-        	if (srcHex.getLevel() >= 0) return null; 
+            if (srcHex.getLevel() >= 0) return null; 
         }
         else
         {
-        	// no shadow area when the current hex is not lower than the next hex in direction
-        	if (srcHex.getLevel() >= destHex.getLevel()) return null;
+            // no shadow area when the current hex is not lower than the next hex in direction
+            if (srcHex.getLevel() >= destHex.getLevel()) return null;
         }
 
         return(AffineTransform.getScaleInstance(scale, scale).createTransformedShape(
@@ -2425,8 +2425,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // but only to a maximum difference of 3 levels
         ldiff = Math.min(ldiff*5,15);
         
-    	Color c1 = new Color(30,30,50,255); // dark end of shadow
-    	Color c2 = new Color(50,50,70,0);   // light end of shadow
+        Color c1 = new Color(30,30,50,255); // dark end of shadow
+        Color c2 = new Color(50,50,70,0);   // light end of shadow
 
         Point2D p1 = new Point2D.Double(41.5,-25+ldiff);
         Point2D p2 = new Point2D.Double(41.5,8.0+ldiff);
@@ -2559,7 +2559,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             return new Coords(-1,-1);
         }
         else {
-        	// not Isometric
+            // not Isometric
             return cc;
         }
     }
@@ -2992,14 +2992,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * The method will clip both values to this range. 
      */
     public void centerOnPointRel(double xrel, double yrel) {
-    	// restrict both values to between 0 and 1
-    	xrel = Math.max(0,xrel);
-    	xrel = Math.min(1,xrel);
-    	yrel = Math.max(0,yrel);
-    	yrel = Math.min(1,yrel);
-    	Point p = new Point(
-    			(int)((double)boardSize.getWidth()*xrel)+HEX_W,
-    			(int)((double)boardSize.getHeight()*yrel)+HEX_H);
+        // restrict both values to between 0 and 1
+        xrel = Math.max(0,xrel);
+        xrel = Math.min(1,xrel);
+        yrel = Math.max(0,yrel);
+        yrel = Math.min(1,yrel);
+        Point p = new Point(
+                (int)((double)boardSize.getWidth()*xrel)+HEX_W,
+                (int)((double)boardSize.getHeight()*yrel)+HEX_H);
         JScrollBar vscroll = scrollpane.getVerticalScrollBar();
         vscroll.setValue(p.y - (vscroll.getVisibleAmount() / 2));
         JScrollBar hscroll = scrollpane.getHorizontalScrollBar();
@@ -3018,12 +3018,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * and 90% of width and height: 0.1,0.1,1,1
      */
     public double[] getVisibleArea() {
-    	double[] values = new double[4];
-    	
-    	// adjust for padding
-    	double x = (double)(scrollpane.getViewport().getViewPosition().getX()-HEX_W);
-    	double y = (double)(scrollpane.getViewport().getViewPosition().getY()-HEX_H);
-    	
+        double[] values = new double[4];
+        
+        // adjust for padding
+        double x = (double)(scrollpane.getViewport().getViewPosition().getX()-HEX_W);
+        double y = (double)(scrollpane.getViewport().getViewPosition().getY()-HEX_H);
+        
         values[0] = x/(double)boardSize.getWidth();
         values[1] = y/(double)boardSize.getHeight();
         
@@ -3031,10 +3031,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         values[3] = (y+(double)scrollpane.getViewport().getHeight())/(double)(boardSize.getHeight());
         
         // the viewport is bigger than the image, but we want only values for the image
-    	// therefore: restrict values to 0 ... 1 
+        // therefore: restrict values to 0 ... 1 
         for (int i=0;i<4;i++) values[i] = Math.min(1, Math.max(0,values[i]));
-    	
-    	return values;
+        
+        return values;
     }
 
     /**
@@ -3727,8 +3727,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         facingPolys = new Shape[8];
         for (int dir: allDirections)
         {
-        	facingPolys[dir] = FacingRotate.createTransformedShape(facingPoly_tmp);
-        	FacingRotate.rotate(Math.toRadians(60),HEX_W/2,HEX_H/2);
+            facingPolys[dir] = FacingRotate.createTransformedShape(facingPoly_tmp);
+            FacingRotate.rotate(Math.toRadians(60),HEX_W/2,HEX_H/2);
         }
 
         // movement polygons
@@ -3758,8 +3758,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         movementPolys = new Shape[8];
         for (int dir: allDirections)
         {
-        	movementPolys[dir] = FacingRotate.createTransformedShape(movementPoly_tmp);
-        	FacingRotate.rotate(Math.toRadians(60),HEX_W/2,HEX_H/2);
+            movementPolys[dir] = FacingRotate.createTransformedShape(movementPoly_tmp);
+            FacingRotate.rotate(Math.toRadians(60),HEX_W/2,HEX_H/2);
         }
         
         // Up and Down Arrows
@@ -4585,9 +4585,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Hex Terrain
         if (GUIPreferences.getInstance().getShowMapHexPopup() && (mhex != null)) {
-	
+    
             txt.append("<TABLE BORDER=0 BGCOLOR=#DDFFDD width=100%><TR><TD>"); //$NON-NLS-1$
-        	
+            
             txt.append(Messages.getString("BoardView1.Tooltip.Hex", //$NON-NLS-1$
                     new Object[] { mcoords.getBoardNum(), mhex.getLevel() }));
             txt.append("<br>"); //$NON-NLS-1$
@@ -5030,7 +5030,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
     
     private void pingMinimap() {
-    	// send the minimap a hex moused event to make it 
+        // send the minimap a hex moused event to make it 
         // update the visible area rectangle
         BoardViewEvent bve = new BoardViewEvent(this,BoardViewEvent.BOARD_HEX_DRAGGED); 
         if (boardListeners != null) {

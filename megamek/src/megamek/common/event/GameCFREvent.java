@@ -29,29 +29,29 @@ import megamek.common.net.Packet;
  */
 public class GameCFREvent extends GameEvent {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 230173422932412803L;
-	
-	private int cfrType;
-	
-	private int eId;
-	
-	/**
-	 * The equipment number for the AMS used in AMS_ASSIGN CFRs.
-	 */
-	private int amsEquipNum;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 230173422932412803L;
+    
+    private int cfrType;
+    
+    private int eId;
+    
+    /**
+     * The equipment number for the AMS used in AMS_ASSIGN CFRs.
+     */
+    private int amsEquipNum;
 
-	private List<Integer> apdsDists;
+    private List<Integer> apdsDists;
 
-	/**
-	 * List of WeaponAttackActions that can have an AMS assigned to them for 
-	 * AMS_ASSIGN CFRs.
-	 */
-	private List<WeaponAttackAction> waas;
-	
-	/**
+    /**
+     * List of WeaponAttackActions that can have an AMS assigned to them for 
+     * AMS_ASSIGN CFRs.
+     */
+    private List<WeaponAttackAction> waas;
+    
+    /**
      * Construct game event
      */
     public GameCFREvent(Object source, int t) {
@@ -65,7 +65,7 @@ public class GameCFREvent extends GameEvent {
      * @param gl GameListener recipient.
      */
     public void fireEvent(GameListener gl) {
-    	gl.gameClientFeedbackRquest(this);
+        gl.gameClientFeedbackRquest(this);
     }
     
     public String getEventName() {
@@ -93,17 +93,17 @@ public class GameCFREvent extends GameEvent {
         return buff.toString();
     }
 
-	public int getCFRType() {
-		return cfrType;
-	}
+    public int getCFRType() {
+        return cfrType;
+    }
     
-	public int getEntityId() {
-		return eId;
-	}
+    public int getEntityId() {
+        return eId;
+    }
 
-	public void setEntityId(int id) {
-		eId = id;
-	}
+    public void setEntityId(int id) {
+        eId = id;
+    }
 
     public int getAmsEquipNum() {
         return amsEquipNum;

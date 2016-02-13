@@ -1284,16 +1284,16 @@ public class Princess extends BotClient {
         super.disconnected();
     }
 
-	public int getHighestEnemyInitiativeId() {
-		int highestEnemyInitiativeBonus = -1;
-		int highestEnemyInitiativeId = -1;
-		for (Entity entity : getEnemyEntities()) {
-			int initBonus = entity.getHQIniBonus() + entity.getMDIniBonus() + entity.getQuirkIniBonus();
-	        if (initBonus > highestEnemyInitiativeBonus) {
-	            highestEnemyInitiativeBonus = initBonus;
-	            highestEnemyInitiativeId = entity.getId();
-	        }
-		}
-		return highestEnemyInitiativeId;
-	}
+    public int getHighestEnemyInitiativeId() {
+        int highestEnemyInitiativeBonus = -1;
+        int highestEnemyInitiativeId = -1;
+        for (Entity entity : getEnemyEntities()) {
+            int initBonus = entity.getHQIniBonus() + entity.getMDIniBonus() + entity.getQuirkIniBonus();
+            if (initBonus > highestEnemyInitiativeBonus) {
+                highestEnemyInitiativeBonus = initBonus;
+                highestEnemyInitiativeId = entity.getId();
+            }
+        }
+        return highestEnemyInitiativeId;
+    }
 }

@@ -36,8 +36,8 @@ public class Messages {
         try {
             return RESOURCE_BUNDLE.getString(key);
         } catch (MissingResourceException e) {
-        	System.out.println("Missing i18n entry: " + key);
-        	return '!' + key + '!';
+            System.out.println("Missing i18n entry: " + key);
+            return '!' + key + '!';
         }
     }
 

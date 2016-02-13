@@ -34,13 +34,13 @@ public class GameBoardChangeEvent extends GameEvent {
         super(source);
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gameBoardChanged(this);
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gameBoardChanged(this);
+    }
 
-	@Override
-	public String getEventName() {
-		return "Board Changed";
-	}
+    @Override
+    public String getEventName() {
+        return "Board Changed";
+    }
 }

@@ -749,10 +749,10 @@ public class MiscType extends EquipmentType {
             return entity.getWeight() / 10.0f;
 
         } else if (hasFlag(F_ENVIRONMENTAL_SEALING)) {
-        	if ((entity instanceof SupportTank ) || (entity instanceof LargeSupportTank )
-        			|| (entity instanceof FixedWingSupport ) || (entity instanceof SupportVTOL )) {
-        		return 0;
-          	} else {
+            if ((entity instanceof SupportTank ) || (entity instanceof LargeSupportTank )
+                    || (entity instanceof FixedWingSupport ) || (entity instanceof SupportVTOL )) {
+                return 0;
+              } else {
                 return entity.getWeight() / 10.0f;
             }
 
@@ -760,15 +760,15 @@ public class MiscType extends EquipmentType {
         //but Mechanical Boosters only add 1 Jump MP.  So the weight calculations
         //below are calculated according to that 1 Jump MP they give.
         } else if (hasFlag(F_MECHANICAL_JUMP_BOOSTER)) {
-      	if((entity.getWeightClass() == EntityWeightClass.WEIGHT_ULTRA_LIGHT)
-      			|| (entity.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT)) {
-      			return  2.0f *.025f;
+          if((entity.getWeightClass() == EntityWeightClass.WEIGHT_ULTRA_LIGHT)
+                  || (entity.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT)) {
+                  return  2.0f *.025f;
         } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
-        		return  2.0f *.05f;
+                return  2.0f *.05f;
         } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
-        		return  2.0f *.125f;
+                return  2.0f *.125f;
         } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT) {
-        		return  2.0f *.250f;
+                return  2.0f *.250f;
         }
 
         } else if (hasFlag(F_JUMP_BOOSTER)) {
@@ -850,9 +850,9 @@ public class MiscType extends EquipmentType {
 
         } else if (hasFlag(F_EJECTION_SEAT)) {
             if (entity.isSupportVehicle() && (entity.getWeight() < 5)) {
-            	return .1f;
+                return .1f;
             } else {
-            	return .5f;
+                return .5f;
             }
         } else if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
             float weight = 2;
@@ -1176,12 +1176,12 @@ public class MiscType extends EquipmentType {
                 return 2;
             }
         } else if (hasFlag(F_BLUE_SHIELD)) {
-        	if (entity instanceof Aero) {
-        		return 4;
-        	}
-        	else if ((entity instanceof BipedMech) || (entity instanceof QuadMech)) {
-        		return 7;
-        	}
+            if (entity instanceof Aero) {
+                return 4;
+            }
+            else if ((entity instanceof BipedMech) || (entity instanceof QuadMech)) {
+                return 7;
+            }
 
         } else if (hasFlag(F_ENDO_STEEL)) {
             if ((entity instanceof Mech) && ((Mech)entity).isSuperHeavy()) {
@@ -9210,7 +9210,7 @@ public class MiscType extends EquipmentType {
                 EquipmentType.RATING_E, EquipmentType.RATING_D };
         misc.introDate = 2820;
         misc.techLevel.put(2820
-        		, misc.techLevel.get(3071));
+                , misc.techLevel.get(3071));
         misc.techRating = RATING_C;
         return misc;
     }
@@ -11727,7 +11727,7 @@ public class MiscType extends EquipmentType {
 //      return misc;
 //  }
 
-	@Override
+    @Override
     public String toString() {
         return "MiscType: " + name;
     }

@@ -21,12 +21,12 @@ package megamek.common.event;
  */
 public abstract class GameEvent extends java.util.EventObject {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6199335692173395907L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6199335692173395907L;
 
-	/**
+    /**
      * Construct game event
      */
     public GameEvent(Object source) {

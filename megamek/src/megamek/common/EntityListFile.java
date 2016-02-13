@@ -118,7 +118,7 @@ public class EntityListFile {
                 output.append(String.valueOf(mount.getQuirkList("::")));
             }
             if(mount.isAnyMissingTroopers()) {
-            	output.append("\" trooperMiss=\"");
+                output.append("\" trooperMiss=\"");
                 output.append(String.valueOf(mount.getMissingTrooperString()));
             }
         }
@@ -190,7 +190,7 @@ public class EntityListFile {
             //exact zeroes for BA should not be treated as destroyed as MHQ uses this to signify
             //suits without pilots
             if(entity instanceof BattleArmor && entity.getInternalForReal(loc) >= 0) {
-            	isDestroyed = false;
+                isDestroyed = false;
             }
 
             // Record damage to armor and internal structure.
@@ -335,7 +335,7 @@ public class EntityListFile {
 
                     // Record trooper missing equipment on BattleArmor
                     else if(null != mount && mount.isAnyMissingTroopers()) {
-                    	thisLoc.append(EntityListFile.formatSlot(
+                        thisLoc.append(EntityListFile.formatSlot(
                                 String.valueOf(loop + 1), mount, slot.isHit(),
                                 slot.isDestroyed(), slot.isRepairable(),
                                 slot.isMissing(), indentLvl+1));
@@ -464,9 +464,9 @@ public class EntityListFile {
         output.write(CommonConstants.NL);
 
         try {
-        	writeEntityList(output, list);
+            writeEntityList(output, list);
         } catch(IOException exception) {
-        	throw exception;
+            throw exception;
         }
 
 
@@ -497,9 +497,9 @@ public class EntityListFile {
     public static void saveTo(File file, Client client)
             throws IOException {
 
-    	if(null == client.getGame()) {
-    		return;
-    	}
+        if(null == client.getGame()) {
+            return;
+        }
 
         // Open up the file. Produce UTF-8 output.
         Writer output = new BufferedWriter(new OutputStreamWriter(
@@ -532,14 +532,14 @@ public class EntityListFile {
         while (graveyard.hasMoreElements()) {
             Entity entity = graveyard.nextElement();
             if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
-	            Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
-	            if(null != killer
-	            		&& !killer.getExternalIdAsString().equals("-1")
-	            		&& killer.getOwnerId() == client.getLocalPlayer().getId()) {
-	            	kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
-	            } else {
-	            	kills.put(entity.getDisplayName(), "None");
-	            }
+                Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
+                if(null != killer
+                        && !killer.getExternalIdAsString().equals("-1")
+                        && killer.getOwnerId() == client.getLocalPlayer().getId()) {
+                    kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
+                } else {
+                    kills.put(entity.getDisplayName(), "None");
+                }
             }
             salvage.add(entity);
         }
@@ -547,13 +547,13 @@ public class EntityListFile {
         //look for surviving enemy entities and add them to the possible salvage
         Iterator<Entity> entities = client.getGame().getEntities();
         while(entities.hasNext()) {
-        	Entity entity = entities.next();
-        	if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
+            Entity entity = entities.next();
+            if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
                  if(!entity.canEscape()) {
-                 	kills.put(entity.getDisplayName(), "None");
+                     kills.put(entity.getDisplayName(), "None");
                  }
                  salvage.add(entity);
-        	}
+            }
         }
 
         //devastated units
@@ -561,76 +561,76 @@ public class EntityListFile {
         while (devastation.hasMoreElements()) {
             Entity entity = devastation.nextElement();
             if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
-	            Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
-	            if(null != killer
-	            		&& !killer.getExternalIdAsString().equals("-1")
-	            		&& killer.getOwnerId() == client.getLocalPlayer().getId()) {
-	            	kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
-	            } else {
-	            	kills.put(entity.getDisplayName(), "None");
-	            }
+                Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
+                if(null != killer
+                        && !killer.getExternalIdAsString().equals("-1")
+                        && killer.getOwnerId() == client.getLocalPlayer().getId()) {
+                    kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
+                } else {
+                    kills.put(entity.getDisplayName(), "None");
+                }
             }
             devastated.add(entity);
         }
 
         if(!living.isEmpty()) {
-	        output.write(CommonConstants.NL);
-	        output.write(indentStr(1) + "<survivors>");
-	        output.write(CommonConstants.NL);
-	        output.write(CommonConstants.NL);
-	        try {
-	        	writeEntityList(output, living);
-	        } catch(IOException exception) {
-	        	throw exception;
-	        }
-	        // Finish writing.
-	        output.write(indentStr(1) + "</survivors>");
-	        output.write(CommonConstants.NL);
+            output.write(CommonConstants.NL);
+            output.write(indentStr(1) + "<survivors>");
+            output.write(CommonConstants.NL);
+            output.write(CommonConstants.NL);
+            try {
+                writeEntityList(output, living);
+            } catch(IOException exception) {
+                throw exception;
+            }
+            // Finish writing.
+            output.write(indentStr(1) + "</survivors>");
+            output.write(CommonConstants.NL);
         }
 
         if(!salvage.isEmpty()) {
-	        output.write(CommonConstants.NL);
-	        output.write(indentStr(1) + "<salvage>");
-	        output.write(CommonConstants.NL);
-	        output.write(CommonConstants.NL);
-	        try {
-	        	writeEntityList(output, salvage);
-	        } catch(IOException exception) {
-	        	throw exception;
-	        }
-	        // Finish writing.
-	        output.write(indentStr(1) + "</salvage>");
-	        output.write(CommonConstants.NL);
+            output.write(CommonConstants.NL);
+            output.write(indentStr(1) + "<salvage>");
+            output.write(CommonConstants.NL);
+            output.write(CommonConstants.NL);
+            try {
+                writeEntityList(output, salvage);
+            } catch(IOException exception) {
+                throw exception;
+            }
+            // Finish writing.
+            output.write(indentStr(1) + "</salvage>");
+            output.write(CommonConstants.NL);
         }
 
         if(!devastated.isEmpty()) {
-	        output.write(CommonConstants.NL);
-	        output.write(indentStr(1) + "<devastated>");
-	        output.write(CommonConstants.NL);
-	        output.write(CommonConstants.NL);
-	        try {
-	        	writeEntityList(output, devastated);
-	        } catch(IOException exception) {
-	        	throw exception;
-	        }
-	        // Finish writing.
-	        output.write(indentStr(1) + "</devastated>");
-	        output.write(CommonConstants.NL);
+            output.write(CommonConstants.NL);
+            output.write(indentStr(1) + "<devastated>");
+            output.write(CommonConstants.NL);
+            output.write(CommonConstants.NL);
+            try {
+                writeEntityList(output, devastated);
+            } catch(IOException exception) {
+                throw exception;
+            }
+            // Finish writing.
+            output.write(indentStr(1) + "</devastated>");
+            output.write(CommonConstants.NL);
         }
 
         if(!kills.isEmpty()) {
-        	output.write(CommonConstants.NL);
-	        output.write(indentStr(1) + "<kills>");
-	        output.write(CommonConstants.NL);
-	        output.write(CommonConstants.NL);
-	        try {
-	        	writeKills(output, kills);
-	        } catch(IOException exception) {
-	        	throw exception;
-	        }
-        	 // Finish writing.
-	        output.write(indentStr(1) + "</kills>");
-	        output.write(CommonConstants.NL);
+            output.write(CommonConstants.NL);
+            output.write(indentStr(1) + "<kills>");
+            output.write(CommonConstants.NL);
+            output.write(CommonConstants.NL);
+            try {
+                writeKills(output, kills);
+            } catch(IOException exception) {
+                throw exception;
+            }
+             // Finish writing.
+            output.write(indentStr(1) + "</kills>");
+            output.write(CommonConstants.NL);
         }
 
         // Finish writing.
@@ -641,19 +641,19 @@ public class EntityListFile {
     }
 
     private static void writeKills(Writer output, Hashtable<String,String> kills) throws IOException {
-    	int indentLvl = 2;
-    	for(String killed : kills.keySet()) {
-    		output.write(indentStr(indentLvl) + "<kill killed=\"");
+        int indentLvl = 2;
+        for(String killed : kills.keySet()) {
+            output.write(indentStr(indentLvl) + "<kill killed=\"");
             output.write(killed.replaceAll("\"", "&quot;"));
             output.write("\" killer=\"");
             output.write(kills.get(killed));
             output.write("\"/>");
             output.write(CommonConstants.NL);
-    	}
+        }
     }
 
     private static void writeEntityList(Writer output, ArrayList<Entity> list) throws IOException {
-    	// Walk through the list of entities.
+        // Walk through the list of entities.
         Iterator<Entity> items = list.iterator();
         while (items.hasNext()) {
             final Entity entity = items.next();
@@ -711,7 +711,7 @@ public class EntityListFile {
                 output.write(entity.getCamoFileName());
             }
             if(entity instanceof MechWarrior && !((MechWarrior)entity).getPickedUpByExternalIdAsString().equals("-1")) {
-            	output.write("\" pickUpId=\"");
+                output.write("\" pickUpId=\"");
                 output.write(((MechWarrior)entity).getPickedUpByExternalIdAsString());
             }
             output.write("\">");

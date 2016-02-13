@@ -31,13 +31,13 @@ public class GameEntityNewOffboardEvent extends GameEvent {
         super(source);
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gameEntityNewOffboard(this);	
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gameEntityNewOffboard(this);    
+    }
 
-	@Override
-	public String getEventName() {
-		return "Entity New Off-board";
-	}
+    @Override
+    public String getEventName() {
+        return "Entity New Off-board";
+    }
 }

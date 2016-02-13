@@ -83,9 +83,9 @@ public class GameEntityChangeEvent extends GameEntityEvent {
     
     @Override
     public String toString() {
-    	if (movePath == null)
-    		return "There is nothing to move!";
-    	
+        if (movePath == null)
+            return "There is nothing to move!";
+        
         try {
             return getEntity().toString() + " moved to "
                     + movePath.lastElement().getCoords().toFriendlyString();
@@ -100,13 +100,13 @@ public class GameEntityChangeEvent extends GameEntityEvent {
         return "Something happened.";
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gameEntityChange(this);
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gameEntityChange(this);
+    }
 
-	@Override
-	public String getEventName() {
-		return "Entity Change";
-	}
+    @Override
+    public String getEventName() {
+        return "Entity Change";
+    }
 }

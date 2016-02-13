@@ -70,31 +70,31 @@ class DataStreamConnection extends AbstractConnection {
 
     @Override
     protected INetworkPacket readNetworkPacket() throws Exception {
-    	
-	        NetworkPacket packet = null;
-	        if (in == null) {
-				in = new DataInputStream(new BufferedInputStream(
-						getInputStream(), getReceiveBufferSize()));
-	            state = PacketReadState.Header;
-	        }
-	        synchronized (in){
-		        switch (state) {
-		            case Header:
-		                zipped = in.readBoolean();
-		                encoding = in.readInt();
-		                len = in.readInt();
-		                state = PacketReadState.Data;
-		                // drop through on purpose
-		            case Data:
-		                byte[] data = new byte[len];
-		                in.readFully(data);
-		                packet = new NetworkPacket(zipped, encoding, data);
-		                state = PacketReadState.Header;
-		                return packet;
-		            default:
-		                assert (false);
-		        }
-	        }
+        
+            NetworkPacket packet = null;
+            if (in == null) {
+                in = new DataInputStream(new BufferedInputStream(
+                        getInputStream(), getReceiveBufferSize()));
+                state = PacketReadState.Header;
+            }
+            synchronized (in){
+                switch (state) {
+                    case Header:
+                        zipped = in.readBoolean();
+                        encoding = in.readInt();
+                        len = in.readInt();
+                        state = PacketReadState.Data;
+                        // drop through on purpose
+                    case Data:
+                        byte[] data = new byte[len];
+                        in.readFully(data);
+                        packet = new NetworkPacket(zipped, encoding, data);
+                        state = PacketReadState.Header;
+                        return packet;
+                    default:
+                        assert (false);
+                }
+            }
         assert (false);
         return null;
     }
@@ -102,17 +102,17 @@ class DataStreamConnection extends AbstractConnection {
     @Override
     protected void sendNetworkPacket(byte[] data, boolean iszipped)
             throws Exception {
-    	
+        
         if (out == null) {
             out = new DataOutputStream(new BufferedOutputStream(
                     getOutputStream(),getSendBufferSize()));
         }
         synchronized (out){
-	        out.writeBoolean(iszipped);
-	        out.writeInt(marshallingType);
-	        out.writeInt(data.length);
-	        out.write(data);
-    	}
+            out.writeBoolean(iszipped);
+            out.writeInt(marshallingType);
+            out.writeInt(data.length);
+            out.write(data);
+        }
     }
 
     /**

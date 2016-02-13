@@ -122,7 +122,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
                     }
                     if (iterations > fighters.size()){
                         System.err.println("Error: couldn't find ammo for a " +
-                        		"dropped bomb in SpaceBombAttackHandler.useAmmo()");
+                                "dropped bomb in SpaceBombAttackHandler.useAmmo()");
                     }                    
                 }
                 // Now remove a bomb from the squadron

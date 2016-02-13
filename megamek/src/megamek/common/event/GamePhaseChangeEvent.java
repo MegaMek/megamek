@@ -67,13 +67,13 @@ public class GamePhaseChangeEvent extends GameEvent {
         return oldPhase;
     }
 
-	@Override
-	public void fireEvent(GameListener gl) {
-		gl.gamePhaseChange(this);	
-	}
+    @Override
+    public void fireEvent(GameListener gl) {
+        gl.gamePhaseChange(this);    
+    }
 
-	@Override
-	public String getEventName() {
-		return "Phase Change";
-	}
+    @Override
+    public String getEventName() {
+        return "Phase Change";
+    }
 }

@@ -29,7 +29,7 @@ public class ISPrimRL15 extends RLWeapon {
      *
      */
     public ISPrimRL15() {
-    	super ();
+        super ();
         techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
         name = "Primitive Rocket Launcher 15";
         setInternalName("ISPrimRL15");
@@ -47,7 +47,7 @@ public class ISPrimRL15 extends RLWeapon {
         medAV = 9;
         maxRange = RANGE_MED;
         introDate = 2297;
-        extinctDate = 2315;	
+        extinctDate = 2315;    
         techLevel.put(2315, techLevel.get(3071));
         availRating = new int[] { RATING_B, RATING_X, RATING_X };
         techRating = RATING_B;

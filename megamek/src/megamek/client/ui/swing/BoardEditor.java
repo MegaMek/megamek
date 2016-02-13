@@ -526,7 +526,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     }
 
     public void boardResize() {
-    	ResizeMapDialog emd = new ResizeMapDialog(frame, this, null, mapSettings);
+        ResizeMapDialog emd = new ResizeMapDialog(frame, this, null, mapSettings);
         emd.setVisible(true);
         board = BoardUtilities.generateRandom(mapSettings);
 
@@ -547,16 +547,16 @@ public class BoardEditor extends JComponent implements ItemListener,
 
     // When we resize a board, implant the old board's hexes where they should be in the new board
     public IBoard implantOldBoard(IGame game, int west, int north, int east, int south) {
-    	IBoard oldBoard = game.getBoard();
+        IBoard oldBoard = game.getBoard();
         for (int x = 0; x < oldBoard.getWidth(); x++) {
             for (int y = 0; y < oldBoard.getHeight(); y++) {
-            	int newX = x+west;
-            	int newY = y+north;
-            	if (oldBoard.contains(x, y) && board.contains(newX, newY)) {
-            		IHex oldHex = oldBoard.getHex(x, y);
-            		IHex hex = board.getHex(newX, newY);
-            		hex.removeAllTerrains();
-            		    hex.setLevel(oldHex.getLevel());
+                int newX = x+west;
+                int newY = y+north;
+                if (oldBoard.contains(x, y) && board.contains(newX, newY)) {
+                    IHex oldHex = oldBoard.getHex(x, y);
+                    IHex hex = board.getHex(newX, newY);
+                    hex.removeAllTerrains();
+                        hex.setLevel(oldHex.getLevel());
                     int terrainTypes[] = oldHex.getTerrainTypes();
                     for (int i = 0; i < terrainTypes.length; i++) {
                         int terrainID = terrainTypes[i];
@@ -567,7 +567,7 @@ public class BoardEditor extends JComponent implements ItemListener,
                     }
                     board.setHex(newX, newY, hex);
                     board.resetStoredElevation();
-            	}
+                }
             }
         }
         return board;

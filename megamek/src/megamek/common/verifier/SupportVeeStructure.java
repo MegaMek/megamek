@@ -52,7 +52,7 @@ public class SupportVeeStructure extends Structure {
             chassisModMult *= 2;
         }
         if (sv.hasMisc(MiscType.F_HYDROFOIL)) {
-        	chassisModMult *= 1.7;
+            chassisModMult *= 1.7;
         }
         if (sv.hasMisc(MiscType.F_MONOCYCLE)) {
             chassisModMult *= 0.5;

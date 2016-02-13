@@ -212,10 +212,10 @@ public class Infantry extends Entity {
             mp = Math.max(mp - 1, 0);
         }
         if((null != getCrew())
-        		&& getCrew().getOptions().booleanOption("pl_masc")
-        		&& ((getMovementMode() == EntityMovementMode.INF_LEG)
-        			|| (getMovementMode() == EntityMovementMode.INF_JUMP))) {
-        	mp += 1;
+                && getCrew().getOptions().booleanOption("pl_masc")
+                && ((getMovementMode() == EntityMovementMode.INF_LEG)
+                    || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
+            mp += 1;
         }
         if(hasActiveFieldArtillery()) {
             //mp of 1 at the most
@@ -746,10 +746,10 @@ public class Infantry extends Entity {
      */
     @Override
     public int getMaxElevationChange() {
-    	if (hasMountain()) {
+        if (hasMountain()) {
         return 3;
-    	}
-    	return 1;
+        }
+        return 1;
     }
 
     /**
@@ -817,7 +817,7 @@ public class Infantry extends Entity {
   */
     @Override
     public double getCost(boolean ignoreAmmo) {
-        double multiplier = 1;	 //Cost Multiplier per TM
+        double multiplier = 1;     //Cost Multiplier per TM
         double pweaponCost = 0;  //Primary Weapon Cost
         double sweaponCost = 0; // Secondary Weapon Cost
         double armorcost = 0; //Armor Cost
@@ -827,26 +827,26 @@ public class Infantry extends Entity {
         
         //Weapon Cost Calculation
         if(null != primaryW) {
-	    	pweaponCost += Math.sqrt(primaryW.getCost(this, false, -1)) * 2000;
-	    }
-	    if(null != secondW) {
-	    	sweaponCost += Math.sqrt(secondW.getCost(this, false, -1)) * 2000;  
-	    }
+            pweaponCost += Math.sqrt(primaryW.getCost(this, false, -1)) * 2000;
+        }
+        if(null != secondW) {
+            sweaponCost += Math.sqrt(secondW.getCost(this, false, -1)) * 2000;  
+        }
        
-	    //Determining Break down of who would have primary and secondary weapons.
-	    primarySquad = (squadsize - secondn) * squadn;
-	    secondSquad = menStarting - primarySquad;
-	    
-	    //Squad Cost with just the weapons.
-	    cost = (primarySquad * pweaponCost) + (secondSquad * sweaponCost);
-	    
-	    
+        //Determining Break down of who would have primary and secondary weapons.
+        primarySquad = (squadsize - secondn) * squadn;
+        secondSquad = menStarting - primarySquad;
+        
+        //Squad Cost with just the weapons.
+        cost = (primarySquad * pweaponCost) + (secondSquad * sweaponCost);
+        
+        
         //add in infantry armor cost
         if(damageDivisor > 1) {
             if(isArmorEncumbering()) {
                 armorcost += 1600;
             } else {
-            	armorcost += 4300;
+                armorcost += 4300;
             }
         }
         int nSneak = 0;
@@ -861,20 +861,20 @@ public class Infantry extends Entity {
         }
 
         if(hasDEST()) {
-        	armorcost += 50000;
+            armorcost += 50000;
         }
         else if(nSneak == 1) {
-        	armorcost += 7000;
+            armorcost += 7000;
         }
         else if(nSneak == 2) {
-        	armorcost += 21000;
+            armorcost += 21000;
         }
         else if(nSneak == 3) {
-        	armorcost += 28000;
+            armorcost += 28000;
         }
 
         if(hasSpaceSuit()) {
-        	armorcost += 5000;
+            armorcost += 5000;
         }
         
         //Cost of armor on a per man basis added
@@ -888,28 +888,28 @@ public class Infantry extends Entity {
 
         //Add in motive type costs
         switch (getMovementMode()){
-	        case INF_UMU:
-	            multiplier *= 2.0;
-	        case INF_LEG:
-	            multiplier *= 1.0;
-	            break;
-	        case INF_MOTORIZED:
-	            multiplier *= 1.6;
-	            break;
-	        case INF_JUMP:
-	            multiplier *= 2.6;
-	            break;
-	        case HOVER:
-	            multiplier *= 3.2;
-	            break;
-	        case WHEELED:
-	            multiplier *= 3.2;
-	            break;
-	        case TRACKED:
-	            multiplier *= 3.2;
-	            break;
-	        default:
-	            break;
+            case INF_UMU:
+                multiplier *= 2.0;
+            case INF_LEG:
+                multiplier *= 1.0;
+                break;
+            case INF_MOTORIZED:
+                multiplier *= 1.6;
+                break;
+            case INF_JUMP:
+                multiplier *= 2.6;
+                break;
+            case HOVER:
+                multiplier *= 3.2;
+                break;
+            case WHEELED:
+                multiplier *= 3.2;
+                break;
+            case TRACKED:
+                multiplier *= 3.2;
+                break;
+            default:
+                break;
         }
 
         cost = cost * multiplier;
@@ -930,7 +930,7 @@ public class Infantry extends Entity {
      */
     @Override
     public double getAlternateCost() {
-    	double cost = 0;
+        double cost = 0;
         if(null != primaryW) {
             cost += primaryW.getCost(this, false, -1) * (squadsize - secondn);
         }
@@ -940,24 +940,24 @@ public class Infantry extends Entity {
         cost = cost / squadsize;
         //Add in motive type costs
         switch (getMovementMode()){
-	        case INF_UMU:
-	            cost += 17888 * 1;
-	            break;
-	        case INF_LEG:
-	            break;
-	        case INF_MOTORIZED:
-	        	cost += 17888 * 0.6;
-	            break;
-	        case INF_JUMP:
-	        	cost += 17888 * 1.6;
-	            break;
-	        case HOVER:
-	        case WHEELED:
-	        case TRACKED:
-	        	cost += 17888 * 2.2;
-	            break;
-	        default:
-	            break;
+            case INF_UMU:
+                cost += 17888 * 1;
+                break;
+            case INF_LEG:
+                break;
+            case INF_MOTORIZED:
+                cost += 17888 * 0.6;
+                break;
+            case INF_JUMP:
+                cost += 17888 * 1.6;
+                break;
+            case HOVER:
+            case WHEELED:
+            case TRACKED:
+                cost += 17888 * 2.2;
+                break;
+            default:
+                break;
         }
         cost *= menStarting;
         //add in field gun costs
@@ -1349,7 +1349,7 @@ public class Infantry extends Entity {
         super.setMovementMode(movementMode);
         //movement mode will determine base mp
         if (!(this instanceof BattleArmor)) {
-        	setOriginalJumpMP(0);
+            setOriginalJumpMP(0);
             switch (getMovementMode()) {
                 case INF_MOTORIZED:
                     setOriginalWalkMP(3);
@@ -1401,8 +1401,8 @@ public class Infantry extends Entity {
         }
         
         if(isAntiMekTrained()) {
-        		ton += (float) (men * .015);
-        	        	
+                ton += (float) (men * .015);
+                        
         }
 
         //add in field gun weight

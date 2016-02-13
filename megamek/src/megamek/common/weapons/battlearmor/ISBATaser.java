@@ -59,7 +59,7 @@ public class ISBATaser extends AmmoWeapon {
         techRating = RATING_E;
         availRating = new int[] { RATING_X, RATING_X, RATING_E };
         flags = flags.or(F_BA_WEAPON).or(F_ONESHOT).or(F_TASER).or(F_BALLISTIC)
-        		.andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;
+                .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;
     }
 
     /*

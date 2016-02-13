@@ -648,9 +648,9 @@ public class Game implements Serializable, IGame {
     public boolean isPhaseSimultaneous() {
         switch (phase) {
             case PHASE_DEPLOYMENT:
-            	return getOptions().booleanOption("simultaneous_deployment");
+                return getOptions().booleanOption("simultaneous_deployment");
             case PHASE_MOVEMENT:
-            	return getOptions().booleanOption("simultaneous_movement");
+                return getOptions().booleanOption("simultaneous_movement");
             case PHASE_FIRING:
                 return getOptions().booleanOption("simultaneous_firing");
             case PHASE_PHYSICAL:
@@ -1250,15 +1250,15 @@ public class Game implements Serializable, IGame {
      * looks for an entity by id number even if out of the game
      */
     public Entity getEntityFromAllSources(int id) {
-    	Entity en = getEntity(id);
-    	if(null == en) {
-    		for (Entity entity : vOutOfGame) {
-    			if(entity.getId() == id) {
-    				return entity;
-    			}
-    		}
-    	}
-    	return en;
+        Entity en = getEntity(id);
+        if(null == en) {
+            for (Entity entity : vOutOfGame) {
+                if(entity.getId() == id) {
+                    return entity;
+                }
+            }
+        }
+        return en;
     }
     
     public void addEntities(List<Entity> entities) {

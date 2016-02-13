@@ -479,21 +479,21 @@ WindowListener, TreeSelectionListener {
             
             setVisible(false);
         } else if (ev.getSource().equals(m_bClear)) {
-        	armyModel.clearData();
-        	unitsModel.clearData();
+            armyModel.clearData();
+            unitsModel.clearData();
         } else if (ev.getSource().equals(m_bCancel)) {
-        	 armyModel.clearData();
+             armyModel.clearData();
              unitsModel.clearData();
             setVisible(false);
         } else if (ev.getSource().equals(m_bAddAll)) {
-        	for (MechSummary m : unitsModel.getAllUnits()) {
+            for (MechSummary m : unitsModel.getAllUnits()) {
                 armyModel.addUnit(m);
             }
         } else if (ev.getSource().equals(m_bAdd)) {
-        	for(int sel : m_lUnits.getSelectedRows()) {
-        		MechSummary m = unitsModel.getUnitAt(sel);
-        		armyModel.addUnit(m);
-        	}
+            for(int sel : m_lUnits.getSelectedRows()) {
+                MechSummary m = unitsModel.getUnitAt(sel);
+                armyModel.addUnit(m);
+            }
         } else if (ev.getSource().equals(m_bAdvSearch)){
             searchFilter=asd.showDialog();
             m_bAdvSearchClear.setEnabled(searchFilter!=null);
@@ -743,8 +743,8 @@ WindowListener, TreeSelectionListener {
         }
 
         public void setData(ArrayList<MechSummary> mechs) {
-        	data = mechs;
-        	fireTableDataChanged();
+            data = mechs;
+            fireTableDataChanged();
         }
 
         @Override
@@ -788,7 +788,7 @@ WindowListener, TreeSelectionListener {
         }
 
         public ArrayList<MechSummary> getAllUnits() {
-        	return data;
+            return data;
         }
     }
 }

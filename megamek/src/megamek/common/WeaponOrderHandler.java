@@ -178,7 +178,7 @@ public class WeaponOrderHandler {
         File file = new File(Configuration.configDir(), path);
         if (!file.exists() || !file.isFile()) {
             System.err.println("WARN: Could not load custom weapon orders " +
-            		"from " + path);
+                    "from " + path);
             return weapOrderMap;
         }
 

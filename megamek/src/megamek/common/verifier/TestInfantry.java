@@ -24,112 +24,112 @@ import megamek.common.Infantry;
 
 
 public class TestInfantry extends TestEntity {
-	private Infantry infantry;
-	
-	public TestInfantry(Infantry infantry, TestEntityOption option, String fileString) {
+    private Infantry infantry;
+    
+    public TestInfantry(Infantry infantry, TestEntityOption option, String fileString) {
         super(option, null, null, null);
         this.infantry = infantry;
         this.fileString = fileString;
     }
-	
-	@Override
-	public Entity getEntity() {
-		return infantry;
-	}
+    
+    @Override
+    public Entity getEntity() {
+        return infantry;
+    }
 
-	@Override
-	public boolean isTank() {
-		return false;
-	}
+    @Override
+    public boolean isTank() {
+        return false;
+    }
 
-	@Override
-	public boolean isMech() {
-		return false;
-	}
-	
-	@Override
+    @Override
+    public boolean isMech() {
+        return false;
+    }
+    
+    @Override
     public boolean isAero() {
         return false;
     }
 
-	@Override
-	public float getWeightControls() {
-		return 0;
-	}
-
-	@Override
-	public float getWeightMisc() {
-		return 0;
-	}
-
-	@Override
-	public float getWeightHeatSinks() {
-		return 0;
-	}
-
-	@Override
-	public float getWeightEngine() {
+    @Override
+    public float getWeightControls() {
         return 0;
     }
-	
-	@Override
-	public float getWeightStructure() {
+
+    @Override
+    public float getWeightMisc() {
         return 0;
     }
-	
-	@Override
-	public float getWeightArmor() {
+
+    @Override
+    public float getWeightHeatSinks() {
         return 0;
     }
-	
-	@Override
-	public boolean hasDoubleHeatSinks() {
-		return false;
-	}
 
-	@Override
-	public int getCountHeatSinks() {
-		return 0;
-	}
+    @Override
+    public float getWeightEngine() {
+        return 0;
+    }
+    
+    @Override
+    public float getWeightStructure() {
+        return 0;
+    }
+    
+    @Override
+    public float getWeightArmor() {
+        return 0;
+    }
+    
+    @Override
+    public boolean hasDoubleHeatSinks() {
+        return false;
+    }
 
-	@Override
-	public String printWeightMisc() {
-		return null;
-	}
+    @Override
+    public int getCountHeatSinks() {
+        return 0;
+    }
 
-	@Override
-	public String printWeightControls() {
-		return null;
-	}
+    @Override
+    public String printWeightMisc() {
+        return null;
+    }
 
-	@Override
-	public boolean correctEntity(StringBuffer buff) {
-		return false;
-	}
+    @Override
+    public String printWeightControls() {
+        return null;
+    }
 
-	@Override
-	public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
-		return false;
-	}
+    @Override
+    public boolean correctEntity(StringBuffer buff) {
+        return false;
+    }
 
-	@Override
-	public StringBuffer printEntity() {
-		return null;
-	}
+    @Override
+    public boolean correctEntity(StringBuffer buff, int ammoTechLvl) {
+        return false;
+    }
 
-	@Override
-	public String getName() {
-		return "Infantry: " + infantry.getDisplayName();	
-	}
+    @Override
+    public StringBuffer printEntity() {
+        return null;
+    }
 
-	@Override
-	public float getWeightPowerAmp() {
-		return 0;
-	}
-	
-	@Override
-	public float calculateWeight() {
-		return infantry.getWeight();
-	}
-	
+    @Override
+    public String getName() {
+        return "Infantry: " + infantry.getDisplayName();    
+    }
+
+    @Override
+    public float getWeightPowerAmp() {
+        return 0;
+    }
+    
+    @Override
+    public float calculateWeight() {
+        return infantry.getWeight();
+    }
+    
 }

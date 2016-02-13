@@ -5716,20 +5716,20 @@ public class Compute {
             for (int trooper = 1; trooper < entity.locations(); trooper++) {
                 //less than zero means the suit is destroyed
                 if (entity.getInternal(trooper) >= 0) {
-                	//Also, if any modular equipment is missing, then we will consider this 
+                    //Also, if any modular equipment is missing, then we will consider this 
                     //unit to be inoperable and will not allow it to load soldiers. This is because
                     //we have no mechanism in MM to handle BA where some suits have the equipment
                     //and others do not
-                	boolean useSuit = true;
-                	for(Mounted m : entity.getEquipment()) {
-                		if(m.isMissingForTrooper(trooper)) {
-                			useSuit = false;
-                			break;
-                		}
-                	}
-                	if(useSuit) {
-                		ntroopers++;
-                	}
+                    boolean useSuit = true;
+                    for(Mounted m : entity.getEquipment()) {
+                        if(m.isMissingForTrooper(trooper)) {
+                            useSuit = false;
+                            break;
+                        }
+                    }
+                    if(useSuit) {
+                        ntroopers++;
+                    }
                 }
             }
             return ntroopers;

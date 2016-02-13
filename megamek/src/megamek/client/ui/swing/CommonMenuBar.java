@@ -954,7 +954,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
 
         // We can only view the round report in certain phases.
         if ((phase == IGame.Phase.PHASE_INITIATIVE)
-        		|| (phase == IGame.Phase.PHASE_MOVEMENT)
+                || (phase == IGame.Phase.PHASE_MOVEMENT)
                 || (phase == IGame.Phase.PHASE_FIRING)
                 || (phase == IGame.Phase.PHASE_PHYSICAL)
                 || (phase == IGame.Phase.PHASE_OFFBOARD)

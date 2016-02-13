@@ -56,7 +56,7 @@ public class QuicksandProcessor extends DynamicTerrainProcessor {
      * function in the code (I think).
      */
     @SuppressWarnings("unused")
-	private void debugTime(String s, boolean collectGarbage) {
+    private void debugTime(String s, boolean collectGarbage) {
         //Change the "false" below to "true" to enable this function
         if (false) {
             if (collectGarbage) {

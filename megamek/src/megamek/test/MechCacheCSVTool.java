@@ -52,9 +52,9 @@ public class MechCacheCSVTool {
         try {
             StringBuffer csvLine = new StringBuffer();
             csvLine.append("Chassis,Model,Weight,Intro Date,Unit Type,BV,Rules,Engine Name,Internal Structure," +
-            		"Myomer,Cockpit Type,Gyro Type," +
-            		"Armor Types," +
-            		"Equipment (multiple entries)\n");
+                    "Myomer,Cockpit Type,Gyro Type," +
+                    "Armor Types," +
+                    "Equipment (multiple entries)\n");
             fout.write(csvLine.toString());
             for (MechSummary mech : mechs){
                 if (mech.getUnitType().equals("Infantry") || (mech.getUnitType().equals("Gun Emplacement"))){
@@ -102,7 +102,7 @@ public class MechCacheCSVTool {
                             .getInternalsType()] + ",";
                     csvLine.append(isString);
                 }else if
-                	(mech.getInternalsType() < 0){
+                    (mech.getInternalsType() < 0){
                     csvLine.append("Not Applicable,");
                 }
                 
@@ -124,9 +124,9 @@ public class MechCacheCSVTool {
                 if (mech.getGyroType() >= 0){
                     csvLine.append(Mech.GYRO_STRING[mech.getGyroType()] + ",");
                 } else if 
-                	(mech.getGyroType() <0){   
-                    csvLine.append("Not Applicable,");	
-               	}
+                    (mech.getGyroType() <0){   
+                    csvLine.append("Not Applicable,");    
+                   }
                 
                 // Armor type - prints different armor types on the unit
                 Vector<Integer> armorType, armorTech;

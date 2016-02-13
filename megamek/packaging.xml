@@ -33,7 +33,7 @@
 	<property name="pkgbuilddir" value="${pkgdir}/${builddir}" />
 
 	<!-- gitroot used for git authentification -->
-	<property name="gitroot" value="http://git.code.sf.net/p/megamek/git" />
+	<property name="gitroot" value="https://github.com/MegaMek/megamek.git" />
 
 	<property name="timestampfile" value="${logdir}/timestamp" />
 	<property name="TinyXMLsrc" value="TinyXML07-src.zip" />

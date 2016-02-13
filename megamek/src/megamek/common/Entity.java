@@ -4630,10 +4630,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int cyberBonus = 0;
         if (((crew.getOptions().booleanOption("cyber_eye_im") || crew
                 .getOptions().booleanOption("mm_eye_im"))
-             && (this instanceof Infantry) && !(this instanceof BattleArmor))
-            || (crew.getOptions().booleanOption("mm_eye_im") && (crew
-                                                                         .getOptions().booleanOption("vdni") || crew
-                                                                         .getOptions().booleanOption("bvdni")))) {
+                && (this instanceof Infantry) && !(this instanceof BattleArmor))
+                || (crew.getOptions().booleanOption("mm_eye_im") && (crew
+                        .getOptions().booleanOption("vdni") || crew
+                        .getOptions().booleanOption("bvdni")))) {
             cyberBonus = 1;
         }
 

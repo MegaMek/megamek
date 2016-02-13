@@ -2826,6 +2826,7 @@ public class Server implements Runnable {
                 }
                 break;
             case PHASE_MOVEMENT:
+                detectHiddenUnits();
                 resolveWhatPlayersCanSeeWhatUnits();
                 doAllAssaultDrops();
                 addMovementHeat();
@@ -12995,6 +12996,70 @@ public class Server implements Runnable {
             }
         }
         return apdsCoords;
+    }
+
+    /**
+     * Checks to see if any units can detected hidden units.
+     */
+    private void detectHiddenUnits() {
+        // If hidden units aren't on, nothing to do
+        if (!game.getOptions().booleanOption("hidden_units")) {
+            return;
+        }
+        // Get all hidden units
+        ArrayList<Entity> hiddenUnits = new ArrayList<>();
+        for (Entity ent : game.getEntitiesVector()) {
+            if (ent.isHidden()) {
+                hiddenUnits.add(ent);
+            }
+        }
+
+        // If no one is hidden, there's nothing to do
+        if (hiddenUnits.size() < 1) {
+            return;
+        }
+
+        // See if any unit with a probe, detects any hidden units
+        for (Entity detector : game.getEntitiesVector()) {
+            int probeRange = detector.getBAPRange();
+            // No probe, skip unit
+            if (probeRange < 0) {
+                continue;
+            }
+            // Units without a position won't be able to detect
+            if (detector.getPosition() == null) {
+                continue;
+            }
+
+            for (Entity detected : hiddenUnits) {
+                // Only detected enemy units
+                if (!detector.isEnemyOf(detected)) {
+                    continue;
+                }
+                // Can't detect units without a position
+                if (detected.getPosition() == null) {
+                    continue;
+                }
+                // Can only detect units within the probes range
+                int dist = detector.getPosition().distance(
+                        detected.getPosition());
+                if (dist > probeRange) {
+                    continue;
+                }
+                LosEffects los = LosEffects.calculateLos(game,
+                        detector.getId(), detected);
+                if (los.canSee()) {
+                    detected.setHidden(false);
+                    entityUpdate(detected.getId());
+                    Report r = new Report(9960);
+                    r.addDesc(detector);
+                    r.subject = detector.getId();
+                    r.add(detected.getPosition().getBoardNum());
+                    vPhaseReport.addElement(r);
+                    Report.addNewline(vPhaseReport);
+                }
+            }
+        }
     }
 
     /**

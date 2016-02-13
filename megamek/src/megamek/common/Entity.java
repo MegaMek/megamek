@@ -46,6 +46,7 @@ import megamek.common.actions.DisplacementAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
@@ -465,7 +466,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     protected EntityMovementMode movementMode = EntityMovementMode.NONE;
 
+    /**
+     * Flag that determines if this Entity is a hidden unit or not (see TW pg
+     * 259).
+     */
     protected boolean isHidden = false;
+
+    /**
+     * Keeps track of whether this Entity should activate in a particular game
+     * phase.  Generally this will be null, indicating the unit isn't
+     * activating.
+     */
+    protected IGame.Phase hiddenActivationPhase = null;
 
     protected boolean carcass = false;
 
@@ -2389,6 +2401,24 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return true;
         }
 
+        // Additional restrictions for hidden units
+        if (isHidden()) {
+            // Can't deploy in paved hexes
+            if (hex.containsTerrain(Terrains.PAVEMENT)
+                    || hex.containsTerrain(Terrains.ROAD)) {
+                return true;
+            }
+            // Can't deploy on a bridge
+            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation)
+                    && hex.containsTerrain(Terrains.BRIDGE)) {
+                return true;
+            }
+            // Can't deploy on the surface of water
+            if (hex.containsTerrain(Terrains.WATER) && (currElevation == 0)) {
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -2407,24 +2437,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         if ((mapType == Board.T_SPACE) && doomedInSpace()) {
             return true;
-        }
-
-        // Additional restrictions for hidden units
-        if (isHidden()) {
-            // Can't deploy in paved hexes
-            if (hex.containsTerrain(Terrains.PAVEMENT)
-                    || hex.containsTerrain(Terrains.ROAD)) {
-                return true;
-            }
-            // Can't deploy on a bridge
-            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation)
-                    && hex.containsTerrain(Terrains.BRIDGE)) {
-                return true;
-            }
-            // Can't deploy on the surface of water
-            if (hex.containsTerrain(Terrains.WATER) && (currElevation == 0)) {
-                return true;
-            }
         }
 
         return false;
@@ -8541,6 +8553,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return false;
         }
 
+        // Hidden units shouldn't be counted for turn order, unless deploying
+        if (isHidden() && phase != IGame.Phase.PHASE_DEPLOYMENT) {
+            return false;
+        }
+
         switch (phase) {
             case PHASE_MOVEMENT:
                 return isEligibleForMovement();
@@ -9913,11 +9930,39 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
+     * Set a phase for this hidden unit to become active in.
+     *
+     * @param phase
+     */
+    public void setHiddeActivationPhase(IGame.Phase phase) {
+        hiddenActivationPhase = phase;
+    }
+
+    /**
      * Returns true if this unit is currently hidden (hidden units, TW pg 259).
      * @return
      */
     public boolean isHidden() {
         return isHidden;
+    }
+
+    /**
+     * Returns true if this unit should be considering a hidden unit that is
+     * activating.
+     * @return
+     */
+    public boolean isHiddenActivating() {
+        return getHiddenActivationPhase() != null;
+    }
+
+    /**
+     * Get the phase that this hidden unit will activate in (generally this
+     * will be null, indicating that the unit isn't activating).
+     * @return
+     */
+    @Nullable
+    public IGame.Phase getHiddenActivationPhase() {
+        return hiddenActivationPhase;
     }
 
     /**

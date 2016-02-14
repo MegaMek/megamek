@@ -59,6 +59,7 @@ import java.awt.image.ImageProducer;
 import java.awt.image.Kernel;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -67,7 +68,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -1260,9 +1260,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 Transparency.TRANSLUCENT);
         
         Graphics2D g = (Graphics2D)(ShadowMap.createGraphics());
-        int[] LightDirection = { -19, 7 }; 
+        double[] LightDirection = { -19, 7 }; 
         
         IBoard board = game.getBoard();
+        if (board == null) return;
 
         // Shadows for elevation
         // 1) Sort the board hexes by elevation
@@ -1270,13 +1271,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         HashMap<Integer,ArrayList<Coords>> sortedHexes = new HashMap<Integer,ArrayList<Coords>>();
         for (Coords c: allBoardHexes()) {
             IHex hex = board.getHex(c);
+            // Level
             int level = hex.getLevel();
+//            int level = hex.ceiling();
             if (sortedHexes.get(level) == null) { // no hexes yet for this height
                 sortedHexes.put(level, new ArrayList<Coords>());
             }
             sortedHexes.get(level).add(c);
         }
-        
+
         // 2) Gather the hex borders to construct areas
         // for each level, for each hex in that level, 
         // all borders of the hex are added to a list. 
@@ -1357,9 +1360,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         b2.translate(HEX_W/2, 0);
                     }
                     Point p3 = new Point(b1);
-                    p3.translate(LightDirection[0]*(shadowcaster-shadowed), LightDirection[1]*(shadowcaster-shadowed));
+                    p3.translate((int)(LightDirection[0]*(shadowcaster-shadowed)),
+                            (int)(LightDirection[1]*(shadowcaster-shadowed)));
                     Point p4 = new Point(b2);
-                    p4.translate(LightDirection[0]*(shadowcaster-shadowed), LightDirection[1]*(shadowcaster-shadowed));
+                    p4.translate((int)(LightDirection[0]*(shadowcaster-shadowed)), 
+                            (int)(LightDirection[1]*(shadowcaster-shadowed)));
                     Polygon borderShadow = new Polygon();
                     borderShadow.addPoint(b1.x, b1.y);
                     borderShadow.addPoint(b2.x, b2.y);
@@ -1395,6 +1400,31 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             g.setClip(saveClip);
         }
         
+        // Shadows for buildings
+        g.setColor(new Color(0,0,20,255));
+        Enumeration<Building> bldgs = board.getBuildings();
+
+        while (bldgs.hasMoreElements()) {
+            Building bldg = bldgs.nextElement();
+            Enumeration<Coords> bldgC = bldg.getCoords();
+            while (bldgC.hasMoreElements()) {
+                Coords c = bldgC.nextElement();
+                IHex hex = board.getHex(c);
+                List<Image> supers = tileManager.supersFor(hex);
+                Image firstSuper = supers.get(0);
+                Image mask = createShadowMask(firstSuper);
+                int h = board.getHex(c).ceiling();
+                int l = board.getHex(c).getLevel();
+                Point2D p1 = getHexLocationLargeTile(c.getX(), c.getY());
+                double deltaX = LightDirection[0]/10;
+                double deltaY = LightDirection[1]/10;
+                for (int i = 0; i<10*(h-l); i++) {
+                    g.drawImage(mask, (int)p1.getX(), (int)p1.getY(), null);
+                    p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
+                }
+            }
+        }
+
         // Soften up the shadows
         Kernel kernel = new Kernel(5, 5,
                 new float[] {

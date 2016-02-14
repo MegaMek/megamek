@@ -162,6 +162,11 @@ public abstract class BotClient extends Client {
                                     evt.getWAAs(), true);
                         sendAPDSAssignCFRResponse(evt.getWAAs().indexOf(waa));
                         break;
+                    case Packet.COMMAND_CFR_HIDDEN_PBS:
+                        // TODO: Punt for now; this will need to be updated for
+                        // bot to make pointblank shots with hidden units
+                        sendHiddenPBSCFRResponse(null);
+                        break;
                 }
             }
 

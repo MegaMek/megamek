@@ -1478,6 +1478,10 @@ public class Client implements IClientCommandHandler {
                         cfrEvt.setApdsDists((List<Integer>) c.getData()[2]);
                         cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
                         break;
+                    case Packet.COMMAND_CFR_HIDDEN_PBS:
+                        cfrEvt.setEntityId((int)c.getObject(1));
+                        cfrEvt.setTargetId((int)c.getObject(2));
+                        break;
                 }
                 game.processGameEvent(cfrEvt);
                 break;
@@ -1521,6 +1525,12 @@ public class Client implements IClientCommandHandler {
 
     public void sendAPDSAssignCFRResponse(Integer waaIndex) {
         Object data[] = { Packet.COMMAND_CFR_APDS_ASSIGN, waaIndex };
+        Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
+        send(packet);
+    }
+
+    public void sendHiddenPBSCFRResponse(Vector<EntityAction> attacks) {
+        Object data[] = { Packet.COMMAND_CFR_HIDDEN_PBS, attacks };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }

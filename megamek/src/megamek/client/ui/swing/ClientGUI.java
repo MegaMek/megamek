@@ -1985,6 +1985,27 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                                 apdsOptions.indexOf(result) - 1);
                     }
                     break;
+                case Packet.COMMAND_CFR_HIDDEN_PBS:
+                    Entity attacker = client.getGame().getEntity(
+                            evt.getEntityId());
+                    Entity target = client.getGame().getEntity(
+                            evt.getTargetId());
+                    bv.centerOnHex(attacker.getPosition());
+                    msg = Messages.getString(
+                            "ClientGUI.PointBlankShot.Message",
+                            new Object[] { target.getDisplayName(),
+                                    attacker.getDisplayName() });
+                    title = Messages
+                            .getString("ClientGUI.PointBlankShot.Title");
+                    int pbsChoice = JOptionPane.showConfirmDialog(frame, msg,
+                            title, JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE);
+                    if (pbsChoice == JOptionPane.YES_OPTION) {
+                        // TODO
+                    } else {
+                        client.sendHiddenPBSCFRResponse(null);
+                    }
+                    break;
             }
         }
     };

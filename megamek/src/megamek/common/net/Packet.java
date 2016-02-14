@@ -125,6 +125,7 @@ public class Packet {
     public static final int COMMAND_CFR_EDGE_PROMPT = 710;
     public static final int COMMAND_CFR_AMS_ASSIGN = 715;
     public static final int COMMAND_CFR_APDS_ASSIGN = 716;
+    public static final int COMMAND_CFR_HIDDEN_PBS = 717;
     
     public static final int COMMAND_GAME_VICTORY_EVENT = 800;
 

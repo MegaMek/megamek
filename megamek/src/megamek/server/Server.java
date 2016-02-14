@@ -6579,6 +6579,7 @@ public class Server implements Runnable {
         boolean didMove = false;
         boolean recovered = false;
         Entity loader = null;
+        boolean continueTurnFromPBS = false;
 
         // get a list of coordinates that the unit passed through this turn
         // so that I can later recover potential bombing targets
@@ -6633,6 +6634,16 @@ public class Server implements Runnable {
         /* Bug 754610: Revert fix for bug 702735. */
         MoveStep prevStep = null;
 
+        ArrayList<Entity> hiddenEnemies = new ArrayList<>();
+        if (game.getOptions().booleanOption("hidden_units")) {
+            for (Entity e : game.getEntitiesVector()) {
+                if (e.isHidden() && e.isEnemyOf(entity)
+                        && (e.getPosition() != null)) {
+                    hiddenEnemies.add(e);
+                }
+            }
+        }
+
         Vector<UnitLocation> movePath = new Vector<UnitLocation>();
         EntityMovementType lastStepMoveType = md.getLastStepMovementType();
         for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements(); ) {
@@ -6646,6 +6657,44 @@ public class Server implements Runnable {
             boolean isOnGround = !i.hasMoreElements();
             isOnGround |= stepMoveType != EntityMovementType.MOVE_JUMP;
             isOnGround &= step.getElevation() < 1;
+
+            // Check for hidden units point blank shots
+            if (game.getOptions().booleanOption("hidden_units")) {
+                for (Entity e : hiddenEnemies) {
+                    int dist = e.getPosition().distance(step.getPosition());
+                    // Checking for same hex and stacking violation
+                    if ((dist == 0)
+                            && (Compute.stackingViolation(game, entity.getId(),
+                                    step.getPosition()) != null)) {
+                        if (doBlind()) {
+                            r = new Report(9961);
+                            r.subject = e.getId();
+                            r.addDesc(e);
+                            r.addDesc(entity);
+                            r.add(step.getPosition().getBoardNum());
+                            addReport(r);
+                            addNewLines();
+                        }
+                        r = new Report(9962);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
+                        r.add(step.getPosition().getBoardNum());
+                        addReport(r);
+                        addNewLines();
+                        return;
+                    // Potential point-blank shot
+                    } else if ((dist == 1) && !e.madePointblankShot()) {
+                        entity.setPosition(step.getPosition());
+                        entityUpdate(entity.getId());
+                        boolean tookPBS = processPointblankShotCFR(e, entity);
+                        // Movement should be interrupted
+                        if (tookPBS) {
+                            continueTurnFromPBS = true;
+                            break;
+                        }
+                    }
+                }
+            }
 
             // stop for illegal movement
             if (stepMoveType == EntityMovementType.MOVE_ILLEGAL) {
@@ -8896,12 +8945,13 @@ public class Server implements Runnable {
         // Need to check here if the 'Mech actually went from non-prone to prone
         // here because 'fellDuringMovement' is sometimes abused just to force
         // another turn and so doesn't reliably tell us.
-        if (!(game.getOptions().booleanOption("falls_end_movement")
-              && (entity instanceof Mech) && !wasProne && entity.isProne())
-            && (fellDuringMovement && !entity.isCarefulStand()) // Careful standing takes up the whole turn
-            && !turnOver
-            && (entity.mpUsed < entity.getRunMP())
-            && entity.isSelectableThisTurn() && !entity.isDoomed()) {
+        boolean continueTurnFromFall = !(game.getOptions().booleanOption("falls_end_movement")
+                && (entity instanceof Mech) && !wasProne && entity.isProne())
+                && (fellDuringMovement && !entity.isCarefulStand()) // Careful standing takes up the whole turn
+                && !turnOver
+                && (entity.mpUsed < entity.getRunMP());
+        if ((continueTurnFromFall || continueTurnFromPBS)
+                && entity.isSelectableThisTurn() && !entity.isDoomed()) {
             entity.applyDamage();
             entity.setDone(false);
             GameTurn newTurn = new GameTurn.SpecificEntityTurn(entity
@@ -9059,6 +9109,43 @@ public class Server implements Runnable {
 
             } else {
                 ((Mech) entity).setJustMovedIntoIndustrialKillingWater(false);
+            }
+        }
+    }
+
+    /**
+     * Handles a pointblank shot for hidden units, which must request feedback
+     * from the client of the player who owns the hidden unit.
+     * @return Returns true if a point-blank shot was taken, otherwise false
+     */
+    private boolean processPointblankShotCFR(Entity hidden, Entity target) {
+        sendPointBlankShotCFR(hidden, target);
+        synchronized (cfrPacketQueue) {
+            try {
+                cfrPacketQueue.wait();
+            } catch (InterruptedException e) {
+                // Do nothing
+            }
+            if (cfrPacketQueue.size() > 0) {
+                ReceivedPacket rp = cfrPacketQueue.poll();
+                int cfrType = rp.packet.getIntValue(0);
+                // Make sure we got the right type of response
+                if (cfrType != Packet.COMMAND_CFR_HIDDEN_PBS) {
+                    System.err
+                            .println("Excepted a "
+                                    + "COMMAND_CFR_HIDDEN_PBS CFR packet, "
+                                    + "received: " + cfrType);
+                    throw new IllegalStateException();
+                }
+                // Check to see if the client declined the PBS
+                if (rp.packet.getObject(1) == null) {
+                    return false;
+                }
+                Vector<EntityAction> attacks = (Vector<EntityAction>) rp.packet
+                        .getObject(1);
+                return true;
+            } else { // If no responses, treat as no action
+                return false;
             }
         }
     }
@@ -11978,6 +12065,13 @@ public class Server implements Runnable {
         send(e.getOwnerId(), new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
                 new Object[] { Packet.COMMAND_CFR_APDS_ASSIGN, e.getId(),
                 apdsDists, waas }));
+    }
+
+    private void sendPointBlankShotCFR(Entity hidden, Entity target) {
+        send(hidden.getOwnerId(),
+                new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
+                        new Object[] { Packet.COMMAND_CFR_HIDDEN_PBS,
+                                hidden.getId(), target.getId() }));
     }
 
     private Vector<Report> doEntityDisplacementMinefieldCheck(Entity entity,

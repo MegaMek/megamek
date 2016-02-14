@@ -473,6 +473,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected boolean isHidden = false;
 
     /**
+     * Used to determine if this Entity has made a pointblank shot so far this
+     * round.
+     */
+    protected boolean madePointblankShot = false;
+
+    /**
      * Keeps track of whether this Entity should activate in a particular game
      * phase.  Generally this will be null, indicating the unit isn't
      * activating.
@@ -5579,6 +5585,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         deactivateRadicalHS();
 
         clearAttackedByThisTurn();
+
+        setMadePointblankShot(false);
     }
 
     /**
@@ -9929,6 +9937,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         isHidden = inVal;
     }
 
+    public void setMadePointblankShot(boolean inVal) {
+        madePointblankShot = inVal;
+    }
+
     /**
      * Set a phase for this hidden unit to become active in.
      *
@@ -9944,6 +9956,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean isHidden() {
         return isHidden;
+    }
+
+    /**
+     * Returns true if this unit has already made a pointblank shot this round.
+     * @return
+     */
+    public boolean madePointblankShot() {
+        return madePointblankShot;
     }
 
     /**

@@ -15,6 +15,7 @@ v0.41.15-git
 + Issue #27: Shift-letter keys don't appear to work in ChatterBox2
 + Data: New Sprites and Unit Fixes.
 + Issue #6: Issues with path separators for boards
++ Bug: CustomUnitDialog was using Entity's TL for verification, not game TL
 
 v0.41.14 (2016-02-02 13:10 UTC)
 + Data New Sprites/Various RAT and Unit Fixes.

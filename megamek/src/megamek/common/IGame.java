@@ -64,6 +64,7 @@ public interface IGame {
         PHASE_MOVEMENT_REPORT,
         PHASE_OFFBOARD,
         PHASE_OFFBOARD_REPORT,
+        PHASE_POINTBLANK_SHOT, // Fake phase only reached through hidden units
         PHASE_FIRING,
         PHASE_FIRING_REPORT,
         PHASE_PHYSICAL,

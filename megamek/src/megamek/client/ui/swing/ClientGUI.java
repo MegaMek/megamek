@@ -1001,6 +1001,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 mechW.setVisible(false);
                 setMapVisible(false);
                 break;
+            case PHASE_POINTBLANK_SHOT:
             case PHASE_SET_ARTYAUTOHITHEXES:
             case PHASE_DEPLOY_MINEFIELDS:
             case PHASE_DEPLOYMENT:
@@ -1164,6 +1165,17 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                 component = new FiringDisplay(this);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "FiringDisplay"; //$NON-NLS-1$
+                component.setName(secondary);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(bvc, main);
+                }
+                currPhaseDisplay = (StatusBarPhaseDisplay)(component);
+                panSecondary.add(component, secondary);
+                break;
+            case PHASE_POINTBLANK_SHOT:
+                component = new PointblankShotDisplay(this);
+                main = "BoardView"; //$NON-NLS-1$
+                secondary = "PointblankShotDisplay"; //$NON-NLS-1$
                 component.setName(secondary);
                 if (!mainNames.containsValue(main)) {
                     panMain.add(bvc, main);
@@ -2001,7 +2013,11 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                             title, JOptionPane.YES_NO_OPTION,
                             JOptionPane.QUESTION_MESSAGE);
                     if (pbsChoice == JOptionPane.YES_OPTION) {
-                        // TODO
+                        // Switch the UI to display the PointblankShotDisplay
+                        switchPanel(IGame.Phase.PHASE_POINTBLANK_SHOT);
+                        ((PointblankShotDisplay) curPanel).selectEntity(evt
+                                .getEntityId());
+                        ((PointblankShotDisplay) curPanel).target(target);
                     } else {
                         client.sendHiddenPBSCFRResponse(null);
                     }

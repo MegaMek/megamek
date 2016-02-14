@@ -19,6 +19,7 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Composite;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -26,6 +27,8 @@ import java.awt.FontMetrics;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Point;
@@ -34,6 +37,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Toolkit;
+import java.awt.Transparency;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -43,12 +47,16 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
+import java.awt.image.ConvolveOp;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
+import java.awt.image.Kernel;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,6 +67,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -316,6 +325,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     Shape[] facingPolys;
     Shape UpArrow;
     Shape DownArrow;
+    
+    // Image to hold the complete board shadow map
+    BufferedImage ShadowMap;
 
     // the player who owns this BoardView's client
     private IPlayer localPlayer = null;
@@ -1069,6 +1081,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Used to pad the board edge
         g.translate(HEX_W, HEX_H);
+        
+        // Initialize the shadow map when its not yet present
+        if (ShadowMap == null) {
+            updateShadowMap();
+        }
 
         drawHexes(g, g.getClipBounds());
 
@@ -1206,6 +1223,189 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             g.setColor(Color.YELLOW);
             g.drawString(s, g.getClipBounds().x + 5, g.getClipBounds().y + 20);
         }
+    }
+    
+    /**
+     *  Returns a list of Coords of all hexes on the board.
+     *  Returns ONLY hexes where board.getHex != null.
+     */
+    private ArrayList<Coords> allBoardHexes() {
+        IBoard board = game.getBoard();
+        if (board == null) return null;
+        
+        ArrayList<Coords> CoordList = new ArrayList<Coords>();
+        for (int i = 0; i < board.getWidth(); i++) {
+            for (int j = 0; j < board.getHeight(); j++) {
+                IHex hex = board.getHex(i, j);
+                if (hex != null) {
+                    CoordList.add(new Coords(i, j));
+                }
+            }
+        }
+        
+        return CoordList;
+    }
+
+    /**
+     *  Prepares a shadow map for the board, drawing shadows for hills/trees/buildings.
+     *  The shadow map is an image the size of the whole board.
+     */
+    private void updateShadowMap() {
+        GraphicsConfiguration config = GraphicsEnvironment
+                .getLocalGraphicsEnvironment().getDefaultScreenDevice()
+                .getDefaultConfiguration();
+
+        if (boardSize == null) updateBoardSize();
+        ShadowMap = config.createCompatibleImage(boardSize.width, boardSize.height,
+                Transparency.TRANSLUCENT);
+        
+        Graphics2D g = (Graphics2D)(ShadowMap.createGraphics());
+        int[] LightDirection = { -19, 7 }; 
+        
+        IBoard board = game.getBoard();
+
+        // Shadows for elevation
+        // 1) Sort the board hexes by elevation
+        g.setColor(new Color(0,0,20,255));
+        HashMap<Integer,ArrayList<Coords>> sortedHexes = new HashMap<Integer,ArrayList<Coords>>();
+        for (Coords c: allBoardHexes()) {
+            IHex hex = board.getHex(c);
+            int level = hex.getLevel();
+            if (sortedHexes.get(level) == null) { // no hexes yet for this height
+                sortedHexes.put(level, new ArrayList<Coords>());
+            }
+            sortedHexes.get(level).add(c);
+        }
+        
+        // 2) Gather the hex borders to construct areas
+        // for each level, for each hex in that level, 
+        // all borders of the hex are added to a list. 
+        // Whenever a hex border to be added is already present, 
+        // it will not be added but removed as this border is then
+        // inside the area.
+        int[] dirModsX = { 1,2,2,1,0,0 };
+        int[] dirModsY = { 0,0,1,2,1,0 };
+        HashMap<Integer,ArrayList<Integer>> levelBorders = new HashMap<Integer,ArrayList<Integer>>();
+        for (Integer level: sortedHexes.keySet()) { // all levels for which there are hexes
+            for (Coords c: sortedHexes.get(level)) { // all hexes of that level
+                if (levelBorders.get(level) == null) { // no List yet for this level
+                    levelBorders.put(level, new ArrayList<Integer>());
+                }
+                for (int dir: allDirections) {
+                    int cHash = (c.getX()*2+dirModsX[dir])*1000000;
+                    cHash += c.getY()*2+dirModsY[dir]+c.getX()%2;
+                    if (levelBorders.get(level).contains(cHash)) {
+                        levelBorders.remove(cHash); // hex border already present -> remove
+                    } else {
+                        levelBorders.get(level).add(cHash); // not there -> add
+                    }
+                }
+            }
+        }
+        
+        // 2) Create clipping areas
+        HashMap<Integer,Area> levelClips = new HashMap<Integer,Area>();
+        for (Integer h: sortedHexes.keySet()) {
+            for (Coords c: sortedHexes.get(h)) {
+                if (levelClips.get(h) == null) { // no area yet for this level
+                    levelClips.put(h, new Area());
+                }
+                Point p = getHexLocationLargeTile(c.getX(), c.getY());
+                AffineTransform t = AffineTransform.getTranslateInstance(p.x, p.y);
+                t.scale(1.02, 1.02);
+                Area addHex = new Area(t.createTransformedShape(hexPoly));
+                Area fullArea = levelClips.get(h);
+                fullArea.add(addHex);
+                levelClips.put(h, fullArea);
+            }
+        }
+
+        // 3) Draw shadows
+        for (int shadowcaster = board.getMinElevation()+1; 
+                shadowcaster <= board.getMaxElevation(); 
+                shadowcaster++) {
+            
+            if (levelClips.get(shadowcaster) == null) continue;
+            for (int shadowed = board.getMinElevation(); 
+                shadowed < shadowcaster; 
+                shadowed++) {
+                
+                if (levelClips.get(shadowed) == null) continue;
+                
+                Shape saveClip = g.getClip();
+                g.setClip(levelClips.get(shadowed));
+                
+                // Create the shadow area for this level difference
+                for (int border: levelBorders.get(shadowcaster)) {
+                    int x = border/1000000; 
+                    int y = border-x*1000000; 
+                    Point b1, b2;
+                    if (x % 2 == 0) {
+                        if (((x % 4 == 0) && (y % 2 == 0)) ||
+                            ((x % 4 == 2) && (y % 2 == 1)))   {
+                            b1 = new Point(x*HEX_W*3/8+HEX_W/4,y*HEX_H/2);
+                            b2 = new Point(b1);
+                            b2.translate(-HEX_W/4, HEX_H/2); 
+                        } else {
+                            b1 = new Point(x*HEX_W*3/8,y*HEX_H/2);
+                            b2 = new Point(b1);
+                            b2.translate(HEX_W/4, HEX_H/2);
+                        }
+                    } else {
+                        b1 = new Point((x-1)*HEX_W*3/8+HEX_W/4,y*HEX_H/2);
+                        b2 = new Point(b1);
+                        b2.translate(HEX_W/2, 0);
+                    }
+                    Point p3 = new Point(b1);
+                    p3.translate(LightDirection[0]*(shadowcaster-shadowed), LightDirection[1]*(shadowcaster-shadowed));
+                    Point p4 = new Point(b2);
+                    p4.translate(LightDirection[0]*(shadowcaster-shadowed), LightDirection[1]*(shadowcaster-shadowed));
+                    Polygon borderShadow = new Polygon();
+                    borderShadow.addPoint(b1.x, b1.y);
+                    borderShadow.addPoint(b2.x, b2.y);
+                    borderShadow.addPoint(p4.x, p4.y);
+                    borderShadow.addPoint(p3.x, p3.y);
+                    
+                    g.fillPolygon(borderShadow);
+                }
+                g.setClip(saveClip);
+            }
+        }
+
+        // Shadows for all woods hexes
+        g.setColor(new Color(30,30,50,125));
+        for (Integer level: sortedHexes.keySet()) { 
+            Shape saveClip = g.getClip();
+            g.setClip(levelClips.get(level)); // wood shadows only on the same level
+            for (Coords c: sortedHexes.get(level)) {
+                IHex hex = board.getHex(c);
+                if (hex.containsTerrain(Terrains.WOODS) ||
+                        hex.containsTerrain(Terrains.JUNGLE)) {
+                    for (int i=0; i<60; i++) {
+                        Point p = getHexLocationLargeTile(c.getX(), c.getY());
+                        p.translate(HEX_W/2, HEX_H/2);
+                        double n = Math.random()*2-1;
+                        double o = Math.random()*3-0.5;
+                        p.translate((int)(o*LightDirection[0]), (int) (o*LightDirection[1]));
+                        p.translate((int)(n*(-LightDirection[1])), (int) (n*LightDirection[0]));
+                        g.fillOval(p.x-10, p.y-10, 20, 20);
+                    } 
+                }
+            }
+            g.setClip(saveClip);
+        }
+        
+        // Soften up the shadows
+        Kernel kernel = new Kernel(5, 5,
+                new float[] {
+                        1f/25f, 1f/25f, 1f/25f, 1f/25f, 1f/25f,
+                        1f/25f, 1f/25f, 1f/25f, 1f/25f, 1f/25f,
+                        1f/25f, 1f/25f, 1f/25f, 1f/25f, 1f/25f,
+                        1f/25f, 1f/25f, 1f/25f, 1f/25f, 1f/25f,
+                        1f/25f, 1f/25f, 1f/25f, 1f/25f, 1f/25f});
+        BufferedImageOp op = new ConvolveOp(kernel);
+        ShadowMap = op.filter(ShadowMap, null);
+        ShadowMap = op.filter(ShadowMap, null); // soft, soft
     }
 
     /**
@@ -1946,20 +2146,77 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
             g.setClip(saveclip);
         }
-
+        
+        // To place roads under the shadow map, the supers for hexes
+        // with roads have to be drawn before the shadow map, otherwise
+        // the supers are drawn after
+        // TODO: what other supers are there? If only buildings, they could
+        // generally be drawn before the shadowmap
+        // Unfortunately I dont think the supers images themselves can be checked for
+        // roads.
         List<Image> supers = tileManager.supersFor(hex);
-        if (supers != null) {
-            for (Image image : supers) {
-                if (animatedImages.contains(image.hashCode())) {
-                    dontCache = true;
+        boolean supersUnderShadow = false;
+        if (hex.containsTerrain(Terrains.ROAD)) {
+            supersUnderShadow = true;
+            if (supers != null) {
+                for (Image image : supers) {
+                    if (animatedImages.contains(image.hashCode())) {
+                        dontCache = true;
+                    }
+                    scaledImage = getScaledImage(image, true);
+                    g.drawImage(scaledImage, 0, 0, this);
                 }
-                scaledImage = getScaledImage(image, true);
-                g.drawImage(scaledImage, 0, 0, this);
             }
         }
         
-        // Elevation Shadow in this hex when a higher one is adjacent
-        if (guip.getBoolean(GUIPreferences.ADVANCED_SHOW_HEX_SHADOWS))   
+        if (guip.getBoolean(GUIPreferences.SHADOWMAP) &&  
+            (ShadowMap != null)) {
+            Image scaledShadow = getScaledImage(ShadowMap, true);
+            
+            AffineTransform t = new AffineTransform();
+            // without the 1.02 unwanted hex borders will remain
+            t.scale(scale * 1.02, scale * 1.02); 
+            Shape clipShape = t.createTransformedShape(hexPoly);
+
+            Shape saveclip = g.getClip();
+            g.setClip(clipShape);
+            
+            int shWidth = scaledShadow.getWidth(null);
+            int shHeight = scaledShadow.getHeight(null);
+
+            Point p1SRC = getHexLocationLargeTile(c.getX(), c.getY());
+            p1SRC.x = p1SRC.x % shWidth; 
+            p1SRC.y = p1SRC.y % shHeight;
+            Point p2SRC = new Point((int) (p1SRC.x + HEX_W * scale),
+                    (int) (p1SRC.y + HEX_H * scale));
+            Point p2DST = new Point((int) (HEX_W * scale),
+                    (int) (HEX_H * scale));
+            
+            Composite svComp = g.getComposite();
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP,
+                    0.45f));
+
+            // paint the right slice from the big pic
+            g.drawImage(scaledShadow, 0, 0, p2DST.x, p2DST.y, p1SRC.x, p1SRC.y,
+                    p2SRC.x, p2SRC.y, null); 
+            g.setClip(saveclip);
+            g.setComposite(svComp);
+        }
+
+        if (!supersUnderShadow) {
+            if (supers != null) {
+                for (Image image : supers) {
+                    if (animatedImages.contains(image.hashCode())) {
+                        dontCache = true;
+                    }
+                    scaledImage = getScaledImage(image, true);
+                    g.drawImage(scaledImage, 0, 0, this);
+                }
+            }
+        }
+        
+        // AO Hex Shadow in this hex when a higher one is adjacent
+        if (guip.getBoolean(GUIPreferences.AOHEXSHADOWS))   
         {
             for (int dir: allDirections) {
 	    		Shape ShadowShape = getElevationShadowArea(c, dir);
@@ -2109,45 +2366,60 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int s36 = (int)(36*scale);
         int s62 = (int)(62*scale);
         int s83 = (int)(83*scale);
+        
+        Point p1 = new Point(s62, 0);
+        Point p2 = new Point(s21, 0);
+        Point p3 = new Point(s83, s35);
+        Point p4 = new Point(s83, s36);
+        Point p5 = new Point(s62, s71);
+        Point p6 = new Point(s21, s71);
+        Point p7 = new Point(0, s36);
+        Point p8 = new Point(0, s35);
+
+        g.setColor(Color.black);
 
         // draw elevation borders
-        Point p1, p2;
-        g.setColor(Color.black);
         if (drawElevationLine(c, 0)) {
-            p1 = new Point(s62, 0);
-            p2 = new Point(s21, 0);
             drawIsometricElevation(c, Color.GRAY, p1, p2, 0, g);
-            g.drawLine(s21, 0, s62, 0);
+            if (guip.getBoolean(GUIPreferences.LEVELHIGHLIGHT)) {
+                g.drawLine(s21, 0, s62, 0);
+            }
         }
+
         if (drawElevationLine(c, 1)) {
-            p1 = new Point(s83, s35);
-            p2 = new Point(s62, 0);
-            drawIsometricElevation(c, Color.DARK_GRAY, p1, p2, 1, g);
-            g.drawLine(s62, 0, s83, s35);
+            drawIsometricElevation(c, Color.DARK_GRAY, p3, p1, 1, g);
+            if (guip.getBoolean(GUIPreferences.LEVELHIGHLIGHT)) {
+                g.drawLine(s62, 0, s83, s35);
+            }
         }
+
         if (drawElevationLine(c, 2)) {
-            p1 = new Point(s83, s36);
-            p2 = new Point(s62, s71);
-            drawIsometricElevation(c, Color.LIGHT_GRAY, p1, p2, 2, g);
-            g.drawLine(s83, s36, s62, s71);
+            drawIsometricElevation(c, Color.LIGHT_GRAY, p4, p5, 2, g);
+            if (guip.getBoolean(GUIPreferences.LEVELHIGHLIGHT)) {
+                g.drawLine(s83, s36, s62, s71);
+            }
         }
+
         if (drawElevationLine(c, 3)) {
-            p1 = new Point(s21, s71);
-            p2 = new Point(s62, s71);
-            drawIsometricElevation(c, Color.GRAY, p1, p2, 3, g);
-            g.drawLine(s62, s71, s21, s71);
+            drawIsometricElevation(c, Color.GRAY, p6, p5, 3, g);
+            if (guip.getBoolean(GUIPreferences.LEVELHIGHLIGHT)) {
+                g.drawLine(s62, s71, s21, s71);
+            }
         }
+
         if (drawElevationLine(c, 4)) {
-            p1 = new Point(0, s36);
-            p2 = new Point(s21, s71);
-            drawIsometricElevation(c, Color.DARK_GRAY, p1, p2, 4, g);
-            g.drawLine(s21, s71, 0, s36);
+            drawIsometricElevation(c, Color.DARK_GRAY, p7, p6, 4, g);
+            if (guip.getBoolean(GUIPreferences.LEVELHIGHLIGHT)) {
+                g.drawLine(s21, s71, 0, s36);
+            }
         }
+
         if (drawElevationLine(c, 5)) {
-            p1 = new Point(0, s35);
-            p2 = new Point(s21, 0);
-            drawIsometricElevation(c, Color.LIGHT_GRAY, p1, p2, 5, g);
-            g.drawLine(0, s35, s21, 0);
+            drawIsometricElevation(c, Color.LIGHT_GRAY, p8, p2, 5, g);
+            if (guip.getBoolean(GUIPreferences.LEVELHIGHLIGHT)) {
+                g.drawLine(0, s35, s21, 0);
+            }
+
         }
 
         boolean hasLoS = fovHighlightingAndDarkening.draw(g, c, 0, 0,
@@ -2273,7 +2545,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         final IHex dest = game.getBoard().getHexInDir(c, dir);
         final IHex src = game.getBoard().getHex(c);
 
-        if (!useIsometric()) {
+        if (!useIsometric() || 
+                GUIPreferences.getInstance().getBoolean(GUIPreferences.FLOATINGISO)) {
             return;
         }
 

@@ -6685,7 +6685,8 @@ public class Server implements Runnable {
                     // Potential point-blank shot
                     } else if ((dist == 1) && !e.madePointblankShot()) {
                         entity.setPosition(step.getPosition());
-                        entityUpdate(entity.getId());
+                        // Update entity position on ZZ
+                        send(e.getOwnerId(), createEntityPacket(entity.getId(), null));
                         boolean tookPBS = processPointblankShotCFR(e, entity);
                         // Movement should be interrupted
                         if (tookPBS) {
@@ -9120,32 +9121,114 @@ public class Server implements Runnable {
      */
     private boolean processPointblankShotCFR(Entity hidden, Entity target) {
         sendPointBlankShotCFR(hidden, target);
-        synchronized (cfrPacketQueue) {
-            try {
-                cfrPacketQueue.wait();
-            } catch (InterruptedException e) {
-                // Do nothing
-            }
-            if (cfrPacketQueue.size() > 0) {
-                ReceivedPacket rp = cfrPacketQueue.poll();
-                int cfrType = rp.packet.getIntValue(0);
-                // Make sure we got the right type of response
-                if (cfrType != Packet.COMMAND_CFR_HIDDEN_PBS) {
-                    System.err
-                            .println("Excepted a "
-                                    + "COMMAND_CFR_HIDDEN_PBS CFR packet, "
-                                    + "received: " + cfrType);
-                    throw new IllegalStateException();
-                }
-                // Check to see if the client declined the PBS
-                if (rp.packet.getObject(1) == null) {
+        boolean firstPacket = true;
+        // Keep processing until we get a response
+        while (true) {
+            synchronized (cfrPacketQueue) {
+                try {
+                    cfrPacketQueue.wait();
+                } catch (InterruptedException e) {
                     return false;
                 }
+                // Get the packet, if there's something to get
+                ReceivedPacket rp;
+                if (cfrPacketQueue.size() > 0) {
+                    rp = cfrPacketQueue.poll();
+                    int cfrType = rp.packet.getIntValue(0);
+                    // Make sure we got the right type of response
+                    if (cfrType != Packet.COMMAND_CFR_HIDDEN_PBS) {
+                        System.err
+                                .println("Expected a "
+                                        + "COMMAND_CFR_HIDDEN_PBS CFR packet, "
+                                        + "received: " + cfrType);
+                        continue;
+                    }
+                    // Check packet came from right ID
+                    if (rp.connId != hidden.getOwnerId()) {
+                        System.err.println("Exected a "
+                                + "COMMAND_CFR_HIDDEN_PBS CFR packet "
+                                + "from player  " + hidden.getOwnerId()
+                                + " but instead it came from player "
+                                + rp.connId);
+                        continue;
+                    }
+                } else { // If no packets, wait again
+                    continue;
+                }
+                // First packet indicates whether the PBS is taken or declined
+                if (firstPacket) {
+                    // Check to see if the client declined the PBS
+                    if (rp.packet.getObject(1) == null) {
+                        return false;
+                    } else {
+                        firstPacket = false;
+                        // Notify other clients, so they can display a message
+                        for (IPlayer p : game.getPlayersVector()) {
+                            if (p.getId() == hidden.getOwnerId()) {
+                                continue;
+                            }
+                            send(p.getId(), new Packet(
+                                    Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
+                                    new Object[] {
+                                            Packet.COMMAND_CFR_HIDDEN_PBS,
+                                            Entity.NONE, Entity.NONE }));
+                        }
+                        // Update all clients with the position of the PBS
+                        entityUpdate(target.getId());
+                        continue;
+                    }
+                }
+                // The second packet contains the attacks to process
+                @SuppressWarnings("unchecked")
                 Vector<EntityAction> attacks = (Vector<EntityAction>) rp.packet
                         .getObject(1);
+                // Process the Actions
+                for (EntityAction ea : attacks) {
+                    Entity entity = game.getEntity(ea.getEntityId());
+                    if (ea instanceof TorsoTwistAction) {
+                        TorsoTwistAction tta = (TorsoTwistAction) ea;
+                        if (entity.canChangeSecondaryFacing()) {
+                            entity.setSecondaryFacing(tta.getFacing());
+                        }
+                    } else if (ea instanceof FlipArmsAction) {
+                        FlipArmsAction faa = (FlipArmsAction) ea;
+                        entity.setArmsFlipped(faa.getIsFlipped());
+                    } else if (ea instanceof SearchlightAttackAction) {
+                        boolean hexesAdded = ((SearchlightAttackAction) ea)
+                                .setHexesIlluminated(game);
+                        // If we added new hexes, send them to all players.
+                        // These are spotlights at night, you know they're
+                        // there.
+                        if (hexesAdded) {
+                            send(createIlluminatedHexesPacket());
+                        }
+                        SearchlightAttackAction saa = (SearchlightAttackAction) ea;
+                        addReport(saa.resolveAction(game));
+                    } else if (ea instanceof WeaponAttackAction) {
+                        WeaponAttackAction waa = (WeaponAttackAction) ea;
+                        Entity ae = game.getEntity(waa.getEntityId());
+                        Mounted m = ae.getEquipment(waa.getWeaponId());
+                        Weapon w = (Weapon) m.getType();
+                        // Track attacks original target, for things like swarm LRMs
+                        waa.setOriginalTargetId(waa.getTargetId());
+                        waa.setOriginalTargetType(waa.getTargetType());
+                        AttackHandler ah = w.fire(waa, game, this);
+                        if (ah != null) {
+                            ah.setStrafing(waa.isStrafing());
+                            ah.setStrafingFirstShot(waa.isStrafingFirstShot());
+                            game.addAttack(ah);
+                        }
+                    }
+                }
+                // Now handle the attacks
+                // Set to the firing phase, so the attacks handle
+                IGame.Phase currentPhase = game.getPhase();
+                game.setPhase(IGame.Phase.PHASE_FIRING);
+                // Handle attacks
+                handleAttacks(true);
+                // Restore Phase
+                game.setPhase(currentPhase);
                 return true;
-            } else { // If no responses, treat as no action
-                return false;
             }
         }
     }
@@ -12068,6 +12151,7 @@ public class Server implements Runnable {
     }
 
     private void sendPointBlankShotCFR(Entity hidden, Entity target) {
+        // Send attacker/target IDs to PBS Client
         send(hidden.getOwnerId(),
                 new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST,
                         new Object[] { Packet.COMMAND_CFR_HIDDEN_PBS,
@@ -33625,6 +33709,10 @@ public class Server implements Runnable {
      * stay. TODO: Refactor the new entity annoucement out of here.
      */
     private void handleAttacks() {
+        handleAttacks(false);
+    }
+
+    private void handleAttacks(boolean pointblankShot) {
         Report r;
         int lastAttackerId = -1;
         Vector<AttackHandler> currentAttacks, keptAttacks;
@@ -33640,7 +33728,11 @@ public class Server implements Runnable {
                 int aId = ah.getAttackerId();
                 if ((aId != lastAttackerId) && !ah.announcedEntityFiring()) {
                     // report who is firing
-                    r = new Report(3100);
+                    if (pointblankShot) {
+                        r = new Report(3102);
+                    } else {
+                        r = new Report(3100);
+                    }
                     r.subject = aId;
                     Entity ae = game.getEntity(aId);
                     r.addDesc(ae);
@@ -33669,7 +33761,9 @@ public class Server implements Runnable {
                     handleAttackReports.addAll(checkFatalThresholds(aId,
                             lastAttackerId));
                     // report who is firing
-                    if (ah.isStrafing()) {
+                    if (pointblankShot) {
+                        r = new Report(3102);
+                    } else if (ah.isStrafing()) {
                         r = new Report(3101);
                     } else {
                         r = new Report(3100);

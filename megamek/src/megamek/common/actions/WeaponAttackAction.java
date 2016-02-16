@@ -286,7 +286,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 false);
     }
 
-    private static ToHitData toHit(IGame game, int attackerId,
+    public static ToHitData toHit(IGame game, int attackerId,
             Targetable target, int weaponId, int aimingAt, int aimingMode,
             boolean isNemesisConfused, boolean exchangeSwarmTarget,
             Targetable oldTarget, Targetable originalTarget,

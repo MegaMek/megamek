@@ -16,6 +16,7 @@ v0.41.15-git
 + Data: New Sprites and Unit Fixes.
 + Issue #6: Issues with path separators for boards
 + Bug: CustomUnitDialog was using Entity's TL for verification, not game TL
++ Bug: Server appears unresponsive during a client feedback request
 
 v0.41.14 (2016-02-02 13:10 UTC)
 + Data New Sprites/Various RAT and Unit Fixes.

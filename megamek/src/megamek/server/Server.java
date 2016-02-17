@@ -472,13 +472,20 @@ public class Server implements Runnable {
         @Override
         public void packetReceived(PacketReceivedEvent e) {
             ReceivedPacket rp = new ReceivedPacket(e.getConnection().getId(),
-                                                   e.getPacket());
+                    e.getPacket());
+            int cmd = e.getPacket().getCommand();
             // Handled CFR packets specially
-            if (e.getPacket().getCommand() == Packet.COMMAND_CLIENT_FEEDBACK_REQUEST) {
+            if (cmd == Packet.COMMAND_CLIENT_FEEDBACK_REQUEST) {
                 synchronized (cfrPacketQueue) {
                     cfrPacketQueue.add(rp);
                     cfrPacketQueue.notifyAll();
                 }
+            // Some packets should be handled immediately
+            } else if ((cmd == Packet.COMMAND_CLOSE_CONNECTION)
+                    || (cmd == Packet.COMMAND_CLIENT_NAME)
+                    || (cmd == Packet.COMMAND_CLIENT_VERSIONS)
+                    || (cmd == Packet.COMMAND_CHAT)) {
+                handle(rp.connId, rp.packet);
             } else {
                 synchronized (packetQueue) {
                     packetQueue.add(rp);
@@ -29346,7 +29353,7 @@ public class Server implements Runnable {
      *               packet.
      * @param packet - the <code>Packet</code> to be processed.
      */
-    protected synchronized void handle(int connId, Packet packet) {
+    protected void handle(int connId, Packet packet) {
         IPlayer player = game.getPlayer(connId);
         // Check player. Please note, the connection may be pending.
         if ((null == player) && (null == getPendingConnection(connId))) {

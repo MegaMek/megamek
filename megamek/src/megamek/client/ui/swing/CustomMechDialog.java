@@ -70,6 +70,7 @@ import megamek.common.Mounted;
 import megamek.common.OffBoardDirection;
 import megamek.common.Protomech;
 import megamek.common.Tank;
+import megamek.common.TechConstants;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.options.IOption;
@@ -1283,9 +1284,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             testEntity = new TestBattleArmor((BattleArmor) entity, 
                     verifier.baOption, null);
         }
-    
-        if (testEntity != null &&
-                !testEntity.correctEntity(new StringBuffer())) {
+        int gameTL = TechConstants.getGameTechLevel(client.getGame(),
+                entity.isClan());
+        if ((testEntity != null)
+                && !testEntity.correctEntity(new StringBuffer(), gameTL)) {
             entity.setDesignValid(false);
         } else {
             entity.setDesignValid(true);

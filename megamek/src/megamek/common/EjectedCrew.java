@@ -151,4 +151,10 @@ public class EjectedCrew extends Infantry {
         return false;
     }
     
+    @Override
+    public boolean isCrippled() {
+        // Ejected crew should always attempt to flee according to Forced Withdrawal.
+        return true;
+    }
+
 }

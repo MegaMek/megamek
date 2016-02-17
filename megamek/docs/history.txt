@@ -17,6 +17,7 @@ v0.41.15-git
 + Issue #6: Issues with path separators for boards
 + Bug: CustomUnitDialog was using Entity's TL for verification, not game TL
 + Bug: Server appears unresponsive during a client feedback request
++ Issue #31: Ejected Vehicle Crews Should Count as Crippled
 
 v0.41.14 (2016-02-02 13:10 UTC)
 + Data New Sprites/Various RAT and Unit Fixes.

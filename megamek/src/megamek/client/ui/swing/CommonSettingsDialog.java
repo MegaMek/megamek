@@ -804,10 +804,12 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setLevelHighlight(levelhighlight.isSelected());
         gs.setShadowMap(shadowMap.isSelected());
 
-        if (gs.getAntiAliasing() != chkAntiAliasing.isSelected()) {
+        if ((gs.getAntiAliasing() != chkAntiAliasing.isSelected()) &&
+                ((clientgui != null) && (clientgui.bv != null))) {            
             clientgui.bv.clearHexImageCache();
             clientgui.bv.repaint();
         }
+
         gs.setAntiAliasing(chkAntiAliasing.isSelected());
 
         gs.setShowDamageLevel(showDamageLevel.isSelected());
@@ -830,6 +832,10 @@ public class CommonSettingsDialog extends ClientDialog implements
         }
 
         if (tileSetChoice.getSelectedIndex() >= 0) {
+            if (!cs.getMapTileset().equals(tileSets[tileSetChoice.getSelectedIndex()]) &&
+                    (clientgui != null) && (clientgui.bv != null))  {
+                clientgui.bv.clearShadowMap();
+            }
             cs.setMapTileset(tileSets[tileSetChoice.getSelectedIndex()]
                     .getName());
         }
@@ -1081,7 +1087,7 @@ public class CommonSettingsDialog extends ClientDialog implements
                 clientgui.bv.repaint();
             }
             return;
-        }
+        } 
         // For Advanced options
         String option = "Advanced" + keys.getModel().getElementAt(keysIndex); 
         GUIPreferences.getInstance().setValue(option, value.getText());

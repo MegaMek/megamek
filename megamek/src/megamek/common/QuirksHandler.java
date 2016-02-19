@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -639,5 +640,9 @@ public class QuirksHandler {
                 }
             }
         }
+    }
+
+    public static Set<String> getCanonQuirkIds() {
+        return canonQuirkMap.keySet();
     }
 }

@@ -13381,7 +13381,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
             // Make sure this is a weapon.
             // System.out.print("Getting WeaponType... ");
-            if (!(m.getType() instanceof WeaponType)) {
+            if (!(m.getType() instanceof WeaponType) 
+                    && !(m.getType().hasFlag(MiscType.F_CLUB))) {
                 System.out.println(q.toLog() + " failed for " + getChassis()
                                    + " " + getModel() + " - " + m.getName()
                                    + " is not a weapon!");

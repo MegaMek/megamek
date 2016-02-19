@@ -1163,7 +1163,7 @@
         <quirk>poor_performance</quirk>
         <weaponQuirk>
             <weaponQuirkName>accurate</weaponQuirkName>
-            <location>Turret</location>
+            <location>TU</location>
             <slot>1</slot>
             <weaponName>Autocannon/2</weaponName>
         </weaponQuirk>
@@ -1256,8 +1256,7 @@
         <quirk>poor_performance</quirk>
         <weaponQuirk>
             <weaponQuirkName>accurate</weaponQuirkName>
-            <location>Front</location>
-            <slot>0</slot>
+            <location>FR</location>
             <weaponName>ISImprovedHeavyGaussRifle</weaponName>
         </weaponQuirk>
     </unit>

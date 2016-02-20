@@ -22,6 +22,7 @@ v0.41.15-git
 + Issue #33: Princess Fails to Deploy
 + Data: Quirk Fixes, New Sprites, TP Epsilon Eridani Units
 + Bug: Custom saved weapon quirks used wrong weapon name
++ Feature: Added ambient-occlusion like shadows, see client settings graphics
 
 v0.41.14 (2016-02-02 13:10 UTC)
 + Data New Sprites/Various RAT and Unit Fixes.

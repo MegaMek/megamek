@@ -336,6 +336,11 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
      */
     public void notifySkinChanges() {
         saveSkinButton.setEnabled(true);
+
+        String currComp = (String) skinSpecCompList.getSelectedValue();
+        SkinSpecification skinSpec = SkinXMLHandler.getSkin(currComp);
+        skinEditPanel.updateSkinSpec(skinSpec, enableBorders.isSelected());
+        mainGUI.updateBorder();
     }
 
 }

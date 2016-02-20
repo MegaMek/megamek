@@ -23,6 +23,7 @@ v0.41.15-git
 + Data: Quirk Fixes, New Sprites, TP Epsilon Eridani Units
 + Bug: Custom saved weapon quirks used wrong weapon name
 + Feature: Added ambient-occlusion like shadows, see client settings graphics
++ Issue #32: Hot Load LRMs check box will not stay checked
 
 v0.41.14 (2016-02-02 13:10 UTC)
 + Data New Sprites/Various RAT and Unit Fixes.

@@ -309,7 +309,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * clientgui.getClient().
      */
     public MovementDisplay(final ClientGUI clientgui) {
-        super();
+        super(clientgui);
 
         this.clientgui = clientgui;
         if (clientgui != null) {

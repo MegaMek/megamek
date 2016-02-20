@@ -634,8 +634,8 @@ public class QuirksHandler {
                     }
                     // Create new entry and add it
                     QuirkEntry qe = new QuirkEntry(option.getName(),
-                            entity.getLocationAbbr(loc), slot, m.getName(),
-                            unitId);
+                            entity.getLocationAbbr(loc), slot, m.getType()
+                                    .getInternalName(), unitId);
                     quirkEntries.add(qe);
                 }
             }

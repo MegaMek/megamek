@@ -20,6 +20,7 @@ v0.41.15-git
 + Issue #31: Ejected Vehicle Crews Should Count as Crippled
 + Bug: Quirks could not be assigned to melee weapons
 + Issue #33: Princess Fails to Deploy
++ Data: Quirk Fixes, New Sprites, TP Epsilon Eridani Units
 
 v0.41.14 (2016-02-02 13:10 UTC)
 + Data New Sprites/Various RAT and Unit Fixes.

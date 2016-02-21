@@ -1,0 +1,112 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+FixedWingSupport
+</UnitType>
+
+<Name>
+Mustang Fighter
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<Tonnage>
+80
+</Tonnage>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<Armor>
+28
+23
+23
+10
+</Armor>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<Nose Equipment>
+IS Auto Cannon/10 Primitive
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISSRM4
+ISSRM4
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISSRM4
+ISSRM4
+</Right Wing Equipment>
+
+<Body Equipment>
+Advanced Fire Control
+ISSRM4 Ammo
+ISSRM4 Ammo
+ISAC10p Ammo
+ISAC10p Ammo
+</Body Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<transporters>
+</transporters>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<type>
+IS Level 5
+</type>
+
+<year>
+2463
+</year>
+
+<source>
+XTRO Primitives IV - Age of War
+</source>
+
+<internal_type>
+0				
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<barrating>
+6
+</barrating>
+
+<engine_type>				
+1
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>

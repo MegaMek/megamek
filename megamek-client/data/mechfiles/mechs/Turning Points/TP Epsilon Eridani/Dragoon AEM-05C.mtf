@@ -1,0 +1,151 @@
+Version:1.0
+Dragoon
+AEM-05C
+
+Config:Biped
+TechBase:Mixed (IS Chassis)
+Era:3130
+Source:TP Epsilon Eridani - Dark Age
+Rules Level:3
+
+Mass:70
+Engine:280 XL Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+
+Heat Sinks:11 Double
+Walk MP:4
+Jump MP:3
+
+Armor:Ferro-Lamellor(Clan)
+LA Armor:20
+RA Armor:20
+LT Armor:23
+RT Armor:23
+CT Armor:32
+HD Armor:9
+LL Armor:27
+RL Armor:27
+RTL Armor:6
+RTR Armor:6
+RTC Armor:10
+
+Weapons:4
+LB 10-X AC, Right Arm
+Medium X-Pulse Laser, Left Arm
+Medium X-Pulse Laser, Left Arm
+Plasma Rifle, Left Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+ISPlasmaRifle
+ISPlasmaRifle
+ISMediumXPulseLaser
+ISMediumXPulseLaser
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+ISLBXAC10
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+ISPlasmaRifleAmmo
+ISPlasmaRifleAmmo
+ISAngelECMSuite
+ISAngelECMSuite
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+IS LB 10-X AC Ammo
+IS LB 10-X Cluster Ammo
+ISC3iUnit
+ISC3iUnit
+ISCASEII
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Clan Ferro-Lamellor
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

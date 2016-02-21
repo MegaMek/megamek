@@ -1,0 +1,12 @@
+Word of Blake Assault Vehicles D
+Behemoth Heavy Tank (Standard),1
+Heavy LRM Carrier (Standard),2
+Ontos Heavy Tank (3053 Upgrade),3
+Behemoth Heavy Tank (Standard),4
+Heavy LRM Carrier (Standard),5
+Ontos Heavy Tank (Light Gauss),6
+Puma Assault Tank PAT-007,5
+Ontos Heavy Tank (Sealed),4
+Demolisher Heavy Tank (Arrow IV),3
+Palmoni Assault Infantry Fighting Vehicle (Standard),2
+Puma Assault Tank PAT-005,1

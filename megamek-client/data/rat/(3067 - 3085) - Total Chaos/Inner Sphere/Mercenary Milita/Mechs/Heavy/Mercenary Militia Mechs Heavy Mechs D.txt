@@ -1,0 +1,12 @@
+Mercenary/Militia Mechs Heavy Mechs D
+Axman AXM-1N,1
+Archer ARC-2R,2
+JagerMech JM6-DD,3
+Ostsol OTL-9R,4
+Yeoman YMN-6Y,5
+Rifleman RFL-5M,6
+Hercules HRC-LS-9001,5
+Orion ON1-M,4
+Tempest TMP-3M,3
+Grasshopper GHR-5J,2
+Bandersnatch BNDR-01Ar,1

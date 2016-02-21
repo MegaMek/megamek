@@ -1,0 +1,12 @@
+Rasalhague Dominion Keshik Assault Mechs
+Hellstar (Standard),1
+Kodiak 4,2
+Gladiator (Executioner) Prime,3
+Mad Cat Mk II Enhanced,4
+Kodiak (Standard),5
+Gladiator (Executioner) A,6
+Gladiator (Executioner) B,5
+Kingfisher Prime,4
+Kodiak 2,3
+Masakari (Warhawk) Prime,2
+Deimos Prime,1

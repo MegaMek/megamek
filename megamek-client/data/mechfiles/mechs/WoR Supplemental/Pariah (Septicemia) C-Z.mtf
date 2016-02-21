@@ -1,0 +1,169 @@
+Version:1.0
+Pariah (Septicemia)
+C-Z
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3072
+Source:Jihad
+Rules Level:4
+
+Mass:55
+Engine:275 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:12 Double
+Base Chassis Heat Sinks:11
+Walk MP:5
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+LA Armor:18
+RA Armor:18
+LT Armor:18
+RT Armor:18
+CT Armor:23
+HD Armor:8
+LL Armor:24
+RL Armor:24
+RTL Armor:7
+RTR Armor:7
+RTC Armor:7
+
+Weapons:21
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Left Arm
+Medium Pulse Laser, Left Arm
+Plasma Cannon, Head
+Plasma Cannon, Left Arm
+AP Gauss Rifle, Left Torso
+AP Gauss Rifle, Left Torso
+AP Gauss Rifle, Right Torso
+AP Gauss Rifle, Right Torso
+AP Gauss Rifle, Right Torso
+AP Gauss Rifle, Left Torso
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+Machine Gun, Left Torso
+Machine Gun, Right Torso
+Machine Gun, Right Torso
+Machine Gun, Right Torso
+Machine Gun Array, Left Torso
+Machine Gun Array, Right Torso
+Plasma Cannon, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLPlasmaCannon
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLPlasmaCannon
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLAPGaussRifle
+CLAPGaussRifle
+CLAPGaussRifle
+CLMG
+CLMG
+CLMG
+CLMGA
+NovaCEWS
+CLAPGaussRifle Ammo
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLAPGaussRifle
+CLAPGaussRifle
+CLAPGaussRifle
+CLMG
+CLMG
+CLMG
+CLMGA
+Clan Machine Gun Ammo - Half
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLPlasmaCannonAmmo
+CLPlasmaCannonAmmo
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLPlasmaCannon
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

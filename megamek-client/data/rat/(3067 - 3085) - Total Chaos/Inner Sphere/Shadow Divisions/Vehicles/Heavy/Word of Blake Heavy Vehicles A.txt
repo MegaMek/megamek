@@ -1,0 +1,14 @@
+Word of Blake Heavy Vehicles A
+Burke Defense Tank (HPPC),1
+LRM Carrier (WoB),2
+Demon Medium Tank (Standard),3
+Thumper Artillery Vehicle TAV-1,4
+Brutus Assault Tank (Standard),5
+Brutus Assault Tank (HPPC),6
+Bolla Stealth Tank Invictus,6
+Bolla Stealth Tank Comminus,6
+Bolla Stealth Tank Dominus,6
+Bolla Stealth Tank Infernus,6
+Brutus Assault Tank (LRM),4
+Demon Tank (Horned Demon),3
+Demon Tank (HGR),2

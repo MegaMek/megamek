@@ -1,0 +1,12 @@
+Rasalhague Dominion Keshik Medium Mechs
+Beowulf IIC (Standard),1
+Ursus II (Standard),2
+Beowulf IIC (Standard),3
+Grendel (Mongrel) Prime,4
+Ursus (Standard),5
+Ryoken (Stormcrow) Prime,6
+Dasher II 2,5
+Dragonfly (Viper) Prime,4
+Black Hawk (Nova) Prime,3
+Dragonfly (Viper) A,2
+Dragonfly (Viper) B,1

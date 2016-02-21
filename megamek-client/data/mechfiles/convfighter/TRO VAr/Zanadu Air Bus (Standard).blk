@@ -1,0 +1,102 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+FixedWingSupport
+</UnitType>
+
+<Name>
+Zanadu Air Bus
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3004
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+1200
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+13
+13
+13
+13
+</armor>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Body Equipment>
+FieldKitchen
+</Body Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<transporters>
+cargobay:6.5:1
+troopspace:7.5
+</transporters>
+
+<source>
+TRO Vehicle Annex (r) - Succession Wars
+</source>
+
+<tonnage>
+80.0
+</tonnage>
+

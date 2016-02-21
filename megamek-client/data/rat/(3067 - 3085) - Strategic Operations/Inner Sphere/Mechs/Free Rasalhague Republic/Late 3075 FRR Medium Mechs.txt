@@ -1,0 +1,12 @@
+Free Rasalhague Republic Medium Mechs Late 3075
+Beowulf BEO-12,1
+Griffin GRF-6S,2
+Daimyo DMO-1K,3
+Wolverine WVR-8K,4
+Hatchetman HCT-5S,5
+Hunchback HBK-5M,6
+Beowulf BEO-12,5
+Trebuchet TBT-7M,4
+Vulcan VT-5M,3
+Crab CRB-30,2
+Firestarter FS9-O,1

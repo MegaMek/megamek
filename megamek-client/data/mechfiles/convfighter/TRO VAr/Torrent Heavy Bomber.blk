@@ -1,0 +1,129 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+FixedWingSupport
+</UnitType>
+
+<Name>
+Torrent Heavy Bomber
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2597
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+371
+</fuel>
+
+<engine_type>
+7
+</engine_type>
+
+<armor>
+20
+20
+20
+12	
+</armor>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
+<Nose Equipment>
+ISMG
+ISMG
+ISMG
+ISMG
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Body Equipment>
+Advanced Fire Control
+STOLChassisMod
+ISGuardianECM
+ISMG Ammo Half
+ISSRM6 Ammo
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+External Stores Hardpoint
+</Body Equipment>
+
+<Aft Equipment>
+ISSRM6
+</Aft Equipment>
+
+<transporters>
+cargospace:15:2
+</transporters>
+
+<source>
+TRO Vehicle Annex (r) - Star League
+</source>
+
+<tonnage>
+200
+</tonnage>
+
+<history>
+MUL shows the unit introdate as 2093, which is about 500 years before Guardian ECM, so I've made the unit date the same as the introdate for ECM.
+Basically its a "modern" version of the Torrent
+</history>

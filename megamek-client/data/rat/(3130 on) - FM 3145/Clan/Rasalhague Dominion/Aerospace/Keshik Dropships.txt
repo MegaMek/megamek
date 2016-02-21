@@ -1,0 +1,12 @@
+3145 Rasalhague Dominion Keshik Dropships
+Vanir Assault Dropship (Standard),1
+Union C,2
+Nagasawa (Standard),3
+Vanir Assault Dropship (Standard),4
+Noruff (Standard),5
+Aesir Assault Dropship (Standard),6
+Miraborg (Standard),5
+Sassanid (Standard),4
+Nagasawa (Standard),3
+Titan (Clan),2
+Aesir Assault Dropship (Standard),1

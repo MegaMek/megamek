@@ -1,0 +1,12 @@
+Mercenary/Militia Light Aerospace D
+Medium Strike Fighter Defender,1
+Medium Strike Fighter Defender II,2
+Heavy Strike Fighter Meteor,3
+Heavy Strike Fighter Meteor-G,4
+Cheetah F-11,5
+Swift SWF-606,6
+Cheetah F-14-S,5
+Seydlitz SYD-Z3A,4
+Cheetah F-11-R,3
+Sholagar SL-21,2
+Seydlitz SYD-Z4,1

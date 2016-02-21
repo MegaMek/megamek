@@ -1,0 +1,12 @@
+Rasalhague Dominion Frontline Assault Mechs
+Bruin (Standard),1
+Hellstar (Standard),2
+Kodiak 4,3
+Gladiator (Executioner) Prime,4
+Mad Cat Mk II Enhanced,5
+Kodiak (Standard),6
+Gladiator (Executioner) A,5
+Gladiator (Executioner) B,4
+Kingfisher Prime,3
+Kodiak 2,2
+Masakari (Warhawk) Prime,1

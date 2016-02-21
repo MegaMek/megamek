@@ -1,0 +1,12 @@
+Generic Inner Sphere Assault Civilian Dropships- 3063
+Mammoth (Standard),1
+Monarch (Standard),2
+Buccaneer (Standard),3
+Mule (Standard),4
+Buccaneer (Standard),5
+Buccaneer (Standard),6
+Buccaneer (Standard),5
+Mule (Standard),4
+Monarch (Standard),3
+Mammoth (Standard),2
+Behemoth (Standard),1

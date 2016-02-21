@@ -1,0 +1,98 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Pollux II ADA Heavy Tank
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3130
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+4
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+24
+24
+24
+11
+24
+</armor>
+
+<Body Equipment>
+ISGuardianECMSuite
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVHomingAmmo
+ISArrowIVHomingAmmo
+ISArrowIVHomingAmmo
+Silver Bullet Gauss Ammo
+Silver Bullet Gauss Ammo
+Silver Bullet Gauss Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISSmallXPulseLaser
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISSmallXPulseLaser
+ISArrowIV
+ISSBGR
+</Turret Equipment>
+
+<source>
+TP: Epsilon Eridani - Dark Age
+</source>
+
+<tonnage>
+75.0
+</tonnage>
+

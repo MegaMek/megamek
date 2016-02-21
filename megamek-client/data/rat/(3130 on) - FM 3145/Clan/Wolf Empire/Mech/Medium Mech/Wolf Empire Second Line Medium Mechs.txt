@@ -1,0 +1,12 @@
+Wolf Empire Second Line Medium Mechs
+Wyvern IIC 2,1
+Beowulf BEO-14,2
+Shadow Hawk SHD-12C,3
+Clint IIC (Standard),4
+Ursus (Standard),5
+Sun Cobra (Standard),6
+Beowulf IIC (Standard),5
+Hunchback IIC (Standard),4
+Grendel (Mongrel) Prime,3
+Lobo 2,2
+Griffin IIC 8,1

@@ -1,0 +1,12 @@
+3145 Rasalhague Dominion Light Fighters - Front Line
+Poignard PGD-Y3,1
+Issus (Standard),2
+Chaeronea (Standard),3
+Issus (Standard),4
+Vandal Prime,5
+Batu Prime,6
+Avar Prime,5
+Sulla Prime,4
+Bashkir Prime,3
+Avar Prime,2
+Batu Prime,1

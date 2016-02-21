@@ -1,0 +1,12 @@
+Capellan Confederation Light Mechs B
+Raven RVN-4Lr,1
+Stinger STG-6L,2
+Anubis ABS-5Y,3
+Dola DOL-1A1,4
+Ebony MEB-9,5
+Havoc HVC-P6,6
+Gun GN-2O,5
+Yinghuochong YHC-3E,4
+Dola DOL-1A2 'Yoh Ti Ts'angs',3
+Ebony MEB-10,2
+Koshi (Standard),1

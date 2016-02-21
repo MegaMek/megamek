@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<MegaMekSettings>
+	<store name="ClientSettings">
+		<preference name="LastPlayerCamoName" value="Red"/>
+		<preference name="LastPlayerCategory" value="-- No Camo --"/>
+		<preference name="LastPlayerColor" value="1"/>
+		<preference name="LastPlayerName" value="test"/>
+		<preference name="megamek.megamek.metaservername" value="http://stormy-light-2818.herokuapp.com/announce"/>
+	</store>
+	<store name="megamek.client.ui.swing.ButtonOrderPreferences">
+	</store>
+	<store name="megamek.common.preference.GUIPreferences">
+	</store>
+</MegaMekSettings>

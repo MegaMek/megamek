@@ -1,0 +1,12 @@
+Word of Blake Medium Aerospace F
+Stingray F-90,1
+Stingray F-90S,2
+Lancer LX-2,3
+Lancer LX-2A,4
+Gotha GTHA-100,5
+Lancer LX-2,6
+Lancer LX-2A,5
+Hellcat II HCT-214,4
+Stingray F-94,3
+Gotha GTHA-100,2
+Hellcat II HCT-214,1

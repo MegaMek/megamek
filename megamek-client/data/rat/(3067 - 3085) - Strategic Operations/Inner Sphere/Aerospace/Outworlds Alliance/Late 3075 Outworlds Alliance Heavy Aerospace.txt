@@ -1,0 +1,12 @@
+Outworlds Alliance Heavy Aerospace Late 3075
+Sabutai Prime,1
+Stuka STU-K10,2
+Riever F-100,3
+Thunderbird TRB-D36,4
+Slayer SL-15,5
+Stuka STU-K5,6
+Slayer SL-15R,5
+Eagle EGL-R6,4
+Chippewa CHP-W5,3
+Stuka STU-K10,2
+Rapier RPR-100,1

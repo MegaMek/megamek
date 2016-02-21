@@ -1,0 +1,12 @@
+Triarii Protectors Heavy Mechs
+Quickdraw QKD-8P,1
+Koschei KSC-5I,2
+Ostroc OSR-4K,3
+Grand Dragon DRG-7K,4
+Gallant GLT-7-0,5
+Scourge SCG-WF1,6
+Crusader CRD-7W,5
+Rifleman RFL-7X,4
+Black Knight BL-6b-KNT,3
+Ryoken II (Standard),2
+Shootist ST-8A,1

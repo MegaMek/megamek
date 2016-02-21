@@ -1,0 +1,12 @@
+Lyran Commonwealth Light Mechs F
+Dart DRT-4S,1
+Storm Raider STM-R3,2
+Mjolnir MLR-B2,3
+Stinger STG-7S,4
+Ostscout OTT-9S,5
+Commando COM-7S,6
+Scarabus SCB-9T,5
+Wolfhound WLF-5,4
+Stiletto STO-6S,3
+Razorback RZK-10S,2
+Firestarter FS9-M2,1

@@ -1,0 +1,108 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+FixedWingSupport
+</UnitType>
+
+<Name>
+Mosquito Radar Plane IX
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3062
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+5
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+1120
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+10
+7
+7
+5
+</armor>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
+<Nose Equipment>
+ISERMediumLaser
+ISInfraredImager
+ISLookDownRadar
+ISHighResImager
+</Nose Equipment>
+
+<Left Wing Equipment>
+External Stores Hardpoint
+External Stores Hardpoint
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+External Stores Hardpoint
+External Stores Hardpoint
+</Right Wing Equipment>
+
+<Body Equipment>
+STOLChassisMod
+Basic Fire Control
+Communications Equipment (2 ton)
+</Body Equipment>
+
+<Aft Equipment>
+RemoteSensorDispenser
+</Aft Equipment>
+
+<source>
+TRO Vehicle Annex (r) - Civil War
+</source>
+
+<tonnage>
+75.0
+</tonnage>
+

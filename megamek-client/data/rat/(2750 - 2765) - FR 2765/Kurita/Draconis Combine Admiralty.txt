@@ -1,0 +1,11 @@
+Draconis Combine Admiralty
+Samarkand Carrier Block II,15
+Vigilant Corvette (Standard),5
+Aegis Heavy Cruiser (2582),12
+Cruiser (Standard),5
+Baron Destroyer (Standard),12
+Essex Destroyer (2711),12
+Lola I Destroyer (Standard),10
+Narukami Destroyer (Block I),15
+Vincent Corvette Mk 39,10
+Samarkand Carrier Block I,5

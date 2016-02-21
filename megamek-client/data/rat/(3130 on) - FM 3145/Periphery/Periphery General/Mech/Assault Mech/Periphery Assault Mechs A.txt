@@ -1,0 +1,12 @@
+Periphery Assault Mechs A
+Awesome AWS-9M,1
+Stalker STK-5M,2
+Awesome AWS-9Q,3
+Victor VTR-9K,4
+Longbow LGB-13C,5
+Atlas AS7-K,6
+Highlander HGN-732,5
+HawkWolf HWK-4F,4
+Atlas AS7-Dr,3
+Emperor EMP-6A,2
+Xanthos XNT-4O,1

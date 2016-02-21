@@ -1,0 +1,168 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+SpaceStation
+</UnitType>
+<Name>
+Hong Lung Interdiction Station
+</Name>
+<Model>
+(Standard)
+</Model>
+<Tonnage>
+2000
+</Tonnage>
+<Armor>
+16
+16
+16
+16
+16
+16
+</Armor>
+<Nose Equipment>
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:24
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Nose Equipment>
+<Front Left Side Equipment>
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:24
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Front Left Side Equipment>
+<Front Right Side Equipment> 
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:24
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Front Right Side Equipment>
+<Aft Left Side Equipment>
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:24
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Aft Left Side Equipment>
+<Aft Right Side Equipment> 
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:24
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Aft Right Side Equipment>
+<Aft Equipment> 
+ISPPC
+ISPPC
+ISPPC
+ISPPC
+ISLRM20
+ISLRM20
+ISLRM20 Ammo:24
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Aft Equipment>
+<structural_integrity>
+1
+</structural_integrity>
+<heatsinks>
+79
+</heatsinks>
+<sink_type>
+0
+</sink_type>
+<fuel>
+540
+</fuel>
+<type>
+IS Level 3
+</type>
+<year>
+3024
+</year>
+<internal_type>
+0
+</internal_type>
+<armor_type>
+0
+</armor_type>
+
+<transporters>
+SmallCraftBay:2:1
+InfantryBay:3:1
+CargoBay:152:1
+</transporters>
+<docking_collar>
+0
+</docking_collar>
+<grav_deck>
+1
+</grav_deck>
+<escape_pod>
+8
+</escape_pod>
+<life_boat>
+2
+</life_boat>
+<crew>
+57
+</crew>
+<passengers>
+0
+</passengers>
+<Battlestation>
+</battlestation>

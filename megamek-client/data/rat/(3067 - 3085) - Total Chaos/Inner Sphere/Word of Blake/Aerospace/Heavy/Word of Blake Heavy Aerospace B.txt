@@ -1,0 +1,24 @@
+Word of Blake Heavy Aerospace B
+Hammerhead HMR-HF,1
+Ahab AHB-643,2
+Rapier RPR-100,3
+Riever F-700,4
+Ahab AHB-443,5
+Riever F-700a,6
+Riever F-700b,5
+Shiva SHV-O,7
+Shiva SHV-OA,7
+Shiva SHV-OB,7
+Shiva SHV-OC,7
+Shiva SHV-OD,7
+Striga S-STR-O Invictus,1
+Striga S-STR-OA Dominus,1
+Striga S-STR-OB Infernus,1
+Striga S-STR-OC Comminus,1
+Striga S-STR-OD Luminos,1
+Striga S-STR-OE Eminus,1
+Eisensturm EST-O,2
+Eisensturm EST-OA,2
+Eisensturm EST-OB,2
+Eisensturm EST-OC,2
+Eisensturm EST-OD,2

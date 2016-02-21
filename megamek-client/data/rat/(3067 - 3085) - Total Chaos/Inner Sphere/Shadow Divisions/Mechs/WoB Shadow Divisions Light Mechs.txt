@@ -1,0 +1,17 @@
+WoB Shadow Divisions Light Mechs
+Locust LCT-5W,1
+Mercury MCY-104,2
+Red Shift RDS-3A,3
+Nexus II NXS2-A,4
+Hussar HSR-500-D,5
+Nexus II NXS2-B,6
+Malak C-MK-O Invictus,6
+Malak C-MK-OA Dominus,6
+Malak C-MK-OB Infernus,6
+Malak C-MK-OC Comminus,6
+Malak C-MK-OD Luminos,6
+Malak C-MK-OE Eminus,6
+Malak C-MK-OS Caelestis,6
+Hermes HER-4M,4
+Gurkha GUR-8G,3
+Ostscout OTT-10CS,2

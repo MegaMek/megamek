@@ -1,0 +1,120 @@
+Version:1.1
+Celerity
+CLR-03-O
+
+Config:Quad Omnimech
+TechBase:Inner Sphere
+Era:3138
+Rules Level:4
+Source:TRO 3145 Republic of the Sphere - Dark Ages
+
+Mass:15
+Engine:240 XXL Fusion Engine
+Structure:Endo-Steel
+Gyro:XL Gyro
+Cockpit:Small Cockpit
+Myomer:ISMASC
+
+Heat Sinks:10 Double
+Walk MP:16
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:1
+RA Armor:1
+LT Armor:4
+RT Armor:4
+CT Armor:5
+HD Armor:4
+LL Armor:1
+RL Armor:1
+RTL Armor:1
+RTR Armor:1
+RTC Armor:1
+
+Weapons:3
+1 ISDroneOperatingSystem, Right Torso
+1 ISC3SlaveUnit, Head
+1 ISTAG, Head
+
+Left Arm:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+
+Right Arm:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+
+Left Torso:
+Engine
+Engine
+Engine
+Engine
+Engine
+Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISMASC
+Endo-Steel
+Endo-Steel
+
+Right Torso:
+Engine
+Engine
+Engine
+Engine
+Engine
+Engine
+ISDroneOperatingSystem
+Endo-Steel
+Endo-Steel
+Endo-Steel
+Endo-Steel
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+ISTAG
+ISC3SlaveUnit
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Endo-Steel
+Endo-Steel

@@ -1,0 +1,12 @@
+3145 Wolf Empire Keshik Dropships
+Broadsword (Standard),1
+Titan (Clan),2
+Isegrim Assault DropShip (Standard),3
+Broadsword (Standard),4
+Isegrim Assault DropShip (Standard),5
+Union C,6
+Titan (Clan),5
+Carrier (Standard),4
+Nagasawa (Standard),3
+Isegrim Assault DropShip (Standard),2
+Mercer (3065),1

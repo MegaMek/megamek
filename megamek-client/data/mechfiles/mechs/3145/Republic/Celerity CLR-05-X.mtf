@@ -1,0 +1,120 @@
+Version:1.1
+Celerity
+CLR-05-X
+
+Config:Quad
+TechBase:Inner Sphere
+Era:3138
+Rules Level:4
+Source:TRO 3145 Republic of the Sphere - Dark Ages
+
+Mass:15
+Engine:225 XXL Fusion Engine
+Structure:Standard
+Gyro:XL Gyro
+Cockpit:Small Cockpit
+Myomer:ISMASC
+
+Heat Sinks:10 Double
+Walk MP:16
+Jump MP:0
+
+Armor:Impact-Resistant(Inner Sphere)
+LA Armor:2
+RA Armor:2
+LT Armor:4
+RT Armor:4
+CT Armor:5
+HD Armor:4
+LL Armor:2
+RL Armor:2
+RTL Armor:1
+RTR Armor:1
+RTC Armor:1
+
+Weapons:3
+1 Spikes, Right Torso
+1 Spikes, Left Torso
+1 ISDroneOperatingSystem, Right Torso
+
+Left Arm:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Impact-Resistant
+IS Impact-Resistant
+
+Right Arm:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Impact-Resistant
+IS Impact-Resistant
+
+Left Torso:
+Engine
+Engine
+Engine
+Engine
+Engine
+Engine
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISMASC
+Spikes
+-Empty-
+
+Right Torso:
+Engine
+Engine
+Engine
+Engine
+Engine
+Engine
+ISDroneOperatingSystem
+IS Super Charger
+Spikes
+IS Impact-Resistant
+IS Impact-Resistant
+-Empty-
+
+Center Torso:
+Engine
+Engine
+Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Gyro
+Engine
+Engine
+Engine
+
+Head:
+Life Support
+Sensors
+Cockpit
+Sensors
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Impact-Resistant
+IS Impact-Resistant
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS Impact-Resistant
+IS Impact-Resistant

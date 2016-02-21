@@ -1,0 +1,12 @@
+Tamarind Regulars Assault Mechs B
+Longbow LGB-12C,1
+BattleMaster BLR-1Gb,2
+Albatross ALB-3Ur,3
+Awesome AWS-10KM,4
+Atlas AS7-K2,5
+Longbow LGB-13C,6
+Cerberus MR-5M,5
+Goliath GOL-6M,4
+Trebaruna TR-XB,3
+Warhammer IIC 8,2
+Goliath GOL-6M,1

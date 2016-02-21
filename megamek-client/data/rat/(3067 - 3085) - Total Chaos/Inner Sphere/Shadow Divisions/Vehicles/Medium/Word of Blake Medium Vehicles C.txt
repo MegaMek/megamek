@@ -1,0 +1,12 @@
+Word of Blake Medium Vehicles C
+Hetzer Wheeled Assault Gun (Sealed),1
+Goblin Medium Tank (Standard),2
+Myrmidon Medium Tank (Standard),3
+Vedette Medium Tank (Cell),4
+Chaparral Missile Artillery Tank (Standard),5
+Maxim Heavy Hover Transport (BA Factory Upgrade),6
+Zephyr Hovertank (C3i),5
+Maxim Heavy Hover Transport (Fire Support),4
+Goblin Infantry Support Vehicle (Sealed),3
+Zephyr Hovertank (C3i),2
+Regulator II Hovertank (Standard),1

@@ -1,0 +1,92 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Generic Expandable Services Vehicle
+</Name>
+
+<Model>
+(Command Post)
+</Model>
+
+<year>
+3066
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor>
+15
+10
+10
+10
+</armor>
+
+<barrating>
+7
+</barrating>
+
+<structural_tech_rating>
+4
+</structural_tech_rating>
+
+<Body Equipment>
+Tractor
+Communications Equipment (7 ton)
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+RemoteSensorDispenser
+RemoteSensorDispenser
+Hitch
+</Rear Equipment>
+
+<transporters>
+cargobay:3:1
+</transporters>
+
+<source>
+HB HD
+</source>
+
+<tonnage>
+30.0
+</tonnage>
+
+<omni>
+</omni>
+

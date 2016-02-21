@@ -1,0 +1,12 @@
+Periphery Battle Armor B - 3145
+Infiltrator Mk. I Battle Armor 'Waddle',1
+Trinity Medium Battle Armor (Asterion)[PPC],2
+Trinity Medium Battle Armor (Asterion)[MRR],3
+Ravager Assault Battle Armor (Standard),4
+IS Standard Battle Armor [Laser],5
+Marauder Battle Armor (Standard),6
+Ravager Assault Battle Armor (Standard),5
+Spectre Stealth Battle Armor (Standard),4
+Trinity Medium Battle Armor (Asterion Upgrade)[MRR],3
+IS Standard Battle Armor [Laser],2
+Trinity Medium Battle Armor (Theseus RL)[LRR],1

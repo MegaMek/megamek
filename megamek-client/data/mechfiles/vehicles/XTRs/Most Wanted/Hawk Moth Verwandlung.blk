@@ -1,0 +1,85 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+VTOL			
+</UnitType>
+
+<Name>
+Hawk Moth Gunship
+</Name>
+
+<Model>
+'Vedwandlung'
+</Model>
+
+<year>
+3081
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<cruiseMP>
+8
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor>
+11
+6
+6
+3
+2
+11
+</armor>
+
+<armor_type>
+6
+</armor_type>
+
+<Body Equipment>
+ISRAC5 Ammo
+ISRAC5 Ammo
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISRAC5
+ISMG
+</Turret Equipment>
+
+<tonnage>
+20.0
+</tonnage>
+
+<source>
+XTRO Most Wanted - Jihad
+</source>

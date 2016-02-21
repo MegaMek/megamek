@@ -1,0 +1,12 @@
+Word of Blake Assault Vehicles B
+Heavy LRM Carrier (Standard),1
+Ontos Heavy Tank (Light Gauss),2
+Puma Assault Tank PAT-007,3
+Ontos Heavy Tank (Sealed),4
+Demolisher Heavy Tank (Arrow IV),5
+Palmoni Assault Infantry Fighting Vehicle (Standard),6
+Puma Assault Tank PAT-005,5
+Rhino Fire Support Tank (Flamer),4
+Demolisher Heavy Tank (Gauss),3
+Rhino Fire Support Tank (Standard),2
+Demolisher Heavy Tank (Gauss),1

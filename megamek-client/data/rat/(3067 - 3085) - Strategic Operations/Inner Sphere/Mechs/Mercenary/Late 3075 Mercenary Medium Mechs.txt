@@ -1,0 +1,12 @@
+Mercenary Medium Mechs Late 3075
+Clint CLNT-2-3U,1
+Enforcer III ENF-6H,2
+Griffin GRF-6S,3
+Centurion CN9-D,4
+Shadow Hawk SHD-2H,5
+Wolverine WVR-8K,6
+Hoplite HOP-4D,5
+Lynx LNX-9Q,4
+Grim Reaper GRM-R-PR29,3
+Starslayer STY-3C,2
+Uziel UZL-3S,1

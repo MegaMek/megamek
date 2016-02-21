@@ -1,0 +1,153 @@
+Version:1.0
+Balius
+E
+
+Config:Quad Omnimech
+TechBase:Clan
+Era:3130
+Source:RS 3145 NTNU
+Rules Level:2
+
+Mass:65
+Engine:390 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Base Chassis Heat Sinks:10
+Walk MP:6
+Jump MP:0
+
+Armor:Ferro-Fibrous(Clan)
+FLL Armor:27
+FRL Armor:27
+LT Armor:20
+RT Armor:20
+CT Armor:30
+HD Armor:9
+RLL Armor:27
+RRL Armor:27
+RTL Armor:7
+RTR Armor:7
+RTC Armor:10
+
+Weapons:5
+Flamer, Head
+Improved Heavy Medium Laser, Center Torso
+ER Large Pulse Laser, Right Torso
+Streak LRM 15, Left Torso
+Streak SRM 6, Right Torso
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLStreakLRM15
+CLStreakLRM15
+CLStreakLRM15
+Clan Streak LRM 15 Ammo
+Clan Streak LRM 15 Ammo
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLStreakSRM6
+CLStreakSRM6
+Clan Streak SRM 6 Ammo
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLImprovedMediumHeavyLaser (R)
+CLImprovedMediumHeavyLaser (R)
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLFlamer
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Endo Steel
+Clan Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

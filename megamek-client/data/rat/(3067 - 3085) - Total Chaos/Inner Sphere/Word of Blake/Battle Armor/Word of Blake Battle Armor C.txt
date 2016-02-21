@@ -1,0 +1,22 @@
+Word of Blake Battle Armor C
+Nighthawk PA(L) Mk. XXX,1
+Achileus Light Battle Armor (WoB),7
+Achileus Light Battle Armor (WoB) [David],5
+Achileus Light Battle Armor (WoB) [Flamer],5
+Achileus Light Battle Armor (WoB) [Laser],5
+Achileus Light Battle Armor (WoB) [MG],5
+Achileus Light Battle Armor (WoB) [TAG],5
+Longinus Battle Armor [David] (WoB),3
+Longinus Battle Armor (Magnetic) (WOB),5
+Longinus Battle Armor [Flamer] (WoB),3
+Longinus Battle Armor [Laser] (WoB),3
+Longinus Battle Armor [MG] (WoB),3
+Phalanx Battle Armor (WoB-C),3
+Phalanx Battle Armor (WoB-A),5
+Phalanx Battle Armor (WoB-B),5
+Purifier Adaptive Battle Armor [Laser],2
+Purifier Adaptive Battle Armor [PPC],2
+Purifier Adaptive Battle Armor [Narc],2
+Purifier Adaptive Battle Armor [TAG],2
+Purifier Adaptive Battle Armor [Laser],6
+Purifier Adaptive Battle Armor [PPC],6

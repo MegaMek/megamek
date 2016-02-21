@@ -1,0 +1,12 @@
+3145 Wolf Empire Fleet Dropships
+Lion (Clan),1
+Overlord C,2
+Broadsword (Standard),3
+Titan (Clan),4
+Isegrim Assault DropShip (Standard),5
+Broadsword (Standard),6
+Isegrim Assault DropShip (Standard),5
+Union C,4
+Titan (Clan),3
+Carrier (Standard),2
+Nagasawa (Standard),1

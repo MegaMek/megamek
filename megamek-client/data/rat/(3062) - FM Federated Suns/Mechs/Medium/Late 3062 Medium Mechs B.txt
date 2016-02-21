@@ -1,0 +1,12 @@
+Late 3062 AFFS Medium Mechs, Tech Level B
+Strider SR1-O,1
+Lynx LNX-9Q,2
+Enforcer III ENF-6M,3
+Sentry SNT-04,4
+Watchman WTC-4M,5
+Stealth STH-1D,6
+Enforcer ENF-5D,5
+Enforcer III ENF-6M,4
+Blackjack BJ2-OC,3
+Nightsky NGS-4S,2
+Starslayer STY-3C,1

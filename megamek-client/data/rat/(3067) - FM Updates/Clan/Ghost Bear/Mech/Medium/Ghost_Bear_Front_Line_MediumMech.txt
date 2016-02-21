@@ -1,0 +1,12 @@
+Ghost Bear Front-Line Medium Mechs (FMU)
+Dragonfly (Viper) H,1
+Fenris (Ice Ferret) Prime,2
+Dragonfly (Viper) A,3
+Dragonfly (Viper) B,4
+Ryoken (Stormcrow) C,5
+Dragonfly (Viper) Prime,6
+Dragonfly (Viper) D,5
+Dragonfly (Viper) C,4
+Black Hawk (Nova) Prime,3
+Black Hawk (Nova) C,2
+Stooping Hawk Prime,1

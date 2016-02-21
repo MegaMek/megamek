@@ -1,0 +1,92 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportVTOL
+</UnitType>
+
+<Name>
+Pion-Laurier Cascatelle
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3063
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+21
+15
+15
+11
+2
+</armor>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<Body Equipment>
+Fluid Suction System
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+</Rear Equipment>
+
+<Rotor Equipment>
+</Rotor Equipment>
+
+<transporters>
+cargobay:.1:1
+troopspace:.9
+</transporters>
+
+<source>
+TRO VAr
+</source>
+
+<tonnage>
+60.0
+</tonnage>
+

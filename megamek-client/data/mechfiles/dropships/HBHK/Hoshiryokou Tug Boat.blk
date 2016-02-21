@@ -1,0 +1,135 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Hoshiryokou
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<Tonnage>
+800
+</Tonnage>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<Armor>
+122
+92
+92
+92
+</Armor>
+
+<Nose Equipment>
+ISLargeLaser
+ISSmallLaser
+ISSmallLaser
+ISNavalTugAdaptor
+</Nose Equipment>
+
+<Left Side Equipment>
+</Left Side Equipment>
+
+<Right Side Equipment> 
+</Right Side Equipment>
+
+<Aft Equipment> 
+ISSmallLaser
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+</Aft Equipment>
+
+<structural_integrity>
+25
+</structural_integrity>
+
+<heatsinks>
+8
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+1400
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+2480
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+
+CargoBay:8:1
+</transporters>
+
+<escape_pod>
+1
+</escape_pod>
+
+<life_boat>
+0
+</life_boat>
+
+<crew>
+5
+</crew>
+
+<passengers>
+9
+</passengers>
+
+<source>
+HB:House Kurita - Age of War
+</source>

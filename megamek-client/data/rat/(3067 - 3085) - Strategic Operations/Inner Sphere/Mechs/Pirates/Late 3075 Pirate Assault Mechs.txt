@@ -1,0 +1,12 @@
+Pirate Assault Mechs Late 3075
+Goliath GOL-2H,1
+Longbow LGB-0W,2
+Awesome AWS-9M,3
+Charger CGR-2A2,4
+Stalker STK-3F,5
+Atlas AS7-D,6
+Zeus ZEU-9S,5
+Victor VTR-9K,4
+BattleMaster BLR-1G,3
+Cyclops CP-11-H,2
+Marauder II MAD-4H,1

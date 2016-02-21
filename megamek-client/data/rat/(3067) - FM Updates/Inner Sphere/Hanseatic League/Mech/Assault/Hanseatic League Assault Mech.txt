@@ -1,0 +1,12 @@
+Hanseatic League Assault Mechs 3067 FM-U
+Zeus ZEU-6S,1
+Longbow LGB-7Q,2
+Cyclops CP-11-A,3
+Awesome AWS-8Q,4
+Victor VTR-9B,5
+BattleMaster BLR-1G,6
+Atlas AS7-D,5
+Stalker STK-3F,4
+Charger CGR-3K,3
+Goliath GOL-1H,2
+Banshee BNC-5S,1

@@ -1,0 +1,156 @@
+Version:1.0
+Falcon Eyrie
+B-UK
+
+Config:Biped Omnimech
+TechBase:Clan
+Era:3058
+Rules Level:2
+
+Mass:90
+Engine:360 XL Engine
+Structure:Endo Steel
+Myomer:MASC
+
+Heat Sinks:22 Double
+Walk MP:4
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:25
+RA Armor:25
+LT Armor:25
+RT Armor:25
+CT Armor:35
+HD Armor:9
+LL Armor:31
+RL Armor:31
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:11
+3 CLSRM6, Right Arm, Ammo:30
+2 CLMediumPulseLaser, Right Arm
+1 CLStreakSRM2 (OS), Right Arm
+1 CLERPPC, Left Arm
+1 CLSRM6, Left Arm
+2 CLERMediumLaser, Left Arm
+1 CLMediumPulseLaser, Right Torso
+1 CLMediumPulseLaser, Left Torso
+2 CLMediumPulseLaser, Center Torso
+1 CLAntiMissileSystem, Head, Ammo:24
+1 CLAntiPersonnelPod, Right Leg
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLERPPC
+CLERPPC
+CLSRM6
+CLERMediumLaser
+CLERMediumLaser
+CLDouble Heat Sink
+CLDouble Heat Sink
+Endo Steel
+Endo Steel
+Endo Steel
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLSRM6
+CLSRM6
+CLSRM6
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLStreakSRM2 (OS)
+CLSRM6 Ammo
+CLSRM6 Ammo
+CLAMS Ammo
+Endo Steel
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+CLMediumPulseLaser
+CLMASC
+CLMASC
+CLMASC
+CLMASC
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+Endo Steel
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+CLMediumPulseLaser
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+CLDouble Heat Sink
+Endo Steel
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+CLMediumPulseLaser
+CLMediumPulseLaser
+
+Head:
+Life Support
+Sensors
+Cockpit
+CLAntiMissileSystem
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLDouble Heat Sink
+CLDouble Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+CLAntiPersonnelPod
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+

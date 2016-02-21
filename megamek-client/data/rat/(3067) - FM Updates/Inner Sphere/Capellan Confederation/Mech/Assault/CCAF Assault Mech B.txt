@@ -1,0 +1,12 @@
+CCAF Assault Mechs B 3067
+Longbow LGB-12C,1
+Victor VTR-9K,2
+Striker STC-2D,3
+Striker STC-2D,4
+Cyclops CP-11-A,5
+Longbow LGB-7V,6
+Longbow LGB-7V,5
+Emperor EMP-6A,4
+Stalker STK-5M,3
+Pillager PLG-3Z,2
+Yu Huang Y-H9G,1

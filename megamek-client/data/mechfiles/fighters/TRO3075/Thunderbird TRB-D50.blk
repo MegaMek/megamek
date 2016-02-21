@@ -1,0 +1,104 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Thunderbird
+</Name>
+
+<Model>
+TRB-D50
+</Model>
+
+<year>
+3065
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+34
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+94
+66
+66
+51
+</armor>
+
+<Nose Equipment>
+Autocannon/10
+Large Laser
+IS Ammo AC/10
+IS Ammo AC/10
+</Nose Equipment>
+
+<Left Wing Equipment>
+Large Laser
+Medium Laser
+Medium Laser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Large Laser
+Medium Laser
+Medium Laser
+</Right Wing Equipment>
+
+<Aft Equipment>
+Small Laser
+</Aft Equipment>
+
+<source>
+TRO 3075 - Civil War
+</source>
+
+<tonnage>
+100.0
+</tonnage>
+

@@ -1,0 +1,154 @@
+
+#building block data file
+
+<BlockVersion>
+
+1
+
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+
+MAM0
+
+</Version>
+
+<UnitType>
+Dropship
+</UnitType>
+
+<Name>
+Gaajian System Patrol Boat
+</Name>
+
+<Model>
+(3060)
+</Model>
+
+<Tonnage>
+1500
+</Tonnage>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<Armor>
+208
+182
+182
+172
+</Armor>
+
+<Nose Equipment>
+ISERPPC
+ISERPPC
+ISLargePulseLaser
+ISLargePulseLaser
+ISERMediumLaser
+ISERMediumLaser
+ISAMS
+ISAMS Ammo:48
+ISLookDownRadar
+ISHighResImager
+</Nose Equipment>
+
+<Left Side Equipment>
+ISLargePulseLaser
+ISLargePulseLaser
+ISERMediumLaser
+ISERMediumLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+</Left Side Equipment>
+
+<Right Side Equipment> 
+ISLargePulseLaser
+ISLargePulseLaser
+ISERMediumLaser
+ISERMediumLaser
+(R) ISMediumPulseLaser
+(R) ISMediumPulseLaser
+</Right Side Equipment>
+
+<Aft Equipment> 
+ISLargePulseLaser
+ISLargePulseLaser
+ISERMediumLaser
+ISERMediumLaser
+ISAMS
+ISAMS Ammo:48
+</Aft Equipment>
+
+<structural_integrity>
+12
+</structural_integrity>
+
+<heatsinks>
+54
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+5000
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+3060
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+spheroid
+</motion_type>
+
+<transporters>
+smallcraftbay:2:2
+CargoBay:111:1
+</transporters>
+
+<escape_pod>
+4
+</escape_pod>
+
+<life_boat>
+0
+</life_boat>
+
+<crew>
+11
+</crew>
+
+<passengers>
+10
+</passengers>
+
+<marines>
+33
+</marines>
+
+<source>
+HB:House Kurita - Clan Invasion
+</source>
+
+

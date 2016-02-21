@@ -1,0 +1,12 @@
+FRR Assault Mechs B 3067
+Highlander HGN-732,1
+Mauler MAL-1R,2
+Charger CGR-3K,3
+Hatamoto-Chi HTM-27T,4
+Atlas AS7-K,5
+Zeus ZEU-9S,6
+Victor VTR-9K,5
+Banshee BNC-5S,4
+Longbow LGB-7V,3
+Thug THG-11E,2
+King Crab KGC-000,1

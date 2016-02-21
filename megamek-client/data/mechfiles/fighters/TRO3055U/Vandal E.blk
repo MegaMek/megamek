@@ -1,0 +1,104 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Vandal
+</Name>
+
+<Model>
+E
+</Model>
+
+<year>
+3064
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+14
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+10
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+240
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+29
+20
+20
+17
+</armor>
+
+<Nose Equipment>
+CLActiveProbe
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLERMicroLaser
+CLERMicroLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLERMicroLaser
+CLERMicroLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+RemoteSensorDispenser
+RemoteSensorDispenser
+</Aft Equipment>
+
+<source>
+TRO 3055u - Civil War
+</source>
+
+<tonnage>
+30.0
+</tonnage>
+

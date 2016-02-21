@@ -1,0 +1,99 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Sabre
+</Name>
+
+<Model>
+SB-31D
+</Model>
+
+<year>
+3079
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+11
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+11
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+20
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+25
+22
+22
+20
+</armor>
+
+<Nose Equipment>
+ISERMediumLaser
+ISLaserAntiMissileSystem
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERMediumLaser
+ISLaserAntiMissileSystem
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERMediumLaser
+ISLaserAntiMissileSystem
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO Prototypes - Jihad
+</source>
+
+<tonnage>
+25.0
+</tonnage>
+

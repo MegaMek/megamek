@@ -1,0 +1,164 @@
+Version:1.0
+Thorn
+THE-F
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2490
+Source:TRO 3039 - Age of War
+Rules Level:1
+History: Manufacturers of parts change, but the stats and therefore record sheet are identical to the Thorn THE-S.
+
+Mass:20
+Engine:120 Fusion Engine(IS)
+Structure:IS Standard
+Myomer:Standard
+
+Heat Sinks:10 Single
+Walk MP:6
+Jump MP:0
+
+Armor:Standard(Inner Sphere)
+LA Armor:6
+RA Armor:6
+LT Armor:6
+RT Armor:6
+CT Armor:8
+HD Armor:8
+LL Armor:7
+RL Armor:7
+RTL Armor:3
+RTR Armor:3
+RTC Armor:4
+
+Weapons:3
+Medium Laser, Left Arm
+LRM 5, Right Arm
+Medium Laser, Head
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+LRM 5
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Heat Sink
+Heat Sink
+IS Ammo LRM-5
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Heat Sink
+Heat Sink
+
+Head:
+Life Support
+Sensors
+Cockpit
+Medium Laser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Overview: One of the older Terran Hegemony and later Star League light mechs the Thorn originally made it's debut in the late twenty fourth century.  According to survivng records from the period the Thorn was the first to mount Endo Steel II internal structure.  This allowed the design to save significant weight in it's chasis at the expense of increased bulk taking up what would otherwise be valuable space for additional equipment.
+
+The Second Succession War was unkind to the Thorn, as it was to many other designs of the era, by resulting in the destruction of the primary suplier of the materials needed to manufacture the Endo Steel skeleton.  The ravages of the war continued in taking their toll by ensuring other manufacturers could not take up the slack, resulting in a new model of Thorn lacking the sophisticated skeleton.
+
+Capabilities: Reviews of the Thorn have always been mixed.  Hefty firepower for a design of the mass range won it many supporters but many commanders and mechwarriors found the lack of jump jets a significant drawback when the Thorn was forced into roles it was ill suited for.  This was compounded with only modest ground mobility for a unit of the Thorn's mass.  During the height of the Star League where there were enough mechs to fill the roles that the Thorn was poorly suited to this drawback was largely overlooked.
+
+Pilots also often complained that repeated firing of the Medium Laser directly under their feet made the cockpit uncomfortable despite the extensive cooling system and the read outs indicating that the mech's systems were not suffering from excessive heat.  On the upside they did report that the Zeus LRM-5 proved extremely accurate but this comes at the cost of a poorly designed ammunition feed system that can lead to misfeeds in the system due to battle damage which can lead to detonation of ammunition in the upper arm area due to damage and the launcher being excessively exposed, often leading to damage to the system if the pilot used the arm to punch a foe.
+
+Technicians however universaly enjoy working on the Thorn as it has large access ways in the limbs that allow technicians easy access to the interior of the mech.
+
+Deployment: Best suited to being a reasonably mobile firesupport design the Thorn was often teamed with Hussars during the Star League era.
+
+As mechs became scarcer and scarcer the Thorn was often forced into use as a scout where it fares poorly.  With the recovery of technology and new designs entering the field the Thorn's managed to maintain some relevance on the bettlefield but faces stiff competition.
+

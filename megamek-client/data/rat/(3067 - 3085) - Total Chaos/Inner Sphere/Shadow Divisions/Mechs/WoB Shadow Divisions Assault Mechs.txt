@@ -1,0 +1,24 @@
+WoB Shadow Divisions Assault Mechs
+Spartan SPT-N3,1
+Legacy LGC-04-WVR,2
+Goliath GOL-5W,3
+Viking VKG-3W,4
+Grand Crusader II GRN-D-04,5
+Seraph C-SRP-O Invictus,6
+Seraph C-SRP-OA Dominus,6
+Seraph C-SRP-OB Infernus,6
+Seraph C-SRP-OC Comminus,6
+Seraph C-SRP-OD Luminos,6
+Seraph C-SRP-OE Eminus,6
+Seraph C-SRP-OS Caelestis,6
+Vanquisher VQR-5V,5
+Emperor EMP-6M,4
+Archangel C-ANG-O Invictus,3
+Archangel C-ANG-OA Dominus,3
+Archangel C-ANG-OB Infernus,3
+Archangel C-ANG-OC Comminus,3
+Archangel C-ANG-OD Luminos,3
+Archangel C-ANG-OE Eminus,3
+Archangel C-ANG-OS Caelestis,3
+Marauder II MAD-5W,2
+King Crab KGC-008,1

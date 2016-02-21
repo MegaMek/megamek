@@ -1,0 +1,119 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+FixedWingSupport
+</UnitType>
+
+<Name>
+Avanti Aerospace Airliner
+</Name>
+
+<Model>
+ACL-800
+</Model>
+
+<year>
+3030
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+4
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+428
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+28
+19
+19
+12	
+</armor>
+
+<barrating>
+6
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Wing Equipment>
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+
+</Right Wing Equipment>
+
+<Body Equipment>
+Paramedic Equipment
+Paramedic Equipment
+Paramedic Equipment
+Paramedic Equipment
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+</Body Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<transporters>
+troopspace:9
+cargobay:6:1
+1stclassquarters:20:2
+</transporters>
+
+<source>
+TRO Vehicle Annex (r) - Succession Wars
+</source>
+
+<tonnage>
+180
+</tonnage>
+

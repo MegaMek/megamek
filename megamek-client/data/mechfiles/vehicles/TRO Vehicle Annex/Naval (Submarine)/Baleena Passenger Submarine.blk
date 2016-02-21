@@ -1,0 +1,99 @@
+#building block data file
+
+<BlockVersion>
+1
+</BlockVersion>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<blockversion>
+1
+</blockversion>
+
+<Name>
+Baleena Passenger Submarine
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2545
+</year>
+
+<source>
+TRO VAr
+</source>
+
+<type>
+IS Level 2
+</type>
+
+<tonnage>
+200
+</tonnage>
+
+<motion_type>
+Submarine
+</motion_type>
+
+<transporters>
+troopspace:1.5
+steeragequarters:10:2
+lightvehiclebay:1:1
+cargobay:3:1
+</transporters>
+
+<engine_type>
+0
+</engine_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<armor>
+22
+16
+16
+16
+</armor>
+
+<barrating>
+2
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
+<Body Equipment>
+SubmersibleChassisMod
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+Lifeboat (Maritime)
+</Body Equipment>
+
+<Front Equipment>
+Searchlight
+Searchlight
+</Front Equipment>
+
+<Right Equipment>
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+</Right Equipment>
+
+<Left Equipment>
+Cargo Container (10 tons)
+Cargo Container (10 tons)
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+
+

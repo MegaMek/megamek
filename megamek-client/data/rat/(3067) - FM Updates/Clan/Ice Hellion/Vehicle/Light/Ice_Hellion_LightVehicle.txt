@@ -1,0 +1,12 @@
+Clan Ice Hellion Light Vehicles (FMU)
+Anhur Transport (Standard),1
+Svantovit Infantry Fighting Vehicle (Standard),2
+Svantovit Infantry Fighting Vehicle (Standard),3
+Badger (C) Tracked Transport Prime,4
+Odin Scout Tank (Standard),5
+Asshur Fast Reconnaissance Vehicle (Standard),6
+Donar Assault Helicopter (Recon),5
+Mithras Light Tank (Standard),4
+Donar Assault Helicopter (Recon),3
+Indra Infantry Transport (Standard),2
+Shamash Reconnaissance Vehicle (Standard),1

@@ -1,0 +1,12 @@
+3145 Wolf Empire Light Fighters - Keshik
+Avar Prime,1
+Chaeronea (Standard),2
+Batu Prime,3
+Sulla Prime,4
+Vandal Prime,5
+Avar Prime,6
+Sulla Prime,5
+Vandal Prime,4
+Batu Prime,3
+Avar Prime,2
+Batu Prime,1

@@ -1,0 +1,108 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Kirghiz
+</Name>
+
+<Model>
+E
+</Model>
+
+<year>
+3069
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+20
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<omni>
+1
+</omni>
+
+<armor>
+84
+62
+62
+48
+</armor>
+
+<Nose Equipment>
+CLActiveProbe
+CLECMSuite
+CLLargePulseLaser
+CLLargePulseLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLHAG40
+HAG/40 Ammo
+HAG/40 Ammo
+HAG/40 Ammo
+HAG/40 Ammo
+HAG/40 Ammo
+CLCASE
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLHAG40
+HAG/40 Ammo
+HAG/40 Ammo
+HAG/40 Ammo
+HAG/40 Ammo
+HAG/40 Ammo
+CLCASE
+</Right Wing Equipment>
+
+<Aft Equipment>
+CLERSmallLaser
+</Aft Equipment>
+
+<source>
+TRO 3055u - Jihad
+</source>
+
+<tonnage>
+100.0
+</tonnage>
+

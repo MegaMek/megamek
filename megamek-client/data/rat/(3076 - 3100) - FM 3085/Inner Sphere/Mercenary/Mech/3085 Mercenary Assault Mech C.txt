@@ -1,0 +1,12 @@
+3085 Mercenary Assault Mech C
+BattleMaster BLR-3M,1
+Longbow LGB-13C,2
+Banshee BNC-5S,3
+Highlander HGN-733,4
+Salamander PPR-5S,5
+Stalker STK-5M,6
+Atlas AS7-D,5
+Albatross ALB-3U,4
+Emperor EMP-6A,3
+Banshee BNC-3S,2
+Atlas AS7-S,1

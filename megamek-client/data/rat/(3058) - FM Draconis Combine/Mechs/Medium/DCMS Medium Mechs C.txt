@@ -1,0 +1,12 @@
+DCMS Medium Mechs Early 3059, Tech Level C
+Wolverine WVR-6K,1
+Crab CRB-27,2
+Assassin ASN-23,3
+Trebuchet TBT-7M,4
+Griffin GRF-1DS,5
+Wolverine WVR-7K,6
+Whitworth WTH-2,5
+Phoenix Hawk PXH-3K,4
+Kintaro KTO-20,3
+Sentinel STN-3M,2
+Griffin GRF-1N,1

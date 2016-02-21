@@ -1,0 +1,12 @@
+Mercenary Medium Mechs F
+Shadow Hawk SHD-5M,1
+Griffin GRF-1N,2
+Lineholder KW1-LH2,3
+Dervish DV-6Mr,4
+Chimera CMA-1S,5
+Centurion CN9-Ar,6
+Chameleon CLN-7V,5
+Scorpion SCP-12S,4
+Wraith TR1,3
+Cronus CNS-5M,2
+Uziel UZL-2S,1

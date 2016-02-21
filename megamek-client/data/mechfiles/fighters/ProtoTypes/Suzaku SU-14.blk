@@ -1,0 +1,101 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Suzaku
+</Name>
+
+<Model>
+SU-14
+</Model>
+
+<year>
+3082
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+7
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+20
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+320
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+20
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+66
+58
+58
+56
+</armor>
+
+<Nose Equipment>
+MRM 20
+IS MRM 20 Ammo
+IS MRM 20 Ammo
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERPPC
+PPC Capacitor
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERPPC
+PPC Capacitor
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISLaserAntiMissileSystem
+</Aft Equipment>
+
+<source>
+TRO Prototypes - Jihad
+</source>
+
+<tonnage>
+75.0
+</tonnage>
+

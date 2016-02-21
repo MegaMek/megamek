@@ -1,0 +1,12 @@
+Draconis Combine Medium Mechs F
+Chimera CMA-C,1
+Hatchetman HCT-5K,2
+Daimyo DMO-4K,3
+Thunder Fox TFT-C3,4
+Bishamon BSN-4K,5
+Exhumer EXR-2X,6
+Strider SR1-O,5
+Phoenix Hawk PXH-7K,4
+Avalanche AVL-1O,3
+Wolf Trap (Tora) WFT-2B,2
+Hitotsume Kozo HKZ-1F,1

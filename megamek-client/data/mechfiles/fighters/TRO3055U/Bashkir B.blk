@@ -1,0 +1,104 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Bashkir
+</Name>
+
+<Model>
+B
+</Model>
+
+<year>
+2930
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+13
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+11
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+240
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<omni>
+1
+</omni>
+
+<armor>
+19
+17
+17
+14
+</armor>
+
+<Nose Equipment>
+CLERSmallLaser
+</Nose Equipment>
+
+<Left Wing Equipment>
+CLLRM5
+Clan Ammo LRM-5
+CLCASE
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+CLLRM5
+Clan Ammo LRM-5
+CLCASE
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO 3055u - Succession Wars
+</source>
+
+<tonnage>
+20.0
+</tonnage>
+

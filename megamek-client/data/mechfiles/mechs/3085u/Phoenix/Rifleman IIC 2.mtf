@@ -1,0 +1,151 @@
+Version:1.0
+Rifleman IIC
+2
+
+Config:Biped
+TechBase:Clan
+Era:2997
+Source:Succession Wars
+Rules Level:2
+
+Mass:65
+Engine:260 Fusion (Clan) Engine
+Structure:Endo Steel
+Myomer:Standard
+
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:3
+
+Armor:Standard(Clan)
+LA Armor:20
+RA Armor:20
+LT Armor:22
+RT Armor:22
+CT Armor:29
+HD Armor:9
+LL Armor:30
+RL Armor:30
+RTL Armor:8
+RTR Armor:8
+RTC Armor:10
+
+Weapons:4
+Ultra AC/2, Left Arm
+Ultra AC/2, Left Arm
+Ultra AC/2, Right Arm
+Ultra AC/2, Right Arm
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+CLUltraAC2
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Jump Jet
+Clan Ultra AC/2 Ammo
+Clan Ultra AC/2 Ammo
+Clan Ultra AC/2 Ammo
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Jump Jet
+Clan Ultra AC/2 Ammo
+Clan Ultra AC/2 Ammo
+Clan Ultra AC/2 Ammo
+Endo Steel
+Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Jump Jet
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

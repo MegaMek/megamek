@@ -1,0 +1,102 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+FixedWingSupport
+</UnitType>
+
+<Name>
+S 2772 Airplane
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2463
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+2
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+0
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+428
+</fuel>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+22
+15
+15
+12	
+</armor>
+
+<barrating>
+2
+</barrating>
+
+<structural_tech_rating>
+2
+</structural_tech_rating>
+
+<Nose Equipment>
+</Nose Equipment>
+
+<Left Wing Equipment>
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+</Right Wing Equipment>
+
+<Body Equipment>
+</Body Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<transporters>
+troopspace:1.5
+cargobay:8.5:1
+1stclassquarters:50:5
+</transporters>
+
+<source>
+TRO Vehicle Annex (r) - Age of War
+</source>
+
+<tonnage>
+130
+</tonnage>
+

@@ -1,0 +1,98 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+ConvFighter
+</UnitType>
+
+<Name>
+Drake Medium Strike Fighter
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<Tonnage>
+35
+</Tonnage>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<Armor>
+10
+8
+8
+6
+</Armor>
+
+<Nose Equipment>
+ISERSmallLaser
+ISMML3
+ISMML3
+IS MML-3 LRM Ammo
+IS MML-3 SRM Ammo
+ISModularArmor
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISModularArmor
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISModularArmor
+</Right Wing Equipment>
+
+<Aft Equipment>
+ISGuardianECMSuite
+ISModularArmor
+</Aft Equipment>
+
+<heatsinks>
+12
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+480
+</fuel>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+3073
+</year>
+
+<source>
+XTRO Boondocks - Jihad
+</source>
+
+<internal_type>
+0				
+</internal_type>
+
+<armor_type>
+22
+</armor_type>
+
+<engine_type>				
+0
+</engine_type>
+
+<motion_type>
+Aerodyne
+</motion_type>

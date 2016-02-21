@@ -1,0 +1,12 @@
+3145 Rasalhague Dominion Transport Dropships
+Aqueduct Liquid Carrier (Standard),1
+Lion (Clan),2
+Nagasawa (Standard),3
+Union C,4
+Confederate (Clan),5
+Union C,6
+Sassanid (Standard),5
+Broadsword (Standard),4
+Miraborg (Standard),3
+Overlord C,2
+Vanir Assault Dropship (Standard),1

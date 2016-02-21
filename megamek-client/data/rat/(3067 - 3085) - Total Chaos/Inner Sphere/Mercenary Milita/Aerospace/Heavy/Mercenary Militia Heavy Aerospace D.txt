@@ -1,0 +1,12 @@
+Mercenary/Militia Heavy Aerospace D
+Eagle EGL-R6,1
+Riever F-100,2
+Riever F-100a,3
+Eagle EGL-R6,4
+Chippewa CHP-W5,5
+Rapier RPR-100,6
+Hammerhead HMR-HD,5
+Hammerhead HMR-HF,4
+Ahab AHB-643,3
+Rapier RPR-100,2
+Riever F-700,1

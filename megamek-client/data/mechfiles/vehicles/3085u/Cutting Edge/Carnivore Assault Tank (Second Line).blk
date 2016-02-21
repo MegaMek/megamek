@@ -1,0 +1,90 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Carnivore Assault Tank
+</Name>
+
+<Model>
+(Second Line)
+</Model>
+
+<Tonnage>
+80
+</Tonnage>
+
+<cruiseMP>
+4
+</cruiseMP>
+
+#Order is Tank/VTOL/LST
+<Armor>
+62
+46
+46
+42
+52
+</Armor>
+
+<Front Equipment>
+CLMediumPulseLaser
+CLMediumPulseLaser
+</Front Equipment>
+
+<Left Equipment>
+CLLightMG
+</Left Equipment>
+
+<Right Equipment>
+CLLightMG
+</Right Equipment>
+
+<Turret Equipment>
+CLLBXAC10
+</Turret Equipment>
+
+<Body Equipment>
+CLLBXAC10 Ammo
+CLLBXAC10 CL Ammo
+CLLightMG Ammo (200)
+CLCASE
+</Body Equipment>
+
+<type>
+Clan Level 2
+</type>
+
+<year>
+3084
+</year>
+
+<source>
+Dark Age
+</source>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+Tracked
+</motion_type>

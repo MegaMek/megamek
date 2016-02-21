@@ -1,0 +1,12 @@
+House Steiner Light Aerospace Late 3075
+Seydlitz SYD-Z1,1
+Sabre SB-27,2
+Seydlitz SYD-Z3A,3
+Sabre SB-27,4
+Seydlitz SYD-Z3,5
+Seydlitz SYD-Z2,6
+Centurion CNT-1D,5
+Seydlitz SYD-Z2A,4
+Sparrowhawk SPR-H5,3
+Seydlitz SYD-Z4,2
+Cheetah F-10,1

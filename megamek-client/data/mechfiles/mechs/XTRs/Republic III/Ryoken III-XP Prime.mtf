@@ -1,0 +1,155 @@
+Version:1.1
+Ryoken III-XP
+Prime
+
+Config:Biped Omnimech
+TechBase:Mixed (IS Chassis)
+Era:3143
+Rules Level:4
+
+Mass:55
+Engine:330 XL (Clan) Engine
+Structure:Clan Endo Steel
+Myomer:Triple-Strength
+Cockpit:Interface Cockpit
+Gyro:None
+
+Heat Sinks:13 Double
+Base Chassis Heat Sinks:11
+Walk MP:6
+Jump MP:0
+
+Armor:Ferro-Lamellor(Clan)
+LA Armor:16
+RA Armor:16
+LT Armor:21
+RT Armor:21
+CT Armor:24
+HD Armor:9
+LL Armor:19
+RL Armor:19
+RTL Armor:5
+RTR Armor:5
+RTC Armor:6
+
+Weapons:6
+ER Large Pulse Laser, Right Arm
+ER Large Pulse Laser, Left Arm
+ER Medium Pulse Laser, Left Arm
+ER Medium Pulse Laser, Right Arm
+SRM 6, Left Torso
+SRM 6, Right Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLERMediumPulseLaser
+CLERMediumPulseLaser
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+TSM
+TSM
+TSM
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLERLargePulseLaser
+CLERMediumPulseLaser
+CLERMediumPulseLaser
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+Clan Endo Steel
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLSRM6
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+CLDoubleHeatSink
+CLDoubleHeatSink
+CLSRM6
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
+TSM
+TSM
+TSM
+Clan Ammo SRM-6
+Clan Ammo SRM-6
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+Cockpit
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Clan Ferro-Lamellor
+Clan Ferro-Lamellor
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

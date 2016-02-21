@@ -1,0 +1,12 @@
+Rasalhague Dominion Second Line Medium Mechs
+Ursus 3,1
+Violator VT-U1,2
+Beowulf BEO-14,3
+Hunchback IIC (Standard),4
+Hitotsume Kozo HKZ-1F,5
+Clint IIC (Standard),6
+Shadow Hawk SHD-12C,5
+Ursus II (Standard),4
+Black Hawk (Standard),3
+Ursus (Standard),2
+Beowulf IIC (Standard),1

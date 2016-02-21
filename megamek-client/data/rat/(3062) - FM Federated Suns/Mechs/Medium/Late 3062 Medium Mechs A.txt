@@ -1,0 +1,12 @@
+Late 3062 AFFS Medium Mechs, Tech Level A
+Strider SR1-O,1
+Centurion CN10-B,2
+Stealth STH-1D,3
+Firestarter FS9-O,4
+Blackjack BJ2-OD,5
+Enforcer III ENF-6M,6
+Firestarter FS9-OB,5
+Blackjack BJ2-OF,4
+Enforcer III ENF-6T,3
+Bushwacker BSW-S2,2
+Nightsky NGS-5T,1

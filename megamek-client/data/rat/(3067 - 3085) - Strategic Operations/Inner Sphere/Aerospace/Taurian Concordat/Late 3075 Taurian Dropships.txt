@@ -1,0 +1,12 @@
+Taurian Concordat Dropships Late 3075
+Seeker (3054),1
+Leopard CV (3054),2
+Seeker (3054),3
+Mule (Standard),4
+Leopard (3056),5
+Union (3055),6
+Condor (3054),5
+Triumph (3057),4
+Overlord (3056),3
+Fury (3056),2
+Intruder (3056),1

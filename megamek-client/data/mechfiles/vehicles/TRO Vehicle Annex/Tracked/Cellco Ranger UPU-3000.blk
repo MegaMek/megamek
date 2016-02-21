@@ -1,0 +1,99 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SupportTank
+</UnitType>
+
+<Name>
+Cellco Ranger
+</Name>
+
+<Model>
+UPU-3000
+</Model>
+
+<year>
+3022
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<transporters>
+troopspace:1.0
+</transporters>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+1
+</engine_type>
+
+<armor>
+11
+7
+7
+7
+6
+</armor>
+
+<barrating>
+7
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<Body Equipment>
+Armored Chassis
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+BASearchlight
+BASearchlight
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+Machine Gun
+BASearchlight
+</Turret Equipment>
+
+<source>
+TRO VAr
+</source>
+
+<transporters>
+troopspace:1.0
+liquidcargobay:.955:1
+</transporters>
+
+<tonnage>
+17.0
+</tonnage>
+

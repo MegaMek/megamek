@@ -1,0 +1,103 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+SmallCraft
+</UnitType>
+<Name>
+Dragonstar Passenger Transport
+</Name>
+<Model>
+(Standard)
+</Model>
+<Tonnage>
+150
+</Tonnage>
+<SafeThrust>
+5
+</SafeThrust>
+<Armor>
+85
+72
+72
+55
+</Armor>
+<Nose Equipment>
+ISLargeLaser
+ISMediumLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+ISMediumLaser
+</Left Side Equipment>
+
+<Right Side Equipment> 
+ISMediumLaser
+</Right Side Equipment>
+
+<Aft Equipment> 
+ISLargeLaser
+ISMediumLaser
+</Aft Equipment>
+
+<structural_integrity>
+6
+</structural_integrity>
+
+<heatsinks>
+20
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+480
+</fuel>
+
+<type>
+IS Level 2
+</type>
+
+<year>
+2610
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+0
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+spheroid
+</motion_type>
+
+<transporters>
+infantrybay:2:2
+CargoBay:16.5:0
+</transporters>
+
+<crew>
+4
+</crew>
+
+<passengers>
+42
+</passengers>
+
+<source>
+HB Kurita - Star League
+</source>

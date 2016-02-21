@@ -1,0 +1,97 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+LargeSupportTank
+</UnitType>
+
+<Name>
+Saturn Harvester
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2652
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Tracked
+</motion_type>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor>
+25
+18
+18
+18
+18
+18
+</armor>
+
+<barrating>
+4
+</barrating>
+
+<structural_tech_rating>
+3
+</structural_tech_rating>
+
+<Body Equipment>
+AmphibiousChassis
+</Body Equipment>
+
+<Front Equipment>
+Combine
+</Front Equipment>
+
+<Front Right Equipment>
+</Front Right Equipment>
+
+<Front Left Equipment>
+</Front Left Equipment>
+
+<Rear Right Equipment>
+</Rear Right Equipment>
+
+<Rear Left Equipment>
+</Rear Left Equipment>
+
+<Rear Equipment>
+Lift Hoist
+</Rear Equipment>
+
+<transporters>
+2ndclassquarters:21:3
+cargobay:21.5:1
+refrigeratedcargobay:12:1
+</transporters>
+
+<source>
+TRo VAr
+</source>
+
+<tonnage>
+175.0
+</tonnage>
+

@@ -1,0 +1,12 @@
+3145 Capellan Confederation Medium Fighters - C
+Troika CMT-3T,1
+Lightning LTN-G16L,2
+Transit TR-12,3
+Lightning LTN-G15b,4
+Transit TR-13G,5
+Troika CMT-3T,6
+Defiance DFC-O,5
+Troika CMT-4U,4
+Lightning LTN-G16L,3
+Defiance DFC-O,2
+Stingray F-95,1

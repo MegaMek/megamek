@@ -1,0 +1,109 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Chippewa
+</Name>
+
+<Model>
+CHP-W5b
+</Model>
+
+<year>
+2731
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<cockpit_type>
+0
+</cockpit_type>
+
+<heatsinks>
+25
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+-1
+</armor_tech>
+
+<armor>
+43
+31
+31
+29
+</armor>
+
+<Nose Equipment>
+LRM 15
+ISArtemisIV
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+LRM 15
+ISArtemisIV
+IS Ammo LRM-15 Artemis-capable
+IS Ammo LRM-15 Artemis-capable
+Medium Laser
+Medium Laser
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISERLargeLaser
+ISERLargeLaser
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISERLargeLaser
+ISERLargeLaser
+</Right Wing Equipment>
+
+<Aft Equipment>
+Small Laser
+Small Laser
+</Aft Equipment>
+
+<source>
+H:Operation Klondyke - Star League
+</source>
+
+<tonnage>
+90.0
+</tonnage>
+

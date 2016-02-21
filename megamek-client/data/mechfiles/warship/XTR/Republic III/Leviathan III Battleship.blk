@@ -1,0 +1,755 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+Warship
+</UnitType>
+<Name>
+Leviathan III Battleship
+</Name>
+<model>
+(Standard)
+</model>
+<Tonnage>
+2400000
+</Tonnage>
+<SafeThrust>
+3
+</SafeThrust>
+<Armor>
+1000
+1000
+1000
+1000
+1000
+1000
+</Armor>
+<Nose Equipment>
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGauss Ammo:600
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12 Ammo:504
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20 Ammo (Clan) Artemis V-capable:504
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1008
+Clan Laser AMS
+Clan Laser AMS
+Clan Laser AMS
+Clan Laser AMS
+Clan Laser AMS
+HeavyNGauss
+HeavyNGauss
+HeavyNGauss Ammo:200
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:300
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+AR10
+AR10 Barracuda Ammo:100
+AR10 WhiteShark Ammo:50
+AR10 KillerWhale Ammo:25
+AR10
+AR10 Barracuda Ammo:100
+AR10 WhiteShark Ammo:50
+AR10 KillerWhale Ammo:25
+</Nose Equipment>
+<Front Left Side Equipment>
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12 Ammo:600
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLLRM20 Ammo (Clan) Artemis V-capable:504
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1008
+Clan Laser AMS
+Clan Laser AMS
+Clan Laser AMS
+Clan Laser AMS
+Clan Laser AMS
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:300
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+AR10
+AR10 Barracuda Ammo:100
+AR10 WhiteShark Ammo:50
+AR10 KillerWhale Ammo:25
+AR10
+AR10 Barracuda Ammo:100
+AR10 WhiteShark Ammo:50
+AR10 KillerWhale Ammo:25
+</Front Left Side Equipment>
+<Front Right Side Equipment>
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12 Ammo:600
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLLRM20 Ammo (Clan) Artemis V-capable:504
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1008
+Clan Laser AMS
+Clan Laser AMS
+Clan Laser AMS
+Clan Laser AMS
+Clan Laser AMS
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:300
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+AR10
+AR10 Barracuda Ammo:100
+AR10 WhiteShark Ammo:50
+AR10 KillerWhale Ammo:25
+AR10
+AR10 Barracuda Ammo:100
+AR10 WhiteShark Ammo:50
+AR10 KillerWhale Ammo:25
+</Front Right Side Equipment>
+
+<Left Broadside Equipment>
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLERPPC
+CLPPCCapacitor
+CLERPPC
+CLPPCCapacitor
+CLERPPC
+CLPPCCapacitor
+CLERPPC
+CLPPCCapacitor
+CLERPPC
+CLPPCCapacitor
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12 Ammo:900
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLLRM20 Ammo (Clan) Artemis V-capable:900
+HeavyNGauss
+HeavyNGauss
+HeavyNGauss Ammo:200
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+CLStingray
+CLStingray
+CLStingray
+CLStingray Ammo:150
+CLStingray
+CLStingray
+CLStingray
+CLStingray Ammo:150
+</Left Broadside Equipment>
+
+<Right Broadside Equipment>
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLERPPC
+CLPPCCapacitor
+CLERPPC
+CLPPCCapacitor
+CLERPPC
+CLPPCCapacitor
+CLERPPC
+CLPPCCapacitor
+CLERPPC
+CLPPCCapacitor
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12 Ammo:900
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLLRM20 Ammo (Clan) Artemis V-capable:900
+HeavyNGauss
+HeavyNGauss
+HeavyNGauss Ammo:200
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+CLStingray
+CLStingray
+CLStingray
+CLStingray Ammo:150
+CLStingray
+CLStingray
+CLStingray
+CLStingray Ammo:150
+</Right Broadside Equipment>
+
+<Aft Left Side Equipment>
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12 Ammo:600
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLLRM20 Ammo (Clan) Artemis V-capable:600
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1008
+Clan Laser AMS
+Clan Laser AMS
+Clan Laser AMS
+Clan Laser AMS
+Clan Laser AMS
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:300
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+AR10
+AR10 Barracuda Ammo:100
+AR10 WhiteShark Ammo:50
+AR10 KillerWhale Ammo:25
+AR10
+AR10 Barracuda Ammo:100
+AR10 WhiteShark Ammo:50
+AR10 KillerWhale Ammo:25
+</Aft Left Side Equipment>
+
+<Aft Right Side Equipment> 
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLERMediumLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12 Ammo:600
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLLRM20 Ammo (Clan) Artemis V-capable:600
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1008
+Clan Laser AMS
+Clan Laser AMS
+Clan Laser AMS
+Clan Laser AMS
+Clan Laser AMS
+NAC20
+NAC20
+NAC20
+NAC20 Ammo:300
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+NL55
+AR10
+AR10 Barracuda Ammo:100
+AR10 WhiteShark Ammo:50
+AR10 KillerWhale Ammo:25
+AR10
+AR10 Barracuda Ammo:100
+AR10 WhiteShark Ammo:50
+AR10 KillerWhale Ammo:25
+</Aft Right Side Equipment>
+
+<Aft Equipment> 
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLERLargeLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLLargePulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLMediumPulseLaser
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGaussRifle
+CLGauss Ammo:600
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12
+CLATM12 Ammo:500
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLLRM20
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLArtemisV
+CLLRM20 Ammo (Clan) Artemis V-capable:504
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAntiMissileSystem
+CLAMS Ammo:1008
+Clan Laser AMS
+Clan Laser AMS
+Clan Laser AMS
+Clan Laser AMS
+Clan Laser AMS
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+HeavyNPPC
+AR10
+AR10 Barracuda Ammo:100
+AR10 WhiteShark Ammo:50
+AR10 KillerWhale Ammo:25
+AR10
+AR10 Barracuda Ammo:100
+AR10 WhiteShark Ammo:50
+AR10 KillerWhale Ammo:25
+</Aft Equipment>
+
+<structural_integrity>
+150
+</structural_integrity>
+
+<heatsinks>
+10000
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+37500
+</fuel>
+
+<type>
+Clan Level 3
+</type>
+
+<year>
+3150
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+12
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+ASFBay:60:5
+smallcraftbay:10:2
+CargoBay:51459:12
+HPG
+</transporters>
+
+<docking_collar>
+20
+</docking_collar>
+<grav_deck>
+8
+</grav_deck>
+<escape_pod>
+150
+</escape_pod>
+<life_boat>
+150
+</life_boat>
+<crew>
+1730
+</crew>
+<passengers>
+0
+</passengers>
+<lithium-fusion>
+</lithium-fusion>

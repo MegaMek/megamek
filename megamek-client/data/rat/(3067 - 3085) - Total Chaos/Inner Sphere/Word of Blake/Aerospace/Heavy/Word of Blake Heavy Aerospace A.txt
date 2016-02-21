@@ -1,0 +1,22 @@
+Word of Blake Heavy Aerospace A
+Rapier RPR-100,1
+Riever F-700,2
+Ahab AHB-443,3
+Riever F-700a,4
+Riever F-700b,5
+Shiva SHV-O,11
+Shiva SHV-OA,11
+Shiva SHV-OB,11
+Shiva SHV-OC,11
+Shiva SHV-OD,11
+Striga S-STR-O Invictus,6
+Striga S-STR-OA Dominus,6
+Striga S-STR-OB Infernus,6
+Striga S-STR-OC Comminus,6
+Striga S-STR-OD Luminos,6
+Striga S-STR-OE Eminus,6
+Eisensturm EST-O,4
+Eisensturm EST-OA,4
+Eisensturm EST-OB,4
+Eisensturm EST-OC,4
+Eisensturm EST-OD,4

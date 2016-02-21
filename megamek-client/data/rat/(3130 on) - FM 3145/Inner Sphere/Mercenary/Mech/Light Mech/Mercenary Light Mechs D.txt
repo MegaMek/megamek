@@ -1,0 +1,12 @@
+Mercenary Light Mechs D
+Firestarter FS9-M3,1
+Cadaver CVR-A1,2
+Wight WGT-1LAW/SC,3
+Flea FLE-19,4
+Mjolnir MLR-B2,5
+Fireball ALM-10D,6
+Firestarter FS9-M4,5
+Eagle EGL-2M,4
+Valiant V4-LNT-K7,3
+Blade BLD-XS,2
+Locust LCT-5W2,1

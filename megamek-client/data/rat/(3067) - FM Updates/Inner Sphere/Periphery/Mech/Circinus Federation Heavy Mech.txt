@@ -1,0 +1,12 @@
+Circinus Federation Heavy Mechs 3067 FM-U
+Tempest TMP-3M,1
+Caesar CES-3R,2
+JagerMech JM6-DD,3
+Merlin MLN-1B,4
+Catapult CPLT-C1,5
+Orion ON1-K,6
+Grasshopper GHR-5H,5
+Quickdraw QKD-4G,4
+Cataphract CTF-3D,3
+Guillotine GLT-5M,2
+Excalibur EXC-C1,1

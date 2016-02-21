@@ -1,0 +1,12 @@
+3085 Republic of the Sphere Transport Dropships
+Fortress (3058),1
+Excalibur (3056),2
+Triumph (3057),3
+Overlord (3056),4
+Gazelle (3055),5
+Aurora (Standard),6
+Leopard (3056),5
+Hercules (Standard),4
+Union C,3
+Carrier (Standard),2
+Okinawa (Standard),1

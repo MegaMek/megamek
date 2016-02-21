@@ -1,0 +1,12 @@
+Mercenaries Medium Tank
+Drillson Heavy Hover Tank (SRM),1
+Bandit Hovercraft Prime,2
+Vedette Medium Tank (Ultra),3
+Hetzer Wheeled Assault Gun (Standard),4
+Myrmidon Medium Tank (Standard),5
+Drillson Heavy Hover Tank (Standard),6
+Goblin Medium Tank (Standard),5
+Maxim Heavy Hover Transport (3052 Upgrade),4
+Condor Heavy Hover Tank (Standard),3
+Fulcrum Heavy Hovertank (Standard),2
+Condor Heavy Hover Tank (Laser),1

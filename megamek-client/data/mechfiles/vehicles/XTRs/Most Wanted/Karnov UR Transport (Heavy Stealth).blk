@@ -1,0 +1,89 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+VTOL
+</UnitType>
+
+<Name>
+Karnov UR Transport
+</Name>
+
+<Model>
+(Heavy Stealth)
+</Model>
+
+<year>
+3081				
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+VTOL
+</motion_type>
+
+<cruiseMP>
+6
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor>
+20
+15
+15
+12
+2
+</armor>
+
+<armor_type>
+22
+</armor_type>
+
+
+<Body Equipment>
+ISVTOLJetBooster
+ISAngelECMSuite
+ISSponsonTurret
+ISMG (ST)
+ISMG (ST)
+IS Machine Gun Ammo - Half
+</Body Equipment>
+
+<Front Equipment>
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<transporters>
+cargobay:14:1
+InfantryBay:4:1
+</transporters>
+
+<tonnage>
+45.0
+</tonnage>
+
+<source>
+XTRO Most Wanted - Jihad
+</source>
+

@@ -1,0 +1,110 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+SmallCraft
+</UnitType>
+<Name>
+Intrepid Assault Craft
+</Name>
+
+<Model>
+(2331)
+</Model>
+
+<Tonnage>
+150
+</Tonnage>
+
+<SafeThrust>
+5
+</SafeThrust>
+
+<Armor>
+73
+65
+65
+35
+</Armor>
+
+<Nose Equipment>
+ISMediumLaser
+ISMediumLaser
+ISMediumLaser
+</Nose Equipment>
+
+<Left Side Equipment>
+ISLargeLaser
+ISMediumLaser
+</Left Side Equipment>
+
+<Right Side Equipment>
+ISLargeLaser
+ISMediumLaser
+</Right Side Equipment>
+
+<Aft Equipment>
+ISMediumLaser
+</Aft Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
+
+<heatsinks>
+22
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<type>
+IS Level 5
+</type>
+
+<year>
+2331
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<armor_type>
+17
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<crew>
+5
+</crew>
+
+<passengers>
+0
+</passengers>
+
+<transporters>
+infantrybay:1:2
+</transporters>
+
+<source>
+XTRO Primitives IV - Age of War
+</source>
+

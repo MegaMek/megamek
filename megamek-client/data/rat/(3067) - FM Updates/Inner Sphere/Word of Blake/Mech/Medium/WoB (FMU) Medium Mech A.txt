@@ -1,0 +1,12 @@
+WoB Medium Mechs A 3067 (FMU)
+Hermes II HER-5C,1
+Blackjack BJ2-O,2
+Crab CRB-30,3
+Blue Flame BLF-21,4
+Raijin RJN101-C,5
+Initiate INI-02,6
+Lightray LGH-4W,5
+Griffin GRF-6CS,4
+Shadow Hawk SHD-7CS,3
+Buccaneer BCN-3R,2
+Wyvern WVE-10N,1

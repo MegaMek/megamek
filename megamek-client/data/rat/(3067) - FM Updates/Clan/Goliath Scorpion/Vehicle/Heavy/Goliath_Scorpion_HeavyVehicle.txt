@@ -1,0 +1,12 @@
+Goliath Scorpion Heavy Vehicle (FMU)
+Demon Tank (Standard),1
+Ishtar Heavy Fire Support Tank (Standard),2
+Magi Infantry Support Vehicle (Standard),3
+Oro Heavy Tank (Standard),4
+Ishtar Heavy Fire Support Tank (Standard),5
+Oro Heavy Tank (Standard),6
+Ishtar Heavy Fire Support Tank (Standard),5
+SRM Carrier (Standard),4
+Ishtar Heavy Fire Support Tank (Standard),3
+Burke Defense Tank (Standard),2
+Athena Combat Vehicle (Standard),1

@@ -1,0 +1,106 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Aero
+</UnitType>
+
+<Name>
+Striga
+</Name>
+
+<Model>
+S-STR-OA Dominus
+</Model>
+
+<year>
+3072
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Aerodyne
+</motion_type>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<cockpit_type>
+1
+</cockpit_type>
+
+<heatsinks>
+13
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+400
+</fuel>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+19
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+100
+76
+76
+70
+</armor>
+
+<Nose Equipment>
+Heavy PPC
+</Nose Equipment>
+
+<Left Wing Equipment>
+ISRotaryAC5
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISStreakSRM4
+IS Streak SRM 4 Ammo
+ISCASE
+</Left Wing Equipment>
+
+<Right Wing Equipment>
+ISRotaryAC5
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISRotaryAC5 Ammo
+ISStreakSRM4
+</Right Wing Equipment>
+
+<Aft Equipment>
+</Aft Equipment>
+
+<source>
+TRO 3075 - Jihad
+</source>
+
+<tonnage>
+85.0
+</tonnage>
+

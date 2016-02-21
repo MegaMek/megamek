@@ -1,0 +1,171 @@
+Version:1.0
+Mercury
+MCY-98
+
+Config:Biped
+TechBase:Inner Sphere
+Era:2810
+Source:TRO 3039 - Succession Wars
+Rules Level:1
+
+Mass:20
+Engine:160 Fusion Engine
+Structure:Standard
+Myomer:Standard
+
+Heat Sinks:10 Single
+Walk MP:8
+Jump MP:0
+
+Armor:Standard Armor
+LA Armor:6
+RA Armor:6
+LT Armor:7
+RT Armor:7
+CT Armor:8
+HD Armor:6
+LL Armor:7
+RL Armor:7
+RTL Armor:3
+RTR Armor:3
+RTC Armor:4
+
+Weapons:4
+1 ISMediumLaser, Left Torso
+1 ISSmallLaser, Head
+1 ISMediumLaser, Right Arm
+1 ISSmallLaser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+ISMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+ISMediumLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISSmallLaser
+-Empty-
+
+Head:
+Life Support
+Sensors
+Cockpit
+ISSmallLaser
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Overview: The Mercury was intended to be a replacement for the Stinger and Wasp by delivering the same mobility, same or better firepower, and no reduction of armor.
+
+Initial versions with improved electronics and a host of technologies of the Star League was well recieved by pilots acustomed to the aforementioned Stingers and Wasps.
+
+The Mercury was considered so advanced that it was initially restricted to duty on Terra and the factory on Graham IV.  With the Exodus most Mercury mechs left the Inner Sphere with most remaining with what would become the Eridani Light Horse.
+
+It is not surprising that the Mercury established a new lower tech variant during the technological decline of the Succession Wars and the relative rarity ensuring the Mercury remained a highly sought after mech.
+
+Capability: The high mobility and all energy loadout of the Mercury combined to make for a very effective scout and raiding platform able to outlast it's pilots in most situations.
+
+If there is any shortfall of the Mercury's capabilities it is in the lack of jump jets.  This leaves the Mercury in rare situations where it's high mobility is largely negated by rough/built up terrain.
+
+Engineers developed a modular mounting system for the paired Hessen IX Small Lasers to allow for quick removal of damaged components.  While it is not as advanced as modern Omni-mechs the origins of that technology can still be seen in this system.
+
+With the rediscovery of many Star League technologies and the developments of new technologies the Mercury has benefited with the return of it's more advanced variants from the days of the Star Lague as well as all new variants.
+
+Deployment: Initially tightly controlled the Mercury was reduced to nearly mythical status, especially after the combat loses that the Eridani Light Horse suffered on Sendai in 2789.  Fortunately Mitchel Vehicles was able to produce enough Mercury mechs that the design eventually re-emerged and spread during the Succession Wars.
+
+Who ever the Mercury ends up serving the obvious combination of high ground mobility and energy weapon loadout ensures it sees heavy use in units tasked with recon and raiding.
+
+The Mercury even has some popularity as a counter to the same mission roles due to it's higher armor.

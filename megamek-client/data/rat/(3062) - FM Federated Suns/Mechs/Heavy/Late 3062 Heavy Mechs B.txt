@@ -1,0 +1,12 @@
+Late 3062 AFFS Heavy Mechs, Tech Level B
+Bandersnatch BNDR-01A,1
+Rakshasa MDG-1A,2
+Cestus CTS-6Y,3
+War Dog WR-DG-02FC,4
+Falconer FLC-8R,5
+Caesar CES-3R,6
+Penetrator PTR-4D,5
+Cataphract CTF-3D,4
+JagerMech III JM6-D3,3
+Gallowglas GAL-1GLS,2
+Gallowglas GAL-2GLS,1

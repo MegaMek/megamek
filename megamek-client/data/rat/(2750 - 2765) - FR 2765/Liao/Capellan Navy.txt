@@ -1,0 +1,11 @@
+Capellan Navy
+Du Shi Wang Battleship (Standard),14
+Black Lion I-Battlecruiser,3
+Soyal Heavy Cruiser (Standard),27
+Aegis Heavy Cruiser (2582),16
+Baron Destroyer (Standard),8
+Carson Destroyer (Standard),5
+Lola I Destroyer (Standard),5
+Essex Destroyer (2711),5
+Vincent Corvette Mk 39,8
+Vigilant Corvette (Standard),8

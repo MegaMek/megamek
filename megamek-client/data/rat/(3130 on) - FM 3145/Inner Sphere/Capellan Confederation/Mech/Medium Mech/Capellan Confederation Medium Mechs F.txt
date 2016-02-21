@@ -1,0 +1,12 @@
+Capellan Confederation Medium Mechs F
+Calliope CAL-1MAF,1
+Huron Warrior HUR-WO-R4O,2
+Raven II RVN-5X,3
+Shockwave SKW-2F,4
+Sha Yu SYU-6B,5
+Vindicator VND-4L,6
+Shadow Hawk SHD-8L,5
+Griffin GRF-5L,4
+Osprey OSP-26,3
+Vindicator VND-6L,2
+Eyleuka EYL-45A,1

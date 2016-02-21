@@ -114,8 +114,8 @@
 		<exec executable="git">
 			<arg line="clone ${gitroot}" />
 		</exec>
-		<move file="git/megamek" tofile="${pkgdir}"/>
-        <delete dir="git" />
+		<move file="megamek/megamek" tofile="${pkgdir}"/>
+        <delete dir="megamek" />
 	</target>
 
 	<target name="pkgdir-build" depends="pkgdir-get" description="compile project from git and generate JAR file">
@@ -172,7 +172,7 @@
 	<target name="pkgdir-clean" description="remove the Git build directory">
 		<delete dir="${pkgbuilddir}" />
         <delete dir="${pkgdir}" />
-        <delete dir="git" />
+        <delete dir="megamek" />
 	</target>
 
 	<target name="mac-bundle" description="Bundle the project built from Git into an Mac OSX distribution">

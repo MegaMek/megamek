@@ -1,8 +1,0 @@
-Neoancient Marik 2700 Conventional Fighters
-@Neoancient Canopus 2700 Conventional Fighters,2
-@Neoancient Liao 2700 Conventional Fighters,1
-@Neoancient Star League 2700 Conventional Fighters,8
-@Neoancient Steiner 2700 Conventional Fighters,3
-Heavy Strike Fighter Meteor,100
-Light Strike Fighter Angel,61
-Light Strike Fighter Owl,31

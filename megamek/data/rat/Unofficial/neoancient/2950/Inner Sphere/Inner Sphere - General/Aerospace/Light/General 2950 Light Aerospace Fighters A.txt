@@ -1,6 +1,0 @@
-Neoancient General 2950 Light Aerospace Fighters A
-Centurion CNT-1D,100
-Centurion CNT-2D,50
-Rogue RGU-133E,24
-Rogue RGU-133F,18
-Rogue RGU-133L,12

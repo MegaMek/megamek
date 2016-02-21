@@ -1,9 +1,0 @@
-Neoancient Outworlds 2950 Assault Vehicles C
-@Neoancient Davion 2870 Assault Vehicles D,6
-@Neoancient Kurita 2870 Assault Vehicles D,5
-Demolisher Heavy Tank (Standard Mk. II),100
-Ontos Heavy Tank (Standard),20
-Partisan Heavy Tank (Standard),29
-Rhino Fire Support Tank (MG),22
-Rhino Fire Support Tank (Standard),31
-Schrek PPC Carrier (Standard),8

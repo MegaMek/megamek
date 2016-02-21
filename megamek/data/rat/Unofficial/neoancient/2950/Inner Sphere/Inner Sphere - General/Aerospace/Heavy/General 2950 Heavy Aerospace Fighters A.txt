@@ -1,7 +1,0 @@
-Neoancient General 2950 Heavy Aerospace Fighters A
-Eagle EGL-R10,29
-Eagle EGL-R6,57
-Eagle EGL-R9,29
-Hammerhead HMR-HD,19
-Hammerhead HMR-HE,2
-Thunderbird TRB-D36,100

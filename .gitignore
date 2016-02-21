@@ -4,3 +4,5 @@
 /.settings/
 /logs/
 /target/
+/megamek-client/target/
+/megamek-common/target/

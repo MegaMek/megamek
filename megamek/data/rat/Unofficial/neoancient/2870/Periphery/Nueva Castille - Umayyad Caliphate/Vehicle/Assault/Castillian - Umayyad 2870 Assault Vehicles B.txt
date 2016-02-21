@@ -1,7 +1,0 @@
-Neoancient Castillian - Umayyad 2870 Assault Vehicles B
-Demolisher Heavy Tank (Standard Mk. II),5
-Partisan Heavy Tank (Standard),3
-Puma Assault Tank PAT-005,1
-Rhino Fire Support Tank (MG),2
-Rhino Fire Support Tank (Standard),2
-Schrek PPC Carrier (Standard),2

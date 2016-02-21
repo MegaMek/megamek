@@ -1,7 +1,0 @@
-Neoancient General 2700 Heavy Vehicles B
-AC/2 Carrier (Standard),2
-Bulldog Medium Tank (Standard),3
-LRM Carrier (Standard),4
-Manticore Heavy Tank (Standard),5
-SRM Carrier (Standard),3
-Von Luckner Heavy Tank VNL-K65N,2

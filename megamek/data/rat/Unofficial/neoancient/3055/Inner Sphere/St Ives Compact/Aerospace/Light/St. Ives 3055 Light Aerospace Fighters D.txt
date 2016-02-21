@@ -1,6 +1,0 @@
-Neoancient St. Ives 3055 Light Aerospace Fighters D
-@Neoancient Liao 3050 Light Aerospace Fighters F,4
-Centurion CNT-1D,22
-Centurion CNT-2D,8
-Sabre SB-27,13
-Thrush TR-7,100

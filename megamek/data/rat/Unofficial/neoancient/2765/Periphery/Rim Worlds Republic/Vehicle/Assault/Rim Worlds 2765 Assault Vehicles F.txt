@@ -1,8 +1,0 @@
-Neoancient Rim Worlds 2765 Assault Vehicles F
-@Neoancient Star League 2700 Assault Vehicles C,2
-@Neoancient Steiner 2700 Assault Vehicles F,11
-Fury Command Tank (Fury II),21
-Fury Command Tank (Original),31
-Puma Assault Tank PAT-005,100
-Rhino Fire Support Tank (MG),49
-Rhino Fire Support Tank (Standard),68

@@ -1,9 +1,0 @@
-Neoancient Castillian - Umayyad 3039 Light Aerospace Fighters A
-@Neoancient Hansa 3028 Light Aerospace Fighters B,6
-Centurion CNT-1D,26
-Centurion CNT-2D,10
-Cheetah F-10,26
-Seydlitz SYD-21,100
-Sholagar SL-21,20
-Sparrowhawk SPR-H5,40
-Thrush TR-7,30

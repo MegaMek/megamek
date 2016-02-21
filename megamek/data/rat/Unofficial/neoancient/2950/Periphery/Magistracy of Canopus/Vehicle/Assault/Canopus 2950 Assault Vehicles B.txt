@@ -1,9 +1,0 @@
-Neoancient Canopus 2950 Assault Vehicles B
-@Neoancient Liao 2870 Assault Vehicles C,2
-@Neoancient Marik 2870 Assault Vehicles C,10
-Demolisher Heavy Tank (Standard Mk. II),100
-Ontos Heavy Tank (Standard),27
-Partisan Heavy Tank (Standard),53
-Rhino Fire Support Tank (MG),22
-Rhino Fire Support Tank (Standard),31
-Schrek PPC Carrier (Standard),15

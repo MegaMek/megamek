@@ -1,9 +1,0 @@
-Neoancient Marik 3067 Warships
-Agamemnon Heavy Cruiser (Standard),67
-Black Lion Battlecruiser (2691),17
-Eagle Frigate (Standard),100
-Essex Destroyer (2711),33
-Impavido Destroyer (Standard),50
-Thera Carrier (Standard),67
-Zechetinu Corvette (Standard),67
-Zechetinu II Corvette (Standard),83

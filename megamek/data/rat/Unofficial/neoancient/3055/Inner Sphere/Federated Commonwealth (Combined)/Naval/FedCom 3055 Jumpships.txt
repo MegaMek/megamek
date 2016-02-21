@@ -1,8 +1,0 @@
-Neoancient FedCom 3055 Jumpships
-Invader Jumpship (PPC),100
-Invader Jumpship (Standard),100
-Merchant Jumpship (Standard),95
-Monolith Jumpship (Standard),19
-Scout JumpShip (Standard),95
-Star Lord JumpShip (Standard),38
-Tramp JumpShip (Standard),57

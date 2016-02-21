@@ -1,9 +1,0 @@
-Neoancient Kurita 3039 Light Aerospace Fighters A
-@Neoancient Davion 3028 Light Aerospace Fighters B,3
-@Neoancient Steiner 3028 Light Aerospace Fighters B,6
-Centurion CNT-1D,26
-Centurion CNT-2D,10
-Sabre SB-27,15
-Sholagar SL-21,100
-Sholagar SL-21L,50
-Sparrowhawk SPR-H5K,75

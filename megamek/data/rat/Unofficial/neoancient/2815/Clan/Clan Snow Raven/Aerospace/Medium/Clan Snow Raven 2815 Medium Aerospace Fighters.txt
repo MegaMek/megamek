@@ -1,8 +1,0 @@
-Neoancient Clan Snow Raven 2815 Medium Aerospace Fighters
-Corsair CSR-V12b,94
-Gotha GTHA-500b,100
-Hellcat II HCT-213C,57
-Hellcat II HCT-214,14
-Ironsides IRN-SD1b,87
-Lightning LTN-G15,23
-Lightning LTN-G15b,52

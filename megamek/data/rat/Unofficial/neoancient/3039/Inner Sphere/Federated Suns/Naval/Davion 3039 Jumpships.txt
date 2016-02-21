@@ -1,8 +1,0 @@
-Neoancient Davion 3039 Jumpships
-Invader Jumpship (PPC),100
-Invader Jumpship (Standard),100
-Merchant Jumpship (Standard),74
-Monolith Jumpship (Standard),15
-Scout JumpShip (Standard),59
-Star Lord JumpShip (Standard),74
-Tramp JumpShip (Standard),44

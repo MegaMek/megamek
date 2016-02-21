@@ -1,9 +1,0 @@
-Neoancient Periphery 3067 Medium Meks A
-Gladiator GLD-3R,8
-Gladiator GLD-4R,16
-Hunchback HBK-4G,22
-Hunchback HBK-4P,43
-Hunchback HBK-5H,31
-Marshal MHL-X1,28
-Trebuchet TBT-5N,24
-Whitworth WTH-1,100

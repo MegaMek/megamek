@@ -1,9 +1,0 @@
-Neoancient Clan Nova Cat 3067 Conventional Fighters
-@Neoancient Davion 3060 Conventional Fighters,9
-@Neoancient Free Rasalhague Republic 3060 Conventional Fighters,4
-@Neoancient Ghost Bear Dominion 3060 Conventional Fighters,11
-@Neoancient Steiner 3060 Conventional Fighters,7
-Heavy Strike Fighter Meteor,100
-Light Strike Fighter Comet,34
-Light Strike Fighter Owl,51
-Light Strike Fighter Owl II,17

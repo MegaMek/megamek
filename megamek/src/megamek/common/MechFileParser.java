@@ -83,6 +83,7 @@ public class MechFileParser {
             try {
                 parse(new FileInputStream(f.getAbsolutePath()), f.getName());
             } catch (Exception ex) {
+                System.out.println("Error parsing " + entryName + "!");
                 ex.printStackTrace();
                 if (ex instanceof EntityLoadingException) {
                     throw new EntityLoadingException("While parsing file "
@@ -214,6 +215,8 @@ public class MechFileParser {
             ent.loadDefaultQuirks();
             ent.loadDefaultCustomWeaponOrder();
         } catch (Exception e) {
+            System.out.println("Error in postLoadInit for "
+                    + ent.getDisplayName() + "!");
             e.printStackTrace();
         }
 

@@ -66,6 +66,7 @@ import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
 import megamek.common.Mech;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.OffBoardDirection;
 import megamek.common.Protomech;
@@ -365,6 +366,12 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         partReps = entity.getPartialRepairs();
         for (Mounted m : entity.getWeaponList()) {
             h_wpnQuirks.put(entity.getEquipmentNum(m), m.getQuirks());
+        }
+        // Also need to consider melee weapons
+        for (Mounted m : entity.getMisc()) {
+            if (m.getType().hasFlag(MiscType.F_CLUB)) {
+                h_wpnQuirks.put(entity.getEquipmentNum(m), m.getQuirks());
+            }
         }
         this.editable = editable;
 

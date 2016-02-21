@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -633,11 +634,15 @@ public class QuirksHandler {
                     }
                     // Create new entry and add it
                     QuirkEntry qe = new QuirkEntry(option.getName(),
-                            entity.getLocationAbbr(loc), slot, m.getName(),
-                            unitId);
+                            entity.getLocationAbbr(loc), slot, m.getType()
+                                    .getInternalName(), unitId);
                     quirkEntries.add(qe);
                 }
             }
         }
+    }
+
+    public static Set<String> getCanonQuirkIds() {
+        return canonQuirkMap.keySet();
     }
 }

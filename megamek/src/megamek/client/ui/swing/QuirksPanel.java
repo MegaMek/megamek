@@ -28,7 +28,6 @@ import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.Mounted;
-import megamek.common.WeaponType;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
@@ -70,9 +69,8 @@ public class QuirksPanel extends JPanel {
     public void refreshQuirks() {
         removeAll();
         quirkComps = new ArrayList<DialogOptionComponent>();
-        for (Mounted m : entity.getWeaponList()) {
-            h_wpnQuirkComps.put(entity.getEquipmentNum(m),
-                                new ArrayList<DialogOptionComponent>());
+        for (Integer eqNum : h_wpnQuirks.keySet()) {
+            h_wpnQuirkComps.put(eqNum, new ArrayList<DialogOptionComponent>());
         }
 
         for (Enumeration<IOptionGroup> i = quirks.getGroups(); i.hasMoreElements(); ) {
@@ -108,7 +106,7 @@ public class QuirksPanel extends JPanel {
                         .hasMoreElements(); ) {
                     IOption option = j.nextElement();
                     if (!WeaponQuirks.isQuirkLegalFor(option, entity,
-                                                      (WeaponType) m.getType())) {
+                            m.getType())) {
                         continue;
                     }
                     addWeaponQuirk(key, option, editable);
@@ -129,7 +127,7 @@ public class QuirksPanel extends JPanel {
 
     private void addWeaponQuirk(int key, IOption option, boolean editable) {
         DialogOptionComponent optionComp = new DialogOptionComponent(parent,
-                                                                     option, editable);
+                option, editable);
 
         add(optionComp, GBC.eol());
         h_wpnQuirkComps.get(key).add(optionComp);

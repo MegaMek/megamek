@@ -81,12 +81,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String ADVANCED_KEY_REPEAT_RATE = "AdvancedKeyRepeatRate";
     public static final String ADVANCED_SHOW_FPS = "AdvancedShowFPS";
     public static final String ADVANCED_SHOW_COORDS = "AdvancedShowCoords";
-    public static final String ADVANCED_SHOW_HEX_SHADOWS = "AdvancedShowHexShadows";
     public static final String ADVANCED_BUTTONS_PER_ROW = "AdvancedButtonsPerRow";
     /* --End advanced settings-- */
 
 
     public static final String ANTIALIASING = "AntiAliasing";
+    public static final String SHADOWMAP = "ShadowMap";
+    public static final String AOHEXSHADOWS = "AoHexShadows";
+    public static final String LEVELHIGHLIGHT = "LevelHighlight";
+    public static final String FLOATINGISO = "FloatingIsometric";
     public static final String AUTO_END_FIRING = "AutoEndFiring";
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
     public static final String CHAT_LOUNGE_TABS = "ChatLoungeTabs";
@@ -243,7 +246,6 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(ADVANCED_KEY_REPEAT_RATE, 20);
         store.setDefault(ADVANCED_SHOW_FPS, "false");
         store.setDefault(ADVANCED_SHOW_COORDS, "true");
-        store.setDefault(ADVANCED_SHOW_HEX_SHADOWS, "false");    
         store.setDefault(ADVANCED_BUTTONS_PER_ROW, 5);
 
         store.setDefault(FOV_HIGHLIGHT_RINGS_RADII, "5 10 15 20 25");
@@ -251,6 +253,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
 
         store.setDefault(ANTIALIASING, true);
+        store.setDefault(AOHEXSHADOWS, false);
+        store.setDefault(SHADOWMAP, false);
+        store.setDefault(FLOATINGISO, false);
+        store.setDefault(LEVELHIGHLIGHT, false);
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);
         store.setDefault(CHAT_LOUNGE_TABS, true);
@@ -351,6 +357,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getAntiAliasing() {
         return store.getBoolean(ANTIALIASING);
+    }
+
+    public boolean getAOHexShadows() {
+        return store.getBoolean(AOHEXSHADOWS);
+    }
+    
+    public boolean getFloatingIso() {
+        return store.getBoolean(FLOATINGISO);
+    }
+
+    public boolean getShadowMap() {
+        return store.getBoolean(SHADOWMAP);
+    }
+
+    public boolean getLevelHighlight() {
+        return store.getBoolean(LEVELHIGHLIGHT);
     }
 
     public boolean getAutoEndFiring() {
@@ -698,7 +720,23 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setAntiAliasing(boolean state){
         store.setValue(ANTIALIASING, state);
     }
-
+    
+    public void setShadowMap(boolean state){
+        store.setValue(SHADOWMAP, state);
+    }
+    
+    public void setAOHexShadows(boolean state){
+        store.setValue(AOHEXSHADOWS, state);
+    }
+    
+    public void setFloatingIso(boolean state){
+        store.setValue(FLOATINGISO, state);
+    }
+    
+    public void setLevelHighlight(boolean state){
+        store.setValue(LEVELHIGHLIGHT, state);
+    }
+    
     public boolean getShowDamageLevel(){
         return store.getBoolean(SHOW_DAMAGE_LEVEL);
     }

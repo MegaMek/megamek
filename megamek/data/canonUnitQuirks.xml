@@ -533,7 +533,7 @@
 			<weaponQuirkName>accurate</weaponQuirkName>
 			<location>TU</location>
 			<slot>0</slot>
-			<weaponName>Sniper</weaponName>
+			<weaponName>ISSniper</weaponName>
 		</weaponQuirk>
 	</unit>
 	<unit>
@@ -732,18 +732,18 @@
         <quirk>command_mech</quirk>
         <quirk>distracting</quirk>
     </unit>
-    <unit>
-        <chassis>Dig Lord</chassis>
-        <model>RCL-Z1 Armed MiningMech</model>
-        <quirk>prototype</quirk>
-        <quirk>pro_actuator</quirk>
-        <weaponQuirk>
-            <weaponQuirkName>jettison_capable</weaponQuirkName>
-            <location>RA</location>
-            <slot>7</slot>
-            <weaponName>ISMediumVibroBlade</weaponName>
-        </weaponQuirk>
-    </unit>
+	<unit>
+		<chassis>Dig Lord</chassis>
+		<model>RCL-Z1 Armed MiningMech</model>
+		<quirk>pro_actuator</quirk>
+		<quirk>prototype</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>7</slot>
+			<weaponName>Medium Vibroblade</weaponName>
+		</weaponQuirk>
+	</unit>
     <unit>
         <chassis>Saladin Assault Hover Tank</chassis>
         <model>Ifrit</model>
@@ -1163,7 +1163,7 @@
         <quirk>poor_performance</quirk>
         <weaponQuirk>
             <weaponQuirkName>accurate</weaponQuirkName>
-            <location>Turret</location>
+            <location>TU</location>
             <slot>1</slot>
             <weaponName>Autocannon/2</weaponName>
         </weaponQuirk>
@@ -1256,8 +1256,7 @@
         <quirk>poor_performance</quirk>
         <weaponQuirk>
             <weaponQuirkName>accurate</weaponQuirkName>
-            <location>Front</location>
-            <slot>0</slot>
+            <location>FR</location>
             <weaponName>ISImprovedHeavyGaussRifle</weaponName>
         </weaponQuirk>
     </unit>
@@ -1294,20 +1293,20 @@
 		<weaponQuirk>
 			<weaponQuirkName>em_interference</weaponQuirkName>
 			<location>RA</location>
-			<slot>5</slot>
-			<weaponName>ER Large Laser</weaponName>
+			<slot>4</slot>
+			<weaponName>CLERLargeLaser</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>em_interference</weaponQuirkName>
 			<location>LA</location>
-			<slot>5</slot>
-			<weaponName>ER Medium Pulse Laser</weaponName>
+			<slot>4</slot>
+			<weaponName>CLERMediumPulseLaser</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>em_interference</weaponQuirkName>
 			<location>LA</location>
-			<slot>7</slot>
-			<weaponName>ER Medium Pulse Laser</weaponName>
+			<slot>6</slot>
+			<weaponName>CLERMediumPulseLaser</weaponName>
 		</weaponQuirk>
 	</unit>
     <unit>
@@ -1397,20 +1396,20 @@
 		<weaponQuirk>
 			<weaponQuirkName>em_interference</weaponQuirkName>
 			<location>RA</location>
-			<slot>5</slot>
-			<weaponName>ER Large Pulse Laser</weaponName>
+			<slot>4</slot>
+			<weaponName>CLERLargePulseLaser</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>em_interference</weaponQuirkName>
 			<location>LA</location>
-			<slot>5</slot>
-			<weaponName>ER Medium Pulse Laser</weaponName>
+			<slot>4</slot>
+			<weaponName>CLERMediumPulseLaser</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>em_interference</weaponQuirkName>
 			<location>LA</location>
-			<slot>7</slot>
-			<weaponName>ER Medium Pulse Laser</weaponName>
+			<slot>6</slot>
+			<weaponName>CLERMediumPulseLaser</weaponName>
 		</weaponQuirk>
 	</unit>
 	<unit>
@@ -1497,13 +1496,13 @@
 		</weaponQuirk>
 	</unit>
 	<unit>
-	<chassis>Dola</chassis>
-	<model>DOL-1A2 'Yoh Ti Ts'angs'</model>
+		<chassis>Dola</chassis>
+		<model>DOL-1A2 'Yoh Ti Ts'angs'</model>
 		<weaponQuirk>
 			<weaponQuirkName>jettison_capable</weaponQuirkName>
 			<location>RA</location>
-			<slot>5</slot>
-			<weaponName>ISSmallVibroblade</weaponName>
+			<slot>4</slot>
+			<weaponName>Small Vibroblade</weaponName>
 		</weaponQuirk>
 	</unit>
 	<unit>
@@ -1821,19 +1820,21 @@
 		<quirk>rumble_seat</quirk>
 	</unit>
 	<unit>
-		<chassis>Persepolis</chassis>
+		<chassis>Persepolis 2</chassis>
 		<model>(Standard)</model>
 		<quirk>difficult_eject</quirk>
 		<quirk>poor_performance</quirk>
 		<quirk>poor_work</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>accurate</weaponQuirkName>
-			<location>Nose</location>
+			<location>NOS</location>
+			<slot>0</slot>
 			<weaponName>CLERLargeLaser</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>accurate</weaponQuirkName>
-			<location>Nose</location>
+			<location>NOS</location>
+			<slot>1</slot>
 			<weaponName>CLERLargeLaser</weaponName>
 		</weaponQuirk>
 	</unit>
@@ -2047,8 +2048,8 @@
 		<weaponQuirk>
 			<weaponQuirkName>jettison_capable</weaponQuirkName>
 			<location>RA</location>
-			<slot>5</slot>
-			<weaponName>ChainWhip</weaponName>
+			<slot>4</slot>
+			<weaponName>Chain Whip</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>exposed_linkage</weaponQuirkName>
@@ -2160,25 +2161,6 @@
 		<quirk>prototype</quirk>
 	</unit>
 	<unit>
-		<chassis>Persepolis 2</chassis>
-		<model>(Standard)</model>
-		<quirk>difficult_eject</quirk>
-		<quirk>poor_performance</quirk>
-		<quirk>poor_work</quirk>
-		<weaponQuirk>
-			<weaponQuirkName>accurate</weaponQuirkName>
-			<location>NOS</location>
-			<slot>0</slot>
-			<weaponName>ER Large Laser</weaponName>
-		</weaponQuirk>
-		<weaponQuirk>
-			<weaponQuirkName>accurate</weaponQuirkName>
-			<location>NOS</location>
-			<slot>1</slot>
-			<weaponName>ER Large Laser</weaponName>
-		</weaponQuirk>
-	</unit>
-	<unit>
 		<chassis>Hornet</chassis>
 		<model>HNT-181</model>
 		<quirk>low_profile</quirk>
@@ -2211,25 +2193,25 @@
 			<weaponQuirkName>exposed_linkage</weaponQuirkName>
 			<location>RA</location>
 			<slot>5</slot>
-			<weaponName>LAC/2</weaponName>
+			<weaponName>ISLAC2</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>static_feed</weaponQuirkName>
 			<location>RA</location>
 			<slot>5</slot>
-			<weaponName>LAC/2</weaponName>
+			<weaponName>ISLAC2</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>exposed_linkage</weaponQuirkName>
 			<location>LA</location>
 			<slot>5</slot>
-			<weaponName>LAC/2</weaponName>
+			<weaponName>ISLAC2</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>static_feed</weaponQuirkName>
 			<location>LA</location>
 			<slot>5</slot>
-			<weaponName>LAC/2</weaponName>
+			<weaponName>ISLAC2</weaponName>
 		</weaponQuirk>
 	</unit>
 	<unit>
@@ -2260,7 +2242,7 @@
 			<weaponQuirkName>jettison_capable</weaponQuirkName>
 			<location>RA</location>
 			<slot>4</slot>
-			<weaponName>Large Pulse Laser</weaponName>
+			<weaponName>CLLargePulseLaser</weaponName>
 		</weaponQuirk>
 	</unit>
 	<unit>
@@ -2281,13 +2263,13 @@
 			<weaponQuirkName>inaccurate</weaponQuirkName>
 			<location>RA</location>
 			<slot>5</slot>
-			<weaponName>ER Medium Laser</weaponName>
+			<weaponName>ISERMediumLaser</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>inaccurate</weaponQuirkName>
 			<location>LA</location>
 			<slot>5</slot>
-			<weaponName>ER Medium Laser</weaponName>
+			<weaponName>ISERMediumLaser</weaponName>
 		</weaponQuirk>
 	</unit>
 	<unit>
@@ -3662,21 +3644,27 @@
 		<quirk>rumble_seat</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>exposed_linkage</weaponQuirkName>
+			<location>RT</location>
+			<slot>7</slot>
+			<weaponName>CLERLargeLaser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>exposed_linkage</weaponQuirkName>
 			<location>LT</location>
 			<slot>7</slot>
-			<weaponName>ER Large Laser</weaponName>
+			<weaponName>CLERLargeLaser</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>exposed_linkage</weaponQuirkName>
 			<location>LA</location>
-			<slot>4</slot>
-			<weaponName>Ultra AC/5</weaponName>
+			<slot>3</slot>
+			<weaponName>CLUltraAC5</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>exposed_linkage</weaponQuirkName>
 			<location>LA</location>
-			<slot>7</slot>
-			<weaponName>Ultra AC/5</weaponName>
+			<slot>6</slot>
+			<weaponName>CLUltraAC5</weaponName>
 		</weaponQuirk>
 	</unit>
 	<unit>
@@ -3689,17 +3677,16 @@
 		<weaponQuirk>
 			<weaponQuirkName>exposed_linkage</weaponQuirkName>
 			<location>LA</location>
-			<slot>4</slot>
-			<weaponName>Ultra AC/10</weaponName>
+			<slot>3</slot>
+			<weaponName>CLUltraAC10</weaponName>
 		</weaponQuirk>
 		<weaponQuirk>
 			<weaponQuirkName>exposed_linkage</weaponQuirkName>
 			<location>LA</location>
-			<slot>8</slot>
-			<weaponName>Ultra AC/10</weaponName>
+			<slot>7</slot>
+			<weaponName>CLUltraAC10</weaponName>
 		</weaponQuirk>
 	</unit>
-
     <unit>
         <chassis>Kodiak II</chassis>
         <model>all</model>

@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.41.16-git
+
 v0.41.15 (2016-02-21 14:15 UTC)
 + Issue #19: doTryUnstuck Error
 + Issue #20: Cluster Master should be labeled Unofficial not atow

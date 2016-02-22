@@ -77,7 +77,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
     protected AbstractPhaseDisplay(ClientGUI cg) {
         this.clientgui = cg;
         SkinSpecification pdSkinSpec = SkinXMLHandler
-                .getSkin(SkinSpecification.UIComponents.PhaseDisplay.toString());
+                .getSkin(SkinSpecification.UIComponents.PhaseDisplay.getComp());
         
         try {
             if (pdSkinSpec.backgrounds.size() > 0){
@@ -98,8 +98,7 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
         
         setBorder(new MegamekBorder("PhaseDisplayBorder"));
         butDone = new MegamekButton("",
-                SkinSpecification.UIComponents.PhaseDisplayDoneButton
-                        .toString());
+                SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
         butDone.setActionCommand("doneButton");
         if (clientgui != null) {
             butDone.addActionListener(new AbstractAction() {

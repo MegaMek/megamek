@@ -115,7 +115,7 @@ public class MegamekButton extends JButton {
      */
     public MegamekButton(String text) {
         super(text);
-        initialize(SkinSpecification.UIComponents.DefaultButton.toString());
+        initialize(SkinSpecification.UIComponents.DefaultButton.getComp());
     }
 
     /**
@@ -124,7 +124,7 @@ public class MegamekButton extends JButton {
      */
     public MegamekButton() {
         super();
-        initialize(SkinSpecification.UIComponents.DefaultButton.toString());
+        initialize(SkinSpecification.UIComponents.DefaultButton.getComp());
     }
 
     /**

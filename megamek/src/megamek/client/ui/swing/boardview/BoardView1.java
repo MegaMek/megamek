@@ -5241,7 +5241,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         SkinSpecification bvSkinSpec = SkinXMLHandler
-                .getSkin(SkinSpecification.UIComponents.BoardView.toString());
+                .getSkin(SkinSpecification.UIComponents.BoardView.getComp());
 
         // Setup background icons
         try {

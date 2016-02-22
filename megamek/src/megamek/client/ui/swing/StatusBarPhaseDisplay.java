@@ -256,7 +256,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
      */
     protected void setupStatusBar(String defStatus) {
         SkinSpecification pdSkinSpec = SkinXMLHandler
-                .getSkin(SkinSpecification.UIComponents.PhaseDisplay.toString());
+                .getSkin(SkinSpecification.UIComponents.PhaseDisplay.getComp());
         
         panStatus = new JPanel();
         panStatus.setOpaque(false);

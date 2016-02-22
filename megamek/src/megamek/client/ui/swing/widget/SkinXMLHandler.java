@@ -250,8 +250,8 @@ public class SkinXMLHandler {
                 skinSpecs.put(name, skinSpec);
             }
             
-            if (!skinSpecs.containsKey(UIComponents.DefaultUIElement.toString()) 
-                    || !skinSpecs.containsKey(UIComponents.DefaultButton.toString())) {
+            if (!skinSpecs.containsKey(UIComponents.DefaultUIElement.getComp()) 
+                    || !skinSpecs.containsKey(UIComponents.DefaultButton.getComp())) {
                 System.out.println("ERROR: Bad skin specification file: " +
                         "file doesn't specify " + UIComponents.DefaultUIElement + 
                         " or " + UIComponents.DefaultButton + "!");
@@ -561,9 +561,9 @@ public class SkinXMLHandler {
         SkinSpecification spec = skinSpecs.get(component);
         if (spec == null){
             if (isBtn){
-                spec = skinSpecs.get(UIComponents.DefaultButton.toString());
+                spec = skinSpecs.get(UIComponents.DefaultButton.getComp());
             } else {
-                spec = skinSpecs.get(UIComponents.DefaultUIElement.toString());
+                spec = skinSpecs.get(UIComponents.DefaultUIElement.getComp());
             }
         }
         return spec;

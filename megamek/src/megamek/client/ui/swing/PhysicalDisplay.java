@@ -165,8 +165,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             String title = Messages.getString("PhysicalDisplay."
                                               + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title,
-                    SkinSpecification.UIComponents.PhaseDisplayButton
-                            .toString());
+                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);

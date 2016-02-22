@@ -55,6 +55,10 @@ public class SkinSpecification {
          */
         @Override
         public String toString() {
+            return getName();
+        }
+        
+        public String getComp() {
             return comp;
         }
 
@@ -82,7 +86,7 @@ public class SkinSpecification {
          * @return
          */
         @Nullable
-        public static UIComponents getComp(@Nullable String val) {
+        public static UIComponents getUIComponent(@Nullable String val) {
             for (UIComponents c : UIComponents.values()) {
                 if (c.toString().equals(val)) {
                     return c;

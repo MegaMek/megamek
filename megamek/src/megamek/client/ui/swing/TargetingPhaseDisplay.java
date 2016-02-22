@@ -175,8 +175,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             String title = Messages.getString("TargetingPhaseDisplay."
                     + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title,
-                    SkinSpecification.UIComponents.PhaseDisplayButton
-                            .toString());
+                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);

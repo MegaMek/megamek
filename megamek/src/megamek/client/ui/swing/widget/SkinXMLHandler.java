@@ -591,4 +591,13 @@ public class SkinXMLHandler {
         skinSpecs.put(component, newSpec);
     }
 
+    /**
+     * Remove the specified componenet from the SkinSpecs map.
+     *
+     * @param component
+     */
+    public synchronized static void removeComp(String component) {
+        skinSpecs.remove(component);
+    }
+
 }

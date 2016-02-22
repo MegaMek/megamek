@@ -278,11 +278,19 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
             skinEditPanel.removeAll();
             return;            
         }
-        
+        SkinSpecification.UIComponents selectedComp = skinSpecCompList
+                .getSelectedValue();
         saveSkinButton.setEnabled(false);
 
-        SkinSpecification skinSpec = SkinXMLHandler.getSkin(skinSpecCompList
-                .getSelectedValue().getComp());
+        if ((selectedComp == SkinSpecification.UIComponents.DefaultButton)
+                || (selectedComp == SkinSpecification.UIComponents.DefaultUIElement)) {
+            removeCompButton.setEnabled(false);
+        } else {
+            removeCompButton.setEnabled(true);
+        }
+
+        SkinSpecification skinSpec = SkinXMLHandler.getSkin(selectedComp
+                .getComp());
         
         enableBorders.setSelected(!skinSpec.noBorder);
         
@@ -365,6 +373,20 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
             SkinXMLHandler.addNewComp(choice.getComp());
             populateSkinSpecComponents();
             notifySkinChanges();
+        } else if (e.getSource().equals(removeCompButton)) {
+            SkinSpecification.UIComponents selectedComp = skinSpecCompList
+                    .getSelectedValue();
+            // Don't remove defaults - this button shouldn't be enabled in this
+            // case, but just to be sure...
+            if ((selectedComp == SkinSpecification.UIComponents.DefaultButton)
+                    || (selectedComp == SkinSpecification.UIComponents.DefaultUIElement)) {
+                return;
+            } else {
+                SkinXMLHandler.removeComp(selectedComp.getComp());
+                populateSkinSpecComponents();
+                setupSkinEditPanel();
+                notifySkinChanges();
+            }
         }
     }
 

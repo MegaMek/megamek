@@ -13481,10 +13481,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return "Mech";
         } else if ((typeId & ETYPE_AERO) == ETYPE_AERO) {
             return "Aero";
+        } else if ((typeId & ETYPE_VTOL) == ETYPE_VTOL) {
+            return "VTOL";
         } else if ((typeId & ETYPE_TANK) == ETYPE_TANK) {
             return "Tank";
         } else if ((typeId & ETYPE_INFANTRY) == ETYPE_INFANTRY) {
             return "Infantry";
+        } else if ((typeId & ETYPE_PROTOMECH) == ETYPE_PROTOMECH) {
+            return "Protomech";
         } else {
             return "Unknown";
         }

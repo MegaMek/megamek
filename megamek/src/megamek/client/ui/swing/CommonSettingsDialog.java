@@ -162,6 +162,10 @@ public class CommonSettingsDialog extends ClientDialog implements
 
     private JCheckBox showDamageLevel;
     private JCheckBox showMapsheets;
+    private JCheckBox aOHexShadows;
+    private JCheckBox floatingIso;
+    private JCheckBox levelhighlight;
+    private JCheckBox shadowMap;
     private JCheckBox mouseWheelZoom;
     private JCheckBox mouseWheelZoomFlip;
 
@@ -672,10 +676,12 @@ public class CommonSettingsDialog extends ClientDialog implements
         displayLocale.setSelectedIndex(index);
 
         showMapsheets.setSelected(gs.getShowMapsheets());
-
         chkAntiAliasing.setSelected(gs.getAntiAliasing());
-
         showDamageLevel.setSelected(gs.getShowDamageLevel());
+        aOHexShadows.setSelected(gs.getAOHexShadows());
+        floatingIso.setSelected(gs.getFloatingIso());
+        levelhighlight.setSelected(gs.getLevelHighlight());
+        shadowMap.setSelected(gs.getShadowMap());
 
 
         File dir = new File("data" + File.separator + "images" + File.separator
@@ -793,11 +799,17 @@ public class CommonSettingsDialog extends ClientDialog implements
                 .getSelectedIndex()]);
 
         gs.setShowMapsheets(showMapsheets.isSelected());
+        gs.setAOHexShadows(aOHexShadows.isSelected());
+        gs.setFloatingIso(floatingIso.isSelected());
+        gs.setLevelHighlight(levelhighlight.isSelected());
+        gs.setShadowMap(shadowMap.isSelected());
 
-        if (gs.getAntiAliasing() != chkAntiAliasing.isSelected()) {
+        if ((gs.getAntiAliasing() != chkAntiAliasing.isSelected()) &&
+                ((clientgui != null) && (clientgui.bv != null))) {            
             clientgui.bv.clearHexImageCache();
             clientgui.bv.repaint();
         }
+
         gs.setAntiAliasing(chkAntiAliasing.isSelected());
 
         gs.setShowDamageLevel(showDamageLevel.isSelected());
@@ -820,6 +832,10 @@ public class CommonSettingsDialog extends ClientDialog implements
         }
 
         if (tileSetChoice.getSelectedIndex() >= 0) {
+            if (!cs.getMapTileset().equals(tileSets[tileSetChoice.getSelectedIndex()]) &&
+                    (clientgui != null) && (clientgui.bv != null))  {
+                clientgui.bv.clearShadowMap();
+            }
             cs.setMapTileset(tileSets[tileSetChoice.getSelectedIndex()]
                     .getName());
         }
@@ -1023,7 +1039,32 @@ public class CommonSettingsDialog extends ClientDialog implements
                 clientgui.bv.clearHexImageCache();
                 clientgui.bv.repaint();
             }
+        } else if (source.equals(aOHexShadows)) {
+            guip.setAOHexShadows(aOHexShadows.isSelected());
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
+        } else if (source.equals(shadowMap)) {
+            guip.setShadowMap(shadowMap.isSelected());
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
+        } else if (source.equals(levelhighlight)) {
+            guip.setLevelHighlight(levelhighlight.isSelected());
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
+        } else if (source.equals(floatingIso)) {
+            guip.setFloatingIso(floatingIso.isSelected());
+            if ((clientgui != null) && (clientgui.bv != null)) {
+                clientgui.bv.clearHexImageCache();
+                clientgui.bv.repaint();
+            }
         }
+
     }
 
     public void focusGained(FocusEvent e) {
@@ -1046,7 +1087,7 @@ public class CommonSettingsDialog extends ClientDialog implements
                 clientgui.bv.repaint();
             }
             return;
-        }
+        } 
         // For Advanced options
         String option = "Advanced" + keys.getModel().getElementAt(keysIndex); 
         GUIPreferences.getInstance().setValue(option, value.getText());
@@ -1057,6 +1098,9 @@ public class CommonSettingsDialog extends ClientDialog implements
         }
     }
 
+    /** 
+     * The Graphics Tab
+     */
     private JPanel getTacticalOverlaySettingsPanel() {
 
         ArrayList<ArrayList<Component>> comps = new ArrayList<ArrayList<Component>>();
@@ -1087,6 +1131,34 @@ public class CommonSettingsDialog extends ClientDialog implements
         showMapsheets = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapsheets")); //$NON-NLS-1$
         row = new ArrayList<>();
         row.add(showMapsheets);
+        comps.add(row);
+
+        // Hill Base AO Shadows
+        aOHexShadows = new JCheckBox(Messages.getString("CommonSettingsDialog.AOHexSHadows")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        aOHexShadows.addItemListener(this);
+        row.add(aOHexShadows);
+        comps.add(row);
+        
+        // Shadow Map = Terrain and Building shadows
+        shadowMap = new JCheckBox(Messages.getString("CommonSettingsDialog.useShadowMap")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        shadowMap.addItemListener(this);
+        row.add(shadowMap);
+        comps.add(row);
+        
+        // Level Highlight = borders around level changes
+        levelhighlight = new JCheckBox(Messages.getString("CommonSettingsDialog.levelHighlight")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        levelhighlight.addItemListener(this);
+        row.add(levelhighlight);
+        comps.add(row);
+        
+        // Floating Isometric = do not draw hex sides
+        floatingIso = new JCheckBox(Messages.getString("CommonSettingsDialog.floatingIso")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        floatingIso.addItemListener(this);
+        row.add(floatingIso);
         comps.add(row);
         
         // Skin

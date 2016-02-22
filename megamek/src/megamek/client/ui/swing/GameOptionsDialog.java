@@ -87,13 +87,14 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
     private GameOptions options;
 
     private boolean editable = true;
+    private boolean cancelled = false;
 
     /**
      * A map that maps an option to a collection of DialogOptionComponents that
      * can effect the value of this option.
      */
     private Map<String, List<DialogOptionComponent>> optionComps = new HashMap<>();
-    
+
     /**
      * Keeps track of the DialogOptionComponents that have been added to the
      * search panel.  This is used to remove those components from optionComps
@@ -227,7 +228,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
 
     public Vector<IBasicOption> getOptions() {
         Vector<IBasicOption> output = new Vector<IBasicOption>();
-        
+
         for (List<DialogOptionComponent> comps : optionComps.values()) {
             // Each option in the list should have the same value, so picking
             //  the first is fine
@@ -249,7 +250,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         }
     }
 
-    private void refreshOptions() {
+    public void refreshOptions() {
         panOptions.removeAll();
         optionComps = new HashMap<>();
 
@@ -259,13 +260,13 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
 
             JPanel groupPanel = addGroup(group);
 
-            for (Enumeration<IOption> j = group.getOptions(); 
+            for (Enumeration<IOption> j = group.getOptions();
                     j.hasMoreElements();) {
                 IOption option = j.nextElement();
                 addOption(groupPanel, option);
             }
         }
-        
+
         addSearchPanel();
 
         // Make the width accomadate the longest game option label
@@ -275,7 +276,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
 
         validate();
     }
-    
+
     private void refreshSearchPanel() {
         panSearchOptions.removeAll();
         // We need to first remove all of the DialogOptionComponents
@@ -287,7 +288,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                 compList.remove(comp);
             }
         }
-        
+
         // Add new DialogOptionComponents for all matching Options
         final String searchText = txtSearch.getText().toLowerCase();
         ArrayList<DialogOptionComponent> allNewComps = new ArrayList<>();
@@ -296,7 +297,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             for (DialogOptionComponent comp : comps) {
                 String optName = comp.option.getDisplayableName().toLowerCase();
                 String optDesc = comp.option.getDescription().toLowerCase();
-                if ((optName.contains(searchText) 
+                if ((optName.contains(searchText)
                         || optDesc.contains(searchText))
                         && !searchText.equals("")) {
                     DialogOptionComponent newComp = new DialogOptionComponent(
@@ -328,7 +329,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         panOptions.addTab(group.getDisplayableName(),scrOptions);
         return groupPanel;
     }
-    
+
     private void addSearchPanel() {
         JPanel panSearch = new JPanel();
         JScrollPane scrOptions = new JScrollPane(panSearch);
@@ -337,8 +338,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrOptions.setHorizontalScrollBarPolicy(
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        
-        
+
+
         // Panel for holding the label and text field for searching
         JPanel panText = new JPanel();
         JLabel lblSearch = new JLabel(
@@ -359,7 +360,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                 refreshSearchPanel();
             }
         });
-        
+
         panText.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = gbc.gridy = 0;
@@ -371,10 +372,10 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         gbc.weightx = 0.7;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panText.add(txtSearch, gbc);
-        
+
         panSearchOptions = new JPanel();
         panSearchOptions.setLayout(new BoxLayout(panSearchOptions,BoxLayout.Y_AXIS));
-        
+
         panSearch.setLayout(new GridBagLayout());
         gbc.gridx = gbc.gridy = 0;
         gbc.insets = new Insets(0,0,0,0);
@@ -384,12 +385,12 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         panSearch.add(panText, gbc);
         gbc.gridy++;
         gbc.weighty = 0.7;
-        
+
         gbc.fill = GridBagConstraints.BOTH;
         panSearch.add(panSearchOptions, gbc);
 
         panOptions.addTab(Messages.getString("GameOptionsDialog.Search"),
-                scrOptions);        
+                scrOptions);
     }
 
     private void addOption(JPanel groupPanel, IOption option) {
@@ -550,7 +551,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
     // state of the checkbox.
     public void optionClicked(DialogOptionComponent clickedComp, IOption option,
             boolean state) {
-        
+
         // Ensure that any other DialogOptionComponents with the same IOption
         //  have the same value
         List<DialogOptionComponent> comps = optionComps.get(option.getName());
@@ -559,7 +560,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                 comp.setValue(clickedComp.getValue());
             }
         }
-        
+
         if ("inf_move_even".equals(option.getName())) { //$NON-NLS-1$
             comps = optionComps.get("inf_deploy_even"); //$NON-NLS-1$
             for (DialogOptionComponent comp_i : comps) {
@@ -714,8 +715,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
-            }            
-        }        
+            }
+        }
         if ("tacops_LOS1".equals(option.getName())) { //$NON-NLS-1$
             comps = optionComps.get("tacops_dead_zones"); //$NON-NLS-1$
             for (DialogOptionComponent comp_i : comps) {
@@ -793,6 +794,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
 
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(butOkay)) {
+            cancelled = false;
             if (client != null) {
                 send();
             }
@@ -805,7 +807,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         } else if (e.getSource().equals(butSave)) {
             File gameOptsFile = selectGameOptionsFile(true);
             if (gameOptsFile != null) {
-                GameOptions.saveOptions(getOptions(), 
+                GameOptions.saveOptions(getOptions(),
                         gameOptsFile.getAbsolutePath());
             }
             return;
@@ -836,11 +838,12 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                 }
             }
             return;
+        } else if (e.getSource().equals(butCancel)) {
+                cancelled = true;
         }
-
         setVisible(false);
     }
-    
+
     private File selectGameOptionsFile(boolean saveDialog) {
         JFileChooser fc = new JFileChooser("mmconf"); //$NON-NLS-1$
         fc.setLocation(getLocation().x + 150, getLocation().y + 100);
@@ -856,7 +859,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                     try {
                         DocumentBuilder builder = dbf.newDocumentBuilder();
                         Document doc = builder.parse(dir);
-                        NodeList listOfComponents = 
+                        NodeList listOfComponents =
                                 doc.getElementsByTagName("options");
                         if (listOfComponents.getLength() > 0) {
                             return true;
@@ -925,6 +928,16 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
      */
     public boolean isEditable() {
         return editable;
+    }
+
+    /**
+     * Determine whether the dialog was cancelled.
+     *
+     * @return <code>true</code> if the dialog was cancelled,
+     *         <code>false</code> if it was not
+     */
+    public boolean wasCancelled() {
+        return cancelled;
     }
 
     @Override

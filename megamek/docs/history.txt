@@ -1,6 +1,8 @@
 VERSION HISTORY:
 ----------------
-v0.41.15-git
+v0.41.16-git
+
+v0.41.15 (2016-02-21 14:15 UTC)
 + Issue #19: doTryUnstuck Error
 + Issue #20: Cluster Master should be labeled Unofficial not atow
 + Issue #18: Small Patch: changes lounge tooltip to act similar to board view tt
@@ -22,6 +24,8 @@ v0.41.15-git
 + Issue #33: Princess Fails to Deploy
 + Data: Quirk Fixes, New Sprites, TP Epsilon Eridani Units
 + Bug: Custom saved weapon quirks used wrong weapon name
++ Feature: Added ambient-occlusion like shadows, see client settings graphics
++ Issue #32: Hot Load LRMs check box will not stay checked
 
 v0.41.14 (2016-02-02 13:10 UTC)
 + Data New Sprites/Various RAT and Unit Fixes.
@@ -155,7 +159,7 @@ v0.41.10 (2015-10-12 00:11 UTC)
 + Bug [#4566]: Vibrabomb Report Problems
 
 
-v0.41.9 (2014-09-14 01:25 UTC)
+v0.41.9 (2015-09-14 01:25 UTC)
 + Bug: Infantry BLK files with true/false for antimek fail to load
 + Bug: Wind direction was actually wind strength
 + Data: New Sprites
@@ -549,7 +553,7 @@ v0.41.4 (2015-05-31 16:45 UTC)
     structure points
 + Bug [#4569]: Aero.addClanCase adds Case to Aero.LOC_WINGS
 
-v0.41.3 (2014-04-18, 12:52 UTC+2)
+v0.41.3 (2015-04-18, 12:52 UTC+2)
 + Data: New Sprites
 + Bug: Air-to-ground fire needs to allow the attacker to pick a path on the
     targets flight path if multiple hexes are equidistant (this can matter for

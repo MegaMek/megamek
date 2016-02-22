@@ -33,22 +33,22 @@ public class MegamekButton extends JButton {
     private static final Color defaultColor = new Color(250, 250, 250);
     private static final Color defaultActiveColor = new Color(255, 255, 0);
     private static final Color defaultDisabledColor = new Color(128, 128, 128);
-    
+
     /**
      * @author arlith
      */
     private static final long serialVersionUID = -3271105050872007863L;
     protected ImageIcon backgroundIcon;
     protected ImageIcon backgroundPressedIcon;
-    
+
     protected BufferedImage bgBuffer = null;
     protected BufferedImage bgPressedBuffer = null;
-    
+
     boolean iconsLoaded = false;
     boolean isPressed = false;
     boolean isMousedOver = false;
     boolean isBGTiled = true;
-    
+
     /**
      * The color of the button text.
      */
@@ -62,23 +62,23 @@ public class MegamekButton extends JButton {
      */
     private Color disabledColor;
 
-    public MegamekButton(String text, String component){
+    public MegamekButton(String text, String component) {
         super(text);
         initialize(component);
     }
-    
-    public MegamekButton(String text){
+
+    public MegamekButton(String text) {
         super(text);
         initialize(SkinSpecification.UIComponents.DefaultButton.toString());
     }
-    
-    public MegamekButton(){
+
+    public MegamekButton() {
         super();
         initialize(SkinSpecification.UIComponents.DefaultButton.toString());
     }
-    
+
     private void initialize(String component) {
-        SkinSpecification skinSpec =  SkinXMLHandler.getSkin(component,true);
+        SkinSpecification skinSpec = SkinXMLHandler.getSkin(component, true);
         setBorder(new MegamekBorder(skinSpec));
         loadIcon(skinSpec);
         isBGTiled = skinSpec.tileBackground;
@@ -99,17 +99,17 @@ public class MegamekButton extends JButton {
             activeColor = defaultActiveColor;
         }
     }
-    
-     public void loadIcon(SkinSpecification spec){
-         iconsLoaded = true;
-         // If there were no background paths loaded, there's nothing to do
-         if (!spec.hasBackgrounds()) {
-             iconsLoaded = false;
-             return;
-         }
-         // Setting this to false helps with transparent images
-         setContentAreaFilled(false);
-         // Otherwise, try to load in all of the images.
+
+    public void loadIcon(SkinSpecification spec) {
+        iconsLoaded = true;
+        // If there were no background paths loaded, there's nothing to do
+        if (!spec.hasBackgrounds()) {
+            iconsLoaded = false;
+            return;
+        }
+        // Setting this to false helps with transparent images
+        setContentAreaFilled(false);
+        // Otherwise, try to load in all of the images.
         try {
             if (spec.backgrounds.size() < 2) {
                 System.out.println("Error: skin specification for a "
@@ -130,9 +130,9 @@ public class MegamekButton extends JButton {
             iconsLoaded = false;
         }
     }
-     
-     protected void processMouseEvent(MouseEvent e){
-        if (e.getID() == MouseEvent.MOUSE_EXITED){
+
+    protected void processMouseEvent(MouseEvent e) {
+        if (e.getID() == MouseEvent.MOUSE_EXITED) {
             isMousedOver = false;
             repaint();
         } else if (e.getID() == MouseEvent.MOUSE_ENTERED) {
@@ -143,16 +143,16 @@ public class MegamekButton extends JButton {
             isPressed = false;
         }
         super.processMouseEvent(e);
-     }
-     
+    }
+
     protected void paintComponent(Graphics g) {
         // Call super, so this components plays well with Swing
-        super.paintComponent(g);        
+        super.paintComponent(g);
         // If none of the icons are loaded, treat this is a regular JButton
         if (!iconsLoaded) {
             return;
         }
-        
+
         // If the BG icon is tiled, draw it in
         if (isBGTiled) {
             int w = getWidth();
@@ -176,8 +176,7 @@ public class MegamekButton extends JButton {
             int w = getWidth();
             int h = getHeight();
             if (isPressed) {
-                if (bgPressedBuffer == null 
-                        || bgPressedBuffer.getWidth() != w
+                if (bgPressedBuffer == null || bgPressedBuffer.getWidth() != w
                         || bgPressedBuffer.getHeight() != h) {
                     bgPressedBuffer = new BufferedImage(w, h,
                             BufferedImage.TYPE_INT_ARGB);
@@ -186,13 +185,12 @@ public class MegamekButton extends JButton {
                 }
                 g.drawImage(bgPressedBuffer, 0, 0, null);
             } else {
-                if (bgBuffer == null 
-                        || bgBuffer.getWidth() != w
+                if (bgBuffer == null || bgBuffer.getWidth() != w
                         || bgBuffer.getHeight() != h) {
                     bgBuffer = new BufferedImage(w, h,
                             BufferedImage.TYPE_INT_ARGB);
-                    bgBuffer.getGraphics().drawImage(
-                            backgroundIcon.getImage(), 0, 0, w, h, null);
+                    bgBuffer.getGraphics().drawImage(backgroundIcon.getImage(),
+                            0, 0, w, h, null);
                 }
                 g.drawImage(bgBuffer, 0, 0, null);
             }
@@ -216,13 +214,13 @@ public class MegamekButton extends JButton {
         }
         textLabel.paint(g);
     }
-     
-     public String toString(){
-         return getActionCommand();
-     }
+
+    public String toString() {
+        return getActionCommand();
+    }
 
     public boolean isIconsLoaded() {
         return iconsLoaded;
     }
-     
+
 }

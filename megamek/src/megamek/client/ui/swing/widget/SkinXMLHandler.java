@@ -247,12 +247,18 @@ public class SkinXMLHandler {
                 String name = borderList.getElementsByTagName(NAME).
                         item(0).getTextContent();
 
-                skinSpecs.put(name, skinSpec);
+                if (SkinSpecification.UIComponents.getUIComponent(name) == null) {
+                    System.out.println("SKIN ERROR: "
+                            + "Unable to add unrecognized UI component: "
+                            + name + "!");
+                } else {
+                    skinSpecs.put(name, skinSpec);
+                }
             }
-            
+
             if (!skinSpecs.containsKey(UIComponents.DefaultUIElement.getComp()) 
                     || !skinSpecs.containsKey(UIComponents.DefaultButton.getComp())) {
-                System.out.println("ERROR: Bad skin specification file: " +
+                System.out.println("SKIN ERROR: Bad skin specification file: " +
                         "file doesn't specify " + UIComponents.DefaultUIElement + 
                         " or " + UIComponents.DefaultButton + "!");
                 return false;

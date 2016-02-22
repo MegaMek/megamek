@@ -67,7 +67,7 @@ public class SkinSpecification {
          * @return
          */
         public String getName() {
-            return Messages.getString("SkinSpec." + toString() + ".Text");
+            return Messages.getString("SkinSpec." + getComp() + ".Text");
         }
 
         /**
@@ -75,7 +75,7 @@ public class SkinSpecification {
          * @return
          */
         public String getDescription() {
-            return Messages.getString("SkinSpec." + toString() + ".Desc");
+            return Messages.getString("SkinSpec." + getComp() + ".Desc");
         }
         
         /**
@@ -88,7 +88,7 @@ public class SkinSpecification {
         @Nullable
         public static UIComponents getUIComponent(@Nullable String val) {
             for (UIComponents c : UIComponents.values()) {
-                if (c.toString().equals(val)) {
+                if (c.getComp().equals(val)) {
                     return c;
                 }
             }

@@ -21,6 +21,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.FilenameFilter;
 
@@ -82,9 +84,10 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
     /**
      * Lists all SkinSpecifications for the current skin.
      */
-    private DefaultListModel<String> skinSpecCompModel = 
+    private DefaultListModel<SkinSpecification.UIComponents> skinSpecCompModel = 
             new DefaultListModel<>();
-    private JList<String> skinSpecCompList = new JList<>(skinSpecCompModel);
+    private JList<SkinSpecification.UIComponents> skinSpecCompList = new JList<>(
+            skinSpecCompModel);
     
     private JCheckBox enableBorders = new JCheckBox(
             Messages.getString("SkinEditor.EnableBorders"));
@@ -106,7 +109,24 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         skinSpecCompList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         skinSpecCompList.setMinimumSize(new Dimension(100, 50));
         skinSpecCompList.setMinimumSize(new Dimension(100, 50));
-        
+
+        skinSpecCompList.addMouseMotionListener(new MouseMotionListener() {
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                // nop
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                int index = skinSpecCompList.locationToIndex(e.getPoint());
+                if (index > -1) {
+                    skinSpecCompList.setToolTipText(skinSpecCompModel
+                            .getElementAt(index).getDescription());
+                }
+            }
+        });
+
         addCompButton.setToolTipText(Messages
                 .getString("SkinEditor.AddCompButtonToolTip")); //$NON-NLS-1$
         removeCompButton.setToolTipText(Messages
@@ -239,7 +259,8 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         skinSpecCompModel.removeAllElements();
 
         for (String comp : SkinXMLHandler.getSkinnedComponents()) {
-            skinSpecCompModel.addElement(comp);
+            skinSpecCompModel.addElement(SkinSpecification.UIComponents
+                    .getUIComponent(comp));
         }
         skinSpecCompList.setSelectedIndex(0);
         addListeners();
@@ -260,7 +281,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         saveSkinButton.setEnabled(false);
 
         SkinSpecification skinSpec = SkinXMLHandler.getSkin(skinSpecCompList
-                .getSelectedValue());
+                .getSelectedValue().getComp());
         
         enableBorders.setSelected(!skinSpec.noBorder);
         
@@ -318,7 +339,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
             setupSkinEditPanel();
         } else if (e.getSource().equals(saveSkinButton)) {
             saveSkinButton.setEnabled(false);
-            String currComp = (String) skinSpecCompList.getSelectedValue();
+            String currComp = (String) skinSpecCompList.getSelectedValue().getComp();
             SkinSpecification skinSpec = SkinXMLHandler.getSkin(currComp);
             skinEditPanel.updateSkinSpec(skinSpec, enableBorders.isSelected());
             SkinXMLHandler.writeSkinToFile((String) currSkinCombo
@@ -343,7 +364,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
     public void notifySkinChanges() {
         saveSkinButton.setEnabled(true);
 
-        String currComp = (String) skinSpecCompList.getSelectedValue();
+        String currComp = skinSpecCompList.getSelectedValue().getComp();
         SkinSpecification skinSpec = SkinXMLHandler.getSkin(currComp);
         skinEditPanel.updateSkinSpec(skinSpec, enableBorders.isSelected());
         mainGUI.updateBorder();

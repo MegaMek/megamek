@@ -1908,7 +1908,31 @@ public class BattleArmor extends Infantry {
     public float getWeight() {
         // this is for loading into transportes, for that purpose, each trooper
         // weighs a ton
-        return troopers;
+        if (game != null && game.getOptions().booleanOption("tacops_ba_weight")) {
+            float troopton = troopers;
+            switch (getWeightClass()) {
+                case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
+                    troopton = (float) (troopers * 0.25);
+                    break;
+                case EntityWeightClass.WEIGHT_LIGHT:
+                    troopton = (float) (troopers * 0.5);
+                    break;
+                case EntityWeightClass.WEIGHT_MEDIUM:
+                    troopton = (float) (troopers * 1.0);
+                    break;
+                case EntityWeightClass.WEIGHT_HEAVY:
+                    troopton = (float) (troopers * 1.5);
+                    break;
+                case EntityWeightClass.WEIGHT_ASSAULT:
+                    troopton = (float) (troopers * 2.0);
+                    break;
+                default:
+                    troopton = troopers;
+            }
+            return troopton;
+        } else {
+            return troopers;
+        }
     }
 
     @Override

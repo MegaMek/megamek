@@ -262,7 +262,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.gridwidth = 1;
-        c.gridheight = 8;
+        c.gridheight = 9;
         addBag(panTitle, gridbag, c);
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = .05;

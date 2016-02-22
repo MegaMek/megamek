@@ -13328,8 +13328,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void loadDefaultQuirks() {
 
         // Get a list of quirks for this entity.
-        List<QuirkEntry> quirks = QuirksHandler.getQuirks(getChassis(),
-                getModel());
+        List<QuirkEntry> quirks = QuirksHandler.getQuirks(this);
 
         // If this unit has no quirks, we do not need to proceed further.
         if ((quirks == null) || quirks.isEmpty()) {

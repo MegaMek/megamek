@@ -29,24 +29,57 @@ import javax.swing.SwingConstants;
 
 import megamek.common.Configuration;
 
+/**
+ * A subclass of JButton that supports specifying the look and feel of the
+ * button via a SkinSpecification.
+ *
+ * @author arlith
+ */
 public class MegamekButton extends JButton {
+
+    private static final long serialVersionUID = -3271105050872007863L;
+
+    // Default values for button text colors
     private static final Color defaultColor = new Color(250, 250, 250);
     private static final Color defaultActiveColor = new Color(255, 255, 0);
     private static final Color defaultDisabledColor = new Color(128, 128, 128);
 
     /**
-     * @author arlith
+     * The default background image for the button,
      */
-    private static final long serialVersionUID = -3271105050872007863L;
     protected ImageIcon backgroundIcon;
+
+    /**
+     * The background image to display when the button is pressed
+     */
     protected ImageIcon backgroundPressedIcon;
 
     protected BufferedImage bgBuffer = null;
     protected BufferedImage bgPressedBuffer = null;
 
+    /**
+     * Keeps track of whether there are images to display for this button, or if
+     * the default rendering for JButtons should be used
+     */
     boolean iconsLoaded = false;
+
+    /**
+     * Keeps track of if the button is pressed or not. This is used for
+     * determining if which image icon should be displayed.
+     */
     boolean isPressed = false;
+
+    /**
+     * Keeps track of whether the mouse cursor is currently over this button.
+     * Used to adjust the font of the button text.
+     */
     boolean isMousedOver = false;
+
+    /**
+     * Determines if the background images should be tiled or not. If this is
+     * false and the background images are smaller than the button size, they
+     * will be scaled to the button size.
+     */
     boolean isBGTiled = true;
 
     /**
@@ -62,21 +95,45 @@ public class MegamekButton extends JButton {
      */
     private Color disabledColor;
 
+    /**
+     *
+     * @param text
+     *            The button text
+     * @param component
+     *            The name of the SkinSpecification entry
+     */
     public MegamekButton(String text, String component) {
         super(text);
         initialize(component);
     }
 
+    /**
+     * Default text constructor, the button will use the DefaultButton
+     * SkinSpecification.
+     *
+     * @param text
+     */
     public MegamekButton(String text) {
         super(text);
         initialize(SkinSpecification.UIComponents.DefaultButton.toString());
     }
 
+    /**
+     * Default constructor with no button text and DefaultButton
+     * SkinSpecification.
+     */
     public MegamekButton() {
         super();
         initialize(SkinSpecification.UIComponents.DefaultButton.toString());
     }
 
+    /**
+     * Initialize the state of the button, using the SkinSpecification linked to
+     * the given string.
+     *
+     * @param component
+     *            String key to get the SkinSpecification.
+     */
     private void initialize(String component) {
         SkinSpecification skinSpec = SkinXMLHandler.getSkin(component, true);
         setBorder(new MegamekBorder(skinSpec));
@@ -100,6 +157,11 @@ public class MegamekButton extends JButton {
         }
     }
 
+    /**
+     * Use the supplied SkinSpecification to load the background images.
+     *
+     * @param spec
+     */
     public void loadIcon(SkinSpecification spec) {
         iconsLoaded = true;
         // If there were no background paths loaded, there's nothing to do

@@ -25,6 +25,40 @@ import java.util.ArrayList;
  */
 public class SkinSpecification {
     
+    public static enum UIComponents {
+        DefaultUIElement("defaultElement", ""),
+        DefaultButton("defaultButton", ""),
+        BoardView("BoardViewBorder", ""),
+        PhaseDisplay("PhaseDisplayBorder", ""),
+        PhaseDisplayDoneButton("PhaseDisplayDoneButton", ""),
+        PhaseDisplayButton("PhaseDisplayButton", ""),
+        ;
+
+        private final String text;
+        
+        private final String desc;
+
+        /**
+         * @param text
+         */
+        private UIComponents(final String text, String desc) {
+            this.text = text;
+            this.desc = desc;
+        }
+
+        /* (non-Javadoc)
+         * @see java.lang.Enum#toString()
+         */
+        @Override
+        public String toString() {
+            return text;
+        }
+        
+        public String getDescription() {
+            return desc;
+        }
+    };
+    
     /**
      * Path to an image to be used in the top left corner.
      */

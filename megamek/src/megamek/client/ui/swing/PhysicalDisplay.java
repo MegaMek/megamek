@@ -33,6 +33,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -163,7 +164,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         for (PhysicalCommand cmd : PhysicalCommand.values()) {
             String title = Messages.getString("PhysicalDisplay."
                                               + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
+            MegamekButton newButton = new MegamekButton(title,
+                    SkinSpecification.UIComponents.PhaseDisplayButton
+                            .toString());
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);

@@ -53,12 +53,12 @@ public class MegamekButton extends JButton {
     
     public MegamekButton(String text){
         super(text);
-        initialize(SkinXMLHandler.defaultButton);
+        initialize(SkinSpecification.UIComponents.DefaultButton.toString());
     }
     
     public MegamekButton(){
         super();
-        initialize(SkinXMLHandler.defaultButton);
+        initialize(SkinSpecification.UIComponents.DefaultButton.toString());
     }
     
     private void initialize(String component) {

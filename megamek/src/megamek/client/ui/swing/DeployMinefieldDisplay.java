@@ -21,10 +21,10 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Coords;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -98,7 +98,9 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
         for (Command cmd : Command.values()) {
             String title = Messages.getString("DeployMinefieldDisplay."
                     + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
+            MegamekButton newButton = new MegamekButton(title,
+                    SkinSpecification.UIComponents.PhaseDisplayButton
+                            .toString());
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);

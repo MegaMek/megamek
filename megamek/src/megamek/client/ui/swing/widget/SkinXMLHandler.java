@@ -29,6 +29,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.widget.SkinSpecification.UIComponents;
 import megamek.common.Configuration;
 
 import org.w3c.dom.Document;
@@ -68,26 +69,6 @@ public class SkinXMLHandler {
         sb.append("    xsi:noNamespaceSchemaLocation=\"skinSchema.xsl\">\n");
         SKIN_HEADER = sb.toString();
     }
-
-    /**
-     * The XML name tag value for the default component border
-     */
-    public static String defaultUIElement = "defaultElement";
-    
-    /**
-     * The XML name tag value for the default component border
-     */
-    public static String defaultButton = "defaultButton";
-    
-    /**
-     * The XML name tag value for the BoardView border
-     */
-    public static String BOARDVIEW = "BoardViewBorder";
-    
-    /**
-     * The XML name tag value for the PhaseDisplay border
-     */
-    public static String PHASEDISPLAY = "PhaseDisplayBorder";
     
     /**
      * The file name for the default Skin XML file, found in the config dir.
@@ -265,11 +246,11 @@ public class SkinXMLHandler {
                 skinSpecs.put(name, skinSpec);
             }
             
-            if (!skinSpecs.containsKey(defaultUIElement) 
-                    || !skinSpecs.containsKey(defaultButton)) {
+            if (!skinSpecs.containsKey(UIComponents.DefaultUIElement.toString()) 
+                    || !skinSpecs.containsKey(UIComponents.DefaultButton.toString())) {
                 System.out.println("ERROR: Bad skin specification file: " +
-                        "file doesn't specify " + defaultUIElement + 
-                        " or " + defaultButton + "!");
+                        "file doesn't specify " + UIComponents.DefaultUIElement + 
+                        " or " + UIComponents.DefaultButton + "!");
                 return false;
             }
         } catch (Exception e) {
@@ -573,9 +554,9 @@ public class SkinXMLHandler {
         SkinSpecification spec = skinSpecs.get(component);
         if (spec == null){
             if (isBtn){
-                spec = skinSpecs.get(defaultButton);
+                spec = skinSpecs.get(UIComponents.DefaultButton.toString());
             } else {
-                spec = skinSpecs.get(defaultUIElement);
+                spec = skinSpecs.get(UIComponents.DefaultUIElement.toString());
             }
         }
         return spec;

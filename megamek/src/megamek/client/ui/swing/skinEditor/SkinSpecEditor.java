@@ -25,6 +25,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 
 import javax.swing.Box;
 import javax.swing.DefaultListModel;
@@ -346,14 +347,24 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
                     .getSelectedItem());
             mainGUI.updateBorder();
         } else if (e.getSource().equals(addCompButton)) {
+            ArrayList<SkinSpecification.UIComponents> newComps = new ArrayList<>();
+            for (SkinSpecification.UIComponents c : SkinSpecification.UIComponents.values()) {
+                if (!skinSpecCompModel.contains(c)) {
+                    newComps.add(c);
+                }
+            }
             String msg = Messages.getString("SkinEditor.AddCompMsg");
             String title = Messages.getString("SkinEditor.AddCompTitle");
-            String newComp = JOptionPane.showInputDialog(this, msg, title,
-                    JOptionPane.QUESTION_MESSAGE);
-            if (newComp == null) {
+            SkinSpecification.UIComponents choice = (SkinSpecification.UIComponents) JOptionPane
+                    .showInputDialog(this, msg, title,
+                            JOptionPane.QUESTION_MESSAGE, null,
+                            newComps.toArray(), null);
+            if (choice == null) {
                 return;
             }
-            SkinXMLHandler.addNewComp(newComp);
+            SkinXMLHandler.addNewComp(choice.getComp());
+            populateSkinSpecComponents();
+            notifySkinChanges();
         }
     }
 

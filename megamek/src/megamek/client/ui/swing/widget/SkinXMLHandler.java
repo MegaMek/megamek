@@ -224,14 +224,18 @@ public class SkinXMLHandler {
                             .parseBoolean(showScrollEle.getTextContent());
                 }
                 
-                // Parse font color
-                Element fontColorEle = (Element) 
-                        borderList.getElementsByTagName(FONT_COLOR).item(0);
-                if (fontColorEle != null) {
-                    String fontColorContent = fontColorEle.getTextContent();
-                    skinSpec.fontColor = Color.decode(fontColorContent);
-                }                  
-                
+                // Parse font colors
+                NodeList fontColors = borderList
+                        .getElementsByTagName(FONT_COLOR);
+                if (fontColors.getLength() > 0) {
+                    skinSpec.fontColors.clear();
+                    for (int fc = 0; fc < fontColors.getLength(); fc++) {
+                        String fontColorContent = fontColors.item(fc)
+                                .getTextContent();
+                        skinSpec.fontColors.add(Color.decode(fontColorContent));
+                    }
+                }
+
                 // Parse tile background
                 Element tileBGEle = (Element) borderList
                         .getElementsByTagName(TILE_BACKGROUND).item(0);
@@ -391,11 +395,13 @@ public class SkinXMLHandler {
         out.write(((Boolean)skinSpec.tileBackground).toString());
         out.write("</" + TILE_BACKGROUND + ">\n");
 
-        // Write color
-        out.write("\t\t<" + FONT_COLOR + ">");
-        out.write("#"
-                + Integer.toHexString(skinSpec.fontColor.getRGB()).substring(2));
-        out.write("</" + FONT_COLOR + ">\n");
+        // Write colors
+        for (Color fontColor : skinSpec.fontColors) {
+            out.write("\t\t<" + FONT_COLOR + ">");
+            out.write("#"
+                    + Integer.toHexString(fontColor.getRGB()).substring(2));
+            out.write("</" + FONT_COLOR + ">\n");
+        }
 
         // Write show scroll bars
         out.write("\t\t<" + SHOW_SCROLL_BARS + ">");

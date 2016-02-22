@@ -341,6 +341,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         SkinSpecification skinSpec = SkinXMLHandler.getSkin(currComp);
         skinEditPanel.updateSkinSpec(skinSpec, enableBorders.isSelected());
         mainGUI.updateBorder();
+        skinEditPanel.setupSkinEditPanel(skinSpec);
     }
 
 }

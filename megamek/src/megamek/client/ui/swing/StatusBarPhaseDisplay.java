@@ -261,7 +261,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         panStatus = new JPanel();
         panStatus.setOpaque(false);
         labStatus = new JLabel(defStatus, SwingConstants.CENTER);
-        labStatus.setForeground(pdSkinSpec.fontColor);
+        labStatus.setForeground(pdSkinSpec.fontColors.get(0));
         labStatus.setOpaque(false);
 
         // layout

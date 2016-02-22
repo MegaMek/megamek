@@ -60,6 +60,14 @@ public class SkinSpecification {
     };
     
     /**
+     * Indicates the maximum number of colors a skin specification can have.
+     * No UI elements will use more than this many colors, so there is no reason
+     * to allow more than this, and it prevents the editor UI from expanding out
+     * of control.
+     */
+    public static final int MAX_NUM_COLORS = 3;
+
+    /**
      * Path to an image to be used in the top left corner.
      */
     public String tl_corner;
@@ -123,7 +131,7 @@ public class SkinSpecification {
     /**
      * Specifies the font color for the UI component
      */
-    public Color fontColor = Color.black;
+    public ArrayList<Color> fontColors;
     
     /**
      * A collection of background images.  Most UI components only need one,
@@ -160,6 +168,8 @@ public class SkinSpecification {
         rightShouldTile = new ArrayList<Boolean>();
         bottomShouldTile = new ArrayList<Boolean>();
         leftShouldTile = new ArrayList<Boolean>();
+        fontColors = new ArrayList<>();
+        fontColors.add(Color.black);
     }
     
     public boolean hasBorder() {

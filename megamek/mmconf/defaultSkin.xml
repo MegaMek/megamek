@@ -226,6 +226,7 @@
     <!-- Specification of background image -->
     <background_image>SpaceD/buttonNormal.png</background_image>
     <background_image>SpaceD/buttonPushed.png</background_image>
+    <font_color>#ffffff</font_color>
   </UI_Element>
 
 </skin>

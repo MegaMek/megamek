@@ -30,6 +30,9 @@ import javax.swing.SwingConstants;
 import megamek.common.Configuration;
 
 public class MegamekButton extends JButton {
+    private static final Color defaultColor = new Color(250, 250, 250);
+    private static final Color defaultActiveColor = new Color(255, 255, 0);
+    private static final Color defaultDisabledColor = new Color(128, 128, 128);
     
     /**
      * @author arlith
@@ -46,6 +49,19 @@ public class MegamekButton extends JButton {
     boolean isMousedOver = false;
     boolean isBGTiled = true;
     
+    /**
+     * The color of the button text.
+     */
+    private Color buttonColor;
+    /**
+     * The color of the button text when activated.
+     */
+    private Color activeColor;
+    /**
+     * The color of the button text when the button is disabled.
+     */
+    private Color disabledColor;
+
     public MegamekButton(String text, String component){
         super(text);
         initialize(component);
@@ -66,6 +82,22 @@ public class MegamekButton extends JButton {
         setBorder(new MegamekBorder(skinSpec));
         loadIcon(skinSpec);
         isBGTiled = skinSpec.tileBackground;
+
+        if (skinSpec.fontColors.size() >= 1) {
+            buttonColor = skinSpec.fontColors.get(0);
+        } else {
+            buttonColor = defaultColor;
+        }
+        if (skinSpec.fontColors.size() >= 2) {
+            disabledColor = skinSpec.fontColors.get(1);
+        } else {
+            disabledColor = defaultDisabledColor;
+        }
+        if (skinSpec.fontColors.size() >= 3) {
+            activeColor = skinSpec.fontColors.get(2);
+        } else {
+            activeColor = defaultActiveColor;
+        }
     }
     
      public void loadIcon(SkinSpecification spec){
@@ -175,12 +207,12 @@ public class MegamekButton extends JButton {
                 Font boldFont = new Font(font.getFontName(), Font.BOLD,
                         font.getSize() + 2);
                 textLabel.setFont(boldFont);
-                textLabel.setForeground(new Color(255, 255, 0));
+                textLabel.setForeground(activeColor);
             } else {
-                textLabel.setForeground(new Color(250, 250, 250));
+                textLabel.setForeground(buttonColor);
             }
         } else {
-            textLabel.setForeground(new Color(128, 128, 128));
+            textLabel.setForeground(disabledColor);
         }
         textLabel.paint(g);
     }

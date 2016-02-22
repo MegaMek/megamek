@@ -397,7 +397,13 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
     JCheckBox showScrollBars = new JCheckBox(
             Messages.getString("SkinEditor.ShowScrollBars")); //$NON-NLS-1$
 
-    JButton colorButton = new JButton();
+    ArrayList<JButton> colorButtons = new ArrayList<>();
+
+    JButton addColor = new JButton(
+            Messages.getString("SkinEditor.AddColor.Text")); //$NON-NLS-1$
+
+    JButton removeColor = new JButton(
+            Messages.getString("SkinEditor.RemoveColor.Text")); //$NON-NLS-1$
 
     JLabel colorLbl = new JLabel(Messages.getString("SkinEditor.Color")); //$NON-NLS-1$
 
@@ -408,23 +414,47 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
      */
     public SkinSpecPanel(SkinSpecEditor skinEditor) {
         super(new GridBagLayout());
-        colorButton.setMaximumSize(new Dimension(14, 14));
-        colorButton.setPreferredSize(new Dimension(14, 14));
         this.skinEditor = skinEditor;
+        addColor.setToolTipText(Messages
+                .getString("SkinEditor.AddColor.ToolTip"));
+        removeColor.setToolTipText(Messages
+                .getString("SkinEditor.RemoveColor.ToolTip"));
     }
 
     /**
      * Add this SkinSpecEditor as a listener to all components.
      */
     private void addListeners() {
-        colorButton.addActionListener(this);
+        for (JButton colorButton : colorButtons) {
+            colorButton.addActionListener(this);
+        }
+        addColor.addActionListener(this);
+        removeColor.addActionListener(this);
     }
 
     /**
      * Remove thsi SkinSpecEditor as a listener from all components.
      */
     private void removeListeners() {
-        colorButton.removeActionListener(this);
+        for (JButton colorButton : colorButtons) {
+            colorButton.removeActionListener(this);
+        }
+        addColor.removeActionListener(this);
+        removeColor.removeActionListener(this);
+    }
+
+    private void resetColorButtons(SkinSpecification skinSpec) {
+        // Listeners must already be removed before calling this!
+        colorButtons.clear();
+        for (Color c : skinSpec.fontColors) {
+            JButton colorButton = new JButton();
+            colorButton.setMaximumSize(new Dimension(14, 14));
+            colorButton.setPreferredSize(new Dimension(14, 14));
+            colorButton.setForeground(c);
+            colorButton.setBackground(c);
+            colorButtons.add(colorButton);
+        }
+        // Don't add listeners, to prevent double add
     }
 
     /**
@@ -478,7 +508,10 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
         skinSpec.tileBackground = background.tiled.get(0).isSelected();
 
         // Font Color
-        skinSpec.fontColor = colorButton.getBackground();
+        skinSpec.fontColors.clear();
+        for (JButton colorButton : colorButtons) {
+            skinSpec.fontColors.add(colorButton.getBackground());
+        }
 
         // Show Scroll Bars
         skinSpec.showScrollBars = showScrollBars.isSelected();
@@ -582,6 +615,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
                         skinSpec.tileBackground));
 
         gbc.gridy++;
+
         add(background, gbc);
 
         JPanel misc = new JPanel(new GridBagLayout());
@@ -592,14 +626,16 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
         gbc.fill = GridBagConstraints.NONE;
         misc.add(showScrollBars);
 
+        resetColorButtons(skinSpec);
         JPanel glue = new JPanel();
         glue.add(colorLbl);
-        glue.add(colorButton);
+        for (JButton colorButton : colorButtons) {
+            glue.add(colorButton);
+        }
+        glue.add(addColor);
+        glue.add(removeColor);
         gbc.gridy++;
         misc.add(glue, gbc);
-
-        colorButton.setForeground(skinSpec.fontColor);
-        colorButton.setBackground(skinSpec.fontColor);
 
         revalidate();
         addListeners();
@@ -615,14 +651,39 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        notifySkinChanges();
-        if (e.getSource().equals(colorButton)) {
-            Color newColor = JColorChooser.showDialog(this,
-                    Messages.getString("SkinEditor.ColorChoice"), //$NON-NLS-1$
-                    colorButton.getBackground());
-            if (newColor != null) {
-                colorButton.setBackground(newColor);
+        removeListeners();
+        boolean notify = false;
+        if (e.getSource() instanceof JButton) {
+            if (addColor.equals(e.getSource())) {
+                if (colorButtons.size() < SkinSpecification.MAX_NUM_COLORS) {
+                    JButton colorButton = new JButton();
+                    colorButton.setMaximumSize(new Dimension(14, 14));
+                    colorButton.setPreferredSize(new Dimension(14, 14));
+                    colorButton.setForeground(Color.BLACK);
+                    colorButton.setBackground(Color.BLACK);
+                    colorButtons.add(colorButton);
+                    notify = true;
+                }
+            } else if (removeColor.equals(e.getSource())) {
+                if (colorButtons.size() > 1) {
+                    colorButtons.remove(colorButtons.size() - 1);
+                    notify = true;
+                }
+            } else if (colorButtons.contains(e.getSource())) {
+                JButton colorButton = (JButton) e.getSource();
+                Color newColor = JColorChooser.showDialog(this,
+                        Messages.getString("SkinEditor.ColorChoice"), //$NON-NLS-1$
+                        colorButton.getBackground());
+                if (newColor != null) {
+                    colorButton.setBackground(newColor);
+                    notify = true;
+                }
             }
+        }
+        if (notify) {
+            notifySkinChanges();
+        } else { // If we notify, listeners are added, don't double-add
+            addListeners();
         }
     }
 

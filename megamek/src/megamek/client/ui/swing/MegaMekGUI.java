@@ -316,6 +316,16 @@ public class MegaMekGUI implements IMegaMekGUI {
     }
     
     void showSkinEditor() {
+        int response = JOptionPane.showConfirmDialog(frame, 
+                "The skin editor is currently "
+                + "in beta and is a work in progress.  There are likely to "
+                + "be issues.\nIn particular, the current skin spec editor "
+                + "must be resived to by very large, generally around half "
+                + "the screen on a 1080 display.\nContinue?", "Continue?", 
+                JOptionPane.OK_CANCEL_OPTION);
+        if (response == JOptionPane.CANCEL_OPTION) {
+            return;
+        }
         SkinEditorMainGUI skinEditor = new SkinEditorMainGUI();
         skinEditor.initialize();
         skinEditor.switchPanel(IGame.Phase.PHASE_MOVEMENT);

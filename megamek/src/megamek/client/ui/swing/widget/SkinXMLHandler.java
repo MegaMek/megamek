@@ -440,8 +440,8 @@ public class SkinXMLHandler {
         out.write("\t\t\t<!-- Border lines: these images will be tiled -->\n");
         out.write("\t\t\t<" + EDGE + ">\n");
         // Top Edge
-        out.write("\t\t\t\t<" + EDGE_ICON + ">\n");
         for (int i = 0; i < skinSpec.topEdge.size(); i++) {
+            out.write("\t\t\t\t<" + EDGE_ICON + ">\n");
             // Edge Icon
             out.write("\t\t\t\t\t<" + ICON + ">");
             out.write(skinSpec.topEdge.get(i));
@@ -450,8 +450,9 @@ public class SkinXMLHandler {
             out.write("\t\t\t\t\t<" + TILED + ">");
             out.write(((Boolean)skinSpec.topShouldTile.get(i)).toString());
             out.write("</" + TILED + ">\n");
+            out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
         }
-        out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
+
         out.write("\t\t\t\t<" + EDGE_NAME + ">");
         out.write("top");
         out.write("</" + EDGE_NAME + ">\n");
@@ -460,8 +461,8 @@ public class SkinXMLHandler {
 
         // Bottom Edge
         out.write("\t\t\t<" + EDGE + ">\n");
-        out.write("\t\t\t\t<" + EDGE_ICON + ">\n");
         for (int i = 0; i < skinSpec.bottomEdge.size(); i++) {
+            out.write("\t\t\t\t<" + EDGE_ICON + ">\n");
             // Edge Icon
             out.write("\t\t\t\t\t<" + ICON + ">");
             out.write(skinSpec.bottomEdge.get(i));
@@ -470,8 +471,8 @@ public class SkinXMLHandler {
             out.write("\t\t\t\t\t<" + TILED + ">");
             out.write(((Boolean)skinSpec.bottomShouldTile.get(i)).toString());
             out.write("</" + TILED + ">\n");
+            out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
         }
-        out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
         out.write("\t\t\t\t<" + EDGE_NAME + ">");
         out.write("bottom");
         out.write("</" + EDGE_NAME + ">\n");
@@ -480,8 +481,8 @@ public class SkinXMLHandler {
 
         // Left Edge
         out.write("\t\t\t<" + EDGE + ">\n");
-        out.write("\t\t\t\t<" + EDGE_ICON + ">\n");
         for (int i = 0; i < skinSpec.leftEdge.size(); i++) {
+            out.write("\t\t\t\t<" + EDGE_ICON + ">\n");
             // Edge Icon
             out.write("\t\t\t\t\t<" + ICON + ">");
             out.write(skinSpec.leftEdge.get(i));
@@ -490,8 +491,8 @@ public class SkinXMLHandler {
             out.write("\t\t\t\t\t<" + TILED + ">");
             out.write(((Boolean)skinSpec.leftShouldTile.get(i)).toString());
             out.write("</" + TILED + ">\n");
+            out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
         }
-        out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
         out.write("\t\t\t\t<" + EDGE_NAME + ">");
         out.write("left");
         out.write("</" + EDGE_NAME + ">\n");
@@ -500,8 +501,8 @@ public class SkinXMLHandler {
 
         // Right Edge
         out.write("\t\t\t<" + EDGE + ">\n");
-        out.write("\t\t\t\t<" + EDGE_ICON + ">\n");
         for (int i = 0; i < skinSpec.rightEdge.size(); i++) {
+            out.write("\t\t\t\t<" + EDGE_ICON + ">\n");
             // Edge Icon
             out.write("\t\t\t\t\t<" + ICON + ">");
             out.write(skinSpec.rightEdge.get(i));
@@ -510,8 +511,8 @@ public class SkinXMLHandler {
             out.write("\t\t\t\t\t<" + TILED + ">");
             out.write(((Boolean)skinSpec.rightShouldTile.get(i)).toString());
             out.write("</" + TILED + ">\n");
+            out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
         }
-        out.write("\t\t\t\t</" + EDGE_ICON + ">\n");
         out.write("\t\t\t\t<" + EDGE_NAME + ">");
         out.write("right");
         out.write("</" + EDGE_NAME + ">\n");

@@ -17,6 +17,9 @@ package megamek.client.ui.swing.widget;
 import java.awt.Color;
 import java.util.ArrayList;
 
+import megamek.common.Messages;
+import megamek.common.annotations.Nullable;
+
 /**
  * A class that contains state information that specifies a skin.
  * 
@@ -24,38 +27,68 @@ import java.util.ArrayList;
  *
  */
 public class SkinSpecification {
-    
+
     public static enum UIComponents {
-        DefaultUIElement("defaultElement", ""),
-        DefaultButton("defaultButton", ""),
-        BoardView("BoardViewBorder", ""),
-        PhaseDisplay("PhaseDisplayBorder", ""),
-        PhaseDisplayDoneButton("PhaseDisplayDoneButton", ""),
-        PhaseDisplayButton("PhaseDisplayButton", ""),
+        DefaultUIElement("defaultElement"),
+        DefaultButton("defaultButton"),
+        BoardView("BoardViewBorder"),
+        PhaseDisplay("PhaseDisplayBorder"),
+        PhaseDisplayDoneButton("PhaseDisplayDoneButton"),
+        PhaseDisplayButton("PhaseDisplayButton"),
         ;
 
-        private final String text;
-        
-        private final String desc;
+        private final String comp;
 
         /**
-         * @param text
+         * Constructions a new UIComponent with the given internalcomponent name
+         * @param comp The internal name of this component
          */
-        private UIComponents(final String text, String desc) {
-            this.text = text;
-            this.desc = desc;
+        private UIComponents(final String comp) {
+            this.comp = comp;
         }
 
-        /* (non-Javadoc)
+        /**
+         * Returns a string representation of this component, which is just the
+         * intenral name.
+         *
          * @see java.lang.Enum#toString()
          */
         @Override
         public String toString() {
-            return text;
+            return comp;
+        }
+
+        /**
+         * Returns an internationalized name for this component.
+         * @return
+         */
+        public String getName() {
+            return Messages.getString("SkinSpec." + toString() + ".Text");
+        }
+
+        /**
+         * Returns an internationalized description for this component.
+         * @return
+         */
+        public String getDescription() {
+            return Messages.getString("SkinSpec." + toString() + ".Desc");
         }
         
-        public String getDescription() {
-            return desc;
+        /**
+         * Given a component name, return it's UIComponents instance or null
+         * if no match is found.
+         * 
+         * @param val
+         * @return
+         */
+        @Nullable
+        public static UIComponents getComp(@Nullable String val) {
+            for (UIComponents c : UIComponents.values()) {
+                if (c.toString().equals(val)) {
+                    return c;
+                }
+            }
+            return null;
         }
     };
     

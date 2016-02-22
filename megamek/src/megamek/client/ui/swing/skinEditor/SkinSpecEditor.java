@@ -134,7 +134,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
                 .getString("SkinEditor.RemoveCompButtonToolTip")); //$NON-NLS-1$
         saveSkinButton.setToolTipText(Messages
                 .getString("SkinEditor.SaveSkinButtonToolTip")); //$NON-NLS-1$
-        addCompButton.setToolTipText(Messages
+        resetSkinButton.setToolTipText(Messages
                 .getString("SkinEditor.ResestSkinButtonToolTip")); //$NON-NLS-1$
 
         JScrollPane compListScroll = new JScrollPane(skinSpecCompList);

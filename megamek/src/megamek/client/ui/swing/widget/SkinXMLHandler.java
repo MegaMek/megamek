@@ -75,29 +75,60 @@ public class SkinXMLHandler {
      */
     public static String defaultSkinXML = "defaultSkin.xml";
     
+    // General XML Tags
     public static String UI_ELEMENT = "UI_Element";
     public static String NAME = "name";
-    public static String FONT_COLOR = "font_color";
-    public static String BORDER = "border";
-    public static String PLAIN = "plain";
-    public static String NO_BORDER = "no_border";
-    public static String TILE_BACKGROUND = "tile_background";
-    public static String TR_CORNER = "corner_top_right";
-    public static String TL_CORNER = "corner_top_left";
-    public static String BR_CORNER = "corner_bottom_right";
-    public static String BL_CORNER = "corner_bottom_left";
-    public static String EDGE = "edge";
-    public static String EDGE_NAME = "edgeName";
-    public static String EDGE_ICON = "edgeIcon";
-    public static String ICON = "icon";
-    public static String TILED = "tiled";
-    public static String TOP_LINE = "line_top";
-    public static String BOTTOM_LINE = "line_bottom";
-    public static String RIGHT_LINE = "line_right";
-    public static String LEFT_LINE = "line_left";
-    public static String BACKGROUND_IMAGE = "background_image";
-    public static String SHOW_SCROLL_BARS = "show_scroll_bars";
+
+    // Skin Specification XML Tags
+    public static final String FONT_COLOR = "font_color"; //$NON-NLS-1$
+    public static final String BORDER = "border"; //$NON-NLS-1$
+    public static final String PLAIN = "plain"; //$NON-NLS-1$
+    public static final String NO_BORDER = "no_border"; //$NON-NLS-1$
+    public static final String TILE_BACKGROUND = "tile_background"; //$NON-NLS-1$
+    public static final String TR_CORNER = "corner_top_right"; //$NON-NLS-1$
+    public static final String TL_CORNER = "corner_top_left"; //$NON-NLS-1$
+    public static final String BR_CORNER = "corner_bottom_right"; //$NON-NLS-1$
+    public static final String BL_CORNER = "corner_bottom_left"; //$NON-NLS-1$
+    public static final String EDGE = "edge"; //$NON-NLS-1$
+    public static final String EDGE_NAME = "edgeName"; //$NON-NLS-1$
+    public static final String EDGE_ICON = "edgeIcon"; //$NON-NLS-1$
+    public static final String ICON = "icon"; //$NON-NLS-1$
+    public static final String TILED = "tiled"; //$NON-NLS-1$
+    public static final String TOP_LINE = "line_top"; //$NON-NLS-1$
+    public static final String BOTTOM_LINE = "line_bottom"; //$NON-NLS-1$
+    public static final String RIGHT_LINE = "line_right"; //$NON-NLS-1$
+    public static final String LEFT_LINE = "line_left"; //$NON-NLS-1$
+    public static final String BACKGROUND_IMAGE = "background_image"; //$NON-NLS-1$
+    public static final String SHOW_SCROLL_BARS = "show_scroll_bars"; //$NON-NLS-1$
+
+    // Unit Display Skin Specification XML tags
+    public static final String GeneralTabIdle = "tab_general_idle"; //$NON-NLS-1$
+    public static final String PilotTabIdle = "tab_pilot_idle"; //$NON-NLS-1$
+    public static final String ArmorTabIdle = "tab_armor_idle"; //$NON-NLS-1$
+    public static final String SystemsTabIdle = "tab_systems_idle"; //$NON-NLS-1$
+    public static final String WeaponsTabIdle = "tab_weapon_idle"; //$NON-NLS-1$
+    public static final String ExtrasTabIdle = "tab_extras_idle"; //$NON-NLS-1$
+    public static final String GeneralTabActive = "tab_general_active"; //$NON-NLS-1$
+    public static final String PilotTabActive = "tab_pilot_active"; //$NON-NLS-1$
+    public static final String ArmorTabActive = "tab_armor_active"; //$NON-NLS-1$
+    public static final String SystemsTabActive = "tab_systems_active"; //$NON-NLS-1$
+    public static final String WeaponsTabActive = "tab_weapon_active"; //$NON-NLS-1$
+    public static final String ExtraTabActive = "tab_extras_active"; //$NON-NLS-1$
+    public static final String CornerIdle = "idle_corner"; //$NON-NLS-1$
+    public static final String CornerActive = "active_corner"; //$NON-NLS-1$
+
+    public static final String BackgroundTile = "background_tile"; //$NON-NLS-1$
+    public static final String TopLine = "top_line"; //$NON-NLS-1$
+    public static final String BottomLine = "bottom_line"; //$NON-NLS-1$
+    public static final String LeftLine = "left_line"; //$NON-NLS-1$
+    public static final String RightLine = "right_line"; //$NON-NLS-1$
+    public static final String TopLeftCorner = "tl_corner"; //$NON-NLS-1$
+    public static final String BottomLeftCorner = "bl_corner"; //$NON-NLS-1$
+    public static final String TopRightCorner = "tr_corner"; //$NON-NLS-1$
+    public static final String BottomRightCorner = "br_corner"; //$NON-NLS-1$
     
+    public static final String MechOutline = "mech_outline"; //$NON-NLS-1$
+
     private static Hashtable<String, SkinSpecification> skinSpecs;
 
     private static UnitDisplaySkinSpecification udSpec = null;
@@ -146,6 +177,8 @@ public class SkinXMLHandler {
      * @throws IOException
      */
     public synchronized static boolean initSkinXMLHandler(String fileName) {
+        // Reset UnitDisplay spec
+        udSpec = null;
 
         if (fileName == null) {
             System.out.println("ERROR: Bad skin specification file: " +
@@ -174,9 +207,17 @@ public class SkinXMLHandler {
             skinSpecs = new Hashtable<String, SkinSpecification>(
                     (int)(totalComponents * 1.25));
             for (int comp = 0; comp < totalComponents; comp++) {
-                SkinSpecification skinSpec;
                 Element borderList = (Element) listOfComponents.item(comp);
+
+                String name = borderList.getElementsByTagName(NAME).
+                        item(0).getTextContent();
                 
+                if (name.equals(SkinSpecification.UIComponents.UnitDisplay.getComp())) {
+                    parseUnitDisplaySkinSpec(borderList);
+                    continue;
+                }
+
+                SkinSpecification skinSpec;
                 // Parse no border
                 Element noBorderEle = (Element) borderList
                         .getElementsByTagName(NO_BORDER).item(0);
@@ -245,9 +286,6 @@ public class SkinXMLHandler {
                     skinSpec.tileBackground = Boolean
                             .parseBoolean(tileBGEle.getTextContent());
                 }
-                
-                String name = borderList.getElementsByTagName(NAME).
-                        item(0).getTextContent();
 
                 if (SkinSpecification.UIComponents.getUIComponent(name) == null) {
                     System.out.println("SKIN ERROR: "
@@ -269,6 +307,10 @@ public class SkinXMLHandler {
             System.out.println(e.getMessage());
             e.printStackTrace();
             return false;
+        }
+        // Skin spec didn't specify UnitDisplay skin, use default
+        if (udSpec == null) {
+            udSpec = new UnitDisplaySkinSpecification();
         }
         return true;
     }
@@ -346,6 +388,137 @@ public class SkinXMLHandler {
         return skinSpec;        
     }
 
+    /**
+     * Given a UI_Component component with a UnitDisplay name, parse it into
+     * a new UnitDisplaySkinSpecification.  This tupe of UI_Element has a
+     * different structure than other UI_Elements.
+     *
+     * @param border
+     */
+    private static void parseUnitDisplaySkinSpec(Element border) {
+        udSpec = new UnitDisplaySkinSpecification();
+
+        if (border.getElementsByTagName(GeneralTabIdle).getLength() > 0) {
+            udSpec.setGeneralTabIdle(border
+                    .getElementsByTagName(GeneralTabIdle).item(0)
+                    .getTextContent());
+        }
+        if (border.getElementsByTagName(PilotTabIdle).getLength() > 0) {
+            udSpec.setPilotTabIdle(border.getElementsByTagName(PilotTabIdle)
+                    .item(0).getTextContent());
+        }
+        if (border.getElementsByTagName(ArmorTabIdle).getLength() > 0) {
+            udSpec.setArmorTabIdle(border.getElementsByTagName(ArmorTabIdle)
+                    .item(0).getTextContent());
+        }
+        if (border.getElementsByTagName(SystemsTabIdle).getLength() > 0) {
+            udSpec.setSystemsTabIdle(border
+                    .getElementsByTagName(SystemsTabIdle).item(0)
+                    .getTextContent());
+        }
+        if (border.getElementsByTagName(WeaponsTabIdle).getLength() > 0) {
+            udSpec.setWeaponsTabIdle(border
+                    .getElementsByTagName(WeaponsTabIdle).item(0)
+                    .getTextContent());
+        }
+        if (border.getElementsByTagName(ExtrasTabIdle).getLength() > 0) {
+            udSpec.setExtrasTabIdle(border.getElementsByTagName(ExtrasTabIdle)
+                    .item(0).getTextContent());
+        }
+        if (border.getElementsByTagName(GeneralTabActive).getLength() > 0) {
+            udSpec.setGeneralTabActive(border
+                    .getElementsByTagName(GeneralTabActive).item(0)
+                    .getTextContent());
+        }
+        if (border.getElementsByTagName(PilotTabActive).getLength() > 0) {
+            udSpec.setPilotTabActive(border
+                    .getElementsByTagName(PilotTabActive).item(0)
+                    .getTextContent());
+        }
+        if (border.getElementsByTagName(ArmorTabActive).getLength() > 0) {
+            udSpec.setArmorTabActive(border
+                    .getElementsByTagName(ArmorTabActive).item(0)
+                    .getTextContent());
+        }
+        if (border.getElementsByTagName(SystemsTabActive).getLength() > 0) {
+            udSpec.setSystemsTabActive(border
+                    .getElementsByTagName(SystemsTabActive).item(0)
+                    .getTextContent());
+        }
+        if (border.getElementsByTagName(WeaponsTabActive).getLength() > 0) {
+            udSpec.setWeaponsTabActive(border
+                    .getElementsByTagName(WeaponsTabActive).item(0)
+                    .getTextContent());
+        }
+        if (border.getElementsByTagName(ExtraTabActive).getLength() > 0) {
+            udSpec.setExtraTabActive(border
+                    .getElementsByTagName(ExtraTabActive).item(0)
+                    .getTextContent());
+        }
+        if (border.getElementsByTagName(CornerIdle).getLength() > 0) {
+            udSpec.setCornerIdle(border.getElementsByTagName(CornerIdle)
+                    .item(0).getTextContent());
+        }
+        if (border.getElementsByTagName(CornerActive).getLength() > 0) {
+            udSpec.setCornerActive(border.getElementsByTagName(CornerActive)
+                    .item(0).getTextContent());
+        }
+
+        if (border.getElementsByTagName(BackgroundTile).getLength() > 0) {
+            udSpec.setBackgroundTile(border
+                    .getElementsByTagName(BackgroundTile).item(0)
+                    .getTextContent());
+        }
+        if (border.getElementsByTagName(TopLine).getLength() > 0) {
+            udSpec.setTopLine(border
+                    .getElementsByTagName(TopLine).item(0)
+                    .getTextContent());
+        }
+        if (border.getElementsByTagName(BottomLine).getLength() > 0) {
+            udSpec.setBottomLine(border
+                    .getElementsByTagName(BottomLine).item(0)
+                    .getTextContent());
+        }
+        if (border.getElementsByTagName(LeftLine).getLength() > 0) {
+            udSpec.setLeftLine(border.getElementsByTagName(LeftLine)
+                    .item(0).getTextContent());
+        }
+        if (border.getElementsByTagName(RightLine).getLength() > 0) {
+            udSpec.setRightLine(border.getElementsByTagName(RightLine)
+                    .item(0).getTextContent());
+        }
+        if (border.getElementsByTagName(TopLeftCorner).getLength() > 0) {
+            udSpec.setTopLeftCorner(border.getElementsByTagName(TopLeftCorner)
+                    .item(0).getTextContent());
+        }
+        if (border.getElementsByTagName(BottomLeftCorner).getLength() > 0) {
+            udSpec.setBottomLeftCorner(border
+                    .getElementsByTagName(BottomLeftCorner).item(0)
+                    .getTextContent());
+        }
+        if (border.getElementsByTagName(TopRightCorner).getLength() > 0) {
+            udSpec.setTopRightCorner(border
+                    .getElementsByTagName(TopRightCorner).item(0)
+                    .getTextContent());
+        }
+        if (border.getElementsByTagName(BottomRightCorner).getLength() > 0) {
+            udSpec.setBottomRightCorner(border
+                    .getElementsByTagName(BottomRightCorner).item(0)
+                    .getTextContent());
+        }
+
+        if (border.getElementsByTagName(MechOutline).getLength() > 0) {
+            udSpec.setMechOutline(border
+                    .getElementsByTagName(MechOutline).item(0)
+                    .getTextContent());
+        }
+    }
+
+    /**
+     * Writes the current skin to the specified XML file.
+     *
+     * @param filename
+     */
     public static void writeSkinToFile(String filename) {
         String userDir = System.getProperty("user.dir");
         if (!userDir.endsWith(File.separator)) {
@@ -362,12 +535,135 @@ public class SkinXMLHandler {
             for (String component : skinSpecs.keySet()) {
                 writeSkinComponent(component, output);
             }
+            if (udSpec != null) {
+                writeUnitDisplaySkinSpec(output);
+            }
             output.write(SKIN_FOOTER);
             output.close();
         } catch (IOException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Helper method for writing the UI_Element tag related to a
+     * UnitDisplaySkinSpecification.
+     *
+     * @param out
+     * @throws IOException
+     */
+    private static void writeUnitDisplaySkinSpec(Writer out) throws IOException {
+        // If the spec is null, nothing to do
+        if (udSpec == null) {
+            return;
+        }
+
+        out.write("\t<" + UI_ELEMENT + ">\n");
+
+        // Write Component name
+        out.write("\t\t<" + NAME + ">");
+        out.write(SkinSpecification.UIComponents.UnitDisplay.getComp());
+        out.write("</" + NAME + ">\n");
+
+        out.write("\t\t\t<" + GeneralTabIdle + ">");
+        out.write(udSpec.getGeneralTabIdle());
+        out.write("</" + GeneralTabIdle + ">\n");
+
+        out.write("\t\t\t<" + PilotTabIdle + ">");
+        out.write(udSpec.getPilotTabIdle());
+        out.write("</" + PilotTabIdle + ">\n");
+
+        out.write("\t\t\t<" + ArmorTabIdle + ">");
+        out.write(udSpec.getArmorTabIdle());
+        out.write("</" + ArmorTabIdle + ">\n");
+
+        out.write("\t\t\t<" + SystemsTabIdle + ">");
+        out.write(udSpec.getSystemsTabIdle());
+        out.write("</" + SystemsTabIdle + ">\n");
+
+        out.write("\t\t\t<" + WeaponsTabIdle + ">");
+        out.write(udSpec.getWeaponsTabIdle());
+        out.write("</" + WeaponsTabIdle + ">\n");
+
+        out.write("\t\t\t<" + ExtrasTabIdle + ">");
+        out.write(udSpec.getExtrasTabIdle());
+        out.write("</" + ExtrasTabIdle + ">\n");
+
+        out.write("\t\t\t<" + GeneralTabActive + ">");
+        out.write(udSpec.getGeneralTabActive());
+        out.write("</" + GeneralTabActive + ">\n");
+
+        out.write("\t\t\t<" + PilotTabActive + ">");
+        out.write(udSpec.getPilotTabActive());
+        out.write("</" + PilotTabActive + ">\n");
+
+        out.write("\t\t\t<" + ArmorTabActive + ">");
+        out.write(udSpec.getArmorTabActive());
+        out.write("</" + ArmorTabActive + ">\n");
+
+        out.write("\t\t\t<" + SystemsTabActive + ">");
+        out.write(udSpec.getSystemsTabActive());
+        out.write("</" + SystemsTabActive + ">\n");
+
+        out.write("\t\t\t<" + WeaponsTabActive + ">");
+        out.write(udSpec.getWeaponsTabActive());
+        out.write("</" + WeaponsTabActive + ">\n");
+
+        out.write("\t\t\t<" + ExtraTabActive + ">");
+        out.write(udSpec.getExtraTabActive());
+        out.write("</" + ExtraTabActive + ">\n");
+
+        out.write("\t\t\t<" + CornerIdle + ">");
+        out.write(udSpec.getCornerIdle());
+        out.write("</" + CornerIdle + ">\n");
+
+        out.write("\t\t\t<" + CornerActive + ">");
+        out.write(udSpec.getCornerActive());
+        out.write("</" + CornerActive + ">\n");
+
+        out.write("\t\t\t<" + BackgroundTile + ">");
+        out.write(udSpec.getBackgroundTile());
+        out.write("</" + BackgroundTile + ">\n");
+
+        out.write("\t\t\t<" + TopLine + ">");
+        out.write(udSpec.getTopLine());
+        out.write("</" + TopLine + ">\n");
+
+        out.write("\t\t\t<" + BottomLine + ">");
+        out.write(udSpec.getBottomLine());
+        out.write("</" + BottomLine + ">\n");
+
+        out.write("\t\t\t<" + LeftLine + ">");
+        out.write(udSpec.getLeftLine());
+        out.write("</" + LeftLine + ">\n");
+
+        out.write("\t\t\t<" + RightLine + ">");
+        out.write(udSpec.getRightLine());
+        out.write("</" + RightLine + ">\n");
+
+        out.write("\t\t\t<" + TopLeftCorner + ">");
+        out.write(udSpec.getTopLeftCorner());
+        out.write("</" + TopLeftCorner + ">\n");
+
+        out.write("\t\t\t<" + BottomLeftCorner + ">");
+        out.write(udSpec.getBottomLeftCorner());
+        out.write("</" + BottomLeftCorner + ">\n");
+
+        out.write("\t\t\t<" + TopRightCorner + ">");
+        out.write(udSpec.getTopRightCorner());
+        out.write("</" + TopRightCorner + ">\n");
+
+        out.write("\t\t\t<" + BottomRightCorner + ">");
+        out.write(udSpec.getBottomRightCorner());
+        out.write("</" + BottomRightCorner + ">\n");
+
+        out.write("\t\t\t<" + MechOutline + ">");
+        out.write(udSpec.getMechOutline());
+        out.write("</" + MechOutline + ">\n");
+
+        // Close UI_ELEMENT tag
+        out.write("\t</" + UI_ELEMENT + ">\n\n");
     }
 
     /**

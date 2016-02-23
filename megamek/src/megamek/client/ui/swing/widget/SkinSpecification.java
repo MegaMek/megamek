@@ -35,6 +35,7 @@ public class SkinSpecification {
         PhaseDisplay("PhaseDisplayBorder"),
         PhaseDisplayDoneButton("PhaseDisplayDoneButton"),
         PhaseDisplayButton("PhaseDisplayButton"),
+        UnitDisplay("UnitDisplay"),
         ;
 
         private final String comp;

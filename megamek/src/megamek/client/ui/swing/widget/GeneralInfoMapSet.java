@@ -553,22 +553,22 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
-        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getHoriztonalLine()).toString()); //$NON-NLS-1$
+        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getTopLine()).toString()); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
-        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getHoriztonalLine()).toString());
+        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getBottomLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getVerticalLine()).toString());
+        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getLeftLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
         b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getVerticalLine()).toString());
+        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), udSpec.getRightLine()).toString());
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 

@@ -93,10 +93,13 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
     private JCheckBox enableBorders = new JCheckBox(
             Messages.getString("SkinEditor.EnableBorders"));
     
+    private JPanel editPanel = new JPanel();
     /**
      * Panel that holds UI widgets for editing the selected skin spec.
      */
     private SkinSpecPanel skinEditPanel = new SkinSpecPanel(this);
+
+    private UnitDisplaySpecPanel udEditPanel = new UnitDisplaySpecPanel(this);
 
     /**************************************************************************/
     
@@ -138,7 +141,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
                 .getString("SkinEditor.ResestSkinButtonToolTip")); //$NON-NLS-1$
 
         JScrollPane compListScroll = new JScrollPane(skinSpecCompList);
-        JScrollPane editPanelScroll = new JScrollPane(skinEditPanel,
+        JScrollPane editPanelScroll = new JScrollPane(editPanel,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         
@@ -190,7 +193,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         
         updateSkinCombo();
         populateSkinSpecComponents();
-        setupSkinEditPanel();
+        setupEditPanel();
         validate();
     }
     
@@ -263,6 +266,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
             skinSpecCompModel.addElement(SkinSpecification.UIComponents
                     .getUIComponent(comp));
         }
+        skinSpecCompModel.addElement(SkinSpecification.UIComponents.UnitDisplay);
         skinSpecCompList.setSelectedIndex(0);
         addListeners();
     }
@@ -270,12 +274,13 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
     /**
      * Update the editing panel with the currently selected SkinSpecification.
      */
-    private void setupSkinEditPanel() {
+    private void setupEditPanel() {
         removeListeners();
-
+        editPanel.removeAll();
         // Nothing to do if we selected nothing...
         if (skinSpecCompList.getSelectedIndex() == -1) {
             skinEditPanel.removeAll();
+            udEditPanel.removeAll();
             return;            
         }
         SkinSpecification.UIComponents selectedComp = skinSpecCompList
@@ -283,30 +288,31 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         saveSkinButton.setEnabled(false);
 
         if ((selectedComp == SkinSpecification.UIComponents.DefaultButton)
-                || (selectedComp == SkinSpecification.UIComponents.DefaultUIElement)) {
+                || (selectedComp == SkinSpecification.UIComponents.DefaultUIElement)
+                || (selectedComp == SkinSpecification.UIComponents.UnitDisplay)) {
             removeCompButton.setEnabled(false);
         } else {
             removeCompButton.setEnabled(true);
         }
 
-        SkinSpecification skinSpec = SkinXMLHandler.getSkin(selectedComp
-                .getComp());
-        
-        enableBorders.setSelected(!skinSpec.noBorder);
-        
-        GridBagConstraints gbc = new GridBagConstraints();
-        
-        gbc.gridx = gbc.gridy = 0;
-        gbc.weightx = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(0,0,2,0);
-
-        skinEditPanel.setupSkinEditPanel(skinSpec);
+        editPanel.removeAll();
+        if (selectedComp == SkinSpecification.UIComponents.UnitDisplay) {
+            enableBorders.setSelected(true);
+            enableBorders.setEnabled(false);
+            udEditPanel.setupSkinEditPanel(SkinXMLHandler.getUnitDisplaySkin());
+            editPanel.add(udEditPanel);
+        } else {
+            SkinSpecification skinSpec = SkinXMLHandler.getSkin(selectedComp
+                    .getComp());
+            enableBorders.setSelected(!skinSpec.noBorder);
+            enableBorders.setEnabled(true);
+            skinEditPanel.setupSkinEditPanel(skinSpec);
+            editPanel.add(skinEditPanel);
+        }
         
         revalidate();
         addListeners();
     }
-
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
@@ -315,7 +321,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         }
         
         if (e.getSource().equals(skinSpecCompList)) {
-            setupSkinEditPanel();
+            setupEditPanel();
         }
     }
 
@@ -340,12 +346,12 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
                 }
                 mainGUI.updateBorder();
                 populateSkinSpecComponents();
-                setupSkinEditPanel();                
+                setupEditPanel();
             }
         } else if (e.getSource().equals(enableBorders)) {
             skinEditPanel.setEnabled(enableBorders.isSelected());
         } else if (e.getSource().equals(resetSkinButton)) {
-            setupSkinEditPanel();
+            setupEditPanel();
         } else if (e.getSource().equals(saveSkinButton)) {
             saveSkinButton.setEnabled(false);
             String currComp = (String) skinSpecCompList.getSelectedValue().getComp();
@@ -384,7 +390,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
             } else {
                 SkinXMLHandler.removeComp(selectedComp.getComp());
                 populateSkinSpecComponents();
-                setupSkinEditPanel();
+                setupEditPanel();
                 notifySkinChanges();
             }
         }
@@ -398,10 +404,14 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         saveSkinButton.setEnabled(true);
 
         String currComp = skinSpecCompList.getSelectedValue().getComp();
-        SkinSpecification skinSpec = SkinXMLHandler.getSkin(currComp);
-        skinEditPanel.updateSkinSpec(skinSpec, enableBorders.isSelected());
+        if (skinSpecCompList.getSelectedValue() == SkinSpecification.UIComponents.UnitDisplay) {
+            udEditPanel.updateSkinSpec(SkinXMLHandler.getUnitDisplaySkin());
+        } else {
+            SkinSpecification skinSpec = SkinXMLHandler.getSkin(currComp);
+            skinEditPanel.updateSkinSpec(skinSpec, enableBorders.isSelected());
+            skinEditPanel.setupSkinEditPanel(skinSpec);
+        }
         mainGUI.updateBorder();
-        skinEditPanel.setupSkinEditPanel(skinSpec);
     }
 
 }

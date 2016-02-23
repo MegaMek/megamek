@@ -39,12 +39,16 @@ public class UnitDisplaySkinSpecification {
     private String cornerActive = "active_corner.gif"; //$NON-NLS-1$
 
     private String backgroundTile = "tile.gif"; //$NON-NLS-1$
-    private String horiztonalLine = "h_line.gif"; //$NON-NLS-1$
-    private String verticalLine = "v_line.gif"; //$NON-NLS-1$
+    private String topLine = "h_line.gif"; //$NON-NLS-1$
+    private String bottomLine = "h_line.gif"; //$NON-NLS-1$
+    private String leftLine = "v_line.gif"; //$NON-NLS-1$
+    private String rightLine = "v_line.gif"; //$NON-NLS-1$
     private String topLeftCorner = "tl_corner.gif"; //$NON-NLS-1$
     private String bottomLeftCorner = "bl_corner.gif"; //$NON-NLS-1$
     private String topRightCorner = "tr_corner.gif"; //$NON-NLS-1$
     private String bottomRightCorner = "br_corner.gif"; //$NON-NLS-1$
+
+    private String mechOutline = "bg_mech.gif"; //$NON-NLS-1$
 
     public String getGeneralTabIdle() {
         return generalTabIdle;
@@ -166,20 +170,36 @@ public class UnitDisplaySkinSpecification {
         this.backgroundTile = backgroundTile;
     }
 
-    public String getHoriztonalLine() {
-        return horiztonalLine;
+    public String getTopLine() {
+        return topLine;
     }
 
-    public void setHoriztonalLine(String horiztonalLine) {
-        this.horiztonalLine = horiztonalLine;
+    public void setTopLine(String topLine) {
+        this.topLine = topLine;
     }
 
-    public String getVerticalLine() {
-        return verticalLine;
+    public String getBottomLine() {
+        return bottomLine;
     }
 
-    public void setVerticalLine(String verticalLine) {
-        this.verticalLine = verticalLine;
+    public void setBottomLine(String bottomLine) {
+        this.bottomLine = bottomLine;
+    }
+
+    public String getLeftLine() {
+        return leftLine;
+    }
+
+    public void setLeftLine(String leftLine) {
+        this.leftLine = leftLine;
+    }
+
+    public String getRightLine() {
+        return rightLine;
+    }
+
+    public void setRightLine(String rightLine) {
+        this.rightLine = rightLine;
     }
 
     public String getTopLeftCorner() {
@@ -212,6 +232,14 @@ public class UnitDisplaySkinSpecification {
 
     public void setBottomRightCorner(String bottomRightCorner) {
         this.bottomRightCorner = bottomRightCorner;
+    }
+
+    public String getMechOutline() {
+        return mechOutline;
+    }
+
+    public void setMechOutline(String mechOutline) {
+        this.mechOutline = mechOutline;
     }
 
 }

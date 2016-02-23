@@ -23,6 +23,7 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -75,6 +76,8 @@ import megamek.common.Entity;
 import megamek.common.Game;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
+import megamek.common.MechFileParser;
+import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.Distractable;
 
 public class SkinEditorMainGUI extends JPanel implements WindowListener,
@@ -106,6 +109,11 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
 
     protected JComponent curPanel;
     private ChatLounge chatlounge;
+
+    /**
+     * Test entity to display in UnitDisplay.
+     */
+    private Entity testEntity;
 
     /**
      * Map each phase to the name of the card for the main display area.
@@ -154,6 +162,15 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         panDisplay.add(panMain, BorderLayout.CENTER);
         panDisplay.add(panSecondary, BorderLayout.SOUTH);
         add(panDisplay, BorderLayout.CENTER);
+
+        try {
+            MechFileParser mfp;
+            mfp = new MechFileParser(new File(Configuration.unitsDir(),
+                    "mechs/3039u/Archer ARC-2W.mtf"));
+            testEntity =  mfp.getEntity();
+        } catch (EntityLoadingException e) {
+            e.printStackTrace();
+        }
     }
 
     public IBoardView getBoardView() {
@@ -226,10 +243,10 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         mechW.setLocation(x, y);
         mechW.setSize(w, h);
         mechW.setResizable(true);
-        mechW.addWindowListener(this);
         unitDisplay = new UnitDisplay(null);
         mechW.add(unitDisplay);
         mechW.setVisible(true);
+        unitDisplay.displayEntity(testEntity);
     }
 
     /**
@@ -264,6 +281,18 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         }
         switchPanel(IGame.Phase.PHASE_MOVEMENT);
         frame.validate();
+
+        mechW.dispose();
+        Point loc = mechW.getLocation();
+        Dimension sz = mechW.getSize();
+        mechW = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false);
+        mechW.setLocation(loc);
+        mechW.setSize(sz);
+        mechW.setResizable(true);
+        unitDisplay = new UnitDisplay(null);
+        mechW.add(unitDisplay);
+        mechW.setVisible(true);
+        unitDisplay.displayEntity(testEntity);
     }
 
     /**

@@ -67,6 +67,7 @@ import megamek.client.ui.swing.SelectArtyAutoHitHexDisplay;
 import megamek.client.ui.swing.StatusBarPhaseDisplay;
 import megamek.client.ui.swing.TargetingPhaseDisplay;
 import megamek.client.ui.swing.boardview.BoardView1;
+import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Configuration;
 import megamek.common.Coords;
@@ -99,6 +100,9 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     private Component bvc;
     private JDialog skinSpecEditorD;
     private SkinSpecEditor skinSpecEditor;
+
+    public JDialog mechW;
+    public UnitDisplay unitDisplay;
 
     protected JComponent curPanel;
     private ChatLounge chatlounge;
@@ -162,21 +166,13 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
     private void initializeFrame() {
         frame = new JFrame(Messages.getString("ClientGUI.title")); //$NON-NLS-1$
         frame.setJMenuBar(menuBar);
-        Rectangle virtualBounds = new Rectangle();
-        GraphicsEnvironment ge = GraphicsEnvironment
-                .getLocalGraphicsEnvironment();
-        GraphicsDevice[] gs = ge.getScreenDevices();
-        for (GraphicsDevice gd : gs) {
-            GraphicsConfiguration[] gc = gd.getConfigurations();
-            for (GraphicsConfiguration element : gc) {
-                virtualBounds = virtualBounds.union(element.getBounds());
-            }
-        }
+        Rectangle virtualBounds = getVirtualBounds();
+        int x, y, w, h;
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
-            int x = GUIPreferences.getInstance().getWindowPosX();
-            int y = GUIPreferences.getInstance().getWindowPosY();
-            int w = GUIPreferences.getInstance().getWindowSizeWidth();
-            int h = GUIPreferences.getInstance().getWindowSizeHeight();
+            x = GUIPreferences.getInstance().getWindowPosX();
+            y = GUIPreferences.getInstance().getWindowPosY();
+            w = GUIPreferences.getInstance().getWindowSizeWidth();
+            h = GUIPreferences.getInstance().getWindowSizeHeight();
             if ((x < virtualBounds.getMinX())
                     || ((x + w) > virtualBounds.getMaxX())) {
                 x = 0;
@@ -213,6 +209,27 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
                 new File(Configuration.miscImagesDir(), FILENAME_ICON_256X256)
                         .toString()));
         frame.setIconImages(iconList);
+
+        mechW = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false);
+        x = GUIPreferences.getInstance().getDisplayPosX();
+        y = GUIPreferences.getInstance().getDisplayPosY();
+        h = GUIPreferences.getInstance().getDisplaySizeHeight();
+        w = GUIPreferences.getInstance().getDisplaySizeWidth();
+        if ((x + w) > virtualBounds.getWidth()) {
+            x = 0;
+            w = Math.min(w, (int)virtualBounds.getWidth());
+        }
+        if ((y + h) > virtualBounds.getHeight()) {
+            y = 0;
+            h = Math.min(h, (int)virtualBounds.getHeight());
+        }
+        mechW.setLocation(x, y);
+        mechW.setSize(w, h);
+        mechW.setResizable(true);
+        mechW.addWindowListener(this);
+        unitDisplay = new UnitDisplay(null);
+        mechW.add(unitDisplay);
+        mechW.setVisible(true);
     }
 
     /**
@@ -879,4 +896,22 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         return curPanel;
     }
 
+    /**
+     * Returns the 'virtual bounds' of the screen.  That is, the union of the
+     * displayable space on all available screen devices.
+     *
+     * @return
+     */
+    private Rectangle getVirtualBounds() {
+        Rectangle virtualBounds = new Rectangle();
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice[] gs = ge.getScreenDevices();
+        for (GraphicsDevice gd : gs) {
+            GraphicsConfiguration[] gc = gd.getConfigurations();
+            for (GraphicsConfiguration element : gc) {
+                virtualBounds = virtualBounds.union(element.getBounds());
+            }
+        }
+        return virtualBounds;
+    }
 }

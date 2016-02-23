@@ -99,6 +99,8 @@ public class SkinXMLHandler {
     public static String SHOW_SCROLL_BARS = "show_scroll_bars";
     
     private static Hashtable<String, SkinSpecification> skinSpecs;
+
+    private static UnitDisplaySkinSpecification udSpec = null;
     
     /**
      * Checks whether the given path points to a file that is a valid skin
@@ -573,6 +575,18 @@ public class SkinXMLHandler {
             }
         }
         return spec;
+    }
+
+    public synchronized static UnitDisplaySkinSpecification getUnitDisplaySkin() {
+        if (udSpec == null) {
+            boolean rv = initSkinXMLHandler();
+            if (!rv || (udSpec == null)) {
+                // This will return a blank ud skin spec file, which will show
+                // the default skin for the unit display
+                return new UnitDisplaySkinSpecification();
+            }
+        }
+        return udSpec;
     }
 
     /**

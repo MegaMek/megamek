@@ -1262,6 +1262,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // too much hassle currently; it works so beautifully
         IBoard board = game.getBoard();
         if (board == null) return;
+        if (board.inSpace()) return;
         if (boardSize == null) updateBoardSize();
         if (!isTileImagesLoaded()) return;
         // Map editor? No shadows

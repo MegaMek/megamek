@@ -67,6 +67,7 @@ import megamek.client.ui.swing.ReportDisplay;
 import megamek.client.ui.swing.SelectArtyAutoHitHexDisplay;
 import megamek.client.ui.swing.StatusBarPhaseDisplay;
 import megamek.client.ui.swing.TargetingPhaseDisplay;
+import megamek.client.ui.swing.UnitLoadingDialog;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.unitDisplay.UnitDisplay;
 import megamek.client.ui.swing.util.PlayerColors;
@@ -77,6 +78,8 @@ import megamek.common.Game;
 import megamek.common.IGame;
 import megamek.common.IPlayer;
 import megamek.common.MechFileParser;
+import megamek.common.MechSummary;
+import megamek.common.MechSummaryCache;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.Distractable;
 
@@ -163,11 +166,16 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         panDisplay.add(panSecondary, BorderLayout.SOUTH);
         add(panDisplay, BorderLayout.CENTER);
 
+        UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
+        if (!MechSummaryCache.getInstance().isInitialized()) {
+            unitLoadingDialog.setVisible(true);
+        }
+
         try {
-            MechFileParser mfp;
-            mfp = new MechFileParser(new File(Configuration.unitsDir(),
-                    "mechs/3039u/Archer ARC-2W.mtf"));
-            testEntity =  mfp.getEntity();
+            MechSummary ms = MechSummaryCache.getInstance().getMech(
+                    "Archer ARC-2W");
+            testEntity = new MechFileParser(ms.getSourceFile(),
+                    ms.getEntryName()).getEntity();
         } catch (EntityLoadingException e) {
             e.printStackTrace();
         }

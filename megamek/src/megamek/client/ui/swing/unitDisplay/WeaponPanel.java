@@ -895,7 +895,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         tile = getToolkit()
                 .getImage(
                         new File(Configuration.widgetsDir(), udSpec
-                                .getTopRightCorner()).toString());
+                                .getTopLeftCorner()).toString());
         PMUtil.setImage(tile, this);
         addBgDrawer(new BackGroundDrawer(tile, b));
 

@@ -340,7 +340,7 @@ public class QuirksHandler {
         }
 
         // Load the canon quirks list.
-        String filePath = userDir + "data" + File.separator + "canonUnitQuirks.xml";
+        String filePath = Configuration.dataDir().getAbsolutePath() + File.separator + "canonUnitQuirks.xml";
         canonQuirkMap = loadQuirksFile(filePath);
 
         // Load the custom quirks list.

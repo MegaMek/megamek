@@ -1906,8 +1906,9 @@ public class BattleArmor extends Infantry {
 
     @Override
     public float getWeight() {
-        // this is for loading into transportes, for that purpose, each trooper
-        // weighs a ton
+        // If following Total Warfare rules each BA trooper will weigh a ton
+        // for transport purposes. Following Tactical Operations gives us a
+        // more realistic weight per trooper
         if (game != null && game.getOptions().booleanOption("tacops_ba_weight")) {
             float troopton = troopers;
             switch (getWeightClass()) {
@@ -1933,6 +1934,30 @@ public class BattleArmor extends Infantry {
         } else {
             return troopers;
         }
+    }
+
+    public float getAlternateWeight() {
+        float troopton;
+        switch (getWeightClass()) {
+            case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
+                troopton = (float) (troopers * 0.25);
+                break;
+            case EntityWeightClass.WEIGHT_LIGHT:
+                troopton = (float) (troopers * 0.5);
+                break;
+            case EntityWeightClass.WEIGHT_MEDIUM:
+                troopton = (float) (troopers * 1.0);
+                break;
+            case EntityWeightClass.WEIGHT_HEAVY:
+                troopton = (float) (troopers * 1.5);
+                break;
+            case EntityWeightClass.WEIGHT_ASSAULT:
+                troopton = (float) (troopers * 2.0);
+                break;
+            default:
+                troopton = troopers;
+        }
+        return troopton;
     }
 
     @Override

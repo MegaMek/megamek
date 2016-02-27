@@ -193,7 +193,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private static final float[] ZOOM_FACTORS = {0.30f, 0.41f, 0.50f, 0.60f,
                                                  0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f, 1.3f};
     
-    public static int [] allDirections = new int[] {0,1,2,3,4,5};
+    public static final int [] allDirections = {0,1,2,3,4,5};
     
     // Set to TRUE to draw hexes with isometric elevation.
     private boolean drawIsometric = GUIPreferences.getInstance()
@@ -4514,10 +4514,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             
                     
             updateEcmList();
-            if (e.getEntity().hasActiveECM()) {
-                // this might disrupt c3/c3i lines, so redraw all
-                redrawAllEntities();
-            }
+            redrawAllEntities();
+//            if (e.getEntity().hasActiveECM()) {
+//                // this might disrupt c3/c3i lines, so redraw all
+//            }
             if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 refreshMoveVectors();
             }
@@ -4530,10 +4530,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     addMovingUnit(en, mp);
                 } else {
                     // Redraw entity, so sensor return is in the right location
-                    redrawEntity(en, e.getOldEntity());
+//                    redrawEntity(en, e.getOldEntity());
                 }
             } else {
-                redrawEntity(en, e.getOldEntity());
+//                redrawEntity(en, e.getOldEntity());
             }
         }
 

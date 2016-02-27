@@ -6511,12 +6511,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 || isLastStep)
             && (curHex.terrainLevel(Terrains.RUBBLE) > 0)
             && (this instanceof Mech)) {
-            int mod = 0;
-            if (curHex.terrainLevel(Terrains.RUBBLE) > 5) {
-                mod++;
-            }
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), mod, "entering Rubble"));
+            
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,

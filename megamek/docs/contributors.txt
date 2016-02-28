@@ -1,15 +1,18 @@
-﻿Lot of people have contributed to the MegaMek project.
+﻿Lots of people have contributed to the MegaMek project.
 
   Original author:
      Ben Mazur <bmazur@sev.org>
-     
-  Current maintainers:
+
+  Current Maintainer:
+     MegaMek GitHub Organization <https://github.com/MegaMek>
+
+  Lead Developers:
      Sebastian Brocks <beerockxs@users.sourceforge.net>
 	 Dave Nawton <hammer-gs@users.sourceforge.net>
 	 Nicholas Walczak <arlith@users.sourceforge.net>
 	 Deric "Netzilla" Page <dericpage@users.sourceforge.net>
-     Dylan Myers <ralgith-erian@users.sourceforge.net>
-	 
+     Dylan Myers <https://github.com/Dylan-M>
+
 
   AI Coding:
      Steven Hawkins <skh_mail@yahoo.com>
@@ -95,7 +98,7 @@
      Michael Rowlett <eventsbeyondme@users.sourceforge.net>
 	 Juliez <juliez@users.sourceforge.net>
 	 Derrick Turk <derrickturk@users.sourceforge.net>
-     
+
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)
 
@@ -202,16 +205,16 @@
      Michael "Spartan10590" Rehrig
      Scintilla
      Michael Rehrig
-     
-     
+
+
   Camo Pack
   	 SeaVea
-  	 
+
   Fluff Pack (Optional pack available for down from (https://sourceforge.net/projects/megamek/files/?source=navbar)
   	The optional fluff pack images have been provided by the artists of http://www.camospecs.com/ and other community artists.
   	All images are owned by the original artist and these materials are included under the fair use exemption and are
     restricted from further use.
-   
+
   Random Assignment Tables
      Harold "BATTLEMASTER" N. <s_d@users.sourceforge.net>
      Nicholas "starbird7" Ristow
@@ -224,7 +227,7 @@
      Jörg Harder <joergharder@t-online.de>
      Alexander Schölling <schoelling@users.sourceforge.net>
      Alexander "Twin_81" Manturov
-     
+
   MegaMek Developers, Emeritus
      James Lacy <freakboy2571@users.sourceforge.net>
 
@@ -237,7 +240,7 @@
 
 
   And Of Course...
-     FASA, WizKids, FanPro and Catalyst Game Labs for creating and publishing the original game of 
+     FASA, WizKids, FanPro and Catalyst Game Labs for creating and publishing the original game of
      BattleTech, a source of fun and inspiration to us all.
 
 

@@ -143,12 +143,7 @@ public class RandomNameGenerator implements Serializable {
             while (input.hasNextLine()) {
                 // Check to see if we've been interrupted
                 if (interrupted) {
-                    if (dispose) {
-                        clear();
-                    }
-                    fnms.close();
-                    input.close();
-                    return;
+                    break;
                 }
                 String line = input.nextLine();
                 linen++;
@@ -202,12 +197,7 @@ public class RandomNameGenerator implements Serializable {
             while (input.hasNextLine()) {
                 // Check to see if we've been interrupted
                 if (interrupted) {
-                    if (dispose) {
-                        clear();
-                    }
-                    fnfs.close();
-                    input.close();
-                    return;
+                    break;
                 }
                 String line = input.nextLine();
                 linen++;
@@ -261,12 +251,7 @@ public class RandomNameGenerator implements Serializable {
             while (input.hasNextLine()) {
                 // Check to see if we've been interrupted
                 if (interrupted) {
-                    if (dispose) {
-                        clear();
-                    }
-                    lns.close();
-                    input.close();
-                    return;
+                    break;
                 }
                 String line = input.nextLine();
                 linen++;
@@ -320,17 +305,7 @@ public class RandomNameGenerator implements Serializable {
         for (int filen = 0; filen < filenames.length; filen++) {
             // Check to see if we've been interrupted
             if (interrupted) {
-                if (dispose) {
-                    clear();
-                }
-                return;
-            }
-            // Check to see if we've been interrupted
-            if (interrupted){
-                if (dispose){
-                    clear();
-                }
-                return;
+                break;
             }
             String filename = filenames[filen];
             String key = filename.split("\\.txt")[0];
@@ -351,11 +326,7 @@ public class RandomNameGenerator implements Serializable {
             while (input.hasNextLine()) {
                 // Check to see if we've been interrupted
                 if (interrupted) {
-                    if (dispose) {
-                        clear();
-                    }
-                    input.close();
-                    return;
+                    break;
                 }
                 String line = input.nextLine();
                 String[] values = line.split(",");
@@ -380,6 +351,9 @@ public class RandomNameGenerator implements Serializable {
             }
             factionFirst.put(key, hash);
             input.close();
+            if (dispose) {
+                clear();
+            }
         }
     }
 

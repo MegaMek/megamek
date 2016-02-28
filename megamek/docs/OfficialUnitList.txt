@@ -136,6 +136,7 @@ Wayland Mobile Base (Standard)|
 Tiger Medium Tank T-12|
 Tokugawa Heavy Tank SD2|
 Sturmfeur Heavy Tank (WoB)|
+Pollux II ADA Heavy Tank (Standard)|
 Koryu Submarine (Civilian)|
 Koryu Submarine (Military)|
 Neptune Submarine (Hunter-Killer)|
@@ -1685,6 +1686,7 @@ Suzaku SU-14|
 Persepolis (Standard)|
 Sabre SB-31D|
 Lucifer III LCR-3|
+Wildkatze WKT-2S|
 Cheetah OF-17A-R|
 Corax C|
 Shade S-HA-OE Eminus|
@@ -2823,6 +2825,8 @@ Tian-Zong TNZ-N3 'Jasminda'|
 Centurion CN9-YLW3 'Yen Lo Wang'|
 Rampage RMP-4G (Benboudaoud)|
 Rifleman II RFL-3N-2 (Kataga)|
+Dragoon AEM-05C|
+Lament LMT-2R (Manes)|
 Fafnir FNR-4A (Peter)|
 Dragon Fire DGR-6FC2 (Gregory)|
 Black Hawk-KU BHKU-O (Albert)|

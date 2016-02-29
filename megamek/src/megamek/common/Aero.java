@@ -389,7 +389,7 @@ public class Aero extends Entity {
     public int getCurrentVelocity() {
         // if using advanced movement then I just want to sum up
         // the different vectors
-        if (game.useVectorMove()) {
+        if ((game != null) && game.useVectorMove()) {
             return getVelocity();
         }
         return currentVelocity;

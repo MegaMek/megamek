@@ -112,7 +112,7 @@
 	<!-- following pkgdir-* tasks get, build & package the current version from git -->
 	<target name="pkgdir-get" depends="pkgdir-init" description="get the latest source from Git">
 		<exec executable="git">
-			<arg line="clone ${gitroot}" />
+			<arg line="clone --single-branch ${gitroot}" />
 		</exec>
 		<move file="megamek/megamek" tofile="${pkgdir}"/>
         <delete dir="megamek" />

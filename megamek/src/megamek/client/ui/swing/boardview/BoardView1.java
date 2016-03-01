@@ -4511,13 +4511,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             final Entity en = e.getEntity();
             final GameOptions gopts = game.getOptions();
             GUIPreferences guip = GUIPreferences.getInstance();
-            
-                    
+
             updateEcmList();
             redrawAllEntities();
-//            if (e.getEntity().hasActiveECM()) {
-//                // this might disrupt c3/c3i lines, so redraw all
-//            }
             if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 refreshMoveVectors();
             }
@@ -4528,12 +4524,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         || !en.getOwner().isEnemyOf(localPlayer)
                         || en.hasSeenEntity(localPlayer)) {
                     addMovingUnit(en, mp);
-                } else {
-                    // Redraw entity, so sensor return is in the right location
-//                    redrawEntity(en, e.getOldEntity());
                 }
-            } else {
-//                redrawEntity(en, e.getOldEntity());
             }
         }
 

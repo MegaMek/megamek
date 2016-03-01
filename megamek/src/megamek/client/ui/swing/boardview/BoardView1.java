@@ -1314,6 +1314,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         } else if (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DUSK) {
             // TODO: replace when made user controlled
             LightDirection = new double[] { -38, 14 };
+        } else {
+            LightDirection = new double[] { -19, 7 };
         }
         
         // Shadows for elevation
@@ -5594,17 +5596,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return mask;
     }
     
-    BufferedImage accessShadowMasks(Image image) {
-        int hashCode = image.hashCode();
-        BufferedImage mask = shadowImageCache.get(hashCode);
-        if (mask != null) {
-            return mask;
-        } else {        
-            shadowImageCache.put(hashCode, mask);
-        }
-        return mask;
-    }
-
     public void die() {
         ourTask.cancel();
         fovHighlightingAndDarkening.die();

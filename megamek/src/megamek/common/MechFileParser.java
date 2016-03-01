@@ -144,7 +144,7 @@ public class MechFileParser {
         } else if (lowerName.endsWith(".hmv")) {
             loader = new HmvFile(is);
         } else if (lowerName.endsWith(".xml")) {
-            loader = new TdbFile(is);
+            loader = TdbFile.load(is);
         } else if (lowerName.endsWith(".blk")) {
             BuildingBlock bb = new BuildingBlock(is);
             if (bb.exists("UnitType")) {

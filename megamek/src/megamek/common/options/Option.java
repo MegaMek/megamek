@@ -16,12 +16,20 @@ package megamek.common.options;
 
 import java.io.Serializable;
 import java.util.Vector;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement(name = "gameoption")
+@XmlAccessorType(XmlAccessType.NONE)
 public class Option implements IOption, Serializable {
     private static final long serialVersionUID = 8310472250031962888L;
+    @XmlElement(name = "optionname")
     private String name;
     private int type;
     private Object defaultValue;
+    @XmlElement(name = "optionvalue")
     private Object value;
     private IOptions owner;
 
@@ -32,7 +40,7 @@ public class Option implements IOption, Serializable {
     }
 
     public Option(IOptions owner, String name, boolean defaultValue) {
-        this(owner, name, BOOLEAN, new Boolean(defaultValue));
+        this(owner, name, BOOLEAN, Boolean.valueOf(defaultValue));
     }
 
     public Option(IOptions owner, String name, int defaultValue) {
@@ -60,52 +68,69 @@ public class Option implements IOption, Serializable {
         }
     }
 
+    /**
+     * Constructor that satisfies JAXB.
+     */
+    protected Option() {
+    }
+
+    @Override
     public IOptions getOwner() {
         return owner;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getDisplayableNameWithValue() {
         updateInfo();
         return info.getDisplayableName()
                 + (type == IOption.INTEGER ? " " + value : "");
     }
 
+    @Override
     public String getDisplayableName() {
         updateInfo();
         return info.getDisplayableName();
     }
 
+    @Override
     public String getDescription() {
         updateInfo();
         return info.getDescription();
     }
 
+    @Override
     public int getTextFieldLength() {
         updateInfo();
         return info.getTextFieldLength();
     }
 
+    @Override
     public boolean isLabelBeforeTextField() {
         updateInfo();
         return info.isLabelBeforeTextField();
     }
 
+    @Override
     public int getType() {
         return type;
     }
 
+    @Override
     public Object getDefault() {
         return defaultValue;
     }
 
+    @Override
     public Object getValue() {
         return value;
     }
 
+    @Override
     public boolean booleanValue() {
         if (type == INTEGER) {
             return (Integer) value > 0;
@@ -116,21 +141,25 @@ public class Option implements IOption, Serializable {
             }
             return true;
         }
-        return ((Boolean) value).booleanValue();
+        return ((Boolean) value);
     }
 
+    @Override
     public int intValue() {
-        return ((Integer) value).intValue();
+        return ((Integer) value);
     }
 
+    @Override
     public float floatValue() {
-        return ((Float) value).floatValue();
+        return ((Float) value);
     }
 
+    @Override
     public String stringValue() {
         return value.toString();
     }
 
+    @Override
     public void setValue(Object value) {
         if (isValidValue(value)) {
             this.value = value;
@@ -140,6 +169,7 @@ public class Option implements IOption, Serializable {
         }
     }
 
+    @Override
     public void setValue(String value) {
         if (type == STRING || type == CHOICE) {
             this.value = value;
@@ -149,27 +179,30 @@ public class Option implements IOption, Serializable {
         }
     }
 
+    @Override
     public void setValue(boolean value) {
         if (type == BOOLEAN) {
-            this.value = new Boolean(value);
+            this.value = value;
         } else {
             throw new IllegalArgumentException(
                     "Tried to give boolean value to non-boolean option."); //$NON-NLS-1$
         }
     }
 
+    @Override
     public void setValue(int value) {
         if (type == INTEGER) {
-            this.value = new Integer(value);
+            this.value = value;
         } else {
             throw new IllegalArgumentException(
                     "Tried to give integer value to non-integer option."); //$NON-NLS-1$
         }
     }
 
+    @Override
     public void setValue(float value) {
         if (type == FLOAT) {
-            this.value = new Float(value);
+            this.value = value;
         } else {
             throw new IllegalArgumentException(
                     "Tried to give float value to non-float option."); //$NON-NLS-1$
@@ -177,6 +210,7 @@ public class Option implements IOption, Serializable {
     }
 
     // Turns this option "off"
+    @Override
     public void clearValue() {
         switch (type) {
             case STRING:

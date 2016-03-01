@@ -15,23 +15,27 @@
 
 package megamek.common.preference;
 
-import gd.xml.ParseException;
-import gd.xml.tiny.ParsedXML;
-import gd.xml.tiny.TinyParser;
-
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.Hashtable;
-
-import megamek.common.CommonConstants;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
 import megamek.common.Configuration;
 
 public class PreferenceManager {
@@ -40,10 +44,6 @@ public class PreferenceManager {
     public static final String CFG_FILE_OPTION_NAME = "cfgfilename";
     public static final String ROOT_NODE_NAME = "MegaMekSettings";
     public static final String CLIENT_SETTINGS_STORE_NAME = "ClientSettings";
-    public static final String STORE_NODE_NAME = "store";
-    public static final String PREFERENCE_NODE_NAME = "preference";
-    public static final String NAME_ATTRIBUTE = "name";
-    public static final String VALUE_ATTRIBUTE = "value";
 
     protected Hashtable<String, IPreferenceStore> stores;
     protected ClientPreferences clientPreferences;
@@ -87,7 +87,6 @@ public class PreferenceManager {
     }
 
     protected void load(String fileName) {
-        ParsedXML root = null;
         InputStream is = null;
 
         try {
@@ -97,137 +96,141 @@ public class PreferenceManager {
         }
 
         try {
-            root = TinyParser.parseXML(is);
-        } catch (ParseException e) {
-            System.out
-                    .println("Error parsing settings file'" + fileName + ",.");
-            e.printStackTrace(System.out);
-            return;
-        }
+            JAXBContext jc = JAXBContext.newInstance(Settings.class);
+            
+            Unmarshaller um = jc.createUnmarshaller();
+            Settings opts = (Settings) um.unmarshal(is);
 
-        Enumeration<?> rootChildren = root.elements();
-        ParsedXML optionsNode = (ParsedXML) rootChildren.nextElement();
-
-        if (optionsNode.getName().equals(ROOT_NODE_NAME)) {
-            Enumeration<?> children = optionsNode.elements();
-            while (children.hasMoreElements()) {
-                ParsedXML child = (ParsedXML) children.nextElement();
-                if ((child != null) && child.getName().equals(STORE_NODE_NAME)) {
-                    String name = child.getAttribute(NAME_ATTRIBUTE);
-                    if (name.equals(CLIENT_SETTINGS_STORE_NAME)) {
-                        loadGroup(child, clientPreferenceStore);
-                    } else {
-                        loadGroup(child, getPreferenceStore(name));
+            for (Store store : opts.stores) {
+                if (CLIENT_SETTINGS_STORE_NAME.equals(store.name)) {
+                    for (XmlProperty prop : store.preferences) {
+                        clientPreferenceStore.putValue(prop.key, prop.value);
+                    }
+                } else {
+                    IPreferenceStore ips = getPreferenceStore(store.name);
+                    for (XmlProperty prop : store.preferences) {
+                        ips.putValue(prop.key, prop.value);
                     }
                 }
             }
-
-        } else {
-            System.out
-                    .println("Root node of settings file is incorrectly named. Name should be '"
-                            + "ROOT_NODE_NAME"
-                            + "' but name is '"
-                            + optionsNode.getName() + "'");
-        }
-    }
-
-    protected void loadGroup(ParsedXML node, IPreferenceStore cp) {
-        Enumeration<?> children = node.elements();
-        while (children.hasMoreElements()) {
-            ParsedXML child = (ParsedXML) children.nextElement();
-            if ((child != null) && child.getName().equals(PREFERENCE_NODE_NAME)) {
-                String name = child.getAttribute(NAME_ATTRIBUTE);
-                String value = child.getAttribute(VALUE_ATTRIBUTE);
-                if ((name != null) && (value != null)) {
-                    cp.putValue(name, value);
-                }
-            }
+        } catch (JAXBException ex) {
+            System.err.println("Error loading XML for client settings: " + ex.getMessage()); //$NON-NLS-1$
+            ex.printStackTrace();
         }
     }
 
     public void save() {
+        save(new File(Configuration.configDir(), DEFAULT_CFG_FILE_NAME));
+    }
+    
+    public void save(final File file) {
         try {
-
-            Writer output = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(new File(Configuration.configDir(), DEFAULT_CFG_FILE_NAME))));
-
-            output.write("<?xml version=\"1.0\"?>");
-            output.write(CommonConstants.NL);
-            output.write("<" + ROOT_NODE_NAME + ">");
-            output.write(CommonConstants.NL);
-
-            // save client preference store
-            saveStore(output, CLIENT_SETTINGS_STORE_NAME, clientPreferenceStore);
-
-            // save all other stores
-            for (Enumeration<String> e = stores.keys(); e.hasMoreElements();) {
-                String name = e.nextElement();
-                PreferenceStore store = (PreferenceStore) stores.get(name);
-                saveStore(output, name, store);
-            }
-            output.write("</" + ROOT_NODE_NAME + ">");
-            output.write(CommonConstants.NL);
-            output.flush();
-            output.close();
-        } catch (IOException e) {
+            JAXBContext jc = JAXBContext.newInstance(Settings.class);
+            
+            Marshaller marshaller = jc.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            
+            // The default header has the encoding and standalone properties
+            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+            marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
+            
+            JAXBElement<Settings> element = new JAXBElement<>(new QName(ROOT_NODE_NAME), Settings.class, new Settings(clientPreferenceStore, stores));
+            
+            marshaller.marshal(element, file);
+        } catch (JAXBException ex) {
+            System.err.println("Error writing XML for client settings: " + ex.getMessage()); //$NON-NLS-1$
+            ex.printStackTrace();
         }
     }
 
-    protected void saveStore(Writer output, String name, PreferenceStore ps)
-            throws IOException {
-        output.write("\t<" + STORE_NODE_NAME + " " + NAME_ATTRIBUTE + "=\""
-                + quoteXMLChars(name) + "\">");
-        output.write(CommonConstants.NL);
-        for (Enumeration<?> e = ps.properties.keys(); e.hasMoreElements();) {
-            String pname = (String) e.nextElement();
-            String pvalue = (String) ps.properties.get(pname);
-            output.write("\t\t<" + PREFERENCE_NODE_NAME + " " + NAME_ATTRIBUTE
-                    + "=\"" + quoteXMLChars(pname) + "\" " + VALUE_ATTRIBUTE
-                    + "=\"" + quoteXMLChars(pvalue) + "\"/>");
-            output.write(CommonConstants.NL);
+    /**
+     * A wrapper class for all of the client settings.
+     */
+    @XmlRootElement(name = ROOT_NODE_NAME)
+    @XmlAccessorType(XmlAccessType.NONE)
+    private static class Settings {
 
-        }
-        output.write("\t</" + STORE_NODE_NAME + ">");
-        output.write(CommonConstants.NL);
-
-    }
-
-    protected static String quoteXMLChars(String s) {
-        StringBuffer result = null;
-        for (int i = 0, max = s.length(), delta = 0; i < max; i++) {
-            char c = s.charAt(i);
-            String replacement = null;
-
-            if (c == '&') {
-                replacement = "&amp;";
-            } else if (c == '<') {
-                replacement = "&lt;";
-            } else if (c == '\r') {
-                replacement = "&#13;";
-            } else if (c == '>') {
-                replacement = "&gt;";
-            } else if (c == '"') {
-                replacement = "&quot;";
-            } else if (c == '\'') {
-                replacement = "&apos;";
+        @XmlElement(name = "store")
+        List<Store> stores = new ArrayList<>();
+        
+        Settings(final PreferenceStore clientPreferenceStore, final Map<String, IPreferenceStore> stores) {
+            if (clientPreferenceStore != null) {
+                this.stores.add(new Store(CLIENT_SETTINGS_STORE_NAME, clientPreferenceStore));
             }
-
-            if (replacement != null) {
-                if (result == null) {
-                    result = new StringBuffer(s);
+            
+            if (stores != null) {
+                for (Entry<String, IPreferenceStore> ps : stores.entrySet()) {
+                    this.stores.add(new Store(ps.getKey(), (PreferenceStore) ps.getValue()));
                 }
-                String temp = result.toString();
-                String firstHalf = temp.substring(0, i + delta);
-                String secondHalf = temp
-                        .substring(i + delta + 1, temp.length());
-                result = new StringBuffer(firstHalf + replacement + secondHalf);
-                delta += (replacement.length() - 1);
             }
         }
-        if (result == null) {
-            return s;
-        }
-        return result.toString();
-    }
 
+        /**
+         * Required for JAXB.
+         */
+        Settings() {
+        }
+        
+    }
+    
+    /**
+     * A wrapper class for each PreferenceStore.
+     */
+    @XmlType
+    private static class Store {
+        
+        @XmlAttribute
+        String name;
+        
+        @XmlElement(name = "preference")
+        List<XmlProperty> preferences = new ArrayList<>();
+
+        Store(final String name, final PreferenceStore preferenceStore) {
+            this.name = name;
+            
+            for (Entry<Object, Object> prop : preferenceStore.properties.entrySet()) {
+                preferences.add(new XmlProperty(prop.getKey().toString(), prop.getValue().toString()));
+            }
+        }
+
+        /**
+         * Required for JAXB.
+         */
+        Store() {
+        }
+        
+        PreferenceStore getPreferenceStore() {
+            PreferenceStore store = new PreferenceStore();
+            
+            for (XmlProperty prop : preferences) {
+                store.putValue(prop.key, prop.value);
+            }
+            
+            return store;
+        }
+    }
+    
+    /**
+     * A wrapper class for entries in a Properties object.
+     */
+    @XmlType
+    private static class XmlProperty {
+        
+        @XmlAttribute(name = "name")
+        String key;
+        
+        @XmlAttribute
+        String value;
+
+        XmlProperty(final String key, final String value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        /**
+         * Required for JAXB.
+         */
+        XmlProperty() {
+        }
+    }
 }

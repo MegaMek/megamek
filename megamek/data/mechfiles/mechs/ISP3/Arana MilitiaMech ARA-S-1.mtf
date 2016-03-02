@@ -12,10 +12,8 @@ Mass:40
 Engine:200 Fusion (Clan) Engine(IS)
 Structure:Clan Industrial
 Myomer:Standard
-Cockpit:Industrial Cockpit
-Gyro:Standard Gyro
 
-Heat Sinks:14 Single
+Heat Sinks:15 Single
 Walk MP:5
 Jump MP:0
 
@@ -126,7 +124,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
--Empty-
+Heat Sink
 -Empty-
 -Empty-
 -Empty-

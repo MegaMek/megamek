@@ -9,15 +9,15 @@ Source:TRO 3050 - Civil War
 Rules Level:2
 
 Mass:45
-Engine:225 XL Engine
-Structure:Standard
+Engine:225 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Double
 Walk MP:5
 Jump MP:5
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:14
 RA Armor:14
 LT Armor:16
@@ -31,8 +31,8 @@ RTR Armor:6
 RTC Armor:7
 
 Weapons:2
-1 ISERMediumLaser, Right Torso
-1 ISRotaryAC2, Left Torso, Ammo:90
+Rotary AC/2, Right Torso
+ER Medium Laser, Left Torso
 
 Left Arm:
 Shoulder
@@ -66,13 +66,13 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISRotaryAC2
-ISRotaryAC2
-ISRotaryAC2
-ISRotaryAC2 Ammo
-ISRotaryAC2 Ammo
--Empty-
--Empty-
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERMediumLaser
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
 -Empty-
 -Empty-
 
@@ -80,13 +80,13 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISERMediumLaser
+ISRotaryAC2
+ISRotaryAC2
+ISRotaryAC2
+ISRotaryAC2 Ammo
+ISRotaryAC2 Ammo
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 
@@ -145,4 +145,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
 

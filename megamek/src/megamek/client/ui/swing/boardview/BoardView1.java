@@ -1286,11 +1286,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         BufferedImage hexShadow = shadowImageCache.get(hM.hashCode());
         if (hexShadow == null) {
-            hexShadow = createShadowMask(hM);
-            hexShadow = blurOp.filter(hexShadow, null);
+            BufferedImage hS = createShadowMask(hM);
+            hexShadow = blurOp.filter(hS, null);
             if (game.getPlanetaryConditions().getLight() != PlanetaryConditions.L_DAY) {
                 hexShadow = blurOp.filter(hexShadow, null); // soft, soft
             }
+            Graphics2D gs = (Graphics2D) hexShadow.getGraphics();
+            gs.drawImage(hS,0,0,null);
+            gs.dispose();
             // EVIL: This uses the hashcode of the unblurred shadow mask
             // to store and retrieve the blurred one... :-)
             shadowImageCache.put(hM.hashCode(), hexShadow);
@@ -1310,7 +1313,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         
         Graphics2D g = (Graphics2D)(shadowMap.createGraphics());
         
-        if (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_MOONLESS) {
+        if ((game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_MOONLESS) ||
+        (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_PITCH_BLACK)) {
             lightDirection = new double[] { 0, 0 };
         } else if (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DUSK) {
             // TODO: replace when made user controlled
@@ -1438,11 +1442,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         }
                         BufferedImage superMask = shadowImageCache.get(maskB.hashCode());
                         if (superMask == null) {
-                            superMask = createShadowMask(maskB);
-                            superMask = blurOp.filter(superMask, null);
+                            BufferedImage bM = createShadowMask(maskB);
+                            superMask = blurOp.filter(bM, null);
                             if (game.getPlanetaryConditions().getLight() != PlanetaryConditions.L_DAY) {
                                 superMask = blurOp.filter(superMask, null);
                             }
+                            Graphics2D gs = (Graphics2D) superMask.getGraphics();
+                            gs.drawImage(bM,0,0,null);
+                            gs.dispose();
+
                             shadowImageCache.put(maskB.hashCode(), superMask);
                         }
                         int h = hex.terrainLevel(Terrains.BRIDGE_ELEV);
@@ -2337,6 +2345,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         
         // Darken the hex image if nighttime 
+        /*
         if (guip.getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT) 
                 && (game.isPositionIlluminated(c) == IGame.ILLUMINATED_NONE)
                 && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)) {
@@ -2354,6 +2363,47 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 g.drawImage(scaledImage, 0, 0, this);
             }
             g.setComposite(svComposite);
+        }*/
+        
+        if (guip.getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT) 
+                && (game.isPositionIlluminated(c) == IGame.ILLUMINATED_NONE)
+                && (game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY)) {
+            
+            for (int x = 0; x < hexImage.getWidth(); ++x) {
+                for (int y = 0; y < hexImage.getHeight(); ++y) {
+                    int rgb = hexImage.getRGB(x, y);
+
+                    int rd = (rgb >> 16) & 0xFF; 
+                    int gr = (rgb >> 8) & 0xFF; 
+                    int bl = rgb & 0xFF; 
+                    int al = (rgb >> 24); 
+
+                    switch (game.getPlanetaryConditions().getLight()) {
+                    case PlanetaryConditions.L_FULL_MOON:
+                        rd = rd/4; // 1/4 red
+                        gr = gr/4; // 1/4 green
+                        bl = bl/2; // half blue
+                        break;
+                    case PlanetaryConditions.L_PITCH_BLACK:
+                        rd = (rd >> 2); // 1/4 red
+                        gr = (gr >> 2); // 1/4 green
+                        bl = (bl >> 2); // 1/4 blue
+                        break;
+                    case PlanetaryConditions.L_MOONLESS:
+                        rd = rd/4; 
+                        gr = gr/4; 
+                        bl = bl/2; 
+                        break;
+                    case PlanetaryConditions.L_DUSK:
+                        bl = bl*3/4; 
+                        break;
+                    default:
+                    }
+
+                    int nc = (al << 24) + (rd << 16) + (gr << 8) + bl; 
+                    hexImage.setRGB(x, y, nc);
+                }
+            }
         }
         
         // Set the text color according to Preferences or Light Gray in space

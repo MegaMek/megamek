@@ -327,7 +327,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     
     // Image to hold the complete board shadow map
     BufferedImage ShadowMap;
-    double[] LightDirection = { -19, 7 };
+    double[] lightDirection = { -19, 7 };
     private static Kernel kernel = new Kernel(5, 5,
             new float[] {
                     1f/25f, 1f/25f, 1f/25f, 1f/25f, 1f/25f,
@@ -1310,12 +1310,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         Graphics2D g = (Graphics2D)(ShadowMap.createGraphics());
         
         if (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_MOONLESS) {
-            LightDirection = new double[] { 0, 0 };
+            lightDirection = new double[] { 0, 0 };
         } else if (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DUSK) {
             // TODO: replace when made user controlled
-            LightDirection = new double[] { -38, 14 };
+            lightDirection = new double[] { -38, 14 };
         } else {
-            LightDirection = new double[] { -19, 7 };
+            lightDirection = new double[] { -19, 7 };
         }
         
         // Shadows for elevation
@@ -1364,8 +1364,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
                 for (Coords c: sortedHexes.get(shadowcaster)) {
                     Point2D p0 = getHexLocationLargeTile(c.getX(), c.getY(), 1);
-                    double deltaX = LightDirection[0]/10;
-                    double deltaY = LightDirection[1]/10;
+                    double deltaX = lightDirection[0]/10;
+                    double deltaY = lightDirection[1]/10;
                     Point2D p1 = new Point2D.Double();
                     
                     // Elevation Shadow

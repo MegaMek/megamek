@@ -171,6 +171,13 @@ class EntitySprite extends Sprite {
             if (color.equals(Color.RED)) criticalStatus = true;
         }
 
+        Status(Color c, String s, Object objs[]) {
+            color = c;
+            status = Messages.getString("BoardView1."+s, objs);
+            small = false;
+            if (color.equals(Color.RED)) criticalStatus = true;
+        }
+
         Status(Color c, String s, boolean direct) {
             color = c;
             status = s;
@@ -383,8 +390,7 @@ class EntitySprite extends Sprite {
             // Crew
             if (entity.getCrew().isDead()) stStr.add(new Status(Color.RED, "CrewDead"));
             if (crewStunned > 0)  {
-                stStr.add(new Status(Color.YELLOW,
-                        Messages.getString("BoardView1.",new Object[] { crewStunned })));
+                stStr.add(new Status(Color.YELLOW, "STUNNED", new Object[] { crewStunned }));
             }
             
             // Infantry

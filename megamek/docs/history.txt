@@ -2,6 +2,10 @@ VERSION HISTORY:
 ----------------
 v0.41.16-git
 + Data: New Sprites and Unit Fixes.
++ PR #47: EntitySprite updates (AA, scaling, labels)
++ PR #49: Adding runway overlay fluff images
++ PR #45: SPA organization
++ Issue #51: Missing i18n entry: BoardView1. (for crew stunned)
 
 v0.41.15 (2016-02-21 14:15 UTC)
 + Issue #19: doTryUnstuck Error

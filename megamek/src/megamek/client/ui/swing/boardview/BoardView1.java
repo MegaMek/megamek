@@ -322,11 +322,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     
     Shape[] movementPolys;
     Shape[] facingPolys;
-    Shape UpArrow;
-    Shape DownArrow;
+    Shape upArrow;
+    Shape downArrow;
     
     // Image to hold the complete board shadow map
-    BufferedImage ShadowMap;
+    BufferedImage shadowMap;
     double[] lightDirection = { -19, 7 };
     private static Kernel kernel = new Kernel(5, 5,
             new float[] {
@@ -1091,7 +1091,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         g.translate(HEX_W, HEX_H);
         
         // Initialize the shadow map when its not yet present
-        if (ShadowMap == null) {
+        if (shadowMap == null) {
             updateShadowMap();
         }
 
@@ -1304,10 +1304,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 .getLocalGraphicsEnvironment().getDefaultScreenDevice()
                 .getDefaultConfiguration();
         
-        ShadowMap = config.createCompatibleImage(width, height,
+        shadowMap = config.createCompatibleImage(width, height,
                 Transparency.TRANSLUCENT);
         
-        Graphics2D g = (Graphics2D)(ShadowMap.createGraphics());
+        Graphics2D g = (Graphics2D)(shadowMap.createGraphics());
         
         if (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_MOONLESS) {
             lightDirection = new double[] { 0, 0 };
@@ -1460,7 +1460,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
     
     public void clearShadowMap() {
-        ShadowMap = null;
+        shadowMap = null;
     }
 
     /**
@@ -2228,7 +2228,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         
         // Add the terrain & building shadows
         if (guip.getBoolean(GUIPreferences.SHADOWMAP) &&  
-            (ShadowMap != null)) {            
+            (shadowMap != null)) {            
             Point p1SRC = getHexLocationLargeTile(c.getX(), c.getY(), 1);
             Point p2SRC = new Point(p1SRC.x + HEX_W, p1SRC.y + HEX_H);
             Point p2DST = new Point(hex_size.width, hex_size.height);
@@ -2241,7 +2241,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
 
             // paint the right slice from the big pic
-            g.drawImage(ShadowMap, 0, 0, p2DST.x, p2DST.y, p1SRC.x, p1SRC.y,
+            g.drawImage(shadowMap, 0, 0, p2DST.x, p2DST.y, p1SRC.x, p1SRC.y,
                     p2SRC.x, p2SRC.y, null); 
             g.setComposite(svComp);
         }
@@ -4100,12 +4100,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // Up and Down Arrows
         FacingRotate.setToIdentity();
         FacingRotate.translate(0, -31);
-        UpArrow = FacingRotate.createTransformedShape(movementPoly_tmp);
+        upArrow = FacingRotate.createTransformedShape(movementPoly_tmp);
 
         FacingRotate.setToIdentity();
         FacingRotate.rotate(Math.toRadians(180),HEX_W/2,HEX_H/2);
         FacingRotate.translate(0, -31);
-        DownArrow = FacingRotate.createTransformedShape(movementPoly_tmp);
+        downArrow = FacingRotate.createTransformedShape(movementPoly_tmp);
     }
 
     synchronized boolean doMoveUnits(long idleTime) {

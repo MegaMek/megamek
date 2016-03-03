@@ -1253,6 +1253,34 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         
         return CoordList;
     }
+    
+    private Image createBlurredShadow(Image orig) {
+        if ((orig == null) ||
+                orig.getWidth(this) < 0 || 
+                orig.getHeight(this) < 0) {
+            return null;
+        }
+        BufferedImage mask = shadowImageCache.get(orig.hashCode());
+        if (mask == null) {
+            GraphicsConfiguration config = GraphicsEnvironment
+                    .getLocalGraphicsEnvironment().getDefaultScreenDevice()
+                    .getDefaultConfiguration();
+
+            // a slightly bigger image to give room for blurring
+            mask = config.createCompatibleImage(orig.getWidth(this)+4, orig.getHeight(this)+4,
+                    Transparency.TRANSLUCENT);
+            Graphics g = mask.getGraphics();
+            g.drawImage(orig,2,2,null);
+            g.dispose();
+            mask = createShadowMask(mask);
+            mask = blurOp.filter(mask, null);
+            if (game.getPlanetaryConditions().getLight() != PlanetaryConditions.L_DAY) {
+                mask = blurOp.filter(mask, null);
+            }
+            shadowImageCache.put(orig.hashCode(), mask);
+        }
+        return mask;
+    }
 
     /**
      *  Prepares a shadow map for the board, drawing shadows for hills/trees/buildings.
@@ -1277,26 +1305,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (game.getPhase() == IGame.Phase.PHASE_UNKNOWN) return;
         
         // 1) create or get the hex shadow
-        Image hM = tileManager.getHexMask();
-        if (hM.getWidth(this) < 0 || hM.getHeight(this) < 0) {
-            // TODO: I don't get why the isTileImagesLoad() check doesn't catch this
-            // but the hex mask may still not be present
+        Image hexShadow = createBlurredShadow(tileManager.getHexMask());
+        if (hexShadow == null) {
             repaint(1000);
             return;
-        }
-        BufferedImage hexShadow = shadowImageCache.get(hM.hashCode());
-        if (hexShadow == null) {
-            BufferedImage hS = createShadowMask(hM);
-            hexShadow = blurOp.filter(hS, null);
-            if (game.getPlanetaryConditions().getLight() != PlanetaryConditions.L_DAY) {
-                hexShadow = blurOp.filter(hexShadow, null); // soft, soft
-            }
-            Graphics2D gs = (Graphics2D) hexShadow.getGraphics();
-            gs.drawImage(hS,0,0,null);
-            gs.dispose();
-            // EVIL: This uses the hashcode of the unblurred shadow mask
-            // to store and retrieve the blurred one... :-)
-            shadowImageCache.put(hM.hashCode(), hexShadow);
         }
         
         // the shadowmap needs to be painted as if scale == 1
@@ -1387,21 +1399,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     List<Image> supers = tileManager.supersFor(hex);
 
                     if (!supers.isEmpty()) {
-                        Image lastSuper = supers.get(supers.size()-1);
-                        if (lastSuper.getWidth(null) == -1) {
+                        Image lastSuper = createBlurredShadow(supers.get(supers.size()-1));
+                        if (lastSuper == null) {
                             clearShadowMap();
                             return;
                         }
-                        BufferedImage superMask = shadowImageCache.get(lastSuper.hashCode());
-                        if (superMask == null) {
-                            superMask = createShadowMask(lastSuper);
-                            superMask = blurOp.filter(superMask, null);
-                            if (game.getPlanetaryConditions().getLight() != PlanetaryConditions.L_DAY) {
-                                superMask = blurOp.filter(superMask, null);
-                            }
-                            shadowImageCache.put(lastSuper.hashCode(), superMask);
-                        }
-
                         if (hex.containsTerrain(Terrains.WOODS) ||
                                 hex.containsTerrain(Terrains.JUNGLE)) {
                             // Woods are 2 levels high, but then shadows
@@ -1410,7 +1412,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             p1.setLocation(p0);
                             if ((shadowcaster+1.5-shadowed) > 0) {
                                 for (int i = 0; i<10*(shadowcaster+1.5-shadowed); i++) {
-                                    g.drawImage(superMask, (int)p1.getX(), (int)p1.getY(), null);
+                                    g.drawImage(lastSuper, (int)p1.getX(), (int)p1.getY(), null);
                                     p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
                                 }
                             }
@@ -1423,7 +1425,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             if ((shadowcaster+h-shadowed) > 0) {
                                 p1.setLocation(p0);
                                 for (int i = 0; i<10*(shadowcaster+h-shadowed); i++) {
-                                    g.drawImage(superMask, (int)p1.getX(), (int)p1.getY(), null);
+                                    g.drawImage(lastSuper, (int)p1.getX(), (int)p1.getY(), null);
                                     p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
                                 }
                             }
@@ -1435,23 +1437,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     if (hex.containsTerrain(Terrains.BRIDGE)) {
                         supers = tileManager.orthoFor(hex);
                         if (supers.isEmpty()) break; 
-                        Image maskB = supers.get(supers.size()-1);
-                        if (maskB.getWidth(null) == -1) {
+                        Image maskB = createBlurredShadow(supers.get(supers.size()-1));
+                        if (maskB == null) {
                             clearShadowMap();
                             return;
-                        }
-                        BufferedImage superMask = shadowImageCache.get(maskB.hashCode());
-                        if (superMask == null) {
-                            BufferedImage bM = createShadowMask(maskB);
-                            superMask = blurOp.filter(bM, null);
-                            if (game.getPlanetaryConditions().getLight() != PlanetaryConditions.L_DAY) {
-                                superMask = blurOp.filter(superMask, null);
-                            }
-                            Graphics2D gs = (Graphics2D) superMask.getGraphics();
-                            gs.drawImage(bM,0,0,null);
-                            gs.dispose();
-
-                            shadowImageCache.put(maskB.hashCode(), superMask);
                         }
                         int h = hex.terrainLevel(Terrains.BRIDGE_ELEV);
                         p1.setLocation(p0.getX()+deltaX*10*(shadowcaster+h-shadowed), 
@@ -1459,7 +1448,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         // the shadowmask is translucent, therefore draw 10 times
                         // stupid hack
                         for (int i=0;i<10;i++)
-                            g.drawImage(superMask, (int)p1.getX(), (int)p1.getY(), null);
+                            g.drawImage(maskB, (int)p1.getX(), (int)p1.getY(), null);
                     }
 
                 }
@@ -2385,9 +2374,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         bl = bl/2; // half blue
                         break;
                     case PlanetaryConditions.L_PITCH_BLACK:
-                        rd = (rd >> 2); // 1/4 red
-                        gr = (gr >> 2); // 1/4 green
-                        bl = (bl >> 2); // 1/4 blue
+                        int gy = (rd+gr+bl)/16;
+                        if (Math.random()<0.3) {
+                            gy=gy*4/5;
+                        }
+                        if (Math.random()<0.3) {
+                            gy=gy*5/4;
+                        }
+                        rd = gy+rd/5;
+                        gr = gy+gr/5;
+                        bl = gy+bl/5;
                         break;
                     case PlanetaryConditions.L_MOONLESS:
                         rd = rd/4; 

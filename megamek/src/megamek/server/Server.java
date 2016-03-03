@@ -27996,7 +27996,7 @@ public class Server implements Runnable {
 
             // Verify the entity's design
             if (Server.entityVerifier == null) {
-                Server.entityVerifier = new EntityVerifier(new File(
+                Server.entityVerifier = EntityVerifier.build(new File(
                         Configuration.unitsDir(),
                         EntityVerifier.CONFIG_FILENAME));
             }

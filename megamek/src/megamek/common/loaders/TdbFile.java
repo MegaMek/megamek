@@ -72,19 +72,13 @@ public class TdbFile implements IMechLoader {
     private List<Mounted> vSplitWeapons = new ArrayList<>();
 
     /**
-     * JAXB required constructor.
-     */
-    TdbFile() {
-    }
-
-    /**
      * Creates new TdbFile.
      * 
      * @param is an input stream that contains a "The Drawing Board" generated XML file.
      * @return an instance of a parsed file
      * @throws megamek.common.loaders.EntityLoadingException
      */
-    public static TdbFile load(final InputStream is) throws EntityLoadingException {
+    public static TdbFile getInstance(final InputStream is) throws EntityLoadingException {
         try {
             JAXBContext jc = JAXBContext.newInstance(TdbFile.class);
             
@@ -98,6 +92,12 @@ public class TdbFile implements IMechLoader {
         }
     }
     
+    /**
+     * JAXB required constructor.
+     */
+    private TdbFile() {
+    }
+
     @Override
     public Entity getEntity() throws EntityLoadingException {
         try {

@@ -144,7 +144,7 @@ public class MechFileParser {
         } else if (lowerName.endsWith(".hmv")) {
             loader = new HmvFile(is);
         } else if (lowerName.endsWith(".xml")) {
-            loader = TdbFile.load(is);
+            loader = TdbFile.getInstance(is);
         } else if (lowerName.endsWith(".blk")) {
             BuildingBlock bb = new BuildingBlock(is);
             if (bb.exists("UnitType")) {
@@ -734,7 +734,7 @@ public class MechFileParser {
             }
         }
 
-        // Don't forget to actually load any applicable weapons.
+        // Don't forget to actually getInstance any applicable weapons.
         ent.loadAllWeapons();
 
         if (ent instanceof Aero) {

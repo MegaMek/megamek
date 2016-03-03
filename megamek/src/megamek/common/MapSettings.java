@@ -39,7 +39,8 @@ import megamek.common.util.BuildingTemplate;
 @XmlRootElement(name = "ENVIRONMENT")
 @XmlAccessorType(XmlAccessType.NONE)
 public class MapSettings implements Serializable {
-    private static final long serialVersionUID = 1615589831676583649L;
+    private static final long serialVersionUID = -6163977970758303066L;
+
     public static final String BOARD_RANDOM = "[RANDOM]";
     public static final String BOARD_SURPRISE = "[SURPRISE]";
     public static final String BOARD_GENERATED = "[GENERATED]";

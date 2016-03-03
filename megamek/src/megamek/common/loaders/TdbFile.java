@@ -238,7 +238,7 @@ public class TdbFile implements IMechLoader {
             }
 
             // we do these in reverse order to get the outermost
-            // critdefs first, which is necessary for split crits to work
+            // locations first, which is necessary for split crits to work
             for (int i = mech.locations() - 1; i >= 0; i--) {
                 parseCrits(mech, i);
             }

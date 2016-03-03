@@ -734,7 +734,7 @@ public class MechFileParser {
             }
         }
 
-        // Don't forget to actually getInstance any applicable weapons.
+        // Don't forget to actually load any applicable weapons.
         ent.loadAllWeapons();
 
         if (ent instanceof Aero) {

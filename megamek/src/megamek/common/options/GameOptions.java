@@ -114,6 +114,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, "tacops_ghost_target", false); //$NON-NLS-1$
         addOption(advancedRules, "ghost_target_max", 5); //$NON-NLS-1$
         addOption(advancedRules, "tacops_dig_in", false); //$NON-NLS-1$
+        addOption(advancedRules, "tacops_ba_weight", false); //$NON-NLS-1$
         addOption(advancedRules, "tacops_take_cover", false); //$NON-NLS-1$
         addOption(advancedRules, "tacops_angel_ecm", false); //$NON-NLS-1$
         addOption(advancedRules, "tacops_battle_wreck", false); //$NON-NLS-1$

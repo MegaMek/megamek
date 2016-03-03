@@ -348,6 +348,8 @@ public class MechSummaryCache {
         ms.setType(e.getTechLevel());
         ms.setTons(e.getWeight());
         if (e instanceof BattleArmor){
+            ms.setTOweight(((BattleArmor)e).getAlternateWeight());
+            ms.setTWweight(((BattleArmor)e).getWeight());
             ms.setSuitWeight(((BattleArmor)e).getTrooperWeight());
         }
         ms.setBV(e.calculateBattleValue());

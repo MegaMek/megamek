@@ -66,20 +66,26 @@ public class EntityVerifier implements MechSummaryCache.Listener {
     private EntityVerifier() {
     }
     
-    public static EntityVerifier build(final File config) {
+    /**
+     * Creates and return a new instance of EntityVerifier.
+     * 
+     * @param config a File that contains an XML representation of the configuration settings
+     * @return an EntityVerifier with the configuration loaded from XML
+     */
+    public static EntityVerifier getInstance(final File config) {
+        EntityVerifier ev = null;
+        
         try {
             JAXBContext jc = JAXBContext.newInstance(EntityVerifier.class);
             
             Unmarshaller um = jc.createUnmarshaller();
-            EntityVerifier ev = (EntityVerifier) um.unmarshal(config);
-
-            return ev;
+            ev = (EntityVerifier) um.unmarshal(config);
         } catch (JAXBException ex) {
             System.err.println("Error loading XML for entity verifier: " + ex.getMessage()); //$NON-NLS-1$
             ex.printStackTrace();
         }
         
-        return null;
+        return ev;
     }
 
     public boolean checkEntity(Entity entity, String fileString, boolean verbose) {
@@ -272,11 +278,11 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                 System.err.println("Exception: " + e.getMessage());
                 return;
             }
-            EntityVerifier.build(config).checkEntity(entity, f.toString(), true);
+            EntityVerifier.getInstance(config).checkEntity(entity, f.toString(), true);
         } else {
             // No specific file passed, so have MegaMek load all the mechs it
             // normally would, then verify all of them.
-            EntityVerifier ev = EntityVerifier.build(config);
+            EntityVerifier ev = EntityVerifier.getInstance(config);
             ev.loadingVerbosity = verbose;
             ev.failsOnly = failsOnly;
             mechSummaryCache = MechSummaryCache.getInstance(ignoreUnofficial);

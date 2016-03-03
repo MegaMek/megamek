@@ -79,7 +79,7 @@ public class MapDimensionsDialog extends JDialog implements ActionListener {
         super(clientGUI.frame, Messages
                 .getString("MapDimensionsDialog.MapDimensions"), true); //$NON-NLS-1$
         this.clientGUI = clientGUI;
-        this.mapSettings = (MapSettings)mapSettings.clone();
+        this.mapSettings = MapSettings.getInstance(mapSettings);
      
         setupMapSize();
         setupButtons();

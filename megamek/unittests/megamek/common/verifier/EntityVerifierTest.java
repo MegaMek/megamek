@@ -30,7 +30,7 @@ public class EntityVerifierTest {
     public void testEmpty() {
         File file = new File(getClass().getResource("empty-verifier-options.xml").getFile());
 
-        EntityVerifier result = EntityVerifier.build(file);
+        EntityVerifier result = EntityVerifier.getInstance(file);
 
         assertNotNull(result.aeroOption);
         assertNotNull(result.baOption);
@@ -64,7 +64,7 @@ public class EntityVerifierTest {
     public void testBuild() {
         File file = new File(getClass().getResource("test-verifier-options.xml").getFile());
 
-        EntityVerifier result = EntityVerifier.build(file);
+        EntityVerifier result = EntityVerifier.getInstance(file);
         
         assertNotNull(result.mechOption);
 

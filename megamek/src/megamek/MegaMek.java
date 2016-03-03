@@ -605,7 +605,7 @@ public class MegaMek {
                                 ms.getEntryName()).getEntity();
                         System.err
                                 .println("Validating Entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
-                        EntityVerifier entityVerifier = EntityVerifier.build(
+                        EntityVerifier entityVerifier = EntityVerifier.getInstance(
                                 new File(Configuration.unitsDir(),
                                         EntityVerifier.CONFIG_FILENAME));
                         MechView mechView = new MechView(entity, false);

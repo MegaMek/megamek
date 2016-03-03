@@ -315,9 +315,51 @@ public class MapSettings implements Serializable {
     private int mountainStyle = MOUNTAIN_PLAIN;
 
     /** end Map Generator Parameters */
+    
+    /**
+     * Creates and returns a new default instance of MapSettings.
+     * 
+     * @return a MapSettings with default settings values
+     */
+    public static MapSettings getInstance() {
+        return new MapSettings();
+    }
+    
+    /**
+     * Creates and returns a clone of the given MapSettings.
+     *
+     * @param other the MapSettings to clone
+     * @return a MapSettings with the cloned settings values
+     */
+    public static MapSettings getInstance(final MapSettings other) {
+        return new MapSettings(other);
+    }
+
+    /**
+     * Creates and returns a new instance of MapSettings with default values loaded 
+     * from the given input stream.
+     * 
+     * @param is the input stream that contains an XML representation of the map settings
+     * @return a MapSettings with the values from XML
+     */
+    public static MapSettings getInstance(final InputStream is) {
+        MapSettings ms = null;
+        
+        try {
+            JAXBContext jc = JAXBContext.newInstance(MapSettings.class);
+            
+            Unmarshaller um = jc.createUnmarshaller();
+            ms = (MapSettings) um.unmarshal(is);
+        } catch (JAXBException ex) {
+            System.err.println("Error loading XML for map settings: " + ex.getMessage()); //$NON-NLS-1$
+            ex.printStackTrace();
+        }
+        
+        return ms;
+    }
 
     /** Creates new MapSettings */
-    public MapSettings() {
+    private MapSettings() {
         this(megamek.common.preference.PreferenceManager.getClientPreferences()
                 .getBoardWidth(), megamek.common.preference.PreferenceManager
                 .getClientPreferences().getBoardHeight(),
@@ -328,59 +370,15 @@ public class MapSettings implements Serializable {
     }
 
     /** Create new MapSettings with all size settings specified */
-    public MapSettings(int boardWidth, int boardHeight, int mapWidth,
+    private MapSettings(int boardWidth, int boardHeight, int mapWidth,
             int mapHeight) {
         setBoardSize(boardWidth, boardHeight);
         setMapSize(mapWidth, mapHeight);
     }
     
-    /**
-     * Odious hack to fix cross-platform issues.  The Server generates the list
-     * of available boards and then sends them to the client.  Instead of
-     * storing the boards as a File object, they are stored as lists of Strings.
-     * This means that, a Windows server will generate Windows paths that could
-     * then be sent to non-windows machines.
-     * 
-     * While the available and selected boards should really be stored as lists
-     * of Files, they have infrastructure built up around them and it's far
-     * easier to use this kludgy hack.
-     */
-    public void adjustPathSeparator() {
-        // Windows will happily accept a forward slash in the path, the only
-        // real issue is back-slashes (windows separators) in Linux
-        boolean isWindows = System.getProperty("os.name").contains("Windows");
-        boolean containsWindowsPathSeparator = false;
-        for (String path : boardsAvailable) {
-            if (path.contains("\\")) {
-                containsWindowsPathSeparator = true;
-            }
-            if (containsWindowsPathSeparator) {
-                break;
-            }
-        }
-        
-        if (!isWindows && containsWindowsPathSeparator) {
-            for (int i = 0; i < boardsAvailable.size(); i++) {
-                if (boardsAvailable.get(i) == null) {
-                    continue;
-                }
-                boardsAvailable.set(i, boardsAvailable.get(i)
-                        .replace("\\", "/"));
-            }
-            for (int i = 0; i < boardsSelected.size(); i++) {
-                if (boardsSelected.get(i) == null) {
-                    continue;
-                }
-                boardsSelected.set(i, boardsSelected.get(i)
-                        .replace("\\", "/"));
-            }
-        }
-    }
-   
-
     /** Creates new MapSettings that is a duplicate of another */
     @SuppressWarnings("unchecked")
-    public MapSettings(MapSettings other) {
+    private MapSettings(MapSettings other) {
         boardWidth = other.getBoardWidth();
         boardHeight = other.getBoardHeight();
         mapWidth = other.getMapWidth();
@@ -471,6 +469,49 @@ public class MapSettings implements Serializable {
         townSize = other.getTownSize();
     }
 
+    /**
+     * Odious hack to fix cross-platform issues.  The Server generates the list
+     * of available boards and then sends them to the client.  Instead of
+     * storing the boards as a File object, they are stored as lists of Strings.
+     * This means that, a Windows server will generate Windows paths that could
+     * then be sent to non-windows machines.
+     * 
+     * While the available and selected boards should really be stored as lists
+     * of Files, they have infrastructure built up around them and it's far
+     * easier to use this kludgy hack.
+     */
+    public void adjustPathSeparator() {
+        // Windows will happily accept a forward slash in the path, the only
+        // real issue is back-slashes (windows separators) in Linux
+        boolean isWindows = System.getProperty("os.name").contains("Windows");
+        boolean containsWindowsPathSeparator = false;
+        for (String path : boardsAvailable) {
+            if (path.contains("\\")) {
+                containsWindowsPathSeparator = true;
+            }
+            if (containsWindowsPathSeparator) {
+                break;
+            }
+        }
+        
+        if (!isWindows && containsWindowsPathSeparator) {
+            for (int i = 0; i < boardsAvailable.size(); i++) {
+                if (boardsAvailable.get(i) == null) {
+                    continue;
+                }
+                boardsAvailable.set(i, boardsAvailable.get(i)
+                        .replace("\\", "/"));
+            }
+            for (int i = 0; i < boardsSelected.size(); i++) {
+                if (boardsSelected.get(i) == null) {
+                    continue;
+                }
+                boardsSelected.set(i, boardsSelected.get(i)
+                        .replace("\\", "/"));
+            }
+        }
+    }
+   
     public int getBoardWidth() {
         return boardWidth;
     }
@@ -913,12 +954,6 @@ public class MapSettings implements Serializable {
         }
         return true;
     } /* equalMapGenParameters */
-
-    /** clone! */
-    @Override
-    public Object clone() {
-        return new MapSettings(this);
-    }
 
     public int getInvertNegativeTerrain() {
         return invertNegativeTerrain;
@@ -1480,97 +1515,6 @@ public class MapSettings implements Serializable {
             marshaller.marshal(element, os);
         } catch (JAXBException ex) {
             System.err.println("Error writing XML for map settings: " + ex.getMessage()); //$NON-NLS-1$
-            ex.printStackTrace();
-        }
-    }
-
-    public void load(final InputStream is) {
-        try {
-            JAXBContext jc = JAXBContext.newInstance(MapSettings.class);
-            
-            Unmarshaller um = jc.createUnmarshaller();
-            MapSettings ms = (MapSettings) um.unmarshal(is);
-
-            // Ugly, but JAXB doesn't have any way to unmarshal into an existing object
-            this.boardWidth = ms.boardWidth;
-            this.boardHeight = ms.boardHeight;
-            this.theme = ms.theme;
-            this.invertNegativeTerrain = ms.invertNegativeTerrain;
-            this.hilliness = ms.hilliness;
-            this.range = ms.range;
-            this.probInvert = ms.probInvert;
-            this.algorithmToUse = ms.algorithmToUse;
-            this.cliffs = ms.cliffs;
-            this.minForestSpots = ms.minForestSpots;
-            this.maxForestSpots = ms.maxForestSpots;
-            this.minForestSize = ms.minForestSize;
-            this.maxForestSize = ms.maxForestSize;
-            this.probHeavy = ms.probHeavy;
-            this.minRoughSpots = ms.minRoughSpots;
-            this.maxRoughSpots = ms.maxRoughSpots;
-            this.minRoughSize = ms.minRoughSize;
-            this.maxRoughSize = ms.maxRoughSize;
-            this.minSandSpots = ms.minSandSpots;
-            this.maxSandSpots = ms.maxSandSpots;
-            this.minSandSize = ms.minSandSize;
-            this.maxSandSize = ms.maxSandSize;
-            this.minPlantedFieldSpots = ms.minPlantedFieldSpots;
-            this.maxPlantedFieldSpots = ms.maxPlantedFieldSpots;
-            this.minPlantedFieldSize = ms.minPlantedFieldSize;
-            this.maxPlantedFieldSize = ms.maxPlantedFieldSize;
-            this.minSwampSpots = ms.minSwampSpots;
-            this.maxSwampSpots = ms.maxSwampSpots;
-            this.minSwampSize = ms.minSwampSize;
-            this.maxSwampSize = ms.maxSwampSize;
-            this.probRoad = ms.probRoad;
-            this.minWaterSpots = ms.minWaterSpots;
-            this.maxWaterSpots = ms.maxWaterSpots;
-            this.minWaterSize = ms.minWaterSize;
-            this.maxWaterSize = ms.maxWaterSize;
-            this.probDeep = ms.probDeep;
-            this.probRiver = ms.probRiver;
-            this.minCraters = ms.minCraters;
-            this.maxCraters = ms.maxCraters;
-            this.minRadius = ms.minRadius;
-            this.maxRadius = ms.maxRadius;
-            this.probCrater = ms.probCrater;
-            this.minPavementSpots = ms.minPavementSpots;
-            this.maxPavementSpots = ms.maxPavementSpots;
-            this.minPavementSize = ms.minPavementSize;
-            this.maxPavementSize = ms.maxPavementSize;
-            this.minRubbleSpots = ms.minRubbleSpots;
-            this.maxRubbleSpots = ms.maxRubbleSpots;
-            this.minRubbleSize = ms.minRubbleSize;
-            this.maxRubbleSize = ms.maxRubbleSize;
-            this.minFortifiedSpots = ms.minFortifiedSpots;
-            this.maxFortifiedSpots = ms.maxFortifiedSpots;
-            this.minFortifiedSize = ms.minFortifiedSize;
-            this.maxFortifiedSize = ms.maxFortifiedSize;
-            this.minIceSpots = ms.minIceSpots;
-            this.maxIceSpots = ms.maxIceSpots;
-            this.minIceSize = ms.minIceSize;
-            this.maxIceSize = ms.maxIceSize;
-            this.fxMod = ms.fxMod;
-            this.probFreeze = ms.probFreeze;
-            this.probFlood = ms.probFlood;
-            this.probForestFire = ms.probForestFire;
-            this.probDrought = ms.probDrought;
-            this.cityType = ms.cityType;
-            this.cityBlocks = ms.cityBlocks;
-            this.cityDensity = ms.cityDensity;
-            this.cityMinCF = ms.cityMinCF;
-            this.cityMaxCF = ms.cityMaxCF;
-            this.cityMinFloors = ms.cityMinFloors;
-            this.cityMaxFloors = ms.cityMaxFloors;
-            this.townSize = ms.townSize;
-            this.mountainPeaks = ms.mountainPeaks;
-            this.mountainWidthMin = ms.mountainWidthMin;
-            this.mountainWidthMax = ms.mountainWidthMax;
-            this.mountainHeightMin = ms.mountainHeightMin;
-            this.mountainHeightMax = ms.mountainHeightMax;
-            this.mountainStyle = ms.mountainStyle;
-        } catch (JAXBException ex) {
-            System.err.println("Error loading XML for map settings: " + ex.getMessage()); //$NON-NLS-1$
             ex.printStackTrace();
         }
     }

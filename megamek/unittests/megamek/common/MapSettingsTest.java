@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -34,21 +33,15 @@ import static org.junit.Assert.*;
  */
 public class MapSettingsTest {
 
-    private MapSettings testMe;
-    
     @Rule
     public TemporaryFolder tmpFolder = new TemporaryFolder();
     
-    @Before
-    public void setUp() {
-        testMe = new MapSettings();
-    }
-
     @Test
     public void testSaveAndLoad() throws UnsupportedEncodingException, IOException {
         File f = tmpFolder.newFile("test-map-settings.xml");
         OutputStream os = new FileOutputStream(f);
         
+        MapSettings testMe = MapSettings.getInstance();
         testMe.setBoardSize(32, 34);
         testMe.save(os);
         
@@ -56,7 +49,7 @@ public class MapSettingsTest {
         assertTrue(f.length() > 0);
         
         InputStream is = new FileInputStream(f);
-        testMe.load(is);
+        testMe = MapSettings.getInstance(is);
 
         assertEquals(32, testMe.getBoardWidth());
         assertEquals(34, testMe.getBoardHeight());

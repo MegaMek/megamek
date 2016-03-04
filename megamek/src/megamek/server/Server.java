@@ -671,7 +671,7 @@ public class Server implements Runnable {
 
     /**
      * Make a default message o' the day containing the version string, and if
- it was found, the build timestamp
+     * it was found, the build timestamp
      */
     private String createMotd() {
         StringBuffer buf = new StringBuffer();

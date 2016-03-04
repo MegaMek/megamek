@@ -33,8 +33,6 @@ import static org.junit.Assert.*;
  */
 public class TdbFileTest {
 
-    private TdbFile testMe;
-    
     private int[] locations = new int[] {
         Mech.LOC_HEAD, 
         Mech.LOC_CT, 
@@ -51,7 +49,7 @@ public class TdbFileTest {
         InputStream is = getClass().getResourceAsStream("JR7-D Jenner.xml");
         assertNotNull(is);
         
-        testMe = TdbFile.load(is);
+        TdbFile testMe = TdbFile.getInstance(is);
         
         assertEquals(6, testMe.mounted.items.size());
         
@@ -172,7 +170,7 @@ public class TdbFileTest {
         InputStream is = getClass().getResourceAsStream("ZPH-1A Tarantula.xml");
         assertNotNull(is);
         
-        testMe = TdbFile.load(is);
+        TdbFile testMe = TdbFile.getInstance(is);
         
         assertEquals(4, testMe.mounted.items.size());
         

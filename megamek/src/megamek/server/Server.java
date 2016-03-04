@@ -671,7 +671,7 @@ public class Server implements Runnable {
 
     /**
      * Make a default message o' the day containing the version string, and if
- it was found, the getInstance timestamp
+ it was found, the build timestamp
      */
     private String createMotd() {
         StringBuffer buf = new StringBuffer();
@@ -10871,7 +10871,7 @@ public class Server implements Runnable {
                 continue;
             }
 
-            // getInstance up heat from movement
+            // build up heat from movement
             if (entity.isEvading() && !(entity instanceof Aero)) {
                 entity.heatBuildup += entity.getRunHeat() + 2;
             } else if (entity.moved == EntityMovementType.MOVE_NONE) {
@@ -15537,7 +15537,7 @@ public class Server implements Runnable {
             return;
         }
 
-        // Need to compute 2d6 damage. and add +3 heat getInstance up.
+        // Need to compute 2d6 damage. and add +3 heat build up.
         if (((MiscType) (caa.getClub().getType()))
                 .hasSubType(MiscType.S_BUZZSAW)) {
 
@@ -17706,7 +17706,7 @@ public class Server implements Runnable {
                 }
             }
 
-            // put in ASF heat getInstance-up first because there are few differences
+            // put in ASF heat build-up first because there are few differences
             if ((entity instanceof Aero) && !(entity instanceof ConvFighter)) {
                 // If this aero is part of a squadron, we will deal with its
                 // heat with the fighter squadron

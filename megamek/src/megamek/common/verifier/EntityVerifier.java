@@ -18,6 +18,7 @@ package megamek.common.verifier;
 import java.io.File;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -83,6 +84,8 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         } catch (JAXBException ex) {
             System.err.println("Error loading XML for entity verifier: " + ex.getMessage()); //$NON-NLS-1$
             ex.printStackTrace();
+            
+            ev = new EntityVerifier();
         }
         
         return ev;

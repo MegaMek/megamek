@@ -31,7 +31,7 @@ Darter Scout Car
 ISMachine Gun
 </Front Equipment>
 <transporters>
-TroopSpace:1.5
+cargobay:2:1
 </transporters>
 <Body Equipment>
 ISMG Ammo (200)

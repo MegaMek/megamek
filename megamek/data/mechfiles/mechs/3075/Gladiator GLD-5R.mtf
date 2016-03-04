@@ -9,60 +9,61 @@ Source:TRO 3075
 Rules Level:2
 
 Mass:55
-Engine:275 Light Engine
+Engine:220 Light Engine
 Structure:Standard
 Myomer:Standard
+Gyro:XL Gyro
 
 Heat Sinks:13 Double
-Walk MP:5
-Jump MP:5
+Walk MP:4
+Jump MP:6
 
 Armor:Standard(Inner Sphere)
-LA Armor:15
-RA Armor:15
-LT Armor:19
-RT Armor:19
-CT Armor:26
+LA Armor:18
+RA Armor:18
+LT Armor:20
+RT Armor:20
+CT Armor:27
 HD Armor:9
-LL Armor:19
-RL Armor:19
-RTL Armor:3
-RTR Armor:3
-RTC Armor:5
+LL Armor:26
+RL Armor:26
+RTL Armor:6
+RTR Armor:6
+RTC Armor:9
 
 Weapons:4
 ER Medium Laser, Left Arm
 ER Medium Laser, Left Arm
 Snub-Nose PPC, Right Arm
-MML 5, Right Arm
+MML 5, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISERMediumLaser
 ISERMediumLaser
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 ISSNPPC
 ISSNPPC
-ISMML5
-ISMML5
-ISMML5
-ISArtemisIV
--Empty-
--Empty-
 
 Left Torso:
 Fusion Engine
@@ -70,27 +71,27 @@ Fusion Engine
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
-Jump Jet
-Jump Jet
-IS Ammo MML-5 LRM Artemis-capable
-IS Ammo MML-5 SRM Artemis-capable
--Empty-
--Empty-
--Empty-
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+ISGuardianECMSuite
+ISGuardianECMSuite
+ISC3SlaveUnit
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISDoubleHeatSink
-ISDoubleHeatSink
-ISDoubleHeatSink
-Jump Jet
-Jump Jet
-ISC3iUnit
-ISC3iUnit
--Empty-
--Empty-
--Empty-
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+Improved Jump Jet
+ISMML5
+ISMML5
+ISMML5
+ISArtemisIV
+IS Ammo MML-5 LRM Artemis-capable
+IS Ammo MML-5 SRM Artemis-capable
 
 Center Torso:
 Fusion Engine
@@ -100,11 +101,11 @@ Gyro
 Gyro
 Gyro
 Gyro
+Gyro
+Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Jump Jet
--Empty-
 
 Head:
 Life Support
@@ -125,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
--Empty-
--Empty-
+Improved Jump Jet
+Improved Jump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -139,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
--Empty-
--Empty-
+Improved Jump Jet
+Improved Jump Jet
 -Empty-
 -Empty-
 -Empty-

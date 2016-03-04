@@ -13,7 +13,7 @@ Tank
 Darter Scout Car
 </Name>
 <Model>
-(SRM)
+(SRM-2)
 </Model>
 <Tonnage>
 13
@@ -28,13 +28,15 @@ Darter Scout Car
 8
 </Armor>
 <Front Equipment>
-SRM 4
+SRM 2
+Machine Gun
 </Front Equipment>
 <transporters>
-cargobay:1.5:1
+cargobay:1:1
 </transporters>
 <Body Equipment>
-IS Ammo SRM-4
+IS Ammo SRM-2
+IS Machine Gun Ammo
 </Body Equipment>
 <type>
 IS

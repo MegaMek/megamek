@@ -1,68 +1,74 @@
 #building block data file
+
 <BlockVersion>
 1
 </BlockVersion>
-
-##Write the version number just in case...
-<Version>
-MAM0
-</Version>
 
 <UnitType>
 Tank
 </UnitType>
 
+<blockversion>
+1
+</blockversion>
+
 <Name>
-Marsden II MBT
+Daimyo HQ
 </Name>
 
 <Model>
-II-A (LB-X)
+67-K
 </Model>
 
 <year>
-3068
+2781
 </year>
+
+<source>
+Succession Wars
+</source>
 
 <type>
 IS Level 2
 </type>
 
+<tonnage>
+50.0
+</tonnage>
+
 <motion_type>
-Tracked
+Wheeled
 </motion_type>
 
-<cruiseMP>
-3
-</cruiseMP>
+<transporters>
+TroopSpace: 3
+</transporters>
 
 <engine_type>
-1
+0
 </engine_type>
+
+<cruiseMP>
+6
+</cruiseMP>
 
 <internal_type>
 -1
 </internal_type>
 
 <armor>
-52
-52
-52
-51
-41
+34
+22
+22
+15
+19
 </armor>
 
 <Body Equipment>
-IS LB 10-X AC Ammo
-IS LB 10-X AC Ammo
-IS Streak SRM 2 Ammo
-IS Streak SRM 2 Ammo
-IS Machine Gun Ammo
+IS Machine Gun Ammo - Half
 </Body Equipment>
 
 <Front Equipment>
-ISStreakSRM2
-ISStreakSRM2
 </Front Equipment>
 
 <Right Equipment>
@@ -75,16 +81,14 @@ ISStreakSRM2
 </Rear Equipment>
 
 <Turret Equipment>
+Large Laser
 Machine Gun
 Machine Gun
-ISLBXAC10
+Machine Gun
+Machine Gun
 </Turret Equipment>
 
-<source>
-Jihad
-</source>
-
-<tonnage>
-60.0
-</tonnage>
+<armor_type>
+0
+</armor_type>
 

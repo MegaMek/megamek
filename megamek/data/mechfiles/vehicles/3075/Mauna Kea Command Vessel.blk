@@ -41,7 +41,7 @@ Naval
 </motion_type>
 
 <transporters>
-TroopSpace: 9
+cargobay:8:1
 </transporters>
 
 <engine_type>
@@ -70,6 +70,7 @@ IS Ammo LRM-15
 IS Machine Gun Ammo - Half
 IS Ammo AC/10
 IS Ammo AC/10
+CommsGear:1
 </Body Equipment>
 
 <Front Equipment>

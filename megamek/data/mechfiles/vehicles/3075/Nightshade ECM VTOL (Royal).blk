@@ -40,6 +40,10 @@ IS Level 2
 VTOL
 </motion_type>
 
+<transporters>
+cargobay:0.5:1
+</transporters>
+
 <engine_type>
 2
 </engine_type>

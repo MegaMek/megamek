@@ -33,8 +33,8 @@ RTC Armor:8
 Weapons:4
 Particle Cannon, Left Arm
 Particle Cannon, Right Arm
-LRM 10, Left Torso
-SRM 6, Right Torso
+LRM 10, Right Torso
+SRM 6, Left Torso
 
 Left Arm:
 Shoulder
@@ -65,9 +65,9 @@ Particle Cannon
 -Empty-
 
 Left Torso:
-LRM 10
-LRM 10
-IS Ammo LRM-10
+SRM 6
+SRM 6
+IS Ammo SRM-6
 -Empty-
 -Empty-
 -Empty-
@@ -79,9 +79,9 @@ IS Ammo LRM-10
 -Empty-
 
 Right Torso:
-SRM 6
-SRM 6
-IS Ammo SRM-6
+LRM 10
+LRM 10
+IS Ammo LRM-10
 -Empty-
 -Empty-
 -Empty-

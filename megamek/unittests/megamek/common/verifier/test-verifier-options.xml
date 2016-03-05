@@ -1,0 +1,47 @@
+<!-- Test Entity Test options file -->
+<entityverifier>
+    <mech>
+        <ceilWeight>
+            <engine>0.75</engine>
+            <structure>0.75</structure>
+            <armor>0.75</armor>
+            <controls>0.75</controls>
+            <weapons>0.99</weapons>
+            <targcomp>0.99</targcomp>
+            <gyro>0.75</gyro>
+        </ceilWeight>
+        <showOverweighted>
+            false
+        </showOverweighted>
+        <maxOverweight>
+            1
+        </maxOverweight>
+        <showUnderweighted>
+            true
+        </showUnderweighted>
+        <minUnderweight>
+            0.99
+        </minUnderweight>
+        <ignoreFailedEquipment>
+            The Claw, BFG-2000, Stereo Console, Dual Speakers
+        </ignoreFailedEquipment>
+        <skip>
+            false
+        </skip>
+        <targCompCrits>
+            1
+        </targCompCrits>
+        <printSize>
+            75
+        </printSize>
+        <showCorrectArmorPlacement>
+            false
+        </showCorrectArmorPlacement>
+        <showCorrectCriticalAllocation>
+            false
+        </showCorrectCriticalAllocation>
+        <showFailedEquip>
+            false
+        </showFailedEquip>
+    </mech>
+</entityverifier>

@@ -13,22 +13,17 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
-/*
- * Author: Reinhard Vicinus
- */
-
 package megamek.common.verifier;
 
-import gd.xml.ParseException;
-import gd.xml.tiny.ParsedXML;
-import gd.xml.tiny.TinyParser;
-
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.Enumeration;
-
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Configuration;
@@ -44,44 +39,56 @@ import megamek.common.Tank;
  * Performs verification of the validity of different types of 
  * <code>Entity</code> subclasses.  Most of the actual validation is performed
  * by <code>TestEntity</code> and its subclasses. 
+ * 
+ * @author Reinhard Vicinus
  */
+@XmlRootElement(name = "entityverifier")
+@XmlAccessorType(XmlAccessType.NONE)
 public class EntityVerifier implements MechSummaryCache.Listener {
-    public final static String CONFIG_FILENAME = "UnitVerifierOptions.xml"; //$NON-NLS-1$
-
-    public final static String BASE_NODE = "entityverifier"; //$NON-NLS-1$
-    public final static String BASE_MECH_NODE = "mech"; //$NON-NLS-1$
-    public final static String BASE_TANK_NODE = "tank"; //$NON-NLS-1$
-    public final static String BASE_AERO_NODE = "aero"; //$NON-NLS-1$
-    public final static String BASE_BA_NODE = "ba"; //$NON-NLS-1$
+    public static final String CONFIG_FILENAME = "UnitVerifierOptions.xml"; //$NON-NLS-1$
 
     private static MechSummaryCache mechSummaryCache = null;
+
+    @XmlElement(name = "mech")
     public TestXMLOption mechOption = new TestXMLOption();
+    @XmlElement(name = "tank")
     public TestXMLOption tankOption = new TestXMLOption();
+    @XmlElement(name = "aero")
     public TestXMLOption aeroOption = new TestXMLOption();
+    @XmlElement(name = "ba")
     public TestXMLOption baOption = new TestXMLOption();
     
     private boolean loadingVerbosity = false;
     private boolean failsOnly = false;
 
-    public EntityVerifier(File config) {
-        ParsedXML root = null;
+    /**
+     * JAXB Constructor.
+     */
+    private EntityVerifier() {
+    }
+    
+    /**
+     * Creates and return a new instance of EntityVerifier.
+     * 
+     * @param config a File that contains an XML representation of the configuration settings
+     * @return an EntityVerifier with the configuration loaded from XML
+     */
+    public static EntityVerifier getInstance(final File config) {
+        EntityVerifier ev = null;
+        
         try {
-            root = TinyParser.parseXML(new FileInputStream(config));
-            for (Enumeration<?> e = root.elements(); e.hasMoreElements();) {
-                ParsedXML child = (ParsedXML) e.nextElement();
-                if (child.getTypeName().equals("tag") //$NON-NLS-1$
-                        && child.getName().equals(BASE_NODE)) {
-                    readOptions(child);
-                }
-            }
-            // System.out.println("Using config file: " + config.getPath());
-        } catch (ParseException e) {
-            System.err.println("EntityVerifier: Failure parsing config file:");
-            System.err.println(e.getMessage());
-        } catch (FileNotFoundException e) {
-            System.err.println("EntityVerifier: Configfile not found:");
-            System.err.println(e.getMessage());
+            JAXBContext jc = JAXBContext.newInstance(EntityVerifier.class);
+            
+            Unmarshaller um = jc.createUnmarshaller();
+            ev = (EntityVerifier) um.unmarshal(config);
+        } catch (JAXBException ex) {
+            System.err.println("Error loading XML for entity verifier: " + ex.getMessage()); //$NON-NLS-1$
+            ex.printStackTrace();
+            
+            ev = new EntityVerifier();
         }
+        
+        return ev;
     }
 
     public boolean checkEntity(Entity entity, String fileString, boolean verbose) {
@@ -170,6 +177,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
     // specific files were passed to main() as arguments (which implies
     // all units that are loaded when MegaMek normally runs should be
     // checked).
+    @Override
     public void doneLoading() {
         MechSummary[] ms = mechSummaryCache.getAllMechs();
         System.out.println("\n");
@@ -216,22 +224,6 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         System.out.println("\t Failed Tanks: " + failedTank);
         System.out.println("\t Failed Aeros: " + failedAero);
         System.out.println("\t Failed BA: " + failedBA);
-    }
-
-    private void readOptions(ParsedXML node) {
-        for (Enumeration<?> e = node.elements(); e.hasMoreElements();) {
-            ParsedXML child = (ParsedXML) e.nextElement();
-            if (child.getName().equals(BASE_TANK_NODE)) {
-                tankOption.readXMLOptions(child);
-            } else if (child.getName().equals(BASE_MECH_NODE)) {
-                mechOption.readXMLOptions(child);
-            } else if (child.getName().equals(BASE_AERO_NODE)) {
-                aeroOption.readXMLOptions(child);
-            } else if (child.getName().equals(BASE_BA_NODE)) {
-                baOption.readXMLOptions(child);
-            }
-            
-        }
     }
 
     public static void main(String[] args) {
@@ -289,11 +281,11 @@ public class EntityVerifier implements MechSummaryCache.Listener {
                 System.err.println("Exception: " + e.getMessage());
                 return;
             }
-            new EntityVerifier(config).checkEntity(entity, f.toString(), true);
+            EntityVerifier.getInstance(config).checkEntity(entity, f.toString(), true);
         } else {
             // No specific file passed, so have MegaMek load all the mechs it
             // normally would, then verify all of them.
-            EntityVerifier ev = new EntityVerifier(config);
+            EntityVerifier ev = EntityVerifier.getInstance(config);
             ev.loadingVerbosity = verbose;
             ev.failsOnly = failsOnly;
             mechSummaryCache = MechSummaryCache.getInstance(ignoreUnofficial);

@@ -188,7 +188,7 @@ public class MechSummaryCache {
         Vector<MechSummary> vMechs = new Vector<MechSummary>();
         Set<String> sKnownFiles = new HashSet<String>();
         long lLastCheck = 0;
-        entityVerifier = new EntityVerifier(new File(getUnitCacheDir(),
+        entityVerifier = EntityVerifier.getInstance(new File(getUnitCacheDir(),
                 EntityVerifier.CONFIG_FILENAME));
         hFailedFiles = new HashMap<String, String>();
 

@@ -94,7 +94,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JCheckBoxMenuItem toggleFovHighlight;
     private JCheckBoxMenuItem toggleFovDarken;
     private JCheckBoxMenuItem toggleFiringSolutions;
-    private JMenuItem viewMovementEnvelope;
+    private JCheckBoxMenuItem viewMovementEnvelope;
     private JMenuItem viewMovModEnvelope;
     private JMenuItem viewLOSSetting;
     private JMenuItem viewUnitOverview;
@@ -401,8 +401,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         toggleFiringSolutions.addActionListener(this);
         toggleFiringSolutions.setActionCommand(ClientGUI.VIEW_TOGGLE_FIRING_SOLUTIONS);
         menu.add(toggleFiringSolutions);
-        viewMovementEnvelope = new JMenuItem(Messages
+        viewMovementEnvelope = new JCheckBoxMenuItem(Messages
                 .getString("CommonMenuBar.movementEnvelope")); //$NON-NLS-1$
+        viewMovementEnvelope.setState(GUIPreferences.getInstance().getBoolean("MoveEnvelope")); //$NON-NLS-1$
         viewMovementEnvelope.addActionListener(this);
         viewMovementEnvelope.setActionCommand(ClientGUI.VIEW_MOVE_ENV);
         viewMovementEnvelope.setMnemonic(KeyEvent.VK_Q);

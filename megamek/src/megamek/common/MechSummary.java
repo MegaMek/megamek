@@ -67,6 +67,8 @@ public class MechSummary implements Serializable {
     /**
      * For BattleArmor, we want to know the weight of an individual suit.
      */
+    private float m_TWsuitTons;
+    private float m_TOsuitTons;
     private float suitWeight;
     
 
@@ -197,6 +199,14 @@ public class MechSummary implements Serializable {
         return (m_nTons);
     }
 
+    public float getTOweight() {
+        return (m_TOsuitTons);
+    }
+
+    public float getTWweight() {
+        return (m_TWsuitTons);
+    }
+
     public int getBV() {
         return (m_nBV);
     }
@@ -255,6 +265,14 @@ public class MechSummary implements Serializable {
 
     public void setTons(float m_nTons) {
         this.m_nTons = m_nTons;
+    }
+
+    public void setTOweight(float m_TOsuitTons) {
+        this.m_TOsuitTons = m_TOsuitTons;
+    }
+
+    public void setTWweight(float m_TWsuitTons) {
+        this.m_TWsuitTons = m_TWsuitTons;
     }
 
     public void setCost(long m_nCost) {

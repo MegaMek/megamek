@@ -15,7 +15,9 @@
 package megamek.common;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -35,8 +37,8 @@ public final class TroopSpace implements Transporter {
     /**
      * The troops being carried.
      */
-    /* package */Vector<Integer> troops = new Vector<Integer>();
-
+    Map<Integer, Float> troops = new HashMap<>();
+    
     /**
      * The total amount of space available for troops.
      */
@@ -122,7 +124,8 @@ public final class TroopSpace implements Transporter {
         currentSpace -= unit.getWeight();
 
         // Add the unit to our list of troops.
-        troops.addElement(unit.getId());
+        troops.put(unit.getId(), unit.getWeight());
+
     }
 
     /**
@@ -135,9 +138,11 @@ public final class TroopSpace implements Transporter {
      */
     public Vector<Entity> getLoadedUnits() {
         Vector<Entity> loaded = new Vector<Entity>();
-        for (int id : troops) {
-            loaded.add(game.getEntity(id));
+        for (Map.Entry<Integer,Float> entry : troops.entrySet()) {
+            int key = entry.getKey();
+            loaded.add(game.getEntity(key));
         }
+
         return loaded;
     }
 
@@ -151,11 +156,16 @@ public final class TroopSpace implements Transporter {
      */
     public boolean unload(Entity unit) {
         // Remove the unit if we are carrying it.
-        boolean retval = troops.removeElement(unit.getId());
+        boolean retval = false;
+        float unloadWeight = 0;
+        if (unit != null) {
+            unloadWeight = troops.get(unit.getId());
+        }
 
         // If we removed it, restore our space.
-        if (retval) {
-            currentSpace += unit.getWeight();
+        if (troops.remove(unit.getId()) != null) {
+            retval = true;
+            currentSpace += unloadWeight;
         }
 
         // Return our status
@@ -231,7 +241,7 @@ public final class TroopSpace implements Transporter {
     }
     
     public void resetTransporter() {
-        troops = new Vector<Integer>();
+        troops = new HashMap<>();
         currentSpace = totalSpace;
     }
     

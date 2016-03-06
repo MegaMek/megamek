@@ -1268,6 +1268,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // Map editor? No shadows
         if (game.getPhase() == IGame.Phase.PHASE_UNKNOWN) return;
         
+ 
+
         // the shadowmap needs to be painted as if scale == 1
         // therefore some of the methods of boardview1 cannot be used
         int width = game.getBoard().getWidth() * HEX_WC + (int) (HEX_W / 4);
@@ -5767,5 +5769,25 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         
         repaint();
     }
+    
+    /** Displays a dialog and changes the theme of all 
+     * board hexes to the user-entered theme string.
+     */
+    public void changeTheme() {
+        if (game == null) return;
+        IBoard board = game.getBoard();
+        if (board.inSpace()) return;
+
+        String newTheme  = (String)JOptionPane.showInputDialog(
+                "Enter the desired theme: ", "");
+        if (newTheme == null) return;
+
+        for (Coords c: allBoardHexes()) {
+            IHex hex = board.getHex(c);
+            hex.setTheme(newTheme);
+            board.setHex(c, hex);
+        }
+    }
+
     
 }

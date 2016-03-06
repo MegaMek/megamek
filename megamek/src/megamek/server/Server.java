@@ -385,7 +385,7 @@ public class Server implements Runnable {
         return vPhaseReport;
     }
 
-    private MapSettings mapSettings = new MapSettings();
+    private MapSettings mapSettings = MapSettings.getInstance();
 
     // commands
     private Hashtable<String, ServerCommand> commandsHash = new Hashtable<String, ServerCommand>();
@@ -27996,7 +27996,7 @@ public class Server implements Runnable {
 
             // Verify the entity's design
             if (Server.entityVerifier == null) {
-                Server.entityVerifier = new EntityVerifier(new File(
+                Server.entityVerifier = EntityVerifier.getInstance(new File(
                         Configuration.unitsDir(),
                         EntityVerifier.CONFIG_FILENAME));
             }

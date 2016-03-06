@@ -27,7 +27,7 @@ package megamek.common.loaders;
  * @author Ben
  * @version
  */
-public class EntityLoadingException extends java.lang.Exception {
+public class EntityLoadingException extends Exception {
 
     /**
      * 
@@ -48,5 +48,16 @@ public class EntityLoadingException extends java.lang.Exception {
      */
     public EntityLoadingException(String msg) {
         super(msg);
+    }
+
+    /**
+     * Constructs a new exception with the specified detail message and
+     * cause.
+     * 
+     * @param message the detail message
+     * @param cause the cause
+     */
+    public EntityLoadingException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 }

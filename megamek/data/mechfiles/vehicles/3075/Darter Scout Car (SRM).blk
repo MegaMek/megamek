@@ -31,7 +31,7 @@ Darter Scout Car
 SRM 4
 </Front Equipment>
 <transporters>
-TroopSpace:.5
+cargobay:1.5:1
 </transporters>
 <Body Equipment>
 IS Ammo SRM-4

@@ -56,7 +56,8 @@ Tracked
 IS LB 10-X AC Ammo
 IS LB 10-X AC Ammo
 IS Streak SRM 2 Ammo
-IS Machine Gun Ammo - Half
+IS Streak SRM 2 Ammo
+IS Machine Gun Ammo
 </Body Equipment>
 
 <Front Equipment>
@@ -74,6 +75,7 @@ ISStreakSRM2
 </Rear Equipment>
 
 <Turret Equipment>
+Machine Gun
 Machine Gun
 ISLBXAC10
 </Turret Equipment>

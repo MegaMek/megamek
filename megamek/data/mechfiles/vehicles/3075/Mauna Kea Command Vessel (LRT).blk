@@ -40,10 +40,6 @@ IS Level 2
 Naval
 </motion_type>
 
-<transporters>
-TroopSpace: 9
-</transporters>
-
 <engine_type>
 1
 </engine_type>
@@ -65,14 +61,17 @@ TroopSpace: 9
 </armor>
 
 <Body Equipment>
-IS Ammo LRTorpedo-15
+IS Ammo LRM-15
+IS Ammo LRM-15
 IS Ammo LRTorpedo-15
 IS Machine Gun Ammo - Half
 IS Ammo AC/10
 IS Ammo AC/10
+CommsGear:1
 </Body Equipment>
 
 <Front Equipment>
+LRT 15
 </Front Equipment>
 
 <Right Equipment>
@@ -90,8 +89,8 @@ Machine Gun
 </Rear Equipment>
 
 <Turret Equipment>
+LRM 15
 Autocannon/10
-LRT 15
 </Turret Equipment>
 
 <armor_type>

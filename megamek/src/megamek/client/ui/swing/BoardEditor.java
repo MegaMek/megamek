@@ -129,7 +129,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     private JButton butMiniMap;
     private JDialog minimapW;
     private MiniMap minimap;
-    private MapSettings mapSettings = new MapSettings();
+    private MapSettings mapSettings = MapSettings.getInstance();
     private JButton butExpandMap;
 
     Coords lastClicked;

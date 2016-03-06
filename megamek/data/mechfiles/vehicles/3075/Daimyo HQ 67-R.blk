@@ -66,6 +66,7 @@ TroopSpace: 3
 
 <Body Equipment>
 Communications Equipment (7 ton)
+ISPlasmaRifleAmmo
 </Body Equipment>
 
 <Front Equipment>
@@ -84,7 +85,7 @@ RL10
 </Rear Equipment>
 
 <Turret Equipment>
-ISSNPPC
+ISPlasmaRifle
 </Turret Equipment>
 
 <armor_type>

@@ -3396,9 +3396,11 @@ public class Server implements Runnable {
         if (!game.getOptions().booleanOption("random_basements")) {
             newBoard.setRandomBasementsOff();
         }
-        BoardUtilities.addWeatherConditions(newBoard, game
-                .getPlanetaryConditions().getWeather(), game
-                                                    .getPlanetaryConditions().getWindStrength());
+        if (game.getPlanetaryConditions().isTerrainAffected()) {
+            BoardUtilities.addWeatherConditions(newBoard, game
+                    .getPlanetaryConditions().getWeather(), game
+                    .getPlanetaryConditions().getWindStrength());
+        }
         game.setBoard(newBoard);
     }
 

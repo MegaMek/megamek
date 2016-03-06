@@ -5532,6 +5532,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         repaint();
         return drawIsometric;
     }
+    
+    public void updateEntityLabels() {
+        for (Entity e: game.getEntitiesVector()) {
+            e.generateShortName();
+        }
+        for (EntitySprite eS: entitySprites) {
+            eS.prepare();
+        }
+        repaint();
+    }
 
     BufferedImage createShadowMask(Image image) {
         int hashCode = image.hashCode();

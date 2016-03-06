@@ -5780,7 +5780,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         setShouldIgnoreKeys(true);
         String newTheme  = (String)JOptionPane.showInputDialog(
-                "Enter the desired theme: ", "");
+                "Enter the desired theme (e.g. grass):", "");
         setShouldIgnoreKeys(false);
         if (newTheme == null) return;
 

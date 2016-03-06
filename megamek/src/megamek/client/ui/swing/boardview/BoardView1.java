@@ -1268,8 +1268,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // Map editor? No shadows
         if (game.getPhase() == IGame.Phase.PHASE_UNKNOWN) return;
         
- 
-
         // the shadowmap needs to be painted as if scale == 1
         // therefore some of the methods of boardview1 cannot be used
         int width = game.getBoard().getWidth() * HEX_WC + (int) (HEX_W / 4);

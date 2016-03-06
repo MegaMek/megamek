@@ -5778,8 +5778,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         IBoard board = game.getBoard();
         if (board.inSpace()) return;
 
+        setShouldIgnoreKeys(true);
         String newTheme  = (String)JOptionPane.showInputDialog(
                 "Enter the desired theme: ", "");
+        setShouldIgnoreKeys(false);
         if (newTheme == null) return;
 
         for (Coords c: allBoardHexes()) {

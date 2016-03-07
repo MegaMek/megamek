@@ -98,6 +98,9 @@
         <jar basedir="${builddir}" jarfile="${basedir}/${jarfile}">
             <fileset dir="${propdir}" includes="**/*.properties"/>
             <fileset dir="${srcdir}" includes="**/*.properties"/>
+            <exclude name="**/testreport/**"/>
+            <exclude name="**/teststaging/**"/>
+            <exclude name="**/unittests/**"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Class-Path" value=". ${jarclasspath}"/>

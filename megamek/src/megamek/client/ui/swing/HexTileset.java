@@ -311,7 +311,7 @@ public class HexTileset {
     }
     
     public Set<String> getThemes() {
-        return themes;
+        return new HashSet<String>(themes);
     }
 
     /**

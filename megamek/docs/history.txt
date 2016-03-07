@@ -7,6 +7,7 @@ v0.41.16-git
 + PR #45: SPA organization
 + Issue #51: Missing i18n entry: BoardView1. (for crew stunned)
 + Data: New Sprites and Unit Fixes (Thanks Greekfire)
++ Remove classpath entries for TinyXML (Also fixes #67)
 
 
 v0.41.15 (2016-02-21 14:15 UTC)

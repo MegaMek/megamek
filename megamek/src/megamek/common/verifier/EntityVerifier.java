@@ -16,14 +16,15 @@
 package megamek.common.verifier;
 
 import java.io.File;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Configuration;

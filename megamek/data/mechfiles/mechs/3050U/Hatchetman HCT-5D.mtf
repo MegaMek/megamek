@@ -9,15 +9,15 @@ Source:TRO 3050 - Civil War
 Rules Level:2
 
 Mass:45
-Engine:180 XL Engine
-Structure:Standard
+Engine:180 XL Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Double
 Walk MP:4
 Jump MP:4
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:10
 RA Armor:10
 LT Armor:12
@@ -31,20 +31,20 @@ RTR Armor:4
 RTC Armor:5
 
 Weapons:2
-1 ISERMediumLaser, Right Torso
-1 ISUltraAC10, Left Torso, Ammo:20
+Ultra AC/10, Right Torso
+ER Medium Laser, Left Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
 -Empty-
 -Empty-
 
@@ -66,29 +66,29 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10
-ISUltraAC10 Ammo
-ISUltraAC10 Ammo
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISERMediumLaser
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+ISTargeting Computer
+-Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISTargeting Computer
-ISERMediumLaser
--Empty-
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+ISUltraAC10
+IS Ultra AC/10 Ammo
+IS Ultra AC/10 Ammo
 
 Center Torso:
 Fusion Engine
@@ -145,4 +145,5 @@ Jump Jet
 -Empty-
 -Empty-
 -Empty-
+
 

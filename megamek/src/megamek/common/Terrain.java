@@ -329,6 +329,12 @@ public class Terrain implements ITerrain, Serializable {
             }
             return 0;
         case Terrains.RUBBLE:
+            if (level == 6) {
+                if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                    return 1;
+                }
+                return 2;
+            }
             if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
                 return 0;
             }

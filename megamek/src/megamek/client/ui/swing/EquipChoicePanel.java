@@ -233,7 +233,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             // We need to determine how much weight is free, so the user can
             //  pick legal combinations of manipulators
             BattleArmor ba = (BattleArmor) entity;
-            EntityVerifier verifier = new EntityVerifier(
+            EntityVerifier verifier = EntityVerifier.getInstance(
                     new File(Configuration.unitsDir(),
                             EntityVerifier.CONFIG_FILENAME));
             TestBattleArmor testBA = new TestBattleArmor(ba, 

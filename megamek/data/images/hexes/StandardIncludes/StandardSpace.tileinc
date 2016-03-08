@@ -1,0 +1,3 @@
+# Standard MM space background with hex border
+
+base 0 "space:1" "" "boring/space.gif"

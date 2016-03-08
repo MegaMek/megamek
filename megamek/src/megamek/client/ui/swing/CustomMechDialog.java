@@ -1223,7 +1223,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
         
         // Check validity of unit after customization
-        EntityVerifier verifier = new EntityVerifier(
+        EntityVerifier verifier = EntityVerifier.getInstance(
                 new File(Configuration.unitsDir(),
                         EntityVerifier.CONFIG_FILENAME));
         TestEntity testEntity = null;

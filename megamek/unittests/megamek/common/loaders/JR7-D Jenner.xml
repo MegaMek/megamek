@@ -1,0 +1,233 @@
+<mech>
+  <creator>
+    <name>The Drawing Board</name>
+    <version>2</version>
+  </creator>
+  <basics>
+    <name>Jenner</name>
+    <model>JR7-D</model>
+    <technology level="1">Inner Sphere</technology>
+    <tonnage>35</tonnage>
+    <type>Biped</type>
+    <cost>3198375</cost>
+    <bv>0</bv>
+    <speed>
+      <walk>7</walk>
+      <run>11</run>
+      <jump type="Standard" tonnage="2.5">5</jump>
+    </speed>
+    <structural>
+      <engine tonnage="12" rating="245">Fusion</engine>
+      <gyro tonnage="3">Standard</gyro>
+      <cockpit tonnage="3">Standard</cockpit>
+      <targsys tonnage="0">Standard</targsys>
+      <heatsinks tonnage="0" count="10">Single</heatsinks>
+      <armor tonnage="4" points="64">Standard</armor>
+      <internal tonnage="3.5" points="85">Standard</internal>
+    </structural>
+  </basics>
+  <itemdefs>
+    <itemdata>
+      <refindex>0</refindex>
+      <name>Medium Laser</name>
+      <techbase>Inner Sphere</techbase>
+      <techlevel>1</techlevel>
+      <type>Energy</type>
+      <cost>40000</cost>
+      <bv>46</bv>
+      <defensivebv>False</defensivebv>
+      <tonnage>1</tonnage>
+      <heat>3</heat>
+      <tonnage>1</tonnage>
+      <crits>1</crits>
+      <spreadablecrits>no</spreadablecrits>
+      <rangedata>
+        <minimum>0</minimum>
+        <short>3</short>
+        <medium>6</medium>
+        <long>9</long>
+        <extreme>12</extreme>
+        <rangetype>Hex</rangetype>
+      </rangedata>
+      <damagedata>
+        <damage>5</damage>
+      </damagedata>
+      <special>
+        <streak>False</streak>
+        <rac>False</rac>
+        <ultra>False</ultra>
+        <explosiveammo>False</explosiveammo>
+      </special>
+    </itemdata>
+    <itemdata>
+      <refindex>1</refindex>
+      <name>SRM 4</name>
+      <techbase>Inner Sphere</techbase>
+      <techlevel>1</techlevel>
+      <type>Missile</type>
+      <cost>60000</cost>
+      <bv>39</bv>
+      <defensivebv>False</defensivebv>
+      <tonnage>2</tonnage>
+      <heat>3</heat>
+      <tonnage>2</tonnage>
+      <crits>1</crits>
+      <spreadablecrits>no</spreadablecrits>
+      <rangedata>
+        <minimum>0</minimum>
+        <short>3</short>
+        <medium>6</medium>
+        <long>9</long>
+        <extreme>12</extreme>
+        <rangetype>Hex</rangetype>
+      </rangedata>
+      <damagedata>
+        <damage>2</damage>
+        <damagetype>missile</damagetype>
+        <maxdamage>8</maxdamage>
+        <avedamage>8</avedamage>
+      </damagedata>
+      <special>
+        <streak>False</streak>
+        <rac>False</rac>
+        <ultra>False</ultra>
+        <explosiveammo>False</explosiveammo>
+        <artemislaunchertype>0</artemislaunchertype>
+      </special>
+    </itemdata>
+    <itemdata>
+      <refindex>2</refindex>
+      <name>SRM 4 Ammo</name>
+      <techbase>Inner Sphere</techbase>
+      <techlevel>1</techlevel>
+      <type>Ammunition</type>
+      <cost>27000</cost>
+      <bv>5</bv>
+      <defensivebv>False</defensivebv>
+      <tonnage>1</tonnage>
+      <tonnage>1</tonnage>
+      <crits>1</crits>
+      <spreadablecrits>no</spreadablecrits>
+      <rangedata>
+        <minimum>0</minimum>
+        <short>0</short>
+        <medium>0</medium>
+        <long>0</long>
+        <rangetype>Hex</rangetype>
+      </rangedata>
+      <damagedata>
+        <ammoshortname>SRM 4</ammoshortname>
+      </damagedata>
+      <special>
+        <streak>False</streak>
+        <rac>False</rac>
+        <ultra>False</ultra>
+        <explosiveammo>True</explosiveammo>
+      </special>
+    </itemdata>
+  </itemdefs>
+  <mounteditems>
+    <mounteditem itemindex="0" weaponrefindex="0" location="LA" rearmounted="False" isspread="False" turretmounted="False" baseomniitem="False" shots="-1">Medium Laser</mounteditem>
+    <mounteditem itemindex="1" weaponrefindex="0" location="LA" rearmounted="False" isspread="False" turretmounted="False" baseomniitem="False" shots="-1">Medium Laser</mounteditem>
+    <mounteditem itemindex="2" weaponrefindex="0" location="RA" rearmounted="False" isspread="False" turretmounted="False" baseomniitem="False" shots="-1">Medium Laser</mounteditem>
+    <mounteditem itemindex="3" weaponrefindex="0" location="RA" rearmounted="False" isspread="False" turretmounted="False" baseomniitem="False" shots="-1">Medium Laser</mounteditem>
+    <mounteditem itemindex="4" weaponrefindex="1" location="CT" rearmounted="False" isspread="False" turretmounted="False" baseomniitem="False" shots="25">SRM 4</mounteditem>
+    <mounteditem itemindex="5" weaponrefindex="2" location="RT" rearmounted="False" isspread="False" turretmounted="False" baseomniitem="False" shots="25">SRM 4 Ammo</mounteditem>
+  </mounteditems>
+  <critdefs>
+    <location name="LA" maxcrits="12" armor="4" reararmor="0" internal="6">
+      <criticalslot slotindex="0" armored="False">Shoulder</criticalslot>
+      <criticalslot slotindex="1" armored="False">Upper Arm Actuator</criticalslot>
+      <criticalslot slotindex="2" itemindex="0" armored="False" turretmounted="False">Medium Laser</criticalslot>
+      <criticalslot slotindex="3" itemindex="1" armored="False" turretmounted="False">Medium Laser</criticalslot>
+      <criticalslot slotindex="4">Empty</criticalslot>
+      <criticalslot slotindex="5">Empty</criticalslot>
+      <criticalslot slotindex="6">Empty</criticalslot>
+      <criticalslot slotindex="7">Empty</criticalslot>
+      <criticalslot slotindex="8">Empty</criticalslot>
+      <criticalslot slotindex="9">Empty</criticalslot>
+      <criticalslot slotindex="10">Empty</criticalslot>
+      <criticalslot slotindex="11">Empty</criticalslot>
+    </location>
+    <location name="LT" maxcrits="12" armor="8" reararmor="4" internal="8">
+      <criticalslot slotindex="0" armored="False">Jump Jet</criticalslot>
+      <criticalslot slotindex="1" armored="False">Jump Jet</criticalslot>
+      <criticalslot slotindex="2">Empty</criticalslot>
+      <criticalslot slotindex="3">Empty</criticalslot>
+      <criticalslot slotindex="4">Empty</criticalslot>
+      <criticalslot slotindex="5">Empty</criticalslot>
+      <criticalslot slotindex="6">Empty</criticalslot>
+      <criticalslot slotindex="7">Empty</criticalslot>
+      <criticalslot slotindex="8">Empty</criticalslot>
+      <criticalslot slotindex="9">Empty</criticalslot>
+      <criticalslot slotindex="10">Empty</criticalslot>
+      <criticalslot slotindex="11">Empty</criticalslot>
+    </location>
+    <location name="LL" maxcrits="6" armor="6" reararmor="0" internal="8">
+      <criticalslot slotindex="0" armored="False">Hip</criticalslot>
+      <criticalslot slotindex="1" armored="False">Upper Leg Actuator</criticalslot>
+      <criticalslot slotindex="2" armored="False">Lower Leg Actuator</criticalslot>
+      <criticalslot slotindex="3" armored="False">Foot Actuator</criticalslot>
+      <criticalslot slotindex="4">Empty</criticalslot>
+      <criticalslot slotindex="5">Empty</criticalslot>
+    </location>
+    <location name="RL" maxcrits="6" armor="6" reararmor="0" internal="8">
+      <criticalslot slotindex="0" armored="False">Hip</criticalslot>
+      <criticalslot slotindex="1" armored="False">Upper Leg Actuator</criticalslot>
+      <criticalslot slotindex="2" armored="False">Lower Leg Actuator</criticalslot>
+      <criticalslot slotindex="3" armored="False">Foot Actuator</criticalslot>
+      <criticalslot slotindex="4">Empty</criticalslot>
+      <criticalslot slotindex="5">Empty</criticalslot>
+    </location>
+    <location name="RT" maxcrits="12" armor="8" reararmor="4" internal="8">
+      <criticalslot slotindex="0" armored="False">Jump Jet</criticalslot>
+      <criticalslot slotindex="1" armored="False">Jump Jet</criticalslot>
+      <criticalslot slotindex="2" itemindex="5" armored="False" turretmounted="False">SRM 4 Ammo</criticalslot>
+      <criticalslot slotindex="3">Empty</criticalslot>
+      <criticalslot slotindex="4">Empty</criticalslot>
+      <criticalslot slotindex="5">Empty</criticalslot>
+      <criticalslot slotindex="6">Empty</criticalslot>
+      <criticalslot slotindex="7">Empty</criticalslot>
+      <criticalslot slotindex="8">Empty</criticalslot>
+      <criticalslot slotindex="9">Empty</criticalslot>
+      <criticalslot slotindex="10">Empty</criticalslot>
+      <criticalslot slotindex="11">Empty</criticalslot>
+    </location>
+    <location name="RA" maxcrits="12" armor="4" reararmor="0" internal="6">
+      <criticalslot slotindex="0" armored="False">Shoulder</criticalslot>
+      <criticalslot slotindex="1" armored="False">Upper Arm Actuator</criticalslot>
+      <criticalslot slotindex="2" itemindex="2" armored="False" turretmounted="False">Medium Laser</criticalslot>
+      <criticalslot slotindex="3" itemindex="3" armored="False" turretmounted="False">Medium Laser</criticalslot>
+      <criticalslot slotindex="4">Empty</criticalslot>
+      <criticalslot slotindex="5">Empty</criticalslot>
+      <criticalslot slotindex="6">Empty</criticalslot>
+      <criticalslot slotindex="7">Empty</criticalslot>
+      <criticalslot slotindex="8">Empty</criticalslot>
+      <criticalslot slotindex="9">Empty</criticalslot>
+      <criticalslot slotindex="10">Empty</criticalslot>
+      <criticalslot slotindex="11">Empty</criticalslot>
+    </location>
+    <location name="CT" maxcrits="12" armor="10" reararmor="3" internal="11">
+      <criticalslot slotindex="0" armored="False">Engine</criticalslot>
+      <criticalslot slotindex="1" armored="False">Engine</criticalslot>
+      <criticalslot slotindex="2" armored="False">Engine</criticalslot>
+      <criticalslot slotindex="3" armored="False">Gyro</criticalslot>
+      <criticalslot slotindex="4" armored="False">Gyro</criticalslot>
+      <criticalslot slotindex="5" armored="False">Gyro</criticalslot>
+      <criticalslot slotindex="6" armored="False">Gyro</criticalslot>
+      <criticalslot slotindex="7" armored="False">Engine</criticalslot>
+      <criticalslot slotindex="8" armored="False">Engine</criticalslot>
+      <criticalslot slotindex="9" armored="False">Engine</criticalslot>
+      <criticalslot slotindex="10" armored="False">Jump Jet</criticalslot>
+      <criticalslot slotindex="11" itemindex="4" armored="False" turretmounted="False">SRM 4</criticalslot>
+    </location>
+    <location name="H" maxcrits="6" armor="7" reararmor="0" internal="3">
+      <criticalslot slotindex="0" armored="False">Life Support</criticalslot>
+      <criticalslot slotindex="1" armored="False">Sensors</criticalslot>
+      <criticalslot slotindex="2" armored="False">Cockpit</criticalslot>
+      <criticalslot slotindex="3" armored="False">Heat Sink</criticalslot>
+      <criticalslot slotindex="4" armored="False">Sensors</criticalslot>
+      <criticalslot slotindex="5" armored="False">Life Support</criticalslot>
+    </location>
+  </critdefs>
+</mech>

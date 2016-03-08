@@ -389,7 +389,7 @@ public class Aero extends Entity {
     public int getCurrentVelocity() {
         // if using advanced movement then I just want to sum up
         // the different vectors
-        if (game.useVectorMove()) {
+        if ((game != null) && game.useVectorMove()) {
             return getVelocity();
         }
         return currentVelocity;
@@ -3847,7 +3847,7 @@ public class Aero extends Entity {
 
     @Override
     public int getElevation() {
-        if (game.getBoard().inSpace()) {
+        if ((game != null) && game.getBoard().inSpace()) {
             return 0;
         }
         // Altitude is not the same as elevation. If an aero is at 0 altitude,

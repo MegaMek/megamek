@@ -54,8 +54,10 @@ Tracked
 
 <Body Equipment>
 IS Ammo SRM-6
+IS Ammo SRM-6
 IS Ammo AC/10
 IS Ammo AC/10
+IS Machine Gun Ammo - Half
 </Body Equipment>
 
 <Front Equipment>
@@ -72,6 +74,7 @@ SRM 6
 </Rear Equipment>
 
 <Turret Equipment>
+Machine Gun
 Autocannon/10
 </Turret Equipment>
 

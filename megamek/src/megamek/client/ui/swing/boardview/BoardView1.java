@@ -193,7 +193,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private static final float[] ZOOM_FACTORS = {0.30f, 0.41f, 0.50f, 0.60f,
                                                  0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f, 1.3f};
     
-    public static int [] allDirections = new int[] {0,1,2,3,4,5};
+    public static final int [] allDirections = {0,1,2,3,4,5};
     
     // Set to TRUE to draw hexes with isometric elevation.
     private boolean drawIsometric = GUIPreferences.getInstance()
@@ -1264,6 +1264,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // too much hassle currently; it works so beautifully
         IBoard board = game.getBoard();
         if (board == null) return;
+        if (board.inSpace()) return;
         if (boardSize == null) updateBoardSize();
         if (!isTileImagesLoaded()) return;
         // Map editor? No shadows
@@ -4512,13 +4513,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             final Entity en = e.getEntity();
             final GameOptions gopts = game.getOptions();
             GUIPreferences guip = GUIPreferences.getInstance();
-            
-                    
+
             updateEcmList();
-            if (e.getEntity().hasActiveECM()) {
-                // this might disrupt c3/c3i lines, so redraw all
-                redrawAllEntities();
-            }
+            redrawAllEntities();
             if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 refreshMoveVectors();
             }
@@ -4529,12 +4526,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         || !en.getOwner().isEnemyOf(localPlayer)
                         || en.hasSeenEntity(localPlayer)) {
                     addMovingUnit(en, mp);
-                } else {
-                    // Redraw entity, so sensor return is in the right location
-                    redrawEntity(en, e.getOldEntity());
                 }
-            } else {
-                redrawEntity(en, e.getOldEntity());
             }
         }
 
@@ -5541,6 +5533,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             sprite.updateBounds();
         repaint();
         return drawIsometric;
+    }
+    
+    public void updateEntityLabels() {
+        for (Entity e: game.getEntitiesVector()) {
+            e.generateShortName();
+        }
+        for (EntitySprite eS: entitySprites) {
+            eS.prepare();
+        }
+        repaint();
     }
 
     BufferedImage createShadowMask(Image image) {

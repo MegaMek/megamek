@@ -98,6 +98,9 @@
         <jar basedir="${builddir}" jarfile="${basedir}/${jarfile}">
             <fileset dir="${propdir}" includes="**/*.properties"/>
             <fileset dir="${srcdir}" includes="**/*.properties"/>
+            <exclude name="**/testreport/**"/>
+            <exclude name="**/teststaging/**"/>
+            <exclude name="**/unittests/**"/>
             <manifest>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Class-Path" value=". ${jarclasspath}"/>
@@ -152,6 +155,11 @@
         <javac srcdir="${dir.test.src}" destdir="${dir.build.test}" includeantruntime="false" debug="true">
             <classpath refid="classpath.compile-unittest"/>
         </javac>
+        <copy todir="${dir.build.test}">
+            <fileset dir="${dir.test.src}">
+                <include name="**/*.xml"/>
+            </fileset>
+        </copy>
     </target>
 
     <target depends="compileTests" name="unit.test" description="Execute unit tests">

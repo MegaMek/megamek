@@ -41,7 +41,7 @@ Wheeled
 </motion_type>
 
 <transporters>
-TroopSpace: 3
+TroopSpace: 4
 </transporters>
 
 <engine_type>

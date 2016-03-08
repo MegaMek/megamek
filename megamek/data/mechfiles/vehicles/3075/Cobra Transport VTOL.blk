@@ -41,7 +41,7 @@ VTOL
 </motion_type>
 
 <transporters>
-TroopSpace: 10
+cargobay:10:1
 </transporters>
 
 <engine_type>

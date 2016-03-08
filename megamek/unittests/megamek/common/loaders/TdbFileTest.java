@@ -32,17 +32,6 @@ import static org.junit.Assert.*;
  * @author nderwin
  */
 public class TdbFileTest {
-
-    private int[] locations = new int[] {
-        Mech.LOC_HEAD, 
-        Mech.LOC_CT, 
-        Mech.LOC_RT, 
-        Mech.LOC_LT, 
-        Mech.LOC_RARM, 
-        Mech.LOC_LARM, 
-        Mech.LOC_RLEG, 
-        Mech.LOC_LLEG
-    };
     
     @Test
     public void testJenner() throws Exception {

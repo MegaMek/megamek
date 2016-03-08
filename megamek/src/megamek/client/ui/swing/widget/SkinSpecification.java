@@ -35,6 +35,8 @@ public class SkinSpecification {
         PhaseDisplay("PhaseDisplayBorder"),
         PhaseDisplayDoneButton("PhaseDisplayDoneButton"),
         PhaseDisplayButton("PhaseDisplayButton"),
+        ChatLounge("ChatLoungeBorder"),
+        ChatLoungeDoneButton("ChatLoungeDoneButton"),
         UnitDisplay("UnitDisplay"),
         ;
 

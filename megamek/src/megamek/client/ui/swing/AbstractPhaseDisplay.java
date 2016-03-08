@@ -75,10 +75,15 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
     ImageIcon backgroundIcon = null;
 
     protected AbstractPhaseDisplay(ClientGUI cg) {
+        this(cg, SkinSpecification.UIComponents.PhaseDisplay.getComp(),
+                SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
+    }
+
+    protected AbstractPhaseDisplay(ClientGUI cg, String borderSkinComp,
+            String buttonSkinComp) {
         this.clientgui = cg;
-        SkinSpecification pdSkinSpec = SkinXMLHandler
-                .getSkin(SkinSpecification.UIComponents.PhaseDisplay.getComp());
-        
+        SkinSpecification pdSkinSpec = SkinXMLHandler.getSkin(borderSkinComp);
+
         try {
             if (pdSkinSpec.backgrounds.size() > 0){
                 File file = new File(Configuration.widgetsDir(), 
@@ -96,9 +101,8 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
             System.out.println(e.getMessage());
         }
         
-        setBorder(new MegamekBorder("PhaseDisplayBorder"));
-        butDone = new MegamekButton("",
-                SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
+        setBorder(new MegamekBorder(borderSkinComp));
+        butDone = new MegamekButton("",buttonSkinComp);
         butDone.setActionCommand("doneButton");
         if (clientgui != null) {
             butDone.addActionListener(new AbstractAction() {

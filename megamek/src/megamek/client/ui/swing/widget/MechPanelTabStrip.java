@@ -94,20 +94,33 @@ public class MechPanelTabStrip extends PicMap {
         if (mt.isErrorID(0)) {
             System.out.println("TabStrip: Could Not load Image."); //$NON-NLS-1$
         }
+
+        for (int i = 0; i < 6; i++) {
+            if (idleImage[i].getWidth(null) != activeImage[i].getWidth(null)) {
+                System.out.println("TabStrip Warning: idleImage and "
+                        + "activeImage do not match widths for image " + i);
+            }
+            if (idleImage[i].getHeight(null) != activeImage[i].getHeight(null)) {
+                System.out.println("TabStrip Warning: idleImage and "
+                        + "activeImage do not match heights for image " + i);
+            }
+        }
     }
 
     private void setAreas() {
-
         int stepX = 47;
 
-        tabs[0] = new PMPicPolygonalArea(firstTab, createImage(47, 18));
-        for (int i = 1; i < 5; i++) {
+        int width, height;
+        width = idleImage[0].getWidth(null);
+        height = idleImage[0].getHeight(null);
+        tabs[0] = new PMPicPolygonalArea(firstTab, createImage(width, height));
+        for (int i = 1; i <= 5; i++) {
+            width = idleImage[i].getWidth(null);
+            height = idleImage[i].getHeight(null);
             tabs[i] = new PMPicPolygonalArea(new Polygon(pointsX, pointsY, 6),
-                    createImage(47, 18));
+                    createImage(width, height));
         }
 
-        tabs[5] = new PMPicPolygonalArea(new Polygon(pointsX, pointsY, 6),
-                createImage(60, 18));
         for (int i = 0; i < 6; i++) {
             drawIdleImage(i);
             tabs[i].translate(i * stepX, 0);

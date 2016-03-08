@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import megamek.client.ui.ITilesetManager;
 import megamek.client.ui.swing.boardview.BoardView1;
@@ -264,6 +265,10 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
     public Image getNightFog() {
         return nightFog;
+    }
+    
+    public Set<String> getThemes() {
+        return hexTileset.getThemes();
     }
 
     /**

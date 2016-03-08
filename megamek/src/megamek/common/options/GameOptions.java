@@ -16,6 +16,7 @@ package megamek.common.options;
 
 import java.io.File;
 import java.util.Vector;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -26,6 +27,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.namespace.QName;
+
 import megamek.common.TechConstants;
 
 /**
@@ -446,7 +448,10 @@ public class GameOptions extends AbstractOptions {
             this.options = options;
         }
         
-        GameOptionsXML() {
+        /**
+         * Required for JAXB.
+         */
+        private GameOptionsXML() {
         }
 
         public Vector<IBasicOption> getOptions() {

@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -32,6 +33,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import megamek.common.BipedMech;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
@@ -479,7 +481,10 @@ public class TdbFile implements IMechLoader {
         @XmlElement(name = "version")
         String creatorVersion = "Unknown";
 
-        Creator() {
+        /**
+         * Required for JAXB.
+         */
+        private Creator() {
         }
     }
 
@@ -518,7 +523,10 @@ public class TdbFile implements IMechLoader {
         @XmlElement(name = "structural")
         Structure structure;
 
-        BasicInformation() {
+        /**
+         * Required for JAXB.
+         */
+        private BasicInformation() {
         }
 
     }
@@ -550,7 +558,10 @@ public class TdbFile implements IMechLoader {
         @XmlElement(name = "internal")
         String structureType;
 
-        Structure() {
+        /**
+         * Required for JAXB.
+         */
+        private Structure() {
         }
 
         boolean isClanTC() {
@@ -572,7 +583,10 @@ public class TdbFile implements IMechLoader {
         @XmlAttribute(name = "level")
         Integer rulesLevel;
 
-        Technology() {
+        /**
+         * Required for JAXB.
+         */
+        private Technology() {
         }
 
     }
@@ -586,7 +600,10 @@ public class TdbFile implements IMechLoader {
         @XmlAttribute
         String LAMTonnage;
 
-        MovementModifier() {
+        /**
+         * Required for JAXB.
+         */
+        private MovementModifier() {
         }
     }
 
@@ -602,7 +619,10 @@ public class TdbFile implements IMechLoader {
         @XmlAttribute
         Integer count;
 
-        HeatSink() {
+        /**
+         * Required for JAXB.
+         */
+        private HeatSink() {
         }
 
         public boolean isDouble() {
@@ -623,7 +643,10 @@ public class TdbFile implements IMechLoader {
         @XmlAttribute(name = "rating")
         Integer engineRating;
 
-        Engine() {
+        /**
+         * Required for JAXB.
+         */
+        private Engine() {
         }
 
     }
@@ -658,7 +681,10 @@ public class TdbFile implements IMechLoader {
         @XmlJavaTypeAdapter(LocationAdapter.class)
         Integer location;
 
-        MountedItem() {
+        /**
+         * Required for JAXB.
+         */
+        private MountedItem() {
         }
     }
     
@@ -671,7 +697,10 @@ public class TdbFile implements IMechLoader {
         @XmlElement(name = "location")
         List<Location> locations = new ArrayList<>();
 
-        CriticalDefinitions() {
+        /**
+         * Required for JAXB.
+         */
+        private CriticalDefinitions() {
         }
     }
 

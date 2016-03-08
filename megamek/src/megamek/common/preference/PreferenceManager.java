@@ -24,6 +24,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -36,6 +37,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+
 import megamek.common.Configuration;
 
 public class PreferenceManager {
@@ -168,7 +170,7 @@ public class PreferenceManager {
         /**
          * Required for JAXB.
          */
-        Settings() {
+        private Settings() {
         }
         
     }
@@ -196,18 +198,9 @@ public class PreferenceManager {
         /**
          * Required for JAXB.
          */
-        Store() {
+        private Store() {
         }
         
-        PreferenceStore getPreferenceStore() {
-            PreferenceStore store = new PreferenceStore();
-            
-            for (XmlProperty prop : preferences) {
-                store.putValue(prop.key, prop.value);
-            }
-            
-            return store;
-        }
     }
     
     /**
@@ -230,7 +223,7 @@ public class PreferenceManager {
         /**
          * Required for JAXB.
          */
-        XmlProperty() {
+        private XmlProperty() {
         }
     }
 }

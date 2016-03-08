@@ -886,6 +886,8 @@ public class BoardEditor extends JComponent implements ItemListener,
             showSettings();
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_TOGGLE_ISOMETRIC)) {
             bv.toggleIsometric();
+        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_CHANGE_THEME)) {
+            bv.changeTheme();
         }
     }
 

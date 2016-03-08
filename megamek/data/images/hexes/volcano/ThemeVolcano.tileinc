@@ -1,0 +1,11 @@
+# Standard Volcano Theme
+
+base 0 "" "volcano" "volcano/volcano_plains_0.gif"
+base 1 "" "volcano" "volcano/volcano_plains_1.gif"
+base 2 "" "volcano" "volcano/volcano_plains_2.gif"
+base 3 "" "volcano" "volcano/volcano_plains_3.gif"
+base 4 "" "volcano" "volcano/volcano_plains_4.gif"
+base -1 "" "volcano" "volcano/volcano_sinkhole_1.gif"
+base -2 "" "volcano" "volcano/volcano_sinkhole_2.gif"
+base -3 "" "volcano" "volcano/volcano_sinkhole_3.gif"
+base -4 "" "volcano" "volcano/volcano_sinkhole_4.gif"

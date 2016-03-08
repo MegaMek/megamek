@@ -134,6 +134,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         mechTileset.loadFromFile("mechset.txt"); //$NON-NLS-1$
         wreckTileset.loadFromFile("wreckset.txt"); //$NON-NLS-1$
         try {
+            hexTileset.incDepth = 0;
             hexTileset.loadFromFile(PreferenceManager.getClientPreferences().getMapTileset());
         } catch (Exception FileNotFoundException) {
             if ( !new File(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).exists() ){
@@ -149,6 +150,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         if (e.getName().equals(IClientPreferences.MAP_TILESET)) {
             HexTileset hts = new HexTileset();
             try {
+                hexTileset.incDepth = 0;
                 hts.loadFromFile((String) e.getNewValue());
                 hexTileset = hts;
                 boardview.clearHexImageCache();

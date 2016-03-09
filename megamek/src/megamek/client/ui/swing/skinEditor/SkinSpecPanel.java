@@ -253,13 +253,13 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            skinPanel.notifySkinChanges();
             if (e.getSource().equals(addButton)) {
                 addPathRow("", false, true);
                 for (JButton removeButton : removeButtons) {
                     removeButton.setEnabled(path.size() > 1);
                 }
                 layoutPanel();
+                skinPanel.notifySkinChanges();
                 skinPanel.signalValidate();
             } else {
                 // Did we press a remove button?
@@ -281,6 +281,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
                             removeButton.setEnabled(path.size() > 1);
                         }
                         layoutPanel();
+                        skinPanel.notifySkinChanges();
                         skinPanel.signalValidate();
                         // We're done
                         return;
@@ -290,6 +291,8 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
                 for (int i = 0; i < pathLbl.size(); i++) {
                     if (e.getSource().equals(pathLbl.get(i))) {
                         chooseFile(i);
+                        skinPanel.notifySkinChanges();
+                        skinPanel.signalValidate();
                         return;
                     }
                 }
@@ -356,13 +359,13 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
         public void actionPerformed(ActionEvent e) {
             boolean tiledChecked = false;
             boolean newValue = false;
-            skinPanel.notifySkinChanges();
             if (e.getSource().equals(addButton)) {
-                addPathRow("", tiled.get(0).isSelected(), true);
+                addPathRow("", false, true);
                 for (JButton removeButton : removeButtons) {
                     removeButton.setEnabled(path.size() > 1);
                 }
                 layoutPanel();
+                skinPanel.notifySkinChanges();
                 skinPanel.signalValidate();
                 return;
             }
@@ -376,6 +379,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
                 for (JCheckBox tileChk : tiled) {
                     tileChk.setSelected(newValue);
                 }
+                skinPanel.notifySkinChanges();
                 return;
             }
             super.actionPerformed(e);
@@ -505,7 +509,10 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
         for (int i = 0; i < background.path.size(); i++) {
             skinSpec.backgrounds.add(background.path.get(i).getText());
         }
-        skinSpec.tileBackground = background.tiled.get(0).isSelected();
+        skinSpec.tileBackground = false;
+        if (background.tiled.size() > 0) {
+            skinSpec.tileBackground = background.tiled.get(0).isSelected();
+        }
 
         // Font Color
         skinSpec.fontColors.clear();

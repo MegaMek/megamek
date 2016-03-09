@@ -159,6 +159,10 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
         int h = getHeight();
         int iW = backgroundIcon.getIconWidth();
         int iH = backgroundIcon.getIconHeight();
+        // If the image isn't loaded, prevent an infinite loop
+        if ((iW < 1) || (iH < 1)) {
+            return;
+        }
         for (int x = 0; x < w; x+=iW){
             for (int y = 0; y < h; y+=iH){
                 g.drawImage(backgroundIcon.getImage(), x, y, 

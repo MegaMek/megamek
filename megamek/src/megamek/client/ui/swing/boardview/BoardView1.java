@@ -1070,7 +1070,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 int h = (int) viewRect.getHeight();
                 int iW = bvBgIcon.getIconWidth();
                 int iH = bvBgIcon.getIconHeight();
-
+                // If the unit icon hasn't been loaded, prevent an infinite loop
+                if ((iW < 1) || (iH < 1)) {
+                    return;
+                }
                 for (int x = 0; x < w; x += iW) {
                     for (int y = 0; y < h; y += iH) {
                         bgGraph.drawImage(bvBgIcon.getImage(), x, y,
@@ -5288,8 +5291,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     || (scrollPaneBgBuffer.getWidth() != w)
                     || (scrollPaneBgBuffer.getHeight() != h)) {
                     scrollPaneBgBuffer = new BufferedImage(w, h,
-                                                           BufferedImage.TYPE_INT_RGB);
+                            BufferedImage.TYPE_INT_RGB);
                     Graphics bgGraph = scrollPaneBgBuffer.getGraphics();
+                    // If the unit icon hasn't been loaded, prevent an infinite loop
+                    if ((iW < 1) || (iH < 1)) {
+                        return;
+                    }
                     for (int x = 0; x < w; x += iW) {
                         for (int y = 0; y < h; y += iH) {
                             bgGraph.drawImage(scrollPaneBgIcon.getImage(), x, y,

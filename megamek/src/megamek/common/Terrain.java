@@ -35,7 +35,7 @@ public class Terrain implements ITerrain, Serializable {
      * types (ie, Light Woods vs Heavy woods). Not to be confused with Hex
      * levels.
      */
-    private int level;
+    private final int level;
     private boolean exitsSpecified = false;
     private int exits;
     private int terrainFactor;
@@ -244,6 +244,15 @@ public class Terrain implements ITerrain, Serializable {
                 (level == other.getLevel());
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + level;
+        result = prime * result + type;
+        return result;
+    }
+
     /**
      * Terrains are equal if their types and levels are equal. Does not pay
      * attention to exits.
@@ -252,11 +261,11 @@ public class Terrain implements ITerrain, Serializable {
     public boolean equals(Object object) {
         if (this == object) {
             return true;
-        } else if ((object == null) || !(object instanceof ITerrain)) {
+        } else if ((object == null) || !getClass().equals(object.getClass())) {
             return false;
         }
-        ITerrain other = (ITerrain) object;
-        return (type == other.getType()) && (level == other.getLevel());
+        Terrain other = (Terrain) object;
+        return (type == other.type) && (level == other.level);
     }
 
     @Override

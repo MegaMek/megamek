@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Represents a single type of terrain or condition in a hex. The type of a
@@ -246,11 +247,7 @@ public class Terrain implements ITerrain, Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + level;
-        result = prime * result + type;
-        return result;
+        return Objects.hash(level, type);
     }
 
     /**
@@ -261,11 +258,13 @@ public class Terrain implements ITerrain, Serializable {
     public boolean equals(Object object) {
         if (this == object) {
             return true;
-        } else if ((object == null) || !getClass().equals(object.getClass())) {
+        } else if ((object == null) || (getClass() != object.getClass())) {
             return false;
         }
-        Terrain other = (Terrain) object;
+        final Terrain other = (Terrain) object;
         return (type == other.type) && (level == other.level);
+        // Ints don't need special handling. For more complex objects use:
+        // return Objects.equals(level, other.level) && Objects.equals(type, other.type);
     }
 
     @Override

@@ -59,7 +59,6 @@ import java.awt.image.ImageProducer;
 import java.awt.image.Kernel;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -5783,8 +5782,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         Set<String> themes = tileManager.getThemes();
         if (themes.remove("")) themes.add("(No Theme)");
         themes.add("(Original Theme)");
-        Object[] oThemes = themes.toArray();
-        Arrays.sort(oThemes);
 
         setShouldIgnoreKeys(true);
         selectedTheme = (String)JOptionPane.showInputDialog(
@@ -5793,7 +5790,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 "Theme Selection",
                 JOptionPane.PLAIN_MESSAGE,
                 null,
-                oThemes,
+                themes.toArray(),
                 selectedTheme);
         setShouldIgnoreKeys(false);
         

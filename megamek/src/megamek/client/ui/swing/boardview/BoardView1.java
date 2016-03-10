@@ -1260,6 +1260,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // this seems to need a lot of additional copying (paint shadow on a clean map for this level alone; soften up; copy to real shadow
         // map with clipping area active; get new clean shadow map for next shadowed level; 
         // too much hassle currently; it works so beautifully
+        if (!GUIPreferences.getInstance().getShadowMap()) return;
+        
         IBoard board = game.getBoard();
         if (board == null) return;
         if (board.inSpace()) return;

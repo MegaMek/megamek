@@ -794,6 +794,9 @@ public class CommonSettingsDialog extends ClientDialog implements
         cs.setUseAverageSkills(useAverageSkills.isSelected());
         cs.setGenerateNames(generateNames.isSelected());
         cs.setShowUnitId(showUnitId.isSelected());
+        if ((clientgui != null) && (clientgui.bv != null)) {
+            clientgui.bv.updateEntityLabels();
+        }
 
         cs.setLocale(CommonSettingsDialog.LOCALE_CHOICES[displayLocale
                 .getSelectedIndex()]);

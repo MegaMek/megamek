@@ -3389,7 +3389,13 @@ public class MoveStep implements Serializable {
 
         // different rules if flying on the ground map
         if (en.game.getBoard().onGround() && (getElevation() > 0)) {
-            thresh *= 8;
+            if (en instanceof Dropship) {
+                thresh = vel * 8;
+            } else if (en instanceof SmallCraft) {
+                thresh = 8 + ((vel - 1) * 6);
+            } else {
+                thresh = 8 + ((vel - 1) * 4);
+            }
         }
 
         if (straight >= thresh) {

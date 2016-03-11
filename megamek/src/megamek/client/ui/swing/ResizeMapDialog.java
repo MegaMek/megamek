@@ -77,8 +77,8 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
     // General map settings.
     private final JLabel mapNorthLabel = new JLabel(Messages.getString("ExpandMapDialog.labelNorth"));
     private final JLabel mapEastLabel = new JLabel(Messages.getString("ExpandMapDialog.labelEast"));
-    private final JLabel mapSouthLabel = new JLabel(Messages.getString("ExpandMapDialog.labelWest"));
-    private final JLabel mapWestLabel = new JLabel(Messages.getString("ExpandMapDialog.labelSouth"));
+    private final JLabel mapSouthLabel = new JLabel(Messages.getString("ExpandMapDialog.labelSouth"));
+    private final JLabel mapWestLabel = new JLabel(Messages.getString("ExpandMapDialog.labelWest"));
     private final JLabel mapThemeLabel = new JLabel(Messages.getString("RandomMapDialog.labTheme"));
     private final VerifiableTextField mapNorthField = new VerifiableTextField(4);
     private final VerifiableTextField mapEastField = new VerifiableTextField(4);
@@ -356,7 +356,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
 
         // Load the file.  If there is an error, log it and return.
         try {
-            mapSettings.load(new FileInputStream(selectedFile));
+            mapSettings = MapSettings.getInstance(new FileInputStream(selectedFile));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return;
@@ -385,7 +385,7 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
 
         // Load the changed settings into the existing map settings object.
         try {
-            mapSettings.load(new FileInputStream(selectedFile));
+            mapSettings = MapSettings.getInstance(new FileInputStream(selectedFile));
         } catch (Exception ex) {
             ex.printStackTrace();
         }

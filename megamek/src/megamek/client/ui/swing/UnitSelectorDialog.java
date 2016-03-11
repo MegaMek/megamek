@@ -76,6 +76,7 @@ import megamek.common.MechView;
 import megamek.common.TechConstants;
 import megamek.common.UnitType;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.GameOptions;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 
@@ -851,116 +852,125 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
      */
     public class MechTableModel extends AbstractTableModel {
 
-            /**
+        /**
              *
              */
-            private static final long serialVersionUID = -5457068129532709857L;
-            private final static int COL_CHASSIS = 0;
-            private final static int COL_MODEL = 1;
-            private final static int COL_WEIGHT = 2;
-            private final static int COL_BV = 3;
-            private final static int COL_YEAR = 4;
-            private final static int COL_COST = 5;
-            private final static int COL_LEVEL = 6;
-            private final static int N_COL = 7;
+        private static final long serialVersionUID = -5457068129532709857L;
+        private final static int COL_CHASSIS = 0;
+        private final static int COL_MODEL = 1;
+        private final static int COL_WEIGHT = 2;
+        private final static int COL_BV = 3;
+        private final static int COL_YEAR = 4;
+        private final static int COL_COST = 5;
+        private final static int COL_LEVEL = 6;
+        private final static int N_COL = 7;
 
-            private MechSummary[] data = new MechSummary[0];
+        private MechSummary[] data = new MechSummary[0];
 
-            public int getRowCount() {
-                return data.length;
-            }
+        public int getRowCount() {
+            return data.length;
+        }
 
-            public int getColumnCount() {
-                return N_COL;
-            }
+        public int getColumnCount() {
+            return N_COL;
+        }
 
-            @Override
-            public String getColumnName(int column) {
-                switch(column) {
-                    case COL_MODEL:
-                        return "Model";
-                    case COL_CHASSIS:
-                        return "Chassis";
-                    case COL_WEIGHT:
-                        return "Weight";
-                    case COL_BV:
-                        return "BV";
-                    case COL_YEAR:
-                        return "Year";
-                    case COL_COST:
-                        return "Price";
-                    case COL_LEVEL:
-                         return "Level";
-                    default:
-                        return "?";
-                }
-            }
-
-            @Override
-            public Class<?> getColumnClass(int c) {
-                return getValueAt(0, c).getClass();
-            }
-
-            @Override
-            public boolean isCellEditable(int row, int col) {
-                return false;
-            }
-
-            public MechSummary getMechSummary(int i) {
-                return data[i];
-            }
-
-            //fill table with values
-            public void setData(MechSummary[] ms) {
-                data = ms;
-                fireTableDataChanged();
-            }
-
-            public Object getValueAt(int row, int col) {
-                if (data.length <= row) {
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case COL_MODEL:
+                    return "Model";
+                case COL_CHASSIS:
+                    return "Chassis";
+                case COL_WEIGHT:
+                    return "Weight";
+                case COL_BV:
+                    return "BV";
+                case COL_YEAR:
+                    return "Year";
+                case COL_COST:
+                    return "Price";
+                case COL_LEVEL:
+                    return "Level";
+                default:
                     return "?";
-                }
+            }
+        }
 
-                MechSummary ms = data[row];
-                if(col == COL_MODEL) {
-                    return ms.getModel();
-                }
-                if(col == COL_CHASSIS) {
-                    return ms.getChassis();
-                }
-                if(col == COL_WEIGHT) {
-                    return ms.getTons();
-                }
-                if (col == COL_BV) {
-                    if (null != client && client.getGame().getOptions()
-                            .booleanOption("geometric_mean_bv")) {
-                        if (null != client && client.getGame().getOptions()
-                                .booleanOption("reduced_overheat_modifier_bv")) {
-                            return ms.getRHGMBV();
-                        } else {
-                            return ms.getGMBV();
-                        }
-                    } else {
-                        if (null != client && client.getGame().getOptions()
-                                .booleanOption("reduced_overheat_modifier_bv")) {
-                            return ms.getRHBV();
-                        } else {
-                            return ms.getBV();
-                        }
-                    }
-                }
-                if(col == COL_YEAR) {
-                    return ms.getYear();
-                }
-                if(col == COL_COST) {
-                    //return NumberFormat.getInstance().format(ms.getCost());
-                    return ms.getCost();
-                }
-                if (col == COL_LEVEL) {
-                    return ms.getLevel();
-                }
+        @Override
+        public Class<?> getColumnClass(int c) {
+            return getValueAt(0, c).getClass();
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int col) {
+            return false;
+        }
+
+        public MechSummary getMechSummary(int i) {
+            return data[i];
+        }
+
+        // fill table with values
+        public void setData(MechSummary[] ms) {
+            data = ms;
+            fireTableDataChanged();
+        }
+
+        public Object getValueAt(int row, int col) {
+            if (data.length <= row) {
                 return "?";
             }
+            GameOptions opts = null;
+            if (client != null) {
+                opts = client.getGame().getOptions();
+            }
+            MechSummary ms = data[row];
+            if (col == COL_MODEL) {
+                return ms.getModel();
+            }
+            if (col == COL_CHASSIS) {
+                return ms.getChassis();
+            }
+            if (col == COL_WEIGHT) {
+                if ((opts != null) && ms.getUnitType().equals("BattleArmor")) {
+                    if (opts.booleanOption("tacops_ba_weight")) {
+                        return ms.getTOweight();
+                    } else {
+                        return ms.getTWweight();
+                    }
+                }
+                return ms.getTons();
+            }
+            if (col == COL_BV) {
+                if ((opts != null)
+                        && opts.booleanOption("geometric_mean_bv")) {
+                    if (opts.booleanOption("reduced_overheat_modifier_bv")) {
+                        return ms.getRHGMBV();
+                    } else {
+                        return ms.getGMBV();
+                    }
+                } else {
+                    if ((opts != null)
+                            && opts.booleanOption("reduced_overheat_modifier_bv")) {
+                        return ms.getRHBV();
+                    } else {
+                        return ms.getBV();
+                    }
+                }
+            }
+            if (col == COL_YEAR) {
+                return ms.getYear();
+            }
+            if (col == COL_COST) {
+                // return NumberFormat.getInstance().format(ms.getCost());
+                return ms.getCost();
+            }
+            if (col == COL_LEVEL) {
+                return ms.getLevel();
+            }
+            return "?";
+        }
 
     }
 

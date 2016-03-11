@@ -33,8 +33,8 @@ RTC Armor:7
 Weapons:4
 Flamer, Left Arm
 Particle Cannon, Right Arm
-SRM 4, Right Torso
-SRM 4, Right Torso
+SRM 4, Left Torso
+SRM 4, Left Torso
 
 Left Arm:
 Shoulder
@@ -65,9 +65,9 @@ Particle Cannon
 -Empty-
 
 Left Torso:
-Heat Sink
-Heat Sink
-Heat Sink
+SRM 4
+SRM 4
+IS Ammo SRM-4
 -Empty-
 -Empty-
 -Empty-
@@ -79,9 +79,9 @@ Heat Sink
 -Empty-
 
 Right Torso:
-SRM 4
-SRM 4
-IS Ammo SRM-4
+Heat Sink
+Heat Sink
+Heat Sink
 -Empty-
 -Empty-
 -Empty-

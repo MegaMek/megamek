@@ -1,0 +1,26 @@
+# Standard Mars Theme
+
+base 0 "" "mars" "mars/mars_plains_0.gif"
+base 1 "" "mars" "mars/mars_plains_1.gif"
+base 2 "" "mars" "mars/mars_plains_2.gif"
+base 3 "" "mars" "mars/mars_plains_3.gif"
+base 4 "" "mars" "mars/mars_plains_4.gif"
+base 5 "" "mars" "mars/mars_plains_5.gif"
+base 6 "" "mars" "mars/mars_plains_6.gif"
+base 7 "" "mars" "mars/mars_plains_7.gif"
+base 8 "" "mars" "mars/mars_plains_8.gif"
+base 9 "" "mars" "mars/mars_plains_9.gif"
+base 10 "" "mars" "mars/mars_plains_10.gif"
+base -1 "" "mars" "mars/mars_sinkhole_1.gif"
+base -2 "" "mars" "mars/mars_sinkhole_2.gif"
+base -3 "" "mars" "mars/mars_sinkhole_3.gif"
+
+base 0 "rough:1" "mars" "mars/mars_rough_0.gif"
+base 1 "rough:1" "mars" "mars/mars_rough_1.gif"
+base 3 "rough:1" "mars" "mars/mars_rough_3.gif"
+base 4 "rough:1" "mars" "mars/mars_rough_3.gif"
+base 5 "rough:1" "mars" "mars/mars_rough_5.gif"
+base -1 "rough:1" "mars" "mars/mars_sinkhole_rough_1.gif"
+base -2 "rough:1" "mars" "mars/mars_sinkhole_rough_2.gif"
+base -3 "rough:1" "mars" "mars/mars_sinkhole_rough_3.gif"
+

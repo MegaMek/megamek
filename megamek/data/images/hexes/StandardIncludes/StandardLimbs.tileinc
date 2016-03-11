@@ -1,0 +1,8 @@
+# Standard Limbs
+
+super * "arms:1" "" "limbs/arm1.gif"
+super * "arms:2" "" "limbs/arm2.gif"
+super * "arms:3" "" "limbs/arm2.gif"
+super * "legs:1" "" "limbs/leg1.gif"
+super * "legs:2" "" "limbs/leg2.gif"
+super * "legs:3" "" "limbs/leg2.gif"

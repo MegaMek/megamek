@@ -6,6 +6,16 @@ v0.41.16-git
 + PR #49: Adding runway overlay fluff images
 + PR #45: SPA organization
 + Issue #51: Missing i18n entry: BoardView1. (for crew stunned)
++ Data: New Sprites and Unit Fixes (Thanks Greekfire)
++ Remove classpath entries for TinyXML (Also fixes #67)
++ PR #46: TacOps Alternate BattleArmor weights
++ PR #57: Remove dependency on TinyXML
++ PR #60: Ignore test data when building MegaMek.jar
++ PR #61: Extract named unit nicknames and (when present) display them
++ PR #65: Tilesets can use an 'include' keyword
++ PR #68: Ultra Rubble terrain level missing +2 movement cost
++ Issue #63: ASF free facing changes incorrect on ground maps
+
 
 v0.41.15 (2016-02-21 14:15 UTC)
 + Issue #19: doTryUnstuck Error

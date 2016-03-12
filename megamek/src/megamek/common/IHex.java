@@ -256,7 +256,7 @@ public interface IHex extends Cloneable {
     /**
      * @return modifier to PSRs made in the hex
      */
-    public abstract int terrainPilotingModifier(EntityMovementMode moveType);
+    public abstract void terrainPilotingModifier(EntityMovementMode moveType, PilotingRollData roll, boolean enteringRubble);
 
     /**
      * (Only if statically determinable)
@@ -283,7 +283,7 @@ public interface IHex extends Cloneable {
 
     public abstract int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee);
 
-    public abstract int getUnstuckModifier(int elev);
+    public abstract void getUnstuckModifier(int elev, PilotingRollData rollTarget);
 
     public abstract boolean isClearForTakeoff();
 

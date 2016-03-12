@@ -555,7 +555,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (clientgui.getClient().getGame().getEntity(en) != null) {
 
             cen = en;
-            clientgui.setSelectedEntityNum(en); 
+            clientgui.setSelectedEntityNum(en);
             clientgui.mechD.displayEntity(ce());
 
             // If the selected entity is not on the board, use the next one.
@@ -596,7 +596,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
             if (!ce().isOffBoard()) {
                 clientgui.getBoardView().highlight(ce().getPosition());
-
             }
             clientgui.getBoardView().select(null);
             clientgui.getBoardView().cursor(null);
@@ -2164,7 +2163,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
         refreshAll();
-
     }
 
     //

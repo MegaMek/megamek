@@ -302,7 +302,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     // int because it acts as an array index
     public int fieldofFireWpUnderwater = 0;
     private static final String[] rangeTexts = { "min", "S", "M", "L", "E" };
-    
+
     TilesetManager tileManager = null;
 
     // polygons for a few things
@@ -651,7 +651,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         initPolys();
 
-        cursorSprite = new CursorSprite(this, Color.MAGENTA);
+        cursorSprite = new CursorSprite(this, Color.cyan);
         highlightSprite = new CursorSprite(this, Color.white);
         selectedSprite = new CursorSprite(this, Color.blue);
         firstLOSSprite = new CursorSprite(this, Color.red);
@@ -4277,7 +4277,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             this.selected = selected;
             checkFoVHexImageCacheClear();
             // force a repaint of the board
-            scheduleRedraw(); // TODO: correct?
+            // ... actually seems unnecessary
         }
     }
 
@@ -4665,7 +4665,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         selectedWeapon = null;
         updateEcmList();
         highlightSelectedEntity();
-        repaint();
     }
 
     public synchronized void weaponSelected(MechDisplayEvent b) {

@@ -959,7 +959,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         Color walkColor = GUIPreferences.getInstance().getColor(
                 GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
         clientgui.getBoardView().setHighlightColor(walkColor);
-        
+
         // update some GUI elements
         clientgui.bv.clearMovementData();
         butDone.setText("<html><b>"

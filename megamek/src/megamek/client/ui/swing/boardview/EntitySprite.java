@@ -458,9 +458,6 @@ class EntitySprite extends Sprite {
             // Label text
             graph.setFont(labelFont);
             Color textColor = LABEL_TEXT_COLOR;
-//            if (entity.isDone() && !onlyDetectedBySensors()) {
-//                textColor = Color.LIGHT_GRAY;
-//            }
             if (!entity.isDone() && !onlyDetectedBySensors()) {
                 textColor = GUIPreferences.getInstance().getColor(
                         GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR);

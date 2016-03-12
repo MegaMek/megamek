@@ -69,6 +69,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimerTask;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -1338,17 +1339,43 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         
         // Shadows for elevation
-        // 1) Sort the board hexes by elevation
+        // 1a) Sort the board hexes by elevation
+        // 1b) Create a reduced list of shadowcasting hexes
+        double angle = Math.atan2(-lightDirection[1], lightDirection[0]);
+        double an = Math.toDegrees(angle);
+        int mDir = (int)(0.5+1.5-angle/Math.PI*3); // +0.5 to counter the (int)
+        int[] sDirs = { mDir%6, (mDir+1)%6, (mDir+5)%6 };
         HashMap<Integer,Set<Coords>> sortedHexes = new HashMap<Integer,Set<Coords>>();
+        HashMap<Integer,Set<Coords>> shadowCastingHexes = new HashMap<Integer,Set<Coords>>();
         for (Coords c: allBoardHexes()) {
             IHex hex = board.getHex(c);
             int level = hex.getLevel();
             if (!sortedHexes.containsKey(level)) { // no hexes yet for this height
                 sortedHexes.put(level, new HashSet<Coords>());
             }
+            if (!shadowCastingHexes.containsKey(level)) { // no hexes yet for this height
+                shadowCastingHexes.put(level, new HashSet<Coords>());
+            }
             sortedHexes.get(level).add(c);
+            // add a hex to the shadowcasting hexes only 
+            // if it is nor surrounded by same height hexes
+            boolean surrounded = true;
+            for (int dir: sDirs) {
+                if (!board.contains(c.translated(dir))) {
+                    surrounded = false;
+                } else {
+                    IHex nhex = board.getHex(c.translated(dir));
+                    int lv = nhex.getLevel();
+                    if (lv < level) 
+                        surrounded = false;
+                }
+            }
+            if (!surrounded) shadowCastingHexes.get(level).add(c);
         }
         
+        for (Integer i: sortedHexes.keySet()) System.out.println("Höhe "+i+": "+sortedHexes.get(i).size());
+        for (Integer i: shadowCastingHexes.keySet()) System.out.println("Höhe "+i+": "+shadowCastingHexes.get(i).size());
+
         long sT = System.nanoTime();
         
         // 2) Create clipping areas
@@ -1366,10 +1393,98 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         // 3) Draw shadows
-        int n = 4; // more = higher quality shadows, more time
+        int n = 1; // more = higher quality shadows, more time
         double deltaX = lightDirection[0]/n;
         double deltaY = lightDirection[1]/n;
+
         
+        sT = System.nanoTime();
+        Set<Integer> lDiffs = new TreeSet<Integer>();
+        
+        // gather up the possible level differences
+        for (int shadowed = board.getMinElevation(); 
+                shadowed <= board.getMaxElevation(); 
+                shadowed++) {
+            if (levelClips.get(shadowed) == null) continue;
+
+            for (int shadowcaster = board.getMinElevation(); 
+                    shadowcaster <= board.getMaxElevation(); 
+                    shadowcaster++) {
+                if (levelClips.get(shadowcaster) == null) continue;
+                
+                lDiffs.add(Math.abs(shadowcaster-shadowed));
+            }
+        }
+        
+        long tT = System.nanoTime()-sT;
+        System.out.println("Time to prepare the LDiffs: "+tT/1e6+" ms");
+        sT = System.nanoTime();
+        
+        Map<Integer,BufferedImage> hS = new HashMap<Integer,BufferedImage>(); 
+        // Elevation Shadow images
+        for (int lDiff: lDiffs) {
+
+            Dimension eSize = new Dimension(
+                    (int)(Math.abs(lightDirection[0])*lDiff+HEX_W)*2, 
+                    (int)(Math.abs(lightDirection[1])*lDiff+HEX_H)*2);
+            
+            BufferedImage elevShadow = config.createCompatibleImage(eSize.width, eSize.height,
+                    Transparency.TRANSLUCENT);
+            Graphics gS = elevShadow.getGraphics();
+            Point2D p1 = new Point2D.Double(eSize.width/2, eSize.height/2);
+            n = 10;
+            deltaX = lightDirection[0]/n;
+            deltaY = lightDirection[1]/n;
+            for (int i = 0; i<n*lDiff; i++) {
+                gS.drawImage(hexShadow, (int)p1.getX(), (int)p1.getY(), null);
+                p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
+            }
+            gS.dispose();
+            hS.put(lDiff, elevShadow);
+        }
+        
+        tT = System.nanoTime()-sT;
+        System.out.println("Time to prepare the hex LDiff shadows: "+tT/1e6+" ms");
+        sT = System.nanoTime();
+        
+        
+        for (int shadowed = board.getMinElevation(); 
+                shadowed < board.getMaxElevation(); 
+                shadowed++) {
+            if (levelClips.get(shadowed) == null) continue;
+
+            Shape saveClip = g.getClip();
+            g.setClip(levelClips.get(shadowed));
+
+            for (int shadowcaster = shadowed+1; 
+                    shadowcaster <= board.getMaxElevation(); 
+                    shadowcaster++) {
+                if (levelClips.get(shadowcaster) == null) continue;
+                int lDiff = shadowcaster - shadowed;
+
+//                System.out.println("Shadows: Caster: "+shadowcaster+"; Shadowed: "+shadowed);
+
+                for (Coords c: shadowCastingHexes.get(shadowcaster)) {
+                    Point2D p0 = getHexLocationLargeTile(c.getX(), c.getY(), 1);
+                    g.drawImage(hS.get(lDiff), 
+                            (int)p0.getX()-(int)(Math.abs(lightDirection[0])*lDiff+HEX_W), 
+                            (int)p0.getY()-(int)(Math.abs(lightDirection[1])*lDiff+HEX_H), null);
+//                    g.setColor(Color.RED);
+//                    g.fillRect((int)p0.getX()+10, (int)p0.getY()+10, (int)(50*scale), (int)(40*scale));
+                }
+            }
+            g.setClip(saveClip);
+        }
+
+        tT = System.nanoTime()-sT;
+        System.out.println("Time to prepare shadows: "+tT/1e6+" ms");
+        sT = System.nanoTime();
+        
+        n = 2;
+        deltaX = lightDirection[0]/n;
+        deltaY = lightDirection[1]/n;
+        
+        // 4) woods and bulding shadows
         for (int shadowed = board.getMinElevation(); 
                 shadowed <= board.getMaxElevation(); 
                 shadowed++) {
@@ -1382,20 +1497,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     shadowcaster <= board.getMaxElevation(); 
                     shadowcaster++) {
                 if (levelClips.get(shadowcaster) == null) continue;
-
+                
+//                System.out.println("Shadows: Caster: "+shadowcaster+"; Shadowed: "+shadowed);
                 
                 for (Coords c: sortedHexes.get(shadowcaster)) {
                     Point2D p0 = getHexLocationLargeTile(c.getX(), c.getY(), 1);
                     Point2D p1 = new Point2D.Double();
                     
                     // Elevation Shadow
-                    if (shadowcaster > shadowed) {
-                        p1.setLocation(p0);
-                        for (int i = 0; i<n*(shadowcaster-shadowed); i++) {
-                            g.drawImage(hexShadow, (int)p1.getX(), (int)p1.getY(), null);
-                            p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
-                        }
-                    }
+//                    if ((shadowcaster > shadowed) 
+//                    && shadowCastingHexes.get(shadowcaster).contains(c)) {
+//                        p1.setLocation(p0);
+//                        for (int i = 0; i<n*(shadowcaster-shadowed); i++) {
+//                            g.drawImage(hexShadow, (int)p1.getX(), (int)p1.getY(), null);
+//                            p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
+//                        }
+//                    }
 
                     // Woods Shadow
                     IHex hex = board.getHex(c);

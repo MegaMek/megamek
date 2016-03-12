@@ -66,6 +66,8 @@ class EntitySprite extends Sprite {
     private Point hexOrigin;
     private boolean criticalStatus;
     private Positioning labelPos;
+    /** Used to color the label when this unit is selected for movement etc. */
+    private boolean isSelected;
     
     // Keep track of ECM state, as it's too expensive to compute on the fly.
     private boolean isAffectedByECM = false;
@@ -462,6 +464,10 @@ class EntitySprite extends Sprite {
             if (!entity.isDone() && !onlyDetectedBySensors()) {
                 textColor = GUIPreferences.getInstance().getColor(
                         GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR);
+            }
+            if (isSelected) {
+                textColor = GUIPreferences.getInstance().getColor(
+                        GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR);
             }
             bv.drawCenteredText(graph, getAdjShortName(), labelRect.x+labelRect.width/2,
                     labelRect.y+labelRect.height/2-1, textColor, (entity.isDone() && !onlyDetectedBySensors()));
@@ -957,6 +963,19 @@ class EntitySprite extends Sprite {
         if (changed) {
             prepare();
         }
+    }
+    
+    /** Marks the entity as selected for movement etc., recoloring the label */
+    public void setSelected(boolean status) {
+        if (isSelected != status) {
+            isSelected = status;
+            prepare();
+        }
+    }
+    
+    /** Returns if the entity is marked as selected for movement etc., recoloring the label */
+    public boolean getSelected() {
+        return isSelected;
     }
 }
 

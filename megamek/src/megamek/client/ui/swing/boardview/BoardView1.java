@@ -302,7 +302,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     // int because it acts as an array index
     public int fieldofFireWpUnderwater = 0;
     private static final String[] rangeTexts = { "min", "S", "M", "L", "E" };
-
+    
     TilesetManager tileManager = null;
 
     // polygons for a few things
@@ -3123,6 +3123,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         updateEcmList();
+        highlightSelectedEntity();
         scheduleRedraw();
     }
 
@@ -3224,6 +3225,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Update ECM list, to ensure that Sprites are updated with ECM info
         updateEcmList();
+        // Re-highlight a selected entity, if present
+        highlightSelectedEntity();
         
         scheduleRedraw();
     }
@@ -4274,7 +4277,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             this.selected = selected;
             checkFoVHexImageCacheClear();
             // force a repaint of the board
-            updateBoard();
+            scheduleRedraw(); // TODO: correct?
         }
     }
 
@@ -4359,6 +4362,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         highlight(new Coords(x, y));
     }
 
+    public synchronized void highlightSelectedEntity() {
+        for (EntitySprite sprite: entitySprites) {
+            if (sprite.entity.equals(selectedEntity)) {
+                sprite.setSelected(true);
+            } else {
+                sprite.setSelected(false);
+            }
+        }
+    }
+    
     /**
      * Determines if this Board contains the Coords, and if so, "cursors" that
      * Coords.
@@ -4651,6 +4664,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // entity
         selectedWeapon = null;
         updateEcmList();
+        highlightSelectedEntity();
+        repaint();
     }
 
     public synchronized void weaponSelected(MechDisplayEvent b) {

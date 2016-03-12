@@ -651,7 +651,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         initPolys();
 
-        cursorSprite = new CursorSprite(this, Color.cyan);
+        cursorSprite = new CursorSprite(this, Color.MAGENTA);
         highlightSprite = new CursorSprite(this, Color.white);
         selectedSprite = new CursorSprite(this, Color.blue);
         firstLOSSprite = new CursorSprite(this, Color.red);

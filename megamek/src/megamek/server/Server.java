@@ -25,6 +25,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -32,6 +34,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -1342,7 +1345,9 @@ public class Server implements Runnable {
             sFinalFile = sDir + File.separator + sFinalFile;
             GZIPOutputStream gzo = new GZIPOutputStream(new FileOutputStream(
                     sFinalFile + ".gz"));
-            xstream.toXML(game, gzo);
+            Writer writer = new OutputStreamWriter(gzo, Charset.forName("UTF-8"));
+            xstream.toXML(game, writer);
+            writer.close();
             gzo.close();
         } catch (Exception e) {
             System.err.println("Unable to save file: " + sFinalFile);

@@ -1307,12 +1307,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // Map editor? No shadows
         if (game.getPhase() == IGame.Phase.PHASE_UNKNOWN) return;
         
+        long stT = System.nanoTime();
+
         // 1) create or get the hex shadow
         Image hexShadow = createBlurredShadow(tileManager.getHexMask());
         if (hexShadow == null) {
             repaint(1000);
             return;
         }
+        
         
         // the shadowmap needs to be painted as if scale == 1
         // therefore some of the methods of boardview1 cannot be used
@@ -1342,7 +1345,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // 1a) Sort the board hexes by elevation
         // 1b) Create a reduced list of shadowcasting hexes
         double angle = Math.atan2(-lightDirection[1], lightDirection[0]);
-        double an = Math.toDegrees(angle);
         int mDir = (int)(0.5+1.5-angle/Math.PI*3); // +0.5 to counter the (int)
         int[] sDirs = { mDir%6, (mDir+1)%6, (mDir+5)%6 };
         HashMap<Integer,Set<Coords>> sortedHexes = new HashMap<Integer,Set<Coords>>();
@@ -1373,11 +1375,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (!surrounded) shadowCastingHexes.get(level).add(c);
         }
         
-        for (Integer i: sortedHexes.keySet()) System.out.println("Höhe "+i+": "+sortedHexes.get(i).size());
-        for (Integer i: shadowCastingHexes.keySet()) System.out.println("Höhe "+i+": "+shadowCastingHexes.get(i).size());
-
-        long sT = System.nanoTime();
-        
         // 2) Create clipping areas
         HashMap<Integer,Shape> levelClips = new HashMap<Integer,Shape>();
         for (Integer h: sortedHexes.keySet()) {
@@ -1392,38 +1389,30 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             levelClips.put(h, path);
         }
 
-        // 3) Draw shadows
-        int n = 1; // more = higher quality shadows, more time
-        double deltaX = lightDirection[0]/n;
-        double deltaY = lightDirection[1]/n;
 
-        
-        sT = System.nanoTime();
+        // 3) Find all level differences
+        final int maxDiff = 35; // limit all diffs to this value
         Set<Integer> lDiffs = new TreeSet<Integer>();
-        
-        // gather up the possible level differences
         for (int shadowed = board.getMinElevation(); 
-                shadowed <= board.getMaxElevation(); 
+                shadowed < board.getMaxElevation(); 
                 shadowed++) {
             if (levelClips.get(shadowed) == null) continue;
 
-            for (int shadowcaster = board.getMinElevation(); 
+            for (int shadowcaster = shadowed+1; 
                     shadowcaster <= board.getMaxElevation(); 
                     shadowcaster++) {
                 if (levelClips.get(shadowcaster) == null) continue;
                 
-                lDiffs.add(Math.abs(shadowcaster-shadowed));
+                lDiffs.add(Math.min(shadowcaster-shadowed, maxDiff));
             }
         }
         
-        long tT = System.nanoTime()-sT;
-        System.out.println("Time to prepare the LDiffs: "+tT/1e6+" ms");
-        sT = System.nanoTime();
-        
+        // 4) Elevation Shadow images for all level differences present
+        int n = 10;
+        double deltaX = lightDirection[0]/n;
+        double deltaY = lightDirection[1]/n;
         Map<Integer,BufferedImage> hS = new HashMap<Integer,BufferedImage>(); 
-        // Elevation Shadow images
         for (int lDiff: lDiffs) {
-
             Dimension eSize = new Dimension(
                     (int)(Math.abs(lightDirection[0])*lDiff+HEX_W)*2, 
                     (int)(Math.abs(lightDirection[1])*lDiff+HEX_H)*2);
@@ -1432,9 +1421,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     Transparency.TRANSLUCENT);
             Graphics gS = elevShadow.getGraphics();
             Point2D p1 = new Point2D.Double(eSize.width/2, eSize.height/2);
-            n = 10;
-            deltaX = lightDirection[0]/n;
-            deltaY = lightDirection[1]/n;
             for (int i = 0; i<n*lDiff; i++) {
                 gS.drawImage(hexShadow, (int)p1.getX(), (int)p1.getY(), null);
                 p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
@@ -1443,11 +1429,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             hS.put(lDiff, elevShadow);
         }
         
-        tT = System.nanoTime()-sT;
-        System.out.println("Time to prepare the hex LDiff shadows: "+tT/1e6+" ms");
-        sT = System.nanoTime();
-        
-        
+        // 5) Actually draw the elevation shadows
         for (int shadowed = board.getMinElevation(); 
                 shadowed < board.getMaxElevation(); 
                 shadowed++) {
@@ -1462,25 +1444,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 if (levelClips.get(shadowcaster) == null) continue;
                 int lDiff = shadowcaster - shadowed;
 
-//                System.out.println("Shadows: Caster: "+shadowcaster+"; Shadowed: "+shadowed);
-
                 for (Coords c: shadowCastingHexes.get(shadowcaster)) {
                     Point2D p0 = getHexLocationLargeTile(c.getX(), c.getY(), 1);
-                    g.drawImage(hS.get(lDiff), 
-                            (int)p0.getX()-(int)(Math.abs(lightDirection[0])*lDiff+HEX_W), 
-                            (int)p0.getY()-(int)(Math.abs(lightDirection[1])*lDiff+HEX_H), null);
-//                    g.setColor(Color.RED);
-//                    g.fillRect((int)p0.getX()+10, (int)p0.getY()+10, (int)(50*scale), (int)(40*scale));
+                    g.drawImage(hS.get(Math.min(lDiff, maxDiff)), 
+                            (int)p0.getX()-(int)(Math.abs(lightDirection[0])*Math.min(lDiff, maxDiff)+HEX_W), 
+                            (int)p0.getY()-(int)(Math.abs(lightDirection[1])*Math.min(lDiff, maxDiff)+HEX_H), null);
                 }
             }
             g.setClip(saveClip);
         }
 
-        tT = System.nanoTime()-sT;
-        System.out.println("Time to prepare shadows: "+tT/1e6+" ms");
-        sT = System.nanoTime();
-        
-        n = 2;
+        n = 5;
         deltaX = lightDirection[0]/n;
         deltaY = lightDirection[1]/n;
         
@@ -1498,22 +1472,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     shadowcaster++) {
                 if (levelClips.get(shadowcaster) == null) continue;
                 
-//                System.out.println("Shadows: Caster: "+shadowcaster+"; Shadowed: "+shadowed);
-                
                 for (Coords c: sortedHexes.get(shadowcaster)) {
                     Point2D p0 = getHexLocationLargeTile(c.getX(), c.getY(), 1);
                     Point2D p1 = new Point2D.Double();
                     
-                    // Elevation Shadow
-//                    if ((shadowcaster > shadowed) 
-//                    && shadowCastingHexes.get(shadowcaster).contains(c)) {
-//                        p1.setLocation(p0);
-//                        for (int i = 0; i<n*(shadowcaster-shadowed); i++) {
-//                            g.drawImage(hexShadow, (int)p1.getX(), (int)p1.getY(), null);
-//                            p1.setLocation(p1.getX()+deltaX, p1.getY()+deltaY);
-//                        }
-//                    }
-
                     // Woods Shadow
                     IHex hex = board.getHex(c);
                     List<Image> supers = tileManager.supersFor(hex);
@@ -1575,7 +1537,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             g.setClip(saveClip);
         }
 
-        long tT5 = System.nanoTime()-sT;
+        long tT5 = System.nanoTime()-stT;
         System.out.println("Time to prepare the shadow map: "+tT5/1e6+" ms");
 
     }

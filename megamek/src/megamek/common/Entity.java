@@ -6504,19 +6504,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             EntityMovementType moveType, IHex curHex, Coords lastPos,
             Coords curPos, boolean isLastStep) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
-        addPilotingModifierForTerrain(roll, curPos);
+        boolean enteringRubble = true;
+        addPilotingModifierForTerrain(roll, curPos, enteringRubble);
 
         if (!lastPos.equals(curPos)
             && ((moveType != EntityMovementType.MOVE_JUMP)
                 || isLastStep)
             && (curHex.terrainLevel(Terrains.RUBBLE) > 0)
             && (this instanceof Mech)) {
-            int mod = 0;
-            if (curHex.terrainLevel(Terrains.RUBBLE) > 5) {
-                mod++;
-            }
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), mod, "entering Rubble"));
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
@@ -9764,10 +9759,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return;
         }
         IHex hex = game.getBoard().getHex(c);
-        int modifier = hex.terrainPilotingModifier(getMovementMode());
-        if (modifier != 0) {
-            roll.addModifier(modifier, "difficult terrain");
+        hex.terrainPilotingModifier(getMovementMode(), roll, false);
+    }
+
+    public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c, boolean enteringRubble) {
+        if ((c == null) || (roll == null)) {
+            return;
         }
+        if (isOffBoard() || !(isDeployed())) {
+            return;
+        }
+        IHex hex = game.getBoard().getHex(c);
+        hex.terrainPilotingModifier(getMovementMode(), roll, enteringRubble);
     }
 
     /**

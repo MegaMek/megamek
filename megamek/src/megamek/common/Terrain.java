@@ -106,6 +106,76 @@ public class Terrain implements ITerrain, Serializable {
         return level;
     }
 
+    public String getLevelasString(boolean enteringRubble) {
+        switch (type) {
+        case Terrains.JUNGLE:
+            if (level == 3) {
+                return "Ultra Jungle";
+            }
+            if (level == 2) {
+                return "Heavy Jungle";
+            }
+            if (level == 1) {
+                return "Jungle";
+            }
+        case Terrains.MAGMA:
+            if (level == 2) {
+                return "Liquid Magma";
+            }
+            if (level == 1) {
+                return "Magma Crust";
+            }
+        case Terrains.TUNDRA:
+            return "Tundra";
+        case Terrains.SAND:
+            return "Sand";
+        case Terrains.SNOW:
+            if (level == 2) {
+                return "Deep Snow";
+            }
+            if (level == 1) {
+                return "Thin Snow";
+            }
+        case Terrains.SWAMP:
+            return "Swamp";
+        case Terrains.MUD:
+            return "Mud";
+        case Terrains.GEYSER:
+            if (level == 2) {
+                return "Active Geyser";
+            }
+            return "Dormant Geyser";
+        case Terrains.RUBBLE:
+            if (level == 6) {
+                if (enteringRubble) {
+                    return "entering Ultra Rubble";
+                }
+                else {
+                    return "Ultra Rubble";
+                }
+            }
+            if (level < 6) {
+                if (enteringRubble) {
+                    return "entering Rubble";
+                }
+                else {
+                    return "Rubble";
+                }
+            }
+        case Terrains.RAPIDS:
+            if (level == 2) {
+                return "Torrent";
+            }
+            return "Rapids";
+        case Terrains.ICE:
+            return "Ice";
+        case Terrains.INDUSTRIAL:
+            return "Industrial Zone";
+        default:
+            return "Unknown Terrain";
+        }
+    }
+
     public int getTerrainFactor() {
         return terrainFactor;
     }
@@ -303,8 +373,12 @@ public class Terrain implements ITerrain, Serializable {
             }
             return 1;
         case Terrains.GEYSER:
-        case Terrains.RUBBLE:
             if (level == 2) {
+                return 1;
+            }
+            return 0;
+        case Terrains.RUBBLE:
+            if (level == 6) {
                 return 1;
             }
             return 0;
@@ -322,7 +396,7 @@ public class Terrain implements ITerrain, Serializable {
         case Terrains.INDUSTRIAL:
             return 1;
         default:
-            return 0;
+            return -1;
         }
     }
 
@@ -468,6 +542,7 @@ public class Terrain implements ITerrain, Serializable {
                     || (moveMode == EntityMovementMode.QUAD)) {
                 return TargetRoll.AUTOMATIC_SUCCESS;
             }
+            return -1;
         case (Terrains.TUNDRA):
             return -1;
         case (Terrains.SNOW):
@@ -492,13 +567,36 @@ public class Terrain implements ITerrain, Serializable {
                 return 3 + ((-3) * elev);
             }
             return 0;
+        case (Terrains.MUD):
+            return -1;
         case (Terrains.TUNDRA):
             return -1;
         case (Terrains.SNOW):
             return -1;
         default:
-            return 0;
+            return -5;
         }
     }
 
+    public String getUnstuckString(int elev) {
+        switch (type) {
+        case (Terrains.SWAMP):
+            if (level > 1) {
+                return "Quicksand";
+            }
+            return "Swamp";
+        case (Terrains.MUD):
+            return "Mud";
+        case (Terrains.TUNDRA):
+            return "Tundra";
+        case (Terrains.SNOW):
+            return "Deep Snow";
+        case (Terrains.MAGMA):
+            if (level == 2) {
+                return "Liquid Magma";
+            }
+        default:
+            return "Unknown Terrain " + type;
+        }
+    }
 }

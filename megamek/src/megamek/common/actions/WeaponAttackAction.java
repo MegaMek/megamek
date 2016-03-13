@@ -1212,6 +1212,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         }
 
+		if (te != null) {
+			
+		}
+
         // check for VDNI
         if (ae.getCrew().getOptions().booleanOption("vdni")
             || ae.getCrew().getOptions().booleanOption("bvdni")) {

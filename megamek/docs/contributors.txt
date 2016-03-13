@@ -138,6 +138,7 @@
      DarkISI
      Dave Nawton <hammer-gs@users.sourceforge.net>
      Phoenixstorm
+	 Greekfire
 
   Updates to the Ant build file:
      Robert Schuster <thebohemian@users.sourceforge.net>
@@ -209,11 +210,6 @@
 
   Camo Pack
   	 SeaVea
-
-  Fluff Pack (Optional pack available for down from (https://sourceforge.net/projects/megamek/files/?source=navbar)
-  	The optional fluff pack images have been provided by the artists of http://www.camospecs.com/ and other community artists.
-  	All images are owned by the original artist and these materials are included under the fair use exemption and are
-    restricted from further use.
 
   Random Assignment Tables
      Harold "BATTLEMASTER" N. <s_d@users.sourceforge.net>

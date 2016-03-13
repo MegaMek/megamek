@@ -34,7 +34,7 @@ Weapons:5
 1 ISImprovedC3CPU, Head
 1 ISLightPPC, Left Torso
 1 ISLightPPC, Center Torso
-1 ISMediumVSPLaser, Right Torso
+1 ISMediumVSPLaser, Right Torso (R)
 1 ISLightPPC, Right Torso
 
 Left Arm:
@@ -75,8 +75,8 @@ ISDouble Heat Sink
 ISDouble Heat Sink
 ISLightPPC
 ISLightPPC
-ISMediumVSPLaser
-ISMediumVSPLaser
+ISMediumVSPLaser (R)
+ISMediumVSPLaser (R)
 Endo-Steel
 Endo-Steel
 Endo-Steel

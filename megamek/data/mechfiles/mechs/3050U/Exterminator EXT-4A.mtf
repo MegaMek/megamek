@@ -13,16 +13,16 @@ Engine:325 Fusion Engine
 Structure:Standard
 Myomer:Standard
 
-Heat Sinks:11 Single
+Heat Sinks:10 Single
 Walk MP:5
 Jump MP:5
 
 Armor:Standard(Inner Sphere)
-LA Armor:18
-RA Armor:18
-LT Armor:20
-RT Armor:20
-CT Armor:21
+LA Armor:19
+RA Armor:19
+LT Armor:22
+RT Armor:22
+CT Armor:23
 HD Armor:9
 LL Armor:19
 RL Armor:19
@@ -35,7 +35,7 @@ Weapons:5
 2 ISMediumLaser, Right Arm
 2 ISMediumLaser, Left Arm
 1 ISSmallLaser, Head
-1 ISMachine Gun, Right Torso, Ammo:100
+1 ISMachine Gun, Right Torso, Ammo:200
 
 Left Arm:
 Shoulder
@@ -83,7 +83,7 @@ Right Torso:
 Jump Jet
 Jump Jet
 ISMachine Gun
-ISMG Ammo (100)
+ISMG Ammo (200)
 -Empty-
 -Empty-
 -Empty-

@@ -17,24 +17,22 @@ Walk MP:9
 Jump MP:0
 
 Armor:Ferro-Fibrous
-LA Armor:9
-RA Armor:9
-LT Armor:9
-RT Armor:9
-CT Armor:14
-HD Armor:7
-LL Armor:10
-RL Armor:10
+LA Armor:10
+RA Armor:10
+LT Armor:10
+RT Armor:10
+CT Armor:16
+HD Armor:9
+LL Armor:14
+RL Armor:14
 RTL Armor:4
 RTR Armor:4
 RTC Armor:4
 
 Weapons:7
-1 ISMediumLaser, Right Arm
-1 ISMediumLaser, Left Torso
 1 ISFlamer, Left Arm
-1 ISMediumLaser, Left Torso
-1 ISMediumLaser, Right Arm
+2 ISMediumLaser, Right Arm
+2 ISMediumLaser, Left Torso
 1 ISSmallLaser, Head
 1 ISBeagleActiveProbe, Center Torso
 
@@ -77,7 +75,7 @@ Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
--Empty-
+Ferro-Fibrous
 -Empty-
 
 Right Torso:

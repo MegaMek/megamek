@@ -38,7 +38,7 @@ Weapons:10
 1 ISMediumLaser, Right Torso
 1 ISAntiMissileSystem, Right Torso, Ammo:12
 1 ISMediumLaser, Left Torso
-1 ISMediumLaser, null
+1 ISMediumLaser, Left Torso (R)
 1 ISLargeLaser, Center Torso
 1 ISC3SlaveUnit, Head
 
@@ -75,7 +75,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 ISMediumLaser
-ISMediumLaser
+ISMediumLaser (R)
 -Empty-
 -Empty-
 -Empty-

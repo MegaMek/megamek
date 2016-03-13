@@ -22,31 +22,32 @@ LA Armor:22
 RA Armor:22
 LT Armor:22
 RT Armor:22
-CT Armor:32
+CT Armor:28
 HD Armor:9
-LL Armor:30
-RL Armor:30
+LL Armor:27
+RL Armor:27
 RTL Armor:8
 RTR Armor:8
-RTC Armor:10
+RTC Armor:11
 
 Weapons:6
 1 ISSNPPC, Right Arm
 1 ISMediumPulseLaser, Right Arm
 1 ISMediumPulseLaser, Left Arm
 1 ISGaussRifle, Right Torso, Ammo:16
-2 ISERMediumLaser, Right Torso
-1 ISERMediumLaser, Center Torso
+1 ISERMediumLaser, Right Torso
+1 ISERMediumLaser, Left Torso
+1 ISERMediumLaser, Center Torso (R)
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
 ISMediumPulseLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -70,15 +71,15 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISMASC
-ISMASC
-ISMASC
-ISMASC
+ISERMediumLaser
 ISGauss Ammo
 ISGauss Ammo
+ISMASC
+ISMASC
+ISMASC
+ISMASC
+Ferro-Fibrous
+Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
@@ -92,7 +93,7 @@ ISGaussRifle
 ISGaussRifle
 ISGaussRifle
 ISERMediumLaser
-ISERMediumLaser
+ISCASE
 
 Center Torso:
 Fusion Engine
@@ -105,14 +106,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERMediumLaser
+ISERMediumLaser (R)
 Ferro-Fibrous
 
 Head:
 Life Support
 Sensors
 Cockpit
--Empty-
+Ferro-Fibrous
 Sensors
 Life Support
 -Empty-

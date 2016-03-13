@@ -34,7 +34,7 @@ Weapons:8
 1 ISMediumLaser, Left Arm
 1 ISMediumPulseLaser, Right Arm
 1 ISMediumPulseLaser, Left Arm
-1 ISSmallPulseLaser, Right Arm
+1 ISSmallPulseLaser, Right Torso
 1 ISSmallPulseLaser, Left Torso
 1 ISAntiMissileSystem, Center Torso
 1 ISLBXAC20, Right Torso, Ammo:15
@@ -71,7 +71,7 @@ Left Torso:
 Engine
 Engine
 Engine
-ISSmallPulseLaser
+ISSmallPulseLaser (R)
 IS AMS Ammo
 Ferro-Fibrous
 Ferro-Fibrous
@@ -92,7 +92,7 @@ ISLBXAC20
 ISLBXAC20
 ISLBXAC20
 ISLBXAC20
-ISSmallPulseLaser
+ISSmallPulseLaser (R)
 Ferro-Fibrous
 
 Center Torso:

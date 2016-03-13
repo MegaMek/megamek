@@ -15,6 +15,7 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Sebastian Brocks This class represents an iNarc pod attached to an
@@ -69,15 +70,20 @@ public class INarcPod implements Serializable, Targetable {
      *         <code>false</code> otherwise.
      */
     @Override
-    public boolean equals(Object other) {
-        boolean equal = false;
-        if (other instanceof INarcPod) {
-            INarcPod pod = (INarcPod) other;
-            if (type == pod.type && team == pod.team) {
-                equal = true;
-            }
+    public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;
         }
-        return equal;
+        if((null == obj) || (getClass() != obj.getClass())) {
+            return false;
+        }
+        final INarcPod other = (INarcPod) obj;
+        return (type == other.type) && (team == other.team);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, team);
     }
 
     /**

@@ -22,6 +22,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -46,21 +47,23 @@ public class WeaponOrderHandler {
         public Map<Integer, Integer> customWeaponOrderMap = 
                 new HashMap<Integer, Integer>();
         
-        public boolean equals(Object o) {
-            if (!(o instanceof WeaponOrder)) {
-                return false;
-            }
-            WeaponOrder other = (WeaponOrder)o;
-            if ((orderType != Entity.WeaponSortOrder.CUSTOM) 
-                    && orderType == other.orderType) {
+        @Override
+        public boolean equals(Object obj) {
+            if(this == obj) {
                 return true;
-            } else if (orderType == other.orderType) { // Both are CUSTOM
-                return customWeaponOrderMap.equals(other.customWeaponOrderMap);
-            } else {
+            }
+            if((null == obj) || (getClass() != obj.getClass())) {
                 return false;
             }
+            final WeaponOrder other = (WeaponOrder) obj;
+            return Objects.equals(orderType, other.orderType)
+                    && Objects.equals(customWeaponOrderMap, other.customWeaponOrderMap);
         }
         
+        @Override
+        public int hashCode() {
+            return Objects.hash(orderType, customWeaponOrderMap);
+        }
     }
     
     public static final String CUSTOM_WEAPON_ORDER_FILENAME = 

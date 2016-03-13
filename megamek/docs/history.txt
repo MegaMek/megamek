@@ -15,6 +15,8 @@ v0.41.16-git
 + PR #65: Tilesets can use an 'include' keyword
 + PR #68: Ultra Rubble terrain level missing +2 movement cost
 + Issue #63: ASF free facing changes incorrect on ground maps
++ Data: New Sprites and Unit Fixes (Thanks Greekfire)
+
 
 
 v0.41.15 (2016-02-21 14:15 UTC)

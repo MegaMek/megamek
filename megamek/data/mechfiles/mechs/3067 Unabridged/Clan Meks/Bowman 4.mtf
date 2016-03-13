@@ -13,7 +13,7 @@ Engine:350 XL (Clan) Engine(IS)
 Structure:Endo Steel
 Myomer:Standard
 
-Heat Sinks:12 Double
+Heat Sinks:11 Double
 Walk MP:5
 Jump MP:0
 
@@ -124,7 +124,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 CLAntiPersonnelPod
--Empty-
+CLAntiPersonnelPod
 -Empty-
 -Empty-
 -Empty-
@@ -138,7 +138,7 @@ Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
 CLAntiPersonnelPod
--Empty-
+CLAntiPersonnelPod
 -Empty-
 -Empty-
 -Empty-

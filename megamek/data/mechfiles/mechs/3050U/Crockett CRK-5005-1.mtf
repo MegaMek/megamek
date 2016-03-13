@@ -34,9 +34,9 @@ RTC Armor:14
 Weapons:6
 1 ISERLargeLaser, Right Arm
 1 ISERLargeLaser, Left Arm
-1 ISSRM4, Right Torso, Ammo:25
+1 ISMML3, Right Torso, Ammo:73
 1 ISLBXAC10, Left Torso, Ammo:20
-1 ISSRM4, Left Torso
+1 ISMML3, Left Torso
 1 ISImprovedC3CPU, Head
 
 Left Arm:
@@ -46,11 +46,11 @@ Lower Arm Actuator
 ISDouble Heat Sink
 ISDouble Heat Sink
 ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
 ISERLargeLaser
 ISERLargeLaser
--Empty-
--Empty-
--Empty-
 -Empty-
 
 Right Arm:
@@ -78,22 +78,22 @@ ISLBXAC10
 ISLBXAC10
 ISLBXAC10
 ISLBXAC10
-ISSRM4
--Empty-
+ISMML3
+ISMML3
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
 ImprovedJump Jet
 ImprovedJump Jet
-ISSRM4
-ISSRM4 Ammo
+ISMML3
+ISMML3
 ISLBXAC10 Ammo
 ISLBXAC10 Ammo
+IS Ammo MML-3 LRM
+IS Ammo MML-3 SRM
 ISCASE
+-Empty-
 
 Center Torso:
 Fusion Engine

@@ -625,6 +625,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             System.err.println("FiringDisplay: tried to " + //$NON-NLS-1$
                     "select non-existant entity: " + en); //$NON-NLS-1$
         }
+        
 
         if (GUIPreferences.getInstance().getBoolean("FiringSolutions")) {
             setFiringSolutions();
@@ -1599,7 +1600,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     }
 
     /**
-     * Refeshes all displays.
+     * Refreshes all displays.
      */
     private void refreshAll() {
         if (ce() == null) {

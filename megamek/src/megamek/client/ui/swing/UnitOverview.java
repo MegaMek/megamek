@@ -365,7 +365,7 @@ public class UnitOverview implements IDisplayable {
 
     private Color getFrameColor(Entity entity) {
         if (!clientgui.getClient().isMyTurn() || !entity.isSelectableThisTurn()) {
-            return Color.gray;
+            return Color.DARK_GRAY;
         }
         return Color.black;
     }

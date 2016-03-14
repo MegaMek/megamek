@@ -1213,7 +1213,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
 		if (te != null) {
-			
+		    if (te.getCrew().getOptions().booleanOption("tm_forest_ranger")
+		            && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.WOODS)
+                    || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.JUNGLE))
+                    && te.moved == EntityMovementType.MOVE_WALK) {
+                toHit.addModifier(+1, "forest ranger");
+            }
 		}
 
         // check for VDNI

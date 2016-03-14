@@ -378,6 +378,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private Coords highlighted;
     Coords selected;
     private Coords firstLOS;
+    
+    /** stores the theme last selected to override all hex themes */
+    private String selectedTheme = "";
 
     // selected entity and weapon for artillery display
     Entity selectedEntity = null;
@@ -5788,25 +5791,36 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         
         Set<String> themes = tileManager.getThemes();
         if (themes.remove("")) themes.add("(No Theme)");
+        themes.add("(Original Theme)");
 
         setShouldIgnoreKeys(true);
-        String newTheme = (String)JOptionPane.showInputDialog(
+        selectedTheme = (String)JOptionPane.showInputDialog(
                 null,
                 "Choose the desired theme:",
                 "Theme Selection",
                 JOptionPane.PLAIN_MESSAGE,
                 null,
                 themes.toArray(),
-                "");
+                selectedTheme);
         setShouldIgnoreKeys(false);
-        if (newTheme == null) return;
         
-        if (newTheme.equals("(No Theme)")) newTheme = "";
-
-        for (Coords c: allBoardHexes()) {
-            IHex hex = board.getHex(c);
-            hex.setTheme(newTheme);
-            board.setHex(c, hex);
+        if (selectedTheme == null) {
+            return;
+            
+        } else if (selectedTheme.equals("(Original Theme)")) {
+            for (Coords c: allBoardHexes()) {
+                IHex hex = board.getHex(c);
+                hex.resetTheme();
+                board.setHex(c, hex);
+            }
+            
+        } else {
+            for (Coords c: allBoardHexes()) {
+                IHex hex = board.getHex(c);
+                hex.setTheme(selectedTheme.equals("(No Theme)")?
+                        "":selectedTheme);
+                board.setHex(c, hex);
+            }
         }
     }
 

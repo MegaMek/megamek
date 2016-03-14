@@ -6540,6 +6540,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if ((this instanceof Mech) && ((Mech) this).isSuperHeavy()) {
                 roll.addModifier(1, "superheavy mech avoiding bogging down");
             }
+            if (getCrew().getOptions().booleanOption("tm_swamp_beast")) {
+                roll.addModifier(-1, "swamp beast");
+            }
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(
@@ -9762,6 +9765,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         hex.terrainPilotingModifier(getMovementMode(), roll, false);
         if (hex.containsTerrain(Terrains.JUNGLE) && getCrew().getOptions().booleanOption("tm_forest_ranger")) {
             roll.addModifier(-1, "Forest Ranger");
+        }
+        if ((hex.containsTerrain(Terrains.MUD) || hex.containsTerrain(Terrains.SWAMP))
+                && getCrew().getOptions().booleanOption("tm_swamp_beast")) {
+            roll.addModifier(-1, "Swamp Beast");
         }
     }
 

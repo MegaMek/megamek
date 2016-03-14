@@ -3128,6 +3128,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         updateEcmList();
+        highlightSelectedEntity();
         scheduleRedraw();
     }
 
@@ -3229,6 +3230,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Update ECM list, to ensure that Sprites are updated with ECM info
         updateEcmList();
+        // Re-highlight a selected entity, if present
+        highlightSelectedEntity();
         
         scheduleRedraw();
     }
@@ -4278,8 +4281,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (this.selected != selected) {
             this.selected = selected;
             checkFoVHexImageCacheClear();
-            // force a repaint of the board
-            updateBoard();
         }
     }
 
@@ -4364,6 +4365,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         highlight(new Coords(x, y));
     }
 
+    public synchronized void highlightSelectedEntity() {
+        for (EntitySprite sprite: entitySprites) {
+            if (sprite.entity.equals(selectedEntity)) {
+                sprite.setSelected(true);
+            } else {
+                sprite.setSelected(false);
+            }
+        }
+    }
+    
     /**
      * Determines if this Board contains the Coords, and if so, "cursors" that
      * Coords.
@@ -4656,6 +4667,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // entity
         selectedWeapon = null;
         updateEcmList();
+        highlightSelectedEntity();
     }
 
     public synchronized void weaponSelected(MechDisplayEvent b) {

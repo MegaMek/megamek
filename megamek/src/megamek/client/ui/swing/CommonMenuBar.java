@@ -96,6 +96,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
     private JCheckBoxMenuItem toggleFiringSolutions;
     private JMenuItem viewMovementEnvelope;
     private JMenuItem viewMovModEnvelope;
+    private JMenuItem viewChangeTheme;
     private JMenuItem viewLOSSetting;
     private JMenuItem viewUnitOverview;
     private JMenuItem viewRoundReport;
@@ -417,6 +418,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener,
         viewMovModEnvelope.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W,
                 getToolkit().getMenuShortcutKeyMask()));
         menu.add(viewMovModEnvelope);
+        viewChangeTheme = new JMenuItem(Messages
+                .getString("CommonMenuBar.viewChangeTheme")); //$NON-NLS-1$
+        viewChangeTheme.addActionListener(this);
+        viewChangeTheme.setActionCommand(ClientGUI.VIEW_CHANGE_THEME);
+        menu.add(viewChangeTheme);
         menu.addSeparator();
         viewRoundReport = new JMenuItem(Messages
                 .getString("CommonMenuBar.viewRoundReport")); //$NON-NLS-1$

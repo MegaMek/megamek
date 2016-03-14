@@ -6513,6 +6513,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             && (curHex.terrainLevel(Terrains.RUBBLE) > 0)
             && (this instanceof Mech)) {
             adjustDifficultTerrainPSRModifier(roll);
+            if (getCrew().getOptions().booleanOption("tm_mountaineer")) {
+                roll.addModifier(-1, "Mountaineer");
+            }
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
                              "Check false: Entity is not entering rubble");
@@ -9769,6 +9772,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if ((hex.containsTerrain(Terrains.MUD) || hex.containsTerrain(Terrains.SWAMP))
                 && getCrew().getOptions().booleanOption("tm_swamp_beast")) {
             roll.addModifier(-1, "Swamp Beast");
+        }
+        if ((hex.containsTerrain(Terrains.ROUGH) || hex.containsTerrain(Terrains.RUBBLE))
+                && getCrew().getOptions().booleanOption("tm_mountaineer")) {
+            roll.addModifier(-1, "Mountaineer");
         }
     }
 

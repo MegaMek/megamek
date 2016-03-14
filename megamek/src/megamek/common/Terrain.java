@@ -411,6 +411,18 @@ public class Terrain implements ITerrain, Serializable {
             }
             return 0;
         case Terrains.RUBBLE:
+            if (e.getCrew().getOptions().booleanOption("tm_mountaineer")) {
+                if (level == 6) {
+                    if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                        return 0;
+                    }
+                    return 1;
+                }
+                if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                    return -1;
+                }
+                return 0;
+            }
             if (level == 6) {
                 if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
                     return 1;
@@ -494,7 +506,28 @@ public class Terrain implements ITerrain, Serializable {
             }
             return 1;
         case Terrains.RAPIDS:
+            if (level == 2) {
+                if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                    return 1;
+                }
+                return 2;
+            }
+            if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                return 0;
+            }
         case Terrains.ROUGH:
+            if (e.getCrew().getOptions().booleanOption("tm_mountaineer")) {
+                if (level == 2) {
+                    if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                        return 0;
+                    }
+                    return 1;
+                }
+                if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                    return -1;
+                }
+                return 0;
+            }
             if (level == 2) {
                 if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
                     return 1;

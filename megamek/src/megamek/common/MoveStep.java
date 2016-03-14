@@ -2675,7 +2675,11 @@ public class MoveStep implements Serializable {
                             || (moveMode == EntityMovementMode.HOVER))) {
                 delta_e *= 2;
             }
-            mp += delta_e;
+            if (entity.getCrew().getOptions().booleanOption("tm_mountaineer")) {
+                mp += delta_e - 1;
+            } else {
+                mp += delta_e;
+            }
         }
 
         // WiGEs in climb mode pay 2 extra MP to stay at the same flight level

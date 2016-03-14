@@ -582,7 +582,7 @@ public class GameTurn implements Serializable {
          *
          */
         private static final long serialVersionUID = -681892308327846884L;
-        private final char unitNumber;
+        private final short unitNumber;
 
         /**
          * Only allow entities for the given player which have types in the
@@ -592,7 +592,7 @@ public class GameTurn implements Serializable {
          * @param unit the <code>int</code> unit number of the entities
          *            allowed to move.
          */
-        public UnitNumberTurn(int playerId, char unit) {
+        public UnitNumberTurn(int playerId, short unit) {
             super(playerId);
             unitNumber = unit;
         }

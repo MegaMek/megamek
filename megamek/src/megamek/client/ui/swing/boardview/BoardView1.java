@@ -4281,8 +4281,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (this.selected != selected) {
             this.selected = selected;
             checkFoVHexImageCacheClear();
-            // force a repaint of the board
-            // ... actually seems unnecessary
         }
     }
 

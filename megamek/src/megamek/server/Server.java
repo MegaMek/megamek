@@ -17572,11 +17572,15 @@ public class Server implements Runnable {
      */
     private PilotingRollData getKickPushPSR(Entity psrEntity, Entity attacker,
                                             Entity target, String reason) {
+        IHex curHex = game.getBoard().getHex(psrEntity.getPosition());
         int mod = 0;
         PilotingRollData psr = new PilotingRollData(psrEntity.getId(), mod,
                                                     reason);
         if (psrEntity.hasQuirk(OptionsConstants.QUIRK_POS_STABLE)) {
             psr.addModifier(-1, "stable", false);
+        }
+        if (psrEntity.getCrew().getOptions().booleanOption("tm_frogman") && curHex.terrainLevel(Terrains.WATER) > 1) {
+            psr.addModifier(-1, "Frogman");
         }
         if (game.getOptions().booleanOption("tacops_physical_psr")) {
 

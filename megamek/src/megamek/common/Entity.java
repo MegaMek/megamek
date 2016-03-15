@@ -6597,6 +6597,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mod = 1;
         }
 
+        if ((waterLevel > 1) && getCrew().getOptions().booleanOption("tm_frogman")) {
+            roll.append(new PilotingRollData(getId(), -1, "Frogman"));
+        }
         if (waterLevel > 0) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), mod, "entering Depth "

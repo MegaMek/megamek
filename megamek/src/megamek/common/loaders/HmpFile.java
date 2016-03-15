@@ -1979,8 +1979,8 @@ implements IMechLoader
                 return;
             }
             HmpFile hmpFile = null;
-            try {
-                hmpFile = new HmpFile(new FileInputStream(args[i]));
+            try(InputStream is = new FileInputStream(args[i])) {
+                hmpFile = new HmpFile(is);
             } catch (Exception e) {
                 e.printStackTrace();
                 return;

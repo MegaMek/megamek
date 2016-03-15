@@ -30,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Timer;
@@ -419,8 +420,8 @@ public class PacketTool extends Frame implements Runnable {
                      * * Save the board here.
                      */
                     Board recvBoard = (Board) packet.getObject(0);
-                    try {
-                        recvBoard.save(new FileOutputStream("xmit.board"));
+                    try(OutputStream os = new FileOutputStream("xmit.board")) { //$NON-NLS-1$
+                        recvBoard.save(os);
                     } catch (IOException ioErr) {
                         ioErr.printStackTrace();
                     }

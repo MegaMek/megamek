@@ -2574,7 +2574,6 @@ public class MoveStep implements Serializable {
             return;
         }
 
-
         boolean applyNightPen =
                 !game.getOptions().booleanOption("no_night_move_pen");
         boolean carefulExempt =
@@ -2593,16 +2592,34 @@ public class MoveStep implements Serializable {
                     break;
             }
             // Light
-            switch (game.getPlanetaryConditions().getLight()){
-                case PlanetaryConditions.L_FULL_MOON:
-                    mp += 1;
-                    break;
-                case  PlanetaryConditions.L_MOONLESS:
-                    mp += 2;
-                    break;
-                case PlanetaryConditions.L_PITCH_BLACK:
-                    mp += 3;
-                    break;
+            if (getEntity().getCrew().getOptions().booleanOption("tm_nightwalker")) {
+                if ((getEntity().moved == EntityMovementType.MOVE_WALK)) {
+                    mp += 0;
+                } else {
+                    switch (game.getPlanetaryConditions().getLight()){
+                        case PlanetaryConditions.L_FULL_MOON:
+                            mp += 0;
+                            break;
+                        case  PlanetaryConditions.L_MOONLESS:
+                            mp += 1;
+                            break;
+                        case PlanetaryConditions.L_PITCH_BLACK:
+                            mp += 2;
+                            break;
+                    }
+                }
+            } else {
+                switch (game.getPlanetaryConditions().getLight()){
+                    case PlanetaryConditions.L_FULL_MOON:
+                        mp += 1;
+                        break;
+                    case  PlanetaryConditions.L_MOONLESS:
+                        mp += 2;
+                        break;
+                    case PlanetaryConditions.L_PITCH_BLACK:
+                        mp += 3;
+                        break;
+                }
             }
         }
 

@@ -19,6 +19,7 @@ import megamek.client.ui.swing.util.VerifyIsInteger;
 import megamek.client.ui.swing.util.VerifyIsPositiveInteger;
 import megamek.client.ui.swing.widget.VerifiableTextField;
 import megamek.common.MapSettings;
+import megamek.common.util.BoardUtilities;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -1699,7 +1700,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         constraints.weightx = 1;
         elevationAlgorithmField.setRequired(true);
         elevationAlgorithmField.setSelectAllTextOnGotFocus(true);
-        elevationAlgorithmField.addVerifier(new VerifyInRange(0, 2, true));
+        elevationAlgorithmField.addVerifier(new VerifyInRange(0, BoardUtilities.getAmountElevationGenerators() - 1, true));
         elevationAlgorithmField.setToolTipText(Messages.getString("RandomMapDialog.elevationAlgorithmField.toolTip"));
         elevationAlgorithmField.setName(algorithmLabel.getText());
         panel.add(elevationAlgorithmField, constraints);

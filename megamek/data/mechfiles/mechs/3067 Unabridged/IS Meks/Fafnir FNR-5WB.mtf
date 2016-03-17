@@ -32,7 +32,7 @@ RTC Armor:16
 
 Weapons:7
 1 ISImprovedC3CPU, Center Torso
-1 ISPlasmaRifle, Left Torso, Ammo:40
+1 ISPlasmaRifle, Left Torso, Ammo:50
 1 ISPlasmaRifle, Left Torso
 1 ISPlasmaRifle, Right Torso
 1 ISPlasmaRifle, Right Torso
@@ -113,7 +113,7 @@ Head:
 Life Support
 Sensors
 Cockpit
--Empty-
+ISPlasmaRifle Ammo
 Sensors
 Life Support
 

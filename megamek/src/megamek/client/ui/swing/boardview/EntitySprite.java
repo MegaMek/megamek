@@ -48,7 +48,10 @@ class EntitySprite extends Sprite {
     private final static int SMALL = 0;
     private final static boolean DIRECT = true;
     private final static Color LABEL_TEXT_COLOR = Color.WHITE;
-    private static Color LABEL_BACK_COLOR;
+    private static final Color LABEL_CRITICAL_BACK = new Color(200,0,0,200);
+    private static final Color LABEL_SPACE_BACK = new Color(0,0,200,200);
+    private static final Color LABEL_GROUND_BACK = new Color(50,50,50,200);
+    private static Color LABEL_BACK;
     enum Positioning { LEFT, RIGHT };
     
     // Individuals
@@ -63,6 +66,8 @@ class EntitySprite extends Sprite {
     private Point hexOrigin;
     private boolean criticalStatus;
     private Positioning labelPos;
+    /** Used to color the label when this unit is selected for movement etc. */
+    private boolean isSelected;
     
     // Keep track of ECM state, as it's too expensive to compute on the fly.
     private boolean isAffectedByECM = false;
@@ -74,9 +79,9 @@ class EntitySprite extends Sprite {
         this.radarBlipImage = radarBlipImage;
         this.secondaryPos = secondaryPos;
         if (bv.game.getBoard().inSpace()) {
-            LABEL_BACK_COLOR = new Color(0,0,200,100);
+            LABEL_BACK = LABEL_SPACE_BACK;
         } else {
-            LABEL_BACK_COLOR = new Color(50,50,50,100);
+            LABEL_BACK = LABEL_GROUND_BACK;
         }
         getBounds();
     }
@@ -225,7 +230,7 @@ class EntitySprite extends Sprite {
                 } else {
                     stR.translate(labelRect.height+2,0);
                 }
-                g.setColor(LABEL_BACK_COLOR);
+                g.setColor(LABEL_BACK);
                 g.fillRoundRect(stR.x, stR.y, stR.width, stR.height, 5, 5);
                 if (curStatus.status == null) {
                     Color damageColor = getDamageColor();
@@ -443,9 +448,9 @@ class EntitySprite extends Sprite {
             
             // Label background
             if (criticalStatus) {
-                graph.setColor(new Color(100,0,0,100));
+                graph.setColor(LABEL_CRITICAL_BACK);
             } else {
-                graph.setColor(LABEL_BACK_COLOR);
+                graph.setColor(LABEL_BACK);
             }
             graph.fillRoundRect(labelRect.x, labelRect.y, 
                     labelRect.width, labelRect.height, 5, 10);
@@ -453,8 +458,13 @@ class EntitySprite extends Sprite {
             // Label text
             graph.setFont(labelFont);
             Color textColor = LABEL_TEXT_COLOR;
-            if (entity.isDone() && !onlyDetectedBySensors()) {
-                textColor = Color.LIGHT_GRAY;
+            if (!entity.isDone() && !onlyDetectedBySensors()) {
+                textColor = GUIPreferences.getInstance().getColor(
+                        GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR);
+            }
+            if (isSelected) {
+                textColor = GUIPreferences.getInstance().getColor(
+                        GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR);
             }
             bv.drawCenteredText(graph, getAdjShortName(), labelRect.x+labelRect.width/2,
                     labelRect.y+labelRect.height/2-1, textColor, (entity.isDone() && !onlyDetectedBySensors()));
@@ -950,6 +960,19 @@ class EntitySprite extends Sprite {
         if (changed) {
             prepare();
         }
+    }
+    
+    /** Marks the entity as selected for movement etc., recoloring the label */
+    public void setSelected(boolean status) {
+        if (isSelected != status) {
+            isSelected = status;
+            prepare();
+        }
+    }
+    
+    /** Returns if the entity is marked as selected for movement etc., recoloring the label */
+    public boolean getSelected() {
+        return isSelected;
     }
 }
 

@@ -22,13 +22,13 @@ LA Armor:11
 RA Armor:11
 LT Armor:14
 RT Armor:14
-CT Armor:17
+CT Armor:18
 HD Armor:9
-LL Armor:14
-RL Armor:14
+LL Armor:18
+RL Armor:18
 RTL Armor:5
 RTR Armor:5
-RTC Armor:6
+RTC Armor:5
 
 Weapons:3
 1 ISLargePulseLaser, Right Arm

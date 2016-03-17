@@ -15,6 +15,7 @@
 package megamek.client.bot;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class BotConfiguration {
@@ -22,8 +23,8 @@ public class BotConfiguration {
     static Properties BotProperties = new Properties();
 
     static {
-        try {
-            BotProperties.load(new FileInputStream("mmconf/bot.properties")); //$NON-NLS-1$
+        try(InputStream is = new FileInputStream("mmconf/bot.properties")) { //$NON-NLS-1$
+            BotProperties.load(is);
         } catch (Exception e) {
             System.out
                     .println("Bot properties could not be loaded, will use defaults"); //$NON-NLS-1$

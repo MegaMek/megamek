@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Represents a single type of terrain or condition in a hex. The type of a
@@ -35,7 +36,7 @@ public class Terrain implements ITerrain, Serializable {
      * types (ie, Light Woods vs Heavy woods). Not to be confused with Hex
      * levels.
      */
-    private int level;
+    private final int level;
     private boolean exitsSpecified = false;
     private int exits;
     private int terrainFactor;
@@ -244,6 +245,11 @@ public class Terrain implements ITerrain, Serializable {
                 (level == other.getLevel());
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(level, type);
+    }
+
     /**
      * Terrains are equal if their types and levels are equal. Does not pay
      * attention to exits.
@@ -252,11 +258,13 @@ public class Terrain implements ITerrain, Serializable {
     public boolean equals(Object object) {
         if (this == object) {
             return true;
-        } else if ((object == null) || !(object instanceof ITerrain)) {
+        } else if ((object == null) || (getClass() != object.getClass())) {
             return false;
         }
-        ITerrain other = (ITerrain) object;
-        return (type == other.getType()) && (level == other.getLevel());
+        final Terrain other = (Terrain) object;
+        return (type == other.type) && (level == other.level);
+        // Ints don't need special handling. For more complex objects use:
+        // return Objects.equals(level, other.level) && Objects.equals(type, other.type);
     }
 
     @Override

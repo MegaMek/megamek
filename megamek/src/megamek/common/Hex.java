@@ -44,6 +44,7 @@ public class Hex implements IHex, Serializable {
      */
     private HashSet<Integer> hsTerrains;
     private String theme;
+    private String originalTheme;
     private int fireTurn;
     private Coords coords;
     /** Constructs clear, plain hex at level 0. */
@@ -81,6 +82,7 @@ public class Hex implements IHex, Serializable {
         } else {
             this.theme = null;
         }
+        originalTheme = this.theme;
     }
 
     public Hex(int level, String terrain, String theme) {
@@ -145,6 +147,11 @@ public class Hex implements IHex, Serializable {
      */
     public void setTheme(String theme) {
         this.theme = theme;
+    }
+    
+    /** Resets the theme to what was specified in the board file. */
+    public void resetTheme() {
+        setTheme(originalTheme);
     }
 
     /*

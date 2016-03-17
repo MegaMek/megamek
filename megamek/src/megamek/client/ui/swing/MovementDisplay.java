@@ -954,7 +954,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         cmd = new MovePath(clientgui.getClient().getGame(), ce);
         clientgui.bv.setWeaponFieldofFire(ce, cmd);
 
-        // set to "walk," or the equivalent
+        // set to "walk" or the equivalent
         gear = MovementDisplay.GEAR_LAND;
         Color walkColor = GUIPreferences.getInstance().getColor(
                 GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);

@@ -565,6 +565,7 @@ public class BoardEditor extends JComponent implements ItemListener,
                             hex.addTerrain(oldHex.getTerrain(terrainID));
                         }
                     }
+                    hex.setTheme(oldHex.getTheme());
                     board.setHex(newX, newY, hex);
                     board.resetStoredElevation();
                 }
@@ -616,6 +617,7 @@ public class BoardEditor extends JComponent implements ItemListener,
         }
         frame.setTitle(Messages.getString("BoardEditor.title0") + curfile); //$NON-NLS-1$
         cheRoadsAutoExit.setSelected(board.getRoadsAutoExit());
+        mapSettings.setBoardSize(board.getWidth(), board.getHeight());
         refreshTerrainList();
     }
 
@@ -886,6 +888,8 @@ public class BoardEditor extends JComponent implements ItemListener,
             showSettings();
         } else if (ae.getActionCommand().equals(ClientGUI.VIEW_TOGGLE_ISOMETRIC)) {
             bv.toggleIsometric();
+        } else if (ae.getActionCommand().equals(ClientGUI.VIEW_CHANGE_THEME)) {
+            bv.changeTheme();
         }
     }
 

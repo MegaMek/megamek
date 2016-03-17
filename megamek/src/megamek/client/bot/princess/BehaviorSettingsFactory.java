@@ -28,6 +28,8 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -129,7 +131,9 @@ public class BehaviorSettingsFactory {
                         "Could not load " + PRINCESS_BEHAVIOR_PATH);
                 return null;
             }
-            return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new FileInputStream(behaviorFile));
+            try(InputStream is = new FileInputStream(behaviorFile)) {
+                return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -207,10 +211,11 @@ public class BehaviorSettingsFactory {
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             DOMSource source = new DOMSource(behaviorDoc);
-            StreamResult result = new StreamResult(new FileWriter(behaviorFile));
-            transformer.transform(source, result);
-
-            return true;
+            try(Writer writer = new FileWriter(behaviorFile)) {
+                StreamResult result = new StreamResult(writer);
+                transformer.transform(source, result);
+                return true;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return false;

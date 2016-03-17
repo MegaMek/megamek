@@ -387,6 +387,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private Coords highlighted;
     Coords selected;
     private Coords firstLOS;
+    
+    /** stores the theme last selected to override all hex themes */
+    private String selectedTheme = "";
 
     // selected entity and weapon for artillery display
     Entity selectedEntity = null;
@@ -3289,6 +3292,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         updateEcmList();
+        highlightSelectedEntity();
         scheduleRedraw();
     }
 
@@ -3390,6 +3394,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Update ECM list, to ensure that Sprites are updated with ECM info
         updateEcmList();
+        // Re-highlight a selected entity, if present
+        highlightSelectedEntity();
         
         scheduleRedraw();
     }
@@ -4439,8 +4445,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (this.selected != selected) {
             this.selected = selected;
             checkFoVHexImageCacheClear();
-            // force a repaint of the board
-            updateBoard();
         }
     }
 
@@ -4525,6 +4529,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         highlight(new Coords(x, y));
     }
 
+    public synchronized void highlightSelectedEntity() {
+        for (EntitySprite sprite: entitySprites) {
+            if (sprite.entity.equals(selectedEntity)) {
+                sprite.setSelected(true);
+            } else {
+                sprite.setSelected(false);
+            }
+        }
+    }
+    
     /**
      * Determines if this Board contains the Coords, and if so, "cursors" that
      * Coords.
@@ -4818,6 +4832,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // entity
         selectedWeapon = null;
         updateEcmList();
+        highlightSelectedEntity();
     }
 
     public synchronized void weaponSelected(MechDisplayEvent b) {
@@ -5942,7 +5957,51 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
         }
         
-        repaint();
+        repaint(); 
     }
+    
+    /** Displays a dialog and changes the theme of all 
+     *  board hexes to the user-chosen theme.
+     */
+    public void changeTheme() {
+        if (game == null) return;
+        IBoard board = game.getBoard();
+        if (board.inSpace()) return;
+        
+        Set<String> themes = tileManager.getThemes();
+        if (themes.remove("")) themes.add("(No Theme)");
+        themes.add("(Original Theme)");
+
+        setShouldIgnoreKeys(true);
+        selectedTheme = (String)JOptionPane.showInputDialog(
+                null,
+                "Choose the desired theme:",
+                "Theme Selection",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                themes.toArray(),
+                selectedTheme);
+        setShouldIgnoreKeys(false);
+        
+        if (selectedTheme == null) {
+            return;
+            
+        } else if (selectedTheme.equals("(Original Theme)")) {
+            for (Coords c: allBoardHexes()) {
+                IHex hex = board.getHex(c);
+                hex.resetTheme();
+                board.setHex(c, hex);
+            }
+            
+        } else {
+            for (Coords c: allBoardHexes()) {
+                IHex hex = board.getHex(c);
+                hex.setTheme(selectedTheme.equals("(No Theme)")?
+                        "":selectedTheme);
+                board.setHex(c, hex);
+            }
+        }
+    }
+
     
 }

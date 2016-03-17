@@ -36,7 +36,7 @@ Weapons:6
 1 ISMediumPulseLaser, Left Arm
 1 ISGaussRifle, Right Torso, Ammo:16
 1 ISGuardianECM, Right Torso
-1 ISERSmallLaser, Center Torso
+1 ISERSmallLaser, Center Torso (R)
 
 Left Arm:
 Shoulder
@@ -105,7 +105,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISERSmallLaser
+ISERSmallLaser (R)
 Endo Steel
 
 Head:

@@ -806,6 +806,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         controller.stopRepeating(KeyCommandBind.SCROLL_SOUTH);
                         vbar.setValue((int) (vbar.getValue() - (HEX_H * scale)));
                         pingMinimap();
+                        isSoftCentering = false;
                     }
 
                 });
@@ -828,6 +829,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         controller.stopRepeating(KeyCommandBind.SCROLL_NORTH);
                         vbar.setValue((int) (vbar.getValue() + (HEX_H * scale)));
                         pingMinimap();
+                        isSoftCentering = false;
                     }
 
                 });
@@ -850,6 +852,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         controller.stopRepeating(KeyCommandBind.SCROLL_WEST);
                         hbar.setValue((int) (hbar.getValue() + (HEX_W * scale)));
                         pingMinimap();
+                        isSoftCentering = false;
                     }
 
                 });
@@ -872,6 +875,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         controller.stopRepeating(KeyCommandBind.SCROLL_EAST);
                         hbar.setValue((int) (hbar.getValue() - (HEX_W * scale)));
                         pingMinimap();
+                        isSoftCentering = false;
                     }
 
                 });
@@ -3278,6 +3282,23 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         Point p = getCentreHexLocation(c);
         softCenterTarget[0] = (double)p.x/boardSize.getWidth();
         softCenterTarget[1] = (double)p.y/boardSize.getHeight();
+        
+        double w = scrollpane.getViewport().getWidth();
+        double h = scrollpane.getViewport().getHeight();
+        double bw = boardSize.getWidth();
+        double bh = boardSize.getHeight();
+        
+        double minX = (w/2-HEX_W)/bw;
+        double minY = (h/2-HEX_H)/bh;
+        double maxX = (bw+HEX_W-w/2)/bw;
+        double maxY = (bh+HEX_H-h/2)/bh;
+        // adjust the position because the board can't 
+        // center on points too close to an edge
+        softCenterTarget[0] = Math.max(softCenterTarget[0], minX);
+        softCenterTarget[1] = Math.max(softCenterTarget[1], minY);
+        
+        softCenterTarget[0] = Math.min(softCenterTarget[0], maxX);
+        softCenterTarget[1] = Math.min(softCenterTarget[1], maxY);
 
         // get the current board center point
         double[] v = getVisibleArea();

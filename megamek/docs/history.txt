@@ -17,6 +17,7 @@ v0.41.16-git
 + Issue #63: ASF free facing changes incorrect on ground maps
 + Data: New Sprites and Unit Fixes (Thanks Greekfire)
 + PR #87: Adding Simplex-based random landscape generator
++ PR #50: Shadows (optimizations, new effects for low-light levels)
 
 
 v0.41.15 (2016-02-21 14:15 UTC)

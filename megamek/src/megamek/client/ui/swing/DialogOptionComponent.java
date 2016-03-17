@@ -27,7 +27,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.Serializable;
 import java.util.StringTokenizer;
 
 import javax.swing.JCheckBox;
@@ -36,6 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import megamek.common.options.BasicOption;
 import megamek.common.options.IBasicOption;
 import megamek.common.options.IOption;
 
@@ -324,38 +324,6 @@ public class DialogOptionComponent extends JPanel implements
 
     public void itemStateChanged(ItemEvent itemEvent) {
         dialogOptionListener.optionClicked(this, option, checkbox.isSelected());
-    }
-
-    private static class BasicOption implements IBasicOption, Serializable {
-        /**
-         *
-         */
-        private static final long serialVersionUID = -1888895390718831758L;
-        private String name;
-        private Object value;
-
-        BasicOption(String name, Object value) {
-            this.name = name;
-            this.value = value;
-        }
-
-        /*
-         * (non-Javadoc)
-         *
-         * @see megamek.common.options.IBasicOption#getName()
-         */
-        public String getName() {
-            return name;
-        }
-
-        /*
-         * (non-Javadoc)
-         *
-         * @see megamek.common.options.IBasicOption#getValue()
-         */
-        public Object getValue() {
-            return value;
-        }
     }
 
     @Override

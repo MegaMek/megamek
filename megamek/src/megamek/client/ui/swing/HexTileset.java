@@ -213,6 +213,9 @@ public class HexTileset {
     // all but theme
     // all but elevation
     // all but elevation & theme
+    
+    /** Recursion depth counter to prevent freezing from circular includes*/
+    public int incDepth = 0;
 
     public void loadFromFile(String filename) throws IOException {
         // make input stream for board
@@ -262,6 +265,15 @@ public class HexTileset {
                     ortho.add(new HexEntry(new Hex(elevation, terrain, theme),
                             imageName));
                 }
+            } else if ((st.ttype == StreamTokenizer.TT_WORD) &&
+                    st.sval.equals("include")) {
+                st.nextToken(); 
+                incDepth++;
+                if (incDepth < 100) {
+                    String incFile = st.sval;
+                    System.out.println("Including "+incFile); //$NON-NLS-1$
+                    loadFromFile(incFile);
+                }
             }
             // else if((st.ttype == StreamTokenizer.TT_WORD) &&
             // st.sval.equals("ortho")){}
@@ -277,6 +289,7 @@ public class HexTileset {
         System.out
                 .println("hexTileset: loaded " + ortho.size() + 
                         " ortho images"); //$NON-NLS-1$ //$NON-NLS-2$
+        incDepth--;
     }
 
     /**

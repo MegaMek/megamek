@@ -635,7 +635,7 @@ public class RandomMapPanelBasic extends JPanel {
     }
 
     public MapSettings getMapSettings() {
-        MapSettings newMapSettings = new MapSettings(mapSettings);
+        MapSettings newMapSettings = MapSettings.getInstance(mapSettings);
         String value;
         boolean anyChanges = false;
 

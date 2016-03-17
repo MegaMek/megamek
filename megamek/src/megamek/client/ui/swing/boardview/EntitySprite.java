@@ -85,7 +85,15 @@ class EntitySprite extends Sprite {
         if (onlyDetectedBySensors()) {
             return Messages.getString("BoardView1.sensorReturn"); //$NON-NLS-1$
         } else {
-            return entity.getShortName();
+            String name = entity.getShortName();
+            int firstApo = name.indexOf('\'');
+            int secondApo = name.indexOf('\'', name.indexOf('\'')+1);
+            if ((firstApo >= 0) && (secondApo >= 0)) {
+                name = name
+                        .substring(firstApo+1, secondApo)
+                        .toUpperCase();
+            }
+            return name;
         }
     }
 
@@ -167,6 +175,13 @@ class EntitySprite extends Sprite {
         Status(Color c, String s) {
             color = c;
             status = Messages.getString("BoardView1."+s);
+            small = false;
+            if (color.equals(Color.RED)) criticalStatus = true;
+        }
+
+        Status(Color c, String s, Object objs[]) {
+            color = c;
+            status = Messages.getString("BoardView1."+s, objs);
             small = false;
             if (color.equals(Color.RED)) criticalStatus = true;
         }
@@ -383,8 +398,7 @@ class EntitySprite extends Sprite {
             // Crew
             if (entity.getCrew().isDead()) stStr.add(new Status(Color.RED, "CrewDead"));
             if (crewStunned > 0)  {
-                stStr.add(new Status(Color.YELLOW,
-                        Messages.getString("BoardView1.",new Object[] { crewStunned })));
+                stStr.add(new Status(Color.YELLOW, "STUNNED", new Object[] { crewStunned }));
             }
             
             // Infantry
@@ -668,7 +682,7 @@ class EntitySprite extends Sprite {
         if ((entity.getCrew().getNickname() != null)
                 && !entity.getCrew().getNickname().equals("")) 
             pnameStr = "'" + entity.getCrew().getNickname() + "'";
-
+        
         addToTT("Pilot", BR,
                 pnameStr, 
                 entity.getCrew().getGunnery(), 
@@ -924,7 +938,7 @@ class EntitySprite extends Sprite {
                     .getOwner().getColorIndex()));
         }
     }
-
+    
     public boolean isAffectedByECM() {
         return isAffectedByECM;
     }

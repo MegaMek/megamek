@@ -1,18 +1,19 @@
 package megamek.client.ui.swing.boardview;
 
 import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.image.FilteredImageSource;
+import java.awt.Transparency;
 import java.awt.image.ImageObserver;
 
-import megamek.client.ui.swing.util.KeyAlphaFilter;
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
@@ -156,30 +157,29 @@ class IsometricSprite extends Sprite {
 
     @Override
     public void prepare() {
-        Image tempImage;
-        Graphics graph;
-        try {
-            tempImage = bv.createImage(bounds.width, bounds.height);
-            graph = tempImage.getGraphics();
-        } catch (NullPointerException ex) {
-            // argh! but I want it!
-            return;
+        // create image for buffer
+        GraphicsConfiguration config = GraphicsEnvironment
+                .getLocalGraphicsEnvironment().getDefaultScreenDevice()
+                .getDefaultConfiguration();
+        image = config.createCompatibleImage(bounds.width, bounds.height,
+                Transparency.TRANSLUCENT);
+        Graphics2D g = (Graphics2D)image.getGraphics();
+
+        // draw the unit icon translucent if hidden from the enemy 
+        // (and activated graphics setting); or submerged
+        boolean translucentHiddenUnits = GUIPreferences.getInstance()
+                .getBoolean(GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS);
+        
+        if ((trackThisEntitiesVisibilityInfo(entity)
+                && !entity.isVisibleToEnemy() && translucentHiddenUnits)
+                || (entity.relHeight() < 0)) {
+            g.setComposite(AlphaComposite.getInstance(
+                    AlphaComposite.SRC_OVER, 0.5f));
         }
-
-        // fill with key color
-        graph.setColor(new Color(BoardView1.TRANSPARENT));
-        graph.fillRect(0, 0, bounds.width, bounds.height);
-
-        // draw entity image
-        graph.drawImage(bv.tileManager.imageFor(entity, secondaryPos), 0, 0,
-                this);
-
-        // create final image
-        image = bv.getScaledImage(bv.createImage(new FilteredImageSource(
-                tempImage.getSource(), new KeyAlphaFilter(
-                        BoardView1.TRANSPARENT))), false);
-        graph.dispose();
-        tempImage.flush();
+        g.drawImage(bv.tileManager.imageFor(entity, secondaryPos),
+                0, 0, this);
+        image = bv.getScaledImage(image, false);
+        g.dispose();
     }
     
     /**

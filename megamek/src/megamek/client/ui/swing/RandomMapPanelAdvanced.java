@@ -2086,7 +2086,7 @@ public class RandomMapPanelAdvanced extends JPanel {
         }
 
         // Build a new MapSettings objects.
-        MapSettings newMapSettings = new MapSettings(mapSettings);
+        MapSettings newMapSettings = MapSettings.getInstance(mapSettings);
 
         // Update the settings with the values from the fields.
         newMapSettings.setAlgorithmToUse(elevationAlgorithmField.getAsInt());

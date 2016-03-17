@@ -41,7 +41,7 @@ VTOL
 </motion_type>
 
 <transporters>
-TroopSpace: 9
+cargobay:9:1
 </transporters>
 
 <engine_type>
@@ -65,6 +65,9 @@ TroopSpace: 9
 </armor>
 
 <Body Equipment>
+Paramedic Equipment
+Paramedic Equipment
+Paramedic Equipment
 Paramedic Equipment
 ISAMS Ammo
 ISAMS Ammo

@@ -41,7 +41,7 @@ Naval
 </motion_type>
 
 <transporters>
-TroopSpace: 9
+cargobay:8:1
 </transporters>
 
 <engine_type>
@@ -70,6 +70,7 @@ IS Ammo LRM-15 Artemis-capable
 IS Ammo LRM-15 Artemis-capable
 IS LB 10-X AC Ammo
 IS LB 10-X AC Ammo
+CommsGear:1
 </Body Equipment>
 
 <Front Equipment>

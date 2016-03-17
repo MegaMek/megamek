@@ -340,7 +340,7 @@ public class RandomMapDialog extends JDialog implements ActionListener {
 
         // Load the file.  If there is an error, log it and return.
         try {
-            mapSettings.load(new FileInputStream(selectedFile));
+            mapSettings = MapSettings.getInstance(new FileInputStream(selectedFile));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return;

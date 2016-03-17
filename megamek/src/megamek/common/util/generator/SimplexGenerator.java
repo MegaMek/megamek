@@ -39,7 +39,7 @@ public class SimplexGenerator implements ElevationGenerator {
     }
 
     @Override
-    public String getTolltip() {
+    public String getTooltip() {
         return "Generator.Simplex.toolTip"; //$NON-NLS-1$
     }
 

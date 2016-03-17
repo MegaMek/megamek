@@ -18,7 +18,7 @@ public interface ElevationGenerator {
     String getName();
     
     /** @return translatable string for the tooltip / description */
-    String getTolltip();
+    String getTooltip();
     
     /**
      * Generate a map of given width and height and put it into the supplied elevation map

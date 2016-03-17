@@ -661,6 +661,8 @@ public class MiniMap extends JPanel {
             return;
         }
         double[] relSize = m_bview.getVisibleArea();
+        for (int i=0;i<4;i++) relSize[i] = Math.min(1, Math.max(0,relSize[i]));
+        
         Color sc = g.getColor();
         Stroke sbs = ((Graphics2D) g).getStroke();
         

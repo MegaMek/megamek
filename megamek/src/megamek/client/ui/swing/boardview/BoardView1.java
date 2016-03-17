@@ -443,6 +443,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private long paintCompsStartTime;
 
     private Rectangle displayablesRect = new Rectangle();
+    
+    
+    /** True when the board is in the process of centering to a spot. */
+    boolean isSoftCentering = false;
+    /** The final position of a soft centering relative to board size (x, y=0...1). */
+    double[] softCenterTarget = new double[2];
+    double[] oldCenter = new double[2];
+    /** Speed of soft centering of the board, less is faster */
+    private static final int SOFT_CENTER_SPEED = 8; 
 
 
     /**
@@ -3257,20 +3266,48 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
     
     public void centerOnHex(Coords c) {
-        if (null == c) {
-            return;
+        centerOnHexSoft(c);
+    }
+    
+    /** Sets the board in motion to center it on hex c  
+     * smoothly using the RedrawWorker. */
+    public synchronized void centerOnHexSoft(Coords c) {
+        if (c == null) return;
+        
+        // set the target point
+        Point p = getCentreHexLocation(c);
+        softCenterTarget[0] = (double)p.x/boardSize.getWidth();
+        softCenterTarget[1] = (double)p.y/boardSize.getHeight();
+
+        // get the current board center point
+        double[] v = getVisibleArea();
+        oldCenter[0] = (v[0]+v[2])/2; 
+        oldCenter[1] = (v[1]+v[3])/2;
+
+        isSoftCentering = true;
+    }
+    
+    /** Moves the board one step towards the final 
+     * position in during soft centering.
+     */
+    private synchronized void centerOnHexSoftStep() {
+        if (isSoftCentering) {
+            double[] vec = { softCenterTarget[0]-oldCenter[0], 
+                    softCenterTarget[1]-oldCenter[1] };
+            double[] newC = { oldCenter[0]+vec[0]/SOFT_CENTER_SPEED, 
+                    oldCenter[1]+vec[1]/SOFT_CENTER_SPEED };
+
+            if ((Math.abs(vec[0]) < 0.0005) && (Math.abs(vec[1]) < 0.0005)) {
+                // very close to the final position -> stop the motion
+                centerOnPointRel(softCenterTarget[0], softCenterTarget[1]);
+                isSoftCentering = false; 
+                pingMinimap();
+            } else {
+                centerOnPointRel(newC[0], newC[1]);
+                oldCenter[0] = newC[0];
+                oldCenter[1] = newC[1];
+            }
         }
-        // the scrollbars auto-correct if we try to set a value that's out of
-        // bounds
-        Point hexPoint = getCentreHexLocation(c);
-        // correct for upper left board padding
-        hexPoint.translate(HEX_W, HEX_H);
-        JScrollBar vscroll = scrollpane.getVerticalScrollBar();
-        vscroll.setValue(hexPoint.y - (vscroll.getVisibleAmount() / 2));
-        JScrollBar hscroll = scrollpane.getHorizontalScrollBar();
-        hscroll.setValue(hexPoint.x - (hscroll.getVisibleAmount() / 2));
-        pingMinimap();
-        repaint();
     }
     
     private void adjustVisiblePosition(Coords c, Point dispPoint, double ihdx, double ihdy) {
@@ -3319,23 +3356,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * So when the whole board is visible, the values should be 0,0,1,1. 
      * When the lower right corner of the board is visible 
      * and 90% of width and height: 0.1,0.1,1,1
+     * Due to board padding the values can be outside of [0;1]
      */
     public double[] getVisibleArea() {
         double[] values = new double[4];
+        double x = scrollpane.getViewport().getViewPosition().getX()-HEX_W;
+        double y = scrollpane.getViewport().getViewPosition().getY()-HEX_H;
+        double w = scrollpane.getViewport().getWidth();
+        double h = scrollpane.getViewport().getHeight();
+        double bw = boardSize.getWidth();
+        double bh = boardSize.getHeight();
         
-        // adjust for padding
-        double x = (double)(scrollpane.getViewport().getViewPosition().getX()-HEX_W);
-        double y = (double)(scrollpane.getViewport().getViewPosition().getY()-HEX_H);
-        
-        values[0] = x/(double)boardSize.getWidth();
-        values[1] = y/(double)boardSize.getHeight();
-        
-        values[2] = (x+(double)scrollpane.getViewport().getWidth())/(double)(boardSize.getWidth());
-        values[3] = (y+(double)scrollpane.getViewport().getHeight())/(double)(boardSize.getHeight());
-        
-        // the viewport is bigger than the image, but we want only values for the image
-        // therefore: restrict values to 0 ... 1 
-        for (int i=0;i<4;i++) values[i] = Math.min(1, Math.max(0,values[i]));
+        values[0] = x/bw;
+        values[1] = y/bh;
+        values[2] = (x+w)/bw;
+        values[3] = (y+h)/bh;
         
         return values;
     }
@@ -4130,6 +4165,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     //
     public void mousePressed(MouseEvent me) {
         requestFocusInWindow();
+        isSoftCentering = false;
         Point point = me.getPoint();
         if (null == point) {
             return;
@@ -4641,6 +4677,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 if (redraw) {
                     repaint();
                 }
+                centerOnHexSoftStep();
             }
             lastTime = currentTime;
         }

@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 import java.io.OutputStreamWriter;
@@ -1410,14 +1411,13 @@ public class Server implements Runnable {
      *         successfull
      */
     public boolean loadGame(File f, boolean sendInfo) {
-        System.out.println("s: loading saved game file '" + f + '\'');
+        System.out.println("s: loading saved game file '" + f + '\''); //$NON-NLS-1$
         IGame newGame;
-        try {
+        try(InputStream is = new GZIPInputStream(new FileInputStream(f))) {
             XStream xstream = new XStream();
-            newGame = (IGame) xstream.fromXML(new GZIPInputStream(
-                    new FileInputStream(f)));
+            newGame = (IGame) xstream.fromXML(is);
         } catch (Exception e) {
-            System.err.println("Unable to load file: " + f);
+            System.err.println("Unable to load file: " + f); //$NON-NLS-1$
             e.printStackTrace();
             return false;
         }

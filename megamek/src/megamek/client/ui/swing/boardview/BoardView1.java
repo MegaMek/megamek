@@ -447,10 +447,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     // Soft Centering ---
     
     /** True when the board is in the process of centering to a spot. */
-    boolean isSoftCentering = false;
+    private boolean isSoftCentering = false;
     /** The final position of a soft centering relative to board size (x, y=0...1). */
-    double[] softCenterTarget = new double[2];
-    double[] oldCenter = new double[2];
+    private double[] softCenterTarget = new double[2];
+    private double[] oldCenter = new double[2];
+    private long waitTimer;
     /** Speed of soft centering of the board, less is faster */
     private static final int SOFT_CENTER_SPEED = 8; 
 
@@ -3293,7 +3294,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         double minY = (h/2-HEX_H)/bh;
         double maxX = (bw+HEX_W-w/2)/bw;
         double maxY = (bh+HEX_H-h/2)/bh;
-        // adjust the position because the board can't 
+        // adjust the target point because the board can't 
         // center on points too close to an edge
         softCenterTarget[0] = Math.max(softCenterTarget[0], minX);
         softCenterTarget[1] = Math.max(softCenterTarget[1], minY);
@@ -3309,8 +3310,6 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         waitTimer = 0;
         isSoftCentering = true;
     }
-    
-    long waitTimer;
     
     /** Moves the board one step towards the final 
      * position in during soft centering.

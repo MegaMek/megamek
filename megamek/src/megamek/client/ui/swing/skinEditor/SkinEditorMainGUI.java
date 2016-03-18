@@ -384,6 +384,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
             y = 0;
             h = Math.min(h, gd.getDisplayMode().getHeight());
         }
+        frame.pack();
         frame.setVisible(true);
     }
 

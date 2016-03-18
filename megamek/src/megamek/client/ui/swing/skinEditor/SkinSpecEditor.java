@@ -143,7 +143,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         JScrollPane compListScroll = new JScrollPane(skinSpecCompList);
         JScrollPane editPanelScroll = new JScrollPane(editPanel,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         
         JPanel tmpHolding;
 
@@ -176,17 +176,22 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         add(tmpHolding, c);
 
         c.gridy++;
-        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+        c.weighty = 0.25;
+        c.fill = GridBagConstraints.BOTH;
         add(compListScroll, c);
 
+        c.gridx = 0;
         c.gridy++;
         c.weightx = 1.0;
+        c.weighty = 0.0;
         c.anchor = GridBagConstraints.CENTER;
         c.fill = GridBagConstraints.NONE;
         add(enableBorders, c);
 
         c.gridy++;
         c.weightx = 1.0;
+        c.weighty = 0.75;
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(1,0,1,0);
         add(editPanelScroll, c);

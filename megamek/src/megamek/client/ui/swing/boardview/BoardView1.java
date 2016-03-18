@@ -444,6 +444,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     private Rectangle displayablesRect = new Rectangle();
     
+    // Soft Centering ---
     
     /** True when the board is in the process of centering to a spot. */
     boolean isSoftCentering = false;
@@ -3301,30 +3302,46 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         softCenterTarget[1] = Math.min(softCenterTarget[1], maxY);
 
         // get the current board center point
-        double[] v = getVisibleArea();
+        double[] v = new double[4];
+        double x = scrollpane.getViewport().getViewPosition().getX()-HEX_W;
+        double y = scrollpane.getViewport().getViewPosition().getY()-HEX_H;
+        
+        v[0] = x/bw;
+        v[1] = y/bh;
+        v[2] = (x+w)/bw;
+        v[3] = (y+h)/bh;
         oldCenter[0] = (v[0]+v[2])/2; 
         oldCenter[1] = (v[1]+v[3])/2;
-
+        
+        waitTimer = 0;
         isSoftCentering = true;
     }
+    
+    long waitTimer;
     
     /** Moves the board one step towards the final 
      * position in during soft centering.
      */
-    private synchronized void centerOnHexSoftStep() {
+    private synchronized void centerOnHexSoftStep(long deltaTime) {
         if (isSoftCentering) {
-            double[] vec = { softCenterTarget[0]-oldCenter[0], 
+            waitTimer += deltaTime;
+            if (waitTimer < 20) return;
+            waitTimer = 0;
+            
+            double[] vec = { 
+                    softCenterTarget[0]-oldCenter[0], 
                     softCenterTarget[1]-oldCenter[1] };
-            double[] newC = { oldCenter[0]+vec[0]/SOFT_CENTER_SPEED, 
+            double[] newC = { 
+                    oldCenter[0]+vec[0]/SOFT_CENTER_SPEED, 
                     oldCenter[1]+vec[1]/SOFT_CENTER_SPEED };
-
+            
             if ((Math.abs(vec[0]) < 0.0005) && (Math.abs(vec[1]) < 0.0005)) {
                 // very close to the final position -> stop the motion
                 centerOnPointRel(softCenterTarget[0], softCenterTarget[1]);
                 isSoftCentering = false; 
                 pingMinimap();
             } else {
-                centerOnPointRel(newC[0], newC[1]);
+                centerOnPointRel(oldCenter[0], oldCenter[1]);
                 oldCenter[0] = newC[0];
                 oldCenter[1] = newC[1];
             }
@@ -4698,7 +4715,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 if (redraw) {
                     repaint();
                 }
-                centerOnHexSoftStep();
+                centerOnHexSoftStep(currentTime - lastTime);
             }
             lastTime = currentTime;
         }

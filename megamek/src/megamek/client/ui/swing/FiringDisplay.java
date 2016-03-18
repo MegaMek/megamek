@@ -603,6 +603,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             refreshAll();
             cacheVisibleTargets();
 
+            if (!ce().isOffBoard()) {
+                clientgui.bv.centerOnHex(ce().getPosition());
+            }
 
             // Update the menu bar.
             clientgui.getMenuBar().setEntity(ce());
@@ -618,10 +621,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             updateClearTurret();
             updateClearWeaponJam();
             updateStrafe();
-            
-            if (!ce().isOffBoard()) {
-                clientgui.bv.centerOnHex(ce().getPosition());
-            }
         } else {
             System.err.println("FiringDisplay: tried to " + //$NON-NLS-1$
                     "select non-existant entity: " + en); //$NON-NLS-1$

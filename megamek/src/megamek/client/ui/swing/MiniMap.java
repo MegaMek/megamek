@@ -1439,8 +1439,8 @@ public class MiniMap extends JPanel {
                 m_bview.centerOnPointRel(
                         ((double)(x - leftMargin))/(double)((hexSideBySin30[zoom] + hexSide[zoom])*m_board.getWidth()),
                         ((double)(y - topMargin))/(double)(2 * hexSideByCos30[zoom]*m_board.getHeight()));
+                m_bview.stopSoftCentering();
                 repaint();
-                //drawMap(); MUCH SLOWER
             }
         }
     }

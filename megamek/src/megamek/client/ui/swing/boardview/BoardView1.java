@@ -807,7 +807,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         controller.stopRepeating(KeyCommandBind.SCROLL_SOUTH);
                         vbar.setValue((int) (vbar.getValue() - (HEX_H * scale)));
                         pingMinimap();
-                        isSoftCentering = false;
+                        stopSoftCentering();
                     }
 
                 });
@@ -830,7 +830,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         controller.stopRepeating(KeyCommandBind.SCROLL_NORTH);
                         vbar.setValue((int) (vbar.getValue() + (HEX_H * scale)));
                         pingMinimap();
-                        isSoftCentering = false;
+                        stopSoftCentering();
                     }
 
                 });
@@ -853,7 +853,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         controller.stopRepeating(KeyCommandBind.SCROLL_WEST);
                         hbar.setValue((int) (hbar.getValue() + (HEX_W * scale)));
                         pingMinimap();
-                        isSoftCentering = false;
+                        stopSoftCentering();
                     }
 
                 });
@@ -876,7 +876,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         controller.stopRepeating(KeyCommandBind.SCROLL_EAST);
                         hbar.setValue((int) (hbar.getValue() - (HEX_W * scale)));
                         pingMinimap();
-                        isSoftCentering = false;
+                        stopSoftCentering();
                     }
 
                 });
@@ -3302,14 +3302,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         softCenterTarget[1] = Math.min(softCenterTarget[1], maxY);
 
         // get the current board center point
-        double[] v = new double[4];
-        double x = scrollpane.getViewport().getViewPosition().getX()-HEX_W;
-        double y = scrollpane.getViewport().getViewPosition().getY()-HEX_H;
-        
-        v[0] = x/bw;
-        v[1] = y/bh;
-        v[2] = (x+w)/bw;
-        v[3] = (y+h)/bh;
+        double[] v = getVisibleArea();
         oldCenter[0] = (v[0]+v[2])/2; 
         oldCenter[1] = (v[1]+v[3])/2;
         
@@ -3338,7 +3331,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if ((Math.abs(vec[0]) < 0.0005) && (Math.abs(vec[1]) < 0.0005)) {
                 // very close to the final position -> stop the motion
                 centerOnPointRel(softCenterTarget[0], softCenterTarget[1]);
-                isSoftCentering = false; 
+                stopSoftCentering();
                 pingMinimap();
             } else {
                 centerOnPointRel(oldCenter[0], oldCenter[1]);
@@ -3346,6 +3339,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 oldCenter[1] = newC[1];
             }
         }
+    }
+    
+    public void stopSoftCentering() {
+        isSoftCentering = false;
     }
     
     private void adjustVisiblePosition(Coords c, Point dispPoint, double ihdx, double ihdy) {
@@ -3398,17 +3395,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     public double[] getVisibleArea() {
         double[] values = new double[4];
-        double x = scrollpane.getViewport().getViewPosition().getX()-HEX_W;
-        double y = scrollpane.getViewport().getViewPosition().getY()-HEX_H;
+        double x = scrollpane.getViewport().getViewPosition().getX();
+        double y = scrollpane.getViewport().getViewPosition().getY();
         double w = scrollpane.getViewport().getWidth();
         double h = scrollpane.getViewport().getHeight();
         double bw = boardSize.getWidth();
         double bh = boardSize.getHeight();
         
-        values[0] = x/bw;
-        values[1] = y/bh;
-        values[2] = (x+w)/bw;
-        values[3] = (y+h)/bh;
+        values[0] = (x-HEX_W)/bw;
+        values[1] = (y-HEX_H)/bh;
+        values[2] = (x-HEX_W+w)/bw;
+        values[3] = (y-HEX_H+h)/bh;
         
         return values;
     }
@@ -4203,7 +4200,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     //
     public void mousePressed(MouseEvent me) {
         requestFocusInWindow();
-        isSoftCentering = false;
+        stopSoftCentering();
         Point point = me.getPoint();
         if (null == point) {
             return;

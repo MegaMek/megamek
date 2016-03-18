@@ -135,7 +135,9 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
          * edges. An add button is used to allow more images to be added and
          * each image path added has the option to be tiled or not. There is
          * also a remove button added for each entry to allow them to be
-         * removed.
+         * removed. Remove buttons are enabled if there are more than one image,
+         * otherwise if only one image is specified then the remove button is
+         * disabled.
          *
          * @param elementName
          * @param imgPath
@@ -143,6 +145,25 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
          */
         BorderElement(SkinSpecPanel skinPanel, String elementName,
                 List<String> imgPath, List<Boolean> isTiled) {
+            this(skinPanel, elementName, imgPath, isTiled, imgPath.size() > 1);
+        }
+
+        /**
+         * Constructor for BorderElements that can have multiple images, like
+         * edges. An add button is used to allow more images to be added and
+         * each image path added has the option to be tiled or not. There is
+         * also a remove button added for each entry to allow them to be
+         * removed.
+         *
+         * @param elementName
+         * @param imgPath
+         * @param isTiled
+         * @param removeEnabled
+         *            Determines if remove buttons are enabled
+         */
+        BorderElement(SkinSpecPanel skinPanel, String elementName,
+                List<String> imgPath, List<Boolean> isTiled,
+                boolean removeEnabled) {
             super(new GridBagLayout());
             this.skinPanel = skinPanel;
             setBorder(BorderFactory.createTitledBorder(
@@ -150,7 +171,6 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
                     TitledBorder.LEFT, TitledBorder.TOP));
 
             displayTiled = true;
-            boolean removeEnabled = imgPath.size() > 1;
             assert (imgPath.size() == isTiled.size());
             for (int i = 0; i < imgPath.size(); i++) {
                 addPathRow(imgPath.get(i), isTiled.get(i), removeEnabled);
@@ -247,7 +267,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
                 pathLbl.get(i).setEnabled(en);
                 path.get(i).setEnabled(en);
                 tiled.get(i).setEnabled(en);
-                removeButtons.get(i).setEnabled(path.size() > 1);
+                removeButtons.get(i).setEnabled((path.size() > 1) && en);
             }
         }
 
@@ -353,7 +373,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
         BackgroundElement(SkinSpecPanel skinPanel, List<String> imgPath,
                 List<Boolean> isTiled) {
             super(skinPanel, Messages.getString("SkinEditor.Background"), //$NON-NLS-1$
-                    imgPath, isTiled);
+                    imgPath, isTiled, true);
         }
 
         public void actionPerformed(ActionEvent e) {
@@ -362,7 +382,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
             if (e.getSource().equals(addButton)) {
                 addPathRow("", false, true);
                 for (JButton removeButton : removeButtons) {
-                    removeButton.setEnabled(path.size() > 1);
+                    removeButton.setEnabled(true);
                 }
                 layoutPanel();
                 skinPanel.notifySkinChanges();

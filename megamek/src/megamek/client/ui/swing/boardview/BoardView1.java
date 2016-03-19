@@ -808,7 +808,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     public void performAction() {
                         controller.stopRepeating(KeyCommandBind.SCROLL_SOUTH);
                         vbar.setValue((int) (vbar.getValue() - (HEX_H * scale)));
+                    }
+                    
+                    @Override
+                    public void releaseAction() {
                         pingMinimap();
+                    }
+                    
+                    @Override
+                    public boolean hasReleaseAction() {
+                        return true;
                     }
 
                 });
@@ -830,7 +839,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     public void performAction() {
                         controller.stopRepeating(KeyCommandBind.SCROLL_NORTH);
                         vbar.setValue((int) (vbar.getValue() + (HEX_H * scale)));
+                    }
+                    
+                    @Override
+                    public void releaseAction() {
                         pingMinimap();
+                    }
+                    
+                    @Override
+                    public boolean hasReleaseAction() {
+                        return true;
                     }
 
                 });
@@ -852,7 +870,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     public void performAction() {
                         controller.stopRepeating(KeyCommandBind.SCROLL_WEST);
                         hbar.setValue((int) (hbar.getValue() + (HEX_W * scale)));
+                    }
+                    
+                    @Override
+                    public void releaseAction() {
                         pingMinimap();
+                    }
+                    
+                    @Override
+                    public boolean hasReleaseAction() {
+                        return true;
                     }
 
                 });
@@ -874,7 +901,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     public void performAction() {
                         controller.stopRepeating(KeyCommandBind.SCROLL_EAST);
                         hbar.setValue((int) (hbar.getValue() - (HEX_W * scale)));
+                    }
+                    
+                    @Override
+                    public void releaseAction() {
                         pingMinimap();
+                    }
+                    
+                    @Override
+                    public boolean hasReleaseAction() {
+                        return true;
                     }
 
                 });

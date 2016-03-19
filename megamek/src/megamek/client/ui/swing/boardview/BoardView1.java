@@ -449,8 +449,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /** True when the board is in the process of centering to a spot. */
     private boolean isSoftCentering = false;
     /** The final position of a soft centering relative to board size (x, y=0...1). */
-    private double[] softCenterTarget = new double[2];
-    private double[] oldCenter = new double[2];
+    private Point2D softCenterTarget = new Point2D.Double();
+    private Point2D oldCenter = new Point2D.Double();
     private long waitTimer;
     /** Speed of soft centering of the board, less is faster */
     private static final int SOFT_CENTER_SPEED = 8; 
@@ -3282,9 +3282,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         
         // set the target point
         Point p = getCentreHexLocation(c);
-        softCenterTarget[0] = (double)p.x/boardSize.getWidth();
-        softCenterTarget[1] = (double)p.y/boardSize.getHeight();
+        softCenterTarget.setLocation(
+                (double)p.x/boardSize.getWidth(), 
+                (double)p.y/boardSize.getHeight());
         
+        // adjust the target point because the board can't 
+        // center on points too close to an edge
         double w = scrollpane.getViewport().getWidth();
         double h = scrollpane.getViewport().getHeight();
         double bw = boardSize.getWidth();
@@ -3294,18 +3297,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         double minY = (h/2-HEX_H)/bh;
         double maxX = (bw+HEX_W-w/2)/bw;
         double maxY = (bh+HEX_H-h/2)/bh;
-        // adjust the target point because the board can't 
-        // center on points too close to an edge
-        softCenterTarget[0] = Math.max(softCenterTarget[0], minX);
-        softCenterTarget[1] = Math.max(softCenterTarget[1], minY);
         
-        softCenterTarget[0] = Math.min(softCenterTarget[0], maxX);
-        softCenterTarget[1] = Math.min(softCenterTarget[1], maxY);
+        // here the order is important because the top/left
+        // edges always stop the board, the bottom/right 
+        // only when the board is big enough
+        softCenterTarget.setLocation(
+                Math.min(softCenterTarget.getX(), maxX), 
+                Math.min(softCenterTarget.getY(), maxY));
 
+        softCenterTarget.setLocation(
+                Math.max(softCenterTarget.getX(), minX), 
+                Math.max(softCenterTarget.getY(), minY));
+        
         // get the current board center point
         double[] v = getVisibleArea();
-        oldCenter[0] = (v[0]+v[2])/2; 
-        oldCenter[1] = (v[1]+v[3])/2;
+        oldCenter.setLocation((v[0]+v[2])/2, (v[1]+v[3])/2);
         
         waitTimer = 0;
         isSoftCentering = true;
@@ -3316,26 +3322,23 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     private synchronized void centerOnHexSoftStep(long deltaTime) {
         if (isSoftCentering) {
+            // don't move the board if 20ms haven't passed since the last move
             waitTimer += deltaTime;
             if (waitTimer < 20) return;
             waitTimer = 0;
             
-            double[] vec = { 
-                    softCenterTarget[0]-oldCenter[0], 
-                    softCenterTarget[1]-oldCenter[1] };
-            double[] newC = { 
-                    oldCenter[0]+vec[0]/SOFT_CENTER_SPEED, 
-                    oldCenter[1]+vec[1]/SOFT_CENTER_SPEED };
+            // move the board by a fraction of the distance to the target
+            Point2D newCenter = new Point2D.Double(
+                    oldCenter.getX() + (softCenterTarget.getX() - oldCenter.getX())/SOFT_CENTER_SPEED, 
+                    oldCenter.getY() + (softCenterTarget.getY() - oldCenter.getY())/SOFT_CENTER_SPEED );
+            centerOnPointRel(newCenter.getX(), newCenter.getY());
             
-            if ((Math.abs(vec[0]) < 0.0005) && (Math.abs(vec[1]) < 0.0005)) {
-                // very close to the final position -> stop the motion
-                centerOnPointRel(softCenterTarget[0], softCenterTarget[1]);
+            oldCenter = newCenter;
+            
+            // stop the motion when close enough to the final position 
+            if (softCenterTarget.distance(newCenter) < 0.0005) {
                 stopSoftCentering();
                 pingMinimap();
-            } else {
-                centerOnPointRel(oldCenter[0], oldCenter[1]);
-                oldCenter[0] = newC[0];
-                oldCenter[1] = newC[1];
             }
         }
     }

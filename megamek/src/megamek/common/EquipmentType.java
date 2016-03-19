@@ -582,6 +582,9 @@ public class EquipmentType {
     }
 
     public static int getArmorType(EquipmentType et) {
+        if (null == et) {
+            return T_ARMOR_UNKNOWN;
+        }
         for (int x = 0; x < armorNames.length; x++) {
             // Some armor names (Industrial), have a space in the name, so trim
             if (armorNames[x].trim().equals(et.getName().trim())) {

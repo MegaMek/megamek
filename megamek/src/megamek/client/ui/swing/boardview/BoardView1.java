@@ -240,7 +240,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private int scrollYDifference = 0;
     // are we drag-scrolling?
     private boolean dragging = false;
-    // should we scroll when the mouse is dragged?
+    /** True when the right mouse button was pressed to start a drag */
     private boolean shouldScroll = false;
 
     // entity sprites

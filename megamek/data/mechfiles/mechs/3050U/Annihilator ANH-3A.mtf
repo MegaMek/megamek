@@ -9,15 +9,16 @@ Source:TRO 3050 - Jihad
 Rules Level:2
 
 Mass:100
-Engine:200 Fusion Engine
+Engine:200 Compact Engine
 Structure:Standard
 Myomer:Standard
+Gyro:Compact Gyro
 
-Heat Sinks:14 Double
+Heat Sinks:12 Double
 Walk MP:2
 Jump MP:0
 
-Armor:Standard
+Armor:Light Ferro-Fibrous(Inner Sphere)
 LA Armor:34
 RA Armor:34
 LT Armor:32
@@ -47,12 +48,12 @@ Lower Arm Actuator
 ISDouble Heat Sink
 ISDouble Heat Sink
 ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
 ISERMediumLaser
 ISLAC2
 ISLAC2
+-Empty-
+-Empty-
+-Empty-
 
 Right Arm:
 Shoulder
@@ -61,26 +62,26 @@ Lower Arm Actuator
 ISDouble Heat Sink
 ISDouble Heat Sink
 ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
 ISERMediumLaser
 ISLAC2
 ISLAC2
+-Empty-
+-Empty-
+-Empty-
 
 Left Torso:
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
 ISERMediumLaser
 ISLAC2
 ISLAC2
 ISLAC2 Ammo
 ISLAC2 Ammo
 ISLAC2 Ammo
+ISLAC2 Ammo
+ISLAC2 Ammo
+ISCASE
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
 
 Right Torso:
 ISERMediumLaser
@@ -102,19 +103,19 @@ Fusion Engine
 Fusion Engine
 Gyro
 Gyro
-Gyro
-Gyro
-Fusion Engine
-Fusion Engine
-Fusion Engine
-ISLAC2 Ammo
-ISLAC2 Ammo
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Light Ferro-Fibrous
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISLAC2 Ammo
+Light Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -129,7 +130,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISLAC2 Ammo
+Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -143,7 +144,7 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ISLAC2 Ammo
+Light Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-

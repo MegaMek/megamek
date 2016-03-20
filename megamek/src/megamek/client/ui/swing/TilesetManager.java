@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import megamek.client.ui.ITilesetManager;
 import megamek.client.ui.swing.boardview.BoardView1;
@@ -74,6 +75,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
     private static final String FILENAME_DEFAULT_HEX_SET = "defaulthexset.txt"; //$NON-NLS-1$
     private static final String FILENAME_NIGHT_IMAGE = new File("transparent", "night.png").toString();  //$NON-NLS-1$  //$NON-NLS-2$
+    private static final String FILENAME_HEX_MASK = new File("transparent", "HexMask.png").toString();  //$NON-NLS-1$  //$NON-NLS-2$
     private static final String FILENAME_ARTILLERY_AUTOHIT_IMAGE = "artyauto.gif"; //$NON-NLS-1$
     private static final String FILENAME_ARTILLERY_ADJUSTED_IMAGE = "artyadj.gif"; //$NON-NLS-1$
     private static final String FILENAME_ARTILLERY_INCOMING_IMAGE = "artyinc.gif"; //$NON-NLS-1$
@@ -105,6 +107,10 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
     private Image minefieldSign;
     private Image nightFog;
+    
+    /** An opaque hex shape used to limit draw operations to the exact hex shape. */
+    private Image hexMask;
+    
     private Image artilleryAutohit;
     private Image artilleryAdjusted;
     private Image artilleryIncoming;
@@ -268,6 +274,14 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         return nightFog;
     }
 
+    public Image getHexMask() {
+        return hexMask;
+    }
+
+    public Set<String> getThemes() {
+        return hexTileset.getThemes();
+    }
+
     /**
      * Hexes affected by ECM will have a shaded static effect drawn on them.
      * This method will check the cache for a suitable static image for a given
@@ -368,6 +382,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
 
         // load night overlay
         nightFog = boardview.getToolkit().getImage(new File(Configuration.hexesDir(), FILENAME_NIGHT_IMAGE).toString());
+        
+        // load the hexMask
+        hexMask = boardview.getToolkit().getImage(new File(Configuration.hexesDir(), FILENAME_HEX_MASK).toString());
 
         // load artillery targets
         artilleryAutohit = boardview.getToolkit().getImage(

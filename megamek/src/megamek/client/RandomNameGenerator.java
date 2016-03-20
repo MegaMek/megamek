@@ -17,7 +17,6 @@ package megamek.client;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -315,11 +314,10 @@ public class RandomNameGenerator implements Serializable {
             factionLast.put(key, new Vector<String>());
             factionFirst.put(key, new HashMap<String, Vector<String>>());
             File ff = new File(factions_dir_path, filename);
-            try {
-                FileInputStream fs = new FileInputStream(ff);
-                input = new Scanner(fs, "UTF-8");
-            } catch (FileNotFoundException fne) {
-                System.err.println("RandomNameGenerator.populateNames(): Could not find '" + ff + "'");
+            try(FileInputStream fs = new FileInputStream(ff)) {
+                input = new Scanner(fs, "UTF-8"); //$NON-NLS-1$
+            } catch (IOException fne) {
+                System.err.println("RandomNameGenerator.populateNames(): Could not find '" + ff + "'"); //$NON-NLS-1$
                 continue;
             }
             Map<String, Vector<String>> hash = new HashMap<String, Vector<String>>();

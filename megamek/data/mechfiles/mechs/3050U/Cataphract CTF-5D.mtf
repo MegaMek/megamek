@@ -14,27 +14,27 @@ Structure:Standard
 Myomer:Standard
 Cockpit:Small Cockpit
 
-Heat Sinks:16 Single
+Heat Sinks:14 Double
 Walk MP:4
 Jump MP:6
 
-Armor:Standard
+Armor:Stealth Armor
 LA Armor:22
 RA Armor:22
 LT Armor:19
 RT Armor:19
 CT Armor:26
 HD Armor:9
-LL Armor:20
-RL Armor:20
+LL Armor:24
+RL Armor:24
 RTL Armor:9
 RTR Armor:9
 RTC Armor:9
 
 Weapons:4
 1 ISLAC5, Right Arm, Ammo:20
+1 ISERMediumLaser, Right Arm
 1 ISERMediumLaser, Right Torso
-1 ISERMediumLaser, Left Torso
 1 ISPlasmaRifle, Head, Ammo:20
 
 Left Arm:
@@ -42,28 +42,28 @@ Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
-Heat Sink
-Heat Sink
-Heat Sink
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
+Stealth Armor
+Stealth Armor
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
+ISDouble Heat Sink
+ISDouble Heat Sink
+ISDouble Heat Sink
 ISLAC5
 ISLAC5
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+ISERMediumLaser
+ISLAC5 Ammo
+Stealth Armor
+Stealth Armor
 
 Left Torso:
 Fusion Engine
@@ -72,12 +72,12 @@ ImprovedJump Jet
 ImprovedJump Jet
 ImprovedJump Jet
 ImprovedJump Jet
-ISERMediumLaser
-ISPlasmaRifle Ammo
-ISPlasmaRifle Ammo
--Empty-
--Empty-
--Empty-
+ImprovedJump Jet
+ImprovedJump Jet
+ISGuardianECM
+ISGuardianECM
+Stealth Armor
+Stealth Armor
 
 Right Torso:
 Fusion Engine
@@ -86,12 +86,12 @@ ImprovedJump Jet
 ImprovedJump Jet
 ImprovedJump Jet
 ImprovedJump Jet
-ISCASE
+ImprovedJump Jet
+ImprovedJump Jet
 ISERMediumLaser
-ISLAC5 Ammo
--Empty-
--Empty-
--Empty-
+ISCASE
+Stealth Armor
+Stealth Armor
 
 Center Torso:
 Fusion Engine
@@ -104,8 +104,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Heat Sink
-Heat Sink
+ISPlasmaRifle Ammo
+ISPlasmaRifle Ammo
 
 Head:
 Life Support
@@ -126,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ImprovedJump Jet
-ImprovedJump Jet
+Stealth Armor
+Stealth Armor
 -Empty-
 -Empty-
 -Empty-
@@ -140,8 +140,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-ImprovedJump Jet
-ImprovedJump Jet
+Stealth Armor
+Stealth Armor
 -Empty-
 -Empty-
 -Empty-

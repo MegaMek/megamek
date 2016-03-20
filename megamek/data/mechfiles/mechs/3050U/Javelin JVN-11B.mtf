@@ -18,17 +18,17 @@ Walk MP:6
 Jump MP:0
 
 Armor:Ferro-Fibrous
-LA Armor:6
-RA Armor:6
-LT Armor:8
-RT Armor:8
-CT Armor:8
-HD Armor:6
-LL Armor:8
-RL Armor:8
-RTL Armor:2
-RTR Armor:2
-RTC Armor:2
+LA Armor:9
+RA Armor:9
+LT Armor:9
+RT Armor:9
+CT Armor:11
+HD Armor:9
+LL Armor:12
+RL Armor:12
+RTL Armor:3
+RTR Armor:3
+RTC Armor:3
 
 Weapons:4
 1 ISSRM4, Right Torso, Ammo:50

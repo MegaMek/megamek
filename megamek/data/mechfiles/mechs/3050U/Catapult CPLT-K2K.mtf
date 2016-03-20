@@ -32,9 +32,9 @@ RTC Armor:10
 
 Weapons:4
 ER PPC, Left Arm
-ER Medium Laser, Left Arm
 ER PPC, Right Arm
-ER Medium Laser, Right Arm
+ER Medium Laser, Center Torso
+ER Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -48,7 +48,7 @@ ISDoubleHeatSink
 ISERPPC
 ISERPPC
 ISERPPC
-ISERMediumLaser
+-Empty-
 
 Right Arm:
 Shoulder
@@ -62,7 +62,7 @@ ISDoubleHeatSink
 ISERPPC
 ISERPPC
 ISERPPC
-ISERMediumLaser
+-Empty-
 
 Left Torso:
 Fusion Engine
@@ -103,8 +103,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
--Empty-
--Empty-
+ISERMediumLaser
+ISERMediumLaser
 
 Head:
 Life Support

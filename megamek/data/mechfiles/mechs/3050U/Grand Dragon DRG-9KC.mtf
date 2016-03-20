@@ -18,17 +18,17 @@ Walk MP:6
 Jump MP:0
 
 Armor:Light Ferro-Fibrous
-LA Armor:14
-RA Armor:14
-LT Armor:16
-RT Armor:16
-CT Armor:27
+LA Armor:16
+RA Armor:16
+LT Armor:17
+RT Armor:17
+CT Armor:25
 HD Armor:9
-LL Armor:18
-RL Armor:18
-RTL Armor:8
-RTR Armor:8
-RTC Armor:12
+LL Armor:21
+RL Armor:22
+RTL Armor:5
+RTR Armor:5
+RTC Armor:8
 
 Weapons:5
 1 ISSNPPC, Right Arm

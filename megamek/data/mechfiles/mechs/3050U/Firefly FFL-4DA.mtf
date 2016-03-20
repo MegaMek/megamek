@@ -1,50 +1,51 @@
 Version:1.0
-Hatchetman
-HCT-6S
+Firefly
+FFL-4DA
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3064
-Source:TRO 3050 - Civil War
+Era:3067
+Source:Starterbook: Wolf & Blake - Civil War
 Rules Level:2
 
-Mass:45
-Engine:180 Light Engine
-Structure:Standard
+Mass:30
+Engine:150 Light Engine
+Structure:Endo Steel
 Myomer:Standard
 
-Heat Sinks:10 Double
-Walk MP:4
+Heat Sinks:12 Single
+Walk MP:5
 Jump MP:4
 
 Armor:Ferro-Fibrous
-LA Armor:14
-RA Armor:14
-LT Armor:16
-RT Armor:16
-CT Armor:21
+LA Armor:10
+RA Armor:10
+LT Armor:11
+RT Armor:11
+CT Armor:15
 HD Armor:9
-LL Armor:22
-RL Armor:22
-RTL Armor:6
-RTR Armor:6
-RTC Armor:6
+LL Armor:14
+RL Armor:14
+RTL Armor:3
+RTR Armor:3
+RTC Armor:5
 
-Weapons:4
-1 ISERMediumLaser, Right Arm
-1 ISERMediumLaser, Left Arm
-1 ISLBXAC10, Right Torso, Ammo:20
+Weapons:5
+1 ISERMediumLaser, Right Torso
+1 ISLRM5, Right Torso, Ammo:24
+1 ISGuardianECM, Left Torso
 1 ISERMediumLaser, Left Torso
+1 ISERMediumLaser, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
-Lower Arm Actuator
-Hand Actuator
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISERMediumLaser
+Heat Sink
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -53,12 +54,12 @@ Ferro-Fibrous
 Right Arm:
 Shoulder
 Upper Arm Actuator
-Lower Arm Actuator
-Hand Actuator
-Hatchet
-Hatchet
-Hatchet
-ISERMediumLaser
+Endo Steel
+Endo Steel
+Endo Steel
+Ferro-Fibrous
+Ferro-Fibrous
+Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
 Ferro-Fibrous
@@ -67,30 +68,30 @@ Ferro-Fibrous
 Left Torso:
 Fusion Engine
 Fusion Engine
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
-ISDouble Heat Sink
+Heat Sink
+Heat Sink
+ISGuardianECM
+ISGuardianECM
 ISERMediumLaser
-Ferro-Fibrous
-Ferro-Fibrous
-Ferro-Fibrous
+ISLRM5 Ammo Artemis-capable
+ISCASE
+Endo Steel
+Endo Steel
+Endo Steel
 
 Right Torso:
 Fusion Engine
 Fusion Engine
-ISLBXAC10
-ISLBXAC10
-ISLBXAC10
-ISLBXAC10
-ISLBXAC10
-ISLBXAC10
-ISLBXAC10 Ammo
-ISLBXAC10 Ammo
-ISCASE
-Ferro-Fibrous
+Heat Sink
+Heat Sink
+Heat Sink
+ISERMediumLaser
+ISLRM5
+ISArtemisIV
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -103,14 +104,14 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-Ferro-Fibrous
-Ferro-Fibrous
+ISERMediumLaser
+Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
--Empty-
+Ferro-Fibrous
 Sensors
 Life Support
 -Empty-

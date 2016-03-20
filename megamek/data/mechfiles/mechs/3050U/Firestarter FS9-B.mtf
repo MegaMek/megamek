@@ -9,91 +9,90 @@ Source:TRO 3050 - Jihad
 Rules Level:2
 
 Mass:35
-Engine:210 Fusion Engine
+Engine:210 Light Fusion Engine
 Structure:Endo Steel
 Myomer:Standard
 
 Heat Sinks:10 Single
 Walk MP:6
-Jump MP:6
+Jump MP:8
 
 Armor:Light Ferro-Fibrous
-LA Armor:8
-RA Armor:8
-LT Armor:11
-RT Armor:11
-CT Armor:15
-HD Armor:9
-LL Armor:10
-RL Armor:10
-RTL Armor:5
-RTR Armor:5
-RTC Armor:6
+LA Armor:9
+RA Armor:9
+LT Armor:9
+RT Armor:9
+CT Armor:14
+HD Armor:8
+LL Armor:12
+RL Armor:12
+RTL Armor:3
+RTR Armor:3
+RTC Armor:5
 
 Weapons:7
-1 ISFlamer, Right Arm
 1 ISFlamer, Left Arm
-1 ISImprovedC3CPU, Right Torso
-1 ISFlamer, Left Torso
-1 ISERMediumLaser, Left Torso
+1 ISERMediumLaser, Right Arm
+1 ISImprovedC3CPU, Left Torso
+1 ISFlamer, Center Torso (R)
 1 ISFlamer, Center Torso
-1 ISFlamer, Head (R)
+
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
+Heat Sink
 ISFlamer
+Endo Steel
+Endo Steel
+Endo Steel
+Endo Steel
 Light Ferro-Fibrous
 Light Ferro-Fibrous
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+Light Ferro-Fibrous
 
 Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISFlamer
-Light Ferro-Fibrous
-Light Ferro-Fibrous
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
-
-Left Torso:
-Jump Jet
-Jump Jet
-Jump Jet
-ISFlamer
+Heat Sink
 ISERMediumLaser
 Endo Steel
 Endo Steel
 Endo Steel
 Endo Steel
-Endo Steel
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+Light Ferro-Fibrous
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+ImprovedJump Jet
+ImprovedJump Jet
+ImprovedJump Jet
+ImprovedJump Jet
+ImprovedJump Jet
+ImprovedJump Jet
+ISImprovedC3CPU
+ISImprovedC3CPU
 Endo Steel
 Endo Steel
 
 Right Torso:
-Jump Jet
-Jump Jet
-Jump Jet
-ISImprovedC3CPU
-ISImprovedC3CPU
+Fusion Engine
+Fusion Engine
+ImprovedJump Jet
+ImprovedJump Jet
+ImprovedJump Jet
+ImprovedJump Jet
+ImprovedJump Jet
+ImprovedJump Jet
 Endo Steel
 Endo Steel
 Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+Light Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -107,13 +106,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 ISFlamer
-ISFlamer
+ISFlamer (R)
 
 Head:
 Life Support
 Sensors
 Cockpit
-Light Ferro-Fibrous
+Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -128,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink
-Light Ferro-Fibrous
+ImprovedJump Jet
+ImprovedJump Jet
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +141,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Heat Sink
-Light Ferro-Fibrous
+ImprovedJump Jet
+ImprovedJump Jet
 -Empty-
 -Empty-
 -Empty-

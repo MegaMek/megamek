@@ -23,8 +23,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -32,6 +35,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -1342,7 +1346,9 @@ public class Server implements Runnable {
             sFinalFile = sDir + File.separator + sFinalFile;
             GZIPOutputStream gzo = new GZIPOutputStream(new FileOutputStream(
                     sFinalFile + ".gz"));
-            xstream.toXML(game, gzo);
+            Writer writer = new OutputStreamWriter(gzo, Charset.forName("UTF-8"));
+            xstream.toXML(game, writer);
+            writer.close();
             gzo.close();
         } catch (Exception e) {
             System.err.println("Unable to save file: " + sFinalFile);
@@ -1405,14 +1411,13 @@ public class Server implements Runnable {
      *         successfull
      */
     public boolean loadGame(File f, boolean sendInfo) {
-        System.out.println("s: loading saved game file '" + f + '\'');
+        System.out.println("s: loading saved game file '" + f + '\''); //$NON-NLS-1$
         IGame newGame;
-        try {
+        try(InputStream is = new GZIPInputStream(new FileInputStream(f))) {
             XStream xstream = new XStream();
-            newGame = (IGame) xstream.fromXML(new GZIPInputStream(
-                    new FileInputStream(f)));
+            newGame = (IGame) xstream.fromXML(is);
         } catch (Exception e) {
-            System.err.println("Unable to load file: " + f);
+            System.err.println("Unable to load file: " + f); //$NON-NLS-1$
             e.printStackTrace();
             return false;
         }

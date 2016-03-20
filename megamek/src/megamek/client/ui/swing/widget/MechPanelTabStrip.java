@@ -107,6 +107,14 @@ public class MechPanelTabStrip extends PicMap {
                         + "activeImage do not match heights for image " + i);
             }
         }
+        if (idleCorner.getWidth(null) != selectedCorner.getWidth(null)) {
+            System.out.println("TabStrip Warning: idleCorner and "
+                    + "selectedCorner do not match widths!");
+        }
+        if (idleCorner.getHeight(null) != selectedCorner.getHeight(null)) {
+            System.out.println("TabStrip Warning: idleCorner and "
+                    + "selectedCorner do not match heights!");
+        }
     }
 
     private void setAreas() {

@@ -32,11 +32,6 @@ public class MechPanelTabStrip extends PicMap {
     private int activeTab = 0;
     UnitDisplay md;
 
-    private Polygon firstTab = new Polygon(new int[] { 0, 43, 59, 59, 0 },
-            new int[] { 0, 0, 16, 17, 17 }, 5);
-    private int[] pointsX = new int[] { 0, 43, 59, 59, 13, 0 };
-    private int[] pointsY = new int[] { 0, 0, 16, 17, 17, 4 };
-
     public MechPanelTabStrip(UnitDisplay md) {
         super();
         this.md = md;
@@ -108,23 +103,23 @@ public class MechPanelTabStrip extends PicMap {
     }
 
     private void setAreas() {
-        int stepX = 47;
+        int cornerWidth = idleCorner.getWidth(null);
 
-        int width, height;
-        width = idleImage[0].getWidth(null);
-        height = idleImage[0].getHeight(null);
-        tabs[0] = new PMPicPolygonalArea(firstTab, createImage(width, height));
-        for (int i = 1; i <= 5; i++) {
-            width = idleImage[i].getWidth(null);
-            height = idleImage[i].getHeight(null);
-            tabs[i] = new PMPicPolygonalArea(new Polygon(pointsX, pointsY, 6),
+        for (int i = 0; i < idleImage.length; i++) {
+            int width = idleImage[i].getWidth(null);
+            int height = idleImage[i].getHeight(null);
+            int[] pointsX = new int[] { 0, width, width + cornerWidth, 0 };
+            int[] pointsY = new int[] { 0, 0, height, height };
+            tabs[i] = new PMPicPolygonalArea(new Polygon(pointsX, pointsY, 4),
                     createImage(width, height));
         }
 
-        for (int i = 0; i < 6; i++) {
+        int cumWidth = 0;
+        for (int i = 0; i < idleImage.length; i++) {
             drawIdleImage(i);
-            tabs[i].translate(i * stepX, 0);
+            tabs[i].translate(cumWidth, 0);
             addElement(tabs[i]);
+            cumWidth += idleImage[i].getWidth(null);
         }
     }
 

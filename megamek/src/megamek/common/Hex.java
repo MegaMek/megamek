@@ -481,9 +481,7 @@ public class Hex implements IHex, Serializable {
     public void terrainPilotingModifier(EntityMovementMode moveMode, PilotingRollData roll, boolean enteringRubble) {
         for (Integer i : hsTerrains){
             if (terrains[i] != null) {
-                if (terrains[i].pilotingModifier(moveMode) != -1) {
-                    roll.addModifier(terrains[i].pilotingModifier(moveMode), terrains[i].getLevelasString(enteringRubble));
-                }
+                terrains[i].pilotingModifier(moveMode, roll, enteringRubble);
             }
         }
     }
@@ -626,8 +624,8 @@ public class Hex implements IHex, Serializable {
      */
     public void getUnstuckModifier(int elev, PilotingRollData rollTarget) {
         for (Integer i : hsTerrains){
-            if ((terrains[i] != null) && (terrains[i].getUnstuckModifier(elev) != -5)) {
-                rollTarget.addModifier(terrains[i].getUnstuckModifier(elev), terrains[i].getUnstuckString(elev));
+            if (terrains[i] != null) {
+                terrains[i].getUnstuckModifier(elev, rollTarget);
             }
         }
     }

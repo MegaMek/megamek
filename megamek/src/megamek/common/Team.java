@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.util.Enumeration;
+import java.util.Objects;
 import java.util.Vector;
 
 /**
@@ -220,24 +221,19 @@ public final class Team extends TurnOrdered {
      */
     @Override
     public boolean equals(Object object) {
-        if (this == object) {
+        if(this == object) {
             return true;
-        } else if ((object == null) || (getClass() != object.getClass())) {
+        }
+        if((null == object) || (getClass() != object.getClass())) {
             return false;
         }
-        Team other = (Team) object;
-        if ((other.getId() != getId()) || (other.getSize() != getSize())) {
-            return false;
-        }
-        Enumeration<IPlayer> thisPlayers = getPlayers();
-        Enumeration<IPlayer> otherPlayers = other.getPlayers();
-        while (thisPlayers.hasMoreElements()) {
-            if (!thisPlayers.nextElement().equals(otherPlayers.nextElement())) {
-                return false;
-            }
-        }
-        // The teams pass all tests, so they must match.
-        return true;
+        final Team other = (Team) object;
+        return (id == other.id) && Objects.equals(players, other.players);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, players);
     }
     
     @Override

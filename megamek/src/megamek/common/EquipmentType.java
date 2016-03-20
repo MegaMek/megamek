@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Vector;
 
 import megamek.common.options.GameOptions;
@@ -825,20 +826,20 @@ public class EquipmentType {
     }
 
     @Override
-    public boolean equals(Object e) {
-        if(null == e || !(e instanceof EquipmentType)) {
+    public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;
+        }
+        if((null == obj) || (getClass() != obj.getClass())) {
             return false;
         }
-        try {
-            EquipmentType et = (EquipmentType)e;
-            if (internalName.equals(et.internalName)) {
-                return true;
-            }
-        } catch (Exception ex) {
-            System.err.println(name + "  does not have an internal name set!");
-        }
-        return false;
-
+        final EquipmentType other = (EquipmentType) obj;
+        return Objects.equals(internalName, other.internalName);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(internalName);
     }
 
     public static void writeEquipmentDatabase(File f) {

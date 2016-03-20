@@ -14,6 +14,8 @@
 
 package megamek.common;
 
+import java.util.Objects;
+
 import megamek.common.util.StringUtil;
 
 /**
@@ -148,28 +150,20 @@ class QuirkEntry {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof QuirkEntry) && equals((QuirkEntry) obj);
-    }
-
-    public boolean equals(QuirkEntry quirk) {
-        if (!getQuirk().equalsIgnoreCase(quirk.getQuirk())) {
-            return false;
-        } else if (StringUtil.isNullOrEmpty(getLocation()) && !StringUtil.isNullOrEmpty(quirk.getLocation())) {
-            return false;
-        } else if (!StringUtil.isNullOrEmpty(getLocation()) && StringUtil.isNullOrEmpty(quirk.getLocation())) {
-            return false;
-        } else if (!StringUtil.isNullOrEmpty(getLocation()) && !getLocation().equals(quirk.getLocation())) {
-            return false;
-        } else if (StringUtil.isNullOrEmpty(getWeaponName()) && !StringUtil.isNullOrEmpty(quirk.getWeaponName())) {
-            return false;
-        } else if (!StringUtil.isNullOrEmpty(getWeaponName()) && StringUtil.isNullOrEmpty(quirk.getWeaponName())) {
-            return false;
-        } else if (!StringUtil.isNullOrEmpty(getWeaponName()) && !getLocation().equals(quirk.getWeaponName())) {
-            return false;
-        } else if (getSlot() != quirk.getSlot()) {
+        if(this == obj) {
+            return true;
+        }
+        if((null == obj) || (getClass() != obj.getClass())) {
             return false;
         }
-        return true;
+        final QuirkEntry other = (QuirkEntry) obj;
+        return Objects.equals(location, other.location) && Objects.equals(weaponName, other.weaponName)
+                && (slot == other.slot);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(location, weaponName, slot);
     }
 
     public QuirkEntry copy() {

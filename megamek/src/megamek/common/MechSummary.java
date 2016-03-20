@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 
@@ -510,18 +511,21 @@ public class MechSummary implements Serializable {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (!(other instanceof MechSummary)) {
-            return false;
-        }
-        MechSummary msOther = (MechSummary) other;
-        // we match on chassis + model + unittype + sourcefile
-        if (msOther.getChassis().equals(getChassis())
-                && msOther.getModel().equals(getModel())
-                && msOther.getUnitType().equals(getUnitType())
-                && msOther.getSourceFile().equals(getSourceFile())) {
+    public boolean equals(Object obj) {
+        if(this == obj) {
             return true;
         }
-        return false;
+        if((null == obj) || (getClass() != obj.getClass())) {
+            return false;
+        }
+        final MechSummary other = (MechSummary) obj;
+        // we match on chassis + model + unittype + sourcefile
+        return Objects.equals(m_sChassis, other.m_sChassis) && Objects.equals(m_sModel, other.m_sModel)
+                && Objects.equals(m_sUnitType, other.m_sUnitType) && Objects.equals(m_sSourceFile, other.m_sSourceFile);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(m_sChassis, m_sModel, m_sUnitType, m_sSourceFile);
     }
 }

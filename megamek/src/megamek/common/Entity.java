@@ -5859,14 +5859,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Two entities are equal if their ids are equal
      */
     @Override
-    public boolean equals(Object object) {
-        if (this == object) {
+    public boolean equals(Object obj) {
+        if(this == obj) {
             return true;
-        } else if ((object == null) || (getClass() != object.getClass())) {
+        }
+        if((null == obj) || (getClass() != obj.getClass())) {
             return false;
         }
-        Entity other = (Entity) object;
-        return other.getId() == id;
+        final Entity other = (Entity) obj;
+        return (id == other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 
     /**

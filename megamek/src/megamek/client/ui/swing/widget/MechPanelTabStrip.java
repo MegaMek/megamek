@@ -75,7 +75,14 @@ public class MechPanelTabStrip extends PicMap {
         idleCorner = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getCornerIdle()).toString());
         selectedCorner = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getCornerActive()).toString());
 
+        // If we don't flush, we might have stale data
+        idleCorner.flush();
+        selectedCorner.flush();
+
         for (int i = 0; i < 6; i++) {
+            // If we don't flush, we might have stale data
+            idleImage[i].flush();
+            activeImage[i].flush();
             mt.addImage(idleImage[i], 0);
             mt.addImage(activeImage[i], 0);
         }

@@ -3636,8 +3636,8 @@ public class Compute {
         }
         // Target may be in an illuminated hex
         if (!teIlluminated) {
-            teIlluminated = game.getIlluminatedPositions().contains(
-                    target.getPosition());
+            int lightLvl = game.isPositionIlluminated(target.getPosition());
+            teIlluminated = lightLvl != Game.ILLUMINATED_NONE;
         }
 
         // if either does not have a position then return false

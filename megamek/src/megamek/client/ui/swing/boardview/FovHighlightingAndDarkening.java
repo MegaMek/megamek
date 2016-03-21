@@ -15,6 +15,7 @@ import megamek.common.ComputeECM;
 import megamek.common.Coords;
 import megamek.common.ECMInfo;
 import megamek.common.Entity;
+import megamek.common.Game;
 import megamek.common.IBoard;
 import megamek.common.IHex;
 import megamek.common.LosEffects;
@@ -136,8 +137,8 @@ class FovHighlightingAndDarkening {
             }
             // Target may be in an illuminated hex
             if (!targetIlluminated) {
-                targetIlluminated = this.boardView1.game
-                        .getIlluminatedPositions().contains(c);
+                int lightLvl = boardView1.game.isPositionIlluminated(c);
+                targetIlluminated = lightLvl != Game.ILLUMINATED_NONE;
             }
 
             final int max_dist;

@@ -69,6 +69,8 @@ public interface IBoardView extends MechDisplayListener {
     public void centerOnHex(Coords position);
     public void centerOnPointRel(double xrel, double yrel);
     public double[] getVisibleArea();
+    
+    public void stopSoftCentering();
 
     // it's a hack that the popup is Object, but we use this interface
     // for both AWT and swing, and AWT's PopupMenu and Swing's JPopupMenu

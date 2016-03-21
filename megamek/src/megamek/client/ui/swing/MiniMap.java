@@ -661,6 +661,8 @@ public class MiniMap extends JPanel {
             return;
         }
         double[] relSize = m_bview.getVisibleArea();
+        for (int i=0;i<4;i++) relSize[i] = Math.min(1, Math.max(0,relSize[i]));
+        
         Color sc = g.getColor();
         Stroke sbs = ((Graphics2D) g).getStroke();
         
@@ -1437,8 +1439,8 @@ public class MiniMap extends JPanel {
                 m_bview.centerOnPointRel(
                         ((double)(x - leftMargin))/(double)((hexSideBySin30[zoom] + hexSide[zoom])*m_board.getWidth()),
                         ((double)(y - topMargin))/(double)(2 * hexSideByCos30[zoom]*m_board.getHeight()));
+                m_bview.stopSoftCentering();
                 repaint();
-                //drawMap(); MUCH SLOWER
             }
         }
     }

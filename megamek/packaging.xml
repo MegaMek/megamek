@@ -329,6 +329,14 @@
 		<delete dir="${pkgdir}/${datadir}/mechfiles/warship" />
 	</target>
 
+	<target name="rat-zip" description="Create a zipfile of the RAT files">
+		<zip zipfile="${pkgdir}/${datadir}/rat_default.zip" basedir="${pkgdir}/${datadir}/rat" />
+		<delete dir="${pkgdir}/${datadir}/rat" />
+		<sleep seconds="1" /> <!-- give the file system time to catch up -->
+		<mkdir dir="${pkgdir}/${datadir}/rat" />
+		<move file="${pkgdir}/${datadir}/rat_default.zip" tofile="${pkgdir}/${datadir}/rat/default.zip" />
+	</target>
+	
 	<target name="win-zip" description="Create a zipfile of the Windows distribution">
 		<zip zipfile="${basedir}/${windist}.zip" basedir="${windist}" />
 	</target>
@@ -356,7 +364,7 @@
 		<delete dir="${srcdist}" />
 	</target>
 
-	<target name="release" depends="pkgdir-build, unitfiles-zip, mac-package, nix-package, win-package, source-package, pkgdir-clean" description="Build the project from git and package it as Windows, Mac, Unix, and source-only" />
+	<target name="release" depends="pkgdir-build, unitfiles-zip, rat-zip, mac-package, nix-package, win-package, source-package, pkgdir-clean" description="Build the project from git and package it as Windows, Mac, Unix, and source-only" />
 
     <target name="mac-release" depends="pkgdir-build, mac-package, pkgdir-clean" description="Build the project from local source and package it as Mac" />
 

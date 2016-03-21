@@ -51,9 +51,9 @@ public class ISEHERPPC extends PPCWeapon {
         criticals = 3;
         bv = 329;
         cost = 300000;
-        shortAV = 10;
-        medAV = 10;
-        longAV = 10;
+        shortAV = 12;
+        medAV = 12;
+        longAV = 12;
         maxRange = RANGE_LONG;
         //This is the Clan Wolverine PPC mentioned in Blake Documents
         introDate = 2823;

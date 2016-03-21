@@ -264,8 +264,11 @@ public class RandomUnitGenerator implements Serializable {
     
     private RatTreeNode getNodeByPath(RatTreeNode root, String path) {
         RatTreeNode result = root;
-        String[] pathElements = path.split("/"); //$NON-NLS-1$
+        String[] pathElements = path.split("/", -1); //$NON-NLS-1$
         for( int i = 0; i < pathElements.length - 1; ++ i ) {
+            if( pathElements[i].length() == 0 ) {
+                continue;
+            }
             RatTreeNode subNode = null;
             for( RatTreeNode rtn : result.children ) {
                 if( rtn.name.equals(pathElements[i]) ) {
@@ -330,9 +333,7 @@ public class RandomUnitGenerator implements Serializable {
             
             // READ IN RATS
             if (ratFile.isDirectory()) {
-
-                RatTreeNode newNode = new RatTreeNode(ratFile.getName());
-                node.children.add(newNode);
+                RatTreeNode newNode = getNodeByPath(node, ratFile.getName() + "/"); //$NON-NLS-1$
 
                 // recursion is fun
                 loadRatsFromDirectory(ratFile, newNode);

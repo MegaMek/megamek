@@ -8951,31 +8951,29 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 break;
             case NORTH:
                 setPosition(new Coords((game.getBoard().getWidth() / 2)
-                                       + (game.getBoard().getWidth() % 2),
-                                       -getOffBoardDistance()));
+                        + (game.getBoard().getWidth() % 2),
+                        -getOffBoardDistance()));
                 setFacing(3);
                 setDeployed(true);
                 break;
             case SOUTH:
                 setPosition(new Coords((game.getBoard().getWidth() / 2)
-                                       + (game.getBoard().getWidth() % 2), game.getBoard()
-                                                                               .getHeight() +
-                                                                           getOffBoardDistance()));
+                        + (game.getBoard().getWidth() % 2), game.getBoard()
+                        .getHeight() + getOffBoardDistance()));
                 setFacing(0);
                 setDeployed(true);
                 break;
             case EAST:
                 setPosition(new Coords(game.getBoard().getWidth()
-                                       + getOffBoardDistance(),
-                                       (game.getBoard().getHeight() / 2)
-                                       + (game.getBoard().getHeight() % 2)));
+                        + getOffBoardDistance(),
+                        (game.getBoard().getHeight() / 2)
+                                + (game.getBoard().getHeight() % 2)));
                 setFacing(5);
                 setDeployed(true);
                 break;
             case WEST:
                 setPosition(new Coords(-getOffBoardDistance(), (game.getBoard()
-                                                                    .getHeight() / 2) + (game.getBoard().getHeight()
-                                                                                         % 2)));
+                        .getHeight() / 2) + (game.getBoard().getHeight() % 2)));
                 setFacing(1);
                 setDeployed(true);
                 break;

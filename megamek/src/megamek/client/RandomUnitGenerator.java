@@ -153,8 +153,19 @@ public class RandomUnitGenerator implements Serializable {
     public synchronized void populateUnits() {
         initRats();
         initRatTree();
+        
+        // Give the MSC some time to initialize
+        MechSummaryCache msc = MechSummaryCache.getInstance();
+        long waitLimit = System.currentTimeMillis() + 3000; /* 3 seconds */
+        while( !interrupted && !msc.isInitialized() && waitLimit > System.currentTimeMillis() ) {
+            try {
+                Thread.sleep(50);
+            } catch(InterruptedException e) {
+                // Ignore
+            }
+        }
 
-        loadRatsFromDirectory(Configuration.armyTablesDir());
+        loadRatsFromDirectory(Configuration.armyTablesDir(), msc);
         cleanupNode(ratTree);
         if (!interrupted) {
             rug.initialized = true;
@@ -292,11 +303,11 @@ public class RandomUnitGenerator implements Serializable {
         Collections.sort(node.children);
     }
     
-    private void loadRatsFromDirectory(File dir) {
-        loadRatsFromDirectory(dir, ratTree);
+    private void loadRatsFromDirectory(File dir, MechSummaryCache msc) {
+        loadRatsFromDirectory(dir, msc, ratTree);
     }
     
-    private void loadRatsFromDirectory(File dir, RatTreeNode node) {
+    private void loadRatsFromDirectory(File dir, MechSummaryCache msc, RatTreeNode node) {
         if (interrupted) {
             return;
         }
@@ -310,15 +321,6 @@ public class RandomUnitGenerator implements Serializable {
             return;
         }
 
-        MechSummaryCache msc = MechSummaryCache.getInstance();
-        while( !interrupted && !msc.isInitialized() ) {
-            try {
-                Thread.sleep(50);
-            } catch(InterruptedException e) {
-                // Ignore
-            }
-        }
-        
         for (File ratFile : files) {
             // Check to see if we've been interrupted
             if (interrupted) {
@@ -336,7 +338,7 @@ public class RandomUnitGenerator implements Serializable {
                 RatTreeNode newNode = getNodeByPath(node, ratFile.getName() + "/"); //$NON-NLS-1$
 
                 // recursion is fun
-                loadRatsFromDirectory(ratFile, newNode);
+                loadRatsFromDirectory(ratFile, msc, newNode);
 
                 // Prune empty nodes (this removes the "Unofficial" place holder)
                 if (newNode.children.size() == 0) {

@@ -12552,10 +12552,12 @@ public class Server implements Runnable {
                         game.removeTurnFor(def);
                         def.setDone(true);
                     }
-                    // Add a turn to declare counterattack
-                    game.insertNextTurn(new GameTurn.CounterGrappleTurn(def
-                                                                                .getOwnerId(), def.getId()));
-                    send(createTurnVectorPacket());
+                    // If defender is able, add a turn to declare counterattack
+                    if (!def.isImmobile()) {
+                        game.insertNextTurn(new GameTurn.CounterGrappleTurn(def
+                                .getOwnerId(), def.getId()));
+                        send(createTurnVectorPacket());
+                    }
                 }
             }
             if (ea instanceof ArtilleryAttackAction) {
@@ -13206,6 +13208,7 @@ public class Server implements Runnable {
             Entity ent = e.next();
             if (ent.isDeployed() && ent.isLargeCraft()) {
                 r = new Report(3635);
+                r.subject = ent.getId();
                 r.addDesc(ent);
                 int target = ((Aero) ent).getECCMTarget();
                 int roll = ((Aero) ent).getECCMRoll();

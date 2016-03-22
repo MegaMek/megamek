@@ -3687,7 +3687,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * @param suggestion
      */
     public void computeMovementEnvelope(Entity suggestion) {
-        // dp nothing if deactivated in the settings
+        // do nothing if deactivated in the settings
         if (!GUIPreferences.getInstance()
                 .getBoolean(GUIPreferences.MOVE_ENVELOPE)) {
             clientgui.bv.clearMovementEnvelope();

@@ -3170,7 +3170,9 @@ public class Game implements Serializable, IGame {
     }
 
     /**
-     * Get a set of illuminated hexes.
+     * Get a set of illuminated hexes.  Note: this should not be used to
+     * determine if a hex is illuminated! Use <code>isPositionIlluminated</code>
+     * for that purpose!
      */
     public HashSet<Coords> getIlluminatedPositions() {
         return illuminatedPositions;

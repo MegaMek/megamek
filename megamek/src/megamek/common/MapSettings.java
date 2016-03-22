@@ -14,21 +14,21 @@
 
 package megamek.common;
 
-import gd.xml.ParseException;
-import gd.xml.tiny.ParsedXML;
-import gd.xml.tiny.TinyParser;
-
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Serializable;
-import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
-
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.namespace.QName;
 import megamek.common.util.BuildingTemplate;
 
 /**
@@ -36,8 +36,11 @@ import megamek.common.util.BuildingTemplate;
  *
  * @author Ben
  */
+@XmlRootElement(name = "ENVIRONMENT")
+@XmlAccessorType(XmlAccessType.NONE)
 public class MapSettings implements Serializable {
-    private static final long serialVersionUID = 6838624193286089780L;
+    private static final long serialVersionUID = -6163977970758303066L;
+
     public static final String BOARD_RANDOM = "[RANDOM]";
     public static final String BOARD_SURPRISE = "[SURPRISE]";
     public static final String BOARD_GENERATED = "[GENERATED]";
@@ -55,7 +58,9 @@ public class MapSettings implements Serializable {
 
     private static final String[] mediumNames = { "Ground", "Atmosphere", "Space" };
 
+    @XmlElement(name = "WIDTH")
     private int boardWidth = 16;
+    @XmlElement(name = "HEIGHT")
     private int boardHeight = 17;
     private int mapWidth = 1;
     private int mapHeight = 1;
@@ -72,173 +77,290 @@ public class MapSettings implements Serializable {
      */
 
     /** how much hills there should be, Range 0..99 */
+    @XmlElement(name = "HILLYNESS")
     private int hilliness = 40;
     /**
      * how much cliffs should there be, range 0-100 (% chance for each cliff
      * candidate)
      */
+    @XmlElement(name = "CLIFFS")
     private int cliffs = 0;
     /** Maximum difference between highest elevation and lowest sink */
+    @XmlElement(name = "HILLELEVATIONRANGE")
     private int range = 5;
     /** Probabiltity for invertion of the map, Range 0..100 */
+    @XmlElement(name = "HILLINVERTPROB")
     private int probInvert = 5;
 
     /** how much Lakes at least */
+    @XmlElement(name = "WATERMINSPOTS")
     private int minWaterSpots = 1;
     /** how much Lakes at most */
+    @XmlElement(name = "WATERMAXSPOTS")
     private int maxWaterSpots = 3;
     /** minimum size of a lake */
+    @XmlElement(name = "WATERMINHEXES")
     private int minWaterSize = 5;
     /** maximum Size of a lake */
+    @XmlElement(name = "WATERMAXHEXES")
     private int maxWaterSize = 10;
     /** probability for water deeper than lvl1, Range 0..100 */
+    @XmlElement(name = "WATERDEEPPROB")
     private int probDeep = 33;
 
     /** how much forests at least */
+    @XmlElement(name = "FORESTMINSPOTS")
     private int minForestSpots = 3;
     /** how much forests at most */
+    @XmlElement(name = "FORESTMAXSPOTS")
     private int maxForestSpots = 8;
     /** minimum size of a forest */
+    @XmlElement(name = "FORESTMINHEXES")
     private int minForestSize = 4;
     /** maximum Size of a forest */
+    @XmlElement(name = "FORESTMAXHEXES")
     private int maxForestSize = 12;
     /** probability for heavy woods, Range 0..100 */
+    @XmlElement(name = "FORESTHEAVYPROB")
     private int probHeavy = 30;
 
     /** how much rough spots at least */
+    @XmlElement(name = "ROUGHMINSPOTS")
     private int minRoughSpots = 2;
     /** how much rough spots at most */
+    @XmlElement(name = "ROUGHMAXSPOTS")
     private int maxRoughSpots = 10;
     /** minimum size of a rough spot */
+    @XmlElement(name = "ROUGHMINHEXES")
     private int minRoughSize = 1;
     /** maximum Size of a rough spot */
+    @XmlElement(name = "ROUGHMAXHEXES")
     private int maxRoughSize = 2;
 
     /** how much sand spots at least */
+    @XmlElement(name = "SANDMINSPOTS")
     private int minSandSpots = 2;
     /** how much sand spots at most */
+    @XmlElement(name = "SANDMAXSPOTS")
     private int maxSandSpots = 10;
     /** minimum size of a rough spot */
+    @XmlElement(name = "SANDMINHEXES")
     private int minSandSize = 1;
     /** maximum Size of a rough spot */
+    @XmlElement(name = "SANDMAXHEXES")
     private int maxSandSize = 2;
 
     /** how much planted field spots at least */
+    @XmlElement(name = "PLANTEDFIELDMINSPOTS")
     private int minPlantedFieldSpots = 2;
     /** how much planted field spots at most */
+    @XmlElement(name = "PLANTEDFIELDMAXSPOTS")
     private int maxPlantedFieldSpots = 10;
     /** minimum size of a planted field spot */
+    @XmlElement(name = "PLANTEDFIELDMINHEXES")
     private int minPlantedFieldSize = 1;
     /** maximum size of a planted field spot */
+    @XmlElement(name = "PLANTEDFIELDMAXHEXES")
     private int maxPlantedFieldSize = 2;
 
     /** how much swamp spots at least */
+    @XmlElement(name = "SWAMPMINSPOTS")
     private int minSwampSpots = 2;
     /** how much swamp spots at most */
+    @XmlElement(name = "SWAMPMAXSPOTS")
     private int maxSwampSpots = 10;
     /** minimum size of a swamp spot */
+    @XmlElement(name = "SWAMPMINHEXES")
     private int minSwampSize = 1;
     /** maximum Size of a swamp spot */
+    @XmlElement(name = "SWAMPMAXHEXES")
     private int maxSwampSize = 2;
 
     /** how much pavement spots at least */
+    @XmlElement(name = "PAVEMENTMINSPOTS")
     private int minPavementSpots = 0;
     /** how much pavement spots at most */
+    @XmlElement(name = "PAVEMENTMAXSPOTS")
     private int maxPavementSpots = 0;
     /** minimum size of a pavement spot */
+    @XmlElement(name = "PAVEMENTMINHEXES")
     private int minPavementSize = 1;
     /** maximum Size of a pavement spot */
+    @XmlElement(name = "PAVEMENTMAXHEXES")
     private int maxPavementSize = 6;
 
     /** how much rubble spots at least */
+    @XmlElement(name = "RUBBLEMINSPOTS")
     private int minRubbleSpots = 0;
     /** how much rubble spots at most */
+    @XmlElement(name = "RUBBLEMAXSPOTS")
     private int maxRubbleSpots = 0;
     /** minimum size of a rubble spot */
+    @XmlElement(name = "RUBBLEMINHEXES")
     private int minRubbleSize = 1;
     /** maximum Size of a rubble spot */
+    @XmlElement(name = "RUBBLEMAXHEXES")
     private int maxRubbleSize = 6;
 
     /** how much fortified spots at least */
+    @XmlElement(name = "FORTIFIEDMINSPOTS")
     private int minFortifiedSpots = 0;
     /** how much fortified spots at most */
+    @XmlElement(name = "FORTIFIEDMAXSPOTS")
     private int maxFortifiedSpots = 0;
     /** minimum size of a fortified spot */
+    @XmlElement(name = "FORTIFIEDMINHEXES")
     private int minFortifiedSize = 1;
     /** maximum Size of a fortified spot */
+    @XmlElement(name = "FORTIFIEDMAXHEXES")
     private int maxFortifiedSize = 2;
 
     /** how much ice spots at least */
+    @XmlElement(name = "ICEMINSPOTS")
     private int minIceSpots = 0;
     /** how much ice spots at most */
+    @XmlElement(name = "ICEMAXSPOTS")
     private int maxIceSpots = 0;
     /** minimum size of a ice spot */
+    @XmlElement(name = "ICEMINHEXES")
     private int minIceSize = 1;
     /** maximum Size of a ice spot */
+    @XmlElement(name = "ICEMAXHEXES")
     private int maxIceSize = 6;
 
     /** probability for a road, range 0..100 */
+    @XmlElement(name = "ROADPROB")
     private int probRoad = 0;
 
     /** probability for a river, range 0..100 */
+    @XmlElement(name = "RIVERPROB")
     private int probRiver = 0;
 
     /** probabilitay for Crater 0..100 */
+    @XmlElement(name = "CRATEPROB")
     private int probCrater = 0;
 
     /** minimum Radius of the Craters */
+    @XmlElement(name = "CRATERMINRADIUS")
     private int minRadius = 2;
 
     /** maximum Radius of the Craters */
+    @XmlElement(name = "CRATERMAXRADIUS")
     private int maxRadius = 7;
 
     /** maximum Number of Craters on one map */
+    @XmlElement(name = "CRATERMAXNUM")
     private int maxCraters = 2;
 
     /** minimum Number of Craters on one map */
+    @XmlElement(name = "CRATERMINNUM")
     private int minCraters = 1;
 
     /** which landscape generation Algortihm to use */
     /* atm there are 2 different: 0= first, 1=second */
+    @XmlElement(name = "ALGORITHM")
     private int algorithmToUse = 0;
 
     /** a tileset theme to apply */
+    @XmlElement(name = "THEME")
     private String theme = "";
 
     /** probability of flooded map */
+    @XmlElement(name = "PROBFLOOD")
     private int probFlood = 0;
     /** probability of forest fire */
+    @XmlElement(name = "PROBFORESTFIRE")
     private int probForestFire = 0;
     /** probability of frozen map */
+    @XmlElement(name = "PROBFREEZE")
     private int probFreeze = 0;
     /** probability of drought */
+    @XmlElement(name = "PROBDROUGHT")
     private int probDrought = 0;
     /** special FX modifier */
+    @XmlElement(name = "FXMOD")
     private int fxMod = 0;
 
     /** Parameters for the city generator */
+    @XmlElement(name = "CITYBLOCKS")
     private int cityBlocks = 16;
+    @XmlElement(name = "CITYTYPE")
     private String cityType = "NONE";
+    @XmlElement(name = "MINCF")
     private int cityMinCF = 10;
+    @XmlElement(name = "MAXCF")
     private int cityMaxCF = 100;
+    @XmlElement(name = "MINFLOORS")
     private int cityMinFloors = 1;
+    @XmlElement(name = "MAXFLOORS")
     private int cityMaxFloors = 6;
+    @XmlElement(name = "CITYDENSITY")
     private int cityDensity = 75;
+    @XmlElement(name = "TOWNSIZE")
     private int townSize = 60;
 
+    @XmlElement(name = "INVERTNEGATIVETERRAIN")
     private int invertNegativeTerrain = 0;
 
+    @XmlElement(name = "MOUNTPEAKS")
     private int mountainPeaks = 0;
+    @XmlElement(name = "MOUNTWIDTHMIN")
     private int mountainWidthMin = 7;
+    @XmlElement(name = "MOUNTWIDTHMAX")
     private int mountainWidthMax = 20;
+    @XmlElement(name = "MOUNTHEIGHTMIN")
     private int mountainHeightMin = 5;
+    @XmlElement(name = "MOUNTHEIGHTMAX")
     private int mountainHeightMax = 8;
+    @XmlElement(name = "MOUNTSTYLE")
     private int mountainStyle = MOUNTAIN_PLAIN;
 
     /** end Map Generator Parameters */
+    
+    /**
+     * Creates and returns a new default instance of MapSettings.
+     * 
+     * @return a MapSettings with default settings values
+     */
+    public static MapSettings getInstance() {
+        return new MapSettings();
+    }
+    
+    /**
+     * Creates and returns a clone of the given MapSettings.
+     *
+     * @param other the MapSettings to clone
+     * @return a MapSettings with the cloned settings values
+     */
+    public static MapSettings getInstance(final MapSettings other) {
+        return new MapSettings(other);
+    }
+
+    /**
+     * Creates and returns a new instance of MapSettings with default values loaded 
+     * from the given input stream.
+     * 
+     * @param is the input stream that contains an XML representation of the map settings
+     * @return a MapSettings with the values from XML
+     */
+    public static MapSettings getInstance(final InputStream is) {
+        MapSettings ms = null;
+        
+        try {
+            JAXBContext jc = JAXBContext.newInstance(MapSettings.class);
+            
+            Unmarshaller um = jc.createUnmarshaller();
+            ms = (MapSettings) um.unmarshal(is);
+        } catch (JAXBException ex) {
+            System.err.println("Error loading XML for map settings: " + ex.getMessage()); //$NON-NLS-1$
+            ex.printStackTrace();
+        }
+        
+        return ms;
+    }
 
     /** Creates new MapSettings */
-    public MapSettings() {
+    private MapSettings() {
         this(megamek.common.preference.PreferenceManager.getClientPreferences()
                 .getBoardWidth(), megamek.common.preference.PreferenceManager
                 .getClientPreferences().getBoardHeight(),
@@ -249,59 +371,15 @@ public class MapSettings implements Serializable {
     }
 
     /** Create new MapSettings with all size settings specified */
-    public MapSettings(int boardWidth, int boardHeight, int mapWidth,
+    private MapSettings(int boardWidth, int boardHeight, int mapWidth,
             int mapHeight) {
         setBoardSize(boardWidth, boardHeight);
         setMapSize(mapWidth, mapHeight);
     }
     
-    /**
-     * Odious hack to fix cross-platform issues.  The Server generates the list
-     * of available boards and then sends them to the client.  Instead of
-     * storing the boards as a File object, they are stored as lists of Strings.
-     * This means that, a Windows server will generate Windows paths that could
-     * then be sent to non-windows machines.
-     * 
-     * While the available and selected boards should really be stored as lists
-     * of Files, they have infrastructure built up around them and it's far
-     * easier to use this kludgy hack.
-     */
-    public void adjustPathSeparator() {
-        // Windows will happily accept a forward slash in the path, the only
-        // real issue is back-slashes (windows separators) in Linux
-        boolean isWindows = System.getProperty("os.name").contains("Windows");
-        boolean containsWindowsPathSeparator = false;
-        for (String path : boardsAvailable) {
-            if (path.contains("\\")) {
-                containsWindowsPathSeparator = true;
-            }
-            if (containsWindowsPathSeparator) {
-                break;
-            }
-        }
-        
-        if (!isWindows && containsWindowsPathSeparator) {
-            for (int i = 0; i < boardsAvailable.size(); i++) {
-                if (boardsAvailable.get(i) == null) {
-                    continue;
-                }
-                boardsAvailable.set(i, boardsAvailable.get(i)
-                        .replace("\\", "/"));
-            }
-            for (int i = 0; i < boardsSelected.size(); i++) {
-                if (boardsSelected.get(i) == null) {
-                    continue;
-                }
-                boardsSelected.set(i, boardsSelected.get(i)
-                        .replace("\\", "/"));
-            }
-        }
-    }
-   
-
     /** Creates new MapSettings that is a duplicate of another */
     @SuppressWarnings("unchecked")
-    public MapSettings(MapSettings other) {
+    private MapSettings(MapSettings other) {
         boardWidth = other.getBoardWidth();
         boardHeight = other.getBoardHeight();
         mapWidth = other.getMapWidth();
@@ -392,6 +470,49 @@ public class MapSettings implements Serializable {
         townSize = other.getTownSize();
     }
 
+    /**
+     * Odious hack to fix cross-platform issues.  The Server generates the list
+     * of available boards and then sends them to the client.  Instead of
+     * storing the boards as a File object, they are stored as lists of Strings.
+     * This means that, a Windows server will generate Windows paths that could
+     * then be sent to non-windows machines.
+     * 
+     * While the available and selected boards should really be stored as lists
+     * of Files, they have infrastructure built up around them and it's far
+     * easier to use this kludgy hack.
+     */
+    public void adjustPathSeparator() {
+        // Windows will happily accept a forward slash in the path, the only
+        // real issue is back-slashes (windows separators) in Linux
+        boolean isWindows = System.getProperty("os.name").contains("Windows");
+        boolean containsWindowsPathSeparator = false;
+        for (String path : boardsAvailable) {
+            if (path.contains("\\")) {
+                containsWindowsPathSeparator = true;
+            }
+            if (containsWindowsPathSeparator) {
+                break;
+            }
+        }
+        
+        if (!isWindows && containsWindowsPathSeparator) {
+            for (int i = 0; i < boardsAvailable.size(); i++) {
+                if (boardsAvailable.get(i) == null) {
+                    continue;
+                }
+                boardsAvailable.set(i, boardsAvailable.get(i)
+                        .replace("\\", "/"));
+            }
+            for (int i = 0; i < boardsSelected.size(); i++) {
+                if (boardsSelected.get(i) == null) {
+                    continue;
+                }
+                boardsSelected.set(i, boardsSelected.get(i)
+                        .replace("\\", "/"));
+            }
+        }
+    }
+   
     public int getBoardWidth() {
         return boardWidth;
     }
@@ -834,12 +955,6 @@ public class MapSettings implements Serializable {
         }
         return true;
     } /* equalMapGenParameters */
-
-    /** clone! */
-    @Override
-    public Object clone() {
-        return new MapSettings(this);
-    }
 
     public int getInvertNegativeTerrain() {
         return invertNegativeTerrain;
@@ -1371,358 +1486,6 @@ public class MapSettings implements Serializable {
         this.mountainStyle = mountainStyle;
     }
 
-    // note the format is intended to be interoperable with mekwars' existing
-    // terrain.xml format
-    public void save(OutputStream os) {
-        try {
-            Writer output = new BufferedWriter(new OutputStreamWriter(os));
-            // Output the doctype and header stuff.
-            output.write("<?xml version=\"1.0\"?>"); //$NON-NLS-1$
-            output.write(CommonConstants.NL);
-            output.write("<ENVIRONMENT>"); //$NON-NLS-1$
-            output.write(CommonConstants.NL);
-
-            // size
-            saveParameter(output,"WIDTH",boardWidth);
-            saveParameter(output,"HEIGHT",boardHeight);
-            
-            // theme
-            saveParameter(output, "THEME", theme);
-
-            // elevation params
-            saveParameter(output, "INVERTNEGATIVETERRAIN",
-                    invertNegativeTerrain);
-            saveParameter(output, "HILLYNESS", hilliness);
-            saveParameter(output, "HILLELEVATIONRANGE", range);
-            saveParameter(output, "HILLINVERTPROB", probInvert);
-
-            saveParameter(output, "ALGORITHM", algorithmToUse);
-            saveParameter(output, "CLIFFS", cliffs);
-
-            // forest params
-            saveParameter(output, "FORESTMINSPOTS", minForestSpots);
-            saveParameter(output, "FORESTMAXSPOTS", maxForestSpots);
-            saveParameter(output, "FORESTMINHEXES", minForestSize);
-            saveParameter(output, "FORESTMAXHEXES", maxForestSize);
-            saveParameter(output, "FORESTHEAVYPROB", probHeavy);
-
-            // rough params
-            saveParameter(output, "ROUGHMINSPOTS", minRoughSpots);
-            saveParameter(output, "ROUGHMAXSPOTS", maxRoughSpots);
-            saveParameter(output, "ROUGHMINHEXES", minRoughSize);
-            saveParameter(output, "ROUGHMAXHEXES", maxRoughSize);
-
-            // sand params
-            saveParameter(output, "SANDMINSPOTS", minSandSpots);
-            saveParameter(output, "SANDMAXSPOTS", maxSandSpots);
-            saveParameter(output, "SANDMINHEXES", minSandSize);
-            saveParameter(output, "SANDMAXHEXES", maxSandSize);
-
-            // planted field params
-            saveParameter(output, "PLANTEDFIELDMINSPOTS", minPlantedFieldSpots);
-            saveParameter(output, "PLANTEDFIELDMAXSPOTS", maxPlantedFieldSpots);
-            saveParameter(output, "PLANTEDFIELDMINHEXES", minPlantedFieldSize);
-            saveParameter(output, "PLANTEDFIELDMAXHEXES", maxPlantedFieldSize);
-
-            // Swamp params
-            saveParameter(output, "SWAMPMINSPOTS", minSwampSpots);
-            saveParameter(output, "SWAMPMAXSPOTS", maxSwampSpots);
-            saveParameter(output, "SWAMPMINHEXES", minSwampSize);
-            saveParameter(output, "SWAMPMAXHEXES", maxSwampSize);
-
-            // Road params
-            saveParameter(output, "ROADPROB", probRoad);
-
-            // water params
-            saveParameter(output, "WATERMINSPOTS", minWaterSpots);
-            saveParameter(output, "WATERMAXSPOTS", maxWaterSpots);
-            saveParameter(output, "WATERMINHEXES", minWaterSize);
-            saveParameter(output, "WATERMAXHEXES", maxWaterSize);
-            saveParameter(output, "WATERDEEPPROB", probDeep);
-
-            // River params
-            saveParameter(output, "RIVERPROB", probRiver);
-
-            // Crater params
-            saveParameter(output, "CRATERMINNUM", minCraters);
-            saveParameter(output, "CRATERMAXNUM", maxCraters);
-            saveParameter(output, "CRATERMINRADIUS", minRadius);
-            saveParameter(output, "CRATERMAXRADIUS", maxRadius);
-            saveParameter(output, "CRATEPROB", probCrater);
-
-            // Pavement params
-            saveParameter(output, "PAVEMENTMINSPOTS", minPavementSpots);
-            saveParameter(output, "PAVEMENTMAXSPOTS", maxPavementSpots);
-            saveParameter(output, "PAVEMENTMINHEXES", minPavementSize);
-            saveParameter(output, "PAVEMENTMAXHEXES", maxPavementSize);
-
-            // Rubble params
-            saveParameter(output, "RUBBLEMINSPOTS", minRubbleSpots);
-            saveParameter(output, "RUBBLEMAXSPOTS", maxRubbleSpots);
-            saveParameter(output, "RUBBLEMINHEXES", minRubbleSize);
-            saveParameter(output, "RUBBLEMAXHEXES", maxRubbleSize);
-
-            // Fortified params
-            saveParameter(output, "FORTIFIEDMINSPOTS", minFortifiedSpots);
-            saveParameter(output, "FORTIFIEDMAXSPOTS", maxFortifiedSpots);
-            saveParameter(output, "FORTIFIEDMINHEXES", minFortifiedSize);
-            saveParameter(output, "FORTIFIEDMAXHEXES", maxFortifiedSize);
-
-            // Ice params
-            saveParameter(output, "ICEMINSPOTS", minIceSpots);
-            saveParameter(output, "ICEMAXSPOTS", maxIceSpots);
-            saveParameter(output, "ICEMINHEXES", minIceSize);
-            saveParameter(output, "ICEMAXHEXES", maxIceSize);
-
-            // Special FX
-            saveParameter(output, "FXMOD", fxMod);
-            saveParameter(output, "PROBFREEZE", probFreeze);
-            saveParameter(output, "PROBFLOOD", probFlood);
-            saveParameter(output, "PROBFORESTFIRE", probForestFire);
-            saveParameter(output, "PROBDROUGHT", probDrought);
-
-            // City
-            saveParameter(output, "CITYTYPE", cityType);
-            saveParameter(output, "CITYBLOCKS", cityBlocks);
-            saveParameter(output, "CITYDENSITY", cityDensity);
-            saveParameter(output, "MINCF", cityMinCF);
-            saveParameter(output, "MAXCF", cityMaxCF);
-            saveParameter(output, "MINFLOORS", cityMinFloors);
-            saveParameter(output, "MAXFLOORS", cityMaxFloors);
-            saveParameter(output, "TOWNSIZE", townSize);
-
-            // mountain
-            saveParameter(output, "MOUNTPEAKS", mountainPeaks);
-            saveParameter(output, "MOUNTWIDTHMIN", mountainWidthMin);
-            saveParameter(output, "MOUNTWIDTHMAX", mountainWidthMax);
-            saveParameter(output, "MOUNTHEIGHTMIN", mountainHeightMin);
-            saveParameter(output, "MOUNTHEIGHTMAX", mountainHeightMax);
-            saveParameter(output, "MOUNTSTYLE", mountainStyle);
-
-            // Finish writing.
-            output.write("</ENVIRONMENT>"); //$NON-NLS-1$
-            output.write(CommonConstants.NL);
-            output.flush();
-            output.close();
-        } catch (IOException e) {
-
-        }
-    }
-
-    private void saveParameter(Writer output, String name, Object value)
-            throws IOException {
-        output.write("    <");
-        output.write(name);
-        output.write(">");
-        output.write(value.toString());
-        output.write("</");
-        output.write(name);
-        output.write(">");
-        output.write(CommonConstants.NL);
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    public void load(InputStream is) {
-        ParsedXML root = null;
-        try {
-            root = TinyParser.parseXML(is);
-        } catch (ParseException e) {
-            System.err.println("Error parsing map settings xml file."); //$NON-NLS-1$
-            e.printStackTrace();
-            return;
-        }
-        Enumeration rootChildren = root.elements();
-        ParsedXML enivoronmentNode = (ParsedXML) rootChildren.nextElement();
-
-        if (enivoronmentNode.getName().equals("ENVIRONMENT")) { //$NON-NLS-1$
-            Enumeration children = enivoronmentNode.elements();
-
-            while (children.hasMoreElements()) {
-                try {
-                    parseEnvironmentNode((ParsedXML) children.nextElement());
-                } catch (Exception ex) {
-                    System.err.println("error in map settings file:");
-                    ex.printStackTrace();
-                }
-            }
-
-        } else {
-            System.out
-                    .println("Root node of map settings file is incorrectly named. Name should be 'ENVIRONMENT' but name is '" + enivoronmentNode.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-    }
-
-    @SuppressWarnings({ "rawtypes" })
-    private void parseEnvironmentNode(ParsedXML node) {
-        Enumeration values = node.elements();
-        if (!(values.hasMoreElements())) {
-            return;
-        }
-        ParsedXML value = (ParsedXML) values.nextElement();
-        String param = value.getContent();
-        if (null == param) {
-            return;
-        }
-        String key = node.getName();
-
-        // theme
-        if (key.equals("THEME")) {
-            theme = param;
-        } else if (key.equals("WIDTH")) {
-            boardWidth = Integer.valueOf(param);
-        } else if (key.equals("HEIGHT")) {
-            boardHeight = Integer.valueOf(param);
-        } else if (key.equals("INVERTNEGATIVETERRAIN")) {
-            invertNegativeTerrain = Integer.valueOf(param);
-        } else if (key.equals("HILLYNESS")) {
-            hilliness = Integer.valueOf(param);
-        } else if (key.equals("HILLELEVATIONRANGE")) {
-            range = Integer.valueOf(param);
-        } else if (key.equals("HILLINVERTPROB")) {
-            probInvert = Integer.valueOf(param);
-        } else if (key.equals("ALGORITHM")) {
-            algorithmToUse = Integer.valueOf(param);
-        } else if (key.equals("CLIFFS")) {
-            cliffs = Integer.valueOf(param);
-        } else if (key.equals("FORESTMINSPOTS")) {
-            minForestSpots = Integer.valueOf(param);
-        } else if (key.equals("FORESTMAXSPOTS")) {
-            maxForestSpots = Integer.valueOf(param);
-        } else if (key.equals("FORESTMINHEXES")) {
-            minForestSize = Integer.valueOf(param);
-        } else if (key.equals("FORESTMAXHEXES")) {
-            maxForestSize = Integer.valueOf(param);
-        } else if (key.equals("FORESTHEAVYPROB")) {
-            probHeavy = Integer.valueOf(param);
-        } else if (key.equals("ROUGHMINSPOTS")) {
-            minRoughSpots = Integer.valueOf(param);
-        } else if (key.equals("ROUGHMAXSPOTS")) {
-            maxRoughSpots = Integer.valueOf(param);
-        } else if (key.equals("ROUGHMINHEXES")) {
-            minRoughSize = Integer.valueOf(param);
-        } else if (key.equals("ROUGHMAXHEXES")) {
-            maxRoughSize = Integer.valueOf(param);
-        } else if (key.equals("SANDMINSPOTS")) {
-            minSandSpots = Integer.valueOf(param);
-        } else if (key.equals("SANDMAXSPOTS")) {
-            maxSandSpots = Integer.valueOf(param);
-        } else if (key.equals("SANDMINHEXES")) {
-            minSandSize = Integer.valueOf(param);
-        } else if (key.equals("SANDMAXHEXES")) {
-            maxSandSize = Integer.valueOf(param);
-        } else if (key.equals("PLANTEDFIELDMINSPOTS")) {
-            minPlantedFieldSpots = Integer.valueOf(param);
-        } else if (key.equals("PLANTEDFIELDMAXSPOTS")) {
-            maxPlantedFieldSpots = Integer.valueOf(param);
-        } else if (key.equals("PLANTEDFIELDMINHEXES")) {
-            minPlantedFieldSize = Integer.valueOf(param);
-        } else if (key.equals("PLANTEDFIELDMAXHEXES")) {
-            maxPlantedFieldSize = Integer.valueOf(param);
-        } else if (key.equals("SWAMPMINSPOTS")) {
-            minSwampSpots = Integer.valueOf(param);
-        } else if (key.equals("SWAMPMAXSPOTS")) {
-            maxSwampSpots = Integer.valueOf(param);
-        } else if (key.equals("SWAMPMINHEXES")) {
-            minSwampSize = Integer.valueOf(param);
-        } else if (key.equals("SWAMPMAXHEXES")) {
-            maxSwampSize = Integer.valueOf(param);
-        } else if (key.equals("ROADPROB")) {
-            probRoad = Integer.valueOf(param);
-        } else if (key.equals("WATERMINSPOTS")) {
-            minWaterSpots = Integer.valueOf(param);
-        } else if (key.equals("WATERMAXSPOTS")) {
-            maxWaterSpots = Integer.valueOf(param);
-        } else if (key.equals("WATERMINHEXES")) {
-            minWaterSize = Integer.valueOf(param);
-        } else if (key.equals("WATERMAXHEXES")) {
-            maxWaterSize = Integer.valueOf(param);
-        } else if (key.equals("WATERDEEPPROB")) {
-            probDeep = Integer.valueOf(param);
-        } else if (key.equals("RIVERPROB")) {
-            probRiver = Integer.valueOf(param);
-        } else if (key.equals("CRATERMINNUM")) {
-            minCraters = Integer.valueOf(param);
-        } else if (key.equals("CRATERMAXNUM")) {
-            maxCraters = Integer.valueOf(param);
-        } else if (key.equals("CRATERMINRADIUS")) {
-            minRadius = Integer.valueOf(param);
-        } else if (key.equals("CRATERMAXRADIUS")) {
-            maxRadius = Integer.valueOf(param);
-        } else if (key.equals("CRATEPROB")) {
-            probCrater = Integer.valueOf(param);
-        } else if (key.equals("PAVEMENTMINSPOTS")) {
-            minPavementSpots = Integer.valueOf(param);
-        } else if (key.equals("PAVEMENTMAXSPOTS")) {
-            maxPavementSpots = Integer.valueOf(param);
-        } else if (key.equals("PAVEMENTMINHEXES")) {
-            minPavementSize = Integer.valueOf(param);
-        } else if (key.equals("PAVEMENTMAXHEXES")) {
-            maxPavementSize = Integer.valueOf(param);
-        } else if (key.equals("RUBBLEMINSPOTS")) {
-            minRubbleSpots = Integer.valueOf(param);
-        } else if (key.equals("RUBBLEMAXSPOTS")) {
-            maxRubbleSpots = Integer.valueOf(param);
-        } else if (key.equals("RUBBLEMINHEXES")) {
-            minRubbleSize = Integer.valueOf(param);
-        } else if (key.equals("RUBBLEMAXHEXES")) {
-            maxRubbleSize = Integer.valueOf(param);
-        } else if (key.equals("FORTIFIEDMINSPOTS")) {
-            minFortifiedSpots = Integer.valueOf(param);
-        } else if (key.equals("FORTIFIEDMAXSPOTS")) {
-            maxFortifiedSpots = Integer.valueOf(param);
-        } else if (key.equals("FORTIFIEDMINHEXES")) {
-            minFortifiedSize = Integer.valueOf(param);
-        } else if (key.equals("FORTIFIEDMAXHEXES")) {
-            maxFortifiedSize = Integer.valueOf(param);
-        } else if (key.equals("ICEMINSPOTS")) {
-            minIceSpots = Integer.valueOf(param);
-        } else if (key.equals("ICEMAXSPOTS")) {
-            maxIceSpots = Integer.valueOf(param);
-        } else if (key.equals("ICEMINHEXES")) {
-            minIceSize = Integer.valueOf(param);
-        } else if (key.equals("ICEMAXHEXES")) {
-            maxIceSize = Integer.valueOf(param);
-        } else if (key.equals("FXMOD")) {
-            fxMod = Integer.valueOf(param);
-        } else if (key.equals("PROBFREEZE")) {
-            probFreeze = Integer.valueOf(param);
-        } else if (key.equals("PROBFLOOD")) {
-            probFlood = Integer.valueOf(param);
-        } else if (key.equals("PROBFORESTFIRE")) {
-            probForestFire = Integer.valueOf(param);
-        } else if (key.equals("PROBDROUGHT")) {
-            probDrought = Integer.valueOf(param);
-        } else if (key.equals("CITYTYPE")) {
-            cityType = param;
-        } else if (key.equals("CITYBLOCKS")) {
-            cityBlocks = Integer.valueOf(param);
-        } else if (key.equals("CITYDENSITY")) {
-            cityDensity = Integer.valueOf(param);
-        } else if (key.equals("MINCF")) {
-            cityMinCF = Integer.valueOf(param);
-        } else if (key.equals("MAXCF")) {
-            cityMaxCF = Integer.valueOf(param);
-        } else if (key.equals("MINFLOORS")) {
-            cityMinFloors = Integer.valueOf(param);
-        } else if (key.equals("MAXFLOORS")) {
-            cityMaxFloors = Integer.valueOf(param);
-        } else if (key.equals("TOWNSIZE")) {
-            townSize = Integer.valueOf(param);
-        } else if (key.equals("MOUNTPEAKS")) {
-            mountainPeaks = Integer.valueOf(param);
-        } else if (key.equals("MOUNTWIDTHMIN")) {
-            mountainWidthMin = Integer.valueOf(param);
-        } else if (key.equals("MOUNTWIDTHMAX")) {
-            mountainWidthMax = Integer.valueOf(param);
-        } else if (key.equals("MOUNTHEIGHTMIN")) {
-            mountainHeightMin = Integer.valueOf(param);
-        } else if (key.equals("MOUNTHEIGHTMAX")) {
-            mountainHeightMax = Integer.valueOf(param);
-        } else if (key.equals("MOUNTSTYLE")) {
-            mountainStyle = Integer.valueOf(param);
-        }
-    }
-
     public void setMedium(int m) {
         medium = m;
     }
@@ -1735,15 +1498,25 @@ public class MapSettings implements Serializable {
         return mediumNames[m];
     }
 
-    void loadStringParameter(ParsedXML node, String param, String value) {
-        if (node.getName().equals(param)) {
-            value = node.getContent();
-        }
-    }
-
-    void loadIntParameter(ParsedXML node, String param, Integer value) {
-        if (node.getName().equals(param)) {
-            value = Integer.valueOf(node.getContent());
+    // note the format is intended to be interoperable with mekwars' existing
+    // terrain.xml format
+    public void save(final OutputStream os) {
+        try {
+            JAXBContext jc = JAXBContext.newInstance(MapSettings.class);
+            
+            Marshaller marshaller = jc.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            
+            // The default header has the encoding and standalone properties
+            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+            marshaller.setProperty("com.sun.xml.internal.bind.xmlHeaders", "<?xml version=\"1.0\"?>");
+            
+            JAXBElement<MapSettings> element = new JAXBElement<>(new QName("ENVIRONMENT"), MapSettings.class, this);
+            
+            marshaller.marshal(element, os);
+        } catch (JAXBException ex) {
+            System.err.println("Error writing XML for map settings: " + ex.getMessage()); //$NON-NLS-1$
+            ex.printStackTrace();
         }
     }
 }

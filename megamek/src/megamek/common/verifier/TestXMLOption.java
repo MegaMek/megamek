@@ -12,257 +12,168 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
-/*
- * Author: Reinhard Vicinus
- */
-
 package megamek.common.verifier;
 
-import gd.xml.tiny.ParsedXML;
-
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Vector;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+/**
+ * 
+ * @author Reinhard Vicinus
+ */
 public class TestXMLOption implements TestEntityOption {
-    public final static String CEIL_WEIGHT = "ceilWeight";
-    public final static String SHOW_OVERWEIGHTED = "showOverweighted";
-    public final static String MAX_OVERWEIGHT = "maxOverweight";
-    public final static String SHOW_UNDERWEIGHTED = "showUnderweighted";
-    public final static String MIN_UNDERWEIGHT = "minUnderweight";
-    public final static String IGNORE_FAILED_EQUIP = "ignoreFailedEquipment";
-    public final static String TARGCOMP_CRITS = "targCompCrits";
-    public final static String SKIP = "skip";
-    public final static String SHOW_CORRECTARMOR = "showCorrectArmorPlacement";
-    public final static String SHOW_CORRECTCRITICAL = "showCorrectCriticalAllocation";
-    public final static String SHOW_FAILEDEQUIP = "showFailedEquip";
 
-    public final static String ENGINE = "engine";
-    public final static String STRUCTURE = "structure";
-    public final static String ARMOR = "armor";
-    public final static String CONTROLS = "controls";
-    public final static String WEAPONS = "weapons";
-    public final static String TARGCOMP = "tragcomp";
-    public final static String TURRET = "turret";
-    public final static String LIFTING = "lifting";
-    public final static String POWERAMP = "poweramp";
-    public final static String GYRO = "gyro";
-    public final static String PRINTSIZE = "printSize";
-
-    private float ceilEngine = TestEntity.CEIL_HALFTON;
-    private float ceilStructure = TestEntity.CEIL_HALFTON;
-    private float ceilArmor = TestEntity.CEIL_HALFTON;
-    private float ceilControls = TestEntity.CEIL_HALFTON;
-    private float ceilWeapons = TestEntity.CEIL_TON;
-    private float ceilTargComp = TestEntity.CEIL_TON;
-    private float ceilTurret = TestEntity.CEIL_HALFTON;
-    private float ceilLifting = TestEntity.CEIL_HALFTON;
-    private float ceilPowerAmp = TestEntity.CEIL_HALFTON;
-    private float ceilGyro = TestEntity.CEIL_HALFTON;
-
+    @XmlElement(name = "ceilWeight")
+    private WeightCeiling weightCeiling = new WeightCeiling();
+    
+    @XmlElement
     private float maxOverweight = 0.25f;
+
+    @XmlElement
     private boolean showOverweighted = true;
+
+    @XmlElement
     private float minUnderweight = 1.0f;
+
+    @XmlElement
     private boolean showUnderweighted = false;
-    private Vector<String> ignoreFailedEquip = new Vector<String>();
+
+    @XmlElement(name = "ignoreFailedEquipment")
+    @XmlJavaTypeAdapter(CSVAdapter.class)
+    private List<String> ignoreFailedEquip = new ArrayList<>();
+
+    @XmlElement
     private boolean skip = false;
+
+    @XmlElement(name = "showCorrectArmorPlacement")
     private boolean showCorrectArmor = true;
+
+    @XmlElement(name = "showCorrectCriticalAllocation")
     private boolean showCorrectCritical = true;
+
+    @XmlElement
     private boolean showFailedEquip = true;
 
+    @XmlElement
     private int targCompCrits = 0;
+
+    @XmlElement
     private int printSize = 70;
 
     public TestXMLOption() {
     }
 
-    private static String getContent(ParsedXML node) {
-        if (node.elements().hasMoreElements()) {
-            return ((ParsedXML) node.elements().nextElement()).getContent();
-        }
-        return "";
-    }
-
-    private static float getContentAsFloat(ParsedXML node) {
-        if (node.elements().hasMoreElements()) {
-            return Float.valueOf(
-                    ((ParsedXML) node.elements().nextElement()).getContent()
-                            .trim()).floatValue();
-        }
-        return 0;
-    }
-
-    private static boolean getContentAsBoolean(ParsedXML node) {
-        if (node.elements().hasMoreElements()) {
-            return (new Boolean(((ParsedXML) node.elements().nextElement())
-                    .getContent().trim())).booleanValue();
-        }
-        // return Boolean.parseBoolean(
-        // ((ParsedXML) node.elements().nextElement()).getContent().trim());
-        return false;
-    }
-
-    private static int getContentAsInteger(ParsedXML node) {
-        if (node.elements().hasMoreElements()) {
-            return Integer.parseInt(((ParsedXML) node.elements().nextElement())
-                    .getContent().trim());
-        }
-        return 0;
-    }
-
-    public void readXMLOptions(ParsedXML node) {
-        for (Enumeration<?> e = node.elements(); e.hasMoreElements();) {
-            ParsedXML child = (ParsedXML) e.nextElement();
-            if (child.getName().equals(CEIL_WEIGHT)) {
-                readCeilWeight(child);
-            } else if (child.getName().equals(MAX_OVERWEIGHT)) {
-                maxOverweight = getContentAsFloat(child);
-            } else if (child.getName().equals(SHOW_OVERWEIGHTED)) {
-                showOverweighted = getContentAsBoolean(child);
-            } else if (child.getName().equals(MIN_UNDERWEIGHT)) {
-                minUnderweight = getContentAsFloat(child);
-            } else if (child.getName().equals(SHOW_UNDERWEIGHTED)) {
-                showUnderweighted = getContentAsBoolean(child);
-            } else if (child.getName().equals(SHOW_CORRECTARMOR)) {
-                showCorrectArmor = getContentAsBoolean(child);
-            } else if (child.getName().equals(SHOW_CORRECTCRITICAL)) {
-                showCorrectCritical = getContentAsBoolean(child);
-            } else if (child.getName().equals(SHOW_FAILEDEQUIP)) {
-                showFailedEquip = getContentAsBoolean(child);
-            } else if (child.getName().equals(IGNORE_FAILED_EQUIP)) {
-                StringTokenizer st = new StringTokenizer(getContent(child), ",");
-                while (st.hasMoreTokens()) {
-                    ignoreFailedEquip.addElement(st.nextToken());
-                }
-
-                for (int i = 0; i < ignoreFailedEquip.size(); i++) {
-                    ignoreFailedEquip.setElementAt(ignoreFailedEquip.elementAt(
-                            i).trim(), i);
-                }
-            } else if (child.getName().equals(SKIP)) {
-                skip = getContentAsBoolean(child);
-            } else if (child.getName().equals(TARGCOMP_CRITS)) {
-                targCompCrits = getContentAsInteger(child);
-            } else if (child.getName().equals(PRINTSIZE)) {
-                printSize = getContentAsInteger(child);
-            }
-        }
-    }
-
-    private void readCeilWeight(ParsedXML node) {
-        for (Enumeration<?> e = node.elements(); e.hasMoreElements();) {
-            ParsedXML child = (ParsedXML) e.nextElement();
-            String name = child.getName();
-            if (name.equals(ENGINE)) {
-                ceilEngine = 1 / getContentAsFloat(child);
-            } else if (name.equals(STRUCTURE)) {
-                ceilStructure = 1 / getContentAsFloat(child);
-            } else if (name.equals(ARMOR)) {
-                ceilArmor = 1 / getContentAsFloat(child);
-            } else if (name.equals(CONTROLS)) {
-                ceilControls = 1 / getContentAsFloat(child);
-            } else if (name.equals(WEAPONS)) {
-                ceilWeapons = 1 / getContentAsFloat(child);
-            } else if (name.equals(TARGCOMP)) {
-                ceilTargComp = 1 / getContentAsFloat(child);
-            } else if (name.equals(TURRET)) {
-                ceilTurret = 1 / getContentAsFloat(child);
-            } else if (name.equals(LIFTING)) {
-                ceilLifting = 1 / getContentAsFloat(child);
-            } else if (name.equals(POWERAMP)) {
-                ceilPowerAmp = 1 / getContentAsFloat(child);
-            } else if (name.equals(GYRO)) {
-                ceilGyro = 1 / getContentAsFloat(child);
-            }
-        }
-    }
-
+    @Override
     public float getWeightCeilingEngine() {
-        return ceilEngine;
+        return weightCeiling.engine;
     }
 
+    @Override
     public float getWeightCeilingStructure() {
-        return ceilStructure;
+        return weightCeiling.structure;
     }
 
+    @Override
     public float getWeightCeilingArmor() {
-        return ceilArmor;
+        return weightCeiling.armor;
     }
 
+    @Override
     public float getWeightCeilingControls() {
-        return ceilControls;
+        return weightCeiling.controls;
     }
 
+    @Override
     public float getWeightCeilingWeapons() {
-        return ceilWeapons;
+        return weightCeiling.weapons;
     }
 
+    @Override
     public float getWeightCeilingTargComp() {
-        return ceilTargComp;
+        return weightCeiling.targComp;
     }
 
+    @Override
     public float getWeightCeilingGyro() {
-        return ceilGyro;
+        return weightCeiling.gyro;
     }
 
+    @Override
     public float getWeightCeilingTurret() {
-        return ceilTurret;
+        return weightCeiling.turret;
     }
 
+    @Override
     public float getWeightCeilingLifting() {
-        return ceilLifting;
+        return weightCeiling.lifting;
     }
     
+    @Override
     public float getWeightCeilingPowerAmp() {
-        return ceilPowerAmp;
+        return weightCeiling.powerAmp;
     }
 
+    @Override
     public float getMaxOverweight() {
         return maxOverweight;
     }
 
+    @Override
     public boolean showOverweightedEntity() {
         return showOverweighted;
     }
 
+    @Override
     public boolean showUnderweightedEntity() {
         return showUnderweighted;
     }
 
+    @Override
     public float getMinUnderweight() {
         return minUnderweight;
     }
 
+    @Override
     public boolean ignoreFailedEquip(String name) {
         for (int i = 0; i < ignoreFailedEquip.size(); i++) {
-            if (ignoreFailedEquip.elementAt(i).equals(name)) {
+            if (ignoreFailedEquip.get(i).equals(name)) {
                 return true;
             }
         }
         return false;
     }
 
+    @Override
     public boolean skip() {
         return skip;
     }
 
+    @Override
     public boolean showCorrectArmor() {
         return showCorrectArmor;
     }
 
+    @Override
     public boolean showCorrectCritical() {
         return showCorrectCritical;
     }
 
+    @Override
     public boolean showFailedEquip() {
         return showFailedEquip;
     }
 
+    @Override
     public int getTargCompCrits() {
         return targCompCrits;
     }
 
+    @Override
     public int getPrintSize() {
         return printSize;
     }
@@ -271,7 +182,7 @@ public class TestXMLOption implements TestEntityOption {
         System.out.println("--->printIgnoredFailedEquip");
         String ret = "";
         for (int i = 0; i < ignoreFailedEquip.size(); i++) {
-            ret += "  " + ignoreFailedEquip.elementAt(i) + "\n";
+            ret += "  " + ignoreFailedEquip.get(i) + "\n";
         }
         return ret;
     }
@@ -307,5 +218,95 @@ public class TestXMLOption implements TestEntityOption {
                 + "Weight Ceiling PowerAmp: "
                 + Float.toString(1 / getWeightCeilingPowerAmp()) + "\n"
                 + "Ignore Failed Equipment: \n" + printIgnoredFailedEquip();
+    }
+    
+    /**
+     * JAXB helper class for the ceilWeight tag.
+     */
+    @XmlType
+    private static class WeightCeiling {
+        @XmlElement
+        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
+        Float engine = TestEntity.CEIL_HALFTON;
+
+        @XmlElement
+        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
+        Float structure = TestEntity.CEIL_HALFTON;
+
+        @XmlElement
+        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
+        Float armor = TestEntity.CEIL_HALFTON;
+
+        @XmlElement
+        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
+        Float controls = TestEntity.CEIL_HALFTON;
+
+        @XmlElement
+        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
+        Float weapons = TestEntity.CEIL_TON;
+
+        @XmlElement(name = "targcomp")
+        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
+        Float targComp = TestEntity.CEIL_TON;
+
+        @XmlElement
+        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
+        Float turret = TestEntity.CEIL_HALFTON;
+
+        @XmlElement
+        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
+        Float lifting = TestEntity.CEIL_HALFTON;
+
+        @XmlElement(name = "poweramp")
+        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
+        Float powerAmp = TestEntity.CEIL_HALFTON;
+
+        @XmlElement
+        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
+        Float gyro = TestEntity.CEIL_HALFTON;
+
+        WeightCeiling() {
+        }
+    }
+    
+    /**
+     * An adapter that unmarshals a float, then returns 1 divided by the value.
+     */
+    private static class FloatInvertAdapter extends XmlAdapter<Float, Float> {
+
+        @Override
+        public Float marshal(final Float v) throws Exception {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public Float unmarshal(final Float v) throws Exception {
+            return 1 / v;
+        }
+        
+    }
+    
+    /**
+     * An adapter that unmarshals a comma-separated string of values into a list of values.
+     */
+    private static class CSVAdapter extends XmlAdapter<String, List<String>> {
+
+        @Override
+        public String marshal(final List<String> v) throws Exception {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public List<String> unmarshal(final String v) throws Exception {
+            List<String> list = new ArrayList<>();
+            StringTokenizer st = new StringTokenizer(v, ",");
+            
+            while (st.hasMoreTokens()) {
+                list.add(st.nextToken().trim());
+            }
+            
+            return list;
+        }
+        
     }
 }

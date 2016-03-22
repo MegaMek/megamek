@@ -49,6 +49,9 @@ public interface IHex extends Cloneable {
      * @see getTheme
      */
     public abstract void setTheme(String theme);
+    
+    /** Resets the theme to what was specified in the board file. */
+    public abstract void resetTheme(); 
 
     /**
      * Clears the "exits" flag for all terrains in the hex where it is not

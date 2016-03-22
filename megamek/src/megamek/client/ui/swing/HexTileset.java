@@ -33,6 +33,8 @@ import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import megamek.client.ui.swing.util.ImageCache;
@@ -53,6 +55,7 @@ public class HexTileset {
     private ArrayList<HexEntry> bases = new ArrayList<HexEntry>();
     private ArrayList<HexEntry> supers = new ArrayList<HexEntry>();
     private ArrayList<HexEntry> ortho = new ArrayList<HexEntry>();
+    private Set<String> themes = new TreeSet<String>();
     private ImageCache<IHex, Image> hexToImageCache = 
         new ImageCache<IHex, Image>();
     private ImageCache<IHex, List<Image>> hexToImageListCache = 
@@ -213,6 +216,9 @@ public class HexTileset {
     // all but theme
     // all but elevation
     // all but elevation & theme
+    
+    /** Recursion depth counter to prevent freezing from circular includes*/
+    public int incDepth = 0;
 
     public void loadFromFile(String filename) throws IOException {
         // make input stream for board
@@ -247,6 +253,7 @@ public class HexTileset {
                 terrain = st.sval;
                 st.nextToken();
                 theme = st.sval;
+                themes.add(theme);
                 st.nextToken();
                 imageName = st.sval;
                 // add to list
@@ -261,6 +268,15 @@ public class HexTileset {
                 if (ort) {
                     ortho.add(new HexEntry(new Hex(elevation, terrain, theme),
                             imageName));
+                }
+            } else if ((st.ttype == StreamTokenizer.TT_WORD) &&
+                    st.sval.equals("include")) {
+                st.nextToken(); 
+                incDepth++;
+                if (incDepth < 100) {
+                    String incFile = st.sval;
+                    System.out.println("Including "+incFile); //$NON-NLS-1$
+                    loadFromFile(incFile);
                 }
             }
             // else if((st.ttype == StreamTokenizer.TT_WORD) &&
@@ -277,6 +293,7 @@ public class HexTileset {
         System.out
                 .println("hexTileset: loaded " + ortho.size() + 
                         " ortho images"); //$NON-NLS-1$ //$NON-NLS-2$
+        incDepth--;
     }
 
     /**
@@ -304,6 +321,10 @@ public class HexTileset {
             }
             tracker.addImage(entry.getImage(), 1);
         }
+    }
+    
+    public Set<String> getThemes() {
+        return new TreeSet<String>(themes);
     }
 
     /**

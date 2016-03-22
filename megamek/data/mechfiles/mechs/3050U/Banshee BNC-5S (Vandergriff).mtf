@@ -13,7 +13,7 @@ Engine:380 XL Engine(IS)
 Structure:IS Standard
 Myomer:Standard
 
-Heat Sinks:13 Double
+Heat Sinks:14 Double
 Walk MP:4
 Jump MP:4
 
@@ -77,7 +77,7 @@ ISLBXAC10
 ISLBXAC10
 ISLBXAC10
 IS LB 10-X AC Ammo
-IS LB 10-X Cluster Ammo
+-Empty-
 -Empty-
 
 Right Torso:

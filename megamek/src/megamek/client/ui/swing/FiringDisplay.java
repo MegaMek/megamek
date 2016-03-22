@@ -537,7 +537,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             refreshAll();
         }
         
-        if ((ce() != null) &&ce().isWeapOrderChanged()) {
+        if ((ce() != null) && ce().isWeapOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
         
@@ -597,7 +597,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             refreshAll();
             cacheVisibleTargets();
 
-            if (!clientgui.bv.isMovingUnits() && !ce().isOffBoard()) {
+            if (!ce().isOffBoard()) {
                 clientgui.bv.centerOnHex(ce().getPosition());
             }
 
@@ -619,6 +619,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             System.err.println("FiringDisplay: tried to " + //$NON-NLS-1$
                     "select non-existant entity: " + en); //$NON-NLS-1$
         }
+        
 
         if (GUIPreferences.getInstance().getBoolean("FiringSolutions")) {
             setFiringSolutions();
@@ -1593,7 +1594,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     }
 
     /**
-     * Refeshes all displays.
+     * Refreshes all displays.
      */
     protected void refreshAll() {
         if (ce() == null) {

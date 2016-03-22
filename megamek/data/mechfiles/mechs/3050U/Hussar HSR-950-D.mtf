@@ -33,7 +33,7 @@ RTC Armor:5
 Weapons:3
 1 ISERMediumLaser, Right Arm
 1 ISERMediumLaser, Left Arm
-1 ISLightPPC, Center Torso
+1 ISSNPPC, Center Torso
 
 Left Arm:
 Shoulder
@@ -102,8 +102,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISLightPPC
-ISLightPPC
+ISSNPPC
+ISSNPPC
 
 Head:
 Life Support

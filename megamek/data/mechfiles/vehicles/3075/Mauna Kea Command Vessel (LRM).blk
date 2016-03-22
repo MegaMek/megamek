@@ -40,10 +40,6 @@ IS Level 2
 Naval
 </motion_type>
 
-<transporters>
-TroopSpace: 2
-</transporters>
-
 <engine_type>
 1
 </engine_type>
@@ -68,8 +64,10 @@ TroopSpace: 2
 IS Machine Gun Ammo - Half
 IS Ammo LRM-15
 IS Ammo LRM-15
+IS Ammo LRM-15
 IS Ammo AC/10
 IS Ammo AC/10
+CommsGear:1
 </Body Equipment>
 
 <Front Equipment>

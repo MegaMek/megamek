@@ -15,24 +15,16 @@ import java.awt.image.ImageObserver;
  * rectangle, so it's easy to tell when they return onscreen.
  */
 abstract class Sprite implements ImageObserver {
-    /**
-     * 
-     */
+
     protected final BoardView1 bv;
-
-    /**
-     * @param boardView1
-     */
-    Sprite(BoardView1 boardView1) {
-        this.bv = boardView1;
-    }
-
     protected Rectangle bounds;
-
     protected Image image;
-
     // Set this to true if you don't want the sprite to be drawn.
     protected boolean hidden = false;
+
+    Sprite(BoardView1 boardView1) {
+        bv = boardView1;
+    }
 
     /**
      * Do any necessary preparation. This is called after creation, but
@@ -42,13 +34,13 @@ abstract class Sprite implements ImageObserver {
 
     /**
      * When we draw our buffered images, it's necessary to implement the
-     * ImageObserver interface. This provides the necesasry functionality.
+     * ImageObserver interface. This provides the necessary functionality.
      */
     public boolean imageUpdate(Image image, int infoflags, int x, int y,
             int width, int height) {
         if (infoflags == ImageObserver.ALLBITS) {
             prepare();
-            this.bv.repaint();
+            bv.repaint();
             return false;
         }
         return true;
@@ -86,8 +78,7 @@ abstract class Sprite implements ImageObserver {
                 g2.setComposite(AlphaComposite.getInstance(
                         AlphaComposite.SRC_OVER, 0.5f));
                 g2.drawImage(image, x, y, observer);
-                g2.setComposite(AlphaComposite.getInstance(
-                        AlphaComposite.SRC_OVER, 1.0f));
+                g2.setComposite(AlphaComposite.SrcOver);
             } else {
                 g.drawImage(image, x, y, observer);
             }

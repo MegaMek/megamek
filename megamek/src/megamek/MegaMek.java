@@ -298,15 +298,13 @@ public class MegaMek {
         assert (guiName != null) : "guiName must be non-null"; //$NON-NLS-1$
         Properties p = new Properties();
         String key = "gui." + guiName; //$NON-NLS-1$
-        InputStream is = MegaMek.class.getClassLoader().getResourceAsStream(
-                PROPERTIES_FILE);
-        if (is != null) {
-            try {
+        try(InputStream is = MegaMek.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {
+            if (is != null) {
                 p.load(is);
                 return p.getProperty(key);
-            } catch (IOException e) {
-                MegaMek.displayMessage("Property file load failed."); //$NON-NLS-1$
             }
+        } catch (IOException e) {
+            MegaMek.displayMessage("Property file load failed."); //$NON-NLS-1$
         }
         return null;
     }
@@ -605,7 +603,7 @@ public class MegaMek {
                                 ms.getEntryName()).getEntity();
                         System.err
                                 .println("Validating Entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
-                        EntityVerifier entityVerifier = new EntityVerifier(
+                        EntityVerifier entityVerifier = EntityVerifier.getInstance(
                                 new File(Configuration.unitsDir(),
                                         EntityVerifier.CONFIG_FILENAME));
                         MechView mechView = new MechView(entity, false);

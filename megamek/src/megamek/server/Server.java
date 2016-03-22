@@ -23,8 +23,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -32,6 +35,7 @@ import java.net.Socket;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -385,7 +389,7 @@ public class Server implements Runnable {
         return vPhaseReport;
     }
 
-    private MapSettings mapSettings = new MapSettings();
+    private MapSettings mapSettings = MapSettings.getInstance();
 
     // commands
     private Hashtable<String, ServerCommand> commandsHash = new Hashtable<String, ServerCommand>();
@@ -1342,7 +1346,9 @@ public class Server implements Runnable {
             sFinalFile = sDir + File.separator + sFinalFile;
             GZIPOutputStream gzo = new GZIPOutputStream(new FileOutputStream(
                     sFinalFile + ".gz"));
-            xstream.toXML(game, gzo);
+            Writer writer = new OutputStreamWriter(gzo, Charset.forName("UTF-8"));
+            xstream.toXML(game, writer);
+            writer.close();
             gzo.close();
         } catch (Exception e) {
             System.err.println("Unable to save file: " + sFinalFile);
@@ -1405,14 +1411,13 @@ public class Server implements Runnable {
      *         successfull
      */
     public boolean loadGame(File f, boolean sendInfo) {
-        System.out.println("s: loading saved game file '" + f + '\'');
+        System.out.println("s: loading saved game file '" + f + '\''); //$NON-NLS-1$
         IGame newGame;
-        try {
+        try(InputStream is = new GZIPInputStream(new FileInputStream(f))) {
             XStream xstream = new XStream();
-            newGame = (IGame) xstream.fromXML(new GZIPInputStream(
-                    new FileInputStream(f)));
+            newGame = (IGame) xstream.fromXML(is);
         } catch (Exception e) {
-            System.err.println("Unable to load file: " + f);
+            System.err.println("Unable to load file: " + f); //$NON-NLS-1$
             e.printStackTrace();
             return false;
         }
@@ -3413,9 +3418,11 @@ public class Server implements Runnable {
         if (!game.getOptions().booleanOption("random_basements")) {
             newBoard.setRandomBasementsOff();
         }
-        BoardUtilities.addWeatherConditions(newBoard, game
-                .getPlanetaryConditions().getWeather(), game
-                                                    .getPlanetaryConditions().getWindStrength());
+        if (game.getPlanetaryConditions().isTerrainAffected()) {
+            BoardUtilities.addWeatherConditions(newBoard, game
+                    .getPlanetaryConditions().getWeather(), game
+                    .getPlanetaryConditions().getWindStrength());
+        }
         game.setBoard(newBoard);
     }
 
@@ -12740,10 +12747,12 @@ public class Server implements Runnable {
                         game.removeTurnFor(def);
                         def.setDone(true);
                     }
-                    // Add a turn to declare counterattack
-                    game.insertNextTurn(new GameTurn.CounterGrappleTurn(def
-                                                                                .getOwnerId(), def.getId()));
-                    send(createTurnVectorPacket());
+                    // If defender is able, add a turn to declare counterattack
+                    if (!def.isImmobile()) {
+                        game.insertNextTurn(new GameTurn.CounterGrappleTurn(def
+                                .getOwnerId(), def.getId()));
+                        send(createTurnVectorPacket());
+                    }
                 }
             }
             if (ea instanceof ArtilleryAttackAction) {
@@ -13458,6 +13467,7 @@ public class Server implements Runnable {
             Entity ent = e.next();
             if (ent.isDeployed() && ent.isLargeCraft()) {
                 r = new Report(3635);
+                r.subject = ent.getId();
                 r.addDesc(ent);
                 int target = ((Aero) ent).getECCMTarget();
                 int roll = ((Aero) ent).getECCMRoll();
@@ -28255,7 +28265,7 @@ public class Server implements Runnable {
 
             // Verify the entity's design
             if (Server.entityVerifier == null) {
-                Server.entityVerifier = new EntityVerifier(new File(
+                Server.entityVerifier = EntityVerifier.getInstance(new File(
                         Configuration.unitsDir(),
                         EntityVerifier.CONFIG_FILENAME));
             }

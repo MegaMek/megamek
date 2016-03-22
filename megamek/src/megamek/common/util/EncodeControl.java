@@ -16,6 +16,7 @@ package megamek.common.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.AccessController;
@@ -92,9 +93,9 @@ public class EncodeControl extends ResourceBundle.Control {
             }
 
             if (stream != null) {
-                try {
+                try(Reader reader = new InputStreamReader(stream, "UTF-8")) { //$NON-NLS-1$
                     // Only this line is changed to make it to read properties files as UTF-8 or other encodings.
-                    bundle = new PropertyResourceBundle(new InputStreamReader(stream, "UTF-8"));
+                    bundle = new PropertyResourceBundle(reader);
                 } finally {
                     stream.close();
                 }

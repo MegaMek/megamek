@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Vector;
 
 
@@ -67,6 +68,8 @@ public class MechSummary implements Serializable {
     /**
      * For BattleArmor, we want to know the weight of an individual suit.
      */
+    private float m_TWsuitTons;
+    private float m_TOsuitTons;
     private float suitWeight;
     
 
@@ -197,6 +200,14 @@ public class MechSummary implements Serializable {
         return (m_nTons);
     }
 
+    public float getTOweight() {
+        return (m_TOsuitTons);
+    }
+
+    public float getTWweight() {
+        return (m_TWsuitTons);
+    }
+
     public int getBV() {
         return (m_nBV);
     }
@@ -255,6 +266,14 @@ public class MechSummary implements Serializable {
 
     public void setTons(float m_nTons) {
         this.m_nTons = m_nTons;
+    }
+
+    public void setTOweight(float m_TOsuitTons) {
+        this.m_TOsuitTons = m_TOsuitTons;
+    }
+
+    public void setTWweight(float m_TWsuitTons) {
+        this.m_TWsuitTons = m_TWsuitTons;
     }
 
     public void setCost(long m_nCost) {
@@ -492,18 +511,21 @@ public class MechSummary implements Serializable {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (!(other instanceof MechSummary)) {
-            return false;
-        }
-        MechSummary msOther = (MechSummary) other;
-        // we match on chassis + model + unittype + sourcefile
-        if (msOther.getChassis().equals(getChassis())
-                && msOther.getModel().equals(getModel())
-                && msOther.getUnitType().equals(getUnitType())
-                && msOther.getSourceFile().equals(getSourceFile())) {
+    public boolean equals(Object obj) {
+        if(this == obj) {
             return true;
         }
-        return false;
+        if((null == obj) || (getClass() != obj.getClass())) {
+            return false;
+        }
+        final MechSummary other = (MechSummary) obj;
+        // we match on chassis + model + unittype + sourcefile
+        return Objects.equals(m_sChassis, other.m_sChassis) && Objects.equals(m_sModel, other.m_sModel)
+                && Objects.equals(m_sUnitType, other.m_sUnitType) && Objects.equals(m_sSourceFile, other.m_sSourceFile);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(m_sChassis, m_sModel, m_sUnitType, m_sSourceFile);
     }
 }

@@ -1,0 +1,218 @@
+<mech>
+  <creator>
+    <name>The Drawing Board</name>
+    <version>2</version>
+  </creator>
+  <basics>
+    <name>Tarantula</name>
+    <model>ZPH-1A</model>
+    <technology level="2">Inner Sphere</technology>
+    <tonnage>25</tonnage>
+    <type>Quad</type>
+    <cost>3620416</cost>
+    <bv>0</bv>
+    <speed>
+      <walk>8</walk>
+      <run>12</run>
+      <jump type="Standard" tonnage="4">8</jump>
+    </speed>
+    <structural>
+      <engine tonnage="4.5" rating="200">Fusion XL</engine>
+      <gyro tonnage="2">Standard</gyro>
+      <cockpit tonnage="3">Standard</cockpit>
+      <targsys tonnage="0">Standard</targsys>
+      <heatsinks tonnage="0" count="10">Double</heatsinks>
+      <armor tonnage="4.5" points="72">Standard</armor>
+      <internal tonnage="2.5" points="67">Standard</internal>
+    </structural>
+  </basics>
+  <itemdefs>
+    <itemdata>
+      <refindex>0</refindex>
+      <name>Medium Laser</name>
+      <techbase>Inner Sphere</techbase>
+      <techlevel>1</techlevel>
+      <type>Energy</type>
+      <cost>40000</cost>
+      <bv>46</bv>
+      <defensivebv>False</defensivebv>
+      <tonnage>1</tonnage>
+      <heat>3</heat>
+      <tonnage>1</tonnage>
+      <crits>1</crits>
+      <spreadablecrits>no</spreadablecrits>
+      <rangedata>
+        <minimum>0</minimum>
+        <short>3</short>
+        <medium>6</medium>
+        <long>9</long>
+        <extreme>12</extreme>
+        <rangetype>Hex</rangetype>
+      </rangedata>
+      <damagedata>
+        <damage>5</damage>
+      </damagedata>
+      <special>
+        <streak>False</streak>
+        <rac>False</rac>
+        <ultra>False</ultra>
+        <explosiveammo>False</explosiveammo>
+      </special>
+    </itemdata>
+    <itemdata>
+      <refindex>1</refindex>
+      <name>Streak SRM 2</name>
+      <techbase>Inner Sphere</techbase>
+      <techlevel>2</techlevel>
+      <type>Missile</type>
+      <cost>15000</cost>
+      <bv>30</bv>
+      <defensivebv>False</defensivebv>
+      <tonnage>1.5</tonnage>
+      <heat>2</heat>
+      <tonnage>1.5</tonnage>
+      <crits>1</crits>
+      <spreadablecrits>no</spreadablecrits>
+      <rangedata>
+        <minimum>0</minimum>
+        <short>3</short>
+        <medium>6</medium>
+        <long>9</long>
+        <extreme>12</extreme>
+        <rangetype>Hex</rangetype>
+      </rangedata>
+      <damagedata>
+        <damage>2</damage>
+        <damagetype>missile</damagetype>
+        <maxdamage>4</maxdamage>
+        <avedamage>4</avedamage>
+      </damagedata>
+      <special>
+        <streak>True</streak>
+        <rac>False</rac>
+        <ultra>False</ultra>
+        <explosiveammo>False</explosiveammo>
+      </special>
+    </itemdata>
+    <itemdata>
+      <refindex>2</refindex>
+      <name>Streak SRM 2 Ammo</name>
+      <techbase>Inner Sphere</techbase>
+      <techlevel>2</techlevel>
+      <type>Ammunition</type>
+      <cost>54000</cost>
+      <bv>4</bv>
+      <defensivebv>False</defensivebv>
+      <tonnage>1</tonnage>
+      <tonnage>1</tonnage>
+      <crits>1</crits>
+      <spreadablecrits>no</spreadablecrits>
+      <rangedata>
+        <minimum>0</minimum>
+        <short>0</short>
+        <medium>0</medium>
+        <long>0</long>
+        <rangetype>Hex</rangetype>
+      </rangedata>
+      <damagedata>
+        <ammoshortname>Streak SRM 2</ammoshortname>
+      </damagedata>
+      <special>
+        <streak>False</streak>
+        <rac>False</rac>
+        <ultra>False</ultra>
+        <explosiveammo>True</explosiveammo>
+      </special>
+    </itemdata>
+  </itemdefs>
+  <mounteditems>
+    <mounteditem itemindex="0" weaponrefindex="0" location="LT" rearmounted="False" isspread="False" turretmounted="False" baseomniitem="False" shots="-1">Medium Laser</mounteditem>
+    <mounteditem itemindex="1" weaponrefindex="0" location="RT" rearmounted="False" isspread="False" turretmounted="False" baseomniitem="False" shots="-1">Medium Laser</mounteditem>
+    <mounteditem itemindex="2" weaponrefindex="1" location="CT" rearmounted="False" isspread="False" turretmounted="False" baseomniitem="False" shots="50">Streak SRM 2</mounteditem>
+    <mounteditem itemindex="3" weaponrefindex="2" location="CT" rearmounted="False" isspread="False" turretmounted="False" baseomniitem="False" shots="50">Streak SRM 2 Ammo</mounteditem>
+  </mounteditems>
+  <critdefs>
+    <location name="FLL" maxcrits="6" armor="7" reararmor="0" internal="6">
+      <criticalslot slotindex="0" armored="False">Hip</criticalslot>
+      <criticalslot slotindex="1" armored="False">Upper Leg Actuator</criticalslot>
+      <criticalslot slotindex="2" armored="False">Lower Leg Actuator</criticalslot>
+      <criticalslot slotindex="3" armored="False">Foot Actuator</criticalslot>
+      <criticalslot slotindex="4" armored="False">Jump Jet</criticalslot>
+      <criticalslot slotindex="5" armored="False">Jump Jet</criticalslot>
+    </location>
+    <location name="LT" maxcrits="12" armor="7" reararmor="4" internal="6">
+      <criticalslot slotindex="0" armored="False">XL Engine</criticalslot>
+      <criticalslot slotindex="1" armored="False">XL Engine</criticalslot>
+      <criticalslot slotindex="2" armored="False">XL Engine</criticalslot>
+      <criticalslot slotindex="3" armored="False">Double Heat Sink</criticalslot>
+      <criticalslot slotindex="4" armored="False">Double Heat Sink</criticalslot>
+      <criticalslot slotindex="5" armored="False">Double Heat Sink</criticalslot>
+      <criticalslot slotindex="6" itemindex="0" armored="False" turretmounted="False">Medium Laser</criticalslot>
+      <criticalslot slotindex="7">Empty</criticalslot>
+      <criticalslot slotindex="8">Empty</criticalslot>
+      <criticalslot slotindex="9">Empty</criticalslot>
+      <criticalslot slotindex="10">Empty</criticalslot>
+      <criticalslot slotindex="11">Empty</criticalslot>
+    </location>
+    <location name="RLL" maxcrits="6" armor="7" reararmor="0" internal="6">
+      <criticalslot slotindex="0" armored="False">Hip</criticalslot>
+      <criticalslot slotindex="1" armored="False">Upper Leg Actuator</criticalslot>
+      <criticalslot slotindex="2" armored="False">Lower Leg Actuator</criticalslot>
+      <criticalslot slotindex="3" armored="False">Foot Actuator</criticalslot>
+      <criticalslot slotindex="4" armored="False">Jump Jet</criticalslot>
+      <criticalslot slotindex="5" armored="False">Jump Jet</criticalslot>
+    </location>
+    <location name="RRL" maxcrits="6" armor="7" reararmor="0" internal="6">
+      <criticalslot slotindex="0" armored="False">Hip</criticalslot>
+      <criticalslot slotindex="1" armored="False">Upper Leg Actuator</criticalslot>
+      <criticalslot slotindex="2" armored="False">Lower Leg Actuator</criticalslot>
+      <criticalslot slotindex="3" armored="False">Foot Actuator</criticalslot>
+      <criticalslot slotindex="4" armored="False">Jump Jet</criticalslot>
+      <criticalslot slotindex="5" armored="False">Jump Jet</criticalslot>
+    </location>
+    <location name="RT" maxcrits="12" armor="7" reararmor="4" internal="6">
+      <criticalslot slotindex="0" armored="False">XL Engine</criticalslot>
+      <criticalslot slotindex="1" armored="False">XL Engine</criticalslot>
+      <criticalslot slotindex="2" armored="False">XL Engine</criticalslot>
+      <criticalslot slotindex="3" armored="False">Double Heat Sink</criticalslot>
+      <criticalslot slotindex="4" armored="False">Double Heat Sink</criticalslot>
+      <criticalslot slotindex="5" armored="False">Double Heat Sink</criticalslot>
+      <criticalslot slotindex="6" itemindex="1" armored="False" turretmounted="False">Medium Laser</criticalslot>
+      <criticalslot slotindex="7">Empty</criticalslot>
+      <criticalslot slotindex="8">Empty</criticalslot>
+      <criticalslot slotindex="9">Empty</criticalslot>
+      <criticalslot slotindex="10">Empty</criticalslot>
+      <criticalslot slotindex="11">Empty</criticalslot>
+    </location>
+    <location name="FRL" maxcrits="6" armor="7" reararmor="0" internal="6">
+      <criticalslot slotindex="0" armored="False">Hip</criticalslot>
+      <criticalslot slotindex="1" armored="False">Upper Leg Actuator</criticalslot>
+      <criticalslot slotindex="2" armored="False">Lower Leg Actuator</criticalslot>
+      <criticalslot slotindex="3" armored="False">Foot Actuator</criticalslot>
+      <criticalslot slotindex="4" armored="False">Jump Jet</criticalslot>
+      <criticalslot slotindex="5" armored="False">Jump Jet</criticalslot>
+    </location>
+    <location name="CT" maxcrits="12" armor="10" reararmor="6" internal="8">
+      <criticalslot slotindex="0" armored="False">XL Engine</criticalslot>
+      <criticalslot slotindex="1" armored="False">XL Engine</criticalslot>
+      <criticalslot slotindex="2" armored="False">XL Engine</criticalslot>
+      <criticalslot slotindex="3" armored="False">Gyro</criticalslot>
+      <criticalslot slotindex="4" armored="False">Gyro</criticalslot>
+      <criticalslot slotindex="5" armored="False">Gyro</criticalslot>
+      <criticalslot slotindex="6" armored="False">Gyro</criticalslot>
+      <criticalslot slotindex="7" armored="False">XL Engine</criticalslot>
+      <criticalslot slotindex="8" armored="False">XL Engine</criticalslot>
+      <criticalslot slotindex="9" armored="False">XL Engine</criticalslot>
+      <criticalslot slotindex="10" itemindex="2" armored="False" turretmounted="False">Streak SRM 2</criticalslot>
+      <criticalslot slotindex="11" itemindex="3" armored="False" turretmounted="False">Streak SRM 2 Ammo</criticalslot>
+    </location>
+    <location name="H" maxcrits="6" armor="6" reararmor="0" internal="3">
+      <criticalslot slotindex="0" armored="False">Life Support</criticalslot>
+      <criticalslot slotindex="1" armored="False">Sensors</criticalslot>
+      <criticalslot slotindex="2" armored="False">Cockpit</criticalslot>
+      <criticalslot slotindex="3">Empty</criticalslot>
+      <criticalslot slotindex="4" armored="False">Sensors</criticalslot>
+      <criticalslot slotindex="5" armored="False">Life Support</criticalslot>
+    </location>
+  </critdefs>
+</mech>

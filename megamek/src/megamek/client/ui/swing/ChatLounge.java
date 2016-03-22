@@ -696,8 +696,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         panMap = new JPanel();
 
-        mapSettings = (MapSettings) clientgui.getClient().getMapSettings()
-                .clone();
+        mapSettings = MapSettings.getInstance(clientgui.getClient().getMapSettings());
 
         randomMapDialog = new RandomMapDialog(clientgui.frame, this,
                 clientgui.getClient(), mapSettings); // new
@@ -2837,7 +2836,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * the server.
      */
     public void updateMapSettings(MapSettings newSettings) {
-        mapSettings = (MapSettings) newSettings.clone();
+        mapSettings = MapSettings.getInstance(newSettings);
         refreshMapButtons();
         refreshMapChoice();
         refreshSpaceGround();

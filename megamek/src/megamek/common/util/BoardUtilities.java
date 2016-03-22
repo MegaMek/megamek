@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import megamek.common.Board;
@@ -31,8 +32,21 @@ import megamek.common.ITerrainFactory;
 import megamek.common.MapSettings;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Terrains;
+import megamek.common.util.generator.ElevationGenerator;
+import megamek.common.util.generator.SimplexGenerator;
 
 public class BoardUtilities {
+    private static List<ElevationGenerator> elevationGenerators = new ArrayList<ElevationGenerator>();
+    static {
+        // TODO: make this externally accessible via registerElevationGenerator()
+        elevationGenerators.add(new SimplexGenerator());
+    }
+
+    /** @return how many elevation generator algorithms there are; three built-in */
+    public static int getAmountElevationGenerators() {
+        return 3 + elevationGenerators.size();
+    }
+    
     /**
      * Combines one or more boards into one huge megaboard!
      *
@@ -1049,6 +1063,11 @@ public class BoardUtilities {
                 cutSteps(hilliness, width, height, elevationMap);
                 midPoint(hilliness, width, height, elevationMap);
                 break;
+            default:
+                // Non-hardcoded generators, if we have any
+                if((algorithm > 2) && (algorithm - 3 < elevationGenerators.size())) {
+                    elevationGenerators.get(algorithm - 3).generate(hilliness, width, height, elevationMap);
+                }
         }
 
         /* and now normalize it */

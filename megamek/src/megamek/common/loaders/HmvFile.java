@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Objects;
 
 import megamek.common.AmmoType;
 import megamek.common.Engine;
@@ -1256,29 +1257,20 @@ abstract class HMVType {
     }
 
     @Override
-    public boolean equals(Object other) {
-
-        // Assume the other object doesn't equal this one.
-        boolean result = false;
-
-        // References to the same object are equal.
-        if (this == other) {
-            result = true;
+    public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;
         }
-
-        // If the other object is an instance of
-        // this object's class, then recast it.
-        else if (this.getClass().isInstance(other)) {
-            HMVType cast = (HMVType) other;
-
-            // The two objects match if their names and IDs match.
-            if (name.equals(cast.name) && (id == cast.id)) {
-                result = true;
-            }
+        if((null == obj) || (getClass() != obj.getClass())) {
+            return false;
         }
+        final HMVType other = (HMVType) obj;
+        return Objects.equals(name, other.name) && Objects.equals(id, other.id);
+    }
 
-        // Return the result
-        return result;
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, id);
     }
 
     public int getId() {

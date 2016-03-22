@@ -180,7 +180,7 @@ class StepSprite extends Sprite {
                 // draw arrow indicating dropping prone
                 // also doubles as the descent indication
                 graph.setColor(Color.darkGray);
-                CurrentArrow = UpDownOffset.createTransformedShape(bv.DownArrow);
+                CurrentArrow = UpDownOffset.createTransformedShape(bv.downArrow);
                 CurrentArrow = StepOffset.createTransformedShape(CurrentArrow);
                 ((Graphics2D) graph).fill(CurrentArrow);
                 
@@ -198,7 +198,7 @@ class StepSprite extends Sprite {
                 // draw arrow indicating standing up
                 // also doubles as the climb indication
                 graph.setColor(Color.darkGray);
-                CurrentArrow = UpDownOffset.createTransformedShape(bv.UpArrow);
+                CurrentArrow = UpDownOffset.createTransformedShape(bv.upArrow);
                 CurrentArrow = StepOffset.createTransformedShape(CurrentArrow);
                 ((Graphics2D) graph).fill(CurrentArrow);
                 

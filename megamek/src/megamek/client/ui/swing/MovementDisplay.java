@@ -3879,9 +3879,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             gear = MovementDisplay.GEAR_TURN;
         } else if (actionCmd.equals(MoveCommand.MOVE_BACK_UP.getCmd())) {
             if (gear == MovementDisplay.GEAR_JUMP) {
+                gear = MovementDisplay.GEAR_BACKUP; // on purpose...
                 clear();
             }
-            gear = MovementDisplay.GEAR_BACKUP;
+            gear = MovementDisplay.GEAR_BACKUP; // on purpose...
             Color backColor = GUIPreferences.getInstance().getColor(
                     GUIPreferences.ADVANCED_MOVE_BACK_COLOR);
             clientgui.getBoardView().setHighlightColor(backColor);

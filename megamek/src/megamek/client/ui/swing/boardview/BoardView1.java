@@ -3741,7 +3741,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         for (Coords loc : mvEnvData.keySet()) {
             Color spriteColor = null;
             int mvType = -1;
-            if (gear == MovementDisplay.GEAR_JUMP) {
+            if (gear == MovementDisplay.GEAR_JUMP || gear == MovementDisplay.GEAR_DFA) {
                 if (mvEnvData.get(loc) <= jump) {
                     spriteColor = guip
                             .getColor(GUIPreferences.ADVANCED_MOVE_JUMP_COLOR);

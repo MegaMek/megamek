@@ -67,7 +67,9 @@ public enum KeyCommandBind {
     UD_ARMOR("udArmor", false, KeyEvent.VK_F3, 0), // Default: F3
     UD_SYSTEMS("udSystems", false, KeyEvent.VK_F4, 0), // Default: F4
     UD_WEAPONS("udWeapons", false, KeyEvent.VK_F5, 0), // Default: F5
-    UD_EXTRAS("udExtras", false, KeyEvent.VK_F6, 0); // Default: F6
+    UD_EXTRAS("udExtras", false, KeyEvent.VK_F6, 0), // Default: F6
+    // Toggle between Jumping and Walk/Run (or other movement modes if there are any)
+    TOGGLE_MOVEMODE("toggleJump", false, KeyEvent.VK_J, 0); // Default: J
     
     /**
      * The command associated with this binding.

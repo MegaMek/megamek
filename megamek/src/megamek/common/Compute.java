@@ -278,7 +278,7 @@ public class Compute {
             if ((coords != null) && (entering.getPosition() != null)) {
                 thisLowStackingLevel = entering.calcElevation(game.getBoard()
                         .getHex(entering.getPosition()), game.getBoard()
-                        .getHex(coords), entering.getElevation(), entering
+                        .getHex(coords), elevation, entering
                         .climbMode(), false);
             }
             int thisHighStackingLevel = thisLowStackingLevel;

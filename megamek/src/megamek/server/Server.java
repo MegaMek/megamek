@@ -8978,7 +8978,9 @@ public class Server implements Runnable {
             // brief everybody on the turn update
             send(createTurnVectorPacket());
             // let everyone know about what just happened
-            send(entity.getOwner().getId(), createSpecialReportPacket());
+            if (vPhaseReport.size() > 1) {
+                send(entity.getOwner().getId(), createSpecialReportPacket());
+            }
         } else {
             if ((entity.getMovementMode() == EntityMovementMode.WIGE)
                 && (entity.getElevation() > 0)) {

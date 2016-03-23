@@ -95,8 +95,8 @@ public class MapMenu extends JPopupMenu {
         selectedEntity = myEntity = game.getEntity(gui.getSelectedEntityNum());
 
         hasMenu = createMenu();
-        // make this popup not consume mouse events outside it
-        // so board dragging can start correctly when it's open
+        // make popups not consume mouse events outside them
+        // so board dragging can start correctly when this menu is open
         UIManager.put("PopupMenu.consumeEventOnClose", false);
     }
 
@@ -114,7 +114,7 @@ public class MapMenu extends JPopupMenu {
                    || (currentPanel instanceof PhysicalDisplay)
                    || (currentPanel instanceof TargetingPhaseDisplay));
     }
-    
+
     private boolean createMenu() {
         removeAll();
         int itemCount = 0;

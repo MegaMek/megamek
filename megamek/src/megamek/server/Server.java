@@ -6699,6 +6699,7 @@ public class Server implements Runnable {
                     // Potential point-blank shot
                     } else if ((dist == 1) && !e.madePointblankShot()) {
                         entity.setPosition(step.getPosition());
+                        entity.setFacing(step.getFacing());
                         // Update entity position on ZZ
                         send(e.getOwnerId(), createEntityPacket(entity.getId(), null));
                         boolean tookPBS = processPointblankShotCFR(e, entity);

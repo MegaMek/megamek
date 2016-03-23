@@ -380,7 +380,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         try {
             client.getGame().addGameListener(gameListener);
             // Create the board viewer.
-            bv = new BoardView1(client.getGame(), controller);
+            bv = new BoardView1(client.getGame(), controller, this);
             bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");
@@ -1230,7 +1230,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     /**
      * Toggles the entity display window
      */
-    private void toggleDisplay() {
+    public void toggleDisplay() {
         mechW.setVisible(!mechW.isVisible());
         if (mechW.isVisible()) {
             frame.requestFocus();
@@ -1247,7 +1247,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
     }
 
-    private void toggleUnitOverview() {
+    public void toggleUnitOverview() {
         uo.setVisible(!uo.isVisible());
         GUIPreferences.getInstance().setShowUnitOverview(uo.isVisible());
         bv.refreshDisplayables();
@@ -1256,7 +1256,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     /**
      * Toggles the minimap window Also, toggles the minimap enabled setting
      */
-    private void toggleMap() {
+    public void toggleMap() {
         if (minimapW.isVisible()) {
             GUIPreferences.getInstance().setMinimapEnabled(false);
         } else {

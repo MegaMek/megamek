@@ -141,7 +141,7 @@ public class SkinXMLHandler {
      * @return
      */
     public static boolean validSkinSpecFile(String fileName) {
-        File file = new File(Configuration.configDir(), fileName);
+        File file = new File(Configuration.skinsDir(), fileName);
         if (!file.exists() || !file.isFile()) {
             return false;
         }
@@ -186,7 +186,7 @@ public class SkinXMLHandler {
             return false;
         }
         
-        File file = new File(Configuration.configDir(), fileName);
+        File file = new File(Configuration.skinsDir(), fileName);
         if (!file.exists() || !file.isFile()) {
             System.out.println("ERROR: Bad skin specification file: " +
                     "file doesn't exist!  File name: " + fileName);

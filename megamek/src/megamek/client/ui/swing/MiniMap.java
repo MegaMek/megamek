@@ -1097,15 +1097,25 @@ public class MiniMap extends JPanel {
         g.setColor(pColor);
         
         // Fill the interior of the unit marker
-        if (!entity.isSelectableThisTurn()) {
-            // entity has moved (or whatever) already
-            g.setColor(g.getColor().darker());
-        }
         g.fillPolygon(xPoints, yPoints, xPoints.length);
-
+        
         // Create a colored border according to the done() status
         Entity se = clientgui == null ? null : m_game.getEntity(clientgui
                 .getSelectedEntityNum());
+        if (entity == se) {
+            g.setColor(GUIPreferences.getInstance().getColor(
+                    GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR));
+        } else if (entity.isSelectableThisTurn()) {
+            // entity has moved (or whatever) already
+//            g.setColor(g.getColor().darker());
+            g.setColor(GUIPreferences.getInstance().getColor(
+                    GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR));
+            
+        } else {
+            g.setColor(Color.BLACK);
+        }
+        g.drawPolygon(xPoints, yPoints, xPoints.length);
+/*
         if (entity == se) {
             Color w = new Color(255, 255, 255);
             Color b = new Color(0, 0, 0);
@@ -1114,12 +1124,13 @@ public class MiniMap extends JPanel {
             g.setColor(w);
             g.drawRect(baseX, baseY, 1, 1);
         }
+        
         if (border) {
             Color oldColor = g.getColor();
             g.setColor(oldColor.darker().darker().darker());
             g.drawPolygon(xPoints, yPoints, xPoints.length);
             g.setColor(oldColor);
-        }
+        }*/
     }
     
     /** Returns a non-transparent, saturated form of Color c or Black if passed Black. */

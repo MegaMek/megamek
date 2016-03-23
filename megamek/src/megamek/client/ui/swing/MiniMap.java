@@ -1103,29 +1103,32 @@ public class MiniMap extends JPanel {
         g.drawPolygon(xPoints, yPoints, xPoints.length);
         
         // Fill the icon according to the player color
-        Color pColor = new Color(PlayerColors.getColorRGB(entity.getOwner().getColorIndex()));
+        Color pColor = new Color(
+                PlayerColors.getColorRGB(entity.getOwner().getColorIndex()));
         g.setColor(pColor);
         g.fillPolygon(xPoints, yPoints, xPoints.length);
         
-        // Create a colored circle for the selected unit
-        ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]+1));
+        // Draw a white border to better show the player color
+        // maybe useful later: if (!entity.isSelectableThisTurn()) {
+        ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]));
+        g.setColor(Color.WHITE);
+        g.drawPolygon(xPoints, yPoints, xPoints.length);
+
+        // Create a colored circle if this is the selected unit
         Entity se = (clientgui == null) ? null : 
             m_game.getEntity(clientgui.getSelectedEntityNum());
+        
         if (entity == se) {
+            ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]+1));
             g.setColor(GUIPreferences.getInstance().getColor(
                     GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR));
             int rad = unitSize*2-1;
             g.drawOval(baseX-rad, baseY-rad, rad*2, rad*2);
         }
         
-        // Draw a white border to better show the player color
-        ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]));
-        g.setColor(Color.WHITE);
-        g.drawPolygon(xPoints, yPoints, xPoints.length);
-        
         ((Graphics2D)g).setStroke(svStroke);
     }
-    
+
     private void paintRoads(Graphics g) {
         int exits = 0;
         int baseX, baseY, x, y;

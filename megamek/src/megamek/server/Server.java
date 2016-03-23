@@ -6700,6 +6700,8 @@ public class Server implements Runnable {
                     } else if ((dist == 1) && !e.madePointblankShot()) {
                         entity.setPosition(step.getPosition());
                         entity.setFacing(step.getFacing());
+                        // If not set, BV icons could have wrong facing
+                        entity.setSecondaryFacing(step.getFacing());
                         // Update entity position on ZZ
                         send(e.getOwnerId(), createEntityPacket(entity.getId(), null));
                         boolean tookPBS = processPointblankShotCFR(e, entity);
@@ -29161,7 +29163,7 @@ public class Server implements Runnable {
      * Creates a packet containing a single entity, for update
      */
     private Packet createEntityPacket(int entityId,
-                                      Vector<UnitLocation> movePath) {
+            Vector<UnitLocation> movePath) {
         final Entity entity = game.getEntity(entityId);
         final Object[] data = new Object[3];
         data[0] = new Integer(entityId);

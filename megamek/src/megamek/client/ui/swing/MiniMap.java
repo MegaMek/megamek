@@ -144,6 +144,8 @@ public class MiniMap extends JPanel {
     private int[] halfRoadWidthByCos30 = {0, 0, 1, 2, 2, 3};
     private int[] halfRoadWidthBySin30 = {0, 0, 1, 1, 1, 2};
     private int[] halfRoadWidth = {0, 0, 1, 2, 3, 3};
+    private int[] unitSizes = {5, 6, 7, 8, 9, 10};  
+    private int[] unitBorder = {1, 1, 1, 2, 2, 2};
 
     private int heightDisplayMode = SHOW_NO_HEIGHT;
     Coords firstLOS;
@@ -407,6 +409,8 @@ public class MiniMap extends JPanel {
 
         dirty = new boolean[(m_board.getWidth() / 10) + 1][(m_board.getHeight() / 10) + 1];
         dirtyMap = true;
+        
+        unitSize = unitSizes[zoom];
 
         // ensure its on screen
         Rectangle virtualBounds = new Rectangle();
@@ -637,7 +641,7 @@ public class MiniMap extends JPanel {
                     if (e.getPosition() == null) {
                         continue;
                     }
-                    paintUnit(g, e, true);
+                    paintUnit(g, e);
                 }
             }
             clean();
@@ -979,7 +983,7 @@ public class MiniMap extends JPanel {
         g.setColor(oldColor);
     }
 
-    private void paintUnit(Graphics g, Entity entity, boolean border) {
+    private void paintUnit(Graphics g, Entity entity) {
         boolean sensors = m_game.getOptions().booleanOption(
                 "tacops_sensors");
         boolean sensorsDetectAll = m_game.getOptions().booleanOption(
@@ -1091,66 +1095,37 @@ public class MiniMap extends JPanel {
             yPoints[3] = baseY;
         }
 
-        // set the fill color according to the player color
-        Color pColor = PlayerColors.getColor(entity.getOwner().getColorIndex());
-        pColor = saturateColor(pColor);
-        g.setColor(pColor);
+        Stroke svStroke = ((Graphics2D)g).getStroke();
+
+        // Draw a slight dark border to set off the icon from the background
+        ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]+2));
+        g.setColor(new Color(100,100,100,200));
+        g.drawPolygon(xPoints, yPoints, xPoints.length);
         
-        // Fill the interior of the unit marker
+        // Fill the icon according to the player color
+        Color pColor = new Color(PlayerColors.getColorRGB(entity.getOwner().getColorIndex()));
+        g.setColor(pColor);
         g.fillPolygon(xPoints, yPoints, xPoints.length);
         
-        // Create a colored border according to the done() status
-        Entity se = clientgui == null ? null : m_game.getEntity(clientgui
-                .getSelectedEntityNum());
+        // Create a colored circle for the selected unit
+        ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]+1));
+        Entity se = (clientgui == null) ? null : 
+            m_game.getEntity(clientgui.getSelectedEntityNum());
         if (entity == se) {
             g.setColor(GUIPreferences.getInstance().getColor(
                     GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR));
-        } else if (entity.isSelectableThisTurn()) {
-            // entity has moved (or whatever) already
-//            g.setColor(g.getColor().darker());
-            g.setColor(GUIPreferences.getInstance().getColor(
-                    GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR));
-            
-        } else {
-            g.setColor(Color.BLACK);
-        }
-        g.drawPolygon(xPoints, yPoints, xPoints.length);
-/*
-        if (entity == se) {
-            Color w = new Color(255, 255, 255);
-            Color b = new Color(0, 0, 0);
-            g.setColor(b);
-            g.drawRect(baseX - 1, baseY - 1, 3, 3);
-            g.setColor(w);
-            g.drawRect(baseX, baseY, 1, 1);
+            int rad = unitSize*2-1;
+            g.drawOval(baseX-rad, baseY-rad, rad*2, rad*2);
         }
         
-        if (border) {
-            Color oldColor = g.getColor();
-            g.setColor(oldColor.darker().darker().darker());
-            g.drawPolygon(xPoints, yPoints, xPoints.length);
-            g.setColor(oldColor);
-        }*/
+        // Draw a white border to better show the player color
+        ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]));
+        g.setColor(Color.WHITE);
+        g.drawPolygon(xPoints, yPoints, xPoints.length);
+        
+        ((Graphics2D)g).setStroke(svStroke);
     }
     
-    /** Returns a non-transparent, saturated form of Color c or Black if passed Black. */
-    private Color saturateColor(Color c) {
-        // find the highest component
-        int r = c.getRed();
-        int g = c.getGreen();
-        int b = c.getBlue();
-        int maxC = Math.max(r, Math.max(g, b));
-        
-        // When the highest component is 0, Black was passed as a parameter
-        if (maxC == 0) return Color.BLACK;
-        
-        // Otherwise, increase all components so that the highest become 255 
-        r = r * 255/maxC;
-        g = g * 255/maxC;
-        b = b * 255/maxC;
-        return new Color(r, g, b);
-    }
-
     private void paintRoads(Graphics g) {
         int exits = 0;
         int baseX, baseY, x, y;

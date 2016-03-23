@@ -2023,10 +2023,13 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
                     }
                     // If this is the client to handle the PBS, take care of it
                     bv.centerOnHex(attacker.getPosition());
+                    bv.highlight(attacker.getPosition());
+                    bv.select(target.getPosition());
+                    bv.cursor(target.getPosition());
                     msg = Messages.getString(
                             "ClientGUI.PointBlankShot.Message",
-                            new Object[] { target.getDisplayName(),
-                                    attacker.getDisplayName() });
+                            new Object[] { target.getShortName(),
+                                    attacker.getShortName() });
                     title = Messages
                             .getString("ClientGUI.PointBlankShot.Title");
                     // Ask whether the player wants to take a PBS or not

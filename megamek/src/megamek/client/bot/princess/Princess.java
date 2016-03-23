@@ -251,7 +251,7 @@ public class Princess extends BotClient {
             }
 
             // get the coordinates I can deploy on
-            Coords deployCoords = getCoordsAround(getEntity(entityNum), startingCoords);
+            Coords deployCoords = getFirstValidCoords(getEntity(entityNum), startingCoords);
             if (deployCoords == null) {
                 log(getClass(),
                     METHOD_NAME,

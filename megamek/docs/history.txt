@@ -24,6 +24,7 @@ v0.41.16-git
 + Issue #80: Flare Rounds not Illuminating Targets for Visual Detection
 + Bug: Floor deploy dialog for Infantry in buildings could select wrong floor
 + Bug: Landed dropships were allowed to hang off the edge of the board
++ Issue #82: Dropship Deployment Overlapping
 
 v0.41.15 (2016-02-21 14:15 UTC)
 + Issue #19: doTryUnstuck Error

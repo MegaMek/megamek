@@ -1091,13 +1091,19 @@ public class MiniMap extends JPanel {
             yPoints[3] = baseY;
         }
 
-        g.setColor(PlayerColors.getColor(entity.getOwner().getColorIndex()));
+        // set the fill color according to the player color
+        Color pColor = PlayerColors.getColor(entity.getOwner().getColorIndex());
+        pColor = saturateColor(pColor);
+        g.setColor(pColor);
+        
+        // Fill the interior of the unit marker
         if (!entity.isSelectableThisTurn()) {
             // entity has moved (or whatever) already
             g.setColor(g.getColor().darker());
         }
         g.fillPolygon(xPoints, yPoints, xPoints.length);
 
+        // Create a colored border according to the done() status
         Entity se = clientgui == null ? null : m_game.getEntity(clientgui
                 .getSelectedEntityNum());
         if (entity == se) {
@@ -1114,6 +1120,24 @@ public class MiniMap extends JPanel {
             g.drawPolygon(xPoints, yPoints, xPoints.length);
             g.setColor(oldColor);
         }
+    }
+    
+    /** Returns a non-transparent, saturated form of Color c or Black if passed Black. */
+    private Color saturateColor(Color c) {
+        // find the highest component
+        int r = c.getRed();
+        int g = c.getGreen();
+        int b = c.getBlue();
+        int maxC = Math.max(r, Math.max(g, b));
+        
+        // When the highest component is 0, Black was passed as a parameter
+        if (maxC == 0) return Color.BLACK;
+        
+        // Otherwise, increase all components so that the highest become 255 
+        r = r * 255/maxC;
+        g = g * 255/maxC;
+        b = b * 255/maxC;
+        return new Color(r, g, b);
     }
 
     private void paintRoads(Graphics g) {

@@ -17,17 +17,24 @@ package megamek.client;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.Vector;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import megamek.common.Configuration;
 import megamek.common.MechSummary;
@@ -84,6 +91,7 @@ public class RandomUnitGenerator implements Serializable {
             children = new Vector<>();
         }
 
+        @Override
         public int compareTo(RatTreeNode rtn) {
             return name.compareTo(rtn.name);
         }
@@ -126,7 +134,6 @@ public class RandomUnitGenerator implements Serializable {
     }
 
     private RatTreeNode ratTree;
-    private RatTreeNode currentNode;
 
     private String chosenRAT;
 
@@ -146,8 +153,20 @@ public class RandomUnitGenerator implements Serializable {
     public synchronized void populateUnits() {
         initRats();
         initRatTree();
+        
+        // Give the MSC some time to initialize
+        MechSummaryCache msc = MechSummaryCache.getInstance();
+        long waitLimit = System.currentTimeMillis() + 3000; /* 3 seconds */
+        while( !interrupted && !msc.isInitialized() && waitLimit > System.currentTimeMillis() ) {
+            try {
+                Thread.sleep(50);
+            } catch(InterruptedException e) {
+                // Ignore
+            }
+        }
 
-        loadRatsFromDirectory(Configuration.armyTablesDir());
+        loadRatsFromDirectory(Configuration.armyTablesDir(), msc);
+        cleanupNode(ratTree);
         if (!interrupted) {
             rug.initialized = true;
             rug.notifyListenersOfInitialization();
@@ -184,141 +203,177 @@ public class RandomUnitGenerator implements Serializable {
     protected void addRat(String ratName, RatEntry ratEntry) {
         rats.put(ratName, ratEntry);
     }
+    
+    private void readRat(InputStream is, RatTreeNode node, String fileName, MechSummaryCache msc) throws IOException {
+        try(BufferedReader reader
+                = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")))) { //$NON-NLS-1$
+            int lineNumber = 0;
+            String key = "Huh"; //$NON-NLS-1$
+            float totalWeight = 0.0f;
+            RatEntry re = new RatEntry();
+            String line = null;
+            while (null != (line = reader.readLine())) {
+                if (interrupted) {
+                    return;
+                }
+                if (line.startsWith("#")) { //$NON-NLS-1$
+                    continue;
+                }
+                lineNumber++;
+                if (lineNumber == 1) {
+                    key = line;
+                } else {
+                    String[] values = line.split(","); //$NON-NLS-1$
+                    if (values.length < 2) {
+                        System.err.println(String.format("Not enough fields in %s on %d", //$NON-NLS-1$
+                            fileName, lineNumber));
+                        continue;
+                    }
+                    String name = values[0];
+                    float weight;
+                    try {
+                        weight = Integer.parseInt(values[1].trim());
+                    } catch (NumberFormatException nef) {
+                        System.err.println(
+                            String.format("The frequency field could not be interpreted on line %d of %s", //$NON-NLS-1$
+                                lineNumber, fileName));
+                        continue;
+                    }
+                    if( weight <= 0.0f ) {
+                        System.err.println(
+                            String.format("The frequency field is zero or negative (%d) on line %d of %s", //$NON-NLS-1$
+                                weight, lineNumber, fileName));
+                        continue;
+                    }
+    
+                    // The @ symbol denotes a reference to another RAT rather than a unit.
+                    if (!name.startsWith("@") && (null == msc.getMech(name))) { //$NON-NLS-1$
+                        System.err.println(
+                            String.format("The unit %s could not be found in the %s RAT (%s)", //$NON-NLS-1$
+                                name, key, fileName));
+                        continue;
+                    }
+                    re.getUnits().add(name);
+                    re.getWeights().add(weight);
+                    totalWeight += weight;
+                }
+            }
+            
+            // Calculate total weights
+            if (re.getUnits().size() > 0) {
+                for (int i = 0; i < re.getWeights().size(); i++) {
+                    re.getWeights().set(i, re.getWeights().get(i) / totalWeight);
+                }  
+                rats.put(key, re);
+                if (null != node) {
+                    node.children.add(new RatTreeNode(key));
+                }
+            }
+        }
 
-    private void loadRatsFromDirectory(File dir) {
-
+    }
+    
+    private RatTreeNode getNodeByPath(RatTreeNode root, String path) {
+        RatTreeNode result = root;
+        String[] pathElements = path.split("/", -1); //$NON-NLS-1$
+        for( int i = 0; i < pathElements.length - 1; ++ i ) {
+            if( pathElements[i].length() == 0 ) {
+                continue;
+            }
+            RatTreeNode subNode = null;
+            for( RatTreeNode rtn : result.children ) {
+                if( rtn.name.equals(pathElements[i]) ) {
+                    subNode = rtn;
+                    break;
+                }
+            }
+            if( null == subNode ) {
+                subNode = new RatTreeNode(pathElements[i]);
+                result.children.addElement(subNode);
+            }
+            result = subNode;
+        }
+        return result;
+    }
+    
+    private void cleanupNode(RatTreeNode node) {
+        for(RatTreeNode child : node.children) {
+               cleanupNode(child);
+        }
+        Collections.sort(node.children);
+    }
+    
+    private void loadRatsFromDirectory(File dir, MechSummaryCache msc) {
+        loadRatsFromDirectory(dir, msc, ratTree);
+    }
+    
+    private void loadRatsFromDirectory(File dir, MechSummaryCache msc, RatTreeNode node) {
         if (interrupted) {
             return;
         }
 
-        if (null == dir) {
+        if ((null == dir) || (null == node)) {
             return;
         }
 
         File[] files = dir.listFiles();
-        if (files == null) {
+        if (null == files) {
             return;
         }
-
-        RatTreeNode oldParentNode;
-        if (null == currentNode) {
-            currentNode = ratTree;
-        }
-
-        Scanner input;
 
         for (File ratFile : files) {
             // Check to see if we've been interrupted
             if (interrupted) {
                 return;
             }
+            String ratFileNameLC = ratFile.getName().toLowerCase(Locale.ROOT);
 
+            if (ratFileNameLC.equals("_svn") || ratFileNameLC.equals(".svn")) { //$NON-NLS-1$ //$NON-NLS-2$
+                // This is a Subversion work directory. Lets ignore it.
+                continue;
+            }
+            
             // READ IN RATS
             if (ratFile.isDirectory()) {
-                if (ratFile.getName().toLowerCase().equals("_svn") 
-                        || ratFile.getName().toLowerCase().equals(".svn")) {
-                    // This is a Subversion work directory. Lets ignore it.
-                    continue;
-                }
-
-                RatTreeNode newNode = new RatTreeNode(ratFile.getName());
-                oldParentNode = currentNode;
-                currentNode = newNode;
-
-                // Add non-root nodes to the tree.
-                if (ratTree != currentNode) {
-                    oldParentNode.children.add(currentNode);
-                }
+                RatTreeNode newNode = getNodeByPath(node, ratFile.getName() + "/"); //$NON-NLS-1$
 
                 // recursion is fun
-                loadRatsFromDirectory(ratFile);
+                loadRatsFromDirectory(ratFile, msc, newNode);
 
                 // Prune empty nodes (this removes the "Unofficial" place holder)
-                if (currentNode.children.size() == 0) {
-                    oldParentNode.children.remove(currentNode);
+                if (newNode.children.size() == 0) {
+                    node.children.remove(newNode);
                 }
-
-                currentNode = oldParentNode;
                 continue;
             }
-            if (!ratFile.getName().toLowerCase().endsWith(".txt")) {
+            if( ratFileNameLC.endsWith(".zip") ) { //$NON-NLS-1$
+                try(ZipFile zipFile = new ZipFile(ratFile)) {
+                    Enumeration<? extends ZipEntry> entries = zipFile.entries();
+                    while(entries.hasMoreElements()) {
+                        ZipEntry entry = entries.nextElement();
+                        String entryName = entry.getName();
+                        if(!entry.isDirectory() && entryName.toLowerCase(Locale.ROOT).endsWith(".txt")) //$NON-NLS-1$
+                        {
+                            RatTreeNode subNode = getNodeByPath(node, entryName);
+                            try(InputStream zis = zipFile.getInputStream(entry))
+                            {
+                                readRat(zis, subNode, ratFile.getName() + ":" + entryName, msc); //$NON-NLS-1$
+                            }
+                        }
+                    }
+                } catch(IOException e) {
+                    System.err.println(String.format("Unable to load %s", ratFile.getName())); //$NON-NLS-1$
+                }
+            }
+            if (!ratFileNameLC.endsWith(".txt")) { //$NON-NLS-1$
                 continue;
             }
-            FileInputStream ratInputStream = null;
-            try {
-                ratInputStream = new FileInputStream(ratFile);
-                input = new Scanner(ratInputStream, "UTF-8");
-                int lineNumber = 0;
-                String key = "Huh";
-                RatEntry re = new RatEntry();
-                while (input.hasNextLine()) {
-                    if (interrupted) {
-                        return;
-                    }
-                    String line = input.nextLine();
-                    if (line.startsWith("#")) {
-                        continue;
-                    }
-                    lineNumber++;
-                    if (lineNumber == 1) {
-                        key = line;
-                    } else {
-                        String[] values = line.split(",");
-                        if (values.length < 2) {
-                            System.err.println("Not enough fields in " + ratFile.getName() + " on " + lineNumber);
-                            continue;
-                        }
-                        String name = values[0];
-                        float weight;
-                        try {
-                            weight = Integer.parseInt(values[1].trim());
-                        } catch (NumberFormatException nef) {
-                            System.err.println("the frequency field could not be interpreted on line "
-                                               + lineNumber + " of " + ratFile.getName());
-                            continue;
-                        }
-
-                        // The @ symbol denotes a reference to another RAT rather than a unit.
-                        MechSummary unit = null;
-                        if (!name.startsWith("@")) {
-                            unit = MechSummaryCache.getInstance().getMech(name);
-                        }
-                        if ((null == unit) && !name.startsWith("@")) {
-                            System.err.println("The unit " + name + " could not be found in the " + key + " RAT (" +
-                                               ratFile.getPath() + ")");
-                        } else {
-                            re.getUnits().add(name);
-                            re.getWeights().add(weight);
-                        }
-                    }
-                }
-                if (re.getUnits().size() > 0) {
-                    float sum = 0;
-                    for (int i = 0; i < re.getWeights().size(); i++) {
-                        sum += re.getWeights().get(i);
-                    }
-                    for (int i = 0; i < re.getWeights().size(); i++) {
-                        re.getWeights().set(i, re.getWeights().get(i) / sum);
-                    }  
-                    rats.put(key, re);
-                    if (null != currentNode) {
-                        currentNode.children.add(new RatTreeNode(key));
-                    }
-                }
-            } catch (FileNotFoundException fne) {
-                System.err.println("Unable to find " + ratFile.getName());
-            } finally {
-                if (ratInputStream != null) {
-                    try {
-                        ratInputStream.close();
-                    } catch (Exception e){
-                        // Nothing to do...
-                    }
-                }
+            try(InputStream ratInputStream = new FileInputStream(ratFile)) {
+                readRat(ratInputStream, node, ratFile.getName(), msc);
+            } catch(IOException e) {
+                System.err.println(String.format("Unable to load %s", ratFile.getName())); //$NON-NLS-1$
             }
         }
-
-        Collections.sort(currentNode.children);
     }
 
     /**

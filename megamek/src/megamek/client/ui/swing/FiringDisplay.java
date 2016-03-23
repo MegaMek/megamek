@@ -544,7 +544,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             refreshAll();
         }
         
-        if ((ce() != null) &&ce().isWeapOrderChanged()) {
+        if ((ce() != null) && ce().isWeapOrderChanged()) {
             clientgui.getClient().sendEntityWeaponOrderUpdate(ce());
         }
         
@@ -604,7 +604,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             refreshAll();
             cacheVisibleTargets();
 
-            if (!clientgui.bv.isMovingUnits() && !ce().isOffBoard()) {
+            if (!ce().isOffBoard()) {
                 clientgui.bv.centerOnHex(ce().getPosition());
             }
 

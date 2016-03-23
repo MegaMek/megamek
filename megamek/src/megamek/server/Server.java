@@ -9196,6 +9196,8 @@ public class Server implements Runnable {
                 @SuppressWarnings("unchecked")
                 Vector<EntityAction> attacks = (Vector<EntityAction>) rp.packet
                         .getObject(1);
+                // Mark the hidden unit as having taken a PBS
+                hidden.setMadePointblankShot(true);
                 // Process the Actions
                 for (EntityAction ea : attacks) {
                     Entity entity = game.getEntity(ea.getEntityId());

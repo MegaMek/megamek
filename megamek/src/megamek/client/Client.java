@@ -1340,14 +1340,14 @@ public class Client implements IClientCommandHandler {
                 }
                 game.addReports((Vector<Report>) c.getObject(0));
                 roundReport = receiveReport(game.getReports(game
-                                                                    .getRoundCount()));
+                        .getRoundCount()));
                 if (c.getCommand() == Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS) {
                     game.processGameEvent(new GameReportEvent(this, roundReport));
                 }
                 break;
             case Packet.COMMAND_SENDING_REPORTS_SPECIAL:
                 game.processGameEvent(new GameReportEvent(this,
-                                                          receiveReport((Vector<Report>) c.getObject(0))));
+                        receiveReport((Vector<Report>) c.getObject(0))));
                 break;
             case Packet.COMMAND_SENDING_REPORTS_ALL:
                 Vector<Vector<Report>> allReports = (Vector<Vector<Report>>) c

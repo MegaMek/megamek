@@ -246,7 +246,7 @@ public class UnitDisplaySpecPanel extends JPanel {
 
         udSpec.setBackgroundTile(backgroundTile.getPath());
         udSpec.setTopLine(topLine.getPath());
-        udSpec.setBottomLine(topLine.getPath());
+        udSpec.setBottomLine(bottomLine.getPath());
         udSpec.setLeftLine(leftLine.getPath());
         udSpec.setRightLine(rightLine.getPath());
         udSpec.setTopLeftCorner(topLeftCorner.getPath());

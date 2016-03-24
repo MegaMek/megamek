@@ -520,17 +520,11 @@ public class SkinXMLHandler {
      * @param filename
      */
     public static void writeSkinToFile(String filename) {
-        String userDir = System.getProperty("user.dir");
-        if (!userDir.endsWith(File.separator)) {
-            userDir += File.separator;
-        }
-        String filePath = userDir + "mmconf" + File.separator
-                + filename;
+        File filePath = new File(Configuration.skinsDir(),
+                filename);
 
-        Writer output = null;
-        try {
-            output = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(filePath)));
+        try (Writer output = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(filePath)));){
             output.write(SKIN_HEADER);
             for (String component : skinSpecs.keySet()) {
                 writeSkinComponent(component, output);

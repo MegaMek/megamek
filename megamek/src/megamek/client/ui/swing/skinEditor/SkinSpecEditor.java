@@ -290,7 +290,6 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         }
         SkinSpecification.UIComponents selectedComp = skinSpecCompList
                 .getSelectedValue();
-        saveSkinButton.setEnabled(false);
 
         if ((selectedComp == SkinSpecification.UIComponents.DefaultButton)
                 || (selectedComp == SkinSpecification.UIComponents.DefaultUIElement)

@@ -355,6 +355,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
             }
         } else if (e.getSource().equals(enableBorders)) {
             skinEditPanel.setEnabled(enableBorders.isSelected());
+            notifySkinChanges();
         } else if (e.getSource().equals(resetSkinButton)) {
             setupEditPanel();
         } else if (e.getSource().equals(saveSkinButton)) {

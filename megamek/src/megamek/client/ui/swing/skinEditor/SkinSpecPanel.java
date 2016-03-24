@@ -111,7 +111,6 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
             JButton newPathLbl = new JButton(
                     Messages.getString("SkinEditor.Path")); //$NON-NLS-1$
             newPathLbl.setMargin(new Insets(1, 1, 1, 1));
-            newPathLbl.setContentAreaFilled(false);
             newPathLbl.setToolTipText(Messages.getString(
                     "SkinEditor.PathToolTip", //$NON-NLS-1$
                     new Object[] { Configuration.widgetsDir().getPath() }));
@@ -194,7 +193,6 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
             JButton newPathLbl = new JButton(
                     Messages.getString("SkinEditor.Path")); //$NON-NLS-1$
             newPathLbl.setMargin(new Insets(1, 1, 1, 1));
-            newPathLbl.setContentAreaFilled(false);
             newPathLbl.setToolTipText(Messages
                     .getString("SkinEditor.PathToolTip")); //$NON-NLS-1$
             newPathLbl.addActionListener(this);

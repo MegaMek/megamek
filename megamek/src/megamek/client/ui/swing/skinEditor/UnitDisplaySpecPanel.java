@@ -89,7 +89,6 @@ public class UnitDisplaySpecPanel extends JPanel {
             pathLbl = new JButton(
                     Messages.getString("SkinEditor.Path")); //$NON-NLS-1$
             pathLbl.setMargin(new Insets(1, 1, 1, 1));
-            pathLbl.setContentAreaFilled(false);
             pathLbl.setToolTipText(Messages.getString(
                     "SkinEditor.PathToolTip", //$NON-NLS-1$
                     new Object[] { Configuration.widgetsDir().getPath() }));

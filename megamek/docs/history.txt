@@ -22,6 +22,7 @@ v0.41.16-git
 + Data New Sprites.
 + Issue #81: Grappling a 'mech involved in a Grapple may cause hang
 + Issue #80: Flare Rounds not Illuminating Targets for Visual Detection
++ PR #96/Issue #98: Fixed Industrial TSM calculation
 
 v0.41.15 (2016-02-21 14:15 UTC)
 + Issue #19: doTryUnstuck Error

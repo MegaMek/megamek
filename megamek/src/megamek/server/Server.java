@@ -32188,8 +32188,7 @@ public class Server implements Runnable {
             entity.addPilotingModifierForTerrain(rollTarget);
             // apart from swamp & liquid magma, -1 modifier
             IHex hex = game.getBoard().getHex(entity.getPosition());
-            rollTarget.addModifier(
-                    hex.getUnstuckModifier(entity.getElevation()), "terrain");
+            hex.getUnstuckModifier(entity.getElevation(), rollTarget);
             // okay, print the info
             r = new Report(2340);
             r.addDesc(entity);

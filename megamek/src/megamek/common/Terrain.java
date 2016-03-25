@@ -273,56 +273,100 @@ public class Terrain implements ITerrain, Serializable {
                 + (exitsSpecified ? ":" + exits : "");
     }
 
-    public int pilotingModifier(EntityMovementMode moveMode) {
+    public void pilotingModifier(EntityMovementMode moveMode, PilotingRollData roll, boolean enteringRubble) {
         switch (type) {
         case Terrains.JUNGLE:
-            return level;
+            if (level == 3) {
+                roll.addModifier(level, "Ultra Jungle");
+                break;
+            }
+            if (level == 2) {
+                roll.addModifier(level, "Heavy Jungle");
+                break;
+            }
+            if (level == 1) {
+                roll.addModifier(level, "Jungle");
+                break;
+            }
         case Terrains.MAGMA:
-            return (level == 2) ? 4 : 1;
+            if (level == 2) {
+                roll.addModifier(4, "Liquid Magma");
+                break;
+            }
+            if (level == 1) {
+                roll.addModifier(1, "Magma Crust");
+                break;
+            }
         case Terrains.TUNDRA:
+            roll.addModifier(1, "Tundra");
+            break;
         case Terrains.SAND:
-            return 1;
+            roll.addModifier(1, "Sand");
+            break;
         case Terrains.SNOW:
-            return (level == 2) ? 1 : 0;
+            if (level == 2) {
+                roll.addModifier(1, "Deep Snow");
+                break;
+            }
         case Terrains.SWAMP:
-            if ((moveMode == EntityMovementMode.HOVER)
-                    || (moveMode == EntityMovementMode.WIGE)) {
-                return 0;
-            } else if ((moveMode == EntityMovementMode.BIPED)
+            if ((moveMode == EntityMovementMode.BIPED)
                     || (moveMode == EntityMovementMode.QUAD)) {
-                return 1;
+                roll.addModifier(1, "Swamp");
+                break;
             } else {
-                return 2;
+                roll.addModifier(2, "Swamp");
+                break;
             }
         case Terrains.MUD:
-            if ((moveMode == EntityMovementMode.BIPED)
-                    || (moveMode == EntityMovementMode.QUAD)
-                    || (moveMode == EntityMovementMode.HOVER)
-                    || (moveMode == EntityMovementMode.WIGE)) {
-                return 0;
+            if ((moveMode != EntityMovementMode.BIPED)
+                    || (moveMode != EntityMovementMode.QUAD)
+                    || (moveMode != EntityMovementMode.HOVER)
+                    || (moveMode != EntityMovementMode.WIGE)) {
+                roll.addModifier(1, "Mud");
+                break;
             }
-            return 1;
         case Terrains.GEYSER:
-        case Terrains.RUBBLE:
             if (level == 2) {
-                return 1;
+                roll.addModifier(1, "Active Geyser");
+                break;
             }
-            return 0;
+        case Terrains.RUBBLE:
+            if (level == 6) {
+                if (enteringRubble) {
+                    roll.addModifier(1, "entering Ultra Rubble");
+                    break;
+                } else {
+                    roll.addModifier(1, "Ultra Rubble");
+                    break;
+                }
+            }
+            if (level < 6) {
+                if (enteringRubble) {
+                    roll.addModifier(0, "entering Rubble");
+                    break;
+                } else {
+                    roll.addModifier(0, "Rubble");
+                    break;
+                }
+            }
         case Terrains.RAPIDS:
             if (level == 2) {
-                return 3;
+                roll.addModifier(3, "Torrent");
+                break;
             }
-            return 2;
+            roll.addModifier(2, "Rapids");
+            break;
         case Terrains.ICE:
             if ((moveMode == EntityMovementMode.HOVER)
                     || (moveMode == EntityMovementMode.WIGE)) {
-                return 0;
+                roll.addModifier(4, "Ice");
+                break;
             }
-            return 4;
         case Terrains.INDUSTRIAL:
-            return 1;
+            roll.addModifier(1, "Industrial Zone");
+            break;
         default:
-            return 0;
+            break;
         }
     }
 
@@ -468,6 +512,7 @@ public class Terrain implements ITerrain, Serializable {
                     || (moveMode == EntityMovementMode.QUAD)) {
                 return TargetRoll.AUTOMATIC_SUCCESS;
             }
+            return -1;
         case (Terrains.TUNDRA):
             return -1;
         case (Terrains.SNOW):
@@ -485,20 +530,31 @@ public class Terrain implements ITerrain, Serializable {
         }
     }
 
-    public int getUnstuckModifier(int elev) {
+    public void getUnstuckModifier(int elev, PilotingRollData rollTarget) {
         switch (type) {
         case (Terrains.SWAMP):
             if (level > 1) {
-                return 3 + ((-3) * elev);
+                rollTarget.addModifier((3 + ((-3) * elev)), "Quicksand");
+                break;
             }
-            return 0;
+            rollTarget.addModifier(0, "Swamp");
+            break;
+        case (Terrains.MAGMA):
+            if (level == 2) {
+                rollTarget.addModifier(0, "Liquid Magma");
+            }
+            break;
+        case (Terrains.MUD):
+            rollTarget.addModifier(-1, "Mud");
+            break;
         case (Terrains.TUNDRA):
-            return -1;
+            rollTarget.addModifier(-1, "Tundra");
+            break;
         case (Terrains.SNOW):
-            return -1;
+            rollTarget.addModifier(-1, "Deep Snow");
+            break;
         default:
-            return 0;
+            break;
         }
     }
-
 }

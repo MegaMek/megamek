@@ -31,6 +31,7 @@ v0.41.16-git
 + PR #87: On Windows, RMB scrolling interacts better with the context menu
 + PR #88: Board soft centering to units
 + PR #77: Adjustments to Entity Sprites (transparency, coloring)   
++ PR #94: Hotkey for toggling Walk/Jump, Movement Envelope now static on or off 
 
 
 v0.41.15 (2016-02-21 14:15 UTC)

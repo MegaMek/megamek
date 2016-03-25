@@ -6510,20 +6510,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             EntityMovementType moveType, IHex curHex, Coords lastPos,
             Coords curPos, boolean isLastStep) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
-        addPilotingModifierForTerrain(roll, curPos);
+        boolean enteringRubble = true;
+        addPilotingModifierForTerrain(roll, curPos, enteringRubble);
 
         if (!lastPos.equals(curPos)
             && ((moveType != EntityMovementType.MOVE_JUMP)
                 || isLastStep)
             && (curHex.terrainLevel(Terrains.RUBBLE) > 0)
             && (this instanceof Mech)) {
-            int mod = 0;
-            if (curHex.terrainLevel(Terrains.RUBBLE) > 5) {
-                mod++;
-            }
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), mod, "entering Rubble"));
             adjustDifficultTerrainPSRModifier(roll);
+            if (getCrew().getOptions().booleanOption("tm_mountaineer")) {
+                roll.addModifier(-1, "Mountaineer");
+            }
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
                              "Check false: Entity is not entering rubble");
@@ -6550,6 +6548,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     "avoid bogging down"));
             if ((this instanceof Mech) && ((Mech) this).isSuperHeavy()) {
                 roll.addModifier(1, "superheavy mech avoiding bogging down");
+            }
+            if (getCrew().getOptions().booleanOption("tm_swamp_beast")) {
+                roll.addModifier(-1, "swamp beast");
             }
             adjustDifficultTerrainPSRModifier(roll);
         } else {
@@ -6602,6 +6603,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mod = 1;
         }
 
+        if ((waterLevel > 1) && getCrew().getOptions().booleanOption("tm_frogman")) {
+            roll.append(new PilotingRollData(getId(), -1, "Frogman"));
+        }
         if (waterLevel > 0) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), mod, "entering Depth "
@@ -9768,10 +9772,29 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return;
         }
         IHex hex = game.getBoard().getHex(c);
-        int modifier = hex.terrainPilotingModifier(getMovementMode());
-        if (modifier != 0) {
-            roll.addModifier(modifier, "difficult terrain");
+        hex.terrainPilotingModifier(getMovementMode(), roll, false);
+        if (hex.containsTerrain(Terrains.JUNGLE) && getCrew().getOptions().booleanOption("tm_forest_ranger")) {
+            roll.addModifier(-1, "Forest Ranger");
         }
+        if ((hex.containsTerrain(Terrains.MUD) || hex.containsTerrain(Terrains.SWAMP))
+                && getCrew().getOptions().booleanOption("tm_swamp_beast")) {
+            roll.addModifier(-1, "Swamp Beast");
+        }
+        if ((hex.containsTerrain(Terrains.ROUGH) || hex.containsTerrain(Terrains.RUBBLE))
+                && getCrew().getOptions().booleanOption("tm_mountaineer")) {
+            roll.addModifier(-1, "Mountaineer");
+        }
+    }
+
+    public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c, boolean enteringRubble) {
+        if ((c == null) || (roll == null)) {
+            return;
+        }
+        if (isOffBoard() || !(isDeployed())) {
+            return;
+        }
+        IHex hex = game.getBoard().getHex(c);
+        hex.terrainPilotingModifier(getMovementMode(), roll, enteringRubble);
     }
 
     /**

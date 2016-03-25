@@ -17575,11 +17575,15 @@ public class Server implements Runnable {
      */
     private PilotingRollData getKickPushPSR(Entity psrEntity, Entity attacker,
                                             Entity target, String reason) {
+        IHex curHex = game.getBoard().getHex(psrEntity.getPosition());
         int mod = 0;
         PilotingRollData psr = new PilotingRollData(psrEntity.getId(), mod,
                                                     reason);
         if (psrEntity.hasQuirk(OptionsConstants.QUIRK_POS_STABLE)) {
             psr.addModifier(-1, "stable", false);
+        }
+        if (psrEntity.getCrew().getOptions().booleanOption("tm_frogman") && curHex.terrainLevel(Terrains.WATER) > 1) {
+            psr.addModifier(-1, "Frogman");
         }
         if (game.getOptions().booleanOption("tacops_physical_psr")) {
 
@@ -32188,8 +32192,7 @@ public class Server implements Runnable {
             entity.addPilotingModifierForTerrain(rollTarget);
             // apart from swamp & liquid magma, -1 modifier
             IHex hex = game.getBoard().getHex(entity.getPosition());
-            rollTarget.addModifier(
-                    hex.getUnstuckModifier(entity.getElevation()), "terrain");
+            hex.getUnstuckModifier(entity.getElevation(), rollTarget);
             // okay, print the info
             r = new Report(2340);
             r.addDesc(entity);

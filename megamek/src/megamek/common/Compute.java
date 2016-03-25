@@ -2149,6 +2149,11 @@ public class Compute {
             toHit.addModifier(-1, "melee specialist");
         }
 
+        if (attacker.getCrew().getOptions().booleanOption("tm_frogman")
+                && (attacker instanceof Mech)) {
+                toHit.addModifier(-1, "Frogman");
+        }
+
         if (attacker.getCrew().getOptions()
                     .booleanOption("clan_pilot_training")) {
             toHit.addModifier(1, "clan pilot training");

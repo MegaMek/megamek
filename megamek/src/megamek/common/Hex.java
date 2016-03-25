@@ -485,14 +485,14 @@ public class Hex implements IHex, Serializable {
         return new Hex(level, tcopy, theme, coords);
     }
 
-    public int terrainPilotingModifier(EntityMovementMode moveMode) {
-        int rv = 0;
+    public void terrainPilotingModifier(EntityMovementMode moveMode, PilotingRollData roll, boolean enteringRubble) {
         for (Integer i : hsTerrains){
             if (terrains[i] != null) {
-                rv += terrains[i].pilotingModifier(moveMode);
+                if (terrains[i].pilotingModifier(moveMode) != -1) {
+                    roll.addModifier(terrains[i].pilotingModifier(moveMode), terrains[i].getLevelasString(enteringRubble));
+                }
             }
         }
-        return rv;
     }
 
     public int movementCost(Entity entity) {
@@ -631,14 +631,12 @@ public class Hex implements IHex, Serializable {
     /**
      * get any modifiers to a an unstuck roll in this hex.
      */
-    public int getUnstuckModifier(int elev) {
-        int mod = 0;
+    public void getUnstuckModifier(int elev, PilotingRollData rollTarget) {
         for (Integer i : hsTerrains){
-            if (terrains[i] != null) {
-                mod += terrains[i].getUnstuckModifier(elev);
+            if ((terrains[i] != null) && (terrains[i].getUnstuckModifier(elev) != -5)) {
+                rollTarget.addModifier(terrains[i].getUnstuckModifier(elev), terrains[i].getUnstuckString(elev));
             }
         }
-        return mod;
     }
 
     /** The notional position of this {@code Hex}, as set upon creation.

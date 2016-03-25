@@ -37,6 +37,11 @@ public interface ITerrain {
     public abstract int getLevel();
 
     /**
+     * @return terrain level as string
+     */
+    public abstract String getLevelasString(boolean enteringRubble);
+
+    /**
      * @return terrain factor
      */
     public abstract int getTerrainFactor();
@@ -115,5 +120,7 @@ public interface ITerrain {
     public abstract int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee);
 
     public abstract int getUnstuckModifier(int elev);
+
+    public abstract String getUnstuckString(int elev);
 
 }

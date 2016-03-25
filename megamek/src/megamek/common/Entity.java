@@ -9756,17 +9756,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param c    the coordinates where the PSR happens
      */
     public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c) {
-        if ((c == null) || (roll == null)) {
-            return;
-        }
-        if (isOffBoard() || !(isDeployed())) {
-            return;
-        }
-        IHex hex = game.getBoard().getHex(c);
-        hex.terrainPilotingModifier(getMovementMode(), roll, false);
+        addPilotingModifierForTerrain(roll, c, false);
     }
 
-    public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c, boolean enteringRubble) {
+    /**
+     * Apply PSR modifier for difficult terrain at the specified coordinates
+     *
+     * @param roll the PSR to modify
+     * @param c    the coordinates where the PSR happens
+     * @param enteringRubble True if entering rubble, else false
+     */
+    public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c,
+            boolean enteringRubble) {
         if ((c == null) || (roll == null)) {
             return;
         }
@@ -9784,7 +9785,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param step the move step the PSR occurs at
      */
     public void addPilotingModifierForTerrain(PilotingRollData roll,
-                                              MoveStep step) {
+            MoveStep step) {
         if (step.getElevation() > 0) {
             return;
         }

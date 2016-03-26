@@ -80,8 +80,8 @@ public class MechFileParser {
             throws EntityLoadingException {
         if (entryName == null) {
             // try normal file
-            try {
-                parse(new FileInputStream(f.getAbsolutePath()), f.getName());
+            try(InputStream is = new FileInputStream(f.getAbsolutePath())) {
+                parse(is, f.getName());
             } catch (Exception ex) {
                 System.out.println("Error parsing " + entryName + "!");
                 ex.printStackTrace();
@@ -870,10 +870,8 @@ public class MechFileParser {
             if (canonUnitNames == null) {
                 canonUnitNames = new Vector<String>();
                 // init the list.
-                BufferedReader br = null;
-                try {
-                    br = new BufferedReader(new FileReader(new File(
-                            Configuration.docsDir(), FILENAME_OFFICIAL_UNITS)));
+                try(BufferedReader br = new BufferedReader(new FileReader(new File(
+                            Configuration.docsDir(), FILENAME_OFFICIAL_UNITS)))) {
                     String s;
                     String name;
                     while ((s = br.readLine()) != null) {

@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 import java.io.OutputStreamWriter;
@@ -1410,14 +1411,13 @@ public class Server implements Runnable {
      *         successfull
      */
     public boolean loadGame(File f, boolean sendInfo) {
-        System.out.println("s: loading saved game file '" + f + '\'');
+        System.out.println("s: loading saved game file '" + f + '\''); //$NON-NLS-1$
         IGame newGame;
-        try {
+        try(InputStream is = new GZIPInputStream(new FileInputStream(f))) {
             XStream xstream = new XStream();
-            newGame = (IGame) xstream.fromXML(new GZIPInputStream(
-                    new FileInputStream(f)));
+            newGame = (IGame) xstream.fromXML(is);
         } catch (Exception e) {
-            System.err.println("Unable to load file: " + f);
+            System.err.println("Unable to load file: " + f); //$NON-NLS-1$
             e.printStackTrace();
             return false;
         }
@@ -12552,10 +12552,12 @@ public class Server implements Runnable {
                         game.removeTurnFor(def);
                         def.setDone(true);
                     }
-                    // Add a turn to declare counterattack
-                    game.insertNextTurn(new GameTurn.CounterGrappleTurn(def
-                                                                                .getOwnerId(), def.getId()));
-                    send(createTurnVectorPacket());
+                    // If defender is able, add a turn to declare counterattack
+                    if (!def.isImmobile()) {
+                        game.insertNextTurn(new GameTurn.CounterGrappleTurn(def
+                                .getOwnerId(), def.getId()));
+                        send(createTurnVectorPacket());
+                    }
                 }
             }
             if (ea instanceof ArtilleryAttackAction) {
@@ -13206,6 +13208,7 @@ public class Server implements Runnable {
             Entity ent = e.next();
             if (ent.isDeployed() && ent.isLargeCraft()) {
                 r = new Report(3635);
+                r.subject = ent.getId();
                 r.addDesc(ent);
                 int target = ((Aero) ent).getECCMTarget();
                 int roll = ((Aero) ent).getECCMRoll();
@@ -32185,8 +32188,7 @@ public class Server implements Runnable {
             entity.addPilotingModifierForTerrain(rollTarget);
             // apart from swamp & liquid magma, -1 modifier
             IHex hex = game.getBoard().getHex(entity.getPosition());
-            rollTarget.addModifier(
-                    hex.getUnstuckModifier(entity.getElevation()), "terrain");
+            hex.getUnstuckModifier(entity.getElevation(), rollTarget);
             // okay, print the info
             r = new Report(2340);
             r.addDesc(entity);

@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.util.Comparator;
+import java.util.Objects;
 
 /**
  * A class that keeps track of information related to an ECM field.
@@ -392,6 +393,7 @@ public class ECMInfo {
         return (owner == null) || (other.getOwner() == null) 
                 || owner.isEnemyOf(other.getOwner());
     }
+
     /**
      * Equality is based on whether position, owner, range and all strengths
      * match.
@@ -400,23 +402,24 @@ public class ECMInfo {
      * @return
      */
     @Override
-    public boolean equals(Object o){
-       if (!(o instanceof ECMInfo)) {
-           return false;
-       }
-       ECMInfo other = (ECMInfo)o;
-       boolean ownersMatch = ((owner == null && other.owner == null) 
-               || owner.equals(other.owner));
-       boolean posMatch = pos.equals(other.pos);
-       boolean strMatch = (strength == other.strength) 
-               && (angelStrength == other.angelStrength) 
-               && (eccmStrength == other.eccmStrength) 
-               && (angelECCMStrength == other.angelECCMStrength);
-       boolean novaMatch = isECMNova == other.isECMNova;
-       boolean rangeMatch = range == other.range;
-       return ownersMatch && posMatch && strMatch && rangeMatch && novaMatch;
+    public boolean equals(Object obj){
+        if(this == obj) {
+            return true;
+        }
+        if((null == obj) || (getClass() != obj.getClass())) {
+            return false;
+        }
+        final ECMInfo other = (ECMInfo)obj;
+        return Objects.equals(owner, other.owner) && Objects.equals(pos, other.pos) && (strength == other.strength) 
+                && (angelStrength == other.angelStrength) && (eccmStrength == other.eccmStrength) 
+                && (angelECCMStrength == other.angelECCMStrength) && (isECMNova == other.isECMNova) && (range == other.range);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(owner, pos, strength, angelStrength, eccmStrength, angelECCMStrength, isECMNova, range);
+    }
+    
     public int getRange() {
         return range;
     }

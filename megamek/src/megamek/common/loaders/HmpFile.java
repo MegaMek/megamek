@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Hashtable;
+import java.util.Objects;
 import java.util.Vector;
 
 import megamek.common.ArmlessMech;
@@ -1979,8 +1980,8 @@ implements IMechLoader
                 return;
             }
             HmpFile hmpFile = null;
-            try {
-                hmpFile = new HmpFile(new FileInputStream(args[i]));
+            try(InputStream is = new FileInputStream(args[i])) {
+                hmpFile = new HmpFile(is);
             } catch (Exception e) {
                 e.printStackTrace();
                 return;
@@ -2022,29 +2023,20 @@ abstract class HMPType {
     }
 
     @Override
-    public boolean equals(Object other) {
-
-        // Assume the other object doesn't equal this one.
-        boolean result = false;
-
-        // References to the same object are equal.
-        if (this == other) {
-            result = true;
+    public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;
         }
-
-        // If the other object is an instance of
-        // this object's class, then recast it.
-        else if (this.getClass().isInstance(other)) {
-            HMPType cast = (HMPType) other;
-
-            // The two objects match if their names and IDs match.
-            if (name.equals(cast.name) && (id == cast.id)) {
-                result = true;
-            }
+        if((null == obj) || (getClass() != obj.getClass())) {
+            return false;
         }
-
-        // Return the result
-        return result;
+        final HMPType other = (HMPType) obj;
+        return Objects.equals(name, other.name) && Objects.equals(id, other.id);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, id);
     }
 }
 

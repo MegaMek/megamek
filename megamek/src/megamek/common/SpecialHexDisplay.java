@@ -18,6 +18,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author dirk
@@ -290,15 +291,21 @@ public class SpecialHexDisplay implements Serializable {
         return false;
     }
     
-    public boolean equals(Object o){
-        if (o instanceof SpecialHexDisplay){
-            SpecialHexDisplay other = (SpecialHexDisplay)o;
-            return other.getType() == getType() 
-                    && getOwner().equals(other.getOwner()) 
-                    && getRound() == other.getRound();
-        } else {
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;
+        }
+        if((null == obj) || (getClass() != obj.getClass())) {
             return false;
         }
+        final SpecialHexDisplay other = (SpecialHexDisplay) obj;
+        return (type == other.type) && Objects.equals(owner, other.owner) && (round == other.round);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, owner, round);
     }
     
     public String toString() {

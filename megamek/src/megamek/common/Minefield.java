@@ -16,6 +16,7 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Minefield implements Serializable, Cloneable {
 
@@ -117,19 +118,20 @@ public class Minefield implements Serializable, Cloneable {
     }
 
     @Override
-    public boolean equals(Object object) {
-        Minefield mf;
-        try {
-            mf = (Minefield) object;
-        } catch (Exception e) {
-            return false;
-        }
-
-        if (mf.playerId == this.playerId && mf.coords.equals(coords)
-                && mf.type == this.type) {
+    public boolean equals(Object obj) {
+        if(this == obj) {
             return true;
         }
-        return false;
+        if((null == obj) || (getClass() != obj.getClass())) {
+            return false;
+        }
+        final Minefield other = (Minefield) obj;
+        return (playerId == other.playerId) && Objects.equals(coords, other.coords) && (type == other.type);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(playerId, coords, type);
     }
 
     public void setDensity(int density) {

@@ -223,6 +223,9 @@ public class Compute {
      * Returns an entity if the specified entity would cause a stacking
      * violation entering a hex, or returns null if it would not. The returned
      * entity is the entity causing the violation.
+     *
+     * The position, and elevation for the stacking violation are derived from
+     * the Entity represented by the passed Entity ID.
      */
     public static Entity stackingViolation(IGame game, int enteringId,
             Coords coords) {
@@ -236,15 +239,51 @@ public class Compute {
     /**
      * When compiling an unloading step, both the transporter and the unloaded
      * unit probably occupy some other position on the board.
+     *
+     * The position, and elevation for the stacking violation are derived from
+     * the passed Entity.
+     *
+     * @param transport
+     *            Represents the unit transporing entering, which may affect
+     *            stacking, can be null
      */
     public static Entity stackingViolation(IGame game, Entity entering,
             Coords dest, Entity transport) {
         return stackingViolation(game, entering, entering.getElevation(), dest,
                 transport);
     }
-    
+
+    /**
+     * Returns an entity if the specified entity would cause a stacking
+     * violation entering a hex, or returns null if it would not. The returned
+     * entity is the entity causing the violation.
+     *
+     * The position is derived from the passed Entity, while the elevation is
+     * derived from the passed Entity parameter.
+     *
+     * @param transport
+     *            Represents the unit transporing entering, which may affect
+     *            stacking, can be null
+     */
     public static Entity stackingViolation(IGame game, Entity entering,
             int elevation, Coords dest, Entity transport) {
+        return stackingViolation(game, entering, entering.getPosition(),
+                elevation, dest, transport);
+    }
+
+    /**
+     * Returns an entity if the specified entity would cause a stacking
+     * violation entering a hex, or returns null if it would not. The returned
+     * entity is the entity causing the violation.
+     *
+     * The position and elevation is derived from the passed Entity parameter.
+     *
+     * @param transport
+     *            Represents the unit transporing entering, which may affect
+     *            stacking, can be null
+     */
+    public static Entity stackingViolation(IGame game, Entity entering,
+            Coords origPosition, int elevation, Coords dest, Entity transport) {
         // no stacking violations on the low-atmosphere and space maps
         if (!game.getBoard().onGround()) {
             return null;
@@ -275,10 +314,10 @@ public class Compute {
         }
         for (Coords coords : positions) {
             int thisLowStackingLevel = elevation;
-            if ((coords != null) && (entering.getPosition() != null)) {
+            if ((coords != null) && (origPosition != null)) {
                 thisLowStackingLevel = entering.calcElevation(game.getBoard()
-                        .getHex(entering.getPosition()), game.getBoard()
-                        .getHex(coords), entering.getElevation(), entering
+                        .getHex(origPosition), game.getBoard()
+                        .getHex(coords), elevation, entering
                         .climbMode(), false);
             }
             int thisHighStackingLevel = thisLowStackingLevel;
@@ -3636,8 +3675,8 @@ public class Compute {
         }
         // Target may be in an illuminated hex
         if (!teIlluminated) {
-            teIlluminated = game.getIlluminatedPositions().contains(
-                    target.getPosition());
+            int lightLvl = game.isPositionIlluminated(target.getPosition());
+            teIlluminated = lightLvl != Game.ILLUMINATED_NONE;
         }
 
         // if either does not have a position then return false

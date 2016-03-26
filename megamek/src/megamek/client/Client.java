@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -906,17 +907,16 @@ public class Client implements IClientCommandHandler {
      * sends a load game file to the server
      */
     public void sendLoadGame(File f) {
-        try {
+        try(InputStream is = new GZIPInputStream(new FileInputStream(f))) {
             XStream xstream = new XStream();
 
             game.reset();
-            IGame newGame = (IGame) xstream.fromXML(new GZIPInputStream(
-                    new FileInputStream(f)));
+            IGame newGame = (IGame) xstream.fromXML(is);
 
             send(new Packet(Packet.COMMAND_LOAD_GAME, new Object[]{newGame}));
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Can't find local savegame " + f);
+            System.out.println("Can't find local savegame " + f); //$NON-NLS-1$
         }
     }
 

@@ -559,19 +559,29 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         final IGame game = clientgui.getClient().getGame();
 
         int height = board.getHex(moveto).terrainLevel(Terrains.BLDG_ELEV);
-        ArrayList<String> floorNames = new ArrayList<String>(height + 1);
+        ArrayList<String> floorNames = new ArrayList<>(height + 1);
+        ArrayList<Integer> floorValues = new ArrayList<>(height + 1);
 
         for (int loop = 0; loop < height; loop++) {
             if (Compute.stackingViolation(game, ce(), loop, moveto, null) == null) {
                 floorNames.add(Messages.getString("DeploymentDisplay.floor")
                         + Integer.toString(loop + 1));
+                floorValues.add(loop);
             }
         }
         if (Compute.stackingViolation(game, ce(), height, moveto, null) == null) {
             floorNames.add(Messages.getString("DeploymentDisplay.top"));
+            floorValues.add(height);
         }
+
         // No valid floors to deploy on
         if (floorNames.size() < 1) {
+            String msg = Messages.getString("DeploymentDisplay.cantDeployInto",
+                    new Object[] { ce().getShortName(), moveto.getBoardNum() });
+            String title = Messages
+                    .getString("DeploymentDisplay.alertDialog.title"); //$NON-NLS-1$
+            JOptionPane.showMessageDialog(clientgui.frame, msg, title,
+                    JOptionPane.ERROR_MESSAGE);
             return false;
         }
         String i18nString = "DeploymentDisplay.floorsDialog.message"; //$NON-NLS-1$;
@@ -585,7 +595,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         if (input != null) {
             for (int i = 0; i < floorNames.size(); i++) {
                 if (input.equals(floorNames.get(i))) {
-                    ce().setElevation(i);
+                    ce().setElevation(floorValues.get(i));
                     break;
                 }
             }

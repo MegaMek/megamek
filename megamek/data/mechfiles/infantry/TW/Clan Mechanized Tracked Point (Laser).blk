@@ -2,34 +2,52 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Infantry
 </UnitType>
+
 <Name>
 Clan Mechanized Tracked Point
 </Name>
+
 <Model>
 (Laser)
 </Model>
-<squad_size>
-5
-</squad_size>
-<squadn>
-5
-</squadn>
-<Primary>
-Laser Rifle
-</Primary>
-<type>
-Clan
-</type>
+
 <year>
 2815
 </year>
+
+<type>
+Clan Level 2
+</type>
+
 <motion_type>
 Tracked
 </motion_type>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+Total Warfare - Succession Wars
+</source>
+
+<squad_size>
+5
+</squad_size>
+
+<squadn>
+5
+</squadn>
+
+<Primary>
+Laser Rifle
+</Primary>
+

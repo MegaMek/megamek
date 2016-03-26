@@ -44,6 +44,7 @@ public class Hex implements IHex, Serializable {
      */
     private HashSet<Integer> hsTerrains;
     private String theme;
+    private String originalTheme;
     private int fireTurn;
     private Coords coords;
     /** Constructs clear, plain hex at level 0. */
@@ -81,6 +82,7 @@ public class Hex implements IHex, Serializable {
         } else {
             this.theme = null;
         }
+        originalTheme = this.theme;
     }
 
     public Hex(int level, String terrain, String theme) {
@@ -145,6 +147,11 @@ public class Hex implements IHex, Serializable {
      */
     public void setTheme(String theme) {
         this.theme = theme;
+    }
+    
+    /** Resets the theme to what was specified in the board file. */
+    public void resetTheme() {
+        setTheme(originalTheme);
     }
 
     /*
@@ -478,14 +485,12 @@ public class Hex implements IHex, Serializable {
         return new Hex(level, tcopy, theme, coords);
     }
 
-    public int terrainPilotingModifier(EntityMovementMode moveMode) {
-        int rv = 0;
+    public void terrainPilotingModifier(EntityMovementMode moveMode, PilotingRollData roll, boolean enteringRubble) {
         for (Integer i : hsTerrains){
             if (terrains[i] != null) {
-                rv += terrains[i].pilotingModifier(moveMode);
+                terrains[i].pilotingModifier(moveMode, roll, enteringRubble);
             }
         }
-        return rv;
     }
 
     public int movementCost(Entity entity) {
@@ -624,14 +629,12 @@ public class Hex implements IHex, Serializable {
     /**
      * get any modifiers to a an unstuck roll in this hex.
      */
-    public int getUnstuckModifier(int elev) {
-        int mod = 0;
+    public void getUnstuckModifier(int elev, PilotingRollData rollTarget) {
         for (Integer i : hsTerrains){
             if (terrains[i] != null) {
-                mod += terrains[i].getUnstuckModifier(elev);
+                terrains[i].getUnstuckModifier(elev, rollTarget);
             }
         }
-        return mod;
     }
 
     /** The notional position of this {@code Hex}, as set upon creation.

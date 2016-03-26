@@ -328,18 +328,19 @@ public final class Player extends TurnOrdered implements IPlayer {
      */
     @Override
     public boolean equals(Object object) {
-        if (this == object) {
+        if(this == object) {
             return true;
-        } else if ((object == null) || (getClass() != object.getClass())) {
+        }
+        if((null == object) || (getClass() != object.getClass())) {
             return false;
         }
-        IPlayer other = (IPlayer) object;
-        return other.getId() == id;
+        final Player other = (Player) object;
+        return other.id == id;
     }
 
     @Override
     public int hashCode() {
-        return getId();
+        return id;
     }
 
     @Override

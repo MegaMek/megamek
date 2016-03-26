@@ -130,6 +130,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public static final String VIEW_TOGGLE_FIRING_SOLUTIONS = "viewToggleFiringSolutions"; //$NON-NLS-1$
     public static final String VIEW_MOVE_ENV = "viewMovementEnvelope"; //$NON-NLS-1$
     public static final String VIEW_MOVE_MOD_ENV = "viewMovModEnvelope"; //$NON-NLS-1$
+    public static final String VIEW_CHANGE_THEME = "viewChangeTheme"; //$NON-NLS-1$
     
     public static final String SAVE_WEAP_ORDER = "saveWeapOrder";
 
@@ -784,6 +785,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             bv.refreshDisplayables();
         } else if (event.getActionCommand().equals(VIEW_MOVE_ENV)) {
             if (curPanel instanceof MovementDisplay){
+                GUIPreferences.getInstance().setMoveEnvelope(
+                        !GUIPreferences.getInstance().getMoveEnvelope());
                 ((MovementDisplay) curPanel).computeMovementEnvelope(mechD
                         .getCurrentEntity());
             }
@@ -791,6 +794,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             if (curPanel instanceof MovementDisplay) {
                 ((MovementDisplay) curPanel).computeModifierEnvelope();
             }
+        } else if (event.getActionCommand().equals(VIEW_CHANGE_THEME)) {
+            bv.changeTheme();
         } else if (event.getActionCommand().equals(SAVE_WEAP_ORDER)) {
             Entity ent = mechD.getCurrentEntity();
             if (ent != null) {

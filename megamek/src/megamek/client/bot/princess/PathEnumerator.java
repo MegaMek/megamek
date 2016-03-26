@@ -183,6 +183,7 @@ public class PathEnumerator {
 
             // Start constructing the new list of paths.
             List<MovePath> paths = new ArrayList<>();
+            // Aero movement
             if (mover instanceof Aero) {
                 Aero aeroMover = (Aero)mover;
                 // Get the shortest paths possible.
@@ -234,10 +235,9 @@ public class PathEnumerator {
                 };
                 paths = new ArrayList<>(filter.doFilter(paths));
 
-            } else {
-
+            } else { // Non-Aero movement
                 //add running moves
-                // todo: Will this cause Princess to never use MASC?
+                // TODO: Will this cause Princess to never use MASC?
                 LongestPathFinder lpf = LongestPathFinder
                         .newInstanceOfLongestPath(mover.getRunMPwithoutMASC(),
                                 MoveStepType.FORWARDS, getGame());

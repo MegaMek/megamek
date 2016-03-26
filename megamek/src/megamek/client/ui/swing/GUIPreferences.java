@@ -101,6 +101,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String GAME_OPTIONS_SIZE_HEIGHT = "GameOptionsSizeHeight";
     public static final String GAME_OPTIONS_SIZE_WIDTH = "GameOptionsSizeWidth";
     public static final String FIRING_SOLUTIONS = "FiringSolutions";
+    public static final String MOVE_ENVELOPE = "MoveEnvelope";
     public static final String FOV_HIGHLIGHT = "FovHighlight";
     public static final String FOV_HIGHLIGHT_ALPHA = "FovHighlightAlpha";
     //Rings' sizes (measured in distance to center) separated by whitespace.
@@ -417,6 +418,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getFiringSolutions() {
         return store.getBoolean(FIRING_SOLUTIONS);
+    }
+    
+    public boolean getMoveEnvelope() {
+        return store.getBoolean(MOVE_ENVELOPE);
     }
 
     public boolean getFovHighlight() {
@@ -784,6 +789,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setFiringSolutions(boolean state){
         store.setValue(FIRING_SOLUTIONS,state);
     }
+    
+    public void setMoveEnvelope(boolean state){
+        store.setValue(MOVE_ENVELOPE,state);
+    }   
 
     public void setFovHighlight(boolean state){
         store.setValue(FOV_HIGHLIGHT,state);

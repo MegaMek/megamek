@@ -85,7 +85,10 @@ public class Dropship extends SmallCraft {
         for (int dir = 0; dir < 6; dir++){
             Coords secondaryCoord = c.translated(dir);
             IHex secondaryHex = game.getBoard().getHex(secondaryCoord);
-            if (secondaryHex != null){
+            if (secondaryHex == null) {
+                // Don't allow landed dropships to hang off the board
+                isProhibited = true;
+            } else {
                 isProhibited |= secondaryHex.containsTerrain(Terrains.WOODS)
                         || secondaryHex.containsTerrain(Terrains.ROUGH)
                         || ((secondaryHex.terrainLevel(Terrains.WATER) > 0) &&

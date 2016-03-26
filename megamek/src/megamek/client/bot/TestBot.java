@@ -1739,7 +1739,7 @@ public class TestBot extends BotClient {
         assert (entNum != Entity.NONE) : "The bot is trying to deploy without units being left.";
 
         List<Coords> cStart = getStartingCoordsArray();
-        Coords cDeploy = getCoordsAround(getEntity(entNum), cStart);
+        Coords cDeploy = getFirstValidCoords(getEntity(entNum), cStart);
 
         if (cDeploy == null) {
             // bad event handeling, this unit is not deployable, remove it

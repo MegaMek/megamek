@@ -5859,14 +5859,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Two entities are equal if their ids are equal
      */
     @Override
-    public boolean equals(Object object) {
-        if (this == object) {
+    public boolean equals(Object obj) {
+        if(this == obj) {
             return true;
-        } else if ((object == null) || (getClass() != object.getClass())) {
+        }
+        if((null == obj) || (getClass() != obj.getClass())) {
             return false;
         }
-        Entity other = (Entity) object;
-        return other.getId() == id;
+        final Entity other = (Entity) obj;
+        return (id == other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 
     /**
@@ -6504,19 +6510,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             EntityMovementType moveType, IHex curHex, Coords lastPos,
             Coords curPos, boolean isLastStep) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
-        addPilotingModifierForTerrain(roll, curPos);
+        boolean enteringRubble = true;
+        addPilotingModifierForTerrain(roll, curPos, enteringRubble);
 
         if (!lastPos.equals(curPos)
             && ((moveType != EntityMovementType.MOVE_JUMP)
                 || isLastStep)
             && (curHex.terrainLevel(Terrains.RUBBLE) > 0)
             && (this instanceof Mech)) {
-            int mod = 0;
-            if (curHex.terrainLevel(Terrains.RUBBLE) > 5) {
-                mod++;
-            }
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), mod, "entering Rubble"));
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
@@ -8945,31 +8946,29 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 break;
             case NORTH:
                 setPosition(new Coords((game.getBoard().getWidth() / 2)
-                                       + (game.getBoard().getWidth() % 2),
-                                       -getOffBoardDistance()));
+                        + (game.getBoard().getWidth() % 2),
+                        -getOffBoardDistance()));
                 setFacing(3);
                 setDeployed(true);
                 break;
             case SOUTH:
                 setPosition(new Coords((game.getBoard().getWidth() / 2)
-                                       + (game.getBoard().getWidth() % 2), game.getBoard()
-                                                                               .getHeight() +
-                                                                           getOffBoardDistance()));
+                        + (game.getBoard().getWidth() % 2), game.getBoard()
+                        .getHeight() + getOffBoardDistance()));
                 setFacing(0);
                 setDeployed(true);
                 break;
             case EAST:
                 setPosition(new Coords(game.getBoard().getWidth()
-                                       + getOffBoardDistance(),
-                                       (game.getBoard().getHeight() / 2)
-                                       + (game.getBoard().getHeight() % 2)));
+                        + getOffBoardDistance(),
+                        (game.getBoard().getHeight() / 2)
+                                + (game.getBoard().getHeight() % 2)));
                 setFacing(5);
                 setDeployed(true);
                 break;
             case WEST:
                 setPosition(new Coords(-getOffBoardDistance(), (game.getBoard()
-                                                                    .getHeight() / 2) + (game.getBoard().getHeight()
-                                                                                         % 2)));
+                        .getHeight() / 2) + (game.getBoard().getHeight() % 2)));
                 setFacing(1);
                 setDeployed(true);
                 break;
@@ -9757,6 +9756,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param c    the coordinates where the PSR happens
      */
     public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c) {
+        addPilotingModifierForTerrain(roll, c, false);
+    }
+
+    /**
+     * Apply PSR modifier for difficult terrain at the specified coordinates
+     *
+     * @param roll the PSR to modify
+     * @param c    the coordinates where the PSR happens
+     * @param enteringRubble True if entering rubble, else false
+     */
+    public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c,
+            boolean enteringRubble) {
         if ((c == null) || (roll == null)) {
             return;
         }
@@ -9764,10 +9775,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return;
         }
         IHex hex = game.getBoard().getHex(c);
-        int modifier = hex.terrainPilotingModifier(getMovementMode());
-        if (modifier != 0) {
-            roll.addModifier(modifier, "difficult terrain");
-        }
+        hex.terrainPilotingModifier(getMovementMode(), roll, enteringRubble);
     }
 
     /**
@@ -9777,7 +9785,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param step the move step the PSR occurs at
      */
     public void addPilotingModifierForTerrain(PilotingRollData roll,
-                                              MoveStep step) {
+            MoveStep step) {
         if (step.getElevation() > 0) {
             return;
         }

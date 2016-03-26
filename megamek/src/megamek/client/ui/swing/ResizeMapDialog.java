@@ -25,7 +25,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -355,9 +356,9 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
         }
 
         // Load the file.  If there is an error, log it and return.
-        try {
-            mapSettings = MapSettings.getInstance(new FileInputStream(selectedFile));
-        } catch (FileNotFoundException e) {
+        try(InputStream is = new FileInputStream(selectedFile)) {
+            mapSettings = MapSettings.getInstance(is);
+        } catch (IOException e) {
             e.printStackTrace();
             return;
         }
@@ -384,8 +385,8 @@ public class ResizeMapDialog extends JDialog implements ActionListener {
         }
 
         // Load the changed settings into the existing map settings object.
-        try {
-            mapSettings = MapSettings.getInstance(new FileInputStream(selectedFile));
+        try(InputStream is = new FileInputStream(selectedFile)) {
+            mapSettings = MapSettings.getInstance(is);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

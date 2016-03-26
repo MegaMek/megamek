@@ -4913,7 +4913,7 @@ public abstract class Mech extends Entity {
         costs[i++] = cockpitCost;
         costs[i++] = 50000;// life support
         costs[i++] = weight * 2000;// sensors
-        int muscCost = hasSCM() ? 10000 : hasTSM() ? 16000 : 2000;
+        int muscCost = hasSCM() ? 10000 : hasTSM() ? 16000 : hasIndustrialTSM() ? 12000 : 2000;
         costs[i++] = muscCost * weight;// musculature
         costs[i++] = EquipmentType.getStructureCost(structureType) * weight;// IS
         costs[i++] = getActuatorCost();// arm and/or leg actuators

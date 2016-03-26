@@ -144,6 +144,8 @@ public class MiniMap extends JPanel {
     private int[] halfRoadWidthByCos30 = {0, 0, 1, 2, 2, 3};
     private int[] halfRoadWidthBySin30 = {0, 0, 1, 1, 1, 2};
     private int[] halfRoadWidth = {0, 0, 1, 2, 3, 3};
+    private int[] unitSizes = {5, 6, 7, 8, 9, 10};  
+    private int[] unitBorder = {1, 1, 1, 2, 2, 2};
 
     private int heightDisplayMode = SHOW_NO_HEIGHT;
     Coords firstLOS;
@@ -407,6 +409,8 @@ public class MiniMap extends JPanel {
 
         dirty = new boolean[(m_board.getWidth() / 10) + 1][(m_board.getHeight() / 10) + 1];
         dirtyMap = true;
+        
+        unitSize = unitSizes[zoom];
 
         // ensure its on screen
         Rectangle virtualBounds = new Rectangle();
@@ -637,7 +641,7 @@ public class MiniMap extends JPanel {
                     if (e.getPosition() == null) {
                         continue;
                     }
-                    paintUnit(g, e, true);
+                    paintUnit(g, e);
                 }
             }
             clean();
@@ -661,6 +665,8 @@ public class MiniMap extends JPanel {
             return;
         }
         double[] relSize = m_bview.getVisibleArea();
+        for (int i=0;i<4;i++) relSize[i] = Math.min(1, Math.max(0,relSize[i]));
+        
         Color sc = g.getColor();
         Stroke sbs = ((Graphics2D) g).getStroke();
         
@@ -977,7 +983,7 @@ public class MiniMap extends JPanel {
         g.setColor(oldColor);
     }
 
-    private void paintUnit(Graphics g, Entity entity, boolean border) {
+    private void paintUnit(Graphics g, Entity entity) {
         boolean sensors = m_game.getOptions().booleanOption(
                 "tacops_sensors");
         boolean sensorsDetectAll = m_game.getOptions().booleanOption(
@@ -1089,29 +1095,38 @@ public class MiniMap extends JPanel {
             yPoints[3] = baseY;
         }
 
-        g.setColor(PlayerColors.getColor(entity.getOwner().getColorIndex()));
-        if (!entity.isSelectableThisTurn()) {
-            // entity has moved (or whatever) already
-            g.setColor(g.getColor().darker());
-        }
-        g.fillPolygon(xPoints, yPoints, xPoints.length);
+        Stroke svStroke = ((Graphics2D)g).getStroke();
 
-        Entity se = clientgui == null ? null : m_game.getEntity(clientgui
-                .getSelectedEntityNum());
+        // Draw a slight dark border to set off the icon from the background
+        ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]+2));
+        g.setColor(new Color(100,100,100,200));
+        g.drawPolygon(xPoints, yPoints, xPoints.length);
+        
+        // Fill the icon according to the player color
+        Color pColor = new Color(
+                PlayerColors.getColorRGB(entity.getOwner().getColorIndex()));
+        g.setColor(pColor);
+        g.fillPolygon(xPoints, yPoints, xPoints.length);
+        
+        // Draw a white border to better show the player color
+        // maybe useful later: if (!entity.isSelectableThisTurn()) {
+        ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]));
+        g.setColor(Color.WHITE);
+        g.drawPolygon(xPoints, yPoints, xPoints.length);
+
+        // Create a colored circle if this is the selected unit
+        Entity se = (clientgui == null) ? null : 
+            m_game.getEntity(clientgui.getSelectedEntityNum());
+        
         if (entity == se) {
-            Color w = new Color(255, 255, 255);
-            Color b = new Color(0, 0, 0);
-            g.setColor(b);
-            g.drawRect(baseX - 1, baseY - 1, 3, 3);
-            g.setColor(w);
-            g.drawRect(baseX, baseY, 1, 1);
+            ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]+1));
+            g.setColor(GUIPreferences.getInstance().getColor(
+                    GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR));
+            int rad = unitSize*2-1;
+            g.drawOval(baseX-rad, baseY-rad, rad*2, rad*2);
         }
-        if (border) {
-            Color oldColor = g.getColor();
-            g.setColor(oldColor.darker().darker().darker());
-            g.drawPolygon(xPoints, yPoints, xPoints.length);
-            g.setColor(oldColor);
-        }
+        
+        ((Graphics2D)g).setStroke(svStroke);
     }
 
     private void paintRoads(Graphics g) {
@@ -1437,8 +1452,8 @@ public class MiniMap extends JPanel {
                 m_bview.centerOnPointRel(
                         ((double)(x - leftMargin))/(double)((hexSideBySin30[zoom] + hexSide[zoom])*m_board.getWidth()),
                         ((double)(y - topMargin))/(double)(2 * hexSideByCos30[zoom]*m_board.getHeight()));
+                m_bview.stopSoftCentering();
                 repaint();
-                //drawMap(); MUCH SLOWER
             }
         }
     }

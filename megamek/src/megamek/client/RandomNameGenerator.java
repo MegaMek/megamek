@@ -15,9 +15,10 @@
 
 package megamek.client;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -72,7 +73,9 @@ import megamek.common.Configuration;
  * @author Jay Lawson
  */
 public class RandomNameGenerator implements Serializable {
-    /** Default directory containing the faction-specific name files. */
+    private static final String PROP_INITIALIZED = "initialized"; //$NON-NLS-1$
+
+	/** Default directory containing the faction-specific name files. */
     private static final String DIR_NAME_FACTIONS = "factions"; //$NON-NLS-1$
 
     /** Default filename for the list of male first names. */
@@ -106,13 +109,14 @@ public class RandomNameGenerator implements Serializable {
     private boolean initialized;
     private boolean initializing;
 
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
     public RandomNameGenerator() {
         percentFemale = 50;
-        chosenFaction = "General";
+        chosenFaction = "General"; //$NON-NLS-1$
     }
 
     public void populateNames() {
-
         // TODO: how do I weight name vectors by frequency, without making them
         // gargantuan?
         if (null == firstm) {
@@ -131,14 +135,9 @@ public class RandomNameGenerator implements Serializable {
             factionFirst = new HashMap<String, Map<String, Vector<String>>>();
         }
 
-        Scanner input = null;
-
         // READ IN MALE FIRST NAMES
         File male_firstnames_path = new File(Configuration.namesDir(), FILENAME_FIRSTNAMES_MALE);
-        FileInputStream fnms = null;
-        try {            
-            fnms = new FileInputStream(male_firstnames_path);
-            input = new Scanner(fnms, "UTF-8");
+        try(Scanner input = new Scanner(new FileInputStream(male_firstnames_path), "UTF-8")) { //$NON-NLS-1$
             int linen = 0;
             while (input.hasNextLine()) {
                 // Check to see if we've been interrupted
@@ -147,10 +146,10 @@ public class RandomNameGenerator implements Serializable {
                 }
                 String line = input.nextLine();
                 linen++;
-                String[] values = line.split(",");
+                String[] values = line.split(","); //$NON-NLS-1$
                 if (values.length < 3) {
                     System.err.println(
-                            "Not enough fields in '" + male_firstnames_path.toString() + "' on " + linen
+                            "Not enough fields in '" + male_firstnames_path.toString() + "' on " + linen //$NON-NLS-1$ //$NON-NLS-2$
                     );
                     continue;
                 }
@@ -173,26 +172,12 @@ public class RandomNameGenerator implements Serializable {
                 }
             }
         } catch (IOException fne) {
-            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + male_firstnames_path + "'");
-        } finally {
-            try {
-                if (fnms != null){
-                    fnms.close();
-                }
-                if (input != null){
-                    input.close();
-                }
-            } catch (IOException e) {
-                // Nothing to do...
-            }
+            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + male_firstnames_path + "'"); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         // READ IN FEMALE FIRST NAMES
         File female_firstnames_path = new File(Configuration.namesDir(), FILENAME_FIRSTNAMES_FEMALE);
-        FileInputStream fnfs = null;
-        try {
-            fnfs = new FileInputStream(female_firstnames_path);
-            input = new Scanner(fnfs, "UTF-8");
+        try(Scanner input = new Scanner(new FileInputStream(female_firstnames_path), "UTF-8")) { //$NON-NLS-1$
             int linen = 0;
             while (input.hasNextLine()) {
                 // Check to see if we've been interrupted
@@ -201,10 +186,10 @@ public class RandomNameGenerator implements Serializable {
                 }
                 String line = input.nextLine();
                 linen++;
-                String[] values = line.split(",");
+                String[] values = line.split(","); //$NON-NLS-1$
                 if (values.length < 3) {
                     System.err.println(
-                            "RandomNameGenerator.populateNames(): Not enough fields in '" + female_firstnames_path.toString() + "' on " + linen
+                            "RandomNameGenerator.populateNames(): Not enough fields in '" + female_firstnames_path.toString() + "' on " + linen //$NON-NLS-1$ //$NON-NLS-2$
                     );
                     continue;
                 }
@@ -227,26 +212,12 @@ public class RandomNameGenerator implements Serializable {
                 }
             }
         } catch (IOException fne) {
-            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + female_firstnames_path + "'");
-        } finally {
-            try {
-                if (fnfs != null){
-                    fnfs.close();
-                }
-                if (input != null){
-                    input.close();
-                }
-            } catch (IOException e){
-                
-            }
+            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + female_firstnames_path + "'"); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         // READ IN SURNAMES
         File surnames_path = new File(Configuration.namesDir(), FILENAME_SURNAMES);
-        FileInputStream lns = null;
-        try {
-            lns = new FileInputStream(surnames_path);
-            input = new Scanner(lns, "UTF-8");
+        try(Scanner input = new Scanner(new FileInputStream(surnames_path), "UTF-8")) { //$NON-NLS-1$
             int linen = 0;
             while (input.hasNextLine()) {
                 // Check to see if we've been interrupted
@@ -255,10 +226,10 @@ public class RandomNameGenerator implements Serializable {
                 }
                 String line = input.nextLine();
                 linen++;
-                String[] values = line.split(",");
+                String[] values = line.split(","); //$NON-NLS-1$
                 if (values.length < 3) {
                     System.err.println(
-                            "Not enough fields in '" + surnames_path + "' on " + linen
+                            "Not enough fields in '" + surnames_path + "' on " + linen //$NON-NLS-1$ //$NON-NLS-2$
                     );
                     continue;
                 }
@@ -281,18 +252,7 @@ public class RandomNameGenerator implements Serializable {
                 }
             }
         } catch (IOException fne) {
-            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + surnames_path + "'");
-        } finally {
-            try {
-                if (lns != null){
-                    lns.close();
-                }
-                if (input != null){
-                    input.close();
-                }
-            } catch (IOException e){
-                // Nothing to do...
-            }
+            System.err.println("RandomNameGenerator.populateNames(): Could not find '" + surnames_path + "'"); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         // READ IN FACTION FILES
@@ -308,55 +268,69 @@ public class RandomNameGenerator implements Serializable {
                 break;
             }
             String filename = filenames[filen];
-            String key = filename.split("\\.txt")[0];
+            String key = filename.split("\\.txt")[0]; //$NON-NLS-1$
             if ((key.length() < 1) || factionLast.containsKey(key)) {
                 continue;
             }
             factionLast.put(key, new Vector<String>());
             factionFirst.put(key, new HashMap<String, Vector<String>>());
             File ff = new File(factions_dir_path, filename);
-            try {
-                FileInputStream fs = new FileInputStream(ff);
-                input = new Scanner(fs, "UTF-8");
-            } catch (FileNotFoundException fne) {
-                System.err.println("RandomNameGenerator.populateNames(): Could not find '" + ff + "'");
-                continue;
-            }
-            Map<String, Vector<String>> hash = new HashMap<String, Vector<String>>();
-            while (input.hasNextLine()) {
-                // Check to see if we've been interrupted
-                if (interrupted) {
-                    break;
-                }
-                String line = input.nextLine();
-                String[] values = line.split(",");
-                String ethnicity = values[0];
-                int freq = Integer.parseInt(values[2]);
-                while (freq > 0) {
-                    factionLast.get(key).add(ethnicity);
-                    freq--;
-                }
-                Vector<String> v = new Vector<String>();
-                for (int i = 3; i < values.length; i++) {
-                    freq = Integer.parseInt(values[i]);
-                    // TODO: damm - I don't have the integer codes for ethnicity
-                    // here, for now just assume they are the
-                    // same as i-2
+            try(Scanner factionInput = new Scanner(new FileInputStream(ff), "UTF-8")) { //$NON-NLS-1$
+                Map<String, Vector<String>> hash = new HashMap<String, Vector<String>>();
+                while (factionInput.hasNextLine()) {
+                    // Check to see if we've been interrupted
+                    if (interrupted) {
+                        break;
+                    }
+                    String line = factionInput.nextLine();
+                    String[] values = line.split(","); //$NON-NLS-1$
+                    String ethnicity = values[0];
+                    int freq = Integer.parseInt(values[2]);
                     while (freq > 0) {
-                        v.add(Integer.toString(i - 2));
+                        factionLast.get(key).add(ethnicity);
                         freq--;
                     }
+                    Vector<String> v = new Vector<String>();
+                    for (int i = 3; i < values.length; i++) {
+                        freq = Integer.parseInt(values[i]);
+                        // TODO: damm - I don't have the integer codes for ethnicity
+                        // here, for now just assume they are the
+                        // same as i-2
+                        while (freq > 0) {
+                            v.add(Integer.toString(i - 2));
+                            freq--;
+                        }
+                    }
+                    hash.put(ethnicity, v);
                 }
-                hash.put(ethnicity, v);
+                factionFirst.put(key, hash);
+            } catch (IOException fne) {
+                System.err.println("RandomNameGenerator.populateNames(): Could not find '" + ff + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+                continue;
             }
-            factionFirst.put(key, hash);
-            input.close();
             if (dispose) {
                 clear();
             }
         }
     }
 
+	public synchronized void addInitializationListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
+		if(initialized) {
+			// Fire and remove
+			pcs.firePropertyChange(PROP_INITIALIZED, false, true);
+			pcs.removePropertyChangeListener(listener);
+		}
+	}
+	
+	protected void setInitialized(boolean initialized) {
+		pcs.firePropertyChange(PROP_INITIALIZED, this.initialized, this.initialized = initialized);
+	}
+	
+	public boolean isInitialized() {
+		return initialized;
+	}
+	
     /**
      * Generate a single random name
      * 
@@ -367,7 +341,6 @@ public class RandomNameGenerator implements Serializable {
     }
 
     public String generate(boolean isFemale) {
-
         if ((null != chosenFaction) && (null != factionLast)
                 && (null != factionFirst) && (null != firstm)
                 && (null != firstf) && (null != last)) {
@@ -458,7 +431,7 @@ public class RandomNameGenerator implements Serializable {
         last = null;
         factionFirst = null;
         factionLast = null;
-        initialized = false;
+        setInitialized(false);
         initializing = false;
         interrupted = false;
         dispose = false;
@@ -481,7 +454,7 @@ public class RandomNameGenerator implements Serializable {
                     interrupted = false;
                     rng.populateNames();
                     if (rng != null) {
-                        rng.initialized = true;
+                        rng.setInitialized(true);
                     }
                 }
             }, "Random Name Generator name populator");

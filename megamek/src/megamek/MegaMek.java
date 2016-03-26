@@ -298,15 +298,13 @@ public class MegaMek {
         assert (guiName != null) : "guiName must be non-null"; //$NON-NLS-1$
         Properties p = new Properties();
         String key = "gui." + guiName; //$NON-NLS-1$
-        InputStream is = MegaMek.class.getClassLoader().getResourceAsStream(
-                PROPERTIES_FILE);
-        if (is != null) {
-            try {
+        try(InputStream is = MegaMek.class.getClassLoader().getResourceAsStream(PROPERTIES_FILE)) {
+            if (is != null) {
                 p.load(is);
                 return p.getProperty(key);
-            } catch (IOException e) {
-                MegaMek.displayMessage("Property file load failed."); //$NON-NLS-1$
             }
+        } catch (IOException e) {
+            MegaMek.displayMessage("Property file load failed."); //$NON-NLS-1$
         }
         return null;
     }

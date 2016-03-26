@@ -687,14 +687,21 @@ public class Building implements Serializable {
      *         <code>Building</code>.
      */
     @Override
-    public boolean equals(Object other) {
-        if ((other == null) || !(other instanceof Building)) {
+    public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;
+        }
+        if((null == obj) || (getClass() != obj.getClass())) {
             return false;
         }
-
         // True until we're talking about more than one Board per Game.
-        Building bldg = (Building) other;
-        return (id == bldg.id);
+        final Building other = (Building) obj;
+        return (id == other.id);
+    }
+    
+    @Override
+    public int hashCode() {
+        return id;
     }
 
     /**

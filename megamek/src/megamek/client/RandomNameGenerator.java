@@ -15,6 +15,8 @@
 
 package megamek.client;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -71,7 +73,9 @@ import megamek.common.Configuration;
  * @author Jay Lawson
  */
 public class RandomNameGenerator implements Serializable {
-    /** Default directory containing the faction-specific name files. */
+    private static final String PROP_INITIALIZED = "initialized"; //$NON-NLS-1$
+
+	/** Default directory containing the faction-specific name files. */
     private static final String DIR_NAME_FACTIONS = "factions"; //$NON-NLS-1$
 
     /** Default filename for the list of male first names. */
@@ -105,13 +109,14 @@ public class RandomNameGenerator implements Serializable {
     private boolean initialized;
     private boolean initializing;
 
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
+
     public RandomNameGenerator() {
         percentFemale = 50;
         chosenFaction = "General"; //$NON-NLS-1$
     }
 
     public void populateNames() {
-
         // TODO: how do I weight name vectors by frequency, without making them
         // gargantuan?
         if (null == firstm) {
@@ -309,6 +314,23 @@ public class RandomNameGenerator implements Serializable {
         }
     }
 
+	public synchronized void addInitializationListener(PropertyChangeListener listener) {
+		pcs.addPropertyChangeListener(listener);
+		if(initialized) {
+			// Fire and remove
+			pcs.firePropertyChange(PROP_INITIALIZED, false, true);
+			pcs.removePropertyChangeListener(listener);
+		}
+	}
+	
+	protected void setInitialized(boolean initialized) {
+		pcs.firePropertyChange(PROP_INITIALIZED, this.initialized, this.initialized = initialized);
+	}
+	
+	public boolean isInitialized() {
+		return initialized;
+	}
+	
     /**
      * Generate a single random name
      * 
@@ -319,7 +341,6 @@ public class RandomNameGenerator implements Serializable {
     }
 
     public String generate(boolean isFemale) {
-
         if ((null != chosenFaction) && (null != factionLast)
                 && (null != factionFirst) && (null != firstm)
                 && (null != firstf) && (null != last)) {
@@ -410,7 +431,7 @@ public class RandomNameGenerator implements Serializable {
         last = null;
         factionFirst = null;
         factionLast = null;
-        initialized = false;
+        setInitialized(false);
         initializing = false;
         interrupted = false;
         dispose = false;
@@ -433,7 +454,7 @@ public class RandomNameGenerator implements Serializable {
                     interrupted = false;
                     rng.populateNames();
                     if (rng != null) {
-                        rng.initialized = true;
+                        rng.setInitialized(true);
                     }
                 }
             }, "Random Name Generator name populator");

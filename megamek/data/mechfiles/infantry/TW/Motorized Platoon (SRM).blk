@@ -2,40 +2,64 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Infantry
 </UnitType>
+
 <Name>
 Motorized Platoon
 </Name>
+
 <Model>
 (SRM)
 </Model>
-<squad_size>
-6
-</squad_size>
-<squadn>
-4
-</squadn>
-<Primary>
-Auto Rifle
-</Primary>
-<Secondary>
-Infantry Heavy SRM Launcher
-</Secondary>
-<secondn>
-2
-</secondn>
-<type>
-IS
-</type>
+
 <year>
 2370
 </year>
+
+<type>
+IS Level 2
+</type>
+
 <motion_type>
 Motorized
 </motion_type>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+Total Warfare - Succession Wars
+</source>
+
+<squad_size>
+6
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+Auto-Rifle
+</Primary>
+
+<Secondary>
+SRM Launcher (Hvy, One-Shot)
+</Secondary>
+
+<antimek>
+6
+</antimek>
+

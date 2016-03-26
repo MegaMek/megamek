@@ -21,6 +21,7 @@ import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -41,12 +42,18 @@ import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Path2D;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JDialog;
@@ -61,9 +68,11 @@ import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.IBoardView;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.PlayerColors;
+import megamek.common.Aero;
 import megamek.common.Configuration;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
@@ -144,7 +153,8 @@ public class MiniMap extends JPanel {
     private int[] halfRoadWidthByCos30 = {0, 0, 1, 2, 2, 3};
     private int[] halfRoadWidthBySin30 = {0, 0, 1, 1, 1, 2};
     private int[] halfRoadWidth = {0, 0, 1, 2, 3, 3};
-    private int[] unitSizes = {5, 6, 7, 8, 9, 10};  
+    private int[] unitSizes = {5, 6, 7, 8, 9, 10};
+    private int[] stratZoom = {8, 9, 11, 12, 14, 16};
     private int[] unitBorder = {1, 1, 1, 2, 2, 2};
 
     private int heightDisplayMode = SHOW_NO_HEIGHT;
@@ -158,7 +168,152 @@ public class MiniMap extends JPanel {
     boolean dirtyMap = true;
     boolean[][] dirty;
     private Image terrainBuffer;
+    
+    // Here come the Strat Ops / NATO unit symbols
+    Map<Coords, Integer> multiUnits = new HashMap<Coords, Integer>();
+    private final static Path2D STRAT_BASERECT;
+    private final static Path2D STRAT_INFANTRY;
+    private final static Path2D STRAT_MECH;
+    private final static Path2D STRAT_VTOL;
+    private final static Path2D STRAT_TANKTRACKED;
+    private final static Path2D STRAT_AERO;
+    private final static Path2D STRAT_SPHEROID;
+    private final static Path2D STRAT_HOVER;
+    private final static Path2D STRAT_WHEELED;
+    private final static Path2D STRAT_NAVAL;
+    private final static Dimension SYMBOLSIZE = new Dimension(167,103);
+    private final static String[] STRAT_WEIGHTS = { "L", "L", "M", "H", "A", "A" };
+    private final static double STRAT_CX = SYMBOLSIZE.getWidth()/5; // X center for two symbols
+    
+    static {
+        // Base rectangle for all units
+        STRAT_BASERECT = new Path2D.Double();
+        STRAT_BASERECT.moveTo(-SYMBOLSIZE.getWidth()/2, -SYMBOLSIZE.getHeight()/2);
+        STRAT_BASERECT.lineTo( SYMBOLSIZE.getWidth()/2, -SYMBOLSIZE.getHeight()/2);
+        STRAT_BASERECT.lineTo( SYMBOLSIZE.getWidth()/2,  SYMBOLSIZE.getHeight()/2);
+        STRAT_BASERECT.lineTo(-SYMBOLSIZE.getWidth()/2,  SYMBOLSIZE.getHeight()/2);
+        STRAT_BASERECT.closePath();
+        
+        // Infantry Symbol
+        STRAT_INFANTRY = new Path2D.Double();
+        STRAT_INFANTRY.append(STRAT_BASERECT, false);
+        STRAT_INFANTRY.moveTo(-SYMBOLSIZE.getWidth()/2, -SYMBOLSIZE.getHeight()/2);
+        STRAT_INFANTRY.lineTo( SYMBOLSIZE.getWidth()/2,  SYMBOLSIZE.getHeight()/2);
+        STRAT_INFANTRY.moveTo(-SYMBOLSIZE.getWidth()/2,  SYMBOLSIZE.getHeight()/2);
+        STRAT_INFANTRY.lineTo( SYMBOLSIZE.getWidth()/2, -SYMBOLSIZE.getHeight()/2);
+        
+        STRAT_VTOL = new Path2D.Double();
+        STRAT_VTOL.append(STRAT_BASERECT, false);
+        STRAT_VTOL.moveTo(-SYMBOLSIZE.getWidth()/4, -SYMBOLSIZE.getHeight()/4);
+        STRAT_VTOL.lineTo(-SYMBOLSIZE.getWidth()/4,  SYMBOLSIZE.getHeight()/4);
+        STRAT_VTOL.lineTo( 0,  0);
+        STRAT_VTOL.lineTo(-SYMBOLSIZE.getWidth()/4, -SYMBOLSIZE.getHeight()/4);
+        
+        STRAT_VTOL.moveTo( SYMBOLSIZE.getWidth()/4,  SYMBOLSIZE.getHeight()/4);
+        STRAT_VTOL.lineTo( SYMBOLSIZE.getWidth()/4, -SYMBOLSIZE.getHeight()/4);
+        STRAT_VTOL.lineTo( 0, 0);
+        STRAT_VTOL.closePath();
+        
+        STRAT_TANKTRACKED = new Path2D.Double();
+        STRAT_TANKTRACKED.append(STRAT_BASERECT, false);
+        double small = SYMBOLSIZE.getWidth()/20; 
+        STRAT_TANKTRACKED.moveTo(-SYMBOLSIZE.getWidth()/3+small, -SYMBOLSIZE.getHeight()/4);
+        STRAT_TANKTRACKED.lineTo( SYMBOLSIZE.getWidth()/3-small, -SYMBOLSIZE.getHeight()/4);
+        STRAT_TANKTRACKED.lineTo( SYMBOLSIZE.getWidth()/3,       -SYMBOLSIZE.getHeight()/4+small);
+        STRAT_TANKTRACKED.lineTo( SYMBOLSIZE.getWidth()/3,        SYMBOLSIZE.getHeight()/4-small);
+        STRAT_TANKTRACKED.lineTo( SYMBOLSIZE.getWidth()/3-small,  SYMBOLSIZE.getHeight()/4);
+        STRAT_TANKTRACKED.lineTo(-SYMBOLSIZE.getWidth()/3+small,  SYMBOLSIZE.getHeight()/4);
+        STRAT_TANKTRACKED.lineTo(-SYMBOLSIZE.getWidth()/3,        SYMBOLSIZE.getHeight()/4-small);
+        STRAT_TANKTRACKED.lineTo(-SYMBOLSIZE.getWidth()/3,       -SYMBOLSIZE.getHeight()/4+small);
+        STRAT_TANKTRACKED.closePath();
+        
+        STRAT_MECH = new Path2D.Double();
+        STRAT_MECH.append(STRAT_BASERECT, false);
+        
+        STRAT_MECH.moveTo(-STRAT_CX-1.5*small, -SYMBOLSIZE.getHeight()/4);
+        STRAT_MECH.lineTo(-STRAT_CX-3.0*small,  SYMBOLSIZE.getHeight()/4);
+        STRAT_MECH.lineTo(-STRAT_CX+3.0*small,  SYMBOLSIZE.getHeight()/4);
+        STRAT_MECH.lineTo(-STRAT_CX+1.5*small, -SYMBOLSIZE.getHeight()/4);
+        STRAT_MECH.closePath();
+        
+        STRAT_AERO = new Path2D.Double();
+        STRAT_AERO.append(STRAT_BASERECT, false);
+        double rad = SYMBOLSIZE.getWidth()/5;
+        double r72 = Math.toRadians(72);
+        STRAT_AERO.moveTo(-STRAT_CX+rad/3*Math.cos(Math.PI/2+2*r72), rad/3*Math.sin(Math.PI/2+2*r72));
+        STRAT_AERO.lineTo(-STRAT_CX+rad*Math.cos(Math.PI/2+1*r72), -rad*Math.sin(Math.PI/2+1*r72));
+        STRAT_AERO.lineTo(-STRAT_CX+rad/3*Math.cos(Math.PI/2+1*r72), rad/3*Math.sin(Math.PI/2+1*r72));
+        STRAT_AERO.lineTo(-STRAT_CX+rad*Math.cos(Math.PI/2+2*r72), -rad*Math.sin(Math.PI/2+2*r72));
+        STRAT_AERO.lineTo(-STRAT_CX+rad/3*Math.cos(Math.PI/2), rad/3*Math.sin(Math.PI/2));
+        STRAT_AERO.lineTo(-STRAT_CX+rad*Math.cos(Math.PI/2+3*r72), -rad*Math.sin(Math.PI/2+3*r72));
+        STRAT_AERO.lineTo(-STRAT_CX+rad/3*Math.cos(Math.PI/2+4*r72), rad/3*Math.sin(Math.PI/2+4*r72));
+        STRAT_AERO.lineTo(-STRAT_CX+rad*Math.cos(Math.PI/2+4*r72), -rad*Math.sin(Math.PI/2+4*r72));
+        STRAT_AERO.lineTo(-STRAT_CX+rad/3*Math.cos(Math.PI/2+3*r72), rad/3*Math.sin(Math.PI/2+3*r72));
+        STRAT_AERO.lineTo(-STRAT_CX+rad*Math.cos(Math.PI/2),       -rad*Math.sin(Math.PI/2));
+        STRAT_AERO.closePath();
+        
+        STRAT_SPHEROID = new Path2D.Double();
+        STRAT_SPHEROID.append(STRAT_BASERECT, false);
+        STRAT_SPHEROID.moveTo(rad*Math.cos(Math.PI/2),       -rad*Math.sin(Math.PI/2));
+        STRAT_SPHEROID.lineTo(rad*Math.cos(Math.PI/2+r72),   -rad*Math.sin(Math.PI/2+r72));
+        STRAT_SPHEROID.lineTo(rad*Math.cos(Math.PI/2+2*r72), -rad*Math.sin(Math.PI/2+2*r72));
+        STRAT_SPHEROID.lineTo(rad*Math.cos(Math.PI/2+3*r72), -rad*Math.sin(Math.PI/2+3*r72));
+        STRAT_SPHEROID.lineTo(rad*Math.cos(Math.PI/2+4*r72), -rad*Math.sin(Math.PI/2+4*r72));
+        STRAT_SPHEROID.closePath();
+        
+        STRAT_HOVER = new Path2D.Double();
+        STRAT_HOVER.append(STRAT_BASERECT, false);
+        STRAT_HOVER.moveTo(-SYMBOLSIZE.getWidth()/3,  small);
+        STRAT_HOVER.lineTo(-SYMBOLSIZE.getWidth()/3, -small);
+        STRAT_HOVER.lineTo( SYMBOLSIZE.getWidth()/3, -small);
+        STRAT_HOVER.lineTo( SYMBOLSIZE.getWidth()/3,  small);
 
+        STRAT_HOVER.moveTo(-SYMBOLSIZE.getWidth()/6, -small);
+        STRAT_HOVER.lineTo(-SYMBOLSIZE.getWidth()/6, +small);
+        STRAT_HOVER.moveTo(0, -small);
+        STRAT_HOVER.lineTo(0, +small);
+        STRAT_HOVER.moveTo( SYMBOLSIZE.getWidth()/6, -small);
+        STRAT_HOVER.lineTo( SYMBOLSIZE.getWidth()/6, +small);
+        
+        STRAT_WHEELED = new Path2D.Double();
+        STRAT_WHEELED.append(STRAT_BASERECT, false);
+        double smallr = SYMBOLSIZE.getWidth()/17;
+        STRAT_WHEELED.moveTo(-STRAT_CX-smallr*2, -smallr);
+        STRAT_WHEELED.lineTo(+STRAT_CX+smallr*2, -smallr);
+        STRAT_WHEELED.moveTo(-STRAT_CX, -smallr);
+        STRAT_WHEELED.lineTo(-STRAT_CX-smallr, 0);
+        STRAT_WHEELED.lineTo(-STRAT_CX, +smallr);
+        STRAT_WHEELED.lineTo(-STRAT_CX+smallr, 0);
+        STRAT_WHEELED.closePath();
+        STRAT_WHEELED.moveTo( STRAT_CX, -smallr);
+        STRAT_WHEELED.lineTo( STRAT_CX-smallr, 0);
+        STRAT_WHEELED.lineTo( STRAT_CX, +smallr);
+        STRAT_WHEELED.lineTo( STRAT_CX+smallr, 0);
+        STRAT_WHEELED.closePath();
+        STRAT_WHEELED.moveTo(0, -smallr);
+        STRAT_WHEELED.lineTo(-smallr, 0);
+        STRAT_WHEELED.lineTo(0, +smallr);
+        STRAT_WHEELED.lineTo(smallr, 0);
+        STRAT_WHEELED.closePath();
+        
+        STRAT_NAVAL = new Path2D.Double();
+        STRAT_NAVAL.append(STRAT_BASERECT, false);
+        STRAT_NAVAL.moveTo(0, -SYMBOLSIZE.getHeight()/3);
+        STRAT_NAVAL.lineTo(0,  SYMBOLSIZE.getHeight()/3);
+        STRAT_NAVAL.moveTo(-STRAT_CX/2, -SYMBOLSIZE.getHeight()/5);
+        STRAT_NAVAL.lineTo( STRAT_CX/2, -SYMBOLSIZE.getHeight()/5);
+        
+        STRAT_NAVAL.moveTo(rad, 0);
+        STRAT_NAVAL.curveTo(
+                rad*0.8, SYMBOLSIZE.getHeight()/3*0.8,
+                rad*0.8, SYMBOLSIZE.getHeight()/3*0.8,
+                0, SYMBOLSIZE.getHeight()/3);
+        STRAT_NAVAL.curveTo(
+                -rad*0.8, SYMBOLSIZE.getHeight()/3*0.8,
+                -rad*0.8, SYMBOLSIZE.getHeight()/3*0.8,
+                -rad, 0);
+    }
+    
     // are we drag-scrolling?
     private boolean dragging = false;
 
@@ -637,6 +792,7 @@ public class MiniMap extends JPanel {
                     }
                 }
 
+                multiUnits.clear();
                 for (Entity e : m_game.getEntitiesVector()) {
                     if (e.getPosition() == null) {
                         continue;
@@ -1095,38 +1251,132 @@ public class MiniMap extends JPanel {
             yPoints[3] = baseY;
         }
 
-        Stroke svStroke = ((Graphics2D)g).getStroke();
+        Graphics2D g2 = (Graphics2D)g;
+        Stroke svStroke = g2.getStroke();
 
-        // Draw a slight dark border to set off the icon from the background
-        ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]+2));
-        g.setColor(new Color(100,100,100,200));
-        g.drawPolygon(xPoints, yPoints, xPoints.length);
-        
-        // Fill the icon according to the player color
-        Color pColor = new Color(
-                PlayerColors.getColorRGB(entity.getOwner().getColorIndex()));
-        g.setColor(pColor);
-        g.fillPolygon(xPoints, yPoints, xPoints.length);
-        
-        // Draw a white border to better show the player color
-        // maybe useful later: if (!entity.isSelectableThisTurn()) {
-        ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]));
-        g.setColor(Color.WHITE);
-        g.drawPolygon(xPoints, yPoints, xPoints.length);
+        if (GUIPreferences.getInstance().getBoolean(GUIPreferences.MMSYMBOL)) {
+            AffineTransform svTransform = g2.getTransform();
 
+            // Transform for placement and scaling
+            AffineTransform t = AffineTransform.getTranslateInstance(baseX, baseY);
+            t.scale(stratZoom[zoom]/100.0d, fontSize[zoom]/100.0d);
+            g2.transform(t);
+
+            // Add a position shift if multiple units are present in this hex
+            Coords p = entity.getPosition();
+            Integer eStack = multiUnits.get(p);
+            if (eStack == null) eStack = 0;
+            eStack++;
+            multiUnits.put(p, eStack);
+            g2.translate(20*(eStack-1), -20*(eStack-1));
+
+            // White border to set off the icon from the background
+            g2.setStroke(new BasicStroke(30f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL));
+            g2.setColor(new Color(255,255,255,150));
+            g2.draw(STRAT_BASERECT);
+
+            // Black background to fill forms like the Dropship
+            g2.setColor(Color.BLACK);
+            g2.fill(STRAT_BASERECT);
+
+            // Rectangle border for all units
+            g2.setStroke(new BasicStroke(8f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+            g2.draw(STRAT_BASERECT);
+
+            // Select the correct form for the entity
+            Path2D form;
+            if ((entity instanceof Mech) || (entity instanceof Protomech)) {
+                form = STRAT_MECH;
+                g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+            } else if (entity instanceof VTOL) {
+                form = STRAT_VTOL;
+                g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+            } else if (entity instanceof Tank) {
+                if (entity.getMovementMode() == EntityMovementMode.HOVER) {
+                    form = STRAT_HOVER;
+                } else if (entity.getMovementMode() == EntityMovementMode.WHEELED) {
+                    form = STRAT_WHEELED;
+                } else if ((entity.getMovementMode() == EntityMovementMode.HYDROFOIL) ||
+                        (entity.getMovementMode() == EntityMovementMode.NAVAL)) {
+                    form = STRAT_NAVAL; 
+                } else {
+                    form = STRAT_TANKTRACKED;
+                }
+            } else if (entity instanceof Aero) {
+                if (((Aero) entity).isFighter()) {
+                    form = STRAT_AERO;
+                } else {
+                    form = STRAT_SPHEROID;
+                }
+                g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
+            } else {
+                form = STRAT_INFANTRY;
+            }
+
+            // Fill the form in player color
+            g2.setColor(new Color(PlayerColors.getColorRGB(
+                    entity.getOwner().getColorIndex())));
+            g2.fill(form);
+
+            // Add the weight class or other lettering for certain units
+            g.setColor(Color.BLACK);
+            if ((entity instanceof Protomech) || (entity instanceof Mech) || (entity instanceof Aero)) {
+                String s = "";
+                if (entity instanceof Protomech) {
+                    s = "P";
+                } else if ((entity instanceof Mech) && ((Mech)entity).isIndustrial()) {
+                    s = "I";
+                } else if (entity.getWeightClass() < 6) {
+                    s = STRAT_WEIGHTS[entity.getWeightClass()];
+                }
+                if (!s.equals("")) {
+                    FontRenderContext fontContext = new FontRenderContext(null, true, true);
+                    Font font = new Font("SansSerif", Font.BOLD, 100);
+                    FontMetrics currentMetrics = getFontMetrics(font);
+                    int stringWidth = currentMetrics.stringWidth(s);
+                    GlyphVector gv = font.createGlyphVector(fontContext, s);
+                    g2.fill(gv.getOutline((int)STRAT_CX-stringWidth/2,(float)SYMBOLSIZE.getHeight()/3.0f));
+                }
+            }
+            // Draw the unit icon in black
+            g2.draw(form);
+
+            g2.setTransform(svTransform);
+            
+        } else {
+
+            // Draw a slight dark border to set off the icon from the background
+            ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]+2));
+            g.setColor(new Color(100,100,100,200));
+            g.drawPolygon(xPoints, yPoints, xPoints.length);
+            
+            // Fill the icon according to the player color
+            Color pColor = new Color(
+                    PlayerColors.getColorRGB(entity.getOwner().getColorIndex()));
+            g.setColor(pColor);
+            g.fillPolygon(xPoints, yPoints, xPoints.length);
+            
+            // Draw a white border to better show the player color
+            // maybe useful later: if (!entity.isSelectableThisTurn()) {
+            ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]));
+            g.setColor(Color.WHITE);
+            g.drawPolygon(xPoints, yPoints, xPoints.length);
+
+        }
+        
         // Create a colored circle if this is the selected unit
         Entity se = (clientgui == null) ? null : 
             m_game.getEntity(clientgui.getSelectedEntityNum());
         
         if (entity == se) {
-            ((Graphics2D)g).setStroke(new BasicStroke(unitBorder[zoom]+1));
-            g.setColor(GUIPreferences.getInstance().getColor(
+            g2.setStroke(new BasicStroke(unitBorder[zoom]+1));
+            g2.setColor(GUIPreferences.getInstance().getColor(
                     GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR));
             int rad = unitSize*2-1;
-            g.drawOval(baseX-rad, baseY-rad, rad*2, rad*2);
+            g2.drawOval(baseX-rad, baseY-rad, rad*2, rad*2);
         }
-        
-        ((Graphics2D)g).setStroke(svStroke);
+
+        g2.setStroke(svStroke);
     }
 
     private void paintRoads(Graphics g) {

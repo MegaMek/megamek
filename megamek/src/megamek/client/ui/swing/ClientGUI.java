@@ -1244,7 +1244,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     /**
      * Toggles the entity display window
      */
-    public void toggleDisplay() {
+    private void toggleDisplay() {
         mechW.setVisible(!mechW.isVisible());
         if (mechW.isVisible()) {
             frame.requestFocus();
@@ -1276,7 +1276,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         }
     }
 
-    public void toggleUnitOverview() {
+    private void toggleUnitOverview() {
         uo.setVisible(!uo.isVisible());
         GUIPreferences.getInstance().setShowUnitOverview(uo.isVisible());
         bv.refreshDisplayables();
@@ -1285,7 +1285,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     /**
      * Toggles the minimap window Also, toggles the minimap enabled setting
      */
-    public void toggleMap() {
+    private void toggleMap() {
         if (minimapW.isVisible()) {
             GUIPreferences.getInstance().setMinimapEnabled(false);
         } else {

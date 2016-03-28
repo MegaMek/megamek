@@ -90,6 +90,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String AOHEXSHADOWS = "AoHexShadows";
     public static final String LEVELHIGHLIGHT = "LevelHighlight";
     public static final String FLOATINGISO = "FloatingIsometric";
+    public static final String MMSYMBOL = "MmSymbol";
     public static final String AUTO_END_FIRING = "AutoEndFiring";
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
     public static final String CHAT_LOUNGE_TABS = "ChatLoungeTabs";
@@ -366,6 +367,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     
     public boolean getFloatingIso() {
         return store.getBoolean(FLOATINGISO);
+    }
+    
+    public boolean getMmSymbol() {
+        return store.getBoolean(MMSYMBOL);
     }
 
     public boolean getShadowMap() {
@@ -737,11 +742,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setFloatingIso(boolean state){
         store.setValue(FLOATINGISO, state);
     }
-    
+
+    public void setMmSymbol(boolean state){
+        store.setValue(MMSYMBOL, state);
+    }
+
     public void setLevelHighlight(boolean state){
         store.setValue(LEVELHIGHLIGHT, state);
     }
-    
+
     public boolean getShowDamageLevel(){
         return store.getBoolean(SHOW_DAMAGE_LEVEL);
     }

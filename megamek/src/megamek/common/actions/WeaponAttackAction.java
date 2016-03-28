@@ -1514,6 +1514,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (Compute.isAirToGround(ae, target)) {
             if (wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
                 toHit.addModifier(ae.getAltitude(), "bombing altitude");
+                if (ae.getCrew().getOptions().booleanOption("golden_goose")) {
+                    toHit.addModifier(-2, "Golden Goose");
+                }
             } else if (isStrafing) {
                 toHit.addModifier(+4, "strafing");
                 if (ae.getAltitude() == 1) {
@@ -1529,6 +1532,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             } else {
                 toHit.addModifier(+2, "air to ground strike");
+                if (ae.getCrew().getOptions().booleanOption("golden_goose")) {
+                    toHit.addModifier(-1, "Golden Goose");
+                }
             }
         }
 

@@ -34,6 +34,7 @@ v0.41.16-git
 + PR #94: Hotkey for toggling Walk/Jump, Movement Envelope now static on or off 
 + Issue #106 - Fixing name generator resource loading derp
 + Data: New Sprites
++ PR #109: StratOps Symbols for the Minimap
 
 v0.41.15 (2016-02-21 14:15 UTC)
 + Issue #19: doTryUnstuck Error

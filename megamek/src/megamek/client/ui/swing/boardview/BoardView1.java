@@ -4419,8 +4419,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         
         // Button 4: Hide/Show the minimap and unitDisplay
         if (me.getButton() == 4) {
-            clientgui.toggleDisplay();
-            clientgui.toggleMap();
+            clientgui.toggleMMUDDisplays();
         }
         
         // we clicked the right mouse button,

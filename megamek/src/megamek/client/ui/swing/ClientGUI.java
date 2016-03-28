@@ -1257,17 +1257,18 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
     public void setDisplayVisible(boolean visible) {
         // If no unit is displayed, select a unit so the display can be safely shown
         // This can happen when using mouse button 4
-        if ((mechD.getCurrentEntity() == null) &&
-                (getClient() != null) && 
-                (getClient().getGame() != null)) {
-            List<Entity> es = getClient().getGame().getEntitiesVector();
-            if ((es != null) && (es.size() > 0)) {
-                mechD.displayEntity(es.get(0));
+        if (mechD.getCurrentEntity() == null) {
+            if ((getClient() != null) && 
+                    (getClient().getGame() != null)) {
+                List<Entity> es = getClient().getGame().getEntitiesVector();
+                if ((es != null) && (es.size() > 0)) {
+                    mechD.displayEntity(es.get(0));
+                } else {
+                    return;
+                }
             } else {
                 return;
             }
-        } else {
-            return;
         }
 
         mechW.setVisible(visible);

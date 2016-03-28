@@ -1533,7 +1533,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             } else {
                 toHit.addModifier(+2, "air to ground strike");
                 if (ae.getCrew().getOptions().booleanOption("golden_goose")) {
-                    toHit.addModifier(-1, "Golden Goose");
+                    if (wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
+                        toHit.addModifier(-2, "Golden Goose");
+                    } else {
+                        toHit.addModifier(-1, "Golden Goose");
+                    }
                 }
             }
         }

@@ -50,7 +50,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, "melee_specialist", false); //$NON-NLS-1$
         // addOption(adv, "natural_grace", false); //$NON-NLS-1$
         // addOption(adv, "ride_wash", false); //$NON-NLS-1$
-        // addOption(adv, "shaky_stick", false); //$NON-NLS-1$
+        addOption(adv, "shaky_stick", false); //$NON-NLS-1$
         // addOption(adv, "slugger", false); //$NON-NLS-1$
         // addOption(adv, "speed_demon", false); //$NON-NLS-1$
         // addOption(adv, "stand_aside", false); //$NON-NLS-1$

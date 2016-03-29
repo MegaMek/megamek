@@ -773,6 +773,10 @@ public abstract class TestEntity implements TestEntityOption {
                 retVal = true;
             }
         } else if (getEntity() instanceof Mech) {
+            // TODO: Enable TL testing for cockpits/gyros
+            //  This ends up causing canon units to fail, and we have to come
+            //  up with a way to deal with this
+            /*
             Mech mech = (Mech) getEntity();
             cockpitType = mech.getCockpitType();
             cockpitTL = TechConstants.getCockpitTechLevel(cockpitType,
@@ -808,8 +812,13 @@ public abstract class TestEntity implements TestEntityOption {
                 buff.append(")\n");
                 retVal = true;
             }
+            */
         }
         if (getEntity().getEngine() != null) {
+            // TODO: Enable TL testing for engines
+            //  This ends up causing canon units to fail, and we have to come
+            //  up with a way to deal with this
+            /*
             int engineTL = getEntity().getEngine().getTechType(eTLYear);
             if (!TechConstants.isLegal(eTechLevel, engineTL, mixedTech)) {
                 buff.append("Engine is illegal at unit's tech level (");
@@ -828,6 +837,7 @@ public abstract class TestEntity implements TestEntityOption {
                 buff.append("\n");
                 retVal = true;
             }
+            */
         }
 
         return retVal;

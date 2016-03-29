@@ -1522,6 +1522,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 if (ae.getAltitude() == 1) {
                     toHit.addModifier(+2, "strafing at NOE");
                 }
+                if (ae.getCrew().getOptions().booleanOption("ground_hugger")) {
+                    toHit.addModifier(-1, "Ground Hugger");
+                }
                 // Additional Nape-of-Earth restrictions for strafing
                 if (ae.getAltitude() == 1) {
                     Coords prevCoords = ae.passedThroughPrevious(target
@@ -1538,6 +1541,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     } else {
                         toHit.addModifier(-1, "Golden Goose");
                     }
+                }
+                if (ae.getCrew().getOptions().booleanOption("ground_hugger") && !wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
+                    toHit.addModifier(-1, "Ground Hugger");
                 }
             }
         }

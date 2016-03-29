@@ -65,7 +65,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, "cluster_master", false); //$NON-NLS-1$
         // addOption(adv, "fist_fire", false); //$NON-NLS-1$
         addOption(adv, "golden_goose", false); //$NON-NLS-1$
-        // addOption(adv, "ground_hugger", false); //$NON-NLS-1$
+        addOption(adv, "ground_hugger", false); //$NON-NLS-1$
         addOption(adv, "specialist", new Vector<String>()); //$NON-NLS-1$
         // addOption(adv, "marksman", false); //$NON-NLS-1$
         addOption(adv, "multi_tasker", false); //$NON-NLS-1$

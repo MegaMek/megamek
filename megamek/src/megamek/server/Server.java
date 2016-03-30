@@ -2160,7 +2160,7 @@ public class Server implements Runnable {
             && (entityUsed != null)) {
 
             // What's the unit number and ID of the entity used?
-            final char movingUnit = entityUsed.getUnitNumber();
+            final short movingUnit = entityUsed.getUnitNumber();
             final int movingId = entityUsed.getId();
 
             // How many other Protomechs are in the unit that can fire?
@@ -2169,7 +2169,7 @@ public class Server implements Runnable {
 
                 private final int entityId = movingId;
 
-                private final char unitNum = movingUnit;
+                private final short unitNum = movingUnit;
 
                 public boolean accept(Entity entity) {
                     if ((entity instanceof Protomech)
@@ -3450,14 +3450,14 @@ public class Server implements Runnable {
                 "protos_move_multi");
         if (!protosMoveMulti) {
             entities = new ArrayList<>(game.getEntitiesVector().size());
-            Set<Character> movedUnits = new HashSet<Character>();
+            Set<Short> movedUnits = new HashSet<>();
             for (Entity e : game.getEntitiesVector()) {
                 // This only effects Protos for the time being
                 if (!(e instanceof Protomech)) {
                     entities.add(e);
                     continue;
                 }
-                char unitNumber = e.getUnitNumber();
+                short unitNumber = e.getUnitNumber();
                 if ((unitNumber == Entity.NONE)
                         || !movedUnits.contains(unitNumber)) {
                     entities.add(e);
@@ -28078,8 +28078,8 @@ public class Server implements Runnable {
 
                 // According to page 54 of the BMRr, Protomechs must be
                 // deployed in full Points of five, unless circumstances have
-                // reduced the number to less that that.
-                entity.setUnitNumber((char) (numPlayerProtos / 5));
+                // reduced the number to less than that.
+                entity.setUnitNumber((short) (numPlayerProtos / 5));
 
             } // End added-Protomech
 
@@ -28570,12 +28570,12 @@ public class Server implements Runnable {
 
                     // According to page 54 of the BMRr, Protomechs must be
                     // deployed in full Points of five, unless "losses" have
-                    // reduced the number to less that that.
+                    // reduced the number to less than that.
                     final char oldMax = (char) (Math
                                                         .ceil(numPlayerProtos / 5.0) - 1);
                     char newMax = (char) (Math
                                                   .ceil((numPlayerProtos - 1) / 5.0) - 1);
-                    char deletedUnitNum = entity.getUnitNumber();
+                    short deletedUnitNum = entity.getUnitNumber();
 
                     // Do we have to update a Protomech from the last unit?
                     if ((oldMax != deletedUnitNum) && (oldMax != newMax)) {

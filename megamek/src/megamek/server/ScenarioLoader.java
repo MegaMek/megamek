@@ -61,7 +61,9 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.DirectoryItems;
 
 public class ScenarioLoader {
-    private final File scenarioFile;
+    private static final String PROP_MMSVERSION = "MMSVersion"; //$NON-NLS-1$
+    
+	private final File scenarioFile;
     // copied from ChatLounge.java
     private final List<DamagePlan> damagePlans = new ArrayList<DamagePlan>();
 
@@ -75,18 +77,8 @@ public class ScenarioLoader {
 
     public ScenarioLoader(File f) {
         scenarioFile = f;
-
-        // Build camo model so we can validate camo selections for faction and
-        // individual unit camo
-        // Code stolen from client/ui/swing/CamoChoiceDialog.java
-        // Parse the camo directory.
-
         try {
-            camos = new DirectoryItems(
-                    Configuration.camoDir(),
-                    "", //$NON-NLS-1$
-                    ImageFileFactory.getInstance()
-            );
+            camos = new DirectoryItems(Configuration.camoDir(), "", ImageFileFactory.getInstance()); //$NON-NLS-1$
         } catch (Exception e) {
             camos = null;
         }
@@ -292,7 +284,7 @@ public class ScenarioLoader {
         System.out.println("Loading scenario from " + scenarioFile);
         Properties p = loadProperties();
 
-        String sCheck = p.getProperty("MMSVersion");
+        String sCheck = p.getProperty(PROP_MMSVERSION);
         if (sCheck == null) {
             throw new Exception("Not a valid MMS file.  No MMSVersion.");
         }
@@ -374,7 +366,7 @@ public class ScenarioLoader {
             if (s != null) {
                 StringTokenizer st = new StringTokenizer(s, ",");
                 while (st.hasMoreTokens()) {
-                    dp.AddSpecificDammage(st.nextToken());
+                    dp.addSpecificDammage(st.nextToken());
                 }
                 dpCreated = true;
             }
@@ -386,7 +378,7 @@ public class ScenarioLoader {
             if (s != null) {
                 StringTokenizer st = new StringTokenizer(s, ",");
                 while (st.hasMoreTokens()) {
-                    chp.AddCritHit(st.nextToken());
+                    chp.addCritHit(st.nextToken());
                 }
                 chpCreated = true;
             }
@@ -398,7 +390,7 @@ public class ScenarioLoader {
             if (s != null) {
                 StringTokenizer st = new StringTokenizer(s, ",");
                 while (st.hasMoreTokens()) {
-                    sap.AddSetAmmoTo(st.nextToken());
+                    sap.addSetAmmoTo(st.nextToken());
                 }
                 sapCreated = true;
             }
@@ -971,7 +963,7 @@ public class ScenarioLoader {
             entity = e;
         }
 
-        public void AddCritHit(String s) {
+        public void addCritHit(String s) {
             int loc;
             int slot;
 
@@ -1014,7 +1006,7 @@ public class ScenarioLoader {
         /**
          * Converts 2:1-34 to Location 2 Slot 1 set Ammo to 34
          */
-        public void AddSetAmmoTo(String s) {
+        public void addSetAmmoTo(String s) {
             int loc = 0;
             int slot = 0;
             int setTo = 0;
@@ -1073,7 +1065,7 @@ public class ScenarioLoader {
         /**
          * Converts N2:1 to Nornam hit to location 2 set armor to 1!
          */
-        public void AddSpecificDammage(String s) {
+        public void addSpecificDammage(String s) {
             int loc = 0;
             int setTo = 0;
             boolean rear = false;

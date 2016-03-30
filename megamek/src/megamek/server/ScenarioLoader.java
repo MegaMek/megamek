@@ -16,13 +16,18 @@
 
 package megamek.server;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -61,7 +66,12 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.DirectoryItems;
 
 public class ScenarioLoader {
-    private static final String PROP_MMSVERSION = "MMSVersion"; //$NON-NLS-1$
+	private static final String COMMENT_MARK = "#"; //$NON-NLS-1$
+    private static final String SPLITTER_PROPERTY = "="; //$NON-NLS-1$
+	private static final String SEPARATOR_COMMA = ","; //$NON-NLS-1$
+
+
+	private static final String PROP_MMSVERSION = "MMSVersion"; //$NON-NLS-1$
     
 	private final File scenarioFile;
     // copied from ChatLounge.java
@@ -282,9 +292,9 @@ public class ScenarioLoader {
 
     public IGame createGame() throws Exception {
         System.out.println("Loading scenario from " + scenarioFile);
-        Properties p = loadProperties();
+        StringMultiMap p = loadProperties();
 
-        String sCheck = p.getProperty(PROP_MMSVERSION);
+        String sCheck = p.getString(PROP_MMSVERSION);
         if (sCheck == null) {
             throw new Exception("Not a valid MMS file.  No MMSVersion.");
         }
@@ -312,7 +322,7 @@ public class ScenarioLoader {
         }
         // game's ready
         g.getOptions().initialize();
-        String optionFile = p.getProperty("GameOptionsFile");
+        String optionFile = p.getString("GameOptionsFile");
         if (optionFile == null) {
             g.getOptions().loadOptions();
         } else {
@@ -339,7 +349,7 @@ public class ScenarioLoader {
         return g;
     }
 
-    private Entity[] buildFactionEntities(Properties p, IPlayer player)
+    private Entity[] buildFactionEntities(StringMultiMap p, IPlayer player)
             throws Exception {
         String sFaction = player.getName();
 
@@ -730,8 +740,8 @@ public class ScenarioLoader {
         return -1;
     }
 
-    private Player[] createPlayers(Properties p) throws Exception {
-        String sFactions = p.getProperty("Factions");
+    private Player[] createPlayers(StringMultiMap p) throws Exception {
+        String sFactions = p.getString("Factions");
         if (sFactions == null) {
             throw new Exception("Not a valid MMS file.  No Factions");
         }
@@ -746,7 +756,7 @@ public class ScenarioLoader {
             out[x].setGhost(true);
 
             // check for initial placement
-            String s = p.getProperty("Location_" + out[x].getName());
+            String s = p.getString("Location_" + out[x].getName());
 
             // default to any
             if (s == null) {
@@ -763,7 +773,7 @@ public class ScenarioLoader {
             out[x].setStartingPos(nDir);
 
             // Check for Faction Camo
-            String camo = p.getProperty("Camo_" + out[x].getName());
+            String camo = p.getString("Camo_" + out[x].getName());
             if ((camo != null) && (camo != "")) {
                 parseCamo(out[x], camo);
             }
@@ -771,7 +781,7 @@ public class ScenarioLoader {
             // Check for team setup
 
             try {
-                team = Integer.parseInt(p.getProperty("Team_"
+                team = Integer.parseInt(p.getString("Team_"
                         + out[x].getName()));
             } catch (Exception e) {
                 team++;
@@ -779,7 +789,7 @@ public class ScenarioLoader {
 
             out[x].setTeam(Math.min(team, 5));
 
-            String minefields = p.getProperty("Minefields_" + out[x].getName());
+            String minefields = p.getString("Minefields_" + out[x].getName());
             if (minefields != null) {
                 try {
                     StringTokenizer mfs = new StringTokenizer(minefields, ",");
@@ -803,31 +813,31 @@ public class ScenarioLoader {
     /**
      * Load board files and create the megaboard.
      */
-    private IBoard createBoard(Properties p) throws Exception {
+    private IBoard createBoard(StringMultiMap p) throws Exception {
         int mapWidth = 16, mapHeight = 17;
-        if (p.getProperty("MapWidth") == null) {
+        if (p.getString("MapWidth") == null) {
             System.out.println("No map width specified.  Using " + mapWidth);
         } else {
-            mapWidth = Integer.parseInt(p.getProperty("MapWidth"));
+            mapWidth = Integer.parseInt(p.getString("MapWidth"));
         }
 
-        if (p.getProperty("MapHeight") == null) {
+        if (p.getString("MapHeight") == null) {
             System.out.println("No map height specified.  Using " + mapHeight);
         } else {
-            mapHeight = Integer.parseInt(p.getProperty("MapHeight"));
+            mapHeight = Integer.parseInt(p.getString("MapHeight"));
         }
 
         int nWidth = 1, nHeight = 1;
-        if (p.getProperty("BoardWidth") == null) {
+        if (p.getString("BoardWidth") == null) {
             System.out.println("No board width specified.  Using " + nWidth);
         } else {
-            nWidth = Integer.parseInt(p.getProperty("BoardWidth"));
+            nWidth = Integer.parseInt(p.getString("BoardWidth"));
         }
 
-        if (p.getProperty("BoardHeight") == null) {
+        if (p.getString("BoardHeight") == null) {
             System.out.println("No board height specified.  Using " + nHeight);
         } else {
-            nHeight = Integer.parseInt(p.getProperty("BoardHeight"));
+            nHeight = Integer.parseInt(p.getString("BoardHeight"));
         }
 
         System.out.println("Mapsheets are " + mapWidth + " by " + mapHeight
@@ -835,11 +845,11 @@ public class ScenarioLoader {
         System.out.println("Constructing " + nWidth + " by " + nHeight
                 + " board.");
         int cf = 0;
-        if (p.getProperty("BridgeCF") == null) {
+        if (p.getString("BridgeCF") == null) {
             System.out
                     .println("No CF for bridges defined. Using map file defaults.");
         } else {
-            cf = Integer.parseInt(p.getProperty("BridgeCF"));
+            cf = Integer.parseInt(p.getString("BridgeCF"));
             System.out.println("Overriding map-defined bridge CFs with " + cf
                     + ".");
         }
@@ -856,7 +866,7 @@ public class ScenarioLoader {
         }
 
         IBoard[] ba = new IBoard[nWidth * nHeight];
-        StringTokenizer st = new StringTokenizer(p.getProperty("Maps"), ",");
+        StringTokenizer st = new StringTokenizer(p.getString("Maps"), ",");
         for (int x = 0; x < nWidth; x++) {
             for (int y = 0; y < nHeight; y++) {
                 int n = (y * nWidth) + x;
@@ -903,31 +913,32 @@ public class ScenarioLoader {
                 MapSettings.MEDIUM_GROUND);
     }
 
-    private Properties loadProperties() throws Exception {
-        Properties props = new Properties();
-        FileInputStream fis = new FileInputStream(scenarioFile);
-        props.load(fis);
-        fis.close();
-
-        // Strip trailing spaces
-        int loop;
-        String key;
-        StringBuffer value;
-        Properties fixed = new Properties();
-        Enumeration<Object> keyIt = props.keys();
-        while (keyIt.hasMoreElements()) {
-            key = keyIt.nextElement().toString();
-            value = new StringBuffer(props.getProperty(key));
-            for (loop = value.length() - 1; loop >= 0; loop--) {
-                if (!Character.isWhitespace(value.charAt(loop))) {
-                    break;
-                }
-            }
-
-            value.setLength(loop + 1);
-            fixed.setProperty(key, value.toString());
-        }
-        return fixed;
+    private StringMultiMap loadProperties() throws Exception {
+    	StringMultiMap props = new StringMultiMap();
+    	try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(scenarioFile), "UTF-8"))) { //$NON-NLS-1$
+    		String line = null;
+    		int lineNum = 0;
+    		while(null != (line = reader.readLine())) {
+    			++ lineNum;
+    			line = line.trim();
+    			if(line.startsWith(COMMENT_MARK) || (line.length() == 0)) {
+    				continue;
+    			}
+    			if(!line.contains(SPLITTER_PROPERTY)) {
+    				System.err.println(String.format("Equality sign in scenario file %s on line %d missing; ignoring", //$NON-NLS-1$
+    					scenarioFile, lineNum));
+    				continue;
+    			}
+    			String elements[] = line.split(SPLITTER_PROPERTY, -1);
+    			if(elements.length > 2) {
+    				System.err.println(String.format("Multiple equality signs in scenario file %s on line %d; ignoring", //$NON-NLS-1$
+        					scenarioFile, lineNum));
+        				continue;
+    			}
+    			props.put(elements[0].trim(), elements[1].trim());
+    		}
+    	}
+        return props;
     }
 
     public static void main(String[] saArgs) throws Exception {
@@ -1094,12 +1105,46 @@ public class ScenarioLoader {
     /**
      * Parses out the external game id from the scenario file
      */
-    private int parseExternalGameId(Properties p) {
-        String sExternalId = p.getProperty("ExternalId");
+    private int parseExternalGameId(StringMultiMap p) {
+        String sExternalId = p.getString("ExternalId");
         int ExternalGameId = 0;
         if (sExternalId != null) {
             ExternalGameId = Integer.parseInt(sExternalId);
         }
         return ExternalGameId;
+    }
+    
+    public static class StringMultiMap extends HashMap<String, Collection<String>> {
+		public void put(String key, String value) {
+			Collection<String> values = get(key);
+			if(null == values) {
+				values = new ArrayList<String>();
+				put(key, values);
+			}
+			values.add(value);
+		}
+
+		public String getString(String key) {
+			return getString(key, SEPARATOR_COMMA);
+		}
+
+		public String getString(String key, String separator) {
+			Collection<String> values = get(key);
+			if(null == values || values.size() == 0) {
+				return null;
+			}
+			
+			boolean firstElement = true;
+			StringBuilder sb = new StringBuilder();
+			for(String val : values) {
+				if(firstElement) {
+					firstElement = false;
+				} else {
+					sb.append(separator);
+				}
+				sb.append(val);
+			}
+			return sb.toString();
+		}
     }
 }

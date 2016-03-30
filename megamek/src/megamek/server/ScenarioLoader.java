@@ -18,13 +18,14 @@ package megamek.server;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.AmmoType;
@@ -60,20 +61,20 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.DirectoryItems;
 
 public class ScenarioLoader {
-    private File m_scenFile;
+    private final File scenarioFile;
     // copied from ChatLounge.java
-    private Vector<DamagePlan> m_vDamagePlans = new Vector<DamagePlan>();
+    private final List<DamagePlan> damagePlans = new ArrayList<DamagePlan>();
 
     // Used to store Crit Hits
-    private Vector<CritHitPlan> m_vCritHitPlans = new Vector<CritHitPlan>();
+    private final List<CritHitPlan> critHitPlans = new ArrayList<CritHitPlan>();
 
     // Used to set ammo Spec Ammounts
-    private Vector<SetAmmoPlan> m_vSetAmmoTo = new Vector<SetAmmoPlan>();
+    private final List<SetAmmoPlan> ammoPlans = new ArrayList<SetAmmoPlan>();
 
     private DirectoryItems camos;
 
     public ScenarioLoader(File f) {
-        m_scenFile = f;
+        scenarioFile = f;
 
         // Build camo model so we can validate camo selections for faction and
         // individual unit camo
@@ -96,8 +97,8 @@ public class ScenarioLoader {
      * the random damage until a server is made available to us.
      */
     public void applyDamage(Server s) {
-        for (int x = 0, n = m_vDamagePlans.size(); x < n; x++) {
-            DamagePlan dp = m_vDamagePlans.elementAt(x);
+        for (int x = 0, n = damagePlans.size(); x < n; x++) {
+            DamagePlan dp = damagePlans.get(x);
             System.out
                     .println("Applying damage to " + dp.entity.getShortName());
             for (int y = 0; y < dp.nBlocks; y++) {
@@ -110,7 +111,7 @@ public class ScenarioLoader {
             // Apply Spec Dammage
             for (int dpspot = 0, dpcount = dp.specificDammage.size(); dpspot < dpcount; dpspot++) {
                 // Get the SpecDam
-                SpecDam sd = dp.specificDammage.elementAt(dpspot);
+                SpecDam sd = dp.specificDammage.get(dpspot);
 
                 if (dp.entity.locations() <= sd.loc) {
                     // location is valid
@@ -180,14 +181,14 @@ public class ScenarioLoader {
         }
 
         // Loop throught Crit Hits
-        for (int chSpot = 0, chCount = m_vCritHitPlans.size(); chSpot < chCount; chSpot++) {
-            CritHitPlan chp = m_vCritHitPlans.elementAt(chSpot);
+        for (int chSpot = 0, chCount = critHitPlans.size(); chSpot < chCount; chSpot++) {
+            CritHitPlan chp = critHitPlans.get(chSpot);
             System.out.print("Applying Critical Hits to "
                     + chp.entity.getShortName());
 
             for (int chpspot = 0, chpcount = chp.critHits.size(); chpspot < chpcount; chpspot++) {
                 // Get the ScritHit
-                CritHit ch = chp.critHits.elementAt(chpspot);
+                CritHit ch = chp.critHits.get(chpspot);
 
                 // Apply a critical hit to the indicated slot.
                 if (chp.entity.locations() <= ch.loc) {
@@ -255,14 +256,14 @@ public class ScenarioLoader {
         } // Handle the next critical hit plan
 
         // Loop throught Set Ammo To
-        for (int saSpot = 0, saCount = m_vSetAmmoTo.size(); saSpot < saCount; saSpot++) {
-            SetAmmoPlan sap = m_vSetAmmoTo.elementAt(saSpot);
+        for (int saSpot = 0, saCount = ammoPlans.size(); saSpot < saCount; saSpot++) {
+            SetAmmoPlan sap = ammoPlans.get(saSpot);
             System.out.println("Applying Ammo Adjustment to "
                     + sap.entity.getShortName());
 
             for (int sapSpot = 0, sapCount = sap.ammoSetTo.size(); sapSpot < sapCount; sapSpot++) {
                 // Get the ScritHit
-                SetAmmoTo sa = sap.ammoSetTo.elementAt(sapSpot);
+                SetAmmoTo sa = sap.ammoSetTo.get(sapSpot);
 
                 // Only can be done against Mechs
                 if (sap.entity instanceof Mech) {
@@ -288,7 +289,7 @@ public class ScenarioLoader {
     }
 
     public IGame createGame() throws Exception {
-        System.out.println("Loading scenario from " + m_scenFile);
+        System.out.println("Loading scenario from " + scenarioFile);
         Properties p = loadProperties();
 
         String sCheck = p.getProperty("MMSVersion");
@@ -324,7 +325,7 @@ public class ScenarioLoader {
             g.getOptions().loadOptions();
         } else {
             g.getOptions().loadOptions(
-                    new File(m_scenFile.getParentFile(), optionFile), true);
+                    new File(scenarioFile.getParentFile(), optionFile), true);
         }
 
         // set wind
@@ -350,14 +351,12 @@ public class ScenarioLoader {
             throws Exception {
         String sFaction = player.getName();
 
-        Vector<Entity> vEntities = new Vector<Entity>();
+        List<Entity> vEntities = new ArrayList<Entity>();
         for (int i = 1; true; i++) {
             String s = p.getProperty("Unit_" + sFaction + "_" + i);
             if (s == null) {
                 // prepare and return array
-                Entity[] out = new Entity[vEntities.size()];
-                vEntities.copyInto(out);
-                return out;
+                return vEntities.toArray(new Entity[vEntities.size()]);
             }
             Entity e = parseEntityLine(s);
 
@@ -367,7 +366,7 @@ public class ScenarioLoader {
             s = p.getProperty("Unit_" + sFaction + "_" + i + "_Damage");
             if (s != null) {
                 int nBlocks = Integer.parseInt(s);
-                m_vDamagePlans.addElement(new DamagePlan(e, nBlocks));
+                damagePlans.add(new DamagePlan(e, nBlocks));
             }
 
             // Add the Specif Dammage if it exists
@@ -405,13 +404,13 @@ public class ScenarioLoader {
             }
 
             if (chpCreated) {
-                m_vCritHitPlans.addElement(chp);
+                critHitPlans.add(chp);
             }
             if (dpCreated) {
-                m_vDamagePlans.addElement(dp);
+                damagePlans.add(dp);
             }
             if (sapCreated) {
-                m_vSetAmmoTo.addElement(sap);
+                ammoPlans.add(sap);
             }
 
             // Check for pilot hits
@@ -482,7 +481,7 @@ public class ScenarioLoader {
             if (null != s) {
                 parseCamo(e, s);
             }
-            vEntities.addElement(e);
+            vEntities.add(e);
         }
     }
 
@@ -854,12 +853,12 @@ public class ScenarioLoader {
         }
         // load available boards
         // basically copied from Server.java. Should get moved somewhere neutral
-        Vector<String> vBoards = new Vector<String>();
+        List<String> vBoards = new ArrayList<String>();
 
         String[] fileList = Configuration.boardsDir().list();
         for (int i = 0; i < fileList.length; i++) {
             if (fileList[i].endsWith(".board")) {
-                vBoards.addElement(fileList[i].substring(0,
+                vBoards.add(fileList[i].substring(0,
                         fileList[i].lastIndexOf(".board")));
             }
         }
@@ -884,7 +883,7 @@ public class ScenarioLoader {
 
                 String sBoardFile;
                 if (sBoard.equals("RANDOM")) {
-                    sBoardFile = (vBoards.elementAt(Compute.randomInt(vBoards
+                    sBoardFile = (vBoards.get(Compute.randomInt(vBoards
                             .size()))) + ".board";
                 } else {
                     sBoardFile = sBoard + ".board";
@@ -914,7 +913,7 @@ public class ScenarioLoader {
 
     private Properties loadProperties() throws Exception {
         Properties props = new Properties();
-        FileInputStream fis = new FileInputStream(m_scenFile);
+        FileInputStream fis = new FileInputStream(scenarioFile);
         props.load(fis);
         fis.close();
 
@@ -966,7 +965,7 @@ public class ScenarioLoader {
      */
     class CritHitPlan {
         public Entity entity;
-        Vector<CritHit> critHits = new Vector<CritHit>();
+        List<CritHit> critHits = new ArrayList<CritHit>();
 
         public CritHitPlan(Entity e) {
             entity = e;
@@ -981,7 +980,7 @@ public class ScenarioLoader {
 
             loc = Integer.parseInt(s.substring(0, ewSpot));
             slot = Integer.parseInt(s.substring(ewSpot + 1));
-            critHits.addElement(new CritHit(loc, slot - 1));
+            critHits.add(new CritHit(loc, slot - 1));
         }
     }
 
@@ -1006,7 +1005,7 @@ public class ScenarioLoader {
      */
     class SetAmmoPlan {
         public Entity entity;
-        Vector<SetAmmoTo> ammoSetTo = new Vector<SetAmmoTo>();
+        List<SetAmmoTo> ammoSetTo = new ArrayList<SetAmmoTo>();
 
         public SetAmmoPlan(Entity e) {
             entity = e;
@@ -1028,7 +1027,7 @@ public class ScenarioLoader {
             slot = Integer.parseInt(s.substring(ewSpot + 1, amSpot));
             setTo = Integer.parseInt(s.substring(amSpot + 1));
 
-            ammoSetTo.addElement(new SetAmmoTo(loc, slot - 1, setTo));
+            ammoSetTo.add(new SetAmmoTo(loc, slot - 1, setTo));
 
         }
     }
@@ -1058,8 +1057,8 @@ public class ScenarioLoader {
     class DamagePlan {
         public Entity entity;
         public int nBlocks;
-        Vector<SpecDam> specificDammage = new Vector<SpecDam>();
-        Vector<SetAmmoTo> ammoSetTo = new Vector<SetAmmoTo>();
+        List<SpecDam> specificDammage = new ArrayList<SpecDam>();
+        List<SetAmmoTo> ammoSetTo = new ArrayList<SetAmmoTo>();
 
         public DamagePlan(Entity e, int n) {
             entity = e;
@@ -1096,7 +1095,7 @@ public class ScenarioLoader {
             // the string
             loc = Integer.parseInt(s.substring(1, ewSpot));
             setTo = Integer.parseInt(s.substring(ewSpot + 1));
-            specificDammage.addElement(new SpecDam(loc, setTo, rear, internal));
+            specificDammage.add(new SpecDam(loc, setTo, rear, internal));
         }
     }
 

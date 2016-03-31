@@ -22,15 +22,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.IllegalFormatException;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Queue;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -76,11 +78,20 @@ public class ScenarioLoader {
     private static final String SEPARATOR_COLON = ":"; //$NON-NLS-1$
     private static final String SEPARATOR_UNDERSCORE = "_"; //$NON-NLS-1$
 
+    private static final String FILE_SUFFIX_BOARD = ".board"; //$NON-NLS-1$
+
 	private static final String PARAM_MMSVERSION = "MMSVersion"; //$NON-NLS-1$
     private static final String PARAM_GAME_OPTIONS_FILE = "GameOptionsFile"; //$NON-NLS-1$
     private static final String PARAM_GAME_EXTERNAL_ID = "ExternalId"; //$NON-NLS-1$
     private static final String PARAM_FACTIONS = "Factions"; //$NON-NLS-1$
-    
+
+    private static final String PARAM_MAP_WIDTH = "MapWidth"; //$NON-NLS-1$
+    private static final String PARAM_MAP_HEIGHT = "MapHeight"; //$NON-NLS-1$
+    private static final String PARAM_BOARD_WIDTH = "BoardWidth"; //$NON-NLS-1$
+    private static final String PARAM_BOARD_HEIGHT = "BoardHeight"; //$NON-NLS-1$
+    private static final String PARAM_BRIDGE_CF = "BridgeCF"; //$NON-NLS-1$
+    private static final String PARAM_MAPS = "Maps"; //$NON-NLS-1$
+
     private static final String PARAM_TEAM = "Team"; //$NON-NLS-1$
     private static final String PARAM_LOCATION = "Location"; //$NON-NLS-1$
     private static final String PARAM_MINEFIELDS = "Minefields"; //$NON-NLS-1$
@@ -96,6 +107,8 @@ public class ScenarioLoader {
     private static final String PARAM_DEPLOYMENT_ROUND = "DeploymentRound"; //$NON-NLS-1$
     private static final String PARAM_CAMO = "Camo"; //$NON-NLS-1$
     
+    private static final String MAP_RANDOM = "RANDOM"; //$NON-NLS-1$
+
 	private final File scenarioFile;
     // copied from ChatLounge.java
     private final List<DamagePlan> damagePlans = new ArrayList<DamagePlan>();
@@ -731,91 +744,83 @@ public class ScenarioLoader {
     /**
      * Load board files and create the megaboard.
      */
-    private IBoard createBoard(StringMultiMap p) throws Exception {
+    private IBoard createBoard(StringMultiMap p) throws ScenarioLoaderException {
         int mapWidth = 16, mapHeight = 17;
-        if (p.getString("MapWidth") == null) {
-            System.out.println("No map width specified.  Using " + mapWidth);
+        if(null == p.getString(PARAM_MAP_WIDTH)) {
+            System.out.println(String.format("No map width specified; using %d", mapWidth)); //$NON-NLS-1$
         } else {
-            mapWidth = Integer.parseInt(p.getString("MapWidth"));
+            mapWidth = Integer.parseInt(p.getString(PARAM_MAP_WIDTH));
         }
 
-        if (p.getString("MapHeight") == null) {
-            System.out.println("No map height specified.  Using " + mapHeight);
+        if(null == p.getString(PARAM_MAP_HEIGHT)) {
+            System.out.println(String.format("No map height specified; using %d", mapHeight)); //$NON-NLS-1$
         } else {
-            mapHeight = Integer.parseInt(p.getString("MapHeight"));
+            mapHeight = Integer.parseInt(p.getString(PARAM_MAP_HEIGHT));
         }
 
         int nWidth = 1, nHeight = 1;
-        if (p.getString("BoardWidth") == null) {
-            System.out.println("No board width specified.  Using " + nWidth);
+        if(null == p.getString(PARAM_BOARD_WIDTH)) {
+            System.out.println(String.format("No board width specified; using %d", nWidth)); //$NON-NLS-1$
         } else {
-            nWidth = Integer.parseInt(p.getString("BoardWidth"));
+            nWidth = Integer.parseInt(p.getString(PARAM_BOARD_WIDTH));
         }
 
-        if (p.getString("BoardHeight") == null) {
-            System.out.println("No board height specified.  Using " + nHeight);
+        if(null == p.getString(PARAM_BOARD_HEIGHT)) {
+            System.out.println(String.format("No board height specified; using %d", nHeight)); //$NON-NLS-1$
         } else {
-            nHeight = Integer.parseInt(p.getString("BoardHeight"));
+            nHeight = Integer.parseInt(p.getString(PARAM_BOARD_HEIGHT));
         }
 
-        System.out.println("Mapsheets are " + mapWidth + " by " + mapHeight
-                + " hexes.");
-        System.out.println("Constructing " + nWidth + " by " + nHeight
-                + " board.");
+        System.out.println(String.format("Mapsheets are %d by %d hexes.", mapWidth, mapHeight)); //$NON-NLS-1$
+        System.out.println(String.format("Constructing %d by %d board.", nWidth, nHeight)); //$NON-NLS-1$
         int cf = 0;
-        if (p.getString("BridgeCF") == null) {
-            System.out
-                    .println("No CF for bridges defined. Using map file defaults.");
+        if(null == p.getString(PARAM_BRIDGE_CF)) {
+            System.out.println("No CF for bridges defined. Using map file defaults."); //$NON-NLS-1$
         } else {
-            cf = Integer.parseInt(p.getString("BridgeCF"));
-            System.out.println("Overriding map-defined bridge CFs with " + cf
-                    + ".");
+            cf = Integer.parseInt(p.getString(PARAM_BRIDGE_CF));
+            System.out.println(String.format("Overriding map-defined bridge CFs with %d.", cf)); //$NON-NLS-1$
         }
         // load available boards
         // basically copied from Server.java. Should get moved somewhere neutral
         List<String> vBoards = new ArrayList<String>();
 
-        String[] fileList = Configuration.boardsDir().list();
-        for (int i = 0; i < fileList.length; i++) {
-            if (fileList[i].endsWith(".board")) {
-                vBoards.add(fileList[i].substring(0,
-                        fileList[i].lastIndexOf(".board")));
+        for(String file : Configuration.boardsDir().list()) {
+            if(file.toLowerCase(Locale.ROOT).endsWith(FILE_SUFFIX_BOARD)) {
+                vBoards.add(file.substring(0, file.length() - FILE_SUFFIX_BOARD.length()));
             }
         }
 
         IBoard[] ba = new IBoard[nWidth * nHeight];
-        StringTokenizer st = new StringTokenizer(p.getString("Maps"), ",");
-        for (int x = 0; x < nWidth; x++) {
-            for (int y = 0; y < nHeight; y++) {
+        Queue<String> maps = new LinkedList<String>(
+            Arrays.asList(p.getString(PARAM_MAPS).split(SEPARATOR_COMMA, -1)));
+        for(int x = 0; x < nWidth; x++) {
+            for(int y = 0; y < nHeight; y++) {
                 int n = (y * nWidth) + x;
-                String sBoard = "RANDOM";
-                if (st.hasMoreTokens()) {
-                    sBoard = st.nextToken();
+                String board = MAP_RANDOM;
+                if(!maps.isEmpty()) {
+                    board = maps.poll();
                 }
-                System.out.println("(" + x + "," + y + ")" + sBoard);
+                System.out.println(String.format("(%d,%d) %s", x, y, board)); //$NON-NLS-1$
 
                 boolean isRotated = false;
-                if (sBoard.startsWith(Board.BOARD_REQUEST_ROTATION)) {
+                if(board.startsWith(Board.BOARD_REQUEST_ROTATION)) {
                     isRotated = true;
-                    sBoard = sBoard.substring(Board.BOARD_REQUEST_ROTATION
-                            .length());
+                    board = board.substring(Board.BOARD_REQUEST_ROTATION.length());
                 }
 
                 String sBoardFile;
-                if (sBoard.equals("RANDOM")) {
-                    sBoardFile = (vBoards.get(Compute.randomInt(vBoards
-                            .size()))) + ".board";
+                if(board.equals(MAP_RANDOM)) {
+                    sBoardFile = (vBoards.get(Compute.randomInt(vBoards.size()))) + FILE_SUFFIX_BOARD;
                 } else {
-                    sBoardFile = sBoard + ".board";
+                    sBoardFile = board + FILE_SUFFIX_BOARD;
                 }
                 File fBoard = new File(Configuration.boardsDir(), sBoardFile);
                 if (!fBoard.exists()) {
-                    throw new Exception("Scenario requires nonexistant board: "
-                            + sBoard);
+                    throw new ScenarioLoaderException("nonexistantBoard", board);
                 }
                 ba[n] = new Board();
                 ba[n].load(new File(Configuration.boardsDir(), sBoardFile));
-                if (cf > 0) {
+                if(cf > 0) {
                     ba[n].setBridgeCF(cf);
                 }
                 BoardUtilities.flip(ba[n], isRotated, isRotated);
@@ -827,8 +832,7 @@ public class ScenarioLoader {
             return ba[0];
         }
         // construct the big board
-        return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba,
-                MapSettings.MEDIUM_GROUND);
+        return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba, MapSettings.MEDIUM_GROUND);
     }
 
     private StringMultiMap load() throws ScenarioLoaderException {

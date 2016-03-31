@@ -72,14 +72,14 @@ public class ScenarioLoader {
     private static final String COMMENT_MARK = "#"; //$NON-NLS-1$
     
     private static final String SEPARATOR_PROPERTY = "="; //$NON-NLS-1$
-	private static final String SEPARATOR_COMMA = ","; //$NON-NLS-1$
+    private static final String SEPARATOR_COMMA = ","; //$NON-NLS-1$
     private static final String SEPARATOR_SPACE = " "; //$NON-NLS-1$
     private static final String SEPARATOR_COLON = ":"; //$NON-NLS-1$
     private static final String SEPARATOR_UNDERSCORE = "_"; //$NON-NLS-1$
 
     private static final String FILE_SUFFIX_BOARD = ".board"; //$NON-NLS-1$
 
-	private static final String PARAM_MMSVERSION = "MMSVersion"; //$NON-NLS-1$
+    private static final String PARAM_MMSVERSION = "MMSVersion"; //$NON-NLS-1$
     private static final String PARAM_GAME_OPTIONS_FILE = "GameOptionsFile"; //$NON-NLS-1$
     private static final String PARAM_GAME_EXTERNAL_ID = "ExternalId"; //$NON-NLS-1$
     private static final String PARAM_FACTIONS = "Factions"; //$NON-NLS-1$
@@ -108,15 +108,15 @@ public class ScenarioLoader {
     
     private static final String MAP_RANDOM = "RANDOM"; //$NON-NLS-1$
 
-	private final File scenarioFile;
+    private final File scenarioFile;
     // copied from ChatLounge.java
-    private final List<DamagePlan> damagePlans = new ArrayList<DamagePlan>();
+    private final List<DamagePlan> damagePlans = new ArrayList<>();
 
     // Used to store Crit Hits
-    private final List<CritHitPlan> critHitPlans = new ArrayList<CritHitPlan>();
+    private final List<CritHitPlan> critHitPlans = new ArrayList<>();
 
     // Used to set ammo Spec Ammounts
-    private final List<SetAmmoPlan> ammoPlans = new ArrayList<SetAmmoPlan>();
+    private final List<SetAmmoPlan> ammoPlans = new ArrayList<>();
 
     private DirectoryItems camos;
 
@@ -339,7 +339,7 @@ public class ScenarioLoader {
         Pattern unitDataPattern = Pattern.compile(
             String.format("^(Unit_\\Q%s\\E_[^_]+)_([A-Z][^_]+)$", faction)); //$NON-NLS-1$
 
-        Map<String, Entity> entities = new HashMap<String, Entity>();
+        Map<String, Entity> entities = new HashMap<>();
         
         // Gather all defined units
         for(String key : p.keySet()) {
@@ -628,7 +628,7 @@ public class ScenarioLoader {
             throw new ScenarioLoaderException("missingFactions"); //$NON-NLS-1$
         }
         String[] factions = sFactions.split(SEPARATOR_COMMA, -1);
-        List<Player> result = new ArrayList<Player>(factions.length);
+        List<Player> result = new ArrayList<>(factions.length);
         
         int playerId = 0;
         int teamId = 0;
@@ -727,16 +727,16 @@ public class ScenarioLoader {
         }
         // load available boards
         // basically copied from Server.java. Should get moved somewhere neutral
-        List<String> vBoards = new ArrayList<String>();
+        List<String> boards = new ArrayList<>();
 
         for(String file : Configuration.boardsDir().list()) {
             if(file.toLowerCase(Locale.ROOT).endsWith(FILE_SUFFIX_BOARD)) {
-                vBoards.add(file.substring(0, file.length() - FILE_SUFFIX_BOARD.length()));
+                boards.add(file.substring(0, file.length() - FILE_SUFFIX_BOARD.length()));
             }
         }
 
         IBoard[] ba = new IBoard[nWidth * nHeight];
-        Queue<String> maps = new LinkedList<String>(
+        Queue<String> maps = new LinkedList<>(
             Arrays.asList(p.getString(PARAM_MAPS).split(SEPARATOR_COMMA, -1)));
         for(int x = 0; x < nWidth; x++) {
             for(int y = 0; y < nHeight; y++) {
@@ -755,7 +755,7 @@ public class ScenarioLoader {
 
                 String sBoardFile;
                 if(board.equals(MAP_RANDOM)) {
-                    sBoardFile = (vBoards.get(Compute.randomInt(vBoards.size()))) + FILE_SUFFIX_BOARD;
+                    sBoardFile = (boards.get(Compute.randomInt(boards.size()))) + FILE_SUFFIX_BOARD;
                 } else {
                     sBoardFile = board + FILE_SUFFIX_BOARD;
                 }
@@ -781,34 +781,46 @@ public class ScenarioLoader {
     }
 
     private StringMultiMap load() throws ScenarioLoaderException {
-    	StringMultiMap props = new StringMultiMap();
-    	try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(scenarioFile), "UTF-8"))) { //$NON-NLS-1$
-    		String line = null;
-    		int lineNum = 0;
-    		while(null != (line = reader.readLine())) {
-    			++ lineNum;
-    			line = line.trim();
-    			if(line.startsWith(COMMENT_MARK) || (line.length() == 0)) {
-    				continue;
-    			}
-    			if(!line.contains(SEPARATOR_PROPERTY)) {
-    				System.err.println(String.format("Equality sign in scenario file %s on line %d missing; ignoring", //$NON-NLS-1$
-    					scenarioFile, lineNum));
-    				continue;
-    			}
-    			String elements[] = line.split(SEPARATOR_PROPERTY, -1);
-    			if(elements.length > 2) {
-    				System.err.println(String.format("Multiple equality signs in scenario file %s on line %d; ignoring", //$NON-NLS-1$
-        					scenarioFile, lineNum));
-        				continue;
-    			}
-    			props.put(elements[0].trim(), elements[1].trim());
-    		}
-    	} catch(IOException e) {
+        StringMultiMap props = new StringMultiMap();
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(scenarioFile), "UTF-8"))) { //$NON-NLS-1$
+            String line = null;
+            int lineNum = 0;
+            while(null != (line = reader.readLine())) {
+                ++ lineNum;
+                line = line.trim();
+                if(line.startsWith(COMMENT_MARK) || (line.length() == 0)) {
+                    continue;
+                }
+                if(!line.contains(SEPARATOR_PROPERTY)) {
+                    System.err.println(String.format("Equality sign in scenario file %s on line %d missing; ignoring", //$NON-NLS-1$
+                        scenarioFile, lineNum));
+                    continue;
+                }
+                String elements[] = line.split(SEPARATOR_PROPERTY, -1);
+                if(elements.length > 2) {
+                    System.err.println(String.format("Multiple equality signs in scenario file %s on line %d; ignoring", //$NON-NLS-1$
+                            scenarioFile, lineNum));
+                        continue;
+                }
+                props.put(elements[0].trim(), elements[1].trim());
+            }
+        } catch(IOException e) {
             e.printStackTrace();
             throw new ScenarioLoaderException("exceptionReadingFile", scenarioFile); //$NON-NLS-1$
         }
         return props;
+    }
+
+    /**
+     * Parses out the external game id from the scenario file
+     */
+    private int parseExternalGameId(StringMultiMap p) {
+        String sExternalId = p.getString(PARAM_GAME_EXTERNAL_ID);
+        int ExternalGameId = 0;
+        if (sExternalId != null) {
+            ExternalGameId = Integer.parseInt(sExternalId);
+        }
+        return ExternalGameId;
     }
 
     public static void main(String[] saArgs) throws Exception {
@@ -822,7 +834,7 @@ public class ScenarioLoader {
     /**
      * This is used specify the critical hit location
      */
-    public class CritHit {
+    private class CritHit {
         public int loc;
         public int slot;
 
@@ -836,9 +848,9 @@ public class ScenarioLoader {
      * This class is used to store the critical hit plan for a entity it is
      * loaded from the scenario file. It contains a vector of CritHit.
      */
-    class CritHitPlan {
+    private class CritHitPlan {
         public Entity entity;
-        List<CritHit> critHits = new ArrayList<CritHit>();
+        List<CritHit> critHits = new ArrayList<>();
 
         public CritHitPlan(Entity e) {
             entity = e;
@@ -856,7 +868,7 @@ public class ScenarioLoader {
     /**
      * This is used to store the armor to change ammo at a given location
      */
-    public class SetAmmoTo {
+    private class SetAmmoTo {
         public int loc;
         public int slot;
         public int setAmmoTo;
@@ -872,9 +884,9 @@ public class ScenarioLoader {
      * This class is used to store the ammo Adjustments it is loaded from the
      * scenario file. It contains a vector of SetAmmoTo.
      */
-    class SetAmmoPlan {
+    private class SetAmmoPlan {
         public Entity entity;
-        List<SetAmmoTo> ammoSetTo = new ArrayList<SetAmmoTo>();
+        List<SetAmmoTo> ammoSetTo = new ArrayList<>();
 
         public SetAmmoPlan(Entity e) {
             entity = e;
@@ -898,7 +910,7 @@ public class ScenarioLoader {
     /**
      * This is used specify the one damage location
      */
-    public class SpecDam {
+    private class SpecDam {
         public int loc;
         public int setArmorTo;
         public boolean rear;
@@ -917,11 +929,10 @@ public class ScenarioLoader {
      * This class is used to store the damage plan for a entity it is loaded
      * from the scenario file. It contains a vector of SpecDam.
      */
-    class DamagePlan {
+    private class DamagePlan {
         public Entity entity;
         public int nBlocks;
-        List<SpecDam> specificDammage = new ArrayList<SpecDam>();
-        List<SetAmmoTo> ammoSetTo = new ArrayList<SetAmmoTo>();
+        List<SpecDam> specificDammage = new ArrayList<>();
 
         public DamagePlan(Entity e, int n) {
             entity = e;
@@ -946,20 +957,8 @@ public class ScenarioLoader {
             specificDammage.add(new SpecDam(loc, setTo, rear, internal));
         }
     }
-
-    /**
-     * Parses out the external game id from the scenario file
-     */
-    private int parseExternalGameId(StringMultiMap p) {
-        String sExternalId = p.getString(PARAM_GAME_EXTERNAL_ID);
-        int ExternalGameId = 0;
-        if (sExternalId != null) {
-            ExternalGameId = Integer.parseInt(sExternalId);
-        }
-        return ExternalGameId;
-    }
     
-    public static class ScenarioLoaderException extends Exception {
+    private static class ScenarioLoaderException extends Exception {
         private static final long serialVersionUID = 8622648319531348199L;
         
         private final Object[] params;
@@ -988,45 +987,45 @@ public class ScenarioLoader {
         }
     }
     
-    public static class StringMultiMap extends HashMap<String, Collection<String>> {
+    private static class StringMultiMap extends HashMap<String, Collection<String>> {
         private static final long serialVersionUID = 2171662843329151622L;
 
         public void put(String key, String value) {
-			Collection<String> values = get(key);
-			if(null == values) {
-				values = new ArrayList<String>();
-				put(key, values);
-			}
-			values.add(value);
-		}
+            Collection<String> values = get(key);
+            if(null == values) {
+                values = new ArrayList<>();
+                put(key, values);
+            }
+            values.add(value);
+        }
 
-		public String getString(String key) {
-			return getString(key, SEPARATOR_COMMA);
-		}
+        public String getString(String key) {
+            return getString(key, SEPARATOR_COMMA);
+        }
 
-		public String getString(String key, String separator) {
-			Collection<String> values = get(key);
-			if(null == values || values.size() == 0) {
-				return null;
-			}
-			
-			boolean firstElement = true;
-			StringBuilder sb = new StringBuilder();
-			for(String val : values) {
-				if(firstElement) {
-					firstElement = false;
-				} else {
-					sb.append(separator);
-				}
-				sb.append(val);
-			}
-			return sb.toString();
-		}
-		
-		/** @return the number of values for this key in the file */
-		public int getNumValues(String key) {
-		    Collection<String> values = get(key);
-		    return (null == values) ? 0 : values.size();
-		}
+        public String getString(String key, String separator) {
+            Collection<String> values = get(key);
+            if(null == values || values.size() == 0) {
+                return null;
+            }
+            
+            boolean firstElement = true;
+            StringBuilder sb = new StringBuilder();
+            for(String val : values) {
+                if(firstElement) {
+                    firstElement = false;
+                } else {
+                    sb.append(separator);
+                }
+                sb.append(val);
+            }
+            return sb.toString();
+        }
+        
+        /** @return the number of values for this key in the file */
+        public int getNumValues(String key) {
+            Collection<String> values = get(key);
+            return (null == values) ? 0 : values.size();
+        }
     }
 }

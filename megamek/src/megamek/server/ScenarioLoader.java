@@ -792,13 +792,13 @@ public class ScenarioLoader {
                     continue;
                 }
                 if(!line.contains(SEPARATOR_PROPERTY)) {
-                    System.err.println(String.format("Equality sign in scenario file %s on line %d missing; ignoring", //$NON-NLS-1$
+                    System.out.println(String.format("Equality sign in scenario file %s on line %d missing; ignoring", //$NON-NLS-1$
                         scenarioFile, lineNum));
                     continue;
                 }
                 String elements[] = line.split(SEPARATOR_PROPERTY, -1);
                 if(elements.length > 2) {
-                    System.err.println(String.format("Multiple equality signs in scenario file %s on line %d; ignoring", //$NON-NLS-1$
+                    System.out.println(String.format("Multiple equality signs in scenario file %s on line %d; ignoring", //$NON-NLS-1$
                             scenarioFile, lineNum));
                         continue;
                 }

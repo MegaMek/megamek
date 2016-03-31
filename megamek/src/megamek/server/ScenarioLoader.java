@@ -64,6 +64,7 @@ import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IOption;
 import megamek.common.util.BoardUtilities;
@@ -134,16 +135,20 @@ public class ScenarioLoader {
     // TODO: legal/valid ammo type handling and game options, since they are set at this point
     private AmmoType getValidAmmoType(IGame game, Mounted mounted, String ammoString) {
         final Entity e = mounted.getEntity();
-        final AmmoType currentAmmoType = (AmmoType) mounted.getType();
-        final AmmoType newAmmoType = (AmmoType) EquipmentType.get(ammoString);
-        if(null == newAmmoType) {
+        final EquipmentType currentAmmoType = mounted.getType();
+        final Mounted currentWeapon = mounted.getLinkedBy();
+        final EquipmentType currentWeaponType = (null != currentWeapon) ? currentWeapon.getType() : null;
+        final EquipmentType newAmmoType = EquipmentType.get(ammoString);
+        if((null == newAmmoType) || !(newAmmoType instanceof AmmoType)) {
             return null;
         }
-        if((newAmmoType.getRackSize() == currentAmmoType.getRackSize())
+        int weaponAmmoType = (currentWeaponType instanceof WeaponType) ? ((WeaponType) currentWeaponType).getAmmoType() : 0;
+        if((((AmmoType) newAmmoType).getRackSize() == ((AmmoType) currentAmmoType).getRackSize())
             && (newAmmoType.hasFlag(AmmoType.F_BATTLEARMOR) == currentAmmoType.hasFlag(AmmoType.F_BATTLEARMOR))
             && (newAmmoType.hasFlag(AmmoType.F_ENCUMBERING) == currentAmmoType.hasFlag(AmmoType.F_ENCUMBERING))
-            && (newAmmoType.getTonnage(e) == currentAmmoType.getTonnage(e))) {
-            return newAmmoType;
+            && (newAmmoType.getTonnage(e) == currentAmmoType.getTonnage(e))
+            && (((AmmoType) newAmmoType).getAmmoType() == weaponAmmoType)) {
+            return (AmmoType) newAmmoType;
         } else {
             return null;
         }

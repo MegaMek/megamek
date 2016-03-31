@@ -142,7 +142,7 @@ public class BoardEditor extends JComponent implements ItemListener,
     public BoardEditor(MegaMekController c) {
         controller = c;
         try {
-            bv = new BoardView1(game, controller);
+            bv = new BoardView1(game, controller, null);
             bvc = bv.getComponent(true);
         } catch (IOException e) {
             JOptionPane

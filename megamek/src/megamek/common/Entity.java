@@ -543,7 +543,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * implementations may store multiple unit designations in the same unit
      * number (e.g. battalion, company, platoon, and lance).
      */
-    private char unitNumber = (char) Entity.NONE;
+    private short unitNumber = Entity.NONE;
 
     /**
      * Indicates whether this entity has been seen by the enemy during the
@@ -8203,21 +8203,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Set the unit number for this entity.
      *
-     * @param unit the <code>char</code> number for the low-level unit that this
+     * @param unit the number for the low-level unit that this
      *             entity belongs to. This entity can be removed from its unit by
-     *             passing the value, <code>(char) Entity.NONE</code>.
+     *             passing the value, <code>{@link Entity#NONE}</code>.
      */
-    public void setUnitNumber(char unit) {
+    public void setUnitNumber(final short unit) {
         unitNumber = unit;
     }
 
     /**
      * Get the unit number of this entity.
      *
-     * @return the <code>char</code> unit number. If the entity does not belong
-     * to a unit, <code>(char) Entity.NONE</code> will be returned.
+     * @return The unit number. If the entity does not belong
+     * to a unit, <code>{@link Entity#NONE}</code> will be returned.
      */
-    public char getUnitNumber() {
+    public short getUnitNumber() {
         return unitNumber;
     }
 

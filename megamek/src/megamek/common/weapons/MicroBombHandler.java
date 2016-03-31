@@ -68,7 +68,15 @@ public class MicroBombHandler extends AmmoWeaponHandler {
             r.add(coords.getBoardNum());
             vPhaseReport.add(r);
         } else {
-            coords = Compute.scatterDiveBombs(coords, -typeModifiedToHit.getMoS());
+            int margin = -typeModifiedToHit.getMoS();
+            if (ae.getCrew().getOptions().booleanOption("golden_goose")) {
+                if ((-typeModifiedToHit.getMoS() -2) < 1) {
+                    margin = 0;
+                } else {
+                    margin = -typeModifiedToHit.getMoS() -2;
+                }
+            }
+            coords = Compute.scatterDiveBombs(coords, margin);
             if (game.getBoard().contains(coords)) {
                 Report r = new Report(3195);
                 r.subject = subjectId;

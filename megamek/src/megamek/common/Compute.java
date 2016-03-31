@@ -4970,8 +4970,8 @@ public class Compute {
      * @param coords The <code>Coords</code> to scatter from
      * @return the <code>Coords</code> scattered to
      */
-    public static Coords scatterDiveBombs(Coords coords) {
-        return Compute.scatter(coords, Compute.d6());
+    public static Coords scatterDiveBombs(Coords coords, int margin) {
+        return Compute.scatter(coords, margin);
     }
 
     /**

@@ -337,9 +337,9 @@ public class ScenarioLoader {
         Pattern unitPattern = Pattern.compile(
             String.format("^Unit_\\Q%s\\E_[^_]+$", faction)); //$NON-NLS-1$
         Pattern unitDataPattern = Pattern.compile(
-            String.format("^(Unit_\\Q%s\\E_[^_]+)_(.+)$", faction)); //$NON-NLS-1$
+            String.format("^(Unit_\\Q%s\\E_[^_]+)_([A-Z][^_]+)$", faction)); //$NON-NLS-1$
 
-        Map<String, Entity> vEntities = new HashMap<String, Entity>();
+        Map<String, Entity> entities = new HashMap<String, Entity>();
         
         // Gather all defined units
         for(String key : p.keySet()) {
@@ -349,7 +349,7 @@ public class ScenarioLoader {
                         key, p.getNumValues(key)));
                     throw new ScenarioLoaderException("multipleUnitDeclarations", key); //$NON-NLS-1$
                 }
-                vEntities.put(key, parseEntityLine(p.getString(key)));
+                entities.put(key, parseEntityLine(p.getString(key)));
             }
         }
         
@@ -358,12 +358,12 @@ public class ScenarioLoader {
             Matcher dataMatcher = unitDataPattern.matcher(key);
             if(dataMatcher.matches()) {
                 String unitKey = dataMatcher.group(1);
-                if(!vEntities.containsKey(unitKey)) {
+                if(!entities.containsKey(unitKey)) {
                     System.out.println(String.format("Scenario loading: Data for undeclared unit encountered, ignoring: %s", //$NON-NLS-1$
                         key));
                     continue;
                 }
-                Entity e = vEntities.get(unitKey);
+                Entity e = entities.get(unitKey);
                 switch(dataMatcher.group(2)) {
                     case PARAM_DAMAGE:
                         for(String val : p.get(key)) {
@@ -427,7 +427,7 @@ public class ScenarioLoader {
             }
         }
         
-        return vEntities.values();
+        return entities.values();
     }
 
     private Entity parseEntityLine(String s) throws ScenarioLoaderException {

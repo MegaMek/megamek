@@ -19,6 +19,7 @@ package megamek.server;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -73,10 +74,18 @@ public class ScenarioLoader {
 	private static final String SEPARATOR_COMMA = ","; //$NON-NLS-1$
     private static final String SEPARATOR_SPACE = " "; //$NON-NLS-1$
     private static final String SEPARATOR_COLON = ":"; //$NON-NLS-1$
+    private static final String SEPARATOR_UNDERSCORE = "_"; //$NON-NLS-1$
 
 	private static final String PARAM_MMSVERSION = "MMSVersion"; //$NON-NLS-1$
-    private static final String PARAM_UNIT_DAMAGE = "Damage"; //$NON-NLS-1$
-    private static final String PARAM_UNIT_SPECIFIC_DAMAGE = "DamageSpecific"; //$NON-NLS-1$
+    private static final String PARAM_GAME_OPTIONS_FILE = "GameOptionsFile"; //$NON-NLS-1$
+    private static final String PARAM_GAME_EXTERNAL_ID = "ExternalId"; //$NON-NLS-1$
+    private static final String PARAM_FACTIONS = "Factions"; //$NON-NLS-1$
+    
+    private static final String PARAM_TEAM = "Team"; //$NON-NLS-1$
+    private static final String PARAM_LOCATION = "Location"; //$NON-NLS-1$
+    private static final String PARAM_MINEFIELDS = "Minefields"; //$NON-NLS-1$
+    private static final String PARAM_DAMAGE = "Damage"; //$NON-NLS-1$
+    private static final String PARAM_SPECIFIC_DAMAGE = "DamageSpecific"; //$NON-NLS-1$
     private static final String PARAM_CRITICAL_HIT = "CritHit"; //$NON-NLS-1$
     private static final String PARAM_AMMO_SETTING = "SetAmmoTo"; //$NON-NLS-1$
     private static final String PARAM_PILOT_HITS = "PilotHits"; //$NON-NLS-1$
@@ -306,7 +315,7 @@ public class ScenarioLoader {
 
     public IGame createGame() throws Exception {
         System.out.println(String.format("Loading scenario from %s", scenarioFile)); //$NON-NLS-1$
-        StringMultiMap p = loadProperties();
+        StringMultiMap p = load();
 
         String sCheck = p.getString(PARAM_MMSVERSION);
         if (sCheck == null) {
@@ -319,29 +328,31 @@ public class ScenarioLoader {
         g.board = createBoard(p);
 
         // build the faction players
-        Player[] players = createPlayers(p);
-        for (int x = 0; x < players.length; x++) {
-            g.addPlayer(x, players[x]);
+        Collection<Player> players = createPlayers(p);
+        int playerId = 0;
+        for(Player player : players) {
+            g.addPlayer(playerId, player);
+            ++ playerId;
         }
 
         // build the entities
-        int nIndex = 0;
-        for (int x = 0; x < players.length; x++) {
-            Collection<Entity> entities = buildFactionEntities(p, players[x]);
+        int entityId = 0;
+        for(Player player : players) {
+            Collection<Entity> entities = buildFactionEntities(p, player);
             for(Entity entity : entities) {
-                entity.setOwner(players[x]);
-                entity.setId(nIndex++);
+                entity.setOwner(player);
+                entity.setId(entityId);
+                ++ entityId;
                 g.addEntity(entity);
             }
         }
         // game's ready
         g.getOptions().initialize();
-        String optionFile = p.getString("GameOptionsFile");
+        String optionFile = p.getString(PARAM_GAME_OPTIONS_FILE);
         if (optionFile == null) {
             g.getOptions().loadOptions();
         } else {
-            g.getOptions().loadOptions(
-                    new File(scenarioFile.getParentFile(), optionFile), true);
+            g.getOptions().loadOptions(new File(scenarioFile.getParentFile(), optionFile), true);
         }
 
         // set wind
@@ -378,7 +389,7 @@ public class ScenarioLoader {
                 if(p.getNumValues(key) > 1) {
                     System.out.println(String.format("Scenario loading: Unit declaration %s found %d times", //$NON-NLS-1$
                         key, p.getNumValues(key)));
-                    throw new ScenarioLoaderException("multipleUnitDeclarations"); //$NON-NLS-1$
+                    throw new ScenarioLoaderException("multipleUnitDeclarations");
                 }
                 vEntities.put(key, parseEntityLine(p.getString(key)));
             }
@@ -396,12 +407,12 @@ public class ScenarioLoader {
                 }
                 Entity e = vEntities.get(unitKey);
                 switch(dataMatcher.group(2)) {
-                    case PARAM_UNIT_DAMAGE:
+                    case PARAM_DAMAGE:
                         for(String val : p.get(key)) {
                             damagePlans.add(new DamagePlan(e, Integer.parseInt(val)));
                         }
                         break;
-                    case PARAM_UNIT_SPECIFIC_DAMAGE:
+                    case PARAM_SPECIFIC_DAMAGE:
                         DamagePlan dp = new DamagePlan(e);
                         for(String val : p.getString(key).split(SEPARATOR_COMMA, -1)) {
                             dp.addSpecificDamage(val);
@@ -467,7 +478,7 @@ public class ScenarioLoader {
             String sRef = parts[0];
             MechSummary ms = MechSummaryCache.getInstance().getMech(sRef);
             if (ms == null) {
-                throw new ScenarioLoaderException("missingRequiredEntity", sRef); //$NON-NLS-1$
+                throw new ScenarioLoaderException("missingRequiredEntity", sRef);
             }
             System.out.println(String.format("Loading %s", ms.getName())); //$NON-NLS-1$
             Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
@@ -505,7 +516,7 @@ public class ScenarioLoader {
             return e;
         } catch (NumberFormatException | IndexOutOfBoundsException | EntityLoadingException e) {
             e.printStackTrace();
-            throw new ScenarioLoaderException("unparsableEntityLine", s); //$NON-NLS-1$
+            throw new ScenarioLoaderException("unparsableEntityLine", s);
         }
     }
 
@@ -623,7 +634,7 @@ public class ScenarioLoader {
     /*
      * Camo Parser/Validator for Faction Camo
      */
-    private void parseCamo(IPlayer player, String camoString) throws Exception {
+    private void parseCamo(IPlayer player, String camoString) throws ScenarioLoaderException {
         String[] camoData = camoString.split(SEPARATOR_COMMA, -1);
         String camoGroup = getValidCamoGroup(camoData[0]);
         if(null == camoGroup) {
@@ -649,74 +660,72 @@ public class ScenarioLoader {
         return -1;
     }
 
-    private Player[] createPlayers(StringMultiMap p) throws Exception {
-        String sFactions = p.getString("Factions");
-        if (sFactions == null) {
-            throw new Exception("Not a valid MMS file.  No Factions");
+    private String getFactionParam(String faction, String param) {
+        return param + SEPARATOR_UNDERSCORE + faction;
+    }
+    
+    private Collection<Player> createPlayers(StringMultiMap p) throws ScenarioLoaderException {
+        String sFactions = p.getString(PARAM_FACTIONS);
+        if((null == sFactions) || sFactions.isEmpty()) {
+            throw new ScenarioLoaderException("missingFactions");
         }
-
-        StringTokenizer st = new StringTokenizer(sFactions, ",");
-        Player[] out = new Player[st.countTokens()];
-        int team = IPlayer.TEAM_NONE;
-        for (int x = 0; x < out.length; x++) {
-            out[x] = new Player(x, st.nextToken());
-
+        String[] factions = sFactions.split(SEPARATOR_COMMA, -1);
+        Map<String, Player> result = new HashMap<String, Player>(factions.length);
+        
+        int playerId = 0;
+        int teamId = 0;
+        for(String faction : factions) {
+            Player player = new Player(playerId, faction);
+            result.put(faction, player);
+            ++ playerId;
+            
             // scenario players start out as ghosts to be logged into
-            out[x].setGhost(true);
-
-            // check for initial placement
-            String s = p.getString("Location_" + out[x].getName());
-
-            // default to any
-            if (s == null) {
-                s = "Any";
+            player.setGhost(true);
+            
+            String loc = p.getString(getFactionParam(faction, PARAM_LOCATION));
+            if(null == loc) {
+                loc = "Any"; //$NON-NLS-1$
             }
-
-            int nDir = findIndex(IStartingPositions.START_LOCATION_NAMES, s);
-
-            // if it's not set by now, make it any
-            if (nDir == -1) {
-                nDir = 0;
+            int dir = Math.max(findIndex(IStartingPositions.START_LOCATION_NAMES, loc), 0);
+            player.setStartingPos(dir);
+            
+            String camo = p.getString(getFactionParam(faction, PARAM_CAMO));
+            if((null != camo) && !camo.isEmpty()) {
+                parseCamo(player, camo);
             }
-
-            out[x].setStartingPos(nDir);
-
-            // Check for Faction Camo
-            String camo = p.getString("Camo_" + out[x].getName());
-            if ((camo != null) && (camo != "")) {
-                parseCamo(out[x], camo);
-            }
-
-            // Check for team setup
-
-            try {
-                team = Integer.parseInt(p.getString("Team_"
-                        + out[x].getName()));
-            } catch (Exception e) {
-                team++;
-            }
-
-            out[x].setTeam(Math.min(team, 5));
-
-            String minefields = p.getString("Minefields_" + out[x].getName());
-            if (minefields != null) {
+            
+            String team = p.getString(getFactionParam(faction, PARAM_TEAM));
+            if((null != team) && !team.isEmpty()) {
                 try {
-                    StringTokenizer mfs = new StringTokenizer(minefields, ",");
-                    out[x].setNbrMFConventional(Integer.parseInt(mfs
-                            .nextToken()));
-                    out[x].setNbrMFCommand(Integer.parseInt(mfs.nextToken()));
-                    out[x].setNbrMFVibra(Integer.parseInt(mfs.nextToken()));
-                } catch (Exception e) {
-                    out[x].setNbrMFConventional(0);
-                    out[x].setNbrMFCommand(0);
-                    out[x].setNbrMFVibra(0);
-                    System.err.println("Something wrong with "
-                            + out[x].getName() + "s minefields.");
+                    teamId = Integer.parseInt(team);
+                } catch(NumberFormatException nfex) {
+                    ++ teamId;
+                }
+            } else {
+                ++ teamId;
+            }
+            player.setTeam(Math.min(teamId, IPlayer.MAX_TEAMS - 1));
+            
+            String minefields = p.getString(getFactionParam(faction, PARAM_MINEFIELDS));
+            if((null != minefields) && !minefields.isEmpty()) {
+                String[] mines = minefields.split(SEPARATOR_COMMA, -1);
+                if(mines.length >= 3) {
+                    try {
+                        int minesConventional = Integer.parseInt(mines[0]);
+                        int minesCommand = Integer.parseInt(mines[1]);
+                        int minesVibra = Integer.parseInt(mines[2]);
+                        player.setNbrMFConventional(minesConventional);
+                        player.setNbrMFCommand(minesCommand);
+                        player.setNbrMFVibra(minesVibra);
+                    } catch(NumberFormatException nfex) {
+                        System.out.println(String.format("Format error with minefields string '%s' for %s", //$NON-NLS-1$
+                            minefields, faction));
+                    }
                 }
             }
         }
-
-        return out;
+        
+        return result.values();
     }
 
     /**
@@ -822,7 +831,7 @@ public class ScenarioLoader {
                 MapSettings.MEDIUM_GROUND);
     }
 
-    private StringMultiMap loadProperties() throws Exception {
+    private StringMultiMap load() throws ScenarioLoaderException {
     	StringMultiMap props = new StringMultiMap();
     	try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(scenarioFile), "UTF-8"))) { //$NON-NLS-1$
     		String line = null;
@@ -846,7 +855,10 @@ public class ScenarioLoader {
     			}
     			props.put(elements[0].trim(), elements[1].trim());
     		}
-    	}
+    	} catch(IOException e) {
+            e.printStackTrace();
+            throw new ScenarioLoaderException("exceptionReadingFile", scenarioFile);
+        }
         return props;
     }
 
@@ -854,7 +866,7 @@ public class ScenarioLoader {
         ScenarioLoader sl = new ScenarioLoader(new File(saArgs[0]));
         IGame g = sl.createGame();
         if (g != null) {
-            System.out.println("Successfully loaded.");
+            System.out.println("Successfully loaded."); //$NON-NLS-1$
         }
     }
 
@@ -893,7 +905,7 @@ public class ScenarioLoader {
     }
 
     /**
-     * This is used to store the ammour to change ammo at a given location
+     * This is used to store the armor to change ammo at a given location
      */
     public class SetAmmoTo {
         public int loc;
@@ -990,7 +1002,7 @@ public class ScenarioLoader {
      * Parses out the external game id from the scenario file
      */
     private int parseExternalGameId(StringMultiMap p) {
-        String sExternalId = p.getString("ExternalId");
+        String sExternalId = p.getString(PARAM_GAME_EXTERNAL_ID);
         int ExternalGameId = 0;
         if (sExternalId != null) {
             ExternalGameId = Integer.parseInt(sExternalId);

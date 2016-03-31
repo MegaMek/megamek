@@ -19,18 +19,19 @@ package megamek.server;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.IllegalFormatException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.common.AmmoType;
@@ -66,12 +67,25 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.DirectoryItems;
 
 public class ScenarioLoader {
-	private static final String COMMENT_MARK = "#"; //$NON-NLS-1$
-    private static final String SPLITTER_PROPERTY = "="; //$NON-NLS-1$
+    private static final String COMMENT_MARK = "#"; //$NON-NLS-1$
+    
+    private static final String SEPARATOR_PROPERTY = "="; //$NON-NLS-1$
 	private static final String SEPARATOR_COMMA = ","; //$NON-NLS-1$
+    private static final String SEPARATOR_SPACE = " "; //$NON-NLS-1$
+    private static final String SEPARATOR_COLON = ":"; //$NON-NLS-1$
 
-
-	private static final String PROP_MMSVERSION = "MMSVersion"; //$NON-NLS-1$
+	private static final String PARAM_MMSVERSION = "MMSVersion"; //$NON-NLS-1$
+    private static final String PARAM_UNIT_DAMAGE = "Damage"; //$NON-NLS-1$
+    private static final String PARAM_UNIT_SPECIFIC_DAMAGE = "DamageSpecific"; //$NON-NLS-1$
+    private static final String PARAM_CRITICAL_HIT = "CritHit"; //$NON-NLS-1$
+    private static final String PARAM_AMMO_SETTING = "SetAmmoTo"; //$NON-NLS-1$
+    private static final String PARAM_PILOT_HITS = "PilotHits"; //$NON-NLS-1$
+    private static final String PARAM_EXTERNAL_ID = "ExternalID"; //$NON-NLS-1$
+    private static final String PARAM_ADVANTAGES = "Advantages"; //$NON-NLS-1$
+    private static final String PARAM_AUTO_EJECT = "AutoEject"; //$NON-NLS-1$
+    private static final String PARAM_COMMANDER = "Commander"; //$NON-NLS-1$
+    private static final String PARAM_DEPLOYMENT_ROUND = "DeploymentRound"; //$NON-NLS-1$
+    private static final String PARAM_CAMO = "Camo"; //$NON-NLS-1$
     
 	private final File scenarioFile;
     // copied from ChatLounge.java
@@ -291,12 +305,12 @@ public class ScenarioLoader {
     }
 
     public IGame createGame() throws Exception {
-        System.out.println("Loading scenario from " + scenarioFile);
+        System.out.println(String.format("Loading scenario from %s", scenarioFile)); //$NON-NLS-1$
         StringMultiMap p = loadProperties();
 
-        String sCheck = p.getString(PROP_MMSVERSION);
+        String sCheck = p.getString(PARAM_MMSVERSION);
         if (sCheck == null) {
-            throw new Exception("Not a valid MMS file.  No MMSVersion.");
+            throw new ScenarioLoaderException("missingMMSVersion");
         }
 
         Game g = new Game();
@@ -313,11 +327,11 @@ public class ScenarioLoader {
         // build the entities
         int nIndex = 0;
         for (int x = 0; x < players.length; x++) {
-            Entity[] entities = buildFactionEntities(p, players[x]);
-            for (int y = 0; y < entities.length; y++) {
-                entities[y].setOwner(players[x]);
-                entities[y].setId(nIndex++);
-                g.addEntity(entities[y]);
+            Collection<Entity> entities = buildFactionEntities(p, players[x]);
+            for(Entity entity : entities) {
+                entity.setOwner(players[x]);
+                entity.setId(nIndex++);
+                g.addEntity(entity);
             }
         }
         // game's ready
@@ -349,224 +363,166 @@ public class ScenarioLoader {
         return g;
     }
 
-    private Entity[] buildFactionEntities(StringMultiMap p, IPlayer player)
-            throws Exception {
-        String sFaction = player.getName();
+    private Collection<Entity> buildFactionEntities(StringMultiMap p, IPlayer player) throws ScenarioLoaderException {
+        String faction = player.getName();
+        Pattern unitPattern = Pattern.compile(
+            String.format("^Unit_\\Q%s\\E_[^_]+$", faction)); //$NON-NLS-1$
+        Pattern unitDataPattern = Pattern.compile(
+            String.format("^(Unit_\\Q%s\\E_[^_]+)_(.+)$", faction)); //$NON-NLS-1$
 
-        List<Entity> vEntities = new ArrayList<Entity>();
-        for (int i = 1; true; i++) {
-            String s = p.getProperty("Unit_" + sFaction + "_" + i);
-            if (s == null) {
-                // prepare and return array
-                return vEntities.toArray(new Entity[vEntities.size()]);
-            }
-            Entity e = parseEntityLine(s);
-
-            // Damage Plan Stuff
-            boolean dpCreated = false;
-            DamagePlan dp = new DamagePlan(e);
-            s = p.getProperty("Unit_" + sFaction + "_" + i + "_Damage");
-            if (s != null) {
-                int nBlocks = Integer.parseInt(s);
-                damagePlans.add(new DamagePlan(e, nBlocks));
-            }
-
-            // Add the Specif Dammage if it exists
-            s = p.getProperty("Unit_" + sFaction + "_" + i + "_DamageSpecific");
-            if (s != null) {
-                StringTokenizer st = new StringTokenizer(s, ",");
-                while (st.hasMoreTokens()) {
-                    dp.addSpecificDammage(st.nextToken());
+        Map<String, Entity> vEntities = new HashMap<String, Entity>();
+        
+        // Gather all defined units
+        for(String key : p.keySet()) {
+            if(unitPattern.matcher(key).matches() && (p.getNumValues(key) > 0)) {
+                if(p.getNumValues(key) > 1) {
+                    System.out.println(String.format("Scenario loading: Unit declaration %s found %d times", //$NON-NLS-1$
+                        key, p.getNumValues(key)));
+                    throw new ScenarioLoaderException("multipleUnitDeclarations"); //$NON-NLS-1$
                 }
-                dpCreated = true;
+                vEntities.put(key, parseEntityLine(p.getString(key)));
             }
-
-            // Add Crit Hits if it exists
-            boolean chpCreated = false;
-            s = p.getProperty("Unit_" + sFaction + "_" + i + "_CritHit");
-            CritHitPlan chp = new CritHitPlan(e);
-            if (s != null) {
-                StringTokenizer st = new StringTokenizer(s, ",");
-                while (st.hasMoreTokens()) {
-                    chp.addCritHit(st.nextToken());
-                }
-                chpCreated = true;
-            }
-
-            // Add Set Ammo Locations
-            boolean sapCreated = false;
-            s = p.getProperty("Unit_" + sFaction + "_" + i + "_SetAmmoTo");
-            SetAmmoPlan sap = new SetAmmoPlan(e);
-            if (s != null) {
-                StringTokenizer st = new StringTokenizer(s, ",");
-                while (st.hasMoreTokens()) {
-                    sap.addSetAmmoTo(st.nextToken());
-                }
-                sapCreated = true;
-            }
-
-            if (chpCreated) {
-                critHitPlans.add(chp);
-            }
-            if (dpCreated) {
-                damagePlans.add(dp);
-            }
-            if (sapCreated) {
-                ammoPlans.add(sap);
-            }
-
-            // Check for pilot hits
-            s = p.getProperty("Unit_" + sFaction + "_" + i + "_PilotHits");
-            if (null != s) {
-                int hits = Integer.parseInt(s);
-                if (hits > 5) {
-                    hits = 0;
-                }
-                e.getCrew().setHits(hits);
-            }
-
-            // Check for unit external ids
-            s = p.getProperty("Unit_" + sFaction + "_" + i + "_ExternalID");
-            if (null != s) {
-                e.setExternalIdAsString(s);
-            }
-
-            // Check for advantages
-            s = p.getProperty("Unit_" + sFaction + "_" + i + "_Advantages");
-            if (null != s) {
-                parseAdvantages(e, s);
-            }
-
-            // Check for autoeject
-            s = p.getProperty("Unit_" + sFaction + "_" + i + "_AutoEject");
-            if (null != s) {
-                parseAutoEject(e, s);
-            }
-
-            // Check for commander
-            s = p.getProperty("Unit_" + sFaction + "_" + i + "_Commander");
-            if (null != s) {
-                parseCommander(e, s);
-            }
-
-            // Check for deployment
-            s = p.getProperty("Unit_" + sFaction + "_" + i + "_DeploymentRound");
-            if (null != s) {
-                int round = 0;
-
-                try {
-                    round = Integer.parseInt(s);
-                } catch (Exception ex) {
-                    throw new Exception("Bad deployment round setting (" + s
-                            + ") for unit " + sFaction + ":" + i);
-                }
-
-                if (round < 0) {
-                    System.out.println("Deployment round setting of '" + round
-                            + "' for " + sFaction + ":" + i
-                            + " will be ignored and set to 0");
-                    round = 0;
-                }
-
-                if (round > 0) {
-                    System.out.println(e.getDisplayName()
-                            + " will be deployed before round " + round);
-                    e.setDeployRound(round);
-                    e.setDeployed(false);
-                    e.setNeverDeployed(false);
-                    e.setPosition(null);
-                }
-            }
-
-            // Check for Individual Unit Camo
-            s = p.getProperty("Unit_" + sFaction + "_" + i + "_Camo");
-            if (null != s) {
-                parseCamo(e, s);
-            }
-            vEntities.add(e);
         }
+        
+        // Add other information
+        for(String key: p.keySet()) {
+            Matcher dataMatcher = unitDataPattern.matcher(key);
+            if(dataMatcher.matches()) {
+                String unitKey = dataMatcher.group(1);
+                if(!vEntities.containsKey(unitKey)) {
+                    System.out.println(String.format("Scenario loading: Data for undeclared unit encountered, ignoring: %s", //$NON-NLS-1$
+                        key));
+                    continue;
+                }
+                Entity e = vEntities.get(unitKey);
+                switch(dataMatcher.group(2)) {
+                    case PARAM_UNIT_DAMAGE:
+                        for(String val : p.get(key)) {
+                            damagePlans.add(new DamagePlan(e, Integer.parseInt(val)));
+                        }
+                        break;
+                    case PARAM_UNIT_SPECIFIC_DAMAGE:
+                        DamagePlan dp = new DamagePlan(e);
+                        for(String val : p.getString(key).split(SEPARATOR_COMMA, -1)) {
+                            dp.addSpecificDamage(val);
+                        }
+                        damagePlans.add(dp);
+                        break;
+                    case PARAM_CRITICAL_HIT:
+                        CritHitPlan chp = new CritHitPlan(e);
+                        for(String val : p.getString(key).split(SEPARATOR_COMMA, -1)) {
+                            chp.addCritHit(val);
+                        }
+                        critHitPlans.add(chp);
+                        break;
+                    case PARAM_AMMO_SETTING:
+                        SetAmmoPlan sap = new SetAmmoPlan(e);
+                        for(String val : p.getString(key).split(SEPARATOR_COMMA, -1)) {
+                            sap.addSetAmmoTo(val);
+                        }
+                        ammoPlans.add(sap);
+                        break;
+                    case PARAM_PILOT_HITS:
+                        int hits = Integer.parseInt(p.getString(key));
+                        e.getCrew().setHits(Math.min(hits, 5));
+                        break;
+                    case PARAM_EXTERNAL_ID:
+                        e.setExternalIdAsString(p.getString(key));
+                        break;
+                    case PARAM_ADVANTAGES:
+                        parseAdvantages(e, p.getString(key, SEPARATOR_SPACE));
+                        break;
+                    case PARAM_AUTO_EJECT:
+                        parseAutoEject(e, p.getString(key));
+                        break;
+                    case PARAM_COMMANDER:
+                        parseCommander(e, p.getString(key));
+                        break;
+                    case PARAM_DEPLOYMENT_ROUND:
+                        int round = Integer.parseInt(p.getString(key));
+                        if(round > 0) {
+                            System.out.println(String.format("%s will be deployed before round %d", //$NON-NLS-1$
+                                e.getDisplayName(), round));
+                            e.setDeployRound(round);
+                            e.setDeployed(false);
+                            e.setNeverDeployed(false);
+                            e.setPosition(null);
+                        }
+                        break;
+                    case PARAM_CAMO:
+                        parseCamo(e, p.getString(key));
+                        break;
+                    default:
+                        System.out.println(String.format("Scenario loading: Unknown unit data key %s", key)); //$NON-NLS-1$
+                }
+            }
+        }
+        
+        return vEntities.values();
     }
 
-    private Entity parseEntityLine(String s) throws Exception {
+    private Entity parseEntityLine(String s) throws ScenarioLoaderException {
         try {
-            StringTokenizer st = new StringTokenizer(s, ",");
-            String sRef = st.nextToken();
+            String[] parts = s.split(SEPARATOR_COMMA, -1);
+            String sRef = parts[0];
             MechSummary ms = MechSummaryCache.getInstance().getMech(sRef);
             if (ms == null) {
-                throw new Exception("Scenario requires missing entity: " + sRef);
+                throw new ScenarioLoaderException("missingRequiredEntity", sRef); //$NON-NLS-1$
             }
-            System.out.println("Loading " + ms.getName());
-            Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName())
-                    .getEntity();
-            e.setCrew(new Crew(st.nextToken(), 1, Integer.parseInt(st
-                    .nextToken()), Integer.parseInt(st.nextToken())));
-            try {
-                String direction = st.nextToken();
-                if (direction.equalsIgnoreCase("N")) {
-                    e.setFacing(0);
-                } else if (direction.equalsIgnoreCase("NW")) {
-                    e.setFacing(5);
-                } else if (direction.equalsIgnoreCase("SW")) {
-                    e.setFacing(4);
-                } else if (direction.equalsIgnoreCase("S")) {
-                    e.setFacing(3);
-                } else if (direction.equalsIgnoreCase("SE")) {
-                    e.setFacing(2);
-                } else if (direction.equalsIgnoreCase("NE")) {
-                    e.setFacing(1);
+            System.out.println(String.format("Loading %s", ms.getName())); //$NON-NLS-1$
+            Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+            e.setCrew(new Crew(parts[1], 1, Integer.parseInt(parts[2]), Integer.parseInt(parts[3])));
+            if(parts.length >= 7) {
+                String direction = parts[4].toUpperCase(Locale.ROOT);
+                switch(direction) {
+                    case "N": //$NON-NLS-1$
+                        e.setFacing(0);
+                        break;
+                    case "NW": //$NON-NLS-1$
+                        e.setFacing(5);
+                        break;
+                    case "SW": //$NON-NLS-1$
+                        e.setFacing(4);
+                        break;
+                    case "S": //$NON-NLS-1$
+                        e.setFacing(3);
+                        break;
+                    case "SE": //$NON-NLS-1$
+                        e.setFacing(2);
+                        break;
+                    case "NE": //$NON-NLS-1$
+                        e.setFacing(1);
+                        break;
+                    default:
+                        break;
                 }
-                int x = Integer.parseInt(st.nextToken()) - 1;
-                int y = Integer.parseInt(st.nextToken()) - 1;
+                int x = Integer.parseInt(parts[5]) - 1;
+                int y = Integer.parseInt(parts[6]) - 1;
                 Coords coords = new Coords(x, y);
                 e.setPosition(coords);
                 e.setDeployed(true);
-            } catch (NoSuchElementException ex) {
             }
             return e;
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | IndexOutOfBoundsException | EntityLoadingException e) {
             e.printStackTrace();
-            throw new Exception("Unparseable entity line: " + s);
-        } catch (NoSuchElementException e) {
-            e.printStackTrace();
-            throw new Exception("Unparseable entity line: " + s);
-        } catch (EntityLoadingException e) {
-            e.printStackTrace();
-            throw new Exception("Unparseable entity line: " + s
-                    + "\n   Unable to load mech: " + e.getMessage());
+            throw new ScenarioLoaderException("unparsableEntityLine", s); //$NON-NLS-1$
         }
     }
 
     private void parseAdvantages(Entity entity, String adv) {
-        StringTokenizer st = new StringTokenizer(adv);
+        String[] advantages = adv.split(SEPARATOR_SPACE, -1);
 
-        while (st.hasMoreTokens()) {
-            String curAdv = st.nextToken();
-            int curParameter = 0;
-            boolean bParameterDetected = false;
-
-            StringTokenizer advantageParameterTokenizer = new StringTokenizer(
-                    curAdv, ":");
-            if (advantageParameterTokenizer.countTokens() > 1) {
-                // This advantage term has a parameter associated with it.
-                // Reduce curAdv to be just the Advantage Name, then store
-                // the parameter in curParameter. Also, set bParameterDetected.
-                curAdv = advantageParameterTokenizer.nextToken();
-                String curParam = advantageParameterTokenizer.nextToken();
-                curParameter = Integer.parseInt(curParam);
-                bParameterDetected = true;
-            }
-
-            IOption option = entity.getCrew().getOptions().getOption(curAdv);
-
-            if (null == option) {
-                System.out.println("Ignoring invalid pilot advantage: "
-                        + curAdv);
+        for(String curAdv : advantages) {
+            String[] advantageData = curAdv.split(SEPARATOR_COLON, -1);
+            IOption option = entity.getCrew().getOptions().getOption(advantageData[0]);
+            if(null == option) {
+                System.out.println(String.format("Ignoring invalid pilot advantage '%s'", //$NON-NLS-1$
+                    curAdv));
             } else {
-                System.out.println("Adding pilot advantage '" + curAdv
-                        + "' to " + entity.getDisplayName());
-                // Now we need to check if this was a parameterized advantage.
-                if (bParameterDetected) {
-                    option.setValue(curParameter);
+                System.out.println(String.format("Adding pilot advantage '%s' to %s", //$NON-NLS-1$
+                    curAdv, entity.getDisplayName()));
+                if(advantageData.length > 1) {
+                    option.setValue(advantageData[1]);
                 } else {
                     option.setValue(true);
                 }
@@ -581,37 +537,27 @@ public class ScenarioLoader {
         }
     }
 
-    private void parseCommander(Entity entity, String eject) {
-        entity.setCommander(Boolean.valueOf(eject).booleanValue());
+    private void parseCommander(Entity entity, String commander) {
+        entity.setCommander(Boolean.valueOf(commander).booleanValue());
     }
 
-    /*
-     * Camo Parser/Validator for Individual Entity Camo
-     */
-    private void parseCamo(Entity entity, String camoString) throws Exception {
-        StringTokenizer st = new StringTokenizer(camoString, ",");
-        String camoGroup = st.nextToken();
-        String camoName = st.nextToken();
-
+    private String getValidCamoGroup(String camoGroup) {
         // Translate base categories for userfriendliness.
-        if (camoGroup.equals("No Camo") || camoGroup.equals("None")) {
+        if(camoGroup.equals("No Camo") || camoGroup.equals("None")) { //$NON-NLS-1$ //$NON-NLS-2$
             camoGroup = IPlayer.NO_CAMO;
-        } else if (camoGroup.equals("General")) {
+        } else if (camoGroup.equals("General")) { //$NON-NLS-1$
             camoGroup = IPlayer.ROOT_CAMO;
         } else {
             // If CamoGroup does not have a trailing slash, add one, since all
             // subdirectories require it
             if (camoGroup.charAt(camoGroup.length() - 1) != '/') {
-                camoGroup += "/";
+                camoGroup += "/"; //$NON-NLS-1$
             }
         }
-
+        
         boolean validGroup = false;
-        boolean validName = false;
 
-        // Validate GroupName
-        if (camoGroup.equals(IPlayer.NO_CAMO)
-                || camoGroup.equals(IPlayer.ROOT_CAMO)) {
+        if(camoGroup.equals(IPlayer.NO_CAMO) || camoGroup.equals(IPlayer.ROOT_CAMO)) {
             validGroup = true;
         } else {
             Iterator<String> catNames = camos.getCategoryNames();
@@ -622,22 +568,24 @@ public class ScenarioLoader {
                 }
             }
         }
-        if (!validGroup) {
-            throw new Exception("Invalid Individual Camo Group \'" + camoGroup
-                    + "\' for " + entity.getDisplayName());
-        }
+
+        return validGroup ? camoGroup : null;
+    }
+    
+    private String getValidCamoName(String camoGroup, String camoName) {
+        boolean validName = false;
 
         // Validate CamoName
-        if (camoGroup.equals(IPlayer.NO_CAMO)) {
-            for (String color : IPlayer.colorNames) {
-                if (camoName.equals(color)) {
+        if(camoGroup.equals(IPlayer.NO_CAMO)) {
+            for(String color : IPlayer.colorNames) {
+                if(camoName.equals(color)) {
                     validName = true;
                 }
             }
         } else {
             Iterator<String> camoNames;
-            if (camoGroup.equals(IPlayer.ROOT_CAMO)) {
-                camoNames = camos.getItemNames("");
+            if(camoGroup.equals(IPlayer.ROOT_CAMO)) {
+                camoNames = camos.getItemNames(""); //$NON-NLS-1$
             } else {
                 camoNames = camos.getItemNames(camoGroup);
             }
@@ -648,10 +596,24 @@ public class ScenarioLoader {
                 }
             }
         }
-        if (!validName) {
-            throw new Exception("Invalid Individual Camo \'" + camoName
-                    + "\' in Group \'" + camoGroup + "\' for "
-                    + entity.getDisplayName());
+        
+        return validName ? camoName : null;
+    }
+    
+    /*
+     * Camo Parser/Validator for Individual Entity Camo
+     */
+    private void parseCamo(Entity entity, String camoString) throws ScenarioLoaderException {
+        String[] camoData = camoString.split(SEPARATOR_COMMA, -1);
+        String camoGroup = getValidCamoGroup(camoData[0]);
+        if(null == camoGroup) {
+            throw new ScenarioLoaderException("invalidIndividualCamoGroup",
+                camoData[0], entity.getDisplayName());
+        }
+        String camoName = getValidCamoName(camoGroup, camoData[1]);
+        if(null == camoName) {
+            throw new ScenarioLoaderException("invalidIndividualCamoName",
+                camoData[1], camoGroup, entity.getDisplayName());
         }
 
         entity.setCamoCategory(camoGroup);
@@ -662,69 +624,16 @@ public class ScenarioLoader {
      * Camo Parser/Validator for Faction Camo
      */
     private void parseCamo(IPlayer player, String camoString) throws Exception {
-        StringTokenizer st = new StringTokenizer(camoString, ",");
-        String camoGroup = st.nextToken();
-        String camoName = st.nextToken();
-
-        // Translate base categories for userfriendliness.
-        if (camoGroup.equals("No Camo") || camoGroup.equals("None")) {
-            camoGroup = IPlayer.NO_CAMO;
-        } else if (camoGroup.equals("General")) {
-            camoGroup = IPlayer.ROOT_CAMO;
-        } else {
-            // If CamoGroup does not have a trailing slash, add one, since all
-            // subdirectories require it
-            if (camoGroup.charAt(camoGroup.length() - 1) != '/') {
-                camoGroup += "/";
-            }
+        String[] camoData = camoString.split(SEPARATOR_COMMA, -1);
+        String camoGroup = getValidCamoGroup(camoData[0]);
+        if(null == camoGroup) {
+            throw new ScenarioLoaderException("invalidFactionCamoGroup",
+                camoData[0], player.getName());
         }
-
-        boolean validGroup = false;
-        boolean validName = false;
-
-        // Validate GroupName
-        if (camoGroup.equals(IPlayer.NO_CAMO)
-                || camoGroup.equals(IPlayer.ROOT_CAMO)) {
-            validGroup = true;
-        } else {
-            Iterator<String> catNames = camos.getCategoryNames();
-            while (catNames.hasNext()) {
-                String s = catNames.next();
-                if (s.equals(camoGroup)) {
-                    validGroup = true;
-                }
-            }
-        }
-        if (!validGroup) {
-            throw new Exception("Invalid Faction Camo Group \'" + camoGroup
-                    + "\' for " + player.getName());
-        }
-
-        // Validate CamoName
-        if (camoGroup.equals(IPlayer.NO_CAMO)) {
-            for (String color : IPlayer.colorNames) {
-                if (camoName.equals(color)) {
-                    validName = true;
-                }
-            }
-        } else {
-            Iterator<String> camoNames;
-            if (camoGroup.equals(IPlayer.ROOT_CAMO)) {
-                camoNames = camos.getItemNames("");
-            } else {
-                camoNames = camos.getItemNames(camoGroup);
-            }
-            while (camoNames.hasNext()) {
-                String s = camoNames.next();
-                if (s.equals(camoName)) {
-                    validName = true;
-                }
-            }
-        }
-        if (!validName) {
-            throw new Exception("Invalid Faction Camo \'" + camoName
-                    + "\' in Group \'" + camoGroup + "\' for "
-                    + player.getName());
+        String camoName = getValidCamoName(camoGroup, camoData[1]);
+        if(null == camoName) {
+            throw new ScenarioLoaderException("invalidFactionCamoName",
+                camoData[1], camoGroup, player.getName());
         }
 
         player.setCamoCategory(camoGroup);
@@ -924,12 +833,12 @@ public class ScenarioLoader {
     			if(line.startsWith(COMMENT_MARK) || (line.length() == 0)) {
     				continue;
     			}
-    			if(!line.contains(SPLITTER_PROPERTY)) {
+    			if(!line.contains(SEPARATOR_PROPERTY)) {
     				System.err.println(String.format("Equality sign in scenario file %s on line %d missing; ignoring", //$NON-NLS-1$
     					scenarioFile, lineNum));
     				continue;
     			}
-    			String elements[] = line.split(SPLITTER_PROPERTY, -1);
+    			String elements[] = line.split(SEPARATOR_PROPERTY, -1);
     			if(elements.length > 2) {
     				System.err.println(String.format("Multiple equality signs in scenario file %s on line %d; ignoring", //$NON-NLS-1$
         					scenarioFile, lineNum));
@@ -975,14 +884,10 @@ public class ScenarioLoader {
         }
 
         public void addCritHit(String s) {
-            int loc;
-            int slot;
-
-            // Get the pos of the ":"
-            int ewSpot = s.indexOf(":");
-
-            loc = Integer.parseInt(s.substring(0, ewSpot));
-            slot = Integer.parseInt(s.substring(ewSpot + 1));
+            int ewSpot = s.indexOf(':');
+            int loc = Integer.parseInt(s.substring(0, ewSpot));
+            int slot = Integer.parseInt(s.substring(ewSpot + 1));
+            
             critHits.add(new CritHit(loc, slot - 1));
         }
     }
@@ -1018,17 +923,11 @@ public class ScenarioLoader {
          * Converts 2:1-34 to Location 2 Slot 1 set Ammo to 34
          */
         public void addSetAmmoTo(String s) {
-            int loc = 0;
-            int slot = 0;
-            int setTo = 0;
-
-            // Get the pos of the ":"
-            int ewSpot = s.indexOf(":");
-            int amSpot = s.indexOf("-");
-
-            loc = Integer.parseInt(s.substring(0, ewSpot));
-            slot = Integer.parseInt(s.substring(ewSpot + 1, amSpot));
-            setTo = Integer.parseInt(s.substring(amSpot + 1));
+            int ewSpot = s.indexOf(':');
+            int amSpot = s.indexOf('-');
+            int loc = Integer.parseInt(s.substring(0, ewSpot));
+            int slot = Integer.parseInt(s.substring(ewSpot + 1, amSpot));
+            int setTo = Integer.parseInt(s.substring(amSpot + 1));
 
             ammoSetTo.add(new SetAmmoTo(loc, slot - 1, setTo));
 
@@ -1076,28 +975,13 @@ public class ScenarioLoader {
         /**
          * Converts N2:1 to Nornam hit to location 2 set armor to 1!
          */
-        public void addSpecificDammage(String s) {
-            int loc = 0;
-            int setTo = 0;
-            boolean rear = false;
-            boolean internal = false;
-
-            // Get the type of set to make
-            if (s.substring(0, 1).equals("R")) {
-                rear = true;
-            }
-
-            if (s.substring(0, 1).equals("I")) {
-                internal = true;
-            }
-
-            // Get the pos of the ":"
-            int ewSpot = s.indexOf(":");
-
-            // Get the Location this is the number starting at Character 2 in
-            // the string
-            loc = Integer.parseInt(s.substring(1, ewSpot));
-            setTo = Integer.parseInt(s.substring(ewSpot + 1));
+        public void addSpecificDamage(String s) {
+            int ewSpot = s.indexOf(':');
+            int loc = Integer.parseInt(s.substring(1, ewSpot));
+            int setTo = Integer.parseInt(s.substring(ewSpot + 1));
+            boolean rear = (s.charAt(0) == 'R');
+            boolean internal = (s.charAt(0) == 'I');
+            
             specificDammage.add(new SpecDam(loc, setTo, rear, internal));
         }
     }
@@ -1114,8 +998,38 @@ public class ScenarioLoader {
         return ExternalGameId;
     }
     
+    public static class ScenarioLoaderException extends Exception {
+        private static final long serialVersionUID = 8622648319531348199L;
+        
+        private final Object[] params;
+
+        public ScenarioLoaderException(String errorKey) {
+            super(errorKey);
+            this.params = null;
+        }
+        
+        public ScenarioLoaderException(String errorKey, Object ... params) {
+            super(errorKey);
+            this.params = params;
+        }
+        
+        public String getTranslatedString(ResourceBundle rb) {
+            String result = rb.getString("ScenarioLoaderException." + getMessage()); //$NON-NLS-1$
+            if(null != params) {
+                try {
+                    return String.format(result, params);
+                } catch(IllegalFormatException ifex) {
+                    // Ignore, return the base translation instead
+                }
+            }
+            return result;
+        }
+    }
+    
     public static class StringMultiMap extends HashMap<String, Collection<String>> {
-		public void put(String key, String value) {
+        private static final long serialVersionUID = 2171662843329151622L;
+
+        public void put(String key, String value) {
 			Collection<String> values = get(key);
 			if(null == values) {
 				values = new ArrayList<String>();
@@ -1145,6 +1059,12 @@ public class ScenarioLoader {
 				sb.append(val);
 			}
 			return sb.toString();
+		}
+		
+		/** @return the number of values for this key in the file */
+		public int getNumValues(String key) {
+		    Collection<String> values = get(key);
+		    return (null == values) ? 0 : values.size();
 		}
     }
 }

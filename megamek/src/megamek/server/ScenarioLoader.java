@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
-import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -280,7 +279,7 @@ public class ScenarioLoader {
 
         String sCheck = p.getString(PARAM_MMSVERSION);
         if (sCheck == null) {
-            throw new ScenarioLoaderException("missingMMSVersion");
+            throw new ScenarioLoaderException("missingMMSVersion"); //$NON-NLS-1$
         }
 
         Game g = new Game();
@@ -350,7 +349,7 @@ public class ScenarioLoader {
                 if(p.getNumValues(key) > 1) {
                     System.out.println(String.format("Scenario loading: Unit declaration %s found %d times", //$NON-NLS-1$
                         key, p.getNumValues(key)));
-                    throw new ScenarioLoaderException("multipleUnitDeclarations");
+                    throw new ScenarioLoaderException("multipleUnitDeclarations", key); //$NON-NLS-1$
                 }
                 vEntities.put(key, parseEntityLine(p.getString(key)));
             }
@@ -439,7 +438,7 @@ public class ScenarioLoader {
             String sRef = parts[0];
             MechSummary ms = MechSummaryCache.getInstance().getMech(sRef);
             if (ms == null) {
-                throw new ScenarioLoaderException("missingRequiredEntity", sRef);
+                throw new ScenarioLoaderException("missingRequiredEntity", sRef); //$NON-NLS-1$
             }
             System.out.println(String.format("Loading %s", ms.getName())); //$NON-NLS-1$
             Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
@@ -477,7 +476,7 @@ public class ScenarioLoader {
             return e;
         } catch (NumberFormatException | IndexOutOfBoundsException | EntityLoadingException e) {
             e.printStackTrace();
-            throw new ScenarioLoaderException("unparsableEntityLine", s);
+            throw new ScenarioLoaderException("unparsableEntityLine", s); //$NON-NLS-1$
         }
     }
 
@@ -579,12 +578,12 @@ public class ScenarioLoader {
         String[] camoData = camoString.split(SEPARATOR_COMMA, -1);
         String camoGroup = getValidCamoGroup(camoData[0]);
         if(null == camoGroup) {
-            throw new ScenarioLoaderException("invalidIndividualCamoGroup",
+            throw new ScenarioLoaderException("invalidIndividualCamoGroup", //$NON-NLS-1$
                 camoData[0], entity.getDisplayName());
         }
         String camoName = getValidCamoName(camoGroup, camoData[1]);
         if(null == camoName) {
-            throw new ScenarioLoaderException("invalidIndividualCamoName",
+            throw new ScenarioLoaderException("invalidIndividualCamoName", //$NON-NLS-1$
                 camoData[1], camoGroup, entity.getDisplayName());
         }
 
@@ -599,12 +598,12 @@ public class ScenarioLoader {
         String[] camoData = camoString.split(SEPARATOR_COMMA, -1);
         String camoGroup = getValidCamoGroup(camoData[0]);
         if(null == camoGroup) {
-            throw new ScenarioLoaderException("invalidFactionCamoGroup",
+            throw new ScenarioLoaderException("invalidFactionCamoGroup", //$NON-NLS-1$
                 camoData[0], player.getName());
         }
         String camoName = getValidCamoName(camoGroup, camoData[1]);
         if(null == camoName) {
-            throw new ScenarioLoaderException("invalidFactionCamoName",
+            throw new ScenarioLoaderException("invalidFactionCamoName", //$NON-NLS-1$
                 camoData[1], camoGroup, player.getName());
         }
 
@@ -628,7 +627,7 @@ public class ScenarioLoader {
     private Collection<Player> createPlayers(StringMultiMap p) throws ScenarioLoaderException {
         String sFactions = p.getString(PARAM_FACTIONS);
         if((null == sFactions) || sFactions.isEmpty()) {
-            throw new ScenarioLoaderException("missingFactions");
+            throw new ScenarioLoaderException("missingFactions"); //$NON-NLS-1$
         }
         String[] factions = sFactions.split(SEPARATOR_COMMA, -1);
         Map<String, Player> result = new HashMap<String, Player>(factions.length);
@@ -764,7 +763,7 @@ public class ScenarioLoader {
                 }
                 File fBoard = new File(Configuration.boardsDir(), sBoardFile);
                 if (!fBoard.exists()) {
-                    throw new ScenarioLoaderException("nonexistantBoard", board);
+                    throw new ScenarioLoaderException("nonexistantBoard", board); //$NON-NLS-1$
                 }
                 ba[n] = new Board();
                 ba[n].load(new File(Configuration.boardsDir(), sBoardFile));
@@ -809,7 +808,7 @@ public class ScenarioLoader {
     		}
     	} catch(IOException e) {
             e.printStackTrace();
-            throw new ScenarioLoaderException("exceptionReadingFile", scenarioFile);
+            throw new ScenarioLoaderException("exceptionReadingFile", scenarioFile); //$NON-NLS-1$
         }
         return props;
     }
@@ -977,8 +976,9 @@ public class ScenarioLoader {
             this.params = params;
         }
         
-        public String getTranslatedString(ResourceBundle rb) {
-            String result = rb.getString("ScenarioLoaderException." + getMessage()); //$NON-NLS-1$
+        @Override
+        public String getMessage() {
+            String result = Messages.getString("ScenarioLoaderException." + super.getMessage()); //$NON-NLS-1$
             if(null != params) {
                 try {
                     return String.format(result, params);

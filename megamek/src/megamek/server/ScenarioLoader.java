@@ -289,10 +289,8 @@ public class ScenarioLoader {
 
         // build the faction players
         Collection<Player> players = createPlayers(p);
-        int playerId = 0;
         for(Player player : players) {
-            g.addPlayer(playerId, player);
-            ++ playerId;
+            g.addPlayer(player.getId(), player);
         }
 
         // build the entities
@@ -630,13 +628,13 @@ public class ScenarioLoader {
             throw new ScenarioLoaderException("missingFactions"); //$NON-NLS-1$
         }
         String[] factions = sFactions.split(SEPARATOR_COMMA, -1);
-        Map<String, Player> result = new HashMap<String, Player>(factions.length);
+        List<Player> result = new ArrayList<Player>(factions.length);
         
         int playerId = 0;
         int teamId = 0;
         for(String faction : factions) {
             Player player = new Player(playerId, faction);
-            result.put(faction, player);
+            result.add(player);
             ++ playerId;
             
             // scenario players start out as ghosts to be logged into
@@ -685,7 +683,7 @@ public class ScenarioLoader {
             }
         }
         
-        return result.values();
+        return result;
     }
 
     /**

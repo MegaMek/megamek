@@ -135,81 +135,59 @@ public class ScenarioLoader {
      * the random damage until a server is made available to us.
      */
     public void applyDamage(Server s) {
-        for (int x = 0, n = damagePlans.size(); x < n; x++) {
-            DamagePlan dp = damagePlans.get(x);
-            System.out
-                    .println("Applying damage to " + dp.entity.getShortName());
-            for (int y = 0; y < dp.nBlocks; y++) {
-                HitData hit = dp.entity.rollHitLocation(ToHitData.HIT_NORMAL,
-                        ToHitData.SIDE_FRONT);
-                System.out.println("[s.damageEntity(dp.entity, hit, 5)]");
-                s.damageEntity(dp.entity, hit, 5);
+        for(DamagePlan damagePlan : damagePlans) {
+            System.out.println(String.format("Applying damage to %s", damagePlan.entity.getShortName())); //$NON-NLS-1$
+            for(int y = 0; y < damagePlan.nBlocks; ++ y) {
+                HitData hit = damagePlan.entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                System.out.println("[s.damageEntity(dp.entity, hit, 5)]"); //$NON-NLS-1$
+                s.damageEntity(damagePlan.entity, hit, 5);
             }
 
-            // Apply Spec Dammage
-            for (int dpspot = 0, dpcount = dp.specificDammage.size(); dpspot < dpcount; dpspot++) {
-                // Get the SpecDam
-                SpecDam sd = dp.specificDammage.get(dpspot);
-
-                if (dp.entity.locations() <= sd.loc) {
+            // Apply Spec Damage
+            for(SpecDam specDamage : damagePlan.specificDammage) {
+                if(damagePlan.entity.locations() <= specDamage.loc) {
                     // location is valid
-                    System.out
-                            .println("\tInvalid Location Specified " + sd.loc);
+                    System.out.println(String.format("\tInvalid location specified %d", specDamage.loc)); //$NON-NLS-1$
                 } else {
-                    // Infantry only take dammage to "internal"
-                    if (sd.internal
-                            || ((dp.entity instanceof Infantry) && !(dp.entity instanceof BattleArmor))) {
-                        if (dp.entity.getOInternal(sd.loc) > sd.setArmorTo) {
-                            dp.entity.setInternal(sd.setArmorTo, sd.loc);
-                            System.out
-                                    .println("\tSet Armor Value for (Internal "
-                                            + dp.entity.getLocationName(sd.loc)
-                                            + ") To " + sd.setArmorTo);
-                            if (sd.setArmorTo == 0) {
-                                // Mark destroy if internal armor is set to zero
-                                System.out.println("\tSection Destoyed "
-                                        + dp.entity.getLocationName(sd.loc));
-                                dp.entity.destroyLocation(sd.loc);
+                    // Infantry only take damage to "internal"
+                    if(specDamage.internal
+                        || ((damagePlan.entity instanceof Infantry) && !(damagePlan.entity instanceof BattleArmor))) {
+                        if(damagePlan.entity.getOInternal(specDamage.loc) > specDamage.setArmorTo) {
+                            damagePlan.entity.setInternal(specDamage.setArmorTo, specDamage.loc);
+                            System.out.println(String.format("\tSet armor value for (internal %s) to %d", //$NON-NLS-1$
+                                damagePlan.entity.getLocationName(specDamage.loc), specDamage.setArmorTo));
+                            if(specDamage.setArmorTo == 0) {
+                                System.out.println(String.format("\tSection destoyed %s", //$NON-NLS-1$
+                                    damagePlan.entity.getLocationName(specDamage.loc)));
+                                damagePlan.entity.destroyLocation(specDamage.loc);
                             }
                         }
                     } else {
-                        if (sd.rear && dp.entity.hasRearArmor(sd.loc)) {
-                            if (dp.entity.getOArmor(sd.loc, true) > sd.setArmorTo) {
-                                System.out
-                                        .println("\tSet Armor Value for (Rear "
-                                                + dp.entity
-                                                .getLocationName(sd.loc)
-                                                + ") To " + sd.setArmorTo);
-                                dp.entity.setArmor(sd.setArmorTo, sd.loc, true);
+                        if(specDamage.rear && damagePlan.entity.hasRearArmor(specDamage.loc)) {
+                            if(damagePlan.entity.getOArmor(specDamage.loc, true) > specDamage.setArmorTo) {
+                                System.out.println(String.format("\tSet armor value for (rear %s) to %d", //$NON-NLS-1$
+                                    damagePlan.entity.getLocationName(specDamage.loc), specDamage.setArmorTo));
+                                damagePlan.entity.setArmor(specDamage.setArmorTo, specDamage.loc, true);
                             }
                         } else {
-                            if (dp.entity.getOArmor(sd.loc, false) > sd.setArmorTo) {
-                                System.out.println("\tSet Armor Value for ("
-                                        + dp.entity.getLocationName(sd.loc)
-                                        + ") To " + sd.setArmorTo);
+                            if(damagePlan.entity.getOArmor(specDamage.loc, false) > specDamage.setArmorTo) {
+                                System.out.println(String.format("\tSet armor value for (%s) to %d", //$NON-NLS-1$
+                                    damagePlan.entity.getLocationName(specDamage.loc), specDamage.setArmorTo));
 
                                 // Battle Armor Handled Differently
                                 // If armor set to Zero kill the Armor sport
-                                // which represents
-                                // one member of the squad
-                                if (dp.entity instanceof BattleArmor) {
-                                    if (sd.setArmorTo == 0) {
-                                        dp.entity.setArmor(
-                                                IArmorState.ARMOR_DOOMED,
-                                                sd.loc, false);
-                                        dp.entity.setInternal(
-                                                IArmorState.ARMOR_DOOMED,
-                                                sd.loc);
+                                // which represents one member of the squad
+                                if(damagePlan.entity instanceof BattleArmor) {
+                                    if(specDamage.setArmorTo == 0) {
+                                        damagePlan.entity.setArmor(IArmorState.ARMOR_DOOMED,specDamage.loc, false);
+                                        damagePlan.entity.setInternal(IArmorState.ARMOR_DOOMED,specDamage.loc);
                                     } else {
-                                        // For some reason setting armor to 1
-                                        // will result in 2 armor points
-                                        // left on the GUI Dont know why but
-                                        // adjust here!
-                                        dp.entity.setArmor(sd.setArmorTo - 1,
-                                                sd.loc);
+                                        // For some reason setting armor to 1 will result in 2 armor points
+                                        // left on the GUI. Dont know why but adjust here!
+                                        damagePlan.entity.setArmor(specDamage.setArmorTo - 1, specDamage.loc);
                                     }
                                 } else {
-                                    dp.entity.setArmor(sd.setArmorTo, sd.loc);
+                                    damagePlan.entity.setArmor(specDamage.setArmorTo, specDamage.loc);
                                 }
                             }
                         }
@@ -219,105 +197,75 @@ public class ScenarioLoader {
         }
 
         // Loop throught Crit Hits
-        for (int chSpot = 0, chCount = critHitPlans.size(); chSpot < chCount; chSpot++) {
-            CritHitPlan chp = critHitPlans.get(chSpot);
-            System.out.print("Applying Critical Hits to "
-                    + chp.entity.getShortName());
-
-            for (int chpspot = 0, chpcount = chp.critHits.size(); chpspot < chpcount; chpspot++) {
-                // Get the ScritHit
-                CritHit ch = chp.critHits.get(chpspot);
-
+        for(CritHitPlan chp : critHitPlans) {
+            System.out.println(String.format("Applying critical hits to %s", //$NON-NLS-1$
+                chp.entity.getShortName()));
+            for(CritHit critHit : chp.critHits) {
                 // Apply a critical hit to the indicated slot.
-                if (chp.entity.locations() <= ch.loc) {
-                    System.out.println("\n\tInvalid Location Specified "
-                            + ch.loc);
+                if(chp.entity.locations() <= critHit.loc) {
+                    System.out.println(String.format("\tInvalid location specified %d", //$NON-NLS-1$
+                        critHit.loc));
                 } else {
                     // Make sure that we have crit spot to hit
-                    if ((chp.entity instanceof Mech)
-                            || (chp.entity instanceof Protomech)) {
-
+                    if((chp.entity instanceof Mech) || (chp.entity instanceof Protomech)) {
                         // Is this a torso weapon slot?
                         CriticalSlot cs = null;
                         if ((chp.entity instanceof Protomech)
-                                && (Protomech.LOC_TORSO == ch.loc)
-                                && ((Protomech.SYSTEM_TORSO_WEAPON_A == ch.slot) || (Protomech.SYSTEM_TORSO_WEAPON_B == ch.slot))) {
-                            cs = new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
-                                    ch.slot);
+                                && (Protomech.LOC_TORSO == critHit.loc)
+                                && ((Protomech.SYSTEM_TORSO_WEAPON_A == critHit.slot) || (Protomech.SYSTEM_TORSO_WEAPON_B == critHit.slot))) {
+                            cs = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, critHit.slot);
                         }
                         // Is this a valid slot number?
-                        else if ((ch.slot < 0)
-                                || (ch.slot > chp.entity
-                                .getNumberOfCriticals(ch.loc))) {
-                            System.out.println("\n\tInvalid Slot Specified "
-                                    + ch.loc + ":" + (ch.slot + 1));
+                        else if((critHit.slot < 0)
+                                || (critHit.slot > chp.entity.getNumberOfCriticals(critHit.loc))) {
+                            System.out.println(String.format("\tInvalid slot specified %d: %d", //$NON-NLS-1$
+                                critHit.loc, (critHit.slot + 1)));
                         }
                         // Get the slot from the entity.
                         else {
-                            cs = chp.entity.getCritical(ch.loc, ch.slot);
+                            cs = chp.entity.getCritical(critHit.loc, critHit.slot);
                         }
 
                         // Ignore invalid, unhittable, and damaged slots.
-                        if ((null == cs) || !cs.isHittable()) {
-                            System.out.println("\n\tSlot not hittable "
-                                    + ch.loc + ":" + (ch.slot + 1));
+                        if((null == cs) || !cs.isHittable()) {
+                            System.out.println(String.format("\tSlot not hittable %d: %d", //$NON-NLS-1$
+                                critHit.loc, (critHit.slot + 1)));
                         } else {
-                            System.out
-                                    .print("[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]");
-                            s.applyCriticalHit(chp.entity, ch.loc, cs, false,
-                                    0, false);
+                            System.out.print("[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]"); //$NON-NLS-1$
+                            s.applyCriticalHit(chp.entity, critHit.loc, cs, false, 0, false);
                         }
                     }
                     // Handle Tanks differently.
-                    else if (chp.entity instanceof Tank) {
-                        if ((ch.slot < 0) || (ch.slot >= 6)) {
-                            System.out.println("\n\tInvalid Slot Specified "
-                                    + ch.loc + ":" + (ch.slot + 1));
+                    else if(chp.entity instanceof Tank) {
+                        if((critHit.slot < 0) || (critHit.slot >= 6)) {
+                            System.out.println(String.format("\tInvalid slot specified %d: %d", //$NON-NLS-1$
+                                critHit.loc, (critHit.slot + 1)));
                         } else {
-                            CriticalSlot cs = new CriticalSlot(
-                                    CriticalSlot.TYPE_SYSTEM, ch.slot + 1);
-                            System.out
-                                    .print("[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]");
-                            s.applyCriticalHit(chp.entity, Entity.NONE, cs,
-                                    false, 0, false);
+                            CriticalSlot cs = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, critHit.slot + 1);
+                            System.out.print("[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]"); //$NON-NLS-1$
+                            s.applyCriticalHit(chp.entity, Entity.NONE, cs, false, 0, false);
                         }
-
-                    } // End have-tank
-
-                } // End have-valid-location
-
-            } // Handle the next critical hit
-
-            // Print a line between hit plans.
-            System.out.println();
-
-        } // Handle the next critical hit plan
+                    }
+                }
+            }
+        }
 
         // Loop throught Set Ammo To
-        for (int saSpot = 0, saCount = ammoPlans.size(); saSpot < saCount; saSpot++) {
-            SetAmmoPlan sap = ammoPlans.get(saSpot);
-            System.out.println("Applying Ammo Adjustment to "
-                    + sap.entity.getShortName());
-
-            for (int sapSpot = 0, sapCount = sap.ammoSetTo.size(); sapSpot < sapCount; sapSpot++) {
-                // Get the ScritHit
-                SetAmmoTo sa = sap.ammoSetTo.get(sapSpot);
-
+        for(SetAmmoPlan sap : ammoPlans) {
+            System.out.println(String.format("Applying ammo adjustment to ", //$NON-NLS-1$
+                sap.entity.getShortName()));
+            for(SetAmmoTo sa : sap.ammoSetTo) {
                 // Only can be done against Mechs
-                if (sap.entity instanceof Mech) {
-                    if (sa.slot < sap.entity.getNumberOfCriticals(sa.loc)) {
-                        // Get the piece of Eqipment and Check to make sure it
-                        // is
-                        // a ammo item then set its amount!
-                        CriticalSlot cs = sap.entity.getCritical(sa.loc,
-                                sa.slot);
+                if(sap.entity instanceof Mech) {
+                    if(sa.slot < sap.entity.getNumberOfCriticals(sa.loc)) {
+                        // Get the piece of equipment and check to make sure it
+                        // is a ammo item then set its amount!
+                        CriticalSlot cs = sap.entity.getCritical(sa.loc, sa.slot);
                         if (!(cs == null)) {
-                            Mounted ammo = sap.entity.getCritical(sa.loc,
-                                    sa.slot).getMount();
-                            if (ammo.getType() instanceof AmmoType) {
-                                // Also make sure we dont exceed the max aloud
-                                ammo.setShotsLeft(Math.min(sa.setAmmoTo,
-                                        ammo.getBaseShotsLeft()));
+                            Mounted ammo = sap.entity.getCritical(sa.loc, sa.slot).getMount();
+                            if(ammo.getType() instanceof AmmoType) {
+                                // Also make sure we dont exceed the max allowed
+                                ammo.setShotsLeft(Math.min(sa.setAmmoTo, ammo.getBaseShotsLeft()));
                             }
                         }
                     }

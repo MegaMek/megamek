@@ -94,6 +94,7 @@ import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.ChatterBox2;
+import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.MovementDisplay;
 import megamek.client.ui.swing.TilesetManager;
@@ -228,6 +229,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private Font font_minefield = FONT_12;
 
     IGame game;
+    ClientGUI clientgui;
 
     private Dimension boardSize;
     private Dimension preferredSize = new Dimension(0, 0);
@@ -471,9 +473,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Construct a new board view for the specified game
      */
-    public BoardView1(final IGame game, final MegaMekController controller)
+    public BoardView1(final IGame game, final MegaMekController controller, ClientGUI clientgui)
             throws java.io.IOException {
         this.game = game;
+        this.clientgui = clientgui;
 
         hexImageCache = new ImageCache<Coords, HexImageCacheEntry>();
 
@@ -4413,6 +4416,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (null == point) {
             return;
         }
+        
+        // Button 4: Hide/Show the minimap and unitDisplay
+        if (me.getButton() == 4) {
+            if (clientgui != null) clientgui.toggleMMUDDisplays();
+        }
+        
         // we clicked the right mouse button,
         // remember the position if we start to scroll
         // if we drag, we should scroll

@@ -45,6 +45,7 @@ import megamek.common.Coords;
 import megamek.common.Crew;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.Game;
 import megamek.common.HitData;
 import megamek.common.IArmorState;
@@ -97,7 +98,8 @@ public class ScenarioLoader {
     private static final String PARAM_DAMAGE = "Damage"; //$NON-NLS-1$
     private static final String PARAM_SPECIFIC_DAMAGE = "DamageSpecific"; //$NON-NLS-1$
     private static final String PARAM_CRITICAL_HIT = "CritHit"; //$NON-NLS-1$
-    private static final String PARAM_AMMO_SETTING = "SetAmmoTo"; //$NON-NLS-1$
+    private static final String PARAM_AMMO_AMOUNT = "SetAmmoTo"; //$NON-NLS-1$
+    private static final String PARAM_AMMO_TYPE = "SetAmmoType"; //$NON-NLS-1$
     private static final String PARAM_PILOT_HITS = "PilotHits"; //$NON-NLS-1$
     private static final String PARAM_EXTERNAL_ID = "ExternalID"; //$NON-NLS-1$
     private static final String PARAM_ADVANTAGES = "Advantages"; //$NON-NLS-1$
@@ -126,6 +128,24 @@ public class ScenarioLoader {
             camos = new DirectoryItems(Configuration.camoDir(), "", ImageFileFactory.getInstance()); //$NON-NLS-1$
         } catch (Exception e) {
             camos = null;
+        }
+    }
+
+    // TODO: legal/valid ammo type handling and game options, since they are set at this point
+    private AmmoType getValidAmmoType(IGame game, Mounted mounted, String ammoString) {
+        final Entity e = mounted.getEntity();
+        final AmmoType currentAmmoType = (AmmoType) mounted.getType();
+        final AmmoType newAmmoType = (AmmoType) EquipmentType.get(ammoString);
+        if(null == newAmmoType) {
+            return null;
+        }
+        if((newAmmoType.getRackSize() == currentAmmoType.getRackSize())
+            && (newAmmoType.hasFlag(AmmoType.F_BATTLEARMOR) == currentAmmoType.hasFlag(AmmoType.F_BATTLEARMOR))
+            && (newAmmoType.hasFlag(AmmoType.F_ENCUMBERING) == currentAmmoType.hasFlag(AmmoType.F_ENCUMBERING))
+            && (newAmmoType.getTonnage(e) == currentAmmoType.getTonnage(e))) {
+            return newAmmoType;
+        } else {
+            return null;
         }
     }
 
@@ -251,8 +271,28 @@ public class ScenarioLoader {
 
         // Loop throught Set Ammo To
         for(SetAmmoPlan sap : ammoPlans) {
-            System.out.println(String.format("Applying ammo adjustment to ", //$NON-NLS-1$
+            System.out.println(String.format("Applying ammo adjustment to %s", //$NON-NLS-1$
                 sap.entity.getShortName()));
+            for(SetAmmoType sa : sap.ammoSetType) {
+                // Limit to 'Mechs for now (needs to be extended later)
+                if(sap.entity instanceof Mech) {
+                    if(sa.slot < sap.entity.getNumberOfCriticals(sa.loc)) {
+                        CriticalSlot cs = sap.entity.getCritical(sa.loc, sa.slot);
+                        if(null != cs) {
+                            Mounted ammo = sap.entity.getCritical(sa.loc, sa.slot).getMount();
+                            if(ammo.getType() instanceof AmmoType) {
+                                AmmoType newAmmoType = getValidAmmoType(s.getGame(), ammo, sa.type);
+                                if(null != newAmmoType) {
+                                    ammo.changeAmmoType(newAmmoType);
+                                } else {
+                                    System.out.println(String.format("Illegal ammo type '%s' for unit %s, slot %s", //$NON-NLS-1$
+                                        sa.type, sap.entity.getDisplayName(), ammo.getName()));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             for(SetAmmoTo sa : sap.ammoSetTo) {
                 // Only can be done against Mechs
                 if(sap.entity instanceof Mech) {
@@ -260,7 +300,7 @@ public class ScenarioLoader {
                         // Get the piece of equipment and check to make sure it
                         // is a ammo item then set its amount!
                         CriticalSlot cs = sap.entity.getCritical(sa.loc, sa.slot);
-                        if (!(cs == null)) {
+                        if(null != cs) {
                             Mounted ammo = sap.entity.getCritical(sa.loc, sa.slot).getMount();
                             if(ammo.getType() instanceof AmmoType) {
                                 // Also make sure we dont exceed the max allowed
@@ -384,12 +424,19 @@ public class ScenarioLoader {
                         }
                         critHitPlans.add(chp);
                         break;
-                    case PARAM_AMMO_SETTING:
-                        SetAmmoPlan sap = new SetAmmoPlan(e);
+                    case PARAM_AMMO_AMOUNT:
+                        SetAmmoPlan amountSap = new SetAmmoPlan(e);
                         for(String val : p.getString(key).split(SEPARATOR_COMMA, -1)) {
-                            sap.addSetAmmoTo(val);
+                            amountSap.addSetAmmoTo(val);
                         }
-                        ammoPlans.add(sap);
+                        ammoPlans.add(amountSap);
+                        break;
+                    case PARAM_AMMO_TYPE:
+                        SetAmmoPlan typeSap = new SetAmmoPlan(e);
+                        for(String val : p.getString(key).split(SEPARATOR_COMMA, -1)) {
+                            typeSap.addSetAmmoType(val);
+                        }
+                        ammoPlans.add(typeSap);
                         break;
                     case PARAM_PILOT_HITS:
                         int hits = Integer.parseInt(p.getString(key));
@@ -472,8 +519,8 @@ public class ScenarioLoader {
                 e.setDeployed(true);
             }
             return e;
-        } catch (NumberFormatException | IndexOutOfBoundsException | EntityLoadingException e) {
-            e.printStackTrace();
+        } catch (NumberFormatException | IndexOutOfBoundsException | EntityLoadingException ex) {
+            ex.printStackTrace();
             throw new ScenarioLoaderException("unparsableEntityLine", s); //$NON-NLS-1$
         }
     }
@@ -869,15 +916,28 @@ public class ScenarioLoader {
      * This is used to store the armor to change ammo at a given location
      */
     private class SetAmmoTo {
-        public int loc;
-        public int slot;
-        public int setAmmoTo;
+        public final int loc;
+        public final int slot;
+        public final int setAmmoTo;
 
-        public SetAmmoTo(int Location, int Slot, int SetAmmoTo) {
-            loc = Location;
-            slot = Slot;
-            setAmmoTo = SetAmmoTo;
+        public SetAmmoTo(int loc, int slot, int setAmmoTo) {
+            this.loc = loc;
+            this.slot = slot;
+            this.setAmmoTo = setAmmoTo;
         }
+    }
+    
+    private class SetAmmoType {
+        public final int loc;
+        public final int slot;
+        public final String type;
+        
+        public SetAmmoType(int loc, int slot, String type) {
+            this.loc = loc;
+            this.slot = slot;
+            this.type = type;
+        }
+
     }
 
     /**
@@ -885,8 +945,9 @@ public class ScenarioLoader {
      * scenario file. It contains a vector of SetAmmoTo.
      */
     private class SetAmmoPlan {
-        public Entity entity;
-        List<SetAmmoTo> ammoSetTo = new ArrayList<>();
+        public final Entity entity;
+        public final List<SetAmmoTo> ammoSetTo = new ArrayList<>();
+        public final List<SetAmmoType> ammoSetType = new ArrayList<>();
 
         public SetAmmoPlan(Entity e) {
             entity = e;
@@ -903,7 +964,15 @@ public class ScenarioLoader {
             int setTo = Integer.parseInt(s.substring(amSpot + 1));
 
             ammoSetTo.add(new SetAmmoTo(loc, slot - 1, setTo));
-
+        }
+        
+        public void addSetAmmoType(String s) {
+            int ewSpot = s.indexOf(':');
+            int atSpot = s.indexOf('-');
+            int loc = Integer.parseInt(s.substring(0, ewSpot));
+            int slot = Integer.parseInt(s.substring(ewSpot + 1, atSpot));
+            
+            ammoSetType.add(new SetAmmoType(loc, slot - 1, s.substring(atSpot + 1)));
         }
     }
 
@@ -911,10 +980,10 @@ public class ScenarioLoader {
      * This is used specify the one damage location
      */
     private class SpecDam {
-        public int loc;
-        public int setArmorTo;
-        public boolean rear;
-        public boolean internal;
+        public final int loc;
+        public final int setArmorTo;
+        public final boolean rear;
+        public final boolean internal;
 
         public SpecDam(int Location, int SetArmorTo, boolean RearHit,
                        boolean Internal) {
@@ -930,9 +999,9 @@ public class ScenarioLoader {
      * from the scenario file. It contains a vector of SpecDam.
      */
     private class DamagePlan {
-        public Entity entity;
-        public int nBlocks;
-        List<SpecDam> specificDammage = new ArrayList<>();
+        public final Entity entity;
+        public final int nBlocks;
+        public final List<SpecDam> specificDammage = new ArrayList<>();
 
         public DamagePlan(Entity e, int n) {
             entity = e;

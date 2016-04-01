@@ -63,6 +63,7 @@ import megamek.common.Mounted;
 import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.Tank;
+import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.loaders.EntityLoadingException;
@@ -135,11 +136,53 @@ public class ScenarioLoader {
     // TODO: legal/valid ammo type handling and game options, since they are set at this point
     private AmmoType getValidAmmoType(IGame game, Mounted mounted, String ammoString) {
         final Entity e = mounted.getEntity();
+        final int year = game.getOptions().intOption("year"); //$NON-NLS-1$
         final EquipmentType currentAmmoType = mounted.getType();
         final Mounted currentWeapon = mounted.getLinkedBy();
         final EquipmentType currentWeaponType = (null != currentWeapon) ? currentWeapon.getType() : null;
         final EquipmentType newAmmoType = EquipmentType.get(ammoString);
-        if((null == newAmmoType) || !(newAmmoType instanceof AmmoType)) {
+        if(null == newAmmoType) {
+            System.out.println(String.format("Ammo type '%s' not found", ammoString)); //$NON-NLS-1$
+            return null;
+        }
+        if(!(newAmmoType instanceof AmmoType)) {
+            System.out.println(String.format("Equipment %s is not an ammo type", newAmmoType.getName())); //$NON-NLS-1$
+            return null;
+        }
+        if(!TechConstants.isLegal(
+            TechConstants.getGameTechLevel(game, e.isClan()),
+            newAmmoType.getTechLevel(year), true,
+            e.isMixedTech())) {
+            System.out.println(String.format("Ammo %s (TL %d) is not legal for year %d (TL %d)", //$NON-NLS-1$
+                newAmmoType.getName(), newAmmoType.getTechLevel(year), year,
+                TechConstants.getGameTechLevel(game, e.isClan())));
+            return null;
+        }
+        if(e.isClan() && !game.getOptions().booleanOption("clan_ignore_eq_limits")) { //$NON-NLS-1$
+            // Check for clan weapon restrictions
+            final long muniType = ((AmmoType) newAmmoType).getMunitionType() & ~AmmoType.M_INCENDIARY_LRM;
+            if((muniType == AmmoType.M_SEMIGUIDED)
+                || (muniType == AmmoType.M_SWARM_I)
+                || (muniType == AmmoType.M_FLARE)
+                || (muniType == AmmoType.M_FRAGMENTATION)
+                || (muniType == AmmoType.M_THUNDER_AUGMENTED)
+                || (muniType == AmmoType.M_THUNDER_INFERNO)
+                || (muniType == AmmoType.M_THUNDER_VIBRABOMB)
+                || (muniType == AmmoType.M_THUNDER_ACTIVE)
+                || (muniType == AmmoType.M_INFERNO_IV)
+                || (muniType == AmmoType.M_VIBRABOMB_IV)
+                || (muniType == AmmoType.M_LISTEN_KILL)
+                || (muniType == AmmoType.M_ANTI_TSM) 
+                || (muniType == AmmoType.M_SMOKE_WARHEAD)) {
+                System.out.println(String.format("Ammo type %s not allowed by Clan rules", //$NON-NLS-1$
+                    newAmmoType.getName()));
+                return null;
+            }
+        }
+        if(AmmoType.canDeliverMinefield((AmmoType) newAmmoType)
+            && !game.getOptions().booleanOption("minefields")) { //$NON-NLS-1$
+            System.out.println(String.format("Minefield-creating ammo type %s forbidden by game rules", //$NON-NLS-1$
+                newAmmoType.getName()));
             return null;
         }
         int weaponAmmoType = (currentWeaponType instanceof WeaponType) ? ((WeaponType) currentWeaponType).getAmmoType() : 0;

@@ -13,12 +13,17 @@ import megamek.server.ScenarioLoader;
 import megamek.server.Server;
 
 public class ScenarioLoadierTest {
-    private static List<String> errCache = new ArrayList<>();
-    private static PrintStream cachedPs;
-    private static PrintStream originalErr;
+    private List<String> errCache = new ArrayList<>();
+    private PrintStream cachedPs;
+    private PrintStream originalErr;
+    
+    public static void main(String[] args) {
+        ScenarioLoadierTest tester = new ScenarioLoadierTest();
+        tester.runTests();
+    }
     
     @SuppressWarnings("resource")
-    public static void main(String[] args) {
+    public void runTests() {
         PrintStream nullPs = new PrintStream(new OutputStream() {
             @Override
             public void write(int b) throws IOException {
@@ -31,29 +36,24 @@ public class ScenarioLoadierTest {
             
             @Override
             public void write(int b) throws IOException {
-                if (b == '\n') {
+                if(b == '\n') {
                     String s = line.toString();
                     if(!s.startsWith("MMRandom: generating RNG")) { //$NON-NLS-1$
                         errCache.add(s);
                     }
                     line.setLength(0);
-                } else if (b != '\r') {
+                } else if(b != '\r') {
                     line.append((char) b);
                 }
             }
         });
         originalErr = System.err;
         System.setErr(cachedPs);
-        ScenarioLoadierTest tester = new ScenarioLoadierTest();
-        tester.runTests();
+        File baseDir = new File("data/scenarios"); //$NON-NLS-1$
+        checkScenarioFile(baseDir);
         System.setErr(originalErr);
         cachedPs.close();
         nullPs.close();
-    }
-    
-    public void runTests() {
-        File baseDir = new File("data/scenarios"); //$NON-NLS-1$
-        checkScenarioFile(baseDir);
     }
     
     private void checkScenarioFile(File file) {

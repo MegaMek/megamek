@@ -115,13 +115,10 @@ public class ScenarioLoader {
     private final File scenarioFile;
     // copied from ChatLounge.java
     private final List<DamagePlan> damagePlans = new ArrayList<>();
-
     // Used to store Crit Hits
     private final List<CritHitPlan> critHitPlans = new ArrayList<>();
-
     // Used to set ammo Spec Ammounts
     private final List<SetAmmoPlan> ammoPlans = new ArrayList<>();
-
     private DirectoryItems camos;
 
     public ScenarioLoader(File f) {
@@ -132,7 +129,7 @@ public class ScenarioLoader {
             camos = null;
         }
     }
-
+    
     // TODO: legal/valid ammo type handling and game options, since they are set at this point
     private AmmoType getValidAmmoType(IGame game, Mounted mounted, String ammoString) {
         final Entity e = mounted.getEntity();
@@ -142,11 +139,11 @@ public class ScenarioLoader {
         final EquipmentType currentWeaponType = (null != currentWeapon) ? currentWeapon.getType() : null;
         final EquipmentType newAmmoType = EquipmentType.get(ammoString);
         if(null == newAmmoType) {
-            System.out.println(String.format("Ammo type '%s' not found", ammoString)); //$NON-NLS-1$
+            System.err.println(String.format("Ammo type '%s' not found", ammoString)); //$NON-NLS-1$
             return null;
         }
         if(!(newAmmoType instanceof AmmoType)) {
-            System.out.println(String.format("Equipment %s is not an ammo type", newAmmoType.getName())); //$NON-NLS-1$
+            System.err.println(String.format("Equipment %s is not an ammo type", newAmmoType.getName())); //$NON-NLS-1$
             return null;
         }
         if(!TechConstants.isLegal(
@@ -214,7 +211,7 @@ public class ScenarioLoader {
             for(SpecDam specDamage : damagePlan.specificDammage) {
                 if(damagePlan.entity.locations() <= specDamage.loc) {
                     // location is valid
-                    System.out.println(String.format("\tInvalid location specified %d", specDamage.loc)); //$NON-NLS-1$
+                    System.err.println(String.format("\tInvalid location specified %d", specDamage.loc)); //$NON-NLS-1$
                 } else {
                     // Infantry only take damage to "internal"
                     if(specDamage.internal
@@ -270,7 +267,7 @@ public class ScenarioLoader {
             for(CritHit critHit : chp.critHits) {
                 // Apply a critical hit to the indicated slot.
                 if(chp.entity.locations() <= critHit.loc) {
-                    System.out.println(String.format("\tInvalid location specified %d", //$NON-NLS-1$
+                    System.err.println(String.format("\tInvalid location specified %d", //$NON-NLS-1$
                         critHit.loc));
                 } else {
                     // Make sure that we have crit spot to hit
@@ -285,8 +282,8 @@ public class ScenarioLoader {
                         // Is this a valid slot number?
                         else if((critHit.slot < 0)
                                 || (critHit.slot > chp.entity.getNumberOfCriticals(critHit.loc))) {
-                            System.out.println(String.format("\tInvalid slot specified %d: %d", //$NON-NLS-1$
-                                critHit.loc, (critHit.slot + 1)));
+                            System.err.println(String.format("%s - invalid slot specified %d: %d", //$NON-NLS-1$
+                                chp.entity.getShortName(), critHit.loc, (critHit.slot + 1)));
                         }
                         // Get the slot from the entity.
                         else {
@@ -295,8 +292,8 @@ public class ScenarioLoader {
 
                         // Ignore invalid, unhittable, and damaged slots.
                         if((null == cs) || !cs.isHittable()) {
-                            System.out.println(String.format("\tSlot not hittable %d: %d", //$NON-NLS-1$
-                                critHit.loc, (critHit.slot + 1)));
+                            System.err.println(String.format("%s - slot not hittable %d: %d", //$NON-NLS-1$
+                                chp.entity.getShortName(), critHit.loc, (critHit.slot + 1)));
                         } else {
                             System.out.print("[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]"); //$NON-NLS-1$
                             s.applyCriticalHit(chp.entity, critHit.loc, cs, false, 0, false);
@@ -305,8 +302,8 @@ public class ScenarioLoader {
                     // Handle Tanks differently.
                     else if(chp.entity instanceof Tank) {
                         if((critHit.slot < 0) || (critHit.slot >= 6)) {
-                            System.out.println(String.format("\tInvalid slot specified %d: %d", //$NON-NLS-1$
-                                critHit.loc, (critHit.slot + 1)));
+                            System.err.println(String.format("%s - invalid slot specified %d: %d", //$NON-NLS-1$
+                                chp.entity.getShortName(), critHit.loc, (critHit.slot + 1)));
                         } else {
                             CriticalSlot cs = new CriticalSlot(CriticalSlot.TYPE_SYSTEM, critHit.slot + 1);
                             System.out.print("[s.applyCriticalHit(chp.entity, ch.loc, cs, false)]"); //$NON-NLS-1$
@@ -329,8 +326,8 @@ public class ScenarioLoader {
                         if(null != cs) {
                             Mounted ammo = sap.entity.getCritical(sa.loc, sa.slot).getMount();
                             if(null == ammo) {
-                                System.out.println(String.format("\tInvalid slot specified %d: %d", //$NON-NLS-1$
-                                    sa.loc, sa.slot + 1));
+                                System.err.println(String.format("%s - invalid slot specified %d: %d", //$NON-NLS-1$
+                                    sap.entity.getShortName(), sa.loc, sa.slot + 1));
                             } else if(ammo.getType() instanceof AmmoType) {
                                 AmmoType newAmmoType = getValidAmmoType(s.getGame(), ammo, sa.type);
                                 if(null != newAmmoType) {
@@ -354,8 +351,8 @@ public class ScenarioLoader {
                         if(null != cs) {
                             Mounted ammo = sap.entity.getCritical(sa.loc, sa.slot).getMount();
                             if(null == ammo) {
-                                System.out.println(String.format("\tInvalid slot specified %d: %d", //$NON-NLS-1$
-                                    sa.loc, sa.slot + 1));
+                                System.err.println(String.format("%s - invalid slot specified %d: %d", //$NON-NLS-1$
+                                    sap.entity.getShortName(), sa.loc, sa.slot + 1));
                             } else if(ammo.getType() instanceof AmmoType) {
                                 // Also make sure we dont exceed the max allowed
                                 ammo.setShotsLeft(Math.min(sa.setAmmoTo, ammo.getBaseShotsLeft()));
@@ -439,7 +436,7 @@ public class ScenarioLoader {
         for(String key : p.keySet()) {
             if(unitPattern.matcher(key).matches() && (p.getNumValues(key) > 0)) {
                 if(p.getNumValues(key) > 1) {
-                    System.out.println(String.format("Scenario loading: Unit declaration %s found %d times", //$NON-NLS-1$
+                    System.err.println(String.format("Scenario loading: Unit declaration %s found %d times", //$NON-NLS-1$
                         key, p.getNumValues(key)));
                     throw new ScenarioLoaderException("multipleUnitDeclarations", key); //$NON-NLS-1$
                 }
@@ -523,7 +520,7 @@ public class ScenarioLoader {
                         parseCamo(e, p.getString(key));
                         break;
                     default:
-                        System.out.println(String.format("Scenario loading: Unknown unit data key %s", key)); //$NON-NLS-1$
+                        System.err.println(String.format("Scenario loading: Unknown unit data key %s", key)); //$NON-NLS-1$
                 }
             }
         }
@@ -586,7 +583,7 @@ public class ScenarioLoader {
             String[] advantageData = curAdv.split(SEPARATOR_COLON, -1);
             IOption option = entity.getCrew().getOptions().getOption(advantageData[0]);
             if(null == option) {
-                System.out.println(String.format("Ignoring invalid pilot advantage '%s'", //$NON-NLS-1$
+                System.err.println(String.format("Ignoring invalid pilot advantage '%s'", //$NON-NLS-1$
                     curAdv));
             } else {
                 System.out.println(String.format("Adding pilot advantage '%s' to %s", //$NON-NLS-1$
@@ -777,7 +774,7 @@ public class ScenarioLoader {
                         player.setNbrMFCommand(minesCommand);
                         player.setNbrMFVibra(minesVibra);
                     } catch(NumberFormatException nfex) {
-                        System.out.println(String.format("Format error with minefields string '%s' for %s", //$NON-NLS-1$
+                        System.err.println(String.format("Format error with minefields string '%s' for %s", //$NON-NLS-1$
                             minefields, faction));
                     }
                 }
@@ -893,13 +890,13 @@ public class ScenarioLoader {
                     continue;
                 }
                 if(!line.contains(SEPARATOR_PROPERTY)) {
-                    System.out.println(String.format("Equality sign in scenario file %s on line %d missing; ignoring", //$NON-NLS-1$
+                    System.err.println(String.format("Equality sign in scenario file %s on line %d missing; ignoring", //$NON-NLS-1$
                         scenarioFile, lineNum));
                     continue;
                 }
                 String elements[] = line.split(SEPARATOR_PROPERTY, -1);
                 if(elements.length > 2) {
-                    System.out.println(String.format("Multiple equality signs in scenario file %s on line %d; ignoring", //$NON-NLS-1$
+                    System.err.println(String.format("Multiple equality signs in scenario file %s on line %d; ignoring", //$NON-NLS-1$
                             scenarioFile, lineNum));
                         continue;
                 }

@@ -9,19 +9,19 @@ import java.util.List;
 import java.util.Locale;
 
 import megamek.common.IGame;
+import megamek.common.MechSummaryCache;
 import megamek.server.ScenarioLoader;
 import megamek.server.Server;
 
 public class ScenarioLoadierTest {
     private List<String> errCache = new ArrayList<>();
     private PrintStream cachedPs;
+    private PrintStream originalOut;
     private PrintStream originalErr;
     
     public static void main(String[] args) {
         ScenarioLoadierTest tester = new ScenarioLoadierTest();
-        for(String line : tester.runTests()) {
-            System.err.println(line);
-        }
+        tester.runTests();
     }
     
     @SuppressWarnings("resource")
@@ -33,6 +33,7 @@ public class ScenarioLoadierTest {
                 // Output nothing
             }
         });
+        originalOut = System.out;
         System.setOut(nullPs);
         cachedPs = new PrintStream(new OutputStream() {
             private StringBuilder line = new StringBuilder();
@@ -52,8 +53,18 @@ public class ScenarioLoadierTest {
         });
         originalErr = System.err;
         System.setErr(cachedPs);
+
+        // Wait for MSC (we have to wait anyway, better to do it once if we want to measure)
+        MechSummaryCache msc = MechSummaryCache.getInstance();
+        while(!msc.isInitialized()) {
+            try {
+                Thread.sleep(1000);
+            } catch(InterruptedException e) {}
+        }
+        
         File baseDir = new File("data/scenarios"); //$NON-NLS-1$
         checkScenarioFile(baseDir, errorAccumulator);
+        System.setOut(originalOut);
         System.setErr(originalErr);
         cachedPs.close();
         nullPs.close();
@@ -79,8 +90,10 @@ public class ScenarioLoadierTest {
             
             if(errCache.size() > 0) {
                 errorAccumulator.add("ERROR in " + file.getPath()); //$NON-NLS-1$
+                originalErr.println("ERROR in " + file.getPath()); //$NON-NLS-1$
                 for(String line : errCache) {
                     errorAccumulator.add(line);
+                    originalErr.println(line);
                 }
                 errCache.clear();
             }

@@ -36,6 +36,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Board;
@@ -109,7 +110,8 @@ public class ScenarioLoader {
     private static final String PARAM_COMMANDER = "Commander"; //$NON-NLS-1$
     private static final String PARAM_DEPLOYMENT_ROUND = "DeploymentRound"; //$NON-NLS-1$
     private static final String PARAM_CAMO = "Camo"; //$NON-NLS-1$
-    
+    private static final String PARAM_ALTITUDE = "Altitude"; //$NON-NLS-1$
+
     private static final String MAP_RANDOM = "RANDOM"; //$NON-NLS-1$
 
     private final File scenarioFile;
@@ -518,6 +520,18 @@ public class ScenarioLoader {
                         break;
                     case PARAM_CAMO:
                         parseCamo(e, p.getString(key));
+                        break;
+                    case PARAM_ALTITUDE:
+                        int altitude = Math.min(Integer.parseInt(p.getString(key)), 10);
+                        if(e instanceof Aero) {
+                            e.setAltitude(altitude);
+                            if(altitude <= 0) {
+                                ((Aero) e).land();
+                            }
+                        } else {
+                            System.out.println(String.format("Altitude setting for a non-aerospace unit %s; ignoring", //$NON-NLS-1$
+                                e.getShortName()));
+                        }
                         break;
                     default:
                         System.err.println(String.format("Scenario loading: Unknown unit data key %s", key)); //$NON-NLS-1$

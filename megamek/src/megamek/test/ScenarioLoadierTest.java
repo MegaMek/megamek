@@ -22,9 +22,9 @@ public class ScenarioLoadierTest {
     public static void main(String[] args) {
         ScenarioLoadierTest tester = new ScenarioLoadierTest();
         tester.runTests();
+        System.exit(0);
     }
     
-    @SuppressWarnings("resource")
     public List<String> runTests() {
         List<String> errorAccumulator = new ArrayList<>();
         PrintStream nullPs = new PrintStream(new OutputStream() {

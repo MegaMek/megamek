@@ -1010,6 +1010,9 @@ public class ScenarioLoader {
         public void addSetAmmoTo(String s) {
             int ewSpot = s.indexOf(':');
             int amSpot = s.indexOf('-');
+            if(s.isEmpty() || (ewSpot < 1) || (amSpot < ewSpot)) {
+                return;
+            }
             int loc = Integer.parseInt(s.substring(0, ewSpot));
             int slot = Integer.parseInt(s.substring(ewSpot + 1, amSpot));
             int setTo = Integer.parseInt(s.substring(amSpot + 1));
@@ -1020,6 +1023,9 @@ public class ScenarioLoader {
         public void addSetAmmoType(String s) {
             int ewSpot = s.indexOf(':');
             int atSpot = s.indexOf('-');
+            if(s.isEmpty() || (ewSpot < 1) || (atSpot < ewSpot)) {
+                return;
+            }
             int loc = Integer.parseInt(s.substring(0, ewSpot));
             int slot = Integer.parseInt(s.substring(ewSpot + 1, atSpot));
             
@@ -1069,6 +1075,9 @@ public class ScenarioLoader {
          */
         public void addSpecificDamage(String s) {
             int ewSpot = s.indexOf(':');
+            if(s.isEmpty() || (ewSpot < 1)) {
+                return;
+            }
             int loc = Integer.parseInt(s.substring(1, ewSpot));
             int setTo = Integer.parseInt(s.substring(ewSpot + 1));
             boolean rear = (s.charAt(0) == 'R');

@@ -19,11 +19,14 @@ public class ScenarioLoadierTest {
     
     public static void main(String[] args) {
         ScenarioLoadierTest tester = new ScenarioLoadierTest();
-        tester.runTests();
+        for(String line : tester.runTests()) {
+            System.err.println(line);
+        }
     }
     
     @SuppressWarnings("resource")
-    public void runTests() {
+    public List<String> runTests() {
+        List<String> errorAccumulator = new ArrayList<>();
         PrintStream nullPs = new PrintStream(new OutputStream() {
             @Override
             public void write(int b) throws IOException {
@@ -50,13 +53,14 @@ public class ScenarioLoadierTest {
         originalErr = System.err;
         System.setErr(cachedPs);
         File baseDir = new File("data/scenarios"); //$NON-NLS-1$
-        checkScenarioFile(baseDir);
+        checkScenarioFile(baseDir, errorAccumulator);
         System.setErr(originalErr);
         cachedPs.close();
         nullPs.close();
+        return errorAccumulator;
     }
     
-    private void checkScenarioFile(File file) {
+    private void checkScenarioFile(File file, List<String> errorAccumulator) {
         int port = 7770;
         if(null == file) {
             return;
@@ -74,15 +78,15 @@ public class ScenarioLoadierTest {
             }
             
             if(errCache.size() > 0) {
-                originalErr.println("ERROR in " + file.getPath()); //$NON-NLS-1$
+                errorAccumulator.add("ERROR in " + file.getPath()); //$NON-NLS-1$
                 for(String line : errCache) {
-                    originalErr.println(line);
+                    errorAccumulator.add(line);
                 }
                 errCache.clear();
             }
         } else if(file.isDirectory()) {
             for(File subFile : file.listFiles()) {
-                checkScenarioFile(subFile);
+                checkScenarioFile(subFile, errorAccumulator);
             }
         }
     }

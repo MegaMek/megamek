@@ -328,7 +328,10 @@ public class ScenarioLoader {
                         CriticalSlot cs = sap.entity.getCritical(sa.loc, sa.slot);
                         if(null != cs) {
                             Mounted ammo = sap.entity.getCritical(sa.loc, sa.slot).getMount();
-                            if(ammo.getType() instanceof AmmoType) {
+                            if(null == ammo) {
+                                System.out.println(String.format("\tInvalid slot specified %d: %d", //$NON-NLS-1$
+                                    sa.loc, sa.slot + 1));
+                            } else if(ammo.getType() instanceof AmmoType) {
                                 AmmoType newAmmoType = getValidAmmoType(s.getGame(), ammo, sa.type);
                                 if(null != newAmmoType) {
                                     ammo.changeAmmoType(newAmmoType);
@@ -350,7 +353,10 @@ public class ScenarioLoader {
                         CriticalSlot cs = sap.entity.getCritical(sa.loc, sa.slot);
                         if(null != cs) {
                             Mounted ammo = sap.entity.getCritical(sa.loc, sa.slot).getMount();
-                            if(ammo.getType() instanceof AmmoType) {
+                            if(null == ammo) {
+                                System.out.println(String.format("\tInvalid slot specified %d: %d", //$NON-NLS-1$
+                                    sa.loc, sa.slot + 1));
+                            } else if(ammo.getType() instanceof AmmoType) {
                                 // Also make sure we dont exceed the max allowed
                                 ammo.setShotsLeft(Math.min(sa.setAmmoTo, ammo.getBaseShotsLeft()));
                             }

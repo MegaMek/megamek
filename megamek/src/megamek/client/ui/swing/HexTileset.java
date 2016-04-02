@@ -540,13 +540,7 @@ public class HexTileset {
                 loadImage(comp);
             }
             if (images.size() > 1) {
-                // Use a "seed" for determining which
-                // Image to use from the tileset. Normally the seed is the
-                // hashcode of the hex coordinates.
-                // Coords.Hashcode() is always a multiple of 4. So mess with the
-                // seed a little.
-                int betterSeed = (seed >> 3) + (seed);
-                int rand = (betterSeed % images.size());
+                int rand = (seed % images.size());
                 return images.elementAt(rand);
             }
             return images.firstElement();

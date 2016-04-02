@@ -13,12 +13,13 @@ SmallCraft
 Aquarius Escort
 </Name>
 <Model>
+(Standard)
 </Model>
 <Tonnage>
 200
 </Tonnage>
 <SafeThrust>
-5
+4
 </SafeThrust>
 <Armor>
 183
@@ -31,18 +32,18 @@ ISLargeLaser
 ISLargeLaser
 </Nose Equipment>
 <Left Side Equipment>
-ISLRM15
-ISLRM15 Ammo
-ISLRM15 Ammo
+ISLRM10
+ISLRM10 Ammo
+ISLRM10 Ammo
 ISSRM6
 ISSRM6 Ammo
 ISSRM6 Ammo
 (R) ISMediumLaser
 </Left Side Equipment>
 <Right Side Equipment>
-ISLRM15
-ISLRM15 Ammo
-ISLRM15 Ammo
+ISLRM10
+ISLRM10 Ammo
+ISLRM10 Ammo
 ISSRM6
 ISSRM6 Ammo
 ISSRM6 Ammo
@@ -56,7 +57,7 @@ ISMediumLaser
 8
 </structural_integrity>
 <heatsinks>
-35
+32
 </heatsinks>
 <sink_type>
 0

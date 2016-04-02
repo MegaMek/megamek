@@ -54,9 +54,10 @@ include "StandardIncludes/StandardLimbs.tileinc"
 include "StandardIncludes/StandardSpace.tileinc"
 
 
-super * "swamp:1" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_3.png;swamp/swamp_3.png"
-super * "swamp:2" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_3.png;swamp/swamp_3.png"
-super * "swamp:3" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_3.png;swamp/swamp_3.png"
+super * "swamp:1" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_2.png;swamp/swamp_3.png"
+#levels 2 and 3 of swamp are for quicksand
+super * "swamp:2" "" "swamp/quicksand_0.gif;swamp/quicksand_1.gif;swamp/quicksand_2.gif;swamp/quicksand_3.gif"
+super * "swamp:3" "" "swamp/quicksand_0.gif;swamp/quicksand_1.gif;swamp/quicksand_2.gif;swamp/quicksand_3.gif"
 
 super * "rough:1" "" "transparent/rough_0.png;transparent/rough_1.png;transparent/rough_2.png"
 super * "rough:2" "" "transparent/ultra_rough.png"

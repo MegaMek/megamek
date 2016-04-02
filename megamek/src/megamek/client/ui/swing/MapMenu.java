@@ -28,6 +28,7 @@ import java.util.Vector;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.UIManager;
 
 import megamek.client.Client;
 import megamek.client.ui.Messages;
@@ -94,6 +95,9 @@ public class MapMenu extends JPopupMenu {
         selectedEntity = myEntity = game.getEntity(gui.getSelectedEntityNum());
 
         hasMenu = createMenu();
+        // make popups not consume mouse events outside them
+        // so board dragging can start correctly when this menu is open
+        UIManager.put("PopupMenu.consumeEventOnClose", false);
     }
 
     private boolean canSelectEntities() {

@@ -2,40 +2,60 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Infantry
 </UnitType>
+
 <Name>
 Mechanized Wheeled Squad
 </Name>
+
 <Model>
 (Flamer)
 </Model>
-<squad_size>
-6
-</squad_size>
-<squadn>
-1
-</squadn>
-<Primary>
-Auto Rifle
-</Primary>
-<Secondary>
-Portable Flamer
-</Secondary>
-<secondn>
-1
-</secondn>
-<type>
-IS
-</type>
+
 <year>
 2025
 </year>
+
+<type>
+IS Level 2
+</type>
+
 <motion_type>
 Wheeled
 </motion_type>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+Total Warfare - Succession Wars
+</source>
+
+<squad_size>
+6
+</squad_size>
+
+<squadn>
+1
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+Auto-Rifle
+</Primary>
+
+<Secondary>
+Flamer (Man-Pack)
+</Secondary>
+

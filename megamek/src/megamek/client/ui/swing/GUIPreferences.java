@@ -90,6 +90,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String AOHEXSHADOWS = "AoHexShadows";
     public static final String LEVELHIGHLIGHT = "LevelHighlight";
     public static final String FLOATINGISO = "FloatingIsometric";
+    public static final String MMSYMBOL = "MmSymbol";
     public static final String AUTO_END_FIRING = "AutoEndFiring";
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
     public static final String CHAT_LOUNGE_TABS = "ChatLoungeTabs";
@@ -101,6 +102,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String GAME_OPTIONS_SIZE_HEIGHT = "GameOptionsSizeHeight";
     public static final String GAME_OPTIONS_SIZE_WIDTH = "GameOptionsSizeWidth";
     public static final String FIRING_SOLUTIONS = "FiringSolutions";
+    public static final String MOVE_ENVELOPE = "MoveEnvelope";
     public static final String FOV_HIGHLIGHT = "FovHighlight";
     public static final String FOV_HIGHLIGHT_ALPHA = "FovHighlightAlpha";
     //Rings' sizes (measured in distance to center) separated by whitespace.
@@ -366,6 +368,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getFloatingIso() {
         return store.getBoolean(FLOATINGISO);
     }
+    
+    public boolean getMmSymbol() {
+        return store.getBoolean(MMSYMBOL);
+    }
 
     public boolean getShadowMap() {
         return store.getBoolean(SHADOWMAP);
@@ -417,6 +423,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getFiringSolutions() {
         return store.getBoolean(FIRING_SOLUTIONS);
+    }
+    
+    public boolean getMoveEnvelope() {
+        return store.getBoolean(MOVE_ENVELOPE);
     }
 
     public boolean getFovHighlight() {
@@ -732,11 +742,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setFloatingIso(boolean state){
         store.setValue(FLOATINGISO, state);
     }
-    
+
+    public void setMmSymbol(boolean state){
+        store.setValue(MMSYMBOL, state);
+    }
+
     public void setLevelHighlight(boolean state){
         store.setValue(LEVELHIGHLIGHT, state);
     }
-    
+
     public boolean getShowDamageLevel(){
         return store.getBoolean(SHOW_DAMAGE_LEVEL);
     }
@@ -784,6 +798,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setFiringSolutions(boolean state){
         store.setValue(FIRING_SOLUTIONS,state);
     }
+    
+    public void setMoveEnvelope(boolean state){
+        store.setValue(MOVE_ENVELOPE,state);
+    }   
 
     public void setFovHighlight(boolean state){
         store.setValue(FOV_HIGHLIGHT,state);

@@ -2,40 +2,64 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Infantry
 </UnitType>
+
 <Name>
 Clan Jump Point
 </Name>
+
 <Model>
 (Flamer)
 </Model>
-<squad_size>
-5
-</squad_size>
-<squadn>
-4
-</squadn>
-<Primary>
-Auto Rifle
-</Primary>
-<Secondary>
-InfantryTWFlamer
-</Secondary>
-<secondn>
-2
-</secondn>
-<type>
-Clan
-</type>
+
 <year>
 2815
 </year>
+
+<type>
+Clan Level 2
+</type>
+
 <motion_type>
 Jump
 </motion_type>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+Total Warfare - Succession Wars
+</source>
+
+<squad_size>
+5
+</squad_size>
+
+<squadn>
+4
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+Auto-Rifle
+</Primary>
+
+<Secondary>
+Flamer (Man-Pack)
+</Secondary>
+
+<antimek>
+6
+</antimek>
+

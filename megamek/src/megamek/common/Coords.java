@@ -69,7 +69,7 @@ public class Coords implements Serializable {
         this.x = x;
         this.y = y;
         // Make sure the hash is positive
-        this.hash = HashCodeUtil.hash1(x << SHIFT + y) & 0x7FFFFFFF;
+        this.hash = (HashCodeUtil.hash1(x + 1337) ^ HashCodeUtil.hash1(y + 97331)) & 0x7FFFFFFF;
     }
 
     /**

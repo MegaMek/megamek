@@ -217,6 +217,12 @@ public class Infantry extends Entity {
                     || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
             mp += 1;
         }
+        if ((null != getCrew())
+                && getCrew().getOptions().booleanOption("foot_cav")
+                && ((getMovementMode() == EntityMovementMode.INF_LEG)
+                    || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
+            mp += 1;
+        }
         if(hasActiveFieldArtillery()) {
             //mp of 1 at the most
             mp = Math.min(mp, 1);

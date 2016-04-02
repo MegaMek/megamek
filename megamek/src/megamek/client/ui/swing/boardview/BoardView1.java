@@ -94,6 +94,7 @@ import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.ChatterBox2;
+import megamek.client.ui.swing.ClientGUI;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.MovementDisplay;
 import megamek.client.ui.swing.TilesetManager;
@@ -228,6 +229,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private Font font_minefield = FONT_12;
 
     IGame game;
+    ClientGUI clientgui;
 
     private Dimension boardSize;
     private Dimension preferredSize = new Dimension(0, 0);
@@ -240,7 +242,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private int scrollYDifference = 0;
     // are we drag-scrolling?
     private boolean dragging = false;
-    // should we scroll when the mouse is dragged?
+    /** True when the right mouse button was pressed to start a drag */
     private boolean shouldScroll = false;
 
     // entity sprites
@@ -465,15 +467,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private Point2D oldCenter = new Point2D.Double();
     private long waitTimer;
     /** Speed of soft centering of the board, less is faster */
-    private static final int SOFT_CENTER_SPEED = 8; 
+    private static final int SOFT_CENTER_SPEED = 8;
+    
+    // Tooltip Info ---
+    /** Holds the final Coords for a planned movement. Set by MovementDisplay,
+     *  used to display the distance in the board tooltip. */ 
+    private Coords movementTarget;
 
 
     /**
      * Construct a new board view for the specified game
      */
-    public BoardView1(final IGame game, final MegaMekController controller)
+    public BoardView1(final IGame game, final MegaMekController controller, ClientGUI clientgui)
             throws java.io.IOException {
         this.game = game;
+        this.clientgui = clientgui;
 
         hexImageCache = new ImageCache<Coords, HexImageCacheEntry>();
 
@@ -3633,6 +3641,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Nothing to do if we don't have a MovePath
         if (md == null) {
+            movementTarget = null;
             return;
         }
         // need to update the movement sprites based on the move path for this
@@ -3666,6 +3675,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             "AdvancedMoveDefaultColor");
                     break;
             }
+            movementTarget = md.getLastStep().getPosition();
+        } else {
+            movementTarget = null;
         }
 
         refreshMoveVectors(entity, md, col);
@@ -3702,6 +3714,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     public void clearMovementData() {
         pathSprites = new ArrayList<StepSprite>();
+        movementTarget = null;
         checkFoVHexImageCacheClear();
         repaint();
         refreshMoveVectors();
@@ -3746,7 +3759,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         for (Coords loc : mvEnvData.keySet()) {
             Color spriteColor = null;
             int mvType = -1;
-            if (gear == MovementDisplay.GEAR_JUMP) {
+            if (gear == MovementDisplay.GEAR_JUMP || gear == MovementDisplay.GEAR_DFA) {
                 if (mvEnvData.get(loc) <= jump) {
                     spriteColor = guip
                             .getColor(GUIPreferences.ADVANCED_MOVE_JUMP_COLOR);
@@ -4418,6 +4431,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (null == point) {
             return;
         }
+        
+        // Button 4: Hide/Show the minimap and unitDisplay
+        if (me.getButton() == 4) {
+            if (clientgui != null) clientgui.toggleMMUDDisplays();
+        }
+        
         // we clicked the right mouse button,
         // remember the position if we start to scroll
         // if we drag, we should scroll
@@ -5173,6 +5192,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             mhex = game.getBoard().getHex(mcoords);
 
         txt.append("<html>"); //$NON-NLS-1$
+        
 
         // Hex Terrain
         if (GUIPreferences.getInstance().getShowMapHexPopup() && (mhex != null)) {
@@ -5202,6 +5222,34 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
             txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
+            
+            // Distance from the selected unit and a planned movement end point
+            if ((selectedEntity != null) && 
+                    (selectedEntity.getPosition() != null)) {
+                int distance = selectedEntity
+                        .getPosition()
+                        .distance(mcoords);
+                txt.append("<TABLE BORDER=0 BGCOLOR=#FFDDDD width=100%><TR><TD>"); //$NON-NLS-1$
+                if (distance == 1) {
+                    txt.append(Messages.getString("BoardView1.Tooltip.Distance1")); //$NON-NLS-1$
+                } else {
+                    txt.append(Messages.getString("BoardView1.Tooltip.DistanceN", //$NON-NLS-1$
+                            new Object[] { distance }));
+                }
+                
+                if ((game.getPhase() == Phase.PHASE_MOVEMENT) && 
+                        (movementTarget != null)) {
+                    txt.append("<BR>");
+                    int disPM = movementTarget.distance(mcoords);
+                    if (disPM == 1) {
+                        txt.append(Messages.getString("BoardView1.Tooltip.DistanceMove1")); //$NON-NLS-1$
+                    } else {
+                        txt.append(Messages.getString("BoardView1.Tooltip.DistanceMoveN", //$NON-NLS-1$
+                                new Object[] { disPM }));
+                    }
+                }
+                txt.append("</TD></TR></TABLE>"); //$NON-NLS-1$
+            }
             
             // Fuel Tank
             if (mhex.containsTerrain(Terrains.FUEL_TANK)) {

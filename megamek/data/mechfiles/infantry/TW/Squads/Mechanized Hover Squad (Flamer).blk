@@ -2,40 +2,60 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Infantry
 </UnitType>
+
 <Name>
 Mechanized Hover Squad
 </Name>
+
 <Model>
 (Flamer)
 </Model>
-<squad_size>
-5
-</squad_size>
-<squadn>
-1
-</squadn>
-<Primary>
-Auto Rifle
-</Primary>
-<Secondary>
-Portable Flamer
-</Secondary>
-<secondn>
-1
-</secondn>
-<type>
-IS
-</type>
+
 <year>
 2050
 </year>
+
+<type>
+IS Level 2
+</type>
+
 <motion_type>
 Hover
 </motion_type>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+Total Warfare - Succession Wars
+</source>
+
+<squad_size>
+5
+</squad_size>
+
+<squadn>
+1
+</squadn>
+
+<secondn>
+2
+</secondn>
+
+<Primary>
+Auto-Rifle
+</Primary>
+
+<Secondary>
+Flamer (Man-Pack)
+</Secondary>
+

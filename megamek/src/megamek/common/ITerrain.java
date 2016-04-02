@@ -99,9 +99,10 @@ public interface ITerrain {
     public abstract boolean exitsTo(ITerrain other);
 
     /**
+     * @param roll 
      * @return the modifier to PSRs made in this terrain
      */
-    public abstract int pilotingModifier(EntityMovementMode moveMode);
+    public abstract void pilotingModifier(EntityMovementMode moveMode, PilotingRollData roll, boolean enteringRubble);
 
     /**
      * @return the additional movement cost for this terrain
@@ -114,6 +115,6 @@ public interface ITerrain {
 
     public abstract int getBogDownModifier(EntityMovementMode moveMode, boolean largeVee);
 
-    public abstract int getUnstuckModifier(int elev);
+    public abstract void getUnstuckModifier(int elev, PilotingRollData rollTarget);
 
 }

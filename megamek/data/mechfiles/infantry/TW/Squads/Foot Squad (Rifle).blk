@@ -2,35 +2,56 @@
 <BlockVersion>
 1
 </BlockVersion>
-#Write the version number just in case...
+
+##Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 Infantry
 </UnitType>
+
 <Name>
 Foot Squad
 </Name>
+
 <Model>
 (Rifle)
 </Model>
-<squad_size>
-7
-</squad_size>
-<squadn>
-1
-</squadn>
-<Primary>
-Auto Rifle
-</Primary>
-<type>
-IS
-</type>
+
 <year>
 1900
 </year>
+
+<type>
+IS Level 2
+</type>
+
 <motion_type>
 Leg
 </motion_type>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+Total Warfare - Succession Wars
+</source>
+
+<squad_size>
+7
+</squad_size>
+
+<squadn>
+1
+</squadn>
+
+<Primary>
+Auto-Rifle
+</Primary>
+
+<antimek>
+5
+</antimek>
 

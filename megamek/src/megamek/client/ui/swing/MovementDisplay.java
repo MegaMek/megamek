@@ -449,6 +449,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     @Override
                     public void performAction() {
                         removeLastStep();
+                        computeMovementEnvelope(ce());
                     }
                 });
 
@@ -515,11 +516,93 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
                     @Override
                     public void performAction() {
-                        computeMovementEnvelope(clientgui.mechD
-                                .getCurrentEntity());
+                        GUIPreferences.getInstance().setMoveEnvelope(
+                                !GUIPreferences.getInstance().getMoveEnvelope());
+                        if (GUIPreferences.getInstance().getMoveEnvelope()) {
+                            computeMovementEnvelope(clientgui.mechD
+                                    .getCurrentEntity());
+                        } else {
+                            clientgui.bv.clearMovementEnvelope();
+                        }
                     }
                 });
 
+        // Register the action for CLEAR
+        controller.registerCommandAction(KeyCommandBind.CANCEL.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        clear();
+                        computeMovementEnvelope(ce());
+                    }
+                });
+        
+        // Command to toggle between jumping and walk/run
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_MOVEMODE.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || !display.isVisible()
+                                || display.isIgnoringEvents()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        final Entity ce = ce();
+                        boolean isAero = (ce instanceof Aero);
+                        // first check if jumping is available at all
+                        if (!isAero && !ce.isImmobile() && (ce.getJumpMP() > 0)
+                                && !(ce.isStuck() && !ce.canUnstickByJumping())) {
+                            if (gear != MovementDisplay.GEAR_JUMP) {
+                                if (!((cmd.getLastStep() != null)
+                                        && cmd.getLastStep().isFirstStep() 
+                                        && (cmd.getLastStep().getType() 
+                                                == MoveStepType.LAY_MINE))) {
+                                    clear();
+                                }
+                                if (!cmd.isJumping()) {
+                                    cmd.addStep(MoveStepType.START_JUMP);
+                                }
+                                gear = MovementDisplay.GEAR_JUMP;
+                                Color jumpColor = GUIPreferences.getInstance().getColor(
+                                        GUIPreferences.ADVANCED_MOVE_JUMP_COLOR);
+                                clientgui.getBoardView().setHighlightColor(jumpColor);
+                            } else {
+                                Color walkColor = GUIPreferences.getInstance().getColor(
+                                        GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+                                clientgui.getBoardView().setHighlightColor(walkColor);
+                                gear = MovementDisplay.GEAR_LAND;
+                                clear();
+                            }
+                        } else {
+                            Color walkColor = GUIPreferences.getInstance().getColor(
+                                    GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+                            clientgui.getBoardView().setHighlightColor(walkColor);
+                            gear = MovementDisplay.GEAR_LAND;
+                            clear();
+                        }
+                        computeMovementEnvelope(ce); 
+                    }
+        });
     }
 
     /**
@@ -626,14 +709,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         cen = en;
         clientgui.setSelectedEntityNum(en);
+        gear = MovementDisplay.GEAR_LAND;
+        Color walkColor = GUIPreferences.getInstance().getColor(
+                GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+        clientgui.getBoardView().setHighlightColor(walkColor);
         clear();
+        
         updateButtons();
         // Update the menu bar.
         clientgui.getMenuBar().setEntity(ce);
         clientgui.getBoardView().highlight(ce.getPosition());
-        Color walkColor = GUIPreferences.getInstance().getColor(
-                GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
-        clientgui.getBoardView().setHighlightColor(walkColor);
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().cursor(null);
         clientgui.mechD.displayEntity(ce);
@@ -658,6 +743,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             setStatusBarText(yourTurnMsg);
         }
         clientgui.bv.clearFieldofF();
+        computeMovementEnvelope(ce);
     }
 
     private MegamekButton getBtn(MoveCommand c) {
@@ -958,11 +1044,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         cmd = new MovePath(clientgui.getClient().getGame(), ce);
         clientgui.bv.setWeaponFieldofFire(ce, cmd);
 
-        // set to "walk" or the equivalent
-        gear = MovementDisplay.GEAR_LAND;
-        Color walkColor = GUIPreferences.getInstance().getColor(
-                GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
-        clientgui.getBoardView().setHighlightColor(walkColor);
+        // set to "walk," or the equivalent
+        if (gear != MovementDisplay.GEAR_JUMP) {
+            gear = MovementDisplay.GEAR_LAND;
+            Color walkColor = GUIPreferences.getInstance().getColor(
+                    GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
+            clientgui.getBoardView().setHighlightColor(walkColor);
+        } else if (!cmd.isJumping()) {
+            cmd.addStep(MoveStepType.START_JUMP);
+        }
 
         // update some GUI elements
         clientgui.bv.clearMovementData();
@@ -1014,12 +1104,17 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             updateLoadButtons();
             butDone.setEnabled(true);
         }
+        
     }
 
     private void removeLastStep() {
         cmd.removeLastStep();
         if (cmd.length() == 0) {
             clear();
+            if ((gear == MovementDisplay.GEAR_JUMP) && 
+                    (!cmd.isJumping())) {
+                cmd.addStep(MoveStepType.START_JUMP);
+            }
         } else {
             clientgui.bv.drawMovementData(ce(), cmd);
             clientgui.bv.setWeaponFieldofFire(ce(), cmd);
@@ -1568,6 +1663,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             Messages.getString("MovementDisplay.CantCharge"), //$NON-NLS-1$
                             Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$
                     clear();
+                    computeMovementEnvelope(ce);
                     return;
                 }
 
@@ -1636,6 +1732,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         Messages.getString("MovementDisplay.CantCharge"), //$NON-NLS-1$
                         toHit.getDesc());
                 clear();
+                computeMovementEnvelope(ce);
                 return;
             } else if (gear == MovementDisplay.GEAR_DFA) {
                 // check if target is valid
@@ -1645,6 +1742,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                             Messages.getString("MovementDisplay.CantDFA"),
                             Messages.getString("MovementDisplay.NoTarget")); //$NON-NLS-1$ //$NON-NLS-2$
                     clear();
+                    computeMovementEnvelope(ce);
                     return;
                 }
 
@@ -3614,6 +3712,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * @param suggestion
      */
     public void computeMovementEnvelope(Entity suggestion) {
+        // do nothing if deactivated in the settings
+        if (!GUIPreferences.getInstance()
+                .getBoolean(GUIPreferences.MOVE_ENVELOPE)) {
+            clientgui.bv.clearMovementEnvelope();
+            return;
+        }
+        
         Entity en = ce();
         int mvMode = gear;
         if ((en == null) && (suggestion == null)) {
@@ -3632,7 +3737,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MovePath mp = new MovePath(clientgui.getClient().getGame(), en);
 
         int maxMP;
-        if (mvMode == GEAR_JUMP) {
+        if (mvMode == GEAR_JUMP || mvMode == GEAR_DFA) {
             maxMP = en.getJumpMP();
         } else if (mvMode == GEAR_BACKUP) {
             maxMP = en.getWalkMP();
@@ -3646,7 +3751,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
         MoveStepType stepType = (mvMode == GEAR_BACKUP) ? MoveStepType.BACKWARDS
                 : MoveStepType.FORWARDS;
-        if (mvMode == GEAR_JUMP) {
+        if (mvMode == GEAR_JUMP || mvMode == GEAR_DFA) {
             mp.addStep(MoveStepType.START_JUMP);
         }
 
@@ -3722,6 +3827,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             selectNextPlayer();
         } else if (actionCmd.equals(MoveCommand.MOVE_CANCEL.getCmd())) {
             clear();
+            computeMovementEnvelope(ce);
         } else if (ev.getSource().equals(getBtn(MoveCommand.MOVE_MORE))) {
             currentButtonGroup++;
             currentButtonGroup %= numButtonGroups;
@@ -3769,6 +3875,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     GUIPreferences.ADVANCED_MOVE_DEFAULT_COLOR);
             clientgui.getBoardView().setHighlightColor(walkColor);
             gear = MovementDisplay.GEAR_LAND;
+            computeMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_JUMP.getCmd())) {
             if ((gear != MovementDisplay.GEAR_JUMP)
                     && !((cmd.getLastStep() != null)
@@ -3784,6 +3891,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             Color jumpColor = GUIPreferences.getInstance().getColor(
                     GUIPreferences.ADVANCED_MOVE_JUMP_COLOR);
             clientgui.getBoardView().setHighlightColor(jumpColor);
+            computeMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_SWIM.getCmd())) {
             if (gear != MovementDisplay.GEAR_SWIM) {
                 clear();
@@ -3796,12 +3904,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             gear = MovementDisplay.GEAR_TURN;
         } else if (actionCmd.equals(MoveCommand.MOVE_BACK_UP.getCmd())) {
             if (gear == MovementDisplay.GEAR_JUMP) {
+                gear = MovementDisplay.GEAR_BACKUP; // on purpose...
                 clear();
             }
-            gear = MovementDisplay.GEAR_BACKUP;
+            gear = MovementDisplay.GEAR_BACKUP; // on purpose...
             Color backColor = GUIPreferences.getInstance().getColor(
                     GUIPreferences.ADVANCED_MOVE_BACK_COLOR);
             clientgui.getBoardView().setHighlightColor(backColor);
+            computeMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_LONGEST_RUN.getCmd())) {
             if (gear == MovementDisplay.GEAR_JUMP) {
                 clear();
@@ -3874,11 +3984,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 clear();
             }
             gear = MovementDisplay.GEAR_CHARGE;
+            computeMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_DFA.getCmd())) {
             if (gear != MovementDisplay.GEAR_JUMP) {
                 clear();
             }
             gear = MovementDisplay.GEAR_DFA;
+            computeMovementEnvelope(ce);
             if (!cmd.isJumping()) {
                 cmd.addStep(MoveStepType.START_JUMP);
             }
@@ -3887,6 +3999,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 clear();
             }
             gear = MovementDisplay.GEAR_RAM;
+            computeMovementEnvelope(ce);
         } else if (actionCmd.equals(MoveCommand.MOVE_GET_UP.getCmd())) {
             // if the unit has a hull down step
             // then don't clear the moves

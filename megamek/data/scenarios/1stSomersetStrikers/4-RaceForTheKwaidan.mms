@@ -23,4 +23,4 @@ Unit_1stSomersetStrikers_2_DamageSpecific=N0:5,N1:14,R1:5,N2:13,R2:5,N3:13,R3:5,
 Unit_1stSomersetStrikers_3_DamageSpecific=N0:5,N1:9,R1:4,N2:7,R2:3,N3:7,R3:3,N4:8,N5:8,N6:8,N7:8
 Unit_1stSomersetStrikers_1_SetAmmoTo=3:6-4,3:7-4
 Unit_1stSomersetStrikers_2_SetAmmoTo=2:8-4,2:9-4,2:10-22,3:8-4,3:9-4,3:10-22
-Unit_1stSomersetStrikers_3_SetAmmoTo=2:3-0,2:5-6,2:6-6
+Unit_1stSomersetStrikers_3_SetAmmoTo=2:4-0,2:6-6,2:7-6

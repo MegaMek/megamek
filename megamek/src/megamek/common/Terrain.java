@@ -382,12 +382,16 @@ public class Terrain implements ITerrain, Serializable {
             return 0;
         case Terrains.RUBBLE:
             if (level == 6) {
-                if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                if (((e instanceof Mech) && ((Mech)e).isSuperHeavy())
+                        || (e.getCrew().getOptions().booleanOption("foot_cav")
+                                && (moveMode == EntityMovementMode.INF_LEG))) {
                     return 1;
                 }
                 return 2;
             }
-            if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+            if (((e instanceof Mech) && ((Mech)e).isSuperHeavy())
+                    || (e.getCrew().getOptions().booleanOption("foot_cav")
+                            && (moveMode == EntityMovementMode.INF_LEG))) {
                 return 0;
             }
             return 1;
@@ -447,6 +451,16 @@ public class Terrain implements ITerrain, Serializable {
             }
             return 1;
         case Terrains.RAPIDS:
+            if (level == 2) {
+                if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                    return 1;
+                }
+                return 2;
+            }
+            if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                return 0;
+            }
+            return 1;
         case Terrains.ROUGH:
             if (e.getCrew().getOptions().booleanOption("foot_cav") && (moveMode == EntityMovementMode.INF_LEG)) {
                 return level - 1;

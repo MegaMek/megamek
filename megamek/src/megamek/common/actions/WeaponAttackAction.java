@@ -1213,7 +1213,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
 		if (te != null) {
-			
+		    if (te.getCrew().getOptions().booleanOption("urban_guerrilla")
+		            && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.PAVEMENT)
+		                || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROAD))) {
+		        toHit.addModifier(+1, "urban guerrilla");
+		    }
 		}
 
         // check for VDNI

@@ -93,6 +93,7 @@ public class PilotOptions extends AbstractOptions {
 
         // Infantry abilities - Only one until beast mounts are implemented
         addOption(adv, "foot_cav", false); //$NON-NLS-1$
+        addOption(adv, "urban_guerrilla", false); //$NON-NLS-1$
 
         // Unofficial
         addOption(adv, "ei_implant", false); //$NON-NLS-1$

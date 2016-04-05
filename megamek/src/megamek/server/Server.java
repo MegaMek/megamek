@@ -20725,6 +20725,9 @@ public class Server implements Runnable {
                 && !te_hex.containsTerrain(Terrains.BUILDING)
                 && !te_hex.containsTerrain(Terrains.FUEL_TANK)
                 && !te_hex.containsTerrain(Terrains.FORTIFIED)
+                && (!te.getCrew().getOptions().booleanOption("urban_guerrilla"))
+                    && (!te_hex.containsTerrain(Terrains.PAVEMENT)
+                        || !te_hex.containsTerrain(Terrains.ROAD))
                 && !ammoExplosion) {
                 // PBI. Damage is doubled.
                 damage *= 2;

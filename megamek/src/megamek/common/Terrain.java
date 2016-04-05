@@ -396,7 +396,9 @@ public class Terrain implements ITerrain, Serializable {
             }
             return 1;
         case Terrains.WOODS:
-            if (e.getCrew().getOptions().booleanOption("foot_cav") && (moveMode == EntityMovementMode.INF_LEG)) {
+            if (e.getCrew().getOptions().booleanOption("foot_cav") 
+                    && (moveMode == EntityMovementMode.INF_LEG)
+                    && (level > 1)) {
                 return level - 1;
             }
             if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
@@ -404,7 +406,8 @@ public class Terrain implements ITerrain, Serializable {
             }
             return level;
         case Terrains.JUNGLE:
-            if (e.getCrew().getOptions().booleanOption("foot_cav") && (moveMode == EntityMovementMode.INF_LEG)) {
+            if (e.getCrew().getOptions().booleanOption("foot_cav")
+                    && (moveMode == EntityMovementMode.INF_LEG)) {
                 return level;
             }
             if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {

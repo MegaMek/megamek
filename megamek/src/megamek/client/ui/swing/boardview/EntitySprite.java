@@ -745,10 +745,11 @@ class EntitySprite extends Sprite {
             } else if (
                     (entity.isDone() && this.bv.game.getPhase() == Phase.PHASE_MOVEMENT) 
                     || this.bv.game.getPhase() == Phase.PHASE_FIRING) {
-                
+                int tmm = Compute.getTargetMovementModifier(bv.game,
+                        entity.getId()).getValue();
                 // Unit didn't move
                 if (entity.moved == EntityMovementType.MOVE_NONE) {
-                    addToTT("NoMove", BR);
+                    addToTT("NoMove", BR, tmm);
                     
                 // Unit did move
                 } else {
@@ -776,7 +777,7 @@ class EntitySprite extends Sprite {
                     addToTT("MovementF", NOBR,
                             entity.getMovementString(entity.moved),
                             entity.delta_distance,
-                            Compute.getTargetMovementModifier(this.bv.game,entity.getId()).getValue());
+                            tmm);
                 }
                 // Special Moves
                 if (entity.isEvading()) 

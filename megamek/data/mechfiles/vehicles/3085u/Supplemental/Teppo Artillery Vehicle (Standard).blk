@@ -1,0 +1,120 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Teppo Artillery Vehicle
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3086
+</year>
+
+<type>
+IS Level 4
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+troopspace:4.0
+</transporters>
+
+<cruiseMP>
+2
+</cruiseMP>
+
+<engine_type>
+6
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+7
+</armor_tech>
+
+<armor>
+60
+60
+60
+60
+60
+59
+57
+</armor>
+
+<Body Equipment>
+ISGuardianECMSuite
+ISCASE
+ISAMS Ammo
+ISAMS Ammo
+ISSniperAmmo
+ISSniperAmmo
+ISSniperAmmo
+IS Light Machine Gun Ammo - Half
+Communications Equipment (3 ton)
+</Body Equipment>
+
+<Front Equipment>
+ISArrowIV
+ISArrowIV
+ISAntiMissileSystem
+Light Machine Gun
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
+ISArrowIVAmmo
+</Front Equipment>
+
+<Front Right Equipment>
+ISAntiMissileSystem
+</Front Right Equipment>
+
+<Front Left Equipment>
+ISAntiMissileSystem
+</Front Left Equipment>
+
+<Rear Right Equipment>
+</Rear Right Equipment>
+
+<Rear Left Equipment>
+</Rear Left Equipment>
+
+<Rear Equipment>
+Light Machine Gun
+Hitch
+</Rear Equipment>
+
+<Turret Equipment>
+ISSniper
+</Turret Equipment>
+
+<source>
+TRO 3085S - Early Republic
+</source>
+
+<tonnage>
+150.0
+</tonnage>
+

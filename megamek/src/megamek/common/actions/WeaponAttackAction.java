@@ -1215,7 +1215,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 		if (te != null) {
 		    if (te.getCrew().getOptions().booleanOption("urban_guerrilla")
 		            && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.PAVEMENT)
-		                || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROAD))) {
+		                || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROAD))
+		                || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.RUBBLE)
+		                || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.BUILDING)
+		                || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROUGH)) {
 		        toHit.addModifier(+1, "urban guerrilla");
 		    }
 		}

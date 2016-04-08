@@ -115,6 +115,8 @@ public class Infantry extends Entity {
     private int dugIn = DUG_IN_NONE;
     
     private boolean isTakingCover = false;
+    private boolean canCallSupport = true;
+    private boolean isCallingSupport = false;
 
     // Public and Protected constants, constructors, and methods.
 
@@ -191,6 +193,24 @@ public class Infantry extends Entity {
     @Override
     public int clipSecondaryFacing(int dir) {
         return dir;
+    }
+
+    /**
+     * Create local platoon for Urban Guerrilla
+     */
+    public void createLocalSupport() {
+        if (Compute.isInUrbanEnvironment(game, getPosition())) {
+            setIsCallingSupport(true);
+            canCallSupport = false;
+        }
+    }
+
+    public void setIsCallingSupport(boolean b) {
+        isCallingSupport = b;
+    }
+
+    public boolean getIsCallingSupport() {
+        return isCallingSupport;
     }
 
     /**
@@ -816,7 +836,10 @@ public class Infantry extends Entity {
         return roll;
     }
 
-     
+    public boolean getCanCallSupport() {
+        return canCallSupport;
+    }
+
   /**
   * This combines the old getCost and getAlternativeCost methods into a revised getCost Method.  
     *this better considers AntiMek training and Weapons and armor costs.  
@@ -1165,6 +1188,10 @@ public class Infantry extends Entity {
 
     public void setArmorEncumbering(boolean b) {
         encumbering = b;
+    }
+
+    public void setCanCallSupport(boolean b) {
+        canCallSupport =b;
     }
 
     public boolean hasSpaceSuit() {

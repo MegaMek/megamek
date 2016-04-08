@@ -5457,6 +5457,29 @@ public class Compute {
         return entities;
     }
 
+    public static boolean isInUrbanEnvironment(IGame game, Coords unitPOS) {
+        // loop through adjacent hexes
+        for (int dir = 0; dir <= 5; dir++) {
+            Coords tempcoords = unitPOS.translated(dir);
+            IHex hextor = game.getBoard().getHex(tempcoords);
+
+            if (!game.getBoard().contains(tempcoords)) {
+                continue;
+            }
+            if (unitPOS.equals(tempcoords)) {
+                continue;
+            }
+            // hex pavement or building?
+            if (hextor.containsTerrain(Terrains.PAVEMENT)
+                    || hextor.containsTerrain(Terrains.BUILDING)
+                    || hextor.containsTerrain(Terrains.RUBBLE)) {
+                continue;
+            }
+            return true;
+        }
+        return false;
+    }
+
     public static boolean isAirToGround(Entity attacker, Targetable target) {
         if ((attacker == null) || (target == null)) {
             return false;

@@ -1,3 +1,13 @@
+/*
+ * MMEvent.java - Simple event system helper class
+ *
+ * Copyright (C) 2016 MegaMek Team
+ *
+ * This file is part of MegaMek
+ *
+ * Some rights reserved. See megamek/docs/license.txt
+ */
+
 package megamek.common.event;
 
 /**

@@ -663,7 +663,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if ("fileGameSaveServer".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             ignoreHotKeys = true;
             String filename = (String) JOptionPane.showInputDialog(frame, Messages.getString("ClientGUI.FileSaveServerDialog.message"), Messages.getString("ClientGUI.FileSaveServerDialog.title"), JOptionPane.QUESTION_MESSAGE, null, null, "savegame.sav");
-            client.sendChat("/save " + filename);
+            if (filename != null) {
+                client.sendChat("/save " + filename);
+            }
             ignoreHotKeys = false;
         }
         if ("helpAbout".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$

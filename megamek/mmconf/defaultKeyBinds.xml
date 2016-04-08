@@ -231,5 +231,12 @@
         <modifier>0</modifier>
         <isRepeatable>false</isRepeatable>
       </KeyBind>
+      
+      <KeyBind>
+        <command>toggleJump</command>
+        <keyCode>74</keyCode> <!-- J -->
+        <modifier>0</modifier>          
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
 
 </KeyBindings>

@@ -6,10 +6,7 @@ MMSVersion=1
 
 Name=Instant Fame:Northwind Highlanders
 
-Description=The campaign on Bellatrix against Ajax's Avengers brought McCormack's Fusiliers instant fame.  
-Arriving to find themselves outnumbered three-to-one, the Fusiliers quickly used their superior grasp of tactics and their ferocity to smash the defending
-unit.  The retreating Avengers tried deperately to shake the Highlanders as they fled east across the southern continent of Bellatrix, but to no avail.  
-Exhausted and bogged down by bad weather, the Avengers had no choice but to stand and fight.
+Description=The campaign on Bellatrix against Ajax's Avengers brought McCormack's Fusiliers instant fame. Arriving to find themselves outnumbered three-to-one, the Fusiliers quickly used their superior grasp of tactics and their ferocity to smash the defending unit.  The retreating Avengers tried deperately to shake the Highlanders as they fled east across the southern continent of Bellatrix, but to no avail. Exhausted and bogged down by bad weather, the Avengers had no choice but to stand and fight.
 
 BoardWidth=2
 BoardHeight=1

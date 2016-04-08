@@ -10,5 +10,5 @@ Location_Jaguar=N
 Location_FedCom=S
 Unit_Jaguar_1=Elemental Battle Armor [Laser],Lincoln Osis,2,3
 Unit_Jaguar_2=Masakari (Warhawk) C,Kit Furey,1,2
-Unit_FedCom_1=Daishi (Dire Wolf) "Prometheus",Victor Steiner-Davion,2,4
+Unit_FedCom_1=Daishi (Dire Wolf) 'Prometheus',Victor Steiner-Davion,2,4
 Unit_FedCom_2=Falconer FLC-8R,Danai Centrella,3,4

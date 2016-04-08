@@ -38,6 +38,9 @@ v0.41.16-git
 + Bug [#3399]: No Quicksand Image
 + Issue #92: Canon units being flagged as invalid designs (temp workaround)
 + PR #118: Mouse Button 4 will not show/hide the Minimap and Unit Display
++ Issue #126: Game saves regardless of button pushed
++ Data: New Sprites and Unit Fixes.
++ Bug: Entity tooltip could have incorrect movement mod with TO standing still
 
 v0.41.15 (2016-02-21 14:15 UTC)
 + Issue #19: doTryUnstuck Error

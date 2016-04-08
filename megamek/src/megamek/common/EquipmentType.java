@@ -216,6 +216,11 @@ public class EquipmentType {
     // static list of eq
     protected static Vector<EquipmentType> allTypes;
     protected static Hashtable<String, EquipmentType> lookupHash;
+    
+    /**
+    * Keeps track of page numbers for rules references.
+    */
+    public String rulesRefs = "";
 
     /** Creates new EquipmentType */
     public EquipmentType() {

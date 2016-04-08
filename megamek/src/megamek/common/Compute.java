@@ -5462,12 +5462,18 @@ public class Compute {
         for (int dir = 0; dir <= 5; dir++) {
             Coords tempcoords = unitPOS.translated(dir);
             IHex hextor = game.getBoard().getHex(tempcoords);
+            IHex unitHex = game.getBoard().getHex(unitPOS);
 
             if (!game.getBoard().contains(tempcoords)) {
                 continue;
             }
             if (unitPOS.equals(tempcoords)) {
                 continue;
+            }
+            if (unitHex.containsTerrain(Terrains.PAVEMENT)
+                    || unitHex.containsTerrain(Terrains.BUILDING)
+                    || unitHex.containsTerrain(Terrains.RUBBLE)) {
+                return true;
             }
             // hex pavement or building?
             if (hextor.containsTerrain(Terrains.PAVEMENT)

@@ -4582,6 +4582,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                    || !ComputeECM.isAffectedByECM(this, getPosition(),
                                                   getPosition());
         }
+        // check for SPA
+        if (crew.getOptions().booleanOption("eagle_eyes")) {
+            return !checkECM
+                   || !ComputeECM.isAffectedByECM(this, getPosition(),
+                                                  getPosition());
+        }
 
         return false;
     }
@@ -4615,6 +4621,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             quirkBonus = 2;
         }
 
+        // check for SPA
+        int spaBonus = 0;
+        if (crew.getOptions().booleanOption("eagle_eyes")) {
+            spaBonus = 1;
+        }
+
         for (Mounted m : getMisc()) {
             EquipmentType type = m.getType();
             if ((type instanceof MiscType) && type.hasFlag(MiscType.F_BAP)
@@ -4631,31 +4643,31 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
                 if (m.getName().equals("Bloodhound Active Probe (THB)")
                     || m.getName().equals(Sensor.BAP)) {
-                    return 8 + cyberBonus + quirkBonus;
+                    return 8 + cyberBonus + quirkBonus + spaBonus;
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.CLAN_AP)
                     || (m.getType()).getInternalName().equals(
                         Sensor.WATCHDOG)
                     || (m.getType()).getInternalName().equals(Sensor.NOVA)) {
-                    return 5 + cyberBonus + quirkBonus;
+                    return 5 + cyberBonus + quirkBonus + spaBonus;
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP)
                     || (m.getType().getInternalName()
                          .equals(Sensor.CLBALIGHT_AP))
                     || (m.getType().getInternalName()
                          .equals(Sensor.ISBALIGHT_AP))) {
-                    return 3 + cyberBonus + quirkBonus;
+                    return 3 + cyberBonus + quirkBonus + spaBonus;
                 }
                 if (m.getType().getInternalName().equals(Sensor.ISIMPROVED)
                     || (m.getType().getInternalName()
                          .equals(Sensor.CLIMPROVED))) {
-                    return 2 + cyberBonus + quirkBonus;
+                    return 2 + cyberBonus + quirkBonus + spaBonus;
                 }
-                return 4 + cyberBonus + quirkBonus;// everthing else should be
+                return 4 + cyberBonus + quirkBonus + spaBonus;// everthing else should be
                 // range 4
             }
         }
-        if ((cyberBonus + quirkBonus) > 0) {
+        if ((cyberBonus + quirkBonus + spaBonus) > 0) {
             return cyberBonus + quirkBonus;
         }
 

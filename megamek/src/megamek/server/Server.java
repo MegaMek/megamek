@@ -10152,6 +10152,9 @@ public class Server implements Runnable {
                 if (entity instanceof Infantry) {
                     target += 1;
                 }
+                if (entity.getCrew().getOptions().booleanOption("eagle_eyes")) {
+                    target += 2;
+                }
                 if ((entity.getMovementMode() == EntityMovementMode.HOVER)
                     || (entity.getMovementMode() == EntityMovementMode.WIGE)) {
                     target = 12;

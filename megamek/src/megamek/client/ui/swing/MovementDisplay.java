@@ -4154,6 +4154,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_CALL_SUPPORT.getCmd())) {
             ((Infantry) ce).createLocalSupport();
+            clientgui.getClient().sendUpdateEntity(ce());
         } else if (actionCmd.equals(MoveCommand.MOVE_DIG_IN.getCmd())) {
             cmd.addStep(MoveStepType.DIG_IN);
             clientgui.bv.drawMovementData(ce(), cmd);

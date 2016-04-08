@@ -5473,9 +5473,8 @@ public class Compute {
             if (hextor.containsTerrain(Terrains.PAVEMENT)
                     || hextor.containsTerrain(Terrains.BUILDING)
                     || hextor.containsTerrain(Terrains.RUBBLE)) {
-                continue;
+                return true;
             }
-            return true;
         }
         return false;
     }

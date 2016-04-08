@@ -31897,11 +31897,12 @@ public class Server implements Runnable {
 
                 // Now lets create a new foot platoon
                 Infantry guerrilla = new Infantry();
-                guerrilla.setChassis("Local Support");
+                guerrilla.setChassis("Insurgents");
                 guerrilla.setModel("(Rifle)");
                 guerrilla.setSquadN(4);
                 guerrilla.setSquadSize(7);
                 guerrilla.autoSetInternal();
+                guerrilla.getCrew().setGunnery(5);
                 try {
                     guerrilla.addEquipment(EquipmentType.get("InfantryAssaultRifle"),
                             Infantry.LOC_INFANTRY);

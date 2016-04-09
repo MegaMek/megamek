@@ -13193,6 +13193,7 @@ public class Server implements Runnable {
                 addReport(r);
             }
         }
+        addNewLines();
     }
 
     private void reportLargeCraftECCMRolls() {

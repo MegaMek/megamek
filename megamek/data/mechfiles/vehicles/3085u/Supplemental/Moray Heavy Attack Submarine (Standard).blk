@@ -1,0 +1,104 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Moray Heavy Attack Submarine
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3072
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Submarine
+</motion_type>
+
+<cruiseMP>
+3
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+75
+66
+66
+55
+60
+</armor>
+
+<Body Equipment>
+IS Ammo LRTorpedo-20
+IS Ammo LRTorpedo-20
+IS Ammo LRTorpedo-20
+IS Ammo LRTorpedo-10
+IS Ammo LRTorpedo-10
+IS Ammo LRTorpedo-10
+IS Ammo SRTorpedo-6
+IS Ammo SRTorpedo-6
+IS Ammo SRTorpedo-6
+IS Ammo SRTorpedo-6
+ISCASE
+</Body Equipment>
+
+<Front Equipment>
+LRT 20
+LRT 20
+SRT 6
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+LRT 10
+SRT 6
+</Rear Equipment>
+
+<Turret Equipment>
+ISERMediumLaser
+ISERMediumLaser
+LRT 10
+SRT 6
+</Turret Equipment>
+
+<source>
+TRO 3085S - Jihad
+</source>
+
+<tonnage>
+140
+</tonnage>
+

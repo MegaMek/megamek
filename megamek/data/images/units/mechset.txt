@@ -506,11 +506,13 @@ chassis "Wraith Battle Armor" "battle armor/Wraith BA.gif"
 chassis "Xiphos Assault Battle Armor" "battle armor/Xiphos Assault Battle Armor.gif"
 chassis "Zou Heavy Battle Armor" "battle armor/Zou Heavy Battle Armor.gif"
 
+
 #Infantry
 exact "AA Jump Infantry 292nd League Regulars" "Infantry/jump_infantry.gif"
 exact "AA Mechanized Infantry Mechanized AA Infantry" "Infantry/mecha_w.gif"
 exact "Anti-Infantry Unit Second Lyran Armored Infantry" "Infantry/motorized_infantry.gif"
 exact "Anti-'Mech Jump Infantry Third Ueda Infantry" "Infantry/jump_infantry.gif"
+chassis "Bridge-builder Engineers" "Infantry/mecha_t.gif"
 chassis "CCAF Foot Platoon" "defaults/default_infantry.gif"
 chassis "CCAF Jump Platoon" "Infantry/jump_infantry.gif"
 chassis "CCAF Mechanized Hover Platoon" "Infantry/mecha_h.gif"
@@ -552,6 +554,7 @@ chassis "Clan Mechanized Wheeled Squad" "Infantry/mecha_w.gif"
 chassis "Clan Motorized Point" "Infantry/motorized_infantry.gif"
 chassis "Clan Motorized Squad" "Infantry/motorized_infantry.gif"
 exact "Clan Space Marine Clan Snow Raven Space Marines" "defaults/default_infantry.gif"
+chassis "Combat Engineer" "Infantry/motorized_infantry.gif"
 exact "Commando CCAF Battlefield Infiltration Units" "Infantry/jump_infantry.gif"
 chassis "DC Foot Platoon" "defaults/default_infantry.gif"
 chassis "DC Jump Platoon" "Infantry/jump_infantry.gif"
@@ -581,6 +584,7 @@ exact "Field Gunners (UAC10)" "Infantry/fieldgunac5.gif"
 exact "Field Gunners (UAC2)" "Infantry/fieldgunac5.gif"
 exact "Field Gunners (UAC20)" "Infantry/fieldgunac5.gif"
 exact "Field Gunners (UAC5)" "Infantry/fieldgunac5.gif"
+chassis "Firefighter" "Infantry/motorized_infantry.gif"
 exact "Foot Ballistic Rifle Hastati V" "defaults/default_infantry.gif"
 exact "Foot Infantry Raventhir's Infantry Guard" "defaults/default_infantry.gif"
 chassis "Foot Platoon" "defaults/default_infantry.gif"
@@ -602,7 +606,9 @@ exact "HALO Paratrooper Lyran Paratrooper Corps" "defaults/default_infantry.gif"
 exact "Heavy Foot LRM Infantry Stalwart Support - Heavy LRM Infantry" "defaults/default_infantry.gif"
 exact "Heavy Infantry Heavy Urban Response Platoon" "Infantry/motorized_infantry.gif"
 exact "Heavy Jump Infantry DEST Heavy Response Platoon" "Infantry/jump_infantry.gif"
+chassis "Heavy Jump Infantry" "Infantry/jump_infantry.gif"
 chassis "Heavy Jump Platoon" "Infantry/jump_infantry.gif"
+chassis "Heavy Mountain Infantry" "defaults/default_infantry.gif"
 exact "Heavy Support Infantry Irian Technologies SWAT Team" "Infantry/motorized_infantry.gif"
 exact "Hover Assault Infantry Johnston Industries Rapid Response Force" "Infantry/mecha_h.gif"
 exact "Jump Laser Infantry Principes III 103rd Jump Battalion" "Infantry/jump_infantry.gif"
@@ -635,18 +641,20 @@ exact "Motorized Heavy Infantry Motstand/Mimir Troop" "Infantry/motorized_infant
 exact "Motorized Infantry Dark Caste Bandits" "Infantry/motorized_infantry.gif"
 exact "Motorized MG Galatean Support Wheels" "Infantry/motorized_infantry.gif"
 chassis "Motorized Platoon" "Infantry/motorized_infantry.gif"
-exact "Motorized Squad (Flamer)" "Infantry/motorized_infantry.gif"
+chassis "Motorized Squad" "Infantry/motorized_infantry.gif"
 exact "Motorized XCT Infantry Explorer Corps Hostile Environment" "Infantry/motorized_infantry.gif"
+chassis "Mountaineer" "defaults/default_infantry.gif"
 exact "Pirate Lady Death's 'Pacification' Squads" "Infantry/motorized_infantry.gif"
 exact "Prisoner Squad (Unarmed)" "defaults/default_infantry.gif"
 exact "RAF Mechanized Hover Platoon Assault" "Infantry/mecha_h.gif"
 exact "RAF Mechanized Tracked Platoon Gauss/Inferno Mortar" "Infantry/mecha_t.gif"
+chassis "Recon Infantry" "Infantry/mecha_h.gif"
 chassis "Riot Organizers" "Infantry/motorized_infantry.gif"
 exact "Riot Police Word of Blake Protectorate Militia Pacification Unit" "Infantry/motorized_infantry.gif"
 chassis "Rioting Crowd" "defaults/default_infantry.gif"
 exact "Royal Engineers 1st Lyran Royal Guards RCT" "Infantry/motorized_infantry.gif"
 exact "Scout Infantry The Battle Corps - Baker Street Irregulars" "defaults/default_infantry.gif"
-exact "Skåret Assassins JàrnFòlk" "defaults/default_infantry.gif"
+chassis "Skåret Assassins" "defaults/default_infantry.gif"
 exact "Sniper House Dai Da Chi Snipers" "defaults/default_infantry.gif"
 exact "Space Marine Com Guards Warship Fleet Marine" "defaults/default_infantry.gif"
 exact "Special Forces Stone's Trackers" "Infantry/jump_infantry.gif"
@@ -658,6 +666,14 @@ chassis "WoB Mechanized Tracked Platoon" "Infantry/mecha_t.gif"
 chassis "WoB Mechanized Wheeled Platoon" "Infantry/mecha_w.gif"
 exact "XCT Marine Special Asteroid Support Forces" "defaults/default_infantry.gif"
 exact "Xenoplanetary Infantry Eagle Corps Eyrie Defense Force" "defaults/default_infantry.gif"
+
+
+
+
+
+
+
+
 
 
 

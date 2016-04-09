@@ -33,7 +33,7 @@ VTOL
 </motion_type>
 
 <transporters>
-battlearmorbay:36:1
+battlearmorbay:4.5:1
 </transporters>
 
 <cruiseMP>

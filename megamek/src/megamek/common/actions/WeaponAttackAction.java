@@ -1396,32 +1396,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
 
             // weapon to-hit modifier
-            if (wtype instanceof VariableSpeedPulseLaserWeapon) {
-                int nRange = ae.getPosition().distance(target.getPosition());
-                int[] nRanges = wtype.getRanges(weapon);
-                int modifier = wtype.getToHitModifier();
-
-                if (nRange <= nRanges[RangeType.RANGE_SHORT]) {
-                    modifier -= RangeType.RANGE_SHORT;
-                } else if (nRange <= nRanges[RangeType.RANGE_MEDIUM]) {
-                    modifier -= RangeType.RANGE_MEDIUM;
-                } else if (nRange <= nRanges[RangeType.RANGE_LONG]) {
-                    modifier -= RangeType.RANGE_LONG;
-                } else {
-                    modifier = 0;
-                }
-
-                toHit.addModifier(modifier, "weapon to-hit modifier");
-            } else if (wtype instanceof ISBombastLaser) {
-                int damage = (int) Math.ceil((Compute.dialDownDamage(weapon,
-                                                                     wtype) - 7) / 2);
-
-                if (damage > 0) {
-                    toHit.addModifier(damage, "weapon to-hit modifier");
-                }
-            } else if (wtype.getToHitModifier() != 0) {
+            if (wtype.getToHitModifier() != 0) {
                 toHit.addModifier(wtype.getToHitModifier(),
-                                  "weapon to-hit modifier");
+                        "weapon to-hit modifier");
             }
 
             // ammo to-hit modifier

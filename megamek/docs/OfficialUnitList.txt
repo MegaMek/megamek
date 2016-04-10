@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Megamek Official Unit List
 This file can be regenerated with java -jar MegaMek.jar -oul
 Format is: Chassis Model|
@@ -6090,3 +6091,5 @@ Minotaur P2|
 Satyr XP|
 Procyon (Quad)|
 Svartalfa Ultra|
+=======
+>>>>>>> branch 'master' of ssh://git@github.com/MegaMek/megamek.git

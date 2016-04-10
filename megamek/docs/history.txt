@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.41.17-git
+
 v0.41.16 (2016-04-10 21:53 UTC)
 + Data: New Sprites and Unit Fixes.
 + PR #47: EntitySprite updates (AA, scaling, labels)

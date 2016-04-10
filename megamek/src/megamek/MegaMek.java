@@ -63,7 +63,7 @@ import megamek.server.DedicatedServer;
  */
 public class MegaMek {
 
-    public static String VERSION = "0.41.16-git"; //$NON-NLS-1$
+    public static String VERSION = "0.41.16"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager
             .getClientPreferences().getLogDirectory()
             + File.separator
@@ -571,7 +571,7 @@ public class MegaMek {
                 error("directory name expected"); // $NON-NLS-1$
             }
         }
-        
+
         private void processUnitValidator() throws ParseException {
             String filename;
             if (getToken() == TOK_LITERAL) {

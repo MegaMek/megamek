@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.41.16-git
+v0.41.16
 + Data: New Sprites and Unit Fixes.
 + PR #47: EntitySprite updates (AA, scaling, labels)
 + PR #49: Adding runway overlay fluff images
@@ -30,8 +30,8 @@ v0.41.16-git
 + Bug/PR #89: Keyboard scrolling made smoother by reducing calls to the minimap
 + PR #87: On Windows, RMB scrolling interacts better with the context menu
 + PR #88: Board soft centering to units
-+ PR #77: Adjustments to Entity Sprites (transparency, coloring)   
-+ PR #94: Hotkey for toggling Walk/Jump, Movement Envelope now static on or off 
++ PR #77: Adjustments to Entity Sprites (transparency, coloring)
++ PR #94: Hotkey for toggling Walk/Jump, Movement Envelope now static on or off
 + Issue #106 - Fixing name generator resource loading derp
 + Data: New Sprites
 + PR #109: StratOps Symbols for the Minimap

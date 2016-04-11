@@ -84,7 +84,7 @@ public final class EventBus {
                         Class<?> eventType = parameterTypes[0];
                         if(!MMEvent.class.isAssignableFrom(eventType)) {
                             throw new IllegalArgumentException(
-                                String.format("@Subscribe annotation of %s requires the argument type to be some subtype of HQEvent, not %s", //$NON-NLS-1$
+                                String.format("@Subscribe annotation of %s requires the argument type to be some subtype of MMEvent, not %s", //$NON-NLS-1$
                                     method, eventType));
                         }
                         internalRegister(handler, realMethod, (Class<? extends MMEvent>) eventType);
@@ -143,7 +143,7 @@ public final class EventBus {
         internalUnregister(); // Clean up unregister queue
         for(Class<?> cls : getClasses(event.getClass())) {
             if(MMEvent.class.isAssignableFrom(cls)) {
-                // Run through the triggers for each superclass up to HQEvent itself
+                // Run through the triggers for each superclass up to MMEvent itself
                 internalTrigger((Class<? extends MMEvent>) cls, event);
             }
         }

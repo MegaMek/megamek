@@ -4,7 +4,7 @@ PKP-2K
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3130
+Era:3116
 Source:RS 3145 NT NU
 Rules Level:3
 
@@ -31,8 +31,8 @@ RTR Armor:10
 RTC Armor:13
 
 Weapons:4
-Heavy PPC, Right Arm
 ER PPC, Left Arm
+Heavy PPC, Right Arm
 Medium X-Pulse Laser, Left Torso
 Plasma Rifle, Right Torso
 
@@ -86,8 +86,8 @@ ISPlasmaRifle
 ISPlasmaRifle
 ISPlasmaRifleAmmo
 ISPlasmaRifleAmmo
-ISC3EmergencyMaster
-ISC3EmergencyMaster
+Emergency C3 Master
+Emergency C3 Master
 IS Endo Steel
 IS Anti-Penetrative Ablation
 IS Anti-Penetrative Ablation

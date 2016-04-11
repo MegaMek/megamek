@@ -4,7 +4,7 @@ MTR-7K
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
-Era:3130
+Era:3112
 Source:RS 3145 NT NU
 Rules Level:3
 
@@ -17,7 +17,7 @@ Heat Sinks:19 Double
 Walk MP:5
 Jump MP:0
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:24
 RA Armor:24
 LT Armor:26
@@ -31,11 +31,11 @@ RTR Armor:6
 RTC Armor:8
 
 Weapons:5
-Medium X-Pulse Laser, Head
+Heavy Large Laser, Left Arm
+ER PPC, Right Arm
 Medium X-Pulse Laser, Left Torso
 Medium X-Pulse Laser, Right Torso
-ER PPC, Right Arm
-Heavy Large Laser, Left Arm
+Medium X-Pulse Laser, Head
 
 Left Arm:
 Shoulder

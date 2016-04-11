@@ -4,7 +4,7 @@ PPR-7T
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3130
+Era:3111
 Source:RS 3145 NT NU
 Rules Level:3
 
@@ -33,9 +33,9 @@ RTR Armor:6
 RTC Armor:8
 
 Weapons:3
+Extended LRM 10, Left Arm
 Extended LRM 15, Left Torso
 Extended LRM 15, Right Torso
-Extended LRM 10, Left Arm
 
 Left Arm:
 Shoulder

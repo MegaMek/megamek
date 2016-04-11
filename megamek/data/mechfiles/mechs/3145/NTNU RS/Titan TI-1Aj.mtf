@@ -4,7 +4,7 @@ TI-1Aj
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3130
+Era:3023
 Source:RS 3145 NT NU
 Rules Level:2
 
@@ -32,19 +32,19 @@ RTC Armor:20
 
 Weapons:14
 Medium Laser, Left Arm
+Medium Laser, Left Arm
+Medium Laser, Left Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
+Medium Laser, Right Arm
 ER PPC, Left Torso
+SRM 4, Left Torso
+SRM 4, Left Torso
 ER PPC, Right Torso
-Medium Laser, Left Arm
-Medium Laser, Right Arm
-Medium Laser, Head
-Medium Laser, Right Arm
-Medium Laser, Right Arm
-Medium Laser, Left Arm
-SRM 4, Left Torso
+SRM 4, Right Torso
+SRM 4, Right Torso
 SRM 4, Center Torso
-SRM 4, Right Torso
-SRM 4, Right Torso
-SRM 4, Left Torso
+Medium Laser, Head
 
 Left Arm:
 Shoulder

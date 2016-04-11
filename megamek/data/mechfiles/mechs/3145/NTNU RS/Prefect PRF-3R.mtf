@@ -4,7 +4,7 @@ PRF-3R
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3130
+Era:3110
 Source:RS 3145 NT NU
 Rules Level:3
 
@@ -33,10 +33,10 @@ RTR Armor:7
 RTC Armor:10
 
 Weapons:4
-Snub-Nose PPC, Right Torso
-Snub-Nose PPC, Left Torso
 Heavy PPC, Left Arm
 TSEMP Cannon, Right Arm
+Snub-Nose PPC, Left Torso
+Snub-Nose PPC, Right Torso
 
 Left Arm:
 Shoulder

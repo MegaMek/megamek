@@ -4,7 +4,7 @@ TBT-9R
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
-Era:3130
+Era:3131
 Source:RS 3145 NT NU
 Rules Level:3
 
@@ -31,11 +31,11 @@ RTR Armor:6
 RTC Armor:7
 
 Weapons:5
+LRM 15, Left Arm
+LRM 15, Left Arm
+Medium X-Pulse Laser, Right Arm
+Medium X-Pulse Laser, Right Arm
 LRM 15, Right Torso
-LRM 15, Left Arm
-LRM 15, Left Arm
-Medium X-Pulse Laser, Right Arm
-Medium X-Pulse Laser, Right Arm
 
 Left Arm:
 Shoulder

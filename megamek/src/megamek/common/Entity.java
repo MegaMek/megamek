@@ -4668,7 +4668,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
         }
         if ((cyberBonus + quirkBonus + spaBonus) > 0) {
-            return cyberBonus + quirkBonus;
+            return cyberBonus + quirkBonus + spaBonus;
         }
 
         return Entity.NONE;

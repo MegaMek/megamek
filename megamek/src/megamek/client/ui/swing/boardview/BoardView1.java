@@ -38,6 +38,7 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.Transparency;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -72,6 +73,7 @@ import java.util.TimerTask;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -569,6 +571,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             hbar.setValue((int) (hbar.getValue() + (HEX_H
                                                                     * scale * (notches))));
                         }
+                        stopSoftCentering();
                     } else {
                         int notches = we.getWheelRotation();
                         if (notches < 0) {
@@ -579,6 +582,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             vbar.setValue((int) (vbar.getValue() + (HEX_H
                                                                     * scale * (notches))));
                         }
+                        stopSoftCentering();
                     }
                 }
                 pingMinimap();
@@ -827,12 +831,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     public void performAction() {
                         controller.stopRepeating(KeyCommandBind.SCROLL_SOUTH);
                         vbar.setValue((int) (vbar.getValue() - (HEX_H * scale)));
+                        stopSoftCentering();
                     }
                     
                     @Override
                     public void releaseAction() {
                         pingMinimap();
-                        stopSoftCentering();
                     }
                     
                     @Override
@@ -859,12 +863,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     public void performAction() {
                         controller.stopRepeating(KeyCommandBind.SCROLL_NORTH);
                         vbar.setValue((int) (vbar.getValue() + (HEX_H * scale)));
+                        stopSoftCentering();
                     }
                     
                     @Override
                     public void releaseAction() {
                         pingMinimap();
-                        stopSoftCentering();
                     }
                     
                     @Override
@@ -891,12 +895,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     public void performAction() {
                         controller.stopRepeating(KeyCommandBind.SCROLL_WEST);
                         hbar.setValue((int) (hbar.getValue() + (HEX_W * scale)));
+                        stopSoftCentering();
                     }
                     
                     @Override
                     public void releaseAction() {
                         pingMinimap();
-                        stopSoftCentering();
                     }
                     
                     @Override
@@ -923,12 +927,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     public void performAction() {
                         controller.stopRepeating(KeyCommandBind.SCROLL_EAST);
                         hbar.setValue((int) (hbar.getValue() - (HEX_W * scale)));
+                        stopSoftCentering();
                     }
                     
                     @Override
                     public void releaseAction() {
                         pingMinimap();
-                        stopSoftCentering();
                     }
                     
                     @Override
@@ -5644,6 +5648,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // IDisplayables that are drawn in fixed positions in the viewport
         // leave artifacts when scrolling
         scrollpane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
+        
+        // Prevent the default arrow key scrolling
+        scrollpane.getActionMap().put("unitScrollRight", DoNothing);
+        scrollpane.getActionMap().put("unitScrollDown", DoNothing);
+        scrollpane.getActionMap().put("unitScrollLeft", DoNothing);
+        scrollpane.getActionMap().put("unitScrollUp", DoNothing);
 
         vbar = scrollpane.getVerticalScrollBar();
         hbar = scrollpane.getHorizontalScrollBar();
@@ -5655,6 +5665,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         return scrollpane;
     }
+    
+    AbstractAction DoNothing = new AbstractAction() {
+        private static final long serialVersionUID = 5944877465265121983L;
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+        }
+    };
 
     /**
      * refresh the IDisplayables
@@ -5727,6 +5745,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private void zoom() {
         
         checkZoomIndex();
+        stopSoftCentering();
         scale = ZOOM_FACTORS[zoomIndex];
         GUIPreferences.getInstance().setMapZoomIndex(zoomIndex);
 

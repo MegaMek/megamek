@@ -277,7 +277,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         secondaryNames.clear();
 
         try {
-            bv = new BoardView1(new Game(), null);
+            bv = new BoardView1(new Game(), null, null);
             bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");
@@ -322,7 +322,7 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         initializeFrame();
         try {
             // Create the board viewer.
-            bv = new BoardView1(new Game(), null);
+            bv = new BoardView1(new Game(), null, null);
             bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");

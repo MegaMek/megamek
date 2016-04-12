@@ -52,6 +52,8 @@ import megamek.common.Configuration;
 public class SkinSpecPanel extends JPanel implements ListSelectionListener,
         ActionListener {
 
+    JFileChooser fileChooser = new JFileChooser(Configuration.widgetsDir());
+
     /**
      * A UI widget for displaying information related to a border widget (image
      * path and whether the image is tiled or not). Also supports a flag to
@@ -83,8 +85,6 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
         List<JButton> removeButtons = new ArrayList<>();
 
         JButton addButton = new JButton(Messages.getString("SkinEditor.Add")); //$NON-NLS-1$
-
-        JFileChooser fileChooser = new JFileChooser(Configuration.widgetsDir());
 
         boolean displayTiled = false;
 

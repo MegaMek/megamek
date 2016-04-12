@@ -343,7 +343,9 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
                     .relativize(fileChooser.getSelectedFile().toURI())
                     .getPath();
             // Set text
+            path.get(pathIdx).getDocument().removeDocumentListener(this);
             path.get(pathIdx).setText(relativePath);
+            path.get(pathIdx).getDocument().addDocumentListener(this);
         }
 
         @Override

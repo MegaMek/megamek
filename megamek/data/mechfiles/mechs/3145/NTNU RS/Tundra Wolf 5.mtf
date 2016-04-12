@@ -4,7 +4,7 @@ Tundra Wolf
 
 Config:Biped
 TechBase:Clan
-Era:3130
+Era:3086
 Source:RS 3145 NT NU
 Rules Level:2
 
@@ -31,15 +31,15 @@ RTR Armor:8
 RTC Armor:12
 
 Weapons:9
-LRM 10, Right Torso
-ER Large Laser, Left Torso
+Gauss Rifle, Left Arm
 ER Small Laser, Left Arm
-ER Small Laser, Right Arm
-ER Small Laser, Right Arm
 ER Small Laser, Left Arm
 Gauss Rifle, Right Arm
-Gauss Rifle, Left Arm
+ER Small Laser, Right Arm
+ER Small Laser, Right Arm
+ER Large Laser, Left Torso
 SRM 4, Left Torso
+LRM 10, Right Torso
 
 Left Arm:
 Shoulder

@@ -4,7 +4,7 @@ LGB-14C2
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3130
+Era:3088
 Source:RS 3145 NT NU
 Rules Level:3
 
@@ -34,11 +34,11 @@ RTC Armor:11
 
 Weapons:7
 MML 9, Left Arm
-MML 9, Right Arm
 MML 9, Left Arm
-MML 9, Right Torso
+MML 9, Right Arm
 MML 9, Right Arm
 MML 9, Left Torso
+MML 9, Right Torso
 ER Medium Laser, Center Torso
 
 Left Arm:
@@ -116,8 +116,8 @@ Life Support
 Sensors
 Cockpit
 Sensors
-ISC3BoostedSystemSlaveUnit
-ISC3BoostedSystemSlaveUnit
+-Empty-
+-Empty-
 -Empty-
 -Empty-
 -Empty-

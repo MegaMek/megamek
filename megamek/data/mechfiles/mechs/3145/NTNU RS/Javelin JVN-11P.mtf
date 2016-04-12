@@ -4,7 +4,7 @@ JVN-11P
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3130
+Era:3101
 Source:RS 3145 NT NU
 Rules Level:2
 
@@ -32,9 +32,9 @@ RTC Armor:3
 
 Weapons:4
 Streak SRM 2, Left Torso
-Streak SRM 2, Right Torso
-Streak SRM 2, Right Torso
 Streak SRM 2, Left Torso
+Streak SRM 2, Right Torso
+Streak SRM 2, Right Torso
 
 Left Arm:
 Shoulder

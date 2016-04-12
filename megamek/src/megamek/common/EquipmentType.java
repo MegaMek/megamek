@@ -154,6 +154,7 @@ public class EquipmentType {
     public static final int ERA_SL = 0;
     public static final int ERA_SW = 1;
     public static final int ERA_CLAN = 2;
+    public static final int ERA_DA = 3;
 
     public static final int DATE_NONE = -1;
 
@@ -192,7 +193,7 @@ public class EquipmentType {
 
     // fluffy stuff
     protected int techRating = RATING_C;
-    protected int[] availRating = { RATING_E, RATING_E, RATING_E };
+    protected int[] availRating = { RATING_E, RATING_E, RATING_E, RATING_E };
     protected int introDate = DATE_NONE;
     protected int extinctDate = DATE_NONE;
     protected int reintroDate = DATE_NONE;
@@ -216,6 +217,11 @@ public class EquipmentType {
     // static list of eq
     protected static Vector<EquipmentType> allTypes;
     protected static Hashtable<String, EquipmentType> lookupHash;
+    
+    /**
+    * Keeps track of page numbers for rules references.
+    */
+    public String rulesRefs = "";
 
     /** Creates new EquipmentType */
     public EquipmentType() {
@@ -727,13 +733,20 @@ public class EquipmentType {
         rating += getAvailabilityName(ERA_SW);
         rating += "-";
         rating += getAvailabilityName(ERA_CLAN);
+        rating += "-";
+        rating += getAvailabilityName(ERA_DA);
         return rating;
     }
 
     public int getAvailability(int era) {
-        if ((era < 0) || (era > ERA_CLAN)) {
+        if ((era < 0) || (era > ERA_DA)) {
             return RATING_X;
         }
+    // If the avail ratings don't list the era, assume RATING_X
+        if (availRating.length <= era) {
+            return RATING_X;
+        }
+        
         return availRating[era];
     }
 

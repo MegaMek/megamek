@@ -4,7 +4,7 @@ Cave Lion
 
 Config:Biped
 TechBase:Clan
-Era:3130
+Era:3122
 Source:ED: Dark Age
 Rules Level:3
 
@@ -31,12 +31,12 @@ RTR Armor:6
 RTC Armor:8
 
 Weapons:7
-Medium Pulse Laser, Right Torso
-Medium Pulse Laser, Left Torso
 Medium Pulse Laser, Left Arm
 Medium Pulse Laser, Right Arm
 ER PPC, Left Torso
+Medium Pulse Laser, Left Torso
 ER PPC, Right Torso
+Medium Pulse Laser, Right Torso
 ATM 3, Center Torso
 
 Left Arm:

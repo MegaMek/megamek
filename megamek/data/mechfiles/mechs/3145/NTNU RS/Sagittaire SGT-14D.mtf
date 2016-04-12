@@ -4,7 +4,7 @@ SGT-14D
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3130
+Era:3134
 Source:RS 3145 NT NU
 Rules Level:4
 
@@ -33,13 +33,13 @@ RTR Armor:10
 RTC Armor:15
 
 Weapons:7
-ER Large Laser, Left Torso
 Large Re-engineered Laser, Left Arm
+Medium VSP Laser, Left Arm
+Medium VSP Laser, Left Arm
 Large Re-engineered Laser, Right Arm
-Medium VSP Laser, Left Arm
-Medium VSP Laser, Left Arm
 Medium VSP Laser, Right Arm
 Medium X-Pulse Laser, Right Arm
+ER Large Laser, Left Torso
 
 Left Arm:
 Shoulder
@@ -49,10 +49,10 @@ Large Re-engineered Laser
 Large Re-engineered Laser
 Large Re-engineered Laser
 Large Re-engineered Laser
-ISMediumVSP
-ISMediumVSP
-ISMediumVSP
-ISMediumVSP
+ISMediumVSPLaser
+ISMediumVSPLaser
+ISMediumVSPLaser
+ISMediumVSPLaser
 -Empty-
 
 Right Arm:
@@ -63,8 +63,8 @@ Large Re-engineered Laser
 Large Re-engineered Laser
 Large Re-engineered Laser
 Large Re-engineered Laser
-ISMediumVSP
-ISMediumVSP
+ISMediumVSPLaser
+ISMediumVSPLaser
 ISMediumXPulseLaser
 -Empty-
 -Empty-

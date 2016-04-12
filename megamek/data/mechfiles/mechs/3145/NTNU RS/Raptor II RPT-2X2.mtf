@@ -4,7 +4,7 @@ RPT-2X2
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3130
+Era:3109
 Source:RS 3145 NT NU
 Rules Level:4
 
@@ -33,9 +33,9 @@ RTR Armor:3
 RTC Armor:4
 
 Weapons:3
+TSEMP Cannon, Right Arm
 Medium VSP Laser, Left Torso
 Medium VSP Laser, Right Torso
-TSEMP Cannon, Right Arm
 
 Left Arm:
 Shoulder
@@ -69,8 +69,8 @@ Left Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMediumVSP
-ISMediumVSP
+ISMediumVSPLaser
+ISMediumVSPLaser
 ISMASC
 ISMASC
 Mek Void Signature System
@@ -83,8 +83,8 @@ Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISMediumVSP
-ISMediumVSP
+ISMediumVSPLaser
+ISMediumVSPLaser
 Mek Void Signature System
 IS Endo Steel
 IS Endo Steel

@@ -4,7 +4,7 @@ Onager
 
 Config:Biped
 TechBase:Clan
-Era:3130
+Era:3137
 Source:RS 3145 NT NU
 Rules Level:3
 
@@ -31,14 +31,14 @@ RTR Armor:13
 RTC Armor:18
 
 Weapons:8
-Small Pulse Laser, Head
-Large Pulse Laser, Right Torso
-Micro Pulse Laser, Right Torso
-Micro Pulse Laser, Right Torso
-SRM 6, Left Torso
-SRM 6, Right Torso
 HAG/30, Left Arm
 Large Pulse Laser, Left Torso
+SRM 6, Left Torso
+Large Pulse Laser, Right Torso
+SRM 6, Right Torso
+Micro Pulse Laser, Right Torso
+Micro Pulse Laser, Right Torso
+Small Pulse Laser, Head
 
 Left Arm:
 Shoulder

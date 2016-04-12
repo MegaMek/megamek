@@ -4,7 +4,7 @@ AS7-K4
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3130
+Era:3098
 Source:RS 3145 NT NU
 Rules Level:2
 
@@ -33,9 +33,9 @@ RTC Armor:14
 Weapons:5
 ER PPC, Left Arm
 ER PPC, Right Arm
-SRM 6, Right Torso
-SRM 6, Left Torso
 Rotary AC/5, Left Torso
+SRM 6, Left Torso
+SRM 6, Right Torso
 
 Left Arm:
 Shoulder

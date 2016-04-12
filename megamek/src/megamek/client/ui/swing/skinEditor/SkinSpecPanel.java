@@ -314,6 +314,13 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
                         return;
                     }
                 }
+                // Did we press a tile button?
+                for (int i = 0; i < tiled.size(); i++) {
+                    if (e.getSource().equals(tiled.get(i))) {
+                        skinPanel.notifySkinChanges();
+                        return;
+                    }
+                }
             }
         }
 

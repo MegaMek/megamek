@@ -32,21 +32,21 @@ public class Engine implements Serializable {
      */
     private static final long serialVersionUID = -246032529363109609L;
 
-    public final static float[] ENGINE_RATINGS = { 0.0f, 0.25f, 0.5f, 0.5f,
-            0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.5f, 1.5f, 1.5f, 2.0f, 2.0f,
-            2.0f, 2.5f, 2.5f, 3.0f, 3.0f, 3.0f, 3.5f, 3.5f, 4.0f, 4.0f, 4.0f,
-            4.5f, 4.5f, 5.0f, 5.0f, 5.5f, 5.5f, 6.0f, 6.0f, 6.0f, 7.0f, 7.0f,
-            7.5f, 7.5f, 8.0f, 8.5f,
+    public final static double[] ENGINE_RATINGS = { 0.0, 0.25, 0.5, 0.5,
+            0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 1.5, 1.5, 1.5, 2.0, 2.0,
+            2.0, 2.5, 2.5, 3.0, 3.0, 3.0, 3.5, 3.5, 4.0, 4.0, 4.0,
+            4.5, 4.5, 5.0, 5.0, 5.5, 5.5, 6.0, 6.0, 6.0, 7.0, 7.0,
+            7.5, 7.5, 8.0, 8.5,
 
-            8.5f, 9.0f, 9.5f, 10.0f, 10.0f, 10.5f, 11.0f, 11.5f, 12.0f, 12.5f,
-            13.0f, 13.5f, 14.0f, 14.5f, 15.5f, 16.0f, 16.5f, 17.5f, 18.0f,
-            19.0f, 19.5f, 20.5f, 21.5f, 22.5f, 23.5f, 24.5f, 25.5f, 27.0f,
-            28.5f, 29.5f, 31.5f, 33.0f, 34.5f, 36.5f, 38.5f, 41.0f, 43.5f,
-            46.0f, 49.0f, 52.5f,
+            8.5, 9.0, 9.5, 10.0, 10.0, 10.5, 11.0, 11.5, 12.0, 12.5,
+            13.0, 13.5, 14.0, 14.5, 15.5, 16.0, 16.5, 17.5, 18.0,
+            19.0, 19.5, 20.5, 21.5, 22.5, 23.5, 24.5, 25.5, 27.0,
+            28.5, 29.5, 31.5, 33.0, 34.5, 36.5, 38.5, 41.0, 43.5,
+            46.0, 49.0, 52.5,
 
-            56.5f, 61.0f, 66.5f, 72.5f, 79.5f, 87.5f, 97.0f, 107.5f, 119.5f,
-            133.5f, 150.0f, 168.5f, 190.0f, 214.5f, 243.0f, 275.5f, 313.0f,
-            356.0f, 405.5f, 462.5f };
+            56.5, 61.0, 66.5, 72.5, 79.5, 87.5, 97.0, 107.5, 119.5,
+            133.5, 150.0, 168.5, 190.0, 214.5, 243.0, 275.5, 313.0,
+            356.0, 405.5, 462.5 };
     
   
     // flags
@@ -74,57 +74,56 @@ public class Engine implements Serializable {
     //These are the SUPPORT VEHICLE ENGINE WEIGHT MULTIPLIERS from TM PG 127
     //The other engine types are assumed to have a value of ) in the array
     //if not listed.
-    public final static float[][] SV_ENGINE_RATINGS = new float[13][6];
+    public final static double[][] SV_ENGINE_RATINGS = new double[13][6];
     static { 
-    SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_A] = 4.0f;
-    SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_B] = 3.5f;
-    SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_C] = 3.0f;
-    SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_D] = 2.8f;
-    SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_E] = 2.6f;
-    SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_F] = 2.5f;
-    
-    SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_A] = 0.0f;
-    SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_B] = 3.0f;
-    SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_C] = 2.0f;
-    SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_D] = 1.5f;
-    SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_E] = 1.3f;
-    SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_F] = 1.0f;
-    
-    SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_A] = 0.0f;
-    SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_B] = 0.0f;
-    SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_C] = 1.5f;
-    SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_D] = 1.2f;
-    SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_E] = 1.0f;
-    SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_F] = 0.8f;
-    
-    SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_A] = 0.0f;
-    SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_B] = 0.0f;
-    SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_C] = 1.2f;
-    SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_D] = 1.0f;
-    SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_E] = 0.9f;
-    SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_F] = 0.7f;
-    
-    SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_A] = 0.0f;
-    SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_B] = 0.0f;
-    SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_C] = 5.0f;
-    SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_D] = 4.5f;
-    SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_E] = 4.0f;
-    SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_F] = 3.5f;
-    
-    SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_A] = 0.0f;
-    SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_B] = 0.0f;
-    SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_C] = 1.75f;
-    SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_D] = 1.5f;
-    SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_E] = 1.4f;
-    SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_F] = 1.3f;
-    
-    SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_A] = 0.0f;
-    SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_B] = 0.0f;
-    SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_C] = 1.5f;
-    SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_D] = 1.0f;
-    SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_E] = 0.75f;
-    SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_F] = 0.5f;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_A] = 4.0;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_B] = 3.5;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_C] = 3.0;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_D] = 2.8;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_E] = 2.6;
+        SV_ENGINE_RATINGS[STEAM][EquipmentType.RATING_F] = 2.5;
         
+        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_A] = 0.0;
+        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_B] = 3.0;
+        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_C] = 2.0;
+        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_D] = 1.5;
+        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_E] = 1.3;
+        SV_ENGINE_RATINGS[COMBUSTION_ENGINE][EquipmentType.RATING_F] = 1.0;
+        
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_A] = 0.0;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_B] = 0.0;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_C] = 1.5;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_D] = 1.2;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_E] = 1.0;
+        SV_ENGINE_RATINGS[BATTERY][EquipmentType.RATING_F] = 0.8;
+        
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_A] = 0.0;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_B] = 0.0;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_C] = 1.2;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_D] = 1.0;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_E] = 0.9;
+        SV_ENGINE_RATINGS[FUEL_CELL][EquipmentType.RATING_F] = 0.7;
+        
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_A] = 0.0;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_B] = 0.0;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_C] = 5.0;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_D] = 4.5;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_E] = 4.0;
+        SV_ENGINE_RATINGS[SOLAR][EquipmentType.RATING_F] = 3.5;
+        
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_A] = 0.0;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_B] = 0.0;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_C] = 1.75;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_D] = 1.5;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_E] = 1.4;
+        SV_ENGINE_RATINGS[FISSION][EquipmentType.RATING_F] = 1.3;
+        
+        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_A] = 0.0;
+        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_B] = 0.0;
+        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_C] = 1.5;
+        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_D] = 1.0;
+        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_E] = 0.75;
+        SV_ENGINE_RATINGS[NORMAL_ENGINE][EquipmentType.RATING_F] = 0.5;
     }
 
        
@@ -295,8 +294,8 @@ public class Engine implements Serializable {
      *
      * @return the weight of the engine.
      */
-    public float getWeightEngine(Entity entity) {
-        return getWeightEngine(entity, TestEntity.CEIL_HALFTON);
+    public double getWeightEngine(Entity entity) {
+        return getWeightEngine(entity, TestEntity.Ceil.HALFTON);
     }
 
     /**
@@ -306,40 +305,40 @@ public class Engine implements Serializable {
      *            {@link megamek.common.verifier.TestEntity}.
      * @return the weight of the engine in tons.
      */
-    public float getWeightEngine(Entity entity, float roundWeight) {
+    public double getWeightEngine(Entity entity, TestEntity.Ceil roundWeight) {
         // Support Vehicles compute engine weight differently
         if ((entity.isSupportVehicle() || hasFlag(SUPPORT_VEE_ENGINE))
                 && isValidEngine()) {
-            float movementFactor = 4 + entity.getOriginalWalkMP()
+            double movementFactor = 4 + entity.getOriginalWalkMP()
                     * entity.getOriginalWalkMP();
-            float engineWeightMult = SV_ENGINE_RATINGS[engineType][entity
+            double engineWeightMult = SV_ENGINE_RATINGS[engineType][entity
                     .getEngineTechRating()];
             double weight = entity.getBaseEngineValue() * movementFactor
                     * engineWeightMult * entity.getWeight();
-            roundWeight = TestEntity.CEIL_HALFTON;
+            roundWeight = TestEntity.Ceil.HALFTON;
             if (entity.getWeight() < 5) {
-                roundWeight = TestEntity.CEIL_KILO;
+                roundWeight = TestEntity.Ceil.KILO;
             }
-            return TestEntity.ceil((float)weight, roundWeight);
+            return TestEntity.ceil(weight, roundWeight);
         }
-        float weight = ENGINE_RATINGS[(int) Math.ceil(engineRating / 5.0)];
+        double weight = ENGINE_RATINGS[(int) Math.ceil(engineRating / 5.0)];
         switch (engineType) {
             case COMBUSTION_ENGINE:
-                weight *= 2.0f;
+                weight *= 2.0;
                 break;
             case NORMAL_ENGINE:
                 break;
             case XL_ENGINE:
-                weight *= 0.5f;
+                weight *= 0.5;
                 break;
             case LIGHT_ENGINE:
-                weight *= 0.75f;
+                weight *= 0.75;
                 break;
             case XXL_ENGINE:
-                weight /= 3f;
+                weight /= 3;
                 break;
             case COMPACT_ENGINE:
-                weight *= 1.5f;
+                weight *= 1.5;
                 break;
             case FISSION:
                 weight *= 1.75;
@@ -354,14 +353,14 @@ public class Engine implements Serializable {
         weight = TestEntity.ceilMaxHalf(weight, roundWeight);
 
         if (hasFlag(TANK_ENGINE) && (isFusion() || (engineType == FISSION))) {
-            weight *= 1.5f;
+            weight *= 1.5;
         }
         
         
-        float toReturn = TestEntity.ceilMaxHalf(weight, roundWeight);
+        double toReturn = TestEntity.ceilMaxHalf(weight, roundWeight);
         // hover have a minimum weight of 20%
         if ((entity.getMovementMode() == EntityMovementMode.HOVER) && (entity instanceof Tank)) {
-            return Math.max(TestEntity.ceilMaxHalf(entity.getWeight()/5, TestEntity.CEIL_HALFTON), toReturn);
+            return Math.max(TestEntity.ceilMaxHalf(entity.getWeight()/5, TestEntity.Ceil.HALFTON), toReturn);
         }
         return toReturn;
     }

@@ -76,7 +76,7 @@ public class WeaponFireInfoTest {
 
         mockShooter = Mockito.mock(BipedMech.class);
         Mockito.when(mockShooter.getPosition()).thenReturn(SHOOTER_COORDS);
-        Mockito.when(mockShooter.getWeight()).thenReturn(75.0f);
+        Mockito.when(mockShooter.getWeight()).thenReturn(75.0);
         Mockito.when(mockShooter.getId()).thenReturn(SHOOTER_ID);
         Mockito.when(mockShooter.getDisplayName()).thenReturn("Test shooter 1");
         Mockito.when(mockShooter.getEquipmentNum(Mockito.eq(mockWeapon))).thenReturn(WEAPON_ID);

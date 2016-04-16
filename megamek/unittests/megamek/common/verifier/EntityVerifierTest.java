@@ -37,16 +37,16 @@ public class EntityVerifierTest {
         assertNotNull(result.mechOption);
         assertNotNull(result.tankOption);
 
-        assertEquals(TestEntity.CEIL_HALFTON, result.aeroOption.getWeightCeilingEngine(), 0.0f);
-        assertEquals(TestEntity.CEIL_HALFTON, result.aeroOption.getWeightCeilingStructure(), 0.0f);
-        assertEquals(TestEntity.CEIL_HALFTON, result.aeroOption.getWeightCeilingArmor(), 0.0f);
-        assertEquals(TestEntity.CEIL_HALFTON, result.aeroOption.getWeightCeilingControls(), 0.0f);
-        assertEquals(TestEntity.CEIL_TON, result.aeroOption.getWeightCeilingWeapons(), 0.0f);
-        assertEquals(TestEntity.CEIL_TON, result.aeroOption.getWeightCeilingTargComp(), 0.0f);
-        assertEquals(TestEntity.CEIL_HALFTON, result.aeroOption.getWeightCeilingTurret(), 0.0f);
-        assertEquals(TestEntity.CEIL_HALFTON, result.aeroOption.getWeightCeilingLifting(), 0.0f);
-        assertEquals(TestEntity.CEIL_HALFTON, result.aeroOption.getWeightCeilingPowerAmp(), 0.0f);
-        assertEquals(TestEntity.CEIL_HALFTON, result.aeroOption.getWeightCeilingGyro(), 0.0f);
+        assertEquals(TestEntity.Ceil.HALFTON, result.aeroOption.getWeightCeilingEngine());
+        assertEquals(TestEntity.Ceil.HALFTON, result.aeroOption.getWeightCeilingStructure());
+        assertEquals(TestEntity.Ceil.HALFTON, result.aeroOption.getWeightCeilingArmor());
+        assertEquals(TestEntity.Ceil.HALFTON, result.aeroOption.getWeightCeilingControls());
+        assertEquals(TestEntity.Ceil.TON, result.aeroOption.getWeightCeilingWeapons());
+        assertEquals(TestEntity.Ceil.TON, result.aeroOption.getWeightCeilingTargComp());
+        assertEquals(TestEntity.Ceil.HALFTON, result.aeroOption.getWeightCeilingTurret());
+        assertEquals(TestEntity.Ceil.HALFTON, result.aeroOption.getWeightCeilingLifting());
+        assertEquals(TestEntity.Ceil.HALFTON, result.aeroOption.getWeightCeilingPowerAmp());
+        assertEquals(TestEntity.Ceil.HALFTON, result.aeroOption.getWeightCeilingGyro());
         assertEquals(0.25f, result.aeroOption.getMaxOverweight(), 0.0f);
         assertTrue(result.aeroOption.showOverweightedEntity());
         assertEquals(1.0f, result.aeroOption.getMinUnderweight(), 0.0f);
@@ -58,42 +58,5 @@ public class EntityVerifierTest {
         assertTrue(result.aeroOption.showFailedEquip());
         assertEquals(0, result.aeroOption.getTargCompCrits());
         assertEquals(70, result.aeroOption.getPrintSize());
-    }
-
-    @Test
-    public void testBuild() {
-        File file = new File(getClass().getResource("test-verifier-options.xml").getFile());
-
-        EntityVerifier result = EntityVerifier.getInstance(file);
-        
-        assertNotNull(result.mechOption);
-
-        float halfTon = 1/0.75f;
-        float ton = 1/0.99f;
-        
-        assertEquals(halfTon, result.mechOption.getWeightCeilingEngine(), 0.0f);
-        assertEquals(halfTon, result.mechOption.getWeightCeilingStructure(), 0.0f);
-        assertEquals(halfTon, result.mechOption.getWeightCeilingArmor(), 0.0f);
-        assertEquals(halfTon, result.mechOption.getWeightCeilingControls(), 0.0f);
-        assertEquals(ton, result.mechOption.getWeightCeilingWeapons(), 0.0f);
-        assertEquals(ton, result.mechOption.getWeightCeilingTargComp(), 0.0f);
-        assertEquals(TestEntity.CEIL_HALFTON, result.mechOption.getWeightCeilingTurret(), 0.0f);
-        assertEquals(TestEntity.CEIL_HALFTON, result.mechOption.getWeightCeilingLifting(), 0.0f);
-        assertEquals(TestEntity.CEIL_HALFTON, result.mechOption.getWeightCeilingPowerAmp(), 0.0f);
-        assertEquals(halfTon, result.mechOption.getWeightCeilingGyro(), 0.0f);
-        assertEquals(1.0f, result.mechOption.getMaxOverweight(), 0.0f);
-        assertFalse(result.mechOption.showOverweightedEntity());
-        assertEquals(0.99f, result.mechOption.getMinUnderweight(), 0.0f);
-        assertTrue(result.mechOption.showUnderweightedEntity());
-        assertTrue(result.mechOption.ignoreFailedEquip("The Claw"));
-        assertTrue(result.mechOption.ignoreFailedEquip("BFG-2000"));
-        assertTrue(result.mechOption.ignoreFailedEquip("Stereo Console"));
-        assertTrue(result.mechOption.ignoreFailedEquip("Dual Speakers"));
-        assertFalse(result.mechOption.skip());
-        assertFalse(result.mechOption.showCorrectArmor());
-        assertFalse(result.mechOption.showCorrectCritical());
-        assertFalse(result.mechOption.showFailedEquip());
-        assertEquals(1, result.mechOption.getTargCompCrits());
-        assertEquals(75, result.mechOption.getPrintSize());
     }
 }

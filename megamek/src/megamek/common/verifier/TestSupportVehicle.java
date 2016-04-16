@@ -44,21 +44,25 @@ public class TestSupportVehicle extends TestTank {
         super(sv, options, fileString);
     }
     
+    @Override
     public String printWeightStructure() {
         return StringUtil.makeLength(
                 "Chassis: ", getPrintSize() - 5)
                 + TestEntity.makeWeightString(getWeightStructure()) + "\n";
     }
     
-    public float getWeightControls() {
+    @Override
+    public double getWeightControls() {
         return 0;
     }
     
-    public float getTankWeightLifting() {
+    @Override
+    public double getTankWeightLifting() {
         return 0;
     }
         
-    public float getWeightArmor() {
+    @Override
+    public double getWeightArmor() {
         int totalArmorPoints = 0;
         for (int loc = 0; loc < getEntity().locations(); loc++) {
             totalArmorPoints += getEntity().getOArmor(loc);
@@ -67,9 +71,9 @@ public class TestSupportVehicle extends TestTank {
         int techRating = getEntity().getArmorTechRating();
         double weight = totalArmorPoints * SV_ARMOR_WEIGHT[bar][techRating];
         if (getEntity().getWeight() < 5) {
-            return TestEntity.floor((float)weight, CEIL_KILO);
+            return TestEntity.floor(weight, Ceil.KILO);
         } else {
-            return TestEntity.ceil((float)weight, CEIL_HALFTON);
+            return TestEntity.ceil(weight, Ceil.HALFTON);
         }
         
     }    

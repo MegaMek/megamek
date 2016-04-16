@@ -5517,7 +5517,7 @@ public class Server implements Runnable {
                         // Damage equals tonnage, divided by 5.
                         // ASSUMPTION: damage is applied in one hit.
                         addReport(damageEntity(target, hit,
-                                               Math.round(entity.getWeight() / 5)));
+                                               (int) Math.round(entity.getWeight() / 5)));
                         addNewLines();
                     }
 
@@ -30172,7 +30172,7 @@ public class Server implements Runnable {
             // index 1, the second is at index 1, etc., and the roof is
             // at index (numFloors).
             // if bridge is present, bridge will be numFloors+1
-            float[] loads = new float[numLoads + 1];
+            double[] loads = new double[numLoads + 1];
             // track all units that might fall into the basement
             Vector<Entity> basement = new Vector<Entity>();
 
@@ -30216,7 +30216,7 @@ public class Server implements Runnable {
                     // Add the weight to the
                     // correct floor.
 
-                    float load = entity.getWeight();
+                    double load = entity.getWeight();
                     int floor = entityElev;
                     if (floor == bridgeEl) {
                         floor = numLoads;

@@ -76,7 +76,7 @@ public class HmvFile implements IMechLoader {
 
     private Hashtable<HMVWeaponLocation, Hashtable<EquipmentType, Integer>> equipment = new Hashtable<HMVWeaponLocation, Hashtable<EquipmentType, Integer>>();
 
-    private float troopSpace = 0;
+    private double troopSpace = 0;
 
     private String fluff;
 
@@ -562,9 +562,8 @@ public class HmvFile implements IMechLoader {
             addEquipment(vehicle, HMVWeaponLocation.BODY, Tank.LOC_BODY);
 
             // Do we have any infantry/cargo bays?
-            int capacity = (int) Math.round(Math.floor(troopSpace));
-            if (capacity > 0) {
-                vehicle.addTransporter(new TroopSpace(capacity));
+            if (troopSpace > 0) {
+                vehicle.addTransporter(new TroopSpace(troopSpace));
             }
 
             addFailedEquipment(vehicle);

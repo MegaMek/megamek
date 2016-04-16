@@ -3596,7 +3596,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 return "Can't fire field guns in same turn as moving";
             }
             // check for mixing infantry and field gun attacks
-            float fieldGunWeight = 0.0f;
+            double fieldGunWeight = 0.0;
             for (Enumeration<EntityAction> i = game.getActions(); i
                     .hasMoreElements();) {
                 EntityAction ea = i.nextElement();

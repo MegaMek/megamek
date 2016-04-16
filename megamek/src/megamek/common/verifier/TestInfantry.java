@@ -53,32 +53,32 @@ public class TestInfantry extends TestEntity {
     }
 
     @Override
-    public float getWeightControls() {
+    public double getWeightControls() {
         return 0;
     }
 
     @Override
-    public float getWeightMisc() {
+    public double getWeightMisc() {
         return 0;
     }
 
     @Override
-    public float getWeightHeatSinks() {
+    public double getWeightHeatSinks() {
         return 0;
     }
 
     @Override
-    public float getWeightEngine() {
+    public double getWeightEngine() {
         return 0;
     }
     
     @Override
-    public float getWeightStructure() {
+    public double getWeightStructure() {
         return 0;
     }
     
     @Override
-    public float getWeightArmor() {
+    public double getWeightArmor() {
         return 0;
     }
     
@@ -123,12 +123,12 @@ public class TestInfantry extends TestEntity {
     }
 
     @Override
-    public float getWeightPowerAmp() {
+    public double getWeightPowerAmp() {
         return 0;
     }
     
     @Override
-    public float calculateWeight() {
+    public double calculateWeight() {
         return infantry.getWeight();
     }
     

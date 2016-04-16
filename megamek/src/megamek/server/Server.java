@@ -51,6 +51,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -60,6 +61,8 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import com.thoughtworks.xstream.XStream;
 
 import megamek.MegaMek;
 import megamek.client.ui.swing.util.PlayerColors;
@@ -209,7 +212,6 @@ import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
-import megamek.common.util.HashCodeUtil;
 import megamek.common.util.StringUtil;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
@@ -260,8 +262,6 @@ import megamek.server.commands.VictoryCommand;
 import megamek.server.commands.WhoCommand;
 import megamek.server.victory.Victory;
 
-import com.thoughtworks.xstream.XStream;
-
 /**
  * @author Ben Mazur
  */
@@ -279,21 +279,19 @@ public class Server implements Runnable {
 
         @Override
         public boolean equals(Object o) {
-            if (!(o instanceof EntityTargetPair)) {
+            if(this == o) {
+                return true;
+            }
+            if((null == o) || (getClass() != o.getClass())) {
                 return false;
             }
-            EntityTargetPair other = (EntityTargetPair)o;
-            return ent.equals(other.ent)
-                    && (((target != null) && target.equals(other.target))
-                            || ((target == null) && (other.target == null)));
+            final EntityTargetPair other = (EntityTargetPair) o;
+            return Objects.equals(ent, other.ent) && Objects.equals(target, other.target);
         }
 
         @Override
         public int hashCode() {
-            int hashCode = HashCodeUtil.SEED;
-            hashCode = HashCodeUtil.hash(hashCode, ent.getId());
-            hashCode = HashCodeUtil.hash(hashCode, target);
-            return hashCode;
+            return Objects.hash(ent, target);
         }
 
     }

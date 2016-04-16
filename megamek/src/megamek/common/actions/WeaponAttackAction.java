@@ -1431,11 +1431,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
             toHit.addModifier(mod, "indirect artillery modifier");
             int adjust = ae.aTracker.getModifier(weapon, target.getPosition());
+            boolean spotterIsForwardObserver = ae.aTracker.getSpotterHasForwardObs();
             if (adjust == TargetRoll.AUTOMATIC_SUCCESS) {
                 return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
                         "Artillery firing at target that's been hit before.");
             } else if (adjust != 0) {
                 toHit.addModifier(adjust, "adjusted fire");
+                if (spotterIsForwardObserver) {
+                    toHit.addModifier(-2, "Forward Observer");
+                }
             }
             if (ae.isAirborne()) {
                 if (ae.getAltitude() > 6) {

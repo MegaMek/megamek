@@ -32,6 +32,8 @@ public class ArtilleryTracker implements Serializable {
      * for all the different coords it's got mods to.
      */
     private Hashtable<Mounted, Vector<ArtilleryModifier>> weapons;
+    
+    private boolean spotterIsForwardObs;
 
     /**
      * Creates new instance of the tracker
@@ -159,5 +161,13 @@ public class ArtilleryTracker implements Serializable {
             return modifier;
         }
 
+    }
+    
+    public boolean getSpotterHasForwardObs() {
+        return spotterIsForwardObs;
+    }
+    
+    public void setSpotterHasForwardObs(boolean forwardObserver) {
+        spotterIsForwardObs = forwardObserver;
     }
 }

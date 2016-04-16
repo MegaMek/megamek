@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.41.17-git
+v0.41.17
 + Data: New Sprites and Unit Date Fixes.
 
 v0.41.16 (2016-04-10 21:53 UTC)

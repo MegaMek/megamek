@@ -511,6 +511,14 @@ public class MiscType extends EquipmentType {
     public MiscType() {
     }
 
+    public int getBaseDamageAbsorptionRate() {
+        return baseDamageAbsorptionRate;
+    }
+    
+    public int getBaseDamageCapacity() {
+        return baseDamageCapacity;
+    }
+    
     public boolean isShield() {
         if (hasFlag(MiscType.F_CLUB)
                 && (hasSubType(MiscType.S_SHIELD_LARGE)
@@ -542,7 +550,7 @@ public class MiscType extends EquipmentType {
 
     public float getTonnage(Entity entity, int location) {
 
-        if (tonnage != TONNAGE_VARIABLE) {
+        if((tonnage != TONNAGE_VARIABLE) || (null == entity)) {
             return tonnage;
         }
         // check for known formulas
@@ -1014,7 +1022,7 @@ public class MiscType extends EquipmentType {
 
     @Override
     public int getCriticals(Entity entity) {
-        if (criticals != CRITICALS_VARIABLE) {
+        if((criticals != CRITICALS_VARIABLE) || (null == entity)) {
             return criticals;
         }
         // check for known formulas
@@ -1246,7 +1254,7 @@ public class MiscType extends EquipmentType {
 
     public double getBV(Entity entity, int location) {
         double returnBV = 0.0;
-        if (bv != BV_VARIABLE) {
+        if((bv != BV_VARIABLE) || (null == entity)) {
             returnBV = bv;
             // Mast Mounts give extra BV to equipment mounted in the mast
             if ((entity instanceof VTOL)

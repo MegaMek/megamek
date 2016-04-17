@@ -232,6 +232,10 @@ public class EquipmentType {
         flags = inF;
     }
 
+    public long getSubType() {
+        return subType;
+    }
+    
     public void setSubType(int newFlags) {
         subType = newFlags;
     }
@@ -302,6 +306,10 @@ public class EquipmentType {
     }
 
     public boolean isExplosive(Mounted mounted, boolean ignoreCharge) {
+        if(null == mounted) {
+            return explosive;
+        }
+        
         // Special case: discharged M- and B-pods shouldn't explode.
         if (((this instanceof MPodWeapon) || (this instanceof BPodWeapon))
                 && ((mounted.getLinked() == null) || (mounted.getLinked()

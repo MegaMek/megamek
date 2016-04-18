@@ -119,7 +119,7 @@ public final class ImageUtil {
             FinishedLoadingObserver observer = new FinishedLoadingObserver();
             result.preload(observer);
             while(!observer.isLoaded()) {
-                try { Thread.sleep(10); } catch(Exception ex) {}
+                try { Thread.sleep(10); } catch(InterruptedException ex) {}
             }
             return result;
         }
@@ -167,7 +167,7 @@ public final class ImageUtil {
             FinishedLoadingObserver observer = new FinishedLoadingObserver();
             base.preload(observer);
             while(!observer.isLoaded()) {
-                try { Thread.sleep(10); } catch(Exception ex) {}
+                try { Thread.sleep(10); } catch(InterruptedException ex) {}
             }
             BufferedImage result = ImageUtil.createAcceleratedImage(size.getX(), size.getY());
             Graphics2D g2d = result.createGraphics();

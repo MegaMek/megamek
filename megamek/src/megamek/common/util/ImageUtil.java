@@ -116,10 +116,14 @@ public final class ImageUtil {
             if(null == result) {
                 return null;
             }
-            FinishedLoadingObserver observer = new FinishedLoadingObserver();
+            FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
             result.preload(observer);
             while(!observer.isLoaded()) {
-                try { Thread.sleep(10); } catch(InterruptedException ex) {}
+                try {
+                    Thread.sleep(10);
+                } catch(InterruptedException ex) {
+                    break;
+                }
             }
             return result;
         }
@@ -164,10 +168,14 @@ public final class ImageUtil {
             if(null == base) {
                 return null;
             }
-            FinishedLoadingObserver observer = new FinishedLoadingObserver();
+            FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
             base.preload(observer);
             while(!observer.isLoaded()) {
-                try { Thread.sleep(10); } catch(InterruptedException ex) {}
+                try {
+                    Thread.sleep(10);
+                } catch(InterruptedException ex) {
+                    break;
+                }
             }
             BufferedImage result = ImageUtil.createAcceleratedImage(size.getX(), size.getY());
             Graphics2D g2d = result.createGraphics();
@@ -182,12 +190,18 @@ public final class ImageUtil {
         private static final int DONE
             = ImageObserver.ABORT | ImageObserver.ERROR | ImageObserver.ALLBITS;
         
+        private final Thread mainThread;
         private volatile boolean loaded = false;
-    
+
+        public FinishedLoadingObserver(Thread mainThread) {
+            this.mainThread = mainThread;
+        }
+        
         @Override
         public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
             if((infoflags & DONE) > 1) {
                 loaded = true;
+                mainThread.interrupt();
                 return false;
             }
             return true;

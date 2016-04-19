@@ -125,7 +125,7 @@ public final class ImageUtil {
                     break;
                 }
             }
-            return result;
+            return ImageUtil.createAcceleratedImage(result.getBufferedImage());
         }
     }
     

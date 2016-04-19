@@ -43,6 +43,7 @@ import megamek.common.Hex;
 import megamek.common.IHex;
 import megamek.common.ITerrain;
 import megamek.common.Terrains;
+import megamek.common.util.ImageUtil;
 import megamek.common.util.StringUtil;
 
 /**
@@ -551,13 +552,10 @@ public class HexTileset {
             for (int i = 0; i < filenames.size(); i++) {
                 String filename = filenames.elementAt(i);
                 File imgFile = new File(Configuration.hexesDir(), filename);
-                if (!imgFile.exists()) {
-                    System.err.println("Error loading image for tileset!  "
-                            + "File does not exist: " + imgFile.getPath());
+                Image image = ImageUtil.loadImageFromFile(imgFile.toString(), comp.getToolkit());
+                if(null != image) {
+                    images.add(image);
                 }
-                images.addElement(comp.getToolkit().getImage(
-                        imgFile.toString()
-                ));
             }
         }
 

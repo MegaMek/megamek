@@ -46,7 +46,7 @@ public class EntityWeightClass {
     public static final int SIZE = 15;
     private static String[] classAppends = { "0", "1", "2", "3", "4", "5", "SC", "DS.7", "DS.8", "DS.9", "JS.10", "JS.11", "SV.12", "SV.13", "SV.14" };
 
-    private static final double LESS_THAN_5 = Math.nextDown(5.0);
+    private static final double LESS_THAN_5 = Math.nextAfter(5.0, Double.NEGATIVE_INFINITY);
     private static double[] BAWeightLimits = { 0.4, 0.75, 1, 1.5, 2 };
     private static double[] mechWeightLimits = { 15, 35, 55, 75, 100, 135 };
     private static double[] vehicleWeightLimits = { 0, 39, 59, 79, 100, 300 }; // One padding 0

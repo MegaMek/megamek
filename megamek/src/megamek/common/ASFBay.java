@@ -243,8 +243,8 @@ public final class ASFBay extends Bay {
     }
 
     @Override
-    public float getWeight() {
-        return (float) totalSpace * 150;
+    public double getWeight() {
+        return totalSpace * 150;
     }
 
     @Override

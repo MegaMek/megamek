@@ -19,8 +19,8 @@ import megamek.common.Tank;
 
 public class SupportVeeStructure extends Structure {
 
-    static final float[] SV_TECH_RATING_STRUCTURE_MULTIPLIER = 
-        { 1.60f, 1.30f, 1.15f, 1.00f, 0.85f, 0.66f };
+    static final double[] SV_TECH_RATING_STRUCTURE_MULTIPLIER = 
+        { 1.60, 1.30, 1.15, 1.00, 0.85, 0.66 };
     
     Tank sv;
     
@@ -28,7 +28,7 @@ public class SupportVeeStructure extends Structure {
         this.sv = supportVee;
     }
     
-    public static  float getWeightStructure(Tank sv) {
+    public static double getWeightStructure(Tank sv) {
         double baseChassisVal = sv.getBaseChassisValue();
         double trMult = SV_TECH_RATING_STRUCTURE_MULTIPLIER[sv
                 .getStructuralTechRating()];
@@ -86,14 +86,15 @@ public class SupportVeeStructure extends Structure {
         }
         
         double weight = baseChassisVal * trMult * chassisModMult * sv.getWeight();
-        float roundWeight = TestEntity.CEIL_HALFTON;
+        TestEntity.Ceil roundWeight = TestEntity.Ceil.HALFTON;
         if (sv.getWeight() < 5) {
-            roundWeight = TestEntity.CEIL_KILO;
+            roundWeight = TestEntity.Ceil.KILO;
         }
-        return TestEntity.ceil((float)weight,roundWeight);
+        return TestEntity.ceil(weight,roundWeight);
     }
     
-    public float getWeightStructure(float weight, float roundWeight) {
+    @Override
+    public double getWeightStructure(double weight, TestEntity.Ceil roundWeight) {
         return getWeightStructure(sv);
     }
     

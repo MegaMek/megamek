@@ -104,8 +104,8 @@ public final class BattleArmorBay extends Bay {
     }
 
     @Override
-    public float getWeight() {
-        return (float) totalSpace * 2 * (isClan?5:isComStar?6:4);
+    public double getWeight() {
+        return totalSpace * 2 * (isClan ? 5 : (isComStar ? 6 : 4));
     }
 
     @Override

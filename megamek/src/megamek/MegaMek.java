@@ -806,7 +806,7 @@ public class MegaMek {
                             w.write(TechConstants.getLevelDisplayableName(unit
                                     .getType()));
                             w.write(",");
-                            w.write(Float.toString(unit.getTons()));
+                            w.write(Double.toString(unit.getTons()));
                             w.write(",");
                             if (unit.isClan()) {
                                 w.write("Clan,");

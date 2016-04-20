@@ -393,8 +393,8 @@ public class FighterSquadron extends Aero {
     }
 
     @Override
-    public float getWeight() {
-        float totWeight = 0.0f;
+    public double getWeight() {
+        double totWeight = 0.0;
         for (Integer fId : fighters) {
             Aero fighter = (Aero)game.getEntity(fId);
             if (!fighter.isDestroyed() && !fighter.isDoomed()) {
@@ -593,7 +593,7 @@ public class FighterSquadron extends Aero {
         maxBombPoints = Integer.MAX_VALUE;
         for (Integer fId : fighters) {
             Aero fighter = (Aero)game.getEntity(fId);
-            int currBombPoints = Math.round(fighter.getWeight() / 5);
+            int currBombPoints = (int) Math.round(fighter.getWeight() / 5);
             maxBombPoints = Math.min(maxBombPoints,currBombPoints);
         }
     }

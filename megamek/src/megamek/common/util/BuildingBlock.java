@@ -390,6 +390,41 @@ public class BuildingBlock {
     }
 
     /**
+     * @see getDataAsString()
+     */
+    public double[] getDataAsDouble(String blockName) {
+        double[] data;
+        int startIndex, endIndex;
+
+        startIndex = findStartIndex(blockName);
+        endIndex = findEndIndex(blockName);
+        if((startIndex == -1) || (endIndex == -1)) {
+            return new double[]{0};
+        }
+
+        // calculate the size of our data array by subtracting the two indexes
+        int size = endIndex - startIndex;
+
+        if (size == 0) {
+            return new double[]{0};
+        }
+        data = new double[size];
+        int dataRecord = 0;
+
+        // fill up the data array with the raw data we want...
+        for(int rawRecord = startIndex; rawRecord < endIndex; rawRecord++) {
+            try {
+                data[dataRecord] = Double.valueOf(rawData.get(rawRecord).toString()).doubleValue();
+                dataRecord ++;
+            } catch (NumberFormatException oops) {
+                data[0] = 0;
+                System.err.println("getDataAsDouble(\"" + blockName + "\") failed.  NumberFormatException was caught."); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+        }
+        return data; // hand back the goods...
+    }
+
+    /**
      * Gets data from a block.
      *
      * @param blockName
@@ -496,6 +531,18 @@ public class BuildingBlock {
         return writeBlockData(blockName, makeVector(temp));
 
     }
+
+    /**
+     * @see writeBlockData (String, Vector)
+     */
+    public boolean writeBlockData(String blockName, double blockData) {
+
+        String[] temp = new String[1];
+        temp[0] = "" + blockData; //$NON-NLS-1$
+        return writeBlockData(blockName, makeVector(temp));
+
+    }
+
 
     /**
      * @see writeBlockData (String, Vector)

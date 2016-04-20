@@ -110,6 +110,7 @@ public class Bay implements Transporter {
         loadedThisTurn = 0;
     }
 
+    @Override
     public void resetTransporter() {
         troops = new Vector<Integer>();
         currentSpace = totalSpace;
@@ -125,6 +126,7 @@ public class Bay implements Transporter {
      * @return <code>true</code> if the unit can be loaded, <code>false</code>
      *         otherwise.
      */
+    @Override
     public boolean canLoad(Entity unit) {
         // Assume that we cannot carry the unit.
         boolean result = true;
@@ -162,6 +164,7 @@ public class Bay implements Transporter {
      *            <code>IllegalArgumentException</code> exception will be
      *            thrown.
      */
+    @Override
     public void load(Entity unit) throws IllegalArgumentException {
         // If we can't load the unit, throw an exception.
         if (!canLoad(unit)) {
@@ -185,6 +188,7 @@ public class Bay implements Transporter {
      *         returned <code>List</code> is independant from the under- lying
      *         data structure; modifying one does not affect the other.
      */
+    @Override
     public Vector<Entity> getLoadedUnits() {
         // Return a copy of our list of troops.
         Vector<Entity> loaded = new Vector<Entity>();
@@ -253,6 +257,7 @@ public class Bay implements Transporter {
      * @return <code>true</code> if the unit was contained in this space,
      *         <code>false</code> otherwise.
      */
+    @Override
     public boolean unload(Entity unit) {
 
         // Remove the unit if we are carrying it.
@@ -277,10 +282,12 @@ public class Bay implements Transporter {
         return " - " + currentSpace + (currentSpace > 1 ? " units" : " unit");
     }
 
+    @Override
     public String getUnusedString() {
         return getUnusedString(true);
     }
 
+    @Override
     public double getUnused() {
         return currentSpace;
     }
@@ -298,6 +305,7 @@ public class Bay implements Transporter {
      * @return <code>true</code> if a transported unit is in the way,
      *         <code>false</code> if the weapon can fire.
      */
+    @Override
     public boolean isWeaponBlockedAt(int loc, boolean isRear) {
         return false;
     }
@@ -318,15 +326,18 @@ public class Bay implements Transporter {
      *         location. This value will be <code>null</code> if no unit is
      *         transported on the outside at that location.
      */
+    @Override
     public Entity getExteriorUnitAt(int loc, boolean isRear) {
         return null;
     }
 
+    @Override
     public final List<Entity> getExternalUnits() {
         ArrayList<Entity> rv = new ArrayList<Entity>(1);
         return rv;
     }
 
+    @Override
     public int getCargoMpReduction() {
         return 0;
     }
@@ -359,8 +370,9 @@ public class Bay implements Transporter {
         return unloadedThisTurn;
     }
 
-    public float getWeight() {
-        return (float) totalSpace;
+    /** Return the tonnage of the bay, not the actual mass or weight */
+    public double getWeight() {
+        return totalSpace;
     }
 
     @Override
@@ -376,6 +388,7 @@ public class Bay implements Transporter {
         return bayNumber;
     }
 
+    @Override
     public void setGame(IGame game) {
         this.game = game;
     }

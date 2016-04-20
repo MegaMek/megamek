@@ -46,7 +46,7 @@ import megamek.server.Server;
  * @version
  */
 public class EquipmentType {
-    public static final float TONNAGE_VARIABLE = Float.MIN_VALUE;
+    public static final double TONNAGE_VARIABLE = Float.MIN_VALUE;
     public static final int CRITICALS_VARIABLE = Integer.MIN_VALUE;
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
     public static final int COST_VARIABLE = Integer.MIN_VALUE;
@@ -171,7 +171,7 @@ public class EquipmentType {
 
     private Vector<String> namesVector = new Vector<String>();
 
-    protected float tonnage = 0;
+    protected double tonnage = 0;
     protected int criticals = 0;
     protected int tankslots = 1;
 
@@ -285,11 +285,15 @@ public class EquipmentType {
         return TechConstants.T_TECH_UNKNOWN;
     }
 
-    public float getTonnage(Entity entity) {
+    public double getTonnage(Entity entity) {
+        return getTonnage(entity, Entity.LOC_NONE);
+    }
+
+    public double getTonnage(Entity entity, int location) {
         return tonnage;
     }
 
-    public void setTonnage(float tonnage) {
+    public void setTonnage(double tonnage) {
         this.tonnage = tonnage;
     }
 
@@ -659,7 +663,7 @@ public class EquipmentType {
         return getArmorTypeName(armorType, clan);
     }
 
-    public static float getBaArmorWeightPerPoint(int type, boolean isClan) {
+    public static double getBaArmorWeightPerPoint(int type, boolean isClan) {
         switch (type) {
         case T_ARMOR_BA_STANDARD_PROTOTYPE:
             return 0.1f;
@@ -957,7 +961,7 @@ public class EquipmentType {
                 if (type.tonnage == EquipmentType.TONNAGE_VARIABLE) {
                     w.write("Variable");
                 } else {
-                    w.write(Float.toString(type.tonnage));
+                    w.write(Double.toString(type.tonnage));
                 }
                 w.write(",");
                 if (type.criticals == EquipmentType.CRITICALS_VARIABLE) {

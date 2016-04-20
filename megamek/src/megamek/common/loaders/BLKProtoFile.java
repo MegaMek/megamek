@@ -77,7 +77,7 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");
         }
-        t.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
+        t.setWeight(dataFile.getDataAsDouble("tonnage")[0]);
 
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         EntityMovementMode nMotion = EntityMovementMode.getMode(sMotion);

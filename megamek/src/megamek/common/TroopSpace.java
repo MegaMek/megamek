@@ -37,7 +37,7 @@ public final class TroopSpace implements Transporter {
     /**
      * The troops being carried.
      */
-    Map<Integer, Float> troops = new HashMap<>();
+    Map<Integer, Double> troops = new HashMap<>();
     
     /**
      * The total amount of space available for troops.
@@ -136,9 +136,10 @@ public final class TroopSpace implements Transporter {
      *         returned <code>List</code> is independant from the under- lying
      *         data structure; modifying one does not affect the other.
      */
+    @Override
     public Vector<Entity> getLoadedUnits() {
         Vector<Entity> loaded = new Vector<Entity>();
-        for (Map.Entry<Integer,Float> entry : troops.entrySet()) {
+        for (Map.Entry<Integer, Double> entry : troops.entrySet()) {
             int key = entry.getKey();
             loaded.add(game.getEntity(key));
         }
@@ -154,10 +155,11 @@ public final class TroopSpace implements Transporter {
      * @return <code>true</code> if the unit was contained in this space,
      *         <code>false</code> otherwise.
      */
+    @Override
     public boolean unload(Entity unit) {
         // Remove the unit if we are carrying it.
         boolean retval = false;
-        float unloadWeight = 0;
+        double unloadWeight = 0;
         if (unit != null) {
             unloadWeight = troops.get(unit.getId());
         }
@@ -177,10 +179,12 @@ public final class TroopSpace implements Transporter {
      *
      * @return A <code>String</code> meant for a human.
      */
+    @Override
     public String getUnusedString() {
         return "Troops - " + currentSpace + " tons";
     }
 
+    @Override
     public double getUnused(){
         return currentSpace;
     }

@@ -142,8 +142,8 @@ public class Tank extends Entity {
     /**
      * Keeps track of the base weight of the turret for omni tanks.
      */
-    private float baseChassisTurretWeight = -1;
-    private float baseChassisTurret2Weight = -1;
+    private double baseChassisTurretWeight = -1;
+    private double baseChassisTurret2Weight = -1;
 
     /**
      * Keeps track of whether this vehicle has control systems.  Trailers aren't
@@ -1167,8 +1167,7 @@ public class Tank extends Entity {
             bvText.append(startColumn);
             bvText.append(endColumn);
             bvText.append(startColumn);
-            double armorBV = (getArmor(loc) + modularArmor) * armorMultiplier
-                    * ((float) (getBARRating(loc)) / 10);
+            double armorBV = (getArmor(loc) + modularArmor) * armorMultiplier * (getBARRating(loc) / 10);
             bvText.append(armorBV);
             dbv += armorBV;
             bvText.append(endColumn);
@@ -3666,19 +3665,19 @@ public class Tank extends Entity {
                 && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
     }
 
-    public float getBaseChassisTurretWeight() {
+    public double getBaseChassisTurretWeight() {
         return baseChassisTurretWeight;
     }
 
-    public void setBaseChassisTurretWeight(float baseChassisTurretWeight) {
+    public void setBaseChassisTurretWeight(double baseChassisTurretWeight) {
         this.baseChassisTurretWeight = baseChassisTurretWeight;
     }
 
-    public float getBaseChassisTurret2Weight() {
+    public double getBaseChassisTurret2Weight() {
         return baseChassisTurret2Weight;
     }
 
-    public void setBaseChassisTurret2Weight(float baseChassisTurret2Weight) {
+    public void setBaseChassisTurret2Weight(double baseChassisTurret2Weight) {
         this.baseChassisTurret2Weight = baseChassisTurret2Weight;
     }
 

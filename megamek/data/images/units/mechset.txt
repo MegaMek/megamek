@@ -44,8 +44,12 @@
 # You may also just specify a graphic for a chassis, for example:
 # chassis "Marauder" "marauder.gif"
 
-# Images should be greyscale, 84x72 pixel GIF files with the chassis centered.
+# Images should be greyscale, 84x72 pixel GIF or PNG files with the chassis centered.
 # The tinting process is subtractive, so make images light.
+# Images can be cut-out parts of other, larger images. The syntax for this is
+# "imagename(X,Y-W,H)", with X and Y being the coordinates of the upper left corner
+# and W and H the width and height, respectively (typically 84 and 72). For example:
+# chassis "Marauder" "mechs.png(100,144-85,72)"
 
 # As of v0.29.61, mechset files can include other mechset files.
 

@@ -11,6 +11,9 @@
 #   theme for which this image is used instead.  E.G. "snow"
 # <image> can be a list separated by ; character. In this case, they are shuffled
 #   for each hex painted.
+#   Each image can be just a cut-out part of a larger image. The syntax for this is:
+#   "imagefile(X,Y-W,H)", with X and Y being the pixel positions of the upper left corner
+#   and W and H the width and height, respectively (typically 84 and 72).
 #
 # Image Size:
 #   Hexes in MegaMek are drawn to be 84x72 pixels.  In general, hex textures follow this size.

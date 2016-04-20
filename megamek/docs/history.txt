@@ -1,6 +1,9 @@
 VERSION HISTORY:
 ----------------
 v0.41.18-git
++ PR #154: Replacing all internal mass and tonnage related variables with doubles
++ PR #155: Adding the possibility to load parts of image (sprite sheets/texture atlases)
++ PR #122: Updating coordinates hashing code ("nice" random distribution of hex images)
 
 v0.41.17 (2016-04-16 00:30 UTC)
 + Data: New Sprites and Unit Date Fixes.

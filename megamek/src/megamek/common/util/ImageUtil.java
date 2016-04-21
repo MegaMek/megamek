@@ -53,7 +53,7 @@ public final class ImageUtil {
      *         else just the image passed to it
      */
     public static BufferedImage createAcceleratedImage(BufferedImage base) {
-        if(null == GC) {
+        if((null == GC) || (null == base)) {
             return base;
         }
         BufferedImage acceleratedImage
@@ -149,17 +149,18 @@ public final class ImageUtil {
         
         @Override
         public Image loadImage(String fileName, Toolkit toolkit) {
-            int tileStart = fileName.indexOf('('); //$NON-NLS-1$
-            int tileEnd = fileName.indexOf(')'); //$NON-NLS-1$
+            int tileStart = fileName.indexOf('(');
+            int tileEnd = fileName.indexOf(')');
             if((tileStart == -1) || (tileEnd == -1) || (tileEnd < tileStart)) {
                 return null;
             }
-            String[] tileCoords = fileName.substring(tileStart + 1, tileEnd).split("-", -1); //$NON-NLS-1$
-            if(tileCoords.length != 2) {
+            String coords = fileName.substring(tileStart + 1, tileEnd);
+            int coordsSplitter = coords.indexOf('-');
+            if(coordsSplitter == -1) {
                 return null;
             }
-            Coords start = parseCoords(tileCoords[0]);
-            Coords size = parseCoords(tileCoords[1]);
+            Coords start = parseCoords(coords.substring(0, coordsSplitter));
+            Coords size = parseCoords(coords.substring(coordsSplitter + 1));
             if((null == start) || (null == size) || (0 == size.getX()) || (0 == size.getY())) {
                 return null;
             }
@@ -177,7 +178,7 @@ public final class ImageUtil {
                     break;
                 }
             }
-            BufferedImage result = ImageUtil.createAcceleratedImage(size.getX(), size.getY());
+            BufferedImage result = ImageUtil.createAcceleratedImage(Math.abs(size.getX()), Math.abs(size.getY()));
             Graphics2D g2d = result.createGraphics();
             g2d.drawImage(base, 0, 0, result.getWidth(), result.getHeight(),
                 start.getX(), start.getY(), start.getX() + size.getX(), start.getY() + size.getY(), null);

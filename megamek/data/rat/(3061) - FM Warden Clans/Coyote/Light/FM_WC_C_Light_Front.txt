@@ -1,0 +1,12 @@
+Warden Clan Front-Line Light Mechs (Coyote),
+Hankyu (Arctic Cheetah) C,1
+Puma (Adder) C,2
+Fire Falcon E,3
+Koshi (Mist Lynx) C,4
+Puma (Adder) A,5
+Puma (Adder) Prime,6
+Dasher (Fire Moth) Prime,5
+Puma (Adder) Prime,4
+Koshi (Mist Lynx) B,3
+Dasher (Fire Moth) D,2
+Fire Falcon B,1

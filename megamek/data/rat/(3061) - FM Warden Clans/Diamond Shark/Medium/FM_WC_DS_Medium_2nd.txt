@@ -1,0 +1,12 @@
+Warden Clan Second-Line Medium Mechs (Diamond Shark),
+Hunchback IIC (Standard),1
+Crab CRB-27,2
+Griffin IIC (Standard),3
+Griffin IIC (Standard),4
+Thresher (Standard),5
+Thresher (Standard),6
+Shadow Hawk IIC (Standard),5
+Wyvern IIC (Standard),4
+Shadow Hawk IIC (Standard),3
+Great Wyrm (Standard),2
+Grendel (Mongrel) Prime,1

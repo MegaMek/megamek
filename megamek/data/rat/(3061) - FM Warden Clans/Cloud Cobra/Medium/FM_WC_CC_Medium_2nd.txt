@@ -1,0 +1,12 @@
+Warden Clan Second-Line Medium Mechs (Cloud Cobra),
+Crab CRB-27,1
+Stalking Spider (Standard),2
+Shadow Hawk IIC (Standard),3
+Goshawk (Vapor Eagle) (Standard),4
+Griffin IIC (Standard),5
+Great Wyrm (Standard),6
+Griffin IIC (Standard),5
+Hunchback IIC (Standard),4
+Goshawk (Vapor Eagle) (Standard),3
+Great Wyrm (Standard),2
+Wyvern IIC (Standard),1

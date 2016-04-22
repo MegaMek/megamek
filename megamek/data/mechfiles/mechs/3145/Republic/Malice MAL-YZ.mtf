@@ -1,6 +1,6 @@
 Version:1.1
 Malice
-MAL-XY
+MAL-YZ
 
 Config:Biped
 TechBase:Mixed (Clan Chassis)
@@ -20,14 +20,14 @@ Walk MP:4
 Jump MP:0
 
 Armor:Ferro-Lamellor(Clan)
-LA Armor:34
-RA Armor:34
+LA Armor:32
+RA Armor:32
 LT Armor:30
 RT Armor:30
 CT Armor:42
 HD Armor:9
-LL Armor:42
-RL Armor:42
+LL Armor:41
+RL Armor:41
 RTL Armor:12
 RTR Armor:12
 RTC Armor:20
@@ -70,10 +70,10 @@ Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 
 Left Torso:
-Fusion Engine
-Fusion Engine
-Fusion Engine
-Fusion Engine
+Fusion Engine (armored)
+Fusion Engine (armored)
+Fusion Engine (armored)
+Fusion Engine (armored)
 CLERLargeLaser
 RemoteSensorDispenser
 Clan Coolant Pod
@@ -84,10 +84,10 @@ Clan Endo Steel
 Clan Endo Steel
 
 Right Torso:
-Fusion Engine
-Fusion Engine
-Fusion Engine
-Fusion Engine
+Fusion Engine (armored)
+Fusion Engine (armored)
+Fusion Engine (armored)
+Fusion Engine (armored)
 CLERLargeLaser
 RemoteSensorDispenser
 Clan Coolant Pod
@@ -98,14 +98,14 @@ Clan Endo Steel
 -Empty-
 
 Center Torso:
-Fusion Engine
-Fusion Engine
-Fusion Engine
+Fusion Engine (armored)
+Fusion Engine (armored)
+Fusion Engine (armored)
 Gyro (armored)
 Gyro (armored)
-Fusion Engine
-Fusion Engine
-Fusion Engine
+Fusion Engine (armored)
+Fusion Engine (armored)
+Fusion Engine (armored)
 CLAngelECMSuite
 CLAngelECMSuite
 ISC3SlaveUnit

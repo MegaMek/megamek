@@ -1,0 +1,12 @@
+Warden Clan Front-Line Heavy Mechs (Cloud Cobra),
+Night Gyr C,1
+Vulture (Mad Dog) Prime,2
+Mad Cat (Timber Wolf) Prime,3
+Night Gyr Prime,4
+Cauldron-Born (Ebon Jaguar) B,5
+Vulture (Mad Dog) B,6
+Thor (Summoner) C,5
+Loki (Hellbringer) Prime,4
+Mad Cat (Timber Wolf) D,3
+Thor (Summoner) D,2
+Linebacker A,1

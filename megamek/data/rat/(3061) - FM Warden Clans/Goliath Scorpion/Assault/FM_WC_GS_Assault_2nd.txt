@@ -1,0 +1,12 @@
+Warden Clan Second-Line Assault Mechs (Goliath Scorpion),
+Kraken (Bane) 2,1
+Thug THG-11E,2
+Kodiak (Standard),3
+Supernova (Standard),4
+Behemoth (Stone Rhino) (Standard),5
+Marauder IIC (Standard),6
+Behemoth (Stone Rhino) (Standard),5
+Supernova (Standard),4
+Kraken (Bane) 2,3
+Thug THG-11E,2
+Warhammer IIC (Standard),1

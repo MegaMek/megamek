@@ -1,0 +1,12 @@
+Warden Clan Second-Line Heavy Mechs (Cloud Cobra),
+Hellfire (Standard),1
+Guillotine IIC (Standard),2
+Flashman FLS-8K,3
+Thresher (Standard),4
+Galahad (Glass Spider) (Standard),5
+Rifleman IIC (Standard),6
+Viper (Black Python) (Standard),5
+Guillotine IIC (Standard),4
+Viper (Black Python) (Standard),3
+Grizzly (Standard),2
+Lancelot LNC25-01,1

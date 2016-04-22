@@ -1,10 +1,10 @@
 Version:1.0
 Orion IIC
-'Barton'
+'Burton'
 
 Config:Biped
 TechBase:Clan
-Era:3130
+Era:3105
 Source:OTP Capellan - Dark Age
 Rules Level:2
 
@@ -31,11 +31,11 @@ RTR Armor:10
 RTC Armor:11
 
 Weapons:6
-HAG/20, Right Torso
-ATM 3, Left Torso
+Streak LRM 15, Left Arm
 ER Large Laser, Left Arm
 ER Large Laser, Right Arm
-Streak LRM 15, Left Arm
+ATM 3, Left Torso
+HAG/20, Right Torso
 Laser AMS, Head
 
 Left Arm:

@@ -1,0 +1,12 @@
+Warden Clan Front-Line Heavy Mechs (Coyote),
+Crossbow Prime,1
+Vulture (Mad Dog) Prime,2
+Mad Cat (Timber Wolf) C,3
+Thor (Summoner) D,4
+Loki (Hellbringer) Prime,5
+Mad Cat (Timber Wolf) Prime,6
+Mad Cat (Timber Wolf) A,5
+Thor (Summoner) Prime,4
+Loki (Hellbringer) C,3
+Mad Cat (Timber Wolf) A,2
+Linebacker Prime,1

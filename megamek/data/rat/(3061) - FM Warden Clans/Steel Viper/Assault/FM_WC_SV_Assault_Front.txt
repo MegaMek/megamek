@@ -1,0 +1,12 @@
+Warden Clan Front-Line Assault Mechs (Steel Viper),
+Naga Prime,1
+Kingfisher C,2
+Masakari (Warhawk) A,3
+Man O' War (Gargoyle) Prime,4
+Masakari (Warhawk) Prime,5
+Man O' War (Gargoyle) B,6
+Man O' War (Gargoyle) B,5
+Gladiator (Executioner) Prime,4
+Daishi (Dire Wolf) B,3
+Kingfisher B,2
+Daishi (Dire Wolf) Prime,1

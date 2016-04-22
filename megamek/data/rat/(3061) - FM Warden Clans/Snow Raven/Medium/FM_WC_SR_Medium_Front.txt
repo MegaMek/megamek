@@ -1,0 +1,12 @@
+Warden Clan Front-Line Medium Mechs (Snow Raven),
+Black Hawk (Nova) S,1
+Dragonfly (Viper) A,2
+Fenris (Ice Ferret) Prime,3
+Dragonfly (Viper) Prime,4
+Black Hawk (Nova) C,5
+Black Hawk (Nova) Prime,6
+Ryoken (Stormcrow) D,5
+Shadow Cat B,4
+Phantom B,3
+Fenris (Ice Ferret) C,2
+Hankyu (Arctic Cheetah) A,1

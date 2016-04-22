@@ -4204,26 +4204,26 @@
             <weaponName>ISLBXAC10Prototype</weaponName>
         </weaponQuirk>
     </unit>
-    <unit>
-        <chassis>Hatchetman</chassis>
-        <model>HCT-5D</model>
-        <weaponQuirk>
-            <weaponQuirkName>fast_reload</weaponQuirkName>
-            <location>LT</location>
-            <slot>3</slot>
-            <weaponName>ISUltraAC10</weaponName>
-        </weaponQuirk>
-    </unit>
-    <unit>
-        <chassis>Hatchetman</chassis>
-        <model>HCT-5DD</model>
-        <weaponQuirk>
-            <weaponQuirkName>fast_reload</weaponQuirkName>
-            <location>LT</location>
-            <slot>3</slot>
-            <weaponName>ISRotaryAC2</weaponName>
-        </weaponQuirk>
-    </unit>
+	<unit>
+		<chassis>Hatchetman</chassis>
+		<model>HCT-5D</model>
+		<weaponQuirk>
+			<weaponQuirkName>fast_reload</weaponQuirkName>
+			<location>RT</location>
+			<slot>3</slot>
+			<weaponName>ISUltraAC10</weaponName>
+		</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Hatchetman</chassis>
+		<model>HCT-5DD</model>
+		<weaponQuirk>
+			<weaponQuirkName>fast_reload</weaponQuirkName>
+			<location>RT</location>
+			<slot>3</slot>
+			<weaponName>ISRotaryAC2</weaponName>
+		</weaponQuirk>
+	</unit>
     <unit>
         <chassis>Hatchetman</chassis>
         <model>HCT-5S Austin</model>

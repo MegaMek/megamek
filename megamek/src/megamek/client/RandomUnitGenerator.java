@@ -253,7 +253,7 @@ public class RandomUnitGenerator implements Serializable {
                                 name, key, fileName));
                         continue;
                     }
-                    re.getUnits().add(name);
+                    re.getUnits().add(name.intern());
                     re.getWeights().add(weight);
                     totalWeight += weight;
                 }

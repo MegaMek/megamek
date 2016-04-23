@@ -243,7 +243,9 @@ public class MapMenu extends JPopupMenu {
             item.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     try {
-                        ((MovementDisplay) currentPanel).actionPerformed(e);
+                        if (currentPanel instanceof MovementDisplay) {
+                            ((MovementDisplay) currentPanel).actionPerformed(e);
+                        }
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }

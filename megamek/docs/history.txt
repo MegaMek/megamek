@@ -12,6 +12,7 @@ v0.41.18-git
 
 v0.41.17 (2016-04-16 00:30 UTC)
 + Data: New Sprites and Unit Date Fixes.
++ Issue #162: "The armor panel is null." warning during deployment phase
 
 v0.41.16 (2016-04-10 21:53 UTC)
 + Data: New Sprites and Unit Fixes.

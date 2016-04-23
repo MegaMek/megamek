@@ -24,7 +24,6 @@ package megamek.common;
 import java.math.BigInteger;
 
 import megamek.common.verifier.TestEntity;
-import megamek.common.verifier.TestEntity.Ceil;
 import megamek.common.weapons.CLERPPC;
 import megamek.common.weapons.ISERPPC;
 import megamek.common.weapons.ISHeavyPPC;

@@ -1,0 +1,12 @@
+Warden Clan Front-Line Assault Mechs (Cloud Cobra),
+Savage Coyote A,1
+Gladiator (Executioner) B,2
+Masakari (Warhawk) C,3
+Gladiator (Executioner) D,4
+Gladiator (Executioner) A,5
+Man O' War (Gargoyle) A,6
+Masakari (Warhawk) Prime,5
+Man O' War (Gargoyle) C,4
+Daishi (Dire Wolf) Prime,3
+Naga A,2
+Turkina B,1

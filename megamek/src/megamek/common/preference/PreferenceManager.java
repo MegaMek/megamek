@@ -170,6 +170,7 @@ public class PreferenceManager {
         /**
          * Required for JAXB.
          */
+        @SuppressWarnings("unused")
         private Settings() {
         }
         
@@ -198,6 +199,7 @@ public class PreferenceManager {
         /**
          * Required for JAXB.
          */
+        @SuppressWarnings("unused")
         private Store() {
         }
         
@@ -223,6 +225,7 @@ public class PreferenceManager {
         /**
          * Required for JAXB.
          */
+        @SuppressWarnings("unused")
         private XmlProperty() {
         }
     }

@@ -380,7 +380,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         try {
             client.getGame().addGameListener(gameListener);
             // Create the board viewer.
-            bv = new BoardView1(client.getGame(), controller);
+            bv = new BoardView1(client.getGame(), controller, this);
             bv.setPreferredSize(getSize());
             bvc = bv.getComponent();
             bvc.setName("BoardView");
@@ -663,7 +663,9 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         if ("fileGameSaveServer".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
             ignoreHotKeys = true;
             String filename = (String) JOptionPane.showInputDialog(frame, Messages.getString("ClientGUI.FileSaveServerDialog.message"), Messages.getString("ClientGUI.FileSaveServerDialog.title"), JOptionPane.QUESTION_MESSAGE, null, null, "savegame.sav");
-            client.sendChat("/save " + filename);
+            if (filename != null) {
+                client.sendChat("/save " + filename);
+            }
             ignoreHotKeys = false;
         }
         if ("helpAbout".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
@@ -785,6 +787,8 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             bv.refreshDisplayables();
         } else if (event.getActionCommand().equals(VIEW_MOVE_ENV)) {
             if (curPanel instanceof MovementDisplay){
+                GUIPreferences.getInstance().setMoveEnvelope(
+                        !GUIPreferences.getInstance().getMoveEnvelope());
                 ((MovementDisplay) curPanel).computeMovementEnvelope(mechD
                         .getCurrentEntity());
             }
@@ -1226,6 +1230,20 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
             bv.showPopup(popup, c);
         }
     }
+    
+    /** Switches the Minimap and the MechDisplay an and off together.
+     *  If the MechDisplay is active, both will be hidden, else 
+     *  both will be shown.
+     */
+    public void toggleMMUDDisplays() {
+        if (mechW.isVisible()) {
+            setDisplayVisible(false);
+            setMapVisible(false);
+        } else {
+            setDisplayVisible(true);
+            setMapVisible(true);
+        }
+    }
 
     /**
      * Toggles the entity display window
@@ -1241,7 +1259,21 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
      * Sets the visibility of the entity display window
      */
     public void setDisplayVisible(boolean visible) {
+        // If no unit displayed, select a unit so display can be safely shown
+        // This can happen when using mouse button 4
+        Entity unitToSelect = null;
+        IGame game = (getClient() != null) ? getClient().getGame() : null;
+        if ((mechD.getCurrentEntity() == null) && (game != null)) {
+            List<Entity> es = getClient().getGame().getEntitiesVector();
+            if ((es != null) && (es.size() > 0)) {
+                unitToSelect = es.get(0);
+            }
+        }
+
         mechW.setVisible(visible);
+        if (unitToSelect != null) {
+            mechD.displayEntity(unitToSelect);
+        }
         if (visible) {
             frame.requestFocus();
         }

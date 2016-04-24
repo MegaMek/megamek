@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Objects;
 
 import megamek.common.AmmoType;
 import megamek.common.Engine;
@@ -75,7 +76,7 @@ public class HmvFile implements IMechLoader {
 
     private Hashtable<HMVWeaponLocation, Hashtable<EquipmentType, Integer>> equipment = new Hashtable<HMVWeaponLocation, Hashtable<EquipmentType, Integer>>();
 
-    private float troopSpace = 0;
+    private double troopSpace = 0;
 
     private String fluff;
 
@@ -561,9 +562,8 @@ public class HmvFile implements IMechLoader {
             addEquipment(vehicle, HMVWeaponLocation.BODY, Tank.LOC_BODY);
 
             // Do we have any infantry/cargo bays?
-            int capacity = (int) Math.round(Math.floor(troopSpace));
-            if (capacity > 0) {
-                vehicle.addTransporter(new TroopSpace(capacity));
+            if (troopSpace > 0) {
+                vehicle.addTransporter(new TroopSpace(troopSpace));
             }
 
             addFailedEquipment(vehicle);
@@ -1256,29 +1256,20 @@ abstract class HMVType {
     }
 
     @Override
-    public boolean equals(Object other) {
-
-        // Assume the other object doesn't equal this one.
-        boolean result = false;
-
-        // References to the same object are equal.
-        if (this == other) {
-            result = true;
+    public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;
         }
-
-        // If the other object is an instance of
-        // this object's class, then recast it.
-        else if (this.getClass().isInstance(other)) {
-            HMVType cast = (HMVType) other;
-
-            // The two objects match if their names and IDs match.
-            if (name.equals(cast.name) && (id == cast.id)) {
-                result = true;
-            }
+        if((null == obj) || (getClass() != obj.getClass())) {
+            return false;
         }
+        final HMVType other = (HMVType) obj;
+        return Objects.equals(name, other.name) && Objects.equals(id, other.id);
+    }
 
-        // Return the result
-        return result;
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, id);
     }
 
     public int getId() {

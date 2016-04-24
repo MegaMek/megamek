@@ -1,0 +1,12 @@
+Warden Clan Front-Line Assault Mechs (Snow Raven),
+Man O' War (Gargoyle) Prime,1
+Gladiator (Executioner) A,2
+Naga Prime,3
+Masakari (Warhawk) B,4
+Kingfisher Prime,5
+Daishi (Dire Wolf) Prime,6
+Gladiator (Executioner) D,5
+Man O' War (Gargoyle) C,4
+Masakari (Warhawk) Prime,3
+Daishi (Dire Wolf) A,2
+Naga D,1

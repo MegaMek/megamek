@@ -1,6 +1,24 @@
 VERSION HISTORY:
 ----------------
-v0.41.16-git
+v0.41.18-git
++ PR #154: Replacing all internal mass and tonnage related variables with doubles
+           WARNING: This means that old unit caches will cause errors.
+           Delete them and let MegaMek rebuild!
++ PR #155: Adding the possibility to load parts of image (sprite sheets/texture atlases)
++ PR #122: Updating coordinates hashing code ("nice" random distribution of hex images)
++ Data: New Sprites
++ Data: Lots of Unit Fixes (Thanks Clavius1 and Sartis for the research)
++ Issue #158 Missing RATs From FM Warden Clans (Thanks to xStormforgex)
++ Issue #162: "The armor panel is null." warning during deployment phase
++ Issue #163: NPE in Compute.canCompleteNodePath
++ Issue #157: When /reset used from a saved game, you lose map size options
++ Issue #143: Super Heavy Endo Steel Weight Calculating wrong (in MML)
++ Issue #132: Make pilot death more obvious in head destruction.
+
+v0.41.17 (2016-04-16 00:30 UTC)
++ Data: New Sprites and Unit Date Fixes.
+
+v0.41.16 (2016-04-10 21:53 UTC)
 + Data: New Sprites and Unit Fixes.
 + PR #47: EntitySprite updates (AA, scaling, labels)
 + PR #49: Adding runway overlay fluff images
@@ -17,7 +35,30 @@ v0.41.16-git
 + Issue #63: ASF free facing changes incorrect on ground maps
 + Data: New Sprites and Unit Fixes (Thanks Greekfire)
 + PR #87: Adding Simplex-based random landscape generator
-
++ PR #50: Shadows (optimizations, new effects for low-light levels)
++ Fixing MML Issue #6 - Wrong damage for Enhanced ER PPC  (#6)
++ Data New Sprites.
++ Issue #81: Grappling a 'mech involved in a Grapple may cause hang
++ Issue #80: Flare Rounds not Illuminating Targets for Visual Detection
++ Bug: Floor deploy dialog for Infantry in buildings could select wrong floor
++ Bug: Landed dropships were allowed to hang off the edge of the board
++ Issue #82: Dropship Deployment Overlapping
++ PR #96/Issue #98: Fixed Industrial TSM calculation
++ PR #100: Minimap unit icons made more visible
++ Bug/PR #89: Keyboard scrolling made smoother by reducing calls to the minimap
++ PR #87: On Windows, RMB scrolling interacts better with the context menu
++ PR #88: Board soft centering to units
++ PR #77: Adjustments to Entity Sprites (transparency, coloring)
++ PR #94: Hotkey for toggling Walk/Jump, Movement Envelope now static on or off
++ Issue #106 - Fixing name generator resource loading derp
++ Data: New Sprites
++ PR #109: StratOps Symbols for the Minimap
++ Bug [#3399]: No Quicksand Image
++ Issue #92: Canon units being flagged as invalid designs (temp workaround)
++ PR #118: Mouse Button 4 will not show/hide the Minimap and Unit Display
++ Issue #126: Game saves regardless of button pushed
++ Data: New Sprites and Unit Fixes.
++ Bug: Entity tooltip could have incorrect movement mod with TO standing still
 
 v0.41.15 (2016-02-21 14:15 UTC)
 + Issue #19: doTryUnstuck Error

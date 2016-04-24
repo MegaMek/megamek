@@ -1,0 +1,12 @@
+Warden Clan Front-Line Medium Mechs (Diamond Shark),
+Hunchback IIC (Standard),1
+Black Hawk (Nova) A,2
+Fenris (Ice Ferret) Prime,3
+Grendel (Mongrel) B,4
+Ryoken (Stormcrow) Prime,5
+Grendel (Mongrel) Prime,6
+Black Hawk (Nova) Prime,5
+Grendel (Mongrel) C,4
+Black Hawk (Nova) A,3
+Grendel (Mongrel) A,2
+Fenris (Ice Ferret) H,1

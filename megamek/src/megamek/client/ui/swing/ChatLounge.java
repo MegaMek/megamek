@@ -36,6 +36,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -81,6 +83,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import megamek.client.Client;
+import megamek.client.RandomNameGenerator;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
@@ -216,12 +219,17 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     // keep track of portrait images
     private DirectoryItems portraits;
+    
+    private boolean mscLoaded = false;
+    private boolean rngLoaded = false;
 
     private MechSummaryCache.Listener mechSummaryCacheListener = new MechSummaryCache.Listener() {
-        public void doneLoading() {
-            butLoad.setEnabled(true);
-            butArmy.setEnabled(true);
-            butLoadList.setEnabled(true);
+        @Override
+		public void doneLoading() {
+        	mscLoaded = true;
+            butLoad.setEnabled(mscLoaded && rngLoaded);
+            butArmy.setEnabled(mscLoaded && rngLoaded);
+            butLoadList.setEnabled(mscLoaded);
         }
     };
 
@@ -359,11 +367,21 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         butSkills = new JButton(Messages.getString("ChatLounge.butSkills")); //$NON-NLS-1$
         butNames = new JButton(Messages.getString("ChatLounge.butNames")); //$NON-NLS-1$
 
+        RandomNameGenerator rng = RandomNameGenerator.getInstance();
+        rng.addInitializationListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				rngLoaded = (boolean) evt.getNewValue();
+		        butLoad.setEnabled(mscLoaded && rngLoaded);
+		        butArmy.setEnabled(mscLoaded && rngLoaded);
+			}
+		});
         MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
         mechSummaryCache.addListener(mechSummaryCacheListener);
-        butLoad.setEnabled(mechSummaryCache.isInitialized());
-        butArmy.setEnabled(mechSummaryCache.isInitialized());
-        butLoadList.setEnabled(mechSummaryCache.isInitialized());
+        mscLoaded = mechSummaryCache.isInitialized();
+        butLoad.setEnabled(mscLoaded && rngLoaded);
+        butArmy.setEnabled(mscLoaded && rngLoaded);
+        butLoadList.setEnabled(mscLoaded);
         butSkills.setEnabled(true);
         butNames.setEnabled(true);
 
@@ -460,8 +478,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                             new Object[] { getValueAt(rowIndex, colIndex),
                                     player.getConstantInitBonus(), mines });
                 } else if (realColIndex == PlayerTableModel.COL_TON) {
-                    return Float
-                            .toString((Float) getValueAt(rowIndex, colIndex));
+                    return ((Double) getValueAt(rowIndex, colIndex)).toString();
                 } else if (realColIndex == PlayerTableModel.COL_COST) {
                     return Messages.getString(
                             "ChatLounge.tipCost",
@@ -3046,13 +3063,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         private ArrayList<IPlayer> players;
         private ArrayList<Integer> bvs;
         private ArrayList<Integer> costs;
-        private ArrayList<Float> tons;
+        private ArrayList<Double> tons;
 
         public PlayerTableModel() {
-            players = new ArrayList<IPlayer>();
-            bvs = new ArrayList<Integer>();
-            costs = new ArrayList<Integer>();
-            tons = new ArrayList<Float>();
+            players = new ArrayList<>();
+            bvs = new ArrayList<>();
+            costs = new ArrayList<>();
+            tons = new ArrayList<>();
         }
 
         public int getRowCount() {
@@ -3060,10 +3077,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
 
         public void clearData() {
-            players = new ArrayList<IPlayer>();
-            bvs = new ArrayList<Integer>();
-            costs = new ArrayList<Integer>();
-            tons = new ArrayList<Float>();
+            players = new ArrayList<>();
+            bvs = new ArrayList<>();
+            costs = new ArrayList<>();
+            tons = new ArrayList<>();
         }
 
         public int getColumnCount() {
@@ -3074,7 +3091,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             players.add(player);
             int bv = 0;
             int cost = 0;
-            float ton = 0;
+            double ton = 0;
             for (Entity entity : clientgui.getClient().getEntitiesVector()) {
                  if (entity.getOwner().equals(player)) {
                     bv += entity.calculateBattleValue();
@@ -3135,7 +3152,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 return IStartingPositions.START_LOCATION_NAMES[player
                         .getStartingPos()];
             } else if (col == COL_TON) {
-                float ton = tons.get(row);
+                double ton = tons.get(row);
                 if (blindDrop) {
                     ton = ton > 0 ? 9999 : 0;
                 }

@@ -1,0 +1,12 @@
+Warden Clan Front-Line Heavy Mechs (Steel Viper),
+Loki (Hellbringer) A,1
+Crossbow B,2
+Crossbow Prime,3
+Thor (Summoner) Prime,4
+Loki (Hellbringer) B,5
+Crossbow Prime,5
+Vulture (Mad Dog) C,6
+Mad Cat (Timber Wolf) A,4
+Crossbow B,3
+Linebacker A,2
+Thor (Summoner) H,1

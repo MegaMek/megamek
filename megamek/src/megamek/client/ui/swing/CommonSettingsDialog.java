@@ -164,6 +164,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox showMapsheets;
     private JCheckBox aOHexShadows;
     private JCheckBox floatingIso;
+    private JCheckBox mmSymbol;
     private JCheckBox levelhighlight;
     private JCheckBox shadowMap;
     private JCheckBox mouseWheelZoom;
@@ -680,6 +681,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         showDamageLevel.setSelected(gs.getShowDamageLevel());
         aOHexShadows.setSelected(gs.getAOHexShadows());
         floatingIso.setSelected(gs.getFloatingIso());
+        mmSymbol.setSelected(gs.getMmSymbol());
         levelhighlight.setSelected(gs.getLevelHighlight());
         shadowMap.setSelected(gs.getShadowMap());
 
@@ -804,6 +806,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setShowMapsheets(showMapsheets.isSelected());
         gs.setAOHexShadows(aOHexShadows.isSelected());
         gs.setFloatingIso(floatingIso.isSelected());
+        gs.setMmSymbol(mmSymbol.isSelected());
         gs.setLevelHighlight(levelhighlight.isSelected());
         gs.setShadowMap(shadowMap.isSelected());
 
@@ -1066,8 +1069,13 @@ public class CommonSettingsDialog extends ClientDialog implements
                 clientgui.bv.clearHexImageCache();
                 clientgui.bv.repaint();
             }
-        }
+        } else if (source.equals(mmSymbol)) {
+            guip.setMmSymbol(mmSymbol.isSelected());
+            if ((clientgui != null) && (clientgui.minimap != null)) {
+                clientgui.minimap.drawMap();
+            }
 
+        }
     }
 
     public void focusGained(FocusEvent e) {
@@ -1163,7 +1171,15 @@ public class CommonSettingsDialog extends ClientDialog implements
         floatingIso.addItemListener(this);
         row.add(floatingIso);
         comps.add(row);
-        
+
+        // Type of symbol used on the minimap 
+        mmSymbol = new JCheckBox(Messages.getString("CommonSettingsDialog.mmSymbol")); //$NON-NLS-1$
+        row = new ArrayList<>();
+        mmSymbol.addItemListener(this);
+        row.add(mmSymbol);
+        comps.add(row);
+
+
         // Skin
         skinFiles = new JComboBox<String>();
         skinFiles.setMaximumSize(new Dimension(400,skinFiles.getMaximumSize().height));

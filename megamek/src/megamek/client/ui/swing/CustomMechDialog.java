@@ -464,7 +464,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     Messages.getString("CustomMechDialog.Callsign")); //$NON-NLS-1$
             callsign.append(": "); //$NON-NLS-1$
             callsign.append(
-                    (char) (this.entity.getUnitNumber() + PreferenceManager
+                    (this.entity.getUnitNumber() + PreferenceManager
                             .getClientPreferences().getUnitStartChar()))
                     .append('-').append(this.entity.getId());
             labCallsign.setText(callsign.toString());
@@ -478,7 +478,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                         private final int ownerId = CustomMechDialog.this.entity
                                 .getOwnerId();
 
-                        private final char unitNumber = CustomMechDialog.this.entity
+                        private final short unitNumber = CustomMechDialog.this.entity
                                 .getUnitNumber();
 
                         public boolean accept(Entity unitEntity) {
@@ -970,7 +970,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // Show the other entity's name and callsign.
             StringBuffer callsign = new StringBuffer(other.getDisplayName());
             callsign.append(" (")//$NON-NLS-1$
-                    .append((char) (other.getUnitNumber() + PreferenceManager
+                    .append((other.getUnitNumber() + PreferenceManager
                             .getClientPreferences().getUnitStartChar()))
                     .append('-').append(other.getId()).append(')');
             choUnitNum.addItem(callsign.toString());
@@ -1166,7 +1166,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             // entities and send an update packet for the other entity.
             if (!entityUnitNum.isEmpty() && (choUnitNum.getSelectedIndex() > 0)) {
                 Entity other = entityUnitNum.get(choUnitNum.getSelectedIndex());
-                char temp = entity.getUnitNumber();
+                short temp = entity.getUnitNumber();
                 entity.setUnitNumber(other.getUnitNumber());
                 other.setUnitNumber(temp);
                 client.sendUpdateEntity(other);

@@ -4,7 +4,7 @@ Ocelot
 
 Config:Biped
 TechBase:Clan
-Era:3130
+Era:3096
 Source:RS 3145 NT NU
 Rules Level:2
 
@@ -31,9 +31,9 @@ RTR Armor:4
 RTC Armor:4
 
 Weapons:3
+Medium Pulse Laser, Right Arm
+Medium Pulse Laser, Right Arm
 Large Pulse Laser, Left Torso
-Medium Pulse Laser, Right Arm
-Medium Pulse Laser, Right Arm
 
 Left Arm:
 Shoulder

@@ -19,8 +19,8 @@ J-27 Ordnance Transport K-27 'Killjoy',27
 Flatbed Truck (SRM),27
 Flatbed Truck (LRM),27
 Flatbed Truck (RL),27
-Truck (AC Conversion),27
-Truck (SRM Conversion),27
+Flatbed Truck (AC),27
+Flatbed Truck (SRM),27
 Coolant Truck (Hover),27
 Coolant Truck (Tracked),27
 Coolant Truck 135-K,27

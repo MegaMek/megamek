@@ -1,41 +1,43 @@
-Version:1.0
+Version:1.1
 Patriot
 PKM-2E
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3076
-Source:TRO 3075
-Rules Level:2
+Source:TRO 3075-Jihad
+Rules Level:3
 
 Mass:65
-Engine:260 XL Engine
-Structure:Endo Steel
+Engine:260 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
+Cockpit:Standard Cockpit
+Gyro:Heavy Duty Gyro
 
 Heat Sinks:10 Double
 Walk MP:4
 Jump MP:0
 
-Armor:Standard(Inner Sphere)
-LA Armor:20
-RA Armor:20
+Armor:Standard(IS/Clan)
+LA Armor:15
+RA Armor:15
 LT Armor:22
 RT Armor:22
-CT Armor:32
+CT Armor:31
 HD Armor:9
-LL Armor:30
-RL Armor:30
-RTL Armor:8
-RTR Armor:8
+LL Armor:27
+RL Armor:27
+RTL Armor:7
+RTR Armor:7
 RTC Armor:10
 
 Weapons:6
-TAG, Right Torso
+MML 7, Left Arm
+MML 7, Left Arm
 Heavy PPC, Right Arm
-MML 7, Left Arm
-MML 7, Left Arm
 MML 7, Left Torso
+TAG, Right Torso
 AMS, Head
 
 Left Arm:
@@ -60,10 +62,10 @@ Heavy PPC
 Heavy PPC
 Heavy PPC
 Heavy PPC
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Left Torso:
@@ -75,10 +77,10 @@ ISMML7
 ISMML7
 ISMML7
 ISArtemisIV
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
 Fusion Engine
@@ -91,8 +93,8 @@ IS Ammo MML-7 SRM Artemis-capable
 IS Ammo MML-7 SRM Artemis-capable
 ISAMS Ammo
 ISCASE
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Center Torso:
 Fusion Engine
@@ -105,8 +107,8 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISGuardianECMSuite
-ISGuardianECMSuite
+-Empty-
+-Empty-
 
 Head:
 Life Support
@@ -127,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

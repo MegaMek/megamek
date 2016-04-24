@@ -451,6 +451,7 @@ public class GameOptions extends AbstractOptions {
         /**
          * Required for JAXB.
          */
+        @SuppressWarnings("unused")
         private GameOptionsXML() {
         }
 

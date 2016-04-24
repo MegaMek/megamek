@@ -4,7 +4,7 @@ VLK-QD8
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3130
+Era:3102
 Source:RS 3145 NT NU
 Rules Level:2
 
@@ -20,7 +20,7 @@ Heat Sinks:10 Double
 Walk MP:6
 Jump MP:6
 
-Armor:Standard(IS/Clan)
+Armor:Standard(Clan)
 LA Armor:8
 RA Armor:8
 LT Armor:8

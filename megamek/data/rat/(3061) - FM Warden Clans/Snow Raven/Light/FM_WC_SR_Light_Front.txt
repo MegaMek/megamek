@@ -1,0 +1,12 @@
+Warden Clan Front-Line Light Mechs (Snow Raven),
+Dasher (Fire Moth) H,1
+Dasher (Fire Moth) A,2
+Puma (Adder) C,3
+Puma (Adder) A,4
+Dasher (Fire Moth) Prime,5
+Uller (Kit Fox) D,6
+Uller (Kit Fox) Prime,5
+Uller (Kit Fox) B,4
+Koshi (Mist Lynx) B,3
+Koshi (Mist Lynx) Prime,2
+Koshi (Mist Lynx) C,1

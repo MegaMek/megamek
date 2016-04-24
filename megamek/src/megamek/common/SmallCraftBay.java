@@ -238,8 +238,8 @@ public final class SmallCraftBay extends Bay {
     }
 
     @Override
-    public float getWeight() {
-        return (float) totalSpace * 200;
+    public double getWeight() {
+        return totalSpace * 200;
     }
 
     @Override

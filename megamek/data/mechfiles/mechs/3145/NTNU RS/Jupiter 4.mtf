@@ -4,7 +4,7 @@ Jupiter
 
 Config:Biped
 TechBase:Clan
-Era:3130
+Era:3093
 Source:RS 3145 NT NU
 Rules Level:2
 
@@ -31,12 +31,12 @@ RTR Armor:10
 RTC Armor:16
 
 Weapons:6
-ER PPC, Right Torso
+Streak SRM 4, Left Arm
+Streak SRM 4, Right Arm
 ER PPC, Left Torso
 LRM 15, Left Torso
+ER PPC, Right Torso
 LRM 15, Right Torso
-Streak SRM 4, Right Arm
-Streak SRM 4, Left Arm
 
 Left Arm:
 Shoulder

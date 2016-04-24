@@ -99,4 +99,11 @@ public interface Targetable extends Serializable {
      * Not used for aerospace units, see {@link Targetable#isAirborne()}
      */
     public boolean isAirborneVTOLorWIGE();
+    
+    // Make sure Targetable implements both
+    @Override
+    boolean equals(Object obj);
+    
+    @Override
+    int hashCode();
 }

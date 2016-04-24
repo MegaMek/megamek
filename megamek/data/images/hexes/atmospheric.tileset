@@ -11,6 +11,9 @@
 #   theme for which this image is used instead.  E.G. "snow"
 # <image> can be a list separated by ; character. In this case, they are shuffled
 #   for each hex painted.
+#   Each image can be just a cut-out part of a larger image. The syntax for this is:
+#   "imagefile(X,Y-W,H)", with X and Y being the pixel positions of the upper left corner
+#   and W and H the width and height, respectively (typically 84 and 72).
 #
 # Image Size:
 #   Hexes in MegaMek are drawn to be 84x72 pixels.  In general, hex textures follow this size.
@@ -54,9 +57,10 @@ include "StandardIncludes/StandardLimbs.tileinc"
 include "StandardIncludes/StandardSpace.tileinc"
 
 
-super * "swamp:1" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_3.png;swamp/swamp_3.png"
-super * "swamp:2" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_3.png;swamp/swamp_3.png"
-super * "swamp:3" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_3.png;swamp/swamp_3.png"
+super * "swamp:1" "" "swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_2.png;swamp/swamp_3.png"
+#levels 2 and 3 of swamp are for quicksand
+super * "swamp:2" "" "swamp/quicksand_0.gif;swamp/quicksand_1.gif;swamp/quicksand_2.gif;swamp/quicksand_3.gif"
+super * "swamp:3" "" "swamp/quicksand_0.gif;swamp/quicksand_1.gif;swamp/quicksand_2.gif;swamp/quicksand_3.gif"
 
 super * "rough:1" "" "transparent/rough_0.png;transparent/rough_1.png;transparent/rough_2.png"
 super * "rough:2" "" "transparent/ultra_rough.png"

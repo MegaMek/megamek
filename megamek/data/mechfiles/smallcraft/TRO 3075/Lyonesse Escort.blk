@@ -19,7 +19,7 @@ Lyonesse Escort
 175
 </Tonnage>
 <SafeThrust>
-4
+3
 </SafeThrust>
 <Armor>
 165
@@ -29,8 +29,6 @@ Lyonesse Escort
 </Armor>
 <Nose Equipment>
 ISLRM20
-ISLRM20 Ammo
-ISLRM20 Ammo
 ISLRM20 Ammo
 ISLRM20 Ammo
 ISSRM6
@@ -59,10 +57,10 @@ ISMediumLaser
 ISSmallLaser
 </Aft Equipment>
 <structural_integrity>
-8
+7
 </structural_integrity>
 <heatsinks>
-40
+35
 </heatsinks>
 <sink_type>
 0

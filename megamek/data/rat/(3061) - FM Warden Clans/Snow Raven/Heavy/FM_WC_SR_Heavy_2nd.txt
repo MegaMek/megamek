@@ -1,0 +1,12 @@
+Warden Clan Second-Line Heavy Mechs (Snow Raven),
+Guillotine IIC (Standard),1
+Mad Cat (Timber Wolf) B,2
+Rifleman IIC (Standard),3
+Galahad (Glass Spider) (Standard),4
+Viper (Black Python) (Standard),5
+Galahad (Glass Spider) (Standard),6
+Viper (Black Python) (Standard),5
+Grizzly (Standard),4
+Rifleman IIC (Standard),3
+Exterminator EXT-4D,2
+Thresher (Standard),1

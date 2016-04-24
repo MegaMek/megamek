@@ -1,0 +1,83 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Manta Fast Attack Submarine
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+2698
+</year>
+
+<type>
+IS Level 2
+</type>
+
+<motion_type>
+Submarine
+</motion_type>
+
+<cruiseMP>
+7
+</cruiseMP>
+
+<engine_type>
+2
+</engine_type>
+
+<armor_type>
+1
+</armor_type>
+
+<armor_tech>
+1
+</armor_tech>
+
+<armor>
+52
+39
+39
+31
+</armor>
+
+<Body Equipment>
+IS Ammo SRTorpedo-6
+</Body Equipment>
+
+<Front Equipment>
+ISERLargeLaser
+SRT 6
+</Front Equipment>
+
+<Right Equipment>
+</Right Equipment>
+
+<Left Equipment>
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<source>
+TRO3085S - Star League
+</source>
+
+<tonnage>
+50.0
+</tonnage>
+

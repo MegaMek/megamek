@@ -5,7 +5,7 @@ F
 Config:Biped Omnimech
 TechBase:Clan
 Era:3073
-Source:WoR
+Source:WoR - Jihad
 Rules Level:4
 
 Mass:85
@@ -34,19 +34,19 @@ RTR Armor:12
 RTC Armor:12
 
 Weapons:13
-Rotary AC/5, Right Arm
 Gauss Rifle, Left Arm
-ER Large Laser, Head
+Rotary AC/5, Right Arm
+Machine Gun Array, Left Torso
 Machine Gun, Left Torso
 Machine Gun, Left Torso
 Machine Gun, Left Torso
-Machine Gun, Right Torso
-Machine Gun, Right Torso
-Machine Gun, Right Torso
-Machine Gun, Right Torso
 Machine Gun, Left Torso
 Machine Gun Array, Right Torso
-Machine Gun Array, Left Torso
+Machine Gun, Right Torso
+Machine Gun, Right Torso
+Machine Gun, Right Torso
+Machine Gun, Right Torso
+ER Large Laser, Head
 
 Left Arm:
 Shoulder
@@ -85,7 +85,7 @@ CLMG
 CLMG
 CLMG
 CLMG
-Clan Machine Gun Ammo - Full
+Clan Machine Gun Ammo - Half
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
 -Empty-
@@ -99,10 +99,10 @@ CLMG
 CLMG
 CLMG
 CLMG
+CLRotaryAC5 Ammo
+CLRotaryAC5 Ammo
 Clan Ferro-Lamellor
 Clan Ferro-Lamellor
--Empty-
--Empty-
 
 Center Torso:
 Fusion Engine

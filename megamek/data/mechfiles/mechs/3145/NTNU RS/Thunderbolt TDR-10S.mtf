@@ -4,7 +4,7 @@ TDR-10S
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3130
+Era:3086
 Source:RS 3145 NYNU
 Rules Level:2
 
@@ -31,12 +31,12 @@ RTR Armor:7
 RTC Armor:9
 
 Weapons:6
-LRM 15, Right Torso
-ER Medium Laser, Left Torso
-ER Medium Laser, Left Torso
-ER Medium Laser, Left Torso
 ER PPC, Left Arm
 ER Large Laser, Right Arm
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+ER Medium Laser, Left Torso
+LRM 15, Right Torso
 
 Left Arm:
 Shoulder

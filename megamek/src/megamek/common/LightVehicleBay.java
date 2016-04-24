@@ -98,8 +98,8 @@ public final class LightVehicleBay extends Bay {
     }
 
     @Override
-    public float getWeight() {
-        return (float) totalSpace * 50;
+    public double getWeight() {
+        return totalSpace * 50;
     }
 
     @Override

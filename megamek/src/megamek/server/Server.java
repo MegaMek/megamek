@@ -51,6 +51,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -60,6 +61,8 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import com.thoughtworks.xstream.XStream;
 
 import megamek.MegaMek;
 import megamek.client.ui.swing.util.PlayerColors;
@@ -209,7 +212,6 @@ import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
-import megamek.common.util.HashCodeUtil;
 import megamek.common.util.StringUtil;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
@@ -260,8 +262,6 @@ import megamek.server.commands.VictoryCommand;
 import megamek.server.commands.WhoCommand;
 import megamek.server.victory.Victory;
 
-import com.thoughtworks.xstream.XStream;
-
 /**
  * @author Ben Mazur
  */
@@ -279,21 +279,19 @@ public class Server implements Runnable {
 
         @Override
         public boolean equals(Object o) {
-            if (!(o instanceof EntityTargetPair)) {
+            if(this == o) {
+                return true;
+            }
+            if((null == o) || (getClass() != o.getClass())) {
                 return false;
             }
-            EntityTargetPair other = (EntityTargetPair)o;
-            return ent.equals(other.ent)
-                    && (((target != null) && target.equals(other.target))
-                            || ((target == null) && (other.target == null)));
+            final EntityTargetPair other = (EntityTargetPair) o;
+            return Objects.equals(ent, other.ent) && Objects.equals(target, other.target);
         }
 
         @Override
         public int hashCode() {
-            int hashCode = HashCodeUtil.SEED;
-            hashCode = HashCodeUtil.hash(hashCode, ent.getId());
-            hashCode = HashCodeUtil.hash(hashCode, target);
-            return hashCode;
+            return Objects.hash(ent, target);
         }
 
     }
@@ -2160,7 +2158,7 @@ public class Server implements Runnable {
             && (entityUsed != null)) {
 
             // What's the unit number and ID of the entity used?
-            final char movingUnit = entityUsed.getUnitNumber();
+            final short movingUnit = entityUsed.getUnitNumber();
             final int movingId = entityUsed.getId();
 
             // How many other Protomechs are in the unit that can fire?
@@ -2169,7 +2167,7 @@ public class Server implements Runnable {
 
                 private final int entityId = movingId;
 
-                private final char unitNum = movingUnit;
+                private final short unitNum = movingUnit;
 
                 public boolean accept(Entity entity) {
                     if ((entity instanceof Protomech)
@@ -2310,6 +2308,7 @@ public class Server implements Runnable {
                         mapSettings.getBoardWidth(), mapSettings.getBoardHeight())));
                 mapSettings.setNullBoards(DEFAULT_BOARD);
                 send(createMapSettingsPacket());
+                send(createMapSizesPacket());
                 checkForObservers();
                 transmitAllPlayerUpdates();
                 break;
@@ -3450,14 +3449,14 @@ public class Server implements Runnable {
                 "protos_move_multi");
         if (!protosMoveMulti) {
             entities = new ArrayList<>(game.getEntitiesVector().size());
-            Set<Character> movedUnits = new HashSet<Character>();
+            Set<Short> movedUnits = new HashSet<>();
             for (Entity e : game.getEntitiesVector()) {
                 // This only effects Protos for the time being
                 if (!(e instanceof Protomech)) {
                     entities.add(e);
                     continue;
                 }
-                char unitNumber = e.getUnitNumber();
+                short unitNumber = e.getUnitNumber();
                 if ((unitNumber == Entity.NONE)
                         || !movedUnits.contains(unitNumber)) {
                     entities.add(e);
@@ -5519,7 +5518,7 @@ public class Server implements Runnable {
                         // Damage equals tonnage, divided by 5.
                         // ASSUMPTION: damage is applied in one hit.
                         addReport(damageEntity(target, hit,
-                                               Math.round(entity.getWeight() / 5)));
+                                               (int) Math.round(entity.getWeight() / 5)));
                         addNewLines();
                     }
 
@@ -12552,10 +12551,12 @@ public class Server implements Runnable {
                         game.removeTurnFor(def);
                         def.setDone(true);
                     }
-                    // Add a turn to declare counterattack
-                    game.insertNextTurn(new GameTurn.CounterGrappleTurn(def
-                                                                                .getOwnerId(), def.getId()));
-                    send(createTurnVectorPacket());
+                    // If defender is able, add a turn to declare counterattack
+                    if (!def.isImmobile()) {
+                        game.insertNextTurn(new GameTurn.CounterGrappleTurn(def
+                                .getOwnerId(), def.getId()));
+                        send(createTurnVectorPacket());
+                    }
                 }
             }
             if (ea instanceof ArtilleryAttackAction) {
@@ -13191,6 +13192,7 @@ public class Server implements Runnable {
                 addReport(r);
             }
         }
+        addNewLines();
     }
 
     private void reportLargeCraftECCMRolls() {
@@ -13206,6 +13208,7 @@ public class Server implements Runnable {
             Entity ent = e.next();
             if (ent.isDeployed() && ent.isLargeCraft()) {
                 r = new Report(3635);
+                r.subject = ent.getId();
                 r.addDesc(ent);
                 int target = ((Aero) ent).getECCMTarget();
                 int roll = ((Aero) ent).getECCMRoll();
@@ -20120,13 +20123,17 @@ public class Server implements Runnable {
         Report r;
         if (!crew.isDead() && !crew.isEjected() && !crew.isDoomed()) {
             crew.setHits(crew.getHits() + damage);
-            r = new Report(6025);
+            if (Crew.DEATH > crew.getHits()) {
+                r = new Report(6025);
+            } else {
+                r = new Report(6026);
+            }
             r.subject = en.getId();
             r.indent(2);
             r.addDesc(en);
             r.add(crew.getName());
             r.add(damage);
-            r.newlines = 0;
+            r.add(crew.getHits());
             vDesc.addElement(r);
             if (Crew.DEATH > crew.getHits()) {
                 vDesc.addAll(resolveCrewDamage(en, damage));
@@ -28075,8 +28082,8 @@ public class Server implements Runnable {
 
                 // According to page 54 of the BMRr, Protomechs must be
                 // deployed in full Points of five, unless circumstances have
-                // reduced the number to less that that.
-                entity.setUnitNumber((char) (numPlayerProtos / 5));
+                // reduced the number to less than that.
+                entity.setUnitNumber((short) (numPlayerProtos / 5));
 
             } // End added-Protomech
 
@@ -28567,12 +28574,12 @@ public class Server implements Runnable {
 
                     // According to page 54 of the BMRr, Protomechs must be
                     // deployed in full Points of five, unless "losses" have
-                    // reduced the number to less that that.
+                    // reduced the number to less than that.
                     final char oldMax = (char) (Math
                                                         .ceil(numPlayerProtos / 5.0) - 1);
                     char newMax = (char) (Math
                                                   .ceil((numPlayerProtos - 1) / 5.0) - 1);
-                    char deletedUnitNum = entity.getUnitNumber();
+                    short deletedUnitNum = entity.getUnitNumber();
 
                     // Do we have to update a Protomech from the last unit?
                     if ((oldMax != deletedUnitNum) && (oldMax != newMax)) {
@@ -30170,7 +30177,7 @@ public class Server implements Runnable {
             // index 1, the second is at index 1, etc., and the roof is
             // at index (numFloors).
             // if bridge is present, bridge will be numFloors+1
-            float[] loads = new float[numLoads + 1];
+            double[] loads = new double[numLoads + 1];
             // track all units that might fall into the basement
             Vector<Entity> basement = new Vector<Entity>();
 
@@ -30214,7 +30221,7 @@ public class Server implements Runnable {
                     // Add the weight to the
                     // correct floor.
 
-                    float load = entity.getWeight();
+                    double load = entity.getWeight();
                     int floor = entityElev;
                     if (floor == bridgeEl) {
                         floor = numLoads;
@@ -32185,8 +32192,7 @@ public class Server implements Runnable {
             entity.addPilotingModifierForTerrain(rollTarget);
             // apart from swamp & liquid magma, -1 modifier
             IHex hex = game.getBoard().getHex(entity.getPosition());
-            rollTarget.addModifier(
-                    hex.getUnstuckModifier(entity.getElevation()), "terrain");
+            hex.getUnstuckModifier(entity.getElevation(), rollTarget);
             // okay, print the info
             r = new Report(2340);
             r.addDesc(entity);

@@ -319,7 +319,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
 
         if (en instanceof Infantry) {
-            weightR.setString(Float.toString(en.getWeight()));
+            weightR.setString(Double.toString(en.getWeight()));
         } else {
             weightR.setString(Integer.toString((int) en.getWeight()));
         }

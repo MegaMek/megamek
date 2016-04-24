@@ -1,0 +1,12 @@
+Warden Clan Second-Line Light Mechs (Goliath Scorpion),
+Commando IIC (Standard),1
+Mongoose MON-66,2
+Jenner IIC (Standard),3
+Locust IIC (Standard),4
+Peregrine (Horned Owl) (Standard),5
+Vixen (Incubus) (Standard),6
+Peregrine (Horned Owl) (Standard),5
+Locust IIC (Standard),4
+Piranha (Standard),3
+Mercury MCY-97,2
+Commando IIC (Standard),1

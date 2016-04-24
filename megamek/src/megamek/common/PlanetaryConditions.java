@@ -781,6 +781,8 @@ public class PlanetaryConditions implements Serializable {
         lightConditions = type;
     }
 
+    
+    /** @return The time of day lighting conditions (one of PlanetaryConditions.L_*). */
     public int getLight() {
         return lightConditions;
     }

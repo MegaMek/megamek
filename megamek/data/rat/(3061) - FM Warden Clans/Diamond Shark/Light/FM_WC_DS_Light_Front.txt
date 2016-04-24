@@ -1,0 +1,12 @@
+Warden Clan Front-Line Light Mechs (Diamond Shark),
+Dasher (Fire Moth) A,1
+Puma (Adder) C,2
+Puma (Adder) B,3
+Hankyu (Arctic Cheetah) Prime,4
+Puma (Adder) A,5
+Puma (Adder) Prime,6
+Koshi (Mist Lynx) Prime,5
+Koshi (Mist Lynx) A,4
+Hankyu (Arctic Cheetah) C,3
+Dasher (Fire Moth) Prime,2
+Puma (Adder) D,1

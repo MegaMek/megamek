@@ -420,67 +420,26 @@ public abstract class BotClient extends Client {
     }
 
     /**
-     * Gets valid & empty starting coords around the specified point
+     * Gets valid & empty starting coords around the specified point. This
+     * method iterates through the list of Coords and returns the first Coords
+     * that does not have a stacking violation.
      */
-    protected Coords getCoordsAround(Entity deploy_me, List<Coords> c) {
-        int mech_count;
-        int conv_fcount; // Friendly conventional units
-        int conv_ecount; // Enemy conventional units
-
+    protected Coords getFirstValidCoords(Entity deployedUnit,
+            List<Coords> possibleDeployCoords) {
         // Check all of the hexes in order.
-        for (Coords element : c) {
-            // Verify stacking limits. Gotta do this the long way, as
-            // Compute.stackingViolation references the entity's CURRENT
-            // position as well as the hex being checked; because its not
-            // deployed yet it doesn't have a location!
-            mech_count = 0;
-            conv_fcount = 0;
-            conv_ecount = 0;
-            for (Entity test_ent : game.getEntitiesVector(element)) {
-                if (test_ent instanceof Mech) {
-                    mech_count++;
-                } else {
-                    if (deploy_me.isEnemyOf(test_ent)) {
-                        conv_ecount++;
-                    } else {
-                        conv_fcount++;
-                    }
-                }
-            }
-            if (deploy_me instanceof Mech) {
-                mech_count++;
-            } else {
-                conv_fcount++;
-            }
-            if (mech_count > 1) {
+        for (Coords dest : possibleDeployCoords) {
+            Entity violation = Compute.stackingViolation(game, deployedUnit,
+                    dest, deployedUnit.getElevation(), dest, null);
+            // Ignore coords that could cause a stacking violation
+            if (violation != null) {
                 continue;
             }
-            if ((conv_fcount + mech_count) > 2) {
-                continue;
-            }
-            if ((conv_fcount + conv_ecount) > 4) {
-                continue;
-            }
-            return element;
+            return dest;
         }
 
         System.out.println("Returning no deployment position; THIS IS BAD!");
         // If NONE of them are acceptable, then just return null.
         return null;
-        /*
-         * // check the requested coords if
-         * (game.getBoard().isLegalDeployment(c, this.getLocalPlayer()) &&
-         * game.getFirstEntity(c) == null) { // Verify that the unit can be
-         * placed in this hex if
-         * (!deploy_me.isHexProhibited(game.getBoard().getHex(c.x, c.y))) {
-         * return c; } } // check the rest of the list. for (int x = 0; x < 6;
-         * x++) { Coords c2 = c.translated(x); if
-         * (game.getBoard().isLegalDeployment(c2, this.getLocalPlayer()) &&
-         * game.getFirstEntity(c2) == null) { if
-         * (!deploy_me.isHexProhibited(game.getBoard().getHex(c2.x, c2.y))) {
-         * return c2; } } } // recurse in a random direction return
-         * getCoordsAround(deploy_me, c.translated(Compute.randomInt(6)));
-         */
     }
 
     protected List<Coords> getStartingCoordsArray() {

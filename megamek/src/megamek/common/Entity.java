@@ -189,7 +189,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     protected String externalId = "-1";
 
-    protected float weight;
+    protected double weight;
     protected boolean omni = false;
     protected String chassis;
     protected String model;
@@ -543,7 +543,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * implementations may store multiple unit designations in the same unit
      * number (e.g. battalion, company, platoon, and lance).
      */
-    private char unitNumber = (char) Entity.NONE;
+    private short unitNumber = Entity.NONE;
 
     /**
      * Indicates whether this entity has been seen by the enemy during the
@@ -1087,7 +1087,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         this.year = year;
     }
 
-    public float getWeight() {
+    /** @return the tonnage of the Entity, not its weight */
+    public double getWeight() {
         return weight;
     }
 
@@ -1100,7 +1101,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return EntityWeightClass.getClassName(getWeightClass(), this);
     }
 
-    public void setWeight(float weight) {
+    public void setWeight(double weight) {
         this.weight = weight;
         // Any time the weight is reset we need to reset the crew size
         crew.setSize(Compute.getFullCrewSize(this));
@@ -5859,14 +5860,20 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Two entities are equal if their ids are equal
      */
     @Override
-    public boolean equals(Object object) {
-        if (this == object) {
+    public boolean equals(Object obj) {
+        if(this == obj) {
             return true;
-        } else if ((object == null) || (getClass() != object.getClass())) {
+        }
+        if((null == obj) || (getClass() != obj.getClass())) {
             return false;
         }
-        Entity other = (Entity) object;
-        return other.getId() == id;
+        final Entity other = (Entity) obj;
+        return (id == other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 
     /**
@@ -6504,19 +6511,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             EntityMovementType moveType, IHex curHex, Coords lastPos,
             Coords curPos, boolean isLastStep) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
-        addPilotingModifierForTerrain(roll, curPos);
+        boolean enteringRubble = true;
+        addPilotingModifierForTerrain(roll, curPos, enteringRubble);
 
         if (!lastPos.equals(curPos)
             && ((moveType != EntityMovementType.MOVE_JUMP)
                 || isLastStep)
             && (curHex.terrainLevel(Terrains.RUBBLE) > 0)
             && (this instanceof Mech)) {
-            int mod = 0;
-            if (curHex.terrainLevel(Terrains.RUBBLE) > 5) {
-                mod++;
-            }
-            // append the reason modifier
-            roll.append(new PilotingRollData(getId(), mod, "entering Rubble"));
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
@@ -8202,21 +8204,21 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     /**
      * Set the unit number for this entity.
      *
-     * @param unit the <code>char</code> number for the low-level unit that this
+     * @param unit the number for the low-level unit that this
      *             entity belongs to. This entity can be removed from its unit by
-     *             passing the value, <code>(char) Entity.NONE</code>.
+     *             passing the value, <code>{@link Entity#NONE}</code>.
      */
-    public void setUnitNumber(char unit) {
+    public void setUnitNumber(final short unit) {
         unitNumber = unit;
     }
 
     /**
      * Get the unit number of this entity.
      *
-     * @return the <code>char</code> unit number. If the entity does not belong
-     * to a unit, <code>(char) Entity.NONE</code> will be returned.
+     * @return The unit number. If the entity does not belong
+     * to a unit, <code>{@link Entity#NONE}</code> will be returned.
      */
-    public char getUnitNumber() {
+    public short getUnitNumber() {
         return unitNumber;
     }
 
@@ -8803,8 +8805,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
 
-    public float getTroopCarryingSpace() {
-        float space = 0;
+    public double getTroopCarryingSpace() {
+        double space = 0;
         for (Transporter t : transports) {
             if (t instanceof TroopSpace) {
                 space += ((TroopSpace) t).totalSpace;
@@ -8945,31 +8947,29 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 break;
             case NORTH:
                 setPosition(new Coords((game.getBoard().getWidth() / 2)
-                                       + (game.getBoard().getWidth() % 2),
-                                       -getOffBoardDistance()));
+                        + (game.getBoard().getWidth() % 2),
+                        -getOffBoardDistance()));
                 setFacing(3);
                 setDeployed(true);
                 break;
             case SOUTH:
                 setPosition(new Coords((game.getBoard().getWidth() / 2)
-                                       + (game.getBoard().getWidth() % 2), game.getBoard()
-                                                                               .getHeight() +
-                                                                           getOffBoardDistance()));
+                        + (game.getBoard().getWidth() % 2), game.getBoard()
+                        .getHeight() + getOffBoardDistance()));
                 setFacing(0);
                 setDeployed(true);
                 break;
             case EAST:
                 setPosition(new Coords(game.getBoard().getWidth()
-                                       + getOffBoardDistance(),
-                                       (game.getBoard().getHeight() / 2)
-                                       + (game.getBoard().getHeight() % 2)));
+                        + getOffBoardDistance(),
+                        (game.getBoard().getHeight() / 2)
+                                + (game.getBoard().getHeight() % 2)));
                 setFacing(5);
                 setDeployed(true);
                 break;
             case WEST:
                 setPosition(new Coords(-getOffBoardDistance(), (game.getBoard()
-                                                                    .getHeight() / 2) + (game.getBoard().getHeight()
-                                                                                         % 2)));
+                        .getHeight() / 2) + (game.getBoard().getHeight() % 2)));
                 setFacing(1);
                 setDeployed(true);
                 break;
@@ -9757,6 +9757,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param c    the coordinates where the PSR happens
      */
     public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c) {
+        addPilotingModifierForTerrain(roll, c, false);
+    }
+
+    /**
+     * Apply PSR modifier for difficult terrain at the specified coordinates
+     *
+     * @param roll the PSR to modify
+     * @param c    the coordinates where the PSR happens
+     * @param enteringRubble True if entering rubble, else false
+     */
+    public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c,
+            boolean enteringRubble) {
         if ((c == null) || (roll == null)) {
             return;
         }
@@ -9764,10 +9776,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return;
         }
         IHex hex = game.getBoard().getHex(c);
-        int modifier = hex.terrainPilotingModifier(getMovementMode());
-        if (modifier != 0) {
-            roll.addModifier(modifier, "difficult terrain");
-        }
+        hex.terrainPilotingModifier(getMovementMode(), roll, enteringRubble);
     }
 
     /**
@@ -9777,7 +9786,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @param step the move step the PSR occurs at
      */
     public void addPilotingModifierForTerrain(PilotingRollData roll,
-                                              MoveStep step) {
+            MoveStep step) {
         if (step.getElevation() > 0) {
             return;
         }

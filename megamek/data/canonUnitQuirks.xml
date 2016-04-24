@@ -252,15 +252,6 @@
         <quirk>obsolete</quirk>
     </unit>
     <unit>
-        <chassis>Alacorn Heavy Tank</chassis>
-        <model>Mk I</model>
-        <quirk>difficult_maintain</quirk>
-        <quirk>imp_com</quirk>
-        <quirk>poor_performance</quirk>
-        <quirk>trailer_hitch</quirk>
-        <quirk>obsolete</quirk>
-    </unit>
-    <unit>
         <chassis>Caravan Heavy Transport</chassis>
         <model>(Standard)</model>
         <quirk>atmo_flyer</quirk>
@@ -329,19 +320,6 @@
             <weaponQuirkName>ammo_feed_problems</weaponQuirkName>
             <location>LT</location>
             <slot>5</slot>
-            <weaponName>Autocannon/5</weaponName>
-        </weaponQuirk>
-    </unit>
-    <unit>
-        <chassis>Swordsman</chassis>
-        <model>SWD-1</model>
-        <quirk>bad_rep</quirk>
-        <quirk>obsolete</quirk>
-        <quirk>searchlight</quirk>
-        <weaponQuirk>
-            <weaponQuirkName>accurate</weaponQuirkName>
-            <location>LT</location>
-            <slot>1</slot>
             <weaponName>Autocannon/5</weaponName>
         </weaponQuirk>
     </unit>
@@ -588,13 +566,6 @@
 		<chassis>Waneta</chassis>
 		<model>all</model>
 		<quirk>non_standard</quirk>
-	</unit>
-	<unit>
-		<chassis>Tortoise II</chassis>
-		<model>all</model>
-		<quirk>difficult_maintain</quirk>
-		<quirk>hard_pilot</quirk>
-		<quirk>prototype</quirk>
 	</unit>
 	<unit>
 		<chassis>Pwwka</chassis>
@@ -1338,12 +1309,6 @@
 		<chassis>Hexareme HQ Hovercraft</chassis>
 		<model>(Standard)</model>
 		<quirk>poor_performance</quirk>
-	</unit>
-    <unit>
-		<chassis>Strix Stealth VTOL</chassis>
-		<model>(Standard)</model>
-		<quirk>anti_air</quirk>
-		<quirk>rumble_seat</quirk>
 	</unit>
     <unit>
 		<chassis>'Surat' (Grey Death) Solahma Suit</chassis>
@@ -2352,11 +2317,6 @@
 		<chassis>Savior Repair Vehicle</chassis>
 		<model>(Standard)</model>
 		<quirk>easy_maintain</quirk>
-	</unit>
-    <unit>
-		<chassis>Kite Reconnaissance Vehicle</chassis>
-		<model>(Standard)</model>
-		<quirk>imp_sensors</quirk>
 	</unit>
     <unit>
 		<chassis>Koshi</chassis>
@@ -3618,7 +3578,7 @@
         <quirk>variable_range_long</quirk>
     </unit>
     <unit>
-        <chassis>Loki Mk II (Hellbringer Mk II)</chassis>
+        <chassis>Loki Mk II (Hel)</chassis>
         <model>all</model>
         <quirk>multi_trac</quirk>
     </unit>
@@ -4171,16 +4131,6 @@
         </weaponQuirk>
     </unit>
     <unit>
-        <chassis>Super-Griffin</chassis>
-        <model>GRF-2N-X</model>
-        <weaponQuirk>
-            <weaponQuirkName>jettison_capable</weaponQuirkName>
-            <location>RA</location>
-            <slot>7</slot>
-            <weaponName>PPC</weaponName>
-        </weaponQuirk>
-    </unit>
-    <unit>
     <chassis>Guillotine</chassis>
         <model>all</model>
         <quirk>searchlight</quirk>
@@ -4269,11 +4219,6 @@
         <chassis>Highlander</chassis>
         <model>all</model>
         <quirk>reinforced_legs</quirk>
-    </unit>
-    <unit>
-        <chassis>Jackalope</chassis>
-        <model>all</model>
-        <quirk>compact_mech</quirk>
     </unit>
     <unit>
     <chassis>Javelin</chassis>
@@ -4465,21 +4410,6 @@
         <model>all</model>
         <quirk>combat_computer</quirk>
         <quirk>no_arms</quirk>
-    </unit>
-    <unit>
-        <chassis>Stiletto</chassis>
-        <model>STO-4C</model>
-        <quirk>bad_rep</quirk>
-    </unit>
-    <unit>
-        <chassis>Stiletto</chassis>
-        <model>STO-6S</model>
-        <quirk>bad_rep</quirk>
-    </unit>
-    <unit>
-        <chassis>Stiletto</chassis>
-        <model>STO-6X</model>
-        <quirk>bad_rep</quirk>
     </unit>
     <unit>
     <chassis>Stinger</chassis>

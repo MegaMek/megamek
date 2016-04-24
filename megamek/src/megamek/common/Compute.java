@@ -1668,12 +1668,12 @@ public class Compute {
         // ECMInfo for line between spotter's position and end's position
         ECMInfo spotterEndECM = ComputeECM.getECMEffects(spotter,
                 spotter.getPosition(), end.getPosition(), true, allECMInfo);
-        isC3BDefeated = start.hasBoostedC3() && (spotterStartECM != null)
+        isC3BDefeated = start.hasBoostedC3() && (spotterEndECM != null)
                 && spotterEndECM.isAngelECM();
-        isNovaDefeated = start.hasNovaCEWS() && (spotterStartECM != null)
+        isNovaDefeated = start.hasNovaCEWS() && (spotterEndECM != null)
                 && spotterEndECM.isNovaECM();
         isC3Defeated = !(start.hasBoostedC3() || start.hasNovaCEWS())
-                && (spotterStartECM != null) && spotterEndECM.isECM();
+                && (spotterEndECM != null) && spotterEndECM.isECM();
         // If there's no ECM between spotter and end, we're done
         if (!(isC3BDefeated || isNovaDefeated || isC3Defeated)) {
             return true;

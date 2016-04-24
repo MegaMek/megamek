@@ -20123,13 +20123,17 @@ public class Server implements Runnable {
         Report r;
         if (!crew.isDead() && !crew.isEjected() && !crew.isDoomed()) {
             crew.setHits(crew.getHits() + damage);
-            r = new Report(6025);
+            if (Crew.DEATH > crew.getHits()) {
+                r = new Report(6025);
+            } else {
+                r = new Report(6026);
+            }
             r.subject = en.getId();
             r.indent(2);
             r.addDesc(en);
             r.add(crew.getName());
             r.add(damage);
-            r.newlines = 0;
+            r.add(crew.getHits());
             vDesc.addElement(r);
             if (Crew.DEATH > crew.getHits()) {
                 vDesc.addAll(resolveCrewDamage(en, damage));

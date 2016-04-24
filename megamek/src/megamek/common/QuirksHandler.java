@@ -214,6 +214,11 @@ public class QuirksHandler {
         }
     }
 
+    public static String replaceUnitType(String unitId, String newUnitType) {
+        int splitIdx = unitId.lastIndexOf("~");
+        return unitId.substring(0, splitIdx) + "~" + newUnitType;
+    }
+
     private static Map<String, List<QuirkEntry>> loadQuirksFile(String path) throws IOException {
         Map<String, List<QuirkEntry>> quirkMap = new HashMap<>();
 
@@ -676,5 +681,28 @@ public class QuirksHandler {
 
     public static Set<String> getCanonQuirkIds() {
         return canonQuirkMap.keySet();
+    }
+
+    /**
+     * Used by QuirkRewriteTool to take a quirk entry from canon quirks, and
+     * munge its eType and write it to customQuirks.
+     */
+    public static void mungeQuirks(String quirkId, String newId) {
+        // Shouldn't happen, but lets be careful
+        if (customQuirkMap == null) {
+            try {
+                QuirksHandler.initQuirksList();
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+        }
+
+        customQuirksDirty.set(true);
+
+        customQuirkMap.put(newId, canonQuirkMap.get(quirkId));
+    }
+
+    public static boolean customQuirksContain(String unitId) {
+        return customQuirkMap.containsKey(unitId);
     }
 }

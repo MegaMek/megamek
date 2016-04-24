@@ -2308,6 +2308,7 @@ public class Server implements Runnable {
                         mapSettings.getBoardWidth(), mapSettings.getBoardHeight())));
                 mapSettings.setNullBoards(DEFAULT_BOARD);
                 send(createMapSettingsPacket());
+                send(createMapSizesPacket());
                 checkForObservers();
                 transmitAllPlayerUpdates();
                 break;

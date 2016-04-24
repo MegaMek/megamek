@@ -12,6 +12,7 @@ v0.41.18-git
 + Issue #162: "The armor panel is null." warning during deployment phase
 + Issue #163: NPE in Compute.canCompleteNodePath
 + Issue #157: When /reset used from a saved game, you lose map size options
++ Issue #143: Super Heavy Endo Steel Weight Calculating wrong (in MML)
 
 v0.41.17 (2016-04-16 00:30 UTC)
 + Data: New Sprites and Unit Date Fixes.

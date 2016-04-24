@@ -1670,8 +1670,13 @@ class Structure {
             multiplier = 1.1;
         }
         if (structureType == EquipmentType.T_STRUCTURE_ENDO_STEEL) {
-            return TestEntity.ceilMaxHalf((weight / 20.0f) * multiplier,
-                    roundWeight);
+            if (isSuperHeavy) {
+                return TestEntity.ceilMaxHalf((weight / 10.0f) * multiplier,
+                        roundWeight);
+            } else {
+                return TestEntity.ceilMaxHalf((weight / 20.0f) * multiplier,
+                        roundWeight);
+            }
         } else if (structureType == EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE) {
             return TestEntity.ceilMaxHalf((weight / 20.0f) * multiplier,
                     roundWeight);
@@ -1700,7 +1705,8 @@ class Structure {
             }
         }
         if (isSuperHeavy
-                && ((movementmode != EntityMovementMode.NAVAL) && (movementmode != EntityMovementMode.SUBMARINE))) {
+                && ((movementmode != EntityMovementMode.NAVAL)
+                        && (movementmode != EntityMovementMode.SUBMARINE))) {
             return TestEntity.ceilMaxHalf((weight / 5.0f) * multiplier,
                     roundWeight);
         } else {

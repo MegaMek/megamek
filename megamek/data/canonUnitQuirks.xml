@@ -2731,9 +2731,10 @@
         <quirk>fast_reload</quirk>
     </unit>
     <unit>
-        <chassis>Hatamoto-Suna</chassis>
+        <chassis>Hatamoto-Godai</chassis>
         <model>HTM-30Z</model>
-        <quirk>command_mech</quirk>
+        <quirk>poor_work</quirk>
+        <quirk>fast_reload</quirk>
     </unit>
     <unit>
         <chassis>Tenshi</chassis>
@@ -3721,22 +3722,6 @@
     </unit>
     <unit>
         <chassis>BattleMaster</chassis>
-        <model>BLR-1GR-UK</model>
-        <weaponQuirk>
-            <weaponQuirkName>jettison_capable</weaponQuirkName>
-            <location>RA</location>
-            <slot>7</slot>
-            <weaponName>ISERPPC</weaponName>
-        </weaponQuirk>
-        <weaponQuirk>
-            <weaponQuirkName>jettison_capable</weaponQuirkName>
-            <location>LA</location>
-            <slot>7</slot>
-            <weaponName>ISERPPC</weaponName>
-        </weaponQuirk>
-    </unit>
-    <unit>
-        <chassis>BattleMaster</chassis>
         <model>BLR-1Gbc</model>
         <weaponQuirk>
             <weaponQuirkName>jettison_capable</weaponQuirkName>
@@ -4225,11 +4210,6 @@
     </unit>
     <unit>
     <chassis>Javelin</chassis>
-        <model>all</model>
-        <quirk>unbalanced</quirk>
-    </unit>
-    <unit>
-        <chassis>Fire Javelin</chassis>
         <model>all</model>
         <quirk>unbalanced</quirk>
     </unit>

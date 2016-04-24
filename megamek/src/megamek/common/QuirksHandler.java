@@ -178,7 +178,7 @@ public class QuirksHandler {
         if (useModel) {
             return ent.getChassis() + "~" + ent.getModel() + "~" + typeText;
         } else {
-            return ent.getChassis() + "~~" + typeText ;
+            return ent.getChassis() + "~~" + typeText;
         }
     }
     
@@ -235,7 +235,7 @@ public class QuirksHandler {
             // Get the list of units.
             NodeList listOfEntries = doc.getElementsByTagName(UNIT);
             int totalEntries = listOfEntries.getLength();
-            log.append("\n\tTotal number of quirk entries: ").append(totalEntries);
+            log.append("\n\tTotal number of unit tags: ").append(totalEntries);
             for (int unitCount = 0; unitCount < totalEntries; unitCount++) {
 
                 // Get the first element of this node.
@@ -278,6 +278,7 @@ public class QuirksHandler {
                     Element quirkElement = (Element) quirkNodes.item(quirkCount);
                     String qeText = quirkElement.getTextContent().trim();
                     if ((quirkElement.getTextContent() == null) || qeText.isEmpty()) {
+                        log.append("\n\t\t" + unitId + ": no text content!");
                         continue;
                     }
                     QuirkEntry quirkEntry = new QuirkEntry(qeText, unitId);
@@ -291,6 +292,7 @@ public class QuirksHandler {
                     // Get the name of the quirk.
                     Element nameElement = (Element) quirkElement.getElementsByTagName(WEAPON_QUIRK_NAME).item(0);
                     if (nameElement == null) {
+                        log.append("\n\t\t" + unitId + ": no weapon quirk name!");
                         continue;
                     }
                     String weaponQuirkName = nameElement.getTextContent().trim();
@@ -298,6 +300,7 @@ public class QuirksHandler {
                     // Get the weapon's location.
                     Element locElement = (Element) quirkElement.getElementsByTagName(LOCATION).item(0);
                     if (locElement == null) {
+                        log.append("\n\t\t" + unitId + ": no weapon quirk loc!");
                         continue;
                     }
                     String location = locElement.getTextContent().trim();
@@ -305,6 +308,7 @@ public class QuirksHandler {
                     // Get the weapon's critical slot.
                     Element slotElement = (Element) quirkElement.getElementsByTagName(SLOT).item(0);
                     if (slotElement == null) {
+                        log.append("\n\t\t" + unitId + ": no weapon quirk slot!");
                         continue;
                     }
                     String slot = slotElement.getTextContent().trim();
@@ -317,6 +321,7 @@ public class QuirksHandler {
                     // Get the weapon's name.
                     Element weapElement = (Element) quirkElement.getElementsByTagName(WEAPON_NAME).item(0);
                     if (weapElement == null) {
+                        log.append("\n\t\t" + unitId + ": no weapon quirk weapon name!");
                         continue;
                     }
                     String weaponName = weapElement.getTextContent().trim();
@@ -337,9 +342,12 @@ public class QuirksHandler {
                         log.append("<BlankUnitId>");
                     }
                 }
+                if (quirkMap.containsKey(unitId)) {
+                    log.append("\n\t\t" + unitId + ": duplicate entry added!");
+                }
                 quirkMap.put(unitId, quirkList);
             }
-
+            log.append("\n\tTotal number of quirk entries: ").append(quirkMap.size());
             return quirkMap;
         } catch (Exception e) {
             throw new IOException(e);

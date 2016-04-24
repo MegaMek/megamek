@@ -1228,6 +1228,7 @@
         <weaponQuirk>
             <weaponQuirkName>accurate</weaponQuirkName>
             <location>FR</location>
+			<slot>0</slot>
             <weaponName>ISImprovedHeavyGaussRifle</weaponName>
         </weaponQuirk>
     </unit>
@@ -1694,7 +1695,8 @@
 		<quirk>rumble_seat</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>accurate</weaponQuirkName>
-			<location>Turret</location>
+			<location>TU</location>
+			<slot>0</slot>
 			<weaponName>ISERLargeLaser</weaponName>
 		</weaponQuirk>
 	</unit>
@@ -1810,7 +1812,8 @@
 		<quirk>trailer_hitch</quirk>
 		<weaponQuirk>
 			<weaponQuirkName>inaccurate</weaponQuirkName>
-			<location>Front</location>
+			<location>FR</location>
+			<slot>0</slot>
 			<weaponName>ISMG</weaponName>
 		</weaponQuirk>
 	</unit>

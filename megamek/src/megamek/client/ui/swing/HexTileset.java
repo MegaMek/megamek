@@ -537,8 +537,11 @@ public class HexTileset {
         }
 
         public Image getImage(Component comp, int seed) {
-            if (images == null) {
+            if((null == images) || images.isEmpty()) {
                 loadImage(comp);
+            }
+            if(images.isEmpty()) {
+                return null;
             }
             if (images.size() > 1) {
                 int rand = (seed % images.size());

@@ -664,6 +664,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         }
 
         private Image applyColor(Image image) {
+            if(null == image) {
+                return null;
+            }
             Image iMech;
             boolean useCamo = (camo != null);
 

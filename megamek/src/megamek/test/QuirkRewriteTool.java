@@ -15,9 +15,7 @@
 package megamek.test;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import megamek.common.EquipmentType;

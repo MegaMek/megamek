@@ -63,6 +63,18 @@
         </mapper>
     </pathconvert>
 
+    <!-- Run entity verifier -->
+    <target name="entityVerifier" description="Run the entity verifier, which will validate each unit and create a report of failing units">
+        <java classname="megamek.common.verifier.EntityVerifier" fork="true">
+            <classpath>
+                <pathelement path="${builddir}" />
+                <fileset dir="${libdir}" includes="*.jar" />
+                <pathelement path="${propdir}" />
+            </classpath>
+        </java>
+    </target>
+
+
     <!-- initializes system before build -->
     <target name="init">
         <!-- Create the time stamp -->

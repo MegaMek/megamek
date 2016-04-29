@@ -3489,50 +3489,57 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         repaint(cursor.getBounds());
     }
     
+    /** Centers the board on hex c. Uses smooth centering
+     * if activated in the client settings. */  
     public void centerOnHex(Coords c) {
-        centerOnHexSoft(c);
-    }
-    
-    /** Sets the board in motion to center it on hex c  
-     * smoothly using the RedrawWorker. */
-    public synchronized void centerOnHexSoft(Coords c) {
         if (c == null) return;
         
-        // set the target point
-        Point p = getCentreHexLocation(c);
-        softCenterTarget.setLocation(
-                (double)p.x/boardSize.getWidth(), 
-                (double)p.y/boardSize.getHeight());
-        
-        // adjust the target point because the board can't 
-        // center on points too close to an edge
-        double w = scrollpane.getViewport().getWidth();
-        double h = scrollpane.getViewport().getHeight();
-        double bw = boardSize.getWidth();
-        double bh = boardSize.getHeight();
-        
-        double minX = (w/2-HEX_W)/bw;
-        double minY = (h/2-HEX_H)/bh;
-        double maxX = (bw+HEX_W-w/2)/bw;
-        double maxY = (bh+HEX_H-h/2)/bh;
-        
-        // here the order is important because the top/left
-        // edges always stop the board, the bottom/right 
-        // only when the board is big enough
-        softCenterTarget.setLocation(
-                Math.min(softCenterTarget.getX(), maxX), 
-                Math.min(softCenterTarget.getY(), maxY));
+        if (GUIPreferences.getInstance().getBoolean("SOFTCENTER")) {
+            // Soft Centering:
+            // set the target point
+            Point p = getCentreHexLocation(c);
+            softCenterTarget.setLocation(
+                    (double)p.x/boardSize.getWidth(), 
+                    (double)p.y/boardSize.getHeight());
 
-        softCenterTarget.setLocation(
-                Math.max(softCenterTarget.getX(), minX), 
-                Math.max(softCenterTarget.getY(), minY));
+            // adjust the target point because the board can't 
+            // center on points too close to an edge
+            double w = scrollpane.getViewport().getWidth();
+            double h = scrollpane.getViewport().getHeight();
+            double bw = boardSize.getWidth();
+            double bh = boardSize.getHeight();
+
+            double minX = (w/2-HEX_W)/bw;
+            double minY = (h/2-HEX_H)/bh;
+            double maxX = (bw+HEX_W-w/2)/bw;
+            double maxY = (bh+HEX_H-h/2)/bh;
+
+            // here the order is important because the top/left
+            // edges always stop the board, the bottom/right 
+            // only when the board is big enough
+            softCenterTarget.setLocation(
+                    Math.min(softCenterTarget.getX(), maxX), 
+                    Math.min(softCenterTarget.getY(), maxY));
+
+            softCenterTarget.setLocation(
+                    Math.max(softCenterTarget.getX(), minX), 
+                    Math.max(softCenterTarget.getY(), minY));
+
+            // get the current board center point
+            double[] v = getVisibleArea();
+            oldCenter.setLocation((v[0]+v[2])/2, (v[1]+v[3])/2);
+
+            waitTimer = 0;
+            isSoftCentering = true; 
         
-        // get the current board center point
-        double[] v = getVisibleArea();
-        oldCenter.setLocation((v[0]+v[2])/2, (v[1]+v[3])/2);
-        
-        waitTimer = 0;
-        isSoftCentering = true;
+        } else {
+            // no soft centering:
+            // center on c directly
+            Point p = getCentreHexLocation(c);
+            centerOnPointRel(
+                    (double)p.x/boardSize.getWidth(), 
+                    (double)p.y/boardSize.getHeight());
+        }
     }
     
     /** Moves the board one step towards the final 

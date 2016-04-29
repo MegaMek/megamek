@@ -165,6 +165,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox aOHexShadows;
     private JCheckBox floatingIso;
     private JCheckBox mmSymbol;
+    private JCheckBox useSoftCenter;
     private JCheckBox levelhighlight;
     private JCheckBox shadowMap;
     private JCheckBox mouseWheelZoom;
@@ -361,6 +362,12 @@ public class CommonSettingsDialog extends ClientDialog implements
         showUnitId.addItemListener(this);
         row = new ArrayList<>();
         row.add(showUnitId);
+        comps.add(row);
+        
+        useSoftCenter = new JCheckBox(Messages.getString("CommonSettingsDialog.useSoftCenter")); //$NON-NLS-1$
+        useSoftCenter.addItemListener(this);
+        row = new ArrayList<>();
+        row.add(useSoftCenter);
         comps.add(row);
         
         // Horizontal Line and Spacer
@@ -684,6 +691,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         mmSymbol.setSelected(gs.getMmSymbol());
         levelhighlight.setSelected(gs.getLevelHighlight());
         shadowMap.setSelected(gs.getShadowMap());
+        useSoftCenter.setSelected(gs.getBoolean("SOFTCENTER"));
 
 
         File dir = new File("data" + File.separator + "images" + File.separator
@@ -809,6 +817,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         gs.setMmSymbol(mmSymbol.isSelected());
         gs.setLevelHighlight(levelhighlight.isSelected());
         gs.setShadowMap(shadowMap.isSelected());
+        gs.setValue("SOFTCENTER", useSoftCenter.isSelected());
 
         if ((gs.getAntiAliasing() != chkAntiAliasing.isSelected()) &&
                 ((clientgui != null) && (clientgui.bv != null))) {            

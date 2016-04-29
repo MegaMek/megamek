@@ -877,12 +877,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * this returns the external ID. 1/16/2012 - Taharqa: I am changing
+     * This returns the external ID.
+     * <p>
+     * Taharqa: I am changing
      * externalId to a string so I can use UUIDs in MHQ. It should only require
      * a simple parseInt to be added to it to return an integer for other
-     * programs (i.e. MekWars)
-     *
+     * programs (i.e. MekWars).
+     * 
      * @return the ID settable by external sources (such as mm.net)
+     * @throws NumberFormatException if the stored ID is not an integer
      * @see megamek.common.Entity#externalId
      */
     public int getExternalId() {

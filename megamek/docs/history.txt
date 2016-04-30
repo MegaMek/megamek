@@ -15,6 +15,9 @@ v0.41.18-git
 + Issue #143: Super Heavy Endo Steel Weight Calculating wrong (in MML)
 + Issue #132: Make pilot death more obvious in head destruction.
 + Feature: Added a client settings option to toggle the use of board soft centering 
++ Inconsistencies between Server.processMovement and SharedUtility for moving
+    backwards over an elevation change (which could lead to getting a nag when
+    a PSR isn't necessary)
 
 v0.41.17 (2016-04-16 00:30 UTC)
 + Data: New Sprites and Unit Date Fixes.

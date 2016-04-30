@@ -68,7 +68,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");
         }
-        a.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
+        a.setWeight(dataFile.getDataAsDouble("tonnage")[0]);
 
         // how many bombs can it carry
         a.autoSetMaxBombPoints();

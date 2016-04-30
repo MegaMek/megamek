@@ -20,6 +20,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -187,7 +188,7 @@ public class ImageFileFactory implements ItemFileFactory {
 
         // Convert the file name to upper case, and compare it to image
         // file extensions. Yeah, it's a bit of a hack, but whatever.
-        String ucName = name.toUpperCase();
+        String ucName = name.toUpperCase(Locale.ROOT);
         return (ucName.endsWith(JPG) || ucName.endsWith(JPEG)
                 || ucName.endsWith(GIF) || ucName.endsWith(PNG));
     }
@@ -205,7 +206,7 @@ public class ImageFileFactory implements ItemFileFactory {
 
         // Convert the file name to upper case, and compare it to image
         // file extensions. Yeah, it's a bit of a hack, but whatever.
-        String ucName = name.toUpperCase();
+        String ucName = name.toUpperCase(Locale.ROOT);
         return (ucName.endsWith(JPG) || ucName.endsWith(JPEG)
                 || ucName.endsWith(GIF) || ucName.endsWith(PNG));
     }

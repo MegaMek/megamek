@@ -331,28 +331,28 @@ public class TestBattleArmor extends TestEntity {
     }
 
     @Override
-    public float getWeightControls() {
+    public double getWeightControls() {
         return 0;
     }
 
     @Override
-    public float getWeightMisc() {
+    public double getWeightMisc() {
         return 0;
     }
 
     @Override
-    public float getWeightHeatSinks() {
+    public double getWeightHeatSinks() {
         return 0;
     }
 
     @Override
-    public float getWeightEngine() {
+    public double getWeightEngine() {
         return 0;
     }
 
     @Override
-    public float getWeightStructure() {
-        float tons = 0;
+    public double getWeightStructure() {
+        double tons = 0;
 
         int walkMP = ba.getOriginalWalkMP();
         if (ba.getChassisType() == BattleArmor.CHASSIS_TYPE_QUAD) {
@@ -434,7 +434,7 @@ public class TestBattleArmor extends TestEntity {
     }
 
     @Override
-    public float getWeightArmor() {
+    public double getWeightArmor() {
         return ba.getOArmor(1)
                 * EquipmentType.getBaArmorWeightPerPoint(ba.getArmorType(1),
                         TechConstants.isClan(ba.getArmorTechLevel(1)));
@@ -451,7 +451,7 @@ public class TestBattleArmor extends TestEntity {
     }
 
     @Override
-    public float getWeight() {
+    public double getWeight() {
         return ba.getTrooperWeight() * ba.getTroopers();
     }
 
@@ -945,8 +945,8 @@ public class TestBattleArmor extends TestEntity {
 
     @Override
     public boolean correctWeight(StringBuffer buff, boolean showO, boolean showU) {
-        float weightSum = calculateWeight();
-        float weight = getWeight();
+        double weightSum = calculateWeight();
+        double weight = getWeight();
         boolean correct = true;
         String baDesig = ba.getLocationAbbr(BattleArmor.LOC_SQUAD);
         if (showO && ((weight + getMaxOverweight()) < weightSum)) {
@@ -962,7 +962,7 @@ public class TestBattleArmor extends TestEntity {
         }
 
         for (int t = 1; t < ba.getTroopers(); t++) {
-            float trooperWeight = calculateWeight(t);
+            double trooperWeight = calculateWeight(t);
             if (trooperWeight > ba.getTrooperWeight()) {
                 buff.append("Trooper " + t + " Weight: " + trooperWeight
                         + " is greater than " + ba.getTrooperWeight() + "\n");
@@ -1045,7 +1045,7 @@ public class TestBattleArmor extends TestEntity {
     }
 
     @Override
-    public float getWeightPowerAmp() {
+    public double getWeightPowerAmp() {
         return 0;
     }
 
@@ -1058,8 +1058,8 @@ public class TestBattleArmor extends TestEntity {
      * @param trooper
      * @return
      */
-    public float getWeightMiscEquip(int trooper) {
-        float weightSum = 0.0f;
+    public double getWeightMiscEquip(int trooper) {
+        double weightSum = 0.0;
         for (Mounted m : getEntity().getMisc()) {
             MiscType mt = (MiscType) m.getType();
             // If this equipment isn't mounted on the squad or this particular
@@ -1109,8 +1109,8 @@ public class TestBattleArmor extends TestEntity {
         return weightSum;
     }
 
-    public float getWeightWeapon(int trooper) {
-        float weight = 0.0f;
+    public double getWeightWeapon(int trooper) {
+        double weight = 0.0;
         for (Mounted m : getEntity().getWeaponList()) {
             // If this equipment isn't mounted on the squad or this particular
             // trooper, skip it
@@ -1140,11 +1140,11 @@ public class TestBattleArmor extends TestEntity {
             }
         }
         // Round weight to prevent odd behavior
-        return Math.round(weight*1000) / 1000.0f;
+        return Math.round(weight * 1000) / 1000.0;
     }
 
-    public float getWeightAmmo(int trooper) {
-        float weight = 0.0f;
+    public double getWeightAmmo(int trooper) {
+        double weight = 0.0;
         for (Mounted m : getEntity().getAmmo()) {
 
             // If this equipment isn't mounted on the squad or this particular
@@ -1162,15 +1162,15 @@ public class TestBattleArmor extends TestEntity {
                     && (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_NONE)) {
                 continue;
             }
-            float modifier = 1;
+            double modifier = 1;
             // Ammo mounted in a DWP has its weight reduced by 25%
             if (m.getLinkedBy() != null && m.getLinkedBy().isDWPMounted()){
                 modifier = 0.75f;
             } else if (m.isSquadSupportWeapon()) {
                 if (ba.isClan()){
-                    modifier = 0.4f;
+                    modifier = 0.4;
                 } else {
-                    modifier = 0.5f;
+                    modifier = 0.5;
                 }
             }
             AmmoType mt = (AmmoType) m.getType();
@@ -1187,8 +1187,8 @@ public class TestBattleArmor extends TestEntity {
      * @param trooper
      * @return
      */
-    public float calculateWeight(int trooper) {
-        float weight = 0;
+    public double calculateWeight(int trooper) {
+        double weight = 0;
         weight += getWeightStructure();
         weight += getWeightArmor();
 
@@ -1197,12 +1197,12 @@ public class TestBattleArmor extends TestEntity {
         weight += getWeightAmmo(trooper);
 
         // Round weight to prevent odd behavior
-        return Math.round(weight*1000) / 1000.0f;
+        return Math.round(weight*1000) / 1000.0;
     }
 
     @Override
-    public float calculateWeight() {
-        float totalWeight = 0.0f;
+    public double calculateWeight() {
+        double totalWeight = 0.0;
         for (int i = 1; i < ba.getTroopers(); i++) {
             totalWeight += calculateWeight(i);
         }

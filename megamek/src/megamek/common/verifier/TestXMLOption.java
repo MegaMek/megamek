@@ -32,13 +32,13 @@ public class TestXMLOption implements TestEntityOption {
     private WeightCeiling weightCeiling = new WeightCeiling();
     
     @XmlElement
-    private float maxOverweight = 0.25f;
+    private double maxOverweight = 0.25;
 
     @XmlElement
     private boolean showOverweighted = true;
 
     @XmlElement
-    private float minUnderweight = 1.0f;
+    private double minUnderweight = 1.0;
 
     @XmlElement
     private boolean showUnderweighted = false;
@@ -69,57 +69,57 @@ public class TestXMLOption implements TestEntityOption {
     }
 
     @Override
-    public float getWeightCeilingEngine() {
+    public TestEntity.Ceil getWeightCeilingEngine() {
         return weightCeiling.engine;
     }
 
     @Override
-    public float getWeightCeilingStructure() {
+    public TestEntity.Ceil getWeightCeilingStructure() {
         return weightCeiling.structure;
     }
 
     @Override
-    public float getWeightCeilingArmor() {
+    public TestEntity.Ceil getWeightCeilingArmor() {
         return weightCeiling.armor;
     }
 
     @Override
-    public float getWeightCeilingControls() {
+    public TestEntity.Ceil getWeightCeilingControls() {
         return weightCeiling.controls;
     }
 
     @Override
-    public float getWeightCeilingWeapons() {
+    public TestEntity.Ceil getWeightCeilingWeapons() {
         return weightCeiling.weapons;
     }
 
     @Override
-    public float getWeightCeilingTargComp() {
+    public TestEntity.Ceil getWeightCeilingTargComp() {
         return weightCeiling.targComp;
     }
 
     @Override
-    public float getWeightCeilingGyro() {
+    public TestEntity.Ceil getWeightCeilingGyro() {
         return weightCeiling.gyro;
     }
 
     @Override
-    public float getWeightCeilingTurret() {
+    public TestEntity.Ceil getWeightCeilingTurret() {
         return weightCeiling.turret;
     }
 
     @Override
-    public float getWeightCeilingLifting() {
+    public TestEntity.Ceil getWeightCeilingLifting() {
         return weightCeiling.lifting;
     }
     
     @Override
-    public float getWeightCeilingPowerAmp() {
+    public TestEntity.Ceil getWeightCeilingPowerAmp() {
         return weightCeiling.powerAmp;
     }
 
     @Override
-    public float getMaxOverweight() {
+    public double getMaxOverweight() {
         return maxOverweight;
     }
 
@@ -134,7 +134,7 @@ public class TestXMLOption implements TestEntityOption {
     }
 
     @Override
-    public float getMinUnderweight() {
+    public double getMinUnderweight() {
         return minUnderweight;
     }
 
@@ -190,33 +190,33 @@ public class TestXMLOption implements TestEntityOption {
     public String printOptions() {
         return "Skip: " + skip() + "\n" + "Show Overweighted Entity: "
                 + showOverweightedEntity() + "\n" + "Max Overweight: "
-                + Float.toString(getMaxOverweight()) + "\n"
+                + Double.toString(getMaxOverweight()) + "\n"
                 + "Show Underweighted Entity: " + showUnderweightedEntity()
                 + "\n" + "Min Underweight: "
-                + Float.toString(getMinUnderweight()) + "\n"
+                + Double.toString(getMinUnderweight()) + "\n"
                 + "Show bad Armor Placement: " + showCorrectArmor() + "\n"
                 + "Show bad Critical Allocation: " + showCorrectCritical()
                 + "\n" + "Show Failed to Load Equipment: " + showFailedEquip()
                 + "\n" + "Weight Ceiling Engine: "
-                + Float.toString(1 / getWeightCeilingEngine()) + "\n"
+                + Double.toString(1 / getWeightCeilingEngine().mult) + "\n"
                 + "Weight Ceiling Structure: "
-                + Float.toString(1 / getWeightCeilingStructure()) + "\n"
+                + Double.toString(1 / getWeightCeilingStructure().mult) + "\n"
                 + "Weight Ceiling Armor: "
-                + Float.toString(1 / getWeightCeilingArmor()) + "\n"
+                + Double.toString(1 / getWeightCeilingArmor().mult) + "\n"
                 + "Weight Ceiling Controls: "
-                + Float.toString(1 / getWeightCeilingControls()) + "\n"
+                + Double.toString(1 / getWeightCeilingControls().mult) + "\n"
                 + "Weight Ceiling Weapons: "
-                + Float.toString(1 / getWeightCeilingWeapons()) + "\n"
+                + Double.toString(1 / getWeightCeilingWeapons().mult) + "\n"
                 + "Weight Ceiling TargComp: "
-                + Float.toString(1 / getWeightCeilingTargComp()) + "\n"
+                + Double.toString(1 / getWeightCeilingTargComp().mult) + "\n"
                 + "Weight Ceiling Gyro: "
-                + Float.toString(1 / getWeightCeilingGyro()) + "\n"
+                + Double.toString(1 / getWeightCeilingGyro().mult) + "\n"
                 + "Weight Ceiling Turret: "
-                + Float.toString(1 / getWeightCeilingTurret()) + "\n"
+                + Double.toString(1 / getWeightCeilingTurret().mult) + "\n"
                 + "Weight Ceiling Lifting:"
-                + Float.toString(1 / getWeightCeilingLifting()) + "\n"
+                + Double.toString(1 / getWeightCeilingLifting().mult) + "\n"
                 + "Weight Ceiling PowerAmp: "
-                + Float.toString(1 / getWeightCeilingPowerAmp()) + "\n"
+                + Double.toString(1 / getWeightCeilingPowerAmp().mult) + "\n"
                 + "Ignore Failed Equipment: \n" + printIgnoredFailedEquip();
     }
     
@@ -226,64 +226,37 @@ public class TestXMLOption implements TestEntityOption {
     @XmlType
     private static class WeightCeiling {
         @XmlElement
-        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
-        Float engine = TestEntity.CEIL_HALFTON;
+        TestEntity.Ceil engine = TestEntity.Ceil.HALFTON;
 
         @XmlElement
-        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
-        Float structure = TestEntity.CEIL_HALFTON;
+        TestEntity.Ceil structure = TestEntity.Ceil.HALFTON;
 
         @XmlElement
-        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
-        Float armor = TestEntity.CEIL_HALFTON;
+        TestEntity.Ceil armor = TestEntity.Ceil.HALFTON;
 
         @XmlElement
-        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
-        Float controls = TestEntity.CEIL_HALFTON;
+        TestEntity.Ceil controls = TestEntity.Ceil.HALFTON;
 
         @XmlElement
-        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
-        Float weapons = TestEntity.CEIL_TON;
+        TestEntity.Ceil weapons = TestEntity.Ceil.TON;
 
         @XmlElement(name = "targcomp")
-        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
-        Float targComp = TestEntity.CEIL_TON;
+        TestEntity.Ceil targComp = TestEntity.Ceil.TON;
 
         @XmlElement
-        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
-        Float turret = TestEntity.CEIL_HALFTON;
+        TestEntity.Ceil turret = TestEntity.Ceil.HALFTON;
 
         @XmlElement
-        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
-        Float lifting = TestEntity.CEIL_HALFTON;
+        TestEntity.Ceil lifting = TestEntity.Ceil.HALFTON;
 
         @XmlElement(name = "poweramp")
-        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
-        Float powerAmp = TestEntity.CEIL_HALFTON;
+        TestEntity.Ceil powerAmp = TestEntity.Ceil.HALFTON;
 
         @XmlElement
-        @XmlJavaTypeAdapter(FloatInvertAdapter.class)
-        Float gyro = TestEntity.CEIL_HALFTON;
+        TestEntity.Ceil gyro = TestEntity.Ceil.HALFTON;
 
         WeightCeiling() {
         }
-    }
-    
-    /**
-     * An adapter that unmarshals a float, then returns 1 divided by the value.
-     */
-    private static class FloatInvertAdapter extends XmlAdapter<Float, Float> {
-
-        @Override
-        public Float marshal(final Float v) throws Exception {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public Float unmarshal(final Float v) throws Exception {
-            return 1 / v;
-        }
-        
     }
     
     /**

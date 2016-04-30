@@ -1,0 +1,100 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Bokkusu Support Trailer
+</Name>
+
+<Model>
+(Standard)
+</Model>
+
+<year>
+3086
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+troopspace:4.0
+</transporters>
+
+<cruiseMP>
+0
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+60
+59
+59
+60
+</armor>
+
+<Body Equipment>
+ISMobileFieldBase
+ISCASE
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+</Body Equipment>
+
+<Front Equipment>
+ISAntiMissileSystem
+Lift Hoist
+Hitch
+</Front Equipment>
+
+<Right Equipment>
+ISAntiMissileSystem
+</Right Equipment>
+
+<Left Equipment>
+ISAntiMissileSystem
+</Left Equipment>
+
+<Rear Equipment>
+ISAntiMissileSystem
+Hitch
+</Rear Equipment>
+
+<Transporters>
+cargobay:18:1
+</transporters>
+
+<source>
+TRO3086S - Early Repubic Era
+</source>
+
+<tonnage>
+75.0
+</tonnage>
+

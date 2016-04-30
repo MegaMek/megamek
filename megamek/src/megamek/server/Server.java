@@ -51,6 +51,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -60,6 +61,8 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+
+import com.thoughtworks.xstream.XStream;
 
 import megamek.MegaMek;
 import megamek.client.ui.swing.util.PlayerColors;
@@ -209,7 +212,6 @@ import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BoardUtilities;
-import megamek.common.util.HashCodeUtil;
 import megamek.common.util.StringUtil;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestAero;
@@ -260,8 +262,6 @@ import megamek.server.commands.VictoryCommand;
 import megamek.server.commands.WhoCommand;
 import megamek.server.victory.Victory;
 
-import com.thoughtworks.xstream.XStream;
-
 /**
  * @author Ben Mazur
  */
@@ -279,21 +279,19 @@ public class Server implements Runnable {
 
         @Override
         public boolean equals(Object o) {
-            if (!(o instanceof EntityTargetPair)) {
+            if(this == o) {
+                return true;
+            }
+            if((null == o) || (getClass() != o.getClass())) {
                 return false;
             }
-            EntityTargetPair other = (EntityTargetPair)o;
-            return ent.equals(other.ent)
-                    && (((target != null) && target.equals(other.target))
-                            || ((target == null) && (other.target == null)));
+            final EntityTargetPair other = (EntityTargetPair) o;
+            return Objects.equals(ent, other.ent) && Objects.equals(target, other.target);
         }
 
         @Override
         public int hashCode() {
-            int hashCode = HashCodeUtil.SEED;
-            hashCode = HashCodeUtil.hash(hashCode, ent.getId());
-            hashCode = HashCodeUtil.hash(hashCode, target);
-            return hashCode;
+            return Objects.hash(ent, target);
         }
 
     }
@@ -2310,6 +2308,7 @@ public class Server implements Runnable {
                         mapSettings.getBoardWidth(), mapSettings.getBoardHeight())));
                 mapSettings.setNullBoards(DEFAULT_BOARD);
                 send(createMapSettingsPacket());
+                send(createMapSizesPacket());
                 checkForObservers();
                 transmitAllPlayerUpdates();
                 break;
@@ -5519,7 +5518,7 @@ public class Server implements Runnable {
                         // Damage equals tonnage, divided by 5.
                         // ASSUMPTION: damage is applied in one hit.
                         addReport(damageEntity(target, hit,
-                                               Math.round(entity.getWeight() / 5)));
+                                               (int) Math.round(entity.getWeight() / 5)));
                         addNewLines();
                     }
 
@@ -13193,6 +13192,7 @@ public class Server implements Runnable {
                 addReport(r);
             }
         }
+        addNewLines();
     }
 
     private void reportLargeCraftECCMRolls() {
@@ -20123,13 +20123,17 @@ public class Server implements Runnable {
         Report r;
         if (!crew.isDead() && !crew.isEjected() && !crew.isDoomed()) {
             crew.setHits(crew.getHits() + damage);
-            r = new Report(6025);
+            if (Crew.DEATH > crew.getHits()) {
+                r = new Report(6025);
+            } else {
+                r = new Report(6026);
+            }
             r.subject = en.getId();
             r.indent(2);
             r.addDesc(en);
             r.add(crew.getName());
             r.add(damage);
-            r.newlines = 0;
+            r.add(crew.getHits());
             vDesc.addElement(r);
             if (Crew.DEATH > crew.getHits()) {
                 vDesc.addAll(resolveCrewDamage(en, damage));
@@ -30173,7 +30177,7 @@ public class Server implements Runnable {
             // index 1, the second is at index 1, etc., and the roof is
             // at index (numFloors).
             // if bridge is present, bridge will be numFloors+1
-            float[] loads = new float[numLoads + 1];
+            double[] loads = new double[numLoads + 1];
             // track all units that might fall into the basement
             Vector<Entity> basement = new Vector<Entity>();
 
@@ -30217,7 +30221,7 @@ public class Server implements Runnable {
                     // Add the weight to the
                     // correct floor.
 
-                    float load = entity.getWeight();
+                    double load = entity.getWeight();
                     int floor = entityElev;
                     if (floor == bridgeEl) {
                         floor = numLoads;

@@ -6043,7 +6043,7 @@ public abstract class Mech extends Entity {
         sb.append(newLine);
         sb.append(newLine);
 
-        Float tonnage = new Float(weight);
+        Double tonnage = new Double(weight);
         sb.append("Mass:").append(tonnage.intValue()).append(newLine);
         sb.append("Engine:")
                 .append(getEngine().getEngineName())

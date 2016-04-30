@@ -5,19 +5,21 @@ PKM-2C
 Config:Biped
 TechBase:Inner Sphere
 Era:3070
+Source:TRO 3075U - Jihad
 Rules Level:3
 
 Mass:65
-Engine:260 XL Engine
-Structure:Endo-Steel
-Gyro:Heavy Duty Gyro
+Engine:260 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
+Cockpit:Standard Cockpit
+Gyro:Heavy Duty Gyro
 
 Heat Sinks:10 Double
 Walk MP:4
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:15
 RA Armor:15
 LT Armor:22
@@ -26,16 +28,15 @@ CT Armor:31
 HD Armor:9
 LL Armor:27
 RL Armor:27
-RTL Armor:6
-RTR Armor:6
+RTL Armor:7
+RTR Armor:7
 RTC Armor:10
 
-Weapons:5
-1 ISArrowIV, Left Torso, Ammo:20
-1 ISHeavyPPC, Right Arm
-1 ISAntiMissileSystem, Head
-1 ISTAG, Right Torso
-1 ISGuardianECM, Center Torso
+Weapons:4
+Arrow IV, Left Torso
+Heavy PPC, Right Arm
+TAG, Right Torso
+AMS, Head
 
 Left Arm:
 Shoulder
@@ -55,57 +56,57 @@ Right Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
-ISHeavyPPC
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
-Endo-Steel
+Heavy PPC
+Heavy PPC
+Heavy PPC
+Heavy PPC
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 ISArrowIV
 ISArrowIV
 ISArrowIV
 ISArrowIV
 ISArrowIV
 ISArrowIV
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Right Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 ISTAG
 ISArrowIVAmmo
 ISArrowIVAmmo
 ISArrowIVAmmo
 ISArrowIVAmmo
-IS AMS Ammo
-Endo-Steel
-Endo-Steel
+ISAMS Ammo
+IS Endo Steel
+IS Endo Steel
 ISCASE
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-ISGuardianECM
-ISGuardianECM
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISGuardianECMSuite
+ISGuardianECMSuite
 
 Head:
 Life Support
@@ -114,19 +115,39 @@ Cockpit
 ISAntiMissileSystem
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

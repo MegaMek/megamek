@@ -27,7 +27,7 @@ public class SupportTank extends Tank {
     private static final long serialVersionUID = -9028127010133768714L;
     private int[] barRating;
     
-    public final static float[] SV_TR_MULTIPLIERS = {1.60f,1.30f,1.15f,1.00f,0.85f,.66f}; 
+    public final static double[] SV_TR_MULTIPLIERS = {1.60, 1.30, 1.15, 1.00, 0.85, 0.66}; 
 
     public SupportTank() {
         super();

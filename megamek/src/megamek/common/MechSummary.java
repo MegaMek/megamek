@@ -40,7 +40,7 @@ public class MechSummary implements Serializable {
     private String m_sEntryName; // for files in zips
     private int m_nYear;
     private int m_nType;
-    private float m_nTons;
+    private double m_nTons;
     private int m_nBV;
     /**
      * Stores the BV of the unit computed using the geometric mean method.
@@ -68,9 +68,9 @@ public class MechSummary implements Serializable {
     /**
      * For BattleArmor, we want to know the weight of an individual suit.
      */
-    private float m_TWsuitTons;
-    private float m_TOsuitTons;
-    private float suitWeight;
+    private double m_TWsuitTons;
+    private double m_TOsuitTons;
+    private double suitWeight;
     
 
     /** Stores the type of internal structure on this unit **/
@@ -196,15 +196,15 @@ public class MechSummary implements Serializable {
         return (m_nType);
     }
 
-    public float getTons() {
+    public double getTons() {
         return (m_nTons);
     }
 
-    public float getTOweight() {
+    public double getTOweight() {
         return (m_TOsuitTons);
     }
 
-    public float getTWweight() {
+    public double getTWweight() {
         return (m_TWsuitTons);
     }
 
@@ -264,15 +264,15 @@ public class MechSummary implements Serializable {
         this.m_nType = m_nType;
     }
 
-    public void setTons(float m_nTons) {
+    public void setTons(double m_nTons) {
         this.m_nTons = m_nTons;
     }
 
-    public void setTOweight(float m_TOsuitTons) {
+    public void setTOweight(double m_TOsuitTons) {
         this.m_TOsuitTons = m_TOsuitTons;
     }
 
-    public void setTWweight(float m_TWsuitTons) {
+    public void setTWweight(double m_TWsuitTons) {
         this.m_TWsuitTons = m_TWsuitTons;
     }
 
@@ -317,7 +317,7 @@ public class MechSummary implements Serializable {
     }
 
     public int getWeightClass() {
-        float tons;
+        double tons;
         if (getUnitType().equals("BattleArmor")){
             tons = getSuitWeight();
         } else {
@@ -478,11 +478,11 @@ public class MechSummary implements Serializable {
         this.myomerName = myomerName;
     }
 
-    public float getSuitWeight() {
+    public double getSuitWeight() {
         return suitWeight;
     }
 
-    public void setSuitWeight(float suitWeight) {
+    public void setSuitWeight(double suitWeight) {
         this.suitWeight = suitWeight;
     }
 

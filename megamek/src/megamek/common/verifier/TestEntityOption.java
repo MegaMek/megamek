@@ -24,27 +24,27 @@ public interface TestEntityOption {
     public final static int ROUND_TARGCOMP_CRITS = 1;
     public final static int FLOOR_TARGCOMP_CRITS = 2;
 
-    public float getWeightCeilingEngine();
+    public TestEntity.Ceil getWeightCeilingEngine();
 
-    public float getWeightCeilingStructure();
+    public TestEntity.Ceil getWeightCeilingStructure();
 
-    public float getWeightCeilingArmor();
+    public TestEntity.Ceil getWeightCeilingArmor();
 
-    public float getWeightCeilingControls();
+    public TestEntity.Ceil getWeightCeilingControls();
 
-    public float getWeightCeilingWeapons();
+    public TestEntity.Ceil getWeightCeilingWeapons();
 
-    public float getWeightCeilingTargComp();
+    public TestEntity.Ceil getWeightCeilingTargComp();
 
-    public float getWeightCeilingGyro();
+    public TestEntity.Ceil getWeightCeilingGyro();
 
-    public float getWeightCeilingTurret();
+    public TestEntity.Ceil getWeightCeilingTurret();
     
-    public float getWeightCeilingLifting();
+    public TestEntity.Ceil getWeightCeilingLifting();
 
-    public float getWeightCeilingPowerAmp();
+    public TestEntity.Ceil getWeightCeilingPowerAmp();
 
-    public float getMaxOverweight();
+    public double getMaxOverweight();
 
     public boolean showOverweightedEntity();
 
@@ -56,7 +56,7 @@ public interface TestEntityOption {
 
     public boolean showFailedEquip();
 
-    public float getMinUnderweight();
+    public double getMinUnderweight();
 
     public boolean ignoreFailedEquip(String name);
 

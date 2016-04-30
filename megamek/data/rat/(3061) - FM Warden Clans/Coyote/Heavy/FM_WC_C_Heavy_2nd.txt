@@ -1,0 +1,12 @@
+Warden Clan Second-Line Heavy Mechs (Coyote),
+Mad Cat (Timber Wolf) Prime,1
+Champion CHP-1N,2
+Guillotine IIC (Standard),3
+Galahad (Glass Spider) (Standard),4
+Rifleman IIC (Standard),5
+Guillotine IIC (Standard),6
+Rifleman IIC (Standard),5
+Galahad (Glass Spider) 2,4
+Rifleman IIC (Standard),3
+Viper (Black Python) (Standard),2
+Grizzly (Standard),1

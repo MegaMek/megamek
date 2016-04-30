@@ -108,8 +108,8 @@ public class TestTank extends TestEntity {
         return false;
     }
 
-    public float getTankWeightTurret() {
-        float weight = 0f;
+    public double getTankWeightTurret() {
+        double weight = 0;
 
         // For omni vees, the base chassis sets a turret weight
         if (tank.isOmni() && tank.getBaseChassisTurretWeight() >= 0) {
@@ -128,17 +128,17 @@ public class TestTank extends TestEntity {
 
         if (tank.isSupportVehicle()) {
             if (getEntity().getWeight() < 5) {
-                return TestEntity.ceil(weight, CEIL_KILO);
+                return TestEntity.ceil(weight, Ceil.KILO);
             } else {
-                return TestEntity.ceil(weight, CEIL_HALFTON);
+                return TestEntity.ceil(weight, Ceil.HALFTON);
             }
         } else {
             return TestEntity.ceilMaxHalf(weight, getWeightCeilingTurret());
         }
     }
 
-    public float getTankWeightDualTurret() {
-        float weight = 0f;
+    public double getTankWeightDualTurret() {
+        double weight = 0;
 
         // For omni vees, the base chassis sets a turret weight
         if (tank.isOmni() && tank.getBaseChassisTurret2Weight() >= 0) {
@@ -157,7 +157,7 @@ public class TestTank extends TestEntity {
         return TestEntity.ceilMaxHalf(weight, getWeightCeilingTurret());
     }
 
-    public float getTankWeightLifting() {
+    public double getTankWeightLifting() {
         switch (tank.getMovementMode()) {
             case HOVER:
             case VTOL:
@@ -172,12 +172,12 @@ public class TestTank extends TestEntity {
     }
 
     @Override
-    public float getWeightMisc() {
+    public double getWeightMisc() {
         return getTankWeightTurret() + getTankWeightDualTurret() + getTankWeightLifting();
     }
 
     @Override
-    public float getWeightControls() {
+    public double getWeightControls() {
         if (tank.hasNoControlSystems()) {
             return 0;
         } else {
@@ -242,7 +242,7 @@ public class TestTank extends TestEntity {
     }
 
     @Override
-    public float getWeightHeatSinks() {
+    public double getWeightHeatSinks() {
         int heat = getCountHeatSinks();
         heat -= engine.getWeightFreeEngineHeatSinks();
         if (heat < 0) {
@@ -442,9 +442,9 @@ public class TestTank extends TestEntity {
     }
 
     @Override
-    public float getWeightPowerAmp() {
+    public double getWeightPowerAmp() {
         if (!engine.isFusion() && (engine.getEngineType() != Engine.FISSION)) {
-            int weight = 0;
+            double weight = 0;
             for (Mounted m : tank.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
                 if (wt.hasFlag(WeaponType.F_ENERGY) && !(wt instanceof CLChemicalLaserWeapon) && !(wt instanceof VehicleFlamerWeapon)) {
@@ -456,7 +456,7 @@ public class TestTank extends TestEntity {
                     weight += ((MiscType)m.getLinkedBy().getType()).getTonnage(tank);
                 }
             }
-            return TestEntity.ceil(weight / 10f, getWeightCeilingPowerAmp());
+            return TestEntity.ceil(weight / 10, getWeightCeilingPowerAmp());
         }
         return 0;
     }

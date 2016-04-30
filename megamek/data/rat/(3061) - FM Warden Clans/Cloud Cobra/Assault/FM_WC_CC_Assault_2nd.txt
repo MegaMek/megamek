@@ -1,0 +1,12 @@
+Warden Clan Second-Line Assault Mechs (Cloud Cobra),
+Annihilator ANH-2A,1
+Behemoth (Stone Rhino) (Standard),2
+Kraken (Bane) 3,3
+Kraken (Bane) (Standard),4
+Marauder IIC (Standard),5
+Supernova (Standard),6
+Phoenix Hawk IIC (Standard),5
+Highlander IIC (Standard),4
+Marauder IIC (Standard),3
+Crockett CRK-5003-1,2
+Canis (Standard),1

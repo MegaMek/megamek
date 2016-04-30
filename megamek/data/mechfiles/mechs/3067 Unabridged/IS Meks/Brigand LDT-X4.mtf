@@ -5,13 +5,12 @@ LDT-X4
 Config:Biped
 TechBase:Inner Sphere
 Era:3078
-Source:TRO:3067 Unabridged
+Source:3067 Unabridged
 Rules Level:2
-source:3067 Unabridged
 
 Mass:25
 Engine:150 Light Engine(IS)
-Structure:Endo Steel
+Structure:IS Endo Steel
 Myomer:Triple-Strength
 
 Heat Sinks:10 Double
@@ -19,23 +18,23 @@ Walk MP:6
 Jump MP:6
 
 Armor:Standard(Inner Sphere)
-LA Armor:5
-RA Armor:5
+LA Armor:7
+RA Armor:7
 LT Armor:10
 RT Armor:10
-CT Armor:14
-HD Armor:6
-LL Armor:8
-RL Armor:8
+CT Armor:12
+HD Armor:9
+LL Armor:9
+RL Armor:9
 RTL Armor:2
 RTR Armor:2
-RTC Armor:2
+RTC Armor:3
 
 Weapons:4
-ER Medium Laser, Right Torso
 ER Medium Laser, Left Arm
 Light PPC, Right Arm
 ER Medium Laser, Left Torso
+ER Medium Laser, Right Torso
 
 Left Arm:
 Shoulder
@@ -46,8 +45,8 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISERMediumLaser
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 TSM
 TSM
 
@@ -61,8 +60,8 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 Light PPC
 Light PPC
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 TSM
 
 Left Torso:
@@ -72,11 +71,11 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 TSM
 
 Right Torso:
@@ -86,11 +85,11 @@ ISDoubleHeatSink
 ISDoubleHeatSink
 ISDoubleHeatSink
 ISERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 TSM
 
 Center Torso:

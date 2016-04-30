@@ -1,23 +1,23 @@
-Version:1.1
+Version:1.0
 Atlas
 C
 
 Config:Biped
-TechBase:Mixed (Clan Chassis)
+TechBase:Mixed (IS Chassis)
 Era:3050
 Source:TRO 3050 - Clan Invasion
 Rules Level:4
 
 Mass:100
-Engine:300 Fusion Engine (Clan)
-Structure:Standard
+Engine:300 Fusion Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:20 Single
 Walk MP:3
 Jump MP:0
 
-Armor:Standard Armor (Clan)
+Armor:Standard(IS/Clan)
 LA Armor:34
 RA Armor:34
 LT Armor:32
@@ -31,13 +31,13 @@ RTR Armor:10
 RTC Armor:14
 
 Weapons:7
-1 CLUltraAC20, Right Torso, Ammo:10
-1 CLLRM20, Left Torso, Ammo:12
-1 ISMediumLaser (R), Center Torso (R)
-1 ISMediumLaser, Right Arm
-1 ISMediumLaser (R), Center Torso (R)
-1 ISMediumLaser, Left Arm
-1 CLStreakSRM6, Left Torso, Ammo:15
+Medium Laser, Left Arm
+Medium Laser, Right Arm
+LRM 20, Left Torso
+Streak SRM 6, Left Torso
+Ultra AC/20, Right Torso
+Medium Laser, Center Torso
+Medium Laser, Center Torso
 
 Left Arm:
 Shoulder
@@ -45,7 +45,7 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 Heat Sink
-ISMediumLaser
+Medium Laser
 -Empty-
 -Empty-
 -Empty-
@@ -59,7 +59,7 @@ Upper Arm Actuator
 Lower Arm Actuator
 Hand Actuator
 Heat Sink
-ISMediumLaser
+Medium Laser
 -Empty-
 -Empty-
 -Empty-
@@ -75,9 +75,9 @@ CLLRM20
 CLLRM20
 CLStreakSRM6
 CLStreakSRM6
-CLStreakSRM6 Ammo
-CLLRM20 Ammo
-CLLRM20 Ammo
+Clan Streak SRM 6 Ammo
+Clan Ammo LRM-20
+Clan Ammo LRM-20
 -Empty-
 -Empty-
 
@@ -90,24 +90,24 @@ CLUltraAC20
 CLUltraAC20
 CLUltraAC20
 CLUltraAC20
-CLUltraAC20 Ammo
-CLUltraAC20 Ammo
+Clan Ultra AC/20 Ammo
+Clan Ultra AC/20 Ammo
 -Empty-
 -Empty-
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-ISMediumLaser (R)
-ISMediumLaser (R)
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser (R)
+Medium Laser (R)
 
 Head:
 Life Support
@@ -116,6 +116,12 @@ Cockpit
 Heat Sink
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
@@ -124,6 +130,12 @@ Lower Leg Actuator
 Foot Actuator
 Heat Sink
 Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
@@ -132,3 +144,11 @@ Lower Leg Actuator
 Foot Actuator
 Heat Sink
 Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

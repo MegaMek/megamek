@@ -1,7 +1,7 @@
 WoB Medium Vehicles (Blake Docs)
 Chaparral Missile Artillery Tank (CASE),1
 Thor Artillery Vehicle (C3i),2
-Turhan Urban Combat Vehicle (Standard Armor),3
+Turhan Urban Combat Vehicle (Original),3
 Condor Heavy Hover Tank (Upgrade) (Laser),4
 Goblin Infantry Support Vehicle (Standard),5
 Zephyr Hovertank (C3i),6

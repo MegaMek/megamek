@@ -323,22 +323,22 @@ public class TestAero extends TestEntity {
     }
 
     @Override
-    public float getWeightMisc() {
+    public double getWeightMisc() {
         // VSTOL equipment weighs extra forr conventional fighters
         if (aero.getEntityType() == Entity.ETYPE_CONV_FIGHTER &&
                 aero.isVSTOL()){
             // Weight = tonnage * 0.05 rounded to nearest half ton
-            return Math.round(0.05f * aero.getWeight()*2)/2.0f;
+            return Math.round(0.05f * aero.getWeight()*2) / 2.0;
         }
         return 0.0f;
     }
 
     @Override
-    public float getWeightPowerAmp() {
+    public double getWeightPowerAmp() {
         // Conventional Fighters with ICE engines may need a power amp
         if (aero.getEntityType() == Entity.ETYPE_CONV_FIGHTER &&
                 aero.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE){
-            float weight = 0;
+            double weight = 0;
             for (Mounted m : aero.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
                 if (wt.hasFlag(WeaponType.F_ENERGY) && 
@@ -355,33 +355,33 @@ public class TestAero extends TestEntity {
             }
             // Power amp weighs: 
             //   energy weapon tonnage * 0.1 rounded to nearest half ton
-            return Math.round(0.1f * weight*2)/2.0f;
+            return Math.round(0.1 * weight*2) / 2.0;
         }
         return 0;
     }
 
     @Override
-    public float getWeightControls() {
+    public double getWeightControls() {
         // Controls for Aerospace Fighters and Conventional Fighters consists
         //  of the cockpit and the fuel
-        float weight;
+        double weight;
         if (aero.getEntityType() == Entity.ETYPE_CONV_FIGHTER){
             // Weight = tonnage * 0.1 rounded to nearest half ton
-            weight = Math.round(0.1f * aero.getWeight()*2)/2.0f;
+            weight = Math.round(0.1 * aero.getWeight()*2) / 2.0;
         } else {
-            weight = 3.0f;
+            weight = 3.0;
             if (aero.getCockpitType() == Aero.COCKPIT_SMALL) {
-                weight = 2.0f;
+                weight = 2.0;
         } else if (aero.getCockpitType() == Aero.COCKPIT_COMMAND_CONSOLE){                       
-                weight = 6.0f;
+                weight = 6.0;
             } else if (aero.getCockpitType() == Aero.COCKPIT_PRIMITIVE) {
-                weight = 5.0f;
+                weight = 5.0;
             } 
         }   
         return weight;
     }
     
-    public float getWeightFuel() {
+    public double getWeightFuel() {
         return aero.getFuelTonnage();
     }
 
@@ -391,7 +391,7 @@ public class TestAero extends TestEntity {
     }
 
     @Override
-    public float getWeightHeatSinks() {
+    public double getWeightHeatSinks() {
         return aero.getHeatSinks() - engine.getWeightFreeEngineHeatSinks();        
     }
 
@@ -402,7 +402,7 @@ public class TestAero extends TestEntity {
 
     @Override
     public String printWeightMisc() {
-        float weight = getWeightMisc();
+        double weight = getWeightMisc();
         if (weight > 0){
             return "VSTOL equipment: " + weight;
         }
@@ -818,8 +818,9 @@ public class TestAero extends TestEntity {
         return buff;
     }
     
-    public float calculateWeight() {
-        float weight = 0;
+    @Override
+    public double calculateWeight() {
+        double weight = 0;
         weight += getWeightEngine();
         weight += getWeightControls();
         weight += getWeightFuel();
@@ -838,6 +839,7 @@ public class TestAero extends TestEntity {
         return weight;
     }
 
+    @Override
     public String printWeightCalculation() {
         return printWeightEngine()
                 + printWeightControls() + printWeightFuel() 
@@ -847,6 +849,7 @@ public class TestAero extends TestEntity {
                 + printMiscEquip() + printWeapon() + printAmmo();
     }
     
+    @Override
     public String printLocations() {
         StringBuffer buff = new StringBuffer();
         for (int i = 0; i < getEntity().locations(); i++) {

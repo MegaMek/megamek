@@ -1,41 +1,43 @@
-Version:1.0
+Version:1.1
 Patriot
 PKM-2D
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3072
-Source:TRO 3075
-Rules Level:2
+Source:TRO 3075 - Jihad
+Rules Level:3
 
 Mass:65
-Engine:260 XL Engine
-Structure:Endo Steel
+Engine:260 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
+Cockpit:Standard Cockpit
+Gyro:Heavy Duty Gyro
 
 Heat Sinks:10 Double
 Walk MP:4
 Jump MP:0
 
 Armor:Standard(Inner Sphere)
-LA Armor:19
-RA Armor:19
+LA Armor:15
+RA Armor:15
 LT Armor:22
 RT Armor:22
 CT Armor:31
 HD Armor:9
-LL Armor:30
-RL Armor:30
-RTL Armor:8
-RTR Armor:8
+LL Armor:27
+RL Armor:27
+RTL Armor:7
+RTR Armor:7
 RTC Armor:10
 
 Weapons:6
-TAG, Right Torso
-Heavy PPC, Right Arm
 LB 20-X AC, Left Arm
+Heavy PPC, Right Arm
 ER Medium Laser, Left Torso
 ER Medium Laser, Left Torso
+TAG, Right Torso
 AMS, Head
 
 Left Arm:
@@ -60,11 +62,11 @@ Heavy PPC
 Heavy PPC
 Heavy PPC
 Heavy PPC
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
 Fusion Engine
@@ -74,25 +76,25 @@ ISLBXAC20
 ISLBXAC20
 ISERMediumLaser
 ISERMediumLaser
-Endo Steel
-Endo Steel
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 
 Right Torso:
 Fusion Engine
 Fusion Engine
 Fusion Engine
-ISTAG
-IS LB 20-X AC Ammo
-IS LB 20-X AC Ammo
-IS LB 20-X AC Ammo
-IS LB 20-X Cluster Ammo
-IS LB 20-X Cluster Ammo
 ISAMS Ammo
+IS LB 20-X AC Ammo
+IS LB 20-X AC Ammo
+IS LB 20-X Cluster Ammo
+ISTAG
 ISCASE
-Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
 
 Center Torso:
 Fusion Engine
@@ -127,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -141,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-

@@ -478,8 +478,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                             new Object[] { getValueAt(rowIndex, colIndex),
                                     player.getConstantInitBonus(), mines });
                 } else if (realColIndex == PlayerTableModel.COL_TON) {
-                    return Float
-                            .toString((Float) getValueAt(rowIndex, colIndex));
+                    return ((Double) getValueAt(rowIndex, colIndex)).toString();
                 } else if (realColIndex == PlayerTableModel.COL_COST) {
                     return Messages.getString(
                             "ChatLounge.tipCost",
@@ -3064,13 +3063,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         private ArrayList<IPlayer> players;
         private ArrayList<Integer> bvs;
         private ArrayList<Integer> costs;
-        private ArrayList<Float> tons;
+        private ArrayList<Double> tons;
 
         public PlayerTableModel() {
-            players = new ArrayList<IPlayer>();
-            bvs = new ArrayList<Integer>();
-            costs = new ArrayList<Integer>();
-            tons = new ArrayList<Float>();
+            players = new ArrayList<>();
+            bvs = new ArrayList<>();
+            costs = new ArrayList<>();
+            tons = new ArrayList<>();
         }
 
         public int getRowCount() {
@@ -3078,10 +3077,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
 
         public void clearData() {
-            players = new ArrayList<IPlayer>();
-            bvs = new ArrayList<Integer>();
-            costs = new ArrayList<Integer>();
-            tons = new ArrayList<Float>();
+            players = new ArrayList<>();
+            bvs = new ArrayList<>();
+            costs = new ArrayList<>();
+            tons = new ArrayList<>();
         }
 
         public int getColumnCount() {
@@ -3092,7 +3091,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             players.add(player);
             int bv = 0;
             int cost = 0;
-            float ton = 0;
+            double ton = 0;
             for (Entity entity : clientgui.getClient().getEntitiesVector()) {
                  if (entity.getOwner().equals(player)) {
                     bv += entity.calculateBattleValue();
@@ -3153,7 +3152,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 return IStartingPositions.START_LOCATION_NAMES[player
                         .getStartingPos()];
             } else if (col == COL_TON) {
-                float ton = tons.get(row);
+                double ton = tons.get(row);
                 if (blindDrop) {
                     ton = ton > 0 ? 9999 : 0;
                 }

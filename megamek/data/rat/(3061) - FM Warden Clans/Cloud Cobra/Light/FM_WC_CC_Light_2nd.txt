@@ -1,0 +1,12 @@
+Warden Clan Second-Line Light Mechs (Cloud Cobra),
+Hussar HSR-200-D,1
+Peregrine (Horned Owl) 2,2
+Peregrine (Horned Owl) (Standard),3
+Jenner IIC (Standard),4
+Locust IIC (Standard),5
+Vixen (Incubus) (Standard),6
+Vixen (Incubus) 2,5
+Jenner IIC 3,4
+Locust IIC (Standard),3
+Mongoose MON-66,2
+Baboon (Howler) (Standard),1

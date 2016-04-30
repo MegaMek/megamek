@@ -1,0 +1,12 @@
+Warden Clan Front-Line Light Mechs (Steel Viper),
+Dasher (Fire Moth) H,1
+Koshi (Mist Lynx) Prime,2
+Hankyu (Arctic Cheetah) B,3
+Puma (Adder) Prime,4
+Uller (Kit Fox) C,5
+Dasher (Fire Moth) A,6
+Hankyu (Arctic Cheetah) Prime,5
+Hankyu (Arctic Cheetah) C,4
+Koshi (Mist Lynx) B,3
+Uller (Kit Fox) Prime,2
+Puma (Adder) B,1

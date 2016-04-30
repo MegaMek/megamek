@@ -5,6 +5,7 @@ LGC-04-WVR
 Config:Biped
 TechBase:Inner Sphere
 Era:3072
+Source:RS 3067 - Jihad
 Rules Level:3
 
 Mass:80
@@ -14,15 +15,15 @@ Myomer:Standard
 Cockpit:Standard Cockpit
 Gyro:Compact Gyro
 
-Heat Sinks:10 Double
+Heat Sinks:11 Double
 Walk MP:4
 Jump MP:4
 
 Armor:Light Ferro-Fibrous(Inner Sphere)
 LA Armor:26
 RA Armor:26
-LT Armor:27
-RT Armor:27
+LT Armor:26
+RT Armor:26
 CT Armor:40
 HD Armor:9
 LL Armor:34

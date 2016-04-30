@@ -189,7 +189,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     protected String externalId = "-1";
 
-    protected float weight;
+    protected double weight;
     protected boolean omni = false;
     protected String chassis;
     protected String model;
@@ -877,12 +877,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * this returns the external ID. 1/16/2012 - Taharqa: I am changing
+     * This returns the external ID.
+     * <p>
+     * Taharqa: I am changing
      * externalId to a string so I can use UUIDs in MHQ. It should only require
      * a simple parseInt to be added to it to return an integer for other
-     * programs (i.e. MekWars)
-     *
+     * programs (i.e. MekWars).
+     * 
      * @return the ID settable by external sources (such as mm.net)
+     * @throws NumberFormatException if the stored ID is not an integer
      * @see megamek.common.Entity#externalId
      */
     public int getExternalId() {
@@ -1087,7 +1090,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         this.year = year;
     }
 
-    public float getWeight() {
+    /** @return the tonnage of the Entity, not its weight */
+    public double getWeight() {
         return weight;
     }
 
@@ -1100,7 +1104,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return EntityWeightClass.getClassName(getWeightClass(), this);
     }
 
-    public void setWeight(float weight) {
+    public void setWeight(double weight) {
         this.weight = weight;
         // Any time the weight is reset we need to reset the crew size
         crew.setSize(Compute.getFullCrewSize(this));
@@ -8804,8 +8808,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
 
-    public float getTroopCarryingSpace() {
-        float space = 0;
+    public double getTroopCarryingSpace() {
+        double space = 0;
         for (Transporter t : transports) {
             if (t instanceof TroopSpace) {
                 space += ((TroopSpace) t).totalSpace;

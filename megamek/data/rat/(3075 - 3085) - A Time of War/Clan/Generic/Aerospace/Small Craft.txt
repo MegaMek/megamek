@@ -1,5 +1,5 @@
 3075 Small Craft - Generic Clan
-Aquarius Escort,1
+Aquarius Escort (Standard),1
 Lyonesse Escort (Standard),2
 Long-Range Shuttlecraft KR-61,3
 Ares Assault Craft Mark VII,4
@@ -8,5 +8,5 @@ DropShuttle K-1C,6
 Long-Range Shuttlecraft KR-61C,5
 Ares Assault Craft Mark VII-C,4
 Bus S-7A,3
-Aquarius Escort,2
+Aquarius Escort (Standard),2
 Lyonesse Escort (Standard),1

@@ -238,9 +238,9 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                             EntityVerifier.CONFIG_FILENAME));
             TestBattleArmor testBA = new TestBattleArmor(ba, 
                     verifier.baOption, null);
-            float maxTrooperWeight = 0;
+            double maxTrooperWeight = 0;
             for (int i = 1; i < ba.getTroopers(); i++){
-                float trooperWeight = testBA.calculateWeight(i);
+                double trooperWeight = testBA.calculateWeight(i);
                 if (trooperWeight > maxTrooperWeight){
                     maxTrooperWeight = trooperWeight;
                 }

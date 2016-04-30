@@ -46,7 +46,7 @@ import megamek.server.Server;
  * @version
  */
 public class EquipmentType {
-    public static final float TONNAGE_VARIABLE = Float.MIN_VALUE;
+    public static final double TONNAGE_VARIABLE = Float.MIN_VALUE;
     public static final int CRITICALS_VARIABLE = Integer.MIN_VALUE;
     public static final int BV_VARIABLE = Integer.MIN_VALUE;
     public static final int COST_VARIABLE = Integer.MIN_VALUE;
@@ -154,6 +154,7 @@ public class EquipmentType {
     public static final int ERA_SL = 0;
     public static final int ERA_SW = 1;
     public static final int ERA_CLAN = 2;
+    public static final int ERA_DA = 3;
 
     public static final int DATE_NONE = -1;
 
@@ -170,7 +171,7 @@ public class EquipmentType {
 
     private Vector<String> namesVector = new Vector<String>();
 
-    protected float tonnage = 0;
+    protected double tonnage = 0;
     protected int criticals = 0;
     protected int tankslots = 1;
 
@@ -192,7 +193,7 @@ public class EquipmentType {
 
     // fluffy stuff
     protected int techRating = RATING_C;
-    protected int[] availRating = { RATING_E, RATING_E, RATING_E };
+    protected int[] availRating = { RATING_E, RATING_E, RATING_E, RATING_E };
     protected int introDate = DATE_NONE;
     protected int extinctDate = DATE_NONE;
     protected int reintroDate = DATE_NONE;
@@ -231,6 +232,10 @@ public class EquipmentType {
         flags = inF;
     }
 
+    public long getSubType() {
+        return subType;
+    }
+    
     public void setSubType(int newFlags) {
         subType = newFlags;
     }
@@ -280,11 +285,15 @@ public class EquipmentType {
         return TechConstants.T_TECH_UNKNOWN;
     }
 
-    public float getTonnage(Entity entity) {
+    public double getTonnage(Entity entity) {
+        return getTonnage(entity, Entity.LOC_NONE);
+    }
+
+    public double getTonnage(Entity entity, int location) {
         return tonnage;
     }
 
-    public void setTonnage(float tonnage) {
+    public void setTonnage(double tonnage) {
         this.tonnage = tonnage;
     }
 
@@ -301,6 +310,10 @@ public class EquipmentType {
     }
 
     public boolean isExplosive(Mounted mounted, boolean ignoreCharge) {
+        if(null == mounted) {
+            return explosive;
+        }
+        
         // Special case: discharged M- and B-pods shouldn't explode.
         if (((this instanceof MPodWeapon) || (this instanceof BPodWeapon))
                 && ((mounted.getLinked() == null) || (mounted.getLinked()
@@ -650,7 +663,7 @@ public class EquipmentType {
         return getArmorTypeName(armorType, clan);
     }
 
-    public static float getBaArmorWeightPerPoint(int type, boolean isClan) {
+    public static double getBaArmorWeightPerPoint(int type, boolean isClan) {
         switch (type) {
         case T_ARMOR_BA_STANDARD_PROTOTYPE:
             return 0.1f;
@@ -732,13 +745,20 @@ public class EquipmentType {
         rating += getAvailabilityName(ERA_SW);
         rating += "-";
         rating += getAvailabilityName(ERA_CLAN);
+        rating += "-";
+        rating += getAvailabilityName(ERA_DA);
         return rating;
     }
 
     public int getAvailability(int era) {
-        if ((era < 0) || (era > ERA_CLAN)) {
+        if ((era < 0) || (era > ERA_DA)) {
             return RATING_X;
         }
+    // If the avail ratings don't list the era, assume RATING_X
+        if (availRating.length <= era) {
+            return RATING_X;
+        }
+        
         return availRating[era];
     }
 
@@ -941,7 +961,7 @@ public class EquipmentType {
                 if (type.tonnage == EquipmentType.TONNAGE_VARIABLE) {
                     w.write("Variable");
                 } else {
-                    w.write(Float.toString(type.tonnage));
+                    w.write(Double.toString(type.tonnage));
                 }
                 w.write(",");
                 if (type.criticals == EquipmentType.CRITICALS_VARIABLE) {

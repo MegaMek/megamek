@@ -1,0 +1,12 @@
+Warden Clan Second-Line Light Mechs (Coyote),
+Piranha (Standard),1
+Vixen (Incubus) (Standard),2
+Peregrine (Horned Owl) (Standard),3
+Locust IIC (Standard),4
+Locust IIC (Standard),5
+UrbanMech IIC (Standard),6
+Vixen (Incubus) (Standard),5
+Jenner IIC (Standard),4
+UrbanMech IIC (Standard),3
+Jenner IIC 2,2
+Hussar HSR-200-D,1

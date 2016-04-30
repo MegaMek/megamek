@@ -91,6 +91,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String LEVELHIGHLIGHT = "LevelHighlight";
     public static final String FLOATINGISO = "FloatingIsometric";
     public static final String MMSYMBOL = "MmSymbol";
+    public static final String SOFTCENTER = "SoftCenter";
     public static final String AUTO_END_FIRING = "AutoEndFiring";
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
     public static final String CHAT_LOUNGE_TABS = "ChatLoungeTabs";
@@ -331,6 +332,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
         store.setDefault(SHOW_DAMAGE_LEVEL, false);
         store.setDefault(SKIN_FILE, "defaultSkin.xml");
+        store.setDefault(SOFTCENTER, false);
         
         store.setDefault(RAT_TECH_LEVEL, 0);
         store.setDefault(RAT_BV_MIN, "5800");

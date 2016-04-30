@@ -1,0 +1,12 @@
+Warden Clan Front-Line Medium Mechs (Coyote),
+Pouncer Prime,1
+Ryoken (Stormcrow) E,2
+Dragonfly (Viper) B,3
+Dragonfly (Viper) A,4
+Ryoken (Stormcrow) B,5
+Ryoken (Stormcrow) Prime,6
+Ryoken (Stormcrow) D,5
+Black Hawk (Nova) Prime,4
+Fenris (Ice Ferret) Prime,3
+Black Hawk (Nova) A,2
+Grendel (Mongrel) Prime,1

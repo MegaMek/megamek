@@ -55,7 +55,7 @@ import megamek.common.MechSummaryCache;
  * name of that unit written as <Model> <Chassis> Comment lines can also be
  * added with "#"
  * </p>
- * 
+ *
  * @author Jay Lawson
  */
 public class RandomUnitGenerator implements Serializable {
@@ -77,9 +77,9 @@ public class RandomUnitGenerator implements Serializable {
     private Thread loader;
     private boolean initialized;
     private boolean initializing;
-    
+
     private ArrayList<ActionListener> listeners;
-    
+
     /**
      * Plain old data class used to represent nodes in a Random Assignment Table
      * tree. RATs are grouped into categories based on directory structure, and
@@ -99,18 +99,18 @@ public class RandomUnitGenerator implements Serializable {
         public String name;
         public Vector<RatTreeNode> children;
     }
-    
+
     /**
-     * Keeps track of a RAT entry, stores the name of a unit in the RAT, and 
+     * Keeps track of a RAT entry, stores the name of a unit in the RAT, and
      * its change of appearing (weight).
-     * 
+     *
      * @author arlith
      *
      */
     protected class RatEntry {
         private Vector<String> units;
         private Vector<Float> weights;
-        
+
         RatEntry(){
             setUnits(new Vector<String>());
             setWeights(new Vector<Float>());
@@ -153,7 +153,7 @@ public class RandomUnitGenerator implements Serializable {
     public synchronized void populateUnits() {
         initRats();
         initRatTree();
-        
+
         // Give the MSC some time to initialize
         MechSummaryCache msc = MechSummaryCache.getInstance();
         long waitLimit = System.currentTimeMillis() + 3000; /* 3 seconds */
@@ -177,17 +177,17 @@ public class RandomUnitGenerator implements Serializable {
             dispose = false;
         }
     }
-    
+
     public synchronized void registerListener(ActionListener l){
         listeners.add(l);
     }
 
-    
+
     // todo Not being used.  Is this really needed?
     public synchronized void removeListener(ActionListener l){
         listeners.remove(l);
     }
-    
+
     /**
      * Notifies all the listeners that initialization is finished
      */
@@ -203,10 +203,9 @@ public class RandomUnitGenerator implements Serializable {
     protected void addRat(String ratName, RatEntry ratEntry) {
         rats.put(ratName, ratEntry);
     }
-    
+
     private void readRat(InputStream is, RatTreeNode node, String fileName, MechSummaryCache msc) throws IOException {
-        try(@SuppressWarnings("resource")
-        BufferedReader reader
+        try(BufferedReader reader
                 = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")))) { //$NON-NLS-1$
             int lineNumber = 0;
             String key = "Huh"; //$NON-NLS-1$
@@ -246,7 +245,7 @@ public class RandomUnitGenerator implements Serializable {
                                 weight, lineNumber, fileName));
                         continue;
                     }
-    
+
                     // The @ symbol denotes a reference to another RAT rather than a unit.
                     if (!name.startsWith("@") && (null == msc.getMech(name))) { //$NON-NLS-1$
                         System.err.println(
@@ -259,12 +258,12 @@ public class RandomUnitGenerator implements Serializable {
                     totalWeight += weight;
                 }
             }
-            
+
             // Calculate total weights
             if (re.getUnits().size() > 0) {
                 for (int i = 0; i < re.getWeights().size(); i++) {
                     re.getWeights().set(i, re.getWeights().get(i) / totalWeight);
-                }  
+                }
                 rats.put(key, re);
                 if (null != node) {
                     node.children.add(new RatTreeNode(key));
@@ -273,7 +272,7 @@ public class RandomUnitGenerator implements Serializable {
         }
 
     }
-    
+
     private RatTreeNode getNodeByPath(RatTreeNode root, String path) {
         RatTreeNode result = root;
         String[] pathElements = path.split("/", -1); //$NON-NLS-1$
@@ -296,18 +295,18 @@ public class RandomUnitGenerator implements Serializable {
         }
         return result;
     }
-    
+
     private void cleanupNode(RatTreeNode node) {
         for(RatTreeNode child : node.children) {
                cleanupNode(child);
         }
         Collections.sort(node.children);
     }
-    
+
     private void loadRatsFromDirectory(File dir, MechSummaryCache msc) {
         loadRatsFromDirectory(dir, msc, ratTree);
     }
-    
+
     private void loadRatsFromDirectory(File dir, MechSummaryCache msc, RatTreeNode node) {
         if (interrupted) {
             return;
@@ -333,7 +332,7 @@ public class RandomUnitGenerator implements Serializable {
                 // This is a Subversion work directory. Lets ignore it.
                 continue;
             }
-            
+
             // READ IN RATS
             if (ratFile.isDirectory()) {
                 RatTreeNode newNode = getNodeByPath(node, ratFile.getName() + "/"); //$NON-NLS-1$
@@ -379,7 +378,7 @@ public class RandomUnitGenerator implements Serializable {
 
     /**
      * Generate a list of units from the RAT
-     * 
+     *
      * @return - a string giving the name
      */
     public ArrayList<MechSummary> generate(int numRolls, String ratName) {

@@ -43,6 +43,7 @@ import megamek.common.Hex;
 import megamek.common.IHex;
 import megamek.common.ITerrain;
 import megamek.common.Terrains;
+import megamek.common.util.ImageUtil;
 import megamek.common.util.StringUtil;
 
 /**
@@ -536,17 +537,14 @@ public class HexTileset {
         }
 
         public Image getImage(Component comp, int seed) {
-            if (images == null) {
+            if((null == images) || images.isEmpty()) {
                 loadImage(comp);
             }
+            if(images.isEmpty()) {
+                return null;
+            }
             if (images.size() > 1) {
-                // Use a "seed" for determining which
-                // Image to use from the tileset. Normally the seed is the
-                // hashcode of the hex coordinates.
-                // Coords.Hashcode() is always a multiple of 4. So mess with the
-                // seed a little.
-                int betterSeed = (seed >> 3) + (seed);
-                int rand = (betterSeed % images.size());
+                int rand = (seed % images.size());
                 return images.elementAt(rand);
             }
             return images.firstElement();
@@ -557,13 +555,10 @@ public class HexTileset {
             for (int i = 0; i < filenames.size(); i++) {
                 String filename = filenames.elementAt(i);
                 File imgFile = new File(Configuration.hexesDir(), filename);
-                if (!imgFile.exists()) {
-                    System.err.println("Error loading image for tileset!  "
-                            + "File does not exist: " + imgFile.getPath());
+                Image image = ImageUtil.loadImageFromFile(imgFile.toString(), comp.getToolkit());
+                if(null != image) {
+                    images.add(image);
                 }
-                images.addElement(comp.getToolkit().getImage(
-                        imgFile.toString()
-                ));
             }
         }
 

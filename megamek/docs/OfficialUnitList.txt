@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 Megamek Official Unit List
 This file can be regenerated with java -jar MegaMek.jar -oul
 Format is: Chassis Model|
@@ -1935,7 +1934,7 @@ Scout Infantry The Battle Corps - Baker Street Irregulars|
 Hover Assault Infantry Johnston Industries Rapid Response Force|
 Foot Infantry Raventhir's Infantry Guard|
 Bridge-builder Engineers Take the Time III-chi, Forty-eighth Division|
-Heavy Mountain Infantry Cavalier “Mountain Men” Infantry Guard, Magistracy Cavaliers|
+Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard, Magistracy Cavaliers|
 Motorized Heavy Infantry Motstand/Mimir Troop|
 Heavy Foot LRM Infantry Stalwart Support - Heavy LRM Infantry|
 Ceremonial Guard Otomo Guard|
@@ -6091,5 +6090,3 @@ Minotaur P2|
 Satyr XP|
 Procyon (Quad)|
 Svartalfa Ultra|
-=======
->>>>>>> branch 'master' of ssh://git@github.com/MegaMek/megamek.git

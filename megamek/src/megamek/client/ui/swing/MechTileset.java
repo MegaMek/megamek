@@ -49,6 +49,7 @@ import megamek.common.Tank;
 import megamek.common.TeleMissile;
 import megamek.common.TripodMech;
 import megamek.common.Warship;
+import megamek.common.util.ImageUtil;
 
 /**
  * MechTileset is a misleading name, as this matches any unit, not just mechs
@@ -510,7 +511,7 @@ public class MechTileset {
                         "load a file that doesn't exist: "
                         + fin.getPath());
             }
-            image = comp.getToolkit().getImage(fin.toString());
+            image = ImageUtil.loadImageFromFile(fin.toString(), comp.getToolkit());
         }
     }
 }

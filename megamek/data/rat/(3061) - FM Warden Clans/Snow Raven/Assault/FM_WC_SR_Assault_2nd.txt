@@ -1,0 +1,12 @@
+Warden Clan Second-Line Assault Mechs (Snow Raven),
+Highlander IIC (Standard),1
+Marauder IIC (Standard),2
+Behemoth (Stone Rhino) (Standard),3
+Phoenix Hawk IIC (Standard),4
+Supernova (Standard),5
+Kodiak (Standard),6
+Warhammer IIC (Standard),5
+Kraken (Bane) (Standard),4
+Kraken (Bane) 3,3
+Thug THG-11E,2
+Naga B,1

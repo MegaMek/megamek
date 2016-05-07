@@ -293,17 +293,15 @@ public class SharedUtility {
                 checkNag(rollTarget, nagReport, psrList);
             }
 
+            IHex lastHex = game.getBoard().getHex(lastPos);
             if (((step.getType() == MoveStepType.BACKWARDS)
-                    || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step
-                    .getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
-                    && !(md.isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER)) 
-                    && ((game.getBoard().getHex(lastPos).getLevel() + entity
-                            .calcElevation(curHex,
-                                    game.getBoard().getHex(lastPos))) != (curHex
+                    || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
+                    || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
+                    && !(md.isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER))
+                    && ((lastHex.getLevel() + entity.calcElevation(curHex,
+                            lastHex, step.getElevation(),
+                            md.getFinalClimbMode(), false)) != (curHex
                             .getLevel() + entity.getElevation()))
-                    && ((game.getBoard().getHex(lastPos).getLevel() - game
-                            .getBoard().getHex(lastPos).depth()) != (curHex
-                            .getLevel() - curHex.depth()))
                     && !(entity instanceof VTOL)
                     && !(md.getFinalClimbMode()
                             && curHex.containsTerrain(Terrains.BRIDGE) && ((curHex

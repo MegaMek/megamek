@@ -98,8 +98,8 @@ public final class ProtomechBay extends Bay {
     }
 
     @Override
-    public float getWeight() {
-        return (float) totalSpace * 10;
+    public double getWeight() {
+        return totalSpace * 10;
     }
 
     @Override

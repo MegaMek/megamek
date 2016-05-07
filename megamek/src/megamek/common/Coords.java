@@ -17,6 +17,8 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import megamek.common.util.HashCodeUtil;
+
 /**
  * Coords stores x and y values. Since these are hexes, coordinates with odd x
  * values are a half-hex down. Directions work clockwise around the hex,
@@ -58,6 +60,7 @@ public class Coords implements Serializable {
 
     private final int x;
     private final int y;
+    private final int hash;
 
     /**
      * Constructs a new coordinate pair at (x, y).
@@ -65,6 +68,8 @@ public class Coords implements Serializable {
     public Coords(int x, int y) {
         this.x = x;
         this.y = y;
+        // Make sure the hash is positive
+        this.hash = (HashCodeUtil.hash1(x + 1337) ^ HashCodeUtil.hash1(y + 97331)) & 0x7FFFFFFF;
     }
 
     /**
@@ -307,41 +312,7 @@ public class Coords implements Serializable {
      */
     @Override
     public int hashCode() {
-        // Record the signs of X and Y separately from their values.
-        boolean negy = (getY() < 0);
-        boolean negx = (getX() < 0);
-        int signbits = 0;
-        int absx = getX();
-        int absy = getY();
-        if (negy) {
-            signbits += 0x1;
-            absy = -getY();
-        }
-        if (negx) {
-            signbits += 0x2;
-            absx = -getX();
-        }
-        return (((absx << Coords.SHIFT) ^ absy) << 2) + signbits;
-    }
-
-    /**
-     * Get the coordinates object for a given hash code.
-     * 
-     * @param hash - the hash code for the desired object.
-     * @return the <code>Coords</code> that match the hash code.
-     */
-    public static Coords getFromHashCode(int hash) {
-        // The signs of X and Y are recorded separately from their values.
-        boolean negy = (hash & 0x1) > 0;
-        boolean negx = (hash & 0x2) > 0;
-        int signless = hash >>> 2;
-        int hashy = (signless & Coords.MASK);
-        int hashx = (signless ^ hashy) >>> Coords.SHIFT;
-        if (negx)
-            hashx = -hashx;
-        if (negy)
-            hashy = -hashy;
-        return new Coords(hashx, hashy);
+        return hash;
     }
 
     @Override

@@ -1,0 +1,12 @@
+Warden Clan Front-Line Heavy Mechs (Goliath Scorpion),
+Night Gyr A,1
+Vulture (Mad Dog) Prime,2
+Cauldron-Born (Ebon Jaguar) B,3
+Galahad (Glass Spider) 2,4
+Viper (Black Python) (Standard),5
+Loki (Hellbringer) Prime,6
+Thor (Summoner) D,5
+Night Gyr C,4
+Cauldron-Born (Ebon Jaguar) A,3
+Mad Cat (Timber Wolf) A,2
+Night Gyr Prime,1

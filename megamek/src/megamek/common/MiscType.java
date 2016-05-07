@@ -511,6 +511,14 @@ public class MiscType extends EquipmentType {
     public MiscType() {
     }
 
+    public int getBaseDamageAbsorptionRate() {
+        return baseDamageAbsorptionRate;
+    }
+    
+    public int getBaseDamageCapacity() {
+        return baseDamageCapacity;
+    }
+    
     public boolean isShield() {
         if (hasFlag(MiscType.F_CLUB)
                 && (hasSubType(MiscType.S_SHIELD_LARGE)
@@ -536,13 +544,9 @@ public class MiscType extends EquipmentType {
     }
 
     @Override
-    public float getTonnage(Entity entity) {
-        return getTonnage(entity, Entity.LOC_NONE);
-    }
+    public double getTonnage(Entity entity, int location) {
 
-    public float getTonnage(Entity entity, int location) {
-
-        if (tonnage != TONNAGE_VARIABLE) {
+        if((tonnage != TONNAGE_VARIABLE) || (null == entity)) {
             return tonnage;
         }
         // check for known formulas
@@ -573,31 +577,31 @@ public class MiscType extends EquipmentType {
             }
         } else if (hasFlag(F_PARTIAL_WING) && hasFlag(F_MECH_EQUIPMENT)) {
             if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
-                return (float) (Math.ceil((entity.getWeight() / 20.0f) * 2.0f) / 2.0);
+                return Math.ceil((entity.getWeight() / 20.0f) * 2.0f) / 2.0;
             } else {
-                return (float) (Math.ceil((entity.getWeight() * 0.07f * 2.0f)) / 2.0);
+                return Math.ceil((entity.getWeight() * 0.07f * 2.0f)) / 2.0;
             }
         } else if (hasFlag(F_PARTIAL_WING) && hasFlag(F_PROTOMECH_EQUIPMENT)) {
-            return (float) (Math.ceil((entity.getWeight() / 5.0f) * 2.0f) / 2.0);
+            return Math.ceil((entity.getWeight() / 5.0f) * 2.0f) / 2.0;
         } else if (hasFlag(F_CLUB)
                 && (hasSubType(S_HATCHET) || hasSubType(S_MACE_THB))) {
-            return (float) Math.ceil(entity.getWeight() / 15.0f);
+            return Math.ceil(entity.getWeight() / 15.0f);
         } else if (hasFlag(F_CLUB) && hasSubType(S_LANCE)) {
-            return (float) Math.ceil(entity.getWeight() / 20.0f);
+            return Math.ceil(entity.getWeight() / 20.0f);
         } else if (hasFlag(F_CLUB) && hasSubType(S_SWORD)) {
-            return (float) (Math.ceil((entity.getWeight() / 20.0f) * 2.0f) / 2.0);
+            return Math.ceil((entity.getWeight() / 20.0f) * 2.0f) / 2.0;
         } else if (hasFlag(F_CLUB) && hasSubType(S_MACE)) {
-            return (float) (Math.ceil(entity.getWeight() / 10.0));
+            return Math.ceil(entity.getWeight() / 10.0);
         } else if (hasFlag(F_CLUB) && hasSubType(S_RETRACTABLE_BLADE)) {
-            return 0.5f + (float) (Math.ceil(entity.getWeight() / 10.0f) / 2.0);
+            return 0.5 + Math.ceil(entity.getWeight() / 10.0f) / 2.0;
         } else if (hasFlag(F_MASC)) {
             if (entity instanceof Protomech) {
-                return entity.getWeight() * 0.025f;
+                return entity.getWeight() * 0.025;
             // Myomer Boosters for BA
             } else if (entity instanceof BattleArmor) {
                 // Myomer boosters weight 0.250 tons, however this has to
                 // be split across 3 instances, since it's spreadable equipment
-                return (0.250f / 3);
+                return (0.250 / 3);
             } else {
                 if (hasSubType(S_JETBOOSTER)) {
                     return entity.getEngine().getWeightEngine(entity) / 10.0f;
@@ -607,8 +611,7 @@ public class MiscType extends EquipmentType {
                     if (e == null) {
                         return 0.0f;
                     }
-                    return (float) (Math
-                            .ceil((e.getWeightEngine(entity) / 10.0f) * 2.0f) / 2.0);
+                    return Math.ceil((e.getWeightEngine(entity) / 10.0f) * 2.0f) / 2.0;
                 }
                 if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
                     return Math.round(entity.getWeight() / 25.0f);
@@ -622,7 +625,7 @@ public class MiscType extends EquipmentType {
                 locationToCheck = Mech.LOC_HEAD;
             }
             // 10% of linked weapons' weight
-            float weaponWeight = 0;
+            double weaponWeight = 0;
             for (Mounted m : entity.getWeaponList()) {
                 if ((m.getLocation() == locationToCheck)
                         && m.isMechTurretMounted()) {
@@ -631,9 +634,9 @@ public class MiscType extends EquipmentType {
             }
             // round to half ton
             weaponWeight /= 10;
-            return (float) (Math.ceil(weaponWeight * 2.0f)) / 2.0f;
+            return Math.ceil(weaponWeight * 2.0f) / 2.0f;
         } else if (hasFlag(F_SPONSON_TURRET)) {
-            float weaponWeight = 0;
+            double weaponWeight = 0;
             // 10% of linked weapons' weight
             for (Mounted m : entity.getWeaponList()) {
                 if ((m.isSponsonTurretMounted() && ((m.getLocation() == Tank.LOC_LEFT) || (m
@@ -643,9 +646,9 @@ public class MiscType extends EquipmentType {
             }
             // round to half ton
             weaponWeight /= 10;
-            return (float) (Math.ceil(weaponWeight * 2.0f)) / 2.0f;
+            return Math.ceil(weaponWeight * 2.0f) / 2.0f;
         } else if (hasFlag(F_PINTLE_TURRET)) {
-            float weaponWeight = 0;
+            double weaponWeight = 0;
             // 5% of linked weapons' weight
             for (Mounted m : entity.getWeaponList()) {
                 if (m.isPintleTurretMounted() && (m.getLocation() == location)) {
@@ -663,7 +666,7 @@ public class MiscType extends EquipmentType {
             }
         } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
-            float fTons = 0.0f;
+            double fTons = 0.0;
             for (Mounted m : entity.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
                 if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
@@ -677,73 +680,73 @@ public class MiscType extends EquipmentType {
                 }
             }
             if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
-                return (float) Math.ceil(fTons / 5.0f);
+                return Math.ceil(fTons / 5.0f);
             }
-            return (float) Math.ceil(fTons / 4.0f);
+            return Math.ceil(fTons / 4.0f);
         } else if (hasFlag(MiscType.F_FERRO_FIBROUS)
                 || hasFlag(MiscType.F_FERRO_FIBROUS_PROTO)) {
-            float tons = 0.0f;
+            double tons = 0.0;
             if (!entity.hasPatchworkArmor()) {
                 if (entity.isClanArmor(1)) {
                     tons = entity.getTotalOArmor() / (16 * 1.2f);
                 } else {
                     tons = entity.getTotalOArmor() / (16 * 1.12f);
                 }
-                tons = (float) (Math.ceil(tons * 2.0f) / 2.0);
+                tons = Math.ceil(tons * 2.0f) / 2.0;
             } else {
                 // TODO
             }
             return tons;
         } else if (hasFlag(MiscType.F_LIGHT_FERRO)) {
-            float tons = 0;
+            double tons = 0;
             if (!entity.hasPatchworkArmor()) {
                 tons = entity.getTotalOArmor() / (16 * 1.06f);
-                tons = (float) (Math.ceil(tons * 2.0f) / 2.0);
+                tons = Math.ceil(tons * 2.0f) / 2.0;
             } else {
                 // TODO
             }
             return tons;
         } else if (hasFlag(MiscType.F_HEAVY_FERRO)) {
-            float tons = 0;
+            double tons = 0;
             if (!entity.hasPatchworkArmor()) {
                 tons = entity.getTotalOArmor() / (16 * 1.24f);
-                tons = (float) (Math.ceil(tons * 2.0f) / 2.0);
+                tons = Math.ceil(tons * 2.0f) / 2.0;
             } else {
                 // TODO
             }
             return tons;
         } else if (hasFlag(MiscType.F_FERRO_LAMELLOR)) {
-            float tons = 0;
+            double tons = 0;
             if (!entity.hasPatchworkArmor()) {
                 tons = entity.getTotalOArmor() / (16 * 0.875f);
-                tons = (float) (Math.ceil(tons * 2.0f) / 2.0);
+                tons = Math.ceil(tons * 2.0f) / 2.0;
             } else {
                 // TODO
             }
             return tons;
         } else if (hasFlag(F_ENDO_STEEL) || hasFlag(F_ENDO_STEEL_PROTO)) {
-            float tons = 0;
-            tons = (float) (Math.ceil(entity.getWeight() / 10.0f) / 2.0);
+            double tons = 0;
+            tons = Math.ceil(entity.getWeight() / 10.0f) / 2.0;
             return tons;
         } else if (hasFlag(F_ENDO_COMPOSITE)) {
-            float tons = 0;
-            tons = entity.getWeight() / 10.0f;
-            tons = (float) (Math.ceil(tons * 1.5f) / 2.0);
+            double tons = 0;
+            tons = entity.getWeight() / 10.0;
+            tons = Math.ceil(tons * 1.5f) / 2.0;
             return tons;
         } else if (hasFlag(MiscType.F_REINFORCED)) {
-            float tons = 0;
-            tons = (float) (Math.ceil(entity.getWeight() / 10.0f) * 2.0);
+            double tons = 0;
+            tons = Math.ceil(entity.getWeight() / 10.0f) * 2.0;
             return tons;
         } else if (hasFlag(MiscType.F_COMPOSITE)) {
-            float tons = 0;
-            tons = (float) (Math.ceil(entity.getWeight() / 10.0f) / 2.0);
+            double tons = 0;
+            tons = Math.ceil(entity.getWeight() / 10.0f) / 2.0;
             return tons;
         } else if (hasFlag(MiscType.F_INDUSTRIAL_STRUCTURE)) {
-            float tons = 0;
-            tons = (float) (Math.ceil(entity.getWeight() / 10.0f) * 2.0);
+            double tons = 0;
+            tons = Math.ceil(entity.getWeight() / 10.0f) * 2.0;
             return tons;
         } else if (hasFlag(F_VACUUM_PROTECTION)) {
-            return (float) Math.ceil(entity.getWeight() / 10.0f);
+            return Math.ceil(entity.getWeight() / 10.0);
 
         } else if (hasFlag(F_DUNE_BUGGY)) {
             return entity.getWeight() / 10.0f;
@@ -753,7 +756,7 @@ public class MiscType extends EquipmentType {
                     || (entity instanceof FixedWingSupport ) || (entity instanceof SupportVTOL )) {
                 return 0;
               } else {
-                return entity.getWeight() / 10.0f;
+                return entity.getWeight() / 10.0;
             }
 
         //Per TO Pg 413 Mechanical Jump Boosters weight is 2 times jump movement.
@@ -762,24 +765,23 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_MECHANICAL_JUMP_BOOSTER)) {
           if((entity.getWeightClass() == EntityWeightClass.WEIGHT_ULTRA_LIGHT)
                   || (entity.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT)) {
-                  return  2.0f *.025f;
+                  return  2.0 *.025;
         } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {
-                return  2.0f *.05f;
+                return  2.0 *.05;
         } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
-                return  2.0f *.125f;
+                return  2.0 *.125;
         } else if (entity.getWeightClass() == EntityWeightClass.WEIGHT_ASSAULT) {
-                return  2.0f *.250f;
+                return  2.0 *.250;
         }
 
         } else if (hasFlag(F_JUMP_BOOSTER)) {
-            return (float) (Math.ceil((entity.getWeight() * entity
-                    .getOriginalJumpMP()) / 10.0f) / 2.0);
+            return Math.ceil((entity.getWeight() * entity.getOriginalJumpMP()) / 10.0f) / 2.0;
         } else if ((hasFlag(F_HAND_WEAPON) && hasSubType(S_CLAW))
                 || hasFlag(F_TALON)) {
-            return (float) Math.ceil(entity.getWeight() / 15);
+            return Math.ceil(entity.getWeight() / 15);
         } else if (hasFlag(F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
 
-            float tonnage = 0;
+            double tonnage = 0;
             if (entity instanceof BipedMech) {
                 tonnage = entity.getWeight() / 35;
             } else {
@@ -794,57 +796,57 @@ public class MiscType extends EquipmentType {
                 return Math.round(tonnage);
             }
 
-            return (float) (Math.floor(tonnage) + 0.5);
+            return Math.floor(tonnage) + 0.5;
         } else if (hasFlag(F_TRACKS)) {
             return entity.getWeight() / 10;
         } else if (hasFlag(F_LIMITED_AMPHIBIOUS)) {
-            return (float) (Math.ceil((entity.getWeight() / 25f) * 2) / 2.0);
+            return Math.ceil((entity.getWeight() / 25f) * 2) / 2.0;
         } else if (hasFlag(F_FULLY_AMPHIBIOUS)) {
-            return (float) (Math.ceil((entity.getWeight() / 10f) * 2) / 2.0);
+            return Math.ceil((entity.getWeight() / 10f) * 2) / 2.0;
         } else if (hasFlag(F_DUMPER)) {
             // 5% of cargo
-            float cargoTonnage = 0;
+            double cargoTonnage = 0;
             for (Mounted mount : entity.getMisc()) {
                 if (mount.getType().hasFlag(F_CARGO)
                         && (mount.getLocation() == location)) {
                     cargoTonnage += mount.getType().getTonnage(entity);
                 }
             }
-            float roundWeight = TestEntity.CEIL_HALFTON;
+            TestEntity.Ceil roundWeight = TestEntity.Ceil.HALFTON;
             if (entity.isSupportVehicle() && (entity.getWeight() < 5)) {
-                roundWeight = TestEntity.CEIL_KILO;
+                roundWeight = TestEntity.Ceil.KILO;
             }
-            float weight = cargoTonnage / 20f;
+            double weight = cargoTonnage / 20f;
             return TestEntity.ceil(weight, roundWeight);
         } else if (hasFlag(F_BASIC_FIRECONTROL)) {
             // 5% of weapon weight
-            float weaponWeight = 0;
+            double weaponWeight = 0;
             for (Mounted mount : entity.getWeaponList()) {
                 weaponWeight += mount.getType().getTonnage(entity);
             }
-            float roundWeight = TestEntity.CEIL_HALFTON;
+            TestEntity.Ceil roundWeight = TestEntity.Ceil.HALFTON;
             if (entity.isSupportVehicle() && (entity.getWeight() < 5)) {
-                roundWeight = TestEntity.CEIL_KILO;
+                roundWeight = TestEntity.Ceil.KILO;
             }
-            float weight = weaponWeight / 20f;
+            double weight = weaponWeight / 20;
             return TestEntity.ceil(weight, roundWeight);
         } else if (hasFlag(F_ADVANCED_FIRECONTROL)) {
             // 10% of weapon weight
-            float weaponWeight = 0;
+            double weaponWeight = 0;
             for (Mounted mount : entity.getWeaponList()) {
                 weaponWeight += mount.getType().getTonnage(entity);
             }
-            float roundWeight = TestEntity.CEIL_HALFTON;
+            TestEntity.Ceil roundWeight = TestEntity.Ceil.HALFTON;
             if (entity.isSupportVehicle() && (entity.getWeight() < 5)) {
-                roundWeight = TestEntity.CEIL_KILO;
+                roundWeight = TestEntity.Ceil.KILO;
             }
             return TestEntity.ceil(weaponWeight / 10f, roundWeight);
         } else if (hasFlag(F_BOOBY_TRAP)) {
             // 10% of unit weight
-            float weight = entity.getWeight() / 10f;
-            float roundWeight = TestEntity.CEIL_HALFTON;
+            double weight = entity.getWeight() / 10;
+            TestEntity.Ceil roundWeight = TestEntity.Ceil.HALFTON;
             if (entity.isSupportVehicle() && (entity.getWeight() < 5)) {
-                roundWeight = TestEntity.CEIL_KILO;
+                roundWeight = TestEntity.Ceil.KILO;
             }
             return TestEntity.ceil(weight, roundWeight);
 
@@ -855,7 +857,7 @@ public class MiscType extends EquipmentType {
                 return .5f;
             }
         } else if (hasFlag(F_DRONE_CARRIER_CONTROL)) {
-            float weight = 2;
+            double weight = 2;
             for (Mounted mount : entity.getMisc()) {
                 if (mount.getType().hasFlag(MiscType.F_DRONE_EXTRA)) {
                     weight += 0.5;
@@ -892,7 +894,7 @@ public class MiscType extends EquipmentType {
                     || hasFlag((F_FULLY_AMPHIBIOUS))) {
                 costValue = getTonnage(entity, loc) * 10000;
             } else if (hasFlag(F_DUNE_BUGGY)) {
-                float totalTons = getTonnage(entity, loc);
+                double totalTons = getTonnage(entity, loc);
                 costValue = 10 * totalTons * totalTons;
             } else if (hasFlag(F_MASC) && hasFlag(F_BA_EQUIPMENT)) {
                 costValue = entity.getRunMP() * 75000;
@@ -925,16 +927,16 @@ public class MiscType extends EquipmentType {
                 } else {
                     int mascTonnage = 0;
                     if (getInternalName().equals("ISMASC")) {
-                        mascTonnage = Math.round(entity.getWeight() / 20.0f);
+                        mascTonnage = (int) Math.round(entity.getWeight() / 20.0f);
                     } else if (getInternalName().equals("CLMASC")) {
-                        mascTonnage = Math.round(entity.getWeight() / 25.0f);
+                        mascTonnage = (int) Math.round(entity.getWeight() / 25.0f);
                     }
                     costValue = entity.getEngine().getRating() * mascTonnage
                             * 1000;
                 }
             } else if (hasFlag(MiscType.F_TARGCOMP)) {
                 int tCompTons = 0;
-                float fTons = 0.0f;
+                double fTons = 0.0f;
                 for (Mounted mo : entity.getWeaponList()) {
                     WeaponType wt = (WeaponType) mo.getType();
                     if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
@@ -959,13 +961,11 @@ public class MiscType extends EquipmentType {
                 int hatchetTons = (int) Math.ceil(entity.getWeight() / 15.0);
                 costValue = hatchetTons * 5000;
             } else if (hasFlag(MiscType.F_CLUB) && hasSubType(MiscType.S_SWORD)) {
-                float swordTons = (float) (Math
-                        .ceil((entity.getWeight() / 20.0) * 2.0) / 2.0);
+                double swordTons = Math.ceil((entity.getWeight() / 20.0) * 2.0) / 2.0;
                 costValue = swordTons * 10000;
             } else if (hasFlag(MiscType.F_CLUB)
                     && hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
-                int bladeTons = (int) Math.ceil(0.5f + Math.ceil(entity
-                        .getWeight() / 20.0));
+                int bladeTons = (int) Math.ceil(0.5f + Math.ceil(entity.getWeight() / 20.0));
                 costValue = (1 + bladeTons) * 10000;
             } else if (hasFlag(MiscType.F_TRACKS)) {
                 costValue = (int) Math.ceil((500 * entity.getEngine()
@@ -1014,7 +1014,7 @@ public class MiscType extends EquipmentType {
 
     @Override
     public int getCriticals(Entity entity) {
-        if (criticals != CRITICALS_VARIABLE) {
+        if((criticals != CRITICALS_VARIABLE) || (null == entity)) {
             return criticals;
         }
         // check for known formulas
@@ -1246,7 +1246,7 @@ public class MiscType extends EquipmentType {
 
     public double getBV(Entity entity, int location) {
         double returnBV = 0.0;
-        if (bv != BV_VARIABLE) {
+        if((bv != BV_VARIABLE) || (null == entity)) {
             returnBV = bv;
             // Mast Mounts give extra BV to equipment mounted in the mast
             if ((entity instanceof VTOL)

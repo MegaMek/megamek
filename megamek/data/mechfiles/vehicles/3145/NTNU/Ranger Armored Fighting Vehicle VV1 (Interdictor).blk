@@ -21,7 +21,7 @@ VV1 (Interdictor)
 </Model>
 
 <year>
-3130
+3087
 </year>
 
 <type>
@@ -80,12 +80,8 @@ Machine Gun
 Machine Gun
 </Turret Equipment>
 
-<imagepath>
-.\data\images\fluff\vehicle\ranger.jpg
-</imagepath>
-
 <source>
-RS 3145 NT NU
+RS 3145 NTNU - Early Republic
 </source>
 
 <tonnage>

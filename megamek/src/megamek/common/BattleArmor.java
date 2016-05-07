@@ -1464,7 +1464,7 @@ public class BattleArmor extends Infantry {
         }
     }
 
-    public float getTrooperWeight() {
+    public double getTrooperWeight() {
         return EntityWeightClass.getClassLimit(getWeightClass(), this);
     }
 
@@ -1905,28 +1905,28 @@ public class BattleArmor extends Infantry {
     }
 
     @Override
-    public float getWeight() {
+    public double getWeight() {
         // If following Total Warfare rules each BA trooper will weigh a ton
         // for transport purposes. Following Tactical Operations gives us a
         // more realistic weight per trooper
         if ((game != null)
                 && game.getOptions().booleanOption("tacops_ba_weight")) {
-            float troopton = troopers;
+            double troopton = troopers;
             switch (getWeightClass()) {
                 case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
-                    troopton = (float) (troopers * 0.25);
+                    troopton = troopers * 0.25;
                     break;
                 case EntityWeightClass.WEIGHT_LIGHT:
-                    troopton = (float) (troopers * 0.5);
+                    troopton = troopers * 0.5;
                     break;
                 case EntityWeightClass.WEIGHT_MEDIUM:
-                    troopton = (float) (troopers * 1.0);
+                    troopton = troopers * 1.0;
                     break;
                 case EntityWeightClass.WEIGHT_HEAVY:
-                    troopton = (float) (troopers * 1.5);
+                    troopton = troopers * 1.5;
                     break;
                 case EntityWeightClass.WEIGHT_ASSAULT:
-                    troopton = (float) (troopers * 2.0);
+                    troopton = troopers * 2.0;
                     break;
                 default:
                     troopton = troopers;
@@ -1937,23 +1937,23 @@ public class BattleArmor extends Infantry {
         }
     }
 
-    public float getAlternateWeight() {
-        float troopton;
+    public double getAlternateWeight() {
+        double troopton;
         switch (getWeightClass()) {
             case EntityWeightClass.WEIGHT_ULTRA_LIGHT:
-                troopton = (float) (troopers * 0.25);
+                troopton = troopers * 0.25;
                 break;
             case EntityWeightClass.WEIGHT_LIGHT:
-                troopton = (float) (troopers * 0.5);
+                troopton = troopers * 0.5;
                 break;
             case EntityWeightClass.WEIGHT_MEDIUM:
-                troopton = (float) (troopers * 1.0);
+                troopton = troopers * 1.0;
                 break;
             case EntityWeightClass.WEIGHT_HEAVY:
-                troopton = (float) (troopers * 1.5);
+                troopton = troopers * 1.5;
                 break;
             case EntityWeightClass.WEIGHT_ASSAULT:
-                troopton = (float) (troopers * 2.0);
+                troopton = troopers * 2.0;
                 break;
             default:
                 troopton = troopers;

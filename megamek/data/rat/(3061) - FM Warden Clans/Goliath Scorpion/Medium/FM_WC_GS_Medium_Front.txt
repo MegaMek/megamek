@@ -1,0 +1,12 @@
+Warden Clan Front-Line Medium Mechs (Goliath Scorpion),
+Battle Cobra B,1
+Fenris (Ice Ferret) D,2
+Black Hawk (Nova) Prime,3
+Ryoken (Stormcrow) Prime,4
+Goshawk (Vapor Eagle) (Standard),5
+Phantom C,6
+Pouncer Prime,5
+Battle Cobra Prime,4
+Black Hawk (Nova) A,3
+Ryoken (Stormcrow) C,2
+Battle Cobra A,1

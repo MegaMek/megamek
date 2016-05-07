@@ -1,0 +1,12 @@
+Warden Clan Second-Line Assault Mechs (Steel Viper),
+Man O' War (Gargoyle) A,1
+Supernova (Standard),2
+Behemoth (Stone Rhino) (Standard),3
+Warhammer IIC (Standard),4
+Phoenix Hawk IIC (Standard),5
+Phoenix Hawk IIC (Standard),6
+Thug THG-11E,5
+Warhammer IIC (Standard),4
+Marauder IIC (Standard),3
+Highlander IIC (Standard),2
+Kraken (Bane) (Standard),1

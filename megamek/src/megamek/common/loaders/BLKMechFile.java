@@ -104,7 +104,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find block.");
         }
-        mech.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
+        mech.setWeight(dataFile.getDataAsDouble("tonnage")[0]);
 
         int engineCode = BLKFile.FUSION;
         if (dataFile.exists("engine_type")) {

@@ -40,7 +40,7 @@ public class MechSummary implements Serializable {
     private String m_sEntryName; // for files in zips
     private int m_nYear;
     private int m_nType;
-    private float m_nTons;
+    private double m_nTons;
     private int m_nBV;
     /**
      * Stores the BV of the unit computed using the geometric mean method.
@@ -68,9 +68,9 @@ public class MechSummary implements Serializable {
     /**
      * For BattleArmor, we want to know the weight of an individual suit.
      */
-    private float m_TWsuitTons;
-    private float m_TOsuitTons;
-    private float suitWeight;
+    private double m_TWsuitTons;
+    private double m_TOsuitTons;
+    private double suitWeight;
     
 
     /** Stores the type of internal structure on this unit **/
@@ -140,6 +140,41 @@ public class MechSummary implements Serializable {
         return m_sUnitSubType;
     }
 
+    public static String determineETypeName(MechSummary ms) {
+        if (ms.getUnitType().equals("BattleArmor")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_INFANTRY);
+        } else if (ms.getUnitType().equals("Infantry")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_INFANTRY);
+        } else if (ms.getUnitType().equals("VTOL")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_VTOL);
+        } else if (ms.getUnitType().equals("Naval")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_TANK);
+        } else if (ms.getUnitType().equals("Gun Emplacement")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_TANK);
+        } else if (ms.getUnitType().equals("Tank")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_TANK);
+        } else if (ms.getUnitType().equals("Mek")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_MECH);
+        } else if (ms.getUnitType().equals("ProtoMek")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_PROTOMECH);
+        } else if (ms.getUnitType().equals("Space Station")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_AERO);
+        } else if (ms.getUnitType().equals("Jumpship")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_AERO);
+        } else if (ms.getUnitType().equals("Dropship")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_AERO);
+        } else if (ms.getUnitType().equals("Small Craft")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_AERO);
+        } else if (ms.getUnitType().equals("Conventional Fighter")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_AERO);
+        } else if (ms.getUnitType().equals("Aero")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_AERO);
+        } else if (ms.getUnitType().equals("Unknown")) {
+            return Entity.getEntityMajorTypeName(-1);
+        }
+        return Entity.getEntityMajorTypeName(-1);
+    }
+
     public static String determineUnitType(Entity e) {
         EntityMovementMode mm = e.getMovementMode();
         if (e instanceof BattleArmor) {
@@ -196,15 +231,15 @@ public class MechSummary implements Serializable {
         return (m_nType);
     }
 
-    public float getTons() {
+    public double getTons() {
         return (m_nTons);
     }
 
-    public float getTOweight() {
+    public double getTOweight() {
         return (m_TOsuitTons);
     }
 
-    public float getTWweight() {
+    public double getTWweight() {
         return (m_TWsuitTons);
     }
 
@@ -264,15 +299,15 @@ public class MechSummary implements Serializable {
         this.m_nType = m_nType;
     }
 
-    public void setTons(float m_nTons) {
+    public void setTons(double m_nTons) {
         this.m_nTons = m_nTons;
     }
 
-    public void setTOweight(float m_TOsuitTons) {
+    public void setTOweight(double m_TOsuitTons) {
         this.m_TOsuitTons = m_TOsuitTons;
     }
 
-    public void setTWweight(float m_TWsuitTons) {
+    public void setTWweight(double m_TWsuitTons) {
         this.m_TWsuitTons = m_TWsuitTons;
     }
 
@@ -317,7 +352,7 @@ public class MechSummary implements Serializable {
     }
 
     public int getWeightClass() {
-        float tons;
+        double tons;
         if (getUnitType().equals("BattleArmor")){
             tons = getSuitWeight();
         } else {
@@ -478,11 +513,11 @@ public class MechSummary implements Serializable {
         this.myomerName = myomerName;
     }
 
-    public float getSuitWeight() {
+    public double getSuitWeight() {
         return suitWeight;
     }
 
-    public void setSuitWeight(float suitWeight) {
+    public void setSuitWeight(double suitWeight) {
         this.suitWeight = suitWeight;
     }
 

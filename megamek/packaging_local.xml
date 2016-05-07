@@ -303,11 +303,11 @@
     </target>
 
 	<target name="rat-zip" description="Create a zipfile of the RAT files">
-		<zip zipfile="${pkgdir}/${datadir}/rat_default.zip" basedir="${pkgdir}/${datadir}/rat" />
-		<delete dir="${pkgdir}/${datadir}/rat" />
+		<zip zipfile="${localdir}/${datadir}/rat_default.zip" basedir="${localdir}/${datadir}/rat" />
+		<delete dir="${localdir}/${datadir}/rat" />
 		<sleep seconds="1" /> <!-- give the file system time to catch up -->
-		<mkdir dir="${pkgdir}/${datadir}/rat" />
-		<move file="${pkgdir}/${datadir}/rat_default.zip" tofile="${pkgdir}/${datadir}/rat/default.zip" />
+		<mkdir dir="${localdir}/${datadir}/rat" />
+		<move file="${localdir}/${datadir}/rat_default.zip" tofile="${localdir}/${datadir}/rat/default.zip" />
 	</target>
 	
 	<target name="win-zip" description="Create a zipfile of the Windows distribution">

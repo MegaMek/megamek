@@ -1,0 +1,12 @@
+Warden Clan Front-Line Medium Mechs (Steel Viper),
+Black Lanner Prime,1
+Shadow Cat B,2
+Black Hawk (Nova) Prime,3
+Dragonfly (Viper) Prime,4
+Battle Cobra Prime,5
+Battle Cobra B,6
+Fenris (Ice Ferret) B,5
+Ryoken (Stormcrow) Prime,4
+Black Hawk (Nova) B,3
+Grendel (Mongrel) A,2
+Fenris (Ice Ferret) Prime,1

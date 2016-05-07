@@ -63,7 +63,7 @@ import megamek.server.DedicatedServer;
  */
 public class MegaMek {
 
-    public static String VERSION = "0.41.17-git"; //$NON-NLS-1$
+    public static String VERSION = "0.41.18-git"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager
             .getClientPreferences().getLogDirectory()
             + File.separator
@@ -806,7 +806,7 @@ public class MegaMek {
                             w.write(TechConstants.getLevelDisplayableName(unit
                                     .getType()));
                             w.write(",");
-                            w.write(Float.toString(unit.getTons()));
+                            w.write(Double.toString(unit.getTons()));
                             w.write(",");
                             if (unit.isClan()) {
                                 w.write("Clan,");

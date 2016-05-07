@@ -1,0 +1,12 @@
+Warden Clan Front-Line Heavy Mechs (Diamond Shark),
+Mad Cat (Timber Wolf) Prime,1
+Thor (Summoner) Prime,2
+Vulture (Mad Dog) B,3
+Vulture (Mad Dog) C,4
+Thor (Summoner) A,5
+Vulture (Mad Dog) Prime,6
+Cauldron-Born (Ebon Jaguar) A,5
+Vulture (Mad Dog) Prime,4
+Cauldron-Born (Ebon Jaguar) Prime,3
+Loki (Hellbringer) Prime,2
+Mad Cat (Timber Wolf) C,1

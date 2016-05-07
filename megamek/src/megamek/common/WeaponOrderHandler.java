@@ -96,8 +96,8 @@ public class WeaponOrderHandler {
         
         String path = CUSTOM_WEAPON_ORDER_FILENAME;
         File file = new File(Configuration.configDir(), path);
-        if (!file.exists() || !file.isFile()) {
-            System.err.println("WARN: Could not load custom weapon orders " +
+        if (file.exists() && !file.canWrite()) {
+            System.err.println("WARN: Could not save custom weapon orders " +
                     "from " + path);
             return;
         }

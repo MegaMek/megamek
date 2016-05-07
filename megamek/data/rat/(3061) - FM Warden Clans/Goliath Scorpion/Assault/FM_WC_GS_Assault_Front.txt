@@ -1,0 +1,12 @@
+Warden Clan Front-Line Assault Mechs (Goliath Scorpion),
+Daishi (Dire Wolf) Prime,1
+Turkina B,2
+Kingfisher C,3
+Gladiator (Executioner) A,4
+Masakari (Warhawk) C,5
+Masakari (Warhawk) Prime,6
+Turkina B,5
+Daishi (Dire Wolf) A,4
+Man O' War (Gargoyle) A,3
+Masakari (Warhawk) C,2
+Turkina C,1

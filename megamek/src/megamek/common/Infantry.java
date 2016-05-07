@@ -1381,27 +1381,27 @@ public class Infantry extends Entity {
     }
 
     @Override
-    public float getWeight() {
-        float ton;
+    public double getWeight() {
+        double ton;
         switch (getMovementMode()) {
             case INF_MOTORIZED:
-                ton = (float) (men * 0.195);
+                ton = men * 0.195;
                 break;
             case HOVER:
             case TRACKED:
             case WHEELED:
-                ton = (float) (men * 1);
+                ton = men * 1;
                 break;
             case INF_JUMP:
-                ton = (float) (men * 0.165);
+                ton = men * 0.165;
                 break;
             case INF_LEG:
             default:
-                ton = (float) (men * 0.085);
+                ton = men * 0.085;
         }
         
         if(isAntiMekTrained()) {
-                ton += (float) (men * .015);
+                ton += men * .015;
                         
         }
 
@@ -1411,7 +1411,7 @@ public class Infantry extends Entity {
                 ton += mounted.getType().getTonnage(this);
             }
         }
-        return TestEntity.round(ton, TestEntity.CEIL_QUARTERTON);
+        return TestEntity.round(ton, TestEntity.Ceil.QUARTERTON);
 
     }
     public String getArmorDesc() {
@@ -1460,7 +1460,7 @@ public class Infantry extends Entity {
 
     public boolean hasActiveFieldArtillery() {
         boolean hasArtillery = false;
-        float smallestGun = 100.0f;
+        double smallestGun = 100.0;
         for(Mounted wpn : getWeaponList()) {
             if(wpn.getLocation() != LOC_FIELD_GUNS) {
                 continue;

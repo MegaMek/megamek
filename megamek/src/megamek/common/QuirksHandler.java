@@ -36,7 +36,6 @@ import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.Quirks;
 import megamek.common.options.WeaponQuirks;
-import megamek.common.util.StringUtil;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -154,6 +153,7 @@ public class QuirksHandler {
     private static final String UNIT = "unit";
     private static final String CHASSIS = "chassis";
     private static final String MODEL = "model";
+    private static final String UNIT_TYPE = "unitType";
     private static final String QUIRK = "quirk";
     private static final String WEAPON_QUIRK = "weaponQuirk";
     private static final String LOCATION = "location";
@@ -167,20 +167,25 @@ public class QuirksHandler {
     private static AtomicBoolean initialized = new AtomicBoolean(false);
     
     /**
-     * Generate a Quirk's Unit ID given a chassis and model.
+     * Generate a Quirk's Unit ID given an Entity.
      * 
-     * @param chassis
-     * @param model
+     * @param Entity Entity to generate UnitId from
+     * @param useModel determines if the model should be used, or be 'all'
      * @return
      */
-    public static String getUnitId(String chassis, @Nullable String model) {
-        if (!StringUtil.isNullOrEmpty(model)) {
-            return chassis + "~" + model;
+    public static String getUnitId(Entity ent, boolean useModel) {
+        String typeText = Entity.getEntityMajorTypeName(ent.getEntityType());
+        if (useModel) {
+            return ent.getChassis() + "~" + ent.getModel() + "~" + typeText;
         } else {
-            return chassis;
+            return ent.getChassis() + "~~" + typeText;
         }
     }
     
+    public static String getUnitId(String chassis, String model, String type) {
+        return chassis + "~" + model + "~" + type;
+    }
+
     public static String getChassis(String unitId) {
         int splitIdx = unitId.indexOf("~");
         if (splitIdx == -1) {
@@ -189,14 +194,29 @@ public class QuirksHandler {
             return unitId.substring(0, splitIdx);
         }
     }
-    
+
     public static String getModel(String unitId) {
         int splitIdx = unitId.indexOf("~");
+        int endIdx = unitId.lastIndexOf("~");
+        if (splitIdx == -1) {
+            return null;
+        } else {
+            return unitId.substring(splitIdx + 1, endIdx);
+        }
+    }
+
+    public static String getUnitType(String unitId) {
+        int splitIdx = unitId.lastIndexOf("~");
         if (splitIdx == -1) {
             return null;
         } else {
             return unitId.substring(splitIdx + 1, unitId.length());
         }
+    }
+
+    public static String replaceUnitType(String unitId, String newUnitType) {
+        int splitIdx = unitId.lastIndexOf("~");
+        return unitId.substring(0, splitIdx) + "~" + newUnitType;
     }
 
     private static Map<String, List<QuirkEntry>> loadQuirksFile(String path) throws IOException {
@@ -220,7 +240,7 @@ public class QuirksHandler {
             // Get the list of units.
             NodeList listOfEntries = doc.getElementsByTagName(UNIT);
             int totalEntries = listOfEntries.getLength();
-            log.append("\n\tTotal number of quirk entries: ").append(totalEntries);
+            log.append("\n\tTotal number of unit tags: ").append(totalEntries);
             for (int unitCount = 0; unitCount < totalEntries; unitCount++) {
 
                 // Get the first element of this node.
@@ -242,8 +262,15 @@ public class QuirksHandler {
                     model = modelElement.getTextContent().trim();
                 }
 
+                Element typeElement = (Element) unitList.getElementsByTagName(UNIT_TYPE).item(0);
+                // default to "Mech" type for entries that don't list a type.. backwards compatibility with older quirks files
+                String unitType = "Mech";
+                if (typeElement != null) {
+                    unitType = typeElement.getTextContent().trim();
+                }
+
                 // Generate the unit ID
-                String unitId = getUnitId(chassis, model);
+                String unitId = getUnitId(chassis, model, unitType);
 
                 // Get the quirks.
                 NodeList quirkNodes = unitList.getElementsByTagName(QUIRK);
@@ -256,6 +283,7 @@ public class QuirksHandler {
                     Element quirkElement = (Element) quirkNodes.item(quirkCount);
                     String qeText = quirkElement.getTextContent().trim();
                     if ((quirkElement.getTextContent() == null) || qeText.isEmpty()) {
+                        log.append("\n\t\t" + unitId + ": no text content!");
                         continue;
                     }
                     QuirkEntry quirkEntry = new QuirkEntry(qeText, unitId);
@@ -269,6 +297,7 @@ public class QuirksHandler {
                     // Get the name of the quirk.
                     Element nameElement = (Element) quirkElement.getElementsByTagName(WEAPON_QUIRK_NAME).item(0);
                     if (nameElement == null) {
+                        log.append("\n\t\t" + unitId + ": no weapon quirk name!");
                         continue;
                     }
                     String weaponQuirkName = nameElement.getTextContent().trim();
@@ -276,6 +305,7 @@ public class QuirksHandler {
                     // Get the weapon's location.
                     Element locElement = (Element) quirkElement.getElementsByTagName(LOCATION).item(0);
                     if (locElement == null) {
+                        log.append("\n\t\t" + unitId + ": no weapon quirk loc!");
                         continue;
                     }
                     String location = locElement.getTextContent().trim();
@@ -283,6 +313,7 @@ public class QuirksHandler {
                     // Get the weapon's critical slot.
                     Element slotElement = (Element) quirkElement.getElementsByTagName(SLOT).item(0);
                     if (slotElement == null) {
+                        log.append("\n\t\t" + unitId + ": no weapon quirk slot!");
                         continue;
                     }
                     String slot = slotElement.getTextContent().trim();
@@ -295,6 +326,7 @@ public class QuirksHandler {
                     // Get the weapon's name.
                     Element weapElement = (Element) quirkElement.getElementsByTagName(WEAPON_NAME).item(0);
                     if (weapElement == null) {
+                        log.append("\n\t\t" + unitId + ": no weapon quirk weapon name!");
                         continue;
                     }
                     String weaponName = weapElement.getTextContent().trim();
@@ -315,9 +347,12 @@ public class QuirksHandler {
                         log.append("<BlankUnitId>");
                     }
                 }
+                if (quirkMap.containsKey(unitId)) {
+                    log.append("\n\t\t" + unitId + ": duplicate entry added!");
+                }
                 quirkMap.put(unitId, quirkList);
             }
-
+            log.append("\n\tTotal number of quirk entries: ").append(quirkMap.size());
             return quirkMap;
         } catch (Exception e) {
             throw new IOException(e);
@@ -377,6 +412,7 @@ public class QuirksHandler {
             for (String unitId : customQuirkMap.keySet()) {
                 String chassis = getChassis(unitId);
                 String model = getModel(unitId);
+                String unitType = getUnitType(unitId);
                 
                 output.write("\t" + getOpenTag(UNIT) + "\n");
                 
@@ -391,7 +427,12 @@ public class QuirksHandler {
                     output.write(model);
                     output.write(getCloseTag(MODEL) + "\n");
                 }
-                
+
+                // Write unit type
+                output.write("\t\t" + getOpenTag(UNIT_TYPE));
+                output.write(unitType);
+                output.write(getCloseTag(UNIT_TYPE) + "\n");
+
                 // Write out quirks
                 List<QuirkEntry> quirks = customQuirkMap.get(unitId);
                 for (QuirkEntry quirk : quirks) {
@@ -454,7 +495,7 @@ public class QuirksHandler {
      *         unit. If the unit is not in the list, a NULL value is returned.
      */
     @Nullable
-    public static List<QuirkEntry> getQuirks(String chassis, @Nullable String model) {
+    public static List<QuirkEntry> getQuirks(Entity entity) {
         final String NO_QUIRKS = "none";
 
         if (!initialized.get() || (null == canonQuirkMap)) {
@@ -463,10 +504,10 @@ public class QuirksHandler {
         List<QuirkEntry> quirks = new ArrayList<>();
 
         // General entry for the chassis.
-        String generalId = getUnitId(chassis, "all");
+        String generalId = getUnitId(entity, false);
 
         // Build the unit ID from the chassis and model.
-        String unitId = getUnitId(chassis, model);
+        String unitId = getUnitId(entity, true);
 
         try {
             // Check for a general entry for this chassis in the custom list.
@@ -535,12 +576,8 @@ public class QuirksHandler {
         
         // Generate Unit ID
         String unitId;
-        if (useModel) {
-            unitId = getUnitId(entity.getChassis(), entity.getModel());
-        } else {
-            unitId = getUnitId(entity.getChassis(), "all");
-        }
-        
+        unitId = getUnitId(entity, useModel);
+
         // Get a quirks list
         List<QuirkEntry> quirkEntries = customQuirkMap.get(unitId);
         if (quirkEntries == null) {
@@ -644,5 +681,28 @@ public class QuirksHandler {
 
     public static Set<String> getCanonQuirkIds() {
         return canonQuirkMap.keySet();
+    }
+
+    /**
+     * Used by QuirkRewriteTool to take a quirk entry from canon quirks, and
+     * munge its eType and write it to customQuirks.
+     */
+    public static void mungeQuirks(String quirkId, String newId) {
+        // Shouldn't happen, but lets be careful
+        if (customQuirkMap == null) {
+            try {
+                QuirksHandler.initQuirksList();
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+        }
+
+        customQuirksDirty.set(true);
+
+        customQuirkMap.put(newId, canonQuirkMap.get(quirkId));
+    }
+
+    public static boolean customQuirksContain(String unitId) {
+        return customQuirkMap.containsKey(unitId);
     }
 }

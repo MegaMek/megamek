@@ -46,27 +46,27 @@ public class EntityWeightClass {
     public static final int SIZE = 15;
     private static String[] classAppends = { "0", "1", "2", "3", "4", "5", "SC", "DS.7", "DS.8", "DS.9", "JS.10", "JS.11", "SV.12", "SV.13", "SV.14" };
 
+    private static final double LESS_THAN_5 = Math.nextAfter(5.0, Double.NEGATIVE_INFINITY);
+    private static double[] BAWeightLimits = { 0.4, 0.75, 1, 1.5, 2 };
+    private static double[] mechWeightLimits = { 15, 35, 55, 75, 100, 135 };
+    private static double[] vehicleWeightLimits = { 0, 39, 59, 79, 100, 300 }; // One padding 0
+    private static double[] wheeledSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 80, 160 }; // Twelve padding 0s
+    private static double[] trackedSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 100, 200 }; // Twelve padding 0s
+    private static double[] hoverSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 50, 100 }; // Twelve padding 0s
+    private static double[] vtolSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 30, 60 }; // Twelve padding 0s
+    private static double[] wigeSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 80, 160 }; // Twelve padding 0s
+    //private static double[] airshipSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 300, 1000 }; // Twelve padding 0s
+    //private static double[] fixedwingSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 100, 200 }; // Twelve padding 0s
+    private static double[] navalSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 300, 100000 }; // Twelve padding 0s
+    private static double[] railSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 300, 600 }; // Twelve padding 0s
+    //private static double[] mobilestructuresSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, LESS_THAN_5, 80, 160 }; // Twelve padding 0s
+    private static double[] ASFWeightLimits = { 0, 45, 70, 100 }; // One padding 0
+    private static double[] dropshipWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 2499, 9999, 100000 }; // Seven padding 0s
+    private static double[] jumpshipWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 749999, 2500000 }; // Ten padding 0s
+    private static double[] GEWeightLimits = { 0, 15, 40, 90, 150 }; // One padding 0
+    private static double[] protoWeightLimits = { 0, 3, 5, 7, 9 }; // One padding 0
 
-    private static float[] BAWeightLimits = { 0.4f, 0.75f, 1, 1.5f, 2 };
-    private static float[] mechWeightLimits = { 15, 35, 55, 75, 100, 135 };
-    private static float[] vehicleWeightLimits = { 0, 39, 59, 79, 100, 300 }; // One padding 0
-    private static float[] wheeledSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4.999f, 80, 160 }; // Twelve padding 0s
-    private static float[] trackedSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4.999f, 100, 200 }; // Twelve padding 0s
-    private static float[] hoverSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4.999f, 50, 100 }; // Twelve padding 0s
-    private static float[] vtolSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4.999f, 30, 60 }; // Twelve padding 0s
-    private static float[] wigeSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4.999f, 80, 160 }; // Twelve padding 0s
-    //private static float[] airshipSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4.999f, 300, 1000 }; // Twelve padding 0s
-    //private static float[] fixedwingSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4.999f, 100, 200 }; // Twelve padding 0s
-    private static float[] navalSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4.999f, 300, 100000 }; // Twelve padding 0s
-    private static float[] railSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4.999f, 300, 600 }; // Twelve padding 0s
-    //private static float[] mobilestructuresSupportVehicleWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4.999f, 80, 160 }; // Twelve padding 0s
-    private static float[] ASFWeightLimits = { 0, 45, 70, 100 }; // One padding 0
-    private static float[] dropshipWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 2499, 9999, 100000 }; // Seven padding 0s
-    private static float[] jumpshipWeightLimits = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 749999, 2500000 }; // Ten padding 0s
-    private static float[] GEWeightLimits = { 0, 15, 40, 90, 150 }; // One padding 0
-    private static float[] protoWeightLimits = { 0, 3, 5, 7, 9 }; // One padding 0
-
-    public static int getWeightClass(float tonnage, String type) {
+    public static int getWeightClass(double tonnage, String type) {
         int i;
 
         if (type.equals("BattleArmor")) {
@@ -134,7 +134,7 @@ public class EntityWeightClass {
         return i;
     }
 
-    public static int getSupportWeightClass(float tonnage, String type) {
+    public static int getSupportWeightClass(double tonnage, String type) {
         int i = 0;
 
         if (type.equals("Wheeled")) {
@@ -196,7 +196,7 @@ public class EntityWeightClass {
         return i;
     }
 
-    public static int getWeightClass(float tonnage, Entity en) {
+    public static int getWeightClass(double tonnage, Entity en) {
         int i;
 
         // Order of IF statements is important!! Any subclasses must come before their parent class!
@@ -333,7 +333,7 @@ public class EntityWeightClass {
         return i;
     }
 
-    public static float getClassLimit(int wClass, Entity en) {
+    public static double getClassLimit(int wClass, Entity en) {
         // Order of IF statements is important!! Any subclasses must come before their parent class!
         if (en instanceof Mech) {
         if ((wClass >= 0) && (wClass < SIZE)) {

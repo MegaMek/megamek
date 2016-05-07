@@ -4,7 +4,7 @@ T-IT-N13M
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3130
+Era:3091
 Source:RS 3145 NT NU
 Rules Level:4
 
@@ -33,13 +33,13 @@ RTR Armor:11
 RTC Armor:19
 
 Weapons:7
-Small Pulse Laser, Head
-Medium Laser, Left Torso
-Medium Laser, Right Torso
-ER Medium Laser, Right Arm
+Heavy PPC, Left Arm
 ER Large Laser, Left Arm
 ER Medium Laser, Left Arm
-Heavy PPC, Left Arm
+ER Medium Laser, Right Arm
+Medium Laser, Left Torso
+Medium Laser, Right Torso
+Small Pulse Laser, Head
 
 Left Arm:
 Shoulder (armored)

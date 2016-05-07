@@ -4,7 +4,7 @@ SDR-8Xr
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3130
+Era:3103
 Source:RS 3145 NT NU
 Rules Level:3
 
@@ -32,10 +32,10 @@ RTC Armor:4
 
 Weapons:5
 ER Small Laser, Left Torso
-ER Small Laser, Head
-ER Small Laser, Center Torso
 ER Small Laser, Right Torso
 ER Small Laser, Center Torso
+ER Small Laser, Center Torso
+ER Small Laser, Head
 
 Left Arm:
 Shoulder

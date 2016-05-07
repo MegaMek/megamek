@@ -379,12 +379,12 @@ public abstract class PathRanker {
             }
 
             // Give ourselves a 10-ton margin of error in case someone shoots at the building.
-            float mass = path.getEntity().getWeight() + 10;
+            double mass = path.getEntity().getWeight() + 10;
             return (mass > building.getCurrentCF(finalCoords));
         }
 
         // If we're not jumping, check each building to see if it will collapse if it has a basement.
-        float mass = path.getEntity().getWeight() + 10;
+        double mass = path.getEntity().getWeight() + 10;
         Enumeration<MoveStep> steps = path.getSteps();
         while (steps.hasMoreElements()) {
             MoveStep step = steps.nextElement();

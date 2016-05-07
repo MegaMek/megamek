@@ -46,7 +46,7 @@ public class TeleMissile extends Aero {
         damThresh = new int[] {0};
     }
 
-    public TeleMissile(Entity originalRide, int damageValue, float weight, int type, int capMisMod) {
+    public TeleMissile(Entity originalRide, int damageValue, double weight, int type, int capMisMod) {
         this();
                 
         //fuel

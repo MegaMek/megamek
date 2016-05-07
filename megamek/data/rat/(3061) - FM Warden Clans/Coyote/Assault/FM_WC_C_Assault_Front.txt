@@ -1,0 +1,12 @@
+Warden Clan Front-Line Assault Mechs (Coyote),
+Turkina Prime,1
+Masakari (Warhawk) Prime,2
+Savage Coyote A,3
+Man O' War (Gargoyle) A,4
+Daishi (Dire Wolf) A,5
+Savage Coyote Prime,6
+Savage Coyote A,5
+Daishi (Dire Wolf) Prime,4
+Masakari (Warhawk) C,3
+Savage Coyote B,2
+Kingfisher C,1

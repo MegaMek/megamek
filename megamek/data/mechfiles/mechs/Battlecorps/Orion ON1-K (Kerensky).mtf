@@ -5,42 +5,43 @@ ON1-K (Kerensky)
 Config:Biped
 TechBase:Inner Sphere
 Era:2753
+Source:TRO 3050U - Star League
 Rules Level:2
 
 Mass:75
-Engine:300 Fusion Engine
-Structure:Standard
+Engine:300 Fusion Engine(IS)
+Structure:IS Standard
 Myomer:Standard
 
 Heat Sinks:10 Double
 Walk MP:4
 Jump MP:0
 
-Armor:Standard
-LA Armor:22
-RA Armor:22
+Armor:Ferro-Fibrous(Inner Sphere)
+LA Armor:24
+RA Armor:24
 LT Armor:22
 RT Armor:22
-CT Armor:29
+CT Armor:36
 HD Armor:9
-LL Armor:29
-RL Armor:29
-RTL Armor:7
-RTR Armor:7
+LL Armor:32
+RL Armor:32
+RTL Armor:10
+RTR Armor:10
 RTC Armor:10
 
 Weapons:5
-ISSNPPC, Left Torso
-Medium Laser, Right Arm
 Medium Laser, Left Arm
-Gauss Rifle, Right Torso
+Medium Laser, Right Arm
+Snub-Nose PPC, Left Torso
 SRM 4, Left Torso
+Gauss Rifle, Right Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
+Lower Arm Actuator
 Medium Laser
--Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -53,8 +54,8 @@ Medium Laser
 Right Arm:
 Shoulder
 Upper Arm Actuator
+Lower Arm Actuator
 Medium Laser
--Empty-
 -Empty-
 -Empty-
 -Empty-
@@ -69,14 +70,14 @@ ISSNPPC
 ISSNPPC
 SRM 4
 ISArtemisIV
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 
 Right Torso:
 ISCASE
@@ -90,7 +91,7 @@ ISGaussRifle
 IS Gauss Ammo
 IS Gauss Ammo
 IS Ammo SRM-4 Artemis-capable
--Empty-
+IS Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -103,7 +104,7 @@ Gyro
 Fusion Engine
 Fusion Engine
 Fusion Engine
--Empty-
+IS Ferro-Fibrous
 -Empty-
 
 Head:
@@ -125,8 +126,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
--Empty-
--Empty-
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
@@ -139,12 +140,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
+IS Ferro-Fibrous
+IS Ferro-Fibrous
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
--Empty-
--Empty-
+
 

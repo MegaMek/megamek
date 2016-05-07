@@ -25,7 +25,7 @@ public final class SecondClassQuartersCargoBay extends Bay {
      */
     private static final long serialVersionUID = 4161027191694822726L;
 
-    private float weight = 0;
+    private double weight = 0;
 
     /**
      * The default constructor is only for serialization.
@@ -47,7 +47,7 @@ public final class SecondClassQuartersCargoBay extends Bay {
      */
     public SecondClassQuartersCargoBay(double space, int doors) {
         totalSpace = (int)space/7;
-        weight = (float) space;
+        weight = space;
         currentSpace = (int)space/7;
         this.doors = doors;
     }
@@ -82,7 +82,7 @@ public final class SecondClassQuartersCargoBay extends Bay {
     }
 
     @Override
-    public float getWeight() {
+    public double getWeight() {
         return weight;
     }
 

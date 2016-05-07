@@ -1,23 +1,23 @@
-Version:1.1
+Version:1.0
 No-Dachi
 NDA-2KO
 
 Config:Biped
 TechBase:Inner Sphere
 Era:3060
+Source:TRO 3067
 Rules Level:2
-source:TRO 3067
 
 Mass:70
-Engine:350 XL Fusion Engine
-Structure:Endo-Steel
-Myomer:Triple Strength Myomer
+Engine:350 XL Engine(IS)
+Structure:IS Endo Steel
+Myomer:Triple-Strength
 
 Heat Sinks:14 Double
 Walk MP:5
 Jump MP:0
 
-Armor:Standard Armor
+Armor:Standard(Inner Sphere)
 LA Armor:22
 RA Armor:22
 LT Armor:20
@@ -30,20 +30,19 @@ RTL Armor:10
 RTR Armor:10
 RTC Armor:12
 
-Weapons:13
-1 Sword, Right Arm
-1 ISLargePulseLaser, Left Arm
-1 ISMediumPulseLaser, Left Arm
-1 ISSmallPulseLaser, Left Arm
-1 ISMediumPulseLaser, Center Torso
-1 ISMediumPulseLaser, Left Torso
-1 ISMediumPulseLaser, Right Torso
-1 ISMediumPulseLaser, Left Torso
-1 ISMediumPulseLaser, Right Torso
-1 ISSmallLaser, Head
-1 ISFlamer, Center Torso
-1 ISERMediumLaser (R), Left Torso (R)
-1 ISERMediumLaser (R), Right Torso (R)
+Weapons:12
+Large Pulse Laser, Left Arm
+Medium Pulse Laser, Right Torso
+Small Pulse Laser, Left Arm
+ER Medium Laser, Right Torso
+Medium Pulse Laser, Right Torso
+Medium Pulse Laser, Left Arm
+ER Medium Laser, Left Torso
+Medium Pulse Laser, Center Torso
+Medium Pulse Laser, Left Torso
+Flamer, Center Torso
+Medium Pulse Laser, Left Torso
+Small Laser, Head
 
 Left Arm:
 Shoulder
@@ -53,11 +52,11 @@ ISLargePulseLaser
 ISLargePulseLaser
 ISMediumPulseLaser
 ISSmallPulseLaser
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
-Endo-Steel
 
 Right Arm:
 Shoulder
@@ -69,72 +68,92 @@ Sword
 Sword
 Sword
 Sword
-Endo-Steel
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
 
 Left Torso:
-Engine
-Engine
-Engine
-ISERMediumLaser (R)
+Fusion Engine
+Fusion Engine
+Fusion Engine
 ISMediumPulseLaser
 ISMediumPulseLaser
-Triple Strength Myomer
-Triple Strength Myomer
-Triple Strength Myomer
-Endo-Steel
-Endo-Steel
-Endo-Steel
+ISERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+TSM
+TSM
+TSM
 
 Right Torso:
-Engine
-Engine
-Engine
-ISERMediumLaser (R)
+Fusion Engine
+Fusion Engine
+Fusion Engine
 ISMediumPulseLaser
 ISMediumPulseLaser
-Triple Strength Myomer
-Triple Strength Myomer
-Triple Strength Myomer
-Endo-Steel
-Endo-Steel
-Endo-Steel
+ISERMediumLaser
+IS Endo Steel
+IS Endo Steel
+IS Endo Steel
+TSM
+TSM
+TSM
 
 Center Torso:
-Engine
-Engine
-Engine
+Fusion Engine
+Fusion Engine
+Fusion Engine
 Gyro
 Gyro
 Gyro
 Gyro
-Engine
-Engine
-Engine
-ISFlamer
+Fusion Engine
+Fusion Engine
+Fusion Engine
 ISMediumPulseLaser
+Flamer
 
 Head:
 Life Support
 Sensors
 Cockpit
-ISSmallLaser
+Small Laser
 Sensors
 Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Left Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
 
 Right Leg:
 Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo-Steel
-Endo-Steel
+IS Endo Steel
+IS Endo Steel
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+

@@ -103,20 +103,20 @@ public class TestMech extends TestEntity {
     }
 
     @Override
-    public float getWeightMisc() {
+    public double getWeightMisc() {
         if (mech instanceof LandAirMech) {
             // 10% of weight is conversion equipment
-            return (float) Math.ceil(mech.getWeight() / 10f);
+            return Math.ceil(mech.getWeight() / 10);
         }
         return 0.0f;
     }
 
     @Override
-    public float getWeightPowerAmp() {
+    public double getWeightPowerAmp() {
         if (mech.isIndustrial()
                 && ((mech.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) || (mech
                         .getEngine().getEngineType() == Engine.FUEL_CELL))) {
-            float powerAmpWeight = 0;
+            double powerAmpWeight = 0;
             for (Mounted m : mech.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
                 if (wt instanceof EnergyWeapon) {
@@ -130,45 +130,44 @@ public class TestMech extends TestEntity {
                             .getTonnage(mech);
                 }
             }
-            return TestEntity.ceil(powerAmpWeight / 10f,
-                    getWeightCeilingPowerAmp());
+            return TestEntity.ceil(powerAmpWeight / 10f, getWeightCeilingPowerAmp());
         }
         return 0;
     }
 
-    public float getWeightCockpit() {
-        float weight = 3.0f;
+    public double getWeightCockpit() {
+        double weight = 3.0;
         if (mech.getCockpitType() == Mech.COCKPIT_SMALL) {
-            weight = 2.0f;
+            weight = 2.0;
         } else if (mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
-            weight = 4.0f;
+            weight = 4.0;
         } else if (mech.getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE) {
             // Technically, it's two separate 3-ton pieces of equipment.
             // We're ignoring that and returning the total, because it's easier.
-            weight = 6.0f;
+            weight = 6.0;
         } else if (mech.getCockpitType() == Mech.COCKPIT_DUAL) {
             // Solaris VII - The Game World (German) This is not actually
             // canonical as it
             // has never been repeated in any English language source including
             // Tech Manual
-            weight = 4.0f;
+            weight = 4.0;
         } else if (mech.getCockpitType() == Mech.COCKPIT_PRIMITIVE) {
-            weight = 5.0f;
+            weight = 5.0;
         } else if (mech.getCockpitType() == Mech.COCKPIT_PRIMITIVE_INDUSTRIAL) {
-            weight = 5.0f;
+            weight = 5.0;
         } else if ((mech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY) || (mech.getCockpitType() == Mech.COCKPIT_TRIPOD)) {
-            weight = 4.0f;
+            weight = 4.0;
         } else if (mech.getCockpitType() == Mech.COCKPIT_SUPERHEAVY_TRIPOD) {
-            weight = 5.0f;
+            weight = 5.0;
         } else if (mech.getCockpitType() == Mech.COCKPIT_INTERFACE) {
-            weight = 4.0f;
+            weight = 4.0;
         }
 
         return weight;
     }
 
-    public float getWeightGyro() {
-        float retVal = (float) Math.ceil(engine.getRating() / 100.0f);
+    public double getWeightGyro() {
+        double retVal = Math.ceil(engine.getRating() / 100.0f);
         if (mech.getGyroType() == Mech.GYRO_XL) {
             retVal /= 2;
         } else if (mech.getGyroType() == Mech.GYRO_COMPACT) {
@@ -183,7 +182,7 @@ public class TestMech extends TestEntity {
     }
 
     @Override
-    public float getWeightControls() {
+    public double getWeightControls() {
         return getWeightCockpit() + getWeightGyro();
     }
 
@@ -193,9 +192,9 @@ public class TestMech extends TestEntity {
     }
 
     @Override
-    public float getWeightHeatSinks() {
+    public double getWeightHeatSinks() {
         boolean hasCompact = false;
-        float compactHsTons = 0;
+        double compactHsTons = 0;
         for (Mounted misc : mech.getMisc()) {
             if (misc.getType().hasFlag(MiscType.F_COMPACT_HEAT_SINK)) {
                 hasCompact = true;
@@ -696,18 +695,18 @@ public class TestMech extends TestEntity {
      * calculates the total weight of all armored components.
      */
     @Override
-    public float getArmoredComponentWeight() {
-        float weight = 0.0f;
+    public double getArmoredComponentWeight() {
+        double weight = 0.0;
 
         for (int location = Mech.LOC_HEAD; location <= Mech.LOC_LLEG; location++) {
             for (int slot = 0; slot < mech.getNumberOfCriticals(location); slot++) {
                 CriticalSlot cs = mech.getCritical(location, slot);
                 if ((cs != null) && cs.isArmored()) {
-                    weight += 0.5f;
+                    weight += 0.5;
 
                     if ((cs.getType() == CriticalSlot.TYPE_SYSTEM)
                             && (cs.getIndex() == Mech.SYSTEM_COCKPIT)) {
-                        weight += 0.5f;
+                        weight += 0.5;
                     }
                 }
             }

@@ -190,7 +190,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     protected String externalId = "-1";
 
-    protected float weight;
+    protected double weight;
     protected boolean omni = false;
     protected String chassis;
     protected String model;
@@ -895,12 +895,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     /**
-     * this returns the external ID. 1/16/2012 - Taharqa: I am changing
+     * This returns the external ID.
+     * <p>
+     * Taharqa: I am changing
      * externalId to a string so I can use UUIDs in MHQ. It should only require
      * a simple parseInt to be added to it to return an integer for other
-     * programs (i.e. MekWars)
-     *
+     * programs (i.e. MekWars).
+     * 
      * @return the ID settable by external sources (such as mm.net)
+     * @throws NumberFormatException if the stored ID is not an integer
      * @see megamek.common.Entity#externalId
      */
     public int getExternalId() {
@@ -1105,7 +1108,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         this.year = year;
     }
 
-    public float getWeight() {
+    /** @return the tonnage of the Entity, not its weight */
+    public double getWeight() {
         return weight;
     }
 
@@ -1118,7 +1122,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return EntityWeightClass.getClassName(getWeightClass(), this);
     }
 
-    public void setWeight(float weight) {
+    public void setWeight(double weight) {
         this.weight = weight;
         // Any time the weight is reset we need to reset the crew size
         crew.setSize(Compute.getFullCrewSize(this));
@@ -6387,11 +6391,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         if (curHex.containsTerrain(Terrains.WOODS, 2)) {
             roll.append(new PilotingRollData(getId(), 0,
-                                             "landing in heavy woods"));
+                    "landing in heavy woods"));
+            addPilotingModifierForTerrain(roll);
+        } else if (curHex.containsTerrain(Terrains.WOODS, 3)) {
+            roll.append(new PilotingRollData(getId(), 0,
+                    "landing in ultra woods"));
             addPilotingModifierForTerrain(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "hex does not contain heavy woods");
+                    "hex does not contain heavy or ultra woods");
         }
         return roll;
     }
@@ -8847,8 +8855,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         return false;
     }
 
-    public float getTroopCarryingSpace() {
-        float space = 0;
+    public double getTroopCarryingSpace() {
+        double space = 0;
         for (Transporter t : transports) {
             if (t instanceof TroopSpace) {
                 space += ((TroopSpace) t).totalSpace;
@@ -13428,8 +13436,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void loadDefaultQuirks() {
 
         // Get a list of quirks for this entity.
-        List<QuirkEntry> quirks = QuirksHandler.getQuirks(getChassis(),
-                getModel());
+        List<QuirkEntry> quirks = QuirksHandler.getQuirks(this);
 
         // If this unit has no quirks, we do not need to proceed further.
         if ((quirks == null) || quirks.isEmpty()) {
@@ -13581,10 +13588,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return "Mech";
         } else if ((typeId & ETYPE_AERO) == ETYPE_AERO) {
             return "Aero";
+        } else if ((typeId & ETYPE_VTOL) == ETYPE_VTOL) {
+            return "VTOL";
         } else if ((typeId & ETYPE_TANK) == ETYPE_TANK) {
             return "Tank";
         } else if ((typeId & ETYPE_INFANTRY) == ETYPE_INFANTRY) {
             return "Infantry";
+        } else if ((typeId & ETYPE_PROTOMECH) == ETYPE_PROTOMECH) {
+            return "Protomech";
         } else {
             return "Unknown";
         }

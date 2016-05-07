@@ -46,7 +46,7 @@ public class PhysicalInfoTest {
 
         Entity mockShooter = Mockito.mock(BipedMech.class);
         Mockito.when(mockShooter.getId()).thenReturn(1);
-        Mockito.when(mockShooter.getWeight()).thenReturn(50F);
+        Mockito.when(mockShooter.getWeight()).thenReturn(50.0);
 
         EntityState mockShooterState = Mockito.mock(EntityState.class);
 
@@ -101,7 +101,7 @@ public class PhysicalInfoTest {
         Assert.assertEquals(10.0, testPhysicalInfo.getExpectedDamageOnHit(), TOLERANCE);
 
         // Make the puncher heavier.
-        Mockito.when(mockShooter.getWeight()).thenReturn(100F);
+        Mockito.when(mockShooter.getWeight()).thenReturn(100.0);
         testPhysicalInfo.setShooter(mockShooter);
         testPhysicalInfo.setAttackType(punch);
         testPhysicalInfo.initDamage(punch, mockShooterState, mockTargetState, true, mockGame);
@@ -116,7 +116,7 @@ public class PhysicalInfoTest {
         Mockito.when(mockTarget.getArmor(Mockito.anyInt(), Mockito.eq(false))).thenReturn(6);
         Mockito.when(mockTarget.getArmor(Mockito.anyInt(), Mockito.eq(true))).thenReturn(3);
         Mockito.when(mockTarget.getInternal(Mockito.anyInt())).thenReturn(3);
-        Mockito.when(mockShooter.getWeight()).thenReturn(100F);
+        Mockito.when(mockShooter.getWeight()).thenReturn(100.0);
         testPhysicalInfo.setShooter(mockShooter);
         testPhysicalInfo.setAttackType(punch);
         testPhysicalInfo.initDamage(punch, mockShooterState, mockTargetState, true, mockGame);

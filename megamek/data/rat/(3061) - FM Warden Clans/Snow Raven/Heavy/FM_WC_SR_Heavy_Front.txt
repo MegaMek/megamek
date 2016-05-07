@@ -1,0 +1,12 @@
+Warden Clan Front-Line Heavy Mechs (Snow Raven),
+Cauldron-Born (Ebon Jaguar) C,1
+Thor (Summoner) Prime,2
+Vulture (Mad Dog) Prime,3
+Vulture (Mad Dog) A,4
+Mad Cat (Timber Wolf) C,5
+Mad Cat (Timber Wolf) Prime,6
+Vulture (Mad Dog) B,5
+Linebacker D,4
+Loki (Hellbringer) Prime,3
+Thor (Summoner) D,2
+Loki (Hellbringer) A,1

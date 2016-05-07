@@ -49,13 +49,16 @@ import megamek.common.util.StringUtil;
  *
  */
 public abstract class TestEntity implements TestEntityOption {
-
-    public final static float CEIL_TON = 1.0f;
-    public final static float CEIL_HALFTON = 2.0f;
-    public final static float CEIL_QUARTERTON = 4.0f;
-    public final static float CEIL_TENTHTON = 10.0f;
-    public final static float CEIL_KILO = 1000.0f;
-
+    public static enum Ceil {
+        TON(1.0), HALFTON(2.0), QUARTERTON(4.0), TENTHTON(10.0), KILO(1000.0);
+        
+        public final double mult;
+        
+        private Ceil(double mult) {
+            this.mult = mult;
+        }
+    }
+    
     protected Engine engine = null;
     protected Armor[] armor = null;
     protected Structure structure = null;
@@ -69,11 +72,11 @@ public abstract class TestEntity implements TestEntityOption {
 
     public abstract boolean isAero();
 
-    public abstract float getWeightControls();
+    public abstract double getWeightControls();
 
-    public abstract float getWeightMisc();
+    public abstract double getWeightMisc();
 
-    public abstract float getWeightHeatSinks();
+    public abstract double getWeightHeatSinks();
 
     public abstract boolean hasDoubleHeatSinks();
 
@@ -109,7 +112,7 @@ public abstract class TestEntity implements TestEntityOption {
         return getEntity().isClanArmor(0) && !getEntity().hasPatchworkArmor();
     }
 
-    public float getWeight() {
+    public double getWeight() {
         return getEntity().getWeight();
     }
 
@@ -121,58 +124,72 @@ public abstract class TestEntity implements TestEntityOption {
         return getEntity().getLocationAbbr(location);
     }
 
-    public float getWeightCeilingEngine() {
+    @Override
+    public Ceil getWeightCeilingEngine() {
         return options.getWeightCeilingEngine();
     }
 
-    public float getWeightCeilingStructure() {
+    @Override
+    public Ceil getWeightCeilingStructure() {
         return options.getWeightCeilingStructure();
     }
 
-    public float getWeightCeilingArmor() {
+    @Override
+    public Ceil getWeightCeilingArmor() {
         return options.getWeightCeilingArmor();
     }
 
-    public float getWeightCeilingControls() {
+    @Override
+    public Ceil getWeightCeilingControls() {
         return options.getWeightCeilingControls();
     }
 
-    public float getWeightCeilingWeapons() {
+    @Override
+    public Ceil getWeightCeilingWeapons() {
         return options.getWeightCeilingWeapons();
     }
 
-    public float getWeightCeilingTargComp() {
+    @Override
+    public Ceil getWeightCeilingTargComp() {
         return options.getWeightCeilingTargComp();
     }
 
-    public float getWeightCeilingGyro() {
+    @Override
+    public Ceil getWeightCeilingGyro() {
         return options.getWeightCeilingGyro();
     }
 
-    public float getWeightCeilingTurret() {
+    @Override
+    public Ceil getWeightCeilingTurret() {
         return options.getWeightCeilingTurret();
     }
 
-    public float getWeightCeilingLifting() {
+    @Override
+    public Ceil getWeightCeilingLifting() {
         return options.getWeightCeilingLifting();
     }
 
-    public float getWeightCeilingPowerAmp() {
+    @Override
+    public Ceil getWeightCeilingPowerAmp() {
         return options.getWeightCeilingPowerAmp();
     }
 
-    public float getMaxOverweight() {
+    @Override
+    public double getMaxOverweight() {
         return options.getMaxOverweight();
     }
 
+    @Override
     public boolean showOverweightedEntity() {
         return options.showOverweightedEntity();
     }
 
-    public float getMinUnderweight() {
+    @Override
+    public double getMinUnderweight() {
         return options.getMinUnderweight();
     }
 
+    @Override
     public boolean showUnderweightedEntity() {
         return options.showUnderweightedEntity();
     }
@@ -213,28 +230,28 @@ public abstract class TestEntity implements TestEntityOption {
      *              TestEntity.CEIL_TON, etc.
      * @return      Rounded value
      */
-    public static float ceil(float f, float type) {
-        return (float) Math.ceil(f * type) / type;
+    public static double ceil(double f, Ceil type) {
+        return Math.ceil(f * type.mult) / type.mult;
     }
 
-    public static float ceilMaxHalf(float f, float type) {
-        if (type == CEIL_TON) {
-            return TestEntity.ceil(f, CEIL_HALFTON);
+    public static double ceilMaxHalf(double f, Ceil type) {
+        if (type == Ceil.TON) {
+            return TestEntity.ceil(f, Ceil.HALFTON);
         }
         return TestEntity.ceil(f, type);
     }
 
-    public static float floor(float f, float type) {
-        return (float) Math.floor(f * type) / type;
+    public static double floor(double f, Ceil type) {
+        return Math.floor(f * type.mult) / type.mult;
     }
 
-    public static float round(float f, float type) {
-        return Math.round(f * type) / type;
+    public static double round(double f, Ceil type) {
+        return Math.round(f * type.mult) / type.mult;
     }
 
-    protected static String makeWeightString(float weight) {
+    protected static String makeWeightString(double weight) {
         return (weight < 100 ? " " : "") + (weight < 10 ? " " : "")
-                + Float.toString(weight)
+                + Double.toString(weight)
                 + ((Math.ceil(weight * 10) == (weight * 10)) ? "0" : "");
     }
 
@@ -275,8 +292,8 @@ public abstract class TestEntity implements TestEntityOption {
                 + TestEntity.makeWeightString(getWeightEngine()) + "\n";
     }
 
-    public float getWeightEngine() {
-        float weight = engine.getWeightEngine(getEntity(),
+    public double getWeightEngine() {
+        double weight = engine.getWeightEngine(getEntity(),
                 getWeightCeilingEngine());
         return weight;
     }
@@ -289,7 +306,7 @@ public abstract class TestEntity implements TestEntityOption {
                 + TestEntity.makeWeightString(getWeightStructure()) + "\n";
     }
 
-    public float getWeightStructure() {
+    public double getWeightStructure() {
         return structure.getWeightStructure(getWeight(),
                 getWeightCeilingStructure());
     }
@@ -309,13 +326,12 @@ public abstract class TestEntity implements TestEntityOption {
 
     }
 
-    public float getWeightArmor() {
-        return (float) getEntity().getLabArmorTonnage();
+    public double getWeightArmor() {
+        return getEntity().getLabArmorTonnage();
     }
 
-    public float getWeightAllocatedArmor() {
-
-        float armorWeight = 0;
+    public double getWeightAllocatedArmor() {
+        double armorWeight = 0;
         if (!getEntity().hasPatchworkArmor()) {
             armorWeight += armor[0].getWeightArmor(getTotalOArmor(),
                     getWeightCeilingArmor());
@@ -333,8 +349,8 @@ public abstract class TestEntity implements TestEntityOption {
         return armorWeight;
     }
 
-    public float getWeightMiscEquip() {
-        float weightSum = 0.0f;
+    public double getWeightMiscEquip() {
+        double weightSum = 0.0;
         for (Mounted m : getEntity().getMisc()) {
             MiscType mt = (MiscType) m.getType();
             if (mt.hasFlag(MiscType.F_ENDO_STEEL)
@@ -415,8 +431,8 @@ public abstract class TestEntity implements TestEntityOption {
         return buff;
     }
 
-    public float getWeightWeapon() {
-        float weight = 0.0f;
+    public double getWeightWeapon() {
+        double weight = 0.0;
         for (Mounted m : getEntity().getWeaponList()) {
             WeaponType wt = (WeaponType) m.getType();
             if (m.isDWPMounted()){
@@ -455,8 +471,8 @@ public abstract class TestEntity implements TestEntityOption {
         return buff;
     }
 
-    public float getWeightAmmo() {
-        float weight = 0.0f;
+    public double getWeightAmmo() {
+        double weight = 0.0;
         for (Mounted m : getEntity().getAmmo()) {
 
             // One Shot Ammo
@@ -475,7 +491,7 @@ public abstract class TestEntity implements TestEntityOption {
         return weight;
     }
 
-    public abstract float getWeightPowerAmp();
+    public abstract double getWeightPowerAmp();
 
     public StringBuffer printAmmo() {
         return printAmmo(new StringBuffer());
@@ -565,12 +581,12 @@ public abstract class TestEntity implements TestEntityOption {
             return 6;
         } else if (mt.hasFlag(MiscType.F_MASC)) {
             if (mt.getInternalName().equals("ISMASC")) {
-                return Math.round(getWeight() / 20.0f);
+                return (int) Math.round(getWeight() / 20.0);
             } else if (mt.getInternalName().equals("CLMASC")) {
-                return Math.round(getWeight() / 25.0f);
+                return (int) Math.round(getWeight() / 25.0);
             }
         } else if (mt.hasFlag(MiscType.F_TARGCOMP)) {
-            float fTons = 0.0f;
+            double fTons = 0.0f;
             for (Mounted mo : getEntity().getWeaponList()) {
                 WeaponType wt = (WeaponType) mo.getType();
                 if (wt.hasFlag(WeaponType.F_DIRECT_FIRE)) {
@@ -583,7 +599,7 @@ public abstract class TestEntity implements TestEntityOption {
                     fTons += mt.getTonnage(getEntity());
                 }
             }
-            float weight = 0.0f;
+            double weight = 0.0f;
             if (mt.getInternalName().equals("ISTargeting Computer")) {
                 weight = TestEntity.ceil(fTons / 4.0f,
                         getWeightCeilingTargComp());
@@ -595,7 +611,7 @@ public abstract class TestEntity implements TestEntityOption {
                 case CEIL_TARGCOMP_CRITS:
                     return (int) Math.ceil(weight);
                 case ROUND_TARGCOMP_CRITS:
-                    return Math.round(weight);
+                    return (int) Math.round(weight);
                 case FLOOR_TARGCOMP_CRITS:
                     return (int) Math.floor(weight);
             }
@@ -650,8 +666,8 @@ public abstract class TestEntity implements TestEntityOption {
         return mt.getCriticals(getEntity());
     }
 
-    public float calculateWeight() {
-        float weight = 0;
+    public double calculateWeight() {
+        double weight = 0;
         weight += getWeightEngine();
         weight += getWeightStructure();
         weight += getWeightControls();
@@ -684,8 +700,8 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public boolean correctWeight(StringBuffer buff, boolean showO, boolean showU) {
-        float weightSum = calculateWeight();
-        float weight = getWeight();
+        double weightSum = calculateWeight();
+        double weight = getWeight();
 
         if (showO && ((weight + getMaxOverweight()) < weightSum)) {
             buff.append("Weight: ").append(calculateWeight())
@@ -987,8 +1003,8 @@ public abstract class TestEntity implements TestEntityOption {
         if ((getEntity() instanceof Tank) && getEntity().isOmni()) {
             Tank tank = (Tank) getEntity();
             // Check to see if the base chassis turret weight is set
-            float turretWeight = 0;
-            float turret2Weight = 0;
+            double turretWeight = 0;
+            double turret2Weight = 0;
             for (Mounted m : tank.getEquipment()) {
                 if ((m.getLocation() == tank.getLocTurret2())
                         && !(m.getType() instanceof AmmoType)) {
@@ -1003,11 +1019,11 @@ public abstract class TestEntity implements TestEntityOption {
             turret2Weight *= 0.1f;
             if (tank.isSupportVehicle()) {
                 if (getEntity().getWeight() < 5) {
-                    turretWeight = TestEntity.ceil(turretWeight, CEIL_KILO);
-                    turret2Weight = TestEntity.ceil(turret2Weight, CEIL_KILO);
+                    turretWeight = TestEntity.ceil(turretWeight, Ceil.KILO);
+                    turret2Weight = TestEntity.ceil(turret2Weight, Ceil.KILO);
                 } else {
-                    turretWeight = TestEntity.ceil(turretWeight, CEIL_HALFTON);
-                    turret2Weight = TestEntity.ceil(turret2Weight, CEIL_HALFTON);
+                    turretWeight = TestEntity.ceil(turretWeight, Ceil.HALFTON);
+                    turret2Weight = TestEntity.ceil(turret2Weight, Ceil.HALFTON);
                 }
             } else {
                 turretWeight = TestEntity.ceil(turretWeight,
@@ -1515,9 +1531,9 @@ public abstract class TestEntity implements TestEntityOption {
         return buff;
     }
 
-    public float getWeightCarryingSpace() {
-        float carryingSpace = getEntity().getTroopCarryingSpace();
-        float cargoWeight = 0;
+    public double getWeightCarryingSpace() {
+        double carryingSpace = getEntity().getTroopCarryingSpace();
+        double cargoWeight = 0;
         for (Bay bay : getEntity().getTransportBays()) {
             cargoWeight += bay.getWeight();
         }
@@ -1533,7 +1549,7 @@ public abstract class TestEntity implements TestEntityOption {
                             .getTroopCarryingSpace()) + "\n";
         }
         String cargoWeightString = "";
-        float cargoWeight = 0;
+        double cargoWeight = 0;
         for (Bay bay : getEntity().getTransportBays()) {
             cargoWeight += bay.getWeight();
         }
@@ -1579,7 +1595,7 @@ public abstract class TestEntity implements TestEntityOption {
                 + Integer.toString(getEntity().getYear()) + ")\n";
     }
 
-    public float getArmoredComponentWeight() {
+    public double getArmoredComponentWeight() {
         return 0.0f;
     }
 
@@ -1597,13 +1613,13 @@ class Armor {
         this.armorFlags = armorFlags;
     }
 
-    public float getWeightArmor(int totalOArmor, float roundWeight) {
+    public double getWeightArmor(int totalOArmor, TestEntity.Ceil roundWeight) {
         return Armor.getWeightArmor(armorType, armorFlags, totalOArmor,
                 roundWeight);
     }
 
-    public static float getWeightArmor(int armorType, int armorFlags,
-            int totalOArmor, float roundWeight) {
+    public static double getWeightArmor(int armorType, int armorFlags,
+            int totalOArmor, TestEntity.Ceil roundWeight) {
         double points = totalOArmor;
         int techLevel;
         if ((armorFlags & CLAN_ARMOR) != 0) {
@@ -1616,7 +1632,7 @@ class Armor {
         points /= multiplier;
         double pointsPerTon = 16.0f;
         double armorWeight = points / pointsPerTon;
-        return TestEntity.ceilMaxHalf((float) armorWeight, roundWeight);
+        return TestEntity.ceilMaxHalf(armorWeight, roundWeight);
     }
 
     public String getShortName() {
@@ -1641,21 +1657,26 @@ class Structure {
         movementmode = movementMode;
     }
 
-    public float getWeightStructure(float weight, float roundWeight) {
+    public double getWeightStructure(double weight, TestEntity.Ceil roundWeight) {
         return Structure.getWeightStructure(structureType, weight, roundWeight,
                 isSuperHeavy, movementmode);
     }
 
-    public static float getWeightStructure(int structureType, float weight,
-            float roundWeight, boolean isSuperHeavy,
+    public static double getWeightStructure(int structureType, double weight,
+            TestEntity.Ceil roundWeight, boolean isSuperHeavy,
             EntityMovementMode movementmode) {
-        float multiplier = 1.0f;
+        double multiplier = 1.0;
         if (movementmode == EntityMovementMode.TRIPOD) {
-            multiplier = 1.1f;
+            multiplier = 1.1;
         }
         if (structureType == EquipmentType.T_STRUCTURE_ENDO_STEEL) {
-            return TestEntity.ceilMaxHalf((weight / 20.0f) * multiplier,
-                    roundWeight);
+            if (isSuperHeavy) {
+                return TestEntity.ceilMaxHalf((weight / 10.0f) * multiplier,
+                        roundWeight);
+            } else {
+                return TestEntity.ceilMaxHalf((weight / 20.0f) * multiplier,
+                        roundWeight);
+            }
         } else if (structureType == EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE) {
             return TestEntity.ceilMaxHalf((weight / 20.0f) * multiplier,
                     roundWeight);
@@ -1684,7 +1705,8 @@ class Structure {
             }
         }
         if (isSuperHeavy
-                && ((movementmode != EntityMovementMode.NAVAL) && (movementmode != EntityMovementMode.SUBMARINE))) {
+                && ((movementmode != EntityMovementMode.NAVAL)
+                        && (movementmode != EntityMovementMode.SUBMARINE))) {
             return TestEntity.ceilMaxHalf((weight / 5.0f) * multiplier,
                     roundWeight);
         } else {

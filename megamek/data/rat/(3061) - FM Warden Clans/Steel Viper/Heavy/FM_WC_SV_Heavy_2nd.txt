@@ -1,0 +1,12 @@
+Warden Clan Second-Line Heavy Mechs (Steel Viper),
+Loki (Hellbringer) A,1
+Matador (Standard),2
+Galahad (Glass Spider) (Standard),3
+Rifleman IIC (Standard),4
+Flashman FLS-8K,5
+Rifleman IIC (Standard),6
+Matador (Standard),5
+Viper (Black Python) (Standard),4
+Viper (Black Python) 2,3
+Grizzly (Standard),2
+Bombardier BMB-12D,1

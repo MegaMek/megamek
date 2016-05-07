@@ -1,0 +1,12 @@
+Warden Clan Second-Line Assault Mechs (Coyote),
+Man O' War (Gargoyle) A,1
+Warhammer IIC (Standard),2
+Supernova (Standard),3
+Canis (Standard),4
+Warhammer IIC (Standard),5
+Canis (Standard),6
+Phoenix Hawk IIC (Standard),5
+Highlander IIC (Standard),4
+Thug THG-11E,3
+Highlander IIC (Standard),2
+Kodiak (Standard),1

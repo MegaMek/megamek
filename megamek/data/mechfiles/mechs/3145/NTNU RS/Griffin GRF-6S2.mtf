@@ -4,8 +4,8 @@ GRF-6S2
 
 Config:Biped
 TechBase:Mixed (IS Chassis)
-Era:3130
-Source:RS 3145 NT NU
+Era:3123
+Source:RS 3145 NTNU - Late Republic
 Rules Level:3
 
 Mass:55
@@ -33,8 +33,8 @@ RTC Armor:9
 
 Weapons:3
 ER Medium Laser, Center Torso
-ER PPC, Right Arm
 LRM 15, Right Torso
+ER PPC, Right Arm
 
 Left Arm:
 Shoulder

@@ -2,13 +2,13 @@
 <entityverifier>
   <mech>
     <ceilWeight>
-      <engine>0.5</engine>
-      <structure>0.5</structure>
-      <armor>0.5</armor>
-      <controls>0.5</controls>
-      <weapons>1.0</weapons>
-      <targcomp>1.0</targcomp>
-      <gyro>0.5</gyro>
+      <engine>HALFTON</engine>
+      <structure>HALFTON</structure>
+      <armor>HALFTON</armor>
+      <controls>HALFTON</controls>
+      <weapons>TON</weapons>
+      <targcomp>TON</targcomp>
+      <gyro>HALFTON</gyro>
     </ceilWeight>
     <showOverweighted>
     true
@@ -46,15 +46,15 @@
   </mech>
   <tank>
     <ceilWeight>
-      <engine>0.5</engine>
-      <structure>0.5</structure>
-      <armor>0.5</armor>
-      <controls>0.5</controls>
-      <weapons>1.0</weapons>
-      <targcomp>1.0</targcomp>
-      <turret>0.5</turret>
-      <lifting>0.5</lifting>
-      <poweramp>0.5</poweramp>
+      <engine>HALFTON</engine>
+      <structure>HALFTON</structure>
+      <armor>HALFTON</armor>
+      <controls>HALFTON</controls>
+      <weapons>TON</weapons>
+      <targcomp>TON</targcomp>
+      <turret>HALFTON</turret>
+      <lifting>HALFTON</lifting>
+      <poweramp>HALFTON</poweramp>
     </ceilWeight>
     <showOverweighted>
     true

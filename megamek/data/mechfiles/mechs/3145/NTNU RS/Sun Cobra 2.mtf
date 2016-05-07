@@ -4,7 +4,7 @@ Sun Cobra
 
 Config:Biped
 TechBase:Clan
-Era:3130
+Era:3093
 Source:RS 3145 NT NU
 Rules Level:2
 
@@ -31,8 +31,8 @@ RTR Armor:8
 RTC Armor:10
 
 Weapons:2
-ER PPC, Right Arm
 ER PPC, Left Arm
+ER PPC, Right Arm
 
 Left Arm:
 Shoulder

@@ -4,7 +4,7 @@ TSG-10L
 
 Config:Biped
 TechBase:Inner Sphere
-Era:3130
+Era:3125
 Source:RS 3145 NTNU
 Rules Level:4
 
@@ -31,23 +31,23 @@ RTR Armor:6
 RTC Armor:9
 
 Weapons:10
-Medium Laser, Left Torso
-Medium Laser, Right Torso
-Medium Laser, Right Torso
-Medium Laser, Left Torso
 Medium VSP Laser, Left Arm
 Small Laser, Left Arm
 Small Laser, Left Arm
 Small Laser, Left Arm
 Small Laser, Left Arm
+Medium Laser, Left Torso
+Medium Laser, Left Torso
+Medium Laser, Right Torso
+Medium Laser, Right Torso
 TAG, Center Torso
 
 Left Arm:
 Shoulder
 Upper Arm Actuator
 Lower Arm Actuator
-ISMediumVSP
-ISMediumVSP
+ISMediumVSPLaser
+ISMediumVSPLaser
 Small Laser
 Small Laser
 Small Laser

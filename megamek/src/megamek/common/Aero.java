@@ -365,7 +365,7 @@ public class Aero extends Entity {
     }
 
     public void autoSetMaxBombPoints() {
-        maxBombPoints = Math.round(getWeight() / 5);
+        maxBombPoints = (int) Math.round(getWeight() / 5);
     }
 
     public int[] getBombChoices() {
@@ -605,7 +605,7 @@ public class Aero extends Entity {
         fuel = gas;
     }
 
-    public float getFuelPointsPerTon(){
+    public double getFuelPointsPerTon(){
         if (getEntityType() == Entity.ETYPE_CONV_FIGHTER){
             return 160;
         } else if (getEntityType() == Entity.ETYPE_DROPSHIP) {
@@ -634,7 +634,7 @@ public class Aero extends Entity {
             } else if (getWeight() < 250000){
                 return 5;
             } else {
-                return 2.5f;
+                return 2.5;
             }
         } else if (getEntityType() == Entity.ETYPE_SMALL_CRAFT) {
             return 80;
@@ -648,8 +648,8 @@ public class Aero extends Entity {
      *
      * @param fuelTons  The number of tons of fuel
      */
-    public void setFuelTonnage(float fuelTons){
-        float pointsPerTon = getFuelPointsPerTon();
+    public void setFuelTonnage(double fuelTons){
+        double pointsPerTon = getFuelPointsPerTon();
         fuel = (int)Math.ceil(pointsPerTon * fuelTons);
     }
 
@@ -658,7 +658,7 @@ public class Aero extends Entity {
      *
      * @return The number of tons of fuel on this Aero.
      */
-    public float getFuelTonnage(){
+    public double getFuelTonnage(){
         return fuel / getFuelPointsPerTon();
     }
 

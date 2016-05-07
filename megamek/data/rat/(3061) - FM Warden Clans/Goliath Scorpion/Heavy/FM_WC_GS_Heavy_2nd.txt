@@ -1,0 +1,12 @@
+Warden Clan Second-Line Heavy Mechs (Goliath Scorpion),
+Fire Scorpion (Standard),1
+Lancelot LNC25-01,2
+Flashman FLS-8K,3
+Black Knight BL-6-KNT,4
+Fire Scorpion (Standard),5
+Viper (Black Python) (Standard),6
+Galahad (Glass Spider) 2,5
+Black Knight BL-6-KNT,4
+Lancelot LNC25-01,3
+Rifleman IIC (Standard),2
+Fire Scorpion (Standard),1

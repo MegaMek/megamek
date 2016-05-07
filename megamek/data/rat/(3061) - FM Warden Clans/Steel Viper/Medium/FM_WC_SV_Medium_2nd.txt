@@ -1,0 +1,12 @@
+Warden Clan Second-Line Medium Mechs (Steel Viper),
+Battle Cobra Prime,1
+Crab CRB-27,2
+Griffin IIC (Standard),3
+Shadow Hawk IIC (Standard),4
+Great Wyrm (Standard),5
+Goshawk (Vapor Eagle) (Standard),6
+Goshawk (Vapor Eagle) 2,5
+Kintaro KTO-19,4
+Hellhound (Conjurer) (Standard),3
+Hellhound (Conjurer) (Standard),2
+Black Hawk (Nova) Prime,1

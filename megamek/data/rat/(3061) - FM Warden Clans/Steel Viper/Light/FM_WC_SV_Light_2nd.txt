@@ -1,0 +1,12 @@
+Warden Clan Second-Line Light Mechs (Steel Viper),
+Hankyu (Arctic Cheetah) A,1
+Hussar HSR-200-D,2
+Jenner IIC (Standard),3
+Vixen (Incubus) (Standard),4
+Peregrine (Horned Owl) (Standard),5
+Locust IIC (Standard),6
+Locust IIC (Standard),5
+Jenner IIC (Standard),4
+Baboon (Howler) (Standard),3
+Baboon (Howler) (Standard),2
+Dasher (Fire Moth) Prime,1

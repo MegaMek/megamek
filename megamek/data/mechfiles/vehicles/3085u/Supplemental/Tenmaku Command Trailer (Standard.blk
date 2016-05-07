@@ -1,0 +1,107 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Tank
+</UnitType>
+
+<Name>
+Tenmaku Command Trailer
+</Name>
+
+<Model>
+(Standard
+</Model>
+
+<year>
+3086
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Wheeled
+</motion_type>
+
+<transporters>
+troopspace:8.0
+</transporters>
+
+<cruiseMP>
+0
+</cruiseMP>
+
+<engine_type>
+0
+</engine_type>
+
+<armor_type>
+6
+</armor_type>
+
+<armor_tech>
+5
+</armor_tech>
+
+<armor>
+60
+60
+60
+57
+60
+</armor>
+
+<Body Equipment>
+ISC3MasterUnit
+ISC3MasterUnit
+ISGuardianECMSuite
+Communications Equipment (10 ton)
+ISCASE
+Cargo (5 tons)
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+ISAMS Ammo
+IS Light Machine Gun Ammo - Full
+</Body Equipment>
+
+<Front Equipment>
+Hitch
+</Front Equipment>
+
+<Right Equipment>
+ISAntiMissileSystem
+</Right Equipment>
+
+<Left Equipment>
+ISAntiMissileSystem
+</Left Equipment>
+
+<Rear Equipment>
+</Rear Equipment>
+
+<Turret Equipment>
+ISMediumPulseLaser
+ISMediumPulseLaser
+Light Machine Gun
+Light Machine Gun
+ISAntiMissileSystem
+</Turret Equipment>
+
+<source>
+TRO 3085S - Early Republic
+</source>
+
+<tonnage>
+75.0
+</tonnage>
+

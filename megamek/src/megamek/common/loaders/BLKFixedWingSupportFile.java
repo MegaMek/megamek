@@ -74,7 +74,7 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMechLoader {
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");
         }
-        a.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
+        a.setWeight(dataFile.getDataAsDouble("tonnage")[0]);
 
         // get a movement mode - lets try Aerodyne
         EntityMovementMode nMotion = EntityMovementMode.AERODYNE;

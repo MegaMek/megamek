@@ -344,6 +344,13 @@ Manticore Heavy Tank (LB-X)|
 Tokugawa Heavy Tank TKG-150|
 Karnov UR Transport (3055 Upgrade)|
 Saladin Assault Hover Tank (LB-X)|
+Manta Fast Attack Submarine (Support)|
+Moray Heavy Attack Submarine (Original)|
+Moray Heavy Attack Submarine (Standard)|
+Manta Fast Attack Submarine (Standard)|
+Teppo Artillery Vehicle (Standard)|
+Bokkusu Support Trailer (Standard)|
+Tenmaku Command Trailer (Standard|
 Regulator II Hovertank (RAC)|
 Fox Armored Car (Standard)|
 Zugvogel Omni Support Aircraft A|
@@ -952,11 +959,13 @@ Thumper Artillery Vehicle TAV-1|
 Darter Scout Car (BAP)|
 Marsden II MBT II-A (LB-X)|
 Transportable Field Repair Unit 'Nifty'|
+Daimyo HQ 67-K|
 Tamerlane Strike Sled 2|
 Demon Tank (Royal)|
 Rhino Fire Support Tank (Royal)|
 Ripper Infantry Transport (Royal)|
 Crow Scout Helicopter (C3)|
+Darter Scout Car (SRM-2)|
 Hiryo Armored Infantry Transport (MRM)|
 Saxon APC (Laser)|
 Merkava Heavy Tank Mk VIII|
@@ -1925,7 +1934,7 @@ Scout Infantry The Battle Corps - Baker Street Irregulars|
 Hover Assault Infantry Johnston Industries Rapid Response Force|
 Foot Infantry Raventhir's Infantry Guard|
 Bridge-builder Engineers Take the Time III-chi, Forty-eighth Division|
-Heavy Mountain Infantry Cavalier “Mountain Men” Infantry Guard, Magistracy Cavaliers|
+Heavy Mountain Infantry Cavalier 'Mountain Men' Infantry Guard, Magistracy Cavaliers|
 Motorized Heavy Infantry Motstand/Mimir Troop|
 Heavy Foot LRM Infantry Stalwart Support - Heavy LRM Infantry|
 Ceremonial Guard Otomo Guard|
@@ -1966,7 +1975,7 @@ Mechanized Tracked Platoon (Rifle AA)|
 Dragonstar Assault Transport (3060)|
 Dragonstar Passenger Transport (Standard)|
 Foxhound Gunboat TIG-40|
-Aquarius Escort|
+Aquarius Escort (Standard)|
 Lyonesse Escort W1|
 Aquarius Escort W1|
 Lyonesse Escort M1|
@@ -3588,6 +3597,7 @@ Highlander IIC 3|
 Argus AGS-8DX|
 Men Shen MS1-OU|
 Vulture (Mad Dog) U|
+Naginata NG-C3Ar|
 Dart DRT-6T|
 Cyclops CP-11-C3|
 Banshee BNC-3Mr|
@@ -3626,7 +3636,6 @@ Hatamoto-Chi HTM-28Tr|
 Cauldron-Born (Ebon Jaguar) U|
 Daikyu DAI-01r|
 King Crab KGC-005r|
-Naginata NC-C3Ar|
 Arctic Fox AF1U|
 Grand Dragon DRG-7KC|
 Albatross ALB-3Ur|
@@ -4475,6 +4484,7 @@ Grasshopper GHR-6K|
 Blackjack BJ-4|
 Koshi (Mist Lynx) P|
 Whitworth WTH-1H|
+Hellspawn HSN-10G|
 Gladiator (Executioner) H|
 Black Hawk (Nova) A|
 Mad Cat (Timber Wolf) D|
@@ -4703,6 +4713,7 @@ Thug THG-11E (Reich)|
 Koshi (Mist Lynx) A|
 Urbanmech UM-R68|
 Ryoken (Stormcrow) H|
+Firefly FFL-4DA|
 Quickdraw QKD-5K|
 Commando COM-7S|
 Assassin ASN-99|

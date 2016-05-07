@@ -1,0 +1,12 @@
+Warden Clan Front-Line Assault Mechs (Diamond Shark),
+Masakari (Warhawk) H,1
+Gladiator (Executioner) A,2
+Daishi (Dire Wolf) S,3
+Masakari (Warhawk) C,4
+Man O' War (Gargoyle) A,5
+Masakari (Warhawk) Prime,6
+Man O' War (Gargoyle) Prime,5
+Masakari (Warhawk) B,4
+Man O' War (Gargoyle) B,3
+Gladiator (Executioner) D,2
+Daishi (Dire Wolf) Prime,1

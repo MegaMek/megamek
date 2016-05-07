@@ -21,7 +21,7 @@ Demon Medium Tank
 </Model>
 
 <year>
-3130
+3100
 </year>
 
 <type>
@@ -82,7 +82,7 @@ ISERMediumLaser
 </Turret Equipment>
 
 <source>
-RS 3145 NY NU
+RS 3145 NTNU - Late Republic
 </source>
 
 <tonnage>

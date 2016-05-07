@@ -56,7 +56,7 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
         if (!dataFile.exists("tonnage")) {
             throw new EntityLoadingException("Could not find weight block.");
         }
-        t.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
+        t.setWeight(dataFile.getDataAsDouble("tonnage")[0]);
 
         if (!dataFile.exists("motion_type")) {
             throw new EntityLoadingException("Could not find movement block.");

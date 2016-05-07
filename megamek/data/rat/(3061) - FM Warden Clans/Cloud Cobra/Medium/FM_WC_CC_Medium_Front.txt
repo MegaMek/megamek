@@ -1,0 +1,12 @@
+Warden Clan Front-Line Medium Mechs (Cloud Cobra),
+Black Lanner A,1
+Ryoken (Stormcrow) B,2
+Shadow Cat A,3
+Dragonfly (Viper) A,4
+Ryoken (Stormcrow) Prime,5
+Battle Cobra Prime,6
+Dragonfly (Viper) B,5
+Stalking Spider (Standard),4
+Black Hawk (Nova) A,3
+Phantom Prime,2
+Pouncer Prime,1

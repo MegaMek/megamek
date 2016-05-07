@@ -25,7 +25,7 @@ public final class InsulatedCargoBay extends Bay {
      */
     private static final long serialVersionUID = 4161027191694822726L;
 
-    private float weight = 0;
+    private double weight = 0;
 
     /**
      * The default constructor is only for serialization.
@@ -47,7 +47,7 @@ public final class InsulatedCargoBay extends Bay {
      */
     public InsulatedCargoBay(double space, int doors, int bayNumber) {
         totalSpace = space * 0.87;
-        weight = (float) space;
+        weight = space;
         currentSpace = space * 0.87;
         this.doors = doors;
         this.bayNumber = bayNumber;
@@ -90,7 +90,7 @@ public final class InsulatedCargoBay extends Bay {
     }
 
     @Override
-    public float getWeight() {
+    public double getWeight() {
         return weight;
     }
 

@@ -4,7 +4,7 @@ TR-XH
 
 Config:Quad
 TechBase:Inner Sphere
-Era:3130
+Era:3115
 Source:RS 3145 NT NU
 Rules Level:3
 
@@ -31,8 +31,8 @@ RTR Armor:9
 RTC Armor:9
 
 Weapons:2
-Improved Heavy Gauss Rifle, Right Torso
 ER PPC, Left Torso
+Improved Heavy Gauss Rifle, Center Torso
 
 Front Left Leg:
 Hip

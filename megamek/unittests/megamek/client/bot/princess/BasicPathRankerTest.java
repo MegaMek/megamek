@@ -229,7 +229,7 @@ public class BasicPathRankerTest {
         Coords enemyCoords = new Coords(10, 15);
         int enemyMechId = 1;
         Entity mockEnemyMech = Mockito.mock(BipedMech.class);
-        Mockito.when(mockEnemyMech.getWeight()).thenReturn(50.0f);
+        Mockito.when(mockEnemyMech.getWeight()).thenReturn(50.0);
         Mockito.when(mockEnemyMech.getId()).thenReturn(enemyMechId);
         Mockito.doReturn(enemyCoords)
                .when(testRanker)
@@ -257,7 +257,7 @@ public class BasicPathRankerTest {
         enemyCoords = new Coords(10, 15);
         enemyMechId = 1;
         mockEnemyMech = Mockito.mock(BipedMech.class);
-        Mockito.when(mockEnemyMech.getWeight()).thenReturn(50.0f);
+        Mockito.when(mockEnemyMech.getWeight()).thenReturn(50.0);
         Mockito.when(mockEnemyMech.getId()).thenReturn(enemyMechId);
         Mockito.doReturn(enemyCoords)
                .when(testRanker)
@@ -285,7 +285,7 @@ public class BasicPathRankerTest {
         enemyCoords = new Coords(10, 15);
         enemyMechId = 1;
         mockEnemyMech = Mockito.mock(BipedMech.class);
-        Mockito.when(mockEnemyMech.getWeight()).thenReturn(50.0f);
+        Mockito.when(mockEnemyMech.getWeight()).thenReturn(50.0);
         Mockito.when(mockEnemyMech.getId()).thenReturn(enemyMechId);
         Mockito.doReturn(enemyCoords)
                .when(testRanker)

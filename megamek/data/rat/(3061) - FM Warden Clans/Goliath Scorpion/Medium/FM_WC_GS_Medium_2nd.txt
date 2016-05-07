@@ -1,0 +1,12 @@
+Warden Clan Second-Line Medium Mechs (Goliath Scorpion),
+Griffin IIC (Standard),1
+Great Wyrm (Standard),2
+Crab CRB-27,3
+Hellhound (Conjurer) (Standard),4
+Goshawk (Vapor Eagle) (Standard),5
+Hunchback IIC (Standard),6
+Goshawk (Vapor Eagle) (Standard),5
+Hellhound (Conjurer) (Standard),4
+Crab CRB-27,3
+Shadow Hawk IIC (Standard),2
+Hunchback IIC (Standard),1

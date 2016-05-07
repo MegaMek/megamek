@@ -4,7 +4,8 @@ import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -73,7 +74,7 @@ public class SkinXMLHandler {
     public static String BACKGROUND_IMAGE = "background_image";
     public static String SHOW_SCROLL_BARS = "show_scroll_bars";
     
-    private static Hashtable<String, SkinSpecification> skinSpecs;
+    private static Map<String, SkinSpecification> skinSpecs;
     
     /**
      * Checks whether the given path points to a file that is a valid skin
@@ -144,7 +145,7 @@ public class SkinXMLHandler {
             // Get the list of units.
             NodeList listOfComponents = doc.getElementsByTagName(UI_ELEMENT);
             int totalComponents = listOfComponents.getLength();
-            skinSpecs = new Hashtable<String, SkinSpecification>(
+            skinSpecs = new HashMap<String, SkinSpecification>(
                     (int)(totalComponents * 1.25));
             for (int comp = 0; comp < totalComponents; comp++) {
                 SkinSpecification skinSpec;

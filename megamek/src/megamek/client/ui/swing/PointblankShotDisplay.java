@@ -21,7 +21,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
@@ -116,7 +117,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
     }
 
     // buttons
-    protected Hashtable<FiringCommand, MegamekButton> buttons;
+    protected Map<FiringCommand, MegamekButton> buttons;
 
     /**
      * Creates and lays out a new pointblank phase display for the specified
@@ -125,7 +126,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
     public PointblankShotDisplay(final ClientGUI clientgui) {
         super(clientgui);
 
-        buttons = new Hashtable<FiringCommand, MegamekButton>(
+        buttons = new HashMap<FiringCommand, MegamekButton>(
                 (int) (FiringCommand.values().length * 1.25 + 0.5));
         for (FiringCommand cmd : FiringCommand.values()) {
             String title = Messages.getString("FiringDisplay." //$NON-NLS-1$

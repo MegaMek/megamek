@@ -21,9 +21,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -132,7 +133,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
     }
 
     // buttons
-    protected Hashtable<PhysicalCommand, MegamekButton> buttons;
+    protected Map<PhysicalCommand, MegamekButton> buttons;
 
     // let's keep track of what we're shooting and at what, too
     private int cen = Entity.NONE; // current entity number
@@ -158,7 +159,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
 
         attacks = new Vector<EntityAction>();
 
-        buttons = new Hashtable<PhysicalCommand, MegamekButton>(
+        buttons = new HashMap<PhysicalCommand, MegamekButton>(
                 (int) (PhysicalCommand.values().length * 1.25 + 0.5));
         for (PhysicalCommand cmd : PhysicalCommand.values()) {
             String title = Messages.getString("PhysicalDisplay."

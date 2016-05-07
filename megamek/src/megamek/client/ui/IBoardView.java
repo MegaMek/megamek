@@ -18,8 +18,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -46,8 +46,8 @@ public interface IBoardView extends MechDisplayListener {
     public void drawMovementData(Entity ce, MovePath cmd);
     public void clearMovementData();
     public void setFiringSolutions(Entity attacker,
-            Hashtable<Integer,ToHitData> firingSolutions);
-    public void setMovementEnvelope(Hashtable<Coords,Integer> mvEnvData,
+            Map<Integer,ToHitData> firingSolutions);
+    public void setMovementEnvelope(Map<Coords,Integer> mvEnvData,
             int walk, int run, int jump, int gear);
     public void clearFiringSolutionData();
     public void clearMovementEnvelope();

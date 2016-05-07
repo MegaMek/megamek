@@ -23,9 +23,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -150,7 +151,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     }
 
     // buttons
-    private Hashtable<FiringCommand, MegamekButton> buttons;
+    private Map<FiringCommand, MegamekButton> buttons;
 
     // let's keep track of what we're shooting and at what, too
     protected int cen = Entity.NONE; // current entity number
@@ -199,7 +200,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         setupStatusBar(Messages
                 .getString("FiringDisplay.waitingForFiringPhase")); //$NON-NLS-1$
 
-        buttons = new Hashtable<FiringCommand, MegamekButton>(
+        buttons = new HashMap<FiringCommand, MegamekButton>(
                 (int) (FiringCommand.values().length * 1.25 + 0.5));
         for (FiringCommand cmd : FiringCommand.values()) {
             String title = Messages.getString("FiringDisplay." //$NON-NLS-1$
@@ -639,7 +640,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (!GUIPreferences.getInstance().getFiringSolutions()) {
             return;
         }
-        Hashtable<Integer, ToHitData> fs = new Hashtable<Integer, ToHitData>();
+        Map<Integer, ToHitData> fs = new HashMap<Integer, ToHitData>();
         for (Entity target : game.getEntitiesVector()) {
             boolean friendlyFire = game.getOptions().booleanOption(
                     "friendly_fire"); //$NON-NLS-1$

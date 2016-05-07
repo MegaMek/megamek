@@ -627,6 +627,14 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
+     * Send activate hidden data to the server
+     */
+    public void sendActivateHidden(int nEntity, IGame.Phase phase) {
+        Object[] data = {new Integer(nEntity), phase};
+        send(new Packet(Packet.COMMAND_ENTITY_ACTIVATE_HIDDEN, data));
+    }
+
+    /**
      * Send movement data for the given entity to the server.
      */
     public void moveEntity(int id, MovePath md) {
@@ -1332,14 +1340,14 @@ public class Client implements IClientCommandHandler {
                 }
                 game.addReports((Vector<Report>) c.getObject(0));
                 roundReport = receiveReport(game.getReports(game
-                                                                    .getRoundCount()));
+                        .getRoundCount()));
                 if (c.getCommand() == Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS) {
                     game.processGameEvent(new GameReportEvent(this, roundReport));
                 }
                 break;
             case Packet.COMMAND_SENDING_REPORTS_SPECIAL:
                 game.processGameEvent(new GameReportEvent(this,
-                                                          receiveReport((Vector<Report>) c.getObject(0))));
+                        receiveReport((Vector<Report>) c.getObject(0))));
                 break;
             case Packet.COMMAND_SENDING_REPORTS_ALL:
                 Vector<Vector<Report>> allReports = (Vector<Vector<Report>>) c
@@ -1470,6 +1478,10 @@ public class Client implements IClientCommandHandler {
                         cfrEvt.setApdsDists((List<Integer>) c.getData()[2]);
                         cfrEvt.setWAAs((List<WeaponAttackAction>) c.getData()[3]);
                         break;
+                    case Packet.COMMAND_CFR_HIDDEN_PBS:
+                        cfrEvt.setEntityId((int)c.getObject(1));
+                        cfrEvt.setTargetId((int)c.getObject(2));
+                        break;
                 }
                 game.processGameEvent(cfrEvt);
                 break;
@@ -1513,6 +1525,12 @@ public class Client implements IClientCommandHandler {
 
     public void sendAPDSAssignCFRResponse(Integer waaIndex) {
         Object data[] = { Packet.COMMAND_CFR_APDS_ASSIGN, waaIndex };
+        Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
+        send(packet);
+    }
+
+    public void sendHiddenPBSCFRResponse(Vector<EntityAction> attacks) {
+        Object data[] = { Packet.COMMAND_CFR_HIDDEN_PBS, attacks };
         Packet packet = new Packet(Packet.COMMAND_CLIENT_FEEDBACK_REQUEST, data);
         send(packet);
     }

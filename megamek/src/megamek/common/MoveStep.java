@@ -2779,6 +2779,11 @@ public class MoveStep implements Serializable {
             return false;
         }
 
+        // Hidden units, and activating hidden units cannot move
+        if (entity.isHidden() || entity.isHiddenActivating()) {
+            return false;
+        }
+
         // another easy check
         if (!game.getBoard().contains(dest)) {
             // System.err.println("board doesn't contain destination");

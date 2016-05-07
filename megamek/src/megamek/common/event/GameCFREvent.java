@@ -37,6 +37,8 @@ public class GameCFREvent extends GameEvent {
     private int cfrType;
     
     private int eId;
+
+    private int targetId;
     
     /**
      * The equipment number for the AMS used in AMS_ASSIGN CFRs.
@@ -127,5 +129,13 @@ public class GameCFREvent extends GameEvent {
 
     public void setApdsDists(List<Integer> apdsDist) {
         this.apdsDists = apdsDist;
+    }
+
+    public int getTargetId() {
+        return targetId;
+    }
+
+    public void setTargetId(int targetId) {
+        this.targetId = targetId;
     }
 }

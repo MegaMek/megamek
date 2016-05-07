@@ -89,6 +89,25 @@ public class SupportTank extends Tank {
         if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
         }
+
+        // Additional restrictions for hidden units
+        if (isHidden()) {
+            // Can't deploy in paved hexes
+            if (hex.containsTerrain(Terrains.PAVEMENT)
+                    || hex.containsTerrain(Terrains.ROAD)) {
+                return true;
+            }
+            // Can't deploy on a bridge
+            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation)
+                    && hex.containsTerrain(Terrains.BRIDGE)) {
+                return true;
+            }
+            // Can't deploy on the surface of water
+            if (hex.containsTerrain(Terrains.WATER) && (currElevation == 0)) {
+                return true;
+            }
+        }
+
         switch (movementMode) {
             case TRACKED:
                 return (hex.terrainLevel(Terrains.WOODS) > 1)

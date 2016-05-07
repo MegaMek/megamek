@@ -19,7 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -272,7 +272,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     }
 
     // buttons
-    private Hashtable<MoveCommand, MegamekButton> buttons;
+    private Map<MoveCommand, MegamekButton> buttons;
 
     // let's keep track of what we're moving, too
     private int cen = Entity.NONE; // current entity number
@@ -314,7 +314,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         setupStatusBar(Messages.getString("MovementDisplay.waitingForMovementPhase")); //$NON-NLS-1$
 
         // Create all of the buttons
-        buttons = new Hashtable<MoveCommand, MegamekButton>(
+        buttons = new HashMap<MoveCommand, MegamekButton>(
                 (int) (MoveCommand.values().length * 1.25 + 0.5));
         for (MoveCommand cmd : MoveCommand.values()) {
             String title = Messages
@@ -3708,7 +3708,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
         
-        Map<Coords, MovePath> mvEnvData = new Hashtable<Coords, MovePath>();
+        Map<Coords, MovePath> mvEnvData = new HashMap<Coords, MovePath>();
         MovePath mp = new MovePath(clientgui.getClient().getGame(), en);
 
         int maxMP;
@@ -3734,7 +3734,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 stepType, en.getGame());
         pf.run(mp);
         mvEnvData = pf.getAllComputedPaths();
-        Hashtable<Coords, Integer> mvEnvMP = new Hashtable<Coords, Integer>(
+        Map<Coords, Integer> mvEnvMP = new HashMap<Coords, Integer>(
                 (int) ((mvEnvData.size() * 1.25) + 1));
         for (Coords c : mvEnvData.keySet()) {
             mvEnvMP.put(c, mvEnvData.get(c).countMp(mvMode == GEAR_JUMP));

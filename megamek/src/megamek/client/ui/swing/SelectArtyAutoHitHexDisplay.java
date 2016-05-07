@@ -18,7 +18,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -80,7 +81,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
     }
     
     // buttons
-    protected Hashtable<ArtyAutoHitCommand,MegamekButton> buttons;
+    protected Map<ArtyAutoHitCommand,MegamekButton> buttons;
 
     private IPlayer p;
     private PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<Coords>();
@@ -104,7 +105,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay {
 
         artyAutoHitHexes.setPlayerID(p.getId());
 
-        buttons = new Hashtable<ArtyAutoHitCommand, MegamekButton>(
+        buttons = new HashMap<ArtyAutoHitCommand, MegamekButton>(
                 (int) (ArtyAutoHitCommand.values().length * 1.25 + 0.5));
         for (ArtyAutoHitCommand cmd : ArtyAutoHitCommand.values()) {
             String title = Messages.getString("SelectArtyAutoHitHexDisplay."

@@ -6353,11 +6353,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         if (curHex.containsTerrain(Terrains.WOODS, 2)) {
             roll.append(new PilotingRollData(getId(), 0,
-                                             "landing in heavy woods"));
+                    "landing in heavy woods"));
+            addPilotingModifierForTerrain(roll);
+        } else if (curHex.containsTerrain(Terrains.WOODS, 3)) {
+            roll.append(new PilotingRollData(getId(), 0,
+                    "landing in ultra woods"));
             addPilotingModifierForTerrain(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "hex does not contain heavy woods");
+                    "hex does not contain heavy or ultra woods");
         }
         return roll;
     }

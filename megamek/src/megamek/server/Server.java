@@ -8658,7 +8658,7 @@ public class Server implements Runnable {
             // check for jumping into heavy woods
             if (game.getOptions().booleanOption("psr_jump_heavy_woods")) {
                 rollTarget = entity.checkLandingInHeavyWoods(overallMoveType,
-                                                             curHex);
+                        curHex);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     doSkillCheckInPlace(entity, rollTarget);
                 }
@@ -8666,9 +8666,9 @@ public class Server implements Runnable {
             // Mechanical jump boosters fall damage
             if (md.shouldMechanicalJumpCauseFallDamage()) {
                 vPhaseReport.addAll(doEntityFallsInto(entity,
-                                                      entity.getElevation(), md.getJumpPathHighestPoint(),
-                                                      curPos, entity.getBasePilotingRoll(overallMoveType),
-                                                      false, entity.getJumpMP()));
+                        entity.getElevation(), md.getJumpPathHighestPoint(),
+                        curPos, entity.getBasePilotingRoll(overallMoveType),
+                        false, entity.getJumpMP()));
             }
             // jumped into water?
             int waterLevel = curHex.terrainLevel(Terrains.WATER);

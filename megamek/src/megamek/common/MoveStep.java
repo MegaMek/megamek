@@ -1422,11 +1422,12 @@ public class MoveStep implements Serializable {
 
         // If this step isn't the end step anymore, we might not be in danger
         // after all
+        IHex pos = getGame().getBoard().getHex(position);
         if (getGame().getOptions().booleanOption("psr_jump_heavy_woods")) {
             if (!isEnd
                     && isJumping()
-                    && getGame().getBoard().getHex(position)
-                    .containsTerrain(Terrains.WOODS, 2)) {
+                    && (pos.containsTerrain(Terrains.WOODS, 2) 
+                            || pos.containsTerrain(Terrains.WOODS, 3))) {
                 danger = false;
                 pastDanger = false;
             }

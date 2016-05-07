@@ -20,6 +20,7 @@ v0.41.18-git
     a PSR isn't necessary)
 + Bug [#4578]: Quirks need a way to distinguish unit type
 + Fixed #173: Reorder of include lines in tilesets
++ Fixed #179: PSR for jumping into ultra heavy woods
 
 v0.41.17 (2016-04-16 00:30 UTC)
 + Data: New Sprites and Unit Date Fixes.

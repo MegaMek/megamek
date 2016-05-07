@@ -77,9 +77,10 @@ public class QuirkTool implements MechSummaryCache.Listener {
         for (String quirkId : quirkIds) {
             for (MechSummary summary : ms) {              
                 String allId = QuirksHandler.getUnitId(summary.getChassis(),
-                        "all");
+                        "all", MechSummary.determineETypeName(summary));
                 String specificId = QuirksHandler.getUnitId(
-                        summary.getChassis(), summary.getModel());
+                        summary.getChassis(), summary.getModel(),
+                        MechSummary.determineETypeName(summary));
                 List<Entity> entities;
                 if (quirkId.equals(allId) || quirkId.equals(specificId)) {
                     entities = idEntitiesMap.get(quirkId);
@@ -90,6 +91,10 @@ public class QuirkTool implements MechSummaryCache.Listener {
                     entities.add(loadEntity(summary.getSourceFile(),
                             summary.getEntryName()));
                 }
+            }
+            if (idEntitiesMap.get(quirkId) == null) {
+                System.out.println("Entry: " + quirkId
+                        + " doesn't have any matches!");
             }
         }
         

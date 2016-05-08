@@ -1,0 +1,12 @@
+Escorpion Imperio Assault Vehicles (3090)
+Schrek PPC Carrier (Standard),1
+Schrek AC Carrier (Standard),2
+Rhino Fire Support Tank (Standard),3
+Demolisher Heavy Tank (Standard Mk. II),4
+Ontos Heavy Tank (3053 Upgrade),5
+Fury Command Tank (Standard),6
+Ontos Heavy Tank (Light Gauss),5
+Puma Assault Tank PAT-005,4
+Alacorn Heavy Tank Mk VI,3
+Huitzilopochtli Assault Tank 'Huey' (Standard),2
+Mars Assault Vehicle (Standard),1

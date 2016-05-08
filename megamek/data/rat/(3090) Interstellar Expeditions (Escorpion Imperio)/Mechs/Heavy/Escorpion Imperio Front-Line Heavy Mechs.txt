@@ -1,0 +1,12 @@
+Escorpion Imperio Front-Line Heavy Mechs (3090)
+Warhammer WHM-6R,1
+Grasshopper GHR-5J,2
+Orion ON1-K,3
+Guillotine GLT-3N,4
+Lancelot LNC25-01,5
+Flashman FLS-8K,6
+Black Knight BL-6-KNT,5
+Fire Scorpion (Standard),4
+Galahad (Glass Spider) (Standard),3
+Rifleman IIC (Standard),2
+Perseus P1,1

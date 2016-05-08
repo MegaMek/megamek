@@ -1,40 +1,40 @@
 Version:1.0
-Shadow Hawk
-SHD-X1
+Shadow Hawk LAM
+SHD-X2
 
 Config:LAM
 TechBase:Inner Sphere
-Era:2680
+Era:2684
 Source:TRO3085
 Rules Level:4
 History: LAM's not coded into MegaMek for play. Unit included for completeness.
 
 Mass:55
-Engine:275 Fusion Engine(IS)
+Engine:220 Fusion Engine(IS)
 Structure:IS Standard
 Myomer:Standard
 
-Heat Sinks:10 Single
-Walk MP:5
-Jump MP:3
+Heat Sinks:10 Double
+Walk MP:4
+Jump MP:4
 
 Armor:Standard(Inner Sphere)
-LA Armor:11
-RA Armor:11
-LT Armor:12
-RT Armor:12
-CT Armor:15
+LA Armor:16
+RA Armor:16
+LT Armor:18
+RT Armor:18
+CT Armor:23
 HD Armor:9
-LL Armor:12
-RL Armor:12
-RTL Armor:3
-RTR Armor:3
-RTC Armor:4
+LL Armor:16
+RL Armor:16
+RTL Armor:6
+RTR Armor:6
+RTC Armor:8
 
 Weapons:3
-AC/2, Left Torso
-Medium Laser, Right Arm
 LRM 5, Right Torso
+Medium Laser, Right Arm
+ER Large Laser, Left Torso
 
 Left Arm:
 Shoulder
@@ -68,29 +68,29 @@ Left Torso:
 Landing Gear
 Avionics
 Jump Jet
-Autocannon/2
-IS Ammo AC/2
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
+Jump Jet
+ISERLargeLaser
+ISERLargeLaser
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
+Cargo (1 ton)
 -Empty-
 -Empty-
 
 Right Torso:
 Landing Gear
 Avionics
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+ISDoubleHeatSink
+Jump Jet
 Jump Jet
 LRM 5
 IS Ammo LRM-5
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
--Empty-
 
 Center Torso:
 Fusion Engine
@@ -104,7 +104,7 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Landing Gear
-Jump Jet
+-Empty-
 
 Head:
 Life Support

@@ -1,0 +1,12 @@
+Escorpion Imperio Keshik Light Mechs (3090)
+Thorn THE-N,1
+Jackrabbit JKR-8T,2
+Mongoose MON-66,3
+Talon TLN-5W,4
+Hussar HSR-200-D,5
+Icestorm (Standard),6
+Hellion Prime,5
+Commando IIC (Standard),4
+Dasher (Fire Moth) Prime,3
+Peregrine (Horned Owl) 4,2
+Puma (Adder) Prime,1

@@ -21,6 +21,8 @@ v0.41.18-git
 + Bug [#4578]: Quirks need a way to distinguish unit type
 + Fixed #173: Reorder of include lines in tilesets
 + Fixed #179: PSR for jumping into ultra heavy woods
++ Data: New Sprites, Unit Fixes, and Quirk additions
++ Issue #166 - RATs From Interstellar Expeditions.
 
 v0.41.17 (2016-04-16 00:30 UTC)
 + Data: New Sprites and Unit Date Fixes.

@@ -1,0 +1,12 @@
+Escorpion Imperio Second-Line Heavy Mechs (3090)
+Catapult CPLT-C1,1
+Archer ARC-2R,2
+Rifleman RFL-1N,3
+Crusader CRD-3R,4
+Quickdraw QKD-4G,5
+Rifleman RFL-3N,6
+Warhammer WHM-6R,5
+Grasshopper GHR-5J,4
+Orion ON1-K,3
+Guillotine GLT-3N,2
+Lancelot LNC25-01,1

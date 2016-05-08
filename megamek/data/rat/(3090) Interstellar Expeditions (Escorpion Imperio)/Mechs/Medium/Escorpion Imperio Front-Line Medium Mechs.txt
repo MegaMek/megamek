@@ -1,0 +1,12 @@
+Escorpion Imperio Front-Line Medium Mechs (3090)
+Shadow Hawk SHD-2H,1
+Phoenix Hawk PXH-1,2
+Initiate INI-02,3
+Sentinel STN-3L,4
+Lightray LGH-4Y,5
+Wyvern WVE-5N,6
+Lynx LNX-9Q,5
+Griffin IIC (Standard),4
+Shadow Hawk IIC (Standard),3
+Hunchback IIC (Standard),2
+Grendel (Mongrel) Prime,1

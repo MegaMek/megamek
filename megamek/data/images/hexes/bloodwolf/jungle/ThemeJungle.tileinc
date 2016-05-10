@@ -1,0 +1,15 @@
+# BLOODWOLF's Jungle Theme
+
+base 0 "" "jungle" "bloodwolf/jungle/jungle_plains_0.png"
+base 1 "" "jungle" "bloodwolf/jungle/jungle_plains_1.png"
+base 2 "" "jungle" "bloodwolf/jungle/jungle_plains_2.png"
+base 3 "" "jungle" "bloodwolf/jungle/jungle_plains_3.png"
+base 4 "" "jungle" "bloodwolf/jungle/jungle_plains_4.png"
+base 5 "" "jungle" "bloodwolf/jungle/jungle_plains_5.png"
+base 6 "" "jungle" "bloodwolf/jungle/jungle_plains_6.png"
+base -1 "" "jungle" "bloodwolf/jungle/jungle_sinkhole_1.png"
+base -2 "" "jungle" "bloodwolf/jungle/jungle_sinkhole_2.png"
+base -3 "" "jungle" "bloodwolf/jungle/jungle_sinkhole_3.png"
+base -4 "" "jungle" "bloodwolf/jungle/jungle_sinkhole_4.png"
+base -5 "" "jungle" "bloodwolf/jungle/jungle_sinkhole_5.png"
+base -6 "" "jungle" "bloodwolf/jungle/jungle_sinkhole_6.png"

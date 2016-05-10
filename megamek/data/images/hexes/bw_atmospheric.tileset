@@ -1,0 +1,108 @@
+# BLOODWOLF's modification of the HQ_Atmospheric tileset.
+#
+# format is:
+# base/super <elevation> <terrains> <theme> <image>
+#
+# <elevation> can be * (any elevation), or a specific hex level.  The closest match will
+#   be used if there isn't an exact elevation match.
+# <terrains> can be a list separated by ; character. In this case, all the
+#   terrains must match.
+# <theme> is either an empty string (for the default terrain image), or the name of the
+#   theme for which this image is used instead.  E.G. "snow"
+# <image> can be a list separated by ; character. In this case, they are shuffled
+#   for each hex painted.
+#
+# Image Size:
+#   Hexes in MegaMek are drawn to be 84x72 pixels.  In general, hex textures follow this size.
+#   The data/images/misc directory contains an example image that shows hex borders to add in creating hex textures.
+#   Textures larger than 84x72 are also supported and can be specified exactly like regular 84x72 images.
+#
+# Important:
+#   when multiple "super" images are used in a hex, the first one in this file is drawn first.
+#   Themed "super" images must appear before the default ones
+#
+# Drawing order for this tileset:
+# ground (base sets)
+# swamp
+# rough
+# woods
+# water
+# ice / rapids
+# road
+# building
+# bridge
+# fire
+# smoke
+# elevator
+
+include "StandardIncludes/StandardFluff.tileinc"
+include "StandardIncludes/StandardFuelTanks.tileinc"
+
+include "StandardIncludes/BuildingsNonSClassArmor.tileinc"
+include "StandardIncludes/BuildingsNonSClassNoArmor.tileinc"
+include "StandardIncludes/BuildingsSClassArmor.tileinc"
+include "StandardIncludes/BuildingsSClassNoArmor.tileinc"
+
+include "StandardIncludes/StandardRailMaglev.tileinc"
+include "StandardIncludes/StandardElevator.tileinc"
+include "StandardIncludes/StandardLimbs.tileinc"
+include "StandardIncludes/StandardSpace.tileinc"
+
+include "bloodwolf/grass/ThemeGrass.tileinc"
+include "bloodwolf/jungle/ThemeJungle.tileinc"
+include "bloodwolf/snow/ThemeSnow.tileinc"
+
+super * "swamp:1" "" "bloodwolf/hq_boring/swamp_0.png;bloodwolf/hq_boring/swamp_1.png;bloodwolf/hq_boring/swamp_2.png"
+
+super * "rough:1" "" "hq_boring/rough_0.png;hq_boring/rough_1.png;hq_boring/rough_2.png;hq_boring/rough_3.png"
+super * "rough:2" "" "bloodwolf/hq_boring/ultra_rough.png"
+
+super * "woods:1" "" "hq_boring/lf0.png;hq_boring/lf1.png;hq_boring/lf2.png;hq_boring/lf3.png"
+super * "woods:2" "" "hq_boring/hf0.png;hq_boring/hf1.png;hq_boring/hf2.png"
+super * "woods:3" "" "bloodwolf/hq_boring/uhf0.png"
+
+include "StandardIncludes/BasicBridges.tileinc"
+include "StandardIncludes/BasicRoads.tileinc"
+
+super * "water:0" "" "bloodwolf/hq_boring/blue_water_0.png"
+super * "water:1" "" "bloodwolf/hq_boring/blue_water_1.png"
+super * "water:2" "" "bloodwolf/hq_boring/blue_water_2.png"
+super * "water:3" "" "bloodwolf/hq_boring/blue_water_3.png"
+super * "water:4" "" "bloodwolf/hq_boring/blue_water_4.png"
+super * "water:*" "" "bloodwolf/hq_boring/blue_water_4.png"
+
+super * "ice:1" "" "bloodwolf/hq_boring/ice_0.png;bloodwolf/hq_boring/ice_1.png;bloodwolf/hq_boring/ice_2.png"
+
+super * "fire:1" "" "bloodwolf/hq_boring/fire_0.png;bloodwolf/hq_boring/fire_1.png;bloodwolf/hq_boring/fire_2.png"
+
+base 0 "" "" "bloodwolf/hq_boring/beige_plains_0.png"
+base 1 "" "" "bloodwolf/hq_boring/beige_plains_1.png"
+base 2 "" "" "bloodwolf/hq_boring/beige_plains_2.png"
+base 3 "" "" "bloodwolf/hq_boring/beige_plains_3.png"
+base 4 "" "" "bloodwolf/hq_boring/beige_plains_4.png"
+base 5 "" "" "bloodwolf/hq_boring/beige_plains_5.png"
+base 6 "" "" "bloodwolf/hq_boring/beige_plains_6.png"
+base -1 "" "" "bloodwolf/hq_boring/beige_sinkhole_1.png"
+base -2 "" "" "bloodwolf/hq_boring/beige_sinkhole_2.png"
+base -3 "" "" "bloodwolf/hq_boring/beige_sinkhole_3.png"
+base -4 "" "" "bloodwolf/hq_boring/beige_sinkhole_4.png"
+base -5 "" "" "bloodwolf/hq_boring/beige_sinkhole_5.png"
+base -6 "" "" "bloodwolf/hq_boring/beige_sinkhole_6.png"
+
+base -3 "mud:1" "" "bloodwolf/hq_boring/mud_-3.gif"
+base -2 "mud:1" "" "bloodwolf/hq_boring/mud_-2.gif"
+base -1 "mud:1" "" "bloodwolf/hq_boring/mud_-1.gif"
+base 0 "mud:1" "" "bloodwolf/hq_boring/mud_0.gif"
+base 1 "mud:1" "" "bloodwolf/hq_boring/mud_1.gif"
+base 2 "mud:1" "" "bloodwolf/hq_boring/mud_2.gif"
+base 3 "mud:1" "" "bloodwolf/hq_boring/mud_3.gif"
+
+base -3 "sand:1" "" "bloodwolf/hq_boring/sand_-3.png"
+base -2 "sand:1" "" "bloodwolf/hq_boring/sand_-2.png"
+base -1 "sand:1" "" "bloodwolf/hq_boring/sand_-1.png"
+base 0 "sand:1" "" "bloodwolf/hq_boring/sand_0.png"
+base 1 "sand:1" "" "bloodwolf/hq_boring/sand_1.png"
+base 2 "sand:1" "" "bloodwolf/hq_boring/sand_2.png"
+base 3 "sand:1" "" "bloodwolf/hq_boring/sand_3.png"
+
+include "atmospheric.tileset"

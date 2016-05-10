@@ -10,7 +10,7 @@ v0.41.18-git
 + Data: Lots of Unit Fixes (Thanks Clavius1 and Sartis for the research)
 + Issue #158 Missing RATs From FM Warden Clans (Thanks to xStormforgex)
 + Issue #162: "The armor panel is null." warning during deployment phase
-+ Issue #163: NPE in Compute.canCompleteNodePath
++ Issue #165: NPE in Compute.canCompleteNodePath
 + Issue #157: When /reset used from a saved game, you lose map size options
 + Issue #143: Super Heavy Endo Steel Weight Calculating wrong (in MML)
 + Issue #132: Make pilot death more obvious in head destruction.

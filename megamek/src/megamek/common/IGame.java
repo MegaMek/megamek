@@ -1412,7 +1412,12 @@ public interface IGame {
     public abstract void addFlare(Flare flare);
 
     /**
-     * returns true if the hex is illuminated by a flare
+     * Returns the level of illumination for a given coords.  Different light
+     * sources affect how much the night-time penalties are reduced. Note: this
+     * method should be used for determining is a Coords/Hex is illuminated, not
+     * IGame. getIlluminatedPositions(), as that just returns the hexes that
+     * are effected by spotlights, whereas this one considers searchlights as
+     * well as other light sources.
      */
     public abstract int isPositionIlluminated(Coords c);
 
@@ -1471,22 +1476,26 @@ public interface IGame {
     public abstract void setPlanetaryConditions(PlanetaryConditions conditions);
     
     /**
-     * Get a set of illuminated hexes.
+     * Get a set of Coords illuminated by searchlights.
+     * 
+     * Note: coords could be illuminated by other sources as well, it's likely
+     * that IGame.isPositionIlluminated is desired unless the searchlighted hex
+     * set is being sent to the client or server.
      */
     public abstract HashSet<Coords> getIlluminatedPositions();
     
     /**
-     * Clear the map of illuminated hexes.
+     * Clear the set of searchlight illuminated hexes.
      */
     public abstract void clearIlluminatedPositions();
 
     /**
-     * Set the set of illuminated hexes.
+     * Setter for the list of Coords illuminated by search lights.
      */
     public abstract void setIlluminatedPositions(HashSet<Coords> ip);
 
     /**
-     * Add a new hex to the collection of illuminated hexes.
+     * Add a new hex to the collection of Coords illuminated by searchlights.
      * 
      * @return True if a new hex was added, else false if the set already
      *      contained the input hex.

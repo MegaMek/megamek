@@ -2716,10 +2716,10 @@ public class MoveStep implements Serializable {
             }
         }
 
-        // Infantry (except mechanized) pay 1 less MP to enter woods
-        // Assumption - this doesn't apply to jungle
-        if (isInfantry && destHex.containsTerrain(Terrains.WOODS)
-                && !isMechanizedInfantry) {
+        // Infantry (except mechanized) pay 1 less MP to enter woods and Jungle
+        if (isInfantry && !isMechanizedInfantry
+                && destHex.containsTerrain(Terrains.WOODS)
+                && !isPavementStep) {
             mp--;
         }
     }

@@ -115,7 +115,9 @@ public class SupportTank extends Tank {
                                 && !hex.containsTerrain(Terrains.ICE) 
                                 && !hasEnvironmentalSealing())
                         || hex.containsTerrain(Terrains.JUNGLE)
-                        || (hex.terrainLevel(Terrains.MAGMA) > 1);
+                        || (hex.terrainLevel(Terrains.MAGMA) > 1)
+                        || (hex.terrainLevel(Terrains.ROUGH) > 1)
+                        || (hex.terrainLevel(Terrains.RUBBLE) > 5);
             case WHEELED:
                 return hex.containsTerrain(Terrains.WOODS)
                         || hex.containsTerrain(Terrains.ROUGH)
@@ -130,7 +132,9 @@ public class SupportTank extends Tank {
             case HOVER:
                 return hex.containsTerrain(Terrains.WOODS)
                         || hex.containsTerrain(Terrains.JUNGLE)
-                        || (hex.terrainLevel(Terrains.MAGMA) > 1);
+                        || (hex.terrainLevel(Terrains.MAGMA) > 1)
+                        || (hex.terrainLevel(Terrains.ROUGH) > 1)
+                        || (hex.terrainLevel(Terrains.RUBBLE) > 5);
             case NAVAL:
             case HYDROFOIL:
                 return (hex.terrainLevel(Terrains.WATER) <= 0)

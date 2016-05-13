@@ -488,7 +488,7 @@ public class Tank extends Entity {
                             || hex.containsTerrain(Terrains.JUNGLE)
                             || (hex.terrainLevel(Terrains.MAGMA) > 1)
                             || (hex.terrainLevel(Terrains.ROUGH) > 1)
-                            || (hex.terrainLevel(Terrains.RUBBLE) > 1);
+                            || (hex.terrainLevel(Terrains.RUBBLE) > 5);
                 } else {
                     return (hex.terrainLevel(Terrains.WOODS) > 1)
                             || ((hex.terrainLevel(Terrains.WATER) > 0)
@@ -526,7 +526,7 @@ public class Tank extends Entity {
                             || hex.containsTerrain(Terrains.JUNGLE)
                             || (hex.terrainLevel(Terrains.MAGMA) > 1)
                             || (hex.terrainLevel(Terrains.ROUGH) > 1)
-                            || (hex.terrainLevel(Terrains.RUBBLE) > 1);
+                            || (hex.terrainLevel(Terrains.RUBBLE) > 5);
                 } else {
                     return hex.containsTerrain(Terrains.WOODS)
                             || hex.containsTerrain(Terrains.JUNGLE)

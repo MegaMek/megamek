@@ -23,7 +23,6 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
@@ -290,16 +289,27 @@ public class SkinEditorMainGUI extends JPanel implements WindowListener,
         switchPanel(IGame.Phase.PHASE_MOVEMENT);
         frame.validate();
 
-        mechW.dispose();
-        Point loc = mechW.getLocation();
+        // This is a horrible hack
+        // Essentially, UnitDisplay (I think specifically ArmorPanel), relies
+        // upon addNotify being called, so I need to way to set the
+        // isDisplayable state to true.  However, if I create a new JDialog, or
+        // called JDialog.setVisible(true), focus will get stolen from the
+        // Skin Spec Editor, which causes undesirable behavior, particularly
+        // with the path JTextFields
         Dimension sz = mechW.getSize();
-        mechW = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false);
-        mechW.setLocation(loc);
-        mechW.setSize(sz);
-        mechW.setResizable(true);
+        mechW.remove(unitDisplay);
+        // UnitDisplay has no way to update the skin without being recreated
         unitDisplay = new UnitDisplay(null);
         mechW.add(unitDisplay);
-        mechW.setVisible(true);
+        if (mechW.isVisible()) {
+            // This will cause the isDisplayable state to be true, in effect
+            // ensuring addNotify has been called.
+            mechW.pack();
+        } else {
+            mechW.setVisible(true);
+        }
+        // Packing is going to change the dimensions, so we'll restore old sz
+        mechW.setSize(sz);
         unitDisplay.displayEntity(testEntity);
     }
 

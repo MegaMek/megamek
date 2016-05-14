@@ -493,7 +493,7 @@ public class UnitDisplaySpecPanel extends JPanel {
     }
 
     public void notifySkinChanges() {
-        skinEditor.notifySkinChanges();
+        skinEditor.notifySkinChanges(false);
     }
 
 }

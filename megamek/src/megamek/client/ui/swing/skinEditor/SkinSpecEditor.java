@@ -354,7 +354,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
             }
         } else if (e.getSource().equals(enableBorders)) {
             skinEditPanel.setEnabled(enableBorders.isSelected());
-            notifySkinChanges();
+            notifySkinChanges(false);
         } else if (e.getSource().equals(resetSkinButton)) {
             setupEditPanel();
         } else if (e.getSource().equals(saveSkinButton)) {
@@ -383,7 +383,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
             }
             SkinXMLHandler.addNewComp(choice.getComp());
             populateSkinSpecComponents();
-            notifySkinChanges();
+            notifySkinChanges(true);
         } else if (e.getSource().equals(removeCompButton)) {
             SkinSpecification.UIComponents selectedComp = skinSpecCompList
                     .getSelectedValue();
@@ -396,7 +396,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
                 SkinXMLHandler.removeComp(selectedComp.getComp());
                 populateSkinSpecComponents();
                 setupEditPanel();
-                notifySkinChanges();
+                notifySkinChanges(true);
             }
         }
     }
@@ -405,7 +405,7 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
      * Notifies the SkinSpecEditor that a change has been made to the currently
      * selected component's SkinSpecification.
      */
-    public void notifySkinChanges() {
+    public void notifySkinChanges(boolean setupSkinEditPanel) {
         saveSkinButton.setEnabled(true);
 
         String currComp = skinSpecCompList.getSelectedValue().getComp();
@@ -414,7 +414,9 @@ public class SkinSpecEditor extends JPanel implements ListSelectionListener,
         } else {
             SkinSpecification skinSpec = SkinXMLHandler.getSkin(currComp);
             skinEditPanel.updateSkinSpec(skinSpec, enableBorders.isSelected());
-            skinEditPanel.setupSkinEditPanel(skinSpec);
+            if (setupSkinEditPanel) {
+                skinEditPanel.setupSkinEditPanel(skinSpec);
+            }
         }
         mainGUI.updateBorder();
     }

@@ -278,7 +278,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
                     removeButton.setEnabled(path.size() > 1);
                 }
                 layoutPanel();
-                skinPanel.notifySkinChanges();
+                skinPanel.notifySkinChanges(true);
                 skinPanel.signalValidate();
             } else {
                 // Did we press a remove button?
@@ -300,7 +300,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
                             removeButton.setEnabled(path.size() > 1);
                         }
                         layoutPanel();
-                        skinPanel.notifySkinChanges();
+                        skinPanel.notifySkinChanges(true);
                         skinPanel.signalValidate();
                         // We're done
                         return;
@@ -310,7 +310,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
                 for (int i = 0; i < pathLbl.size(); i++) {
                     if (e.getSource().equals(pathLbl.get(i))) {
                         chooseFile(i);
-                        skinPanel.notifySkinChanges();
+                        skinPanel.notifySkinChanges(false);
                         skinPanel.signalValidate();
                         return;
                     }
@@ -318,7 +318,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
                 // Did we press a tile button?
                 for (int i = 0; i < tiled.size(); i++) {
                     if (e.getSource().equals(tiled.get(i))) {
-                        skinPanel.notifySkinChanges();
+                        skinPanel.notifySkinChanges(false);
                         return;
                     }
                 }
@@ -350,17 +350,17 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
 
         @Override
         public void changedUpdate(DocumentEvent arg0) {
-            skinPanel.notifySkinChanges();
+            skinPanel.notifySkinChanges(false);
         }
 
         @Override
         public void insertUpdate(DocumentEvent arg0) {
-            skinPanel.notifySkinChanges();
+            skinPanel.notifySkinChanges(false);
         }
 
         @Override
         public void removeUpdate(DocumentEvent arg0) {
-            skinPanel.notifySkinChanges();
+            skinPanel.notifySkinChanges(false);
         }
     }
 
@@ -393,7 +393,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
                     removeButton.setEnabled(true);
                 }
                 layoutPanel();
-                skinPanel.notifySkinChanges();
+                skinPanel.notifySkinChanges(true);
                 skinPanel.signalValidate();
                 return;
             }
@@ -407,7 +407,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
                 for (JCheckBox tileChk : tiled) {
                     tileChk.setSelected(newValue);
                 }
-                skinPanel.notifySkinChanges();
+                skinPanel.notifySkinChanges(false);
                 return;
             }
             super.actionPerformed(e);
@@ -716,7 +716,7 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
             }
         }
         if (notify) {
-            notifySkinChanges();
+            notifySkinChanges(true);
         } else { // If we notify, listeners are added, don't double-add
             addListeners();
         }
@@ -744,8 +744,8 @@ public class SkinSpecPanel extends JPanel implements ListSelectionListener,
         skinEditor.validate();
     }
 
-    public void notifySkinChanges() {
-        skinEditor.notifySkinChanges();
+    public void notifySkinChanges(boolean setupSkinEditPanel) {
+        skinEditor.notifySkinChanges(setupSkinEditPanel);
     }
 
 }

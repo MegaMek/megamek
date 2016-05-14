@@ -331,22 +331,35 @@ public class Infantry extends Entity {
             }
         }
 
-        if (hex.terrainLevel(Terrains.WOODS) > 0) {
-            if ((hex.terrainLevel(Terrains.WOODS) > 1)
-                    && (getMovementMode() == EntityMovementMode.TRACKED)) {
-                return true;
-            }
-            if ((getMovementMode() == EntityMovementMode.HOVER)
-                    || (getMovementMode() == EntityMovementMode.WHEELED)
-                    || hasActiveFieldArtillery()) {
+        if (hex.containsTerrain(Terrains.MAGMA)) {
+            return true;
+        }
+
+        if (getMovementMode() == EntityMovementMode.WHEELED) {
+            if (hex.containsTerrain(Terrains.WOODS)
+                    || hex.containsTerrain(Terrains.ROUGH)
+                    || hex.containsTerrain(Terrains.RUBBLE)
+                    || hex.containsTerrain(Terrains.JUNGLE)
+                    || (hex.terrainLevel(Terrains.SNOW) > 1)
+                    || (hex.terrainLevel(Terrains.GEYSER) == 2)) {
                 return true;
             }
         }
 
-        if (hex.containsTerrain(Terrains.ROUGH)
-                || hex.containsTerrain(Terrains.RUBBLE)) {
-            if ((getMovementMode() == EntityMovementMode.WHEELED)
-                    || hasActiveFieldArtillery()) {
+        if (getMovementMode() == EntityMovementMode.TRACKED) {
+            if ((hex.terrainLevel(Terrains.WOODS) > 1)
+                    || hex.containsTerrain(Terrains.JUNGLE)
+                    || (hex.terrainLevel(Terrains.ROUGH) > 1)
+                    || (hex.terrainLevel(Terrains.RUBBLE) > 5)) {
+                return true;
+            }
+        }
+
+        if (getMovementMode() == EntityMovementMode.HOVER) {
+            if (hex.containsTerrain(Terrains.WOODS)
+                    || hex.containsTerrain(Terrains.JUNGLE)
+                    || (hex.terrainLevel(Terrains.ROUGH) > 1)
+                    || (hex.terrainLevel(Terrains.RUBBLE) > 5)) {
                 return true;
             }
         }

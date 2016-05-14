@@ -341,8 +341,7 @@ public class Infantry extends Entity {
                     || hex.containsTerrain(Terrains.RUBBLE)
                     || hex.containsTerrain(Terrains.JUNGLE)
                     || (hex.terrainLevel(Terrains.SNOW) > 1)
-                    || (hex.terrainLevel(Terrains.GEYSER) == 2)
-                    || hasActiveFieldArtillery()) {
+                    || (hex.terrainLevel(Terrains.GEYSER) == 2)) {
                 return true;
             }
         }
@@ -351,8 +350,7 @@ public class Infantry extends Entity {
             if ((hex.terrainLevel(Terrains.WOODS) > 1)
                     || hex.containsTerrain(Terrains.JUNGLE)
                     || (hex.terrainLevel(Terrains.ROUGH) > 1)
-                    || (hex.terrainLevel(Terrains.RUBBLE) > 5)
-                    || hasActiveFieldArtillery()) {
+                    || (hex.terrainLevel(Terrains.RUBBLE) > 5)) {
                 return true;
             }
         }

@@ -313,22 +313,53 @@ public class Infantry extends Entity {
             return true;
         }
 
-        if (hex.terrainLevel(Terrains.WOODS) > 0) {
-            if ((hex.terrainLevel(Terrains.WOODS) > 1)
-                    && (getMovementMode() == EntityMovementMode.TRACKED)) {
+        // Additional restrictions for hidden units
+        if (isHidden()) {
+            // Can't deploy in paved hexes
+            if (hex.containsTerrain(Terrains.PAVEMENT)
+                    || hex.containsTerrain(Terrains.ROAD)) {
                 return true;
             }
-            if ((getMovementMode() == EntityMovementMode.HOVER)
-                    || (getMovementMode() == EntityMovementMode.WHEELED)
-                    || hasActiveFieldArtillery()) {
+            // Can't deploy on a bridge
+            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation)
+                    && hex.containsTerrain(Terrains.BRIDGE)) {
+                return true;
+            }
+            // Can't deploy on the surface of water
+            if (hex.containsTerrain(Terrains.WATER) && (currElevation == 0)) {
                 return true;
             }
         }
 
-        if (hex.containsTerrain(Terrains.ROUGH)
-                || hex.containsTerrain(Terrains.RUBBLE)) {
-            if ((getMovementMode() == EntityMovementMode.WHEELED)
-                    || hasActiveFieldArtillery()) {
+        if (hex.containsTerrain(Terrains.MAGMA)) {
+            return true;
+        }
+
+        if (getMovementMode() == EntityMovementMode.WHEELED) {
+            if (hex.containsTerrain(Terrains.WOODS)
+                    || hex.containsTerrain(Terrains.ROUGH)
+                    || hex.containsTerrain(Terrains.RUBBLE)
+                    || hex.containsTerrain(Terrains.JUNGLE)
+                    || (hex.terrainLevel(Terrains.SNOW) > 1)
+                    || (hex.terrainLevel(Terrains.GEYSER) == 2)) {
+                return true;
+            }
+        }
+
+        if (getMovementMode() == EntityMovementMode.TRACKED) {
+            if ((hex.terrainLevel(Terrains.WOODS) > 1)
+                    || hex.containsTerrain(Terrains.JUNGLE)
+                    || (hex.terrainLevel(Terrains.ROUGH) > 1)
+                    || (hex.terrainLevel(Terrains.RUBBLE) > 5)) {
+                return true;
+            }
+        }
+
+        if (getMovementMode() == EntityMovementMode.HOVER) {
+            if (hex.containsTerrain(Terrains.WOODS)
+                    || hex.containsTerrain(Terrains.JUNGLE)
+                    || (hex.terrainLevel(Terrains.ROUGH) > 1)
+                    || (hex.terrainLevel(Terrains.RUBBLE) > 5)) {
                 return true;
             }
         }

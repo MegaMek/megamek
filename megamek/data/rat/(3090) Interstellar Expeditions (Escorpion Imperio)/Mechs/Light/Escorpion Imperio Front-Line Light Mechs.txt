@@ -1,0 +1,12 @@
+Escorpion Imperio Front-Line Light Mechs (3090)
+UrbanMech UM-R60,1
+Firestarter FS9-K,2
+Thorn THE-N,3
+Jackrabbit JKR-8T,4
+Mongoose MON-66,5
+Talon TLN-5W,6
+Hussar HSR-200-D,5
+Icestorm (Standard),4
+Hellion Prime,3
+Commando IIC (Standard),2
+Dasher (Fire Moth) Prime,1

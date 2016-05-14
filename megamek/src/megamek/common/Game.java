@@ -3170,16 +3170,18 @@ public class Game implements Serializable, IGame {
     }
 
     /**
-     * Get a set of illuminated hexes.  Note: this should not be used to
-     * determine if a hex is illuminated! Use <code>isPositionIlluminated</code>
-     * for that purpose!
+     * Get a set of Coords illuminated by searchlights.
+     * 
+     * Note: coords could be illuminated by other sources as well, it's likely
+     * that IGame.isPositionIlluminated is desired unless the searchlighted hex
+     * set is being sent to the client or server.
      */
     public HashSet<Coords> getIlluminatedPositions() {
         return illuminatedPositions;
     }
 
     /**
-     * Clear the map of illuminated hexes.
+     * Clear the set of searchlight illuminated hexes.
      */
     public void clearIlluminatedPositions() {
         if (illuminatedPositions == null) {
@@ -3189,7 +3191,7 @@ public class Game implements Serializable, IGame {
     }
 
     /**
-     * Set the set of illuminated hexes.
+     * Setter for the list of Coords illuminated by search lights.
      */
     public void setIlluminatedPositions(HashSet<Coords> ip) {
         if (ip == null) {
@@ -3200,7 +3202,7 @@ public class Game implements Serializable, IGame {
     }
 
     /**
-     * Add a new hex to the collection of illuminated hexes.
+     * Add a new hex to the collection of Coords illuminated by searchlights.
      *
      * @return True if a new hex was added, else false if the set already
      * contained the input hex.
@@ -3212,7 +3214,12 @@ public class Game implements Serializable, IGame {
     }
 
     /**
-     * returns true if the hex is illuminated by a flare
+     * Returns the level of illumination for a given coords.  Different light
+     * sources affect how much the night-time penalties are reduced. Note: this
+     * method should be used for determining is a Coords/Hex is illuminated, not
+     * IGame. getIlluminatedPositions(), as that just returns the hexes that
+     * are effected by spotlights, whereas this one considers searchlights as
+     * well as other light sources.
      */
     public int isPositionIlluminated(Coords c) {
         // Flares happen first, because they totally negate nighttime penalties

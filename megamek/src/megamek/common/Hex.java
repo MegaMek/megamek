@@ -652,4 +652,19 @@ public class Hex implements IHex, Serializable {
         coords = c;
     }
 
+    @Override
+    public boolean isClearHex() {
+        for (int t = 1; t <= Terrains.BLDG_BASE_COLLAPSED; t++) {
+            // Ignore some terrain types
+            if ((t == Terrains.FLUFF) || (t == Terrains.ARMS)
+                    || (t == Terrains.LEGS)) {
+                continue;
+            }
+            if (containsTerrain(t)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

@@ -139,11 +139,23 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     private boolean isStrafing = false;
 
     /**
+<<<<<<< HEAD
+     * Boolean flag that determines if this shot was the first one by a
+     * particular weapon in a strafing run.  Used to ensure that heat is only
+=======
      * Boolean flag that determiens if this shot was the first one by a
      * particular weapon in a strafing run. Used to ensure that heat is only
+>>>>>>> master
      * added once.
      */
     protected boolean isStrafingFirstShot = false;
+
+    /**
+     * Boolean flag that determines if this shot was fired as part of a
+     * pointblank shot from a hidden unit.  In this case, to-hit numbers should
+     * not be modified for terrain or movement. See TW pg 260
+     */
+    protected boolean isPointblankShot = false;
 
     // default to attacking an entity
     public WeaponAttackAction(int entityId, int targetId, int weaponId) {
@@ -251,7 +263,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 swarmingMissiles,
                 game.getTarget(getOldTargetType(), getOldTargetId()),
                 game.getTarget(getOriginalTargetType(), getOriginalTargetId()),
-                isStrafing());
+                isStrafing(),  isPointblankShot());
     }
 
     public ToHitData toHit(IGame game, List<ECMInfo> allECMInfo) {
@@ -261,30 +273,32 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 swarmingMissiles,
                 game.getTarget(getOldTargetType(), getOldTargetId()),
                 game.getTarget(getOriginalTargetType(), getOriginalTargetId()),
-                isStrafing(), allECMInfo);
+                isStrafing(), isPointblankShot(), allECMInfo);
     }
 
     public static ToHitData toHit(IGame game, int attackerId,
             Targetable target, int weaponId, boolean isStrafing) {
         return WeaponAttackAction.toHit(game, attackerId, target, weaponId,
                 Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE, false, false,
-                null, null, isStrafing);
+                null, null, isStrafing, false);
     }
 
     public static ToHitData toHit(IGame game, int attackerId,
             Targetable target, int weaponId, int aimingAt, int aimingMode,
             boolean isStrafing) {
         return WeaponAttackAction.toHit(game, attackerId, target, weaponId,
-                aimingAt, aimingMode, false, false, null, null, isStrafing);
+                aimingAt, aimingMode, false, false, null, null, isStrafing,
+                false);
     }
 
-    private static ToHitData toHit(IGame game, int attackerId,
+    public static ToHitData toHit(IGame game, int attackerId,
             Targetable target, int weaponId, int aimingAt, int aimingMode,
             boolean isNemesisConfused, boolean exchangeSwarmTarget,
-            Targetable oldTarget, Targetable originalTarget, boolean isStrafing) {
+            Targetable oldTarget, Targetable originalTarget,
+            boolean isStrafing, boolean isPointblankShot) {
         return WeaponAttackAction.toHit(game, attackerId, target, weaponId,
                 aimingAt, aimingMode, isNemesisConfused, exchangeSwarmTarget,
-                oldTarget, originalTarget, isStrafing, null);
+                oldTarget, originalTarget, isStrafing, isPointblankShot, null);
     }
 
     /**
@@ -293,8 +307,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     private static ToHitData toHit(IGame game, int attackerId,
             Targetable target, int weaponId, int aimingAt, int aimingMode,
             boolean isNemesisConfused, boolean exchangeSwarmTarget,
-            Targetable oldTarget, Targetable originalTarget,
-            boolean isStrafing, List<ECMInfo> allECMInfo) {
+            Targetable oldTarget, Targetable originalTarget, boolean isStrafing,
+            boolean isPointblankShot, List<ECMInfo> allECMInfo) {
         final Entity ae = game.getEntity(attackerId);
         final Mounted weapon = ae.getEquipment(weaponId);
 
@@ -1562,8 +1576,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // attacker movement
         toHit.append(Compute.getAttackerMovementModifier(game, attackerId));
 
-        // target movement
-        if (te != null) {
+        // target movement - ignore for pointblank shots from hidden units
+        if ((te != null) && !isPointblankShot) {
             ToHitData thTemp = Compute.getTargetMovementModifier(game,
                     target.getTargetId());
             toHit.append(thTemp);
@@ -1645,7 +1659,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         toHit.append(Compute.getAttackerTerrainModifier(game, attackerId));
 
         // target terrain, not applicable when delivering minefields or bombs
-        if (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
+        // also not applicable in pointblank shots from hidden units
+        if ((target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER)
+                && !isPointblankShot) {
             toHit.append(Compute.getTargetTerrainModifier(game, target,
                     eistatus, inSameBuilding, underWater));
             toSubtract += Compute.getTargetTerrainModifier(game, target,
@@ -4463,5 +4479,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
     public void setStrafingFirstShot(boolean isStrafingFirstShot) {
         this.isStrafingFirstShot = isStrafingFirstShot;
+    }
+
+    public boolean isPointblankShot() {
+        return isPointblankShot;
+    }
+
+    public void setPointblankShot(boolean isPointblankShot) {
+        this.isPointblankShot = isPointblankShot;
     }
 }

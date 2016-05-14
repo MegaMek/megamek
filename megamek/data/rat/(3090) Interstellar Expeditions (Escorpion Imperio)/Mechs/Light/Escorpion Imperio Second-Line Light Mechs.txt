@@ -1,0 +1,12 @@
+Escorpion Imperio Second-Line Light Mechs (3090)
+Reptar MilitiaMech EPT-C-1,1
+Reptar MilitiaMech EPT-C-1,2
+Wasp WSP-1A,3
+Stinger STG-3G,4
+Wasp WSP-1A,5
+Locust LCT-1V,6
+UrbanMech UM-R60,5
+Firestarter FS9-K,4
+Thorn THE-N,3
+Jackrabbit JKR-8T,2
+Mongoose MON-66,1

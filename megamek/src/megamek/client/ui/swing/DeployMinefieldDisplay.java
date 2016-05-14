@@ -18,7 +18,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.client.event.BoardViewEvent;
@@ -68,7 +69,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
     }
 
     // buttons
-    protected Hashtable<Command,MegamekButton> buttons;
+    protected Map<Command,MegamekButton> buttons;
     
     private boolean deployM = false;
     private boolean deployC = false;
@@ -93,7 +94,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay {
 
         p = clientgui.getClient().getLocalPlayer();
 
-        buttons = new Hashtable<Command, MegamekButton>(
+        buttons = new HashMap<Command, MegamekButton>(
                 (int) (Command.values().length * 1.25 + 0.5));
         for (Command cmd : Command.values()) {
             String title = Messages.getString("DeployMinefieldDisplay."

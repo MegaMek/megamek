@@ -292,6 +292,13 @@ public interface IHex extends Cloneable {
 
     public abstract boolean isClearForLanding();
 
+    /**
+     * Used to determine if this hex is "clear", based on the absense of most
+     * other terrain types.
+     * @return
+     */
+    public abstract boolean isClearHex();
+
     public abstract Coords getCoords();
 
     public abstract void setCoords(Coords c);

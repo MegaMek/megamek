@@ -26,6 +26,7 @@ import java.util.Vector;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.options.GameOptions;
@@ -63,6 +64,7 @@ public interface IGame {
         PHASE_MOVEMENT_REPORT,
         PHASE_OFFBOARD,
         PHASE_OFFBOARD_REPORT,
+        PHASE_POINTBLANK_SHOT, // Fake phase only reached through hidden units
         PHASE_FIRING,
         PHASE_FIRING_REPORT,
         PHASE_PHYSICAL,
@@ -89,6 +91,39 @@ public interface IGame {
         public boolean isBefore(Phase otherPhase) {
             return compareTo(otherPhase) < 0;
         }
+
+        /**
+         * Get the displayable name for the given Phase.
+         *
+         * @param phase
+         * @return
+         */
+        static public String getDisplayableName(Phase phase) {
+            return Messages.getString("GAME_" + phase.name());
+        }
+
+        /**
+         * Given a displayable name for a phase, return the Phase instance for
+         * that name.  Null will be returned if no match is found or a null
+         * string is passed.
+         *
+         * @param name
+         * @return
+         */
+        @Nullable
+        static public Phase getPhaseFromName(@Nullable String name) {
+            if (name == null) {
+                return null;
+            }
+
+            for (Phase p : values()) {
+                if (name.equals(getDisplayableName(p))) {
+                    return p;
+                }
+            }
+            return null;
+        }
+
     }
 
     // New accessors for external game id
@@ -1377,7 +1412,12 @@ public interface IGame {
     public abstract void addFlare(Flare flare);
 
     /**
-     * returns true if the hex is illuminated by a flare
+     * Returns the level of illumination for a given coords.  Different light
+     * sources affect how much the night-time penalties are reduced. Note: this
+     * method should be used for determining is a Coords/Hex is illuminated, not
+     * IGame. getIlluminatedPositions(), as that just returns the hexes that
+     * are effected by spotlights, whereas this one considers searchlights as
+     * well as other light sources.
      */
     public abstract int isPositionIlluminated(Coords c);
 
@@ -1436,22 +1476,26 @@ public interface IGame {
     public abstract void setPlanetaryConditions(PlanetaryConditions conditions);
     
     /**
-     * Get a set of illuminated hexes.
+     * Get a set of Coords illuminated by searchlights.
+     * 
+     * Note: coords could be illuminated by other sources as well, it's likely
+     * that IGame.isPositionIlluminated is desired unless the searchlighted hex
+     * set is being sent to the client or server.
      */
     public abstract HashSet<Coords> getIlluminatedPositions();
     
     /**
-     * Clear the map of illuminated hexes.
+     * Clear the set of searchlight illuminated hexes.
      */
     public abstract void clearIlluminatedPositions();
 
     /**
-     * Set the set of illuminated hexes.
+     * Setter for the list of Coords illuminated by search lights.
      */
     public abstract void setIlluminatedPositions(HashSet<Coords> ip);
 
     /**
-     * Add a new hex to the collection of illuminated hexes.
+     * Add a new hex to the collection of Coords illuminated by searchlights.
      * 
      * @return True if a new hex was added, else false if the set already
      *      contained the input hex.

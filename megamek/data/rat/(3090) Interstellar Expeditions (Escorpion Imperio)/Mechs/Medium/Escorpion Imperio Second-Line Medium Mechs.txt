@@ -1,0 +1,12 @@
+Escorpion Imperio Second-Line Medium Mechs (3090)
+Arana MilitiaMech ARA-S-1,1
+Arana MilitiaMech ARA-S-1,2
+Shadow Hawk SHD-1R,3
+Hunchback HBK-4P,4
+Trebuchet TBT-5S,5
+Wolverine WVR-6R,6
+Shadow Hawk SHD-2H,5
+Phoenix Hawk PXH-1,4
+Initiate INI-02,3
+Sentinel STN-3L,2
+Lightray LGH-4Y,1

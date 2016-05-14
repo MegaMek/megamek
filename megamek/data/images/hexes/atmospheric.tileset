@@ -40,9 +40,6 @@
 
 include "StandardIncludes/StandardThemes.tileinc"
 
-include "StandardIncludes/BasicBridges.tileinc"
-include "StandardIncludes/BasicRoads.tileinc"
-
 include "StandardIncludes/StandardFluff.tileinc"
 include "StandardIncludes/StandardFuelTanks.tileinc"
 
@@ -82,15 +79,17 @@ super * "water:3" "" "transparent/blue_water_3.png"
 super * "water:4" "" "transparent/blue_water_4.png"
 super * "water:*" "" "transparent/blue_water_4.png"
 
-super * "geyser:1" "" "boring/geyservent.gif"
-# geyser 2 is rendered with smoke
-super * "geyser:3" "" "boring/geyservent.gif"
-
 super * "rapids:1" "" "transparent/rapids.png"
 super * "rapids:2" "" "transparent/rapids.png"
 
+include "StandardIncludes/BasicBridges.tileinc"
+include "StandardIncludes/BasicRoads.tileinc"
+
 super * "ice:1" "" "transparent/ice.png"
 
+super * "geyser:1" "" "boring/geyservent.gif"
+# geyser 2 is rendered with smoke
+super * "geyser:3" "" "boring/geyservent.gif"
 
 super * "fluff:14:0" "" "runway/runway_number_36.png"
 super * "fluff:14:1" "" "runway/runway_number_06.png"
@@ -151,8 +150,6 @@ super * "smoke:5" "" "transparent/chaff.gif"
 super * "screen:*" "" "boring/screen.gif"
 
 super * "geyser:2" "" "transparent/geysererupt.png"
-
-
 
 base 0 "" "" "boring/beige_plains_0.gif"
 base 1 "" "" "boring/beige_plains_1.gif"

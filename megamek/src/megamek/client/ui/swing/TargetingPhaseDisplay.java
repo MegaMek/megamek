@@ -23,9 +23,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -132,7 +133,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     }
 
     // buttons
-    protected Hashtable<TargetingCommand, MegamekButton> buttons;
+    protected Map<TargetingCommand, MegamekButton> buttons;
 
     // let's keep track of what we're shooting and at what, too
     private int cen = Entity.NONE; // current entity number
@@ -169,7 +170,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         setupStatusBar(Messages
                 .getString("TargetingPhaseDisplay.waitingForTargetingPhase")); //$NON-NLS-1$
 
-        buttons = new Hashtable<TargetingCommand, MegamekButton>(
+        buttons = new HashMap<TargetingCommand, MegamekButton>(
                 (int) (TargetingCommand.values().length * 1.25 + 0.5));
         for (TargetingCommand cmd : TargetingCommand.values()) {
             String title = Messages.getString("TargetingPhaseDisplay."

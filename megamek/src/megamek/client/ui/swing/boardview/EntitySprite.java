@@ -23,6 +23,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityMovementType;
 import megamek.common.GunEmplacement;
+import megamek.common.IGame;
 import megamek.common.IGame.Phase;
 import megamek.common.IBoard;
 import megamek.common.IPlayer;
@@ -304,8 +305,9 @@ class EntitySprite extends Sprite {
                 // submerged
                 boolean translucentHiddenUnits = GUIPreferences.getInstance()
                         .getBoolean(GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS);
-                if ((trackThisEntitiesVisibilityInfo(entity)
-                        && !entity.isVisibleToEnemy() && translucentHiddenUnits)
+                boolean shouldBeTranslucent = (trackThisEntitiesVisibilityInfo(entity)
+                        && !entity.isVisibleToEnemy()) || entity.isHidden();
+                if ((shouldBeTranslucent && translucentHiddenUnits)
                         || (entity.relHeight() < 0)) {
                     graph.setComposite(AlphaComposite.getInstance(
                             AlphaComposite.SRC_OVER, 0.5f));
@@ -366,6 +368,8 @@ class EntitySprite extends Sprite {
             
             // Prone, Hulldown, Stuck, Immobile, Jammed
             if (entity.isProne()) stStr.add(new Status(Color.RED, "PRONE"));
+            if (entity.isHiddenActivating()) stStr.add(new Status(Color.RED, "ACTIVATING"));
+            if (entity.isHidden()) stStr.add(new Status(Color.RED, "HIDDEN"));
             if (entity.isHullDown()) stStr.add(new Status(Color.ORANGE, "HULLDOWN"));
             if ((entity.isStuck())) stStr.add(new Status(Color.ORANGE, "STUCK"));
             if (!ge && entity.isImmobile()) stStr.add(new Status(Color.RED, "IMMOBILE"));
@@ -808,7 +812,15 @@ class EntitySprite extends Sprite {
         // Unit Immobile
         if ((thisGunEmp == null) && (entity.isImmobile()))
             addToTT("Immobile", BR);
-        
+
+        if (entity.isHiddenActivating()) {
+            addToTT("HiddenActivating", BR,
+                    IGame.Phase.getDisplayableName(entity
+                            .getHiddenActivationPhase()));
+        } else if (entity.isHidden()) {
+            addToTT("Hidden", BR);
+        }
+
         // Jammed by ECM
         if (isAffectedByECM()) {
             addToTT("Jammed", BR);

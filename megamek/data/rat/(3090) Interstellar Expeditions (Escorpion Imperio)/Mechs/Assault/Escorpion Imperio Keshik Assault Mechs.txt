@@ -1,0 +1,12 @@
+Escorpion Imperio Keshik Assault Mechs (3090)
+Grand Crusader II GRN-D-04,1
+Crockett CRK-5003-1,2
+Highlander HGN-732,3
+Thug THG-11E,4
+Emperor EMP-6A,5
+Warhammer IIC (Standard),6
+Marauder IIC (Standard),5
+Kraken (Bane) 2,4
+Behemoth (Stone Rhino) 2,3
+Man O' War (Gargoyle) Prime,2
+Masakari (Warhawk) Prime,1

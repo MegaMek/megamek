@@ -1,0 +1,12 @@
+Escorpion Imperio Dropships (3090)
+Sassanid (Standard),1
+Manatee (Standard),2
+Condor (2801),3
+Triumph (2593),4
+Union (2708),5
+Union C,6
+Broadsword (Standard),5
+Gazelle (2531),4
+Overlord C,3
+Lion (Clan),2
+Titan (Clan),1

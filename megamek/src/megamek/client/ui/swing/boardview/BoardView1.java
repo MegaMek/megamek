@@ -64,7 +64,6 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -3288,6 +3287,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 || entity.hasSeenEntity(localPlayer)
                 || entity.hasDetectedEntity(localPlayer);
 
+        canSee &= (localPlayer == null)
+                || !game.getOptions().booleanOption("hidden_units")
+                || !entity.getOwner().isEnemyOf(localPlayer)
+                || !entity.isHidden();
+
         if ((position != null) && canSee) {
             // Add new EntitySprite
             // If no secondary positions, add a sprite for the central position
@@ -3414,6 +3418,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 && entity.getOwner().isEnemyOf(localPlayer)
                 && !entity.hasSeenEntity(localPlayer)
                 && !entity.hasDetectedEntity(localPlayer)) {
+                continue;
+            }
+            if ((localPlayer != null)
+                    && game.getOptions().booleanOption("hidden_units")
+                    && entity.getOwner().isEnemyOf(localPlayer)
+                    && entity.isHidden()) {
                 continue;
             }
             if (entity.getSecondaryPositions().isEmpty()) {
@@ -3732,7 +3742,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     public void setFiringSolutions(Entity attacker,
-                                   Hashtable<Integer, ToHitData> firingSolutions) {
+            Map<Integer, ToHitData> firingSolutions) {
 
         clearFiringSolutionData();
         if (firingSolutions == null) {
@@ -3758,8 +3768,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         strafingCoords.clear();
     }
 
-    public void setMovementEnvelope(Hashtable<Coords, Integer> mvEnvData,
-                                    int walk, int run, int jump, int gear) {
+    public void setMovementEnvelope(Map<Coords, Integer> mvEnvData, int walk,
+            int run, int jump, int gear) {
         clearMovementEnvelope();
 
         if (mvEnvData == null) {

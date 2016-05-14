@@ -1,0 +1,12 @@
+Escorpion Imperio Medium Vehicles (3090)
+Engineering Vehicle (AC),1
+Hetzer Wheeled Assault Gun (AC10),2
+Maxim Heavy Hover Transport (Standard),3
+Vedette Medium Tank (Standard),4
+Zephyr Hovertank (Standard),5
+Prowler Multi-Terrain Vehicle (Succession Wars),6
+Myrmidon Medium Tank (Standard),5
+Ares Medium Tank (Standard),4
+Ku Wheeled Assault Tank (Standard),3
+Hachiman Fire Support Tank (Standard),2
+Bandit (C) Hovercraft Prime,1

@@ -1,0 +1,12 @@
+Escorpion Imperio Heavy Fighters (3090)
+Stuka STU-K5,1
+Vulcan VLC-5N,2
+Chippewa CHP-W5,3
+Rapier RPR-100,4
+Thunderbird TRB-D36,5
+Hammerhead HMR-HD,6
+Ahab AHB-443,5
+Xerxes (Standard),4
+Hydaspes (Standard),3
+Kirghiz Prime,2
+Sabutai Prime,1

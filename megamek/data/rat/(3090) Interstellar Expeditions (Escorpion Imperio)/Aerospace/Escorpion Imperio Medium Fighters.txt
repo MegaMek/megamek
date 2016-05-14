@@ -1,0 +1,12 @@
+Escorpion Imperio Medium Fighters (3090)
+Heavy Strike Fighter Meteor,1
+Corsair CSR-V12,2
+Hellcat HCT-213,3
+Samurai SL-25,4
+Lightning LTN-G15,5
+Hellcat II HCT-213B,6
+Gotha GTHA-500,5
+Ironsides IRN-SD1,4
+Tyre (Standard),3
+Turk Prime,2
+Visigoth Prime,1

@@ -22,8 +22,10 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
+
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -126,10 +128,10 @@ public class SkinXMLHandler {
     public static final String BottomLeftCorner = "bl_corner"; //$NON-NLS-1$
     public static final String TopRightCorner = "tr_corner"; //$NON-NLS-1$
     public static final String BottomRightCorner = "br_corner"; //$NON-NLS-1$
-    
+
     public static final String MechOutline = "mech_outline"; //$NON-NLS-1$
 
-    private static Hashtable<String, SkinSpecification> skinSpecs;
+    private static Map<String, SkinSpecification> skinSpecs;
 
     private static UnitDisplaySkinSpecification udSpec = null;
     
@@ -204,7 +206,7 @@ public class SkinXMLHandler {
             // Get the list of units.
             NodeList listOfComponents = doc.getElementsByTagName(UI_ELEMENT);
             int totalComponents = listOfComponents.getLength();
-            skinSpecs = new Hashtable<String, SkinSpecification>(
+            skinSpecs = new HashMap<String, SkinSpecification>(
                     (int)(totalComponents * 1.25));
             for (int comp = 0; comp < totalComponents; comp++) {
                 Element borderList = (Element) listOfComponents.item(comp);

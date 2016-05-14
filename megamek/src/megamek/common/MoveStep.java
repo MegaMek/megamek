@@ -1422,11 +1422,12 @@ public class MoveStep implements Serializable {
 
         // If this step isn't the end step anymore, we might not be in danger
         // after all
+        IHex pos = getGame().getBoard().getHex(position);
         if (getGame().getOptions().booleanOption("psr_jump_heavy_woods")) {
             if (!isEnd
                     && isJumping()
-                    && getGame().getBoard().getHex(position)
-                    .containsTerrain(Terrains.WOODS, 2)) {
+                    && (pos.containsTerrain(Terrains.WOODS, 2) 
+                            || pos.containsTerrain(Terrains.WOODS, 3))) {
                 danger = false;
                 pastDanger = false;
             }
@@ -2715,10 +2716,10 @@ public class MoveStep implements Serializable {
             }
         }
 
-        // Infantry (except mechanized) pay 1 less MP to enter woods
-        // Assumption - this doesn't apply to jungle
-        if (isInfantry && destHex.containsTerrain(Terrains.WOODS)
-                && !isMechanizedInfantry) {
+        // Infantry (except mechanized) pay 1 less MP to enter woods and Jungle
+        if (isInfantry && !isMechanizedInfantry
+                && (destHex.containsTerrain(Terrains.WOODS) || destHex.containsTerrain(Terrains.JUNGLE))
+                && !isPavementStep) {
             mp--;
         }
     }
@@ -2775,6 +2776,11 @@ public class MoveStep implements Serializable {
         // super-easy
         if (entity.isImmobile()) {
             // System.err.println("illegal - immobile");
+            return false;
+        }
+
+        // Hidden units, and activating hidden units cannot move
+        if (entity.isHidden() || entity.isHiddenActivating()) {
             return false;
         }
 

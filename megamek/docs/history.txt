@@ -24,6 +24,7 @@ v0.41.18-git
 + Data: New Sprites, Unit Fixes, and Quirk additions
 + Issue #166 - RATs From Interstellar Expeditions.
 + Fixed #159: Added bw_atmospheric.tileset
++ Fixed #191: Replacement truck_wreck image
 
 v0.41.17 (2016-04-16 00:30 UTC)
 + Data: New Sprites and Unit Date Fixes.

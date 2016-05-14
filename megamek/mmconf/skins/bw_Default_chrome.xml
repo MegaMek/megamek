@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  This is BLOODWOLF's Default_chrome skin for Megamek
+
+  New skins can be created by specifying UI_Element tags
+
+  The defaultElement UI_Element specifies the default border to be used by UI
+    components
+
+  The defaultButton UI_Element specifies the default border and background
+   images to use for Megamek buttons.  The first image is the base default
+   image and the second image is the pressed image
+
+  NOTE: All locations should be in data/images/widgets
+-->
+<skin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="skinSchema.xsl">
+	<UI_Element>
+		<name>BoardViewBorder</name>
+		<no_border>false</no_border>
+		<!-- Specification of border images -->
+		<border>
+			<!-- Corner images -->
+			<corner_top_left>bloodwolf/Default/boardview/TLC_chrome.gif</corner_top_left>
+			<corner_top_right>bloodwolf/Default/boardview/TRC_chrome.gif</corner_top_right>
+			<corner_bottom_left>bloodwolf/Default/boardview/BLC_chrome.gif</corner_bottom_left>
+			<corner_bottom_right>bloodwolf/Default/boardview/BRC_chrome.gif</corner_bottom_right>
+			<!-- Border lines: these images will be tiled -->
+			<edge>
+				<edgeIcon>
+					<icon>bloodwolf/Default/boardview/TE_chrome.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>top</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>bloodwolf/Default/boardview/BE_chrome.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>bottom</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>bloodwolf/Default/boardview/LE_chrome.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>left</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>bloodwolf/Default/boardview/RE_chrome.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>right</edgeName>
+			</edge>
+		</border>
+		<background_image>bloodwolf/Default/boardview/background_1.gif</background_image>
+		<background_image>bloodwolf/Default/boardview/background.png</background_image>
+		<tile_background>true</tile_background>
+		<font_color>#ffffff</font_color>
+		<show_scroll_bars>false</show_scroll_bars>
+	</UI_Element>
+
+	<UI_Element>
+		<name>PhaseDisplayBorder</name>
+		<no_border>false</no_border>
+		<!-- Specification of border images -->
+		<border>
+			<!-- Corner images -->
+			<corner_top_left>bloodwolf/Default/phase/TLC_chrome.gif</corner_top_left>
+			<corner_top_right>bloodwolf/Default/phase/TRC_chrome.gif</corner_top_right>
+			<corner_bottom_left>bloodwolf/Default/phase/BLC_chrome.gif</corner_bottom_left>
+			<corner_bottom_right>bloodwolf/Default/phase/BRC_chrome.gif</corner_bottom_right>
+			<!-- Border lines: these images will be tiled -->
+			<edge>
+				<edgeIcon>
+					<icon>bloodwolf/Default/phase/TE_chrome.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>top</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>bloodwolf/Default/phase/BE_chrome.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>bottom</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>bloodwolf/Default/phase/LE_chrome.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>left</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>bloodwolf/Default/phase/RE_chrome.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>right</edgeName>
+			</edge>
+		</border>
+		<background_image>bloodwolf/Default/phase/background.png</background_image>
+		<tile_background>true</tile_background>
+		<font_color>#ffffff</font_color>
+		<show_scroll_bars>false</show_scroll_bars>
+	</UI_Element>
+
+	<UI_Element>
+		<name>defaultElement</name>
+		<no_border>false</no_border>
+		<!-- Specification of border images -->
+		<border>
+			<!-- Corner images -->
+			<corner_top_left>bloodwolf/Default/boardview/TLC_chrome.gif</corner_top_left>
+			<corner_top_right>bloodwolf/Default/boardview/TRC_chrome.gif</corner_top_right>
+			<corner_bottom_left>bloodwolf/Default/boardview/BLC_chrome.gif</corner_bottom_left>
+			<corner_bottom_right>bloodwolf/Default/boardview/BRC_chrome.gif</corner_bottom_right>
+			<!-- Border lines: these images will be tiled -->
+			<edge>
+				<edgeIcon>
+					<icon>bloodwolf/Default/boardview/TE_chrome.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>top</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>bloodwolf/Default/boardview/BE_chrome.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>bottom</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>bloodwolf/Default/boardview/LE_chrome.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>left</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>bloodwolf/Default/boardview/RE_chrome.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>right</edgeName>
+			</edge>
+		</border>
+		<background_image>bloodwolf/Default/boardview/background_1.gif</background_image>
+		<tile_background>true</tile_background>
+		<font_color>#ffffff</font_color>
+		<show_scroll_bars>false</show_scroll_bars>
+	</UI_Element>
+
+	<UI_Element>
+		<name>defaultButton</name>
+		<no_border>true</no_border>
+		<!-- Specification of border images -->
+		<border>
+			<!-- Corner images -->
+			<corner_top_left></corner_top_left>
+			<corner_top_right></corner_top_right>
+			<corner_bottom_left></corner_bottom_left>
+			<corner_bottom_right></corner_bottom_right>
+			<!-- Border lines: these images will be tiled -->
+			<edge>
+				<edgeName>top</edgeName>
+			</edge>
+			<edge>
+				<edgeName>bottom</edgeName>
+			</edge>
+			<edge>
+				<edgeName>left</edgeName>
+			</edge>
+			<edge>
+				<edgeName>right</edgeName>
+			</edge>
+		</border>
+		<background_image>bloodwolf/Default/button/buttonNormal_chrome.png</background_image>
+		<background_image>bloodwolf/Default/button/buttonPushed_chrome.png</background_image>
+		<tile_background>false</tile_background>
+		<font_color>#ffffff</font_color>
+		<font_color>#999999</font_color>
+		<font_color>#ffffff</font_color>
+		<show_scroll_bars>false</show_scroll_bars>
+	</UI_Element>
+
+	<UI_Element>
+		<name>UnitDisplay</name>
+			<tab_general_idle>bloodwolf/Default/unit/tab_general_idle_chrome.gif</tab_general_idle>
+			<tab_pilot_idle>bloodwolf/Default/unit/tab_pilot_idle_chrome.gif</tab_pilot_idle>
+			<tab_armor_idle>bloodwolf/Default/unit/tab_armor_idle_chrome.gif</tab_armor_idle>
+			<tab_systems_idle>bloodwolf/Default/unit/tab_systems_idle_chrome.gif</tab_systems_idle>
+			<tab_weapon_idle>bloodwolf/Default/unit/tab_weapon_idle_chrome.gif</tab_weapon_idle>
+			<tab_extras_idle>bloodwolf/Default/unit/tab_extras_idle_chrome.gif</tab_extras_idle>
+			<tab_general_active>bloodwolf/Default/unit/tab_general_active_chrome.gif</tab_general_active>
+			<tab_pilot_active>bloodwolf/Default/unit/tab_pilot_active_chrome.gif</tab_pilot_active>
+			<tab_armor_active>bloodwolf/Default/unit/tab_armor_active_chrome.gif</tab_armor_active>
+			<tab_systems_active>bloodwolf/Default/unit/tab_systems_active_chrome.gif</tab_systems_active>
+			<tab_weapon_active>bloodwolf/Default/unit/tab_weapon_active_chrome.gif</tab_weapon_active>
+			<tab_extras_active>bloodwolf/Default/unit/tab_extras_active_chrome.gif</tab_extras_active>
+			<idle_corner>bloodwolf/Default/unit/idle_corner_chrome.gif</idle_corner>
+			<active_corner>bloodwolf/Default/unit/active_corner_chrome.gif</active_corner>
+			<background_tile>bloodwolf/Default/unit/background.png</background_tile>
+			<top_line>bloodwolf/Default/unit/TE_chrome.gif</top_line>
+			<bottom_line>bloodwolf/Default/unit/BE_chrome.gif</bottom_line>
+			<left_line>bloodwolf/Default/unit/LE_chrome.gif</left_line>
+			<right_line>bloodwolf/Default/unit/RE_chrome.gif</right_line>
+			<tl_corner>bloodwolf/Default/unit/TLC_chrome.gif</tl_corner>
+			<bl_corner>bloodwolf/Default/unit/BLC_chrome.gif</bl_corner>
+			<tr_corner>bloodwolf/Default/unit/TRC_chrome.gif</tr_corner>
+			<br_corner>bloodwolf/Default/unit/BRC_chrome.gif</br_corner>
+			<mech_outline>bloodwolf/Default/unit/bg_mech.gif</mech_outline>
+	</UI_Element>
+
+</skin>

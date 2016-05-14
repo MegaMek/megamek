@@ -33,6 +33,7 @@ v0.41.18-git
 + Fixed #191: Replacement truck_wreck image
 + PR #99: Added a UI editor for skins
 + PR 124: Hidden Units rules from TW
++ Issue #185: Skins added by BLOODWOLF
 
 
 v0.41.17 (2016-04-16 00:30 UTC)

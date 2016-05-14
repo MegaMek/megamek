@@ -25,6 +25,11 @@ v0.41.18-git
 + Issue #166 - RATs From Interstellar Expeditions.
 + Fixed #159: Added bw_atmospheric.tileset
 + Fixed #191: Replacement truck_wreck image
++ Fixed #175: Foot platoons can move infinite hexes while in woods per turn
++ Fixed #127: Jungle move cost for infantry incorrect.
++ Fixed #74: Bog Down Rules - Both stuck/unstuck should use same PSR modifiers
++ Fixed #43: Conflicting rules on Rubble unit restrictions (errata)
++ Fixed #187: Mechnized infantry able to enter prohibited terrain
 
 v0.41.17 (2016-04-16 00:30 UTC)
 + Data: New Sprites and Unit Date Fixes.

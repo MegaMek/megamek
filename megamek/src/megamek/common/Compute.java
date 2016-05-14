@@ -5458,27 +5458,30 @@ public class Compute {
     }
 
     public static boolean isInUrbanEnvironment(IGame game, Coords unitPOS) {
+        IHex unitHex = game.getBoard().getHex(unitPOS);
+
+        if (unitHex.containsTerrain(Terrains.PAVEMENT)
+                || unitHex.containsTerrain(Terrains.BUILDING)
+                || unitHex.containsTerrain(Terrains.RUBBLE)) {
+            return true;
+        }
+
         // loop through adjacent hexes
         for (int dir = 0; dir <= 5; dir++) {
-            Coords tempcoords = unitPOS.translated(dir);
-            IHex hextor = game.getBoard().getHex(tempcoords);
-            IHex unitHex = game.getBoard().getHex(unitPOS);
+            Coords adjCoords = unitPOS.translated(dir);
+            IHex adjHex = game.getBoard().getHex(adjCoords);
 
-            if (!game.getBoard().contains(tempcoords)) {
+            if (!game.getBoard().contains(adjCoords)) {
                 continue;
             }
-            if (unitPOS.equals(tempcoords)) {
+            if (unitPOS.equals(adjCoords)) {
                 continue;
             }
-            if (unitHex.containsTerrain(Terrains.PAVEMENT)
-                    || unitHex.containsTerrain(Terrains.BUILDING)
-                    || unitHex.containsTerrain(Terrains.RUBBLE)) {
-                return true;
-            }
+
             // hex pavement or building?
-            if (hextor.containsTerrain(Terrains.PAVEMENT)
-                    || hextor.containsTerrain(Terrains.BUILDING)
-                    || hextor.containsTerrain(Terrains.RUBBLE)) {
+            if (adjHex.containsTerrain(Terrains.PAVEMENT)
+                    || adjHex.containsTerrain(Terrains.BUILDING)
+                    || adjHex.containsTerrain(Terrains.RUBBLE)) {
                 return true;
             }
         }

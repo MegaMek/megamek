@@ -30,6 +30,7 @@ v0.41.18-git
 + Fixed #74: Bog Down Rules - Both stuck/unstuck should use same PSR modifiers
 + Fixed #43: Conflicting rules on Rubble unit restrictions (errata)
 + Fixed #187: Mechnized infantry able to enter prohibited terrain
++ PR #147: SPA: Eagle's Eyes
 
 v0.41.17 (2016-04-16 00:30 UTC)
 + Data: New Sprites and Unit Date Fixes.

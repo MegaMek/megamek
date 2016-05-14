@@ -31,6 +31,9 @@ v0.41.18-git
 + Fixed #187: Mechnized infantry able to enter prohibited terrain
 + PR #141: SPA: Eagle's Eyes
 + Fixed #191: Replacement truck_wreck image
++ PR #99: Added a UI editor for skins
++ PR 124: Hidden Units rules from TW
+
 
 v0.41.17 (2016-04-16 00:30 UTC)
 + Data: New Sprites and Unit Date Fixes.

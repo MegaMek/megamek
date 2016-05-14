@@ -75,10 +75,15 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
     ImageIcon backgroundIcon = null;
 
     protected AbstractPhaseDisplay(ClientGUI cg) {
+        this(cg, SkinSpecification.UIComponents.PhaseDisplay.getComp(),
+                SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
+    }
+
+    protected AbstractPhaseDisplay(ClientGUI cg, String borderSkinComp,
+            String buttonSkinComp) {
         this.clientgui = cg;
-        SkinSpecification pdSkinSpec = 
-                SkinXMLHandler.getSkin(SkinXMLHandler.PHASEDISPLAY);
-        
+        SkinSpecification pdSkinSpec = SkinXMLHandler.getSkin(borderSkinComp);
+
         try {
             if (pdSkinSpec.backgrounds.size() > 0){
                 File file = new File(Configuration.widgetsDir(), 
@@ -96,50 +101,53 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
             System.out.println(e.getMessage());
         }
         
-        setBorder(new MegamekBorder("PhaseDisplayBorder"));
-        butDone = new MegamekButton("","PhaseDisplayDoneButton");
+        setBorder(new MegamekBorder(borderSkinComp));
+        butDone = new MegamekButton("",buttonSkinComp);
         butDone.setActionCommand("doneButton");
-        butDone.addActionListener(new AbstractAction() {
-            private static final long serialVersionUID = -5034474968902280850L;
+        if (clientgui != null) {
+            butDone.addActionListener(new AbstractAction() {
+                private static final long serialVersionUID = -5034474968902280850L;
 
-            public void actionPerformed(ActionEvent e) {
-                if (isIgnoringEvents()) {
-                    return;
-                }
-                if (clientgui.getClient().isMyTurn() || 
-                        (clientgui.getClient().getGame().getTurn() == null)) {
-                    ready();
-                    // When the turn is ended, we could miss a key release event
-                    // This will ensure no repeating keys are stuck down
-                    clientgui.controller.stopAllRepeating();
-                }
-            }
-        });
-
-        final AbstractPhaseDisplay display = this;
-        // Register the action for DONE
-        clientgui.controller.registerCommandAction(KeyCommandBind.DONE.cmd,
-                new CommandAction() {
-
-                    @Override
-                    public boolean shouldPerformAction() {
-                        if ((!clientgui.getClient().isMyTurn() && (clientgui
-                                .getClient().getGame().getTurn() != null))
-                                || clientgui.bv.getChatterBoxActive()
-                                || display.isIgnoringEvents()
-                                || !display.isVisible()
-                                || !butDone.isEnabled()) {
-                            return false;
-                        } else {
-                            return true;
-                        }
+                public void actionPerformed(ActionEvent e) {
+                    if (isIgnoringEvents()) {
+                        return;
                     }
-
-                    @Override
-                    public void performAction() {
+                    if (clientgui.getClient().isMyTurn()
+                            || (clientgui.getClient().getGame().getTurn() == null)) {
                         ready();
+                        // When the turn is ended, we could miss a key release
+                        // event
+                        // This will ensure no repeating keys are stuck down
+                        clientgui.controller.stopAllRepeating();
                     }
-                });
+                }
+            });
+
+            final AbstractPhaseDisplay display = this;
+            // Register the action for DONE
+            clientgui.controller.registerCommandAction(KeyCommandBind.DONE.cmd,
+                    new CommandAction() {
+
+                        @Override
+                        public boolean shouldPerformAction() {
+                            if ((!clientgui.getClient().isMyTurn() && (clientgui
+                                    .getClient().getGame().getTurn() != null))
+                                    || clientgui.bv.getChatterBoxActive()
+                                    || display.isIgnoringEvents()
+                                    || !display.isVisible()
+                                    || !butDone.isEnabled()) {
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        }
+
+                        @Override
+                        public void performAction() {
+                            ready();
+                        }
+                    });
+        }
     }
     
     protected void paintComponent(Graphics g) {
@@ -151,6 +159,10 @@ public abstract class AbstractPhaseDisplay extends JPanel implements
         int h = getHeight();
         int iW = backgroundIcon.getIconWidth();
         int iH = backgroundIcon.getIconHeight();
+        // If the image isn't loaded, prevent an infinite loop
+        if ((iW < 1) || (iH < 1)) {
+            return;
+        }
         for (int x = 0; x < w; x+=iW){
             for (int y = 0; y < h; y+=iH){
                 g.drawImage(backgroundIcon.getImage(), x, y, 

@@ -255,13 +255,13 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
      * Sets up the status bar with toggle buttons for the mek display and map.
      */
     protected void setupStatusBar(String defStatus) {
-        SkinSpecification pdSkinSpec = 
-                SkinXMLHandler.getSkin(SkinXMLHandler.PHASEDISPLAY);
+        SkinSpecification pdSkinSpec = SkinXMLHandler
+                .getSkin(SkinSpecification.UIComponents.PhaseDisplay.getComp());
         
         panStatus = new JPanel();
         panStatus.setOpaque(false);
         labStatus = new JLabel(defStatus, SwingConstants.CENTER);
-        labStatus.setForeground(pdSkinSpec.fontColor);
+        labStatus.setForeground(pdSkinSpec.fontColors.get(0));
         labStatus.setOpaque(false);
 
         // layout

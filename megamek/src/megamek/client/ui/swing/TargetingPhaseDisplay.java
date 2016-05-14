@@ -42,6 +42,7 @@ import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -175,7 +176,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             String title = Messages.getString("TargetingPhaseDisplay."
                     + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title,
-                    "PhaseDisplayButton");
+                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);

@@ -209,66 +209,79 @@ public class JumpshipMapSet implements DisplayMapSet{
 
     }
 
-    private void setBackGround(){
-        Image tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), "tile.gif").toString()); //$NON-NLS-1$
-        PMUtil.setImage(tile,comp);
+    private void setBackGround() {
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler
+                .getUnitDisplaySkin();
+
+        Image tile = comp.getToolkit()
+                .getImage(
+                        new File(Configuration.widgetsDir(), udSpec
+                                .getBackgroundTile()).toString());
+        PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
-        bgDrawers.addElement(new BackGroundDrawer (tile,b));
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.TILING_HORIZONTAL | 
-        BackGroundDrawer.VALIGN_TOP;
-        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), "h_line.gif").toString()); //$NON-NLS-1$
-        PMUtil.setImage(tile,comp);
-        bgDrawers.addElement(new BackGroundDrawer (tile,b));                
+        b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
+        tile = comp.getToolkit().getImage(
+                new File(Configuration.widgetsDir(), udSpec.getTopLine())
+                        .toString());
+        PMUtil.setImage(tile, comp);
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.TILING_HORIZONTAL | 
-        BackGroundDrawer.VALIGN_BOTTOM;
-        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), "h_line.gif").toString()); //$NON-NLS-1$
-        PMUtil.setImage(tile,comp);
-        bgDrawers.addElement(new BackGroundDrawer (tile,b));
+        b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
+        tile = comp.getToolkit().getImage(
+                new File(Configuration.widgetsDir(), udSpec.getBottomLine())
+                        .toString());
+        PMUtil.setImage(tile, comp);
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.TILING_VERTICAL | 
-        BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), "v_line.gif").toString()); //$NON-NLS-1$
-        PMUtil.setImage(tile,comp);
-        bgDrawers.addElement(new BackGroundDrawer (tile,b));
+        b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
+        tile = comp.getToolkit().getImage(
+                new File(Configuration.widgetsDir(), udSpec.getLeftLine())
+                        .toString());
+        PMUtil.setImage(tile, comp);
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.TILING_VERTICAL | 
-        BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), "v_line.gif").toString()); //$NON-NLS-1$
-        PMUtil.setImage(tile,comp);
-        bgDrawers.addElement(new BackGroundDrawer (tile,b));
+        b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
+        tile = comp.getToolkit().getImage(
+                new File(Configuration.widgetsDir(), udSpec.getRightLine())
+                        .toString());
+        PMUtil.setImage(tile, comp);
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
+                | BackGroundDrawer.HALIGN_LEFT;
+        tile = comp.getToolkit().getImage(
+                new File(Configuration.widgetsDir(), udSpec.getTopLeftCorner())
+                        .toString());
+        PMUtil.setImage(tile, comp);
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | 
-        BackGroundDrawer.VALIGN_TOP |
-        BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), "tl_corner.gif").toString()); //$NON-NLS-1$
-        PMUtil.setImage(tile,comp);
-        bgDrawers.addElement(new BackGroundDrawer (tile,b));
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
+                | BackGroundDrawer.HALIGN_LEFT;
+        tile = comp.getToolkit().getImage(
+                new File(Configuration.widgetsDir(), udSpec
+                        .getBottomLeftCorner()).toString());
+        PMUtil.setImage(tile, comp);
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | 
-        BackGroundDrawer.VALIGN_BOTTOM |
-        BackGroundDrawer.HALIGN_LEFT;
-        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), "bl_corner.gif").toString()); //$NON-NLS-1$
-        PMUtil.setImage(tile,comp);
-        bgDrawers.addElement(new BackGroundDrawer (tile,b));
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
+                | BackGroundDrawer.HALIGN_RIGHT;
+        tile = comp.getToolkit()
+                .getImage(
+                        new File(Configuration.widgetsDir(), udSpec
+                                .getTopRightCorner()).toString());
+        PMUtil.setImage(tile, comp);
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING | 
-        BackGroundDrawer.VALIGN_TOP |
-        BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), "tr_corner.gif").toString()); //$NON-NLS-1$
-        PMUtil.setImage(tile,comp);
-        bgDrawers.addElement(new BackGroundDrawer (tile,b));
-
-        b = BackGroundDrawer.NO_TILING | 
-        BackGroundDrawer.VALIGN_BOTTOM |
-        BackGroundDrawer.HALIGN_RIGHT;
-        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), "br_corner.gif").toString()); //$NON-NLS-1$
-        PMUtil.setImage(tile,comp);
-        bgDrawers.addElement(new BackGroundDrawer (tile,b));
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
+                | BackGroundDrawer.HALIGN_RIGHT;
+        tile = comp.getToolkit().getImage(
+                new File(Configuration.widgetsDir(), udSpec
+                        .getBottomRightCorner()).toString());
+        PMUtil.setImage(tile, comp);
+        bgDrawers.addElement(new BackGroundDrawer(tile, b));
     }
-
     private void translateAreas(){
 
     }

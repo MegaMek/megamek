@@ -40,6 +40,7 @@ import megamek.client.Client;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -65,7 +66,8 @@ public class ReportDisplay extends AbstractPhaseDisplay implements
      */
     public ReportDisplay(ClientGUI clientgui) {
         super(clientgui);
-        butDone = new MegamekButton("","PhaseDisplayDoneButton");
+        butDone = new MegamekButton("",
+                SkinSpecification.UIComponents.PhaseDisplayDoneButton.getComp());
         butDone.setActionCommand("doneButton");
         butDone.addActionListener(new AbstractAction() {
             private static final long serialVersionUID = -5034474968902280850L;

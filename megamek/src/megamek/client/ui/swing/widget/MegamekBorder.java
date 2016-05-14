@@ -70,7 +70,9 @@ public class MegamekBorder extends EtchedBorder {
     
     public MegamekBorder(){
         super();
-        initialize(SkinXMLHandler.getSkin(SkinXMLHandler.defaultUIElement));
+        initialize(SkinXMLHandler
+                .getSkin(SkinSpecification.UIComponents.DefaultUIElement
+                        .getComp()));
     }
     
     public MegamekBorder(SkinSpecification spec){

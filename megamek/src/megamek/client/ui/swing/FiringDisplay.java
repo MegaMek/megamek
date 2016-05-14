@@ -42,6 +42,7 @@ import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BombType;
@@ -206,7 +207,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             String title = Messages.getString("FiringDisplay." //$NON-NLS-1$
                     + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title,
-                    "PhaseDisplayButton"); //$NON-NLS-1$
+                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);

@@ -51,6 +51,12 @@ public final class Configuration {
     // **************************************************************************
     // These are all directories that normally appear under 'data'.
 
+    /** The default skin specification directory. */
+    private static final String DEFAULT_DIR_NAME_SKINS = "skins";
+
+    // **************************************************************************
+    // These are all directories that normally appear under 'data'.
+
     /**
      * The default random army tables directory name (under the data directory).
      */
@@ -179,6 +185,33 @@ public final class Configuration {
         lock.writeLock().lock();
         docs_dir = (docs_dir_path == null) ? new File(DEFAULT_DIR_NAME_DOCS)
                 : docs_dir_path;
+        lock.writeLock().unlock();
+    }
+
+    /**
+     * Return the configured skin specification files directory.
+     *
+     * @return {@link File} containing the path to the skins directory.
+     */
+    public static File skinsDir() {
+        lock.readLock().lock();
+        try {
+            return skins_dir;
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Set the skins directory.
+     *
+     * @param skin_dir_path
+     *            The path to the skins directory.
+     */
+    public static void setSkinDir(final File skin_dir_path) {
+        lock.writeLock().lock();
+        skins_dir = (skin_dir_path == null) ? new File(DEFAULT_DIR_NAME_CONFIG,
+                DEFAULT_DIR_NAME_SKINS) : skin_dir_path;
         lock.writeLock().unlock();
     }
 
@@ -469,6 +502,10 @@ public final class Configuration {
 
     /** The configured documentation directory. */
     private static File docs_dir = new File(DEFAULT_DIR_NAME_DOCS);
+
+    /** The configured skins directory. */
+    private static File skins_dir = new File(DEFAULT_DIR_NAME_CONFIG,
+            DEFAULT_DIR_NAME_SKINS);
 
     /** The configured army tables directory. */
     private static File army_tables_dir = null;

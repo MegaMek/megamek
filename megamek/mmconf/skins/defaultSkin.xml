@@ -126,7 +126,6 @@
       </border>
       <background_image>kiro/hexpattern_02.png</background_image>
       <background_image>hyades.jpg</background_image>
-      <show_scroll_bars>true</show_scroll_bars>
   </UI_Element>
 
   <!-- Defines the borders for the PhaseDisplay -->
@@ -227,6 +226,7 @@
     <!-- Specification of background image -->
     <background_image>SpaceD/buttonNormal.png</background_image>
     <background_image>SpaceD/buttonPushed.png</background_image>
+    <font_color>#ffffff</font_color>
   </UI_Element>
 
 </skin>

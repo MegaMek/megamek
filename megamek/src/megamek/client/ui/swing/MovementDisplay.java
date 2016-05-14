@@ -35,6 +35,7 @@ import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Bay;
@@ -244,16 +245,21 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
          * @return An array of valid commands for the given parameters
          */
         public static MoveCommand[] values(int f, GameOptions opts,
-                                           boolean forwardIni) {
+                boolean forwardIni) {
+            boolean manualShutdown = false, selfDestruct = false;
+            if (opts != null) {
+                manualShutdown = opts.booleanOption("manual_shutdown");
+                selfDestruct = opts.booleanOption("tacops_self_destruct");
+            }
             ArrayList<MoveCommand> flaggedCmds = new ArrayList<MoveCommand>();
             for (MoveCommand cmd : MoveCommand.values()) {
                 // Check for movements that with disabled game options
                 if ((cmd == MOVE_SHUTDOWN || cmd == MOVE_STARTUP)
-                    && !opts.booleanOption("manual_shutdown")) {
+                    && !manualShutdown) {
                     continue;
                 }
                 if (cmd == MOVE_SELF_DESTRUCT
-                    && !opts.booleanOption("tacops_self_destruct")) {
+                    && !selfDestruct) {
                     continue;
                 }
 
@@ -306,11 +312,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     public MovementDisplay(final ClientGUI clientgui) {
         super(clientgui);
 
-        clientgui.getClient().getGame().addGameListener(this);
-        gear = MovementDisplay.GEAR_LAND;
-        shiftheld = false;
-        clientgui.getBoardView().addBoardViewListener(this);
-        clientgui.getClient().getGame().setupTeams();
+        this.clientgui = clientgui;
+        if (clientgui != null) {
+            clientgui.getClient().getGame().addGameListener(this);
+            clientgui.getBoardView().addBoardViewListener(this);
+            clientgui.getClient().getGame().setupTeams();
+            clientgui.bv.addKeyListener(this);
+        }
+
         setupStatusBar(Messages.getString("MovementDisplay.waitingForMovementPhase")); //$NON-NLS-1$
 
         // Create all of the buttons
@@ -320,10 +329,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             String title = Messages
                     .getString("MovementDisplay." + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title,
-                                                        "PhaseDisplayButton");
+                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
-            newButton.setEnabled(false);
+            if (clientgui != null) {
+                newButton.setEnabled(false);
+            } else {
+                newButton.setEnabled(true);
+            }
             buttons.put(cmd, newButton);
         }
 
@@ -334,7 +347,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         layoutScreen();
         setupButtonPanel();
 
-        clientgui.bv.addKeyListener(this);
+        gear = MovementDisplay.GEAR_LAND;
+        shiftheld = false;
         
         registerKeyCommands();
     }
@@ -343,7 +357,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * Register all of the <code>CommandAction</code>s for this panel display.
      */
     private void registerKeyCommands() {
+        if (clientgui == null) {
+            return;
+        }
+
         MegaMekController controller = clientgui.controller;
+
+        if (controller == null) {
+            return;
+        }
 
         final StatusBarPhaseDisplay display = this;
         // Register the action for TURN_LEFT
@@ -581,7 +603,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         computeMovementEnvelope(ce); 
                     }
         });
-
     }
 
     /**
@@ -616,11 +637,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     }
 
     private ArrayList<MegamekButton> getButtonList(int flag) {
-        IGame game = clientgui.getClient().getGame();
-        IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
-        boolean forwardIni = (game.getTeamForPlayer(localPlayer) != null)
-                             && (game.getTeamForPlayer(localPlayer).getSize() > 1);
-        GameOptions opts = game.getOptions();
+        boolean forwardIni = false;
+        GameOptions opts = null;
+        if (clientgui != null) {
+            IGame game = clientgui.getClient().getGame();
+            IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
+            forwardIni = (game.getTeamForPlayer(localPlayer) != null)
+                    && (game.getTeamForPlayer(localPlayer).getSize() > 1);
+            opts = game.getOptions();
+        }
 
         ArrayList<MegamekButton> buttonList = new ArrayList<MegamekButton>();
 
@@ -923,7 +948,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         clientgui.getBoardView().cursor(null);
         clientgui.getBoardView().selectEntity(null);
         clientgui.bv.clearMovementData();
-        clientgui.bv.clearFieldofF();
     }
 
     /**
@@ -1302,11 +1326,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 if ((null != cmd) && cmd.contains(MoveStepType.LAND)) {
                     landing = true;
                 }
-                boolean ejecting = false;
-                if ((null != cmd) && cmd.contains(MoveStepType.EJECT)) {
-                    ejecting = true;
-                }
-                if (unusedVelocity && !flyoff && !landing && !ejecting) {
+                if (unusedVelocity && !flyoff && !landing) {
                     String title = Messages
                             .getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
                     String body = Messages
@@ -1358,7 +1378,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * Returns the current entity.
      */
     private synchronized Entity ce() {
-        return clientgui.getClient().getGame().getEntity(cen);
+        if (clientgui != null) {
+            return clientgui.getClient().getGame().getEntity(cen);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -1491,6 +1515,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     //
     @Override
     public synchronized void hexMoused(BoardViewEvent b) {
+        if (clientgui == null) {
+            return;
+        }
+
         final Entity ce = ce();
 
         // Are we ignoring events?
@@ -3537,16 +3565,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         cmd.addManeuver(type);
         switch (type) {
             case (ManeuverType.MAN_HAMMERHEAD):
-                // Don't consider a maneuver, so it doesn't get a free turns
-                cmd.addStep(MoveStepType.YAW, true, false);
+                cmd.addStep(MoveStepType.YAW, true, true);
                 return true;
             case (ManeuverType.MAN_HALF_ROLL):
-                // Don't consider a maneuver, so it doesn't get a free turns
-                cmd.addStep(MoveStepType.ROLL, true, false);
+                cmd.addStep(MoveStepType.ROLL, true, true);
                 return true;
             case (ManeuverType.MAN_BARREL_ROLL):
-                // Don't consider a maneuver, so it doesn't get a free turns
-                cmd.addStep(MoveStepType.DEC, true, false);
+                cmd.addStep(MoveStepType.DEC, true, true);
                 return true;
             case (ManeuverType.MAN_IMMELMAN):
                 gear = MovementDisplay.GEAR_IMMEL;
@@ -3983,7 +4008,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             }
 
             if (opts.booleanOption("tacops_careful_stand")
-                    && ((ce.getWalkMP() - ce.mpUsed) > 2)) {
+                    && (ce.getWalkMP() > 2)) {
                 ConfirmDialog response = clientgui
                         .doYesNoBotherDialog(
                                 Messages.getString("MovementDisplay.CarefulStand.title"),//$NON-NLS-1$
@@ -4323,7 +4348,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 clear();
                 cmd.addStep(MoveStepType.VTAKEOFF);
                 ready();
-                clear();
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_LAND.getCmd())) {
             if ((ce() instanceof Aero)
@@ -4872,8 +4896,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      * Stop just ignoring events and actually stop listening to them.
      */
     public void removeAllListeners() {
-        clientgui.getClient().getGame().removeGameListener(this);
-        clientgui.getBoardView().removeBoardViewListener(this);
+        if (clientgui != null) {
+            clientgui.getClient().getGame().removeGameListener(this);
+            clientgui.getBoardView().removeBoardViewListener(this);
+        }
     }
 
     private void updateTurnButton() {

@@ -30,6 +30,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Aero;
 import megamek.common.Bay;
 import megamek.common.Board;
@@ -123,7 +124,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         for (DeployCommand cmd : DeployCommand.values()) {
             String title = Messages.getString("DeploymentDisplay."
                     + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
+            MegamekButton newButton = new MegamekButton(title,
+                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);

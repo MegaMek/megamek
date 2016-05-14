@@ -89,6 +89,7 @@ import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
+import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.BattleArmorHandlesTank;
@@ -239,13 +240,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * Creates a new chat lounge for the clientgui.getClient().
      */
     public ChatLounge(ClientGUI clientgui) {
-        super(clientgui);
+        super(clientgui, SkinSpecification.UIComponents.ChatLounge.getComp(),
+                SkinSpecification.UIComponents.ChatLoungeDoneButton.getComp());
 
         // Create a tabbed panel to hold our components.
         panTabs = new JTabbedPane();
         Font tabPanelFont = new Font("Dialog", Font.BOLD, //$NON-NLS-1$
                 GUIPreferences.getInstance().getInt(
-                        "AdvancedChatLoungeTabFontSize"));
+                        "AdvancedChatLoungeTabFontSize")); //$NON-NLS-1$
         panTabs.setFont(tabPanelFont);
 
         try {
@@ -265,11 +267,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         lblMapSummary = new JLabel("");
         lblGameYear = new JLabel("");
         lblGameYear.setToolTipText(Messages
-                .getString("ChatLounge.GameYearLabelToolTip"));
+                .getString("ChatLounge.GameYearLabelToolTip")); //$NON-NLS-1$
 
         lblTechLevel = new JLabel("");
         lblTechLevel.setToolTipText(Messages
-                .getString("ChatLounge.TechLevelLabelToolTip"));
+                .getString("ChatLounge.TechLevelLabelToolTip")); //$NON-NLS-1$
 
         butCompact = new JToggleButton(
                 Messages.getString("ChatLounge.butCompact")); //$NON-NLS-1$

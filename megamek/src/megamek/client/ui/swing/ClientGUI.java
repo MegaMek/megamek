@@ -418,7 +418,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         int y;
         int h;
         int w;
-        mechW = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false) {
+        mechW = new JDialog(frame, Messages.getString("ClientGUI.MechDisplay"), false) { //$NON-NLS-1$
             /**
              *
              */
@@ -477,7 +477,7 @@ public class ClientGUI extends JPanel implements WindowListener, BoardViewListen
         ruler.setLocation(x, y);
         ruler.setSize(w, h);
         // minimap
-        minimapW = new JDialog(frame, Messages.getString("ClientGUI.MiniMap"), false) {
+        minimapW = new JDialog(frame, Messages.getString("ClientGUI.MiniMap"), false) { //$NON-NLS-1$
             /**
              *
              */

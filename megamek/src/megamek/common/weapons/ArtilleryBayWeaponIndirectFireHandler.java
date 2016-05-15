@@ -183,16 +183,16 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
                 Entity ent = spottersAfter.next();
                 if (bestSpotter == null) {
                     bestSpotter = ent;
-                } else {
-                    if (ent.getCrew().getOptions().booleanOption("forward_observer")) {
+                } else if (ent.getCrew().getOptions().booleanOption("forward_observer")
+                        && !bestSpotter.getCrew().getOptions().booleanOption("forward_observer")){
+                    bestSpotter = ent;
+                } else if (ent.getCrew().getGunnery() < bestSpotter.getCrew().getGunnery()
+                        && !bestSpotter.getCrew().getOptions().booleanOption("forward_observer")) {
+                    bestSpotter = ent;
+                } else if (bestSpotter.getCrew().getOptions().booleanOption("forward_observer")
+                        && ent.getCrew().getOptions().booleanOption("forward_observer")) {
+                    if (ent.getCrew().getGunnery() < bestSpotter.getCrew().getGunnery()) {
                         bestSpotter = ent;
-                    }
-                    if ((ent.getCrew().getGunnery() < bestSpotter.getCrew().getGunnery())
-                            && !bestSpotter.getCrew().getOptions().booleanOption("forward_observer")) {
-                        bestSpotter = ent;
-                    }
-                    if (bestSpotter.getCrew().getOptions().booleanOption("forward_observer")) {
-                        continue;
                     }
                 }
             }

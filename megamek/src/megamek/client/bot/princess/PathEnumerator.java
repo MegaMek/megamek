@@ -297,11 +297,11 @@ public class PathEnumerator {
         }
 
         for (MovePath path : paths) {
-            adjustPathForBidge(path);
+            adjustPathForBridge(path);
         }
     }
 
-    private void adjustPathForBidge(MovePath path) {
+    private void adjustPathForBridge(MovePath path) {
         boolean needsAdjust = false;
         for (Coords c : path.getCoordsSet()) {
             if (getGame().getBoard().getHex(c)

@@ -203,7 +203,15 @@ public class BombAttackHandler extends WeaponHandler {
                     r.newlines = 1;
                     vPhaseReport.add(r);
                 } else {
-                    drop = Compute.scatter(coords, -typeModifiedToHit.getMoS());
+                    int margin = -typeModifiedToHit.getMoS();
+                    if (ae.getCrew().getOptions().booleanOption("golden_goose")) {
+                        if ((-typeModifiedToHit.getMoS() -2) < 1) {
+                            margin = 0;
+                        } else {
+                            margin = -typeModifiedToHit.getMoS() -2;
+                        }
+                    }
+                    drop = Compute.scatter(coords, margin);
                     if (game.getBoard().contains(drop)) {
                         // misses and scatters to another hex
                         r = new Report(6698);

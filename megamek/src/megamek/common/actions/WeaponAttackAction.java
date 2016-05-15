@@ -1223,6 +1223,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         }
 
+		if (te != null) {
+		    if (te.getCrew().getOptions().booleanOption("shaky_stick") 
+		            && (!(ae instanceof Aero) || !(ae instanceof VTOL))) {
+                toHit.addModifier(+1, "Shaky Stick");
+            }
+		}
+
         // check for VDNI
         if (ae.getCrew().getOptions().booleanOption("vdni")
                 || ae.getCrew().getOptions().booleanOption("bvdni")) {
@@ -1497,10 +1504,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (Compute.isAirToGround(ae, target)) {
             if (wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
                 toHit.addModifier(ae.getAltitude(), "bombing altitude");
+                if (ae.getCrew().getOptions().booleanOption("golden_goose")) {
+                    toHit.addModifier(-2, "Golden Goose");
+                }
             } else if (isStrafing) {
                 toHit.addModifier(+4, "strafing");
                 if (ae.getAltitude() == 1) {
                     toHit.addModifier(+2, "strafing at NOE");
+                }
+                if (ae.getCrew().getOptions().booleanOption("ground_hugger")) {
+                    toHit.addModifier(-1, "Ground Hugger");
                 }
                 // Additional Nape-of-Earth restrictions for strafing
                 if (ae.getAltitude() == 1) {
@@ -1512,6 +1525,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             } else {
                 toHit.addModifier(+2, "air to ground strike");
+                if (ae.getCrew().getOptions().booleanOption("golden_goose")) {
+                    if (wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
+                        toHit.addModifier(-2, "Golden Goose");
+                    } else {
+                        toHit.addModifier(-1, "Golden Goose");
+                    }
+                }
+                if (ae.getCrew().getOptions().booleanOption("ground_hugger") && !wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
+                    toHit.addModifier(-1, "Ground Hugger");
+                }
             }
         }
 

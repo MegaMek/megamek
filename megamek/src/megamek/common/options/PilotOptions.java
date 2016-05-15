@@ -50,7 +50,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, "melee_specialist", false); //$NON-NLS-1$
         // addOption(adv, "natural_grace", false); //$NON-NLS-1$
         // addOption(adv, "ride_wash", false); //$NON-NLS-1$
-        // addOption(adv, "shaky_stick", false); //$NON-NLS-1$
+        addOption(adv, "shaky_stick", false); //$NON-NLS-1$
         // addOption(adv, "slugger", false); //$NON-NLS-1$
         // addOption(adv, "speed_demon", false); //$NON-NLS-1$
         // addOption(adv, "stand_aside", false); //$NON-NLS-1$
@@ -64,8 +64,8 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, "cluster_hitter", false); //$NON-NLS-1$
         addOption(adv, "cluster_master", false); //$NON-NLS-1$
         // addOption(adv, "fist_fire", false); //$NON-NLS-1$
-        // addOption(adv, "golden_goose", false); //$NON-NLS-1$
-        // addOption(adv, "ground_hugger", false); //$NON-NLS-1$
+        addOption(adv, "golden_goose", false); //$NON-NLS-1$
+        addOption(adv, "ground_hugger", false); //$NON-NLS-1$
         addOption(adv, "specialist", new Vector<String>()); //$NON-NLS-1$
         // addOption(adv, "marksman", false); //$NON-NLS-1$
         addOption(adv, "multi_tasker", false); //$NON-NLS-1$

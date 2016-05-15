@@ -34,6 +34,7 @@ v0.41.18-git
 + PR #99: Added a UI editor for skins
 + PR 124: Hidden Units rules from TW
 + Issue #185: Skins added by BLOODWOLF
++ Data: New Sprites and a couple of quirk fixes.
 
 
 v0.41.17 (2016-04-16 00:30 UTC)

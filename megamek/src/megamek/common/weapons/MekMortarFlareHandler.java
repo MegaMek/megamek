@@ -139,7 +139,7 @@ public class MekMortarFlareHandler extends AmmoWeaponHandler {
             vPhaseReport.addElement(r);
         } else {
             // only scatters by one d6
-            targetPos = Compute.scatterDirectArty(targetPos);
+            targetPos = Compute.scatter(targetPos, 1);
             if (game.getBoard().contains(targetPos)) {
                 // misses and scatters to another hex
                 r = new Report(3195);                    

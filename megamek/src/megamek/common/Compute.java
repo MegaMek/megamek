@@ -4979,10 +4979,11 @@ public class Compute {
      * distance)
      *
      * @param coords The <code>Coords</code> to scatter from
+     * @param moF The margin of failure, which deterimines scatter distance
      * @return the <code>Coords</code> scattered to
      */
-    public static Coords scatterDirectArty(Coords coords) {
-        return Compute.scatter(coords, Compute.d6());
+    public static Coords scatterDirectArty(Coords coords, int moF) {
+        return Compute.scatter(coords, moF);
     }
 
     /**

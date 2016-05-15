@@ -315,12 +315,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             // we do this here to avoid duplicating handle()
             // in the ArtilleryWeaponDirectFireHandler
             Coords origPos = targetPos;
-            if (phase == IGame.Phase.PHASE_FIRING) {
-                targetPos = Compute.scatterDirectArty(targetPos);
-            } else {
-                targetPos = Compute
-                        .scatter(targetPos, Math.abs(toHit.getMoS()));
-            }
+            targetPos = Compute.scatterDirectArty(targetPos, toHit.getMoS());
             if (game.getBoard().contains(targetPos)) {
                 // misses and scatters to another hex
                 if (!isFlak) {

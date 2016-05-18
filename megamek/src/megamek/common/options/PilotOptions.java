@@ -90,7 +90,11 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.PILOT_APTITUDE_PILOTING, false); //$NON-NLS-1$
         addOption(adv, "pain_resistance", false); //$NON-NLS-1$
         addOption(adv, "tactical_genius", false); //$NON-NLS-1$
-        
+
+        // Infantry abilities - Only one until beast mounts are implemented
+        addOption(adv, "foot_cav", false); //$NON-NLS-1$
+        addOption(adv, "urban_guerrilla", false); //$NON-NLS-1$
+
         // Unofficial
         addOption(adv, "ei_implant", false); //$NON-NLS-1$
         addOption(adv, "gunnery_laser", false); //$NON-NLS-1$

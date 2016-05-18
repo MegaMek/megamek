@@ -140,7 +140,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_LOAD("moveLoad", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_UNLOAD("moveUnload", CMD_MECH | CMD_TANK | CMD_VTOL), //$NON-NLS-1$
         MOVE_MOUNT("moveMount", CMD_GROUND), //$NON-NLS-1$
-        MOVE_UNJAM("moveUnjam", CMD_ALL), //$NON-NLS-1$
+        MOVE_UNJAM("moveUnjam", CMD_NON_INF), //$NON-NLS-1$
         MOVE_CLEAR("moveClear", CMD_INF), //$NON-NLS-1$
         MOVE_CANCEL("moveCancel", CMD_NONE), //$NON-NLS-1$
         MOVE_RAISE_ELEVATION("moveRaiseElevation", CMD_NON_VECTORED), //$NON-NLS-1$
@@ -164,6 +164,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         MOVE_DIG_IN("moveDigIn", CMD_INF), //$NON-NLS-1$
         MOVE_FORTIFY("moveFortify", CMD_INF), //$NON-NLS-1$
         MOVE_TAKE_COVER("moveTakeCover", CMD_INF), //$NON-NLS-1$
+        MOVE_CALL_SUPPORT("moveCallSuport", CMD_INF), //$NON-NLS-1$
         // Aero Movement
         MOVE_ACC("MoveAccelerate", CMD_AERO), //$NON-NLS-1$
         MOVE_DEC("MoveDecelerate", CMD_AERO), //$NON-NLS-1$
@@ -865,7 +866,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
         // Infantry - Take Cover
         updateTakeCoverButton();
-        
+
+        // Infantry - Urban Guerrilla calling for support
+        if (isInfantry && ce.getCrew().getOptions().booleanOption("urban_guerrilla")
+                && ((Infantry) ce).getCanCallSupport()) {
+            getBtn(MoveCommand.MOVE_CALL_SUPPORT).setEnabled(true);
+        } else {
+            getBtn(MoveCommand.MOVE_CALL_SUPPORT).setEnabled(false);
+        }
+
         getBtn(MoveCommand.MOVE_SHAKE_OFF).setEnabled(
                 (ce instanceof Tank)
                 && (ce.getSwarmAttackerId() != Entity.NONE));
@@ -1012,6 +1021,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         getBtn(MoveCommand.MOVE_CLIMB_MODE).setEnabled(false);
         getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(false);
+        getBtn(MoveCommand.MOVE_CALL_SUPPORT).setEnabled(false);
     }
 
     /**
@@ -4167,6 +4177,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 cmd.addStep(MoveStepType.LAY_MINE, i);
                 clientgui.bv.drawMovementData(ce, cmd);
             }
+        } else if (actionCmd.equals(MoveCommand.MOVE_CALL_SUPPORT.getCmd())) {
+            ((Infantry) ce).createLocalSupport();
+            clientgui.getClient().sendUpdateEntity(ce());
         } else if (actionCmd.equals(MoveCommand.MOVE_DIG_IN.getCmd())) {
             cmd.addStep(MoveStepType.DIG_IN);
             clientgui.bv.drawMovementData(ce(), cmd);

@@ -115,6 +115,8 @@ public class Infantry extends Entity {
     private int dugIn = DUG_IN_NONE;
     
     private boolean isTakingCover = false;
+    private boolean canCallSupport = true;
+    private boolean isCallingSupport = false;
 
     // Public and Protected constants, constructors, and methods.
 
@@ -194,6 +196,24 @@ public class Infantry extends Entity {
     }
 
     /**
+     * Create local platoon for Urban Guerrilla
+     */
+    public void createLocalSupport() {
+        if (Compute.isInUrbanEnvironment(game, getPosition())) {
+            setIsCallingSupport(true);
+            canCallSupport = false;
+        }
+    }
+
+    public void setIsCallingSupport(boolean b) {
+        isCallingSupport = b;
+    }
+
+    public boolean getIsCallingSupport() {
+        return isCallingSupport;
+    }
+
+    /**
      * return this infantry's walk mp, adjusted for planetary conditions
      */
     @Override
@@ -213,6 +233,12 @@ public class Infantry extends Entity {
         }
         if((null != getCrew())
                 && getCrew().getOptions().booleanOption("pl_masc")
+                && ((getMovementMode() == EntityMovementMode.INF_LEG)
+                    || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
+            mp += 1;
+        }
+        if ((null != getCrew())
+                && getCrew().getOptions().booleanOption("foot_cav")
                 && ((getMovementMode() == EntityMovementMode.INF_LEG)
                     || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
             mp += 1;
@@ -841,7 +867,10 @@ public class Infantry extends Entity {
         return roll;
     }
 
-     
+    public boolean getCanCallSupport() {
+        return canCallSupport;
+    }
+
   /**
   * This combines the old getCost and getAlternativeCost methods into a revised getCost Method.  
     *this better considers AntiMek training and Weapons and armor costs.  
@@ -1190,6 +1219,10 @@ public class Infantry extends Entity {
 
     public void setArmorEncumbering(boolean b) {
         encumbering = b;
+    }
+
+    public void setCanCallSupport(boolean b) {
+        canCallSupport =b;
     }
 
     public boolean hasSpaceSuit() {

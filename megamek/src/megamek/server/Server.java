@@ -229,6 +229,7 @@ import megamek.common.weapons.TAGHandler;
 import megamek.common.weapons.TSEMPWeapon;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
+import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.commands.AddBotCommand;
 import megamek.server.commands.AllowTeamChangeCommand;
 import megamek.server.commands.AssignNovaNetServerCommand;
@@ -2849,6 +2850,7 @@ public class Server implements Runnable {
                 checkForTeleMissileAttacks();
                 cleanupDestroyedNarcPods();
                 checkForFlawedCooling();
+                resolveCallSupport();
                 // check phase report
                 if (vPhaseReport.size() > 1) {
                     game.addReports(vPhaseReport);
@@ -20998,6 +21000,9 @@ public class Server implements Runnable {
                 && !te_hex.containsTerrain(Terrains.BUILDING)
                 && !te_hex.containsTerrain(Terrains.FUEL_TANK)
                 && !te_hex.containsTerrain(Terrains.FORTIFIED)
+                && (!te.getCrew().getOptions().booleanOption("urban_guerrilla"))
+                    && (!te_hex.containsTerrain(Terrains.PAVEMENT)
+                        || !te_hex.containsTerrain(Terrains.ROAD))
                 && !ammoExplosion) {
                 // PBI. Damage is doubled.
                 damage *= 2;
@@ -32171,6 +32176,60 @@ public class Server implements Runnable {
             rollTarget.addModifier(3, "Really Bad Weather");
         }
         return rollTarget;
+    }
+
+    /**
+     * Creates a new Ballistic Infantry unit at the end of the movement phase
+     */
+    public void resolveCallSupport() {
+        for (Entity e : game.getEntitiesVector()) {
+            if ((e instanceof Infantry) && ((Infantry) e).getIsCallingSupport()) {
+
+                // Now lets create a new foot platoon
+                Infantry guerrilla = new Infantry();
+                guerrilla.setChassis("Insurgents");
+                guerrilla.setModel("(Rifle)");
+                guerrilla.setSquadN(4);
+                guerrilla.setSquadSize(7);
+                guerrilla.autoSetInternal();
+                guerrilla.getCrew().setGunnery(5);
+                try {
+                    guerrilla.addEquipment(EquipmentType.get("InfantryAssaultRifle"),
+                            Infantry.LOC_INFANTRY);
+                    guerrilla.setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get("InfantryAssaultRifle"));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                //guerrilla.addEquipment(EquipmentType.get("InfantryAssaultRifle"), Infantry.LOC_INFANTRY);
+                //guerrilla.setPrimaryWeapon((InfantryWeapon) InfantryWeapon.get("InfantryAssaultRifle"));
+                guerrilla.setDeployed(true);
+                guerrilla.setDone(true);
+                guerrilla.setId(getFreeEntityId());
+                guerrilla.setOwner(e.getOwner());
+                game.addEntity(guerrilla);
+
+                // Add the infantry unit on the battlefield. Should spawn within 3 hexes
+                // First get coords then loop over some targets
+                Coords tmpCoords = e.getPosition();
+                Coords targetCoords = null;
+                while (!game.getBoard().contains(targetCoords)) {
+                    targetCoords = Compute.scatter(tmpCoords, (Compute.d6(1) / 2));
+                    if (game.getBoard().contains(targetCoords)) {
+                        guerrilla.setPosition(targetCoords);
+                        break;
+                    }
+                }
+                send(createAddEntityPacket(guerrilla.getId()));
+                ((Infantry) e).setIsCallingSupport(false);
+                /*
+                // Update the entity
+                entityUpdate(guerrilla.getId());
+                Report r = new Report(5535, Report.PUBLIC);
+                r.subject = e.getId();
+                r.addDesc(e);
+                addReport(r);*/
+            }
+        }
     }
 
     /**

@@ -83,7 +83,7 @@ public class PilotOptions extends AbstractOptions {
         // addOption(adv, "demoralizer", false); //$NON-NLS-1$
         addOption(adv, "eagle_eyes", false); //$NON-NLS-1$
         // addOption(adv, "env_specialist", false); //$NON-NLS-1$
-        // addOption(adv, "forward_observer", false); //$NON-NLS-1$
+        addOption(adv, "forward_observer", false); //$NON-NLS-1$
         // addOption(adv, "human_tro", false); //$NON-NLS-1$
         addOption(adv, "iron_man", false); //$NON-NLS-1$
         addOption(adv, OptionsConstants.PILOT_APTITUDE_GUNNERY, false); //$NON-NLS-1$

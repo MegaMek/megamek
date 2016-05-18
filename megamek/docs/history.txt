@@ -39,6 +39,7 @@ v0.41.18-git
 + Issue #190: Artillery cannons generate indirect fire artillery images and
     popup tooltip
 + Issue #101: Princess NPE in PathEnumerator.adjustPathForBidge
++ Feature: Foot Calvary SPA
 
 
 v0.41.17 (2016-04-16 00:30 UTC)

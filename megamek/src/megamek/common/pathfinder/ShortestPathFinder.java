@@ -394,7 +394,12 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
             return 0;
         }
         IHex destHex = board.getHex(dest);
-        return Math.abs(destHex.getLevel() - currHex.getLevel());        
+        if (destHex == null) {
+            System.out.println("getLevelDiff: destHex was null! Coords: "
+                               + dest);
+            return 0;
+        }
+        return Math.abs(destHex.getLevel() - currHex.getLevel());
     }
     
     /**

@@ -29,6 +29,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.pathfinder.AbstractPathFinder;
 import megamek.common.pathfinder.ShortestPathFinder;
 import megamek.common.preference.PreferenceManager;
@@ -445,6 +446,21 @@ public class MovePath implements Cloneable, Serializable {
             return getLastStep().getPosition();
         }
         return getEntity().getPosition();
+    }
+
+    /**
+     * Returns the starting {@link Coords} of this path.
+     */
+    @Nullable
+    public Coords getStartCoords() {
+        for (final Enumeration<MoveStep> e = getSteps(); e.hasMoreElements(); ) {
+            final MoveStep step = e.nextElement();
+            final Coords coords = step.getPosition();
+            if (coords != null) {
+                return coords;
+            }
+        }
+        return null;
     }
 
     /**

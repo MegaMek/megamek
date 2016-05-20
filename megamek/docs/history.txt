@@ -40,6 +40,7 @@ v0.41.18-git
     popup tooltip
 + Issue #101: Princess NPE in PathEnumerator.adjustPathForBidge
 + Feature: Foot Calvary SPA
++ Issue #101: Added on board check to Precognition.run()
 
 
 v0.41.17 (2016-04-16 00:30 UTC)

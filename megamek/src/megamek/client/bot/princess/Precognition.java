@@ -354,6 +354,10 @@ public class Precognition implements Runnable {
         }
     }
 
+    private boolean isEntityOnMap(final Entity entity) {
+        return entity.isDeployed() && !entity.isOffBoard();
+    }
+
     /**
      * Makes sure pathEnumerator has up to date information about other units
      * locations call this right before making a move. automatically pauses.
@@ -369,7 +373,7 @@ public class Precognition implements Runnable {
                 if (getDone().get()) {
                     return;
                 }
-                if (!entity.isDeployed() || entity.isOffBoard()) {
+                if (!isEntityOnMap(entity)) {
                     continue;
                 }
                 if (((!getPathEnumerator().getLastKnownLocations().containsKey(entity.getId()))
@@ -418,7 +422,7 @@ public class Precognition implements Runnable {
                             getGame().getEntitiesVector());
                 } else if (!getDirtyUnits().isEmpty()) {
                     Entity entity = getGame().getEntity(getDirtyUnits().pollFirst());
-                    if (entity != null) {
+                    if ((entity != null) && isEntityOnMap(entity)) {
                         unPause();
                         getOwner().log(getClass(), METHOD_NAME, "recalculating paths for " + entity.getDisplayName());
                         getPathEnumerator().recalculateMovesFor(entity);

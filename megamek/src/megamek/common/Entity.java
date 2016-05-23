@@ -10984,6 +10984,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // This is implemented in subclasses, do nothing in general
     }
 
+    public void resetCoolantFailureAmount() {
+        // This is implemented in subclasses, do nothing in general
+    }
+
     /**
      * @return the tonnage of additional mounted communications equipment
      */

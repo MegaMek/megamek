@@ -2379,8 +2379,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
     }
 
-    public void mechCamo(Entity entity) {
-        boolean editable = clientgui.getBots().get(entity.getOwner().getName()) != null;
+    public void mechCamo(Vector<Entity> entities) {
+        if (entities.size() < 0) {
+            return;
+        }
+        Entity entity = entities.get(0);
+        boolean editable;
+        editable = clientgui.getBots().get(entity.getOwner().getName()) != null;
         Client c;
         if (editable) {
             c = clientgui.getBots().get(entity.getOwner().getName());
@@ -2397,7 +2402,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         mcd.setVisible(true);
         if (editable && mcd.isSelect()) {
             // send changes
-            c.sendUpdateEntity(entity);
+            for (Entity ent : entities) {
+                if (mcd.category.equals(IPlayer.NO_CAMO)) {
+                    ent.setCamoCategory(null);
+                    ent.setCamoFileName(null);
+                } else {
+                    ent.setCamoCategory(mcd.category);
+                    ent.setCamoFileName(mcd.filename);
+                }
+                c.sendUpdateEntity(ent);
+            }
         }
     }
 
@@ -3532,7 +3546,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             } else if (command.equalsIgnoreCase("DAMAGE")) {
                 mechEdit(entity);
             } else if (command.equalsIgnoreCase("INDI_CAMO")) {
-                mechCamo(entity);
+                mechCamo(entities);
             } else if (command.equalsIgnoreCase("CONFIGURE")) {
                 customizeMech(entity);
             } else if (command.equalsIgnoreCase("DELETE")) {
@@ -3882,14 +3896,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     menuItem.addActionListener(this);
                     menuItem.setEnabled(isOwner || isBot);
                     popup.add(menuItem);
-
-                    menuItem = new JMenuItem("Set individual camo");
-                    menuItem.setActionCommand("INDI_CAMO");
-                    menuItem.addActionListener(this);
-                    menuItem.setEnabled(isOwner || isBot);
-                    menuItem.setMnemonic(KeyEvent.VK_I);
-                    popup.add(menuItem);
                 }
+
+                menuItem = new JMenuItem("Set individual camo");
+                menuItem.setActionCommand("INDI_CAMO");
+                menuItem.addActionListener(this);
+                menuItem.setEnabled(isOwner || isBot);
+                menuItem.setMnemonic(KeyEvent.VK_I);
+                popup.add(menuItem);
+
                 menuItem = new JMenuItem("Delete...");
                 menuItem.setActionCommand("DELETE");
                 menuItem.addActionListener(this);

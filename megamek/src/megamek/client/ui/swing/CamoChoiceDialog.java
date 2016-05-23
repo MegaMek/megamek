@@ -313,8 +313,15 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
         camoModel.reset();
         camoModel.setCategory(category);
         if (IPlayer.NO_CAMO.equals(category)) {
-            for (String color : IPlayer.colorNames) {
-                camoModel.addCamo(color);
+            // If we are setting colors for a player, allow all colors
+            if (entity == null) {
+                for (String color : IPlayer.colorNames) {
+                    camoModel.addCamo(color);
+                }
+            // If we are setting individual cammo, then selecting colors other
+            // than the player color has no effect
+            } else {
+                camoModel.addCamo(IPlayer.colorNames[player.getColorIndex()]);
             }
         } else {
             // Translate the "root camo" category name.
@@ -542,7 +549,7 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
                 setOpaque(true);
                 String name = getValueAt(row, column).toString();
                 setText(getValueAt(row, column).toString());
-                setImage(category, name, row);
+                setImage(category, name);
                 if (isSelected) {
                     setBackground(new Color(220, 220, 220));
                 } else {
@@ -581,20 +588,17 @@ public class CamoChoiceDialog extends JDialog implements TreeSelectionListener {
             lblImage.setText(text);
         }
 
-        public void setImage(String category, String name, int colorInd) {
+        public void setImage(String category, String name) {
 
             if (null == category) {
                 return;
             }
 
             if (IPlayer.NO_CAMO.equals(category)) {
-                if (colorInd == -1) {
-                    colorInd = 0;
-                }
                 BufferedImage tempImage = new BufferedImage(84, 72,
                         BufferedImage.TYPE_INT_RGB);
                 Graphics2D graphics = tempImage.createGraphics();
-                graphics.setColor(PlayerColors.getColor(colorInd));
+                graphics.setColor(PlayerColors.getColor(name));
                 graphics.fillRect(0, 0, 84, 72);
                 lblImage.setIcon(new ImageIcon(tempImage));
                 return;

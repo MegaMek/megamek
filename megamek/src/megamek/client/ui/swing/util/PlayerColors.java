@@ -67,6 +67,14 @@ public class PlayerColors {
             0xFFCC00, 0xFFCC33, 0xFFCC66, 0xFFCC99, 0xFFCCCC, 0xFFCCFF,
             0xFFFF00, 0xFFFF33, 0xFFFF66, 0xFFFF99, 0xFFFFCC, 0xFFFFFF };
 
+    public static Color getColor(String colorName) {
+        for (int idx = 0; idx < colorNames.length; idx++) {
+            if (colorNames[idx].equals(colorName)) {
+                return getColor(idx);
+            }
+        }
+        return getColor(0);
+    }
     public static Color getColor(int colorIndex) {
         int colour = colorRGBs[colorIndex];
         int transparency = GUIPreferences.getInstance().getInt(

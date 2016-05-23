@@ -3338,7 +3338,7 @@ public class Compute {
      * specified entity
      */
     public static boolean isInArc(IGame game, int attackerId, int weaponId,
-                                  Targetable t) {
+            Targetable t) {
         Entity ae = game.getEntity(attackerId);
         if ((ae instanceof Mech)
             && (((Mech) ae).getGrappled() == t.getTargetId())) {

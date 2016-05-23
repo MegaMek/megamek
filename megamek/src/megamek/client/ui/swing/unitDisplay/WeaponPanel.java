@@ -63,6 +63,7 @@ import megamek.common.Mounted;
 import megamek.common.SmallCraft;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
+import megamek.common.WeaponComparatorArc;
 import megamek.common.WeaponComparatorCustom;
 import megamek.common.WeaponComparatorDamage;
 import megamek.common.WeaponComparatorNum;
@@ -2622,6 +2623,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         } else if (sortIdx == Entity.WeaponSortOrder.CUSTOM.ordinal()) {
             entity.setWeaponSortOrder(Entity.WeaponSortOrder.CUSTOM);
             weapComparator = new WeaponComparatorCustom(entity);
+        } else if (sortIdx == Entity.WeaponSortOrder.ARC.ordinal()) {
+            entity.setWeaponSortOrder(Entity.WeaponSortOrder.ARC);
+            weapComparator = new WeaponComparatorArc(entity);
         } else { // Default
             entity.setWeaponSortOrder(Entity.WeaponSortOrder.DEFAULT);
             weapComparator = new WeaponComparatorNum(entity);

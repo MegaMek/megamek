@@ -169,6 +169,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         RANGE_HL("RANGE_HL"),
         DAMAGE_LH("DAMAGE_LH"),
         DAMAGE_HL("DAMAGE_HL"),
+        ARC("ARC"),
         CUSTOM("CUSTOM");
 
         public final String i18nEntry;

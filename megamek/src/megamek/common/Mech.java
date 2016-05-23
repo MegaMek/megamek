@@ -6994,6 +6994,11 @@ public abstract class Mech extends Entity {
         heatSinkCoolantFailureFactor += amount;
     }
 
+    @Override
+    public void resetCoolantFailureAmount() {
+        heatSinkCoolantFailureFactor = 0;
+    }
+
     /*
      * (non-Javadoc)
      *

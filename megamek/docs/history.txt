@@ -45,6 +45,8 @@ v0.41.18-git
 + Issue #207: Bot refuses to deploy because of NPE
 + Issue #197: Sort weapons by firing arc
 + Issue #194: Request: Mass Individual Camo
++ Issue #214: BA get danger warning when jumping into heavy woods with
+    unofficial rule
 
 
 v0.41.17 (2016-04-16 00:30 UTC)

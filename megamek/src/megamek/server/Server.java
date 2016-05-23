@@ -2774,12 +2774,15 @@ public class Server implements Runnable {
     private void endCurrentPhase() {
         switch (game.getPhase()) {
             case PHASE_LOUNGE:
+                game.addReports(vPhaseReport);
                 changePhase(IGame.Phase.PHASE_EXCHANGE);
                 break;
             case PHASE_EXCHANGE:
+                game.addReports(vPhaseReport);
                 changePhase(IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES);
                 break;
             case PHASE_STARTING_SCENARIO:
+                game.addReports(vPhaseReport);
                 changePhase(IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES);
                 break;
             case PHASE_SET_ARTYAUTOHITHEXES:
@@ -2792,6 +2795,7 @@ public class Server implements Runnable {
                         mines = true;
                     }
                 }
+                game.addReports(vPhaseReport);
                 if (mines) {
                     changePhase(IGame.Phase.PHASE_DEPLOY_MINEFIELDS);
                 } else {

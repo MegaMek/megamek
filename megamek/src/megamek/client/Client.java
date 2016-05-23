@@ -1363,7 +1363,7 @@ public class Client implements IClientCommandHandler {
                     }
                 }
                 roundReport = receiveReport(game.getReports(game
-                                                                    .getRoundCount()));
+                        .getRoundCount()));
                 // We don't really have a copy of the phase report at
                 // this point, so I guess we'll just use the round report
                 // until the next phase actually completes.

@@ -41,6 +41,7 @@ v0.41.18-git
 + Issue #101: Princess NPE in PathEnumerator.adjustPathForBidge
 + Feature: Foot Calvary SPA
 + Issue #101: Added on board check to Precognition.run()
++ Issue #211: Saving in the Arty Autohit phase breaks the save
 
 
 v0.41.17 (2016-04-16 00:30 UTC)

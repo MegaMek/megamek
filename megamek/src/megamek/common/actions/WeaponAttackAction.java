@@ -1232,6 +1232,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 		                || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROUGH))) {
 		        toHit.addModifier(+1, "urban guerrilla");
 		    }
+		    if (te.getCrew().getOptions().booleanOption("shaky_stick")
+		            && (!(ae instanceof Aero) || !(ae instanceof VTOL))) {
+		        toHit.addModifier(+1, "Shaky Stick");
+		    }
 		}
 
         // check for VDNI

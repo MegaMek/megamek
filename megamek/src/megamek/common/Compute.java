@@ -4964,19 +4964,18 @@ public class Compute {
     }
 
     /**
-     * scatter from hex according to dive bombing rules (1d6 of scatter
-     * distance)
+     * scatter from hex according to dive bombing rules (based on MoF)
      *
      * @param coords The <code>Coords</code> to scatter from
-     * @return the <code>Coords</code> scattered to
+     * @param moF The margin of failure, which deterimines scatter distance
+     * @return the <code>Coords</code> scattered to and distance (moF)
      */
-    public static Coords scatterDiveBombs(Coords coords) {
-        return Compute.scatter(coords, Compute.d6());
+    public static Coords scatterDiveBombs(Coords coords, int moF) {
+        return Compute.scatter(coords, moF);
     }
 
     /**
-     * scatter from hex according to direct fire artillery rules (1d6 of scatter
-     * distance)
+     * scatter from hex according to direct fire artillery rules (based on MoF)
      *
      * @param coords The <code>Coords</code> to scatter from
      * @param moF The margin of failure, which deterimines scatter distance

@@ -66,7 +66,7 @@ public class MicroBombHandler extends AmmoWeaponHandler {
             r.add(coords.getBoardNum());
             vPhaseReport.add(r);
         } else {
-            coords = Compute.scatterDiveBombs(coords);
+            coords = Compute.scatterDiveBombs(coords, toHit.getMoS());
             if (game.getBoard().contains(coords)) {
                 Report r = new Report(3195);
                 r.subject = subjectId;

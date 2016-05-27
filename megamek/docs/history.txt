@@ -1,5 +1,8 @@
 VERSION HISTORY:
 ----------------
+v0.41.19-git
+
+
 v0.41.18 (2016-04-16 19:30 UTC)
 + PR #154: Replacing all internal mass and tonnage related variables with doubles
            WARNING: This means that old unit caches will cause errors.

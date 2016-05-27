@@ -1,6 +1,9 @@
 VERSION HISTORY:
 ----------------
-v0.41.18-git
+v0.41.19-git
+
+
+v0.41.18 (2016-04-16 19:30 UTC)
 + PR #154: Replacing all internal mass and tonnage related variables with doubles
            WARNING: This means that old unit caches will cause errors.
            Delete them and let MegaMek rebuild!
@@ -47,6 +50,8 @@ v0.41.18-git
 + Issue #194: Request: Mass Individual Camo
 + Issue #214: BA get danger warning when jumping into heavy woods with
     unofficial rule
++ SPA: Golden Goose #227
++ New Sprites
 
 
 v0.41.17 (2016-04-16 00:30 UTC)

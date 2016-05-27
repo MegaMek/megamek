@@ -71,7 +71,7 @@ public class SRMSmokeWarheadHandler extends SRMHandler {
             vPhaseReport.addElement(r);
         } else {
             // scatterable SRMs scatter like dive bombs
-            coords = Compute.scatterDiveBombs(coords);
+            coords = Compute.scatter(coords, 1);
             if (game.getBoard().contains(coords)) {
                 // misses and scatters to another hex
                 Report r = new Report(3195);

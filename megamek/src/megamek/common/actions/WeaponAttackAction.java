@@ -1233,7 +1233,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 		        toHit.addModifier(+1, "urban guerrilla");
 		    }
 		    if (te.getCrew().getOptions().booleanOption("shaky_stick")
-		            && (!(ae instanceof Aero) || !(ae instanceof VTOL))) {
+		            && te.isAirborne()
+		            && !ae.isAirborne() || !ae.isAirborneVTOLorWIGE()) {
 		        toHit.addModifier(+1, "Shaky Stick");
 		    }
 		}

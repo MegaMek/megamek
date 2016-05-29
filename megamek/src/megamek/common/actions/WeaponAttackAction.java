@@ -1234,7 +1234,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 		    }
 		    if (te.getCrew().getOptions().booleanOption("shaky_stick")
 		            && te.isAirborne()
-		            && !ae.isAirborne() || !ae.isAirborneVTOLorWIGE()) {
+		            && (!ae.isAirborne() || !ae.isAirborneVTOLorWIGE())) {
 		        toHit.addModifier(+1, "Shaky Stick");
 		    }
 		}

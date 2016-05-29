@@ -335,12 +335,14 @@ public class ArtilleryBayWeaponIndirectFireHandler extends AmmoBayWeaponHandler 
             // we do this here to avoid duplicating handle()
             // in the ArtilleryWeaponDirectFireHandler
             Coords origPos = targetPos;
-            int moF = -toHit.getMoS();
+            int moF = toHit.getMoS();
             if (ae.getCrew().getOptions().booleanOption("oblique_artillery")) {
-                if ((-toHit.getMoS() -2) < 1) {
+                // getMoS returns a negative MoF
+                // simple math is better so lets make it positive
+                if ((-moF -2) < 1) {
                     moF = 0;
                 } else {
-                    moF = -toHit.getMoS() -2;
+                    moF = moF +2;
                 }
             }
             targetPos = Compute.scatterDirectArty(targetPos, moF);

@@ -125,7 +125,9 @@ class StepSprite extends Sprite {
                         "AdvancedMoveIllegalColor");
                 break;
             default:
-                if (step.getType() == MoveStepType.BACKWARDS) {
+                if ((step.getType() == MoveStepType.BACKWARDS)
+                        || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
+                        || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS)) {
                     col = GUIPreferences.getInstance().getColor(
                             "AdvancedMoveBackColor");
                 } else {

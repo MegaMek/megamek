@@ -717,9 +717,11 @@ public class CommonSettingsDialog extends ClientDialog implements
                     return fileName.endsWith(".xml");
                 } 
             });
-        for (String file : xmlFiles) {
-            if (SkinXMLHandler.validSkinSpecFile(file)) {
-                skinFiles.addItem(file);
+        if (xmlFiles != null) {
+            for (String file : xmlFiles) {
+                if (SkinXMLHandler.validSkinSpecFile(file)) {
+                    skinFiles.addItem(file);
+                }
             }
         }
         // Select the default file first

@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import megamek.MegaMek;
 import megamek.common.GameTurn.SpecificEntityTurn;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
@@ -63,6 +64,11 @@ public class Game implements Serializable, IGame {
      *
      */
     private static final long serialVersionUID = 8376320092671792532L;
+
+    /**
+     * Stores the version of MM, so that it can be serialized in saved games.
+     */
+    public String mmVersion = MegaMek.VERSION;
 
     /**
      * Define constants to describe the condition a unit was in when it wass

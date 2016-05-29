@@ -327,7 +327,7 @@ public class SharedUtility {
                 Targetable targ = step.getTarget(game);
                 if (game.getOptions().booleanOption("tacops_ziplines")
                         && (entity instanceof VTOL)
-                        && (entity.getElevation() > 0)
+                        && (md.getFinalElevation() > 0)
                         && (targ instanceof Infantry)
                         && (((Entity)targ).getJumpMP() < 1)
                         && !((Infantry) targ).isMechanized()) {

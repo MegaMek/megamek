@@ -5,6 +5,7 @@ v0.41.19-git
 + Issue #21: SPAs and Unit Quirks not displaying after loading saved game
 + Issue #208: Incorrect color when reversing a mech with lateral shifts
 + Issue #224: Backup MP cost possibly incorrect when mech is prone
++ Issue #217: Zip Line Dialog sometimes displayed when it shouldn't be
 
 v0.41.18 (2016-04-16 19:30 UTC)
 + PR #154: Replacing all internal mass and tonnage related variables with doubles

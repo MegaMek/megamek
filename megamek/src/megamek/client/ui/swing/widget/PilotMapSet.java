@@ -271,7 +271,7 @@ public class PilotMapSet implements DisplayMapSet {
                         break;
                     }
                     IOption adv = advs.nextElement();
-                    if (adv.booleanValue()) {
+                    if ((adv != null) && adv.booleanValue()) {
                         advantagesR[i++].setString("  "
                                 + adv.getDisplayableNameWithValue());
                     }

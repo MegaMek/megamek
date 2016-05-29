@@ -446,6 +446,11 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         if (ent instanceof Infantry) {
             elevationDiff *= 2;
         }
+        // Penalty for standing
+        if (ent.isProne() && !(mp.contains(MoveStepType.GET_UP)
+                || mp.contains(MoveStepType.CAREFUL_STAND))) {
+            elevationDiff += 2;
+        }
         return elevationDiff;
     }    
 }

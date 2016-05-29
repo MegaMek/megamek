@@ -146,9 +146,16 @@ public class PilotOptions extends AbstractOptions {
     }
 
     private static class PilotOptionsInfo extends AbstractOptionsInfo {
+        private static boolean initliazed = false;
         private static AbstractOptionsInfo instance = new PilotOptionsInfo();
 
         public static AbstractOptionsInfo getInstance() {
+            if (!initliazed) {
+                initliazed = true;
+                // Create a new dummy PilotOptions; ensures values initialized
+                // Otherwise, could have issues when loading saved games
+                new PilotOptions();
+            }
             return instance;
         }
 

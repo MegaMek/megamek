@@ -8693,8 +8693,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // must be active
         if (!isActive()
-            || (isImmobile() && !isManualShutdown() && !canUnjamRAC() && !game
-                .getOptions().booleanOption("vehicles_can_eject"))) {
+            || (isImmobile() && !isManualShutdown() && !canUnjamRAC() &&
+                !game.getOptions().booleanOption(OptionsConstants.AGM_VEHICLES_CAN_EJECT))) {
             return false;
         }
 

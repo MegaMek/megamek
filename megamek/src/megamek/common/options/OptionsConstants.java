@@ -21,10 +21,12 @@ package megamek.common.options;
 public class OptionsConstants {
     public static final String AGM_TAC_OPS_STANDING_STILL = "tacops_standing_still"; //$NON-NLS-1$
     public static final String AGM_TAC_OPS_PHYSICAL_ATTACK_PSR = "tacops_attack_physical_psr"; //$NON-NLS-1$
+    public static final String AGM_VEHICLES_CAN_EJECT = "vehicles_can_eject"; //$NON-NLS-1$
+    public static final String AGM_EJECTED_PILOTS_FLEE = "ejected_pilots_flee"; //$NON-NLS-1$
 
     public static final String AC_TAC_OPS_RANGE = "tacops_range"; //$NON-NLS-1$
     public static final String AC_TAC_OPS_LOS_RANGE = "tacops_los_range"; //$NON-NLS-1$
-
+    
     public static final String QUIRK_POS_ANTI_AIR = "anti_air"; //$NON-NLS-1$
     public static final String QUIRK_POS_ATMO_FLYER= "atmo_flyer"; //$NON-NLS-1$
     public static final String QUIRK_POS_BATTLE_COMP = "battle_computer"; //$NON-NLS-1$

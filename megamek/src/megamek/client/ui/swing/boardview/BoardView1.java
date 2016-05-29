@@ -2402,11 +2402,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (!supersUnderShadow) {
             if (supers != null) {
                 for (Image image : supers) {
-                    if (animatedImages.contains(image.hashCode())) {
-                        dontCache = true;
+                    if(null != image) {
+                        if (animatedImages.contains(image.hashCode())) {
+                            dontCache = true;
+                        }
+                        scaledImage = getScaledImage(image, true);
+                        g.drawImage(scaledImage, 0, 0, this);
                     }
-                    scaledImage = getScaledImage(image, true);
-                    g.drawImage(scaledImage, 0, 0, this);
                 }
             }
         }

@@ -63,6 +63,11 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.converters.MarshallingContext;
+import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.io.HierarchicalStreamReader;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import megamek.MegaMek;
 import megamek.client.ui.swing.util.PlayerColors;
@@ -1414,6 +1419,42 @@ public class Server implements Runnable {
         IGame newGame;
         try(InputStream is = new GZIPInputStream(new FileInputStream(f))) {
             XStream xstream = new XStream();
+            xstream.registerConverter(new Converter() {
+                @SuppressWarnings("rawtypes")
+                @Override
+                public boolean canConvert(Class cls) {
+                    return (cls == Coords.class);
+                }
+                
+                @Override
+                public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                    int x = 0, y = 0;
+                    boolean foundX = false, foundY = false;
+                    while(reader.hasMoreChildren()) {
+                        reader.moveDown();
+                        switch(reader.getNodeName()) {
+                            case "x":
+                                x = Integer.parseInt(reader.getValue());
+                                foundX = true;
+                                break;
+                            case "y":
+                                y = Integer.parseInt(reader.getValue());
+                                foundY = true;
+                                break;
+                            default:
+                                // Unknown node, or <hash>
+                                break;
+                        }
+                        reader.moveUp();
+                    }
+                    return (foundX && foundY) ? new Coords(x, y) : null;
+                }
+                
+                @Override
+                public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                    // Unused here
+                }
+            });
             newGame = (IGame) xstream.fromXML(is);
         } catch (Exception e) {
             System.err.println("Unable to load file: " + f); //$NON-NLS-1$

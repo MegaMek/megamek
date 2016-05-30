@@ -3680,7 +3680,7 @@ public class Tank extends Entity {
 
     @Override
     public boolean isEjectionPossible() {
-        return game.getOptions().booleanOption("vehicles_can_eject")
+        return game.getOptions().booleanOption(OptionsConstants.AGM_VEHICLES_CAN_EJECT)
                 && getCrew().isActive()
                 && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
     }

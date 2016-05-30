@@ -881,8 +881,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         setLayMineEnabled(ce.canLayMine());
         setFleeEnabled(ce.canFlee());
-        if (gOpts.booleanOption("vehicles_can_eject")
-                && (ce instanceof Tank)) { //$NON-NLS-1$
+        if (gOpts.booleanOption(OptionsConstants.AGM_VEHICLES_CAN_EJECT) && (ce instanceof Tank)) {
             // Vehicle don't have ejection systems so crews abandon, and must 
             // enter a valid hex, if they cannot they can't abandon TO pg 197
             Coords pos = ce().getPosition();

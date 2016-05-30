@@ -621,6 +621,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         }
 
         public void loadFacings() {
+            if(null == base) {
+                return;
+            }
             base = applyColor(base);
 
             icon = base.getScaledInstance(56, 48, Image.SCALE_SMOOTH);

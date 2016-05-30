@@ -272,7 +272,6 @@ import megamek.server.victory.Victory;
  * @author Ben Mazur
  */
 public class Server implements Runnable {
-
     private static class EntityTargetPair {
         Entity ent;
 
@@ -32053,7 +32052,7 @@ public class Server implements Runnable {
                                                   IEntityRemovalConditions.REMOVE_IN_RETREAT));
                     // }
                 }
-                if (game.getOptions().booleanOption("ejected_pilots_flee")) {
+                if (game.getOptions().booleanOption(OptionsConstants.AGM_EJECTED_PILOTS_FLEE)) {
                     game.removeEntity(pilot.getId(),
                                       IEntityRemovalConditions.REMOVE_IN_RETREAT);
                     send(createRemoveEntityPacket(pilot.getId(),
@@ -32070,7 +32069,6 @@ public class Server implements Runnable {
 
         } // End entity-is-Mek
         else if (game.getBoard().contains(entity.getPosition())
-                 && !game.getOptions().booleanOption("ejected_pilots_flee")
                  && (entity instanceof Tank)) {
             EjectedCrew crew = new EjectedCrew(entity);
             // Need to set game manually; since game.addEntity not called yet
@@ -32112,6 +32110,10 @@ public class Server implements Runnable {
             vDesc.addAll(doEntityDisplacementMinefieldCheck(crew,
                     entity.getPosition(), entity.getPosition(),
                     entity.getElevation()));
+            if (game.getOptions().booleanOption(OptionsConstants.AGM_EJECTED_PILOTS_FLEE)) {
+                game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
+                send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
+            }
         }
 
         // Mark the entity's crew as "ejected".
@@ -32331,16 +32333,14 @@ public class Server implements Runnable {
             // check if the pilot lands in a minefield
             vDesc.addAll(doEntityDisplacementMinefieldCheck(pilot,
                                                             entity.getPosition(), targetCoords, entity.getElevation()));
-            if (game.getOptions().booleanOption("ejected_pilots_flee")) {
+            if (game.getOptions().booleanOption(OptionsConstants.AGM_EJECTED_PILOTS_FLEE)) {
                 game.removeEntity(pilot.getId(),
                                   IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(pilot.getId(),
                                               IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
         } // End entity-is-Mek
-        else if (game.getBoard().contains(entity.getPosition())
-                 && !game.getOptions().booleanOption("ejected_pilots_flee")
-                 && game.getOptions().booleanOption("vehicles_can_eject")
+        else if (game.getOptions().booleanOption(OptionsConstants.AGM_VEHICLES_CAN_EJECT)
                  && (entity instanceof Tank)) {
             EjectedCrew crew = new EjectedCrew(entity);
             crew.setDeployed(true);
@@ -32350,14 +32350,19 @@ public class Server implements Runnable {
             // Make them not get a move this turn
             crew.setDone(true);
             // Place on board
-
-            crew.setPosition(entity.getPosition());
+            if(game.getBoard().contains(entity.getPosition())) {
+                crew.setPosition(entity.getPosition());
+            }
             // Update the entity
             entityUpdate(crew.getId());
             // Check if the crew lands in a minefield
             vDesc.addAll(doEntityDisplacementMinefieldCheck(crew,
                                                             entity.getPosition(), entity.getPosition(),
                                                             entity.getElevation()));
+            if(game.getOptions().booleanOption(OptionsConstants.AGM_EJECTED_PILOTS_FLEE)) {
+                game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
+                send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
+            }
         }
 
         // Mark the entity's crew as "ejected".

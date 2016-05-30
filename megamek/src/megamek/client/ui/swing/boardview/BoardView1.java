@@ -5048,8 +5048,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
         }
 
-        // Next, determine what E(C)CM effects each Coord
+        // Keep track of allied ECM and enemy ECCM
         Map<Coords, ECMEffects> ecmAffectedCoords =
+                new HashMap<Coords, ECMEffects>();
+        // Keep track of allied ECCM and enemy ECM
+        Map<Coords, ECMEffects> eccmAffectedCoords =
                 new HashMap<Coords, ECMEffects>();
         for (ECMInfo ecmInfo : allEcmInfo) {
             // Can't see ECM field of unspotted unit
@@ -5076,29 +5079,42 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     if ((dist > range) || !inArc) {
                         continue;
                     }
-                    ECMEffects ecmEffects = ecmAffectedCoords.get(c);
-                    if (ecmEffects == null) {
-                        ecmEffects = new ECMEffects();
-                        ecmAffectedCoords.put(c, ecmEffects);
+
+                    // Check for allied ECCM or enemy ECM
+                    if ((!ecmInfo.isOpposed(localPlayer) && ecmInfo.isECCM())
+                            || (ecmInfo.isOpposed(localPlayer) && ecmInfo.isECCM())) {
+                        ECMEffects ecmEffects = eccmAffectedCoords.get(c);
+                        if (ecmEffects == null) {
+                            ecmEffects = new ECMEffects();
+                            eccmAffectedCoords.put(c, ecmEffects);
+                        }
+                        ecmEffects.addECM(ecmInfo);
+                    } else {
+                        ECMEffects ecmEffects = ecmAffectedCoords.get(c);
+                        if (ecmEffects == null) {
+                            ecmEffects = new ECMEffects();
+                            ecmAffectedCoords.put(c, ecmEffects);
+                        }
+                        ecmEffects.addECM(ecmInfo);
                     }
-                    ecmEffects.addECM(ecmInfo);
                 }
             }
         }
 
         // Finally, determine the color for each affected hex
         for (Coords c : ecmAffectedCoords.keySet()) {
-            ECMEffects ecmEffects = ecmAffectedCoords.get(c);
-            Color hexColor = ecmEffects.getHexColor();
-            // Hex color is null if all effects cancel out
-            if (hexColor == null) {
-                continue;
+            ECMEffects ecm = ecmAffectedCoords.get(c);
+            ECMEffects eccm = eccmAffectedCoords.get(c);
+            processAffectedCoords(c, ecm, eccm, newECMHexes, newECCMHexes);
+        }
+        for (Coords c : eccmAffectedCoords.keySet()) {
+            ECMEffects ecm = ecmAffectedCoords.get(c);
+            ECMEffects eccm = eccmAffectedCoords.get(c);
+            // Already processed all ECM affected coords
+            if (ecm != null) {
+             continue;
             }
-            if (ecmEffects.isECCM()) {
-                newECCMHexes.put(c, hexColor);
-            } else {
-                newECMHexes.put(c, hexColor);
-            }
+            processAffectedCoords(c, ecm, eccm, newECMHexes, newECCMHexes);
         }
 
         synchronized (this) {
@@ -5108,6 +5124,38 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             eccmCenters = newECCMCenters;
         }
         repaint();
+    }
+
+    private void processAffectedCoords(Coords c, ECMEffects ecm,
+            ECMEffects eccm, Map<Coords, Color> newECMHexes,
+            Map<Coords, Color> newECCMHexes) {
+        Color hexColorECM = null;
+        if (ecm != null) {
+            hexColorECM = ecm.getHexColor();
+        }
+        Color hexColorECCM = null;
+        if (eccm != null) {
+            hexColorECCM = eccm.getHexColor();
+        }
+        // Hex color is null if all effects cancel out
+        if ((hexColorECM == null) && (hexColorECCM == null)) {
+            return;
+        } else if ((hexColorECM != null) && (hexColorECCM == null)) {
+            if (ecm.isECCM()) {
+                newECCMHexes.put(c, hexColorECM);
+            } else {
+                newECMHexes.put(c, hexColorECM);
+            }
+        } else if ((hexColorECM == null) && (hexColorECCM != null)) {
+            if (eccm.isECCM()) {
+                newECCMHexes.put(c, hexColorECCM);
+            } else {
+                newECMHexes.put(c, hexColorECCM);
+            }
+        } else { // Both are non-null
+            newECMHexes.put(c, hexColorECM);
+            newECCMHexes.put(c, hexColorECCM);
+        }
     }
 
     public Dimension getPreferredScrollableViewportSize() {

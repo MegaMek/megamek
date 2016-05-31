@@ -333,6 +333,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
         clientgui.bv.clearMovementData();
+        clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
     }
 

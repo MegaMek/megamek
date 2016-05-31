@@ -452,7 +452,7 @@ public class MapMenu extends JPopupMenu {
         // add select options
         if (canSelectEntities()) {
             for (Entity entity : client.getGame().getEntitiesVector(coords,
-                                                                    canTargetEntities())) {
+                    canTargetEntities())) {
                 if (client.getMyTurn().isValidEntity(entity, client.getGame())) {
                     menu.add(selectJMenuItem(entity));
                 }

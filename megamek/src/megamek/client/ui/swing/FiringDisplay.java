@@ -729,6 +729,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         clientgui.bv.clearFiringSolutionData();
         clientgui.bv.clearStrafingCoords();
         clientgui.bv.clearFieldofF();
+        clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
 
         clearVisibleTargets();

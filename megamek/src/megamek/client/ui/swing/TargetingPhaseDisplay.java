@@ -650,6 +650,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.bv.clearFiringSolutionData();
         clientgui.bv.clearMovementData();
         clientgui.bv.clearFieldofF();
+        clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
 
     }

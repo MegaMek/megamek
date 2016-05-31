@@ -18,6 +18,7 @@ v0.41.19-git
 + New Maps - Thanks Razorback (via Facebook)
 + New Sprites.
 + Issue #156: Graphical To-Hit Modifiers ('firing solutions') in Indirect Phase
++ Bug: MiniMap selected unit highlighting persists after turn ends
 
 v0.41.18 (2016-05-26 19:30 UTC)
 + PR #154: Replacing all internal mass and tonnage related variables with doubles

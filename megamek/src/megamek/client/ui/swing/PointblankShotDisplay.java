@@ -463,6 +463,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
         clientgui.bv.clearFiringSolutionData();
         clientgui.bv.clearStrafingCoords();
         clientgui.bv.clearFieldofF();
+        clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
         // Return back to the movement phase display
         clientgui.switchPanel(IGame.Phase.PHASE_MOVEMENT);

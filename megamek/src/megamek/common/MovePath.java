@@ -186,12 +186,23 @@ public class MovePath implements Cloneable, Serializable {
                 // Maneuvering Ace allows Bipeds and VTOLs moving at cruise
                 //  speed to perform a lateral shift
                 || (getEntity().isUsingManAce()
-                    && ((getEntity() instanceof BipedMech))
-                    || ((getEntity() instanceof VTOL)
-                        && (getMpUsed() <= getEntity().getWalkMP())))
+                    && ((getEntity() instanceof BipedMech)
+                        || ((getEntity() instanceof VTOL)
+                        && (getMpUsed() <= getEntity().getWalkMP()))))
                 || ((getEntity() instanceof TripodMech)
                     && (((Mech) getEntity()).countBadLegs() == 0)))
                 && !isJumping();
+    }
+
+    /**
+     * Returns true if this MovePath contains a lateral shift
+     * @return
+     */
+    public boolean containsLateralShift() {
+        return this.contains(MoveStepType.LATERAL_LEFT)
+                || this.contains(MoveStepType.LATERAL_RIGHT)
+                || this.contains(MoveStepType.LATERAL_LEFT_BACKWARDS)
+                || this.contains(MoveStepType.LATERAL_RIGHT_BACKWARDS);
     }
 
     protected MovePath addStep(final MoveStep step) {
@@ -316,6 +327,13 @@ public class MovePath implements Cloneable, Serializable {
                     step.setDanger(true);
                 }
             }
+        }
+
+        // VTOLs using maneuvering ace to make lateral shifts can't flank
+        if (containsLateralShift() && getEntity().isUsingManAce()
+                && (getEntity() instanceof VTOL)
+                && getMpUsed() > getEntity().getWalkMP()) {
+            step.setMovementType(EntityMovementType.MOVE_ILLEGAL);
         }
         
         if (shouldMechanicalJumpCauseFallDamage()) {

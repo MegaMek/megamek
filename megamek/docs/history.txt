@@ -8,6 +8,7 @@ v0.41.19-git
 + Issue #217: Zip Line Dialog sometimes displayed when it shouldn't be
 + Issue #182: For display, overlapping friendly ECM/ECCM could cancel out
 + Issue #232: Bloodwolf IS House Skins added
++ Issue #210: VTOLs incorrectly able to lateral shift, can shift and flank
 
 v0.41.18 (2016-05-26 19:30 UTC)
 + PR #154: Replacing all internal mass and tonnage related variables with doubles

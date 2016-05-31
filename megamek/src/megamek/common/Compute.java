@@ -17,9 +17,11 @@ package megamek.common;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.Building.BasementType;
@@ -1953,9 +1955,8 @@ public class Compute {
 
         int primaryTarget = Entity.NONE;
         boolean primaryInFrontArc = false;
-        // Keeps track of the number of targets the attacker has.  Starts at 
-        //  one, because we're passed a target
-        int countTargets = 1;
+        // Track # of targets, for secondary modifiers w/ multi-crew vehicles
+        Set<Integer> targIds = new HashSet<>();
         for (Enumeration<EntityAction> i = game.getActions(); i
                 .hasMoreElements(); ) {
             Object o = i.nextElement();
@@ -1964,10 +1965,9 @@ public class Compute {
             }
             WeaponAttackAction prevAttack = (WeaponAttackAction) o;
             if (prevAttack.getEntityId() == attacker.getId()) {
-                // Count how many targets we have for proper secondary modifiers
-                // for multi-crew vehicles
+                // Don't add id of current target, as it gets counted elsewhere
                 if (prevAttack.getTargetId() != target.getTargetId()) {
-                    countTargets++;
+                    targIds.add(prevAttack.getTargetId());
                 }
                 // first front arc target is our primary.
                 // if first target is non-front, and either a later target or
@@ -1998,15 +1998,18 @@ public class Compute {
             }
         }
 
+        // # of targets, +1 for the passed target
+        int countTargets = 1 + targIds.size();
+
         if (game.getOptions().booleanOption("tacops_tank_crews")
-            && attacker instanceof Tank) {
+            && (attacker instanceof Tank)) {
 
             // If we are a tank, and only have 1 crew then we have some special
             //  restrictions
             if (countTargets > 1 && attacker.getCrew().getSize() == 1) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                     "Vehicles with only 1 crewman may not attack " +
-                                     "secondary targets");
+                        "Vehicles with only 1 crewman may not attack "
+                                + "secondary targets");
             }
             // If we are a tank, we can have Crew Size - 1 targets before 
             //  incurring a secondary target penalty (or crew size - 2 secondary 

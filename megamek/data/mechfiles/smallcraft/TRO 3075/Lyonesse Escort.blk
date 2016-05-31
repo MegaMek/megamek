@@ -2,31 +2,39 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 SmallCraft
 </UnitType>
+
 <Name>
 Lyonesse Escort
 </Name>
+
 <Model>
 (Standard)
 </Model>
+
 <Tonnage>
 175
 </Tonnage>
+
 <SafeThrust>
 3
 </SafeThrust>
+
 <Armor>
 165
 133
 133
 101
 </Armor>
+
 <Nose Equipment>
 ISLRM20
 ISLRM20 Ammo
@@ -35,6 +43,7 @@ ISSRM6
 ISSRM6 Ammo
 ISSRM6 Ammo
 </Nose Equipment>
+
 <Left Side Equipment>
 ISMediumLaser
 ISMediumLaser
@@ -43,6 +52,7 @@ ISMediumLaser
 (R) ISMediumLaser
 #This Last Laser is supposed to be rearfacing
 </Left Side Equipment>
+
 <Right Side Equipment>
 ISMediumLaser
 ISMediumLaser
@@ -50,45 +60,62 @@ ISMediumLaser
 ISMediumLaser
 (R) ISMediumLaser
 </Right Side Equipment>
+
 <Aft Equipment>
 ISMediumLaser
 ISMediumLaser
 ISMediumLaser
 ISSmallLaser
 </Aft Equipment>
+
 <structural_integrity>
 7
 </structural_integrity>
+
 <heatsinks>
 35
 </heatsinks>
+
 <sink_type>
 0
 </sink_type>
+
 <fuel>
 400
 </fuel>
+
 <type>
 IS Level 2
 </type>
+
 <year>
 2513
 </year>
+
 <internal_type>
 0
 </internal_type>
+
+<designtype>
+1
+</designtype>
+
 <armor_type>
 0
 </armor_type>
+
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 aerodyne
 </motion_type>
+
 <crew>
 6
 </crew>
+
 <passengers>
 0
 </passengers>

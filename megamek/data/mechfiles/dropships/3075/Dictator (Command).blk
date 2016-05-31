@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
 MAM0
 </Version>
@@ -13,6 +11,7 @@ MAM0
 <UnitType>
 Dropship
 </UnitType>
+
 <Name>
 Dictator
 </Name>
@@ -125,6 +124,10 @@ TRO 3075 - Star League
 <internal_type>
 0
 </internal_type>
+
+<designtype>
+1
+</designtype>
 
 <armor_type>
 0

@@ -21,6 +21,7 @@ v0.41.19-git
 + Bug: MiniMap selected unit highlighting persists after turn ends
 + Issue #149: IS Small Laser firing at LOS Range
 + Issue #152: MGs, Flamers, AMS firing at LOS Range
++ Issue #151: Flamers can't Strafe
 
 v0.41.18 (2016-05-26 19:30 UTC)
 + PR #154: Replacing all internal mass and tonnage related variables with doubles

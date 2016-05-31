@@ -3998,12 +3998,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
             // Only direct-fire energy weapons can strafe
             EquipmentType wt = weapon.getType();
-            boolean isDirectFireEnergy = wt.hasFlag(WeaponType.F_DIRECT_FIRE)
+            boolean isDirectFireEnergy = (wt.hasFlag(WeaponType.F_DIRECT_FIRE)
                     && (wt.hasFlag(WeaponType.F_LASER)
-                            || wt.hasFlag(WeaponType.F_PPC)
-                            || wt.hasFlag(WeaponType.F_PLASMA)
-                            || wt.hasFlag(WeaponType.F_PLASMA_MFUK) || wt
-                                .hasFlag(WeaponType.F_FLAMER));
+                        || wt.hasFlag(WeaponType.F_PPC)
+                        || wt.hasFlag(WeaponType.F_PLASMA)
+                        || wt.hasFlag(WeaponType.F_PLASMA_MFUK)))
+                    || wt.hasFlag(WeaponType.F_FLAMER);
+            // Note: flamers are direct fire energy, but don't have the flag,
+            //  so they won't work with targeting computers
             boolean isEnergyBay = (wt instanceof LaserBayWeapon)
                     || (wt instanceof PPCBayWeapon)
                     || (wt instanceof PulseLaserBayWeapon);

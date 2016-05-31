@@ -2,75 +2,103 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 SmallCraft
 </UnitType>
+
 <Name>
 Life Boat
 </Name>
+
 <Model>
 (Standard)
 </Model>
+
 <Tonnage>
 5
 </Tonnage>
+
 <SafeThrust>
 0
 </SafeThrust>
+
 <Armor>
 1
 1
 1
 1
 </Armor>
+
 <Nose Equipment>
 </Nose Equipment>
+
 <Left Side Equipment>
 </Left Side Equipment>
+
 <Right Side Equipment> 
 </Right Side Equipment>
+
 <Aft Equipment> 
 </Aft Equipment>
+
 <structural_integrity>
 1
 </structural_integrity>
+
 <heatsinks>
 0
 </heatsinks>
+
 <sink_type>
 0
 </sink_type>
+
 <fuel>
 0
 </fuel>
+
 <type>
 IS Level 2
 </type>
+
 <year>
 2478
 </year>
+
 <internal_type>
 0
 </internal_type>
+
+<designtype>
+0
+</designtype>
+
 <armor_type>
 0
 </armor_type>
+
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 aerodyne
 </motion_type>
+
 <transporters>
 CargoBay:1.85:0
 </transporters>
+
 <crew>
 1
 </crew>
+
 <passengers>
 6
 </passengers>

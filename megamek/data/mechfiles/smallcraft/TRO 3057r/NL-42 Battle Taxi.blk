@@ -2,83 +2,111 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 SmallCraft
 </UnitType>
+
 <Name>
 Battle Taxi
 </Name>
+
 <Model>
 NL-42
 </Model>
+
 <Tonnage>
 200
 </Tonnage>
+
 <SafeThrust>
 6
 </SafeThrust>
+
 <Armor>
 248
 90
 90
 120
 </Armor>
+
 <Nose Equipment>
 </Nose Equipment>
+
 <Left Side Equipment>
 ISERLargeLaser
 ISMediumPulseLaser
 ISMediumPulseLaser
 </Left Side Equipment>
+
 <Right Side Equipment> 
 ISERLargeLaser
 ISMediumPulseLaser
 ISMediumPulseLaser
 </Right Side Equipment>
+
 <Aft Equipment> 
 </Aft Equipment>
+
 <structural_integrity>
 9
 </structural_integrity>
+
 <heatsinks>
 14
 </heatsinks>
+
 <sink_type>
 0
 </sink_type>
+
 <fuel>
 400
 </fuel>
+
 <type>
 IS Level 2
 </type>
+
 <year>
 3053
 </year>
+
 <internal_type>
 0
 </internal_type>
+
+<designtype>
+1
+</designtype>
+
 <armor_type>
 0
 </armor_type>
+
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 spheroid
 </motion_type>
+
 <transporters>
 BattleArmorBay:1:0
 BattleArmorBay:1:0
 CargoBay:1:0
 </transporters>
+
 <crew>
 3
 </crew>
+
 <passengers>
 0
-</passengers>
+</passengers>

@@ -7,6 +7,7 @@ v0.41.19-git
 + Issue #224: Backup MP cost possibly incorrect when mech is prone
 + Issue #217: Zip Line Dialog sometimes displayed when it shouldn't be
 + Issue #182: For display, overlapping friendly ECM/ECCM could cancel out
++ Issue #232: Bloodwolf IS House Skins added
 
 v0.41.18 (2016-05-26 19:30 UTC)
 + PR #154: Replacing all internal mass and tonnage related variables with doubles

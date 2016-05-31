@@ -334,7 +334,17 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             // we do this here to avoid duplicating handle()
             // in the ArtilleryWeaponDirectFireHandler
             Coords origPos = targetPos;
-            targetPos = Compute.scatterDirectArty(targetPos, toHit.getMoS());
+            int moF = toHit.getMoS();
+            if (ae.getCrew().getOptions().booleanOption("oblique_artillery")) {
+                // getMoS returns a negative MoF
+                // simple math is better so lets make it positive
+                if ((-moF -2) < 1) {
+                    moF = 0;
+                } else {
+                    moF = moF +2;
+                }
+            }
+            targetPos = Compute.scatterDirectArty(targetPos, moF);
             if (game.getBoard().contains(targetPos)) {
                 // misses and scatters to another hex
                 if (!isFlak) {

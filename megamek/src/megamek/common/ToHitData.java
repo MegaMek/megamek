@@ -216,6 +216,14 @@ public class ToHitData extends TargetRoll {
         this.cover = cover;
     }
 
+    /**
+     * Determines whether the Margin of success or failure
+     * for a given roll.
+     * MoS returns a positive while
+     * MoF returns a negative
+     *
+     * @return <code>int</code> 
+     */
     public int getMoS() {
         return margineOfSuccess;
     }

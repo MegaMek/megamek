@@ -17,6 +17,7 @@ v0.41.19-git
 + Issue #230: Axel Heavy Tank IIC (XL) has incorrect name and stats
 + New Maps - Thanks Razorback (via Facebook)
 + New Sprites.
++ Issue #156: Graphical To-Hit Modifiers ('firing solutions') in Indirect Phase
 
 v0.41.18 (2016-05-26 19:30 UTC)
 + PR #154: Replacing all internal mass and tonnage related variables with doubles

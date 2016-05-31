@@ -542,10 +542,47 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             updateSearchlight();
 
             setFireModeEnabled(true);
+
+            if (GUIPreferences.getInstance().getBoolean("FiringSolutions")
+                    && !ce().isOffBoard()) {
+                setFiringSolutions();
+            } else {
+                clientgui.getBoardView().clearFiringSolutionData();
+            }
         } else {
-            System.err
-                    .println("FiringDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
+            System.err.println("TargetingPhaseDisplay: " //$NON-NLS-1$
+                    + "tried to select non-existant entity: " + en); //$NON-NLS-1$
         }
+    }
+
+    public void setFiringSolutions() {
+        // If no Entity is selected, exit
+        if (cen == Entity.NONE) {
+            return;
+        }
+
+        IGame game = clientgui.getClient().getGame();
+        IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
+        if (!GUIPreferences.getInstance().getFiringSolutions()) {
+            return;
+        }
+        Map<Integer, ToHitData> fs = new HashMap<Integer, ToHitData>();
+        for (Entity target : game.getEntitiesVector()) {
+            boolean friendlyFire = game.getOptions().booleanOption(
+                    "friendly_fire"); //$NON-NLS-1$
+            boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
+            if ((target.getId() != cen)
+                && (friendlyFire || enemyTarget)
+                && (!enemyTarget || target.hasSeenEntity(localPlayer)
+                    || target.hasDetectedEntity(localPlayer))
+                && target.isTargetable()) {
+                ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
+                thd.setLocation(target.getPosition());
+                thd.setRange(ce().getPosition().distance(target.getPosition()));
+                fs.put(target.getId(), thd);
+            }
+        }
+        clientgui.getBoardView().setFiringSolutions(ce(), fs);
     }
 
     /**
@@ -610,6 +647,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
+        clientgui.bv.clearFiringSolutionData();
         clientgui.bv.clearMovementData();
         clientgui.bv.clearFieldofF();
         disableButtons();

@@ -1036,8 +1036,8 @@ public class Compute {
             }
             // No Direct Fire Energy or Pulse with range < 7            
             if (wtype.hasFlag(WeaponType.F_PULSE)
-                && (wtype.hasFlag(WeaponType.F_ENERGY)
-                    || wtype.hasFlag(WeaponType.F_DIRECT_FIRE))) {
+                || (wtype.hasFlag(WeaponType.F_ENERGY)
+                    && wtype.hasFlag(WeaponType.F_DIRECT_FIRE))) {
                 if (longRange < 7) {
                     range = RangeType.RANGE_OUT;
                 }

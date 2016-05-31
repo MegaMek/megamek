@@ -45,6 +45,7 @@ import megamek.common.weapons.ArtilleryCannonWeapon;
 import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.HAGWeapon;
 import megamek.common.weapons.InfantryAttack;
+import megamek.common.weapons.MGWeapon;
 import megamek.common.weapons.MekMortarWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.Server;
@@ -1025,6 +1026,22 @@ public class Compute {
             if (isSwarmOrLegAttack) {
                 range = RangeType.RANGE_OUT;
             }
+
+            // MGs lack range for LOS Range, but don't have F_DIRECT_FIRE flag
+            if (wtype instanceof MGWeapon) {
+                range = RangeType.RANGE_OUT;
+            }
+
+            // AMS lack range for LOS Range, but don't have F_DIRECT_FIRE flag
+            if (wtype.hasFlag(WeaponType.F_AMS)) {
+                range = RangeType.RANGE_OUT;
+            }
+
+            // Flamers lack range for LOS Range, but don't have F_DIRECT_FIRE
+            if (wtype.hasFlag(WeaponType.F_FLAMER)) {
+                range = RangeType.RANGE_OUT;
+            }
+
             int longRange = wtype.getRanges(weapon)[RangeType.RANGE_LONG];
             // No Missiles or Direct Fire Ballistics with range < 13 
             if (wtype.hasFlag(WeaponType.F_MISSILE)

@@ -11,6 +11,8 @@ v0.41.19-git
 + Issue #210: VTOLs incorrectly able to lateral shift, can shift and flank
 + Issue #220: TO vehicle crew rule counts # of targets incorrectly
 + PR #222 & # #229: New SPAs: Shaky Stick and Oblique Artilleryman
++ Issue #176: Real Blind Drop: unit customization messages reveal how many units
+    a player has
 
 v0.41.18 (2016-05-26 19:30 UTC)
 + PR #154: Replacing all internal mass and tonnage related variables with doubles

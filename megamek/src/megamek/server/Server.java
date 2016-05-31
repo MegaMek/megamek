@@ -28526,17 +28526,20 @@ public class Server implements Runnable {
             // In the chat lounge, notify players of customizing of unit
             if (game.getPhase() == IGame.Phase.PHASE_LOUNGE) {
                 StringBuffer message = new StringBuffer();
-                message.append("Unit ");
-                if (game.getOptions().booleanOption("blind_drop")
-                    || game.getOptions().booleanOption("real_blind_drop")) {
+                if (game.getOptions().booleanOption("real_blind_drop")) {
+                    message.append("A Unit ");
+                    message.append('(').append(entity.getOwner().getName()).append(')');
+                } else if (game.getOptions().booleanOption("blind_drop")) {
+                    message.append("Unit ");
                     if (!entity.getExternalIdAsString().equals("-1")) {
                         message.append('[')
                                .append(entity.getExternalIdAsString())
                                .append("] ");
                     }
-                    message.append(entity.getId()).append('(')
+                    message.append(entity.getId()).append(" (")
                            .append(entity.getOwner().getName()).append(')');
                 } else {
+                    message.append("Unit ");
                     message.append(entity.getDisplayName());
                 }
                 message.append(" has been customized.");

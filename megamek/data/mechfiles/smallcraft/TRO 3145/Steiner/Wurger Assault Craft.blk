@@ -2,6 +2,7 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
@@ -105,6 +106,10 @@ IS Level 2
 <internal_type>
 0
 </internal_type>
+
+<designtype>
+1
+</designtype>
 
 <armor_type>
 20

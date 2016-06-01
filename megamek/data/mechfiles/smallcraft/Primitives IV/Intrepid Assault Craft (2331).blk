@@ -2,13 +2,16 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 SmallCraft
 </UnitType>
+
 <Name>
 Intrepid Assault Craft
 </Name>
@@ -79,6 +82,10 @@ IS Level 5
 <internal_type>
 0
 </internal_type>
+
+<designtype>
+1
+</designtype>
 
 <armor_type>
 17

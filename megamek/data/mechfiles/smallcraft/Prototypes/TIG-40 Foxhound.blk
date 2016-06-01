@@ -2,46 +2,57 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 SmallCraft
 </UnitType>
+
 <Name>
 Foxhound Gunboat
 </Name>
+
 <Model>
 TIG-40
 </Model>
+
 <Tonnage>
 180
 </Tonnage>
+
 <SafeThrust>
 5
 </SafeThrust>
+
 <Armor>
 96
 89
 89
 89
 </Armor>
+
 <Nose Equipment>
 ISERLargeLaser
 ISERLargeLaser
 IS Laser AMS
 </Nose Equipment>
+
 <Left Side Equipment>
 ISImprovedHeavyGaussRifle
 ISImprovedHeavyGauss Ammo
 ISImprovedHeavyGauss Ammo
 </Left Side Equipment>
+
 <Right Side Equipment> 
 ISImprovedHeavyGaussRifle
 ISImprovedHeavyGauss Ammo
 ISImprovedHeavyGauss Ammo
 </Right Side Equipment>
+
 <Aft Equipment>
 IS Laser AMS
 </Aft Equipment>
@@ -49,30 +60,43 @@ IS Laser AMS
 <structural_integrity>
 9
 </structural_integrity>
+
 <heatsinks>
 20
 </heatsinks>
+
 <sink_type>
 1
 </sink_type>
+
 <fuel>
 640
 </fuel>
+
 <type>
 IS Level 3
 </type>
+
 <year>
 3083
 </year>
+
 <internal_type>
 0
 </internal_type>
+
+<designtype>
+1
+</designtype>
+
 <armor_type>
 6
 </armor_type>
+
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 spheroid
 </motion_type>
@@ -80,6 +104,7 @@ spheroid
 <escape_pod>
 0
 </escape_pod>
+
 <life_boat>
 0
 </life_boat>
@@ -91,4 +116,3 @@ spheroid
 <source>
 TRO:Prototypes
 </sources>
-

@@ -1,0 +1,114 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SmallCraft
+</UnitType>
+
+<Name>
+Battle Taxi
+</Name>
+
+<Model>
+NL-43
+</Model>
+
+<Tonnage>
+100
+</Tonnage>
+
+<SafeThrust>
+6
+</SafeThrust>
+
+<Armor>
+105
+55
+55
+105
+</Armor>
+
+<Nose Equipment>
+ISGuardianECM
+</Nose Equipment>
+
+<Left Side Equipment>
+IS X-Pulse Med Laser
+IS X-Pulse Med Laser
+</Left Side Equipment>
+
+<Right Side Equipment> 
+IS X-Pulse Med Laser
+IS X-Pulse Med Laser
+</Right Side Equipment>
+
+<Aft Equipment>
+IS X-Pulse Med Laser
+IS X-Pulse Med Laser
+</Aft Equipment>
+
+<structural_integrity>
+10
+</structural_integrity>
+
+<heatsinks>
+18
+</heatsinks>
+
+<sink_type>
+1
+</sink_type>
+
+<fuel>
+880
+</fuel>
+
+<type>
+IS Level 4
+</type>
+
+<year>
+3074
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<designtype>
+1
+</designtype>
+
+<armor_type>
+8
+</armor_type>
+
+<engine_type>
+2
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+infantrybay:16:0
+CargoBay:2:0
+</transporters>
+
+<crew>
+3
+</crew>
+<passengers>
+0
+</passengers>
+
+<source>
+XTRO Phantoms - Jihad
+</source>

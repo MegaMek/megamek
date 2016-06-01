@@ -14,11 +14,11 @@ SmallCraft
 </UnitType>
 
 <Name>
-Ares Landing Craft
+Ares Assault Craft
 </Name>
 
 <Model>
-Mk.I
+Mk.III
 </Model>
 
 <Tonnage>
@@ -30,15 +30,15 @@ Mk.I
 </SafeThrust>
 
 <Armor>
-76
-75
-75
+91
+90
+90
 55
 </Armor>
 
 <Nose Equipment>
-ISMediumLaser
-ISMediumLaser
+ISLargeLaser
+ISMediumLaser 
 </Nose Equipment>
 
 <Left Side Equipment>
@@ -63,7 +63,7 @@ ISMediumLaser
 </structural_integrity>
 
 <heatsinks>
-16
+20
 </heatsinks>
 
 <sink_type>
@@ -71,7 +71,7 @@ ISMediumLaser
 </sink_type>
 
 <fuel>
-480
+540
 </fuel>
 
 <type>
@@ -79,12 +79,16 @@ IS Level 5
 </type>
 
 <year>
-2438
+2451
 </year>
 
 <internal_type>
 0
 </internal_type>
+
+<designtype>
+1
+</designtype>
 
 <armor_type>
 17
@@ -99,7 +103,7 @@ aerodyne
 </motion_type>
 
 <transporters>
-CargoBay:65:2
+InfantryBay:2:1
 </transporters>
 
 <crew>

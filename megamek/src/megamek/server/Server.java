@@ -3430,7 +3430,7 @@ public class Server implements Runnable {
         mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
         mapSettings.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
         IBoard[] sheetBoards = new IBoard[mapSettings.getMapWidth()
-                                          * mapSettings.getMapHeight()];
+                * mapSettings.getMapHeight()];
         for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings
                 .getMapHeight()); i++) {
             sheetBoards[i] = new Board();
@@ -3444,21 +3444,21 @@ public class Server implements Runnable {
                 name = name.substring(Board.BOARD_REQUEST_ROTATION.length());
             }
             if (name.startsWith(MapSettings.BOARD_GENERATED)
-                || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
+                    || (mapSettings.getMedium() == MapSettings.MEDIUM_SPACE)) {
                 sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
             } else {
                 sheetBoards[i].load(new File(Configuration.boardsDir(), name
-                                                                        + ".board"));
+                        + ".board"));
                 BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
             }
         }
         IBoard newBoard = BoardUtilities.combine(mapSettings.getBoardWidth(),
-                                                 mapSettings.getBoardHeight(), mapSettings.getMapWidth(),
-                                                 mapSettings.getMapHeight(), sheetBoards,
-                                                 mapSettings.getMedium());
+                mapSettings.getBoardHeight(), mapSettings.getMapWidth(),
+                mapSettings.getMapHeight(), sheetBoards,
+                mapSettings.getMedium());
         if (game.getOptions().getOption("bridgeCF").intValue() > 0) {
             newBoard.setBridgeCF(game.getOptions().getOption("bridgeCF")
-                                     .intValue());
+                    .intValue());
         }
         if (!game.getOptions().booleanOption("random_basements")) {
             newBoard.setRandomBasementsOff();

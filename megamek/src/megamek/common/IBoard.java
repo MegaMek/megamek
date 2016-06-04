@@ -456,4 +456,71 @@ public interface IBoard {
     public abstract void resetStoredElevation();
 
     boolean containsBridges();
+
+    /**
+     * Returns the list of background images associated with this board. If
+     * created from a single board file, then the list should only have one
+     * element. Multiple elements exist when the board is created by combinging
+     * multiple board files.
+     *
+     * @return
+     */
+    public abstract List<String> getBackgroundPaths();
+
+    /**
+     * Returns the first element of the background path list, or null if it is
+     * empty.
+     *
+     * @return
+     */
+    public abstract String getBackgroundPath();
+
+    /**
+     * Returns the number of boards in width that were used to created this
+     * board. Only used when background paths are set.
+     *
+     * @return
+     */
+    public abstract int getNumBoardsWidth();
+
+    /**
+     * Returns the number of boards in height that were used to created this
+     * board. Only used when background paths are set.
+     *
+     * @return
+     */
+    public abstract int getNumBoardsHeight();
+
+    /**
+     * Flag that determines if the board background image should be flipped
+     * horizontally. Only used when background paths are set.
+     *
+     * @return
+     */
+    public abstract List<Boolean> getFlipBGHoriz();
+
+    /**
+     * Flag that determines if the board background image should be flipped
+     * vertically. Only used when background paths are set.
+     *
+     * @return
+     */
+    public abstract List<Boolean> getFlipBGVert();
+
+    public int getSubBoardWidth();
+
+    public int getSubBoardHeight();
+
+    public void setSubBoardWidth(int width);
+
+    public void setSubBoardHeight(int height);
+
+    public abstract void setNumBoardsWidth(int width);
+
+    public abstract void setNumBoardsHeight(int height);
+
+    public abstract void addBackgroundPath(String path, boolean flipVert,
+            boolean flipHorz);
+
+    public abstract boolean hasBoardBackground();
 }

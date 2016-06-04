@@ -30,6 +30,7 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.StreamTokenizer;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -86,6 +87,35 @@ public class Board implements Serializable, IBoard {
     private int mapType = T_GROUND;
 
     private IHex[] data;
+
+    /**
+     * The path to the file to load as background image for this board. To avoid
+     * the Server sending a serialized image, the image isn't loaded until
+     * requested.
+     */
+    private List<String> backgroundPaths = new ArrayList<>();
+
+    /**
+     * Keeps track of how many boards were combined to create this board.  These
+     * are necessary to properly index into the background image, and only need
+     * to be set if backgroundPaths are present.
+     */
+    private int numBoardsWidth, numBoardsHeight;
+
+    /**
+     * Keeps track of the size of the boards used to create this board.  These
+     * are necessary to properly index into the background image, and only need
+     * to be set if backgroundPaths are present.
+     */
+    private int subBoardWidth, subBoardHeight;
+
+    /**
+     * Flags that determine if the background image should be flipped.  These
+     * are necessary to properly index into the background image, and only need
+     * to be set if backgroundPaths are present.
+     */
+    private List<Boolean> flipBGHoriz = new ArrayList<>(),
+            flipBGVert = new ArrayList<>();
 
     /**
      * Building data structures.
@@ -836,6 +866,14 @@ public class Board implements Serializable, IBoard {
                     if (x_pos > nw) {
                         y_pos++;
                         x_pos = 1;
+                    }
+                } else if ((st.ttype == StreamTokenizer.TT_WORD)
+                        && st.sval.equalsIgnoreCase("background")) {
+                    st.nextToken();
+                    File bgFile = new File(Configuration.boardBackgroundsDir(),
+                            st.sval);
+                    if (bgFile.exists()) {
+                        backgroundPaths.add(bgFile.getPath());
                     }
                 } else if ((st.ttype == StreamTokenizer.TT_WORD)
                         && st.sval.equalsIgnoreCase("end")) {
@@ -1589,5 +1627,69 @@ public class Board implements Serializable, IBoard {
             }
         }
         return false;
+    }
+
+    public List<String> getBackgroundPaths() {
+        return backgroundPaths;
+    }
+
+    public String getBackgroundPath() {
+        if (backgroundPaths.size() > 0) {
+            return backgroundPaths.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    public int getNumBoardsWidth() {
+        return numBoardsWidth;
+    }
+
+    public int getNumBoardsHeight() {
+        return numBoardsHeight;
+    }
+
+    public List<Boolean> getFlipBGHoriz() {
+        return flipBGHoriz;
+    }
+
+    public List<Boolean> getFlipBGVert() {
+        return flipBGVert;
+    }
+
+    public int getSubBoardWidth() {
+        return subBoardWidth;
+    }
+
+    public int getSubBoardHeight() {
+        return subBoardHeight;
+    }
+
+    public void setSubBoardWidth(int width) {
+        subBoardWidth = width;
+    }
+
+    public void setSubBoardHeight(int height) {
+        subBoardHeight = height;
+    }
+
+    public void setNumBoardsWidth(int width) {
+        numBoardsWidth = width;
+    }
+
+    public void setNumBoardsHeight(int height) {
+        numBoardsHeight = height;
+    }
+
+    public void addBackgroundPath(String path, boolean flipVert,
+            boolean flipHorz) {
+        backgroundPaths.add(path);
+
+        flipBGVert.add(flipVert);
+        flipBGHoriz.add(flipHorz);
+    }
+
+    public boolean hasBoardBackground() {
+        return backgroundPaths.size() > 0;
     }
 }

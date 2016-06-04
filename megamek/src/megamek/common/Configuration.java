@@ -68,6 +68,9 @@ public final class Configuration {
     /** The default images directory name (under the data directory). */
     private static final String DEFAULT_DIR_NAME_IMAGES = "images";
 
+    /** The default board backgrounds directory name (under the images directory). */
+    private static final String DEFAULT_DIR_NAME_BOARD_BACKGROUNDS = "board_backgrounds";
+
     /** The default random names directory (under the data directory). */
     private static final String DEFAULT_DIR_NAME_NAMES = "names";
 
@@ -320,13 +323,43 @@ public final class Configuration {
     /**
      * Set the images directory to an arbitrary location (<b>not</b> relative to
      * the data directory).
-     * 
+     *
      * @param images_dir_path
      *            The path to the images directory.
      */
     public static void setImagesDir(final File images_dir_path) {
         lock.writeLock().lock();
         images_dir = images_dir_path;
+        lock.writeLock().unlock();
+    }
+
+    /**
+     * Return the configured board backgrounds directory, if set, otherwise
+     * return the default path, relative to the configured images directory.
+     *
+     * @return {@link File} containing the path to the images directory.
+     */
+    public static File boardBackgroundsDir() {
+        lock.readLock().lock();
+        try {
+            return (board_backgrounds_dir != null) ? board_backgrounds_dir
+                    : new File(imagesDir(), DEFAULT_DIR_NAME_BOARD_BACKGROUNDS);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Set the board backgrounds directory to an arbitrary location (<b>not</b>
+     * relative to the images directory).
+     *
+     * @param board_background_dir_path
+     *            The path to the images directory.
+     */
+    public static void setboardBackgroundsDir(
+            final File board_background_dir_path) {
+        lock.writeLock().lock();
+        board_backgrounds_dir = board_background_dir_path;
         lock.writeLock().unlock();
     }
 
@@ -515,6 +548,9 @@ public final class Configuration {
 
     /** The configured images directory. */
     private static File images_dir = null;
+
+    /** The configured images directory. */
+    private static File board_backgrounds_dir = null;
 
     /** The configured unit files directory. */
     private static File units_dir = null;

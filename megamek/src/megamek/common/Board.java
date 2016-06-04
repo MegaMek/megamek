@@ -874,6 +874,10 @@ public class Board implements Serializable, IBoard {
                             st.sval);
                     if (bgFile.exists()) {
                         backgroundPaths.add(bgFile.getPath());
+                    } else {
+                        System.err.println("Board specified background image, "
+                                + "but path couldn't be found! Path: "
+                                + bgFile.getPath());
                     }
                 } else if ((st.ttype == StreamTokenizer.TT_WORD)
                         && st.sval.equalsIgnoreCase("end")) {

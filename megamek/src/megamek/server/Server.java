@@ -3431,6 +3431,7 @@ public class Server implements Runnable {
         mapSettings.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
         IBoard[] sheetBoards = new IBoard[mapSettings.getMapWidth()
                 * mapSettings.getMapHeight()];
+        List<Boolean> rotateBoard = new ArrayList<>();
         for (int i = 0; i < (mapSettings.getMapWidth() * mapSettings
                 .getMapHeight()); i++) {
             sheetBoards[i] = new Board();
@@ -3451,10 +3452,11 @@ public class Server implements Runnable {
                         + ".board"));
                 BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
             }
+            rotateBoard.add(isRotated);
         }
         IBoard newBoard = BoardUtilities.combine(mapSettings.getBoardWidth(),
                 mapSettings.getBoardHeight(), mapSettings.getMapWidth(),
-                mapSettings.getMapHeight(), sheetBoards,
+                mapSettings.getMapHeight(), sheetBoards, rotateBoard,
                 mapSettings.getMedium());
         if (game.getOptions().getOption("bridgeCF").intValue() > 0) {
             newBoard.setBridgeCF(game.getOptions().getOption("bridgeCF")

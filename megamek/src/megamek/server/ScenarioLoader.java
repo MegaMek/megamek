@@ -850,6 +850,7 @@ public class ScenarioLoader {
         IBoard[] ba = new IBoard[nWidth * nHeight];
         Queue<String> maps = new LinkedList<>(
             Arrays.asList(p.getString(PARAM_MAPS).split(SEPARATOR_COMMA, -1)));
+        List<Boolean> rotateBoard = new ArrayList<>();
         for(int x = 0; x < nWidth; x++) {
             for(int y = 0; y < nHeight; y++) {
                 int n = (y * nWidth) + x;
@@ -881,6 +882,7 @@ public class ScenarioLoader {
                     ba[n].setBridgeCF(cf);
                 }
                 BoardUtilities.flip(ba[n], isRotated, isRotated);
+                rotateBoard.add(isRotated);
             }
         }
 
@@ -889,7 +891,8 @@ public class ScenarioLoader {
             return ba[0];
         }
         // construct the big board
-        return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba, MapSettings.MEDIUM_GROUND);
+        return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba,
+                rotateBoard, MapSettings.MEDIUM_GROUND);
     }
 
     private StringMultiMap load() throws ScenarioLoaderException {

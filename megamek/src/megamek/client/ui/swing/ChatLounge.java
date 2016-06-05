@@ -1235,6 +1235,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         temp.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
         IBoard[] sheetBoards = new IBoard[temp.getMapWidth()
                 * temp.getMapHeight()];
+        List<Boolean> rotateBoard = new ArrayList<>();
         for (int i = 0; i < (temp.getMapWidth() * temp.getMapHeight()); i++) {
             sheetBoards[i] = new Board();
             String name = temp.getBoardsSelectedVector().get(i);
@@ -1254,11 +1255,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         + ".board"));
                 BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
             }
+            rotateBoard.add(isRotated);
         }
 
         IBoard newBoard = BoardUtilities.combine(temp.getBoardWidth(),
                 temp.getBoardHeight(), temp.getMapWidth(), temp.getMapHeight(),
-                sheetBoards, temp.getMedium());
+                sheetBoards, rotateBoard, temp.getMedium());
         gameBoardMap.setBoard(newBoard);
         gameBoardPreviewW.setVisible(true);
 

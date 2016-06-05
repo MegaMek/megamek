@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import megamek.common.Board;
@@ -55,16 +56,19 @@ public class BoardUtilities {
      * @param sheetWidth how many sheets wide the combined map is
      * @param sheetHeight how many sheets tall the combined map is
      * @param boards an array of the boards to be combined
+     * @param isRotated Flag that determines if any of the maps are rotated
+     * @param medium Sets the medium the map is in (ie., ground, atmo, space)
      */
     public static IBoard combine(int width, int height, int sheetWidth,
-            int sheetHeight, IBoard[] boards, int medium) {
+            int sheetHeight, IBoard[] boards, List<Boolean> isRotated,
+            int medium) {
 
         int resultWidth = width * sheetWidth;
         int resultHeight = height * sheetHeight;
 
         IHex[] resultData = new IHex[resultWidth * resultHeight];
         boolean roadsAutoExit = true;
-
+        boolean boardListContainsBackground = false;
         // Copy the data from the sub-boards.
         for (int i = 0; i < sheetHeight; i++) {
             for (int j = 0; j < sheetWidth; j++) {
@@ -81,6 +85,7 @@ public class BoardUtilities {
                 if (boards[i * sheetWidth + j].getRoadsAutoExit() == false) {
                     roadsAutoExit = false;
                 }
+                boardListContainsBackground |= b.hasBoardBackground();
             }
         }
 
@@ -88,6 +93,17 @@ public class BoardUtilities {
         result.setRoadsAutoExit(roadsAutoExit);
         // Initialize all hexes - buildings, exits, etc
         result.newData(resultWidth, resultHeight, resultData);
+        if (boardListContainsBackground) {
+            result.setNumBoardsHeight(sheetHeight);
+            result.setNumBoardsWidth(sheetWidth);
+            result.setSubBoardHeight(height);
+            result.setSubBoardWidth(width);
+            ListIterator<Boolean> flipIt = isRotated.listIterator();
+            for (IBoard b : boards) {
+                boolean flip = flipIt.next();
+                result.addBackgroundPath(b.getBackgroundPath(), flip, flip);
+            }
+        }
 
         //assuming that the map setting and board types match
         result.setType(medium);

@@ -53,6 +53,8 @@ import megamek.common.util.StringUtil;
  */
 public class HexTileset {
 
+    public static String TRANSPARENT_THEME = "transparent";
+
     private ArrayList<HexEntry> bases = new ArrayList<HexEntry>();
     private ArrayList<HexEntry> supers = new ArrayList<HexEntry>();
     private ArrayList<HexEntry> ortho = new ArrayList<HexEntry>();
@@ -284,6 +286,7 @@ public class HexTileset {
             // st.sval.equals("ortho")){}
         }
         r.close();
+        themes.add(TRANSPARENT_THEME);
 
         System.out
                 .println("hexTileset: loaded " + bases.size() + 

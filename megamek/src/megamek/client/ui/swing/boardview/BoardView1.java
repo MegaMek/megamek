@@ -6313,7 +6313,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     + "in BoardView1.getTransparentImage!");
             return null;
         }
-        Image bgImg = getScaledImage(boardBackgrounds.get(linIdx), true);
+        Image bgImg = boardBackgrounds.get(linIdx);
         int bgImgWidth = bgImg.getWidth(null);
         int bgImgHeight = bgImg.getHeight(null);        
         
@@ -6322,18 +6322,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 c.getY() - (boardY * board.getSubBoardHeight()));
         p1SRC.x = p1SRC.x % bgImgWidth;
         p1SRC.y = p1SRC.y % bgImgHeight;
-        Point p2SRC = new Point((int) (p1SRC.x + HEX_W * scale),
-                (int) (p1SRC.y + HEX_H * scale));
-        Point p2DST = new Point((int) (HEX_W * scale),
-                (int) (HEX_H * scale));
-        
-        Image hexImage = createImage(HEX_W, HEX_H);
+        Point p2SRC = new Point(p1SRC.x + HEX_W, p1SRC.y + HEX_H);
+        Point p2DST = new Point(HEX_W, HEX_H);
+
+        Image hexImage = new BufferedImage(HEX_W,  HEX_H,
+                BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D)hexImage.getGraphics();
         
         // hex mask to limit drawing to the hex shape
         // TODO: this is not ideal yet but at least it draws
         // without leaving gaps at any zoom
-        Image hexMask = getScaledImage(tileManager.getHexMask(), true);
+        Image hexMask = tileManager.getHexMask();
         g.drawImage(hexMask, 0, 0, this);
         Composite svComp = g.getComposite(); 
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP,

@@ -4895,33 +4895,37 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 b.addBoardListener(BoardView1.this);
             }
             boardBackgrounds.clear();
-            ListIterator<Boolean> flipItHoriz = b.getFlipBGHoriz().listIterator();
-            ListIterator<Boolean> flipItVert = b.getFlipBGVert().listIterator();
-            for (String path : b.getBackgroundPaths()) {
-                boolean flipHoriz = flipItHoriz.next();
-                boolean flipVert = flipItVert.next();
-                if (path == null) {
-                    boardBackgrounds.add(null);
-                } else {
-                    Image bgImg = ImageUtil.loadImageFromFile(path,
-                            getToolkit());
-                    ImageProducer prod = bgImg.getSource();
-                    if (flipHoriz || flipVert) {
-                        AffineTransform at = new AffineTransform();
+            if (b.hasBoardBackground()) {
+                ListIterator<Boolean> flipItHoriz = b.getFlipBGHoriz()
+                        .listIterator();
+                ListIterator<Boolean> flipItVert = b.getFlipBGVert()
+                        .listIterator();
+                for (String path : b.getBackgroundPaths()) {
+                    boolean flipHoriz = flipItHoriz.next();
+                    boolean flipVert = flipItVert.next();
+                    if (path == null) {
+                        boardBackgrounds.add(null);
+                    } else {
+                        Image bgImg = ImageUtil.loadImageFromFile(path,
+                                getToolkit());
+                        ImageProducer prod = bgImg.getSource();
+                        if (flipHoriz || flipVert) {
+                            AffineTransform at = new AffineTransform();
 
-                        if (flipHoriz) {
-                            at.concatenate(AffineTransform.getScaleInstance(1,
-                                    -1));
+                            if (flipHoriz) {
+                                at.concatenate(AffineTransform
+                                        .getScaleInstance(1, -1));
+                            }
+                            if (flipVert) {
+                                at.concatenate(AffineTransform
+                                        .getTranslateInstance(0,
+                                                -bgImg.getHeight(null)));
+                            }
+                            ((Graphics2D) bgImg.getGraphics()).setTransform(at);
                         }
-                        if (flipVert) {
-                            at.concatenate(AffineTransform
-                                    .getTranslateInstance(0,
-                                            -bgImg.getHeight(null)));
-                        }
-                        ((Graphics2D) bgImg.getGraphics()).setTransform(at);
+                        boardBackgrounds.add(Toolkit.getDefaultToolkit()
+                                .createImage(prod));
                     }
-                    boardBackgrounds.add(Toolkit.getDefaultToolkit()
-                            .createImage(prod));
                 }
             }
             clearHexImageCache();

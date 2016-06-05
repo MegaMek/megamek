@@ -1694,6 +1694,6 @@ public class Board implements Serializable, IBoard {
     }
 
     public boolean hasBoardBackground() {
-        return backgroundPaths.size() > 0;
+        return (backgroundPaths != null) && backgroundPaths.size() > 0;
     }
 }

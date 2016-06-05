@@ -458,11 +458,6 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if ("visibility".equals(option.getName())) { //$NON-NLS-1$
-            if (!(options.getOption("double_blind")).booleanValue() //$NON-NLS-1$
-                    || !editable) {
-                optionComp.setEditable(false);
-            }
         } else if (option.getName().equals("tacops_falling_expanded")) { //$NON-NLS-1$
             if (!(options.getOption("tacops_hull_down")).booleanValue() //$NON-NLS-1$
                     || !editable) {
@@ -693,12 +688,6 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
-            }
-        }
-        if ("double_blind".equals(option.getName())) { //$NON-NLS-1$
-            comps = optionComps.get("visibility"); //$NON-NLS-1$
-            for (DialogOptionComponent comp_i : comps) {
-                comp_i.setEditable(state);
             }
         }
         if ("tacops_dead_zones".equals(option.getName())) { //$NON-NLS-1$

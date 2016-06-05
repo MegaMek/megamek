@@ -2266,33 +2266,33 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         Image boardBgHexImg = getBoardBackgroundHexImage(c, hex);
         // get the base tile image
-        Image baseImage;
+        Image baseImage, scaledImage;
         if (boardBgHexImg != null) {
             baseImage = boardBgHexImg;
+            scaledImage = boardBgHexImg;
         } else {
             baseImage = tileManager.baseFor(hex);
+            scaledImage = getScaledImage(baseImage, true);
         }
-        
+
         // Some hex images shouldn't be cached, like if they are animated
         boolean dontCache = animatedImages.contains(baseImage.hashCode());
-        
+
         // check if this is a standard tile image 84x72 or something different
         boolean standardTile = (baseImage.getHeight(null) == HEX_H)
                 && (baseImage.getWidth(null) == HEX_W);
-        
-        Image scaledImage = getScaledImage(baseImage, true);
 
         int imgHeight, imgWidth;
         imgWidth = scaledImage.getWidth(null);
         imgHeight = scaledImage.getHeight(null);
-        
+
         // do not make larger than hex images even when the input image is big
         int origImgWidth = imgWidth; // save for later, needed for large tiles
         int origImgHeight = imgHeight;
-        
+
         imgWidth = Math.min(imgWidth,(int)(HEX_W*scale));
         imgHeight = Math.min(imgHeight,(int)(HEX_H*scale));
-        
+
         if (useIsometric()) {
             int largestLevelDiff = 0;
             for (int dir: allDirections) {
@@ -6311,7 +6311,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     + "in BoardView1.getTransparentImage!");
             return null;
         }
-        Image bgImg = boardBackgrounds.get(linIdx);
+        Image bgImg = getScaledImage(boardBackgrounds.get(linIdx), true);
         int bgImgWidth = bgImg.getWidth(null);
         int bgImgHeight = bgImg.getHeight(null);        
         
@@ -6320,8 +6320,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 c.getY() - (boardY * board.getSubBoardHeight()));
         p1SRC.x = p1SRC.x % bgImgWidth;
         p1SRC.y = p1SRC.y % bgImgHeight;
-        Point p2SRC = new Point(p1SRC.x + HEX_W, p1SRC.y + HEX_H);
-        Point p2DST = new Point(HEX_W, HEX_H);
+        Point p2SRC = new Point((int) (p1SRC.x + HEX_W * scale),
+                (int) (p1SRC.y + HEX_H * scale));
+        Point p2DST = new Point((int) (HEX_W * scale),
+                (int) (HEX_H * scale));
 
         Image hexImage = new BufferedImage(HEX_W,  HEX_H,
                 BufferedImage.TYPE_INT_ARGB);
@@ -6330,7 +6332,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // hex mask to limit drawing to the hex shape
         // TODO: this is not ideal yet but at least it draws
         // without leaving gaps at any zoom
-        Image hexMask = tileManager.getHexMask();
+        Image hexMask = getScaledImage(tileManager.getHexMask(), true);
         g.drawImage(hexMask, 0, 0, this);
         Composite svComp = g.getComposite(); 
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP,

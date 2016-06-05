@@ -2264,11 +2264,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                               hex.terrainLevel(Terrains.BRIDGE_ELEV));
         height = Math.max(height, hex.terrainLevel(Terrains.INDUSTRIAL));
 
-        Image transparentThemeImg = getTransparentImage(c, hex);
+        Image boardBgHexImg = getBoardBackgroundHexImage(c, hex);
         // get the base tile image
         Image baseImage;
-        if (transparentThemeImg != null) {
-            baseImage = transparentThemeImg;
+        if (boardBgHexImg != null) {
+            baseImage = boardBgHexImg;
         } else {
             baseImage = tileManager.baseFor(hex);
         }
@@ -2369,7 +2369,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         // Only draw additional terrain if we aren't using transparent theme
-        if (transparentThemeImg == null) {
+        if (boardBgHexImg == null) {
             // To place roads under the shadow map, supers for hexes with roads
             // have to be drawn before the shadow map, otherwise the supers are
             // drawn after.  Unfortunately I dont think the supers images
@@ -6298,7 +6298,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
     }
 
-    private Image getTransparentImage(Coords c, IHex hex) {
+    private Image getBoardBackgroundHexImage(Coords c, IHex hex) {
         IBoard board = game.getBoard();
         if (!hex.getTheme().equals(HexTileset.TRANSPARENT_THEME) 
                 || !board.hasBoardBackground()) {

@@ -2,83 +2,110 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 SmallCraft
 </UnitType>
+
 <Name>
 Ares Attack Craft
 </Name>
+
 <Model>
 Mark IX
 </Model>
+
 <Tonnage>
 200
 </Tonnage>
+
 <SafeThrust>
 7
 </SafeThrust>
+
 <Armor>
 159
 118
 118
 81
 </Armor>
+
 <Nose Equipment>
 ISLargePulseLaser
 ISERLargeLaser
 ISBeagleActiveProbe
 </Nose Equipment>
+
 <Left Side Equipment>
 ISMediumPulseLaser
 ISMediumPulseLaser
 </Left Side Equipment>
+
 <Right Side Equipment> 
 ISMediumPulseLaser
 ISMediumPulseLaser
 </Right Side Equipment>
+
 <Aft Equipment> 
 </Aft Equipment>
+
 <structural_integrity>
 11
 </structural_integrity>
+
 <heatsinks>
 15
 </heatsinks>
+
 <sink_type>
 1
 </sink_type>
+
 <fuel>
 800
 </fuel>
+
 <type>
 IS Level 2
 </type>
+
 <year>
 3077
 </year>
+
 <internal_type>
 0
 </internal_type>
+
+<designtype>
+1
+</designtype>
+
 <armor_type>
 0
 </armor_type>
+
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 aerodyne
 </motion_type>
+
 <transporters>
 CargoBay:3:0
 </transporters>
+
 <crew>
 4
 </crew>
+
 <passengers>
 0
 </passengers>
-

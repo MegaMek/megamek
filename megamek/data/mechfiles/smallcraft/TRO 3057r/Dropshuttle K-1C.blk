@@ -2,80 +2,108 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 SmallCraft
 </UnitType>
+
 <Name>
 DropShuttle
 </Name>
+
 <Model>
 K-1C
 </Model>
+
 <Tonnage>
 200
 </Tonnage>
+
 <SafeThrust>
 4
 </SafeThrust>
+
 <Armor>
 180
 80
 80
 104
 </Armor>
+
 <Nose Equipment>
 CLMediumPulseLaser
 CLMediumPulseLaser
 </Nose Equipment>
+
 <Left Side Equipment>
 CLMediumPulseLaser
 </Left Side Equipment>
+
 <Right Side Equipment> 
 CLMediumPulseLaser
 </Right Side Equipment>
+
 <Aft Equipment> 
 CLMediumPulseLaser
 </Aft Equipment>
+
 <structural_integrity>
 6
 </structural_integrity>
+
 <heatsinks>
 10
 </heatsinks>
+
 <sink_type>
 1
 </sink_type>
+
 <fuel>
 2400
 </fuel>
+
 <type>
 Clan Level 2
 </type>
+
 <year>
 2914
 </year>
+
 <internal_type>
 0
 </internal_type>
+
+<designtype>
+0
+</designtype>
+
 <armor_type>
 0
 </armor_type>
+
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 spheroid
 </motion_type>
+
 <transporters>
 CargoBay:17:0
 </transporters>
+
 <crew>
 4
 </crew>
+
 <passengers>
 6
-</passengers>
+</passengers>

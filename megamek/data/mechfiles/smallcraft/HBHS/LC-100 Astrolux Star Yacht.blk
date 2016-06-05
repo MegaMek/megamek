@@ -2,78 +2,107 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 SmallCraft
 </UnitType>
+
 <Name>
 'Astrolux' Staryacht
 </Name>
+
 <Model>
 LC-100
 </Model>
+
 <Tonnage>
 200
 </Tonnage>
+
 <SafeThrust>
 5
 </SafeThrust>
+
 <Armor>
 33
 28
 28
 23
 </Armor>
+
 <Nose Equipment>
 </Nose Equipment>
+
 <Left Side Equipment>
 </Left Side Equipment>
+
 <Right Side Equipment> 
 </Right Side Equipment>
+
 <Aft Equipment> 
 </Aft Equipment>
+
 <structural_integrity>
 8
 </structural_integrity>
+
 <heatsinks>
 1
 </heatsinks>
+
 <sink_type>
 0
 </sink_type>
+
 <fuel>
 1600
 </fuel>
+
 <type>
 IS Level 2
 </type>
+
 <year>
 2953
 </year>
+
 <internal_type>
 0
 </internal_type>
+
+<designtype>
+1
+</designtype>
+
 <armor_type>
 0
 </armor_type>
+
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 aerodyne
 </motion_type>
+
 <transporters>
 CargoBay:7.5:1
 </transporters>
+
 <crew>
 3
 </crew>
+
 <passengers>
 7
 </passengers>
+
 <source>
 HB: House Steiner
 </source>

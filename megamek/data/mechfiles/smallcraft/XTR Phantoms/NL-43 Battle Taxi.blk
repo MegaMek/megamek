@@ -2,7 +2,6 @@
 <BlockVersion>
 1
 </BlockVersion>
-
 #Write the version number just in case...
 <Version>
 MAM0
@@ -13,46 +12,45 @@ SmallCraft
 </UnitType>
 
 <Name>
-Intrepid Assault Craft
+Battle Taxi
 </Name>
 
 <Model>
-(2331)
+NL-43
 </Model>
 
 <Tonnage>
-150
+100
 </Tonnage>
 
 <SafeThrust>
-5
+6
 </SafeThrust>
 
 <Armor>
-73
-65
-65
-35
+105
+55
+55
+105
 </Armor>
 
 <Nose Equipment>
-ISMediumLaser
-ISMediumLaser
-ISMediumLaser
+ISGuardianECM
 </Nose Equipment>
 
 <Left Side Equipment>
-ISLargeLaser
-ISMediumLaser
+IS X-Pulse Med Laser
+IS X-Pulse Med Laser
 </Left Side Equipment>
 
-<Right Side Equipment>
-ISLargeLaser
-ISMediumLaser
+<Right Side Equipment> 
+IS X-Pulse Med Laser
+IS X-Pulse Med Laser
 </Right Side Equipment>
 
 <Aft Equipment>
-ISMediumLaser
+IS X-Pulse Med Laser
+IS X-Pulse Med Laser
 </Aft Equipment>
 
 <structural_integrity>
@@ -60,23 +58,23 @@ ISMediumLaser
 </structural_integrity>
 
 <heatsinks>
-22
+18
 </heatsinks>
 
 <sink_type>
-0
+1
 </sink_type>
 
 <fuel>
-400
+880
 </fuel>
 
 <type>
-IS Level 5
+IS Level 4
 </type>
 
 <year>
-2331
+3074
 </year>
 
 <internal_type>
@@ -88,30 +86,29 @@ IS Level 5
 </designtype>
 
 <armor_type>
-17
+8
 </armor_type>
 
 <engine_type>
-0
+2
 </engine_type>
 
 <motion_type>
 aerodyne
 </motion_type>
 
-<crew>
-5
-</crew>
+<transporters>
+infantrybay:16:0
+CargoBay:2:0
+</transporters>
 
+<crew>
+3
+</crew>
 <passengers>
 0
 </passengers>
 
-<transporters>
-infantrybay:1:2
-</transporters>
-
 <source>
-XTRO Primitives IV - Age of War
+XTRO Phantoms - Jihad
 </source>
-

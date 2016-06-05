@@ -1,11 +1,9 @@
 #building block data file
-
 <BlockVersion>
 1
 </BlockVersion>
 
 #Write the version number just in case...
-
 <Version>
 MAM0
 </Version>
@@ -118,6 +116,10 @@ TRO 3075 - Civil War
 0
 </internal_type>
 
+<designtype>
+1
+</designtype>
+
 <armor_type>
 0
 </armor_type>
@@ -129,8 +131,6 @@ TRO 3075 - Civil War
 <motion_type>
 spheroid
 </motion_type>
-
-
 
 <transporters>
 CargoBay:161:1

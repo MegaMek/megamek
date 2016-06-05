@@ -2,83 +2,111 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 SmallCraft
 </UnitType>
+
 <Name>
 DropShuttle
 </Name>
+
 <Model>
 K-1
 </Model>
+
 <Tonnage>
 200
 </Tonnage>
+
 <SafeThrust>
 4
 </SafeThrust>
+
 <Armor>
 140
 60
 60
 100
 </Armor>
+
 <Nose Equipment>
 ISLRM5
 ISLRM5 Ammo
 ISLRM5 Ammo
 ISMediumLaser
 </Nose Equipment>
+
 <Left Side Equipment>
 ISMediumLaser
 </Left Side Equipment>
+
 <Right Side Equipment> 
 ISMediumLaser
 </Right Side Equipment>
+
 <Aft Equipment> 
 ISMediumLaser
 ISSmallLaser
 </Aft Equipment>
+
 <structural_integrity>
 6
 </structural_integrity>
+
 <heatsinks>
 10
 </heatsinks>
+
 <sink_type>
 0
 </sink_type>
+
 <fuel>
 2400
 </fuel>
+
 <type>
 IS Level 2
 </type>
+
 <year>
 2536
 </year>
+
 <internal_type>
 0
 </internal_type>
+
+<designtype>
+0
+</designtype>
+
 <armor_type>
 0
 </armor_type>
+
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 spheroid
 </motion_type>
+
 <transporters>
 CargoBay:17:0
 </transporters>
+
 <crew>
 4
 </crew>
+
 <passengers>
 6
-</passengers>
+</passengers>

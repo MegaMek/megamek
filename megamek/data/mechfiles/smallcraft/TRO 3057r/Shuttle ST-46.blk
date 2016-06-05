@@ -2,78 +2,106 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 SmallCraft
 </UnitType>
+
 <Name>
 Shuttle
 </Name>
+
 <Model>
 ST-46
 </Model>
+
 <Tonnage>
 100
 </Tonnage>
+
 <SafeThrust>
 4
 </SafeThrust>
+
 <Armor>
 160
 48
 48
 64
 </Armor>
+
 <Nose Equipment>
 ISMediumLaser 
 </Nose Equipment>
+
 <Left Side Equipment>
 (R) ISMediumLaser 
 </Left Side Equipment>
+
 <Right Side Equipment> 
 (R) ISMediumLaser
 </Right Side Equipment>
+
 <Aft Equipment> 
 </Aft Equipment>
+
 <structural_integrity>
 6
 </structural_integrity>
+
 <heatsinks>
 0
 </heatsinks>
+
 <sink_type>
 0
 </sink_type>
+
 <fuel>
 400
 </fuel>
+
 <type>
 IS Level 2
 </type>
+
 <year>
 2528
 </year>
+
 <internal_type>
 0
 </internal_type>
+
+<designtype>
+0
+</designtype>
+
 <armor_type>
 0
 </armor_type>
+
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 aerodyne
 </motion_type>
+
 <transporters>
 CargoBay:12:0
 </transporters>
+
 <crew>
 3
 </crew>
+
 <passengers>
 8
-</passengers>
+</passengers>

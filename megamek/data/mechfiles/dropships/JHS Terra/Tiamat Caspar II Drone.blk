@@ -74,6 +74,10 @@ IS Level 4
 0
 </internal_type>
 
+<designtype>
+1
+</designtype>
+
 <engine_type>
 0
 </engine_type>
@@ -214,6 +218,3 @@ ScreenLauncher Ammo:20
 <history>
 The Caspar II Advanced Smart Robotic Control System isn't implemented in MM.  Unit included for completeness.  If used as a drone it is a Piloting 5/Gunnery 4 unit.  Fighter bay normally carriers Aeshna heavy drone fighters
 </history>
-
-
-

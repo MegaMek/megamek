@@ -616,12 +616,8 @@ Nekohono'o (HQ)|
 Lung Wang 'Predator'|
 Merlin Ngake|
 Vengeance Danai Centrella|
-Battle Taxi NL-43|
 Vampire II|
 Leopard PA-Class Dropship|
-Ares Close Assault Landing Craft Mk.II|
-Ares Landing Craft Mk.I|
-Ares Assault Craft Mk.III|
 Black Eagle (Standard)|
 Czar Dropship (Standard)|
 DroST IIa Transport (2445)|
@@ -4705,7 +4701,11 @@ Condottiere Assault Craft (Standard)|
 NL-45 Gunboat (Standard)|
 Wurger Assault Craft (Standard)|
 Mowang Courier (Clandestine)|
+Battle Taxi NL-43|
 S7-P Bus 'Scarab'|
+Ares Close Assault Landing Craft Mk.II|
+Ares Landing Craft Mk.I|
+Ares Assault Craft Mk.III|
 Crucible Station (Standard)|
 Hong Lung Interdiction Station (Standard)|
 Snowden Mining Station Mk I|
@@ -4964,7 +4964,6 @@ Alacorn Heavy Tank Mk VI|
 Alacorn Heavy Tank Mk VII|
 Axel Heavy Tank IIC (Standard)|
 Axel Heavy Tank IIC (XL)|
-Axel Heavy Tank IIC (Standard)|
 Badger (C) Tracked Transport A|
 Badger (C) Tracked Transport B|
 Badger (C) Tracked Transport C|

@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.41.19-git
+v0.41.19 (2016-06-05 22:40 UTC)
 + Issue #233: NPE Displaying Client Options when no skins present
 + Issue #21: SPAs and Unit Quirks not displaying after loading saved game
 + Issue #208: Incorrect color when reversing a mech with lateral shifts

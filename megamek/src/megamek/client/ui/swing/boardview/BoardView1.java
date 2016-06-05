@@ -2318,7 +2318,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         Graphics2D g = (Graphics2D)(hexImage.getGraphics());
         GUIPreferences.AntiAliasifSet(g);
-        
+
         if (standardTile) { // is the image hex-sized, 84*72?
             g.drawImage(scaledImage, 0, 0, this);
         } else { // Draw image for a texture larger than a hex
@@ -2329,19 +2329,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     (int) (p1SRC.y + HEX_H * scale));
             Point p2DST = new Point((int) (HEX_W * scale),
                     (int) (HEX_H * scale));
-            
+
             // hex mask to limit drawing to the hex shape
             // TODO: this is not ideal yet but at least it draws
             // without leaving gaps at any zoom
             Image hexMask = getScaledImage(tileManager.getHexMask(), true);
             g.drawImage(hexMask, 0, 0, this);
-            Composite svComp = g.getComposite(); 
+            Composite svComp = g.getComposite();
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP,
-                  1f));
-            
+                    1f));
+
             // paint the right slice from the big pic
             g.drawImage(scaledImage, 0, 0, p2DST.x, p2DST.y, p1SRC.x, p1SRC.y,
-                    p2SRC.x, p2SRC.y, null); 
+                    p2SRC.x, p2SRC.y, null);
 
             // Handle wrapping of the image
             if (p2SRC.x > origImgWidth && p2SRC.y <= origImgHeight) {
@@ -2359,28 +2359,59 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 g.drawImage(scaledImage, 0, origImgHeight - p1SRC.y, p2DST.x,
                         p2DST.y, p1SRC.x, 0, p2SRC.x, p2SRC.y - origImgHeight,
                         null); // paint addtl slice on the left side
-             // paint addtl slice on the top left side
-                g.drawImage(scaledImage, origImgWidth - p1SRC.x,
-                        origImgHeight - p1SRC.y, p2DST.x, p2DST.y, 0, 0,
-                        p2SRC.x - origImgWidth, p2SRC.y - origImgHeight, null); 
+                // paint addtl slice on the top left side
+                g.drawImage(scaledImage, origImgWidth - p1SRC.x, origImgHeight
+                        - p1SRC.y, p2DST.x, p2DST.y, 0, 0, p2SRC.x
+                        - origImgWidth, p2SRC.y - origImgHeight, null);
             }
-            
+
             g.setComposite(svComp);
         }
 
-        // Only draw additional terrain if we aren't using transparent theme
-        if (boardBgHexImg == null) {
-            // To place roads under the shadow map, supers for hexes with roads
-            // have to be drawn before the shadow map, otherwise the supers are
-            // drawn after.  Unfortunately I dont think the supers images
-            // themselves can be checked for roads.
-            List<Image> supers = tileManager.supersFor(hex);
-            boolean supersUnderShadow = false;
-            if (hex.containsTerrain(Terrains.ROAD) ||
-                    hex.containsTerrain(Terrains.WATER)) {
-                supersUnderShadow = true;
-                if (supers != null) {
-                    for (Image image : supers) {
+        // To place roads under the shadow map, supers for hexes with roads
+        // have to be drawn before the shadow map, otherwise the supers are
+        // drawn after.  Unfortunately I dont think the supers images
+        // themselves can be checked for roads.
+        List<Image> supers = tileManager.supersFor(hex);
+        boolean supersUnderShadow = false;
+        if (hex.containsTerrain(Terrains.ROAD) ||
+                hex.containsTerrain(Terrains.WATER)) {
+            supersUnderShadow = true;
+            if (supers != null) {
+                for (Image image : supers) {
+                    if (animatedImages.contains(image.hashCode())) {
+                        dontCache = true;
+                    }
+                    scaledImage = getScaledImage(image, true);
+                    g.drawImage(scaledImage, 0, 0, this);
+                }
+            }
+        }
+
+        // Add the terrain & building shadows
+        if (guip.getBoolean(GUIPreferences.SHADOWMAP) &&
+            (shadowMap != null)) {
+            Point p1SRC = getHexLocationLargeTile(c.getX(), c.getY(), 1);
+            Point p2SRC = new Point(p1SRC.x + HEX_W, p1SRC.y + HEX_H);
+            Point p2DST = new Point(hex_size.width, hex_size.height);
+
+            Composite svComp = g.getComposite();
+            if (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DAY) {
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.55f));
+            } else {
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.45f));
+            }
+
+            // paint the right slice from the big pic
+            g.drawImage(shadowMap, 0, 0, p2DST.x, p2DST.y, p1SRC.x, p1SRC.y,
+                    p2SRC.x, p2SRC.y, null);
+            g.setComposite(svComp);
+        }
+
+        if (!supersUnderShadow) {
+            if (supers != null) {
+                for (Image image : supers) {
+                    if (null != image) {
                         if (animatedImages.contains(image.hashCode())) {
                             dontCache = true;
                         }
@@ -2389,75 +2420,42 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
                 }
             }
+        }
 
-            // Add the terrain & building shadows
-            if (guip.getBoolean(GUIPreferences.SHADOWMAP) &&  
-                (shadowMap != null)) {            
-                Point p1SRC = getHexLocationLargeTile(c.getX(), c.getY(), 1);
-                Point p2SRC = new Point(p1SRC.x + HEX_W, p1SRC.y + HEX_H);
-                Point p2DST = new Point(hex_size.width, hex_size.height);
-    
-                Composite svComp = g.getComposite();
-                if (game.getPlanetaryConditions().getLight() == PlanetaryConditions.L_DAY) {
-                    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.55f));
-                } else {            
-                    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.45f));
-                }
-    
-                // paint the right slice from the big pic
-                g.drawImage(shadowMap, 0, 0, p2DST.x, p2DST.y, p1SRC.x, p1SRC.y,
-                        p2SRC.x, p2SRC.y, null); 
-                g.setComposite(svComp);
-            }
-    
-            if (!supersUnderShadow) {
-                if (supers != null) {
-                    for (Image image : supers) {
-                        if(null != image) {
-                            if (animatedImages.contains(image.hashCode())) {
-                                dontCache = true;
-                            }
-                            scaledImage = getScaledImage(image, true);
-                            g.drawImage(scaledImage, 0, 0, this);
-                        }
-                    }
-                }
-            }
-            
-            // AO Hex Shadow in this hex when a higher one is adjacent
-            if (guip.getBoolean(GUIPreferences.AOHEXSHADOWS) ||
-                    guip.getBoolean(GUIPreferences.SHADOWMAP))   
-            {
-                for (int dir: allDirections) {
-                    Shape ShadowShape = getElevationShadowArea(c, dir);
-                    GradientPaint gpl = getElevationShadowGP(c, dir);
-                    if (ShadowShape != null && gpl != null) {
-                        g.setPaint(gpl);
-                        g.fill(getElevationShadowArea(c, dir));
-                    }
-                }
-            }
-    
-            // Orthos (bridges) 
-            List<Image> orthos = tileManager.orthoFor(hex);
-            if (orthos != null) {
-                for (Image image : orthos) {
-                    if (animatedImages.contains(image.hashCode())) {
-                        dontCache = true;
-                    }
-                    scaledImage = getScaledImage(image, true);
-                    if (!useIsometric()) {
-                        g.drawImage(scaledImage, 0, 0, this);
-                    }
-                    // draw a shadow for bridge hex.
-                    if (useIsometric() && !guip.getBoolean(GUIPreferences.SHADOWMAP)
-                        && (hex.terrainLevel(Terrains.BRIDGE_ELEV) > 0)) {
-                        Image shadow = createShadowMask(scaledImage);
-                        g.drawImage(shadow, 0, 0, this);
-                    }
+        // AO Hex Shadow in this hex when a higher one is adjacent
+        if (guip.getBoolean(GUIPreferences.AOHEXSHADOWS)
+                || guip.getBoolean(GUIPreferences.SHADOWMAP)) {
+            for (int dir : allDirections) {
+                Shape ShadowShape = getElevationShadowArea(c, dir);
+                GradientPaint gpl = getElevationShadowGP(c, dir);
+                if (ShadowShape != null && gpl != null) {
+                    g.setPaint(gpl);
+                    g.fill(getElevationShadowArea(c, dir));
                 }
             }
         }
+
+        // Orthos (bridges)
+        List<Image> orthos = tileManager.orthoFor(hex);
+        if (orthos != null) {
+            for (Image image : orthos) {
+                if (animatedImages.contains(image.hashCode())) {
+                    dontCache = true;
+                }
+                scaledImage = getScaledImage(image, true);
+                if (!useIsometric()) {
+                    g.drawImage(scaledImage, 0, 0, this);
+                }
+                // draw a shadow for bridge hex.
+                if (useIsometric()
+                        && !guip.getBoolean(GUIPreferences.SHADOWMAP)
+                        && (hex.terrainLevel(Terrains.BRIDGE_ELEV) > 0)) {
+                    Image shadow = createShadowMask(scaledImage);
+                    g.drawImage(shadow, 0, 0, this);
+                }
+            }
+        }
+
         // Shade and add static noise to hexes that are in an ECM field
         if (ecmHexes != null) {
             Color tint = ecmHexes.get(c);
@@ -2468,9 +2466,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 sc.scale(scale, scale);
                 g.fill(sc.createTransformedShape(hexPoly));
                 g.setColor(origColor);
-                Image staticImage = getScaledImage(tileManager.getEcmStaticImage(tint), false);
-                g.drawImage(staticImage, 0, 0,
-                        staticImage.getWidth(null),
+                Image staticImage = getScaledImage(
+                        tileManager.getEcmStaticImage(tint), false);
+                g.drawImage(staticImage, 0, 0, staticImage.getWidth(null),
                         staticImage.getHeight(null), this);
             }
         }
@@ -2493,7 +2491,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 drawHexBorder(g, tint.darker(), 5, 10);
             }
         }
-        
+
         // Highlight hexes that contain the source of an ECCM field
         if (eccmCenters != null) {
             Color tint = eccmCenters.get(c);

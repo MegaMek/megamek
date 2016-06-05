@@ -6298,7 +6298,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     private Image getBoardBackgroundHexImage(Coords c, IHex hex) {
         IBoard board = game.getBoard();
-        if (!hex.getTheme().equals(HexTileset.TRANSPARENT_THEME) 
+        if ((hex == null) || (board == null) || (hex.getTheme() == null)
+                || !hex.getTheme().equals(HexTileset.TRANSPARENT_THEME)
                 || !board.hasBoardBackground()) {
             return null;
         }

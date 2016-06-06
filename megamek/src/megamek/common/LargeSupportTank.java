@@ -36,6 +36,8 @@ public class LargeSupportTank extends SupportTank {
     public static final int LOC_REAR = 6;
     public static final int LOC_TURRET = 7;
     public static final int LOC_TURRET_2 = 8;
+    
+    private double fuelTonnage = 0;
 
     private static String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
             "RRRS", "RRLS", "RR", "TU", "TU2" };
@@ -463,5 +465,14 @@ public class LargeSupportTank extends SupportTank {
             }
         }
         return super.isLocationProhibited(c, currElevation);
+    }
+
+    //FUEL CAPACITY TM 128
+    public double getFuelTonnage() {
+        return fuelTonnage;
+    }
+
+    public void setFuelTonnage(double fuel) {
+        fuelTonnage = fuel;
     }
 }

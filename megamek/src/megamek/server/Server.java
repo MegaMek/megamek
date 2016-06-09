@@ -13462,17 +13462,17 @@ public class Server implements Runnable {
                     if (e instanceof Mech) {
                         Mech mech = (Mech) e;
                         if (mech.isAutoEject()
-                            && (!game.getOptions().booleanOption(
-                                "conditional_ejection") || (game
-                                                                    .getOptions().booleanOption(
-                                        "conditional_ejection") && mech
-                                                                    .isCondEjectEngine()))) {
+                                && (!game.getOptions().booleanOption(
+                                        "conditional_ejection") || (game
+                                        .getOptions().booleanOption(
+                                                "conditional_ejection") && mech
+                                        .isCondEjectEngine()))) {
                             vDesc.addAll(ejectEntity(e, true));
                         }
                     }
 
                     doFusionEngineExplosion(engineRating, e.getPosition(),
-                                            vDesc, null);
+                            vDesc, null);
                     Report.addNewline(vDesc);
                     r = new Report(5410, Report.PUBLIC);
                     r.subject = e.getId();
@@ -22353,7 +22353,7 @@ public class Server implements Runnable {
                         }
 
                         boolean engineExploded = checkEngineExplosion(te,
-                                                                      vDesc, te.engineHitsThisPhase);
+                                vDesc, te.engineHitsThisPhase);
 
                         if (!engineExploded) {
                             // Entity destroyed. Ammo explosions are
@@ -22681,15 +22681,14 @@ public class Server implements Runnable {
      * <code>false</code> if not.
      */
     private boolean checkEngineExplosion(Entity en, Vector<Report> vDesc,
-                                         int hits) {
+            int hits) {
         if (!(en instanceof Mech) && !(en instanceof QuadMech)
             && !(en instanceof BipedMech) && !(en instanceof Aero)
             && !(en instanceof Tank)) {
             return false;
         }
         // If this method gets called for an entity that's already destroyed or
-        // that
-        // hasn't taken any actual engine hits this phase yet, do nothing.
+        // that hasn't taken any actual engine hits this phase yet, do nothing.
         if (en.isDestroyed() || (en.engineHitsThisPhase <= 0)) {
             return false;
         }

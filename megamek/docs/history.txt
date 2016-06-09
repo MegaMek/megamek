@@ -1,7 +1,11 @@
 VERSION HISTORY:
 ----------------
 v0.41.20-git
++ Data: Date fixes for units
++ Data: New Sprites
++ Data: Adding Jake's map pack
 + Issue: Pilot/Crew not damaged reports did not have subject id set
+
 
 v0.41.19 (2016-06-05 22:40 UTC)
 + Issue #233: NPE Displaying Client Options when no skins present

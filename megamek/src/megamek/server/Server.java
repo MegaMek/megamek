@@ -20478,6 +20478,7 @@ public class Server implements Runnable {
                     r = new Report(6024);
                 }
             }
+            r.subject = en.getId();
             r.addDesc(en);
             r.add(crew.getName());
             r.indent(2);

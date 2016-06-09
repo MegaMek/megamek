@@ -13470,7 +13470,7 @@ public class Server implements Runnable {
                             vDesc.addAll(ejectEntity(e, true));
                         }
                     }
-
+                    e.setSelfDestructedThisTurn(true);
                     doFusionEngineExplosion(engineRating, e.getPosition(),
                             vDesc, null);
                     Report.addNewline(vDesc);
@@ -22689,7 +22689,8 @@ public class Server implements Runnable {
         }
         // If this method gets called for an entity that's already destroyed or
         // that hasn't taken any actual engine hits this phase yet, do nothing.
-        if (en.isDestroyed() || (en.engineHitsThisPhase <= 0)) {
+        if (en.isDestroyed() || (en.engineHitsThisPhase <= 0)
+                || en.getSelfDestructedThisTurn()) {
             return false;
         }
         int explosionBTH = 10;

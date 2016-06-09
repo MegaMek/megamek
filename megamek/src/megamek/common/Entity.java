@@ -273,6 +273,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected boolean unjammingRAC = false;
     protected boolean selfDestructing = false;
     protected boolean selfDestructInitiated = false;
+    protected boolean selfDestructedThisTurn = false;
     /**
      * Variable to store the state of a possible externally mounted searchlight.
      * True if an operable searchlight is externally mounted, false if one isn't
@@ -5604,6 +5605,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         clearAttackedByThisTurn();
 
         setMadePointblankShot(false);
+
+        setSelfDestructedThisTurn(false);
     }
 
     /**
@@ -13389,6 +13392,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setSelfDestructInitiated(boolean tf) {
         selfDestructInitiated = tf;
+    }
+
+    public boolean getSelfDestructedThisTurn() {
+        return selfDestructedThisTurn;
+    }
+
+    public void setSelfDestructedThisTurn(boolean tf) {
+        selfDestructedThisTurn = tf;
     }
 
     public void setIsJumpingNow(boolean jumped) {

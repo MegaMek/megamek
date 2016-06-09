@@ -22714,8 +22714,8 @@ public class Server implements Runnable {
         }
         // ICE can always explode and roll every time hit
         if (engine.isFusion()
-            && (!game.getOptions()
-                     .booleanOption("tacops_engine_explosions") || (en.engineHitsThisPhase < hitsPerRound))) {
+                && (!game.getOptions().booleanOption("tacops_engine_explosions")
+                        || (en.engineHitsThisPhase < hitsPerRound))) {
             return false;
         }
         if (!engine.isFusion()) {
@@ -22851,8 +22851,8 @@ public class Server implements Runnable {
      * General function to cause explosions in areas.
      */
     public void doExplosion(int[] damages, boolean autoDestroyInSameHex,
-                            Coords position, boolean allowShelter, Vector<Report> vDesc,
-                            Vector<Integer> vUnits, int clusterAmt, int excludedUnitId) {
+            Coords position, boolean allowShelter, Vector<Report> vDesc,
+            Vector<Integer> vUnits, int clusterAmt, int excludedUnitId) {
         if (vDesc == null) {
             vDesc = new Vector<Report>();
         }
@@ -22877,7 +22877,7 @@ public class Server implements Runnable {
                 int dist = position.distance(coords);
                 if (dist < damages.length) {
                     Vector<Report> buildingReport = damageBuilding(bldg,
-                                                                   damages[dist], coords);
+                            damages[dist], coords);
                     for (Report report : buildingReport) {
                         report.type = Report.PUBLIC;
                     }
@@ -26220,7 +26220,7 @@ public class Server implements Runnable {
 
             // Kill any picked up MechWarriors
             Enumeration<Integer> iter = entity.getPickedUpMechWarriors()
-                                              .elements();
+                    .elements();
             while (iter.hasMoreElements()) {
                 int mechWarriorId = iter.nextElement();
                 Entity mw = game.getEntity(mechWarriorId);

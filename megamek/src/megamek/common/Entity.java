@@ -6139,7 +6139,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Add in any modifiers due to global conditions like light/weather/etc.
      */
     public PilotingRollData addConditionBonuses(PilotingRollData roll,
-                                                EntityMovementType moveType) {
+            EntityMovementType moveType) {
 
         if (moveType == EntityMovementType.MOVE_SPRINT) {
             roll.addModifier(2, "Sprinting");

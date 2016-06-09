@@ -6,6 +6,7 @@ v0.41.20-git
 + Data: Adding Jake's map pack
 + Issue: Pilot/Crew not damaged reports did not have subject id set
 + Issue #242: Unit Can Self Destruct and Stackpole in same turn
++ Issue #236: PSR Terrain modifiers added inappropriately
 
 
 v0.41.19 (2016-06-05 22:40 UTC)

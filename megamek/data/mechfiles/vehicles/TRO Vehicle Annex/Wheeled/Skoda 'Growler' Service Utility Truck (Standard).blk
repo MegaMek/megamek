@@ -80,6 +80,7 @@ BASearchlight
 
 <Right Equipment>
 Ladder (20m)
+Manipulator
 BASearchlight
 </Right Equipment>
 
@@ -91,6 +92,7 @@ BASearchlight
 </Rear Equipment>
 
 <transporters>
+cargobay:.128:1
 standardseats:.3:1
 </transporters>
 

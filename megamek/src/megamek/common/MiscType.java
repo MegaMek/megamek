@@ -1674,7 +1674,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createConvertibleModification());
         EquipmentType.addType(MiscType.createISDuneBuggyChassis());
         EquipmentType.addType(MiscType.createCLDuneBuggyChassis());
-        EquipmentType.addType(MiscType.createEnviromentalSealedChassis());
+        EquipmentType.addType(MiscType.createEnvironmentalSealedChassis());
         EquipmentType.addType(MiscType.createHydroFoilChassisModification());
         EquipmentType.addType(MiscType.createMonocycleModification());
         EquipmentType.addType(MiscType.createISOffRoadChassis());
@@ -3275,11 +3275,11 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
-    public static MiscType createEnviromentalSealedChassis() {
+    public static MiscType createEnvironmentalSealedChassis() {
         MiscType misc = new MiscType();
 
-        misc.name = "Enviromental Sealed Chassis";
-        misc.setInternalName("Enviromental Sealed Chassis");
+        misc.name = "Environmental Sealed Chassis";
+        misc.setInternalName("Environmental Sealed Chassis");
         misc.tonnage = 0;
         misc.criticals = 0;
         misc.cost = 0; // Cost accounted as part of unit cost

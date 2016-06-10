@@ -13,7 +13,7 @@ SupportTank
 </UnitType>
 
 <Name>
-Raptor Law Enforcement Vehicle
+Raptor RRV
 </Name>
 
 <Model>
@@ -21,7 +21,7 @@ Raptor Law Enforcement Vehicle
 </Model>
 
 <year>
-3022
+3059
 </year>
 
 <type>
@@ -34,7 +34,6 @@ Tracked
 
 <transporters>
 troopspace:3.0
-liquidcargobay:.955:1
 </transporters>
 
 <cruiseMP>
@@ -44,6 +43,10 @@ liquidcargobay:.955:1
 <engine_type>
 6
 </engine_type>
+
+<fuel>
+.5
+</fuel>
 
 <armor>
 10
@@ -82,10 +85,9 @@ ISERSmallLaser
 </Turret Equipment>
 
 <source>
-TRO VAr
+TRO VAr - Clan Invasion
 </source>
 
 <tonnage>
 15.0
 </tonnage>
-

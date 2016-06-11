@@ -9624,6 +9624,9 @@ public class Server implements Runnable {
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_HEAVY, 3);
+        IHex hex = game.getBoard().getHex(coords);
+        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
         sendChangedHex(coords);
     }
 
@@ -9633,6 +9636,9 @@ public class Server implements Runnable {
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_LIGHT, 3);
+        IHex hex = game.getBoard().getHex(coords);
+        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                Terrains.SMOKE, SmokeCloud.SMOKE_LIGHT));
         sendChangedHex(coords);
     }
 
@@ -9643,6 +9649,9 @@ public class Server implements Runnable {
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_HEAVY, duration);
+        IHex hex = game.getBoard().getHex(coords);
+        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
         sendChangedHex(coords);
     }
 
@@ -9652,6 +9661,9 @@ public class Server implements Runnable {
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_CHAFF_LIGHT, 1);
+        IHex hex = game.getBoard().getHex(coords);
+        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                Terrains.SMOKE, SmokeCloud.SMOKE_CHAFF_LIGHT));
         sendChangedHex(coords);
     }
 
@@ -9666,6 +9678,9 @@ public class Server implements Runnable {
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_HEAVY, 3);
+        IHex hex = game.getBoard().getHex(coords);
+        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
         sendChangedHex(coords);
         for (int dir = 0; dir <= 5; dir++) {
             Coords tempcoords = coords.translated(dir);
@@ -9680,6 +9695,9 @@ public class Server implements Runnable {
             r.add(tempcoords.getBoardNum());
             vPhaseReport.add(r);
             createSmoke(tempcoords, 2, 3);
+            hex = game.getBoard().getHex(coords);
+            hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                    Terrains.SMOKE, SmokeCloud.SMOKE_HEAVY));
             sendChangedHex(tempcoords);
         }
     }
@@ -9695,6 +9713,9 @@ public class Server implements Runnable {
         r.add(coords.getBoardNum());
         vPhaseReport.add(r);
         createSmoke(coords, SmokeCloud.SMOKE_LI_HEAVY, 2);
+        IHex hex = game.getBoard().getHex(coords);
+        hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
         sendChangedHex(coords);
         for (int dir = 0; dir <= 5; dir++) {
             Coords tempcoords = coords.translated(dir);
@@ -9709,6 +9730,8 @@ public class Server implements Runnable {
             r.add(tempcoords.getBoardNum());
             vPhaseReport.add(r);
             createSmoke(tempcoords, SmokeCloud.SMOKE_LI_HEAVY, 2);
+            hex.addTerrain(Terrains.getTerrainFactory().createTerrain(
+                    Terrains.SMOKE, SmokeCloud.SMOKE_LI_HEAVY));
             sendChangedHex(tempcoords);
         }
     }
@@ -9721,7 +9744,7 @@ public class Server implements Runnable {
      * @param subjectId the <code>int</code> id of the target
      */
     public void deliverArtilleryInferno(Coords coords, Entity ae,
-                                        int subjectId, Vector<Report> vPhaseReport) {
+            int subjectId, Vector<Report> vPhaseReport) {
         IHex h = game.getBoard().getHex(coords);
         Report r;
         // Unless there is a fire in the hex already, start one.
@@ -9809,7 +9832,7 @@ public class Server implements Runnable {
      * deploys a new tele-missile entity onto the map
      */
     public void deployTeleMissile(Entity ae, AmmoType atype, int wId,
-                                  int capMisMod, Vector<Report> vPhaseReport) {
+            int capMisMod, Vector<Report> vPhaseReport) {
         Report r = new Report(9080);
         r.subject = ae.getId();
         r.addDesc(ae);
@@ -9818,7 +9841,7 @@ public class Server implements Runnable {
         r.add(atype.getName());
         vPhaseReport.add(r);
         TeleMissile tele = new TeleMissile(ae, atype.getDamagePerShot(),
-                                           atype.getTonnage(ae), atype.getAmmoType(), capMisMod);
+                atype.getTonnage(ae), atype.getAmmoType(), capMisMod);
         tele.setDeployed(true);
         tele.setId(getFreeEntityId());
         if (ae instanceof Aero) {

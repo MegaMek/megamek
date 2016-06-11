@@ -72,7 +72,7 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
 
         for( Coords coords : cloud.getCoordsList() ){
             IHex smokeHex = game.getBoard().getHex(coords);
-            if ( smokeHex != null ){
+            if (smokeHex != null ){
                 if (smokeHex.containsTerrain(Terrains.SMOKE)) {
                     if (smokeHex.terrainLevel(Terrains.SMOKE) 
                             == SmokeCloud.SMOKE_LIGHT) {
@@ -97,7 +97,7 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
      */
     public void updateSmoke(){
         //Have to remove all smoke at once before creating new ones.
-        for ( SmokeCloud cloud : server.getSmokeCloudList() ){
+        for (SmokeCloud cloud : server.getSmokeCloudList()){
             server.removeSmokeTerrain(cloud);
             // Dissipate the cloud, this gets handled in FireProcessor if 
             //  TO start fires is on

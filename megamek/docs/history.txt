@@ -10,6 +10,7 @@ v0.41.20-git
 + Issue #243: PSR issues related to high/low gravity
 + Issue #241: Dropship Cannot Eject w/o expending all velocity
 + Issue #244: Added TigerShark's alternative Pilot Skill BV mod table to docs
++ Issue #245: Smoke & chaff from weapons fire appears in end phase
 
 
 v0.41.19 (2016-06-05 22:40 UTC)

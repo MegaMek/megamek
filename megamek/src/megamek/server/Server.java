@@ -31834,17 +31834,21 @@ public class Server implements Runnable {
                     System.err.println("gravity move check jump: "
                                        + step.getMpUsed() + "/" + cachedMaxMPExpenditure);
                     System.err.flush();
+                    int origWalkMP = entity.getWalkMP(false, false);
+                    int gravWalkMP = entity.getWalkMP();
                     if (step.getMpUsed() > cachedMaxMPExpenditure) {
-                        // We jumped too far, let's make PSR to see if we get
-                        // damage
+                        // Jumped too far, make PSR to see if we get damaged
                         game.addExtremeGravityPSR(entity.checkMovedTooFast(
                                 step, moveType));
-                    } else if (game.getPlanetaryConditions().getGravity() > 1) {
+                    } else if ((game.getPlanetaryConditions().getGravity() > 1)
+                            && ((origWalkMP - gravWalkMP) > 0)) {
                         // jumping in high g is bad for your legs
+                        // Damage dealt = 1 pt for each MP lost due to gravity
+                        // Ignore this if no damage would be dealt
                         rollTarget = entity.getBasePilotingRoll(moveType);
                         entity.addPilotingModifierForTerrain(rollTarget, step);
                         rollTarget.append(new PilotingRollData(entity.getId(),
-                                                               0, "jumped in high gravity"));
+                                0, "jumped in high gravity"));
                         game.addExtremeGravityPSR(rollTarget);
                     }
                 }

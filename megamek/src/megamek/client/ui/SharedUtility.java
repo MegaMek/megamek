@@ -219,8 +219,7 @@ public class SharedUtility {
                     lastPos, curPos, lastElevation, isPavementStep);
             checkNag(rollTarget, nagReport, psrList);
 
-            // check if we used more MPs than the Mech/Vehicle would have in
-            // normal gravity
+            // check if used more MPs than Mech/Vehicle would have w/o gravity
             if (!i.hasMoreElements() && !firstStep) {
                 if ((entity instanceof Mech) || (entity instanceof VTOL)) {
                     if ((moveType == EntityMovementType.MOVE_WALK)
@@ -233,10 +232,13 @@ public class SharedUtility {
                             checkNag(rollTarget, nagReport, psrList);
                         }
                     } else if (moveType == EntityMovementType.MOVE_JUMP) {
+                        int origWalkMP = entity.getWalkMP(false, false);
+                        int gravWalkMP = entity.getWalkMP();
                         if (step.getMpUsed() > entity.getJumpMP(false)) {
                             rollTarget = entity.checkMovedTooFast(step, overallMoveType);
                             checkNag(rollTarget, nagReport, psrList);
-                        } else if (game.getPlanetaryConditions().getGravity() > 1) {
+                        } else if ((game.getPlanetaryConditions().getGravity() > 1)
+                                && ((origWalkMP - gravWalkMP) > 0)) {
                             rollTarget = entity.getBasePilotingRoll(md.getLastStepMovementType());
                             entity.addPilotingModifierForTerrain(rollTarget, step);
                             rollTarget.append(new PilotingRollData(entity.getId(), 0, "jumped in high gravity"));

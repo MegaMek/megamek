@@ -6176,13 +6176,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             roll.addModifier(windMod, conditions.getWindDisplayableName());
         }
 
-        // check gravity conditions for all entities
-        int gravMod = conditions.getGravityPilotPenalty();
-        if ((gravMod != 0) && !game.getBoard().inSpace()) {
-            roll.addModifier(gravMod, "high/low gravity");
-        }
         return roll;
-
     }
 
     /**
@@ -6474,6 +6468,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if (step.getMpUsed() > getJumpMP(false)) {
                     roll.append(new PilotingRollData(getId(), 0,
                             "used more MPs than at 1G possible"));
+                    int gravMod = game.getPlanetaryConditions()
+                            .getGravityPilotPenalty();
+                    if ((gravMod != 0) && !game.getBoard().inSpace()) {
+                        roll.addModifier(gravMod, game
+                                .getPlanetaryConditions().getGravity()
+                                + "G gravity");
+                    }
                 } else {
                     roll.addModifier(TargetRoll.CHECK_FALSE,
                             "Check false: Entity did not use more "

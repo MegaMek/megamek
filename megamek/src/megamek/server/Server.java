@@ -31847,6 +31847,13 @@ public class Server implements Runnable {
                         // Ignore this if no damage would be dealt
                         rollTarget = entity.getBasePilotingRoll(moveType);
                         entity.addPilotingModifierForTerrain(rollTarget, step);
+                        int gravMod = game.getPlanetaryConditions()
+                                .getGravityPilotPenalty();
+                        if ((gravMod != 0) && !game.getBoard().inSpace()) {
+                            rollTarget.addModifier(gravMod, game
+                                    .getPlanetaryConditions().getGravity()
+                                    + "G gravity");
+                        }
                         rollTarget.append(new PilotingRollData(entity.getId(),
                                 0, "jumped in high gravity"));
                         game.addExtremeGravityPSR(rollTarget);

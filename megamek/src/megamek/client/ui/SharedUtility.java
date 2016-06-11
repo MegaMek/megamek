@@ -241,6 +241,13 @@ public class SharedUtility {
                                 && ((origWalkMP - gravWalkMP) > 0)) {
                             rollTarget = entity.getBasePilotingRoll(md.getLastStepMovementType());
                             entity.addPilotingModifierForTerrain(rollTarget, step);
+                            int gravMod = game.getPlanetaryConditions()
+                                    .getGravityPilotPenalty();
+                            if ((gravMod != 0) && !game.getBoard().inSpace()) {
+                                rollTarget.addModifier(gravMod, game
+                                        .getPlanetaryConditions().getGravity()
+                                        + "G gravity");
+                            }
                             rollTarget.append(new PilotingRollData(entity.getId(), 0, "jumped in high gravity"));
                             SharedUtility.checkNag(rollTarget, nagReport, psrList);
                         }

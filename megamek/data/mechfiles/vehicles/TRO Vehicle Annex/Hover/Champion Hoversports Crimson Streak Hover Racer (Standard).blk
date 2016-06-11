@@ -40,6 +40,10 @@ Hover
 6
 </engine_type>
 
+<fuel>
+.451
+</fuel>
+
 <armor>
 2
 2
@@ -77,14 +81,9 @@ standardseats:.075:1
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Civil War
 </source>
 
 <tonnage>
 3.5
 </tonnage>
-
-<range>
-1000
-</range>
-

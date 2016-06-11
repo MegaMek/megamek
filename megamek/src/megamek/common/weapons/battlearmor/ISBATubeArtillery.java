@@ -36,7 +36,6 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
      */
     public ISBATubeArtillery() {
         super();
-        techLevel.put(3075, TechConstants.T_IS_ADVANCED);
         name = "BA Tube Artillery";
         setInternalName("ISBATubeArtillery");
         rackSize = 3;
@@ -49,11 +48,12 @@ public class ISBATubeArtillery extends ArtilleryWeapon {
         criticals = 4;
         bv = 27;
         cost = 200000;
-        techRating = RATING_B;
-        introDate = 3075;
-        flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON);
-        availRating = new int[] { RATING_C, RATING_C, RATING_C };
-
+        introDate = 3065;
+        techLevel.put(3065, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3075, TechConstants.T_IS_ADVANCED);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
+        techRating = RATING_E;
+        rulesRefs = "284, TO";
     }
 
 }

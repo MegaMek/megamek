@@ -32,7 +32,6 @@ public class CLBASRM5 extends SRMWeapon {
      */
     public CLBASRM5() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "SRM 5";
         setInternalName("CLBASRM5");
         addLookupName("Clan BA SRM-5");
@@ -49,9 +48,12 @@ public class CLBASRM5 extends SRMWeapon {
         cost = 25000;
         shortAV = 4;
         maxRange = RANGE_SHORT;
-        introDate = 2868;
-        techLevel.put(2868, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_D, RATING_C };
-        techRating = RATING_F;
+        introDate = 2860;
+		techLevel.put(2860, TechConstants.T_CLAN_EXPERIMENTAL);
+		techLevel.put(2868, TechConstants.T_CLAN_ADVANCED);	
+		techLevel.put(2870, TechConstants.T_CLAN_TW);	
+		availRating = new int[] { RATING_X ,RATING_D ,RATING_C ,RATING_B};	
+		techRating = RATING_F;
+		rulesRefs = "261, TM";
     }
 }

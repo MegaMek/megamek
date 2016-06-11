@@ -1327,10 +1327,12 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLBAHeavyGrenadeLauncher());
         EquipmentType.addType(new CLBAHeavyMediumLaser());
         EquipmentType.addType(new CLBAHeavyMG());
+        EquipmentType.addType(new CLBAHeavyMortar());  //added per IO Pg 53
         EquipmentType.addType(new CLBAHeavyRecoillessRifle());
         EquipmentType.addType(new CLBAHeavySmallLaser());
         EquipmentType.addType(new CLBALBX());
         EquipmentType.addType(new CLBALightMG());
+        EquipmentType.addType(new CLBALightMortar()); //added per IO Pg 53
         EquipmentType.addType(new CLBALightRecoillessRifle());
         EquipmentType.addType(new CLBALRM1());
         EquipmentType.addType(new CLBALRM1OS());
@@ -1390,7 +1392,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new ISBALightRecoillessRifle());
         EquipmentType.addType(new ISBAMediumRecoillessRifle());
         EquipmentType.addType(new ISBAMicroGrenadeLauncher());
-        EquipmentType.addType(new ISBAGrenadeLauncher());
+//        EquipmentType.addType(new ISBAGrenadeLauncher()); //See note in ISBAGrenadeLauncher File.
         EquipmentType.addType(new ISBAPopUpMineLauncher());
         EquipmentType.addType(new ISBATsunamiGaussRifle());
         EquipmentType.addType(new ISBASRM1());

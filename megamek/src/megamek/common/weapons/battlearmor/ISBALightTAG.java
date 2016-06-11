@@ -34,8 +34,7 @@ public class ISBALightTAG extends TAGWeapon {
 
     public ISBALightTAG() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        this.name = "Light TAG";
+        this.name = "TAG (Light)";
         setInternalName("ISBALightTAG");
         this.addLookupName("IS BA Light TAG");
         this.tonnage = 0.035f;
@@ -50,10 +49,13 @@ public class ISBALightTAG extends TAGWeapon {
         this.extremeRange = 12;
         this.bv = 0;
         this.cost = 40000;
-        introDate = 3053;
-        techLevel.put(3053, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_E;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        introDate = 3046;
+        techLevel.put(3046, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3053, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3057, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
+        techRating = RATING_E;
+        rulesRefs = "270, TM";
     }
 }

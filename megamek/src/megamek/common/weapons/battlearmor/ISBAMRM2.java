@@ -31,7 +31,6 @@ public class ISBAMRM2 extends MRMWeapon {
      */
     public ISBAMRM2() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         this.name = "MRM 2";
         this.setInternalName("ISBAMRM2");
         this.addLookupName("BA MRM-2");
@@ -45,10 +44,14 @@ public class ISBAMRM2 extends MRMWeapon {
         cost = 10000;
         tonnage = .12f;
         criticals = 2;
-        introDate = 3060;
-        techLevel.put(3060, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_D };
-        techRating = RATING_D;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        introDate = 3053;
+        techLevel.put(3053, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3060, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_D};
+        techRating = RATING_D;
+        rulesRefs = "261, TM";
+
     }
 }

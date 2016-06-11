@@ -37,7 +37,6 @@ public class ISBATaser extends AmmoWeapon {
      */
     public ISBATaser() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Battle Armor Taser";
         setInternalName("ISBATaser");
         addLookupName("IS BA Taser");
@@ -55,11 +54,14 @@ public class ISBATaser extends AmmoWeapon {
         introDate = 3067;
         tonnage = 0.3f;
         criticals = 3;
-        techLevel.put(3067, TechConstants.T_IS_ADVANCED);
-        techRating = RATING_E;
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         flags = flags.or(F_BA_WEAPON).or(F_ONESHOT).or(F_TASER).or(F_BALLISTIC)
-                .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;
+                .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        introDate = 3055;
+        techLevel.put(3055, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3067, TechConstants.T_IS_ADVANCED);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_E};
+        techRating = RATING_E;
+        rulesRefs = "255, TM";
     }
 
     /*

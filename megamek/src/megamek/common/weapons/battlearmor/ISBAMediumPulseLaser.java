@@ -34,7 +34,6 @@ public class ISBAMediumPulseLaser extends PulseLaserWeapon {
      */
     public ISBAMediumPulseLaser() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Medium Pulse Laser";
         setInternalName("ISBAMediumPulseLaser");
         addLookupName("IS BA Pulse Med Laser");
@@ -56,12 +55,12 @@ public class ISBAMediumPulseLaser extends PulseLaserWeapon {
         flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         shortAV = 6;
         maxRange = RANGE_SHORT;
-        introDate = 2609;
-        techLevel.put(2609, techLevel.get(3071));
-        extinctDate = 2950;
-        reintroDate = 3037;
-        availRating = new int[] { RATING_X, RATING_X, RATING_D };
+        introDate = 3052;
+        techLevel.put(3052, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3060, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3062, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_C};
         techRating = RATING_E;
-
+        rulesRefs = "258, TM";
     }
 }

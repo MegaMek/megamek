@@ -32,7 +32,6 @@ public class ISBASRM1OS extends SRMWeapon {
      */
     public ISBASRM1OS() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "SRM 1 (OS)";
         setInternalName("ISBASRM1OS");
         addLookupName("IS BA SRM1 OS");
@@ -43,12 +42,16 @@ public class ISBASRM1OS extends SRMWeapon {
         extremeRange = 12;
         bv = 3;
         cost = 2500;
-        introDate = 3050;
-        techLevel.put(3050, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_B };
-        techRating = RATING_E;
         tonnage = .05f;
         criticals = 2;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        introDate = 3045;
+        techLevel.put(3045, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3050, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3051, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_B};
+        techRating = RATING_E;
+        rulesRefs = "261, TM";
+
     }
 }

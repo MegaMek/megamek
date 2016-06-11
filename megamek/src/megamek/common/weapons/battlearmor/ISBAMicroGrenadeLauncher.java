@@ -35,7 +35,6 @@ public class ISBAMicroGrenadeLauncher extends Weapon {
      */
     public ISBAMicroGrenadeLauncher() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Micro Grenade Launcher";
         setInternalName("ISBAMicroGrenadeLauncher");
         addLookupName("IS BA Micro Grenade Launcher");
@@ -52,9 +51,10 @@ public class ISBAMicroGrenadeLauncher extends Weapon {
         bv = 1;
         cost = 1950;
         flags = flags.or(F_BALLISTIC).or(F_BA_WEAPON).or(F_BURST_FIRE).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        introDate = 2100;
-        techLevel.put(2100, techLevel.get(3071));
-        availRating = new int[] { RATING_B, RATING_B, RATING_B };
+        introDate = 3050;
+        techLevel.put(3050, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X ,RATING_B ,RATING_B ,RATING_B};
         techRating = RATING_B;
+        rulesRefs = "256, TM";
     }
 }

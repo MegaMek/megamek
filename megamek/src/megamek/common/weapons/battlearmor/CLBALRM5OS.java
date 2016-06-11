@@ -31,7 +31,6 @@ public class CLBALRM5OS extends LRMWeapon {
      */
     public CLBALRM5OS() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "LRM 5 (OS)";
         setInternalName("CLBALRM5 (OS)");
         addLookupName("CLBALRM5OS");
@@ -42,10 +41,13 @@ public class CLBALRM5OS extends LRMWeapon {
         criticals = 3;
         bv = 11;
         cost = 15000;
-        introDate = 3060;
-        techLevel.put(3060, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_F;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).or(F_ONESHOT).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        introDate = 3053;
+		techLevel.put(3053, TechConstants.T_CLAN_EXPERIMENTAL);	
+		techLevel.put(3060, TechConstants.T_CLAN_ADVANCED);
+		techLevel.put(3062, TechConstants.T_CLAN_TW);	
+		availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_D};	
+		techRating = RATING_F;	
+		rulesRefs = "261, TM";
     }
 }

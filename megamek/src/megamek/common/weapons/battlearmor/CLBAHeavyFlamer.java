@@ -31,8 +31,7 @@ public class CLBAHeavyFlamer extends BAFlamerWeapon {
      */
     public CLBAHeavyFlamer() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
-        name = "Heavy Flamer";
+        name = "Heavy Flamer [BA]";
         setInternalName("CLBAHeavyFlamer");
         heat = 5;
         damage = 4;
@@ -47,10 +46,14 @@ public class CLBAHeavyFlamer extends BAFlamerWeapon {
         cost = 11250;
         techRating = RATING_C;
         availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        introDate = 3070;
-        techLevel.put(3070, techLevel.get(3071));
-        techLevel.put(3073, TechConstants.T_CLAN_TW);
         flags = flags.or(F_FLAMER).or(F_ENERGY).or(F_BA_WEAPON)
                 .or(F_BURST_FIRE).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        introDate = 3073;
+        techLevel.put(3073, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3075, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_D};
+        techRating = RATING_C;
+        rulesRefs = "312, TO";
+
     }
 }

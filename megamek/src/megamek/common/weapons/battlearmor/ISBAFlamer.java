@@ -35,7 +35,7 @@ public class ISBAFlamer extends BAFlamerWeapon {
     public ISBAFlamer() {
         super();
         techLevel.put(3071, TechConstants.T_INTRO_BOXSET);
-        name = "Flamer";
+        name = "Flamer [BA]";
         setInternalName("ISBAFlamer");
         addLookupName("ISBAFlamer");
         heat = 3;
@@ -51,9 +51,11 @@ public class ISBAFlamer extends BAFlamerWeapon {
         cost = 7500;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        introDate = 1950;
-        techLevel.put(1950, techLevel.get(3071));
-        availRating = new int[] { RATING_A, RATING_A, RATING_B };
+        introDate = 3050;
+        techLevel.put(3050, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X ,RATING_D ,RATING_B ,RATING_B};
         techRating = RATING_C;
+        rulesRefs = "255, TO";
+
     }
 }

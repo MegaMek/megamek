@@ -33,8 +33,7 @@ public class CLBALightTAG extends TAGWeapon {
 
     public CLBALightTAG() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
-        name = "Light TAG";
+        name = "TAG (Light)";
         setInternalName("CLBALightTAG");
         addLookupName("Clan BA Light TAG");
         tonnage = 0.035f;
@@ -49,10 +48,13 @@ public class CLBALightTAG extends TAGWeapon {
         extremeRange = 12;
         bv = 0;
         cost = 40000;
-        introDate = 3054;
-        techLevel.put(3054, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_F;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        introDate = 3054;
+        techLevel.put(3054, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3057, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
+        techRating = RATING_E;
+        rulesRefs = "270, TM";
+
     }
 }

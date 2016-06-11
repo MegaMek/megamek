@@ -29,8 +29,7 @@ public class ISBAHeavyFlamer extends BAFlamerWeapon {
 
     public ISBAHeavyFlamer() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
-        name = "Heavy Flamer";
+        name = "Heavy Flamer [BA]";
         setInternalName("ISBAHeavyFlamer");
         addLookupName("IS BA Heavy Flamer");
         heat = 5;
@@ -44,12 +43,15 @@ public class ISBAHeavyFlamer extends BAFlamerWeapon {
         criticals = 1;
         bv = 15;
         cost = 11250;
-        techRating = RATING_C;
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        introDate = 3070;
-        techLevel.put(3070, techLevel.get(3071));
-        techLevel.put(3073, TechConstants.T_IS_TW_NON_BOX);
         flags = flags.or(F_FLAMER).or(F_ENERGY).or(F_BA_WEAPON)
                 .or(F_BURST_FIRE).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        introDate = 3065;
+        techLevel.put(3065, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3073, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3075, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_D};
+        techRating = RATING_C;
+        rulesRefs = "312, TO";
+
     }
 }

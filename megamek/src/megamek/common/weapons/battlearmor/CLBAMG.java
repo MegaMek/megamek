@@ -35,8 +35,7 @@ public class CLBAMG extends BAMGWeapon {
      */
     public CLBAMG() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
-        name = "Machine Gun";
+        name = "Machine Gun (Medium)";
         setInternalName("CLBAMG");
         addLookupName("Clan BA Machine Gun");
         heat = 0;
@@ -51,11 +50,14 @@ public class CLBAMG extends BAMGWeapon {
         criticals = 1;
         bv = 5;
         cost = 5000;
-        introDate = 2868;
-        techLevel.put(2868, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_B };
-        techRating = RATING_C;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON).or(F_BURST_FIRE).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        introDate = 2868;
+        techLevel.put(2868, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(2870, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X ,RATING_D ,RATING_B ,RATING_B};
+        techRating = RATING_C;
+        rulesRefs = "258, TM";
+
     }
 
 }

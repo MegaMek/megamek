@@ -35,7 +35,6 @@ public class CLBAERSmallLaser extends LaserWeapon {
      */
     public CLBAERSmallLaser() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "ER Small Laser";
         setInternalName("CLBAERSmallLaser");
         addLookupName("Clan BA ER Small Laser");
@@ -56,9 +55,14 @@ public class CLBAERSmallLaser extends LaserWeapon {
         cost = 11250;
         shortAV = 5;
         maxRange = RANGE_SHORT;
-        introDate = 2868;
-        techLevel.put(2868, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_D, RATING_C };
+        introDate = 2867;
+        techLevel.put(2867, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(2870, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(2880, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X ,RATING_E ,RATING_D ,RATING_C};
         techRating = RATING_F;
+        rulesRefs = "258, TM";
+
+  
     }
 }

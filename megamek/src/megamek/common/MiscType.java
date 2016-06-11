@@ -1790,6 +1790,13 @@ public class MiscType extends EquipmentType {
 //        EquipmentType.addType(MiscType.createSneakThreeSystemInfArmor());
 
     }
+    
+/* A note about Tech Progression from Ray. Received via PM after IO Release
+*     If there's no info specifying proto/prod/common in the NOTES section, 
+*     assume it means Production/Advanced, with no definite Common/Tournament-legal date.
+* Based on this Some equipment will start at Advanced and not have common date
+*/
+    
 
     public static MiscType createHeatSink() {
         MiscType misc = new MiscType();
@@ -2378,7 +2385,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLBAMyomerBooster() {
         MiscType misc = new MiscType();
 
-        misc.techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
+
         misc.name = "BA Myomer Booster";
         misc.setInternalName("CLBAMyomerBooster");
         misc.addLookupName("CLBAMB");
@@ -2393,12 +2400,13 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_MASC).or(F_BA_EQUIPMENT)
                 .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
                 .andNot(F_AERO_EQUIPMENT);
-        misc.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F };
-        misc.introDate = 3072;
-        misc.techLevel.put(3072, misc.techLevel.get(3071));
-        misc.techLevel.put(3084, TechConstants.T_CLAN_ADVANCED);
-        misc.techRating = RATING_F;
+        misc.introDate = 3072;	
+		misc.techLevel.put(3072, TechConstants.T_CLAN_EXPERIMENTAL);	
+		misc.techLevel.put(3085, TechConstants.T_CLAN_ADVANCED);	
+		misc.techLevel.put(3104, TechConstants.T_CLAN_TW);
+		misc.availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};	
+		misc.techRating = RATING_F;	
+		misc.rulesRefs = "287, TO";
 
         return misc;
     }
@@ -9426,36 +9434,38 @@ public class MiscType extends EquipmentType {
     public static MiscType createISDetachableWeaponPack() {
         MiscType misc = new MiscType();
 
-        misc.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         misc.name = "Detachable Weapon Pack";
         misc.setInternalName("ISDetachableWeaponPack");
         misc.tonnage = 0;
         misc.criticals = 1;
         misc.cost = 18000;
-        misc.techRating = RATING_E;
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
         misc.introDate = 3073;
-        misc.techLevel.put(3073, misc.techLevel.get(3071));
-        misc.techLevel.put(3073, TechConstants.T_IS_TW_NON_BOX);
-        misc.flags = misc.flags.or(F_DETACHABLE_WEAPON_PACK).or(F_BA_EQUIPMENT);
+        misc.techLevel.put(3073, TechConstants.T_IS_ADVANCED);
+        misc.techLevel.put(3080, TechConstants.T_IS_TW_NON_BOX);
+        misc.availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_D};
+        misc.techRating = RATING_E;
+        misc.rulesRefs = "287, TO";
+
         return misc;
     }
 
     public static MiscType createCLDetachableWeaponPack() {
         MiscType misc = new MiscType();
 
-        misc.techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
         misc.name = "Detachable Weapon Pack";
         misc.setInternalName("CLDetachableWeaponPack");
         misc.tonnage = 0;
         misc.criticals = 1;
         misc.cost = 18000;
         misc.techRating = RATING_E;
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        misc.introDate = 3072;
-        misc.techLevel.put(3072, misc.techLevel.get(3071));
-        misc.techLevel.put(3080, TechConstants.T_CLAN_TW);
-        misc.flags = misc.flags.or(F_DETACHABLE_WEAPON_PACK).or(F_BA_EQUIPMENT);
+        misc.introDate = 2865;
+        misc.techLevel.put(2865, TechConstants.T_CLAN_EXPERIMENTAL);
+        misc.techLevel.put(2880, TechConstants.T_CLAN_ADVANCED);
+        misc.techLevel.put(3051, TechConstants.T_CLAN_TW);
+        misc.availRating = new int[] { RATING_X ,RATING_E ,RATING_E ,RATING_D};
+        misc.techRating = RATING_E;
+        misc.rulesRefs = "287, TO";
+
         return misc;
     }
 

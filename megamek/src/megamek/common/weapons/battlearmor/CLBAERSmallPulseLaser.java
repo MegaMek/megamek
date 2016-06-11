@@ -35,7 +35,6 @@ public class CLBAERSmallPulseLaser extends PulseLaserWeapon {
      */
     public CLBAERSmallPulseLaser() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
         name = "ER Small Pulse Laser";
         setInternalName("CLBAERSmallPulseLaser");
         addLookupName("Clan BA ER Pulse Small Laser");
@@ -57,12 +56,17 @@ public class CLBAERSmallPulseLaser extends PulseLaserWeapon {
         criticals = 2;
         bv = 36;
         cost = 30000;
-        flags = flags.or(F_BURST_FIRE);
-        techRating = RATING_F;
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        introDate = 3059;
-        techLevel.put(3059, techLevel.get(3071));
+        flags = flags.or(F_BURST_FIRE).or(F_NO_FIRES).or(F_BA_WEAPON).
+        		andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        introDate = 3057;
+        techLevel.put(3057, TechConstants.T_CLAN_EXPERIMENTAL);
         techLevel.put(3082, TechConstants.T_CLAN_ADVANCED);
-        flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        techLevel.put(3085, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_D};
+        techRating = RATING_F;
+        rulesRefs = "258,TM";
+
+
+        
     }
 }

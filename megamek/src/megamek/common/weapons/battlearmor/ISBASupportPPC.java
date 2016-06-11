@@ -35,7 +35,6 @@ public class ISBASupportPPC extends PPCWeapon {
      */
     public ISBASupportPPC() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Support PPC";
         setInternalName("ISBASupportPPC");
         addLookupName("IS BA Support PPC");
@@ -50,10 +49,12 @@ public class ISBASupportPPC extends PPCWeapon {
         flags = flags.or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;
         bv = 12;
         setModes(new String[] { "Field Inhibitor ON", "Field Inhibitor OFF" });
-        cost = 14000;
-        introDate = 2436;
-        techLevel.put(2436, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_D };
+        introDate = 3046;
+        techLevel.put(3046, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3053, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3056, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X ,RATING_F ,RATING_D ,RATING_C};
         techRating = RATING_D;
+        rulesRefs = "267, TM";
     }
 }

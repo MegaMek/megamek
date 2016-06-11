@@ -48,10 +48,11 @@ public class CLBALBX extends Weapon {
         bv = 20;
         cost = 70000;
         introDate = 3075;
-        techLevel.put(3075, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        flags = flags.or(F_BALLISTIC).or(F_DIRECT_FIRE).or(F_BA_WEAPON);
+        techLevel.put(3075, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(3085, TechConstants.T_CLAN_ADVANCED);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_D};
         techRating = RATING_F;
+        rulesRefs = "207, TM";
     }
 
     @Override

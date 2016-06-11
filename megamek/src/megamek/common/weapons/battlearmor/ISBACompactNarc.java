@@ -34,8 +34,7 @@ public class ISBACompactNarc extends NarcWeapon {
      */
     public ISBACompactNarc() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "Compact Narc";
+        name = "Narc (Compact)";
         setInternalName("ISBACompactNarc");
         addLookupName("ISBACompact Narc");
         heat = 0;
@@ -50,9 +49,11 @@ public class ISBACompactNarc extends NarcWeapon {
         criticals = 1;
         cost = 15000;
         introDate = 3060;
-        techLevel.put(3060, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
+		techLevel.put(3060, TechConstants.T_IS_ADVANCED);
+		techLevel.put(3065, TechConstants.T_IS_TW_NON_BOX);
+		availRating = new int[] { RATING_X ,RATING_F ,RATING_E ,RATING_D};
+		techRating = RATING_E;
+		rulesRefs = "263, TM";
     }
 
 }

@@ -37,7 +37,6 @@ public class ISBAFiredrakeNeedler extends Weapon {
      */
     public ISBAFiredrakeNeedler() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Firedrake Needler";
         setInternalName("ISBAFireDrakeNeedler");
         addLookupName("ISBAFiredrakeIncendiaryNeedler");
@@ -52,13 +51,15 @@ public class ISBAFiredrakeNeedler extends Weapon {
         cost = 1500;
         tonnage = 0.050f;
         criticals = 1;
-        availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_C };
-        introDate = 3061;
-        techRating = EquipmentType.RATING_D;
-        techLevel.put(3061, techLevel.get(3071));
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC)
-                .or(F_INCENDIARY_NEEDLES).or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;
+                .or(F_INCENDIARY_NEEDLES).or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        introDate = 3053;
+        techLevel.put(3053, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3060, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3068, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_C ,RATING_B};
+        techRating = RATING_D;
+        rulesRefs = "266, TM";
     }
 
 }

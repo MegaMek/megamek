@@ -36,7 +36,6 @@ public class CLBAMicroPulseLaser extends PulseLaserWeapon {
      */
     public CLBAMicroPulseLaser() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "Micro Pulse Laser";
         setInternalName("CLBAMicroPulseLaser");
         addLookupName("Clan BA Micro Pulse Laser");
@@ -60,10 +59,14 @@ public class CLBAMicroPulseLaser extends PulseLaserWeapon {
         shortAV = 3;
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
-        this.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D };
-        introDate = 3060;
-        techLevel.put(3060, techLevel.get(3071));
+        introDate = 3050;
+        techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(3060, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3063, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_C};
+        techRating = RATING_F;
+
+
     }
 
 }

@@ -35,7 +35,6 @@ public class ISBASmallPulseLaser extends PulseLaserWeapon {
      */
     public ISBASmallPulseLaser() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "Small Pulse Laser";
         setInternalName("ISBASmallPulseLaser");
         addLookupName("IS BA Small Pulse Laser");
@@ -58,13 +57,14 @@ public class ISBASmallPulseLaser extends PulseLaserWeapon {
         shortAV = 3;
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
-        introDate = 2609;
-        techLevel.put(2609, techLevel.get(3071));
-        extinctDate = 2950;
-        reintroDate = 3037;
-        availRating = new int[] { RATING_X, RATING_X, RATING_D };
+        flags = flags.or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        introDate = 3052;
+        techLevel.put(3052, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3060, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3062, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_C};
         techRating = RATING_E;
-        flags = flags.or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;
+        rulesRefs = "258, TM";
     }
 
 }

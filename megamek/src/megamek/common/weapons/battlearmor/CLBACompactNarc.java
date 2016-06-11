@@ -34,8 +34,7 @@ public class CLBACompactNarc extends NarcWeapon {
      */
     public CLBACompactNarc() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
-        name = "Compact Narc";
+        name = "Narc (Compact)";
         setInternalName("CLBACompactNarc");
         addLookupName("CLBACompact Narc");
         heat = 0;
@@ -49,10 +48,13 @@ public class CLBACompactNarc extends NarcWeapon {
         tonnage = .15f;
         criticals = 1;
         cost = 15000;
-        introDate = 2868;
-        techLevel.put(2868, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_E, RATING_D };
+        introDate = 2865;
+        techLevel.put(2865, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(2875, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3065, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X ,RATING_F ,RATING_E ,RATING_D};
         techRating = RATING_E;
+        rulesRefs = "263, TM";
     }
 
 }

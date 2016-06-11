@@ -23,40 +23,47 @@ import megamek.common.WeaponType;
 import megamek.common.weapons.Weapon;
 
 /**
- * @author Andrew Hunter
+ * @author Sebastian Brocks
  */
-public class CLBAHeavyGrenadeLauncher extends Weapon {
+public class CLBALightMortar extends Weapon {
+    /**
+     *
+     */
+    private static final long serialVersionUID = -141763207003813118L;
 
     /**
      *
      */
-    private static final long serialVersionUID = 2728566278196446996L;
-
-    public CLBAHeavyGrenadeLauncher() {
+    public CLBALightMortar() {
         super();
-        name = "Heavy Grenade Launcher";
-        setInternalName("CLBAHeavyGrenadeLauncher");
-        addLookupName("CLBAHeavyGL");
-        addLookupName("Heavy BA Grenade Launcher");
-        heat = 0;
-        damage = 1;
+        name = "Mortar (Light)";
+        setInternalName("CLBALightMortar");
+        addLookupName("CL BA Light Mortar");
+        damage = 3;
         infDamageClass = WeaponType.WEAPON_BURST_1D6;
         ammoType = AmmoType.T_NA;
+        minimumRange = 1;
         shortRange = 1;
         mediumRange = 2;
         longRange = 3;
         extremeRange = 4;
-        tonnage = 0.1f;
-        criticals = 1;
-        bv = 1;
-        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        introDate = 2875;
-        techLevel.put(2875, TechConstants.T_CLAN_EXPERIMENTAL);
-        techLevel.put(2900, TechConstants.T_CLAN_ADVANCED);
-        techLevel.put(3050, TechConstants.T_CLAN_TW);
-        availRating = new int[] { RATING_X ,RATING_D ,RATING_D ,RATING_C};
-        techRating = RATING_C;
-        rulesRefs = "256,TM";
+        bv = 9;
+        tonnage = 0.3f;
+        cost = 2100;
+        criticals = 2;
+        flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON)
+                .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;
+        introDate = 3060;
+        techLevel.put(3060, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3063, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_C ,RATING_C};
+        techRating = RATING_B;
+        rulesRefs = "263, TM";
+
     }
 
 }
+
+/* added per IO Pg 53 - Tech Manual shows this is an IS weapon only
+*Put IO seems to have made this a Clan weapon as well.abstract
+*/

@@ -58,7 +58,7 @@ public class CLBABearhunterSuperheavyACi extends Weapon {
                 .or(F_BA_WEAPON).or(F_BURST_FIRE);
         introDate = 3065;
         techLevel.put(3065, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_F };
         techRating = RATING_D;
 
     }

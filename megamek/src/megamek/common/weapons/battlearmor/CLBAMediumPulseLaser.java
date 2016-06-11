@@ -35,7 +35,6 @@ public class CLBAMediumPulseLaser extends PulseLaserWeapon {
      */
     public CLBAMediumPulseLaser() {
         super();
-        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
         this.name = "Medium Pulse Laser";
         this.setInternalName("CLBAMediumPulseLaser");
         this.addLookupName("Clan BA Pulse Med Laser");
@@ -58,10 +57,13 @@ public class CLBAMediumPulseLaser extends PulseLaserWeapon {
         this.shortAV = 7;
         this.medAV = 7;
         this.maxRange = RANGE_MED;
-        introDate = 2868;
-        techLevel.put(2868, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_D, RATING_C };
-        techRating = RATING_F;
         this.flags = flags.or(F_BURST_FIRE).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        introDate = 2865;
+        techLevel.put(2865, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(2867, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(2880, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X ,RATING_E ,RATING_D ,RATING_C};
+        techRating = RATING_F;
+        rulesRefs = "258, TM";
     }
 }

@@ -32,7 +32,6 @@ public class ISBALRM3 extends LRMWeapon {
      */
     public ISBALRM3() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         name = "LRM 3";
         setInternalName("ISBALRM3");
         addLookupName("IS BA LRM-3");
@@ -44,10 +43,13 @@ public class ISBALRM3 extends LRMWeapon {
         cost = 18000;
         tonnage = .180f;
         criticals = 3;
-        introDate = 3057;
-        techLevel.put(3057, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_E;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        introDate = 3050;
+        techLevel.put(3050, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3057, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3060, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_D};
+        techRating = RATING_E;
+        rulesRefs = "261, TM";
     }
 }

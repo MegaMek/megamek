@@ -35,7 +35,6 @@ public class CLBAERMediumLaser extends LaserWeapon {
      */
     public CLBAERMediumLaser() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "ER Medium Laser";
         setInternalName("CLBAERMediumLaser");
         addLookupName("Clan BA ER Medium Laser");
@@ -56,11 +55,14 @@ public class CLBAERMediumLaser extends LaserWeapon {
         shortAV = 7;
         medAV = 7;
         maxRange = RANGE_MED;
-        availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_D, EquipmentType.RATING_C };
-        introDate = 2868;
-        techLevel.put(2868, techLevel.get(3071));
-        techRating = RATING_F;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        introDate = 2867;
+        techLevel.put(2867, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(2870, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(2880, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X ,RATING_E ,RATING_D ,RATING_C};
+        techRating = RATING_F;
+        rulesRefs = "258, TM";
+
     }
 }

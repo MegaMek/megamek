@@ -34,8 +34,7 @@ public class CLBAFlamer extends BAFlamerWeapon {
      */
     public CLBAFlamer() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
-        name = "Flamer";
+        name = "Flamer [BA]";
         setInternalName("CLBAFlamer");
         addLookupName("Clan BA Flamer");
         heat = 3;
@@ -51,9 +50,12 @@ public class CLBAFlamer extends BAFlamerWeapon {
         cost = 7500;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        introDate = 2868;
-        techLevel.put(2868, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_B };
+        introDate = 2860;
+        techLevel.put(2860, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(2868, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3050, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X ,RATING_D ,RATING_B ,RATING_B};
         techRating = RATING_C;
+        rulesRefs = "255, TO";
     }
 }

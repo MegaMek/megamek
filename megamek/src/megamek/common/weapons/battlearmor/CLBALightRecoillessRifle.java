@@ -36,8 +36,7 @@ public class CLBALightRecoillessRifle extends Weapon {
      */
     public CLBALightRecoillessRifle() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
-        name = "Light Recoilless Rifle";
+        name = "Recoilless Rifle (Light)";
         setInternalName("CLBALight Recoilless Rifle");
         addLookupName("CLBALight Recoilless Rifle");
         addLookupName("CLBALightRecoillessRifle");
@@ -53,10 +52,12 @@ public class CLBALightRecoillessRifle extends Weapon {
         criticals = 2;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON).or(F_BURST_FIRE).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         cost = 1000;
-        introDate = 2868;
-        techLevel.put(2868, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_A };
+        introDate = 3057;
+        techLevel.put(3057, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3056, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_D};
         techRating = RATING_C;
+        rulesRefs = "268, TM";
     }
 
 }

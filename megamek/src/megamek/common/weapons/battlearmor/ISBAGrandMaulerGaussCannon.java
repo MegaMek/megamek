@@ -35,8 +35,7 @@ public class ISBAGrandMaulerGaussCannon extends Weapon {
      */
     public ISBAGrandMaulerGaussCannon() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "Grand Mauler Gauss Cannon";
+        name = "Gauss Rifle [Grand Mauler]";
         setInternalName("ISBAGrandMaulerGaussCannon");
         addLookupName("ISBAGrandMauler");
         heat = 0;
@@ -51,10 +50,12 @@ public class ISBAGrandMaulerGaussCannon extends Weapon {
         criticals = 2;
         bv = 6;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        introDate = 3059;
-        techLevel.put(3059, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_D };
+        introDate = 3050;
+        techLevel.put(3050, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3059, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3060, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_E};
         techRating = RATING_E;
-
+        rulesRefs = "255, TM";
     }
 }

@@ -36,7 +36,6 @@ public class ISBASmallVariableSpeedPulseLaser extends
      */
     public ISBASmallVariableSpeedPulseLaser() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
         name = "Small VSP Laser";
         setInternalName("ISBASmallVSPLaser");
         addLookupName("ISBASVSPL");
@@ -62,11 +61,14 @@ public class ISBASmallVariableSpeedPulseLaser extends
         cost = 60000;
         shortAV = 4;
         maxRange = RANGE_SHORT;
-        techRating = RATING_E;
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        introDate = 3071;
-        techLevel.put(3071, techLevel.get(3071));
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        introDate = 3070;
+        techLevel.put(3070, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3072, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3080, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_D};
+        techRating = RATING_E;
+        rulesRefs = "321, TO";
     }
 
 }

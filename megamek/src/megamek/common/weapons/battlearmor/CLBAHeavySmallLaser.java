@@ -36,7 +36,6 @@ public class CLBAHeavySmallLaser extends LaserWeapon {
      */
     public CLBAHeavySmallLaser() {
         super();
-        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
         this.name = "Heavy Small Laser";
         this.setInternalName("CLBAHeavySmallLaser");
         this.addLookupName("Clan BA Small Heavy Laser");
@@ -57,11 +56,13 @@ public class CLBAHeavySmallLaser extends LaserWeapon {
         this.cost = 20000;
         this.shortAV = 6;
         this.maxRange = RANGE_SHORT;
-        this.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D };
-        introDate = 3059;
-        techLevel.put(3059, techLevel.get(3071));
-        techRating = RATING_F;
         flags = flags.or(F_NO_FIRES).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
+        introDate = 3052;
+        techLevel.put(3052, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3062, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_D};
+        techRating = RATING_F;
+        rulesRefs = "258, TM";
     }
 }

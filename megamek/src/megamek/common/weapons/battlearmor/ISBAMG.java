@@ -31,8 +31,7 @@ public class ISBAMG extends BAMGWeapon {
      */
     public ISBAMG() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "Machine Gun";
+        name = "Machine Gun (Medium)";
         setInternalName("ISBAMG");
         addLookupName("IS BA Machine Gun");
         addLookupName("ISBAMachine Gun");
@@ -50,9 +49,11 @@ public class ISBAMG extends BAMGWeapon {
         bv = 5;
         cost = 5000;
         introDate = 1950;
-        techLevel.put(1950, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_B };
-        techRating = RATING_C;
+		techLevel.put(1950, TechConstants.T_IS_ADVANCED);
+		techLevel.put(3050, TechConstants.T_IS_TW_NON_BOX);
+		availRating = new int[] { RATING_X ,RATING_D ,RATING_B ,RATING_B};
+		techRating = RATING_C;
+		rulesRefs = "258, TM";
     }
 
 }

@@ -35,8 +35,7 @@ public class ISBATsunamiGaussRifle extends Weapon {
      */
     public ISBATsunamiGaussRifle() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        name = "Tsunami Heavy Gauss Rifle";
+        name = "Gauss Rifle [Tsunami]";
         setInternalName("ISBATsunamiHeavyGaussRifle");
         addLookupName("BA-ISTsunamiHeavyGaussRifle");
         addLookupName("IS BA Tsunami Heavy Gauss Rifle");
@@ -52,9 +51,12 @@ public class ISBATsunamiGaussRifle extends Weapon {
         cost = 9500;
         bv = 6;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_BA_WEAPON).andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
-        introDate = 3056;
-        techLevel.put(3056, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        introDate = 3049;
+        techLevel.put(3049, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3056, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3058, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_E};
         techRating = RATING_E;
+        rulesRefs = "255, TM";
     }
 }

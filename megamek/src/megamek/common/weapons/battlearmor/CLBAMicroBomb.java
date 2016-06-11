@@ -42,7 +42,7 @@ public class CLBAMicroBomb extends Weapon {
     public CLBAMicroBomb() {
         super();
         techLevel.put(3071, TechConstants.T_CLAN_TW);
-        name = "Micro Bomb";
+        name = "Bomb Rack (Micro)";
         setInternalName("CLBAMicroBomb");
         addLookupName("CLBAMicro Bomb");
         heat = 0;
@@ -58,10 +58,14 @@ public class CLBAMicroBomb extends Weapon {
         tonnage = .1f;
         criticals = 2;
         cost = 30000;
-        introDate = 3060;
-        techLevel.put(3060, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        introDate = 3050;
+        techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(3060, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3065, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
         techRating = RATING_F;
+        rulesRefs = "253, TM";
+
     }
 
     @Override

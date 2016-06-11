@@ -30,7 +30,6 @@ public class CLAdvancedSRM1OS extends AdvancedSRMWeapon {
      */
     public CLAdvancedSRM1OS() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
         name = "Advanced SRM 1 (OS)";
         setInternalName("CLAdvancedSRM1OS");
         rackSize = 1;
@@ -43,9 +42,11 @@ public class CLAdvancedSRM1OS extends AdvancedSRMWeapon {
         tonnage = .035f;
         criticals = 3;
         cost = 7500;
-        introDate = 3058;
-        techLevel.put(3058, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        introDate = 3047;
+        techLevel.put(3047, TechConstants.T_CLAN_EXPERIMENTAL);	
+        techLevel.put(3056, TechConstants.T_CLAN_ADVANCED);	
+        techLevel.put(3062, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_D};	
         techRating = RATING_F;
     }
 }

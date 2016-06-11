@@ -40,8 +40,12 @@ VTOL
 6
 </engine_type>
 
+<fuel>
+.5
+</fuel>
+
 <armor>
-4
+5
 3
 3
 2
@@ -81,14 +85,13 @@ Paramedic Equipment
 
 <transporters>
 cargobay:.05:1
-troopspace:.45
+standardseats:.45:6
 </transporters>
 
 <source>
-TRO VAr
+TRO VAr - Succession Wars
 </source>
 
 <tonnage>
 15.0
 </tonnage>
-

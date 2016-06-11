@@ -8,6 +8,7 @@ v0.41.20-git
 + Issue #242: Unit Can Self Destruct and Stackpole in same turn
 + Issue #236: PSR Terrain modifiers added inappropriately
 + Issue #243: PSR issues related to high/low gravity
++ Issue #241: Dropship Cannot Eject w/o expending all velocity
 
 
 v0.41.19 (2016-06-05 22:40 UTC)

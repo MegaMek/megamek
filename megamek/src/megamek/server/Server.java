@@ -19886,7 +19886,7 @@ public class Server implements Runnable {
     }
 
     private Vector<Report> resolvePilotingRolls(Entity entity, boolean moving,
-                                                Coords src, Coords dest) {
+            Coords src, Coords dest) {
         Vector<Report> vPhaseReport = new Vector<Report>();
         // dead and undeployed and offboard units don't need to.
         if (entity.isDoomed() || entity.isDestroyed() || entity.isOffBoard()

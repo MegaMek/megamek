@@ -2594,7 +2594,7 @@ public class Game implements Serializable, IGame {
         // now, clear them out
         for (i = rollsToRemove.size() - 1; i > -1; i--) {
             extremeGravityRolls.removeElementAt(rollsToRemove.elementAt(i)
-                                                             .intValue());
+                    .intValue());
         }
     }
 

@@ -40,6 +40,10 @@ Wheeled
 1
 </engine_type>
 
+<fuel>
+4
+</fuel>
+
 <armor_type>
 0
 </armor_type>
@@ -105,11 +109,9 @@ ISLRM20 Ammo
 </tonnage>
 
 <source>
-Op Klondike
+H:Operation Klondike - Succession Wars
 </source>
 
 <history>
 Armor is based on fluff.  No Record Sheet available.
 </history>
-
-

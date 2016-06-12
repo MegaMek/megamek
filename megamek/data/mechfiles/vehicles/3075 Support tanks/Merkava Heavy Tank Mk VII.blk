@@ -13,32 +13,27 @@ SupportTank
 </UnitType>
 
 <Name>
-Paramour Mobile Repair Vehicle
+Merkava Heavy Tank
 </Name>
 
 <Model>
-(Standard)
+Mk VII
 </Model>
 
 <year>
-2557
+2435
 </year>
 
 <type>
-IS Level 3
+IS Level 1
 </type>
 
 <motion_type>
 Tracked
 </motion_type>
 
-<transporters>
-troopspace:5.0
-cargobay:15:1
-</transporters>
-
 <cruiseMP>
-4
+3
 </cruiseMP>
 
 <engine_type>
@@ -46,31 +41,31 @@ cargobay:15:1
 </engine_type>
 
 <armor>
-27
-20
-20
-25
+32
+32
+32
+24
+32
 </armor>
 
 <barrating>
-6
+9
 </barrating>
 
 <structural_tech_rating>
 3
 </structural_tech_rating>
 
-<armor_type>
-14
-</armor_type>
-
 <Body Equipment>
-IS Machine Gun Ammo - Half
+Advanced Fire Control
 Armored Chassis
+IS Ammo AC/5
+IS Ammo SRM-4
+IS Ammo LRM-10
+IS Machine Gun Ammo - Half
 </Body Equipment>
 
 <Front Equipment>
-Machine Gun
 </Front Equipment>
 
 <Right Equipment>
@@ -80,14 +75,19 @@ Machine Gun
 </Left Equipment>
 
 <Rear Equipment>
-Lift Hoist
-Lift Hoist
 </Rear Equipment>
+
+<Turret Equipment>
+Autocannon/5
+LRM 10
+SRM 4
+Machine Gun
+</Turret Equipment>
 
 <source>
 TRO 3075 - Age of War
 </source>
 
 <tonnage>
-60.0
+75.0
 </tonnage>

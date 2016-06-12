@@ -2,10 +2,12 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 LargeSupportTank
 </UnitType>
@@ -82,7 +84,7 @@ IS Level 3
 </type>
 
 <year>
-3069
+2822
 </year>
 
 <internal_type>
@@ -100,3 +102,7 @@ IS Level 3
 <motion_type>
 Tracked
 </motion_type>
+
+<source>
+TRO 3075 - Succession Wars
+</source>

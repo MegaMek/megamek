@@ -13,7 +13,7 @@ LargeSupportTank
 </UnitType>
 
 <Name>
-BFFL "Buffalo"
+BFFL 'Buffalo'
 </Name>
 
 <Model>

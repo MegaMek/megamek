@@ -5874,8 +5874,13 @@ public class MiscType extends EquipmentType {
                 EquipmentType.RATING_X, EquipmentType.RATING_F };
         misc.techRating = RATING_F;
         misc.introDate = 3063;
-        misc.techLevel.put(3063, misc.techLevel.get(3071));
-        misc.techLevel.put(3080, TechConstants.T_IS_TW_NON_BOX);
+		misc.techLevel.put(3063, TechConstants.T_IS_EXPERIMENTAL);
+		misc.techLevel.put(3075, TechConstants.T_IS_ADVANCED);
+		misc.techLevel.put(3097, TechConstants.T_IS_TW_NON_BOX);
+		misc.availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
+		misc.techRating = RATING_F;
+		misc.rulesRefs = "279, TO";
+
 
         return misc;
     }
@@ -5884,7 +5889,6 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         // Don't forget, this will eventually count double for ECCM.
-        misc.techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
         misc.name = "Angel ECM Suite";
         misc.setInternalName("BACLAngelECMSuite");
         misc.addLookupName("BA CL Angel ECM Suite");
@@ -5897,12 +5901,14 @@ public class MiscType extends EquipmentType {
         misc.bv = 100;
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
-        misc.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F };
+        misc.introDate = 3058;
+        misc.techLevel.put(3058, TechConstants.T_CLAN_EXPERIMENTAL);
+        misc.techLevel.put(3075, TechConstants.T_CLAN_ADVANCED);
+        misc.techLevel.put(3097, TechConstants.T_CLAN_TW);
+        misc.availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
         misc.techRating = RATING_F;
-        misc.introDate = 3063;
-        misc.techLevel.put(3063, misc.techLevel.get(3071));
-        misc.techLevel.put(3080, TechConstants.T_CLAN_TW);
+        misc.rulesRefs = "279, TO";
+
 
         return misc;
     }

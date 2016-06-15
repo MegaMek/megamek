@@ -11,6 +11,7 @@ v0.41.20-git
 + Issue #241: Dropship Cannot Eject w/o expending all velocity
 + Issue #244: Added TigerShark's alternative Pilot Skill BV mod table to docs
 + Issue #245: Smoke & chaff from weapons fire appears in end phase
++ Bug: EntityWeightClass.getWeightClass missing entry for hydrofoil support vees
 
 
 v0.41.19 (2016-06-05 22:40 UTC)

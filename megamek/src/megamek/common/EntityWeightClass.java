@@ -293,6 +293,13 @@ public class EntityWeightClass {
                     }
                 }
                 break;
+            case HYDROFOIL:
+                for (i = WEIGHT_SMALL_SUPPORT; i < (navalSupportVehicleWeightLimits.length - 1); i++) {
+                    if (tonnage <= navalSupportVehicleWeightLimits[i]) {
+                        break;
+                    }
+                }
+                break;
             case RAIL:
                 for (i = WEIGHT_SMALL_SUPPORT; i < (railSupportVehicleWeightLimits.length - 1); i++) {
                     if (tonnage <= railSupportVehicleWeightLimits[i]) {

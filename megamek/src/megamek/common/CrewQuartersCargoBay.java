@@ -71,7 +71,8 @@ public final class CrewQuartersCargoBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        StringBuffer returnString = new StringBuffer("Crew Quarters - ");
+        StringBuffer returnString = new StringBuffer("Crew Quarters ("
+                + getDoors() + " doors) - ");
         returnString.append((int)currentSpace);
         return returnString.toString();
     }

@@ -71,7 +71,8 @@ public final class PillionSeatCargoBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        StringBuffer returnString = new StringBuffer("Passenger Pillion Seats - ");
+        StringBuffer returnString = new StringBuffer(
+                "Passenger Pillion Seats (" + getDoors() + " doors) - ");
         returnString.append((int)currentSpace);
         return returnString.toString();
     }

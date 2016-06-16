@@ -132,9 +132,14 @@ public final class SmallCraftBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         if (showrecovery) {
-            return "Small Craft - " + String.format("%1$,.0f", currentSpace) + (currentSpace > 1 ? " units (" : " unit (") + getRecoverySlots() + " recovery open)";
+            return "Small Craft (" + getDoors() + " doors) - "
+                    + String.format("%1$,.0f", currentSpace)
+                    + (currentSpace > 1 ? " units (" : " unit (")
+                    + getRecoverySlots() + " recovery open)";
         } else {
-            return "Small Craft - " + String.format("%1$,.0f", currentSpace) + (currentSpace > 1 ? " units" : " unit");
+            return "Small Craft (" + getDoors() + " doors) - "
+                    + String.format("%1$,.0f", currentSpace)
+                    + (currentSpace > 1 ? " units" : " unit");
         }
     }
 

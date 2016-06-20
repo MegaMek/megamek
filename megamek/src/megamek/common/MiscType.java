@@ -425,7 +425,11 @@ public class MiscType extends EquipmentType {
             .valueOf(1).shiftLeft(193);
     public static final BigInteger F_EMERGENCY_COOLANT_SYSTEM = BigInteger
             .valueOf(1).shiftLeft(194);
-
+    public static final BigInteger F_BADC = BigInteger.valueOf(1)
+    		.shiftLeft(195);
+    public static final BigInteger F_REUSABLE = BigInteger.valueOf(1)
+    		.shiftLeft(196);
+    		
 
     // Secondary Flags for Physical Weapons
     public static final long S_CLUB = 1L << 0; // BMR
@@ -956,6 +960,22 @@ public class MiscType extends EquipmentType {
                     tCompTons = (int) Math.ceil(fTons / 5.0f);
                 }
                 costValue = tCompTons * 10000;
+                
+            } else if (hasFlag(MiscType.F_BADC)) {
+            	int tDCCost = 0;
+            	if (getInternalName().equals("CLBADropChuteStd")||
+            		(getInternalName().equals("ISBADropChuteStd"))) {
+               		tDCCost = 1000;
+                } else if (getInternalName().equals("CLBADropChuteStealth")||
+            		(getInternalName().equals("ISBADropChuteStealth"))) {	
+                	tDCCost = 5000;
+                } else if (getInternalName().equals("CLBADropChuteCamo")||
+            		(getInternalName().equals("ISBADropChuteCamo"))) {	
+                	tDCCost = 3000; }
+                if (hasFlag(MiscType.F_REUSABLE)) {
+                    tDCCost = tDCCost * 2;
+                    costValue = tDCCost;
+                }
             } else if (hasFlag(MiscType.F_CLUB)
                     && (hasSubType(MiscType.S_HATCHET) || hasSubType(MiscType.S_MACE_THB))) {
                 int hatchetTons = (int) Math.ceil(entity.getWeight() / 15.0);
@@ -1653,7 +1673,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createCLDetachableWeaponPack());
         EquipmentType.addType(MiscType.createISBAHeatSensor());
         EquipmentType.addType(MiscType.createCLBAHeatSensor());
-        EquipmentType.addType(MiscType.createBAExtendedLifeSupport());
+        EquipmentType.addType(MiscType.createISBAExtendedLifeSupport());
+        EquipmentType.addType(MiscType.createCLBAExtendedLifeSupport());
         EquipmentType.addType(MiscType.createBAPartialWing());
         EquipmentType.addType(MiscType.createISBAJumpBooster());
         EquipmentType.addType(MiscType.createCLBAJumpBooster());
@@ -1666,6 +1687,15 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createShotgunMicrophone());
         EquipmentType.addType(MiscType.createISBAMineDispenser());
         EquipmentType.addType(MiscType.createBAMissionEquipStorage());
+        EquipmentType.addType(MiscType.createISBADropChuteCamo());
+        EquipmentType.addType(MiscType.createISBADropChuteCamo());
+        EquipmentType.addType(MiscType.createISBADropChuteStd());
+        EquipmentType.addType(MiscType.createISBADropChuteStealth());
+        EquipmentType.addType(MiscType.createCLBADropChuteCamo());
+        EquipmentType.addType(MiscType.createCLBADropChuteReuse());
+        EquipmentType.addType(MiscType.createCLBADropChuteStd());
+        EquipmentType.addType(MiscType.createCLBADropChuteStealth());
+        EquipmentType.addType(MiscType.createCLBAHarjel());
 
         // support vee Chassis stuff
         EquipmentType.addType(MiscType.createAmphibiousChassis());
@@ -3838,6 +3868,28 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
+    
+    public static MiscType createCLBAHarjel() {
+        MiscType misc = new MiscType();
+        //Included for Completeness.
+        misc.name = "Harjel";
+        misc.setInternalName("CLBAHarjel");
+        misc.cost = 0;
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).andNot(F_MECH_EQUIPMENT)
+        		.andNot(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        misc.introDate = 2833;
+        misc.techLevel.put(2833, TechConstants.T_CLAN_EXPERIMENTAL);
+        misc.techLevel.put(2835, TechConstants.T_CLAN_ADVANCED);
+        misc.techLevel.put(2855, TechConstants.T_CLAN_TW);
+        misc.availRating = new int[] { RATING_X ,RATING_C ,RATING_C ,RATING_C};
+        misc.techRating = RATING_F;
+        misc.rulesRefs = "256, TM";
+
+        return misc;
+    }  
 
     public static MiscType createMine() {
         MiscType misc = new MiscType();
@@ -4028,7 +4080,8 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.name = BattleArmor.SINGLE_HEX_ECM;
-        misc.setInternalName("IS BA ECM");
+        misc.setInternalName("ECM Suite (Light)");
+        misc.addLookupName("IS BA ECM");
         misc.addLookupName("ISBAECM");
         misc.addLookupName("IS" + BattleArmor.SINGLE_HEX_ECM);
         misc.tonnage = .1f;
@@ -4041,21 +4094,26 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
-        misc.introDate = 2720;
-        misc.techLevel.put(2720, TechConstants.T_IS_TW_NON_BOX);
-        misc.extinctDate = 2788;
+        misc.introDate = 2713;
+        misc.extinctDate = 2766;
         misc.reintroDate = 3057;
-        misc.availRating = new int[] { RATING_E, RATING_F, RATING_F };
+        misc.techLevel.put(2713, TechConstants.T_IS_EXPERIMENTAL);
+        misc.techLevel.put(2720, TechConstants.T_IS_ADVANCED);
+        misc.techLevel.put(3057, TechConstants.T_IS_EXPERIMENTAL);
+        misc.techLevel.put(3060, TechConstants.T_IS_TW_NON_BOX);
+        misc.availRating = new int[] { RATING_E ,RATING_F ,RATING_F ,RATING_E};
         misc.techRating = RATING_E;
+        misc.rulesRefs = "254, TM";
+
         return misc;
     }
 
     public static MiscType createCLSingleHexECM() {
         MiscType misc = new MiscType();
 
-        misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
         misc.name = BattleArmor.SINGLE_HEX_ECM;
-        misc.setInternalName("CL BA ECM");
+        misc.setInternalName("ECM Suite (Light)");
+        misc.addLookupName("CL BA ECM");
         misc.addLookupName("CLBAECM");
         misc.addLookupName("CL" + BattleArmor.SINGLE_HEX_ECM);
         misc.tonnage = .075f;
@@ -4068,17 +4126,19 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.setModes(new String[] { "ECM" });
         misc.setInstantModeSwitch(false);
-        misc.introDate = 2820;
-        misc.techLevel.put(2820, misc.techLevel.get(3071));
-        misc.availRating = new int[] { RATING_X, RATING_E, RATING_D };
+        misc.introDate = 2868;
+        misc.techLevel.put(2868, TechConstants.T_CLAN_ADVANCED);
+        misc.techLevel.put(3060, TechConstants.T_CLAN_TW);
+        misc.availRating = new int[] { RATING_X ,RATING_F ,RATING_F ,RATING_E};
         misc.techRating = RATING_E;
+        misc.rulesRefs = "254, TM";
+        
         return misc;
     }
 
     public static MiscType createSimpleCamo() {
         MiscType misc = new MiscType();
 
-        misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         misc.name = BattleArmor.CAMO_SYSTEM;
         misc.setInternalName(BattleArmor.CAMO_SYSTEM);
         misc.addLookupName("Simple Camo");
@@ -4088,10 +4148,13 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_STEALTH).or(F_VISUAL_CAMO)
                 .or(F_BA_EQUIPMENT).andNot(F_MECH_EQUIPMENT)
                 .andNot(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
-        misc.introDate = 2800;
-        misc.techLevel.put(2800, misc.techLevel.get(3071));
-        misc.availRating = new int[] { RATING_X, RATING_F, RATING_F };
+        misc.introDate = 2785;
+        misc.techLevel.put(2785, TechConstants.T_IS_EXPERIMENTAL);
+        misc.techLevel.put(2795, TechConstants.T_IS_ADVANCED);
+        misc.techLevel.put(3058, TechConstants.T_IS_TW_NON_BOX);
+        misc.availRating = new int[] { RATING_X ,RATING_F ,RATING_F ,RATING_E};
         misc.techRating = RATING_E;
+        misc.rulesRefs = "253, TM";
         misc.bv = 0;
 
         return misc;
@@ -5406,7 +5469,6 @@ public class MiscType extends EquipmentType {
     public static MiscType createISImprovedSensors() {
         MiscType misc = new MiscType();
 
-        misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         misc.name = "Improved Sensors";
         misc.setInternalName(Sensor.ISIMPROVED);
         misc.addLookupName("IS BA Improved Sensors");
@@ -5417,9 +5479,11 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_BAP).or(F_BA_EQUIPMENT)
                 .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT);
         misc.introDate = 3051;
-        misc.techLevel.put(3051, misc.techLevel.get(3071));
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        misc.techRating = RATING_E;
+		misc.techLevel.put(3051, TechConstants.T_IS_TW_NON_BOX);
+		misc.availRating = new int[] { RATING_X ,RATING_F ,RATING_E ,RATING_D};
+		misc.techRating = RATING_E;
+		misc.rulesRefs = "257, TM";
+
 
         return misc;
     }
@@ -5427,7 +5491,6 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLImprovedSensors() {
         MiscType misc = new MiscType();
 
-        misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
         misc.name = "Improved Sensors";
         misc.setInternalName(Sensor.CLIMPROVED);
         misc.addLookupName("Clan BA Improved Sensors");
@@ -5437,10 +5500,13 @@ public class MiscType extends EquipmentType {
         misc.cost = 200000;
         misc.flags = misc.flags.or(F_BAP).or(F_BA_EQUIPMENT)
                 .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT);
-        misc.introDate = 2890;
-        misc.techLevel.put(2890, misc.techLevel.get(3071));
-        misc.availRating = new int[] { RATING_X, RATING_D, RATING_C };
-        misc.techRating = RATING_F;
+        misc.introDate = 2882;
+        misc.techLevel.put(2882, TechConstants.T_CLAN_EXPERIMENTAL);
+        misc.techLevel.put(2885, TechConstants.T_CLAN_ADVANCED);
+        misc.techLevel.put(3051, TechConstants.T_CLAN_TW);
+        misc.availRating = new int[] { RATING_X ,RATING_F ,RATING_E ,RATING_D};
+        misc.techRating = RATING_E;
+        misc.rulesRefs = "257, TM";
 
         return misc;
     }
@@ -5593,7 +5659,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLBALightActiveProbe() {
         MiscType misc = new MiscType();
 
-        misc.name = "Light Active Probe";
+        misc.name = "Active Probe (Light)";
         misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
         misc.setInternalName(Sensor.CLBALIGHT_AP);
         misc.tonnage = 0.15f;
@@ -5603,18 +5669,20 @@ public class MiscType extends EquipmentType {
                 .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
                 .andNot(F_AERO_EQUIPMENT);
         misc.bv = 0;
-        misc.introDate = 2900;
-        misc.techLevel.put(2900, misc.techLevel.get(3071));
-        misc.availRating = new int[] { EquipmentType.RATING_X,
-                EquipmentType.RATING_D, EquipmentType.RATING_C };
-        misc.techRating = RATING_F;
+        misc.introDate = 2893;
+        misc.techLevel.put(2893, TechConstants.T_CLAN_EXPERIMENTAL);
+        misc.techLevel.put(2900, TechConstants.T_CLAN_ADVANCED);
+        misc.techLevel.put(3050, TechConstants.T_CLAN_TW);
+        misc.availRating = new int[] { RATING_X ,RATING_F ,RATING_E ,RATING_E};
+        misc.techRating = RATING_E;
+
         return misc;
     }
 
     public static MiscType createISBALightActiveProbe() {
         MiscType misc = new MiscType();
 
-        misc.name = "Light Active Probe";
+        misc.name = "Active Probe (Light)";
         misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         misc.setInternalName(Sensor.ISBALIGHT_AP);
         misc.addLookupName("ISBAActiveProbe");
@@ -5625,9 +5693,10 @@ public class MiscType extends EquipmentType {
                 .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
                 .andNot(F_AERO_EQUIPMENT);
         misc.bv = 0;
-        misc.introDate = 3050;
-        misc.techLevel.put(3050, misc.techLevel.get(3071));
-        misc.techRating = RATING_E;
+		misc.introDate = 3050;
+		misc.techLevel.put(3050, TechConstants.T_IS_ADVANCED);
+		misc.availRating = new int[] { RATING_X ,RATING_F ,RATING_E ,RATING_E};
+		misc.techRating = RATING_E;
 
         return misc;
     }
@@ -8702,7 +8771,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createBACuttingTorch() {
         MiscType misc = new MiscType();
-        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+
         misc.name = "Cutting Torch";
         misc.setInternalName("BACuttingTorch");
         misc.tonnage = 0.005f;
@@ -8712,9 +8781,10 @@ public class MiscType extends EquipmentType {
                 .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
                 .andNot(F_AERO_EQUIPMENT);
         misc.introDate = 2110;
-        misc.techLevel.put(2110, misc.techLevel.get(3071));
+        misc.techLevel.put(2110, TechConstants.T_ALLOWED_ALL);
         misc.availRating = new int[] { RATING_B, RATING_B, RATING_B };
         misc.techRating = RATING_C;
+        misc.rulesRefs = "254, TM";
         misc.bv = 0;
 
         return misc;
@@ -9481,57 +9551,83 @@ public class MiscType extends EquipmentType {
         misc.name = "Heat Sensor";
         misc.setInternalName("ISBAHeatSensor");
         misc.cost = 15000;
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        misc.techRating = RATING_D;
-        misc.tonnage = 0.020f;
+         misc.tonnage = 0.020f;
         misc.criticals = 1;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_HEAT_SENSOR)
                 .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
                 .andNot(F_AERO_EQUIPMENT);
         misc.introDate = 3050;
-        misc.techLevel.put(3050, misc.techLevel.get(3071));
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        misc.techRating = RATING_D;
+        misc.techLevel.put(3050, TechConstants.T_IS_ADVANCED);
+        misc.availRating = new int[] { RATING_X ,RATING_C ,RATING_C ,RATING_C};
+        misc.techRating = RATING_F;
+        misc.rulesRefs = "256, TM";
+
         return misc;
     }
 
     public static MiscType createCLBAHeatSensor() {
         MiscType misc = new MiscType();
-        misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
+
         misc.name = "Heat Sensor";
         misc.setInternalName("CLBAHeatSensor");
         misc.cost = 15000;
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        misc.techRating = RATING_D;
         misc.tonnage = 0.020f;
         misc.criticals = 1;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_HEAT_SENSOR)
                 .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
                 .andNot(F_AERO_EQUIPMENT);
-        misc.introDate = 2880;
-        misc.techLevel.put(2880, misc.techLevel.get(3071));
-        misc.availRating = new int[] { RATING_X, RATING_D, RATING_C };
-        misc.techRating = RATING_D;
+        misc.introDate = 2833;
+        misc.techLevel.put(2833, TechConstants.T_CLAN_EXPERIMENTAL);
+        misc.techLevel.put(2835, TechConstants.T_CLAN_ADVANCED);
+        misc.techLevel.put(2855, TechConstants.T_CLAN_TW);
+        misc.availRating = new int[] { RATING_X ,RATING_C ,RATING_C ,RATING_C};
+        misc.techRating = RATING_F;
+        misc.rulesRefs = "256, TM";
+
         return misc;
     }
 
-    public static MiscType createBAExtendedLifeSupport() {
+    public static MiscType createISBAExtendedLifeSupport() {
         // TODO: add game rules for this
         MiscType misc = new MiscType();
-        misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);
+
         misc.name = "Extended Life Support";
-        misc.setInternalName("BAExtendedLifeSupport");
+        misc.setInternalName("ISBAExtendedLifeSupport");
         misc.cost = 10000;
-        misc.techRating = RATING_E;
         misc.tonnage = 0.025f;
         misc.criticals = 1;
         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_EXTENDED_LIFESUPPORT)
                 .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
                 .andNot(F_AERO_EQUIPMENT);
-        misc.introDate = 2715;
-        misc.techLevel.put(2715, misc.techLevel.get(3071));
-        misc.availRating = new int[] { RATING_E, RATING_F, RATING_E };
+        misc.introDate = 2707;
+        misc.techLevel.put(2707, TechConstants.T_IS_EXPERIMENTAL);
+        misc.techLevel.put(2710, TechConstants.T_IS_ADVANCED);
+        misc.techLevel.put(2720, TechConstants.T_IS_TW_NON_BOX);
+        misc.availRating = new int[] { RATING_E ,RATING_F ,RATING_E ,RATING_D};
         misc.techRating = RATING_E;
+        misc.rulesRefs = "254, TM";
+
+        return misc;
+    }
+    
+    public static MiscType createCLBAExtendedLifeSupport() {
+        // TODO: add game rules for this
+        MiscType misc = new MiscType();
+
+        misc.name = "Extended Life Support";
+        misc.setInternalName("CLBAExtendedLifeSupport");
+        misc.cost = 10000;
+        misc.tonnage = 0.025f;
+        misc.criticals = 1;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_EXTENDED_LIFESUPPORT)
+                .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
+                .andNot(F_AERO_EQUIPMENT);
+        misc.introDate = 2868;
+        misc.techLevel.put(2868, TechConstants.T_CLAN_TW);
+        misc.availRating = new int[] { RATING_X ,RATING_F ,RATING_E ,RATING_D};
+        misc.techRating = RATING_E;
+        misc.rulesRefs = "254, TM";
+
         return misc;
     }
 
@@ -9588,11 +9684,35 @@ public class MiscType extends EquipmentType {
 
         return misc;
     }
+    
+/*    public static MiscType createBAJumpJet() {
+        MiscType misc = new MiscType();
+        //Included for Completeness
+
+        misc.name = "Jump Jet/ Jump Pack (BA)";
+        misc.setInternalName(misc.name);
+        misc.addLookupName("BAJumpJet");
+        misc.tonnage = 0;
+        misc.criticals = 0;
+        misc.tankslots = 0;
+        misc.flags = misc.flags.or(F_JUMP_JET).or(F_BA_EQUIPMENT)
+                .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
+                .andNot(F_AERO_EQUIPMENT);
+        misc.subType |= S_STANDARD;
+        misc.bv = 0;
+        misc.availRating = new int[] { EquipmentType.RATING_C,
+                EquipmentType.RATING_C, EquipmentType.RATING_C };
+        misc.introDate = 2100;
+        misc.techLevel.put(2100, TechConstants.T_ALLOWED_ALL);
+        misc.techRating = RATING_D;
+
+        return misc;
+    }*/
 
     public static MiscType createISBAJumpBooster() {
         MiscType misc = new MiscType();
-        misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        misc.name = "Jump Booster";
+
+        misc.name = "Jump Booster (BA)";
         misc.setInternalName("ISBAJumpBooster");
         misc.tonnage = 0.125f;
         misc.criticals = 2;
@@ -9600,17 +9720,21 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_JUMP_BOOSTER).or(F_BA_EQUIPMENT)
                 .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
                 .andNot(F_AERO_EQUIPMENT);
-        misc.introDate = 3051;
-        misc.techLevel.put(3051, misc.techLevel.get(3071));
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        misc.introDate = 3045;
+        misc.techLevel.put(3045, TechConstants.T_IS_EXPERIMENTAL);
+        misc.techLevel.put(3051, TechConstants.T_IS_ADVANCED);
+        misc.techLevel.put(3056, TechConstants.T_IS_TW_NON_BOX);
+        misc.availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_D};
         misc.techRating = RATING_E;
+        misc.rulesRefs = "257, TM";
+
         return misc;
     }
 
     public static MiscType createCLBAJumpBooster() {
         MiscType misc = new MiscType();
-        misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
-        misc.name = "Jump Booster";
+
+        misc.name = "Jump Booster (BA)";
         misc.setInternalName("CLBAJumpBooster");
         misc.tonnage = 0.125f;
         misc.criticals = 2;
@@ -9618,10 +9742,12 @@ public class MiscType extends EquipmentType {
         misc.flags = misc.flags.or(F_JUMP_BOOSTER).or(F_BA_EQUIPMENT)
                 .andNot(F_MECH_EQUIPMENT).andNot(F_TANK_EQUIPMENT)
                 .andNot(F_AERO_EQUIPMENT);
-        misc.introDate = 3070;
-        misc.techLevel.put(3070, misc.techLevel.get(3071));
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        misc.introDate = 3062;
+        misc.techLevel.put(3062, TechConstants.T_CLAN_ADVANCED);
+        misc.availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_D};
         misc.techRating = RATING_E;
+        misc.rulesRefs = "257, TM";
+
         return misc;
     }
 
@@ -9632,13 +9758,16 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("ISMechanicalJumpBooster");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.techRating = RATING_E;
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        misc.introDate = 3070;
-        misc.techLevel.put(3070, misc.techLevel.get(3071));
-        misc.techLevel.put(3084, TechConstants.T_IS_ADVANCED);
         misc.flags = misc.flags.or(F_MECHANICAL_JUMP_BOOSTER)
                 .or(F_BA_EQUIPMENT);
+        misc.introDate = 3070;
+        misc.techLevel.put(3070, TechConstants.T_IS_EXPERIMENTAL);
+        misc.techLevel.put(3079, TechConstants.T_IS_ADVANCED);
+        misc.techLevel.put(3096, TechConstants.T_IS_TW_NON_BOX);
+        misc.availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
+        misc.techRating = RATING_E;
+        misc.rulesRefs = "286, TO";
+
         return misc;
     }
 
@@ -9648,16 +9777,185 @@ public class MiscType extends EquipmentType {
         misc.setInternalName("CLMechanicalJumpBooster");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.cost = COST_VARIABLE;
-        misc.techRating = RATING_E;
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        misc.introDate = 3084;
-        misc.techLevel.put(3084, TechConstants.T_CLAN_ADVANCED);
         misc.flags = misc.flags.or(F_MECHANICAL_JUMP_BOOSTER)
                 .or(F_BA_EQUIPMENT);
+        misc.introDate = 3090;
+        misc.techLevel.put(3090, TechConstants.T_CLAN_EXPERIMENTAL);
+        misc.availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
+        misc.techRating = RATING_E;
+        misc.rulesRefs = "286, TO";
+
         return misc;
     }
 
-    public static MiscType createISSmallNavalCommScannerSuite() {
+    public static MiscType createISBADropChuteStd() {
+        MiscType misc = new MiscType();
+        // TODO: game rules
+        misc.name = "BattleArmor DropChute(Standard)";
+        misc.setInternalName("ISBADropChuteStd");
+        misc.tonnage = 0.2f;
+        misc.criticals = 0;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BADC).andNot(F_MECH_EQUIPMENT)
+                .andNot(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        misc.cost = 1000;
+        misc.introDate = 3051;
+        misc.techLevel.put(3051, TechConstants.T_IS_ADVANCED);
+        misc.availRating = new int[] { RATING_X ,RATING_E ,RATING_C ,RATING_C};
+        misc.techRating = RATING_D;
+        misc.rulesRefs = "348, TO";
+
+        return misc;
+    }
+    
+    public static MiscType createISBADropChuteStealth() {
+        MiscType misc = new MiscType();
+        // TODO: game rules
+        misc.name = "BattleArmor DropChute(Stealth)";
+        misc.setInternalName("ISBADropChuteStealth");
+        misc.tonnage = 0.2f;
+        misc.criticals = 0;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BADC).andNot(F_MECH_EQUIPMENT)
+                .andNot(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        misc.cost = 1000;
+        misc.introDate = 3054;
+        misc.techLevel.put(3054, TechConstants.T_IS_ADVANCED);
+        misc.availRating = new int[] { RATING_X ,RATING_E ,RATING_C ,RATING_C};
+        misc.techRating = RATING_D;
+        misc.rulesRefs = "348, TO";
+
+        return misc;
+    }
+        
+       
+    public static MiscType createISBADropChuteCamo() {
+        MiscType misc = new MiscType();
+        // TODO: game rules
+        misc.name = "BattleArmor DropChute(Camouflage)";
+        misc.setInternalName("ISBADropChuteCamo");
+        misc.tonnage = 0.2f;
+        misc.criticals = 0;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BADC).andNot(F_MECH_EQUIPMENT)
+                .andNot(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        misc.cost = 3000;
+        misc.introDate = 3051;
+        misc.techLevel.put(3051, TechConstants.T_IS_ADVANCED);
+        misc.availRating = new int[] { RATING_X ,RATING_E ,RATING_C ,RATING_C};
+        misc.techRating = RATING_D;
+        misc.rulesRefs = "348, TO";
+
+        return misc;
+    }  
+    
+     public static MiscType createISBADropChuteReuse() {
+        MiscType misc = new MiscType();
+        // TODO: game rules
+        misc.name = "BattleArmor DropChute(Reuseable)";
+        misc.setInternalName("ISBADropChuteReuse");
+        misc.tonnage = 0.225f;
+        misc.criticals = 1;
+        misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BADC).or(F_REUSABLE).andNot(F_MECH_EQUIPMENT)
+                .andNot(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+        misc.bv = 0;
+        misc.cost = COST_VARIABLE;
+        misc.introDate = 3051;
+        misc.techLevel.put(3051, TechConstants.T_IS_ADVANCED);
+        misc.availRating = new int[] { RATING_X ,RATING_E ,RATING_C ,RATING_C};
+        misc.techRating = RATING_D;
+        misc.rulesRefs = "348, TO";
+
+        return misc;
+    }    
+     
+     public static MiscType createCLBADropChuteStd() {
+         MiscType misc = new MiscType();
+         // TODO: game rules
+         misc.name = "BattleArmor DropChute(Standard)";
+         misc.setInternalName("CLBADropChuteStd");
+         misc.tonnage = 0.2f;
+         misc.criticals = 0;
+         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BADC).andNot(F_MECH_EQUIPMENT)
+                 .andNot(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+         misc.bv = 0;
+         misc.cost = 1000;
+         misc.introDate = 2869;
+         misc.techLevel.put(2869, TechConstants.T_CLAN_EXPERIMENTAL);
+         misc.techLevel.put(2875, TechConstants.T_CLAN_ADVANCED);
+         misc.availRating = new int[] { RATING_X ,RATING_E ,RATING_C ,RATING_C};
+         misc.techRating = RATING_D;
+         misc.rulesRefs = "348, TO";
+
+         return misc;
+     }
+     
+     public static MiscType createCLBADropChuteStealth() {
+         MiscType misc = new MiscType();
+         // TODO: game rules
+         misc.name = "BattleArmor DropChute(Stealth)";
+         misc.setInternalName("CLBADropChuteStealth");
+         misc.tonnage = 0.2f;
+         misc.criticals = 0;
+         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BADC).andNot(F_MECH_EQUIPMENT)
+                 .andNot(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+         misc.bv = 0;
+         misc.cost = 1000;
+         misc.introDate = 2869;
+         misc.techLevel.put(2869, TechConstants.T_CLAN_EXPERIMENTAL);
+         misc.techLevel.put(2875, TechConstants.T_CLAN_ADVANCED);
+         misc.availRating = new int[] { RATING_X ,RATING_E ,RATING_C ,RATING_C};
+         misc.techRating = RATING_D;
+         misc.rulesRefs = "348, TO";
+
+         return misc;
+     }
+         
+        
+     public static MiscType createCLBADropChuteCamo() {
+         MiscType misc = new MiscType();
+         // TODO: game rules
+         misc.name = "BattleArmor DropChute(Camouflage)";
+         misc.setInternalName("CLBADropChuteCamo");
+         misc.tonnage = 0.2f;
+         misc.criticals = 0;
+         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BADC).andNot(F_MECH_EQUIPMENT)
+                 .andNot(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+         misc.bv = 0;
+         misc.cost = 3000;
+         misc.introDate = 2869;
+         misc.techLevel.put(2869, TechConstants.T_CLAN_EXPERIMENTAL);
+         misc.techLevel.put(2875, TechConstants.T_CLAN_ADVANCED);
+         misc.availRating = new int[] { RATING_X ,RATING_E ,RATING_C ,RATING_C};
+         misc.techRating = RATING_D;
+         misc.rulesRefs = "348, TO";
+
+
+         return misc;
+     }  
+     
+      public static MiscType createCLBADropChuteReuse() {
+         MiscType misc = new MiscType();
+         // TODO: game rules
+         misc.name = "BattleArmor DropChute(Reuseable)";
+         misc.setInternalName("CLBADropChuteReuse");
+         misc.tonnage = 0.225f;
+         misc.criticals = 1;
+         misc.flags = misc.flags.or(F_BA_EQUIPMENT).or(F_BADC).or(F_REUSABLE).andNot(F_MECH_EQUIPMENT)
+                 .andNot(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
+         misc.bv = 0;
+         misc.cost = COST_VARIABLE;
+         misc.introDate = 2869;
+         misc.techLevel.put(2869, TechConstants.T_CLAN_EXPERIMENTAL);
+         misc.techLevel.put(2875, TechConstants.T_CLAN_ADVANCED);
+         misc.availRating = new int[] { RATING_X ,RATING_E ,RATING_C ,RATING_C};
+         misc.techRating = RATING_D;
+         misc.rulesRefs = "348, TO";
+
+         return misc;
+     } 
+   
+      public static MiscType createISSmallNavalCommScannerSuite() {
         MiscType misc = new MiscType();
         misc.tonnage = 100;
         misc.cost = 50000000;
@@ -10164,7 +10462,6 @@ public class MiscType extends EquipmentType {
     public static MiscType createISBAFuelTank() {
         MiscType misc = new MiscType();
 
-        misc.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
         misc.name = "Fuel Tank";
         misc.setInternalName("ISBAFuelTank");
         misc.tonnage = 0.05f;
@@ -10173,10 +10470,16 @@ public class MiscType extends EquipmentType {
                 .andNot(F_TANK_EQUIPMENT).andNot(F_AERO_EQUIPMENT);
         misc.bv = 0;
         misc.cost = 500;
-        misc.introDate = 3051;
-        misc.techLevel.put(3051, misc.techLevel.get(3071));
-        misc.availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        misc.techRating = RATING_D;
+        misc.introDate = 2735;
+        misc.extinctDate = 2781;
+        misc.reintroDate = 3051;
+        misc.techLevel.put(2735, TechConstants.T_IS_EXPERIMENTAL);
+        misc.techLevel.put(2744, TechConstants.T_IS_ADVANCED);
+        misc.techLevel.put(3051, TechConstants.T_IS_EXPERIMENTAL);
+        misc.techLevel.put(3053, TechConstants.T_IS_TW_NON_BOX);
+        misc.availRating = new int[] { RATING_X ,RATING_E ,RATING_E ,RATING_E};
+        misc.techRating = RATING_C;
+        misc.rulesRefs = "255, TM";
 
         return misc;
     }
@@ -10184,7 +10487,6 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLBAFuelTank() {
         MiscType misc = new MiscType();
 
-        misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
         misc.name = "Fuel Tank";
         misc.setInternalName("CLBAFuelTank");
         misc.tonnage = 0.05f;
@@ -10194,7 +10496,8 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.cost = 500;
         misc.introDate = 2868;
-        misc.techLevel.put(2868, misc.techLevel.get(3071));
+        misc.techLevel.put(2868, TechConstants.T_CLAN_ADVANCED);
+        misc.techLevel.put(3053, TechConstants.T_CLAN_TW);
         misc.availRating = new int[] { RATING_X, RATING_E, RATING_B };
         misc.techRating = RATING_D;
 

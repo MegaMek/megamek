@@ -45,10 +45,11 @@ public class ISBAAPDS extends Weapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 50000;
-        introDate = 3134;
+        introDate = 3132;
         techLevel.put(3132, TechConstants.T_IS_EXPERIMENTAL);
         techLevel.put(3134, TechConstants.T_IS_ADVANCED);
         availRating = new int[] { RATING_X, RATING_X, RATING_X, RATING_E };
         techRating = RATING_E;
+        rulesRefs = "91, IO";
     }
 }

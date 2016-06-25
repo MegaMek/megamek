@@ -31,7 +31,7 @@ public class CLBALBX extends Weapon {
 
     public CLBALBX() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
+
         name = "Battle Armor LB-X AC";
         setInternalName(name);
         addLookupName("CLBALBX");

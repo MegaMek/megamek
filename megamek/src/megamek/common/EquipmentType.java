@@ -113,10 +113,10 @@ public class EquipmentType {
             "Heavy Ferro-Aluminum", "Light Ferro-Aluminum",
             "Vehicular Stealth", "Anti-Penetrative Ablation",
             "Heat-Dissipating", "Impact-Resistant", "Ballistic-Reinforced",
-            "Prototype Ferro-Aluminum", "BA Standard",
+            "Prototype Ferro-Aluminum", "BA Standard (Basic)",
             "BA Standard (Prototype)", "BA Advanced", "BA Stealth (Basic)",
-            "BA Stealth", "BA Stealth (Improved)", "BA Stealth (Prototype)",
-            "BA Fire Resistant", "BA Mimetic", "BA Reflective", "BA Reactive"};
+            "BA Stealth (Standard)", "BA Stealth (Improved)", "BA Stealth (Prototype)",
+            "BA Fire Resistant", "BA Mimetic", "BA Laser Reflective (Reflec/Glazed)", "BA Reactive (Blazer)"};
 
 
     public static final String[] structureNames = { "Standard", "Industrial",

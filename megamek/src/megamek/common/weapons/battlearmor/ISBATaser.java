@@ -61,7 +61,7 @@ public class ISBATaser extends AmmoWeapon {
         techLevel.put(3067, TechConstants.T_IS_ADVANCED);
         availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_E};
         techRating = RATING_E;
-        rulesRefs = "255, TM";
+        rulesRefs = "345, TO";
     }
 
     /*

@@ -54,7 +54,7 @@ public class CLBALightMortar extends Weapon {
         flags = flags.or(F_BALLISTIC).or(F_BURST_FIRE).or(F_BA_WEAPON)
                 .andNot(F_MECH_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);;
         introDate = 3060;
-        techLevel.put(3060, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3060, TechConstants.T_CLAN_EXPERIMENTAL);
         techLevel.put(3063, TechConstants.T_CLAN_TW);
         availRating = new int[] { RATING_X ,RATING_X ,RATING_C ,RATING_C};
         techRating = RATING_B;

@@ -57,6 +57,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Configuration;
 import megamek.common.Crew;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.EquipmentType;
@@ -219,6 +220,12 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             Messages.getString("CustomMechDialog.labCommander"), SwingConstants.RIGHT); //$NON-NLS-1$
 
     private JCheckBox chCommander = new JCheckBox();
+
+    private JLabel labHidden = new JLabel(
+            Messages.getString("CustomMechDialog.labHidden"), //$NON-NLS-1$
+            SwingConstants.RIGHT);
+
+    private JCheckBox chHidden = new JCheckBox();
 
     private JLabel labOffBoard = new JLabel(
             Messages.getString("CustomMechDialog.labOffBoard"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -565,6 +572,13 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         refreshDeployment();
 
+        if (clientgui.getClient().getGame().getOptions()
+                .booleanOption("hidden_units")) {
+            panDeploy.add(labHidden, GBC.std());
+            panDeploy.add(chHidden, GBC.eol());
+            chHidden.setSelected(entity.isHidden());
+        }
+
         if (eligibleForOffBoard) {
             panDeploy.add(labOffBoard, GBC.std());
             panDeploy.add(chOffBoard, GBC.eol());
@@ -656,6 +670,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             chDeployProne.setEnabled(false);
             chDeployHullDown.setEnabled(false);
             chCommander.setEnabled(false);
+            chHidden.setEnabled(false);
             chOffBoard.setEnabled(false);
             choOffBoardDirection.setEnabled(false);
             fldOffBoardDistance.setEnabled(false);
@@ -878,7 +893,6 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     public void optionClicked(DialogOptionComponent comp, IOption option,
             boolean state) {
-        // TODO : implement me!!!
     }
 
     public boolean isOkay() {
@@ -942,6 +956,20 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         choDeploymentZone.setSelectedIndex(entity.getStartingPos(false) + 1);
         
         choDeploymentRound.addItemListener(this);
+
+        chHidden.removeActionListener(this);
+        boolean enableHidden = true;
+        // Airborne units can't be hidden
+        if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
+            enableHidden = false;
+        }
+        // Landed dropships can't be hidden
+        if ((entity instanceof Dropship)) {
+            enableHidden = false;
+        }
+        labHidden.setEnabled(enableHidden);
+        chHidden.setEnabled(enableHidden);
+        chHidden.addActionListener(this);
     }
 
     /**
@@ -1016,6 +1044,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
             distance = sl.getValue();
             butOffBoardDistance.setText(Integer.toString(distance));
+            return;
+        }
+
+        if (actionEvent.getSource().equals(chHidden)) {
             return;
         }
 
@@ -1100,6 +1132,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                                 Messages.getString("CustomMechDialog.EnterCorrectHeight"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
+
+            entity.setHidden(chHidden.isSelected());
 
             if (chOffBoard.isSelected()) {
                 try {

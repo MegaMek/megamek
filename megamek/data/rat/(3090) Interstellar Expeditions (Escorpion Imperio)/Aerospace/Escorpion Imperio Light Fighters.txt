@@ -1,0 +1,12 @@
+Escorpion Imperio Light Fighters (3090)
+Guardian Fighter (Standard),1
+Light Strike Fighter Angel,2
+Medium Strike Fighter Defender,3
+Seydlitz SYD-21,4
+Sabre SB-27,5
+Spad SPD-502,6
+Chaeronea (Standard),5
+Issus (Standard),4
+Sulla Prime,3
+Avar Prime,2
+Batu Prime,1

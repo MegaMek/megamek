@@ -457,6 +457,24 @@ public class Tank extends Entity {
             return true;
         }
 
+        // Additional restrictions for hidden units
+        if (isHidden()) {
+            // Can't deploy in paved hexes
+            if (hex.containsTerrain(Terrains.PAVEMENT)
+                    || hex.containsTerrain(Terrains.ROAD)) {
+                return true;
+            }
+            // Can't deploy on a bridge
+            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation)
+                    && hex.containsTerrain(Terrains.BRIDGE)) {
+                return true;
+            }
+            // Can't deploy on the surface of water
+            if (hex.containsTerrain(Terrains.WATER) && (currElevation == 0)) {
+                return true;
+            }
+        }
+
         boolean hasFlotationHull = hasWorkingMisc(MiscType.F_FLOTATION_HULL);
         boolean isAmphibious = hasWorkingMisc(MiscType.F_FULLY_AMPHIBIOUS);
 
@@ -469,7 +487,8 @@ public class Tank extends Entity {
                                     && !hasFlotationHull && !isAmphibious)
                             || hex.containsTerrain(Terrains.JUNGLE)
                             || (hex.terrainLevel(Terrains.MAGMA) > 1)
-                            || (hex.terrainLevel(Terrains.ROUGH) > 1);
+                            || (hex.terrainLevel(Terrains.ROUGH) > 1)
+                            || (hex.terrainLevel(Terrains.RUBBLE) > 5);
                 } else {
                     return (hex.terrainLevel(Terrains.WOODS) > 1)
                             || ((hex.terrainLevel(Terrains.WATER) > 0)
@@ -506,7 +525,8 @@ public class Tank extends Entity {
                     return hex.containsTerrain(Terrains.WOODS)
                             || hex.containsTerrain(Terrains.JUNGLE)
                             || (hex.terrainLevel(Terrains.MAGMA) > 1)
-                            || (hex.terrainLevel(Terrains.ROUGH) > 1);
+                            || (hex.terrainLevel(Terrains.ROUGH) > 1)
+                            || (hex.terrainLevel(Terrains.RUBBLE) > 5);
                 } else {
                     return hex.containsTerrain(Terrains.WOODS)
                             || hex.containsTerrain(Terrains.JUNGLE)
@@ -3660,7 +3680,7 @@ public class Tank extends Entity {
 
     @Override
     public boolean isEjectionPossible() {
-        return game.getOptions().booleanOption("vehicles_can_eject")
+        return game.getOptions().booleanOption(OptionsConstants.AGM_VEHICLES_CAN_EJECT)
                 && getCrew().isActive()
                 && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
     }

@@ -82,7 +82,6 @@ import megamek.common.util.StringUtil;
 public abstract class BotClient extends Client {
 
     private static final HexHasPathToCenterCache hexHasPathToCenterCache = new HexHasPathToCenterCache();
-    private static Coords boardCenter = null;
 
     // a frame, to show stuff in
     public JFrame frame;
@@ -161,6 +160,11 @@ public abstract class BotClient extends Client {
                             Compute.getHighestExpectedDamage(game,
                                     evt.getWAAs(), true);
                         sendAPDSAssignCFRResponse(evt.getWAAs().indexOf(waa));
+                        break;
+                    case Packet.COMMAND_CFR_HIDDEN_PBS:
+                        // TODO: Punt for now; this will need to be updated for
+                        // bot to make pointblank shots with hidden units
+                        sendHiddenPBSCFRResponse(null);
                         break;
                 }
             }
@@ -746,32 +750,33 @@ public abstract class BotClient extends Client {
         }
 
         // Don't take too long.
-        final int timeLimit = PreferenceManager.getClientPreferences().getMaxPathfinderTime();
+        final int timeLimit = PreferenceManager.getClientPreferences()
+                                               .getMaxPathfinderTime();
 
-        // Find the center of the board.
-        synchronized (this) {
-            if (boardCenter == null) {
-                boardCenter = board.getCenter();
-            }
-        }
+        final Coords boardCenter = board.getCenter();
 
-        // Start the path assuming forward movement, but if the unit is jump-capable, use jump movement.
+        // Start the path assuming forward movement, but if the unit is
+        // jump-capable, use jump movement.
         MovePath pathToCenter = new MovePath(game, entity);
         MovePath.MoveStepType type = MovePath.MoveStepType.FORWARDS;
         if (entity.getOriginalJumpMP() > 0) {
             type = MovePath.MoveStepType.START_JUMP;
         }
 
-        // Check the cache to see if we've already tested this hex for this movement mode.
+        // Check the cache to see if we've already tested this hex for this
+        // movement mode.
         HexHasPathToCenterCache.Key key =
-                new HexHasPathToCenterCache.Key(entity.getPosition().toFriendlyString(), entity.getMovementMode());
+                new HexHasPathToCenterCache.Key(entity.getPosition()
+                                                      .toFriendlyString(),
+                                                entity.getMovementMode());
         Boolean hasPath = hexHasPathToCenterCache.hasPathToCenter(key);
         if (hasPath != null) {
             return hasPath;
         }
 
         // Find the shortest path.
-        ShortestPathFinder shortestPathFinder = ShortestPathFinder.newInstanceOfAStar(boardCenter, type, game);
+        ShortestPathFinder shortestPathFinder =
+                ShortestPathFinder.newInstanceOfAStar(boardCenter, type, game);
         AbstractPathFinder.StopConditionTimeout<MovePath> timeoutCondition =
                 new AbstractPathFinder.StopConditionTimeout<>(timeLimit);
         shortestPathFinder.addStopCondition(timeoutCondition);

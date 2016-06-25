@@ -51,13 +51,13 @@ import javax.swing.filechooser.FileFilter;
 
 import megamek.MegaMek;
 import megamek.client.Client;
-import megamek.client.RandomNameGenerator;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.princess.Princess;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.IMegaMekGUI;
 import megamek.client.ui.Messages;
+import megamek.client.ui.swing.skinEditor.SkinEditorMainGUI;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.common.Compute;
 import megamek.common.Configuration;
@@ -197,6 +197,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         JButton connectB;
         JButton botB;
         JButton editB;
+        JButton skinEditB;
         JButton scenB;
         JButton loadB;
         JButton quitB;
@@ -221,6 +222,9 @@ public class MegaMekGUI implements IMegaMekGUI {
         editB = new JButton(Messages.getString("MegaMek.MapEditor.label")); //$NON-NLS-1$
         editB.setActionCommand("fileBoardNew"); //$NON-NLS-1$
         editB.addActionListener(actionListener);
+        skinEditB = new JButton(Messages.getString("MegaMek.SkinEditor.label")); //$NON-NLS-1$
+        skinEditB.setActionCommand("fileSkinNew"); //$NON-NLS-1$
+        skinEditB.addActionListener(actionListener);        
         quitB = new JButton(Messages.getString("MegaMek.Quit.label")); //$NON-NLS-1$
         quitB.setActionCommand("quit"); //$NON-NLS-1$
         quitB.addActionListener(actionListener);
@@ -257,7 +261,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.gridwidth = 1;
-        c.gridheight = 8;
+        c.gridheight = 9;
         addBag(panTitle, gridbag, c);
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = .05;
@@ -279,6 +283,8 @@ public class MegaMekGUI implements IMegaMekGUI {
         addBag(botB, gridbag, c);
         c.gridy++;
         addBag(editB, gridbag, c);
+        c.gridy++;
+        addBag(skinEditB, gridbag, c);
         c.gridy++;
         addBag(quitB, gridbag, c);
         frame.validate();
@@ -306,6 +312,21 @@ public class MegaMekGUI implements IMegaMekGUI {
         controller.boardEditor = editor;
         launch(editor.getFrame());
         editor.boardNew();
+    }
+    
+    void showSkinEditor() {
+        int response = JOptionPane.showConfirmDialog(frame, 
+                "The skin editor is currently "
+                + "in beta and is a work in progress.  There are likely to "
+                + "be issues. \nContinue?", "Continue?",
+                JOptionPane.OK_CANCEL_OPTION);
+        if (response == JOptionPane.CANCEL_OPTION) {
+            return;
+        }
+        SkinEditorMainGUI skinEditor = new SkinEditorMainGUI();
+        skinEditor.initialize();
+        skinEditor.switchPanel(IGame.Phase.PHASE_MOVEMENT);
+        launch(skinEditor.getFrame());        
     }
 
     /**
@@ -489,7 +510,6 @@ public class MegaMekGUI implements IMegaMekGUI {
         // This normally happens in the deployment phase in Client, but
         // if we are loading a game, this phase may not be reached
         MechFileParser.dispose();
-        RandomNameGenerator.getInstance().dispose();
         // We must do this last, as the name and unit generators can create
         // a new instance if they are running
         MechSummaryCache.dispose();
@@ -971,6 +991,9 @@ public class MegaMekGUI implements IMegaMekGUI {
         public void actionPerformed(ActionEvent ev) {
             if ("fileBoardNew".equalsIgnoreCase(ev.getActionCommand())) { //$NON-NLS-1$
                 showEditor();
+            }
+            if ("fileSkinNew".equalsIgnoreCase(ev.getActionCommand())) { //$NON-NLS-1$
+                showSkinEditor();
             }
             if ("fileBoardOpen".equalsIgnoreCase(ev.getActionCommand())) { //$NON-NLS-1$
                 showEditorOpen();

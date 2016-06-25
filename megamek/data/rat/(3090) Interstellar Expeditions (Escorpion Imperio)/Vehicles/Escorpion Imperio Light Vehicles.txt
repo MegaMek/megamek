@@ -1,0 +1,12 @@
+Escorpion Imperio Light Vehicles (3090)
+J. Edgar Light Hover Tank (ICE),1
+Galleon Light Tank GAL-100,2
+Heavy Tracked APC (Standard),3
+Pegasus Scout Hover Tank (Standard),4
+Lightning Attack Hovercraft (Standard),5
+Scorpion Light Tank (Standard),6
+Main Gauche Light Support Tank (XL),5
+Odin Scout Tank (Standard),4
+Mithras Light Tank (Standard),3
+Svantovit Infantry Fighting Vehicle (Standard),2
+Zorya Light Tank (Standard),1

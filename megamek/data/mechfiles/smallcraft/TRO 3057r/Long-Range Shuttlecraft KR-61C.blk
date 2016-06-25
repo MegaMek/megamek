@@ -2,75 +2,103 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 SmallCraft
 </UnitType>
+
 <Name>
 Long-Range Shuttlecraft
 </Name>
+
 <Model>
 KR-61C
 </Model>
+
 <Tonnage>
 100
 </Tonnage>
+
 <SafeThrust>
 4
 </SafeThrust>
+
 <Armor>
 50
 31
 31
 40
 </Armor>
+
 <Nose Equipment>
 </Nose Equipment>
+
 <Left Side Equipment>
 </Left Side Equipment>
+
 <Right Side Equipment> 
 </Right Side Equipment>
+
 <Aft Equipment> 
 </Aft Equipment>
+
 <structural_integrity>
 6
 </structural_integrity>
+
 <heatsinks>
 0
 </heatsinks>
+
 <sink_type>
 0
 </sink_type>
+
 <fuel>
 2000
 </fuel>
+
 <type>
 Clan Level 2
 </type>
+
 <year>
 2851
 </year>
+
 <internal_type>
 0
 </internal_type>
+
+<designtype>
+0
+</designtype>
+
 <armor_type>
 0
 </armor_type>
+
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 aerodyne
 </motion_type>
+
 <transporters>
 CargoBay:1:0
 </transporters>
+
 <crew>
 3
 </crew>
+
 <passengers>
 2
-</passengers>
+</passengers>

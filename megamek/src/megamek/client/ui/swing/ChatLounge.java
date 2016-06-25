@@ -89,6 +89,7 @@ import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.ui.Messages;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
+import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.BattleArmorHandlesTank;
@@ -239,13 +240,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * Creates a new chat lounge for the clientgui.getClient().
      */
     public ChatLounge(ClientGUI clientgui) {
-        super(clientgui);
+        super(clientgui, SkinSpecification.UIComponents.ChatLounge.getComp(),
+                SkinSpecification.UIComponents.ChatLoungeDoneButton.getComp());
 
         // Create a tabbed panel to hold our components.
         panTabs = new JTabbedPane();
         Font tabPanelFont = new Font("Dialog", Font.BOLD, //$NON-NLS-1$
                 GUIPreferences.getInstance().getInt(
-                        "AdvancedChatLoungeTabFontSize"));
+                        "AdvancedChatLoungeTabFontSize")); //$NON-NLS-1$
         panTabs.setFont(tabPanelFont);
 
         try {
@@ -265,11 +267,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         lblMapSummary = new JLabel("");
         lblGameYear = new JLabel("");
         lblGameYear.setToolTipText(Messages
-                .getString("ChatLounge.GameYearLabelToolTip"));
+                .getString("ChatLounge.GameYearLabelToolTip")); //$NON-NLS-1$
 
         lblTechLevel = new JLabel("");
         lblTechLevel.setToolTipText(Messages
-                .getString("ChatLounge.TechLevelLabelToolTip"));
+                .getString("ChatLounge.TechLevelLabelToolTip")); //$NON-NLS-1$
 
         butCompact = new JToggleButton(
                 Messages.getString("ChatLounge.butCompact")); //$NON-NLS-1$
@@ -1233,6 +1235,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         temp.replaceBoardWithRandom(MapSettings.BOARD_SURPRISE);
         IBoard[] sheetBoards = new IBoard[temp.getMapWidth()
                 * temp.getMapHeight()];
+        List<Boolean> rotateBoard = new ArrayList<>();
         for (int i = 0; i < (temp.getMapWidth() * temp.getMapHeight()); i++) {
             sheetBoards[i] = new Board();
             String name = temp.getBoardsSelectedVector().get(i);
@@ -1252,11 +1255,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         + ".board"));
                 BoardUtilities.flip(sheetBoards[i], isRotated, isRotated);
             }
+            rotateBoard.add(isRotated);
         }
 
         IBoard newBoard = BoardUtilities.combine(temp.getBoardWidth(),
                 temp.getBoardHeight(), temp.getMapWidth(), temp.getMapHeight(),
-                sheetBoards, temp.getMedium());
+                sheetBoards, rotateBoard, temp.getMedium());
         gameBoardMap.setBoard(newBoard);
         gameBoardPreviewW.setVisible(true);
 
@@ -1809,6 +1813,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             value += ", aboard " + loader.getShortName() + "";
         }
 
+        if (entity.isHidden()) {
+            value += " (" + Messages.getString("ChatLounge.hidden") + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        }
+        
         if (entity.isOffBoard()) {
             value += " (" + Messages.getString("ChatLounge.deploysOffBoard") + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         } else if (entity.getDeployRound() > 0) {
@@ -1911,8 +1919,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
 
         }
+
+        if (entity.isHidden()) {
+            value += Messages.getString("ChatLounge.hidden") + "<br>"; //$NON-NLS-1$ ; //$NON-NLS-1$
+        }
+
         if (entity.isOffBoard()) {
-            value += Messages.getString("ChatLounge.deploysOffBoard"); //$NON-NLS-1$ //$NON-NLS-2$
+            value += Messages.getString("ChatLounge.deploysOffBoard"); //$NON-NLS-1$
         } else if (entity.getDeployRound() > 0) {
             value += Messages.getString("ChatLounge.deploysAfterRound") + entity.getDeployRound(); //$NON-NLS-1$
             if (entity.getStartingPos(false) != Board.START_NONE) {
@@ -1999,6 +2012,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     + Messages.getString("ChatLounge.pquirk") : ""); //$NON-NLS-1$ //$NON-NLS-2$
             String negQuirks = (negQuirkCount > 0 ? " <" + negQuirkCount //$NON-NLS-1$
                     + Messages.getString("ChatLounge.nquirk") : ""); //$NON-NLS-1$
+            String hidden = ((entity.isHidden()) ? Messages
+                    .getString("ChatLounge.hidden") : ""); //$NON-NLS-1$
             String offBoard = ((entity.isOffBoard()) ? Messages
                     .getString("ChatLounge.deploysOffBoard") : ""); //$NON-NLS-1$
             String deployRound = ((entity.getDeployRound() > 0) ? Messages
@@ -2007,7 +2022,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             value = Messages.getString("ChatLounge.EntityListEntry1", //$NON-NLS-1$
                     new Object[] { entity.getOwner().getName(), gunnery,
                             piloting, advantages, maneiDomini, unitClass,
-                            posQuirks, negQuirks, offBoard, deployRound });
+                            posQuirks, negQuirks, offBoard, deployRound, hidden });
         } else {
             Integer piloting = new Integer(entity.getCrew().getPiloting());
             String advantages = (crewAdvCount > 0 ? " <" + crewAdvCount //$NON-NLS-1$
@@ -2019,6 +2034,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             String negQuirks = (negQuirkCount > 0 ? " <" + negQuirkCount //$NON-NLS-1$
                     + Messages.getString("ChatLounge.nquirk") : ""); //$NON-NLS-1$
             Integer battleValue = new Integer(entity.calculateBattleValue());
+            String hidden = ((entity.isHidden()) ? Messages
+                    .getString("ChatLounge.hidden") : ""); //$NON-NLS-1$
             String offBoard = ((entity.isOffBoard()) ? Messages
                     .getString("ChatLounge.deploysOffBoard") : ""); //$NON-NLS-1$ //$NON-NLS-2$
             String deployRound = ((entity.getDeployRound() > 0) ? Messages
@@ -2032,7 +2049,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                             entity.getDisplayName(), gunnery, piloting,
                                     advantages, maneiDomini, posQuirks,
                                     negQuirks, battleValue, strTreeView,
-                                    offBoard, deployRound, valid });
+                                    offBoard, deployRound, hidden, valid });
         }
         return value;
     }
@@ -2364,8 +2381,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
     }
 
-    public void mechCamo(Entity entity) {
-        boolean editable = clientgui.getBots().get(entity.getOwner().getName()) != null;
+    public void mechCamo(Vector<Entity> entities) {
+        if (entities.size() < 0) {
+            return;
+        }
+        Entity entity = entities.get(0);
+        boolean editable;
+        editable = clientgui.getBots().get(entity.getOwner().getName()) != null;
         Client c;
         if (editable) {
             c = clientgui.getBots().get(entity.getOwner().getName());
@@ -2382,7 +2404,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         mcd.setVisible(true);
         if (editable && mcd.isSelect()) {
             // send changes
-            c.sendUpdateEntity(entity);
+            for (Entity ent : entities) {
+                if (mcd.category.equals(IPlayer.NO_CAMO)) {
+                    ent.setCamoCategory(null);
+                    ent.setCamoFileName(null);
+                } else {
+                    ent.setCamoCategory(mcd.category);
+                    ent.setCamoFileName(mcd.filename);
+                }
+                c.sendUpdateEntity(ent);
+            }
         }
     }
 
@@ -2997,9 +3028,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         clientgui.getBoardView().removeBoardViewListener(this);
     }
 
-    // TODO Is there a better solution?
-    // This is required because the ChatLounge adds the listener to the
-    // MechSummaryCache that must be removed explicitly.
+    /*
+     *  This is required because the ChatLounge adds the listener to the
+     *  MechSummaryCache that must be removed explicitly.
+     */
     public void die() {
         MechSummaryCache.getInstance().removeListener(mechSummaryCacheListener);
     }
@@ -3516,7 +3548,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             } else if (command.equalsIgnoreCase("DAMAGE")) {
                 mechEdit(entity);
             } else if (command.equalsIgnoreCase("INDI_CAMO")) {
-                mechCamo(entity);
+                mechCamo(entities);
             } else if (command.equalsIgnoreCase("CONFIGURE")) {
                 customizeMech(entity);
             } else if (command.equalsIgnoreCase("DELETE")) {
@@ -3866,14 +3898,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     menuItem.addActionListener(this);
                     menuItem.setEnabled(isOwner || isBot);
                     popup.add(menuItem);
-
-                    menuItem = new JMenuItem("Set individual camo");
-                    menuItem.setActionCommand("INDI_CAMO");
-                    menuItem.addActionListener(this);
-                    menuItem.setEnabled(isOwner || isBot);
-                    menuItem.setMnemonic(KeyEvent.VK_I);
-                    popup.add(menuItem);
                 }
+
+                menuItem = new JMenuItem("Set individual camo");
+                menuItem.setActionCommand("INDI_CAMO");
+                menuItem.addActionListener(this);
+                menuItem.setEnabled(isOwner || isBot);
+                menuItem.setMnemonic(KeyEvent.VK_I);
+                popup.add(menuItem);
+
                 menuItem = new JMenuItem("Delete...");
                 menuItem.setActionCommand("DELETE");
                 menuItem.addActionListener(this);

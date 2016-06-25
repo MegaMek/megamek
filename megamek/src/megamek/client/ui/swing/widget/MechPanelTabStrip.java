@@ -32,11 +32,6 @@ public class MechPanelTabStrip extends PicMap {
     private int activeTab = 0;
     UnitDisplay md;
 
-    private Polygon firstTab = new Polygon(new int[] { 0, 43, 59, 59, 0 },
-            new int[] { 0, 0, 16, 17, 17 }, 5);
-    private int[] pointsX = new int[] { 0, 43, 59, 59, 13, 0 };
-    private int[] pointsY = new int[] { 0, 0, 16, 17, 17, 4 };
-
     public MechPanelTabStrip(UnitDisplay md) {
         super();
         this.md = md;
@@ -61,24 +56,33 @@ public class MechPanelTabStrip extends PicMap {
     }
 
     private void setImages() {
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler
+                .getUnitDisplaySkin();
         MediaTracker mt = new MediaTracker(this);
         Toolkit tk = getToolkit();
-        idleImage[0] = tk.getImage(new File(Configuration.widgetsDir(), "tab_general_idle.gif").toString()); //$NON-NLS-1$
-        idleImage[1] = tk.getImage(new File(Configuration.widgetsDir(), "tab_pilot_idle.gif").toString()); //$NON-NLS-1$
-        idleImage[2] = tk.getImage(new File(Configuration.widgetsDir(), "tab_armor_idle.gif").toString()); //$NON-NLS-1$
-        idleImage[3] = tk.getImage(new File(Configuration.widgetsDir(), "tab_systems_idle.gif").toString()); //$NON-NLS-1$
-        idleImage[4] = tk.getImage(new File(Configuration.widgetsDir(), "tab_weapon_idle.gif").toString()); //$NON-NLS-1$
-        idleImage[5] = tk.getImage(new File(Configuration.widgetsDir(), "tab_extras_idle.gif").toString()); //$NON-NLS-1$
-        activeImage[0] = tk.getImage(new File(Configuration.widgetsDir(), "tab_general_active.gif").toString()); //$NON-NLS-1$
-        activeImage[1] = tk.getImage(new File(Configuration.widgetsDir(), "tab_pilot_active.gif").toString()); //$NON-NLS-1$
-        activeImage[2] = tk.getImage(new File(Configuration.widgetsDir(), "tab_armor_active.gif").toString()); //$NON-NLS-1$
-        activeImage[3] = tk.getImage(new File(Configuration.widgetsDir(), "tab_systems_active.gif").toString()); //$NON-NLS-1$
-        activeImage[4] = tk.getImage(new File(Configuration.widgetsDir(), "tab_weapon_active.gif").toString()); //$NON-NLS-1$
-        activeImage[5] = tk.getImage(new File(Configuration.widgetsDir(), "tab_extras_active.gif").toString()); //$NON-NLS-1$
-        idleCorner = tk.getImage(new File(Configuration.widgetsDir(), "idle_corner.gif").toString()); //$NON-NLS-1$
-        selectedCorner = tk.getImage(new File(Configuration.widgetsDir(), "active_corner.gif").toString()); //$NON-NLS-1$
+        idleImage[0] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getGeneralTabIdle()).toString());
+        idleImage[1] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getPilotTabIdle()).toString());
+        idleImage[2] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getArmorTabIdle()).toString());
+        idleImage[3] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getSystemsTabIdle()).toString());
+        idleImage[4] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getWeaponsTabIdle()).toString());
+        idleImage[5] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getExtrasTabIdle()).toString());
+        activeImage[0] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getGeneralTabActive()).toString());
+        activeImage[1] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getPilotTabActive()).toString());
+        activeImage[2] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getArmorTabActive()).toString());
+        activeImage[3] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getSystemsTabActive()).toString());
+        activeImage[4] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getWeaponsTabActive()).toString());
+        activeImage[5] = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getExtraTabActive()).toString());
+        idleCorner = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getCornerIdle()).toString());
+        selectedCorner = tk.getImage(new File(Configuration.widgetsDir(), udSpec.getCornerActive()).toString());
+
+        // If we don't flush, we might have stale data
+        idleCorner.flush();
+        selectedCorner.flush();
 
         for (int i = 0; i < 6; i++) {
+            // If we don't flush, we might have stale data
+            idleImage[i].flush();
+            activeImage[i].flush();
             mt.addImage(idleImage[i], 0);
             mt.addImage(activeImage[i], 0);
         }
@@ -92,24 +96,45 @@ public class MechPanelTabStrip extends PicMap {
         if (mt.isErrorID(0)) {
             System.out.println("TabStrip: Could Not load Image."); //$NON-NLS-1$
         }
+
+        for (int i = 0; i < 6; i++) {
+            if (idleImage[i].getWidth(null) != activeImage[i].getWidth(null)) {
+                System.out.println("TabStrip Warning: idleImage and "
+                        + "activeImage do not match widths for image " + i);
+            }
+            if (idleImage[i].getHeight(null) != activeImage[i].getHeight(null)) {
+                System.out.println("TabStrip Warning: idleImage and "
+                        + "activeImage do not match heights for image " + i);
+            }
+        }
+        if (idleCorner.getWidth(null) != selectedCorner.getWidth(null)) {
+            System.out.println("TabStrip Warning: idleCorner and "
+                    + "selectedCorner do not match widths!");
+        }
+        if (idleCorner.getHeight(null) != selectedCorner.getHeight(null)) {
+            System.out.println("TabStrip Warning: idleCorner and "
+                    + "selectedCorner do not match heights!");
+        }
     }
 
     private void setAreas() {
+        int cornerWidth = idleCorner.getWidth(null);
 
-        int stepX = 47;
-
-        tabs[0] = new PMPicPolygonalArea(firstTab, createImage(47, 18));
-        for (int i = 1; i < 5; i++) {
-            tabs[i] = new PMPicPolygonalArea(new Polygon(pointsX, pointsY, 6),
-                    createImage(47, 18));
+        for (int i = 0; i < idleImage.length; i++) {
+            int width = idleImage[i].getWidth(null);
+            int height = idleImage[i].getHeight(null);
+            int[] pointsX = new int[] { 0, width, width + cornerWidth, 0 };
+            int[] pointsY = new int[] { 0, 0, height, height };
+            tabs[i] = new PMPicPolygonalArea(new Polygon(pointsX, pointsY, 4),
+                    createImage(width, height));
         }
 
-        tabs[5] = new PMPicPolygonalArea(new Polygon(pointsX, pointsY, 6),
-                createImage(60, 18));
-        for (int i = 0; i < 6; i++) {
+        int cumWidth = 0;
+        for (int i = 0; i < idleImage.length; i++) {
             drawIdleImage(i);
-            tabs[i].translate(i * stepX, 0);
+            tabs[i].translate(cumWidth, 0);
             addElement(tabs[i]);
+            cumWidth += idleImage[i].getWidth(null);
         }
     }
 

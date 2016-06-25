@@ -363,11 +363,19 @@ public class ArmlessMechMapSet implements DisplayMapSet {
     }
 
     private void setBackGround() {
-        Image tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), "tile.gif").toString()); //$NON-NLS-1$
+        UnitDisplaySkinSpecification udSpec = SkinXMLHandler
+                .getUnitDisplaySkin();
+
+        Image tile = comp.getToolkit()
+                .getImage(
+                        new File(Configuration.widgetsDir(), udSpec
+                                .getBackgroundTile()).toString());
         PMUtil.setImage(tile, comp);
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
-        tile = comp.getToolkit().getImage(new File(Configuration.widgetsDir(), "bg_mech.gif").toString()); //$NON-NLS-1$
+        tile = comp.getToolkit().getImage(
+                new File(Configuration.widgetsDir(), udSpec.getMechOutline())
+                        .toString());
         PMUtil.setImage(tile, comp);
         b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_CENTER
                 | BackGroundDrawer.HALIGN_CENTER;

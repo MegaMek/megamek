@@ -1,0 +1,12 @@
+Escorpion Imperio Keshik Medium Mechs (3090)
+Initiate INI-02,1
+Sentinel STN-3L,2
+Lightray LGH-4Y,3
+Wyvern WVE-5N,4
+Lynx LNX-9Q,5
+Griffin IIC (Standard),6
+Shadow Hawk IIC (Standard),5
+Hunchback IIC (Standard),4
+Grendel (Mongrel) Prime,3
+Fenris (Ice Ferret) Prime,2
+Ryoken (Stormcrow) Prime,1

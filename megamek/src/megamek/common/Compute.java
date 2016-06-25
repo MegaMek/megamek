@@ -17,9 +17,11 @@ package megamek.common;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.Building.BasementType;
@@ -43,6 +45,7 @@ import megamek.common.weapons.ArtilleryCannonWeapon;
 import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.HAGWeapon;
 import megamek.common.weapons.InfantryAttack;
+import megamek.common.weapons.MGWeapon;
 import megamek.common.weapons.MekMortarWeapon;
 import megamek.common.weapons.infantry.InfantryWeapon;
 import megamek.server.Server;
@@ -1023,6 +1026,22 @@ public class Compute {
             if (isSwarmOrLegAttack) {
                 range = RangeType.RANGE_OUT;
             }
+
+            // MGs lack range for LOS Range, but don't have F_DIRECT_FIRE flag
+            if (wtype instanceof MGWeapon) {
+                range = RangeType.RANGE_OUT;
+            }
+
+            // AMS lack range for LOS Range, but don't have F_DIRECT_FIRE flag
+            if (wtype.hasFlag(WeaponType.F_AMS)) {
+                range = RangeType.RANGE_OUT;
+            }
+
+            // Flamers lack range for LOS Range, but don't have F_DIRECT_FIRE
+            if (wtype.hasFlag(WeaponType.F_FLAMER)) {
+                range = RangeType.RANGE_OUT;
+            }
+
             int longRange = wtype.getRanges(weapon)[RangeType.RANGE_LONG];
             // No Missiles or Direct Fire Ballistics with range < 13 
             if (wtype.hasFlag(WeaponType.F_MISSILE)
@@ -1034,8 +1053,8 @@ public class Compute {
             }
             // No Direct Fire Energy or Pulse with range < 7            
             if (wtype.hasFlag(WeaponType.F_PULSE)
-                && (wtype.hasFlag(WeaponType.F_ENERGY)
-                    || wtype.hasFlag(WeaponType.F_DIRECT_FIRE))) {
+                || (wtype.hasFlag(WeaponType.F_ENERGY)
+                    && wtype.hasFlag(WeaponType.F_DIRECT_FIRE))) {
                 if (longRange < 7) {
                     range = RangeType.RANGE_OUT;
                 }
@@ -1953,9 +1972,8 @@ public class Compute {
 
         int primaryTarget = Entity.NONE;
         boolean primaryInFrontArc = false;
-        // Keeps track of the number of targets the attacker has.  Starts at 
-        //  one, because we're passed a target
-        int countTargets = 1;
+        // Track # of targets, for secondary modifiers w/ multi-crew vehicles
+        Set<Integer> targIds = new HashSet<>();
         for (Enumeration<EntityAction> i = game.getActions(); i
                 .hasMoreElements(); ) {
             Object o = i.nextElement();
@@ -1964,10 +1982,9 @@ public class Compute {
             }
             WeaponAttackAction prevAttack = (WeaponAttackAction) o;
             if (prevAttack.getEntityId() == attacker.getId()) {
-                // Count how many targets we have for proper secondary modifiers
-                // for multi-crew vehicles
+                // Don't add id of current target, as it gets counted elsewhere
                 if (prevAttack.getTargetId() != target.getTargetId()) {
-                    countTargets++;
+                    targIds.add(prevAttack.getTargetId());
                 }
                 // first front arc target is our primary.
                 // if first target is non-front, and either a later target or
@@ -1998,15 +2015,18 @@ public class Compute {
             }
         }
 
+        // # of targets, +1 for the passed target
+        int countTargets = 1 + targIds.size();
+
         if (game.getOptions().booleanOption("tacops_tank_crews")
-            && attacker instanceof Tank) {
+            && (attacker instanceof Tank)) {
 
             // If we are a tank, and only have 1 crew then we have some special
             //  restrictions
             if (countTargets > 1 && attacker.getCrew().getSize() == 1) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                     "Vehicles with only 1 crewman may not attack " +
-                                     "secondary targets");
+                        "Vehicles with only 1 crewman may not attack "
+                                + "secondary targets");
             }
             // If we are a tank, we can have Crew Size - 1 targets before 
             //  incurring a secondary target penalty (or crew size - 2 secondary 
@@ -3338,7 +3358,7 @@ public class Compute {
      * specified entity
      */
     public static boolean isInArc(IGame game, int attackerId, int weaponId,
-                                  Targetable t) {
+            Targetable t) {
         Entity ae = game.getEntity(attackerId);
         if ((ae instanceof Mech)
             && (((Mech) ae).getGrappled() == t.getTargetId())) {
@@ -4964,25 +4984,25 @@ public class Compute {
     }
 
     /**
-     * scatter from hex according to dive bombing rules (1d6 of scatter
-     * distance)
+     * scatter from hex according to dive bombing rules (based on MoF)
      *
      * @param coords The <code>Coords</code> to scatter from
-     * @return the <code>Coords</code> scattered to
+     * @param moF The margin of failure, which deterimines scatter distance
+     * @return the <code>Coords</code> scattered to and distance (moF)
      */
-    public static Coords scatterDiveBombs(Coords coords) {
-        return Compute.scatter(coords, Compute.d6());
+    public static Coords scatterDiveBombs(Coords coords, int moF) {
+        return Compute.scatter(coords, moF);
     }
 
     /**
-     * scatter from hex according to direct fire artillery rules (1d6 of scatter
-     * distance)
+     * scatter from hex according to direct fire artillery rules (based on MoF)
      *
      * @param coords The <code>Coords</code> to scatter from
+     * @param moF The margin of failure, which deterimines scatter distance
      * @return the <code>Coords</code> scattered to
      */
-    public static Coords scatterDirectArty(Coords coords) {
-        return Compute.scatter(coords, Compute.d6());
+    public static Coords scatterDirectArty(Coords coords, int moF) {
+        return Compute.scatter(coords, moF);
     }
 
     /**
@@ -5455,6 +5475,37 @@ public class Compute {
             }
         }
         return entities;
+    }
+
+    public static boolean isInUrbanEnvironment(IGame game, Coords unitPOS) {
+        IHex unitHex = game.getBoard().getHex(unitPOS);
+
+        if (unitHex.containsTerrain(Terrains.PAVEMENT)
+                || unitHex.containsTerrain(Terrains.BUILDING)
+                || unitHex.containsTerrain(Terrains.RUBBLE)) {
+            return true;
+        }
+
+        // loop through adjacent hexes
+        for (int dir = 0; dir <= 5; dir++) {
+            Coords adjCoords = unitPOS.translated(dir);
+            IHex adjHex = game.getBoard().getHex(adjCoords);
+
+            if (!game.getBoard().contains(adjCoords)) {
+                continue;
+            }
+            if (unitPOS.equals(adjCoords)) {
+                continue;
+            }
+
+            // hex pavement or building?
+            if (adjHex.containsTerrain(Terrains.PAVEMENT)
+                    || adjHex.containsTerrain(Terrains.BUILDING)
+                    || adjHex.containsTerrain(Terrains.RUBBLE)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean isAirToGround(Entity attacker, Targetable target) {

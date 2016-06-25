@@ -219,8 +219,7 @@ public class SharedUtility {
                     lastPos, curPos, lastElevation, isPavementStep);
             checkNag(rollTarget, nagReport, psrList);
 
-            // check if we used more MPs than the Mech/Vehicle would have in
-            // normal gravity
+            // check if used more MPs than Mech/Vehicle would have w/o gravity
             if (!i.hasMoreElements() && !firstStep) {
                 if ((entity instanceof Mech) || (entity instanceof VTOL)) {
                     if ((moveType == EntityMovementType.MOVE_WALK)
@@ -233,12 +232,22 @@ public class SharedUtility {
                             checkNag(rollTarget, nagReport, psrList);
                         }
                     } else if (moveType == EntityMovementType.MOVE_JUMP) {
+                        int origWalkMP = entity.getWalkMP(false, false);
+                        int gravWalkMP = entity.getWalkMP();
                         if (step.getMpUsed() > entity.getJumpMP(false)) {
                             rollTarget = entity.checkMovedTooFast(step, overallMoveType);
                             checkNag(rollTarget, nagReport, psrList);
-                        } else if (game.getPlanetaryConditions().getGravity() > 1) {
+                        } else if ((game.getPlanetaryConditions().getGravity() > 1)
+                                && ((origWalkMP - gravWalkMP) > 0)) {
                             rollTarget = entity.getBasePilotingRoll(md.getLastStepMovementType());
                             entity.addPilotingModifierForTerrain(rollTarget, step);
+                            int gravMod = game.getPlanetaryConditions()
+                                    .getGravityPilotPenalty();
+                            if ((gravMod != 0) && !game.getBoard().inSpace()) {
+                                rollTarget.addModifier(gravMod, game
+                                        .getPlanetaryConditions().getGravity()
+                                        + "G gravity");
+                            }
                             rollTarget.append(new PilotingRollData(entity.getId(), 0, "jumped in high gravity"));
                             SharedUtility.checkNag(rollTarget, nagReport, psrList);
                         }
@@ -293,17 +302,15 @@ public class SharedUtility {
                 checkNag(rollTarget, nagReport, psrList);
             }
 
+            IHex lastHex = game.getBoard().getHex(lastPos);
             if (((step.getType() == MoveStepType.BACKWARDS)
-                    || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS) || (step
-                    .getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
-                    && !(md.isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER)) 
-                    && ((game.getBoard().getHex(lastPos).getLevel() + entity
-                            .calcElevation(curHex,
-                                    game.getBoard().getHex(lastPos))) != (curHex
+                    || (step.getType() == MoveStepType.LATERAL_LEFT_BACKWARDS)
+                    || (step.getType() == MoveStepType.LATERAL_RIGHT_BACKWARDS))
+                    && !(md.isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER))
+                    && ((lastHex.getLevel() + entity.calcElevation(curHex,
+                            lastHex, step.getElevation(),
+                            md.getFinalClimbMode(), false)) != (curHex
                             .getLevel() + entity.getElevation()))
-                    && ((game.getBoard().getHex(lastPos).getLevel() - game
-                            .getBoard().getHex(lastPos).depth()) != (curHex
-                            .getLevel() - curHex.depth()))
                     && !(entity instanceof VTOL)
                     && !(md.getFinalClimbMode()
                             && curHex.containsTerrain(Terrains.BRIDGE) && ((curHex
@@ -329,7 +336,7 @@ public class SharedUtility {
                 Targetable targ = step.getTarget(game);
                 if (game.getOptions().booleanOption("tacops_ziplines")
                         && (entity instanceof VTOL)
-                        && (entity.getElevation() > 0)
+                        && (md.getFinalElevation() > 0)
                         && (targ instanceof Infantry)
                         && (((Entity)targ).getJumpMP() < 1)
                         && !((Infantry) targ).isMechanized()) {

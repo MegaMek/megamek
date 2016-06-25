@@ -35,6 +35,18 @@ public class SmallCraft extends Aero {
     private int nMarines = 0;
     private int nOtherPassenger = 0;
 
+    // Is it Civilian or Military
+    public static final int CIVILIAN = 0;
+    public static final int MILITARY = 1;
+    private int designType = 0;
+
+    public void setDesignType(int design) {
+        designType = design;
+    }
+
+    public int getDesignType() {
+        return designType;
+    }
     public void setNCrew(int crew) {
         nCrew = crew;
     }

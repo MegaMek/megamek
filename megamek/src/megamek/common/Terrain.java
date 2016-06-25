@@ -278,25 +278,22 @@ public class Terrain implements ITerrain, Serializable {
         case Terrains.JUNGLE:
             if (level == 3) {
                 roll.addModifier(level, "Ultra Jungle");
-                break;
             }
             if (level == 2) {
                 roll.addModifier(level, "Heavy Jungle");
-                break;
             }
             if (level == 1) {
                 roll.addModifier(level, "Jungle");
-                break;
             }
+            break;
         case Terrains.MAGMA:
             if (level == 2) {
                 roll.addModifier(4, "Liquid Magma");
-                break;
             }
             if (level == 1) {
                 roll.addModifier(1, "Magma Crust");
-                break;
             }
+            break;
         case Terrains.TUNDRA:
             roll.addModifier(1, "Tundra");
             break;
@@ -306,25 +303,24 @@ public class Terrain implements ITerrain, Serializable {
         case Terrains.SNOW:
             if (level == 2) {
                 roll.addModifier(1, "Deep Snow");
-                break;
             }
+            break;
         case Terrains.SWAMP:
             if ((moveMode == EntityMovementMode.BIPED)
                     || (moveMode == EntityMovementMode.QUAD)) {
                 roll.addModifier(1, "Swamp");
-                break;
             } else {
                 roll.addModifier(2, "Swamp");
-                break;
             }
+            break;
         case Terrains.MUD:
             if ((moveMode != EntityMovementMode.BIPED)
                     || (moveMode != EntityMovementMode.QUAD)
                     || (moveMode != EntityMovementMode.HOVER)
                     || (moveMode != EntityMovementMode.WIGE)) {
                 roll.addModifier(1, "Mud");
-                break;
             }
+            break;
         case Terrains.GEYSER:
             if (level == 2) {
                 roll.addModifier(1, "Active Geyser");
@@ -334,34 +330,32 @@ public class Terrain implements ITerrain, Serializable {
             if (level == 6) {
                 if (enteringRubble) {
                     roll.addModifier(1, "entering Ultra Rubble");
-                    break;
                 } else {
                     roll.addModifier(1, "Ultra Rubble");
-                    break;
+
                 }
             }
             if (level < 6) {
                 if (enteringRubble) {
                     roll.addModifier(0, "entering Rubble");
-                    break;
                 } else {
                     roll.addModifier(0, "Rubble");
-                    break;
                 }
             }
+            break;
         case Terrains.RAPIDS:
             if (level == 2) {
                 roll.addModifier(3, "Torrent");
-                break;
+            } else {
+                roll.addModifier(2, "Rapids");
             }
-            roll.addModifier(2, "Rapids");
             break;
         case Terrains.ICE:
             if ((moveMode == EntityMovementMode.HOVER)
                     || (moveMode == EntityMovementMode.WIGE)) {
                 roll.addModifier(4, "Ice");
-                break;
             }
+            break;
         case Terrains.INDUSTRIAL:
             roll.addModifier(1, "Industrial Zone");
             break;
@@ -382,21 +376,34 @@ public class Terrain implements ITerrain, Serializable {
             return 0;
         case Terrains.RUBBLE:
             if (level == 6) {
-                if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                if (((e instanceof Mech) && ((Mech)e).isSuperHeavy())
+                        || (e.getCrew().getOptions().booleanOption("foot_cav")
+                                && (moveMode == EntityMovementMode.INF_LEG))) {
                     return 1;
                 }
                 return 2;
             }
-            if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+            if (((e instanceof Mech) && ((Mech)e).isSuperHeavy())
+                    || (e.getCrew().getOptions().booleanOption("foot_cav")
+                            && (moveMode == EntityMovementMode.INF_LEG))) {
                 return 0;
             }
             return 1;
         case Terrains.WOODS:
+            if (e.getCrew().getOptions().booleanOption("foot_cav") 
+                    && (moveMode == EntityMovementMode.INF_LEG)
+                    && (level > 1)) {
+                return level - 1;
+            }
             if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
                 return level - 1;
             }
             return level;
         case Terrains.JUNGLE:
+            if (e.getCrew().getOptions().booleanOption("foot_cav")
+                    && (moveMode == EntityMovementMode.INF_LEG)) {
+                return level;
+            }
             if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
                 return level;
             }
@@ -441,7 +448,20 @@ public class Terrain implements ITerrain, Serializable {
             }
             return 1;
         case Terrains.RAPIDS:
+            if (level == 2) {
+                if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                    return 1;
+                }
+                return 2;
+            }
+            if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
+                return 0;
+            }
+            return 1;
         case Terrains.ROUGH:
+            if (e.getCrew().getOptions().booleanOption("foot_cav") && (moveMode == EntityMovementMode.INF_LEG)) {
+                return level - 1;
+            }
             if (level == 2) {
                 if ((e instanceof Mech) && ((Mech)e).isSuperHeavy()) {
                     return 1;

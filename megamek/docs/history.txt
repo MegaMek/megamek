@@ -1,6 +1,45 @@
 VERSION HISTORY:
 ----------------
-v0.41.18-git
+v0.41.20-git
++ Data: Date fixes for units
++ Data: New Sprites
++ Data: Adding Jake's map pack
++ Issue: Pilot/Crew not damaged reports did not have subject id set
++ Issue #242: Unit Can Self Destruct and Stackpole in same turn
++ Issue #236: PSR Terrain modifiers added inappropriately
++ Issue #243: PSR issues related to high/low gravity
++ Issue #241: Dropship Cannot Eject w/o expending all velocity
++ Issue #244: Added TigerShark's alternative Pilot Skill BV mod table to docs
++ Issue #245: Smoke & chaff from weapons fire appears in end phase
++ Bug: EntityWeightClass.getWeightClass missing entry for hydrofoil support vees
++ Issue #253: UnitDisplay Extras tab now display # of doors for small craft bays
+
+
+v0.41.19 (2016-06-05 22:40 UTC)
++ Issue #233: NPE Displaying Client Options when no skins present
++ Issue #21: SPAs and Unit Quirks not displaying after loading saved game
++ Issue #208: Incorrect color when reversing a mech with lateral shifts
++ Issue #224: Backup MP cost possibly incorrect when mech is prone
++ Issue #217: Zip Line Dialog sometimes displayed when it shouldn't be
++ Issue #182: For display, overlapping friendly ECM/ECCM could cancel out
++ Issue #232: Bloodwolf IS House Skins added
++ Issue #210: VTOLs incorrectly able to lateral shift, can shift and flank
++ Issue #220: TO vehicle crew rule counts # of targets incorrectly
++ PR #222 & # #229: New SPAs: Shaky Stick and Oblique Artilleryman
++ Issue #176: Real Blind Drop: unit customization messages reveal how many units
+    a player has
++ Issue #234: Mechbuster & Protector CF's Not Using Their Images
++ Issue #230: Axel Heavy Tank IIC (XL) has incorrect name and stats
++ New Maps - Thanks Razorback (via Facebook)
++ New Sprites.
++ Issue #156: Graphical To-Hit Modifiers ('firing solutions') in Indirect Phase
++ Bug: MiniMap selected unit highlighting persists after turn ends
++ Issue #149: IS Small Laser firing at LOS Range
++ Issue #152: MGs, Flamers, AMS firing at LOS Range
++ Issue #151: Flamers can't Strafe
++ Issue #144: Feature: Hi-Res Backgrounds
+
+v0.41.18 (2016-05-26 19:30 UTC)
 + PR #154: Replacing all internal mass and tonnage related variables with doubles
            WARNING: This means that old unit caches will cause errors.
            Delete them and let MegaMek rebuild!
@@ -10,14 +49,50 @@ v0.41.18-git
 + Data: Lots of Unit Fixes (Thanks Clavius1 and Sartis for the research)
 + Issue #158 Missing RATs From FM Warden Clans (Thanks to xStormforgex)
 + Issue #162: "The armor panel is null." warning during deployment phase
-+ Issue #163: NPE in Compute.canCompleteNodePath
++ Issue #165: NPE in Compute.canCompleteNodePath
 + Issue #157: When /reset used from a saved game, you lose map size options
 + Issue #143: Super Heavy Endo Steel Weight Calculating wrong (in MML)
 + Issue #132: Make pilot death more obvious in head destruction.
 + Feature: Added a client settings option to toggle the use of board soft centering 
++ Inconsistencies between Server.processMovement and SharedUtility for moving
+    backwards over an elevation change (which could lead to getting a nag when
+    a PSR isn't necessary)
++ Bug [#4578]: Quirks need a way to distinguish unit type
++ Fixed #173: Reorder of include lines in tilesets
++ Fixed #179: PSR for jumping into ultra heavy woods
++ Data: New Sprites, Unit Fixes, and Quirk additions
++ Issue #166 - RATs From Interstellar Expeditions.
++ Fixed #159: Added bw_atmospheric.tileset
++ Fixed #175 Foot platoons can move infinite hexes while in woods per turn
++ Fixed #127 Bug: Jungle move cost for infantry incorrect.
++ Fixed #74 Bog Down Rules - Both stuck/unstuck should use same PSR modifiers
++ Fixed #43 Conflicting rules on Rubble unit restrictions
++ Fixed #187: Mechnized infantry able to enter prohibited terrain
++ PR #141: SPA: Eagle's Eyes
++ Fixed #191: Replacement truck_wreck image
++ PR #99: Added a UI editor for skins
++ PR 124: Hidden Units rules from TW
++ Issue #185: Skins added by BLOODWOLF
++ Data: New Sprites and a couple of quirk fixes.
++ Issue #129: Artillery Scatter should be based on MoF for distance and not d6
++ Issue #190: Artillery cannons generate indirect fire artillery images and
+    popup tooltip
++ Issue #101: Princess NPE in PathEnumerator.adjustPathForBidge
++ Feature: Foot Calvary SPA
++ Issue #101: Added on board check to Precognition.run()
++ Issue #211: Saving in the Arty Autohit phase breaks the save
++ Issue #207: Bot refuses to deploy because of NPE
++ Issue #197: Sort weapons by firing arc
++ Issue #194: Request: Mass Individual Camo
++ Issue #214: BA get danger warning when jumping into heavy woods with
+    unofficial rule
++ SPA: Golden Goose #227
++ New Sprites
+
 
 v0.41.17 (2016-04-16 00:30 UTC)
 + Data: New Sprites and Unit Date Fixes.
++ Issue #162: "The armor panel is null." warning during deployment phase
 
 v0.41.16 (2016-04-10 21:53 UTC)
 + Data: New Sprites and Unit Fixes.
@@ -85,6 +160,7 @@ v0.41.15 (2016-02-21 14:15 UTC)
 + Bug: Custom saved weapon quirks used wrong weapon name
 + Feature: Added ambient-occlusion like shadows, see client settings graphics
 + Issue #32: Hot Load LRMs check box will not stay checked
++ Fixed #168: Fires in low light battles don't reveal enemy units
 
 v0.41.14 (2016-02-02 13:10 UTC)
 + Data New Sprites/Various RAT and Unit Fixes.

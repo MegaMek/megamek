@@ -2,25 +2,32 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 SmallCraft
 </UnitType>
+
 <Name>
 Aquarius Escort
 </Name>
+
 <Model>
 M1
 </Model>
+
 <Tonnage>
 200
 </Tonnage>
+
 <SafeThrust>
 5
 </SafeThrust>
+
 <Armor>
 183
 162
@@ -85,6 +92,10 @@ IS Level 2
 <internal_type>
 0
 </internal_type>
+
+<designtype>
+1
+</designtype>
 
 <armor_type>
 0

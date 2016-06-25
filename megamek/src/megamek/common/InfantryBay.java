@@ -91,7 +91,9 @@ public final class InfantryBay extends Bay {
 
     @Override
     public String getUnusedString(boolean showrecovery) {
-        return "Infantry Bay - " + String.format("%1$,.0f", currentSpace) + (currentSpace > 1 ? " platoons" : " platoon");
+        return "Infantry Bay (" + getDoors() + " doors) - "
+                + String.format("%1$,.0f", currentSpace)
+                + (currentSpace > 1 ? " platoons" : " platoon");
     }
 
     @Override

@@ -46,6 +46,7 @@ import megamek.common.actions.DisplacementAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
@@ -168,6 +169,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         RANGE_HL("RANGE_HL"),
         DAMAGE_LH("DAMAGE_LH"),
         DAMAGE_HL("DAMAGE_HL"),
+        ARC("ARC"),
         CUSTOM("CUSTOM");
 
         public final String i18nEntry;
@@ -271,6 +273,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     protected boolean unjammingRAC = false;
     protected boolean selfDestructing = false;
     protected boolean selfDestructInitiated = false;
+    protected boolean selfDestructedThisTurn = false;
     /**
      * Variable to store the state of a possible externally mounted searchlight.
      * True if an operable searchlight is externally mounted, false if one isn't
@@ -465,7 +468,24 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     protected EntityMovementMode movementMode = EntityMovementMode.NONE;
 
+    /**
+     * Flag that determines if this Entity is a hidden unit or not (see TW pg
+     * 259).
+     */
     protected boolean isHidden = false;
+
+    /**
+     * Used to determine if this Entity has made a pointblank shot so far this
+     * round.
+     */
+    protected boolean madePointblankShot = false;
+
+    /**
+     * Keeps track of whether this Entity should activate in a particular game
+     * phase.  Generally this will be null, indicating the unit isn't
+     * activating.
+     */
+    protected IGame.Phase hiddenActivationPhase = null;
 
     protected boolean carcass = false;
 
@@ -2391,6 +2411,24 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
             return true;
+        }
+
+        // Additional restrictions for hidden units
+        if (isHidden()) {
+            // Can't deploy in paved hexes
+            if (hex.containsTerrain(Terrains.PAVEMENT)
+                    || hex.containsTerrain(Terrains.ROAD)) {
+                return true;
+            }
+            // Can't deploy on a bridge
+            if ((hex.terrainLevel(Terrains.BRIDGE_ELEV) == currElevation)
+                    && hex.containsTerrain(Terrains.BRIDGE)) {
+                return true;
+            }
+            // Can't deploy on the surface of water
+            if (hex.containsTerrain(Terrains.WATER) && (currElevation == 0)) {
+                return true;
+            }
         }
 
         return false;
@@ -4586,6 +4624,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                    || !ComputeECM.isAffectedByECM(this, getPosition(),
                                                   getPosition());
         }
+        // check for SPA
+        if (crew.getOptions().booleanOption("eagle_eyes")) {
+            return !checkECM
+                   || !ComputeECM.isAffectedByECM(this, getPosition(),
+                                                  getPosition());
+        }
 
         return false;
     }
@@ -4604,10 +4648,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int cyberBonus = 0;
         if (((crew.getOptions().booleanOption("cyber_eye_im") || crew
                 .getOptions().booleanOption("mm_eye_im"))
-             && (this instanceof Infantry) && !(this instanceof BattleArmor))
-            || (crew.getOptions().booleanOption("mm_eye_im") && (crew
-                                                                         .getOptions().booleanOption("vdni") || crew
-                                                                         .getOptions().booleanOption("bvdni")))) {
+                && (this instanceof Infantry) && !(this instanceof BattleArmor))
+                || (crew.getOptions().booleanOption("mm_eye_im") && (crew
+                        .getOptions().booleanOption("vdni") || crew
+                        .getOptions().booleanOption("bvdni")))) {
             cyberBonus = 1;
         }
 
@@ -4617,6 +4661,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int quirkBonus = 0;
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMPROVED_SENSORS)) {
             quirkBonus = 2;
+        }
+
+        // check for SPA
+        int spaBonus = 0;
+        if (crew.getOptions().booleanOption("eagle_eyes")) {
+            spaBonus = 1;
         }
 
         for (Mounted m : getMisc()) {
@@ -4635,32 +4685,32 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
                 if (m.getName().equals("Bloodhound Active Probe (THB)")
                     || m.getName().equals(Sensor.BAP)) {
-                    return 8 + cyberBonus + quirkBonus;
+                    return 8 + cyberBonus + quirkBonus + spaBonus;
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.CLAN_AP)
                     || (m.getType()).getInternalName().equals(
                         Sensor.WATCHDOG)
                     || (m.getType()).getInternalName().equals(Sensor.NOVA)) {
-                    return 5 + cyberBonus + quirkBonus;
+                    return 5 + cyberBonus + quirkBonus + spaBonus;
                 }
                 if ((m.getType()).getInternalName().equals(Sensor.LIGHT_AP)
                     || (m.getType().getInternalName()
                          .equals(Sensor.CLBALIGHT_AP))
                     || (m.getType().getInternalName()
                          .equals(Sensor.ISBALIGHT_AP))) {
-                    return 3 + cyberBonus + quirkBonus;
+                    return 3 + cyberBonus + quirkBonus + spaBonus;
                 }
                 if (m.getType().getInternalName().equals(Sensor.ISIMPROVED)
                     || (m.getType().getInternalName()
                          .equals(Sensor.CLIMPROVED))) {
-                    return 2 + cyberBonus + quirkBonus;
+                    return 2 + cyberBonus + quirkBonus + spaBonus;
                 }
-                return 4 + cyberBonus + quirkBonus;// everthing else should be
+                return 4 + cyberBonus + quirkBonus + spaBonus;// everthing else should be
                 // range 4
             }
         }
-        if ((cyberBonus + quirkBonus) > 0) {
-            return cyberBonus + quirkBonus;
+        if ((cyberBonus + quirkBonus + spaBonus) > 0) {
+            return cyberBonus + quirkBonus + spaBonus;
         }
 
         return Entity.NONE;
@@ -5553,6 +5603,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         deactivateRadicalHS();
 
         clearAttackedByThisTurn();
+
+        setMadePointblankShot(false);
+
+        setSelfDestructedThisTurn(false);
     }
 
     /**
@@ -6085,7 +6139,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Add in any modifiers due to global conditions like light/weather/etc.
      */
     public PilotingRollData addConditionBonuses(PilotingRollData roll,
-                                                EntityMovementType moveType) {
+            EntityMovementType moveType) {
 
         if (moveType == EntityMovementType.MOVE_SPRINT) {
             roll.addModifier(2, "Sprinting");
@@ -6122,13 +6176,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             roll.addModifier(windMod, conditions.getWindDisplayableName());
         }
 
-        // check gravity conditions for all entities
-        int gravMod = conditions.getGravityPilotPenalty();
-        if ((gravMod != 0) && !game.getBoard().inSpace()) {
-            roll.addModifier(gravMod, "high/low gravity");
-        }
         return roll;
-
     }
 
     /**
@@ -6353,11 +6401,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         if (curHex.containsTerrain(Terrains.WOODS, 2)) {
             roll.append(new PilotingRollData(getId(), 0,
-                                             "landing in heavy woods"));
+                    "landing in heavy woods"));
+            addPilotingModifierForTerrain(roll);
+        } else if (curHex.containsTerrain(Terrains.WOODS, 3)) {
+            roll.append(new PilotingRollData(getId(), 0,
+                    "landing in ultra woods"));
             addPilotingModifierForTerrain(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "hex does not contain heavy woods");
+                    "hex does not contain heavy or ultra woods");
         }
         return roll;
     }
@@ -6416,6 +6468,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 if (step.getMpUsed() > getJumpMP(false)) {
                     roll.append(new PilotingRollData(getId(), 0,
                             "used more MPs than at 1G possible"));
+                    int gravMod = game.getPlanetaryConditions()
+                            .getGravityPilotPenalty();
+                    if ((gravMod != 0) && !game.getBoard().inSpace()) {
+                        roll.addModifier(gravMod, game
+                                .getPlanetaryConditions().getGravity()
+                                + "G gravity");
+                    }
                 } else {
                     roll.addModifier(TargetRoll.CHECK_FALSE,
                             "Check false: Entity did not use more "
@@ -6550,6 +6609,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             if ((this instanceof Mech) && ((Mech) this).isSuperHeavy()) {
                 roll.addModifier(1, "superheavy mech avoiding bogging down");
             }
+            addPilotingModifierForTerrain(roll, curPos, false);
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(
@@ -8528,6 +8588,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return false;
         }
 
+        // Hidden units shouldn't be counted for turn order, unless deploying
+        if (isHidden() && phase != IGame.Phase.PHASE_DEPLOYMENT) {
+            return false;
+        }
+
         switch (phase) {
             case PHASE_MOVEMENT:
                 return isEligibleForMovement();
@@ -8632,8 +8697,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // must be active
         if (!isActive()
-            || (isImmobile() && !isManualShutdown() && !canUnjamRAC() && !game
-                .getOptions().booleanOption("vehicles_can_eject"))) {
+            || (isImmobile() && !isManualShutdown() && !canUnjamRAC() &&
+                !game.getOptions().booleanOption(OptionsConstants.AGM_VEHICLES_CAN_EJECT))) {
             return false;
         }
 
@@ -9897,12 +9962,61 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public abstract boolean isNuclearHardened();
 
+    /**
+     * Set the isHidden state of this entity (used for hidden units rules, TW
+     * pg 259).
+     * @param inVal
+     */
     public void setHidden(boolean inVal) {
         isHidden = inVal;
     }
 
+    public void setMadePointblankShot(boolean inVal) {
+        madePointblankShot = inVal;
+    }
+
+    /**
+     * Set a phase for this hidden unit to become active in.
+     *
+     * @param phase
+     */
+    public void setHiddeActivationPhase(IGame.Phase phase) {
+        hiddenActivationPhase = phase;
+    }
+
+    /**
+     * Returns true if this unit is currently hidden (hidden units, TW pg 259).
+     * @return
+     */
     public boolean isHidden() {
         return isHidden;
+    }
+
+    /**
+     * Returns true if this unit has already made a pointblank shot this round.
+     * @return
+     */
+    public boolean madePointblankShot() {
+        return madePointblankShot;
+    }
+
+    /**
+     * Returns true if this unit should be considering a hidden unit that is
+     * activating.
+     * @return
+     */
+    public boolean isHiddenActivating() {
+        return getHiddenActivationPhase() != null;
+    }
+
+    /**
+     * Get the phase that this hidden unit will activate in (generally this
+     * will be null, indicating that the unit isn't activating).
+     * @return
+     */
+    @Nullable
+    public IGame.Phase getHiddenActivationPhase() {
+        return hiddenActivationPhase;
     }
 
     /**
@@ -10872,6 +10986,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public void addCoolantFailureAmount(int amount) {
+        // This is implemented in subclasses, do nothing in general
+    }
+
+    public void resetCoolantFailureAmount() {
         // This is implemented in subclasses, do nothing in general
     }
 
@@ -13277,6 +13395,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         selfDestructInitiated = tf;
     }
 
+    public boolean getSelfDestructedThisTurn() {
+        return selfDestructedThisTurn;
+    }
+
+    public void setSelfDestructedThisTurn(boolean tf) {
+        selfDestructedThisTurn = tf;
+    }
+
     public void setIsJumpingNow(boolean jumped) {
         isJumpingNow = jumped;
     }
@@ -13340,8 +13466,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public void loadDefaultQuirks() {
 
         // Get a list of quirks for this entity.
-        List<QuirkEntry> quirks = QuirksHandler.getQuirks(getChassis(),
-                getModel());
+        List<QuirkEntry> quirks = QuirksHandler.getQuirks(this);
 
         // If this unit has no quirks, we do not need to proceed further.
         if ((quirks == null) || quirks.isEmpty()) {
@@ -13493,10 +13618,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return "Mech";
         } else if ((typeId & ETYPE_AERO) == ETYPE_AERO) {
             return "Aero";
+        } else if ((typeId & ETYPE_VTOL) == ETYPE_VTOL) {
+            return "VTOL";
         } else if ((typeId & ETYPE_TANK) == ETYPE_TANK) {
             return "Tank";
         } else if ((typeId & ETYPE_INFANTRY) == ETYPE_INFANTRY) {
             return "Infantry";
+        } else if ((typeId & ETYPE_PROTOMECH) == ETYPE_PROTOMECH) {
+            return "Protomech";
         } else {
             return "Unknown";
         }

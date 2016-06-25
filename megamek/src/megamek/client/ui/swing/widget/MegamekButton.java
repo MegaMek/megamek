@@ -29,55 +29,149 @@ import javax.swing.SwingConstants;
 
 import megamek.common.Configuration;
 
+/**
+ * A subclass of JButton that supports specifying the look and feel of the
+ * button via a SkinSpecification.
+ *
+ * @author arlith
+ */
 public class MegamekButton extends JButton {
-    
-    /**
-     * @author arlith
-     */
+
     private static final long serialVersionUID = -3271105050872007863L;
+
+    // Default values for button text colors
+    private static final Color defaultColor = new Color(250, 250, 250);
+    private static final Color defaultActiveColor = new Color(255, 255, 0);
+    private static final Color defaultDisabledColor = new Color(128, 128, 128);
+
+    /**
+     * The default background image for the button,
+     */
     protected ImageIcon backgroundIcon;
+
+    /**
+     * The background image to display when the button is pressed
+     */
     protected ImageIcon backgroundPressedIcon;
-    
+
     protected BufferedImage bgBuffer = null;
     protected BufferedImage bgPressedBuffer = null;
-    
+
+    /**
+     * Keeps track of whether there are images to display for this button, or if
+     * the default rendering for JButtons should be used
+     */
     boolean iconsLoaded = false;
+
+    /**
+     * Keeps track of if the button is pressed or not. This is used for
+     * determining if which image icon should be displayed.
+     */
     boolean isPressed = false;
+
+    /**
+     * Keeps track of whether the mouse cursor is currently over this button.
+     * Used to adjust the font of the button text.
+     */
     boolean isMousedOver = false;
+
+    /**
+     * Determines if the background images should be tiled or not. If this is
+     * false and the background images are smaller than the button size, they
+     * will be scaled to the button size.
+     */
     boolean isBGTiled = true;
-    
-    public MegamekButton(String text, String component){
+
+    /**
+     * The color of the button text.
+     */
+    private Color buttonColor;
+    /**
+     * The color of the button text when activated.
+     */
+    private Color activeColor;
+    /**
+     * The color of the button text when the button is disabled.
+     */
+    private Color disabledColor;
+
+    /**
+     *
+     * @param text
+     *            The button text
+     * @param component
+     *            The name of the SkinSpecification entry
+     */
+    public MegamekButton(String text, String component) {
         super(text);
         initialize(component);
     }
-    
-    public MegamekButton(String text){
+
+    /**
+     * Default text constructor, the button will use the DefaultButton
+     * SkinSpecification.
+     *
+     * @param text
+     */
+    public MegamekButton(String text) {
         super(text);
-        initialize(SkinXMLHandler.defaultButton);
+        initialize(SkinSpecification.UIComponents.DefaultButton.getComp());
     }
-    
-    public MegamekButton(){
+
+    /**
+     * Default constructor with no button text and DefaultButton
+     * SkinSpecification.
+     */
+    public MegamekButton() {
         super();
-        initialize(SkinXMLHandler.defaultButton);
+        initialize(SkinSpecification.UIComponents.DefaultButton.getComp());
     }
-    
+
+    /**
+     * Initialize the state of the button, using the SkinSpecification linked to
+     * the given string.
+     *
+     * @param component
+     *            String key to get the SkinSpecification.
+     */
     private void initialize(String component) {
-        SkinSpecification skinSpec =  SkinXMLHandler.getSkin(component,true);
+        SkinSpecification skinSpec = SkinXMLHandler.getSkin(component, true);
         setBorder(new MegamekBorder(skinSpec));
         loadIcon(skinSpec);
         isBGTiled = skinSpec.tileBackground;
+
+        if (skinSpec.fontColors.size() >= 1) {
+            buttonColor = skinSpec.fontColors.get(0);
+        } else {
+            buttonColor = defaultColor;
+        }
+        if (skinSpec.fontColors.size() >= 2) {
+            disabledColor = skinSpec.fontColors.get(1);
+        } else {
+            disabledColor = defaultDisabledColor;
+        }
+        if (skinSpec.fontColors.size() >= 3) {
+            activeColor = skinSpec.fontColors.get(2);
+        } else {
+            activeColor = defaultActiveColor;
+        }
     }
-    
-     public void loadIcon(SkinSpecification spec){
-         iconsLoaded = true;
-         // If there were no background paths loaded, there's nothing to do
-         if (!spec.hasBackgrounds()) {
-             iconsLoaded = false;
-             return;
-         }
-         // Setting this to false helps with transparent images
-         setContentAreaFilled(false);
-         // Otherwise, try to load in all of the images.
+
+    /**
+     * Use the supplied SkinSpecification to load the background images.
+     *
+     * @param spec
+     */
+    public void loadIcon(SkinSpecification spec) {
+        iconsLoaded = true;
+        // If there were no background paths loaded, there's nothing to do
+        if (!spec.hasBackgrounds()) {
+            iconsLoaded = false;
+            return;
+        }
+        // Setting this to false helps with transparent images
+        setContentAreaFilled(false);
+        // Otherwise, try to load in all of the images.
         try {
             if (spec.backgrounds.size() < 2) {
                 System.out.println("Error: skin specification for a "
@@ -98,9 +192,9 @@ public class MegamekButton extends JButton {
             iconsLoaded = false;
         }
     }
-     
-     protected void processMouseEvent(MouseEvent e){
-        if (e.getID() == MouseEvent.MOUSE_EXITED){
+
+    protected void processMouseEvent(MouseEvent e) {
+        if (e.getID() == MouseEvent.MOUSE_EXITED) {
             isMousedOver = false;
             repaint();
         } else if (e.getID() == MouseEvent.MOUSE_ENTERED) {
@@ -111,16 +205,16 @@ public class MegamekButton extends JButton {
             isPressed = false;
         }
         super.processMouseEvent(e);
-     }
-     
+    }
+
     protected void paintComponent(Graphics g) {
         // Call super, so this components plays well with Swing
-        super.paintComponent(g);        
+        super.paintComponent(g);
         // If none of the icons are loaded, treat this is a regular JButton
         if (!iconsLoaded) {
             return;
         }
-        
+
         // If the BG icon is tiled, draw it in
         if (isBGTiled) {
             int w = getWidth();
@@ -144,8 +238,7 @@ public class MegamekButton extends JButton {
             int w = getWidth();
             int h = getHeight();
             if (isPressed) {
-                if (bgPressedBuffer == null 
-                        || bgPressedBuffer.getWidth() != w
+                if (bgPressedBuffer == null || bgPressedBuffer.getWidth() != w
                         || bgPressedBuffer.getHeight() != h) {
                     bgPressedBuffer = new BufferedImage(w, h,
                             BufferedImage.TYPE_INT_ARGB);
@@ -154,13 +247,12 @@ public class MegamekButton extends JButton {
                 }
                 g.drawImage(bgPressedBuffer, 0, 0, null);
             } else {
-                if (bgBuffer == null 
-                        || bgBuffer.getWidth() != w
+                if (bgBuffer == null || bgBuffer.getWidth() != w
                         || bgBuffer.getHeight() != h) {
                     bgBuffer = new BufferedImage(w, h,
                             BufferedImage.TYPE_INT_ARGB);
-                    bgBuffer.getGraphics().drawImage(
-                            backgroundIcon.getImage(), 0, 0, w, h, null);
+                    bgBuffer.getGraphics().drawImage(backgroundIcon.getImage(),
+                            0, 0, w, h, null);
                 }
                 g.drawImage(bgBuffer, 0, 0, null);
             }
@@ -175,22 +267,22 @@ public class MegamekButton extends JButton {
                 Font boldFont = new Font(font.getFontName(), Font.BOLD,
                         font.getSize() + 2);
                 textLabel.setFont(boldFont);
-                textLabel.setForeground(new Color(255, 255, 0));
+                textLabel.setForeground(activeColor);
             } else {
-                textLabel.setForeground(new Color(250, 250, 250));
+                textLabel.setForeground(buttonColor);
             }
         } else {
-            textLabel.setForeground(new Color(128, 128, 128));
+            textLabel.setForeground(disabledColor);
         }
         textLabel.paint(g);
     }
-     
-     public String toString(){
-         return getActionCommand();
-     }
+
+    public String toString() {
+        return getActionCommand();
+    }
 
     public boolean isIconsLoaded() {
         return iconsLoaded;
     }
-     
+
 }

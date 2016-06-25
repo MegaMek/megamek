@@ -395,6 +395,16 @@ public class ECMInfo {
     }
 
     /**
+     * Returns true if the supplied ECMInfo is opposed to this one.
+     * @param other
+     * @return
+     */
+    public boolean isOpposed(IPlayer other) {
+        return (owner == null) || (other == null)
+                || owner.isEnemyOf(other);
+    }
+
+    /**
      * Equality is based on whether position, owner, range and all strengths
      * match.
      * 

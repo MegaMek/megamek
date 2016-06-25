@@ -394,6 +394,9 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
     }
 
     private void addOption(JPanel groupPanel, IOption option) {
+        if (option == null) {
+            return;
+        }
         DialogOptionComponent optionComp = new DialogOptionComponent(this,
                 option, true, true);
 
@@ -401,12 +404,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         maxOptionWidth = Math.max(maxOptionWidth,
                 optionComp.getPreferredSize().width);
 
-        if (option.getName().equals("hidden_units")) {
-            // FIXME
-            // This is a convenient way to disable it until it's actually
-            // usable.
-            optionComp.setEditable(false);
-        } else if ("inf_deploy_even".equals(option.getName())) { //$NON-NLS-1$
+        if ("inf_deploy_even".equals(option.getName())) { //$NON-NLS-1$
             if ((options.getOption("individual_initiative")).booleanValue() //$NON-NLS-1$
                     || !(options.getOption("inf_move_even")).booleanValue() //$NON-NLS-1$
                     || !editable) {
@@ -457,11 +455,6 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             if ((options.getOption("individual_initiative")).booleanValue() //$NON-NLS-1$
                     || (options.getOption("protos_move_even")).booleanValue() //$NON-NLS-1$
                     || (options.getOption("protos_move_multi")).booleanValue() //$NON-NLS-1$
-                    || !editable) {
-                optionComp.setEditable(false);
-            }
-        } else if ("visibility".equals(option.getName())) { //$NON-NLS-1$
-            if (!(options.getOption("double_blind")).booleanValue() //$NON-NLS-1$
                     || !editable) {
                 optionComp.setEditable(false);
             }
@@ -695,12 +688,6 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
-            }
-        }
-        if ("double_blind".equals(option.getName())) { //$NON-NLS-1$
-            comps = optionComps.get("visibility"); //$NON-NLS-1$
-            for (DialogOptionComponent comp_i : comps) {
-                comp_i.setEditable(state);
             }
         }
         if ("tacops_dead_zones".equals(option.getName())) { //$NON-NLS-1$

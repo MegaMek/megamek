@@ -50,7 +50,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, "melee_specialist", false); //$NON-NLS-1$
         // addOption(adv, "natural_grace", false); //$NON-NLS-1$
         // addOption(adv, "ride_wash", false); //$NON-NLS-1$
-        // addOption(adv, "shaky_stick", false); //$NON-NLS-1$
+        addOption(adv, "shaky_stick", false); //$NON-NLS-1$
         // addOption(adv, "slugger", false); //$NON-NLS-1$
         // addOption(adv, "speed_demon", false); //$NON-NLS-1$
         // addOption(adv, "stand_aside", false); //$NON-NLS-1$
@@ -64,12 +64,12 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, "cluster_hitter", false); //$NON-NLS-1$
         addOption(adv, "cluster_master", false); //$NON-NLS-1$
         // addOption(adv, "fist_fire", false); //$NON-NLS-1$
-        // addOption(adv, "golden_goose", false); //$NON-NLS-1$
+        addOption(adv, "golden_goose", false); //$NON-NLS-1$
         // addOption(adv, "ground_hugger", false); //$NON-NLS-1$
         addOption(adv, "specialist", new Vector<String>()); //$NON-NLS-1$
         // addOption(adv, "marksman", false); //$NON-NLS-1$
         addOption(adv, "multi_tasker", false); //$NON-NLS-1$
-        // addOption(adv, "oblique_artillery", false); //$NON-NLS-1$
+        addOption(adv, "oblique_artillery", false); //$NON-NLS-1$
         addOption(adv, "oblique_attacker", false); //$NON-NLS-1$
         // addOption(adv, "range_master", false); //$NON-NLS-1$
         addOption(adv, "sandblaster", false); //$NON-NLS-1$
@@ -81,16 +81,20 @@ public class PilotOptions extends AbstractOptions {
         // addOption(adv, "antagonizer", false); //$NON-NLS-1$
         // addOption(adv, "combat_intuition", false); //$NON-NLS-1$
         // addOption(adv, "demoralizer", false); //$NON-NLS-1$
-        // addOption(adv, "eagle_eyes", false); //$NON-NLS-1$
+        addOption(adv, "eagle_eyes", false); //$NON-NLS-1$
         // addOption(adv, "env_specialist", false); //$NON-NLS-1$
-        // addOption(adv, "forward_observer", false); //$NON-NLS-1$
+        addOption(adv, "forward_observer", false); //$NON-NLS-1$
         // addOption(adv, "human_tro", false); //$NON-NLS-1$
         addOption(adv, "iron_man", false); //$NON-NLS-1$
         addOption(adv, OptionsConstants.PILOT_APTITUDE_GUNNERY, false); //$NON-NLS-1$
         addOption(adv, OptionsConstants.PILOT_APTITUDE_PILOTING, false); //$NON-NLS-1$
         addOption(adv, "pain_resistance", false); //$NON-NLS-1$
         addOption(adv, "tactical_genius", false); //$NON-NLS-1$
-        
+
+        // Infantry abilities - Only one until beast mounts are implemented
+        addOption(adv, "foot_cav", false); //$NON-NLS-1$
+        addOption(adv, "urban_guerrilla", false); //$NON-NLS-1$
+
         // Unofficial
         addOption(adv, "ei_implant", false); //$NON-NLS-1$
         addOption(adv, "gunnery_laser", false); //$NON-NLS-1$
@@ -142,9 +146,16 @@ public class PilotOptions extends AbstractOptions {
     }
 
     private static class PilotOptionsInfo extends AbstractOptionsInfo {
+        private static boolean initliazed = false;
         private static AbstractOptionsInfo instance = new PilotOptionsInfo();
 
         public static AbstractOptionsInfo getInstance() {
+            if (!initliazed) {
+                initliazed = true;
+                // Create a new dummy PilotOptions; ensures values initialized
+                // Otherwise, could have issues when loading saved games
+                new PilotOptions();
+            }
             return instance;
         }
 

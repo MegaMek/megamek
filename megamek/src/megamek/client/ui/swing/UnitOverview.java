@@ -164,7 +164,7 @@ public class UnitOverview implements IDisplayable {
             
             Entity se = clientgui == null ? null : clientgui.getClient()
                     .getEntity(clientgui.getSelectedEntityNum());
-            if (e == se && game.getTurn() != null && 
+            if ((e == se) && (game.getTurn() != null) &&
                     game.getTurn().isValidEntity(e,game)) {
                 Color oldColor = graph.getColor();
                 graph.setColor(GUIPreferences.getInstance().getColor(

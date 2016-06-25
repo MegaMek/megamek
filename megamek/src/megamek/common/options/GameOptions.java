@@ -36,7 +36,6 @@ import megamek.common.TechConstants;
  * @author Ben
  */
 public class GameOptions extends AbstractOptions {
-
     private static final long serialVersionUID = 4916321960852747706L;
     private static final String GAME_OPTIONS_FILE_NAME = "mmconf/gameoptions.xml"; //$NON-NLS-1$
 
@@ -100,7 +99,7 @@ public class GameOptions extends AbstractOptions {
 
         IBasicOptionGroup advancedRules = addGroup("advancedRules"); //$NON-NLS-1$
         addOption(advancedRules, "minefields", false); //$NON-NLS-1$
-        //        addOption(advancedRules, "hidden_units", false); //$NON-NLS-1$
+        addOption(advancedRules, "hidden_units", false); //$NON-NLS-1$
         addOption(advancedRules, "double_blind", false); //$NON-NLS-1$
         addOption(advancedRules, "tacops_sensors", false); //$NON-NLS-1$
         addOption(advancedRules, "supress_all_double_blind_messages", false); //$NON-NLS-1$
@@ -226,8 +225,8 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedGroundMovement, "mek_lance_movement", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "mek_lance_movement_number", 4); //$NON-NLS-1$
         addOption(advancedGroundMovement, "no_immobile_vehicles", false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "vehicles_can_eject", false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "ejected_pilots_flee", false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.AGM_VEHICLES_CAN_EJECT, false);
+        addOption(advancedGroundMovement, OptionsConstants.AGM_EJECTED_PILOTS_FLEE, false);
         addOption(advancedGroundMovement, "auto_abandon_unit", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "no_hover_charge", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, "no_premove_vibra", false); //$NON-NLS-1$

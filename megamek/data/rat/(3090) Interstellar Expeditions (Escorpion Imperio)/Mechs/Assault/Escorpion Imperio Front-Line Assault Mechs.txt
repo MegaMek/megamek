@@ -1,0 +1,12 @@
+Escorpion Imperio Front-Line Assault Mechs (3090)
+Stalker STK-3F,1
+Longbow LGB-0W,2
+Grand Crusader II GRN-D-04,3
+Crockett CRK-5003-1,4
+Highlander HGN-732,5
+Thug THG-11E,6
+Emperor EMP-6A,5
+Warhammer IIC (Standard),4
+Marauder IIC (Standard),3
+Kraken (Bane) 2,2
+Behemoth (Stone Rhino) 2,1

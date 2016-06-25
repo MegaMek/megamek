@@ -16,7 +16,6 @@
 package megamek.client.ui.swing;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -24,9 +23,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -41,11 +41,10 @@ import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
-import megamek.client.ui.swing.widget.IndexedRadioButton;
 import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
 import megamek.common.BombType;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -54,7 +53,6 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
 import megamek.common.GameTurn;
-import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.IAimingModes;
 import megamek.common.IBoard;
@@ -65,12 +63,10 @@ import megamek.common.INarcPod;
 import megamek.common.IPlayer;
 import megamek.common.IdealHex;
 import megamek.common.Infantry;
-import megamek.common.LargeSupportTank;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
-import megamek.common.SuperHeavyTank;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -156,31 +152,31 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     }
 
     // buttons
-    protected Hashtable<FiringCommand, MegamekButton> buttons;
+    private Map<FiringCommand, MegamekButton> buttons;
 
     // let's keep track of what we're shooting and at what, too
-    private int cen = Entity.NONE; // current entity number
+    protected int cen = Entity.NONE; // current entity number
 
     Targetable target; // target
 
     // HACK : track when we wan to show the target choice dialog.
-    private boolean showTargetChoice = true;
+    protected boolean showTargetChoice = true;
 
     // shots we have so far.
-    private Vector<AbstractEntityAction> attacks;
+    protected Vector<AbstractEntityAction> attacks;
 
     // is the shift key held?
-    private boolean shiftheld;
+    protected boolean shiftheld;
 
-    private boolean twisting;
+    protected boolean twisting;
 
-    private Entity[] visibleTargets = null;
+    protected Entity[] visibleTargets = null;
 
-    private int lastTargetID = -1;
+    protected int lastTargetID = -1;
 
-    private AimedShotHandler ash;
+    protected AimedShotHandler ash;
     
-    private boolean isStrafing = false;
+    protected boolean isStrafing = false;
     
     /**
      * Keeps track of the Coords that are in a strafing run.
@@ -205,13 +201,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         setupStatusBar(Messages
                 .getString("FiringDisplay.waitingForFiringPhase")); //$NON-NLS-1$
 
-        buttons = new Hashtable<FiringCommand, MegamekButton>(
+        buttons = new HashMap<FiringCommand, MegamekButton>(
                 (int) (FiringCommand.values().length * 1.25 + 0.5));
         for (FiringCommand cmd : FiringCommand.values()) {
             String title = Messages.getString("FiringDisplay." //$NON-NLS-1$
                     + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title,
-                    "PhaseDisplayButton"); //$NON-NLS-1$
+                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);
@@ -234,7 +230,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         clientgui.mechD.wPan.weaponList.addListSelectionListener(this);
         clientgui.mechD.wPan.weaponList.addKeyListener(this);
 
-        ash = new AimedShotHandler();
+        ash = new AimedShotHandler(this);
 
         registerKeyCommands();
     }
@@ -242,7 +238,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Register all of the <code>CommandAction</code>s for this panel display.
      */
-    private void registerKeyCommands() {
+    protected void registerKeyCommands() {
         MegaMekController controller = clientgui.controller;
         final StatusBarPhaseDisplay display = this;
         // Register the action for UNDO
@@ -645,7 +641,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (!GUIPreferences.getInstance().getFiringSolutions()) {
             return;
         }
-        Hashtable<Integer, ToHitData> fs = new Hashtable<Integer, ToHitData>();
+        Map<Integer, ToHitData> fs = new HashMap<Integer, ToHitData>();
         for (Entity target : game.getEntitiesVector()) {
             boolean friendlyFire = game.getOptions().booleanOption(
                     "friendly_fire"); //$NON-NLS-1$
@@ -667,7 +663,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Does turn start stuff
      */
-    private void beginMyTurn() {
+    protected void beginMyTurn() {
         target = null;
 
         if (!clientgui.bv.isMovingUnits()) {
@@ -715,7 +711,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Does end turn stuff.
      */
-    private void endMyTurn() {
+    protected void endMyTurn() {
         // end my turn, then.
         IGame game = clientgui.getClient().getGame();
         Entity next = game.getNextEntity(game.getTurnIndex());
@@ -733,6 +729,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         clientgui.bv.clearFiringSolutionData();
         clientgui.bv.clearStrafingCoords();
         clientgui.bv.clearFieldofF();
+        clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
 
         clearVisibleTargets();
@@ -741,7 +738,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Disables all buttons in the interface
      */
-    private void disableButtons() {
+    protected void disableButtons() {
         setFireEnabled(false);
         setSkipEnabled(false);
         setTwistEnabled(false);
@@ -762,7 +759,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Fire Mode - Adds a Fire Mode Change to the current Attack Action
      */
-    private void changeMode() {
+    protected void changeMode() {
         int wn = clientgui.mechD.wPan.getSelectedWeaponNum();
 
         // Do nothing we have no unit selected.
@@ -804,7 +801,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Called Shots - changes the current called shots selection
      */
-    private void changeCalled() {
+    protected void changeCalled() {
         int wn = clientgui.mechD.wPan.getSelectedWeaponNum();
 
         // Do nothing we have no unit selected.
@@ -1145,7 +1142,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * fire searchlight
      */
-    private void doSearchlight() {
+    protected void doSearchlight() {
         // validate
         if ((ce() == null) || (target == null)) {
             throw new IllegalArgumentException(
@@ -1516,7 +1513,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * The entity spends the rest of its turn spotting
      */
-    private void doSpot() {
+    protected void doSpot() {
         if ((ce() == null) || (target == null)) {
             return;
         }
@@ -1543,7 +1540,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Removes all current fire
      */
-    private void clearAttacks() {
+    protected void clearAttacks() {
         isStrafing = false;
         strafingCoords.clear();
         clientgui.bv.clearStrafingCoords();
@@ -1575,7 +1572,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Removes temp attacks from the game and board
      */
-    private void removeTempAttacks() {
+    protected void removeTempAttacks() {
         // remove temporary attacks from game & board
         clientgui.getClient().getGame().removeActionsFor(cen);
         clientgui.bv.removeAttacksFor(ce());
@@ -1584,7 +1581,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * removes the last action
      */
-    private void removeLastFiring() {
+    protected void removeLastFiring() {
         if (!attacks.isEmpty()) {
             Object o = attacks.lastElement();
             if (o instanceof WeaponAttackAction) {
@@ -1602,7 +1599,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Refreshes all displays.
      */
-    private void refreshAll() {
+    protected void refreshAll() {
         if (ce() == null) {
             return;
         }
@@ -2043,7 +2040,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         refreshAll();
     }
 
-    private void updateSearchlight() {
+    protected void updateSearchlight() {
         setSearchlightEnabled((ce() != null)
                 && (target != null)
                 && ce().isUsingSpotlight()
@@ -2077,73 +2074,73 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
-    private void setFireEnabled(boolean enabled) {
+    protected void setFireEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_FIRE).setEnabled(enabled);
         clientgui.getMenuBar().setFireFireEnabled(enabled);
     }
 
-    private void setTwistEnabled(boolean enabled) {
+    protected void setTwistEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_TWIST).setEnabled(enabled);
         clientgui.getMenuBar().setFireTwistEnabled(enabled);
     }
 
-    private void setSkipEnabled(boolean enabled) {
+    protected void setSkipEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_SKIP).setEnabled(enabled);
         clientgui.getMenuBar().setFireSkipEnabled(enabled);
     }
 
-    private void setFindClubEnabled(boolean enabled) {
+    protected void setFindClubEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_FIND_CLUB).setEnabled(enabled);
         clientgui.getMenuBar().setFireFindClubEnabled(enabled);
     }
 
-    private void setNextTargetEnabled(boolean enabled) {
+    protected void setNextTargetEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_NEXT_TARG).setEnabled(enabled);
         clientgui.getMenuBar().setFireNextTargetEnabled(enabled);
     }
 
-    private void setFlipArmsEnabled(boolean enabled) {
+    protected void setFlipArmsEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_FLIP_ARMS).setEnabled(enabled);
         clientgui.getMenuBar().setFireFlipArmsEnabled(enabled);
     }
 
-    private void setSpotEnabled(boolean enabled) {
+    protected void setSpotEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_SPOT).setEnabled(enabled);
         clientgui.getMenuBar().setFireSpotEnabled(enabled);
     }
 
-    private void setSearchlightEnabled(boolean enabled) {
+    protected void setSearchlightEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_SEARCHLIGHT).setEnabled(enabled);
         clientgui.getMenuBar().setFireSearchlightEnabled(enabled);
     }
 
-    private void setFireModeEnabled(boolean enabled) {
+    protected void setFireModeEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_MODE).setEnabled(enabled);
         clientgui.getMenuBar().setFireModeEnabled(enabled);
     }
 
-    private void setFireCalledEnabled(boolean enabled) {
+    protected void setFireCalledEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_CALLED).setEnabled(enabled);
         clientgui.getMenuBar().setFireCalledEnabled(enabled);
     }
 
-    private void setFireClearTurretEnabled(boolean enabled) {
+    protected void setFireClearTurretEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_CLEAR_TURRET).setEnabled(enabled);
         clientgui.getMenuBar().setFireClearTurretEnabled(enabled);
     }
 
-    private void setFireClearWeaponJamEnabled(boolean enabled) {
+    protected void setFireClearWeaponJamEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_CLEAR_WEAPON).setEnabled(enabled);
         clientgui.getMenuBar().setFireClearWeaponJamEnabled(enabled);
     }
 
-    private void setStrafeEnabled(boolean enabled) {
+    protected void setStrafeEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_STRAFE).setEnabled(enabled);
         clientgui.getMenuBar().setFireClearWeaponJamEnabled(enabled);
     }    
     
 
-    private void setNextEnabled(boolean enabled) {
+    protected void setNextEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_NEXT).setEnabled(enabled);
         clientgui.getMenuBar().setFireNextEnabled(enabled);
     }
@@ -2222,374 +2219,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             // is set properly, hence we can't update
 
             // update target data in weapon display
-            updateTarget();
-        }
-    }
-
-    private class AimedShotHandler implements ActionListener, ItemListener {
-        private int aimingAt = Entity.LOC_NONE;
-
-        private int aimingMode = IAimingModes.AIM_MODE_NONE;
-
-        private int partialCover = LosEffects.COVER_NONE;
-
-        private AimedShotDialog asd;
-
-        public AimedShotHandler() {
-            // ignore
-        }
-
-        public void showDialog() {
-            if (asd != null) {
-                int oldAimingMode = aimingMode;
-                closeDialog();
-                aimingMode = oldAimingMode;
-            }
-
-            if (inAimingMode()) {
-                String[] options;
-                boolean[] enabled;
-
-                if (target instanceof GunEmplacement) {
-                    return;
-                }
-                if (target instanceof Entity) {
-                    options = ((Entity) target).getLocationNames();
-                    enabled = createEnabledMask(options.length);
-                } else {
-                    return;
-                }
-                if (target instanceof Mech) {
-                    if (aimingMode == IAimingModes.AIM_MODE_IMMOBILE) {
-                        aimingAt = Mech.LOC_HEAD;
-                    } else if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP) {
-                        aimingAt = Mech.LOC_CT;
-                    }
-                } else if (target instanceof Tank) {
-                    int side = Compute.targetSideTable(ce(), target);
-                    if (target instanceof LargeSupportTank) {
-                        if (side == ToHitData.SIDE_FRONTLEFT) {
-                            aimingAt = LargeSupportTank.LOC_FRONTLEFT;
-                        } else if (side == ToHitData.SIDE_FRONTRIGHT) {
-                            aimingAt = LargeSupportTank.LOC_FRONTRIGHT;
-                        } else if (side == ToHitData.SIDE_REARRIGHT) {
-                            aimingAt = LargeSupportTank.LOC_REARRIGHT;
-                        } else if (side == ToHitData.SIDE_REARLEFT) {
-                            aimingAt = LargeSupportTank.LOC_REARLEFT;
-                        }
-                    }
-                    if (side == ToHitData.SIDE_LEFT) {
-                        aimingAt = Tank.LOC_LEFT;
-                    }
-                    if (side == ToHitData.SIDE_RIGHT) {
-                        aimingAt = Tank.LOC_RIGHT;
-                    }
-                    if (side == ToHitData.SIDE_REAR) {
-                        aimingAt = (target instanceof LargeSupportTank) ? LargeSupportTank.LOC_REAR
-                                : target instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
-                                        : Tank.LOC_REAR;
-                    }
-                    if (side == ToHitData.SIDE_FRONT) {
-                        aimingAt = Tank.LOC_FRONT;
-                    }
-                } else if (target instanceof Protomech) {
-                    aimingAt = Protomech.LOC_TORSO;
-                } else if (target instanceof BattleArmor) {
-                    aimingAt = BattleArmor.LOC_TROOPER_1;
-                } else {
-                    // no aiming allowed for MechWarrior or BattleArmor
-                    return;
-                }
-
-                asd = new AimedShotDialog(
-                        clientgui.frame,
-                        Messages.getString("FiringDisplay.AimedShotDialog.title"), //$NON-NLS-1$
-                        Messages.getString("FiringDisplay.AimedShotDialog.message"), //$NON-NLS-1$
-                        options, enabled, aimingAt, this, this);
-
-                asd.setVisible(true);
-                updateTarget();
-            }
-        }
-
-        private boolean[] createEnabledMask(int length) {
-            boolean[] mask = new boolean[length];
-
-            for (int i = 0; i < length; i++) {
-                mask[i] = true;
-            }
-
-            int side = Compute.targetSideTable(ce(), target);
-
-            // on a tank, remove turret if its missing
-            // also, remove body
-            if (target instanceof Tank) {
-                mask[Tank.LOC_BODY] = false;
-                Tank tank = (Tank) target;
-                if (tank.hasNoTurret()) {
-                    int turretLoc = tank.getLocTurret();
-                    mask[turretLoc] = false;
-                }
-                // remove non-visible sides
-                if (target instanceof LargeSupportTank) {
-                    if (side == ToHitData.SIDE_FRONT) {
-                        mask[LargeSupportTank.LOC_FRONTLEFT] = false;
-                        mask[LargeSupportTank.LOC_REARLEFT] = false;
-                        mask[LargeSupportTank.LOC_REARRIGHT] = false;
-                        mask[LargeSupportTank.LOC_REAR] = false;
-                    }
-                    if (side == ToHitData.SIDE_FRONTLEFT) {
-                        mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
-                        mask[LargeSupportTank.LOC_REARLEFT] = false;
-                        mask[LargeSupportTank.LOC_REARRIGHT] = false;
-                        mask[LargeSupportTank.LOC_REAR] = false;
-                    }
-                    if (side == ToHitData.SIDE_FRONTRIGHT) {
-                        mask[LargeSupportTank.LOC_FRONTLEFT] = false;
-                        mask[LargeSupportTank.LOC_REARLEFT] = false;
-                        mask[LargeSupportTank.LOC_REARRIGHT] = false;
-                        mask[LargeSupportTank.LOC_REAR] = false;
-                    }
-                    if (side == ToHitData.SIDE_REARRIGHT) {
-                        mask[Tank.LOC_FRONT] = false;
-                        mask[LargeSupportTank.LOC_FRONTLEFT] = false;
-                        mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
-                        mask[LargeSupportTank.LOC_REARLEFT] = false;
-                    }
-                    if (side == ToHitData.SIDE_REARLEFT) {
-                        mask[Tank.LOC_FRONT] = false;
-                        mask[LargeSupportTank.LOC_FRONTLEFT] = false;
-                        mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
-                        mask[LargeSupportTank.LOC_REARRIGHT] = false;
-                    }
-                    if (side == ToHitData.SIDE_REAR) {
-                        mask[Tank.LOC_FRONT] = false;
-                        mask[LargeSupportTank.LOC_FRONTLEFT] = false;
-                        mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
-                        mask[LargeSupportTank.LOC_REARRIGHT] = false;
-                    }
-                } else if (target instanceof SuperHeavyTank) {
-                    if (side == ToHitData.SIDE_FRONT) {
-                        mask[SuperHeavyTank.LOC_FRONTLEFT] = false;
-                        mask[SuperHeavyTank.LOC_REARLEFT] = false;
-                        mask[SuperHeavyTank.LOC_REARRIGHT] = false;
-                        mask[SuperHeavyTank.LOC_REAR] = false;
-                    }
-                    if (side == ToHitData.SIDE_FRONTLEFT) {
-                        mask[SuperHeavyTank.LOC_FRONTRIGHT] = false;
-                        mask[SuperHeavyTank.LOC_REARLEFT] = false;
-                        mask[SuperHeavyTank.LOC_REARRIGHT] = false;
-                        mask[SuperHeavyTank.LOC_REAR] = false;
-                    }
-                    if (side == ToHitData.SIDE_FRONTRIGHT) {
-                        mask[SuperHeavyTank.LOC_FRONTLEFT] = false;
-                        mask[SuperHeavyTank.LOC_REARLEFT] = false;
-                        mask[SuperHeavyTank.LOC_REARRIGHT] = false;
-                        mask[SuperHeavyTank.LOC_REAR] = false;
-                    }
-                    if (side == ToHitData.SIDE_REARRIGHT) {
-                        mask[Tank.LOC_FRONT] = false;
-                        mask[SuperHeavyTank.LOC_FRONTLEFT] = false;
-                        mask[SuperHeavyTank.LOC_FRONTRIGHT] = false;
-                        mask[SuperHeavyTank.LOC_REARLEFT] = false;
-                    }
-                    if (side == ToHitData.SIDE_REARLEFT) {
-                        mask[Tank.LOC_FRONT] = false;
-                        mask[SuperHeavyTank.LOC_FRONTLEFT] = false;
-                        mask[SuperHeavyTank.LOC_FRONTRIGHT] = false;
-                        mask[SuperHeavyTank.LOC_REARRIGHT] = false;
-                    }
-                    if (side == ToHitData.SIDE_REAR) {
-                        mask[Tank.LOC_FRONT] = false;
-                        mask[SuperHeavyTank.LOC_FRONTLEFT] = false;
-                        mask[SuperHeavyTank.LOC_FRONTRIGHT] = false;
-                        mask[SuperHeavyTank.LOC_REARRIGHT] = false;
-                    }
-                } else {
-                    if (side == ToHitData.SIDE_LEFT) {
-                        mask[Tank.LOC_RIGHT] = false;
-                    }
-                    if (side == ToHitData.SIDE_RIGHT) {
-                        mask[Tank.LOC_LEFT] = false;
-                    }
-                    if (side == ToHitData.SIDE_REAR) {
-                        mask[Tank.LOC_FRONT] = false;
-                    }
-                    if (side == ToHitData.SIDE_FRONT) {
-                        mask[Tank.LOC_REAR] = false;
-                    }
-                }
-            }
-
-            // remove main gun on protos that don't have one
-            if (target instanceof Protomech) {
-                if (!((Protomech) target).hasMainGun()) {
-                    mask[Protomech.LOC_MAINGUN] = false;
-                }
-            }
-
-            // remove squad location on BAs
-            // also remove dead troopers
-            if (target instanceof BattleArmor) {
-                mask[BattleArmor.LOC_SQUAD] = false;
-            }
-
-            // remove locations hidden by partial cover
-            if ((partialCover & LosEffects.COVER_HORIZONTAL) != 0) {
-                mask[Mech.LOC_LLEG] = false;
-                mask[Mech.LOC_RLEG] = false;
-            }
-            if (side == ToHitData.SIDE_FRONT) {
-                if ((partialCover & LosEffects.COVER_LOWLEFT) != 0) {
-                    mask[Mech.LOC_RLEG] = false;
-                }
-                if ((partialCover & LosEffects.COVER_LOWRIGHT) != 0) {
-                    mask[Mech.LOC_LLEG] = false;
-                }
-                if ((partialCover & LosEffects.COVER_LEFT) != 0) {
-                    mask[Mech.LOC_RARM] = false;
-                    mask[Mech.LOC_RT] = false;
-                }
-                if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
-                    mask[Mech.LOC_LARM] = false;
-                    mask[Mech.LOC_LT] = false;
-                }
-            } else {
-                if ((partialCover & LosEffects.COVER_LOWLEFT) != 0) {
-                    mask[Mech.LOC_LLEG] = false;
-                }
-                if ((partialCover & LosEffects.COVER_LOWRIGHT) != 0) {
-                    mask[Mech.LOC_RLEG] = false;
-                }
-                if ((partialCover & LosEffects.COVER_LEFT) != 0) {
-                    mask[Mech.LOC_LARM] = false;
-                    mask[Mech.LOC_LT] = false;
-                }
-                if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
-                    mask[Mech.LOC_RARM] = false;
-                    mask[Mech.LOC_RT] = false;
-                }
-            }
-
-            if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP) {
-                // Can't target head with targeting computer.
-                mask[Mech.LOC_HEAD] = false;
-            }
-            return mask;
-        }
-
-        public void closeDialog() {
-            if (asd != null) {
-                aimingAt = Entity.LOC_NONE;
-                aimingMode = IAimingModes.AIM_MODE_NONE;
-                asd.dispose();
-                asd = null;
-                updateTarget();
-            }
-        }
-
-        /**
-         * Enables the radiobuttons in the dialog.
-         */
-        public void setEnableAll(boolean enableAll) {
-            if (asd != null) {
-                asd.setEnableAll(enableAll);
-            }
-        }
-
-        public void setPartialCover(int partialCover) {
-            this.partialCover = partialCover;
-        }
-
-        public int getAimingAt() {
-            return aimingAt;
-        }
-
-        public int getAimingMode() {
-            return aimingMode;
-        }
-
-        /**
-         * Returns the name of aimed location.
-         */
-        public String getAimingLocation() {
-            if ((target != null) && (aimingAt != Entity.LOC_NONE)
-                && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
-                if (target instanceof GunEmplacement) {
-                    return GunEmplacement.HIT_LOCATION_NAMES[aimingAt];
-                } else if (target instanceof Entity) {
-                    return ((Entity) target).getLocationAbbrs()[aimingAt];
-                }
-            }
-            return null;
-        }
-
-        /**
-         * Sets the aiming mode, depending on the target and the attacker.
-         * Against immobile mechs, targeting computer aiming mode will be used
-         * if turned on. (This is a hack, but it's the resolution suggested by
-         * the bug submitter, and I don't think it's half bad.
-         */
-
-        public void setAimingMode() {
-            boolean allowAim;
-
-            // TC against a mech
-            allowAim = ((target != null) && (ce() != null)
-                    && ce().hasAimModeTargComp() && ((target instanceof Mech)
-                    || (target instanceof Tank)
-                    || (target instanceof BattleArmor) || (target instanceof Protomech)));
-            if (allowAim) {
-                aimingMode = IAimingModes.AIM_MODE_TARG_COMP;
-                return;
-            }
-            // immobile mech or gun emplacement
-            allowAim = ((target != null) && ((target.isImmobile() && ((target instanceof Mech) || (target instanceof Tank))) || (target instanceof GunEmplacement)));
-            if (allowAim) {
-                aimingMode = IAimingModes.AIM_MODE_IMMOBILE;
-                return;
-            }
-
-            aimingMode = IAimingModes.AIM_MODE_NONE;
-        }
-
-        /**
-         * @return if are we in aiming mode
-         */
-        public boolean inAimingMode() {
-            return aimingMode != IAimingModes.AIM_MODE_NONE;
-        }
-
-        /**
-         * @return if a hit location currently selected.
-         */
-        public boolean isAimingAtLocation() {
-            return aimingAt != Entity.LOC_NONE;
-        }
-
-        /**
-         * should aimned shoots be allowed with the passed weapon
-         *
-         * @param weapon
-         * @return
-         */
-        public boolean allowAimedShotWith(Mounted weapon) {
-            return Compute.allowAimedShotWith(weapon, aimingMode);
-        }
-
-        /**
-         * ActionListener, listens to the button in the dialog.
-         */
-        public void actionPerformed(ActionEvent ev) {
-            closeDialog();
-        }
-
-        /**
-         * ItemListener, listens to the radiobuttons in the dialog.
-         */
-        public void itemStateChanged(ItemEvent ev) {
-            IndexedRadioButton icb = (IndexedRadioButton) ev.getSource();
-            aimingAt = icb.getIndex();
             updateTarget();
         }
     }

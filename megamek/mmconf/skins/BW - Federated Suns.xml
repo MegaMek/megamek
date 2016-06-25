@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  This is the default skin for Megamek
+
+  New skins can be created by specifying UI_Element tags
+
+  The defaultElement UI_Element specifies the default border to be used by UI
+    components
+
+  The defaultButton UI_Element specifies the default border and background
+   images to use for Megamek buttons.  The first image is the base default
+   image and the second image is the pressed image
+
+  NOTE: All locations should be in data/images/widgets
+-->
+<skin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="skinSchema.xsl">
+	<UI_Element>
+		<name>BoardViewBorder</name>
+		<no_border>false</no_border>
+		<!-- Specification of border images -->
+		<border>
+			<!-- Corner images -->
+			<corner_top_left>Bloodwolf/Federated Suns/boardview/TLC.gif</corner_top_left>
+			<corner_top_right>Bloodwolf/Federated Suns/boardview/TRC.gif</corner_top_right>
+			<corner_bottom_left>Bloodwolf/Federated Suns/boardview/BLC.gif</corner_bottom_left>
+			<corner_bottom_right>Bloodwolf/Federated Suns/boardview/BRC.gif</corner_bottom_right>
+			<!-- Border lines: these images will be tiled -->
+			<edge>
+				<edgeIcon>
+					<icon>Bloodwolf/Federated Suns/boardview/TLCT.gif</icon>
+					<tiled>false</tiled>
+				</edgeIcon>
+				<edgeIcon>
+					<icon>Bloodwolf/Federated Suns/boardview/TE.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeIcon>
+					<icon>Bloodwolf/Federated Suns/boardview/TC.gif</icon>
+					<tiled>false</tiled>
+				</edgeIcon>
+				<edgeIcon>
+					<icon>Bloodwolf/Federated Suns/boardview/TE.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeIcon>
+					<icon>Bloodwolf/Federated Suns/boardview/TRCT.gif</icon>
+					<tiled>false</tiled>
+				</edgeIcon>
+				<edgeName>top</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>Bloodwolf/Federated Suns/boardview/BE.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>bottom</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>Bloodwolf/Federated Suns/boardview/LE.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>left</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>Bloodwolf/Federated Suns/boardview/RE.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>right</edgeName>
+			</edge>
+		</border>
+		<background_image>Bloodwolf/Federated Suns/boardview/background_1.gif</background_image>
+		<background_image>Bloodwolf/Federated Suns/boardview/background.png</background_image>
+		<tile_background>true</tile_background>
+		<font_color>#ffffff</font_color>
+		<show_scroll_bars>false</show_scroll_bars>
+	</UI_Element>
+
+	<UI_Element>
+		<name>defaultElement</name>
+		<no_border>false</no_border>
+		<!-- Specification of border images -->
+		<border>
+			<!-- Corner images -->
+			<corner_top_left>Bloodwolf/Federated Suns/phase/TLC.gif</corner_top_left>
+			<corner_top_right>Bloodwolf/Federated Suns/phase/TRC.gif</corner_top_right>
+			<corner_bottom_left>Bloodwolf/Federated Suns/phase/BLC.gif</corner_bottom_left>
+			<corner_bottom_right>Bloodwolf/Federated Suns/phase/BRC.gif</corner_bottom_right>
+			<!-- Border lines: these images will be tiled -->
+			<edge>
+				<edgeIcon>
+					<icon>Bloodwolf/Federated Suns/phase/TE.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>top</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>Bloodwolf/Federated Suns/phase/BE.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>bottom</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>Bloodwolf/Federated Suns/phase/LE.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>left</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>Bloodwolf/Federated Suns/phase/RE.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>right</edgeName>
+			</edge>
+		</border>
+		<background_image>Bloodwolf/Federated Suns/phase/background.png</background_image>
+		<tile_background>true</tile_background>
+		<font_color>#ffffff</font_color>
+		<show_scroll_bars>false</show_scroll_bars>
+	</UI_Element>
+
+	<UI_Element>
+		<name>PhaseDisplayBorder</name>
+		<no_border>false</no_border>
+		<!-- Specification of border images -->
+		<border>
+			<!-- Corner images -->
+			<corner_top_left>Bloodwolf/Federated Suns/phase/TLC.gif</corner_top_left>
+			<corner_top_right>Bloodwolf/Federated Suns/phase/TRC.gif</corner_top_right>
+			<corner_bottom_left>Bloodwolf/Federated Suns/phase/BLC.gif</corner_bottom_left>
+			<corner_bottom_right>Bloodwolf/Federated Suns/phase/BRC.gif</corner_bottom_right>
+			<!-- Border lines: these images will be tiled -->
+			<edge>
+				<edgeIcon>
+					<icon>Bloodwolf/Federated Suns/phase/TE.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>top</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>Bloodwolf/Federated Suns/phase/BE.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>bottom</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>Bloodwolf/Federated Suns/phase/LE.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>left</edgeName>
+			</edge>
+			<edge>
+				<edgeIcon>
+					<icon>Bloodwolf/Federated Suns/phase/RE.gif</icon>
+					<tiled>true</tiled>
+				</edgeIcon>
+				<edgeName>right</edgeName>
+			</edge>
+		</border>
+		<background_image>Bloodwolf/Federated Suns/phase/background.png</background_image>
+		<tile_background>true</tile_background>
+		<font_color>#ffffff</font_color>
+		<show_scroll_bars>false</show_scroll_bars>
+	</UI_Element>
+
+	<UI_Element>
+		<name>defaultButton</name>
+		<no_border>true</no_border>
+		<!-- Specification of border images -->
+		<border>
+			<!-- Corner images -->
+			<corner_top_left></corner_top_left>
+			<corner_top_right></corner_top_right>
+			<corner_bottom_left></corner_bottom_left>
+			<corner_bottom_right></corner_bottom_right>
+			<!-- Border lines: these images will be tiled -->
+			<edge>
+				<edgeName>top</edgeName>
+			</edge>
+			<edge>
+				<edgeName>bottom</edgeName>
+			</edge>
+			<edge>
+				<edgeName>left</edgeName>
+			</edge>
+			<edge>
+				<edgeName>right</edgeName>
+			</edge>
+		</border>
+		<background_image>Bloodwolf/Federated Suns/button/buttonNormal.png</background_image>
+		<background_image>Bloodwolf/Federated Suns/button/buttonPushed.png</background_image>
+		<tile_background>false</tile_background>
+		<font_color>#facc0b</font_color>
+		<font_color>#000000</font_color>
+		<font_color>#facc0b</font_color>
+		<show_scroll_bars>false</show_scroll_bars>
+	</UI_Element>
+
+	<UI_Element>
+		<name>UnitDisplay</name>
+			<tab_general_idle>Bloodwolf/Federated Suns/unit/tab_general_idle.gif</tab_general_idle>
+			<tab_pilot_idle>Bloodwolf/Federated Suns/unit/tab_pilot_idle.gif</tab_pilot_idle>
+			<tab_armor_idle>Bloodwolf/Federated Suns/unit/tab_armor_idle.gif</tab_armor_idle>
+			<tab_systems_idle>Bloodwolf/Federated Suns/unit/tab_systems_idle.gif</tab_systems_idle>
+			<tab_weapon_idle>Bloodwolf/Federated Suns/unit/tab_weapon_idle.gif</tab_weapon_idle>
+			<tab_extras_idle>Bloodwolf/Federated Suns/unit/tab_extras_idle.gif</tab_extras_idle>
+			<tab_general_active>Bloodwolf/Federated Suns/unit/tab_general_active.gif</tab_general_active>
+			<tab_pilot_active>Bloodwolf/Federated Suns/unit/tab_pilot_active.gif</tab_pilot_active>
+			<tab_armor_active>Bloodwolf/Federated Suns/unit/tab_armor_active.gif</tab_armor_active>
+			<tab_systems_active>Bloodwolf/Federated Suns/unit/tab_systems_active.gif</tab_systems_active>
+			<tab_weapon_active>Bloodwolf/Federated Suns/unit/tab_weapon_active.gif</tab_weapon_active>
+			<tab_extras_active>Bloodwolf/Federated Suns/unit/tab_extras_active.gif</tab_extras_active>
+			<idle_corner>Bloodwolf/Federated Suns/unit/idle_corner.gif</idle_corner>
+			<active_corner>Bloodwolf/Federated Suns/unit/active_corner.gif</active_corner>
+			<background_tile>Bloodwolf/Federated Suns/unit/background.png</background_tile>
+			<top_line>Bloodwolf/Federated Suns/unit/TE.gif</top_line>
+			<bottom_line>Bloodwolf/Federated Suns/unit/BE.gif</bottom_line>
+			<left_line>Bloodwolf/Federated Suns/unit/LE.gif</left_line>
+			<right_line>Bloodwolf/Federated Suns/unit/RE.gif</right_line>
+			<tl_corner>Bloodwolf/Federated Suns/unit/TLC.gif</tl_corner>
+			<bl_corner>Bloodwolf/Federated Suns/unit/BLC.gif</bl_corner>
+			<tr_corner>Bloodwolf/Federated Suns/unit/TRC.gif</tr_corner>
+			<br_corner>Bloodwolf/Federated Suns/unit/BRC.gif</br_corner>
+			<mech_outline>Bloodwolf/Federated Suns/unit/bg_mech.gif</mech_outline>
+	</UI_Element>
+
+</skin>

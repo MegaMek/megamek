@@ -2,81 +2,108 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 SmallCraft
 </UnitType>
+
 <Name>
 Ares Assault Craft
 </Name>
+
 <Model>
 Mark VII-C
 </Model>
+
 <Tonnage>
 150
 </Tonnage>
+
 <SafeThrust>
 4
 </SafeThrust>
+
 <Armor>
 130
 42
 42
 50
 </Armor>
+
 <Nose Equipment>
 CLMediumPulseLaser
 CLMediumPulseLaser
 </Nose Equipment>
+
 <Left Side Equipment>
 CLMediumPulseLaser
 </Left Side Equipment>
+
 <Right Side Equipment> 
 CLMediumPulseLaser
 </Right Side Equipment>
+
 <Aft Equipment> 
 CLMediumPulseLaser
 </Aft Equipment>
+
 <structural_integrity>
 6
 </structural_integrity>
+
 <heatsinks>
 10
 </heatsinks>
+
 <sink_type>
 1
 </sink_type>
+
 <fuel>
 800
 </fuel>
+
 <type>
 Clan Level 2
 </type>
+
 <year>
 2841
 </year>
+
 <internal_type>
 0
 </internal_type>
+
+<designtype>
+1
+</designtype>
+
 <armor_type>
 0
 </armor_type>
+
 <engine_type>
 0
 </engine_type>
+
 <motion_type>
 aerodyne
 </motion_type>
+
 <transporters>
 CargoBay:31:0
 </transporters>
+
 <crew>
 5
 </crew>
+
 <passengers>
 0
 </passengers>
-

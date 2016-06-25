@@ -29,6 +29,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.IHex;
 import megamek.common.MovePath;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.Terrains;
@@ -297,15 +298,15 @@ public class PathEnumerator {
         }
 
         for (MovePath path : paths) {
-            adjustPathForBidge(path);
+            adjustPathForBridge(path);
         }
     }
 
-    private void adjustPathForBidge(MovePath path) {
+    private void adjustPathForBridge(MovePath path) {
         boolean needsAdjust = false;
         for (Coords c : path.getCoordsSet()) {
-            if (getGame().getBoard().getHex(c)
-                         .containsTerrain(Terrains.BRIDGE)) {
+            IHex hex = getGame().getBoard().getHex(c);
+            if ((hex != null) && hex.containsTerrain(Terrains.BRIDGE)) {
                 if (getGame().getBoard().getBuildingAt(c).getCurrentCF(c) >=
                     path.getEntity().getWeight()) {
                     needsAdjust = true;

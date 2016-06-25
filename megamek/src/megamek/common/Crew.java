@@ -444,7 +444,7 @@ public class Crew implements Serializable {
             for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
 
-                if (option.booleanValue()) {
+                if ((option != null) && option.booleanValue()) {
                     if (adv.length() > 0) {
                         adv.append(sep);
                     }

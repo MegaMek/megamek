@@ -1,0 +1,115 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+#Write the version number just in case...
+
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+SmallCraft
+</UnitType>
+
+<Name>
+Ares Assault Craft
+</Name>
+
+<Model>
+Mk.III
+</Model>
+
+<Tonnage>
+200
+</Tonnage>
+
+<SafeThrust>
+3
+</SafeThrust>
+
+<Armor>
+91
+90
+90
+55
+</Armor>
+
+<Nose Equipment>
+ISLargeLaser
+ISMediumLaser 
+</Nose Equipment>
+
+<Left Side Equipment>
+ISLRM15
+ISLRM15 Ammo
+ISLRM15 Ammo
+</Left Side Equipment>
+
+<Right Side Equipment> 
+ISLRM15
+ISLRM15 Ammo
+ISLRM15 Ammo
+</Right Side Equipment>
+
+<Aft Equipment> 
+ISMediumLaser
+ISMediumLaser
+</Aft Equipment>
+
+<structural_integrity>
+6
+</structural_integrity>
+
+<heatsinks>
+20
+</heatsinks>
+
+<sink_type>
+0
+</sink_type>
+
+<fuel>
+540
+</fuel>
+
+<type>
+IS Level 5
+</type>
+
+<year>
+2451
+</year>
+
+<internal_type>
+0
+</internal_type>
+
+<designtype>
+1
+</designtype>
+
+<armor_type>
+17
+</armor_type>
+
+<engine_type>
+0
+</engine_type>
+
+<motion_type>
+aerodyne
+</motion_type>
+
+<transporters>
+InfantryBay:2:1
+</transporters>
+
+<crew>
+4
+</crew>
+
+<passengers>
+0
+</passengers>

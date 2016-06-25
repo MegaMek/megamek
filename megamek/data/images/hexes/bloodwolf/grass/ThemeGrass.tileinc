@@ -1,0 +1,15 @@
+# BLOODWOLF's Grass Theme
+
+base 0 "" "grass" "bloodwolf/grass/grass_plains_0.gif"
+base 1 "" "grass" "bloodwolf/grass/grass_plains_1.gif"
+base 2 "" "grass" "bloodwolf/grass/grass_plains_2.gif"
+base 3 "" "grass" "bloodwolf/grass/grass_plains_3.gif"
+base 4 "" "grass" "bloodwolf/grass/grass_plains_4.gif"
+base 5 "" "grass" "bloodwolf/grass/grass_plains_5.gif"
+base 6 "" "grass" "bloodwolf/grass/grass_plains_6.gif"
+base -1 "" "grass" "bloodwolf/grass/grass_sinkhole_1.gif"
+base -2 "" "grass" "bloodwolf/grass/grass_sinkhole_2.gif"
+base -3 "" "grass" "bloodwolf/grass/grass_sinkhole_3.gif"
+base -4 "" "grass" "bloodwolf/grass/grass_sinkhole_4.gif"
+base -5 "" "grass" "bloodwolf/grass/grass_sinkhole_5.gif"
+base -6 "" "grass" "bloodwolf/grass/grass_sinkhole_6.gif"

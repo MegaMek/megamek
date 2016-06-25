@@ -1,0 +1,12 @@
+Escorpion Imperio Heavy Vehicles (3090)
+Bulldog Medium Tank (Standard),1
+SRM Carrier (Standard),2
+AC/2 Carrier (Standard),3
+LRM Carrier (Standard),4
+Demon Tank (Standard),5
+Von Luckner Heavy Tank VNL-K65N,6
+Burke Defense Tank (Standard),5
+Ishtar Heavy Fire Support Tank (Standard),4
+Oro Heavy Tank (Standard),3
+Ishtar Heavy Fire Support Tank (Standard),2
+Athena Combat Vehicle (Standard),1

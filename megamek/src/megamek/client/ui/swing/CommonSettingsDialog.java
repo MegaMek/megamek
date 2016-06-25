@@ -712,14 +712,17 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         skinFiles.removeAllItems();
         String[] xmlFiles = 
-            Configuration.configDir().list(new FilenameFilter() {
+            Configuration.skinsDir().list(new FilenameFilter() {
                 public boolean accept(File directory, String fileName) {
                     return fileName.endsWith(".xml");
                 } 
             });
-        for (String file : xmlFiles) {
-            if (SkinXMLHandler.validSkinSpecFile(file)) {
-                skinFiles.addItem(file);
+        Arrays.sort(xmlFiles);
+        if (xmlFiles != null) {
+            for (String file : xmlFiles) {
+                if (SkinXMLHandler.validSkinSpecFile(file)) {
+                    skinFiles.addItem(file);
+                }
             }
         }
         // Select the default file first

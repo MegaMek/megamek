@@ -310,7 +310,7 @@ public class PlanetaryConditions implements Serializable {
      * According to email from TPTB, you apply a penalty for every 0.5 gravities above or below 1 (rounding up)
      */
     public int getGravityPilotPenalty() {
-        return (int)Math.ceil(Math.abs(gravity - 1.0) / 0.5);
+        return (int)Math.floor(Math.abs(gravity - 1.0) / 0.5);
     }
 
     /**

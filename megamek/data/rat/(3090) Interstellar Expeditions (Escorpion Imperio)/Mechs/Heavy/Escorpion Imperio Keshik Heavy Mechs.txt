@@ -1,0 +1,12 @@
+Escorpion Imperio Keshik Heavy Mechs (3090)
+Orion ON1-K,1
+Guillotine GLT-3N,2
+Lancelot LNC25-01,3
+Flashman FLS-8K,4
+Black Knight BL-6-KNT,5
+Fire Scorpion (Standard),6
+Galahad (Glass Spider) (Standard),5
+Rifleman IIC (Standard),4
+Perseus P1,3
+Loki (Hellbringer) Prime,2
+Thor (Summoner) Prime,1

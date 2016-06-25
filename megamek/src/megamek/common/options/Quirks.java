@@ -504,9 +504,16 @@ public class Quirks extends AbstractOptions {
     }
 
     private static class QuirksInfo extends AbstractOptionsInfo {
+        private static boolean initliazed = false;
         private static AbstractOptionsInfo instance = new QuirksInfo();
 
         public static AbstractOptionsInfo getInstance() {
+            if (!initliazed) {
+                initliazed = true;
+                // Create a new dummy Quirks; ensures values initialized
+                // Otherwise, could have issues when loading saved games
+                new Quirks();
+            }
             return instance;
         }
 

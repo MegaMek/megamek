@@ -389,12 +389,21 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         }
         IHex currHex = board.getHex(mp.getFinalCoords());
         if (currHex == null) {
-            System.out.println("getLevelDiff: currHex was null! Coords: "
-                    + mp.getFinalCoords());
+            System.out.println("getLevelDiff: currHex was null!" +
+                               "\nStart: " + mp.getStartCoords() +
+                               "\ncurrHex:  " + mp.getFinalCoords() +
+                               "\nPath: " + mp.toString());
             return 0;
         }
         IHex destHex = board.getHex(dest);
-        return Math.abs(destHex.getLevel() - currHex.getLevel());        
+        if (destHex == null) {
+            System.out.println("getLevelDiff: destHex was null!" +
+                               "\nStart: " + mp.getStartCoords() +
+                               "\ndestHex: " + dest +
+                               "\nPath: " + mp.toString());
+            return 0;
+        }
+        return Math.abs(destHex.getLevel() - currHex.getLevel());
     }
     
     /**
@@ -436,6 +445,11 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
         // Infantry elevation changes are doubled 
         if (ent instanceof Infantry) {
             elevationDiff *= 2;
+        }
+        // Penalty for standing
+        if (ent.isProne() && !(mp.contains(MoveStepType.GET_UP)
+                || mp.contains(MoveStepType.CAREFUL_STAND))) {
+            elevationDiff += 2;
         }
         return elevationDiff;
     }    

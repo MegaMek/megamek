@@ -135,11 +135,12 @@ public final class ASFBay extends Bay {
     @Override
     public String getUnusedString(boolean showrecovery) {
         if (showrecovery) {
-            return "Aerospace Fighter - "
+            return "Aerospace Fighter (" + getDoors() + " doors) - "
                     + String.format("%1$,.0f", currentSpace) + " units ("
                     + getRecoverySlots() + " recovery open)";
         }
-        return String.format("Aerospace Fighter Bay - %1$,.0f", currentSpace)
+        return String.format("Aerospace Fighter Bay (%d doors) - %1$,.0f",
+                getDoors(), currentSpace)
                 + (currentSpace > 1 ? " units" : " unit");
     }
 

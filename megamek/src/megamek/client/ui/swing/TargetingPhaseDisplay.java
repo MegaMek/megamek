@@ -23,9 +23,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -41,6 +42,7 @@ import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -131,7 +133,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     }
 
     // buttons
-    protected Hashtable<TargetingCommand, MegamekButton> buttons;
+    protected Map<TargetingCommand, MegamekButton> buttons;
 
     // let's keep track of what we're shooting and at what, too
     private int cen = Entity.NONE; // current entity number
@@ -168,13 +170,13 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         setupStatusBar(Messages
                 .getString("TargetingPhaseDisplay.waitingForTargetingPhase")); //$NON-NLS-1$
 
-        buttons = new Hashtable<TargetingCommand, MegamekButton>(
+        buttons = new HashMap<TargetingCommand, MegamekButton>(
                 (int) (TargetingCommand.values().length * 1.25 + 0.5));
         for (TargetingCommand cmd : TargetingCommand.values()) {
             String title = Messages.getString("TargetingPhaseDisplay."
                     + cmd.getCmd());
             MegamekButton newButton = new MegamekButton(title,
-                    "PhaseDisplayButton");
+                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);
@@ -540,10 +542,47 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             updateSearchlight();
 
             setFireModeEnabled(true);
+
+            if (GUIPreferences.getInstance().getBoolean("FiringSolutions")
+                    && !ce().isOffBoard()) {
+                setFiringSolutions();
+            } else {
+                clientgui.getBoardView().clearFiringSolutionData();
+            }
         } else {
-            System.err
-                    .println("FiringDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
+            System.err.println("TargetingPhaseDisplay: " //$NON-NLS-1$
+                    + "tried to select non-existant entity: " + en); //$NON-NLS-1$
         }
+    }
+
+    public void setFiringSolutions() {
+        // If no Entity is selected, exit
+        if (cen == Entity.NONE) {
+            return;
+        }
+
+        IGame game = clientgui.getClient().getGame();
+        IPlayer localPlayer = clientgui.getClient().getLocalPlayer();
+        if (!GUIPreferences.getInstance().getFiringSolutions()) {
+            return;
+        }
+        Map<Integer, ToHitData> fs = new HashMap<Integer, ToHitData>();
+        for (Entity target : game.getEntitiesVector()) {
+            boolean friendlyFire = game.getOptions().booleanOption(
+                    "friendly_fire"); //$NON-NLS-1$
+            boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
+            if ((target.getId() != cen)
+                && (friendlyFire || enemyTarget)
+                && (!enemyTarget || target.hasSeenEntity(localPlayer)
+                    || target.hasDetectedEntity(localPlayer))
+                && target.isTargetable()) {
+                ToHitData thd = WeaponAttackAction.toHit(game, cen, target);
+                thd.setLocation(target.getPosition());
+                thd.setRange(ce().getPosition().distance(target.getPosition()));
+                fs.put(target.getId(), thd);
+            }
+        }
+        clientgui.getBoardView().setFiringSolutions(ce(), fs);
     }
 
     /**
@@ -608,8 +647,10 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().select(null);
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
+        clientgui.bv.clearFiringSolutionData();
         clientgui.bv.clearMovementData();
         clientgui.bv.clearFieldofF();
+        clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
 
     }

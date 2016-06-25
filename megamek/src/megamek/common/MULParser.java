@@ -97,6 +97,10 @@ public class MULParser {
     private static final String TROOPER_MISS = "trooperMiss";
     private static final String DRIVER = "driver";
     private static final String COMMANDER = "commander";
+    private static final String OFFBOARD = "offboard";
+    private static final String OFFBOARD_DISTANCE = "offboard_distance";
+    private static final String OFFBOARD_DIRECTION = "offboard_direction";
+    private static final String HIDDEN = "hidden";
     private static final String DEPLOYMENT = "deployment";
     private static final String DEPLOYMENT_ZONE = "deploymentZone";
     private static final String NEVER_DEPLOYED = "neverDeployed";
@@ -514,6 +518,29 @@ public class MULParser {
                 Boolean.parseBoolean(entityTag.getAttribute(COMMANDER));
         entity.setCommander(commander);
 
+        // hidden
+        try {
+            boolean isHidden =
+                    Boolean.parseBoolean(entityTag.getAttribute(HIDDEN));
+            entity.setHidden(isHidden);
+        } catch (Exception e) {
+            entity.setHidden(false);
+        }
+
+        // deploy offboard
+        try {
+            boolean offBoard =
+                    Boolean.parseBoolean(entityTag.getAttribute(OFFBOARD));
+            if (offBoard) {
+                int distance = Integer.parseInt(entityTag
+                        .getAttribute(OFFBOARD_DISTANCE));
+                OffBoardDirection dir = OffBoardDirection.getDirection(Integer
+                        .parseInt(entityTag.getAttribute(OFFBOARD_DIRECTION)));
+                entity.setOffBoard(distance, dir);
+            }
+        } catch (Exception e) {
+        }
+
         // deployment round
         try {
             int deployround = 
@@ -523,7 +550,7 @@ public class MULParser {
             entity.setDeployRound(0);
         }
         
-     // deployment round
+        // deployment zone
         try {
             int deployZone = 
                     Integer.parseInt(entityTag.getAttribute(DEPLOYMENT_ZONE));

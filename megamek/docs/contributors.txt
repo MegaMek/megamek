@@ -116,6 +116,7 @@
      Rovnek
      Aokarasu
      Ratach
+     Razorback
 
   German Readme:
      Black Ice <WKA_Online@yahoo.de>
@@ -206,6 +207,7 @@
      Michael "Spartan10590" Rehrig
      Scintilla
      Michael Rehrig
+     Bloodwolf
 
 
   Camo Pack

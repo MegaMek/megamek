@@ -29,7 +29,6 @@ import megamek.common.Infantry;
 import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.Report;
-import megamek.common.SpecialHexDisplay;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
@@ -75,7 +74,6 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         if (!cares(phase)) {
             return true;
         }
-        String artyMsg;
         Coords targetPos = target.getPosition();
         boolean isFlak = (target instanceof VTOL) || (target instanceof Aero);
         boolean asfFlak = target instanceof Aero;
@@ -153,31 +151,13 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             r.add(targetPos.getBoardNum());
             vPhaseReport.addElement(r);
-            artyMsg = "Artillery Hit here by"
-                    + ae.getOwner().getName()
-                    + " (this hex is now an auto-hit). Display this for everyone.";
-            game.getBoard().addSpecialHexDisplay(
-                    targetPos,
-                    new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
-                            game.getRoundCount(), ae.getOwner(), artyMsg));
-
         } else {
-            Coords origPos = targetPos;
             targetPos = Compute.scatter(targetPos,
                     (Math.abs(toHit.getMoS()) + 1) / 2);
             if (game.getBoard().contains(targetPos)) {
                 // misses and scatters to another hex
                 if (!isFlak) {
                     r = new Report(3195);
-                    artyMsg = "Artillery missed here by"
-                            + ae.getOwner().getName()
-                            + ". Display this for everyone.";
-                    game.getBoard().addSpecialHexDisplay(
-                            origPos,
-                            new SpecialHexDisplay(
-                                    SpecialHexDisplay.Type.ARTILLERY_HIT, game
-                                            .getRoundCount(), ae.getOwner(),
-                                    artyMsg));
                 } else {
                     r = new Report(3192);
                 }

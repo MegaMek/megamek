@@ -75,7 +75,7 @@ import megamek.common.Configuration;
 public class RandomNameGenerator implements Serializable {
     private static final String PROP_INITIALIZED = "initialized"; //$NON-NLS-1$
 
-	/** Default directory containing the faction-specific name files. */
+    /** Default directory containing the faction-specific name files. */
     private static final String DIR_NAME_FACTIONS = "factions"; //$NON-NLS-1$
 
     /** Default filename for the list of male first names. */
@@ -87,15 +87,9 @@ public class RandomNameGenerator implements Serializable {
     /** Default filename for the list of surnames names. */
     private static final String FILENAME_SURNAMES = "surnames.txt"; //$NON-NLS-1$
 
-    
-    /**
-     *
-     */
     private static final long serialVersionUID = 5765118329881301375L;
 
     private static RandomNameGenerator rng;
-    private static boolean interrupted;
-    private static boolean dispose;
 
     Map<String, Vector<String>> firstm;
     Map<String, Vector<String>> firstf;
@@ -140,10 +134,6 @@ public class RandomNameGenerator implements Serializable {
         try(Scanner input = new Scanner(new FileInputStream(male_firstnames_path), "UTF-8")) { //$NON-NLS-1$
             int linen = 0;
             while (input.hasNextLine()) {
-                // Check to see if we've been interrupted
-                if (interrupted) {
-                    break;
-                }
                 String line = input.nextLine();
                 linen++;
                 String[] values = line.split(","); //$NON-NLS-1$
@@ -180,10 +170,6 @@ public class RandomNameGenerator implements Serializable {
         try(Scanner input = new Scanner(new FileInputStream(female_firstnames_path), "UTF-8")) { //$NON-NLS-1$
             int linen = 0;
             while (input.hasNextLine()) {
-                // Check to see if we've been interrupted
-                if (interrupted) {
-                    break;
-                }
                 String line = input.nextLine();
                 linen++;
                 String[] values = line.split(","); //$NON-NLS-1$
@@ -220,10 +206,6 @@ public class RandomNameGenerator implements Serializable {
         try(Scanner input = new Scanner(new FileInputStream(surnames_path), "UTF-8")) { //$NON-NLS-1$
             int linen = 0;
             while (input.hasNextLine()) {
-                // Check to see if we've been interrupted
-                if (interrupted) {
-                    break;
-                }
                 String line = input.nextLine();
                 linen++;
                 String[] values = line.split(","); //$NON-NLS-1$
@@ -263,10 +245,6 @@ public class RandomNameGenerator implements Serializable {
             return;
         }
         for (int filen = 0; filen < filenames.length; filen++) {
-            // Check to see if we've been interrupted
-            if (interrupted) {
-                break;
-            }
             String filename = filenames[filen];
             String key = filename.split("\\.txt")[0]; //$NON-NLS-1$
             if ((key.length() < 1) || factionLast.containsKey(key)) {
@@ -278,10 +256,6 @@ public class RandomNameGenerator implements Serializable {
             try(Scanner factionInput = new Scanner(new FileInputStream(ff), "UTF-8")) { //$NON-NLS-1$
                 Map<String, Vector<String>> hash = new HashMap<String, Vector<String>>();
                 while (factionInput.hasNextLine()) {
-                    // Check to see if we've been interrupted
-                    if (interrupted) {
-                        break;
-                    }
                     String line = factionInput.nextLine();
                     String[] values = line.split(","); //$NON-NLS-1$
                     String ethnicity = values[0];
@@ -308,29 +282,26 @@ public class RandomNameGenerator implements Serializable {
                 System.err.println("RandomNameGenerator.populateNames(): Could not find '" + ff + "'"); //$NON-NLS-1$ //$NON-NLS-2$
                 continue;
             }
-            if (dispose) {
-                clear();
-            }
         }
     }
 
-	public synchronized void addInitializationListener(PropertyChangeListener listener) {
-		pcs.addPropertyChangeListener(listener);
-		if(initialized) {
-			// Fire and remove
-			pcs.firePropertyChange(PROP_INITIALIZED, false, true);
-			pcs.removePropertyChangeListener(listener);
-		}
-	}
-	
-	protected void setInitialized(boolean initialized) {
-		pcs.firePropertyChange(PROP_INITIALIZED, this.initialized, this.initialized = initialized);
-	}
-	
-	public boolean isInitialized() {
-		return initialized;
-	}
-	
+    public synchronized void addInitializationListener(PropertyChangeListener listener) {
+        pcs.addPropertyChangeListener(listener);
+        if(initialized) {
+            // Fire and remove
+            pcs.firePropertyChange(PROP_INITIALIZED, false, true);
+            pcs.removePropertyChangeListener(listener);
+        }
+    }
+    
+    protected void setInitialized(boolean initialized) {
+        pcs.firePropertyChange(PROP_INITIALIZED, this.initialized, this.initialized = initialized);
+    }
+    
+    public boolean isInitialized() {
+        return initialized;
+    }
+    
     /**
      * Generate a single random name
      * 
@@ -416,29 +387,6 @@ public class RandomNameGenerator implements Serializable {
         return Compute.randomInt(100) < percentFemale;
     }
 
-    public void dispose() {
-        interrupted = true;
-        dispose = true;
-        if (initialized){
-            clear();
-        }
-    }
-
-    public void clear() {
-        rng = null;
-        firstm = null;
-        firstf = null;
-        last = null;
-        factionFirst = null;
-        factionLast = null;
-        setInitialized(false);
-        initializing = false;
-        interrupted = false;
-        dispose = false;
-        interrupted = false;
-        dispose = false;
-    }
-
     public static void initialize() {
         if ((rng != null) && (rng.last != null)) {
             return;
@@ -450,8 +398,6 @@ public class RandomNameGenerator implements Serializable {
             rng.loader = new Thread(new Runnable() {
                 public void run() {
                     rng.initializing = true;
-                    dispose = false;
-                    interrupted = false;
                     rng.populateNames();
                     if (rng != null) {
                         rng.setInitialized(true);
@@ -469,4 +415,8 @@ public class RandomNameGenerator implements Serializable {
         }
         return rng;
     }
+    
+    // Deactivated methods
+    public void dispose() {}
+    public void clear() {}
 }

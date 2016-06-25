@@ -1,0 +1,12 @@
+Escorpion Imperio Infantry/BattleArmor/Protomechs (3090)
+Motorized Platoon (Rifle),1
+Scout Infantry The Battle Corps - Baker Street Irregulars,2
+Clan Motorized Point (Laser),3
+Elemental Battle Armor [Laser],4
+Undine Battle Armor (Upgrade),5
+Elemental Battle Armor [Laser],6
+Salamander Battle Armor (Laser),5
+Afreet Medium Battle Armor (Standard),4
+Triton (Standard),3
+Roc (Standard),2
+Satyr (Standard),1

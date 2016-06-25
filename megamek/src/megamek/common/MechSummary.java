@@ -140,6 +140,41 @@ public class MechSummary implements Serializable {
         return m_sUnitSubType;
     }
 
+    public static String determineETypeName(MechSummary ms) {
+        if (ms.getUnitType().equals("BattleArmor")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_INFANTRY);
+        } else if (ms.getUnitType().equals("Infantry")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_INFANTRY);
+        } else if (ms.getUnitType().equals("VTOL")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_VTOL);
+        } else if (ms.getUnitType().equals("Naval")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_TANK);
+        } else if (ms.getUnitType().equals("Gun Emplacement")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_TANK);
+        } else if (ms.getUnitType().equals("Tank")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_TANK);
+        } else if (ms.getUnitType().equals("Mek")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_MECH);
+        } else if (ms.getUnitType().equals("ProtoMek")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_PROTOMECH);
+        } else if (ms.getUnitType().equals("Space Station")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_AERO);
+        } else if (ms.getUnitType().equals("Jumpship")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_AERO);
+        } else if (ms.getUnitType().equals("Dropship")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_AERO);
+        } else if (ms.getUnitType().equals("Small Craft")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_AERO);
+        } else if (ms.getUnitType().equals("Conventional Fighter")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_AERO);
+        } else if (ms.getUnitType().equals("Aero")) {
+            return Entity.getEntityMajorTypeName(Entity.ETYPE_AERO);
+        } else if (ms.getUnitType().equals("Unknown")) {
+            return Entity.getEntityMajorTypeName(-1);
+        }
+        return Entity.getEntityMajorTypeName(-1);
+    }
+
     public static String determineUnitType(Entity e) {
         EntityMovementMode mm = e.getMovementMode();
         if (e instanceof BattleArmor) {

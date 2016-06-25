@@ -2,31 +2,39 @@
 <BlockVersion>
 1
 </BlockVersion>
+
 #Write the version number just in case...
 <Version>
 MAM0
 </Version>
+
 <UnitType>
 SmallCraft
 </UnitType>
+
 <Name>
 Dragonstar Passenger Transport
 </Name>
+
 <Model>
 (Standard)
 </Model>
+
 <Tonnage>
 150
 </Tonnage>
+
 <SafeThrust>
 5
 </SafeThrust>
+
 <Armor>
 85
 72
 72
 55
 </Armor>
+
 <Nose Equipment>
 ISLargeLaser
 ISMediumLaser
@@ -72,6 +80,10 @@ IS Level 2
 <internal_type>
 0
 </internal_type>
+
+<designtype>
+0
+</designtype>
 
 <armor_type>
 0

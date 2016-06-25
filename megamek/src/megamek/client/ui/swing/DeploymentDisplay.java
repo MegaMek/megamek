@@ -17,8 +17,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
@@ -29,6 +30,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.widget.MegamekButton;
+import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Aero;
 import megamek.common.Bay;
 import megamek.common.Board;
@@ -99,7 +101,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         }
     }
 
-    protected Hashtable<DeployCommand,MegamekButton> buttons;
+    protected Map<DeployCommand,MegamekButton> buttons;
 
     private int cen = Entity.NONE; // current entity number
     // is the shift key held?
@@ -117,12 +119,13 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         setupStatusBar(Messages
                 .getString("DeploymentDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
         
-        buttons = new Hashtable<DeployCommand, MegamekButton>(
+        buttons = new HashMap<DeployCommand, MegamekButton>(
                 (int) (DeployCommand.values().length * 1.25 + 0.5));
         for (DeployCommand cmd : DeployCommand.values()) {
             String title = Messages.getString("DeploymentDisplay."
                     + cmd.getCmd());
-            MegamekButton newButton = new MegamekButton(title, "PhaseDisplayButton");
+            MegamekButton newButton = new MegamekButton(title,
+                    SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
             newButton.addActionListener(this);
             newButton.setActionCommand(cmd.getCmd());
             newButton.setEnabled(false);
@@ -283,6 +286,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
         clientgui.bv.markDeploymentHexesFor(null);
+        clientgui.setSelectedEntityNum(Entity.NONE);
         disableButtons();
     }
 

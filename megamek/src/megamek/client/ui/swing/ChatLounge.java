@@ -226,8 +226,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     private MechSummaryCache.Listener mechSummaryCacheListener = new MechSummaryCache.Listener() {
         @Override
-		public void doneLoading() {
-        	mscLoaded = true;
+        public void doneLoading() {
+            mscLoaded = true;
             butLoad.setEnabled(mscLoaded && rngLoaded);
             butArmy.setEnabled(mscLoaded && rngLoaded);
             butLoadList.setEnabled(mscLoaded);
@@ -371,13 +371,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         RandomNameGenerator rng = RandomNameGenerator.getInstance();
         rng.addInitializationListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				rngLoaded = (boolean) evt.getNewValue();
-		        butLoad.setEnabled(mscLoaded && rngLoaded);
-		        butArmy.setEnabled(mscLoaded && rngLoaded);
-			}
-		});
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                rngLoaded = (boolean) evt.getNewValue();
+                butLoad.setEnabled(mscLoaded && rngLoaded);
+                butArmy.setEnabled(mscLoaded && rngLoaded);
+            }
+        });
         MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
         mechSummaryCache.addListener(mechSummaryCacheListener);
         mscLoaded = mechSummaryCache.isInitialized();

@@ -55,6 +55,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import megamek.client.Client;
 import megamek.client.RandomUnitGenerator;
+import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.MechFileParser;
@@ -90,6 +91,8 @@ WindowListener, TreeSelectionListener {
     //private JScrollPane m_treeViewRAT = new JScrollPane(m_treeRAT);
     private JTabbedPane m_pMain = new JTabbedPane();
     private JPanel m_pRAT = new JPanel();
+    private JPanel m_pRATGen = new JPanel();
+    private JPanel m_pRoles = new JPanel();
     private JPanel m_pParameters = new JPanel();
     private JPanel m_pPreview = new JPanel();
     private JPanel m_pButtons = new JPanel();
@@ -98,6 +101,7 @@ WindowListener, TreeSelectionListener {
     private JButton m_bCancel = new JButton(Messages.getString("Cancel"));
     private JButton m_bAdvSearch = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearch"));
     private JButton m_bAdvSearchClear = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearchClear"));
+    private JButton m_bGenerate = new JButton(Messages.getString("RandomArmyDialog.Generate"));
 
     private JSplitPane m_pSplit;
 
@@ -108,6 +112,7 @@ WindowListener, TreeSelectionListener {
 
     private JTable m_lArmy;
     private JTable m_lUnits;
+    private JTable m_lRAT;
 
     private UnitTableModel armyModel;
     private UnitTableModel unitsModel;
@@ -129,6 +134,16 @@ WindowListener, TreeSelectionListener {
             .getString("RandomArmyDialog.Tech"));
     private JLabel m_labUnits = new JLabel(Messages
             .getString("RandomArmyDialog.Unit"));
+    private JLabel m_labFaction = new JLabel(Messages
+            .getString("RandomArmyDialog.Faction"));
+    private JLabel m_labCommand = new JLabel(Messages
+            .getString("RandomArmyDialog.Command"));
+    private JLabel m_labUnitType = new JLabel(Messages
+            .getString("RandomArmyDialog.UnitType"));
+    private JLabel m_labWeightClass = new JLabel(Messages
+            .getString("RandomArmyDialog.WeightClass"));
+    private JLabel m_labRating = new JLabel(Messages
+            .getString("RandomArmyDialog.Rating"));
     private JLabel m_ratStatus;
 
     private JTextField m_tBVmin = new JTextField(6);
@@ -145,9 +160,15 @@ WindowListener, TreeSelectionListener {
     private JCheckBox m_chkCanon = new JCheckBox(Messages
             .getString("RandomArmyDialog.Canon"));
 
+    private JTextField m_tYear = new JTextField(4);
+    private JComboBox<String> m_chFaction = new JComboBox<String>();
+    private JComboBox<String> m_chSubfaction = new JComboBox<String>();
+    private JComboBox<String> m_chUnitType = new JComboBox<String>();
+    private JComboBox<String> m_chWeightClass = new JComboBox<String>();
+    private JComboBox<String> m_chRating = new JComboBox<String>();
 
     private RandomUnitGenerator rug;
-
+    private RATGenerator rg;
 
     public RandomArmyDialog(ClientGUI cl) {
         super(cl.frame, Messages.getString("RandomArmyDialog.title"), true); //$NON-NLS-1$
@@ -333,6 +354,160 @@ WindowListener, TreeSelectionListener {
         treeViewRAT.setPreferredSize(new Dimension(300, 200));
         m_pRAT.add(treeViewRAT, c);
 
+        //construct the RAT Generator panel
+        m_pRATGen.setLayout(new GridBagLayout());
+
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGen.add(m_labYear, c);
+
+        m_tYear.setText(String.valueOf(m_clientgui.getClient().getGame().getOptions()
+                .intOption("year")));
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGen.add(m_tYear, c);
+        
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGen.add(m_labFaction, c);
+
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGen.add(m_chFaction, c);
+        
+        c = new GridBagConstraints();
+        c.gridx = 2;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGen.add(m_labCommand, c);
+
+        c = new GridBagConstraints();
+        c.gridx = 3;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGen.add(m_chSubfaction, c);
+        
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGen.add(m_labUnitType, c);
+
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGen.add(m_chUnitType, c);
+        
+        c = new GridBagConstraints();
+        c.gridx = 2;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGen.add(m_labWeightClass, c);
+
+        c = new GridBagConstraints();
+        c.gridx = 3;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGen.add(m_chWeightClass, c);
+        
+        c = new GridBagConstraints();
+        c.gridx = 4;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGen.add(m_labRating, c);
+
+        c = new GridBagConstraints();
+        c.gridx = 5;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGen.add(m_chRating, c);
+        
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 3;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGen.add(m_pRoles, c);
+        
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 4;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGen.add(m_bGenerate, c);
+        
+        m_lRAT = new JTable();
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 5;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
+        m_pRATGen.add(m_lRAT, c);
+
         // construct the preview panel
         m_pPreview.setLayout(new GridBagLayout());
         unitsModel = new UnitTableModel();
@@ -389,6 +564,7 @@ WindowListener, TreeSelectionListener {
 
         m_pMain.addTab(Messages.getString("RandomArmyDialog.BVtab"), m_pParameters);
         m_pMain.addTab(Messages.getString("RandomArmyDialog.RATtab"), m_pRAT);
+        m_pMain.addTab(Messages.getString("RandomArmyDialog.RATGentab"), m_pRATGen);
 
         m_pSplit = new javax.swing.JSplitPane(javax.swing.JSplitPane.HORIZONTAL_SPLIT,m_pMain, m_pPreview);
         m_pSplit.setOneTouchExpandable(false);

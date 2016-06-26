@@ -53,6 +53,7 @@ public class AbstractUnitRecord {
 
 	protected String chassis = "";
 	protected boolean omni;
+	protected boolean clan;
 	protected String unitType;
 	protected int movementType;
 	protected int introYear;
@@ -62,6 +63,7 @@ public class AbstractUnitRecord {
 		this.chassis = chassis;
 		unitType = "Mek";
 		omni = false;
+		clan = false;
 		movementType = MOVEMENT_LEG;
 		includedFactions = new HashSet<String>();
 	}
@@ -98,7 +100,11 @@ public class AbstractUnitRecord {
 		this.chassis = chassis;
 	}
 	public final String getChassisKey() {
-		return chassis + "[" + unitType + (omni?"] Omni":"]");
+		if (omni) {
+			return clan? chassis + "[" + unitType + "]ClanOmni" :
+				chassis + "[" + unitType + "]ISOmni";
+		}
+		return chassis + "[" + unitType + "]";
 	}
 	public String getKey() {
 		return getChassisKey();

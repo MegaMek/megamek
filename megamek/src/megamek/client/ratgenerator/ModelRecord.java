@@ -34,7 +34,6 @@ import megamek.common.loaders.EntityLoadingException;
  */
 public class ModelRecord extends AbstractUnitRecord {
 	private String model;
-	private boolean clan;
 	private boolean starLeague;
 	private int weightClass;
 	private ArrayList<MissionRole> roles;
@@ -258,6 +257,7 @@ public class ModelRecord extends AbstractUnitRecord {
 		ChassisRecord retVal = new ChassisRecord(chassis);
 		retVal.introYear = introYear;
 		retVal.omni = omni;
+		retVal.clan = clan;
 		retVal.unitType = unitType;
 		retVal.movementType = movementType;
 		retVal.addModel(this);

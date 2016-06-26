@@ -471,8 +471,12 @@ public class RATGenerator {
 						String key = wn.getAttributes().getNamedItem("name").getTextContent()
 								+ "[" + wn.getAttributes().getNamedItem("unitType").getTextContent()
 								+ "]";
-						if (Boolean.parseBoolean(wn.getAttributes().getNamedItem("omni").getTextContent())) {
-							key += " Omni";
+						if (wn.getAttributes().getNamedItem("omni") != null) {
+							if (wn.getAttributes().getNamedItem("omni").getTextContent().equalsIgnoreCase("IS")) {
+								key += "ISOmni";
+							} else {
+								key += "ClanOmni";
+							}
 						}
 						ChassisRecord cr = chassis.get(key);
 						if (cr == null) {

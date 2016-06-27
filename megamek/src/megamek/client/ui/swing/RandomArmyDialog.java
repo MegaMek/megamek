@@ -15,6 +15,7 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -26,15 +27,19 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Iterator;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -162,8 +167,8 @@ WindowListener, TreeSelectionListener {
             .getString("RandomArmyDialog.Canon"));
 
     private JTextField m_tYear = new JTextField(4);
-    private JComboBox<String> m_chFaction = new JComboBox<String>();
-    private JComboBox<String> m_chSubfaction = new JComboBox<String>();
+    private JComboBox<FactionRecord> m_chFaction = new JComboBox<FactionRecord>();
+    private JComboBox<FactionRecord> m_chSubfaction = new JComboBox<FactionRecord>();
     private JComboBox<String> m_chUnitType = new JComboBox<String>();
     private JComboBox<String> m_chWeightClass = new JComboBox<String>();
     private JComboBox<String> m_chRating = new JComboBox<String>();
@@ -401,6 +406,7 @@ WindowListener, TreeSelectionListener {
         c.weightx = 0.0;
         c.weighty = 0.0;
         m_pRATGen.add(m_chFaction, c);
+        m_chFaction.setRenderer(factionCbRenderer);
         
         c = new GridBagConstraints();
         c.gridx = 2;
@@ -421,6 +427,7 @@ WindowListener, TreeSelectionListener {
         c.weightx = 0.0;
         c.weighty = 0.0;
         m_pRATGen.add(m_chSubfaction, c);
+        m_chSubfaction.setRenderer(factionCbRenderer);
         
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -872,12 +879,38 @@ WindowListener, TreeSelectionListener {
     
     private void updateFactionChoice() {
     	m_chFaction.removeAllItems();
+    	ArrayList<FactionRecord> recs = new ArrayList<>();
     	for (FactionRecord fRec : rg.getFactionList()) {
     		if (!fRec.getKey().contains(".")) {
-    			m_chFaction.addItem(fRec.getName(getRATGenYear()));
+    			recs.add(fRec);
     		}
     	}
+    	Collections.sort(recs, factionSorter);
+    	for (FactionRecord fRec : recs) {
+    		m_chFaction.addItem(fRec);
+    	}
     }
+    
+    private DefaultListCellRenderer factionCbRenderer = new DefaultListCellRenderer() {
+		private static final long serialVersionUID = -333065979253244440L;
+
+		@Override
+		public Component getListCellRendererComponent(JList<?> list,
+				Object value, int index, boolean isSelected,
+				boolean cellHasFocus) {
+			if (value != null) {
+				setText(((FactionRecord)value).getName(getRATGenYear()));
+			}
+			return this;
+		}    	
+    };
+    
+    private Comparator<FactionRecord> factionSorter = new Comparator<FactionRecord>() {
+		@Override
+		public int compare(FactionRecord o1, FactionRecord o2) {
+			return o1.getName(getRATGenYear()).compareTo(o2.getName(getRATGenYear()));
+		}    	
+    };
 
     @Override
     public void setVisible(boolean show) {

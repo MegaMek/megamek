@@ -24,6 +24,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
@@ -75,7 +77,7 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.RandomArmyCreator;
 
 public class RandomArmyDialog extends JDialog implements ActionListener,
-WindowListener, TreeSelectionListener {
+WindowListener, TreeSelectionListener, FocusListener {
 
     /**
      *
@@ -175,6 +177,7 @@ WindowListener, TreeSelectionListener {
 
     private RandomUnitGenerator rug;
     private RATGenerator rg;
+    private int ratGenYear;
 
     public RandomArmyDialog(ClientGUI cl) {
         super(cl.frame, Messages.getString("RandomArmyDialog.title"), true); //$NON-NLS-1$
@@ -375,8 +378,9 @@ WindowListener, TreeSelectionListener {
         c.weighty = 0.0;
         m_pRATGen.add(m_labYear, c);
 
-        m_tYear.setText(String.valueOf(m_clientgui.getClient().getGame().getOptions()
-                .intOption("year")));
+        ratGenYear = m_clientgui.getClient().getGame().getOptions()
+                .intOption("year");
+        m_tYear.setText(String.valueOf(ratGenYear));
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 0;
@@ -386,6 +390,7 @@ WindowListener, TreeSelectionListener {
         c.weightx = 0.0;
         c.weighty = 0.0;
         m_pRATGen.add(m_tYear, c);
+        m_tYear.addFocusListener(this);
         
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -400,17 +405,18 @@ WindowListener, TreeSelectionListener {
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 1;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
         m_pRATGen.add(m_chFaction, c);
         m_chFaction.setRenderer(factionCbRenderer);
+        m_chFaction.addActionListener(this);
         
         c = new GridBagConstraints();
-        c.gridx = 2;
-        c.gridy = 1;
+        c.gridx = 0;
+        c.gridy = 2;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
@@ -419,19 +425,20 @@ WindowListener, TreeSelectionListener {
         m_pRATGen.add(m_labCommand, c);
 
         c = new GridBagConstraints();
-        c.gridx = 3;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
+        c.gridx = 1;
+        c.gridy = 2;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
         m_pRATGen.add(m_chSubfaction, c);
         m_chSubfaction.setRenderer(factionCbRenderer);
+        m_chSubfaction.addActionListener(this);
         
         c = new GridBagConstraints();
         c.gridx = 0;
-        c.gridy = 2;
+        c.gridy = 3;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
@@ -441,7 +448,7 @@ WindowListener, TreeSelectionListener {
 
         c = new GridBagConstraints();
         c.gridx = 1;
-        c.gridy = 2;
+        c.gridy = 3;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
@@ -451,7 +458,7 @@ WindowListener, TreeSelectionListener {
         
         c = new GridBagConstraints();
         c.gridx = 2;
-        c.gridy = 2;
+        c.gridy = 3;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
@@ -461,7 +468,7 @@ WindowListener, TreeSelectionListener {
 
         c = new GridBagConstraints();
         c.gridx = 3;
-        c.gridy = 2;
+        c.gridy = 3;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
@@ -471,7 +478,7 @@ WindowListener, TreeSelectionListener {
         
         c = new GridBagConstraints();
         c.gridx = 4;
-        c.gridy = 2;
+        c.gridy = 3;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
@@ -481,7 +488,7 @@ WindowListener, TreeSelectionListener {
 
         c = new GridBagConstraints();
         c.gridx = 5;
-        c.gridy = 2;
+        c.gridy = 3;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
@@ -491,7 +498,7 @@ WindowListener, TreeSelectionListener {
         
         c = new GridBagConstraints();
         c.gridx = 0;
-        c.gridy = 3;
+        c.gridy = 4;
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
@@ -500,7 +507,7 @@ WindowListener, TreeSelectionListener {
         
         c = new GridBagConstraints();
         c.gridx = 0;
-        c.gridy = 4;
+        c.gridy = 5;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
@@ -511,7 +518,7 @@ WindowListener, TreeSelectionListener {
         m_lRAT = new JTable();
         c = new GridBagConstraints();
         c.gridx = 0;
-        c.gridy = 5;
+        c.gridy = 6;
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 1.0;
@@ -715,14 +722,15 @@ WindowListener, TreeSelectionListener {
             }finally{
                 setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
             }
+        } else if (ev.getSource().equals(m_chFaction)) {
+        	updateSubfactionChoice();
         } else if (ev.getSource().equals(rug)) {
             m_ratStatus.setText(Messages
                     .getString("RandomArmyDialog.ratStatusDoneLoading"));
             updateRATs();
         } else if (ev.getSource().equals(rg)) {
         	if (ev.getActionCommand().equals("ratGenInitialized")) {
-        		rg.loadEra(m_clientgui.getClient().getGame().getOptions()
-                        .intOption("year"));
+        		rg.loadEra(ratGenYear);
         	} else {
         		updateFactionChoice();
         	}
@@ -757,7 +765,31 @@ WindowListener, TreeSelectionListener {
         //ignored
     }
 
-    private void updatePlayerChoice() {
+
+	@Override
+	public void focusGained(FocusEvent e) {
+		//ignored
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		if (e.getSource().equals(m_tYear)) {
+			try {
+				ratGenYear = Integer.parseInt(m_tYear.getText());
+				if (ratGenYear < rg.getEraSet().first()) {
+					ratGenYear = rg.getEraSet().first();
+				} else if (ratGenYear > rg.getEraSet().last()) {
+					ratGenYear = rg.getEraSet().last();
+				}
+			} catch (NumberFormatException ex) {
+				//ignore and restore to previous value
+			}
+			m_tYear.setText(String.valueOf(ratGenYear));
+			rg.loadEra(ratGenYear);
+		}
+	}
+
+	private void updatePlayerChoice() {
         String lastChoice = (String) m_chPlayer.getSelectedItem();
         String clientName = m_clientgui.getClient().getName();
         m_chPlayer.removeAllItems();
@@ -873,15 +905,13 @@ WindowListener, TreeSelectionListener {
         return null;
     }
     
-    private int getRATGenYear() {
-    	return Integer.parseInt(m_tYear.getText());
-    }
-    
     private void updateFactionChoice() {
+    	FactionRecord old = (FactionRecord)m_chFaction.getSelectedItem();
+    	m_chFaction.removeActionListener(this);
     	m_chFaction.removeAllItems();
     	ArrayList<FactionRecord> recs = new ArrayList<>();
     	for (FactionRecord fRec : rg.getFactionList()) {
-    		if (!fRec.getKey().contains(".")) {
+    		if (!fRec.getKey().contains(".") && fRec.isActiveInYear(ratGenYear)) {
     			recs.add(fRec);
     		}
     	}
@@ -889,6 +919,35 @@ WindowListener, TreeSelectionListener {
     	for (FactionRecord fRec : recs) {
     		m_chFaction.addItem(fRec);
     	}
+    	m_chFaction.setSelectedItem(old);
+    	if (m_chFaction.getSelectedItem() == null) {
+    		m_chFaction.setSelectedItem(rg.getFaction("IS"));
+    	}
+    	updateSubfactionChoice();
+    	m_chFaction.addActionListener(this);
+    }
+    
+    private void updateSubfactionChoice() {
+    	FactionRecord old = (FactionRecord)m_chSubfaction.getSelectedItem();
+    	m_chSubfaction.removeActionListener(this);
+    	m_chSubfaction.removeAllItems();
+    	FactionRecord selectedFaction = (FactionRecord)m_chFaction.getSelectedItem();
+    	if (selectedFaction != null) {
+	    	ArrayList<FactionRecord> recs = new ArrayList<>();
+	    	for (FactionRecord fRec : rg.getFactionList()) {
+	    		if (fRec.getKey().startsWith(selectedFaction.getKey() + ".")
+	    				&& fRec.isActiveInYear(ratGenYear)) {
+	    			recs.add(fRec);
+	    		}
+	    	}
+	    	Collections.sort(recs, factionSorter);
+	    	m_chSubfaction.addItem(null); //No specific subcommand.
+	    	for (FactionRecord fRec : recs) {
+	    		m_chSubfaction.addItem(fRec);
+	    	}
+    	}
+    	m_chSubfaction.setSelectedItem(old);
+    	m_chSubfaction.addActionListener(this);
     }
     
     private DefaultListCellRenderer factionCbRenderer = new DefaultListCellRenderer() {
@@ -898,8 +957,10 @@ WindowListener, TreeSelectionListener {
 		public Component getListCellRendererComponent(JList<?> list,
 				Object value, int index, boolean isSelected,
 				boolean cellHasFocus) {
-			if (value != null) {
-				setText(((FactionRecord)value).getName(getRATGenYear()));
+			if (value == null) {
+				setText("General");
+			} else {
+				setText(((FactionRecord)value).getName(ratGenYear));
 			}
 			return this;
 		}    	
@@ -908,7 +969,7 @@ WindowListener, TreeSelectionListener {
     private Comparator<FactionRecord> factionSorter = new Comparator<FactionRecord>() {
 		@Override
 		public int compare(FactionRecord o1, FactionRecord o2) {
-			return o1.getName(getRATGenYear()).compareTo(o2.getName(getRATGenYear()));
+			return o1.getName(ratGenYear).compareTo(o2.getName(ratGenYear));
 		}    	
     };
 

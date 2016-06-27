@@ -33,7 +33,9 @@
 		<parentFaction></parentFaction>
 		<salvage pct='0'></salvage>
 	</faction>
-	<faction key='CGB' name='Rasalhague Dominion' clan='true' periphery='false'>
+	<faction key='CGB' name='Clan Ghost Bear' clan='true' periphery='false'>
+		<nameChange year='3060'>Ghost Bear Dominion</nameChange>
+		<nameChange year='3103'>Rasalhague Dominion</nameChange>
 		<years>2807-</years>
 		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
@@ -67,6 +69,8 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CDS' name='Clan Sea Fox' clan='true' periphery='false'>
+		<nameChange year='2986'>Clan Diamond Shark</nameChange>
+		<nameChange year='3100'>Clan Sea Fox</nameChange>
 		<years>2807-</years>
 		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
@@ -77,7 +81,8 @@
 		<pctSL unitType='Vehicle'>85,85,55</pctSL>
 		<salvage pct='12'>RD:10,DC:6</salvage>
 	</faction>
-	<faction key='CSR' name='Raven Alliance' clan='true' periphery='false'>
+	<faction key='CSR' name='Clan Snow Raven' clan='true' periphery='false'>
+		<nameChange year='3083'>Raven Alliance</nameChange>
 		<years>2807-</years>
 		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
@@ -119,6 +124,8 @@
 		<salvage pct='5'>MOC:2,CC:10,OP:1</salvage>
 	</faction>
 	<faction key='FS' name='Federated Suns' clan='false' periphery='false'>
+		<nameChange year='3042'>Federated Commonwealth (Davion)</nameChange>
+		<nameChange year='3067'>Federated Suns</nameChange>
 		<years>2317-</years>
 		<ratName>Davion</ratName>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
@@ -139,6 +146,8 @@
 		<salvage pct='5'>PIR:5,FS:10,Periphery:5</salvage>
 	</faction>
 	<faction key='FWL' name='Free Worlds League' clan='false' periphery='false'>
+		<nameChange year='3078'>Former Free Worlds Independent</nameChange>
+		<nameChange year='3138'>Free Worlds League</nameChange>
 		<years>2271-</years>
 		<ratName>Marik</ratName>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
@@ -171,6 +180,9 @@
 		<salvage pct='5'>MH:10</salvage>
 	</faction>
 	<faction key='LA' name='Lyran Commonwealth' clan='false' periphery='false'>
+		<nameChange year='3042'>Federated Commonwealth (Steiner)</nameChange>
+		<nameChange year='3057'>Lyran Alliance</nameChange>
+		<nameChange year='3084'>Lyran Commonwealth</nameChange>
 		<years>2341-</years>
 		<ratName>Steiner</ratName>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
@@ -204,14 +216,8 @@
 		<parentFaction>Periphery.OS</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='NIOPS' name='Niops Association' clan='false' periphery='true'>
-		<years>2750-</years>
-		<ratName>Niops</ratName>
-		<ratingLevels></ratingLevels>
-		<parentFaction>Periphery.ME,SL</parentFaction>
-		<salvage pct='0'></salvage>
-	</faction>
-	<faction key='OA' name='Raven Alliance (AMC)' clan='false' periphery='true'>
+	<faction key='OA' name='Outworlds Alliance' clan='false' periphery='true'>
+		<nameChange year='3083'>Raven Alliance (AMC)</nameChange>
 		<years>2413-</years>
 		<ratName>Outworlds</ratName>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
@@ -228,25 +234,6 @@
 		<ratingLevels></ratingLevels>
 		<parentFaction>Periphery</parentFaction>
 		<salvage pct='15'>CC:2,LA:2,FWL:2,FS:2,DC:2,BAN:4</salvage>
-	</faction>
-	<faction key='RD' name='Rasalhague Dominion' clan='true' periphery='false'>
-		<years>3103-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
-		<parentFaction>CGB</parentFaction>
-	</faction>
-	<faction key='RA' name='Raven Alliance' clan='true' periphery='true'>
-		<years>3083-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
-		<parentFaction>CSR</parentFaction>
-		<pctOmni>40,0,75,95,100</pctOmni>
-		<pctClan>70,0,95,100</pctClan>
-		<pctSL>30,0,5,0</pctSL>
-		<pctOmni unitType='Aero'>40,0,80,100</pctOmni>
-		<pctClan unitType='Aero'>80,0,100</pctClan>
-		<pctSL unitType='Aero'>20,0</pctSL>
-		<pctClan unitType='Vehicle'>15,15,45</pctClan>
-		<pctSL unitType='Vehicle'>85,0,55</pctSL>
-		<salvage pct='6'>FS:9,DC:10</salvage>
 	</faction>
 	<faction key='RF' name='Regulan Fiefs' clan='false' periphery='false'>
 		<years>3078-</years>
@@ -344,13 +331,8 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.AD' name='Atrean Dragoons' clan='false' periphery='false'>
-		<years>2271-</years>
+		<years>2271-3079,3138-</years>
 		<ratingLevels>B</ratingLevels>
-		<parentFaction>FWL</parentFaction>
-	</faction>
-	<faction key='FWL.AH' name='Atrean Hussars' clan='false' periphery='false'>
-		<years>2923-</years>
-		<ratingLevels>C</ratingLevels>
 		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='FS.AH' name='Avalon Hussars' clan='false' periphery='false'>
@@ -400,7 +382,7 @@
 		<parentFaction>FS</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='Periphery.CM' name='Capellan Marches (Periphery)' clan='false' periphery='true'>
+	<faction key='Periphery.CM' name='Capellan Marches' clan='false' periphery='true'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery</parentFaction>
@@ -434,6 +416,11 @@
 		<parentFaction>CC</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
+	<faction key='FWL.CG' name='Covenant Guards' clan='false' periphery='false'>
+		<years>3139-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
 	<faction key='FS.CL' name='Crucis Lancers' clan='false' periphery='false'>
 		<years>2780-</years>
 		<ratingLevels>B</ratingLevels>
@@ -457,6 +444,11 @@
 		<ratingLevels>A</ratingLevels>
 		<parentFaction>CC</parentFaction>
 	</faction>
+	<faction key='Periphery.Deep' name='Deep Periphery' clan='false' periphery='true'>
+		<years>-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery</parentFaction>
+	</faction>
 	<faction key='FS.DLC' name='Deneb Light Cavalry' clan='false' periphery='false'>
 		<years>2780-</years>
 		<ratingLevels>C</ratingLevels>
@@ -473,7 +465,7 @@
 		<parentFaction>LA</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='Periphery.DD' name='Draconian Drift (Periphery)' clan='false' periphery='true'>
+	<faction key='Periphery.DD' name='Draconian Drift' clan='false' periphery='true'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery</parentFaction>
@@ -490,17 +482,12 @@
 		<parentFaction>CS</parentFaction>
 	</faction>
 	<faction key='FWL.FWG' name='Free Worlds Guards' clan='false' periphery='false'>
-		<years>2426-</years>
+		<years>2426-3079,3138-</years>
 		<ratingLevels>A</ratingLevels>
 		<parentFaction>FWL</parentFaction>
 	</faction>
-	<faction key='FWL.FWL' name='Free Worlds Legionnaires' clan='false' periphery='false'>
-		<years>3042-</years>
-		<ratingLevels>B</ratingLevels>
-		<parentFaction>FWL</parentFaction>
-	</faction>
 	<faction key='FWL.FO' name='Fusiliers of Oriente' clan='false' periphery='false'>
-		<years>2485-</years>
+		<years>2485-3079,3139-</years>
 		<ratingLevels>A</ratingLevels>
 		<parentFaction>FWL</parentFaction>
 	</faction>
@@ -522,7 +509,7 @@
 		<parentFaction>DC</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='Periphery.HR' name='Hyades Rim (Periphery)' clan='false' periphery='true'>
+	<faction key='Periphery.HR' name='Hyades Rim' clan='false' periphery='true'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery</parentFaction>
@@ -538,11 +525,6 @@
 		<ratingLevels>A</ratingLevels>
 		<parentFaction>MERC,LA</parentFaction>
 		<salvage pct='6'></salvage>
-	</faction>
-	<faction key='FWL.KIS' name='Knights of the Inner Sphere' clan='false' periphery='false'>
-		<years>3055-</years>
-		<ratingLevels>A</ratingLevels>
-		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='DC.LV' name='Legion of Vega' clan='false' periphery='false'>
 		<years>3011-</years>
@@ -560,6 +542,11 @@
 		<years>2367-2823,3113-</years>
 		<ratingLevels>D</ratingLevels>
 		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='FWL.LD' name='Loyalty Defenders' clan='false' periphery='false'>
+		<years>3139-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='LA.LG' name='Lyran Guards' clan='false' periphery='false'>
 		<years>2341-</years>
@@ -585,25 +572,15 @@
 		<parentFaction>MOC</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='Periphery.MW' name='March Worlds (Periphery)' clan='false' periphery='true'>
+	<faction key='Periphery.MW' name='March Worlds' clan='false' periphery='true'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery</parentFaction>
 	</faction>
-	<faction key='Periphery.ME' name='Marik Expanses (Periphery)' clan='false' periphery='true'>
+	<faction key='Periphery.ME' name='Marik Expanses' clan='false' periphery='true'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery</parentFaction>
-	</faction>
-	<faction key='FWL.MG' name='Marik Guard' clan='false' periphery='false'>
-		<years>2246-</years>
-		<ratingLevels>C</ratingLevels>
-		<parentFaction>FWL</parentFaction>
-	</faction>
-	<faction key='FWL.MM' name='Marik Militia' clan='false' periphery='false'>
-		<years>2238-</years>
-		<ratingLevels>F</ratingLevels>
-		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='CC.MAC' name='McCarron&apos;s Armored Cavalry' clan='false' periphery='false'>
 		<years>3060-</years>
@@ -623,12 +600,12 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.OH' name='Oriente Hussars' clan='false' periphery='false'>
-		<years>2245-</years>
+		<years>2245-3079,3139-</years>
 		<ratingLevels>F</ratingLevels>
 		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='FWL.OG' name='Orloff Grenadiers' clan='false' periphery='false'>
-		<years>2691-</years>
+		<years>2691-3079,3139-</years>
 		<ratingLevels>A</ratingLevels>
 		<parentFaction>FWL</parentFaction>
 	</faction>
@@ -638,7 +615,7 @@
 		<parentFaction>DC</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='Periphery.OS' name='Outer Sphere (Periphery)' clan='false' periphery='true'>
+	<faction key='Periphery.OS' name='Outer Sphere' clan='false' periphery='true'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery</parentFaction>
@@ -653,11 +630,6 @@
 		<ratingLevels>C</ratingLevels>
 		<parentFaction>FS</parentFaction>
 		<salvage pct='5'></salvage>
-	</faction>
-	<faction key='Periphery.Deep' name='Periphery.Deep' clan='false' periphery='true'>
-		<years>-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>Periphery</parentFaction>
 	</faction>
 	<faction key='DC.PR' name='Pesht Regulars' clan='false' periphery='false'>
 		<years>2319-</years>
@@ -676,11 +648,12 @@
 		<parentFaction>DC</parentFaction>
 	</faction>
 	<faction key='FWL.PG' name='Protectorate Guard' clan='false' periphery='false'>
-		<years>3000-</years>
+		<years>3000-3079,3138-</years>
 		<ratingLevels>C</ratingLevels>
 		<parentFaction>FWL</parentFaction>
 	</faction>
-	<faction key='MOC.RC' name='Raventhir Cuirassiers' clan='false' periphery='true'>
+	<faction key='MOC.RC' name='Raventhir Footmen' clan='false' periphery='true'>
+		<nameChange year='3063'>Raventhir Cuirassiers</nameChange>
 		<years>3055-</years>
 		<ratingLevels>C</ratingLevels>
 		<parentFaction>MOC</parentFaction>
@@ -692,9 +665,9 @@
 		<parentFaction>LA</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='FWL.RH' name='Regulan Hussars' clan='false' periphery='false'>
-		<years>2478-</years>
-		<ratingLevels>D</ratingLevels>
+	<faction key='FWL.RCG' name='Rim Commonality Guards' clan='false' periphery='false'>
+		<years>3139-</years>
+		<ratingLevels>C</ratingLevels>
 		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='FS.RMB' name='Robinson March Brigade' clan='false' periphery='false'>
@@ -721,13 +694,8 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.SHI' name='Silver Hawk Irregulars ' clan='false' periphery='false'>
-		<years>3000-3080,3137-</years>
+		<years>3000-3081,3138-</years>
 		<ratingLevels>C</ratingLevels>
-		<parentFaction>FWL</parentFaction>
-	</faction>
-	<faction key='FWL.SL' name='Sirian Lancers' clan='false' periphery='false'>
-		<years>2950-</years>
-		<ratingLevels>D</ratingLevels>
 		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='LA.SR' name='Skye Rangers' clan='false' periphery='false'>
@@ -747,11 +715,6 @@
 		<parentFaction>CC</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='FWL.SD' name='Stewart Dragoons' clan='false' periphery='false'>
-		<years>2293-</years>
-		<ratingLevels>D</ratingLevels>
-		<parentFaction>FWL</parentFaction>
-	</faction>
 	<faction key='DC.SZC' name='Sun Zhang Academy' clan='false' periphery='false'>
 		<years>2319-</years>
 		<ratingLevels>D</ratingLevels>
@@ -769,7 +732,12 @@
 		<ratingLevels>C</ratingLevels>
 		<parentFaction>FS</parentFaction>
 	</faction>
-	<faction key='Periphery.R' name='The Rift (Periphery' clan='false' periphery='true'>
+	<faction key='FWL.TR' name='Tamarind Regulars' clan='false' periphery='false'>
+		<years>3139-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='Periphery.R' name='The Rift' clan='false' periphery='true'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery</parentFaction>
@@ -825,7 +793,7 @@
 		</model>
 	</chassis>
 	<chassis name='Albatross' unitType='Mek'>
-		<availability>ROS:4,FWL:5,FWL.KIS:7,MERC:2</availability>
+		<availability>ROS:4,FWL:5,MERC:2</availability>
 		<model name='ALB-4U'>
 			<availability>FWL:6</availability>
 		</model>
@@ -2579,7 +2547,7 @@
 		</model>
 	</chassis>
 	<chassis name='Eagle' unitType='Mek'>
-		<availability>CC:4,MOC:4,FWL.MM:7,RF:6,FWL:6,MH:4,FWL.FO:7,MERC:4,DA:5</availability>
+		<availability>CC:4,MOC:4,RF:6,FWL:6,MH:4,FWL.FO:7,MERC:4,DA:5</availability>
 		<model name='EGL-1M'>
 			<availability>CC:2,MOC:2,FWL:1,MH:2</availability>
 		</model>
@@ -3050,7 +3018,7 @@
 		</model>
 	</chassis>
 	<chassis name='Grand Titan' unitType='Mek'>
-		<availability>CC:4,MOC:4,FWL.KIS:8,FS:4,MERC:4,FVC:5,RF:7,ROS:6,Periphery.MW:4,Periphery.ME:4,FWL:7,MH:4,DA:7,DC:4</availability>
+		<availability>CC:4,MOC:4,FS:4,MERC:4,FVC:5,RF:7,ROS:6,Periphery.MW:4,Periphery.ME:4,FWL:7,MH:4,DA:7,DC:4</availability>
 		<model name='T-IT-N10M'>
 			<availability>ROS:2,FWL:2,MERC:2,Periphery:2</availability>
 		</model>
@@ -6354,7 +6322,7 @@
 		</model>
 	</chassis>
 	<chassis name='Tempest' unitType='Mek'>
-		<availability>FWL.MM:8,RF:8,ROS:5,Periphery.MW:4,Periphery.ME:4,FWL:8,MH:4,MERC:4</availability>
+		<availability>RF:8,ROS:5,Periphery.MW:4,Periphery.ME:4,FWL:8,MH:4,MERC:4</availability>
 		<model name='TMP-3MA'>
 			<availability>RF:4,ROS:4,MERC:4</availability>
 		</model>
@@ -7367,7 +7335,7 @@
 		</model>
 	</chassis>
 	<chassis name='Yeoman' unitType='Mek'>
-		<availability>FWL.FWL:6,ROS:4,FWL:4,MH:3,MERC:3</availability>
+		<availability>ROS:4,FWL:4,MH:3,MERC:3</availability>
 		<model name='YMN-10-OR'>
 			<availability>ROS:4,FWL:4,MERC:4</availability>
 		</model>
@@ -11768,7 +11736,7 @@
 		</model>
 	</chassis>
 	<chassis name='Shiva' unitType='Aero' omni='IS'>
-		<availability>RF:6,ROS:4,FWL:6,FWL.KIS:7,FWL.FWG:6,DA:6</availability>
+		<availability>RF:6,ROS:4,FWL:6,FWL.FWG:6,DA:6</availability>
 		<model name='SHV-O'>
 			<availability>General:8</availability>
 		</model>

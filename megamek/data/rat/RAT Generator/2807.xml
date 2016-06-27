@@ -1039,7 +1039,6 @@
 		<model name='EXT-4Db'>
 			<availability>PP:4</availability>
 		</model>
-		</model>
 	</chassis>
 	<chassis name='Falcon' unitType='Mek'>
 		<availability>PP:4,MOC:4,OA:4,LA:7,FWL:5,FS:5,MERC:5,DC:5,TC:4</availability>
@@ -1301,7 +1300,6 @@
 		<model name='KGC-000'>
 			<availability>CS:8,General:6,NIOPS:8</availability>
 		</model>
-		</model>
 		<model name='KGC-000b'>
 			<availability>PP:4</availability>
 		</model>
@@ -1544,7 +1542,6 @@
 		<model name='PXH-1D'>
 			<deployedWith>recon</deployedWith>
 			<availability>FS:6</availability>
-		</model>
 		</model>
 		<model name='PXH-1K'>
 			<deployedWith>recon</deployedWith>
@@ -3051,7 +3048,6 @@
 			<roles>ground support</roles>
 			<availability>LA:4,General:4,FS:4</availability>
 		</model>
-		</model>
 		<model name='EGL-R6'>
 			<availability>LA:4,General:8,FS:4</availability>
 		</model>
@@ -3091,7 +3087,6 @@
 	</chassis>
 	<chassis name='Hellcat II' unitType='Aero'>
 		<availability>PP:6,CC:4,MOC:3,CS:6,OA:3,LA:4,FWL:4,IS:3,FS:4,DC:4,TC:3</availability>
-		</model>
 		<model name='HCT-213B'>
 			<roles>recon</roles>
 			<availability>IS:8,DC:8</availability>
@@ -3182,7 +3177,6 @@
 	</chassis>
 	<chassis name='Sabre' unitType='Aero'>
 		<availability>CC:5-,MOC:5-,OA:5-,LA:5-,FWL:5-,IS:5-,FS:5-,MERC:5-,DC:6-,Periphery:5-</availability>
-		</model>
 		<model name='SB-28'>
 			<availability>CS:6</availability>
 		</model>
@@ -3323,7 +3317,6 @@
 		<availability>PP:7,CC:6,MOC:5,FS:6,MERC:6,CIR:4,TC:5,CS:7,OA:5,LA:3,FWL:4,DC:6</availability>
 		<model name='TRN-3T'>
 			<availability>PP:8,CS:8,OA:6,NIOPS:8,IS:6,Periphery:6</availability>
-		</model>
 		</model>
 		<model name='TRN-3U'>
 			<availability>IS:4-</availability>
@@ -3639,7 +3632,6 @@
 		<availability>PP:6,CC:5,MOC:5,IS:5,FS:5,MERC:5,CIR:5,Periphery:5,CS:6,LA:5,FWL:5,DC:5</availability>
 		<model name='(Standard)'>
 			<availability>General:8</availability>
-		</model>
 		</model>
 	</chassis>
 	<chassis name='Aegis Heavy Cruiser' unitType='Warship'>

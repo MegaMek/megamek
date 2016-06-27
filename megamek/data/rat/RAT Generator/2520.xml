@@ -666,7 +666,6 @@
 			<roles>recon</roles>
 			<availability>LA:6</availability>
 		</model>
-		</model>
 		<model name='LCT-1V'>
 			<roles>recon</roles>
 			<availability>LA:4,General:8,FS:7</availability>
@@ -737,7 +736,6 @@
 	</chassis>
 	<chassis name='Phoenix Hawk' unitType='Mek'>
 		<availability>TH:4</availability>
-		</model>
 		<model name='PXH-1D'>
 			<deployedWith>recon</deployedWith>
 			<availability>FS:6</availability>
@@ -802,7 +800,6 @@
 		<availability>TH:5</availability>
 		<model name='THE-F'>
 			<availability>TH:8</availability>
-		</model>
 		</model>
 	</chassis>
 	<chassis name='Thunderbolt' unitType='Mek'>

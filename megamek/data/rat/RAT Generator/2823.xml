@@ -1282,10 +1282,8 @@
 	</chassis>
 	<chassis name='Falcon' unitType='Mek'>
 		<availability>MOC:2,OA:2,CIH:6,LA:4,CLAN:4,FWL:3,FS:3,MERC:3,CGS:5,TC:2,DC:3</availability>
-		</model>
 		<model name='FLC-4N'>
 			<availability>IS:8,DC:8,Periphery:8</availability>
-		</model>
 		</model>
 		<model name='FLC-4Nb'>
 			<availability>CLAN:8</availability>
@@ -1299,14 +1297,11 @@
 	</chassis>
 	<chassis name='Firefly' unitType='Mek'>
 		<availability>CC:3,MOC:1+,CIH:7,CLAN:8,FS:3,TC:1+,CS:5,OA:1+,LA:3,FWL:3,DC:3,CB:7</availability>
-		</model>
-		</model>
 		<model name='FFL-3SLE'>
 			<availability>General:4+,CLAN:8</availability>
 		</model>
 		<model name='FFL-4A'>
 			<availability>IS:5,NIOPS:0</availability>
-		</model>
 		</model>
 	</chassis>
 	<chassis name='Firestarter' unitType='Mek'>
@@ -2679,7 +2674,6 @@
 	</chassis>
 	<chassis name='Kanga Medium Hovertank' unitType='Tank'>
 		<availability>CC:2,CS:2,CHH:6,LA:2,CLAN:5,FWL:4,FS:2,DC:2</availability>
-		</model>
 		<model name='(Standard)'>
 			<availability>General:8</availability>
 		</model>

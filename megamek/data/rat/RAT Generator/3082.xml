@@ -2193,7 +2193,6 @@
 		<model name='MR-5M'>
 			<availability>CC:4,MOC:4,ROS:5,FWL:6</availability>
 		</model>
-		</model>
 		<model name='MR-V2'>
 			<availability>General:8</availability>
 		</model>
@@ -3212,7 +3211,6 @@
 		<availability>LA:3,ROS:3,MERC:3</availability>
 		<model name='GLH-2D'>
 			<availability>LA:8,ROS:8,MERC:8</availability>
-		</model>
 		</model>
 	</chassis>
 	<chassis name='Gallowglas' unitType='Mek'>
@@ -4988,7 +4986,6 @@
 		</model>
 		<model name='MAD-9W2'>
 			<availability>LA:5,ROS:4,FS:5,MERC:4,DC:5</availability>
-		</model>
 		</model>
 		<model name='MAD-9M'>
 			<availability>DTA:6,OP:6,MSC:6,MERC:3,DA:6</availability>
@@ -8167,11 +8164,9 @@
 		<model name='(Sealed)'>
 			<availability>ROS:8</availability>
 		</model>
-		</model>
 		<model name='(Standard)'>
 			<roles>recon</roles>
 			<availability>General:8</availability>
-		</model>
 		</model>
 	</chassis>
 	<chassis name='Behemoth Heavy Tank' unitType='Tank'>
@@ -9061,7 +9056,6 @@
 		<availability>CLAN:8,CJF:4,BAN:8</availability>
 		<model name='(Royal)'>
 			<availability>CLAN:8,BAN:2</availability>
-		</model>
 		</model>
 		<model name='(Standard)'>
 			<availability>General:8,CLAN:6</availability>
@@ -10407,7 +10401,6 @@
 		<model name='[GL/Flamer]'>
 			<availability>FRR:6</availability>
 		</model>
-		</model>
 		<model name='(GB) [GL]'>
 			<availability>CGB:4</availability>
 		</model>
@@ -11167,7 +11160,6 @@
 	</chassis>
 	<chassis name='Motorized XCT Infantry' unitType='Infantry'>
 		<availability>CS.EC:4</availability>
-		</model>
 	</chassis>
 	<chassis name='Mountaineer' unitType='Infantry'>
 		<availability>FS:4</availability>
@@ -11552,13 +11544,11 @@
 	</chassis>
 	<chassis name='Nightshade ECM VTOL' unitType='VTOL'>
 		<availability>CHH:2,CW:2,ROS:5,NIOPS:4,BAN:4,CWIE:2,CGB:2</availability>
-		</model>
 		<model name='(Standard)'>
 			<availability>General:8</availability>
 		</model>
 		<model name='(Royal)'>
 			<availability>CLAN:8,BAN:4</availability>
-		</model>
 		</model>
 	</chassis>
 	<chassis name='Pinto Attack VTOL' unitType='VTOL'>
@@ -13567,7 +13557,6 @@
 		<model name='(Clan)'>
 			<roles>cruiser</roles>
 			<availability>MERC.WD:8,CLAN:8</availability>
-		</model>
 		</model>
 	</chassis>
 	<chassis name='Avalon Cruiser' unitType='Warship'>

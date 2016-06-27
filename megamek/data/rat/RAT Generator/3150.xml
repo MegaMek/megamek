@@ -905,7 +905,6 @@
 			<roles>fire support</roles>
 			<availability>CC:3,FWL:4,DC:3</availability>
 		</model>
-		</model>
 		<model name='APL-3T'>
 			<roles>fire support</roles>
 			<availability>FWL:4,DC:3</availability>
@@ -1328,7 +1327,6 @@
 	</chassis>
 	<chassis name='BattleMaster' unitType='Mek'>
 		<availability>CC:5,DC.GHO:4,LA:7,ROS:6,IS:5,FWL:8,FS:5,CJF:2,BAN:4,Periphery:4,DC:5</availability>
-		</model>
 		<model name='BLR-3S'>
 			<availability>LA:2</availability>
 		</model>
@@ -1355,7 +1353,6 @@
 		</model>
 		<model name='BLR-1Gc'>
 			<availability>IS:3,Periphery:3</availability>
-		</model>
 		</model>
 		<model name='BLR-K4'>
 			<availability>ROS:4,DC:6</availability>
@@ -1768,7 +1765,6 @@
 		<model name='2'>
 			<availability>CLAN:4</availability>
 		</model>
-		</model>
 	</chassis>
 	<chassis name='Cataphract' unitType='Mek'>
 		<availability>CC:4,MOC:3,FVC:3,Periphery.CM:2,Periphery.HR:1,Periphery.ME:1,MH:1,FS:2,MERC:3,CDP:3,TC:3</availability>
@@ -1913,7 +1909,6 @@
 		<availability>MOC:4,LA:5,IS:4,MH:4,FS:5,DC:6,Periphery:4</availability>
 		<model name='MR-5M'>
 			<availability>CC:4,MOC:4,ROS:5,FWL:6</availability>
-		</model>
 		</model>
 		<model name='MR-V2'>
 			<availability>General:8</availability>
@@ -3456,10 +3451,8 @@
 		<model name='(Standard)'>
 			<availability>CHH:4,CJF:4</availability>
 		</model>
-		</model>
 		<model name='5'>
 			<availability>ROS:5</availability>
-		</model>
 		</model>
 		<model name='2'>
 			<availability>DC.RYU:6,CDS:6,DC.AL:6,CWIE:8</availability>
@@ -3871,8 +3864,6 @@
 	</chassis>
 	<chassis name='Jenner IIC' unitType='Mek'>
 		<availability>CDS:6,CW:6,ROS:4+,BAN:5,DC:3+</availability>
-		</model>
-		</model>
 		<model name='4'>
 			<availability>CDS:8,IS:8</availability>
 		</model>
@@ -5633,7 +5624,6 @@
 		<model name='(Standard)'>
 			<availability>CDS:1</availability>
 		</model>
-		</model>
 		<model name='4'>
 			<availability>ROS:5,FS:5</availability>
 		</model>
@@ -5990,7 +5980,6 @@
 	</chassis>
 	<chassis name='Snow Fox' unitType='Mek'>
 		<availability>CJF:4</availability>
-		</model>
 		<model name='3'>
 			<availability>CJF:8</availability>
 		</model>
@@ -7719,11 +7708,9 @@
 		<model name='(Sealed)'>
 			<availability>ROS:8</availability>
 		</model>
-		</model>
 		<model name='(Standard)'>
 			<roles>recon</roles>
 			<availability>General:8</availability>
-		</model>
 		</model>
 	</chassis>
 	<chassis name='Behemoth Heavy Tank' unitType='Tank'>
@@ -8517,7 +8504,6 @@
 		<availability>CLAN:8,CJF:4,BAN:8</availability>
 		<model name='(Royal)'>
 			<availability>CLAN:8,BAN:2</availability>
-		</model>
 		</model>
 		<model name='(Standard)'>
 			<availability>General:8</availability>
@@ -9746,7 +9732,6 @@
 		<model name='[GL/Flamer]'>
 			<availability>RD:6</availability>
 		</model>
-		</model>
 		<model name='(GB) [GL]'>
 			<availability>CGB:4</availability>
 		</model>
@@ -10476,7 +10461,6 @@
 	</chassis>
 	<chassis name='Motorized XCT Infantry' unitType='Infantry'>
 		<availability>CS.EC:4</availability>
-		</model>
 	</chassis>
 	<chassis name='Mountaineer' unitType='Infantry'>
 		<availability>FS:4</availability>
@@ -10594,7 +10578,6 @@
 		<model name='2'>
 			<availability>CHH:8</availability>
 		</model>
-		</model>
 		<model name='(Standard)'>
 			<availability>CLAN:5</availability>
 		</model>
@@ -10705,7 +10688,6 @@
 		<availability>CLAN:7</availability>
 		<model name='(Close Support)'>
 			<availability>CHH:6,CGB:4</availability>
-		</model>
 		</model>
 		<model name='(Standard)'>
 			<availability>CLAN:8,CJF:2</availability>
@@ -10820,7 +10802,6 @@
 		</model>
 		<model name='(Royal)'>
 			<availability>CLAN:8,BAN:4</availability>
-		</model>
 		</model>
 	</chassis>
 	<chassis name='Pinto Attack VTOL' unitType='VTOL'>
@@ -11361,7 +11342,6 @@
 		<availability>MOC:4,CC:3,OA:2,LA:3,CLAN:3,IS:3,FWL:4,FS:4,Periphery:3,TC:3,DC:3</availability>
 		<model name='EGL-R11'>
 			<availability>RF:6,LA:6,ROS:6,MERC:6,FS:6</availability>
-		</model>
 		</model>
 		<model name='EGL-R6'>
 			<availability>General:2-</availability>
@@ -12777,7 +12757,6 @@
 		<model name='(Clan)'>
 			<roles>cruiser</roles>
 			<availability>MERC.WD:8,CLAN:8</availability>
-		</model>
 		</model>
 	</chassis>
 	<chassis name='Avalon Cruiser' unitType='Warship'>

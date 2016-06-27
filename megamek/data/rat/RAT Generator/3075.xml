@@ -6553,7 +6553,6 @@
 		<model name='(Standard)'>
 			<availability>CLAN:8</availability>
 		</model>
-		</model>
 	</chassis>
 	<chassis name='Pouncer' unitType='Mek' omni='Clan'>
 		<availability>CSA:6,CHH:4,CCC:4,CW:8,CNC:4,CSL:4,CGS:7,CCO:6,CWIE:8</availability>
@@ -7232,7 +7231,6 @@
 	</chassis>
 	<chassis name='Snow Fox' unitType='Mek'>
 		<availability>CNC:4,CJF:4</availability>
-		</model>
 		<model name='(Standard)'>
 			<availability>CNC:8</availability>
 		</model>
@@ -12451,7 +12449,6 @@
 		<model name='(Standard)'>
 			<availability>CHH:8,SOC:5,CNC:8,CFM:5,CSL:5,CJF:5</availability>
 		</model>
-		</model>
 		<model name='2'>
 			<availability>CFM:8,CSL:5</availability>
 		</model>
@@ -12515,7 +12512,6 @@
 		<model name='2'>
 			<availability>CSA:6,CHH:8,CCC:6,CSL:8,CGS:6</availability>
 		</model>
-		</model>
 		<model name='4'>
 			<availability>CBS:4</availability>
 		</model>
@@ -12572,10 +12568,8 @@
 		<model name='3'>
 			<availability>CSA:6,CCC:4</availability>
 		</model>
-		</model>
 		<model name='(Standard)'>
 			<availability>CSA:4,CCC:4,CCO:4</availability>
-		</model>
 		</model>
 	</chassis>
 	<chassis name='Anhur Transport' unitType='VTOL'>

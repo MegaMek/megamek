@@ -728,6 +728,7 @@ public class FactionRecord {
 				} else {
 					setPctOmni(era, wn.getTextContent());
 				}
+				break;
 			case "pctClan":
 				if (wn.getAttributes().getNamedItem("unitType") != null
 						&& wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
@@ -738,6 +739,7 @@ public class FactionRecord {
 				} else {
 					setPctClan(era, wn.getTextContent());
 				}
+				break;
 			case "pctSL":
 				if (wn.getAttributes().getNamedItem("unitType") != null
 						&& wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
@@ -748,6 +750,7 @@ public class FactionRecord {
 				} else {
 					setPctSL(era, wn.getTextContent());
 				}
+				break;
 			case "salvage":
 				pctSalvage.put(era,
 						Integer.parseInt(wn.getAttributes().getNamedItem("pct").getTextContent()));
@@ -759,6 +762,7 @@ public class FactionRecord {
 						salvage.get(era).put(subfields[0], Integer.parseInt(subfields[1]));
 					}
 				}				
+				break;
 			}
 		}
 	}

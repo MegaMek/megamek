@@ -55,6 +55,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import megamek.client.Client;
 import megamek.client.RandomUnitGenerator;
+import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
@@ -183,6 +184,8 @@ WindowListener, TreeSelectionListener {
             m_ratStatus = new JLabel(Messages
                     .getString("RandomArmyDialog.ratStatusLoading"));
         }
+        rg = RATGenerator.getInstance();
+        rg.registerListener(this);
         updatePlayerChoice();
         asd = new AdvancedSearchDialog(m_clientgui.frame,
                 m_client.getGame().getOptions().intOption("year"));
@@ -709,6 +712,13 @@ WindowListener, TreeSelectionListener {
             m_ratStatus.setText(Messages
                     .getString("RandomArmyDialog.ratStatusDoneLoading"));
             updateRATs();
+        } else if (ev.getSource().equals(rg)) {
+        	if (ev.getActionCommand().equals("ratGenInitialized")) {
+        		rg.loadEra(m_clientgui.getClient().getGame().getOptions()
+                        .intOption("year"));
+        	} else {
+        		updateFactionChoice();
+        	}
         }
     }
 
@@ -854,6 +864,19 @@ WindowListener, TreeSelectionListener {
         }
         // No match at this branch
         return null;
+    }
+    
+    private int getRATGenYear() {
+    	return Integer.parseInt(m_tYear.getText());
+    }
+    
+    private void updateFactionChoice() {
+    	m_chFaction.removeAllItems();
+    	for (FactionRecord fRec : rg.getFactionList()) {
+    		if (!fRec.getKey().contains(".")) {
+    			m_chFaction.addItem(fRec.getName(getRATGenYear()));
+    		}
+    	}
     }
 
     @Override

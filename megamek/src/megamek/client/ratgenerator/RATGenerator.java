@@ -13,6 +13,8 @@
  */
 package megamek.client.ratgenerator;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -59,14 +61,47 @@ public class RATGenerator {
 	private TreeSet<Integer> eraSet = new TreeSet<Integer>();
 
 	private static RATGenerator rg = null;
+    private static boolean interrupted = false;
+    private static boolean dispose = false;
+    private Thread loader;
+    private boolean initialized;
+    private boolean initializing;
+
+    private ArrayList<ActionListener> listeners;
+    
+    protected RATGenerator() {
+    	models = new HashMap<String,ModelRecord>();
+    	chassis = new HashMap<String,ChassisRecord>();
+    	factions = new HashMap<String,FactionRecord>();
+    	modelIndex = new HashMap<>();
+    	chassisIndex = new HashMap<>();
+    	eraSet = new TreeSet<Integer>();
+    	
+    	listeners = new ArrayList<ActionListener>();
+    }
 
 	public static RATGenerator getInstance() {
 		if (rg == null) {
 			rg = new RATGenerator();
-			rg.initialize();
 		}
+        if (!rg.initialized && !rg.initializing) {
+            rg.initializing = true;
+            interrupted = false;
+            dispose = false;
+            rg.loader = new Thread(new Runnable() {
+                public void run() {
+                    rg.initialize();
+                }
+            }, "RAT Generator unit populator");
+            rg.loader.setPriority(Thread.NORM_PRIORITY - 1);
+            rg.loader.start();
+        }
 		return rg;
 	}
+
+    public boolean isInitialized() {
+        return initialized;
+    }
 
 	public AvailabilityRating findChassisAvailabilityRecord(int era, String unit, String faction) {
 		if (factions.containsKey(faction)) {
@@ -181,6 +216,17 @@ public class RATGenerator {
 	public Collection<String> getFactionSet() {
 		return factions.keySet();
 	}
+	
+	public int eraForYear(int year) {
+		if (year < eraSet.first()) {
+			return eraSet.first();
+		}
+		return eraSet.floor(year);
+	}
+	
+	public boolean eraIsLoaded(int era) {
+		return chassisIndex.containsKey(era);
+	}
 
 	/**
 	 * Used for a faction with multiple parent factions (e.g. FC == FS + LA) to find the average
@@ -229,7 +275,6 @@ public class RATGenerator {
 		}
 		return av1 + (av2 - av1) * (now - year1) / (year2 - year1);
 	}
-	
 	
 	public Map<String, Double> generateTable(String fKey, String unitType, int year,
 			int rating, Collection<MissionRole> roles, int roleStrictness,
@@ -401,8 +446,39 @@ public class RATGenerator {
 		return retVal;
 	}
 
-	private void initialize() {
-		for (MechSummary ms : MechSummaryCache.getInstance().getAllMechs()) {
+    public void dispose() {
+        interrupted = true;
+        dispose = true;
+        if (initialized){
+            clear();
+        }
+    }
+
+    public void clear() {
+        rg = null;
+        models = null;
+        chassis = null;
+        factions = null;
+        chassisIndex = null;
+        modelIndex = null;
+        eraSet = null;
+        initialized = false;
+        initializing = false;
+    }
+
+	private synchronized void initialize() {
+        // Give the MSC some time to initialize
+        MechSummaryCache msc = MechSummaryCache.getInstance();
+        long waitLimit = System.currentTimeMillis() + 3000; /* 3 seconds */
+        while( !interrupted && !msc.isInitialized() && waitLimit > System.currentTimeMillis() ) {
+            try {
+                Thread.sleep(50);
+            } catch(InterruptedException e) {
+                // Ignore
+            }
+        }
+
+        for (MechSummary ms : MechSummaryCache.getInstance().getAllMechs()) {
 			ModelRecord mr = new ModelRecord(ms);
 
 			models.put(mr.getKey(), mr);
@@ -416,17 +492,41 @@ public class RATGenerator {
 			} else {
 				chassis.put(chassisKey, mr.createChassisRec());
 			}
-		}		
+		}
+        
+		File dir = new File(Configuration.armyTablesDir(), DATA_DIR);
+		for (File f : dir.listFiles()) {
+			if (f.getName().matches("\\d+\\.xml")) {
+				eraSet.add(Integer.parseInt(f.getName().replace(".xml", "")));
+			}
+		}
+
+        if (!interrupted) {
+            rg.initialized = true;
+            rg.notifyListenersOfInitialization();
+        }
+
+        if (dispose) {
+            clear();
+            dispose = false;
+        }
 	}
 
 	public void loadEra(int era) {
+		era = eraForYear(era);
+		if (eraIsLoaded(era)) {
+			notifyListenersEraLoaded();
+			return;
+		}
+		chassisIndex.put(era, new HashMap<String,HashMap<String,AvailabilityRating>>());
+		modelIndex.put(era, new HashMap<String,HashMap<String,AvailabilityRating>>());
 		File dir = new File(Configuration.armyTablesDir(), DATA_DIR);
 		File file = new File(dir, era + ".xml");
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(file);
 		} catch (FileNotFoundException e) {
-			System.err.println("Unable to read RAT generator file for year " + era); //$NON-NLS-1$
+			System.err.println("Unable to read RAT generator file for era " + era); //$NON-NLS-1$
 		}
 
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -521,5 +621,38 @@ public class RATGenerator {
 				}
 			}
 		}
+		notifyListenersEraLoaded();
 	}
+
+    public synchronized void registerListener(ActionListener l){
+        listeners.add(l);
+    }
+
+    public synchronized void removeListener(ActionListener l){
+        listeners.remove(l);
+    }
+
+    /**
+     * Notifies all the listeners that initialization is finished
+     */
+    public void notifyListenersOfInitialization(){
+        if (initialized){
+            for (ActionListener l : listeners){
+                l.actionPerformed(new ActionEvent(
+                        this,ActionEvent.ACTION_PERFORMED,"ratGenInitialized"));
+            }
+        }
+    }
+
+    /**
+     * Notifies all the listeners that era is loaded
+     */
+    public void notifyListenersEraLoaded(){
+        if (initialized){
+            for (ActionListener l : listeners){
+                l.actionPerformed(new ActionEvent(
+                        this,ActionEvent.ACTION_PERFORMED,"ratGenEraLoaded"));
+            }
+        }
+    }
 }

@@ -117,7 +117,8 @@
      Aokarasu
      Ratach
      Razorback
-
+	 Mike V
+  
   German Readme:
      Black Ice <WKA_Online@yahoo.de>
 
@@ -208,7 +209,6 @@
      Scintilla
      Michael Rehrig
      Bloodwolf
-
 
   Camo Pack
   	 SeaVea

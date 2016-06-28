@@ -161,6 +161,8 @@ public class QuirksHandler {
     private static final String WEAPON_NAME = "weaponName";
     private static final String WEAPON_QUIRK_NAME = "weaponQuirkName";
 
+    private static final String MODEL_ALL = "all";
+    
     private static Map<String, List<QuirkEntry>> canonQuirkMap;
     private static Map<String, List<QuirkEntry>> customQuirkMap;
     private static AtomicBoolean customQuirksDirty = new AtomicBoolean(false);
@@ -183,7 +185,7 @@ public class QuirksHandler {
     }
     
     public static String getUnitId(String chassis, String model, String type) {
-        return chassis + "~" + model + "~" + type;
+        return chassis + "~" + (model.equals(MODEL_ALL) ? "" : model) + "~" + type;
     }
 
     public static String getChassis(String unitId) {
@@ -257,7 +259,7 @@ public class QuirksHandler {
                 // Get the model.
                 Element modelElement = (Element) unitList.getElementsByTagName(MODEL).item(0);
                 // default to "all" model for entries that don't list a model.. backwards compatibility with older quirks files
-                String model = "all";
+                String model = MODEL_ALL;
                 if (modelElement != null) {
                     model = modelElement.getTextContent().trim();
                 }

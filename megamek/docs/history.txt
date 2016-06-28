@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.41.21
+
 v0.41.20
 + Data: Date fixes for units
 + Data: New Sprites
@@ -15,7 +17,6 @@ v0.41.20
 + Issue #253: UnitDisplay Extras tab now display # of doors for small craft bays
 + Data: New Sprites and Mechfile fixes
 + Data: New Map (Thanks mikecj)
-
 
 v0.41.19 (2016-06-05 22:40 UTC)
 + Issue #233: NPE Displaying Client Options when no skins present

@@ -372,6 +372,40 @@ public class RATGenerator {
 		if (retVal.size() == 0) {
 			return retVal;
 		}
+		
+		if (fRec.getPctSalvage(early) != null) {
+			double salvage = fRec.getPctSalvage(early);
+			if (salvage >= 100) {
+				salvage = total;
+				retVal.clear();
+			} else {
+				salvage = salvage * total / (100 - salvage);
+			}
+			int totalFactionWeight = 0;
+			for (int weight : fRec.getSalvage(early).values()) {
+				totalFactionWeight += weight;
+			}
+			for (String fKey : fRec.getSalvage(early).keySet()) {
+				FactionRecord salvageFaction = factions.get(fKey);
+				if (salvageFaction == null) {
+					System.err.println("Could not locate faction " + fKey + " for " + fRec.getKey() + " salvage");
+				} else {
+					double wt = salvage * fRec.getSalvage(early).get(fKey) / totalFactionWeight;
+					retVal.put("@" + fKey, wt);
+					if (salvageFaction.isClan()) {
+						totalClan += wt;
+						clan.add("@" + fKey);
+					} else {
+						totalOther += wt;
+						other.add("@" + fKey);
+					}
+					total += wt;
+				}
+			}
+			if (fRec.getPctSalvage(early) >= 100) {
+				return retVal;
+			}
+		}
 
 		if (rating >= 0) {
 			Integer pctOmni = null;

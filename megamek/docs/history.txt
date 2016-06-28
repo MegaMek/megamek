@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.41.20-git
+v0.41.20
 + Data: Date fixes for units
 + Data: New Sprites
 + Data: Adding Jake's map pack

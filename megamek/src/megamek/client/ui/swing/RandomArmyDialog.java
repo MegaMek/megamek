@@ -35,6 +35,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -71,6 +72,7 @@ import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
 import megamek.common.TechConstants;
 import megamek.common.IGame.Phase;
+import megamek.common.UnitType;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
@@ -122,9 +124,11 @@ WindowListener, TreeSelectionListener, FocusListener {
     private JTable m_lUnits;
     private JTable m_lRAT;
 
+    private DefaultComboBoxModel<String> groundWeightsModel = new DefaultComboBoxModel<String>();
+    private DefaultComboBoxModel<String> aeroWeightsModel = new DefaultComboBoxModel<String>();
+
     private UnitTableModel armyModel;
     private UnitTableModel unitsModel;
-
 
     private JLabel m_labBV = new JLabel(Messages
             .getString("RandomArmyDialog.BV"));
@@ -385,7 +389,7 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.gridx = 1;
         c.gridy = 0;
         c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
@@ -434,8 +438,14 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.weighty = 0.0;
         m_pRATGen.add(m_chSubfaction, c);
         m_chSubfaction.setRenderer(factionCbRenderer);
-        m_chSubfaction.addActionListener(this);
+        m_chSubfaction.addActionListener(this);        
         
+		for (int i = 0; i < UnitType.SIZE; i++) {
+			if (i != UnitType.GUN_EMPLACEMENT
+					&& i != UnitType.SPACE_STATION) {
+				m_chUnitType.addItem(UnitType.getTypeName(i));
+			}
+		}
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 3;
@@ -455,6 +465,8 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.weightx = 0.0;
         c.weighty = 0.0;
         m_pRATGen.add(m_chUnitType, c);
+        m_chUnitType.addActionListener(this);
+        m_chUnitType.setSelectedIndex(0);
         
         c = new GridBagConstraints();
         c.gridx = 2;
@@ -476,6 +488,14 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.weighty = 0.0;
         m_pRATGen.add(m_chWeightClass, c);
         
+        groundWeightsModel.addElement(Messages.getString("RandomArmyDialog.Light"));
+        groundWeightsModel.addElement(Messages.getString("RandomArmyDialog.Medium"));
+        groundWeightsModel.addElement(Messages.getString("RandomArmyDialog.Heavy"));
+        groundWeightsModel.addElement(Messages.getString("RandomArmyDialog.Assault"));
+        aeroWeightsModel.addElement(Messages.getString("RandomArmyDialog.Light"));
+        aeroWeightsModel.addElement(Messages.getString("RandomArmyDialog.Medium"));
+        aeroWeightsModel.addElement(Messages.getString("RandomArmyDialog.Heavy"));
+        
         c = new GridBagConstraints();
         c.gridx = 4;
         c.gridy = 3;
@@ -490,7 +510,7 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.gridx = 5;
         c.gridy = 3;
         c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
+        c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
@@ -499,7 +519,7 @@ WindowListener, TreeSelectionListener, FocusListener {
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 4;
-        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridwidth = 1;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
@@ -724,6 +744,8 @@ WindowListener, TreeSelectionListener, FocusListener {
             }
         } else if (ev.getSource().equals(m_chFaction)) {
         	updateSubfactionChoice();
+        } else if (ev.getSource().equals(m_chUnitType)) {
+        	updateWeightClassChoice();
         } else if (ev.getSource().equals(rug)) {
             m_ratStatus.setText(Messages
                     .getString("RandomArmyDialog.ratStatusDoneLoading"));
@@ -947,7 +969,38 @@ WindowListener, TreeSelectionListener, FocusListener {
 	    	}
     	}
     	m_chSubfaction.setSelectedItem(old);
+    	updateRatingChoice();
     	m_chSubfaction.addActionListener(this);
+    }
+    
+    private void updateWeightClassChoice() {
+    	int current = m_chWeightClass.getSelectedIndex();
+    	String unitType = (String)m_chUnitType.getSelectedItem();
+    	if (unitType == null
+    			|| !(unitType.equals("Mek") || unitType.equals("Tank")
+    			|| unitType.equals("Aero"))) {
+			m_chWeightClass.setEnabled(false);    			
+    	} else {
+    		m_chWeightClass.setModel(unitType.equals("Aero")? aeroWeightsModel : groundWeightsModel);
+			m_chWeightClass.setEnabled(true);
+			if (current < m_chWeightClass.getModel().getSize()) {
+				m_chWeightClass.setSelectedIndex(current);
+			}
+    	}
+    }
+    
+    private void updateRatingChoice() {
+    	int current = m_chRating.getSelectedIndex();
+    	m_chRating.removeAllItems();
+    	FactionRecord fRec = (FactionRecord)m_chFaction.getSelectedItem();
+    	if (fRec != null) {
+    		for (String r : fRec.getRatingLevels()) {
+    			m_chRating.addItem(r);
+    		}
+    		if (current < fRec.getRatingLevels().size()) {
+    			m_chRating.setSelectedIndex(current);
+    		}
+    	}
     }
     
     private DefaultListCellRenderer factionCbRenderer = new DefaultListCellRenderer() {

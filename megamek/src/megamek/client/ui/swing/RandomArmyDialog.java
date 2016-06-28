@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -64,12 +65,14 @@ import javax.swing.tree.TreeSelectionModel;
 import megamek.client.Client;
 import megamek.client.RandomUnitGenerator;
 import megamek.client.ratgenerator.FactionRecord;
+import megamek.client.ratgenerator.MissionRole;
 import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.MechFileParser;
 import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
+import megamek.common.MechSummaryCache;
 import megamek.common.TechConstants;
 import megamek.common.IGame.Phase;
 import megamek.common.UnitType;
@@ -129,6 +132,7 @@ WindowListener, TreeSelectionListener, FocusListener {
 
     private UnitTableModel armyModel;
     private UnitTableModel unitsModel;
+    private RATTableModel ratModel;
 
     private JLabel m_labBV = new JLabel(Messages
             .getString("RandomArmyDialog.BV"));
@@ -182,6 +186,7 @@ WindowListener, TreeSelectionListener, FocusListener {
     private RandomUnitGenerator rug;
     private RATGenerator rg;
     private int ratGenYear;
+    private Map<String,Double> generatedRAT;
 
     public RandomArmyDialog(ClientGUI cl) {
         super(cl.frame, Messages.getString("RandomArmyDialog.title"), true); //$NON-NLS-1$
@@ -534,16 +539,21 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.weightx = 0.0;
         c.weighty = 0.0;
         m_pRATGen.add(m_bGenerate, c);
+        m_bGenerate.addActionListener(this);
         
+        ratModel = new RATTableModel();
         m_lRAT = new JTable();
+        m_lRAT.setModel(ratModel);
+        m_lRAT.setIntercellSpacing(new Dimension(0, 0));
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 6;
+        c.fill = GridBagConstraints.BOTH;
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 1.0;
         c.weighty = 1.0;
-        m_pRATGen.add(m_lRAT, c);
+        m_pRATGen.add(new JScrollPane(m_lRAT), c);
 
         // construct the preview panel
         m_pPreview.setLayout(new GridBagLayout());
@@ -721,6 +731,8 @@ WindowListener, TreeSelectionListener, FocusListener {
                     if(units > 0) {
                         unitsModel.setData(RandomUnitGenerator.getInstance().generate(units));
                     }
+                } else if (m_pMain.getSelectedIndex() == 2) {
+                	//TODO: select from RAT
                 } else {
                     RandomArmyCreator.Parameters p = new RandomArmyCreator.Parameters();
                     p.advancedSearchFilter=searchFilter;
@@ -746,13 +758,15 @@ WindowListener, TreeSelectionListener, FocusListener {
         	updateSubfactionChoice();
         } else if (ev.getSource().equals(m_chUnitType)) {
         	updateWeightClassChoice();
+        } else if (ev.getSource().equals(m_bGenerate)) {
+        	generateRAT();
         } else if (ev.getSource().equals(rug)) {
             m_ratStatus.setText(Messages
                     .getString("RandomArmyDialog.ratStatusDoneLoading"));
             updateRATs();
         } else if (ev.getSource().equals(rg)) {
         	if (ev.getActionCommand().equals("ratGenInitialized")) {
-        		rg.loadEra(ratGenYear);
+        		rg.loadYear(ratGenYear);
         	} else {
         		updateFactionChoice();
         	}
@@ -807,7 +821,7 @@ WindowListener, TreeSelectionListener, FocusListener {
 				//ignore and restore to previous value
 			}
 			m_tYear.setText(String.valueOf(ratGenYear));
-			rg.loadEra(ratGenYear);
+			rg.loadYear(ratGenYear);
 		}
 	}
 
@@ -1025,6 +1039,21 @@ WindowListener, TreeSelectionListener, FocusListener {
 			return o1.getName(ratGenYear).compareTo(o2.getName(ratGenYear));
 		}    	
     };
+    
+    private void generateRAT() {
+    	FactionRecord fRec = (FactionRecord)m_chSubfaction.getSelectedItem();
+    	if (fRec == null) {
+    		fRec = (FactionRecord)m_chFaction.getSelectedItem();
+    	}
+		ArrayList<Integer> weights = new ArrayList<>();
+		if (m_chWeightClass.isEnabled()) {
+			weights.add(m_chWeightClass.getSelectedIndex() + 1);
+		}
+		ArrayList<MissionRole> roles = new ArrayList<MissionRole>();
+		generatedRAT = rg.generateTable(fRec, (String)m_chUnitType.getSelectedItem(),
+				ratGenYear, m_chRating.getSelectedIndex(), weights, roles, 0, fRec);
+		ratModel.refreshData();
+    }
 
     @Override
     public void setVisible(boolean show) {
@@ -1135,6 +1164,103 @@ WindowListener, TreeSelectionListener, FocusListener {
 
         public ArrayList<MechSummary> getAllUnits() {
             return data;
+        }
+    }
+
+    /**
+     * A table model for displaying a generated RAT
+     */
+    public class RATTableModel extends AbstractTableModel {
+
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 7807207311532173654L;
+		
+		private static final int COL_PCT = 0;
+        private static final int COL_UNIT = 1;
+        private static final int COL_BV = 2;
+        private static final int N_COL = 3;
+
+        private ArrayList<String> keyList;
+
+        public RATTableModel() {
+            keyList = new ArrayList<>();
+        }
+
+        public int getRowCount() {
+            return keyList.size();
+        }
+
+        public void refreshData() {
+            keyList = new ArrayList<String>();
+            if (generatedRAT != null) {
+            	keyList.addAll(generatedRAT.keySet());
+            }
+            fireTableDataChanged();
+        }
+
+        public int getColumnCount() {
+            return N_COL;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case (COL_PCT):
+                    return Messages.getString("RandomArmyDialog.colWeight");
+                case (COL_UNIT):
+                    return Messages.getString("RandomArmyDialog.colUnit");
+                case (COL_BV):
+                    return Messages.getString("RandomArmyDialog.colBV");
+            }
+            return "??";
+        }
+
+        @Override
+        public Class<?> getColumnClass(int c) {
+            return getValueAt(0, c).getClass();
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int col) {
+            return false;
+        }
+
+        public Object getValueAt(int row, int col) {
+        	switch (col) {
+        	case COL_PCT:
+        		return String.valueOf((int)(generatedRAT.get(keyList.get(row)) + 0.5));
+        	case COL_UNIT:
+        		if (keyList.get(row).startsWith("@")) {
+        			FactionRecord altFaction = rg.getFaction(keyList.get(row).replace("@", ""));
+        			if (altFaction == null) {
+        				System.err.println("Could not located salvage faction " + keyList.get(row));
+        				return "";
+        			}
+        			if (((FactionRecord)m_chFaction.getSelectedItem()).isClan()) {
+        				return "Isorla: " + altFaction.getName(ratGenYear);
+        			} else {
+        				return "Salvage: " + altFaction.getName(ratGenYear);        				
+        			}
+        		}
+        		return keyList.get(row);
+        	case COL_BV:
+        		if (keyList.get(row).startsWith("@")) {
+        			return "";
+        		} else {
+        			MechSummary ms = MechSummaryCache.getInstance().getMech(keyList.get(row));
+        			if (ms != null) {
+        				return ms.getBV();
+        			}
+        			return "Not found";
+        		}
+        	}
+            return "";
+        }
+
+        public String getUnitAt(int row) {
+            return keyList.get(row);
         }
     }
 }

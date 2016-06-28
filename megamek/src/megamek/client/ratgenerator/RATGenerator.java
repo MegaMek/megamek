@@ -276,8 +276,9 @@ public class RATGenerator {
 		return av1 + (av2 - av1) * (now - year1) / (year2 - year1);
 	}
 	
-	public Map<String, Double> generateTable(String fKey, String unitType, int year,
-			int rating, Collection<MissionRole> roles, int roleStrictness,
+	public Map<String, Double> generateTable(FactionRecord fRec, String unitType, int year,
+			int rating, Collection<Integer> weightClasses,
+			Collection<MissionRole> roles, int roleStrictness,
 			FactionRecord user) {
 		TreeMap<String, Double> retVal = new TreeMap<String, Double>();
 		ArrayList<String> omnis = new ArrayList<String>();
@@ -290,7 +291,6 @@ public class RATGenerator {
 		double totalClan = 0.0;
 		double totalOther = 0.0;
 		
-		FactionRecord fRec = factions.get(fKey);
 		if (fRec == null) {
 			fRec = new FactionRecord();
 		}
@@ -329,6 +329,9 @@ public class RATGenerator {
 				double totalModelWeight = cRec.totalModelWeight(early,
 						cRec.isOmni()?user : fRec);
 				for (ModelRecord mRec : cRec.getModels()) {
+					if (weightClasses.size() > 0 && !weightClasses.contains(mRec.getWeightClass())) {
+						continue;
+					}
 					ar = findModelAvailabilityRecord(early,
 							mRec.getKey(), fRec);
 					if (ar == null) {
@@ -435,12 +438,25 @@ public class RATGenerator {
 				largest = retVal.get(key);
 			}
 		}
-		if ((smallest != null && smallest < 0.5)
-				|| (largest != null && largest > 100.0)) {
-			double adj = 100.0 / largest;
+		if (smallest != null && smallest < 0.5) {
+			double adj = 0.5 / smallest;
+			largest *= adj;
 			for (String key : retVal.keySet()) {
 				retVal.put(key, retVal.get(key) * adj);
+			}						
+		}
+		ArrayList<String> toRemove = new ArrayList<String>();
+		if (largest != null && largest > 1000.0) {
+			double adj = 1000.0 / largest;
+			for (String key : retVal.keySet()) {
+				retVal.put(key, retVal.get(key) * adj);
+				if (retVal.get(key) < 0.5) {
+					toRemove.add(key);
+				}
 			}			
+		}
+		for (String key : toRemove) {
+			retVal.remove(key);
 		}
 
 		return retVal;
@@ -511,9 +527,24 @@ public class RATGenerator {
             dispose = false;
         }
 	}
-
-	public void loadEra(int era) {
-		era = eraForYear(era);
+	
+	/**
+	 * If year is equal to one of the era marks, loads that era. If it is between,
+	 * loads eras on both sides.
+	 */
+	public void loadYear(int year) {
+		if (eraSet.contains(year)) {
+			loadEra(year);
+		}
+		if (year > eraSet.first()) {
+			loadEra(eraSet.floor(year));
+		}
+		if (year < eraSet.last()) {
+			loadEra(eraSet.ceiling(year));
+		}
+	}
+	
+	private void loadEra(int era) {
 		if (eraIsLoaded(era)) {
 			notifyListenersEraLoaded();
 			return;

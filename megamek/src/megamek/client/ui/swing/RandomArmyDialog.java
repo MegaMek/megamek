@@ -731,7 +731,10 @@ WindowListener, TreeSelectionListener, FocusListener {
                         unitsModel.setData(RandomUnitGenerator.getInstance().generate(units));
                     }
                 } else if (m_pMain.getSelectedIndex() == 2) {
-                	//TODO: select from RAT
+                	int units = Integer.parseInt(m_tUnits.getText());
+                	if (units > 0 && generatedRAT != null && generatedRAT.getNumEntries() > 0) {
+                		unitsModel.setData(generatedRAT.generateUnits(units));
+                	}
                 } else {
                     RandomArmyCreator.Parameters p = new RandomArmyCreator.Parameters();
                     p.advancedSearchFilter=searchFilter;

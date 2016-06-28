@@ -15,8 +15,10 @@ package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
+import megamek.common.Compute;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 
@@ -35,10 +37,13 @@ public class UnitTable {
 	private Collection<Integer> weightClasses;
 	private Collection<MissionRole> roles;
 	private int roleStrictness;
+	private FactionRecord deployingFaction;
+	private HashMap<String,UnitTable> salvageCache =
+			new HashMap<String,UnitTable>();
 	
 	public UnitTable(FactionRecord faction, String unitType, int year,
 			int rating, Collection<Integer> weightClasses,
-			Collection<MissionRole> roles, int roleStrictness) {
+			Collection<MissionRole> roles, int roleStrictness, FactionRecord deployingFaction) {
 		this.faction = faction;
 		this.unitType = unitType;
 		this.year = year;
@@ -46,13 +51,21 @@ public class UnitTable {
 		this.weightClasses = weightClasses;
 		this.roles = roles;
 		this.roleStrictness = roleStrictness;
+		this.deployingFaction = deployingFaction;
 		generateTable();
+	}
+	
+	public UnitTable(FactionRecord faction, String unitType, int year,
+			int rating, Collection<Integer> weightClasses,
+			Collection<MissionRole> roles, int roleStrictness) {
+		this(faction, unitType, year, rating, weightClasses,
+				roles, roleStrictness, faction);
 	}
 	
 	private void generateTable() {
 		table = new ArrayList<TableEntry>();
 		Map<String,Double> generated = RATGenerator.getInstance().generateTable(faction,
-				unitType, year, rating, weightClasses, roles, roleStrictness, faction);
+				unitType, year, rating, weightClasses, roles, roleStrictness, deployingFaction);
 		for (String key : generated.keySet()) {
 			int weight = (int)(generated.get(key) + 0.5);
 			if (weight > 0) {
@@ -96,7 +109,31 @@ public class UnitTable {
 	
 	public ArrayList<MechSummary> generateUnits(int num) {
 		ArrayList<MechSummary> retVal = new ArrayList<MechSummary>();
-		//TODO: generate units
+		ArrayList<TableEntry> weightedList = new ArrayList<TableEntry>();
+		for (TableEntry entry : table) {
+			for (int i = 0; i < entry.weight; i++) {
+				weightedList.add(entry);
+			}
+		}
+		if (weightedList.size() > 0) {
+			for (int i = 0; i < num; i++) {
+				TableEntry entry = weightedList.get(Compute.randomInt(weightedList.size()));
+				if (entry.isUnit()) {
+					retVal.add(entry.getUnitEntry());
+				} else {
+					/*TODO: account for the possibility that salvage faction table will be empty
+					(e.g. Protos */
+					UnitTable salvage = salvageCache.get(entry.getSalvageFaction().getKey());
+					if (salvage == null) {
+						salvage = new UnitTable(entry.getSalvageFaction(),
+								unitType, year, rating, weightClasses,
+								roles, roleStrictness, faction);
+						salvageCache.put(entry.getSalvageFaction().getKey(), salvage);
+					}
+					retVal.addAll(salvage.generateUnits(1));
+				}
+			}
+		}
 		return retVal;
 	}
 	

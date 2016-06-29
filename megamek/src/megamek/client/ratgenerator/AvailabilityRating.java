@@ -169,6 +169,9 @@ public class AvailabilityRating {
 	}
 	
 	static double calcWeight(double avRating) {
+		if (avRating == 0) {
+			return 0;
+		}
 		return Math.pow(EXP_BASE, avRating);
 	}
 	

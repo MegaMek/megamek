@@ -1889,7 +1889,7 @@
 	<chassis name='Armored Personnel Carrier' unitType='Tank'>
 		<availability>PP:10,CC:10,MOC:10,SLIE:10,IS:9,CIR:10,DC:8,Periphery:10,TC:10</availability>
 		<model name='(Hover SRM)'>
-			<roles>apc</roles>
+			<roles>apc,support</roles>
 			<availability>PP:5,CC:2-,LA:2-,PIR:5,General:3,FWL:2-,FS:2-,MERC:2-,DC:2-,Periphery:2</availability>
 		</model>
 		<model name='(Hover)'>
@@ -1897,11 +1897,11 @@
 			<availability>General:7</availability>
 		</model>
 		<model name='(Wheeled SRM)'>
-			<roles>apc</roles>
+			<roles>apc,support</roles>
 			<availability>PP:5,CC:2-,LA:2-,PIR:5,General:3,FWL:2-,FS:2-,MERC:2-,CIR:3,DC:2-,Periphery:2</availability>
 		</model>
 		<model name='(Tracked MG)'>
-			<roles>apc</roles>
+			<roles>apc,support</roles>
 			<availability>PP:4,CC:2,LA:2,PIR:4,General:3,FWL:2,FS:2,MERC:2,CIR:3,DC:2,Periphery:2</availability>
 		</model>
 		<model name='(Hover Sensors)'>
@@ -1909,27 +1909,27 @@
 			<availability>TC:3</availability>
 		</model>
 		<model name='(Wheeled MG)'>
-			<roles>apc,urban</roles>
+			<roles>apc,urban,support</roles>
 			<availability>PP:3,PIR:3,General:2</availability>
 		</model>
 		<model name='(Hover LRM)'>
-			<roles>apc</roles>
+			<roles>apc,support</roles>
 			<availability>PP:4,CC:2-,LA:2-,PIR:4,General:3,FWL:2-,FS:2-,MERC:2-,DC:2-,Periphery:2</availability>
 		</model>
 		<model name='(Wheeled LRM)'>
-			<roles>apc</roles>
+			<roles>apc,support</roles>
 			<availability>PP:4,CC:2-,LA:2-,PIR:4,General:3,FWL:2-,FS:2-,MERC:2-,DC:2-,Periphery:2</availability>
 		</model>
 		<model name='(Tracked LRM)'>
-			<roles>apc</roles>
+			<roles>apc,support</roles>
 			<availability>PP:4,CC:2-,LA:2-,PIR:4,General:3,FWL:2-,FS:2-,MERC:2-,CIR:3,DC:2-,Periphery:2</availability>
 		</model>
 		<model name='(Tracked SRM)'>
-			<roles>apc</roles>
+			<roles>apc,support</roles>
 			<availability>PP:5,CC:2-,LA:2-,PIR:5,General:3,FWL:2-,FS:2-,MERC:2-,CIR:3,DC:2-,Periphery:2</availability>
 		</model>
 		<model name='(Hover MG)'>
-			<roles>apc</roles>
+			<roles>apc,support</roles>
 			<availability>General:2</availability>
 		</model>
 		<model name='(Wheeled)'>

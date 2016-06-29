@@ -70,11 +70,21 @@ public enum MissionRole {
 		return false;
 	}
 	
+	public boolean isNonCombatRole() {
+		return ordinal() >= CARGO.ordinal() && ordinal() <= CIVILIAN.ordinal(); 
+	}
+	
 	public static double adjustAvailabilityByRole(double avRating, Collection<MissionRole> desiredRoles,
 			ModelRecord mRec, int year, int strictness) {
 		boolean roleApplied = false;
 		if (desiredRoles == null) {
 			desiredRoles = new HashSet<MissionRole>();
+		}
+		/* Units which have a non-combat role are only deployed when that roles is specifically required. */
+		for (MissionRole role : mRec.getRoles()) {
+			if (role.isNonCombatRole() && !desiredRoles.contains(role)) {
+				return 0;
+			}
 		}
 		if (desiredRoles.size() > 0) {
 			roleApplied = true;

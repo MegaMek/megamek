@@ -735,6 +735,8 @@ WindowListener, TreeSelectionListener, FocusListener {
                 	if (units > 0 && generatedRAT != null && generatedRAT.getNumEntries() > 0) {
                 		unitsModel.setData(generatedRAT.generateUnits(units));
                 	}
+                	//generateUnits removes salvage entries that have no units meeting criteria
+                	ratModel.refreshData();
                 } else {
                     RandomArmyCreator.Parameters p = new RandomArmyCreator.Parameters();
                     p.advancedSearchFilter=searchFilter;

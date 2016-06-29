@@ -107,6 +107,15 @@ public class UnitTable {
 		}
 	}
 	
+	public boolean hasUnits() {
+		for (TableEntry entry : table) {
+			if (entry.isUnit()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public ArrayList<MechSummary> generateUnits(int num) {
 		ArrayList<MechSummary> retVal = new ArrayList<MechSummary>();
 		ArrayList<TableEntry> weightedList = new ArrayList<TableEntry>();
@@ -115,23 +124,25 @@ public class UnitTable {
 				weightedList.add(entry);
 			}
 		}
-		if (weightedList.size() > 0) {
-			for (int i = 0; i < num; i++) {
-				TableEntry entry = weightedList.get(Compute.randomInt(weightedList.size()));
-				if (entry.isUnit()) {
-					retVal.add(entry.getUnitEntry());
-				} else {
-					/*TODO: account for the possibility that salvage faction table will be empty
-					(e.g. Protos */
-					UnitTable salvage = salvageCache.get(entry.getSalvageFaction().getKey());
-					if (salvage == null) {
-						salvage = new UnitTable(entry.getSalvageFaction(),
-								unitType, year, rating, weightClasses,
-								roles, roleStrictness, faction);
+		while (retVal.size() < num && weightedList.size() > 0) {
+			TableEntry entry = weightedList.get(Compute.randomInt(weightedList.size()));
+			if (entry.isUnit()) {
+				retVal.add(entry.getUnitEntry());
+			} else {
+				UnitTable salvage = salvageCache.get(entry.getSalvageFaction().getKey());
+				if (salvage == null) {
+					salvage = new UnitTable(entry.getSalvageFaction(),
+							unitType, year, rating, weightClasses,
+							roles, roleStrictness, faction);
+					if (salvage.hasUnits()) {
 						salvageCache.put(entry.getSalvageFaction().getKey(), salvage);
+					} else {
+						table.remove(entry);
+						while (weightedList.remove(entry));
+						continue;
 					}
-					retVal.addAll(salvage.generateUnits(1));
 				}
+				retVal.addAll(salvage.generateUnits(1));
 			}
 		}
 		return retVal;

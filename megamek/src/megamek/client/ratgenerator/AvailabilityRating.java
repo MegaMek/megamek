@@ -16,8 +16,12 @@ package megamek.client.ratgenerator;
 
 /**
  * Handles availability rating values and calculations for RAT generator.
- * Availability is rated on a logarithmic scale from 0 (non-existent) to 10 (ubiquitous),
+ * Availability is rated on a base-2 logarithmic scale from 0 (non-existent) to 10 (ubiquitous),
  * with 6 being a typical value when the source material does not give an indication of frequency.
+ * The availability rating is actually twice the exponent, which allows more precision
+ * while still storing values as integers (so it's really a base-(sqrt(2)) scale, but using
+ * 2 as the base should theoretically be faster).
+ * 
  * These values are stored separately for chassis and models; for example, there is
  * one value to indicate the likelihood that a medium Mek is a Phoenix Hawk and another
  * set of values to indicate the likelihood that a give Phoenix Hawk is a 1D or 1K, etc.
@@ -27,9 +31,8 @@ package megamek.client.ratgenerator;
  */
 
 public class AvailabilityRating {
-	//Base for calculating weights from availability ratings. Based on analysis of Xotl's tables.
-	public static final double EXP_BASE = 1.48;
-	public static final double LOG_BASE = Math.log(EXP_BASE);
+	//Used to calculate av rating from weight.
+	public static final double LOG_BASE = Math.log(2);
 	
 	String faction = "General";
 	int availability = 0;
@@ -168,13 +171,10 @@ public class AvailabilityRating {
 	}
 	
 	static double calcWeight(double avRating) {
-		if (avRating == 0) {
-			return 0;
-		}
-		return Math.pow(EXP_BASE, avRating);
+		return Math.pow(2, avRating / 2.0);
 	}
 	
 	static double calcAvRating(double weight) {
-		return Math.log(weight) / LOG_BASE;
+		return 2.0 * Math.log(weight) / LOG_BASE;
 	}
 }

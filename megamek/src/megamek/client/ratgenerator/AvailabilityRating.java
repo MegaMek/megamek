@@ -27,7 +27,6 @@ package megamek.client.ratgenerator;
  */
 
 public class AvailabilityRating {
-	public static final int MAX_AV_RATING = 12;
 	//Base for calculating weights from availability ratings. Based on analysis of Xotl's tables.
 	public static final double EXP_BASE = 1.48;
 	public static final double LOG_BASE = Math.log(EXP_BASE);
@@ -95,9 +94,9 @@ public class AvailabilityRating {
 		if (rating < 0 || ratingAdjustment == 0) {
 			return availability;
 		} else if (ratingAdjustment < 0) {
-			return Math.max(availability - rating, 0);
+			return availability - rating;
 		} else {
-			return Math.min(Math.max(0, availability - (numLevels - rating)), MAX_AV_RATING);
+			return availability - (numLevels - rating);
 		}
 	}
 

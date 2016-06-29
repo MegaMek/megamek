@@ -343,26 +343,28 @@ public class RATGenerator {
 								mRec.calcAvailability(ar, rating, fRec.getRatingLevels().size(), late),
 								Math.max(early, mRec.getIntroYear()), late, year);
 					}
-					double adjCAv = MissionRole.adjustAvailabilityByRole(cAv, roles, mRec, year, roleStrictness);
-					double mWt = AvailabilityRating.calcWeight(mAv) / totalModelWeight
-							* AvailabilityRating.calcWeight(adjCAv);
-
-					if (mWt > 0) {
-						retVal.put(mRec.getKey(), mWt);
-						total += mWt;
-						if (mRec.isOmni()) {
-							totalOmni += mWt;
-							omnis.add(mRec.getKey());
-						}
-						if (mRec.isClan()) {
-							totalClan += mWt;
-							clan.add(mRec.getKey());
-						} else if (mRec.isSL()) {
-							totalSL += mWt;
-							sl.add(mRec.getKey());
-						} else {
-							totalOther += mWt;
-							other.add(mRec.getKey());
+					Double adjMAv = MissionRole.adjustAvailabilityByRole(mAv, roles, mRec, year, roleStrictness);
+					if (adjMAv != null) {
+						double mWt = AvailabilityRating.calcWeight(adjMAv) / totalModelWeight
+								* AvailabilityRating.calcWeight(cAv);
+	
+						if (mWt > 0) {
+							retVal.put(mRec.getKey(), mWt);
+							total += mWt;
+							if (mRec.isOmni()) {
+								totalOmni += mWt;
+								omnis.add(mRec.getKey());
+							}
+							if (mRec.isClan()) {
+								totalClan += mWt;
+								clan.add(mRec.getKey());
+							} else if (mRec.isSL()) {
+								totalSL += mWt;
+								sl.add(mRec.getKey());
+							} else {
+								totalOther += mWt;
+								other.add(mRec.getKey());
+							}
 						}
 					}
 				}

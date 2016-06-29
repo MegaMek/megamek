@@ -2103,12 +2103,6 @@
 			<availability>DC:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Icarus II' unitType='Mek'>
-		<availability>FWL:1-</availability>
-		<model name='ICR-1S'>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
 	<chassis name='Icestorm' unitType='Mek'>
 		<availability>CIH:8+,CW:5</availability>
 		<model name='(Standard)'>

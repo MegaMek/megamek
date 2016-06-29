@@ -224,6 +224,11 @@
 		<pctSL>76</pctSL>
 		<salvage pct='5'>CC:4,FWL:10</salvage>
 	</faction>
+	<faction key='DGM' name='Duchy of Graham-Marik' clan='false' periphery='false'>
+		<years>3078-3082</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>FWL,MSC</parentFaction>
+	</faction>
 	<faction key='DTA' name='Duchy of Tamarind-Abbey' clan='false' periphery='false'>
 		<years>3071-3139</years>
 		<ratName>Tamarind-Abbey</ratName>
@@ -327,6 +332,11 @@
 		<parentFaction>Periphery.ME</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
+	<faction key='MCM' name='Marik Commonwealth' clan='false' periphery='false'>
+		<years>3078-3082</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>MSC</parentFaction>
+	</faction>
 	<faction key='MSC' name='Marik-Stewart Commonwealth' clan='false' periphery='false'>
 		<years>3082-3138</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
@@ -401,6 +411,11 @@
 		<ratingLevels></ratingLevels>
 		<parentFaction>Periphery.R</parentFaction>
 		<salvage pct='5'></salvage>
+	</faction>
+	<faction key='SC' name='Stewart Commonality' clan='false' periphery='false'>
+		<years>3078-3082</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>FWL,MCM</parentFaction>
 	</faction>
 	<faction key='TC' name='Taurian Concordat' clan='false' periphery='true'>
 		<years>2335-</years>

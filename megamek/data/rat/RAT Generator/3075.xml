@@ -266,6 +266,11 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 	</faction>
+	<faction key='DGM' name='Duchy of Graham-Marik' clan='false' periphery='false'>
+		<years>3078-3082</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>FWL,MSC</parentFaction>
+	</faction>
 	<faction key='DTA' name='Duchy of Tamarind-Abbey' clan='false' periphery='false'>
 		<years>3071-3139</years>
 		<ratName>Tamarind-Abbey</ratName>
@@ -377,6 +382,11 @@
 		<parentFaction>Periphery.ME</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
+	<faction key='MCM' name='Marik Commonwealth' clan='false' periphery='false'>
+		<years>3078-3082</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>MSC</parentFaction>
+	</faction>
 	<faction key='MERC' name='Mercenary' clan='false' periphery='false'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
@@ -438,6 +448,11 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 		<salvage pct='6'>FWL:10</salvage>
+	</faction>
+	<faction key='SC' name='Stewart Commonality' clan='false' periphery='false'>
+		<years>3078-3082</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>FWL,MCM</parentFaction>
 	</faction>
 	<faction key='Stone' name='Stone&apos;s Coalition' clan='false' periphery='true'>
 		<years>3073-3081</years>
@@ -1063,7 +1078,7 @@
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='WOB.SD' name='Shadow Divisions' clan='false' periphery='false'>
-		<years>3067-3075</years>
+		<years>3067-3081</years>
 		<ratingLevels>A</ratingLevels>
 		<parentFaction>WOB</parentFaction>
 		<pctOmni>50</pctOmni>

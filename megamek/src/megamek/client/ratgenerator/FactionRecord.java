@@ -207,10 +207,29 @@ public class FactionRecord {
 	}
 	
 	public HashMap<String, Integer> getSalvage(int era) {
-		if (!salvage.containsKey(era)) {
-			salvage.put(era, new HashMap<String, Integer>());
+		if (salvage.containsKey(era) && salvage.get(era).size() > 0) {
+			return salvage.get(era);
 		}
-		return salvage.get(era);
+		HashMap<String,Integer> retVal = new HashMap<String, Integer>();
+		if (retVal.size() == 0 && parentFactions.size() > 0) {
+			for (String fKey : parentFactions) {
+				FactionRecord fRec = RATGenerator.getInstance().getFaction(fKey);
+				if (fRec != null) {
+					for (String str : fRec.getSalvage(era).keySet()) {
+						if (retVal.containsKey(str)) {
+							retVal.put(str, retVal.get(str) + fRec.getSalvage(era).get(str));
+						} else {
+							retVal.put(str, fRec.getSalvage(era).get(str));
+						}
+					}
+				} else {
+					System.err.println("RATGenerator: could not locate salvage faction " + fKey
+							+ " for " + key);
+				}
+			}
+		}
+		salvage.put(era, retVal);
+		return retVal;
 	}
 	
 	public void setSalvage(int era, String faction, Integer wt) {

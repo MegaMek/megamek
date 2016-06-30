@@ -64,6 +64,9 @@ public class UnitTable {
 	
 	private void generateTable() {
 		table = new ArrayList<TableEntry>();
+		if (!faction.isActiveInYear(year)) {
+			return;
+		}
 		Map<String,Double> generated = RATGenerator.getInstance().generateTable(faction,
 				unitType, year, rating, weightClasses, roles, roleStrictness, deployingFaction);
 		for (String key : generated.keySet()) {
@@ -92,9 +95,9 @@ public class UnitTable {
 			return table.get(index).getUnitEntry().getName();
 		} else {
 			if (faction.isClan()) {
-				return "Isorla: " + table.get(index).getSalvageFaction().getName(year);
+				return "Isorla: " + table.get(index).getSalvageFaction().getName(year - 5);
 			} else {
-				return "Salvage: " + table.get(index).getSalvageFaction().getName(year);
+				return "Salvage: " + table.get(index).getSalvageFaction().getName(year - 5);
 			}
 		}
 	}
@@ -132,7 +135,7 @@ public class UnitTable {
 				UnitTable salvage = salvageCache.get(entry.getSalvageFaction().getKey());
 				if (salvage == null) {
 					salvage = new UnitTable(entry.getSalvageFaction(),
-							unitType, year, rating, weightClasses,
+							unitType, year - 5, rating, weightClasses,
 							roles, roleStrictness, faction);
 					if (salvage.hasUnits()) {
 						salvageCache.put(entry.getSalvageFaction().getKey(), salvage);

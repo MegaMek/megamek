@@ -267,11 +267,8 @@ public class RATGenerator {
 	 */
 	
 	private double interpolateAvRating(double av1, double av2, int year1, int year2, int now) {
-		/* If no record is found for the earlier date, the unit is not available to the faction.
-		 * If none is found for the later date, use the early one as the final value. 
-		 */
-		if (av1 == 0) {
-			return 0;
+		if (year1 == year2) {
+			return av1;
 		}
 		return av1 + (av2 - av1) * (now - year1) / (year2 - year1);
 	}
@@ -290,6 +287,8 @@ public class RATGenerator {
 		double totalSL = 0.0;
 		double totalClan = 0.0;
 		double totalOther = 0.0;
+		
+		loadYear(year);
 		
 		if (fRec == null) {
 			fRec = new FactionRecord();
@@ -332,9 +331,12 @@ public class RATGenerator {
 					if (weightClasses.size() > 0 && !weightClasses.contains(mRec.getWeightClass())) {
 						continue;
 					}
+					if (mRec.getIntroYear() > year) {
+						continue;
+					}
 					ar = findModelAvailabilityRecord(early,
 							mRec.getKey(), fRec);
-					if (ar == null) {
+					if (ar == null || ar.getAvailability() == 0) {
 						continue;
 					}
 					double mAv = mRec.calcAvailability(ar, rating, fRec.getRatingLevels().size(), early);
@@ -374,7 +376,7 @@ public class RATGenerator {
 		if (retVal.size() == 0) {
 			return retVal;
 		}
-		
+
 		if (fRec.getPctSalvage(early) != null) {
 			double salvage = fRec.getPctSalvage(early);
 			if (salvage >= 100) {
@@ -383,16 +385,31 @@ public class RATGenerator {
 			} else {
 				salvage = salvage * total / (100 - salvage);
 			}
+			//TODO: use linear interpolation instead of averaging.
+			HashMap<String,Integer> salvageEntries = new HashMap<String,Integer>();
+			salvageEntries.putAll(fRec.getSalvage(early));
+			if (late != null && early != late) {
+				for (Map.Entry<String,Integer> entry : fRec.getSalvage(late).entrySet()) {
+					if (salvageEntries.containsKey(entry.getKey())) {
+						salvageEntries.put(entry.getKey(),
+								salvageEntries.get(entry.getKey()) + entry.getValue());
+					} else {
+						salvageEntries.put(entry.getKey(), entry.getValue());
+					}
+				}
+				
+			}
+			
 			int totalFactionWeight = 0;
-			for (int weight : fRec.getSalvage(early).values()) {
+			for (int weight : salvageEntries.values()) {
 				totalFactionWeight += weight;
 			}
-			for (String fKey : fRec.getSalvage(early).keySet()) {
+			for (String fKey : salvageEntries.keySet()) {
 				FactionRecord salvageFaction = factions.get(fKey);
 				if (salvageFaction == null) {
 					System.err.println("Could not locate faction " + fKey + " for " + fRec.getKey() + " salvage");
 				} else {
-					double wt = salvage * fRec.getSalvage(early).get(fKey) / totalFactionWeight;
+					double wt = salvage * salvageEntries.get(fKey) / totalFactionWeight;
 					retVal.put("@" + fKey, wt);
 					if (salvageFaction.isClan()) {
 						totalClan += wt;
@@ -582,7 +599,6 @@ public class RATGenerator {
 	
 	private void loadEra(int era) {
 		if (eraIsLoaded(era)) {
-			notifyListenersEraLoaded();
 			return;
 		}
 		chassisIndex.put(era, new HashMap<String,HashMap<String,AvailabilityRating>>());
@@ -594,6 +610,7 @@ public class RATGenerator {
 			fis = new FileInputStream(file);
 		} catch (FileNotFoundException e) {
 			System.err.println("Unable to read RAT generator file for era " + era); //$NON-NLS-1$
+			return;
 		}
 
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();

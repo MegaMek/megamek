@@ -266,7 +266,7 @@ public class RATGenerator {
 	 * @return generated AvailabilityRecord
 	 */
 	
-	private double interpolateAvRating(double av1, double av2, int year1, int year2, int now) {
+	private double interpolateDouble(double av1, double av2, int year1, int year2, int now) {
 		if (year1 == year2) {
 			return av1;
 		}
@@ -320,7 +320,7 @@ public class RATGenerator {
 			}
 			double cAv = cRec.calcAvailability(ar, rating, fRec.getRatingLevels().size(), early);
 			if (late != null) {
-				cAv = interpolateAvRating(cAv,
+				cAv = interpolateDouble(cAv,
 						cRec.calcAvailability(ar, rating, fRec.getRatingLevels().size(), late),
 						Math.max(early, cRec.getIntroYear()), late, year);
 			}
@@ -341,7 +341,7 @@ public class RATGenerator {
 					}
 					double mAv = mRec.calcAvailability(ar, rating, fRec.getRatingLevels().size(), early);
 					if (late != null) {
-						mAv = interpolateAvRating(mAv,
+						mAv = interpolateDouble(mAv,
 								mRec.calcAvailability(ar, rating, fRec.getRatingLevels().size(), late),
 								Math.max(early, mRec.getIntroYear()), late, year);
 					}
@@ -385,25 +385,29 @@ public class RATGenerator {
 			} else {
 				salvage = salvage * total / (100 - salvage);
 			}
-			//TODO: use linear interpolation instead of averaging.
-			HashMap<String,Integer> salvageEntries = new HashMap<String,Integer>();
-			salvageEntries.putAll(fRec.getSalvage(early));
-			if (late != null && early != late) {
+			HashMap<String,Double> salvageEntries = new HashMap<String,Double>();
+			for (Map.Entry<String,Integer> entry : fRec.getSalvage(early).entrySet()) {
+				if (late == null) {
+					salvageEntries.put(entry.getKey(), entry.getValue().doubleValue());
+				} else {
+					salvageEntries.put(entry.getKey(),
+							interpolateDouble(entry.getValue().doubleValue(),
+									fRec.getSalvage(late).containsKey(entry.getKey())?
+											fRec.getSalvage(late).get(entry.getKey()).doubleValue() : 0,
+											early, late, year));
+				}
+			}
+			if (late != null) {
 				for (Map.Entry<String,Integer> entry : fRec.getSalvage(late).entrySet()) {
-					if (salvageEntries.containsKey(entry.getKey())) {
-						salvageEntries.put(entry.getKey(),
-								salvageEntries.get(entry.getKey()) + entry.getValue());
-					} else {
-						salvageEntries.put(entry.getKey(), entry.getValue());
+					if (!salvageEntries.containsKey(entry.getKey())) {
+						salvageEntries.put(entry.getKey(), interpolateDouble(0,
+								entry.getValue().doubleValue(), early, late, year));
 					}
 				}
-				
-			}
+			}			
 			
-			int totalFactionWeight = 0;
-			for (int weight : salvageEntries.values()) {
-				totalFactionWeight += weight;
-			}
+			double totalFactionWeight = salvageEntries.values().stream()
+					.mapToDouble(v -> v.doubleValue()).sum();
 			for (String fKey : salvageEntries.keySet()) {
 				FactionRecord salvageFaction = factions.get(fKey);
 				if (salvageFaction == null) {

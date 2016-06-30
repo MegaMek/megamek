@@ -175,6 +175,7 @@ WindowListener, TreeSelectionListener, FocusListener {
     private JCheckBox m_chkCanon = new JCheckBox(Messages
             .getString("RandomArmyDialog.Canon"));
 
+    private JTextField m_tRGUnits = new JTextField(3);
     private JTextField m_tYear = new JTextField(4);
     private JComboBox<FactionRecord> m_chFaction = new JComboBox<FactionRecord>();
     private JComboBox<FactionRecord> m_chSubfaction = new JComboBox<FactionRecord>();
@@ -400,6 +401,28 @@ WindowListener, TreeSelectionListener, FocusListener {
         m_pRATGen.add(m_tYear, c);
         m_tYear.addFocusListener(this);
         
+        c = new GridBagConstraints();
+        c.gridx = 2;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGen.add(new JLabel(Messages.getString("RandomArmyDialog.Unit")), c);
+
+        m_tRGUnits.setText("4");
+
+        c = new GridBagConstraints();
+        c.gridx = 3;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGen.add(m_tRGUnits, c);
+
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 1;
@@ -731,7 +754,7 @@ WindowListener, TreeSelectionListener, FocusListener {
                         unitsModel.setData(RandomUnitGenerator.getInstance().generate(units));
                     }
                 } else if (m_pMain.getSelectedIndex() == 2) {
-                	int units = Integer.parseInt(m_tUnits.getText());
+                	int units = Integer.parseInt(m_tRGUnits.getText());
                 	if (units > 0 && generatedRAT != null && generatedRAT.getNumEntries() > 0) {
                 		unitsModel.setData(generatedRAT.generateUnits(units));
                 	}

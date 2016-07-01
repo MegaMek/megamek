@@ -37,6 +37,7 @@ import org.w3c.dom.NodeList;
 import megamek.common.Configuration;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
+import megamek.common.UnitType;
 
 /**
  * Generates a random assignment table (RAT) dynamically based on a variety of criteria,
@@ -273,7 +274,7 @@ public class RATGenerator {
 		return av1 + (av2 - av1) * (now - year1) / (year2 - year1);
 	}
 	
-	public Map<String, Double> generateTable(FactionRecord fRec, String unitType, int year,
+	public Map<String, Double> generateTable(FactionRecord fRec, int unitType, int year,
 			int rating, Collection<Integer> weightClasses,
 			Collection<MissionRole> roles, int roleStrictness,
 			FactionRecord user) {
@@ -309,7 +310,7 @@ public class RATGenerator {
 				System.err.println("Could not locate chassis " + chassisKey);
 				continue;
 			}
-			if (!cRec.getUnitType().equals(unitType)) {
+			if (cRec.getUnitType() != unitType) {
 				continue;
 			}
 
@@ -435,17 +436,17 @@ public class RATGenerator {
 			Integer pctNonOmni = null;
 			Integer pctSL = null;
 			Integer pctClan = null;
-			if (unitType.equals("Mek")) {
+			if (unitType == UnitType.MEK) {
 				pctOmni = user.getPctOmni(early, rating);
 				pctClan = user.getPctClan(early, rating);
 				pctSL = user.getPctSL(early, rating);
 			}
-			if (unitType.equals("Aero")) {
+			if (unitType == UnitType.AERO) {
 				pctOmni = user.getPctOmniAero(early, rating);
 				pctClan = user.getPctClanAero(early, rating);
 				pctSL = user.getPctSLAero(early, rating);
 			}
-			if (unitType.equals("Tank") || unitType.equals("VTOL")) {
+			if (unitType == UnitType.TANK || unitType == UnitType.AERO) {
 				pctClan = user.getPctClanVee(early, rating);
 				pctSL = user.getPctSLVee(early, rating);
 			}

@@ -15,6 +15,8 @@ package megamek.client.ratgenerator;
 
 import java.util.HashSet;
 
+import megamek.common.UnitType;
+
 /**
  * Base functionality for chassis and model records for RAT generator.
  *
@@ -54,14 +56,14 @@ public class AbstractUnitRecord {
 	protected String chassis = "";
 	protected boolean omni;
 	protected boolean clan;
-	protected String unitType;
+	protected int unitType;
 	protected int movementType;
 	protected int introYear;
 	protected HashSet<String> includedFactions;
 
 	public AbstractUnitRecord(String chassis){
 		this.chassis = chassis;
-		unitType = "Mek";
+		unitType = UnitType.MEK;
 		omni = false;
 		clan = false;
 		movementType = MOVEMENT_LEG;
@@ -101,18 +103,18 @@ public class AbstractUnitRecord {
 	}
 	public final String getChassisKey() {
 		if (omni) {
-			return clan? chassis + "[" + unitType + "]ClanOmni" :
-				chassis + "[" + unitType + "]ISOmni";
+			return clan? chassis + "[" + UnitType.getTypeName(unitType) + "]ClanOmni" :
+				chassis + "[" + UnitType.getTypeName(unitType) + "]ISOmni";
 		}
-		return chassis + "[" + unitType + "]";
+		return chassis + "[" + UnitType.getTypeName(unitType) + "]";
 	}
 	public String getKey() {
 		return getChassisKey();
 	}
-	public String getUnitType() {
+	public int getUnitType() {
 		return unitType;
 	}
-	public void setUnitType(String type) {
+	public void setUnitType(int type) {
 		unitType = type;
 	}
 	public boolean isOmni() {

@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import megamek.common.EntityWeightClass;
+import megamek.common.UnitType;
 
 /**
  * Used to adjust availability to conform to a particular mission role.
@@ -45,29 +46,88 @@ public enum MissionRole {
 	/* Infantry roles */
 	MARINE, MOUNTAINEER, XCT, PARATROOPER, ANTI_MEK, FIELD_GUN; 
 	
-	public boolean fitsUnitType(String unitType) {
-		if (ordinal() <= CIVILIAN.ordinal()) {
+	public boolean fitsUnitType(int unitType) {
+		switch (this) {
+		case RECON:
+		case SUPPORT:
+		case CIVILIAN:
+		case SPECOPS:
 			return true;
+			
+		case URBAN:
+		case ANTI_INFANTRY:
+		case INF_SUPPORT:
+			return unitType <= UnitType.TANK;
+			
+		case FIRE_SUPPORT:
+		case CAVALRY:
+		case RAIDER:
+		case ARTILLERY:
+		case MISSILE_ARTILLERY:
+		case APC:
+			return unitType <= UnitType.TANK || unitType == UnitType.VTOL;
+			
+		case INCINDIARY:
+		case ANTI_AIRCRAFT:
+			return unitType <= UnitType.PROTOMEK; // all ground units
+			
+		case ENGINEER:
+		case MINESWEEPER:
+		case MINELAYER:
+			return unitType < UnitType.TANK || unitType == UnitType.INFANTRY;
+
+		case CARGO:
+			return unitType < UnitType.BATTLE_ARMOR || unitType > UnitType.PROTOMEK;
+			
+		case EW_SUPPORT:
+			return unitType <= UnitType.TANK || unitType == UnitType.AERO;
+
+		case TRAINING:
+			return unitType < UnitType.SMALL_CRAFT;
+		
+		case SPOTTER:
+			return unitType <= UnitType.AERO;
+			
+		case BOMBER:
+		case ESCORT:
+		case INTERCEPTOR:
+		case GROUND_SUPPORT:
+		case STRIKE:
+			return unitType == UnitType.AERO || unitType == UnitType.CONV_FIGHTER;
+			
+		case ASSAULT:
+		case MECH_CARRIER:
+		case ASF_CARRIER:
+		case VEE_CARRIER:
+		case INFANTRY_CARRIER:
+		case BA_CARRIER:
+		case TROOP_CARRIER:
+		case TUG:
+		case POCKET_WARSHIP:
+			return unitType == UnitType.DROPSHIP;
+			
+		case CORVETTE:
+		case DESTROYER:
+		case FRIGATE:
+		case CRUISER:
+		case BATTLESHIP:
+			return unitType == UnitType.WARSHIP;
+			
+		case MECHANIZED_BA:
+			return unitType <= UnitType.TANK || unitType == UnitType.BATTLE_ARMOR;
+			
+		case MARINE:
+		case XCT:
+			return unitType == UnitType.INFANTRY || unitType == UnitType.BATTLE_ARMOR;
+			
+		case MOUNTAINEER:
+		case PARATROOPER:
+		case ANTI_MEK:
+		case FIELD_GUN:
+			return unitType == UnitType.INFANTRY;
+		default:
+			return false;
 		}
-		switch (unitType) {
-		case "Mek":
-		case "Tank":
-		case "ProtoMek":
-			return ordinal() < BOMBER.ordinal();
-		case "VTOL":
-		case "Aero":
-		case "Conventional Fighter":
-			return ordinal() >= BOMBER.ordinal() && ordinal() < ASSAULT.ordinal();
-		case "Dropship":
-			return ordinal() >= ASSAULT.ordinal() && ordinal() < CORVETTE.ordinal();
-		case "Warship":
-			return ordinal() >= CORVETTE.ordinal() && ordinal() < MARINE.ordinal();
-		case "Battle Armor":
-			return ordinal() >= MECHANIZED_BA.ordinal();
-		case "Infantry":
-			return ordinal() >= MARINE.ordinal();
-		}
-		return false;
 	}
 	
 	public static Double adjustAvailabilityByRole(double avRating, Collection<MissionRole> desiredRoles,
@@ -115,8 +175,8 @@ public enum MissionRole {
 								(mRec.getRoles().contains(TRAINING) && !desiredRoles.contains("training")) ||
 								(mRec.getRoles().contains(ARTILLERY) && !desiredRoles.contains("artillery"))) {
 							return null;
-						} else if (!mRec.getUnitType().equals("Infantry")
-								&& !mRec.getUnitType().equals("BattleArmor")
+						} else if (mRec.getUnitType() != UnitType.INFANTRY
+								&& mRec.getUnitType() != UnitType.BATTLE_ARMOR
 									&& mRec.getSpeed() < 4 + avAdj[2] - mRec.getWeightClass()) {
 							return null;
 						} else {
@@ -192,11 +252,11 @@ public enum MissionRole {
 					}
 					break;
 				case MECHANIZED_BA:
-					if ((mRec.getUnitType().equals("Mek") || mRec.getUnitType().equals("Tank"))
+					if ((mRec.getUnitType() <= UnitType.TANK)
 							&& !mRec.isOmni()) {
 						return null;
 					}
-					if (mRec.getUnitType().equals("BattleArmor")
+					if (mRec.getUnitType() == UnitType.BATTLE_ARMOR
 							&& (mRec.getWeightClass() > EntityWeightClass.WEIGHT_HEAVY
 							|| (mRec.isQuad() != null && mRec.isQuad()))) {
 						return null;						
@@ -233,7 +293,7 @@ public enum MissionRole {
 							avRating -= avAdj[3];
 						}
 					}
-					if (avRating > 0 && mRec.getUnitType().equals("Tank")) {
+					if (avRating > 0 && mRec.getUnitType() == UnitType.TANK) {
 						if (mRec.getMovementType() == AbstractUnitRecord.MOVEMENT_WHEELED) {
 							avRating += avAdj[2];
 						} else if (mRec.getMovementType() == AbstractUnitRecord.MOVEMENT_TRACKED) {
@@ -258,8 +318,8 @@ public enum MissionRole {
 						} else if (mRec.getAmmoRequirement() < 0.5) {
 							avRating += avAdj[1];
 						}
-						if (!mRec.getUnitType().equals("Infantry")
-								&& !mRec.getUnitType().equals("BattleArmor")
+						if (mRec.getUnitType() != UnitType.INFANTRY
+								&& mRec.getUnitType() != UnitType.BATTLE_ARMOR
 									&& mRec.getSpeed() < 3 + avAdj[2] - mRec.getWeightClass()) {
 							avRating -= 2 + avAdj[2] - mRec.getWeightClass() - mRec.getSpeed();
 						}
@@ -354,7 +414,8 @@ public enum MissionRole {
 					}
 					break;
 				case CAVALRY:
-					if (mRec.getUnitType().equals("Infantry") || mRec.getUnitType().equals("BattleArmor")) {
+					if (mRec.getUnitType() == UnitType.INFANTRY
+							|| mRec.getUnitType() == UnitType.BATTLE_ARMOR) {
 						avRating += avAdj[2] * (mRec.getSpeed() - 3);
 					} else {
 						avRating += avAdj[2] * (mRec.getSpeed() - (7 - mRec.getWeightClass()));					
@@ -370,7 +431,7 @@ public enum MissionRole {
 		 */
 		if (!roleApplied) {
 			if ((mRec.getRoles().contains(SUPPORT) && !desiredRoles.contains(SUPPORT)) ||
-					(mRec.getRoles().contains(CARGO) && !(desiredRoles.contains(CARGO) || desiredRoles.size() > 1 || mRec.getUnitType().equals("Warship"))) ||
+					(mRec.getRoles().contains(CARGO) && !(desiredRoles.contains(CARGO) || desiredRoles.size() > 1 || mRec.getUnitType() == UnitType.WARSHIP)) ||
 					(mRec.getRoles().contains(TUG) && !desiredRoles.contains(TUG)) ||
 					(mRec.getRoles().contains(CIVILIAN) && !desiredRoles.contains(CIVILIAN)) ||
 					(mRec.getRoles().contains(TRAINING) && !desiredRoles.contains(TRAINING)) ||

@@ -22,6 +22,7 @@ import megamek.common.EquipmentType;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
+import megamek.common.UnitType;
 import megamek.common.WeaponType;
 import megamek.common.loaders.EntityLoadingException;
 
@@ -69,9 +70,45 @@ public class ModelRecord extends AbstractUnitRecord {
 		quad = null;
 	}
 	
+	public static int parseUnitType(String typeName) {
+		switch (typeName) {
+		case "Mek":
+			return UnitType.MEK;
+		case "Tank":
+			return UnitType.TANK;
+		case "BattleArmor":
+			return UnitType.BATTLE_ARMOR;
+		case "Infantry":
+			return UnitType.INFANTRY;
+		case "ProtoMek":
+			return UnitType.PROTOMEK;
+		case "VTOL":
+			return UnitType.VTOL;
+		case "Naval":
+			return UnitType.NAVAL;
+		case "Gun Emplacement":
+			return UnitType.GUN_EMPLACEMENT;
+		case "Conventional Fighter":
+			return UnitType.CONV_FIGHTER;
+		case "Aero":
+			return UnitType.AERO;
+		case "Small Craft":
+			return UnitType.SMALL_CRAFT;
+		case "Dropship":
+			return UnitType.DROPSHIP;
+		case "Jumpship":
+			return UnitType.JUMPSHIP;
+		case "Warship":
+			return UnitType.WARSHIP;
+		case "Space Station":
+			return UnitType.SPACE_STATION;
+		}
+		return -1;
+	}
+	
 	public ModelRecord(MechSummary ms) {
 		this(ms.getChassis(), ms.getModel());
-		unitType = ms.getUnitType();
+		unitType = parseUnitType(ms.getUnitType());
 		movementType = findMovementType(ms.getUnitSubType());
 		introYear = ms.getYear();
     	switch (ms.getUnitType()) {
@@ -207,10 +244,10 @@ public class ModelRecord extends AbstractUnitRecord {
 	}
 	
 	private int findMovementType(String subtype) {
-		if (unitType.equals("Conventional Fighter")) {
+		if (unitType == UnitType.CONV_FIGHTER) {
 			return MOVEMENT_ATMOSPHERIC;
 		}
-		if (unitType.equals("Jumpship") || unitType.equals("Warship")) {
+		if (unitType == UnitType.JUMPSHIP || unitType == UnitType.WARSHIP) {
 			return MOVEMENT_SPACE;
 		}
 		switch (subtype) {

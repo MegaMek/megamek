@@ -31,7 +31,7 @@ import megamek.common.MechSummaryCache;
 public class UnitTable {
 	private ArrayList<TableEntry> table = new ArrayList<TableEntry>();
 	private FactionRecord faction;
-	private String unitType;
+	private int unitType;
 	private int year;
 	private int rating;
 	private Collection<Integer> weightClasses;
@@ -41,7 +41,7 @@ public class UnitTable {
 	private HashMap<String,UnitTable> salvageCache =
 			new HashMap<String,UnitTable>();
 	
-	public UnitTable(FactionRecord faction, String unitType, int year,
+	public UnitTable(FactionRecord faction, int unitType, int year,
 			int rating, Collection<Integer> weightClasses,
 			Collection<MissionRole> roles, int roleStrictness, FactionRecord deployingFaction) {
 		this.faction = faction;
@@ -55,7 +55,7 @@ public class UnitTable {
 		generateTable();
 	}
 	
-	public UnitTable(FactionRecord faction, String unitType, int year,
+	public UnitTable(FactionRecord faction, int unitType, int year,
 			int rating, Collection<Integer> weightClasses,
 			Collection<MissionRole> roles, int roleStrictness) {
 		this(faction, unitType, year, rating, weightClasses,

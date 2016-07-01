@@ -1223,21 +1223,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         }
 
-		if (te != null) {
-		    if (te.getCrew().getOptions().booleanOption("urban_guerrilla")
-		            && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.PAVEMENT)
-		                || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROAD)
-		                || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.RUBBLE)
-		                || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.BUILDING)
-		                || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROUGH))) {
-		        toHit.addModifier(+1, "urban guerrilla");
-		    }
-		    if (te.getCrew().getOptions().booleanOption("shaky_stick")
-		            && te.isAirborne()
-		            && (!ae.isAirborne() || !ae.isAirborneVTOLorWIGE())) {
-		        toHit.addModifier(+1, "Shaky Stick");
-		    }
-		}
+        if (te != null) {
+            if (te.getCrew().getOptions().booleanOption("urban_guerrilla")
+                    && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.PAVEMENT)
+                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROAD)
+                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.RUBBLE)
+                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.BUILDING)
+                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROUGH))) {
+                toHit.addModifier(+1, "urban guerrilla");
+            }
+            if (te.getCrew().getOptions().booleanOption("shaky_stick")
+                    && te.isAirborne()
+                    && (!ae.isAirborne() || !ae.isAirborneVTOLorWIGE())) {
+                toHit.addModifier(+1, "Shaky Stick");
+            }
+        }
 
         // check for VDNI
         if (ae.getCrew().getOptions().booleanOption("vdni")

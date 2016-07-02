@@ -484,6 +484,8 @@ public enum MissionRole {
 			return URBAN;
 		case "infantry support":
 			return INF_SUPPORT;
+		case "cavalry":
+			return CAVALRY;
 		case "raider":
 			return RAIDER;
 		case "incindiary":

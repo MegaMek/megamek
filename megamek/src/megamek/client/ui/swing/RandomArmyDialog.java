@@ -36,6 +36,9 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -108,9 +111,10 @@ WindowListener, TreeSelectionListener, FocusListener {
     private JTabbedPane m_pMain = new JTabbedPane();
     private JPanel m_pRAT = new JPanel();
     private JPanel m_pRATGen = new JPanel();
-    private JPanel m_pAdvRATGen = new JPanel();
+    private JPanel m_pRATGenOptions = new JPanel();
+    private JPanel m_pRATGenAdvOptions = new JPanel();
     private JPanel m_pAdvWeightClass = new JPanel();
-    private JPanel m_pRoles = new JPanel();
+    private JPanel m_pRoles = new JPanel(new CardLayout());
     private JPanel m_pNetwork = new JPanel();
     private JPanel m_pParameters = new JPanel();
     private JPanel m_pPreview = new JPanel();
@@ -189,7 +193,7 @@ WindowListener, TreeSelectionListener, FocusListener {
     private JComboBox<String> m_chUnitType = new JComboBox<String>();
     private JComboBox<String> m_chWeightClass = new JComboBox<String>();
     private JComboBox<String> m_chRating = new JComboBox<String>();
-    private HashMap<String,JPanel> roleCards = new HashMap<String,JPanel>();
+    private HashMap<String,MissionRolePanel> roleCards = new HashMap<String,MissionRolePanel>();
 
     private RandomUnitGenerator rug;
     private RATGenerator rg;
@@ -389,11 +393,49 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 1;
+        c.fill = GridBagConstraints.BOTH;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 1.0;
+        c.weighty = 0.5;
+        m_pRATGen.add(new JScrollPane(m_pRATGenOptions), c);
+
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 1;
+        c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        m_pRATGen.add(m_labYear, c);
+        m_pRATGen.add(m_bGenerate, c);
+        m_bGenerate.addActionListener(this);
+        
+        ratModel = new RATTableModel();
+        m_lRAT = new JTable();
+        m_lRAT.setModel(ratModel);
+        m_lRAT.setIntercellSpacing(new Dimension(5, 0));
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 2;
+        c.fill = GridBagConstraints.BOTH;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 1.0;
+        c.weighty = 0.5;
+        m_pRATGen.add(new JScrollPane(m_lRAT), c);
+
+        
+        m_pRATGenOptions.setLayout(new GridBagLayout());
+        
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGenOptions.add(m_labYear, c);
 
         ratGenYear = m_clientgui.getClient().getGame().getOptions()
                 .intOption("year");
@@ -406,7 +448,7 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        m_pRATGen.add(m_tYear, c);
+        m_pRATGenOptions.add(m_tYear, c);
         m_tYear.addFocusListener(this);
         
         c = new GridBagConstraints();
@@ -417,7 +459,7 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        m_pRATGen.add(new JLabel(Messages.getString("RandomArmyDialog.Unit")), c);
+        m_pRATGenOptions.add(new JLabel(Messages.getString("RandomArmyDialog.Unit")), c);
 
         m_tRGUnits.setText("4");
 
@@ -429,7 +471,7 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        m_pRATGen.add(m_tRGUnits, c);
+        m_pRATGenOptions.add(m_tRGUnits, c);
 
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -439,7 +481,7 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        m_pRATGen.add(m_labFaction, c);
+        m_pRATGenOptions.add(m_labFaction, c);
 
         c = new GridBagConstraints();
         c.gridx = 1;
@@ -449,84 +491,101 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        m_pRATGen.add(m_chFaction, c);
+        m_pRATGenOptions.add(m_chFaction, c);
         m_chFaction.setRenderer(factionCbRenderer);
         m_chFaction.addActionListener(this);
+        
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 2;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGenOptions.add(m_labCommand, c);
+
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = 2;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGenOptions.add(m_chSubfaction, c);
+        m_chSubfaction.setRenderer(factionCbRenderer);
+        m_chSubfaction.addActionListener(this);        
         
 		for (int i = 0; i < UnitType.SIZE; i++) {
 			if (i != UnitType.GUN_EMPLACEMENT
 					&& i != UnitType.SPACE_STATION) {
 				m_chUnitType.addItem(UnitType.getTypeName(i));
-				JPanel card = new JPanel(new GridLayout(0, 4));
+				MissionRolePanel card = new MissionRolePanel(i);
 				roleCards.put(UnitType.getTypeName(i), card);
-				for (MissionRole role : MissionRole.values()) {
-					if (role.fitsUnitType(i)) {
-						card.add(new JCheckBox(role.toString()));
-					}
-				}
 			}
 		}
         c = new GridBagConstraints();
         c.gridx = 0;
-        c.gridy = 2;
+        c.gridy = 3;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        m_pRATGen.add(m_labUnitType, c);
+        m_pRATGenOptions.add(m_labUnitType, c);
 
         c = new GridBagConstraints();
         c.gridx = 1;
-        c.gridy = 2;
+        c.gridy = 3;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        m_pRATGen.add(m_chUnitType, c);
+        m_pRATGenOptions.add(m_chUnitType, c);
         m_chUnitType.addActionListener(this);
         m_chUnitType.setSelectedIndex(0);
         
         c = new GridBagConstraints();
         c.gridx = 2;
-        c.gridy = 2;
+        c.gridy = 3;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        m_pRATGen.add(m_labRating, c);
+        m_pRATGenOptions.add(m_labRating, c);
 
         c = new GridBagConstraints();
         c.gridx = 3;
-        c.gridy = 2;
+        c.gridy = 3;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        m_pRATGen.add(m_chRating, c);
+        m_pRATGenOptions.add(m_chRating, c);
         
         c = new GridBagConstraints();
         c.gridx = 0;
-        c.gridy = 3;
+        c.gridy = 4;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        m_pRATGen.add(m_labWeightClass, c);
+        m_pRATGenOptions.add(m_labWeightClass, c);
 
         c = new GridBagConstraints();
         c.gridx = 1;
-        c.gridy = 3;
+        c.gridy = 4;
         c.gridwidth = 1;
         c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        m_pRATGen.add(m_chWeightClass, c);
+        m_pRATGenOptions.add(m_chWeightClass, c);
         
         groundWeightsModel.addElement(Messages.getString("RandomArmyDialog.Light"));
         groundWeightsModel.addElement(Messages.getString("RandomArmyDialog.Medium"));
@@ -536,99 +595,26 @@ WindowListener, TreeSelectionListener, FocusListener {
         aeroWeightsModel.addElement(Messages.getString("RandomArmyDialog.Medium"));
         aeroWeightsModel.addElement(Messages.getString("RandomArmyDialog.Heavy"));
         
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 4;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pRATGen.add(m_pAdvRATGen, c);
-        
+        m_pRATGenAdvOptions.setLayout(new BorderLayout());
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 5;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pRATGen.add(m_bGenerate, c);
-        m_bGenerate.addActionListener(this);
-        
-        m_pAdvRATGen.setLayout(new GridBagLayout());
-        
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pAdvRATGen.add(m_labCommand, c);
-
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 0;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        c.fill = GridBagConstraints.HORIZONTAL;
+        c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pAdvRATGen.add(m_chSubfaction, c);
-        m_chSubfaction.setRenderer(factionCbRenderer);
-        m_chSubfaction.addActionListener(this);        
+        c.weighty = 1.0;
+        m_pRATGenOptions.add(m_pRATGenAdvOptions, c);
         
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 1;
-        c.gridwidth = 2;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pAdvRATGen.add(m_pAdvWeightClass, c);
-        
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pAdvRATGen.add(m_pRoles, c);
-
-        m_pRoles.setLayout(new CardLayout());
         for (String unitType : roleCards.keySet()) {
         	m_pRoles.add(roleCards.get(unitType), unitType);
         }
-        
-        c = new GridBagConstraints();
-        c.gridx = 2;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pAdvRATGen.add(m_pNetwork, c);
-        
-        ratModel = new RATTableModel();
-        m_lRAT = new JTable();
-        m_lRAT.setModel(ratModel);
-        m_lRAT.setIntercellSpacing(new Dimension(5, 0));
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 6;
-        c.fill = GridBagConstraints.BOTH;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        m_pRATGen.add(new JScrollPane(m_lRAT), c);
 
+        m_pRATGenAdvOptions.add(m_pAdvWeightClass, BorderLayout.WEST);
+        m_pRATGenAdvOptions.add(m_pRoles, BorderLayout.CENTER);
+        m_pRATGenAdvOptions.add(m_pNetwork, BorderLayout.EAST);
+       	((CardLayout)m_pRoles.getLayout()).show(m_pRoles, m_chUnitType.getItemAt(0));
+        
         // construct the preview panel
         m_pPreview.setLayout(new GridBagLayout());
         unitsModel = new UnitTableModel();
@@ -837,6 +823,8 @@ WindowListener, TreeSelectionListener, FocusListener {
         	updateSubfactionChoice();
         } else if (ev.getSource().equals(m_chUnitType)) {
         	updateWeightClassChoice();
+        	CardLayout layout = (CardLayout)m_pRoles.getLayout();
+        	layout.show(m_pRoles, (String)m_chUnitType.getSelectedItem());
         } else if (ev.getSource().equals(m_bGenerate)) {
         	generateRAT();
         } else if (ev.getSource().equals(rug)) {
@@ -1128,9 +1116,9 @@ WindowListener, TreeSelectionListener, FocusListener {
 		if (m_chWeightClass.isEnabled()) {
 			weights.add(m_chWeightClass.getSelectedIndex() + 1);
 		}
-		ArrayList<MissionRole> roles = new ArrayList<MissionRole>();
+		List<MissionRole> roles = roleCards.get((String)m_chUnitType.getSelectedItem()).getSelectedRoles();
 		generatedRAT = new UnitTable(fRec, ModelRecord.parseUnitType((String)m_chUnitType.getSelectedItem()),
-				ratGenYear, m_chRating.getSelectedIndex(), weights, roles, 0);
+				ratGenYear, m_chRating.getSelectedIndex(), weights, roles, 2);
 		ratModel.refreshData();
     }
 
@@ -1315,5 +1303,32 @@ WindowListener, TreeSelectionListener, FocusListener {
         	}
 		   	return "";
         }
+    }
+    
+    public class MissionRolePanel extends JPanel {
+    	/**
+		 * 
+		 */
+		private static final long serialVersionUID = -3961143911841133921L;
+		
+		private ArrayList<JCheckBox> checkboxes = new ArrayList<JCheckBox>();
+    	
+    	public MissionRolePanel(int unitType) {
+    		//TODO: Sort alphabetically
+    		super(new GridLayout(0, 3));
+    		for (MissionRole role : MissionRole.values()) {
+    			if (role.fitsUnitType(unitType)) {
+    				JCheckBox chk = new JCheckBox(Messages.getString("MissionRole." + role.toString()));
+    				chk.setName(role.toString());
+    				checkboxes.add(chk);
+    				add(chk);
+    			}
+    		}
+    	}
+    	
+    	public List<MissionRole> getSelectedRoles() {
+    		return checkboxes.stream().filter(chk -> chk.isSelected())
+    				.map(chk -> MissionRole.parseRole(chk.getName())).collect(Collectors.toList());
+    	}
     }
 }

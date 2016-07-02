@@ -38,7 +38,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
@@ -1314,16 +1313,18 @@ WindowListener, TreeSelectionListener, FocusListener {
 		private ArrayList<JCheckBox> checkboxes = new ArrayList<JCheckBox>();
     	
     	public MissionRolePanel(int unitType) {
-    		//TODO: Sort alphabetically
     		super(new GridLayout(0, 3));
     		for (MissionRole role : MissionRole.values()) {
     			if (role.fitsUnitType(unitType)) {
     				JCheckBox chk = new JCheckBox(Messages.getString("MissionRole." + role.toString()));
     				chk.setName(role.toString());
     				checkboxes.add(chk);
-    				add(chk);
     			}
     		}
+    		Collections.sort(checkboxes, (c1, c2) -> c1.getText().compareTo(c2.getText()));
+			for (JCheckBox chk : checkboxes) {
+				add(chk);
+			}
     	}
     	
     	public List<MissionRole> getSelectedRoles() {

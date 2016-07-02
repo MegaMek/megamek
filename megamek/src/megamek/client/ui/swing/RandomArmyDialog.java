@@ -22,7 +22,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,7 +39,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -75,6 +73,7 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
+import megamek.common.EntityWeightClass;
 import megamek.common.MechFileParser;
 import megamek.common.MechSearchFilter;
 import megamek.common.MechSummary;
@@ -111,10 +110,7 @@ WindowListener, TreeSelectionListener, FocusListener {
     private JPanel m_pRAT = new JPanel();
     private JPanel m_pRATGen = new JPanel();
     private JPanel m_pRATGenOptions = new JPanel();
-    private JPanel m_pRATGenAdvOptions = new JPanel();
-    private JPanel m_pAdvWeightClass = new JPanel();
-    private JPanel m_pRoles = new JPanel(new CardLayout());
-    private JPanel m_pNetwork = new JPanel();
+    private JPanel m_pUnitTypeOptions = new JPanel(new CardLayout());
     private JPanel m_pParameters = new JPanel();
     private JPanel m_pPreview = new JPanel();
     private JPanel m_pButtons = new JPanel();
@@ -135,9 +131,6 @@ WindowListener, TreeSelectionListener, FocusListener {
     private JTable m_lArmy;
     private JTable m_lUnits;
     private JTable m_lRAT;
-
-    private DefaultComboBoxModel<String> groundWeightsModel = new DefaultComboBoxModel<String>();
-    private DefaultComboBoxModel<String> aeroWeightsModel = new DefaultComboBoxModel<String>();
 
     private UnitTableModel armyModel;
     private UnitTableModel unitsModel;
@@ -165,8 +158,6 @@ WindowListener, TreeSelectionListener, FocusListener {
             .getString("RandomArmyDialog.Command"));
     private JLabel m_labUnitType = new JLabel(Messages
             .getString("RandomArmyDialog.UnitType"));
-    private JLabel m_labWeightClass = new JLabel(Messages
-            .getString("RandomArmyDialog.WeightClass"));
     private JLabel m_labRating = new JLabel(Messages
             .getString("RandomArmyDialog.Rating"));
     private JLabel m_ratStatus;
@@ -190,10 +181,10 @@ WindowListener, TreeSelectionListener, FocusListener {
     private JComboBox<FactionRecord> m_chFaction = new JComboBox<FactionRecord>();
     private JComboBox<FactionRecord> m_chSubfaction = new JComboBox<FactionRecord>();
     private JComboBox<String> m_chUnitType = new JComboBox<String>();
-    private JComboBox<String> m_chWeightClass = new JComboBox<String>();
     private JComboBox<String> m_chRating = new JComboBox<String>();
-    private HashMap<String,MissionRolePanel> roleCards = new HashMap<String,MissionRolePanel>();
-
+    private HashMap<String,UnitTypeOptionsPanel> unitTypeCards = 
+    		new HashMap<String,UnitTypeOptionsPanel>();
+    
     private RandomUnitGenerator rug;
     private RATGenerator rg;
     private int ratGenYear;
@@ -520,8 +511,8 @@ WindowListener, TreeSelectionListener, FocusListener {
 			if (i != UnitType.GUN_EMPLACEMENT
 					&& i != UnitType.SPACE_STATION) {
 				m_chUnitType.addItem(UnitType.getTypeName(i));
-				MissionRolePanel card = new MissionRolePanel(i);
-				roleCards.put(UnitType.getTypeName(i), card);
+				UnitTypeOptionsPanel card = new UnitTypeOptionsPanel(i);
+				unitTypeCards.put(UnitType.getTypeName(i), card);
 			}
 		}
         c = new GridBagConstraints();
@@ -544,7 +535,6 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.weighty = 0.0;
         m_pRATGenOptions.add(m_chUnitType, c);
         m_chUnitType.addActionListener(this);
-        m_chUnitType.setSelectedIndex(0);
         
         c = new GridBagConstraints();
         c.gridx = 2;
@@ -569,51 +559,19 @@ WindowListener, TreeSelectionListener, FocusListener {
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 4;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pRATGenOptions.add(m_labWeightClass, c);
-
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 4;
-        c.gridwidth = 1;
-        c.fill = GridBagConstraints.NONE;
-        c.anchor = GridBagConstraints.WEST;
-        c.weightx = 0.0;
-        c.weighty = 0.0;
-        m_pRATGenOptions.add(m_chWeightClass, c);
-        
-        groundWeightsModel.addElement(Messages.getString("RandomArmyDialog.Light"));
-        groundWeightsModel.addElement(Messages.getString("RandomArmyDialog.Medium"));
-        groundWeightsModel.addElement(Messages.getString("RandomArmyDialog.Heavy"));
-        groundWeightsModel.addElement(Messages.getString("RandomArmyDialog.Assault"));
-        aeroWeightsModel.addElement(Messages.getString("RandomArmyDialog.Light"));
-        aeroWeightsModel.addElement(Messages.getString("RandomArmyDialog.Medium"));
-        aeroWeightsModel.addElement(Messages.getString("RandomArmyDialog.Heavy"));
-        
-        m_pRATGenAdvOptions.setLayout(new BorderLayout());
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 5;
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 1.0;
-        m_pRATGenOptions.add(m_pRATGenAdvOptions, c);
+        m_pRATGenOptions.add(m_pUnitTypeOptions, c);
         
-        for (String unitType : roleCards.keySet()) {
-        	m_pRoles.add(roleCards.get(unitType), unitType);
+        for (String unitType : unitTypeCards.keySet()) {
+        	m_pUnitTypeOptions.add(unitTypeCards.get(unitType), unitType);
         }
 
-        m_pRATGenAdvOptions.add(m_pAdvWeightClass, BorderLayout.WEST);
-        m_pRATGenAdvOptions.add(m_pRoles, BorderLayout.CENTER);
-        m_pRATGenAdvOptions.add(m_pNetwork, BorderLayout.EAST);
-       	((CardLayout)m_pRoles.getLayout()).show(m_pRoles, m_chUnitType.getItemAt(0));
-        
+        m_chUnitType.setSelectedIndex(0);
+
         // construct the preview panel
         m_pPreview.setLayout(new GridBagLayout());
         unitsModel = new UnitTableModel();
@@ -821,9 +779,8 @@ WindowListener, TreeSelectionListener, FocusListener {
         } else if (ev.getSource().equals(m_chFaction)) {
         	updateSubfactionChoice();
         } else if (ev.getSource().equals(m_chUnitType)) {
-        	updateWeightClassChoice();
-        	CardLayout layout = (CardLayout)m_pRoles.getLayout();
-        	layout.show(m_pRoles, (String)m_chUnitType.getSelectedItem());
+        	CardLayout layout = (CardLayout)m_pUnitTypeOptions.getLayout();
+        	layout.show(m_pUnitTypeOptions, (String)m_chUnitType.getSelectedItem());
         } else if (ev.getSource().equals(m_bGenerate)) {
         	generateRAT();
         } else if (ev.getSource().equals(rug)) {
@@ -1053,22 +1010,6 @@ WindowListener, TreeSelectionListener, FocusListener {
     	m_chSubfaction.addActionListener(this);
     }
     
-    private void updateWeightClassChoice() {
-    	int current = m_chWeightClass.getSelectedIndex();
-    	String unitType = (String)m_chUnitType.getSelectedItem();
-    	if (unitType == null
-    			|| !(unitType.equals("Mek") || unitType.equals("Tank")
-    			|| unitType.equals("Aero"))) {
-			m_chWeightClass.setEnabled(false);    			
-    	} else {
-    		m_chWeightClass.setModel(unitType.equals("Aero")? aeroWeightsModel : groundWeightsModel);
-			m_chWeightClass.setEnabled(true);
-			if (current < m_chWeightClass.getModel().getSize()) {
-				m_chWeightClass.setSelectedIndex(current);
-			}
-    	}
-    }
-    
     private void updateRatingChoice() {
     	int current = m_chRating.getSelectedIndex();
     	m_chRating.removeAllItems();
@@ -1111,13 +1052,10 @@ WindowListener, TreeSelectionListener, FocusListener {
     	if (fRec == null) {
     		fRec = (FactionRecord)m_chFaction.getSelectedItem();
     	}
-		ArrayList<Integer> weights = new ArrayList<>();
-		if (m_chWeightClass.isEnabled()) {
-			weights.add(m_chWeightClass.getSelectedIndex() + 1);
-		}
-		List<MissionRole> roles = roleCards.get((String)m_chUnitType.getSelectedItem()).getSelectedRoles();
+		UnitTypeOptionsPanel panOptions = unitTypeCards.get((String)m_chUnitType.getSelectedItem());
 		generatedRAT = new UnitTable(fRec, ModelRecord.parseUnitType((String)m_chUnitType.getSelectedItem()),
-				ratGenYear, m_chRating.getSelectedIndex(), weights, roles, 2);
+				ratGenYear, m_chRating.getSelectedIndex(), panOptions.getSelectedWeights(),
+				panOptions.getSelectedRoles(), panOptions.getRoleStrictness());
 		ratModel.refreshData();
     }
 
@@ -1304,32 +1242,173 @@ WindowListener, TreeSelectionListener, FocusListener {
         }
     }
     
-    public class MissionRolePanel extends JPanel {
+    /**
+     * Options that vary according to unit type
+     *
+     */
+    
+    public class UnitTypeOptionsPanel extends JPanel {
     	/**
 		 * 
 		 */
 		private static final long serialVersionUID = -3961143911841133921L;
-		
-		private ArrayList<JCheckBox> checkboxes = new ArrayList<JCheckBox>();
+
+		private JComboBox<String> cbWeightClass = new JComboBox<String>();
+		private ArrayList<JCheckBox> weightChecks = new ArrayList<JCheckBox>();
+		private JComboBox<String> cbRoleStrictness = new JComboBox<String>();
+		private ArrayList<JCheckBox> roleChecks = new ArrayList<JCheckBox>();
     	
-    	public MissionRolePanel(int unitType) {
-    		super(new GridLayout(0, 3));
+    	public UnitTypeOptionsPanel(int unitType) {
+    		super(new BorderLayout());
+    		
+    		JPanel panWeightClass = new JPanel(new GridBagLayout());
+            panWeightClass.setBorder(BorderFactory.createTitledBorder(Messages
+            		.getString("RandomArmyDialog.WeightClass")));
+    		add(panWeightClass, BorderLayout.WEST);
+    		
+    		JPanel panRoles = new JPanel(new GridBagLayout());
+    		panRoles.setBorder(BorderFactory.createTitledBorder(Messages
+            		.getString("RandomArmyDialog.MissionRole")));
+            
+            JPanel panStrictness = new JPanel();
+            panStrictness.add(new JLabel(Messages.getString("RandomArmyDialog.Strictness")));
+    		cbRoleStrictness.addItem(Messages.getString("RandomArmyDialog.Low"));
+    		cbRoleStrictness.addItem(Messages.getString("RandomArmyDialog.Medium"));
+    		cbRoleStrictness.addItem(Messages.getString("RandomArmyDialog.High"));
+    		cbRoleStrictness.setSelectedIndex(1);
+    		panStrictness.add(cbRoleStrictness);
+    		
+            GridBagConstraints c = new GridBagConstraints();
+            c.gridx = 0;
+            c.gridy = 0;
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.fill = GridBagConstraints.NONE;
+            c.anchor = GridBagConstraints.NORTHWEST;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+            panRoles.add(panStrictness, c);
+            
+            add(panRoles, BorderLayout.CENTER);
+
+            JPanel panNetwork = new JPanel();
+    		add(panNetwork, BorderLayout.EAST);
+    		
+    		JPanel panMotive = new JPanel();
+    		add(panMotive, BorderLayout.SOUTH);
+    		
+    		switch(unitType) {
+    		case UnitType.MEK:
+    			addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_LIGHT,
+    					EntityWeightClass.WEIGHT_COLOSSAL, false);
+    			break;
+    		case UnitType.TANK:
+    		case UnitType.NAVAL:
+    			addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_LIGHT,
+    					EntityWeightClass.WEIGHT_ASSAULT, false);
+    			break;
+    		case UnitType.PROTOMEK:    			
+    			addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_LIGHT,
+    					EntityWeightClass.WEIGHT_ASSAULT, true);
+    			break;
+    		case UnitType.BATTLE_ARMOR:
+    			addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_ULTRA_LIGHT,
+    					EntityWeightClass.WEIGHT_ASSAULT, true);
+    			break;
+    		case UnitType.AERO:
+    			addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_LIGHT,
+    					EntityWeightClass.WEIGHT_HEAVY, false);
+    			break;
+    		case UnitType.DROPSHIP:
+    			addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_SMALL_DROP,
+    					EntityWeightClass.WEIGHT_LARGE_DROP, true);
+    			break;
+    		case UnitType.WARSHIP:
+    			addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_SMALL_WAR,
+    					EntityWeightClass.WEIGHT_LARGE_WAR, true);
+    			break;
+    		default:
+    			panWeightClass.setVisible(false);
+    		}
+    		
     		for (MissionRole role : MissionRole.values()) {
     			if (role.fitsUnitType(unitType)) {
     				JCheckBox chk = new JCheckBox(Messages.getString("MissionRole." + role.toString()));
     				chk.setName(role.toString());
-    				checkboxes.add(chk);
+    				roleChecks.add(chk);
     			}
     		}
-    		Collections.sort(checkboxes, (c1, c2) -> c1.getText().compareTo(c2.getText()));
-			for (JCheckBox chk : checkboxes) {
-				add(chk);
+    		Collections.sort(roleChecks, (c1, c2) -> c1.getText().compareTo(c2.getText()));
+            c = new GridBagConstraints();
+            c.gridwidth = 1;
+            c.fill = GridBagConstraints.NONE;
+            c.anchor = GridBagConstraints.NORTHWEST;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+			for (int i = 0; i < roleChecks.size(); i++) {
+				c.gridx = i % 3;
+				c.gridy = i / 3 + 1;
+    			if (i == roleChecks.size() - 1) {
+    				c.weightx = 1.0;
+    				c.weighty = 1.0;
+    			}
+				panRoles.add(roleChecks.get(i), c);
 			}
     	}
     	
+    	private void addWeightClasses(JPanel panel, int start, int end, boolean all) {
+            cbWeightClass.addItem(Messages.getString("RandomArmyDialog.Mixed"));
+            GridBagConstraints c = new GridBagConstraints();
+            c.gridx = 1;
+            c.gridy = 0;
+            c.gridwidth = 1;
+            c.fill = GridBagConstraints.NONE;
+            c.anchor = GridBagConstraints.NORTHWEST;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+    		panel.add(cbWeightClass);
+    		
+    		c.gridx = 0;
+    		c.gridwidth = 2;
+    		for(int i = start; i <= end; i++) {
+    			String name = Messages.getString("RandomArmyDialog.weight_class_" + i);
+    			cbWeightClass.addItem(name);
+    			JCheckBox chk = new JCheckBox(name);
+    			chk.setName(String.valueOf(i));
+    			chk.setSelected(all);
+    			weightChecks.add(chk);
+    			c.gridy++;
+    			if (i == end) {
+    				c.weightx = 1.0;
+    				c.weighty = 1.0;
+    			}
+    			panel.add(chk, c);
+    		}
+    		cbWeightClass.addActionListener(e -> {
+    			for (JCheckBox chk : weightChecks) {
+    				chk.setEnabled(cbWeightClass.getSelectedIndex() == 0);
+    			}
+    		});
+    		cbWeightClass.setSelectedIndex(all?0 : 1);
+    	}
+    	
+    	public List<Integer> getSelectedWeights() {
+    		if (cbWeightClass.getSelectedIndex() > 0) {
+    			ArrayList<Integer> retVal = new ArrayList<Integer>();
+    			retVal.add(Integer.parseInt(weightChecks
+    					.get(cbWeightClass.getSelectedIndex() - 1).getName()));
+    			return retVal;
+    		}
+    		return weightChecks.stream().filter(chk -> chk.isSelected())
+    				.map(chk -> Integer.parseInt(chk.getName())).collect(Collectors.toList());
+    	}
+
     	public List<MissionRole> getSelectedRoles() {
-    		return checkboxes.stream().filter(chk -> chk.isSelected())
+    		return roleChecks.stream().filter(chk -> chk.isSelected())
     				.map(chk -> MissionRole.parseRole(chk.getName())).collect(Collectors.toList());
+    	}
+    	
+    	public int getRoleStrictness() {
+    		return cbRoleStrictness.getSelectedIndex() + 1;
     	}
     }
 }

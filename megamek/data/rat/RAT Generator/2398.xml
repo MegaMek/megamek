@@ -25,6 +25,8 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 		<salvage pct='6'>TH:1</salvage>
+		<weightDistribution era='2398' unitType='Mek'>4,2,3,1,0</weightDistribution>
+		<weightDistribution era='2398' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
 	<faction key='EF' name='Elysian Fields' clan='false' periphery='true'>
 		<years>-3049</years>
@@ -48,6 +50,8 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 		<salvage pct='6'>TH:10,LA:4</salvage>
+		<weightDistribution era='2398' unitType='Mek'>4,5,3,1,0</weightDistribution>
+		<weightDistribution era='2398' unitType='Tank'>3,4,3,1</weightDistribution>
 	</faction>
 	<faction key='IP' name='Illyrian Palatinate' clan='false' periphery='true'>
 		<years>2350-3063</years>
@@ -62,6 +66,9 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction></parentFaction>
 		<salvage pct='0'></salvage>
+		<weightDistribution era='2398' unitType='Mek'>3,4,2,1,0</weightDistribution>
+		<weightDistribution era='2398' unitType='Tank'>3,4,3,1</weightDistribution>
+		<weightDistribution era='2398' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='LA' name='Lyran Commonwealth' clan='false' periphery='false'>
 		<nameChange year='3042'>Federated Commonwealth (Steiner)</nameChange>
@@ -72,6 +79,8 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 		<salvage pct='6'>TH:6,FWL:2</salvage>
+		<weightDistribution era='2398' unitType='Mek'>4,6,7,3,0</weightDistribution>
+		<weightDistribution era='2398' unitType='Tank'>4,6,7,3</weightDistribution>
 	</faction>
 	<faction key='MERC' name='Mercenary' clan='false' periphery='false'>
 		<years>-</years>
@@ -93,11 +102,16 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.OS</parentFaction>
 		<salvage pct='5'></salvage>
+		<weightDistribution era='2398' unitType='Mek'>6,6,3,1,0</weightDistribution>
+		<weightDistribution era='2398' unitType='Tank'>5,5,2,1</weightDistribution>
 	</faction>
 	<faction key='Periphery' name='Periphery' clan='false' periphery='true'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction></parentFaction>
+		<weightDistribution era='2398' unitType='Mek'>6,5,3,1,0</weightDistribution>
+		<weightDistribution era='2398' unitType='Tank'>3,4,2,1</weightDistribution>
+		<weightDistribution era='2398' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='PIR' name='Pirate' clan='false' periphery='true'>
 		<years>-</years>
@@ -124,6 +138,7 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.HR</parentFaction>
 		<salvage pct='6'>FS:7</salvage>
+		<weightDistribution era='2398' unitType='Aero'>1,2,3</weightDistribution>
 	</faction>
 	<faction key='TH' name='Terran Hegemony' clan='false' periphery='false'>
 		<years>2315-2767</years>

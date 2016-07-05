@@ -42,6 +42,9 @@
 		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
 		<parentFaction></parentFaction>
 		<salvage pct='0'></salvage>
+		<weightDistribution era='3082' unitType='Mek'>2,3,3,1,0</weightDistribution>
+		<weightDistribution era='3082' unitType='Tank'>4,1,3,2</weightDistribution>
+		<weightDistribution era='3082' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='CBS' name='Clan Blood Spirit' clan='true' periphery='false'>
 		<years>2807-3082</years>
@@ -78,6 +81,8 @@
 		<pctClan unitType='Vehicle'>10,0,40</pctClan>
 		<pctSL unitType='Vehicle'>90,0,60</pctSL>
 		<salvage pct='10'>CSA:10,CCC:8,CSL:1</salvage>
+		<weightDistribution era='3082' unitType='Mek'>2,3,4,2,0</weightDistribution>
+		<weightDistribution era='3082' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
 	<faction key='CGB' name='Clan Ghost Bear' clan='true' periphery='false'>
 		<nameChange year='3060'>Ghost Bear Dominion</nameChange>
@@ -91,6 +96,8 @@
 		<pctClan unitType='Vehicle'>15,0,45</pctClan>
 		<pctSL unitType='Vehicle'>85,0,55</pctSL>
 		<salvage pct='10'>CHH:2,CDS:1,CW:9,LA:3,CNC:10,WOB:1,CJF:1,DC:10</salvage>
+		<weightDistribution era='3082' unitType='Mek'>2,3,4,2,0</weightDistribution>
+		<weightDistribution era='3082' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
 	<faction key='CGS' name='Clan Goliath Scorpion' clan='true' periphery='false'>
 		<nameChange year='3078'>Escorpión Império</nameChange>
@@ -215,6 +222,8 @@
 		<pctSL unitType='Aero'>60,73,76,88,92</pctSL>
 		<pctSL unitType='Vehicle'>76,81,84,86,90</pctSL>
 		<salvage pct='6'>OA:2,CDS:4,WOB:10,CGB:6</salvage>
+		<weightDistribution era='3082' unitType='Mek'>4,2,3,1,0</weightDistribution>
+		<weightDistribution era='3082' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
 	<faction key='DA' name='Duchy of Andurien' clan='false' periphery='false'>
 		<years>3030-3040,3079-</years>
@@ -300,6 +309,9 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction></parentFaction>
 		<salvage pct='0'></salvage>
+		<weightDistribution era='3082' unitType='Mek'>3,4,2,1,0</weightDistribution>
+		<weightDistribution era='3082' unitType='Tank'>3,4,3,1</weightDistribution>
+		<weightDistribution era='3082' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='LL' name='Lothian League' clan='false' periphery='true'>
 		<years>2691-</years>
@@ -317,6 +329,8 @@
 		<parentFaction>IS</parentFaction>
 		<pctSL>40,45,62,80,96</pctSL>
 		<salvage pct='7'>DTA:4,CDS:1,RIM:1,FWL:10,CIR:2,SHC:1</salvage>
+		<weightDistribution era='3082' unitType='Mek'>4,6,7,3,0</weightDistribution>
+		<weightDistribution era='3082' unitType='Tank'>4,6,7,3</weightDistribution>
 	</faction>
 	<faction key='MOC' name='Magistracy of Canopus' clan='false' periphery='true'>
 		<years>2530-</years>
@@ -375,6 +389,9 @@
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction></parentFaction>
+		<weightDistribution era='3082' unitType='Mek'>6,5,3,1,0</weightDistribution>
+		<weightDistribution era='3082' unitType='Tank'>3,4,2,1</weightDistribution>
+		<weightDistribution era='3082' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='PIR' name='Pirate' clan='false' periphery='true'>
 		<years>-</years>
@@ -423,6 +440,7 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.HR</parentFaction>
 		<salvage pct='5'>FS:10</salvage>
+		<weightDistribution era='3082' unitType='Aero'>1,2,3</weightDistribution>
 	</faction>
 	<faction key='TD' name='Tortuga Dominions' clan='false' periphery='true'>
 		<years>2590-</years>

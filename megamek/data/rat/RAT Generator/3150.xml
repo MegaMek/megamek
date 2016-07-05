@@ -32,6 +32,9 @@
 		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
 		<parentFaction></parentFaction>
 		<salvage pct='0'></salvage>
+		<weightDistribution era='3150' unitType='Mek'>2,3,3,1,0</weightDistribution>
+		<weightDistribution era='3150' unitType='Tank'>4,1,3,2</weightDistribution>
+		<weightDistribution era='3150' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='CGB' name='Clan Ghost Bear' clan='true' periphery='false'>
 		<nameChange year='3060'>Ghost Bear Dominion</nameChange>
@@ -39,6 +42,8 @@
 		<years>2807-</years>
 		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
+		<weightDistribution era='3150' unitType='Mek'>2,3,4,2,0</weightDistribution>
+		<weightDistribution era='3150' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
 	<faction key='CHH' name='Clan Hell&apos;s Horses' clan='true' periphery='false'>
 		<years>2807-</years>
@@ -115,6 +120,8 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 		<salvage pct='5'>RD:5,LA:1,ROS:3,FS:10,RA:1</salvage>
+		<weightDistribution era='3150' unitType='Mek'>4,2,3,1,0</weightDistribution>
+		<weightDistribution era='3150' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
 	<faction key='DA' name='Duchy of Andurien' clan='false' periphery='false'>
 		<years>3030-3040,3079-</years>
@@ -171,6 +178,9 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction></parentFaction>
 		<salvage pct='0'></salvage>
+		<weightDistribution era='3150' unitType='Mek'>3,4,2,1,0</weightDistribution>
+		<weightDistribution era='3150' unitType='Tank'>3,4,3,1</weightDistribution>
+		<weightDistribution era='3150' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='LL' name='Lothian League' clan='false' periphery='true'>
 		<years>2691-</years>
@@ -188,6 +198,8 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 		<salvage pct='5'>DTA:4,RT:1,RD:1,CW:4,ROS:10,MSC:2,CJF:8,DC:2</salvage>
+		<weightDistribution era='3150' unitType='Mek'>4,6,7,3,0</weightDistribution>
+		<weightDistribution era='3150' unitType='Tank'>4,6,7,3</weightDistribution>
 	</faction>
 	<faction key='MOC' name='Magistracy of Canopus' clan='false' periphery='true'>
 		<years>2530-</years>
@@ -228,6 +240,9 @@
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction></parentFaction>
+		<weightDistribution era='3150' unitType='Mek'>6,5,3,1,0</weightDistribution>
+		<weightDistribution era='3150' unitType='Tank'>3,4,2,1</weightDistribution>
+		<weightDistribution era='3150' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='PIR' name='Pirate' clan='false' periphery='true'>
 		<years>-</years>
@@ -276,6 +291,7 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.HR</parentFaction>
 		<salvage pct='5'>FS:10</salvage>
+		<weightDistribution era='3150' unitType='Aero'>1,2,3</weightDistribution>
 	</faction>
 	<faction key='TB' name='The Barrens' clan='false' periphery='false'>
 		<years>3100-</years>

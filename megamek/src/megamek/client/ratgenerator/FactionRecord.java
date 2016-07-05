@@ -16,7 +16,6 @@ package megamek.client.ratgenerator;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.TreeMap;
 
 import org.w3c.dom.Node;
@@ -50,6 +49,8 @@ public class FactionRecord {
 	private HashMap<Integer, ArrayList<Integer>> pctClanVee;
 	private HashMap<Integer, ArrayList<Integer>> pctSLVee;
 	private HashMap<Integer, HashMap<String, Integer>> salvage;
+	//weightDistribution.get(era).get(unitType)
+	private HashMap<Integer, HashMap<Integer,ArrayList<Integer>>> weightDistribution;
 	private ArrayList<String> parentFactions;
 	
 	public FactionRecord() {
@@ -77,6 +78,7 @@ public class FactionRecord {
 		pctClanVee = new HashMap<Integer, ArrayList<Integer>>();
 		pctSLVee = new HashMap<Integer, ArrayList<Integer>>();
 		salvage = new HashMap<Integer, HashMap<String, Integer>>();
+		weightDistribution = new HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>();
 		parentFactions = new ArrayList<String>();
 		ratingLevels.add("F");
 		ratingLevels.add("D");
@@ -125,14 +127,6 @@ public class FactionRecord {
 		return retVal;
 	}
 	
-	public String getNamesAsString() {
-		String retVal = name;
-		for (Integer y : altNames.keySet()) {
-			retVal += "," + y + ":" + altNames.get(y);
-		}
-		return retVal;
-	}
-	
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -158,18 +152,6 @@ public class FactionRecord {
 			}
 		}
 		return false;
-	}
-	
-	public String getYearsAsString() {
-		StringBuilder sb = new StringBuilder();
-		for (Iterator<DateRange> iter = yearsActive.iterator(); iter.hasNext();) {
-			DateRange dr = iter.next();
-			sb.append(dr.toString());
-			if (iter.hasNext()) {
-				sb.append(",");
-			}
-		}
-		return sb.toString();
 	}
 	
 	public void setYears(String str) throws ParseException {
@@ -420,17 +402,6 @@ public class FactionRecord {
 		}
 	}
 	
-	public String getRatingsAsString() {
-		String retVal = "";
-		for (int i = 0; i < ratingLevels.size(); i++) {
-			retVal += ratingLevels.get(i);
-			if (i < ratingLevels.size() - 1) {
-				retVal += ",";
-			}
-		}
-		return retVal;
-	}
-	
 	public void setPctOmni(int era, String str) {
 		if (pctOmni.containsKey(era)) {
 			pctOmni.get(era).clear();
@@ -449,19 +420,6 @@ public class FactionRecord {
 		}
 	}
 	
-	public String getPctOmniAsString(int era) {
-		String retVal = "";
-		if (pctOmni.containsKey(era)) {
-			for (int i = 0; i < pctOmni.get(era).size(); i++) {
-				retVal += pctOmni.get(era).get(i);
-				if (i < pctOmni.get(era).size() - 1) {
-					retVal += ",";
-				}
-			}
-		}
-		return retVal;
-	}
-
 	public void setPctClan(int era, String str) {
 		if (pctClan.containsKey(era)) {
 			pctClan.get(era).clear();
@@ -480,19 +438,6 @@ public class FactionRecord {
 		}
 	}
 	
-	public String getPctClanAsString(int era) {
-		String retVal = "";
-		if (pctClan.containsKey(era)) {
-			for (int i = 0; i < pctClan.get(era).size(); i++) {
-				retVal += pctClan.get(era).get(i);
-				if (i < pctClan.get(era).size() - 1) {
-					retVal += ",";
-				}
-			}
-		}
-		return retVal;
-	}
-
 	public void setPctSL(int era, String str) {
 		if (pctSL.containsKey(era)) {
 			pctSL.get(era).clear();
@@ -511,19 +456,6 @@ public class FactionRecord {
 		}
 	}
 	
-	public String getPctSLAsString(int era) {
-		String retVal = "";
-		if (pctSL.containsKey(era)) {
-			for (int i = 0; i < pctSL.get(era).size(); i++) {
-				retVal += pctSL.get(era).get(i);
-				if (i < pctSL.get(era).size() - 1) {
-					retVal += ",";
-				}
-			}
-		}
-		return retVal;
-	}
-
 	public void setPctOmniAero(int era, String str) {
 		if (pctOmniAero.containsKey(era)) {
 			pctOmniAero.get(era).clear();
@@ -542,19 +474,6 @@ public class FactionRecord {
 		}
 	}
 	
-	public String getPctOmniAeroAsString(int era) {
-		String retVal = "";
-		if (pctOmniAero.containsKey(era)) {
-			for (int i = 0; i < pctOmniAero.get(era).size(); i++) {
-				retVal += pctOmniAero.get(era).get(i);
-				if (i < pctOmniAero.get(era).size() - 1) {
-					retVal += ",";
-				}
-			}
-		}
-		return retVal;
-	}
-
 	public void setPctClanAero(int era, String str) {
 		if (pctClanAero.containsKey(era)) {
 			pctClanAero.get(era).clear();
@@ -573,19 +492,6 @@ public class FactionRecord {
 		}
 	}
 	
-	public String getPctClanAeroAsString(int era) {
-		String retVal = "";
-		if (pctClanAero.containsKey(era)) {
-			for (int i = 0; i < pctClanAero.get(era).size(); i++) {
-				retVal += pctClanAero.get(era).get(i);
-				if (i < pctClanAero.get(era).size() - 1) {
-					retVal += ",";
-				}
-			}
-		}
-		return retVal;
-	}
-
 	public void setPctSLAero(int era, String str) {
 		if (pctSLAero.containsKey(era)) {
 			pctSLAero.get(era).clear();
@@ -604,19 +510,6 @@ public class FactionRecord {
 		}
 	}
 	
-	public String getPctSLAeroAsString(int era) {
-		String retVal = "";
-		if (pctSLAero.containsKey(era)) {
-			for (int i = 0; i < pctSLAero.get(era).size(); i++) {
-				retVal += pctSLAero.get(era).get(i);
-				if (i < pctSLAero.get(era).size() - 1) {
-					retVal += ",";
-				}
-			}
-		}
-		return retVal;
-	}
-
 	public void setPctClanVee(int era, String str) {
 		if (pctClanVee.containsKey(era)) {
 			pctClanVee.get(era).clear();
@@ -633,19 +526,6 @@ public class FactionRecord {
 				}
 			}
 		}
-	}
-	
-	public String getPctClanVeeAsString(int era) {
-		String retVal = "";
-		if (pctClanVee.containsKey(era)) {
-			for (int i = 0; i < pctClanVee.get(era).size(); i++) {
-				retVal += pctClanVee.get(era).get(i);
-				if (i < pctClanVee.get(era).size() - 1) {
-					retVal += ",";
-				}
-			}
-		}
-		return retVal;
 	}
 	
 	public void setPctSLVee(int era, String str) {
@@ -666,32 +546,49 @@ public class FactionRecord {
 		}
 	}
 	
-	public String getPctSLVeeAsString(int era) {
-		String retVal = "";
-		if (pctSLVee.containsKey(era)) {
-			for (int i = 0; i < pctSLVee.get(era).size(); i++) {
-				retVal += pctSLVee.get(era).get(i);
-				if (i < pctSLVee.get(era).size() - 1) {
-					retVal += ",";
+	public ArrayList<Integer> getWeightDistribution(int era, int unitType) {
+		if (weightDistribution.containsKey(era)
+				&& weightDistribution.get(era).containsKey(unitType)) {
+			return weightDistribution.get(era).get(unitType);
+		}
+		if (parentFactions.size() > 0) {
+			ArrayList<Integer> retVal = new ArrayList<>();
+			for (String fKey : parentFactions) {
+				FactionRecord fRec = RATGenerator.getInstance().getFaction(fKey);
+				if (fRec != null) {
+					ArrayList<Integer> wd = fRec.getWeightDistribution(era, unitType);
+					if (wd != null) {
+						if (retVal.size() == 0) {
+							retVal.addAll(wd);
+						} else {
+							for (int i = 0; i < retVal.size(); i++) {
+								retVal.set(i, retVal.get(i) + wd.get(i));
+							}
+						}
+					}
 				}
 			}
+			return retVal;
 		}
-		return retVal;
-	}
-
-	public ArrayList<String> getParentFactions() {
-		return parentFactions;
+		return null;
 	}
 	
-	public String getParentFactionsAsString() {
-		String retVal = "";
-		for (int i = 0; i < parentFactions.size(); i++) {
-			retVal += parentFactions.get(i);
-			if (i < parentFactions.size() - 1) {
-				retVal += ",";
-			}
+	public void setWeightDistribution(int era, int unitType, String dist) {
+		if (dist == null && weightDistribution.containsKey(era)) {
+			weightDistribution.get(era).remove(unitType);
 		}
-		return retVal;
+		ArrayList<Integer> list = new ArrayList<>();
+		for (String s : dist.split(",")) {
+			list.add(Integer.valueOf(s));
+		}
+		if (!weightDistribution.containsKey(era)) {
+			weightDistribution.put(era, new HashMap<Integer,ArrayList<Integer>>());
+		}
+		weightDistribution.get(era).put(unitType, list);
+	}
+	
+	public ArrayList<String> getParentFactions() {
+		return parentFactions;
 	}
 	
 	public void setParentFactions(String factions) {
@@ -781,6 +678,15 @@ public class FactionRecord {
 						salvage.get(era).put(subfields[0], Integer.parseInt(subfields[1]));
 					}
 				}				
+				break;
+			case "weightDistribution":
+				try {
+					int unitType = ModelRecord.parseUnitType(wn.getAttributes().getNamedItem("unitType").getTextContent());
+					setWeightDistribution(era, unitType, wn.getTextContent());
+				} catch (Exception ex) {
+					System.err.println("RATGenerator: error parsing weight distributions for " + key
+							+ ", " + era);
+				}
 				break;
 			}
 		}

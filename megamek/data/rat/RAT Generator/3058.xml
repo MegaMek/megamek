@@ -30,6 +30,7 @@
 		<pctClan>0,0,0,1,3</pctClan>
 		<pctSL>0,4,14,22,36</pctSL>
 		<salvage pct='5'>CLAN:1,FWL:7,SIC:4,FS:10,FC:10,TC:1</salvage>
+		<weightDistribution era='3058' unitType='Aero'>3,3,1</weightDistribution>
 	</faction>
 	<faction key='CI' name='Chainelane Islands' clan='false' periphery='true'>
 		<years>-</years>
@@ -62,6 +63,9 @@
 		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
 		<parentFaction></parentFaction>
 		<salvage pct='0'></salvage>
+		<weightDistribution era='3058' unitType='Mek'>2,3,3,1,0</weightDistribution>
+		<weightDistribution era='3058' unitType='Tank'>4,1,3,2</weightDistribution>
+		<weightDistribution era='3058' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='CBS' name='Clan Blood Spirit' clan='true' periphery='false'>
 		<years>2807-3082</years>
@@ -84,6 +88,8 @@
 		<pctClan unitType='Vehicle'>10,10,40</pctClan>
 		<pctSL unitType='Vehicle'>90,90,60</pctSL>
 		<salvage pct='2'>CCC:1,CHH:5,CSR:4,CIH:4,CSV:6,CFM:3,CCO:5,CGS:3,CSA:4,CDS:5,CW:4,CBS:3,CNC:10,CSJ:5,CJF:4</salvage>
+		<weightDistribution era='3058' unitType='Mek'>3,4,2,1,0</weightDistribution>
+		<weightDistribution era='3058' unitType='Tank'>4,1,3,2</weightDistribution>
 	</faction>
 	<faction key='CCC' name='Clan Cloud Cobra' clan='true' periphery='false'>
 		<years>2807-3085</years>
@@ -109,6 +115,8 @@
 		<pctClan unitType='Vehicle'>10,10,40</pctClan>
 		<pctSL unitType='Vehicle'>90,90,60</pctSL>
 		<salvage pct='10'>CHH:1,CCC:3,CIH:6,CSR:2,CSV:2,CFM:2,CGS:1,CSA:3,CDS:1,CW:1,CBS:1,CNC:7,CSJ:10,CJF:5,CB:2</salvage>
+		<weightDistribution era='3058' unitType='Mek'>2,3,4,2,0</weightDistribution>
+		<weightDistribution era='3058' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
 	<faction key='CFM' name='Clan Fire Mandrill' clan='true' periphery='false'>
 		<years>2807-3075</years>
@@ -133,6 +141,8 @@
 		<pctClan unitType='Vehicle'>11,11,43</pctClan>
 		<pctSL unitType='Vehicle'>88,88,57</pctSL>
 		<salvage pct='10'>CHH:2,CCC:0,CIH:1,CSV:2,FRR:4,CFM:0,CGS:0,CSA:1,CW:8,CNC:2,CSJ:2,CJF:1,DC:7</salvage>
+		<weightDistribution era='3058' unitType='Mek'>2,3,4,2,0</weightDistribution>
+		<weightDistribution era='3058' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
 	<faction key='CGS' name='Clan Goliath Scorpion' clan='true' periphery='false'>
 		<nameChange year='3078'>Escorpión Império</nameChange>
@@ -170,6 +180,8 @@
 		<pctClan unitType='Vehicle'>11,11,40</pctClan>
 		<pctSL unitType='Vehicle'>88,88,60</pctSL>
 		<salvage pct='10'>CCC:1,CHH:3,CSR:1,CSV:4,CFM:3,CCO:5,CGS:5,CSA:5,CDS:7,CW:4,CNC:2,CSJ:2,CJF:10,CGB:3,CB:1</salvage>
+		<weightDistribution era='3058' unitType='Mek'>5,4,2,1,0</weightDistribution>
+		<weightDistribution era='3058' unitType='Tank'>5,2,3,1</weightDistribution>
 	</faction>
 	<faction key='CJF' name='Clan Jade Falcon' clan='true' periphery='false'>
 		<years>2807-</years>
@@ -245,6 +257,8 @@
 		<pctClan unitType='Vehicle'>11,11,43,50</pctClan>
 		<pctSL unitType='Vehicle'>88,88,57,50</pctSL>
 		<salvage pct='10'>CCC:3,CHH:1,CSR:1,CIH:5,CSV:3,CFM:10,CCO:3,CGS:3,CDS:2,CW:5,CNC:5,CSJ:3,CJF:7,CGB:2,CB:2</salvage>
+		<weightDistribution era='3058' unitType='Mek'>2,3,4,2,0</weightDistribution>
+		<weightDistribution era='3058' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
 	<faction key='CSV' name='Clan Steel Viper' clan='true' periphery='false'>
 		<years>2807-3075</years>
@@ -297,6 +311,8 @@
 		<pctClan>0,1,4,8,12</pctClan>
 		<pctSL>4,14,22,26,46</pctSL>
 		<salvage pct='7'>LA:5,FRR:0,CNC:0,CSJ:0,FS:5,FC:10,CGB:1</salvage>
+		<weightDistribution era='3058' unitType='Mek'>4,2,3,1,0</weightDistribution>
+		<weightDistribution era='3058' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
 	<faction key='DS' name='Duchy of Small' clan='false' periphery='false'>
 		<years>3057-3066</years>
@@ -380,6 +396,9 @@
 		<pctClan>0,0,0,0,0</pctClan>
 		<pctSL>0,1,2,5,10</pctSL>
 		<salvage pct='0'></salvage>
+		<weightDistribution era='3058' unitType='Mek'>3,4,2,1,0</weightDistribution>
+		<weightDistribution era='3058' unitType='Tank'>3,4,3,1</weightDistribution>
+		<weightDistribution era='3058' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='LL' name='Lothian League' clan='false' periphery='true'>
 		<years>2691-</years>
@@ -400,6 +419,8 @@
 		<pctClan>0,0,2,5,7</pctClan>
 		<pctSL>3,12,19,28,41</pctSL>
 		<salvage pct='7'>FRR:2,FWL:10,CM:0,CJF:10,DC:10</salvage>
+		<weightDistribution era='3058' unitType='Mek'>4,6,7,3,0</weightDistribution>
+		<weightDistribution era='3058' unitType='Tank'>4,6,7,3</weightDistribution>
 	</faction>
 	<faction key='MOC' name='Magistracy of Canopus' clan='false' periphery='true'>
 		<years>2530-</years>
@@ -458,11 +479,16 @@
 		<pctClan>0,0,0,0,0</pctClan>
 		<pctSL>0,0,1,4,8</pctSL>
 		<salvage pct='5'>FS:1,FC:10,DC:7</salvage>
+		<weightDistribution era='3058' unitType='Mek'>6,6,3,1,0</weightDistribution>
+		<weightDistribution era='3058' unitType='Tank'>5,5,2,1</weightDistribution>
 	</faction>
 	<faction key='Periphery' name='Periphery' clan='false' periphery='true'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction></parentFaction>
+		<weightDistribution era='3058' unitType='Mek'>6,5,3,1,0</weightDistribution>
+		<weightDistribution era='3058' unitType='Tank'>3,4,2,1</weightDistribution>
+		<weightDistribution era='3058' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='PIR' name='Pirate' clan='false' periphery='true'>
 		<years>-</years>
@@ -485,6 +511,7 @@
 		<pctClan>0,0,0,0,0</pctClan>
 		<pctSL>0,4,14,22,36</pctSL>
 		<salvage pct='6'>CC:10</salvage>
+		<weightDistribution era='3058' unitType='Aero'>2,2,3</weightDistribution>
 	</faction>
 	<faction key='SKC' name='Styk Commonality' clan='false' periphery='false'>
 		<years>3057-3063</years>
@@ -500,6 +527,7 @@
 		<pctClan>0,0,0,0,0</pctClan>
 		<pctSL>0,0,1,4,9</pctSL>
 		<salvage pct='5'>CC:2,FS:10,FC:10</salvage>
+		<weightDistribution era='3058' unitType='Aero'>1,2,3</weightDistribution>
 	</faction>
 	<faction key='TCC' name='Terracap Confederation' clan='false' periphery='false'>
 		<years>3057-3068</years>

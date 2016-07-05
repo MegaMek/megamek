@@ -20,6 +20,8 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 		<salvage pct='5'>OA:1,LA:9,SL:10,FS:8</salvage>
+		<weightDistribution era='2650' unitType='Mek'>4,2,3,1,0</weightDistribution>
+		<weightDistribution era='2650' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
 	<faction key='EF' name='Elysian Fields' clan='false' periphery='true'>
 		<years>-3049</years>
@@ -43,6 +45,8 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 		<salvage pct='5'>CC:4,MOC:1,LA:6,SL:10</salvage>
+		<weightDistribution era='2650' unitType='Mek'>4,5,3,1,0</weightDistribution>
+		<weightDistribution era='2650' unitType='Tank'>3,4,3,1</weightDistribution>
 	</faction>
 	<faction key='IP' name='Illyrian Palatinate' clan='false' periphery='true'>
 		<years>2350-3063</years>
@@ -57,6 +61,9 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction></parentFaction>
 		<salvage pct='0'></salvage>
+		<weightDistribution era='2650' unitType='Mek'>3,4,2,1,0</weightDistribution>
+		<weightDistribution era='2650' unitType='Tank'>3,4,3,1</weightDistribution>
+		<weightDistribution era='2650' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='LL' name='Lothian League' clan='false' periphery='true'>
 		<years>2691-</years>
@@ -74,6 +81,8 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 		<salvage pct='5'>TH:10,SL:10,FWL:4,RWR:2,DC:4</salvage>
+		<weightDistribution era='2650' unitType='Mek'>4,6,7,3,0</weightDistribution>
+		<weightDistribution era='2650' unitType='Tank'>4,6,7,3</weightDistribution>
 	</faction>
 	<faction key='MOC' name='Magistracy of Canopus' clan='false' periphery='true'>
 		<years>2530-</years>
@@ -102,11 +111,16 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.OS</parentFaction>
 		<salvage pct='5'>SL:1,FS:7,DC:10</salvage>
+		<weightDistribution era='2650' unitType='Mek'>6,6,3,1,0</weightDistribution>
+		<weightDistribution era='2650' unitType='Tank'>5,5,2,1</weightDistribution>
 	</faction>
 	<faction key='Periphery' name='Periphery' clan='false' periphery='true'>
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction></parentFaction>
+		<weightDistribution era='2650' unitType='Mek'>6,5,3,1,0</weightDistribution>
+		<weightDistribution era='2650' unitType='Tank'>3,4,2,1</weightDistribution>
+		<weightDistribution era='2650' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='PIR' name='Pirate' clan='false' periphery='true'>
 		<years>-</years>
@@ -126,6 +140,9 @@
 		<ratingLevels>C,B,A</ratingLevels>
 		<parentFaction></parentFaction>
 		<salvage pct='5'>CC:8,LA:10,FWL:7,FS:3,DC:6</salvage>
+		<weightDistribution era='2650' unitType='Mek'>3,4,2,1,0</weightDistribution>
+		<weightDistribution era='2650' unitType='Tank'>3,4,3,1</weightDistribution>
+		<weightDistribution era='2650' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='TC' name='Taurian Concordat' clan='false' periphery='true'>
 		<years>2335-</years>
@@ -133,6 +150,7 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.HR</parentFaction>
 		<salvage pct='5'>CC:1,SL:1,FS:10</salvage>
+		<weightDistribution era='2650' unitType='Aero'>1,2,3</weightDistribution>
 	</faction>
 	<faction key='TH' name='Terran Hegemony' clan='false' periphery='false'>
 		<years>2315-2767</years>

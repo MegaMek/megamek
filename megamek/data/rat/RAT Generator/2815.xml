@@ -33,6 +33,9 @@
 		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
 		<parentFaction></parentFaction>
 		<salvage pct='0'></salvage>
+		<weightDistribution era='2815' unitType='Mek'>2,3,3,1,0</weightDistribution>
+		<weightDistribution era='2815' unitType='Tank'>4,1,3,2</weightDistribution>
+		<weightDistribution era='2815' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='CBS' name='Clan Blood Spirit' clan='true' periphery='false'>
 		<years>2807-3082</years>
@@ -55,6 +58,8 @@
 		<pctClan unitType='Vehicle'>0,0,0</pctClan>
 		<pctSL unitType='Vehicle'>100,100,100</pctSL>
 		<salvage pct='5'>CCC:1,CHH:7,CSR:5,CIH:5,CSV:3,CFM:3,CCO:7,CGS:3,CSA:2,CDS:5,CW:3,CWI:2,CBS:3,CNC:10,CSJ:2,CMG:2,CJF:5</salvage>
+		<weightDistribution era='2815' unitType='Mek'>3,4,2,1,0</weightDistribution>
+		<weightDistribution era='2815' unitType='Tank'>4,1,3,2</weightDistribution>
 	</faction>
 	<faction key='CCC' name='Clan Cloud Cobra' clan='true' periphery='false'>
 		<years>2807-3085</years>
@@ -80,6 +85,8 @@
 		<pctClan unitType='Vehicle'>0,0,0</pctClan>
 		<pctSL unitType='Vehicle'>100,100,100</pctSL>
 		<salvage pct='5'>CCC:8,CHH:1,CSR:5,CIH:8,CWOV:1,CSV:3,CFM:8,CGS:1,CSA:5,CDS:2,CW:1,CBS:1,CNC:5,CSJ:8,CJF:10,CB:5</salvage>
+		<weightDistribution era='2815' unitType='Mek'>2,3,4,2,0</weightDistribution>
+		<weightDistribution era='2815' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
 	<faction key='CFM' name='Clan Fire Mandrill' clan='true' periphery='false'>
 		<years>2807-3075</years>
@@ -104,6 +111,8 @@
 		<pctClan unitType='Vehicle'>0,0,0</pctClan>
 		<pctSL unitType='Vehicle'>100,100,100</pctSL>
 		<salvage pct='5'>CHH:10,CCC:3,CIH:5,CSR:1,CWOV:3,CSV:10,CFM:3,CGS:1,CCO:1,CSA:8,CDS:1,CW:8,CMG:3,CJF:5,IND:3</salvage>
+		<weightDistribution era='2815' unitType='Mek'>2,3,4,2,0</weightDistribution>
+		<weightDistribution era='2815' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
 	<faction key='CGS' name='Clan Goliath Scorpion' clan='true' periphery='false'>
 		<nameChange year='3078'>Escorpión Império</nameChange>
@@ -141,6 +150,8 @@
 		<pctClan unitType='Vehicle'>0,0,0</pctClan>
 		<pctSL unitType='Vehicle'>100,100,100</pctSL>
 		<salvage pct='5'>CCC:2,CHH:3,CSR:4,CWOV:1,CSV:5,CFM:10,CCO:5,CGS:5,CSA:8,CDS:5,CW:4,CWI:1,CNC:2,CSJ:3,CMG:5,CJF:8,CGB:2,CB:2</salvage>
+		<weightDistribution era='2815' unitType='Mek'>5,4,2,1,0</weightDistribution>
+		<weightDistribution era='2815' unitType='Tank'>5,2,3,1</weightDistribution>
 	</faction>
 	<faction key='CJF' name='Clan Jade Falcon' clan='true' periphery='false'>
 		<years>2807-</years>
@@ -227,6 +238,8 @@
 		<pctClan unitType='Vehicle'>0,0,0,0</pctClan>
 		<pctSL unitType='Vehicle'>100,100,100,100</pctSL>
 		<salvage pct='5'>CCC:1,CHH:1,CSR:1,CIH:8,CWOV:1,CSV:6,CFM:10,CCO:3,CGS:4,CDS:4,CW:4,CSJ:1,CMG:4,CJF:9,IND:1,CGB:2,CB:1</salvage>
+		<weightDistribution era='2815' unitType='Mek'>2,3,4,2,0</weightDistribution>
+		<weightDistribution era='2815' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
 	<faction key='CSV' name='Clan Steel Viper' clan='true' periphery='false'>
 		<years>2807-3075</years>
@@ -283,6 +296,8 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 		<salvage pct='6'>CC:1,LA:7,FS:10</salvage>
+		<weightDistribution era='2815' unitType='Mek'>4,2,3,1,0</weightDistribution>
+		<weightDistribution era='2815' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
 	<faction key='EF' name='Elysian Fields' clan='false' periphery='true'>
 		<years>-3049</years>
@@ -306,6 +321,8 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 		<salvage pct='6'>CC:8,LA:10</salvage>
+		<weightDistribution era='2815' unitType='Mek'>4,5,3,1,0</weightDistribution>
+		<weightDistribution era='2815' unitType='Tank'>3,4,3,1</weightDistribution>
 	</faction>
 	<faction key='IP' name='Illyrian Palatinate' clan='false' periphery='true'>
 		<years>2350-3063</years>
@@ -320,6 +337,9 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction></parentFaction>
 		<salvage pct='0'></salvage>
+		<weightDistribution era='2815' unitType='Mek'>3,4,2,1,0</weightDistribution>
+		<weightDistribution era='2815' unitType='Tank'>3,4,3,1</weightDistribution>
+		<weightDistribution era='2815' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='LL' name='Lothian League' clan='false' periphery='true'>
 		<years>2691-</years>
@@ -337,6 +357,8 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 		<salvage pct='6'>FWL:10,DC:9</salvage>
+		<weightDistribution era='2815' unitType='Mek'>4,6,7,3,0</weightDistribution>
+		<weightDistribution era='2815' unitType='Tank'>4,6,7,3</weightDistribution>
 	</faction>
 	<faction key='MOC' name='Magistracy of Canopus' clan='false' periphery='true'>
 		<years>2530-</years>
@@ -365,6 +387,8 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.OS</parentFaction>
 		<salvage pct='5'>FS:10,DC:9</salvage>
+		<weightDistribution era='2815' unitType='Mek'>6,6,3,1,0</weightDistribution>
+		<weightDistribution era='2815' unitType='Tank'>5,5,2,1</weightDistribution>
 	</faction>
 	<faction key='PP' name='Pentagon Powers' clan='false' periphery='false'>
 		<years>2801-2822</years>
@@ -377,6 +401,9 @@
 		<years>-</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction></parentFaction>
+		<weightDistribution era='2815' unitType='Mek'>6,5,3,1,0</weightDistribution>
+		<weightDistribution era='2815' unitType='Tank'>3,4,2,1</weightDistribution>
+		<weightDistribution era='2815' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='PIR' name='Pirate' clan='false' periphery='true'>
 		<years>-</years>
@@ -390,6 +417,7 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.HR</parentFaction>
 		<salvage pct='5'>CC:6,FS:10</salvage>
+		<weightDistribution era='2815' unitType='Aero'>1,2,3</weightDistribution>
 	</faction>
 	<faction key='TD' name='Tortuga Dominions' clan='false' periphery='true'>
 		<years>2590-</years>

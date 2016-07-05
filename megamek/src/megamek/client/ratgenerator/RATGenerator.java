@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -278,16 +279,8 @@ public class RATGenerator {
 			int rating, Collection<Integer> weightClasses,
 			Collection<MissionRole> roles, int roleStrictness,
 			FactionRecord user) {
-		TreeMap<String, Double> retVal = new TreeMap<String, Double>();
-		ArrayList<String> omnis = new ArrayList<String>();
-		ArrayList<String> sl = new ArrayList<String>();
-		ArrayList<String> clan = new ArrayList<String>();
-		ArrayList<String> other = new ArrayList<String>();
-		double total = 0.0;
-		double totalOmni = 0.0;
-		double totalSL = 0.0;
-		double totalClan = 0.0;
-		double totalOther = 0.0;
+		HashMap<ModelRecord, Double> unitWeights = new HashMap<ModelRecord, Double>();
+		HashMap<FactionRecord, Double> salvageWeights = new HashMap<FactionRecord, Double>();
 		
 		loadYear(year);
 		
@@ -350,42 +343,69 @@ public class RATGenerator {
 					if (adjMAv != null) {
 						double mWt = AvailabilityRating.calcWeight(adjMAv) / totalModelWeight
 								* AvailabilityRating.calcWeight(cAv);
-	
+
 						if (mWt > 0) {
-							retVal.put(mRec.getKey(), mWt);
-							total += mWt;
-							if (mRec.isOmni()) {
-								totalOmni += mWt;
-								omnis.add(mRec.getKey());
-							}
-							if (mRec.isClan()) {
-								totalClan += mWt;
-								clan.add(mRec.getKey());
-							} else if (mRec.isSL()) {
-								totalSL += mWt;
-								sl.add(mRec.getKey());
-							} else {
-								totalOther += mWt;
-								other.add(mRec.getKey());
-							}
+							unitWeights.put(mRec, mWt);
 						}
 					}
 				}
 			}						
 		}
 
-		if (retVal.size() == 0) {
-			return retVal;
+		if (unitWeights.size() == 0) {
+			return new HashMap<String,Double>();
+		}
+		
+		/* If there is more than one weight class and the faction record (or parent)
+		 * indicates a certain distribution of weight classes, adjust the weight value
+		 * to conform to the given ratio.
+		 */
+
+		if (weightClasses.size() > 0) {
+			ArrayList<Integer> wcd = fRec.getWeightDistribution(early, unitType);
+			if (wcd != null) {
+				double total = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
+				List<Integer> wcOffsets = weightClasses.stream()
+						.map(wc -> wc - ModelRecord.getWeightClassOffset(unitType))
+						.collect(Collectors.toList());
+				HashMap<Integer,ArrayList<ModelRecord>> wcMap = new HashMap<>();
+				for (int wc : wcOffsets) {
+					wcMap.put(wc, new ArrayList<ModelRecord>());
+				}
+				for (ModelRecord mRec : unitWeights.keySet()) {
+					wcMap.get(mRec.getWeightClass() - ModelRecord.getWeightClassOffset(unitType)).add(mRec);
+				}
+				int wdTotal = wcOffsets.stream()
+						.mapToInt(wc -> wcd.get(wc)).sum();
+				for (int wc : wcMap.keySet()) {
+					double ratio = wcMap.get(wc).stream()
+							.mapToDouble(mKey -> unitWeights.get(mKey)).sum() / total;
+					double adj = wcd.get(wc) / (ratio * wdTotal);
+					for (ModelRecord mRec : wcMap.get(wc)) {
+						unitWeights.put(mRec, unitWeights.get(mRec) * adj);
+					}
+				}
+			}
+		}
+		
+		double total = 0.0;
+		double totalOmni = 0.0;
+		double totalClan = 0.0;
+		double totalSL = 0.0;
+		for (Map.Entry<ModelRecord,Double> entry : unitWeights.entrySet()) {
+			if (entry.getKey().isOmni()) {
+				totalOmni += entry.getValue();
+			}
+			if (entry.getKey().isClan()) {
+				totalClan += entry.getValue();
+			}
+			if (entry.getKey().isSL()) {
+				totalSL += entry.getValue();
+			}
+			total += entry.getValue();
 		}
 
 		if (fRec.getPctSalvage(early) != null) {
-			double salvage = fRec.getPctSalvage(early);
-			if (salvage >= 100) {
-				salvage = total;
-				retVal.clear();
-			} else {
-				salvage = salvage * total / (100 - salvage);
-			}
 			HashMap<String,Double> salvageEntries = new HashMap<String,Double>();
 			for (Map.Entry<String,Integer> entry : fRec.getSalvage(early).entrySet()) {
 				if (late == null) {
@@ -407,30 +427,26 @@ public class RATGenerator {
 				}
 			}			
 			
+			double salvage = fRec.getPctSalvage(early);
+			if (salvage >= 100) {
+				salvage = total;
+				unitWeights.clear();
+			} else {
+				salvage = salvage * total / (100 - salvage);
+			}
 			double totalFactionWeight = salvageEntries.values().stream()
-					.mapToDouble(v -> v.doubleValue()).sum();
+					.mapToDouble(Double::doubleValue).sum();
 			for (String fKey : salvageEntries.keySet()) {
 				FactionRecord salvageFaction = factions.get(fKey);
 				if (salvageFaction == null) {
 					System.err.println("Could not locate faction " + fKey + " for " + fRec.getKey() + " salvage");
 				} else {
 					double wt = salvage * salvageEntries.get(fKey) / totalFactionWeight;
-					retVal.put("@" + fKey, wt);
-					if (salvageFaction.isClan()) {
-						totalClan += wt;
-						clan.add("@" + fKey);
-					} else {
-						totalOther += wt;
-						other.add("@" + fKey);
-					}
-					total += wt;
+					salvageWeights.put(salvageFaction, wt);
 				}
 			}
-			if (fRec.getPctSalvage(early) >= 100) {
-				return retVal;
-			}
 		}
-
+		
 		if (rating >= 0) {
 			Integer pctOmni = null;
 			Integer pctNonOmni = null;
@@ -460,27 +476,50 @@ public class RATGenerator {
 			if (pctSL != null) {
 				pctOther -= pctSL;
 			}
-			for (String key : retVal.keySet()) {
-				if (pctOmni != null && omnis.contains(key) && totalOmni < total) {
-					retVal.put(key, retVal.get(key) * (pctOmni / 100.0) * (total / totalOmni));
-				}
-				if (pctNonOmni != null && !omnis.contains(key) && totalOmni > 0) {
-					retVal.put(key, retVal.get(key) * (pctNonOmni / 100.0) * (total / (total - totalOmni)));						
-				}
-				if (pctSL != null && sl.contains(key)
-						&& totalSL > 0) {
-					retVal.put(key, retVal.get(key) * (pctSL / 100.0) * (total / totalSL));
-				}
-				if (fRec.isClan() && pctClan != null && clan.contains(key)
-						&& totalClan > 0) {
-					//Clan % for IS is handled through salvage mechanism
-					retVal.put(key, retVal.get(key) * (pctClan / 100.0) * (total / totalClan));
-				}
-				if (pctOther != null && other.contains(key)
-						&& totalClan > 0) {
-					retVal.put(key, retVal.get(key) * (pctOther / 100.0) * (total / totalOther));
+			/* For non-Clan factions, the amount of salvage from Clan factions is
+			 * part of the overall Clan percentage.
+			 */
+			if (!fRec.isClan() && pctClan != null && totalClan > 0) {
+				double clanSalvage = salvageWeights.keySet().stream().filter(fr -> fr.isClan())
+						.mapToDouble(fr -> salvageWeights.get(fr)).sum();
+				total += clanSalvage;
+				totalClan += clanSalvage;
+				for (FactionRecord fr : salvageWeights.keySet()) {
+					if (fr.isClan()) {
+						salvageWeights.put(fr, salvageWeights.get(fr)
+								* (pctClan / 100.0) * (total / totalClan));
+					}
 				}
 			}
+			for (ModelRecord mRec : unitWeights.keySet()) {
+				if (pctOmni != null && mRec.isOmni() && totalOmni < total) {
+					unitWeights.put(mRec, unitWeights.get(mRec) * (pctOmni / 100.0) * (total / totalOmni));
+				}
+				if (pctNonOmni != null && !mRec.isOmni() && totalOmni > 0) {
+					unitWeights.put(mRec, unitWeights.get(mRec) * (pctNonOmni / 100.0) * (total / (total - totalOmni)));						
+				}
+				if (pctSL != null && mRec.isSL()
+						&& totalSL > 0) {
+					unitWeights.put(mRec, unitWeights.get(mRec) * (pctSL / 100.0) * (total / totalSL));
+				}
+				if (pctClan != null && mRec.isClan()
+						&& totalClan > 0) {
+					unitWeights.put(mRec, unitWeights.get(mRec) * (pctClan / 100.0) * (total / totalClan));
+				}
+				if (pctOther != null && !mRec.isClan() && !mRec.isSL()
+						&& totalClan > 0) {
+					unitWeights.put(mRec, unitWeights.get(mRec) * (pctOther / 100.0)
+							* (total / pctOther));
+				}
+			}
+		}
+		
+		TreeMap<String,Double> retVal = new TreeMap<>();
+		for (Map.Entry<FactionRecord, Double> entry : salvageWeights.entrySet()) {
+			retVal.put("@" + entry.getKey().getKey(), entry.getValue());
+		}
+		for (Map.Entry<ModelRecord, Double> entry : unitWeights.entrySet()) {
+			retVal.put(entry.getKey().getKey(), entry.getValue());
 		}
 		
 		/* Increase weights if necessary to keep smallest from rounding down to zero */

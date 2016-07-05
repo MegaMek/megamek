@@ -35,6 +35,7 @@ public class UnitTable {
 	private int year;
 	private int rating;
 	private Collection<Integer> weightClasses;
+	private int networkMask;
 	private Collection<MissionRole> roles;
 	private int roleStrictness;
 	private FactionRecord deployingFaction;
@@ -42,13 +43,14 @@ public class UnitTable {
 			new HashMap<String,UnitTable>();
 	
 	public UnitTable(FactionRecord faction, int unitType, int year,
-			int rating, Collection<Integer> weightClasses,
+			int rating, Collection<Integer> weightClasses, int networkMask,
 			Collection<MissionRole> roles, int roleStrictness, FactionRecord deployingFaction) {
 		this.faction = faction;
 		this.unitType = unitType;
 		this.year = year;
 		this.rating = rating;
 		this.weightClasses = weightClasses;
+		this.networkMask = networkMask;
 		this.roles = roles;
 		this.roleStrictness = roleStrictness;
 		this.deployingFaction = deployingFaction;
@@ -56,9 +58,9 @@ public class UnitTable {
 	}
 	
 	public UnitTable(FactionRecord faction, int unitType, int year,
-			int rating, Collection<Integer> weightClasses,
+			int rating, Collection<Integer> weightClasses, int networkMask,
 			Collection<MissionRole> roles, int roleStrictness) {
-		this(faction, unitType, year, rating, weightClasses,
+		this(faction, unitType, year, rating, weightClasses, networkMask,
 				roles, roleStrictness, faction);
 	}
 	
@@ -68,7 +70,8 @@ public class UnitTable {
 			return;
 		}
 		Map<String,Double> generated = RATGenerator.getInstance().generateTable(faction,
-				unitType, year, rating, weightClasses, roles, roleStrictness, deployingFaction);
+				unitType, year, rating, weightClasses, networkMask,
+				roles, roleStrictness, deployingFaction);
 		for (String key : generated.keySet()) {
 			int weight = (int)(generated.get(key) + 0.5);
 			if (weight > 0) {
@@ -135,7 +138,7 @@ public class UnitTable {
 				UnitTable salvage = salvageCache.get(entry.getSalvageFaction().getKey());
 				if (salvage == null) {
 					salvage = new UnitTable(entry.getSalvageFaction(),
-							unitType, year - 5, rating, weightClasses,
+							unitType, year - 5, rating, weightClasses, networkMask,
 							roles, roleStrictness, faction);
 					if (salvage.hasUnits()) {
 						salvageCache.put(entry.getSalvageFaction().getKey(), salvage);

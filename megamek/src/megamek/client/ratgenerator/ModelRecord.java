@@ -15,6 +15,8 @@
 package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
@@ -34,14 +36,28 @@ import megamek.common.loaders.EntityLoadingException;
  *
  */
 public class ModelRecord extends AbstractUnitRecord {
+	public static final int NETWORK_NONE = 0;
+	public static final int NETWORK_C3_SLAVE = 1;
+	public static final int NETWORK_NAVAL_C3 = 1;
+	public static final int NETWORK_BA_C3 = 1;
+	public static final int NETWORK_C3_MASTER = 1 << 1;
+	public static final int NETWORK_C3I = 1 << 2;
+	public static final int NETWORK_NOVA = 1 << 3;
+	
+	public static final int NETWORK_BOOSTED = 1 << 4;
+	public static final int NETWORK_COMPANY_COMMAND = 1 << 5;
+	
+	public static final int NETWORK_BOOSTED_SLAVE = NETWORK_C3_SLAVE | NETWORK_BOOSTED;
+	public static final int NETWORK_BOOSTED_MASTER = NETWORK_C3_MASTER | NETWORK_BOOSTED;
+
 	private String model;
 	private boolean starLeague;
 	private int weightClass;
-	private ArrayList<MissionRole> roles;
+	private HashSet<MissionRole> roles;
 	private ArrayList<String> deployedWith;
 	private ArrayList<String> requiredUnits;
 	private ArrayList<String> excludedFactions;
-	private int network;
+	private int networkMask;
 	private double flak; //proportion of weapon BV that can fire flak ammo
 	private double longRange; //proportion of weapon BV with range >= 20 hexes
 	private int speed;
@@ -60,11 +76,11 @@ public class ModelRecord extends AbstractUnitRecord {
 	public ModelRecord(String chassis, String model) {
 		super(chassis);
 		this.model = model;
-		roles = new ArrayList<MissionRole>();
+		roles = new HashSet<MissionRole>();
 		deployedWith = new ArrayList<String>();
 		requiredUnits = new ArrayList<String>();
 		excludedFactions = new ArrayList<String>();
-		network = NETWORK_NONE;
+		networkMask = NETWORK_NONE;
 		flak = 0.0;
 		longRange = 0.0;
 		quad = null;
@@ -175,31 +191,38 @@ public class ModelRecord extends AbstractUnitRecord {
         		if (((WeaponType)eq).getLongRange() >= 20) {
         			lrBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
         		}
+        		if (eq instanceof megamek.common.weapons.TAGWeapon) {
+        			roles.add(MissionRole.SPOTTER);
+        		}
+        		if (eq instanceof megamek.common.weapons.ISC3M) {
+   					networkMask |= NETWORK_C3_MASTER;
+   					if (ms.getEquipmentQuantities().get(i) > 1) {
+   						networkMask |= NETWORK_COMPANY_COMMAND;
+   					}
+        		}
+        		if (eq instanceof megamek.common.weapons.ISC3MBS) {
+					networkMask |= NETWORK_BOOSTED_MASTER;
+   					if (ms.getEquipmentQuantities().get(i) > 1) {
+   						networkMask |= NETWORK_COMPANY_COMMAND;
+    				}        			
+        		}
     		} else {
     			switch (eq.getInternalName()) {
-    			case "ISC3MasterUnit":
-    			case "ISC3MasterBoostedSystemUnit":
-    				network = AbstractUnitRecord.NETWORK_C3_MASTER;
-    				break;
     			case "ISC3SlaveUnit":
     			case "ISC3EmergencyMaster":
+    			case "ISNC3Unit":
+    			case "BattleArmorC3":
+    				networkMask |= NETWORK_C3_SLAVE;
+    				break;
     			case "ISC3BoostedSystemSlaveUnit":
-    				network = AbstractUnitRecord.NETWORK_C3_SLAVE;
+    				networkMask |= NETWORK_BOOSTED_SLAVE;
     				break;
     			case "ISC3iUnit":
-    				network = AbstractUnitRecord.NETWORK_C3I;
-    				break;
-    			case "ISNC3Unit":
-    				network = AbstractUnitRecord.NETWORK_NAVAL_C3;
-    				break;
-    			case "BattleArmorC3":
-    				network = AbstractUnitRecord.NETWORK_BA_C3;
-    				break;
     			case "ISBC3i":
-    				network = AbstractUnitRecord.NETWORK_BA_C3I;
+    				networkMask |= NETWORK_C3I;
     				break;
     			case megamek.common.Sensor.NOVA:
-    				network = AbstractUnitRecord.NETWORK_NOVA;
+    				networkMask |= NETWORK_NOVA;
     				break;
     			}
     		}
@@ -344,7 +367,7 @@ public class ModelRecord extends AbstractUnitRecord {
 		return starLeague;
 	}
 	
-	public ArrayList<MissionRole> getRoles() {
+	public Set<MissionRole> getRoles() {
 		return roles;
 	}
 	public ArrayList<String> getDeployedWith() {
@@ -356,11 +379,11 @@ public class ModelRecord extends AbstractUnitRecord {
 	public ArrayList<String> getExcludedFactions() {
 		return excludedFactions;
 	}
-	public int getNetwork() {
-		return network;
+	public int getNetworkMask() {
+		return networkMask;
 	}
 	public void setNetwork(int network) {
-		this.network = network;
+		this.networkMask = network;
 	}
 	public double getFlak() {
 		return flak;
@@ -430,47 +453,6 @@ public class ModelRecord extends AbstractUnitRecord {
 		} else {
 			return excludedFactions.contains(faction + "." + subfaction);
 		}
-	}
-	
-	public String getRolesAsString() {
-		String retVal = "";
-		for (int i = 0; i < roles.size(); i++) {
-				if (roles.get(i) != null) {
-				retVal += roles.get(i).toString();
-				if (i < roles.size() - 1) {
-					retVal += ",";
-				}
-			}
-		}
-		return retVal;
-	}
-
-	public String getDeployedWithAsString() {
-		String retVal = "";
-		for (int i = 0; i < deployedWith.size(); i++) {
-			retVal += deployedWith.get(i);
-			if (i < deployedWith.size() - 1 || requiredUnits.size() > 0) {
-				retVal += ",";
-			}
-		}
-		for (int i = 0; i < requiredUnits.size(); i++) {
-			retVal += "req:" + requiredUnits.get(i);
-			if (i < requiredUnits.size() - 1) {
-				retVal += ",";
-			}
-		}
-		return retVal;
-	}
-	
-	public String getExcludedFactionsAsString() {
-		String retVal = "";
-		for (int i = 0; i < excludedFactions.size(); i++) {
-			retVal += excludedFactions.get(i);
-			if (i < excludedFactions.size() - 1) {
-				retVal += ",";
-			}
-		}
-		return retVal;
 	}
 	
 	@Override

@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -47,6 +48,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -1055,6 +1057,7 @@ WindowListener, TreeSelectionListener, FocusListener {
 		UnitTypeOptionsPanel panOptions = unitTypeCards.get((String)m_chUnitType.getSelectedItem());
 		generatedRAT = new UnitTable(fRec, ModelRecord.parseUnitType((String)m_chUnitType.getSelectedItem()),
 				ratGenYear, m_chRating.getSelectedIndex(), panOptions.getSelectedWeights(),
+				panOptions.getNetworkMask(),
 				panOptions.getSelectedRoles(), panOptions.getRoleStrictness());
 		ratModel.refreshData();
     }
@@ -1257,6 +1260,7 @@ WindowListener, TreeSelectionListener, FocusListener {
 		private ArrayList<JCheckBox> weightChecks = new ArrayList<JCheckBox>();
 		private JComboBox<String> cbRoleStrictness = new JComboBox<String>();
 		private ArrayList<JCheckBox> roleChecks = new ArrayList<JCheckBox>();
+		private ButtonGroup networkButtons = new ButtonGroup();
     	
     	public UnitTypeOptionsPanel(int unitType) {
     		super(new BorderLayout());
@@ -1290,7 +1294,9 @@ WindowListener, TreeSelectionListener, FocusListener {
             
             add(panRoles, BorderLayout.CENTER);
 
-            JPanel panNetwork = new JPanel();
+            JPanel panNetwork = new JPanel(new GridBagLayout());
+            panNetwork.setBorder(BorderFactory.createTitledBorder(Messages
+            		.getString("RandomArmyDialog.Network")));
     		add(panNetwork, BorderLayout.EAST);
     		
     		JPanel panMotive = new JPanel();
@@ -1347,11 +1353,74 @@ WindowListener, TreeSelectionListener, FocusListener {
 			for (int i = 0; i < roleChecks.size(); i++) {
 				c.gridx = i % 3;
 				c.gridy = i / 3 + 1;
-    			if (i == roleChecks.size() - 1) {
+				if (c.gridx == 2) {
     				c.weightx = 1.0;
+				} else {
+					c.weightx = 0.0;
+				}
+    			if (i == roleChecks.size() - 1) {
     				c.weighty = 1.0;
     			}
 				panRoles.add(roleChecks.get(i), c);
+			}
+			
+            c = new GridBagConstraints();
+            c.gridx = 0;
+            c.gridy = 0;
+            c.gridwidth = 1;
+            c.fill = GridBagConstraints.NONE;
+            c.anchor = GridBagConstraints.NORTHWEST;
+            c.weightx = 0.0;
+            c.weighty = 0.0;
+
+			switch (unitType) {
+			case UnitType.MEK:
+			case UnitType.TANK:
+			case UnitType.VTOL:
+			case UnitType.NAVAL:
+			case UnitType.CONV_FIGHTER:
+			case UnitType.AERO:
+				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.NoNetwork"),
+						ModelRecord.NETWORK_NONE);
+				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3S"),
+						ModelRecord.NETWORK_C3_SLAVE);
+				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3M"),
+						ModelRecord.NETWORK_C3_MASTER);
+				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3I"),
+						ModelRecord.NETWORK_C3I);
+				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3SB"),
+						ModelRecord.NETWORK_BOOSTED_SLAVE);
+				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3MB"),
+						ModelRecord.NETWORK_BOOSTED_MASTER);
+				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3CC"),
+						ModelRecord.NETWORK_COMPANY_COMMAND);
+				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3CCB"),
+						ModelRecord.NETWORK_COMPANY_COMMAND|ModelRecord.NETWORK_BOOSTED);
+				c.weighty = 1.0;
+				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.Nova"),
+						ModelRecord.NETWORK_NOVA);
+				break;
+			case UnitType.BATTLE_ARMOR:
+				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.NoNetwork"),
+						ModelRecord.NETWORK_NONE);
+				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3BA"),
+						ModelRecord.NETWORK_BA_C3);
+				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3BAB"),
+						ModelRecord.NETWORK_BOOSTED_SLAVE);
+				c.weighty = 1.0;
+				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3I"),
+						ModelRecord.NETWORK_C3I);
+				break;
+			case UnitType.DROPSHIP:
+			case UnitType.JUMPSHIP:
+			case UnitType.WARSHIP:
+			case UnitType.SPACE_STATION:
+				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.NoNetwork"),
+						ModelRecord.NETWORK_NONE);
+				c.weighty = 1.0;
+				addNetworkButton(panNetwork, c, networkButtons, Messages.getString("RandomArmyDialog.C3N"),
+						ModelRecord.NETWORK_NAVAL_C3);
+				break;
 			}
     	}
     	
@@ -1391,6 +1460,16 @@ WindowListener, TreeSelectionListener, FocusListener {
     		cbWeightClass.setSelectedIndex(all?0 : 1);
     	}
     	
+    	private void addNetworkButton(JPanel panel, GridBagConstraints constraints,
+    			ButtonGroup group, String text, int mask) {
+    		JRadioButton btn = new JRadioButton(text);
+    		btn.setActionCommand(String.valueOf(mask));
+    		btn.setSelected(mask == ModelRecord.NETWORK_NONE);
+    		panel.add(btn, constraints);
+    		group.add(btn);
+    		constraints.gridy++;
+    	}
+    	
     	public List<Integer> getSelectedWeights() {
     		if (cbWeightClass.getSelectedIndex() > 0) {
     			ArrayList<Integer> retVal = new ArrayList<Integer>();
@@ -1409,6 +1488,13 @@ WindowListener, TreeSelectionListener, FocusListener {
     	
     	public int getRoleStrictness() {
     		return cbRoleStrictness.getSelectedIndex() + 1;
+    	}
+    	
+    	public int getNetworkMask() {
+    		if (networkButtons.getSelection() != null) {
+    			return Integer.valueOf(networkButtons.getSelection().getActionCommand());
+    		}
+    		return ModelRecord.NETWORK_NONE;
     	}
     }
 }

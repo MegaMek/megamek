@@ -44,15 +44,6 @@ public class AbstractUnitRecord {
 		"Aerospace", "Space", "None"
 	};
 	
-	public static final int NETWORK_NONE = 0;
-	public static final int NETWORK_C3_SLAVE = 1;
-	public static final int NETWORK_C3_MASTER = 2;
-	public static final int NETWORK_C3I = 3;
-	public static final int NETWORK_NAVAL_C3 = 4;
-	public static final int NETWORK_BA_C3 = 5;
-	public static final int NETWORK_BA_C3I = 6;
-	public static final int NETWORK_NOVA = 7;
-
 	protected String chassis = "";
 	protected boolean omni;
 	protected boolean clan;

@@ -276,7 +276,7 @@ public class RATGenerator {
 	}
 	
 	public Map<String, Double> generateTable(FactionRecord fRec, int unitType, int year,
-			int rating, Collection<Integer> weightClasses,
+			int rating, Collection<Integer> weightClasses, int networkMask,
 			Collection<MissionRole> roles, int roleStrictness,
 			FactionRecord user) {
 		HashMap<ModelRecord, Double> unitWeights = new HashMap<ModelRecord, Double>();
@@ -322,7 +322,10 @@ public class RATGenerator {
 				double totalModelWeight = cRec.totalModelWeight(early,
 						cRec.isOmni()?user : fRec);
 				for (ModelRecord mRec : cRec.getModels()) {
-					if (weightClasses.size() > 0 && !weightClasses.contains(mRec.getWeightClass())) {
+					if (mRec.getIntroYear() > year
+							|| (weightClasses.size() > 0
+									&& !weightClasses.contains(mRec.getWeightClass()))
+							|| (networkMask & mRec.getNetworkMask()) != networkMask) {
 						continue;
 					}
 					if (mRec.getIntroYear() > year) {
@@ -363,7 +366,7 @@ public class RATGenerator {
 
 		if (weightClasses.size() > 0) {
 			ArrayList<Integer> wcd = fRec.getWeightDistribution(early, unitType);
-			if (wcd != null) {
+			if (wcd != null && wcd.size() > 0) {
 				double total = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
 				List<Integer> wcOffsets = weightClasses.stream()
 						.map(wc -> wc - ModelRecord.getWeightClassOffset(unitType))

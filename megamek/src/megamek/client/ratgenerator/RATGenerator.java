@@ -276,7 +276,7 @@ public class RATGenerator {
 	}
 	
 	public Map<String, Double> generateTable(FactionRecord fRec, int unitType, int year,
-			int rating, Collection<Integer> weightClasses, int networkMask,
+			int rating, Collection<Integer> weightClasses, int networkMask, Collection<String> subtypes,
 			Collection<MissionRole> roles, int roleStrictness,
 			FactionRecord user) {
 		HashMap<ModelRecord, Double> unitWeights = new HashMap<ModelRecord, Double>();
@@ -303,7 +303,11 @@ public class RATGenerator {
 				System.err.println("Could not locate chassis " + chassisKey);
 				continue;
 			}
-			if (cRec.getUnitType() != unitType) {
+			
+			if (cRec.getUnitType() != unitType &&
+					!(unitType == UnitType.TANK
+						&& cRec.getUnitType() == UnitType.VTOL
+						&& subtypes.contains("VTOL"))) {
 				continue;
 			}
 
@@ -328,7 +332,7 @@ public class RATGenerator {
 							|| (networkMask & mRec.getNetworkMask()) != networkMask) {
 						continue;
 					}
-					if (mRec.getIntroYear() > year) {
+					if (subtypes.size() > 0 && !subtypes.contains(mRec.getMechSummary().getUnitSubType())) {
 						continue;
 					}
 					ar = findModelAvailabilityRecord(early,
@@ -593,7 +597,7 @@ public class RATGenerator {
                 // Ignore
             }
         }
-
+        
         for (MechSummary ms : MechSummaryCache.getInstance().getAllMechs()) {
 			ModelRecord mr = new ModelRecord(ms);
 

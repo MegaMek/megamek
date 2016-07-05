@@ -1057,7 +1057,7 @@ WindowListener, TreeSelectionListener, FocusListener {
 		UnitTypeOptionsPanel panOptions = unitTypeCards.get((String)m_chUnitType.getSelectedItem());
 		generatedRAT = new UnitTable(fRec, ModelRecord.parseUnitType((String)m_chUnitType.getSelectedItem()),
 				ratGenYear, m_chRating.getSelectedIndex(), panOptions.getSelectedWeights(),
-				panOptions.getNetworkMask(),
+				panOptions.getNetworkMask(), panOptions.getMotiveTypes(),
 				panOptions.getSelectedRoles(), panOptions.getRoleStrictness());
 		ratModel.refreshData();
     }
@@ -1261,6 +1261,7 @@ WindowListener, TreeSelectionListener, FocusListener {
 		private JComboBox<String> cbRoleStrictness = new JComboBox<String>();
 		private ArrayList<JCheckBox> roleChecks = new ArrayList<JCheckBox>();
 		private ButtonGroup networkButtons = new ButtonGroup();
+		private ArrayList<JCheckBox> subtypeChecks = new ArrayList<JCheckBox>();
     	
     	public UnitTypeOptionsPanel(int unitType) {
     		super(new BorderLayout());
@@ -1300,7 +1301,7 @@ WindowListener, TreeSelectionListener, FocusListener {
     		add(panNetwork, BorderLayout.EAST);
     		
     		JPanel panMotive = new JPanel();
-    		add(panMotive, BorderLayout.SOUTH);
+    		add(panMotive, BorderLayout.NORTH);
     		
     		switch(unitType) {
     		case UnitType.MEK:
@@ -1422,6 +1423,36 @@ WindowListener, TreeSelectionListener, FocusListener {
 						ModelRecord.NETWORK_NAVAL_C3);
 				break;
 			}
+			
+			switch(unitType) {
+			case UnitType.TANK:
+				panMotive.add(createSubtypeCheck("Hover", true));
+				panMotive.add(createSubtypeCheck("Tracked", true));
+				panMotive.add(createSubtypeCheck("Wheeled", true));
+				panMotive.add(createSubtypeCheck("WiGE", true));
+				panMotive.add(createSubtypeCheck("VTOL", false));
+				break;
+			case UnitType.INFANTRY:
+				panMotive.add(createSubtypeCheck("Leg", true));
+				panMotive.add(createSubtypeCheck("Jump", true));
+				panMotive.add(createSubtypeCheck("Motorized", true));
+				panMotive.add(createSubtypeCheck(Messages.getString("RandomArmyDialog.Mech.Hover"),
+						"Hover", true));
+				panMotive.add(createSubtypeCheck(Messages.getString("RandomArmyDialog.Mech.Tracked"),
+						"Tracked", true));
+				panMotive.add(createSubtypeCheck(Messages.getString("RandomArmyDialog.Mech.Wheeled"),
+						"Wheeled", true));
+				break;
+			case UnitType.NAVAL:
+				panMotive.add(createSubtypeCheck("Naval", true));
+				panMotive.add(createSubtypeCheck("Hydrofoil", true));
+				panMotive.add(createSubtypeCheck("Submarine", true));
+				break;
+			case UnitType.DROPSHIP:
+				panMotive.add(createSubtypeCheck("Aerodyne", true));
+				panMotive.add(createSubtypeCheck("Spheroid", true));
+				break;
+			}
     	}
     	
     	private void addWeightClasses(JPanel panel, int start, int end, boolean all) {
@@ -1470,6 +1501,19 @@ WindowListener, TreeSelectionListener, FocusListener {
     		constraints.gridy++;
     	}
     	
+    	private JCheckBox createSubtypeCheck(String name, boolean select) {
+    		return createSubtypeCheck(Messages.getString("RandomArmyDialog.Motive." + name),
+    				name, select);
+    	}
+    	
+    	private JCheckBox createSubtypeCheck(String text, String name, boolean select) {
+    		JCheckBox chk = new JCheckBox(text);
+    		chk.setName(name);
+    		chk.setSelected(select);
+    		subtypeChecks.add(chk);
+    		return chk;
+    	}
+    	
     	public List<Integer> getSelectedWeights() {
     		if (cbWeightClass.getSelectedIndex() > 0) {
     			ArrayList<Integer> retVal = new ArrayList<Integer>();
@@ -1495,6 +1539,11 @@ WindowListener, TreeSelectionListener, FocusListener {
     			return Integer.valueOf(networkButtons.getSelection().getActionCommand());
     		}
     		return ModelRecord.NETWORK_NONE;
+    	}
+    	
+    	public List<String> getMotiveTypes() {
+    		return subtypeChecks.stream().filter(chk -> chk.isSelected())
+    				.map(chk -> chk.getName()).collect(Collectors.toList());
     	}
     }
 }

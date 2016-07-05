@@ -50,7 +50,7 @@ public class ModelRecord extends AbstractUnitRecord {
 	public static final int NETWORK_BOOSTED_SLAVE = NETWORK_C3_SLAVE | NETWORK_BOOSTED;
 	public static final int NETWORK_BOOSTED_MASTER = NETWORK_C3_MASTER | NETWORK_BOOSTED;
 
-	private String model;
+	private MechSummary mechSummary;
 	private boolean starLeague;
 	private int weightClass;
 	private HashSet<MissionRole> roles;
@@ -75,7 +75,6 @@ public class ModelRecord extends AbstractUnitRecord {
 
 	public ModelRecord(String chassis, String model) {
 		super(chassis);
-		this.model = model;
 		roles = new HashSet<MissionRole>();
 		deployedWith = new ArrayList<String>();
 		requiredUnits = new ArrayList<String>();
@@ -124,8 +123,8 @@ public class ModelRecord extends AbstractUnitRecord {
 	
 	public ModelRecord(MechSummary ms) {
 		this(ms.getChassis(), ms.getModel());
+		mechSummary = ms;
 		unitType = parseUnitType(ms.getUnitType());
-		movementType = findMovementType(ms.getUnitSubType());
 		introYear = ms.getYear();
     	switch (ms.getUnitType()) {
     	case "Mek":
@@ -266,53 +265,6 @@ public class ModelRecord extends AbstractUnitRecord {
     	}
 	}
 	
-	private int findMovementType(String subtype) {
-		if (unitType == UnitType.CONV_FIGHTER) {
-			return MOVEMENT_ATMOSPHERIC;
-		}
-		if (unitType == UnitType.JUMPSHIP || unitType == UnitType.WARSHIP) {
-			return MOVEMENT_SPACE;
-		}
-		switch (subtype) {
-		case "BattleMech":
-		case "QuadMech":
-		case "Biped":
-		case "Quad":
-		case "Leg":
-		case "Industrial":
-		case "Omni":
-			return AbstractUnitRecord.MOVEMENT_LEG;
-		case "Tracked":
-			return AbstractUnitRecord.MOVEMENT_TRACKED;
-		case "Wheeled":
-			return AbstractUnitRecord.MOVEMENT_WHEELED;
-		case "Hover":
-			return AbstractUnitRecord.MOVEMENT_HOVER;
-		case "WiGE":
-			return AbstractUnitRecord.MOVEMENT_WIGE;
-		case "VTOL":
-			return AbstractUnitRecord.MOVEMENT_VTOL;
-		case "Naval":
-		case "Hydrofoil":
-			return AbstractUnitRecord.MOVEMENT_NAVAL;
-		case "Submarine":
-		case "UMU":
-			return AbstractUnitRecord.MOVEMENT_UW;
-		case "Jump":
-			return AbstractUnitRecord.MOVEMENT_JUMP;
-		case "Motorized":
-			return AbstractUnitRecord.MOVEMENT_MOTORIZED;
-		case "Aerodyne":
-		case "Spheroid":
-			return AbstractUnitRecord.MOVEMENT_AEROSPACE;
-		case "None":
-			return MOVEMENT_NONE;
-		default:
-			System.err.println("Could not find movement constant for " + subtype);
-			return 0;
-		}
-	}
-	
 	public ChassisRecord createChassisRec() {
 		ChassisRecord retVal = new ChassisRecord(chassis);
 		retVal.introYear = introYear;
@@ -325,13 +277,9 @@ public class ModelRecord extends AbstractUnitRecord {
 	}
 
 	public String getModel() {
-		return model;
+		return mechSummary.getModel();
 	}
 
-	public void setModel(String model) {
-		this.model = model;
-	}
-	
 	public int getWeightClass() {
 		return weightClass;
 	}
@@ -411,9 +359,9 @@ public class ModelRecord extends AbstractUnitRecord {
 	public boolean hasAPWeapons() {
 		return apWeapons;
 	}
-
+	
 	public MechSummary getMechSummary() {
-		return MechSummaryCache.getInstance().getMech(getKey());
+		return mechSummary;
 	}
 	
 	public void setRoles(String str) {
@@ -457,11 +405,7 @@ public class ModelRecord extends AbstractUnitRecord {
 	
 	@Override
 	public String getKey() {
-		if (model != null && model.length() > 0) {
-			return chassis + " " + model;
-		} else {
-			return chassis;
-		}		
+		return mechSummary.getName();
 	}
 	
 	public Boolean isQuad() {

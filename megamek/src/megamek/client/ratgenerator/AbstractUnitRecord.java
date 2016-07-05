@@ -24,25 +24,6 @@ import megamek.common.UnitType;
  * 
  */
 public class AbstractUnitRecord {
-	public static final int MOVEMENT_LEG = 0;
-	public static final int MOVEMENT_TRACKED = 1;
-	public static final int MOVEMENT_WHEELED = 2;
-	public static final int MOVEMENT_HOVER = 3;
-	public static final int MOVEMENT_WIGE = 4;
-	public static final int MOVEMENT_VTOL = 5;
-	public static final int MOVEMENT_NAVAL = 6;
-	public static final int MOVEMENT_UW = 7;
-	public static final int MOVEMENT_JUMP = 8;
-	public static final int MOVEMENT_MOTORIZED = 9;
-	public static final int MOVEMENT_ATMOSPHERIC = 10;
-	public static final int MOVEMENT_AEROSPACE = 11;
-	public static final int MOVEMENT_SPACE = 12;
-	public static final int MOVEMENT_NONE = 13;
-	public static final String[] movementTypeNames = {
-		"Leg", "Tracked", "Wheeled", "Hover", "WiGE", "VTOL",
-		"Naval", "Underwater", "Jump", "Motorized", "Atmospheric",
-		"Aerospace", "Space", "None"
-	};
 	
 	protected String chassis = "";
 	protected boolean omni;
@@ -57,7 +38,6 @@ public class AbstractUnitRecord {
 		unitType = UnitType.MEK;
 		omni = false;
 		clan = false;
-		movementType = MOVEMENT_LEG;
 		includedFactions = new HashSet<String>();
 	}
 	

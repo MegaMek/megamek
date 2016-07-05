@@ -168,12 +168,7 @@ public enum MissionRole {
 					} else if (mRec.getRoles().contains(SPOTTER)) {
 						avRating += avAdj[0];
 					} else {
-						if ((mRec.getRoles().contains(SUPPORT) && !desiredRoles.contains("support")) ||
-								(mRec.getRoles().contains(CARGO) && !desiredRoles.contains("cargo")) ||
-								(mRec.getRoles().contains(TUG) && !desiredRoles.contains("tug")) ||
-								(mRec.getRoles().contains(CIVILIAN) && !desiredRoles.contains("civilian")) ||
-								(mRec.getRoles().contains(TRAINING) && !desiredRoles.contains("training")) ||
-								(mRec.getRoles().contains(ARTILLERY) && !desiredRoles.contains("artillery"))) {
+						if (isSpecialized(desiredRoles, mRec)) {
 							return null;
 						} else if (mRec.getUnitType() != UnitType.INFANTRY
 								&& mRec.getUnitType() != UnitType.BATTLE_ARMOR
@@ -228,12 +223,7 @@ public enum MissionRole {
 							|| mRec.getRoles().contains(URBAN)) {
 						avRating += avAdj[0];
 					} else {
-						if ((mRec.getRoles().contains(SUPPORT) && !desiredRoles.contains("support")) ||
-								(mRec.getRoles().contains(CARGO) && !desiredRoles.contains("cargo")) ||
-								(mRec.getRoles().contains(TUG) && !desiredRoles.contains("tug")) ||
-								(mRec.getRoles().contains(CIVILIAN) && !desiredRoles.contains("civilian")) ||
-								(mRec.getRoles().contains(TRAINING) && !desiredRoles.contains("training")) ||
-								(mRec.getRoles().contains(ARTILLERY) && !desiredRoles.contains("artillery"))) {
+						if (isSpecialized(desiredRoles, mRec)) {
 							return null;
 						} else {
 							if (mRec.getRoles().contains(MOUNTAINEER) ||
@@ -270,12 +260,7 @@ public enum MissionRole {
 					} else if (mRec.getRoles().contains(INF_SUPPORT)) {
 						avRating += avAdj[0];
 					} else {
-						if ((mRec.getRoles().contains(SUPPORT) && !desiredRoles.contains("support")) ||
-								(mRec.getRoles().contains(CARGO) && !desiredRoles.contains("cargo")) ||
-								(mRec.getRoles().contains(TUG) && !desiredRoles.contains("tug")) ||
-								(mRec.getRoles().contains(CIVILIAN) && !desiredRoles.contains("civilian")) ||
-								(mRec.getRoles().contains(TRAINING) && !desiredRoles.contains("training")) ||
-								(mRec.getRoles().contains(ARTILLERY) && !desiredRoles.contains("artillery"))) {
+						if (isSpecialized(desiredRoles, mRec)) {
 							return null;
 						}
 						if (mRec.getRoles().contains(FIRE_SUPPORT) ||
@@ -294,9 +279,9 @@ public enum MissionRole {
 						}
 					}
 					if (avRating > 0 && mRec.getUnitType() == UnitType.TANK) {
-						if (mRec.getMovementType() == AbstractUnitRecord.MOVEMENT_WHEELED) {
+						if (mRec.getMechSummary().getUnitSubType().equals("Wheeled")) {
 							avRating += avAdj[2];
-						} else if (mRec.getMovementType() == AbstractUnitRecord.MOVEMENT_TRACKED) {
+						} else if (mRec.getMechSummary().getUnitSubType().equals("Tracked")) {
 							avRating -= avAdj[2];
 						}
 					}
@@ -306,12 +291,7 @@ public enum MissionRole {
 					if (mRec.getRoles().contains(RAIDER)) {
 						avRating += avAdj[2];
 					} else {
-						if ((mRec.getRoles().contains(SUPPORT) && !desiredRoles.contains("support")) ||
-								(mRec.getRoles().contains(CARGO) && !desiredRoles.contains("cargo")) ||
-								(mRec.getRoles().contains(TUG) && !desiredRoles.contains("tug")) ||
-								(mRec.getRoles().contains(CIVILIAN) && !desiredRoles.contains("civilian")) ||
-								(mRec.getRoles().contains(TRAINING) && !desiredRoles.contains("training")) ||
-								(mRec.getRoles().contains(ARTILLERY) && !desiredRoles.contains("artillery"))) {
+						if (isSpecialized(desiredRoles, mRec)) {
 							return null;
 						} else if (mRec.getAmmoRequirement() < 0.2) {
 							avRating += avAdj[0];
@@ -329,12 +309,7 @@ public enum MissionRole {
 					if (mRec.getRoles().contains(INCINDIARY)) {
 						avRating += avAdj[2];
 					} else {
-						if ((mRec.getRoles().contains(SUPPORT) && !desiredRoles.contains("support")) ||
-								(mRec.getRoles().contains(CARGO) && !desiredRoles.contains("cargo")) ||
-								(mRec.getRoles().contains(TUG) && !desiredRoles.contains("tug")) ||
-								(mRec.getRoles().contains(CIVILIAN) && !desiredRoles.contains("civilian")) ||
-								(mRec.getRoles().contains(TRAINING) && !desiredRoles.contains("training")) ||
-								(mRec.getRoles().contains(ARTILLERY) && !desiredRoles.contains("artillery"))) {
+						if (isSpecialized(desiredRoles, mRec)) {
 							avRating = 0;
 						} else if (mRec.hasFlamer()) {
 							avRating += avAdj[2];
@@ -352,12 +327,7 @@ public enum MissionRole {
 					} else if (mRec.getFlak() > 0.2) {
 						avRating += avAdj[0];
 					} else {
-						if ((mRec.getRoles().contains(SUPPORT) && !desiredRoles.contains("support")) ||
-								(mRec.getRoles().contains(CARGO) && !desiredRoles.contains("cargo")) ||
-								(mRec.getRoles().contains(TUG) && !desiredRoles.contains("tug")) ||
-								(mRec.getRoles().contains(CIVILIAN) && !desiredRoles.contains("civilian")) ||
-								(mRec.getRoles().contains(TRAINING) && !desiredRoles.contains("training")) ||
-								(mRec.getRoles().contains(ARTILLERY) && !desiredRoles.contains("artillery"))) {
+						if (isSpecialized(desiredRoles, mRec)) {
 							return null;
 						} else {
 							avRating -= avAdj[1];
@@ -367,12 +337,7 @@ public enum MissionRole {
 				case ANTI_INFANTRY:
 					if (mRec.getRoles().contains(ANTI_INFANTRY)) {
 						avRating += avAdj[2];
-					} else 	if ((mRec.getRoles().contains(SUPPORT) && !desiredRoles.contains("support")) ||
-							(mRec.getRoles().contains(CARGO) && !desiredRoles.contains("cargo")) ||
-							(mRec.getRoles().contains(TUG) && !desiredRoles.contains("tug")) ||
-							(mRec.getRoles().contains(CIVILIAN) && !desiredRoles.contains("civilian")) ||
-							(mRec.getRoles().contains(TRAINING) && !desiredRoles.contains("training")) ||
-							(mRec.getRoles().contains(ARTILLERY) && !desiredRoles.contains("artillery"))) {
+					} else 	if (isSpecialized(desiredRoles, mRec)) {
 						return null;
 					} else if (!mRec.hasAPWeapons()) {
 						avRating -= avAdj[2];
@@ -467,6 +432,16 @@ public enum MissionRole {
 			}
 		}
 		return avRating;
+	}
+
+	private static boolean isSpecialized(Collection<MissionRole> desiredRoles,
+			ModelRecord mRec) {
+		return (mRec.getRoles().contains(SUPPORT) && !desiredRoles.contains(SUPPORT)) ||
+				(mRec.getRoles().contains(CARGO) && !desiredRoles.contains(CARGO)) ||
+				(mRec.getRoles().contains(TUG) && !desiredRoles.contains(TUG)) ||
+				(mRec.getRoles().contains(CIVILIAN) && !desiredRoles.contains(CIVILIAN)) ||
+				(mRec.getRoles().contains(TRAINING) && !desiredRoles.contains(TRAINING)) ||
+				(mRec.getRoles().contains(ARTILLERY) && !desiredRoles.contains(ARTILLERY));
 	}
 	
 	public static MissionRole parseRole(String role) {

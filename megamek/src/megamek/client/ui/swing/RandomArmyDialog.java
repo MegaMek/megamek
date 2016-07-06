@@ -60,6 +60,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -406,6 +407,12 @@ WindowListener, TreeSelectionListener, FocusListener {
         m_lRAT = new JTable();
         m_lRAT.setModel(ratModel);
         m_lRAT.setIntercellSpacing(new Dimension(5, 0));
+        for (int i = 0; i < ratModel.getColumnCount(); i++) {
+        	m_lRAT.getColumnModel().getColumn(i).setPreferredWidth(ratModel.getPreferredWidth(i));
+        }
+		DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
+		rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
+		m_lRAT.getColumnModel().getColumn(RATTableModel.COL_BV).setCellRenderer(rightRenderer);
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 2;
@@ -1203,7 +1210,19 @@ WindowListener, TreeSelectionListener, FocusListener {
         public int getColumnCount() {
             return N_COL;
         }
-
+        
+        public int getPreferredWidth(int col) {
+        	switch (col) {
+        	case COL_WEIGHT:
+        		return 12;
+        	case COL_UNIT:
+        		return 240;
+        	case COL_BV:
+        		return 18;
+        	}
+        	return 0;
+        }
+        
         @Override
         public String getColumnName(int column) {
             switch (column) {

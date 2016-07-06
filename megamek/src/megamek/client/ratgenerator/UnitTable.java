@@ -15,6 +15,7 @@ package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -73,6 +74,7 @@ public class UnitTable {
 		table = RATGenerator.getInstance().generateTable(faction,
 				unitType, year, rating, weightClasses, networkMask, subtypes,
 				roles, roleStrictness, deployingFaction);
+		Collections.sort(table);
 	}
 	
 	public int getNumEntries() {
@@ -144,7 +146,7 @@ public class UnitTable {
 		return retVal;
 	}
 	
-	public static class TableEntry {
+	public static class TableEntry implements Comparable<TableEntry> {
 		int weight;
 		Object entry;
 		
@@ -163,6 +165,25 @@ public class UnitTable {
 		
 		public boolean isUnit() {
 			return entry instanceof MechSummary;
+		}
+
+		@Override
+		public int compareTo(TableEntry other) {
+			if (entry instanceof MechSummary && other.entry instanceof FactionRecord) {
+				return 1;
+			}
+			if (entry instanceof FactionRecord && other.entry instanceof MechSummary) {
+				return -1;
+			}
+			return toString().compareTo(other.toString());
+		}
+			
+		@Override
+		public String toString() {
+			if (entry instanceof MechSummary) {
+				return ((MechSummary)entry).getName();
+			}
+			return entry.toString();
 		}
 	}
 }

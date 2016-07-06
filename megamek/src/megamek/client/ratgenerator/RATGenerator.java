@@ -20,12 +20,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.DoubleSummaryStatistics;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -275,7 +276,7 @@ public class RATGenerator {
 		return av1 + (av2 - av1) * (now - year1) / (year2 - year1);
 	}
 	
-	public Map<String, Double> generateTable(FactionRecord fRec, int unitType, int year,
+	public List<UnitTable.TableEntry> generateTable(FactionRecord fRec, int unitType, int year,
 			int rating, Collection<Integer> weightClasses, int networkMask, Collection<String> subtypes,
 			Collection<MissionRole> roles, int roleStrictness,
 			FactionRecord user) {
@@ -360,7 +361,7 @@ public class RATGenerator {
 		}
 
 		if (unitWeights.size() == 0) {
-			return new HashMap<String,Double>();
+			return new ArrayList<UnitTable.TableEntry>();
 		}
 		
 		/* If there is more than one weight class and the faction record (or parent)
@@ -375,12 +376,11 @@ public class RATGenerator {
 				List<Integer> wcOffsets = weightClasses.stream()
 						.map(wc -> wc - ModelRecord.getWeightClassOffset(unitType))
 						.collect(Collectors.toList());
-				HashMap<Integer,ArrayList<ModelRecord>> wcMap = new HashMap<>();
-				for (int wc : wcOffsets) {
-					wcMap.put(wc, new ArrayList<ModelRecord>());
-				}
+				HashMap<Integer,ArrayList<ModelRecord>> wcMap = new HashMap<>();				
 				for (ModelRecord mRec : unitWeights.keySet()) {
-					wcMap.get(mRec.getWeightClass() - ModelRecord.getWeightClassOffset(unitType)).add(mRec);
+					Integer key = mRec.getWeightClass() - ModelRecord.getWeightClassOffset(unitType);
+					wcMap.computeIfAbsent(key, k -> new ArrayList<ModelRecord>())
+						.add(mRec);
 				}
 				int wdTotal = wcOffsets.stream()
 						.mapToInt(wc -> wcd.get(wc)).sum();
@@ -521,48 +521,34 @@ public class RATGenerator {
 			}
 		}
 		
-		TreeMap<String,Double> retVal = new TreeMap<>();
-		for (Map.Entry<FactionRecord, Double> entry : salvageWeights.entrySet()) {
-			retVal.put("@" + entry.getKey().getKey(), entry.getValue());
-		}
-		for (Map.Entry<ModelRecord, Double> entry : unitWeights.entrySet()) {
-			retVal.put(entry.getKey().getKey(), entry.getValue());
+		/* Increase weights if necessary to keep smallest from rounding down to zero */
+		
+		double adj = 1.0;
+		DoubleSummaryStatistics stats = Stream.concat(salvageWeights.values().stream(),
+				unitWeights.values().stream())
+				.mapToDouble(Double::doubleValue)
+				.filter(d -> d > 0)
+				.summaryStatistics();
+		if (stats.getMin() < 0.5) {
+			adj = 0.5 / stats.getMin();
+			if (stats.getMax() * adj > 1000.0) {
+				adj = 1000.0 / (stats.getMax() * adj);
+			}
 		}
 		
-		/* Increase weights if necessary to keep smallest from rounding down to zero */
-		Double smallest = null;
-		Double largest = null;
-		for (String key : retVal.keySet()) {
-			if (retVal.get(key) > 0
-					&&  (smallest == null || retVal.get(key) < smallest)) {
-				smallest = retVal.get(key);
-			}
-			if (retVal.get(key) > 0
-					&& (largest == null || retVal.get(key) > largest)) {
-				largest = retVal.get(key);
+		List<UnitTable.TableEntry> retVal = new ArrayList<UnitTable.TableEntry>();
+		for (FactionRecord faction : salvageWeights.keySet()) {
+			int wt = (int)(salvageWeights.get(faction) * adj + 0.5);
+			if (wt > 0) {
+				retVal.add(new UnitTable.TableEntry(wt, faction));
 			}
 		}
-		if (smallest != null && smallest < 0.5) {
-			double adj = 0.5 / smallest;
-			largest *= adj;
-			for (String key : retVal.keySet()) {
-				retVal.put(key, retVal.get(key) * adj);
-			}						
+		for (ModelRecord mRec : unitWeights.keySet()) {
+			int wt = (int)(unitWeights.get(mRec) * adj + 0.5);
+			if (wt > 0) {
+				retVal.add(new UnitTable.TableEntry(wt, mRec.getMechSummary()));
+			}
 		}
-		ArrayList<String> toRemove = new ArrayList<String>();
-		if (largest != null && largest > 1000.0) {
-			double adj = 1000.0 / largest;
-			for (String key : retVal.keySet()) {
-				retVal.put(key, retVal.get(key) * adj);
-				if (retVal.get(key) < 0.5) {
-					toRemove.add(key);
-				}
-			}			
-		}
-		for (String key : toRemove) {
-			retVal.remove(key);
-		}
-
 		return retVal;
 	}
 

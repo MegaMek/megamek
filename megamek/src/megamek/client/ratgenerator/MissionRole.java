@@ -242,6 +242,9 @@ public enum MissionRole {
 					}
 					break;
 				case MECHANIZED_BA:
+					if (isSpecialized(desiredRoles, mRec)) {
+						return null;
+					}
 					if ((mRec.getUnitType() <= UnitType.TANK)
 							&& !mRec.isOmni()) {
 						return null;

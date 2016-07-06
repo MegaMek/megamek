@@ -194,18 +194,14 @@ public class FactionRecord {
 		}
 		HashMap<String,Integer> retVal = new HashMap<String, Integer>();
 		if (retVal.size() == 0 && parentFactions.size() > 0) {
-			for (String fKey : parentFactions) {
-				FactionRecord fRec = RATGenerator.getInstance().getFaction(fKey);
+			for (String pKey : parentFactions) {
+				FactionRecord fRec = RATGenerator.getInstance().getFaction(pKey);
 				if (fRec != null) {
-					for (String str : fRec.getSalvage(era).keySet()) {
-						if (retVal.containsKey(str)) {
-							retVal.put(str, retVal.get(str) + fRec.getSalvage(era).get(str));
-						} else {
-							retVal.put(str, fRec.getSalvage(era).get(str));
-						}
-					}
+					for (String fKey : fRec.getSalvage(era).keySet()) {
+						retVal.merge(fKey, fRec.getSalvage(era).get(fKey), Integer::sum);
+					}					
 				} else {
-					System.err.println("RATGenerator: could not locate salvage faction " + fKey
+					System.err.println("RATGenerator: could not locate salvage faction " + pKey
 							+ " for " + key);
 				}
 			}

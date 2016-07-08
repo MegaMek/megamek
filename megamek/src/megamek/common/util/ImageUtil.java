@@ -125,7 +125,7 @@ public final class ImageUtil {
                     break;
                 }
             }
-            return ImageUtil.createAcceleratedImage(result.getBufferedImage());
+            return observer.isAnimated() ? result : ImageUtil.createAcceleratedImage(result.getBufferedImage());
         }
     }
     
@@ -189,10 +189,11 @@ public final class ImageUtil {
     
     private static class FinishedLoadingObserver implements ImageObserver {
         private static final int DONE
-            = ImageObserver.ABORT | ImageObserver.ERROR | ImageObserver.ALLBITS;
+            = ImageObserver.ABORT | ImageObserver.ERROR | ImageObserver.FRAMEBITS | ImageObserver.ALLBITS;
         
         private final Thread mainThread;
         private volatile boolean loaded = false;
+        private volatile boolean animated = false;
 
         public FinishedLoadingObserver(Thread mainThread) {
             this.mainThread = mainThread;
@@ -200,8 +201,9 @@ public final class ImageUtil {
         
         @Override
         public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-            if((infoflags & DONE) > 1) {
+            if((infoflags & DONE) > 0) {
                 loaded = true;
+                animated = ((infoflags & ImageObserver.FRAMEBITS) > 0);
                 mainThread.interrupt();
                 return false;
             }
@@ -210,6 +212,10 @@ public final class ImageUtil {
         
         public boolean isLoaded() {
             return loaded;
+        }
+        
+        public boolean isAnimated() {
+            return animated;
         }
     }
 }

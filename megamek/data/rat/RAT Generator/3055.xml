@@ -3968,7 +3968,7 @@
 		</model>
 	</chassis>
 	<chassis name='Panther' unitType='Mek'>
-		<availability>CC:2,Periphery.DD:5,FS.RR:3,FRR:10,WOB:2,MERC:5,Periphery.OS:5,Periphery:3,CS:2,FS.DMM:3,FWL:2,DC:10</availability>
+		<availability>CC:2,CS:2,Periphery.DD:5,FS.RR:3,FRR:10,FS.DMM:3,FWL:2,WOB:2,MERC:5,Periphery.OS:5,Periphery:3,DC:10</availability>
 		<model name='PNT-10KA'>
 			<roles>fire support</roles>
 			<availability>FRR:2+,MERC:2+,DC:2+</availability>

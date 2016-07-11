@@ -2857,7 +2857,7 @@
 		</model>
 	</chassis>
 	<chassis name='Sentinel' unitType='Mek'>
-		<availability>CSV:5,CLAN:6,CFM:7,CGS:5,BAN:6,CS:4,DC.GHO:5,CDS:5,CW:5,CBS:5,LA:1-,NIOPS:5,MERC.SI:4,CJF:7,CGB:7,DC:1</availability>
+		<availability>CSV:5,CLAN:6,CFM:7,CGS:5,BAN:6,CS:4,DC.GHO:5,CDS:5,CW:5,CBS:5,LA:1-,MERC.SI:4,CJF:7,CGB:7,DC:1</availability>
 		<model name='STN-3KA'>
 			<availability>LA:4</availability>
 		</model>
@@ -2871,7 +2871,7 @@
 			<availability>LA:4</availability>
 		</model>
 		<model name='STN-3L'>
-			<availability>CS:8,CLAN:6,NIOPS:8,MERC.SI:8,BAN:8</availability>
+			<availability>CS:8,CLAN:6,MERC.SI:8,BAN:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Shadow Cat' unitType='Mek' omni='Clan'>
@@ -4628,7 +4628,7 @@
 		</model>
 	</chassis>
 	<chassis name='Thor Artillery Vehicle' unitType='Tank'>
-		<availability>CS:3,CLAN:5,NIOPS:4,BAN:5</availability>
+		<availability>CS:3,CLAN:5,BAN:5</availability>
 		<model name='(Clan)'>
 			<roles>artillery</roles>
 			<availability>CLAN:8,BAN:2</availability>
@@ -4636,6 +4636,12 @@
 		<model name='(Standard)'>
 			<roles>artillery</roles>
 			<availability>BAN:1</availability>
+		</model>
+	</chassis>
+	<chassis name='Thumper Artillery Vehicle' unitType='Tank'>
+		<availability>IS:7,Periphery:8</availability>
+		<model name='(Standard)'>
+			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Tokugawa Heavy Tank' unitType='Tank'>
@@ -4711,7 +4717,7 @@
 		</model>
 	</chassis>
 	<chassis name='Elemental Battle Armor' unitType='BattleArmor' omni='Clan'>
-		<availability>CHH:8,CW:8,CLAN:8</availability>
+		<availability>CHH:8,CW:8,CLAN:8,CNC:8</availability>
 		<model name='[Laser]'>
 			<availability>General:7</availability>
 		</model>
@@ -6241,7 +6247,7 @@
 		</model>
 	</chassis>
 	<chassis name='Excalibur' unitType='Dropship'>
-		<availability>MOC:3,CC:5,FRR:6,IS:5,SIC:5,FS:5,CIR:2,Periphery:2,TC:3,CS:5,OA:2,LA:5,FWL:5,DC:6</availability>
+		<availability>MOC:3,CC:5,FRR:6,IS:5,SIC:5,FS:3,CIR:2,Periphery:2,TC:3,CS:5,OA:2,LA:5,FWL:5,DC:6</availability>
 		<model name='(2786)'>
 			<roles>troop carrier</roles>
 			<availability>General:8</availability>

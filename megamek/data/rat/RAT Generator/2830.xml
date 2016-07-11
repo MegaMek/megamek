@@ -82,7 +82,7 @@
 		<pctSL unitType='Aero'>100,100,95,85,75</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95</pctSL>
-		<salvage pct='10'>CHH:2,CSR:1,CIH:5,CWOV:2,CSV:3,CFM:3,CCO:10,CGS:2,CSA:3,CDS:1,CW:3,CBS:2,CNC:5,CJF:5,CGB:2,CB:1</salvage>
+		<salvage pct='10'>CHH:2,CSR:1,CIH:5,CSV:3,CFM:3,CCO:10,CGS:2,CSA:3,CDS:1,CW:3,CBS:2,CNC:5,CJF:5,CGB:2,CB:1,</salvage>
 	</faction>
 	<faction key='CCO' name='Clan Coyote' clan='true' periphery='false'>
 		<years>2807-3085</years>
@@ -93,7 +93,7 @@
 		<pctSL>100,100,100,85,80</pctSL>
 		<pctClan unitType='Vehicle'>0,0,10</pctClan>
 		<pctSL unitType='Vehicle'>100,100,90</pctSL>
-		<salvage pct='10'>CCC:7,CHH:1,CSR:3,CIH:10,CWOV:1,CSV:3,CFM:7,CGS:1,CSA:5,CDS:1,CW:1,CBS:1,CNC:3,CSJ:7,CJF:3,CB:3</salvage>
+		<salvage pct='10'>CCC:7,CHH:1,CSR:3,CIH:10,CSV:3,CFM:7,CGS:1,CSA:5,CDS:1,CW:1,CBS:1,CNC:3,CSJ:7,CJF:3,CB:3,</salvage>
 		<weightDistribution era='2830' unitType='Mek'>2,3,4,2,0</weightDistribution>
 		<weightDistribution era='2830' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
@@ -106,7 +106,7 @@
 		<pctSL>100,100,100,85,80</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95</pctSL>
-		<salvage pct='10'>CCC:2,CHH:3,CSR:3,CIH:10,CWOV:1,CSV:5,CCO:6,CGS:7,CSA:10,CDS:3,CW:1,CNC:2,CSJ:4,CMG:1,CJF:4,CGB:1,CB:1</salvage>
+		<salvage pct='10'>CCC:2,CHH:3,CSR:3,CIH:10,CSV:5,CCO:6,CGS:7,CSA:10,CDS:3,CW:1,CNC:2,CSJ:4,CMG:1,CJF:4,CGB:1,CB:1,</salvage>
 	</faction>
 	<faction key='CGB' name='Clan Ghost Bear' clan='true' periphery='false'>
 		<nameChange year='3060'>Ghost Bear Dominion</nameChange>
@@ -119,7 +119,7 @@
 		<pctSL>100,100,90,85,80</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95</pctSL>
-		<salvage pct='10'>CHH:10,CCC:3,CIH:5,CSR:1,CWOV:3,CSV:10,CFM:3,CGS:1,CCO:1,CSA:8,CDS:1,CW:8,CMG:3,CJF:5</salvage>
+		<salvage pct='10'>CHH:10,CCC:3,CIH:5,CSR:1,CSV:10,CFM:3,CGS:1,CCO:1,CSA:8,CDS:1,CW:8,CMG:3,CJF:5,</salvage>
 		<weightDistribution era='2830' unitType='Mek'>2,3,4,2,0</weightDistribution>
 		<weightDistribution era='2830' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
@@ -136,7 +136,7 @@
 		<pctSL unitType='Aero'>100,100,95,90,85</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95</pctSL>
-		<salvage pct='10'>CCC:1,CHH:4,CSR:1,CIH:6,CWOV:1,CSV:4,CFM:10,CCO:1,CSA:8,CDS:4,CW:1,CWI:3,CNC:3,CSJ:1,CMG:3,CJF:10,CB:3</salvage>
+		<salvage pct='10'>CCC:1,CHH:4,CSR:1,CIH:6,CSV:4,CFM:10,CCO:1,CSA:8,CDS:4,CW:1,CWI:3,CNC:3,CSJ:1,CMG:3,CJF:10,CB:3,</salvage>
 	</faction>
 	<faction key='CHH' name='Clan Hell&apos;s Horses' clan='true' periphery='false'>
 		<years>2807-</years>
@@ -147,7 +147,7 @@
 		<pctSL>100,100,100,85,80</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5,10,15</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95,90,85</pctSL>
-		<salvage pct='10'>CCC:2,CSR:7,CIH:10,CWOV:2,CSV:4,CFM:7,CCO:1,CGS:6,CSA:4,CDS:7,CW:3,CWI:4,CBS:2,CNC:10,CSJ:3,CMG:3,CJF:3,CGB:8,CB:7</salvage>
+		<salvage pct='10'>CCC:2,CSR:7,CIH:10,CSV:4,CFM:7,CCO:1,CGS:6,CSA:4,CDS:7,CW:3,CWI:4,CBS:2,CNC:10,CSJ:3,CMG:3,CJF:3,CGB:8,CB:7,</salvage>
 	</faction>
 	<faction key='CIH' name='Clan Ice Hellion' clan='true' periphery='false'>
 		<years>2807-3074</years>
@@ -158,7 +158,7 @@
 		<pctSL>100,100,100,85,80</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95</pctSL>
-		<salvage pct='10'>CCC:3,CHH:4,CSR:3,CWOV:1,CSV:1,CFM:10,CCO:9,CGS:5,CSA:1,CDS:4,CW:4,CWI:1,CNC:3,CSJ:3,CMG:3,CJF:3,IND:1,CGB:2,CB:3</salvage>
+		<salvage pct='10'>CCC:3,CHH:4,CSR:3,CSV:1,CFM:10,CCO:9,CGS:5,CSA:1,CDS:4,CW:4,CWI:1,CNC:3,CSJ:3,CMG:3,CJF:3,CGB:2,CB:3,</salvage>
 		<weightDistribution era='2830' unitType='Mek'>5,4,2,1,0</weightDistribution>
 		<weightDistribution era='2830' unitType='Tank'>5,2,3,1</weightDistribution>
 	</faction>
@@ -171,7 +171,7 @@
 		<pctSL>100,100,95,85,80</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95</pctSL>
-		<salvage pct='10'>CCC:2,CHH:3,CSR:7,CIH:7,CWOV:1,CSV:7,CFM:10,CCO:7,CGS:6,CSA:3,CDS:4,CW:7,CWI:1,CBS:1,CNC:2,CSJ:3,CMG:3,CGB:1,CB:2</salvage>
+		<salvage pct='10'>CCC:2,CHH:3,CSR:7,CIH:7,CSV:7,CFM:10,CCO:7,CGS:6,CSA:3,CDS:4,CW:7,CWI:1,CBS:1,CNC:2,CSJ:3,CMG:3,CGB:1,CB:2,</salvage>
 	</faction>
 	<faction key='CMG' name='Clan Mongoose' clan='true' periphery='false'>
 		<years>2807-2868</years>
@@ -206,7 +206,7 @@
 		<pctSL>100,100,100,85,80</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95</pctSL>
-		<salvage pct='12'>CCC:2,CHH:7,CSR:3,CIH:10,CWOV:1,CSV:3,CFM:4,CCO:3,CGS:4,CSA:8,CW:3,CWI:1,CNC:3,CSJ:7,CMG:1,CJF:6,CB:3</salvage>
+		<salvage pct='12'>CCC:2,CHH:7,CSR:3,CIH:10,CSV:3,CFM:4,CCO:3,CGS:4,CSA:8,CW:3,CWI:1,CNC:3,CSJ:7,CMG:1,CJF:6,CB:3,</salvage>
 	</faction>
 	<faction key='CSJ' name='Clan Smoke Jaguar' clan='true' periphery='false'>
 		<years>2807-3060</years>
@@ -232,7 +232,7 @@
 		<pctSL unitType='Aero'>100,100,95,80,70</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95</pctSL>
-		<salvage pct='10'>CCC:1,CHH:7,CIH:7,CWOV:5,CSV:5,CFM:7,CCO:7,CGS:1,CSA:1,CDS:3,CW:3,CWI:1,CNC:3,CSJ:3,CMG:1,CJF:7,CB:10</salvage>
+		<salvage pct='10'>CCC:1,CHH:7,CIH:7,CSV:5,CFM:7,CCO:7,CGS:1,CSA:1,CDS:3,CW:3,CWI:1,CNC:3,CSJ:3,CMG:1,CJF:7,CB:10,</salvage>
 	</faction>
 	<faction key='CSA' name='Clan Star Adder' clan='true' periphery='false'>
 		<years>2807-3085</years>
@@ -246,7 +246,7 @@
 		<pctSL unitType='Aero'>100,100,100,75,80</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5,10</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95,90</pctSL>
-		<salvage pct='10'>CCC:2,CHH:2,CSR:1,CIH:10,CWOV:2,CSV:10,CFM:10,CCO:3,CGS:5,CDS:5,CW:10,CSJ:1,CMG:3,CJF:10,CGB:3,CB:1</salvage>
+		<salvage pct='10'>CCC:2,CHH:2,CSR:1,CIH:10,CSV:10,CFM:10,CCO:3,CGS:5,CDS:5,CW:10,CSJ:1,CMG:3,CJF:10,CGB:3,CB:1,</salvage>
 		<weightDistribution era='2830' unitType='Mek'>2,3,4,2,0</weightDistribution>
 		<weightDistribution era='2830' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
@@ -259,7 +259,7 @@
 		<pctSL>100,100,90,80,70</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95</pctSL>
-		<salvage pct='10'>CCC:1,CHH:1,CSR:3,CIH:4,CWOV:1,CFM:4,CCO:1,CGS:2,CSA:6,CDS:4,CW:4,CBS:1,CSJ:1,CMG:2,CJF:10,CGB:3,CB:1</salvage>
+		<salvage pct='10'>CCC:1,CHH:1,CSR:3,CIH:4,CFM:4,CCO:1,CGS:2,CSA:6,CDS:4,CW:4,CBS:1,CSJ:1,CMG:2,CJF:10,CGB:3,CB:1,</salvage>
 	</faction>
 	<faction key='CWI' name='Clan Widowmaker' clan='true' periphery='false'>
 		<years>2807-2834</years>
@@ -281,7 +281,7 @@
 		<pctSL>100,100,95,85,75</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95</pctSL>
-		<salvage pct='10'>CCC:3,CHH:2,CSR:3,CIH:8,CWOV:3,CSV:10,CFM:3,CCO:1,CGS:1,CSA:3,CDS:2,CWI:1,CBS:1,CNC:5,CSJ:10,CMG:3,CJF:5,CGB:2,CB:5</salvage>
+		<salvage pct='10'>CCC:3,CHH:2,CSR:3,CIH:8,CSV:10,CFM:3,CCO:1,CGS:1,CSA:3,CDS:2,CWI:1,CBS:1,CNC:5,CSJ:10,CMG:3,CJF:5,CGB:2,CB:5,</salvage>
 	</faction>
 	<faction key='CS' name='ComStar' clan='false' periphery='false'>
 		<years>2788-3081</years>
@@ -651,7 +651,7 @@
 		<pctSL unitType='Aero'>100,100,100,85,80</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95</pctSL>
-		<salvage pct='10'>CCC:2,CHH:3,CSR:3,CIH:9,CWOV:1,CSV:5,CCO:5,CGS:7,CSA:10,CDS:3,CW:3,CNC:2,CSJ:3,CMG:3,CJF:9,CGB:1,CB:2</salvage>
+		<salvage pct='10'>CCC:2,CHH:3,CSR:3,CIH:9,CSV:5,CCO:5,CGS:7,CSA:10,CDS:3,CW:3,CNC:2,CSJ:3,CMG:3,CJF:9,CGB:1,CB:2,</salvage>
 	</faction>
 	<faction key='CFM.FT' name='Kindraa Faraday-Tanaga' clan='true' periphery='false'>
 		<years>2823-3075</years>
@@ -662,7 +662,7 @@
 		<pctSL>100,100,100,85,80</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95</pctSL>
-		<salvage pct='10'>CCC:2,CHH:3,CSR:3,CIH:9,CWOV:1,CSV:5,CCO:5,CGS:7,CSA:10,CDS:3,CW:3,CNC:2,CSJ:3,CMG:3,CJF:9,CGB:1,CB:2</salvage>
+		<salvage pct='10'>CCC:2,CHH:3,CSR:3,CIH:9,CSV:5,CCO:5,CGS:7,CSA:10,CDS:3,CW:3,CNC:2,CSJ:3,CMG:3,CJF:9,CGB:1,CB:2,</salvage>
 	</faction>
 	<faction key='CFM.Kl' name='Kindraa Kline' clan='true' periphery='false'>
 		<years>2823-3067</years>
@@ -673,7 +673,7 @@
 		<pctSL>100,100,100,85,80</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95</pctSL>
-		<salvage pct='10'>CCC:2,CHH:3,CSR:3,CIH:9,CWOV:1,CSV:5,CCO:5,CGS:7,CSA:10,CDS:3,CW:3,CNC:2,CSJ:3,CMG:3,CJF:9,CGB:1,CB:2</salvage>
+		<salvage pct='10'>CCC:2,CHH:3,CSR:3,CIH:9,CSV:5,CCO:5,CGS:7,CSA:10,CDS:3,CW:3,CNC:2,CSJ:3,CMG:3,CJF:9,CGB:1,CB:2,</salvage>
 	</faction>
 	<faction key='CFM.MaC' name='Kindraa Mattila-Carrol' clan='true' periphery='false'>
 		<years>2823-3073</years>
@@ -684,7 +684,7 @@
 		<pctSL>100,100,100,85,80</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95</pctSL>
-		<salvage pct='10'>CCC:2,CHH:3,CSR:3,CIH:9,CWOV:1,CSV:5,CCO:5,CGS:7,CSA:10,CDS:3,CW:3,CNC:2,CSJ:3,CMG:3,CJF:9,CGB:1,CB:2</salvage>
+		<salvage pct='10'>CCC:2,CHH:3,CSR:3,CIH:9,CSV:5,CCO:5,CGS:7,CSA:10,CDS:3,CW:3,CNC:2,CSJ:3,CMG:3,CJF:9,CGB:1,CB:2,</salvage>
 	</faction>
 	<faction key='CFM.MiKr' name='Kindraa Mick-Kreese' clan='true' periphery='false'>
 		<years>2823-3067</years>
@@ -698,7 +698,7 @@
 		<pctSL unitType='Aero'>100,100,100,85,80</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95</pctSL>
-		<salvage pct='10'>CCC:2,CHH:3,CSR:3,CIH:9,CWOV:1,CSV:5,CCO:5,CGS:7,CSA:10,CDS:3,CW:3,CNC:2,CSJ:3,CMG:3,CJF:9,CGB:1,CB:2</salvage>
+		<salvage pct='10'>CCC:2,CHH:3,CSR:3,CIH:9,CSV:5,CCO:5,CGS:7,CSA:10,CDS:3,CW:3,CNC:2,CSJ:3,CMG:3,CJF:9,CGB:1,CB:2,</salvage>
 	</faction>
 	<faction key='CFM.P' name='Kindraa Payne' clan='true' periphery='false'>
 		<years>2823-3066</years>
@@ -709,7 +709,7 @@
 		<pctSL>100,100,100,85,80</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95</pctSL>
-		<salvage pct='10'>CCC:2,CHH:3,CSR:3,CIH:9,CWOV:1,CSV:5,CCO:5,CGS:7,CSA:10,CDS:3,CW:3,CNC:2,CSJ:3,CMG:3,CFM.P:8,CJF:9,CGB:1,CB:2</salvage>
+		<salvage pct='10'>CCC:2,CHH:3,CSR:3,CIH:9,CSV:5,CCO:5,CGS:7,CSA:10,CDS:3,CW:3,CNC:2,CSJ:3,CMG:3,CFM.P:8,CJF:9,CGB:1,CB:2,</salvage>
 	</faction>
 	<faction key='CFM.S' name='Kindraa Sainze' clan='true' periphery='false'>
 		<years>2823-3075</years>
@@ -720,7 +720,7 @@
 		<pctSL>100,100,100,85,80</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95</pctSL>
-		<salvage pct='10'>CCC:2,CHH:3,CSR:3,CIH:9,CWOV:1,CSV:5,CCO:5,CGS:7,CSA:10,CDS:3,CW:3,CNC:2,CSJ:3,CMG:3,CFM.P:8,CJF:9,CGB:1,CB:2</salvage>
+		<salvage pct='10'>CCC:2,CHH:3,CSR:3,CIH:9,CSV:5,CCO:5,CGS:7,CSA:10,CDS:3,CW:3,CNC:2,CSJ:3,CMG:3,CFM.P:8,CJF:9,CGB:1,CB:2,</salvage>
 	</faction>
 	<faction key='CFM.SmJ' name='Kindraa Smythe-Jewel' clan='true' periphery='false'>
 		<years>2823-2872</years>
@@ -731,7 +731,7 @@
 		<pctSL>100,100,100,85,80</pctSL>
 		<pctClan unitType='Vehicle'>0,0,5</pctClan>
 		<pctSL unitType='Vehicle'>100,100,95</pctSL>
-		<salvage pct='10'>CCC:2,CHH:3,CSR:3,CIH:9,CWOV:1,CSV:5,CCO:5,CGS:7,CSA:10,CDS:3,CW:3,CNC:2,CSJ:3,CMG:3,CJF:9,CGB:1,CB:2</salvage>
+		<salvage pct='10'>CCC:2,CHH:3,CSR:3,CIH:9,CSV:5,CCO:5,CGS:7,CSA:10,CDS:3,CW:3,CNC:2,CSJ:3,CMG:3,CJF:9,CGB:1,CB:2,</salvage>
 	</faction>
 	<faction key='CC.LL' name='Liao Lancers' clan='false' periphery='false'>
 		<years>2529-3000</years>
@@ -1888,7 +1888,7 @@
 		</model>
 	</chassis>
 	<chassis name='Ostwar' unitType='Mek'>
-		<availability>CC:2-,FWL:2-,IS:1-,Periphery:4</availability>
+		<availability>CC:2-,MOC:4,LA:1-,FWL:2-,IS:1-,MERC:1-,Periphery:4,DC:1-</availability>
 		<model name='OWR-2M'>
 			<availability>General:8,SL:0</availability>
 		</model>
@@ -1979,7 +1979,7 @@
 		</model>
 	</chassis>
 	<chassis name='Sentinel' unitType='Mek'>
-		<availability>MOC:3,CC:1,CSV:5,CLAN:6,CFM:7,MERC:3,FS:3,CGS:5,BAN:6,TC:3,CS:4,OA:3,CDS:5,CW:5,LA:5,CBS:5,FWL:3,NIOPS:5,CJF:7,CGB:7,DC:3</availability>
+		<availability>MOC:3,CC:1,CSV:5,CLAN:6,CFM:7,MERC:3,FS:3,CGS:5,BAN:6,TC:3,CS:4,OA:3,CDS:5,CW:5,LA:5,CBS:5,FWL:3,CJF:7,CGB:7,DC:3</availability>
 		<model name='STN-3KA'>
 			<availability>LA:2</availability>
 		</model>
@@ -1990,7 +1990,7 @@
 			<availability>LA:2</availability>
 		</model>
 		<model name='STN-3L'>
-			<availability>CS:8,LA:4+,CLAN:6,NIOPS:8,IS:4+,FS:4+,MERC:4+,BAN:8,DC:4+</availability>
+			<availability>CS:8,LA:4+,CLAN:6,IS:4+,FS:4+,MERC:4+,BAN:8,DC:4+</availability>
 		</model>
 		<model name='STN-3Lb'>
 			<availability>CLAN:8,BAN:4</availability>
@@ -2881,6 +2881,9 @@
 			<availability>General:6</availability>
 		</model>
 	</chassis>
+	<chassis name='O-65 &apos;Oppie&apos; Hazardous Materials Recovery Vehicle' unitType='Tank'>
+		<availability>IS:2</availability>
+	</chassis>
 	<chassis name='Ontos Heavy Tank' unitType='Tank'>
 		<availability>CC:5</availability>
 		<model name='(Standard)'>
@@ -3054,10 +3057,16 @@
 		</model>
 	</chassis>
 	<chassis name='Thor Artillery Vehicle' unitType='Tank'>
-		<availability>CC:3,MOC:1,CLAN:5,FS:3,MERC:3,BAN:5,TC:1,CS:3,OA:1,LA:3,FWL:3,NIOPS:4,DC:3</availability>
+		<availability>CC:3,MOC:1,CS:3,OA:1,LA:3,CLAN:5,FWL:3,FS:3,MERC:3,BAN:5,TC:1,DC:3</availability>
 		<model name='(Standard)'>
 			<roles>artillery</roles>
 			<availability>General:8,BAN:4</availability>
+		</model>
+	</chassis>
+	<chassis name='Thumper Artillery Vehicle' unitType='Tank'>
+		<availability>IS:7,Periphery:7</availability>
+		<model name='(Standard)'>
+			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Tokugawa Heavy Tank' unitType='Tank'>

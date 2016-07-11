@@ -429,7 +429,7 @@
 			<availability>LA:2,General:2</availability>
 		</model>
 		<model name='MSK-6S'>
-			<availability>General:6</availability>
+			<availability>General:6,FWL:6</availability>
 		</model>
 	</chassis>
 	<chassis name='AC/2 Carrier' unitType='Tank'>

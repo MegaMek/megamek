@@ -404,7 +404,7 @@
 			<availability>LA:4,General:4</availability>
 		</model>
 		<model name='MSK-6S'>
-			<availability>General:6</availability>
+			<availability>General:6,FWL:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Armored Personnel Carrier' unitType='Tank'>

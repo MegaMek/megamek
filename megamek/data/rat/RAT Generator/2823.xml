@@ -110,7 +110,7 @@
 		<pctSL>100,100,100,100,100</pctSL>
 		<pctClan unitType='Vehicle'>0,0,0</pctClan>
 		<pctSL unitType='Vehicle'>100,100,100</pctSL>
-		<salvage pct='10'>CHH:10,CCC:3,CIH:5,CSR:1,CWOV:3,CSV:10,CFM:3,CGS:1,CCO:1,CSA:8,CDS:1,CW:8,CMG:3,CJF:5,IND:3</salvage>
+		<salvage pct='10'>CHH:10,CCC:3,CIH:5,CSR:1,CWOV:3,CSV:10,CFM:3,CGS:1,CCO:1,CSA:8,CDS:1,CW:8,CMG:3,CJF:5,</salvage>
 		<weightDistribution era='2823' unitType='Mek'>2,3,4,2,0</weightDistribution>
 		<weightDistribution era='2823' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
@@ -237,7 +237,7 @@
 		<pctSL unitType='Aero'>100,100,100,100,100</pctSL>
 		<pctClan unitType='Vehicle'>0,0,0,0</pctClan>
 		<pctSL unitType='Vehicle'>100,100,100,100</pctSL>
-		<salvage pct='10'>CCC:1,CHH:1,CSR:1,CIH:8,CWOV:1,CSV:6,CFM:10,CCO:3,CGS:4,CDS:4,CW:4,CSJ:1,CMG:4,CJF:9,IND:1,CGB:2,CB:1</salvage>
+		<salvage pct='10'>CCC:1,CHH:1,CSR:1,CIH:8,CWOV:1,CSV:6,CFM:10,CCO:3,CGS:4,CDS:4,CW:4,CSJ:1,CMG:4,CJF:9,CGB:2,CB:1,</salvage>
 		<weightDistribution era='2823' unitType='Mek'>2,3,4,2,0</weightDistribution>
 		<weightDistribution era='2823' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
@@ -1851,7 +1851,7 @@
 		</model>
 	</chassis>
 	<chassis name='Ostwar' unitType='Mek'>
-		<availability>CC:2-,FWL:2-,IS:1-,Periphery:4</availability>
+		<availability>CC:2-,MOC:4,LA:1-,FWL:2-,IS:1-,MERC:1-,Periphery:4,DC:1-</availability>
 		<model name='OWR-2M'>
 			<availability>General:8,SL:0</availability>
 		</model>
@@ -1948,7 +1948,7 @@
 		</model>
 	</chassis>
 	<chassis name='Sentinel' unitType='Mek'>
-		<availability>MOC:3,CC:1,CSV:5,CLAN:6,CFM:7,MERC:3,FS:3,CGS:5,TC:3,CS:4,OA:3,CDS:5,CW:5,LA:5,CBS:5,FWL:3,NIOPS:5,CJF:7,CGB:7,DC:3</availability>
+		<availability>MOC:3,CC:1,CSV:5,CLAN:6,CFM:7,MERC:3,FS:3,CGS:5,TC:3,CS:4,OA:3,CDS:5,CW:5,LA:5,CBS:5,FWL:3,CJF:7,CGB:7,DC:3</availability>
 		<model name='STN-3KA'>
 			<availability>LA:2</availability>
 		</model>
@@ -1959,7 +1959,7 @@
 			<availability>LA:2</availability>
 		</model>
 		<model name='STN-3L'>
-			<availability>CS:8,LA:4+,CLAN:6,NIOPS:8,IS:4+,FS:4+,MERC:4+,DC:4+</availability>
+			<availability>CS:8,LA:4+,CLAN:6,IS:4+,FS:4+,MERC:4+,DC:4+</availability>
 		</model>
 		<model name='STN-3Lb'>
 			<availability>CLAN:8</availability>
@@ -2840,6 +2840,9 @@
 			<availability>General:6</availability>
 		</model>
 	</chassis>
+	<chassis name='O-65 &apos;Oppie&apos; Hazardous Materials Recovery Vehicle' unitType='Tank'>
+		<availability>IS:2</availability>
+	</chassis>
 	<chassis name='Packrat LRPV' unitType='Tank'>
 		<availability>MOC:4,CC:5,IS:5,FS:5,CIR:5,FS.CrMM:7,Periphery:5,TC:4,CS:6,OA:4,LA:7,FS.CMM:7,FS.DMM:7,FWL:5,DC:6</availability>
 		<model name='PKR-T5 (ML)'>
@@ -3003,9 +3006,15 @@
 		</model>
 	</chassis>
 	<chassis name='Thor Artillery Vehicle' unitType='Tank'>
-		<availability>CC:3,MOC:1,CLAN:5,FS:3,MERC:3,TC:1,CS:3,OA:1,LA:3,FWL:3,NIOPS:4,DC:3</availability>
+		<availability>CC:3,MOC:1,CS:3,OA:1,LA:3,CLAN:5,FWL:3,FS:3,MERC:3,TC:1,DC:3</availability>
 		<model name='(Standard)'>
 			<roles>artillery</roles>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Thumper Artillery Vehicle' unitType='Tank'>
+		<availability>IS:7,Periphery:7</availability>
+		<model name='(Standard)'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

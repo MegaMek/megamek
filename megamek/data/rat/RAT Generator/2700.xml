@@ -1218,7 +1218,7 @@
 		</model>
 	</chassis>
 	<chassis name='Ostwar' unitType='Mek'>
-		<availability>CC:3,SL:1,FWL:5,IS:1,Periphery:4</availability>
+		<availability>CC:3,MOC:4,LA:1,SL:1,FWL:5,IS:1,MERC:1,Periphery:4,DC:1</availability>
 		<model name='OWR-2Mb'>
 			<availability>SL.R:8</availability>
 		</model>
@@ -2122,6 +2122,12 @@
 		<availability>CC:4,MOC:2,OA:2,LA:4,SL:6,FWL:4,SL.R:3,RWR:2,FS:4,MERC:4,DC:4,TC:2</availability>
 		<model name='(Standard)'>
 			<roles>artillery</roles>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Thumper Artillery Vehicle' unitType='Tank'>
+		<availability>IS:4,Periphery:3</availability>
+		<model name='(Standard)'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

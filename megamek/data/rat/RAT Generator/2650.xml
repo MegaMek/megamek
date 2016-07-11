@@ -955,7 +955,7 @@
 	<chassis name='Mackie' unitType='Mek'>
 		<availability>LA:1-,IS:1-,FWL:1-,SL.R:0,TH.HM:4-,Periphery:4</availability>
 		<model name='MSK-6S'>
-			<availability>General:1</availability>
+			<availability>General:1,FWL:1</availability>
 		</model>
 		<model name='MSK-7A'>
 			<availability>General:4</availability>
@@ -1020,7 +1020,7 @@
 		</model>
 	</chassis>
 	<chassis name='Ostwar' unitType='Mek'>
-		<availability>CC:4,SL:2,FWL:6,IS:2,Periphery:3</availability>
+		<availability>CC:4,MOC:3,LA:2,SL:2,FWL:6,IS:2,MERC:2,Periphery:3,DC:2</availability>
 		<model name='OWR-2Mb'>
 			<availability>SL.R:8</availability>
 		</model>

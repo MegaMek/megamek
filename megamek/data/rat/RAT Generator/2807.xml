@@ -262,7 +262,7 @@
 		<years>-</years>
 		<ratingLevels></ratingLevels>
 		<parentFaction>Periphery</parentFaction>
-		<salvage pct='15'>CC:2,LA:2,SL:2,FWL:2,FS:2,DC:2</salvage>
+		<salvage pct='15'>CC:2,LA:2,FWL:2,FS:2,DC:2,</salvage>
 	</faction>
 	<faction key='TC' name='Taurian Concordat' clan='false' periphery='true'>
 		<years>2335-</years>
@@ -1535,7 +1535,7 @@
 		</model>
 	</chassis>
 	<chassis name='Ostwar' unitType='Mek'>
-		<availability>CC:2-,FWL:2-,IS:1-,Periphery:4</availability>
+		<availability>CC:2-,MOC:4,LA:1-,FWL:2-,IS:1-,MERC:1-,Periphery:4,DC:1-</availability>
 		<model name='OWR-2M'>
 			<availability>General:8,SL:0</availability>
 		</model>
@@ -1631,9 +1631,9 @@
 		</model>
 	</chassis>
 	<chassis name='Sentinel' unitType='Mek'>
-		<availability>PP:6,CC:1,MOC:3,FS:3,MERC:3,TC:3,CS:4,OA:3,LA:6,FWL:3,NIOPS:5,DC:3</availability>
+		<availability>PP:6,CC:1,MOC:3,CS:4,OA:3,LA:6,FWL:3,FS:3,MERC:3,TC:3,DC:3</availability>
 		<model name='STN-3L'>
-			<availability>PP:8,CS:8,LA:8+,NIOPS:8,IS:8+,FS:8+,MERC:8+,DC:8+</availability>
+			<availability>PP:8,CS:8,LA:8+,IS:8+,FS:8+,MERC:8+,DC:8+</availability>
 		</model>
 		<model name='STN-3Lb'>
 			<availability>PP:4</availability>
@@ -2609,13 +2609,19 @@
 		</model>
 	</chassis>
 	<chassis name='Thor Artillery Vehicle' unitType='Tank'>
-		<availability>PP:5,CC:4,MOC:2,FS:4,MERC:4,TC:2,CS:3,OA:2,LA:4,FWL:4,NIOPS:4,DC:4</availability>
+		<availability>PP:5,CC:4,MOC:2,CS:3,OA:2,LA:4,FWL:4,FS:4,MERC:4,TC:2,DC:4</availability>
 		<model name='(AC)'>
 			<availability>PP:8</availability>
 		</model>
 		<model name='(Standard)'>
 			<roles>artillery</roles>
 			<availability>PP:4,General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Thumper Artillery Vehicle' unitType='Tank'>
+		<availability>IS:6,Periphery:7</availability>
+		<model name='(Standard)'>
+			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Tokugawa Heavy Tank' unitType='Tank'>

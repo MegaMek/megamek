@@ -158,7 +158,7 @@
 		<pctSL>100,100,85,60,50</pctSL>
 		<pctClan unitType='Vehicle'>0,0,15</pctClan>
 		<pctSL unitType='Vehicle'>100,100,85</pctSL>
-		<salvage pct='10'>CCC:3,CHH:4,CSR:4,CSV:1,CFM:10,CCO:9,CGS:1,CSA:4,CDS:4,CW:7,CNC:3,CSJ:3,CMG:3,CJF:3,IND:1,CGB:2,CB:3</salvage>
+		<salvage pct='10'>CCC:3,CHH:4,CSR:4,CSV:1,CFM:10,CCO:9,CGS:1,CSA:4,CDS:4,CW:7,CNC:3,CSJ:3,CMG:3,CJF:3,CGB:2,CB:3,</salvage>
 		<weightDistribution era='2860' unitType='Mek'>5,4,2,1,0</weightDistribution>
 		<weightDistribution era='2860' unitType='Tank'>5,2,3,1</weightDistribution>
 	</faction>
@@ -226,7 +226,7 @@
 		<pctSL unitType='Aero'>100,100,75,50,40</pctSL>
 		<pctClan unitType='Vehicle'>0,0,15</pctClan>
 		<pctSL unitType='Vehicle'>100,100,85</pctSL>
-		<salvage pct='10'>CCC:2,CHH:3,CIH:5,CSV:4,CFM:5,CCO:8,CGS:1,CSA:1,CDS:7,CW:7,CNC:10,CSJ:2,CMG:1,CJF:3,IND:2,CB:8</salvage>
+		<salvage pct='10'>CCC:2,CHH:3,CIH:5,CSV:4,CFM:5,CCO:8,CGS:1,CSA:1,CDS:7,CW:7,CNC:10,CSJ:2,CMG:1,CJF:3,CB:8,</salvage>
 	</faction>
 	<faction key='CSA' name='Clan Star Adder' clan='true' periphery='false'>
 		<years>2807-3085</years>
@@ -367,7 +367,7 @@
 		<ratName>Castillian - Umayyad</ratName>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.Deep</parentFaction>
-		<salvage pct='5'>HL:10</salvage>
+		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='OA' name='Outworlds Alliance' clan='false' periphery='true'>
 		<nameChange year='3083'>Raven Alliance (AMC)</nameChange>
@@ -413,7 +413,7 @@
 		<years>2830-3075</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>NC</parentFaction>
-		<salvage pct='5'>HL:10</salvage>
+		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FS.ACAD' name='Academy and Training Units' clan='false' periphery='false'>
 		<years>2317-</years>
@@ -1987,7 +1987,7 @@
 		</model>
 	</chassis>
 	<chassis name='Ostwar' unitType='Mek'>
-		<availability>CC:2-,FWL:2-,IS:1-,Periphery:3</availability>
+		<availability>CC:2-,MOC:3,LA:1-,FWL:2-,IS:1-,MERC:1-,Periphery:3,DC:1-</availability>
 		<model name='OWR-2M'>
 			<availability>General:8,SL:0</availability>
 		</model>
@@ -2101,7 +2101,7 @@
 		</model>
 	</chassis>
 	<chassis name='Sentinel' unitType='Mek'>
-		<availability>MOC:2,CSV:5,CLAN:6,CFM:7,MERC:1-,FS:1-,CGS:5,BAN:6,TC:1,CS:4,OA:2,CDS:5,CW:5,LA:4-,CBS:5,FWL:1-,NIOPS:5,CJF:7,CGB:7,DC:2</availability>
+		<availability>MOC:2,CSV:5,CLAN:6,CFM:7,MERC:1-,FS:1-,CGS:5,BAN:6,TC:1,CS:4,OA:2,CDS:5,CW:5,LA:4-,CBS:5,FWL:1-,CJF:7,CGB:7,DC:2</availability>
 		<model name='STN-3KA'>
 			<availability>LA:4</availability>
 		</model>
@@ -2112,7 +2112,7 @@
 			<availability>LA:4</availability>
 		</model>
 		<model name='STN-3L'>
-			<availability>CS:8,LA:1+,CLAN:6,NIOPS:8,IS:1+,FS:1+,MERC:1+,BAN:8,DC:1+</availability>
+			<availability>CS:8,LA:1+,CLAN:6,IS:1+,FS:1+,MERC:1+,BAN:8,DC:1+</availability>
 		</model>
 		<model name='STN-3Lb'>
 			<availability>CLAN:6,BAN:3</availability>
@@ -3127,6 +3127,9 @@
 			<availability>General:6</availability>
 		</model>
 	</chassis>
+	<chassis name='O-65 &apos;Oppie&apos; Hazardous Materials Recovery Vehicle' unitType='Tank'>
+		<availability>IS:1</availability>
+	</chassis>
 	<chassis name='Odin Scout Tank' unitType='Tank'>
 		<availability>CLAN:5,CJF:5</availability>
 		<model name='(Standard)'>
@@ -3340,10 +3343,16 @@
 		</model>
 	</chassis>
 	<chassis name='Thor Artillery Vehicle' unitType='Tank'>
-		<availability>CC:2+,MOC:1+,CLAN:5,FS:2+,MERC:2+,BAN:5,TC:1+,CS:3,OA:1+,LA:2+,FWL:2+,NIOPS:4,DC:2+</availability>
+		<availability>CC:2+,MOC:1+,CS:3,OA:1+,LA:2+,CLAN:5,FWL:2+,FS:2+,MERC:2+,BAN:5,TC:1+,DC:2+</availability>
 		<model name='(Standard)'>
 			<roles>artillery</roles>
 			<availability>General:8,BAN:4</availability>
+		</model>
+	</chassis>
+	<chassis name='Thumper Artillery Vehicle' unitType='Tank'>
+		<availability>IS:7,Periphery:8</availability>
+		<model name='(Standard)'>
+			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Tokugawa Heavy Tank' unitType='Tank'>

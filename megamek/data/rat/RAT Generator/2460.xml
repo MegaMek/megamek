@@ -470,7 +470,7 @@
 			<availability>LA:1,General:1</availability>
 		</model>
 		<model name='MSK-6S'>
-			<availability>General:6</availability>
+			<availability>General:6,FWL:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Shadow Hawk' unitType='Mek'>

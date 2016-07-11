@@ -140,7 +140,7 @@
 		<pctSL>60,60,20,17,0</pctSL>
 		<pctClan unitType='Vehicle'>11,11,43</pctClan>
 		<pctSL unitType='Vehicle'>88,88,57</pctSL>
-		<salvage pct='10'>CHH:2,CCC:0,CIH:1,CSV:2,FRR:4,CFM:0,CGS:0,CSA:1,CW:8,CNC:2,CSJ:2,CJF:1,DC:7</salvage>
+		<salvage pct='10'>CHH:2,CCC:0,CIH:1,CSV:2,FRR:1,CFM:0,CGS:0,CSA:1,CW:10,CNC:2,CSJ:3,CJF:1,DC:7</salvage>
 		<weightDistribution era='3058' unitType='Mek'>2,3,4,2,0</weightDistribution>
 		<weightDistribution era='3058' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
@@ -310,7 +310,7 @@
 		<pctOmni>0,1,4,9,15</pctOmni>
 		<pctClan>0,1,4,8,12</pctClan>
 		<pctSL>4,14,22,26,46</pctSL>
-		<salvage pct='7'>LA:5,FRR:0,CNC:0,CSJ:0,FS:5,FC:10,CGB:1</salvage>
+		<salvage pct='7'>LA:5,FRR:0,CNC:1,CSJ:1,FS:5,FC:10,CGB:2</salvage>
 		<weightDistribution era='3058' unitType='Mek'>4,2,3,1,0</weightDistribution>
 		<weightDistribution era='3058' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
@@ -4293,7 +4293,7 @@
 		</model>
 	</chassis>
 	<chassis name='Panther' unitType='Mek'>
-		<availability>CC:2,Periphery.DD:5,FS.RR:3,FRR:10,WOB:2,MERC:5,Periphery.OS:5,FS:2,Periphery:3,CS:2,FS.DMM:3,CNC:3,FWL:2,SL.2:4,DC:10</availability>
+		<availability>CC:2,Periphery.DD:5,FS.RR:3,FRR:10,WOB:2,MERC:5,Periphery.OS:5,FS:2,Periphery:3,CS:2,FS.DMM:3,CNC:3,FWL:2,DC:10</availability>
 		<model name='PNT-10KA'>
 			<roles>fire support</roles>
 			<availability>FRR:2+,CNC:5,MERC:2+,DC:2+</availability>
@@ -4500,7 +4500,7 @@
 		</model>
 	</chassis>
 	<chassis name='Quickdraw' unitType='Mek'>
-		<availability>MOC:5,CC:3,FRR:7,IS:5,WOB:3-,SIC:3,FS:3,CIR:4,Periphery:4,TC:5,CS:3-,OA:5,LA:5,FWL:8,SL.2:6,DC:6</availability>
+		<availability>MOC:5,CC:3,FRR:7,IS:5,WOB:3-,SIC:3,FS:3,CIR:4,Periphery:4,TC:5,CS:3-,OA:5,LA:5,FWL:8,DC:6</availability>
 		<model name='QKD-C'>
 			<availability>FRR:4,MERC:4,DC:6+</availability>
 		</model>
@@ -5355,7 +5355,7 @@
 		</model>
 	</chassis>
 	<chassis name='Vulcan' unitType='Mek'>
-		<availability>CC:4,CS:3,LA:7,FRR:4,FWL:7,IS:5,SL.2:6,WOB:3,BAN:5,Periphery:5</availability>
+		<availability>CC:4,CS:3,LA:7,FRR:4,FWL:7,IS:5,WOB:3,BAN:5,Periphery:5</availability>
 		<model name='VT-5M'>
 			<roles>anti infantry</roles>
 			<availability>FRR:2+,FWL:6+,WOB:3+,MERC:2+,DC:2+</availability>
@@ -6652,7 +6652,7 @@
 		</model>
 	</chassis>
 	<chassis name='Packrat LRPV' unitType='Tank'>
-		<availability>MOC:5,CC:6,HL:5,FRR:5,IS:6,WOB:6,SIC:4,FS:8,CIR:6,FS.CrMM:8,Periphery:6,TC:5,CS:6,OA:5,LA:8,NC:4,FS.CMM:8,FS.DMM:8,FWL:6,SL.2:6,DC:6</availability>
+		<availability>MOC:5,CC:6,HL:5,FRR:5,IS:6,WOB:6,SIC:4,FS:8,CIR:6,FS.CrMM:8,Periphery:6,TC:5,CS:6,OA:5,LA:8,NC:4,FS.CMM:8,FS.DMM:8,FWL:6,DC:6</availability>
 		<model name='PKR-T5 (ICE)'>
 			<roles>recon,raider</roles>
 			<availability>CC:2,MERC.KH:2,HL:3,FRR:3,IS:2,SIC:3,MERC:2,FS:2,Periphery:4,NC:3,PIR:2,General:2,FWL:2,DC:2</availability>
@@ -6986,7 +6986,7 @@
 		</model>
 	</chassis>
 	<chassis name='Striker Light Tank' unitType='Tank'>
-		<availability>CC:4,FRR:4,IS:5,WOB:4-,SIC:6,FS:9,MERC:3,CS:4-,CDS:3,LA:6,PIR:3,FWL:3,SL.2:4,DC:3</availability>
+		<availability>CC:4,FRR:4,IS:5,WOB:4-,SIC:6,FS:9,MERC:3,CS:4-,CDS:3,LA:6,PIR:3,FWL:3,DC:3</availability>
 		<model name='(SRM)'>
 			<availability>IS:5</availability>
 		</model>
@@ -8768,7 +8768,7 @@
 		</model>
 	</chassis>
 	<chassis name='Seydlitz' unitType='Aero'>
-		<availability>MOC:4,MERC.KH:6,HL:5,FRR:2,FS:4,MERC:3,CIR:3,Periphery:6,TC:7,Periphery.R:6,OA:7,LA:9,NC:4,FWL:1,MH:2,SL.2:3,DC:3</availability>
+		<availability>MOC:4,MERC.KH:6,HL:5,FRR:2,FS:4,MERC:3,CIR:3,Periphery:6,TC:7,Periphery.R:6,OA:7,LA:9,NC:4,FWL:1,MH:2,DC:3</availability>
 		<model name='SYD-21'>
 			<roles>interceptor</roles>
 			<availability>MERC.KH:3,LA:4,FS:3,Periphery:3</availability>

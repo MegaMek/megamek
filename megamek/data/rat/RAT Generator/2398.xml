@@ -12,7 +12,7 @@
 		<ratName>Liao</ratName>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
-		<salvage pct='6'>TH:9,FWL:5,FS:4,TC:1</salvage>
+		<salvage pct='6'>TH:9,FWL:5,FS:4,TC:1,</salvage>
 	</faction>
 	<faction key='CI' name='Chainelane Islands' clan='false' periphery='true'>
 		<years>-</years>
@@ -24,7 +24,7 @@
 		<ratName>Kurita</ratName>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
-		<salvage pct='6'>TH:1</salvage>
+		<salvage pct='6'>TH:1,</salvage>
 		<weightDistribution era='2398' unitType='Mek'>4,2,3,1,0</weightDistribution>
 		<weightDistribution era='2398' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
@@ -40,7 +40,7 @@
 		<ratName>Davion</ratName>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
-		<salvage pct='6'>CC:2,TH:2</salvage>
+		<salvage pct='6'>CC:2,TH:2,</salvage>
 	</faction>
 	<faction key='FWL' name='Free Worlds League' clan='false' periphery='false'>
 		<nameChange year='3078'>Former Free Worlds Independent</nameChange>
@@ -78,7 +78,7 @@
 		<ratName>Steiner</ratName>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
-		<salvage pct='6'>TH:6,FWL:2</salvage>
+		<salvage pct='6'>TH:6,FWL:2,</salvage>
 		<weightDistribution era='2398' unitType='Mek'>4,6,7,3,0</weightDistribution>
 		<weightDistribution era='2398' unitType='Tank'>4,6,7,3</weightDistribution>
 	</faction>

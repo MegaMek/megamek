@@ -106,37 +106,46 @@ public class RATGenerator {
         return initialized;
     }
 
-	public AvailabilityRating findChassisAvailabilityRecord(int era, String unit, String faction) {
+	public AvailabilityRating findChassisAvailabilityRecord(int era, String unit, String faction,
+			int year) {
 		if (factions.containsKey(faction)) {
-			return findChassisAvailabilityRecord(era, unit, factions.get(faction));
+			return findChassisAvailabilityRecord(era, unit, factions.get(faction), year);
 		}
 		if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(unit)) {
-			return chassisIndex.get(era).get(unit).get("General");
+			AvailabilityRating av = chassisIndex.get(era).get(unit).get("General");
+			if (av != null && year >= av.getStartYear()) {
+				return av;
+			}
 		}
 		return null;
 	}
 
-	public AvailabilityRating findChassisAvailabilityRecord(int era, String unit, FactionRecord fRec) {
+	public AvailabilityRating findChassisAvailabilityRecord(int era, String unit, FactionRecord fRec,
+			int year) {
 		if (fRec == null) {
 			return null;
 		}
+		AvailabilityRating retVal = null;
 		if (chassisIndex.containsKey(era) && chassisIndex.get(era).containsKey(unit)) {
 			if (chassisIndex.get(era).get(unit).containsKey(fRec.getKey())) {
-				return chassisIndex.get(era).get(unit).get(fRec.getKey());
-			}
-			if (fRec.getParentFactions().size() == 1) {
-				return findChassisAvailabilityRecord(era, unit, fRec.getParentFactions().get(0));
+				retVal = chassisIndex.get(era).get(unit).get(fRec.getKey());
+			} else if (fRec.getParentFactions().size() == 1) {
+				retVal = findChassisAvailabilityRecord(era, unit, fRec.getParentFactions().get(0), year);
 			} else if (fRec.getParentFactions().size() > 0) {
 				ArrayList<AvailabilityRating> list = new ArrayList<>();
 				for (String alt : fRec.getParentFactions()) {
-					AvailabilityRating ar = findChassisAvailabilityRecord(era, unit, alt);
+					AvailabilityRating ar = findChassisAvailabilityRecord(era, unit, alt, year);
 					if (ar != null) {
 						list.add(ar);
 					}
 				}
-				return mergeFactionAvailability(fRec.getKey(), list);
+				retVal = mergeFactionAvailability(fRec.getKey(), list);
+			} else {
+				retVal = chassisIndex.get(era).get(unit).get("General");
 			}
-			return chassisIndex.get(era).get(unit).get("General");
+		}
+		if (retVal != null && year >= retVal.getStartYear()) {
+			return retVal;
 		}
 		return null;
 	}
@@ -313,7 +322,7 @@ public class RATGenerator {
 			}
 
 			AvailabilityRating ar = findChassisAvailabilityRecord(early,
-						cRec.getChassisKey(), fRec);
+						cRec.getChassisKey(), fRec, year);
 			if (ar == null) {
 				continue;
 			}

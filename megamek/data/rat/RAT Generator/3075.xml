@@ -14868,7 +14868,7 @@
 		</model>
 	</chassis>
 	<chassis name='Shilone' unitType='Aero'>
-		<availability>Periphery.DD:4,OA:4,FVC:2,FRR:7,ROS:5,MERC:4,Periphery.OS:4,DC:7,Periphery:2,RA:4</availability>
+		<availability>Periphery.DD:4,OA:4,FVC:2,CSR:4,FRR:7,ROS:5,MERC:4,Periphery.OS:4,DC:7,Periphery:2</availability>
 		<model name='SL-17R'>
 			<availability>OA:3,FRR:4,MERC:3,DC:4</availability>
 		</model>
@@ -14941,7 +14941,7 @@
 			<availability>OA:1,FRR:1,DC:1</availability>
 		</model>
 		<model name='SL-15R'>
-			<availability>OA:6,RD:6,FRR:8,ROS:6,FS:6,MERC:6,CDP:4,DC:8,TC:4,RA:6,CGB:6</availability>
+			<availability>OA:6,CSR:6,FRR:8,ROS:6,FS:6,MERC:6,CDP:4,DC:8,TC:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Spad' unitType='Aero'>

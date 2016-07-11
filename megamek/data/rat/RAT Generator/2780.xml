@@ -98,7 +98,7 @@
 		<ratName>Steiner</ratName>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
-		<salvage pct='5'>FWL:10,DC:9</salvage>
+		<salvage pct='5'>FWL:10,DC:9,</salvage>
 		<weightDistribution era='2780' unitType='Mek'>4,6,7,3,0</weightDistribution>
 		<weightDistribution era='2780' unitType='Tank'>4,6,7,3</weightDistribution>
 	</faction>

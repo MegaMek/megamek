@@ -25,7 +25,7 @@
 		<ratName>Kurita</ratName>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
-		<salvage pct='5'>OA:2,LA:10,SL:10,FS:10</salvage>
+		<salvage pct='5'>OA:2,TH:7,LA:10,SL:10,FS:10</salvage>
 		<weightDistribution era='2765' unitType='Mek'>4,2,3,1,0</weightDistribution>
 		<weightDistribution era='2765' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
@@ -41,7 +41,7 @@
 		<ratName>Davion</ratName>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
-		<salvage pct='5'>CC:10,OA:1,SL:8,DC:3,TC:2</salvage>
+		<salvage pct='5'>CC:10,OA:1,TH:1,SL:8,DC:3,TC:2</salvage>
 	</faction>
 	<faction key='FWL' name='Free Worlds League' clan='false' periphery='false'>
 		<nameChange year='3078'>Former Free Worlds Independent</nameChange>
@@ -95,7 +95,7 @@
 		<ratName>Canopus</ratName>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.CM</parentFaction>
-		<salvage pct='5'>CC:5,SL:1,FWL:10</salvage>
+		<salvage pct='5'>CC:5,TH:1,SL:1,FWL:10</salvage>
 	</faction>
 	<faction key='MERC' name='Mercenary' clan='false' periphery='false'>
 		<years>-</years>

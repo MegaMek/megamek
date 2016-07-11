@@ -38,14 +38,15 @@ public class AvailabilityRating {
 	int availability = 0;
 	String ratings = null;
 	int ratingAdjustment = 0;
-	int year = 3025;
+	int era;
+	int startYear;
 	String unitName = null;
 	
 	/**
 	 * 
 	 * @param unit The chassis or model key
 	 * @param year The year that this availability code applies to.
-	 * @param code A string with the format FKEY[!RATING]:AV[+/-]
+	 * @param code A string with the format FKEY[!RATING]:AV[+/-][:YEAR]
 	 * 				FKEY: the faction key
 	 * 				RATING: if supplied, will limit this record to units with the indicated equipment rating
 	 * 				AV: a value that indicates how common this unit is, from 0 (non-existent)
@@ -54,10 +55,14 @@ public class AvailabilityRating {
 	 * 					(usually A or Keshik) and decreases for each step the rating is reduced.
 	 * 				-: as +, but applies to the lowest equipment rating (F or PGC) and decreases
 	 * 					as rating increases.
+	 * 				YEAR: when the unit becomes available to the faction, if later than the
+	 * 					beginning of the era. Any year before this within the era will be treated
+	 * 					as having no availability.
 	 */
-	public AvailabilityRating(String unit, int year, String code) {
+	public AvailabilityRating(String unit, int era, String code) {
 		unitName = unit;
-		this.year = year;
+		this.era = era;
+		startYear = era;
 		this.ratingAdjustment = 0;
 		String[] fields = code.split(":");
 		if (fields[0].contains("!")) {
@@ -68,7 +73,8 @@ public class AvailabilityRating {
 		faction = fields[0];
 		
 		if (fields.length < 2) {
-			System.err.println(unit + " (" + year + "): " + faction);
+			System.err.println("No availability code given for " + unit +
+					" (" + era + "): " + faction);
 		}
 		if (fields[1].endsWith("+")) {
 			this.ratingAdjustment++;
@@ -79,6 +85,14 @@ public class AvailabilityRating {
 			fields[1] = fields[1].replace("-", "");
 		}
 		availability = Integer.parseInt(fields[1]);
+		if (fields.length > 2) {
+			try {
+				startYear = Integer.parseInt(fields[2]);
+			} catch (NumberFormatException ex) {
+				System.err.println("Could not parse start year " + fields[2] + " for "
+						+ unit + " in " + era);
+			}
+		}
 	}
 
 	public String getFaction() {
@@ -123,12 +137,20 @@ public class AvailabilityRating {
 		this.ratingAdjustment = ratingAdjustment;
 	}
 
-	public int getYear() {
-		return year;
+	public int getEra() {
+		return era;
 	}
 
-	public void setYear(int year) {
-		this.year = year;
+	public void setEra(int era) {
+		this.era = era;
+	}
+	
+	public int getStartYear() {
+		return startYear;
+	}
+	
+	public void setStartYear(int year) {
+		startYear = year;
 	}
 
 	public String getUnitName() {
@@ -159,11 +181,15 @@ public class AvailabilityRating {
 	
 	@Override
 	public String toString() {
+		if (era != startYear) {
+			return getFactionCode() + ":" + getAvailabilityCode()
+					+ ":" + startYear;
+		}
 		return getFactionCode() + ":" + getAvailabilityCode();
 	}
 	
 	public AvailabilityRating makeCopy(String newFaction) {
-		return new AvailabilityRating(unitName, year, newFaction + ":" + getAvailabilityCode());
+		return new AvailabilityRating(unitName, era, newFaction + ":" + getAvailabilityCode());
 	}
 
 	public double getWeight() {

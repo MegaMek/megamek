@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.41.21
++ Feature: Added "Swarmed" entry to unit tooltips
 
 v0.41.20
 + Data: Date fixes for units

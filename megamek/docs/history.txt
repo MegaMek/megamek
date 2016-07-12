@@ -2,6 +2,7 @@ VERSION HISTORY:
 ----------------
 v0.41.21
 + Feature: Added "Swarmed" entry to unit tooltips
++ Issue #275: Non-optimal paths planned in certain circumstances
 
 v0.41.20
 + Data: Date fixes for units

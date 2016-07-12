@@ -220,10 +220,11 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
             }
 
             int dd = (first.getMpUsed() + h1) - (second.getMpUsed() + h2);
+
             if (dd != 0) {
                 return dd;
             } else {
-                return -(first.getHexesMoved() - second.getHexesMoved());
+                return first.getHexesMoved() - second.getHexesMoved();
             }
         }
     }

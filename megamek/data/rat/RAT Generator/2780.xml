@@ -624,7 +624,7 @@
 		</model>
 	</chassis>
 	<chassis name='Archer' unitType='Mek'>
-		<availability>CC:7,CS:5-,LA:9,SL:2,IS:6,FWL:9,Periphery.Deep:6,NIOPS:5-,FS:8,Periphery:6,DC:8</availability>
+		<availability>CC:7,CS:5-,LA:9,SL:2,IS:6,FWL:9,NIOPS:5-,Periphery.Deep:6,FS:8,Periphery:6,DC:8</availability>
 		<model name='ARC-2Rb'>
 			<roles>fire support</roles>
 			<availability>SL.R:8</availability>
@@ -880,7 +880,7 @@
 		</model>
 	</chassis>
 	<chassis name='Crusader' unitType='Mek'>
-		<availability>CS:6-,SL:7,IS:8,Periphery.Deep:6,NIOPS:6-,SL.R:6,Periphery:6</availability>
+		<availability>CS:6-,SL:7,IS:8,NIOPS:6-,Periphery.Deep:6,SL.R:6,Periphery:6</availability>
 		<model name='CRD-3R'>
 			<availability>General:8,Periphery.Deep:8,SL.R:6,Periphery:8</availability>
 		</model>
@@ -1015,7 +1015,7 @@
 		</model>
 	</chassis>
 	<chassis name='Firestarter' unitType='Mek'>
-		<availability>CS:3,LA:8,SL:4-,IS:7,Periphery.Deep:7,NIOPS:3,Periphery:7</availability>
+		<availability>CS:3,LA:8,SL:4-,IS:7,NIOPS:3,Periphery.Deep:7,Periphery:7</availability>
 		<model name='FS9-H'>
 			<roles>recon</roles>
 			<deployedWith>Vulcan</deployedWith>
@@ -1073,7 +1073,7 @@
 		</model>
 	</chassis>
 	<chassis name='Grasshopper' unitType='Mek'>
-		<availability>CS:4-,IS:6,Periphery.Deep:6,NIOPS:4-,MERC:7,Periphery:6,DC:6</availability>
+		<availability>CS:4-,IS:6,NIOPS:4-,Periphery.Deep:6,MERC:7,Periphery:6,DC:6</availability>
 		<model name='GHR-5H'>
 			<availability>IS:8,Periphery.Deep:8,Periphery:8</availability>
 		</model>
@@ -1443,7 +1443,7 @@
 		</model>
 	</chassis>
 	<chassis name='Ostscout' unitType='Mek'>
-		<availability>CC:5,CS:4,LA:5,SL:5,FWL:5,IS:5,NIOPS:4,Periphery.Deep:5,FS:5,MERC:5,DC:5,Periphery:5</availability>
+		<availability>CC:5,CS:4,LA:5,SL:5,IS:5,FWL:5,NIOPS:4,Periphery.Deep:5,FS:5,MERC:5,Periphery:5,DC:5</availability>
 		<model name='OTT-7Jb'>
 			<roles>recon</roles>
 			<deployedWith>recon</deployedWith>
@@ -1563,7 +1563,7 @@
 		</model>
 	</chassis>
 	<chassis name='Scorpion' unitType='Mek'>
-		<availability>CC:5-,CS:3-,LA:5-,SL:2-,FWL:5-,IS:5-,NIOPS:3-,Periphery.Deep:5-,FS:5-,MERC:5-,DC:5-,Periphery:5-</availability>
+		<availability>CC:5-,CS:3-,LA:5-,SL:2-,IS:5-,FWL:5-,NIOPS:3-,Periphery.Deep:5-,FS:5-,MERC:5-,Periphery:5-,DC:5-</availability>
 		<model name='SCP-1N'>
 			<availability>LA:8,General:8,Periphery.Deep:8,MERC:8,Periphery:8</availability>
 		</model>
@@ -1717,7 +1717,7 @@
 		</model>
 	</chassis>
 	<chassis name='Thunderbolt' unitType='Mek'>
-		<availability>CC:8,CS:5-,LA:8,SL:5-,IS:5,NIOPS:5-,Periphery.Deep:5,FS:7,MERC:5,DC:8,Periphery:5,TC:5</availability>
+		<availability>CC:8,CS:5-,LA:8,SL:5-,IS:5,NIOPS:5-,Periphery.Deep:5,FS:7,MERC:5,Periphery:5,TC:5,DC:8</availability>
 		<model name='TDR-5Sb'>
 			<availability>SL.R:6</availability>
 		</model>
@@ -1911,7 +1911,7 @@
 		</model>
 	</chassis>
 	<chassis name='Armored Personnel Carrier' unitType='Tank'>
-		<availability>PP:10,CC:10,MOC:10,SLIE:10,IS:9,Periphery.Deep:10,CIR:10,DC:8,Periphery:10,TC:10</availability>
+		<availability>PP:10,CC:10,MOC:10,SLIE:10,IS:9,Periphery.Deep:10,CIR:10,Periphery:10,TC:10,DC:8</availability>
 		<model name='(Hover SRM)'>
 			<roles>apc,support</roles>
 			<availability>PP:5,CC:2-,LA:2-,PIR:5,General:3,FWL:2-,FS:2-,MERC:2-,DC:2-,Periphery:2</availability>
@@ -2290,7 +2290,7 @@
 		</model>
 	</chassis>
 	<chassis name='LTV-4 Hover Tank' unitType='Tank'>
-		<availability>CS:1-,SL:5,IS:6,Periphery.Deep:6,NIOPS:1-,Periphery:6</availability>
+		<availability>CS:1-,SL:5,IS:6,NIOPS:1-,Periphery.Deep:6,Periphery:6</availability>
 		<model name='(Standard)'>
 			<availability>General:8</availability>
 		</model>
@@ -2423,14 +2423,14 @@
 		</model>
 	</chassis>
 	<chassis name='Partisan Heavy Tank' unitType='Tank'>
-		<availability>CC:6,MOC:9,OA:5,LA:8,FWL:7,IS:8,Periphery.Deep:9,FS:7,CIR:6,DC:6,Periphery:9,TC:9</availability>
+		<availability>CC:6,MOC:9,OA:5,LA:8,IS:8,FWL:7,Periphery.Deep:9,FS:7,CIR:6,Periphery:9,TC:9,DC:6</availability>
 		<model name='(Standard)'>
 			<roles>anti aircraft</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Pegasus Scout Hover Tank' unitType='Tank'>
-		<availability>CC:8,MOC:7,OA:7,LA:8,FWL:9,IS:8,Periphery.Deep:7,FS:8,CIR:7,DC:7,Periphery:7,TC:7</availability>
+		<availability>CC:8,MOC:7,OA:7,LA:8,IS:8,FWL:9,Periphery.Deep:7,FS:8,CIR:7,Periphery:7,TC:7,DC:7</availability>
 		<model name='(Sensors)'>
 			<roles>recon</roles>
 			<availability>IS:2</availability>
@@ -2804,7 +2804,7 @@
 		<availability>CC:6,MOC:6,IS:4,FS:6,CIR:4,TC:6,Periphery:2,CS:6,OA:6,LA:6,SL:7,FWL:6,NIOPS:6,DC:6</availability>
 		<model name='(Standard)'>
 			<roles>escort,recon</roles>
-			<availability>CC:8,CS:8,General:8,Periphery.Deep:8,NIOPS:8,MERC:8,Periphery:8</availability>
+			<availability>CC:8,CS:8,General:8,NIOPS:8,Periphery.Deep:8,MERC:8,Periphery:8</availability>
 		</model>
 		<model name='(Royal)'>
 			<availability>SL.R:6</availability>
@@ -3013,7 +3013,7 @@
 	<chassis name='Gotha' unitType='Aero'>
 		<availability>CC:4,MOC:4,IS:2,FS:2,CIR:2,MERC:2,TC:2,CS:9,OA:2,LA:2,Periphery.MW:3,SL:9,Periphery.ME:3,FWL:9,NIOPS:9,DC:2</availability>
 		<model name='GTHA-500'>
-			<availability>CS:6,SL:8,FWL:6,Periphery.Deep:6,NIOPS:6,SL.R:3,Periphery:6</availability>
+			<availability>CS:6,SL:8,FWL:6,NIOPS:6,Periphery.Deep:6,SL.R:3,Periphery:6</availability>
 		</model>
 		<model name='GTHA-300'>
 			<availability>SL:6,FWL:6,SL.R:4</availability>
@@ -3051,7 +3051,7 @@
 		</model>
 	</chassis>
 	<chassis name='Hellcat' unitType='Aero'>
-		<availability>CC:3,MOC:4,OA:4,LA:5,SL:4-,FWL:3,Periphery.Deep:4,FS:5,MERC:6,DC:3,Periphery:4,TC:4</availability>
+		<availability>CC:3,MOC:4,OA:4,LA:5,SL:4-,FWL:3,Periphery.Deep:4,FS:5,MERC:6,Periphery:4,TC:4,DC:3</availability>
 		<model name='HCT-213'>
 			<availability>General:8</availability>
 		</model>
@@ -3131,7 +3131,7 @@
 		</model>
 	</chassis>
 	<chassis name='Sabre' unitType='Aero'>
-		<availability>CC:5-,MOC:5-,OA:5-,LA:5-,SL:5,FWL:5-,IS:5-,Periphery.Deep:5-,FS:5-,MERC:5-,DC:6-,Periphery:5-</availability>
+		<availability>CC:5-,MOC:5-,OA:5-,LA:5-,SL:5,IS:5-,FWL:5-,Periphery.Deep:5-,FS:5-,MERC:5-,Periphery:5-,DC:6-</availability>
 		<model name='SB-27b'>
 			<availability>SL.R:8</availability>
 		</model>
@@ -3150,11 +3150,11 @@
 		</model>
 		<model name='SL-25'>
 			<roles>ground support</roles>
-			<availability>OA:8,SLIE:4,General:8,SL.R:4,DC:8</availability>
+			<availability>OA:8,SLIE:4,General:8,Periphery.Deep:8,SL.R:4,DC:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Seydlitz' unitType='Aero'>
-		<availability>MOC:2,Periphery.R:4,OA:3,LA:6,FWL:2,Periphery.Deep:4,FS:2,CIR:3,MERC:2,DC:2,Periphery:4,TC:2</availability>
+		<availability>MOC:2,Periphery.R:4,OA:3,LA:6,FWL:2,Periphery.Deep:4,FS:2,CIR:3,MERC:2,Periphery:4,TC:2,DC:2</availability>
 		<model name='SYD-21'>
 			<roles>interceptor</roles>
 			<availability>LA:4,General:4,Periphery.Deep:4,FS:4,Periphery:4</availability>
@@ -3274,7 +3274,7 @@
 	<chassis name='Trident' unitType='Aero'>
 		<availability>CC:6,MOC:5,FS:6,MERC:6,CIR:4,TC:5,CS:7,OA:5,LA:3,SL:7,FWL:4,NIOPS:7,DC:6</availability>
 		<model name='TRN-3T'>
-			<availability>CS:8,OA:7,IS:7,Periphery.Deep:7,NIOPS:8,SL.R:4,Periphery:7</availability>
+			<availability>CS:8,OA:7,IS:7,NIOPS:8,Periphery.Deep:7,SL.R:4,Periphery:7</availability>
 		</model>
 		<model name='TRN-3Tb'>
 			<availability>SL.R:8</availability>
@@ -3348,7 +3348,7 @@
 		</model>
 	</chassis>
 	<chassis name='Buccaneer' unitType='Dropship'>
-		<availability>CS:3,IS:6,Periphery.Deep:7,NIOPS:3,MERC:5,Periphery:7</availability>
+		<availability>CS:3,IS:6,NIOPS:3,Periphery.Deep:7,MERC:5,Periphery:7</availability>
 		<model name='(Standard)'>
 			<roles>cargo</roles>
 			<availability>General:8</availability>
@@ -3422,7 +3422,7 @@
 		</model>
 	</chassis>
 	<chassis name='Gazelle' unitType='Dropship'>
-		<availability>CS:4,SL:3,IS:6,Periphery.Deep:6,NIOPS:4,Periphery:6</availability>
+		<availability>CS:4,SL:3,IS:6,NIOPS:4,Periphery.Deep:6,Periphery:6</availability>
 		<model name='(2531)'>
 			<roles>vee carrier</roles>
 			<availability>General:8</availability>

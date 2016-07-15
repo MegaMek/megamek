@@ -1310,7 +1310,7 @@
 		</model>
 	</chassis>
 	<chassis name='Condor Heavy Hover Tank' unitType='Tank'>
-		<availability>CC:3,MOC:3,LA:7,SL:3-,FWL:3,IS:3,SL.R:0,RWR:3,FS:3,DC:3,Periphery:3,TC:3</availability>
+		<availability>CC:3,MOC:3,LA:7,SL:3-,IS:3,FWL:3,SL.R:0,RWR:3,FS:3,Periphery:3,TC:3,DC:3</availability>
 		<model name='(Standard)'>
 			<availability>CC:6,General:8,FS:6</availability>
 		</model>
@@ -2042,7 +2042,7 @@
 		</model>
 	</chassis>
 	<chassis name='Sabre' unitType='Aero'>
-		<availability>CC:5-,MOC:5-,OA:5-,LA:5-,SL:5-,FWL:5-,IS:5-,Periphery.Deep:5-,FS:5-,MERC:5-,DC:6-,Periphery:5-</availability>
+		<availability>CC:5-,MOC:5-,OA:5-,LA:5-,SL:5-,IS:5-,FWL:5-,Periphery.Deep:5-,FS:5-,MERC:5-,Periphery:5-,DC:6-</availability>
 		<model name='SB-26'>
 			<availability>DC:4</availability>
 		</model>
@@ -2054,7 +2054,7 @@
 		<availability>MOC:4,CC:6,IS:6,Periphery.Deep:6,RWR:4,MERC:6,FS:6,Periphery:6,TC:4,OA:4,LA:6,SL:8,FWL:6,DC:6</availability>
 		<model name='SL-25'>
 			<roles>ground support</roles>
-			<availability>OA:8,General:8,SL.R:8,DC:8</availability>
+			<availability>OA:8,General:8,Periphery.Deep:8,SL.R:8,DC:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Seydlitz' unitType='Aero'>
@@ -2084,7 +2084,7 @@
 		</model>
 	</chassis>
 	<chassis name='Thunderbird' unitType='Aero'>
-		<availability>CC:5,MOC:5,OA:5,LA:9,SL:7,FWL:4,IS:5,Periphery.Deep:5,FS:5,DC:5,Periphery:5,TC:5</availability>
+		<availability>CC:5,MOC:5,OA:5,LA:9,SL:7,IS:5,FWL:4,Periphery.Deep:5,FS:5,Periphery:5,TC:5,DC:5</availability>
 		<model name='TRB-D36'>
 			<roles>ground support,escort</roles>
 			<availability>General:8,SL.R:8</availability>

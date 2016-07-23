@@ -61,9 +61,6 @@ super * "woods:1" "" "hq_boring/lf0.png;hq_boring/lf1.png;hq_boring/lf2.png;hq_b
 super * "woods:2" "" "hq_boring/hf0.png;hq_boring/hf1.png;hq_boring/hf2.png"
 super * "woods:3" "" "bloodwolf/hq_boring/uhf0.png"
 
-include "StandardIncludes/BasicBridges.tileinc"
-include "StandardIncludes/BasicRoads.tileinc"
-
 super * "water:0" "" "bloodwolf/hq_boring/blue_water_0.png"
 super * "water:1" "" "bloodwolf/hq_boring/blue_water_1.png"
 super * "water:2" "" "bloodwolf/hq_boring/blue_water_2.png"
@@ -71,11 +68,15 @@ super * "water:3" "" "bloodwolf/hq_boring/blue_water_3.png"
 super * "water:4" "" "bloodwolf/hq_boring/blue_water_4.png"
 super * "water:*" "" "bloodwolf/hq_boring/blue_water_4.png"
 
+include "StandardIncludes/BasicBridges.tileinc"
+include "StandardIncludes/BasicRoads.tileinc"
+
 super * "ice:1" "" "bloodwolf/hq_boring/ice_0.png;bloodwolf/hq_boring/ice_1.png;bloodwolf/hq_boring/ice_2.png"
 
 super * "fire:1" "" "bloodwolf/hq_boring/fire_0.png;bloodwolf/hq_boring/fire_1.png;bloodwolf/hq_boring/fire_2.png"
 
 base 0 "" "" "bloodwolf/hq_boring/beige_plains_0.png"
+base * "" "" "bloodwolf/hq_boring/beige_plains_0.png"
 base 1 "" "" "bloodwolf/hq_boring/beige_plains_1.png"
 base 2 "" "" "bloodwolf/hq_boring/beige_plains_2.png"
 base 3 "" "" "bloodwolf/hq_boring/beige_plains_3.png"
@@ -93,6 +94,7 @@ base -3 "mud:1" "" "bloodwolf/hq_boring/mud_-3.gif"
 base -2 "mud:1" "" "bloodwolf/hq_boring/mud_-2.gif"
 base -1 "mud:1" "" "bloodwolf/hq_boring/mud_-1.gif"
 base 0 "mud:1" "" "bloodwolf/hq_boring/mud_0.gif"
+base * "mud:1" "" "bloodwolf/hq_boring/mud_0.gif"
 base 1 "mud:1" "" "bloodwolf/hq_boring/mud_1.gif"
 base 2 "mud:1" "" "bloodwolf/hq_boring/mud_2.gif"
 base 3 "mud:1" "" "bloodwolf/hq_boring/mud_3.gif"
@@ -101,8 +103,17 @@ base -3 "sand:1" "" "bloodwolf/hq_boring/sand_-3.png"
 base -2 "sand:1" "" "bloodwolf/hq_boring/sand_-2.png"
 base -1 "sand:1" "" "bloodwolf/hq_boring/sand_-1.png"
 base 0 "sand:1" "" "bloodwolf/hq_boring/sand_0.png"
+base * "sand:1" "" "bloodwolf/hq_boring/sand_0.png"
 base 1 "sand:1" "" "bloodwolf/hq_boring/sand_1.png"
 base 2 "sand:1" "" "bloodwolf/hq_boring/sand_2.png"
 base 3 "sand:1" "" "bloodwolf/hq_boring/sand_3.png"
+
+super * "building:4;bldg_elev:1;bldg_cf:*" "" "singlehex/hardened_1.gif;bloodwolf/singlehex/hardened_crate_0.gif;bloodwolf/singlehex/hardened_crate_1.gif;bloodwolf/singlehex/hardened_crate_2.gif"
+
+super * "building:3;bldg_elev:1;bldg_cf:*" "" "singlehex/heavy_1.gif;bloodwolf/singlehex/heavy_crate_0.gif;bloodwolf/singlehex/heavy_crate_1.gif;bloodwolf/singlehex/heavy_crate_2.gif"
+
+super * "building:2;bldg_elev:1;bldg_cf:*" "" "singlehex/medium_1.gif;bloodwolf/singlehex/medium_crate_0.gif;bloodwolf/singlehex/medium_crate_1.gif;bloodwolf/singlehex/medium_crate_2.gif"
+
+super * "building:1;bldg_elev:1;bldg_cf:*" "" "singlehex/light_6.gif;bloodwolf/singlehex/light_crate_0.gif;bloodwolf/singlehex/light_crate_1.gif;bloodwolf/singlehex/light_crate_2.gif"
 
 include "atmospheric.tileset"

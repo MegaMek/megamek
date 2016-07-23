@@ -152,37 +152,52 @@ degrees (North becomes South, East becomes West, and vice versa) by clicking
 on the "Rotate Board" checkbox; the fact that the map is rotated will be shown
 in the middle column.
 
-[SURPRISE] means that the Server will pick a random map and not tell you what
-it has picked until the game starts.  [RANDOM] means that the Server will pick
+**[SURPRISE]** means that the Server will pick a random map and not tell you what
+it has picked until the game starts.  
+
+**[RANDOM]** means that the Server will pick
 a map as soon as you hit "Okay".
 
-[GENERATED] means that the server will create random terrain for you to play on.
+**[GENERATED]** means that the server will create random terrain for you to play on.
 You need to use the "generated map settings" button to select what kind of terrain
 you want.
+
 There is a set of settings with drop down list of choices.  For most settings, you
 can pick "none", "low", "medium" or "high". Except for cities, where you pick a 
 type of city instead.
+
 **Theme** - leave blank for the default theme, or enter a theme supported by your tileset.
         grass, lunar, mars, snow are supported by the standard tileset
+        
 **Elevation** - how hilly you want the map
+
 **Cliffs** - chance of 2+ level elevation changes, if you have enough elevation already
+
 **Woods** - higher settings have more and larger tree patchs and more heavy woods
+
 **Roughs** - higher settings have more and larger rough patches
+
 **Lakes** - works the same as woods, but deep water instead of heavy woods
 Swamps/Pavement/Ice/Rubble/Fortified all work like roughs. 
 Fortified hexes are described in the MaxTech rulebook.
+
 **River** - chance to have a river running across the map
+
 **Road** - chance to have a single road running across the map
+
 **Craters** - chance for craters, also the size and number.  Good for a "moonscape" map
+
 **City:**
 **HUB** - roads wander out from the centre with plenty of twists and turns. A common
         pattern for older european cities.
+        
 **GRID** - vertical and horizontal roads divide the city into rectangular blocks. A pattern
         common in newer cities, especially in north america and asia.
+        
 **METRO** - a grid with roads forming a diagonal X from the centre as well. 
 
 Water and swamp will affect the city plan, as the builders will have to make bridges to
-        cross it or just give up and stop the road at the edge.
+        cross it or just give up and stop the road at the edge.        
 Mountain tops (4+ height) are expensive to build on, so they will only build in the valleys. 
 Other terrain will just be bulldozed in the name of progress, though you may find a few
         hexes left between buildings.  

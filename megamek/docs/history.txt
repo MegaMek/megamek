@@ -6,6 +6,7 @@ v0.41.21
 + Data New Sprites and some unit fixes.
 + Bug: +4 Ice PSR penalty applied to Hover/WiGE instead of not Hover/WiGE
 + Bug: Fixed error in blue shield failure report
++ Issue #280: Adding snow theme to default tileset
 
 v0.41.20
 + Data: Date fixes for units

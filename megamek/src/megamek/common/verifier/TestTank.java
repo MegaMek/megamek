@@ -443,6 +443,10 @@ public class TestTank extends TestEntity {
 
     @Override
     public double getWeightPowerAmp() {
+        if (getEntity().isSupportVehicle() && (getEntity().getWeight() < 5)) {
+            return 0;
+        }
+    	
         if (!engine.isFusion() && (engine.getEngineType() != Engine.FISSION)) {
             double weight = 0;
             for (Mounted m : tank.getWeaponList()) {

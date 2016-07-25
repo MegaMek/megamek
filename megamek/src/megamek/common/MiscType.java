@@ -647,6 +647,7 @@ public class MiscType extends EquipmentType {
             // round to half ton
             weaponWeight /= 10;
             return Math.ceil(weaponWeight * 2.0f) / 2.0f;
+            
         } else if (hasFlag(F_PINTLE_TURRET)) {
             double weaponWeight = 0;
             // 5% of linked weapons' weight
@@ -655,14 +656,19 @@ public class MiscType extends EquipmentType {
                     weaponWeight += m.getType().getTonnage(entity);
                 }
             }
-            // TODO: round to kilogram
-            weaponWeight /= 20;
-            return weaponWeight;
+            
+            TestEntity.Ceil roundWeight = TestEntity.Ceil.HALFTON;
+            if (entity.isSupportVehicle() && (entity.getWeight() < 5)) {
+                roundWeight = TestEntity.Ceil.KILO;
+            }
+            double weight = weaponWeight / 20;
+            return TestEntity.ceil(weight, roundWeight);
+           
         } else if (hasFlag(F_ARMORED_MOTIVE_SYSTEM)) {
             if (TechConstants.isClan(getTechLevel(entity.getTechLevelYear()))) {
-                return (entity.getWeight() * 0.1f);
+                return Math.round((entity.getWeight() * 0.1f) * 2.0f) / 2.0f;
             } else {
-                return (entity.getWeight() * 0.15f);
+                return Math.round((entity.getWeight() * 0.15f) * 2.0f) / 2.0f;
             }
         } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
@@ -818,6 +824,7 @@ public class MiscType extends EquipmentType {
             }
             double weight = cargoTonnage / 20f;
             return TestEntity.ceil(weight, roundWeight);
+            
         } else if (hasFlag(F_BASIC_FIRECONTROL)) {
             // 5% of weapon weight
             double weaponWeight = 0;
@@ -829,7 +836,8 @@ public class MiscType extends EquipmentType {
                 roundWeight = TestEntity.Ceil.KILO;
             }
             double weight = weaponWeight / 20;
-            return TestEntity.ceil(weight, roundWeight);
+                        return TestEntity.ceil(weight, roundWeight);
+        
         } else if (hasFlag(F_ADVANCED_FIRECONTROL)) {
             // 10% of weapon weight
             double weaponWeight = 0;
@@ -7757,7 +7765,7 @@ public class MiscType extends EquipmentType {
 
         misc.name = "Sprayer";
         misc.setInternalName("Tank Sprayer");
-        misc.tonnage = 0.015f;
+        misc.tonnage = 0.015;
         misc.criticals = 1;
         misc.cost = 1000;
         misc.flags = misc.flags.or(F_TANK_EQUIPMENT).or(F_SPRAYER);
@@ -9833,7 +9841,7 @@ public class MiscType extends EquipmentType {
 
     public static MiscType createManipulator() {
         MiscType misc = new MiscType();
-        misc.tonnage = 0.01f;
+        misc.tonnage = 0.01;
         misc.cost = 7500;
         misc.criticals = 1;
         misc.techLevel.put(3071, TechConstants.T_ALLOWED_ALL);

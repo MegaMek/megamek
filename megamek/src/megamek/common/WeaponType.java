@@ -317,7 +317,8 @@ public class WeaponType extends EquipmentType {
         int mRange = getMediumRange();
         int lRange = getLongRange();
         int eRange = getExtremeRange();
-        if (getAmmoType() == AmmoType.T_ATM) {
+        boolean hasLoadedAmmo = (weapon.getLinked() != null);
+        if ((getAmmoType() == AmmoType.T_ATM) && hasLoadedAmmo) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
             if ((atype.getAmmoType() == AmmoType.T_ATM) && (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)) {
                 minRange = 4;
@@ -333,7 +334,7 @@ public class WeaponType extends EquipmentType {
                 eRange = 12;
             }
         }
-        if (getAmmoType() == AmmoType.T_IATM) {
+        if ((getAmmoType() == AmmoType.T_IATM) && hasLoadedAmmo) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
             if ((atype.getAmmoType() == AmmoType.T_IATM) && (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE)) {
                 minRange = 4;
@@ -349,7 +350,7 @@ public class WeaponType extends EquipmentType {
                 eRange = 12;
             }
         }
-        if (getAmmoType() == AmmoType.T_MML) {
+        if ((getAmmoType() == AmmoType.T_MML) && hasLoadedAmmo) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
             if (atype.hasFlag(AmmoType.F_MML_LRM) || (getAmmoType() == AmmoType.T_LRM_TORPEDO)) {
                 minRange = 6;

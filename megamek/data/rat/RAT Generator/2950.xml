@@ -42,7 +42,6 @@
 		<ratName>Clan</ratName>
 		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
 		<parentFaction></parentFaction>
-		<salvage pct='0'></salvage>
 		<weightDistribution era='2950' unitType='Mek'>2,3,3,1,0</weightDistribution>
 		<weightDistribution era='2950' unitType='Tank'>4,1,3,2</weightDistribution>
 		<weightDistribution era='2950' unitType='Aero'>1,1,1</weightDistribution>
@@ -112,7 +111,7 @@
 	<faction key='CGB' name='Clan Ghost Bear' clan='true' periphery='false'>
 		<nameChange year='3060'>Ghost Bear Dominion</nameChange>
 		<nameChange year='3103'>Rasalhague Dominion</nameChange>
-		<years>2807-</years>
+		<years>2807-3103</years>
 		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
 		<pctOmni>0,0,20,70,80</pctOmni>
@@ -211,7 +210,7 @@
 	</faction>
 	<faction key='CSR' name='Clan Snow Raven' clan='true' periphery='false'>
 		<nameChange year='3083'>Raven Alliance</nameChange>
-		<years>2807-</years>
+		<years>2807-3082</years>
 		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
 		<pctOmni>15,15,50,60,80</pctOmni>
@@ -266,6 +265,7 @@
 		<years>2788-3081</years>
 		<ratingLevels>B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
+		<pctSL>50,75</pctSL>
 	</faction>
 	<faction key='DC' name='Draconis Combine' clan='false' periphery='false'>
 		<years>2319-</years>
@@ -380,8 +380,9 @@
 	</faction>
 	<faction key='NIOPS' name='Niops Association' clan='false' periphery='true'>
 		<years>2765-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>Periphery.CM</parentFaction>
+		<pctSL>90</pctSL>
 		<salvage pct='5'>FWL:10,MH:1</salvage>
 	</faction>
 	<faction key='NC' name='Nueva Castille' clan='false' periphery='true'>
@@ -394,7 +395,7 @@
 	</faction>
 	<faction key='OA' name='Outworlds Alliance' clan='false' periphery='true'>
 		<nameChange year='3083'>Raven Alliance (AMC)</nameChange>
-		<years>2413-</years>
+		<years>2413-3082</years>
 		<ratName>Outworlds</ratName>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.OS</parentFaction>
@@ -483,7 +484,7 @@
 		<years>2923-3079</years>
 		<ratingLevels>C</ratingLevels>
 		<parentFaction>FWL</parentFaction>
-		<salvage pct='80'>CC:80,LA:5</salvage>
+		<salvage pct='80'></salvage>
 	</faction>
 	<faction key='FS.AH' name='Avalon Hussars' clan='false' periphery='false'>
 		<years>2317-</years>
@@ -597,7 +598,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FS.DLC' name='Deneb Light Cavalry' clan='false' periphery='false'>
-		<years>2780-</years>
+		<years>2780-3081</years>
 		<ratingLevels>C</ratingLevels>
 		<parentFaction>FS</parentFaction>
 		<salvage pct='5'></salvage>
@@ -794,7 +795,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.MM' name='Marik Militia' clan='false' periphery='false'>
-		<years>2238-3079</years>
+		<years>2238-3079,3139-</years>
 		<ratingLevels>F</ratingLevels>
 		<parentFaction>FWL</parentFaction>
 		<salvage pct='5'></salvage>
@@ -839,7 +840,7 @@
 		<parentFaction>TC</parentFaction>
 	</faction>
 	<faction key='DC.PH' name='Proserpina Hussars' clan='false' periphery='false'>
-		<years>2319-</years>
+		<years>2319-3082</years>
 		<ratingLevels>C</ratingLevels>
 		<parentFaction>DC</parentFaction>
 		<salvage pct='5'></salvage>
@@ -893,7 +894,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='LA.SR' name='Skye Rangers' clan='false' periphery='false'>
-		<years>2341-</years>
+		<years>2341-3081</years>
 		<ratingLevels>C</ratingLevels>
 		<parentFaction>LA</parentFaction>
 		<salvage pct='5'></salvage>
@@ -3501,6 +3502,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='J-37 Ordnance Transport' unitType='Tank'>
+		<availability>General:1</availability>
+		<model name='(Original)'>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
 	<chassis name='J. Edgar Light Hover Tank' unitType='Tank'>
 		<availability>CC:3,MOC:5,HL:3,IS:4,Periphery.Deep:5,FS:3,CIR:4,Periphery:5,TC:7,CS:4-,OA:5,LA:4,FWL:3,NIOPS:4-,DC:6</availability>
 		<model name='(Standard)'>
@@ -3771,6 +3778,25 @@
 		<model name='(Standard)'>
 			<roles>support,engineer</roles>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Prowler Multi-Terrain Vehicle' unitType='Tank'>
+		<availability>General:4</availability>
+		<model name='(Support)'>
+			<roles>apc</roles>
+			<availability>IS:4,Periphery:4</availability>
+		</model>
+		<model name='(Standard)'>
+			<roles>support</roles>
+			<availability>CLAN:8</availability>
+		</model>
+		<model name='(Sealed)'>
+			<roles>support</roles>
+			<availability>IS:4</availability>
+		</model>
+		<model name='(Succession Wars)'>
+			<roles>support</roles>
+			<availability>IS:8,Periphery:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Puma Assault Tank' unitType='Tank'>

@@ -117,7 +117,7 @@
 	</faction>
 	<faction key='NIOPS' name='Niops Association' clan='false' periphery='true'>
 		<years>2765-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>Periphery.CM</parentFaction>
 		<salvage pct='5'>FWL:10</salvage>
 	</faction>
@@ -136,7 +136,7 @@
 	</faction>
 	<faction key='OA' name='Outworlds Alliance' clan='false' periphery='true'>
 		<nameChange year='3083'>Raven Alliance (AMC)</nameChange>
-		<years>2413-</years>
+		<years>2413-3082</years>
 		<ratName>Outworlds</ratName>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.OS</parentFaction>
@@ -328,7 +328,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FS.DLC' name='Deneb Light Cavalry' clan='false' periphery='false'>
-		<years>2780-</years>
+		<years>2780-3081</years>
 		<ratingLevels>C</ratingLevels>
 		<parentFaction>FS</parentFaction>
 		<salvage pct='5'></salvage>
@@ -450,7 +450,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.MM' name='Marik Militia' clan='false' periphery='false'>
-		<years>2238-3079</years>
+		<years>2238-3079,3139-</years>
 		<ratingLevels>F</ratingLevels>
 		<parentFaction>FWL</parentFaction>
 		<salvage pct='5'></salvage>
@@ -496,7 +496,7 @@
 		<parentFaction>TC</parentFaction>
 	</faction>
 	<faction key='DC.PH' name='Proserpina Hussars' clan='false' periphery='false'>
-		<years>2319-</years>
+		<years>2319-3082</years>
 		<ratingLevels>C</ratingLevels>
 		<parentFaction>DC</parentFaction>
 		<salvage pct='5'></salvage>
@@ -545,7 +545,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='LA.SR' name='Skye Rangers' clan='false' periphery='false'>
-		<years>2341-</years>
+		<years>2341-3081</years>
 		<ratingLevels>C</ratingLevels>
 		<parentFaction>LA</parentFaction>
 		<salvage pct='5'></salvage>
@@ -1426,6 +1426,13 @@
 		</model>
 		<model name='ON1-V'>
 			<availability>IS:3,TC:3</availability>
+		</model>
+	</chassis>
+	<chassis name='Osprey' unitType='Mek'>
+		<availability>SL.R:2</availability>
+		<model name='OSP-15'>
+			<roles>urban,fire support</roles>
+			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Ostroc' unitType='Mek'>
@@ -2447,6 +2454,17 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Prowler Multi-Terrain Vehicle' unitType='Tank'>
+		<availability>General:4</availability>
+		<model name='(Standard)'>
+			<roles>support</roles>
+			<availability>General:8</availability>
+		</model>
+		<model name='(ECM)'>
+			<roles>support</roles>
+			<availability>General:4</availability>
+		</model>
+	</chassis>
 	<chassis name='Puma Assault Tank' unitType='Tank'>
 		<availability>MOC:5,CC:8,Periphery.Deep:4,MERC:6,FS:8,CIR:6,Periphery:4,TC:5,CS:8,OA:5,LA:8,SL:7-,FWL:8,NIOPS:8,SL.R:6,DC:7</availability>
 		<model name='PAT-005'>
@@ -2841,6 +2859,12 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Manta Fast Attack Submarine' unitType='Naval'>
+		<availability>SL:6</availability>
+		<model name='(Standard)'>
+			<availability>SL:8</availability>
+		</model>
+	</chassis>
 	<chassis name='Mauna Kea Command Vessel' unitType='Naval'>
 		<availability>General:7</availability>
 		<model name='(LRT)'>
@@ -2851,6 +2875,12 @@
 		</model>
 		<model name='(LRM)'>
 			<availability>General:4</availability>
+		</model>
+	</chassis>
+	<chassis name='Moray Heavy Attack Submarine' unitType='Naval'>
+		<availability>SL:4</availability>
+		<model name='(Original)'>
+			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Neptune Submarine' unitType='Naval'>
@@ -3837,6 +3867,13 @@
 		<availability>FS:2</availability>
 		<model name='(2557)'>
 			<roles>asf carrier</roles>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Newgrange Yardship' unitType='Warship'>
+		<availability>SL:4</availability>
+		<model name='(Standard)'>
+			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

@@ -512,6 +512,11 @@ public class MechTileset {
                         + fin.getPath());
             }
             image = ImageUtil.loadImageFromFile(fin.toString(), comp.getToolkit());
+            if (image == null) {
+                System.out.println("Received null image from "
+                        + "ImageUtil.loadImageFromFile!  File: "
+                        + fin.toString());
+            }
         }
     }
 }

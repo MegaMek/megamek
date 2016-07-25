@@ -561,6 +561,9 @@ public class HexTileset {
                 Image image = ImageUtil.loadImageFromFile(imgFile.toString(), comp.getToolkit());
                 if(null != image) {
                     images.add(image);
+                } else {
+                    System.out.println("Received null image from "
+                            + "ImageUtil.loadImageFromFile!  File: " + imgFile);
                 }
             }
         }

@@ -684,7 +684,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                 pgMech.grabPixels();
             } catch (InterruptedException e) {
                 System.err
-                        .println("EntityImage.applyColor(): Failed to grab pixels for mech image." + e.getMessage()); //$NON-NLS-1$
+                        .println("EntityImage.applyColor(): Failed to grab pixels for mech image. " + e.getMessage()); //$NON-NLS-1$
                 return image;
             }
             if ((pgMech.getStatus() & ImageObserver.ABORT) != 0) {
@@ -700,7 +700,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                     pgCamo.grabPixels();
                 } catch (InterruptedException e) {
                     System.err
-                            .println("EntityImage.applyColor(): Failed to grab pixels for camo image." + e.getMessage()); //$NON-NLS-1$
+                            .println("EntityImage.applyColor(): Failed to grab pixels for camo image. " + e.getMessage()); //$NON-NLS-1$
                     return image;
                 }
                 if ((pgCamo.getStatus() & ImageObserver.ABORT) != 0) {

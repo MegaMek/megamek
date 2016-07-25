@@ -23,6 +23,7 @@ import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,6 +113,11 @@ public final class ImageUtil {
     public static class AWTImageLoader implements ImageLoader {
         @Override
         public Image loadImage(String fileName, Toolkit toolkit) {
+            File fin = new File(fileName);
+            if (!fin.exists()) {
+                System.out.println("Trying to load image for a non-existant "
+                        + "file! Path: " + fileName);
+            }
             ToolkitImage result = (ToolkitImage) toolkit.getImage(fileName);
             if(null == result) {
                 return null;

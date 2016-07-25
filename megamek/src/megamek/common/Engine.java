@@ -282,11 +282,14 @@ public class Engine implements Serializable {
      * @return true if it is not an internal combustion engine.
      */
     public boolean isFusion() {
-        if ((engineType == COMBUSTION_ENGINE) || (engineType == FISSION) || (engineType == FUEL_CELL) || (engineType == NONE)) {
+        if ((engineType == COMBUSTION_ENGINE) || (engineType == FISSION) || (engineType == FUEL_CELL) || (engineType == NONE)
+        		|| (engineType == BATTERY) || (engineType == SOLAR) || (engineType == STEAM) || (engineType == MAGLEV)      		        		
+        		) {
             return false;
         }
         return true;
     }
+ 
 
     /**
      * Returns the weight of the engine in tons, rounded to the next highest half

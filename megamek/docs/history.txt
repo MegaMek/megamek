@@ -11,6 +11,8 @@ v0.41.21
 + Issue #264: Dropship.isLocationProhibited Error
 + Issue #262: Unloaded ammo in ATMs and MMLs can cause NPEs
 + Issue #261: Host cannot deploy as observer if commander killed victory active
++ Unit Fixes
++ Bug: Engine missing some engine types when determining if fusion.
 
 v0.41.20 (2016-06-27 02:00)
 + Data: Date fixes for units

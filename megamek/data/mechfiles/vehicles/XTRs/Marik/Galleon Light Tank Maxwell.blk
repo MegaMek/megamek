@@ -28,6 +28,10 @@ Maxwell
 IS Level 4
 </type>
 
+<tonnage>
+30.0
+</tonnage>
+
 <motion_type>
 Tracked
 </motion_type>
@@ -36,14 +40,17 @@ Tracked
 troopspace:4.0
 </transporters>
 
-<cruiseMP>
-6
-</cruiseMP>
-
 <engine_type>
 2
 </engine_type>
 
+<cruiseMP>
+6
+</cruiseMP>
+
+<armor_type>
+0
+</armor_type>
 <armor>
 18
 18
@@ -81,8 +88,4 @@ ISERMediumLaser
 <source>
 XTRO Marik - Jihad
 </source>
-
-<tonnage>
-30.0
-</tonnage>
 

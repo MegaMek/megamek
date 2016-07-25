@@ -315,6 +315,7 @@ public class Engine implements Serializable {
                     .getEngineTechRating()];
             double weight = entity.getBaseEngineValue() * movementFactor
                     * engineWeightMult * entity.getWeight();
+            weight = TestEntity.setPrecision(weight, 4);
             roundWeight = TestEntity.Ceil.HALFTON;
             if (entity.getWeight() < 5) {
                 roundWeight = TestEntity.Ceil.KILO;

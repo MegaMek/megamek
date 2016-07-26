@@ -73,7 +73,8 @@ import megamek.common.util.DirectoryItems;
 public class TilesetManager implements IPreferenceChangeListener, ITilesetManager {
     public static final String DIR_NAME_WRECKS = "wrecks"; //$NON-NLS-1$
 
-    private static final String FILENAME_DEFAULT_HEX_SET = "defaulthexset.txt"; //$NON-NLS-1$
+    public static final String FILENAME_DEFAULT_HEX_SET = "defaulthexset.txt"; //$NON-NLS-1$
+
     private static final String FILENAME_NIGHT_IMAGE = new File("transparent", "night.png").toString();  //$NON-NLS-1$  //$NON-NLS-2$
     private static final String FILENAME_HEX_MASK = new File("transparent", "HexMask.png").toString();  //$NON-NLS-1$  //$NON-NLS-2$
     private static final String FILENAME_ARTILLERY_AUTOHIT_IMAGE = "artyauto.gif"; //$NON-NLS-1$
@@ -737,7 +738,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         }
     }
 
-    private void createDefaultHexSet(){
+    public static void createDefaultHexSet(){
         try {
             FileOutputStream fos = new FileOutputStream(new File(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET));
             PrintStream p = new PrintStream(fos);

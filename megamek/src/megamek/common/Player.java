@@ -318,9 +318,11 @@ public final class Player extends TurnOrdered implements IPlayer {
 
     @Override
     public boolean isEnemyOf(IPlayer other) {
-        return ((id != other.getId()) 
-                && ((team == TEAM_NONE) || (team == TEAM_UNASSIGNED) 
-                        || (team != other.getTeam())));
+        if(null == other) {
+            return true;
+        }
+        return (id != other.getId()) 
+            && ((team == TEAM_NONE) || (team == TEAM_UNASSIGNED) || (team != other.getTeam()));
     }
 
     /**

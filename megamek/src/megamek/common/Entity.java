@@ -1167,13 +1167,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * be an enemy of itself.
      */
     public boolean isEnemyOf(Entity other) {
-        if (other == null) {
+        if(null == other) {
             return false;
         }
-        if (null == owner) {
+        if(null == owner) {
             return ((id != other.getId()) && (ownerId != other.ownerId));
         }
-        return (id != other.getId()) && owner.isEnemyOf(other.getOwner());
+        return (id != other.getId())
+            && ((null == other.getOwner()) || owner.isEnemyOf(other.getOwner()));
     }
 
     public Crew getCrew() {

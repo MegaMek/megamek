@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Vector;
 
+import megamek.client.ui.swing.TilesetManager;
 import megamek.common.Configuration;
 import megamek.common.ITerrain;
 import megamek.common.util.StringUtil;
@@ -59,8 +60,7 @@ public class HexSetTest {
      */
     private static void testFile(File dir, String filename, int incDepth)
             throws IOException {
-        System.out.println("Listing Errors for " + filename);
-        System.out.println("\n\n");
+        System.out.println("Checking file: " + filename);
 
         // make inpustream for board
         Reader r = new BufferedReader(new FileReader(new File(dir, filename)));
@@ -71,6 +71,7 @@ public class HexSetTest {
         st.commentChar('#');
         st.quoteChar('"');
         st.wordChars('_', '_');
+        @SuppressWarnings("unused")
         int bases, supers, orthos;
         bases = supers = orthos = 0;
         while (st.nextToken() != StreamTokenizer.TT_EOF) {
@@ -78,7 +79,6 @@ public class HexSetTest {
             int elevation = 0;
             // int levity = 0;
             String terrain = null;
-            @SuppressWarnings("unused")
             String theme = null;
             String imageName = null;
             if ((st.ttype == StreamTokenizer.TT_WORD)
@@ -112,7 +112,13 @@ public class HexSetTest {
                 Vector<String> filenames = StringUtil.splitString(imageName,
                         ";"); //$NON-NLS-1$
                 for (String entryFile : filenames) {
-                    testImageName(dir, entryFile, terrain);
+                    String entryName;
+                    if ((theme == null) || theme.equals("")) {
+                        entryName = terrain;
+                    } else {
+                        entryName = terrain + " " +  theme;
+                    }
+                    testImageName(dir, entryFile, entryName);
                 }
             } else if ((st.ttype == StreamTokenizer.TT_WORD) &&
                     st.sval.equals("include")) {
@@ -120,19 +126,12 @@ public class HexSetTest {
                 incDepth++;
                 if (incDepth < 100) {
                     String incFile = st.sval;
-                    System.out.println("Including "+incFile); //$NON-NLS-1$
                     testFile(dir, incFile, incDepth);
                 }
             }
         }
         r.close();
-
-        System.out.println("hexTileset: loaded " + bases + //$NON-NLS-1$ 
-                " base images"); //$NON-NLS-1$
-        System.out.println("hexTileset: loaded " + supers + //$NON-NLS-1$
-                " super images"); //$NON-NLS-1$
-        System.out.println("hexTileset: loaded " + orthos + //$NON-NLS-1$
-                " ortho images"); //$NON-NLS-1$
+        System.out.println("\n");
         incDepth--;
     }
     
@@ -179,6 +178,10 @@ public class HexSetTest {
                     testFile(hexesDir, tileset, 0);
                 }
             }
+            // Create the default hexset, so we can validate it as well
+            TilesetManager.createDefaultHexSet();
+            testFile(hexesDir, TilesetManager.FILENAME_DEFAULT_HEX_SET, 0);
+
         }catch (IOException e){
             System.out.println("IOException!");
             e.printStackTrace();

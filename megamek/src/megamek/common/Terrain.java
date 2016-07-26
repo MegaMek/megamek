@@ -352,7 +352,7 @@ public class Terrain implements ITerrain, Serializable {
             break;
         case Terrains.ICE:
             if ((moveMode != EntityMovementMode.HOVER)
-                    || (moveMode != EntityMovementMode.WIGE)) {
+                    && (moveMode != EntityMovementMode.WIGE)) {
                 roll.addModifier(4, "Ice");
             }
             break;

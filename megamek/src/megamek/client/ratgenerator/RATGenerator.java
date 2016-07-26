@@ -378,7 +378,7 @@ public class RATGenerator {
 		 * to conform to the given ratio.
 		 */
 
-		if (weightClasses.size() > 0) {
+		if (weightClasses.size() > 1) {
 			ArrayList<Integer> wcd = fRec.getWeightDistribution(early, unitType);
 			if (wcd != null && wcd.size() > 0) {
 				double total = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
@@ -541,7 +541,7 @@ public class RATGenerator {
 		if (stats.getMin() < 0.5) {
 			adj = 0.5 / stats.getMin();
 			if (stats.getMax() * adj > 1000.0) {
-				adj = 1000.0 / (stats.getMax() * adj);
+				adj = 1000.0 / stats.getMax();
 			}
 		}
 		

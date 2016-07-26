@@ -151,7 +151,12 @@ public class HexTileset {
         for (Iterator<HexEntry> i = ortho.iterator(); i.hasNext();) {
             HexEntry entry = i.next();
             if (orthoMatch(hex, entry.getHex()) >= 1.0) {
-                matches.add(entry.getImage(comp, hex.getCoords().hashCode()));
+                Image img = entry.getImage(comp, hex.getCoords().hashCode());
+                if (img != null) {
+                    matches.add(img);
+                } else {
+                    matches.add(ImageUtil.createAcceleratedImage(HEX_W, HEX_H));
+                }
                 // remove involved terrain from consideration
                 int terrTypes[] = entry.getHex().getTerrainTypes();
                 for (int j = 0; j < terrTypes.length; j++) {
@@ -177,7 +182,12 @@ public class HexTileset {
         for (Iterator<HexEntry> i = supers.iterator(); i.hasNext();) {
             HexEntry entry = i.next();
             if (superMatch(hex, entry.getHex()) >= 1.0) {
-                matches.add(entry.getImage(comp, hex.getCoords().hashCode()));
+                Image img = entry.getImage(comp, hex.getCoords().hashCode());
+                if (img != null) {
+                    matches.add(img);
+                } else {
+                    matches.add(ImageUtil.createAcceleratedImage(HEX_W, HEX_H));
+                }
                 // remove involved terrain from consideration
                 int terrTypes[] = entry.getHex().getTerrainTypes();
                 for (int j = 0; j < terrTypes.length; j++) {
@@ -222,7 +232,11 @@ public class HexTileset {
             }
         }
 
-        return bestMatch.getImage(comp, hex.getCoords().hashCode());
+        Image img = bestMatch.getImage(comp, hex.getCoords().hashCode());
+        if (img == null) {
+            img = ImageUtil.createAcceleratedImage(HEX_W, HEX_H);
+        }
+        return img;
     }
 
     // perfect match

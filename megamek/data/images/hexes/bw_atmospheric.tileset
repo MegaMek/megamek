@@ -108,12 +108,12 @@ base 1 "sand:1" "" "bloodwolf/hq_boring/sand_1.png"
 base 2 "sand:1" "" "bloodwolf/hq_boring/sand_2.png"
 base 3 "sand:1" "" "bloodwolf/hq_boring/sand_3.png"
 
-super * "building:4;bldg_elev:1;bldg_cf:*" "" "singlehex/hardened_1.gif;bloodwolf/singlehex/hardened_crate_0.gif;bloodwolf/singlehex/hardened_crate_1.gif;bloodwolf/singlehex/hardened_crate_2.gif"
+#super * "building:4;bldg_elev:1;bldg_cf:*" "" "singlehex/hardened_1.gif;bloodwolf/singlehex/hardened_crate_0.gif;bloodwolf/singlehex/hardened_crate_1.gif;bloodwolf/singlehex/hardened_crate_2.gif"
 
-super * "building:3;bldg_elev:1;bldg_cf:*" "" "singlehex/heavy_1.gif;bloodwolf/singlehex/heavy_crate_0.gif;bloodwolf/singlehex/heavy_crate_1.gif;bloodwolf/singlehex/heavy_crate_2.gif"
+#super * "building:3;bldg_elev:1;bldg_cf:*" "" "singlehex/heavy_1.gif;bloodwolf/singlehex/heavy_crate_0.gif;bloodwolf/singlehex/heavy_crate_1.gif;bloodwolf/singlehex/heavy_crate_2.gif"
 
-super * "building:2;bldg_elev:1;bldg_cf:*" "" "singlehex/medium_1.gif;bloodwolf/singlehex/medium_crate_0.gif;bloodwolf/singlehex/medium_crate_1.gif;bloodwolf/singlehex/medium_crate_2.gif"
+#super * "building:2;bldg_elev:1;bldg_cf:*" "" "singlehex/medium_1.gif;bloodwolf/singlehex/medium_crate_0.gif;bloodwolf/singlehex/medium_crate_1.gif;bloodwolf/singlehex/medium_crate_2.gif"
 
-super * "building:1;bldg_elev:1;bldg_cf:*" "" "singlehex/light_6.gif;bloodwolf/singlehex/light_crate_0.gif;bloodwolf/singlehex/light_crate_1.gif;bloodwolf/singlehex/light_crate_2.gif"
+#super * "building:1;bldg_elev:1;bldg_cf:*" "" "singlehex/light_6.gif;bloodwolf/singlehex/light_crate_0.gif;bloodwolf/singlehex/light_crate_1.gif;bloodwolf/singlehex/light_crate_2.gif"
 
 include "atmospheric.tileset"

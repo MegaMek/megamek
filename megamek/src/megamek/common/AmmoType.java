@@ -133,6 +133,9 @@ public class AmmoType extends EquipmentType {
     public static final int T_APDS = 103;
     public static final int NUM_TYPES = 104;
     public static final int T_AC_IMP = 105;
+	public static final int T_GAUSS_IMP = 106;
+	public static final int T_SRM_IMP = 107;
+	public static final int T_LRM_IMP = 108;
 
     // ammo flags
     public static final BigInteger F_MG = BigInteger.valueOf(1).shiftLeft(0);
@@ -210,6 +213,7 @@ public class AmmoType extends EquipmentType {
     public static final long M_PRECISION = 1l << 4;
     public static final long M_TRACER = 1l << 5;
     public static final long M_FLAK = 1l << 6;
+    //public Static final long M_CASELESS -->TODO
 
     // ATM Munition Types
     public static final long M_EXTENDED_RANGE = 1l << 7;
@@ -306,8 +310,7 @@ public class AmmoType extends EquipmentType {
     
     // More SRM+LRM Munitions types
     public static final long M_MINE_CLEARANCE = 1l << 61;
-    
-    
+      
     /*
      * public static final String[] MUNITION_NAMES = { "Standard", "Cluster",
      * "Armor Piercing", "Flechette", "Incendiary", "Incendiary", "Precision",
@@ -686,10 +689,20 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(AmmoType.createISHVAC5Ammo());
         EquipmentType.addType(AmmoType.createISHVAC2Ammo());
         EquipmentType.addType(AmmoType.createISMekTaserAmmo());
+        
+        //IO Equipment
         EquipmentType.addType(AmmoType.createCLImprovedAC2Ammo());
         EquipmentType.addType(AmmoType.createCLImprovedAC5Ammo());
         EquipmentType.addType(AmmoType.createCLImprovedAC10Ammo());
         EquipmentType.addType(AmmoType.createCLImprovedAC20Ammo());
+        EquipmentType.addType(AmmoType.createCLImprovedGaussAmmo());
+        EquipmentType.addType(AmmoType.createCLImprovedSRM2Ammo());
+        EquipmentType.addType(AmmoType.createCLImprovedSRM4Ammo());
+        EquipmentType.addType(AmmoType.createCLImprovedSRM6Ammo());
+        EquipmentType.addType(AmmoType.createCLImprovedLRM5Ammo());
+        EquipmentType.addType(AmmoType.createCLImprovedLRM10Ammo());
+        EquipmentType.addType(AmmoType.createCLImprovedLRM15Ammo());
+        EquipmentType.addType(AmmoType.createCLImprovedLRM20Ammo());
 
         base = AmmoType.createISMML3LRMAmmo();
         lrmAmmos.add(base);
@@ -1264,6 +1277,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Tandem-Charge", 2, M_TANDEM_CHARGE, 2757, TechConstants.T_IS_EXPERIMENTAL));
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD, 2333, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Mine Clearance", 1, M_MINE_CLEARANCE, 3069, TechConstants.T_IS_ADVANCED));
+        //TODO: Harpoon SRMs (TO 369), Tear Gas SRMs (TO 371), RETRO-STREAK (IO 193)
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1276,7 +1290,8 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Fragmentation", 1, M_FRAGMENTATION, 2820, TechConstants.T_CLAN_TW));
         munitions.add(new MunitionMutator("(Clan) Narc-capable", 1, M_NARC_CAPABLE, 2820, TechConstants.T_CLAN_TW));
         munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1, M_ARTEMIS_CAPABLE, 2820, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE, 3061, TechConstants.T_CLAN_EXPERIMENTAL).addTechLevel(3085, TechConstants.T_CLAN_TW));
+		munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE, 3061,
+				TechConstants.T_CLAN_EXPERIMENTAL).addTechLevel(3085, TechConstants.T_CLAN_TW));
         munitions.add(new MunitionMutator("(Clan) Heat-Seeking", 2, M_HEAT_SEEKING, 2820, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("(Clan) Tandem-Charge", 2, M_TANDEM_CHARGE, 2757, TechConstants.T_CLAN_EXPERIMENTAL));
         munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE_WARHEAD, 2820, TechConstants.T_CLAN_ADVANCED));
@@ -1285,6 +1300,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Acid", 2, M_AX_HEAD,3053,TechConstants.T_CLAN_EXPERIMENTAL));
         munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,3055,TechConstants.T_CLAN_UNOFFICIAL));
         munitions.add(new MunitionMutator("(Clan) Mine Clearance", 1, M_MINE_CLEARANCE, 3069, TechConstants.T_CLAN_UNOFFICIAL));
+        //TODO: Harpoon SRMs (TO 369), Tear Gas SRMs (TO 371), RETRO-STREAK (IO 193)
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1336,6 +1352,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Follow The Leader", 2, M_FOLLOW_THE_LEADER, 3053, TechConstants.T_IS_EXPERIMENTAL));
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD, 2333, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Mine Clearance", 1, M_MINE_CLEARANCE, 3069, TechConstants.T_IS_ADVANCED));
+        //TODO (FLARE (230, TM), INCENDIARY (370, TO)
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1364,6 +1381,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Anti-TSM", 1, M_ANTI_TSM,3055,TechConstants.T_CLAN_EXPERIMENTAL));
         munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,3055,TechConstants.T_CLAN_UNOFFICIAL));
         munitions.add(new MunitionMutator("(Clan) Mine Clearance", 1, M_MINE_CLEARANCE, 3069, TechConstants.T_CLAN_UNOFFICIAL));
+        //TODO (FLARE (230, TM), INCENDIARY (370, TO)
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1395,7 +1413,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M, 2620, TechConstants.T_IS_EXPERIMENTAL));
         munitions.add(new MunitionMutator("Flare", 1, M_FLARE, 2620, TechConstants.T_IS_ADVANCED));
         
-        //TO ADD:
+        //TODO:
         //Fuel-Air Mutators (See IO 165)
 
         // Walk through both the base types and the
@@ -1414,7 +1432,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Davy Crockett-M", 5, M_DAVY_CROCKETT_M, 2807, TechConstants.T_CLAN_EXPERIMENTAL));
         munitions.add(new MunitionMutator("Flare", 1, M_FLARE, 2807, TechConstants.T_CLAN_ADVANCED));
         
-        //TO ADD:
+        //TODO:
         //Fuel-Air Mutators (See IO 165)
 
         // Walk through both the base types and the
@@ -1446,7 +1464,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, 1950, TechConstants.T_IS_ADVANCED));
         munitions.add(new MunitionMutator("Flare", 1, M_FLARE, 1950, TechConstants.T_IS_ADVANCED));
         
-        //TO ADD:
+        //TODO:
         //Fuel-Air Mutators (See IO 165)
 
         // Walk through both the base types and the
@@ -1467,7 +1485,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("Flechette", 1, M_FLECHETTE, 1950, TechConstants.T_IS_UNOFFICIAL));
         munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE, 1950, TechConstants.T_IS_UNOFFICIAL));
         
-        //TO ADD:
+        //TODO:
         //Fuel-Air Mutators (See IO 165)
 
         // Walk through both the base types and the
@@ -1488,7 +1506,7 @@ public class AmmoType extends EquipmentType {
         munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE, 2820, TechConstants.T_CLAN_ADVANCED));
         munitions.add(new MunitionMutator("(Clan) Flare", 1, M_FLARE, 2820, TechConstants.T_CLAN_ADVANCED));
         
-        //TO ADD:
+        //TODO:
         //Fuel-Air Mutators (See IO 165)
 
         // Walk through both the base types and the
@@ -2188,7 +2206,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISLRM5Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_INTRO_BOXSET);
         ammo.name = "LRM 5 Ammo";
         ammo.shortName = "LRM 5";
         ammo.setInternalName("IS Ammo LRM-5");
@@ -2202,11 +2219,13 @@ public class AmmoType extends EquipmentType {
         ammo.setModes(new String[]{"", "HotLoad"});
         ammo.bv = 6;
         ammo.cost = 30000;
-        ammo.availRating = new int[]{EquipmentType.RATING_C,
-                EquipmentType.RATING_C, EquipmentType.RATING_C};
-        ammo.introDate = 2300;
-        ammo.techLevel.put(2300, ammo.techLevel.get(3067));
+        ammo.introDate = 2295;
+        ammo.techLevel.put(2295, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.techLevel.put(2300, TechConstants.T_IS_ADVANCED);
+        ammo.techLevel.put(2400, TechConstants.T_INTRO_BOXSET);
+        ammo.availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
         ammo.techRating = RATING_C;
+        ammo.rulesRefs = "229, TM";
 
         return ammo;
     }
@@ -2214,7 +2233,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISLRM10Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_INTRO_BOXSET);
         ammo.name = "LRM 10 Ammo";
         ammo.shortName = "LRM 10";
         ammo.setInternalName("IS Ammo LRM-10");
@@ -2225,22 +2243,23 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 12;
         ammo.bv = 11;
+        ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_C,
-                EquipmentType.RATING_C, EquipmentType.RATING_C};
-        ammo.introDate = 2300;
-        ammo.techLevel.put(2300, ammo.techLevel.get(3067));
+        ammo.introDate = 2295;
+        ammo.techLevel.put(2295, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.techLevel.put(2300, TechConstants.T_IS_ADVANCED);
+        ammo.techLevel.put(2400, TechConstants.T_INTRO_BOXSET);
+        ammo.availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
         ammo.techRating = RATING_C;
-
-        ammo.cost = 30000;
+        ammo.rulesRefs = "229, TM";
 
         return ammo;
     }
 
     private static AmmoType createISLRM15Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_INTRO_BOXSET);
+
         ammo.name = "LRM 15 Ammo";
         ammo.shortName = "LRM 15";
         ammo.setInternalName("IS Ammo LRM-15");
@@ -2254,11 +2273,13 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_C,
-                EquipmentType.RATING_C, EquipmentType.RATING_C};
-        ammo.introDate = 2300;
-        ammo.techLevel.put(2300, ammo.techLevel.get(3067));
+        ammo.introDate = 2295;
+        ammo.techLevel.put(2295, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.techLevel.put(2300, TechConstants.T_IS_ADVANCED);
+        ammo.techLevel.put(2400, TechConstants.T_INTRO_BOXSET);
+        ammo.availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
         ammo.techRating = RATING_C;
+        ammo.rulesRefs = "229, TM";
 
         return ammo;
     }
@@ -2266,7 +2287,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISLRM20Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_INTRO_BOXSET);
         ammo.name = "LRM 20 Ammo";
         ammo.shortName = "LRM 20";
         ammo.setInternalName("IS Ammo LRM-20");
@@ -2280,11 +2300,13 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_C,
-                EquipmentType.RATING_C, EquipmentType.RATING_C};
-        ammo.introDate = 2300;
-        ammo.techLevel.put(2300, ammo.techLevel.get(3067));
+        ammo.introDate = 2295;
+        ammo.techLevel.put(2295, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.techLevel.put(2300, TechConstants.T_IS_ADVANCED);
+        ammo.techLevel.put(2400, TechConstants.T_INTRO_BOXSET);
+        ammo.availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
         ammo.techRating = RATING_C;
+        ammo.rulesRefs = "229, TM";
 
         return ammo;
     }
@@ -2292,7 +2314,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISSRM2Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_INTRO_BOXSET);
         ammo.name = "SRM 2 Ammo";
         ammo.shortName = "SRM 2";
         ammo.setInternalName("IS Ammo SRM-2");
@@ -2304,11 +2325,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 50;
         ammo.bv = 3;
         ammo.cost = 27000;
-        ammo.availRating = new int[]{EquipmentType.RATING_B,
-                EquipmentType.RATING_B, EquipmentType.RATING_B};
-        ammo.introDate = 2370;
-        ammo.techLevel.put(2370, ammo.techLevel.get(3067));
+        ammo.introDate = 2365;
+        ammo.techLevel.put(2365, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.techLevel.put(2370, TechConstants.T_IS_ADVANCED);
+        ammo.techLevel.put(2400, TechConstants.T_INTRO_BOXSET);
+        ammo.availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
         ammo.techRating = RATING_C;
+        ammo.rulesRefs = "229, TM";
 
         return ammo;
     }
@@ -2316,7 +2339,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISSRM4Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_INTRO_BOXSET);
         ammo.name = "SRM 4 Ammo";
         ammo.shortName = "SRM 4";
         ammo.setInternalName("IS Ammo SRM-4");
@@ -2328,18 +2350,19 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 25;
         ammo.bv = 5;
         ammo.cost = 27000;
-        ammo.availRating = new int[]{EquipmentType.RATING_B,
-                EquipmentType.RATING_B, EquipmentType.RATING_B};
-        ammo.introDate = 2370;
-        ammo.techLevel.put(2370, ammo.techLevel.get(3067));
+        ammo.introDate = 2365;
+        ammo.techLevel.put(2365, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.techLevel.put(2370, TechConstants.T_IS_ADVANCED);
+        ammo.techLevel.put(2400, TechConstants.T_INTRO_BOXSET);
+        ammo.availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
         ammo.techRating = RATING_C;
+        ammo.rulesRefs = "229, TM";
         return ammo;
     }
 
     private static AmmoType createISSRM6Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_INTRO_BOXSET);
         ammo.name = "SRM 6 Ammo";
         ammo.shortName = "SRM 6";
         ammo.setInternalName("IS Ammo SRM-6");
@@ -2351,11 +2374,14 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 15;
         ammo.bv = 7;
         ammo.cost = 27000;
-        ammo.availRating = new int[]{EquipmentType.RATING_B,
-                EquipmentType.RATING_B, EquipmentType.RATING_B};
-        ammo.introDate = 2370;
-        ammo.techLevel.put(2370, ammo.techLevel.get(3067));
+        ammo.introDate = 2365;
+        ammo.techLevel.put(2365, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.techLevel.put(2370, TechConstants.T_IS_ADVANCED);
+        ammo.techLevel.put(2400, TechConstants.T_INTRO_BOXSET);
+        ammo.availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
         ammo.techRating = RATING_C;
+        ammo.rulesRefs = "229, TM";
+        
         return ammo;
     }
 
@@ -2778,7 +2804,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISLB2XAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "LB 2-X AC Ammo";
         ammo.shortName = "LB 2-X";
         ammo.setInternalName("IS LB 2-X AC Ammo");
@@ -2791,11 +2816,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 5;
         ammo.cost = 2000;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D};
-        ammo.introDate = 3058;
-        ammo.techLevel.put(3058, ammo.techLevel.get(3067));
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        ammo.techLevel.put(3058, TechConstants.T_IS_ADVANCED);   ///ADV
+        ammo.techLevel.put(3060, TechConstants.T_ALLOWED_ALL);   ///COMMON
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E, RATING_D };
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "TM 207";
 
         return ammo;
     }
@@ -2803,7 +2830,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISLB5XAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "LB 5-X AC Ammo";
         ammo.shortName = "LB 5-X";
         ammo.setInternalName("IS LB 5-X AC Ammo");
@@ -2816,11 +2842,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 10;
         ammo.cost = 9000;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D};
-        ammo.introDate = 3058;
-        ammo.techLevel.put(3058, ammo.techLevel.get(3067));
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        ammo.techLevel.put(3058, TechConstants.T_IS_ADVANCED);   ///ADV
+        ammo.techLevel.put(3060, TechConstants.T_ALLOWED_ALL);   ///COMMON
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E, RATING_D };
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "TM 207";
 
         return ammo;
     }
@@ -2828,7 +2856,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISLB10XAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "LB 10-X AC Ammo";
         ammo.shortName = "LB 10-X";
         ammo.setInternalName("IS LB 10-X AC Ammo");
@@ -2841,13 +2868,16 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 19;
         ammo.cost = 12000;
-        ammo.availRating = new int[]{EquipmentType.RATING_C,
-                EquipmentType.RATING_E, EquipmentType.RATING_D};
-        ammo.introDate = 2595;
-        ammo.techLevel.put(2595, ammo.techLevel.get(3067));
+        ammo.introDate = 2590;
         ammo.extinctDate = 2840;
         ammo.reintroDate = 3035;
+        ammo.techLevel.put(2590, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        ammo.techLevel.put(2595, TechConstants.T_IS_ADVANCED);   ///ADV
+        ammo.techLevel.put(3035, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        ammo.techLevel.put(3040, TechConstants.T_IS_TW_NON_BOX);   ///COMMON
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E, RATING_D };
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "TM 207";
 
         return ammo;
     }
@@ -2855,7 +2885,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISLB20XAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "LB 20-X AC Ammo";
         ammo.shortName = "LB 20-X";
         ammo.setInternalName("IS LB 20-X AC Ammo");
@@ -2868,11 +2897,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 30;
         ammo.cost = 20000;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D};
-        ammo.introDate = 3058;
-        ammo.techLevel.put(3058, ammo.techLevel.get(3067));
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        ammo.techLevel.put(3058, TechConstants.T_IS_ADVANCED);   ///ADV
+        ammo.techLevel.put(3060, TechConstants.T_ALLOWED_ALL);   ///COMMON
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E, RATING_D };
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "TM 207";
 
         return ammo;
     }
@@ -2880,7 +2911,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISLB2XClusterAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "LB 2-X Cluster Ammo";
         ammo.shortName = "LB 2-X Cluster";
         ammo.subMunitionBegin = 7;
@@ -2898,11 +2928,14 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 5;
         ammo.cost = 3300;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D};
-        ammo.introDate = 3058;
-        ammo.techLevel.put(3058, ammo.techLevel.get(3067));
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        ammo.techLevel.put(3058, TechConstants.T_IS_ADVANCED);   ///ADV
+        ammo.techLevel.put(3060, TechConstants.T_IS_TW_NON_BOX);   ///COMMON
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E, RATING_D };
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "TM 207";
+
 
         return ammo;
     }
@@ -2910,7 +2943,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISLB5XClusterAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "LB 5-X Cluster Ammo";
         ammo.shortName = "LB 5-X Cluster";
         ammo.subMunitionBegin = 7;
@@ -2928,11 +2960,14 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 10;
         ammo.cost = 15000;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D};
-        ammo.introDate = 3058;
-        ammo.techLevel.put(3058, ammo.techLevel.get(3067));
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        ammo.techLevel.put(3058, TechConstants.T_IS_ADVANCED);   ///ADV
+        ammo.techLevel.put(3060, TechConstants.T_IS_TW_NON_BOX);   ///COMMON
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E, RATING_D };
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "TM 207";
+
 
         return ammo;
     }
@@ -2940,7 +2975,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISLB10XClusterAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "LB 10-X Cluster Ammo";
         ammo.shortName = "LB 10-X Cluster";
         ammo.subMunitionBegin = 8;
@@ -2958,13 +2992,16 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 19;
         ammo.cost = 20000;
-        ammo.availRating = new int[]{EquipmentType.RATING_C,
-                EquipmentType.RATING_E, EquipmentType.RATING_D};
-        ammo.introDate = 2595;
-        ammo.techLevel.put(2595, ammo.techLevel.get(3067));
+        ammo.introDate = 2590;
         ammo.extinctDate = 2840;
         ammo.reintroDate = 3035;
+        ammo.techLevel.put(2590, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        ammo.techLevel.put(2595, TechConstants.T_IS_ADVANCED);   ///ADV
+        ammo.techLevel.put(3035, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        ammo.techLevel.put(3040, TechConstants.T_IS_TW_NON_BOX);   ///COMMON
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E, RATING_D };
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "TM 207";
 
         return ammo;
     }
@@ -2972,7 +3009,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISLB20XClusterAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "LB 20-X Cluster Ammo";
         ammo.shortName = "LB 20-X Cluster";
         ammo.subMunitionBegin = 8;
@@ -2990,60 +3026,20 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 30;
         ammo.cost = 34000;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D};
-        ammo.introDate = 3058;
-        ammo.techLevel.put(3058, ammo.techLevel.get(3067));
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        ammo.techLevel.put(3058, TechConstants.T_IS_ADVANCED);   ///ADV
+        ammo.techLevel.put(3060, TechConstants.T_IS_TW_NON_BOX);   ///COMMON
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E, RATING_D };
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "TM 207";
 
         return ammo;
     }
 
-    private static AmmoType createISTHBLB2XAmmo() {
+   private static AmmoType createISUltra2Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_ADVANCED);
-        ammo.name = "LB 2-X AC Ammo (THB)";
-        ammo.shortName = "LB 2-X";
-        ammo.setInternalName("IS LB 2-X AC Ammo (THB)");
-        ammo.addLookupName("IS Ammo 2-X (THB)");
-        ammo.addLookupName("ISLBXAC2 Ammo (THB)");
-        ammo.addLookupName("IS LB 2-X AC Ammo - Slug (THB)");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_AC_LBX_THB;
-        ammo.shots = 40;
-        ammo.bv = 5;
-        ammo.cost = 3000;
-
-        return ammo;
-    }
-
-    private static AmmoType createISTHBLB5XAmmo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.techLevel.put(3067, TechConstants.T_IS_ADVANCED);
-        ammo.name = "LB 5-X AC Ammo (THB)";
-        ammo.shortName = "LB 5-X";
-        ammo.setInternalName("IS LB 5-X AC Ammo (THB)");
-        ammo.addLookupName("IS Ammo 5-X (THB)");
-        ammo.addLookupName("ISLBXAC5 Ammo (THB)");
-        ammo.addLookupName("IS LB 5-X AC Ammo - Slug (THB)");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_AC_LBX_THB;
-        ammo.shots = 16;
-        ammo.bv = 11;
-        ammo.cost = 15000;
-
-        return ammo;
-    }
-
-
-    private static AmmoType createISUltra2Ammo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "Ultra AC/2 Ammo";
         ammo.shortName = "Ultra AC/2";
         ammo.setInternalName("IS Ultra AC/2 Ammo");
@@ -3055,11 +3051,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 7;
         ammo.cost = 1000;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_E};
-        ammo.introDate = 3057;
-        ammo.techLevel.put(3057, ammo.techLevel.get(3067));
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        ammo.techLevel.put(3057, TechConstants.T_IS_ADVANCED);   ///ADV
+        ammo.techLevel.put(3060, TechConstants.T_IS_TW_NON_BOX);   ///COMMON
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E, RATING_D };
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "TM 208";
 
         return ammo;
     }
@@ -3067,7 +3065,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISUltra5Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "Ultra AC/5 Ammo";
         ammo.shortName = "Ultra AC/5";
         ammo.setInternalName("IS Ultra AC/5 Ammo");
@@ -3079,13 +3076,16 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 14;
         ammo.cost = 9000;
-        ammo.availRating = new int[]{EquipmentType.RATING_D,
-                EquipmentType.RATING_F, EquipmentType.RATING_D};
-        ammo.introDate = 2640;
-        ammo.techLevel.put(2640, ammo.techLevel.get(3067));
+        ammo.introDate = 2635;
         ammo.extinctDate = 2915;
         ammo.reintroDate = 3035;
+        ammo.techLevel.put(2635, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        ammo.techLevel.put(2640, TechConstants.T_IS_ADVANCED);   ///ADV
+        ammo.techLevel.put(3035, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        ammo.techLevel.put(3040, TechConstants.T_IS_TW_NON_BOX);   ///COMMON
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E, RATING_D };
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "TM 207";
 
         return ammo;
     }
@@ -3093,7 +3093,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISUltra10Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "Ultra AC/10 Ammo";
         ammo.shortName = "Ultra AC/10";
         ammo.setInternalName("IS Ultra AC/10 Ammo");
@@ -3105,11 +3104,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 26;
         ammo.cost = 12000;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_E};
-        ammo.introDate = 3057;
-        ammo.techLevel.put(3057, ammo.techLevel.get(3067));
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        ammo.techLevel.put(3057, TechConstants.T_IS_ADVANCED);   ///ADV
+        ammo.techLevel.put(3060, TechConstants.T_IS_TW_NON_BOX);   ///COMMON
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E, RATING_D };
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "TM 208";
 
         return ammo;
     }
@@ -3117,7 +3118,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISUltra20Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "Ultra AC/20 Ammo";
         ammo.shortName = "Ultra AC/20";
         ammo.setInternalName("IS Ultra AC/20 Ammo");
@@ -3129,11 +3129,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 35;
         ammo.cost = 20000;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_E};
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
+        ammo.introDate = 3052;
+        ammo.techLevel.put(3052, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        ammo.techLevel.put(3060, TechConstants.T_IS_ADVANCED);   ///ADV
+        ammo.techLevel.put(3061, TechConstants.T_IS_TW_NON_BOX);   ///COMMON
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E, RATING_D };
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "TM 208";
 
         return ammo;
     }
@@ -3142,7 +3144,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISRotary2Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "Rotary AC/2 Ammo";
         ammo.shortName = "RAC/2";
         ammo.setInternalName("ISRotaryAC2 Ammo");
@@ -3154,11 +3155,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 15;
         ammo.cost = 3000;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_E};
-        ammo.introDate = 3062;
-        ammo.techLevel.put(3062, ammo.techLevel.get(3067));
+        ammo.introDate = 3055;
+        ammo.techLevel.put(3055, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        ammo.techLevel.put(3062, TechConstants.T_IS_ADVANCED);   ///ADV
+        ammo.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);   ///COMMON
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E, RATING_D };
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "TM 207";
 
         return ammo;
     }
@@ -3166,7 +3169,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISRotary5Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "Rotary AC/5 Ammo";
         ammo.shortName = "RAC/5";
         ammo.setInternalName("ISRotaryAC5 Ammo");
@@ -3178,11 +3180,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 31;
         ammo.cost = 12000;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_E};
-        ammo.introDate = 3062;
-        ammo.techLevel.put(3062, ammo.techLevel.get(3067));
+        ammo.introDate = 3055;
+        ammo.techLevel.put(3055, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        ammo.techLevel.put(3062, TechConstants.T_IS_ADVANCED);   ///ADV
+        ammo.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);   ///COMMON
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_E, RATING_D };
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "TM 207";
 
         return ammo;
     }
@@ -3831,6 +3835,32 @@ public class AmmoType extends EquipmentType {
         ammo.introDate = 2828;
         ammo.techLevel.put(2828, ammo.techLevel.get(3067));
         ammo.techRating = RATING_E;
+        return ammo;
+    }
+    
+    private static AmmoType createCLImprovedGaussAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Improved Gauss Ammo";
+        ammo.shortName = "Improved Gauss";
+        ammo.setInternalName("CLImpGaussAmmo");
+        ammo.damagePerShot = 15;
+        ammo.explosive = false;
+        ammo.ammoType = AmmoType.T_GAUSS_IMP;
+        ammo.shots = 8;
+        ammo.bv = 40;
+        ammo.cost = 20000;
+        ammo.kgPerShot = 125;
+        ammo.introDate = 2807;
+        ammo.extinctDate = 2837;
+        ammo.reintroDate = 3080;
+        ammo.techLevel.put(2813, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(2821, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(2822, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_E ,RATING_X ,RATING_X};
+        ammo.techRating = RATING_E;
+        ammo.rulesRefs = "96, TO";
+        
         return ammo;
     }
 
@@ -4867,7 +4897,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLSRM2Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "SRM 2 Ammo";
         ammo.shortName = "SRM 2";
         ammo.setInternalName("Clan Ammo SRM-2");
@@ -4880,10 +4909,13 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 3;
         ammo.cost = 27000;
         ammo.kgPerShot = 10;
-        ammo.introDate = 2824;
-        ammo.techLevel.put(2824, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_B, RATING_A};
-        ammo.techRating = RATING_C;
+        ammo.introDate = 2815;
+        ammo.techLevel.put(2815, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(2824, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(2825, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_C ,RATING_C ,RATING_C};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "229, TM";
 
         return ammo;
     }
@@ -4914,7 +4946,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLSRM4Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "SRM 4 Ammo";
         ammo.shortName = "SRM 4";
         ammo.setInternalName("Clan Ammo SRM-4");
@@ -4927,10 +4958,13 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 5;
         ammo.cost = 27000;
         ammo.kgPerShot = 10;
-        ammo.introDate = 2824;
-        ammo.techLevel.put(2824, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_B, RATING_A};
-        ammo.techRating = RATING_C;
+        ammo.introDate = 2815;
+        ammo.techLevel.put(2815, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(2824, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(2825, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_C ,RATING_C ,RATING_C};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "229, TM";
 
         return ammo;
     }
@@ -4961,7 +4995,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLSRM6Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "SRM 6 Ammo";
         ammo.shortName = "SRM 6";
         ammo.setInternalName("Clan Ammo SRM-6");
@@ -4975,12 +5008,95 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 27000;
         ammo.kgPerShot = 10;
         ammo.techRating = RATING_C;
-        ammo.introDate = 2824;
-        ammo.techLevel.put(2824, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_B, RATING_A};
+        ammo.introDate = 2815;
+        ammo.techLevel.put(2815, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(2824, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(2825, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_C ,RATING_C ,RATING_C};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "229, TM";
 
         return ammo;
     }
+    private static AmmoType createCLImprovedSRM2Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Improved SRM 2 Ammo";
+        ammo.shortName = "Improved SRM 2";
+        ammo.setInternalName("ClanImpAmmoSRM2");
+        ammo.addLookupName("CLImpSRM2 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_SRM_IMP;
+        ammo.shots = 50;
+        ammo.bv = 4;
+        ammo.cost = 27000;
+        ammo.kgPerShot = 10;
+        ammo.introDate = 2815;
+        ammo.techLevel.put(2815, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(2817, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(2819, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_D ,RATING_X ,RATING_X};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "96, IO";
+
+        return ammo;
+    }
+
+        private static AmmoType createCLImprovedSRM4Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Improved SRM 4 Ammo";
+        ammo.shortName = "Improved SRM 4";
+        ammo.setInternalName("ClImpAmmoSRM4");
+        ammo.addLookupName("CLImpSRM4 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_SRM_IMP;
+        ammo.shots = 25;
+        ammo.bv = 7;
+        ammo.cost = 27000;
+        ammo.kgPerShot = 10;
+        ammo.introDate = 2815;
+        ammo.extinctDate = 2828;
+        ammo.reintroDate = 3080;
+        ammo.techLevel.put(2815, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(2824, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(2825, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_D ,RATING_X ,RATING_X};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "96, IO";
+
+        return ammo;
+    }
+    
+        private static AmmoType createCLImprovedSRM6Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Improved SRM 6 Ammo";
+        ammo.shortName = "Improved SRM 6";
+        ammo.setInternalName("CLImpAmmoSRM6");
+        ammo.addLookupName("CLImpSRM6 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 6;
+        ammo.ammoType = AmmoType.T_SRM_IMP;
+        ammo.shots = 15;
+        ammo.bv = 10;
+        ammo.cost = 27000;
+        ammo.kgPerShot = 10;
+        ammo.introDate = 2815;
+        ammo.extinctDate = 2828;
+        ammo.reintroDate = 3080;
+        ammo.techLevel.put(2815, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(2824, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(2825, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_D ,RATING_X ,RATING_X};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "96, IO";
+
+        return ammo;
+    }
+    
 
     private static AmmoType createCLLRM1Ammo() {
         AmmoType ammo = new AmmoType();
@@ -5077,7 +5193,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLLRM5Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "LRM 5 Ammo";
         ammo.shortName = "LRM 5";
         ammo.setInternalName("Clan Ammo LRM-5");
@@ -5090,10 +5205,13 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 7;
         ammo.cost = 30000;
         ammo.kgPerShot = 8.33;
-        ammo.techRating = RATING_C;
-        ammo.introDate = 2824;
-        ammo.techLevel.put(2824, ammo.techLevel.get(3067));
-        ammo.availRating = new int[] { RATING_X, RATING_C, RATING_B };
+        ammo.introDate = 2815;
+        ammo.techLevel.put(2815, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(2824, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(2825, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X ,RATING_D ,RATING_C ,RATING_C};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "229, TM";
 
         return ammo;
     }
@@ -5193,7 +5311,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLLRM10Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "LRM 10 Ammo";
         ammo.shortName = "LRM 10";
         ammo.setInternalName("Clan Ammo LRM-10");
@@ -5206,10 +5323,13 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 14;
         ammo.cost = 30000;
         ammo.kgPerShot = 8.33;
-        ammo.techRating = RATING_C;
-        ammo.introDate = 2824;
-        ammo.techLevel.put(2824, ammo.techLevel.get(3067));
-        ammo.availRating = new int[] { RATING_X, RATING_C, RATING_B };
+        ammo.introDate = 2815;
+        ammo.techLevel.put(2815, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(2824, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(2825, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X ,RATING_D ,RATING_C ,RATING_C};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "229, TM";
 
         return ammo;
     }
@@ -5309,7 +5429,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLLRM15Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.shortName = "LRM 15";
         ammo.name = "LRM 15 Ammo";
         ammo.setInternalName("Clan Ammo LRM-15");
@@ -5322,10 +5441,13 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 21;
         ammo.cost = 30000;
         ammo.kgPerShot = 8.33;
-        ammo.techRating = RATING_C;
-        ammo.introDate = 2824;
-        ammo.techLevel.put(2824, ammo.techLevel.get(3067));
-        ammo.availRating = new int[] { RATING_X, RATING_C, RATING_B };
+        ammo.introDate = 2815;
+        ammo.techLevel.put(2815, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(2824, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(2825, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X ,RATING_D ,RATING_C ,RATING_C};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "229, TM";
 
         return ammo;
     }
@@ -5425,7 +5547,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLLRM20Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "LRM 20 Ammo";
         ammo.shortName = "LRM 20";
         ammo.setInternalName("Clan Ammo LRM-20");
@@ -5438,13 +5559,126 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.cost = 30000;
         ammo.kgPerShot = 8.33;
-        ammo.techRating = RATING_C;
-        ammo.introDate = 2824;
-        ammo.techLevel.put(2824, ammo.techLevel.get(3067));
-        ammo.availRating = new int[] { RATING_X, RATING_C, RATING_B };
+        ammo.introDate = 2815;
+        ammo.techLevel.put(2815, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(2824, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(2825, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X ,RATING_D ,RATING_C ,RATING_C};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "229, TM";
 
         return ammo;
     }
+    
+    private static AmmoType createCLImprovedLRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Improved LRM 5 Ammo";
+        ammo.shortName = "Improved LRM 5";
+        ammo.setInternalName("ClanImprovedLRM5Ammo");
+        ammo.addLookupName("CLImpLRM5Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_LRM_IMP;
+        ammo.shots = 24;
+        ammo.bv = 6;
+        ammo.cost = 30000;
+        ammo.kgPerShot = 8.33;
+        ammo.introDate = 2815;
+        ammo.extinctDate = 2831;
+        ammo.reintroDate = 3080;
+        ammo.techLevel.put(2815, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(2818, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(2820, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X ,RATING_D ,RATING_X ,RATING_X};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "96, IO";
+
+        return ammo;
+    }
+  
+    private static AmmoType createCLImprovedLRM10Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Improved LRM 10 Ammo";
+        ammo.shortName = "Improved LRM 10";
+        ammo.setInternalName("ClanImprovedLRM10Ammo");
+        ammo.addLookupName("CLImpLRM10Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_LRM_IMP;
+        ammo.shots = 12;
+        ammo.bv = 11;
+        ammo.cost = 30000;
+        ammo.kgPerShot = 8.33;
+        ammo.introDate = 2815;
+        ammo.extinctDate = 2831;
+        ammo.reintroDate = 3080;
+        ammo.techLevel.put(2815, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(2824, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(2825, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X ,RATING_D ,RATING_X ,RATING_X};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "96, IO";
+
+        return ammo;
+    }
+
+     private static AmmoType createCLImprovedLRM15Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.shortName = "Improved LRM 15";
+        ammo.name = "Improved LRM 15 Ammo";
+        ammo.setInternalName("ClanImprovedLRM15Ammo");
+        ammo.addLookupName("CLImpLRM15Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_LRM_IMP;
+        ammo.shots = 8;
+        ammo.bv = 17;
+        ammo.cost = 30000;
+        ammo.kgPerShot = 8.33;
+        ammo.introDate = 2815;
+        ammo.extinctDate = 2831;
+        ammo.reintroDate = 3080;
+        ammo.techLevel.put(2815, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(2824, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(2825, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X ,RATING_D ,RATING_X ,RATING_X};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "96, IO";
+
+        return ammo;
+    }
+    
+        private static AmmoType createCLImprovedLRM20Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.name = "Improved LRM 20 Ammo";
+        ammo.shortName = "Improved LRM 20";
+        ammo.setInternalName("ClanImprovedLRM20Ammo");
+        ammo.addLookupName("CLImpLRM20Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_LRM_IMP;
+        ammo.shots = 6;
+        ammo.bv = 23;
+        ammo.cost = 30000;
+        ammo.kgPerShot = 8.33;
+        ammo.introDate = 2815;
+        ammo.extinctDate = 2831;
+        ammo.reintroDate = 3080;
+        ammo.techLevel.put(2815, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(2824, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(2825, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X ,RATING_D ,RATING_X ,RATING_X};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "96, IO";
+
+        return ammo;
+    }
+
+    
 
     private static AmmoType createCLSRT1Ammo() {
         AmmoType ammo = new AmmoType();
@@ -5794,7 +6028,7 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createCLSmallChemicalLaserAmmo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
+
         ammo.name = "Small Chemical Laser Ammo";
         ammo.shortName = "Small Chemical Laser";
         ammo.setInternalName("CLSmallChemLaserAmmo");
@@ -5805,16 +6039,20 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 1;
         ammo.cost = 30000;
         ammo.introDate = 3059;
-        ammo.techLevel.put(3083, TechConstants.T_CLAN_TW);
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3085, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3145, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_E ,RATING_E};
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "320, TO";
+
 
         return ammo;
     }
 
     private static AmmoType createCLMediumChemicalLaserAmmo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_EXPERIMENTAL);
+
         ammo.name = "Medium Chemical Laser Ammo";
         ammo.shortName = "Medium Chemical Laser";
         ammo.setInternalName("CLMediumChemLaserAmmo");
@@ -5825,16 +6063,19 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 5;
         ammo.cost = 30000;
         ammo.introDate = 3059;
-        ammo.techLevel.put(3083, TechConstants.T_CLAN_TW);
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3085, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3145, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_E ,RATING_E};
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "320, TO";
 
         return ammo;
     }
 
     private static AmmoType createCLLargeChemicalLaserAmmo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_EXPERIMENTAL);
+
         ammo.name = "Large Chemical Laser Ammo";
         ammo.shortName = "Large Chemical Laser";
         ammo.setInternalName("CLLargeChemLaserAmmo");
@@ -5845,9 +6086,12 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 12;
         ammo.cost = 30000;
         ammo.introDate = 3059;
-        ammo.techLevel.put(3083, TechConstants.T_CLAN_TW);
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3085, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3145, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_E ,RATING_E};
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "320, TO";
 
         return ammo;
 
@@ -5856,7 +6100,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISMML3LRMAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "MML 3 LRM Ammo";
         ammo.shortName = "MML 3/LRM";
         ammo.setInternalName("IS Ammo MML-3 LRM");
@@ -5870,18 +6113,19 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.introDate = 2300;
-        ammo.techLevel.put(2300, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{EquipmentType.RATING_C,
-                EquipmentType.RATING_C, EquipmentType.RATING_C};
-        ammo.techRating = RATING_E;
+        ammo.introDate = 3062;
+        ammo.techLevel.put(3062, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.techLevel.put(3068, TechConstants.T_IS_ADVANCED);
+        ammo.techLevel.put(3072, TechConstants.T_IS_TW_NON_BOX);
+        ammo.availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
+        ammo.techRating = RATING_C;
+        ammo.rulesRefs = "229, TM";
         return ammo;
     }
 
     private static AmmoType createISMML3SRMAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "MML 3 SRM Ammo";
         ammo.shortName = "MML 3/SRM";
         ammo.setInternalName("IS Ammo MML-3 SRM");
@@ -5893,11 +6137,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 33;
         ammo.bv = 4;
         ammo.cost = 27000;
-        ammo.availRating = new int[]{EquipmentType.RATING_B,
-                EquipmentType.RATING_B, EquipmentType.RATING_B};
-        ammo.introDate = 2370;
-        ammo.techLevel.put(2370, ammo.techLevel.get(3067));
-        ammo.techRating = RATING_E;
+        ammo.introDate = 3062;
+        ammo.techLevel.put(3062, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.techLevel.put(3068, TechConstants.T_IS_ADVANCED);
+        ammo.techLevel.put(3072, TechConstants.T_IS_TW_NON_BOX);
+        ammo.availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
+        ammo.techRating = RATING_C;
+        ammo.rulesRefs = "229, TM";
 
         return ammo;
     }
@@ -5905,7 +6151,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISMML5LRMAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "MML 5 LRM Ammo";
         ammo.shortName = "MML 5/LRM";
         ammo.setInternalName("IS Ammo MML-5 LRM");
@@ -5919,11 +6164,13 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.introDate = 2300;
-        ammo.techLevel.put(2300, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{EquipmentType.RATING_C,
-                EquipmentType.RATING_C, EquipmentType.RATING_C};
-        ammo.techRating = RATING_E;
+        ammo.introDate = 3062;
+        ammo.techLevel.put(3062, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.techLevel.put(3068, TechConstants.T_IS_ADVANCED);
+        ammo.techLevel.put(3072, TechConstants.T_IS_TW_NON_BOX);
+        ammo.availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
+        ammo.techRating = RATING_C;
+        ammo.rulesRefs = "229, TM";
 
         return ammo;
     }
@@ -5931,7 +6178,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISMML5SRMAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "MML 5 SRM Ammo";
         ammo.shortName = "MML 5/SRM";
         ammo.setInternalName("IS Ammo MML-5 SRM");
@@ -5943,11 +6189,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 6;
         ammo.cost = 27000;
-        ammo.availRating = new int[]{EquipmentType.RATING_B,
-                EquipmentType.RATING_B, EquipmentType.RATING_B};
-        ammo.introDate = 2370;
-        ammo.techLevel.put(2370, ammo.techLevel.get(3067));
-        ammo.techRating = RATING_E;
+        ammo.introDate = 3062;
+        ammo.techLevel.put(3062, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.techLevel.put(3068, TechConstants.T_IS_ADVANCED);
+        ammo.techLevel.put(3072, TechConstants.T_IS_TW_NON_BOX);
+        ammo.availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
+        ammo.techRating = RATING_C;
+        ammo.rulesRefs = "229, TM";
 
         return ammo;
     }
@@ -5955,7 +6203,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISMML7LRMAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "MML 7 LRM Ammo";
         ammo.shortName = "MML 7/LRM";
         ammo.setInternalName("IS Ammo MML-7 LRM");
@@ -5969,11 +6216,13 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.introDate = 2300;
-        ammo.techLevel.put(2300, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{EquipmentType.RATING_C,
-                EquipmentType.RATING_C, EquipmentType.RATING_C};
-        ammo.techRating = RATING_E;
+        ammo.introDate = 3062;
+        ammo.techLevel.put(3062, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.techLevel.put(3068, TechConstants.T_IS_ADVANCED);
+        ammo.techLevel.put(3072, TechConstants.T_IS_TW_NON_BOX);
+        ammo.availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
+        ammo.techRating = RATING_C;
+        ammo.rulesRefs = "229, TM";
 
         return ammo;
     }
@@ -5981,7 +6230,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISMML7SRMAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "MML 7 SRM Ammo";
         ammo.shortName = "MML 7/SRM";
         ammo.setInternalName("IS Ammo MML-7 SRM");
@@ -5993,11 +6241,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 14;
         ammo.bv = 8;
         ammo.cost = 27000;
-        ammo.availRating = new int[]{EquipmentType.RATING_B,
-                EquipmentType.RATING_B, EquipmentType.RATING_B};
-        ammo.introDate = 2370;
-        ammo.techLevel.put(2370, ammo.techLevel.get(3067));
-        ammo.techRating = RATING_E;
+        ammo.introDate = 3062;
+        ammo.techLevel.put(3062, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.techLevel.put(3068, TechConstants.T_IS_ADVANCED);
+        ammo.techLevel.put(3072, TechConstants.T_IS_TW_NON_BOX);
+        ammo.availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
+        ammo.techRating = RATING_C;
+        ammo.rulesRefs = "229, TM";
 
         return ammo;
     }
@@ -6005,7 +6255,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISMML9LRMAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "MML 9 LRM Ammo";
         ammo.shortName = "MML 9/LRM";
         ammo.setInternalName("IS Ammo MML-9 LRM");
@@ -6019,11 +6268,13 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 30000;
         ammo.flags = ammo.flags.or(F_HOTLOAD).or(F_MML_LRM);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.introDate = 2300;
-        ammo.techLevel.put(2300, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{EquipmentType.RATING_C,
-                EquipmentType.RATING_C, EquipmentType.RATING_C};
-        ammo.techRating = RATING_E;
+        ammo.introDate = 3062;
+        ammo.techLevel.put(3062, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.techLevel.put(3068, TechConstants.T_IS_ADVANCED);
+        ammo.techLevel.put(3072, TechConstants.T_IS_TW_NON_BOX);
+        ammo.availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
+        ammo.techRating = RATING_C;
+        ammo.rulesRefs = "229, TM";
 
         return ammo;
     }
@@ -6031,7 +6282,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISMML9SRMAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
         ammo.name = "MML 9 SRM Ammo";
         ammo.shortName = "MML 9/SRM";
         ammo.setInternalName("IS Ammo MML-9 SRM");
@@ -6043,11 +6293,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 11;
         ammo.bv = 11;
         ammo.cost = 27000;
-        ammo.availRating = new int[]{EquipmentType.RATING_B,
-                EquipmentType.RATING_B, EquipmentType.RATING_B};
-        ammo.introDate = 2370;
-        ammo.techLevel.put(2370, ammo.techLevel.get(3067));
-        ammo.techRating = RATING_E;
+        ammo.introDate = 3062;
+        ammo.techLevel.put(3062, TechConstants.T_IS_EXPERIMENTAL);
+        ammo.techLevel.put(3068, TechConstants.T_IS_ADVANCED);
+        ammo.techLevel.put(3072, TechConstants.T_IS_TW_NON_BOX);
+        ammo.availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
+        ammo.techRating = RATING_C;
+        ammo.rulesRefs = "229, TM";
 
         return ammo;
     }
@@ -6055,7 +6307,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLATM3Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "ATM 3 Ammo";
         ammo.shortName = "ATM 3";
         ammo.setInternalName("Clan Ammo ATM-3");
@@ -6069,11 +6320,13 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D};
-        ammo.introDate = 3054;
-        ammo.techLevel.put(3054, ammo.techLevel.get(3067));
+        ammo.introDate = 3047;
+        ammo.techLevel.put(3047, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3053, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3060, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "138, TW";
 
         return ammo;
     }
@@ -6081,7 +6334,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLATM3ERAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "ATM 3 ER Ammo";
         ammo.shortName = "ATM 3 ER";
         ammo.setInternalName("Clan Ammo ATM-3 ER");
@@ -6096,11 +6348,13 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D};
-        ammo.introDate = 3054;
-        ammo.techLevel.put(3054, ammo.techLevel.get(3067));
+        ammo.introDate = 3047;
+        ammo.techLevel.put(3047, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3053, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3060, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "138, TW";
 
         return ammo;
     }
@@ -6108,7 +6362,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLATM3HEAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "ATM 3 HE Ammo";
         ammo.shortName = "ATM 3 HE";
         ammo.setInternalName("Clan Ammo ATM-3 HE");
@@ -6121,11 +6374,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 14;
         ammo.cost = 75000;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D};
-        ammo.introDate = 3054;
-        ammo.techLevel.put(3054, ammo.techLevel.get(3067));
+        ammo.introDate = 3047;
+        ammo.techLevel.put(3047, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3054, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3060, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "138, TW";
 
         return ammo;
     }
@@ -6133,7 +6388,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLATM6Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "ATM 6 Ammo";
         ammo.shortName = "ATM 6";
         ammo.setInternalName("Clan Ammo ATM-6");
@@ -6147,11 +6401,13 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D};
-        ammo.introDate = 3054;
-        ammo.techLevel.put(3054, ammo.techLevel.get(3067));
+        ammo.introDate = 3047;
+        ammo.techLevel.put(3047, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3053, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3060, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "138, TW";
 
         return ammo;
     }
@@ -6159,7 +6415,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLATM6ERAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "ATM 6 ER Ammo";
         ammo.shortName = "ATM 6 ER";
         ammo.setInternalName("Clan Ammo ATM-6 ER");
@@ -6174,11 +6429,13 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D};
-        ammo.introDate = 3054;
-        ammo.techLevel.put(3054, ammo.techLevel.get(3067));
+        ammo.introDate = 3047;
+        ammo.techLevel.put(3047, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3053, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3060, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "138, TW";
 
         return ammo;
     }
@@ -6186,7 +6443,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLATM6HEAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "ATM 6 HE Ammo";
         ammo.shortName = "ATM 6 HE";
         ammo.setInternalName("Clan Ammo ATM-6 HE");
@@ -6199,11 +6455,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 26;
         ammo.cost = 75000;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D};
-        ammo.introDate = 3054;
-        ammo.techLevel.put(3054, ammo.techLevel.get(3067));
+        ammo.introDate = 3047;
+        ammo.techLevel.put(3047, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3054, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3060, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "138, TW";
 
         return ammo;
     }
@@ -6211,7 +6469,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLATM9Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "ATM 9 Ammo";
         ammo.shortName = "ATM 9";
         ammo.setInternalName("Clan Ammo ATM-9");
@@ -6225,19 +6482,19 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D};
-        ammo.introDate = 3054;
-        ammo.techLevel.put(3054, ammo.techLevel.get(3067));
+        ammo.introDate = 3047;
+        ammo.techLevel.put(3047, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3053, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3060, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
         ammo.techRating = RATING_F;
-
+        ammo.rulesRefs = "138, TW";
         return ammo;
     }
 
     private static AmmoType createCLATM9ERAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "ATM 9 ER Ammo";
         ammo.shortName = "ATM 9 ER";
         ammo.setInternalName("Clan Ammo ATM-9 ER");
@@ -6252,11 +6509,13 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D};
-        ammo.introDate = 3054;
-        ammo.techLevel.put(3054, ammo.techLevel.get(3067));
+        ammo.introDate = 3047;
+        ammo.techLevel.put(3047, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3053, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3060, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "138, TW";
 
         return ammo;
     }
@@ -6264,7 +6523,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLATM9HEAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "ATM 9 HE Ammo";
         ammo.shortName = "ATM 9 HE";
         ammo.setInternalName("Clan Ammo ATM-9 HE");
@@ -6277,19 +6535,19 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 7;
         ammo.bv = 36;
         ammo.cost = 75000;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D};
-        ammo.introDate = 3054;
-        ammo.techLevel.put(3054, ammo.techLevel.get(3067));
+        ammo.introDate = 3047;
+        ammo.techLevel.put(3047, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3054, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3060, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
         ammo.techRating = RATING_F;
-
+        ammo.rulesRefs = "138, TW";
         return ammo;
     }
 
     private static AmmoType createCLATM12Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "ATM 12 Ammo";
         ammo.shortName = "ATM 12";
         ammo.setInternalName("Clan Ammo ATM-12");
@@ -6303,11 +6561,13 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D};
-        ammo.introDate = 3054;
-        ammo.techLevel.put(3054, ammo.techLevel.get(3067));
+        ammo.introDate = 3047;
+        ammo.techLevel.put(3047, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3053, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3060, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "138, TW";
 
         return ammo;
     }
@@ -6315,7 +6575,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLATM12ERAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "ATM 12 ER Ammo";
         ammo.shortName = "ATM 12 ER";
         ammo.setInternalName("Clan Ammo ATM-12 ER");
@@ -6330,19 +6589,19 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D};
-        ammo.introDate = 3054;
-        ammo.techLevel.put(3054, ammo.techLevel.get(3067));
+        ammo.introDate = 3047;
+        ammo.techLevel.put(3047, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3053, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3060, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
         ammo.techRating = RATING_F;
-
+        ammo.rulesRefs = "138, TW";
         return ammo;
     }
 
     private static AmmoType createCLATM12HEAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "ATM 12 HE Ammo";
         ammo.shortName = "ATM 12 HE";
         ammo.setInternalName("Clan Ammo ATM-12 HE");
@@ -6355,19 +6614,19 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 52;
         ammo.cost = 75000;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D};
-        ammo.introDate = 3054;
-        ammo.techLevel.put(3054, ammo.techLevel.get(3067));
+        ammo.introDate = 3047;
+        ammo.techLevel.put(3047, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3054, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3060, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_D ,RATING_D};
         ammo.techRating = RATING_F;
-
+        ammo.rulesRefs = "138, TW";
         return ammo;
     }
 
     private static AmmoType createCLIATM3Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 3 Ammo";
         ammo.shortName = "iATM 3";
         ammo.setInternalName("Clan Ammo iATM-3");
@@ -6381,10 +6640,11 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "67, IO";
 
         return ammo;
     }
@@ -6392,7 +6652,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLIATM3ERAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 3 ER Ammo";
         ammo.shortName = "iATM 3 ER";
         ammo.setInternalName("Clan Ammo iATM-3 ER");
@@ -6407,10 +6666,11 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "67, IO";
 
         return ammo;
     }
@@ -6418,7 +6678,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLIATM3HEAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 3 HE Ammo";
         ammo.shortName = "iATM 3 HE";
         ammo.setInternalName("Clan Ammo iATM-3 HE");
@@ -6433,10 +6692,11 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "67, IO";
 
         return ammo;
     }
@@ -6444,7 +6704,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLIATM3IIWAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 3 IIW Ammo";
         ammo.shortName = "iATM 3 IIW";
         ammo.setInternalName("Clan Ammo iATM-3 IIW");
@@ -6460,10 +6719,11 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "67, IO";
 
         return ammo;
     }
@@ -6471,7 +6731,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLIATM3IMPAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 3 IMP Ammo";
         ammo.shortName = "iATM 3 IMP";
         ammo.setInternalName("Clan Ammo iATM-3 IMP");
@@ -6487,10 +6746,12 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.extinctDate = 3080;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "67, IO";
 
         return ammo;
     }
@@ -6498,7 +6759,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLIATM6Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 6 Ammo";
         ammo.shortName = "iATM 6";
         ammo.setInternalName("Clan Ammo iATM-6");
@@ -6512,10 +6772,11 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "67, IO";
 
         return ammo;
     }
@@ -6523,7 +6784,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLIATM6ERAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 6 ER Ammo";
         ammo.shortName = "iATM 6 ER";
         ammo.setInternalName("Clan Ammo iATM-6 ER");
@@ -6537,11 +6797,11 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 39;
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
-        ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "67, IO";
 
         return ammo;
     }
@@ -6549,7 +6809,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLIATM6HEAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 6 HE Ammo";
         ammo.shortName = "iATM 6 HE";
         ammo.setInternalName("Clan Ammo iATM-6 HE");
@@ -6564,10 +6823,11 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "67, IO";
 
         return ammo;
     }
@@ -6575,7 +6835,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLIATM6IIWAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 6 IIW Ammo";
         ammo.shortName = "iATM 6 IIW";
         ammo.setInternalName("Clan Ammo iATM-6 IIW");
@@ -6591,10 +6850,11 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "67, IO";
 
         return ammo;
     }
@@ -6602,7 +6862,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLIATM6IMPAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 6 IMP Ammo";
         ammo.shortName = "iATM 6 IMP";
         ammo.setInternalName("Clan Ammo iATM-6 IMP");
@@ -6618,10 +6877,12 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.extinctDate = 3080;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "67, IO";
 
         return ammo;
     }
@@ -6629,7 +6890,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLIATM9Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 9 Ammo";
         ammo.shortName = "iATM 9";
         ammo.setInternalName("Clan Ammo iATM-9");
@@ -6643,10 +6903,11 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "67, IO";
 
         return ammo;
     }
@@ -6654,7 +6915,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLIATM9ERAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 9 ER Ammo";
         ammo.shortName = "iATM 9 ER";
         ammo.setInternalName("Clan Ammo iATM-9 ER");
@@ -6669,10 +6929,11 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "67, IO";
 
         return ammo;
     }
@@ -6680,7 +6941,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLIATM9HEAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 9 HE Ammo";
         ammo.shortName = "iATM 9 HE";
         ammo.setInternalName("Clan Ammo iATM-9 HE");
@@ -6695,10 +6955,11 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "67, IO";
 
         return ammo;
     }
@@ -6706,7 +6967,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLIATM9IIWAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 9 IIW Ammo";
         ammo.shortName = "iATM 9 IIW";
         ammo.setInternalName("Clan Ammo iATM-9 IIW");
@@ -6722,10 +6982,11 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "67, IO";
 
         return ammo;
     }
@@ -6733,7 +6994,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLIATM9IMPAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 9 IMP Ammo";
         ammo.shortName = "iATM 9 IMP";
         ammo.setInternalName("Clan Ammo iATM-9 IMP");
@@ -6749,10 +7009,12 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.extinctDate = 3080;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "67, IO";
 
         return ammo;
     }
@@ -6760,7 +7022,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLIATM12Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 12 Ammo";
         ammo.shortName = "iATM 12";
         ammo.setInternalName("Clan Ammo iATM-12");
@@ -6774,18 +7035,17 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
-
+        ammo.rulesRefs = "67, IO";
         return ammo;
     }
 
     private static AmmoType createCLIATM12ERAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 12 ER Ammo";
         ammo.shortName = "iATM 12 ER";
         ammo.setInternalName("Clan Ammo iATM-12 ER");
@@ -6800,10 +7060,11 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "67, IO";
 
         return ammo;
     }
@@ -6811,7 +7072,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLIATM12HEAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 12 HE Ammo";
         ammo.shortName = "iATM 12 HE";
         ammo.setInternalName("Clan Ammo iATM-12 HE");
@@ -6826,10 +7086,11 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "67, IO";
 
         return ammo;
     }
@@ -6837,7 +7098,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLIATM12IIWAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 12 IIW Ammo";
         ammo.shortName = "iATM 12 IIW";
         ammo.setInternalName("Clan Ammo iATM-12 IIW");
@@ -6853,10 +7113,11 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "67, IO";
 
         return ammo;
     }
@@ -6864,7 +7125,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLIATM12IMPAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3070, TechConstants.T_CLAN_EXPERIMENTAL);
         ammo.name = "iATM 12 IMP Ammo";
         ammo.shortName = "iATM 12 IMP";
         ammo.setInternalName("Clan Ammo iATM-12 IMP");
@@ -6880,10 +7140,12 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 75000;
         ammo.flags = ammo.flags.or(F_HOTLOAD);
         ammo.setModes(new String[]{"", "HotLoad"});
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
-        ammo.introDate = 3070;
+        ammo.introDate = 3065;
+        ammo.extinctDate = 3080;
+        ammo.techLevel.put(3065, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        ammo.availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_X};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "67, IO";
 
         return ammo;
     }
@@ -9082,7 +9344,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLAPGaussRifleAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "AP Gauss Rifle Ammo";
         ammo.shortName = "AP Gauss";
         ammo.setInternalName("CLAPGaussRifle Ammo");
@@ -9095,11 +9356,14 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 3;
         ammo.cost = 1000;
         ammo.kgPerShot = 25;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_D};
-        ammo.introDate = 3069;
-        ammo.techLevel.put(3069, ammo.techLevel.get(3067));
+        ammo.introDate = 3060;
+        ammo.techLevel.put(3060, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3069, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3072, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_E ,RATING_D};
         ammo.techRating = RATING_F;
+        ammo.rulesRefs = "218, TM";
+        
         return ammo;
     }
 
@@ -10986,7 +11250,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISCruiseMissile50Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
         ammo.name = "Cruise Missile/50 Ammo";
         ammo.setInternalName("ISCruiseMissile50Ammo");
         ammo.damagePerShot = 1;
@@ -10996,12 +11259,12 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 75;
         ammo.cost = 20000;
         ammo.tonnage = 25;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.introDate = 3065;
-        ammo.techLevel.put(3065, ammo.techLevel.get(3067));
+        ammo.techLevel.put(3065, TechConstants.T_IS_EXPERIMENTAL);
         ammo.techLevel.put(3095, TechConstants.T_IS_ADVANCED);
+        ammo.availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "284, TO";
 
         return ammo;
     }
@@ -11009,7 +11272,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISCruiseMissile70Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
         ammo.name = "Cruise Missile/70 Ammo";
         ammo.setInternalName("ISCruiseMissile70Ammo");
         ammo.damagePerShot = 1;
@@ -11019,12 +11281,12 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 129;
         ammo.cost = 50000;
         ammo.tonnage = 35;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.introDate = 3065;
-        ammo.techLevel.put(3065, ammo.techLevel.get(3067));
+        ammo.techLevel.put(3065, TechConstants.T_IS_EXPERIMENTAL);
         ammo.techLevel.put(3095, TechConstants.T_IS_ADVANCED);
+        ammo.availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "284, TO";
 
         return ammo;
     }
@@ -11032,7 +11294,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISCruiseMissile90Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
         ammo.name = "Cruise Missile/90 Ammo";
         ammo.setInternalName("ISCruiseMissile90Ammo");
         ammo.damagePerShot = 1;
@@ -11042,12 +11303,12 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 191;
         ammo.cost = 90000;
         ammo.tonnage = 45;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.introDate = 3065;
-        ammo.techLevel.put(3065, ammo.techLevel.get(3067));
+        ammo.techLevel.put(3065, TechConstants.T_IS_EXPERIMENTAL);
         ammo.techLevel.put(3095, TechConstants.T_IS_ADVANCED);
+        ammo.availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "284, TO";
 
         return ammo;
     }
@@ -11055,7 +11316,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISCruiseMissile120Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
         ammo.name = "Cruise Missile/120 Ammo";
         ammo.setInternalName("ISCruiseMissile120Ammo");
         ammo.damagePerShot = 1;
@@ -11065,12 +11325,12 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 285;
         ammo.cost = 140000;
         ammo.tonnage = 60;
-        ammo.availRating = new int[]{EquipmentType.RATING_X,
-                EquipmentType.RATING_X, EquipmentType.RATING_F};
         ammo.introDate = 3065;
-        ammo.techLevel.put(3065, ammo.techLevel.get(3067));
+        ammo.techLevel.put(3065, TechConstants.T_IS_EXPERIMENTAL);
         ammo.techLevel.put(3095, TechConstants.T_IS_ADVANCED);
+        ammo.availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
         ammo.techRating = RATING_E;
+        ammo.rulesRefs = "284, TO";
 
         return ammo;
     }
@@ -11316,7 +11576,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISLightRifleAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         ammo.name = "Light Rifle Ammo";
         ammo.shortName = "Light Rifle";
         ammo.setInternalName("IS Ammo Light Rifle");
@@ -11327,12 +11586,14 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 18;
         ammo.bv = 3;
         ammo.cost = 1000;
-        ammo.availRating = new int[]{EquipmentType.RATING_C,
-                EquipmentType.RATING_F, EquipmentType.RATING_X};
         ammo.introDate = 1950;
-        ammo.techLevel.put(1950, ammo.techLevel.get(3071));
-        ammo.techLevel.put(3084, TechConstants.T_IS_TW_NON_BOX);
+        ammo.extinctDate = 2820;
+        ammo.reintroDate = 3079;
+        ammo.techLevel.put(1950, TechConstants.T_IS_UNOFFICIAL);
+        ammo.techLevel.put(3085, TechConstants.T_IS_TW_NON_BOX);
+        ammo.availRating = new int[] { RATING_C ,RATING_F ,RATING_X ,RATING_D};
         ammo.techRating = RATING_B;
+        ammo.rulesRefs = "338, TO";
 
         return ammo;
     }
@@ -11340,7 +11601,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISMediumRifleAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         ammo.name = "Medium Rifle Ammo";
         ammo.shortName = "Medium Rifle";
         ammo.setInternalName("IS Ammo Medium Rifle");
@@ -11351,12 +11611,14 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 9;
         ammo.bv = 6;
         ammo.cost = 1000;
-        ammo.availRating = new int[]{EquipmentType.RATING_C,
-                EquipmentType.RATING_F, EquipmentType.RATING_X};
         ammo.introDate = 1950;
-        ammo.techLevel.put(1950, ammo.techLevel.get(3071));
-        ammo.techLevel.put(3084, TechConstants.T_IS_TW_NON_BOX);
+        ammo.extinctDate = 2820;
+        ammo.reintroDate = 3079;
+        ammo.techLevel.put(1950, TechConstants.T_IS_UNOFFICIAL);
+        ammo.techLevel.put(3085, TechConstants.T_IS_TW_NON_BOX);
+        ammo.availRating = new int[] { RATING_C ,RATING_F ,RATING_X ,RATING_D};
         ammo.techRating = RATING_B;
+        ammo.rulesRefs = "338, TO";
 
         return ammo;
     }
@@ -11364,7 +11626,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISHeavyRifleAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         ammo.name = "Heavy Rifle Ammo";
         ammo.shortName = "Heavy Rifle";
         ammo.setInternalName("IS Ammo Heavy Rifle");
@@ -11375,12 +11636,14 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 11;
         ammo.cost = 1000;
-        ammo.availRating = new int[]{EquipmentType.RATING_C,
-                EquipmentType.RATING_F, EquipmentType.RATING_X};
         ammo.introDate = 1950;
-        ammo.techLevel.put(1950, ammo.techLevel.get(3071));
-        ammo.techLevel.put(3084, TechConstants.T_IS_TW_NON_BOX);
+        ammo.extinctDate = 2820;
+        ammo.reintroDate = 3079;
+        ammo.techLevel.put(1950, TechConstants.T_IS_UNOFFICIAL);
+        ammo.techLevel.put(3085, TechConstants.T_IS_TW_NON_BOX);
+        ammo.availRating = new int[] { RATING_C ,RATING_F ,RATING_X ,RATING_D};
         ammo.techRating = RATING_B;
+        ammo.rulesRefs = "338, TO";
 
         return ammo;
     }
@@ -11479,26 +11742,65 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-
-       private static AmmoType createISTHBLB20XAmmo() {
+    private static AmmoType createISTHBLB2XAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_IS_UNOFFICIAL);
-        ammo.name = "LB 20-X AC Ammo (THB)";
-        ammo.shortName = "LB 20-X";
-        ammo.setInternalName("IS LB 20-X AC Ammo (THB)");
-        ammo.addLookupName("IS Ammo 20-X (THB)");
-        ammo.addLookupName("ISLBXAC20 Ammo (THB)");
-        ammo.addLookupName("IS LB 20-X AC Ammo - Slug (THB)");
+        ammo.techLevel.put(3067, TechConstants.T_IS_ADVANCED);
+        ammo.name = "LB 2-X AC Ammo (THB)";
+        ammo.shortName = "LB 2-X";
+        ammo.setInternalName("IS LB 2-X AC Ammo (THB)");
+        ammo.addLookupName("IS Ammo 2-X (THB)");
+        ammo.addLookupName("ISLBXAC2 Ammo (THB)");
+        ammo.addLookupName("IS LB 2-X AC Ammo - Slug (THB)");
         ammo.damagePerShot = 1;
-        ammo.rackSize = 20;
+        ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_AC_LBX_THB;
-        ammo.shots = 4;
-        ammo.bv = 26;
-        ammo.cost = 30000;
+        ammo.shots = 40;
+        ammo.bv = 5;
+        ammo.cost = 3000;
 
         return ammo;
     }
+
+    private static AmmoType createISTHBLB5XAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel.put(3067, TechConstants.T_IS_ADVANCED);
+        ammo.name = "LB 5-X AC Ammo (THB)";
+        ammo.shortName = "LB 5-X";
+        ammo.setInternalName("IS LB 5-X AC Ammo (THB)");
+        ammo.addLookupName("IS Ammo 5-X (THB)");
+        ammo.addLookupName("ISLBXAC5 Ammo (THB)");
+        ammo.addLookupName("IS LB 5-X AC Ammo - Slug (THB)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_AC_LBX_THB;
+        ammo.shots = 16;
+        ammo.bv = 11;
+        ammo.cost = 15000;
+
+        return ammo;
+    }
+
+   private static AmmoType createISTHBLB20XAmmo() {
+    AmmoType ammo = new AmmoType();
+
+    ammo.techLevel.put(3067, TechConstants.T_IS_UNOFFICIAL);
+    ammo.name = "LB 20-X AC Ammo (THB)";
+    ammo.shortName = "LB 20-X";
+    ammo.setInternalName("IS LB 20-X AC Ammo (THB)");
+    ammo.addLookupName("IS Ammo 20-X (THB)");
+    ammo.addLookupName("ISLBXAC20 Ammo (THB)");
+    ammo.addLookupName("IS LB 20-X AC Ammo - Slug (THB)");
+    ammo.damagePerShot = 1;
+    ammo.rackSize = 20;
+    ammo.ammoType = AmmoType.T_AC_LBX_THB;
+    ammo.shots = 4;
+    ammo.bv = 26;
+    ammo.cost = 30000;
+
+    return ammo;
+}
 
     private static AmmoType createISTHBLB2XClusterAmmo() {
         AmmoType ammo = new AmmoType();

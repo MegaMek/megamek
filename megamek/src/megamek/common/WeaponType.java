@@ -1022,9 +1022,23 @@ public class WeaponType extends EquipmentType {
         // VGLs
         EquipmentType.addType(new ISVehicularGrenadeLauncher());
         EquipmentType.addType(new CLVehicularGrenadeLauncher());
-
         EquipmentType.addType(new ISC3RemoteSensorLauncher());
 
+        //IO Weapons
+        EquipmentType.addType(new CLImprovedAC2());
+        EquipmentType.addType(new CLImprovedAC5());
+        EquipmentType.addType(new CLImprovedAC10());
+        EquipmentType.addType(new CLImprovedAC20());
+        EquipmentType.addType(new CLImprovedSRM2());
+        EquipmentType.addType(new CLImprovedSRM4());
+        EquipmentType.addType(new CLImprovedSRM6());
+        EquipmentType.addType(new CLImprovedLRM5());
+        EquipmentType.addType(new CLImprovedLRM10());
+        EquipmentType.addType(new CLImprovedLRM15());
+        EquipmentType.addType(new CLImprovedLRM20());
+        EquipmentType.addType(new CLImprovedGaussRifle());
+        
+                
         // Infantry Attacks
         EquipmentType.addType(new LegAttack());
         EquipmentType.addType(new SwarmAttack());

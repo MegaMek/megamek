@@ -144,7 +144,10 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             hexTileset.incDepth = 0;
             hexTileset.loadFromFile(PreferenceManager.getClientPreferences().getMapTileset());
         } catch (Exception FileNotFoundException) {
-            if ( !new File(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).exists() ){
+            System.out.println("Error loading tileset, "
+                    + "reverting to default hexset! " + "Could not find file: "
+                    + PreferenceManager.getClientPreferences().getMapTileset());
+            if (!new File(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).exists()){
                 createDefaultHexSet();
             }
             hexTileset.loadFromFile(FILENAME_DEFAULT_HEX_SET);

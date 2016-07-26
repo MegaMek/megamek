@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Set;
 
 import megamek.client.ui.ITilesetManager;
+import megamek.client.ui.swing.MechTileset.MechEntry;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.ImageFileFactory;
@@ -185,7 +186,17 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                 // now it's a real problem
                 System.out
                         .println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
-                return null;
+                // Try to get a default image, so something is displayed
+                MechEntry defaultEntry = mechTileset.genericFor(entity, -1);
+                if (defaultEntry.getImage() == null) {
+                    defaultEntry.loadImage(boardview);
+                }
+                if (defaultEntry.getImage() != null) {
+                    return defaultEntry.getImage().getScaledInstance(56, 48,
+                            Image.SCALE_SMOOTH);
+                } else {
+                    return null;
+                }
             }
         }
         return entityImage.getIcon();
@@ -205,8 +216,13 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             if (entityImage == null) {
                 // now it's a real problem
                 System.out
-                        .println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
-                return null;
+                        .println("Unable to load wreckMarker image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
+                // Try to get a default image, so something is displayed
+                MechEntry defaultEntry = wreckTileset.genericFor(entity, -1);
+                if (defaultEntry.getImage() == null) {
+                    defaultEntry.loadImage(boardview);
+                }
+                return defaultEntry.getImage();
             }
         }
         return entityImage.getWreckFacing(entity.getFacing());
@@ -242,7 +258,12 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                 // now it's a real problem
                 System.out
                         .println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
-                return null;
+                // Try to get a default image, so something is displayed
+                MechEntry defaultEntry = mechTileset.genericFor(entity, -1);
+                if (defaultEntry.getImage() == null) {
+                    defaultEntry.loadImage(boardview);
+                }
+                return defaultEntry.getImage();
             }
         }
         // get image rotated for facing
@@ -507,7 +528,6 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      *         pattern or if there was an error loading it.
      */
     public Image getEntityCamo(Entity entity) {
-
         // Return a null if the player has selected no camo file.
         if ((null == entity.getCamoCategory())
                 || IPlayer.NO_CAMO.equals(entity.getCamoCategory())) {
@@ -517,14 +537,12 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         // Try to get the player's camo file.
         Image camo = null;
         try {
-
             // Translate the root camo directory name.
             String category = entity.getCamoCategory();
             if (IPlayer.ROOT_CAMO.equals(category)) {
                 category = ""; //$NON-NLS-1$
             }
             camo = (Image) camos.getItem(category, entity.getCamoFileName());
-
         } catch (Exception err) {
             err.printStackTrace();
         }

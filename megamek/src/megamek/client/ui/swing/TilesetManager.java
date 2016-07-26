@@ -298,16 +298,16 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         Image image = ecmStaticImages.get(tint);
         if (image == null) {
             // Create a new hex-sized image
-            image = new BufferedImage(EntityImage.IMG_WIDTH,
-                    EntityImage.IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+            image = new BufferedImage(HexTileset.HEX_W,
+                    HexTileset.HEX_H, BufferedImage.TYPE_INT_ARGB);
             Graphics g = image.getGraphics();
             Polygon hexPoly = boardview.getHexPoly();
             g.setColor(tint.darker());
             // Draw ~200 small "ovals" at random locations within a a hex
             // A 3x3 oval ends up looking more like a cross
             for (int i = 0; i < 200; i++) {
-                int x = (int)(Math.random() * EntityImage.IMG_WIDTH);
-                int y = (int)(Math.random() * EntityImage.IMG_HEIGHT);
+                int x = (int)(Math.random() * HexTileset.HEX_W);
+                int y = (int)(Math.random() * HexTileset.HEX_H);
                 if (hexPoly.contains(x,y)) {
                     g.fillOval(x, y, 3, 3);
                 }
@@ -603,9 +603,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         private Image[] wreckFacings = new Image[6];
         private Component parent;
 
-        private static final int IMG_WIDTH = 84;
-        private static final int IMG_HEIGHT = 72;
-        private static final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
+        private final int IMG_WIDTH = HexTileset.HEX_W;
+        private final int IMG_HEIGHT = HexTileset.HEX_H;
+        private final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
 
         public EntityImage(Image base, int tint, Image camo, Component comp) {
             this(base, null, tint, camo, comp);

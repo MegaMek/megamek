@@ -53,6 +53,16 @@ import megamek.common.util.StringUtil;
  */
 public class HexTileset {
 
+    /**
+     * The image width of a hex image.
+     */
+    public static int HEX_W = 84;
+
+    /**
+     * The image height of a hex image.
+     */
+    public static int HEX_H = 72;
+
     public static String TRANSPARENT_THEME = "transparent";
 
     private ArrayList<HexEntry> bases = new ArrayList<HexEntry>();

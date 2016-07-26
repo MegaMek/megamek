@@ -179,13 +179,13 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         if (entityImage == null) {
             // probably double_blind. Try to load on the fly
             System.out
-                    .println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
+                    .println("Loading icon for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
             loadImage(entity, -1);
             entityImage = mechImages.get(temp);
             if (entityImage == null) {
                 // now it's a real problem
                 System.out
-                        .println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
+                        .println("Unable to load icon for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
                 // Try to get a default image, so something is displayed
                 MechEntry defaultEntry = mechTileset.genericFor(entity, -1);
                 if (defaultEntry.getImage() == null) {
@@ -210,7 +210,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         if (entityImage == null) {
             // probably double_blind. Try to load on the fly
             System.out
-                    .println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
+                    .println("Loading wreckMarker image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
             loadImage(entity, secondaryPos);
             entityImage = mechImages.get(temp);
             if (entityImage == null) {

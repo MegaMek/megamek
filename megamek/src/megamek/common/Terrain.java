@@ -315,9 +315,9 @@ public class Terrain implements ITerrain, Serializable {
             break;
         case Terrains.MUD:
             if ((moveMode != EntityMovementMode.BIPED)
-                    || (moveMode != EntityMovementMode.QUAD)
-                    || (moveMode != EntityMovementMode.HOVER)
-                    || (moveMode != EntityMovementMode.WIGE)) {
+                    && (moveMode != EntityMovementMode.QUAD)
+                    && (moveMode != EntityMovementMode.HOVER)
+                    && (moveMode != EntityMovementMode.WIGE)) {
                 roll.addModifier(1, "Mud");
             }
             break;

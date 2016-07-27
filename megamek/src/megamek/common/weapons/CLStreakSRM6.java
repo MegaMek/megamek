@@ -29,7 +29,7 @@ public class CLStreakSRM6 extends StreakSRMWeapon {
      * 
      */
     public CLStreakSRM6() {
-        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
+
         this.name = "Streak SRM 6";
         this.setInternalName("CLStreakSRM6");
         this.addLookupName("Clan Streak SRM-6");
@@ -47,9 +47,12 @@ public class CLStreakSRM6 extends StreakSRMWeapon {
         this.shortAV = 12;
         this.medAV = 12;
         this.maxRange = RANGE_MED;
-        introDate = 2822;
-        techLevel.put(2822, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_D, RATING_C };
+        introDate = 2817;
+        techLevel.put(2817, TechConstants.T_CLAN_EXPERIMENTAL);   ///EXP
+        techLevel.put(2819, TechConstants.T_CLAN_ADVANCED);   ///ADV
+        techLevel.put(2830, TechConstants.T_CLAN_TW);   ///COMMON
+        availRating = new int[] { RATING_X, RATING_D, RATING_D, RATING_D };
         techRating = RATING_F;
+        rulesRefs = "230, TM";
     }
 }

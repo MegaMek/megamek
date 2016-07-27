@@ -33,7 +33,7 @@ public class CLLightMGA extends AmmoWeapon {
 
     public CLLightMGA() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
+
         name = "Light Machine Gun Array";
         addLookupName("Clan Light Machine Gun Array");
         setInternalName("CLLMGA");
@@ -59,9 +59,11 @@ public class CLLightMGA extends AmmoWeapon {
         setModes(modeStrings);
         instantModeSwitch = false;
         introDate = 3069;
-        techLevel.put(3069, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_D };
+        techLevel.put(3069, TechConstants.T_CLAN_ADVANCED);   ///ADV
+        techLevel.put(3070, TechConstants.T_CLAN_TW);   ///COMMON
+        availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_F };
         techRating = RATING_E;
+        rulesRefs = "228, TM";
     }
 
     /*

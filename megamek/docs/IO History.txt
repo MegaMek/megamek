@@ -1,0 +1,5 @@
+This is a list of the equipment that needs to me implemented in Megamek.  
+The list is based from Interstellar Operations.
+
+=========================================================================
+Retro-Streak Warhead - (IO 193)  -  http://www.sarna.net/wiki/Retro-Streak_Warhead

@@ -30,7 +30,7 @@ public class ISStreakSRM2 extends StreakSRMWeapon {
      */
     public ISStreakSRM2() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+
         name = "Streak SRM 2";
         setInternalName("ISStreakSRM2");
         addLookupName("IS Streak SRM-2");
@@ -48,11 +48,14 @@ public class ISStreakSRM2 extends StreakSRMWeapon {
         cost = 15000;
         shortAV = 4;
         maxRange = RANGE_SHORT;
-        introDate = 2647;
-        techLevel.put(2647, techLevel.get(3071));
+        introDate = 2645;
         extinctDate = 2845;
-        reintroDate = 3035;
-        availRating = new int[] { RATING_E, RATING_F, RATING_D };
+    	reintroDate = 3035;	
+        techLevel.put(2645, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2647, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2650, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_E ,RATING_E ,RATING_D ,RATING_D};
         techRating = RATING_E;
+        rulesRefs = "230, TM";
     }
 }

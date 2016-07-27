@@ -38,7 +38,7 @@ public class CLGaussRifle extends GaussWeapon {
      */
     public CLGaussRifle() {
         super();
-        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
+
         this.name = "Gauss Rifle";
         this.setInternalName("CLGaussRifle");
         this.addLookupName("Clan Gauss Rifle");
@@ -59,10 +59,13 @@ public class CLGaussRifle extends GaussWeapon {
         this.longAV = 15;
         this.maxRange = RANGE_LONG;
         this.explosionDamage = 20;
-        availRating = new int[] { RATING_X, RATING_C, RATING_C };
-        introDate = 2828;
-        techLevel.put(2828, techLevel.get(3071));
+        introDate = 2817;
+        techLevel.put(2817, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(2828, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(2830, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_F ,RATING_D ,RATING_D};
         techRating = RATING_F;
+        rulesRefs = "218, TM";
     }
 
     /*

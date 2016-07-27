@@ -33,7 +33,7 @@ public class ISLightMGA extends AmmoWeapon {
 
     public ISLightMGA() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+
         name = "Light Machine Gun Array";
         addLookupName("IS Light Machine Gun Array");
         setInternalName("ISLMGA");
@@ -58,10 +58,13 @@ public class ISLightMGA extends AmmoWeapon {
         String[] modeStrings = { "Linked", "Off" };
         setModes(modeStrings);
         instantModeSwitch = false;
-        introDate = 3068;
-        techLevel.put(3068, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        introDate = 3061;
+        techLevel.put(3061, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        techLevel.put(3068, TechConstants.T_IS_ADVANCED);   ///ADV
+        techLevel.put(3070, TechConstants.T_IS_TW_NON_BOX);   ///COMMON
+        availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_F };
         techRating = RATING_E;
+        rulesRefs = "228, TM";
     }
 
     /*

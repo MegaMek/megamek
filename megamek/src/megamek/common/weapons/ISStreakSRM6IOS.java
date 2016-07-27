@@ -49,10 +49,12 @@ public class ISStreakSRM6IOS extends StreakSRMWeapon {
         cost = 96000;
         shortAV = 12;
         maxRange = RANGE_SHORT;
-        techRating = RATING_B;
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3056;
-        techLevel.put(3056, techLevel.get(3071));
-        techLevel.put(3081, TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3056, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3076, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3085, TechConstants.T_IS_EXPERIMENTAL);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
+        techRating = RATING_B;
+        rulesRefs = "230, TM";;
     }
 }

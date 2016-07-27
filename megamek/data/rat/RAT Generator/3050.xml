@@ -1636,7 +1636,7 @@
 		</model>
 	</chassis>
 	<chassis name='Black Knight' unitType='Mek'>
-		<availability>CHH:8,FRR:2,CLAN:9,CFM:8,FS:1,DC.GHO:3,CSA:9,OA:1,CDS:8,CBS:10,FWL:1,NIOPS:7,CGB:10,CSR:8,CSV:8,WOB:7,FWL.OH:1,CGS:10,Periphery:1,TC:1,BAN:8,CS:7,CW:10,LA:1,CNC:10,MERC.SI:4,CJF:8,DC:2</availability>
+		<availability>CHH:7,FRR:2,CLAN:8,CFM:7,FS:1,DC.GHO:3,CSA:8,OA:1,CDS:7,CBS:9,FWL:1,NIOPS:7,CGB:9,CSR:7,CSV:7,WOB:7,FWL.OH:1,CGS:9,Periphery:1,TC:1,BAN:8,CS:7,CW:9,LA:1,CNC:9,MERC.SI:4,CJF:7,DC:2</availability>
 		<model name='BL-6-KNT'>
 			<availability>DC.GHO:4,CS:6,FRR:3,CLAN:6,NIOPS:6,WOB:6,MERC.SI:6,BAN:6,DC:3</availability>
 		</model>
@@ -2008,7 +2008,7 @@
 		</model>
 	</chassis>
 	<chassis name='Crockett' unitType='Mek'>
-		<availability>CHH:10,CSR:8,CSV:8,CLAN:9,CFM:8,WOB:8,CGS:8,BAN:8,CS:8,DC.GHO:4,CDS:8,CW:10,CBS:10,NIOPS:8,MERC.SI:4,CJF:8,CGB:10</availability>
+		<availability>CHH:8,CSR:6,CSV:6,CLAN:7,CFM:6,WOB:8,CGS:6,BAN:8,CS:8,DC.GHO:4,CDS:6,CW:8,CBS:8,NIOPS:8,MERC.SI:4,CJF:6,CGB:8</availability>
 		<model name='CRK-5003-0'>
 			<availability>IS:8,NIOPS:0</availability>
 		</model>
@@ -2717,7 +2717,7 @@
 		</model>
 	</chassis>
 	<chassis name='Highlander' unitType='Mek'>
-		<availability>CC:1,CS:9,LA:3,CLAN:9,NIOPS:9,CFM:10,WOB:9,MERC:2,FS:2,CJF:10,BAN:8,DC:2</availability>
+		<availability>CC:1,CS:9,LA:3,CLAN:7,NIOPS:9,CFM:8,WOB:9,MERC:2,FS:2,CJF:8,BAN:7,DC:2</availability>
 		<model name='HGN-732b'>
 			<availability>CLAN:5,BAN:2</availability>
 		</model>
@@ -2807,7 +2807,7 @@
 		</model>
 	</chassis>
 	<chassis name='Hussar' unitType='Mek'>
-		<availability>DC.GHO:6,CS:4,CIH:9,CSV:9,CLAN:8,NIOPS:4,MERC.SI:4,BAN:8,DC:2</availability>
+		<availability>DC.GHO:6,CS:4,CIH:7,CSV:7,CLAN:6,NIOPS:4,MERC.SI:4,BAN:6,DC:2</availability>
 		<model name='HSR-300-D'>
 			<availability>DC:8</availability>
 		</model>

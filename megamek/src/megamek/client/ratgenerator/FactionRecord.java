@@ -49,6 +49,19 @@ public class FactionRecord {
 	private HashMap<Integer, ArrayList<Integer>> pctClanVee;
 	private HashMap<Integer, ArrayList<Integer>> pctSLVee;
 	private HashMap<Integer, HashMap<String, Integer>> salvage;
+	/*
+	 * FM:Updates gives percentage values for omni, Clan, and SL tech. Later manuals are
+	 * less precise, giving omni percentages for Clans and (in FM:3085) upgrade percentage
+	 * for IS and Periphary factions. In order to use the values that are available without
+	 * either forcing conformity to guesses for later eras or suddenly removing constraints,
+	 * we extrapolate some values but provide a margin of conformity that grows as we
+	 * get farther from known values. upgradeMargin applies the percentage of units that
+	 * are late-SW IS tech. techMargin applies to both Clan and advanced (SL and post-Clan) tech.
+	 */
+	private HashMap<Integer, Integer> omniMargin;
+	private HashMap<Integer, Integer> techMargin;
+	private HashMap<Integer, Integer> upgradeMargin;
+	
 	//weightDistribution.get(era).get(unitType)
 	private HashMap<Integer, HashMap<Integer,ArrayList<Integer>>> weightDistribution;
 	private ArrayList<String> parentFactions;
@@ -77,6 +90,9 @@ public class FactionRecord {
 		pctSLAero = new HashMap<Integer, ArrayList<Integer>>();
 		pctClanVee = new HashMap<Integer, ArrayList<Integer>>();
 		pctSLVee = new HashMap<Integer, ArrayList<Integer>>();
+		omniMargin = new HashMap<Integer,Integer>();
+		upgradeMargin = new HashMap<Integer,Integer>();
+		techMargin = new HashMap<Integer,Integer>();
 		salvage = new HashMap<Integer, HashMap<String, Integer>>();
 		weightDistribution = new HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>();
 		parentFactions = new ArrayList<String>();
@@ -542,6 +558,27 @@ public class FactionRecord {
 		}
 	}
 	
+	public int getOmniMargin(int era) {
+		if (omniMargin.containsKey(era)) {
+			return omniMargin.get(era);
+		}
+		return 0;
+	}
+	
+	public int getTechMargin(int era) {
+		if (techMargin.containsKey(era)) {
+			return techMargin.get(era);
+		}
+		return 0;
+	}
+	
+	public int getUpgradeMargin(int era) {
+		if (upgradeMargin.containsKey(era)) {
+			return upgradeMargin.get(era);
+		}
+		return 0;
+	}
+	
 	public ArrayList<Integer> getWeightDistribution(int era, int unitType) {
 		if (weightDistribution.containsKey(era)
 				&& weightDistribution.get(era).containsKey(unitType)) {
@@ -646,7 +683,7 @@ public class FactionRecord {
 						&& wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
 					setPctClanAero(era, wn.getTextContent());
 				} else if (wn.getAttributes().getNamedItem("unitType") != null
-							&& wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
+							&& wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Vehicle")) {
 					setPctClanVee(era, wn.getTextContent());
 				} else {
 					setPctClan(era, wn.getTextContent());
@@ -657,11 +694,20 @@ public class FactionRecord {
 						&& wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
 					setPctSLAero(era, wn.getTextContent());
 				} else if (wn.getAttributes().getNamedItem("unitType") != null
-							&& wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
+							&& wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Vehicle")) {
 					setPctSLVee(era, wn.getTextContent());
 				} else {
 					setPctSL(era, wn.getTextContent());
 				}
+				break;
+			case "omniMargin":
+				omniMargin.put(era, Integer.parseInt(wn.getTextContent()));
+				break;
+			case "techMargin":
+				techMargin.put(era, Integer.parseInt(wn.getTextContent()));
+				break;
+			case "upgradeMargin":
+				upgradeMargin.put(era, Integer.parseInt(wn.getTextContent()));
 				break;
 			case "salvage":
 				pctSalvage.put(era,

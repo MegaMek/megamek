@@ -270,19 +270,32 @@ public class RATGenerator {
 	}
 	
 	/**
-	 * Determines availability rating between two era points by interpolation.
+	 * Given values for two years, interpolates or extrapolates value for another given year.
+	 * If one of the two values is null, it is treated as 0.
 	 * 
-	 * @param year The year for which to find an availability rating.
-	 * @param early AvailabilityRecord for the earlier date.
-	 * @param late AvailabilityRecord for the later date.
-	 * @return generated AvailabilityRecord
+	 * @param av1 The first value.
+	 * @param av2 The second value.
+	 * @param year1 The year for the first value.
+	 * @param year2 The year for the second value.
+	 * @param now The year for which to calculate a value.
+	 * @return The value for the year in question. Returns null if av1 and av2 are both null.
 	 */
 	
-	private double interpolateDouble(double av1, double av2, int year1, int year2, int now) {
-		if (year1 == year2) {
-			return av1;
+	private Double interpolate(Number av1, Number av2, int year1, int year2, int now) {
+		if (av1 == null && av2 == null) {
+			return null;
 		}
-		return av1 + (av2 - av1) * (now - year1) / (year2 - year1);
+		if (av1 == null) {
+			av1 = 0.0;
+		}
+		if (av2 == null) {
+			av2 = 0.0;
+		}
+		if (year1 == year2) {
+			return av1.doubleValue();
+		}
+		return av1.doubleValue()
+				+ (av2.doubleValue() - av1.doubleValue()) * (now - year1) / (year2 - year1);
 	}
 	
 	public List<UnitTable.TableEntry> generateTable(FactionRecord fRec, int unitType, int year,
@@ -306,6 +319,9 @@ public class RATGenerator {
 		if (!eraSet.contains(year)) {
 			late = eraSet.ceiling(year);
 		}
+		if (late == null) {
+			late = early;
+		}
 		
 		for (String chassisKey : chassisIndex.get(early).keySet()) {
 			ChassisRecord cRec = chassis.get(chassisKey);
@@ -327,11 +343,9 @@ public class RATGenerator {
 				continue;
 			}
 			double cAv = cRec.calcAvailability(ar, rating, fRec.getRatingLevels().size(), early);
-			if (late != null) {
-				cAv = interpolateDouble(cAv,
-						cRec.calcAvailability(ar, rating, fRec.getRatingLevels().size(), late),
-						Math.max(early, cRec.getIntroYear()), late, year);
-			}
+			cAv = interpolate(cAv,
+					cRec.calcAvailability(ar, rating, fRec.getRatingLevels().size(), late),
+					Math.max(early, cRec.getIntroYear()), late, year);
 			if (cAv > 0) {
 				double totalModelWeight = cRec.totalModelWeight(early,
 						cRec.isOmni()?user : fRec);
@@ -351,11 +365,9 @@ public class RATGenerator {
 						continue;
 					}
 					double mAv = mRec.calcAvailability(ar, rating, fRec.getRatingLevels().size(), early);
-					if (late != null) {
-						mAv = interpolateDouble(mAv,
-								mRec.calcAvailability(ar, rating, fRec.getRatingLevels().size(), late),
-								Math.max(early, mRec.getIntroYear()), late, year);
-					}
+					mAv = interpolate(mAv,
+							mRec.calcAvailability(ar, rating, fRec.getRatingLevels().size(), late),
+							Math.max(early, mRec.getIntroYear()), late, year);
 					Double adjMAv = MissionRole.adjustAvailabilityByRole(mAv, roles, mRec, year, roleStrictness);
 					if (adjMAv != null) {
 						double mWt = AvailabilityRating.calcWeight(adjMAv) / totalModelWeight
@@ -404,41 +416,21 @@ public class RATGenerator {
 			}
 		}
 		
-		double total = 0.0;
-		double totalOmni = 0.0;
-		double totalClan = 0.0;
-		double totalSL = 0.0;
-		for (Map.Entry<ModelRecord,Double> entry : unitWeights.entrySet()) {
-			if (entry.getKey().isOmni()) {
-				totalOmni += entry.getValue();
-			}
-			if (entry.getKey().isClan()) {
-				totalClan += entry.getValue();
-			}
-			if (entry.getKey().isSL()) {
-				totalSL += entry.getValue();
-			}
-			total += entry.getValue();
-		}
+		double total = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
 
 		if (fRec.getPctSalvage(early) != null) {
 			HashMap<String,Double> salvageEntries = new HashMap<String,Double>();
 			for (Map.Entry<String,Integer> entry : fRec.getSalvage(early).entrySet()) {
-				if (late == null) {
-					salvageEntries.put(entry.getKey(), entry.getValue().doubleValue());
-				} else {
-					salvageEntries.put(entry.getKey(),
-							interpolateDouble(entry.getValue().doubleValue(),
-									fRec.getSalvage(late).containsKey(entry.getKey())?
-											fRec.getSalvage(late).get(entry.getKey()).doubleValue() : 0,
-											early, late, year));
-				}
+				salvageEntries.put(entry.getKey(),
+						interpolate(entry.getValue(),
+								fRec.getSalvage(late).get(entry.getKey()),
+										early, late, year));
 			}
-			if (late != null) {
+			if (late != early) {
 				for (Map.Entry<String,Integer> entry : fRec.getSalvage(late).entrySet()) {
 					if (!salvageEntries.containsKey(entry.getKey())) {
-						salvageEntries.put(entry.getKey(), interpolateDouble(0,
-								entry.getValue().doubleValue(), early, late, year));
+						salvageEntries.put(entry.getKey(), interpolate(0.0,
+								entry.getValue(), early, late, year));
 					}
 				}
 			}			
@@ -464,71 +456,10 @@ public class RATGenerator {
 		}
 		
 		if (rating >= 0) {
-			Integer pctOmni = null;
-			Integer pctNonOmni = null;
-			Integer pctSL = null;
-			Integer pctClan = null;
-			if (unitType == UnitType.MEK) {
-				pctOmni = user.getPctOmni(early, rating);
-				pctClan = user.getPctClan(early, rating);
-				pctSL = user.getPctSL(early, rating);
-			}
-			if (unitType == UnitType.AERO) {
-				pctOmni = user.getPctOmniAero(early, rating);
-				pctClan = user.getPctClanAero(early, rating);
-				pctSL = user.getPctSLAero(early, rating);
-			}
-			if (unitType == UnitType.TANK || unitType == UnitType.AERO) {
-				pctClan = user.getPctClanVee(early, rating);
-				pctSL = user.getPctSLVee(early, rating);
-			}
-			Integer pctOther = 100;
-			if (pctOmni != null) {
-				pctNonOmni = 100 - pctOmni;
-			}
-			if (pctClan != null) {
-				pctOther -= pctClan;
-			}
-			if (pctSL != null) {
-				pctOther -= pctSL;
-			}
-			/* For non-Clan factions, the amount of salvage from Clan factions is
-			 * part of the overall Clan percentage.
-			 */
-			if (!fRec.isClan() && pctClan != null && totalClan > 0) {
-				double clanSalvage = salvageWeights.keySet().stream().filter(fr -> fr.isClan())
-						.mapToDouble(fr -> salvageWeights.get(fr)).sum();
-				total += clanSalvage;
-				totalClan += clanSalvage;
-				for (FactionRecord fr : salvageWeights.keySet()) {
-					if (fr.isClan()) {
-						salvageWeights.put(fr, salvageWeights.get(fr)
-								* (pctClan / 100.0) * (total / totalClan));
-					}
-				}
-			}
-			for (ModelRecord mRec : unitWeights.keySet()) {
-				if (pctOmni != null && mRec.isOmni() && totalOmni < total) {
-					unitWeights.put(mRec, unitWeights.get(mRec) * (pctOmni / 100.0) * (total / totalOmni));
-				}
-				if (pctNonOmni != null && !mRec.isOmni() && totalOmni > 0) {
-					unitWeights.put(mRec, unitWeights.get(mRec) * (pctNonOmni / 100.0) * (total / (total - totalOmni)));						
-				}
-				if (pctSL != null && mRec.isSL()
-						&& totalSL > 0) {
-					unitWeights.put(mRec, unitWeights.get(mRec) * (pctSL / 100.0) * (total / totalSL));
-				}
-				if (pctClan != null && mRec.isClan()
-						&& totalClan > 0) {
-					unitWeights.put(mRec, unitWeights.get(mRec) * (pctClan / 100.0) * (total / totalClan));
-				}
-				if (pctOther != null && !mRec.isClan() && !mRec.isSL()
-						&& totalClan > 0) {
-					unitWeights.put(mRec, unitWeights.get(mRec) * (pctOther / 100.0)
-							* (total / pctOther));
-				}
-			}
+			adjustForRating(fRec, unitType, year, rating,
+					unitWeights, salvageWeights, early, late);
 		}
+		
 		
 		/* Increase weights if necessary to keep smallest from rounding down to zero */
 		
@@ -538,7 +469,7 @@ public class RATGenerator {
 				.mapToDouble(Double::doubleValue)
 				.filter(d -> d > 0)
 				.summaryStatistics();
-		if (stats.getMin() < 0.5) {
+		if (stats.getMin() < 0.5 || stats.getMax() > 1000) {
 			adj = 0.5 / stats.getMin();
 			if (stats.getMax() * adj > 1000.0) {
 				adj = 1000.0 / stats.getMax();
@@ -559,6 +490,163 @@ public class RATGenerator {
 			}
 		}
 		return retVal;
+	}
+
+	private void adjustForRating(FactionRecord fRec, int unitType, int year,
+			int rating, HashMap<ModelRecord, Double> unitWeights,
+			HashMap<FactionRecord, Double> salvageWeights, Integer early,
+			Integer late) {
+		double total = 0.0;
+		double totalOmni = 0.0;
+		double totalClan = 0.0;
+		double totalSL = 0.0;
+		for (Map.Entry<ModelRecord, Double> entry : unitWeights.entrySet()) {
+			total += entry.getValue();
+			if (entry.getKey().isOmni()) {
+				totalOmni += entry.getValue();
+			}
+			if (entry.getKey().isClan()) {
+				totalClan += entry.getValue();
+			} else if (entry.getKey().isSL()) {
+				totalSL += entry.getValue();
+			}
+		}
+		Double pctOmni = null;
+		Double pctNonOmni = null;
+		Double pctSL = null;
+		Double pctClan = null;
+		Double pctOther = null;
+		if (unitType == UnitType.MEK) {
+			try {
+			pctOmni = interpolate(fRec.getPctOmni(early, rating),
+							fRec.getPctOmni(late, rating), early, late, year);
+			pctClan = interpolate(fRec.getPctClan(early, rating),
+							fRec.getPctClan(late, rating), early, late, year);
+			pctSL = interpolate(fRec.getPctSL(early, rating),
+							fRec.getPctSL(late, rating), early, late, year);
+			} catch (NullPointerException ex) {
+				System.err.println("NPE");	
+			}
+		}
+		if (unitType == UnitType.AERO) {
+			pctOmni = interpolate(fRec.getPctOmniAero(early, rating),
+						fRec.getPctOmniAero(late, rating), early, late, year);
+			pctClan = interpolate(fRec.getPctClanAero(early, rating),
+						fRec.getPctClanAero(late, rating), early, late, year);
+			pctSL = interpolate(fRec.getPctSLAero(early, rating),
+						fRec.getPctSLAero(late, rating), early, late, year);
+		}
+		if (unitType == UnitType.TANK || unitType == UnitType.AERO) {
+			pctClan = interpolate(fRec.getPctClanVee(early, rating),
+						fRec.getPctClanVee(late, rating), early, late, year);
+			pctSL = interpolate(fRec.getPctSLVee(early, rating),
+						fRec.getPctSLVee(late, rating), early, late, year);
+		}
+		/* Adjust for lack of precision in post-FM:Updates extrapolations */
+		if (pctSL != null || pctClan != null) {
+			pctOther = 100.0;
+			if (pctSL != null) {
+				pctOther -= pctSL;
+			}
+			if (pctClan != null) {
+				pctOther -= pctClan;
+			}
+			Double techMargin = interpolate(fRec.getTechMargin(early),
+					fRec.getTechMargin(late),
+					early, late, year);
+			if (techMargin != null) {
+				if (pctClan != null) {
+					pctClan = Math.min(pctClan + techMargin,
+							100.0 * totalClan/total);
+					pctClan = Math.max(pctClan - techMargin,
+							100.0 * totalClan/total);
+				}
+				if (pctSL != null) {
+					pctSL = Math.min(pctSL + techMargin,
+							100.0 * pctSL/total);
+					pctSL = Math.max(pctSL - techMargin,
+							100.0 * pctSL/total);
+				}					
+			}
+			Double upgradeMargin = interpolate(fRec.getUpgradeMargin(early),
+					fRec.getUpgradeMargin(late),
+					early, late, year);
+			if (upgradeMargin != null) {
+				pctOther = Math.min(pctOther + upgradeMargin,
+						100.0 * (total - totalClan - totalSL)/total);
+				pctOther = Math.max(pctOther - upgradeMargin,
+						100.0 * (total - totalClan - totalSL)/total);
+				/* If clan, sl, and other are all adjusted, the values probably
+				 * don't add up to 100, which is fine unless the upgradeMargin is
+				 * <= techMargin. Then pctOther is more certain, and we adjust 
+				 * the values of clan and sl to keep the value of "other" equal to
+				 * a percentage. 
+				 */
+				if (techMargin != null) {
+					if (upgradeMargin <= techMargin) {
+						if (pctClan == null || pctClan == 0) {
+							pctSL = 100.0 - pctOther;
+						} else if (pctSL == null || pctSL == 0) {
+							pctClan = 100.0 - pctOther;
+						} else {
+							pctSL = (100.0 - pctOther) * pctSL / (pctSL + pctClan);
+							pctClan = 100.0 - pctOther - pctSL;
+						}
+					}
+				}
+			}
+		}
+		if (pctOmni != null) {
+			Double omniMargin = interpolate(fRec.getOmniMargin(early),
+					fRec.getOmniMargin(late),
+					early, late, year);
+			if (omniMargin != null && omniMargin > 0) {
+				pctOmni = Math.min(pctOmni + omniMargin, 100.0 * totalOmni/total);
+				pctOmni = Math.max(pctOmni - omniMargin, 100.0 * totalOmni/total);
+			}
+			pctNonOmni = 100.0 - pctOmni;
+		}			
+				
+		/* For non-Clan factions, the amount of salvage from Clan factions is
+		 * part of the overall Clan percentage.
+		 */
+		if (!fRec.isClan() && pctClan != null && totalClan > 0) {
+			double clanSalvage = salvageWeights.keySet().stream().filter(fr -> fr.isClan())
+					.mapToDouble(fr -> salvageWeights.get(fr)).sum();
+			total += clanSalvage;
+			totalClan += clanSalvage;
+			for (FactionRecord fr : salvageWeights.keySet()) {
+				if (fr.isClan()) {
+					salvageWeights.put(fr, salvageWeights.get(fr)
+							* pctClan * (total / totalClan));
+				}
+			}
+		}
+		for (ModelRecord mRec : unitWeights.keySet()) {
+			if (pctOmni != null && mRec.isOmni() && totalOmni < total) {
+				unitWeights.put(mRec, unitWeights.get(mRec) * pctOmni * (total / totalOmni));
+			}
+			if (pctNonOmni != null && !mRec.isOmni() && totalOmni > 0) {
+				unitWeights.put(mRec, unitWeights.get(mRec) * pctNonOmni * (total / (total - totalOmni)));						
+			}
+			if (pctSL != null && mRec.isSL()
+					&& totalSL > 0) {
+				unitWeights.put(mRec, unitWeights.get(mRec) * pctSL * (total / totalSL));
+			}
+			if (pctClan != null && mRec.isClan()
+					&& totalClan > 0) {
+				unitWeights.put(mRec, unitWeights.get(mRec) * pctClan * (total / totalClan));
+			}
+			if (pctOther != null && pctOther > 0 && !mRec.isClan() && !mRec.isSL()
+					&& totalClan > 0) {
+				unitWeights.put(mRec, unitWeights.get(mRec) * pctOther
+						* (total / pctOther));
+			}
+		}
+		double multiplier = total / unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
+		for (ModelRecord mRec : unitWeights.keySet()) {
+			unitWeights.merge(mRec, multiplier, (a, b) -> a * b);
+		}
 	}
 
     public void dispose() {

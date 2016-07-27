@@ -30,7 +30,7 @@ public class CLAAAMissileWeapon extends CapitalMissileWeapon {
 
     public CLAAAMissileWeapon() {
         super();
-        this.techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
+
         this.name = "AAA Missile";
         this.setInternalName(BombType.getBombWeaponName(BombType.B_AAA));
         this.heat = 0;
@@ -52,9 +52,11 @@ public class CLAAAMissileWeapon extends CapitalMissileWeapon {
         this.ammoType = AmmoType.T_AAA_MISSILE;
         this.capital = false;
         cost = 9000;
-        introDate = 3072;
-        techLevel.put(3072, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_E;
+        this.introDate = 3072;
+        this.techLevel.put(3072, TechConstants.T_CLAN_ADVANCED);
+        this.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_E};
+        this.techRating = RATING_E;
+        this.rulesRefs = "357, TO";
+
     }
 }

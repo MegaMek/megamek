@@ -20,44 +20,42 @@ import megamek.common.TechConstants;
 /**
  * @author Jay Lawson
  */
-public class ISAAAMissileWeapon extends CapitalMissileWeapon {
+public class ISASEWMissileWeapon extends CapitalMissileWeapon {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -2043203178614130517L;
+    private static final long serialVersionUID = -2094737986722961212L;
 
-    public ISAAAMissileWeapon() {
+    public ISASEWMissileWeapon() {
         super();
 
-        this.name = "AAA Missile";
-        this.setInternalName("IS " + BombType.getBombWeaponName(BombType.B_AAA));
+        this.name = "ASEW Missile";
+        this.setInternalName("IS " + BombType.getBombWeaponName(BombType.B_ASEW));
         this.heat = 0;
-        this.damage = 20;
+        this.damage = 0;
         this.rackSize = 1;
-        this.minimumRange = 6;
-        this.shortRange = 12;
-        this.mediumRange = 18;
-        this.longRange = 24;
-        this.extremeRange = 36;
-        this.tonnage = 1;
+        this.minimumRange = 7;
+        this.shortRange = 14;
+        this.mediumRange = 21;
+        this.longRange = 28;
+        this.extremeRange = 42;
+        this.tonnage = 2;
         this.criticals = 0;
         this.hittable = false;
         this.bv = 0;
-        this.cost = 9000;
-        this.shortAV = 20;
-        this.medAV = 20;
+        this.cost = 20000;
+        this.shortAV = 0;
+        this.medAV = 0;
+        this.longAV = 0;
         this.maxRange = RANGE_MED;
-        this.ammoType = AmmoType.T_AAA_MISSILE;
+        this.ammoType = AmmoType.T_ASEW_MISSILE;
         this.capital = false;
-        cost = 9000;
-        this.introDate = 3064;
-        this.techLevel.put(3064, TechConstants.T_IS_EXPERIMENTAL);
-        this.techLevel.put(3072, TechConstants.T_IS_ADVANCED);
-        this.availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
-        this.techRating = RATING_E;
-        this.rulesRefs = "357, TO";
-
-
+        introDate = 3067;
+        techLevel.put(3067, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3073, TechConstants.T_IS_ADVANCED);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_E};
+        techRating = RATING_E;
+        rulesRefs = "358, TO";
     }
 }

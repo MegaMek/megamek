@@ -35,7 +35,7 @@ public class CLArrowIV extends ArtilleryWeapon {
      */
     public CLArrowIV() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_ADVANCED);
+
         name = "Arrow IV";
         setInternalName("CLArrowIV");
         addLookupName("CLArrowIVSystem");
@@ -53,9 +53,11 @@ public class CLArrowIV extends ArtilleryWeapon {
         bv = 240;
         cost = 450000;
         techRating = RATING_E;
-        availRating = new int[] { RATING_X, RATING_D, RATING_D };
-        introDate = 2850;
-        techLevel.put(2850, techLevel.get(3071));
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_ADVANCED);
+        availRating = new int[] { RATING_X,RATING_F ,RATING_E ,RATING_E};
+        techRating = RATING_E;
+        rulesRefs = "359, TO";
 
     }
 

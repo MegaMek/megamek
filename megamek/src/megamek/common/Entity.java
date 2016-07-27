@@ -57,15 +57,15 @@ import megamek.common.options.Quirks;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.ACWeapon;
-import megamek.common.weapons.ASEWMissileWeapon;
-import megamek.common.weapons.ASMissileWeapon;
+import megamek.common.weapons.ISASEWMissileWeapon;
+import megamek.common.weapons.ISASMissileWeapon;
 import megamek.common.weapons.ATMWeapon;
 import megamek.common.weapons.AlamoMissileWeapon;
 import megamek.common.weapons.AltitudeBombAttack;
 import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.BombArrowIV;
 import megamek.common.weapons.BombISRL10;
-import megamek.common.weapons.BombTAG;
+import megamek.common.weapons.CLBombTAG;
 import megamek.common.weapons.CLAAAMissileWeapon;
 import megamek.common.weapons.CLLAAMissileWeapon;
 import megamek.common.weapons.CapitalLaserBayWeapon;
@@ -3493,13 +3493,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 || (m.getType() instanceof AltitudeBombAttack)
                 || (m.getType() instanceof ISAAAMissileWeapon)
                 || (m.getType() instanceof CLAAAMissileWeapon)
-                || (m.getType() instanceof ASMissileWeapon)
-                || (m.getType() instanceof ASEWMissileWeapon)
+                || (m.getType() instanceof ISASMissileWeapon)
+                || (m.getType() instanceof ISASEWMissileWeapon)
                 || (m.getType() instanceof ISLAAMissileWeapon)
                 || (m.getType() instanceof CLLAAMissileWeapon)
                 || (m.getType() instanceof BombArrowIV)
                     /*|| m.getType() instanceof CLBombArrowIV*/
-                    || (m.getType() instanceof BombTAG)
+                    || (m.getType() instanceof CLBombTAG)
                     || (m.getType() instanceof BombISRL10)
                     || (m.getType() instanceof AlamoMissileWeapon)) {
                 i.remove();
@@ -3512,13 +3512,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 || (m.getType() instanceof AltitudeBombAttack)
                 || (m.getType() instanceof ISAAAMissileWeapon)
                 || (m.getType() instanceof CLAAAMissileWeapon)
-                || (m.getType() instanceof ASMissileWeapon)
-                || (m.getType() instanceof ASEWMissileWeapon)
+                || (m.getType() instanceof ISASMissileWeapon)
+                || (m.getType() instanceof ISASEWMissileWeapon)
                 || (m.getType() instanceof ISLAAMissileWeapon)
                 || (m.getType() instanceof CLLAAMissileWeapon)
                 || (m.getType() instanceof BombArrowIV)
                     /*|| m.getType() instanceof CLBombArrowIV*/
-                    || (m.getType() instanceof BombTAG)
+                    || (m.getType() instanceof CLBombTAG)
                     || (m.getType() instanceof BombISRL10)
                     || (m.getType() instanceof AlamoMissileWeapon)) {
                 i.remove();

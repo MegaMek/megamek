@@ -1531,13 +1531,16 @@ public class WeaponType extends EquipmentType {
         // bomb-related weapons
         EquipmentType.addType(new ISAAAMissileWeapon());
         EquipmentType.addType(new CLAAAMissileWeapon());
-        EquipmentType.addType(new ASMissileWeapon());
-        EquipmentType.addType(new ASEWMissileWeapon());
+        EquipmentType.addType(new ISASMissileWeapon());
+        EquipmentType.addType(new CLASMissileWeapon());
+        EquipmentType.addType(new ISASEWMissileWeapon());
+        EquipmentType.addType(new CLASEWMissileWeapon());
         EquipmentType.addType(new ISLAAMissileWeapon());
         EquipmentType.addType(new CLLAAMissileWeapon());
         EquipmentType.addType(new BombArrowIV());
         //EquipmentType.addType(new CLBombArrowIV());
-        EquipmentType.addType(new BombTAG());
+        EquipmentType.addType(new ISBombTAG());
+        EquipmentType.addType(new CLBombTAG());
         EquipmentType.addType(new BombISRL10());
         EquipmentType.addType(new AlamoMissileWeapon());
         EquipmentType.addType(new SpaceBombAttack());

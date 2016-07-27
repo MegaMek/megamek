@@ -29,9 +29,10 @@ public class BombISRL10 extends MissileWeapon {
 
     public BombISRL10() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
-        this.name = "RL 10 (Bomb)";
+
+        this.name = "Rocket Launcher Pod";
         this.setInternalName(BombType.getBombWeaponName(BombType.B_RL));
+        addLookupName("RL 10 (Bomb)");
         this.heat = 0;
         this.rackSize = 10;
         this.shortRange = 5;
@@ -48,9 +49,13 @@ public class BombISRL10 extends MissileWeapon {
         this.maxRange = RANGE_MED;
         this.toHitModifier = 1;
         this.ammoType = AmmoType.T_RL_BOMB;
-        introDate = 3064;
-        techLevel.put(3064, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_B };
+        introDate = 3055;
+        techLevel.put(3055, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3064, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_B ,RATING_B};
         techRating = RATING_B;
+        rulesRefs = "229, TM";
+
     }
 }

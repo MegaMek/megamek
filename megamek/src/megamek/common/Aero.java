@@ -2313,7 +2313,7 @@ public class Aero extends Entity {
         boolean hasBombs = false;
         double bombBV = 0;
         for (int bombType = 0; bombType < BombType.B_NUM; bombType++ ){
-            BombType bomb = BombType.createBombByType(bombType);
+            BombType bomb = BombType.createBombByType(bombType, isClan());
             bombBV += bomb.bv * bombChoices[bombType];
             if (bombChoices[bombType] > 0) {
                 hasBombs = true;

@@ -29,9 +29,9 @@ public class ISLAAMissileWeapon extends CapitalMissileWeapon {
 
     public ISLAAMissileWeapon() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_ADVANCED);
+
         this.name = "LAA Missile";
-        this.setInternalName(BombType.getBombWeaponName(BombType.B_LAA));
+        this.setInternalName("IS " + BombType.getBombWeaponName(BombType.B_LAA));
         this.heat = 0;
         this.damage = 6;
         this.rackSize = 1;
@@ -50,9 +50,12 @@ public class ISLAAMissileWeapon extends CapitalMissileWeapon {
         this.maxRange = RANGE_MED;
         this.ammoType = AmmoType.T_LAA_MISSILE;
         this.capital = false;
-        introDate = 3072;
-        techLevel.put(3072, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        techRating = RATING_D;
+        introDate = 3064;
+        techLevel.put(3064, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3072, TechConstants.T_IS_ADVANCED);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_D};
+        techRating = RATING_E;
+        rulesRefs = "359, TO";
+
     }
 }

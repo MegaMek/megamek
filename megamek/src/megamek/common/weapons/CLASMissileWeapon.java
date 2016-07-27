@@ -20,18 +20,17 @@ import megamek.common.TechConstants;
 /**
  * @author Jay Lawson
  */
-public class ASMissileWeapon extends CapitalMissileWeapon {
+public class CLASMissileWeapon extends CapitalMissileWeapon {
 
     /**
      *
      */
     private static final long serialVersionUID = 8263429182520693147L;
 
-    public ASMissileWeapon() {
+    public CLASMissileWeapon() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
         name = "AS Missile";
-        setInternalName(BombType.getBombWeaponName(BombType.B_AS));
+        setInternalName("Clan " + BombType.getBombWeaponName(BombType.B_AS));
         heat = 0;
         damage = 30;
         rackSize = 1;
@@ -52,9 +51,12 @@ public class ASMissileWeapon extends CapitalMissileWeapon {
         maxRange = RANGE_LONG;
         ammoType = AmmoType.T_AS_MISSILE;
         capital = false;
-        introDate = 3071;
-        techLevel.put(3071, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
+        introDate = 3076;
+        techLevel.put(3076, TechConstants.T_CLAN_ADVANCED);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_E};
         techRating = RATING_D;
+        rulesRefs = "358, TO";
+
+
     }
 }

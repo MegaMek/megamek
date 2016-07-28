@@ -131,7 +131,11 @@ public final class ImageUtil {
                     break;
                 }
             }
-            return observer.isAnimated() ? result : ImageUtil.createAcceleratedImage(result.getBufferedImage());
+            BufferedImage bImg = result.getBufferedImage();
+            if (bImg == null) {
+                System.out.println("ERROR: AWTImageLoader.loadImage got null BufferedImage!");
+            }
+            return observer.isAnimated() ? result : ImageUtil.createAcceleratedImage(bImg);
         }
     }
     

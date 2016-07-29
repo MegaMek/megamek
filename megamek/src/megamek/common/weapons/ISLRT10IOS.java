@@ -30,7 +30,7 @@ public class ISLRT10IOS extends LRTWeapon {
      */
     public ISLRT10IOS() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
+
         name = "LRT 10 (I-OS)";
         setInternalName(name);
         addLookupName("IS IOS LRT-10");
@@ -49,10 +49,12 @@ public class ISLRT10IOS extends LRTWeapon {
         bv = 18;
         flags = flags.or(F_ONESHOT);
         cost = 80000;
-        techRating = RATING_B;
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3056;
-        techLevel.put(3056, techLevel.get(3071));
-        techLevel.put(3081, TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3056, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3076, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3085, TechConstants.T_INTRO_BOXSET);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
+        techRating = RATING_B;
+        rulesRefs = "230, TM";
     }
 }

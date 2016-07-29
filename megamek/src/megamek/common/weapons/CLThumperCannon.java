@@ -32,7 +32,7 @@ public class CLThumperCannon extends ArtilleryCannonWeapon {
 
     public CLThumperCannon() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
+
         name = "Thumper Cannon";
         setInternalName("CLThumper Cannon");
         addLookupName("CLThumperArtilleryCannon");
@@ -53,11 +53,12 @@ public class CLThumperCannon extends ArtilleryCannonWeapon {
         medAV = 5;
         longAV = 5;
         maxRange = RANGE_MED;
-        techRating = RATING_B;
-        availRating = new int[] { RATING_X, RATING_F, RATING_E };
         introDate = 3032;
-        techLevel.put(3032, techLevel.get(3071));
+        techLevel.put(3032, TechConstants.T_CLAN_EXPERIMENTAL);
         techLevel.put(3079, TechConstants.T_CLAN_ADVANCED);
+        availRating = new int[] { RATING_X,RATING_F ,RATING_E ,RATING_D};
+        techRating = RATING_B;
+        rulesRefs = "285, TO";
     }
 
 }

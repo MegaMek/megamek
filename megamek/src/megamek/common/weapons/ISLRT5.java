@@ -30,7 +30,7 @@ public class ISLRT5 extends LRTWeapon {
      */
     public ISLRT5() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+
         name = "LRT 5";
         setInternalName(name);
         addLookupName("IS LRT-5");
@@ -48,9 +48,12 @@ public class ISLRT5 extends LRTWeapon {
         criticals = 1;
         bv = 45;
         cost = 30000;
-        introDate = 2380;
-        techLevel.put(2380, techLevel.get(3071));
-        availRating = new int[] { RATING_C, RATING_C, RATING_C };
+        introDate = 2370;
+        techLevel.put(2370, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2380, TechConstants.T_IS_ADVANCED);
+        techLevel.put(2400, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
         techRating = RATING_C;
+        rulesRefs = "229, TM";
     }
 }

@@ -30,7 +30,7 @@ public class ISLRT15OS extends LRTWeapon {
      */
     public ISLRT15OS() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+
         name = "LRT 15 (OS)";
         setInternalName(name);
         addLookupName("IS OS LRT-15");
@@ -49,9 +49,14 @@ public class ISLRT15OS extends LRTWeapon {
         bv = 27;
         flags = flags.or(F_ONESHOT);
         cost = 87500;
-        introDate = 2676;
-        techLevel.put(2676, techLevel.get(3071));
-        availRating = new int[] { RATING_C, RATING_C, RATING_C };
+        introDate = 2660;
+        extinctDate = 2800;
+        reintroDate = 3030;
+        techLevel.put(2660, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2676, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3045, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
         techRating = RATING_C;
+        rulesRefs = "229, TM";
     }
 }

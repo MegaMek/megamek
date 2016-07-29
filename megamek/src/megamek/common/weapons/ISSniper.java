@@ -35,7 +35,7 @@ public class ISSniper extends ArtilleryWeapon {
      */
     public ISSniper() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
+
         name = "Sniper";
         setInternalName("ISSniper");
         addLookupName("ISSniperArtillery");
@@ -52,10 +52,11 @@ public class ISSniper extends ArtilleryWeapon {
         criticals = 20;
         bv = 85;
         cost = 300000;
-        techRating = RATING_B;
-        availRating = new int[] { RATING_C, RATING_C, RATING_C };
         introDate = 1950;
         techLevel.put(1950, TechConstants.T_IS_ADVANCED);
+        availRating = new int[] { RATING_C ,RATING_C ,RATING_C ,RATING_C};
+        techRating = RATING_B;
+        rulesRefs = "284, TO";
 
     }
 

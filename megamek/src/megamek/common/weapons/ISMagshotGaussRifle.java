@@ -34,7 +34,7 @@ public class ISMagshotGaussRifle extends GaussWeapon {
      */
     public ISMagshotGaussRifle() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
+
         name = "MagShot";
         setInternalName("ISMagshotGR");
         heat = 1;
@@ -49,10 +49,12 @@ public class ISMagshotGaussRifle extends GaussWeapon {
         bv = 15;
         cost = 8500;
         explosionDamage = 3;
+        introDate = 3054;
+        techLevel.put(3054, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3072, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3090, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_D ,RATING_C};
         techRating = RATING_E;
-        introDate = 3072;
-        techLevel.put(3072, techLevel.get(3071));
-        techLevel.put(3078, TechConstants.T_IS_TW_NON_BOX);
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        rulesRefs = "314, TO";
     }
 }

@@ -66,11 +66,13 @@ public class ISSilverBulletGauss extends GaussWeapon {
         flags = flags.or(F_NO_AIM).andNot(F_DIRECT_FIRE);
         atClass = CLASS_LBX_AC;
         explosionDamage = 20;
-        techRating = RATING_E;
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3051;
-        techLevel.put(3051, techLevel.get(3071));
-        techLevel.put(3080, TechConstants.T_IS_TW_NON_BOX);
+        techLevel.put(3051, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3080, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3090, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
+        techRating = RATING_D;
+        rulesRefs = "314, TO";
     }
 
     /*

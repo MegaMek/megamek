@@ -32,8 +32,8 @@ public class ISSRM2Primitive extends SRMWeapon {
 
     public ISSRM2Primitive() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
-        name = "SRM 2p";
+
+        name = "Primitive Prototype SRM 2";
         setInternalName(name);
         addLookupName("IS SRM-2 Primitive");
         addLookupName("ISSRM2p");
@@ -52,11 +52,14 @@ public class ISSRM2Primitive extends SRMWeapon {
         shortAV = 2;
         maxRange = RANGE_SHORT;
         ammoType = AmmoType.T_SRM_PRIMITIVE;
-        //Per Blake Documents Intro Date is 10 years early, with same tech levels
-        introDate = 2360;
-        techLevel.put(2360, TechConstants.T_IS_UNOFFICIAL);
-        availRating = new int[] { RATING_C, RATING_C, RATING_C };
+        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
+        introDate = 2439;
+        extinctDate = 2470;
+        techLevel.put(2439, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        availRating = new int[] { RATING_F, RATING_X, RATING_X, RATING_X };
         techRating = RATING_C;
+        rulesRefs = "217, IO";
+  
     }
 
     @Override

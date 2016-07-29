@@ -28,8 +28,8 @@ public class ISMediumLaserPrimitive extends LaserWeapon {
 
     public ISMediumLaserPrimitive() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
-        this.name = "Medium Laser Prototype";
+
+        this.name = "Primitive Prototype Medium Laser";
         this.setInternalName(this.name);
         this.addLookupName("IS Medium Laser Prototype");
         this.addLookupName("ISMediumLaserPrototype");
@@ -49,10 +49,12 @@ public class ISMediumLaserPrimitive extends LaserWeapon {
         this.cost = 40000;
         this.shortAV = 5;
         this.maxRange = RANGE_SHORT;
-        //Per Blake Documents using normal weapon information and an introdate 10 years before the normal.
-        this.availRating = new int[] { EquipmentType.RATING_C,EquipmentType.RATING_D, EquipmentType.RATING_C };
+        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
         introDate = 2290;
-        techLevel.put(2290, techLevel.get(3071));
+        extinctDate = 2310;
+        techLevel.put(2290, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        availRating = new int[] { RATING_F, RATING_X, RATING_X, RATING_X };
         techRating = RATING_C;
+        rulesRefs = "217, IO";
     }
 }

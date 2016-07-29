@@ -1037,8 +1037,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new CLImprovedLRM15());
         EquipmentType.addType(new CLImprovedLRM20());
         EquipmentType.addType(new CLImprovedGaussRifle());
-        
-                
+        EquipmentType.addType(new ISLongTomPrimitive());
+      
         // Infantry Attacks
         EquipmentType.addType(new LegAttack());
         EquipmentType.addType(new SwarmAttack());

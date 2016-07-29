@@ -32,8 +32,8 @@ public class ISLRM5Primitive extends LRMWeapon {
 
     public ISLRM5Primitive() {
         super();
-        //techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
-        name = "LRM 5p";
+
+        name = "Primitive Prototype LRM 5";
         setInternalName(name);
         addLookupName("IS LRM-5 Primitive");
         addLookupName("ISLRM5p");
@@ -50,11 +50,13 @@ public class ISLRM5Primitive extends LRMWeapon {
         longAV = 3;
         maxRange = RANGE_LONG;
         ammoType = AmmoType.T_LRM_PRIMITIVE;
-        //Per Blake Documents Intro Date is 10 years early, with same tech levels
-        introDate = 2290;
-        techLevel.put(2290, TechConstants.T_IS_UNOFFICIAL);
-        availRating = new int[] { RATING_C, RATING_C, RATING_C };
+        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
+        introDate = 2295;
+        extinctDate = 2320;
+        techLevel.put(2295, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        availRating = new int[] { RATING_F, RATING_X, RATING_X, RATING_X };
         techRating = RATING_C;
+        rulesRefs = "217, IO";
     }
 
     @Override

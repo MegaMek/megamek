@@ -27,8 +27,8 @@ public class ISPPCPrimitive extends PPCWeapon {
 
     public ISPPCPrimitive() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
-        name = "PPCp";
+
+        name = "Primitive Prototype PPC";
         setInternalName(name);
         addLookupName("Particle Cannon Primitive");
         addLookupName("IS PPCp");
@@ -54,12 +54,12 @@ public class ISPPCPrimitive extends PPCWeapon {
         maxRange = RANGE_MED;
         // with a capacitor
         explosive = true;
-        //Per Blake Documents Intro Date is 10 years early, with same tech levels
-        introDate = 2450;
+        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
+        introDate = 2439;
         extinctDate = 2470;
-        reintroDate = 3067;
-        techLevel.put(2450, techLevel.get(3071));
-        availRating = new int[] { RATING_C, RATING_F, RATING_C };
-        techRating = RATING_D;
+        techLevel.put(2439, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        availRating = new int[] { RATING_F, RATING_X, RATING_X, RATING_X };
+        techRating = RATING_C;
+        rulesRefs = "217, IO";
     }
 }

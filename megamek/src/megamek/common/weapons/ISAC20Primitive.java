@@ -33,8 +33,8 @@ public class ISAC20Primitive extends ACWeapon {
 
     public ISAC20Primitive() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_EXPERIMENTAL);
-        name = "AC/20p";
+
+        name = "Primitive Prototype Autocannon/20";
         setInternalName("Autocannon/20 Primitive");
         addLookupName("IS Auto Cannon/20 Primitive");
         addLookupName("Auto Cannon/20 Primitive");
@@ -56,12 +56,13 @@ public class ISAC20Primitive extends ACWeapon {
         shortAV = 20;
         maxRange = RANGE_SHORT;
         explosionDamage = damage;
-        //Per Blake Documents using normal weapon information and an introdate 10 years before the normal.
-        availRating = new int[] { EquipmentType.RATING_C,
-                EquipmentType.RATING_D, EquipmentType.RATING_D };
-        introDate = 2488;
-        techLevel.put(2488, techLevel.get(3071));
+        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
+        introDate = 2490;
+        extinctDate = 2510;
+        techLevel.put(2490, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        availRating = new int[] { RATING_F, RATING_X, RATING_X, RATING_X };
         techRating = RATING_C;
+        rulesRefs = "217, IO";
     }
 
     @Override

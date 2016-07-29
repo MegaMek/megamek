@@ -33,7 +33,7 @@ public class CLRAC2 extends RACWeapon {
      */
     public CLRAC2() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_EXPERIMENTAL);
+
         name = "Rotary AC/2";
         setInternalName("CLRotaryAC2");
         addLookupName("Clan Rotary AC/2");
@@ -50,15 +50,18 @@ public class CLRAC2 extends RACWeapon {
         criticals = 4;
         bv = 161;
         cost = 175000;
-        techRating = RATING_F;
         shortAV = 8;
         medAV = 8;
         longAV = 8;
         extAV = 8;
         maxRange = RANGE_EXT;
-        availRating = new int[] { RATING_X, RATING_X, RATING_F };
         introDate = 3073;
-        techLevel.put(3073, techLevel.get(3071));
-        techLevel.put(3104, TechConstants.T_CLAN_TW);
+        techLevel.put(3073, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(3104, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3145, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_E};
+        techRating = RATING_F;
+        rulesRefs = "286, TO";
+
     }
 }

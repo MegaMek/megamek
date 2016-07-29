@@ -32,8 +32,8 @@ public class ISSRM4Primitive extends SRMWeapon {
 
     public ISSRM4Primitive() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_UNOFFICIAL);
-        this.name = "SRM 4p";
+
+        this.name = "Primitive Prototype SRM 4";
         this.setInternalName(this.name);
         this.addLookupName("IS SRM-4 Primitive");
         this.addLookupName("ISSRM4p");
@@ -51,11 +51,13 @@ public class ISSRM4Primitive extends SRMWeapon {
         this.shortAV = 4;
         this.maxRange = RANGE_SHORT;
         ammoType = AmmoType.T_SRM_PRIMITIVE;
-        //Per Blake Documents Intro Date is 10 years early, with same tech levels
-        introDate = 2360;
-        techLevel.put(2360, TechConstants.T_IS_UNOFFICIAL);
-        availRating = new int[] { RATING_C, RATING_C, RATING_C };
+        //IO Doesn't strictly define when these weapons stop production so assigning a value of ten years.
+        introDate = 2439;
+        extinctDate = 2470;
+        techLevel.put(2439, TechConstants.T_IS_EXPERIMENTAL);   ///EXP
+        availRating = new int[] { RATING_F, RATING_X, RATING_X, RATING_X };
         techRating = RATING_C;
+        rulesRefs = "217, IO";
     }
 
     @Override

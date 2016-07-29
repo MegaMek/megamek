@@ -34,7 +34,7 @@ public class ISHeavyFlamer extends VehicleFlamerWeapon {
      */
     public ISHeavyFlamer() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
+
         name = "Heavy Flamer";
         setInternalName(name);
         addLookupName("IS Heavy Flamer");
@@ -54,10 +54,11 @@ public class ISHeavyFlamer extends VehicleFlamerWeapon {
         cost = 11250;
         flags = flags.or(WeaponType.F_AERO_WEAPON).or(WeaponType.F_MECH_WEAPON)
                 .or(WeaponType.F_TANK_WEAPON);
-        techRating = RATING_C;
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
         introDate = 3068;
-        techLevel.put(3068, techLevel.get(3071));
+        techLevel.put(3068, TechConstants.T_IS_ADVANCED);
         techLevel.put(3079, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_F ,RATING_E};
+        techRating = RATING_D;
+        rulesRefs = "285, TO";;
     }
 }

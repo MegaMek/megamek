@@ -33,7 +33,7 @@ public class CLRAC10 extends RACWeapon {
      */
     public CLRAC10() {
         super();
-        this.techLevel.put(3071, TechConstants.T_CLAN_UNOFFICIAL);
+
         this.name = "Rotary AC/10";
         this.setInternalName("CLRotaryAC10");
         this.addLookupName("Clan Rotary AC/10");
@@ -49,9 +49,9 @@ public class CLRAC10 extends RACWeapon {
         this.criticals = 7;
         this.bv = 617;
         this.cost = 640000;
-        this.techRating = RATING_F;
-        this.availRating = new int[] { RATING_X, RATING_X, RATING_F };
-        this.introDate = 3073;
-        this.techLevel.put(3073, techLevel.get(3071));
+        techRating = RATING_F;
+        availRating = new int[] { RATING_X, RATING_X, RATING_F, RATING_F };
+        introDate = 3073;
+        techLevel.put(3073, TechConstants.T_CLAN_UNOFFICIAL);
     }
 }

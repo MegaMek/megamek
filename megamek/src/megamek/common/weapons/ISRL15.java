@@ -30,7 +30,7 @@ public class ISRL15 extends RLWeapon {
      */
     public ISRL15() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+
         name = "Rocket Launcher 15";
         setInternalName("RL15");
         addLookupName("ISRocketLauncher15");
@@ -49,9 +49,12 @@ public class ISRL15 extends RLWeapon {
         shortAV = 9;
         medAV = 9;
         maxRange = RANGE_MED;
-        introDate = 3050;
-        techLevel.put(3050, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_B };
+        introDate = 2200;
+        techLevel.put(2200, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3064, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3067, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_B ,RATING_B ,RATING_B ,RATING_B};
         techRating = RATING_B;
+        rulesRefs = "229, TM";
     }
 }

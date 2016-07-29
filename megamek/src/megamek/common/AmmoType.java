@@ -12735,6 +12735,12 @@ public class AmmoType extends EquipmentType {
          */
         private long type;
 
+        protected int techRating;
+        protected int[] availRating;
+        protected int introDate;
+        protected int extinctDate;
+        protected int reintroDate;
+
         private Map<Integer, Integer> techLevel;
 
         /**
@@ -12750,12 +12756,17 @@ public class AmmoType extends EquipmentType {
          *                       type.
          */
         public MunitionMutator(String munitionName, int weightRatio,
-                               long munitionType, int introYear, int introTechLevel) {
+                long munitionType, int introYear, int introTechLevel,
+                int[] availRating, int extinctDate, int reintroDate) {
             name = munitionName;
             weight = weightRatio;
             type = munitionType;
             techLevel = new HashMap<Integer, Integer>();
             techLevel.put(introYear, introTechLevel);
+            introDate = introYear;
+            this.availRating = availRating;
+            this.extinctDate = extinctDate;
+            this.reintroDate = reintroDate;
         }
 
         /**
@@ -12957,6 +12968,11 @@ public class AmmoType extends EquipmentType {
             } else {
                 munition.techLevel = base.techLevel;
             }
+
+            munition.introDate = introDate;
+            munition.availRating = availRating;
+            munition.extinctDate = extinctDate;
+            munition.reintroDate = reintroDate;
 
             // Reduce base number of shots to reflect the munition's weight.
             munition.shots = Math.max(1, base.shots / weight);

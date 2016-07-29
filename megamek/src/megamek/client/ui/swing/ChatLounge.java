@@ -2362,6 +2362,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 .getCustomUnitHeight()));
         cmd.setTitle(Messages.getString("ChatLounge.CustomizeUnits")); //$NON-NLS-1$
         cmd.setVisible(true);
+        GUIPreferences.getInstance().setCustomUnitHeight(cmd.getSize().height);
+        GUIPreferences.getInstance().setCustomUnitWidth(cmd.getSize().width);
         if (editable && cmd.isOkay()) {
             // send changes
             for (Entity entity : entities) {
@@ -2383,10 +2385,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     }
                 }
             }
-            GUIPreferences.getInstance().setCustomUnitHeight(
-                    cmd.getSize().height);
-            GUIPreferences.getInstance()
-                    .setCustomUnitWidth(cmd.getSize().width);
         }
     }
 
@@ -2430,6 +2428,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         cmd.refreshPartReps();
         cmd.setTitle(entity.getShortName());
         cmd.setVisible(true);
+        GUIPreferences.getInstance().setCustomUnitHeight(cmd.getSize().height);
+        GUIPreferences.getInstance().setCustomUnitWidth(cmd.getSize().width);
         if (editable && cmd.isOkay()) {
             // send changes
             c.sendUpdateEntity(entity);
@@ -2456,10 +2456,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     c.sendUpdateEntity(unit);
                 }
             }
-            GUIPreferences.getInstance().setCustomUnitHeight(
-                    cmd.getSize().height);
-            GUIPreferences.getInstance()
-                    .setCustomUnitWidth(cmd.getSize().width);
         }
     }
 

@@ -1212,7 +1212,7 @@ public class AmmoType extends EquipmentType {
         
         // Create the munition types for IS Mek mortars
         munitions.clear();
-        munitions.add(new MunitionMutator("Airburst", 1, M_AIRBURST, 2544, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Airburst", 1, M_AIRBURST, 2544, TechConstants.T_IS_TW_NON_BOX, RATING_E, new int[] { RATING_X, RATING_X, RATING_E, RATING_D }, 3005, 3050));
         munitions.add(new MunitionMutator("Anti-personnel", 1, M_ANTI_PERSONNEL, 2531, TechConstants.T_IS_TW_NON_BOX));
         munitions.add(new MunitionMutator("Flare", 1, M_FLARE, 2536, TechConstants.T_IS_TW_NON_BOX));
         munitions.add(new MunitionMutator("Semi-Guided", 1, M_SEMIGUIDED, 3064, TechConstants.T_IS_TW_NON_BOX));
@@ -12747,13 +12747,43 @@ public class AmmoType extends EquipmentType {
          * Create a mutator that will transform the <code>AmmoType</code> of a
          * base round into one of its muntions.
          *
-         * @param munitionName   - the <code>String</code> name of this munition type.
-         * @param weightRatio    - the <code>int</code> ratio of a round of this munition
-         *                       to a round of the standard type.
-         * @param munitionType   - the <code>int</code> munition flag(s) of this type.
-         * @param introYear      - the year of introduction for the tech level
-         * @param introTechLevel - The new tech level, if different from the base ammo
-         *                       type.
+         * @param munitionName
+         *            - the <code>String</code> name of this munition type.
+         * @param weightRatio
+         *            - the <code>int</code> ratio of a round of this munition
+         *            to a round of the standard type.
+         * @param munitionType
+         *            - the <code>int</code> munition flag(s) of this type.
+         * @param introYear
+         *            - the year of introduction for the tech level
+         * @param introTechLevel
+         *            - The new tech level, if different from the base ammo
+         *            type.
+         */
+        public MunitionMutator(String munitionName, int weightRatio,
+                long munitionType, int introYear, int introTechLevel,
+                int techRating, int[] availRating) {
+            this(munitionName, weightRatio, munitionType, introYear,
+                    introTechLevel, techRating, availRating, DATE_NONE,
+                    DATE_NONE);
+        }
+
+        /**
+         * Create a mutator that will transform the <code>AmmoType</code> of a
+         * base round into one of its muntions.
+         *
+         * @param munitionName
+         *            - the <code>String</code> name of this munition type.
+         * @param weightRatio
+         *            - the <code>int</code> ratio of a round of this munition
+         *            to a round of the standard type.
+         * @param munitionType
+         *            - the <code>int</code> munition flag(s) of this type.
+         * @param introYear
+         *            - the year of introduction for the tech level
+         * @param introTechLevel
+         *            - The new tech level, if different from the base ammo
+         *            type.
          */
         public MunitionMutator(String munitionName, int weightRatio,
                 long munitionType, int introYear, int introTechLevel,

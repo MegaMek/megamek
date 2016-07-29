@@ -31,6 +31,7 @@ import megamek.common.Report;
 import megamek.common.TagInfo;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -211,7 +212,22 @@ public class BombAttackHandler extends WeaponHandler {
                             moF = -typeModifiedToHit.getMoS() -2;
                         }
                     }
-                    drop = Compute.scatter(coords, moF);
+                    if (wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
+                        // Need to determine location in flight path
+                        int idx = 0;
+                        for (; idx < ae.getPassedThrough().size(); idx++) {
+                            if (ae.getPassedThrough().get(idx).equals(coords)) {
+                                break;
+                                }
+                        }
+                        // Retrieve facing at current step in flight path
+                        int facing = ae.getPassedThroughFacing().get(idx);
+                        // Scatter, based on location and facing
+                        drop = Compute.scatterAltitudeBombs(coords, facing);
+                    } else {
+                        drop = Compute.scatterDiveBombs(coords, moF);
+                    }
+
                     if (game.getBoard().contains(drop)) {
                         // misses and scatters to another hex
                         r = new Report(6698);

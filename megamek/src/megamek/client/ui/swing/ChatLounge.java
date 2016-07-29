@@ -225,6 +225,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private boolean mscLoaded = false;
     private boolean rngLoaded = false;
 
+    private int cmdSelectedTab = -1;
+
     private MechSummaryCache.Listener mechSummaryCacheListener = new MechSummaryCache.Listener() {
         @Override
         public void doneLoading() {
@@ -2361,7 +2363,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 .getCustomUnitWidth(), GUIPreferences.getInstance()
                 .getCustomUnitHeight()));
         cmd.setTitle(Messages.getString("ChatLounge.CustomizeUnits")); //$NON-NLS-1$
+        if (cmdSelectedTab != -1) {
+            cmd.setSelectedTab(cmdSelectedTab);
+        }
         cmd.setVisible(true);
+        GUIPreferences.getInstance().setCustomUnitHeight(cmd.getSize().height);
+        GUIPreferences.getInstance().setCustomUnitWidth(cmd.getSize().width);
+        cmdSelectedTab = cmd.getSelectedTab();
         if (editable && cmd.isOkay()) {
             // send changes
             for (Entity entity : entities) {
@@ -2383,11 +2391,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     }
                 }
             }
-            GUIPreferences.getInstance().setCustomUnitHeight(
-                    cmd.getSize().height);
-            GUIPreferences.getInstance()
-                    .setCustomUnitWidth(cmd.getSize().width);
         }
+        if (cmd.isOkay() && (cmd.getStatus() != CustomMechDialog.DONE)) {
+            Entity nextEnt = cmd
+                    .getNextEntity(cmd.getStatus() == CustomMechDialog.NEXT);
+            customizeMech(nextEnt);
+        }
+    }
+
+    public void setCMDSelectedTab(int tab) {
+        cmdSelectedTab = tab;
     }
 
     /**
@@ -2417,49 +2430,63 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
         }
 
-        // display dialog
-        List<Entity> entities = new ArrayList<>();
-        entities.add(entity);
-        CustomMechDialog cmd = new CustomMechDialog(clientgui, c, entities,
-                editable);
-        cmd.setSize(new Dimension(GUIPreferences.getInstance()
-                .getCustomUnitWidth(), GUIPreferences.getInstance()
-                .getCustomUnitHeight()));
-        cmd.refreshOptions();
-        cmd.refreshQuirks();
-        cmd.refreshPartReps();
-        cmd.setTitle(entity.getShortName());
-        cmd.setVisible(true);
-        if (editable && cmd.isOkay()) {
-            // send changes
-            c.sendUpdateEntity(entity);
-
-            // Changing state to a transporting unit can update state of 
-            // transported units, so update those as well
-            for (Transporter transport : entity.getTransports()) {
-                for (Entity loaded : transport.getLoadedUnits()) {
-                    c.sendUpdateEntity(loaded);
-                }
+        boolean doneCustomizing = false;
+        while (!doneCustomizing) {
+            // display dialog
+            List<Entity> entities = new ArrayList<>();
+            entities.add(entity);
+            CustomMechDialog cmd = new CustomMechDialog(clientgui, c, entities,
+                    editable);
+            cmd.setSize(new Dimension(GUIPreferences.getInstance()
+                    .getCustomUnitWidth(), GUIPreferences.getInstance()
+                    .getCustomUnitHeight()));
+            cmd.refreshOptions();
+            cmd.refreshQuirks();
+            cmd.refreshPartReps();
+            cmd.setTitle(entity.getShortName());
+            if (cmdSelectedTab != -1) {
+                cmd.setSelectedTab(cmdSelectedTab);
             }
-
-            // Customizations to a Squadron can effect the fighters
-            if (entity instanceof FighterSquadron) {
-                for (Aero fighter : ((FighterSquadron) entity).getFighters()) {
-                    c.sendUpdateEntity(fighter);
-                }
-            }
-
-            // Do we need to update the members of our C3 network?
-            if (((c3master != null) && !c3master.equals(entity.getC3Master()))
-                    || ((c3master == null) && (entity.getC3Master() != null))) {
-                for (Entity unit : c3members) {
-                    c.sendUpdateEntity(unit);
-                }
-            }
+            cmd.setVisible(true);
             GUIPreferences.getInstance().setCustomUnitHeight(
                     cmd.getSize().height);
             GUIPreferences.getInstance()
                     .setCustomUnitWidth(cmd.getSize().width);
+            cmdSelectedTab = cmd.getSelectedTab();
+            if (editable && cmd.isOkay()) {
+                // send changes
+                c.sendUpdateEntity(entity);
+
+                // Changing state to a transporting unit can update state of
+                // transported units, so update those as well
+                for (Transporter transport : entity.getTransports()) {
+                    for (Entity loaded : transport.getLoadedUnits()) {
+                        c.sendUpdateEntity(loaded);
+                    }
+                }
+
+                // Customizations to a Squadron can effect the fighters
+                if (entity instanceof FighterSquadron) {
+                    for (Aero fighter : ((FighterSquadron) entity)
+                            .getFighters()) {
+                        c.sendUpdateEntity(fighter);
+                    }
+                }
+
+                // Do we need to update the members of our C3 network?
+                if (((c3master != null) && !c3master.equals(entity
+                        .getC3Master()))
+                        || ((c3master == null) && (entity.getC3Master() != null))) {
+                    for (Entity unit : c3members) {
+                        c.sendUpdateEntity(unit);
+                    }
+                }
+            }
+            if (cmd.isOkay() && (cmd.getStatus() != CustomMechDialog.DONE)) {
+                entity = cmd.getNextEntity(cmd.getStatus() == CustomMechDialog.NEXT);
+            } else {
+                doneCustomizing = true;
+            }
         }
     }
 

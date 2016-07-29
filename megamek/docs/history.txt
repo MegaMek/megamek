@@ -14,6 +14,8 @@ v0.41.21
 + Bug: Rounding issues when computing SV engine weights
 + Unit Fixes
 + Bug: Engine missing some engine types when determining if fusion.
++ Feature: Deployment tab in Custom Unit Dialog now works for multiple units
++ Feature: Custom Unit Dialog now saves/loads size (width and height)
 
 v0.41.20 (2016-06-27 02:00)
 + Data: Date fixes for units

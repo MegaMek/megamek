@@ -95,6 +95,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String AUTO_END_FIRING = "AutoEndFiring";
     public static final String AUTO_DECLARE_SEARCHLIGHT = "AutoDeclareSearchlight";
     public static final String CHAT_LOUNGE_TABS = "ChatLoungeTabs";
+    public static final String CUSTOM_UNIT_HEIGHT = "CustomUnitDialogSizeHeight";
+    public static final String CUSTOM_UNIT_WIDTH = "CustomUnitDialogSizeWidth";
     public static final String DISPLAY_POS_X = "DisplayPosX";
     public static final String DISPLAY_POS_Y = "DisplayPosY";
     public static final String DISPLAY_SIZE_HEIGHT = "DisplaySizeHeight";
@@ -263,6 +265,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);
         store.setDefault(CHAT_LOUNGE_TABS, true);
+        store.setDefault(CUSTOM_UNIT_HEIGHT, 400);
+        store.setDefault(CUSTOM_UNIT_WIDTH, 600);
         store.setDefault(DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(DISPLAY_SIZE_WIDTH, 300);
         store.setDefault(GAME_OPTIONS_SIZE_HEIGHT,400);
@@ -393,6 +397,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getChatLoungeTabs() {
         return store.getBoolean(CHAT_LOUNGE_TABS);
+    }
+    
+    public int getCustomUnitHeight() {
+        return store.getInt(CUSTOM_UNIT_HEIGHT);
+    }
+
+    public int getCustomUnitWidth() {
+        return store.getInt(CUSTOM_UNIT_WIDTH);
     }
 
     public int getDisplayPosX() {
@@ -724,36 +736,36 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public String getSkinFile() {
         return store.getString(SKIN_FILE);
     }
-    
+
     public int getDefaultWeaponSortOrder() {
         return store.getInt(DEFAULT_WEAP_SORT_ORDER);
     }
 
-    public void setAntiAliasing(boolean state){
+    public void setAntiAliasing(boolean state) {
         store.setValue(ANTIALIASING, state);
     }
-    
-    public void setShadowMap(boolean state){
+
+    public void setShadowMap(boolean state) {
         store.setValue(SHADOWMAP, state);
     }
-    
-    public void setAOHexShadows(boolean state){
+
+    public void setAOHexShadows(boolean state) {
         store.setValue(AOHEXSHADOWS, state);
     }
-    
-    public void setFloatingIso(boolean state){
+
+    public void setFloatingIso(boolean state) {
         store.setValue(FLOATINGISO, state);
     }
 
-    public void setMmSymbol(boolean state){
+    public void setMmSymbol(boolean state) {
         store.setValue(MMSYMBOL, state);
     }
 
-    public void setLevelHighlight(boolean state){
+    public void setLevelHighlight(boolean state) {
         store.setValue(LEVELHIGHLIGHT, state);
     }
 
-    public boolean getShowDamageLevel(){
+    public boolean getShowDamageLevel() {
         return store.getBoolean(SHOW_DAMAGE_LEVEL);
     }
 
@@ -767,6 +779,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setChatloungeTabs(boolean state) {
         store.setValue(CHAT_LOUNGE_TABS, state);
+    }
+
+    public void setCustomUnitHeight(int state) {
+        store.setValue(CUSTOM_UNIT_HEIGHT, state);
+    }
+
+    public void setCustomUnitWidth(int state) {
+        store.setValue(CUSTOM_UNIT_WIDTH, state);
     }
 
     public void setDisplayPosX(int i) {

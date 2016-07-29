@@ -2007,7 +2007,7 @@
 		</model>
 	</chassis>
 	<chassis name='Merkava Heavy Tank' unitType='Tank'>
-		<availability>MOC:3,CC:4,RWR:3,MERC:3,FS:4,Periphery:2,TC:3,OA:3,LA:4,FWL:4,TH.HM:5,DC:4</availability>
+		<availability>MOC:3,CC:4,OA:3,LA:4,FWL:4,RWR:3,MERC:3,FS:4,TH.HM:5,Periphery:2,TC:3,DC:4</availability>
 		<model name='Mk VIII'>
 			<availability>General:8</availability>
 		</model>

@@ -21,7 +21,7 @@
 		<parentFaction>Periphery.R</parentFaction>
 	</faction>
 	<faction key='CIR' name='Circinus Federation' clan='false' periphery='true'>
-		<years>2785-3067</years>
+		<years>2785-3081</years>
 		<ratName>Circinus</ratName>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.MW</parentFaction>
@@ -2002,7 +2002,7 @@
 		</model>
 	</chassis>
 	<chassis name='Bulldog Medium Tank' unitType='Tank'>
-		<availability>CC:9,MOC:8,IS:7,Periphery.Deep:7,FS:6,CIR:7,MERC:7,Periphery:7,TC:8,LA:8,FWL:8,DC:9</availability>
+		<availability>CC:9,MOC:8,LA:8,IS:7,Periphery.Deep:7,FWL:8,FS:6,CIR:7,MERC:7,Periphery:7,TC:8,DC:9</availability>
 		<model name='(LRM)'>
 			<availability>General:6</availability>
 		</model>

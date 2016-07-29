@@ -2157,7 +2157,7 @@
 		</model>
 	</chassis>
 	<chassis name='Merkava Heavy Tank' unitType='Tank'>
-		<availability>MOC:3,CC:4,RWR:3,MERC:3,FS:4,Periphery:3,TC:3,OA:3,LA:4,FWL:4,TH.HM:4,DC:4</availability>
+		<availability>MOC:3,CC:4,OA:3,LA:4,FWL:4,RWR:3,MERC:3,FS:4,TH.HM:4,Periphery:3,TC:3,DC:4</availability>
 		<model name='Mk VIII'>
 			<availability>General:8</availability>
 		</model>
@@ -2737,7 +2737,7 @@
 		</model>
 	</chassis>
 	<chassis name='Chippewa' unitType='Aero'>
-		<availability>MOC:3,CC:5,RWR:3,MERC:5,FS:5,Periphery:2,TC:3,OA:3,LA:5,SL:7,FWL:5,DC:4</availability>
+		<availability>MOC:3,CC:5,OA:3,LA:5,SL:7,FWL:5,RWR:3,MERC:5,FS:5,Periphery:2,TC:3,DC:4</availability>
 		<model name='CHP-W5b'>
 			<availability>SL.R:8</availability>
 		</model>

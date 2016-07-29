@@ -1730,7 +1730,7 @@
 		</model>
 	</chassis>
 	<chassis name='Packrat LRPV' unitType='Tank'>
-		<availability>MOC:2,CC:2,IS:3,RWR:2,FS:4,Periphery:3,TC:2,OA:2,LA:4,FWL:3,TH.HM:4,DC:3</availability>
+		<availability>MOC:2,CC:2,OA:2,LA:4,IS:3,FWL:3,RWR:2,FS:4,TH.HM:4,Periphery:3,TC:2,DC:3</availability>
 		<model name='PKR-T5'>
 			<roles>recon,raider</roles>
 			<availability>General:8,Periphery.Deep:8,Periphery:8</availability>

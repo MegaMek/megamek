@@ -48,14 +48,14 @@
 		<salvage pct='3'>CC:1,LA:6,FWL:2,DC:0</salvage>
 	</faction>
 	<faction key='CIR' name='Circinus Federation' clan='false' periphery='true'>
-		<years>2785-3067</years>
+		<years>2785-3081</years>
 		<ratName>Circinus</ratName>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.MW</parentFaction>
 		<pctOmni>0,0,0,0,0</pctOmni>
 		<pctClan>0,0,0,0,0</pctClan>
 		<pctSL>0,0,3,6,26</pctSL>
-		<salvage pct='6'>LA:10,FWL:9</salvage>
+		<salvage pct='6'>LA:10,FWL:9,FC:10</salvage>
 	</faction>
 	<faction key='CLAN' name='Clan - General' clan='true' periphery='false'>
 		<years>2807-</years>
@@ -84,8 +84,8 @@
 		<pctOmni>0,0,7,80,100</pctOmni>
 		<pctClan>36,36,77,100,100</pctClan>
 		<pctSL>64,64,23,0,0</pctSL>
-		<pctClan unitType='Vehicle'>10,10,40</pctClan>
-		<pctSL unitType='Vehicle'>90,90,60</pctSL>
+		<pctClan unitType='Vehicle'>10,10,40,40,40</pctClan>
+		<pctSL unitType='Vehicle'>90,90,60,60,60</pctSL>
 		<salvage pct='2'>CCC:1,CHH:5,CSR:4,CIH:4,CSV:6,CFM:3,CCO:5,CGS:3,CSA:4,CDS:5,CW:4,CBS:3,CNC:10,CSJ:5,CJF:4</salvage>
 		<weightDistribution era='3058' unitType='Mek'>3,4,2,1,0</weightDistribution>
 		<weightDistribution era='3058' unitType='Tank'>4,1,3,2</weightDistribution>
@@ -98,10 +98,10 @@
 		<pctClan>0,0,89,100,100</pctClan>
 		<pctSL>100,100,10,0,0</pctSL>
 		<pctOmni unitType='Aero'>0,0,38,100,100</pctOmni>
-		<pctClan unitType='Aero'>11,11,40,100</pctClan>
+		<pctClan unitType='Aero'>11,11,40,100,100</pctClan>
 		<pctSL unitType='Aero'>88,88,60,0,0</pctSL>
-		<pctClan unitType='Vehicle'>11,11,40</pctClan>
-		<pctSL unitType='Vehicle'>88,88,60</pctSL>
+		<pctClan unitType='Vehicle'>11,11,40,40,40</pctClan>
+		<pctSL unitType='Vehicle'>88,88,60,60,60</pctSL>
 		<salvage pct='10'>CHH:2,CSR:2,CIH:3,CSV:7,CFM:3,CCO:7,CGS:2,CSA:7,CDS:1,CW:7,CBS:2,CNC:10,CSJ:3,CJF:5,CGB:2,CB:1</salvage>
 	</faction>
 	<faction key='CCO' name='Clan Coyote' clan='true' periphery='false'>
@@ -111,8 +111,8 @@
 		<pctOmni>8,8,10,90,100</pctOmni>
 		<pctClan>69,69,69,100,100</pctClan>
 		<pctSL>30,30,30,0,0</pctSL>
-		<pctClan unitType='Vehicle'>10,10,40</pctClan>
-		<pctSL unitType='Vehicle'>90,90,60</pctSL>
+		<pctClan unitType='Vehicle'>10,10,40,40,40</pctClan>
+		<pctSL unitType='Vehicle'>90,90,60,60,60</pctSL>
 		<salvage pct='10'>CHH:1,CCC:3,CIH:6,CSR:2,CSV:2,CFM:2,CGS:1,CSA:3,CDS:1,CW:1,CBS:1,CNC:7,CSJ:10,CJF:5,CB:2</salvage>
 		<weightDistribution era='3058' unitType='Mek'>2,3,4,2,0</weightDistribution>
 		<weightDistribution era='3058' unitType='Tank'>3,1,3,2</weightDistribution>
@@ -124,8 +124,8 @@
 		<pctOmni>0,0,5,62,100</pctOmni>
 		<pctClan>33,33,66,100,100</pctClan>
 		<pctSL>66,66,33,0,0</pctSL>
-		<pctClan unitType='Vehicle'>11,11,40</pctClan>
-		<pctSL unitType='Vehicle'>88,88,60</pctSL>
+		<pctClan unitType='Vehicle'>11,11,40,40,40</pctClan>
+		<pctSL unitType='Vehicle'>88,88,60,60,60</pctSL>
 		<salvage pct='10'>CCC:1,CHH:2,CSR:2,CIH:3,CSV:7,CCO:1,CGS:6,CSA:9,CDS:1,CW:3,CNC:3,CSJ:3,CJF:10,CGB:1,CB:1</salvage>
 	</faction>
 	<faction key='CGB' name='Clan Ghost Bear' clan='true' periphery='false'>
@@ -137,8 +137,8 @@
 		<pctOmni>3,3,35,74,100</pctOmni>
 		<pctClan>40,40,80,83,100</pctClan>
 		<pctSL>60,60,20,17,0</pctSL>
-		<pctClan unitType='Vehicle'>11,11,43</pctClan>
-		<pctSL unitType='Vehicle'>88,88,57</pctSL>
+		<pctClan unitType='Vehicle'>11,11,43,43,43</pctClan>
+		<pctSL unitType='Vehicle'>88,88,57,57,57</pctSL>
 		<salvage pct='10'>CHH:2,CCC:0,CIH:1,CSV:2,FRR:1,CFM:0,CGS:0,CSA:1,CW:10,CNC:2,CSJ:3,CJF:1,DC:7</salvage>
 		<weightDistribution era='3058' unitType='Mek'>2,3,4,2,0</weightDistribution>
 		<weightDistribution era='3058' unitType='Tank'>3,1,3,2</weightDistribution>
@@ -154,8 +154,8 @@
 		<pctOmni unitType='Aero'>0,0,20,50,80</pctOmni>
 		<pctClan unitType='Aero'>10,10,60,70,90</pctClan>
 		<pctSL unitType='Aero'>90,90,40,30,10</pctSL>
-		<pctClan unitType='Vehicle'>10,10,40</pctClan>
-		<pctSL unitType='Vehicle'>90,90,60</pctSL>
+		<pctClan unitType='Vehicle'>10,10,40,40,40</pctClan>
+		<pctSL unitType='Vehicle'>90,90,60,60,60</pctSL>
 		<salvage pct='10'>CCC:1,CHH:1,CIH:4,CSR:0,CSV:4,CFM:5,CCO:2,CSA:3,CDS:3,CW:1,CNC:3,CSJ:1,CJF:10,CGB:1,CB:2</salvage>
 	</faction>
 	<faction key='CHH' name='Clan Hell&apos;s Horses' clan='true' periphery='false'>
@@ -176,8 +176,8 @@
 		<pctOmni>0,0,6,90,100</pctOmni>
 		<pctClan>33,33,76,100,100</pctClan>
 		<pctSL>67,67,23,0,0</pctSL>
-		<pctClan unitType='Vehicle'>11,11,40</pctClan>
-		<pctSL unitType='Vehicle'>88,88,60</pctSL>
+		<pctClan unitType='Vehicle'>11,11,40,40,40</pctClan>
+		<pctSL unitType='Vehicle'>88,88,60,60,60</pctSL>
 		<salvage pct='10'>CCC:1,CHH:3,CSR:1,CSV:4,CFM:3,CCO:5,CGS:5,CSA:5,CDS:7,CW:4,CNC:2,CSJ:2,CJF:10,CGB:3,CB:1</salvage>
 		<weightDistribution era='3058' unitType='Mek'>5,4,2,1,0</weightDistribution>
 		<weightDistribution era='3058' unitType='Tank'>5,2,3,1</weightDistribution>
@@ -189,8 +189,8 @@
 		<pctOmni>25,25,53,90,100</pctOmni>
 		<pctClan>53,53,80,46,100</pctClan>
 		<pctSL>47,47,20,54,0</pctSL>
-		<pctClan unitType='Vehicle'>0,0,20</pctClan>
-		<pctSL unitType='Vehicle'>100,100,80</pctSL>
+		<pctClan unitType='Vehicle'>0,0,20,20,20</pctClan>
+		<pctSL unitType='Vehicle'>100,100,80,80,80</pctSL>
 		<salvage pct='17'>CHH:0,CSR:0,CIH:0,CI:0,CSV:2,CFM:0,CCO:0,CGS:0,CSA:0,CDS:0,CW:6,LA:5,CNC:0,CSJ:0,FC:5,CGB:0</salvage>
 	</faction>
 	<faction key='CNC' name='Clan Nova Cat' clan='true' periphery='false'>
@@ -200,8 +200,8 @@
 		<pctOmni>10,10,50,78,100</pctOmni>
 		<pctClan>30,30,60,94,100</pctClan>
 		<pctSL>70,70,40,6,0</pctSL>
-		<pctClan unitType='Vehicle'>10,10,40</pctClan>
-		<pctSL unitType='Vehicle'>90,90,60</pctSL>
+		<pctClan unitType='Vehicle'>10,10,40,40,40</pctClan>
+		<pctSL unitType='Vehicle'>90,90,60,60,60</pctSL>
 		<salvage pct='10'>CCC:3,CHH:2,CSR:3,CIH:1,CSV:1,FRR:1,CFM:2,FS:3,CCO:4,CGS:2,CSA:3,CDS:0,CW:2,CBS:1,LA:3,CSJ:6,CJF:1,CGB:5,CB:2,DC:6</salvage>
 	</faction>
 	<faction key='CDS' name='Clan Sea Fox' clan='true' periphery='false'>
@@ -213,8 +213,8 @@
 		<pctOmni>0,0,0,90,100</pctOmni>
 		<pctClan>46,46,100,100,100</pctClan>
 		<pctSL>54,54,0,0,0</pctSL>
-		<pctClan unitType='Vehicle'>11,11,43</pctClan>
-		<pctSL unitType='Vehicle'>88,88,57</pctSL>
+		<pctClan unitType='Vehicle'>11,11,43,43,43</pctClan>
+		<pctSL unitType='Vehicle'>88,88,57,57,57</pctSL>
 		<salvage pct='12'>CCC:3,CHH:10,CSR:10,CIH:9,CSV:4,CFM:10,CCO:8,CGS:3,CSA:10,CW:1,CNC:8,CSJ:10,CJF:9,CB:10</salvage>
 	</faction>
 	<faction key='CSJ' name='Clan Smoke Jaguar' clan='true' periphery='false'>
@@ -224,8 +224,8 @@
 		<pctOmni>20,20,50,90,100</pctOmni>
 		<pctClan>40,40,80,100,100</pctClan>
 		<pctSL>60,60,20,0,0</pctSL>
-		<pctClan unitType='Vehicle'>10,10,40</pctClan>
-		<pctSL unitType='Vehicle'>90,90,60</pctSL>
+		<pctClan unitType='Vehicle'>10,10,40,40,40</pctClan>
+		<pctSL unitType='Vehicle'>90,90,60,60,60</pctSL>
 		<salvage pct='10'>CCC:0,CHH:2,CSR:0,CIH:3,CSV:2,FRR:1,CFM:2,CCO:4,CGS:0,CSA:0,CDS:2,CW:3,CBS:0,CNC:6,CJF:4,CGB:3,DC:8,CB:1</salvage>
 	</faction>
 	<faction key='CSR' name='Clan Snow Raven' clan='true' periphery='false'>
@@ -237,10 +237,10 @@
 		<pctClan>70,70,92,100,100</pctClan>
 		<pctSL>30,30,7,0,0</pctSL>
 		<pctOmni unitType='Aero'>40,40,80,100,100</pctOmni>
-		<pctClan unitType='Aero'>80,80,100</pctClan>
+		<pctClan unitType='Aero'>80,80,100,100,100</pctClan>
 		<pctSL unitType='Aero'>20,20,0,0,0</pctSL>
-		<pctClan unitType='Vehicle'>11,11,43</pctClan>
-		<pctSL unitType='Vehicle'>88,88,57</pctSL>
+		<pctClan unitType='Vehicle'>11,11,43,43,43</pctClan>
+		<pctSL unitType='Vehicle'>88,88,57,57,57</pctSL>
 		<salvage pct='10'>CHH:1,CCC:2,CIH:3,CSV:7,CFM:7,CCO:7,CGS:2,CSA:3,CDS:3,CW:10,CNC:10,CSJ:1,CJF:10,CB:3</salvage>
 	</faction>
 	<faction key='CSA' name='Clan Star Adder' clan='true' periphery='false'>
@@ -251,10 +251,10 @@
 		<pctClan>76,76,91,100,100</pctClan>
 		<pctSL>23,23,8,0,0</pctSL>
 		<pctOmni unitType='Aero'>18,18,27,100,100</pctOmni>
-		<pctClan unitType='Aero'>80,80,95,100</pctClan>
+		<pctClan unitType='Aero'>80,80,95,100,100</pctClan>
 		<pctSL unitType='Aero'>20,20,5,0,0</pctSL>
-		<pctClan unitType='Vehicle'>11,11,43,50</pctClan>
-		<pctSL unitType='Vehicle'>88,88,57,50</pctSL>
+		<pctClan unitType='Vehicle'>11,11,43,50,50</pctClan>
+		<pctSL unitType='Vehicle'>88,88,57,50,50</pctSL>
 		<salvage pct='10'>CCC:3,CHH:1,CSR:1,CIH:5,CSV:3,CFM:10,CCO:3,CGS:3,CDS:2,CW:5,CNC:5,CSJ:3,CJF:7,CGB:2,CB:2</salvage>
 		<weightDistribution era='3058' unitType='Mek'>2,3,4,2,0</weightDistribution>
 		<weightDistribution era='3058' unitType='Tank'>3,1,3,2</weightDistribution>
@@ -266,8 +266,8 @@
 		<pctOmni>40,40,82,98,100</pctOmni>
 		<pctClan>48,48,93,98,100</pctClan>
 		<pctSL>51,51,7,1,0</pctSL>
-		<pctClan unitType='Vehicle'>10,10,40</pctClan>
-		<pctSL unitType='Vehicle'>90,90,60</pctSL>
+		<pctClan unitType='Vehicle'>10,10,40,40,40</pctClan>
+		<pctSL unitType='Vehicle'>90,90,60,60,60</pctSL>
 		<salvage pct='10'>CCC:0,CHH:0,CSR:0,CIH:2,CFM:1,CCO:1,CGS:1,CSA:2,CDS:2,CW:4,CBS:0,LA:2,CNC:0,CSJ:1,CJF:10,CGB:1,CB:1</salvage>
 	</faction>
 	<faction key='CW' name='Clan Wolf' clan='true' periphery='false'>
@@ -277,8 +277,8 @@
 		<pctOmni>0,0,0,88,100</pctOmni>
 		<pctClan>28,28,54,95,100</pctClan>
 		<pctSL>71,71,46,4,0</pctSL>
-		<pctClan unitType='Vehicle'>10,10,40</pctClan>
-		<pctSL unitType='Vehicle'>90,90,60</pctSL>
+		<pctClan unitType='Vehicle'>10,10,40,40,40</pctClan>
+		<pctSL unitType='Vehicle'>90,90,60,60,60</pctSL>
 		<salvage pct='17'>CSA:0,CIH:0,LA:4,CSV:1,FRR:1,CNC:1,CFM:0,CSJ:0,FC:4,CJF:6,CGB:2,DC:0</salvage>
 	</faction>
 	<faction key='CWIE' name='Clan Wolf-in-Exile' clan='true' periphery='false'>
@@ -288,8 +288,8 @@
 		<pctOmni>39,39,78,96,100</pctOmni>
 		<pctClan>40,40,80,98,100</pctClan>
 		<pctSL>60,60,20,1,0</pctSL>
-		<pctClan unitType='Vehicle'>11,11,43</pctClan>
-		<pctSL unitType='Vehicle'>88,88,57</pctSL>
+		<pctClan unitType='Vehicle'>11,11,43,43,43</pctClan>
+		<pctSL unitType='Vehicle'>88,88,57,57,57</pctSL>
 		<salvage pct='10'>CW:2,LA:5,CJF:10</salvage>
 	</faction>
 	<faction key='CS' name='ComStar' clan='false' periphery='false'>
@@ -323,8 +323,8 @@
 		<ratName>FedCom</ratName>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>FS,LA</parentFaction>
-		<pctOmni>0,0</pctOmni>
-		<pctClan>0</pctClan>
+		<pctOmni>0,0,0,0,0</pctOmni>
+		<pctClan>0,0,0,0,0</pctClan>
 		<pctSL>2,14,21,29,43</pctSL>
 		<salvage pct='7'>CC:2,FRR:2,FWL:2,CJF:3,DC:4,TC:0</salvage>
 	</faction>
@@ -978,8 +978,8 @@
 		<pctOmni unitType='Aero'>0,0,10,63,100</pctOmni>
 		<pctClan unitType='Aero'>33,33,68,100,100</pctClan>
 		<pctSL unitType='Aero'>66,66,32,0,0</pctSL>
-		<pctClan unitType='Vehicle'>11,11,40</pctClan>
-		<pctSL unitType='Vehicle'>88,88,60</pctSL>
+		<pctClan unitType='Vehicle'>11,11,40,40,40</pctClan>
+		<pctSL unitType='Vehicle'>88,88,60,60,60</pctSL>
 		<salvage pct='10'>CCC:1,CHH:2,CSR:3,CIH:6,CSV:4,CCO:4,CGS:6,CSA:8,CDS:3,CW:3,CNC:2,CSJ:4,CJF:10,CGB:1,CB:1</salvage>
 	</faction>
 	<faction key='CFM.FT' name='Kindraa Faraday-Tanaga' clan='true' periphery='false'>
@@ -989,8 +989,8 @@
 		<pctOmni>0,0,5,85,100</pctOmni>
 		<pctClan>33,33,75,100,100</pctClan>
 		<pctSL>66,66,25,0,0</pctSL>
-		<pctClan unitType='Vehicle'>11,11,40</pctClan>
-		<pctSL unitType='Vehicle'>88,88,60</pctSL>
+		<pctClan unitType='Vehicle'>11,11,40,40,40</pctClan>
+		<pctSL unitType='Vehicle'>88,88,60,60,60</pctSL>
 		<salvage pct='10'>CCC:1,CHH:2,CSR:3,CIH:6,CSV:4,CCO:4,CGS:6,CSA:8,CDS:3,CW:3,CNC:2,CSJ:4,CJF:10,CGB:1,CB:1</salvage>
 	</faction>
 	<faction key='CFM.Kl' name='Kindraa Kline' clan='true' periphery='false'>
@@ -1000,8 +1000,8 @@
 		<pctOmni>0,0,0,15,90</pctOmni>
 		<pctClan>33,33,66,100,100</pctClan>
 		<pctSL>66,66,33,0,0</pctSL>
-		<pctClan unitType='Vehicle'>11,11,40</pctClan>
-		<pctSL unitType='Vehicle'>88,88,60</pctSL>
+		<pctClan unitType='Vehicle'>11,11,40,40,40</pctClan>
+		<pctSL unitType='Vehicle'>88,88,60,60,60</pctSL>
 		<salvage pct='10'>CCC:1,CHH:2,CSR:3,CIH:6,CSV:4,CCO:4,CGS:6,CSA:8,CDS:3,CW:3,CNC:2,CSJ:4,CJF:10,CGB:1,CB:1</salvage>
 	</faction>
 	<faction key='CFM.MaC' name='Kindraa Mattila-Carrol' clan='true' periphery='false'>
@@ -1011,8 +1011,8 @@
 		<pctOmni>0,0,5,80,100</pctOmni>
 		<pctClan>33,33,66,100,100</pctClan>
 		<pctSL>66,66,33,0,0</pctSL>
-		<pctClan unitType='Vehicle'>11,11,40</pctClan>
-		<pctSL unitType='Vehicle'>88,88,60</pctSL>
+		<pctClan unitType='Vehicle'>11,11,40,40,40</pctClan>
+		<pctSL unitType='Vehicle'>88,88,60,60,60</pctSL>
 		<salvage pct='10'>CCC:1,CHH:2,CSR:3,CIH:6,CSV:4,CCO:4,CGS:6,CSA:8,CDS:3,CW:3,CNC:2,CSJ:4,CJF:10,CGB:1,CB:1</salvage>
 	</faction>
 	<faction key='CFM.MiKr' name='Kindraa Mick-Kreese' clan='true' periphery='false'>
@@ -1025,8 +1025,8 @@
 		<pctOmni unitType='Aero'>0,0,10,63,100</pctOmni>
 		<pctClan unitType='Aero'>33,33,68,100,100</pctClan>
 		<pctSL unitType='Aero'>66,66,32,0,0</pctSL>
-		<pctClan unitType='Vehicle'>11,11,40</pctClan>
-		<pctSL unitType='Vehicle'>88,88,60</pctSL>
+		<pctClan unitType='Vehicle'>11,11,40,40,40</pctClan>
+		<pctSL unitType='Vehicle'>88,88,60,60,60</pctSL>
 		<salvage pct='10'>CCC:1,CHH:2,CSR:3,CIH:6,CSV:4,CCO:4,CGS:6,CSA:8,CDS:3,CW:3,CNC:2,CSJ:4,CJF:10,CGB:1,CB:1</salvage>
 	</faction>
 	<faction key='CFM.P' name='Kindraa Payne' clan='true' periphery='false'>
@@ -1036,8 +1036,8 @@
 		<pctOmni>0,0,5,62,100</pctOmni>
 		<pctClan>33,33,66,100,100</pctClan>
 		<pctSL>66,66,33,0,0</pctSL>
-		<pctClan unitType='Vehicle'>11,11,40</pctClan>
-		<pctSL unitType='Vehicle'>88,88,60</pctSL>
+		<pctClan unitType='Vehicle'>11,11,40,40,40</pctClan>
+		<pctSL unitType='Vehicle'>88,88,60,60,60</pctSL>
 		<salvage pct='10'>CCC:1,CHH:2,CSR:3,CIH:6,CSV:4,CCO:4,CGS:6,CSA:8,CDS:3,CW:3,CNC:2,CSJ:4,CFM.P:8,CJF:10,CGB:1,CB:1</salvage>
 	</faction>
 	<faction key='CFM.S' name='Kindraa Sainze' clan='true' periphery='false'>
@@ -1047,8 +1047,8 @@
 		<pctOmni>0,0,20,100,100</pctOmni>
 		<pctClan>33,33,66,100,100</pctClan>
 		<pctSL>66,66,33,0,0</pctSL>
-		<pctClan unitType='Vehicle'>11,11,40</pctClan>
-		<pctSL unitType='Vehicle'>88,88,60</pctSL>
+		<pctClan unitType='Vehicle'>11,11,40,40,40</pctClan>
+		<pctSL unitType='Vehicle'>88,88,60,60,60</pctSL>
 		<salvage pct='10'>CCC:1,CHH:2,CSR:3,CIH:6,CSV:4,CCO:4,CGS:6,CSA:8,CDS:3,CW:3,CNC:2,CSJ:4,CFM.P:8,CJF:10,CGB:1,CB:1</salvage>
 	</faction>
 	<faction key='FWL.KIS' name='Knights of the Inner Sphere' clan='false' periphery='false'>
@@ -1122,7 +1122,6 @@
 		<pctOmni>2</pctOmni>
 		<pctClan>0</pctClan>
 		<pctSL>29</pctSL>
-		<pctOmni unitType='Aero'>null</pctOmni>
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='FWL.MM' name='Marik Militia' clan='false' periphery='false'>

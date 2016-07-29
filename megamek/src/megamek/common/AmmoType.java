@@ -12757,13 +12757,15 @@ public class AmmoType extends EquipmentType {
          */
         public MunitionMutator(String munitionName, int weightRatio,
                 long munitionType, int introYear, int introTechLevel,
-                int[] availRating, int extinctDate, int reintroDate) {
+                int techRating, int[] availRating, int extinctDate,
+                int reintroDate) {
             name = munitionName;
             weight = weightRatio;
             type = munitionType;
             techLevel = new HashMap<Integer, Integer>();
             techLevel.put(introYear, introTechLevel);
             introDate = introYear;
+            this.techRating = techRating;
             this.availRating = availRating;
             this.extinctDate = extinctDate;
             this.reintroDate = reintroDate;
@@ -12969,6 +12971,7 @@ public class AmmoType extends EquipmentType {
                 munition.techLevel = base.techLevel;
             }
 
+            munition.techRating = techRating;
             munition.introDate = introDate;
             munition.availRating = availRating;
             munition.extinctDate = extinctDate;

@@ -106,6 +106,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
      */
     private static final long serialVersionUID = -6809436986445582731L;
 
+    public static int DONE = 0;
+    public static int NEXT = 1;
+    public static int PREV = 2;
+
     private JPanel panPilot;
     private JPanel panDeploy;
     private QuirksPanel panQuirks;
@@ -283,6 +287,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     private List<Entity> entities;
 
     private boolean okay;
+
+    private int status = CustomMechDialog.DONE;
 
     ClientGUI clientgui;
 
@@ -938,6 +944,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         return okay;
     }
 
+    public int getStatus() {
+        return status;
+    }
+
     private void refreshDeployment() {
         choDeploymentRound.removeItemListener(this);
         
@@ -1328,6 +1338,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
 
         okay = true;
+        status = DONE;
         clientgui.chatlounge.refreshEntities();
 
         // Check validity of units after customization
@@ -1369,17 +1380,12 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
         }
 
-        setVisible(false);
-        Entity nextOne = null;
         if (actionEvent.getSource().equals(butPrev)) {
-            nextOne = getNextEntity(false);
+            status = PREV;
         } else if (actionEvent.getSource().equals(butNext)) {
-            nextOne = getNextEntity(true);
+            status = NEXT;
         }
-        if (nextOne != null) {
-            clientgui.chatlounge.setCMDSelectedTab(getSelectedTab());
-            clientgui.chatlounge.customizeMech(nextOne);
-        }
+        setVisible(false);
     }
 
     public void itemStateChanged(ItemEvent itemEvent) {
@@ -1401,7 +1407,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
     }
 
-    private Entity getNextEntity(boolean forward) {
+    public Entity getNextEntity(boolean forward) {
         IGame game = client.getGame();
         boolean bd = game.getOptions().booleanOption("blind_drop"); //$NON-NLS-1$
         boolean rbd = game.getOptions().booleanOption("real_blind_drop"); //$NON-NLS-1$

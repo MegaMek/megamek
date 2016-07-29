@@ -45,6 +45,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -2321,6 +2322,78 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.sendDeleteEntity(entity.getId());
     }
 
+    /**
+     *
+     * @param entities
+     */
+    public void customizeMechs(List<Entity> entities) {
+        // Only call this for when selecting a valid list of entities
+        if (entities.size() < 1) {
+            return;
+        }
+        Set<String> owners = new HashSet<>();
+        String ownerName = "";
+        int ownerId = -1;
+        for (Entity e : entities) {
+            ownerName = e.getOwner().getName();
+            ownerId = e.getOwner().getId();
+            owners.add(ownerName);
+        }
+
+        // Error State
+        if (owners.size() > 1) {
+            return;
+        }
+
+        boolean editable = clientgui.getBots().get(ownerName) != null;
+        Client client;
+        if (editable) {
+            client = clientgui.getBots().get(ownerName);
+        } else {
+            editable |= ownerId == clientgui.getClient().getLocalPlayer()
+                    .getId();
+            client = clientgui.getClient();
+        }
+
+        CustomMechDialog cmd = new CustomMechDialog(clientgui, client,
+                entities, editable);
+        cmd.setSize(new Dimension(GUIPreferences.getInstance()
+                .getCustomUnitWidth(), GUIPreferences.getInstance()
+                .getCustomUnitHeight()));
+        cmd.setTitle(Messages.getString("ChatLounge.CustomizeUnits")); //$NON-NLS-1$
+        cmd.setVisible(true);
+        if (editable && cmd.isOkay()) {
+            // send changes
+            for (Entity entity : entities) {
+                client.sendUpdateEntity(entity);
+
+                // Changing state to a transporting unit can update state of
+                // transported units, so update those as well
+                for (Transporter transport : entity.getTransports()) {
+                    for (Entity loaded : transport.getLoadedUnits()) {
+                        client.sendUpdateEntity(loaded);
+                    }
+                }
+
+                // Customizations to a Squadron can effect the fighters
+                if (entity instanceof FighterSquadron) {
+                    for (Aero fighter : ((FighterSquadron) entity)
+                            .getFighters()) {
+                        client.sendUpdateEntity(fighter);
+                    }
+                }
+            }
+            GUIPreferences.getInstance().setCustomUnitHeight(
+                    cmd.getSize().height);
+            GUIPreferences.getInstance()
+                    .setCustomUnitWidth(cmd.getSize().width);
+        }
+    }
+
+    /**
+     *
+     * @param entity
+     */
     public void customizeMech(Entity entity) {
         boolean editable = clientgui.getBots().get(entity.getOwner().getName()) != null;
         Client c;
@@ -2345,8 +2418,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
 
         // display dialog
-        CustomMechDialog cmd = new CustomMechDialog(clientgui, c, entity,
+        List<Entity> entities = new ArrayList<>();
+        entities.add(entity);
+        CustomMechDialog cmd = new CustomMechDialog(clientgui, c, entities,
                 editable);
+        cmd.setSize(new Dimension(GUIPreferences.getInstance()
+                .getCustomUnitWidth(), GUIPreferences.getInstance()
+                .getCustomUnitHeight()));
         cmd.refreshOptions();
         cmd.refreshQuirks();
         cmd.refreshPartReps();
@@ -2378,6 +2456,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     c.sendUpdateEntity(unit);
                 }
             }
+            GUIPreferences.getInstance().setCustomUnitHeight(
+                    cmd.getSize().height);
+            GUIPreferences.getInstance()
+                    .setCustomUnitWidth(cmd.getSize().width);
         }
     }
 
@@ -3038,6 +3120,31 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         MechSummaryCache.getInstance().removeListener(mechSummaryCacheListener);
     }
 
+    /**
+     * Returns true if the given list of entities can be configured as a group.
+     * This requires that they all have the same owner, and that none of the
+     * units are being transported.
+     *
+     * @param entities
+     * @return
+     */
+    private boolean canConfigureAll(List<Entity> entities) {
+        if (entities.size() == 1) {
+            return true;
+        }
+
+        Set<Integer> owners = new HashSet<>();
+        boolean containsTransportedUnit = false;
+        for (Entity e : entities) {
+            containsTransportedUnit |= e.getTransportId() != Entity.NONE;
+            owners.add(e.getOwner().getId());
+        }
+        return (owners.size() == 1) && !containsTransportedUnit;
+    }
+
+    /**
+     *
+     */
     public void valueChanged(ListSelectionEvent event) {
         if (event.getValueIsAdjusting()) {
             return;
@@ -3523,7 +3630,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 mechReadout(entities.get(0));
             } else if (code == KeyEvent.VK_ENTER) {
                 e.consume();
-                customizeMech(entities.get(0));
+                if (entities.size() == 1) {
+                    customizeMech(entities.get(0));
+                } else if (canConfigureAll(entities)) {
+                    customizeMechs(entities);
+                }
             }
         }
     }
@@ -3553,6 +3664,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 mechCamo(entities);
             } else if (command.equalsIgnoreCase("CONFIGURE")) {
                 customizeMech(entity);
+            } else if (command.equalsIgnoreCase("CONFIGURE_ALL")) {
+                customizeMechs(entities);
             } else if (command.equalsIgnoreCase("DELETE")) {
                 Client c = clientgui.getBots().get(entity.getOwner().getName());
                 if (c == null) {
@@ -3901,6 +4014,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     menuItem.setEnabled(isOwner || isBot);
                     popup.add(menuItem);
                 }
+
+                menuItem = new JMenuItem("Configure all");
+                menuItem.setActionCommand("CONFIGURE_ALL");
+                menuItem.addActionListener(this);
+                menuItem.setEnabled(canConfigureAll(entities));
+                menuItem.setMnemonic(KeyEvent.VK_C);
+                popup.add(menuItem);
 
                 menuItem = new JMenuItem("Set individual camo");
                 menuItem.setActionCommand("INDI_CAMO");

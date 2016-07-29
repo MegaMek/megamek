@@ -720,6 +720,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         setLocationRelativeTo(clientgui);
     }
 
+    public int getSelectedTab() {
+        return tabAll.getSelectedIndex();
+    }
+
+    public void setSelectedTab(int idx) {
+        tabAll.setSelectedIndex(idx);
+    }
+
     private void setupButtons() {
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
@@ -1369,6 +1377,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             nextOne = getNextEntity(true);
         }
         if (nextOne != null) {
+            clientgui.chatlounge.setCMDSelectedTab(getSelectedTab());
             clientgui.chatlounge.customizeMech(nextOne);
         }
     }

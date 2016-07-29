@@ -225,6 +225,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private boolean mscLoaded = false;
     private boolean rngLoaded = false;
 
+    private int cmdSelectedTab = -1;
+
     private MechSummaryCache.Listener mechSummaryCacheListener = new MechSummaryCache.Listener() {
         @Override
         public void doneLoading() {
@@ -2361,9 +2363,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 .getCustomUnitWidth(), GUIPreferences.getInstance()
                 .getCustomUnitHeight()));
         cmd.setTitle(Messages.getString("ChatLounge.CustomizeUnits")); //$NON-NLS-1$
+        if (cmdSelectedTab != -1) {
+            cmd.setSelectedTab(cmdSelectedTab);
+        }
         cmd.setVisible(true);
         GUIPreferences.getInstance().setCustomUnitHeight(cmd.getSize().height);
         GUIPreferences.getInstance().setCustomUnitWidth(cmd.getSize().width);
+        cmdSelectedTab = cmd.getSelectedTab();
         if (editable && cmd.isOkay()) {
             // send changes
             for (Entity entity : entities) {
@@ -2386,6 +2392,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 }
             }
         }
+    }
+
+    public void setCMDSelectedTab(int tab) {
+        cmdSelectedTab = tab;
     }
 
     /**
@@ -2427,9 +2437,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         cmd.refreshQuirks();
         cmd.refreshPartReps();
         cmd.setTitle(entity.getShortName());
+        if (cmdSelectedTab != -1) {
+            cmd.setSelectedTab(cmdSelectedTab);
+        }
         cmd.setVisible(true);
         GUIPreferences.getInstance().setCustomUnitHeight(cmd.getSize().height);
         GUIPreferences.getInstance().setCustomUnitWidth(cmd.getSize().width);
+        cmdSelectedTab = cmd.getSelectedTab();
         if (editable && cmd.isOkay()) {
             // send changes
             c.sendUpdateEntity(entity);

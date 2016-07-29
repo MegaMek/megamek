@@ -18,6 +18,7 @@ v0.41.21
 + Feature: Custom Unit Dialog now saves/loads size (width and height)
 + Issue #132: ASF Altitude Bombing uses incorrect scatter pattern
 + Bug: Manually shutdown units skipped during movement with option turned on
++ Feature: Custom Unit Dialog now remembers selected tab within session
 
 v0.41.20 (2016-06-27 02:00)
 + Data: Date fixes for units

@@ -30659,17 +30659,20 @@ public class Server implements Runnable {
      * Collapse a building basement. Inflict the appropriate amount of damage on
      * all entities that fell to the basement. Update all clients.
      *
-     * @param bldg        - the <code>Building</code> that has collapsed.
-     * @param positionMap - a <code>Hashtable</code> that maps the <code>Coords</code>
-     *                    positions or each unit in the game to a <code>Vector</code> of
-     *                    <code>Entity</code>s at that position. This value should not
-     *                    be <code>null</code>.
-     * @param coords      - The <code>Coords></code> of the building basement hex that
-     *                    has collapsed
+     * @param bldg
+     *            - the <code>Building</code> that has collapsed.
+     * @param positionMap
+     *            - a <code>Hashtable</code> that maps the <code>Coords</code>
+     *            positions or each unit in the game to a <code>Vector</code> of
+     *            <code>Entity</code>s at that position. This value should not
+     *            be <code>null</code>.
+     * @param coords
+     *            - The <code>Coords></code> of the building basement hex that
+     *            has collapsed
      */
     public void collapseBasement(Building bldg,
-                                 Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
-                                 Vector<Report> vPhaseReport) {
+            Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
+            Vector<Report> vPhaseReport) {
         if (!bldg.hasCFIn(coords)) {
             return;
         }
@@ -30762,20 +30765,24 @@ public class Server implements Runnable {
      * Collapse a building hex. Inflict the appropriate amount of damage on all
      * entities in the building. Update all clients.
      *
-     * @param bldg        - the <code>Building</code> that has collapsed.
-     * @param positionMap - a <code>Hashtable</code> that maps the <code>Coords</code>
-     *                    positions or each unit in the game to a <code>Vector</code> of
-     *                    <code>Entity</code>s at that position. This value should not
-     *                    be <code>null</code>.
-     * @param coords      - The <code>Coords></code> of the building hex that has
-     *                    collapsed
-     * @param collapseAll - A <code>boolean</code> indicating wether or not this
-     *                    collapse of a hex should be able to collapse the whole
-     *                    building
+     * @param bldg
+     *            - the <code>Building</code> that has collapsed.
+     * @param positionMap
+     *            - a <code>Hashtable</code> that maps the <code>Coords</code>
+     *            positions or each unit in the game to a <code>Vector</code> of
+     *            <code>Entity</code>s at that position. This value should not
+     *            be <code>null</code>.
+     * @param coords
+     *            - The <code>Coords></code> of the building hex that has
+     *            collapsed
+     * @param collapseAll
+     *            - A <code>boolean</code> indicating wether or not this
+     *            collapse of a hex should be able to collapse the whole
+     *            building
      */
     public void collapseBuilding(Building bldg,
-                                 Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
-                                 boolean collapseAll, Vector<Report> vPhaseReport) {
+            Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
+            boolean collapseAll, Vector<Report> vPhaseReport) {
         if (!bldg.hasCFIn(coords)) {
             return;
         }
@@ -30793,7 +30800,7 @@ public class Server implements Runnable {
             final IHex curHex = game.getBoard().getHex(coords);
             final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
             final int numFloors = Math.max(bridgeEl,
-                                           curHex.terrainLevel(Terrains.BLDG_ELEV));
+                    curHex.terrainLevel(Terrains.BLDG_ELEV));
 
             // Now collapse the building in this hex, so entities fall to
             // the ground
@@ -30820,7 +30827,7 @@ public class Server implements Runnable {
                 // all gun emplacements are simply destroyed
                 if (entity instanceof GunEmplacement) {
                     vPhaseReport.addAll(destroyEntity(entity,
-                                                      "building collapse"));
+                            "building collapse"));
                     addNewLines();
                     continue;
                 }
@@ -30830,7 +30837,7 @@ public class Server implements Runnable {
                 // destroyed
                 if (floor < 0) {
                     vPhaseReport.addAll(destroyEntity(entity,
-                                                      "Crushed under building rubble", false, false));
+                            "Crushed under building rubble", false, false));
                 }
 
                 // Ignore units above the building / bridge.
@@ -30846,12 +30853,12 @@ public class Server implements Runnable {
 
                 // Calculate collapse damage for this entity.
                 int damage = (int) Math.floor(bldg.getDamageFromScale()
-                                              * Math.ceil((phaseCF * (numFloors - floor)) / 10.0));
+                        * Math.ceil((phaseCF * (numFloors - floor)) / 10.0));
 
                 // Infantry suffer more damage.
                 if (entity instanceof Infantry) {
                     if ((entity instanceof BattleArmor)
-                        || ((Infantry) entity).isMechanized()) {
+                            || ((Infantry) entity).isMechanized()) {
                         damage *= 2;
                     } else {
                         damage *= 3;
@@ -30868,7 +30875,7 @@ public class Server implements Runnable {
                 int remaining = damage;
                 int cluster = damage;
                 if ((entity instanceof BattleArmor) || (entity instanceof Mech)
-                    || (entity instanceof Tank)) {
+                        || (entity instanceof Tank)) {
                     cluster = 5;
                 }
                 while (remaining > 0) {
@@ -30882,7 +30889,7 @@ public class Server implements Runnable {
                         table = ToHitData.HIT_PUNCH;
                     }
                     HitData hit = entity.rollHitLocation(table,
-                                                         ToHitData.SIDE_FRONT);
+                            ToHitData.SIDE_FRONT);
                     hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                     vPhaseReport.addAll(damageEntity(entity, hit, next));
                     remaining -= next;
@@ -30901,7 +30908,7 @@ public class Server implements Runnable {
                         psr.addModifier(1, "20+ damage");
                     }
                     vPhaseReport.addAll(doEntityFallsInto(entity, coords, psr,
-                                                          true));
+                            true));
                 }
                 // Update this entity.
                 // ASSUMPTION: this is the correct thing to do.
@@ -30921,10 +30928,10 @@ public class Server implements Runnable {
         // if more than half of the hexes are gone, collapse all
         if (bldg.getCollapsedHexCount() > (bldg.getOriginalHexCount() / 2)) {
             for (Enumeration<Coords> coordsEnum = bldg.getCoords(); coordsEnum
-                    .hasMoreElements(); ) {
+                    .hasMoreElements();) {
                 coords = coordsEnum.nextElement();
                 collapseBuilding(bldg, game.getPositionMap(), coords, false,
-                                 vPhaseReport);
+                        vPhaseReport);
             }
         }
 

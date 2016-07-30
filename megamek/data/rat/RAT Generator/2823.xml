@@ -263,6 +263,7 @@
 		<salvage pct='10'>CHH:10,CIH:5,CSR:5,CDS:5,CW:10,CNC:5,CGS:10,CJF:5,CB:5</salvage>
 	</faction>
 	<faction key='CW' name='Clan Wolf' clan='true' periphery='false'>
+		<nameChange year='3142'>Wolf Empire</nameChange>
 		<years>2807-</years>
 		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
@@ -1047,7 +1048,7 @@
 		</model>
 	</chassis>
 	<chassis name='Black Knight' unitType='Mek'>
-		<availability>CHH:8,CLAN:9,CFM:8,FS:5,CSA:9,OA:2,CDS:8,CBS:10,FWL:5,NIOPS:7,CGB:10,MOC:2,CC:5,CSR:8,CSV:8,FWL.OH:5,MERC:5,CIR:2,CGS:10,Periphery:2,TC:2,CS:7,CW:10,LA:5,CNC:10,CJF:8,DC:5</availability>
+		<availability>CHH:8,CLAN:9,CFM:8,FS:5,OA:2,CDS:8,CBS:10,FWL:5,NIOPS:7,CGB:10,MOC:2,CC:5,CSR:8,CSV:8,FWL.OH:5,MERC:5,CIR:2,CGS:10,Periphery:2,TC:2,CS:7,CW:10,LA:5,CNC:10,CJF:8,DC:5</availability>
 		<model name='BL-6-KNT'>
 			<availability>CS:8,OA:4+,LA:4+,CLAN:6,FWL:4+,IS:4+,NIOPS:8,DC:4+,TC:4+</availability>
 		</model>
@@ -1816,7 +1817,7 @@
 		</model>
 	</chassis>
 	<chassis name='Orion' unitType='Mek'>
-		<availability>CC:5,MOC:5,CLAN:4,IS:5,Periphery.Deep:4,FS:5,CIR:5,Periphery:4,TC:5,CS:5-,OA:5,LA:6,Periphery.MW:4,Periphery.ME:4,FWL:8,NIOPS:5-,DC:5</availability>
+		<availability>CC:5,MOC:5,CLAN:4,IS:5,Periphery.Deep:4,FS:5,CIR:5,Periphery:4,TC:5,CS:5-,OA:5,CW:4,LA:6,Periphery.MW:4,Periphery.ME:4,FWL:8,NIOPS:5-,DC:5</availability>
 		<model name='ON1-K'>
 			<availability>General:8,Periphery.Deep:8,Periphery:8</availability>
 		</model>

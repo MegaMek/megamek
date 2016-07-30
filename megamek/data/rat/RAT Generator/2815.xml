@@ -263,6 +263,7 @@
 		<salvage pct='5'>CHH:10,CIH:5,CSR:5,CDS:5,CW:10,CNC:5,CGS:10,CJF:5,CB:5</salvage>
 	</faction>
 	<faction key='CW' name='Clan Wolf' clan='true' periphery='false'>
+		<nameChange year='3142'>Wolf Empire</nameChange>
 		<years>2807-</years>
 		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
@@ -941,7 +942,7 @@
 		</model>
 	</chassis>
 	<chassis name='Black Knight' unitType='Mek'>
-		<availability>PP:10,CHH:8,CLAN:9,CFM:8,FS:5,CSA:9,OA:2,CDS:8,CBS:10,FWL:6,NIOPS:7,CGB:10,MOC:2,CC:5,CSR:8,CSV:8,FWL.OH:6,MERC:5,CIR:2,CGS:10,Periphery:2,TC:2,CS:7,CW:10,LA:5,CNC:10,CJF:8,DC:5</availability>
+		<availability>PP:10,CHH:8,CLAN:9,CFM:8,FS:5,OA:2,CDS:8,CBS:10,FWL:6,NIOPS:7,CGB:10,MOC:2,CC:5,CSR:8,CSV:8,FWL.OH:6,MERC:5,CIR:2,CGS:10,Periphery:2,TC:2,CS:7,CW:10,LA:5,CNC:10,CJF:8,DC:5</availability>
 		<model name='BL-6-KNT'>
 			<availability>PP:8,CS:8,OA:6+,LA:6+,FWL:6+,IS:6+,NIOPS:8,DC:6+,TC:6+</availability>
 		</model>

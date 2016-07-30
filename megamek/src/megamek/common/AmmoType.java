@@ -12741,6 +12741,8 @@ public class AmmoType extends EquipmentType {
         protected int extinctDate;
         protected int reintroDate;
 
+        protected String rulesRefs;
+
         private Map<Integer, Integer> techLevel;
 
         /**
@@ -12762,10 +12764,10 @@ public class AmmoType extends EquipmentType {
          */
         public MunitionMutator(String munitionName, int weightRatio,
                 long munitionType, int introYear, int introTechLevel,
-                int techRating, int[] availRating) {
+                int techRating, int[] availRating, String rulesRefs) {
             this(munitionName, weightRatio, munitionType, introYear,
                     introTechLevel, techRating, availRating, DATE_NONE,
-                    DATE_NONE);
+                    DATE_NONE, rulesRefs);
         }
 
         /**
@@ -12788,7 +12790,7 @@ public class AmmoType extends EquipmentType {
         public MunitionMutator(String munitionName, int weightRatio,
                 long munitionType, int introYear, int introTechLevel,
                 int techRating, int[] availRating, int extinctDate,
-                int reintroDate) {
+                int reintroDate, String rulesRefs) {
             name = munitionName;
             weight = weightRatio;
             type = munitionType;
@@ -12799,6 +12801,7 @@ public class AmmoType extends EquipmentType {
             this.availRating = availRating;
             this.extinctDate = extinctDate;
             this.reintroDate = reintroDate;
+            this.rulesRefs = rulesRefs;
         }
 
         /**
@@ -13006,6 +13009,7 @@ public class AmmoType extends EquipmentType {
             munition.availRating = availRating;
             munition.extinctDate = extinctDate;
             munition.reintroDate = reintroDate;
+            munition.rulesRefs = rulesRefs;
 
             // Reduce base number of shots to reflect the munition's weight.
             munition.shots = Math.max(1, base.shots / weight);

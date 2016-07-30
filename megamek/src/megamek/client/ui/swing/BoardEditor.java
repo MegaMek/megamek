@@ -137,6 +137,12 @@ public class BoardEditor extends JComponent implements ItemListener,
     MegaMekController controller;
 
     /**
+     * Flag that indicates whether hotkeys should be ignored or not.  This is
+     * used for disabling hot keys when various dialogs are displayed.
+     */
+    private boolean ignoreHotKeys = false;
+
+    /**
      * Creates and lays out a new Board Editor frame.
      */
     public BoardEditor(MegaMekController c) {
@@ -837,17 +843,29 @@ public class BoardEditor extends JComponent implements ItemListener,
     //
     public void actionPerformed(ActionEvent ae) {
         if ("fileBoardNew".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+            ignoreHotKeys = true;
             boardNew();
+            ignoreHotKeys = false;
         } else if ("fileBoardExpand".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+            ignoreHotKeys = true;
             boardResize();
+            ignoreHotKeys = false;
         } else if ("fileBoardOpen".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+            ignoreHotKeys = true;
             boardLoad();
+            ignoreHotKeys = false;
         } else if ("fileBoardSave".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+            ignoreHotKeys = true;
             boardSave();
+            ignoreHotKeys = false;
         } else if ("fileBoardSaveAs".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+            ignoreHotKeys = true;
             boardSaveAs();
+            ignoreHotKeys = false;
         } else if ("fileBoardSaveAsImage".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
+            ignoreHotKeys = true;
             boardSaveAsImage();
+            ignoreHotKeys = false;
         } else if (ae.getSource().equals(butDelTerrain)
                    && (lisTerrain.getSelectedValue() != null)) {
             ITerrain toRemove = Terrains.getTerrainFactory().createTerrain(
@@ -973,8 +991,10 @@ public class BoardEditor extends JComponent implements ItemListener,
      * @return
      */
     public boolean shouldIgnoreHotKeys() {
-        return (about != null && about.isVisible())
-               || (help != null && help.isVisible())
-               || (setdlg != null && setdlg.isVisible());
+        return ignoreHotKeys || (about != null && about.isVisible())
+                || (help != null && help.isVisible())
+                || (setdlg != null && setdlg.isVisible()) || texElev.hasFocus()
+                || texTerrainLevel.hasFocus() || texTerrExits.hasFocus()
+                || texTheme.hasFocus();
     }
 }

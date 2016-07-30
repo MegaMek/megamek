@@ -8,9 +8,9 @@ Retro-Streak Warhead - (IO 193)  -  http://www.sarna.net/wiki/Retro-Streak_Warhe
 Harpoon SRMs - (TO 3669)
 Tear Gas SRMs - (TO 371)
 Caseless AC Ammo - (TO 352) 
-
-
-
+Magnetic Pulse Missiles (LRM, SRM, MML) - (TO 370)
+Anti-Radiation Missiles (LRM, SRM, MML) - (TO 368)
+Standard Mortars (Reference in IO see TM 263) - Not sure if we are missing this one or not.
 
 
 

@@ -30,7 +30,7 @@ public class ISMekMortar2 extends MekMortarWeapon {
      */
     public ISMekMortar2() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
+
         name = "'Mech Mortar 2";
         setInternalName("IS Mech Mortar-2");
         addLookupName("ISMekMortar2");
@@ -46,11 +46,14 @@ public class ISMekMortar2 extends MekMortarWeapon {
         criticals = 2;
         tonnage = 5;
         cost = 15000;
-        techRating = RATING_B;
-        availRating = new int[] { RATING_D, RATING_F, RATING_E };
-        introDate = 2531;
-        techLevel.put(2531, techLevel.get(3071));
+        introDate = 2521;
         extinctDate = 2819;
         reintroDate = 3043;
+        techLevel.put(2521, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2531, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3052, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_D ,RATING_F ,RATING_F ,RATING_E};
+        techRating = RATING_B;
+        rulesRefs = "263, TM";
     }
 }

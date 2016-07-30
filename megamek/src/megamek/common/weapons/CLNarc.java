@@ -30,7 +30,7 @@ public class CLNarc extends NarcWeapon {
      */
     public CLNarc() {
         super();
-        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
+
         this.name = "Narc";
         this.setInternalName("CLNarcBeacon");
         this.addLookupName("Clan Narc Beacon");
@@ -45,9 +45,12 @@ public class CLNarc extends NarcWeapon {
         this.criticals = 1;
         this.bv = 30;
         this.cost = 100000;
-        introDate = 2828;
-        techLevel.put(2828, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_D, RATING_C };
+        introDate = 2815;
+        techLevel.put(2815, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(2828, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(2830, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_E ,RATING_D ,RATING_C};
         techRating = RATING_F;
+        rulesRefs = "232, TM";
     }
 }

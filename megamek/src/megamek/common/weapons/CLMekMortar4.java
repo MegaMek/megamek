@@ -30,7 +30,7 @@ public class CLMekMortar4 extends MekMortarWeapon {
      */
     public CLMekMortar4() {
         super();
-        techLevel.put(2840, TechConstants.T_CLAN_ADVANCED);
+
         name = "'Mech Mortar 4";
         setInternalName("Clan Mech Mortar-4");
         addLookupName("CLMekMortar4");
@@ -46,9 +46,12 @@ public class CLMekMortar4 extends MekMortarWeapon {
         criticals = 2;
         tonnage = 3.5f;
         cost = 32000;
+        introDate = 2830;
+        techLevel.put(2830, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(2840, TechConstants.T_CLAN_ADVANCED);
+        availRating = new int[] { RATING_X ,RATING_F ,RATING_F ,RATING_E};
         techRating = RATING_B;
-        availRating = new int[] { RATING_X, RATING_C, RATING_C };
-        introDate = 2840;
+        rulesRefs = "263, TM";
 
     }
 }

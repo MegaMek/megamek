@@ -30,7 +30,7 @@ public class ISNarc extends NarcWeapon {
      */
     public ISNarc() {
         super();
-        this.techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+
         this.name = "Narc";
         this.setInternalName("ISNarcBeacon");
         this.addLookupName("IS Narc Beacon");
@@ -45,11 +45,14 @@ public class ISNarc extends NarcWeapon {
         this.criticals = 2;
         this.bv = 30;
         this.cost = 100000;
-        introDate = 2587;
-        techLevel.put(2587, techLevel.get(3071));
+        introDate = 2575;
         extinctDate = 2795;
-        reintroDate = 3035;
-        availRating = new int[] { RATING_E, RATING_F, RATING_D };
+        reintroDate = 3055;
+        techLevel.put(2575, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(2587, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3049, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_E ,RATING_F ,RATING_D ,RATING_C};
         techRating = RATING_E;
+        rulesRefs = "232, TM";
     }
 }

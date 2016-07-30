@@ -1212,22 +1212,43 @@ public class AmmoType extends EquipmentType {
         
         // Create the munition types for IS Mek mortars
         munitions.clear();
-        munitions.add(new MunitionMutator("Airburst", 1, M_AIRBURST, 2544, TechConstants.T_IS_TW_NON_BOX, RATING_E, new int[] { RATING_X, RATING_X, RATING_E, RATING_D }, 3005, 3050));
-        munitions.add(new MunitionMutator("Anti-personnel", 1, M_ANTI_PERSONNEL, 2531, TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Flare", 1, M_FLARE, 2536, TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Semi-Guided", 1, M_SEMIGUIDED, 3064, TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD, 2531, TechConstants.T_IS_TW_NON_BOX));
-        
+        munitions.add(new MunitionMutator("Anti-personnel", 1, M_ANTI_PERSONNEL, 2521, TechConstants.T_IS_EXPERIMENTAL,
+                RATING_B, new int[] { RATING_B, RATING_B, RATING_B, RATING_B }, DATE_NONE, DATE_NONE, "374, TM")
+                        .addTechLevel(2531, TechConstants.T_IS_ADVANCED)
+                        .addTechLevel(2531, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Flare", 1, M_FLARE, 2528, TechConstants.T_IS_EXPERIMENTAL, RATING_B,
+                new int[] { RATING_A, RATING_A, RATING_A, RATING_A }, DATE_NONE, DATE_NONE, "374, TM")
+                        .addTechLevel(2536, TechConstants.T_IS_ADVANCED)
+                        .addTechLevel(2536, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Semi-Guided", 1, M_SEMIGUIDED, 3050, TechConstants.T_IS_EXPERIMENTAL,
+                RATING_C, new int[] { RATING_X, RATING_X, RATING_E, RATING_D }, DATE_NONE, DATE_NONE, "374, TM")
+                        .addTechLevel(3064, TechConstants.T_IS_ADVANCED)
+                        .addTechLevel(3064, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD, 2521, TechConstants.T_IS_EXPERIMENTAL, RATING_B,
+                new int[] { RATING_A, RATING_A, RATING_A, RATING_A }, DATE_NONE, DATE_NONE, "375, TM")
+                        .addTechLevel(2531, TechConstants.T_IS_ADVANCED)
+                        .addTechLevel(2531, TechConstants.T_IS_TW_NON_BOX));
+             
         // Walk through both the base types and the
         // mutators, and create munition types.
         AmmoType.createMunitions(mortarAmmos, munitions);
         
         // Create the munition types for Clan Mek mortars
         munitions.clear();
-        munitions.add(new MunitionMutator("Airburst", 1, M_AIRBURST, 2544, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("Anti-personnel", 1, M_ANTI_PERSONNEL, 2531, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("Flare", 1, M_FLARE, 2536, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD, 2531, TechConstants.T_CLAN_ADVANCED));
+        munitions.add(new MunitionMutator("Airburst", 1, M_AIRBURST, 2535, TechConstants.T_CLAN_EXPERIMENTAL, RATING_C,
+                new int[] { RATING_B, RATING_D, RATING_C, RATING_D }, DATE_NONE, DATE_NONE, "373, TM")
+                        .addTechLevel(2544, TechConstants.T_CLAN_ADVANCED).addTechLevel(2544, TechConstants.T_CLAN_TW));
+        munitions
+                .add(new MunitionMutator("Anti-personnel", 1, M_ANTI_PERSONNEL, 2521, TechConstants.T_CLAN_EXPERIMENTAL,
+                        RATING_B, new int[] { RATING_B, RATING_B, RATING_B, RATING_B }, DATE_NONE, DATE_NONE, "374, TM")
+                                .addTechLevel(2531, TechConstants.T_CLAN_ADVANCED)
+                                .addTechLevel(2531, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("Flare", 1, M_FLARE, 2528, TechConstants.T_CLAN_EXPERIMENTAL, RATING_B,
+                new int[] { RATING_A, RATING_A, RATING_A, RATING_A }, DATE_NONE, DATE_NONE, "374, TM")
+                        .addTechLevel(2536, TechConstants.T_CLAN_ADVANCED).addTechLevel(2536, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD, 2521, TechConstants.T_CLAN_EXPERIMENTAL,
+                RATING_B, new int[] { RATING_A, RATING_A, RATING_A, RATING_A }, DATE_NONE, DATE_NONE, "375, TM")
+                        .addTechLevel(2531, TechConstants.T_CLAN_ADVANCED).addTechLevel(2531, TechConstants.T_CLAN_TW));
 
         AmmoType.createMunitions(clanMortarAmmos, munitions);
         
@@ -1310,18 +1331,44 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for IS SRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("Inferno", 1, M_INFERNO, 2380, TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Fragmentation", 1, M_FRAGMENTATION, 2385, TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Narc-capable", 1, M_NARC_CAPABLE, 2597, TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Artemis-capable", 1, M_ARTEMIS_CAPABLE, 2598, TechConstants.T_IS_TW_NON_BOX));
-        munitions.add(new MunitionMutator("Listen-Kill", 1, M_LISTEN_KILL, 3038, TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Anti-TSM", 1, M_ANTI_TSM, 3030, TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Acid", 2, M_AX_HEAD, 3053, TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Dead-Fire", 2, M_DEAD_FIRE, 3055, TechConstants.T_IS_UNOFFICIAL));
-        munitions.add(new MunitionMutator("Heat-Seeking", 2, M_HEAT_SEEKING, 2340, TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Tandem-Charge", 2, M_TANDEM_CHARGE, 2757, TechConstants.T_IS_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD, 2333, TechConstants.T_IS_ADVANCED));
-        munitions.add(new MunitionMutator("Mine Clearance", 1, M_MINE_CLEARANCE, 3069, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Inferno", 1, M_INFERNO, 2365, TechConstants.T_IS_EXPERIMENTAL, RATING_B,
+                new int[] { RATING_D, RATING_D, RATING_D, RATING_D }, DATE_NONE, DATE_NONE, "")
+                        .addTechLevel(2380, TechConstants.T_IS_ADVANCED)
+                        .addTechLevel(2400, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Fragmentation", 1, M_FRAGMENTATION, 2370, TechConstants.T_IS_EXPERIMENTAL,
+                RATING_D, new int[] { RATING_E, RATING_F, RATING_E, RATING_D }, 2790, 3054, "230, TM")
+                        .addTechLevel(2377, TechConstants.T_IS_ADVANCED)
+                        .addTechLevel(3058, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Narc-capable", 1, M_NARC_CAPABLE, 2515, TechConstants.T_IS_EXPERIMENTAL,
+                RATING_E, new int[] { RATING_E, RATING_F, RATING_D, RATING_C }, DATE_NONE, DATE_NONE, "142, TW")
+                        .addTechLevel(2587, TechConstants.T_IS_ADVANCED)
+                        .addTechLevel(3049, TechConstants.T_IS_TW_NON_BOX));
+        munitions
+                .add(new MunitionMutator("Artemis-capable", 1, M_ARTEMIS_CAPABLE, 2592, TechConstants.T_IS_EXPERIMENTAL,
+                        RATING_E, new int[] { RATING_E, RATING_F, RATING_D, RATING_C }, DATE_NONE, DATE_NONE, "207, TM")
+                                .addTechLevel(2598, TechConstants.T_IS_ADVANCED)
+                                .addTechLevel(3045, TechConstants.T_IS_TW_NON_BOX));
+        munitions.add(new MunitionMutator("Listen-Kill", 1, M_LISTEN_KILL, 3032, TechConstants.T_IS_EXPERIMENTAL,
+                RATING_D, new int[] { RATING_X, RATING_X, RATING_F, RATING_X }, 3040, DATE_NONE, "105, IO"));
+        munitions.add(new MunitionMutator("Anti-TSM", 1, M_ANTI_TSM, 3026, TechConstants.T_IS_EXPERIMENTAL, RATING_E,
+                new int[] { RATING_X, RATING_X, RATING_F, RATING_F }, DATE_NONE, DATE_NONE, "104, IO")
+                        .addTechLevel(3027, TechConstants.T_IS_ADVANCED)
+        munitions.add(new MunitionMutator("Acid", 2, M_AX_HEAD, 3053, TechConstants.T_IS_EXPERIMENTAL, RATING_E,
+                new int[] { RATING_X, RATING_X, RATING_F, RATING_F }, DATE_NONE, DATE_NONE, "368, TO"));
+        munitions.add(new MunitionMutator("Dead-Fire", 2, M_DEAD_FIRE, 3052, TechConstants.T_IS_EXPERIMENTAL, RATING_C,
+                new int[] { RATING_X, RATING_X, RATING_E, RATING_E }, DATE_NONE, DATE_NONE, "131,IO"));
+        munitions.add(new MunitionMutator("Heat-Seeking", 2, M_HEAT_SEEKING, 2360, TechConstants.T_IS_EXPERIMENTAL,
+                RATING_C, new int[] { RATING_E, RATING_E, RATING_E, RATING_F }, DATE_NONE, DATE_NONE, "369, TO")
+                        .addTechLevel(2370, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Tandem-Charge", 2, M_TANDEM_CHARGE, 2757, TechConstants.T_IS_EXPERIMENTAL,
+                RATING_E, new int[] { RATING_X, RATING_X, RATING_E, RATING_E }, DATE_NONE, DATE_NONE, "372, TO"));
+        munitions.add(new MunitionMutator("Smoke", 1, M_SMOKE_WARHEAD, 2333, TechConstants.T_IS_EXPERIMENTAL, RATING_C,
+                new int[] { RATING_D, RATING_D, RATING_D, RATING_D }, DATE_NONE, DATE_NONE, "371, TO")
+                        .addTechLevel(2370, TechConstants.T_IS_ADVANCED));
+        munitions.add(new MunitionMutator("Mine Clearance", 1, M_MINE_CLEARANCE, 3060, TechConstants.T_IS_EXPERIMENTAL,
+                RATING_C, new int[] { RATING_X, RATING_X, RATING_E, RATING_D }, DATE_NONE, DATE_NONE, "370, TO")
+                        .addTechLevel(3069, TechConstants.T_IS_ADVANCED));
+
         //TODO: Harpoon SRMs (TO 369), Tear Gas SRMs (TO 371), RETRO-STREAK (IO 193)
 
         // Walk through both the base types and the
@@ -1331,20 +1378,42 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for Clan SRM launchers.
         munitions.clear();
-        munitions.add(new MunitionMutator("(Clan) Inferno", 1, M_INFERNO, 2820,TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Fragmentation", 1, M_FRAGMENTATION, 2820, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Narc-capable", 1, M_NARC_CAPABLE, 2820, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1, M_ARTEMIS_CAPABLE, 2820, TechConstants.T_CLAN_TW));
-		munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE, 3061,
-				TechConstants.T_CLAN_EXPERIMENTAL).addTechLevel(3085, TechConstants.T_CLAN_TW));
-        munitions.add(new MunitionMutator("(Clan) Heat-Seeking", 2, M_HEAT_SEEKING, 2820, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Tandem-Charge", 2, M_TANDEM_CHARGE, 2757, TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE_WARHEAD, 2820, TechConstants.T_CLAN_ADVANCED));
-        munitions.add(new MunitionMutator("(Clan) Listen-Kill", 1,M_LISTEN_KILL,3050, TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Anti-TSM", 1, M_ANTI_TSM,3050,TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Acid", 2, M_AX_HEAD,3053,TechConstants.T_CLAN_EXPERIMENTAL));
-        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE,3055,TechConstants.T_CLAN_UNOFFICIAL));
-        munitions.add(new MunitionMutator("(Clan) Mine Clearance", 1, M_MINE_CLEARANCE, 3069, TechConstants.T_CLAN_UNOFFICIAL));
+        munitions.add(new MunitionMutator("(Clan) Inferno", 1, M_INFERNO, 2807, TechConstants.T_CLAN_TW, RATING_B,
+                new int[] { RATING_X, RATING_D, RATING_D, RATING_D }, DATE_NONE, DATE_NONE, ""));
+        munitions.add(new MunitionMutator("(Clan) Fragmentation", 1, M_FRAGMENTATION, 2807, TechConstants.T_CLAN_TW,
+                RATING_D, new int[] { RATING_X, RATING_F, RATING_E, RATING_D }, DATE_NONE, DATE_NONE, "230, TM"));
+        munitions.add(new MunitionMutator("(Clan) Narc-capable", 1, M_NARC_CAPABLE, 2815, TechConstants.T_CLAN_EXPERIMENTAL,
+                RATING_E, new int[] { RATING_X, RATING_F, RATING_D, RATING_C }, DATE_NONE, DATE_NONE, "142, TW")
+                        .addTechLevel(2828, TechConstants.T_CLAN_ADVANCED)
+                        .addTechLevel(2830, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Artemis-capable", 1, M_ARTEMIS_CAPABLE, 2811, TechConstants.T_CLAN_ADVANCED,
+                RATING_E, new int[] { RATING_X, RATING_F, RATING_D, RATING_C }, DATE_NONE, DATE_NONE, "207, TM")
+                .addTechLevel(2818, TechConstants.T_CLAN_ADVANCED)
+                .addTechLevel(2830, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Artemis V-capable", 1, M_ARTEMIS_V_CAPABLE, 3061,
+                TechConstants.T_CLAN_EXPERIMENTAL, RATING_F, new int[] { RATING_X, RATING_X, RATING_F, RATING_E },
+                DATE_NONE, DATE_NONE, "283, TO")
+                .addTechLevel(3085, TechConstants.T_CLAN_ADVANCED)
+                .addTechLevel(3093, TechConstants.T_CLAN_TW));
+        munitions.add(new MunitionMutator("(Clan) Heat-Seeking", 2, M_HEAT_SEEKING, 2807, TechConstants.T_CLAN_TW,
+                RATING_C, new int[] { RATING_X, RATING_E, RATING_E, RATING_F }, DATE_NONE, DATE_NONE, "369, TO"));
+        munitions.add(new MunitionMutator("(Clan) Tandem-Charge", 2, M_TANDEM_CHARGE, 2807,
+                TechConstants.T_CLAN_EXPERIMENTAL, RATING_E, new int[] { RATING_X, RATING_X, RATING_E, RATING_E },
+                DATE_NONE, DATE_NONE, "372, TO"));
+        munitions.add(new MunitionMutator("(Clan) Smoke", 1, M_SMOKE_WARHEAD, 2807, TechConstants.T_CLAN_TW, RATING_C,
+                new int[] { RATING_X, RATING_D, RATING_D, RATING_D }, DATE_NONE, DATE_NONE, "371, TO"));
+        munitions.add(new MunitionMutator("(Clan) Listen-Kill", 1, M_LISTEN_KILL, 3052, TechConstants.T_CLAN_UNOFFICIAL,
+                RATING_C, new int[] { RATING_X, RATING_X, RATING_E, RATING_E }, DATE_NONE, DATE_NONE, "131,IO"));
+        munitions.add(new MunitionMutator("(Clan) Anti-TSM", 1, M_ANTI_TSM, 3026, TechConstants.T_CLAN_UNOFFICIAL,
+                RATING_E, new int[] { RATING_X, RATING_X, RATING_F, RATING_F }, DATE_NONE, DATE_NONE, "104, IO"));
+        munitions.add(new MunitionMutator("(Clan) Acid", 2, M_AX_HEAD, 3053, TechConstants.T_CLAN_UNOFFICIAL, RATING_E,
+                new int[] { RATING_X, RATING_X, RATING_F, RATING_F }, DATE_NONE, DATE_NONE, "368, TO"));
+        munitions.add(new MunitionMutator("(Clan) Dead-Fire", 2, M_DEAD_FIRE, 3052, TechConstants.T_CLAN_UNOFFICIAL,
+                RATING_C, new int[] { RATING_X, RATING_X, RATING_E, RATING_E }, DATE_NONE, DATE_NONE, "131,IO"));
+        munitions.add(new MunitionMutator("(Clan) Mine Clearance", 1, M_MINE_CLEARANCE, 3060,
+                TechConstants.T_CLAN_UNOFFICIAL, RATING_C, new int[] { RATING_X, RATING_X, RATING_E, RATING_D },
+                DATE_NONE, DATE_NONE, "370, TO"));
+
         //TODO: Harpoon SRMs (TO 369), Tear Gas SRMs (TO 371), RETRO-STREAK (IO 193)
 
         // Walk through both the base types and the

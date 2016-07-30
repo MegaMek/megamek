@@ -5,7 +5,9 @@ The list is based from Interstellar Operations.
 TO ADDs
 ==================================================================================
 Retro-Streak Warhead - (IO 193)  -  http://www.sarna.net/wiki/Retro-Streak_Warhead
-
+Harpoon SRMs - (TO 3669)
+Tear Gas SRMs - (TO 371)
+Caseless AC Ammo - (TO 352) 
 
 
 

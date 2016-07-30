@@ -20,6 +20,7 @@ v0.41.21
 + Bug: Manually shutdown units skipped during movement with option turned on
 + Feature: Custom Unit Dialog now remembers selected tab within session
 + Bug: Hotkeys not ignored in some cases (ie: scrolling when save menu is up)
++ Issue #195: Elevation incorrect when collapsing basement in lvl 1 building
 
 v0.41.20 (2016-06-27 02:00)
 + Data: Date fixes for units

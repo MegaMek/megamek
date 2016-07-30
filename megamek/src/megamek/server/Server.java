@@ -26871,12 +26871,12 @@ public class Server implements Runnable {
         // collapses
         boolean checkCollapse = false;
 
-        if ((entity.relHeight() >= buildingElev)
+        if ((entity.getElevation() >= buildingElev)
             && (buildingElev >= 0)) {
             // fallHeight should already reflect this
             newElevation = buildingElev;
             checkCollapse = true;
-        } else if (fallOntoBridge && (entity.relHeight() >= bridgeElev)
+        } else if (fallOntoBridge && (entity.getElevation() >= bridgeElev)
                 && (bridgeElev >= 0)) {
             // fallHeight should already reflect this
             waterDepth = 0;

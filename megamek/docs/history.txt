@@ -21,6 +21,9 @@ v0.41.21
 + Feature: Custom Unit Dialog now remembers selected tab within session
 + Bug: Hotkeys not ignored in some cases (ie: scrolling when save menu is up)
 + Issue #195: Elevation incorrect when collapsing basement in lvl 1 building
++ Searchlights can no longer be removed from units with the searchlight quirk
++ Feature: Added "Equipment" context menu in lounge, for burst MGs, hot loading
+    and searchlights (Covers SF features #1399 and #1418)
 
 v0.41.20 (2016-06-27 02:00)
 + Data: Date fixes for units

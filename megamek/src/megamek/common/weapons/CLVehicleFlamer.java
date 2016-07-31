@@ -34,7 +34,7 @@ public class CLVehicleFlamer extends VehicleFlamerWeapon {
      */
     public CLVehicleFlamer() {
         super();
-        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
+
         this.name = "Vehicle Flamer";
         this.setInternalName("CLVehicleFlamer");
         this.addLookupName("Clan Vehicle Flamer");
@@ -52,9 +52,10 @@ public class CLVehicleFlamer extends VehicleFlamerWeapon {
         this.cost = 7500;
         this.shortAV = 2;
         this.maxRange = RANGE_SHORT;
-        introDate = 2820;
-        techLevel.put(2820, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_B, RATING_B };
+        introDate = 2807;
+        techLevel.put(2807, TechConstants.T_CLAN_TW);   ///COMMON
+        availRating = new int[] { RATING_X, RATING_A, RATING_B, RATING_A };
         techRating = RATING_B;
+        rulesRefs = "207, TM";
     }
 }

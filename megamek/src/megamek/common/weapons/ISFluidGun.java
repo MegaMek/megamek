@@ -30,7 +30,7 @@ public class ISFluidGun extends FluidGunWeapon {
      */
     public ISFluidGun() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_ADVANCED);
+
         name = "Fluid Gun";
         setInternalName("IS Fluid Gun");
         addLookupName("ISFluidGun");
@@ -45,7 +45,9 @@ public class ISFluidGun extends FluidGunWeapon {
         tonnage = 2;
         cost = 35000;
         introDate = 1950;
+        techLevel.put(1950, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_B ,RATING_B ,RATING_B ,RATING_B};
         techRating = RATING_B;
-        availRating = new int[] { RATING_B, RATING_B, RATING_B };
+        rulesRefs = "313, TO";
     }
 }

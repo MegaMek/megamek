@@ -31,7 +31,7 @@ public class ISImprovedNarcOS extends NarcWeapon {
      */
     public ISImprovedNarcOS() {
         super();
-        techLevel.put(3071, TechConstants.T_IS_TW_NON_BOX);
+
         name = "iNarc (OS)";
         setInternalName("ISImprovedNarc (OS)");
         addLookupName("IS OS iNarc Beacon");
@@ -48,9 +48,12 @@ public class ISImprovedNarcOS extends NarcWeapon {
         bv = 15;
         flags = flags.or(F_ONESHOT);
         cost = 250000;
-        introDate = 3061;
-        techLevel.put(30612, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        introDate = 3049;
+        techLevel.put(3049, TechConstants.T_IS_EXPERIMENTAL);
+        techLevel.put(3062, TechConstants.T_IS_ADVANCED);
+        techLevel.put(3070, TechConstants.T_IS_TW_NON_BOX);
+        availRating = new int[] { RATING_X ,RATING_X ,RATING_E ,RATING_D};
         techRating = RATING_E;
+        rulesRefs = "141, TW";
     }
 }

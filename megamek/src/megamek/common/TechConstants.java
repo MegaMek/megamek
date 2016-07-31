@@ -500,22 +500,19 @@ public class TechConstants {
                 } else {
                     return T_IS_TW_NON_BOX;
                 }
-
-                // case Mech.GYRO_SUPER_HEAVY - Super heavy gyro should be added
-                // as equipment somewhere.
-                // if (isClan) {
-                // return T_CLAN_UNOFFICIAL;
-                // }
-                // if (year <=2900) {
-                // return T_IS_UNOFFICIAL;
-                // } else if (year <=2940){
-                // return T_IS_EXPERIMENTAL;
-                // } else {
-                // return T_IS_ADVANCED;
-                // }
+            case Mech.GYRO_SUPERHEAVY:
+                if (isClan) {
+                    return T_CLAN_UNOFFICIAL;
+                }
+                if (year <= 2900) {
+                    return T_IS_UNOFFICIAL;
+                } else if (year <= 2940) {
+                    return T_IS_EXPERIMENTAL;
+                } else {
+                    return T_IS_ADVANCED;
+                }
             case Mech.GYRO_NONE:
                 return T_ALLOWED_ALL;
-
         }
 
         return T_TECH_UNKNOWN;
@@ -525,7 +522,7 @@ public class TechConstants {
      * Return the tech level of the given cockpit. THis is necessary because
      * cockpits are systems and hence don't have MiscType entries.
      * 
-     * @param gyroType
+     * @param cockpitType
      * @param entityType
      * @param isClan
      * @param year

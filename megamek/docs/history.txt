@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.41.22-git
+
 v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips
 + Issue #275: Non-optimal paths planned in certain circumstances

@@ -1,4 +1,4 @@
-Version:1.0
+Version:1.1
 'OMEGA'
 SHP-4X
 
@@ -8,17 +8,17 @@ Era:3078
 Rules Level:4
 
 Mass:150
-Engine:300 XL Engine
-Structure:Endo Steel
+Engine:300 XL Engine(IS)
+Structure:IS Endo Steel
 Myomer:Standard
-Gyro:Standard Gyro
 Cockpit:Superheavy Cockpit
+Gyro:Superheavy Gyro
 
 Heat Sinks:10 Single
 Walk MP:2
 Jump MP:0
 
-Armor:Standard
+Armor:Standard(Inner Sphere)
 LA Armor:44
 RA Armor:44
 LT Armor:45
@@ -32,12 +32,11 @@ RTR Armor:19
 RTC Armor:20
 
 Weapons:5
-1 ISGaussRifle, Right Torso
-1 ISGaussRifle, Center Torso
-1 ISGaussRifle, Left Torso
-1 ISLBXAC10, Right Arm
-1 ISLBXAC10, Left Arm
-1 ISImprovedC3CPU, Center Torso
+LB 10-X AC, Left Arm
+LB 10-X AC, Right Arm
+Gauss Rifle, Left Torso
+Gauss Rifle, Right Torso
+Gauss Rifle, Center Torso
 
 Left Arm:
 Shoulder
@@ -46,7 +45,7 @@ Lower Arm Actuator
 ISLBXAC10
 ISLBXAC10
 ISLBXAC10
-ISLBXAC10 Ammo|ISLBXAC10 Ammo
+IS LB 10-X AC Ammo|IS LB 10-X AC Ammo
 ISCASEII
 -Empty-
 -Empty-
@@ -60,7 +59,7 @@ Lower Arm Actuator
 ISLBXAC10
 ISLBXAC10
 ISLBXAC10
-ISLBXAC10 CL Ammo|ISLBXAC10 CL Ammo
+IS LB 10-X Cluster Ammo|IS LB 10-X Cluster Ammo
 ISCASEII
 -Empty-
 -Empty-
@@ -74,10 +73,10 @@ ISGaussRifle
 ISGaussRifle
 ISGaussRifle
 ISGaussRifle
-ISGauss Ammo|ISGauss Ammo
-ISGauss Ammo|ISGauss Ammo
+IS Gauss Ammo|IS Gauss Ammo
+IS Gauss Ammo|IS Gauss Ammo
 ISCASEII
-Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -88,10 +87,10 @@ ISGaussRifle
 ISGaussRifle
 ISGaussRifle
 ISGaussRifle
-ISGauss Ammo|ISGauss Ammo
-ISGauss Ammo|ISGauss Ammo
+IS Gauss Ammo|IS Gauss Ammo
+IS Gauss Ammo|IS Gauss Ammo
 ISCASEII
-Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 
@@ -105,15 +104,15 @@ ISGaussRifle
 ISGaussRifle
 ISGaussRifle
 ISGaussRifle
-ISGauss Ammo|ISGauss Ammo
-ISImprovedC3CPU
+IS Gauss Ammo|IS Gauss Ammo
+ISC3iUnit
 ISCASEII
 
 Head:
 Life Support
 Sensors
 Cockpit
-Endo Steel
+IS Endo Steel
 Sensors
 Life Support
 -Empty-
@@ -128,8 +127,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -142,11 +141,13 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+IS Endo Steel
+IS Endo Steel
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
 -Empty-
+
+

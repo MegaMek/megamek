@@ -26,6 +26,7 @@ v0.41.21
     and searchlights (Covers SF features #1399 and #1418)
 + Bug: UnitEditorDialog always sets critical hit on ASF life support
 + Issue #167: EntitySprite drawn at wrong scale when entity becomes visible
++ Issue #284: Null images returned for hexes and mechs
 
 v0.41.20 (2016-06-27 02:00)
 + Data: Date fixes for units

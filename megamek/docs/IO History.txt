@@ -10,9 +10,10 @@ Tear Gas SRMs - (TO 371)
 Caseless AC Ammo - (TO 352) 
 Magnetic Pulse Missiles (LRM, SRM, MML) - (TO 370)
 Anti-Radiation Missiles (LRM, SRM, MML) - (TO 368)
-Standard Mortars (Reference in IO see TM 263) - Not sure if we are missing this one or not.
-
-
+Incendiary LRMs (LRM, MML) - (TO 370)
+Flare LRMs (LRM, MML) (TM 230)
+Arrow IV [Air-Defense Arrow (ADA) Missiles] - (TO 353)
+Arrow IV [Thunder Active-IV] - TO (357)
 
 
 

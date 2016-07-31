@@ -14,6 +14,12 @@ Incendiary LRMs (LRM, MML) - (TO 370)
 Flare LRMs (LRM, MML) (TM 230)
 Arrow IV [Air-Defense Arrow (ADA) Missiles] - (TO 353)
 Arrow IV [Thunder Active-IV] - TO (357)
+Corrosive Ammo [Fluid Guns/Sprayers] - (TO 360-362)
+Flame-Retardant Foam Ammo [Fluid Guns/Sprayers] - (TO 360-362)
+Oil Slick Ammo [Fluid Guns/Sprayers] - (TO 360-362)
+Paint/Obscurant Ammo [Fluid Guns/Sprayers] - (TO 360-362)
+Water Ammo [Flamers/Fluid Guns/Sprayers] - (TO 360-362)
+
 
 
 

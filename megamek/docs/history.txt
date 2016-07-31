@@ -27,6 +27,7 @@ v0.41.21
 + Bug: UnitEditorDialog always sets critical hit on ASF life support
 + Issue #167: EntitySprite drawn at wrong scale when entity becomes visible
 + Issue #284: Null images returned for hexes and mechs
++ Bug: Superheavy meks should halve number of criticals for armor (and weren't)
 
 v0.41.20 (2016-06-27 02:00)
 + Data: Date fixes for units

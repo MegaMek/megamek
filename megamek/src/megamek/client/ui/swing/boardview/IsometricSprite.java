@@ -176,9 +176,9 @@ class IsometricSprite extends Sprite {
             g.setComposite(AlphaComposite.getInstance(
                     AlphaComposite.SRC_OVER, 0.5f));
         }
-        g.drawImage(bv.tileManager.imageFor(entity, secondaryPos),
-                0, 0, this);
-        image = bv.getScaledImage(image, false);
+        g.drawImage(bv.getScaledImage(
+                bv.tileManager.imageFor(entity, secondaryPos), true), 0, 0,
+                this);
         g.dispose();
     }
     

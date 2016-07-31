@@ -25,6 +25,7 @@ v0.41.21
 + Feature: Added "Equipment" context menu in lounge, for burst MGs, hot loading
     and searchlights (Covers SF features #1399 and #1418)
 + Bug: UnitEditorDialog always sets critical hit on ASF life support
++ Issue #167: EntitySprite drawn at wrong scale when entity becomes visible
 
 v0.41.20 (2016-06-27 02:00)
 + Data: Date fixes for units

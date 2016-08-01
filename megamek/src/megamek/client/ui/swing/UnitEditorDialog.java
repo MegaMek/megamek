@@ -1082,7 +1082,7 @@ public class UnitEditorDialog extends JDialog {
                 aero.setGearHit(gearCrit.getHits() > 0);
             }
             if (null != lifeSupportCrit) {
-                aero.setLifeSupport(lifeSupportCrit.getHits() > 0);
+                aero.setLifeSupport(lifeSupportCrit.getHits() == 0);
             }
             if (null != leftThrusterCrit) {
                 aero.setLeftThrustHits(leftThrusterCrit.getHits());

@@ -2619,7 +2619,7 @@ public class MoveStep implements Serializable {
         }
 
         // Account for terrain, unless we're moving along a road.
-        if (!isPavementStep) {
+        if (!isPavementStep()) {
 
             if ((moveMode != EntityMovementMode.BIPED_SWIM)
                     && (moveMode != EntityMovementMode.QUAD_SWIM)
@@ -2986,8 +2986,8 @@ public class MoveStep implements Serializable {
                 && (destHex.terrainLevel(Terrains.WATER) > 0)
                 && !(destHex.containsTerrain(Terrains.ICE) && (elevation >= 0))
                 && !dest.equals(entity.getPosition())
-                && !firstStep
-                && !isPavementStep) {
+                && !isFirstStep()
+                && !isPavementStep()) {
             return false;
         }
 
@@ -3101,7 +3101,7 @@ public class MoveStep implements Serializable {
                 && (type != MoveStepType.UNLOAD)
                 // Should allow vertical takeoffs
                 && (type != MoveStepType.VTAKEOFF)
-                && entity.isLocationProhibited(src, getElevation()) && !isPavementStep) {
+                && entity.isLocationProhibited(src, getElevation()) && !isPavementStep()) {
             // System.err.println("in restriced terrain");
             return false;
         }

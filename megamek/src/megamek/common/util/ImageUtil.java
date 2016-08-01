@@ -123,19 +123,24 @@ public final class ImageUtil {
                 return null;
             }
             FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
-            result.preload(observer);
-            while(!observer.isLoaded()) {
-                try {
-                    Thread.sleep(10);
-                } catch(InterruptedException ex) {
-                    break;
+            // Check to see if the image is loaded
+            int infoFlags = result.check(observer);
+            if ((infoFlags & ImageObserver.ALLBITS) == 0) {
+                // Image not loaded, wait for it to load
+                long startTime = System.currentTimeMillis();
+                long maxRuntime = 10000;
+                long runTime = 0;
+                result.preload(observer);
+                while (!observer.isLoaded() && runTime < maxRuntime) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException ex) {
+                        // Do nothing
+                    }
+                    runTime = System.currentTimeMillis() - startTime;
                 }
             }
-            BufferedImage bImg = result.getBufferedImage();
-            if (bImg == null) {
-                System.out.println("ERROR: AWTImageLoader.loadImage got null BufferedImage!");
-            }
-            return observer.isAnimated() ? result : ImageUtil.createAcceleratedImage(bImg);
+            return observer.isAnimated() ? result : ImageUtil.createAcceleratedImage(result.getBufferedImage());
         }
     }
     
@@ -180,12 +185,21 @@ public final class ImageUtil {
                 return null;
             }
             FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
-            base.preload(observer);
-            while(!observer.isLoaded()) {
-                try {
-                    Thread.sleep(10);
-                } catch(InterruptedException ex) {
-                    break;
+            // Check to see if the image is loaded
+            int infoFlags = base.check(observer);
+            if ((infoFlags & ImageObserver.ALLBITS) == 0) {
+                // Image not loaded, wait for it to load
+                long startTime = System.currentTimeMillis();
+                long maxRuntime = 10000;
+                long runTime = 0;
+                base.preload(observer);
+                while (!observer.isLoaded() && runTime < maxRuntime) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException ex) {
+                        // Do nothing
+                    }
+                    runTime = System.currentTimeMillis() - startTime;
                 }
             }
             BufferedImage result = ImageUtil.createAcceleratedImage(Math.abs(size.getX()), Math.abs(size.getY()));

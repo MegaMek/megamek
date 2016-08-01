@@ -1,6 +1,11 @@
 VERSION HISTORY:
 ----------------
-v0.41.21
+v0.41.22-git
++ Issue #295: Roads not preventing swamp/rubble PSRs
++ Bug: Clicking Walk from Jump, would still plot jumping movement
++ Issue #258: Added Next/Prev Weapon Mode keybinds
+
+v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips
 + Issue #275: Non-optimal paths planned in certain circumstances
 + Data New Sprites and some unit fixes.
@@ -24,6 +29,12 @@ v0.41.21
 + Searchlights can no longer be removed from units with the searchlight quirk
 + Feature: Added "Equipment" context menu in lounge, for burst MGs, hot loading
     and searchlights (Covers SF features #1399 and #1418)
++ Bug: UnitEditorDialog always sets critical hit on ASF life support
++ Issue #167: EntitySprite drawn at wrong scale when entity becomes visible
++ Issue #284: Null images returned for hexes and mechs
++ Bug: Superheavy meks should halve number of criticals for armor (and weren't)
++ Added Superheavy Gyro type for Superheavy meks
++ Unit fixes and new sprites
 
 v0.41.20 (2016-06-27 02:00)
 + Data: Date fixes for units

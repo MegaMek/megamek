@@ -7763,7 +7763,7 @@ public class Server implements Runnable {
             // check if we've moved into rubble
             boolean isLastStep = step.equals(md.getLastStep());
             rollTarget = entity.checkRubbleMove(step, overallMoveType, curHex,
-                    lastPos, curPos, isLastStep);
+                    lastPos, curPos, isLastStep, isPavementStep);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 doSkillCheckWhileMoving(entity, lastElevation, lastPos, curPos,
                                         rollTarget, true);
@@ -8074,7 +8074,7 @@ public class Server implements Runnable {
                 && (stepMoveType != EntityMovementType.MOVE_JUMP)
                 && !lastPos.equals(curPos)
                 && !(entity instanceof Infantry)
-                && !(step.isPavementStep() && curHex
+                && !(isPavementStep && curHex
                     .containsTerrain(Terrains.BRIDGE))) {
                 if (step.getElevation() == 0) {
                     int roll = Compute.d6(1);

@@ -6572,7 +6572,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public PilotingRollData checkRubbleMove(MoveStep step,
             EntityMovementType moveType, IHex curHex, Coords lastPos,
-            Coords curPos, boolean isLastStep) {
+            Coords curPos, boolean isLastStep, boolean isPavementStep) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
         boolean enteringRubble = true;
         addPilotingModifierForTerrain(roll, curPos, enteringRubble);
@@ -6581,6 +6581,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             && ((moveType != EntityMovementType.MOVE_JUMP)
                 || isLastStep)
             && (curHex.terrainLevel(Terrains.RUBBLE) > 0)
+            && !isPavementStep
             && (this instanceof Mech)) {
             adjustDifficultTerrainPSRModifier(roll);
         } else {

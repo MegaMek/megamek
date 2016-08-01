@@ -3883,6 +3883,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_WALK.getCmd())) {
             if ((gear == MovementDisplay.GEAR_JUMP)
                     || (gear == MovementDisplay.GEAR_SWIM)) {
+                gear = MovementDisplay.GEAR_LAND;
                 clear();
             }
             Color walkColor = GUIPreferences.getInstance().getColor(

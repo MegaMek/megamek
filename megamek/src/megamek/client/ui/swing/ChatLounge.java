@@ -4461,7 +4461,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         menuItem.setEnabled((isOwner || isBot) && !loneEntityWithQuirk);
                         menu.add(menuItem);
                     }
-                    popup.add(menu);
+                    if (menu.getMenuComponentCount() > 0) {
+                        popup.add(menu);
+                    }
                 }
 
                 boolean hasQuirks = true;

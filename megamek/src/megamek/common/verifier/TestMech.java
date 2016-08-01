@@ -172,7 +172,8 @@ public class TestMech extends TestEntity {
             retVal /= 2;
         } else if (mech.getGyroType() == Mech.GYRO_COMPACT) {
             retVal *= 1.5;
-        } else if (mech.getGyroType() == Mech.GYRO_HEAVY_DUTY) {
+        } else if ((mech.getGyroType() == Mech.GYRO_HEAVY_DUTY)
+                || (mech.getGyroType() == Mech.GYRO_SUPERHEAVY)) {
             retVal *= 2;
         } else if (mech.getGyroType() == Mech.GYRO_NONE) {
             retVal = 0;

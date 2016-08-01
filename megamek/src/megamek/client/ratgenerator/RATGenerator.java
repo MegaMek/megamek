@@ -517,16 +517,12 @@ public class RATGenerator {
 		Double pctClan = null;
 		Double pctOther = null;
 		if (unitType == UnitType.MEK) {
-			try {
 			pctOmni = interpolate(fRec.getPctOmni(early, rating),
 							fRec.getPctOmni(late, rating), early, late, year);
 			pctClan = interpolate(fRec.getPctClan(early, rating),
 							fRec.getPctClan(late, rating), early, late, year);
 			pctSL = interpolate(fRec.getPctSL(early, rating),
 							fRec.getPctSL(late, rating), early, late, year);
-			} catch (NullPointerException ex) {
-				System.err.println("NPE");	
-			}
 		}
 		if (unitType == UnitType.AERO) {
 			pctOmni = interpolate(fRec.getPctOmniAero(early, rating),
@@ -536,7 +532,7 @@ public class RATGenerator {
 			pctSL = interpolate(fRec.getPctSLAero(early, rating),
 						fRec.getPctSLAero(late, rating), early, late, year);
 		}
-		if (unitType == UnitType.TANK || unitType == UnitType.AERO) {
+		if (unitType == UnitType.TANK || unitType == UnitType.VTOL) {
 			pctClan = interpolate(fRec.getPctClanVee(early, rating),
 						fRec.getPctClanVee(late, rating), early, late, year);
 			pctSL = interpolate(fRec.getPctSLVee(early, rating),
@@ -563,9 +559,9 @@ public class RATGenerator {
 				}
 				if (pctSL != null) {
 					pctSL = Math.min(pctSL + techMargin,
-							100.0 * pctSL/total);
+							100.0 * totalSL/total);
 					pctSL = Math.max(pctSL - techMargin,
-							100.0 * pctSL/total);
+							100.0 * totalSL/total);
 				}					
 			}
 			Double upgradeMargin = interpolate(fRec.getUpgradeMargin(early),
@@ -618,7 +614,7 @@ public class RATGenerator {
 			for (FactionRecord fr : salvageWeights.keySet()) {
 				if (fr.isClan()) {
 					salvageWeights.put(fr, salvageWeights.get(fr)
-							* pctClan * (total / totalClan));
+							* (pctClan / 100.0) * (total / totalClan));
 				}
 			}
 		}

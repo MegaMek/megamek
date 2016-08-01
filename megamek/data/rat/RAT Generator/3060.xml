@@ -3720,7 +3720,7 @@
 		</model>
 	</chassis>
 	<chassis name='Hellhound (Conjurer)' unitType='Mek'>
-		<availability>CHH:4,CIH:4,CDS:3,CLAN:2,CNC:4,CJF:4,DC:2+</availability>
+		<availability>CHH:4,CIH:4,CDS:3,CLAN:2,CNC:4,CJF:4,DC:2</availability>
 		<model name='(Standard)'>
 			<availability>CHH:8,CLAN:6,CJF:8</availability>
 		</model>
@@ -3924,7 +3924,7 @@
 		</model>
 	</chassis>
 	<chassis name='Hunchback IIC' unitType='Mek'>
-		<availability>MERC.WD:6,CDS:7,CW:6,CSV:5,CLAN:2,IS:3+,CSJ:5,CJF:6,CGB:6,CWIE:5</availability>
+		<availability>MERC.WD:6,CDS:7,CW:6,CSV:5,CLAN:2,IS:3,CSJ:5,CJF:6,CGB:6,CWIE:5</availability>
 		<model name='2'>
 			<availability>CSA:6,CBS:6</availability>
 		</model>
@@ -4640,7 +4640,7 @@
 		</model>
 	</chassis>
 	<chassis name='Mad Cat Mk II' unitType='Mek'>
-		<availability>CDS:4,LA:2+,CNC:4,FS:2+,CWIE:2,DC:2+</availability>
+		<availability>CDS:4,LA:2,CNC:4,FS:2,CWIE:2,DC:2</availability>
 		<model name='(Standard)'>
 			<availability>General:8</availability>
 		</model>
@@ -7856,7 +7856,7 @@
 		</model>
 	</chassis>
 	<chassis name='Ishtar Heavy Fire Support Tank' unitType='Tank'>
-		<availability>CSA:6,CHH:6,CIH:3,CLAN:4,DC:2+</availability>
+		<availability>CSA:6,CHH:6,CIH:3,CLAN:4,DC:2</availability>
 		<model name='(Standard)'>
 			<roles>fire support</roles>
 			<availability>General:8</availability>
@@ -8588,7 +8588,7 @@
 		</model>
 	</chassis>
 	<chassis name='Shoden Assault Vehicle' unitType='Tank'>
-		<availability>CDS:3,CNC:4,CJF:2,DC:2+</availability>
+		<availability>CDS:3,CNC:4,CJF:2,DC:2</availability>
 		<model name='(Standard)'>
 			<availability>General:8,CW:0</availability>
 		</model>
@@ -9209,6 +9209,7 @@
 	<chassis name='Sylph Battle Armor' unitType='BattleArmor' omni='Clan'>
 		<availability>CCC:6,CSR:2,CDS:2</availability>
 		<model name='(Standard)'>
+			<roles>recon</roles>
 			<availability>General:6</availability>
 		</model>
 	</chassis>
@@ -10401,6 +10402,7 @@
 			<availability>General:6</availability>
 		</model>
 		<model name='&apos;SuperPelican&apos; aka &apos;Waddle&apos;'>
+			<roles>cargo</roles>
 			<availability>FS:4</availability>
 		</model>
 	</chassis>
@@ -10690,7 +10692,7 @@
 		</model>
 	</chassis>
 	<chassis name='Hydaspes' unitType='Aero'>
-		<availability>CSA:6,CCC:7,CSR:6,CLAN:5</availability>
+		<availability>CCC:7,CSR:6,CLAN:6</availability>
 		<model name='2'>
 			<availability>CLAN:5</availability>
 		</model>
@@ -11350,6 +11352,12 @@
 		<availability>FWL:3,WOB:3</availability>
 		<model name='(Standard)'>
 			<roles>escort</roles>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Tigress Close Patrol Craft' unitType='Small Craft'>
+		<availability>TC:6</availability>
+		<model name='TIG-15'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

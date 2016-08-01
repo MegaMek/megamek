@@ -3976,6 +3976,7 @@
 			<availability>General:6</availability>
 		</model>
 		<model name='&apos;SuperPelican&apos; aka &apos;Waddle&apos;'>
+			<roles>cargo</roles>
 			<availability>FS:4</availability>
 		</model>
 	</chassis>
@@ -4134,7 +4135,7 @@
 		</model>
 	</chassis>
 	<chassis name='Hydaspes' unitType='Aero'>
-		<availability>CSA:6,CCC:7,CSR:6,CLAN:5</availability>
+		<availability>CCC:8,CSR:7,CLAN:7</availability>
 		<model name='(Standard)'>
 			<availability>CLAN:8</availability>
 		</model>
@@ -4461,6 +4462,12 @@
 		<availability>FWL:4</availability>
 		<model name='(Standard)'>
 			<roles>escort</roles>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Tigress Close Patrol Craft' unitType='Small Craft'>
+		<availability>TC:6</availability>
+		<model name='TIG-15'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

@@ -4438,7 +4438,7 @@
 		</model>
 	</chassis>
 	<chassis name='Hellhound (Conjurer)' unitType='Mek'>
-		<availability>CHH:4,CIH:4,CDS:3,CLAN:2,CNC:5,CJF:4,DC:2+</availability>
+		<availability>CHH:4,CIH:4,CDS:3,CLAN:2,CNC:5,CJF:4,DC:2</availability>
 		<model name='(Standard)'>
 			<availability>CHH:8,CLAN:4,CJF:8</availability>
 		</model>
@@ -4677,7 +4677,7 @@
 		</model>
 	</chassis>
 	<chassis name='Hunchback IIC' unitType='Mek'>
-		<availability>MERC.WD:6,CDS:7,CW:6,CSV:5,CLAN:2,IS:3+,CJF:6,CGB:6,CWIE:5</availability>
+		<availability>MERC.WD:6,CDS:7,CW:6,CSV:5,CLAN:2,IS:3,CJF:6,CGB:6,CWIE:5</availability>
 		<model name='2'>
 			<availability>CSA:8,CBS:8,CB:8</availability>
 		</model>
@@ -5325,12 +5325,6 @@
 			<availability>WOB:4</availability>
 		</model>
 	</chassis>
-	<chassis name='Legionnaire' unitType='Mek'>
-		<availability>FS:3</availability>
-		<model name='LGN-2D'>
-			<availability>General:8</availability>
-		</model>
-	</chassis>
 	<chassis name='Lightray' unitType='Mek'>
 		<availability>WOB:6</availability>
 		<model name='LGH-4Y'>
@@ -5625,7 +5619,7 @@
 		</model>
 	</chassis>
 	<chassis name='Mad Cat Mk II' unitType='Mek'>
-		<availability>CIH:4,CDS:5,LA:3+,CNC:6,FS:3+,CWIE:4,DC:3+</availability>
+		<availability>CIH:4,CDS:5,LA:3,CNC:6,FS:3,CWIE:4,DC:3</availability>
 		<model name='2'>
 			<availability>CDS:4,CW:4,LA:4,CNC:4,FS:4,DC:4,CWIE:4</availability>
 		</model>
@@ -9974,7 +9968,7 @@
 		</model>
 	</chassis>
 	<chassis name='Ishtar Heavy Fire Support Tank' unitType='Tank'>
-		<availability>CSA:6,CHH:6,CIH:3,CLAN:4,DC:2+</availability>
+		<availability>CSA:6,CHH:6,CIH:3,CLAN:4,DC:2</availability>
 		<model name='(Standard)'>
 			<roles>fire support</roles>
 			<availability>General:8</availability>
@@ -10385,7 +10379,7 @@
 		</model>
 	</chassis>
 	<chassis name='Morrigu Fire Support Vehicle' unitType='Tank'>
-		<availability>CSA:4,CFM.MiKr:4,CBS:6,CLAN:2,IS:2+</availability>
+		<availability>CSA:4,CFM.MiKr:4,CBS:6,CLAN:2,IS:2</availability>
 		<model name='(Standard)'>
 			<availability>CLAN:8</availability>
 		</model>
@@ -10936,7 +10930,7 @@
 		</model>
 	</chassis>
 	<chassis name='Shoden Assault Vehicle' unitType='Tank'>
-		<availability>CHH:3,CDS:4,CW:3,CNC:5,CJF:3,DC:3+</availability>
+		<availability>CHH:3,CDS:4,CW:3,CNC:5,CJF:3,DC:3</availability>
 		<model name='(Standard)'>
 			<availability>General:8,CW:0</availability>
 		</model>
@@ -11879,9 +11873,11 @@
 	<chassis name='Sylph Battle Armor' unitType='BattleArmor' omni='Clan'>
 		<availability>CSA:2,CCC:6,CSR:3,CDS:2,CB:2</availability>
 		<model name='(Standard)'>
+			<roles>recon</roles>
 			<availability>General:6</availability>
 		</model>
 		<model name='(Upgrade)'>
+			<roles>recon</roles>
 			<availability>General:7</availability>
 		</model>
 	</chassis>
@@ -12853,7 +12849,7 @@
 		</model>
 	</chassis>
 	<chassis name='Satyr' unitType='ProtoMek'>
-		<availability>CCC:3,CSR:3,CIH:7,CBS:4,CSV:3,CNC:4,CFM:3,CGS:6,CCO:7,CWIE:7</availability>
+		<availability>CCC:3,CSR:3,CIH:7,CBS:4,CSV:3,CNC:2,CFM:3,CGS:6,CCO:7,CWIE:7</availability>
 		<model name='2'>
 			<roles>recon,raider</roles>
 			<availability>CLAN:8</availability>
@@ -13421,6 +13417,7 @@
 			<availability>General:6</availability>
 		</model>
 		<model name='&apos;SuperPelican&apos; aka &apos;Waddle&apos;'>
+			<roles>cargo</roles>
 			<availability>FVC:4,FS:4</availability>
 		</model>
 	</chassis>
@@ -13813,7 +13810,7 @@
 		</model>
 	</chassis>
 	<chassis name='Hydaspes' unitType='Aero'>
-		<availability>CSA:6,CCC:7,CSR:6,CLAN:5</availability>
+		<availability>CCC:6,CSR:5,CLAN:5</availability>
 		<model name='2'>
 			<availability>CLAN:6</availability>
 		</model>
@@ -13979,6 +13976,9 @@
 		<availability>CS:6,LA:4,CLAN:3,NIOPS:6,WOB:6</availability>
 		<model name='RPR-102'>
 			<availability>LA:4-</availability>
+		</model>
+		<model name='RPR-300X'>
+			<availability>WOB:4</availability>
 		</model>
 		<model name='RPR-200'>
 			<availability>CCC:1,CSR:1,CBS:1,CNC:2</availability>
@@ -14694,6 +14694,12 @@
 		<model name='M1'>
 			<roles>escort</roles>
 			<availability>FWL:6</availability>
+		</model>
+	</chassis>
+	<chassis name='Tigress Close Patrol Craft' unitType='Small Craft'>
+		<availability>TC:6</availability>
+		<model name='TIG-15'>
+			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Achilles' unitType='Dropship'>

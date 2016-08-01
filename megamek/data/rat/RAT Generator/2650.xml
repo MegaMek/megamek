@@ -2181,6 +2181,7 @@
 			<availability>General:6</availability>
 		</model>
 		<model name='&apos;SuperPelican&apos; aka &apos;Waddle&apos;'>
+			<roles>cargo</roles>
 			<availability>FS:3</availability>
 		</model>
 	</chassis>

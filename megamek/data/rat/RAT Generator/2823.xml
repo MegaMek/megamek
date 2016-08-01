@@ -3561,6 +3561,7 @@
 			<availability>General:6</availability>
 		</model>
 		<model name='&apos;SuperPelican&apos; aka &apos;Waddle&apos;'>
+			<roles>cargo</roles>
 			<availability>FS:4</availability>
 		</model>
 	</chassis>
@@ -3998,6 +3999,12 @@
 		<availability>FWL:4</availability>
 		<model name='(Standard)'>
 			<roles>escort</roles>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Tigress Close Patrol Craft' unitType='Small Craft'>
+		<availability>TC:5</availability>
+		<model name='TIG-15'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

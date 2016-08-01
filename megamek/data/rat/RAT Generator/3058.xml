@@ -3140,7 +3140,7 @@
 		</model>
 	</chassis>
 	<chassis name='Hellhound (Conjurer)' unitType='Mek'>
-		<availability>CHH:4,CIH:4,CDS:3,CLAN:3,CNC:4,CJF:4,DC:2+</availability>
+		<availability>CHH:4,CIH:4,CDS:3,CLAN:3,CNC:4,CJF:4,DC:2</availability>
 		<model name='(Standard)'>
 			<availability>CHH:8,CLAN:8,CJF:8</availability>
 		</model>
@@ -3312,7 +3312,7 @@
 		</model>
 	</chassis>
 	<chassis name='Hunchback IIC' unitType='Mek'>
-		<availability>MERC.WD:5,CDS:7,CW:7,CSV:5,CLAN:3,IS:2+,CSJ:5,CJF:7,CGB:7,CWIE:6</availability>
+		<availability>MERC.WD:5,CDS:7,CW:7,CSV:5,CLAN:3,IS:2,CSJ:5,CJF:7,CGB:7,CWIE:6</availability>
 		<model name='(Standard)'>
 			<availability>CSR:8,General:8</availability>
 		</model>
@@ -8366,6 +8366,7 @@
 			<availability>General:6</availability>
 		</model>
 		<model name='&apos;SuperPelican&apos; aka &apos;Waddle&apos;'>
+			<roles>cargo</roles>
 			<availability>FS:4</availability>
 		</model>
 	</chassis>
@@ -8585,7 +8586,7 @@
 		</model>
 	</chassis>
 	<chassis name='Hydaspes' unitType='Aero'>
-		<availability>CSA:6,CCC:7,CSR:6,CLAN:5</availability>
+		<availability>CCC:7,CSR:6,CLAN:6</availability>
 		<model name='(Standard)'>
 			<availability>CLAN:8</availability>
 		</model>
@@ -9136,6 +9137,12 @@
 		<availability>FWL:3,WOB:2</availability>
 		<model name='(Standard)'>
 			<roles>escort</roles>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Tigress Close Patrol Craft' unitType='Small Craft'>
+		<availability>TC:6</availability>
+		<model name='TIG-15'>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

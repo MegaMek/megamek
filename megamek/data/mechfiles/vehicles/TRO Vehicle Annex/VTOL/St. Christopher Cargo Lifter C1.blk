@@ -81,6 +81,7 @@ Armored Chassis
 
 <transporters>
 cargobay:8.55:3
+troopspace:.45
 standardseats:.45:6
 </transporters>
 

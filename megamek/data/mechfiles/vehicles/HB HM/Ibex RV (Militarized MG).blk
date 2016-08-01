@@ -79,6 +79,7 @@ PintleTurret
 
 <transporters>
 cargobay:.387:1
+troopspace:.6
 standardseats:.6:8
 </transporters>
 

@@ -83,6 +83,7 @@ Cargo Container (10 tons)
 
 <transporters>
 cargobay:.1:1
+troopspace:.9
 standardseats:.9:12
 </transporters>
 

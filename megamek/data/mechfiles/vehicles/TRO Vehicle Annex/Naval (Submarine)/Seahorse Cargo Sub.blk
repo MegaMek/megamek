@@ -37,6 +37,7 @@ Submarine
 
 <transporters>
 cargobay:84.55:3
+troopspace:.45
 standardseats:.45:6
 </transporters>
 

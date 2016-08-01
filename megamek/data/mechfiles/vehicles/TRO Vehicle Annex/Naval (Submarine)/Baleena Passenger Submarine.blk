@@ -36,6 +36,7 @@ Submarine
 </motion_type>
 
 <transporters>
+troopspace:1.5
 standardseats:1.5:20
 steeragequarters:10:2
 lightvehiclebay:1:1

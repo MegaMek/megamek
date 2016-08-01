@@ -33,6 +33,7 @@ VTOL
 </motion_type>
 
 <transporters>
+troopspace:7.5
 standardseats:7.5:100
 cargobay:5:1
 </transporters>

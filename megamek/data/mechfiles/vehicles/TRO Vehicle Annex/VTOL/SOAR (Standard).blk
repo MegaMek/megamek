@@ -85,6 +85,7 @@ Paramedic Equipment
 
 <transporters>
 cargobay:.05:1
+troopspace:.45
 standardseats:.45:6
 </transporters>
 

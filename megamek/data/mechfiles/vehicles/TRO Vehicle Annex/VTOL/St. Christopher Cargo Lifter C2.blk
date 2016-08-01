@@ -80,6 +80,7 @@ VTOL
 
 <transporters>
 cargobay:12.55:3
+troopspace:.45
 standardseats:.45:6
 </transporters>
 

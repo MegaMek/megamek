@@ -303,6 +303,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             add(chSearchlight, GBC.eol());
             chSearchlight.setSelected(entity.hasSpotlight()
                     || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
+            chSearchlight.setEnabled(!entity
+                    .hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
         }
 
         // Set up mines

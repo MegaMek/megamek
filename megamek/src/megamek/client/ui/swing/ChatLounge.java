@@ -92,6 +92,7 @@ import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Aero;
+import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BattleArmorHandlesTank;
 import megamek.common.Bay;
@@ -104,6 +105,7 @@ import megamek.common.Crew;
 import megamek.common.DockingCollar;
 import megamek.common.Dropship;
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
@@ -115,6 +117,7 @@ import megamek.common.Jumpship;
 import megamek.common.MapSettings;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
+import megamek.common.PlanetaryConditions;
 import megamek.common.Protomech;
 import megamek.common.QuirksHandler;
 import megamek.common.RangeType;
@@ -3922,7 +3925,51 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 for (Entity e : entities) {
                     QuirksHandler.addCustomQuirk(e, true);
                 }
+            } else if (command.equalsIgnoreCase("RAPIDFIREMG_OFF")
+                    || command.equalsIgnoreCase("RAPIDFIREMG_ON")) {
+                boolean rapidFire = command.equalsIgnoreCase("RAPIDFIREMG_ON");
+                for (Entity e : entities) {
+                    for (Mounted m : e.getWeaponList()) {
+                        WeaponType wtype = (WeaponType) m.getType();
+                        if (!wtype.hasFlag(WeaponType.F_MG)) {
+                            continue;
+                        }
+                        m.setRapidfire(rapidFire);
+                    }
+                }
+            } else if (command.equalsIgnoreCase("HOTLOAD_OFF")
+                    || command.equalsIgnoreCase("HOTLOAD_ON")) {
+                boolean hotLoad = command.equalsIgnoreCase("HOTLOAD_ON");
+                for (Entity e : entities) {
+                    for (Mounted m : e.getWeaponList()) {
+                        WeaponType wtype = (WeaponType) m.getType();
+                        if (!wtype.hasFlag(WeaponType.F_MISSILE)
+                                || (wtype.getAmmoType() != AmmoType.T_LRM)) {
+                            continue;
+                        }
+                        m.setHotLoad(hotLoad);
+                    }
+                    for (Mounted m :e.getAmmo()) {
+                        AmmoType atype = (AmmoType) m.getType();
+                        if (atype.getAmmoType() != AmmoType.T_LRM) {
+                            continue;
+                        }
+                        m.setHotLoad(hotLoad);
+                    }
+                }
+            } else if (command.equalsIgnoreCase("SEARCHLIGHT_OFF")
+                    || command.equalsIgnoreCase("SEARCHLIGHT_ON")) {
+                boolean searchLight = command.equalsIgnoreCase("SEARCHLIGHT_ON");
+                for (Entity e : entities) {
+                    if (!e.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT)) {
+                        e.setExternalSpotlight(searchLight);
+                        e.setSpotlightState(searchLight);
+                    }
+                }
             }
+            
+            
+            
 
         }
 
@@ -3978,6 +4025,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     .booleanOption("blind_drop");
             boolean isQuirksEnabled = clientgui.getClient().getGame().getOptions()
                     .booleanOption("stratops_quirks");
+            boolean isRapidFireMG = clientgui.getClient().getGame().getOptions()
+                    .booleanOption("tacops_burst");
+            boolean isHotLoad = clientgui.getClient().getGame().getOptions()
+                    .booleanOption("tacops_hotload");
+            boolean isSearchlight = clientgui.getClient().getGame()
+                    .getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK;
             boolean allLoaded = true;
             boolean allUnloaded = true;
             boolean allCapFighter = true;
@@ -3985,6 +4038,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             boolean allInfantry = true;
             boolean allBattleArmor = true;
             boolean allSameEntityType = true;
+            boolean hasMGs = false;
+            boolean hasSearchlight = false;
+            boolean hasLRMS = false;
+            boolean hasHotLoad = false;
+            boolean hasRapidFireMG = false;
             boolean sameSide = true;
             Entity prevEntity = null;
             int prevOwnerId = -1;
@@ -4015,6 +4073,24 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         && !en.getClass().equals(prevEntity.getClass())
                         && !allInfantry) {
                     allSameEntityType = false;
+                }
+                if (isRapidFireMG) {
+                    for (Mounted m : en.getEquipment()) {
+                        EquipmentType etype = m.getType();
+                        if (etype.hasFlag(WeaponType.F_MG)) {
+                            hasMGs |= true;
+                            hasRapidFireMG |= m.isRapidfire();    
+                        }
+                        if (etype.hasFlag(WeaponType.F_MISSILE)) {
+                            hasLRMS |= ((WeaponType) etype).getAmmoType() == AmmoType.T_LRM;
+                            hasHotLoad |= m.isHotLoaded();                            
+                        }
+                    }
+                }
+                boolean hasSearchlightQuirk = isQuirksEnabled
+                        && en.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT);
+                if (!hasSearchlightQuirk) {
+                    hasSearchlight |= en.hasExternaSpotlight();
                 }
                 prevEntity = en;
             }
@@ -4337,7 +4413,57 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         popup.add(menu);
                     }
                 }
-                
+
+                // Set Rapid Fire MGs
+                if (isRapidFireMG || isHotLoad || isSearchlight) {
+                    menu = new JMenu(Messages.getString("ChatLounge.Equipment"));
+                    if (isRapidFireMG && hasMGs) {
+                        if (hasRapidFireMG) {
+                            menuItem = new JMenuItem(
+                                    Messages.getString("ChatLounge.RapidFireToggleOff"));
+                            menuItem.setActionCommand("RAPIDFIREMG_OFF");
+                        } else {
+                            menuItem = new JMenuItem(
+                                    Messages.getString("ChatLounge.RapidFireToggleOn"));
+                            menuItem.setActionCommand("RAPIDFIREMG_ON");
+                        }
+                        menuItem.addActionListener(this);
+                        menuItem.setEnabled(isOwner || isBot);
+                        menu.add(menuItem);
+                    }
+                    if (isHotLoad && hasLRMS) {
+                        if (hasHotLoad) {
+                            menuItem = new JMenuItem(
+                                    Messages.getString("ChatLounge.HotLoadToggleOff"));
+                            menuItem.setActionCommand("HOTLOAD_OFF");
+                        } else {
+                            menuItem = new JMenuItem(
+                                    Messages.getString("ChatLounge.HotLoadToggleOn"));
+                            menuItem.setActionCommand("HOTLOAD_ON");
+                        }
+                        menuItem.addActionListener(this);
+                        menuItem.setEnabled(isOwner || isBot);
+                        menu.add(menuItem);
+                    }
+                    if (isSearchlight) {
+                        if (hasSearchlight) {
+                            menuItem = new JMenuItem(
+                                    Messages.getString("ChatLounge.SearchlightToggleOff"));
+                            menuItem.setActionCommand("SEARCHLIGHT_OFF");
+                        } else {
+                            menuItem = new JMenuItem(
+                                    Messages.getString("ChatLounge.SearchlightToggleOn"));
+                            menuItem.setActionCommand("SEARCHLIGHT_ON");
+                        }
+                        menuItem.addActionListener(this);
+                        boolean loneEntityWithQuirk = oneSelected && isQuirksEnabled
+                                && entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT);
+                        menuItem.setEnabled((isOwner || isBot) && !loneEntityWithQuirk);
+                        menu.add(menuItem);
+                    }
+                    popup.add(menu);
+                }
+
                 boolean hasQuirks = true;
                 for (Entity ent : entities) {
                     hasQuirks &= (ent.countQuirks() > 0)

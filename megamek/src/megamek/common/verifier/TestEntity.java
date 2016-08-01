@@ -255,6 +255,22 @@ public abstract class TestEntity implements TestEntityOption {
                 + ((Math.ceil(weight * 10) == (weight * 10)) ? "0" : "");
     }
 
+    /**
+     * Allows a value to be truncuated to an arbitrary number of decimal places.
+     *
+     * @param value
+     *            The input value
+     * @param precision
+     *            The number of decimals to truncate at
+     *
+     * @return The input value truncated to the number of decimal places
+     *         supplied
+     */
+    public static double setPrecision(double value, int precision) {
+        return Math.round(value * Math.pow(10, precision))
+                / Math.pow(10, precision);
+    }
+
     private boolean hasMASC() {
         if (getEntity() instanceof Mech) {
             return ((Mech) getEntity()).hasMASC();

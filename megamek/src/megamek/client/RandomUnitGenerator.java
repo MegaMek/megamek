@@ -205,7 +205,8 @@ public class RandomUnitGenerator implements Serializable {
     }
 
     private void readRat(InputStream is, RatTreeNode node, String fileName, MechSummaryCache msc) throws IOException {
-        try(BufferedReader reader
+        try(@SuppressWarnings("resource")
+        BufferedReader reader
                 = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")))) { //$NON-NLS-1$
             int lineNumber = 0;
             String key = "Huh"; //$NON-NLS-1$
@@ -372,6 +373,8 @@ public class RandomUnitGenerator implements Serializable {
                 readRat(ratInputStream, node, ratFile.getName(), msc);
             } catch(IOException e) {
                 System.err.println(String.format("Unable to load %s", ratFile.getName())); //$NON-NLS-1$
+                System.err.println(e.getMessage());
+                e.printStackTrace();
             }
         }
     }

@@ -220,10 +220,11 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
             }
 
             int dd = (first.getMpUsed() + h1) - (second.getMpUsed() + h2);
+
             if (dd != 0) {
                 return dd;
             } else {
-                return -(first.getHexesMoved() - second.getHexesMoved());
+                return first.getHexesMoved() - second.getHexesMoved();
             }
         }
     }
@@ -347,22 +348,37 @@ public class ShortestPathFinder extends MovePathFinder<MovePath> {
     
     public static int getFacingDiff(final MovePath mp, Coords dest,
             boolean backward) {
+        // Facing doesn't matter for jumping
         if (mp.isJumping()) {
             return 0;
         }
+
+        // Ignore facing if we are on the destination
         if (mp.getFinalCoords().equals(dest)) {
             return 0;
         }
-        int firstFacing = Math
-                .abs(((mp.getFinalCoords().direction(dest) + (backward ? 3 : 0)) % 6)
-                        - mp.getFinalFacing());
+
+        // Direction dest hex is from current location, in hex facings
+        int destDir = mp.getFinalCoords().direction(dest);
+        // Direction dest hex is from current location, in degrees
+        int destAngle = mp.getFinalCoords().degree(dest);
+        // Estimate the number of facing changes to reach destination
+        int firstFacing = Math.abs(((destDir + (backward ? 3 : 0)) % 6)
+                - mp.getFinalFacing());
+
+        // Adjust for circular nature of facing
         if (firstFacing > 3) {
             firstFacing = 6 - firstFacing;
         }
+
+        // Ability to shift can ease facing costs
         if (mp.canShift()) {
             firstFacing = Math.max(0, firstFacing - 1);
         }
-        if ((mp.getFinalCoords().degree(dest) % 60) != 0) {
+
+        // If the angle to the goal doesn't fall along a hex facing, then we
+        // need to make another facing change, which needs to be accounted for
+        if ((destAngle % 60) != 0) {
             firstFacing++;
         }
         return firstFacing;

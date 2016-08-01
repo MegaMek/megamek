@@ -191,8 +191,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private static final int BOARD_HEX_POPUP = 4;
 
     // the dimensions of megamek's hex images
-    static final int HEX_W = 84;
-    static final int HEX_H = 72;
+    static final int HEX_W = HexTileset.HEX_W;
+    static final int HEX_H = HexTileset.HEX_H;
     private static final int HEX_WC = HEX_W - (HEX_W / 4);
     static final int HEX_ELEV = 12;
 

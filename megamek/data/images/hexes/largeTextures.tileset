@@ -106,11 +106,11 @@ super * "geyser:2" "" "transparent/geysererupt.png"
 
 base * "impassable:1" "" "boring/solidrock.gif"
 
-base 0 "" "" "largeTextures/Texture4.jpg"
-base 1 "" "" "largeTextures/Texture4.jpg"
-base 2 "" "" "largeTextures/Texture4.jpg"
-base 3 "" "" "largeTextures/Texture4c.jpg"
-base -1 "" "" "largeTextures/Texture4b.jpg"
+base 0 "" "" "largeTextures/texture4.jpg"
+base 1 "" "" "largeTextures/texture4.jpg"
+base 2 "" "" "largeTextures/texture4.jpg"
+base 3 "" "" "largeTextures/texture4c.jpg"
+base -1 "" "" "largeTextures/texture4b.jpg"
 
 
 

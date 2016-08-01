@@ -4984,7 +4984,8 @@ public class Compute {
     }
 
     /**
-     * scatter from hex according to dive bombing rules (based on MoF)
+     * Scatter from hex according to dive bombing rules (based on MoF),
+     * TW pg 246.  The scatter can happen in any direction.
      *
      * @param coords The <code>Coords</code> to scatter from
      * @param moF The margin of failure, which deterimines scatter distance
@@ -4992,6 +4993,35 @@ public class Compute {
      */
     public static Coords scatterDiveBombs(Coords coords, int moF) {
         return Compute.scatter(coords, moF);
+    }
+
+    /**
+     * Scatter from hex according to altitude bombing rules (based on MoF),
+     * TW pg 246.  The scatter only happens in the "front" three facings.
+     *
+     * @param coords The <code>Coords</code> to scatter from
+     * @param moF The margin of failure, which deterimines scatter distance
+     * @return the <code>Coords</code> scattered to and distance (moF)
+     */
+    public static Coords scatterAltitudeBombs(Coords coords, int facing) {
+        int dir = 0;
+        int scatterDirection = Compute.d6(1);
+        switch (scatterDirection) {
+            case 1:
+            case 2:
+                dir = (facing - 1) % 6;
+                break;
+            case 3:
+            case 4:
+                dir = facing;
+                break;
+            case 5:
+            case 6:
+                dir = (facing + 1) % 6;
+                break;
+        }
+        int dist = Compute.d6(1);
+        return coords.translated(dir, dist);
     }
 
     /**

@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Set;
 
 import megamek.client.ui.ITilesetManager;
+import megamek.client.ui.swing.MechTileset.MechEntry;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.ImageFileFactory;
@@ -73,7 +74,8 @@ import megamek.common.util.DirectoryItems;
 public class TilesetManager implements IPreferenceChangeListener, ITilesetManager {
     public static final String DIR_NAME_WRECKS = "wrecks"; //$NON-NLS-1$
 
-    private static final String FILENAME_DEFAULT_HEX_SET = "defaulthexset.txt"; //$NON-NLS-1$
+    public static final String FILENAME_DEFAULT_HEX_SET = "defaulthexset.txt"; //$NON-NLS-1$
+
     private static final String FILENAME_NIGHT_IMAGE = new File("transparent", "night.png").toString();  //$NON-NLS-1$  //$NON-NLS-2$
     private static final String FILENAME_HEX_MASK = new File("transparent", "HexMask.png").toString();  //$NON-NLS-1$  //$NON-NLS-2$
     private static final String FILENAME_ARTILLERY_AUTOHIT_IMAGE = "artyauto.gif"; //$NON-NLS-1$
@@ -143,7 +145,10 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             hexTileset.incDepth = 0;
             hexTileset.loadFromFile(PreferenceManager.getClientPreferences().getMapTileset());
         } catch (Exception FileNotFoundException) {
-            if ( !new File(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).exists() ){
+            System.out.println("Error loading tileset, "
+                    + "reverting to default hexset! " + "Could not find file: "
+                    + PreferenceManager.getClientPreferences().getMapTileset());
+            if (!new File(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET).exists()){
                 createDefaultHexSet();
             }
             hexTileset.loadFromFile(FILENAME_DEFAULT_HEX_SET);
@@ -174,14 +179,24 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         if (entityImage == null) {
             // probably double_blind. Try to load on the fly
             System.out
-                    .println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
+                    .println("Loading icon for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
             loadImage(entity, -1);
             entityImage = mechImages.get(temp);
             if (entityImage == null) {
                 // now it's a real problem
                 System.out
-                        .println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
-                return null;
+                        .println("Unable to load icon for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
+                // Try to get a default image, so something is displayed
+                MechEntry defaultEntry = mechTileset.genericFor(entity, -1);
+                if (defaultEntry.getImage() == null) {
+                    defaultEntry.loadImage(boardview);
+                }
+                if (defaultEntry.getImage() != null) {
+                    return defaultEntry.getImage().getScaledInstance(56, 48,
+                            Image.SCALE_SMOOTH);
+                } else {
+                    return null;
+                }
             }
         }
         return entityImage.getIcon();
@@ -195,14 +210,19 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         if (entityImage == null) {
             // probably double_blind. Try to load on the fly
             System.out
-                    .println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
+                    .println("Loading wreckMarker image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
             loadImage(entity, secondaryPos);
             entityImage = mechImages.get(temp);
             if (entityImage == null) {
                 // now it's a real problem
                 System.out
-                        .println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
-                return null;
+                        .println("Unable to load wreckMarker image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
+                // Try to get a default image, so something is displayed
+                MechEntry defaultEntry = wreckTileset.genericFor(entity, -1);
+                if (defaultEntry.getImage() == null) {
+                    defaultEntry.loadImage(boardview);
+                }
+                return defaultEntry.getImage();
             }
         }
         return entityImage.getWreckFacing(entity.getFacing());
@@ -238,7 +258,12 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                 // now it's a real problem
                 System.out
                         .println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
-                return null;
+                // Try to get a default image, so something is displayed
+                MechEntry defaultEntry = mechTileset.genericFor(entity, -1);
+                if (defaultEntry.getImage() == null) {
+                    defaultEntry.loadImage(boardview);
+                }
+                return defaultEntry.getImage();
             }
         }
         // get image rotated for facing
@@ -294,16 +319,16 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         Image image = ecmStaticImages.get(tint);
         if (image == null) {
             // Create a new hex-sized image
-            image = new BufferedImage(EntityImage.IMG_WIDTH,
-                    EntityImage.IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+            image = new BufferedImage(HexTileset.HEX_W,
+                    HexTileset.HEX_H, BufferedImage.TYPE_INT_ARGB);
             Graphics g = image.getGraphics();
             Polygon hexPoly = boardview.getHexPoly();
             g.setColor(tint.darker());
             // Draw ~200 small "ovals" at random locations within a a hex
             // A 3x3 oval ends up looking more like a cross
             for (int i = 0; i < 200; i++) {
-                int x = (int)(Math.random() * EntityImage.IMG_WIDTH);
-                int y = (int)(Math.random() * EntityImage.IMG_HEIGHT);
+                int x = (int)(Math.random() * HexTileset.HEX_W);
+                int y = (int)(Math.random() * HexTileset.HEX_H);
                 if (hexPoly.contains(x,y)) {
                     g.fillOval(x, y, 3, 3);
                 }
@@ -503,7 +528,6 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
      *         pattern or if there was an error loading it.
      */
     public Image getEntityCamo(Entity entity) {
-
         // Return a null if the player has selected no camo file.
         if ((null == entity.getCamoCategory())
                 || IPlayer.NO_CAMO.equals(entity.getCamoCategory())) {
@@ -513,14 +537,12 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         // Try to get the player's camo file.
         Image camo = null;
         try {
-
             // Translate the root camo directory name.
             String category = entity.getCamoCategory();
             if (IPlayer.ROOT_CAMO.equals(category)) {
                 category = ""; //$NON-NLS-1$
             }
             camo = (Image) camos.getItem(category, entity.getCamoFileName());
-
         } catch (Exception err) {
             err.printStackTrace();
         }
@@ -599,9 +621,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         private Image[] wreckFacings = new Image[6];
         private Component parent;
 
-        private static final int IMG_WIDTH = 84;
-        private static final int IMG_HEIGHT = 72;
-        private static final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
+        private final int IMG_WIDTH = HexTileset.HEX_W;
+        private final int IMG_HEIGHT = HexTileset.HEX_H;
+        private final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
 
         public EntityImage(Image base, int tint, Image camo, Component comp) {
             this(base, null, tint, camo, comp);
@@ -684,7 +706,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                 pgMech.grabPixels();
             } catch (InterruptedException e) {
                 System.err
-                        .println("EntityImage.applyColor(): Failed to grab pixels for mech image." + e.getMessage()); //$NON-NLS-1$
+                        .println("EntityImage.applyColor(): Failed to grab pixels for mech image. " + e.getMessage()); //$NON-NLS-1$
                 return image;
             }
             if ((pgMech.getStatus() & ImageObserver.ABORT) != 0) {
@@ -700,7 +722,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                     pgCamo.grabPixels();
                 } catch (InterruptedException e) {
                     System.err
-                            .println("EntityImage.applyColor(): Failed to grab pixels for camo image." + e.getMessage()); //$NON-NLS-1$
+                            .println("EntityImage.applyColor(): Failed to grab pixels for camo image. " + e.getMessage()); //$NON-NLS-1$
                     return image;
                 }
                 if ((pgCamo.getStatus() & ImageObserver.ABORT) != 0) {
@@ -737,7 +759,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         }
     }
 
-    private void createDefaultHexSet(){
+    public static void createDefaultHexSet(){
         try {
             FileOutputStream fos = new FileOutputStream(new File(Configuration.hexesDir(), FILENAME_DEFAULT_HEX_SET));
             PrintStream p = new PrintStream(fos);
@@ -748,70 +770,70 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             p.println("# base/super/ortho <elevation> <terrains> <theme> <image>");
             p.println("#");
             p.println("");
-            p.println("ortho * \"bridge:*:00;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_00.gif\"");
-            p.println("ortho * \"bridge:*:01;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_01.gif\"");
-            p.println("ortho * \"bridge:*:02;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_02.gif\"");
-            p.println("ortho * \"bridge:*:03;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_03.gif\"");
-            p.println("ortho * \"bridge:*:04;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_04.gif\"");
-            p.println("ortho * \"bridge:*:05;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_05.gif\"");
-            p.println("ortho * \"bridge:*:06;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_06.gif\"");
-            p.println("ortho * \"bridge:*:07;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_07.gif\"");
-            p.println("ortho * \"bridge:*:08;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_08.gif\"");
-            p.println("ortho * \"bridge:*:09;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_09.gif\"");
-            p.println("ortho * \"bridge:*:10;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_10.gif\"");
-            p.println("ortho * \"bridge:*:11;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_11.gif\"");
-            p.println("ortho * \"bridge:*:12;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_12.gif\"");
-            p.println("ortho * \"bridge:*:13;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_13.gif\"");
-            p.println("ortho * \"bridge:*:14;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_14.gif\"");
-            p.println("ortho * \"bridge:*:15;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_15.gif\"");
-            p.println("ortho * \"bridge:*:16;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_16.gif\"");
-            p.println("ortho * \"bridge:*:17;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_17.gif\"");
-            p.println("ortho * \"bridge:*:18;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_18.gif\"");
-            p.println("ortho * \"bridge:*:19;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_19.gif\"");
-            p.println("ortho * \"bridge:*:20;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_20.gif\"");
-            p.println("ortho * \"bridge:*:21;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_21.gif\"");
-            p.println("ortho * \"bridge:*:22;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_22.gif\"");
-            p.println("ortho * \"bridge:*:23;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_23.gif\"");
-            p.println("ortho * \"bridge:*:24;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_24.gif\"");
-            p.println("ortho * \"bridge:*:25;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_25.gif\"");
-            p.println("ortho * \"bridge:*:26;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_26.gif\"");
-            p.println("ortho * \"bridge:*:27;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_27.gif\"");
-            p.println("ortho * \"bridge:*:28;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_28.gif\"");
-            p.println("ortho * \"bridge:*:29;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_29.gif\"");
-            p.println("ortho * \"bridge:*:30;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_30.gif\"");
-            p.println("ortho * \"bridge:*:31;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_31.gif\"");
-            p.println("ortho * \"bridge:*:32;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_32.gif\"");
-            p.println("ortho * \"bridge:*:33;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_33.gif\"");
-            p.println("ortho * \"bridge:*:34;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_34.gif\"");
-            p.println("ortho * \"bridge:*:35;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_35.gif\"");
-            p.println("ortho * \"bridge:*:36;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_36.gif\"");
-            p.println("ortho * \"bridge:*:37;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_37.gif\"");
-            p.println("ortho * \"bridge:*:38;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_38.gif\"");
-            p.println("ortho * \"bridge:*:39;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_39.gif\"");
-            p.println("ortho * \"bridge:*:40;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_40.gif\"");
-            p.println("ortho * \"bridge:*:41;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_41.gif\"");
-            p.println("ortho * \"bridge:*:42;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_42.gif\"");
-            p.println("ortho * \"bridge:*:43;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_43.gif\"");
-            p.println("ortho * \"bridge:*:44;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_44.gif\"");
-            p.println("ortho * \"bridge:*:45;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_45.gif\"");
-            p.println("ortho * \"bridge:*:46;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_46.gif\"");
-            p.println("ortho * \"bridge:*:47;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_47.gif\"");
-            p.println("ortho * \"bridge:*:48;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_48.gif\"");
-            p.println("ortho * \"bridge:*:49;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_49.gif\"");
-            p.println("ortho * \"bridge:*:50;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_50.gif\"");
-            p.println("ortho * \"bridge:*:51;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_51.gif\"");
-            p.println("ortho * \"bridge:*:52;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_52.gif\"");
-            p.println("ortho * \"bridge:*:53;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_53.gif\"");
-            p.println("ortho * \"bridge:*:54;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_54.gif\"");
-            p.println("ortho * \"bridge:*:55;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_55.gif\"");
-            p.println("ortho * \"bridge:*:56;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_56.gif\"");
-            p.println("ortho * \"bridge:*:57;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_57.gif\"");
-            p.println("ortho * \"bridge:*:58;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_58.gif\"");
-            p.println("ortho * \"bridge:*:59;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_59.gif\"");
-            p.println("ortho * \"bridge:*:60;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_60.gif\"");
-            p.println("ortho * \"bridge:*:61;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_61.gif\"");
-            p.println("ortho * \"bridge:*:62;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_62.gif\"");
-            p.println("ortho * \"bridge:*:63;bridge_elev:*;bridge_cf:*\" \"\" \"orthogonal/bridge_63.gif\"");
+            p.println("ortho * \"bridge:*:00;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_00.gif\"");
+            p.println("ortho * \"bridge:*:01;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_01.gif\"");
+            p.println("ortho * \"bridge:*:02;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_02.gif\"");
+            p.println("ortho * \"bridge:*:03;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_03.gif\"");
+            p.println("ortho * \"bridge:*:04;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_04.gif\"");
+            p.println("ortho * \"bridge:*:05;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_05.gif\"");
+            p.println("ortho * \"bridge:*:06;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_06.gif\"");
+            p.println("ortho * \"bridge:*:07;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_07.gif\"");
+            p.println("ortho * \"bridge:*:08;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_08.gif\"");
+            p.println("ortho * \"bridge:*:09;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_09.gif\"");
+            p.println("ortho * \"bridge:*:10;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_10.gif\"");
+            p.println("ortho * \"bridge:*:11;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_11.gif\"");
+            p.println("ortho * \"bridge:*:12;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_12.gif\"");
+            p.println("ortho * \"bridge:*:13;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_13.gif\"");
+            p.println("ortho * \"bridge:*:14;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_14.gif\"");
+            p.println("ortho * \"bridge:*:15;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_15.gif\"");
+            p.println("ortho * \"bridge:*:16;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_16.gif\"");
+            p.println("ortho * \"bridge:*:17;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_17.gif\"");
+            p.println("ortho * \"bridge:*:18;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_18.gif\"");
+            p.println("ortho * \"bridge:*:19;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_19.gif\"");
+            p.println("ortho * \"bridge:*:20;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_20.gif\"");
+            p.println("ortho * \"bridge:*:21;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_21.gif\"");
+            p.println("ortho * \"bridge:*:22;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_22.gif\"");
+            p.println("ortho * \"bridge:*:23;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_23.gif\"");
+            p.println("ortho * \"bridge:*:24;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_24.gif\"");
+            p.println("ortho * \"bridge:*:25;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_25.gif\"");
+            p.println("ortho * \"bridge:*:26;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_26.gif\"");
+            p.println("ortho * \"bridge:*:27;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_27.gif\"");
+            p.println("ortho * \"bridge:*:28;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_28.gif\"");
+            p.println("ortho * \"bridge:*:29;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_29.gif\"");
+            p.println("ortho * \"bridge:*:30;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_30.gif\"");
+            p.println("ortho * \"bridge:*:31;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_31.gif\"");
+            p.println("ortho * \"bridge:*:32;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_32.gif\"");
+            p.println("ortho * \"bridge:*:33;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_33.gif\"");
+            p.println("ortho * \"bridge:*:34;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_34.gif\"");
+            p.println("ortho * \"bridge:*:35;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_35.gif\"");
+            p.println("ortho * \"bridge:*:36;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_36.gif\"");
+            p.println("ortho * \"bridge:*:37;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_37.gif\"");
+            p.println("ortho * \"bridge:*:38;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_38.gif\"");
+            p.println("ortho * \"bridge:*:39;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_39.gif\"");
+            p.println("ortho * \"bridge:*:40;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_40.gif\"");
+            p.println("ortho * \"bridge:*:41;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_41.gif\"");
+            p.println("ortho * \"bridge:*:42;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_42.gif\"");
+            p.println("ortho * \"bridge:*:43;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_43.gif\"");
+            p.println("ortho * \"bridge:*:44;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_44.gif\"");
+            p.println("ortho * \"bridge:*:45;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_45.gif\"");
+            p.println("ortho * \"bridge:*:46;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_46.gif\"");
+            p.println("ortho * \"bridge:*:47;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_47.gif\"");
+            p.println("ortho * \"bridge:*:48;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_48.gif\"");
+            p.println("ortho * \"bridge:*:49;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_49.gif\"");
+            p.println("ortho * \"bridge:*:50;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_50.gif\"");
+            p.println("ortho * \"bridge:*:51;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_51.gif\"");
+            p.println("ortho * \"bridge:*:52;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_52.gif\"");
+            p.println("ortho * \"bridge:*:53;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_53.gif\"");
+            p.println("ortho * \"bridge:*:54;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_54.gif\"");
+            p.println("ortho * \"bridge:*:55;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_55.gif\"");
+            p.println("ortho * \"bridge:*:56;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_56.gif\"");
+            p.println("ortho * \"bridge:*:57;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_57.gif\"");
+            p.println("ortho * \"bridge:*:58;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_58.gif\"");
+            p.println("ortho * \"bridge:*:59;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_59.gif\"");
+            p.println("ortho * \"bridge:*:60;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_60.gif\"");
+            p.println("ortho * \"bridge:*:61;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_61.gif\"");
+            p.println("ortho * \"bridge:*:62;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_62.gif\"");
+            p.println("ortho * \"bridge:*:63;bridge_elev:*;bridge_cf:*\" \"\" \"bridge/bridge_63.gif\"");
             p.println("");
             p.println("super * \"elevator:10\" \"\" \"boring/elevator1.gif\"");
             p.println("super * \"elevator:2\" \"\" \"boring/elevator2.gif\"");
@@ -1365,27 +1387,27 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             p.println("base -2 \"\" \"\" \"boring/beige_sinkhole_2.gif\"");
             p.println("base -3 \"\" \"\" \"boring/beige_sinkhole_3.gif\"");
             p.println("");
-            p.println("base * \"impassable:1\" \"\" \"boring/rock.gif\"");
+            p.println("base * \"impassable:1\" \"\" \"boring/solidrock.gif\"");
             p.println("");
-            p.println("super * \"rough:1\" \"\" \"boring/rough_0.gif;boring/rough_1.gif;boring/rough_2.gif\"");
+            p.println("super * \"rough:1\" \"\" \"boring/beige_rough_0.gif\"");
             p.println("");
-            p.println("base 0 \"ice:1\" \"\" \"themes/ice_0.gif\"");
-            p.println("base 1 \"ice:1\" \"\" \"themes/ice_1.gif\"");
-            p.println("base 2 \"ice:1\" \"\" \"themes/ice_2.gif\"");
-            p.println("base 3 \"ice:1\" \"\" \"themes/ice_3.gif\"");
-            p.println("base 4 \"ice:1\" \"\" \"themes/ice_4.gif\"");
-            p.println("base 5 \"ice:1\" \"\" \"themes/ice_5.gif\"");
-            p.println("base 6 \"ice:1\" \"\" \"themes/ice_6.gif\"");
-            p.println("base 7 \"ice:1\" \"\" \"themes/ice_7.gif\"");
-            p.println("base 8 \"ice:1\" \"\" \"themes/ice_8.gif\"");
-            p.println("base 9 \"ice:1\" \"\" \"themes/ice_9.gif\"");
-            p.println("base 10 \"ice:1\" \"\" \"themes/ice_10.gif\"");
-            p.println("base -1 \"ice:1\" \"\" \"themes/ice_-1.gif\"");
-            p.println("base -2 \"ice:1\" \"\" \"themes/ice_-2.gif\"");
-            p.println("base -3 \"ice:1\" \"\" \"themes/ice_-3.gif\"");
-            p.println("base -4 \"ice:1\" \"\" \"themes/ice_-4.gif\"");
-            p.println("base -5 \"ice:1\" \"\" \"themes/ice_-5.gif\"");
-            p.println("base -6 \"ice:1\" \"\" \"themes/ice_-6.gif\"");
+            p.println("base 0 \"ice:1\" \"\" \"boring/ice_0.gif\"");
+            p.println("base 1 \"ice:1\" \"\" \"boring/ice_1.gif\"");
+            p.println("base 2 \"ice:1\" \"\" \"boring/ice_2.gif\"");
+            p.println("base 3 \"ice:1\" \"\" \"boring/ice_3.gif\"");
+            p.println("base 4 \"ice:1\" \"\" \"boring/ice_4.gif\"");
+            p.println("base 5 \"ice:1\" \"\" \"boring/ice_5.gif\"");
+            p.println("base 6 \"ice:1\" \"\" \"boring/ice_6.gif\"");
+            p.println("base 7 \"ice:1\" \"\" \"boring/ice_7.gif\"");
+            p.println("base 8 \"ice:1\" \"\" \"boring/ice_8.gif\"");
+            p.println("base 9 \"ice:1\" \"\" \"boring/ice_9.gif\"");
+            p.println("base 10 \"ice:1\" \"\" \"boring/ice_10.gif\"");
+            p.println("base -1 \"ice:1\" \"\" \"boring/ice_-1.gif\"");
+            p.println("base -2 \"ice:1\" \"\" \"boring/ice_-2.gif\"");
+            p.println("base -3 \"ice:1\" \"\" \"boring/ice_-3.gif\"");
+            p.println("base -4 \"ice:1\" \"\" \"boring/ice_-4.gif\"");
+            p.println("base -5 \"ice:1\" \"\" \"boring/ice_-5.gif\"");
+            p.println("base -6 \"ice:1\" \"\" \"boring/ice_-6.gif\"");
             p.println("");
             p.println("base * \"water:1\" \"\" \"boring/blue_water_1.gif\"");
             p.println("base * \"water:2\" \"\" \"boring/blue_water_2.gif\"");
@@ -1407,23 +1429,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             p.println("base 30 \"pavement:1\" \"\" \"boring/grey_pavement_7.gif\"");
             p.println("base 40 \"pavement:1\" \"\" \"boring/grey_pavement_8.gif\"");
             p.println("");
-            p.println("base 0 \"swamp:1\" \"\" \"swamp/swamp_clear_0.gif\"");
-            p.println("base 0 \"swamp:2\" \"\" \"swamp/swamp_clear_0a.gif\"");
-            p.println("base 0 \"swamp:3\" \"\" \"swamp/swamp_clear_0b.gif\"");
-            p.println("base 0 \"swamp:4\" \"\" \"swamp/swamp_clear_0c.gif\"");
-            p.println("base 1 \"swamp:1\" \"\" \"swamp/swamp_clear_1.gif\"");
-            p.println("base 2 \"swamp:1\" \"\" \"swamp/swamp_clear_2.gif\"");
-            p.println("base 3 \"swamp:1\" \"\" \"swamp/swamp_clear_3.gif\"");
-            p.println("base 4 \"swamp:1\" \"\" \"swamp/swamp_clear_4.gif\"");
-            p.println("base 5 \"swamp:1\" \"\" \"swamp/swamp_clear_5.gif\"");
-            p.println("base 6 \"swamp:1\" \"\" \"swamp/swamp_clear_6.gif\"");
-            p.println("base 7 \"swamp:1\" \"\" \"swamp/swamp_clear_7.gif\"");
-            p.println("base 8 \"swamp:1\" \"\" \"swamp/swamp_clear_8.gif\"");
-            p.println("base 9 \"swamp:1\" \"\" \"swamp/swamp_clear_9.gif\"");
-            p.println("base 10 \"swamp:1\" \"\" \"swamp/swamp_clear_10.gif\"");
-            p.println("base -1 \"swamp:1\" \"\" \"swamp/swamp_clear_-1.gif\"");
-            p.println("base -2 \"swamp:1\" \"\" \"swamp/swamp_clear_-2.gif\"");
-            p.println("base -3 \"swamp:1\" \"\" \"swamp/swamp_clear_-3.gif\"");
+            p.println("super * \"swamp:1\" \"\" \"swamp/swamp_0.png;swamp/swamp_1.png;swamp/swamp_2.png;swamp/swamp_3.png\"");
             p.println("base 0 \"rough:1;swamp:1\" \"\" \"swamp/swamp_rough_0.gif\"");
             p.println("base 0 \"rough:1;swamp:2\" \"\" \"swamp/swamp_rough_0a.gif\"");
             p.println("base 0 \"rough:1;swamp:3\" \"\" \"swamp/swamp_rough_0b.gif\"");
@@ -1490,55 +1496,55 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             p.println("");
             p.println("#------------------- BEGIN snow theme");
             p.println("");
-            p.println("base 0 \"\" \"snow\" \"themes/snow_0.gif\"");
-            p.println("base 1 \"\" \"snow\" \"themes/snow_1.gif\"");
-            p.println("base 2 \"\" \"snow\" \"themes/snow_2.gif\"");
-            p.println("base 3 \"\" \"snow\" \"themes/snow_3.gif\"");
-            p.println("base 4 \"\" \"snow\" \"themes/snow_4.gif\"");
-            p.println("base 5 \"\" \"snow\" \"themes/snow_5.gif\"");
-            p.println("base 6 \"\" \"snow\" \"themes/snow_6.gif\"");
-            p.println("base 7 \"\" \"snow\" \"themes/snow_7.gif\"");
-            p.println("base 8 \"\" \"snow\" \"themes/snow_8.gif\"");
-            p.println("base 9 \"\" \"snow\" \"themes/snow_9.gif\"");
-            p.println("base 10 \"\" \"snow\" \"themes/snow_10.gif\"");
-            p.println("base -1 \"\" \"snow\" \"themes/snow_-1.gif\"");
-            p.println("base -2 \"\" \"snow\" \"themes/snow_-2.gif\"");
-            p.println("base -3 \"\" \"snow\" \"themes/snow_-3.gif\"");
-            p.println("base -4 \"\" \"snow\" \"themes/snow_-4.gif\"");
-            p.println("base -5 \"\" \"snow\" \"themes/snow_-5.gif\"");
-            p.println("base -6 \"\" \"snow\" \"themes/snow_-6.gif\"");
+            p.println("base 0 \"\" \"snow\" \"snow/snow_0.gif\"");
+            p.println("base 1 \"\" \"snow\" \"snow/snow_1.gif\"");
+            p.println("base 2 \"\" \"snow\" \"snow/snow_2.gif\"");
+            p.println("base 3 \"\" \"snow\" \"snow/snow_3.gif\"");
+            p.println("base 4 \"\" \"snow\" \"snow/snow_4.gif\"");
+            p.println("base 5 \"\" \"snow\" \"snow/snow_5.gif\"");
+            p.println("base 6 \"\" \"snow\" \"snow/snow_6.gif\"");
+            p.println("base 7 \"\" \"snow\" \"snow/snow_7.gif\"");
+            p.println("base 8 \"\" \"snow\" \"snow/snow_8.gif\"");
+            p.println("base 9 \"\" \"snow\" \"snow/snow_9.gif\"");
+            p.println("base 10 \"\" \"snow\" \"snow/snow_10.gif\"");
+            p.println("base -1 \"\" \"snow\" \"snow/snow_-1.gif\"");
+            p.println("base -2 \"\" \"snow\" \"snow/snow_-2.gif\"");
+            p.println("base -3 \"\" \"snow\" \"snow/snow_-3.gif\"");
+            p.println("base -4 \"\" \"snow\" \"snow/snow_-4.gif\"");
+            p.println("base -5 \"\" \"snow\" \"snow/snow_-5.gif\"");
+            p.println("base -6 \"\" \"snow\" \"snow/snow_-6.gif\"");
             p.println("");
-            p.println("base 0 \"pavement:1\" \"snow\" \"themes/ice_0.gif\"");
-            p.println("base 1 \"pavement:1\" \"snow\" \"themes/ice_1.gif\"");
-            p.println("base 2 \"pavement:1\" \"snow\" \"themes/ice_2.gif\"");
-            p.println("base 3 \"pavement:1\" \"snow\" \"themes/ice_3.gif\"");
-            p.println("base 4 \"pavement:1\" \"snow\" \"themes/ice_4.gif\"");
-            p.println("base 5 \"pavement:1\" \"snow\" \"themes/ice_5.gif\"");
-            p.println("base 6 \"pavement:1\" \"snow\" \"themes/ice_6.gif\"");
-            p.println("base 7 \"pavement:1\" \"snow\" \"themes/ice_7.gif\"");
-            p.println("base 8 \"pavement:1\" \"snow\" \"themes/ice_8.gif\"");
-            p.println("base 9 \"pavement:1\" \"snow\" \"themes/ice_9.gif\"");
-            p.println("base 10 \"pavement:1\" \"snow\" \"themes/ice_10.gif\"");
-            p.println("base -1 \"pavement:1\" \"snow\" \"themes/ice_-1.gif\"");
-            p.println("base -2 \"pavement:1\" \"snow\" \"themes/ice_-2.gif\"");
-            p.println("base -3 \"pavement:1\" \"snow\" \"themes/ice_-3.gif\"");
-            p.println("base -4 \"pavement:1\" \"snow\" \"themes/ice_-4.gif\"");
-            p.println("base -5 \"pavement:1\" \"snow\" \"themes/ice_-5.gif\"");
-            p.println("base -6 \"pavement:1\" \"snow\" \"themes/ice_-6.gif\"");
+            p.println("base 0 \"pavement:1\" \"snow\" \"boring/ice_0.gif\"");
+            p.println("base 1 \"pavement:1\" \"snow\" \"boring/ice_1.gif\"");
+            p.println("base 2 \"pavement:1\" \"snow\" \"boring/ice_2.gif\"");
+            p.println("base 3 \"pavement:1\" \"snow\" \"boring/ice_3.gif\"");
+            p.println("base 4 \"pavement:1\" \"snow\" \"boring/ice_4.gif\"");
+            p.println("base 5 \"pavement:1\" \"snow\" \"boring/ice_5.gif\"");
+            p.println("base 6 \"pavement:1\" \"snow\" \"boring/ice_6.gif\"");
+            p.println("base 7 \"pavement:1\" \"snow\" \"boring/ice_7.gif\"");
+            p.println("base 8 \"pavement:1\" \"snow\" \"boring/ice_8.gif\"");
+            p.println("base 9 \"pavement:1\" \"snow\" \"boring/ice_9.gif\"");
+            p.println("base 10 \"pavement:1\" \"snow\" \"boring/ice_10.gif\"");
+            p.println("base -1 \"pavement:1\" \"snow\" \"boring/ice_-1.gif\"");
+            p.println("base -2 \"pavement:1\" \"snow\" \"boring/ice_-2.gif\"");
+            p.println("base -3 \"pavement:1\" \"snow\" \"boring/ice_-3.gif\"");
+            p.println("base -4 \"pavement:1\" \"snow\" \"boring/ice_-4.gif\"");
+            p.println("base -5 \"pavement:1\" \"snow\" \"boring/ice_-5.gif\"");
+            p.println("base -6 \"pavement:1\" \"snow\" \"boring/ice_-6.gif\"");
             p.println("");
-            p.println("base 0 \"rough:1\" \"snow\" \"themes/snow_rough_0.gif\"");
-            p.println("base 1 \"rough:1\" \"snow\" \"themes/snow_rough_1.gif\"");
-            p.println("base 3 \"rough:1\" \"snow\" \"themes/snow_rough_3.gif\"");
-            p.println("base 5 \"rough:1\" \"snow\" \"themes/snow_rough_5.gif\"");
-            p.println("base -1 \"rough:1\" \"snow\" \"themes/snow_rough_-1.gif\"");
-            p.println("base -3 \"rough:1\" \"snow\" \"themes/snow_rough_-3.gif\"");
-            p.println("base -5 \"rough:1\" \"snow\" \"themes/snow_rough_-5.gif\"");
+            p.println("base 0 \"rough:1\" \"snow\" \"snow/snow_rough_0.gif\"");
+            p.println("base 1 \"rough:1\" \"snow\" \"snow/snow_rough_1.gif\"");
+            p.println("base 3 \"rough:1\" \"snow\" \"snow/snow_rough_3.gif\"");
+            p.println("base 5 \"rough:1\" \"snow\" \"snow/snow_rough_5.gif\"");
+            p.println("base -1 \"rough:1\" \"snow\" \"snow/snow_rough_-1.gif\"");
+            p.println("base -3 \"rough:1\" \"snow\" \"snow/snow_rough_-3.gif\"");
+            p.println("base -5 \"rough:1\" \"snow\" \"snow/snow_rough_-5.gif\"");
             p.println("");
-            p.println("base 0 \"woods:1\" \"snow\" \"themes/snow_light_forest_0.gif\"");
-            p.println("base 1 \"woods:1\" \"snow\" \"themes/snow_light_forest_1.gif\"");
-            p.println("base 2 \"woods:1\" \"snow\" \"themes/snow_light_forest_2.gif\"");
-            p.println("base 0 \"woods:2\" \"snow\" \"themes/snow_heavy_forest_0.gif\"");
-            p.println("base 1 \"woods:2\" \"snow\" \"themes/snow_heavy_forest_1.gif\"");
+            p.println("base 0 \"woods:1\" \"snow\" \"snow/snow_light_forest_0.gif\"");
+            p.println("base 1 \"woods:1\" \"snow\" \"snow/snow_light_forest_1.gif\"");
+            p.println("base 2 \"woods:1\" \"snow\" \"snow/snow_light_forest_2.gif\"");
+            p.println("base 0 \"woods:2\" \"snow\" \"snow/snow_heavy_forest_0.gif\"");
+            p.println("base 1 \"woods:2\" \"snow\" \"snow/snow_heavy_forest_1.gif\"");
             p.println("");
             p.println("#------------------- END snow theme");
             p.println("");

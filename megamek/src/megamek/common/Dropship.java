@@ -146,11 +146,19 @@ public class Dropship extends SmallCraft {
         int centralElev = hex.getLevel();
         int secondElev = centralElev;
         IHex currHex = game.getBoard().getHex(c.translated(5));
+        // Ensure we aren't trying to deploy off the board
+        if (currHex == null) {
+            return true;
+        }
         for (int dir = 0; dir < 6; dir++){
             if (currHex.getLevel() != centralElev){
                 secondElev = currHex.getLevel();
             }
             IHex nextHex = game.getBoard().getHex(c.translated(dir));
+            // Ensure we aren't trying to deploy off the board
+            if (nextHex == null) {
+                return true;
+            }
             if ((currHex.getLevel() != centralElev) &&
                     (currHex.getLevel() == nextHex.getLevel())){
                 numAdjacencies++;

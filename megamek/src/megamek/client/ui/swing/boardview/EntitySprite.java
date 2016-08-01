@@ -825,6 +825,13 @@ class EntitySprite extends Sprite {
         if (isAffectedByECM()) {
             addToTT("Jammed", BR);
         }
+
+        // Swarmed
+        if (entity.getSwarmAttackerId() != Entity.NONE) {
+            addToTT("Swarmed", BR,
+                    bv.game.getEntity(entity.getSwarmAttackerId())
+                            .getDisplayName());
+        }
         
         // If DB, add information about who sees this Entity
         if (bv.game.getOptions().booleanOption("double_blind")) {

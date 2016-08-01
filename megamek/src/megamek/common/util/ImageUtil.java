@@ -23,6 +23,7 @@ import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,20 +113,34 @@ public final class ImageUtil {
     public static class AWTImageLoader implements ImageLoader {
         @Override
         public Image loadImage(String fileName, Toolkit toolkit) {
+            File fin = new File(fileName);
+            if (!fin.exists()) {
+                System.out.println("Trying to load image for a non-existant "
+                        + "file! Path: " + fileName);
+            }
             ToolkitImage result = (ToolkitImage) toolkit.getImage(fileName);
             if(null == result) {
                 return null;
             }
             FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
-            result.preload(observer);
-            while(!observer.isLoaded()) {
-                try {
-                    Thread.sleep(10);
-                } catch(InterruptedException ex) {
-                    break;
+            // Check to see if the image is loaded
+            int infoFlags = result.check(observer);
+            if ((infoFlags & ImageObserver.ALLBITS) == 0) {
+                // Image not loaded, wait for it to load
+                long startTime = System.currentTimeMillis();
+                long maxRuntime = 10000;
+                long runTime = 0;
+                result.preload(observer);
+                while (!observer.isLoaded() && runTime < maxRuntime) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException ex) {
+                        // Do nothing
+                    }
+                    runTime = System.currentTimeMillis() - startTime;
                 }
             }
-            return ImageUtil.createAcceleratedImage(result.getBufferedImage());
+            return observer.isAnimated() ? result : ImageUtil.createAcceleratedImage(result.getBufferedImage());
         }
     }
     
@@ -170,12 +185,21 @@ public final class ImageUtil {
                 return null;
             }
             FinishedLoadingObserver observer = new FinishedLoadingObserver(Thread.currentThread());
-            base.preload(observer);
-            while(!observer.isLoaded()) {
-                try {
-                    Thread.sleep(10);
-                } catch(InterruptedException ex) {
-                    break;
+            // Check to see if the image is loaded
+            int infoFlags = base.check(observer);
+            if ((infoFlags & ImageObserver.ALLBITS) == 0) {
+                // Image not loaded, wait for it to load
+                long startTime = System.currentTimeMillis();
+                long maxRuntime = 10000;
+                long runTime = 0;
+                base.preload(observer);
+                while (!observer.isLoaded() && runTime < maxRuntime) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException ex) {
+                        // Do nothing
+                    }
+                    runTime = System.currentTimeMillis() - startTime;
                 }
             }
             BufferedImage result = ImageUtil.createAcceleratedImage(Math.abs(size.getX()), Math.abs(size.getY()));
@@ -189,10 +213,11 @@ public final class ImageUtil {
     
     private static class FinishedLoadingObserver implements ImageObserver {
         private static final int DONE
-            = ImageObserver.ABORT | ImageObserver.ERROR | ImageObserver.ALLBITS;
+            = ImageObserver.ABORT | ImageObserver.ERROR | ImageObserver.FRAMEBITS | ImageObserver.ALLBITS;
         
         private final Thread mainThread;
         private volatile boolean loaded = false;
+        private volatile boolean animated = false;
 
         public FinishedLoadingObserver(Thread mainThread) {
             this.mainThread = mainThread;
@@ -200,8 +225,9 @@ public final class ImageUtil {
         
         @Override
         public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
-            if((infoflags & DONE) > 1) {
+            if((infoflags & DONE) > 0) {
                 loaded = true;
+                animated = ((infoflags & ImageObserver.FRAMEBITS) > 0);
                 mainThread.interrupt();
                 return false;
             }
@@ -210,6 +236,10 @@ public final class ImageUtil {
         
         public boolean isLoaded() {
             return loaded;
+        }
+        
+        public boolean isAnimated() {
+            return animated;
         }
     }
 }

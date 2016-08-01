@@ -1167,13 +1167,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * be an enemy of itself.
      */
     public boolean isEnemyOf(Entity other) {
-        if (other == null) {
+        if(null == other) {
             return false;
         }
-        if (null == owner) {
+        if(null == owner) {
             return ((id != other.getId()) && (ownerId != other.ownerId));
         }
-        return (id != other.getId()) && owner.isEnemyOf(other.getOwner());
+        return (id != other.getId())
+            && ((null == other.getOwner()) || owner.isEnemyOf(other.getOwner()));
     }
 
     public Crew getCrew() {
@@ -8695,8 +8696,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return true;
         }
 
-        // must be active
-        if (!isActive()
+        // Must be active: this is slightly different  from isActive();
+        //   we don't want to skip manually shutdown units (so they can restart)
+        boolean isActive = (!shutDown || isManualShutdown()) && !destroyed
+                && getCrew().isActive() && !unloadedThisTurn && deployed;
+        if (!isActive
             || (isImmobile() && !isManualShutdown() && !canUnjamRAC() &&
                 !game.getOptions().booleanOption(OptionsConstants.AGM_VEHICLES_CAN_EJECT))) {
             return false;

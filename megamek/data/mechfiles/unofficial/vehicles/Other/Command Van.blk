@@ -12,6 +12,9 @@ Tank
 <Name>
 Command Van
 </Name>
+<Model>
+(Standard)
+</Model>
 <Tonnage>
 15
 </Tonnage>

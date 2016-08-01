@@ -45,6 +45,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -91,6 +92,7 @@ import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.widget.SkinSpecification;
 import megamek.common.Aero;
+import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BattleArmorHandlesTank;
 import megamek.common.Bay;
@@ -103,6 +105,7 @@ import megamek.common.Crew;
 import megamek.common.DockingCollar;
 import megamek.common.Dropship;
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
 import megamek.common.IBoard;
@@ -114,6 +117,7 @@ import megamek.common.Jumpship;
 import megamek.common.MapSettings;
 import megamek.common.MechSummaryCache;
 import megamek.common.Mounted;
+import megamek.common.PlanetaryConditions;
 import megamek.common.Protomech;
 import megamek.common.QuirksHandler;
 import megamek.common.RangeType;
@@ -224,10 +228,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private boolean mscLoaded = false;
     private boolean rngLoaded = false;
 
+    private int cmdSelectedTab = -1;
+
     private MechSummaryCache.Listener mechSummaryCacheListener = new MechSummaryCache.Listener() {
         @Override
-		public void doneLoading() {
-        	mscLoaded = true;
+        public void doneLoading() {
+            mscLoaded = true;
             butLoad.setEnabled(mscLoaded && rngLoaded);
             butArmy.setEnabled(mscLoaded && rngLoaded);
             butLoadList.setEnabled(mscLoaded);
@@ -371,13 +377,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         RandomNameGenerator rng = RandomNameGenerator.getInstance();
         rng.addInitializationListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				rngLoaded = (boolean) evt.getNewValue();
-		        butLoad.setEnabled(mscLoaded && rngLoaded);
-		        butArmy.setEnabled(mscLoaded && rngLoaded);
-			}
-		});
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                rngLoaded = (boolean) evt.getNewValue();
+                butLoad.setEnabled(mscLoaded && rngLoaded);
+                butArmy.setEnabled(mscLoaded && rngLoaded);
+            }
+        });
         MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
         mechSummaryCache.addListener(mechSummaryCacheListener);
         mscLoaded = mechSummaryCache.isInitialized();
@@ -2321,6 +2327,89 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.sendDeleteEntity(entity.getId());
     }
 
+    /**
+     *
+     * @param entities
+     */
+    public void customizeMechs(List<Entity> entities) {
+        // Only call this for when selecting a valid list of entities
+        if (entities.size() < 1) {
+            return;
+        }
+        Set<String> owners = new HashSet<>();
+        String ownerName = "";
+        int ownerId = -1;
+        for (Entity e : entities) {
+            ownerName = e.getOwner().getName();
+            ownerId = e.getOwner().getId();
+            owners.add(ownerName);
+        }
+
+        // Error State
+        if (owners.size() > 1) {
+            return;
+        }
+
+        boolean editable = clientgui.getBots().get(ownerName) != null;
+        Client client;
+        if (editable) {
+            client = clientgui.getBots().get(ownerName);
+        } else {
+            editable |= ownerId == clientgui.getClient().getLocalPlayer()
+                    .getId();
+            client = clientgui.getClient();
+        }
+
+        CustomMechDialog cmd = new CustomMechDialog(clientgui, client,
+                entities, editable);
+        cmd.setSize(new Dimension(GUIPreferences.getInstance()
+                .getCustomUnitWidth(), GUIPreferences.getInstance()
+                .getCustomUnitHeight()));
+        cmd.setTitle(Messages.getString("ChatLounge.CustomizeUnits")); //$NON-NLS-1$
+        if (cmdSelectedTab != -1) {
+            cmd.setSelectedTab(cmdSelectedTab);
+        }
+        cmd.setVisible(true);
+        GUIPreferences.getInstance().setCustomUnitHeight(cmd.getSize().height);
+        GUIPreferences.getInstance().setCustomUnitWidth(cmd.getSize().width);
+        cmdSelectedTab = cmd.getSelectedTab();
+        if (editable && cmd.isOkay()) {
+            // send changes
+            for (Entity entity : entities) {
+                client.sendUpdateEntity(entity);
+
+                // Changing state to a transporting unit can update state of
+                // transported units, so update those as well
+                for (Transporter transport : entity.getTransports()) {
+                    for (Entity loaded : transport.getLoadedUnits()) {
+                        client.sendUpdateEntity(loaded);
+                    }
+                }
+
+                // Customizations to a Squadron can effect the fighters
+                if (entity instanceof FighterSquadron) {
+                    for (Aero fighter : ((FighterSquadron) entity)
+                            .getFighters()) {
+                        client.sendUpdateEntity(fighter);
+                    }
+                }
+            }
+        }
+        if (cmd.isOkay() && (cmd.getStatus() != CustomMechDialog.DONE)) {
+            Entity nextEnt = cmd
+                    .getNextEntity(cmd.getStatus() == CustomMechDialog.NEXT);
+            customizeMech(nextEnt);
+        }
+    }
+
+    public void setCMDSelectedTab(int tab) {
+        cmdSelectedTab = tab;
+    }
+
+    /**
+     *
+     * @param entity
+     */
     public void customizeMech(Entity entity) {
         boolean editable = clientgui.getBots().get(entity.getOwner().getName()) != null;
         Client c;
@@ -2344,39 +2433,62 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
         }
 
-        // display dialog
-        CustomMechDialog cmd = new CustomMechDialog(clientgui, c, entity,
-                editable);
-        cmd.refreshOptions();
-        cmd.refreshQuirks();
-        cmd.refreshPartReps();
-        cmd.setTitle(entity.getShortName());
-        cmd.setVisible(true);
-        if (editable && cmd.isOkay()) {
-            // send changes
-            c.sendUpdateEntity(entity);
+        boolean doneCustomizing = false;
+        while (!doneCustomizing) {
+            // display dialog
+            List<Entity> entities = new ArrayList<>();
+            entities.add(entity);
+            CustomMechDialog cmd = new CustomMechDialog(clientgui, c, entities,
+                    editable);
+            cmd.setSize(new Dimension(GUIPreferences.getInstance()
+                    .getCustomUnitWidth(), GUIPreferences.getInstance()
+                    .getCustomUnitHeight()));
+            cmd.refreshOptions();
+            cmd.refreshQuirks();
+            cmd.refreshPartReps();
+            cmd.setTitle(entity.getShortName());
+            if (cmdSelectedTab != -1) {
+                cmd.setSelectedTab(cmdSelectedTab);
+            }
+            cmd.setVisible(true);
+            GUIPreferences.getInstance().setCustomUnitHeight(
+                    cmd.getSize().height);
+            GUIPreferences.getInstance()
+                    .setCustomUnitWidth(cmd.getSize().width);
+            cmdSelectedTab = cmd.getSelectedTab();
+            if (editable && cmd.isOkay()) {
+                // send changes
+                c.sendUpdateEntity(entity);
 
-            // Changing state to a transporting unit can update state of 
-            // transported units, so update those as well
-            for (Transporter transport : entity.getTransports()) {
-                for (Entity loaded : transport.getLoadedUnits()) {
-                    c.sendUpdateEntity(loaded);
+                // Changing state to a transporting unit can update state of
+                // transported units, so update those as well
+                for (Transporter transport : entity.getTransports()) {
+                    for (Entity loaded : transport.getLoadedUnits()) {
+                        c.sendUpdateEntity(loaded);
+                    }
+                }
+
+                // Customizations to a Squadron can effect the fighters
+                if (entity instanceof FighterSquadron) {
+                    for (Aero fighter : ((FighterSquadron) entity)
+                            .getFighters()) {
+                        c.sendUpdateEntity(fighter);
+                    }
+                }
+
+                // Do we need to update the members of our C3 network?
+                if (((c3master != null) && !c3master.equals(entity
+                        .getC3Master()))
+                        || ((c3master == null) && (entity.getC3Master() != null))) {
+                    for (Entity unit : c3members) {
+                        c.sendUpdateEntity(unit);
+                    }
                 }
             }
-
-            // Customizations to a Squadron can effect the fighters
-            if (entity instanceof FighterSquadron) {
-                for (Aero fighter : ((FighterSquadron) entity).getFighters()) {
-                    c.sendUpdateEntity(fighter);
-                }
-            }
-
-            // Do we need to update the members of our C3 network?
-            if (((c3master != null) && !c3master.equals(entity.getC3Master()))
-                    || ((c3master == null) && (entity.getC3Master() != null))) {
-                for (Entity unit : c3members) {
-                    c.sendUpdateEntity(unit);
-                }
+            if (cmd.isOkay() && (cmd.getStatus() != CustomMechDialog.DONE)) {
+                entity = cmd.getNextEntity(cmd.getStatus() == CustomMechDialog.NEXT);
+            } else {
+                doneCustomizing = true;
             }
         }
     }
@@ -2979,12 +3091,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         // Make sure player has a commander if Commander killed victory is on
         if (gOpts.booleanOption("commander_killed")) {
             ArrayList<String> players = new ArrayList<String>();
-            if (game.getLiveCommandersOwnedBy(client.getLocalPlayer()) < 1) {
+            if ((game.getLiveCommandersOwnedBy(client.getLocalPlayer()) < 1)
+                    && (game.getEntitiesOwnedBy(client.getLocalPlayer()) > 0)) {
                 players.add(client.getLocalPlayer().getName());
             }
-            for (Client client2 : clientgui.getBots().values()) {
-                if (game.getLiveCommandersOwnedBy(client2.getLocalPlayer()) < 1) {
-                    players.add(client2.getLocalPlayer().getName());
+            for (Client bc : clientgui.getBots().values()) {
+                if ((game.getLiveCommandersOwnedBy(bc.getLocalPlayer()) < 1)
+                        && (game.getEntitiesOwnedBy(bc.getLocalPlayer()) > 0)) {
+                    players.add(bc.getLocalPlayer().getName());
                 } 
             }
             if (players.size() > 0) {
@@ -3036,6 +3150,31 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         MechSummaryCache.getInstance().removeListener(mechSummaryCacheListener);
     }
 
+    /**
+     * Returns true if the given list of entities can be configured as a group.
+     * This requires that they all have the same owner, and that none of the
+     * units are being transported.
+     *
+     * @param entities
+     * @return
+     */
+    private boolean canConfigureAll(List<Entity> entities) {
+        if (entities.size() == 1) {
+            return true;
+        }
+
+        Set<Integer> owners = new HashSet<>();
+        boolean containsTransportedUnit = false;
+        for (Entity e : entities) {
+            containsTransportedUnit |= e.getTransportId() != Entity.NONE;
+            owners.add(e.getOwner().getId());
+        }
+        return (owners.size() == 1) && !containsTransportedUnit;
+    }
+
+    /**
+     *
+     */
     public void valueChanged(ListSelectionEvent event) {
         if (event.getValueIsAdjusting()) {
             return;
@@ -3521,7 +3660,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 mechReadout(entities.get(0));
             } else if (code == KeyEvent.VK_ENTER) {
                 e.consume();
-                customizeMech(entities.get(0));
+                if (entities.size() == 1) {
+                    customizeMech(entities.get(0));
+                } else if (canConfigureAll(entities)) {
+                    customizeMechs(entities);
+                }
             }
         }
     }
@@ -3551,6 +3694,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 mechCamo(entities);
             } else if (command.equalsIgnoreCase("CONFIGURE")) {
                 customizeMech(entity);
+            } else if (command.equalsIgnoreCase("CONFIGURE_ALL")) {
+                customizeMechs(entities);
             } else if (command.equalsIgnoreCase("DELETE")) {
                 Client c = clientgui.getBots().get(entity.getOwner().getName());
                 if (c == null) {
@@ -3780,7 +3925,51 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 for (Entity e : entities) {
                     QuirksHandler.addCustomQuirk(e, true);
                 }
+            } else if (command.equalsIgnoreCase("RAPIDFIREMG_OFF")
+                    || command.equalsIgnoreCase("RAPIDFIREMG_ON")) {
+                boolean rapidFire = command.equalsIgnoreCase("RAPIDFIREMG_ON");
+                for (Entity e : entities) {
+                    for (Mounted m : e.getWeaponList()) {
+                        WeaponType wtype = (WeaponType) m.getType();
+                        if (!wtype.hasFlag(WeaponType.F_MG)) {
+                            continue;
+                        }
+                        m.setRapidfire(rapidFire);
+                    }
+                }
+            } else if (command.equalsIgnoreCase("HOTLOAD_OFF")
+                    || command.equalsIgnoreCase("HOTLOAD_ON")) {
+                boolean hotLoad = command.equalsIgnoreCase("HOTLOAD_ON");
+                for (Entity e : entities) {
+                    for (Mounted m : e.getWeaponList()) {
+                        WeaponType wtype = (WeaponType) m.getType();
+                        if (!wtype.hasFlag(WeaponType.F_MISSILE)
+                                || (wtype.getAmmoType() != AmmoType.T_LRM)) {
+                            continue;
+                        }
+                        m.setHotLoad(hotLoad);
+                    }
+                    for (Mounted m :e.getAmmo()) {
+                        AmmoType atype = (AmmoType) m.getType();
+                        if (atype.getAmmoType() != AmmoType.T_LRM) {
+                            continue;
+                        }
+                        m.setHotLoad(hotLoad);
+                    }
+                }
+            } else if (command.equalsIgnoreCase("SEARCHLIGHT_OFF")
+                    || command.equalsIgnoreCase("SEARCHLIGHT_ON")) {
+                boolean searchLight = command.equalsIgnoreCase("SEARCHLIGHT_ON");
+                for (Entity e : entities) {
+                    if (!e.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT)) {
+                        e.setExternalSpotlight(searchLight);
+                        e.setSpotlightState(searchLight);
+                    }
+                }
             }
+            
+            
+            
 
         }
 
@@ -3836,6 +4025,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     .booleanOption("blind_drop");
             boolean isQuirksEnabled = clientgui.getClient().getGame().getOptions()
                     .booleanOption("stratops_quirks");
+            boolean isRapidFireMG = clientgui.getClient().getGame().getOptions()
+                    .booleanOption("tacops_burst");
+            boolean isHotLoad = clientgui.getClient().getGame().getOptions()
+                    .booleanOption("tacops_hotload");
+            boolean isSearchlight = clientgui.getClient().getGame()
+                    .getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK;
             boolean allLoaded = true;
             boolean allUnloaded = true;
             boolean allCapFighter = true;
@@ -3843,6 +4038,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             boolean allInfantry = true;
             boolean allBattleArmor = true;
             boolean allSameEntityType = true;
+            boolean hasMGs = false;
+            boolean hasSearchlight = false;
+            boolean hasLRMS = false;
+            boolean hasHotLoad = false;
+            boolean hasRapidFireMG = false;
             boolean sameSide = true;
             Entity prevEntity = null;
             int prevOwnerId = -1;
@@ -3874,6 +4074,24 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         && !allInfantry) {
                     allSameEntityType = false;
                 }
+                if (isRapidFireMG) {
+                    for (Mounted m : en.getEquipment()) {
+                        EquipmentType etype = m.getType();
+                        if (etype.hasFlag(WeaponType.F_MG)) {
+                            hasMGs |= true;
+                            hasRapidFireMG |= m.isRapidfire();    
+                        }
+                        if (etype.hasFlag(WeaponType.F_MISSILE)) {
+                            hasLRMS |= ((WeaponType) etype).getAmmoType() == AmmoType.T_LRM;
+                            hasHotLoad |= m.isHotLoaded();                            
+                        }
+                    }
+                }
+                boolean hasSearchlightQuirk = isQuirksEnabled
+                        && en.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT);
+                if (!hasSearchlightQuirk) {
+                    hasSearchlight |= en.hasExternaSpotlight();
+                }
                 prevEntity = en;
             }
             if (e.isPopupTrigger()) {
@@ -3899,6 +4117,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     menuItem.setEnabled(isOwner || isBot);
                     popup.add(menuItem);
                 }
+
+                menuItem = new JMenuItem("Configure all");
+                menuItem.setActionCommand("CONFIGURE_ALL");
+                menuItem.addActionListener(this);
+                menuItem.setEnabled(canConfigureAll(entities));
+                menuItem.setMnemonic(KeyEvent.VK_C);
+                popup.add(menuItem);
 
                 menuItem = new JMenuItem("Set individual camo");
                 menuItem.setActionCommand("INDI_CAMO");
@@ -4188,7 +4413,59 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         popup.add(menu);
                     }
                 }
-                
+
+                // Set Rapid Fire MGs
+                if (isRapidFireMG || isHotLoad || isSearchlight) {
+                    menu = new JMenu(Messages.getString("ChatLounge.Equipment"));
+                    if (isRapidFireMG && hasMGs) {
+                        if (hasRapidFireMG) {
+                            menuItem = new JMenuItem(
+                                    Messages.getString("ChatLounge.RapidFireToggleOff"));
+                            menuItem.setActionCommand("RAPIDFIREMG_OFF");
+                        } else {
+                            menuItem = new JMenuItem(
+                                    Messages.getString("ChatLounge.RapidFireToggleOn"));
+                            menuItem.setActionCommand("RAPIDFIREMG_ON");
+                        }
+                        menuItem.addActionListener(this);
+                        menuItem.setEnabled(isOwner || isBot);
+                        menu.add(menuItem);
+                    }
+                    if (isHotLoad && hasLRMS) {
+                        if (hasHotLoad) {
+                            menuItem = new JMenuItem(
+                                    Messages.getString("ChatLounge.HotLoadToggleOff"));
+                            menuItem.setActionCommand("HOTLOAD_OFF");
+                        } else {
+                            menuItem = new JMenuItem(
+                                    Messages.getString("ChatLounge.HotLoadToggleOn"));
+                            menuItem.setActionCommand("HOTLOAD_ON");
+                        }
+                        menuItem.addActionListener(this);
+                        menuItem.setEnabled(isOwner || isBot);
+                        menu.add(menuItem);
+                    }
+                    if (isSearchlight) {
+                        if (hasSearchlight) {
+                            menuItem = new JMenuItem(
+                                    Messages.getString("ChatLounge.SearchlightToggleOff"));
+                            menuItem.setActionCommand("SEARCHLIGHT_OFF");
+                        } else {
+                            menuItem = new JMenuItem(
+                                    Messages.getString("ChatLounge.SearchlightToggleOn"));
+                            menuItem.setActionCommand("SEARCHLIGHT_ON");
+                        }
+                        menuItem.addActionListener(this);
+                        boolean loneEntityWithQuirk = oneSelected && isQuirksEnabled
+                                && entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT);
+                        menuItem.setEnabled((isOwner || isBot) && !loneEntityWithQuirk);
+                        menu.add(menuItem);
+                    }
+                    if (menu.getMenuComponentCount() > 0) {
+                        popup.add(menu);
+                    }
+                }
+
                 boolean hasQuirks = true;
                 for (Entity ent : entities) {
                     hasQuirks &= (ent.countQuirks() > 0)

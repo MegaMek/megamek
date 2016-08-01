@@ -126,11 +126,13 @@ public abstract class Mech extends Entity {
 
     public static final int GYRO_NONE = 4;
 
+    public static final int GYRO_SUPERHEAVY = 5;
+
     public static final String[] GYRO_STRING = { "Standard Gyro", "XL Gyro",
-            "Compact Gyro", "Heavy Duty Gyro", "None" };
+            "Compact Gyro", "Heavy Duty Gyro", "None", "Superheavy Gyro" };
 
     public static final String[] GYRO_SHORT_STRING = { "Standard", "XL",
-            "Compact", "Heavy Duty", "None" };
+            "Compact", "Heavy Duty", "None", "Superheavy" };
 
     // cockpit types
     public static final int COCKPIT_UNKNOWN = -1;
@@ -5897,6 +5899,9 @@ public abstract class Mech extends Entity {
             case GYRO_NONE:
                 inName = "GYRO_NONE";
                 break;
+            case GYRO_SUPERHEAVY:
+                inName = "GYRO_SUPERHEAVY";
+                break;
             default:
                 inName = "GYRO_UNKNOWN";
         }
@@ -6552,8 +6557,10 @@ public abstract class Mech extends Entity {
                     SYSTEM_GYRO));
             addCritical(LOC_CT, 6, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                     SYSTEM_GYRO));
+            setGyroType(GYRO_STANDARD);
+        } else {
+            setGyroType(GYRO_SUPERHEAVY);
         }
-        setGyroType(GYRO_STANDARD);
         return true;
     }
 

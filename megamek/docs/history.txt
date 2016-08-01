@@ -1,8 +1,39 @@
 VERSION HISTORY:
 ----------------
-v0.41.21
+v0.41.22-git
 
-v0.41.20
+v0.41.21 (2016-07-31 10:00 UTC)
++ Feature: Added "Swarmed" entry to unit tooltips
++ Issue #275: Non-optimal paths planned in certain circumstances
++ Data New Sprites and some unit fixes.
++ Bug: +4 Ice PSR penalty applied to Hover/WiGE instead of not Hover/WiGE
++ Bug: Fixed error in blue shield failure report
++ Issue #280: Adding snow theme to default tileset
++ Bug: Fixing some weight issues causing units to fail.
++ Issue #264: Dropship.isLocationProhibited Error
++ Issue #262: Unloaded ammo in ATMs and MMLs can cause NPEs
++ Issue #261: Host cannot deploy as observer if commander killed victory active
++ Bug: Rounding issues when computing SV engine weights
++ Unit Fixes
++ Bug: Engine missing some engine types when determining if fusion.
++ Feature: Deployment tab in Custom Unit Dialog now works for multiple units
++ Feature: Custom Unit Dialog now saves/loads size (width and height)
++ Issue #132: ASF Altitude Bombing uses incorrect scatter pattern
++ Bug: Manually shutdown units skipped during movement with option turned on
++ Feature: Custom Unit Dialog now remembers selected tab within session
++ Bug: Hotkeys not ignored in some cases (ie: scrolling when save menu is up)
++ Issue #195: Elevation incorrect when collapsing basement in lvl 1 building
++ Searchlights can no longer be removed from units with the searchlight quirk
++ Feature: Added "Equipment" context menu in lounge, for burst MGs, hot loading
+    and searchlights (Covers SF features #1399 and #1418)
++ Bug: UnitEditorDialog always sets critical hit on ASF life support
++ Issue #167: EntitySprite drawn at wrong scale when entity becomes visible
++ Issue #284: Null images returned for hexes and mechs
++ Bug: Superheavy meks should halve number of criticals for armor (and weren't)
++ Added Superheavy Gyro type for Superheavy meks
++ Unit fixes and new sprites
+
+v0.41.20 (2016-06-27 02:00)
 + Data: Date fixes for units
 + Data: New Sprites
 + Data: Adding Jake's map pack
@@ -17,6 +48,7 @@ v0.41.20
 + Issue #253: UnitDisplay Extras tab now display # of doors for small craft bays
 + Data: New Sprites and Mechfile fixes
 + Data: New Map (Thanks mikecj)
++ Bug: Keybinds for unit display didn't fully function
 
 v0.41.19 (2016-06-05 22:40 UTC)
 + Issue #233: NPE Displaying Client Options when no skins present

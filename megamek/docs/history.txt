@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.41.22-git
++ Issue #295: Roads not preventing swamp/rubble PSRs
 
 v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips

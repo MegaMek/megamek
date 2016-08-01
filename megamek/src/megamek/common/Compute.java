@@ -465,6 +465,7 @@ public class Compute {
         if ((movementType != EntityMovementType.MOVE_JUMP)
             && (destHex.terrainLevel(Terrains.RUBBLE) > 0)
             && (entity.getMovementMode() != EntityMovementMode.VTOL)
+            && !isPavementStep
             && (entity instanceof Mech)) {
             return true;
         }
@@ -475,7 +476,8 @@ public class Compute {
             && (entity.getMovementMode() != EntityMovementMode.HOVER)
             && (entity.getMovementMode() != EntityMovementMode.VTOL)
             && (movementType != EntityMovementType.MOVE_JUMP)
-            && (entity.getMovementMode() != EntityMovementMode.WIGE)) {
+            && (entity.getMovementMode() != EntityMovementMode.WIGE)
+            && !isPavementStep) {
             return true;
         }
 

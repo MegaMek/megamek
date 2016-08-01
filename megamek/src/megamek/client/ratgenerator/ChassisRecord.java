@@ -34,6 +34,9 @@ public class ChassisRecord extends AbstractUnitRecord {
 	
 	public void addModel(ModelRecord model) {
 		models.add(model);
+		if (introYear == 0 || model.getIntroYear() < getIntroYear()) {
+			introYear = model.getIntroYear();
+		}
 	}
 	
 	public HashSet<ModelRecord> getModels() {

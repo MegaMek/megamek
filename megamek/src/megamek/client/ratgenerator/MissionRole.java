@@ -16,7 +16,6 @@ package megamek.client.ratgenerator;
 import java.util.Collection;
 import java.util.HashSet;
 
-import megamek.common.EntityWeightClass;
 import megamek.common.UnitType;
 
 /**
@@ -250,8 +249,7 @@ public enum MissionRole {
 						return null;
 					}
 					if (mRec.getUnitType() == UnitType.BATTLE_ARMOR
-							&& (mRec.getWeightClass() > EntityWeightClass.WEIGHT_HEAVY
-							|| (mRec.isQuad() != null && mRec.isQuad()))) {
+							&& !mRec.canDoMechanizedBA()) {
 						return null;						
 					}
 					break;

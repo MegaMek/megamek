@@ -18,15 +18,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
-import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
 import megamek.common.UnitType;
 import megamek.common.WeaponType;
-import megamek.common.loaders.EntityLoadingException;
 
 /**
  * Specific unit variants; analyzes equipment to determine suitability for certain types
@@ -65,13 +61,7 @@ public class ModelRecord extends AbstractUnitRecord {
 	private boolean flamer; //used to determine suitability for incindiary role
 	private boolean apWeapons; //used to determine suitability for anti-infantry role
 	
-	/* There are some occasions when we need to know whether it's a quad chassis
-	 * (e.g. determining whether BA is eligible to be used as mechanized BA) but
-	 * we can't tell whether it's a quad based on the MechSummary. Rather than
-	 * load every unit to check, we only check when the info is needed, then
-	 * store the result for future reference.
-	 */
-	protected Boolean quad;
+	private boolean mechanizedBA;
 
 	public ModelRecord(String chassis, String model) {
 		super(chassis);
@@ -82,7 +72,6 @@ public class ModelRecord extends AbstractUnitRecord {
 		networkMask = NETWORK_NONE;
 		flak = 0.0;
 		longRange = 0.0;
-		quad = null;
 	}
 	
 	public static int parseUnitType(String typeName) {
@@ -126,33 +115,6 @@ public class ModelRecord extends AbstractUnitRecord {
 		mechSummary = ms;
 		unitType = parseUnitType(ms.getUnitType());
 		introYear = ms.getYear();
-    	switch (ms.getUnitType()) {
-    	case "Mek":
-    		omni = ms.getUnitSubType().equals("Omni");
-    		break;
-    	case "Tank":
-    	case "VTOL":
-    	case "Naval":
-    		omni = ms.getModel().equals("Prime") ||
-    				(ms.getModel().matches("[A-Z]") &&
-    						MechSummaryCache.getInstance().getMech(ms.getChassis() + " Prime") != null);
-    		break;
-    	case "Aero":
-    		if (ms.isClan()) {
-        		omni = ms.getModel().equals("Prime") ||
-        				ms.getModel().equals("(Sealed)") ||
-        				(ms.getModel().matches("[A-Z]") &&
-        						MechSummaryCache.getInstance().getMech(ms.getChassis() + " Prime") != null);
-    		} else {
-    			omni = ms.getModel().matches(".*\\-O[A-Z]?\\s?.*") ||
-    					ms.getModel().startsWith("DARO-1") ||
-    					ms.getModel().startsWith("MR-1S");
-    		}
-    		break;
-    	case "BattleArmor":
-    		omni = true;
-    		break;
-    	}
 
     	double totalBV = 0.0;
     	double flakBV = 0.0;
@@ -408,28 +370,12 @@ public class ModelRecord extends AbstractUnitRecord {
 		return mechSummary.getName();
 	}
 	
-	public Boolean isQuad() {
-		if (quad == null) {
-			MechSummary ms = MechSummaryCache.getInstance().getMech(getChassis() + " " + getModel());
-			if (ms != null) {
-				try {
-					Entity en = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-					if (en != null) {
-						quad = en instanceof megamek.common.QuadMech ||
-								(en instanceof megamek.common.BattleArmor &&
-										((megamek.common.BattleArmor)en).getChassisType() == 
-										megamek.common.BattleArmor.CHASSIS_TYPE_QUAD);
-						for (ModelRecord mRec : RATGenerator.getInstance().getChassisRecord(getChassisKey()).getModels()) {
-							mRec.quad = quad;
-						}
-					}
-				} catch (EntityLoadingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		return quad;
+	public boolean canDoMechanizedBA() {
+		return mechanizedBA;
+	}
+	
+	public void setMechanizedBA(boolean mech) {
+		mechanizedBA = mech;
 	}
 }
 

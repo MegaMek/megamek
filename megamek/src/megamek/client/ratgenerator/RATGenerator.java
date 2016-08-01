@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.DoubleSummaryStatistics;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -677,22 +678,6 @@ public class RATGenerator {
             }
         }
         
-        for (MechSummary ms : MechSummaryCache.getInstance().getAllMechs()) {
-			ModelRecord mr = new ModelRecord(ms);
-
-			models.put(mr.getKey(), mr);
-			String chassisKey = mr.getChassisKey();
-			if (chassis.containsKey(chassisKey)) {
-				if (chassis.get(chassisKey).getIntroYear() == 0 ||
-						chassis.get(chassisKey).getIntroYear() > ms.getYear()) {
-					chassis.get(chassisKey).setIntroYear(ms.getYear());
-				}
-				chassis.get(chassisKey).addModel(mr);
-			} else {
-				chassis.put(chassisKey, mr.createChassisRec());
-			}
-		}
-        
 		File dir = new File(Configuration.armyTablesDir(), DATA_DIR);
 		for (File f : dir.listFiles()) {
 			if (f.getName().matches("\\d+\\.xml")) {
@@ -782,42 +767,64 @@ public class RATGenerator {
 				for (int i = 0; i < mainNode.getChildNodes().getLength(); i++) {
 					Node wn = mainNode.getChildNodes().item(i);
 					if (wn.getNodeName().equalsIgnoreCase("chassis")) {
-						String key = wn.getAttributes().getNamedItem("name").getTextContent()
+						boolean omni = false;
+						String chassisName = wn.getAttributes().getNamedItem("name").getTextContent();
+						String chassisKey = chassisName
 								+ "[" + wn.getAttributes().getNamedItem("unitType").getTextContent()
 								+ "]";
 						if (wn.getAttributes().getNamedItem("omni") != null) {
+							omni = true;
 							if (wn.getAttributes().getNamedItem("omni").getTextContent().equalsIgnoreCase("IS")) {
-								key += "ISOmni";
+								chassisKey += "ISOmni";
 							} else {
-								key += "ClanOmni";
+								chassisKey += "ClanOmni";
 							}
 						}
-						ChassisRecord cr = chassis.get(key);
-						if (cr == null) {
-							System.err.println("Could not find chassis " + key);
-							continue;
-						}
+						ChassisRecord cr = chassis.get(chassisKey);
+						HashSet<String> includedFactions = new HashSet<String>();
 						for (int j = 0; j < wn.getChildNodes().getLength(); j++) {
 							Node wn2 = wn.getChildNodes().item(j);
 							if (wn2.getNodeName().equalsIgnoreCase("availability")) {
-								chassisIndex.get(era).put(cr.getKey(), new HashMap<String, AvailabilityRating>());
+								chassisIndex.get(era).put(chassisKey,
+										new HashMap<String, AvailabilityRating>());
 								String [] codes = wn2.getTextContent().trim().split(",");
 								for (String code : codes) {
-									AvailabilityRating ar = new AvailabilityRating(cr.getKey(), era, code);
-									cr.getIncludedFactions().add(code.split(":")[0]);
-									chassisIndex.get(era).get(cr.getKey()).put(ar.getFactionCode(), ar);
+									AvailabilityRating ar = new AvailabilityRating(chassisKey, era, code);
+									includedFactions.add(code.split(":")[0]);
+									chassisIndex.get(era).get(chassisKey).put(ar.getFactionCode(), ar);
 								}
 							} else if (wn2.getNodeName().equalsIgnoreCase("model")) {
-								ModelRecord mr = models.get((cr.getChassis() + " " + wn2.getAttributes().getNamedItem("name").getTextContent()).trim());
+								String modelKey = (chassisName + " " + wn2.getAttributes().getNamedItem("name").getTextContent()).trim();
+								boolean newEntry = false;
+								ModelRecord mr = models.get(modelKey);
 								if (mr == null) {
-									System.err.println(cr.getChassis() + " " + wn2.getAttributes().getNamedItem("name").getTextContent() + " not found.");
-									continue;
+									newEntry = true;
+									MechSummary ms = MechSummaryCache.getInstance().getMech(modelKey);
+									if (ms != null) {
+										mr = new ModelRecord(ms);
+										mr.setOmni(omni);
+										if (cr == null) {
+											cr = mr.createChassisRec();
+											chassis.put(chassisKey, cr);
+										}
+										models.put(modelKey, mr);
+									}
+									if (mr == null) {
+										System.err.println(chassisName + " " + wn2.getAttributes().getNamedItem("name").getTextContent() + " not found.");
+										continue;
+									}
 								}
+								cr.addModel(mr);
+								if (wn2.getAttributes().getNamedItem("mechanized") != null) {
+									mr.setMechanizedBA(Boolean.parseBoolean(wn2.getAttributes().getNamedItem("mechanized").getTextContent()));
+								}
+								cr.getIncludedFactions().addAll(includedFactions);
+								
 								for (int k = 0; k < wn2.getChildNodes().getLength(); k++) {
 									Node wn3 = wn2.getChildNodes().item(k);
-									if (wn3.getNodeName().equalsIgnoreCase("roles")) {
+									if (wn3.getNodeName().equalsIgnoreCase("roles") && newEntry) {
 										mr.setRoles(wn3.getTextContent().trim());
-									} else if (wn3.getNodeName().equalsIgnoreCase("deployedWith")) {
+									} else if (wn3.getNodeName().equalsIgnoreCase("deployedWith") && newEntry) {
 										mr.setRequiredUnits(wn3.getTextContent().trim());            							
 									} else if (wn3.getNodeName().equalsIgnoreCase("availability")) {
 										modelIndex.get(era).put(mr.getKey(), new HashMap<String, AvailabilityRating>());

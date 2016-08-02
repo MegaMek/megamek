@@ -226,7 +226,7 @@ public class RATGenerator {
 		factions.remove(key);
 	}
 
-	public Collection<String> getFactionSet() {
+	public Collection<String> getFactionKeySet() {
 		return factions.keySet();
 	}
 	

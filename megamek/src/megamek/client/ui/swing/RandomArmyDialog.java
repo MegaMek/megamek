@@ -206,6 +206,8 @@ WindowListener, TreeSelectionListener, FocusListener {
             m_ratStatus = new JLabel(Messages
                     .getString("RandomArmyDialog.ratStatusLoading"));
         }
+        ratGenYear = m_clientgui.getClient().getGame().getOptions()
+                .intOption("year");
         rg = RATGenerator.getInstance();
         rg.registerListener(this);
         updatePlayerChoice();
@@ -436,8 +438,6 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.weighty = 0.0;
         m_pRATGenOptions.add(m_labYear, c);
 
-        ratGenYear = m_clientgui.getClient().getGame().getOptions()
-                .intOption("year");
         m_tYear.setText(String.valueOf(ratGenYear));
         c = new GridBagConstraints();
         c.gridx = 1;
@@ -799,7 +799,7 @@ WindowListener, TreeSelectionListener, FocusListener {
         } else if (ev.getSource().equals(rg)) {
         	if (ev.getActionCommand().equals("ratGenInitialized")) {
         		rg.loadYear(ratGenYear);
-        	} else {
+        	} else if (ev.getActionCommand().equals("ratGenEraLoaded")) {
         		updateFactionChoice();
         	}
         }

@@ -4943,7 +4943,7 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createCLLRT1Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRT 1 Ammo";
         ammo.shortName = "LRT 1";
         ammo.setInternalName("Clan Ammo Protomech LRTorpedo-1");
@@ -4956,17 +4956,22 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 2;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
+        
         return ammo;
 
     }
 
     private static AmmoType createCLLRT2Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRT 2 Ammo";
         ammo.shortName = "LRT 2";
         ammo.setInternalName("Clan Ammo Protomech LRTorpedo-2");
@@ -4979,17 +4984,22 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 3;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
+        
         return ammo;
 
     }
 
     private static AmmoType createCLLRT3Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRT 3 Ammo";
         ammo.shortName = "LRT 3";
         ammo.setInternalName("Clan Ammo Protomech LRTorpedo-3");
@@ -5002,17 +5012,21 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 5;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
 
     private static AmmoType createCLLRT4Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRT 4 Ammo";
         ammo.shortName = "LRT 4";
         ammo.setInternalName("Clan Ammo Protomech LRTorpedo-4");
@@ -5025,10 +5039,15 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 6;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
+        
         return ammo;
 
     }
@@ -5060,7 +5079,7 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createCLLRT6Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRT 6 Ammo";
         ammo.shortName = "LRT 6";
         ammo.setInternalName("Clan Ammo Protomech LRTorpedo-6");
@@ -5073,17 +5092,21 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 9;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
 
     private static AmmoType createCLLRT7Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRT 7 Ammo";
         ammo.shortName = "LRT 7";
         ammo.setInternalName("Clan Ammo Protomech LRTorpedo-7");
@@ -5096,17 +5119,21 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 10;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
 
     private static AmmoType createCLLRT8Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRT 8 Ammo";
         ammo.shortName = "LRT 8";
         ammo.setInternalName("Clan Ammo Protomech LRTorpedo-8");
@@ -5119,17 +5146,21 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 11;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
 
     private static AmmoType createCLLRT9Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRT 9 Ammo";
         ammo.shortName = "LRT 9";
         ammo.setInternalName("Clan Ammo Protomech LRTorpedo-9");
@@ -5142,10 +5173,14 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 12;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
@@ -5177,7 +5212,7 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createCLLRT11Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRT 11 Ammo";
         ammo.shortName = "LRT 11";
         ammo.setInternalName("Clan Ammo Protomech LRTorpedo-11");
@@ -5190,17 +5225,22 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 18;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
+        
         return ammo;
 
     }
 
     private static AmmoType createCLLRT12Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRT 12 Ammo";
         ammo.shortName = "LRT 12";
         ammo.setInternalName("Clan Ammo Protomech LRTorpedo-12");
@@ -5213,17 +5253,21 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 18;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
 
     private static AmmoType createCLLRT13Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRT 13 Ammo";
         ammo.shortName = "LRT 13";
         ammo.setInternalName("Clan Ammo Protomech LRTorpedo-13");
@@ -5236,17 +5280,22 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 20;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
+        
         return ammo;
 
     }
 
     private static AmmoType createCLLRT14Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRT 14 Ammo";
         ammo.shortName = "LRT 14";
         ammo.setInternalName("Clan Ammo Protomech LRTorpedo-14");
@@ -5259,10 +5308,15 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 21;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
+        
         return ammo;
 
     }
@@ -5294,7 +5348,7 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createCLLRT16Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRT 16 Ammo";
         ammo.shortName = "LRT 16";
         ammo.setInternalName("Clan Ammo Protomech LRTorpedo-16");
@@ -5307,17 +5361,21 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 27;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
 
     private static AmmoType createCLLRT17Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRT 17 Ammo";
         ammo.shortName = "LRT 17";
         ammo.setInternalName("Clan Ammo Protomech LRTorpedo-17");
@@ -5330,17 +5388,21 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 27;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
 
     private static AmmoType createCLLRT18Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRT 18 Ammo";
         ammo.shortName = "LRT 18";
         ammo.setInternalName("Clan Ammo Protomech LRTorpedo-18");
@@ -5353,17 +5415,21 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 27;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
 
     private static AmmoType createCLLRT19Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRT 19 Ammo";
         ammo.shortName = "LRT 19";
         ammo.setInternalName("Clan Ammo Protomech LRTorpedo-19");
@@ -5376,10 +5442,14 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 27;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
@@ -5412,7 +5482,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLSRM1Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "SRM 1 Ammo";
         ammo.shortName = "SRM 1";
         ammo.setInternalName("Clan Ammo SRM-1");
@@ -5424,10 +5493,14 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 2;
         ammo.kgPerShot = 10;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launchers use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
 
         return ammo;
     }
@@ -5461,7 +5534,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLSRM3Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "SRM 3 Ammo";
         ammo.shortName = "SRM 3";
         ammo.setInternalName("Clan Ammo SRM-3");
@@ -5473,10 +5545,14 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 4;
         ammo.kgPerShot = 10;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launchers use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
 
         return ammo;
     }
@@ -5510,7 +5586,6 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLSRM5Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
         ammo.name = "SRM 5 Ammo";
         ammo.shortName = "SRM 5";
         ammo.setInternalName("Clan Ammo SRM-5");
@@ -5522,10 +5597,14 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 6;
         ammo.kgPerShot = 10;
-        ammo.techRating = RATING_C;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_F};
+        // Per Herb all ProtoMech launchers use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
 
         return ammo;
     }
@@ -5638,7 +5717,7 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createCLLRM1Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRM 1 Ammo";
         ammo.shortName = "LRM 1";
         ammo.setInternalName("Clan Ammo Protomech LRM-1");
@@ -5651,17 +5730,21 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 2;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launchers use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
 
     private static AmmoType createCLLRM2Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRM 2 Ammo";
         ammo.shortName = "LRM 2";
         ammo.setInternalName("Clan Ammo Protomech LRM-2");
@@ -5674,17 +5757,21 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 3;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
 
     private static AmmoType createCLLRM3Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRM 3 Ammo";
         ammo.shortName = "LRM 3";
         ammo.setInternalName("Clan Ammo Protomech LRM-3");
@@ -5707,7 +5794,7 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createCLLRM4Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRM 4 Ammo";
         ammo.shortName = "LRM 4";
         ammo.setInternalName("Clan Ammo Protomech LRM-4");
@@ -5720,10 +5807,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 6;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
@@ -5756,7 +5846,7 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createCLLRM6Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRM 6 Ammo";
         ammo.shortName = "LRM 6";
         ammo.setInternalName("Clan Ammo Protomech LRM-6");
@@ -5779,7 +5869,7 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createCLLRM7Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRM 7 Ammo";
         ammo.shortName = "LRM 7";
         ammo.setInternalName("Clan Ammo Protomech LRM-7");
@@ -5792,17 +5882,20 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 10;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
 
     private static AmmoType createCLLRM8Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRM 8 Ammo";
         ammo.shortName = "LRM 8";
         ammo.setInternalName("Clan Ammo Protomech LRM-8");
@@ -5815,17 +5908,20 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 11;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
 
     private static AmmoType createCLLRM9Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRM 9 Ammo";
         ammo.shortName = "LRM 9";
         ammo.setInternalName("Clan Ammo Protomech LRM-9");
@@ -5874,7 +5970,7 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createCLLRM11Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRM 11 Ammo";
         ammo.shortName = "LRM 11";
         ammo.setInternalName("Clan Ammo Protomech LRM-11");
@@ -5887,17 +5983,20 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 18;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
 
     private static AmmoType createCLLRM12Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRM 12 Ammo";
         ammo.setInternalName("Clan Ammo Protomech LRM-12");
         ammo.shortName = "LRM 12";
@@ -5910,17 +6009,20 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 18;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
 
     private static AmmoType createCLLRM13Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRM 13 Ammo";
         ammo.shortName = "LRM 13";
         ammo.setInternalName("Clan Ammo Protomech LRM-13");
@@ -5933,17 +6035,20 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 20;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
 
     private static AmmoType createCLLRM14Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRM 14 Ammo";
         ammo.shortName = "LRM 14";
         ammo.setInternalName("Clan Ammo Protomech LRM-14");
@@ -5956,10 +6061,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 21;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
@@ -5992,7 +6100,7 @@ public class AmmoType extends EquipmentType {
 
     private static AmmoType createCLLRM16Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRM 16 Ammo";
         ammo.shortName = "LRM 16";
         ammo.setInternalName("Clan Ammo Protomech LRM-16");
@@ -6005,17 +6113,20 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 27;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
 
     private static AmmoType createCLLRM17Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRM 17 Ammo";
         ammo.shortName = "LRM 17";
         ammo.setInternalName("Clan Ammo Protomech LRM-17");
@@ -6029,16 +6140,20 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 27;
         ammo.kgPerShot = 8.33;
         ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
 
     private static AmmoType createCLLRM18Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.name = "LRM 18 Ammo";
         ammo.shortName = "LRM 18";
         ammo.setInternalName("Clan Ammo Protomech LRM-18");
@@ -6051,17 +6166,20 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 27;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }
 
     private static AmmoType createCLLRM19Ammo() {
         AmmoType ammo = new AmmoType();
-        ammo.techLevel.put(3067, TechConstants.T_CLAN_TW);
+
         ammo.shortName = "LRM 19";
         ammo.name = "LRM 19 Ammo";
         ammo.setInternalName("Clan Ammo Protomech LRM-19");
@@ -6074,10 +6192,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 27;
         ammo.kgPerShot = 8.33;
-        ammo.introDate = 3060;
-        ammo.techLevel.put(3060, ammo.techLevel.get(3067));
-        ammo.availRating = new int[]{RATING_X, RATING_X, RATING_E};
-        ammo.techRating = RATING_C;
+        ammo.introDate = 3050;
+        ammo.techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        ammo.techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        ammo.techLevel.put(3062, TechConstants.T_CLAN_TW);
+        ammo.availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        ammo.techRating = RATING_F;
+        ammo.rulesRefs = "231, TM";
         return ammo;
 
     }

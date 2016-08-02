@@ -30,7 +30,7 @@ public class CLLRM7 extends LRMWeapon {
      */
     public CLLRM7() {
         super();
-        techLevel.put(3071, TechConstants.T_CLAN_TW);
+
         name = "LRM 7";
         setInternalName("CLLRM7");
         heat = 0;
@@ -39,9 +39,13 @@ public class CLLRM7 extends LRMWeapon {
         tonnage = 1.4f;
         criticals = 0;
         bv = 82;
-        introDate = 3060;
-        techLevel.put(3060, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        introDate = 3050;
+        techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3062, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
         techRating = RATING_F;
+        rulesRefs = "231, TM";
     }
 }

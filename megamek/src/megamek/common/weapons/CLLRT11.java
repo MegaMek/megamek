@@ -30,7 +30,7 @@ public class CLLRT11 extends LRTWeapon {
      */
     public CLLRT11() {
         super();
-        this.techLevel.put(3071, TechConstants.T_CLAN_TW);
+
         this.name = "LRT 11";
         this.setInternalName("CLLRTorpedo11");
         this.setInternalName("CLLRT11");
@@ -44,9 +44,13 @@ public class CLLRT11 extends LRTWeapon {
         this.tonnage = 2.2f;
         this.criticals = 0;
         this.bv = 139;
-        introDate = 3060;
-        techLevel.put(3060, techLevel.get(3071));
-        availRating = new int[] { RATING_X, RATING_X, RATING_E };
-        techRating = RATING_C;
+        // Per Herb all ProtoMech launcher use the ProtoMech Chassis progression.
+        introDate = 3050;
+        techLevel.put(3050, TechConstants.T_CLAN_EXPERIMENTAL);
+        techLevel.put(3059, TechConstants.T_CLAN_ADVANCED);
+        techLevel.put(3062, TechConstants.T_CLAN_TW);
+        availRating = new int[] { RATING_X,RATING_X ,RATING_F ,RATING_D};
+        techRating = RATING_F;
+        rulesRefs = "231, TM";
     }
 }

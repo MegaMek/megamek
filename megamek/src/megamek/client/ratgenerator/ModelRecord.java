@@ -74,42 +74,6 @@ public class ModelRecord extends AbstractUnitRecord {
 		longRange = 0.0;
 	}
 	
-	public static int parseUnitType(String typeName) {
-		switch (typeName) {
-		case "Mek":
-			return UnitType.MEK;
-		case "Tank":
-			return UnitType.TANK;
-		case "BattleArmor":
-			return UnitType.BATTLE_ARMOR;
-		case "Infantry":
-			return UnitType.INFANTRY;
-		case "ProtoMek":
-			return UnitType.PROTOMEK;
-		case "VTOL":
-			return UnitType.VTOL;
-		case "Naval":
-			return UnitType.NAVAL;
-		case "Gun Emplacement":
-			return UnitType.GUN_EMPLACEMENT;
-		case "Conventional Fighter":
-			return UnitType.CONV_FIGHTER;
-		case "Aero":
-			return UnitType.AERO;
-		case "Small Craft":
-			return UnitType.SMALL_CRAFT;
-		case "Dropship":
-			return UnitType.DROPSHIP;
-		case "Jumpship":
-			return UnitType.JUMPSHIP;
-		case "Warship":
-			return UnitType.WARSHIP;
-		case "Space Station":
-			return UnitType.SPACE_STATION;
-		}
-		return -1;
-	}
-	
 	public ModelRecord(MechSummary ms) {
 		this(ms.getChassis(), ms.getModel());
 		mechSummary = ms;
@@ -227,17 +191,6 @@ public class ModelRecord extends AbstractUnitRecord {
     	}
 	}
 	
-	public ChassisRecord createChassisRec() {
-		ChassisRecord retVal = new ChassisRecord(chassis);
-		retVal.introYear = introYear;
-		retVal.omni = omni;
-		retVal.clan = clan;
-		retVal.unitType = unitType;
-		retVal.movementType = movementType;
-		retVal.addModel(this);
-		return retVal;
-	}
-
 	public String getModel() {
 		return mechSummary.getModel();
 	}

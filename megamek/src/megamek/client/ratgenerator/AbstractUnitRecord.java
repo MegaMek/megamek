@@ -29,7 +29,6 @@ public class AbstractUnitRecord {
 	protected boolean omni;
 	protected boolean clan;
 	protected int unitType;
-	protected int movementType;
 	protected int introYear;
 	protected HashSet<String> includedFactions;
 
@@ -88,21 +87,26 @@ public class AbstractUnitRecord {
 	public void setUnitType(int type) {
 		unitType = type;
 	}
+	public void setUnitType(String type) {
+		unitType = parseUnitType(type);
+	}
 	public boolean isOmni() {
 		return omni;
 	}
 	public void setOmni(boolean omni) {
 		this.omni = omni;
 	}
-	public int getMovementType() {
-		return movementType;
+	public boolean isClan() {
+		return clan;
 	}
-	public void setMovementType(int movementType) {
-		this.movementType = movementType;
+	public void setClan(boolean clan) {
+		this.clan = clan;
 	}
+
 	public int getIntroYear() {
 		return introYear;
 	}
+
 	public void setIntroYear(int year) {
 		this.introYear = year;
 	}
@@ -114,5 +118,41 @@ public class AbstractUnitRecord {
 	public String toString() {
 		return getKey();
 	}
+
+	public static int parseUnitType(String typeName) {
+		switch (typeName) {
+		case "Mek":
+			return UnitType.MEK;
+		case "Tank":
+			return UnitType.TANK;
+		case "BattleArmor":
+			return UnitType.BATTLE_ARMOR;
+		case "Infantry":
+			return UnitType.INFANTRY;
+		case "ProtoMek":
+			return UnitType.PROTOMEK;
+		case "VTOL":
+			return UnitType.VTOL;
+		case "Naval":
+			return UnitType.NAVAL;
+		case "Gun Emplacement":
+			return UnitType.GUN_EMPLACEMENT;
+		case "Conventional Fighter":
+			return UnitType.CONV_FIGHTER;
+		case "Aero":
+			return UnitType.AERO;
+		case "Small Craft":
+			return UnitType.SMALL_CRAFT;
+		case "Dropship":
+			return UnitType.DROPSHIP;
+		case "Jumpship":
+			return UnitType.JUMPSHIP;
+		case "Warship":
+			return UnitType.WARSHIP;
+		case "Space Station":
+			return UnitType.SPACE_STATION;
+		}
+		return -1;
+	}	
 }
 

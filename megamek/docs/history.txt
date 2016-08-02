@@ -4,6 +4,7 @@ v0.41.22-git
 + Issue #295: Roads not preventing swamp/rubble PSRs
 + Bug: Clicking Walk from Jump, would still plot jumping movement
 + Issue #258: Added Next/Prev Weapon Mode keybinds
++ Issue #189: AMS mounted on ASFs do not fire on the ground map
 
 v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips

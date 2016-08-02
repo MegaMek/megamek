@@ -22490,7 +22490,7 @@ public class Server implements Runnable {
                         }
                     }
                 }
-            } else if (hit.getSpecCritMod() < 0) {
+            } else if (hit.getSpecCrit()) {
                 // ok, we dealt damage but didn't go on to internal
                 // we get a chance of a crit, using Armor Piercing.
                 // but only if we don't have hardened or ferro-lamellor armor

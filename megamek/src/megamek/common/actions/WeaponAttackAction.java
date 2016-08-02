@@ -4065,8 +4065,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     }
                     WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
                     if ((prevAttack.getEntityId() == ae.getId())
-                            && (null != te)
-                            && (prevAttack.getTargetId() != te.getId())) {
+                            && (prevAttack.getTargetId() != target.getTargetId())) {
                         return "attack already declared against another target";
                     }
                 }

@@ -20804,8 +20804,8 @@ public class Server implements Runnable {
      * @return a <code>Vector</code> of <code>Report</code>s
      */
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage,
-                                       boolean ammoExplosion, DamageType bFrag, boolean damageIS,
-                                       boolean areaSatArty, boolean throughFront, boolean underWater) {
+            boolean ammoExplosion, DamageType bFrag, boolean damageIS,
+            boolean areaSatArty, boolean throughFront, boolean underWater) {
         return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS,
                             areaSatArty, throughFront, underWater, false);
     }
@@ -21600,10 +21600,8 @@ public class Server implements Runnable {
 
                 // is this a mech/tank dumping ammo being hit in the rear torso?
                 if (((te instanceof Mech) && hit.isRear() && bTorso)
-                    || ((te instanceof Tank) && (hit.getLocation() == (te instanceof SuperHeavyTank ? SuperHeavyTank
-                        .LOC_REAR
-                                                                                                    : Tank.LOC_REAR))
-                )) {
+                        || ((te instanceof Tank) && (hit.getLocation() == (te instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
+                                : Tank.LOC_REAR)))) {
                     for (Mounted mAmmo : te.getAmmo()) {
                         if (mAmmo.isDumping() && !mAmmo.isDestroyed()
                             && !mAmmo.isHit()) {
@@ -22538,7 +22536,7 @@ public class Server implements Runnable {
                         critMod += hit.glancingMod();
                     }
                     vDesc.addAll(criticalEntity(te, hit.getLocation(),
-                                                hit.isRear(), critMod + critBonus, damage_orig));
+                            hit.isRear(), critMod + critBonus, damage_orig));
                 }
                 specCrits = 0;
             }

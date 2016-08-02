@@ -8833,7 +8833,13 @@ public class Server implements Runnable {
                        && !(entity.getMovementMode() == EntityMovementMode.HOVER)) {
                 rollTarget = entity.checkWaterMove(waterLevel, overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    doSkillCheckInPlace(entity, rollTarget);
+                    // For falling elevation, Entity must not on hex surface
+                    int currElevation = entity.getElevation();
+                    entity.setElevation(0);
+                    boolean success = doSkillCheckInPlace(entity, rollTarget);
+                    if (success) {
+                        entity.setElevation(currElevation);
+                    }
                 }
                 if (waterLevel > 1) {
                     // Any swarming infantry will be destroyed.
@@ -26998,8 +27004,7 @@ public class Server implements Runnable {
             waterDamage = ((int) Math.round(entity.getWeight() / 10.0) * (waterDepth + 1)) / 2;
         }
 
-        // If the waterDepth is larger than the fall height,
-        // we fell underwater
+        // If the waterDepth is larger than the fall height, we fell underwater
         if ((waterDepth >= fallHeight) && ((waterDepth != 0) || (fallHeight != 0))) {
             damage = 0;
             waterDamage = ((int) Math.round(entity.getWeight() / 10.0) * (fallHeight + 1)) / 2;
@@ -27116,7 +27121,7 @@ public class Server implements Runnable {
             roll.removeAutos();
 
             if (fallHeight > 1) {
-                roll.addModifier(fallHeight - newElevation - 1, "height of fall");
+                roll.addModifier(fallHeight - 1, "height of fall");
             }
 
             if (roll.getValue() == TargetRoll.IMPOSSIBLE) {

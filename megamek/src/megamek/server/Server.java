@@ -22816,17 +22816,17 @@ public class Server implements Runnable {
                 if (en instanceof Mech) {
                     Mech mech = (Mech) en;
                     if (mech.isAutoEject()
-                        && (!game.getOptions().booleanOption(
-                            "conditional_ejection") || (game
-                                                                .getOptions().booleanOption(
-                                    "conditional_ejection") && mech
-                                                                .isCondEjectEngine()))) {
+                            && (!game.getOptions().booleanOption(
+                                    "conditional_ejection") || (game
+                                    .getOptions().booleanOption(
+                                            "conditional_ejection") && mech
+                                    .isCondEjectEngine()))) {
                         vDesc.addAll(ejectEntity(en, true));
                     }
                 }
 
                 doFusionEngineExplosion(engineRating, en.getPosition(), vDesc,
-                                        null);
+                        null);
                 Report.addNewline(vDesc);
                 r = new Report(5410, Report.PUBLIC);
                 r.subject = en.getId();
@@ -22843,9 +22843,9 @@ public class Server implements Runnable {
      * Extract explosion functionality for generalized explosions in areas.
      */
     public void doFusionEngineExplosion(int engineRating, Coords position,
-                                        Vector<Report> vDesc, Vector<Integer> vUnits) {
-        int[] myDamages = {engineRating, (engineRating / 10),
-                           (engineRating / 20), (engineRating / 40)};
+            Vector<Report> vDesc, Vector<Integer> vUnits) {
+        int[] myDamages = { engineRating, (engineRating / 10),
+                (engineRating / 20), (engineRating / 40) };
         doExplosion(myDamages, true, position, false, vDesc, vUnits, 5, -1);
     }
 
@@ -22853,9 +22853,9 @@ public class Server implements Runnable {
      * General function to cause explosions in areas.
      */
     public void doExplosion(int damage, int degredation,
-                            boolean autoDestroyInSameHex, Coords position,
-                            boolean allowShelter, Vector<Report> vDesc, Vector<Integer> vUnits,
-                            int excludedUnitId) {
+            boolean autoDestroyInSameHex, Coords position,
+            boolean allowShelter, Vector<Report> vDesc, Vector<Integer> vUnits,
+            int excludedUnitId) {
 
         if (degredation < 1) {
             return;
@@ -22872,7 +22872,7 @@ public class Server implements Runnable {
             myDamages[x] = myDamages[x - 1] - degredation;
         }
         doExplosion(myDamages, autoDestroyInSameHex, position, allowShelter,
-                    vDesc, vUnits, 5, excludedUnitId);
+                vDesc, vUnits, 5, excludedUnitId);
     }
 
     /**
@@ -22937,8 +22937,7 @@ public class Server implements Runnable {
             }
 
             // We are going to assume that explosions are on the ground here so
-            // flying entities should be
-            // unaffected
+            // flying entities should be unaffected
             if (entity.isAirborne()) {
                 continue;
             }
@@ -22970,16 +22969,13 @@ public class Server implements Runnable {
             if ((range == 0) && autoDestroyInSameHex) {
                 // Add the reports
                 vDesc.addAll(destroyEntity(entity, "explosion proximity",
-                                           false, false));
-
+                        false, false));
                 // Add it to the "blasted units" list
                 vUnits.add(entity.getId());
-
                 // Kill the crew
                 entity.getCrew().setDoomed(true);
 
                 entitiesHit.add(entity);
-
                 continue;
             }
 
@@ -23018,9 +23014,9 @@ public class Server implements Runnable {
                     table = ToHitData.HIT_SPECIAL_PROTO;
                 }
                 HitData hit = entity.rollHitLocation(table,
-                                                     Compute.targetSideTable(position, entity));
+                        Compute.targetSideTable(position, entity));
                 vDesc.addAll(damageEntity(entity, hit, cluster, false,
-                                          DamageType.IGNORE_PASSENGER, false, true));
+                        DamageType.IGNORE_PASSENGER, false, true));
                 damage -= cluster;
             }
             Report.addNewline(vDesc);
@@ -23031,10 +23027,10 @@ public class Server implements Runnable {
             // This can be null, if the transport died from damage
             final Entity transporter = game.getEntity(e.getTransportId());
             if ((transporter == null)
-                || transporter.getExternalUnits().contains(e)) {
+                    || transporter.getExternalUnits().contains(e)) {
                 // Its external or transport was destroyed - hit it.
                 final Coords entityPos = (transporter == null ? e.getPosition()
-                                                              : transporter.getPosition());
+                        : transporter.getPosition());
                 final int range = position.distance(entityPos);
 
                 if (range >= damages.length) {
@@ -23045,9 +23041,9 @@ public class Server implements Runnable {
                 int damage = damages[range];
                 if (allowShelter) {
                     final int absHeight = (transporter == null ? e.relHeight()
-                                                               : transporter.relHeight());
+                            : transporter.relHeight());
                     if ((entityPos != null)
-                        && canShelter(entityPos, position, absHeight)) {
+                            && canShelter(entityPos, position, absHeight)) {
                         if (isSheltered()) {
                             r = new Report(6545);
                             r.addDesc(e);
@@ -23082,7 +23078,7 @@ public class Server implements Runnable {
                     HitData hit = e
                             .rollHitLocation(table, ToHitData.SIDE_FRONT);
                     vDesc.addAll(damageEntity(e, hit, cluster, false,
-                                              DamageType.IGNORE_PASSENGER, false, true));
+                            DamageType.IGNORE_PASSENGER, false, true));
                     damage -= cluster;
                 }
                 Report.addNewline(vDesc);

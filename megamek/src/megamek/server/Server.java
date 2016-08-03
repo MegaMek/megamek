@@ -22914,6 +22914,42 @@ public class Server implements Runnable {
             }
         }
 
+        // We need to damage terrain
+        int maxDist = damages.length;
+        IHex hex = game.getBoard().getHex(position);
+        if ((hex != null) && hex.hasTerrainfactor()) {
+            r = new Report(3384);
+            r.indent(2);
+            r.type = Report.PUBLIC;
+            r.add(position.getBoardNum());
+            r.add(damages[0]);
+            vDesc.add(r);
+        }
+        Vector<Report> reports = tryClearHex(position, damages[0], Entity.NONE);
+        for (Report report : reports) {
+            report.indent(3);
+        }
+        vDesc.addAll(reports);
+        for (int dist = 1; dist < maxDist; dist++) {
+            for (int dir = 0; dir < 6; dir++) {
+                Coords c = position.translated(dir, dist);
+                hex = game.getBoard().getHex(c);
+                if ((hex != null) && hex.hasTerrainfactor()) {
+                    r = new Report(3384);
+                    r.indent(2);
+                    r.type = Report.PUBLIC;
+                    r.add(c.getBoardNum());
+                    r.add(damages[dist]);
+                    vDesc.add(r);
+                }
+                reports = tryClearHex(c, damages[dist], Entity.NONE);
+                for (Report report : reports) {
+                    report.indent(3);
+                }
+                vDesc.addAll(reports);
+            }
+        }
+
         // Now we damage people near the explosion.
         ArrayList<Entity> loaded = new ArrayList<Entity>();
         for (Iterator<Entity> ents = game.getEntities(); ents.hasNext();) {

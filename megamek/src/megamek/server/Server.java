@@ -8833,7 +8833,13 @@ public class Server implements Runnable {
                        && !(entity.getMovementMode() == EntityMovementMode.HOVER)) {
                 rollTarget = entity.checkWaterMove(waterLevel, overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    doSkillCheckInPlace(entity, rollTarget);
+                    // For falling elevation, Entity must not on hex surface
+                    int currElevation = entity.getElevation();
+                    entity.setElevation(0);
+                    boolean success = doSkillCheckInPlace(entity, rollTarget);
+                    if (success) {
+                        entity.setElevation(currElevation);
+                    }
                 }
                 if (waterLevel > 1) {
                     // Any swarming infantry will be destroyed.
@@ -12983,33 +12989,33 @@ public class Server implements Runnable {
             }
 
             // Can only use AMS versus missles.
-            if (weapon.getType().hasFlag(WeaponType.F_MISSILE)) {
-                Entity target = game.getEntity(waa.getTargetId());
-                Vector<WeaponHandler> v = htAttacks.get(target);
-                if (v == null) {
-                    v = new Vector<WeaponHandler>();
-                    htAttacks.put(target, v);
-                }
-                v.addElement(wh);
-                // Keep track of what weapon attacks could be affected by APDS
-                if (apdsCoords.containsKey(target.getPosition())) {
-                    for (Mounted apds : apdsCoords.get(target.getPosition())) {
-                        // APDS only affects attacks against friendly units
-                        if (target.isEnemyOf(apds.getEntity())) {
-                            continue;
-                        }
-                        Vector<WeaponHandler> handlerList = apdsTargets
-                                .get(apds);
-                        if (handlerList == null) {
-                            handlerList = new Vector<>();
-                            apdsTargets.put(apds, handlerList);
-                        }
-                        handlerList.add(wh);
+            if (!weapon.getType().hasFlag(WeaponType.F_MISSILE)) {
+                continue;
+            }
+
+            Entity target = game.getEntity(waa.getTargetId());
+            Vector<WeaponHandler> v = htAttacks.get(target);
+            if (v == null) {
+                v = new Vector<WeaponHandler>();
+                htAttacks.put(target, v);
+            }
+            v.addElement(wh);
+            // Keep track of what weapon attacks could be affected by APDS
+            if (apdsCoords.containsKey(target.getPosition())) {
+                for (Mounted apds : apdsCoords.get(target.getPosition())) {
+                    // APDS only affects attacks against friendly units
+                    if (target.isEnemyOf(apds.getEntity())) {
+                        continue;
                     }
+                    Vector<WeaponHandler> handlerList = apdsTargets.get(apds);
+                    if (handlerList == null) {
+                        handlerList = new Vector<>();
+                        apdsTargets.put(apds, handlerList);
+                    }
+                    handlerList.add(wh);
                 }
             }
         }
-
 
         // Let each target assign its AMS
         for (Entity e : htAttacks.keySet()) {
@@ -20804,8 +20810,8 @@ public class Server implements Runnable {
      * @return a <code>Vector</code> of <code>Report</code>s
      */
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage,
-                                       boolean ammoExplosion, DamageType bFrag, boolean damageIS,
-                                       boolean areaSatArty, boolean throughFront, boolean underWater) {
+            boolean ammoExplosion, DamageType bFrag, boolean damageIS,
+            boolean areaSatArty, boolean throughFront, boolean underWater) {
         return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS,
                             areaSatArty, throughFront, underWater, false);
     }
@@ -21600,10 +21606,8 @@ public class Server implements Runnable {
 
                 // is this a mech/tank dumping ammo being hit in the rear torso?
                 if (((te instanceof Mech) && hit.isRear() && bTorso)
-                    || ((te instanceof Tank) && (hit.getLocation() == (te instanceof SuperHeavyTank ? SuperHeavyTank
-                        .LOC_REAR
-                                                                                                    : Tank.LOC_REAR))
-                )) {
+                        || ((te instanceof Tank) && (hit.getLocation() == (te instanceof SuperHeavyTank ? SuperHeavyTank.LOC_REAR
+                                : Tank.LOC_REAR)))) {
                     for (Mounted mAmmo : te.getAmmo()) {
                         if (mAmmo.isDumping() && !mAmmo.isDestroyed()
                             && !mAmmo.isHit()) {
@@ -22492,7 +22496,7 @@ public class Server implements Runnable {
                         }
                     }
                 }
-            } else if (hit.getSpecCritMod() < 0) {
+            } else if (hit.getSpecCrit()) {
                 // ok, we dealt damage but didn't go on to internal
                 // we get a chance of a crit, using Armor Piercing.
                 // but only if we don't have hardened or ferro-lamellor armor
@@ -22538,7 +22542,7 @@ public class Server implements Runnable {
                         critMod += hit.glancingMod();
                     }
                     vDesc.addAll(criticalEntity(te, hit.getLocation(),
-                                                hit.isRear(), critMod + critBonus, damage_orig));
+                            hit.isRear(), critMod + critBonus, damage_orig));
                 }
                 specCrits = 0;
             }
@@ -22812,17 +22816,17 @@ public class Server implements Runnable {
                 if (en instanceof Mech) {
                     Mech mech = (Mech) en;
                     if (mech.isAutoEject()
-                        && (!game.getOptions().booleanOption(
-                            "conditional_ejection") || (game
-                                                                .getOptions().booleanOption(
-                                    "conditional_ejection") && mech
-                                                                .isCondEjectEngine()))) {
+                            && (!game.getOptions().booleanOption(
+                                    "conditional_ejection") || (game
+                                    .getOptions().booleanOption(
+                                            "conditional_ejection") && mech
+                                    .isCondEjectEngine()))) {
                         vDesc.addAll(ejectEntity(en, true));
                     }
                 }
 
                 doFusionEngineExplosion(engineRating, en.getPosition(), vDesc,
-                                        null);
+                        null);
                 Report.addNewline(vDesc);
                 r = new Report(5410, Report.PUBLIC);
                 r.subject = en.getId();
@@ -22839,9 +22843,9 @@ public class Server implements Runnable {
      * Extract explosion functionality for generalized explosions in areas.
      */
     public void doFusionEngineExplosion(int engineRating, Coords position,
-                                        Vector<Report> vDesc, Vector<Integer> vUnits) {
-        int[] myDamages = {engineRating, (engineRating / 10),
-                           (engineRating / 20), (engineRating / 40)};
+            Vector<Report> vDesc, Vector<Integer> vUnits) {
+        int[] myDamages = { engineRating, (engineRating / 10),
+                (engineRating / 20), (engineRating / 40) };
         doExplosion(myDamages, true, position, false, vDesc, vUnits, 5, -1);
     }
 
@@ -22849,9 +22853,9 @@ public class Server implements Runnable {
      * General function to cause explosions in areas.
      */
     public void doExplosion(int damage, int degredation,
-                            boolean autoDestroyInSameHex, Coords position,
-                            boolean allowShelter, Vector<Report> vDesc, Vector<Integer> vUnits,
-                            int excludedUnitId) {
+            boolean autoDestroyInSameHex, Coords position,
+            boolean allowShelter, Vector<Report> vDesc, Vector<Integer> vUnits,
+            int excludedUnitId) {
 
         if (degredation < 1) {
             return;
@@ -22868,7 +22872,7 @@ public class Server implements Runnable {
             myDamages[x] = myDamages[x - 1] - degredation;
         }
         doExplosion(myDamages, autoDestroyInSameHex, position, allowShelter,
-                    vDesc, vUnits, 5, excludedUnitId);
+                vDesc, vUnits, 5, excludedUnitId);
     }
 
     /**
@@ -22910,6 +22914,42 @@ public class Server implements Runnable {
             }
         }
 
+        // We need to damage terrain
+        int maxDist = damages.length;
+        IHex hex = game.getBoard().getHex(position);
+        if ((hex != null) && hex.hasTerrainfactor()) {
+            r = new Report(3384);
+            r.indent(2);
+            r.type = Report.PUBLIC;
+            r.add(position.getBoardNum());
+            r.add(damages[0]);
+            vDesc.add(r);
+        }
+        Vector<Report> reports = tryClearHex(position, damages[0], Entity.NONE);
+        for (Report report : reports) {
+            report.indent(3);
+        }
+        vDesc.addAll(reports);
+        for (int dist = 1; dist < maxDist; dist++) {
+            for (int dir = 0; dir < 6; dir++) {
+                Coords c = position.translated(dir, dist);
+                hex = game.getBoard().getHex(c);
+                if ((hex != null) && hex.hasTerrainfactor()) {
+                    r = new Report(3384);
+                    r.indent(2);
+                    r.type = Report.PUBLIC;
+                    r.add(c.getBoardNum());
+                    r.add(damages[dist]);
+                    vDesc.add(r);
+                }
+                reports = tryClearHex(c, damages[dist], Entity.NONE);
+                for (Report report : reports) {
+                    report.indent(3);
+                }
+                vDesc.addAll(reports);
+            }
+        }
+
         // Now we damage people near the explosion.
         ArrayList<Entity> loaded = new ArrayList<Entity>();
         for (Iterator<Entity> ents = game.getEntities(); ents.hasNext();) {
@@ -22933,8 +22973,7 @@ public class Server implements Runnable {
             }
 
             // We are going to assume that explosions are on the ground here so
-            // flying entities should be
-            // unaffected
+            // flying entities should be unaffected
             if (entity.isAirborne()) {
                 continue;
             }
@@ -22966,16 +23005,13 @@ public class Server implements Runnable {
             if ((range == 0) && autoDestroyInSameHex) {
                 // Add the reports
                 vDesc.addAll(destroyEntity(entity, "explosion proximity",
-                                           false, false));
-
+                        false, false));
                 // Add it to the "blasted units" list
                 vUnits.add(entity.getId());
-
                 // Kill the crew
                 entity.getCrew().setDoomed(true);
 
                 entitiesHit.add(entity);
-
                 continue;
             }
 
@@ -23014,9 +23050,9 @@ public class Server implements Runnable {
                     table = ToHitData.HIT_SPECIAL_PROTO;
                 }
                 HitData hit = entity.rollHitLocation(table,
-                                                     Compute.targetSideTable(position, entity));
+                        Compute.targetSideTable(position, entity));
                 vDesc.addAll(damageEntity(entity, hit, cluster, false,
-                                          DamageType.IGNORE_PASSENGER, false, true));
+                        DamageType.IGNORE_PASSENGER, false, true));
                 damage -= cluster;
             }
             Report.addNewline(vDesc);
@@ -23027,10 +23063,10 @@ public class Server implements Runnable {
             // This can be null, if the transport died from damage
             final Entity transporter = game.getEntity(e.getTransportId());
             if ((transporter == null)
-                || transporter.getExternalUnits().contains(e)) {
+                    || transporter.getExternalUnits().contains(e)) {
                 // Its external or transport was destroyed - hit it.
                 final Coords entityPos = (transporter == null ? e.getPosition()
-                                                              : transporter.getPosition());
+                        : transporter.getPosition());
                 final int range = position.distance(entityPos);
 
                 if (range >= damages.length) {
@@ -23041,9 +23077,9 @@ public class Server implements Runnable {
                 int damage = damages[range];
                 if (allowShelter) {
                     final int absHeight = (transporter == null ? e.relHeight()
-                                                               : transporter.relHeight());
+                            : transporter.relHeight());
                     if ((entityPos != null)
-                        && canShelter(entityPos, position, absHeight)) {
+                            && canShelter(entityPos, position, absHeight)) {
                         if (isSheltered()) {
                             r = new Report(6545);
                             r.addDesc(e);
@@ -23078,7 +23114,7 @@ public class Server implements Runnable {
                     HitData hit = e
                             .rollHitLocation(table, ToHitData.SIDE_FRONT);
                     vDesc.addAll(damageEntity(e, hit, cluster, false,
-                                              DamageType.IGNORE_PASSENGER, false, true));
+                            DamageType.IGNORE_PASSENGER, false, true));
                     damage -= cluster;
                 }
                 Report.addNewline(vDesc);
@@ -27000,8 +27036,7 @@ public class Server implements Runnable {
             waterDamage = ((int) Math.round(entity.getWeight() / 10.0) * (waterDepth + 1)) / 2;
         }
 
-        // If the waterDepth is larger than the fall height,
-        // we fell underwater
+        // If the waterDepth is larger than the fall height, we fell underwater
         if ((waterDepth >= fallHeight) && ((waterDepth != 0) || (fallHeight != 0))) {
             damage = 0;
             waterDamage = ((int) Math.round(entity.getWeight() / 10.0) * (fallHeight + 1)) / 2;
@@ -27118,7 +27153,7 @@ public class Server implements Runnable {
             roll.removeAutos();
 
             if (fallHeight > 1) {
-                roll.addModifier(fallHeight - newElevation - 1, "height of fall");
+                roll.addModifier(fallHeight - 1, "height of fall");
             }
 
             if (roll.getValue() == TargetRoll.IMPOSSIBLE) {

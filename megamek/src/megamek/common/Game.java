@@ -2698,7 +2698,6 @@ public class Game implements Serializable, IGame {
 
     public void addReports(Vector<Report> v) {
         if (v.size() == 0) {
-            System.out.println("Game.addReports() received blank vector.");
             return;
         }
         gameReports.add(roundCount, v);

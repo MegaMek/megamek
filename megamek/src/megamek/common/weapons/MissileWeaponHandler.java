@@ -718,15 +718,28 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // ways
         int nCluster = calcnCluster();
         int id = vPhaseReport.size();
-        int hits = calcHits(vPhaseReport);
+        int hits;
         if (target.isAirborne() || game.getBoard().inSpace()) {
-            //if we added a line to the phase report for calc hits, remove it now
-            while(vPhaseReport.size() > id) {
-                vPhaseReport.removeElementAt(vPhaseReport.size()-1);
-            }
+            // Ensures AMS state is properly updated
+            getAMSHitsMod(new Vector<Report>());
             int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);
             hits = aeroResults[0];
             nCluster = aeroResults[1];
+            // Need to report hit (normally reported in calcHits)
+            if (!bMissed && amsEngaged && !ae.isCapitalFighter()) {
+                int amsRoll = Compute.d6();
+                r = new Report(3352);
+                r.subject = subjectId;
+                r.add(amsRoll);
+                vPhaseReport.add(r);
+                hits = Math.max(0, hits - amsRoll);
+            } else if (!bMissed) {
+                r = new Report(3390);
+                r.subject = subjectId;
+                vPhaseReport.addElement(r);
+            }
+        } else {
+            hits = calcHits(vPhaseReport);
         }
 
         // We have to adjust the reports on a miss, so they line up
@@ -748,6 +761,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             if (hits == 0) {
                 r = new Report(3365);
                 r.subject = subjectId;
+                if (target.isAirborne() || game.getBoard().inSpace()) {
+                    r.indent(2);
+                }
                 vPhaseReport.addElement(r);
             }
 

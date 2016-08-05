@@ -4,6 +4,11 @@ v0.41.22-git
 + Issue #295: Roads not preventing swamp/rubble PSRs
 + Bug: Clicking Walk from Jump, would still plot jumping movement
 + Issue #258: Added Next/Prev Weapon Mode keybinds
++ Issue #189: AMS mounted on ASFs do not fire on the ground map
++ Issue #133: ASF strikes can have multiple targets if target is a building
++ Issue #297: Direct blow can make Tandem Charge SRMs fail
++ Issue #138: Jumping into Water and Falling deals incorrect damage
++ Issue #70: Terrain Factor Damage for Engine Explosions and Ammo Explosions
 
 v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips

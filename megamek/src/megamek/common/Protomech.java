@@ -729,8 +729,8 @@ public class Protomech extends Entity {
             case LOC_MAINGUN:
                 return new HitData(LOC_TORSO, hit.isRear(), hit.getEffect(),
                         hit.hitAimedLocation(), hit.getSpecCritMod(),
-                        hit.isFromFront(), hit.getGeneralDamageType(),
-                        hit.glancingMod());
+                        hit.getSpecCrit(), hit.isFromFront(),
+                        hit.getGeneralDamageType(), hit.glancingMod());
             case LOC_TORSO:
             default:
                 return new HitData(LOC_DESTROYED);

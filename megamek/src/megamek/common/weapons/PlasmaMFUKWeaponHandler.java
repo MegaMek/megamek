@@ -106,6 +106,8 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
         // Buildings can't be accidentally ignited,
         // and some weapons can't ignite fires.
         if ((entityTarget != null)
+                && !entityTarget.isAirborne()
+                && !entityTarget.isAirborneVTOLorWIGE()
                 && ((bldg == null) && (wtype.getFireTN() != TargetRoll.IMPOSSIBLE))) {
             server.tryIgniteHex(target.getPosition(), subjectId, true, false,
                     new TargetRoll(wtype.getFireTN(), wtype.getName()), 3,

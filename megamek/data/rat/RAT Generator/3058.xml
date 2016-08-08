@@ -5617,6 +5617,12 @@
 			<availability>CLAN:1,CFM:2,CGS:2,BAN:2</availability>
 		</model>
 	</chassis>
+	<chassis name='Zeus-X' unitType='Mek'>
+		<availability>LA:3-</availability>
+		<model name='ZEU-X'>
+			<availability>LA:8</availability>
+		</model>
+	</chassis>
 	<chassis name='Zeus' unitType='Mek'>
 		<availability>Periphery.R:5,HL:5,LA:10,FRR:4,IS:3,FS:7,MERC:5,Periphery:2</availability>
 		<model name='ZEU-9S2'>

@@ -1710,6 +1710,12 @@
 	</faction>
 </factions>
 <units>
+	<chassis name='&apos;OMEGA&apos;' unitType='Mek'>
+		<availability>WOB:2</availability>
+		<model name='SHP-4X'>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
 	<chassis name='Akuma' unitType='Mek'>
 		<availability>CNC:4,WOB:4,DC:6</availability>
 		<model name='AKU-1X'>
@@ -3297,6 +3303,15 @@
 		</model>
 		<model name='C-1FC'>
 			<availability>MERC:4</availability>
+		</model>
+	</chassis>
+	<chassis name='Cougar' unitType='Mek'>
+		<availability>CJF:2</availability>
+		<model name='XR'>
+			<availability>CJF:8</availability>
+		</model>
+		<model name='G'>
+			<availability>CHH:6,General:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Cougar' unitType='Mek' omni='Clan'>
@@ -6518,9 +6533,6 @@
 		<model name='MAD-4K'>
 			<availability>DC:7</availability>
 		</model>
-		<model name='MAD-4L'>
-			<availability>CC:5</availability>
-		</model>
 		<model name='C'>
 			<availability>MERC.WD:4</availability>
 		</model>
@@ -9059,6 +9071,21 @@
 			<availability>General:4</availability>
 		</model>
 	</chassis>
+	<chassis name='Tomahawk' unitType='Mek' omni='Clan'>
+		<availability>CW:2</availability>
+		<model name='B'>
+			<availability>General:7</availability>
+		</model>
+		<model name='A'>
+			<availability>General:7</availability>
+		</model>
+		<model name='(Prime)'>
+			<availability>General:8</availability>
+		</model>
+		<model name='C'>
+			<availability>General:7</availability>
+		</model>
+	</chassis>
 	<chassis name='Toro' unitType='Mek'>
 		<availability>MOC:3-,FVC:3-,FS:2-,CDP:3-,TC:4-</availability>
 		<model name='TR-A-1'>
@@ -9624,7 +9651,7 @@
 			<availability>CLAN:1,IS:3</availability>
 		</model>
 		<model name='8'>
-			<availability>MOC:2,CLAN:2,IS:2,TC:2</availability>
+			<availability>MOC:3,CLAN:3,IS:3,TC:3</availability>
 		</model>
 		<model name='3'>
 			<availability>CCC:1,CDS:5,CLAN:1</availability>
@@ -10020,6 +10047,18 @@
 		</model>
 		<model name='Y-H9GC'>
 			<availability>CC:3</availability>
+		</model>
+	</chassis>
+	<chassis name='Zeus-X' unitType='Mek'>
+		<availability>MERC.WD:4,MERC.KH:3,LA:3-</availability>
+		<model name='ZEU-X'>
+			<availability>LA:5</availability>
+		</model>
+		<model name='ZEU-9WD'>
+			<availability>General:4</availability>
+		</model>
+		<model name='ZEU-X2'>
+			<availability>LA:6</availability>
 		</model>
 	</chassis>
 	<chassis name='Zeus' unitType='Mek'>
@@ -10443,6 +10482,12 @@
 		</model>
 		<model name='(LRM)'>
 			<availability>General:6</availability>
+		</model>
+	</chassis>
+	<chassis name='Bulwark Assault Vehicle' unitType='Tank'>
+		<availability>FWL:3,MERC:2</availability>
+		<model name='(Original)'>
+			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Burke Defense Tank' unitType='Tank'>
@@ -11412,6 +11457,10 @@
 	</chassis>
 	<chassis name='MIT23 MASH Vehicle' unitType='Tank'>
 		<availability>CS:5</availability>
+		<model name='(Standard)'>
+			<roles>support</roles>
+			<availability>General:8</availability>
+		</model>
 	</chassis>
 	<chassis name='MRM Carrier' unitType='Tank'>
 		<availability>DC:6</availability>

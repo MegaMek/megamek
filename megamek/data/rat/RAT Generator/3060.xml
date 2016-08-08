@@ -6368,6 +6368,21 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Tomahawk' unitType='Mek' omni='Clan'>
+		<availability>CW:1</availability>
+		<model name='B'>
+			<availability>General:7</availability>
+		</model>
+		<model name='A'>
+			<availability>General:7</availability>
+		</model>
+		<model name='(Prime)'>
+			<availability>General:8</availability>
+		</model>
+		<model name='C'>
+			<availability>General:7</availability>
+		</model>
+	</chassis>
 	<chassis name='Toyama' unitType='Mek'>
 		<availability>WOB:5</availability>
 		<model name='TYM-1A'>
@@ -6951,6 +6966,12 @@
 		</model>
 		<model name='Y-H10G'>
 			<availability>General:6</availability>
+		</model>
+	</chassis>
+	<chassis name='Zeus-X' unitType='Mek'>
+		<availability>LA:3-</availability>
+		<model name='ZEU-X'>
+			<availability>LA:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Zeus' unitType='Mek'>

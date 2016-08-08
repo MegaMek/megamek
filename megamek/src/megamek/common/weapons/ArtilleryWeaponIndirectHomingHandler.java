@@ -24,6 +24,7 @@ import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.TagInfo;
 import megamek.common.TargetRoll;
@@ -99,6 +100,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         }
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
+        final boolean bldgDamagedOnMiss = targetInBuilding
+                && !(target instanceof Infantry)
+                && ae.getPosition().distance(target.getPosition()) <= 1;
 
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
@@ -209,7 +213,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
 
             // Works out fire setting, AMS shots, and whether continuation is
             // necessary.
-            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
                     vPhaseReport)) {
                 return false;
             }
@@ -437,7 +441,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends
      */
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
-            boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
+            boolean bldgDamagedOnMiss, Building bldg,
+            Vector<Report> vPhaseReport) {
         return true;
     }
 }

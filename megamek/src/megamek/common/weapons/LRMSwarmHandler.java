@@ -67,6 +67,9 @@ public class LRMSwarmHandler extends LRMHandler {
                 : null;
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
+        final boolean bldgDamagedOnMiss = targetInBuilding
+                && !(target instanceof Infantry)
+                && ae.getPosition().distance(target.getPosition()) <= 1;
 
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
@@ -179,7 +182,7 @@ public class LRMSwarmHandler extends LRMHandler {
 
             // Works out fire setting, AMS shots, and whether continuation is
             // necessary.
-            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
                     vPhaseReport, phase)) {
                 return false;
             }
@@ -331,9 +334,9 @@ public class LRMSwarmHandler extends LRMHandler {
      * .Entity, boolean, megamek.common.Building, java.util.Vector)
      */
     protected boolean handleSpecialMiss(Entity entityTarget,
-            boolean targetInBuilding, Building bldg,
+            boolean bldgDamagedOnMiss, Building bldg,
             Vector<Report> vPhaseReport, IGame.Phase phase) {
-        super.handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+        super.handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
                 vPhaseReport);
         int swarmMissilesNowLeft = waa.getSwarmMissiles();
         if (swarmMissilesNowLeft == 0) {

@@ -103,7 +103,8 @@ public class TAGHandler extends WeaponHandler {
      */
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
-            boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
+            boolean bldgDamagedOnMiss, Building bldg,
+            Vector<Report> vPhaseReport) {
         int priority = 1;
         EquipmentMode mode = (weapon.curMode());
         if (mode != null) {

@@ -13994,23 +13994,30 @@ public class Server implements Runnable {
      * Try to ignite the hex, taking into account exisiting fires and the
      * effects of Inferno rounds.
      *
-     * @param c              - the <code>Coords</code> of the hex being lit.
-     * @param entityId       - the <code>int</code> id of the entity involved.
-     * @param bInferno       - <code>true</code> if the weapon igniting the hex is an
-     *                       Inferno round. If some other weapon or ammo is causing the
-     *                       roll, this should be <code>false</code>.
-     * @param bHotGun        - <code>true</code> if the weapon is plasma/flamer/incendiary
-     *                       LRM/etc
-     * @param nTargetRoll    - the <code>TargetRoll</code> for the ignition roll.
-     * @param bReportAttempt - <code>true</code> if the attempt roll should be added to the
-     *                       report.
-     * @param accidentTarget - <code>int</code> the target number below which a roll has to
-     *                       be made in order to try igniting a hex accidently. -1 for
-     *                       intentional
+     * @param c
+     *            - the <code>Coords</code> of the hex being lit.
+     * @param entityId
+     *            - the <code>int</code> id of the entity involved.
+     * @param bInferno
+     *            - <code>true</code> if the weapon igniting the hex is an
+     *            Inferno round. If some other weapon or ammo is causing the
+     *            roll, this should be <code>false</code>.
+     * @param bHotGun
+     *            - <code>true</code> if the weapon is plasma/flamer/incendiary
+     *            LRM/etc
+     * @param nTargetRoll
+     *            - the <code>TargetRoll</code> for the ignition roll.
+     * @param bReportAttempt
+     *            - <code>true</code> if the attempt roll should be added to the
+     *            report.
+     * @param accidentTarget
+     *            - <code>int</code> the target number below which a roll has to
+     *            be made in order to try igniting a hex accidently. -1 for
+     *            intentional
      */
     public boolean tryIgniteHex(Coords c, int entityId, boolean bHotGun,
-                                boolean bInferno, TargetRoll nTargetRoll, boolean bReportAttempt,
-                                int accidentTarget, Vector<Report> vPhaseReport) {
+            boolean bInferno, TargetRoll nTargetRoll, boolean bReportAttempt,
+            int accidentTarget, Vector<Report> vPhaseReport) {
 
         IHex hex = game.getBoard().getHex(c);
         Report r;
@@ -14113,7 +14120,7 @@ public class Server implements Runnable {
                 vPhaseReport.add(r);
             }
         } else if (checkIgnition(c, nTargetRoll, bInferno, entityId,
-                                 vPhaseReport)) {
+                vPhaseReport)) {
             return true;
         }
         return false;
@@ -14124,18 +14131,22 @@ public class Server implements Runnable {
      * effects of Inferno rounds. This version of the method will not report the
      * attempt roll.
      *
-     * @param c           - the <code>Coords</code> of the hex being lit.
-     * @param entityId    - the <code>int</code> id of the entity involved.
-     * @param bInferno    - <code>true</code> if the weapon igniting the hex is an
-     *                    Inferno round. If some other weapon or ammo is causing the
-     *                    roll, this should be <code>false</code>.
-     * @param nTargetRoll - the <code>int</code> roll target for the attempt.
+     * @param c
+     *            - the <code>Coords</code> of the hex being lit.
+     * @param entityId
+     *            - the <code>int</code> id of the entity involved.
+     * @param bInferno
+     *            - <code>true</code> if the weapon igniting the hex is an
+     *            Inferno round. If some other weapon or ammo is causing the
+     *            roll, this should be <code>false</code>.
+     * @param nTargetRoll
+     *            - the <code>int</code> roll target for the attempt.
      */
     public boolean tryIgniteHex(Coords c, int entityId, boolean bHotGun,
-                                boolean bInferno, TargetRoll nTargetRoll, int accidentTarget,
-                                Vector<Report> vPhaseReport) {
+            boolean bInferno, TargetRoll nTargetRoll, int accidentTarget,
+            Vector<Report> vPhaseReport) {
         return tryIgniteHex(c, entityId, bHotGun, bInferno, nTargetRoll, false,
-                            accidentTarget, vPhaseReport);
+                accidentTarget, vPhaseReport);
     }
 
     public Vector<Report> tryClearHex(Coords c, int nDamage, int entityId) {

@@ -29770,9 +29770,11 @@ public class Server implements Runnable {
     /**
      * Process a packet from a connection.
      *
-     * @param connId - the <code>int</code> ID the connection that received the
-     *               packet.
-     * @param packet - the <code>Packet</code> to be processed.
+     * @param connId
+     *            - the <code>int</code> ID the connection that received the
+     *            packet.
+     * @param packet
+     *            - the <code>Packet</code> to be processed.
      */
     protected void handle(int connId, Packet packet) {
         IPlayer player = game.getPlayer(connId);
@@ -29907,16 +29909,17 @@ public class Server implements Runnable {
                 break;
             case Packet.COMMAND_ENTITY_WORDER_UPDATE:
                 Object data[] = packet.getData();
-                Entity ent = game.getEntity((Integer)data[0]);
+                Entity ent = game.getEntity((Integer) data[0]);
                 if (ent != null) {
-                    Entity.WeaponSortOrder order =
-                        (Entity.WeaponSortOrder)data[1];
+                    Entity.WeaponSortOrder order = (Entity.WeaponSortOrder) data[1];
                     ent.setWeaponSortOrder(order);
                     // Used by the client but is set in setWeaponSortOrder
                     ent.setWeapOrderChanged(false);
                     if (order == Entity.WeaponSortOrder.CUSTOM) {
-                        @SuppressWarnings("unchecked") // Unchecked cause of limitations in Java when casting to a collection
-                        Map<Integer, Integer> customWeapOrder = (Map<Integer, Integer>)data[2];
+                        @SuppressWarnings("unchecked")
+                        // Unchecked cause of limitations in Java when casting
+                        // to a collection
+                        Map<Integer, Integer> customWeapOrder = (Map<Integer, Integer>) data[2];
                         ent.setCustomWeaponOrder(customWeapOrder);
                     }
                 }
@@ -29934,19 +29937,22 @@ public class Server implements Runnable {
                     MapSettings newSettings = (MapSettings) packet.getObject(0);
                     if (!mapSettings.equalMapGenParameters(newSettings)) {
                         sendServerChat("Player " + player.getName()
-                                       + " changed map settings");
+                                + " changed map settings");
                     }
                     mapSettings = newSettings;
-                    mapSettings.setBoardsAvailableVector(scanForBoards(new BoardDimensions(
-                            mapSettings.getBoardWidth(),
-                            mapSettings.getBoardHeight())));
+                    mapSettings
+                            .setBoardsAvailableVector(scanForBoards(new BoardDimensions(
+                                    mapSettings.getBoardWidth(), mapSettings
+                                            .getBoardHeight())));
                     mapSettings.removeUnavailable();
                     mapSettings.setNullBoards(DEFAULT_BOARD);
-                    mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
+                    mapSettings
+                            .replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
                     mapSettings.removeUnavailable();
                     // if still only nulls left, use BOARD_GENERATED
                     if (mapSettings.getBoardsSelected().next() == null) {
-                        mapSettings.setNullBoards((MapSettings.BOARD_GENERATED));
+                        mapSettings
+                                .setNullBoards((MapSettings.BOARD_GENERATED));
                     }
                     newSettings = null;
                     resetPlayersDone();
@@ -29959,20 +29965,23 @@ public class Server implements Runnable {
                     MapSettings newSettings = (MapSettings) packet.getObject(0);
                     if (!mapSettings.equalMapGenParameters(newSettings)) {
                         sendServerChat("Player " + player.getName()
-                                       + " changed map dimensions");
+                                + " changed map dimensions");
                     }
                     mapSettings = newSettings;
                     newSettings = null;
-                    mapSettings.setBoardsAvailableVector(scanForBoards(new BoardDimensions(
-                            mapSettings.getBoardWidth(),
-                            mapSettings.getBoardHeight())));
+                    mapSettings
+                            .setBoardsAvailableVector(scanForBoards(new BoardDimensions(
+                                    mapSettings.getBoardWidth(), mapSettings
+                                            .getBoardHeight())));
                     mapSettings.removeUnavailable();
                     mapSettings.setNullBoards(DEFAULT_BOARD);
-                    mapSettings.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
+                    mapSettings
+                            .replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
                     mapSettings.removeUnavailable();
                     // if still only nulls left, use BOARD_GENERATED
                     if (mapSettings.getBoardsSelected().next() == null) {
-                        mapSettings.setNullBoards((MapSettings.BOARD_GENERATED));
+                        mapSettings
+                                .setNullBoards((MapSettings.BOARD_GENERATED));
                     }
                     resetPlayersDone();
                     transmitAllPlayerDones();
@@ -29985,7 +29994,7 @@ public class Server implements Runnable {
                     PlanetaryConditions conditions = (PlanetaryConditions) packet
                             .getObject(0);
                     sendServerChat("Player " + player.getName()
-                                   + " changed planetary conditions");
+                            + " changed planetary conditions");
                     game.setPlanetaryConditions(conditions);
                     resetPlayersDone();
                     transmitAllPlayerDones();
@@ -30006,13 +30015,14 @@ public class Server implements Runnable {
             case Packet.COMMAND_LOAD_GAME:
                 try {
                     sendServerChat(getPlayer(connId).getName()
-                                   + " loaded a new game.");
+                            + " loaded a new game.");
                     setGame((IGame) packet.getObject(0));
                     for (IConnection conn : connections) {
                         sendCurrentInfo(conn.getId());
                     }
                 } catch (Exception e) {
-                    System.out.println("Error loading savegame sent from client");
+                    System.out
+                            .println("Error loading savegame sent from client");
                 }
                 break;
             case Packet.COMMAND_SQUADRON_ADD:
@@ -30030,8 +30040,9 @@ public class Server implements Runnable {
                 sendSpecialHexDisplayPackets();
                 break;
             case Packet.COMMAND_SPECIAL_HEX_DISPLAY_APPEND:
-                game.getBoard().addSpecialHexDisplay((Coords) packet.getObject(0),
-                                                     (SpecialHexDisplay) packet.getObject(1));
+                game.getBoard().addSpecialHexDisplay(
+                        (Coords) packet.getObject(0),
+                        (SpecialHexDisplay) packet.getObject(1));
                 sendSpecialHexDisplayPackets();
                 break;
         }
@@ -30093,8 +30104,9 @@ public class Server implements Runnable {
      * Makes one slot of inferno ammo, determined by certain rules, explode on a
      * mech.
      *
-     * @param entity The <code>Entity</code> that should suffer an inferno ammo
-     *               explosion.
+     * @param entity
+     *            The <code>Entity</code> that should suffer an inferno ammo
+     *            explosion.
      */
     private Vector<Report> explodeInfernoAmmoFromHeat(Entity entity) {
         int damage = 0;
@@ -30110,7 +30122,7 @@ public class Server implements Runnable {
                 CriticalSlot cs = entity.getCritical(j, k);
                 // Ignore empty, destroyed, hit, and structure slots.
                 if ((cs == null) || cs.isDestroyed() || cs.isHit()
-                    || (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)) {
+                        || (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)) {
                     continue;
                 }
                 // Ignore everything but weapons slots.
@@ -30121,9 +30133,8 @@ public class Server implements Runnable {
                 // Ignore everything but Inferno ammo.
                 AmmoType atype = (AmmoType) mounted.getType();
                 if (!atype.isExplosive(mounted)
-                    || ((atype.getMunitionType() != AmmoType.M_INFERNO) && (atype
-                                                                                    .getMunitionType() != AmmoType
-                                                                                    .M_IATM_IIW))) {
+                        || ((atype.getMunitionType() != AmmoType.M_INFERNO) && (atype
+                                .getMunitionType() != AmmoType.M_IATM_IIW))) {
                     continue;
                 }
 
@@ -30139,14 +30150,14 @@ public class Server implements Runnable {
                 int newDamage = mounted.getExplosionDamage();
                 Mounted mount2 = cs.getMount2();
                 if ((mount2 != null) && (mount2.getType() instanceof AmmoType)
-                    && (mount2.getHittableShotsLeft() > 0)) {
+                        && (mount2.getHittableShotsLeft() > 0)) {
                     // must be for same weapontype, so racksize stays
                     atype = (AmmoType) mount2.getType();
                     newRack += atype.getDamagePerShot() * atype.getRackSize();
                     newDamage += mount2.getExplosionDamage();
                 }
                 if (!mounted.isHit()
-                    && ((rack < newRack) || ((rack == newRack) && (damage < newDamage)))) {
+                        && ((rack < newRack) || ((rack == newRack) && (damage < newDamage)))) {
                     rack = newRack;
                     damage = newDamage;
                     boomloc = j;
@@ -30252,18 +30263,18 @@ public class Server implements Runnable {
                         damage = Compute.d6(2);
                     }
                     HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL,
-                                                     ToHitData.SIDE_FRONT);
+                            ToHitData.SIDE_FRONT);
                     if (en instanceof BattleArmor) {
                         // ugly - I have to apply damage to each trooper
                         // separately
                         for (int loc = 0; loc < en.locations(); loc++) {
                             if ((IArmorState.ARMOR_NA != en.getInternal(loc))
-                                && (IArmorState.ARMOR_DESTROYED != en
-                                    .getInternal(loc))
-                                && (IArmorState.ARMOR_DOOMED != en
-                                    .getInternal(loc))) {
+                                    && (IArmorState.ARMOR_DESTROYED != en
+                                            .getInternal(loc))
+                                    && (IArmorState.ARMOR_DOOMED != en
+                                            .getInternal(loc))) {
                                 vDesc.addAll(damageEntity(en, new HitData(loc),
-                                                          damage));
+                                        damage));
                             }
                         }
                     } else {
@@ -30273,7 +30284,7 @@ public class Server implements Runnable {
                         // lets pretend that the infernos came from the entity
                         // itself (should give us side_front)
                         vDesc.addAll(deliverInfernoMissiles(en, en,
-                                                            Compute.d6(2)));
+                                Compute.d6(2)));
                     }
                 }
             }
@@ -30294,22 +30305,30 @@ public class Server implements Runnable {
      * Tank enters a building, leaves a building, or travels from one hex to
      * another inside a multi-hex building.
      *
-     * @param entity    - the <code>Entity</code> that passed through a wall. Don't
-     *                  pass <code>Infantry</code> units to this method.
-     * @param bldg      - the <code>Building</code> the entity is passing through.
-     * @param lastPos   - the <code>Coords</code> of the hex the entity is exiting.
-     * @param curPos    - the <code>Coords</code> of the hex the entity is entering
-     * @param distance  - the <code>int</code> number of hexes the entity has moved
-     *                  already this phase.
-     * @param why       - the <code>String</code> explanation for this action.
-     * @param backwards - the <code>boolean</code> indicating if the entity is
-     *                  entering the hex backwards
-     * @param entering  - a <code>boolean</code> if the entity is entering or exiting
-     *                  a building
+     * @param entity
+     *            - the <code>Entity</code> that passed through a wall. Don't
+     *            pass <code>Infantry</code> units to this method.
+     * @param bldg
+     *            - the <code>Building</code> the entity is passing through.
+     * @param lastPos
+     *            - the <code>Coords</code> of the hex the entity is exiting.
+     * @param curPos
+     *            - the <code>Coords</code> of the hex the entity is entering
+     * @param distance
+     *            - the <code>int</code> number of hexes the entity has moved
+     *            already this phase.
+     * @param why
+     *            - the <code>String</code> explanation for this action.
+     * @param backwards
+     *            - the <code>boolean</code> indicating if the entity is
+     *            entering the hex backwards
+     * @param entering
+     *            - a <code>boolean</code> if the entity is entering or exiting
+     *            a building
      */
     private void passBuildingWall(Entity entity, Building bldg, Coords lastPos,
-                                  Coords curPos, int distance, String why, boolean backwards,
-                                  EntityMovementType overallMoveType, boolean entering) {
+            Coords curPos, int distance, String why, boolean backwards,
+            EntityMovementType overallMoveType, boolean entering) {
 
         Report r;
 
@@ -30322,16 +30341,16 @@ public class Server implements Runnable {
         } else {
             // Need to roll based on building type.
             PilotingRollData psr = entity.rollMovementInBuilding(bldg,
-                                                                 distance, why, overallMoveType);
+                    distance, why, overallMoveType);
 
             // Did the entity make the roll?
             if (0 < doSkillCheckWhileMoving(entity, entity.getElevation(),
-                                            lastPos, curPos, psr, false)) {
+                    lastPos, curPos, psr, false)) {
 
                 // Divide the building's current CF by 10, round up.
                 int damage = (int) Math.floor(bldg.getDamageFromScale()
-                                              * Math.ceil(bldg.getCurrentCF(entering ? curPos
-                                                                                     : lastPos) / 10.0));
+                        * Math.ceil(bldg.getCurrentCF(entering ? curPos
+                                : lastPos) / 10.0));
 
                 // Infantry and Battle armor take different amounts of damage
                 // then Meks and vehicles.
@@ -30353,7 +30372,7 @@ public class Server implements Runnable {
                         side = ToHitData.SIDE_REAR;
                     }
                     HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL,
-                                                         side);
+                            side);
                     hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                     addReport(damageEntity(entity, hit, damage));
                 }
@@ -30365,7 +30384,7 @@ public class Server implements Runnable {
             }
             // Damage the building. The CF can never drop below 0.
             int toBldg = (int) Math.floor(bldg.getDamageToScale()
-                                          * Math.ceil(entity.getWeight() / 10.0));
+                    * Math.ceil(entity.getWeight() / 10.0));
             int curCF = bldg.getCurrentCF(entering ? curPos : lastPos);
             curCF -= Math.min(curCF, toBldg);
             bldg.setCurrentCF(curCF, entering ? curPos : lastPos);
@@ -30374,20 +30393,23 @@ public class Server implements Runnable {
             // ASSUMPTION: We inflict toBldg damage to infantry and
             // not the amount to bring building to 0 CF.
             addReport(damageInfantryIn(bldg, toBldg, entering ? curPos
-                                                              : lastPos));
+                    : lastPos));
         }
     }
 
     /**
      * check if a building collapes because of a moving entity
      *
-     * @param bldg   the <code>Building</code>
-     * @param entity the <code>Entity</code>
-     * @param curPos the <coode>Coords</code> of the position of the entity
+     * @param bldg
+     *            the <code>Building</code>
+     * @param entity
+     *            the <code>Entity</code>
+     * @param curPos
+     *            the <coode>Coords</code> of the position of the entity
      * @return a <code>boolean</code> value indicating if the building collapses
      */
     private boolean checkBuildingCollapseWhileMoving(Building bldg,
-                                                     Entity entity, Coords curPos) {
+            Entity entity, Coords curPos) {
         Coords oldPos = entity.getPosition();
         // Count the moving entity in its current position, not
         // its pre-move postition. Be sure to handle nulls.
@@ -30398,7 +30420,7 @@ public class Server implements Runnable {
 
         // Check for collapse of this building due to overloading, and return.
         boolean rv = checkForCollapse(bldg, positionMap, curPos, true,
-                                      vPhaseReport);
+                vPhaseReport);
 
         // If the entity was not displaced and didnt fall, move it back where it
         // was
@@ -30409,20 +30431,20 @@ public class Server implements Runnable {
     }
 
     public Vector<Report> damageInfantryIn(Building bldg, int damage,
-                                           Coords hexCoords) {
+            Coords hexCoords) {
         return damageInfantryIn(bldg, damage, hexCoords, WeaponType.WEAPON_NA);
     }
 
     /**
      * Apply the correct amount of damage that passes on to any infantry unit in
      * the given building, based upon the amount of damage the building just
-     * sustained. This amount is a percentage dictated by pg. 52 of BMRr.
+     * sustained. This amount is a percentage dictated by pg. 172 of TW.
      *
      * @param bldg   - the <code>Building</code> that sustained the damage.
      * @param damage - the <code>int</code> amount of damage.
      */
     public Vector<Report> damageInfantryIn(Building bldg, int damage,
-                                           Coords hexCoords, int infDamageClass) {
+            Coords hexCoords, int infDamageClass) {
 
         Vector<Report> vDesc = new Vector<Report>();
 

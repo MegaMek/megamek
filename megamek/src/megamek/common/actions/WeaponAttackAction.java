@@ -1492,6 +1492,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     "Targeting adjacent building.");
         }
 
+        // Store the thruBldg state, for later processing
+        toHit.setThruBldg(los.getThruBldg());
+
         // Attacks against buildings from inside automatically hit.
         if ((null != los.getThruBldg())
                 && ((target.getTargetType() == Targetable.TYPE_BUILDING)

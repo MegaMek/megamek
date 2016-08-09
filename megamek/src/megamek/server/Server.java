@@ -30491,23 +30491,24 @@ public class Server implements Runnable {
                     // Report if the infantry receive no points of damage.
                     if (toInf == 0) {
                         r = new Report(6445);
+                        r.indent(3);
                         r.subject = entity.getId();
+                        r.add(entity.getDisplayName());
                         vDesc.addElement(r);
                     } else {
                         // Yup. Damage the entity.
                         r = new Report(6450);
-                        r.indent(2);
+                        r.indent(3);
                         r.subject = entity.getId();
                         r.add(toInf);
                         r.add(entity.getDisplayName());
                         vDesc.addElement(r);
                         // need to adjust damage to conventional infantry
                         // TW page 217 says left over damage gets treated as
-                        // direct
-                        // fire ballistic damage
+                        // direct fire ballistic damage
                         if (!(entity instanceof BattleArmor)) {
                             toInf = Compute.directBlowInfantryDamage(toInf, 0,
-                                                                     WeaponType.WEAPON_DIRECT_FIRE, false);
+                                    WeaponType.WEAPON_DIRECT_FIRE, false);
                         }
                         int remaining = toInf;
                         int cluster = toInf;

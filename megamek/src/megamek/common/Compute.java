@@ -2945,7 +2945,7 @@ public class Compute {
             && !(g.getEntity(waa.getTargetId()) instanceof BattleArmor)) {
             fDamage = directBlowInfantryDamage(fDamage, 0,
                     wt.getInfantryDamageClass(), ((Infantry) (g.getEntity(waa
-                            .getTargetId()))).isMechanized());
+                            .getTargetId()))).isMechanized(), false);
         }
 
         fDamage *= fChance;
@@ -5336,7 +5336,8 @@ public class Compute {
      * @return
      */
     public static int directBlowInfantryDamage(double damage, int mos,
-                                               int damageType, boolean isNonInfantryAgainstMechanized) {
+            int damageType, boolean isNonInfantryAgainstMechanized,
+            boolean isAttackThruBuilding) {
 
         damageType += mos;
 
@@ -5369,35 +5370,58 @@ public class Compute {
                 break;
             case WeaponType.WEAPON_BURST_HALFD6:
                 damage = Compute.d6() / 2.0;
+                if (isAttackThruBuilding) {
+                    damage *= 0.5;
+                }
                 break;
             case WeaponType.WEAPON_BURST_1D6:
                 damage = Compute.d6();
+                if (isAttackThruBuilding) {
+                    damage *= 0.5;
+                }
                 break;
             case WeaponType.WEAPON_BURST_2D6:
                 damage = Compute.d6(2);
+                if (isAttackThruBuilding) {
+                    damage *= 0.5;
+                }
                 break;
             case WeaponType.WEAPON_BURST_3D6:
                 damage = Compute.d6(3);
+                if (isAttackThruBuilding) {
+                    damage *= 0.5;
+                }
                 break;
             case WeaponType.WEAPON_BURST_4D6:
                 damage = Compute.d6(4);
+                if (isAttackThruBuilding) {
+                    damage *= 0.5;
+                }
                 break;
             case WeaponType.WEAPON_BURST_5D6:
                 damage = Compute.d6(5);
+                if (isAttackThruBuilding) {
+                    damage *= 0.5;
+                }
                 break;
             case WeaponType.WEAPON_BURST_6D6:
                 damage = Compute.d6(6);
+                if (isAttackThruBuilding) {
+                    damage *= 0.5;
+                }
                 break;
             case WeaponType.WEAPON_BURST_7D6:
                 damage = Compute.d6(7);
+                if (isAttackThruBuilding) {
+                    damage *= 0.5;
+                }
                 break;
         }
         damage = Math.ceil(damage);
 
         // according to the following ruling, the half damage that mechanized
-        // inf
-        // get against burst fire should trump the double damage they get from
-        // non-infantry rather than cancel it out
+        // inf get against burst fire should trump the double damage they get
+        // from non-infantry rather than cancel it out
         // http://bg.battletech.com/forums/index.php/topic,23928.0.html
         if (isNonInfantryAgainstMechanized) {
             if (damageType < WeaponType.WEAPON_BURST_HALFD6) {

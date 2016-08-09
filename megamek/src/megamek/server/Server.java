@@ -30548,23 +30548,26 @@ public class Server implements Runnable {
      * crash through its floor into its basement. Again, apply appropriate
      * damage.
      *
-     * @param bldg        - the <code>Building</code> being checked. This value should
-     *                    not be <code>null</code>.
-     * @param positionMap - a <code>Hashtable</code> that maps the <code>Coords</code>
-     *                    positions or each unit in the game to a <code>Vector</code> of
-     *                    <code>Entity</code>s at that position. This value should not
-     *                    be <code>null</code>.
-     * @param coords      - the <code>Coords</code> of the building hex to be checked
+     * @param bldg
+     *            - the <code>Building</code> being checked. This value should
+     *            not be <code>null</code>.
+     * @param positionMap
+     *            - a <code>Hashtable</code> that maps the <code>Coords</code>
+     *            positions or each unit in the game to a <code>Vector</code> of
+     *            <code>Entity</code>s at that position. This value should not
+     *            be <code>null</code>.
+     * @param coords
+     *            - the <code>Coords</code> of the building hex to be checked
      * @return <code>true</code> if the building collapsed.
      */
     public boolean checkForCollapse(Building bldg,
-                                    Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
-                                    boolean checkBecauseOfDamage, Vector<Report> vPhaseReport) {
+            Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
+            boolean checkBecauseOfDamage, Vector<Report> vPhaseReport) {
 
         // If the input is meaningless, do nothing and throw no exception.
         if ((bldg == null) || (positionMap == null) || positionMap.isEmpty()
-            || (coords == null) || !bldg.isIn(coords)
-            || !bldg.hasCFIn(coords)) {
+                || (coords == null) || !bldg.isIn(coords)
+                || !bldg.hasCFIn(coords)) {
             return false;
         }
 
@@ -30592,7 +30595,7 @@ public class Server implements Runnable {
             // How many levels does this building have in this hex?
             final IHex curHex = game.getBoard().getHex(coords);
             final int numFloors = Math.max(0,
-                                           curHex.terrainLevel(Terrains.BLDG_ELEV));
+                    curHex.terrainLevel(Terrains.BLDG_ELEV));
             final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
             int numLoads = numFloors;
             if (bridgeEl != ITerrain.LEVEL_NONE) {
@@ -30600,7 +30603,7 @@ public class Server implements Runnable {
             }
             if (numLoads < 1) {
                 System.err.println("Check for collapse: hex "
-                                   + coords.toString() + " has no bridge or building");
+                        + coords.toString() + " has no bridge or building");
                 return false;
             }
 
@@ -30636,9 +30639,9 @@ public class Server implements Runnable {
                     }
 
                     if ((entity.getMovementMode() == EntityMovementMode.HYDROFOIL)
-                        || (entity.getMovementMode() == EntityMovementMode.NAVAL)
-                        || (entity.getMovementMode() == EntityMovementMode.SUBMARINE)
-                        || (entity.getMovementMode() == EntityMovementMode.INF_UMU)) {
+                            || (entity.getMovementMode() == EntityMovementMode.NAVAL)
+                            || (entity.getMovementMode() == EntityMovementMode.SUBMARINE)
+                            || (entity.getMovementMode() == EntityMovementMode.INF_UMU)) {
                         continue; // under the bridge even at same level
                     }
 
@@ -30683,8 +30686,8 @@ public class Server implements Runnable {
 
             // did anyone fall into the basement?
             if (!basementMap.isEmpty()
-                && (bldg.getBasement(coords) != BasementType.NONE)
-                && !collapse) {
+                    && (bldg.getBasement(coords) != BasementType.NONE)
+                    && !collapse) {
 
                 collapseBasement(bldg, basementMap, coords, vPhaseReport);
                 if (currentCF == 0) {
@@ -30719,8 +30722,8 @@ public class Server implements Runnable {
     } // End private boolean checkForCollapse( Building, Hashtable )
 
     public void collapseBuilding(Building bldg,
-                                 Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
-                                 Vector<Report> vPhaseReport) {
+            Hashtable<Coords, Vector<Entity>> positionMap, Coords coords,
+            Vector<Report> vPhaseReport) {
         collapseBuilding(bldg, positionMap, coords, true, vPhaseReport);
     }
 

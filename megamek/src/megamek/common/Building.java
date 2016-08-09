@@ -849,6 +849,27 @@ public class Building implements Serializable {
         return (int) Math.ceil(getPhaseCF(pos) / 10.0);
     }
 
+    /**
+     * Returns the percentage of damage done to the building for attacks against
+     * infantry in the building from other units within the building.  TW pg175.
+     *
+     * @param pos
+     * @return
+     */
+    public double getInfDmgFromInside() {
+         switch (getType()) {
+            case Building.LIGHT:
+            case Building.MEDIUM:
+                return 0.0;
+            case Building.HEAVY:
+                return 0.5;
+            case Building.HARDENED:
+                return 0.75;
+            default:
+                return 0;
+        }
+    }
+
     public BasementType getBasement(Coords coords) {
         return basement.get(coords);
     }

@@ -598,7 +598,7 @@ public class LosEffects {
         }
 
         if (buildingLevelsOrHexes > 2) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by buildin hexes or levels.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by building hexes or levels.");
         }
 
         if ((ultraWoods >= 1) || (lightWoods + (heavyWoods * 2) > 2)) {

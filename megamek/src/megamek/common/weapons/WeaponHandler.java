@@ -156,11 +156,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
      *         or an AMS only shooting down some missiles.
      */
     protected boolean handleSpecialMiss(Entity entityTarget,
-            boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
+            boolean bldgDamagedOnMiss, Building bldg,
+            Vector<Report> vPhaseReport) {
         // Shots that miss an entity can set fires.
         // Buildings can't be accidentally ignited,
         // and some weapons can't ignite fires.
         if ((entityTarget != null)
+                && !entityTarget.isAirborne()
+                && !entityTarget.isAirborneVTOLorWIGE()
                 && ((bldg == null) && (wtype.getFireTN() != TargetRoll.IMPOSSIBLE))) {
             server.tryIgniteHex(target.getPosition(), subjectId, false, false,
                     new TargetRoll(wtype.getFireTN(), wtype.getName()), 3,
@@ -171,9 +174,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // heavy industrial hex
         server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
 
-        // BMRr, pg. 51: "All shots that were aimed at a target inside
-        // a building and miss do full damage to the building instead."
-        if (!targetInBuilding
+        // TW, pg. 171 - shots that miss a target in a building don't damage the
+        // building, unless the attacker is adjacent
+        if (!bldgDamagedOnMiss
                 || (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL)) {
             return false;
         }
@@ -352,6 +355,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 : null;
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
+        final boolean bldgDamagedOnMiss = targetInBuilding
+                && !(target instanceof Infantry)
+                && ae.getPosition().distance(target.getPosition()) <= 1;
 
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
@@ -485,9 +491,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 }
 
                 // Works out fire setting, AMS shots, and whether continuation
-                // is
-                // necessary.
-                if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+                // is necessary.
+                if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
                         vPhaseReport) && (i < 2)) {
                     returnedReports.addAll(vPhaseReport);
                     return false;
@@ -519,10 +524,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
 
             if (!bMissed) {
-                // The building shields all units from a certain amount of
-                // damage.
-                // The amount is based upon the building's CF at the phase's
-                // start.
+                // Buildings shield all units from a certain amount of damage.
+                // Amount is based upon the building's CF at the phase's start.
                 int bldgAbsorbs = 0;
                 if (targetInBuilding && (bldg != null)) {
                     bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
@@ -593,9 +596,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
                 // When shooting at a non-infantry unit in a building and the
                 // shot misses, the building is damaged instead, TW pg 171
-                int dist = ae.getPosition().distance(target.getPosition());
-                if (targetInBuilding && !(entityTarget instanceof Infantry)
-                        && dist == 1) {
+                if (bldgDamagedOnMiss) {
                     r = new Report(6429);
                     r.indent(2);
                     r.subject = ae.getId();

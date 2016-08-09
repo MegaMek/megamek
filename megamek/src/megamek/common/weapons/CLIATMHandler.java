@@ -436,10 +436,11 @@ public class CLIATMHandler extends ATMHandler {
      */
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
-                                        boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
+            boolean bldgDamagedOnMiss, Building bldg,
+            Vector<Report> vPhaseReport) {
         if (weapon.curMode().equals("Indirect")) {
-            return super.handleSpecialMiss(entityTarget, targetInBuilding,
-                                           bldg, vPhaseReport);
+            return super.handleSpecialMiss(entityTarget, bldgDamagedOnMiss,
+                    bldg, vPhaseReport);
         }
         return false;
     }
@@ -458,9 +459,12 @@ public class CLIATMHandler extends ATMHandler {
             }
             sSalvoType = " IIW missile(s) ";
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
-                                                                                     : null;
+                    : null;
             final boolean targetInBuilding = Compute.isInBuilding(game,
-                                                                  entityTarget);
+                    entityTarget);
+            final boolean bldgDamagedOnMiss = targetInBuilding
+                    && !(target instanceof Infantry)
+                    && ae.getPosition().distance(target.getPosition()) <= 1;
 
             // Which building takes the damage?
             Building bldg = game.getBoard().getBuildingAt(target.getPosition());
@@ -560,8 +564,8 @@ public class CLIATMHandler extends ATMHandler {
                 // Works out fire setting, AMS shots, and whether continuation
                 // is
                 // necessary.
-                if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
-                                       vPhaseReport)) {
+                if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss,
+                        bldg, vPhaseReport)) {
                     return false;
                 }
             }
@@ -579,7 +583,7 @@ public class CLIATMHandler extends ATMHandler {
             // light inferno missiles all at once, if not missed
             if (!bMissed) {
                 vPhaseReport.addAll(server.deliverInfernoMissiles(ae, target,
-                                                                  hits, weapon.getCalledShot().getCall()));
+                        hits, weapon.getCalledShot().getCall()));
             }
             return false;
         } else if (atype.getMunitionType() == AmmoType.M_IATM_IMP) {
@@ -587,9 +591,12 @@ public class CLIATMHandler extends ATMHandler {
                 return true;
             }
             Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
-                                                                                     : null;
+                    : null;
             final boolean targetInBuilding = Compute.isInBuilding(game,
-                                                                  entityTarget);
+                    entityTarget);
+            final boolean bldgDamagedOnMiss = targetInBuilding
+                    && !(target instanceof Infantry)
+                    && ae.getPosition().distance(target.getPosition()) <= 1;
             boolean bNemesisConfusable = isNemesisConfusable();
 
             if (entityTarget != null) {
@@ -618,7 +625,7 @@ public class CLIATMHandler extends ATMHandler {
             if (bNemesisConfusable && !waa.isNemesisConfused()) {
                 // loop through nemesis targets
                 for (Enumeration<Entity> e = game.getNemesisTargets(ae,
-                                                                    target.getPosition()); e.hasMoreElements(); ) {
+                        target.getPosition()); e.hasMoreElements();) {
                     Entity entity = e.nextElement();
                     // friendly unit with attached iNarc Nemesis pod standing in
                     // the
@@ -747,10 +754,9 @@ public class CLIATMHandler extends ATMHandler {
                 reportMiss(vPhaseReport);
 
                 // Works out fire setting, AMS shots, and whether continuation
-                // is
-                // necessary.
-                if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
-                                       vPhaseReport)) {
+                // is necessary.
+                if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss,
+                        bldg, vPhaseReport)) {
                     return false;
                 }
             }

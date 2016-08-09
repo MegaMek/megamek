@@ -363,11 +363,14 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
      */
     @Override
     protected boolean handleSpecialMiss(Entity entityTarget,
-            boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
+            boolean bldgDamagedOnMiss, Building bldg,
+            Vector<Report> vPhaseReport) {
         // Shots that miss an entity can set fires.
         // Buildings can't be accidentally ignited,
         // and some weapons can't ignite fires.
         if ((entityTarget != null)
+                && !entityTarget.isAirborne()
+                && !entityTarget.isAirborneVTOLorWIGE()
                 && ((bldg == null) && (wtype.getFireTN() != TargetRoll.IMPOSSIBLE))) {
             server.tryIgniteHex(target.getPosition(), subjectId, false, false,
                     new TargetRoll(wtype.getFireTN(), wtype.getName()), 3,
@@ -394,9 +397,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             vPhaseReport.addElement(r);
         }
 
-        // BMRr, pg. 51: "All shots that were aimed at a target inside
-        // a building and miss do full damage to the building instead."
-        if (!targetInBuilding
+        // TW, pg. 171 - shots that miss a target in a building don't damage the
+        // building, unless the attacker is adjacent
+        if (!bldgDamagedOnMiss
                 || (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL)) {
             return false;
         }
@@ -545,6 +548,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 : null;
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
+        final boolean bldgDamagedOnMiss = targetInBuilding
+                && !(target instanceof Infantry)
+                && ae.getPosition().distance(target.getPosition()) <= 1;
         boolean bNemesisConfusable = isNemesisConfusable();
 
         if (entityTarget != null) {
@@ -708,7 +714,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
             // Works out fire setting, AMS shots, and whether continuation is
             // necessary.
-            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
                     vPhaseReport)) {
                 return false;
             }
@@ -803,9 +809,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
             // When shooting at a non-infantry unit in a building and the
             //  shot misses, the building is damaged instead, TW pg 171
-            int dist = ae.getPosition().distance(target.getPosition());
-            if (targetInBuilding && !(entityTarget instanceof Infantry) &&
-                    (dist == 1)){
+            if (bldgDamagedOnMiss){
                 r = new Report(6429);
                 r.indent(2);
                 r.subject = ae.getId();

@@ -79,7 +79,7 @@ public class MGHandler extends AmmoWeaponHandler {
             if ((target instanceof Infantry)
                     && !(target instanceof BattleArmor)) {
                 toReturn = Compute.directBlowInfantryDamage(
-                        wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
+                        toReturn, bDirect ? toHit.getMoS() / 3 : 0,
                         wtype.getInfantryDamageClass(),
                         ((Infantry) target).isMechanized(),
                         toHit.getThruBldg() != null);

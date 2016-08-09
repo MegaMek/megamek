@@ -37,7 +37,7 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
      * @param g
      */
     public ChemicalLaserHandler(ToHitData toHit, WeaponAttackAction waa,
-                                IGame g, Server s) {
+            IGame g, Server s) {
         super(toHit, waa, g, s);
         generalDamageType = HitData.DAMAGE_ENERGY;
     }
@@ -80,10 +80,11 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
         }        
 
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(toReturn,
-                                                        bDirect ? toHit.getMoS() / 3 : 0,
-                                                        wtype.getInfantryDamageClass(),
-                                                        ((Infantry) target).isMechanized());
+            toReturn = Compute.directBlowInfantryDamage(
+                    wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }

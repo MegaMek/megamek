@@ -27,18 +27,16 @@ import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
-import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
 
 /**
  * @author Andrew Hunter
  */
-public class ACAPHandler extends AmmoWeaponHandler {
+public class ACAPHandler extends ACWeaponHandler {
     /**
      *
      */
@@ -54,46 +52,6 @@ public class ACAPHandler extends AmmoWeaponHandler {
         generalDamageType = HitData.DAMAGE_ARMOR_PIERCING;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
-    @Override
-    protected int calcDamagePerHit() {
-        double toReturn = wtype.getDamage();
-        // during a swarm, all damage gets applied as one block to one
-        // location
-        if ((ae instanceof BattleArmor)
-            && (weapon.getLocation() == BattleArmor.LOC_SQUAD)
-            && !(weapon.isSquadSupportWeapon())
-            && (ae.getSwarmTargetId() == target.getTargetId())) {
-            toReturn *= ((BattleArmor) ae).getShootingStrength();
-        }
-        // we default to direct fire weapons for anti-infantry damage
-        if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(toReturn,
-                                                        bDirect ? toHit.getMoS() / 3 : 0,
-                                                        wtype.getInfantryDamageClass(),
-                                                        ((Infantry) target).isMechanized());
-        } else if (bDirect) {
-            toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
-        }
-
-        if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        }
-        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
-            && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
-            toReturn = (int) Math.floor(toReturn * .75);
-        }
-        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)
-                && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_EXTREME])) {
-            toReturn = (int) Math.floor(toReturn * .5);
-        }
-
-        return (int) toReturn;
-    }
 
     /*
      * (non-Javadoc)
@@ -147,7 +105,7 @@ public class ACAPHandler extends AmmoWeaponHandler {
             nDamage -= toBldg;
             Report.addNewline(vPhaseReport);
             Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
-                                                                  entityTarget.getPosition());
+                    entityTarget.getPosition());
             for (Report report : buildingReport) {
                 report.subject = subjectId;
             }
@@ -181,10 +139,10 @@ public class ACAPHandler extends AmmoWeaponHandler {
             hit.makeArmorPiercing(atype, critModifer);
             vPhaseReport
                     .addAll(server.damageEntity(entityTarget, hit, nDamage,
-                                                false, ae.getSwarmTargetId() == entityTarget
+                            false, ae.getSwarmTargetId() == entityTarget
                                     .getId() ? DamageType.IGNORE_PASSENGER
-                                             : damageType, false, false, throughFront,
-                                                underWater));
+                                    : damageType, false, false, throughFront,
+                            underWater));
         }
     }
 }

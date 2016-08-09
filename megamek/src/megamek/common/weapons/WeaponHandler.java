@@ -527,8 +527,20 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 // Buildings shield all units from a certain amount of damage.
                 // Amount is based upon the building's CF at the phase's start.
                 int bldgAbsorbs = 0;
-                if (targetInBuilding && (bldg != null)) {
+                if (targetInBuilding && (bldg != null)
+                        && (toHit.getThruBldg() == null)) {
                     bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
+                }
+                
+                // Attacks infantry in buildings
+                if (targetInBuilding && (bldg != null)
+                        && (toHit.getThruBldg() != null)
+                        && (entityTarget instanceof Infantry)) {
+                    //Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
+                     //       entityTarget.getPosition());
+                    //for (Report report : buildingReport) {
+                    //    report.subject = subjectId;
+                    //}
                 }
 
                 // Make sure the player knows when his attack causes no damage.
@@ -667,7 +679,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                     bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized());
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
@@ -1112,9 +1125,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
         vPhaseReport.addAll(buildingReport);
 
-        // Damage any infantry in the hex.
-        vPhaseReport.addAll(server.damageInfantryIn(bldg, nDamage, coords,
-                wtype.getInfantryDamageClass()));
+        // Damage any infantry in hex, unless attack between units in same bldg
+        if (toHit.getThruBldg() == null) {
+            vPhaseReport.addAll(server.damageInfantryIn(bldg, nDamage, coords,
+                    wtype.getInfantryDamageClass()));
+        }
     }
 
     protected boolean allShotsHit() {

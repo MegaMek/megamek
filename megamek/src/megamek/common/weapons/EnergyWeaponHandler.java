@@ -20,6 +20,7 @@ import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
@@ -50,8 +51,8 @@ public class EnergyWeaponHandler extends WeaponHandler {
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage(nRange);
 
-        if (game.getOptions().booleanOption("tacops_energy_weapons")
-            && wtype.hasModes()) {
+        if ((game.getOptions().booleanOption("tacops_energy_weapons")
+            && wtype.hasModes()) || wtype.hasFlag(WeaponType.F_BOMBAST_LASER)) {
             toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }
         // during a swarm, all damage gets applied as one block to one location
@@ -83,10 +84,11 @@ public class EnergyWeaponHandler extends WeaponHandler {
         
 
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(toReturn,
-                                                        bDirect ? toHit.getMoS() / 3 : 0,
-                                                        wtype.getInfantryDamageClass(),
-                                                        ((Infantry) target).isMechanized());
+            toReturn = Compute.directBlowInfantryDamage(
+                    wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }

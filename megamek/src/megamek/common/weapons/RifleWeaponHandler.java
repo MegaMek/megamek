@@ -49,7 +49,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
      * @param s
      */
     public RifleWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
-                              Server s) {
+            Server s) {
         super(t, w, g, s);
     }
 
@@ -65,9 +65,10 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         // we default to direct fire weapons for anti-infantry damage
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                                                        bDirect ? toHit.getMoS() : 0,
-                                                        wtype.getInfantryDamageClass(),
-                                                        ((Infantry) target).isMechanized());
+                    bDirect ? toHit.getMoS() : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
@@ -75,13 +76,13 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         if (target instanceof Entity) {
             te = (Entity) target;
             hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(),
-                                     waa.getAimedLocation(), waa.getAimingMode(),
-                                     toHit.getCover());
+                    waa.getAimedLocation(), waa.getAimingMode(),
+                    toHit.getCover());
             hit.setAttackerId(getAttackerId());
             if (!(te instanceof BattleArmor)
-                && !(te instanceof Infantry)
-                && (!te.hasBARArmor(hit.getLocation()) || (te
-                                                                   .getBARRating(hit.getLocation()) >= 8))) {
+                    && !(te instanceof Infantry)
+                    && (!te.hasBARArmor(hit.getLocation()) || (te
+                            .getBARRating(hit.getLocation()) >= 8))) {
                 toReturn = Math.max(0, toReturn - 3);
             }
         }
@@ -147,7 +148,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
             nDamage -= toBldg;
             Report.addNewline(vPhaseReport);
             Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
-                                                                  entityTarget.getPosition());
+                    entityTarget.getPosition());
             for (Report report : buildingReport) {
                 report.subject = subjectId;
             }
@@ -177,10 +178,10 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
             }
             vPhaseReport
                     .addAll(server.damageEntity(entityTarget, hit, nDamage,
-                                                false, ae.getSwarmTargetId() == entityTarget
+                            false, ae.getSwarmTargetId() == entityTarget
                                     .getId() ? DamageType.IGNORE_PASSENGER
-                                             : damageType, false, false, throughFront,
-                                                underWater, nukeS2S));
+                                    : damageType, false, false, throughFront,
+                            underWater, nukeS2S));
         }
     }
 }

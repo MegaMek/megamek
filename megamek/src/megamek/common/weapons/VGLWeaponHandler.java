@@ -165,7 +165,8 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
                             && !(entTarget instanceof BattleArmor)) {
                         int infDmg = Compute.directBlowInfantryDamage(0, 0,
                                 WeaponType.WEAPON_BURST_2D6,
-                                ((Infantry) entTarget).isMechanized());
+                                ((Infantry) entTarget).isMechanized(),
+                                toHit.getThruBldg() != null);
                         dmgReports = 
                                 server.damageEntity(entTarget, hit, infDmg);
                     } else if (inBuilding && (entTarget instanceof Infantry) 

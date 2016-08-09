@@ -35,7 +35,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
      * @param g
      */
     public VariableSpeedPulseLaserWeaponHandler(ToHitData toHit,
-                                                WeaponAttackAction waa, IGame g, Server s) {
+            WeaponAttackAction waa, IGame g, Server s) {
         super(toHit, waa, g, s);
     }
 
@@ -67,9 +67,10 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
 
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                                                        bDirect ? toHit.getMoS() / 3 : 0,
-                                                        wtype.getInfantryDamageClass(),
-                                                        ((Infantry) target).isMechanized());
+                    bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null);
             if (nRange <= nRanges[RangeType.RANGE_SHORT]) {
                 toReturn += 3;
             } else if (nRange <= nRanges[RangeType.RANGE_MEDIUM]) {

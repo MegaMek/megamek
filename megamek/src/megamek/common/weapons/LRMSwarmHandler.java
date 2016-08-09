@@ -317,7 +317,8 @@ public class LRMSwarmHandler extends LRMHandler {
             double toReturn = Compute.directBlowInfantryDamage(
                     missiles, bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized());
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null);
             if (bGlancing) {
                 toReturn /= 2;
             }

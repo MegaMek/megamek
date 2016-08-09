@@ -90,10 +90,11 @@ public class CLIATMHandler extends ATMHandler {
         }
 
         if ((target instanceof Infantry) && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(wtype.getRackSize()
-                                                        * toReturn, bDirect ? toHit.getMoS() / 3 : 0,
-                                                        wtype.getInfantryDamageClass(),
-                                                        ((Infantry) target).isMechanized());
+            toReturn = Compute.directBlowInfantryDamage(
+                    wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
+                    wtype.getInfantryDamageClass(),
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null);
             if (bGlancing) {
                 toReturn /= 2; // Is this correct for partial streak missiles??
                 // it seems as if this only affects infantry -
@@ -205,8 +206,7 @@ public class CLIATMHandler extends ATMHandler {
         // Only apply if not all shots hit. IATM IMP have HE ranges and thus
         // suffer from spread too
         if (((atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) || (atype
-                                                                                .getMunitionType() == AmmoType
-                                                                                .M_IATM_IMP))
+                .getMunitionType() == AmmoType.M_IATM_IMP))
             && tacopscluster
             && !allShotsHit()) {
             if (nRange <= 1) {
@@ -263,18 +263,18 @@ public class CLIATMHandler extends ATMHandler {
                 missilesHit = wtype.getRackSize();
             } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(), amsMod,
-                                                  weapon.isHotLoaded(), allShotsHit(), isAdvancedAMS());
+                        weapon.isHotLoaded(), allShotsHit(), isAdvancedAMS());
             }
         } else {
             if (ae instanceof BattleArmor) {
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
-                                                  * ((BattleArmor) ae).getShootingStrength(),
-                                                  nMissilesModifier, weapon.isHotLoaded(), false,
-                                                  isAdvancedAMS());
+                        * ((BattleArmor) ae).getShootingStrength(),
+                        nMissilesModifier, weapon.isHotLoaded(), false,
+                        isAdvancedAMS());
             } else {
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
-                                                  nMissilesModifier, weapon.isHotLoaded(), false,
-                                                  isAdvancedAMS());
+                        nMissilesModifier, weapon.isHotLoaded(), false,
+                        isAdvancedAMS());
             }
         }
 
@@ -324,7 +324,7 @@ public class CLIATMHandler extends ATMHandler {
             while (minefields.hasMoreElements()) {
                 Minefield mf = minefields.nextElement();
                 if (server.clearMinefield(mf, ae,
-                                          Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
+                        Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
                     mfRemoved.add(mf);
                 }
             }
@@ -786,7 +786,7 @@ public class CLIATMHandler extends ATMHandler {
                         bSalvo = true;
                         if (nweapons > 1) {
                             nweaponsHit = Compute.missilesHit(nweapons,
-                                                              ((Aero) ae).getClusterMods());
+                                    ((Aero) ae).getClusterMods());
                             r = new Report(3325);
                             r.subject = subjectId;
                             r.add(nweaponsHit);

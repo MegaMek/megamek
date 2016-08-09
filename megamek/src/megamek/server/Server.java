@@ -30507,8 +30507,10 @@ public class Server implements Runnable {
                         // TW page 217 says left over damage gets treated as
                         // direct fire ballistic damage
                         if (!(entity instanceof BattleArmor)) {
-                            toInf = Compute.directBlowInfantryDamage(toInf, 0,
-                                    WeaponType.WEAPON_DIRECT_FIRE, false);
+                            toInf = Compute
+                                    .directBlowInfantryDamage(toInf, 0,
+                                            WeaponType.WEAPON_DIRECT_FIRE,
+                                            false, false);
                         }
                         int remaining = toInf;
                         int cluster = toInf;

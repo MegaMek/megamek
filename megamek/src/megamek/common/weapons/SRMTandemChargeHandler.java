@@ -169,7 +169,8 @@ public class SRMTandemChargeHandler extends SRMHandler {
             double toReturn = Compute.directBlowInfantryDamage(
                     wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized());
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null);
             if (bGlancing) {
                 toReturn /= 2;
             }

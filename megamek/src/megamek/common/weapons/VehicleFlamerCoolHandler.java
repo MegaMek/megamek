@@ -62,7 +62,8 @@ public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
             nDamPerHit = Compute.directBlowInfantryDamage(1,
                     bDirect ? toHit.getMoS() / 3 : 0,
                     WeaponType.WEAPON_DIRECT_FIRE,
-                    ((Infantry) target).isMechanized());
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null);
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, bldgAbsorbs);
         }

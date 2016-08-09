@@ -1,0 +1,55 @@
+# Theme Lunar Buildings
+
+super * "building:4;bldg_elev:1;bldg_cf:*" "mars" "lunar/Sml_Tower_5.gif"
+super * "building:4;bldg_elev:2;bldg_cf:*" "mars" "lunar/Sml_Tower_6.gif"
+super * "building:4;bldg_elev:*;bldg_cf:*" "mars" "lunar/Sml_Tower_6.gif"
+
+super * "building:3;bldg_elev:1;bldg_cf:*" "mars" "lunar/Sml_Tower_3.gif"
+super * "building:3;bldg_elev:2;bldg_cf:*" "mars" "lunar/Sml_Tower_4.gif"
+super * "building:3;bldg_elev:*;bldg_cf:*" "mars" "lunar/Sml_Tower_4.gif"
+
+super * "building:2;bldg_elev:1;bldg_cf:*" "mars" "lunar/Sml_Tower_1.gif"
+super * "building:2;bldg_elev:2;bldg_cf:*" "mars" "lunar/Sml_Tower_2.gif"
+super * "building:2;bldg_elev:*;bldg_cf:*" "mars" "lunar/Sml_Tower_2.gif"
+
+super * "building:1;bldg_elev:1;bldg_cf:*" "mars" "lunar/Fuel_Pod_1.gif"
+super * "building:1;bldg_elev:2;bldg_cf:*" "mars" "lunar/Glass_Dome_1.gif"
+super * "building:1;bldg_elev:*;bldg_cf:*" "mars" "lunar/Glass_Dome_1.gif"
+
+super * "building:1;bldg_elev:*;bldg_cf:*;fluff:0" "mars" "lunar/Glass_Dome_1.gif"
+super * "building:1;bldg_elev:*;bldg_cf:*;fluff:1" "mars" "lunar/Sml_Tower_1.gif"
+super * "building:1;bldg_elev:*;bldg_cf:*;fluff:2" "mars" "lunar/Sml_Tower_2.gif"
+super * "building:1;bldg_elev:*;bldg_cf:*;fluff:3" "mars" "lunar/Sml_Tower_3.gif"
+super * "building:1;bldg_elev:*;bldg_cf:*;fluff:4" "mars" "lunar/Sml_Tower_4.gif"
+super * "building:1;bldg_elev:*;bldg_cf:*;fluff:5" "mars" "lunar/Sml_Tower_5.gif"
+super * "building:1;bldg_elev:*;bldg_cf:*;fluff:6" "mars" "lunar/Sml_Tower_6.gif"
+
+super * "building:2:07;bldg_elev:*;bldg_cf:*;fluff:1" "mars" "lunar/Lrg_Tower_1_BL.gif"
+super * "building:2:12;bldg_elev:*;bldg_cf:*;fluff:1" "mars" "lunar/Lrg_Tower_1_TL.gif"
+super * "building:2:56;bldg_elev:*;bldg_cf:*;fluff:1" "mars" "lunar/Lrg_Tower_1_TR.gif"
+super * "building:2:33;bldg_elev:*;bldg_cf:*;fluff:1" "mars" "lunar/Lrg_Tower_1_BR.gif"
+
+super * "building:2:07;bldg_elev:*;bldg_cf:*;fluff:2" "mars" "lunar/Lrg_Tower_2_BL.gif"
+super * "building:2:12;bldg_elev:*;bldg_cf:*;fluff:2" "mars" "lunar/Lrg_Tower_2_TL.gif"
+super * "building:2:56;bldg_elev:*;bldg_cf:*;fluff:2" "mars" "lunar/Lrg_Tower_2_TR.gif"
+super * "building:2:33;bldg_elev:*;bldg_cf:*;fluff:2" "mars" "lunar/Lrg_Tower_2_BR.gif"
+
+super * "building:2:07;bldg_elev:*;bldg_cf:*;fluff:3" "mars" "lunar/Lrg_Tower_3_BL.gif"
+super * "building:2:12;bldg_elev:*;bldg_cf:*;fluff:3" "mars" "lunar/Lrg_Tower_3_TL.gif"
+super * "building:2:56;bldg_elev:*;bldg_cf:*;fluff:3" "mars" "lunar/Lrg_Tower_3_TR.gif"
+super * "building:2:33;bldg_elev:*;bldg_cf:*;fluff:3" "mars" "lunar/Lrg_Tower_3_BR.gif"
+
+super * "building:2:07;bldg_elev:*;bldg_cf:*;fluff:4" "mars" "lunar/Lrg_Tower_4_BL.gif"
+super * "building:2:12;bldg_elev:*;bldg_cf:*;fluff:4" "mars" "lunar/Lrg_Tower_4_TL.gif"
+super * "building:2:56;bldg_elev:*;bldg_cf:*;fluff:4" "mars" "lunar/Lrg_Tower_4_TR.gif"
+super * "building:2:33;bldg_elev:*;bldg_cf:*;fluff:4" "mars" "lunar/Lrg_Tower_4_BR.gif"
+
+super * "building:2:07;bldg_elev:*;bldg_cf:*;fluff:5" "mars" "lunar/Lrg_Tower_5_BL.gif"
+super * "building:2:12;bldg_elev:*;bldg_cf:*;fluff:5" "mars" "lunar/Lrg_Tower_5_TL.gif"
+super * "building:2:56;bldg_elev:*;bldg_cf:*;fluff:5" "mars" "lunar/Lrg_Tower_5_TR.gif"
+super * "building:2:33;bldg_elev:*;bldg_cf:*;fluff:5" "mars" "lunar/Lrg_Tower_5_BR.gif"
+
+super * "building:2:07;bldg_elev:*;bldg_cf:*;fluff:6" "mars" "lunar/Lrg_Tower_6_BL.gif"
+super * "building:2:12;bldg_elev:*;bldg_cf:*;fluff:6" "mars" "lunar/Lrg_Tower_6_TL.gif"
+super * "building:2:56;bldg_elev:*;bldg_cf:*;fluff:6" "mars" "lunar/Lrg_Tower_6_TR.gif"
+super * "building:2:33;bldg_elev:*;bldg_cf:*;fluff:6" "mars" "lunar/Lrg_Tower_6_BR.gif"

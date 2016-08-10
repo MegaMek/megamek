@@ -17272,12 +17272,12 @@ public class Server implements Runnable {
      * Handle a charge's damage
      */
     private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit,
-                                     int direction) {
+            int direction) {
         resolveChargeDamage(ae, te, toHit, direction, false, true);
     }
 
     private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit,
-                                     int direction, boolean glancing, boolean throughFront) {
+            int direction, boolean glancing, boolean throughFront) {
 
         // we hit...
 
@@ -17289,8 +17289,7 @@ public class Server implements Runnable {
 
         // Damage To Target
         int damage = ChargeAttackAction.getDamageFor(ae, te, game.getOptions()
-                                                                 .booleanOption("tacops_charge_damage"),
-                                                     toHit.getMoS());
+                .booleanOption("tacops_charge_damage"), toHit.getMoS());
 
         // Damage to Attacker
         int damageTaken = ChargeAttackAction.getDamageTakenBy(ae, te, game
@@ -17374,7 +17373,7 @@ public class Server implements Runnable {
                 spikeDamage += 2;
             }
             addReport(damageEntity(ae, hit, cluster, false, DamageType.NONE,
-                                   false, false, throughFront));
+                    false, false, throughFront));
             damageTaken -= cluster;
         }
 

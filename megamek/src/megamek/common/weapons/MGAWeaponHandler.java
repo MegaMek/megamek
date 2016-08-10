@@ -184,7 +184,18 @@ public class MGAWeaponHandler extends MGHandler {
                 report.subject = subjectId;
             }
             vPhaseReport.addAll(buildingReport);
+        // Cases where absorbed damage doesn't reduce incoming damage
+        } else if (bldgAbsorbs < 0) {
+            int toBldg = -bldgAbsorbs;
+            Report.addNewline(vPhaseReport);
+            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
+                    entityTarget.getPosition());
+            for (Report report : buildingReport) {
+                report.subject = subjectId;
+            }
+            vPhaseReport.addAll(buildingReport);
         }
+
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
 

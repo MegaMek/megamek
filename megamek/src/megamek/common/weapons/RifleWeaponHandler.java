@@ -105,8 +105,8 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
 
     @Override
     protected void handleEntityDamage(Entity entityTarget,
-                                      Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-                                      int bldgAbsorbs) {
+            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+            int bldgAbsorbs) {
         int nDamage;
         missed = false;
 
@@ -118,7 +118,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
                 .getCalledShot().getCall()))) {
             // Weapon strikes Partial Cover.
             handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
-                                  nCluster, bldgAbsorbs);
+                    nCluster, bldgAbsorbs);
             return;
         }
 
@@ -153,7 +153,18 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
                 report.subject = subjectId;
             }
             vPhaseReport.addAll(buildingReport);
+        // Cases where absorbed damage doesn't reduce incoming damage
+        } else if (bldgAbsorbs < 0) {
+            int toBldg = -bldgAbsorbs;
+            Report.addNewline(vPhaseReport);
+            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
+                    entityTarget.getPosition());
+            for (Report report : buildingReport) {
+                report.subject = subjectId;
+            }
+            vPhaseReport.addAll(buildingReport);
         }
+
 
         nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
 

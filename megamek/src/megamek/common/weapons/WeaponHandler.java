@@ -532,15 +532,24 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
                 }
                 
-                // Attacks infantry in buildings
+                // Attacking infantry in buildings from same building
                 if (targetInBuilding && (bldg != null)
                         && (toHit.getThruBldg() != null)
                         && (entityTarget instanceof Infantry)) {
-                    //Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
-                     //       entityTarget.getPosition());
-                    //for (Report report : buildingReport) {
-                    //    report.subject = subjectId;
-                    //}
+                    int dmgClass = wtype.getInfantryDamageClass();
+                    int nDamage;
+                    if (dmgClass < WeaponType.WEAPON_BURST_1D6) {
+                        nDamage = nDamPerHit * Math.min(nCluster, hits);
+                    } else {
+                        // Need to indicate to handleEntityDamage that the
+                        // absorbed damage shouldn't reduce incoming damage,
+                        // since the incoming damage was reduced in
+                        // Compute.directBlowInfantryDamage
+                        nDamage = -wtype.getDamage(nRange)
+                                * Math.min(nCluster, hits);
+                    }
+                    bldgAbsorbs = (int) Math.round(nDamage
+                            * bldg.getInfDmgFromInside()); 
                 }
 
                 // Make sure the player knows when his attack causes no damage.
@@ -997,6 +1006,16 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (bldgAbsorbs > 0) {
             int toBldg = Math.min(bldgAbsorbs, nDamage);
             nDamage -= toBldg;
+            Report.addNewline(vPhaseReport);
+            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
+                    entityTarget.getPosition());
+            for (Report report : buildingReport) {
+                report.subject = subjectId;
+            }
+            vPhaseReport.addAll(buildingReport);
+        // Cases where absorbed damage doesn't reduce incoming damage
+        } else if (bldgAbsorbs < 0) {
+            int toBldg = -bldgAbsorbs;
             Report.addNewline(vPhaseReport);
             Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
                     entityTarget.getPosition());

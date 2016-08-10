@@ -11,6 +11,7 @@ v0.41.22-git
 + Issue #70: Terrain Factor Damage for Engine Explosions and Ammo Explosions
 + Issue #300: Ground to Air fire Causing Accidental Fire Check
 + Issue #303: Reporting issues with misses on units in buildings
++ Bug: Fixed IndexOutOfBoundsException in ChatLounge.customizeMechs
 
 v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips

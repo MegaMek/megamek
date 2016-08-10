@@ -2366,13 +2366,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 .getCustomUnitWidth(), GUIPreferences.getInstance()
                 .getCustomUnitHeight()));
         cmd.setTitle(Messages.getString("ChatLounge.CustomizeUnits")); //$NON-NLS-1$
-        if (cmdSelectedTab != -1) {
-            cmd.setSelectedTab(cmdSelectedTab);
-        }
         cmd.setVisible(true);
         GUIPreferences.getInstance().setCustomUnitHeight(cmd.getSize().height);
         GUIPreferences.getInstance().setCustomUnitWidth(cmd.getSize().width);
-        cmdSelectedTab = cmd.getSelectedTab();
         if (editable && cmd.isOkay()) {
             // send changes
             for (Entity entity : entities) {

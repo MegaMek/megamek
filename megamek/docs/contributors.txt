@@ -209,6 +209,7 @@
      Scintilla
      Michael Rehrig
      Bloodwolf
+     SirMegaV
 
   Camo Pack
   	 SeaVea

@@ -2,6 +2,15 @@ Aero Sanity Mod Information
 11/7/2013
 Jay Lawson (Taharqa)
 
+
+WARNING - August 2016
+=========================================================================
+==This option has been known to cause issues in both MegaMek and MekHQ.==
+==The developer on this Mod is no longer active and future support will==
+==depend on his return.                                                ==
+=========================================================================
+
+
 Individuals not used to including aerospace units in their games are often surprised at some of the odd ways the 
 rules for damage work. SRMs do damage in 5-point clusters, LRM20s mounted in weapon bays on dropships can actually
 headcap mechs, UAC20s do one hit for 20 points of damage and another for 10 points of damage, medium laser lasers

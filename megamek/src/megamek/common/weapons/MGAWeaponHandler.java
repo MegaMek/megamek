@@ -173,6 +173,11 @@ public class MGAWeaponHandler extends MGHandler {
         // Resolve damage normally.
         nDamage = nDamPerHit * Math.min(nCluster, hits);
 
+        // Report calcDmgPerHitReports here
+        if (calcDmgPerHitReport.size() > 0) {
+            vPhaseReport.addAll(calcDmgPerHitReport);
+        }
+
         // A building may be damaged, even if the squad is not.
         if (bldgAbsorbs > 0) {
             int toBldg = Math.min(bldgAbsorbs, nDamage);

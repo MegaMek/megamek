@@ -130,7 +130,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
                     bDirect ? toHit.getMoS() / 3 : 0,
                     WeaponType.WEAPON_DIRECT_FIRE,
                     ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null);
+                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
             toReturn = Math.ceil(toReturn);
         }
         if (bGlancing) {

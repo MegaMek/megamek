@@ -111,6 +111,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * added once.
      */
     protected boolean isStrafingFirstShot = false;
+    
+    /**
+     * Used to store reports from calls to <code>calcDamagePerHit</code>.  This
+     * is necessary because the method is called before the report needs to be
+     * added.
+     */
+    protected Vector<Report> calcDmgPerHitReport = new Vector<>();
 
     /**
      * return the <code>int</code> Id of the attacking <code>Entity</code>
@@ -454,8 +461,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
 
             // Do this stuff first, because some weapon's miss report reference
-            // the
-            // amount of shots fired and stuff.
+            // the amount of shots fired and stuff.
+            Vector<Report> dmgPerHitReport = new Vector<>();
             nDamPerHit = calcDamagePerHit();
             if (!heatAdded) {
                 addHeat();
@@ -524,6 +531,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
 
             if (!bMissed) {
+                vPhaseReport.addAll(dmgPerHitReport);
                 // Buildings shield all units from a certain amount of damage.
                 // Amount is based upon the building's CF at the phase's start.
                 int bldgAbsorbs = 0;
@@ -689,7 +697,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null);
+                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
@@ -1002,6 +1010,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (bDirect) {
             hit.makeDirectBlow(toHit.getMoS() / 3);
         }
+        
+        // Report calcDmgPerHitReports here
+        if (calcDmgPerHitReport.size() > 0) {
+            vPhaseReport.addAll(calcDmgPerHitReport);
+        }
+    
         // A building may be damaged, even if the squad is not.
         if (bldgAbsorbs > 0) {
             int toBldg = Math.min(bldgAbsorbs, nDamage);

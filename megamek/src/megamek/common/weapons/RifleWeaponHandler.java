@@ -68,7 +68,7 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
                     bDirect ? toHit.getMoS() : 0,
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null);
+                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
@@ -142,6 +142,13 @@ public class RifleWeaponHandler extends AmmoWeaponHandler {
         if (bDirect) {
             hit.makeDirectBlow(toHit.getMoS() / 3);
         }
+
+        // Report calcDmgPerHitReports here
+        if (calcDmgPerHitReport.size() > 0) {
+            vPhaseReport.addAll(calcDmgPerHitReport);
+        }
+
+
         // A building may be damaged, even if the squad is not.
         if (bldgAbsorbs > 0) {
             int toBldg = Math.min(bldgAbsorbs, nDamage);

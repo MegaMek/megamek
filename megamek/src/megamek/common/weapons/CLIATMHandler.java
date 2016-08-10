@@ -94,7 +94,7 @@ public class CLIATMHandler extends ATMHandler {
                     wtype.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
                     ((Infantry) target).isMechanized(),
-                    toHit.getThruBldg() != null);
+                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
             if (bGlancing) {
                 toReturn /= 2; // Is this correct for partial streak missiles??
                 // it seems as if this only affects infantry -

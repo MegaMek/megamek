@@ -188,7 +188,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
                         bDirect ? toHit.getMoS() / 3 : 0,
                         wtype.getInfantryDamageClass(),
                         ((Infantry) target).isMechanized(),
-                        toHit.getThruBldg() != null);
+                        toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
             }
             // plus 1 for cluster
             toReturn++;

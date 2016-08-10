@@ -99,6 +99,12 @@ public class ACAPHandler extends ACWeaponHandler {
             hit.makeDirectBlow(toHit.getMoS() / 3);
         }
 
+        // Report calcDmgPerHitReports here
+        if (calcDmgPerHitReport.size() > 0) {
+            vPhaseReport.addAll(calcDmgPerHitReport);
+        }
+
+
         // A building may be damaged, even if the squad is not.
         if (bldgAbsorbs > 0) {
             int toBldg = Math.min(bldgAbsorbs, nDamage);

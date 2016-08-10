@@ -13,6 +13,7 @@ v0.41.22-git
 + Issue #303: Reporting issues with misses on units in buildings
 + Bug: Fixed IndexOutOfBoundsException in ChatLounge.customizeMechs
 + Data New Sprites and some unit fixes. (Thanks SirMegaV)
++ Feature: Adding Default Key binds.txt for MegaMek Use.
 
 v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips

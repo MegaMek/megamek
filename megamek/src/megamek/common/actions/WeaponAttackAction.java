@@ -1505,8 +1505,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     "Targeting building from inside (are you SURE this is a good idea?).");
         }
 
-        // add range mods
-        toHit.append(Compute.getRangeMods(game, ae, weaponId, target));
+        // Add range mods - If the attacker and target are in the same building
+        // & hex, range mods don't apply (and will cause the shot to fail)
+        if ((los.getThruBldg() == null)
+                || !los.getTargetPosition().equals(ae.getPosition())) {
+            toHit.append(Compute.getRangeMods(game, ae, weaponId, target));
+        }
 
         if (ae.hasQuirk(OptionsConstants.QUIRK_POS_ANTI_AIR)
                 && (target instanceof Entity)) {
@@ -3907,6 +3911,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
 
             losMods = los.losModifiers(game, underWater);
+        }
+
+        // If the attacker and target are in the same building & hex, they can
+        // always attack each other, TW pg 175.
+        if ((los.getThruBldg() != null)
+                && los.getTargetPosition().equals(ae.getPosition())) {
+            return null;
         }
 
         if (multiPurposeelevationHack) {

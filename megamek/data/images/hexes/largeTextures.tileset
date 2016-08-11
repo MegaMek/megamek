@@ -176,7 +176,14 @@ base * "magma:1" "" "largeTextures/BigMagma.jpg"
 
 base * "sand:1" "" "largeTextures/texture5.jpg"
 
-base * "tundra:1" "" "largeTextures/BigTundra.jpg"
+base * "snow:1" "" "largeTextures/BigSnow1.jpg"
+
+base -2 "tundra:1" "" "tundra/tundra_-2.gif"
+base -1 "tundra:1" "" "tundra/tundra_-1.gif"
+base 0 "tundra:1" "" "tundra/tundra_0.gif"
+base 1 "tundra:1" "" "tundra/tundra_1.gif"
+base 2 "tundra:1" "" "tundra/tundra_2.gif"
+base 3 "tundra:1" "" "tundra/tundra_3.gif"
 
 base * "impassable:1" "" "largeTextures/BigRock.jpg"
 

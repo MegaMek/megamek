@@ -769,20 +769,26 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             if (targetInBuilding && (bldg != null)
                     && (toHit.getThruBldg() != null)
                     && (entityTarget instanceof Infantry)) {
-                int dmgClass = wtype.getInfantryDamageClass();
-                int nDamage;
-                if (dmgClass < WeaponType.WEAPON_BURST_1D6) {
-                    nDamage = nDamPerHit * Math.min(nCluster, hits);
+                // If elevation is the same, building doesn't absorb
+                if (ae.getElevation() != entityTarget.getElevation()) {
+                    int dmgClass = wtype.getInfantryDamageClass();
+                    int nDamage;
+                    if (dmgClass < WeaponType.WEAPON_BURST_1D6) {
+                        nDamage = nDamPerHit * Math.min(nCluster, hits);
+                    } else {
+                        // Need to indicate to handleEntityDamage that the
+                        // absorbed damage shouldn't reduce incoming damage,
+                        // since the incoming damage was reduced in
+                        // Compute.directBlowInfantryDamage
+                        nDamage = -wtype.getDamage(nRange)
+                                * Math.min(nCluster, hits);
+                    }
+                    bldgAbsorbs = (int) Math.round(nDamage
+                            * bldg.getInfDmgFromInside());
                 } else {
-                    // Need to indicate to handleEntityDamage that the
-                    // absorbed damage shouldn't reduce incoming damage,
-                    // since the incoming damage was reduced in
-                    // Compute.directBlowInfantryDamage
-                    nDamage = -wtype.getDamage(nRange)
-                            * Math.min(nCluster, hits);
+                    // Used later to indicate a special report
+                    bldgAbsorbs = Integer.MIN_VALUE;
                 }
-                bldgAbsorbs = (int) Math.round(nDamage
-                        * bldg.getInfDmgFromInside()); 
             }
 
             // Make sure the player knows when his attack causes no damage.

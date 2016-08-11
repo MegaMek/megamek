@@ -189,6 +189,13 @@ public class MGAWeaponHandler extends MGHandler {
                 report.subject = subjectId;
             }
             vPhaseReport.addAll(buildingReport);
+        // Units on same level, report building absorbs no damage
+        } else if (bldgAbsorbs == Integer.MIN_VALUE) {
+            Report.addNewline(vPhaseReport);
+            Report r = new Report(9976);
+            r.subject = ae.getId();
+            r.indent(2);
+            vPhaseReport.add(r);            
         // Cases where absorbed damage doesn't reduce incoming damage
         } else if (bldgAbsorbs < 0) {
             int toBldg = -bldgAbsorbs;

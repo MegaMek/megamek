@@ -1206,6 +1206,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     protected void addHeat() {
+        // Only add heat for first shot in strafe
+        if (isStrafing && !isStrafingFirstShot()) {
+            return;
+        }
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             if (ae.usesWeaponBays() && !game.getOptions().booleanOption("heat_by_bay")) {
                 int loc = weapon.getLocation();
@@ -1215,9 +1219,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     ae.setArcFired(loc, rearMount);
                 }
             } else {
-                if (!isStrafing() || isStrafingFirstShot()) {
-                    ae.heatBuildup += (weapon.getCurrentHeat());
-                }
+                ae.heatBuildup += (weapon.getCurrentHeat());
             }
         }
     }

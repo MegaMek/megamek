@@ -3503,6 +3503,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     continue;
                 }
                 WeaponAttackAction prevAttack = (WeaponAttackAction) o;
+                // Strafing attacks only count heat for first shot
+                if (prevAttack.isStrafing()
+                        && !prevAttack.isStrafingFirstShot()) {
+                    continue;
+                }
                 if ((prevAttack.getEntityId() == attackerId)
                         && (weaponId != prevAttack.getWeaponId())) {
                     Mounted prevWeapon = ae.getEquipment(prevAttack

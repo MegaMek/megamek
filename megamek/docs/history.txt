@@ -15,6 +15,9 @@ v0.41.22-git
 + Data New Sprites and some unit fixes. (Thanks SirMegaV)
 + Feature: Adding Default Key binds.txt for MegaMek Use.
 + Issue #308: Incorrect heat when strafing with dropship bay weapons
++ Feature: Non-Infantry Weapon Damage Against Infantry changes now reported
++ Bug [#4186]: Combat within building damage for infantry now correct
++ Adjusted building floor names during deployment; starts with ground floor
 
 v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips

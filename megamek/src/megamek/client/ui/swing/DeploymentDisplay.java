@@ -566,10 +566,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         ArrayList<String> floorNames = new ArrayList<>(height + 1);
         ArrayList<Integer> floorValues = new ArrayList<>(height + 1);
 
-        for (int loop = 0; loop < height; loop++) {
+        if (Compute.stackingViolation(game, ce(), 0, moveto, null) == null) {
+            floorNames.add(Messages.getString("DeploymentDisplay.ground"));
+            floorValues.add(0);
+        }
+
+        for (int loop = 1; loop < height; loop++) {
             if (Compute.stackingViolation(game, ce(), loop, moveto, null) == null) {
                 floorNames.add(Messages.getString("DeploymentDisplay.floor")
-                        + Integer.toString(loop + 1));
+                        + Integer.toString(loop));
                 floorValues.add(loop);
             }
         }

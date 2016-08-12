@@ -17272,12 +17272,12 @@ public class Server implements Runnable {
      * Handle a charge's damage
      */
     private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit,
-                                     int direction) {
+            int direction) {
         resolveChargeDamage(ae, te, toHit, direction, false, true);
     }
 
     private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit,
-                                     int direction, boolean glancing, boolean throughFront) {
+            int direction, boolean glancing, boolean throughFront) {
 
         // we hit...
 
@@ -17289,8 +17289,7 @@ public class Server implements Runnable {
 
         // Damage To Target
         int damage = ChargeAttackAction.getDamageFor(ae, te, game.getOptions()
-                                                                 .booleanOption("tacops_charge_damage"),
-                                                     toHit.getMoS());
+                .booleanOption("tacops_charge_damage"), toHit.getMoS());
 
         // Damage to Attacker
         int damageTaken = ChargeAttackAction.getDamageTakenBy(ae, te, game
@@ -17374,7 +17373,7 @@ public class Server implements Runnable {
                 spikeDamage += 2;
             }
             addReport(damageEntity(ae, hit, cluster, false, DamageType.NONE,
-                                   false, false, throughFront));
+                    false, false, throughFront));
             damageTaken -= cluster;
         }
 
@@ -30507,8 +30506,10 @@ public class Server implements Runnable {
                         // TW page 217 says left over damage gets treated as
                         // direct fire ballistic damage
                         if (!(entity instanceof BattleArmor)) {
-                            toInf = Compute.directBlowInfantryDamage(toInf, 0,
-                                    WeaponType.WEAPON_DIRECT_FIRE, false);
+                            toInf = Compute
+                                    .directBlowInfantryDamage(toInf, 0,
+                                            WeaponType.WEAPON_DIRECT_FIRE,
+                                            false, false);
                         }
                         int remaining = toInf;
                         int cluster = toInf;
@@ -31155,14 +31156,14 @@ public class Server implements Runnable {
      * @return a <code>Report</code> to be shown to the players.
      */
     public Vector<Report> damageBuilding(Building bldg, int damage, String why,
-                                         Coords coords) {
+            Coords coords) {
         Vector<Report> vPhaseReport = new Vector<Report>();
         Report r = new Report(1210, Report.PUBLIC);
 
         // Do nothing if no building or no damage was passed.
         if ((bldg != null) && (damage > 0)) {
             r.messageId = 3435;
-            r.add(bldg.getName());
+            r.add(bldg.toString());
             r.add(why);
             r.add(damage);
             vPhaseReport.add(r);

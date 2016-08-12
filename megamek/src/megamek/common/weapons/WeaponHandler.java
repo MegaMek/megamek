@@ -111,6 +111,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * added once.
      */
     protected boolean isStrafingFirstShot = false;
+    
+    /**
+     * Used to store reports from calls to <code>calcDamagePerHit</code>.  This
+     * is necessary because the method is called before the report needs to be
+     * added.
+     */
+    protected Vector<Report> calcDmgPerHitReport = new Vector<>();
 
     /**
      * return the <code>int</code> Id of the attacking <code>Entity</code>
@@ -454,8 +461,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
 
             // Do this stuff first, because some weapon's miss report reference
-            // the
-            // amount of shots fired and stuff.
+            // the amount of shots fired and stuff.
+            Vector<Report> dmgPerHitReport = new Vector<>();
             nDamPerHit = calcDamagePerHit();
             if (!heatAdded) {
                 addHeat();
@@ -524,11 +531,39 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
 
             if (!bMissed) {
+                vPhaseReport.addAll(dmgPerHitReport);
                 // Buildings shield all units from a certain amount of damage.
                 // Amount is based upon the building's CF at the phase's start.
                 int bldgAbsorbs = 0;
-                if (targetInBuilding && (bldg != null)) {
+                if (targetInBuilding && (bldg != null)
+                        && (toHit.getThruBldg() == null)) {
                     bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
+                }
+                
+                // Attacking infantry in buildings from same building
+                if (targetInBuilding && (bldg != null)
+                        && (toHit.getThruBldg() != null)
+                        && (entityTarget instanceof Infantry)) {
+                    // If elevation is the same, building doesn't absorb
+                    if (ae.getElevation() != entityTarget.getElevation()) {
+                        int dmgClass = wtype.getInfantryDamageClass();
+                        int nDamage;
+                        if (dmgClass < WeaponType.WEAPON_BURST_1D6) {
+                            nDamage = nDamPerHit * Math.min(nCluster, hits);
+                        } else {
+                            // Need to indicate to handleEntityDamage that the
+                            // absorbed damage shouldn't reduce incoming damage,
+                            // since the incoming damage was reduced in
+                            // Compute.directBlowInfantryDamage
+                            nDamage = -wtype.getDamage(nRange)
+                                    * Math.min(nCluster, hits);
+                        }
+                        bldgAbsorbs = (int) Math.round(nDamage
+                                * bldg.getInfDmgFromInside());
+                    } else {
+                        // Used later to indicate a special report
+                        bldgAbsorbs = Integer.MIN_VALUE;
+                    }
                 }
 
                 // Make sure the player knows when his attack causes no damage.
@@ -667,7 +702,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                     bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized());
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
@@ -980,10 +1016,33 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (bDirect) {
             hit.makeDirectBlow(toHit.getMoS() / 3);
         }
+        
+        // Report calcDmgPerHitReports here
+        if (calcDmgPerHitReport.size() > 0) {
+            vPhaseReport.addAll(calcDmgPerHitReport);
+        }
+    
         // A building may be damaged, even if the squad is not.
         if (bldgAbsorbs > 0) {
             int toBldg = Math.min(bldgAbsorbs, nDamage);
             nDamage -= toBldg;
+            Report.addNewline(vPhaseReport);
+            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
+                    entityTarget.getPosition());
+            for (Report report : buildingReport) {
+                report.subject = subjectId;
+            }
+            vPhaseReport.addAll(buildingReport);
+        // Units on same level, report building absorbs no damage
+        } else if (bldgAbsorbs == Integer.MIN_VALUE) {
+            Report.addNewline(vPhaseReport);
+            Report r = new Report(9976);
+            r.subject = ae.getId();
+            r.indent(2);
+            vPhaseReport.add(r);
+        // Cases where absorbed damage doesn't reduce incoming damage
+        } else if (bldgAbsorbs < 0) {
+            int toBldg = -bldgAbsorbs;
             Report.addNewline(vPhaseReport);
             Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg,
                     entityTarget.getPosition());
@@ -1112,9 +1171,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
         vPhaseReport.addAll(buildingReport);
 
-        // Damage any infantry in the hex.
-        vPhaseReport.addAll(server.damageInfantryIn(bldg, nDamage, coords,
-                wtype.getInfantryDamageClass()));
+        // Damage any infantry in hex, unless attack between units in same bldg
+        if (toHit.getThruBldg() == null) {
+            vPhaseReport.addAll(server.damageInfantryIn(bldg, nDamage, coords,
+                    wtype.getInfantryDamageClass()));
+        }
     }
 
     protected boolean allShotsHit() {

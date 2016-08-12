@@ -61,6 +61,7 @@ include "StandardIncludes/StandardElevator.tileinc"
 include "StandardIncludes/StandardLimbs.tileinc"
 include "StandardIncludes/StandardSpace.tileinc"
 
+super * "swamp:1" "grass" "bloodwolf/hq_boring/swamp_3.png;bloodwolf/hq_boring/swamp_4.png;bloodwolf/hq_boring/swamp_5.png"
 super * "swamp:1" "" "bloodwolf/hq_boring/swamp_0.png;bloodwolf/hq_boring/swamp_1.png;bloodwolf/hq_boring/swamp_2.png"
 
 super * "rough:1" "" "hq_boring/rough_0.png;hq_boring/rough_1.png;hq_boring/rough_2.png;hq_boring/rough_3.png"

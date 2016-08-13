@@ -60,6 +60,9 @@ public class Infantry extends Entity {
     public static int TAG_TROOPS        = 1 << 10;
     public static int SCUBA             = 1 << 11;
     public static int NUM_SPECIALIZATIONS = 12;
+    public static int COMBAT_ENGINEERS = BRIDGE_ENGINEERS | DEMO_ENGINEERS
+            | FIRE_ENGINEERS | MINE_ENGINEERS | SENSOR_ENGINEERS
+            | TRENCH_ENGINEERS;
 
     /**
      * squad size and number
@@ -1266,7 +1269,11 @@ public class Infantry extends Entity {
     public boolean hasSpecialization(int spec) {
         return (infSpecs & spec) > 0;
     }
-    
+
+    public int getSpecializations() {
+        return infSpecs;
+    }
+
     public void setSpecializations(int spec) {
         infSpecs = spec;
     }

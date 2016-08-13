@@ -725,6 +725,38 @@ public class EntityListFile {
                 output.write("\" pickUpId=\"");
                 output.write(((MechWarrior)entity).getPickedUpByExternalIdAsString());
             }
+
+            // Save some values for conventional infantry
+            if ((entity instanceof Infantry)
+                    && !(entity instanceof BattleArmor)) {
+                Infantry inf = (Infantry) entity;
+                if (inf.getDamageDivisor() != 1) {
+                    output.write("\" " + MULParser.ARMOR_DIVISOR + "=\"");
+                    output.write(inf.getDamageDivisor() + "");
+                }
+                if (inf.isArmorEncumbering()) {
+                    output.write("\" " + MULParser.ARMOR_ENC + "=\"1");
+                }
+                if (inf.hasSpaceSuit()) {
+                    output.write("\" " + MULParser.SPACESUIT + "=\"1");
+                }
+                if (inf.hasDEST()) {
+                    output.write("\" " + MULParser.DEST_ARMOR + "=\"1");
+                }
+                if (inf.hasSneakCamo()) {
+                    output.write("\" " + MULParser.SNEAK_CAMO + "=\"1");
+                }
+                if (inf.hasSneakIR()) {
+                    output.write("\" " + MULParser.SNEAK_IR + "=\"1");
+                }
+                if (inf.hasSneakECM()) {
+                    output.write("\" " + MULParser.SNEAK_ECM + "=\"1");
+                }
+                if (inf.getSpecializations() > 0) {
+                    output.write("\" " + MULParser.INF_SPEC + "=\"");
+                    output.write(inf.getSpecializations() + "");
+                }
+            }
             output.write("\">");
             output.write(CommonConstants.NL);
 

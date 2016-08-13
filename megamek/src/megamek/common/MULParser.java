@@ -149,6 +149,16 @@ public class MULParser {
     private static final String KILLED = "killed";
     private static final String KILLER = "killer";
 
+    public static final String ARMOR_DIVISOR = "armorDivisor";
+    public static final String ARMOR_ENC = "armorEncumbering";
+    public static final String DEST_ARMOR = "destArmor";
+    public static final String SPACESUIT = "spacesuit";
+    public static final String SNEAK_CAMO = "sneakCamo";
+    public static final String SNEAK_IR = "sneakIR";
+    public static final String SNEAK_ECM = "sneakECM";
+    public static final String INF_SPEC = "infantrySpecializations";
+
+
     /**
      * Special values recognized by this parser.
      */
@@ -644,6 +654,38 @@ public class MULParser {
         String c3uuid = entityTag.getAttribute(C3UUID);
         if (c3uuid.length() > 0) {
             entity.setC3UUIDAsString(c3uuid);
+        }
+
+        // Load some values for conventional infantry
+        if ((entity instanceof Infantry)
+                && !(entity instanceof BattleArmor)) {
+            Infantry inf = (Infantry) entity;
+            String armorDiv = entityTag.getAttribute(ARMOR_DIVISOR);
+            if (armorDiv.length() > 0) {
+                inf.setDamageDivisor(Double.parseDouble(armorDiv));
+            }
+            if (entityTag.getAttribute(ARMOR_ENC).length() > 0) {
+                inf.setArmorEncumbering(true);
+            }
+            if (entityTag.getAttribute(SPACESUIT).length() > 0) {
+                inf.setSpaceSuit(true);
+            }
+            if (entityTag.getAttribute(DEST_ARMOR).length() > 0) {
+                inf.setDEST(true);
+            }
+            if (entityTag.getAttribute(SNEAK_CAMO).length() > 0) {
+                inf.setSneakCamo(true);
+            }
+            if (entityTag.getAttribute(SNEAK_IR).length() > 0) {
+                inf.setSneakIR(true);
+            }
+            if (entityTag.getAttribute(SNEAK_ECM).length() > 0) {
+                inf.setSneakECM(true);
+            }
+            String infSpec = entityTag.getAttribute(INF_SPEC);
+            if (infSpec.length() > 0) {
+                inf.setSpecializations(Integer.parseInt(infSpec));
+            }
         }
     }
     

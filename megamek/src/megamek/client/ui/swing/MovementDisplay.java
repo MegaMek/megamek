@@ -3950,6 +3950,14 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             // Does the entity has a minesweeper?
             int clear = Minefield.CLEAR_NUMBER_INFANTRY;
             int boom = Minefield.CLEAR_NUMBER_INFANTRY_ACCIDENT;
+            // Check for Minesweeping Engineers
+            if ((ce() instanceof Infantry)) {
+                Infantry inf = (Infantry) ce();
+                if (inf.hasSpecialization(Infantry.MINE_ENGINEERS)) {
+                    clear = Minefield.CLEAR_NUMBER_INF_ENG;
+                    boom = Minefield.CLEAR_NUMBER_INF_ENG_ACCIDENT;
+                }
+            }
             // Check for Mine clearance manipulators on BA
             if ((ce() instanceof BattleArmor)) {
                 BattleArmor ba = (BattleArmor) ce();

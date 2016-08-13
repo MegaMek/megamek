@@ -13578,7 +13578,7 @@ public class Server implements Runnable {
         int clear = Minefield.CLEAR_NUMBER_INFANTRY;
         int boom = Minefield.CLEAR_NUMBER_INFANTRY_ACCIDENT;
 
-        Report r;
+        Report r = new Report(2245);
         // Does the entity has a minesweeper?
         if ((ent instanceof BattleArmor)) {
             BattleArmor ba = (BattleArmor)ent;
@@ -13587,10 +13587,15 @@ public class Server implements Runnable {
             if (ba.getLeftManipulatorName().equals(mcmName)) {
                 clear = Minefield.CLEAR_NUMBER_BA_SWEEPER;
                 boom = Minefield.CLEAR_NUMBER_BA_SWEEPER_ACCIDENT;
+                r = new Report(2246);
             }
-            r = new Report(2246);
-        } else {
-            r = new Report(2245);
+        } else if (ent instanceof Infantry) { // Check Minesweeping Engineers
+            Infantry inf = (Infantry) ent;
+            if (inf.hasSpecialization(Infantry.MINE_ENGINEERS)) {
+                clear = Minefield.CLEAR_NUMBER_INF_ENG;
+                boom = Minefield.CLEAR_NUMBER_INF_ENG_ACCIDENT;
+                r = new Report(2247);
+            }
         }
         // mine clearing roll
         r.subject = ent.getId();
@@ -13604,6 +13609,8 @@ public class Server implements Runnable {
         }
         // some mines might have blown up
         resetMines();
+
+        addNewLines();
     }
 
     /**

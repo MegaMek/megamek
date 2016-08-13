@@ -1537,6 +1537,10 @@ public class Infantry extends Entity {
             sArmor.append("E");
         }
 
+        if (hasSpaceSuit()) {
+            sArmor.append(" (Spacesuit) ");
+        }
+
         if(hasDEST()) {
             sArmor.append(" (DEST) ");
         }
@@ -1555,7 +1559,6 @@ public class Infantry extends Entity {
 
 
         return sArmor.toString();
-
     }
 
     /**
@@ -1750,5 +1753,4 @@ public class Infantry extends Entity {
     public void setTakingCover(boolean isTakingCover) {
         this.isTakingCover = isTakingCover;
     }
-    
 } // End class Infantry

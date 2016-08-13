@@ -720,6 +720,14 @@ class EntitySprite extends Sprite {
                 PilotOptions.MD_ADVANTAGES) > 0)) 
             addToTT("MD", NOBR);
         
+        if (entity instanceof Infantry) {
+            Infantry inf = (Infantry) entity;
+            int spec = inf.getSpecializations();
+            if (spec > 0) {
+                addToTT("InfSpec", BR, Infantry.getSpecializationName(spec));
+            }
+        }
+
         // Unit movement ability
         if (thisGunEmp == null) {
             addToTT("Movement", BR, entity.getWalkMP(), entity.getRunMPasString());

@@ -6328,7 +6328,20 @@ public abstract class Mech extends Entity {
                 SYSTEM_SENSORS));
         addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                 SYSTEM_LIFE_SUPPORT));
-        setCockpitType(COCKPIT_STANDARD);
+        if (isSuperHeavy()) {
+            if (this instanceof TripodMech) {
+            setCockpitType(COCKPIT_SUPERHEAVY_TRIPOD);
+            } else if (isIndustrial()) {
+                setCockpitType(COCKPIT_SUPERHEAVY_INDUSTRIAL);
+            } else {
+                setCockpitType(COCKPIT_SUPERHEAVY);
+            }
+        } else if (this instanceof TripodMech) {
+            setCockpitType(COCKPIT_TRIPOD);
+        } else {
+            setCockpitType(COCKPIT_STANDARD);
+        }
+
         return true;
     }
 

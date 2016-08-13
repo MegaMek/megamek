@@ -18,6 +18,7 @@ v0.41.22-git
 + Feature: Non-Infantry Weapon Damage Against Infantry changes now reported
 + Bug [#4186]: Combat within building damage for infantry now correct
 + Adjusted building floor names during deployment; starts with ground floor
++ Issue #310: Tripod cockpit weight calculations
 
 v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips

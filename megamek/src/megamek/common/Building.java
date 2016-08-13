@@ -18,7 +18,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.Vector;
 
 /**
@@ -102,14 +104,37 @@ public class Building implements Serializable {
         private static final long serialVersionUID = -6655782801564155668L;
         public int damage;
         public int playerId;
+        public Coords pos;
+        /**
+         * A UUID to keep track of the identify of this demolition charge.
+         * Since we could have multiple charges in the same building hex, we
+         * can't track identity based upon owner and damage.  Additionally,
+         * since we pass objects across the network, we need a mechanism to
+         * track identify other than memory address.
+         */
+        public UUID uuid = UUID.randomUUID();
 
-        public DemolitionCharge(int playerId, int damage) {
+        public DemolitionCharge(int playerId, int damage, Coords p) {
             this.damage = damage;
             this.playerId = playerId;
+            this.pos = p;
         }
-    }
+        
+        @Override
+        public int hashCode() {
+            return uuid.hashCode();
+        }
+        
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof DemolitionCharge) {
+                return uuid.equals(((DemolitionCharge)o).uuid);
+            }
+            return false;
+        }
+     }
 
-    private ArrayList<DemolitionCharge> demolitionCharges = new ArrayList<DemolitionCharge>();
+    private List<DemolitionCharge> demolitionCharges = new ArrayList<>();
 
     // Public and Protected constants, constructors, and methods.
 
@@ -776,9 +801,21 @@ public class Building implements Serializable {
         burning.put(coords, onFire);
     }
 
-    public void addDemolitionCharge(int playerId, int damage) {
-        DemolitionCharge charge = new DemolitionCharge(playerId, damage);
+    public void addDemolitionCharge(int playerId, int damage, Coords pos) {
+        DemolitionCharge charge = new DemolitionCharge(playerId, damage, pos);
         demolitionCharges.add(charge);
+    }
+    
+    public void removeDemolitionCharge(DemolitionCharge charge) {
+        demolitionCharges.remove(charge);
+    }
+    
+    public List<DemolitionCharge> getDemolitionCharges() {
+        return demolitionCharges;
+    }
+
+    public void setDemolitionCharges(List<DemolitionCharge> charges) {
+        demolitionCharges = charges;
     }
 
     /**

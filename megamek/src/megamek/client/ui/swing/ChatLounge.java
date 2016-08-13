@@ -4070,8 +4070,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         && !allInfantry) {
                     allSameEntityType = false;
                 }
-                if (isRapidFireMG) {
-                    for (Mounted m : en.getEquipment()) {
+                if (isRapidFireMG || isHotLoad) {
+                    for (Mounted m : en.getWeaponList()) {
                         EquipmentType etype = m.getType();
                         if (etype.hasFlag(WeaponType.F_MG)) {
                             hasMGs |= true;

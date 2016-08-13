@@ -15,7 +15,9 @@
 package megamek.common;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
@@ -1275,7 +1277,53 @@ public class Infantry extends Entity {
     }
 
     public void setSpecializations(int spec) {
+        // Equipment for Trench/Fieldworks Engineers
+        if ((spec & TRENCH_ENGINEERS) > 0 && (infSpecs & TRENCH_ENGINEERS) == 0) {
+            // Need to add vibro shovels
+            try {
+                EquipmentType shovels = EquipmentType.get("Vibro-Shovel");
+                addEquipment(shovels, Infantry.LOC_INFANTRY);
+            } catch (LocationFullException e) {
+                e.printStackTrace();
+            }
+        } else if ((spec & TRENCH_ENGINEERS) == 0
+                && (infSpecs & TRENCH_ENGINEERS) > 0) {
+            // Need to remove vibro shovels
+            List<Mounted> eqToRemove = new ArrayList<>();
+            for (Mounted eq : getEquipment()) {
+                if (eq.getType().hasFlag(MiscType.F_TOOLS)
+                        && eq.getType().hasSubType(MiscType.S_VIBROSHOVEL)) {
+                    eqToRemove.add(eq);
+                }
+            }
+            getEquipment().removeAll(eqToRemove);
+            getMisc().removeAll(eqToRemove);
+        }
+        // Equipment for Demolition Engineers
+        if ((spec & DEMO_ENGINEERS) > 0 && (infSpecs & DEMO_ENGINEERS) == 0) {
+            // Need to add vibro shovels
+            try {
+                EquipmentType shovels = EquipmentType.get("Demolition Charge");
+                addEquipment(shovels, Infantry.LOC_INFANTRY);
+            } catch (LocationFullException e) {
+                e.printStackTrace();
+            }
+        } else if ((spec & DEMO_ENGINEERS) == 0
+                && (infSpecs & DEMO_ENGINEERS) > 0) {
+            // Need to remove vibro shovels
+            List<Mounted> eqToRemove = new ArrayList<>();
+            for (Mounted eq : getEquipment()) {
+                if (eq.getType().hasFlag(MiscType.F_TOOLS)
+                        && eq.getType()
+                                .hasSubType(MiscType.S_DEMOLITION_CHARGE)) {
+                    eqToRemove.add(eq);
+                }
+            }
+            getEquipment().removeAll(eqToRemove);
+            getMisc().removeAll(eqToRemove);
+        }
         infSpecs = spec;
+        
     }
     
     public static String getSpecializationName(int spec) {

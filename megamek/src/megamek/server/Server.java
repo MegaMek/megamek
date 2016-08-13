@@ -81,6 +81,7 @@ import megamek.common.BoardDimensions;
 import megamek.common.BombType;
 import megamek.common.Building;
 import megamek.common.Building.BasementType;
+import megamek.common.Building.DemolitionCharge;
 import megamek.common.BuildingTarget;
 import megamek.common.CalledShot;
 import megamek.common.CommonConstants;
@@ -444,6 +445,8 @@ public class Server implements Runnable {
      * Stores a set of <code>Coords</code> that have changed during this phase.
      */
     private Set<Coords> hexUpdateSet = new LinkedHashSet<Coords>();
+    
+    private List<DemolitionCharge> explodingCharges = new ArrayList<>();
 
     private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
 
@@ -2498,6 +2501,7 @@ public class Server implements Runnable {
                 addReport(checkForTraitors());
                 // write End Phase header
                 addReport(new Report(5005, Report.PUBLIC));
+                checkLayExplosives();
                 resolveHarjelRepairs();
                 resolveEmergencyCoolantSystem();
                 checkForSuffocation();
@@ -17500,6 +17504,47 @@ public class Server implements Runnable {
 
     } // End private void resolveChargeDamage( Entity, Entity, ToHitData )
 
+    /**
+     * End-phase checks for laid explosives; check whether explosives are
+     * touched off, or if we should report laying explosives
+     */
+    private void checkLayExplosives() {
+        // Report continuing explosive work
+        for (Entity e : game.getEntitiesVector()) {
+            if (!(e instanceof Infantry)) {
+                continue;
+            }
+            Infantry inf = (Infantry) e;
+            if (inf.turnsLayingExplosives > 0) {
+                Report r = new Report(4271);
+                r.subject = inf.getId();
+                r.addDesc(inf);
+                addReport(r);
+            }
+        }
+        // Check for touched-off explosives
+        Vector<Building> updatedBuildings = new Vector<>();
+        for (DemolitionCharge charge : explodingCharges) {
+            Building bldg = game.getBoard().getBuildingAt(charge.pos);
+            if (bldg == null) { // Shouldn't happen...
+                continue;
+            }
+            bldg.removeDemolitionCharge(charge);
+            updatedBuildings.add(bldg);
+            Report r = new Report(4272, Report.PUBLIC);
+            r.add(bldg.getName());
+            addReport(r);
+            Vector<Report> dmgReports = damageBuilding(bldg, charge.damage,
+                    " explodes for ", charge.pos);
+            for (Report rep : dmgReports) {
+                rep.indent();
+                addReport(rep);
+            }
+        }
+        explodingCharges.clear();
+        sendChangedBuildings(updatedBuildings);
+    }
+    
     private void resolveLayExplosivesAttack(PhysicalResult pr, int lastEntityId) {
         final LayExplosivesAttackAction laa = (LayExplosivesAttackAction) pr.aaa;
         final Entity ae = game.getEntity(laa.getEntityId());
@@ -17516,12 +17561,16 @@ public class Server implements Runnable {
                         ae.getPosition());
                 if (building != null) {
                     building.addDemolitionCharge(ae.getOwner().getId(),
-                                                 pr.damage);
+                            pr.damage, ae.getPosition());
                     Report r = new Report(4275);
                     r.subject = inf.getId();
                     r.addDesc(inf);
                     r.add(pr.damage);
                     addReport(r);
+                    // Update clients with this info
+                    Vector<Building> updatedBuildings = new Vector<>();
+                    updatedBuildings.add(building);
+                    sendChangedBuildings(updatedBuildings);
                 }
                 inf.turnsLayingExplosives = -1;
             }
@@ -29851,6 +29900,17 @@ public class Server implements Runnable {
                     sendServerChat(INVADER_ZIM_RESPONSE);
                 }
                 break;
+            case Packet.COMMAND_BLDG_EXPLODE:
+                DemolitionCharge charge = (DemolitionCharge)packet.getData()[0];
+                if (charge.playerId == connId) {
+                    if (!explodingCharges.contains(charge)) {
+                        explodingCharges.add(charge);
+                        IPlayer p = game.getPlayer(connId);
+                        sendServerChat(p.getName() + " has touched off explosives "
+                                + "(handled in end phase)!");
+                    }
+                }
+                break;
             case Packet.COMMAND_ENTITY_MOVE:
                 receiveMovement(packet, connId);
                 break;
@@ -31212,7 +31272,7 @@ public class Server implements Runnable {
                 curCF -= Math.min(curCF, damage);
                 bldg.setCurrentCF(curCF, coords);
                 final int damageThresh = (int) Math.ceil(bldg
-                                                                 .getPhaseCF(coords) / 10.0);
+                        .getPhaseCF(coords) / 10.0);
 
                 // If the CF is zero, the building should fall.
                 if ((curCF == 0) && (startingCF != 0)) {
@@ -31231,8 +31291,8 @@ public class Server implements Runnable {
                         vPhaseReport.add(r);
                         Vector<Report> vRep = new Vector<Report>();
                         doExplosion(((FuelTank) bldg).getMagnitude(), 10,
-                                    false, bldg.getCoords().nextElement(), true,
-                                    vRep, null, -1);
+                                false, bldg.getCoords().nextElement(), true,
+                                vRep, null, -1);
                         Report.indentAll(vRep, 2);
                         vPhaseReport.addAll(vRep);
                         return vPhaseReport;
@@ -31255,7 +31315,7 @@ public class Server implements Runnable {
                             .getGunEmplacements(coords);
                     if (guns.size() > 0) {
                         vPhaseReport.addAll(criticalGunEmplacement(guns, bldg,
-                                                                   coords));
+                                coords));
                     }
                 }
             }
@@ -31265,7 +31325,7 @@ public class Server implements Runnable {
     }
 
     private Vector<Report> criticalGunEmplacement(Vector<GunEmplacement> guns,
-                                                  Building bldg, Coords coords) {
+            Building bldg, Coords coords) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
         r = new Report(3800);

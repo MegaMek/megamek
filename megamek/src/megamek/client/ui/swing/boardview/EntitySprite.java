@@ -412,14 +412,20 @@ class EntitySprite extends Sprite {
             
             // Infantry
             if (isInfantry) {
-                int dig = ((Infantry) entity).getDugIn();
+                Infantry inf = ((Infantry) entity);
+                int dig = inf.getDugIn();
                 if (dig == Infantry.DUG_IN_COMPLETE) {
                     stStr.add(new Status(Color.PINK, "D", SMALL));
                 } else if (dig != Infantry.DUG_IN_NONE) {
                     stStr.add(new Status(Color.YELLOW, "Working", DIRECT));
                     stStr.add(new Status(Color.PINK, "D", SMALL));
-                } else if (((Infantry)entity).isTakingCover()) {
+                } else if (inf.isTakingCover()) {
                     stStr.add(new Status(Color.YELLOW, "TakingCover"));
+                }
+                
+                if (inf.turnsLayingExplosives >= 0) {
+                    stStr.add(new Status(Color.YELLOW, "Working", DIRECT));
+                    stStr.add(new Status(Color.PINK, "E", SMALL));
                 }
             }
             

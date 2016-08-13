@@ -8749,6 +8749,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         boolean canHit = false;
         boolean friendlyFire = game.getOptions().booleanOption("friendly_fire");
 
+        if ((this instanceof Infantry)
+                && hasWorkingMisc(MiscType.F_TOOLS,
+                        MiscType.S_DEMOLITION_CHARGE)) {
+            IHex hex = game.getBoard().getHex(getPosition());
+            return hex.containsTerrain(Terrains.BUILDING);
+        }
         // only mechs and protos have physical attacks (except tank charges)
         if (!((this instanceof Mech) || (this instanceof Protomech) || (this instanceof Infantry))) {
             return false;

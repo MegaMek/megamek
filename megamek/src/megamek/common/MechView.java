@@ -80,6 +80,20 @@ public class MechView {
         sLoadout.append(getMisc()) // has to occur before basic is processed
                 .append("<br>") //$NON-NLS-1$
                 .append(getFailed()).append("<br>");
+
+        if (isInf) {
+            Infantry inf = (Infantry) entity;
+            if (inf.getSpecializations() > 0) {
+                sLoadout.append("<b>Infantry Specializations</b> <br>");
+                for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
+                    int spec = 1 << i;
+                    if (inf.hasSpecialization(spec)) {
+                        sLoadout.append(Infantry.getSpecializationName(spec));
+                        sLoadout.append("<br>");
+                    }
+                }
+            }
+        }
         // sBasic.append(getFluffImage(entity)).append("<br>");
         sHead.append("<font size=+1><b>" + entity.getShortNameRaw()
                 + "</b></font>");

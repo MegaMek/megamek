@@ -6654,8 +6654,9 @@ public class Server implements Runnable {
         List<Integer> passedThroughFacing = entity.getPassedThroughFacing();
         passedThroughFacing.add(curFacing);
 
-        // Compile the move
-        md.compile(game, entity);
+        // Compile the move - don't clip
+        //  Clipping could affect hidden units; illegal steps aren't processed
+        md.compile(game, entity, false);
 
         // if advanced movement is being used then set the new vectors based on
         // movepath
@@ -6728,7 +6729,7 @@ public class Server implements Runnable {
                 for (Entity e : hiddenEnemies) {
                     int dist = e.getPosition().distance(step.getPosition());
                     // Checking for same hex and stacking violation
-                    if ((dist == 0)
+                    if ((dist == 0) && !continueTurnFromPBS
                             && (Compute.stackingViolation(game, entity.getId(),
                                     step.getPosition()) != null)) {
                         // Moving into hex of a hidden unit detects the unit
@@ -6747,14 +6748,25 @@ public class Server implements Runnable {
                             r.addDesc(entity);
                             r.add(step.getPosition().getBoardNum());
                             addReport(r);
-                            addNewLines();
                         }
+                        // Report halted movement
                         r = new Report(9962);
                         r.subject = entity.getId();
                         r.addDesc(entity);
                         r.add(step.getPosition().getBoardNum());
                         addReport(r);
                         addNewLines();
+                        Report.addNewline(vPhaseReport);
+                        // If we aren't at the end, send a special report
+                        if ((game.getTurnIndex() + 1) < game.getTurnVector()
+                                .size()) {
+                            send(e.getOwner().getId(),
+                                    createSpecialReportPacket());
+                            send(entity.getOwner().getId(),
+                                    createSpecialReportPacket());
+                        }
+                        entity.setDone(true);
+                        entityUpdate(entity.getId(), movePath, true, losCache);
                         return;
                     // Potential point-blank shot
                     } else if ((dist == 1) && !e.madePointblankShot()) {

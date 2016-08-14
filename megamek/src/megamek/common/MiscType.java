@@ -403,7 +403,6 @@ public class MiscType extends EquipmentType {
     public static final BigInteger F_SUBMERSIBLE = BigInteger.valueOf(1)
             .shiftLeft(185);
 
-
     // Flag for BattleArmor Modular Equipment Adaptor
     public static final BigInteger F_BA_MEA = BigInteger.valueOf(1)
             .shiftLeft(186);
@@ -425,6 +424,9 @@ public class MiscType extends EquipmentType {
             .valueOf(1).shiftLeft(193);
     public static final BigInteger F_EMERGENCY_COOLANT_SYSTEM = BigInteger
             .valueOf(1).shiftLeft(194);
+
+    public static final BigInteger F_BLOODHOUND = BigInteger.valueOf(1)
+            .shiftLeft(195);
 
 
     // Secondary Flags for Physical Weapons
@@ -5570,8 +5572,8 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 2;
         misc.criticals = 3;
         misc.cost = 500000;
-        misc.flags = misc.flags.or(F_BAP).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);;
+        misc.flags = misc.flags.or(F_BAP).or(F_BLOODHOUND).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 25;
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_X, EquipmentType.RATING_F };
@@ -5594,8 +5596,8 @@ public class MiscType extends EquipmentType {
         misc.tonnage = 5;
         misc.criticals = 2;
         misc.cost = 750000;
-        misc.flags = misc.flags.or(F_BAP).or(F_MECH_EQUIPMENT)
-                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);;
+        misc.flags = misc.flags.or(F_BAP).or(F_BLOODHOUND).or(F_MECH_EQUIPMENT)
+                .or(F_TANK_EQUIPMENT).or(F_AERO_EQUIPMENT);
         misc.bv = 25;
         //Since its Tactical Handbook Using TO Values
         misc.availRating = new int[] { EquipmentType.RATING_X,

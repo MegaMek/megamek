@@ -661,6 +661,17 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             updateClearTurret();
             updateClearWeaponJam();
             updateStrafe();
+
+            // Hidden units can only spot
+            if ((ce() != null) && ce().isHidden()) {
+                setFireEnabled(false);
+                setTwistEnabled(false);
+                setFindClubEnabled(false);
+                setFlipArmsEnabled(false);
+                setStrafeEnabled(false);
+                clientgui.mechD.wPan.toHitText
+                .setText("Hidden units are only allowed to spot!");
+            }
         } else {
             System.err.println("FiringDisplay: tried to " + //$NON-NLS-1$
                     "select non-existant entity: " + en); //$NON-NLS-1$
@@ -1799,6 +1810,17 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
 
         updateSearchlight();
+
+        // Hidden units can only spot
+        if ((ce() != null) && ce().isHidden()) {
+            setFireEnabled(false);
+            setTwistEnabled(false);
+            setFindClubEnabled(false);
+            setFlipArmsEnabled(false);
+            setStrafeEnabled(false);
+            clientgui.mechD.wPan.toHitText
+                    .setText("Hidden units are only allowed to spot!");
+        }
     }
 
     /**
@@ -2089,6 +2111,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 && (target != null)
                 && ce().isUsingSpotlight()
                 && ce().getCrew().isActive()
+                && !ce().isHidden()
                 && SearchlightAttackAction.isPossible(clientgui.getClient()
                         .getGame(), cen, target, null)
                 && !((ce() instanceof Tank) && (((Tank) ce()).getStunnedTurns() > 0)));

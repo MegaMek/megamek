@@ -5055,6 +5055,9 @@ public class Server implements Runnable {
         // Notify the clients about any building updates.
         applyAffectedBldgs();
 
+        // Unit movement may detect hidden units
+        detectHiddenUnits();
+
         // Update visibility indications if using double blind.
         if (doBlind()) {
             updateVisibilityIndicator(losCache);
@@ -6654,8 +6657,9 @@ public class Server implements Runnable {
         List<Integer> passedThroughFacing = entity.getPassedThroughFacing();
         passedThroughFacing.add(curFacing);
 
-        // Compile the move
-        md.compile(game, entity);
+        // Compile the move - don't clip
+        //  Clipping could affect hidden units; illegal steps aren't processed
+        md.compile(game, entity, false);
 
         // if advanced movement is being used then set the new vectors based on
         // movepath
@@ -6728,9 +6732,18 @@ public class Server implements Runnable {
                 for (Entity e : hiddenEnemies) {
                     int dist = e.getPosition().distance(step.getPosition());
                     // Checking for same hex and stacking violation
-                    if ((dist == 0)
+                    if ((dist == 0) && !continueTurnFromPBS
                             && (Compute.stackingViolation(game, entity.getId(),
                                     step.getPosition()) != null)) {
+                        // Moving into hex of a hidden unit detects the unit
+                        e.setHidden(false);
+                        entityUpdate(e.getId());
+                        r = new Report(9960);
+                        r.addDesc(entity);
+                        r.subject = entity.getId();
+                        r.add(e.getPosition().getBoardNum());
+                        vPhaseReport.addElement(r);
+                        // Report the block
                         if (doBlind()) {
                             r = new Report(9961);
                             r.subject = e.getId();
@@ -6738,14 +6751,25 @@ public class Server implements Runnable {
                             r.addDesc(entity);
                             r.add(step.getPosition().getBoardNum());
                             addReport(r);
-                            addNewLines();
                         }
+                        // Report halted movement
                         r = new Report(9962);
                         r.subject = entity.getId();
                         r.addDesc(entity);
                         r.add(step.getPosition().getBoardNum());
                         addReport(r);
                         addNewLines();
+                        Report.addNewline(vPhaseReport);
+                        // If we aren't at the end, send a special report
+                        if ((game.getTurnIndex() + 1) < game.getTurnVector()
+                                .size()) {
+                            send(e.getOwner().getId(),
+                                    createSpecialReportPacket());
+                            send(entity.getOwner().getId(),
+                                    createSpecialReportPacket());
+                        }
+                        entity.setDone(true);
+                        entityUpdate(entity.getId(), movePath, true, losCache);
                         return;
                     // Potential point-blank shot
                     } else if ((dist == 1) && !e.madePointblankShot()) {
@@ -6753,11 +6777,20 @@ public class Server implements Runnable {
                         entity.setFacing(step.getFacing());
                         // If not set, BV icons could have wrong facing
                         entity.setSecondaryFacing(step.getFacing());
-                        // Update entity position on ZZ
-                        send(e.getOwnerId(), createEntityPacket(entity.getId(), null));
+                        // Update entity position on client
+                        send(e.getOwnerId(),
+                                createEntityPacket(entity.getId(), null));
                         boolean tookPBS = processPointblankShotCFR(e, entity);
                         // Movement should be interrupted
                         if (tookPBS) {
+                            // Attacking reveals hidden unit
+                            e.setHidden(false);
+                            entityUpdate(e.getId());
+                            r = new Report(9960);
+                            r.addDesc(entity);
+                            r.subject = entity.getId();
+                            r.add(e.getPosition().getBoardNum());
+                            vPhaseReport.addElement(r);
                             continueTurnFromPBS = true;
                             break;
                         }
@@ -13303,13 +13336,11 @@ public class Server implements Runnable {
             return;
         }
 
+        Set<Integer> reportPlayers = new HashSet<>();
         // See if any unit with a probe, detects any hidden units
         for (Entity detector : game.getEntitiesVector()) {
             int probeRange = detector.getBAPRange();
-            // No probe, skip unit
-            if (probeRange < 0) {
-                continue;
-            }
+
             // Units without a position won't be able to detect
             if (detector.getPosition() == null) {
                 continue;
@@ -13327,12 +13358,44 @@ public class Server implements Runnable {
                 // Can only detect units within the probes range
                 int dist = detector.getPosition().distance(
                         detected.getPosition());
-                if (dist > probeRange) {
+
+                // An adjacent enemy unit will detect hidden units, TW pg 259
+                if (dist > 1 && dist > probeRange) {
                     continue;
                 }
+
+                // Check for Void/Null Sig - only detected by Bloodhound probes
+                if (dist > 1 && (detected instanceof Mech)) {
+                    Mech m = (Mech)detected;
+                    if ((m.isVoidSigActive() || m.isNullSigActive())
+                            && !detector.hasWorkingMisc(MiscType.F_BLOODHOUND)) {
+                        continue;
+                    }
+                }
+
+                // Check for Infantry stealth armor
+                if (dist > 1 && (detected instanceof BattleArmor)) {
+                    BattleArmor ba = (BattleArmor) detected;
+                    // Need Bloodhound to detect BA stealth armor
+                    if (ba.isStealthy()
+                            && !detector.hasWorkingMisc(MiscType.F_BLOODHOUND)) {
+                        continue;
+                    }
+                } else if (dist > 1 && (detected instanceof Infantry)) {
+                    Infantry inf = (Infantry) detected;
+                    // Can't detect sneaky infantry
+                    if (inf.isStealthy()) {
+                        continue;
+                    }
+                    // Need bloodhound to detect non-sneaky inf
+                    if (!detector.hasWorkingMisc(MiscType.F_BLOODHOUND)) {
+                        continue;
+                    }
+                }
+
                 LosEffects los = LosEffects.calculateLos(game,
                         detector.getId(), detected);
-                if (los.canSee()) {
+                if (los.canSee() || dist <= 1) {
                     detected.setHidden(false);
                     entityUpdate(detected.getId());
                     Report r = new Report(9960);
@@ -13341,7 +13404,16 @@ public class Server implements Runnable {
                     r.add(detected.getPosition().getBoardNum());
                     vPhaseReport.addElement(r);
                     Report.addNewline(vPhaseReport);
+                    reportPlayers.add(detector.getOwnerId());
+                    reportPlayers.add(detected.getOwnerId());
                 }
+            }
+        }
+
+        if (vPhaseReport.size() > 0 && game.getPhase() == Phase.PHASE_MOVEMENT
+                && (game.getTurnIndex() + 1) < game.getTurnVector().size()) {
+            for (Integer playerId : reportPlayers) {
+                send(playerId, createSpecialReportPacket());
             }
         }
     }

@@ -8591,7 +8591,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // Hidden units shouldn't be counted for turn order, unless deploying
-        if (isHidden() && phase != IGame.Phase.PHASE_DEPLOYMENT) {
+        if (isHidden() && phase != Phase.PHASE_DEPLOYMENT
+                && phase != Phase.PHASE_FIRING) {
             return false;
         }
 

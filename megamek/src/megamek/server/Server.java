@@ -13360,6 +13360,35 @@ public class Server implements Runnable {
                     continue;
                 }
 
+                // Check for Void/Null Sig - only detected by Bloodhound probes
+                if (dist > 1 && (detected instanceof Mech)) {
+                    Mech m = (Mech)detected;
+                    if ((m.isVoidSigActive() || m.isNullSigActive())
+                            && !detector.hasWorkingMisc(MiscType.F_BLOODHOUND)) {
+                        continue;
+                    }
+                }
+
+                // Check for Infantry stealth armor
+                if (dist > 1 && (detected instanceof BattleArmor)) {
+                    BattleArmor ba = (BattleArmor) detected;
+                    // Need Bloodhound to detect BA stealth armor
+                    if (ba.isStealthy()
+                            && !detector.hasWorkingMisc(MiscType.F_BLOODHOUND)) {
+                        continue;
+                    }
+                } else if (dist > 1 && (detected instanceof Infantry)) {
+                    Infantry inf = (Infantry) detected;
+                    // Can't detect sneaky infantry
+                    if (inf.isStealthy()) {
+                        continue;
+                    }
+                    // Need bloodhound to detect non-sneaky inf
+                    if (!detector.hasWorkingMisc(MiscType.F_BLOODHOUND)) {
+                        continue;
+                    }
+                }
+
                 LosEffects los = LosEffects.calculateLos(game,
                         detector.getId(), detected);
                 if (los.canSee() || dist <= 1) {

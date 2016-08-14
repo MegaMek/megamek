@@ -1449,6 +1449,15 @@ public class Infantry extends Entity {
         return result;
     } // End public TargetRoll getStealthModifier( char )
 
+    /**
+     * Determines if the infantry has any type of stealth system.
+     *
+     * @return
+     */
+    public boolean isStealthy() {
+       return  dest || sneak_camo || sneak_ir || sneak_ecm;
+    }
+
     public void setPrimaryWeapon(InfantryWeapon w) {
         primaryW = w;
         primaryName = w.getName();

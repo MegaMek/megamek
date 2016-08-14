@@ -6731,6 +6731,15 @@ public class Server implements Runnable {
                     if ((dist == 0)
                             && (Compute.stackingViolation(game, entity.getId(),
                                     step.getPosition()) != null)) {
+                        // Moving into hex of a hidden unit detects the unit
+                        e.setHidden(false);
+                        entityUpdate(e.getId());
+                        r = new Report(9960);
+                        r.addDesc(entity);
+                        r.subject = entity.getId();
+                        r.add(e.getPosition().getBoardNum());
+                        vPhaseReport.addElement(r);
+                        // Report the block
                         if (doBlind()) {
                             r = new Report(9961);
                             r.subject = e.getId();
@@ -6753,11 +6762,20 @@ public class Server implements Runnable {
                         entity.setFacing(step.getFacing());
                         // If not set, BV icons could have wrong facing
                         entity.setSecondaryFacing(step.getFacing());
-                        // Update entity position on ZZ
-                        send(e.getOwnerId(), createEntityPacket(entity.getId(), null));
+                        // Update entity position on client
+                        send(e.getOwnerId(),
+                                createEntityPacket(entity.getId(), null));
                         boolean tookPBS = processPointblankShotCFR(e, entity);
                         // Movement should be interrupted
                         if (tookPBS) {
+                            // Attacking reveals hidden unit
+                            e.setHidden(false);
+                            entityUpdate(e.getId());
+                            r = new Report(9960);
+                            r.addDesc(entity);
+                            r.subject = entity.getId();
+                            r.add(e.getPosition().getBoardNum());
+                            vPhaseReport.addElement(r);
                             continueTurnFromPBS = true;
                             break;
                         }
@@ -13306,10 +13324,7 @@ public class Server implements Runnable {
         // See if any unit with a probe, detects any hidden units
         for (Entity detector : game.getEntitiesVector()) {
             int probeRange = detector.getBAPRange();
-            // No probe, skip unit
-            if (probeRange < 0) {
-                continue;
-            }
+
             // Units without a position won't be able to detect
             if (detector.getPosition() == null) {
                 continue;
@@ -13327,12 +13342,15 @@ public class Server implements Runnable {
                 // Can only detect units within the probes range
                 int dist = detector.getPosition().distance(
                         detected.getPosition());
-                if (dist > probeRange) {
+
+                // An adjacent enemy unit will detect hidden units, TW pg 259
+                if (dist > 1 && dist > probeRange) {
                     continue;
                 }
+
                 LosEffects los = LosEffects.calculateLos(game,
                         detector.getId(), detected);
-                if (los.canSee()) {
+                if (los.canSee() || dist <= 1) {
                     detected.setHidden(false);
                     entityUpdate(detected.getId());
                     Report r = new Report(9960);

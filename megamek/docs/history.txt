@@ -20,6 +20,7 @@ v0.41.22-git
 + Adjusted building floor names during deployment; starts with ground floor
 + Issue #310: Tripod cockpit weight calculations
 + Issue #25: Added support for infantry specializations
++ Issue #238: Various issues with hidden units
 
 v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips

@@ -5055,6 +5055,9 @@ public class Server implements Runnable {
         // Notify the clients about any building updates.
         applyAffectedBldgs();
 
+        // Unit movement may detect hidden units
+        detectHiddenUnits();
+
         // Update visibility indications if using double blind.
         if (doBlind()) {
             updateVisibilityIndicator(losCache);
@@ -13333,6 +13336,7 @@ public class Server implements Runnable {
             return;
         }
 
+        Set<Integer> reportPlayers = new HashSet<>();
         // See if any unit with a probe, detects any hidden units
         for (Entity detector : game.getEntitiesVector()) {
             int probeRange = detector.getBAPRange();
@@ -13400,7 +13404,16 @@ public class Server implements Runnable {
                     r.add(detected.getPosition().getBoardNum());
                     vPhaseReport.addElement(r);
                     Report.addNewline(vPhaseReport);
+                    reportPlayers.add(detector.getOwnerId());
+                    reportPlayers.add(detected.getOwnerId());
                 }
+            }
+        }
+
+        if (vPhaseReport.size() > 0 && game.getPhase() == Phase.PHASE_MOVEMENT
+                && (game.getTurnIndex() + 1) < game.getTurnVector().size()) {
+            for (Integer playerId : reportPlayers) {
+                send(playerId, createSpecialReportPacket());
             }
         }
     }

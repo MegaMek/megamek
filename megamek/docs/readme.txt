@@ -167,7 +167,7 @@ can pick "none", "low", "medium" or "high". Except for cities, where you pick a
 type of city instead.
 
 **Theme** - leave blank for the default theme, or enter a theme supported by your tileset.
-        grass, lunar, mars, snow are supported by the standard tileset
+        grass, jungle, lunar, mars, snow, and volcano are supported by the standard tileset
         
 **Elevation** - how hilly you want the map
 

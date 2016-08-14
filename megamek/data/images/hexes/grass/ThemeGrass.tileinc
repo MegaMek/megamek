@@ -15,12 +15,3 @@ base -1 "" "grass" "grass/grass_sinkhole_1.gif"
 base -2 "" "grass" "grass/grass_sinkhole_2.gif"
 base -3 "" "grass" "grass/grass_sinkhole_3.gif"
 
-base 0 "rough:1" "grass" "grass/grass_rough_0.gif"
-base 1 "rough:1" "grass" "grass/grass_rough_1.gif"
-base 3 "rough:1" "grass" "grass/grass_rough_3.gif"
-base 4 "rough:1" "grass" "grass/grass_rough_3.gif"
-base 5 "rough:1" "grass" "grass/grass_rough_5.gif"
-base -1 "rough:1" "grass" "grass/grass_sinkhole_rough_1.gif"
-base -2 "rough:1" "grass" "grass/grass_sinkhole_rough_2.gif"
-base -3 "rough:1" "grass" "grass/grass_sinkhole_rough_3.gif"
-

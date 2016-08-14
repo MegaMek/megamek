@@ -13434,7 +13434,7 @@ public class Server implements Runnable {
             entity.clearSeenBy();
             entity.clearDetectedBy();
             // Handle visual spotting
-            for (IPlayer p : whoCanSee(entity, false, losCache, false)) {
+            for (IPlayer p : whoCanSee(entity, false, losCache)) {
                 entity.addBeenSeenBy(p);
             }
             // Handle detection by sensors
@@ -27921,7 +27921,7 @@ public class Server implements Runnable {
             Vector<IPlayer> playersVector = game.getPlayersVector();
             Vector<IPlayer> vCanSee;
             if (updateVisibility) {
-                vCanSee = whoCanSee(eTarget, true, losCache, false);
+                vCanSee = whoCanSee(eTarget, true, losCache);
             } else {
                 vCanSee = eTarget.getWhoCanSee();
             }
@@ -28005,25 +28005,19 @@ public class Server implements Runnable {
      * for sensor detections.
      */
     private Vector<IPlayer> whoCanSee(Entity entity) {
-        return whoCanSee(entity, true, null, false);
+        return whoCanSee(entity, true, null);
     }
 
     /**
      * Returns a vector of which players can see the given entity, optionally
      * allowing for sensors to count.
      *
-     * @param entity
-     *            The entity to check visiblity for
-     * @param useSensors
-     *            A flag that determines whether sensors are allowed
-     * @param visibilityUpdate
-     *            Flag that indicates whether this check is part of the
-     *            visibility update. We want to ignore hidden spotters during
-     *            visibility checks, so they don't tip off their location
+     * @param entity     The entity to check visiblity for
+     * @param useSensors A flag that determines whether sensors are allowed
      * @return A vector of the players who can see the entity
      */
     private Vector<IPlayer> whoCanSee(Entity entity, boolean useSensors,
-            Map<EntityTargetPair, LosEffects> losCache, boolean visibilityUpdate) {
+            Map<EntityTargetPair, LosEffects> losCache) {
         if (losCache == null) {
             losCache = new HashMap<>();
         }
@@ -28064,11 +28058,6 @@ public class Server implements Runnable {
             // Certain conditions make the spotter ineligible
             if (!spotter.isActive() || spotter.isOffBoard()
                     || vCanSee.contains(spotter.getOwner())) {
-                continue;
-            }
-            // We don't want to inform a player that their unit is spotted by a
-            // hidden unit for visibility updates
-            if (visibilityUpdate && spotter.isHidden()) {
                 continue;
             }
             // See if the LosEffects is cached, and if not cache it
@@ -28478,7 +28467,7 @@ public class Server implements Runnable {
             e.setDetectedByEnemy(false);
             e.clearSeenBy();
             e.clearDetectedBy();
-            Vector<IPlayer> vCanSee = whoCanSee(e, false, losCache, true);
+            Vector<IPlayer> vCanSee = whoCanSee(e, false, losCache);
             // Who can See this unit?
             for (IPlayer p : vCanSee) {
                 if (e.getOwner().isEnemyOf(p) && !p.isObserver()) {

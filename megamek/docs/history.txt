@@ -23,6 +23,7 @@ v0.41.22-git
 + Issue #238: Various issues with hidden units
 + Issue #305: Strange matches when a theme doesn't exist in the tileset
 + Adjusted starting fires modifiers for buildings to match TO pg44
++ Issue #145: Infantry unimpacted by fire in buildings if above HL1
 
 v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips

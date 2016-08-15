@@ -19784,8 +19784,10 @@ public class Server implements Runnable {
             final boolean underwater = curHex.containsTerrain(Terrains.WATER)
                     && (curHex.depth() > 0)
                     && (entity.getElevation() < curHex.surface());
-            if (curHex.containsTerrain(Terrains.FIRE)
-                    && (entity.getElevation() <= 1) && !underwater) {
+            final int numFloors = curHex.terrainLevel(Terrains.BLDG_ELEV);
+            if (curHex.containsTerrain(Terrains.FIRE) && !underwater
+                    && ((entity.getElevation() <= 1)
+                            || (entity.getElevation() <= numFloors))) {
                 doFlamingDamage(entity);
             }
         }

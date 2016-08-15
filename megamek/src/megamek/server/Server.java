@@ -14151,7 +14151,7 @@ public class Server implements Runnable {
         // building modifiers
         Building bldg = game.getBoard().getBuildingAt(c);
         if (null != bldg) {
-            nTargetRoll.addModifier(bldg.getType() - 1, "building");
+            nTargetRoll.addModifier(bldg.getType() - 3, "building");
         }
 
         // add in any modifiers for planetary conditions
@@ -27514,7 +27514,7 @@ public class Server implements Runnable {
      *                 included in the report.
      */
     public boolean checkIgnition(Coords c, TargetRoll roll, boolean bInferno,
-                                 int entityId, Vector<Report> vPhaseReport) {
+            int entityId, Vector<Report> vPhaseReport) {
 
         IHex hex = game.getBoard().getHex(c);
 

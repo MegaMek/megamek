@@ -139,13 +139,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     private boolean isStrafing = false;
 
     /**
-<<<<<<< HEAD
      * Boolean flag that determines if this shot was the first one by a
      * particular weapon in a strafing run.  Used to ensure that heat is only
-=======
-     * Boolean flag that determiens if this shot was the first one by a
-     * particular weapon in a strafing run. Used to ensure that heat is only
->>>>>>> master
      * added once.
      */
     protected boolean isStrafingFirstShot = false;
@@ -4082,9 +4077,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     if (!(ea instanceof WeaponAttackAction)) {
                         continue;
                     }
-                    WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                    if ((prevAttack.getEntityId() == ae.getId())
-                            && (prevAttack.getTargetId() != target.getTargetId())) {
+
+                    WeaponAttackAction prevAttk = (WeaponAttackAction) ea;
+                    if ((prevAttk.getEntityId() == ae.getId())
+                            && (prevAttk.getTargetId() != target.getTargetId())
+                            && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
                         return "attack already declared against another target";
                     }
                 }

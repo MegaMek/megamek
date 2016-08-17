@@ -2766,8 +2766,7 @@ public class Server implements Runnable {
             }
 
             // if units were loaded in the chat lounge, I need to keep track of
-            // it here
-            // because they can get dumped in the deployment phase
+            // it here because they can get dumped in the deployment phase
             if (entity.getLoadedUnits().size() > 0) {
                 Vector<Integer> v = new Vector<Integer>();
                 for (Entity en : entity.getLoadedUnits()) {
@@ -2807,8 +2806,24 @@ public class Server implements Runnable {
             }
             // Give the unit a spotlight, if it has the spotlight quirk
             entity.setExternalSpotlight(entity.hasExternaSpotlight()
-                                        || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
+                    || entity.hasQuirk(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
             entityUpdate(entity.getId());
+
+            // Remove hot-loading some from LRMs for meks
+            if (!game.getOptions().booleanOption("hotload_in_game")) {
+                for (Entity e : game.getEntitiesVector()) {
+                    // Vehicles are allowed to hotload, just meks cannot
+                    if (!(e instanceof Mech)) {
+                        continue;
+                    }
+                    for (Mounted weap : e.getWeaponList()) {
+                        weap.getType().removeMode("HotLoad");
+                    }
+                    for (Mounted ammo : e.getAmmo()) {
+                        ammo.getType().removeMode("HotLoad");
+                    }
+                }
+            }
         }
     }
 

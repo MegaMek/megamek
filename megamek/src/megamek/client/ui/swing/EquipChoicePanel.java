@@ -1124,6 +1124,14 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         "tacops_hotload")) {
                     if (chHotLoad.isSelected() != m_mounted.isHotLoaded()) {
                         m_mounted.setHotLoad(chHotLoad.isSelected());
+                        // Set the mode too, so vehicles can switch back
+                        int numModes = m_mounted.getType().getModesCount();
+                        for (int m = 0; m < numModes; m++) {
+                            if (m_mounted.getType().getMode(m).getName()
+                                    .equals("HotLoad")) {
+                                m_mounted.setMode(m);
+                            }
+                        }
                     }
                 }
             }

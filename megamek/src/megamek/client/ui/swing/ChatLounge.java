@@ -3951,6 +3951,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                             continue;
                         }
                         m.setHotLoad(hotLoad);
+                        // Set the mode too, so vehicles can switch back
+                        int numModes = m.getType().getModesCount();
+                        for (int i = 0; i < numModes; i++) {
+                            if (m.getType().getMode(i).getName()
+                                    .equals("HotLoad")) {
+                                m.setMode(i);
+                            }
+                        }
                     }
                 }
             } else if (command.equalsIgnoreCase("SEARCHLIGHT_OFF")

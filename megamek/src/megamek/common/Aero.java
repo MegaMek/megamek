@@ -139,6 +139,14 @@ public class Aero extends Entity {
     // are we tracking any altitude loss due to air-to-ground assaults
     private int altLoss = 0;
 
+    /**
+     * Track how much altitude has been lost this turn.  This is important for
+     * properly making weapon attacks, so WeaponAttackActions knows what the
+     * altitude was before the attack happened, since the altitude lose is
+     * applied before the attack resolves.
+     */
+    private int altLossThisRound = 0;
+
     private boolean spheroid = false;
 
     // deal with heat
@@ -768,6 +776,8 @@ public class Aero extends Entity {
                 }
             }
         }
+
+        resetAltLossThisRound();
     }
 
     /**
@@ -3862,6 +3872,18 @@ public class Aero extends Entity {
 
     public void resetAltLoss() {
         altLoss = 0;
+    }
+
+    public int getAltLossThisRound() {
+        return altLossThisRound;
+    }
+
+    public void setAltLossThisRound(int i) {
+        altLossThisRound = i;
+    }
+
+    public void resetAltLossThisRound() {
+        altLossThisRound = 0;
     }
 
     @Override

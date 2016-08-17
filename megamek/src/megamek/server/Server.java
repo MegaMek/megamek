@@ -12963,6 +12963,7 @@ public class Server implements Runnable {
                 r.add(aero.getAltLoss());
                 addReport(r);
                 aero.setAltitude(aero.getAltitude() - aero.getAltLoss());
+                aero.setAltLossThisRound(aero.getAltLoss());
                 aero.resetAltLoss();
                 entityUpdate(entity.getId());
             }

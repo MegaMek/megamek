@@ -3793,7 +3793,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 if (ae.getAltitude() > 5) {
                     return "no dive bombing above altitude 5";
                 }
-                if (ae.getAltitude() < 3) {
+                int altLoss = 0;
+                if (ae instanceof Aero) {
+                    altLoss = ((Aero) ae).getAltLossThisRound();
+                }
+                if ((ae.getAltitude() + altLoss) < 3) {
                     return "no dive bombing below altitude 3";
                 }
             }
@@ -4064,8 +4068,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (wtype.hasFlag(WeaponType.F_ALT_BOMB) || isStrafing) {
                 altitudeLoss = 0;
             }
+            int altLossThisRound = 0;
+            if (ae instanceof Aero) {
+                altLossThisRound = ((Aero) ae).getAltLossThisRound();
+            }
             // you cant make attacks that would lower you to zero altitude
-            if (altitudeLoss >= ae.getAltitude()) {
+            if (altitudeLoss >= (ae.getAltitude() + altLossThisRound)) {
                 return "This attack would cause too much altitude loss";
             }
 

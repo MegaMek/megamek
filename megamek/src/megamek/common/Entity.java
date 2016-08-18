@@ -6528,6 +6528,13 @@ public abstract class Entity extends TurnOrdered implements Transporter,
          * game.getBoard().getHex(curPos); }
          */
 
+        boolean prevStepPavement;
+        if (prevStep != null) {
+            prevStepPavement = prevStep.isPavementStep();
+        } else {
+            prevStepPavement = prevHex.hasPavement();
+        }
+
         // TODO: add check for elevation of pavement, road,
         // or bridge matches entity elevation.
         if ((prevHex != null)
@@ -6542,8 +6549,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                              "turning on ice"));
             adjustDifficultTerrainPSRModifier(roll);
             return roll;
-        } else if ((prevHex != null)
-                   && (prevStep.isPavementStep()
+        } else if ((prevStepPavement
                        && ((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType
                 .MOVE_SPRINT))
                        && (movementMode != EntityMovementMode.HOVER) && (movementMode != EntityMovementMode.WIGE))

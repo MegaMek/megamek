@@ -6650,7 +6650,7 @@ public class Server implements Runnable {
         boolean turnOver;
         boolean wigeStartedLanded = false;
         int prevFacing = curFacing;
-        IHex prevHex = null;
+        IHex prevHex = game.getBoard().getHex(curPos);
         final boolean isInfantry = entity instanceof Infantry;
         AttackAction charge = null;
         RamAttackAction ram = null;

@@ -27,6 +27,9 @@ v0.41.22-git
 + Issue #313: Altitude bombing: Cannot bomb more than one hex
 + Issue #314: Dive bomb resolution shows blank after first attack during game
 + Issue #160: Mechs switching hot-loading LRMs on/off during battle
++ Issue #310: Movement processing doesn't initialize current location, which
+    could lead to skid checks not being made for turns on starting hex, or could
+    lead to NPEs backing up over bridges
 
 v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips

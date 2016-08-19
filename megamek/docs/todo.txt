@@ -1,10 +1,10 @@
 
 CODE IDEAS:
 -----------
-- seperate client and gui further, allowing for other guis, etc.
+- separate client and gui further, allowing for other guis, etc.
 ? javax.swing gui
 
-- improve code readibility, *commenting*; break up 80+ character lines, etc.
+- improve code readability, *commenting*; break up 80+ character lines, etc.
 
 BoardView1.java:
 - Board buffer should be slightly larger, to contain whole hexes, and only 
@@ -14,7 +14,7 @@ BoardView1.java:
 
 - Both Server and Compute are getting WAY overcrowded.  We need to re-factor.
 
-- The following rules in BMRr iterrupt the resolution of a unit's movement or
+- The following rules in BMRr interrupt the resolution of a unit's movement or
   attacks to immediately allow a player to react.  We may need to add special
   phases to handle these actions.
 -- avoiding skid collisions
@@ -31,7 +31,7 @@ general:
 
 mechs:
 -- Find out how to get M$ .exe to allow UTF-8 encoding.
--- handle "slottless" equipment
+-- handle "slotless" equipment
 -- enforce ammo loading restrictions
 
 initiative:
@@ -41,7 +41,7 @@ movement:
 - remaining todos in pavement skidding
 
 weapon attacks:
-? option to step thru roll by roll
+? option to step through roll by roll
 - warn player when weapon fire will negate a Solo Attack
 
 physical attacks:
@@ -54,9 +54,9 @@ infantry:
 - implement the following special rules:
 -- VTOL movement
 -- Underwater movement
--- Torpedos
+-- Torpedoes
 - implement BattleArmor units as their special rules are implemented
-        (e.g. VTOL for Sylph, Underwater movement and torpedos for Undine).
+        (e.g. VTOL for Sylph, Underwater movement and torpedoes for Undine).
 - allow Fa Shih to lay minefields
 - allow players to configure Fa Shih mine loads
 

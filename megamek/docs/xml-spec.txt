@@ -195,7 +195,7 @@ Drawing Board.
         it appears as part of a <unit> element.
      The following attributes are defined for this element:
         chassis - required - the chassis of the entity.
-        model - optional - the entity's specfic model within the chassis.
+        model - optional - the entity's specific model within the chassis.
                 This value must be supplied, if available.
         type - optional - movement type of entity being described.  Valid
                 values are Biped, Quad, Tracked, Wheeled, Hover, Leg,
@@ -208,13 +208,13 @@ Drawing Board.
         techBase - optional - the technology base used to construct the
                 entity.  Valid values are: Mixed, Clan or IS.
         year - optional - the year the entity entered service.  Any 
-                numberic value between 2750 and 3100 is valid.  The value
+                numeric value between 2750 and 3100 is valid.  The value
                 of 3025 means that the entity uses Level 1 rules.
         mass - optional - the mass of the unit.  Any integer value between
                 0 and 100 is valid.  Not all mass values are valid for all
                 template types.
         engineRating - optional - the rating of the entity's engine. Any 
-                numberic value between 0 and 400 is valid.
+                numeric value between 0 and 400 is valid.
         engineType - optional - the type of engine used by the entity.
                 Valid values are: IC, Fusion, XL, and Light.  Not all 
                 engineType values are valid for all entity techBase and
@@ -257,7 +257,7 @@ Drawing Board.
         advantages - default: empty - a colon (':') separated list of codes
                 specifying the MaxTech advantages the pilot posesses.
         autoeject - default: false - identifies if the pilot will autoeject
-                if the unit sufferes an ammo explosion.  Any boolean value is
+                if the unit suffers an ammo explosion.  Any boolean value is
                 valid.
 
 <movement> - Lets you define alternate (lower) speed for a tank.  This tag

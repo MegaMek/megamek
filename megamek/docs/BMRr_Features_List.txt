@@ -334,13 +334,13 @@ Equipment
 - Hatchets			Yes		None
 - Light Engines			Yes		None
 - Machine Guns			Yes		None
-- Missile Lanchers		Yes		None
+- Missile Launchers		Yes		None
 - Missile Munitions		Partial		Incendiary not implemented
 - MASC				Yes		None
 - Narc				Yes		None
 - Narc Munitions		Yes		None
 - iNarc				Yes		None
-- Rocket Lauchers		Yes		None
+- Rocket Launchers		Yes		None
 - Stealth Armor System		Yes		Activate/Disable on the systems tab.
 - Sword				Yes		None
 - TAG				Yes		None

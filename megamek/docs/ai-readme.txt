@@ -25,7 +25,7 @@ Memory wise, normal MM needs 20 MB + .5 MB for each entity + 1 MB for each
 board. The bot will need an additional 15 MB + 2 MB for each entity.  There are a
 few bugs that will cause it to stop responding, usually, there will be a stack
 trace associated with the error in megamek.log, please save this log, and post it
-as a bug on Sourceforge.  You can restart your game from the last save.
+as a bug on Github.  You can restart your game from the last save.
 
 Using the gui-less client (preferred)-
 	a) start your own game normally
@@ -76,7 +76,7 @@ Other Possibilities:
     than a 3/5/3.
     
   Bot Vs. Bot
-    Because the bot connects like a normal client, you can start two seperate
+    Because the bot connects like a normal client, you can start two separate
     bots and they will fight against each other.  If you do not want to play, 
     you can start a dedicated server (see the readme) and connect two bots to it.
     This is not recommended however, since for small forces (4 on 4) the bots 

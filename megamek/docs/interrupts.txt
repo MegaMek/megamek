@@ -12,7 +12,7 @@ Unique requirements of hidden movement:
  - hidden unit's player can only perform a pointblank attack
 
 Unique requirements of avoiding a skid:
- - both skidding unit's remaing skid can be shown to stepping player
+ - both skidding units' remaining skid can be shown to stepping player
  - avoiding unit needs to pass a PSR to take action
  - avoiding unit takes entire move (possibly causing more skids or pointblank attacks)
 

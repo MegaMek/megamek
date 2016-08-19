@@ -59,7 +59,7 @@ above one, not every level.
 AEROSPACE MOVEMENT
 1) Rules are provided for finding the exact hex on a Battletech ground map an aircraft will crash into
 
-2) Rules are provided for troops loading & unloading a dropship in a hot landing zone, which are unremarkably similar to Infantry dismounting or mounting an APC, although there appear to be some variations (number allowed to enter/exit due to number of accessable doors, etc).
+2) Rules are provided for troops loading & unloading a dropship in a hot landing zone, which are unremarkably similar to Infantry dismounting or mounting an APC, although there appear to be some variations (number allowed to enter/exit due to number of accessible doors, etc).
 
 COMBAT
 
@@ -218,9 +218,9 @@ x3) Battle Armor Squads can now go to 6 Soldiers (for WOB/Comstar)
 
 x4) Infantry do not suffer from penalties to hit for their movement
 
-x5) Conventional Infantry attack rules have changed extensively.  A chart gives the maximum damage possible an Infantry Platoon may do based on the number of surviving members and its weaponry.  If the attack hits, the attacker rolls on the Cluster Hits Table on the column equal to that maximum damage value to get the actual amount of damage inflicted, which is applied in two point clusters.
+x5) Conventional Infantry attack rules have changed extensively.  A chart gives the maximum damage possible an Infantry Platoon may do based on the number of surviving members and its weaponry.  If the attack hits, the attacker rolls on the Cluster Hits Table on the column equal to that maximum damage value to get the actual amount of damage inflicted, which is applied in two point clusters.
 
-x6) Conventional Infantry ignore penalties to hit from Steath Systems, but not Mimetic or Camo systems.
+x6) Conventional Infantry ignore penalties to hit from Stealth Systems, but not Mimetic or Camo systems.
 
 x7) Machine Gun Infantry do an additional 1D6 damage against other conventional infantry
 
@@ -289,4 +289,4 @@ Grounded Dropships gain a -2 to hit bonus when attacking other units on the Grou
 4) the rules for Screen Launchers and Tele-Operated Missiles are included, but none of the other optional rules from Aerotech2.
 
 SCENARIOS
-Very similar to the Scenario chapter in the BMRr.  BV is mentioned but the rules are not provided.  The Forced Withdrawal rules which have appeared in the Jihad sourcebooks are included and recommended for use in scenario play.  The Hidden Unit Rules appear here, and Clan Honor & Zellbriggen Rules are included as well
+Very similar to the Scenario chapter in the BMRr.  BV is mentioned but the rules are not provided.  The Forced Withdrawal rules which have appeared in the Jihad sourcebooks are included and recommended for use in scenario play.  The Hidden Unit Rules appear here, and Clan Honor & Zellbrigen Rules are included as well

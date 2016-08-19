@@ -13,14 +13,14 @@ import megamek.common.MechSummaryCache;
 import megamek.server.ScenarioLoader;
 import megamek.server.Server;
 
-public class ScenarioLoadierTest {
+public class ScenarioLoaderTest {
     private List<String> errCache = new ArrayList<>();
     private PrintStream cachedPs;
     private PrintStream originalOut;
     private PrintStream originalErr;
     
     public static void main(String[] args) {
-        ScenarioLoadierTest tester = new ScenarioLoadierTest();
+        ScenarioLoaderTest tester = new ScenarioLoaderTest();
         tester.runTests();
         System.exit(0);
     }

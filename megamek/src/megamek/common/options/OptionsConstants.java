@@ -198,15 +198,16 @@ public class OptionsConstants {
     public static final String UNOFF_BLIND_FIGHTER = "blind_fighter"; // $NON-NLS$
     public static final String UNOFF_SENSOR_GEEK = "sensor_geek"; // $NON-NLS$
 
-    /*
-     * //EDGE public static final String EDGE = "edge"; //$NON-NLS$ different
-     * edge triggers public static final String EDGE_WHEN_HEADHIT=
-     * "edge_when_headhit"; //$NON-NLS$ public static final String
-     * EDGE_WHEN_TAC= "edge_when_tac"; //$NON-NLS$ public static final String
-     * EDGE_WHEN_KO= "edge_when_ko"; //$NON-NLS$ public static final String
-     * EDGE_WHEN_EXPLOSION= "edge_when_explosion"; //$NON-NLS$ public static
-     * final String EDGE_WHEN_MASC_FAILS= "edge_when_masc_fails"; //$NON-NLS$
-     */
+    
+      //EDGE 
+    public static final String EDGE = "edge"; //$NON-NLS$ 
+    //different edge triggers 
+    public static final String EDGE_WHEN_HEADHIT= "edge_when_headhit"; //$NON-NLS$ 
+    public static final String EDGE_WHEN_TAC= "edge_when_tac"; //$NON-NLS$ 
+    public static final String EDGE_WHEN_KO= "edge_when_ko"; //$NON-NLS$ 
+    public static final String EDGE_WHEN_EXPLOSION= "edge_when_explosion"; //$NON-NLS$ 
+    public static final String EDGE_WHEN_MASC_FAILS= "edge_when_masc_fails"; //$NON-NLS$
+     
 
     // Manei Domini
     public static final String MD_PAIN_SHUNT = "artificial pain shunt"; // $NON-NLS$

@@ -123,14 +123,14 @@ public class PilotOptions extends AbstractOptions {
         addOption(edge, "edge_when_explosion", false); //$NON-NLS-1$
         addOption(edge, "edge_when_masc_fails", false); //$NON-NLS-1$
         
-/*        addOption(edge, OptionsConstants.EDGE, 0); //$NON-NLS-1$
-         different edge triggers 
+        addOption(edge, OptionsConstants.EDGE, 0); //$NON-NLS-1$
+        //different edge triggers 
         addOption(edge, OptionsConstants.EDGE_WHEN_HEADHIT, false); //$NON-NLS-1$
         addOption(edge, OptionsConstants.EDGE_WHEN_TAC, false); //$NON-NLS-1$
         addOption(edge, OptionsConstants.EDGE_WHEN_KO, false); //$NON-NLS-1$
         addOption(edge, OptionsConstants.EDGE_WHEN_EXPLOSION, false); //$NON-NLS-1$
         addOption(edge, OptionsConstants.EDGE_WHEN_MASC_FAILS, false); //$NON-NLS-1$
-*/
+
         
 
         // manei domini

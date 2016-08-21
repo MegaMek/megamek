@@ -1010,7 +1010,7 @@ public class TripodMech extends Mech {
                 switch (roll) {
                     case 2:
                         if ((getCrew().hasEdgeRemaining() && getCrew()
-                                .getOptions().booleanOption("edge_when_tac"))
+                                .getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
                             && !game.getOptions().booleanOption("no_tac")) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
@@ -1059,7 +1059,7 @@ public class TripodMech extends Mech {
                 switch (roll) {
                     case 2:
                         if ((getCrew().hasEdgeRemaining() && getCrew()
-                                .getOptions().booleanOption("edge_when_tac"))
+                                .getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
                             && !game.getOptions().booleanOption("no_tac")) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
@@ -1116,7 +1116,7 @@ public class TripodMech extends Mech {
                 switch (roll) {
                     case 2:
                         if ((getCrew().hasEdgeRemaining() && getCrew()
-                                .getOptions().booleanOption("edge_when_tac"))
+                                .getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
                             && !game.getOptions().booleanOption("no_tac")) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
@@ -1177,7 +1177,7 @@ public class TripodMech extends Mech {
                         case 2:
                             if ((getCrew().hasEdgeRemaining() && getCrew()
                                     .getOptions()
-                                    .booleanOption("edge_when_tac"))
+                                    .booleanOption(OptionsConstants.EDGE_WHEN_TAC))
                                 && !game.getOptions().booleanOption(
                                     "no_tac")) {
                                 getCrew().decreaseEdge();
@@ -1228,7 +1228,7 @@ public class TripodMech extends Mech {
                         case 2:
                             if ((getCrew().hasEdgeRemaining() && getCrew()
                                     .getOptions()
-                                    .booleanOption("edge_when_tac"))
+                                    .booleanOption(OptionsConstants.EDGE_WHEN_TAC))
                                 && !game.getOptions().booleanOption(
                                     "no_tac")) {
                                 getCrew().decreaseEdge();

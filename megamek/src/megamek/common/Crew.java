@@ -630,11 +630,11 @@ public class Crew implements Serializable {
     }
 
     public boolean hasEdgeRemaining() {
-        return (getOptions().intOption("edge") > 0);
+        return (getOptions().intOption(OptionsConstants.EDGE) > 0);
     }
 
     public void decreaseEdge() {
-        IOption edgeOption = getOptions().getOption("edge");
+        IOption edgeOption = getOptions().getOption(OptionsConstants.EDGE);
         edgeOption.setValue((Integer) edgeOption.getValue() - 1);
     }
 

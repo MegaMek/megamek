@@ -6840,7 +6840,7 @@ public class Server implements Runnable {
                     // Check to see if the pilot can reroll due to Edge
                     if (entity.getCrew().hasEdgeRemaining()
                             && entity.getCrew().getOptions()
-                                    .booleanOption("edge_when_masc_fails")) {
+                                    .booleanOption(OptionsConstants.EDGE_WHEN_MASC_FAILS)) {
                         entity.getCrew().decreaseEdge();
                         // Need to reset the MASCUsed flag
                         entity.setMASCUsed(false);
@@ -6856,7 +6856,7 @@ public class Server implements Runnable {
                         masc_report.indent(2);
                         masc_report.addDesc(entity);
                         masc_report.add(entity.getCrew().getOptions()
-                                .intOption("edge"));
+                                .intOption(OptionsConstants.EDGE));
                         vReport.addElement(masc_report);
                         // Recheck MASC failure
                         if (!entity.checkForMASCFailure(md, vReport, crits)) { // The
@@ -20739,21 +20739,21 @@ public class Server implements Runnable {
                     r.choose(false);
                     if (e.getCrew().hasEdgeRemaining()
                         && e.getCrew().getOptions()
-                            .booleanOption("edge_when_ko")) {
+                            .booleanOption(OptionsConstants.EDGE_WHEN_KO)) {
                         edgeUsed = true;
                         vDesc.add(r);
                         r = new Report(6520);
                         r.subject = e.getId();
                         r.addDesc(e);
                         r.add(e.getCrew().getName());
-                        r.add(e.getCrew().getOptions().intOption("edge"));
+                        r.add(e.getCrew().getOptions().intOption(OptionsConstants.EDGE));
                     } // if
                     // return true;
                 } // else
                 vDesc.add(r);
             } while (e.getCrew().hasEdgeRemaining()
                      && e.getCrew().isKoThisRound()
-                     && e.getCrew().getOptions().booleanOption("edge_when_ko"));
+                     && e.getCrew().getOptions().booleanOption(OptionsConstants.EDGE_WHEN_KO));
             // end of do-while
             if (e.getCrew().isKoThisRound()) {
                 e.getCrew().setUnconscious(true);
@@ -21095,7 +21095,7 @@ public class Server implements Runnable {
             r.subject = te_n;
             r.indent(2);
             r.addDesc(te);
-            r.add(te.getCrew().getOptions().intOption("edge"));
+            r.add(te.getCrew().getOptions().intOption(OptionsConstants.EDGE));
             vDesc.addElement(r);
         } // if
 
@@ -26013,7 +26013,7 @@ public class Server implements Runnable {
                 if ((en instanceof Mech)
                         && (en.getCrew().hasEdgeRemaining() && en.getCrew()
                                 .getOptions()
-                                .booleanOption("edge_when_explosion"))
+                                .booleanOption(OptionsConstants.EDGE_WHEN_EXPLOSION))
                         && (slot.getType() == CriticalSlot.TYPE_EQUIPMENT)
                         && slot.getMount().getType()
                                 .isExplosive(slot.getMount())) {
@@ -26021,7 +26021,7 @@ public class Server implements Runnable {
                     r = new Report(6530);
                     r.subject = en.getId();
                     r.indent(3);
-                    r.add(en.getCrew().getOptions().intOption("edge"));
+                    r.add(en.getCrew().getOptions().intOption(OptionsConstants.EDGE));
                     vDesc.addElement(r);
                     continue;
                 }

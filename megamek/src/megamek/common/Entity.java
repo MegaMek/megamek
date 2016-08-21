@@ -2939,7 +2939,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mod++;
         }
         if ((mod > 0) && (getCrew() != null)
-            && getCrew().getOptions().booleanOption("some_like_it_hot")) {
+                && getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SOME_LIKE_IT_HOT)) {
             mod--;
         }
 
@@ -4626,10 +4626,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                   getPosition());
         }
         // check for SPA
-        if (crew.getOptions().booleanOption("eagle_eyes")) {
-            return !checkECM
-                   || !ComputeECM.isAffectedByECM(this, getPosition(),
-                                                  getPosition());
+        if (crew.getOptions().booleanOption(OptionsConstants.MISC_EAGLE_EYES)) {
+            return !checkECM || !ComputeECM.isAffectedByECM(this, getPosition(), getPosition());
         }
 
         return false;
@@ -4666,7 +4664,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // check for SPA
         int spaBonus = 0;
-        if (crew.getOptions().booleanOption("eagle_eyes")) {
+        if (crew.getOptions().booleanOption(OptionsConstants.MISC_EAGLE_EYES)) {
             spaBonus = 1;
         }
 
@@ -6161,19 +6159,15 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         // check weather conditions for all entities
         int weatherMod = conditions.getWeatherPilotPenalty();
-        if ((weatherMod != 0)
-            && !game.getBoard().inSpace()
-            && ((null == crew) || !crew.getOptions().booleanOption(
-                "allweather"))) {
+        if ((weatherMod != 0) && !game.getBoard().inSpace()
+                && ((null == crew) || !crew.getOptions().booleanOption(OptionsConstants.UNOFF_ALLWEATHER))) {
             roll.addModifier(weatherMod, conditions.getWeatherDisplayableName());
         }
 
         // check wind conditions for all entities
         int windMod = conditions.getWindPilotPenalty(this);
-        if ((windMod != 0)
-            && !game.getBoard().inSpace()
-            && ((null == crew) || !crew.getOptions().booleanOption(
-                "allweather"))) {
+        if ((windMod != 0) && !game.getBoard().inSpace()
+                && ((null == crew) || !crew.getOptions().booleanOption(OptionsConstants.UNOFF_ALLWEATHER))) {
             roll.addModifier(windMod, conditions.getWindDisplayableName());
         }
 
@@ -6911,7 +6905,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             mod = -1;
         }
 
-        if (getCrew().getOptions().booleanOption("maneuvering_ace")) {
+        if (getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MANEUVERING_ACE)) {
             mod--;
         }
 
@@ -8545,7 +8539,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean isUsingManAce() {
-        return getCrew().getOptions().booleanOption("maneuvering_ace");
+        return getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MANEUVERING_ACE);
     }
 
     public Enumeration<Entity> getKills() {
@@ -8836,7 +8830,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             // check if we can dodge and target can attack us,
             // then we are eligible.
             canHit |= ((this instanceof Mech) && !isProne()
-                       && getCrew().getOptions().booleanOption("dodge_maneuver") && Compute
+                       && getCrew().getOptions().booleanOption(OptionsConstants.PILOT_DODGE_MANEUVER) && Compute
                     .canPhysicalTarget(game, target.getId(), this));
         }
 
@@ -9296,7 +9290,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getMediumRangeModifier() {
         int mod = 2;
-        if (getCrew().getOptions().booleanOption("sniper")) {
+        if (getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) {
             mod = mod / 2;
         }
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_M)) {
@@ -9310,7 +9304,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getLongRangeModifier() {
         int mod = 4;
-        if (getCrew().getOptions().booleanOption("sniper")) {
+        if (getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) {
             mod = mod / 2;
         }
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_L)) {
@@ -9330,7 +9324,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getExtremeRangeModifier() {
         int mod = 6;
-        if (getCrew().getOptions().booleanOption("sniper")) {
+        if (getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) {
             mod = mod / 2;
         }
         return mod;
@@ -9338,7 +9332,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getLOSRangeModifier() {
         int mod = 8;
-        if (getCrew().getOptions().booleanOption("sniper")) {
+        if (getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SNIPER)) {
             mod = mod / 2;
         }
         return mod;
@@ -9661,8 +9655,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public boolean hasActiveEiCockpit() {
-        return (hasEiCockpit() && getCrew().getOptions().booleanOption(
-                "ei_implant"));
+        return (hasEiCockpit() && getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_EI_IMPLANT));
     }
 
     public boolean isLayingMines() {
@@ -13760,7 +13753,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getAllowedPhysicalAttacks() {
-        if ((null != crew) && crew.getOptions().booleanOption("melee_master")) {
+        if ((null != crew) && crew.getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER)) {
             return 2;
         }
         return 1;

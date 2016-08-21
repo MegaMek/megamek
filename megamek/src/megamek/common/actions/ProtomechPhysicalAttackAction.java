@@ -27,6 +27,7 @@ import megamek.common.Protomech;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.options.OptionsConstants;
 
 /**
  * The attacking Protomech makes it's combo physical attack action.
@@ -71,7 +72,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
             toReturn = (int) Math.ceil(toReturn * 0.5f);
         }
         if ((null != entity.getCrew())
-                && entity.getCrew().getOptions().booleanOption("melee_master")) {
+                && entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER)) {
             toReturn *= 2;
         }
   return toReturn;

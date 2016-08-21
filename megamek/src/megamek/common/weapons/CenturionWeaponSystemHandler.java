@@ -27,6 +27,7 @@ import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -100,7 +101,7 @@ class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
         } else { // Otherwise, there's a shutdown check
             boolean mtHeat = game.getOptions().booleanOption("tacops_heat");
             int hotDogMod = 0;
-            if (entityTarget.getCrew().getOptions().booleanOption("hot_dog")) {
+            if (entityTarget.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_HOT_DOG)) {
                 hotDogMod = 1;
             }
             int shutdown = (4 + (((entityTarget.heat) / 4) * 2))

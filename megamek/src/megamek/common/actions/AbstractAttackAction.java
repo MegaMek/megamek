@@ -27,6 +27,7 @@ import megamek.common.Mounted;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 
 /**
@@ -234,8 +235,8 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
         }
         
         PilotOptions pOpts = attacker.getCrew().getOptions();
-        if((toHit.getValue() > 0) && (null != attacker.getCrew()) 
-                && pOpts.booleanOption("blind_fighter")) {
+        if ((toHit.getValue() > 0) && (null != attacker.getCrew())
+                && pOpts.booleanOption(OptionsConstants.UNOFF_BLIND_FIGHTER)) {
             toHit.addModifier(-1, "blind fighter");
         }
 

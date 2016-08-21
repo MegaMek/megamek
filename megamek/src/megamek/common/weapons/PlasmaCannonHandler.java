@@ -34,6 +34,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 public class PlasmaCannonHandler extends AmmoWeaponHandler {
@@ -290,7 +291,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
                 toReturn += toHit.getMoS() / 3;
             }
             if (((Entity) target).getCrew().getOptions()
-                    .booleanOption("pain_shunt")) {
+                    .booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
                 toReturn = Math.max(toReturn / 2, 1);
             }
         } else if (bDirect) {

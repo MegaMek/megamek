@@ -4908,8 +4908,7 @@ public abstract class Mech extends Entity {
             cockpitCost = 200000;
         }
         if (hasEiCockpit()
-                && ((null != getCrew()) && getCrew().getOptions()
-                        .booleanOption("ei_implant"))) {
+                && ((null != getCrew()) && getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_EI_IMPLANT))) {
             cockpitCost = 400000;
         }
         costs[i++] = cockpitCost;

@@ -48,6 +48,7 @@ import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.AttackHandler;
 import megamek.server.SmokeCloud;
 import megamek.server.victory.SpaghettiVictoryFactory;
@@ -586,11 +587,9 @@ public class Game implements Serializable, IGame {
      */
     public boolean hasTacticalGenius(IPlayer player) {
         for (Entity entity : entities) {
-            if (entity.getCrew().getOptions().booleanOption("tactical_genius")
-                && entity.getOwner().equals(player)
-                && !entity.isDestroyed() && entity.isDeployed()
-                && !entity.isCarcass()
-                && !entity.getCrew().isUnconscious()) {
+            if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MISC_TACTICAL_GENIUS)
+                    && entity.getOwner().equals(player) && !entity.isDestroyed() && entity.isDeployed()
+                    && !entity.isCarcass() && !entity.getCrew().isUnconscious()) {
                 return true;
             }
         }

@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -263,10 +264,9 @@ public class Infantry extends Entity {
                     || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
             mp += 1;
         }
-        if ((null != getCrew())
-                && getCrew().getOptions().booleanOption("foot_cav")
+        if ((null != getCrew()) && getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_FOOT_CAV)
                 && ((getMovementMode() == EntityMovementMode.INF_LEG)
-                    || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
+                        || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
             mp += 1;
         }
         if(hasActiveFieldArtillery()) {

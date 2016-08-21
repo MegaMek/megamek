@@ -585,7 +585,7 @@ public class Crew implements Serializable {
 
         // get highest level
         int level = 1;
-        if (options.booleanOption("pain_shunt")) {
+        if (options.booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
             level = 2;
         }
         if (options.booleanOption("vdni")) {
@@ -622,7 +622,7 @@ public class Crew implements Serializable {
     }
 
     public int modifyPhysicalDamagaForMeleeSpecialist() {
-        if (!getOptions().booleanOption("melee_specialist")) {
+        if (!getOptions().booleanOption(OptionsConstants.PILOT_MELEE_SPECIALIST)) {
             return 0;
         }
 

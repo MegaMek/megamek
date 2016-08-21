@@ -2057,7 +2057,7 @@ public class Compute {
         if (curInFrontArc || (attacker instanceof BattleArmor)) {
             mod--;
         }
-        if (attacker.getCrew().getOptions().booleanOption("multi_tasker")) {
+        if (attacker.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_MULTI_TASKER)) {
             mod--;
         }
         return new ToHitData(mod, "secondary target modifier");
@@ -2098,20 +2098,17 @@ public class Compute {
             return toHit;
         }
 
-        if ((movement == EntityMovementType.MOVE_WALK)
-            || (movement == EntityMovementType.MOVE_VTOL_WALK)
-            || (movement == EntityMovementType.MOVE_CAREFUL_STAND)) {
+        if ((movement == EntityMovementType.MOVE_WALK) || (movement == EntityMovementType.MOVE_VTOL_WALK)
+                || (movement == EntityMovementType.MOVE_CAREFUL_STAND)) {
             toHit.addModifier(1, "attacker walked");
-        } else if ((movement == EntityMovementType.MOVE_RUN)
-                   || (movement == EntityMovementType.MOVE_VTOL_RUN)) {
+        } else if ((movement == EntityMovementType.MOVE_RUN) || (movement == EntityMovementType.MOVE_VTOL_RUN)) {
             toHit.addModifier(2, "attacker ran");
         } else if (movement == EntityMovementType.MOVE_SKID) {
             toHit.addModifier(3, "attacker ran and skidded");
         } else if (movement == EntityMovementType.MOVE_JUMP) {
-            if (entity.getCrew().getOptions().booleanOption("jumping_jack")) {
+            if (entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_JUMPING_JACK)) {
                 toHit.addModifier(1, "attacker jumped");
-            } else if (entity.getCrew().getOptions()
-                             .booleanOption("hopping_jack")) {
+            } else if (entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_HOPPING_JACK)) {
                 toHit.addModifier(2, "attacker jumped");
             } else {
                 toHit.addModifier(3, "attacker jumped");
@@ -2165,13 +2162,12 @@ public class Compute {
     public static void modifyPhysicalBTHForAdvantages(Entity attacker,
                                                       Entity target, ToHitData toHit, IGame game) {
 
-        if (attacker.getCrew().getOptions().booleanOption("melee_specialist")
-            && (attacker instanceof Mech)) {
-            toHit.addModifier(-1, "melee specialist");
+        if (attacker.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_SPECIALIST)
+                && (attacker instanceof Mech)) {
+            toHit.addModifier(-1, OptionsConstants.PILOT_MELEE_SPECIALIST);
         }
 
-        if (attacker.getCrew().getOptions()
-                    .booleanOption("clan_pilot_training")) {
+        if (attacker.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_CLAN_PILOT_TRAINING)) {
             toHit.addModifier(1, "clan pilot training");
         }
 
@@ -2180,7 +2176,7 @@ public class Compute {
         if ((target != null)
             && (target instanceof Mech)
             && target.getCrew().getOptions()
-                     .booleanOption("dodge_maneuver") && (target.dodging)) {
+                     .booleanOption(OptionsConstants.PILOT_DODGE_MANEUVER) && (target.dodging)) {
             toHit.addModifier(2, "target is dodging");
         }
     }
@@ -3858,8 +3854,7 @@ public class Compute {
         }
 
         int check = ae.getSensorCheck();
-        if ((null != ae.getCrew())
-            && ae.getCrew().getOptions().booleanOption("sensor_geek")) {
+        if ((null != ae.getCrew()) && ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_SENSOR_GEEK)) {
             check -= 2;
         }
         if (null != te) {

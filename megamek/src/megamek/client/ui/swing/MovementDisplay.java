@@ -868,7 +868,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         updateTakeCoverButton();
 
         // Infantry - Urban Guerrilla calling for support
-        if (isInfantry && ce.getCrew().getOptions().booleanOption("urban_guerrilla")
+        if (isInfantry && ce.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_URBAN_GUERRILLA)
                 && ((Infantry) ce).getCanCallSupport()) {
             getBtn(MoveCommand.MOVE_CALL_SUPPORT).setEnabled(true);
         } else {

@@ -285,7 +285,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
         if ((entity instanceof Mech)
             && !entity.isProne()
             && entity.getCrew().getOptions()
-                     .booleanOption("dodge_maneuver")) { //$NON-NLS-1$
+                     .booleanOption(OptionsConstants.PILOT_DODGE_MANEUVER)) { //$NON-NLS-1$
             setDodgeEnabled(true);
         }
     }
@@ -418,7 +418,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         .getOptions()
                         .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean isMeleeMaster = (en.getCrew() != null)
-                && en.getCrew().getOptions().booleanOption("melee_master");
+                && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER);
         
         final ToHitData leftArm = PunchAttackAction.toHit(clientgui.getClient()
                 .getGame(), cen, target, PunchAttackAction.LEFT);
@@ -575,7 +575,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         .getOptions()
                         .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean isMeleeMaster = (en.getCrew() != null)
-                && en.getCrew().getOptions().booleanOption("melee_master");
+                && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER);
         
         ToHitData leftLeg = KickAttackAction.toHit(clientgui.getClient()
                 .getGame(), cen, target, KickAttackAction.LEFT);
@@ -973,7 +973,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                         .getOptions()
                         .booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING);
         final boolean isMeleeMaster = (en.getCrew() != null)
-                && en.getCrew().getOptions().booleanOption("melee_master");
+                && en.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_MELEE_MASTER);
         
         final ToHitData toHit = ClubAttackAction.toHit(clientgui.getClient()
                 .getGame(), cen, target, club, ash.getAimTable());

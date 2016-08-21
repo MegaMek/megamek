@@ -10490,11 +10490,11 @@ public class Server implements Runnable {
                 if (entity instanceof Infantry) {
                     target += 1;
                 }
-                if (entity.getCrew().getOptions().booleanOption("eagle_eyes")) {
+                if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MISC_EAGLE_EYES)) {
                     target += 2;
                 }
                 if ((entity.getMovementMode() == EntityMovementMode.HOVER)
-                    || (entity.getMovementMode() == EntityMovementMode.WIGE)) {
+                        || (entity.getMovementMode() == EntityMovementMode.WIGE)) {
                     target = 12;
                 }
             }
@@ -18140,7 +18140,7 @@ public class Server implements Runnable {
             IHex entityHex = game.getBoard().getHex(entity.getPosition());
 
             int hotDogMod = 0;
-            if (entity.getCrew().getOptions().booleanOption("hot_dog")) {
+            if (entity.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_HOT_DOG)) {
                 hotDogMod = 1;
             }
             if (entity.getTaserInterferenceHeat()) {
@@ -19179,7 +19179,7 @@ public class Server implements Runnable {
                     && (entity instanceof Mech)
                     && (((Mech) entity).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
                     && !entity.getCrew().getOptions()
-                              .booleanOption("pain_shunt")) {
+                              .booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
                     damageToCrew += 1;
                 }
                 r = new Report(5070);
@@ -19194,7 +19194,7 @@ public class Server implements Runnable {
                        && !entity.getCrew().isDead()
                        && !entity.getCrew().isDoomed()
                        && !entity.getCrew().getOptions()
-                                 .booleanOption("pain_shunt")) {
+                                 .booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
                 // Crew may take damage from heat if MaxTech option is set
                 int heatroll = Compute.d6(2);
                 int avoidNumber = -1;
@@ -20700,7 +20700,7 @@ public class Server implements Runnable {
         }
 
         // no consciousness roll for pain-shunted warriors
-        if (e.getCrew().getOptions().booleanOption("pain_shunt")) {
+        if (e.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
             return vDesc;
         }
 
@@ -20720,7 +20720,8 @@ public class Server implements Runnable {
                     e.getCrew().decreaseEdge();
                 }
                 int roll = Compute.d6(2);
-                if (e.getCrew().getOptions().booleanOption("pain_resistance")) {
+                if (e.getCrew().getOptions().booleanOption(OptionsConstants.MISC_PAIN_RESISTANCE
+)) {
                     roll = Math.min(12, roll + 1);
                 }
                 Report r = new Report(6030);
@@ -20780,7 +20781,8 @@ public class Server implements Runnable {
             }
             int roll = Compute.d6(2);
 
-            if (e.getCrew().getOptions().booleanOption("pain_resistance")) {
+            if (e.getCrew().getOptions().booleanOption(OptionsConstants.MISC_PAIN_RESISTANCE
+)) {
                 roll = Math.min(12, roll + 1);
             }
 
@@ -21235,23 +21237,17 @@ public class Server implements Runnable {
         }
 
         // Is the infantry in the open?
-        if (isPlatoon && !te.isDestroyed() && !te.isDoomed()
-                && !hit.isIgnoreInfantryDoubleDamage()
+        if (isPlatoon && !te.isDestroyed() && !te.isDoomed() && !hit.isIgnoreInfantryDoubleDamage()
                 && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)
                 && !te.getCrew().getOptions().booleanOption("dermal_armor")) {
             te_hex = game.getBoard().getHex(te.getPosition());
-            if ((te_hex != null) && !te_hex.containsTerrain(Terrains.WOODS)
-                && !te_hex.containsTerrain(Terrains.JUNGLE)
-                && !te_hex.containsTerrain(Terrains.ROUGH)
-                && !te_hex.containsTerrain(Terrains.RUBBLE)
-                && !te_hex.containsTerrain(Terrains.SWAMP)
-                && !te_hex.containsTerrain(Terrains.BUILDING)
-                && !te_hex.containsTerrain(Terrains.FUEL_TANK)
-                && !te_hex.containsTerrain(Terrains.FORTIFIED)
-                && (!te.getCrew().getOptions().booleanOption("urban_guerrilla"))
-                    && (!te_hex.containsTerrain(Terrains.PAVEMENT)
-                        || !te_hex.containsTerrain(Terrains.ROAD))
-                && !ammoExplosion) {
+            if ((te_hex != null) && !te_hex.containsTerrain(Terrains.WOODS) && !te_hex.containsTerrain(Terrains.JUNGLE)
+                    && !te_hex.containsTerrain(Terrains.ROUGH) && !te_hex.containsTerrain(Terrains.RUBBLE)
+                    && !te_hex.containsTerrain(Terrains.SWAMP) && !te_hex.containsTerrain(Terrains.BUILDING)
+                    && !te_hex.containsTerrain(Terrains.FUEL_TANK) && !te_hex.containsTerrain(Terrains.FORTIFIED)
+                    && (!te.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_URBAN_GUERRILLA))
+                    && (!te_hex.containsTerrain(Terrains.PAVEMENT) || !te_hex.containsTerrain(Terrains.ROAD))
+                    && !ammoExplosion) {
                 // PBI. Damage is doubled.
                 damage *= 2;
                 r = new Report(6040);
@@ -22805,7 +22801,7 @@ public class Server implements Runnable {
         if (tookInternalDamage
             && te.getCrew().getOptions().booleanOption("vdni")
             && !te.getCrew().getOptions().booleanOption("bvdni")
-            && !te.getCrew().getOptions().booleanOption("pain_shunt")) {
+            && !te.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
             Report.addNewline(vDesc);
             int roll = Compute.d6(2);
             r = new Report(3580);
@@ -23924,7 +23920,7 @@ public class Server implements Runnable {
                         vDesc.add(r);
                         vDesc.addAll(damageCrew(en, 1));
                     } else {
-                        if (en.getCrew().getOptions().booleanOption("pain_shunt")
+                        if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
                             && !t.isCommanderHitPS()) {
                             r = new Report(6606);
                             r.subject = t.getId();
@@ -23947,7 +23943,7 @@ public class Server implements Runnable {
                         vDesc.add(r);
                         vDesc.addAll(damageCrew(en, 1));
                     } else {
-                        if (en.getCrew().getOptions().booleanOption("pain_shunt")
+                        if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
                             || en.getCrew().getOptions()
                                  .booleanOption("dermal_armor")) {
                             r = new Report(6186);
@@ -23970,7 +23966,7 @@ public class Server implements Runnable {
                         vDesc.add(r);
                         vDesc.addAll(damageCrew(en, 1));
                     } else {
-                        if (en.getCrew().getOptions().booleanOption("pain_shunt")
+                        if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
                             && !t.isDriverHitPS()) {
                             r = new Report(6601);
                             r.subject = t.getId();
@@ -23992,7 +23988,7 @@ public class Server implements Runnable {
                         vDesc.add(r);
                         vDesc.addAll(damageCrew(en, 1));
                     } else {
-                        if (en.getCrew().getOptions().booleanOption("pain_shunt")
+                        if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
                             && !t.isCrewHitPS()) {
                             r = new Report(6191);
                             r.subject = t.getId();
@@ -25131,7 +25127,7 @@ public class Server implements Runnable {
 
         // if using buffered VDNI then a possible pilot hit
         if (en.getCrew().getOptions().booleanOption("bvdni")
-            && !en.getCrew().getOptions().booleanOption("pain_shunt")) {
+            && !en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
             Report.addNewline(vDesc);
             int roll = Compute.d6(2);
             r = new Report(3580);
@@ -26885,12 +26881,11 @@ public class Server implements Runnable {
             pilotDamage = 1;
         }
         if (game.getOptions().booleanOption("case_pilot_damage")
-            && (en.locationHasCase(hit.getLocation()) || en.hasCASEII(hit
-                                                                              .getLocation()))) {
+                && (en.locationHasCase(hit.getLocation()) || en.hasCASEII(hit.getLocation()))) {
             pilotDamage = 1;
         }
-        if (en.getCrew().getOptions().booleanOption("pain_resistance")
-            || en.getCrew().getOptions().booleanOption("iron_man")) {
+        if (en.getCrew().getOptions().booleanOption(OptionsConstants.MISC_PAIN_RESISTANCE)
+                || en.getCrew().getOptions().booleanOption(OptionsConstants.MISC_IRON_MAN)) {
             pilotDamage -= 1;
         }
         // tanks only take pilot damage when using BVDNI or VDNI
@@ -26899,7 +26894,7 @@ public class Server implements Runnable {
                 .getCrew().getOptions().booleanOption("bvdni"))) {
             pilotDamage = 0;
         }
-        if (!en.getCrew().getOptions().booleanOption("pain_shunt")) {
+        if (!en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
             vDesc.addAll(damageCrew(en, pilotDamage));
         }
         if (en.getCrew().isDoomed() || en.getCrew().isDead()) {

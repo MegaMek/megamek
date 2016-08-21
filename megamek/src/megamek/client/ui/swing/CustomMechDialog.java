@@ -77,6 +77,7 @@ import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
+import megamek.common.options.OptionsConstants;
 import megamek.common.options.PartialRepairs;
 import megamek.common.options.PilotOptions;
 import megamek.common.options.Quirks;
@@ -896,13 +897,11 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         panOptions.add(groupLabel);
     }
 
-    private void addOption(IOption option, GridBagLayout gridbag,
-            GridBagConstraints c, boolean editable) {
+    private void addOption(IOption option, GridBagLayout gridbag, GridBagConstraints c, boolean editable) {
         Entity entity = entities.get(0);
-        DialogOptionComponent optionComp = new DialogOptionComponent(this,
-                option, editable);
+        DialogOptionComponent optionComp = new DialogOptionComponent(this, option, editable);
 
-        if ("weapon_specialist".equals(option.getName())) { //$NON-NLS-1$
+        if ((OptionsConstants.GUNNERY_WEAPON_SPECIALIST).equals(option.getName())) { // $NON-NLS-1$
             optionComp.addValue(Messages.getString("CustomMechDialog.None")); //$NON-NLS-1$
             TreeSet<String> uniqueWeapons = new TreeSet<String>();
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
@@ -915,7 +914,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             optionComp.setSelected(option.stringValue());
         }
 
-        if ("specialist".equals(option.getName())) { //$NON-NLS-1$
+        if (OptionsConstants.GUNNERY_SPECIALIST               
+                .equals(option.getName())) { //$NON-NLS-1$
             optionComp.addValue(Crew.SPECIAL_NONE);
             optionComp.addValue(Crew.SPECIAL_LASER);
             optionComp.addValue(Crew.SPECIAL_BALLISTIC);

@@ -1168,26 +1168,26 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         // Has the pilot the appropriate gunnery skill?
-        if (ae.getCrew().getOptions().booleanOption("gunnery_laser")
+        if (ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_GUNNERY_LASER)
                 && wtype.hasFlag(WeaponType.F_ENERGY)) {
             toHit.addModifier(-1, "Gunnery/Energy");
         }
 
-        if (ae.getCrew().getOptions().booleanOption("gunnery_ballistic")
+        if (ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_GUNNERY_BALLISTIC)
                 && wtype.hasFlag(WeaponType.F_BALLISTIC)) {
             toHit.addModifier(-1, "Gunnery/Ballistic");
         }
 
-        if (ae.getCrew().getOptions().booleanOption("gunnery_missile")
+        if (ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_GUNNERY_MISSILE)
                 && wtype.hasFlag(WeaponType.F_MISSILE)) {
             toHit.addModifier(-1, "Gunnery/Missile");
         }
 
         // Is the pilot a weapon specialist?
-        if (ae.getCrew().getOptions().stringOption("weapon_specialist")
-                .equals(wtype.getName())) {
+        if (ae.getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_WEAPON_SPECIALIST
+).equals(wtype.getName())) {
             toHit.addModifier(-2, "weapon specialist");
-        } else if (ae.getCrew().getOptions().booleanOption("specialist")) {
+        } else if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_SPECIALIST)) {
             // aToW style gunnery specialist: -1 to specialized weapon and +1 to
             // all other weapons
             // Note that weapon specialist supercedes gunnery specialization, so
@@ -1195,21 +1195,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             // a specialization in Medium Lasers and a Laser specialization, you
             // only get the -2 specialization mod
             if (wtype.hasFlag(WeaponType.F_ENERGY)) {
-                if (ae.getCrew().getOptions().stringOption("specialist")
+                if (ae.getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_SPECIALIST)
                         .equals(Crew.SPECIAL_LASER)) {
                     toHit.addModifier(-1, "Laser Specialization");
                 } else {
                     toHit.addModifier(+1, "Unspecialized");
                 }
             } else if (wtype.hasFlag(WeaponType.F_BALLISTIC)) {
-                if (ae.getCrew().getOptions().stringOption("specialist")
+                if (ae.getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_SPECIALIST)
                         .equals(Crew.SPECIAL_BALLISTIC)) {
                     toHit.addModifier(-1, "Ballistic Specialization");
                 } else {
                     toHit.addModifier(+1, "Unspecialized");
                 }
             } else if (wtype.hasFlag(WeaponType.F_MISSILE)) {
-                if (ae.getCrew().getOptions().stringOption("specialist")
+                if (ae.getCrew().getOptions().stringOption(OptionsConstants.GUNNERY_SPECIALIST)
                         .equals(Crew.SPECIAL_MISSILE)) {
                     toHit.addModifier(-1, "Missile Specialization");
                 } else {
@@ -1219,18 +1219,17 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         if (te != null) {
-            if (te.getCrew().getOptions().booleanOption("urban_guerrilla")
+            if (te.getCrew().getOptions().booleanOption(OptionsConstants.INFANTRY_URBAN_GUERRILLA)
                     && (game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.PAVEMENT)
-                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROAD)
-                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.RUBBLE)
-                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.BUILDING)
-                        || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROUGH))) {
+                            || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROAD)
+                            || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.RUBBLE)
+                            || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.BUILDING)
+                            || game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ROUGH))) {
                 toHit.addModifier(+1, "urban guerrilla");
             }
-            if (te.getCrew().getOptions().booleanOption("shaky_stick")
-                    && te.isAirborne()
+            if (te.getCrew().getOptions().booleanOption(OptionsConstants.PILOT_SHAKY_STICK) && te.isAirborne()
                     && (!ae.isAirborne() || !ae.isAirborneVTOLorWIGE())) {
-                toHit.addModifier(+1, "Shaky Stick");
+                toHit.addModifier(+1, OptionsConstants.PILOT_SHAKY_STICK);
             }
         }
 
@@ -1373,8 +1372,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         if (weatherToHitMods.getValue() > 0) {
-            if ((ae.getCrew() != null)
-                    && ae.getCrew().getOptions().booleanOption("weathered")) {
+            if ((ae.getCrew() != null) && ae.getCrew().getOptions().booleanOption(OptionsConstants.UNOFF_WEATHERED)) {
                 weatherToHitMods.addModifier(-1, "weathered");
             }
             toHit.append(weatherToHitMods);
@@ -1445,13 +1443,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 return new ToHitData(4, "Homing shot (will miss if TAG misses)");
             }
 
-            if (game.getEntity(attackerId).getOwner().getArtyAutoHitHexes()
-                    .contains(target.getPosition())) {
-                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                        "Artillery firing at designated artillery target.");
+            if (game.getEntity(attackerId).getOwner().getArtyAutoHitHexes().contains(target.getPosition())) {
+                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Artillery firing at designated artillery target.");
             }
             int mod = 7;
-            if (ae.getCrew().getOptions().booleanOption("oblique_attacker")) {
+            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
                 mod--;
             }
             toHit.addModifier(mod, "indirect artillery modifier");
@@ -1519,7 +1515,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (Compute.isAirToGround(ae, target)) {
             if (wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
                 toHit.addModifier(ae.getAltitude(), "bombing altitude");
-                if (ae.getCrew().getOptions().booleanOption("golden_goose")) {
+                if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
                     toHit.addModifier(-2, "Golden Goose");
                 }
             } else if (isStrafing) {
@@ -1529,15 +1525,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
                 // Additional Nape-of-Earth restrictions for strafing
                 if (ae.getAltitude() == 1) {
-                    Coords prevCoords = ae.passedThroughPrevious(target
-                            .getPosition());
+                    Coords prevCoords = ae.passedThroughPrevious(target.getPosition());
                     IHex prevHex = game.getBoard().getHex(prevCoords);
-                    toHit.append(Compute.getStrafingTerrainModifier(game,
-                            eistatus, prevHex));
+                    toHit.append(Compute.getStrafingTerrainModifier(game, eistatus, prevHex));
                 }
             } else {
                 toHit.addModifier(+2, "air to ground strike");
-                if (ae.getCrew().getOptions().booleanOption("golden_goose")) {
+                if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_GOLDEN_GOOSE)) {
                     if (wtype.hasFlag(WeaponType.F_DIVE_BOMB)) {
                         toHit.addModifier(-2, "Golden Goose");
                     } else {
@@ -1588,7 +1582,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         // Indirect fire has a +1 mod
         if (isIndirect) {
-            if (ae.getCrew().getOptions().booleanOption("oblique_attacker")) {
+            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.GUNNERY_OBLIQUE_ATTACKER)) {
                 toHit.addModifier(0, "indirect fire");
             } else {
                 toHit.addModifier(1, "indirect fire");

@@ -3232,6 +3232,12 @@
 			<availability>General:8,FS:8,MERC:8,DC:8,TC:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Star Dagger' unitType='Aero'>
+		<availability>DC:2</availability>
+		<model name='S-2B'>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
 	<chassis name='Stingray' unitType='Aero'>
 		<availability>CC:4,MOC:2,IS:4,FS:4,MERC:4,CIR:3,Periphery:2,TC:2,CS:3,OA:2,LA:6,Periphery.MW:3,SL:4,Periphery.ME:3,FWL:6,NIOPS:3,SL.R:0,DC:4</availability>
 		<model name='F-90'>

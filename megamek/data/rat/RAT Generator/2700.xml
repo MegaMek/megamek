@@ -2425,6 +2425,9 @@
 			<roles>escort,recon</roles>
 			<availability>CC:8,General:8,Periphery.Deep:8,MERC:8,Periphery:8</availability>
 		</model>
+		<model name='(Fury)'>
+			<availability>SL:2</availability>
+		</model>
 		<model name='(Royal)'>
 			<availability>SL.R:4</availability>
 		</model>
@@ -2773,6 +2776,12 @@
 		<model name='SPR-H5'>
 			<roles>interceptor</roles>
 			<availability>General:8,FS:8,MERC:8,DC:8,TC:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Star Dagger' unitType='Aero'>
+		<availability>DC:6</availability>
+		<model name='S-2B'>
+			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Stingray' unitType='Aero'>

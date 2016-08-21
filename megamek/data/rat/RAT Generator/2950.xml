@@ -2907,7 +2907,7 @@
 	<chassis name='Zeus' unitType='Mek'>
 		<availability>Periphery.R:5,HL:4,LA:10,MERC:5,FS:2</availability>
 		<model name='ZEU-6Y'>
-			<availability>LA:1</availability>
+			<availability>LA:2</availability>
 		</model>
 		<model name='ZEU-6S'>
 			<availability>HL:6,General:8,Periphery.Deep:6,Periphery:8</availability>
@@ -3514,7 +3514,7 @@
 			<availability>HL:6,General:5,Periphery.Deep:7,Periphery:8</availability>
 		</model>
 		<model name='(Cell)'>
-			<availability>DC:2</availability>
+			<availability>DC:1</availability>
 		</model>
 		<model name='(MG)'>
 			<roles>recon,raider</roles>
@@ -5287,6 +5287,13 @@
 		<model name='(Standard)'>
 			<roles>escort</roles>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Mowang Courier' unitType='Small Craft'>
+		<availability>CC:2</availability>
+		<model name='(Standard)'>
+			<roles>civilian</roles>
+			<availability>CC:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Tigress Close Patrol Craft' unitType='Small Craft'>

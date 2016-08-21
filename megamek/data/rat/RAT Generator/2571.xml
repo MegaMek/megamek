@@ -709,6 +709,9 @@
 		<model name='FLE-4'>
 			<availability>FWL:8</availability>
 		</model>
+		<model name='FLE-14'>
+			<availability>FWL:2-</availability>
+		</model>
 	</chassis>
 	<chassis name='Galahad' unitType='Mek'>
 		<availability>TH:6,SL:2+,SL.R:6</availability>
@@ -2093,6 +2096,12 @@
 		<model name='SPR-H5'>
 			<roles>interceptor</roles>
 			<availability>General:8,FS:8,MERC:8,DC:8,TC:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Star Dagger' unitType='Aero'>
+		<availability>TH:6,DC:4</availability>
+		<model name='S-2B'>
+			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Stuka' unitType='Aero'>

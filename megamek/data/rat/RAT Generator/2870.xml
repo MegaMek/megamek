@@ -3633,6 +3633,12 @@
 			<availability>IS:4-</availability>
 		</model>
 	</chassis>
+	<chassis name='Soarece Superheavy MBT' unitType='Tank'>
+		<availability>FWL:3</availability>
+		<model name='(Standard)'>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
 	<chassis name='Svantovit Infantry Fighting Vehicle' unitType='Tank'>
 		<availability>CSA:4,CHH:7,CBS:7,CLAN:6,CJF:3</availability>
 		<model name='(Standard)'>
@@ -4811,6 +4817,13 @@
 		<model name='(Standard)'>
 			<roles>escort</roles>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Mowang Courier' unitType='Small Craft'>
+		<availability>CC:2</availability>
+		<model name='(Standard)'>
+			<roles>civilian</roles>
+			<availability>CC:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Tigress Close Patrol Craft' unitType='Small Craft'>

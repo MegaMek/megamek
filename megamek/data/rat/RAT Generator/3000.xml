@@ -3737,7 +3737,7 @@
 			<availability>HL:6,General:5,Periphery.Deep:7,Periphery:8</availability>
 		</model>
 		<model name='(Cell)'>
-			<availability>DC:2</availability>
+			<availability>DC:1</availability>
 		</model>
 		<model name='(MG)'>
 			<roles>recon,raider</roles>
@@ -5003,6 +5003,13 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Tsuru VIP Aircraft' unitType='Conventional Fighter'>
+		<availability>DC:1</availability>
+		<model name='(Standard)'>
+			<roles>cargo,support</roles>
+			<availability>General:8</availability>
+		</model>
+	</chassis>
 	<chassis name='Ahab' unitType='Aero'>
 		<availability>CS:7,CLAN:3,NIOPS:7</availability>
 		<model name='AHB-443'>
@@ -5647,6 +5654,13 @@
 		<model name='(Standard)'>
 			<roles>escort</roles>
 			<availability>General:8</availability>
+		</model>
+	</chassis>
+	<chassis name='Mowang Courier' unitType='Small Craft'>
+		<availability>CC:2</availability>
+		<model name='(Standard)'>
+			<roles>civilian</roles>
+			<availability>CC:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Tigress Close Patrol Craft' unitType='Small Craft'>

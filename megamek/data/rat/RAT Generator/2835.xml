@@ -4356,6 +4356,13 @@
 			<availability>General:8</availability>
 		</model>
 	</chassis>
+	<chassis name='Mowang Courier' unitType='Small Craft'>
+		<availability>CC:2</availability>
+		<model name='(Standard)'>
+			<roles>civilian</roles>
+			<availability>CC:8</availability>
+		</model>
+	</chassis>
 	<chassis name='Tigress Close Patrol Craft' unitType='Small Craft'>
 		<availability>TC:5</availability>
 		<model name='TIG-15'>

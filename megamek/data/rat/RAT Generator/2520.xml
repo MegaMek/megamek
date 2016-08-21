@@ -596,7 +596,7 @@
 			<availability>FWL:8</availability>
 		</model>
 		<model name='FLE-14'>
-			<availability>FWL:1</availability>
+			<availability>FWL:3-</availability>
 		</model>
 	</chassis>
 	<chassis name='Gladiator' unitType='Mek'>

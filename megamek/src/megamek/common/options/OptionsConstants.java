@@ -212,7 +212,6 @@ public class OptionsConstants {
     public static final String MD_PAIN_SHUNT = "artificial pain shunt"; // $NON-NLS$
     public static final String MD_VDNI = "vdni"; // $NON-NLS$
     public static final String MD_BVDNI = "bvdni"; // $NON-NLS$
-
     public static final String MD_GRAPPLER = "grappler"; // $NON-NLS$
     public static final String MD_PL_MASC = "pl_masc"; // $NON-NLS$
     public static final String MD_CYBER_EYE_IM = "cyber_eye_im"; // $NON-NLS$

@@ -1234,8 +1234,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         // check for VDNI
-        if (ae.getCrew().getOptions().booleanOption("vdni")
-                || ae.getCrew().getOptions().booleanOption("bvdni")) {
+        if (ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+                || ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
             toHit.addModifier(-1, "VDNI");
         }
 
@@ -1243,13 +1243,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             // check for pl-masc
             // the rules are a bit vague, but assume that if the infantry didn't
             // move or jumped, then they shouldn't get the penalty
-            if (ae.getCrew().getOptions().booleanOption("pl_masc")
+            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_PL_MASC)
                     && ((ae.moved == EntityMovementType.MOVE_WALK) || (ae.moved == EntityMovementType.MOVE_RUN))) {
                 toHit.addModifier(+1, "PL-MASC");
             }
 
             // check for cyber eye laser sighting on ranged attacks
-            if (ae.getCrew().getOptions().booleanOption("cyber_eye_tele")
+            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_EYE_TELE)
                     && !(wtype instanceof InfantryAttack)) {
                 toHit.addModifier(-1, "MD laser-sighting");
             }
@@ -2532,8 +2532,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         // check for VDNI
-        if (ae.getCrew().getOptions().booleanOption("vdni")
-                || ae.getCrew().getOptions().booleanOption("bvdni")) {
+        if (ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+                || ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
             toHit.addModifier(-1, "VDNI");
         }
 
@@ -2541,7 +2541,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             // check for pl-masc
             // the rules are a bit vague, but assume that if the infantry didn't
             // move or jumped, then they shouldn't get the penalty
-            if (ae.getCrew().getOptions().booleanOption("pl_masc")
+            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_PL_MASC)
                     && ((ae.moved == EntityMovementType.MOVE_WALK) || (ae.moved == EntityMovementType.MOVE_RUN))) {
                 toHit.addModifier(+1, "PL-MASC");
             }

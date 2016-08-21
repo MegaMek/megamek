@@ -135,26 +135,19 @@ public class PilotOptions extends AbstractOptions {
 
         // manei domini
         IBasicOptionGroup md = addGroup("md", MD_ADVANTAGES); //$NON-NLS-1$
-        addOption(md, OptionsConstants.MD_PAIN_SHUNT, false); //$NON-NLS-1$
-
-     
-        
-        
-        addOption(md, "vdni", false); //$NON-NLS-1$
-        addOption(md, "bvdni", false); //$NON-NLS-1$
-
-        addOption(md, "grappler", false); //$NON-NLS-1$
-        addOption(md, "pl_masc", false); // NON-NLS-1$
-        // TODO: Need to add Active Probe as sensor
-        // Forum query pending at
-        // http://www.classicbattletech.com/forums/index.php/topic,47577.0.html
-        addOption(md, "cyber_eye_im", false); //$NON-NLS-1$
-        addOption(md, "cyber_eye_tele", false); //$NON-NLS-1$
-        addOption(md, "mm_eye_im", false); //$NON-NLS-1$
-        addOption(md, "comm_implant", false); //$NON-NLS-1$
-        addOption(md, "boost_comm_implant", false); //$NON-NLS-1$
-        addOption(md, "dermal_armor", false); //$NON-NLS-1$
-        addOption(md, "tsm_implant", false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_PAIN_SHUNT, false); // $NON-NLS-1$
+        addOption(md, OptionsConstants.MD_COMM_IMPLANT, false); // $NON-NLS-1$
+        addOption(md, OptionsConstants.MD_PAIN_SHUNT, false); // $NON-NLS-1$
+        addOption(md, OptionsConstants.MD_BOOST_COMM_IMPLANT, false); // $NON-NLS-1$
+        addOption(md, OptionsConstants.MD_VDNI, false); // $NON-NLS-1$
+        addOption(md, OptionsConstants.MD_BVDNI, false); // $NON-NLS-1$
+        addOption(md, OptionsConstants.MD_GRAPPLER, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_PL_MASC, false); // NON-NLS-1$
+        addOption(md, OptionsConstants.MD_CYBER_EYE_IM, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_CYBER_EYE_TELE, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_MM_EYE_IM, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_DERMAL_ARMOR, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_TSM_IMPLANT, false); //$NON-NLS-1$
     }
 
     /*

@@ -21239,7 +21239,7 @@ public class Server implements Runnable {
         // Is the infantry in the open?
         if (isPlatoon && !te.isDestroyed() && !te.isDoomed() && !hit.isIgnoreInfantryDoubleDamage()
                 && (((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE)
-                && !te.getCrew().getOptions().booleanOption("dermal_armor")) {
+                && !te.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
             te_hex = game.getBoard().getHex(te.getPosition());
             if ((te_hex != null) && !te_hex.containsTerrain(Terrains.WOODS) && !te_hex.containsTerrain(Terrains.JUNGLE)
                     && !te_hex.containsTerrain(Terrains.ROUGH) && !te_hex.containsTerrain(Terrains.RUBBLE)
@@ -21273,7 +21273,7 @@ public class Server implements Runnable {
         switch (bFrag) {
             case ANTI_INFANTRY:
                 if (isPlatoon
-                    && te.getCrew().getOptions().booleanOption("dermal_armor")) {
+                    && te.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
                     int reduce = Math.min(damage - 1, Compute.d6());
                     damage -= reduce;
                     r = new Report(6042);
@@ -22722,7 +22722,7 @@ public class Server implements Runnable {
             }
 
             if (isHeadHit
-                && !te.getCrew().getOptions().booleanOption("dermal_armor")) {
+                && !te.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
                 Report.addNewline(vDesc);
                 vDesc.addAll(damageCrew(te, 1));
             }
@@ -22799,8 +22799,8 @@ public class Server implements Runnable {
 
         // if using VDNI (but not buffered), check for damage on an internal hit
         if (tookInternalDamage
-            && te.getCrew().getOptions().booleanOption("vdni")
-            && !te.getCrew().getOptions().booleanOption("bvdni")
+            && te.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+            && !te.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)
             && !te.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
             Report.addNewline(vDesc);
             int roll = Compute.d6(2);
@@ -23913,8 +23913,8 @@ public class Server implements Runnable {
                     }
                     break;
                 case Tank.CRIT_COMMANDER:
-                    if (en.getCrew().getOptions().booleanOption("vdni")
-                        || en.getCrew().getOptions().booleanOption("bvdni")) {
+                    if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+                        || en.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
                         r = new Report(6191);
                         r.subject = t.getId();
                         vDesc.add(r);
@@ -23936,7 +23936,7 @@ public class Server implements Runnable {
                     // fall through here, because effects of crew stunned also
                     // apply
                 case Tank.CRIT_CREW_STUNNED:
-                    if (en.getCrew().getOptions().booleanOption("vdni")
+                    if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
                         || en.getCrew().getOptions().booleanOption("bvdni")) {
                         r = new Report(6191);
                         r.subject = t.getId();
@@ -23945,7 +23945,7 @@ public class Server implements Runnable {
                     } else {
                         if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)
                             || en.getCrew().getOptions()
-                                 .booleanOption("dermal_armor")) {
+                                 .booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
                             r = new Report(6186);
                             r.subject = t.getId();
                             vDesc.add(r);
@@ -23959,8 +23959,8 @@ public class Server implements Runnable {
                     }
                     break;
                 case Tank.CRIT_DRIVER:
-                    if (en.getCrew().getOptions().booleanOption("vdni")
-                        || en.getCrew().getOptions().booleanOption("bvdni")) {
+                    if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+                        || en.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
                         r = new Report(6191);
                         r.subject = t.getId();
                         vDesc.add(r);
@@ -23981,8 +23981,8 @@ public class Server implements Runnable {
                     }
                     break;
                 case Tank.CRIT_CREW_KILLED:
-                    if (en.getCrew().getOptions().booleanOption("vdni")
-                        || en.getCrew().getOptions().booleanOption("bvdni")) {
+                    if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+                        || en.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
                         r = new Report(6191);
                         r.subject = t.getId();
                         vDesc.add(r);
@@ -24302,13 +24302,13 @@ public class Server implements Runnable {
                 case Aero.CRIT_CREW:
                     // pilot hit
                     r = new Report(6650);
-                    if (en.getCrew().getOptions().booleanOption("dermal_armor")) {
+                    if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
                         r = new Report(6651);
                         r.subject = a.getId();
                         vDesc.add(r);
                         break;
                     } else if (en.getCrew().getOptions()
-                                 .booleanOption("tsm_implant")) {
+                                 .booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
                         r = new Report(6652);
                         r.subject = a.getId();
                         vDesc.add(r);
@@ -25126,7 +25126,7 @@ public class Server implements Runnable {
         }
 
         // if using buffered VDNI then a possible pilot hit
-        if (en.getCrew().getOptions().booleanOption("bvdni")
+        if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)
             && !en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
             Report.addNewline(vDesc);
             int roll = Compute.d6(2);
@@ -26890,8 +26890,8 @@ public class Server implements Runnable {
         }
         // tanks only take pilot damage when using BVDNI or VDNI
         if ((en instanceof Tank)
-            && !(en.getCrew().getOptions().booleanOption("vdni") || en
-                .getCrew().getOptions().booleanOption("bvdni"))) {
+            && !(en.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI) || en
+                .getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI))) {
             pilotDamage = 0;
         }
         if (!en.getCrew().getOptions().booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
@@ -27313,8 +27313,8 @@ public class Server implements Runnable {
         // only mechs should roll to avoid pilot damage
         // vehicles may fall due to sideslips
         if ((entity instanceof Mech)
-            && !entity.getCrew().getOptions().booleanOption("dermal_armor")
-            && !entity.getCrew().getOptions().booleanOption("tsm_implant")) {
+            && !entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)
+            && !entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT)) {
             // we want to be able to avoid pilot damage even when it was
             // an automatic fall, only unconsciousness should cause auto-damage
             roll.removeAutos();

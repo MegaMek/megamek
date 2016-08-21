@@ -4609,12 +4609,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
         }
         // check for Manei Domini implants
-        if (((crew.getOptions().booleanOption("cyber_eye_im") || crew
-                .getOptions().booleanOption("mm_eye_im"))
+        if (((crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_EYE_IM) || crew
+                .getOptions().booleanOption(OptionsConstants.MD_MM_EYE_IM))
              && (this instanceof Infantry) && !(this instanceof BattleArmor))
-            || (crew.getOptions().booleanOption("mm_eye_im") && (crew
-                                                                         .getOptions().booleanOption("vdni") || crew
-                                                                         .getOptions().booleanOption("bvdni")))) {
+            || (crew.getOptions().booleanOption(OptionsConstants.MD_MM_EYE_IM) && (crew
+                                                                         .getOptions().booleanOption(OptionsConstants.MD_VDNI) || crew
+                                                                         .getOptions().booleanOption(OptionsConstants.MD_BVDNI)))) {
             return !checkECM
                    || !ComputeECM.isAffectedByECM(this, getPosition(),
                                                   getPosition());
@@ -4645,12 +4645,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         // check for Manei Domini implants
         int cyberBonus = 0;
-        if (((crew.getOptions().booleanOption("cyber_eye_im") || crew
-                .getOptions().booleanOption("mm_eye_im"))
+        if (((crew.getOptions().booleanOption(OptionsConstants.MD_CYBER_EYE_IM) || crew
+                .getOptions().booleanOption(OptionsConstants.MD_MM_EYE_IM))
                 && (this instanceof Infantry) && !(this instanceof BattleArmor))
-                || (crew.getOptions().booleanOption("mm_eye_im") && (crew
-                        .getOptions().booleanOption("vdni") || crew
-                        .getOptions().booleanOption("bvdni")))) {
+                || (crew.getOptions().booleanOption(OptionsConstants.MD_MM_EYE_IM) && (crew
+                        .getOptions().booleanOption(OptionsConstants.MD_VDNI) || crew
+                        .getOptions().booleanOption(OptionsConstants.MD_BVDNI)))) {
             cyberBonus = 1;
         }
 
@@ -4946,8 +4946,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
         // check for Manei Domini implants
         if ((this instanceof Infantry) && (null != crew)
-            && crew.getOptions().booleanOption("mm_eye_im")
-            && crew.getOptions().booleanOption("boost_comm_implant")) {
+            && crew.getOptions().booleanOption(OptionsConstants.MD_MM_EYE_IM)
+            && crew.getOptions().booleanOption(OptionsConstants.MD_BOOST_COMM_IMPLANT)) {
             return true;
         }
         return false;
@@ -11274,8 +11274,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return the initiative bonus this Entity grants for MD implants
      */
     public int getMDIniBonus() {
-        if (crew.getOptions().booleanOption("comm_implant")
-            || crew.getOptions().booleanOption("boost_comm_implant")) {
+        if (crew.getOptions().booleanOption(OptionsConstants.MD_COMM_IMPLANT)
+            || crew.getOptions().booleanOption(OptionsConstants.MD_BOOST_COMM_IMPLANT)) {
             return 1;
         }
         return 0;

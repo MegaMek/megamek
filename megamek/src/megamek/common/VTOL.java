@@ -17,6 +17,8 @@
  */
 package megamek.common;
 
+import megamek.common.options.OptionsConstants;
+
 /**
  * @author Andrew Hunter VTOLs are helicopters (more or less.)
  */
@@ -521,8 +523,8 @@ public class VTOL extends Tank {
         }
 
         // VDNI bonus?
-        if (getCrew().getOptions().booleanOption("vdni")
-                && !getCrew().getOptions().booleanOption("bvdni")) {
+        if (getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
+                && !getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
             prd.addModifier(-1, "VDNI");
         }
 

@@ -588,10 +588,10 @@ public class Crew implements Serializable {
         if (options.booleanOption(OptionsConstants.MD_PAIN_SHUNT)) {
             level = 2;
         }
-        if (options.booleanOption("vdni")) {
+        if (options.booleanOption(OptionsConstants.MD_VDNI)) {
             level = 3;
         }
-        if (options.booleanOption("bvdni")) {
+        if (options.booleanOption(OptionsConstants.MD_BVDNI)) {
             level = 5;
         }
 

@@ -251,15 +251,15 @@ public class Infantry extends Entity {
             mp = Math.max(mp - 1, 1);
         }
         if((getSecondaryN() > 1)
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption("tsm_implant"))
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption("dermal_armor"))
+                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT))
+                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR))
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)
                 && (getMovementMode() != EntityMovementMode.TRACKED)
                 && (getMovementMode() != EntityMovementMode.INF_JUMP)) {
             mp = Math.max(mp - 1, 0);
         }
         if((null != getCrew())
-                && getCrew().getOptions().booleanOption("pl_masc")
+                && getCrew().getOptions().booleanOption(OptionsConstants.MD_PL_MASC)
                 && ((getMovementMode() == EntityMovementMode.INF_LEG)
                     || (getMovementMode() == EntityMovementMode.INF_JUMP))) {
             mp += 1;
@@ -317,8 +317,8 @@ public class Infantry extends Entity {
     public int getJumpMP(boolean gravity) {
         int mp = getOriginalJumpMP();
         if((getSecondaryN() > 1)
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption("tsm_implant"))
-                && ((null == getCrew()) || !getCrew().getOptions().booleanOption("dermal_armor"))
+                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_TSM_IMPLANT))
+                && ((null == getCrew()) || !getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR))
                 && (null != secondW) && secondW.hasFlag(WeaponType.F_INF_SUPPORT)) {
             mp = Math.max(mp - 1, 0);
         }

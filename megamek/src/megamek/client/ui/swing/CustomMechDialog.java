@@ -819,18 +819,18 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
                 // a bunch of stuf should get disabled for conv infantry
                 if ((((entity instanceof Infantry) && !(entity instanceof BattleArmor)))
-                        && (option.getName().equals("vdni") || option.getName()
-                                .equals("bvdni"))) {
+                        && (option.getName().equals(OptionsConstants.MD_VDNI) || option.getName()
+                                .equals(OptionsConstants.MD_BVDNI))) {
                     continue;
                 }
 
                 // a bunch of stuff should get disabled for all but conventional
                 // infantry
                 if (!((entity instanceof Infantry) && !(entity instanceof BattleArmor))
-                        && (option.getName().equals("grappler")
-                                || option.getName().equals("pl_masc")
+                        && (option.getName().equals(OptionsConstants.MD_GRAPPLER)
+                                || option.getName().equals(OptionsConstants.MD_PL_MASC)
                                 || option.getName().equals("cyber_eye_im") || option
-                                .getName().equals("cyber_eye_tele"))) {
+                                .getName().equals(OptionsConstants.MD_CYBER_EYE_TELE))) {
                     continue;
                 }
 
@@ -1246,14 +1246,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
             if (entity instanceof BattleArmor) {
                 // have to reset internals because of dermal armor option
-                if (entity.getCrew().getOptions().booleanOption("dermal_armor")) {
+                if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
                     ((BattleArmor) entity).setInternal(2);
                 } else {
                     ((BattleArmor) entity).setInternal(1);
                 }
             } else if (entity instanceof Infantry) {
                 // need to reset armor on conventional infantry
-                if (entity.getCrew().getOptions().booleanOption("dermal_armor")) {
+                if (entity.getCrew().getOptions().booleanOption(OptionsConstants.MD_DERMAL_ARMOR)) {
                     entity.initializeArmor(
                             entity.getOInternal(Infantry.LOC_INFANTRY),
                             Infantry.LOC_INFANTRY);

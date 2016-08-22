@@ -105,7 +105,7 @@
         <touch file="${timestampfile}" />
     </target>
 
-    <target name="jar" depends="unit.test" description="Generates JAR File from compiled sources">
+    <target name="jar" description="Generates JAR File from compiled sources">
         <!-- collects all files from the ${builddir} (classes) and generates the jar file in ${basedir} -->
         <jar basedir="${builddir}" jarfile="${basedir}/${jarfile}">
             <fileset dir="${propdir}" includes="**/*.properties"/>
@@ -159,7 +159,9 @@
         </delete>
     </target>
 
-    <target depends="clean, compile, jar" name="all" description="Clean, compile and build a jar"/>
+    <target depends="clean, compile, unit.test, jar" name="all" description="Clean, compile and build a jar"/>
+
+    <target depends="clean, compile, jar" name="all-no-test" description="Clean, compile and build a jar"/>
 
     <target name="compileTests" depends="compile" unless="skip.tests"  description="Compile unit tests">
         <delete dir="${dir.build.test}"/>

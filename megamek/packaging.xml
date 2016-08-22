@@ -364,7 +364,7 @@
 		<delete dir="${srcdist}" />
 	</target>
 
-	<target name="release" depends="pkgdir-build, unitfiles-zip, rat-zip, mac-package, nix-package, win-package, source-package, pkgdir-clean" description="Build the project from git and package it as Windows, Mac, Unix, and source-only" />
+    <target name="release" depends="pkgdir-build, unitfiles-zip, rat-zip, mac-package, nix-package, win-package, source-package, pkgdir-clean" description="Build the project from git and package it as Windows, Mac, Unix, and source-only" />
 
     <target name="mac-release" depends="pkgdir-build, mac-package, pkgdir-clean" description="Build the project from local source and package it as Mac" />
 

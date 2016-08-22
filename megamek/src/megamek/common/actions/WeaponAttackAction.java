@@ -1249,7 +1249,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
 
             // check for cyber eye laser sighting on ranged attacks
-            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_EYE_TELE)
+            if (ae.getCrew().getOptions().booleanOption(OptionsConstants.MD_CYBER_IMP_VISUAL)
                     && !(wtype instanceof InfantryAttack)) {
                 toHit.addModifier(-1, "MD laser-sighting");
             }

@@ -23937,7 +23937,7 @@ public class Server implements Runnable {
                     // apply
                 case Tank.CRIT_CREW_STUNNED:
                     if (en.getCrew().getOptions().booleanOption(OptionsConstants.MD_VDNI)
-                        || en.getCrew().getOptions().booleanOption("bvdni")) {
+                        || en.getCrew().getOptions().booleanOption(OptionsConstants.MD_BVDNI)) {
                         r = new Report(6191);
                         r.subject = t.getId();
                         vDesc.add(r);

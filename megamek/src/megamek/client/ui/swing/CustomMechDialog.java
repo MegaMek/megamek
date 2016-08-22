@@ -829,8 +829,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 if (!((entity instanceof Infantry) && !(entity instanceof BattleArmor))
                         && (option.getName().equals(OptionsConstants.MD_GRAPPLER)
                                 || option.getName().equals(OptionsConstants.MD_PL_MASC)
-                                || option.getName().equals("cyber_eye_im") || option
-                                .getName().equals(OptionsConstants.MD_CYBER_EYE_TELE))) {
+                                || option.getName().equals(OptionsConstants.MD_CYBER_IMP_AUDIO) || option
+                                .getName().equals(OptionsConstants.MD_CYBER_IMP_VISUAL))) {
                     continue;
                 }
 

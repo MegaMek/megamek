@@ -131,8 +131,6 @@ public class PilotOptions extends AbstractOptions {
         addOption(edge, OptionsConstants.EDGE_WHEN_EXPLOSION, false); //$NON-NLS-1$
         addOption(edge, OptionsConstants.EDGE_WHEN_MASC_FAILS, false); //$NON-NLS-1$
 
-        
-
         // manei domini
         IBasicOptionGroup md = addGroup("md", MD_ADVANTAGES); //$NON-NLS-1$
         addOption(md, OptionsConstants.MD_PAIN_SHUNT, false); // $NON-NLS-1$
@@ -143,11 +141,19 @@ public class PilotOptions extends AbstractOptions {
         addOption(md, OptionsConstants.MD_BVDNI, false); // $NON-NLS-1$
         addOption(md, OptionsConstants.MD_GRAPPLER, false); //$NON-NLS-1$
         addOption(md, OptionsConstants.MD_PL_MASC, false); // NON-NLS-1$
-        addOption(md, OptionsConstants.MD_CYBER_EYE_IM, false); //$NON-NLS-1$
-        addOption(md, OptionsConstants.MD_CYBER_EYE_TELE, false); //$NON-NLS-1$
-        addOption(md, OptionsConstants.MD_MM_EYE_IM, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_CYBER_IMP_AUDIO, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_CYBER_IMP_VISUAL, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_MM_IMPLANTS, false); //$NON-NLS-1$
         addOption(md, OptionsConstants.MD_DERMAL_ARMOR, false); //$NON-NLS-1$
         addOption(md, OptionsConstants.MD_TSM_IMPLANT, false); //$NON-NLS-1$
+        //below not implemented
+        addOption(md, OptionsConstants.MD_FILTRATION, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_GAS_EFFUSER_PHERO, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_GAS_EFFUSER_TOXIN, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_DERMAL_CAMO_ARMOR, false); //$NON-NLS-1$
+        addOption(md, OptionsConstants.MD_TRIPLE_CORE_PROCESSOR, false); //$NON-NLS-1$      
+        
+        
     }
 
     /*

@@ -1,0 +1,61 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+
+##Write the version number just in case...
+<Version>
+MAM0
+</Version>
+
+<UnitType>
+Infantry
+</UnitType>
+
+<Name>
+Minesweepers
+</Name>
+
+<Model>
+Thirty-fifth Cluster Support Force, Red Chasseurs
+</Model>
+
+<year>
+2500
+</year>
+
+<type>
+IS Level 3
+</type>
+
+<motion_type>
+Motorized
+</motion_type>
+
+<Field Guns Equipment>
+</Field Guns Equipment>
+
+<source>
+TRO 3085 - Star League
+</source>
+
+<squad_size>
+10
+</squad_size>
+
+<squadn>
+2
+</squadn>
+
+<Primary>
+Auto-Rifle
+</Primary>
+
+<antimek>
+8
+</antimek>
+
+<specialization>
+8
+</specialization>
+

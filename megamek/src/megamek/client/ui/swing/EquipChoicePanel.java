@@ -671,7 +671,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     bTechMatch = false;
                 }
 
-                if (!gameOpts.booleanOption("minefields") && //$NON-NLS-1$
+                if (!gameOpts.booleanOption(OptionsConstants.ADVANCED_MINEFIELDS) && //$NON-NLS-1$
                         AmmoType.canDeliverMinefield(atCheck)) {
                     continue;
                 }

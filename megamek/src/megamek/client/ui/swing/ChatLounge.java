@@ -3050,7 +3050,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         final IGame game = client.getGame();
         final GameOptions gOpts = game.getOptions();
         // enforce exclusive deployment zones in double blind
-        if (gOpts.booleanOption("double_blind") //$NON-NLS-1$
+        if (gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) //$NON-NLS-1$
                 && gOpts.booleanOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT)) { //$NON-NLS-1$
             int i = client.getLocalPlayer().getStartingPos();
             if (i == 0) {

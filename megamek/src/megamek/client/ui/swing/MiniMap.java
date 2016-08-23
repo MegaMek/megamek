@@ -96,6 +96,7 @@ import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.options.OptionsConstants;
 
 /**
  * Displays all the mapsheets in a scaled-down size. TBD refactorings: -make a
@@ -1141,11 +1142,11 @@ public class MiniMap extends JPanel {
 
     private void paintUnit(Graphics g, Entity entity) {
         boolean sensors = m_game.getOptions().booleanOption(
-                "tacops_sensors");
+                OptionsConstants.ADVANCED_TACOPS_SENSORS);
         boolean sensorsDetectAll = m_game.getOptions().booleanOption(
                 "sensors_detect_all");
         boolean doubleBlind = m_game.getOptions().booleanOption(
-                "double_blind");
+                OptionsConstants.ADVANCED_DOUBLE_BLIND);
         boolean hasVisual = entity.hasSeenEntity(m_bview.getLocalPlayer());
         boolean hasDetected = entity.hasDetectedEntity(m_bview.getLocalPlayer());
         

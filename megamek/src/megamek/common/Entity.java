@@ -4480,7 +4480,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             && !game.getOptions().booleanOption("stratops_ecm")) {
             return false;
         }
-        if ((game.getOptions().booleanOption("tacops_eccm") || game
+        if ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM) || game
                 .getOptions().booleanOption("stratops_ecm")) && !isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
@@ -4510,7 +4510,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean hasActiveAngelECCM() {
         if (game.getOptions().booleanOption("tacops_angel_ecm")
-            && game.getOptions().booleanOption("tacops_eccm")
+            && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)
             && !isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
@@ -8320,7 +8320,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean isVisibleToEnemy() {
         // If double blind isn't on, the unit is always visible
-        if ((game != null) && !game.getOptions().booleanOption("double_blind")) {
+        if ((game != null) && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             return true;
         }
         return visibleToEnemy;
@@ -8332,7 +8332,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean isDetectedByEnemy() {
         // If double blind isn't on, the unit is always detected
-        if ((game != null) && !game.getOptions().booleanOption("double_blind")) {
+        if ((game != null) && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             return true;
         }
         return detectedByEnemy;
@@ -8363,7 +8363,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean hasSeenEntity(IPlayer p) {
         // No double blind - everyone sees everything
-        if ((game == null) || !game.getOptions().booleanOption("double_blind")) {
+        if ((game == null) || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             return true;
         }
         // Null players see nothing
@@ -8394,7 +8394,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return true;
         }
         // If team vision, see if any players on team can see
-        if (game.getOptions().booleanOption("team_vision")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)) {
             for (IPlayer teammate : game.getPlayersVector()) {
                 if ((teammate.getTeam() == p.getTeam())
                         && entitySeenBy.contains(teammate)) {
@@ -8440,7 +8440,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean hasDetectedEntity(IPlayer p) {
         // No sensors - no one detects anything
         if ((game == null)
-                || !game.getOptions().booleanOption("tacops_sensors")) {
+                || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
             return false;
         }
         // Null players detect nothing
@@ -8466,7 +8466,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return true;
         }
         // If team vision, see if any players on team can see
-        if (game.getOptions().booleanOption("team_vision")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION)) {
             for (IPlayer teammate : game.getPlayersVector()) {
                 if ((teammate.getTeam() == p.getTeam())
                         && entityDetectedBy.contains(teammate)) {
@@ -8490,14 +8490,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         boolean alliedUnit = 
                 !getOwner().isEnemyOf(spotter)
                 || (getOwner().getTeam() == spotter.getTeam() 
-                    && game.getOptions().booleanOption("team_vision"));
+                    && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION));
         
         boolean sensors = game.getOptions().booleanOption(
-                "tacops_sensors");
+                OptionsConstants.ADVANCED_TACOPS_SENSORS);
         boolean sensorsDetectAll = game.getOptions().booleanOption(
                 "sensors_detect_all");
         boolean doubleBlind = game.getOptions().booleanOption(
-                "double_blind");
+                OptionsConstants.ADVANCED_DOUBLE_BLIND);
         
         return sensors && doubleBlind && !alliedUnit && !sensorsDetectAll 
                 && !hasSeenEntity(spotter) && hasDetectedEntity(spotter);
@@ -10775,7 +10775,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 ArrayList<String> modes = new ArrayList<String>();
                 modes.add("ECM");
                 String[] stringArray = {};
-                if (gameOpts.booleanOption("tacops_eccm")) {
+                if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)) {
                     modes.add("ECCM");
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                         modes.add("ECM & ECCM");
@@ -10787,10 +10787,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                         modes.add("ECM & ECCM");
                     }
                 }
-                if (gameOpts.booleanOption("tacops_ghost_target")) {
+                if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET)) {
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                         modes.add("ECM & Ghost Targets");
-                        if (gameOpts.booleanOption("tacops_eccm")) {
+                        if (gameOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)) {
                             modes.add("ECCM & Ghost Targets");
                         }
                     } else {

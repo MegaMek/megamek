@@ -606,7 +606,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         refreshDeployment();
 
         if (clientgui.getClient().getGame().getOptions()
-                .booleanOption("hidden_units")) {
+                .booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
             panDeploy.add(labHidden, GBC.std());
             panDeploy.add(chHidden, GBC.eol());
             chHidden.setSelected(entity.isHidden());

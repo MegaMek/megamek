@@ -285,8 +285,8 @@ public class OptionsConstants {
     public static final String ADVANCED_HIDDEN_UNITS= "hidden_units";  //$NON-NLS$
     public static final String ADVANCED_DOUBLE_BLIND= "double_blind";  //$NON-NLS$
     public static final String ADVANCED_TACOPS_SENSORS= "tacops_sensors";  //$NON-NLS$
-    public static final String ADVANCED_SUPRESS_ALL_DOUBLE_BLIND_MESSAGES= "supress_all_double_blind_messages";  //$NON-NLS$
-    public static final String ADVANCED_SUPPRESS_DOUBLE_BLIND_BV= "suppress_double_blind_bv";  //$NON-NLS$
+    public static final String ADVANCED_SUPRESS_ALL_DB_MESSAGES= "supress_all_double_blind_messages";  //$NON-NLS$
+    public static final String ADVANCED_SUPPRESS_DB_BV= "suppress_double_blind_bv";  //$NON-NLS$
     public static final String ADVANCED_TEAM_VISION= "team_vision";  //$NON-NLS$
     public static final String ADVANCED_TACOPS_BAP= "tacops_bap";  //$NON-NLS$
     public static final String ADVANCED_TACOPS_ECCM= "tacops_eccm";  //$NON-NLS$

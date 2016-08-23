@@ -2467,7 +2467,7 @@ public class Server implements Runnable {
             case PHASE_TARGETING:
             case PHASE_OFFBOARD:
                 // Check for activating hidden units
-                if (game.getOptions().booleanOption("hidden_units")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
                     for (Entity ent : game.getEntitiesVector()) {
                         if (ent.getHiddenActivationPhase() == phase) {
                             ent.setHidden(false);
@@ -6717,7 +6717,7 @@ public class Server implements Runnable {
         MoveStep prevStep = null;
 
         ArrayList<Entity> hiddenEnemies = new ArrayList<>();
-        if (game.getOptions().booleanOption("hidden_units")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
             for (Entity e : game.getEntitiesVector()) {
                 if (e.isHidden() && e.isEnemyOf(entity)
                         && (e.getPosition() != null)) {
@@ -6742,7 +6742,7 @@ public class Server implements Runnable {
             isOnGround &= step.getElevation() < 1;
 
             // Check for hidden units point blank shots
-            if (game.getOptions().booleanOption("hidden_units")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
                 for (Entity e : hiddenEnemies) {
                     int dist = e.getPosition().distance(step.getPosition());
                     // Checking for same hex and stacking violation
@@ -13352,7 +13352,7 @@ public class Server implements Runnable {
      */
     private void detectHiddenUnits() {
         // If hidden units aren't on, nothing to do
-        if (!game.getOptions().booleanOption("hidden_units")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
             return;
         }
         // Get all hidden units
@@ -13456,7 +13456,7 @@ public class Server implements Runnable {
      */
     private void resolveWhatPlayersCanSeeWhatUnits() {
         List<ECMInfo> allECMInfo = null;
-        if (game.getOptions().booleanOption("tacops_sensors")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
             allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
                     .getEntitiesVector());
         }
@@ -27902,13 +27902,13 @@ public class Server implements Runnable {
      * the current phase
      */
     private boolean doBlind() {
-        return game.getOptions().booleanOption("double_blind")
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                && game.getPhase()
                       .isDuringOrAfter(IGame.Phase.PHASE_DEPLOYMENT);
     }
 
     private boolean suppressBlindBV() {
-        return game.getOptions().booleanOption("suppress_double_blind_bv");
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_SUPPRESS_DB_BV);
     }
 
     /**
@@ -28056,12 +28056,12 @@ public class Server implements Runnable {
         }
 
         List<ECMInfo> allECMInfo = null;
-        if (game.getOptions().booleanOption("tacops_sensors") && useSensors) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS) && useSensors) {
             allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
                     .getEntitiesVector());
         }
 
-        boolean bTeamVision = game.getOptions().booleanOption("team_vision");
+        boolean bTeamVision = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION);
         List<Entity> vEntities = game.getEntitiesVector();
 
         Vector<IPlayer> vCanSee = new Vector<IPlayer>();
@@ -28128,7 +28128,7 @@ public class Server implements Runnable {
             losCache = new HashMap<>();
         }
 
-        boolean bTeamVision = game.getOptions().booleanOption("team_vision");
+        boolean bTeamVision = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION);
         List<Entity> vEntities = game.getEntitiesVector();
 
         Vector<IPlayer> vCanDetect = new Vector<IPlayer>();
@@ -28221,7 +28221,7 @@ public class Server implements Runnable {
         }
         Vector<Entity> vCanSee = new Vector<Entity>();
         Vector<Entity> vMyEntities = new Vector<Entity>();
-        boolean bTeamVision = game.getOptions().booleanOption("team_vision");
+        boolean bTeamVision = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION);
 
         // If they can see all, return the input list
         if (pViewer.canSeeAll()) {
@@ -28229,7 +28229,7 @@ public class Server implements Runnable {
         }
 
         List<ECMInfo> allECMInfo = null;
-        if (game.getOptions().booleanOption("tacops_sensors")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
             allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
                     .getEntitiesVector());
         }
@@ -28409,7 +28409,7 @@ public class Server implements Runnable {
                                 || ((r.type == Report.PLAYER) && (p.getId() != r.player));
         // If supressing double blind messages, don't send this report at all.
         if (game.getOptions()
-                .booleanOption("supress_all_double_blind_messages")
+                .booleanOption(OptionsConstants.ADVANCED_SUPRESS_ALL_DB_MESSAGES)
             && shouldObscure) {
             // Mark the original report to indicate it was filtered
             if (p != null) {
@@ -28482,7 +28482,7 @@ public class Server implements Runnable {
             losCache = new HashMap<>();
         }
         List<ECMInfo> allECMInfo = null;
-        if (game.getOptions().booleanOption("tacops_sensors")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
             allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game
                     .getEntitiesVector());
         }

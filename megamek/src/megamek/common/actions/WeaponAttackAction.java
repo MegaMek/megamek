@@ -791,7 +791,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         // ghost target modifier
-        if (game.getOptions().booleanOption("tacops_ghost_target")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET)
                 && !isIndirect && !isArtilleryIndirect && !isArtilleryDirect) {
             int ghostTargetMod = Compute.getGhostTargetNumber(ae,
                     ae.getPosition(), target.getPosition());
@@ -1138,7 +1138,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
         // if we have BAP with MaxTech rules, and there are woods in the
         // way, and we are within BAP range, we reduce the BTH by 1
-        if (game.getOptions().booleanOption("tacops_bap")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP)
                 && !isIndirect
                 && (te != null)
                 && ae.hasBAP()
@@ -2511,7 +2511,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         // if we have BAP with MaxTech rules, and there are woods in the
         // way, and we are within BAP range, we reduce the BTH by 1
-        if (game.getOptions().booleanOption("tacops_bap")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BAP)
                 && (te != null)
                 && ae.hasBAP()
                 && (ae.getBAPRange() >= Compute.effectiveDistance(game, ae, te))
@@ -3048,7 +3048,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
                 && !game.getOptions().booleanOption("indirect_always_possible")
                 && LosEffects.calculateLos(game, ae.getId(), target).canSee()
-                && (!game.getOptions().booleanOption("double_blind") || Compute
+                && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) || Compute
                         .canSee(game, ae, target))
                 && !(wtype instanceof ArtilleryCannonWeapon)
                 && !(wtype instanceof MekMortarWeapon)) {
@@ -3723,7 +3723,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
                 && !game.getOptions().booleanOption("indirect_always_possible")
                 && LosEffects.calculateLos(game, attackerId, target).canSee()
-                && (!game.getOptions().booleanOption("double_blind") || Compute
+                && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) || Compute
                         .canSee(game, ae, target))
                 && !(wtype instanceof ArtilleryCannonWeapon)
                 && !(wtype instanceof MekMortarWeapon)) {
@@ -3932,7 +3932,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // http://www.classicbattletech.com/forums/index.php/topic,47618.0.html
         // anything outside of visual range requires a "sensor lock" in order to
         // direct fire
-        if (game.getOptions().booleanOption("double_blind")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                 && !Compute.inVisualRange(game, ae, target)
                 && !(Compute.inSensorRange(game, ae, target, null) // Can shoot
                                                                    // at

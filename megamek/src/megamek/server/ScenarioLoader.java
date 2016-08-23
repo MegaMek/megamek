@@ -93,7 +93,7 @@ public class ScenarioLoader {
     private static final String PARAM_MAP_HEIGHT = "MapHeight"; //$NON-NLS-1$
     private static final String PARAM_BOARD_WIDTH = "BoardWidth"; //$NON-NLS-1$
     private static final String PARAM_BOARD_HEIGHT = "BoardHeight"; //$NON-NLS-1$
-    private static final String PARAM_BRIDGE_CF = OptionsConstants.BASE_BRIDGECF; //$NON-NLS-1$
+    private static final String PARAM_BRIDGE_CF = "BridgeCF"; //$NON-NLS-1$
     private static final String PARAM_MAPS = "Maps"; //$NON-NLS-1$
 
     private static final String PARAM_TEAM = "Team"; //$NON-NLS-1$
@@ -180,7 +180,7 @@ public class ScenarioLoader {
             }
         }
         if(AmmoType.canDeliverMinefield((AmmoType) newAmmoType)
-            && !game.getOptions().booleanOption("minefields")) { //$NON-NLS-1$
+            && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) { //$NON-NLS-1$
             System.out.println(String.format("Minefield-creating ammo type %s forbidden by game rules", //$NON-NLS-1$
                 newAmmoType.getName()));
             return null;

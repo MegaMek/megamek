@@ -808,7 +808,7 @@ public class Compute {
                         target, true);
                 ToHitData mods = los.losModifiers(game);
                 // If the target isn't spotted, can't target
-                if (game.getOptions().booleanOption("double_blind")
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                     && !Compute.inVisualRange(game, los, other, target)
                     && !Compute.inSensorRange(game, los, other, target, null)) {
                     mods.addModifier(TargetRoll.IMPOSSIBLE,
@@ -1111,7 +1111,7 @@ public class Compute {
             && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
             && !game.getOptions().booleanOption("indirect_always_possible")
             && LosEffects.calculateLos(game, ae.getId(), target).canSee()
-            && (!game.getOptions().booleanOption("double_blind") || Compute
+            && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) || Compute
                 .canSee(game, ae, target))
             && !(wtype instanceof ArtilleryCannonWeapon)
             && !(wtype instanceof MekMortarWeapon)) {

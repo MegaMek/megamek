@@ -43,7 +43,7 @@ public class LocalSaveGameCommand extends ServerCommand {
      */
     @Override
     public void run(int connId, String[] args) {
-        if (server.getGame().getOptions().booleanOption("double_blind") &&
+        if (server.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) &&
                 server.getGame().getOptions().booleanOption(OptionsConstants.BASE_DISABLE_LOCAL_SAVE)) {
             server
                     .sendServerChat("Local Save only outside double blind games.");

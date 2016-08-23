@@ -576,9 +576,9 @@ class EntitySprite extends Sprite {
         if (localPlayer == null) {
             return false;
         }
-        if (bv.game.getOptions().booleanOption("double_blind") //$NON-NLS-1$
+        if (bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) //$NON-NLS-1$
                 && ((e.getOwner().getId() == localPlayer.getId()) || (bv.game
-                        .getOptions().booleanOption("team_vision") //$NON-NLS-1$
+                        .getOptions().booleanOption(OptionsConstants.ADVANCED_TEAM_VISION) //$NON-NLS-1$
                 && (e.getOwner().getTeam() == localPlayer.getTeam())))) {
             return true;
         }
@@ -593,11 +593,11 @@ class EntitySprite extends Sprite {
      */
     private boolean onlyDetectedBySensors() {
         boolean sensors = bv.game.getOptions().booleanOption(
-                "tacops_sensors");
+                OptionsConstants.ADVANCED_TACOPS_SENSORS);
         boolean sensorsDetectAll = bv.game.getOptions().booleanOption(
                 "sensors_detect_all");
         boolean doubleBlind = bv.game.getOptions().booleanOption(
-                "double_blind");
+                OptionsConstants.ADVANCED_DOUBLE_BLIND);
         boolean hasVisual = entity.hasSeenEntity(bv.getLocalPlayer());
         boolean hasDetected = entity.hasDetectedEntity(bv.getLocalPlayer());
 
@@ -848,10 +848,10 @@ class EntitySprite extends Sprite {
         }
         
         // If DB, add information about who sees this Entity
-        if (bv.game.getOptions().booleanOption("double_blind")) {
+        if (bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             StringBuffer playerList = new StringBuffer();
             boolean teamVision = bv.game.getOptions().booleanOption(
-                    "team_vision");
+                    OptionsConstants.ADVANCED_TEAM_VISION);
             for (IPlayer player : entity.getWhoCanSee()) {
                 if (player.isEnemyOf(entity.getOwner()) || !teamVision) {
                     playerList.append(player.getName());
@@ -865,7 +865,7 @@ class EntitySprite extends Sprite {
         }
 
         // If sensors, display what sensors this unit is using
-        if (bv.game.getOptions().booleanOption("tacops_sensors")) {
+        if (bv.game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_SENSORS)) {
             addToTT("Sensors", BR, entity.getSensorDesc());
         }
 

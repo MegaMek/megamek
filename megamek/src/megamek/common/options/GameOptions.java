@@ -87,7 +87,6 @@ public class GameOptions extends AbstractOptions {
         addOption(victory, OptionsConstants.VICTORY_GAME_KILL_COUNT, 4); //$NON-NLS-1$
         addOption(victory, OptionsConstants.VICTORY_COMMANDER_KILLED, false); //$NON-NLS-1$
 
-
         IBasicOptionGroup allowed = addGroup("allowedUnits"); //$NON-NLS-1$
         addOption(allowed, OptionsConstants.ALLOWED_CANON_ONLY, false); //$NON-NLS-1$
         addOption(allowed, OptionsConstants.ALLOWED_YEAR, 3150); //$NON-NLS-1$
@@ -97,19 +96,19 @@ public class GameOptions extends AbstractOptions {
         addOption(allowed, OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL, false); //$NON-NLS-1$
         addOption(allowed, OptionsConstants.ALLOWED_ALLOW_NUKES, false); //$NON-NLS-1$
         addOption(allowed, OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES, false); //$NON-NLS-1$
-     
-        
+           
         IBasicOptionGroup advancedRules = addGroup("advancedRules"); //$NON-NLS-1$
-        addOption(advancedRules, "minefields", false); //$NON-NLS-1$
-        addOption(advancedRules, "hidden_units", false); //$NON-NLS-1$
-        addOption(advancedRules, "double_blind", false); //$NON-NLS-1$
-        addOption(advancedRules, "tacops_sensors", false); //$NON-NLS-1$
-        addOption(advancedRules, "supress_all_double_blind_messages", false); //$NON-NLS-1$
-        addOption(advancedRules, "suppress_double_blind_bv", false); //$NON-NLS-1$
-        addOption(advancedRules, "team_vision", true); //$NON-NLS-1$
-        addOption(advancedRules, "tacops_bap", false); //$NON-NLS-1$
-        addOption(advancedRules, "tacops_eccm", false); //$NON-NLS-1$
-        addOption(advancedRules, "tacops_ghost_target", false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_MINEFIELDS, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_HIDDEN_UNITS, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_DOUBLE_BLIND, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SENSORS, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_SUPRESS_ALL_DB_MESSAGES, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_SUPPRESS_DB_BV, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TEAM_VISION, true); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BAP, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_ECCM, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET, false); //$NON-NLS-1$
+
         addOption(advancedRules, "ghost_target_max", 5); //$NON-NLS-1$
         addOption(advancedRules, "tacops_dig_in", false); //$NON-NLS-1$
         addOption(advancedRules, "tacops_ba_weight", false); //$NON-NLS-1$
@@ -124,6 +123,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, "tacops_tank_crews", false); //$NON-NLS-1$
         addOption(advancedRules, "stratops_quirks", false); //$NON-NLS-1$
         addOption(advancedRules, "stratops_partialrepairs", false); //$NON-NLS-1$
+        
         addOption(advancedRules, "assault_drop", false); //$NON-NLS-1$
         addOption(advancedRules, "paratroopers", false); //$NON-NLS-1$
         addOption(advancedRules, "inclusive_sensor_range", false); //$NON-NLS-1$
@@ -139,12 +139,52 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, "pilots_cannot_spot", false); //$NON-NLS-1$
         addOption(advancedRules, "metal_content", false); //$NON-NLS-1$
         addOption(advancedRules, "ba_grab_bars", false); //$NON-NLS-1$
+        
         addOption(advancedRules, "maxtech_movement_mods", false); //$NON-NLS-1$
         addOption(advancedRules, "alternate_masc", false); //$NON-NLS-1$
         addOption(advancedRules, "alternate_masc_enhanced", false); //$NON-NLS-1$
         addOption(advancedRules, "geometric_mean_bv", false); //$NON-NLS-1$\
         addOption(advancedRules, "reduced_overheat_modifier_bv", false); //$NON-NLS-1$
         addOption(advancedRules, "alternate_pilot_bv_mod", false); //$NON-NLS-1$
+        
+
+/*        addOption(advancedRules, OptionsConstants.ADVANCED_GHOST_TARGET_MAX, 5); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_DIG_IN, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_TAKE_COVER, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_ANGEL_ECM, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_FATIGUE, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_FUMBLES, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_TANK_CREWS, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_QUIRKS, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_ASSAULT_DROP, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_PARATROOPERS, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_SENSORS_DETECT_ALL, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_MAGSCAN_NOHILLS, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_WOODS_BURN_DOWN, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_WOODS_BURN_DOWN_AMOUNT, 5); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_NO_IGNITE_CLEAR, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_ALL_HAVE_EI_COCKPIT, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_EXTREME_TEMPERATURE_SURVIVAL, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_ARMED_MECHWARRIORS, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_PILOTS_VISUAL_RANGE_ONE, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_METAL_CONTENT, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_BA_GRAB_BARS, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_MAXTECH_MOVEMENT_MODS, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV, false); //$NON-NLS-1$\
+        addOption(advancedRules, OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV, false); //$NON-NLS-1$
+*/        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_PILOT_BV_MOD, false); //$NON-NLS-1$
+       
+        
 
         IBasicOptionGroup advancedCombat = addGroup("advancedCombat"); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_ams", false); //$NON-NLS-1$

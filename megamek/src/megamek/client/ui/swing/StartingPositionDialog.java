@@ -187,7 +187,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
         final GameOptions gOpts = client.getGame().getOptions();
         for (int i = 0; i < 11; i++) {
             if (ev.getSource().equals(butStartPos[i])) {
-                if (gOpts.booleanOption("double_blind") //$NON-NLS-1$
+                if (gOpts.booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) //$NON-NLS-1$
                         && gOpts.booleanOption(OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT)) { //$NON-NLS-1$
                     if (i == 0) {
                         clientgui.doAlertDialog(

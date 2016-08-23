@@ -272,7 +272,7 @@ public abstract class BotClient extends Client {
                      */
                     // if the game is not double blind and I can't see anyone
                     // else on the board I should kill myself.
-                    if (!(game.getOptions().booleanOption("double_blind")) //$NON-NLS-1$
+                    if (!(game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) //$NON-NLS-1$
                         && ((game.getEntitiesOwnedBy(getLocalPlayer())
                              - game.getNoOfEntities()) == 0)) {
                         die();

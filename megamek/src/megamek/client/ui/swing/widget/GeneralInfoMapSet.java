@@ -40,6 +40,7 @@ import megamek.common.Tank;
 import megamek.common.Warship;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
+import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 
 /**
@@ -463,7 +464,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             movementTypeR.setVisible(false);
         }
 
-        if ((en.getGame() != null) && en.getGame().getOptions().booleanOption("double_blind")) {
+        if ((en.getGame() != null) && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)) {
             curSensorsR.setVisible(true);
             visualRangeR.setVisible(true);
             curSensorsL.setVisible(true);

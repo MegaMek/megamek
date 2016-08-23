@@ -35,6 +35,7 @@ import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
 import megamek.common.MechView;
+import megamek.common.options.OptionsConstants;
 
 /**
  * This class displays a window that displays the forces currently selected in
@@ -75,15 +76,15 @@ public class MechGroupView extends JDialog implements ActionListener,
                 continue;
             }
             if (!entity.getOwner().equals(client.getLocalPlayer())
-                    && client.getGame().getOptions().booleanOption("blind_drop")
+                    && client.getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP)
                     && !client.getGame().getOptions().booleanOption(
-                            "real_blind_drop")) {
+                            OptionsConstants.BASE_REAL_BLIND_DROP)) {
                 entityStrings[index++] = ChatLounge.formatUnit(entity, true,
                         rpgSkills);
             } else if (entity.getOwner().equals(client.getLocalPlayer())
-                    || (!client.getGame().getOptions().booleanOption("blind_drop")
+                    || (!client.getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP)
                     && !client.getGame().getOptions().booleanOption(
-                            "real_blind_drop"))) {
+                            OptionsConstants.BASE_REAL_BLIND_DROP))) {
                 entityStrings[index++] = ChatLounge.formatUnit(entity, false,
                         rpgSkills);
             }
@@ -134,7 +135,7 @@ public class MechGroupView extends JDialog implements ActionListener,
                 ta.setText("(enemy unit)");
             } else {
                 Entity entity = client.getGame().getEntity(entityArray[selected]);
-                MechView mechView = new MechView(entity, client.getGame().getOptions().booleanOption("show_bay_detail"));
+                MechView mechView = new MechView(entity, client.getGame().getOptions().booleanOption(OptionsConstants.BASE_SHOW_BAY_DETAIL));
                 ta.setText(mechView.getMechReadout());
             }
         }

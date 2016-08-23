@@ -69,6 +69,7 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IOption;
+import megamek.common.options.OptionsConstants;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.DirectoryItems;
 
@@ -92,7 +93,7 @@ public class ScenarioLoader {
     private static final String PARAM_MAP_HEIGHT = "MapHeight"; //$NON-NLS-1$
     private static final String PARAM_BOARD_WIDTH = "BoardWidth"; //$NON-NLS-1$
     private static final String PARAM_BOARD_HEIGHT = "BoardHeight"; //$NON-NLS-1$
-    private static final String PARAM_BRIDGE_CF = "BridgeCF"; //$NON-NLS-1$
+    private static final String PARAM_BRIDGE_CF = OptionsConstants.BASE_BRIDGECF; //$NON-NLS-1$
     private static final String PARAM_MAPS = "Maps"; //$NON-NLS-1$
 
     private static final String PARAM_TEAM = "Team"; //$NON-NLS-1$

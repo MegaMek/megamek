@@ -389,7 +389,7 @@ public class Game implements Serializable, IGame {
      */
     public void setupTeams() {
         Vector<Team> initTeams = new Vector<Team>();
-        boolean useTeamInit = getOptions().getOption("team_initiative")
+        boolean useTeamInit = getOptions().getOption(OptionsConstants.BASE_TEAM_INITIATIVE)
                                           .booleanValue();
 
         // Get all NO_TEAM players. If team_initiative is false, all
@@ -603,7 +603,7 @@ public class Game implements Serializable, IGame {
     public List<Entity> getValidTargets(Entity entity) {
         List<Entity> ents = new ArrayList<Entity>();
 
-        boolean friendlyFire = getOptions().booleanOption("friendly_fire");
+        boolean friendlyFire = getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
 
         for (Entity otherEntity : entities) {
             // Even if friendly fire is acceptable, do not shoot yourself

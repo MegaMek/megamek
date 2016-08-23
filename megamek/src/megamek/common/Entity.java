@@ -8659,7 +8659,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // check game options
-        if (!game.getOptions().booleanOption("skip_ineligable_firing")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGABLE_FIRING)) {
             return true;
         }
 
@@ -8696,7 +8696,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return false;
         }
         // check game options
-        if (!game.getOptions().booleanOption("skip_ineligable_movement")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGABLE_MOVEMENT)) {
             return true;
         }
 
@@ -8750,7 +8750,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public boolean isEligibleForPhysical() {
         boolean canHit = false;
-        boolean friendlyFire = game.getOptions().booleanOption("friendly_fire");
+        boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE);
 
         if ((this instanceof Infantry)
                 && hasWorkingMisc(MiscType.F_TOOLS,
@@ -8782,7 +8782,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             return true;
         }
 
-        if (!game.getOptions().booleanOption("skip_ineligable_physical")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGABLE_PHYSICAL)) {
             return true;
         }
 
@@ -10742,7 +10742,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                                                                       .toArray(stringArray));
                 }
             } else if (mounted.getType().hasFlag(WeaponType.F_AMS)
-                       && !gameOpts.booleanOption("auto_ams")) {
+                       && !gameOpts.booleanOption(OptionsConstants.BASE_AUTO_AMS)) {
                 Enumeration<EquipmentMode> modeEnum = mounted.getType().getModes();
                 ArrayList<String> newModes = new ArrayList<>();
                 while (modeEnum.hasMoreElements()) {

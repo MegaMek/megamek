@@ -205,7 +205,7 @@ public class TestBot extends BotClient {
             for (CalculateEntityMove task : tasks) {
                 MoveOption[] result = task.getResult();
                 CEntity cen = centities.get(task.getEntity());
-                if (game.getOptions().booleanOption("skip_ineligable_movement")
+                if (game.getOptions().booleanOption(OptionsConstants.BASE_SKIP_INELIGABLE_MOVEMENT)
                     && cen.getEntity().isImmobile()) {
                     cen.moved = true;
                 } else if (result == null) {

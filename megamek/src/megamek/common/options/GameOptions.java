@@ -46,33 +46,33 @@ public class GameOptions extends AbstractOptions {
     @Override
     public synchronized void initialize() {
         IBasicOptionGroup base = addGroup("basic"); //$NON-NLS-1$
-        addOption(base, "friendly_fire", false); //$NON-NLS-1$
-        addOption(base, "skip_ineligable_movement", false); //$NON-NLS-1$
-        addOption(base, "skip_ineligable_firing", false); //$NON-NLS-1$
-        addOption(base, "skip_ineligable_physical", true); //$NON-NLS-1$
-        addOption(base, "push_off_board", true); //$NON-NLS-1$
-        addOption(base, "team_initiative", true); //$NON-NLS-1$
-        addOption(base, "autosave_msg", true); //$NON-NLS-1$
-        addOption(base, "paranoid_autosave", false); //$NON-NLS-1$
-        addOption(base, "exclusive_db_deployment", true); //$NON-NLS-1$
-        addOption(base, "deep_deployment", false); //$NON-NLS-1$
-        addOption(base, "blind_drop", false); //$NON-NLS-1$
-        addOption(base, "real_blind_drop", false); //$NON-NLS-1$
-        addOption(base, "lobby_ammo_dump", false); //$NON-NLS-1$
-        addOption(base, "dumping_from_round", 1); //$NON-NLS-1$
-        addOption(base, "set_arty_player_homeedge", false); //$NON-NLS-1$
-        addOption(base, "restrict_game_commands", false); //$NON-NLS-1$
-        addOption(base, "disable_local_save", false); //$NON-NLS-1$
-        addOption(base, "bridgeCF", 0); //$NON-NLS-1$
-        addOption(base, "show_bay_detail", false); //$NON-NLS-1$
-        addOption(base, "rng_type", 1); //$NON-NLS-1$
-        addOption(base, "rng_log", false); //$NON-NLS-1$
-        addOption(base, "flamer_heat", true); //$NON-NLS-1$
-        addOption(base, "indirect_fire", true); //$NON-NLS-1$
-        addOption(base, "breeze", false); //$NON-NLS-1$
-        addOption(base, "random_basements", true); //$NON-NLS-1$
-        addOption(base, "auto_ams", true); //$NON-NLS-1$
-
+        addOption(base, OptionsConstants.BASE_FRIENDLY_FIRE, false); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_MOVEMENT, false); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_FIRING, false); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_SKIP_INELIGABLE_PHYSICAL, true); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_PUSH_OFF_BOARD, true); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_TEAM_INITIATIVE, true); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_AUTOSAVE_MSG, true); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_PARANOID_AUTOSAVE, false); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_EXCLUSIVE_DB_DEPLOYMENT, true); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_DEEP_DEPLOYMENT, false); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_BLIND_DROP, false); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_REAL_BLIND_DROP, false); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_LOBBY_AMMO_DUMP, false); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_DUMPING_FROM_ROUND, 1); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_SET_ARTY_PLAYER_HOMEEDGE, false); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_RESTRICT_GAME_COMMANDS, false); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_DISABLE_LOCAL_SAVE, false); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_BRIDGECF, 0); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_SHOW_BAY_DETAIL, false); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_RNG_TYPE, 1); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_RNG_LOG, false); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_FLAMER_HEAT, true); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_INDIRECT_FIRE, true); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_BREEZE, false); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_RANDOM_BASEMENTS, true); //$NON-NLS-1$
+        addOption(base, OptionsConstants.BASE_AUTO_AMS, true); //$NON-NLS-1$
+        
         IBasicOptionGroup victory = addGroup("victory"); //$NON-NLS-1$
         addOption(victory, "skip_forced_victory", false); //$NON-NLS-1$
         addOption(victory, "check_victory", true); //$NON-NLS-1$

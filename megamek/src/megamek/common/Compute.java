@@ -138,7 +138,7 @@ public class Compute {
         Roll roll = random.d6(dice);
         if (Server.getServerInstance() != null) {
             if (Server.getServerInstance().getGame().getOptions()
-                      .booleanOption("rng_log")) {
+                      .booleanOption(OptionsConstants.BASE_RNG_LOG)) {
                 Server.getServerInstance().reportRoll(roll);
             }
         }
@@ -152,7 +152,7 @@ public class Compute {
         Roll roll = random.d6(dice, keep);
         if (Server.getServerInstance() != null) {
             if (Server.getServerInstance().getGame().getOptions()
-                      .booleanOption("rng_log")) {
+                      .booleanOption(OptionsConstants.BASE_RNG_LOG)) {
                 Server.getServerInstance().reportRoll(roll);
             }
         }
@@ -166,7 +166,7 @@ public class Compute {
         Roll roll = random.d6();
         if (Server.getServerInstance() != null) {
             if (Server.getServerInstance().getGame().getOptions()
-                      .booleanOption("rng_log")) {
+                      .booleanOption(OptionsConstants.BASE_RNG_LOG)) {
                 Server.getServerInstance().reportRoll(roll);
             }
         }
@@ -598,7 +598,7 @@ public class Compute {
 
         // an easy check
         if (!game.getBoard().contains(dest)) {
-            if (game.getOptions().booleanOption("push_off_board")) {
+            if (game.getOptions().booleanOption(OptionsConstants.BASE_PUSH_OFF_BOARD)) {
                 return true;
             }
             return false;
@@ -1108,7 +1108,7 @@ public class Compute {
             c3spotter = ae; // no c3 when using indirect fire
         }
         if (isIndirect
-            && game.getOptions().booleanOption("indirect_fire")
+            && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
             && !game.getOptions().booleanOption("indirect_always_possible")
             && LosEffects.calculateLos(game, ae.getId(), target).canSee()
             && (!game.getOptions().booleanOption("double_blind") || Compute
@@ -4640,7 +4640,7 @@ public class Compute {
         // .php?Cat=&Board=ask&Number=632321&page=0&view=collapsed&sb=5&o=0&fpart=
         else if (!attacker.isEnemyOf(defender)
                  && !attacker.getGame().getOptions()
-                             .booleanOption("friendly_fire")) {
+                             .booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             reason = "Can only swarm an enemy.";
         }
         // target is already swarmed

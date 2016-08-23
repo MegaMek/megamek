@@ -3045,7 +3045,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         // can't fire Indirect LRM with direct LOS
         if (isIndirect
-                && game.getOptions().booleanOption("indirect_fire")
+                && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
                 && !game.getOptions().booleanOption("indirect_always_possible")
                 && LosEffects.calculateLos(game, ae.getId(), target).canSee()
                 && (!game.getOptions().booleanOption("double_blind") || Compute
@@ -3175,7 +3175,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // missiles
         if (!exchangeSwarmTarget) {
 
-            if (!game.getOptions().booleanOption("friendly_fire")
+            if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)
                     && !isStrafing) {
                 // a friendly unit can never be the target of a direct attack.
                 // but we do allow vehicle flamers to cool
@@ -3715,12 +3715,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         // check if indirect fire is valid
-        if (isIndirect && !game.getOptions().booleanOption("indirect_fire")) {
+        if (isIndirect && !game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) {
             return "Indirect fire option not enabled";
         }
 
         if (isIndirect
-                && game.getOptions().booleanOption("indirect_fire")
+                && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
                 && !game.getOptions().booleanOption("indirect_always_possible")
                 && LosEffects.calculateLos(game, attackerId, target).canSee()
                 && (!game.getOptions().booleanOption("double_blind") || Compute

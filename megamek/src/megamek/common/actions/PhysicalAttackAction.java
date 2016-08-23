@@ -65,7 +65,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             return "target is null";
         }
 
-        if (!game.getOptions().booleanOption("friendly_fire")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
                 && ((((Entity) target).getOwnerId() == ae.getOwnerId())

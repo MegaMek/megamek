@@ -704,7 +704,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
             if ((vTypes.size() < 1)
                     && !client.getGame().getOptions()
-                            .booleanOption("lobby_ammo_dump")
+                            .booleanOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP)
                     && !client.getGame().getOptions()
                             .booleanOption("tacops_hotload")) { //$NON-NLS-1$
                 continue;
@@ -1091,7 +1091,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 add(m_num_shots, GBC.eol());
                 chHotLoad.setSelected(m_mounted.isHotLoaded());
                 if (clientgui.getClient().getGame().getOptions().booleanOption(
-                        "lobby_ammo_dump")) { //$NON-NLS-1$
+                        OptionsConstants.BASE_LOBBY_AMMO_DUMP)) { //$NON-NLS-1$
                     add(labDump, GBC.std());
                     add(chDump, GBC.eol());
                     if (clientgui.getClient().getGame().getOptions().booleanOption(

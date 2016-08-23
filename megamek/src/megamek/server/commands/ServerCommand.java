@@ -23,6 +23,7 @@ package megamek.server.commands;
 import java.util.Enumeration;
 
 import megamek.common.IPlayer;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -70,7 +71,7 @@ public abstract class ServerCommand {
      */
     public boolean canRunRestrictedCommand(int connId) {
         if (!server.getGame().getOptions().booleanOption(
-                "restrict_game_commands")) {
+                OptionsConstants.BASE_RESTRICT_GAME_COMMANDS)) {
             return true;
         }
 

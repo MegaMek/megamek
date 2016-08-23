@@ -699,7 +699,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         Map<Integer, ToHitData> fs = new HashMap<Integer, ToHitData>();
         for (Entity target : game.getEntitiesVector()) {
             boolean friendlyFire = game.getOptions().booleanOption(
-                    "friendly_fire"); //$NON-NLS-1$
+                    OptionsConstants.BASE_FRIENDLY_FIRE); //$NON-NLS-1$
             boolean enemyTarget = target.getOwner().isEnemyOf(ce().getOwner());
             if ((target.getId() != cen)
                 && (friendlyFire || enemyTarget)
@@ -1713,7 +1713,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         IGame game = clientgui.getClient().getGame();
         // allow spotting
         if ((ce() != null) && ce().canSpot() && (target != null)
-                && game.getOptions().booleanOption("indirect_fire")) { //$NON-NLS-1$)
+                && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)) { //$NON-NLS-1$)
             boolean hasLos = LosEffects.calculateLos(game, cen, target)
                     .canSee();
             // In double blind, we need to "spot" the target as well as LoS
@@ -2306,7 +2306,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
      */
     private Targetable chooseTarget(Coords pos) {
         final IGame game = clientgui.getClient().getGame();
-        boolean friendlyFire = game.getOptions().booleanOption("friendly_fire"); //$NON-NLS-1$
+        boolean friendlyFire = game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE); //$NON-NLS-1$
         // Assume that we have *no* choice.
         Targetable choice = null;
         Iterator<Entity> choices;

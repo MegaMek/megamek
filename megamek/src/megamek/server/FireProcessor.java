@@ -31,6 +31,7 @@ import megamek.common.PlanetaryConditions;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.Terrains;
+import megamek.common.options.OptionsConstants;
 
 public class FireProcessor extends DynamicTerrainProcessor {
 
@@ -330,7 +331,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         int windDir = game.getPlanetaryConditions().getWindDirection();
         int windStr = game.getPlanetaryConditions().getWindStrength();
         //if the breeze option is turned on, then treat wind strength like light gale if none
-        if(game.getOptions().booleanOption("breeze") && (windStr == PlanetaryConditions.WI_NONE)) {
+        if(game.getOptions().booleanOption(OptionsConstants.BASE_BREEZE) && (windStr == PlanetaryConditions.WI_NONE)) {
             windStr = PlanetaryConditions.WI_LIGHT_GALE;
         }
 

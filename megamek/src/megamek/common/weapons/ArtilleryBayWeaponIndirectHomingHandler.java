@@ -32,6 +32,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
 
@@ -345,7 +346,7 @@ public class ArtilleryBayWeaponIndirectHomingHandler extends
                 break;
             case Targetable.TYPE_ENTITY:
                 if (ae.isEnemyOf((Entity) ti.target)
-                        || game.getOptions().booleanOption("friendly_fire")) {
+                        || game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
                     allowed.add(ti);
                 }
                 break;

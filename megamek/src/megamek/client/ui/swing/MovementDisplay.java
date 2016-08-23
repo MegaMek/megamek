@@ -4651,7 +4651,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
     private void setForwardIniEnabled(boolean enabled) {
         // forward initiative can only be done if Teams have an initiative!
         if (clientgui.getClient().getGame().getOptions()
-                     .booleanOption("team_initiative")) {
+                     .booleanOption(OptionsConstants.BASE_TEAM_INITIATIVE)) {
             getBtn(MoveCommand.MOVE_FORWARD_INI).setEnabled(enabled);
             clientgui.getMenuBar().setMoveForwardIniEnabled(enabled);
         } else { // turn them off regardless what is said!

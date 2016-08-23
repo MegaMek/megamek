@@ -63,6 +63,7 @@ import megamek.common.actions.BAVibroClawAttackAction;
 import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.GrappleAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.CLFireExtinguisher;
 import megamek.common.weapons.ISFireExtinguisher;
 
@@ -1502,7 +1503,7 @@ public class MapMenu extends JPopupMenu {
 
         IPlayer localPlayer = client.getLocalPlayer();
         boolean friendlyFire = (game.getOptions()
-                .booleanOption("friendly_fire"));
+                .booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE));
 
         for (Entity en : game.getEntitiesVector(coords)) {
             // Only add the unit if it's actually visible

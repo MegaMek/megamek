@@ -1284,7 +1284,7 @@ public class Server implements Runnable {
         if (PreferenceManager.getClientPreferences().stampFilenames()) {
             fileName = StringUtil.addDateTimeStamp(fileName);
         }
-        saveGame(fileName, game.getOptions().booleanOption("autosave_msg"));
+        saveGame(fileName, game.getOptions().booleanOption(OptionsConstants.BASE_AUTOSAVE_MSG));
     }
 
     /**
@@ -2556,7 +2556,7 @@ public class Server implements Runnable {
             case PHASE_END_REPORT:
                 resetActivePlayersDone();
                 sendReport();
-                if (game.getOptions().booleanOption("paranoid_autosave")) {
+                if (game.getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
                     autoSave();
                 }
                 break;
@@ -2718,7 +2718,7 @@ public class Server implements Runnable {
             case PHASE_TARGETING:
             case PHASE_OFFBOARD:
                 changeToNextTurn();
-                if (game.getOptions().booleanOption("paranoid_autosave")) {
+                if (game.getOptions().booleanOption(OptionsConstants.BASE_PARANOID_AUTOSAVE)) {
                     autoSave();
                 }
                 break;
@@ -3477,11 +3477,11 @@ public class Server implements Runnable {
                 mapSettings.getBoardHeight(), mapSettings.getMapWidth(),
                 mapSettings.getMapHeight(), sheetBoards, rotateBoard,
                 mapSettings.getMedium());
-        if (game.getOptions().getOption("bridgeCF").intValue() > 0) {
-            newBoard.setBridgeCF(game.getOptions().getOption("bridgeCF")
+        if (game.getOptions().getOption(OptionsConstants.BASE_BRIDGECF).intValue() > 0) {
+            newBoard.setBridgeCF(game.getOptions().getOption(OptionsConstants.BASE_BRIDGECF)
                     .intValue());
         }
-        if (!game.getOptions().booleanOption("random_basements")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_RANDOM_BASEMENTS)) {
             newBoard.setRandomBasementsOff();
         }
         if (game.getPlanetaryConditions().isTerrainAffected()) {
@@ -5108,7 +5108,7 @@ public class Server implements Runnable {
             if (!game.getBoard().contains(nextPos)) {
 
                 // Can the entity skid off the map?
-                if (game.getOptions().booleanOption("push_off_board")) {
+                if (game.getOptions().booleanOption(OptionsConstants.BASE_PUSH_OFF_BOARD)) {
                     // Yup. One dead entity.
                     game.removeEntity(entity.getId(),
                                       IEntityRemovalConditions.REMOVE_PUSHED);
@@ -13090,7 +13090,7 @@ public class Server implements Runnable {
         for (Entity e : htAttacks.keySet()) {
             Vector<WeaponHandler> vAttacks = htAttacks.get(e);
             // Allow MM to automatically assign AMS targets
-            if (game.getOptions().booleanOption("auto_ams")) {
+            if (game.getOptions().booleanOption(OptionsConstants.BASE_AUTO_AMS)) {
                 e.assignAMS(vAttacks);
             } else { // Allow user to manually assign targets
                 manuallyAssignAMSTarget(e, vAttacks);
@@ -13111,7 +13111,7 @@ public class Server implements Runnable {
             potentialTargets.removeAll(targetsToRemove);
             WeaponAttackAction targetedWAA;
             // Assign APDS to an attack
-            if (game.getOptions().booleanOption("auto_ams")) {
+            if (game.getOptions().booleanOption(OptionsConstants.BASE_AUTO_AMS)) {
                 targetedWAA = apds.assignAPDS(potentialTargets);
             } else { // Allow user to manually assign targets
                 targetedWAA = manuallyAssignAPDSTarget(apds, potentialTargets);
@@ -28754,10 +28754,10 @@ public class Server implements Runnable {
             // In the chat lounge, notify players of customizing of unit
             if (game.getPhase() == IGame.Phase.PHASE_LOUNGE) {
                 StringBuffer message = new StringBuffer();
-                if (game.getOptions().booleanOption("real_blind_drop")) {
+                if (game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)) {
                     message.append("A Unit ");
                     message.append('(').append(entity.getOwner().getName()).append(')');
-                } else if (game.getOptions().booleanOption("blind_drop")) {
+                } else if (game.getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP)) {
                     message.append("Unit ");
                     if (!entity.getExternalIdAsString().equals("-1")) {
                         message.append('[')
@@ -28795,8 +28795,8 @@ public class Server implements Runnable {
                 /*
                  * StringBuffer message = new StringBuffer();
                  * message.append("Unit "); if
-                 * (game.getOptions().booleanOption("blind_drop") ||
-                 * game.getOptions().booleanOption("real_blind_drop")) { if
+                 * (game.getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP) ||
+                 * game.getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)) { if
                  * (!entity.getExternalIdAsString().equals("-1")) {
                  * message.append('[') .append(entity.getExternalIdAsString())
                  * .append("] "); } message.append(entity.getId()).append('(')
@@ -29282,7 +29282,7 @@ public class Server implements Runnable {
         }
 
         // Set proper RNG
-        Compute.setRNG(game.getOptions().intOption("rng_type"));
+        Compute.setRNG(game.getOptions().intOption(OptionsConstants.BASE_RNG_TYPE));
 
         if (changed > 0) {
             for (Entity en : game.getEntitiesVector()) {

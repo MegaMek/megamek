@@ -51,6 +51,7 @@ import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.WeaponType;
+import megamek.common.options.OptionsConstants;
 
 /**
  * This class shows the critical hits and systems for a mech
@@ -833,7 +834,7 @@ class SystemPanel extends PicMap implements ItemListener, ActionListener,
                         && (m.getUsableShotsLeft() > 0)
                         && !m.isDumping()
                         && en.isActive()
-                        && (client.getGame().getOptions().intOption("dumping_from_round") 
+                        && (client.getGame().getOptions().intOption(OptionsConstants.BASE_DUMPING_FROM_ROUND) 
                                 <= client.getGame().getRoundCount())
                         && !carryingBAsOnBack && !invalidEnvironment) {
                     m_bDumpAmmo.setEnabled(true);

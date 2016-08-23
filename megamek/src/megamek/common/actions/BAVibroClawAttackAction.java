@@ -24,6 +24,7 @@ import megamek.common.Infantry;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.options.OptionsConstants;
 
 /**
  * A BattleArmor uses its vibroclaws
@@ -70,7 +71,7 @@ public class BAVibroClawAttackAction extends AbstractAttackAction {
             targetId = target.getTargetId();
         }
 
-        if (!game.getOptions().booleanOption("friendly_fire")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if ((target.getTargetType() == Targetable.TYPE_ENTITY)
                     && ((((Entity)target).getOwnerId() == ae.getOwnerId())

@@ -112,7 +112,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid Target");
         }
 
-        if (!game.getOptions().booleanOption("friendly_fire")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.BASE_FRIENDLY_FIRE)) {
             // a friendly unit can never be the target of a direct attack.
             if (!skid
                 && (target.getTargetType() == Targetable.TYPE_ENTITY)

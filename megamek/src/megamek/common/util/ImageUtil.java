@@ -19,6 +19,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
@@ -76,6 +77,22 @@ public final class ImageUtil {
         }
         BufferedImage acceleratedImage = GC.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
         return acceleratedImage;
+    }
+
+    /**
+     * Get a scaled version of the input image.
+     * 
+     * @param img
+     * @return
+     */
+    public static BufferedImage getScaledImage(Image img, int newWidth,
+            int newHeight) {
+        BufferedImage scaled = createAcceleratedImage(newWidth, newHeight);
+        Graphics2D g2 = (Graphics2D) scaled.getGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        g2.drawImage(img, 0, 0, newWidth, newHeight, null);
+        return scaled;
     }
 
     /** Image loaders */

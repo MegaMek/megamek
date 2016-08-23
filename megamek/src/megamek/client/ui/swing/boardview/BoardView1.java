@@ -53,8 +53,6 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ConvolveOp;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageFilter;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.awt.image.Kernel;
@@ -103,7 +101,6 @@ import megamek.client.ui.swing.MovementDisplay;
 import megamek.client.ui.swing.TilesetManager;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.ImageCache;
-import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
@@ -5988,13 +5985,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * The actual scaling code.
      */
     private Image scale(Image img, int width, int height) {
-        ImageFilter filter;
-        filter = new ImprovedAveragingScaleFilter(img.getWidth(null),
-                img.getHeight(null), width, height);
-
-        ImageProducer prod;
-        prod = new FilteredImageSource(img.getSource(), filter);
-        return Toolkit.getDefaultToolkit().createImage(prod);
+        return ImageUtil.getScaledImage(img, width, height); 
     }
 
     public boolean toggleIsometric() {

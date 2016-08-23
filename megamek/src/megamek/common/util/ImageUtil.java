@@ -50,17 +50,19 @@ public final class ImageUtil {
     }
     
     /**
-     * @return an image in a format best fitting for hardware acceleration, if possible,
-     *         else just the image passed to it
+     * @return an image in a format best fitting for hardware acceleration, if
+     *         possible, else just the image passed to it
      */
-    public static BufferedImage createAcceleratedImage(BufferedImage base) {
-        if((null == GC) || (null == base)) {
-            return base;
+    public static BufferedImage createAcceleratedImage(Image base) {
+        if ((null == GC) || (null == base)) {
+            return null;
         }
-        BufferedImage acceleratedImage
-            = GC.createCompatibleImage(base.getWidth(), base.getHeight(), base.getTransparency());
+        BufferedImage acceleratedImage = GC.createCompatibleImage(
+                base.getWidth(null), base.getHeight(null),
+                Transparency.TRANSLUCENT);
         Graphics2D g2d = acceleratedImage.createGraphics();
-        g2d.drawImage(base, 0, 0, base.getWidth(), base.getHeight(), null);
+        g2d.drawImage(base, 0, 0, base.getWidth(null), base.getHeight(null),
+                null);
         g2d.dispose();
         return acceleratedImage;
     }

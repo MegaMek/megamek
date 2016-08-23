@@ -32,6 +32,7 @@ v0.41.22-git
     lead to NPEs backing up over bridges
  +Data: New Sprites (Infantry Project) and some new units. 
  	(Big Thanks to Bloodwolf for the often frustrating process.)
++ Feature: Colored pixels in Unit images are now ignored when applying camo
 
 v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips

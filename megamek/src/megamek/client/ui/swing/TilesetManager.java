@@ -735,13 +735,18 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             for (int i = 0; i < IMG_SIZE; i++) {
                 int pixel = pMech[i];
                 int alpha = (pixel >> 24) & 0xff;
-
+                float red = ((float) ((pixel >> 16) & 0xff)) / 255;
+                float green = ((float) ((pixel >> 8) & 0xff)) / 255;
+                float blue = ((float) ((pixel) & 0xff)) / 255;
+                // Ignore colors
+                if (!(red == green && green == blue)) {
+                    continue;
+                }
                 if (alpha != 0) {
                     int pixel1 = useCamo ? pCamo[i] : tint;
                     float red1 = ((float) ((pixel1 >> 16) & 0xff)) / 255;
                     float green1 = ((float) ((pixel1 >> 8) & 0xff)) / 255;
                     float blue1 = ((float) ((pixel1) & 0xff)) / 255;
-
                     float black = ((pMech[i]) & 0xff);
 
                     int red2 = Math.round(red1 * black);

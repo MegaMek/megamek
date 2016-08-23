@@ -89,15 +89,16 @@ public class GameOptions extends AbstractOptions {
 
 
         IBasicOptionGroup allowed = addGroup("allowedUnits"); //$NON-NLS-1$
-        addOption(allowed, "canon_only", false); //$NON-NLS-1$
-        addOption(allowed, "year", 3150); //$NON-NLS-1$
+        addOption(allowed, OptionsConstants.ALLOWED_CANON_ONLY, false); //$NON-NLS-1$
+        addOption(allowed, OptionsConstants.ALLOWED_YEAR, 3150); //$NON-NLS-1$
         addOption(allowed, "techlevel", IOption.CHOICE, TechConstants.T_SIMPLE_NAMES[TechConstants.T_SIMPLE_STANDARD]); //$NON-NLS-1$
-        addOption(allowed, "allow_illegal_units", false); //$NON-NLS-1$
-        addOption(allowed, "clan_ignore_eq_limits", false); //$NON-NLS-1$
-        addOption(allowed, "no_clan_physical", false); //$NON-NLS-1$
-        addOption(allowed, "allow_nukes", false); //$NON-NLS-1$
-        addOption(allowed, "really_allow_nukes", false); //$NON-NLS-1$
-
+        addOption(allowed, OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS, false); //$NON-NLS-1$
+        addOption(allowed, OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS, false); //$NON-NLS-1$
+        addOption(allowed, OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL, false); //$NON-NLS-1$
+        addOption(allowed, OptionsConstants.ALLOWED_ALLOW_NUKES, false); //$NON-NLS-1$
+        addOption(allowed, OptionsConstants.ALLOWED_REALLY_ALLOW_NUKES, false); //$NON-NLS-1$
+     
+        
         IBasicOptionGroup advancedRules = addGroup("advancedRules"); //$NON-NLS-1$
         addOption(advancedRules, "minefields", false); //$NON-NLS-1$
         addOption(advancedRules, "hidden_units", false); //$NON-NLS-1$

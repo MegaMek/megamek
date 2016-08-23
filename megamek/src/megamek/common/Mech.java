@@ -5514,7 +5514,7 @@ public abstract class Mech extends Entity {
         // Mechs can charge, unless they are Clan and the "no clan physicals"
         // option is set
         return super.canCharge()
-                && !(game.getOptions().booleanOption("no_clan_physical") && isClan());
+                && !(game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) && isClan());
     }
 
     @Override
@@ -5522,7 +5522,7 @@ public abstract class Mech extends Entity {
         // Mechs can DFA, unless they are Clan and the "no clan physicals"
         // option is set
         return super.canDFA()
-                && !(game.getOptions().booleanOption("no_clan_physical") && isClan());
+                && !(game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) && isClan());
     }
 
     // gives total number of sinks

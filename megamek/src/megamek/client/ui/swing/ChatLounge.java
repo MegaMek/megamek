@@ -3024,7 +3024,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         txt = txt
                 + " " //$NON-NLS-1$
                 + clientgui.getClient().getGame().getOptions()
-                        .intOption("year"); //$NON-NLS-1$
+                        .intOption(OptionsConstants.ALLOWED_YEAR); //$NON-NLS-1$
         lblGameYear.setText(txt);
     }
 

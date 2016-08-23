@@ -63,6 +63,7 @@ import megamek.common.MechSummary;
 import megamek.common.TechConstants;
 import megamek.common.IGame.Phase;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.RandomArmyCreator;
@@ -164,7 +165,7 @@ WindowListener, TreeSelectionListener {
         }
         updatePlayerChoice();
         asd = new AdvancedSearchDialog(m_clientgui.frame,
-                m_client.getGame().getOptions().intOption("year"));
+                m_client.getGame().getOptions().intOption(OptionsConstants.ALLOWED_YEAR));
         
         GUIPreferences guip = GUIPreferences.getInstance();
         // set defaults
@@ -178,7 +179,7 @@ WindowListener, TreeSelectionListener {
         m_tInfantry.setText(guip.getRATNumInf());
         m_chkPad.setSelected(guip.getRATPadBV());
         m_chkCanon.setSelected(m_client.getGame().getOptions().booleanOption(
-        "canon_only"));
+        OptionsConstants.ALLOWED_CANON_ONLY));
         updateTechChoice();
 
         // construct the buttons panel

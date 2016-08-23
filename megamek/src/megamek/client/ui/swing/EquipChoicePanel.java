@@ -615,7 +615,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         panMunitions.setLayout(gbl);
         IGame game = clientgui.getClient().getGame();
         IOptions gameOpts = game.getOptions();
-        int gameYear = gameOpts.intOption("year");
+        int gameYear = gameOpts.intOption(OptionsConstants.ALLOWED_YEAR);
         boolean isClan = entity.isClan();
 
         for (Mounted m : entity.getAmmo()) {
@@ -653,7 +653,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 // to be combined to other munition types.
                 long muniType = atCheck.getMunitionType();
                 muniType &= ~AmmoType.M_INCENDIARY_LRM;
-                if (!gameOpts.booleanOption("clan_ignore_eq_limits") //$NON-NLS-1$
+                if (!gameOpts.booleanOption(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS) //$NON-NLS-1$
                         && entity.isClan()
                         && ((muniType == AmmoType.M_SEMIGUIDED)
                                 || (muniType == AmmoType.M_SWARM_I)

@@ -136,7 +136,7 @@ public class ScenarioLoader {
     // TODO: legal/valid ammo type handling and game options, since they are set at this point
     private AmmoType getValidAmmoType(IGame game, Mounted mounted, String ammoString) {
         final Entity e = mounted.getEntity();
-        final int year = game.getOptions().intOption("year"); //$NON-NLS-1$
+        final int year = game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR); //$NON-NLS-1$
         final EquipmentType currentAmmoType = mounted.getType();
         final Mounted currentWeapon = mounted.getLinkedBy();
         final EquipmentType currentWeaponType = (null != currentWeapon) ? currentWeapon.getType() : null;
@@ -158,7 +158,7 @@ public class ScenarioLoader {
                 TechConstants.getGameTechLevel(game, e.isClan())));
             return null;
         }
-        if(e.isClan() && !game.getOptions().booleanOption("clan_ignore_eq_limits")) { //$NON-NLS-1$
+        if(e.isClan() && !game.getOptions().booleanOption(OptionsConstants.ALLOWED_CLAN_IGNORE_EQ_LIMITS)) { //$NON-NLS-1$
             // Check for clan weapon restrictions
             final long muniType = ((AmmoType) newAmmoType).getMunitionType() & ~AmmoType.M_INCENDIARY_LRM;
             if((muniType == AmmoType.M_SEMIGUIDED)

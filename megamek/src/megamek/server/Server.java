@@ -28596,7 +28596,7 @@ public class Server implements Runnable {
                     entity.setDesignValid(true);
                 } else {
                     System.err.println(sb);
-                    if (game.getOptions().booleanOption("allow_illegal_units")) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_ALLOW_ILLEGAL_UNITS)) {
                         entity.setDesignValid(false);
                     } else {
                         IPlayer cheater = game.getPlayer(connIndex);

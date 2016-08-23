@@ -8771,7 +8771,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // check game options
-        if (game.getOptions().booleanOption("no_clan_physical") && isClan()
+        if (game.getOptions().booleanOption(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL) && isClan()
             && !hasINarcPodsAttached() && (getSwarmAttackerId() == NONE)) {
             return false;
         }
@@ -13604,7 +13604,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getTechLevelYear() {
         if (game != null) {
-            return game.getOptions().intOption("year");
+            return game.getOptions().intOption(OptionsConstants.ALLOWED_YEAR);
         }
         return year;
     }

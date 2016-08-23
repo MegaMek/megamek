@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import megamek.common.IGame;
+import megamek.common.options.OptionsConstants;
 
 /**
  * detailed spaghetti from the old victory code this assumes game options do not
@@ -36,28 +37,27 @@ public class NoodleVictory implements Victory, Serializable {
     protected void construct(IGame game) {
         ArrayList<Victory> victories = new ArrayList<Victory>();
         // BV related victory conditions
-        if (game.getOptions().booleanOption("use_bv_destroyed")) {
+        if (game.getOptions().booleanOption(OptionsConstants.VICTORY_USE_BV_DESTROYED)) {
             victories.add(new BVDestroyedVictory(game.getOptions().intOption(
-            "bv_destroyed_percent")));
+            OptionsConstants.VICTORY_BV_DESTROYED_PERCENT)));
         }
-        if (game.getOptions().booleanOption("use_bv_ratio")) {
+        if (game.getOptions().booleanOption(OptionsConstants.VICTORY_USE_BV_RATIO)) {
             victories.add(new BVRatioVictory(game.getOptions().intOption(
-            "bv_ratio_percent")));
+            OptionsConstants.VICTORY_BV_RATIO_PERCENT)));
         }
         
         // Kill count victory condition
-        if (game.getOptions().booleanOption("use_kill_count")) {
-            victories.add(new KillCountVictory(game.getOptions().intOption(
-            "game_kill_count")));
+        if (game.getOptions().booleanOption(OptionsConstants.VICTORY_USE_KILL_COUNT)) {
+            victories.add(new KillCountVictory(game.getOptions().intOption(OptionsConstants.VICTORY_GAME_KILL_COUNT)));
         }
 
         // Commander killed victory condition
-        if (game.getOptions().booleanOption("commander_killed")) {
+        if (game.getOptions().booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) {
             victories.add(new EnemyCmdrDestroyedVictory());
         }
         // use a summing victory target to check if someone is winning
         v = new SummingThresholdVictory(game.getOptions().intOption(
-        "achieve_conditions"), victories.toArray(new Victory[0]));
+        OptionsConstants.VICTORY_ACHIEVE_CONDITIONS), victories.toArray(new Victory[0]));
     }
 
     public Victory.Result victory(IGame game, HashMap<String, Object> ctx) {

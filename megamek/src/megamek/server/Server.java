@@ -3417,7 +3417,7 @@ public class Server implements Runnable {
 
     private boolean isPlayerForcedVictory() {
         // check game options
-        if (!game.getOptions().booleanOption("skip_forced_victory")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.VICTORY_SKIP_FORCED_VICTORY)) {
             return false;
         }
 

@@ -494,7 +494,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         // Set up commanders for commander killed victory condition
         if (clientgui.getClient().getGame().getOptions()
-                .booleanOption("commander_killed")) { //$NON-NLS-1$
+                .booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) { //$NON-NLS-1$
             panPilot.add(labCommander, GBC.std());
             panPilot.add(chCommander, GBC.eol());
             chCommander.setSelected(entity.isCommander());

@@ -3319,8 +3319,8 @@ public class Game implements Serializable, IGame {
     }
 
     public boolean gameTimerIsExpired() {
-        return ((getOptions().booleanOption("use_game_turn_limit")) && (getRoundCount() == getOptions()
-                .intOption("game_turn_limit")));
+        return ((getOptions().booleanOption(OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT)) && (getRoundCount() == getOptions()
+                .intOption(OptionsConstants.VICTORY_GAME_TURN_LIMIT)));
     }
 
     /**

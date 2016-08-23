@@ -3085,7 +3085,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
         
         // Make sure player has a commander if Commander killed victory is on
-        if (gOpts.booleanOption("commander_killed")) {
+        if (gOpts.booleanOption(OptionsConstants.VICTORY_COMMANDER_KILLED)) {
             ArrayList<String> players = new ArrayList<String>();
             if ((game.getLiveCommandersOwnedBy(client.getLocalPlayer()) < 1)
                     && (game.getEntitiesOwnedBy(client.getLocalPlayer()) > 0)) {

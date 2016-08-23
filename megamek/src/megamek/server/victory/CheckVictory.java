@@ -17,10 +17,11 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import megamek.common.IGame;
+import megamek.common.options.OptionsConstants;
 
 /**
  * implementation of a filter which will wait until the
- * game.gameTimerIsExpired() is true or option "check_victory" is set before
+ * game.gameTimerIsExpired() is true or option OptionsConstants.VICTORY_CHECK_VICTORY is set before
  * returning whatever the given victory returns. otherwise returns
  * SimpleNoResult
  */
@@ -41,7 +42,7 @@ public class CheckVictory implements Victory, Serializable {
         Victory.Result ret = v.victory(game, ctx);
 
         if (!game.gameTimerIsExpired()
-                && !game.getOptions().booleanOption("check_victory")) {
+                && !game.getOptions().booleanOption(OptionsConstants.VICTORY_CHECK_VICTORY)) {
             return new SimpleNoResult();
         }
         return ret;

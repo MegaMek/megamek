@@ -74,18 +74,19 @@ public class GameOptions extends AbstractOptions {
         addOption(base, OptionsConstants.BASE_AUTO_AMS, true); //$NON-NLS-1$
         
         IBasicOptionGroup victory = addGroup("victory"); //$NON-NLS-1$
-        addOption(victory, "skip_forced_victory", false); //$NON-NLS-1$
-        addOption(victory, "check_victory", true); //$NON-NLS-1$
-        addOption(victory, "achieve_conditions", 1); //$NON-NLS-1$
-        addOption(victory, "use_bv_destroyed", false); //$NON-NLS-1$
-        addOption(victory, "bv_destroyed_percent", 100); //$NON-NLS-1$
-        addOption(victory, "use_bv_ratio", false); //$NON-NLS-1$
-        addOption(victory, "bv_ratio_percent", 300); //$NON-NLS-1$
-        addOption(victory, "use_game_turn_limit", false); //$NON-NLS-1$
-        addOption(victory, "game_turn_limit", 10); //$NON-NLS-1$
-        addOption(victory, "use_kill_count", false); //$NON-NLS-1$
-        addOption(victory, "game_kill_count", 4); //$NON-NLS-1$
-        addOption(victory, "commander_killed", false); //$NON-NLS-1$
+        addOption(victory, OptionsConstants.VICTORY_SKIP_FORCED_VICTORY, false); //$NON-NLS-1$
+        addOption(victory, OptionsConstants.VICTORY_CHECK_VICTORY, true); //$NON-NLS-1$
+        addOption(victory, OptionsConstants.VICTORY_ACHIEVE_CONDITIONS, 1); //$NON-NLS-1$
+        addOption(victory, OptionsConstants.VICTORY_USE_BV_DESTROYED, false); //$NON-NLS-1$
+        addOption(victory, OptionsConstants.VICTORY_BV_DESTROYED_PERCENT, 100); //$NON-NLS-1$
+        addOption(victory, OptionsConstants.VICTORY_USE_BV_RATIO, false); //$NON-NLS-1$
+        addOption(victory, OptionsConstants.VICTORY_BV_RATIO_PERCENT, 300); //$NON-NLS-1$
+        addOption(victory, OptionsConstants.VICTORY_USE_GAME_TURN_LIMIT, false); //$NON-NLS-1$
+        addOption(victory, OptionsConstants.VICTORY_GAME_TURN_LIMIT, 10); //$NON-NLS-1$
+        addOption(victory, OptionsConstants.VICTORY_USE_KILL_COUNT, false); //$NON-NLS-1$
+        addOption(victory, OptionsConstants.VICTORY_GAME_KILL_COUNT, 4); //$NON-NLS-1$
+        addOption(victory, OptionsConstants.VICTORY_COMMANDER_KILLED, false); //$NON-NLS-1$
+
 
         IBasicOptionGroup allowed = addGroup("allowedUnits"); //$NON-NLS-1$
         addOption(allowed, "canon_only", false); //$NON-NLS-1$

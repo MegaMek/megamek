@@ -33,6 +33,7 @@ import org.w3c.dom.Node;
 public class FactionRecord {
 	
 	private String key;
+	private boolean minor;
 	private boolean clan;
 	private boolean periphery;
 	private String name;
@@ -77,7 +78,7 @@ public class FactionRecord {
 	public FactionRecord(String key, String name) {
 		this.key = key;
 		this.name = name;
-		clan = false;
+		minor = clan = periphery = false;
 		ratingLevels = new ArrayList<String>();
 		altNames = new TreeMap<Integer, String>();
 		yearsActive = new ArrayList<DateRange>();
@@ -105,6 +106,14 @@ public class FactionRecord {
 	
 	public String getKey() {
 		return key;
+	}
+	
+	public boolean isMinor() {
+		return minor;
+	}
+	
+	public void setMinor(boolean minor) {
+		this.minor = minor;
 	}
 	
 	public boolean isClan() {
@@ -635,6 +644,11 @@ public class FactionRecord {
 		FactionRecord retVal = new FactionRecord();
 		retVal.key = node.getAttributes().getNamedItem("key").getTextContent();
 		retVal.name = node.getAttributes().getNamedItem("name").getTextContent();
+		if (node.getAttributes().getNamedItem("minor") != null) {
+			retVal.minor = Boolean.parseBoolean(node.getAttributes().getNamedItem("minor").getTextContent());
+		} else {
+			retVal.minor = false;
+		}
 		if (node.getAttributes().getNamedItem("clan") != null) {
 			retVal.clan = Boolean.parseBoolean(node.getAttributes().getNamedItem("clan").getTextContent());
 		} else {

@@ -24,7 +24,6 @@
 		<salvage pct='6'>FWL:10,FS:8,DC:2,TC:1</salvage>
 	</faction>
 	<faction key='NC' name='Castillian Principalities' minor='true' clan='false' periphery='true'>
-		<nameChange year='3078'>Escorpión Império</nameChange>
 		<years>2392-3080</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.Deep</parentFaction>
@@ -127,7 +126,6 @@
 		<weightDistribution era='2865' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
 	<faction key='CGS' name='Clan Goliath Scorpion' minor='false' clan='true' periphery='false'>
-		<nameChange year='3078'>Escorpión Império</nameChange>
 		<years>2807-3080</years>
 		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
 		<parentFaction>CLAN.HW</parentFaction>
@@ -397,8 +395,7 @@
 		<parentFaction>Periphery.HR,PIR</parentFaction>
 		<salvage pct='10'>PIR:10,FS:10</salvage>
 	</faction>
-	<faction key='UC' name='Umayyad Caliphate' minor='false' clan='false' periphery='true'>
-		<nameChange year='3078'>Escorpión Império</nameChange>
+	<faction key='UC' name='Umayyad Caliphate' minor='true' clan='false' periphery='true'>
 		<years>2830-3080</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>NC</parentFaction>

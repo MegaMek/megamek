@@ -183,6 +183,8 @@ WindowListener, TreeSelectionListener, FocusListener {
     private JTextField m_tYear = new JTextField(4);
     private JComboBox<FactionRecord> m_chFaction = new JComboBox<FactionRecord>();
     private JComboBox<FactionRecord> m_chSubfaction = new JComboBox<FactionRecord>();
+    private JCheckBox m_chkShowMinor = new JCheckBox(Messages
+    		.getString("RandomArmyDialog.ShowMinorFactions"));
     private JComboBox<String> m_chUnitType = new JComboBox<String>();
     private JComboBox<String> m_chRating = new JComboBox<String>();
     private HashMap<String,UnitTypeOptionsPanel> unitTypeCards = 
@@ -485,7 +487,7 @@ WindowListener, TreeSelectionListener, FocusListener {
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 1;
-        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
@@ -507,7 +509,7 @@ WindowListener, TreeSelectionListener, FocusListener {
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 2;
-        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.gridwidth = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
@@ -515,6 +517,17 @@ WindowListener, TreeSelectionListener, FocusListener {
         m_pRATGenOptions.add(m_chSubfaction, c);
         m_chSubfaction.setRenderer(factionCbRenderer);
         m_chSubfaction.addActionListener(this);        
+        
+        c = new GridBagConstraints();
+        c.gridx = 2;
+        c.gridy = 1;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGenOptions.add(m_chkShowMinor, c);
+        m_chkShowMinor.addActionListener(this);
         
 		for (int i = 0; i < UnitType.SIZE; i++) {
 			if (i != UnitType.GUN_EMPLACEMENT
@@ -787,6 +800,8 @@ WindowListener, TreeSelectionListener, FocusListener {
             }
         } else if (ev.getSource().equals(m_chFaction)) {
         	updateSubfactionChoice();
+        } else if (ev.getSource().equals(m_chkShowMinor)) {
+        	updateFactionChoice();
         } else if (ev.getSource().equals(m_chUnitType)) {
         	CardLayout layout = (CardLayout)m_pUnitTypeOptions.getLayout();
         	layout.show(m_pUnitTypeOptions, (String)m_chUnitType.getSelectedItem());
@@ -979,7 +994,8 @@ WindowListener, TreeSelectionListener, FocusListener {
     	m_chFaction.removeAllItems();
     	ArrayList<FactionRecord> recs = new ArrayList<>();
     	for (FactionRecord fRec : rg.getFactionList()) {
-    		if (!fRec.getKey().contains(".") && fRec.isActiveInYear(ratGenYear)) {
+    		if ((!fRec.isMinor() || m_chkShowMinor.isSelected())
+    				&& !fRec.getKey().contains(".") && fRec.isActiveInYear(ratGenYear)) {
     			recs.add(fRec);
     		}
     	}

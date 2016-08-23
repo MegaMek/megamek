@@ -15,7 +15,6 @@
 		<salvage pct='5'>TH:3,SL:10,FWL:2,FS:10,TC:1</salvage>
 	</faction>
 	<faction key='NC' name='Castillian Principalities' minor='true' clan='false' periphery='true'>
-		<nameChange year='3078'>Escorpión Império</nameChange>
 		<years>2392-3080</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>Periphery.Deep</parentFaction>

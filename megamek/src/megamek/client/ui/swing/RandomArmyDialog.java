@@ -123,6 +123,7 @@ WindowListener, TreeSelectionListener, FocusListener {
     private JButton m_bAdvSearch = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearch"));
     private JButton m_bAdvSearchClear = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearchClear"));
     private JButton m_bGenerate = new JButton(Messages.getString("RandomArmyDialog.Generate"));
+    private JButton m_bAddFromRAT = new JButton(Messages.getString("RandomArmyDialog.AddSelected"));
 
     private JSplitPane m_pSplit;
 
@@ -389,7 +390,7 @@ WindowListener, TreeSelectionListener, FocusListener {
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
-        c.gridwidth = 1;
+        c.gridwidth = GridBagConstraints.REMAINDER;
         c.fill = GridBagConstraints.BOTH;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 1.0;
@@ -407,10 +408,22 @@ WindowListener, TreeSelectionListener, FocusListener {
         m_pRATGen.add(m_bGenerate, c);
         m_bGenerate.addActionListener(this);
         
+        c = new GridBagConstraints();
+        c.gridx = 1;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.EAST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGen.add(m_bAddFromRAT, c);
+        m_bAddFromRAT.addActionListener(this);
+        
         ratModel = new RATTableModel();
         m_lRAT = new JTable();
         m_lRAT.setModel(ratModel);
         m_lRAT.setIntercellSpacing(new Dimension(5, 0));
+        m_lRAT.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         for (int i = 0; i < ratModel.getColumnCount(); i++) {
         	m_lRAT.getColumnModel().getColumn(i).setPreferredWidth(ratModel.getPreferredWidth(i));
         }
@@ -807,6 +820,13 @@ WindowListener, TreeSelectionListener, FocusListener {
         	layout.show(m_pUnitTypeOptions, (String)m_chUnitType.getSelectedItem());
         } else if (ev.getSource().equals(m_bGenerate)) {
         	generateRAT();
+        } else if (ev.getSource().equals(m_bAddFromRAT)) {
+            for(int sel : m_lRAT.getSelectedRows()) {
+                MechSummary ms = generatedRAT.getMechSummary(sel);
+                if (ms != null) {
+                	armyModel.addUnit(ms);
+                }
+            }
         } else if (ev.getSource().equals(rug)) {
             m_ratStatus.setText(Messages
                     .getString("RandomArmyDialog.ratStatusDoneLoading"));

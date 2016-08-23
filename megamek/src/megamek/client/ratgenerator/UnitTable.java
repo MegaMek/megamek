@@ -97,6 +97,13 @@ public class UnitTable {
 		}
 	}
 	
+	public MechSummary getMechSummary(int index) {
+		if (table.get(index).isUnit()) {
+			return table.get(index).getUnitEntry();
+		}
+		return null;
+	}
+	
 	public int getBV(int index) {
 		if (table.get(index).isUnit()) {
 			return table.get(index).getUnitEntry().getBV();

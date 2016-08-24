@@ -193,8 +193,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private static final int HEX_WC = HEX_W - (HEX_W / 4);
     static final int HEX_ELEV = 12;
 
-    private static final float[] ZOOM_FACTORS = {0.30f, 0.41f, 0.50f, 0.60f,
-                                                 0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f, 1.3f};
+    private static final float[] ZOOM_FACTORS = { 0.30f, 0.41f, 0.50f, 0.60f,
+            0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f, 1.3f };
+
+    private static final int[] ZOOM_SCALE_TYPES = {
+            ImageUtil.IMAGE_SCALE_AVG_FILTER, ImageUtil.IMAGE_SCALE_AVG_FILTER,
+            ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
+            ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
+            ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
+            ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
+            ImageUtil.IMAGE_SCALE_BICUBIC };
     
     public static final int [] allDirections = {0,1,2,3,4,5};
     
@@ -5985,7 +5993,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * The actual scaling code.
      */
     private Image scale(Image img, int width, int height) {
-        return ImageUtil.getScaledImage(img, width, height); 
+        return ImageUtil.getScaledImage(img, width, height,
+                ZOOM_SCALE_TYPES[zoomIndex]);
     }
 
     public boolean toggleIsometric() {

@@ -53,8 +53,6 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.ConvolveOp;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageFilter;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.awt.image.Kernel;
@@ -103,7 +101,6 @@ import megamek.client.ui.swing.MovementDisplay;
 import megamek.client.ui.swing.TilesetManager;
 import megamek.client.ui.swing.util.CommandAction;
 import megamek.client.ui.swing.util.ImageCache;
-import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.swing.util.KeyCommandBind;
 import megamek.client.ui.swing.util.MegaMekController;
 import megamek.client.ui.swing.util.PlayerColors;
@@ -196,8 +193,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private static final int HEX_WC = HEX_W - (HEX_W / 4);
     static final int HEX_ELEV = 12;
 
-    private static final float[] ZOOM_FACTORS = {0.30f, 0.41f, 0.50f, 0.60f,
-                                                 0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f, 1.3f};
+    private static final float[] ZOOM_FACTORS = { 0.30f, 0.41f, 0.50f, 0.60f,
+            0.68f, 0.79f, 0.90f, 1.00f, 1.09f, 1.17f, 1.3f };
+
+    private static final int[] ZOOM_SCALE_TYPES = {
+            ImageUtil.IMAGE_SCALE_AVG_FILTER, ImageUtil.IMAGE_SCALE_AVG_FILTER,
+            ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
+            ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
+            ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
+            ImageUtil.IMAGE_SCALE_BICUBIC, ImageUtil.IMAGE_SCALE_BICUBIC,
+            ImageUtil.IMAGE_SCALE_BICUBIC };
     
     public static final int [] allDirections = {0,1,2,3,4,5};
     
@@ -5988,13 +5993,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * The actual scaling code.
      */
     private Image scale(Image img, int width, int height) {
-        ImageFilter filter;
-        filter = new ImprovedAveragingScaleFilter(img.getWidth(null),
-                img.getHeight(null), width, height);
-
-        ImageProducer prod;
-        prod = new FilteredImageSource(img.getSource(), filter);
-        return Toolkit.getDefaultToolkit().createImage(prod);
+        return ImageUtil.getScaledImage(img, width, height,
+                ZOOM_SCALE_TYPES[zoomIndex]);
     }
 
     public boolean toggleIsometric() {

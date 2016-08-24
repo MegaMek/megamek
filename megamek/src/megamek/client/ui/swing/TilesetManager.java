@@ -64,6 +64,7 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.DirectoryItems;
+import megamek.common.util.ImageUtil;
 
 /**
  * Handles loading and manipulating images from both the mech tileset and the
@@ -192,8 +193,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                     defaultEntry.loadImage(boardview);
                 }
                 if (defaultEntry.getImage() != null) {
-                    return defaultEntry.getImage().getScaledInstance(56, 48,
-                            Image.SCALE_SMOOTH);
+                    return ImageUtil.getScaledImage(defaultEntry.getImage(), 56,
+                            48);
                 } else {
                     return null;
                 }
@@ -648,7 +649,7 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             }
             base = applyColor(base);
 
-            icon = base.getScaledInstance(56, 48, Image.SCALE_SMOOTH);
+            icon = ImageUtil.getScaledImage(base,  56, 48);
             for (int i = 0; i < 6; i++) {
                 ImageProducer rotSource = new FilteredImageSource(base
                         .getSource(), new RotateFilter((Math.PI / 3) * (6 - i)));

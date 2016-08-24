@@ -365,6 +365,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         comps.add(row);
         
         useSoftCenter = new JCheckBox(Messages.getString("CommonSettingsDialog.useSoftCenter")); //$NON-NLS-1$
+        useSoftCenter.setToolTipText(Messages.getString("CommonSettingsDialog.useSoftCenterTip"));
         useSoftCenter.addItemListener(this);
         row = new ArrayList<>();
         row.add(useSoftCenter);

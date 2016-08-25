@@ -33,6 +33,7 @@ v0.41.22-git
  +Data: New Sprites (Infantry Project) and some new units. 
  	(Big Thanks to Bloodwolf for the often frustrating process.)
 + Feature: Colored pixels in Unit images are now ignored when applying camo
++ Issue #315: Nag for Lava PSR shown when moving on bridge over lava
 
 v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips

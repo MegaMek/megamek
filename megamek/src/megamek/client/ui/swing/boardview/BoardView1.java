@@ -5163,12 +5163,24 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             processAffectedCoords(c, ecm, eccm, newECMHexes, newECCMHexes);
         }
 
+        Set<Coords> updatedHexes = new HashSet<>();
+        if (ecmHexes != null) {
+            updatedHexes.addAll(ecmHexes.keySet());
+        }
+        if (eccmHexes != null) {
+            updatedHexes.addAll(eccmHexes.keySet());
+        }
+        updatedHexes.addAll(newECMHexes.keySet());
+        updatedHexes.addAll(newECCMHexes.keySet());
+        clearHexImageCache(updatedHexes);
+
         synchronized (this) {
             ecmHexes    = newECMHexes;
             ecmCenters  = newECMCenters;
             eccmHexes   = newECCMHexes;
             eccmCenters = newECCMCenters;
         }
+
         repaint();
     }
 
@@ -6081,6 +6093,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     public void clearHexImageCache() {
         hexImageCache.clear();
+    }
+
+    /**
+     * Clear a specific list of Coords from the hex image cache.
+     * @param coords
+     */
+    public void clearHexImageCache(Set<Coords> coords) {
+        for (Coords c : coords) {
+            hexImageCache.remove(c);
+        }
     }
 
     /**

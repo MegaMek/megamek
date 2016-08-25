@@ -35,6 +35,7 @@ v0.41.22-git
 + Feature: Colored pixels in Unit images are now ignored when applying camo
 + Issue #315: Nag for Lava PSR shown when moving on bridge over lava
 + Issue #306: Thread-safety issues in Princess.Precognition
++ Issue #223: ECM hex display not always updating, especially in deployment
 
 v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips

@@ -2440,5 +2440,16 @@ public class BattleArmor extends Infantry {
         return toReturn;
     }
 
+    /**
+     * Used to determine the draw priority of different Entity subclasses.
+     * This allows different unit types to always be draw above/below other
+     * types.
+     *
+     * @return
+     */
+    public int getSpriteDrawPriority() {
+        return 2;
+    }
+
 
 } // End public class BattleArmor extends Infantry implements Serializable

@@ -1029,5 +1029,9 @@ class EntitySprite extends Sprite {
     public boolean getSelected() {
         return isSelected;
     }
+
+    protected int getSpritePriority() {
+        return entity.getSpriteDrawPriority();
+    }
 }
 

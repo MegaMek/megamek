@@ -68,6 +68,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
 import java.util.TimerTask;
 import java.util.TreeSet;
@@ -250,8 +252,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private boolean shouldScroll = false;
 
     // entity sprites
-    private List<EntitySprite> entitySprites = new ArrayList<EntitySprite>();
-    private List<IsometricSprite> isometricSprites = new ArrayList<IsometricSprite>();
+    private Queue<EntitySprite> entitySprites = new PriorityQueue<EntitySprite>();
+    private Queue<IsometricSprite> isometricSprites = new PriorityQueue<IsometricSprite>();
 
     private ArrayList<FlareSprite> flareSprites = new ArrayList<FlareSprite>();
     /**
@@ -1637,7 +1639,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * onscreen.
      */
     private synchronized void drawSprites(Graphics g,
-            List<? extends Sprite> spriteArrayList) {
+            Collection<? extends Sprite> spriteArrayList) {
         for (Sprite sprite : spriteArrayList) {
             drawSprite(g, sprite);
         }
@@ -1674,7 +1676,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * @param spriteArrayList The complete list of all IsometricSprite on the board.
      */
     private synchronized void drawIsometricSpritesForHex(Coords c, Graphics g,
-            List<IsometricSprite> spriteArrayList) {
+            Collection<IsometricSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricSprite sprite : spriteArrayList) {
             Coords cp = sprite.getPosition();
@@ -1728,7 +1730,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * for all sprites.
      */
     private final void drawIsometricSprites(Graphics g,
-            List<IsometricSprite> spriteArrayList) {
+            Collection<IsometricSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricSprite sprite : spriteArrayList) {
             // This can potentially be an expensive operation
@@ -3122,13 +3124,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // We can ignore secondary locations for now, as we don't have moving
         // multi-location entitys (will need to change for mobile structures)
 
-        ArrayList<EntitySprite> newSprites;
-        ArrayList<IsometricSprite> isoSprites;
+        PriorityQueue<EntitySprite> newSprites;
+        PriorityQueue<IsometricSprite> isoSprites;
         HashMap<List<Integer>, EntitySprite> newSpriteIds;
         HashMap<List<Integer>, IsometricSprite> newIsoSpriteIds;
 
         if (sprite != null) {
-            newSprites = new ArrayList<EntitySprite>(entitySprites);
+            newSprites = new PriorityQueue<EntitySprite>(entitySprites);
             newSpriteIds = new HashMap<>(entitySpriteIds);
 
             newSprites.remove(sprite);
@@ -3139,7 +3141,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         if (isoSprite != null) {
-            isoSprites = new ArrayList<IsometricSprite>(isometricSprites);
+            isoSprites = new PriorityQueue<IsometricSprite>(isometricSprites);
             newIsoSpriteIds = new HashMap<>(isometricSpriteIds);
 
             isoSprites.remove(isoSprite);
@@ -3261,11 +3263,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         // Create a copy of the sprite list
-        ArrayList<EntitySprite> newSprites = new ArrayList<>(entitySprites);
+        Queue<EntitySprite> newSprites = new PriorityQueue<>(entitySprites);
         HashMap<List<Integer>, EntitySprite> newSpriteIds = 
                 new HashMap<>(entitySpriteIds);
-        ArrayList<IsometricSprite> isoSprites = 
-                new ArrayList<>(isometricSprites);
+        Queue<IsometricSprite> isoSprites = new PriorityQueue<>(
+                isometricSprites);
         HashMap<List<Integer>, IsometricSprite> newIsoSpriteIds = 
                 new HashMap<>(isometricSpriteIds);
 
@@ -3385,8 +3387,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     void redrawAllEntities() {
         int numEntities = game.getNoOfEntities();
-        List<EntitySprite> newSprites = new ArrayList<EntitySprite>(numEntities);
-        List<IsometricSprite> newIsometricSprites = new ArrayList<>(numEntities);
+        Queue<EntitySprite> newSprites = new PriorityQueue<EntitySprite>(
+                numEntities);
+        Queue<IsometricSprite> newIsometricSprites = new PriorityQueue<>(
+                numEntities);
         Map<List<Integer>, EntitySprite> newSpriteIds = new HashMap<>(
                 numEntities);
         Map<List<Integer>, IsometricSprite> newIsoSpriteIds = new HashMap<>(

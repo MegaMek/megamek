@@ -27,6 +27,7 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
@@ -89,7 +90,7 @@ public class Precognition implements Runnable {
      *  issues. 
      */
     private IGame game;
-    private final ReentrantReadWriteLock GAME_LOCK = new ReentrantReadWriteLock();
+    private final ReentrantLock GAME_LOCK = new ReentrantLock();
 
     /**
      * Computing ECMInfo requires iterating over all Entities in the Game and 
@@ -146,6 +147,10 @@ public class Precognition implements Runnable {
             System.out.println("client: got null packet"); //$NON-NLS-1$
             return;
         }
+        // Game isn't thread safe; other threads shouldn't use  game while
+        // it may be being updated
+        GAME_LOCK.lock();
+        try {
         switch (c.getCommand()) {
             case Packet.COMMAND_PLAYER_UPDATE:
                 receivePlayerInfo(c);
@@ -306,6 +311,9 @@ public class Precognition implements Runnable {
                 GameVictoryEvent gve = new GameVictoryEvent(this, getGame());
                 getGame().processGameEvent(gve);
                 break;
+        }
+        } finally {
+            GAME_LOCK.unlock();
         }
     }
 
@@ -483,6 +491,8 @@ public class Precognition implements Runnable {
         final String METHOD_NAME = "processGameEvents()";
         getOwner().methodBegin(getClass(), METHOD_NAME);
 
+        // We don't want Game to change while this is happening
+        GAME_LOCK.lock();
         try {
             LinkedList<GameEvent> eventsToProcessIterator = new LinkedList<>(getEventsToProcess());
             int numEvents = eventsToProcessIterator.size();
@@ -546,6 +556,7 @@ public class Precognition implements Runnable {
             }
             getOwner().log(getClass(), METHOD_NAME, "Events still to process: " + getEventsToProcess().size());
         } finally {
+            GAME_LOCK.unlock();
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
@@ -557,7 +568,8 @@ public class Precognition implements Runnable {
     public void dirtifyUnit(int id) {
         final String METHOD_NAME = "dirtifyUnit(int)";
         getOwner().methodBegin(getClass(), METHOD_NAME);
-
+        // Prevent Game from changing while processing
+        GAME_LOCK.lock();
         try {
             // first of all, if a unit has been removed, remove it from the list and
             // stop
@@ -626,6 +638,7 @@ public class Precognition implements Runnable {
                         CoordFacingCombo.createCoordFacingCombo(entity));
             }
         } finally {
+            GAME_LOCK.unlock();
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
@@ -683,23 +696,23 @@ public class Precognition implements Runnable {
     }
     
     public void resetGame() {
-        GAME_LOCK.writeLock();
+        GAME_LOCK.lock();
         try {
             getOwner().log(getClass(), "resetGame()", LogLevel.DEBUG, "GAME_LOCK write locked.");
             game.reset();
         } finally {
-            GAME_LOCK.writeLock().unlock();
+            GAME_LOCK.unlock();
             getOwner().log(getClass(), "resetGame()", LogLevel.DEBUG, "GAME_LOCK write unlocked.");
         }
     }
 
     private IGame getGame() {
-        GAME_LOCK.readLock().lock();
+        GAME_LOCK.lock();
         try {
             getOwner().log(getClass(), "getGame()", LogLevel.DEBUG, "GAME_LOCK read locked.");
             return game;
         } finally {
-            GAME_LOCK.readLock().unlock();
+            GAME_LOCK.unlock();
             getOwner().log(getClass(), "getGame()", LogLevel.DEBUG, "GAME_LOCK read unlocked.");
         }
     }

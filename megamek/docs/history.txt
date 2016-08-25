@@ -34,6 +34,7 @@ v0.41.22-git
  	(Big Thanks to Bloodwolf for the often frustrating process.)
 + Feature: Colored pixels in Unit images are now ignored when applying camo
 + Issue #315: Nag for Lava PSR shown when moving on bridge over lava
++ Issue #306: Thread-safety issues in Princess.Precognition
 
 v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips

@@ -36,6 +36,7 @@ v0.41.22-git
 + Issue #315: Nag for Lava PSR shown when moving on bridge over lava
 + Issue #306: Thread-safety issues in Princess.Precognition
 + Issue #223: ECM hex display not always updating, especially in deployment
++ Issue #180: Unit labels can now have a color border that correspondes to owner
 
 v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips

@@ -101,6 +101,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String DISPLAY_POS_Y = "DisplayPosY";
     public static final String DISPLAY_SIZE_HEIGHT = "DisplaySizeHeight";
     public static final String DISPLAY_SIZE_WIDTH = "DisplaySizeWidth";
+    public static final String ENTITY_OWNER_LABEL_COLOR = "EntityOwnerLabelColor";
     public static final String FOCUS = "Focus";
     public static final String GAME_OPTIONS_SIZE_HEIGHT = "GameOptionsSizeHeight";
     public static final String GAME_OPTIONS_SIZE_WIDTH = "GameOptionsSizeWidth";
@@ -269,6 +270,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(CUSTOM_UNIT_WIDTH, 600);
         store.setDefault(DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(DISPLAY_SIZE_WIDTH, 300);
+        store.setDefault(ENTITY_OWNER_LABEL_COLOR, true);
         store.setDefault(GAME_OPTIONS_SIZE_HEIGHT,400);
         store.setDefault(GAME_OPTIONS_SIZE_WIDTH,400);
         store.setDefault(FIRING_SOLUTIONS,true);
@@ -421,6 +423,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public int getDisplaySizeWidth() {
         return store.getInt(DISPLAY_SIZE_WIDTH);
+    }
+
+    public boolean getEntityOwnerLabelColor() {
+        return store.getBoolean(ENTITY_OWNER_LABEL_COLOR);
     }
 
     public boolean getFocus() {
@@ -803,6 +809,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setDisplaySizeWidth(int i) {
         store.setValue(DISPLAY_SIZE_WIDTH, i);
+    }
+
+    public void setEntityOwnerLabelColor(boolean i) {
+        store.setValue(ENTITY_OWNER_LABEL_COLOR, i);
     }
 
     public void setGetFocus(boolean state) {

@@ -40,6 +40,7 @@ v0.41.22-git
 + Issue #180: Units now have a set draw order based on unit type.  Draw order:
     Infantry, BA, Tank, Mech, VTOL, Aero
 + Board background image can now be scaled instead of tiled
++ Made 'BW - Default.xml' the default skin
 
 v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips

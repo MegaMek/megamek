@@ -213,6 +213,7 @@
 
   Camo Pack
   	 SeaVea
+     Colonel Sanders Light (Folders noted with CSL)
 
   Random Assignment Tables
      Harold "BATTLEMASTER" N. <s_d@users.sourceforge.net>

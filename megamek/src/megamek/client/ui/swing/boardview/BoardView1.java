@@ -76,7 +76,6 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -416,9 +415,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private TimerTask ourTask = null;
 
     BufferedImage bvBgBuffer = null;
-    ImageIcon bvBgIcon = null;
+    Image bvBgImage = null;
+    boolean bvBgShouldTile = false;
     BufferedImage scrollPaneBgBuffer = null;
-    ImageIcon scrollPaneBgIcon = null;
+    Image scrollPaneBgImg = null;
 
     List<Image> boardBackgrounds = new ArrayList<>();
 
@@ -1140,28 +1140,32 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         Rectangle viewRect = scrollpane.getVisibleRect();
-        if ((bvBgBuffer == null) || (bvBgBuffer.getWidth() != viewRect.getWidth())
-            || (bvBgBuffer.getHeight() != viewRect.getHeight())) {
+        if ((bvBgBuffer == null) && (bvBgImage != null)
+                || (bvBgBuffer.getWidth() != viewRect.getWidth())
+                || (bvBgBuffer.getHeight() != viewRect.getHeight())) {
             pingMinimap();
-            bvBgBuffer = new BufferedImage((int) viewRect.getWidth(),
-                                           (int) viewRect.getHeight(), BufferedImage.TYPE_INT_RGB);
+            bvBgBuffer = ImageUtil.createAcceleratedImage(
+                    (int) viewRect.getWidth(), (int) viewRect.getHeight());
             Graphics bgGraph = bvBgBuffer.getGraphics();
-            if (bvBgIcon != null) {
-                int w = (int) viewRect.getWidth();
-                int h = (int) viewRect.getHeight();
-                int iW = bvBgIcon.getIconWidth();
-                int iH = bvBgIcon.getIconHeight();
-                // If the unit icon hasn't been loaded, prevent an infinite loop
-                if ((iW < 1) || (iH < 1)) {
-                    return;
-                }
+
+            int w = (int) viewRect.getWidth();
+            int h = (int) viewRect.getHeight();
+            int iW = bvBgImage.getWidth(null);
+            int iH = bvBgImage.getHeight(null);
+            // If the unit icon hasn't been loaded, prevent an infinite loop
+            if ((iW < 1) || (iH < 1)) {
+                return;
+            }
+            if (bvBgShouldTile) {
                 for (int x = 0; x < w; x += iW) {
                     for (int y = 0; y < h; y += iH) {
-                        bgGraph.drawImage(bvBgIcon.getImage(), x, y,
-                                          bvBgIcon.getImageObserver());
+                        bgGraph.drawImage(bvBgImage, x, y, null);
                     }
                 }
+            } else {
+                bgGraph.drawImage(bvBgImage, 0, 0, w, h, null);
             }
+            bgGraph.dispose();
         }
         g.drawImage(bvBgBuffer, g.getClipBounds().x, g.getClipBounds().y, null);
 
@@ -5713,28 +5717,30 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Setup background icons
         try {
-            java.net.URI imgURL;
             File file;
             if (bvSkinSpec.backgrounds.size() > 0) {
                 file = new File(Configuration.widgetsDir(),
                                 bvSkinSpec.backgrounds.get(0));
-                imgURL = file.toURI();
                 if (!file.exists()) {
                     System.err.println("BoardView1 Error: icon doesn't exist: "
                                        + file.getAbsolutePath());
                 } else {
-                    bvBgIcon = new ImageIcon(imgURL.toURL());
+                    bvBgImage = ImageUtil.loadImageFromFile(
+                            file.getAbsolutePath(),
+                            Toolkit.getDefaultToolkit());
+                    bvBgShouldTile = bvSkinSpec.tileBackground;
                 }
             }
             if (bvSkinSpec.backgrounds.size() > 1) {
                 file = new File(Configuration.widgetsDir(),
                                 bvSkinSpec.backgrounds.get(1));
-                imgURL = file.toURI();
                 if (!file.exists()) {
                     System.err.println("BoardView1 Error: icon doesn't exist: "
                                        + file.getAbsolutePath());
                 } else {
-                    scrollPaneBgIcon = new ImageIcon(imgURL.toURL());
+                    scrollPaneBgImg = ImageUtil.loadImageFromFile(
+                            file.getAbsolutePath(),
+                            Toolkit.getDefaultToolkit());
                 }
             }
         } catch (Exception e) {
@@ -5752,30 +5758,30 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
             @Override
             protected void paintComponent(Graphics g) {
-                if (scrollPaneBgIcon == null) {
+                if (scrollPaneBgImg == null) {
                     super.paintComponent(g);
                     return;
                 }
                 int w = getWidth();
                 int h = getHeight();
-                int iW = scrollPaneBgIcon.getIconWidth();
-                int iH = scrollPaneBgIcon.getIconHeight();
+                int iW = scrollPaneBgImg.getWidth(null);
+                int iH = scrollPaneBgImg.getHeight(null);
                 if ((scrollPaneBgBuffer == null)
                     || (scrollPaneBgBuffer.getWidth() != w)
                     || (scrollPaneBgBuffer.getHeight() != h)) {
                     scrollPaneBgBuffer = new BufferedImage(w, h,
                             BufferedImage.TYPE_INT_RGB);
                     Graphics bgGraph = scrollPaneBgBuffer.getGraphics();
-                    // If the unit icon hasn't been loaded, prevent an infinite loop
+                    // If the unit icon not loaded, prevent infinite loop
                     if ((iW < 1) || (iH < 1)) {
                         return;
                     }
                     for (int x = 0; x < w; x += iW) {
                         for (int y = 0; y < h; y += iH) {
-                            bgGraph.drawImage(scrollPaneBgIcon.getImage(), x, y,
-                                              scrollPaneBgIcon.getImageObserver());
+                            bgGraph.drawImage(scrollPaneBgImg, x, y, null);
                         }
                     }
+                    bgGraph.dispose();
                 }
                 g.drawImage(scrollPaneBgBuffer, 0, 0, null);
             }

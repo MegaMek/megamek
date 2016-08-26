@@ -3387,6 +3387,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     void redrawAllEntities() {
         int numEntities = game.getNoOfEntities();
+        // Prevent IllegalArgumentException
+        numEntities = Math.max(1, numEntities);
         Queue<EntitySprite> newSprites = new PriorityQueue<EntitySprite>(
                 numEntities);
         Queue<IsometricSprite> newIsometricSprites = new PriorityQueue<>(

@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.41.23-git
+
 v0.41.22 (2016-08-26 03:00 UTC)
 + Issue #295: Roads not preventing swamp/rubble PSRs
 + Bug: Clicking Walk from Jump, would still plot jumping movement

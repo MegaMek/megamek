@@ -414,8 +414,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     // reference to our timertask for redraw
     private TimerTask ourTask = null;
 
-    BufferedImage bvBgBuffer = null;
-    Image bvBgImage = null;
+    BufferedImage bvBgImage = null;
     boolean bvBgShouldTile = false;
     BufferedImage scrollPaneBgBuffer = null;
     Image scrollPaneBgImg = null;
@@ -1125,7 +1124,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         if (guip.getAntiAliasing()) {
             ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                              RenderingHints.VALUE_ANTIALIAS_ON);
+                    RenderingHints.VALUE_ANTIALIAS_ON);
         }
 
         if (!isTileImagesLoaded()) {
@@ -1140,34 +1139,40 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         Rectangle viewRect = scrollpane.getVisibleRect();
-        if ((bvBgBuffer == null) && (bvBgImage != null)
-                || (bvBgBuffer.getWidth() != viewRect.getWidth())
-                || (bvBgBuffer.getHeight() != viewRect.getHeight())) {
-            pingMinimap();
-            bvBgBuffer = ImageUtil.createAcceleratedImage(
-                    (int) viewRect.getWidth(), (int) viewRect.getHeight());
-            Graphics bgGraph = bvBgBuffer.getGraphics();
-
-            int w = (int) viewRect.getWidth();
-            int h = (int) viewRect.getHeight();
-            int iW = bvBgImage.getWidth(null);
-            int iH = bvBgImage.getHeight(null);
-            // If the unit icon hasn't been loaded, prevent an infinite loop
-            if ((iW < 1) || (iH < 1)) {
-                return;
-            }
-            if (bvBgShouldTile) {
-                for (int x = 0; x < w; x += iW) {
-                    for (int y = 0; y < h; y += iH) {
-                        bgGraph.drawImage(bvBgImage, x, y, null);
-                    }
+        if (bvBgShouldTile && (bvBgImage != null)) {
+            Rectangle clipping = g.getClipBounds();
+            int x = 0;
+            int y = 0;
+            int w = bvBgImage.getWidth();
+            int h = bvBgImage.getHeight();
+            while (y < clipping.getHeight()) {
+                int yRem = 0;
+                if (y == 0) {
+                    yRem = clipping.y % h;
                 }
-            } else {
-                bgGraph.drawImage(bvBgImage, 0, 0, w, h, null);
+                x = 0;
+                while (x < clipping.getWidth()) {
+                    int xRem = 0;
+                    if (x == 0) {
+                        xRem = clipping.x % w;
+                    }
+                    if (xRem != 0 || yRem != 0) {
+                        g.drawImage(
+                                bvBgImage.getSubimage(xRem, yRem, w - xRem,
+                                        h - yRem),
+                                clipping.x + x, clipping.y + y, this);
+                    } else {
+                        g.drawImage(bvBgImage, clipping.x + x, clipping.y + y,
+                                this);
+                    }
+                    x += w - xRem;
+                }
+                y += h - yRem;
             }
-            bgGraph.dispose();
+        } else if (bvBgImage != null) {
+            g.drawImage(bvBgImage, -getX(), -getY(), (int) viewRect.getWidth(),
+                    (int) viewRect.getHeight(), this);
         }
-        g.drawImage(bvBgBuffer, g.getClipBounds().x, g.getClipBounds().y, null);
 
         // Used to pad the board edge
         g.translate(HEX_W, HEX_H);
@@ -1311,7 +1316,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             String s = String.format("%1$5.3f", averageTime / 1000000d);
             g.setFont(fpsFont);
             g.setColor(Color.YELLOW);
-            g.drawString(s, g.getClipBounds().x + 5, g.getClipBounds().y + 20);
+            g.drawString(s, -getX() + 5, -getY() + 20);
         }
     }
     
@@ -5725,7 +5730,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     System.err.println("BoardView1 Error: icon doesn't exist: "
                                        + file.getAbsolutePath());
                 } else {
-                    bvBgImage = ImageUtil.loadImageFromFile(
+                    bvBgImage = (BufferedImage) ImageUtil.loadImageFromFile(
                             file.getAbsolutePath(),
                             Toolkit.getDefaultToolkit());
                     bvBgShouldTile = bvSkinSpec.tileBackground;

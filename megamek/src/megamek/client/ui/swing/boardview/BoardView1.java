@@ -970,6 +970,31 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
 
                 });
+
+        // Register the action for Toggling drawing unit labels
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_DRAW_LABELS.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (shouldIgnoreKeyCommands()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        GUIPreferences guip = GUIPreferences.getInstance();
+                        boolean drawLabels = guip.getBoolean(
+                                GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL);
+                        guip.setValue(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL,
+                                !drawLabels);
+                        updateEntityLabels();
+                    }
+
+                });
     }
 
     private boolean shouldIgnoreKeyCommands() {
@@ -1023,6 +1048,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(IClientPreferences.MAP_TILESET)) {
             updateBoard();
+        }
+        if (e.getName().equals(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)) {
+            updateEntityLabels();
         }
     }
 

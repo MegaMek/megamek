@@ -466,39 +466,41 @@ class EntitySprite extends Sprite {
             graph.scale(1/bv.scale, 1/bv.scale);
             
             // Label background
-            if (criticalStatus) {
-                graph.setColor(LABEL_CRITICAL_BACK);
-            } else {
-                graph.setColor(LABEL_BACK);
-            }
-            graph.fillRoundRect(labelRect.x, labelRect.y, 
-                    labelRect.width, labelRect.height, 5, 10);
+            if (guip.getBoolean(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)) {
+                if (criticalStatus) {
+                    graph.setColor(LABEL_CRITICAL_BACK);
+                } else {
+                    graph.setColor(LABEL_BACK);
+                }
+                graph.fillRoundRect(labelRect.x, labelRect.y, labelRect.width,
+                        labelRect.height, 5, 10);
 
-            if (guip.getEntityOwnerLabelColor()) {
-                graph.setColor(PlayerColors
-                        .getColor(entity.getOwner().getColorIndex(), false));
-                Stroke oldStroke = graph.getStroke();
-                graph.setStroke(new BasicStroke(3));
-                graph.drawRoundRect(labelRect.x - 1, labelRect.y - 1,
-                        labelRect.width + 1, labelRect.height + 1, 5, 10);
-                graph.setStroke(oldStroke);
-            }
+                if (guip.getEntityOwnerLabelColor()) {
+                    graph.setColor(PlayerColors.getColor(
+                            entity.getOwner().getColorIndex(), false));
+                    Stroke oldStroke = graph.getStroke();
+                    graph.setStroke(new BasicStroke(3));
+                    graph.drawRoundRect(labelRect.x - 1, labelRect.y - 1,
+                            labelRect.width + 1, labelRect.height + 1, 5, 10);
+                    graph.setStroke(oldStroke);
+                }
 
-            // Label text
-            graph.setFont(labelFont);
-            Color textColor = LABEL_TEXT_COLOR;
-            if (!entity.isDone() && !onlyDetectedBySensors()) {
-                textColor = guip.getColor(
-                        GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR);
+                // Label text
+                graph.setFont(labelFont);
+                Color textColor = LABEL_TEXT_COLOR;
+                if (!entity.isDone() && !onlyDetectedBySensors()) {
+                    textColor = guip.getColor(
+                            GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR);
+                }
+                if (isSelected) {
+                    textColor = guip.getColor(
+                            GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR);
+                }
+                bv.drawCenteredText(graph, getAdjShortName(),
+                        labelRect.x + labelRect.width / 2,
+                        labelRect.y + labelRect.height / 2 - 1, textColor,
+                        (entity.isDone() && !onlyDetectedBySensors()));
             }
-            if (isSelected) {
-                textColor = guip.getColor(
-                        GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR);
-            }
-            bv.drawCenteredText(graph, getAdjShortName(),
-                    labelRect.x + labelRect.width / 2,
-                    labelRect.y + labelRect.height / 2 - 1, textColor,
-                    (entity.isDone() && !onlyDetectedBySensors()));
 
             // Past here, everything is drawing status that shouldn't be seen
             // on a sensor return, so we'll just quit here

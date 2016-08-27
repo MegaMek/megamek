@@ -46,6 +46,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
      */
     public static final String ADVANCED_CHATBOX_SIZE = "AdvancedChatboxSize";
     public static final String ADVANCED_CHAT_LOUNGE_TAB_FONT_SIZE = "AdvancedChatLoungeTabFontSize";
+    public static final String ADVANCED_DRAW_ENTITY_LABEL = "AdvancedDrawEntityLabel";
     public static final String ADVANCED_MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE = "AdvancedMechDisplayArmorLargeFontSize";
     public static final String ADVANCED_MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE = "AdvancedMechDisplayArmorMediumFontSize";
     public static final String ADVANCED_MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE = "AdvancedMechDisplayArmorSmallFontSize";
@@ -213,6 +214,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(ADVANCED_CHATBOX_SIZE, 5);
         store.setDefault(ADVANCED_CHAT_LOUNGE_TAB_FONT_SIZE, 16);
+        store.setDefault(ADVANCED_DRAW_ENTITY_LABEL, true);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE, 12);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE, 10);
         store.setDefault(ADVANCED_MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE, 9);

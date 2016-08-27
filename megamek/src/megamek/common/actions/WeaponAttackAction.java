@@ -4215,7 +4215,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // Must target infantry in buildings from the inside.
         if (targetInBuilding && (te instanceof Infantry)
                 && (null == los.getThruBldg())) {
-            return "Attack on infantry crosses building exterior wall.";
+            return "Attack on infantry crosses building exterior wall/roof.";
         }
 
         if ((wtype.getAmmoType() == AmmoType.T_NARC)

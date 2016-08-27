@@ -2912,6 +2912,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         boolean isHoming = false;
         ToHitData toHit = null;
 
+        if ((target instanceof Entity) && ((Entity)target).isHidden()) {
+            return "Can't fire at hidden units!";
+        }
+
         if (weapon.isSquadSupportWeapon() && (ae instanceof BattleArmor)) {
             if (!((BattleArmor) ae).isTrooperActive(BattleArmor.LOC_TROOPER_1)) {
                 return "Squad support mounted weapons cannot fire if "

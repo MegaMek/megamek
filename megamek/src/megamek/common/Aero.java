@@ -2640,16 +2640,6 @@ public class Aero extends Entity {
         return true; // deal with this later
     }
 
-    /**
-     * Restores the entity after serialization
-     */
-    @Override
-    public void restore() {
-        super.restore();
-        // not sure what to put here
-
-    }
-
     @Override
     public boolean canCharge() {
         // ramming is resolved differently than chargin

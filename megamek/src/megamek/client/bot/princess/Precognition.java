@@ -27,6 +27,7 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import megamek.client.bot.princess.BotGeometry.CoordFacingCombo;
@@ -89,7 +90,7 @@ public class Precognition implements Runnable {
      *  issues. 
      */
     private IGame game;
-    private final ReentrantReadWriteLock GAME_LOCK = new ReentrantReadWriteLock();
+    private final ReentrantLock GAME_LOCK = new ReentrantLock();
 
     /**
      * Computing ECMInfo requires iterating over all Entities in the Game and 
@@ -146,6 +147,10 @@ public class Precognition implements Runnable {
             System.out.println("client: got null packet"); //$NON-NLS-1$
             return;
         }
+        // Game isn't thread safe; other threads shouldn't use  game while
+        // it may be being updated
+        GAME_LOCK.lock();
+        try {
         switch (c.getCommand()) {
             case Packet.COMMAND_PLAYER_UPDATE:
                 receivePlayerInfo(c);
@@ -307,6 +312,9 @@ public class Precognition implements Runnable {
                 getGame().processGameEvent(gve);
                 break;
         }
+        } finally {
+            GAME_LOCK.unlock();
+        }
     }
 
     public void pause() {
@@ -362,7 +370,7 @@ public class Precognition implements Runnable {
      * Makes sure pathEnumerator has up to date information about other units
      * locations call this right before making a move. automatically pauses.
      */
-    public void insureUpToDate() {
+    public void ensureUpToDate() {
         final String METHOD_NAME = "insureUpToDate()";
         getOwner().methodBegin(getClass(), METHOD_NAME);
 
@@ -483,6 +491,8 @@ public class Precognition implements Runnable {
         final String METHOD_NAME = "processGameEvents()";
         getOwner().methodBegin(getClass(), METHOD_NAME);
 
+        // We don't want Game to change while this is happening
+        GAME_LOCK.lock();
         try {
             LinkedList<GameEvent> eventsToProcessIterator = new LinkedList<>(getEventsToProcess());
             int numEvents = eventsToProcessIterator.size();
@@ -495,8 +505,7 @@ public class Precognition implements Runnable {
                 getOwner().log(getClass(), METHOD_NAME, "Processing " + event.toString());
                 getEventsToProcess().remove(event);
                 if (event instanceof GameEntityChangeEvent) {
-                    // for starters, ignore entity changes that don't happen during
-                    // the movement phase
+                    // Ignore entity changes that don't happen during movement
                     if (getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT) {
                         continue;
                     }
@@ -521,16 +530,18 @@ public class Precognition implements Runnable {
                     if (position.equals(getPathEnumerator().getLastKnownCoords(entity.getId()))) {
                         continue; // no sense in updating a unit if it hasn't moved
                     }
-                    getOwner().log(getClass(), METHOD_NAME, "Received entity change event for "
-                                                            + changeEvent.getEntity().getDisplayName() + " (ID "
-                                                            + entity.getId() + ")");
+                    getOwner().log(getClass(), METHOD_NAME,
+                            "Received entity change event for "
+                                    + changeEvent.getEntity().getDisplayName()
+                                    + " (ID " + entity.getId() + ")");
                     Integer entityId = changeEvent.getEntity().getId();
                     dirtifyUnit(entityId);
 
                 } else if (event instanceof GamePhaseChangeEvent) {
                     GamePhaseChangeEvent phaseChange = (GamePhaseChangeEvent) event;
-                    getOwner().log(getClass(), METHOD_NAME, "Phase change detected: " + phaseChange.getNewPhase()
-                                                                                                   .name());
+                    getOwner().log(getClass(), METHOD_NAME,
+                            "Phase change detected: "
+                                    + phaseChange.getNewPhase().name());
                     // this marks when I can all I can start recalculating paths.
                     // All units are dirty
                     if (phaseChange.getNewPhase() == IGame.Phase.PHASE_MOVEMENT) {
@@ -545,6 +556,7 @@ public class Precognition implements Runnable {
             }
             getOwner().log(getClass(), METHOD_NAME, "Events still to process: " + getEventsToProcess().size());
         } finally {
+            GAME_LOCK.unlock();
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
@@ -556,7 +568,8 @@ public class Precognition implements Runnable {
     public void dirtifyUnit(int id) {
         final String METHOD_NAME = "dirtifyUnit(int)";
         getOwner().methodBegin(getClass(), METHOD_NAME);
-
+        // Prevent Game from changing while processing
+        GAME_LOCK.lock();
         try {
             // first of all, if a unit has been removed, remove it from the list and
             // stop
@@ -571,23 +584,26 @@ public class Precognition implements Runnable {
             // with its initial or final position
             // in their list become dirty
             if (!(getGame().getEntity(id) instanceof Aero)) {
-                TreeSet<Integer> toDirty = new TreeSet<>(getPathEnumerator().getEntitiesWithLocation(getGame().getEntity
-                                                                                                             (id)
-                                                                                                              .getPosition(),
-                                                                                                     true));
-                if (getPathEnumerator().getLastKnownLocations().containsKey(id)) {
-                    if ((getGame().getEntity(id) != null) && getGame().getEntity(id).isSelectableThisTurn()) {
-                        toDirty.addAll(getPathEnumerator().getEntitiesWithLocation(getPathEnumerator()
-                                                                                           .getLastKnownLocations()
-                                                                                           .get(id).getCoords(), true));
+                TreeSet<Integer> toDirty = new TreeSet<>(
+                        getPathEnumerator().getEntitiesWithLocation(
+                                getGame().getEntity(id).getPosition(), true));
+                if (getPathEnumerator().getLastKnownLocations()
+                        .containsKey(id)) {
+                    if ((getGame().getEntity(id) != null)
+                            && getGame().getEntity(id).isSelectableThisTurn()) {
+                        toDirty.addAll(getPathEnumerator()
+                                .getEntitiesWithLocation(getPathEnumerator()
+                                        .getLastKnownLocations().get(id)
+                                        .getCoords(), true));
                     }
                 }
                 // no need to dirty units that aren't selectable this turn
                 List<Integer> toRemove = new ArrayList<>();
                 for (Integer index : toDirty) {
-                    if ((getGame().getEntity(index) == null) || (!getGame().getEntity(index).isSelectableThisTurn())
-                                                                && (getGame().getPhase() == IGame.Phase
-                            .PHASE_MOVEMENT)) {
+                    if ((getGame().getEntity(index) == null) || (!getGame()
+                            .getEntity(index).isSelectableThisTurn())
+                            && (getGame()
+                                    .getPhase() == IGame.Phase.PHASE_MOVEMENT)) {
                         toRemove.add(index);
                     }
                 }
@@ -598,7 +614,8 @@ public class Precognition implements Runnable {
                 if (toDirty.size() != 0) {
                     String msg = "The following units have become dirty";
                     if (getGame().getEntity(id) != null) {
-                        msg += " as a result of a nearby move of " + getGame().getEntity(id).getDisplayName();
+                        msg += " as a result of a nearby move of "
+                                + getGame().getEntity(id).getDisplayName();
                     }
 
                     Iterator<Integer> dirtyIterator = toDirty.descendingIterator();
@@ -617,10 +634,11 @@ public class Precognition implements Runnable {
                 (getGame().getPhase() != IGame.Phase.PHASE_MOVEMENT)) {
                 getDirtyUnits().add(id);
             } else if (entity != null) {
-                getPathEnumerator().getLastKnownLocations().put(id, CoordFacingCombo.createCoordFacingCombo(entity
-                                                                                                           ));
+                getPathEnumerator().getLastKnownLocations().put(id,
+                        CoordFacingCombo.createCoordFacingCombo(entity));
             }
         } finally {
+            GAME_LOCK.unlock();
             getOwner().methodEnd(getClass(), METHOD_NAME);
         }
     }
@@ -678,23 +696,23 @@ public class Precognition implements Runnable {
     }
     
     public void resetGame() {
-        GAME_LOCK.writeLock();
+        GAME_LOCK.lock();
         try {
             getOwner().log(getClass(), "resetGame()", LogLevel.DEBUG, "GAME_LOCK write locked.");
             game.reset();
         } finally {
-            GAME_LOCK.writeLock().unlock();
+            GAME_LOCK.unlock();
             getOwner().log(getClass(), "resetGame()", LogLevel.DEBUG, "GAME_LOCK write unlocked.");
         }
     }
 
     private IGame getGame() {
-        GAME_LOCK.readLock().lock();
+        GAME_LOCK.lock();
         try {
             getOwner().log(getClass(), "getGame()", LogLevel.DEBUG, "GAME_LOCK read locked.");
             return game;
         } finally {
-            GAME_LOCK.readLock().unlock();
+            GAME_LOCK.unlock();
             getOwner().log(getClass(), "getGame()", LogLevel.DEBUG, "GAME_LOCK read unlocked.");
         }
     }

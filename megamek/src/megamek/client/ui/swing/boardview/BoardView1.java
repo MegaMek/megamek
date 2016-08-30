@@ -68,13 +68,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
 import java.util.TimerTask;
 import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -250,8 +251,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     private boolean shouldScroll = false;
 
     // entity sprites
-    private List<EntitySprite> entitySprites = new ArrayList<EntitySprite>();
-    private List<IsometricSprite> isometricSprites = new ArrayList<IsometricSprite>();
+    private Queue<EntitySprite> entitySprites = new PriorityQueue<EntitySprite>();
+    private Queue<IsometricSprite> isometricSprites = new PriorityQueue<IsometricSprite>();
 
     private ArrayList<FlareSprite> flareSprites = new ArrayList<FlareSprite>();
     /**
@@ -413,10 +414,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     // reference to our timertask for redraw
     private TimerTask ourTask = null;
 
-    BufferedImage bvBgBuffer = null;
-    ImageIcon bvBgIcon = null;
+    BufferedImage bvBgImage = null;
+    boolean bvBgShouldTile = false;
     BufferedImage scrollPaneBgBuffer = null;
-    ImageIcon scrollPaneBgIcon = null;
+    Image scrollPaneBgImg = null;
 
     List<Image> boardBackgrounds = new ArrayList<>();
 
@@ -969,6 +970,31 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     }
 
                 });
+
+        // Register the action for Toggling drawing unit labels
+        controller.registerCommandAction(KeyCommandBind.TOGGLE_DRAW_LABELS.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (shouldIgnoreKeyCommands()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        GUIPreferences guip = GUIPreferences.getInstance();
+                        boolean drawLabels = guip.getBoolean(
+                                GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL);
+                        guip.setValue(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL,
+                                !drawLabels);
+                        updateEntityLabels();
+                    }
+
+                });
     }
 
     private boolean shouldIgnoreKeyCommands() {
@@ -1022,6 +1048,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(IClientPreferences.MAP_TILESET)) {
             updateBoard();
+        }
+        if (e.getName().equals(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)) {
+            updateEntityLabels();
         }
     }
 
@@ -1123,7 +1152,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         if (guip.getAntiAliasing()) {
             ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                              RenderingHints.VALUE_ANTIALIAS_ON);
+                    RenderingHints.VALUE_ANTIALIAS_ON);
         }
 
         if (!isTileImagesLoaded()) {
@@ -1138,30 +1167,40 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         Rectangle viewRect = scrollpane.getVisibleRect();
-        if ((bvBgBuffer == null) || (bvBgBuffer.getWidth() != viewRect.getWidth())
-            || (bvBgBuffer.getHeight() != viewRect.getHeight())) {
-            pingMinimap();
-            bvBgBuffer = new BufferedImage((int) viewRect.getWidth(),
-                                           (int) viewRect.getHeight(), BufferedImage.TYPE_INT_RGB);
-            Graphics bgGraph = bvBgBuffer.getGraphics();
-            if (bvBgIcon != null) {
-                int w = (int) viewRect.getWidth();
-                int h = (int) viewRect.getHeight();
-                int iW = bvBgIcon.getIconWidth();
-                int iH = bvBgIcon.getIconHeight();
-                // If the unit icon hasn't been loaded, prevent an infinite loop
-                if ((iW < 1) || (iH < 1)) {
-                    return;
+        if (bvBgShouldTile && (bvBgImage != null)) {
+            Rectangle clipping = g.getClipBounds();
+            int x = 0;
+            int y = 0;
+            int w = bvBgImage.getWidth();
+            int h = bvBgImage.getHeight();
+            while (y < clipping.getHeight()) {
+                int yRem = 0;
+                if (y == 0) {
+                    yRem = clipping.y % h;
                 }
-                for (int x = 0; x < w; x += iW) {
-                    for (int y = 0; y < h; y += iH) {
-                        bgGraph.drawImage(bvBgIcon.getImage(), x, y,
-                                          bvBgIcon.getImageObserver());
+                x = 0;
+                while (x < clipping.getWidth()) {
+                    int xRem = 0;
+                    if (x == 0) {
+                        xRem = clipping.x % w;
                     }
+                    if (xRem != 0 || yRem != 0) {
+                        g.drawImage(
+                                bvBgImage.getSubimage(xRem, yRem, w - xRem,
+                                        h - yRem),
+                                clipping.x + x, clipping.y + y, this);
+                    } else {
+                        g.drawImage(bvBgImage, clipping.x + x, clipping.y + y,
+                                this);
+                    }
+                    x += w - xRem;
                 }
+                y += h - yRem;
             }
+        } else if (bvBgImage != null) {
+            g.drawImage(bvBgImage, -getX(), -getY(), (int) viewRect.getWidth(),
+                    (int) viewRect.getHeight(), this);
         }
-        g.drawImage(bvBgBuffer, g.getClipBounds().x, g.getClipBounds().y, null);
 
         // Used to pad the board edge
         g.translate(HEX_W, HEX_H);
@@ -1305,7 +1344,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             String s = String.format("%1$5.3f", averageTime / 1000000d);
             g.setFont(fpsFont);
             g.setColor(Color.YELLOW);
-            g.drawString(s, g.getClipBounds().x + 5, g.getClipBounds().y + 20);
+            g.drawString(s, -getX() + 5, -getY() + 20);
         }
     }
     
@@ -1637,7 +1676,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * onscreen.
      */
     private synchronized void drawSprites(Graphics g,
-            List<? extends Sprite> spriteArrayList) {
+            Collection<? extends Sprite> spriteArrayList) {
         for (Sprite sprite : spriteArrayList) {
             drawSprite(g, sprite);
         }
@@ -1674,7 +1713,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * @param spriteArrayList The complete list of all IsometricSprite on the board.
      */
     private synchronized void drawIsometricSpritesForHex(Coords c, Graphics g,
-            List<IsometricSprite> spriteArrayList) {
+            Collection<IsometricSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricSprite sprite : spriteArrayList) {
             Coords cp = sprite.getPosition();
@@ -1728,7 +1767,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * for all sprites.
      */
     private final void drawIsometricSprites(Graphics g,
-            List<IsometricSprite> spriteArrayList) {
+            Collection<IsometricSprite> spriteArrayList) {
         Rectangle view = g.getClipBounds();
         for (IsometricSprite sprite : spriteArrayList) {
             // This can potentially be an expensive operation
@@ -3122,13 +3161,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // We can ignore secondary locations for now, as we don't have moving
         // multi-location entitys (will need to change for mobile structures)
 
-        ArrayList<EntitySprite> newSprites;
-        ArrayList<IsometricSprite> isoSprites;
+        PriorityQueue<EntitySprite> newSprites;
+        PriorityQueue<IsometricSprite> isoSprites;
         HashMap<List<Integer>, EntitySprite> newSpriteIds;
         HashMap<List<Integer>, IsometricSprite> newIsoSpriteIds;
 
         if (sprite != null) {
-            newSprites = new ArrayList<EntitySprite>(entitySprites);
+            newSprites = new PriorityQueue<EntitySprite>(entitySprites);
             newSpriteIds = new HashMap<>(entitySpriteIds);
 
             newSprites.remove(sprite);
@@ -3139,7 +3178,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         if (isoSprite != null) {
-            isoSprites = new ArrayList<IsometricSprite>(isometricSprites);
+            isoSprites = new PriorityQueue<IsometricSprite>(isometricSprites);
             newIsoSpriteIds = new HashMap<>(isometricSpriteIds);
 
             isoSprites.remove(isoSprite);
@@ -3261,11 +3300,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         // Create a copy of the sprite list
-        ArrayList<EntitySprite> newSprites = new ArrayList<>(entitySprites);
+        Queue<EntitySprite> newSprites = new PriorityQueue<>(entitySprites);
         HashMap<List<Integer>, EntitySprite> newSpriteIds = 
                 new HashMap<>(entitySpriteIds);
-        ArrayList<IsometricSprite> isoSprites = 
-                new ArrayList<>(isometricSprites);
+        Queue<IsometricSprite> isoSprites = new PriorityQueue<>(
+                isometricSprites);
         HashMap<List<Integer>, IsometricSprite> newIsoSpriteIds = 
                 new HashMap<>(isometricSpriteIds);
 
@@ -3385,8 +3424,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     void redrawAllEntities() {
         int numEntities = game.getNoOfEntities();
-        List<EntitySprite> newSprites = new ArrayList<EntitySprite>(numEntities);
-        List<IsometricSprite> newIsometricSprites = new ArrayList<>(numEntities);
+        // Prevent IllegalArgumentException
+        numEntities = Math.max(1, numEntities);
+        Queue<EntitySprite> newSprites = new PriorityQueue<EntitySprite>(
+                numEntities);
+        Queue<IsometricSprite> newIsometricSprites = new PriorityQueue<>(
+                numEntities);
         Map<List<Integer>, EntitySprite> newSpriteIds = new HashMap<>(
                 numEntities);
         Map<List<Integer>, IsometricSprite> newIsoSpriteIds = new HashMap<>(
@@ -5163,12 +5206,24 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             processAffectedCoords(c, ecm, eccm, newECMHexes, newECCMHexes);
         }
 
+        Set<Coords> updatedHexes = new HashSet<>();
+        if (ecmHexes != null) {
+            updatedHexes.addAll(ecmHexes.keySet());
+        }
+        if (eccmHexes != null) {
+            updatedHexes.addAll(eccmHexes.keySet());
+        }
+        updatedHexes.addAll(newECMHexes.keySet());
+        updatedHexes.addAll(newECCMHexes.keySet());
+        clearHexImageCache(updatedHexes);
+
         synchronized (this) {
             ecmHexes    = newECMHexes;
             ecmCenters  = newECMCenters;
             eccmHexes   = newECCMHexes;
             eccmCenters = newECCMCenters;
         }
+
         repaint();
     }
 
@@ -5695,28 +5750,30 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // Setup background icons
         try {
-            java.net.URI imgURL;
             File file;
             if (bvSkinSpec.backgrounds.size() > 0) {
                 file = new File(Configuration.widgetsDir(),
                                 bvSkinSpec.backgrounds.get(0));
-                imgURL = file.toURI();
                 if (!file.exists()) {
                     System.err.println("BoardView1 Error: icon doesn't exist: "
                                        + file.getAbsolutePath());
                 } else {
-                    bvBgIcon = new ImageIcon(imgURL.toURL());
+                    bvBgImage = (BufferedImage) ImageUtil.loadImageFromFile(
+                            file.getAbsolutePath(),
+                            Toolkit.getDefaultToolkit());
+                    bvBgShouldTile = bvSkinSpec.tileBackground;
                 }
             }
             if (bvSkinSpec.backgrounds.size() > 1) {
                 file = new File(Configuration.widgetsDir(),
                                 bvSkinSpec.backgrounds.get(1));
-                imgURL = file.toURI();
                 if (!file.exists()) {
                     System.err.println("BoardView1 Error: icon doesn't exist: "
                                        + file.getAbsolutePath());
                 } else {
-                    scrollPaneBgIcon = new ImageIcon(imgURL.toURL());
+                    scrollPaneBgImg = ImageUtil.loadImageFromFile(
+                            file.getAbsolutePath(),
+                            Toolkit.getDefaultToolkit());
                 }
             }
         } catch (Exception e) {
@@ -5734,30 +5791,30 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
             @Override
             protected void paintComponent(Graphics g) {
-                if (scrollPaneBgIcon == null) {
+                if (scrollPaneBgImg == null) {
                     super.paintComponent(g);
                     return;
                 }
                 int w = getWidth();
                 int h = getHeight();
-                int iW = scrollPaneBgIcon.getIconWidth();
-                int iH = scrollPaneBgIcon.getIconHeight();
+                int iW = scrollPaneBgImg.getWidth(null);
+                int iH = scrollPaneBgImg.getHeight(null);
                 if ((scrollPaneBgBuffer == null)
                     || (scrollPaneBgBuffer.getWidth() != w)
                     || (scrollPaneBgBuffer.getHeight() != h)) {
                     scrollPaneBgBuffer = new BufferedImage(w, h,
                             BufferedImage.TYPE_INT_RGB);
                     Graphics bgGraph = scrollPaneBgBuffer.getGraphics();
-                    // If the unit icon hasn't been loaded, prevent an infinite loop
+                    // If the unit icon not loaded, prevent infinite loop
                     if ((iW < 1) || (iH < 1)) {
                         return;
                     }
                     for (int x = 0; x < w; x += iW) {
                         for (int y = 0; y < h; y += iH) {
-                            bgGraph.drawImage(scrollPaneBgIcon.getImage(), x, y,
-                                              scrollPaneBgIcon.getImageObserver());
+                            bgGraph.drawImage(scrollPaneBgImg, x, y, null);
                         }
                     }
+                    bgGraph.dispose();
                 }
                 g.drawImage(scrollPaneBgBuffer, 0, 0, null);
             }
@@ -6081,6 +6138,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     public void clearHexImageCache() {
         hexImageCache.clear();
+    }
+
+    /**
+     * Clear a specific list of Coords from the hex image cache.
+     * @param coords
+     */
+    public void clearHexImageCache(Set<Coords> coords) {
+        for (Coords c : coords) {
+            hexImageCache.remove(c);
+        }
     }
 
     /**

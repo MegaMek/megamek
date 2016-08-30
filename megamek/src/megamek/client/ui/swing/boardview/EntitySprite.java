@@ -1,6 +1,7 @@
 package megamek.client.ui.swing.boardview;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -9,6 +10,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Stroke;
 import java.awt.Transparency;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -278,7 +280,7 @@ class EntitySprite extends Sprite {
     @Override
     public void prepare() {
         final IBoard board = bv.game.getBoard();
-   
+        final GUIPreferences guip = GUIPreferences.getInstance();
         // recalculate bounds & label
         getBounds();
         
@@ -303,7 +305,7 @@ class EntitySprite extends Sprite {
                 // draw the unit icon translucent if:
                 // hidden from the enemy (and activated graphics setting); or
                 // submerged
-                boolean translucentHiddenUnits = GUIPreferences.getInstance()
+                boolean translucentHiddenUnits = guip
                         .getBoolean(GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS);
                 boolean shouldBeTranslucent = (trackThisEntitiesVisibilityInfo(entity)
                         && !entity.isVisibleToEnemy()) || entity.isHidden();
@@ -367,13 +369,20 @@ class EntitySprite extends Sprite {
             }
             
             // Prone, Hulldown, Stuck, Immobile, Jammed
-            if (entity.isProne()) stStr.add(new Status(Color.RED, "PRONE"));
-            if (entity.isHiddenActivating()) stStr.add(new Status(Color.RED, "ACTIVATING"));
-            if (entity.isHidden()) stStr.add(new Status(Color.RED, "HIDDEN"));
-            if (entity.isHullDown()) stStr.add(new Status(Color.ORANGE, "HULLDOWN"));
-            if ((entity.isStuck())) stStr.add(new Status(Color.ORANGE, "STUCK"));
-            if (!ge && entity.isImmobile()) stStr.add(new Status(Color.RED, "IMMOBILE"));
-            if (isAffectedByECM()) stStr.add(new Status(Color.YELLOW, "Jammed"));
+            if (entity.isProne()) 
+                stStr.add(new Status(Color.RED, "PRONE"));
+            if (entity.isHiddenActivating())
+                stStr.add(new Status(Color.RED, "ACTIVATING"));
+            if (entity.isHidden())
+                stStr.add(new Status(Color.RED, "HIDDEN"));
+            if (entity.isHullDown())
+                stStr.add(new Status(Color.ORANGE, "HULLDOWN"));
+            if ((entity.isStuck()))
+                stStr.add(new Status(Color.ORANGE, "STUCK"));
+            if (!ge && entity.isImmobile())
+                stStr.add(new Status(Color.RED, "IMMOBILE"));
+            if (isAffectedByECM())
+                stStr.add(new Status(Color.YELLOW, "Jammed"));
             
             // Turret Lock 
             if (turretLocked) stStr.add(new Status(Color.YELLOW, "LOCKED"));
@@ -443,7 +452,7 @@ class EntitySprite extends Sprite {
                 }
             }
             
-            if (GUIPreferences.getInstance().getShowDamageLevel()) {
+            if (guip.getShowDamageLevel()) {
                 Color damageColor = getDamageColor();
                 if (damageColor != null) {
                     stStr.add(new Status(damageColor, 0, SMALL));
@@ -457,27 +466,41 @@ class EntitySprite extends Sprite {
             graph.scale(1/bv.scale, 1/bv.scale);
             
             // Label background
-            if (criticalStatus) {
-                graph.setColor(LABEL_CRITICAL_BACK);
-            } else {
-                graph.setColor(LABEL_BACK);
+            if (guip.getBoolean(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)) {
+                if (criticalStatus) {
+                    graph.setColor(LABEL_CRITICAL_BACK);
+                } else {
+                    graph.setColor(LABEL_BACK);
+                }
+                graph.fillRoundRect(labelRect.x, labelRect.y, labelRect.width,
+                        labelRect.height, 5, 10);
+
+                if (guip.getEntityOwnerLabelColor()) {
+                    graph.setColor(PlayerColors.getColor(
+                            entity.getOwner().getColorIndex(), false));
+                    Stroke oldStroke = graph.getStroke();
+                    graph.setStroke(new BasicStroke(3));
+                    graph.drawRoundRect(labelRect.x - 1, labelRect.y - 1,
+                            labelRect.width + 1, labelRect.height + 1, 5, 10);
+                    graph.setStroke(oldStroke);
+                }
+
+                // Label text
+                graph.setFont(labelFont);
+                Color textColor = LABEL_TEXT_COLOR;
+                if (!entity.isDone() && !onlyDetectedBySensors()) {
+                    textColor = guip.getColor(
+                            GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR);
+                }
+                if (isSelected) {
+                    textColor = guip.getColor(
+                            GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR);
+                }
+                bv.drawCenteredText(graph, getAdjShortName(),
+                        labelRect.x + labelRect.width / 2,
+                        labelRect.y + labelRect.height / 2 - 1, textColor,
+                        (entity.isDone() && !onlyDetectedBySensors()));
             }
-            graph.fillRoundRect(labelRect.x, labelRect.y, 
-                    labelRect.width, labelRect.height, 5, 10);
-            
-            // Label text
-            graph.setFont(labelFont);
-            Color textColor = LABEL_TEXT_COLOR;
-            if (!entity.isDone() && !onlyDetectedBySensors()) {
-                textColor = GUIPreferences.getInstance().getColor(
-                        GUIPreferences.ADVANCED_UNITOVERVIEW_VALID_COLOR);
-            }
-            if (isSelected) {
-                textColor = GUIPreferences.getInstance().getColor(
-                        GUIPreferences.ADVANCED_UNITOVERVIEW_SELECTED_COLOR);
-            }
-            bv.drawCenteredText(graph, getAdjShortName(), labelRect.x+labelRect.width/2,
-                    labelRect.y+labelRect.height/2-1, textColor, (entity.isDone() && !onlyDetectedBySensors()));
 
             // Past here, everything is drawing status that shouldn't be seen
             // on a sensor return, so we'll just quit here
@@ -1007,6 +1030,10 @@ class EntitySprite extends Sprite {
     /** Returns if the entity is marked as selected for movement etc., recoloring the label */
     public boolean getSelected() {
         return isSelected;
+    }
+
+    protected int getSpritePriority() {
+        return entity.getSpriteDrawPriority();
     }
 }
 

@@ -3708,4 +3708,15 @@ public class Tank extends Entity {
     public void setHasNoControlSystems(boolean hasNoControlSystems) {
         this.hasNoControlSystems = hasNoControlSystems;
     }
+
+    /**
+     * Used to determine the draw priority of different Entity subclasses.
+     * This allows different unit types to always be draw above/below other
+     * types.
+     *
+     * @return
+     */
+    public int getSpriteDrawPriority() {
+        return 4;
+    }
 }

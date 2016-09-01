@@ -71,7 +71,8 @@ public enum KeyCommandBind {
     /** Toggles between Jumping and Walk/Run, also acts as a reset when a unit cannot jump */
     TOGGLE_MOVEMODE("toggleJump", false, KeyEvent.VK_J, 0), // Default: J
     PREV_MODE("prevMode", false, KeyEvent.VK_Z, InputEvent.SHIFT_MASK), // Default: Shift-Z
-    NEXT_MODE("nextMode", false, KeyEvent.VK_C, InputEvent.SHIFT_MASK); // Default: Shift-C
+    NEXT_MODE("nextMode", false, KeyEvent.VK_C, InputEvent.SHIFT_MASK), // Default: Shift-C
+    TOGGLE_DRAW_LABELS("toggleDrawLabels", false, KeyEvent.VK_Y, 0); // Default: Y
 
 
     /**

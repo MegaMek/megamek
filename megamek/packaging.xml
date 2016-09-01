@@ -123,7 +123,7 @@
 
 		<!-- compile -->
 		<echo message="building MegaMek from git sources" />
-		<javac debug="true" debuglevel="lines,source" target="1.7" source="1.7" destdir="${pkgbuilddir}" srcdir="${pkgdir}/${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true" encoding="UTF-8">
+		<javac debug="true" debuglevel="lines,source" target="1.8" source="1.8" destdir="${pkgbuilddir}" srcdir="${pkgdir}/${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true" encoding="UTF-8">
 			<classpath>
 				<pathelement location="${pkgdir}" />
 				<fileset dir="${pkgdir}/${libdir}" includes="*.jar" />

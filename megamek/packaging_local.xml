@@ -120,7 +120,7 @@
 
 		<!-- compile -->
 		<echo message="building MegaMek from local sources" />
-		<javac debug="true" debuglevel="lines,source" target="1.7" source="1.7" destdir="${localbuilddir}" srcdir="${localdir}/${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true" encoding="UTF-8">
+		<javac debug="true" debuglevel="lines,source" target="1.8" source="1.8" destdir="${localbuilddir}" srcdir="${localdir}/${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true" encoding="UTF-8">
 			<classpath>
 				<pathelement location="${localdir}" />
 				<fileset dir="${localdir}/${libdir}" includes="*.jar" />

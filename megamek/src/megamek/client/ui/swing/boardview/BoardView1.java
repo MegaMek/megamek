@@ -3171,6 +3171,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         HashMap<List<Integer>, EntitySprite> newSpriteIds;
         HashMap<List<Integer>, IsometricSprite> newIsoSpriteIds;
 
+        // Remove sprite for Entity, so it's not displayed while moving
         if (sprite != null) {
             newSprites = new PriorityQueue<EntitySprite>(entitySprites);
             newSpriteIds = new HashMap<>(entitySpriteIds);
@@ -3181,7 +3182,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             entitySprites = newSprites;
             entitySpriteIds = newSpriteIds;
         }
-
+        // Remove iso sprite for Entity, so it's not displayed while moving
         if (isoSprite != null) {
             isoSprites = new PriorityQueue<IsometricSprite>(isometricSprites);
             newIsoSpriteIds = new HashMap<>(isometricSpriteIds);
@@ -3198,14 +3199,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 movingEntitySprites);
         HashMap<Integer, MovingEntitySprite> newMovingSpriteIds = new HashMap<>(
                 movingEntitySpriteIds);
-
+        // Remove any old movement sprite
         if (mSprite != null) {
             newMovingSprites.remove(mSprite);
         }
-
+        // Create new movement sprite
         if (entity.getPosition() != null) {
             mSprite = new MovingEntitySprite(this, entity, position, facing,
-                                             elevation);
+                    elevation);
             newMovingSprites.add(mSprite);
             newMovingSpriteIds.put(entityId, mSprite);
         }

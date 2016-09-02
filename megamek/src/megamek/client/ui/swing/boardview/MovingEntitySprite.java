@@ -107,7 +107,8 @@ class MovingEntitySprite extends Sprite {
     public void prepare() {
         image = ImageUtil.createAcceleratedImage(bounds.width, bounds.height);
         Graphics graph = image.getGraphics();
-        graph.drawImage(bv.tileManager.imageFor(entity), 0, 0, this);
+        graph.drawImage(bv.tileManager.imageFor(entity, facing, -1), 0, 0,
+                this);
         image = bv.getScaledImage(image, false);
         graph.dispose();
     }

@@ -354,7 +354,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
         int i = 0;
         if ((null != en.getGame())
-                && en.getGame().getOptions().booleanOption("stratops_quirks")) {
+                && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             for (Enumeration<IOptionGroup> qGroups = en.getQuirks().getGroups(); qGroups
                     .hasMoreElements();) {
                 IOptionGroup qGroup = qGroups.nextElement();

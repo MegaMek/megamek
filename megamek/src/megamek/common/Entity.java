@@ -4386,7 +4386,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             && !game.getOptions().booleanOption("stratops_ecm")) {
             return false;
         }
-        if (game.getOptions().booleanOption("tacops_angel_ecm")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ANGEL_ECM)
             && !isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
@@ -4509,7 +4509,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * it is not in eccm mode or it is damaged.
      */
     public boolean hasActiveAngelECCM() {
-        if (game.getOptions().booleanOption("tacops_angel_ecm")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ANGEL_ECM)
             && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM)
             && !isShutDown()) {
             for (Mounted m : getMisc()) {
@@ -6113,7 +6113,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
             }
         }
 
-        if (game.getOptions().booleanOption("tacops_fatigue")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)
             && crew.isPilotingFatigued()) {
             roll.addModifier(1, "fatigue");
         }
@@ -11666,7 +11666,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean hasQuirk(String name) {
         if ((null == game)
-            || !game.getOptions().booleanOption("stratops_quirks")) {
+            || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return false;
         }
         return quirks.booleanOption(name);
@@ -11696,7 +11696,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int count = 0;
 
         if ((null == game)
-            || !game.getOptions().booleanOption("stratops_quirks")) {
+            || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return count;
         }
 
@@ -11720,7 +11720,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int count = 0;
 
         if ((null == game)
-            || !game.getOptions().booleanOption("stratops_quirks")) {
+            || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return count;
         }
         
@@ -11754,7 +11754,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int count = 0;
 
         if ((null == game)
-            || !game.getOptions().booleanOption("stratops_quirks")) {
+            || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return count;
         }
 
@@ -11785,7 +11785,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         StringBuffer qrk = new StringBuffer();
 
         if ((null == game)
-            || !game.getOptions().booleanOption("stratops_quirks")) {
+            || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return qrk.toString();
         }
 

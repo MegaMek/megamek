@@ -1384,7 +1384,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
 
             if (!clientgui.getClient().getGame().getOptions()
-                    .booleanOption("stratops_partialrepairs")) { //$NON-NLS-1$
+                    .booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS)) { //$NON-NLS-1$
                 entity.clearPartialRepairs();
             }
             // Handle the "Blind Drop" option.
@@ -1710,7 +1710,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         // Add StratOps quirks, if activated
         if ((entity.getGame() != null)
                 && entity.getGame().getOptions()
-                        .booleanOption("stratops_quirks")) {
+                        .booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             for (Enumeration<IOptionGroup> advGroups = entity.getQuirks()
                     .getGroups(); advGroups.hasMoreElements();) {
                 IOptionGroup advGroup = advGroups.nextElement();
@@ -4028,7 +4028,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             boolean blindDrop = clientgui.getClient().getGame().getOptions()
                     .booleanOption(OptionsConstants.BASE_BLIND_DROP);
             boolean isQuirksEnabled = clientgui.getClient().getGame().getOptions()
-                    .booleanOption("stratops_quirks");
+                    .booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS);
             boolean isRapidFireMG = clientgui.getClient().getGame().getOptions()
                     .booleanOption("tacops_burst");
             boolean isHotLoad = clientgui.getClient().getGame().getOptions()

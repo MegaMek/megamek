@@ -935,7 +935,7 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
             }
             if (col == COL_WEIGHT) {
                 if ((opts != null) && ms.getUnitType().equals("BattleArmor")) {
-                    if (opts.booleanOption("tacops_ba_weight")) {
+                    if (opts.booleanOption(OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT)) {
                         return ms.getTOweight();
                     } else {
                         return ms.getTWweight();

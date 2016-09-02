@@ -19565,7 +19565,7 @@ public class Server implements Runnable {
 
     private void clearFlawedCoolingFlags(Entity entity) {
         // If we're not using quirks, no need to do this check.
-        if (!game.getOptions().booleanOption("stratops_quirks")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return;
         }
         // Only applies to units that track heat.
@@ -19585,7 +19585,7 @@ public class Server implements Runnable {
     private void checkForFlawedCooling() {
 
         // If we're not using quirks, no need to do this check.
-        if (!game.getOptions().booleanOption("stratops_quirks")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return;
         }
 
@@ -20131,10 +20131,10 @@ public class Server implements Runnable {
             r.add(rollTarget.getDesc());
             r.add(diceRoll);
             if ((diceRoll < rollTarget.getValue())
-                || (game.getOptions().booleanOption("tacops_fumbles") && (diceRoll == 2))) {
+                || (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FUMBLES) && (diceRoll == 2))) {
                 r.choose(false);
                 // Report the fumble
-                if (game.getOptions().booleanOption("tacops_fumbles")
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FUMBLES)
                     && (diceRoll == 2)) {
                     r.messageId = 2306;
                 }
@@ -20355,10 +20355,10 @@ public class Server implements Runnable {
             r.add(diceRoll);
             r.subject = entity.getId();
             if ((diceRoll < roll.getValue())
-                || (game.getOptions().booleanOption("tacops_fumbles") && (diceRoll == 2))) {
+                || (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FUMBLES) && (diceRoll == 2))) {
                 r.choose(false);
                 // Report the fumble
-                if (game.getOptions().booleanOption("tacops_fumbles")
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FUMBLES)
                     && (diceRoll == 2)) {
                     r.messageId = 2306;
                 }
@@ -22569,7 +22569,7 @@ public class Server implements Runnable {
                                 && !te.getCrew().isDoomed()
                                 && game.getOptions()
                                        .booleanOption(
-                                               "tacops_skin_of_the_teeth_ejection")) {
+                                               OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION)) {
                                 Mech mech = (Mech) te;
                                 if (mech.isAutoEject()
                                     && (!game.getOptions().booleanOption(
@@ -24939,7 +24939,7 @@ public class Server implements Runnable {
                         if (en instanceof Mech) {
                             Mech mech = (Mech) en;
                             if (game.getOptions().booleanOption(
-                                    "tacops_skin_of_the_teeth_ejection")) {
+                                    OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION)) {
                                 if (mech.isAutoEject()
                                     && (!game.getOptions().booleanOption(
                                         "conditional_ejection") || (game
@@ -26630,7 +26630,7 @@ public class Server implements Runnable {
         // might convert the hex to rough
         Coords curPos = entity.getPosition();
         IHex entityHex = game.getBoard().getHex(curPos);
-        if (game.getOptions().booleanOption("tacops_battle_wreck")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK)
             && (entityHex != null)
             && game.getBoard().onGround()
             && !((entity instanceof Infantry) || (entity instanceof Protomech))) {

@@ -109,20 +109,21 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_ECCM, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET, false); //$NON-NLS-1$
 
-        addOption(advancedRules, "ghost_target_max", 5); //$NON-NLS-1$
-        addOption(advancedRules, "tacops_dig_in", false); //$NON-NLS-1$
-        addOption(advancedRules, "tacops_ba_weight", false); //$NON-NLS-1$
-        addOption(advancedRules, "tacops_take_cover", false); //$NON-NLS-1$
-        addOption(advancedRules, "tacops_angel_ecm", false); //$NON-NLS-1$
-        addOption(advancedRules, "tacops_battle_wreck", false); //$NON-NLS-1$
-        addOption(advancedRules, "tacops_skin_of_the_teeth_ejection", false); //$NON-NLS-1$
-        addOption(advancedRules, "tacops_mobile_hqs", false); //$NON-NLS-1$
-        addOption(advancedRules, "tacops_fatigue", false); //$NON-NLS-1$
-        addOption(advancedRules, "tacops_fumbles", false); //$NON-NLS-1$
-        addOption(advancedRules, "tacops_self_destruct", false); //$NON-NLS-1$
-        addOption(advancedRules, "tacops_tank_crews", false); //$NON-NLS-1$
-        addOption(advancedRules, "stratops_quirks", false); //$NON-NLS-1$
-        addOption(advancedRules, "stratops_partialrepairs", false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_GHOST_TARGET_MAX, 5); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_DIG_IN, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_TAKE_COVER, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_ANGEL_ECM, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_FATIGUE, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_FUMBLES, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_TANK_CREWS, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_QUIRKS, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS, false); //$NON-NLS-1$
+       
         
         addOption(advancedRules, "assault_drop", false); //$NON-NLS-1$
         addOption(advancedRules, "paratroopers", false); //$NON-NLS-1$
@@ -148,20 +149,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, "alternate_pilot_bv_mod", false); //$NON-NLS-1$
         
 
-/*        addOption(advancedRules, OptionsConstants.ADVANCED_GHOST_TARGET_MAX, 5); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_DIG_IN, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_TAKE_COVER, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_ANGEL_ECM, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BATTLE_WRECK, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_FATIGUE, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_FUMBLES, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_TANK_CREWS, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_QUIRKS, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS, false); //$NON-NLS-1$
+/*
         addOption(advancedRules, OptionsConstants.ADVANCED_ASSAULT_DROP, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_PARATROOPERS, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE, false); //$NON-NLS-1$
@@ -182,8 +170,8 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV, false); //$NON-NLS-1$\
         addOption(advancedRules, OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV, false); //$NON-NLS-1$
-*/        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_PILOT_BV_MOD, false); //$NON-NLS-1$
-       
+        addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_PILOT_BV_MOD, false); //$NON-NLS-1$
+       */
         
 
         IBasicOptionGroup advancedCombat = addGroup("advancedCombat"); //$NON-NLS-1$
@@ -335,6 +323,8 @@ public class GameOptions extends AbstractOptions {
         addOption(rpg, "conditional_ejection", false); //$NON-NLS-1$
         addOption(rpg, "manual_shutdown", false); //$NON-NLS-1$
         addOption(rpg, "begin_shutdown", false); //$NON-NLS-1$
+        
+        
 
         //IBasicOptionGroup advancedBuildings = addGroup("advancedBuildings"); //$NON-NLS-1$
 

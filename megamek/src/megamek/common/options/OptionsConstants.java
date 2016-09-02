@@ -301,7 +301,7 @@ public class OptionsConstants {
     public static final String ADVANCED_TACOPS_MOBILE_HQS= "tacops_mobile_hqs";  //$NON-NLS$
     public static final String ADVANCED_TACOPS_FATIGUE= "tacops_fatigue";  //$NON-NLS$
     public static final String ADVANCED_TACOPS_FUMBLES= "tacops_fumbles";  //$NON-NLS$
-    public static final String ADVANCED_TACOPS_SELF_DESTRUCT= "tacops_self_destruct";  //$NON-NLS$
+    public static final String ADVANCED_TACOPS_SELF_DESTRUCT= OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT;  //$NON-NLS$
     public static final String ADVANCED_TACOPS_TANK_CREWS= "tacops_tank_crews";  //$NON-NLS$
     public static final String ADVANCED_STRATOPS_QUIRKS= "stratops_quirks";  //$NON-NLS$
     public static final String ADVANCED_STRATOPS_PARTIALREPAIRS= "stratops_partialrepairs";  //$NON-NLS$

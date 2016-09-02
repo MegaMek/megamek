@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import megamek.common.event.GamePlayerChangeEvent;
+import megamek.common.options.OptionsConstants;
 
 /**
  * Represents a player in the game.
@@ -486,7 +487,7 @@ public final class Player extends TurnOrdered implements IPlayer {
         }
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.getOwner().equals(this)) {
-                if (game.getOptions().booleanOption("tacops_mobile_hqs")
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_MOBILE_HQS)
                     && (bonusHQ == 0) && (entity.getHQIniBonus() > 0)) {
                     bonusHQ = entity.getHQIniBonus();
                 }

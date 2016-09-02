@@ -773,7 +773,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         // fatigue
-        if (game.getOptions().booleanOption("tacops_fatigue")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)
                 && ae.getCrew().isGunneryFatigued()) {
             toHit.addModifier(1, "fatigue");
         }
@@ -820,11 +820,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     // http://www.classicbattletech.com/forums/index.php?topic=66036.0
                     // unofficial rule to cap the ghost target to-hit penalty
                     int mod = ghostTargetMoF / 2;
-                    if (game.getOptions().intOption("ghost_target_max") > 0) {
+                    if (game.getOptions().intOption(OptionsConstants.ADVANCED_GHOST_TARGET_MAX) > 0) {
                         mod = Math
                                 .min(mod,
                                         game.getOptions().intOption(
-                                                "ghost_target_max"));
+                                                OptionsConstants.ADVANCED_GHOST_TARGET_MAX));
                     }
                     toHit.addModifier(mod, "ghost targets");
                 }
@@ -2331,7 +2331,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             toHit.addModifier(-1, "target is superheavy mech");
         }
         // fatigue
-        if (game.getOptions().booleanOption("tacops_fatigue")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)
                 && ae.getCrew().isGunneryFatigued()) {
             toHit.addModifier(1, "fatigue");
         }

@@ -250,7 +250,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             boolean manualShutdown = false, selfDestruct = false;
             if (opts != null) {
                 manualShutdown = opts.booleanOption("manual_shutdown");
-                selfDestruct = opts.booleanOption("tacops_self_destruct");
+                selfDestruct = opts.booleanOption(OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT);
             }
             ArrayList<MoveCommand> flaggedCmds = new ArrayList<MoveCommand>();
             for (MoveCommand cmd : MoveCommand.values()) {
@@ -856,7 +856,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             getBtn(MoveCommand.MOVE_FORTIFY).setEnabled(false);
         }
         // Infantry - Digging in
-        if (isInfantry && gOpts.booleanOption("tacops_dig_in")) {
+        if (isInfantry && gOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_DIG_IN)) {
             // Allow infantry to dig in if they aren't currently dug in
             int dugInState = ((Infantry) ce).getDugIn();
             getBtn(MoveCommand.MOVE_DIG_IN).setEnabled(
@@ -1840,7 +1840,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         boolean isInfantry = (ce() instanceof Infantry);
         
         // Infantry - Taking Cover
-        if (isInfantry && gOpts.booleanOption("tacops_take_cover")) {
+        if (isInfantry && gOpts.booleanOption(OptionsConstants.ADVANCED_TACOPS_TAKE_COVER)) {
             // Determine the current position of the infantry
             Coords pos;
             int elevation;
@@ -2377,7 +2377,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         if (!clientgui.getClient().getGame().getOptions()
-                      .booleanOption("tacops_self_destruct")) {
+                      .booleanOption(OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT)) {
             return;
         }
 

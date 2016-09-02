@@ -17,6 +17,7 @@ package megamek.common;
 import java.text.NumberFormat;
 import java.util.Vector;
 
+import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.weapons.InfantryAttack;
 import megamek.common.weapons.battlearmor.ISBAPopUpMineLauncher;
@@ -1910,7 +1911,7 @@ public class BattleArmor extends Infantry {
         // for transport purposes. Following Tactical Operations gives us a
         // more realistic weight per trooper
         if ((game != null)
-                && game.getOptions().booleanOption("tacops_ba_weight")) {
+                && game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT)) {
             double troopton = troopers;
             switch (getWeightClass()) {
                 case EntityWeightClass.WEIGHT_ULTRA_LIGHT:

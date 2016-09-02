@@ -337,9 +337,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
         boolean multipleEntities = entities.size() > 1;
         boolean quirksEnabled = clientgui.getClient().getGame().getOptions()
-                .booleanOption("stratops_quirks");
+                .booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS);
         boolean partialRepairsEnabled = clientgui.getClient().getGame()
-                .getOptions().booleanOption("stratops_partialrepairs");
+                .getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS);
         final Entity entity = entities.get(0);
         boolean isAero = true;
         boolean isInfantry = true;
@@ -469,7 +469,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             panPilot.add(fldArtillery, GBC.eop());
         }
 
-        if (client.getGame().getOptions().booleanOption("tacops_fatigue")) {
+        if (client.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_FATIGUE)) {
             labFatigue.setToolTipText(Messages
                     .getString("CustomMechDialog.labFatigueToolTip"));
             panPilot.add(labFatigue, GBC.std());

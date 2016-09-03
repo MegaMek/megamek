@@ -418,7 +418,7 @@ public class SharedUtility {
             // jumped into water?
             IHex hex = game.getBoard().getHex(curPos);
             // check for jumping into heavy woods
-            if (game.getOptions().booleanOption("psr_jump_heavy_woods")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
                 rollTarget = entity.checkLandingInHeavyWoods(overallMoveType,
                         hex);
                 checkNag(rollTarget, nagReport, psrList);

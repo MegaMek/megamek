@@ -8835,7 +8835,7 @@ public class Server implements Runnable {
                 doSkillCheckInPlace(entity, rollTarget);
             }
             // check for jumping into heavy woods
-            if (game.getOptions().booleanOption("psr_jump_heavy_woods")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
                 rollTarget = entity.checkLandingInHeavyWoods(overallMoveType,
                         curHex);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
@@ -9081,7 +9081,7 @@ public class Server implements Runnable {
         // here because 'fellDuringMovement' is sometimes abused just to force
         // another turn and so doesn't reliably tell us.
         boolean continueTurnFromFall = !(game.getOptions()
-                .booleanOption("falls_end_movement") && (entity instanceof Mech)
+                .booleanOption(OptionsConstants.ADVGRNDMOV_FALLS_END_MOVEMENT) && (entity instanceof Mech)
                 && !wasProne && entity.isProne())
                 && (fellDuringMovement && !entity.isCarefulStand()) // Careful
                                                                     // standing
@@ -11084,11 +11084,11 @@ public class Server implements Runnable {
                 continue;
             }
 
-            // check for the "no_premove_vibra" option
+            // check for the OptionsConstants.ADVGRNDMOV_NO_PREMOVE_VIBRA option
             // If it's set, and the target has not yet moved,
             // it doesn't get damaged.
             if (!entity.isDone()
-                && game.getOptions().booleanOption("no_premove_vibra")) {
+                && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_PREMOVE_VIBRA)) {
                 r = new Report(2157);
                 r.subject = entity.getId();
                 r.add(entity.getShortName(), true);
@@ -22609,7 +22609,7 @@ public class Server implements Runnable {
                                 te.getCrew().setDoomed(true);
                             }
                             if (game.getOptions().booleanOption(
-                                    "auto_abandon_unit")) {
+                                    OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
                                 vDesc.addAll(abandonEntity(te));
                             }
                         }
@@ -22756,7 +22756,7 @@ public class Server implements Runnable {
                         // third engine hit
                         vDesc.addAll(destroyEntity(te, "engine destruction"));
                         if (game.getOptions()
-                                .booleanOption("auto_abandon_unit")) {
+                                .booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
                             vDesc.addAll(abandonEntity(te));
                         }
                         te.setSelfDestructing(false);
@@ -24979,7 +24979,7 @@ public class Server implements Runnable {
                             // third engine hit
                             vDesc.addAll(destroyEntity(en, "engine destruction"));
                             if (game.getOptions()
-                                    .booleanOption("auto_abandon_unit")) {
+                                    .booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
                                 vDesc.addAll(abandonEntity(en));
                             }
                             en.setSelfDestructing(false);
@@ -26312,7 +26312,7 @@ public class Server implements Runnable {
             // Check location for engine/cockpit breach and report accordingly
             if (loc == Mech.LOC_CT) {
                 vDesc.addAll(destroyEntity(entity, "hull breach"));
-                if (game.getOptions().booleanOption("auto_abandon_unit")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
                     vDesc.addAll(abandonEntity(entity));
                 }
             }
@@ -26351,7 +26351,7 @@ public class Server implements Runnable {
                          .getHitCriticals(CriticalSlot.TYPE_SYSTEM,
                                           Mech.SYSTEM_ENGINE, Mech.LOC_RT)) >= hitsToDestroy) {
                 vDesc.addAll(destroyEntity(entity, "engine destruction"));
-                if (game.getOptions().booleanOption("auto_abandon_unit")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT)) {
                     vDesc.addAll(abandonEntity(entity));
                 }
             }

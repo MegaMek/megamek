@@ -437,7 +437,7 @@ public class Tank extends Entity {
     @Override
     public boolean isImmobile() {
         if ((game != null)
-                && game.getOptions().booleanOption("no_immobile_vehicles")) {
+                && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_IMMOBILE_VEHICLES)) {
             return super.isImmobile();
         }
         return super.isImmobile() || m_bImmobile;
@@ -2142,9 +2142,9 @@ public class Tank extends Entity {
     public boolean canCharge() {
         // Tanks can charge, except Hovers when the option is set, and WIGEs
         return super.canCharge()
-                && !(game.getOptions().booleanOption("no_hover_charge") && (EntityMovementMode.HOVER == getMovementMode()))
-                && !(EntityMovementMode.WIGE == getMovementMode())
-                && !(getStunnedTurns() > 0);
+                && !(game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_HOVER_CHARGE)
+                        && (EntityMovementMode.HOVER == getMovementMode()))
+                && !(EntityMovementMode.WIGE == getMovementMode()) && !(getStunnedTurns() > 0);
     }
 
     @Override

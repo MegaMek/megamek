@@ -1423,7 +1423,7 @@ public class MoveStep implements Serializable {
         // If this step isn't the end step anymore, we might not be in danger
         // after all
         IHex pos = getGame().getBoard().getHex(position);
-        if (getGame().getOptions().booleanOption("psr_jump_heavy_woods")) {
+        if (getGame().getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS)) {
             if (!isEnd
                     && isJumping()
                     && (pos.containsTerrain(Terrains.WOODS, 2) 
@@ -2577,7 +2577,7 @@ public class MoveStep implements Serializable {
 
 
         boolean applyNightPen =
-                !game.getOptions().booleanOption("no_night_move_pen");
+                !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN);
         boolean carefulExempt =
                 (moveMode == EntityMovementMode.VTOL) || isJumping();
 

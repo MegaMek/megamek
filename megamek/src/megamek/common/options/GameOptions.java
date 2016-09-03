@@ -215,7 +215,6 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_TAKING_DAMAGE, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE, false); //$NON-NLS-1$
-        
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT, false); //$NON-NLS-1$
@@ -227,43 +226,15 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER, 4); //$NON-NLS-1$
-
-        addOption(advancedGroundMovement, "no_immobile_vehicles", false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_NO_IMMOBILE_VEHICLES, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE, false);
-        addOption(advancedGroundMovement, "auto_abandon_unit", false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "no_hover_charge", false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "no_premove_vibra", false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "falls_end_movement", false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "psr_jump_heavy_woods", false);
-        addOption(advancedGroundMovement, "no_night_move_pen", false); //$NON-NLS-1$
-        
-        
-
-/*        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER, 4); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_ATTEMPTING_STAND, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER, 4); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_NO_IMMOBILE_VEHICLES, false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, OptionsConstants.AGM_VEHICLES_CAN_EJECT, false);
-        addOption(advancedGroundMovement, OptionsConstants.AGM_EJECTED_PILOTS_FLEE, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_AUTO_ABANDON_UNIT, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_NO_HOVER_CHARGE, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_NO_PREMOVE_VIBRA, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_FALLS_END_MOVEMENT, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_PSR_JUMP_HEAVY_WOODS, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN, false); //$NON-NLS-1$
-*/
-        
-        
-
 
         IBasicOptionGroup advAeroRules = addGroup("advancedAeroRules"); //$NON-NLS-1$
         addOption(advAeroRules, "aero_ground_move", true); //$NON-NLS-1$

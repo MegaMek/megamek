@@ -597,7 +597,7 @@ public class MapMenu extends JPopupMenu {
 
             if (game.getPlanetaryConditions().isRecklessConditions()
                 && !game.getBoard().inSpace()
-                && !game.getOptions().booleanOption("no_night_move_pen")) {
+                && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
                 item = new JMenuItem(
                         Messages.getString("MovementDisplay.butReckless"));
 
@@ -723,7 +723,7 @@ public class MapMenu extends JPopupMenu {
 
             if (game.getPlanetaryConditions().isRecklessConditions()
                 && !game.getBoard().inSpace()
-                && !game.getOptions().booleanOption("no_night_move_pen")) {
+                && !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN)) {
                 item = new JMenuItem(
                         Messages.getString("MovementDisplay.butReckless"));
 

@@ -2141,12 +2141,12 @@ public class Server implements Runnable {
         final int playerId = null == entityUsed ? IPlayer.PLAYER_NONE
                                                 : entityUsed.getOwnerId();
         boolean infMoved = entityUsed instanceof Infantry;
-        boolean infMoveMulti = gameOpts.booleanOption("inf_move_multi")
+        boolean infMoveMulti = gameOpts.booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI)
                && ((currPhase == IGame.Phase.PHASE_MOVEMENT)
                    || (currPhase == IGame.Phase.PHASE_DEPLOYMENT)
                    || (currPhase == IGame.Phase.PHASE_INITIATIVE));
         boolean protosMoved = entityUsed instanceof Protomech;
-        boolean protosMoveMulti = gameOpts.booleanOption("protos_move_multi");
+        boolean protosMoveMulti = gameOpts.booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI);
         boolean tanksMoved = entityUsed instanceof Tank;
         boolean tanksMoveMulti = gameOpts.booleanOption(
                 OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)
@@ -2250,7 +2250,7 @@ public class Server implements Runnable {
                 remaining--;
             }
             int moreInfAndProtoTurns = Math.min(
-                    gameOpts.intOption("inf_proto_move_multi") - 1, remaining);
+                    gameOpts.intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI) - 1, remaining);
 
             // Add the correct number of turns for the right unit classes.
             for (int i = 0; i < moreInfAndProtoTurns; i++) {
@@ -3505,7 +3505,7 @@ public class Server implements Runnable {
             TurnOrdered.rollInitiative(
                     game.getTeamsVector(),
                     game.getOptions().booleanOption(
-                            "initiative_streak_compensation")
+                            OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION)
                     && !game.shouldDeployThisRound());
         }
 
@@ -3532,7 +3532,7 @@ public class Server implements Runnable {
         // when first proto in a unit moves, new turns get added so rest of the
         // unit will move
         boolean protosMoveMulti = game.getOptions().booleanOption(
-                "protos_move_multi");
+                OptionsConstants.INIT_PROTOS_MOVE_MULTI);
         if (!protosMoveMulti) {
             entities = new ArrayList<>(game.getEntitiesVector().size());
             Set<Short> movedUnits = new HashSet<>();
@@ -3620,23 +3620,23 @@ public class Server implements Runnable {
             return;
         }
         // and/or deploy even according to game options.
-        boolean infMoveEven = (game.getOptions().booleanOption("inf_move_even") && ((game
+        boolean infMoveEven = (game.getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_EVEN) && ((game
                 .getPhase() == IGame.Phase.PHASE_INITIATIVE) || (game
                 .getPhase() == IGame.Phase.PHASE_MOVEMENT)))
-                || (game.getOptions().booleanOption("inf_deploy_even") && (game
+                || (game.getOptions().booleanOption(OptionsConstants.INIT_INF_DEPLOY_EVEN) && (game
                         .getPhase() == IGame.Phase.PHASE_DEPLOYMENT));
         boolean infMoveMulti = game.getOptions()
-                .booleanOption("inf_move_multi")
+                .booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI)
                 && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || ((game
                         .getPhase() == IGame.Phase.PHASE_MOVEMENT) || (game
                         .getPhase() == IGame.Phase.PHASE_DEPLOYMENT)));
         boolean protosMoveEven = (game.getOptions().booleanOption(
-                "protos_move_even") && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || ((game
+                OptionsConstants.INIT_PROTOS_MOVE_EVEN) && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || ((game
                 .getPhase() == IGame.Phase.PHASE_MOVEMENT) || (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT))))
-                || (game.getOptions().booleanOption("protos_deploy_even") && (game
+                || (game.getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN) && (game
                         .getPhase() == IGame.Phase.PHASE_DEPLOYMENT));
         boolean protosMoveMulti = game.getOptions().booleanOption(
-                "protos_move_multi");
+                OptionsConstants.INIT_PROTOS_MOVE_MULTI);
         boolean protosMoveByPoint = !protosMoveMulti;
         boolean tankMoveByLance = game.getOptions().booleanOption(
                 OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)
@@ -4097,8 +4097,8 @@ public class Server implements Runnable {
                 addReport(r);
                 if (hasEven) {
                     r = new Report(1021, Report.PUBLIC);
-                    if ((game.getOptions().booleanOption("inf_deploy_even") || game
-                            .getOptions().booleanOption("protos_deploy_even"))
+                    if ((game.getOptions().booleanOption(OptionsConstants.INIT_INF_DEPLOY_EVEN) || game
+                            .getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_EVEN))
                         && !(game.getLastPhase() == IGame.Phase.PHASE_END_REPORT)) {
                         r.choose(true);
                     } else {

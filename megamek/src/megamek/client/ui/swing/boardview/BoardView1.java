@@ -4866,7 +4866,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 refreshMoveVectors();
             }
             if ((mp != null) && (mp.size() > 0) && guip.getShowMoveStep()
-                    && !gopts.booleanOption("simultaneous_movement")) {
+                    && !gopts.booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT)) {
                 if ((localPlayer == null)
                         || !game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
                         || !en.getOwner().isEnemyOf(localPlayer)

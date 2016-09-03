@@ -652,19 +652,19 @@ public class Game implements Serializable, IGame {
 
     public boolean isPhaseSimultaneous() {
         switch (phase) {
-            case PHASE_DEPLOYMENT:
-                return getOptions().booleanOption("simultaneous_deployment");
-            case PHASE_MOVEMENT:
-                return getOptions().booleanOption("simultaneous_movement");
-            case PHASE_FIRING:
-                return getOptions().booleanOption("simultaneous_firing");
-            case PHASE_PHYSICAL:
-                return getOptions().booleanOption("simultaneous_physical");
-            case PHASE_TARGETING:
-            case PHASE_OFFBOARD:
-                return getOptions().booleanOption("simultaneous_targeting");
-            default:
-                return false;
+        case PHASE_DEPLOYMENT:
+            return getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT);
+        case PHASE_MOVEMENT:
+            return getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT);
+        case PHASE_FIRING:
+            return getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_FIRING);
+        case PHASE_PHYSICAL:
+            return getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL);
+        case PHASE_TARGETING:
+        case PHASE_OFFBOARD:
+            return getOptions().booleanOption(OptionsConstants.INIT_SIMULTANEOUS_TARGETING);
+        default:
+            return false;
         }
     }
 
@@ -2112,11 +2112,11 @@ public class Game implements Serializable, IGame {
         // then we might not need to remove a turn at all.
         // A turn only needs to be removed when going from 4 inf (2 turns) to
         // 3 inf (1 turn)
-        if (getOptions().booleanOption("inf_move_multi")
+        if (getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_MULTI)
             && (entity instanceof Infantry)
             && (phase == Phase.PHASE_MOVEMENT)) {
             if ((getInfantryLeft(entity.getOwnerId()) % getOptions().intOption(
-                    "inf_proto_move_multi")) != 1) {
+                    OptionsConstants.INIT_INF_PROTO_MOVE_MULTI)) != 1) {
                 // exception, if the _next_ turn is an infantry turn, remove
                 // that
                 // contrived, but may come up e.g. one inf accidently kills
@@ -2136,11 +2136,11 @@ public class Game implements Serializable, IGame {
             }
         }
         // Same thing but for protos
-        if (getOptions().booleanOption("protos_move_multi")
+        if (getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_MULTI)
             && (entity instanceof Protomech)
             && (phase == Phase.PHASE_MOVEMENT)) {
             if ((getProtomechsLeft(entity.getOwnerId()) % getOptions()
-                    .intOption("inf_proto_move_multi")) != 1) {
+                    .intOption(OptionsConstants.INIT_INF_PROTO_MOVE_MULTI)) != 1) {
                 // exception, if the _next_ turn is an protomek turn, remove
                 // that
                 // contrived, but may come up e.g. one inf accidently kills
@@ -2212,9 +2212,9 @@ public class Game implements Serializable, IGame {
         //  rules, then we may be removing an infantry unit that would be
         //  considered invalid unless we don't consider the extra validity
         //  checks.
-        if ((getOptions().booleanOption("inf_move_later") &&
+        if ((getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER) &&
              (entity instanceof Infantry)) ||
-            (getOptions().booleanOption("protos_move_later") &&
+            (getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER) &&
              (entity instanceof Protomech))) {
             useInfantryMoveLaterCheck = false;
         }
@@ -2414,7 +2414,7 @@ public class Game implements Serializable, IGame {
         } else {
             TurnOrdered.rollInitAndResolveTies(teams, initiativeRerollRequests,
                                                getOptions()
-                                                       .booleanOption("initiative_streak_compensation"));
+                                                       .booleanOption(OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION));
         }
         initiativeRerollRequests.removeAllElements();
 
@@ -3007,10 +3007,10 @@ public class Game implements Serializable, IGame {
             Entity entity = iter.next();
             boolean excluded = false;
             if ((entity instanceof Infantry)
-                && getOptions().booleanOption("inf_move_later")) {
+                && getOptions().booleanOption(OptionsConstants.INIT_INF_MOVE_LATER)) {
                 excluded = true;
             } else if ((entity instanceof Protomech)
-                       && getOptions().booleanOption("protos_move_later")) {
+                       && getOptions().booleanOption(OptionsConstants.INIT_PROTOS_MOVE_LATER)) {
                 excluded = true;
             }
 

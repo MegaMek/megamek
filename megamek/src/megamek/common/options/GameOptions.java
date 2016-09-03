@@ -264,23 +264,23 @@ public class GameOptions extends AbstractOptions {
         addOption(advAeroRules, OptionsConstants.ADVAERORULES_SINGLE_NO_CAP, false); //$NON-NLS-1$
 
         IBasicOptionGroup initiative = addGroup("initiative"); //$NON-NLS-1$
-        addOption(initiative, "inf_move_even", false); //$NON-NLS-1$
-        addOption(initiative, "inf_deploy_even", false); //$NON-NLS-1$
-        addOption(initiative, "inf_move_later", false); //$NON-NLS-1$
-        addOption(initiative, "inf_move_multi", false); //$NON-NLS-1$
-        addOption(initiative, "protos_move_even", false); //$NON-NLS-1$
-        addOption(initiative, "protos_deploy_even", false); //$NON-NLS-1$
-        addOption(initiative, "protos_move_later", false); //$NON-NLS-1$
-        addOption(initiative, "protos_move_multi", false); //$NON-NLS-1$
-        addOption(initiative, "inf_proto_move_multi", 3); //$NON-NLS-1$
-        addOption(initiative, "simultaneous_deployment", false); //$NON-NLS-1$
-        addOption(initiative, "simultaneous_movement", false); //$NON-NLS-1$
-        addOption(initiative, "simultaneous_targeting", false); //$NON-NLS-1$
-        addOption(initiative, "simultaneous_firing", false); //$NON-NLS-1$
-        addOption(initiative, "simultaneous_physical", false); //$NON-NLS-1$
-        addOption(initiative, "front_load_initiative", false); //$NON-NLS-1$
-        addOption(initiative, "initiative_streak_compensation", false); //$NON-NLS-1$
-
+        addOption(initiative, OptionsConstants.INIT_INF_MOVE_EVEN, false); //$NON-NLS-1$
+        addOption(initiative, OptionsConstants.INIT_INF_DEPLOY_EVEN, false); //$NON-NLS-1$
+        addOption(initiative, OptionsConstants.INIT_INF_MOVE_LATER, false); //$NON-NLS-1$
+        addOption(initiative, OptionsConstants.INIT_INF_MOVE_MULTI, false); //$NON-NLS-1$
+        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_EVEN, false); //$NON-NLS-1$
+        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_EVEN, false); //$NON-NLS-1$
+        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_LATER, false); //$NON-NLS-1$
+        addOption(initiative, OptionsConstants.INIT_PROTOS_MOVE_MULTI, false); //$NON-NLS-1$
+        addOption(initiative, OptionsConstants.INIT_INF_PROTO_MOVE_MULTI, 3); //$NON-NLS-1$
+        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_DEPLOYMENT, false); //$NON-NLS-1$
+        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_MOVEMENT, false); //$NON-NLS-1$
+        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_TARGETING, false); //$NON-NLS-1$
+        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_FIRING, false); //$NON-NLS-1$
+        addOption(initiative, OptionsConstants.INIT_SIMULTANEOUS_PHYSICAL, false); //$NON-NLS-1$
+        addOption(initiative, OptionsConstants.INIT_FRONT_LOAD_INITIATIVE, false); //$NON-NLS-1$
+        addOption(initiative, OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION, false); //$NON-NLS-1$
+        
         IBasicOptionGroup rpg = addGroup("rpg"); //$NON-NLS-1
         addOption(rpg, "pilot_advantages", false); //$NON-NLS-1$
         addOption(rpg, OptionsConstants.EDGE, false); //$NON-NLS-1$
@@ -293,6 +293,18 @@ public class GameOptions extends AbstractOptions {
         addOption(rpg, "conditional_ejection", false); //$NON-NLS-1$
         addOption(rpg, "manual_shutdown", false); //$NON-NLS-1$
         addOption(rpg, "begin_shutdown", false); //$NON-NLS-1$
+        
+/*        addOption(rpg, OptionsConstants.RPG_PILOT_ADVANTAGES, false); //$NON-NLS-1$
+        addOption(rpg, OptionsConstants.RPG_MANEI_DOMINI, false); //$NON-NLS-1$
+        addOption(rpg, OptionsConstants.RPG_INDIVIDUAL_INITIATIVE, false); //$NON-NLS-1$
+        addOption(rpg, OptionsConstants.RPG_COMMAND_INIT, false); //$NON-NLS-1$
+        addOption(rpg, OptionsConstants.RPG_RPG_GUNNERY, false); //$NON-NLS-1$
+        addOption(rpg, OptionsConstants.RPG_ARTILLERY_SKILL, false); //$NON-NLS-1$
+        addOption(rpg, OptionsConstants.RPG_TOUGHNESS, false); //$NON-NLS-1$
+        addOption(rpg, OptionsConstants.RPG_CONDITIONAL_EJECTION, false); //$NON-NLS-1$
+        addOption(rpg, OptionsConstants.RPG_MANUAL_SHUTDOWN, false); //$NON-NLS-1$
+        addOption(rpg, OptionsConstants.RPG_BEGIN_SHUTDOWN, false); //$NON-NLS-1$
+*/
         
         
 

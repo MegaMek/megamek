@@ -1888,7 +1888,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                     if (cmd.getLastStep() != null) {
                         boolean hullDownEnabled = clientgui.getClient()
                                                            .getGame().getOptions()
-                                                           .booleanOption("tacops_hull_down");
+                                                           .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
                         IHex occupiedHex = clientgui.getClient().getGame()
                                                     .getBoard()
                                                     .getHex(cmd.getLastStep().getPosition());
@@ -2496,7 +2496,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 break;
             }
             // Zip lines, TO pg 219
-            if (game.getOptions().booleanOption("tacops_ziplines")
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES)
                     && (ce() instanceof VTOL) && (en instanceof Infantry) 
                     && !((Infantry)en).isMechanized()) {
                 canUnloadHere = true;
@@ -4030,7 +4030,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 clear();
             }
 
-            if (opts.booleanOption("tacops_careful_stand")
+            if (opts.booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND)
                     && (ce.getWalkMP() > 2)) {
                 ConfirmDialog response = clientgui
                         .doYesNoBotherDialog(

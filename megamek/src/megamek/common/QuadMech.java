@@ -865,7 +865,7 @@ public class QuadMech extends Mech {
     @Override
     public boolean canGoHullDown() {
         // check the option
-        boolean retVal = game.getOptions().booleanOption("tacops_hull_down");
+        boolean retVal = game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
         if (!retVal) {
             return false;
         }

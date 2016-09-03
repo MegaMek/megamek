@@ -1041,13 +1041,13 @@ public class MapMenu extends JPopupMenu {
             menu.setText("Stand");
             menu.add(createStandJMenuItem(false));
 
-            if (game.getOptions().booleanOption("tacops_careful_stand")
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND)
                 && (myEntity.getWalkMP() > 2)
                 && (myEntity.moved == EntityMovementType.MOVE_NONE)) {
                 menu.add(createStandJMenuItem(true));
             }
 
-            if (game.getOptions().booleanOption("tacops_hull_down")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN)) {
                 menu.add(createHullDownJMenuItem());
             }
 
@@ -1055,7 +1055,7 @@ public class MapMenu extends JPopupMenu {
             menu.setText("Stand");
             menu.add(createStandJMenuItem(false));
 
-            if (game.getOptions().booleanOption("tacops_careful_stand")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND)) {
                 menu.add(createStandJMenuItem(true));
             }
 
@@ -1064,7 +1064,7 @@ public class MapMenu extends JPopupMenu {
             menu.setText("Prone");
             menu.add(createProneJMenuItem());
 
-            if (game.getOptions().booleanOption("tacops_hull_down")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN)) {
                 menu.add(createHullDownJMenuItem());
             }
         }

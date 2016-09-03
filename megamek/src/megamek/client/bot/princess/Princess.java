@@ -58,6 +58,7 @@ import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.logging.LogLevel;
 import megamek.common.logging.Logger;
 import megamek.common.net.Packet;
+import megamek.common.options.OptionsConstants;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.AmmoWeapon;
 
@@ -753,7 +754,7 @@ public class Princess extends BotClient {
                 return true;
             }
 
-            MovePath.MoveStepType type = (getBooleanOption("tacops_careful_stand") ?
+            MovePath.MoveStepType type = (getBooleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND) ?
                                           MovePath.MoveStepType.CAREFUL_STAND :
                                           MovePath.MoveStepType.GET_UP);
             MoveStep getUp = new MoveStep(movePath, type);

@@ -3632,7 +3632,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     && (ae.moved != EntityMovementType.MOVE_NONE)) {
                 return "Foot platoons with 0 MP can move or shoot, not both";
             }
-            if (game.getOptions().booleanOption("tacops_fast_infantry_move")
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE)
                     && (ae.moved == EntityMovementType.MOVE_RUN)) {
                 return "Infantry fast moved this turn and so can not shoot.";
             }

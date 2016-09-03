@@ -2846,8 +2846,8 @@ public class MoveStep implements Serializable {
                 && isThisStepBackwards()
                 && !(isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER))
                 && (((destAlt != srcAlt) && !game.getOptions().booleanOption(
-                "tacops_walk_backwards")) || (game.getOptions()
-                .booleanOption("tacops_walk_backwards") && (Math
+                OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS)) || (game.getOptions()
+                .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS) && (Math
                 .abs(destAlt - srcAlt) > 1)))) {
             // System.err.println("Can't back up across an elevation change.");
             return false;
@@ -2956,11 +2956,11 @@ public class MoveStep implements Serializable {
                 && (destAlt != srcAlt)
                 && !(entity instanceof VTOL)
                 && !(isJumping() && (entity.getJumpType() == Mech.JUMP_BOOSTER))) {
-            if (game.getOptions().booleanOption("tacops_walk_backwards")
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS)
                     && (Math.abs(destAlt - srcAlt) > 1)) {
                 return false;
             }
-            if (!game.getOptions().booleanOption("tacops_walk_backwards")
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS)
                     && (destAlt != srcAlt)) {
                 return false;
             }

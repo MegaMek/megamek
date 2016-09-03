@@ -291,7 +291,7 @@ public class Infantry extends Entity {
     @Override
     public int getRunMP(boolean gravity, boolean ignoreheat, boolean ignoremodulararmor) {
         if( (game != null)
-                && game.getOptions().booleanOption("tacops_fast_infantry_move") ) {
+                && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE) ) {
             if(getWalkMP(gravity, ignoreheat, ignoremodulararmor) > 0) {
                 return getWalkMP(gravity, ignoreheat, ignoremodulararmor) + 1;
             }
@@ -1094,7 +1094,7 @@ public class Infantry extends Entity {
 
     @Override
     public boolean isEligibleForFiring() {
-        if(game.getOptions().booleanOption("tacops_fast_infantry_move")) {
+        if(game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE)) {
             if(moved == EntityMovementType.MOVE_RUN) {
                 return false;
             }

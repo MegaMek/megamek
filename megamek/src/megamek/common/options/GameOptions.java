@@ -216,18 +216,18 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_TAKING_DAMAGE, false); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE, false); //$NON-NLS-1$
         
-        addOption(advancedGroundMovement, "tacops_walk_backwards", false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "tacops_fast_infantry_move", false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "vehicle_lance_movement", false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "vehicle_lance_movement_number", 4); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "tacops_hull_down", false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "tacops_falling_expanded", false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "tacops_attempting_stand", false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "tacops_careful_stand", false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "tacops_ziplines", false); //$NON-NLS-1$
-        addOption(advancedGroundMovement, "mek_lance_movement", false); //$NON-NLS-1$
-        
-        addOption(advancedGroundMovement, "mek_lance_movement_number", 4); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_WALK_BACKWARDS, false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_FAST_INFANTRY_MOVE, false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT, false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER, 4); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN, false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED, false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_ATTEMPTING_STAND, false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_CAREFUL_STAND, false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES, false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT, false); //$NON-NLS-1$
+        addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER, 4); //$NON-NLS-1$
+
         addOption(advancedGroundMovement, "no_immobile_vehicles", false); //$NON-NLS-1$
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT, false);
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE, false);

@@ -458,8 +458,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals("tacops_falling_expanded")) { //$NON-NLS-1$
-            if (!(options.getOption("tacops_hull_down")).booleanValue() //$NON-NLS-1$
+        } else if (option.getName().equals(OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED)) { //$NON-NLS-1$
+            if (!(options.getOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN)).booleanValue() //$NON-NLS-1$
                     || !editable) {
                 optionComp.setEditable(false);
             }
@@ -514,14 +514,14 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             }
             optionComp.setSelected(option.stringValue());
             optionComp.setEditable(editable);
-        } else if (option.getName().equals("mek_lance_movement")) {
+        } else if (option.getName().equals(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)) {
             // Disable if individual init is on
             if (!options.getOption("individual_initiative").booleanValue()) {
                 optionComp.setEditable(editable);
             } else {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals("vehicle_lance_movement")) {
+        } else if (option.getName().equals(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)) {
             // Disable if individual init is on
             if (!options.getOption("individual_initiative").booleanValue()) {
                 optionComp.setEditable(editable);
@@ -665,12 +665,12 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get("mek_lance_movement");
+            comps = optionComps.get(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT);
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get("vehicle_lance_movement");
+            comps = optionComps.get(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT);
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
@@ -683,8 +683,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                 comp_i.setSelected(false);
             }
         }
-        if ("tacops_hull_down".equals(option.getName())) { //$NON-NLS-1$
-            comps = optionComps.get("tacops_falling_expanded"); //$NON-NLS-1$
+        if (OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN.equals(option.getName())) { //$NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED); //$NON-NLS-1$
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);

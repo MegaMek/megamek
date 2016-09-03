@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import megamek.common.options.OptionsConstants;
+
 public abstract class TurnOrdered implements ITurnOrdered {
 
     /**
@@ -76,18 +78,18 @@ public abstract class TurnOrdered implements ITurnOrdered {
         if (turns_multi == null) {
             turns_multi = new HashMap<Integer, Integer>();
         }
-        if (game.getOptions().booleanOption("mek_lance_movement")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)) {
             double lanceSize = 
-                    game.getOptions().intOption("mek_lance_movement_number"); 
+                    game.getOptions().intOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER); 
             Integer numMekMultis = turns_multi.get(GameTurn.CLASS_MECH);
             if (numMekMultis != null) {
                 turns += (int)Math.ceil(numMekMultis / lanceSize);
             }
         }
         
-        if (game.getOptions().booleanOption("vehicle_lance_movement")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)) {
             double lanceSize = game.getOptions().intOption(
-                    "vehicle_lance_movement_number");
+                    OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER);
             Integer numTankMultis = turns_multi.get(GameTurn.CLASS_TANK);
             if (numTankMultis != null) {
                 turns += (int)Math.ceil(numTankMultis / lanceSize);

@@ -2149,12 +2149,12 @@ public class Server implements Runnable {
         boolean protosMoveMulti = gameOpts.booleanOption("protos_move_multi");
         boolean tanksMoved = entityUsed instanceof Tank;
         boolean tanksMoveMulti = gameOpts.booleanOption(
-                "vehicle_lance_movement")
+                OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)
                 && ((currPhase == IGame.Phase.PHASE_MOVEMENT)
                     || (currPhase == IGame.Phase.PHASE_DEPLOYMENT)
                     || (currPhase == IGame.Phase.PHASE_INITIATIVE));
         boolean meksMoved = entityUsed instanceof Mech;
-        boolean meksMoveMulti = gameOpts.booleanOption("mek_lance_movement")
+        boolean meksMoveMulti = gameOpts.booleanOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)
                 && ((currPhase == IGame.Phase.PHASE_MOVEMENT)
                     || (currPhase == IGame.Phase.PHASE_DEPLOYMENT)
                     || (currPhase == IGame.Phase.PHASE_INITIATIVE));
@@ -2268,7 +2268,7 @@ public class Server implements Runnable {
                 remaining--;
             }
             int moreVeeTurns = Math.min(
-                    gameOpts.intOption("vehicle_lance_movement_number") - 1,
+                    gameOpts.intOption(OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT_NUMBER) - 1,
                     remaining);
 
             // Add the correct number of turns for the right unit classes.
@@ -2287,7 +2287,7 @@ public class Server implements Runnable {
                 remaining--;
             }
             int moreMekTurns = Math.min(
-                    gameOpts.intOption("mek_lance_movement_number") - 1,
+                    gameOpts.intOption(OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER) - 1,
                     remaining);
 
             // Add the correct number of turns for the right unit classes.
@@ -3637,12 +3637,12 @@ public class Server implements Runnable {
                 "protos_move_multi");
         boolean protosMoveByPoint = !protosMoveMulti;
         boolean tankMoveByLance = game.getOptions().booleanOption(
-                "vehicle_lance_movement")
+                OptionsConstants.ADVGRNDMOV_VEHICLE_LANCE_MOVEMENT)
                 && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || ((game
                         .getPhase() == IGame.Phase.PHASE_MOVEMENT) || (game
                         .getPhase() == IGame.Phase.PHASE_DEPLOYMENT)));
         boolean mekMoveByLance = game.getOptions().booleanOption(
-                "mek_lance_movement")
+                OptionsConstants.ADVGRNDMOV_MEK_LANCE_MOVEMENT)
                 && ((game.getPhase() == IGame.Phase.PHASE_INITIATIVE) || ((game
                         .getPhase() == IGame.Phase.PHASE_MOVEMENT) || (game
                         .getPhase() == IGame.Phase.PHASE_DEPLOYMENT)));
@@ -4497,7 +4497,7 @@ public class Server implements Runnable {
 
         // Check for zip lines PSR -- MOVE_WALK implies ziplines
         if (unit.moved == EntityMovementType.MOVE_WALK) {
-            if (game.getOptions().booleanOption("tacops_ziplines")
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_ZIPLINES)
                     && (unit instanceof Infantry)
                     && !((Infantry) unit).isMechanized()) {
 
@@ -11566,7 +11566,7 @@ public class Server implements Runnable {
             addReport(r);
             if ((entity instanceof Mech)
                 && game.getOptions().booleanOption(
-                    "tacops_falling_expanded")
+                    OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED)
                 && (entity.getCrew().getPiloting() < 6)
                 && !entity.isHullDown() && entity.canGoHullDown()) {
                 if ((entity.getCrew().getPiloting() > 1)
@@ -20280,7 +20280,7 @@ public class Server implements Runnable {
                                                       entity.getElevation(), src, dest, base, true));
             } else if ((entity instanceof Mech)
                        && game.getOptions().booleanOption(
-                    "tacops_falling_expanded")
+                    OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED)
                        && (entity.getCrew().getPiloting() < 6)
                        && !entity.isHullDown() && entity.canGoHullDown()) {
                 if (entity.isHullDown() && entity.canGoHullDown()) {
@@ -20330,7 +20330,7 @@ public class Server implements Runnable {
                 } else {
                     if ((entity instanceof Mech)
                         && game.getOptions().booleanOption(
-                            "tacops_falling_expanded")
+                            OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED)
                         && (entity.getCrew().getPiloting() < 6)
                         && !entity.isHullDown() && entity.canGoHullDown()) {
                         if (entity.isHullDown() && entity.canGoHullDown()) {
@@ -20369,7 +20369,7 @@ public class Server implements Runnable {
                 } else {
                     if ((entity instanceof Mech)
                         && game.getOptions().booleanOption(
-                            "tacops_falling_expanded")
+                            OptionsConstants.ADVGRNDMOV_TACOPS_FALLING_EXPANDED)
                         && (entity.getCrew().getPiloting() < 6)
                         && !entity.isHullDown() && entity.canGoHullDown()) {
                         if ((entity.getCrew().getPiloting() > 1)

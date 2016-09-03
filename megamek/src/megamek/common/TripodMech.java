@@ -859,7 +859,7 @@ public class TripodMech extends Mech {
     @Override
     public boolean canGoHullDown() {
         // check the option
-        boolean retVal = game.getOptions().booleanOption("tacops_hull_down");
+        boolean retVal = game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
         if (!retVal) {
             return false;
         }
@@ -900,7 +900,7 @@ public class TripodMech extends Mech {
             return;
         }
 
-        if (game.getOptions().booleanOption("tacops_attempting_stand")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_ATTEMPTING_STAND)) {
             int[] locsToCheck = new int[2];
 
             locsToCheck[0] = Mech.LOC_RARM;

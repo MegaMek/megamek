@@ -2634,7 +2634,7 @@ public class Tank extends Entity {
         // if the movement is illegal
         IHex occupiedHex = game.getBoard().getHex(getPosition());
         return occupiedHex.containsTerrain(Terrains.FORTIFIED)
-                && game.getOptions().booleanOption("tacops_hull_down");
+                && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_HULL_DOWN);
     }
 
     public void setOnFire(boolean inferno) {

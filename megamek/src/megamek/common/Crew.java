@@ -615,7 +615,7 @@ public class Crew implements Serializable {
     }
 
     public static double getBVSkillMultiplier(int gunnery, int piloting, IGame game) {
-        if ((game != null) && game.getOptions().booleanOption("alternate_pilot_bv_mod")) {
+        if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_PILOT_BV_MOD)) {
             return alternateBvMod[Math.max(Math.min(8, gunnery), 0)][Math.max(Math.min(8, piloting), 0)];
         }
         return bvMod[Math.max(Math.min(8, gunnery), 0)][Math.max(Math.min(8, piloting), 0)];

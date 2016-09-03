@@ -108,7 +108,6 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BAP, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_ECCM, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_GHOST_TARGET, false); //$NON-NLS-1$
-
         addOption(advancedRules, OptionsConstants.ADVANCED_GHOST_TARGET_MAX, 5); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_DIG_IN, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_BA_WEIGHT, false); //$NON-NLS-1$
@@ -123,7 +122,6 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_TACOPS_TANK_CREWS, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_QUIRKS, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS, false); //$NON-NLS-1$
-       
         addOption(advancedRules, OptionsConstants.ADVANCED_ASSAULT_DROP, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_PARATROOPERS, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE, false); //$NON-NLS-1$
@@ -139,22 +137,12 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_METAL_CONTENT, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_BA_GRAB_BARS, false); //$NON-NLS-1$
-        
-        addOption(advancedRules, "maxtech_movement_mods", false); //$NON-NLS-1$
-        addOption(advancedRules, "alternate_masc", false); //$NON-NLS-1$
-        addOption(advancedRules, "alternate_masc_enhanced", false); //$NON-NLS-1$
-        addOption(advancedRules, "geometric_mean_bv", false); //$NON-NLS-1$\
-        addOption(advancedRules, "reduced_overheat_modifier_bv", false); //$NON-NLS-1$
-        addOption(advancedRules, "alternate_pilot_bv_mod", false); //$NON-NLS-1$
-      
-       
-/*        addOption(advancedRules, OptionsConstants.ADVANCED_MAXTECH_MOVEMENT_MODS, false); //$NON-NLS-1$
+        addOption(advancedRules, OptionsConstants.ADVANCED_MAXTECH_MOVEMENT_MODS, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV, false); //$NON-NLS-1$\
         addOption(advancedRules, OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_PILOT_BV_MOD, false); //$NON-NLS-1$
-       */
         
 
         IBasicOptionGroup advancedCombat = addGroup("advancedCombat"); //$NON-NLS-1$

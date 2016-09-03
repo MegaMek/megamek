@@ -945,15 +945,15 @@ public class UnitSelectorDialog extends JDialog implements Runnable,
             }
             if (col == COL_BV) {
                 if ((opts != null)
-                        && opts.booleanOption("geometric_mean_bv")) {
-                    if (opts.booleanOption("reduced_overheat_modifier_bv")) {
+                        && opts.booleanOption(OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV)) {
+                    if (opts.booleanOption(OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV)) {
                         return ms.getRHGMBV();
                     } else {
                         return ms.getGMBV();
                     }
                 } else {
                     if ((opts != null)
-                            && opts.booleanOption("reduced_overheat_modifier_bv")) {
+                            && opts.booleanOption(OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV)) {
                         return ms.getRHBV();
                     } else {
                         return ms.getBV();

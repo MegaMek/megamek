@@ -5881,12 +5881,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean useGeometricMeanBV() {
         return useGeometricBV || ((game != null)
-                                  && game.getOptions().booleanOption("geometric_mean_bv"));
+                                  && game.getOptions().booleanOption(OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV));
     }
 
     public boolean useReducedOverheatModifierBV() {
         return (useReducedOverheatModifierBV || ((game != null)
-                                                && game.getOptions().booleanOption("reduced_overheat_modifier_bv")));
+                                                && game.getOptions().booleanOption(OptionsConstants.ADVANCED_REDUCED_OVERHEAT_MODIFIER_BV)));
     }
 
     /**
@@ -12892,9 +12892,9 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     }
 
     public int getMASCTarget() {
-        if (game.getOptions().booleanOption("alternate_masc_enhanced")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED)) {
             return ALTERNATE_MASC_FAILURE_ENHANCED[nMASCLevel];
-        } else if (game.getOptions().booleanOption("alternate_masc")) {
+        } else if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_ALTERNATE_MASC)) {
             return ALTERNATE_MASC_FAILURE[nMASCLevel];
         } else {
             return MASC_FAILURE[nMASCLevel];

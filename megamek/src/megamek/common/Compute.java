@@ -2249,7 +2249,7 @@ public class Compute {
         }
 
         if ((game != null)
-            && game.getOptions().booleanOption("maxtech_movement_mods")) {
+            && game.getOptions().booleanOption(OptionsConstants.ADVANCED_MAXTECH_MOVEMENT_MODS)) {
             if ((distance >= 3) && (distance <= 4)) {
                 toHit.addModifier(1, "target moved 3-4 hexes");
             } else if ((distance >= 5) && (distance <= 6)) {

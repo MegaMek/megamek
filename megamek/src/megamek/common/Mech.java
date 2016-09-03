@@ -1134,7 +1134,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getRunningGravityLimit() {
-        if (game.getOptions().booleanOption("tacops_sprint")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
             return getSprintMP(false, false, false);
         }
         return getRunMP(false, false, false);
@@ -5210,7 +5210,7 @@ public abstract class Mech extends Entity {
 
     @Override
     public int getMaxElevationDown(int currElevation) {
-        if (game.getOptions().booleanOption("tacops_leaping")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
             return 999;
         }
         return getMaxElevationChange();

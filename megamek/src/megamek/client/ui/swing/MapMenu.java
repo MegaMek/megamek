@@ -577,7 +577,7 @@ public class MapMenu extends JPopupMenu {
                 menu.add(item);
             }
 
-            if (game.getOptions().booleanOption("tacops_evade")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_EVADE)) {
                 item = new JMenuItem(
                         Messages.getString("MovementDisplay.butEvade"));
 
@@ -703,7 +703,7 @@ public class MapMenu extends JPopupMenu {
 
             menu.add(item);
 
-            if (game.getOptions().booleanOption("tacops_evade")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_EVADE)) {
                 item = new JMenuItem(
                         Messages.getString("MovementDisplay.butEvade"));
 

@@ -2191,7 +2191,7 @@ public class Compute {
             return new ToHitData();
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.AGM_TAC_OPS_STANDING_STILL)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL)
             && (entity.mpUsed == 0)
             && !entity.isImmobile()
             && !((entity instanceof Infantry) || (entity instanceof VTOL) || (entity instanceof GunEmplacement))) {

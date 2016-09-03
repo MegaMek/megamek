@@ -881,7 +881,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
 
         setLayMineEnabled(ce.canLayMine());
         setFleeEnabled(ce.canFlee());
-        if (gOpts.booleanOption(OptionsConstants.AGM_VEHICLES_CAN_EJECT) && (ce instanceof Tank)) {
+        if (gOpts.booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT) && (ce instanceof Tank)) {
             // Vehicle don't have ejection systems so crews abandon, and must 
             // enter a valid hex, if they cannot they can't abandon TO pg 197
             Coords pos = ce().getPosition();
@@ -2316,7 +2316,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         if (!clientgui.getClient().getGame().getOptions()
-                      .booleanOption("tacops_evade")) {
+                      .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_EVADE)) {
             return;
         }
 
@@ -3757,7 +3757,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             maxMP = en.getWalkMP();
         } else {
             if (clientgui.getClient().getGame().getOptions()
-                         .booleanOption("tacops_sprint")) {
+                         .booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
                 maxMP = en.getSprintMP();
             } else {
                 maxMP = en.getRunMP();

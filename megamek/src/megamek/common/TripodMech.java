@@ -133,7 +133,7 @@ public class TripodMech extends Mech {
                         hipHits++;
                         if ((game == null)
                             || !game.getOptions().booleanOption(
-                                "tacops_leg_damage")) {
+                                OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                             continue;
                         }
                     }
@@ -150,7 +150,7 @@ public class TripodMech extends Mech {
         } else {
             if (hipHits > 0) {
                 if ((game != null)
-                    && game.getOptions().booleanOption("tacops_leg_damage")) {
+                    && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                     wmp = (hipHits >= 1) ? wmp - (2 * hipHits) : 0;
                 } else {
                     wmp = (hipHits == 1) ? (int) Math.ceil(wmp / 2.0) : 0;
@@ -290,7 +290,7 @@ public class TripodMech extends Mech {
                                     Mech.ACTUATOR_HIP, loc) > 0) {
                     roll.addModifier(2, getLocationName(loc)
                                         + " Hip Actuator destroyed");
-                    if (!game.getOptions().booleanOption("tacops_leg_damage")) {
+                    if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                         continue;
                     }
                 }

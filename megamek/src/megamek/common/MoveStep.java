@@ -2182,7 +2182,7 @@ public class MoveStep implements Serializable {
                 // store if we got the pavement Bonus for end of phase
                 // gravity psr
                 entity.gotPavementBonus = true;
-            } else if (game.getOptions().booleanOption("tacops_sprint")
+            } else if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)
                     && (entity instanceof Mech)
                     && ((getMpUsed() <= sprintMPnoMASC)
                             || ((getMpUsed() <= sprintMP) && isMASCUsed))
@@ -2190,7 +2190,7 @@ public class MoveStep implements Serializable {
                 movementType = EntityMovementType.MOVE_SPRINT;
             } else if ((getMpUsed() <= sprintMP)
                     && !isRunProhibited() && !isEvading()
-                    && game.getOptions().booleanOption("tacops_sprint")) {
+                    && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SPRINT)) {
                 setUsingMASC(true);
                 setTargetNumberMASC(entity.getMASCTarget());
                 movementType = EntityMovementType.MOVE_SPRINT;
@@ -2660,7 +2660,7 @@ public class MoveStep implements Serializable {
         // non-WIGEs pay for elevation differences
         if ((nSrcEl != nDestEl) && (moveMode != EntityMovementMode.WIGE)) {
             int delta_e = Math.abs(nSrcEl - nDestEl);
-            if (game.getOptions().booleanOption("tacops_leaping") && isMech
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING) && isMech
                     && (delta_e > 2) && (nDestEl < nSrcEl)) {
                 // leaping (moving down more than 2 hexes) always costs 4 mp
                 // regardless of anything else

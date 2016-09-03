@@ -346,7 +346,7 @@ public class FireControl {
         if (targetState.isImmobile()) {
             toHitData.addModifier(TH_TAR_IMMOBILE);
         }
-        if (game.getOptions().booleanOption(OptionsConstants.AGM_TAC_OPS_STANDING_STILL)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_STANDING_STILL)
             && (targetState.getMovementType() == EntityMovementType.MOVE_NONE)
             && !targetState.isImmobile()
             && !((target instanceof Infantry) || (target instanceof VTOL) ||
@@ -559,7 +559,7 @@ public class FireControl {
             }
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.AGM_TAC_OPS_PHYSICAL_ATTACK_PSR)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR)) {
             if (shooter.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
                 toHitData.addModifier(TH_PHY_LIGHT);
             } else if (shooter.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {

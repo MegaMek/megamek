@@ -19,13 +19,7 @@ package megamek.common.options;
  * @since 2/21/14 7:57 AM
  */
 public class OptionsConstants {
-    public static final String AGM_TAC_OPS_STANDING_STILL = "tacops_standing_still"; //$NON-NLS-1$
-    public static final String AGM_TAC_OPS_PHYSICAL_ATTACK_PSR = "tacops_attack_physical_psr"; //$NON-NLS-1$
-    public static final String AGM_VEHICLES_CAN_EJECT = "vehicles_can_eject"; //$NON-NLS-1$
-    public static final String AGM_EJECTED_PILOTS_FLEE = "ejected_pilots_flee"; //$NON-NLS-1$
-
-
-    
+     
     public static final String QUIRK_POS_ANTI_AIR = "anti_air"; //$NON-NLS-1$
     public static final String QUIRK_POS_ATMO_FLYER= "atmo_flyer"; //$NON-NLS-1$
     public static final String QUIRK_POS_BATTLE_COMP = "battle_computer"; //$NON-NLS-1$
@@ -385,11 +379,14 @@ public class OptionsConstants {
     public static final String ADVCOMBAT_FOREST_FIRES_NO_SMOKE= "forest_fires_no_smoke";  //$NON-NLS$
     public static final String ADVCOMBAT_HOTLOAD_IN_GAME= "hotload_in_game";  //$NON-NLS$
 
+
     public static final String ADVGRNDMOV_TACOPS_SPRINT= "tacops_sprint";  //$NON-NLS$
+    public static final String ADVGRNDMOV_TACOPS_STANDING_STILL = "tacops_standing_still"; //$NON-NLS-1$
     public static final String ADVGRNDMOV_TACOPS_EVADE= "tacops_evade";  //$NON-NLS$
     public static final String ADVGRNDMOV_TACOPS_SKILLED_EVASION= "tacops_skilled_evasion";  //$NON-NLS$
     public static final String ADVGRNDMOV_TACOPS_LEAPING= "tacops_leaping";  //$NON-NLS$
     public static final String ADVGRNDMOV_TACOPS_PHYSICAL_PSR= "tacops_physical_psr";  //$NON-NLS$
+    public static final String ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR = "tacops_attack_physical_psr"; //$NON-NLS-1$
     public static final String ADVGRNDMOV_TACOPS_TAKING_DAMAGE= "tacops_taking_damage";  //$NON-NLS$
     public static final String ADVGRNDMOV_TACOPS_LEG_DAMAGE= "tacops_leg_damage";  //$NON-NLS$
     public static final String ADVGRNDMOV_TACOPS_WALK_BACKWARDS= "tacops_walk_backwards";  //$NON-NLS$
@@ -404,6 +401,8 @@ public class OptionsConstants {
     public static final String ADVGRNDMOV_MEK_LANCE_MOVEMENT= "mek_lance_movement";  //$NON-NLS$
     public static final String ADVGRNDMOV_MEK_LANCE_MOVEMENT_NUMBER= "mek_lance_movement_number";  //$NON-NLS$
     public static final String ADVGRNDMOV_NO_IMMOBILE_VEHICLES= "no_immobile_vehicles";  //$NON-NLS$
+    public static final String ADVGRNDMOV_VEHICLES_CAN_EJECT = "vehicles_can_eject"; //$NON-NLS-1$
+    public static final String ADVGRNDMOV_EJECTED_PILOTS_FLEE = "ejected_pilots_flee"; //$NON-NLS-1$
     public static final String ADVGRNDMOV_AUTO_ABANDON_UNIT= "auto_abandon_unit";  //$NON-NLS$
     public static final String ADVGRNDMOV_NO_HOVER_CHARGE= "no_hover_charge";  //$NON-NLS$
     public static final String ADVGRNDMOV_NO_PREMOVE_VIBRA= "no_premove_vibra";  //$NON-NLS$

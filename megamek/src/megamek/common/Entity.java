@@ -8706,7 +8706,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 && getCrew().isActive() && !unloadedThisTurn && deployed;
         if (!isActive
             || (isImmobile() && !isManualShutdown() && !canUnjamRAC() &&
-                !game.getOptions().booleanOption(OptionsConstants.AGM_VEHICLES_CAN_EJECT))) {
+                !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT))) {
             return false;
         }
 
@@ -10840,7 +10840,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         } else if (this instanceof Aero) {
             return 3;
         } else {
-            if (game.getOptions().booleanOption("tacops_skilled_evasion")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_SKILLED_EVASION)) {
                 int piloting = crew.getPiloting();
                 if (piloting < 2) {
                     return 3;

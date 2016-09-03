@@ -7632,7 +7632,7 @@ public class Server implements Runnable {
             if (!lastPos.equals(curPos)
                     && (stepMoveType != EntityMovementType.MOVE_JUMP)
                     && (entity instanceof Mech)
-                    && game.getOptions().booleanOption("tacops_leaping")) {
+                    && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
                 int leapDistance = (lastElevation
                         + game.getBoard().getHex(lastPos).getLevel())
                         - (curElevation + curHex.getLevel());
@@ -18097,7 +18097,7 @@ public class Server implements Runnable {
         if (psrEntity.hasQuirk(OptionsConstants.QUIRK_POS_STABLE)) {
             psr.addModifier(-1, "stable", false);
         }
-        if (game.getOptions().booleanOption("tacops_physical_psr")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_PSR)) {
 
             switch (target.getWeightClass()) {
                 case EntityWeightClass.WEIGHT_LIGHT:
@@ -19720,14 +19720,14 @@ public class Server implements Runnable {
                 // if this mech has 20+ damage, add another roll to the list.
                 // Hulldown 'mechs ignore this rule, TO Errata
                 if ((entity.damageThisPhase >= 20) && !entity.isHullDown()) {
-                    if (game.getOptions().booleanOption("tacops_taking_damage")) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_TAKING_DAMAGE)) {
                         PilotingRollData damPRD = new PilotingRollData(
                                 entity.getId());
                         int damMod = entity.damageThisPhase / 20;
                         damPRD.addModifier(damMod, (damMod * 20) + "+ damage");
                         int weightMod = 0;
                         if (game.getOptions().booleanOption(
-                                "tacops_physical_psr")) {
+                                OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_PSR)) {
                             switch (entity.getWeightClass()) {
                                 case EntityWeightClass.WEIGHT_LIGHT:
                                     weightMod = 1;
@@ -32340,7 +32340,7 @@ public class Server implements Runnable {
                                                   IEntityRemovalConditions.REMOVE_IN_RETREAT));
                     // }
                 }
-                if (game.getOptions().booleanOption(OptionsConstants.AGM_EJECTED_PILOTS_FLEE)) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
                     game.removeEntity(pilot.getId(),
                                       IEntityRemovalConditions.REMOVE_IN_RETREAT);
                     send(createRemoveEntityPacket(pilot.getId(),
@@ -32398,7 +32398,7 @@ public class Server implements Runnable {
             vDesc.addAll(doEntityDisplacementMinefieldCheck(crew,
                     entity.getPosition(), entity.getPosition(),
                     entity.getElevation()));
-            if (game.getOptions().booleanOption(OptionsConstants.AGM_EJECTED_PILOTS_FLEE)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
                 game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
@@ -32621,14 +32621,14 @@ public class Server implements Runnable {
             // check if the pilot lands in a minefield
             vDesc.addAll(doEntityDisplacementMinefieldCheck(pilot,
                                                             entity.getPosition(), targetCoords, entity.getElevation()));
-            if (game.getOptions().booleanOption(OptionsConstants.AGM_EJECTED_PILOTS_FLEE)) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
                 game.removeEntity(pilot.getId(),
                                   IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(pilot.getId(),
                                               IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
         } // End entity-is-Mek
-        else if (game.getOptions().booleanOption(OptionsConstants.AGM_VEHICLES_CAN_EJECT)
+        else if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_VEHICLES_CAN_EJECT)
                  && (entity instanceof Tank)) {
             EjectedCrew crew = new EjectedCrew(entity);
             crew.setDeployed(true);
@@ -32647,7 +32647,7 @@ public class Server implements Runnable {
             vDesc.addAll(doEntityDisplacementMinefieldCheck(crew,
                                                             entity.getPosition(), entity.getPosition(),
                                                             entity.getElevation()));
-            if(game.getOptions().booleanOption(OptionsConstants.AGM_EJECTED_PILOTS_FLEE)) {
+            if(game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_EJECTED_PILOTS_FLEE)) {
                 game.removeEntity(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
                 send(createRemoveEntityPacket(crew.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }

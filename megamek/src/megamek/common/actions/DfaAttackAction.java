@@ -410,7 +410,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
         }
         // Attacking Weight Class Modifier.
-        if (game.getOptions().booleanOption(OptionsConstants.AGM_TAC_OPS_PHYSICAL_ATTACK_PSR)) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_PHYSICAL_ATTACK_PSR)) {
             if (ae.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT) {
                 toHit.addModifier(-2, "Weight Class Attack Modifier");
             } else if (ae.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM) {

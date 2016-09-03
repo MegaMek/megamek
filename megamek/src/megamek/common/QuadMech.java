@@ -90,7 +90,7 @@ public class QuadMech extends Mech {
                 if (!isLocationBad(i)) {
                     if (legHasHipCrit(i)) {
                         hipHits++;
-                        if ((game == null) || !game.getOptions().booleanOption("tacops_leg_damage")) {
+                        if ((game == null) || !game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                             continue;
                         }
                     }
@@ -112,7 +112,7 @@ public class QuadMech extends Mech {
         }
         if (wmp > 0) {
             if (hipHits > 0) {
-                if ((game != null) && game.getOptions().booleanOption("tacops_leg_damage")) {
+                if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                     wmp = wmp - (2 * hipHits);
                 } else {
                     for (int i = 0; i < hipHits; i++) {
@@ -310,7 +310,7 @@ public class QuadMech extends Mech {
                 // check for damaged hip actuators
                 if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HIP, loc) > 0) {
                     roll.addModifier(2, getLocationName(loc) + " Hip Actuator destroyed");
-                    if (!game.getOptions().booleanOption("tacops_leg_damage")) {
+                    if (!game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEG_DAMAGE)) {
                         continue;
                     }
                 }

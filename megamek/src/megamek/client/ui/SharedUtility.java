@@ -40,6 +40,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.VTOL;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 public class SharedUtility {
@@ -148,23 +149,18 @@ public class SharedUtility {
             }
 
             // check for leap
-            if (!lastPos.equals(curPos)
-                    && (moveType != EntityMovementType.MOVE_JUMP)
-                    && (entity instanceof Mech)
-                    && game.getOptions().booleanOption("tacops_leaping")) {
-                int leapDistance = (lastElevation + game.getBoard()
-                        .getHex(lastPos).getLevel())
+            if (!lastPos.equals(curPos) && (moveType != EntityMovementType.MOVE_JUMP) && (entity instanceof Mech)
+                    && game.getOptions().booleanOption(OptionsConstants.ADVGRNDMOV_TACOPS_LEAPING)) {
+                int leapDistance = (lastElevation + game.getBoard().getHex(lastPos).getLevel())
                         - (curElevation + curHex.getLevel());
                 if (leapDistance > 2) {
                     rollTarget = entity.getBasePilotingRoll(moveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
-                    rollTarget.append(new PilotingRollData(entity.getId(),
-                            2 * leapDistance, "leaping (leg damage)"));
+                    rollTarget.append(new PilotingRollData(entity.getId(), 2 * leapDistance, "leaping (leg damage)"));
                     SharedUtility.checkNag(rollTarget, nagReport, psrList);
                     rollTarget = entity.getBasePilotingRoll(moveType);
                     entity.addPilotingModifierForTerrain(rollTarget, curPos);
-                    rollTarget.append(new PilotingRollData(entity.getId(),
-                            leapDistance, "leaping (fall)"));
+                    rollTarget.append(new PilotingRollData(entity.getId(), leapDistance, "leaping (fall)"));
                     SharedUtility.checkNag(rollTarget, nagReport, psrList);
                 }
             }

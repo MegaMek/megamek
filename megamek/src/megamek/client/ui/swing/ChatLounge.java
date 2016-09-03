@@ -4030,9 +4030,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             boolean isQuirksEnabled = clientgui.getClient().getGame().getOptions()
                     .booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS);
             boolean isRapidFireMG = clientgui.getClient().getGame().getOptions()
-                    .booleanOption("tacops_burst");
+                    .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BURST);
             boolean isHotLoad = clientgui.getClient().getGame().getOptions()
-                    .booleanOption("tacops_hotload");
+                    .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD);
             boolean isSearchlight = clientgui.getClient().getGame()
                     .getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK;
             boolean allLoaded = true;

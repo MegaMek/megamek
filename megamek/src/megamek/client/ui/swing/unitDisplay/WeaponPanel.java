@@ -1174,8 +1174,8 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         }
 
         // If MaxTech range rules are in play, display the extreme range.
-        if (((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) ||
-            (entity.isAirborne() || entity.usesWeaponBays())) { //$NON-NLS-1$
+        if (((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE))
+                || (entity.isAirborne() || entity.usesWeaponBays())) { // $NON-NLS-1$
             wExtL.setVisible(true);
             wExtR.setVisible(true);
         } else {
@@ -1665,9 +1665,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 wMinL.setVisible(true);
                 wMinR.setVisible(true);
             }
-            if (((entity.getGame() != null) && entity.getGame().getOptions().booleanOption(OptionsConstants
-                                                                                                   .ADVCOMBAT_TACOPS_RANGE))
-                || (entity.isAirborne() || entity.usesWeaponBays())) {
+            if (((entity.getGame() != null)
+                    && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE))
+                    || (entity.isAirborne() || entity.usesWeaponBays())) {
                 wExtL.setVisible(true);
                 wExtR.setVisible(true);
             }

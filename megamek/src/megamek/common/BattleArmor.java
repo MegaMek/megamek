@@ -573,7 +573,7 @@ public class BattleArmor extends Infantry {
         int critLocation = Compute.d6();
         // TacOps p. 108 Trooper takes a crit if a second roll is the same
         // location as the first.
-        if (game.getOptions().booleanOption("tacops_ba_criticals")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_BA_CRITICALS)
                 && (loc == critLocation)) {
             return new HitData(loc, false, HitData.EFFECT_CRITICAL);
         }

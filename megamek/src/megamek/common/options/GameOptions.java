@@ -157,18 +157,17 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE, false);
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES, false); //$NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_LOS1, false); //$NON-NLS-1$
-        
-        addOption(advancedCombat, "tacops_altdmg", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_clusterhitpen", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_ppc_inhibitors", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_charge_damage", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_glancing_blows", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_direct_blow", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_burst", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_heat", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_partial_cover", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_ba_criticals", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_hotload", false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ALTDMG, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_CLUSTERHITPEN, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BURST, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_HEAT, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BA_CRITICALS, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD, false); //$NON-NLS-1$
         
         addOption(advancedCombat, "tacops_rapid_ac", false); //$NON-NLS-1$
         addOption(advancedCombat, "kind_rapid_ac", false); //$NON-NLS-1$
@@ -212,18 +211,8 @@ public class GameOptions extends AbstractOptions {
         
 
 
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ALTDMG, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_CLUSTERHITPEN, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BURST, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_HEAT, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BA_CRITICALS, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC, false); //$NON-NLS-1$
+
+/*        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC, false); //$NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_KIND_RAPID_AC, false); //$NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_GRAPPLING, false); //$NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_JUMP_JET_ATTACK, false); //$NON-NLS-1$
@@ -259,7 +248,7 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_FULL_ROTOR_HITS, false); //$NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_FOREST_FIRES_NO_SMOKE, false); //$NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME, false); //$NON-NLS-1$
-
+*/
         
         
         

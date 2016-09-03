@@ -6960,10 +6960,8 @@ public abstract class Mech extends Entity {
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
 
-                if ((mounted.getType() instanceof PPCWeapon)
-                        && (((WeaponType) mounted.getType()).getMinimumRange() > 0)
-                        && game.getOptions().booleanOption(
-                                "tacops_ppc_inhibitors")) {
+                if ((mounted.getType() instanceof PPCWeapon) && (((WeaponType) mounted.getType()).getMinimumRange() > 0)
+                        && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)) {
                     modes.add("Field Inhibitor ON");
                     modes.add("Field Inhibitor OFF");
                 }

@@ -94,7 +94,7 @@ public class PPCHandler extends EnergyWeaponHandler {
         }
 
         // Check for Altered Damage from Energy Weapons (TacOps, pg.83)
-        if (game.getOptions().booleanOption("tacops_altdmg")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ALTDMG)) {
             if (nRange <= 1) {
                 toReturn++;
             } else if (nRange <= wtype.getMediumRange()) {
@@ -143,7 +143,7 @@ public class PPCHandler extends EnergyWeaponHandler {
     @Override
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         // Resolve roll for disengaged field inhibitors on PPCs, if needed
-        if (game.getOptions().booleanOption("tacops_ppc_inhibitors")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)
                 && wtype.hasModes()
                 && weapon.curMode().equals("Field Inhibitor OFF")) {
             int rollTarget = 0;

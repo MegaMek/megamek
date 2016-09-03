@@ -129,7 +129,7 @@ public class QuadMech extends Mech {
 
         if (!ignoreheat) {
             // factor in heat
-            if ((game != null) && game.getOptions().booleanOption("tacops_heat")) {
+            if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
                 if (heat < 30) {
                     wmp -= (heat / 5);
                 } else if (heat >= 49) {

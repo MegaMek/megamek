@@ -912,7 +912,7 @@ public class Compute {
         // TODO: See above, it should be coded elsewhere...
         //
         if (wtype.hasFlag(WeaponType.F_PPC)) {
-            if (game.getOptions().booleanOption("tacops_ppc_inhibitors")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PPC_INHIBITORS)) {
                 if ((weapon.curMode() != null)
                     && weapon.curMode().equals("Field Inhibitor OFF")) {
                     weaponRanges[RangeType.RANGE_MINIMUM] = 0;
@@ -922,7 +922,7 @@ public class Compute {
 
         // Hotloaded weapons
         if (weapon.isHotLoaded()
-            && game.getOptions().booleanOption("tacops_hotload")) {
+            && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) {
             weaponRanges[RangeType.RANGE_MINIMUM] = 0;
         }
 

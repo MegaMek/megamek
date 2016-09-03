@@ -1694,7 +1694,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                         toAttacker = ChargeAttackAction.getDamageTakenBy(ce,
                                 te,
                                 clientgui.getClient().getGame().getOptions()
-                                        .booleanOption("tacops_charge_damage"), //$NON-NLS-1$
+                                        .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE), //$NON-NLS-1$
                                 cmd.getHexesMoved());
                     } else if ((target.getTargetType() == Targetable.TYPE_FUEL_TANK)
                                || (target.getTargetType() == Targetable.TYPE_BUILDING)) {
@@ -1728,7 +1728,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                                                                                     .getGame()
                                                                                     .getOptions()
                                                                                     .booleanOption(
-                                                                                            "tacops_charge_damage"),
+                                                                                            OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE),
                                                                             cmd.getHexesMoved())),
                                                     toHit.getTableDesc(),
                                                     new Integer(toAttacker) }))) {

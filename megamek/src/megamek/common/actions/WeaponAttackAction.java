@@ -2002,7 +2002,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
                 toHit.setCover(LosEffects.COVER_UPPER);
             } else {
-                if (game.getOptions().booleanOption("tacops_partial_cover")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER)) {
                     toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
                     toHit.setCover(los.getTargetCover());
                 } else {
@@ -2187,7 +2187,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
             // reset cover
             if (swarmlos.getTargetCover() != LosEffects.COVER_NONE) {
-                if (game.getOptions().booleanOption("tacops_partial_cover")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER)) {
                     toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
                     toHit.setCover(swarmlos.getTargetCover());
                 } else {
@@ -2818,7 +2818,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
                 toHit.setCover(LosEffects.COVER_UPPER);
             } else {
-                if (game.getOptions().booleanOption("tacops_partial_cover")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PARTIAL_COVER)) {
                     toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
                     toHit.setCover(los.getTargetCover());
                 } else {

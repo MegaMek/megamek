@@ -286,7 +286,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
 
         // Set up rapidfire mg
         if (clientgui.getClient().getGame().getOptions().booleanOption(
-                "tacops_burst")) { //$NON-NLS-1$
+                OptionsConstants.ADVCOMBAT_TACOPS_BURST)) { //$NON-NLS-1$
             setupRapidfireMGs();
             add(panRapidfireMGs,
                     GBC.eop().anchor(GridBagConstraints.CENTER));
@@ -706,7 +706,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     && !client.getGame().getOptions()
                             .booleanOption(OptionsConstants.BASE_LOBBY_AMMO_DUMP)
                     && !client.getGame().getOptions()
-                            .booleanOption("tacops_hotload")) { //$NON-NLS-1$
+                            .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) { //$NON-NLS-1$
                 continue;
             }
             MunitionChoicePanel mcp;
@@ -1095,13 +1095,13 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     add(labDump, GBC.std());
                     add(chDump, GBC.eol());
                     if (clientgui.getClient().getGame().getOptions().booleanOption(
-                            "tacops_hotload")
+                            OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)
                             && curType.hasFlag(AmmoType.F_HOTLOAD)) {
                         add(labHotLoad, GBC.std());
                         add(chHotLoad, GBC.eol());
                     }
                 } else if (clientgui.getClient().getGame().getOptions().booleanOption(
-                        "tacops_hotload")
+                        OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)
                         && curType.hasFlag(AmmoType.F_HOTLOAD)) {
                     add(labHotLoad, GBC.std());
                     add(chHotLoad, GBC.eol());
@@ -1121,7 +1121,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     m_mounted.setShotsLeft(0);
                 }
                 if (clientgui.getClient().getGame().getOptions().booleanOption(
-                        "tacops_hotload")) {
+                        OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD)) {
                     if (chHotLoad.isSelected() != m_mounted.isHotLoaded()) {
                         m_mounted.setHotLoad(chHotLoad.isSelected());
                         // Set the mode too, so vehicles can switch back

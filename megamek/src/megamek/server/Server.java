@@ -5668,7 +5668,7 @@ public class Server implements Runnable {
                 // ASSUMPTION: you don't charge the building
                 // if Tanks or Mechs were charged.
                 int chargeDamage = ChargeAttackAction.getDamageFor(entity, game
-                        .getOptions().booleanOption("tacops_charge_damage"),
+                        .getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE),
                         entity.delta_distance);
                 if (!bldgSuffered) {
                     Vector<Report> reports = damageBuilding(bldg, chargeDamage,
@@ -14546,14 +14546,14 @@ public class Server implements Runnable {
                                                           : pr.rollRight;
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         final boolean glancing = game.getOptions().booleanOption(
-                "tacops_glancing_blows")
+                OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                                  && (roll == toHit.getValue());
 
         Report r;
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
-                "tacops_direct_blow")
+                OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                                    && ((toHit.getMoS() / 3) >= 1);
 
         // Which building takes the damage?
@@ -14820,13 +14820,13 @@ public class Server implements Runnable {
         int roll = pr.roll;
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         final boolean glancing = game.getOptions().booleanOption(
-                "tacops_glancing_blows")
+                OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                                  && (roll == toHit.getValue());
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
-                "tacops_direct_blow")
+                OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                                    && ((toHit.getMoS() / 3) >= 1);
 
         // Which building takes the damage?
@@ -15086,13 +15086,13 @@ public class Server implements Runnable {
         int roll = pr.roll;
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         final boolean glancing = game.getOptions().booleanOption(
-                "tacops_glancing_blows")
+                OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                                  && (roll == toHit.getValue());
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
-                "tacops_direct_blow")
+                OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                                    && ((toHit.getMoS() / 3) >= 1);
 
         // Which building takes the damage?
@@ -15291,12 +15291,12 @@ public class Server implements Runnable {
         }
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         final boolean glancing = game.getOptions().booleanOption(
-                "tacops_glancing_blows")
+                OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                                  && (roll == toHit.getValue());
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
-                "tacops_direct_blow")
+                OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                                    && ((toHit.getMoS() / 3) >= 1);
 
         Report r;
@@ -15672,13 +15672,13 @@ public class Server implements Runnable {
         final ToHitData toHit = pr.toHit;
         int roll = pr.roll;
         final boolean glancing = game.getOptions().booleanOption(
-                "tacops_glancing_blows")
+                OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                                  && (roll == toHit.getValue());
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
-                "tacops_direct_blow")
+                OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                                    && ((toHit.getMoS() / 3) >= 1);
 
         // PLEASE NOTE: buildings are *never* the target of a "thrash".
@@ -15816,13 +15816,13 @@ public class Server implements Runnable {
         final ToHitData toHit = pr.toHit;
         int roll = pr.roll;
         final boolean glancing = game.getOptions().booleanOption(
-                "tacops_glancing_blows")
+                OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                                  && (roll == toHit.getValue());
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
-                "tacops_direct_blow")
+                OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                                    && ((toHit.getMoS() / 3) >= 1);
 
         // PLEASE NOTE: buildings are *never* the target of a BA vibroclaw
@@ -15953,7 +15953,7 @@ public class Server implements Runnable {
         }
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         final boolean glancing = game.getOptions().booleanOption(
-                "tacops_glancing_blows")
+                OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                                  && (roll == toHit.getValue());
 
         // Set Margin of Success/Failure.
@@ -15962,7 +15962,7 @@ public class Server implements Runnable {
         toHit.setMoS((roll == Integer.MAX_VALUE) ? 0 : roll
                                                        - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
-                "tacops_direct_blow")
+                OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                                    && ((toHit.getMoS() / 3) >= 1);
 
         Report r;
@@ -16896,13 +16896,13 @@ public class Server implements Runnable {
                     .isThroughFrontHex(game, ae.getPosition(), te);
         }
         final boolean glancing = game.getOptions().booleanOption(
-                "tacops_glancing_blows")
+                OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                                  && (roll == toHit.getValue());
 
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
-                "tacops_direct_blow")
+                OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                                    && ((toHit.getMoS() / 3) >= 1);
 
         Report r;
@@ -17404,11 +17404,11 @@ public class Server implements Runnable {
 
         // Damage To Target
         int damage = ChargeAttackAction.getDamageFor(ae, te, game.getOptions()
-                .booleanOption("tacops_charge_damage"), toHit.getMoS());
+                .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE), toHit.getMoS());
 
         // Damage to Attacker
         int damageTaken = ChargeAttackAction.getDamageTakenBy(ae, te, game
-                .getOptions().booleanOption("tacops_charge_damage"));
+                .getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE));
         if (glancing) {
             // Glancing Blow rule doesn't state whether damage to attacker on
             // charge
@@ -17422,7 +17422,7 @@ public class Server implements Runnable {
         }
         boolean bDirect = false;
         int directBlowCritMod = toHit.getMoS() / 3;
-        if (game.getOptions().booleanOption("tacops_direct_blow")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
             && ((toHit.getMoS() / 3) >= 1)) {
             damage += toHit.getMoS() / 3;
             bDirect = false;
@@ -17726,12 +17726,12 @@ public class Server implements Runnable {
                     .isThroughFrontHex(game, ae.getPosition(), te);
         }
         final boolean glancing = game.getOptions().booleanOption(
-                "tacops_glancing_blows")
+                OptionsConstants.ADVCOMBAT_TACOPS_GLANCING_BLOWS)
                                  && (roll == toHit.getValue());
         // Set Margin of Success/Failure.
         toHit.setMoS(roll - Math.max(2, toHit.getValue()));
         final boolean directBlow = game.getOptions().booleanOption(
-                "tacops_direct_blow")
+                OptionsConstants.ADVCOMBAT_TACOPS_DIRECT_BLOW)
                                    && ((toHit.getMoS() / 3) >= 1);
 
         Report r;
@@ -18368,7 +18368,7 @@ public class Server implements Runnable {
                 }
 
                 int autoShutDownHeat = 30;
-                boolean mtHeat = game.getOptions().booleanOption("tacops_heat");
+                boolean mtHeat = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT);
                 if (mtHeat) {
                     autoShutDownHeat = 50;
                 }
@@ -18946,7 +18946,7 @@ public class Server implements Runnable {
             int autoShutDownHeat;
             boolean mtHeat;
 
-            if (game.getOptions().booleanOption("tacops_heat")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
                 autoShutDownHeat = 50;
                 mtHeat = true;
             } else {
@@ -31831,7 +31831,7 @@ public class Server implements Runnable {
             if (caa.getTarget(game) instanceof Entity) {
                 Entity target = (Entity) caa.getTarget(game);
                 damage = ChargeAttackAction.getDamageFor(ae, target, game
-                                                                 .getOptions().booleanOption("tacops_charge_damage"),
+                                                                 .getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CHARGE_DAMAGE),
                                                          toHit.getMoS());
             } else {
                 damage = ChargeAttackAction.getDamageFor(ae);

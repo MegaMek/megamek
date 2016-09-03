@@ -2158,7 +2158,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getHeatMPReduction() {
         int minus;
 
-        if ((game != null) && game.getOptions().booleanOption("tacops_heat")) {
+        if ((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT)) {
             if (heat < 30) {
                 minus = (heat / 5);
             } else if (heat >= 49) {
@@ -2928,7 +2928,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         if (heat >= 24) {
             mod++;
         }
-        boolean mtHeat = game.getOptions().booleanOption("tacops_heat");
+        boolean mtHeat = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_HEAT);
         if (mtHeat && (heat >= 33)) {
             mod++;
         }

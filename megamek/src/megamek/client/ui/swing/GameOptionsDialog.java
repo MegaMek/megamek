@@ -478,8 +478,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals("kind_rapid_ac")) {
-            if ((options.getOption("tacops_rapid_ac")).booleanValue()) {
+        } else if (option.getName().equals(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC)) {
+            if ((options.getOption(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC)).booleanValue()) {
                 optionComp.setEditable(editable);
             } else {
                 optionComp.setEditable(false);
@@ -711,8 +711,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                 comp_i.setSelected(false);
             }
         }
-        if (option.getName().equals("tacops_rapid_ac")) {
-            comps = optionComps.get("kind_rapid_ac"); //$NON-NLS-1$
+        if (option.getName().equals(OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC)) {
+            comps = optionComps.get(OptionsConstants.ADVCOMBAT_KIND_RAPID_AC); //$NON-NLS-1$
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);

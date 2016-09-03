@@ -3528,7 +3528,9 @@ public class Aero extends Entity {
         super.setGameOptions();
 
         for (Mounted mounted : getWeaponList()) {
-            if ((mounted.getType() instanceof EnergyWeapon) && (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_NA) && (game != null) && game.getOptions().booleanOption("tacops_energy_weapons")) {
+            if ((mounted.getType() instanceof EnergyWeapon)
+                    && (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_NA) && (game != null)
+                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
 
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};

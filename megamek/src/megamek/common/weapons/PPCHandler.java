@@ -77,7 +77,7 @@ public class PPCHandler extends EnergyWeaponHandler {
     protected int calcDamagePerHit() {
         float toReturn = wtype.getDamage(nRange);
 
-        if (game.getOptions().booleanOption("tacops_energy_weapons")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
                 && wtype.hasModes()) {
             toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }

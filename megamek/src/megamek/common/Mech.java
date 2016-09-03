@@ -6955,7 +6955,7 @@ public abstract class Mech extends Entity {
             if ((mounted.getType() instanceof EnergyWeapon)
                     && (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_NA)
                     && (game != null)
-                    && game.getOptions().booleanOption("tacops_energy_weapons")) {
+                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)) {
 
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};

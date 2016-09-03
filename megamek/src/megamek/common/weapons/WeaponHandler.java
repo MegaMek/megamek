@@ -1322,7 +1322,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             Vector<Report> vPhaseReport) {
         boolean isAboveWoods = ((entityTarget != null) && ((entityTarget
                 .relHeight() >= 2) || (entityTarget.isAirborne())));
-        if (game.getOptions().booleanOption("tacops_woods_cover")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER)
                 && !isAboveWoods
                 && (game.getBoard().getHex(entityTarget.getPosition())
                         .containsTerrain(Terrains.WOODS) || game.getBoard()

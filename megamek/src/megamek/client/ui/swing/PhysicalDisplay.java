@@ -463,7 +463,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
             if ((en instanceof Mech)
                     && (target instanceof Entity)
                     && clientgui.getClient().getGame().getOptions()
-                            .booleanOption("tacops_retractable_blades")
+                            .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RETRACTABLE_BLADES)
                     && (leftArm.getValue() != TargetRoll.IMPOSSIBLE)
                     && ((Mech) ce()).hasRetractedBlade(Mech.LOC_LARM)) {
                 leftBladeExtend = clientgui.doYesNoDialog(Messages
@@ -477,7 +477,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay {
                     && (target instanceof Entity)
                     && (rightArm.getValue() != TargetRoll.IMPOSSIBLE)
                     && clientgui.getClient().getGame().getOptions()
-                            .booleanOption("tacops_retractable_blades")
+                            .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RETRACTABLE_BLADES)
                     && ((Mech) en).hasRetractedBlade(Mech.LOC_RARM)) {
                 rightBladeExtend = clientgui.doYesNoDialog(Messages
                         .getString("PhysicalDisplay.ExtendBladeDialog"

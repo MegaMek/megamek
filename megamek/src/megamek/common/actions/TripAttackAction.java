@@ -58,7 +58,7 @@ public class TripAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
         }
 
-        if (!game.getOptions().booleanOption("tacops_trip_attack")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_TRIP_ATTACK)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "no Trip attack");
         }
 

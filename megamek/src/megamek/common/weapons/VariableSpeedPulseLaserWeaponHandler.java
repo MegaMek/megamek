@@ -49,7 +49,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
         int[] nRanges = wtype.getRanges(weapon);
         double toReturn = wtype.getDamage(nRange);
 
-        if (game.getOptions().booleanOption("tacops_energy_weapons")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
             && wtype.hasModes()) {
             toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }

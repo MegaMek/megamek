@@ -22822,7 +22822,7 @@ public class Server implements Runnable {
         // ammo explosion
         // destroyed the unit
         if (ammoExplosion
-            && game.getOptions().booleanOption("tacops_ammunition")
+            && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMMUNITION)
             // For 'Mechs we care whether there was CASE specifically in the
             // location that went boom...
             && !(te.locationHasCase(hit.getLocation()) || te.hasCASEII(hit
@@ -33195,7 +33195,7 @@ public class Server implements Runnable {
                 break;
         }
         // Apply vehicle effectiveness...except for jumps.
-        if (game.getOptions().booleanOption("tacops_vehicle_effective")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)
             && !jumpDamage) {
             modifier = Math.max(modifier - 1, 0);
         }

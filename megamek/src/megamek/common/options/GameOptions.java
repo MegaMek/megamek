@@ -169,18 +169,18 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BA_CRITICALS, false); //$NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_HOTLOAD, false); //$NON-NLS-1$
         
-        addOption(advancedCombat, "tacops_rapid_ac", false); //$NON-NLS-1$
-        addOption(advancedCombat, "kind_rapid_ac", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_grappling", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_jump_jet_attack", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_trip_attack", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_energy_weapons", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_gauss_weapons", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_retractable_blades", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_ammunition", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_woods_cover", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_vehicle_effective", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_vehicle_arcs", false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_KIND_RAPID_AC, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_GRAPPLING, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_JUMP_JET_ATTACK, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_TRIP_ATTACK, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_GAUSS_WEAPONS, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_RETRACTABLE_BLADES, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_AMMUNITION, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS, false); //$NON-NLS-1$
         
         addOption(advancedCombat, "tacops_advanced_mech_hit_locations", false); //$NON-NLS-1$
         addOption(advancedCombat, "tacops_coolant_failure", false); //$NON-NLS-1$
@@ -212,19 +212,9 @@ public class GameOptions extends AbstractOptions {
 
 
 
-/*        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_RAPID_AC, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_KIND_RAPID_AC, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_GRAPPLING, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_JUMP_JET_ATTACK, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_TRIP_ATTACK, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_GAUSS_WEAPONS, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_RETRACTABLE_BLADES, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_AMMUNITION, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_WOODS_COVER, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS, false); //$NON-NLS-1$
+
+        
+/*        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS, false); //$NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE, false); //$NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BA_VS_BA, false); //$NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_NO_TAC, false); //$NON-NLS-1$

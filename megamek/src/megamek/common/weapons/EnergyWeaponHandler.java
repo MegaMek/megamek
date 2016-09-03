@@ -51,7 +51,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
     protected int calcDamagePerHit() {
         double toReturn = wtype.getDamage(nRange);
 
-        if ((game.getOptions().booleanOption("tacops_energy_weapons")
+        if ((game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENERGY_WEAPONS)
             && wtype.hasModes()) || wtype.hasFlag(WeaponType.F_BOMBAST_LASER)) {
             toReturn = Compute.dialDownDamage(weapon, wtype, nRange);
         }

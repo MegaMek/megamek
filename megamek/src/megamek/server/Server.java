@@ -2810,7 +2810,7 @@ public class Server implements Runnable {
             entityUpdate(entity.getId());
 
             // Remove hot-loading some from LRMs for meks
-            if (!game.getOptions().booleanOption("hotload_in_game")) {
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_HOTLOAD_IN_GAME)) {
                 for (Entity e : game.getEntitiesVector()) {
                     // Vehicles are allowed to hotload, just meks cannot
                     if (!(e instanceof Mech)) {
@@ -13941,7 +13941,7 @@ public class Server implements Runnable {
     private void resolveUnjam(Entity entity) {
         Report r;
         final int TN = entity.getCrew().getGunnery() + 3;
-        if (game.getOptions().booleanOption("unjam_uac")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
             r = new Report(3026);
         } else {
             r = new Report(3025);
@@ -13974,7 +13974,7 @@ public class Server implements Runnable {
                      || (wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB)
                      || (wtype.getAmmoType() == AmmoType.T_AC) || (wtype
                                                                            .getAmmoType() == AmmoType.T_LAC))
-                    && game.getOptions().booleanOption("unjam_uac")) {
+                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
                     int roll = Compute.d6(2);
                     r = new Report(3030);
                     r.indent();
@@ -18271,7 +18271,7 @@ public class Server implements Runnable {
 
                 // Add heat from external sources to the heat buildup
                 int max_ext_heat = game.getOptions().intOption(
-                        "max_external_heat"); // Check Game Options
+                        OptionsConstants.ADVCOMBAT_MAX_EXTERNAL_HEAT); // Check Game Options
                 if (max_ext_heat < 0) {
                     max_ext_heat = 15; // standard value specified in TW p.159
                 }
@@ -18820,7 +18820,7 @@ public class Server implements Runnable {
             }
 
             // Add heat from external sources to the heat buildup
-            int max_ext_heat = game.getOptions().intOption("max_external_heat"); // Check
+            int max_ext_heat = game.getOptions().intOption(OptionsConstants.ADVCOMBAT_MAX_EXTERNAL_HEAT); // Check
             // Game
             // Options
             if (max_ext_heat < 0) {
@@ -21379,7 +21379,7 @@ public class Server implements Runnable {
         // adjust VTOL rotor damage
         if ((te instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR)
             && (hit.getGeneralDamageType() != HitData.DAMAGE_PHYSICAL)
-            && !game.getOptions().booleanOption("full_rotor_hits")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_FULL_ROTOR_HITS)) {
             damage = (damage + 9) / 10;
         }
 
@@ -26880,7 +26880,7 @@ public class Server implements Runnable {
         if (en instanceof Aero) {
             pilotDamage = 1;
         }
-        if (game.getOptions().booleanOption("case_pilot_damage")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_CASE_PILOT_DAMAGE)
                 && (en.locationHasCase(hit.getLocation()) || en.hasCASEII(hit.getLocation()))) {
             pilotDamage = 1;
         }

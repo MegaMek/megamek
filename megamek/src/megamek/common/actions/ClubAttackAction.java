@@ -465,7 +465,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         // elevation
-        if (game.getOptions().booleanOption("clubs_punch")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_CLUBS_PUNCH)
             && (target instanceof Mech)) {
             toHit.setHitTable(ToHitData.HIT_PUNCH);
             if ((attackerHeight == targetElevation) && !ae.isHullDown()) {

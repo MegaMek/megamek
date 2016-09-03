@@ -2082,7 +2082,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                  || (wtype.getAmmoType() == AmmoType.T_LAC))
                 && mounted.isJammed()
                 && !mounted.isDestroyed()
-                && game.getOptions().booleanOption("unjam_uac")) {
+                && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_UNJAM_UAC)) {
                 return true;
             }
         }
@@ -8871,7 +8871,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean isEligibleForArtyAutoHitHexes() {
         return isEligibleForTargetingPhase()
                && (isOffBoard() || game.getOptions().booleanOption(
-                "on_map_predesignate"));
+                OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE));
     }
 
     public boolean isEligibleForTargetingPhase() {

@@ -199,20 +199,21 @@ public class FireProcessor extends DynamicTerrainProcessor {
                     //check for any explosions
                     server.checkExplodeIndustrialZone(currentCoords, vPhaseReport);
 
-                    //Add smoke, unless tornado or optional rules
-                    boolean containsForest = (currentHex
-                            .containsTerrain(Terrains.WOODS) || currentHex
-                            .containsTerrain(Terrains.JUNGLE));
+                    // Add smoke, unless tornado or optional rules
+                    boolean containsForest = (currentHex.containsTerrain(Terrains.WOODS)
+                            || currentHex.containsTerrain(Terrains.JUNGLE));
                     boolean bInferno = currentHex.terrainLevel(Terrains.FIRE) == 2;
                     if ((game.getPlanetaryConditions().getWindStrength() < PlanetaryConditions.WI_TORNADO_F13)
-                            && !(game.getOptions().booleanOption(
-                                    "forest_fires_no_smoke")
+                            && !(game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_FOREST_FIRES_NO_SMOKE)
                                     && containsForest && (bldg == null))) {
                         ArrayList<Coords> smokeList = new ArrayList<Coords>();
 
-                        smokeList.add(new Coords(Coords.xInDir(currentXCoord, currentYCoord, windDirection), Coords.yInDir(currentXCoord, currentYCoord, windDirection)));
-                        smokeList.add(new Coords(Coords.xInDir(currentXCoord, currentYCoord, (windDirection+1)%6), Coords.yInDir(currentXCoord, currentYCoord, (windDirection+1)%6)));
-                        smokeList.add(new Coords(Coords.xInDir(currentXCoord, currentYCoord, (windDirection+5)%6), Coords.yInDir(currentXCoord, currentYCoord, (windDirection+5)%6)));
+                        smokeList.add(new Coords(Coords.xInDir(currentXCoord, currentYCoord, windDirection),
+                                Coords.yInDir(currentXCoord, currentYCoord, windDirection)));
+                        smokeList.add(new Coords(Coords.xInDir(currentXCoord, currentYCoord, (windDirection + 1) % 6),
+                                Coords.yInDir(currentXCoord, currentYCoord, (windDirection + 1) % 6)));
+                        smokeList.add(new Coords(Coords.xInDir(currentXCoord, currentYCoord, (windDirection + 5) % 6),
+                                Coords.yInDir(currentXCoord, currentYCoord, (windDirection + 5) % 6)));
 
                         server.addSmoke(smokeList, windDirection, bInferno);
                         board.initializeAround(currentXCoord, currentYCoord);

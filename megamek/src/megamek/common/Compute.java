@@ -1109,7 +1109,7 @@ public class Compute {
         }
         if (isIndirect
             && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
-            && !game.getOptions().booleanOption("indirect_always_possible")
+            && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE)
             && LosEffects.calculateLos(game, ae.getId(), target).canSee()
             && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) || Compute
                 .canSee(game, ae, target))
@@ -3159,12 +3159,12 @@ public class Compute {
                                 }
                                 if ((target instanceof Tank)
                                     && !(cgame.getOptions()
-                                              .booleanOption("vehicles_safe_from_infernos"))) {
+                                              .booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS))) {
                                     ammo_multiple = 1.1;
                                 }
                                 if ((target instanceof Protomech)
                                     && !(cgame.getOptions()
-                                              .booleanOption("protos_safe_from_infernos"))) {
+                                              .booleanOption(OptionsConstants.ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS))) {
                                     ammo_multiple = 1.1;
                                 }
                             }

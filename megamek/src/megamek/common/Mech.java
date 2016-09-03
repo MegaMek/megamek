@@ -2024,7 +2024,7 @@ public abstract class Mech extends Entity {
                     case 2:
                         if ((getCrew().hasEdgeRemaining() && getCrew()
                                 .getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
-                                && !game.getOptions().booleanOption("no_tac")) {
+                                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
                                     aimedLocation, aimingMode, cover);
@@ -2067,7 +2067,7 @@ public abstract class Mech extends Entity {
                     case 2:
                         if ((getCrew().hasEdgeRemaining() && getCrew()
                                 .getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
-                                && !game.getOptions().booleanOption("no_tac")) {
+                                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
                                     aimedLocation, aimingMode, cover);
@@ -2087,13 +2087,13 @@ public abstract class Mech extends Entity {
                         return new HitData(Mech.LOC_LT);
                     case 8:
                         if (game.getOptions().booleanOption(
-                                "tacops_advanced_mech_hit_locations")) {
+                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS)) {
                             return new HitData(Mech.LOC_CT, true);
                         }
                         return new HitData(Mech.LOC_CT);
                     case 9:
                         if (game.getOptions().booleanOption(
-                                "tacops_advanced_mech_hit_locations")) {
+                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS)) {
                             return new HitData(Mech.LOC_RT, true);
                         }
                         return new HitData(Mech.LOC_RT);
@@ -2119,7 +2119,7 @@ public abstract class Mech extends Entity {
                     case 2:
                         if ((getCrew().hasEdgeRemaining() && getCrew()
                                 .getOptions().booleanOption(OptionsConstants.EDGE_WHEN_TAC))
-                                && !game.getOptions().booleanOption("no_tac")) {
+                                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
                             getCrew().decreaseEdge();
                             HitData result = rollHitLocation(table, side,
                                     aimedLocation, aimingMode, cover);
@@ -2139,13 +2139,13 @@ public abstract class Mech extends Entity {
                         return new HitData(Mech.LOC_RT);
                     case 8:
                         if (game.getOptions().booleanOption(
-                                "tacops_advanced_mech_hit_locations")) {
+                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS)) {
                             return new HitData(Mech.LOC_CT, true);
                         }
                         return new HitData(Mech.LOC_CT);
                     case 9:
                         if (game.getOptions().booleanOption(
-                                "tacops_advanced_mech_hit_locations")) {
+                                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS)) {
                             return new HitData(Mech.LOC_LT, true);
                         }
                         return new HitData(Mech.LOC_LT);
@@ -2168,7 +2168,7 @@ public abstract class Mech extends Entity {
             } else if (side == ToHitData.SIDE_REAR) {
                 // normal rear hits
                 if (game.getOptions().booleanOption(
-                        "tacops_advanced_mech_hit_locations")
+                        OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS)
                         && isProne()) {
                     switch (roll) {
                         case 2:
@@ -2176,7 +2176,7 @@ public abstract class Mech extends Entity {
                                     .getOptions()
                                     .booleanOption(OptionsConstants.EDGE_WHEN_TAC))
                                     && !game.getOptions().booleanOption(
-                                            "no_tac")) {
+                                            OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side,
                                         aimedLocation, aimingMode, cover);
@@ -2221,7 +2221,7 @@ public abstract class Mech extends Entity {
                                     .getOptions()
                                     .booleanOption(OptionsConstants.EDGE_WHEN_TAC))
                                     && !game.getOptions().booleanOption(
-                                            "no_tac")) {
+                                            OptionsConstants.ADVCOMBAT_NO_TAC)) {
                                 getCrew().decreaseEdge();
                                 HitData result = rollHitLocation(table, side,
                                         aimedLocation, aimingMode, cover);
@@ -2580,7 +2580,7 @@ public abstract class Mech extends Entity {
      */
     protected HitData tac(int table, int side, int location, int cover,
             boolean rear) {
-        if (game.getOptions().booleanOption("no_tac")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_NO_TAC)) {
             return new HitData(location, rear);
         } else if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_FLOATING_CRITS)) {
             HitData hd = rollHitLocation(table, side);

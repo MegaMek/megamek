@@ -3046,7 +3046,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // can't fire Indirect LRM with direct LOS
         if (isIndirect
                 && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
-                && !game.getOptions().booleanOption("indirect_always_possible")
+                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE)
                 && LosEffects.calculateLos(game, ae.getId(), target).canSee()
                 && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) || Compute
                         .canSee(game, ae, target))
@@ -3432,11 +3432,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // Can't target infantry with Inferno rounds (BMRr, pg. 141).
         // Also, enforce options for keeping vehicles and protos safe
         // if those options are checked.
-        if (isInferno
-                && (((te instanceof Tank) && game.getOptions().booleanOption(
-                        "vehicles_safe_from_infernos")) || ((te instanceof Protomech) && game
-                        .getOptions()
-                        .booleanOption("protos_safe_from_infernos")))) {
+        if (isInferno && (((te instanceof Tank)
+                && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS))
+                || ((te instanceof Protomech)
+                        && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS)))) {
             return "Can not target that unit type with Inferno rounds.";
         }
 
@@ -3721,7 +3720,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         if (isIndirect
                 && game.getOptions().booleanOption(OptionsConstants.BASE_INDIRECT_FIRE)
-                && !game.getOptions().booleanOption("indirect_always_possible")
+                && !game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE)
                 && LosEffects.calculateLos(game, attackerId, target).canSee()
                 && (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND) || Compute
                         .canSee(game, ae, target))

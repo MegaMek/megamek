@@ -23,6 +23,7 @@ import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -108,7 +109,7 @@ public abstract class ACWeapon extends AmmoWeapon {
         if (options == null) {
             return dmg;
         }
-        if (options.getOption("increased_ac_dmg").booleanValue()) {
+        if (options.getOption(OptionsConstants.ADVCOMBAT_INCREASED_AC_DMG).booleanValue()) {
             dmg++;
         }
         return dmg;

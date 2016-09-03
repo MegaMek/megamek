@@ -9727,7 +9727,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         boolean targetIsTank = (this instanceof Tank)
                                || (game.getOptions().booleanOption(
-                "tacops_advanced_mech_hit_locations") && (this instanceof QuadMech));
+                OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS) && (this instanceof QuadMech));
         if (targetIsTank) {
             if ((leftBetter == 1) && (fa == 150)) {
                 return ToHitData.SIDE_REAR;

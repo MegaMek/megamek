@@ -484,14 +484,14 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
             } else {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals("vehicles_threshold_divisor")) {
-            if ((options.getOption("vehicles_threshold")).booleanValue()) {
+        } else if (option.getName().equals(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR)) {
+            if ((options.getOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)).booleanValue()) {
                 optionComp.setEditable(editable);
             } else {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals("vehicles_threshold_variable")) {
-            if ((options.getOption("vehicles_threshold")).booleanValue()) {
+        } else if (option.getName().equals(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE)) {
+            if ((options.getOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)).booleanValue()) {
                 optionComp.setEditable(editable);
             } else {
                 optionComp.setEditable(false);
@@ -718,13 +718,13 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                 comp_i.setSelected(false);
             }
         }
-        if (option.getName().equals("vehicles_threshold")) {
-            comps = optionComps.get("vehicles_threshold_variable"); //$NON-NLS-1$
+        if (option.getName().equals(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
+            comps = optionComps.get(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE); //$NON-NLS-1$
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
             }
-            comps = optionComps.get("vehicles_threshold_divisor"); //$NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR); //$NON-NLS-1$
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.resetToDefault();

@@ -126,7 +126,7 @@ public class SuperHeavyTank extends Tank {
         if (!bHitAimed) {
             switch (Compute.d6(2)) {
             case 2:
-                if (game.getOptions().booleanOption("vehicles_threshold")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                     setPotCrit(HitData.EFFECT_CRITICAL);
                 } else {
                     rv.setEffect(HitData.EFFECT_CRITICAL);
@@ -135,27 +135,27 @@ public class SuperHeavyTank extends Tank {
             case 3:
                 if (bSide) {
                     rv = new HitData(LOC_FRONT, false);
-                    if (game.getOptions().booleanOption("vehicles_threshold")) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                         setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     } else {
                         rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     }
                 } else if (bRear) {
                     rv = new HitData(LOC_REARLEFT, false);
-                    if (game.getOptions().booleanOption("vehicles_threshold")) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                         setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     } else {
                         rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     }
                 } else if (bRearSide) {
-                    if (game.getOptions().booleanOption("vehicles_threshold")) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                         setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     } else {
                         rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     }
                 } else {
                     rv = new HitData(LOC_FRONTRIGHT, false);
-                    if (game.getOptions().booleanOption("vehicles_threshold")) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                         setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     } else {
                         rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
@@ -164,7 +164,7 @@ public class SuperHeavyTank extends Tank {
                 rv.setMotiveMod(motiveMod);
                 break;
             case 4:
-                if (game.getOptions().booleanOption("vehicles_threshold")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                     setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                 } else {
                     rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
@@ -173,7 +173,7 @@ public class SuperHeavyTank extends Tank {
                 break;
             case 5:
                 if (bRear || !(bSide || bRearSide)) {
-                    if (game.getOptions().booleanOption("vehicles_threshold")) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                         setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     } else {
                         rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
@@ -189,7 +189,7 @@ public class SuperHeavyTank extends Tank {
                         && !game.getOptions().booleanOption(
                                 OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
                     if (game.getOptions().booleanOption(
-                            "vehicles_threshold")) {
+                            OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                         setPotCrit(HitData.EFFECT_CRITICAL);
                     } else {
                         rv.setEffect(HitData.EFFECT_CRITICAL);
@@ -200,7 +200,7 @@ public class SuperHeavyTank extends Tank {
                 if (!game.getOptions()
                         .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE)) {
                     if (game.getOptions().booleanOption(
-                            "vehicles_threshold")) {
+                            OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                         setPotCrit(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                     } else {
                         rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
@@ -231,7 +231,7 @@ public class SuperHeavyTank extends Tank {
             case 12:
                 if (m_bHasNoTurret) {
                     if (game.getOptions().booleanOption(
-                            "vehicles_threshold")) {
+                            OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                         setPotCrit(HitData.EFFECT_CRITICAL);
                     } else {
                         rv.setEffect(HitData.EFFECT_CRITICAL);
@@ -253,7 +253,7 @@ public class SuperHeavyTank extends Tank {
                         rv = new HitData(LOC_TURRET, false);
                     }
                     if (game.getOptions().booleanOption(
-                            "vehicles_threshold")) {
+                            OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)) {
                         setPotCrit(HitData.EFFECT_CRITICAL);
                     } else {
                         rv.setEffect(HitData.EFFECT_CRITICAL);

@@ -19264,7 +19264,7 @@ public class Server implements Runnable {
                 }
             }
 
-            if (game.getOptions().booleanOption("tacops_coolant_failure")
+            if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE)
                 && (entity.getHeatCapacity() > entity
                     .getCoolantFailureAmount()) && (entity.heat >= 5)) {
                 int roll = Compute.d6(2);
@@ -21899,13 +21899,13 @@ public class Server implements Runnable {
                 // effects now...
                 if ((te instanceof Tank)
                         && game.getOptions()
-                                .booleanOption("vehicles_threshold")
+                                .booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)
                         && !((te instanceof VTOL) || (te instanceof GunEmplacement))) {
                     int thresh = (int) Math.ceil((game.getOptions()
-                            .booleanOption("vehicles_threshold_variable") ? te
+                            .booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE) ? te
                             .getArmor(hit) : te.getOArmor(hit))
                             / game.getOptions().intOption(
-                                    "vehicles_threshold_divisor"));
+                                    OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR));
 
                     // adjust for hardened armor
                     if (hardenedArmor
@@ -22085,7 +22085,7 @@ public class Server implements Runnable {
             // be set if IS is damaged, so set it here.
             if ((te instanceof Tank)
                     && ((te.getArmor(hit) < 1) || damageIS)
-                    && game.getOptions().booleanOption("vehicles_threshold")
+                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)
                     && !((te instanceof VTOL)
                             || (te instanceof GunEmplacement))) {
                 ((Tank) te).setOverThresh(true);
@@ -25567,7 +25567,7 @@ public class Server implements Runnable {
         // now look up on vehicle crits table
         int critType = t.getCriticalEffect(roll, loc, damagedByFire);
         if ((critType == Tank.CRIT_NONE)
-                && game.getOptions().booleanOption("vehicles_threshold")
+                && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)
                 && !t.getOverThresh()) {
             r = new Report(6006);
             r.subject = t.getId();

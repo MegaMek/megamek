@@ -182,18 +182,18 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_EFFECTIVE, false); //$NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_VEHICLE_ARCS, false); //$NON-NLS-1$
         
-        addOption(advancedCombat, "tacops_advanced_mech_hit_locations", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_coolant_failure", false); //$NON-NLS-1$
-        addOption(advancedCombat, "tacops_ba_vs_ba", false); //$NON-NLS-1$
-        addOption(advancedCombat, "no_tac", false); //$NON-NLS-1$
-        addOption(advancedCombat, "vehicles_threshold", false); //$NON-NLS-1$
-        addOption(advancedCombat, "vehicles_threshold_variable", false); //$NON-NLS-1$
-        addOption(advancedCombat, "vehicles_threshold_divisor", 10); //$NON-NLS-1$
-        addOption(advancedCombat, "vehicles_safe_from_infernos", false); //$NON-NLS-1$
-        addOption(advancedCombat, "protos_safe_from_infernos", false); //$NON-NLS-1$
-        addOption(advancedCombat, "indirect_always_possible", false); //$NON-NLS-1$
-        addOption(advancedCombat, "increased_ac_dmg", false); //$NON-NLS-1$
-        addOption(advancedCombat, "increased_iserll_range", false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BA_VS_BA, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_NO_TAC, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR, 10); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_INCREASED_AC_DMG, false); //$NON-NLS-1$
+        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_INCREASED_ISERLL_RANGE, false); //$NON-NLS-1$
         
         addOption(advancedCombat, "unjam_uac", false); //$NON-NLS-1$
         addOption(advancedCombat, "uac_tworolls", false); //$NON-NLS-1$
@@ -214,19 +214,8 @@ public class GameOptions extends AbstractOptions {
 
 
         
-/*        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_ADVANCED_MECH_HIT_LOCATIONS, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_COOLANT_FAILURE, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_TACOPS_BA_VS_BA, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_NO_TAC, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_VARIABLE, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD_DIVISOR, 10); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_VEHICLES_SAFE_FROM_INFERNOS, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_PROTOS_SAFE_FROM_INFERNOS, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_INDIRECT_ALWAYS_POSSIBLE, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_INCREASED_AC_DMG, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_INCREASED_ISERLL_RANGE, false); //$NON-NLS-1$
-        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_UNJAM_UAC, false); //$NON-NLS-1$
+
+/*        addOption(advancedCombat, OptionsConstants.ADVCOMBAT_UNJAM_UAC, false); //$NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_UAC_TWOROLLS, false); //$NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_CLUBS_PUNCH, false); //$NON-NLS-1$
         addOption(advancedCombat, OptionsConstants.ADVCOMBAT_ON_MAP_PREDESIGNATE, false); //$NON-NLS-1$

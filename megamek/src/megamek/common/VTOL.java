@@ -308,7 +308,7 @@ public class VTOL extends Tank {
             roll = 12;
         }
         if ((roll < 6)
-                || (game.getOptions().booleanOption("vehicles_threshold")
+                || (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_VEHICLES_THRESHOLD)
                         && !getOverThresh() && !damagedByFire)) {
             return CRIT_NONE;
         }

@@ -5649,7 +5649,7 @@ public class Compute {
             return -1;
         }
 
-        if (!game.getOptions().booleanOption("return_flyover")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)) {
             return -1;
         }
 

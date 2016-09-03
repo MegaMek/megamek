@@ -4353,7 +4353,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean hasActiveECM(boolean stealth) {
         // no ECM in space unless strat op option enabled
         if (game.getBoard().inSpace()
-            && !game.getOptions().booleanOption("stratops_ecm")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return false;
         }
         if (!isShutDown()) {
@@ -4383,7 +4383,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean hasActiveAngelECM() {
         // no ECM in space unless strat op option enabled
         if (game.getBoard().inSpace()
-            && !game.getOptions().booleanOption("stratops_ecm")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return false;
         }
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ANGEL_ECM)
@@ -4408,7 +4408,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean hasActiveNovaECM() {
         // no ECM in space unless strat op option enabled
         if (game.getBoard().inSpace()
-            && !game.getOptions().booleanOption("stratops_ecm")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return false;
         }
         if (!isShutDown()) {
@@ -4477,11 +4477,11 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public boolean hasActiveECCM() {
         // no ECM in space unless strat op option enabled
         if (game.getBoard().inSpace()
-            && !game.getOptions().booleanOption("stratops_ecm")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return false;
         }
         if ((game.getOptions().booleanOption(OptionsConstants.ADVANCED_TACOPS_ECCM) || game
-                .getOptions().booleanOption("stratops_ecm")) && !isShutDown()) {
+                .getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) && !isShutDown()) {
             for (Mounted m : getMisc()) {
                 EquipmentType type = m.getType();
                 // TacOps p. 100 Angle ECM can have 1 ECM and 1 ECCM at the same
@@ -4536,7 +4536,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public int getECMRange() {
         // no ECM in space unless strat op option enabled
         if (game.getBoard().inSpace()
-            && !game.getOptions().booleanOption("stratops_ecm")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return Entity.NONE;
         }
         // If we have stealth up and running, there's no bubble.
@@ -10253,12 +10253,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // If we're using the unofficial option for single fighters staying
         // standard scale & we're not a member of a squadron... then false.
         if (!lounge && isFighter()
-            && game.getOptions().booleanOption("single_no_cap")
+            && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_SINGLE_NO_CAP)
             && !isPartOfFighterSquadron()) {
             return false;
         }
 
-        return game.getOptions().booleanOption("stratops_capital_fighter")
+        return game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER)
                && isFighter();
     }
 
@@ -10726,14 +10726,14 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
                 modes.add("");
-                if (gameOpts.booleanOption("stratops_bracket_fire")) {
+                if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE)) {
                     modes.add("Bracket 80%");
                     modes.add("Bracket 60%");
                     modes.add("Bracket 40%");
                 }
                 if (((mounted.getType() instanceof CapitalLaserBayWeapon)
                      || (mounted.getType() instanceof SCLBayWeapon))
-                    && gameOpts.booleanOption("stratops_aaa_laser")) {
+                    && gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER)) {
                     modes.add("AAA");
                     ((WeaponType) mounted.getType()).addEndTurnMode("AAA");
                 }
@@ -10762,7 +10762,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         for (Mounted misc : getMisc()) {
             if (misc.getType().hasFlag(MiscType.F_BAP)
                 && (this instanceof Aero)
-                && gameOpts.booleanOption("stratops_ecm")) {
+                && gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
                 modes.add("Short");
@@ -10780,7 +10780,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
                         modes.add("ECM & ECCM");
                     }
-                } else if (gameOpts.booleanOption("stratops_ecm")
+                } else if (gameOpts.booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)
                            && (this instanceof Aero)) {
                     modes.add("ECCM");
                     if (misc.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
@@ -11038,7 +11038,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // E(C)CM operates differently in space (SO pg 110)
         if (game.getBoard().inSpace()) {
             // No ECM in space unless SO rule is on
-            if (!game.getOptions().booleanOption("stratops_ecm")) {
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
                 return null;
             }
             int range = getECMRange();
@@ -11119,7 +11119,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // E(C)CM operates differently in space (SO pg 110)
         if (game.getBoard().inSpace()) {
             // No ECCM in space unless SO rule is on
-            if (!game.getOptions().booleanOption("stratops_ecm")) {
+            if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
                 return null;
             }
             int bapRange = getBAPRange();

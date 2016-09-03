@@ -237,31 +237,31 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedGroundMovement, OptionsConstants.ADVGRNDMOV_NO_NIGHT_MOVE_PEN, false); //$NON-NLS-1$
 
         IBasicOptionGroup advAeroRules = addGroup("advancedAeroRules"); //$NON-NLS-1$
-        addOption(advAeroRules, "aero_ground_move", true); //$NON-NLS-1$
-        addOption(advAeroRules, "stratops_capital_fighter", false); //$NON-NLS-1$
-        addOption(advAeroRules, "fuel_consumption", false); //$NON-NLS-1$
-        addOption(advAeroRules, "stratops_conv_fusion_bonus", false); //$NON-NLS-1$
-        addOption(advAeroRules, "stratops_harjel", false); //$NON-NLS-1$
-        addOption(advAeroRules, "stratops_grav_effects", false); //$NON-NLS-1$
-        addOption(advAeroRules, "advanced_movement", false); //$NON-NLS-1$
-        addOption(advAeroRules, "heat_by_bay", false); //$NON-NLS-1$
-        addOption(advAeroRules, "atmospheric_control", false); //$NON-NLS-1$
-        addOption(advAeroRules, "ammo_explosions", false); //$NON-NLS-1$
-        addOption(advAeroRules, "stratops_aa_fire", false); //$NON-NLS-1$
-        addOption(advAeroRules, "stratops_aaa_laser", false); //$NON-NLS-1$
-        addOption(advAeroRules, "stratops_bracket_fire", false); //$NON-NLS-1$
-        addOption(advAeroRules, "stratops_ecm", false); //$NON-NLS-1$
-        addOption(advAeroRules, "stratops_sensor_shadow", false); //$NON-NLS-1$
-        addOption(advAeroRules, "stratops_over_penetrate", false); //$NON-NLS-1$
-        addOption(advAeroRules, "stratops_space_bomb", false); //$NON-NLS-1$
-        addOption(advAeroRules, "variable_damage_thresh", false); //$NON-NLS-1$
-        addOption(advAeroRules, "at2_nukes", false); //$NON-NLS-1$
-        addOption(advAeroRules, "aero_sanity", false); //$NON-NLS-1$
-        addOption(advAeroRules, "ind_weapons_grounded_dropper", false); //$NON-NLS-1$
-        addOption(advAeroRules, "return_flyover", false); //$NON-NLS-1$
-        addOption(advAeroRules, "aa_move_mod", false); //$NON-NLS-1$
-        addOption(advAeroRules, "allow_large_squadrons", false); //$NON-NLS-1$
-        addOption(advAeroRules, "single_no_cap", false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_GROUND_MOVE, true); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_CONV_FUSION_BONUS, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_HARJEL, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_GRAV_EFFECTS, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_ADVANCED_MOVEMENT, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_HEAT_BY_BAY, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AMMO_EXPLOSIONS, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AA_FIRE, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_AAA_LASER, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_BRACKET_FIRE, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_ECM, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_SENSOR_SHADOW, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_STRATOPS_SPACE_BOMB, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_VARIABLE_DAMAGE_THRESH, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AT2_NUKES, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AERO_SANITY, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_IND_WEAPONS_GROUNDED_DROPPER, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_RETURN_FLYOVER, true); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_AA_MOVE_MOD, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS, false); //$NON-NLS-1$
+        addOption(advAeroRules, OptionsConstants.ADVAERORULES_SINGLE_NO_CAP, false); //$NON-NLS-1$
 
         IBasicOptionGroup initiative = addGroup("initiative"); //$NON-NLS-1$
         addOption(initiative, "inf_move_even", false); //$NON-NLS-1$

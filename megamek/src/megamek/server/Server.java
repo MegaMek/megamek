@@ -2576,32 +2576,34 @@ public class Server implements Runnable {
                             a.doDisbandDamage();
                         }
                     }
-                    //fix the armor and SI of aeros if using aero sanity rules for the MUL
-                    if (game.getOptions().booleanOption("aero_sanity") && (entity instanceof Aero)) {
-                        //need to rescale SI and armor
-                        int scale = 1;
-                        if (entity.isCapitalScale()) {
-                            scale = 10;
-                        }
-                        Aero a = (Aero) entity;
-                        int currentSI = a.getSI() / (2 * scale);
-                        a.set0SI(a.get0SI() / (2 * scale));
-                        if (currentSI > 0) {
-                            a.setSI(currentSI);
-                        }
-                        if (scale > 1) {
-                            for (int loc = 0; loc < entity.locations(); loc++) {
-                                int currentArmor = entity.getArmor(loc) / scale;
-                                if (entity.getOArmor(loc) > 0) {
-                                    entity.initializeArmor(entity.getOArmor(loc) / scale, loc);
-                                }
-                                if (entity.getArmor(loc) > 0) {
-                                    entity.setArmor(currentArmor, loc);
-                                }
+                // fix the armor and SI of aeros if using aero sanity rules for
+                // the MUL
+                if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
+                        && (entity instanceof Aero)) {
+                    // need to rescale SI and armor
+                    int scale = 1;
+                    if (entity.isCapitalScale()) {
+                        scale = 10;
+                    }
+                    Aero a = (Aero) entity;
+                    int currentSI = a.getSI() / (2 * scale);
+                    a.set0SI(a.get0SI() / (2 * scale));
+                    if (currentSI > 0) {
+                        a.setSI(currentSI);
+                    }
+                    if (scale > 1) {
+                        for (int loc = 0; loc < entity.locations(); loc++) {
+                            int currentArmor = entity.getArmor(loc) / scale;
+                            if (entity.getOArmor(loc) > 0) {
+                                entity.initializeArmor(entity.getOArmor(loc) / scale, loc);
+                            }
+                            if (entity.getArmor(loc) > 0) {
+                                entity.setArmor(currentArmor, loc);
                             }
                         }
                     }
                 }
+            }
                 send(createFullEntitiesPacket());
                 send(createReportPacket(null));
                 send(createEndOfGamePacket());
@@ -2756,7 +2758,7 @@ public class Server implements Runnable {
                     }
                 }
                 // apply bombs and santa annas
-                if (game.getOptions().booleanOption("at2_nukes")
+                if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES)
                     && ((entity instanceof Dropship) || (entity instanceof Jumpship))) {
                     entity.applySantaAnna();
                 }
@@ -2775,7 +2777,7 @@ public class Server implements Runnable {
                 entity.setLoadedKeepers(v);
             }
 
-            if (game.getOptions().booleanOption("aero_sanity")
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
                 && (entity instanceof Aero)) {
                 Aero a = (Aero) entity;
                 if (entity.isCapitalScale()) {
@@ -8627,7 +8629,7 @@ public class Server implements Runnable {
 
             // consume fuel
             if (((entity instanceof Aero)
-                    && game.getOptions().booleanOption("fuel_consumption"))
+                    && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_FUEL_CONSUMPTION))
                     || (entity instanceof TeleMissile)) {
                 int fuelUsed = ((Aero) entity).getFuelUsed(thrust);
                 a.useFuel(fuelUsed);
@@ -13654,7 +13656,7 @@ public class Server implements Runnable {
         // large craft in space, then check the roll
         // and report it
         if (!game.getBoard().inSpace()
-            || !game.getOptions().booleanOption("stratops_ecm")) {
+            || !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_ECM)) {
             return;
         }
         Report r;
@@ -17332,11 +17334,11 @@ public class Server implements Runnable {
 
         // are they capital scale?
         if (te.isCapitalScale()
-            && !game.getOptions().booleanOption("aero_sanity")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             damage = (int) Math.floor(damage / 10.0);
         }
         if (ae.isCapitalScale()
-            && !game.getOptions().booleanOption("aero_sanity")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             damageTaken = (int) Math.floor(damageTaken / 10.0);
         }
 
@@ -19766,30 +19768,26 @@ public class Server implements Runnable {
                     }
                 }
             }
-            if ((entity instanceof Aero) && entity.isAirborne()
-                && !game.getBoard().inSpace()) {
+            if ((entity instanceof Aero) && entity.isAirborne() && !game.getBoard().inSpace()) {
                 // if this aero has any damage, add another roll to the list.
                 if (entity.damageThisPhase > 0) {
-                    if (!game.getOptions().booleanOption("atmospheric_control")) {
+                    if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_ATMOSPHERIC_CONTROL)) {
                         int damMod = entity.damageThisPhase / 20;
                         StringBuffer reportStr = new StringBuffer();
-                        reportStr.append(entity.damageThisPhase)
-                                 .append(" damage +").append(damMod);
-                        PilotingRollData damPRD = new PilotingRollData(
-                                entity.getId(), damMod, reportStr.toString());
+                        reportStr.append(entity.damageThisPhase).append(" damage +").append(damMod);
+                        PilotingRollData damPRD = new PilotingRollData(entity.getId(), damMod, reportStr.toString());
                         if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT)
-                            && (entity.getCrew().getPiloting() > 3)) {
+                                && (entity.getCrew().getPiloting() > 3)) {
                             damPRD.addModifier(-1, "easy to pilot");
                         }
                         game.addControlRoll(damPRD);
                     } else {
                         // was the damage threshold exceeded this round?
                         if (((Aero) entity).wasCritThresh()) {
-                            PilotingRollData damThresh = new PilotingRollData(
-                                    entity.getId(), 0,
+                            PilotingRollData damThresh = new PilotingRollData(entity.getId(), 0,
                                     "damage threshold exceeded");
                             if (entity.hasQuirk(OptionsConstants.QUIRK_POS_EASY_PILOT)
-                                && (entity.getCrew().getPiloting() > 3)) {
+                                    && (entity.getCrew().getPiloting() > 3)) {
                                 damThresh.addModifier(-1, "easy to pilot");
                             }
                             game.addControlRoll(damThresh);
@@ -20849,7 +20847,7 @@ public class Server implements Runnable {
             Aero ship = (Aero) en;
             int damage = ship.getCurrentDamage();
             double divisor = 2.0;
-            if (game.getOptions().booleanOption("aero_sanity")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
                 divisor = 20.0;
             }
             if (damage >= ship.getFatalThresh()) {
@@ -21056,7 +21054,7 @@ public class Server implements Runnable {
         int threshDamage = damage;
         // weapon groups only get the damage of one weapon
         if ((hit.getSingleAV() > -1)
-            && !game.getOptions().booleanOption("aero_sanity")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             threshDamage = hit.getSingleAV();
         }
 
@@ -21066,12 +21064,12 @@ public class Server implements Runnable {
         // check capital/standard damage
         if (isCapital
             && (!te.isCapitalScale() || game.getOptions().booleanOption(
-                "aero_sanity"))) {
+                OptionsConstants.ADVAERORULES_AERO_SANITY))) {
             damage = 10 * damage;
             threshDamage = 10 * threshDamage;
         }
         if (!isCapital && te.isCapitalScale()
-            && !game.getOptions().booleanOption("aero_sanity")) {
+            && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             damage = (int) Math.round(damage / 10.0);
             threshDamage = (int) Math.round(threshDamage / 10.0);
         }
@@ -22102,7 +22100,7 @@ public class Server implements Runnable {
 
                     // check for overpenetration
                     if (game.getOptions().booleanOption(
-                            "stratops_over_penetrate")) {
+                            OptionsConstants.ADVAERORULES_STRATOPS_OVER_PENETRATE)) {
                         int opRoll = Compute.d6(1);
                         if ((((te instanceof Jumpship) || (te instanceof SpaceStation))
                              && !(te instanceof Warship) && (opRoll > 3))
@@ -22140,7 +22138,7 @@ public class Server implements Runnable {
                     // divide damage in half
                     // do not divide by half if it is an ammo exposion
                     if (!ammoExplosion && !nukeS2S
-                        && !game.getOptions().booleanOption("aero_sanity")) {
+                        && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
                         damage /= 2;
                     }
 
@@ -24284,7 +24282,7 @@ public class Server implements Runnable {
                         boomTarget = 7;
                     }
                     if (a.isLargeCraft() && a.isClan()
-                        && game.getOptions().booleanOption("stratops_harjel")) {
+                        && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_HARJEL)) {
                         boomTarget = 11;
                     }
                     // check for possible explosion
@@ -24318,7 +24316,7 @@ public class Server implements Runnable {
                         r = new Report(9197);
                     }
                     if (a.isLargeCraft() && a.isClan()
-                        && game.getOptions().booleanOption("stratops_harjel")
+                        && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_HARJEL)
                         && (a.getIgnoredCrewHits() < 2)) {
                         a.setIgnoredCrewHits(a.getIgnoredCrewHits() + 1);
                         r = new Report(9198);
@@ -24454,7 +24452,7 @@ public class Server implements Runnable {
                                                                                .size()));
                         // possibly check for an ammo explosion
                         // don't allow ammo explosions on fighter squadrons
-                        if (game.getOptions().booleanOption("ammo_explosions")
+                        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AMMO_EXPLOSIONS)
                             && !(a instanceof FighterSquadron)
                             && (weapon.getType() instanceof WeaponType)) {
                             // does it use Ammo?
@@ -24561,7 +24559,7 @@ public class Server implements Runnable {
                     double percentDestroyed = 0.0;
                     double mult = 2.0;
                     if (a.isLargeCraft() && a.isClan()
-                        && game.getOptions().booleanOption("stratops_harjel")) {
+                        && game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_HARJEL)) {
                         mult = 4.0;
                     }
                     if (damageCaused > 0) {

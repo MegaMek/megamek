@@ -246,7 +246,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // this will work differently for cluster and non-cluster
         // weapons, and differently for capital fighter/fighter
         // squadrons
-        if (game.getOptions().booleanOption("aero_sanity")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             // everything will use the normal hits and clusters for hits weapon
             // unless
             // we have a squadron or capital scale entity
@@ -1184,7 +1184,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 || (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)) {
             return true;
         }
-        if (game.getOptions().booleanOption("aero_sanity")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)
                 && target.getTargetType() == Targetable.TYPE_ENTITY
                 && ((Entity) target).isCapitalScale()
                 && !((Entity) target).isCapitalFighter()) {
@@ -1272,7 +1272,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             return;
         }
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
-            if (ae.usesWeaponBays() && !game.getOptions().booleanOption("heat_by_bay")) {
+            if (ae.usesWeaponBays() && !game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
                 int loc = weapon.getLocation();
                 boolean rearMount = weapon.isRearMounted();
                 if (!ae.hasArcFired(loc, rearMount)) {

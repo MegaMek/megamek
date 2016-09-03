@@ -3892,10 +3892,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                     fighters.add(e.getId());
                 }
                 if ((!clientgui.getClient().getGame().getOptions()
-                        .booleanOption("allow_large_squadrons") && (fighters
+                        .booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS) && (fighters
                         .size() > FighterSquadron.MAX_SIZE))
                         || (clientgui.getClient().getGame().getOptions()
-                                .booleanOption("allow_large_squadrons") && (fighters
+                                .booleanOption(OptionsConstants.ADVAERORULES_ALLOW_LARGE_SQUADRONS) && (fighters
                                 .size() > FighterSquadron.ALTERNATE_MAX_SIZE))) {
                     JOptionPane.showMessageDialog(clientgui.frame,
                             Messages.getString("FighterSquadron.toomany"),

@@ -271,7 +271,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         // set up Santa Annas if using nukes
         if (((entity instanceof Dropship) || (entity instanceof Jumpship))
                 && clientgui.getClient().getGame().getOptions().booleanOption(
-                        "at2_nukes")) { //$NON-NLS-1$
+                        OptionsConstants.ADVAERORULES_AT2_NUKES)) { //$NON-NLS-1$
             setupSantaAnna();
             add(panSantaAnna,
                     GBC.eop().anchor(GridBagConstraints.CENTER));
@@ -423,7 +423,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
         int techlvl = Arrays.binarySearch(TechConstants.T_SIMPLE_NAMES, client
                 .getGame().getOptions().stringOption("techlevel")); //$NON-NLS-1$
         boolean allowNukes = client.getGame().getOptions()
-                .booleanOption("at2_nukes"); //$NON-NLS-1$
+                .booleanOption(OptionsConstants.ADVAERORULES_AT2_NUKES); //$NON-NLS-1$
         m_bombs = new BombChoicePanel((Aero) entity, allowNukes,
                 techlvl >= TechConstants.T_SIMPLE_ADVANCED);
         panBombs.add(m_bombs, GBC.std());
@@ -470,7 +470,7 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             AmmoType at = (AmmoType) m.getType();
             // Santa Annas?
             if (clientgui.getClient().getGame().getOptions().booleanOption(
-                    "at2_nukes")
+                    OptionsConstants.ADVAERORULES_AT2_NUKES)
                     && ((at.getAmmoType() == AmmoType.T_KILLER_WHALE) || ((at
                             .getAmmoType() == AmmoType.T_AR10) && at
                             .hasFlag(AmmoType.F_AR10_KILLER_WHALE)))) {

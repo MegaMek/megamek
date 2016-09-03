@@ -2868,7 +2868,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
      */
     private synchronized void updateJoinButton() {
         final IGame game = clientgui.getClient().getGame();
-        if (!game.getOptions().booleanOption("stratops_capital_fighter")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_STRATOPS_CAPITAL_FIGHTER)) {
             return;
         }
 
@@ -4086,7 +4086,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             //$NON-NLS-1$
             // $NON-NLS-2$
             // clear();
-            if (opts.booleanOption("return_flyover")
+            if (opts.booleanOption(OptionsConstants.ADVAERORULES_RETURN_FLYOVER)
                     && clientgui
                             .doYesNoDialog(
                                     Messages.getString("MovementDisplay.ReturnFly.title"),

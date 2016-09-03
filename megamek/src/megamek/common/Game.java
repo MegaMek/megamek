@@ -3341,7 +3341,7 @@ public class Game implements Serializable, IGame {
     // a shortcut function for determining whether vectored movement is
     // applicable
     public boolean useVectorMove() {
-        return getOptions().booleanOption("advanced_movement")
+        return getOptions().booleanOption(OptionsConstants.ADVAERORULES_ADVANCED_MOVEMENT)
                && board.inSpace();
     }
 

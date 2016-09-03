@@ -1047,7 +1047,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 // add heat from weapons fire to heat tracker
                 if (entity.usesWeaponBays()) {
                     // if using bay heat option then don't add total arc
-                    if (game.getOptions().booleanOption("heat_by_bay")) {
+                    if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
                         for (int wId : mounted.getBayWeapons()) {
                             currentHeatBuildup += entity.getEquipment(wId)
                                                         .getCurrentHeat();
@@ -2188,7 +2188,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
             maxr = (int) changes[4];
         }
 
-        if (entity.getGame().getOptions().booleanOption("aero_sanity") && wtype.isCapital()) {
+        if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY) && wtype.isCapital()) {
             avShort *= 10;
             avMed *= 10;
             avLong *= 10;
@@ -2406,7 +2406,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         avLong = mult * avLong;
         avExt = mult * avExt;
 
-        if (entity.getGame().getOptions().booleanOption("aero_sanity") && wtype.isCapital()) {
+        if (entity.getGame().getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY) && wtype.isCapital()) {
             avShort *= 10;
             avMed *= 10;
             avLong *= 10;

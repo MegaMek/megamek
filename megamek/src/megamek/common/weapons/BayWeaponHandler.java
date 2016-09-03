@@ -101,7 +101,7 @@ public class BayWeaponHandler extends WeaponHandler {
             return;
         }        
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
-            if (game.getOptions().booleanOption("heat_by_bay")) {
+            if (game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_HEAT_BY_BAY)) {
                 for (int wId : weapon.getBayWeapons()) {
                     Mounted m = ae.getEquipment(wId);
                     ae.heatBuildup += m.getCurrentHeat();
@@ -129,7 +129,7 @@ public class BayWeaponHandler extends WeaponHandler {
     @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
 
-        if(game.getOptions().booleanOption("aero_sanity")) {
+        if(game.getOptions().booleanOption(OptionsConstants.ADVAERORULES_AERO_SANITY)) {
             return handleAeroSanity(phase, vPhaseReport);
         }
 

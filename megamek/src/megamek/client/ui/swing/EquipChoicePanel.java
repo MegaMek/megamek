@@ -190,9 +190,8 @@ public class EquipChoicePanel extends JPanel implements Serializable {
             }
 
             // Conditional Ejections
-            if (clientgui.getClient().getGame().getOptions().booleanOption(
-                    "conditional_ejection")
-                    && hasEjectSeat) { //$NON-NLS-1$
+            if (clientgui.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)
+                    && hasEjectSeat) { // $NON-NLS-1$
                 add(labCondEjectAmmo, GBC.std());
                 add(chCondEjectAmmo, GBC.eol());
                 chCondEjectAmmo.setSelected(mech.isCondEjectAmmo());

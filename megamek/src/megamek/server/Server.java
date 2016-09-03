@@ -3175,7 +3175,7 @@ public class Server implements Runnable {
         }
         // if individual initiative is active we cannot forward our initiative
         // ever!
-        if (game.getOptions().booleanOption("individual_initiative")) {
+        if (game.getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             return;
         }
         // get the next player from the team this player is on.
@@ -3498,7 +3498,7 @@ public class Server implements Runnable {
      * Rolls initiative for all the players.
      */
     private void rollInitiative() {
-        if (game.getOptions().booleanOption("individual_initiative")) {
+        if (game.getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             TurnOrdered.rollInitiative(game.getEntitiesVector(), false);
         } else {
             // Roll for initative on the teams.
@@ -3615,7 +3615,7 @@ public class Server implements Runnable {
      */
     private void determineTurnOrder(IGame.Phase phase) {
 
-        if (game.getOptions().booleanOption("individual_initiative")) {
+        if (game.getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             determineTurnOrderIUI(phase);
             return;
         }
@@ -4022,7 +4022,7 @@ public class Server implements Runnable {
             addReport(new Report(1210, Report.PUBLIC));
         }
 
-        if (game.getOptions().booleanOption("individual_initiative")) {
+        if (game.getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             r = new Report(1040, Report.PUBLIC);
             addReport(r);
             for (Enumeration<GameTurn> e = game.getTurns(); e.hasMoreElements(); ) {
@@ -13602,9 +13602,9 @@ public class Server implements Runnable {
                         Mech mech = (Mech) e;
                         if (mech.isAutoEject()
                                 && (!game.getOptions().booleanOption(
-                                        "conditional_ejection") || (game
+                                        OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
                                         .getOptions().booleanOption(
-                                                "conditional_ejection") && mech
+                                                OptionsConstants.RPG_CONDITIONAL_EJECTION) && mech
                                         .isCondEjectEngine()))) {
                             vDesc.addAll(ejectEntity(e, true));
                         }
@@ -18439,7 +18439,7 @@ public class Server implements Runnable {
                             if (roll >= 8) {
                                 entity.setTaserShutdownRounds(0);
                                 if (!(game.getOptions().booleanOption(
-                                        "manual_shutdown") && entity
+                                        OptionsConstants.RPG_MANUAL_SHUTDOWN) && entity
                                               .isManualShutdown())) {
                                     entity.setShutDown(false);
                                 }
@@ -20709,7 +20709,7 @@ public class Server implements Runnable {
 
         for (int hit = (totalHits - damage) + 1; hit <= totalHits; hit++) {
             int rollTarget = Compute.getConsciousnessNumber(hit);
-            if (game.getOptions().booleanOption("toughness")) {
+            if (game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
                 rollTarget -= e.getCrew().getToughness();
             }
             boolean edgeUsed = false;
@@ -21103,8 +21103,8 @@ public class Server implements Runnable {
                 Mech mech = (Mech) te;
                 if (mech.isAutoEject()
                     && (!game.getOptions().booleanOption(
-                        "conditional_ejection") || (game.getOptions()
-                                                        .booleanOption("conditional_ejection") && mech
+                        OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game.getOptions()
+                                                        .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION) && mech
                                                             .isCondEjectAmmo()))) {
                     autoEject = true;
                     vDesc.addAll(ejectEntity(te, true));
@@ -22571,9 +22571,9 @@ public class Server implements Runnable {
                                 Mech mech = (Mech) te;
                                 if (mech.isAutoEject()
                                     && (!game.getOptions().booleanOption(
-                                        "conditional_ejection") || (game
+                                        OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
                                                                             .getOptions().booleanOption(
-                                                "conditional_ejection") && mech
+                                                OptionsConstants.RPG_CONDITIONAL_EJECTION) && mech
                                                                             .isCondEjectHeadshot()))) {
                                     autoEject = true;
                                     vDesc.addAll(ejectEntity(te, true, true));
@@ -22587,7 +22587,7 @@ public class Server implements Runnable {
                                 Mech mech = (Mech) te;
                                 if (mech.isAutoEject()
                                     && game.getOptions().booleanOption(
-                                        "conditional_ejection")
+                                        OptionsConstants.RPG_CONDITIONAL_EJECTION)
                                     && mech.isCondEjectCTDest()) {
                                     if (mech.getCrew().getHits() < 5) {
                                         Report.addNewline(vDesc);
@@ -22983,9 +22983,9 @@ public class Server implements Runnable {
                     Mech mech = (Mech) en;
                     if (mech.isAutoEject()
                             && (!game.getOptions().booleanOption(
-                                    "conditional_ejection") || (game
+                                    OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
                                     .getOptions().booleanOption(
-                                            "conditional_ejection") && mech
+                                            OptionsConstants.RPG_CONDITIONAL_EJECTION) && mech
                                     .isCondEjectEngine()))) {
                         vDesc.addAll(ejectEntity(en, true));
                     }
@@ -24940,9 +24940,9 @@ public class Server implements Runnable {
                                     OptionsConstants.ADVANCED_TACOPS_SKIN_OF_THE_TEETH_EJECTION)) {
                                 if (mech.isAutoEject()
                                     && (!game.getOptions().booleanOption(
-                                        "conditional_ejection") || (game
+                                        OptionsConstants.RPG_CONDITIONAL_EJECTION) || (game
                                                                             .getOptions().booleanOption(
-                                                "conditional_ejection") && mech
+                                                OptionsConstants.RPG_CONDITIONAL_EJECTION) && mech
                                                                             .isCondEjectHeadshot()))) {
                                     vDesc.addAll(ejectEntity(en, true, true));
                                 }

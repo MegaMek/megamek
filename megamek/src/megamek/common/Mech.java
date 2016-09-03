@@ -981,7 +981,7 @@ public abstract class Mech extends Entity {
      */
     /*
      * public boolean shouldUseConditionalEject() { if (game !=null &&
-     * game.getOptions().booleanOption("conditional_ejection")) { return true; }
+     * game.getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)) { return true; }
      *
      * return false; }
      */

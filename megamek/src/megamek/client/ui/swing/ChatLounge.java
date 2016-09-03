@@ -1369,7 +1369,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
 
             if (!clientgui.getClient().getGame().getOptions()
-                    .booleanOption("pilot_advantages")) { //$NON-NLS-1$
+                    .booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES)) { //$NON-NLS-1$
                 entity.getCrew().clearOptions(PilotOptions.LVL3_ADVANTAGES);
             }
 
@@ -1379,7 +1379,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
 
             if (!clientgui.getClient().getGame().getOptions()
-                    .booleanOption("manei_domini")) { //$NON-NLS-1$
+                    .booleanOption(OptionsConstants.RPG_MANEI_DOMINI)) { //$NON-NLS-1$
                 entity.getCrew().clearOptions(PilotOptions.MD_ADVANTAGES);
             }
 
@@ -3568,11 +3568,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                         setToolTipText(formatPilotTooltip(
                                 entity.getCrew(),
                                 clientgui.getClient().getGame().getOptions()
-                                        .booleanOption("command_init"),
+                                        .booleanOption(OptionsConstants.RPG_COMMAND_INIT),
                                 clientgui.getClient().getGame().getOptions()
-                                        .booleanOption("individual_initiative"),
+                                        .booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE),
                                 clientgui.getClient().getGame().getOptions()
-                                        .booleanOption("toughness")));
+                                        .booleanOption(OptionsConstants.RPG_TOUGHNESS)));
                     }
                 }
                 if (isSelected) {

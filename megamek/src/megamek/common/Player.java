@@ -491,7 +491,7 @@ public final class Player extends TurnOrdered implements IPlayer {
                     && (bonusHQ == 0) && (entity.getHQIniBonus() > 0)) {
                     bonusHQ = entity.getHQIniBonus();
                 }
-                if (game.getOptions().booleanOption("manei_domini")
+                if (game.getOptions().booleanOption(OptionsConstants.RPG_MANEI_DOMINI)
                     && (bonusMD == 0) && (entity.getMDIniBonus() > 0)) {
                     bonusMD = entity.getMDIniBonus();
                 }
@@ -513,7 +513,7 @@ public final class Player extends TurnOrdered implements IPlayer {
     @Override
     public int getCommandBonus() {
         int commandb = 0;
-        if (game.getOptions().booleanOption("command_init")) {
+        if (game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT)) {
             for (Entity entity : game.getEntitiesVector()) {
                 if ((null != entity.getOwner())
                     && entity.getOwner().equals(this)

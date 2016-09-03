@@ -624,7 +624,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
             return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "swarming", ToHitData.HIT_SWARM_CONVENTIONAL, side);
         } else if (isArtilleryFLAK) {
-            if (game.getOptions().booleanOption("artillery_skill")) {
+            if (game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
                 toHit = new ToHitData(ae.getCrew().getArtillery(), "artillery skill");
             } else {
                 toHit = new ToHitData(ae.getCrew().getGunnery(), "gunnery skill");
@@ -643,7 +643,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
             }
         } else {
             toHit = new ToHitData(ae.getCrew().getGunnery(), "gunnery skill");
-            if (game.getOptions().booleanOption("rpg_gunnery")) {
+            if (game.getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
                 if (wtype.hasFlag(WeaponType.F_ENERGY)) {
                     toHit = new ToHitData(ae.getCrew().getGunneryL(), "gunnery (L) skill");
                 }
@@ -654,7 +654,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     toHit = new ToHitData(ae.getCrew().getGunneryB(), "gunnery (B) skill");
                 }
             }
-            if (wtype.hasFlag(WeaponType.F_ARTILLERY) && game.getOptions().booleanOption("artillery_skill")) {
+            if (wtype.hasFlag(WeaponType.F_ARTILLERY) && game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
                 toHit = new ToHitData(ae.getCrew().getArtillery(), "artillery skill");
             }
             if (ae.getTaserFeedBackRounds() > 0) {

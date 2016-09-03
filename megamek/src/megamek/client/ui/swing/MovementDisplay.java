@@ -249,7 +249,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 boolean forwardIni) {
             boolean manualShutdown = false, selfDestruct = false;
             if (opts != null) {
-                manualShutdown = opts.booleanOption("manual_shutdown");
+                manualShutdown = opts.booleanOption(OptionsConstants.RPG_MANUAL_SHUTDOWN);
                 selfDestruct = opts.booleanOption(OptionsConstants.ADVANCED_TACOPS_SELF_DESTRUCT);
             }
             ArrayList<MoveCommand> flaggedCmds = new ArrayList<MoveCommand>();
@@ -2337,7 +2337,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         if (!clientgui.getClient().getGame().getOptions()
-                      .booleanOption("manual_shutdown")) {
+                      .booleanOption(OptionsConstants.RPG_MANUAL_SHUTDOWN)) {
             return;
         }
 
@@ -2357,7 +2357,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         if (!clientgui.getClient().getGame().getOptions()
-                      .booleanOption("manual_shutdown")) {
+                      .booleanOption(OptionsConstants.RPG_MANUAL_SHUTDOWN)) {
             return;
         }
 

@@ -282,19 +282,8 @@ public class GameOptions extends AbstractOptions {
         addOption(initiative, OptionsConstants.INIT_INITIATIVE_STREAK_COMPENSATION, false); //$NON-NLS-1$
         
         IBasicOptionGroup rpg = addGroup("rpg"); //$NON-NLS-1
-        addOption(rpg, "pilot_advantages", false); //$NON-NLS-1$
+        addOption(rpg, OptionsConstants.RPG_PILOT_ADVANTAGES, false); //$NON-NLS-1$
         addOption(rpg, OptionsConstants.EDGE, false); //$NON-NLS-1$
-        addOption(rpg, "manei_domini", false); //$NON-NLS-1$
-        addOption(rpg, "individual_initiative", false); //$NON-NLS-1$
-        addOption(rpg, "command_init", false); //$NON-NLS-1$
-        addOption(rpg, "rpg_gunnery", false); //$NON-NLS-1$
-        addOption(rpg, "artillery_skill", false); //$NON-NLS-1$
-        addOption(rpg, "toughness", false); //$NON-NLS-1$
-        addOption(rpg, "conditional_ejection", false); //$NON-NLS-1$
-        addOption(rpg, "manual_shutdown", false); //$NON-NLS-1$
-        addOption(rpg, "begin_shutdown", false); //$NON-NLS-1$
-        
-/*        addOption(rpg, OptionsConstants.RPG_PILOT_ADVANTAGES, false); //$NON-NLS-1$
         addOption(rpg, OptionsConstants.RPG_MANEI_DOMINI, false); //$NON-NLS-1$
         addOption(rpg, OptionsConstants.RPG_INDIVIDUAL_INITIATIVE, false); //$NON-NLS-1$
         addOption(rpg, OptionsConstants.RPG_COMMAND_INIT, false); //$NON-NLS-1$
@@ -304,9 +293,6 @@ public class GameOptions extends AbstractOptions {
         addOption(rpg, OptionsConstants.RPG_CONDITIONAL_EJECTION, false); //$NON-NLS-1$
         addOption(rpg, OptionsConstants.RPG_MANUAL_SHUTDOWN, false); //$NON-NLS-1$
         addOption(rpg, OptionsConstants.RPG_BEGIN_SHUTDOWN, false); //$NON-NLS-1$
-*/
-        
-        
 
         //IBasicOptionGroup advancedBuildings = addGroup("advancedBuildings"); //$NON-NLS-1$
 

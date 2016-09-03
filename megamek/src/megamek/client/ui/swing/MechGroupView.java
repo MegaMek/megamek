@@ -45,8 +45,7 @@ import megamek.common.options.OptionsConstants;
  * @version $Revision$
  * @since 0.31
  */
-public class MechGroupView extends JDialog implements ActionListener,
-        ListSelectionListener {
+public class MechGroupView extends JDialog implements ActionListener, ListSelectionListener {
 
     /**
      *
@@ -66,8 +65,7 @@ public class MechGroupView extends JDialog implements ActionListener,
         String[] entityStrings = new String[entityArray.length];
         int index = 0;
 
-        boolean rpgSkills = client.getGame().getOptions().booleanOption(
-                "rpg_gunnery");
+        boolean rpgSkills = client.getGame().getOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY);
 
         for (final int newVar : entityArray) {
             Entity entity = client.getGame().getEntity(newVar);
@@ -77,16 +75,12 @@ public class MechGroupView extends JDialog implements ActionListener,
             }
             if (!entity.getOwner().equals(client.getLocalPlayer())
                     && client.getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP)
-                    && !client.getGame().getOptions().booleanOption(
-                            OptionsConstants.BASE_REAL_BLIND_DROP)) {
-                entityStrings[index++] = ChatLounge.formatUnit(entity, true,
-                        rpgSkills);
+                    && !client.getGame().getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP)) {
+                entityStrings[index++] = ChatLounge.formatUnit(entity, true, rpgSkills);
             } else if (entity.getOwner().equals(client.getLocalPlayer())
                     || (!client.getGame().getOptions().booleanOption(OptionsConstants.BASE_BLIND_DROP)
-                    && !client.getGame().getOptions().booleanOption(
-                            OptionsConstants.BASE_REAL_BLIND_DROP))) {
-                entityStrings[index++] = ChatLounge.formatUnit(entity, false,
-                        rpgSkills);
+                            && !client.getGame().getOptions().booleanOption(OptionsConstants.BASE_REAL_BLIND_DROP))) {
+                entityStrings[index++] = ChatLounge.formatUnit(entity, false, rpgSkills);
             }
         }
         entities = new JList<String>(entityStrings);
@@ -104,9 +98,8 @@ public class MechGroupView extends JDialog implements ActionListener,
         closeButton.addActionListener(this);
 
         setSize(550, 600);
-        setLocation((frame.getLocation().x + (frame.getSize().width / 2))
-                - (getSize().width / 2), frame.getLocation().y
-                + (frame.getSize().height / 10));
+        setLocation((frame.getLocation().x + (frame.getSize().width / 2)) - (getSize().width / 2),
+                frame.getLocation().y + (frame.getSize().height / 10));
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -130,12 +123,12 @@ public class MechGroupView extends JDialog implements ActionListener,
             if (selected == -1) {
                 ta.setText("");
                 return;
-            } else if (!client.getGame().getEntity(entityArray[selected]).getOwner()
-                    .equals(client.getLocalPlayer())) {
+            } else if (!client.getGame().getEntity(entityArray[selected]).getOwner().equals(client.getLocalPlayer())) {
                 ta.setText("(enemy unit)");
             } else {
                 Entity entity = client.getGame().getEntity(entityArray[selected]);
-                MechView mechView = new MechView(entity, client.getGame().getOptions().booleanOption(OptionsConstants.BASE_SHOW_BAY_DETAIL));
+                MechView mechView = new MechView(entity,
+                        client.getGame().getOptions().booleanOption(OptionsConstants.BASE_SHOW_BAY_DETAIL));
                 ta.setText(mechView.getMechReadout());
             }
         }

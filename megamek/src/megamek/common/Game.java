@@ -1325,7 +1325,7 @@ public class Game implements Serializable, IGame {
 
         // And... lets get this straight now.
         if ((entity instanceof Mech)
-            && getOptions().booleanOption("conditional_ejection")) {
+            && getOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION)) {
             ((Mech) entity).setAutoEject(true);
             if (((Mech) entity).hasCase()
                 || ((Mech) entity).hasCASEIIAnywhere()) {
@@ -2402,7 +2402,7 @@ public class Game implements Serializable, IGame {
     }
 
     public void rollInitAndResolveTies() {
-        if (getOptions().booleanOption("individual_initiative")) {
+        if (getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
             Vector<TurnOrdered> vRerolls = new Vector<TurnOrdered>();
             for (int i = 0; i < entities.size(); i++) {
                 Entity e = entities.get(i);

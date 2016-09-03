@@ -3779,7 +3779,7 @@ public class Compute {
 
         int maxSensorRange = bracket * range;
         int minSensorRange = Math.max((bracket - 1) * range, 0);
-        if (game.getOptions().booleanOption("inclusive_sensor_range")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
             minSensorRange = 0;
         }
 
@@ -3860,7 +3860,7 @@ public class Compute {
         if (null != te) {
             check += sensor.getModsForStealth(te);
             // Metal Content...
-            if (ae.getGame().getOptions().booleanOption("metal_content")) {
+            if (ae.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_METAL_CONTENT)) {
                 check += sensor.getModForMetalContent(ae, te);
             }
         }

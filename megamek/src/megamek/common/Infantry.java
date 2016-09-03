@@ -1078,7 +1078,7 @@ public class Infantry extends Entity {
     }
     @Override
     public boolean canAssaultDrop() {
-        return game.getOptions().booleanOption("paratroopers");
+        return game.getOptions().booleanOption(OptionsConstants.ADVANCED_PARATROOPERS);
     }
 
     @Override

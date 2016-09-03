@@ -1144,7 +1144,7 @@ public class MiniMap extends JPanel {
         boolean sensors = m_game.getOptions().booleanOption(
                 OptionsConstants.ADVANCED_TACOPS_SENSORS);
         boolean sensorsDetectAll = m_game.getOptions().booleanOption(
-                "sensors_detect_all");
+                OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
         boolean doubleBlind = m_game.getOptions().booleanOption(
                 OptionsConstants.ADVANCED_DOUBLE_BLIND);
         boolean hasVisual = entity.hasSeenEntity(m_bview.getLocalPlayer());

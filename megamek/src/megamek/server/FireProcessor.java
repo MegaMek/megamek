@@ -148,7 +148,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                         if ((currentHex.containsTerrain(Terrains.WOODS) || currentHex
                                 .containsTerrain(Terrains.JUNGLE))
                                 && game.getOptions().booleanOption(
-                                        "woods_burn_down")) {
+                                        OptionsConstants.ADVANCED_WOODS_BURN_DOWN)) {
                             burnReports = burnDownWoods(currentCoords);
                         }
                         //report and check for fire spread
@@ -230,7 +230,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         Vector<Report> burnReports = new Vector<>();
         int burnDamage = 5;
         try {
-            burnDamage = game.getOptions().intOption("woods_burn_down_amount");
+            burnDamage = game.getOptions().intOption(OptionsConstants.ADVANCED_WOODS_BURN_DOWN_AMOUNT);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

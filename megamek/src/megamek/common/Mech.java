@@ -465,7 +465,7 @@ public abstract class Mech extends Entity {
                 removeTransporter(t);
             }
         }
-        if (game.getOptions().booleanOption("ba_grab_bars")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_BA_GRAB_BARS)) {
             addTransporter(new BattleArmorHandles());
         } else {
             addTransporter(new ClampMountMech());

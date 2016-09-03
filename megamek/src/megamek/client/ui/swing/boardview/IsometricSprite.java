@@ -212,7 +212,7 @@ class IsometricSprite extends Sprite {
         boolean sensors = bv.game.getOptions().booleanOption(
                 OptionsConstants.ADVANCED_TACOPS_SENSORS);
         boolean sensorsDetectAll = bv.game.getOptions().booleanOption(
-                "sensors_detect_all");
+                OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
         boolean doubleBlind = bv.game.getOptions().booleanOption(
                 OptionsConstants.ADVANCED_DOUBLE_BLIND);
         boolean hasVisual = entity.hasSeenEntity(bv.getLocalPlayer());

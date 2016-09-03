@@ -8117,7 +8117,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * @return true, if the entity is active
      */
     public boolean canSpot() {
-        if (game.getOptions().booleanOption("pilots_cannot_spot")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT)
             && (this instanceof MechWarrior)) {
             return false;
         }
@@ -8495,7 +8495,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         boolean sensors = game.getOptions().booleanOption(
                 OptionsConstants.ADVANCED_TACOPS_SENSORS);
         boolean sensorsDetectAll = game.getOptions().booleanOption(
-                "sensors_detect_all");
+                OptionsConstants.ADVANCED_SENSORS_DETECT_ALL);
         boolean doubleBlind = game.getOptions().booleanOption(
                 OptionsConstants.ADVANCED_DOUBLE_BLIND);
         
@@ -9651,7 +9651,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public boolean hasEiCockpit() {
         return ((game != null) && game.getOptions().booleanOption(
-                "all_have_ei_cockpit"));
+                OptionsConstants.ADVANCED_ALL_HAVE_EI_COCKPIT));
     }
 
     public boolean hasActiveEiCockpit() {
@@ -11840,7 +11840,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         int range = getActiveSensor().getRangeByBracket();
         int maxSensorRange = bracket * range;
         int minSensorRange = Math.max((bracket - 1) * range, 0);
-        if (game.getOptions().booleanOption("inclusive_sensor_range")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE)) {
             minSensorRange = 0;
         }
         return getActiveSensor().getDisplayName() + " (" + minSensorRange + "-"

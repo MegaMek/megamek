@@ -130,7 +130,7 @@ class FovHighlightingAndDarkening {
             boolean doubleBlindOn = boardView1.game.getOptions().booleanOption(
                     OptionsConstants.ADVANCED_DOUBLE_BLIND);
             boolean inclusiveSensorsOn = boardView1.game.getOptions().booleanOption(
-                    "inclusive_sensor_range");
+                    OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE);
 
             boolean targetIlluminated = false;
             for (Entity target : this.boardView1.game.getEntitiesVector(c)){

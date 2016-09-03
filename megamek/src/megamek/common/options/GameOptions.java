@@ -124,32 +124,6 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_QUIRKS, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_STRATOPS_PARTIALREPAIRS, false); //$NON-NLS-1$
        
-        
-        addOption(advancedRules, "assault_drop", false); //$NON-NLS-1$
-        addOption(advancedRules, "paratroopers", false); //$NON-NLS-1$
-        addOption(advancedRules, "inclusive_sensor_range", false); //$NON-NLS-1$
-        addOption(advancedRules, "sensors_detect_all", false); //$NON-NLS-1$
-        addOption(advancedRules, "magscan_nohills", false); //$NON-NLS-1$
-        addOption(advancedRules, "woods_burn_down", false); //$NON-NLS-1$
-        addOption(advancedRules, "woods_burn_down_amount", 5); //$NON-NLS-1$
-        addOption(advancedRules, "no_ignite_clear", false); //$NON-NLS-1$
-        addOption(advancedRules, "all_have_ei_cockpit", false); //$NON-NLS-1$
-        addOption(advancedRules, "extreme_temperature_survival", false); //$NON-NLS-1$
-        addOption(advancedRules, "armed_mechwarriors", false); //$NON-NLS-1$
-        addOption(advancedRules, "pilots_visual_range_one", false); //$NON-NLS-1$
-        addOption(advancedRules, "pilots_cannot_spot", false); //$NON-NLS-1$
-        addOption(advancedRules, "metal_content", false); //$NON-NLS-1$
-        addOption(advancedRules, "ba_grab_bars", false); //$NON-NLS-1$
-        
-        addOption(advancedRules, "maxtech_movement_mods", false); //$NON-NLS-1$
-        addOption(advancedRules, "alternate_masc", false); //$NON-NLS-1$
-        addOption(advancedRules, "alternate_masc_enhanced", false); //$NON-NLS-1$
-        addOption(advancedRules, "geometric_mean_bv", false); //$NON-NLS-1$\
-        addOption(advancedRules, "reduced_overheat_modifier_bv", false); //$NON-NLS-1$
-        addOption(advancedRules, "alternate_pilot_bv_mod", false); //$NON-NLS-1$
-        
-
-/*
         addOption(advancedRules, OptionsConstants.ADVANCED_ASSAULT_DROP, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_PARATROOPERS, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE, false); //$NON-NLS-1$
@@ -165,7 +139,16 @@ public class GameOptions extends AbstractOptions {
         addOption(advancedRules, OptionsConstants.ADVANCED_PILOTS_CANNOT_SPOT, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_METAL_CONTENT, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_BA_GRAB_BARS, false); //$NON-NLS-1$
-        addOption(advancedRules, OptionsConstants.ADVANCED_MAXTECH_MOVEMENT_MODS, false); //$NON-NLS-1$
+        
+        addOption(advancedRules, "maxtech_movement_mods", false); //$NON-NLS-1$
+        addOption(advancedRules, "alternate_masc", false); //$NON-NLS-1$
+        addOption(advancedRules, "alternate_masc_enhanced", false); //$NON-NLS-1$
+        addOption(advancedRules, "geometric_mean_bv", false); //$NON-NLS-1$\
+        addOption(advancedRules, "reduced_overheat_modifier_bv", false); //$NON-NLS-1$
+        addOption(advancedRules, "alternate_pilot_bv_mod", false); //$NON-NLS-1$
+      
+       
+/*        addOption(advancedRules, OptionsConstants.ADVANCED_MAXTECH_MOVEMENT_MODS, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED, false); //$NON-NLS-1$
         addOption(advancedRules, OptionsConstants.ADVANCED_GEOMETRIC_MEAN_BV, false); //$NON-NLS-1$\

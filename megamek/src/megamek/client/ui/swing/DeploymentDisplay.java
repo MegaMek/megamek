@@ -50,6 +50,7 @@ import megamek.common.Transporter;
 import megamek.common.VTOL;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.options.OptionsConstants;
 
 public class DeploymentDisplay extends StatusBarPhaseDisplay {
     /**
@@ -228,10 +229,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
             setAssaultDropEnabled(ce().canAssaultDrop()
                     && ce().getGame().getOptions()
-                            .booleanOption("assault_drop"));
+                            .booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP));
             if (!ce().canAssaultDrop()
                     && ce().getGame().getOptions()
-                            .booleanOption("assault_drop")) {
+                            .booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP)) {
             buttons.get(DeployCommand.DEPLOY_ASSAULTDROP).setText(Messages
                         .getString("DeploymentDisplay.AssaultDrop")); //$NON-NLS-1$
                 assaultDropPreference = false;

@@ -12406,7 +12406,7 @@ public class Server implements Runnable {
                 || !turn.isValid(connId, entity, game)
                 || !(game.getBoard().isLegalDeployment(coords,
                         entity.getStartingPos()) || (assaultDrop
-                        && game.getOptions().booleanOption("assault_drop") && entity
+                        && game.getOptions().booleanOption(OptionsConstants.ADVANCED_ASSAULT_DROP) && entity
                             .canAssaultDrop()))) {
             String msg = "error: server got invalid deployment packet from "
                          + "connection " + connId;
@@ -14217,7 +14217,7 @@ public class Server implements Runnable {
 
         // inferno always ignites
         // ERRATA not if targeting clear hexes for ignition is disabled.
-        if (bInferno && !game.getOptions().booleanOption("no_ignite_clear")) {
+        if (bInferno && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_NO_IGNITE_CLEAR)) {
             nTargetRoll = new TargetRoll(0, "inferno");
         }
 

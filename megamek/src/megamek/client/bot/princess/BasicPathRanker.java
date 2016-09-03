@@ -472,8 +472,8 @@ public class BasicPathRanker extends PathRanker {
             double maximumDamageDone = 0;
             double maximumPhysicalDamage = 0;
             double expectedDamageTaken = checkPathForHazards(pathCopy, movingUnit, game);
-            boolean extremeRange = game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE);
-            boolean losRange = game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE);
+            boolean extremeRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
+            boolean losRange = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
             for (Entity enemy : enemies) {
 
                 // Skip ejected pilots.

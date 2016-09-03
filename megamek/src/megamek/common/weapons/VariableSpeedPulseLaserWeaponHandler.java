@@ -82,7 +82,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
             toReturn = Math.min(toReturn + (toHit.getMoS() / 3), toReturn * 2);
         }
 
-        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
             && (nRange > nRanges[RangeType.RANGE_LONG])) {
             // Against conventional infantry, treat as direct fire energy
             if ((target instanceof Infantry) 
@@ -92,7 +92,7 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             }
         }
-        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                 && (nRange > nRanges[RangeType.RANGE_EXTREME])) {
          // Against conventional infantry, treat as direct fire energy
             if ((target instanceof Infantry) 

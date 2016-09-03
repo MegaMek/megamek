@@ -768,8 +768,8 @@ public class FireControl {
             }
         }
         int range = RangeType.rangeBracket(distance, weaponType.getRanges(weapon),
-                                           game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE),
-                                           game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE));
+                                           game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE),
+                                           game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE));
         if (RangeType.RANGE_OUT == range) {
             return new ToHitData(TH_OUT_OF_RANGE);
         } else if ((range == RangeType.RANGE_MINIMUM) && targetState.isAirborneAero()) {

@@ -758,7 +758,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             if (numButtonGroups > 1)
                 buttons.get(FiringCommand.FIRE_MORE).setEnabled(true);
             setFireCalledEnabled(clientgui.getClient().getGame().getOptions()
-                    .booleanOption("tacops_called_shots"));
+                    .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS));
             clientgui.getBoardView().select(null);
         }
     }

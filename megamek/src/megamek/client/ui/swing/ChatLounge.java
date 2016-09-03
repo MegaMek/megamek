@@ -1632,7 +1632,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 int maxRange = RangeType.RANGE_LONG;
                 
                 if ((entity.getGame() != null) && entity.getGame().getOptions().booleanOption(
-                        OptionsConstants.AC_TAC_OPS_RANGE)) {
+                        OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) {
                     maxRange = RangeType.RANGE_EXTREME;
                 }
                 for (int i = RangeType.RANGE_SHORT; i <= maxRange; i++) {

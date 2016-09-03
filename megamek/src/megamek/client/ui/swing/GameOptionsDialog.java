@@ -463,18 +463,18 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals("tacops_LOS1")) { //$NON-NLS-1$
-            if ((options.getOption("tacops_dead_zones")).booleanValue() //$NON-NLS-1$
+        } else if (option.getName().equals(OptionsConstants.ADVCOMBAT_TACOPS_LOS1)) { //$NON-NLS-1$
+            if ((options.getOption(OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES)).booleanValue() //$NON-NLS-1$
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals(OptionsConstants.AC_TAC_OPS_LOS_RANGE)) { //$NON-NLS-1$
-            if (!options.getOption(OptionsConstants.AC_TAC_OPS_RANGE).booleanValue() //$NON-NLS-1$
+        } else if (option.getName().equals(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)) { //$NON-NLS-1$
+            if (!options.getOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE).booleanValue() //$NON-NLS-1$
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else if (option.getName().equals("tacops_dead_zones")) { //$NON-NLS-1$
-            if ((options.getOption("tacops_LOS1")).booleanValue() //$NON-NLS-1$
+        } else if (option.getName().equals(OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES)) { //$NON-NLS-1$
+            if ((options.getOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS1)).booleanValue() //$NON-NLS-1$
                     || !editable) {
                 optionComp.setEditable(false);
             }
@@ -690,22 +690,22 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                 comp_i.setSelected(false);
             }
         }
-        if ("tacops_dead_zones".equals(option.getName())) { //$NON-NLS-1$
-            comps = optionComps.get("tacops_LOS1"); //$NON-NLS-1$
+        if (OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES.equals(option.getName())) { //$NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.ADVCOMBAT_TACOPS_LOS1); //$NON-NLS-1$
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);
             }
         }
-        if (OptionsConstants.AC_TAC_OPS_RANGE.equals(option.getName())) {
-            comps = optionComps.get(OptionsConstants.AC_TAC_OPS_LOS_RANGE);
+        if (OptionsConstants.ADVCOMBAT_TACOPS_RANGE.equals(option.getName())) {
+            comps = optionComps.get(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(state);
                 comp_i.setSelected(false);
             }
         }
-        if ("tacops_LOS1".equals(option.getName())) { //$NON-NLS-1$
-            comps = optionComps.get("tacops_dead_zones"); //$NON-NLS-1$
+        if (OptionsConstants.ADVCOMBAT_TACOPS_LOS1.equals(option.getName())) { //$NON-NLS-1$
+            comps = optionComps.get(OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES); //$NON-NLS-1$
             for (DialogOptionComponent comp_i : comps) {
                 comp_i.setEditable(!state);
                 comp_i.setSelected(false);

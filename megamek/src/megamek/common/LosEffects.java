@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import megamek.client.ui.Messages;
+import megamek.common.options.OptionsConstants;
 import megamek.server.SmokeCloud;
 
 /**
@@ -529,7 +530,7 @@ public class LosEffects {
             return los;
         }
 
-        if(game.getOptions().booleanOption("tacops_dead_zones") && isDeadZone(game, ai)) {
+        if(game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_DEAD_ZONES) && isDeadZone(game, ai)) {
             LosEffects los = new LosEffects();
             los.blocked = true;
             los.blockedByHill = true;
@@ -539,7 +540,7 @@ public class LosEffects {
             return los;
         }
         
-        boolean diagramLos = game.getOptions().booleanOption("tacops_LOS1");
+        boolean diagramLos = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS1);
         boolean partialCover = game.getOptions().booleanOption("tacops_partial_cover");
         double degree = ai.attackPos.degree(ai.targetPos);
         LosEffects finalLoS;
@@ -1341,7 +1342,7 @@ public class LosEffects {
      */
     public static int dividedLeftBetter(ArrayList<Coords> in, IGame game,
             AttackInfo ai, boolean targetInBuilding, LosEffects los) {
-        boolean diagramLos = game.getOptions().booleanOption("tacops_LOS1");
+        boolean diagramLos = game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS1);
         boolean partialCover = game.getOptions().booleanOption("tacops_partial_cover");
         LosEffects leftTotal = new LosEffects();
         LosEffects rightTotal = new LosEffects();

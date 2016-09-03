@@ -878,9 +878,9 @@ public class Compute {
                                && weapon.curMode().equals("Indirect"))
                              || (wtype instanceof ArtilleryCannonWeapon);
         boolean useExtremeRange = game.getOptions().booleanOption(
-                OptionsConstants.AC_TAC_OPS_RANGE);
+                OptionsConstants.ADVCOMBAT_TACOPS_RANGE);
         boolean useLOSRange = game.getOptions().booleanOption(
-                OptionsConstants.AC_TAC_OPS_LOS_RANGE);
+                OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE);
 
         if (ae.isAirborne()) {
             useExtremeRange = true;
@@ -1763,7 +1763,7 @@ public class Compute {
 
             if (attacker.isLocationBad(Mech.LOC_RARM)
                 || attacker.isLocationBad(Mech.LOC_LARM)) {
-                if (game.getOptions().booleanOption("tacops_prone_fire")) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_PRONE_FIRE)) {
                     // Can fire with only one arm
                     if (attacker.isLocationBad(Mech.LOC_RARM)
                         && attacker.isLocationBad(Mech.LOC_LARM)) {

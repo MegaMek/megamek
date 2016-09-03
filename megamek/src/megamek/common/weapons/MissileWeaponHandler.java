@@ -37,6 +37,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.options.OptionsConstants;
 import megamek.server.Server;
 
 /**
@@ -63,7 +64,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             Server s) {
         super(t, w, g, s);
         generalDamageType = HitData.DAMAGE_MISSILE;
-        advancedAMS = g.getOptions().booleanOption("tacops_ams");
+        advancedAMS = g.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_AMS);
         sSalvoType = " missile(s) ";
     }
 

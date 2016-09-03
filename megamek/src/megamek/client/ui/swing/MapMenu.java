@@ -1146,7 +1146,7 @@ public class MapMenu extends JPopupMenu {
         final boolean isFiringDisplay = (currentPanel instanceof FiringDisplay);
         final boolean isTargetingDisplay = (currentPanel instanceof TargetingPhaseDisplay);
         final boolean canStartFires = client.getGame().getOptions()
-                .booleanOption("tacops_start_fire"); //$NON-NLS-1$
+                .booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE); //$NON-NLS-1$
         
         IPlayer localPlayer = client.getLocalPlayer();
         

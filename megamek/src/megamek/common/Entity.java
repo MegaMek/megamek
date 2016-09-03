@@ -13782,7 +13782,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
             WeaponType type = (WeaponType) weapon.getType();
             int range = (game.getOptions().booleanOption(
-                    OptionsConstants.AC_TAC_OPS_RANGE) ? type.getExtremeRange()
+                    OptionsConstants.ADVCOMBAT_TACOPS_RANGE) ? type.getExtremeRange()
                     : type.getLongRange());
             if (range > maxRange) {
                 maxRange = range;

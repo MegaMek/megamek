@@ -2582,7 +2582,7 @@ public abstract class Mech extends Entity {
             boolean rear) {
         if (game.getOptions().booleanOption("no_tac")) {
             return new HitData(location, rear);
-        } else if (game.getOptions().booleanOption("floating_crits")) {
+        } else if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_FLOATING_CRITS)) {
             HitData hd = rollHitLocation(table, side);
             // check for cover and keep rolling until you get something without
             // cover

@@ -6169,7 +6169,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // check if extreme range is used
         int maxrange = 4;
         if (game.getOptions().
-                booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)) maxrange = 5;
+                booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) maxrange = 5;
         
         // create the lists of hexes
         List<Set<Coords>> fieldFire = new ArrayList<Set<Coords>>(5);

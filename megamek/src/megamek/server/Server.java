@@ -14143,7 +14143,7 @@ public class Server implements Runnable {
         }
 
         // Ignore if fire is not enabled as a game option
-        if (!game.getOptions().booleanOption("tacops_start_fire")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)) {
             return false;
         }
 
@@ -21176,7 +21176,7 @@ public class Server implements Runnable {
         // the bonus to the crit roll if using the
         // "advanced determining critical hits rule"
         int critBonus = 0;
-        if (game.getOptions().booleanOption("tacops_crit_roll")
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL)
             && (damage_orig > 0)
             && ((te instanceof Mech) || (te instanceof Protomech))) {
             critBonus = Math.min((damage_orig - 1) / 5, 4);
@@ -22910,7 +22910,7 @@ public class Server implements Runnable {
         }
         // ICE can always explode and roll every time hit
         if (engine.isFusion()
-                && (!game.getOptions().booleanOption("tacops_engine_explosions")
+                && (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_ENGINE_EXPLOSIONS)
                         || (en.engineHitsThisPhase < hitsPerRound))) {
             return false;
         }
@@ -25797,7 +25797,7 @@ public class Server implements Runnable {
             r.newlines = 0;
             vDesc.addElement(r);
             boolean advancedCrit = game.getOptions().booleanOption(
-                    "tacops_crit_roll");
+                    OptionsConstants.ADVCOMBAT_TACOPS_CRIT_ROLL);
             if ((!advancedCrit && (roll <= 7)) || (advancedCrit && (roll <= 8))) {
                 // no effect
                 r = new Report(6005);
@@ -27627,7 +27627,7 @@ public class Server implements Runnable {
             return;
         }
 
-        if (!game.getOptions().booleanOption("tacops_start_fire")) {
+        if (!game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_START_FIRE)) {
             if (null != vReport) {
                 Report r = new Report(3008);
                 r.indent(2);

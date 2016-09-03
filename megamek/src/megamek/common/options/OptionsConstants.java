@@ -24,8 +24,7 @@ public class OptionsConstants {
     public static final String AGM_VEHICLES_CAN_EJECT = "vehicles_can_eject"; //$NON-NLS-1$
     public static final String AGM_EJECTED_PILOTS_FLEE = "ejected_pilots_flee"; //$NON-NLS-1$
 
-    public static final String AC_TAC_OPS_RANGE = "tacops_range"; //$NON-NLS-1$
-    public static final String AC_TAC_OPS_LOS_RANGE = "tacops_los_range"; //$NON-NLS-1$
+
     
     public static final String QUIRK_POS_ANTI_AIR = "anti_air"; //$NON-NLS-1$
     public static final String QUIRK_POS_ATMO_FLYER= "atmo_flyer"; //$NON-NLS-1$
@@ -334,7 +333,8 @@ public class OptionsConstants {
     public static final String ADVCOMBAT_TACOPS_CALLED_SHOTS= "tacops_called_shots";  //$NON-NLS$
     public static final String ADVCOMBAT_TACOPS_PRONE_FIRE= "tacops_prone_fire";  //$NON-NLS$
     public static final String ADVCOMBAT_TACOPS_START_FIRE= "tacops_start_fire";  //$NON-NLS$
-
+    public static final String ADVCOMBAT_TACOPS_RANGE = "tacops_range"; //$NON-NLS-1$
+    public static final String ADVCOMBAT_TACOPS_LOS_RANGE = "tacops_los_range"; //$NON-NLS-1$
     public static final String ADVCOMBAT_TACOPS_DEAD_ZONES= "tacops_dead_zones";  //$NON-NLS$
     public static final String ADVCOMBAT_TACOPS_LOS1= "tacops_LOS1";  //$NON-NLS$
     public static final String ADVCOMBAT_TACOPS_ALTDMG= "tacops_altdmg";  //$NON-NLS$

@@ -2026,7 +2026,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         // add penalty for called shots and change hit table, if necessary
-        if (game.getOptions().booleanOption("tacops_called_shots")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) {
             int call = weapon.getCalledShot().getCall();
             if ((call > CalledShot.CALLED_NONE)
                     && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
@@ -3093,7 +3093,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         // check called shots
-        if (game.getOptions().booleanOption("tacops_called_shots")) {
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) {
             String reason = weapon.getCalledShot().isValid(target);
             if (reason != null) {
                 return reason;

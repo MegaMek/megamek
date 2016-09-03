@@ -302,7 +302,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 }
             }
             if ((game != null)
-                    && game.getOptions().booleanOption("tacops_called_shots")) { //$NON-NLS-1$
+                    && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_CALLED_SHOTS)) { //$NON-NLS-1$
                 wn.append(' ');
                 wn.append(mounted.getCalledShot().getDisplayableName());
             }
@@ -1174,7 +1174,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
         }
 
         // If MaxTech range rules are in play, display the extreme range.
-        if (((game != null) && game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)) ||
+        if (((game != null) && game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)) ||
             (entity.isAirborne() || entity.usesWeaponBays())) { //$NON-NLS-1$
             wExtL.setVisible(true);
             wExtR.setVisible(true);
@@ -1666,7 +1666,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener,
                 wMinR.setVisible(true);
             }
             if (((entity.getGame() != null) && entity.getGame().getOptions().booleanOption(OptionsConstants
-                                                                                                   .AC_TAC_OPS_RANGE))
+                                                                                                   .ADVCOMBAT_TACOPS_RANGE))
                 || (entity.isAirborne() || entity.usesWeaponBays())) {
                 wExtL.setVisible(true);
                 wExtR.setVisible(true);

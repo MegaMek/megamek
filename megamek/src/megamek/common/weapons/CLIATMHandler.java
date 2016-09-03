@@ -219,11 +219,11 @@ public class CLIATMHandler extends ATMHandler {
         }
         // //////
         // This applies even with streaks.
-        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_RANGE)
             && (nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG])) {
             nMissilesModifier -= 2;
         }
-        if (game.getOptions().booleanOption(OptionsConstants.AC_TAC_OPS_LOS_RANGE)
+        if (game.getOptions().booleanOption(OptionsConstants.ADVCOMBAT_TACOPS_LOS_RANGE)
                 && (nRange > ranges[RangeType.RANGE_EXTREME])) {
             nMissilesModifier -= 3;
         }

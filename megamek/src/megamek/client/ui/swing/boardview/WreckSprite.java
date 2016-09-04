@@ -8,6 +8,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.FilteredImageSource;
 
+import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.util.KeyAlphaFilter;
 import megamek.common.Entity;
 
@@ -88,7 +89,8 @@ class WreckSprite extends Sprite {
             graph.drawImage(wreck, 0, 0, this);
         }
 
-        if (secondaryPos == -1) {
+        if ((secondaryPos == -1) && GUIPreferences.getInstance()
+                .getBoolean(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)) {
             // draw box with shortName
             Color text = Color.lightGray;
             Color bkgd = Color.darkGray;

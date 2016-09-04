@@ -997,6 +997,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                         guip.setValue(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL,
                                 !drawLabels);
                         updateEntityLabels();
+                        for (Sprite s: wreckSprites) {
+                            s.prepare();
+                        }
+                        for (Sprite s: isometricWreckSprites) {
+                            s.prepare();
+                        }
                     }
 
                 });
@@ -1056,6 +1062,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         if (e.getName().equals(GUIPreferences.ADVANCED_DRAW_ENTITY_LABEL)) {
             updateEntityLabels();
+            for (Sprite s: wreckSprites) {
+                s.prepare();
+            }
+            for (Sprite s: isometricWreckSprites) {
+                s.prepare();
+            }
         }
     }
 

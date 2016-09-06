@@ -177,6 +177,11 @@
 		<parentFaction>CC</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
+	<faction key='CC.CHG' name='Capellan Home Guard' minor='false' clan='false' periphery='false'>
+		<years>2367-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
 	<faction key='CC.CH' name='Capellan Hussars' minor='false' clan='false' periphery='false'>
 		<years>2367-</years>
 		<ratingLevels>A</ratingLevels>
@@ -543,6 +548,17 @@
 			<availability>General:3</availability>
 		</model>
 	</chassis>
+	<chassis name='SRM Carrier' unitType='Tank'>
+		<availability>General:8</availability>
+		<model name='(Primitive)'>
+			<roles>sr fire support</roles>
+			<availability>IS:6,Periphery.Deep:8,Periphery:8</availability>
+		</model>
+		<model name='(Standard)'>
+			<roles>sr fire support</roles>
+			<availability>General:4</availability>
+		</model>
+	</chassis>
 	<chassis name='Stoat Scout Car' unitType='Tank'>
 		<availability>IS:4,Periphery:3</availability>
 		<model name='(Standard)'>
@@ -762,8 +778,9 @@
 		</model>
 	</chassis>
 	<chassis name='Jumbo' unitType='Dropship'>
-		<availability>General:6</availability>
+		<availability>IS:6,Periphery:6</availability>
 		<model name='(Standard)'>
+			<roles>cargo</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -787,6 +804,10 @@
 	</chassis>
 	<chassis name='Aquilla Transport Jumpship' unitType='Warship'>
 		<availability>IS:6,Periphery.Deep:6,Periphery:6</availability>
+		<model name='(Standard)'>
+			<roles>cargo</roles>
+			<availability>General:8</availability>
+		</model>
 	</chassis>
 	<chassis name='Black Lion I-Battlecruiser' unitType='Warship'>
 		<availability>TH:6</availability>

@@ -188,6 +188,11 @@
 		<parentFaction>CC</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
+	<faction key='CC.CHG' name='Capellan Home Guard' minor='false' clan='false' periphery='false'>
+		<years>2367-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
 	<faction key='CC.CH' name='Capellan Hussars' minor='false' clan='false' periphery='false'>
 		<years>2367-</years>
 		<ratingLevels>A</ratingLevels>
@@ -484,7 +489,7 @@
 		</model>
 		<model name='COM-1A'>
 			<roles>recon</roles>
-			<availability>LA:8,Periphery.Deep:8,Periphery:8</availability>
+			<availability>PoR:8,LA:8,Periphery.Deep:8,Periphery:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Crossbow' unitType='Mek'>
@@ -604,6 +609,9 @@
 	</chassis>
 	<chassis name='Phoenix' unitType='Mek'>
 		<availability>RWR:5</availability>
+		<model name='PX-1R'>
+			<availability>General:8</availability>
+		</model>
 	</chassis>
 	<chassis name='Shadow Hawk' unitType='Mek'>
 		<availability>TH:4</availability>
@@ -801,9 +809,13 @@
 	</chassis>
 	<chassis name='LRM Carrier' unitType='Tank'>
 		<availability>General:6</availability>
+		<model name='(Standard)'>
+			<roles>fire support</roles>
+			<availability>General:8</availability>
+		</model>
 		<model name='(Primitive)'>
 			<roles>fire support</roles>
-			<availability>IS:8,Periphery.Deep:8,Periphery:8</availability>
+			<availability>IS:3,Periphery.Deep:8,Periphery:8</availability>
 		</model>
 	</chassis>
 	<chassis name='LTV-4 Hover Tank' unitType='Tank'>
@@ -853,7 +865,11 @@
 		<availability>General:8</availability>
 		<model name='(Primitive)'>
 			<roles>sr fire support</roles>
-			<availability>IS:8,Periphery.Deep:8,Periphery:8</availability>
+			<availability>IS:3,Periphery.Deep:8,Periphery:8</availability>
+		</model>
+		<model name='(Standard)'>
+			<roles>sr fire support</roles>
+			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Stoat Scout Car' unitType='Tank'>
@@ -1044,7 +1060,7 @@
 	<chassis name='Centurion' unitType='Aero'>
 		<availability>LA:1,IS:1,FS:8</availability>
 		<model name='CNT-1D'>
-			<availability>LA:4,FS:4</availability>
+			<availability>LA:4,Periphery.HR:4,FS:4,MERC:4,Periphery.OS:4</availability>
 		</model>
 		<model name='CNT-1A'>
 			<availability>General:7</availability>
@@ -1059,7 +1075,7 @@
 	<chassis name='Hammerhead' unitType='Aero'>
 		<availability>CC:2,TH:7,LA:1,FWL:2,IS:1,FS:2,DC:2</availability>
 		<model name='HMR-HC'>
-			<availability>TH:4</availability>
+			<availability>TH:4,IS:8</availability>
 		</model>
 		<model name='HMR-HA'>
 			<availability>TH:6</availability>
@@ -1078,10 +1094,10 @@
 		</model>
 	</chassis>
 	<chassis name='Samurai' unitType='Aero'>
-		<availability>CC:6,OA:4,LA:6,IS:6,Periphery.Deep:6,FWL:6,RWR:4,MERC:6,FS:6,Periphery:6,TC:4,DC:6</availability>
+		<availability>CC:6,OA:4,LA:6,IS:6,FWL:6,RWR:4,MERC:6,FS:6,Periphery:6,TC:4,DC:6</availability>
 		<model name='SL-25'>
 			<roles>ground support</roles>
-			<availability>OA:8,General:8,Periphery.Deep:8,DC:8</availability>
+			<availability>OA:8,General:8,DC:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Thunderbird' unitType='Aero'>
@@ -1175,8 +1191,9 @@
 		</model>
 	</chassis>
 	<chassis name='Jumbo' unitType='Dropship'>
-		<availability>General:7</availability>
+		<availability>IS:7,Periphery:7</availability>
 		<model name='(Standard)'>
+			<roles>cargo</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>
@@ -1204,9 +1221,17 @@
 	</chassis>
 	<chassis name='Liberty Jumpship' unitType='Jumpship'>
 		<availability>TH:5,IS:2</availability>
+		<model name='(Standard)'>
+			<roles></roles>
+			<availability>General:8</availability>
+		</model>
 	</chassis>
 	<chassis name='Aquilla Transport Jumpship' unitType='Warship'>
 		<availability>IS:5,Periphery.Deep:6,Periphery:6</availability>
+		<model name='(Standard)'>
+			<roles>cargo</roles>
+			<availability>General:8</availability>
+		</model>
 	</chassis>
 	<chassis name='Black Lion I-Battlecruiser' unitType='Warship'>
 		<availability>TH:5</availability>

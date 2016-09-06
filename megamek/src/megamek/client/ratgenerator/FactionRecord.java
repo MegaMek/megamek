@@ -97,11 +97,6 @@ public class FactionRecord {
 		salvage = new HashMap<Integer, HashMap<String, Integer>>();
 		weightDistribution = new HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>();
 		parentFactions = new ArrayList<String>();
-		ratingLevels.add("F");
-		ratingLevels.add("D");
-		ratingLevels.add("C");
-		ratingLevels.add("B");
-		ratingLevels.add("A");
 	}
 	
 	public String getKey() {

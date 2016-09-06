@@ -137,54 +137,54 @@
 	</faction>
 	<faction key='FS.ACAD' name='Academy and Training Units' minor='false' clan='false' periphery='false'>
 		<years>2317-</years>
-		<ratingLevels>D</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>FS</parentFaction>
 	</faction>
 	<faction key='DC.ALAG' name='Amphigean Light Assault Group' minor='false' clan='false' periphery='false'>
 		<years>2319-</years>
-		<ratingLevels>B</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>DC</parentFaction>
 	</faction>
 	<faction key='FS.AC' name='Arcadian Cuirassiers' minor='false' clan='false' periphery='false'>
 		<years>2317-2830</years>
-		<ratingLevels>C</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>FS</parentFaction>
 	</faction>
 	<faction key='LA.AG' name='Arcturan Guards' minor='false' clan='false' periphery='false'>
 		<years>2341-</years>
-		<ratingLevels>C</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>LA</parentFaction>
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='FWL.AD' name='Atrean Dragoons' minor='false' clan='false' periphery='false'>
 		<years>2271-3079,3138-</years>
-		<ratingLevels>B</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='FS.AH' name='Avalon Hussars' minor='false' clan='false' periphery='false'>
 		<years>2317-</years>
-		<ratingLevels>B</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>FS</parentFaction>
 	</faction>
 	<faction key='DC.BR' name='Benjamin Regulars' minor='false' clan='false' periphery='false'>
 		<years>2319-</years>
-		<ratingLevels>C</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>DC</parentFaction>
 	</faction>
 	<faction key='CC.CC' name='Capellan Chargers' minor='false' clan='false' periphery='false'>
 		<years>2367-3144</years>
-		<ratingLevels>B</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>CC</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='CC.CHG' name='Capellan Home Guard' minor='false' clan='false' periphery='false'>
 		<years>2367-</years>
-		<ratingLevels>F</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>CC</parentFaction>
 	</faction>
 	<faction key='CC.CH' name='Capellan Hussars' minor='false' clan='false' periphery='false'>
 		<years>2367-</years>
-		<ratingLevels>A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>CC</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
@@ -195,7 +195,7 @@
 	</faction>
 	<faction key='FS.DBG' name='Davion Brigade of Guards' minor='false' clan='false' periphery='false'>
 		<years>2418-</years>
-		<ratingLevels>A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>FS</parentFaction>
 	</faction>
 	<faction key='Periphery.Deep' name='Deep Periphery' minor='false' clan='false' periphery='true'>
@@ -205,12 +205,12 @@
 	</faction>
 	<faction key='DC.DR' name='Dieron Regulars' minor='false' clan='false' periphery='false'>
 		<years>2319-3081,3135-</years>
-		<ratingLevels>D</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>DC</parentFaction>
 	</faction>
 	<faction key='LA.DG' name='Donegal Guards' minor='false' clan='false' periphery='false'>
 		<years>2341-</years>
-		<ratingLevels>B</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>LA</parentFaction>
 		<salvage pct='6'></salvage>
 	</faction>
@@ -221,12 +221,12 @@
 	</faction>
 	<faction key='FWL.FWG' name='Free Worlds Guards' minor='false' clan='false' periphery='false'>
 		<years>2426-3079,3138-</years>
-		<ratingLevels>A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='DC.GR' name='Galedon Regulars' minor='false' clan='false' periphery='false'>
 		<years>2319-</years>
-		<ratingLevels>B</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>DC</parentFaction>
 	</faction>
 	<faction key='Periphery.HR' name='Hyades Rim' minor='false' clan='false' periphery='true'>
@@ -236,19 +236,19 @@
 	</faction>
 	<faction key='CC.LG' name='Liao Guards' minor='false' clan='false' periphery='false'>
 		<years>2367-2823,3113-</years>
-		<ratingLevels>D</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>CC</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='LA.LG' name='Lyran Guards' minor='false' clan='false' periphery='false'>
 		<years>2341-</years>
-		<ratingLevels>D</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>LA</parentFaction>
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='LA.LR' name='Lyran Regulars' minor='false' clan='false' periphery='false'>
 		<years>2341-</years>
-		<ratingLevels>F</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>LA</parentFaction>
 		<salvage pct='6'></salvage>
 	</faction>
@@ -264,22 +264,22 @@
 	</faction>
 	<faction key='FWL.MG' name='Marik Guard' minor='false' clan='false' periphery='false'>
 		<years>2246-3079</years>
-		<ratingLevels>C</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='FWL.MM' name='Marik Militia' minor='false' clan='false' periphery='false'>
 		<years>2238-3079,3139-</years>
-		<ratingLevels>F</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='MERC.NH' name='Northwind Highlanders' minor='false' clan='false' periphery='false'>
 		<years>-3081</years>
-		<ratingLevels>A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>MERC</parentFaction>
 	</faction>
 	<faction key='FWL.OH' name='Oriente Hussars' minor='false' clan='false' periphery='false'>
 		<years>2245-3079,3139-</years>
-		<ratingLevels>F</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='Periphery.OS' name='Outer Sphere' minor='false' clan='false' periphery='true'>
@@ -289,7 +289,7 @@
 	</faction>
 	<faction key='DC.PR' name='Pesht Regulars' minor='false' clan='false' periphery='false'>
 		<years>2319-</years>
-		<ratingLevels>F</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>DC</parentFaction>
 	</faction>
 	<faction key='DC.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
@@ -339,24 +339,24 @@
 	</faction>
 	<faction key='DC.PH' name='Proserpina Hussars' minor='false' clan='false' periphery='false'>
 		<years>2319-3082</years>
-		<ratingLevels>C</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>DC</parentFaction>
 	</faction>
 	<faction key='LA.M' name='Regional Militia' minor='false' clan='false' periphery='false'>
 		<years>2341-</years>
-		<ratingLevels>F</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>LA</parentFaction>
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='LA.RG' name='Royal Guards' minor='false' clan='false' periphery='false'>
 		<years>2341-</years>
-		<ratingLevels>A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>LA</parentFaction>
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='CC.SSB' name='Sarna Sabres Brigade' minor='false' clan='false' periphery='false'>
 		<years>2367-2529</years>
-		<ratingLevels>D</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>CC</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
@@ -368,40 +368,40 @@
 	<faction key='CC.SD' name='Sian Lancers' minor='false' clan='false' periphery='false'>
 		<nameChange year='2485'>Sian Dragoons</nameChange>
 		<years>2367-3000</years>
-		<ratingLevels>D</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>CC</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='LA.SR' name='Skye Rangers' minor='false' clan='false' periphery='false'>
 		<years>2341-3081</years>
-		<ratingLevels>C</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>LA</parentFaction>
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='CC.SIAC' name='St Ives Armored Cavalry' minor='false' clan='false' periphery='false'>
 		<years>2367-</years>
-		<ratingLevels>B</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>CC</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='FWL.SD' name='Stewart Dragoons' minor='false' clan='false' periphery='false'>
 		<years>2293-3079</years>
-		<ratingLevels>D</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>FWL</parentFaction>
 	</faction>
 	<faction key='DC.SZC' name='Sun Zhang Academy' minor='false' clan='false' periphery='false'>
 		<years>2319-</years>
-		<ratingLevels>D</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>DC</parentFaction>
 	</faction>
 	<faction key='DC.SL' name='Sword of Light' minor='false' clan='false' periphery='false'>
 		<years>2319-</years>
-		<ratingLevels>A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>DC</parentFaction>
 	</faction>
 	<faction key='FS.SF' name='Syrtis Fusiliers' minor='false' clan='false' periphery='false'>
 		<years>2418-</years>
-		<ratingLevels>C</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>FS</parentFaction>
 	</faction>
 	<faction key='Periphery.R' name='The Rift' minor='false' clan='false' periphery='true'>
@@ -411,13 +411,13 @@
 	</faction>
 	<faction key='CC.TL' name='Tikonov Lancers' minor='false' clan='false' periphery='false'>
 		<years>2367-3000</years>
-		<ratingLevels>D</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>CC</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='LA.T' name='Training Units' minor='false' clan='false' periphery='false'>
 		<years>2341-</years>
-		<ratingLevels>C</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>LA</parentFaction>
 		<salvage pct='6'></salvage>
 	</faction>
@@ -441,18 +441,6 @@
 	</chassis>
 	<chassis name='Armored Personnel Carrier' unitType='Tank'>
 		<availability>CC:10,IS:9,Periphery.Deep:10,DC:8,Periphery:10,TC:10</availability>
-		<model name='(Tracked MG)'>
-			<roles>apc,support</roles>
-			<availability>IS:2</availability>
-		</model>
-		<model name='(Tracked Primitive)'>
-			<roles>apc,support</roles>
-			<availability>General:9</availability>
-		</model>
-		<model name='(Wheeled Primitive)'>
-			<roles>apc,support</roles>
-			<availability>General:6</availability>
-		</model>
 		<model name='(Wheeled MG)'>
 			<roles>apc,support</roles>
 			<availability>PIR:3,General:2</availability>
@@ -464,6 +452,18 @@
 		<model name='(Hover Primitive)'>
 			<roles>apc,support</roles>
 			<availability>General:7</availability>
+		</model>
+		<model name='(Tracked MG)'>
+			<roles>apc,support</roles>
+			<availability>IS:2</availability>
+		</model>
+		<model name='(Wheeled Primitive)'>
+			<roles>apc,support</roles>
+			<availability>General:6</availability>
+		</model>
+		<model name='(Tracked Primitive)'>
+			<roles>apc,support</roles>
+			<availability>General:9</availability>
 		</model>
 	</chassis>
 	<chassis name='Buffel Engineering Support Vehicle VII' unitType='Tank'>
@@ -514,6 +514,10 @@
 			<roles>apc</roles>
 			<availability>PIR:5-,Periphery.Deep:5-,IS.pm:4,Periphery:5-</availability>
 		</model>
+		<model name='(SRM)'>
+			<roles>apc</roles>
+			<availability>PIR:6-,Periphery.Deep:6-,IS.pm:4,Periphery:6-</availability>
+		</model>
 		<model name='(MG)'>
 			<roles>apc,support</roles>
 			<availability>General:6</availability>
@@ -521,10 +525,6 @@
 		<model name='(Standard)'>
 			<roles>apc,support</roles>
 			<availability>General:8</availability>
-		</model>
-		<model name='(SRM)'>
-			<roles>apc</roles>
-			<availability>PIR:6-,Periphery.Deep:6-,IS.pm:4,Periphery:6-</availability>
 		</model>
 	</chassis>
 	<chassis name='Korvin Tank' unitType='Tank'>
@@ -541,22 +541,22 @@
 	</chassis>
 	<chassis name='Merkava Heavy Tank' unitType='Tank'>
 		<availability>TH:8</availability>
-		<model name='Mk VI'>
-			<availability>General:8</availability>
-		</model>
 		<model name='Mk VII'>
 			<availability>General:3</availability>
+		</model>
+		<model name='Mk VI'>
+			<availability>General:8</availability>
 		</model>
 	</chassis>
 	<chassis name='SRM Carrier' unitType='Tank'>
 		<availability>General:8</availability>
-		<model name='(Primitive)'>
-			<roles>sr fire support</roles>
-			<availability>IS:6,Periphery.Deep:8,Periphery:8</availability>
-		</model>
 		<model name='(Standard)'>
 			<roles>sr fire support</roles>
 			<availability>General:4</availability>
+		</model>
+		<model name='(Primitive)'>
+			<roles>sr fire support</roles>
+			<availability>IS:6,Periphery.Deep:8,Periphery:8</availability>
 		</model>
 	</chassis>
 	<chassis name='Stoat Scout Car' unitType='Tank'>
@@ -568,8 +568,11 @@
 	</chassis>
 	<chassis name='Foot Platoon' unitType='Infantry'>
 		<availability>IS:10,Periphery.Deep:10,Periphery:10</availability>
-		<model name='(SRM)'>
-			<availability>General:5</availability>
+		<model name='(Rifle)'>
+			<availability>General:8</availability>
+		</model>
+		<model name='(MG)'>
+			<availability>General:7</availability>
 		</model>
 		<model name='(Rifle AA)'>
 			<roles>anti aircraft</roles>
@@ -581,11 +584,8 @@
 		<model name='(Laser)'>
 			<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
 		</model>
-		<model name='(MG)'>
-			<availability>General:7</availability>
-		</model>
-		<model name='(Rifle)'>
-			<availability>General:8</availability>
+		<model name='(SRM)'>
+			<availability>General:5</availability>
 		</model>
 		<model name='(Flamer)'>
 			<availability>General:8</availability>
@@ -593,8 +593,11 @@
 	</chassis>
 	<chassis name='Jump Platoon' unitType='Infantry'>
 		<availability>IS:8,Periphery.Deep:7,Periphery:7</availability>
-		<model name='(Laser)'>
-			<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
+		<model name='(MG)'>
+			<availability>General:7</availability>
+		</model>
+		<model name='(SRM)'>
+			<availability>General:5</availability>
 		</model>
 		<model name='(Rifle)'>
 			<availability>General:8</availability>
@@ -602,39 +605,24 @@
 		<model name='(Flamer)'>
 			<availability>General:8</availability>
 		</model>
-		<model name='(MG)'>
-			<availability>General:7</availability>
-		</model>
 		<model name='(LRM)'>
 			<availability>General:5</availability>
 		</model>
-		<model name='(SRM)'>
-			<availability>General:5</availability>
+		<model name='(Laser)'>
+			<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
 		</model>
 	</chassis>
 	<chassis name='Mechanized Hover Platoon' unitType='Infantry'>
 		<availability>IS:5,Periphery.Deep:5,Periphery:5</availability>
-		<model name='(Laser)'>
-			<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
-		</model>
-		<model name='(MG)'>
-			<availability>General:7</availability>
-		</model>
-		<model name='(Rifle)'>
-			<availability>General:8</availability>
-		</model>
 		<model name='(LRM)'>
 			<availability>General:5</availability>
 		</model>
-		<model name='(SRM)'>
-			<availability>General:5</availability>
+		<model name='(Rifle)'>
+			<availability>General:8</availability>
 		</model>
 		<model name='(Flamer)'>
 			<availability>General:8</availability>
 		</model>
-	</chassis>
-	<chassis name='Mechanized Tracked Platoon' unitType='Infantry'>
-		<availability>IS:7,Periphery.Deep:7,Periphery:7</availability>
 		<model name='(MG)'>
 			<availability>General:7</availability>
 		</model>
@@ -644,11 +632,23 @@
 		<model name='(Laser)'>
 			<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
 		</model>
+	</chassis>
+	<chassis name='Mechanized Tracked Platoon' unitType='Infantry'>
+		<availability>IS:7,Periphery.Deep:7,Periphery:7</availability>
+		<model name='(Rifle)'>
+			<availability>General:8</availability>
+		</model>
 		<model name='(LRM)'>
 			<availability>General:5</availability>
 		</model>
-		<model name='(Rifle)'>
-			<availability>General:8</availability>
+		<model name='(SRM)'>
+			<availability>General:5</availability>
+		</model>
+		<model name='(Laser)'>
+			<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
+		</model>
+		<model name='(MG)'>
+			<availability>General:7</availability>
 		</model>
 		<model name='(Flamer)'>
 			<availability>General:8</availability>
@@ -659,20 +659,20 @@
 		<model name='(LRM)'>
 			<availability>General:5</availability>
 		</model>
-		<model name='(MG)'>
-			<availability>General:7</availability>
+		<model name='(Flamer)'>
+			<availability>General:8</availability>
 		</model>
 		<model name='(Rifle)'>
 			<availability>General:8</availability>
 		</model>
+		<model name='(Laser)'>
+			<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
+		</model>
 		<model name='(SRM)'>
 			<availability>General:5</availability>
 		</model>
-		<model name='(Flamer)'>
-			<availability>General:8</availability>
-		</model>
-		<model name='(Laser)'>
-			<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
+		<model name='(MG)'>
+			<availability>General:7</availability>
 		</model>
 	</chassis>
 	<chassis name='Motorized Platoon' unitType='Infantry'>
@@ -683,14 +683,14 @@
 		<model name='(Flamer)'>
 			<availability>General:8</availability>
 		</model>
-		<model name='(Laser)'>
-			<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
+		<model name='(LRM)'>
+			<availability>General:5</availability>
 		</model>
 		<model name='(Rifle)'>
 			<availability>General:8</availability>
 		</model>
-		<model name='(LRM)'>
-			<availability>General:5</availability>
+		<model name='(Laser)'>
+			<availability>General:6,Periphery.Deep:5,Periphery:5</availability>
 		</model>
 		<model name='(MG)'>
 			<availability>General:7</availability>
@@ -793,13 +793,13 @@
 	</chassis>
 	<chassis name='Vulture' unitType='Dropship'>
 		<availability>DC:8</availability>
-		<model name='(Cargo)'>
-			<roles>cargo</roles>
-			<availability>General:4</availability>
-		</model>
 		<model name='(Standard)'>
 			<roles>troop carrier</roles>
 			<availability>General:8</availability>
+		</model>
+		<model name='(Cargo)'>
+			<roles>cargo</roles>
+			<availability>General:4</availability>
 		</model>
 	</chassis>
 	<chassis name='Aquilla Transport Jumpship' unitType='Warship'>

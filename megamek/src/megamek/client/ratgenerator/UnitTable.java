@@ -33,7 +33,7 @@ public class UnitTable {
 	private FactionRecord faction;
 	private int unitType;
 	private int year;
-	private int rating;
+	private String rating;
 	private Collection<Integer> weightClasses;
 	private int networkMask;
 	private Collection<String> subtypes;
@@ -44,7 +44,7 @@ public class UnitTable {
 			new HashMap<String,UnitTable>();
 	
 	public UnitTable(FactionRecord faction, int unitType, int year,
-			int rating, Collection<Integer> weightClasses, int networkMask, Collection<String> subtypes,
+			String rating, Collection<Integer> weightClasses, int networkMask, Collection<String> subtypes,
 			Collection<MissionRole> roles, int roleStrictness, FactionRecord deployingFaction) {
 		this.faction = faction;
 		this.unitType = unitType;
@@ -60,7 +60,7 @@ public class UnitTable {
 	}
 	
 	public UnitTable(FactionRecord faction, int unitType, int year,
-			int rating, Collection<Integer> weightClasses, int networkMask,
+			String rating, Collection<Integer> weightClasses, int networkMask,
 			Collection<String> subtypes,
 			Collection<MissionRole> roles, int roleStrictness) {
 		this(faction, unitType, year, rating, weightClasses, networkMask, subtypes,

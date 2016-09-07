@@ -299,7 +299,7 @@ public class RATGenerator {
 	}
 	
 	public List<UnitTable.TableEntry> generateTable(FactionRecord fRec, int unitType, int year,
-			int rating, Collection<Integer> weightClasses, int networkMask, Collection<String> subtypes,
+			String rating, Collection<Integer> weightClasses, int networkMask, Collection<String> subtypes,
 			Collection<MissionRole> roles, int roleStrictness,
 			FactionRecord user) {
 		HashMap<ModelRecord, Double> unitWeights = new HashMap<ModelRecord, Double>();
@@ -323,6 +323,23 @@ public class RATGenerator {
 			late = early;
 		}
 		
+		/* Adjustments for unit rating require knowing both how many ratings are available
+		 * to the faction and where the rating falls within the whole. If a faction does
+		 * not have designated rating levels, it inherits those of the parent faction;
+		 * if there are multiple parent factions the first match is used. Some very minor
+		 * or generic factions do not use rating adjustments, indicated by a rating level
+		 * of -1. A faction that has one rating level is a special case that always has
+		 * the indicated rating within the parent faction's system. This is primarily used
+		 * to give planetary militias and the lowest rating.
+		 */
+		
+		int ratingLevel = -1;
+		ArrayList<String> factionRatings = fRec.getRatingLevelSystem();
+		int numRatingLevels = factionRatings.size();
+		if (rating != null && numRatingLevels > 1) {
+			ratingLevel = factionRatings.indexOf(rating);
+		}
+		
 		for (String chassisKey : chassisIndex.get(early).keySet()) {
 			ChassisRecord cRec = chassis.get(chassisKey);
 			if (cRec == null) {
@@ -342,9 +359,9 @@ public class RATGenerator {
 			if (ar == null) {
 				continue;
 			}
-			double cAv = cRec.calcAvailability(ar, rating, fRec.getRatingLevels().size(), early);
+			double cAv = cRec.calcAvailability(ar, ratingLevel, numRatingLevels, early);
 			cAv = interpolate(cAv,
-					cRec.calcAvailability(ar, rating, fRec.getRatingLevels().size(), late),
+					cRec.calcAvailability(ar, ratingLevel, numRatingLevels, late),
 					Math.max(early, cRec.getIntroYear()), late, year);
 			if (cAv > 0) {
 				double totalModelWeight = cRec.totalModelWeight(early,
@@ -364,9 +381,9 @@ public class RATGenerator {
 					if (ar == null || ar.getAvailability() == 0) {
 						continue;
 					}
-					double mAv = mRec.calcAvailability(ar, rating, fRec.getRatingLevels().size(), early);
+					double mAv = mRec.calcAvailability(ar, ratingLevel, numRatingLevels, early);
 					mAv = interpolate(mAv,
-							mRec.calcAvailability(ar, rating, fRec.getRatingLevels().size(), late),
+							mRec.calcAvailability(ar, ratingLevel, numRatingLevels, late),
 							Math.max(early, mRec.getIntroYear()), late, year);
 					Double adjMAv = MissionRole.adjustAvailabilityByRole(mAv, roles, mRec, year, roleStrictness);
 					if (adjMAv != null) {
@@ -455,8 +472,8 @@ public class RATGenerator {
 			}
 		}
 		
-		if (rating >= 0) {
-			adjustForRating(fRec, unitType, year, rating,
+		if (ratingLevel >= 0) {
+			adjustForRating(fRec, unitType, year, ratingLevel,
 					unitWeights, salvageWeights, early, late);
 		}
 		

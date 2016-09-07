@@ -813,6 +813,8 @@ WindowListener, TreeSelectionListener, FocusListener {
             }
         } else if (ev.getSource().equals(m_chFaction)) {
         	updateSubfactionChoice();
+        } else if (ev.getSource().equals(m_chSubfaction)) {
+        	updateRatingChoice();
         } else if (ev.getSource().equals(m_chkShowMinor)) {
         	updateFactionChoice();
         } else if (ev.getSource().equals(m_chUnitType)) {
@@ -1055,18 +1057,33 @@ WindowListener, TreeSelectionListener, FocusListener {
     	m_chSubfaction.addActionListener(this);
     }
     
+    /**
+     * When faction or subfaction is changed, refresh ratings combo box with appropriate
+     * values for selected faction.
+     * 
+     */
+    
     private void updateRatingChoice() {
     	int current = m_chRating.getSelectedIndex();
     	m_chRating.removeAllItems();
-    	FactionRecord fRec = (FactionRecord)m_chFaction.getSelectedItem();
-    	if (fRec != null) {
-    		for (String r : fRec.getRatingLevels()) {
-    			m_chRating.addItem(r);
-    		}
-    		if (current < fRec.getRatingLevels().size()) {
-    			m_chRating.setSelectedIndex(current);
-    		}
+    	FactionRecord fRec = (FactionRecord)m_chSubfaction.getSelectedItem();
+    	if (fRec == null) {
+    		// Subfaction is "general"
+    		fRec = (FactionRecord)m_chFaction.getSelectedItem();
     	}
+    	ArrayList<String> ratingLevels = fRec.getRatingLevels();
+    	if (ratingLevels.isEmpty()) {
+    		// Get rating levels from parent faction(s)
+    		ratingLevels = fRec.getRatingLevelSystem();
+    	}
+		for (int i = ratingLevels.size() - 1; i >= 0; i--) {
+			m_chRating.addItem(ratingLevels.get(i));
+		}
+		if (current < 0 && m_chRating.getItemCount() > 0) {
+			m_chRating.setSelectedIndex(0);
+		} else {
+			m_chRating.setSelectedIndex(Math.min(current, m_chRating.getItemCount() - 1));
+		}
     }
     
     private DefaultListCellRenderer factionCbRenderer = new DefaultListCellRenderer() {
@@ -1099,7 +1116,8 @@ WindowListener, TreeSelectionListener, FocusListener {
     	}
 		UnitTypeOptionsPanel panOptions = unitTypeCards.get((String)m_chUnitType.getSelectedItem());
 		generatedRAT = new UnitTable(fRec, ModelRecord.parseUnitType((String)m_chUnitType.getSelectedItem()),
-				ratGenYear, m_chRating.getSelectedIndex(), panOptions.getSelectedWeights(),
+				ratGenYear, (String)m_chRating.getSelectedItem(),
+				panOptions.getSelectedWeights(),
 				panOptions.getNetworkMask(), panOptions.getMotiveTypes(),
 				panOptions.getSelectedRoles(), panOptions.getRoleStrictness());
 		ratModel.refreshData();

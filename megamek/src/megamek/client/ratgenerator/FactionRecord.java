@@ -127,7 +127,36 @@ public class FactionRecord {
 		this.periphery = periphery;
 	}
 	
+	/**
+	 * 
+	 * @return value of ratingLevels
+	 */
 	public ArrayList<String> getRatingLevels() {
+		return ratingLevels;
+	}
+	
+	/**
+	 * Checks the faction parent hierarchy as necessary to find a set of ratings with at
+	 * least two values. If ratingLevels is empty, this faction inherits the parent's system.
+	 * If ratingLevels has one member, it indicates a set value for this faction within
+	 * the parent faction's system.
+	 * 
+	 * @return The list of available equipment ratings for the faction.
+	 */
+	
+	public ArrayList<String> getRatingLevelSystem() {
+		if (ratingLevels.size() < 2) {
+			for (String parent : parentFactions) {
+				FactionRecord fr = RATGenerator.getInstance().getFaction(parent);
+				if (fr != null) {
+					ArrayList<String> retVal = fr.getRatingLevelSystem();
+					if (retVal.size() > 1 &&
+							(ratingLevels.isEmpty() || retVal.contains(ratingLevels.get(0)))) {
+						return retVal;
+					}
+				}
+			}
+		}
 		return ratingLevels;
 	}
 	
@@ -412,9 +441,11 @@ public class FactionRecord {
 	
 	public void setRatings(String str) {
 		ratingLevels.clear();
-		String[] fields = str.split(",");
-		for (String rating : fields) {
-			ratingLevels.add(rating);
+		if (str.length() > 0) {
+			String[] fields = str.split(",");
+			for (String rating : fields) {
+				ratingLevels.add(rating);
+			}
 		}
 	}
 	

@@ -368,7 +368,7 @@
 		<pctOmni>0,0,0,0,0</pctOmni>
 		<pctClan>0,0,0,0,0</pctClan>
 		<pctSL>4,0,0,10,20</pctSL>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>MOC:10,CC:2</salvage>
 	</faction>
 	<faction key='HL' name='Hanseatic League' minor='true' clan='false' periphery='true'>
 		<years>2891-3085</years>
@@ -395,6 +395,7 @@
 		<years>3072-3081</years>
 		<ratingLevels></ratingLevels>
 		<parentFaction>CM</parentFaction>
+		<salvage pct='7'>CC:1,WOB:10,FS:2</salvage>
 	</faction>
 	<faction key='LA' name='Lyran Commonwealth' minor='false' clan='false' periphery='false'>
 		<nameChange year='3042'>Federated Commonwealth (Steiner)</nameChange>
@@ -489,6 +490,12 @@
 		<parentFaction>Periphery.R</parentFaction>
 		<salvage pct='5'>LA:10</salvage>
 	</faction>
+	<faction key='ST' name='Saiph Triumvirate' minor='true' clan='false' periphery='false'>
+		<years>3057-3068</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>CM</parentFaction>
+		<salvage pct='6'>CC:3,TCC:1,FWL:10,CM:5,</salvage>
+	</faction>
 	<faction key='Stone' name='Stone&apos;s Coalition' minor='false' clan='false' periphery='true'>
 		<years>3073-3081</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
@@ -509,6 +516,7 @@
 		<years>3057-3068</years>
 		<ratingLevels></ratingLevels>
 		<parentFaction>CM</parentFaction>
+		<salvage pct='6'>CC:1,ST:1,CM:10,</salvage>
 	</faction>
 	<faction key='SOC' name='The Society' minor='false' clan='true' periphery='false'>
 		<years>3072-3075</years>

@@ -6,9 +6,6 @@
 		<years>3139-</years>
 		<ratingLevels></ratingLevels>
 		<parentFaction>ROS</parentFaction>
-		<pctOmni>5,10,20,30</pctOmni>
-		<pctClan>0,14,22,30</pctClan>
-		<pctSL>85,85,78,70</pctSL>
 		<omniMargin>13</omniMargin>
 		<techMargin>13</techMargin>
 		<upgradeMargin>10</upgradeMargin>
@@ -40,7 +37,7 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 		<pctOmni>0,10,15,16,28</pctOmni>
-		<pctClan>0,0,5,10,18</pctClan>
+		<pctClan>0,0,8,10,18</pctClan>
 		<pctSL>30,52,70,75,82</pctSL>
 		<omniMargin>13</omniMargin>
 		<techMargin>13</techMargin>
@@ -153,7 +150,7 @@
 	</faction>
 	<faction key='CvW' name='Covenant Worlds' minor='true' clan='false' periphery='false'>
 		<years>3137-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>FWL</parentFaction>
 		<omniMargin>13</omniMargin>
 		<techMargin>13</techMargin>
@@ -365,7 +362,7 @@
 	</faction>
 	<faction key='MiC' name='Milton Combine' minor='true' clan='false' periphery='false'>
 		<years>3137-3139</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>FWL</parentFaction>
 		<omniMargin>13</omniMargin>
 		<techMargin>13</techMargin>
@@ -419,7 +416,7 @@
 		<omniMargin>13</omniMargin>
 		<techMargin>13</techMargin>
 		<upgradeMargin>10</upgradeMargin>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>RR:1,LA:6,MSC:5</salvage>
 	</faction>
 	<faction key='RD' name='Rasalhague Dominion' minor='false' clan='true' periphery='false'>
 		<years>3103-</years>
@@ -431,7 +428,7 @@
 		<pctClan unitType='Vehicle'>15,15,45,45,45</pctClan>
 		<pctSL unitType='Vehicle'>85,85,55,55,55</pctSL>
 		<techMargin>13</techMargin>
-		<salvage pct='10'>CHH:2,CDS:1,CW:9,LA:2,DC:10</salvage>
+		<salvage pct='10'>CHH:1,CDS:1,CW:9,LA:1,CNC:6,DC:4</salvage>
 		<weightDistribution era='3135' unitType='Mek'>2,3,4,2,0</weightDistribution>
 		<weightDistribution era='3135' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
@@ -520,21 +517,20 @@
 		<years>3135-3138</years>
 		<ratingLevels></ratingLevels>
 		<parentFaction>ROS</parentFaction>
-		<pctOmni>5,10,20,30</pctOmni>
-		<pctClan>0,14,22,30</pctClan>
-		<pctSL>85,85,78,70</pctSL>
+		<pctOmni>null,10,20,30</pctOmni>
+		<pctClan>null,14,22,30</pctClan>
+		<pctSL>null,85,78,70</pctSL>
 		<omniMargin>13</omniMargin>
 		<techMargin>13</techMargin>
 		<upgradeMargin>10</upgradeMargin>
-		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='ShA' name='Shiloh Alliance' minor='true' clan='false' periphery='false'>
 		<years>3135-3144</years>
 		<ratingLevels></ratingLevels>
 		<parentFaction>ROS</parentFaction>
-		<pctOmni>5,10,20,30</pctOmni>
-		<pctClan>0,14,22,30</pctClan>
-		<pctSL>85,85,78,70</pctSL>
+		<pctOmni>null,10,20,30</pctOmni>
+		<pctClan>null,14,22,30</pctClan>
+		<pctSL>null,85,78,70</pctSL>
 		<omniMargin>13</omniMargin>
 		<techMargin>13</techMargin>
 		<upgradeMargin>10</upgradeMargin>
@@ -543,9 +539,9 @@
 		<years>3136-3144</years>
 		<ratingLevels></ratingLevels>
 		<parentFaction>ROS</parentFaction>
-		<pctOmni>5,10,20,30</pctOmni>
-		<pctClan>0,14,22,30</pctClan>
-		<pctSL>85,85,78,70</pctSL>
+		<pctOmni>null,10,20,30</pctOmni>
+		<pctClan>null,14,22,30</pctClan>
+		<pctSL>null,85,78,70</pctSL>
 		<omniMargin>13</omniMargin>
 		<techMargin>13</techMargin>
 		<upgradeMargin>10</upgradeMargin>
@@ -1491,10 +1487,6 @@
 		<years>3081-</years>
 		<ratingLevels>PG</ratingLevels>
 		<parentFaction>ROS,IS.pm</parentFaction>
-		<pctOmni>null,10,20,30</pctOmni>
-		<pctClan>null,14,22,30</pctClan>
-		<pctSL>null,85,78,70</pctSL>
-		<pctOmni unitType='Aero'>null</pctOmni>
 		<omniMargin>13</omniMargin>
 		<techMargin>13</techMargin>
 		<upgradeMargin>10</upgradeMargin>
@@ -1756,6 +1748,9 @@
 		<years>3134-</years>
 		<ratingLevels></ratingLevels>
 		<parentFaction>CC</parentFaction>
+		<pctOmni>15</pctOmni>
+		<pctClan>8</pctClan>
+		<pctSL>70</pctSL>
 		<omniMargin>13</omniMargin>
 		<techMargin>13</techMargin>
 		<upgradeMargin>10</upgradeMargin>

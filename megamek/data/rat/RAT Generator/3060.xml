@@ -305,8 +305,9 @@
 	</faction>
 	<faction key='DS' name='Duchy of Small' minor='true' clan='false' periphery='false'>
 		<years>3057-3066</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>CM</parentFaction>
+		<salvage pct='6'>CM:3,</salvage>
 	</faction>
 	<faction key='FS' name='Federated Suns' minor='false' clan='false' periphery='false'>
 		<nameChange year='3042'>Federated Commonwealth (Davion)</nameChange>
@@ -349,6 +350,10 @@
 		<years>3066-</years>
 		<ratingLevels></ratingLevels>
 		<parentFaction>NCR</parentFaction>
+		<pctOmni>0</pctOmni>
+		<pctClan>0</pctClan>
+		<pctSL>0</pctSL>
+		<salvage pct='5'>MOC:10,CC:2</salvage>
 	</faction>
 	<faction key='HL' name='Hanseatic League' minor='true' clan='false' periphery='true'>
 		<years>2891-3085</years>
@@ -473,6 +478,12 @@
 		<parentFaction>Periphery.R</parentFaction>
 		<salvage pct='5'></salvage>
 	</faction>
+	<faction key='ST' name='Saiph Triumvirate' minor='true' clan='false' periphery='false'>
+		<years>3057-3068</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>CM</parentFaction>
+		<salvage pct='6'>CC:3,TCC:1,FWL:10,CM:5,</salvage>
+	</faction>
 	<faction key='SIC' name='St Ives Compact' minor='false' clan='false' periphery='false'>
 		<years>3029-3063</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
@@ -487,6 +498,7 @@
 		<years>3057-3063</years>
 		<ratingLevels></ratingLevels>
 		<parentFaction>CM</parentFaction>
+		<salvage pct='6'>CC:10,FWL:1,CM:2,</salvage>
 	</faction>
 	<faction key='TC' name='Taurian Concordat' minor='false' clan='false' periphery='true'>
 		<years>2335-</years>
@@ -502,6 +514,7 @@
 		<years>3057-3068</years>
 		<ratingLevels></ratingLevels>
 		<parentFaction>CM</parentFaction>
+		<salvage pct='6'>CC:1,ST:1,CM:10,</salvage>
 	</faction>
 	<faction key='TD' name='Tortuga Dominions' minor='false' clan='false' periphery='true'>
 		<years>2785-</years>
@@ -719,6 +732,9 @@
 		<years>2832-3060</years>
 		<ratingLevels></ratingLevels>
 		<parentFaction>CC</parentFaction>
+		<pctOmni>7</pctOmni>
+		<pctClan>5</pctClan>
+		<pctSL>20</pctSL>
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='FS.CR' name='Chisholm&apos;s Raiders' minor='false' clan='false' periphery='false'>

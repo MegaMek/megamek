@@ -32,6 +32,38 @@ import org.w3c.dom.Node;
  */
 public class FactionRecord {
 	
+	/**
+	 * Proportions of omni/Clan/upgraded tech are given for each faction
+	 * by the field manual series.  
+	 */
+	public enum TechCategory {
+		OMNI, CLAN, IS_ADVANCED, // Used for Meks, and also used for ASFs or vees if no other value is present.
+		OMNI_AERO, CLAN_AERO, IS_ADVANCED_AERO,
+		CLAN_VEE, IS_ADVANCED_VEE;
+		/* omni vees do not see the widespread use of Meks and ASFs and do not get
+		 * a separate percentage value
+		 */
+
+		/**
+		 * If no value is provided for ASFs or Vees, use the base value.
+		 * @return The base category if the desired one has no value, or null if this is the base.
+		 */
+		TechCategory fallthrough() {
+			switch (this) {
+			case OMNI_AERO:
+				return OMNI;
+			case CLAN_AERO:
+			case CLAN_VEE:
+				return CLAN;
+			case IS_ADVANCED_AERO:
+			case IS_ADVANCED_VEE:
+				return IS_ADVANCED;
+			default:
+				return null;
+			}
+		}
+	};
+	
 	private String key;
 	private boolean minor;
 	private boolean clan;
@@ -41,14 +73,8 @@ public class FactionRecord {
 	private ArrayList<DateRange> yearsActive;
 	private ArrayList<String> ratingLevels;
 	private HashMap<Integer, Integer> pctSalvage;
-	private HashMap<Integer, ArrayList<Integer>> pctOmni;
-	private HashMap<Integer, ArrayList<Integer>> pctClan;
-	private HashMap<Integer, ArrayList<Integer>> pctSL;
-	private HashMap<Integer, ArrayList<Integer>> pctOmniAero;
-	private HashMap<Integer, ArrayList<Integer>> pctClanAero;
-	private HashMap<Integer, ArrayList<Integer>> pctSLAero;
-	private HashMap<Integer, ArrayList<Integer>> pctClanVee;
-	private HashMap<Integer, ArrayList<Integer>> pctSLVee;
+	// pctTech.get(category).get(era).get(ratingLevel)
+	private HashMap<TechCategory, HashMap<Integer, ArrayList<Integer>>> pctTech;
 	private HashMap<Integer, HashMap<String, Integer>> salvage;
 	/*
 	 * FM:Updates gives percentage values for omni, Clan, and SL tech. Later manuals are
@@ -79,24 +105,17 @@ public class FactionRecord {
 		this.key = key;
 		this.name = name;
 		minor = clan = periphery = false;
-		ratingLevels = new ArrayList<String>();
-		altNames = new TreeMap<Integer, String>();
-		yearsActive = new ArrayList<DateRange>();
-		pctSalvage = new HashMap<Integer, Integer>();
-		pctOmni = new HashMap<Integer, ArrayList<Integer>>();
-		pctClan = new HashMap<Integer, ArrayList<Integer>>();
-		pctSL = new HashMap<Integer, ArrayList<Integer>>();
-		pctOmniAero = new HashMap<Integer, ArrayList<Integer>>();
-		pctClanAero = new HashMap<Integer, ArrayList<Integer>>();
-		pctSLAero = new HashMap<Integer, ArrayList<Integer>>();
-		pctClanVee = new HashMap<Integer, ArrayList<Integer>>();
-		pctSLVee = new HashMap<Integer, ArrayList<Integer>>();
-		omniMargin = new HashMap<Integer,Integer>();
-		upgradeMargin = new HashMap<Integer,Integer>();
-		techMargin = new HashMap<Integer,Integer>();
-		salvage = new HashMap<Integer, HashMap<String, Integer>>();
-		weightDistribution = new HashMap<Integer, HashMap<Integer, ArrayList<Integer>>>();
-		parentFactions = new ArrayList<String>();
+		ratingLevels = new ArrayList<>();
+		altNames = new TreeMap<>();
+		yearsActive = new ArrayList<>();
+		pctSalvage = new HashMap<>();
+		pctTech = new HashMap<>();
+		omniMargin = new HashMap<>();
+		upgradeMargin = new HashMap<>();
+		techMargin = new HashMap<>();
+		salvage = new HashMap<>();
+		weightDistribution = new HashMap<>();
+		parentFactions = new ArrayList<>();
 	}
 	
 	public String getKey() {
@@ -267,178 +286,43 @@ public class FactionRecord {
 		salvage.get(era).remove(faction);
 	}
 	
-	public Integer getPctOmni(int era, int rating) {
-		if (!pctOmni.containsKey(era) || pctOmni.get(era).size() == 0) {
+	public Integer getPctTech(TechCategory category, int era, int rating) {
+		if (!pctTech.containsKey(category) || !pctTech.get(category).containsKey(era)
+				|| pctTech.get(category).get(era).isEmpty()
+				|| pctTech.get(category).get(era).size() <= rating) {
 			return null;
 		}
-		if (pctOmni.get(era).size() <= rating) {
-			return pctOmni.get(era).get(pctOmni.get(era).size() - 1);
-		}
-		return pctOmni.get(era).get(rating);
+		return pctTech.get(category).get(era).get(rating);
 	}
 	
-	public void setPctOmni(int era, int rating, Integer pct) {
-		if (!pctOmni.containsKey(era)) {
-			pctOmni.put(era,  new ArrayList<Integer>());
+	public Integer findPctTech(TechCategory category, int era, int rating) {
+		Integer retVal = getPctTech(category, era, rating);
+		if (retVal != null) {
+			return retVal;
 		}
-		while (pctOmni.get(era).size() <= rating) {
-			pctOmni.get(era).add(0);
+		retVal = getPctTech(category.fallthrough(), era, rating);
+		if (retVal != null) {
+			return retVal;
 		}
-		pctOmni.get(era).set(rating, pct);
-	}
-	
-	public Integer getPctClan(int era, int rating) {
-		if (!pctClan.containsKey(era) || pctClan.get(era).size() == 0) {
+		int total = 0;
+		int count = 0;
+		for (String parent : parentFactions) {
+			FactionRecord pfr = RATGenerator.getInstance().getFaction(parent);
+			if (pfr != null) {
+				Integer pct = pfr.findPctTech(category, era, rating);
+				if (pct != null) {
+					total += pct;
+					count++;
+				}
+			}
+		}
+		if (count > 0) {
+			return (int)((total / count + 0.5));
+		} else {
 			return null;
 		}
-		if (pctClan.get(era).size() <= rating) {
-			return pctClan.get(era).get(pctClan.get(era).size() - 1);
-		}
-		return pctClan.get(era).get(rating);
 	}
-	
-	public void setPctClan(int era, int rating, Integer pct) {
-		if (!pctClan.containsKey(era)) {
-			pctClan.put(era,  new ArrayList<Integer>());
-		}
-		while (pctClan.get(era).size() <= rating) {
-			pctClan.get(era).add(0);
-		}
-		pctClan.get(era).set(rating, pct);
-	}
-	
-	public Integer getPctSL(int era, int rating) {
-		if (!pctSL.containsKey(era) || pctSL.get(era).size() == 0) {
-			return null;
-		}
-		if (pctSL.get(era).size() <= rating) {
-			return pctSL.get(era).get(pctSL.get(era).size() - 1);
-		}
-		return pctSL.get(era).get(rating);
-	}
-	
-	public void setPctSL(int era, int rating, Integer pct) {
-		if (!pctSL.containsKey(era)) {
-			pctSL.put(era,  new ArrayList<Integer>());
-		}
-		while (pctSL.get(era).size() <= rating) {
-			pctSL.get(era).add(0);
-		}
-		pctSL.get(era).set(rating, pct);
-	}
-	
-	public Integer getPctOmniAero(int era, int rating) {
-		return getPctOmniAero(era, rating, true);
-	}
-	
-	public Integer getPctOmniAero(int era, int rating, boolean fallThrough) {
-		if (!pctOmniAero.containsKey(era) || pctOmniAero.get(era).size() == 0) {
-			return fallThrough?getPctOmni(era, rating):null;
-		}
-		if (pctOmniAero.get(era).size() <= rating) {
-			return pctOmniAero.get(era).get(pctOmniAero.get(era).size() - 1);
-		}
-		return pctOmniAero.get(era).get(rating);
-	}
-	
-	public void setPctOmniAero(int era, int rating, Integer pct) {
-		if (!pctOmniAero.containsKey(era)) {
-			pctOmniAero.put(era,  new ArrayList<Integer>());
-		}
-		while (pctOmniAero.get(era).size() <= rating) {
-			pctOmniAero.get(era).add(0);
-		}
-		pctOmniAero.get(era).set(rating, pct);
-	}
-	
-	public Integer getPctClanAero(int era, int rating) {
-		return getPctClanAero(era, rating, true);
-	}
-	
-	public Integer getPctClanAero(int era, int rating, boolean fallThrough) {
-		if (!pctClanAero.containsKey(era) || pctClanAero.get(era).size() == 0) {
-			return fallThrough?getPctClan(era, rating):null;
-		}
-		if (pctClanAero.get(era).size() <= rating) {
-			return pctClanAero.get(era).get(pctClanAero.get(era).size() - 1);
-		}
-		return pctClanAero.get(era).get(rating);
-	}
-	
-	public void setPctClanAero(int era, int rating, Integer pct) {
-		if (!pctClanAero.containsKey(era)) {
-			pctClanAero.put(era,  new ArrayList<Integer>());
-		}
-		while (pctClanAero.get(era).size() <= rating) {
-			pctClanAero.get(era).add(0);
-		}
-		pctClanAero.get(era).set(rating, pct);
-	}
-	
-	public Integer getPctSLAero(int era, int rating) {
-		if (!pctSLAero.containsKey(era) || pctSLAero.get(era).size() == 0) {
-			return null;
-		}
-		if (pctSLAero.get(era).size() <= rating) {
-			return pctSLAero.get(era).get(pctSLAero.get(era).size() - 1);
-		}
-		return pctSLAero.get(era).get(rating);
-	}
-	
-	public void setPctSLAero(int era, int rating, Integer pct) {
-		if (!pctSLAero.containsKey(era)) {
-			pctSLAero.put(era,  new ArrayList<Integer>());
-		}
-		while (pctSLAero.get(era).size() <= rating) {
-			pctSLAero.get(era).add(0);
-		}
-		pctSLAero.get(era).set(rating, pct);
-	}
-	
-	public Integer getPctClanVee(int era, int rating) {
-		return getPctClanVee(era, rating, true);
-	}
-	
-	public Integer getPctClanVee(int era, int rating, boolean fallThrough) {
-		if (!pctClanVee.containsKey(era) || pctClanVee.get(era).size() == 0) {
-			return fallThrough?getPctClan(era, rating):null;
-		}
-		if (pctClanVee.get(era).size() <= rating) {
-			return pctClanVee.get(era).get(pctClanVee.get(era).size() - 1);
-		}
-		return pctClanVee.get(era).get(rating);
-	}
-	
-	public void setPctClanVee(int era, int rating, Integer pct) {
-		if (!pctClanVee.containsKey(era)) {
-			pctClanVee.put(era,  new ArrayList<Integer>());
-		}
-		while (pctClanVee.get(era).size() <= rating) {
-			pctClanVee.get(era).add(0);
-		}
-		pctClanVee.get(era).set(rating, pct);
-	}
-	
-	public Integer getPctSLVee(int era, int rating) {
-		if (!pctSLVee.containsKey(era) || pctSLVee.get(era).size() == 0) {
-			return null;
-		}
-		if (pctSLVee.get(era).size() <= rating) {
-			return pctSLVee.get(era).get(pctSLVee.get(era).size() - 1);
-		}
-		return pctSLVee.get(era).get(rating);
-	}
-	
-	public void setPctSLVee(int era, int rating, Integer pct) {
-		if (!pctSLVee.containsKey(era)) {
-			pctSLVee.put(era,  new ArrayList<Integer>());
-		}
-		while (pctSLVee.get(era).size() <= rating) {
-			pctSLVee.get(era).add(0);
-		}
-		pctSLVee.get(era).set(rating, pct);
-	}
-	
+
 	public void setRatings(String str) {
 		ratingLevels.clear();
 		if (str.length() > 0) {
@@ -449,148 +333,22 @@ public class FactionRecord {
 		}
 	}
 	
-	public void setPctOmni(int era, String str) {
-		if (pctOmni.containsKey(era)) {
-			pctOmni.get(era).clear();
-		} else {
-			pctOmni.put(era, new ArrayList<Integer>());
+	public void setPctTech(TechCategory category, int era, String str) {
+		if (!pctTech.containsKey(category)) {
+			pctTech.put(category, new HashMap<Integer,ArrayList<Integer>>());
 		}
+		ArrayList<Integer> list = new ArrayList<>();
 		if (str != null && str.length() > 0) {
-			String[] fields = str.split(",");
-			for (String pct : fields) {
-				if (pct.equals("null")) {
-					pctOmni.get(era).add(null);
-				} else {
-					pctOmni.get(era).add(Integer.parseInt(pct));
+			for (String pct : str.split(",")) {
+				try {
+					list.add(Integer.parseInt(pct));
+				} catch (NumberFormatException ex) {
+					System.err.println("While loading faction data for " + key);
+					System.err.println(ex.getMessage());
 				}
 			}
 		}
-	}
-	
-	public void setPctClan(int era, String str) {
-		if (pctClan.containsKey(era)) {
-			pctClan.get(era).clear();
-		} else {
-			pctClan.put(era, new ArrayList<Integer>());
-		}
-		if (str != null && str.length() > 0) {
-			String[] fields = str.split(",");
-			for (String pct : fields) {
-				if (pct.equals("null")) {
-					pctClan.get(era).add(null);
-				} else {
-					pctClan.get(era).add(Integer.parseInt(pct));
-				}
-			}
-		}
-	}
-	
-	public void setPctSL(int era, String str) {
-		if (pctSL.containsKey(era)) {
-			pctSL.get(era).clear();
-		} else {
-			pctSL.put(era, new ArrayList<Integer>());
-		}
-		if (str != null && str.length() > 0) {
-			String[] fields = str.split(",");
-			for (String pct : fields) {
-				if (pct.equals("null")) {
-					pctSL.get(era).add(null);
-				} else {
-					pctSL.get(era).add(Integer.parseInt(pct));
-				}
-			}
-		}
-	}
-	
-	public void setPctOmniAero(int era, String str) {
-		if (pctOmniAero.containsKey(era)) {
-			pctOmniAero.get(era).clear();
-		} else {
-			pctOmniAero.put(era, new ArrayList<Integer>());
-		}
-		if (str != null && str.length() > 0) {
-			String[] fields = str.split(",");
-			for (String pct : fields) {
-				if (pct.equals("null")) {
-					pctOmniAero.get(era).add(null);
-				} else {
-					pctOmniAero.get(era).add(pct.length() > 0?Integer.parseInt(pct):0);
-				}
-			}
-		}
-	}
-	
-	public void setPctClanAero(int era, String str) {
-		if (pctClanAero.containsKey(era)) {
-			pctClanAero.get(era).clear();
-		} else {
-			pctClanAero.put(era, new ArrayList<Integer>());
-		}
-		if (str != null && str.length() > 0) {
-			String[] fields = str.split(",");
-			for (String pct : fields) {
-				if (pct.equals("null")) {
-					pctClanAero.get(era).add(null);
-				} else {
-					pctClanAero.get(era).add(Integer.parseInt(pct));
-				}
-			}
-		}
-	}
-	
-	public void setPctSLAero(int era, String str) {
-		if (pctSLAero.containsKey(era)) {
-			pctSLAero.get(era).clear();
-		} else {
-			pctSLAero.put(era, new ArrayList<Integer>());
-		}
-		if (str != null && str.length() > 0) {
-			String[] fields = str.split(",");
-			for (String pct : fields) {
-				if (pct.equals("null")) {
-					pctSLAero.get(era).add(null);
-				} else {
-					pctSLAero.get(era).add(Integer.parseInt(pct));
-				}
-			}
-		}
-	}
-	
-	public void setPctClanVee(int era, String str) {
-		if (pctClanVee.containsKey(era)) {
-			pctClanVee.get(era).clear();
-		} else {
-			pctClanVee.put(era, new ArrayList<Integer>());
-		}
-		if (str != null && str.length() > 0) {
-			String[] fields = str.split(",");
-			for (String pct : fields) {
-				if (pct.equals("null")) {
-					pctClanVee.get(era).add(null);
-				} else {
-					pctClanVee.get(era).add(Integer.parseInt(pct));
-				}
-			}
-		}
-	}
-	
-	public void setPctSLVee(int era, String str) {
-		if (pctSLVee.containsKey(era)) {
-			pctSLVee.get(era).clear();
-		} else {
-			pctSLVee.put(era, new ArrayList<Integer>());
-		}
-		if (str != null && str.length() > 0) {
-			String[] fields = str.split(",");
-			for (String pct : fields) {
-				if (pct.equals("null")) {
-					pctSLVee.get(era).add(null);
-				} else {
-					pctSLVee.get(era).add(Integer.parseInt(pct));
-				}
-			}
-		}
+		pctTech.get(category).put(era, list);
 	}
 	
 	public int getOmniMargin(int era) {
@@ -713,31 +471,31 @@ public class FactionRecord {
 			case "pctOmni":
 				if (wn.getAttributes().getNamedItem("unitType") != null
 						&& wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
-					setPctOmniAero(era, wn.getTextContent());
+					setPctTech(TechCategory.OMNI_AERO, era, wn.getTextContent());
 				} else {
-					setPctOmni(era, wn.getTextContent());
+					setPctTech(TechCategory.OMNI, era, wn.getTextContent());
 				}
 				break;
 			case "pctClan":
 				if (wn.getAttributes().getNamedItem("unitType") != null
 						&& wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
-					setPctClanAero(era, wn.getTextContent());
+					setPctTech(TechCategory.CLAN_AERO, era, wn.getTextContent());
 				} else if (wn.getAttributes().getNamedItem("unitType") != null
 							&& wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Vehicle")) {
-					setPctClanVee(era, wn.getTextContent());
+					setPctTech(TechCategory.CLAN_VEE, era, wn.getTextContent());
 				} else {
-					setPctClan(era, wn.getTextContent());
+					setPctTech(TechCategory.CLAN, era, wn.getTextContent());
 				}
 				break;
 			case "pctSL":
 				if (wn.getAttributes().getNamedItem("unitType") != null
 						&& wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Aero")) {
-					setPctSLAero(era, wn.getTextContent());
+					setPctTech(TechCategory.IS_ADVANCED_AERO, era, wn.getTextContent());
 				} else if (wn.getAttributes().getNamedItem("unitType") != null
 							&& wn.getAttributes().getNamedItem("unitType").getTextContent().equalsIgnoreCase("Vehicle")) {
-					setPctSLVee(era, wn.getTextContent());
+					setPctTech(TechCategory.IS_ADVANCED_VEE, era, wn.getTextContent());
 				} else {
-					setPctSL(era, wn.getTextContent());
+					setPctTech(TechCategory.IS_ADVANCED, era, wn.getTextContent());
 				}
 				break;
 			case "omniMargin":

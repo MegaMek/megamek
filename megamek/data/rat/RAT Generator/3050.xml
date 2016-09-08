@@ -636,6 +636,9 @@
 		<years>2832-3060</years>
 		<ratingLevels></ratingLevels>
 		<parentFaction>CC</parentFaction>
+		<pctOmni>0</pctOmni>
+		<pctClan>0</pctClan>
+		<pctSL>4</pctSL>
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='FS.CR' name='Chisholm&apos;s Raiders' minor='false' clan='false' periphery='false'>

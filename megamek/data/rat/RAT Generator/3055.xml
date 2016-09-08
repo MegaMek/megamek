@@ -303,8 +303,9 @@
 	</faction>
 	<faction key='DS' name='Duchy of Small' minor='true' clan='false' periphery='false'>
 		<years>3057-3066</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>CM</parentFaction>
+		<salvage pct='6'>CM:3,FC:10</salvage>
 	</faction>
 	<faction key='FC' name='Federated Commonwealth (Combined)' minor='false' clan='false' periphery='false'>
 		<years>3028-3057</years>
@@ -469,6 +470,12 @@
 		<parentFaction>Periphery.R</parentFaction>
 		<salvage pct='5'>FC:10</salvage>
 	</faction>
+	<faction key='ST' name='Saiph Triumvirate' minor='true' clan='false' periphery='false'>
+		<years>3057-3068</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>CM</parentFaction>
+		<salvage pct='6'>CC:3,TCC:1,FWL:10,CM:5,FC:4</salvage>
+	</faction>
 	<faction key='SIC' name='St Ives Compact' minor='false' clan='false' periphery='false'>
 		<years>3029-3063</years>
 		<ratingLevels>F,D,C,B,A</ratingLevels>
@@ -483,6 +490,7 @@
 		<years>3057-3063</years>
 		<ratingLevels></ratingLevels>
 		<parentFaction>CM</parentFaction>
+		<salvage pct='6'>CC:10,FWL:1,CM:2,FC:3</salvage>
 	</faction>
 	<faction key='TC' name='Taurian Concordat' minor='false' clan='false' periphery='true'>
 		<years>2335-</years>
@@ -498,6 +506,7 @@
 		<years>3057-3068</years>
 		<ratingLevels></ratingLevels>
 		<parentFaction>CM</parentFaction>
+		<salvage pct='6'>CC:1,ST:1,CM:10,FC:3</salvage>
 	</faction>
 	<faction key='TD' name='Tortuga Dominions' minor='false' clan='false' periphery='true'>
 		<years>2785-</years>
@@ -692,6 +701,9 @@
 		<years>2832-3060</years>
 		<ratingLevels></ratingLevels>
 		<parentFaction>CC</parentFaction>
+		<pctOmni>0</pctOmni>
+		<pctClan>0</pctClan>
+		<pctSL>9</pctSL>
 		<salvage pct='6'></salvage>
 	</faction>
 	<faction key='FS.CR' name='Chisholm&apos;s Raiders' minor='false' clan='false' periphery='false'>

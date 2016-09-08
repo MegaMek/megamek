@@ -28,7 +28,7 @@
 		<ratingLevels>F,D,C,B,A</ratingLevels>
 		<parentFaction>IS</parentFaction>
 		<pctOmni>0,8,12,14,24</pctOmni>
-		<pctClan>0,0,5,10,18</pctClan>
+		<pctClan>0,0,6,10,18</pctClan>
 		<pctSL>25,50,70,75,82</pctSL>
 		<omniMargin>6</omniMargin>
 		<techMargin>6</techMargin>
@@ -395,7 +395,7 @@
 		<pctClan unitType='Vehicle'>15,15,45,45,45</pctClan>
 		<pctSL unitType='Vehicle'>85,85,55,55,55</pctSL>
 		<techMargin>6</techMargin>
-		<salvage pct='10'></salvage>
+		<salvage pct='10'>CHH:1,CDS:1,CW:9,LA:1,CNC:6,DC:4</salvage>
 		<weightDistribution era='3100' unitType='Mek'>2,3,4,2,0</weightDistribution>
 		<weightDistribution era='3100' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
@@ -488,7 +488,7 @@
 		<omniMargin>6</omniMargin>
 		<techMargin>6</techMargin>
 		<upgradeMargin>3</upgradeMargin>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>CHH:10,RD:2,CI:1,CJF:3</salvage>
 	</faction>
 	<faction key='TD' name='Tortuga Dominions' minor='false' clan='false' periphery='true'>
 		<years>2785-</years>

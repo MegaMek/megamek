@@ -250,7 +250,7 @@
 	</faction>
 	<faction key='DGM' name='Duchy of Graham-Marik' minor='true' clan='false' periphery='false'>
 		<years>3079-3082</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>IS</parentFaction>
 		<pctOmni>0,4,11,15,22</pctOmni>
 		<pctClan>0,0,3,7,16</pctClan>
@@ -272,7 +272,7 @@
 	</faction>
 	<faction key='DoO' name='Duchy of Orloff' minor='true' clan='false' periphery='false'>
 		<years>3079-3086</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>IS</parentFaction>
 		<pctOmni>0,4,11,15,22</pctOmni>
 		<pctClan>0,0,3,7,16</pctClan>
@@ -512,7 +512,7 @@
 	</faction>
 	<faction key='PG' name='Principality of Gibson' minor='true' clan='false' periphery='false'>
 		<years>3079-3086</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>IS</parentFaction>
 		<pctOmni>0,2,9,13,19</pctOmni>
 		<pctClan>0,0,2,5,14</pctClan>
@@ -549,11 +549,11 @@
 	</faction>
 	<faction key='RFS' name='Regulan Free States' minor='true' clan='false' periphery='false'>
 		<years>3079-3086</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>IS</parentFaction>
-		<pctOmni>0,2,9,13,19</pctOmni>
-		<pctClan>0,0,2,5,14</pctClan>
-		<pctSL>22,52,54,66,74</pctSL>
+		<pctOmni>null,2,9,13,19</pctOmni>
+		<pctClan>null,0,2,5,14</pctClan>
+		<pctSL>null,52,54,66,74</pctSL>
 		<omniMargin>3</omniMargin>
 		<techMargin>3</techMargin>
 		<salvage pct='6'>FWL:10,MSC:2</salvage>
@@ -590,25 +590,22 @@
 	</faction>
 	<faction key='SHC' name='Silver Hawk Coalition' minor='true' clan='false' periphery='false'>
 		<years>3079-3084</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>FWL</parentFaction>
-		<pctOmni>0,4,11,15,22</pctOmni>
-		<pctClan>0,0,3,7,16</pctClan>
-		<pctSL>22,52,54,66,78</pctSL>
 		<omniMargin>3</omniMargin>
 		<techMargin>3</techMargin>
 		<salvage pct='5'>SC:5,LA:2,MCM:2,FWL:10</salvage>
 	</faction>
 	<faction key='SC' name='Stewart Commonality' minor='true' clan='false' periphery='false'>
 		<years>3079-3082</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>IS</parentFaction>
-		<pctOmni>0,4,11,15,22</pctOmni>
-		<pctClan>0,0,3,7,16</pctClan>
-		<pctSL>22,52,54,66,78</pctSL>
+		<pctOmni>null,4,11,15,22</pctOmni>
+		<pctClan>null,0,3,7,16</pctClan>
+		<pctSL>null,52,54,66,78</pctSL>
 		<omniMargin>3</omniMargin>
 		<techMargin>3</techMargin>
-		<salvage pct='6'></salvage>
+		<salvage pct='6'>ROS:2,FWL:5,SHC:4</salvage>
 	</faction>
 	<faction key='TC' name='Taurian Concordat' minor='false' clan='false' periphery='true'>
 		<years>2335-</years>
@@ -624,11 +621,11 @@
 	</faction>
 	<faction key='TP' name='The Protectorate' minor='true' clan='false' periphery='false'>
 		<years>3078-3086</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>IS</parentFaction>
-		<pctOmni>0,4,11,15,22</pctOmni>
-		<pctClan>0,0,3,7,16</pctClan>
-		<pctSL>22,52,54,66,78</pctSL>
+		<pctOmni>null,4,11,15,22</pctOmni>
+		<pctClan>null,0,3,7,16</pctClan>
+		<pctSL>null,52,54,66,78</pctSL>
 		<omniMargin>3</omniMargin>
 		<techMargin>3</techMargin>
 		<salvage pct='6'>LA:4,FWL:10</salvage>

@@ -534,26 +534,26 @@ public class RATGenerator {
 		Double pctClan = null;
 		Double pctOther = null;
 		if (unitType == UnitType.MEK) {
-			pctOmni = interpolate(fRec.getPctOmni(early, rating),
-							fRec.getPctOmni(late, rating), early, late, year);
-			pctClan = interpolate(fRec.getPctClan(early, rating),
-							fRec.getPctClan(late, rating), early, late, year);
-			pctSL = interpolate(fRec.getPctSL(early, rating),
-							fRec.getPctSL(late, rating), early, late, year);
+			pctOmni = interpolate(fRec.findPctTech(FactionRecord.TechCategory.OMNI, early, rating),
+					fRec.findPctTech(FactionRecord.TechCategory.OMNI, late, rating), early, late, year);
+			pctClan = interpolate(fRec.findPctTech(FactionRecord.TechCategory.CLAN, early, rating),
+					fRec.findPctTech(FactionRecord.TechCategory.CLAN, late, rating), early, late, year);
+			pctSL = interpolate(fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED, early, rating),
+					fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED, late, rating), early, late, year);
 		}
 		if (unitType == UnitType.AERO) {
-			pctOmni = interpolate(fRec.getPctOmniAero(early, rating),
-						fRec.getPctOmniAero(late, rating), early, late, year);
-			pctClan = interpolate(fRec.getPctClanAero(early, rating),
-						fRec.getPctClanAero(late, rating), early, late, year);
-			pctSL = interpolate(fRec.getPctSLAero(early, rating),
-						fRec.getPctSLAero(late, rating), early, late, year);
+			pctOmni = interpolate(fRec.findPctTech(FactionRecord.TechCategory.OMNI_AERO, early, rating),
+					fRec.findPctTech(FactionRecord.TechCategory.OMNI_AERO, late, rating), early, late, year);
+			pctClan = interpolate(fRec.findPctTech(FactionRecord.TechCategory.CLAN_AERO, early, rating),
+					fRec.findPctTech(FactionRecord.TechCategory.CLAN_AERO, late, rating), early, late, year);
+			pctSL = interpolate(fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED_AERO, early, rating),
+					fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED_AERO, late, rating), early, late, year);
 		}
 		if (unitType == UnitType.TANK || unitType == UnitType.VTOL) {
-			pctClan = interpolate(fRec.getPctClanVee(early, rating),
-						fRec.getPctClanVee(late, rating), early, late, year);
-			pctSL = interpolate(fRec.getPctSLVee(early, rating),
-						fRec.getPctSLVee(late, rating), early, late, year);
+			pctClan = interpolate(fRec.findPctTech(FactionRecord.TechCategory.CLAN_VEE, early, rating),
+					fRec.findPctTech(FactionRecord.TechCategory.CLAN_VEE, late, rating), early, late, year);
+			pctSL = interpolate(fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED_VEE, early, rating),
+					fRec.findPctTech(FactionRecord.TechCategory.IS_ADVANCED_VEE, late, rating), early, late, year);
 		}
 		/* Adjust for lack of precision in post-FM:Updates extrapolations */
 		if (pctSL != null || pctClan != null) {

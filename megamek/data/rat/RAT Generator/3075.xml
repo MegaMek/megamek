@@ -9,7 +9,7 @@
 		<parentFaction>DC.AL</parentFaction>
 		<omniMargin>1</omniMargin>
 		<techMargin>1</techMargin>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>LA:3,FS:2,CGB:3,DC:8</salvage>
 	</faction>
 	<faction key='BAN' name='Bandit Caste' minor='false' clan='true' periphery='false'>
 		<years>2830-</years>
@@ -413,6 +413,7 @@
 		<parentFaction>CM</parentFaction>
 		<omniMargin>1</omniMargin>
 		<techMargin>1</techMargin>
+		<salvage pct='7'>CC:1,WOB:10,FS:2</salvage>
 	</faction>
 	<faction key='LA' name='Lyran Commonwealth' minor='false' clan='false' periphery='false'>
 		<nameChange year='3042'>Federated Commonwealth (Steiner)</nameChange>
@@ -447,7 +448,7 @@
 		<parentFaction>FS.CrMM</parentFaction>
 		<omniMargin>1</omniMargin>
 		<techMargin>1</techMargin>
-		<salvage pct='5'></salvage>
+		<salvage pct='5'>FVC:2,FS:10</salvage>
 	</faction>
 	<faction key='MH' name='Marian Hegemony' minor='false' clan='false' periphery='true'>
 		<years>2920-</years>
@@ -1210,8 +1211,12 @@
 		<years>3020-3076</years>
 		<ratingLevels></ratingLevels>
 		<parentFaction>DC</parentFaction>
+		<pctOmni>5</pctOmni>
+		<pctClan>5</pctClan>
+		<pctSL>50</pctSL>
 		<omniMargin>1</omniMargin>
 		<techMargin>1</techMargin>
+		<salvage pct='7'></salvage>
 	</faction>
 	<faction key='MERC.NH' name='Northwind Highlanders' minor='false' clan='false' periphery='false'>
 		<years>-3081</years>

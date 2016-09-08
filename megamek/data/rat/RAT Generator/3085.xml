@@ -234,7 +234,7 @@
 	</faction>
 	<faction key='DoO' name='Duchy of Orloff' minor='true' clan='false' periphery='false'>
 		<years>3079-3086</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>IS</parentFaction>
 		<pctOmni>0,5,12,16,24</pctOmni>
 		<pctClan>0,0,4,8,18</pctClan>
@@ -465,7 +465,7 @@
 	</faction>
 	<faction key='PG' name='Principality of Gibson' minor='true' clan='false' periphery='false'>
 		<years>3079-3086</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>IS</parentFaction>
 		<pctOmni>0,4,10,14,20</pctOmni>
 		<pctClan>0,0,3,6,16</pctClan>
@@ -513,11 +513,11 @@
 	</faction>
 	<faction key='RFS' name='Regulan Free States' minor='true' clan='false' periphery='false'>
 		<years>3079-3086</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>IS</parentFaction>
-		<pctOmni>0,4,10,14,20</pctOmni>
-		<pctClan>0,0,3,6,16</pctClan>
-		<pctSL>25,56,56,68,79</pctSL>
+		<pctOmni>null,4,10,14,20</pctOmni>
+		<pctClan>null,0,3,6,16</pctClan>
+		<pctSL>null,56,56,68,79</pctSL>
 		<omniMargin>3</omniMargin>
 		<techMargin>3</techMargin>
 		<salvage pct='5'>FWL:10,MSC:2</salvage>
@@ -558,7 +558,7 @@
 		<parentFaction>Periphery.R</parentFaction>
 		<omniMargin>3</omniMargin>
 		<techMargin>3</techMargin>
-		<salvage pct='5'>LA:1,RIM:0</salvage>
+		<salvage pct='5'>LA:1</salvage>
 	</faction>
 	<faction key='TC' name='Taurian Concordat' minor='false' clan='false' periphery='true'>
 		<years>2335-</years>
@@ -574,11 +574,11 @@
 	</faction>
 	<faction key='TP' name='The Protectorate' minor='true' clan='false' periphery='false'>
 		<years>3078-3086</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<ratingLevels></ratingLevels>
 		<parentFaction>IS</parentFaction>
-		<pctOmni>0,5,12,16,24</pctOmni>
-		<pctClan>0,0,4,8,18</pctClan>
-		<pctSL>25,56,56,68,79</pctSL>
+		<pctOmni>null,5,12,16,24</pctOmni>
+		<pctClan>null,0,4,8,18</pctClan>
+		<pctSL>null,56,56,68,79</pctSL>
 		<omniMargin>3</omniMargin>
 		<techMargin>3</techMargin>
 		<salvage pct='5'>LA:4,FWL:10</salvage>

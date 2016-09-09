@@ -51,8 +51,6 @@ import megamek.common.UnitType;
  */
 public class RATGenerator {
 	
-	private final static String DATA_DIR = "RAT Generator";
-	
 	private HashMap<String, ModelRecord> models = new HashMap<String,ModelRecord>();
 	private HashMap<String, ChassisRecord> chassis = new HashMap<String,ChassisRecord>();
 	private HashMap<String, FactionRecord> factions = new HashMap<String,FactionRecord>();
@@ -696,8 +694,7 @@ public class RATGenerator {
         
         loadFactions();
         
-		File dir = new File(Configuration.armyTablesDir(), DATA_DIR);
-		for (File f : dir.listFiles()) {
+		for (File f : Configuration.forceGeneratorDir().listFiles()) {
 			if (f.getName().matches("\\d+\\.xml")) {
 				eraSet.add(Integer.parseInt(f.getName().replace(".xml", "")));
 			}
@@ -731,8 +728,7 @@ public class RATGenerator {
 	}
 	
 	private void loadFactions() {
-		File dir = new File(Configuration.armyTablesDir(), DATA_DIR);
-		File file = new File(dir, "factions.xml");
+		File file = new File(Configuration.forceGeneratorDir(), "factions.xml");
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(file);
@@ -775,8 +771,7 @@ public class RATGenerator {
 		}
 		chassisIndex.put(era, new HashMap<String,HashMap<String,AvailabilityRating>>());
 		modelIndex.put(era, new HashMap<String,HashMap<String,AvailabilityRating>>());
-		File dir = new File(Configuration.armyTablesDir(), DATA_DIR);
-		File file = new File(dir, era + ".xml");
+		File file = new File(Configuration.forceGeneratorDir(), era + ".xml");
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(file);

@@ -82,6 +82,9 @@ public final class Configuration {
 
     /** The default sounds directory name (under the data directory). */
     private static final String DEFAULT_DIR_NAME_SOUNDS = "sounds";
+    
+    /** The default force generator directory name (under the data directory). */
+    private static final String DEFAULT_DIR_NAME_FORCE_GENERATOR = "forcegenerator";
 
     // **************************************************************************
     // These are all directories that normally appear under 'data/images'.
@@ -500,6 +503,35 @@ public final class Configuration {
     }
 
     /**
+     * Return the configured force generator data directory, if set, otherwise return the
+     * default path, relative to the configured data directory.
+     * 
+     * @return {@link File} containing the path to the force generator directory.
+     */
+    public static File forceGeneratorDir() {
+        lock.readLock().lock();
+        try {
+            return (force_generator_dir != null) ? force_generator_dir : new File(
+                    dataDir(), DEFAULT_DIR_NAME_FORCE_GENERATOR);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    /**
+     * Set the force generator directory to an arbitrary location (<b>not</b>
+     * relative to the data directory).
+     * 
+     * @param force_generator_dir_path
+     *            The path to the force generator directory.
+     */
+    public static void setForceGeneratorDir(final File force_generator_dir_path) {
+        lock.writeLock().lock();
+        force_generator_dir = force_generator_dir_path;
+        lock.writeLock().unlock();
+    }
+
+    /**
      * Get the unit images directory, which is relative to the images directory.
      * 
      * @return {@link File} containing the path to the unit images directory.
@@ -563,4 +595,7 @@ public final class Configuration {
 
     /** The configured sounds directory. */
     private static File sounds_dir = null;
+
+    /** The configured force generator directory. */
+    private static File force_generator_dir = null;
 }

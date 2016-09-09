@@ -2,29 +2,20 @@
 <!-- Era 3145-->
 <ratgen>
 <factions>
-	<faction key='AA' name='Augustine Alliance' minor='true' clan='false' periphery='false'>
-		<years>3139-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>ROS</parentFaction>
+	<faction key='AA'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'>FWL:2,CP:1</salvage>
 	</faction>
-	<faction key='BAN' name='Bandit Caste' minor='false' clan='true' periphery='false'>
-		<years>2830-</years>
-		<ratingLevels>Sol</ratingLevels>
-		<parentFaction>CLAN</parentFaction>
+	<faction key='BAN'>
 		<pctOmni>10</pctOmni>
 		<pctClan>30</pctClan>
 		<pctSL>60</pctSL>
 		<techMargin>15</techMargin>
 		<salvage pct='10'>CWE:2,CHH:2,RD:2,PIR:10,CJF:2,RA:2</salvage>
 	</faction>
-	<faction key='CDP' name='Calderon Protectorate' minor='false' clan='false' periphery='true'>
-		<years>3066-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>Periphery.HR</parentFaction>
+	<faction key='CDP'>
 		<pctClan>0,0,5,12,15</pctClan>
 		<pctSL>0,50,60,70,80</pctSL>
 		<omniMargin>15</omniMargin>
@@ -32,10 +23,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'>TC:10</salvage>
 	</faction>
-	<faction key='CC' name='Capellan Confederation' minor='false' clan='false' periphery='false'>
-		<years>2367-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>IS</parentFaction>
+	<faction key='CC'>
 		<pctOmni>0,14,16,18,30</pctOmni>
 		<pctClan>0,0,8,10,18</pctClan>
 		<pctSL>35,55,70,75,82</pctSL>
@@ -44,28 +32,19 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'>ROS:2,CLAN:3,FWL:4,DA:1,FS:10,DC:1,</salvage>
 	</faction>
-	<faction key='CI' name='Chainelane Islands' minor='true' clan='false' periphery='true'>
-		<years>-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>Periphery.R</parentFaction>
+	<faction key='CI'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='10'>CHH:8,CDS:1,LA:1,CJF:10,TB:10</salvage>
 	</faction>
-	<faction key='CLAN' name='Clan - General' minor='false' clan='true' periphery='false'>
-		<years>2807-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
-		<parentFaction></parentFaction>
+	<faction key='CLAN'>
 		<techMargin>15</techMargin>
 		<weightDistribution era='3145' unitType='Mek'>2,3,3,1,0</weightDistribution>
 		<weightDistribution era='3145' unitType='Tank'>4,1,3,2</weightDistribution>
 		<weightDistribution era='3145' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
-	<faction key='CHH' name='Clan Hell&apos;s Horses' minor='false' clan='true' periphery='false'>
-		<years>2807-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
-		<parentFaction>CLAN.IS</parentFaction>
+	<faction key='CHH'>
 		<pctOmni>0,0,0,80,95</pctOmni>
 		<pctClan>40,40,85,90,100</pctClan>
 		<pctSL>60,60,15,10,0</pctSL>
@@ -74,10 +53,7 @@
 		<techMargin>15</techMargin>
 		<salvage pct='10'>RD:4,LA:6,CJF:10,TB:4,</salvage>
 	</faction>
-	<faction key='CJF' name='Clan Jade Falcon' minor='false' clan='true' periphery='false'>
-		<years>2807-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
-		<parentFaction>CLAN.IS</parentFaction>
+	<faction key='CJF'>
 		<pctOmni>0,0,7,55,100</pctOmni>
 		<pctClan>60,60,85,100,100</pctClan>
 		<pctSL>40,40,15,0,0</pctSL>
@@ -86,10 +62,7 @@
 		<techMargin>15</techMargin>
 		<salvage pct='10'>CHH:4,LA:8,</salvage>
 	</faction>
-	<faction key='CP' name='Clan Protectorate' minor='false' clan='true' periphery='false'>
-		<years>3138-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
-		<parentFaction>CLAN.IS</parentFaction>
+	<faction key='CP'>
 		<pctOmni>0,10,20,50,80</pctOmni>
 		<pctClan>40,40,70,90,100</pctClan>
 		<pctSL>60,60,30,10,0</pctSL>
@@ -98,12 +71,7 @@
 		<techMargin>15</techMargin>
 		<salvage pct='10'>RD:4,RF:1,ROS:2,DC:5,</salvage>
 	</faction>
-	<faction key='CDS' name='Clan Sea Fox' minor='false' clan='true' periphery='false'>
-		<nameChange year='2985'>Clan Diamond Shark</nameChange>
-		<nameChange year='3100'>Clan Sea Fox</nameChange>
-		<years>2807-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
-		<parentFaction>CLAN.IS</parentFaction>
+	<faction key='CDS'>
 		<pctOmni>0,0,0,43,77</pctOmni>
 		<pctClan>50,50,100,100,100</pctClan>
 		<pctSL>50,50,0,0,0</pctSL>
@@ -112,10 +80,7 @@
 		<techMargin>15</techMargin>
 		<salvage pct='12'>RD:10,DC:6</salvage>
 	</faction>
-	<faction key='CWIE' name='Clan Wolf-in-Exile' minor='false' clan='true' periphery='false'>
-		<years>3057-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
-		<parentFaction>CLAN.IS</parentFaction>
+	<faction key='CWIE'>
 		<pctOmni>0,0,38,52,100</pctOmni>
 		<pctClan>40,0,80,95,100</pctClan>
 		<pctSL>60,60,20,5,0</pctSL>
@@ -124,19 +89,13 @@
 		<techMargin>15</techMargin>
 		<salvage pct='10'>LA:5,CJF:10,</salvage>
 	</faction>
-	<faction key='CvW' name='Covenant Worlds' minor='true' clan='false' periphery='false'>
-		<years>3137-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FWL</parentFaction>
+	<faction key='CvW'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'>ROS:14,CP:3</salvage>
 	</faction>
-	<faction key='DC' name='Draconis Combine' minor='false' clan='false' periphery='false'>
-		<years>2319-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>IS</parentFaction>
+	<faction key='DC'>
 		<pctOmni>0,5,18,30,55</pctOmni>
 		<pctClan>0,6,16,20,26</pctClan>
 		<pctSL>60,74,78,80,74</pctSL>
@@ -147,10 +106,7 @@
 		<weightDistribution era='3145' unitType='Mek'>4,2,3,1,0</weightDistribution>
 		<weightDistribution era='3145' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
-	<faction key='DA' name='Duchy of Andurien' minor='false' clan='false' periphery='false'>
-		<years>3030-3040,3079-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>IS</parentFaction>
+	<faction key='DA'>
 		<pctOmni>0,10,16,20,30</pctOmni>
 		<pctClan>0,0,6,12,20</pctClan>
 		<pctSL>70,80,88,88,80</pctSL>
@@ -159,12 +115,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'>MOC:2,CC:10,FWL:10</salvage>
 	</faction>
-	<faction key='FS' name='Federated Suns' minor='false' clan='false' periphery='false'>
-		<nameChange year='3042'>Federated Commonwealth (Davion)</nameChange>
-		<nameChange year='3067'>Federated Suns</nameChange>
-		<years>2317-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>IS</parentFaction>
+	<faction key='FS'>
 		<pctOmni>10,15,22,28,40</pctOmni>
 		<pctClan>0,0,12,18,20</pctClan>
 		<pctSL>80,90,85,82,80</pctSL>
@@ -173,30 +124,19 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'>CC:7,ROS:6,Periphery:1,DC:10,RA:1,TC:1,</salvage>
 	</faction>
-	<faction key='FOR' name='Fiefdom of Randis' minor='true' clan='false' periphery='true'>
-		<years>2988-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>MERC,Periphery.OS</parentFaction>
+	<faction key='FOR'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='6'></salvage>
 	</faction>
-	<faction key='FVC' name='Filtvelt Coalition' minor='false' clan='false' periphery='true'>
-		<years>3072-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>Periphery.HR</parentFaction>
+	<faction key='FVC'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'>PIR:5,FS:10,Periphery:5</salvage>
 	</faction>
-	<faction key='FWL' name='Free Worlds League' minor='false' clan='false' periphery='false'>
-		<nameChange year='3078'>Former Free Worlds Independent</nameChange>
-		<nameChange year='3138'>Free Worlds League</nameChange>
-		<years>2271-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>IS</parentFaction>
+	<faction key='FWL'>
 		<pctOmni>0,15,18,22,35</pctOmni>
 		<pctClan>0,0,8,12,20</pctClan>
 		<pctSL>70,80,88,88,80</pctSL>
@@ -205,10 +145,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'>CC:8,MOC:1,LA:7,MH:1,DA:5</salvage>
 	</faction>
-	<faction key='FR' name='Fronc Reaches' minor='true' clan='false' periphery='true'>
-		<years>3066-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>NCR</parentFaction>
+	<faction key='FR'>
 		<pctOmni>0</pctOmni>
 		<pctClan>5</pctClan>
 		<pctSL>70</pctSL>
@@ -217,18 +154,12 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'>CC:10,MOC:2</salvage>
 	</faction>
-	<faction key='GL' name='Galatean League' minor='true' clan='false' periphery='false'>
-		<years>3144-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>IS</parentFaction>
+	<faction key='GL'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='IS' name='Inner Sphere - General' minor='false' clan='false' periphery='false'>
-		<years>-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction></parentFaction>
+	<faction key='IS'>
 		<pctOmni>0,8,10,12,20</pctOmni>
 		<pctClan>0,0,10,12,20</pctClan>
 		<pctSL>20,30,40,60,70</pctSL>
@@ -240,22 +171,13 @@
 		<weightDistribution era='3145' unitType='Tank'>3,4,3,1</weightDistribution>
 		<weightDistribution era='3145' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
-	<faction key='LL' name='Lothian League' minor='true' clan='false' periphery='true'>
-		<years>2815-3055,3087-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>Periphery.MW</parentFaction>
+	<faction key='LL'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'>MH:10</salvage>
 	</faction>
-	<faction key='LA' name='Lyran Commonwealth' minor='false' clan='false' periphery='false'>
-		<nameChange year='3042'>Federated Commonwealth (Steiner)</nameChange>
-		<nameChange year='3057'>Lyran Alliance</nameChange>
-		<nameChange year='3084'>Lyran Commonwealth</nameChange>
-		<years>2341-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>IS</parentFaction>
+	<faction key='LA'>
 		<pctOmni>0,18,22,28,30</pctOmni>
 		<pctClan>0,6,12,18,20</pctClan>
 		<pctSL>70,80,88,82,80</pctSL>
@@ -266,10 +188,7 @@
 		<weightDistribution era='3145' unitType='Mek'>4,6,7,3,0</weightDistribution>
 		<weightDistribution era='3145' unitType='Tank'>4,6,7,3</weightDistribution>
 	</faction>
-	<faction key='MOC' name='Magistracy of Canopus' minor='false' clan='false' periphery='true'>
-		<years>2530-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>Periphery.CM</parentFaction>
+	<faction key='MOC'>
 		<pctOmni>0,10,12,15,24</pctOmni>
 		<pctClan>0,0,5,14,16</pctClan>
 		<pctSL>40,50,70,80,82</pctSL>
@@ -278,10 +197,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'>FWL:1,FR:1,DA:10,</salvage>
 	</faction>
-	<faction key='MH' name='Marian Hegemony' minor='false' clan='false' periphery='true'>
-		<years>2920-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>Periphery.ME</parentFaction>
+	<faction key='MH'>
 		<pctOmni>0,8,10,12,18</pctOmni>
 		<pctClan>0,0,5,12,15</pctClan>
 		<pctSL>40,50,70,75,80</pctSL>
@@ -290,10 +206,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='MERC' name='Mercenary' minor='false' clan='false' periphery='false'>
-		<years>-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>IS</parentFaction>
+	<faction key='MERC'>
 		<pctOmni>0,14,16,20,30</pctOmni>
 		<pctClan>0,10,12,15,25</pctClan>
 		<pctSL>70,80,80,82,85</pctSL>
@@ -302,28 +215,19 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='6'>CC:8,MOC:2,FS:8,TC:2,RD:5,LA:8,ROS:5,FWL:8,CJF:5,DC:8,</salvage>
 	</faction>
-	<faction key='MM' name='Mica Majority' minor='true' clan='false' periphery='true'>
-		<years>2855-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>Periphery.OS</parentFaction>
+	<faction key='MM'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='NIOPS' name='Niops Association' minor='true' clan='false' periphery='true'>
-		<years>2760-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>Periphery.CM</parentFaction>
+	<faction key='NIOPS'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'>FWL:10,MH:3,</salvage>
 	</faction>
-	<faction key='Periphery' name='Periphery' minor='false' clan='false' periphery='true'>
-		<years>-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction></parentFaction>
+	<faction key='Periphery'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
@@ -331,19 +235,13 @@
 		<weightDistribution era='3145' unitType='Tank'>3,4,2,1</weightDistribution>
 		<weightDistribution era='3145' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
-	<faction key='PIR' name='Pirate' minor='false' clan='false' periphery='true'>
-		<years>-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>Periphery</parentFaction>
+	<faction key='PIR'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='15'>CC:2,LA:2,FWL:2,FS:2,DC:2,BAN:4</salvage>
 	</faction>
-	<faction key='RD' name='Rasalhague Dominion' minor='false' clan='true' periphery='false'>
-		<years>3103-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
-		<parentFaction>CLAN.IS</parentFaction>
+	<faction key='RD'>
 		<pctOmni>0,0,0,60,100</pctOmni>
 		<pctClan>35,40,80,80,100</pctClan>
 		<pctSL>65,60,20,20,0</pctSL>
@@ -354,10 +252,7 @@
 		<weightDistribution era='3145' unitType='Mek'>2,3,4,2,0</weightDistribution>
 		<weightDistribution era='3145' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
-	<faction key='RA' name='Raven Alliance' minor='false' clan='true' periphery='false'>
-		<years>3083-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
-		<parentFaction>CLAN.IS</parentFaction>
+	<faction key='RA'>
 		<pctOmni>0,0,0,48,100</pctOmni>
 		<pctClan>70,70,95,100,100</pctClan>
 		<pctSL>30,30,5,0,0</pctSL>
@@ -369,10 +264,7 @@
 		<techMargin>15</techMargin>
 		<salvage pct='10'>FS:4,DC:10</salvage>
 	</faction>
-	<faction key='RF' name='Regulan Fiefs' minor='false' clan='false' periphery='false'>
-		<years>3086-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>IS</parentFaction>
+	<faction key='RF'>
 		<pctOmni>0,10,16,20,30</pctOmni>
 		<pctClan>0,0,8,12,20</pctClan>
 		<pctSL>70,80,88,88,80</pctSL>
@@ -381,10 +273,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'>FWL:10,</salvage>
 	</faction>
-	<faction key='RR' name='Republic Remnant' minor='false' clan='false' periphery='false'>
-		<years>3135-</years>
-		<ratingLevels>PG,TP,HS,SB</ratingLevels>
-		<parentFaction>ROS</parentFaction>
+	<faction key='RR'>
 		<pctOmni>5,15,22,35</pctOmni>
 		<pctClan>0,16,22,30</pctClan>
 		<pctSL>95,84,78,70</pctSL>
@@ -393,10 +282,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'>FWL:4</salvage>
 	</faction>
-	<faction key='ROS' name='Republic of the Sphere' minor='false' clan='false' periphery='false'>
-		<years>3081-</years>
-		<ratingLevels>PG,TP,HS,SB</ratingLevels>
-		<parentFaction>IS</parentFaction>
+	<faction key='ROS'>
 		<pctOmni>5,15,22,35</pctOmni>
 		<pctClan>0,16,22,30</pctClan>
 		<pctSL>95,84,78,70</pctSL>
@@ -405,28 +291,19 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'>CC:8,LA:9,FWL:4,FS:10,DC:6</salvage>
 	</faction>
-	<faction key='RIM' name='Rim Collection' minor='true' clan='false' periphery='true'>
-		<years>3048-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>Periphery.R</parentFaction>
+	<faction key='RIM'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'>LA:10</salvage>
 	</faction>
-	<faction key='RT' name='Rim Territories' minor='true' clan='false' periphery='true'>
-		<years>3087-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>Periphery.R</parentFaction>
+	<faction key='RT'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'>LA:10</salvage>
 	</faction>
-	<faction key='TC' name='Taurian Concordat' minor='false' clan='false' periphery='true'>
-		<years>2335-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>Periphery.HR</parentFaction>
+	<faction key='TC'>
 		<pctOmni>0,10,12,14,20</pctOmni>
 		<pctClan>0,0,5,12,15</pctClan>
 		<pctSL>40,55,65,70,80</pctSL>
@@ -436,28 +313,19 @@
 		<salvage pct='5'>FS:10</salvage>
 		<weightDistribution era='3145' unitType='Aero'>1,2,3</weightDistribution>
 	</faction>
-	<faction key='TB' name='The Barrens' minor='false' clan='false' periphery='false'>
-		<years>3100-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>Periphery.DD</parentFaction>
+	<faction key='TB'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'>CHH:10,RD:2,CI:1,CJF:3</salvage>
 	</faction>
-	<faction key='TD' name='Tortuga Dominions' minor='false' clan='false' periphery='true'>
-		<years>2785-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>Periphery.HR,PIR</parentFaction>
+	<faction key='TD'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='10'>FVC:2,FS:10</salvage>
 	</faction>
-	<faction key='CWE' name='Wolf Empire' minor='false' clan='true' periphery='false'>
-		<years>3143-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
-		<parentFaction>CW</parentFaction>
+	<faction key='CWE'>
 		<pctOmni>0,0,1,56,100</pctOmni>
 		<pctClan>30,30,60,100,100</pctClan>
 		<pctSL>70,70,40,0,0</pctSL>
@@ -466,10 +334,7 @@
 		<techMargin>15</techMargin>
 		<salvage pct='10'>CHH:1,RF:2,LA:10,ROS:12,FWL:15,CP:3,CJF:3</salvage>
 	</faction>
-	<faction key='FS.ACAD' name='Academy and Training Units' minor='false' clan='false' periphery='false'>
-		<years>2317-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FS</parentFaction>
+	<faction key='FS.ACAD'>
 		<pctOmni>22</pctOmni>
 		<pctClan>15</pctClan>
 		<pctSL>85</pctSL>
@@ -478,10 +343,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='LA.AlG' name='Alliance Guards' minor='false' clan='false' periphery='false'>
-		<years>3058-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>LA</parentFaction>
+	<faction key='LA.AlG'>
 		<pctOmni>30</pctOmni>
 		<pctClan>20</pctClan>
 		<pctSL>80</pctSL>
@@ -490,11 +352,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='LA.AlJ' name='Alliance Jaegers' minor='false' clan='false' periphery='false'>
-		<nameChange year='3084'>Lyran Reserves</nameChange>
-		<years>3057-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>LA</parentFaction>
+	<faction key='LA.AlJ'>
 		<pctOmni>20</pctOmni>
 		<pctClan>18</pctClan>
 		<pctSL>82</pctSL>
@@ -503,10 +361,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='RA.OA' name='Alliance Military Corps' minor='false' clan='false' periphery='true'>
-		<years>3083-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>OA</parentFaction>
+	<faction key='RA.OA'>
 		<pctOmni>0,0,0,0,0</pctOmni>
 		<pctClan>0,0,0,0,0</pctClan>
 		<pctSL>30,50,60,75,80</pctSL>
@@ -518,10 +373,7 @@
 		<weightDistribution era='3145' unitType='Mek'>5,5,3,1,0</weightDistribution>
 		<weightDistribution era='3145' unitType='Tank'>5,5,2,1</weightDistribution>
 	</faction>
-	<faction key='DC.ALAG' name='Amphigean Light Assault Group' minor='false' clan='false' periphery='false'>
-		<years>2319-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>DC</parentFaction>
+	<faction key='DC.ALAG'>
 		<pctOmni>30</pctOmni>
 		<pctClan>16</pctClan>
 		<pctSL>84</pctSL>
@@ -530,10 +382,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='DC.ATL' name='An Ting Legion' minor='false' clan='false' periphery='false'>
-		<years>2823-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>DC</parentFaction>
+	<faction key='DC.ATL'>
 		<pctOmni>48</pctOmni>
 		<pctClan>16</pctClan>
 		<pctSL>84</pctSL>
@@ -542,10 +391,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='LA.AG' name='Arcturan Guards' minor='false' clan='false' periphery='false'>
-		<years>2341-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>LA</parentFaction>
+	<faction key='LA.AG'>
 		<pctOmni>22</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>88</pctSL>
@@ -554,10 +400,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='DC.AL' name='Arkab Legions' minor='false' clan='false' periphery='false'>
-		<years>2479-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>DC</parentFaction>
+	<faction key='DC.AL'>
 		<pctOmni>10</pctOmni>
 		<pctClan>16</pctClan>
 		<pctSL>64</pctSL>
@@ -566,10 +409,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='FWL.AD' name='Atrean Dragoons' minor='false' clan='false' periphery='false'>
-		<years>2271-3079,3138-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FWL</parentFaction>
+	<faction key='FWL.AD'>
 		<pctOmni>35</pctOmni>
 		<pctClan>20</pctClan>
 		<pctSL>80</pctSL>
@@ -578,10 +418,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='FS.AH' name='Avalon Hussars' minor='false' clan='false' periphery='false'>
-		<years>2317-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FS</parentFaction>
+	<faction key='FS.AH'>
 		<pctOmni>44</pctOmni>
 		<pctClan>20</pctClan>
 		<pctSL>80</pctSL>
@@ -590,10 +427,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='DC.BR' name='Benjamin Regulars' minor='false' clan='false' periphery='false'>
-		<years>2319-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>DC</parentFaction>
+	<faction key='DC.BR'>
 		<pctOmni>52</pctOmni>
 		<pctClan>26</pctClan>
 		<pctSL>74</pctSL>
@@ -602,10 +436,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='MOC.CF' name='Canopian Fusiliers' minor='false' clan='false' periphery='true'>
-		<years>2530-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>MOC</parentFaction>
+	<faction key='MOC.CF'>
 		<pctOmni>12</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>75</pctSL>
@@ -614,10 +445,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='CC.CB' name='Capellan Brigade' minor='false' clan='false' periphery='false'>
-		<years>3061-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>CC</parentFaction>
+	<faction key='CC.CB'>
 		<pctOmni>16</pctOmni>
 		<pctClan>10</pctClan>
 		<pctSL>90</pctSL>
@@ -626,10 +454,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='CC.CC' name='Capellan Chargers' minor='false' clan='false' periphery='false'>
-		<years>2367-2835,3135-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>CC</parentFaction>
+	<faction key='CC.CC'>
 		<pctOmni>16</pctOmni>
 		<pctClan>10</pctClan>
 		<pctSL>75</pctSL>
@@ -638,10 +463,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='CC.CDF' name='Capellan Defense Force' minor='false' clan='false' periphery='false'>
-		<years>3057-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>CC</parentFaction>
+	<faction key='CC.CDF'>
 		<pctOmni>0</pctOmni>
 		<pctClan>0</pctClan>
 		<pctSL>90</pctSL>
@@ -652,10 +474,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='CC.CHG' name='Capellan Home Guard' minor='false' clan='false' periphery='false'>
-		<years>2367-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>CC</parentFaction>
+	<faction key='CC.CHG'>
 		<pctOmni>0</pctOmni>
 		<pctClan>0</pctClan>
 		<pctSL>35</pctSL>
@@ -664,10 +483,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='CC.CH' name='Capellan Hussars' minor='false' clan='false' periphery='false'>
-		<years>2367-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>CC</parentFaction>
+	<faction key='CC.CH'>
 		<pctOmni>25</pctOmni>
 		<pctClan>16</pctClan>
 		<pctSL>84</pctSL>
@@ -680,10 +496,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='FS.CMB' name='Capellan March Brigade' minor='false' clan='false' periphery='false'>
-		<years>3079-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FS</parentFaction>
+	<faction key='FS.CMB'>
 		<pctOmni>28</pctOmni>
 		<pctClan>18</pctClan>
 		<pctSL>82</pctSL>
@@ -692,10 +505,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='FS.CMM' name='Capellan March Militia' minor='false' clan='false' periphery='false'>
-		<years>2754-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FS</parentFaction>
+	<faction key='FS.CMM'>
 		<pctOmni>16</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>85</pctSL>
@@ -704,18 +514,12 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='Periphery.CM' name='Capellan Marches' minor='false' clan='false' periphery='true'>
-		<years>-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>Periphery</parentFaction>
+	<faction key='Periphery.CM'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='FS.CH' name='Ceti Hussars' minor='false' clan='false' periphery='false'>
-		<years>2730-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FS</parentFaction>
+	<faction key='FS.CH'>
 		<pctOmni>28</pctOmni>
 		<pctClan>16</pctClan>
 		<pctSL>84</pctSL>
@@ -724,10 +528,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='MOC.CC' name='Chasseurs à Cheval' minor='false' clan='false' periphery='true'>
-		<years>2530-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>MOC</parentFaction>
+	<faction key='MOC.CC'>
 		<pctOmni>12</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>75</pctSL>
@@ -736,10 +537,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='CC.CHO' name='Citizens&apos; Honored' minor='false' clan='false' periphery='false'>
-		<years>3060-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>CC</parentFaction>
+	<faction key='CC.CHO'>
 		<pctOmni>6</pctOmni>
 		<pctClan>10</pctClan>
 		<pctSL>80</pctSL>
@@ -748,22 +546,13 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='CLAN.IS' name='Clan - Inner Sphere' minor='false' clan='true' periphery='false'>
-		<years>3050-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
-		<parentFaction>CLAN</parentFaction>
+	<faction key='CLAN.IS'>
 		<techMargin>15</techMargin>
 	</faction>
-	<faction key='FWL.CP' name='Clan Protectorate' minor='false' clan='true' periphery='false'>
-		<years>3139-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
-		<parentFaction>CP</parentFaction>
+	<faction key='FWL.CP'>
 		<techMargin>15</techMargin>
 	</faction>
-	<faction key='CC.CRC' name='Confederation Reserve Cavalry' minor='false' clan='false' periphery='false'>
-		<years>2650-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>CC</parentFaction>
+	<faction key='CC.CRC'>
 		<pctOmni>10</pctOmni>
 		<pctClan>0</pctClan>
 		<pctSL>85</pctSL>
@@ -774,18 +563,12 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='FWL.CG' name='Covenant Guards' minor='false' clan='false' periphery='false'>
-		<years>3139-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FWL</parentFaction>
+	<faction key='FWL.CG'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='FS.CL' name='Crucis Lancers' minor='false' clan='false' periphery='false'>
-		<years>2780-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FS</parentFaction>
+	<faction key='FS.CL'>
 		<pctOmni>44</pctOmni>
 		<pctClan>22</pctClan>
 		<pctSL>78</pctSL>
@@ -794,10 +577,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='FS.CrMM' name='Crucis March Militia' minor='false' clan='false' periphery='false'>
-		<years>2754-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FS</parentFaction>
+	<faction key='FS.CrMM'>
 		<pctOmni>15</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>85</pctSL>
@@ -806,10 +586,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='FS.DBG' name='Davion Brigade of Guards' minor='false' clan='false' periphery='false'>
-		<years>2418-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FS</parentFaction>
+	<faction key='FS.DBG'>
 		<pctOmni>42</pctOmni>
 		<pctClan>24</pctClan>
 		<pctSL>76</pctSL>
@@ -818,10 +595,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='CC.DC' name='Death Commandos' minor='false' clan='false' periphery='false'>
-		<years>2988-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>CC</parentFaction>
+	<faction key='CC.DC'>
 		<pctOmni>30</pctOmni>
 		<pctClan>18</pctClan>
 		<pctSL>82</pctSL>
@@ -830,26 +604,17 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='Periphery.Deep' name='Deep Periphery' minor='false' clan='false' periphery='true'>
-		<years>-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction></parentFaction>
+	<faction key='Periphery.Deep'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='DC.DR' name='Dieron Regulars' minor='false' clan='false' periphery='false'>
-		<years>2319-3081,3135-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>DC</parentFaction>
+	<faction key='DC.DR'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='LA.DG' name='Donegal Guards' minor='false' clan='false' periphery='false'>
-		<years>2341-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>LA</parentFaction>
+	<faction key='LA.DG'>
 		<pctOmni>28</pctOmni>
 		<pctClan>18</pctClan>
 		<pctSL>82</pctSL>
@@ -858,18 +623,12 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='Periphery.DD' name='Draconian Drift' minor='false' clan='false' periphery='true'>
-		<years>-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>Periphery</parentFaction>
+	<faction key='Periphery.DD'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='FS.DMM' name='Draconis March Militia' minor='false' clan='false' periphery='false'>
-		<years>2754-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FS</parentFaction>
+	<faction key='FS.DMM'>
 		<pctOmni>18</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>85</pctSL>
@@ -878,18 +637,12 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='CS.EC' name='Explorer Corps' minor='false' clan='false' periphery='false'>
-		<years>2959-</years>
-		<ratingLevels>B,A</ratingLevels>
-		<parentFaction>CS</parentFaction>
+	<faction key='CS.EC'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='FWL.FWG' name='Free Worlds Guards' minor='false' clan='false' periphery='false'>
-		<years>2426-3079,3138-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FWL</parentFaction>
+	<faction key='FWL.FWG'>
 		<pctOmni>35</pctOmni>
 		<pctClan>20</pctClan>
 		<pctSL>80</pctSL>
@@ -898,10 +651,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='FWL.FO' name='Fusiliers of Oriente' minor='false' clan='false' periphery='false'>
-		<years>2485-3079,3139-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FWL</parentFaction>
+	<faction key='FWL.FO'>
 		<pctOmni>35</pctOmni>
 		<pctClan>20</pctClan>
 		<pctSL>80</pctSL>
@@ -910,10 +660,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='DC.GR' name='Galedon Regulars' minor='false' clan='false' periphery='false'>
-		<years>2319-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>DC</parentFaction>
+	<faction key='DC.GR'>
 		<pctOmni>25</pctOmni>
 		<pctClan>18</pctClan>
 		<pctSL>82</pctSL>
@@ -922,10 +669,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='DC.GEN' name='Genyosha' minor='false' clan='false' periphery='false'>
-		<years>3027-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>DC</parentFaction>
+	<faction key='DC.GEN'>
 		<pctOmni>65</pctOmni>
 		<pctClan>30</pctClan>
 		<pctSL>70</pctSL>
@@ -934,10 +678,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='DC.GHO' name='Ghost Regiments' minor='false' clan='false' periphery='false'>
-		<years>3033-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>DC</parentFaction>
+	<faction key='DC.GHO'>
 		<pctOmni>24</pctOmni>
 		<pctClan>18</pctClan>
 		<pctSL>80</pctSL>
@@ -946,18 +687,12 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='Periphery.HR' name='Hyades Rim' minor='false' clan='false' periphery='true'>
-		<years>-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>Periphery</parentFaction>
+	<faction key='Periphery.HR'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='DC.I' name='Izanagi Warriors' minor='false' clan='false' periphery='false'>
-		<years>3030-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>DC</parentFaction>
+	<faction key='DC.I'>
 		<pctOmni>60</pctOmni>
 		<pctClan>50</pctClan>
 		<pctSL>50</pctSL>
@@ -966,10 +701,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='MERC.KH' name='Kell Hounds' minor='false' clan='false' periphery='false'>
-		<years>3010-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>MERC,LA</parentFaction>
+	<faction key='MERC.KH'>
 		<pctOmni>30</pctOmni>
 		<pctClan>30</pctClan>
 		<pctSL>70</pctSL>
@@ -978,10 +710,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='6'></salvage>
 	</faction>
-	<faction key='DC.LV' name='Legion of Vega' minor='false' clan='false' periphery='false'>
-		<years>3011-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>DC</parentFaction>
+	<faction key='DC.LV'>
 		<pctOmni>18</pctOmni>
 		<pctClan>16</pctClan>
 		<pctSL>84</pctSL>
@@ -990,10 +719,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='CC.LCC' name='Liao Cháng-Chéng' minor='false' clan='false' periphery='false'>
-		<years>3061-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>CC</parentFaction>
+	<faction key='CC.LCC'>
 		<pctOmni>8</pctOmni>
 		<pctClan>5</pctClan>
 		<pctSL>75</pctSL>
@@ -1004,18 +730,12 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='CC.LG' name='Liao Guards' minor='false' clan='false' periphery='false'>
-		<years>2367-2823,3113-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>CC</parentFaction>
+	<faction key='CC.LG'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='LA.LG' name='Lyran Guards' minor='false' clan='false' periphery='false'>
-		<years>2341-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>LA</parentFaction>
+	<faction key='LA.LG'>
 		<pctOmni>28</pctOmni>
 		<pctClan>18</pctClan>
 		<pctSL>82</pctSL>
@@ -1024,10 +744,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='LA.LR' name='Lyran Regulars' minor='false' clan='false' periphery='false'>
-		<years>2341-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>LA</parentFaction>
+	<faction key='LA.LR'>
 		<pctOmni>24</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>88</pctSL>
@@ -1036,10 +753,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='MOC.MH' name='Magistracy Highlanders' minor='false' clan='false' periphery='true'>
-		<years>2755-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>MOC</parentFaction>
+	<faction key='MOC.MH'>
 		<pctOmni>10</pctOmni>
 		<pctClan>5</pctClan>
 		<pctSL>70</pctSL>
@@ -1048,10 +762,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='MOC.MRG' name='Magristracy Royal Guard' minor='false' clan='false' periphery='true'>
-		<years>2530-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>MOC</parentFaction>
+	<faction key='MOC.MRG'>
 		<pctOmni>24</pctOmni>
 		<pctClan>18</pctClan>
 		<pctSL>81</pctSL>
@@ -1060,26 +771,17 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='Periphery.MW' name='March Worlds' minor='false' clan='false' periphery='true'>
-		<years>-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>Periphery</parentFaction>
+	<faction key='Periphery.MW'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='Periphery.ME' name='Marik Expanses' minor='false' clan='false' periphery='true'>
-		<years>-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>Periphery</parentFaction>
+	<faction key='Periphery.ME'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='FWL.MM' name='Marik Militia' minor='false' clan='false' periphery='false'>
-		<years>2238-3079,3139-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FWL</parentFaction>
+	<faction key='FWL.MM'>
 		<pctOmni>18</pctOmni>
 		<pctClan>8</pctClan>
 		<pctSL>88</pctSL>
@@ -1088,10 +790,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='CC.MAC' name='McCarron&apos;s Armored Cavalry' minor='false' clan='false' periphery='false'>
-		<years>3060-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>CC</parentFaction>
+	<faction key='CC.MAC'>
 		<pctOmni>32</pctOmni>
 		<pctClan>16</pctClan>
 		<pctSL>84</pctSL>
@@ -1104,10 +803,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='FS.NIC' name='New Ivaarsen Chasseurs' minor='false' clan='false' periphery='false'>
-		<years>3020-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FS</parentFaction>
+	<faction key='FS.NIC'>
 		<pctOmni>22</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>88</pctSL>
@@ -1116,10 +812,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='DC.NSR' name='New Samarkand Regulars' minor='false' clan='false' periphery='false'>
-		<years>3082-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>DC</parentFaction>
+	<faction key='DC.NSR'>
 		<pctOmni>44</pctOmni>
 		<pctClan>24</pctClan>
 		<pctSL>76</pctSL>
@@ -1128,10 +821,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='FWL.OH' name='Oriente Hussars' minor='false' clan='false' periphery='false'>
-		<years>2245-3079,3139-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FWL</parentFaction>
+	<faction key='FWL.OH'>
 		<pctOmni>22</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>88</pctSL>
@@ -1140,10 +830,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='FWL.OG' name='Orloff Grenadiers' minor='false' clan='false' periphery='false'>
-		<years>2691-3079,3139-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FWL</parentFaction>
+	<faction key='FWL.OG'>
 		<pctOmni>22</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>88</pctSL>
@@ -1152,10 +839,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='DC.O' name='Otomo' minor='false' clan='false' periphery='false'>
-		<years>3000-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>DC</parentFaction>
+	<faction key='DC.O'>
 		<pctOmni>52</pctOmni>
 		<pctClan>30</pctClan>
 		<pctSL>70</pctSL>
@@ -1164,18 +848,12 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='Periphery.OS' name='Outer Sphere' minor='false' clan='false' periphery='true'>
-		<years>-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>Periphery</parentFaction>
+	<faction key='Periphery.OS'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='FS.PMG' name='Periphery March Guard' minor='false' clan='false' periphery='false'>
-		<years>3080-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FS</parentFaction>
+	<faction key='FS.PMG'>
 		<pctOmni>28</pctOmni>
 		<pctClan>18</pctClan>
 		<pctSL>82</pctSL>
@@ -1184,10 +862,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='FS.PMM' name='Periphery March Militia' minor='false' clan='false' periphery='false'>
-		<years>3080-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FS</parentFaction>
+	<faction key='FS.PMM'>
 		<pctOmni>22</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>85</pctSL>
@@ -1196,10 +871,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='DC.PR' name='Pesht Regulars' minor='false' clan='false' periphery='false'>
-		<years>2319-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>DC</parentFaction>
+	<faction key='DC.PR'>
 		<pctOmni>25</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>88</pctSL>
@@ -1208,106 +880,67 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='DC.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
-		<years>2319-</years>
-		<ratingLevels>F</ratingLevels>
-		<parentFaction>DC,IS.pm</parentFaction>
+	<faction key='DC.pm'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='FS.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
-		<years>2317-</years>
-		<ratingLevels>F</ratingLevels>
-		<parentFaction>FS,IS.pm</parentFaction>
+	<faction key='FS.pm'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='DA.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
-		<years>3079-</years>
-		<ratingLevels>F</ratingLevels>
-		<parentFaction>DA,IS.pm</parentFaction>
+	<faction key='DA.pm'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='FWL.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
-		<years>2271-</years>
-		<ratingLevels>F</ratingLevels>
-		<parentFaction>FWL,IS.pm</parentFaction>
+	<faction key='FWL.pm'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='RF.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
-		<years>3086-</years>
-		<ratingLevels>F</ratingLevels>
-		<parentFaction>RF,IS.pm</parentFaction>
+	<faction key='RF.pm'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='ROS.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
-		<years>3081-</years>
-		<ratingLevels>PG</ratingLevels>
-		<parentFaction>ROS,IS.pm</parentFaction>
+	<faction key='ROS.pm'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='LA.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
-		<years>2341-</years>
-		<ratingLevels>F</ratingLevels>
-		<parentFaction>LA,IS.pm</parentFaction>
+	<faction key='LA.pm'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='TC.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
-		<years>2335-</years>
-		<ratingLevels>F</ratingLevels>
-		<parentFaction>TC</parentFaction>
+	<faction key='TC.pm'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='IS.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
-		<years>-</years>
-		<ratingLevels>F</ratingLevels>
-		<parentFaction>IS</parentFaction>
+	<faction key='IS.pm'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='CC.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
-		<years>2367-</years>
-		<ratingLevels>F</ratingLevels>
-		<parentFaction>CC,IS.pm</parentFaction>
+	<faction key='CC.pm'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='MOC.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
-		<years>2530-</years>
-		<ratingLevels>F</ratingLevels>
-		<parentFaction>MO</parentFaction>
+	<faction key='MOC.pm'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='TC.PL' name='Pleiades Lancers' minor='false' clan='false' periphery='true'>
-		<years>2335-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>TC</parentFaction>
+	<faction key='TC.PL'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='FWL.PG' name='Protectorate Guard' minor='false' clan='false' periphery='false'>
-		<years>3000-3079,3138-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FWL</parentFaction>
+	<faction key='FWL.PG'>
 		<pctOmni>22</pctOmni>
 		<pctClan>12</pctClan>
 		<pctSL>88</pctSL>
@@ -1316,11 +949,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='MOC.RC' name='Raventhir Footmen' minor='false' clan='false' periphery='true'>
-		<nameChange year='3063'>Raventhir Cuirassiers</nameChange>
-		<years>3055-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>MOC</parentFaction>
+	<faction key='MOC.RC'>
 		<pctOmni>0</pctOmni>
 		<pctClan>0</pctClan>
 		<pctSL>40</pctSL>
@@ -1329,10 +958,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='LA.M' name='Regional Militia' minor='false' clan='false' periphery='false'>
-		<years>2341-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>LA</parentFaction>
+	<faction key='LA.M'>
 		<pctOmni>18</pctOmni>
 		<pctClan>6</pctClan>
 		<pctSL>80</pctSL>
@@ -1341,10 +967,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='FWL.RCG' name='Rim Commonality Guards' minor='false' clan='false' periphery='false'>
-		<years>3139-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FWL</parentFaction>
+	<faction key='FWL.RCG'>
 		<pctOmni>18</pctOmni>
 		<pctClan>8</pctClan>
 		<pctSL>88</pctSL>
@@ -1353,10 +976,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='FS.RMB' name='Robinson March Brigade' minor='false' clan='false' periphery='false'>
-		<years>3080-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FS</parentFaction>
+	<faction key='FS.RMB'>
 		<pctOmni>40</pctOmni>
 		<pctClan>20</pctClan>
 		<pctSL>80</pctSL>
@@ -1365,10 +985,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='FS.RR' name='Robinson Rangers' minor='false' clan='false' periphery='false'>
-		<years>2780-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FS</parentFaction>
+	<faction key='FS.RR'>
 		<pctOmni>28</pctOmni>
 		<pctClan>16</pctClan>
 		<pctSL>84</pctSL>
@@ -1377,10 +994,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='LA.RG' name='Royal Guards' minor='false' clan='false' periphery='false'>
-		<years>2341-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>LA</parentFaction>
+	<faction key='LA.RG'>
 		<pctOmni>35</pctOmni>
 		<pctClan>20</pctClan>
 		<pctSL>80</pctSL>
@@ -1389,10 +1003,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='DC.RYU' name='Ryuken' minor='false' clan='false' periphery='false'>
-		<years>3026-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>DC</parentFaction>
+	<faction key='DC.RYU'>
 		<pctOmni>30</pctOmni>
 		<pctClan>20</pctClan>
 		<pctSL>78</pctSL>
@@ -1401,26 +1012,17 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='MERC.pm' name='Security Forces' minor='false' clan='false' periphery='false'>
-		<years>-</years>
-		<ratingLevels>F</ratingLevels>
-		<parentFaction>MERC,IS.pm</parentFaction>
+	<faction key='MERC.pm'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='FWL.SHI' name='Silver Hawk Irregulars ' minor='false' clan='false' periphery='false'>
-		<years>3000-3081,3138-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FWL</parentFaction>
+	<faction key='FWL.SHI'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='CC.SIAC' name='St Ives Armored Cavalry' minor='false' clan='false' periphery='false'>
-		<years>2367-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>CC</parentFaction>
+	<faction key='CC.SIAC'>
 		<pctOmni>18</pctOmni>
 		<pctClan>8</pctClan>
 		<pctSL>90</pctSL>
@@ -1431,10 +1033,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='CC.SIS' name='St Ives Sentinels' minor='false' clan='false' periphery='false'>
-		<years>3062-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>CC</parentFaction>
+	<faction key='CC.SIS'>
 		<pctOmni>16</pctOmni>
 		<pctClan>8</pctClan>
 		<pctSL>90</pctSL>
@@ -1445,10 +1044,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='DC.SZC' name='Sun Zhang Academy' minor='false' clan='false' periphery='false'>
-		<years>2319-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>DC</parentFaction>
+	<faction key='DC.SZC'>
 		<pctOmni>50</pctOmni>
 		<pctClan>22</pctClan>
 		<pctSL>78</pctSL>
@@ -1457,10 +1053,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='DC.SL' name='Sword of Light' minor='false' clan='false' periphery='false'>
-		<years>2319-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>DC</parentFaction>
+	<faction key='DC.SL'>
 		<pctOmni>55</pctOmni>
 		<pctClan>28</pctClan>
 		<pctSL>72</pctSL>
@@ -1469,10 +1062,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='FS.SF' name='Syrtis Fusiliers' minor='false' clan='false' periphery='false'>
-		<years>2418-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FS</parentFaction>
+	<faction key='FS.SF'>
 		<pctOmni>28</pctOmni>
 		<pctClan>15</pctClan>
 		<pctSL>85</pctSL>
@@ -1481,10 +1071,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='FWL.TR' name='Tamarind Regulars' minor='false' clan='false' periphery='false'>
-		<years>3139-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>FWL</parentFaction>
+	<faction key='FWL.TR'>
 		<pctOmni>18</pctOmni>
 		<pctClan>8</pctClan>
 		<pctSL>88</pctSL>
@@ -1493,18 +1080,12 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='Periphery.R' name='The Rift' minor='false' clan='false' periphery='true'>
-		<years>-</years>
-		<ratingLevels>F,D,C,B,A</ratingLevels>
-		<parentFaction>Periphery</parentFaction>
+	<faction key='Periphery.R'>
 		<omniMargin>15</omniMargin>
 		<techMargin>15</techMargin>
 		<upgradeMargin>12</upgradeMargin>
 	</faction>
-	<faction key='CC.TG' name='Tikonov Guards' minor='false' clan='false' periphery='false'>
-		<years>3134-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>CC</parentFaction>
+	<faction key='CC.TG'>
 		<pctOmni>16</pctOmni>
 		<pctClan>8</pctClan>
 		<pctSL>70</pctSL>
@@ -1513,10 +1094,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='LA.T' name='Training Units' minor='false' clan='false' periphery='false'>
-		<years>2341-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>LA</parentFaction>
+	<faction key='LA.T'>
 		<pctOmni>16</pctOmni>
 		<pctClan>6</pctClan>
 		<pctSL>80</pctSL>
@@ -1525,10 +1103,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='CC.VCR' name='Victoria Commonality Rangers' minor='false' clan='false' periphery='false'>
-		<years>3060-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>CC</parentFaction>
+	<faction key='CC.VCR'>
 		<pctOmni>18</pctOmni>
 		<pctClan>8</pctClan>
 		<pctSL>92</pctSL>
@@ -1539,10 +1114,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='CC.WHO' name='Warrior House Orders' minor='false' clan='false' periphery='false'>
-		<years>2864-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>CC</parentFaction>
+	<faction key='CC.WHO'>
 		<pctOmni>18</pctOmni>
 		<pctClan>10</pctClan>
 		<pctSL>90</pctSL>
@@ -1551,10 +1123,7 @@
 		<upgradeMargin>12</upgradeMargin>
 		<salvage pct='5'></salvage>
 	</faction>
-	<faction key='MERC.WD' name='Wolf&apos;s Dragoons' minor='false' clan='false' periphery='false'>
-		<years>3005-</years>
-		<ratingLevels></ratingLevels>
-		<parentFaction>MERC</parentFaction>
+	<faction key='MERC.WD'>
 		<pctOmni>60</pctOmni>
 		<pctClan>90</pctClan>
 		<pctSL>10</pctSL>

@@ -694,6 +694,8 @@ public class RATGenerator {
             }
         }
         
+        loadFactions();
+        
 		File dir = new File(Configuration.armyTablesDir(), DATA_DIR);
 		for (File f : dir.listFiles()) {
 			if (f.getName().matches("\\d+\\.xml")) {
@@ -725,6 +727,45 @@ public class RATGenerator {
 		}
 		if (year < eraSet.last()) {
 			loadEra(eraSet.ceiling(year));
+		}
+	}
+	
+	private void loadFactions() {
+		File dir = new File(Configuration.armyTablesDir(), DATA_DIR);
+		File file = new File(dir, "factions.xml");
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(file);
+		} catch (FileNotFoundException e) {
+			System.err.println("Unable to read RAT generator factions file"); //$NON-NLS-1$
+			return;
+		}
+
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		Document xmlDoc = null;
+
+		try {
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			xmlDoc = db.parse(fis);
+		} catch (Exception ex) {
+			System.err.println(ex.getMessage());
+		}
+
+		Element element = xmlDoc.getDocumentElement();
+		NodeList nl = element.getChildNodes();
+
+		element.normalize();
+
+		for (int x = 0; x < nl.getLength(); x++) {
+			Node wn = nl.item(x);
+			if (wn.getNodeName().equalsIgnoreCase("faction")) {
+				if (wn.getAttributes().getNamedItem("key") != null) {
+					FactionRecord rec = FactionRecord.createFromXml(wn);
+					factions.put(rec.getKey(), rec);
+				} else {
+					System.err.println("Faction key not found in " + file.getPath());
+				}
+			}			
 		}
 	}
 	
@@ -765,14 +806,14 @@ public class RATGenerator {
 				for (int i = 0; i < mainNode.getChildNodes().getLength(); i++) {
 					Node wn = mainNode.getChildNodes().item(i);
 					if (wn.getNodeName().equalsIgnoreCase("faction")) {
-						if (wn.getAttributes().getNamedItem("key") != null) {
-							FactionRecord rec = factions.get(
-									wn.getAttributes().getNamedItem("key").getTextContent());
-							if (rec == null) {
-								rec = FactionRecord.createFromXml(wn, era);
-								factions.put(rec.getKey(), rec);
-							} else {
+						String fKey = wn.getAttributes().getNamedItem("key").getTextContent();
+						if (fKey != null) {
+							FactionRecord rec = factions.get(fKey);
+							if (rec != null) {
 								rec.loadEra(wn, era);
+							} else {
+								System.err.println("Faction " + fKey + " not found in "
+										+ file.getPath());
 							}
 						} else {
 							System.err.println("Faction key not found in " + file.getPath());

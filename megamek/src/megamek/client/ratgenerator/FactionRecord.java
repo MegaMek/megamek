@@ -424,7 +424,7 @@ public class FactionRecord {
 		}
 	}
 	
-	public static FactionRecord createFromXml(Node node, int era) {
+	public static FactionRecord createFromXml(Node node) {
 		FactionRecord retVal = new FactionRecord();
 		retVal.key = node.getAttributes().getNamedItem("key").getTextContent();
 		retVal.name = node.getAttributes().getNamedItem("name").getTextContent();
@@ -460,10 +460,9 @@ public class FactionRecord {
 				retVal.setParentFactions(wn.getTextContent());
 			}
 		}
-		retVal.loadEra(node, era);
 		return retVal;
 	}
-	
+
 	public void loadEra(Node node, int era) {
 		for (int i = 0; i < node.getChildNodes().getLength(); i++) {
 			Node wn = node.getChildNodes().item(i);

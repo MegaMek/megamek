@@ -567,26 +567,32 @@ public class RATGenerator {
 					early, late, year);
 			if (techMargin != null) {
 				if (pctClan != null) {
-					pctClan = Math.min(pctClan + techMargin,
-							100.0 * totalClan/total);
-					pctClan = Math.max(pctClan - techMargin,
-							100.0 * totalClan/total);
+					double pct = 100.0 * totalClan / total;
+					if (pct < pctClan - techMargin) {
+						pctClan -= techMargin;
+					} else if (pct > pctClan + techMargin) {
+						pctClan += techMargin;
+					}
 				}
 				if (pctSL != null) {
-					pctSL = Math.min(pctSL + techMargin,
-							100.0 * totalSL/total);
-					pctSL = Math.max(pctSL - techMargin,
-							100.0 * totalSL/total);
+					double pct = 100.0 * totalSL / total;
+					if (pct < pctSL - techMargin) {
+						pctSL -= techMargin;
+					} else if (pct > pctSL + techMargin) {
+						pctSL += techMargin;
+					}
 				}					
 			}
 			Double upgradeMargin = interpolate(fRec.getUpgradeMargin(early),
 					fRec.getUpgradeMargin(late),
 					early, late, year);
 			if (upgradeMargin != null) {
-				pctOther = Math.min(pctOther + upgradeMargin,
-						100.0 * (total - totalClan - totalSL)/total);
-				pctOther = Math.max(pctOther - upgradeMargin,
-						100.0 * (total - totalClan - totalSL)/total);
+				double pct = 100.0 * (total - totalClan - totalSL) / total;
+				if (pct < pctOther - upgradeMargin) {
+					pctOther -= upgradeMargin;
+				} else if (pct > pctOther + upgradeMargin) {
+					pctOther += upgradeMargin;
+				}
 				/* If clan, sl, and other are all adjusted, the values probably
 				 * don't add up to 100, which is fine unless the upgradeMargin is
 				 * <= techMargin. Then pctOther is more certain, and we adjust 
@@ -612,8 +618,12 @@ public class RATGenerator {
 					fRec.getOmniMargin(late),
 					early, late, year);
 			if (omniMargin != null && omniMargin > 0) {
-				pctOmni = Math.min(pctOmni + omniMargin, 100.0 * totalOmni/total);
-				pctOmni = Math.max(pctOmni - omniMargin, 100.0 * totalOmni/total);
+				double pct = 100.0 * totalOmni / total;
+				if (pct < pctOmni - omniMargin) {
+					pctOmni -= omniMargin;
+				} else if (pct > pctOmni + omniMargin) {
+					pctOmni += omniMargin;
+				}
 			}
 			pctNonOmni = 100.0 - pctOmni;
 		}			

@@ -536,6 +536,9 @@ public class HexTileset {
                 || ((com.getTheme() != null) && com.getTheme()
                         .equalsIgnoreCase(org.getTheme()))) {
             theme = 1.0;
+        } else if ((org.getTheme() != null) && (com.getTheme() == null)) {
+            // If no precise themed match, slightly favor unthemed comparisons
+            theme = 0.001;
         } else {
             // also don't throw a match entirely out because the theme is off
             theme = 0.0001;

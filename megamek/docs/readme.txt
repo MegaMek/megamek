@@ -75,8 +75,13 @@ https://support.apple.com/en-us/HT204036
 Open source version of Java. Used by most major Linux distributions.
 http://openjdk.java.net/install/
 
-**Microsoft VM (Windows):**
-Microsoft no longer makes their VM available for seperate download.
+GCJ/Gnu classpath (Linux):
+Of interest to experienced developers, there may be some
+compatibility problems.
+http://gcc.gnu.org/java/
+
+Microsoft VM (Windows):
+Microsoft no longer makes their VM available for separate download.
 This version of MegaMek uses features not supported by the Microsoft JVM.
 
 **IBM VM:**
@@ -167,7 +172,7 @@ can pick "none", "low", "medium" or "high". Except for cities, where you pick a
 type of city instead.
 
 **Theme** - leave blank for the default theme, or enter a theme supported by your tileset.
-        grass, lunar, mars, snow are supported by the standard tileset
+        grass, jungle, lunar, mars, snow, and volcano are supported by the standard tileset
         
 **Elevation** - how hilly you want the map
 
@@ -336,7 +341,7 @@ listed, go ahead.
 Secondary facing changes (torso twists) are accomplished by holding Shift and 
 clicking on the board.  Your unit will attempt to change its secondary facing 
 in the direction specified.  If you assign a weapon to a target and then
-attempt a facing change, the weapons fire will be cancelled.
+attempt a facing change, the weapons fire will be canceled.
 
 You can not switch to another unit after declaring some weapons fire.  To 
 switch to another unit, first cancel all current fire by hitting the Esc key.  
@@ -346,10 +351,10 @@ fire will be committed.
 An Anti-Mek trained infantry platoon or Battle Armor squad that is in the same
 hex as a Mek can conduct a Leg Attack or a Swarm Mek attack.  The base to-hit
 number varies with the number of men in the unit.  A Swarm Mek attack against
-a Mek that is prone and/or immoble gains a -4 modifier to its to-hit roll.  A
+a Mek that is prone and/or immobile gains a -4 modifier to its to-hit roll.  A
 successful Leg Attack may cause critical damage to one of the Meks legs; if no
 critical is rolled, the leg will take 4 points of damage (which may damage the
-leg's internal structure, and cause another critical roll).  A successfull
+leg's internal structure, and cause another critical roll).  A successful
 Swarm Mek attack does no damage in the turn it hits, but it means that the unit
 has attached itself to the Mek, and can begin to cause significant damage on
 subsequent turns.  Starting the turn after the unit starts a Swarming a Mek,
@@ -432,7 +437,7 @@ loaded from any of several formats:
  **MekMaker** - files with the extension ".blk"
     Mech files with the extension ".blk" are created by MekMaker, a Java
     mech design program specifically created to work with MegaMek.
-    MekMaker was the offical mech design program, but it has since been
+    MekMaker was the official mech design program, but it has since been
     abandoned and is therefore not up to date with the current ruleset.
     It's homepage is at: http://mekmaker.sourceforge.net/
 

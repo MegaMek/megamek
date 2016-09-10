@@ -27,6 +27,7 @@ import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -67,6 +68,9 @@ public class LRMSwarmHandler extends LRMHandler {
                 : null;
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
+        final boolean bldgDamagedOnMiss = targetInBuilding
+                && !(target instanceof Infantry)
+                && ae.getPosition().distance(target.getPosition()) <= 1;
 
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
@@ -179,7 +183,7 @@ public class LRMSwarmHandler extends LRMHandler {
 
             // Works out fire setting, AMS shots, and whether continuation is
             // necessary.
-            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
                     vPhaseReport, phase)) {
                 return false;
             }
@@ -194,11 +198,38 @@ public class LRMSwarmHandler extends LRMHandler {
 
         } // End missed-target
 
-        // The building shields all units from a certain amount of damage.
-        // The amount is based upon the building's CF at the phase's start.
+        // Buildings shield all units from a certain amount of damage.
+        // Amount is based upon the building's CF at the phase's start.
         int bldgAbsorbs = 0;
-        if (targetInBuilding && (bldg != null)) {
+        if (targetInBuilding && (bldg != null)
+                && (toHit.getThruBldg() == null)) {
             bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
+        }
+        
+        // Attacking infantry in buildings from same building
+        if (targetInBuilding && (bldg != null)
+                && (toHit.getThruBldg() != null)
+                && (entityTarget instanceof Infantry)) {
+            // If elevation is the same, building doesn't absorb
+            if (ae.getElevation() != entityTarget.getElevation()) {
+                int dmgClass = wtype.getInfantryDamageClass();
+                int nDamage;
+                if (dmgClass < WeaponType.WEAPON_BURST_1D6) {
+                    nDamage = nDamPerHit * Math.min(nCluster, hits);
+                } else {
+                    // Need to indicate to handleEntityDamage that the
+                    // absorbed damage shouldn't reduce incoming damage,
+                    // since the incoming damage was reduced in
+                    // Compute.directBlowInfantryDamage
+                    nDamage = -wtype.getDamage(nRange)
+                            * Math.min(nCluster, hits);
+                }
+                bldgAbsorbs = (int) Math.round(nDamage
+                        * bldg.getInfDmgFromInside());
+            } else {
+                // Used later to indicate a special report
+                bldgAbsorbs = Integer.MIN_VALUE;
+            }
         }
 
         // Make sure the player knows when his attack causes no damage.
@@ -314,7 +345,8 @@ public class LRMSwarmHandler extends LRMHandler {
             double toReturn = Compute.directBlowInfantryDamage(
                     missiles, bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized());
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
             if (bGlancing) {
                 toReturn /= 2;
             }
@@ -331,9 +363,9 @@ public class LRMSwarmHandler extends LRMHandler {
      * .Entity, boolean, megamek.common.Building, java.util.Vector)
      */
     protected boolean handleSpecialMiss(Entity entityTarget,
-            boolean targetInBuilding, Building bldg,
+            boolean bldgDamagedOnMiss, Building bldg,
             Vector<Report> vPhaseReport, IGame.Phase phase) {
-        super.handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+        super.handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
                 vPhaseReport);
         int swarmMissilesNowLeft = waa.getSwarmMissiles();
         if (swarmMissilesNowLeft == 0) {

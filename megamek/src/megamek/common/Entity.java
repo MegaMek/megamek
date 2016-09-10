@@ -6491,35 +6491,35 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * Checks if the entity might skid on pavement. If so, returns the target
      * roll for the piloting skill check.
      */
-    public PilotingRollData checkSkid(EntityMovementType moveType,
-            IHex prevHex, EntityMovementType overallMoveType,
-            MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos,
-            Coords curPos, boolean isInfantry, int distance) {
+    public PilotingRollData checkSkid(EntityMovementType moveType, IHex prevHex,
+            EntityMovementType overallMoveType, MoveStep prevStep,
+            int prevFacing, int curFacing, Coords lastPos, Coords curPos,
+            boolean isInfantry, int distance) {
 
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         addPilotingModifierForTerrain(roll, lastPos);
 
         if (isAirborne() || isAirborneVTOLorWIGE()) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "Check false: flyinge entities don't skid");
+                    "Check false: flyinge entities don't skid");
             return roll;
         }
 
         if (isInfantry) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "Check false: infantry don't skid");
+                    "Check false: infantry don't skid");
             return roll;
         }
 
         if (moveType == EntityMovementType.MOVE_JUMP) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "Check false: jumping entities don't skid");
+                    "Check false: jumping entities don't skid");
             return roll;
         }
 
         if ((null != prevStep) && prevStep.isHasJustStood()) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "Check false: getting up entities don't skid");
+                    "Check false: getting up entities don't skid");
             return roll;
         }
 
@@ -6528,40 +6528,50 @@ public abstract class Entity extends TurnOrdered implements Transporter,
          * game.getBoard().getHex(curPos); }
          */
 
+        boolean prevStepPavement;
+        if (prevStep != null) {
+            prevStepPavement = prevStep.isPavementStep();
+        } else {
+            prevStepPavement = prevHex.hasPavement();
+        }
+
         // TODO: add check for elevation of pavement, road,
         // or bridge matches entity elevation.
-        if ((prevHex != null)
-            && prevHex.containsTerrain(Terrains.ICE)
-            && (((movementMode != EntityMovementMode.HOVER) && (movementMode != EntityMovementMode.WIGE)) || ((
-                                                                                                                      (movementMode == EntityMovementMode.HOVER) || (movementMode == EntityMovementMode.WIGE)) && ((game
-                                                                                                                                                                                                                            .getPlanetaryConditions().getWeather() == PlanetaryConditions.WE_HEAVY_SNOW) || (game
-                                                                                                                                                                                                                                                                                                                     .getPlanetaryConditions().getWindStrength() >= PlanetaryConditions.WI_STORM))))
-            && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
+        if ((prevHex != null) && prevHex.containsTerrain(Terrains.ICE)
+                && (((movementMode != EntityMovementMode.HOVER)
+                        && (movementMode != EntityMovementMode.WIGE))
+                        || (((movementMode == EntityMovementMode.HOVER)
+                                || (movementMode == EntityMovementMode.WIGE))
+                                && ((game.getPlanetaryConditions()
+                                        .getWeather() == PlanetaryConditions.WE_HEAVY_SNOW)
+                                        || (game.getPlanetaryConditions()
+                                                .getWindStrength() >= PlanetaryConditions.WI_STORM))))
+                && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
             roll.append(new PilotingRollData(getId(),
-                                             getMovementBeforeSkidPSRModifier(distance),
-                                             "turning on ice"));
+                    getMovementBeforeSkidPSRModifier(distance),
+                    "turning on ice"));
             adjustDifficultTerrainPSRModifier(roll);
             return roll;
-        } else if ((prevHex != null)
-                   && (prevStep.isPavementStep()
-                       && ((overallMoveType == EntityMovementType.MOVE_RUN) || (overallMoveType == EntityMovementType
-                .MOVE_SPRINT))
-                       && (movementMode != EntityMovementMode.HOVER) && (movementMode != EntityMovementMode.WIGE))
-                   && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
+        } else if ((prevStepPavement
+                && ((overallMoveType == EntityMovementType.MOVE_RUN)
+                        || (overallMoveType == EntityMovementType.MOVE_SPRINT))
+                && (movementMode != EntityMovementMode.HOVER)
+                && (movementMode != EntityMovementMode.WIGE))
+                && (prevFacing != curFacing) && !lastPos.equals(curPos)) {
             if (this instanceof Mech) {
                 roll.append(new PilotingRollData(getId(),
-                                                 getMovementBeforeSkidPSRModifier(distance),
-                                                 "running & turning on pavement"));
+                        getMovementBeforeSkidPSRModifier(distance),
+                        "running & turning on pavement"));
             } else {
                 roll.append(new PilotingRollData(getId(),
-                                                 getMovementBeforeSkidPSRModifier(distance),
-                                                 "reckless driving on pavement"));
+                        getMovementBeforeSkidPSRModifier(distance),
+                        "reckless driving on pavement"));
             }
             adjustDifficultTerrainPSRModifier(roll);
             return roll;
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "Check false: Entity is not apparently skidding");
+                    "Check false: Entity is not apparently skidding");
             return roll;
         }
     }
@@ -6572,20 +6582,19 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      */
     public PilotingRollData checkRubbleMove(MoveStep step,
             EntityMovementType moveType, IHex curHex, Coords lastPos,
-            Coords curPos, boolean isLastStep) {
+            Coords curPos, boolean isLastStep, boolean isPavementStep) {
         PilotingRollData roll = getBasePilotingRoll(moveType);
         boolean enteringRubble = true;
         addPilotingModifierForTerrain(roll, curPos, enteringRubble);
 
         if (!lastPos.equals(curPos)
-            && ((moveType != EntityMovementType.MOVE_JUMP)
-                || isLastStep)
-            && (curHex.terrainLevel(Terrains.RUBBLE) > 0)
-            && (this instanceof Mech)) {
+                && ((moveType != EntityMovementType.MOVE_JUMP) || isLastStep)
+                && (curHex.terrainLevel(Terrains.RUBBLE) > 0) && !isPavementStep
+                && (this instanceof Mech)) {
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "Check false: Entity is not entering rubble");
+                    "Check false: Entity is not entering rubble");
         }
 
         return roll;
@@ -6605,17 +6614,17 @@ public abstract class Entity extends TurnOrdered implements Transporter,
                 && (bgMod != TargetRoll.AUTOMATIC_SUCCESS)
                 && (moveType != EntityMovementType.MOVE_JUMP)
                 && (step.getElevation() == 0) && !isPavementStep) {
-            roll.append(new PilotingRollData(getId(), bgMod,
-                    "avoid bogging down"));
+            roll.append(
+                    new PilotingRollData(getId(), bgMod, "avoid bogging down"));
             if ((this instanceof Mech) && ((Mech) this).isSuperHeavy()) {
                 roll.addModifier(1, "superheavy mech avoiding bogging down");
             }
             addPilotingModifierForTerrain(roll, curPos, false);
             adjustDifficultTerrainPSRModifier(roll);
         } else {
-            roll.addModifier(
-                    TargetRoll.CHECK_FALSE,
-                    "Check false: Not entering bog-down terrain, or jumping/hovering over such terrain");
+            roll.addModifier(TargetRoll.CHECK_FALSE,
+                    "Check false: Not entering bog-down terrain, "
+                    + "or jumping/hovering over such terrain");
         }
         return roll;
     }
@@ -6650,7 +6659,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
      * target roll for the piloting skill check.
      */
     public PilotingRollData checkWaterMove(int waterLevel,
-                                           EntityMovementType overallMoveType) {
+            EntityMovementType overallMoveType) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         int mod;
@@ -6664,12 +6673,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
         if (waterLevel > 0) {
             // append the reason modifier
-            roll.append(new PilotingRollData(getId(), mod, "entering Depth "
-                                                           + waterLevel + " Water"));
+            roll.append(new PilotingRollData(getId(), mod,
+                    "entering Depth " + waterLevel + " Water"));
             adjustDifficultTerrainPSRModifier(roll);
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,
-                             "Check false: No water here.");
+                    "Check false: No water here.");
         }
 
         return roll;
@@ -8590,7 +8599,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         }
 
         // Hidden units shouldn't be counted for turn order, unless deploying
-        if (isHidden() && phase != IGame.Phase.PHASE_DEPLOYMENT) {
+        if (isHidden() && phase != Phase.PHASE_DEPLOYMENT
+                && phase != Phase.PHASE_FIRING) {
             return false;
         }
 
@@ -8748,6 +8758,12 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         boolean canHit = false;
         boolean friendlyFire = game.getOptions().booleanOption("friendly_fire");
 
+        if ((this instanceof Infantry)
+                && hasWorkingMisc(MiscType.F_TOOLS,
+                        MiscType.S_DEMOLITION_CHARGE)) {
+            IHex hex = game.getBoard().getHex(getPosition());
+            return hex.containsTerrain(Terrains.BUILDING);
+        }
         // only mechs and protos have physical attacks (except tank charges)
         if (!((this instanceof Mech) || (this instanceof Protomech) || (this instanceof Infantry))) {
             return false;
@@ -14008,5 +14024,16 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public void setEngineTechRating(int engineTechRating) {
         this.engineTechRating = engineTechRating;
+    }
+
+    /**
+     * Used to determine the draw priority of different Entity subclasses.
+     * This allows different unit types to always be draw above/below other
+     * types.
+     *
+     * @return
+     */
+    public int getSpriteDrawPriority() {
+        return 0;
     }
 }

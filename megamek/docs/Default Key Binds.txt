@@ -1,0 +1,50 @@
+Default Keyboard Commands. 
+These can be edited under
+VIEW-CLIENT SETTINGS-KEY BINDS
+
+SCROLLING
+Scroll Map North----- W
+Scroll Map South----- S
+Scroll Map East----- D
+Scroll Map West----- A
+Center On Selected Unit----- Spacebar
+
+MOVEMENT 
+Turn Left----- Shift-A
+Turn Right----- Shift-D
+Torso Twist Left----- Shift-A
+Torso Twist Right----- Shift-D
+Toggle Walking/Jump----- J
+
+COMBAT AND TARGETTING
+Previous Unit----- Z
+Next Unit----- C
+Previous Weapon----- Q
+Next Weapon----- E
+Fire selected Weapon----- F
+Previous Target----- Shift-Q
+Next Target----- Shift-E
+Previous Weapon Mode----- Shift-Z
+Next Weapon Mode----- Shift-C
+
+GENERAL COMMANDS
+Toggle Chat----- Enter
+Toggle Chat Command ----- /
+(opens chat box with /)
+Undo----- Backspace
+Cancel----- Escape
+Done---- Ctrl-Enter
+
+DIAGRAMS
+Show Movement Envelope----- R
+Toggle Field Of Fire----- Shift-R
+Toggle Iso Mode----- T
+Show Auto Arty Deploy Zone----- Shift-Spacebar
+
+UNIT OVERVIEW
+Unit Overview - General----- F1
+Unit Overview - Pilot----- F2
+Unit Overview - Armor----- F3
+Unit Overview - Systems----- F4
+Unit Overview - Weapons----- F5
+Unit Overview - Extras----- F6

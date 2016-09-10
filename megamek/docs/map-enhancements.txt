@@ -9,7 +9,7 @@ New terrain features
  - Swamps can stack with woods and roughs in the same hex
  - Pavements for patches of ice / places to put buildings
  - Craters available on basic menu
- - Theme can be set when generating the map, to use the alterate graphics (snow,lunar,mars...)
+ - Theme can be set when generating the map, to use the alternate graphics (snow,lunar,mars...)
 
 Terrain special effects (advanced menu)
  - Drought, dries up water on the map to leave lower water, swamp or rough.

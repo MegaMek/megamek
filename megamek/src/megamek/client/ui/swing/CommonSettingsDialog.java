@@ -165,6 +165,7 @@ public class CommonSettingsDialog extends ClientDialog implements
     private JCheckBox aOHexShadows;
     private JCheckBox floatingIso;
     private JCheckBox mmSymbol;
+    private JCheckBox entityOwnerColor;
     private JCheckBox useSoftCenter;
     private JCheckBox levelhighlight;
     private JCheckBox shadowMap;
@@ -363,8 +364,16 @@ public class CommonSettingsDialog extends ClientDialog implements
         row = new ArrayList<>();
         row.add(showUnitId);
         comps.add(row);
-        
+
+        entityOwnerColor = new JCheckBox(Messages.getString("CommonSettingsDialog.entityOwnerColor")); //$NON-NLS-1$
+        entityOwnerColor.setToolTipText(Messages.getString("CommonSettingsDialog.entityOwnerColorTip"));
+        entityOwnerColor.addItemListener(this);
+        row = new ArrayList<>();
+        row.add(entityOwnerColor);
+        comps.add(row);
+
         useSoftCenter = new JCheckBox(Messages.getString("CommonSettingsDialog.useSoftCenter")); //$NON-NLS-1$
+        useSoftCenter.setToolTipText(Messages.getString("CommonSettingsDialog.useSoftCenterTip"));
         useSoftCenter.addItemListener(this);
         row = new ArrayList<>();
         row.add(useSoftCenter);
@@ -692,6 +701,7 @@ public class CommonSettingsDialog extends ClientDialog implements
         levelhighlight.setSelected(gs.getLevelHighlight());
         shadowMap.setSelected(gs.getShadowMap());
         useSoftCenter.setSelected(gs.getBoolean("SOFTCENTER"));
+        entityOwnerColor.setSelected(gs.getEntityOwnerLabelColor());
 
 
         File dir = new File("data" + File.separator + "images" + File.separator
@@ -773,6 +783,8 @@ public class CommonSettingsDialog extends ClientDialog implements
         GUIPreferences gs = GUIPreferences.getInstance();
         IClientPreferences cs = PreferenceManager.getClientPreferences();
 
+        gs.setShowDamageLevel(showDamageLevel.isSelected());
+        gs.setEntityOwnerLabelColor(entityOwnerColor.isSelected());
         gs.setMinimapEnabled(minimapEnabled.isSelected());
         gs.setAutoEndFiring(autoEndFiring.isSelected());
         gs.setAutoDeclareSearchlight(autoDeclareSearchlight.isSelected());
@@ -830,8 +842,6 @@ public class CommonSettingsDialog extends ClientDialog implements
 
         gs.setAntiAliasing(chkAntiAliasing.isSelected());
 
-        gs.setShowDamageLevel(showDamageLevel.isSelected());
-        
         String newSkinFile = (String)skinFiles.getSelectedItem();
         String oldSkinFile = gs.getSkinFile();
         if (!oldSkinFile.equals(newSkinFile)) {

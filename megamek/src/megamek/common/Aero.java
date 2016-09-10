@@ -139,6 +139,14 @@ public class Aero extends Entity {
     // are we tracking any altitude loss due to air-to-ground assaults
     private int altLoss = 0;
 
+    /**
+     * Track how much altitude has been lost this turn.  This is important for
+     * properly making weapon attacks, so WeaponAttackActions knows what the
+     * altitude was before the attack happened, since the altitude lose is
+     * applied before the attack resolves.
+     */
+    private int altLossThisRound = 0;
+
     private boolean spheroid = false;
 
     // deal with heat
@@ -768,6 +776,8 @@ public class Aero extends Entity {
                 }
             }
         }
+
+        resetAltLossThisRound();
     }
 
     /**
@@ -2630,16 +2640,6 @@ public class Aero extends Entity {
         return true; // deal with this later
     }
 
-    /**
-     * Restores the entity after serialization
-     */
-    @Override
-    public void restore() {
-        super.restore();
-        // not sure what to put here
-
-    }
-
     @Override
     public boolean canCharge() {
         // ramming is resolved differently than chargin
@@ -3864,6 +3864,18 @@ public class Aero extends Entity {
         altLoss = 0;
     }
 
+    public int getAltLossThisRound() {
+        return altLossThisRound;
+    }
+
+    public void setAltLossThisRound(int i) {
+        altLossThisRound = i;
+    }
+
+    public void resetAltLossThisRound() {
+        altLossThisRound = 0;
+    }
+
     @Override
     public int getElevation() {
         if ((game != null) && game.getBoard().inSpace()) {
@@ -4340,5 +4352,16 @@ public class Aero extends Entity {
 
     public boolean isInASquadron(){
         return game.getEntity(getTransportId()) instanceof FighterSquadron;
+    }
+
+    /**
+     * Used to determine the draw priority of different Entity subclasses.
+     * This allows different unit types to always be draw above/below other
+     * types.
+     *
+     * @return
+     */
+    public int getSpriteDrawPriority() {
+        return 10;
     }
 }

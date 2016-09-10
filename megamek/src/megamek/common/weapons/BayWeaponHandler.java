@@ -19,6 +19,7 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.Report;
@@ -94,6 +95,10 @@ public class BayWeaponHandler extends WeaponHandler {
 
     @Override
     protected void addHeat() {
+        // Only add heat for first shot in strafe
+        if (isStrafing && !isStrafingFirstShot()) {
+            return;
+        }        
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             if (game.getOptions().booleanOption("heat_by_bay")) {
                 for (int wId : weapon.getBayWeapons()) {
@@ -144,6 +149,9 @@ public class BayWeaponHandler extends WeaponHandler {
 
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
+        final boolean bldgDamagedOnMiss = targetInBuilding
+                && !(target instanceof Infantry)
+                && ae.getPosition().distance(target.getPosition()) <= 1;
 
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
@@ -255,7 +263,7 @@ public class BayWeaponHandler extends WeaponHandler {
 
             // Works out fire setting, AMS shots, and whether continuation is
             // necessary.
-            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
                     vPhaseReport)) {
                 return false;
             }
@@ -310,11 +318,38 @@ public class BayWeaponHandler extends WeaponHandler {
             }
             bSalvo = true;
 
-            // The building shields all units from a certain amount of damage.
-            // The amount is based upon the building's CF at the phase's start.
+            // Buildings shield all units from a certain amount of damage.
+            // Amount is based upon the building's CF at the phase's start.
             int bldgAbsorbs = 0;
-            if (targetInBuilding && (bldg != null)) {
+            if (targetInBuilding && (bldg != null)
+                    && (toHit.getThruBldg() == null)) {
                 bldgAbsorbs = bldg.getAbsorbtion(target.getPosition());
+            }
+            
+            // Attacking infantry in buildings from same building
+            if (targetInBuilding && (bldg != null)
+                    && (toHit.getThruBldg() != null)
+                    && (entityTarget instanceof Infantry)) {
+                // If elevation is the same, building doesn't absorb
+                if (ae.getElevation() != entityTarget.getElevation()) {
+                    int dmgClass = wtype.getInfantryDamageClass();
+                    int nDamage;
+                    if (dmgClass < WeaponType.WEAPON_BURST_1D6) {
+                        nDamage = nDamPerHit * Math.min(nCluster, hits);
+                    } else {
+                        // Need to indicate to handleEntityDamage that the
+                        // absorbed damage shouldn't reduce incoming damage,
+                        // since the incoming damage was reduced in
+                        // Compute.directBlowInfantryDamage
+                        nDamage = -wtype.getDamage(nRange)
+                                * Math.min(nCluster, hits);
+                    }
+                    bldgAbsorbs = (int) Math.round(nDamage
+                            * bldg.getInfDmgFromInside());
+                } else {
+                    // Used later to indicate a special report
+                    bldgAbsorbs = Integer.MIN_VALUE;
+                }
             }
 
             handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
@@ -336,6 +371,9 @@ public class BayWeaponHandler extends WeaponHandler {
                 : null;
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
+        final boolean bldgDamagedOnMiss = targetInBuilding
+                && !(target instanceof Infantry)
+                && ae.getPosition().distance(target.getPosition()) <= 1;
 
         if (entityTarget != null) {
             ae.setLastTarget(entityTarget.getId());
@@ -439,7 +477,7 @@ public class BayWeaponHandler extends WeaponHandler {
         // We have to adjust the reports on a miss, so they line up
         if (bMissed){
             reportMiss(vPhaseReport);
-            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+            if (!handleSpecialMiss(entityTarget, bldgDamagedOnMiss, bldg,
                     vPhaseReport)) {
                 return false;
             }

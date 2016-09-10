@@ -58,6 +58,7 @@ public class Packet {
     public static final int COMMAND_BLDG_REMOVE = 210;
     public static final int COMMAND_BLDG_UPDATE = 220;
     public static final int COMMAND_BLDG_COLLAPSE = 230;
+    public static final int COMMAND_BLDG_EXPLODE = 240;
 
     public static final int COMMAND_PHASE_CHANGE = 240;
     public static final int COMMAND_TURN = 250;

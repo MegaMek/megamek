@@ -327,6 +327,50 @@ public class PointblankShotDisplay extends FiringDisplay implements
                     }
                 });
 
+        // Register the action for NEXT_MODE
+        controller.registerCommandAction(KeyCommandBind.NEXT_MODE.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || display.isIgnoringEvents()
+                                || !display.isVisible()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        changeMode(true);
+                    }
+                });
+
+        // Register the action for PREV_MODE
+        controller.registerCommandAction(KeyCommandBind.PREV_MODE.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || display.isIgnoringEvents()
+                                || !display.isVisible()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        changeMode(false);
+                    }
+                });
+
         // Register the action for CLEAR
         controller.registerCommandAction(KeyCommandBind.CANCEL.cmd,
                 new CommandAction() {
@@ -957,7 +1001,7 @@ public class PointblankShotDisplay extends FiringDisplay implements
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_FLIP_ARMS.getCmd())) {
             updateFlipArms(!ce().getArmsFlipped());
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_MODE.getCmd())) {
-            changeMode();
+            changeMode(true);
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_CALLED.getCmd())) {
             changeCalled();
         } else if (("changeSinks".equalsIgnoreCase(ev.getActionCommand()))

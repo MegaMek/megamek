@@ -2610,20 +2610,20 @@ public abstract class Mech extends Entity {
             case LOC_CLEG:
                 return new HitData(LOC_CT, hit.isRear(), hit.getEffect(),
                         hit.hitAimedLocation(), hit.getSpecCritMod(),
-                        hit.isFromFront(), hit.getGeneralDamageType(),
-                        hit.glancingMod());
+                        hit.getSpecCrit(), hit.isFromFront(),
+                        hit.getGeneralDamageType(), hit.glancingMod());
             case LOC_LLEG:
             case LOC_LARM:
                 return new HitData(LOC_LT, hit.isRear(), hit.getEffect(),
                         hit.hitAimedLocation(), hit.getSpecCritMod(),
-                        hit.isFromFront(), hit.getGeneralDamageType(),
-                        hit.glancingMod());
+                        hit.getSpecCrit(), hit.isFromFront(),
+                        hit.getGeneralDamageType(), hit.glancingMod());
             case LOC_RLEG:
             case LOC_RARM:
                 return new HitData(LOC_RT, hit.isRear(), hit.getEffect(),
                         hit.hitAimedLocation(), hit.getSpecCritMod(),
-                        hit.isFromFront(), hit.getGeneralDamageType(),
-                        hit.glancingMod());
+                        hit.getSpecCrit(), hit.isFromFront(),
+                        hit.getGeneralDamageType(), hit.glancingMod());
             case LOC_HEAD:
                 if (getCockpitType() == COCKPIT_TORSO_MOUNTED) {
                     return new HitData(LOC_NONE); // not destroyed by head loss
@@ -6328,7 +6328,20 @@ public abstract class Mech extends Entity {
                 SYSTEM_SENSORS));
         addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
                 SYSTEM_LIFE_SUPPORT));
-        setCockpitType(COCKPIT_STANDARD);
+        if (isSuperHeavy()) {
+            if (this instanceof TripodMech) {
+            setCockpitType(COCKPIT_SUPERHEAVY_TRIPOD);
+            } else if (isIndustrial()) {
+                setCockpitType(COCKPIT_SUPERHEAVY_INDUSTRIAL);
+            } else {
+                setCockpitType(COCKPIT_SUPERHEAVY);
+            }
+        } else if (this instanceof TripodMech) {
+            setCockpitType(COCKPIT_TRIPOD);
+        } else {
+            setCockpitType(COCKPIT_STANDARD);
+        }
+
         return true;
     }
 
@@ -8447,4 +8460,15 @@ public abstract class Mech extends Entity {
         return nCoolantSystemMOS;
     }
 
+
+    /**
+     * Used to determine the draw priority of different Entity subclasses.
+     * This allows different unit types to always be draw above/below other
+     * types.
+     *
+     * @return
+     */
+    public int getSpriteDrawPriority() {
+        return 6;
+    }
 }

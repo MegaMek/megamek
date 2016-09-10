@@ -1143,7 +1143,7 @@ AA Jump Infantry 292nd League Regulars|
 AA Mechanized Infantry Mechanized AA Infantry|
 Anti-Infantry Unit Second Lyran Armored Infantry|
 Anti-'Mech Jump Infantry Third Ueda Infantry|
-Skåret Assassins JàrnFòlk|
+Skaret Assassins JàrnFòlk|
 Bridge-builder Engineers Take the Time III-chi, Forty-eighth Division|
 Ceremonial Guard Otomo Guard|
 Clan Anti-Infantry Clan Jade Falcon Police|
@@ -1173,6 +1173,7 @@ Jump Laser Infantry Principes III 103rd Jump Battalion|
 Jump Support Infantry Star Corps Jump Assault Infantry|
 Mechanized Assault XCT Word of Blake Militia NBC|
 Mechanized Field Artillery 71st Mechanized|
+Minesweepers Thirty-fifth Cluster Support Force, Red Chasseurs|
 Missile Artillery Infantry Kommando Special Forces|
 Motorized Heavy Infantry Motstand/Mimir Troop|
 Motorized Infantry Dark Caste Bandits|

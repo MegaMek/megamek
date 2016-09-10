@@ -598,7 +598,7 @@ public class LosEffects {
         }
 
         if (buildingLevelsOrHexes > 2) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by buildin hexes or levels.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by building hexes or levels.");
         }
 
         if ((ultraWoods >= 1) || (lightWoods + (heavyWoods * 2) > 2)) {
@@ -792,7 +792,9 @@ public class LosEffects {
                         ai.attackPos)) {
             los.setThruBldg(game.getBoard().getBuildingAt(in.get(0)));
             //elevation differences count as building hexes passed through
-            los.buildingLevelsOrHexes += (Math.abs((ai.attackAbsHeight-ai.attackHeight) - (ai.targetAbsHeight-ai.targetHeight)));
+            los.buildingLevelsOrHexes += (Math
+                    .abs((ai.attackAbsHeight - ai.attackHeight)
+                            - (ai.targetAbsHeight - ai.targetHeight)));
         }
 
         // add non-divided line segments
@@ -807,6 +809,11 @@ public class LosEffects {
 
         // if blocked already, return that
         if (los.losModifiers(game).getValue() == TargetRoll.IMPOSSIBLE) {
+            return los;
+        }
+
+        // If there src & dst hexes are the same, nothing to do
+        if (in.size() < 2) {
             return los;
         }
 

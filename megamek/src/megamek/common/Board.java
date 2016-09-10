@@ -1351,6 +1351,7 @@ public class Board implements Serializable, IBoard {
                                 Terrains.BLDG_BASEMENT_TYPE)));
                 bldg.setBasementCollapsed(coords,
                         other.getBasementCollapsed(coords));
+                bldg.setDemolitionCharges(other.getDemolitionCharges());
             }
         } // Handle the next building.
 

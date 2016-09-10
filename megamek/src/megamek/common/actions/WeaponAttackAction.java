@@ -139,13 +139,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
     private boolean isStrafing = false;
 
     /**
-<<<<<<< HEAD
      * Boolean flag that determines if this shot was the first one by a
      * particular weapon in a strafing run.  Used to ensure that heat is only
-=======
-     * Boolean flag that determiens if this shot was the first one by a
-     * particular weapon in a strafing run. Used to ensure that heat is only
->>>>>>> master
      * added once.
      */
     protected boolean isStrafingFirstShot = false;
@@ -1492,6 +1487,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     "Targeting adjacent building.");
         }
 
+        // Store the thruBldg state, for later processing
+        toHit.setThruBldg(los.getThruBldg());
+
         // Attacks against buildings from inside automatically hit.
         if ((null != los.getThruBldg())
                 && ((target.getTargetType() == Targetable.TYPE_BUILDING)
@@ -1502,8 +1500,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     "Targeting building from inside (are you SURE this is a good idea?).");
         }
 
-        // add range mods
-        toHit.append(Compute.getRangeMods(game, ae, weaponId, target));
+        // Add range mods - If the attacker and target are in the same building
+        // & hex, range mods don't apply (and will cause the shot to fail)
+        if ((los.getThruBldg() == null)
+                || !los.getTargetPosition().equals(ae.getPosition())) {
+            toHit.append(Compute.getRangeMods(game, ae, weaponId, target));
+        }
 
         if (ae.hasQuirk(OptionsConstants.QUIRK_POS_ANTI_AIR)
                 && (target instanceof Entity)) {
@@ -2910,6 +2912,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         boolean isHoming = false;
         ToHitData toHit = null;
 
+        if ((target instanceof Entity) && ((Entity)target).isHidden()) {
+            return "Can't fire at hidden units!";
+        }
+
         if (weapon.isSquadSupportWeapon() && (ae instanceof BattleArmor)) {
             if (!((BattleArmor) ae).isTrooperActive(BattleArmor.LOC_TROOPER_1)) {
                 return "Squad support mounted weapons cannot fire if "
@@ -3503,6 +3509,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     continue;
                 }
                 WeaponAttackAction prevAttack = (WeaponAttackAction) o;
+                // Strafing attacks only count heat for first shot
+                if (prevAttack.isStrafing()
+                        && !prevAttack.isStrafingFirstShot()) {
+                    continue;
+                }
                 if ((prevAttack.getEntityId() == attackerId)
                         && (weaponId != prevAttack.getWeaponId())) {
                     Mounted prevWeapon = ae.getEquipment(prevAttack
@@ -3786,7 +3797,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 if (ae.getAltitude() > 5) {
                     return "no dive bombing above altitude 5";
                 }
-                if (ae.getAltitude() < 3) {
+                int altLoss = 0;
+                if (ae instanceof Aero) {
+                    altLoss = ((Aero) ae).getAltLossThisRound();
+                }
+                if ((ae.getAltitude() + altLoss) < 3) {
                     return "no dive bombing below altitude 3";
                 }
             }
@@ -3904,6 +3919,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
 
             losMods = los.losModifiers(game, underWater);
+        }
+
+        // If the attacker and target are in the same building & hex, they can
+        // always attack each other, TW pg 175.
+        if ((los.getThruBldg() != null)
+                && los.getTargetPosition().equals(ae.getPosition())) {
+            return null;
         }
 
         if (multiPurposeelevationHack) {
@@ -4050,8 +4072,12 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if (wtype.hasFlag(WeaponType.F_ALT_BOMB) || isStrafing) {
                 altitudeLoss = 0;
             }
+            int altLossThisRound = 0;
+            if (ae instanceof Aero) {
+                altLossThisRound = ((Aero) ae).getAltLossThisRound();
+            }
             // you cant make attacks that would lower you to zero altitude
-            if (altitudeLoss >= ae.getAltitude()) {
+            if (altitudeLoss >= (ae.getAltitude() + altLossThisRound)) {
                 return "This attack would cause too much altitude loss";
             }
 
@@ -4063,10 +4089,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     if (!(ea instanceof WeaponAttackAction)) {
                         continue;
                     }
-                    WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
-                    if ((prevAttack.getEntityId() == ae.getId())
-                            && (null != te)
-                            && (prevAttack.getTargetId() != te.getId())) {
+
+                    WeaponAttackAction prevAttk = (WeaponAttackAction) ea;
+                    if ((prevAttk.getEntityId() == ae.getId())
+                            && (prevAttk.getTargetId() != target.getTargetId())
+                            && !wtype.hasFlag(WeaponType.F_ALT_BOMB)) {
                         return "attack already declared against another target";
                     }
                 }
@@ -4188,7 +4215,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // Must target infantry in buildings from the inside.
         if (targetInBuilding && (te instanceof Infantry)
                 && (null == los.getThruBldg())) {
-            return "Attack on infantry crosses building exterior wall.";
+            return "Attack on infantry crosses building exterior wall/roof.";
         }
 
         if ((wtype.getAmmoType() == AmmoType.T_NARC)

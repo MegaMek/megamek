@@ -289,17 +289,34 @@ public class Mounted implements Serializable, RoundUpdated, PhaseUpdated {
     }
 
     /**
-     * Switches the equipment mode to the next available.
+     * Switches the equipment mode to the next or previous available.
      *
+     * @param forward
+     *            Flag that determines whether the mode should be advanced
+     *            forward or backwards.
      * @return new mode number, or <code>-1</code> if it's not available.
      */
-    public int switchMode() {
+    public int switchMode(boolean forward) {
         if (type.hasModes()) {
             int nMode = 0;
             if (pendingMode > -1) {
-                nMode = (pendingMode + 1) % type.getModesCount();
+                if (forward) {
+                    nMode = (pendingMode + 1) % type.getModesCount();
+                } else {
+                    nMode = (pendingMode - 1);
+                    if (nMode < 0) {
+                        nMode = type.getModesCount() - 1;
+                    }
+                }
             } else {
-                nMode = (mode + 1) % type.getModesCount();
+                if (forward) {
+                    nMode = (mode + 1) % type.getModesCount();
+                } else {
+                    nMode = (mode - 1);
+                    if (nMode < 0) {
+                        nMode = type.getModesCount() - 1;
+                    }
+                }
             }
             setMode(nMode);
             return nMode;

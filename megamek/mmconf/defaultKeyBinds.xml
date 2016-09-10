@@ -239,4 +239,25 @@
         <isRepeatable>false</isRepeatable>
       </KeyBind>
 
+      <KeyBind>
+        <command>prevMode</command>
+        <keyCode>90</keyCode> <!-- Shift-Z -->
+        <modifier>1</modifier>
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>nextMode</command>
+        <keyCode>67</keyCode> <!-- Shift-C -->
+        <modifier>1</modifier>
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
+      <KeyBind>
+        <command>toggleDrawLabels</command>
+        <keyCode>89</keyCode> <!-- Y -->
+        <modifier>0</modifier>
+        <isRepeatable>false</isRepeatable>
+      </KeyBind>
+
 </KeyBindings>

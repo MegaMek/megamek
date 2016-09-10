@@ -86,7 +86,7 @@
 
     <target name="compile" depends="init" description="Compile java sources into class files">
         <!-- compile -->
-        <javac debug="true" debuglevel="lines,source" target="1.7" source="1.7" destdir="${builddir}" srcdir="${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true">
+        <javac debug="true" debuglevel="lines,source" target="1.8" source="1.8" destdir="${builddir}" srcdir="${srcdir}" memoryInitialSize="512m" memoryMaximumSize="512m" fork="true" encoding="UTF-8">
             <classpath>
                 <pathelement location="${basedir}" />
                 <fileset dir="${libdir}" includes="*.jar" />
@@ -105,7 +105,7 @@
         <touch file="${timestampfile}" />
     </target>
 
-    <target name="jar" depends="unit.test" description="Generates JAR File from compiled sources">
+    <target name="jar" description="Generates JAR File from compiled sources">
         <!-- collects all files from the ${builddir} (classes) and generates the jar file in ${basedir} -->
         <jar basedir="${builddir}" jarfile="${basedir}/${jarfile}">
             <fileset dir="${propdir}" includes="**/*.properties"/>
@@ -159,15 +159,17 @@
         </delete>
     </target>
 
-    <target depends="clean, compile, jar" name="all" description="Clean, compile and build a jar"/>
+    <target depends="clean, compile, unit.test, jar" name="all" description="Clean, compile and build a jar"/>
+
+    <target depends="clean, compile, jar" name="all-no-test" description="Clean, compile and build a jar"/>
 
     <target name="compileTests" depends="compile" unless="skip.tests"  description="Compile unit tests">
         <delete dir="${dir.build.test}"/>
         <mkdir dir="${dir.build.test}"/>
-        <javac srcdir="${dir.test.src}" destdir="${dir.build.test}" includeantruntime="false" debug="true">
+        <javac srcdir="${dir.test.src}" destdir="${dir.build.test}" includeantruntime="false" debug="true" encoding="UTF-8">
             <classpath refid="classpath.compile-unittest"/>
         </javac>
-        <copy todir="${dir.build.test}">
+        <copy todir="${dir.build.test}" encoding="UTF-8">
             <fileset dir="${dir.test.src}">
                 <include name="**/*.xml"/>
             </fileset>

@@ -467,6 +467,50 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     }
                 });
 
+        // Register the action for NEXT_MODE
+        controller.registerCommandAction(KeyCommandBind.NEXT_MODE.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || display.isIgnoringEvents()
+                                || !display.isVisible()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        changeMode(true);
+                    }
+                });
+
+        // Register the action for PREV_MODE
+        controller.registerCommandAction(KeyCommandBind.PREV_MODE.cmd,
+                new CommandAction() {
+
+                    @Override
+                    public boolean shouldPerformAction() {
+                        if (!clientgui.getClient().isMyTurn()
+                                || clientgui.bv.getChatterBoxActive()
+                                || display.isIgnoringEvents()
+                                || !display.isVisible()) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                    @Override
+                    public void performAction() {
+                        changeMode(false);
+                    }
+                });
+
         // Register the action for CLEAR
         controller.registerCommandAction(KeyCommandBind.CANCEL.cmd,
                 new CommandAction() {
@@ -617,6 +661,17 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             updateClearTurret();
             updateClearWeaponJam();
             updateStrafe();
+
+            // Hidden units can only spot
+            if ((ce() != null) && ce().isHidden()) {
+                setFireEnabled(false);
+                setTwistEnabled(false);
+                setFindClubEnabled(false);
+                setFlipArmsEnabled(false);
+                setStrafeEnabled(false);
+                clientgui.mechD.wPan.toHitText
+                .setText("Hidden units are only allowed to spot!");
+            }
         } else {
             System.err.println("FiringDisplay: tried to " + //$NON-NLS-1$
                     "select non-existant entity: " + en); //$NON-NLS-1$
@@ -759,7 +814,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Fire Mode - Adds a Fire Mode Change to the current Attack Action
      */
-    protected void changeMode() {
+    protected void changeMode(boolean forward) {
         int wn = clientgui.mechD.wPan.getSelectedWeaponNum();
 
         // Do nothing we have no unit selected.
@@ -779,7 +834,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
          */
 
         // send change to the server
-        int nMode = m.switchMode();
+        int nMode = m.switchMode(forward);
         clientgui.getClient().sendModeChange(cen, wn, nMode);
 
         // notify the player
@@ -1755,6 +1810,17 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
 
         updateSearchlight();
+
+        // Hidden units can only spot
+        if ((ce() != null) && ce().isHidden()) {
+            setFireEnabled(false);
+            setTwistEnabled(false);
+            setFindClubEnabled(false);
+            setFlipArmsEnabled(false);
+            setStrafeEnabled(false);
+            clientgui.mechD.wPan.toHitText
+                    .setText("Hidden units are only allowed to spot!");
+        }
     }
 
     /**
@@ -1999,7 +2065,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             updateFlipArms(!ce().getArmsFlipped());
             // Fire Mode - More Fire Mode button handling - Rasia
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_MODE.getCmd())) {
-            changeMode();
+            changeMode(true);
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_CALLED.getCmd())) {
             changeCalled();
         } else if (("changeSinks".equalsIgnoreCase(ev.getActionCommand()))
@@ -2045,6 +2111,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 && (target != null)
                 && ce().isUsingSpotlight()
                 && ce().getCrew().isActive()
+                && !ce().isHidden()
                 && SearchlightAttackAction.isPossible(clientgui.getClient()
                         .getGame(), cen, target, null)
                 && !((ce() instanceof Tank) && (((Tank) ce()).getStunnedTurns() > 0)));

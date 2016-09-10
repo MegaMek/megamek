@@ -24,9 +24,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -1122,6 +1124,14 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         "tacops_hotload")) {
                     if (chHotLoad.isSelected() != m_mounted.isHotLoaded()) {
                         m_mounted.setHotLoad(chHotLoad.isSelected());
+                        // Set the mode too, so vehicles can switch back
+                        int numModes = m_mounted.getType().getModesCount();
+                        for (int m = 0; m < numModes; m++) {
+                            if (m_mounted.getType().getMode(m).getName()
+                                    .equals("HotLoad")) {
+                                m_mounted.setMode(m);
+                            }
+                        }
                     }
                 }
             }
@@ -1293,24 +1303,33 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                     Messages.getString("CustomMechDialog.labSpaceSuit"));
             JLabel labDEST = new JLabel(
                     Messages.getString("CustomMechDialog.labDEST"));
-            JLabel labMountain = new JLabel(
-                    Messages.getString("CustomMechDialog.labMountain"));
             JLabel labSneakCamo = new JLabel(
                     Messages.getString("CustomMechDialog.labSneakCamo"));
             JLabel labSneakIR = new JLabel(
                     Messages.getString("CustomMechDialog.labSneakIR"));
             JLabel labSneakECM = new JLabel(
                     Messages.getString("CustomMechDialog.labSneakECM"));
+            JLabel labSpec = new JLabel(
+                    Messages.getString("CustomMechDialog.labInfSpec"));
             private JTextField fldDivisor = new JTextField(3);
             JCheckBox chEncumber = new JCheckBox();
             JCheckBox chSpaceSuit = new JCheckBox();
             JCheckBox chDEST = new JCheckBox();
-            JCheckBox chMountain = new JCheckBox();
             JCheckBox chSneakCamo = new JCheckBox();
             JCheckBox chSneakIR = new JCheckBox();
             JCheckBox chSneakECM = new JCheckBox();
+            List<JCheckBox> chSpecs = new ArrayList<>(
+                    Infantry.NUM_SPECIALIZATIONS);
 
             InfantryArmorPanel() {
+                for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
+                    int spec = 1 << i;
+                    JCheckBox newSpec = new JCheckBox();
+                    newSpec.setText(Infantry.getSpecializationName(spec));
+                    newSpec.setToolTipText(Infantry.getSpecializationTooltip(spec));
+                    chSpecs.add(newSpec);
+                }
+
                 GridBagLayout g = new GridBagLayout();
                 setLayout(g);
                 add(labArmor, GBC.eol());
@@ -1322,14 +1341,17 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 add(chSpaceSuit, GBC.eol());
                 add(labDEST, GBC.std());
                 add(chDEST, GBC.eol());
-                add(labMountain, GBC.std());
-                add(chMountain, GBC.eol());
                 add(labSneakCamo, GBC.std());
                 add(chSneakCamo, GBC.eol());
                 add(labSneakIR, GBC.std());
                 add(chSneakIR, GBC.eol());
                 add(labSneakECM, GBC.std());
                 add(chSneakECM, GBC.eol());
+                add(Box.createVerticalStrut(10), GBC.eol());
+                add(labSpec, GBC.eol());
+                for (JCheckBox spec : chSpecs) {
+                    add(spec, GBC.eol());
+                }
             }
 
             public void initialize() {
@@ -1338,7 +1360,6 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 chEncumber.setSelected(inf.isArmorEncumbering());
                 chSpaceSuit.setSelected(inf.hasSpaceSuit());
                 chDEST.setSelected(inf.hasDEST());
-                chMountain.setSelected(inf.hasMountain());
                 chSneakCamo.setSelected(inf.hasSneakCamo());
                 chSneakIR.setSelected(inf.hasSneakIR());
                 chSneakECM.setSelected(inf.hasSneakECM());
@@ -1363,6 +1384,11 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                         }
                     }
                 });
+
+                for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
+                    int spec = 1 << i;
+                    chSpecs.get(i).setSelected(inf.hasSpecialization(spec));
+                }
             }
 
             public void applyChoice() {
@@ -1370,11 +1396,16 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 inf.setArmorEncumbering(chEncumber.isSelected());
                 inf.setSpaceSuit(chSpaceSuit.isSelected());
                 inf.setDEST(chDEST.isSelected());
-                inf.setMountain(chMountain.isSelected());
                 inf.setSneakCamo(chSneakCamo.isSelected());
                 inf.setSneakIR(chSneakIR.isSelected());
                 inf.setSneakECM(chSneakECM.isSelected());
-
+                int spec = 0;
+                for (int i = 0; i < Infantry.NUM_SPECIALIZATIONS; i++) {
+                    if (chSpecs.get(i).isSelected()) {
+                        spec |= 1 << i;
+                    }
+                }
+                inf.setSpecializations(spec);
             }
 
             @Override
@@ -1383,10 +1414,12 @@ public class EquipChoicePanel extends JPanel implements Serializable {
                 chEncumber.setEnabled(enabled);
                 chSpaceSuit.setEnabled(enabled);
                 chDEST.setEnabled(enabled);
-                chMountain.setEnabled(enabled);
                 chSneakCamo.setEnabled(enabled);
                 chSneakIR.setEnabled(enabled);
                 chSneakECM.setEnabled(enabled);
+                for (JCheckBox spec : chSpecs) {
+                    spec.setEnabled(enabled);
+                }
             }
         }
 

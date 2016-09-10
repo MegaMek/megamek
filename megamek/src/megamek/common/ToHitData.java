@@ -102,6 +102,14 @@ public class ToHitData extends TargetRoll {
     Coords coverLocSecondary = null;
 
     /**
+     * Keeps track of the <code>LosEffects</code> thruBldg value, which tracks
+     * if combat within a building is happening.  That is, if LoS from the
+     * attacker to target is traced  through a single building, then this value
+     * will be non-null.
+     */
+    Building thruBldg = null;
+
+    /**
      * Construct default.
      */
     public ToHitData() {
@@ -310,6 +318,14 @@ public class ToHitData extends TargetRoll {
 
     public void setCoverLocSecondary(Coords coverLoc) {
         coverLocSecondary = coverLoc;
+    }
+
+    public Building getThruBldg() {
+        return thruBldg;
+    }
+
+    public void setThruBldg(Building b) {
+        thruBldg = b;
     }
 
 }

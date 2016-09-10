@@ -64,7 +64,8 @@ public class SRMDeadFireHandler extends SRMHandler {
             double toReturn = Compute.directBlowInfantryDamage(
                     wtype.getRackSize() * 3, bDirect ? toHit.getMoS() / 3 : 0,
                     wtype.getInfantryDamageClass(),
-                    ((Infantry) target).isMechanized());
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
             if (bGlancing) {
                 toReturn /= 2;
             }

@@ -63,7 +63,8 @@ public class LBXHandler extends AmmoWeaponHandler {
             double toReturn = Compute.directBlowInfantryDamage(
                     wtype.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
                     WeaponType.WEAPON_CLUSTER_BALLISTIC,
-                    ((Infantry) target).isMechanized());
+                    ((Infantry) target).isMechanized(),
+                    toHit.getThruBldg() != null, ae.getId(), calcDmgPerHitReport);
             if (bGlancing) {
                 toReturn /= 2;
             }

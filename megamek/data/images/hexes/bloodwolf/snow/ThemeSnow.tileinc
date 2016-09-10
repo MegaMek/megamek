@@ -1,8 +1,5 @@
 # BLOODWOLF's Snow Theme
 
-super * "woods:1" "snow" "bloodwolf/snow/snow_l_woods_0.png;bloodwolf/snow/snow_l_woods_1.png;bloodwolf/snow/snow_l_woods_2.png"
-super * "woods:2" "snow" "bloodwolf/snow/snow_h_woods_0.png;bloodwolf/snow/snow_h_woods_1.png;bloodwolf/snow/snow_h_woods_2.png"
-
 base 0 "" "snow" "bloodwolf/snow/snow_0.gif"
 base 1 "" "snow" "bloodwolf/snow/snow_1.gif"
 base 2 "" "snow" "bloodwolf/snow/snow_2.gif"
@@ -10,6 +7,10 @@ base 3 "" "snow" "bloodwolf/snow/snow_3.gif"
 base 4 "" "snow" "bloodwolf/snow/snow_4.gif"
 base 5 "" "snow" "bloodwolf/snow/snow_5.gif"
 base 6 "" "snow" "bloodwolf/snow/snow_6.gif"
+base 7 "" "snow" "bloodwolf/snow/snow_6.gif"
+base 8 "" "snow" "bloodwolf/snow/snow_6.gif"
+base 9 "" "snow" "bloodwolf/snow/snow_6.gif"
+base 10 "" "snow" "bloodwolf/snow/snow_6.gif"
 base -1 "" "snow" "bloodwolf/snow/snow_-1.gif"
 base -2 "" "snow" "bloodwolf/snow/snow_-2.gif"
 base -3 "" "snow" "bloodwolf/snow/snow_-3.gif"

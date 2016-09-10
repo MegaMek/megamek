@@ -1,6 +1,55 @@
 VERSION HISTORY:
 ----------------
-v0.41.22-git
+v0.41.23-git
++ Issue #323: Artefacting drawing the boardview background
++ Bug: Bot would fire at hidden units
++ Added option to toggle displaying of unit labels, default key is Y
++ Bug: IllegalFormatConversionException in ASFBay.getUnusedString
+
+v0.41.22 (2016-08-26 03:00 UTC)
++ Issue #295: Roads not preventing swamp/rubble PSRs
++ Bug: Clicking Walk from Jump, would still plot jumping movement
++ Issue #258: Added Next/Prev Weapon Mode keybinds
++ Issue #189: AMS mounted on ASFs do not fire on the ground map
++ Issue #133: ASF strikes can have multiple targets if target is a building
++ Issue #297: Direct blow can make Tandem Charge SRMs fail
++ Issue #138: Jumping into Water and Falling deals incorrect damage
++ Issue #70: Terrain Factor Damage for Engine Explosions and Ammo Explosions
++ Issue #300: Ground to Air fire Causing Accidental Fire Check
++ Issue #303: Reporting issues with misses on units in buildings
++ Bug: Fixed IndexOutOfBoundsException in ChatLounge.customizeMechs
++ Data New Sprites and some unit fixes. (Thanks SirMegaV)
++ Feature: Adding Default Key binds.txt for MegaMek Use.
++ Issue #308: Incorrect heat when strafing with dropship bay weapons
++ Feature: Non-Infantry Weapon Damage Against Infantry changes now reported
++ Bug [#4186]: Combat within building damage for infantry now correct
++ Adjusted building floor names during deployment; starts with ground floor
++ Issue #310: Tripod cockpit weight calculations
++ Issue #25: Added support for infantry specializations
++ Issue #238: Various issues with hidden units
++ Issue #305: Strange matches when a theme doesn't exist in the tileset
++ Adjusted starting fires modifiers for buildings to match TO pg44
++ Issue #145: Infantry unimpacted by fire in buildings if above HL1
++ Issue #313: Altitude bombing: Cannot bomb more than one hex
++ Issue #314: Dive bomb resolution shows blank after first attack during game
++ Issue #160: Mechs switching hot-loading LRMs on/off during battle
++ Issue #315: Movement processing doesn't initialize current location, which
+    could lead to skid checks not being made for turns on starting hex, or could
+    lead to NPEs backing up over bridges
+ +Data: New Sprites (Infantry Project) and some new units. 
+ 	(Big Thanks to Bloodwolf for the often frustrating process.)
++ Feature: Colored pixels in Unit images are now ignored when applying camo
++ Issue #315: Nag for Lava PSR shown when moving on bridge over lava
++ Issue #306: Thread-safety issues in Princess.Precognition
++ Issue #223: ECM hex display not always updating, especially in deployment
++ Issue #180: Unit labels can now have a color border that correspondes to owner
++ Issue #180: Units now have a set draw order based on unit type.  Draw order:
+    Infantry, BA, Tank, Mech, VTOL, Aero
++ Board background image can now be scaled instead of tiled
++ Made 'BW - Default.xml' the default skin
++ Data: Adding Colonel Sanders Light Camos and reorganized Standard Camo folder.
++ New Sprites
+
 
 v0.41.21 (2016-07-31 10:00 UTC)
 + Feature: Added "Swarmed" entry to unit tooltips

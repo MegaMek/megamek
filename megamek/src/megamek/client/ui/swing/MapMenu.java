@@ -35,6 +35,8 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.common.AmmoType;
 import megamek.common.BipedMech;
+import megamek.common.Building;
+import megamek.common.Building.DemolitionCharge;
 import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -253,6 +255,12 @@ public class MapMenu extends JPopupMenu {
             });
             this.add(item);
         }
+        
+        menu = touchOffExplosivesMenu();
+        if (menu.getItemCount() > 0) {
+            this.add(menu);
+            itemCount++;
+        }
 
         menu = createSpecialHexDisplayMenu();
         if (menu.getItemCount() > 0) {
@@ -387,6 +395,27 @@ public class MapMenu extends JPopupMenu {
         return item;
     }
 
+    private JMenu touchOffExplosivesMenu() {
+        JMenu menu = new JMenu("Touch off explosives");
+
+        Building bldg = client.getBoard().getBuildingAt(coords);
+        if ((bldg != null)) {
+            for (final DemolitionCharge charge : bldg.getDemolitionCharges()) {
+                if (charge.playerId == client.getLocalPlayer().getId()
+                        && coords.equals(charge.pos)) {
+                    JMenuItem item = new JMenuItem(charge.damage + " Damage");
+                    item.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            client.sendExplodeBuilding(charge);
+                        }
+                    });
+                    menu.add(item);
+                }
+            }
+        }
+        return menu;
+    }
+
     /**
      * Create various menus related to <code>SpecialHexDisplay</code>.
      *
@@ -396,7 +425,7 @@ public class MapMenu extends JPopupMenu {
         JMenu menu = new JMenu("Special Hex Display");
 
         final Collection<SpecialHexDisplay> shdList = game.getBoard()
-                                                          .getSpecialHexDisplay(coords);
+                .getSpecialHexDisplay(coords);
 
         SpecialHexDisplay note = null;
         if (shdList != null) {
@@ -418,8 +447,7 @@ public class MapMenu extends JPopupMenu {
         } else {
             finalNote = note;
         }
-        JMenuItem item = new JMenuItem(Messages
-                                               .getString("NoteDialog.action")); //$NON-NLS-1$
+        JMenuItem item = new JMenuItem(Messages.getString("NoteDialog.action")); //$NON-NLS-1$
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 NoteDialog nd = new NoteDialog(gui.frame, finalNote);
@@ -434,8 +462,7 @@ public class MapMenu extends JPopupMenu {
         menu.add(item);
 
         if (note != null) {
-            item = new JMenuItem(Messages
-                                         .getString("NoteDialog.delete")); //$NON-NLS-1$
+            item = new JMenuItem(Messages.getString("NoteDialog.delete")); //$NON-NLS-1$
             item.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     client.sendSpecialHexDisplayDelete(coords, finalNote);

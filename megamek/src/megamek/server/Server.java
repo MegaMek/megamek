@@ -3315,9 +3315,7 @@ public class Server implements Runnable {
         message.append("Player '")
                .append(skip.getName())
                .append("' has no units to move.  You should skip his/her/your current turn with the /skip command. " +
-                       "You may want to report this error.  See the MegaMek homepage (http://megamek.sf.net/) for " +
-                       "details.");
-        sendServerChat(message.toString());
+                       "You may want to report this error at https://github.com/MegaMek/megamek/issues");
     }
 
     /**
@@ -7439,7 +7437,7 @@ public class Server implements Runnable {
                     sendServerChat("Please make sure "
                             + entity.getOwner().getName()
                             + " is running MegaMek " + MegaMek.VERSION
-                            + ", or if that is already the case, submit a bug report at http://megamek.sf.net/");
+                            + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
                 break;
@@ -7467,7 +7465,7 @@ public class Server implements Runnable {
                     sendServerChat("Please make sure "
                             + entity.getOwner().getName()
                             + " is running MegaMek " + MegaMek.VERSION
-                            + ", or if that is already the case, submit a bug report at http://megamek.sf.net/");
+                            + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
                 break;
@@ -7492,7 +7490,7 @@ public class Server implements Runnable {
                     sendServerChat("Please make sure "
                             + entity.getOwner().getName()
                             + " is running MegaMek " + MegaMek.VERSION
-                            + ", or if that is already the case, submit a bug report at http://megamek.sf.net/");
+                            + ", or if that is already the case, submit a bug report at https://github.com/MegaMek/megamek/issues");
                     return;
                 }
                 break;

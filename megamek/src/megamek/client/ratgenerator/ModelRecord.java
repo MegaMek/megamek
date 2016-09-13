@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import megamek.common.AmmoType;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.MechSummary;
@@ -58,7 +59,7 @@ public class ModelRecord extends AbstractUnitRecord {
 	private double longRange; //proportion of weapon BV with range >= 20 hexes
 	private int speed;
 	private double ammoRequirement; //used to determine suitability for raider role
-	private boolean flamer; //used to determine suitability for incindiary role
+	private boolean incendiary; //used to determine suitability for incindiary role
 	private boolean apWeapons; //used to determine suitability for anti-infantry role
 	
 	private boolean mechanizedBA;
@@ -103,9 +104,12 @@ public class ModelRecord extends AbstractUnitRecord {
         			flakBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);	        			
         		}
         		if (eq instanceof megamek.common.weapons.FlamerWeapon) {
-        			flamer = true;
+        			incendiary = true;
         			apWeapons = true;
         		}
+        		incendiary |= ((WeaponType)eq).getAmmoType() == AmmoType.T_SRM
+        				|| ((WeaponType)eq).getAmmoType() == AmmoType.T_MRM;
+        		
         		if (eq instanceof megamek.common.weapons.MGWeapon ||
         				eq instanceof megamek.common.weapons.BPodWeapon) {
         			apWeapons = true;
@@ -267,8 +271,8 @@ public class ModelRecord extends AbstractUnitRecord {
 		return ammoRequirement;
 	}
 	
-	public boolean hasFlamer() {
-		return flamer;
+	public boolean hasIncendiaryWeapon() {
+		return incendiary;
 	}
 	
 	public boolean hasAPWeapons() {
@@ -283,7 +287,8 @@ public class ModelRecord extends AbstractUnitRecord {
 		roles.clear();
 		String[] fields = str.split(",");
 		for (String role : fields) {
-			roles.add(MissionRole.parseRole(role));
+			MissionRole mr = MissionRole.parseRole(role);
+			roles.add(mr);
 		}
 	}
 	

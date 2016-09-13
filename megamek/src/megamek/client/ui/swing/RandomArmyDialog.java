@@ -406,6 +406,7 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.weightx = 0.0;
         c.weighty = 0.0;
         m_pRATGen.add(m_bGenerate, c);
+        m_bGenerate.setToolTipText(Messages.getString("RandomArmyDialog.Generate.tooltip"));
         m_bGenerate.addActionListener(this);
         
         c = new GridBagConstraints();
@@ -417,6 +418,7 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.weightx = 0.0;
         c.weighty = 0.0;
         m_pRATGen.add(m_bAddFromRAT, c);
+        m_bAddFromRAT.setToolTipText(Messages.getString("RandomArmyDialog.AddFromRAT.tooltip"));
         m_bAddFromRAT.addActionListener(this);
         
         ratModel = new RATTableModel();
@@ -1350,6 +1352,7 @@ WindowListener, TreeSelectionListener, FocusListener {
             
             JPanel panStrictness = new JPanel();
             panStrictness.add(new JLabel(Messages.getString("RandomArmyDialog.Strictness")));
+            cbRoleStrictness.setToolTipText(Messages.getString("RandomArmyDialog.Strictness.tooltip"));
     		cbRoleStrictness.addItem(Messages.getString("RandomArmyDialog.Low"));
     		cbRoleStrictness.addItem(Messages.getString("RandomArmyDialog.Medium"));
     		cbRoleStrictness.addItem(Messages.getString("RandomArmyDialog.High"));
@@ -1412,7 +1415,10 @@ WindowListener, TreeSelectionListener, FocusListener {
     		
     		for (MissionRole role : MissionRole.values()) {
     			if (role.fitsUnitType(unitType)) {
-    				JCheckBox chk = new JCheckBox(Messages.getString("MissionRole." + role.toString()));
+    				JCheckBox chk = new JCheckBox(Messages.getString("MissionRole."
+    						+ role.toString()));
+    				chk.setToolTipText(Messages.getString("MissionRole."
+    						+ role.toString() + ".tooltip"));
     				chk.setName(role.toString());
     				roleChecks.add(chk);
     			}
@@ -1600,7 +1606,8 @@ WindowListener, TreeSelectionListener, FocusListener {
 
     	public List<MissionRole> getSelectedRoles() {
     		return roleChecks.stream().filter(chk -> chk.isSelected())
-    				.map(chk -> MissionRole.parseRole(chk.getName())).collect(Collectors.toList());
+    				.map(chk -> MissionRole.parseRole(chk.getName()))
+    					.filter(role -> role != null).collect(Collectors.toList());
     	}
     	
     	public int getRoleStrictness() {

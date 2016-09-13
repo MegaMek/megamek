@@ -34,7 +34,7 @@ public enum MissionRole {
 	/* Specialized ground support roles */
 	SPECOPS, ENGINEER, MINESWEEPER, MINELAYER,
 	/* ASF roles */
-	BOMBER, ESCORT, INTERCEPTOR, GROUND_SUPPORT, STRIKE,
+	BOMBER, ESCORT, INTERCEPTOR, GROUND_SUPPORT, //unused: STRIKE,
 	/* DropShip roles */
 	ASSAULT, MECH_CARRIER, ASF_CARRIER, VEE_CARRIER, INFANTRY_CARRIER, BA_CARRIER, TROOP_CARRIER,
 	TUG, POCKET_WARSHIP,
@@ -48,10 +48,12 @@ public enum MissionRole {
 	public boolean fitsUnitType(int unitType) {
 		switch (this) {
 		case RECON:
-		case SUPPORT:
 		case CIVILIAN:
-		case SPECOPS:
 			return true;
+			
+		case SUPPORT:
+		case SPECOPS:
+			return unitType < UnitType.JUMPSHIP;
 			
 		case URBAN:
 		case ANTI_INFANTRY:
@@ -91,7 +93,7 @@ public enum MissionRole {
 		case ESCORT:
 		case INTERCEPTOR:
 		case GROUND_SUPPORT:
-		case STRIKE:
+		//case STRIKE:
 			return unitType == UnitType.AERO || unitType == UnitType.CONV_FIGHTER;
 			
 		case ASSAULT:
@@ -312,7 +314,7 @@ public enum MissionRole {
 					} else {
 						if (isSpecialized(desiredRoles, mRec)) {
 							avRating = 0;
-						} else if (mRec.hasFlamer()) {
+						} else if (mRec.hasIncendiaryWeapon()) {
 							avRating += avAdj[2];
 						} else {
 							avRating -= avAdj[2];
@@ -495,8 +497,8 @@ public enum MissionRole {
 			return INTERCEPTOR;
 		case "ground support":
 			return GROUND_SUPPORT;
-		case "strike":
-			return STRIKE;
+		//case "strike":
+			//return STRIKE;
 		case "training":
 			return TRAINING;
 		case "assault":
@@ -557,6 +559,6 @@ public enum MissionRole {
 	
 	@Override
 	public String toString() {
-		return name().toLowerCase().replace("_", " ");
+		return name().toLowerCase();
 	}
 }

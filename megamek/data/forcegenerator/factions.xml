@@ -63,125 +63,125 @@
 	</faction>
 	<faction key='CLAN' name='Clan - General' minor='false' clan='true' periphery='false'>
 		<years>2807-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction></parentFaction>
 	</faction>
 	<faction key='CBS' name='Clan Blood Spirit' minor='false' clan='true' periphery='false'>
 		<years>2807-3082</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.HW</parentFaction>
 	</faction>
 	<faction key='CB' name='Clan Burrock' minor='false' clan='true' periphery='false'>
 		<years>2807-3059,3072-3074</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.HW</parentFaction>
 	</faction>
 	<faction key='CCC' name='Clan Cloud Cobra' minor='false' clan='true' periphery='false'>
 		<years>2807-3085</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.HW</parentFaction>
 	</faction>
 	<faction key='CCO' name='Clan Coyote' minor='false' clan='true' periphery='false'>
 		<years>2807-3085</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.HW</parentFaction>
 	</faction>
 	<faction key='CFM' name='Clan Fire Mandrill' minor='false' clan='true' periphery='false'>
 		<years>2807-3073</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.HW</parentFaction>
 	</faction>
 	<faction key='CGB' name='Clan Ghost Bear' minor='false' clan='true' periphery='false'>
 		<nameChange year='3060'>Ghost Bear Dominion</nameChange>
 		<years>2807-3103</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
 	</faction>
 	<faction key='CGS' name='Clan Goliath Scorpion' minor='false' clan='true' periphery='false'>
 		<years>2807-3080</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.HW</parentFaction>
 	</faction>
 	<faction key='CHH' name='Clan Hell&apos;s Horses' minor='false' clan='true' periphery='false'>
 		<years>2807-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
 	</faction>
 	<faction key='CIH' name='Clan Ice Hellion' minor='false' clan='true' periphery='false'>
 		<years>2807-3074</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.HW</parentFaction>
 	</faction>
 	<faction key='CJF' name='Clan Jade Falcon' minor='false' clan='true' periphery='false'>
 		<years>2807-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
 	</faction>
 	<faction key='CMG' name='Clan Mongoose' minor='false' clan='true' periphery='false'>
 		<years>2807-2868</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN</parentFaction>
 	</faction>
 	<faction key='CNC' name='Clan Nova Cat' minor='false' clan='true' periphery='false'>
 		<years>2807-3143</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
 	</faction>
 	<faction key='CP' name='Clan Protectorate' minor='false' clan='true' periphery='false'>
 		<years>3138-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
 	</faction>
 	<faction key='CDS' name='Clan Sea Fox' minor='false' clan='true' periphery='false'>
 		<nameChange year='2985'>Clan Diamond Shark</nameChange>
 		<nameChange year='3100'>Clan Sea Fox</nameChange>
 		<years>2807-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
 	</faction>
 	<faction key='CSJ' name='Clan Smoke Jaguar' minor='false' clan='true' periphery='false'>
 		<years>2807-3060</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
 	</faction>
 	<faction key='CSR' name='Clan Snow Raven' minor='false' clan='true' periphery='false'>
 		<years>2807-3082</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
 	</faction>
 	<faction key='CSA' name='Clan Star Adder' minor='false' clan='true' periphery='false'>
 		<years>2807-3085</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.HW</parentFaction>
 	</faction>
 	<faction key='CSV' name='Clan Steel Viper' minor='false' clan='true' periphery='false'>
 		<years>2807-3075</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.HW</parentFaction>
 	</faction>
 	<faction key='CSL' name='Clan Stone Lion' minor='false' clan='true' periphery='false'>
 		<years>3075-3085</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.HW</parentFaction>
 	</faction>
 	<faction key='CWI' name='Clan Widowmaker' minor='false' clan='true' periphery='false'>
 		<years>2807-2834</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN</parentFaction>
 	</faction>
 	<faction key='CW' name='Clan Wolf' minor='false' clan='true' periphery='false'>
 		<years>2807-3142</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
 	</faction>
 	<faction key='CWIE' name='Clan Wolf-in-Exile' minor='false' clan='true' periphery='false'>
 		<years>3057-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
 	</faction>
 	<faction key='CWOV' name='Clan Wolverine' minor='false' clan='true' periphery='false'>
 		<years>2807-2823</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN</parentFaction>
 	</faction>
 	<faction key='CS' name='ComStar' minor='false' clan='false' periphery='false'>
@@ -237,7 +237,7 @@
 	</faction>
 	<faction key='CEI' name='Escorpión Imperio' minor='false' clan='true' periphery='false'>
 		<years>3080-3085</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CGS</parentFaction>
 	</faction>
 	<faction key='FC' name='Federated Commonwealth (Combined)' minor='false' clan='false' periphery='false'>
@@ -434,12 +434,12 @@
 	</faction>
 	<faction key='RD' name='Rasalhague Dominion' minor='false' clan='true' periphery='false'>
 		<years>3103-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
 	</faction>
 	<faction key='RA' name='Raven Alliance' minor='false' clan='true' periphery='false'>
 		<years>3083-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN.IS</parentFaction>
 	</faction>
 	<faction key='RF' name='Regulan Fiefs' minor='false' clan='false' periphery='false'>
@@ -454,12 +454,12 @@
 	</faction>
 	<faction key='RR' name='Republic Remnant' minor='false' clan='false' periphery='false'>
 		<years>3135-</years>
-		<ratingLevels>PG,TP,HS,SB</ratingLevels>
+		<ratingLevels>Triarii Protectors,Principes Guards,Hastati Sentinels,Stone&apos;s Brigade</ratingLevels>
 		<parentFaction>ROS</parentFaction>
 	</faction>
 	<faction key='ROS' name='Republic of the Sphere' minor='false' clan='false' periphery='false'>
 		<years>3081-</years>
-		<ratingLevels>PG,TP,HS,SB</ratingLevels>
+		<ratingLevels>Triarii Protectors,Principes Guards,Hastati Sentinels,Stone&apos;s Brigade</ratingLevels>
 		<parentFaction>IS</parentFaction>
 	</faction>
 	<faction key='RIM' name='Rim Collection' minor='true' clan='false' periphery='true'>
@@ -590,7 +590,7 @@
 	</faction>
 	<faction key='CWE' name='Wolf Empire' minor='false' clan='true' periphery='false'>
 		<years>3143-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CW</parentFaction>
 	</faction>
 	<faction key='WOB' name='Word of Blake' minor='false' clan='false' periphery='false'>
@@ -763,17 +763,17 @@
 	</faction>
 	<faction key='CLAN.HW' name='Clan - Homeworld' minor='false' clan='true' periphery='false'>
 		<years>3050-3085</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN</parentFaction>
 	</faction>
 	<faction key='CLAN.IS' name='Clan - Inner Sphere' minor='false' clan='true' periphery='false'>
 		<years>3050-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CLAN</parentFaction>
 	</faction>
 	<faction key='FWL.CP' name='Clan Protectorate' minor='false' clan='true' periphery='false'>
 		<years>3139-</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CP</parentFaction>
 	</faction>
 	<faction key='CC.CRC' name='Confederation Reserve Cavalry' minor='false' clan='false' periphery='false'>
@@ -933,52 +933,52 @@
 	</faction>
 	<faction key='CFM.BG' name='Kindraa Beyl-Grant' minor='false' clan='true' periphery='false'>
 		<years>2823-3066</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CFM</parentFaction>
 	</faction>
 	<faction key='CFM.FT' name='Kindraa Faraday-Tanaga' minor='false' clan='true' periphery='false'>
 		<years>2823-3073</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CFM</parentFaction>
 	</faction>
 	<faction key='CFM.Kl' name='Kindraa Kline' minor='false' clan='true' periphery='false'>
 		<years>2823-3067</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CFM</parentFaction>
 	</faction>
 	<faction key='CFM.MaC' name='Kindraa Mattila-Carrol' minor='false' clan='true' periphery='false'>
 		<years>2823-3073</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CFM</parentFaction>
 	</faction>
 	<faction key='CFM.MiKr' name='Kindraa Mick-Kreese' minor='false' clan='true' periphery='false'>
 		<years>2823-3067</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CFM</parentFaction>
 	</faction>
 	<faction key='CFM.MiKrKl' name='Kindraa Mick-Kreese-Kline' minor='false' clan='true' periphery='false'>
 		<years>3067-3073</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CFM</parentFaction>
 	</faction>
 	<faction key='CFM.P' name='Kindraa Payne' minor='false' clan='true' periphery='false'>
 		<years>2823-3066</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CFM</parentFaction>
 	</faction>
 	<faction key='CFM.PBG' name='Kindraa Payne-Beyl-Grant' minor='false' clan='true' periphery='false'>
 		<years>3066-3073</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CFM</parentFaction>
 	</faction>
 	<faction key='CFM.S' name='Kindraa Sainze' minor='false' clan='true' periphery='false'>
 		<years>2823-3073</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CFM</parentFaction>
 	</faction>
 	<faction key='CFM.SmJ' name='Kindraa Smythe-Jewel' minor='false' clan='true' periphery='false'>
 		<years>2823-2872</years>
-		<ratingLevels>PG,Sol,SL,FL,Keshik</ratingLevels>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
 		<parentFaction>CFM</parentFaction>
 	</faction>
 	<faction key='FWL.KIS' name='Knights of the Inner Sphere' minor='false' clan='false' periphery='false'>

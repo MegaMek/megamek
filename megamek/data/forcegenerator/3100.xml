@@ -310,7 +310,7 @@
 	<faction key='ROS'>
 		<pctOmni>4,8,18,28</pctOmni>
 		<pctClan>0,12,20,28</pctClan>
-		<pctSL>68,69,77,72</pctSL>
+		<pctSL>68,71,77,72</pctSL>
 		<omniMargin>6</omniMargin>
 		<techMargin>6</techMargin>
 		<upgradeMargin>3</upgradeMargin>

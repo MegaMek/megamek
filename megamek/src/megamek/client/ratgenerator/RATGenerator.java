@@ -327,13 +327,15 @@ public class RATGenerator {
 		 * if there are multiple parent factions the first match is used. Some very minor
 		 * or generic factions do not use rating adjustments, indicated by a rating level
 		 * of -1. A faction that has one rating level is a special case that always has
-		 * the indicated rating within the parent faction's system. This is primarily used
-		 * to give planetary militias and the lowest rating.
+		 * the indicated rating within the parent faction's system.
 		 */
 		
 		int ratingLevel = -1;
 		ArrayList<String> factionRatings = fRec.getRatingLevelSystem();
 		int numRatingLevels = factionRatings.size();
+		if (rating == null && fRec.getRatingLevels().size() == 1) {
+			ratingLevel = factionRatings.indexOf(fRec.getRatingLevels().get(0));
+		}
 		if (rating != null && numRatingLevels > 1) {
 			ratingLevel = factionRatings.indexOf(rating);
 		}

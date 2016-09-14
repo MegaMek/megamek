@@ -244,7 +244,7 @@
 	<faction key='MV'>
 	</faction>
 	<faction key='NIOPS'>
-		<pctSL>90</pctSL>
+		<pctSL>90,90,90,90,90</pctSL>
 		<salvage pct='5'>FWL:10,MH:1</salvage>
 	</faction>
 	<faction key='OC'>

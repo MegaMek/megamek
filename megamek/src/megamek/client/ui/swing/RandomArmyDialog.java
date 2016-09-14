@@ -1078,9 +1078,11 @@ WindowListener, TreeSelectionListener, FocusListener {
     		// Get rating levels from parent faction(s)
     		ratingLevels = fRec.getRatingLevelSystem();
     	}
-		for (int i = ratingLevels.size() - 1; i >= 0; i--) {
-			m_chRating.addItem(ratingLevels.get(i));
-		}
+    	if (ratingLevels.size() > 1) {
+			for (int i = ratingLevels.size() - 1; i >= 0; i--) {
+				m_chRating.addItem(ratingLevels.get(i));
+			}
+    	}
 		if (current < 0 && m_chRating.getItemCount() > 0) {
 			m_chRating.setSelectedIndex(0);
 		} else {

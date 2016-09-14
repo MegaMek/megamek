@@ -307,7 +307,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='NIOPS'>
-		<pctSL>95</pctSL>
+		<pctSL>95,95,95,95,95</pctSL>
 		<salvage pct='5'>FWL:10,MH:1</salvage>
 	</faction>
 	<faction key='OA'>
@@ -847,9 +847,9 @@
 		<salvage pct='7'></salvage>
 	</faction>
 	<faction key='SL.2'>
-		<pctOmni>12</pctOmni>
-		<pctClan>42</pctClan>
-		<pctSL>80</pctSL>
+		<pctOmni>6,12,23</pctOmni>
+		<pctClan>14,42,50</pctClan>
+		<pctSL>60,80,50</pctSL>
 		<salvage pct='8'>CJF:5,</salvage>
 	</faction>
 	<faction key='MERC.pm'>

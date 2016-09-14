@@ -337,7 +337,7 @@
 		<salvage pct='5'></salvage>
 	</faction>
 	<faction key='NIOPS'>
-		<pctSL>27</pctSL>
+		<pctSL>27,27,27,27,27</pctSL>
 		<omniMargin>3</omniMargin>
 		<techMargin>3</techMargin>
 		<salvage pct='5'>FWL:10,MH:2,RCM:2</salvage>

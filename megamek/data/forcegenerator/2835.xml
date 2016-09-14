@@ -235,7 +235,7 @@
 		<salvage pct='6'>CC:10,MOC:2,OA:2,LA:10,FWL:10,FS:10,DC:10,TC:2</salvage>
 	</faction>
 	<faction key='NIOPS'>
-		<pctSL>90</pctSL>
+		<pctSL>90,90,90,90,90</pctSL>
 		<salvage pct='5'>FWL:10</salvage>
 	</faction>
 	<faction key='OA'>

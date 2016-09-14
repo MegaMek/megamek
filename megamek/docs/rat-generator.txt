@@ -129,3 +129,34 @@ Hell's Horses example:
 'salvage' element: the 'pct' attribute indicates what percentage of the generated table should be taken up by the salvage section. This is normally 5% for IS factions during times of relative peace, going up to 6-7% in times of more intense war. Pirates and bandit kingdoms are somewhat higher. For Clan factions it normally stays at 10%, though Clans Wolf and Jade Falcon go up to 20% in the latter have of the 3050s due to the Harvest Trials and level out. The text content is a comma-separated list of factions and proportions in the format FKEY:WT. Example: if the text content is "LA:1,FS:2" the salvage section will be split between the Lyran Alliance/Commonwealth and the Federated Suns, with FedSuns salvage twice as likely.
 
 'weightDistribution' element: determines the proportion of weight classes when generating a mixed weight table. Values are listed from lowest to highest. Ultra-lights and superheavies are so rare that they are grouped with light and assault, respectively. If not given, this value is inherited from the parent faction(s). The nodes shown in this example were copied from the generic IS node for purposes of illustration.
+
+The units section has a chassis element for each unit available in that year. Variants are listed inside the chassis node.
+
+Example: Shadow Cat from 3055
+
+	<chassis name='Shadow Cat' unitType='Mek' omni='Clan'>
+		<availability>CCC:5,CSR:5,CDS:4,CW:4,CSV:5,CNC:8,CFM:5,CSJ:6,CJF:3,CB:5</availability>
+		<model name='A'>
+			<roles>recon</roles>
+			<availability>CSR:3,CW:3,General:6</availability>
+		</model>
+		<model name='Prime'>
+			<roles>recon</roles>
+			<availability>CSR:3,General:8</availability>
+		</model>
+		<model name='B'>
+			<roles>recon</roles>
+			<availability>CSR:8,CW:3,General:6</availability>
+		</model>
+	</chassis>
+
+'name' attribute: the chassis name as used by MegaMek
+'unitType' attribute: Can be one of the following values: Mek, Tank, BattleArmor, Infantry, ProtoMek, VTOL, Naval, ConventionalFighter, Aero, Small Craft, Dropship, Jumpship, Warship. Needed to distinguish between different unit types that have the same name, such as Centurion or Eagle (both of which can apply to either a Mek or an ASF).
+'omni' attribute: can be either 'Clan' or 'IS'. For non-omnis it is absent. Needed to distinguish between omni and fixed-configuration variants, since omnis taken as salvage/isorla use the operating faction to determine which configuration is used. Clan and IS must be stated to distinguish between the Clan Battle Cobra and the CS copy.
+'availability' node: a comma-separated list of availability codes for the current year. The format is FKEY:AV[+|-][:YEAR], in which FKEY is the faction key, AV is the rating from 1-10, + or - (optional) adjusts av based on rating, and :YEAR optionally provides an introduction year for the faction. If given, the designated unit will not appear in the year range before the one given. This is used frequently for the reformation of the Free Worlds League. Units that were in use by one or more of the former Free Worlds states but not available to the former FWL independents have FWL:(av rating):3139 in 3135.xml, which prevents them from showing up for FWL during 3135-3138. A value of zero is a special case which indicates unavailable even if available to a parent faction. Sometimes a unit may be available to all IS factions except X, for example, and it is easier to add "IS:6,X:0" than to list all IS factions.
+
+'model' node: There is one model node for each variant in use during the year range.
+    'name' attribute: the name of the variant. The full unit name is chassis name + model name,separated by a space.
+    'role' element: comma-separated list of roles the variant was designed for. Supported values are recon, fire support, spotter, urban, infantry support, cavalry, raider, incindiary, ew support, artillery, missile artillery, anti-aircraft, anti-infantry, apc, spec ops, cargo, support, bomber, escort, interceptor, ground support, training, assault, mech carrier, asf carrier, vee carrier, infantry carrier, ba carrier, tug, troop carrier, pocket ws, corvette, destroyer, frigate, cruiser, battleship, engineer, marine, mountaineer, xct, paratrooper, anti-mek, mechanized ba, field gun, civilian, minesweeper, minelayer
+    'deployedWith' element: not used by RAT Generator, but provided for utilities that might want to use RAT Generator as a back end to build larger forces. Lists other units this one is frequently deployed with.
+    'availability' element: same as in the chassis element

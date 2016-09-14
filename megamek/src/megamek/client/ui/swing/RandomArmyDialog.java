@@ -1381,7 +1381,7 @@ WindowListener, TreeSelectionListener, FocusListener {
     		
     		switch(unitType) {
     		case UnitType.MEK:
-    			addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_LIGHT,
+    			addWeightClasses(panWeightClass, EntityWeightClass.WEIGHT_ULTRA_LIGHT,
     					EntityWeightClass.WEIGHT_COLOSSAL, false);
     			break;
     		case UnitType.TANK:
@@ -1567,7 +1567,13 @@ WindowListener, TreeSelectionListener, FocusListener {
     				chk.setEnabled(cbWeightClass.getSelectedIndex() == 0);
     			}
     		});
-    		cbWeightClass.setSelectedIndex(all?0 : 1);
+    		if (all) {
+    			cbWeightClass.setSelectedIndex(0);
+    		} else if (start > EntityWeightClass.WEIGHT_ULTRA_LIGHT) {
+    			cbWeightClass.setSelectedIndex(1);
+    		} else {
+    			cbWeightClass.setSelectedIndex(2);
+    		}
     	}
     	
     	private void addNetworkButton(JPanel panel, GridBagConstraints constraints,

@@ -22,7 +22,6 @@ import megamek.common.AmmoType;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.MechSummary;
-import megamek.common.UnitType;
 import megamek.common.WeaponType;
 
 /**
@@ -203,28 +202,6 @@ public class ModelRecord extends AbstractUnitRecord {
 		return weightClass;
 	}
 	
-	/**
-	 * 
-	 * @return lightest weight class available to unit type; support vehicles are converted
-	 * 			grouped with standard for RATGenerator purposes and have their weight classes
-	 * 			converted
-	 */
-	public static int getWeightClassOffset(int unitType) {
-		switch(unitType) {
-		case UnitType.BATTLE_ARMOR:
-		case UnitType.INFANTRY:
-			return 0;
-		case UnitType.SMALL_CRAFT:
-			return UnitType.SMALL_CRAFT;
-		case UnitType.DROPSHIP:
-			return EntityWeightClass.WEIGHT_SMALL_DROP;
-		case UnitType.JUMPSHIP:
-		case UnitType.WARSHIP:
-			return EntityWeightClass.WEIGHT_SMALL_WAR;
-		default:
-			return EntityWeightClass.WEIGHT_LIGHT;
-		}
-	}
 	
 	public boolean isClan() {
 		return clan;

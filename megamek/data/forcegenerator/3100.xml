@@ -34,7 +34,7 @@
 	</faction>
 	<faction key='CLAN'>
 		<techMargin>6</techMargin>
-		<weightDistribution era='3100' unitType='Mek'>2,3,3,1,0</weightDistribution>
+		<weightDistribution era='3100' unitType='Mek'>2,3,3,1</weightDistribution>
 		<weightDistribution era='3100' unitType='Tank'>4,1,3,2</weightDistribution>
 		<weightDistribution era='3100' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
@@ -46,7 +46,7 @@
 		<pctSL unitType='Vehicle'>85,85,55,55,55</pctSL>
 		<techMargin>6</techMargin>
 		<salvage pct='10'>CHH:2,CW:9,LA:2,CNC:10,CJF:1,DC:10</salvage>
-		<weightDistribution era='3100' unitType='Mek'>2,3,4,2,0</weightDistribution>
+		<weightDistribution era='3100' unitType='Mek'>2,3,4,2</weightDistribution>
 		<weightDistribution era='3100' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
 	<faction key='CHH'>
@@ -111,7 +111,7 @@
 		<techMargin>6</techMargin>
 		<upgradeMargin>3</upgradeMargin>
 		<salvage pct='5'>CDS:1,LA:2,ROS:6,FS:7,CGB:10,</salvage>
-		<weightDistribution era='3100' unitType='Mek'>4,2,3,1,0</weightDistribution>
+		<weightDistribution era='3100' unitType='Mek'>4,2,3,1</weightDistribution>
 		<weightDistribution era='3100' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
 	<faction key='DA'>
@@ -184,7 +184,7 @@
 		<techMargin>6</techMargin>
 		<upgradeMargin>3</upgradeMargin>
 		<salvage pct='0'></salvage>
-		<weightDistribution era='3100' unitType='Mek'>3,4,2,1,0</weightDistribution>
+		<weightDistribution era='3100' unitType='Mek'>3,4,2,1</weightDistribution>
 		<weightDistribution era='3100' unitType='Tank'>3,4,3,1</weightDistribution>
 		<weightDistribution era='3100' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
@@ -201,7 +201,7 @@
 		<techMargin>6</techMargin>
 		<upgradeMargin>3</upgradeMargin>
 		<salvage pct='5'>DTA:2,RT:1,CDS:1,CW:1,RIM:1,ROS:10,FWL:6,CJF:5,Periphery:1,CGB:3,DC:2,</salvage>
-		<weightDistribution era='3100' unitType='Mek'>4,6,7,3,0</weightDistribution>
+		<weightDistribution era='3100' unitType='Mek'>4,6,7,3</weightDistribution>
 		<weightDistribution era='3100' unitType='Tank'>4,6,7,3</weightDistribution>
 	</faction>
 	<faction key='MOC'>
@@ -265,7 +265,7 @@
 		<omniMargin>6</omniMargin>
 		<techMargin>6</techMargin>
 		<upgradeMargin>3</upgradeMargin>
-		<weightDistribution era='3100' unitType='Mek'>6,5,3,1,0</weightDistribution>
+		<weightDistribution era='3100' unitType='Mek'>6,5,3,1</weightDistribution>
 		<weightDistribution era='3100' unitType='Tank'>3,4,2,1</weightDistribution>
 		<weightDistribution era='3100' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
@@ -283,7 +283,7 @@
 		<pctSL unitType='Vehicle'>85,85,55,55,55</pctSL>
 		<techMargin>6</techMargin>
 		<salvage pct='10'>CHH:1,CDS:1,CW:9,LA:1,CNC:6,DC:4</salvage>
-		<weightDistribution era='3100' unitType='Mek'>2,3,4,2,0</weightDistribution>
+		<weightDistribution era='3100' unitType='Mek'>2,3,4,2</weightDistribution>
 		<weightDistribution era='3100' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
 	<faction key='RA'>
@@ -395,7 +395,7 @@
 		<pctSL unitType='Aero'>20,30,50,60,80</pctSL>
 		<techMargin>6</techMargin>
 		<salvage pct='5'></salvage>
-		<weightDistribution era='3100' unitType='Mek'>5,5,3,1,0</weightDistribution>
+		<weightDistribution era='3100' unitType='Mek'>5,5,3,1</weightDistribution>
 		<weightDistribution era='3100' unitType='Tank'>5,5,2,1</weightDistribution>
 	</faction>
 	<faction key='DC.ALAG'>

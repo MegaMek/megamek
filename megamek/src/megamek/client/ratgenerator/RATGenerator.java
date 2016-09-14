@@ -406,26 +406,36 @@ public class RATGenerator {
 		 */
 
 		if (weightClasses.size() > 1) {
+			// Get standard weight class distribution for faction
 			ArrayList<Integer> wcd = fRec.getWeightDistribution(early, unitType);
+			
 			if (wcd != null && wcd.size() > 0) {
-				double total = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
-				List<Integer> wcOffsets = weightClasses.stream()
-						.map(wc -> wc - ModelRecord.getWeightClassOffset(unitType))
-						.collect(Collectors.toList());
-				HashMap<Integer,ArrayList<ModelRecord>> wcMap = new HashMap<>();				
-				for (ModelRecord mRec : unitWeights.keySet()) {
-					Integer key = mRec.getWeightClass() - ModelRecord.getWeightClassOffset(unitType);
-					wcMap.computeIfAbsent(key, k -> new ArrayList<ModelRecord>())
-						.add(mRec);
-				}
-				int wdTotal = wcOffsets.stream()
-						.mapToInt(wc -> wcd.get(wc)).sum();
-				for (int wc : wcMap.keySet()) {
-					double ratio = wcMap.get(wc).stream()
-							.mapToDouble(mKey -> unitWeights.get(mKey)).sum() / total;
-					double adj = wcd.get(wc) / (ratio * wdTotal);
-					for (ModelRecord mRec : wcMap.get(wc)) {
-						unitWeights.put(mRec, unitWeights.get(mRec) * adj);
+				/* Ultra-light and superheavy are too rare to warrant their own values and
+				 * for weight class distribution purposes are grouped with light and
+				 * assault, respectively.
+				 */
+				final int[] wcdIndex = {0, 0, 1, 2, 3, 3};
+				//Find the totals of the weight for the generated table 
+				double totalMRWeight = unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();
+				//Find the sum of the weight distribution values for all weight classes in use.
+				int totalWCDWeights = weightClasses.stream().mapToInt(wc -> wcd.get(wcdIndex[wc])).sum();
+				
+				if (totalWCDWeights > 0) {
+					//Group all the models of the generated table by weight class.
+					java.util.function.Function<ModelRecord,Integer> grouper =
+							mr -> wcdIndex[mr.getWeightClass()];
+					Map<Integer,List<ModelRecord>> weightGroups = unitWeights.keySet().stream()
+							.collect(Collectors.groupingBy(grouper));
+					
+					/* Go through the weight class groups and adjust the table weights so the
+					 * total of each group corresponds to the distribution for this faction. */
+					for (int i : weightGroups.keySet()) {
+						double totalWeight = weightGroups.get(i).stream()
+								.mapToDouble(mr->unitWeights.get(mr)).sum();
+						if (totalWeight > 0) {
+							double adj = totalMRWeight * wcd.get(i) / (totalWeight * totalWCDWeights);
+							weightGroups.get(i).forEach(mr -> unitWeights.merge(mr, adj, (x,y) -> x*y));
+						}
 					}
 				}
 			}

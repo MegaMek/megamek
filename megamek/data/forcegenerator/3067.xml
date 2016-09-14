@@ -49,7 +49,7 @@
 		<salvage pct='6'>LA:10,FWL:9</salvage>
 	</faction>
 	<faction key='CLAN'>
-		<weightDistribution era='3067' unitType='Mek'>2,3,3,1,0</weightDistribution>
+		<weightDistribution era='3067' unitType='Mek'>2,3,3,1</weightDistribution>
 		<weightDistribution era='3067' unitType='Tank'>4,1,3,2</weightDistribution>
 		<weightDistribution era='3067' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
@@ -87,7 +87,7 @@
 		<pctClan unitType='Vehicle'>10,10,40,40,40</pctClan>
 		<pctSL unitType='Vehicle'>90,90,60,60,60</pctSL>
 		<salvage pct='10'>CSA:10,CHH:1,CCC:2,CIH:6,CSR:2,CDS:2,CW:1,CSV:3,CFM:1,CGS:2,CJF:6</salvage>
-		<weightDistribution era='3067' unitType='Mek'>2,3,4,2,0</weightDistribution>
+		<weightDistribution era='3067' unitType='Mek'>2,3,4,2</weightDistribution>
 		<weightDistribution era='3067' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
 	<faction key='CFM'>
@@ -105,7 +105,7 @@
 		<pctClan unitType='Vehicle'>15,15,45,45,45</pctClan>
 		<pctSL unitType='Vehicle'>85,85,55,55,55</pctSL>
 		<salvage pct='10'>CHH:2,CW:7,FRR:1,CNC:5,CJF:1,DC:10</salvage>
-		<weightDistribution era='3067' unitType='Mek'>2,3,4,2,0</weightDistribution>
+		<weightDistribution era='3067' unitType='Mek'>2,3,4,2</weightDistribution>
 		<weightDistribution era='3067' unitType='Tank'>3,1,3,2</weightDistribution>
 	</faction>
 	<faction key='CGS'>
@@ -134,7 +134,7 @@
 		<pctClan unitType='Vehicle'>15,15,40,40,40</pctClan>
 		<pctSL unitType='Vehicle'>85,85,60,60,60</pctSL>
 		<salvage pct='10'>CSA:7,CHH:5,CCC:1,CSR:2,CDS:5,CW:2,CSV:2,CFM:8,CGS:6,CCO:4,CJF:10,</salvage>
-		<weightDistribution era='3067' unitType='Mek'>5,4,2,1,0</weightDistribution>
+		<weightDistribution era='3067' unitType='Mek'>5,4,2,1</weightDistribution>
 		<weightDistribution era='3067' unitType='Tank'>5,2,3,1</weightDistribution>
 	</faction>
 	<faction key='CJF'>
@@ -218,7 +218,7 @@
 		<pctClan>0,5,14,20,26</pctClan>
 		<pctSL>10,22,28,40,59</pctSL>
 		<salvage pct='7'>OA:1,LA:10,FRR:1,FWL:1,CM:2,WOB:1,FS:1,CGB:7,</salvage>
-		<weightDistribution era='3067' unitType='Mek'>4,2,3,1,0</weightDistribution>
+		<weightDistribution era='3067' unitType='Mek'>4,2,3,1</weightDistribution>
 		<weightDistribution era='3067' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
 	<faction key='DTA'>
@@ -268,7 +268,7 @@
 		<pctClan>0,0,0,0,0</pctClan>
 		<pctSL>0,4,6,11,20</pctSL>
 		<salvage pct='0'></salvage>
-		<weightDistribution era='3067' unitType='Mek'>3,4,2,1,0</weightDistribution>
+		<weightDistribution era='3067' unitType='Mek'>3,4,2,1</weightDistribution>
 		<weightDistribution era='3067' unitType='Tank'>3,4,3,1</weightDistribution>
 		<weightDistribution era='3067' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
@@ -280,7 +280,7 @@
 		<pctClan>0,5,6,13,15</pctClan>
 		<pctSL>10,27,35,49,58</pctSL>
 		<salvage pct='7'>FRR:2,FWL:10,CM:1,ARDC:1,CJF:1,DC:6</salvage>
-		<weightDistribution era='3067' unitType='Mek'>4,6,7,3,0</weightDistribution>
+		<weightDistribution era='3067' unitType='Mek'>4,6,7,3</weightDistribution>
 		<weightDistribution era='3067' unitType='Tank'>4,6,7,3</weightDistribution>
 	</faction>
 	<faction key='MOC'>
@@ -318,11 +318,11 @@
 		<pctClan unitType='Aero'>0,0,0,0,0</pctClan>
 		<pctSL unitType='Aero'>0,0,5,20,40</pctSL>
 		<salvage pct='5'>CSR:2,FS:1,DC:7,</salvage>
-		<weightDistribution era='3067' unitType='Mek'>6,6,3,1,0</weightDistribution>
+		<weightDistribution era='3067' unitType='Mek'>6,6,3,1</weightDistribution>
 		<weightDistribution era='3067' unitType='Tank'>5,5,2,1</weightDistribution>
 	</faction>
 	<faction key='Periphery'>
-		<weightDistribution era='3067' unitType='Mek'>6,5,3,1,0</weightDistribution>
+		<weightDistribution era='3067' unitType='Mek'>6,5,3,1</weightDistribution>
 		<weightDistribution era='3067' unitType='Tank'>3,4,2,1</weightDistribution>
 		<weightDistribution era='3067' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>

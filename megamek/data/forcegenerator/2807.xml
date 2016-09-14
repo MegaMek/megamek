@@ -61,7 +61,7 @@
 	</faction>
 	<faction key='DC'>
 		<salvage pct='6'>CC:1,LA:7,FS:10</salvage>
-		<weightDistribution era='2807' unitType='Mek'>4,2,3,1,0</weightDistribution>
+		<weightDistribution era='2807' unitType='Mek'>4,2,3,1</weightDistribution>
 		<weightDistribution era='2807' unitType='Tank'>4,2,3,1</weightDistribution>
 	</faction>
 	<faction key='EF'>
@@ -71,7 +71,7 @@
 	</faction>
 	<faction key='FWL'>
 		<salvage pct='6'>CC:8,LA:10</salvage>
-		<weightDistribution era='2807' unitType='Mek'>4,5,3,1,0</weightDistribution>
+		<weightDistribution era='2807' unitType='Mek'>4,5,3,1</weightDistribution>
 		<weightDistribution era='2807' unitType='Tank'>3,4,3,1</weightDistribution>
 	</faction>
 	<faction key='IP'>
@@ -79,13 +79,13 @@
 	</faction>
 	<faction key='IS'>
 		<salvage pct='0'></salvage>
-		<weightDistribution era='2807' unitType='Mek'>3,4,2,1,0</weightDistribution>
+		<weightDistribution era='2807' unitType='Mek'>3,4,2,1</weightDistribution>
 		<weightDistribution era='2807' unitType='Tank'>3,4,3,1</weightDistribution>
 		<weightDistribution era='2807' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>
 	<faction key='LA'>
 		<salvage pct='6'>FWL:10,Periphery:2,DC:9</salvage>
-		<weightDistribution era='2807' unitType='Mek'>4,6,7,3,0</weightDistribution>
+		<weightDistribution era='2807' unitType='Mek'>4,6,7,3</weightDistribution>
 		<weightDistribution era='2807' unitType='Tank'>4,6,7,3</weightDistribution>
 	</faction>
 	<faction key='MOC'>
@@ -99,13 +99,13 @@
 	</faction>
 	<faction key='OA'>
 		<salvage pct='6'>FS:10,DC:9</salvage>
-		<weightDistribution era='2807' unitType='Mek'>6,6,3,1,0</weightDistribution>
+		<weightDistribution era='2807' unitType='Mek'>6,6,3,1</weightDistribution>
 		<weightDistribution era='2807' unitType='Tank'>5,5,2,1</weightDistribution>
 	</faction>
 	<faction key='PP'>
 	</faction>
 	<faction key='Periphery'>
-		<weightDistribution era='2807' unitType='Mek'>6,5,3,1,0</weightDistribution>
+		<weightDistribution era='2807' unitType='Mek'>6,5,3,1</weightDistribution>
 		<weightDistribution era='2807' unitType='Tank'>3,4,2,1</weightDistribution>
 		<weightDistribution era='2807' unitType='Aero'>1,1,1</weightDistribution>
 	</faction>

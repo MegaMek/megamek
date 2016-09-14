@@ -376,7 +376,7 @@
 	<faction key='ROS'>
 		<pctOmni>2,5,16,25</pctOmni>
 		<pctClan>0,10,18,26</pctClan>
-		<pctSL>60,63,76,70</pctSL>
+		<pctSL>60,66,76,70</pctSL>
 		<omniMargin>3</omniMargin>
 		<techMargin>3</techMargin>
 		<salvage pct='9'>CC:9,LA:10,MSC:3,FS:10,DC:6,</salvage>

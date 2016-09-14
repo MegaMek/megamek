@@ -123,7 +123,7 @@ WindowListener, TreeSelectionListener, FocusListener {
     private JButton m_bAdvSearch = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearch"));
     private JButton m_bAdvSearchClear = new JButton(Messages.getString("RandomArmyDialog.AdvancedSearchClear"));
     private JButton m_bGenerate = new JButton(Messages.getString("RandomArmyDialog.Generate"));
-    private JButton m_bAddFromRAT = new JButton(Messages.getString("RandomArmyDialog.AddSelected"));
+    private JButton m_bAddToForce = new JButton(Messages.getString("RandomArmyDialog.AddToForce"));
 
     private JSplitPane m_pSplit;
 
@@ -417,9 +417,9 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.anchor = GridBagConstraints.EAST;
         c.weightx = 0.0;
         c.weighty = 0.0;
-        m_pRATGen.add(m_bAddFromRAT, c);
-        m_bAddFromRAT.setToolTipText(Messages.getString("RandomArmyDialog.AddFromRAT.tooltip"));
-        m_bAddFromRAT.addActionListener(this);
+        m_pRATGen.add(m_bAddToForce, c);
+        m_bAddToForce.setToolTipText(Messages.getString("RandomArmyDialog.AddToForce.tooltip"));
+        m_bAddToForce.addActionListener(this);
         
         ratModel = new RATTableModel();
         m_lRAT = new JTable();
@@ -824,7 +824,7 @@ WindowListener, TreeSelectionListener, FocusListener {
         	layout.show(m_pUnitTypeOptions, (String)m_chUnitType.getSelectedItem());
         } else if (ev.getSource().equals(m_bGenerate)) {
         	generateRAT();
-        } else if (ev.getSource().equals(m_bAddFromRAT)) {
+        } else if (ev.getSource().equals(m_bAddToForce)) {
             for(int sel : m_lRAT.getSelectedRows()) {
                 MechSummary ms = generatedRAT.getMechSummary(sel);
                 if (ms != null) {

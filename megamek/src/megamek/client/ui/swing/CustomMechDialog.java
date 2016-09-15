@@ -923,6 +923,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             optionComp.setSelected(option.stringValue());
         }
 
+        if ("range_master".equals(option.getName())) { //$NON-NLS-1$
+            optionComp.addValue(Crew.RANGEMASTER_NONE);
+            optionComp.addValue(Crew.RANGEMASTER_MEDIUM);
+            optionComp.addValue(Crew.RANGEMASTER_LONG);
+            optionComp.addValue(Crew.RANGEMASTER_EXTREME);
+            optionComp.setSelected(option.stringValue());
+        }
+
         gridbag.setConstraints(optionComp, c);
         panOptions.add(optionComp);
 

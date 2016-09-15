@@ -9279,6 +9279,18 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getShortRangeModifier() {
         int mod = 0;
+        if (getCrew().getOptions().stringOption("range_master").equals(Crew.RANGEMASTER_MEDIUM)) {
+            mod = 2;
+        }
+        if (getCrew().getOptions().stringOption("range_master").equals(Crew.RANGEMASTER_LONG)) {
+            mod = 4;
+        }
+        if (getCrew().getOptions().stringOption("range_master").equals(Crew.RANGEMASTER_EXTREME)) {
+            mod = 6;
+        }
+        if ((getCrew().getOptions().booleanOption("sniper")) && (mod > 0)) {
+            mod = mod / 2;
+        }
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_S)) {
             mod--;
         }
@@ -9296,7 +9308,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getMediumRangeModifier() {
         int mod = 2;
-        if (getCrew().getOptions().booleanOption("sniper")) {
+        if (getCrew().getOptions().stringOption("range_master").equals(Crew.RANGEMASTER_MEDIUM)) {
+            mod = 0;
+        }
+        if ((getCrew().getOptions().booleanOption("sniper")) && (mod > 0)) {
             mod = mod / 2;
         }
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_M)) {
@@ -9310,7 +9325,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getLongRangeModifier() {
         int mod = 4;
-        if (getCrew().getOptions().booleanOption("sniper")) {
+        if (getCrew().getOptions().stringOption("range_master").equals(Crew.RANGEMASTER_LONG)) {
+            mod = 0;
+        }
+        if ((getCrew().getOptions().booleanOption("sniper")) && (mod > 0)) {
             mod = mod / 2;
         }
         if (hasQuirk(OptionsConstants.QUIRK_POS_IMP_TARG_L)) {
@@ -9330,7 +9348,10 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getExtremeRangeModifier() {
         int mod = 6;
-        if (getCrew().getOptions().booleanOption("sniper")) {
+        if (getCrew().getOptions().stringOption("range_master").equals(Crew.RANGEMASTER_EXTREME)) {
+            mod = 0;
+        }
+        if ((getCrew().getOptions().booleanOption("sniper")) && (mod > 0)) {
             mod = mod / 2;
         }
         return mod;

@@ -71,7 +71,7 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, "multi_tasker", false); //$NON-NLS-1$
         addOption(adv, "oblique_artillery", false); //$NON-NLS-1$
         addOption(adv, "oblique_attacker", false); //$NON-NLS-1$
-        // addOption(adv, "range_master", false); //$NON-NLS-1$
+        addOption(adv, "range_master", new Vector<String>()); //$NON-NLS-1$
         addOption(adv, "sandblaster", false); //$NON-NLS-1$
         // addOption(adv, "sharpshooter", false); //$NON-NLS-1$
         addOption(adv, "sniper", false); //$NON-NLS-1$

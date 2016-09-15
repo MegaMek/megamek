@@ -9359,9 +9359,6 @@ public abstract class Entity extends TurnOrdered implements Transporter,
 
     public int getLOSRangeModifier() {
         int mod = 8;
-        if (getCrew().getOptions().booleanOption("sniper")) {
-            mod = mod / 2;
-        }
         return mod;
     }
 

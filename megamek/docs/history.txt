@@ -5,6 +5,7 @@ v0.41.23-git
 + Bug: Bot would fire at hidden units
 + Added option to toggle displaying of unit labels, default key is Y
 + Bug: IllegalFormatConversionException in ASFBay.getUnusedString
++ Issue #328: Out of control ASF has the "launch" button available
 
 v0.41.22 (2016-08-26 03:00 UTC)
 + Issue #295: Roads not preventing swamp/rubble PSRs

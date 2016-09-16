@@ -2278,8 +2278,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         }
 
         setLaunchEnabled((ce.getLaunchableFighters().size() > 0)
-                         || (ce.getLaunchableSmallCraft().size() > 0)
-                         || (ce.getLaunchableDropships().size() > 0));
+                || (ce.getLaunchableSmallCraft().size() > 0)
+                || (ce.getLaunchableDropships().size() > 0));
 
     }
 
@@ -3376,7 +3376,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
                 getBtn(MoveCommand.MOVE_MORE).setEnabled(true);
             getBtn(MoveCommand.MOVE_NEXT).setEnabled(true);
             setForwardIniEnabled(true);
-            getBtn(MoveCommand.MOVE_LAUNCH).setEnabled(true);
+            setLaunchEnabled((a.getLaunchableFighters().size() > 0)
+                    || (a.getLaunchableSmallCraft().size() > 0)
+                    || (a.getLaunchableDropships().size() > 0));
         }
         return;
     }
@@ -3400,7 +3402,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             butDone.setEnabled(true);
             getBtn(MoveCommand.MOVE_NEXT).setEnabled(true);
             setForwardIniEnabled(true);
-            getBtn(MoveCommand.MOVE_LAUNCH).setEnabled(true);
+            setLaunchEnabled((a.getLaunchableFighters().size() > 0)
+                    || (a.getLaunchableSmallCraft().size() > 0)
+                    || (a.getLaunchableDropships().size() > 0));
             updateRACButton();
             updateJoinButton();
             updateRecoveryButton();

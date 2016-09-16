@@ -1,0 +1,1426 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<factions>
+	<faction key='ARDC' name='Arc-Royal Defense Cordon' minor='false' clan='false' periphery='false'>
+		<years>3058-3067</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>MERC.KH</parentFaction>
+	</faction>
+	<faction key='AA' name='Augustine Alliance' minor='true' clan='false' periphery='false'>
+		<years>3139-</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>ROS</parentFaction>
+	</faction>
+	<faction key='AB' name='Azami Caliphate' minor='true' clan='false' periphery='false'>
+		<nameChange year='3075'>Azami Brotherhood</nameChange>
+		<years>2450-2516,3075-3081</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>DC.AL</parentFaction>
+	</faction>
+	<faction key='BAN' name='Bandit Caste' minor='false' clan='true' periphery='false'>
+		<years>2830-</years>
+		<ratingLevels>Sol</ratingLevels>
+		<parentFaction>CLAN</parentFaction>
+	</faction>
+	<faction key='BoS' name='Barony of Strang' minor='true' clan='false' periphery='true'>
+		<years>2779-3049</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.R,PIR</parentFaction>
+	</faction>
+	<faction key='BH' name='Butte Hold' minor='true' clan='false' periphery='true'>
+		<years>3018-3028</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.R,PIR</parentFaction>
+	</faction>
+	<faction key='CDP' name='Calderon Protectorate' minor='false' clan='false' periphery='true'>
+		<years>3066-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.HR</parentFaction>
+	</faction>
+	<faction key='CC' name='Capellan Confederation' minor='false' clan='false' periphery='false'>
+		<years>2367-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='NC' name='Castillian Principalities' minor='true' clan='false' periphery='true'>
+		<years>2392-3080</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.Deep</parentFaction>
+	</faction>
+	<faction key='CI' name='Chainelane Islands' minor='true' clan='false' periphery='true'>
+		<years>-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.R</parentFaction>
+	</faction>
+	<faction key='CM' name='Chaos March' minor='false' clan='false' periphery='false'>
+		<years>3057-3069</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='CIR' name='Circinus Federation' minor='false' clan='false' periphery='true'>
+		<years>2785-3081</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.MW</parentFaction>
+	</faction>
+	<faction key='CLAN' name='Clan - General' minor='false' clan='true' periphery='false'>
+		<years>2807-</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction></parentFaction>
+	</faction>
+	<faction key='CBS' name='Clan Blood Spirit' minor='false' clan='true' periphery='false'>
+		<years>2807-3082</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.HW</parentFaction>
+	</faction>
+	<faction key='CB' name='Clan Burrock' minor='false' clan='true' periphery='false'>
+		<years>2807-3059,3072-3074</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.HW</parentFaction>
+	</faction>
+	<faction key='CCC' name='Clan Cloud Cobra' minor='false' clan='true' periphery='false'>
+		<years>2807-3085</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.HW</parentFaction>
+	</faction>
+	<faction key='CCO' name='Clan Coyote' minor='false' clan='true' periphery='false'>
+		<years>2807-3085</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.HW</parentFaction>
+	</faction>
+	<faction key='CFM' name='Clan Fire Mandrill' minor='false' clan='true' periphery='false'>
+		<years>2807-3073</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.HW</parentFaction>
+	</faction>
+	<faction key='CGB' name='Clan Ghost Bear' minor='false' clan='true' periphery='false'>
+		<nameChange year='3060'>Ghost Bear Dominion</nameChange>
+		<years>2807-3103</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.IS</parentFaction>
+	</faction>
+	<faction key='CGS' name='Clan Goliath Scorpion' minor='false' clan='true' periphery='false'>
+		<years>2807-3080</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.HW</parentFaction>
+	</faction>
+	<faction key='CHH' name='Clan Hell&apos;s Horses' minor='false' clan='true' periphery='false'>
+		<years>2807-</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.IS</parentFaction>
+	</faction>
+	<faction key='CIH' name='Clan Ice Hellion' minor='false' clan='true' periphery='false'>
+		<years>2807-3074</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.HW</parentFaction>
+	</faction>
+	<faction key='CJF' name='Clan Jade Falcon' minor='false' clan='true' periphery='false'>
+		<years>2807-</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.IS</parentFaction>
+	</faction>
+	<faction key='CMG' name='Clan Mongoose' minor='false' clan='true' periphery='false'>
+		<years>2807-2868</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN</parentFaction>
+	</faction>
+	<faction key='CNC' name='Clan Nova Cat' minor='false' clan='true' periphery='false'>
+		<years>2807-3143</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.IS</parentFaction>
+	</faction>
+	<faction key='CP' name='Clan Protectorate' minor='false' clan='true' periphery='false'>
+		<years>3138-</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.IS</parentFaction>
+	</faction>
+	<faction key='CDS' name='Clan Sea Fox' minor='false' clan='true' periphery='false'>
+		<nameChange year='2985'>Clan Diamond Shark</nameChange>
+		<nameChange year='3100'>Clan Sea Fox</nameChange>
+		<years>2807-</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.IS</parentFaction>
+	</faction>
+	<faction key='CSJ' name='Clan Smoke Jaguar' minor='false' clan='true' periphery='false'>
+		<years>2807-3060</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.IS</parentFaction>
+	</faction>
+	<faction key='CSR' name='Clan Snow Raven' minor='false' clan='true' periphery='false'>
+		<years>2807-3082</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.IS</parentFaction>
+	</faction>
+	<faction key='CSA' name='Clan Star Adder' minor='false' clan='true' periphery='false'>
+		<years>2807-3085</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.HW</parentFaction>
+	</faction>
+	<faction key='CSV' name='Clan Steel Viper' minor='false' clan='true' periphery='false'>
+		<years>2807-3075</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.HW</parentFaction>
+	</faction>
+	<faction key='CSL' name='Clan Stone Lion' minor='false' clan='true' periphery='false'>
+		<years>3075-3085</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.HW</parentFaction>
+	</faction>
+	<faction key='CWI' name='Clan Widowmaker' minor='false' clan='true' periphery='false'>
+		<years>2807-2834</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN</parentFaction>
+	</faction>
+	<faction key='CW' name='Clan Wolf' minor='false' clan='true' periphery='false'>
+		<years>2807-3142</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.IS</parentFaction>
+	</faction>
+	<faction key='CWIE' name='Clan Wolf-in-Exile' minor='false' clan='true' periphery='false'>
+		<years>3057-</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.IS</parentFaction>
+	</faction>
+	<faction key='CWOV' name='Clan Wolverine' minor='false' clan='true' periphery='false'>
+		<years>2807-2823</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN</parentFaction>
+	</faction>
+	<faction key='CS' name='ComStar' minor='false' clan='false' periphery='false'>
+		<years>2788-3081</years>
+		<ratingLevels>B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='CvW' name='Covenant Worlds' minor='true' clan='false' periphery='false'>
+		<years>3137-</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='DC' name='Draconis Combine' minor='false' clan='false' periphery='false'>
+		<years>2319-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='DA' name='Duchy of Andurien' minor='false' clan='false' periphery='false'>
+		<years>3030-3040,3079-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='DGM' name='Duchy of Graham-Marik' minor='true' clan='false' periphery='false'>
+		<years>3079-3082</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='DO' name='Duchy of Oriente' minor='false' clan='false' periphery='false'>
+		<years>3079-3086</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='DoO' name='Duchy of Orloff' minor='true' clan='false' periphery='false'>
+		<years>3079-3086</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='DS' name='Duchy of Small' minor='true' clan='false' periphery='false'>
+		<years>3057-3066</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>CM</parentFaction>
+	</faction>
+	<faction key='DTA' name='Duchy of Tamarind' minor='false' clan='false' periphery='false'>
+		<nameChange year='3078'>Duchy of Tamarind-Abbey</nameChange>
+		<years>3071-3139</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='EF' name='Elysian Fields' minor='true' clan='false' periphery='true'>
+		<years>-3049</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.DD</parentFaction>
+	</faction>
+	<faction key='CEI' name='Escorpión Imperio' minor='false' clan='true' periphery='false'>
+		<years>3080-3085</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CGS</parentFaction>
+	</faction>
+	<faction key='FC' name='Federated Commonwealth (Combined)' minor='false' clan='false' periphery='false'>
+		<years>3028-3057</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>FS,LA</parentFaction>
+	</faction>
+	<faction key='FS' name='Federated Suns' minor='false' clan='false' periphery='false'>
+		<nameChange year='3042'>Federated Commonwealth (Davion)</nameChange>
+		<nameChange year='3067'>Federated Suns</nameChange>
+		<years>2317-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='FOR' name='Fiefdom of Randis' minor='true' clan='false' periphery='true'>
+		<years>2988-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>MERC,Periphery.OS</parentFaction>
+	</faction>
+	<faction key='FVC' name='Filtvelt Coalition' minor='false' clan='false' periphery='true'>
+		<years>3072-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.HR</parentFaction>
+	</faction>
+	<faction key='FRR' name='Free Rasalhague Republic' minor='false' clan='false' periphery='false'>
+		<years>3034-3103</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='FWL' name='Free Worlds League' minor='false' clan='false' periphery='false'>
+		<nameChange year='3078'>Former Free Worlds Independent</nameChange>
+		<nameChange year='3138'>Free Worlds League</nameChange>
+		<years>2271-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='FR' name='Fronc Reaches' minor='true' clan='false' periphery='true'>
+		<years>3066-</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>NCR</parentFaction>
+	</faction>
+	<faction key='GL' name='Galatean League' minor='true' clan='false' periphery='false'>
+		<years>3144-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='GV' name='Greater Valkyrate' minor='false' clan='false' periphery='true'>
+		<years>3028-3049</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.R,PIR</parentFaction>
+	</faction>
+	<faction key='HL' name='Hanseatic League' minor='true' clan='false' periphery='true'>
+		<years>2891-3085</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.Deep</parentFaction>
+	</faction>
+	<faction key='IP' name='Illyrian Palatinate' minor='true' clan='false' periphery='true'>
+		<years>2350-3063</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.MW</parentFaction>
+	</faction>
+	<faction key='IS' name='Inner Sphere - General' minor='false' clan='false' periphery='false'>
+		<years>-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction></parentFaction>
+	</faction>
+	<faction key='KP' name='Kittery Prefecture' minor='true' clan='false' periphery='false'>
+		<years>3072-3081</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>CM</parentFaction>
+	</faction>
+	<faction key='LL' name='Lothian League' minor='true' clan='false' periphery='true'>
+		<years>2815-3055,3087-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.MW</parentFaction>
+	</faction>
+	<faction key='LA' name='Lyran Commonwealth' minor='false' clan='false' periphery='false'>
+		<nameChange year='3042'>Federated Commonwealth (Steiner)</nameChange>
+		<nameChange year='3057'>Lyran Alliance</nameChange>
+		<nameChange year='3084'>Lyran Commonwealth</nameChange>
+		<years>2341-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='MOC' name='Magistracy of Canopus' minor='false' clan='false' periphery='true'>
+		<years>2530-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.CM</parentFaction>
+	</faction>
+	<faction key='MC' name='Malagrotta Cooperative' minor='true' clan='false' periphery='false'>
+		<years>3073-3079</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>FS.CrMM</parentFaction>
+	</faction>
+	<faction key='MH' name='Marian Hegemony' minor='false' clan='false' periphery='true'>
+		<years>2920-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.ME</parentFaction>
+	</faction>
+	<faction key='MCM' name='Marik Commonwealth' minor='false' clan='false' periphery='false'>
+		<years>3079-3082</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='MSC' name='Marik-Stewart Commonwealth' minor='false' clan='false' periphery='false'>
+		<years>3082-3138</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='MERC' name='Mercenary' minor='false' clan='false' periphery='false'>
+		<years>-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='MM' name='Mica Majority' minor='true' clan='false' periphery='true'>
+		<years>2855-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.OS</parentFaction>
+	</faction>
+	<faction key='MiC' name='Milton Combine' minor='true' clan='false' periphery='false'>
+		<years>3137-3139</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='MV' name='Morgraine&apos;s Valkyrate' minor='true' clan='false' periphery='true'>
+		<years>3021-3028</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.R,PIR</parentFaction>
+	</faction>
+	<faction key='NCR' name='New Colony Region' minor='true' clan='false' periphery='true'>
+		<years>3060-3066</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.CM</parentFaction>
+	</faction>
+	<faction key='NIOPS' name='Niops Association' minor='true' clan='false' periphery='true'>
+		<years>2760-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.CM</parentFaction>
+	</faction>
+	<faction key='OC' name='Oberon Confederation' minor='true' clan='false' periphery='true'>
+		<years>2775-2795,3012-3049</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.DD</parentFaction>
+	</faction>
+	<faction key='OZP' name='Ohrensen-Zion Province' minor='true' clan='false' periphery='false'>
+		<years>3078-3081</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='OP' name='Oriente Protectorate' minor='false' clan='false' periphery='false'>
+		<years>3086-3139</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='OA' name='Outworlds Alliance' minor='false' clan='false' periphery='true'>
+		<years>2413-3082</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.OS</parentFaction>
+	</faction>
+	<faction key='PP' name='Pentagon Powers' minor='false' clan='false' periphery='false'>
+		<years>2801-2822</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>SL</parentFaction>
+	</faction>
+	<faction key='Periphery' name='Periphery' minor='false' clan='false' periphery='true'>
+		<years>-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction></parentFaction>
+	</faction>
+	<faction key='PIR' name='Pirate' minor='false' clan='false' periphery='true'>
+		<years>-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery</parentFaction>
+	</faction>
+	<faction key='PG' name='Principality of Gibson' minor='true' clan='false' periphery='false'>
+		<years>3079-3086</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='PoR' name='Principality of Rasalhague' minor='false' clan='false' periphery='false'>
+		<years>2260-2510</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='PR' name='Principality of Regulus' minor='false' clan='false' periphery='false'>
+		<years>3079-3086</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='PC' name='Protectorate Coalition' minor='true' clan='false' periphery='false'>
+		<years>3136-3144</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='RD' name='Rasalhague Dominion' minor='false' clan='true' periphery='false'>
+		<years>3103-</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.IS</parentFaction>
+	</faction>
+	<faction key='RA' name='Raven Alliance' minor='false' clan='true' periphery='false'>
+		<years>3083-</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN.IS</parentFaction>
+	</faction>
+	<faction key='RF' name='Regulan Fiefs' minor='false' clan='false' periphery='false'>
+		<years>3086-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='RFS' name='Regulan Free States' minor='true' clan='false' periphery='false'>
+		<years>3079-3086</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='RR' name='Republic Remnant' minor='false' clan='false' periphery='false'>
+		<years>3135-</years>
+		<ratingLevels>Triarii Protectors,Principes Guards,Hastati Sentinels,Stone&apos;s Brigade</ratingLevels>
+		<parentFaction>ROS</parentFaction>
+	</faction>
+	<faction key='ROS' name='Republic of the Sphere' minor='false' clan='false' periphery='false'>
+		<years>3081-</years>
+		<ratingLevels>Triarii Protectors,Principes Guards,Hastati Sentinels,Stone&apos;s Brigade</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='RIM' name='Rim Collection' minor='true' clan='false' periphery='true'>
+		<years>3048-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.R</parentFaction>
+	</faction>
+	<faction key='RCM' name='Rim Commonality' minor='false' clan='false' periphery='false'>
+		<years>3075-3139</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='RT' name='Rim Territories' minor='true' clan='false' periphery='true'>
+		<years>3087-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.R</parentFaction>
+	</faction>
+	<faction key='RWR' name='Rim Worlds Republic' minor='false' clan='false' periphery='true'>
+		<years>2250-2769</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.R</parentFaction>
+	</faction>
+	<faction key='ST' name='Saiph Triumvirate' minor='true' clan='false' periphery='false'>
+		<years>3057-3068</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>CM</parentFaction>
+	</faction>
+	<faction key='SA' name='Senatorial Alliance' minor='true' clan='false' periphery='false'>
+		<years>3135-3138</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>ROS</parentFaction>
+	</faction>
+	<faction key='ShA' name='Shiloh Alliance' minor='true' clan='false' periphery='false'>
+		<years>3135-3144</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>ROS</parentFaction>
+	</faction>
+	<faction key='SHC' name='Silver Hawk Coalition' minor='true' clan='false' periphery='false'>
+		<years>3079-3084</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='SIC' name='St Ives Compact' minor='false' clan='false' periphery='false'>
+		<years>3029-3063</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='SL' name='Star League' minor='false' clan='false' periphery='false'>
+		<years>2571-2780</years>
+		<ratingLevels>C,B,A</ratingLevels>
+		<parentFaction></parentFaction>
+	</faction>
+	<faction key='SLIE' name='Star League-in-Exile' minor='false' clan='false' periphery='false'>
+		<years>2786-2801</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>SL</parentFaction>
+	</faction>
+	<faction key='SC' name='Stewart Commonality' minor='true' clan='false' periphery='false'>
+		<years>3079-3082</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='Stone' name='Stone&apos;s Coalition' minor='false' clan='false' periphery='true'>
+		<years>3073-3081</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>ROS</parentFaction>
+	</faction>
+	<faction key='SKC' name='Styk Commonality' minor='true' clan='false' periphery='false'>
+		<years>3057-3063</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>CM</parentFaction>
+	</faction>
+	<faction key='TTU' name='Tall Trees Union' minor='true' clan='false' periphery='false'>
+		<years>3136-3144</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>ROS</parentFaction>
+	</faction>
+	<faction key='TC' name='Taurian Concordat' minor='false' clan='false' periphery='true'>
+		<years>2335-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.HR</parentFaction>
+	</faction>
+	<faction key='TCC' name='Terracap Confederation' minor='true' clan='false' periphery='false'>
+		<years>3057-3068</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>CM</parentFaction>
+	</faction>
+	<faction key='TH' name='Terran Hegemony' minor='false' clan='false' periphery='false'>
+		<nameChange year='2767'>Amaris Empire</nameChange>
+		<years>2315-2779</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='TB' name='The Barrens' minor='false' clan='false' periphery='false'>
+		<years>3100-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.DD</parentFaction>
+	</faction>
+	<faction key='TP' name='The Protectorate' minor='true' clan='false' periphery='false'>
+		<years>3078-3086</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='SOC' name='The Society' minor='false' clan='true' periphery='false'>
+		<years>3072-3075</years>
+		<ratingLevels>PG</ratingLevels>
+		<parentFaction>CLAN</parentFaction>
+	</faction>
+	<faction key='TFR' name='Tikonov Free Republic' minor='true' clan='false' periphery='false'>
+		<years>3029-3031</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='TD' name='Tortuga Dominions' minor='false' clan='false' periphery='true'>
+		<years>2785-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery.HR,PIR</parentFaction>
+	</faction>
+	<faction key='UC' name='Umayyad Caliphate' minor='true' clan='false' periphery='true'>
+		<years>2830-3080</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>NC</parentFaction>
+	</faction>
+	<faction key='UHC' name='United Hindu Collective' minor='false' clan='false' periphery='false'>
+		<years>2240-2540</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='CWE' name='Wolf Empire' minor='false' clan='true' periphery='false'>
+		<years>3143-</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CW</parentFaction>
+	</faction>
+	<faction key='WOB' name='Word of Blake' minor='false' clan='false' periphery='false'>
+		<years>3052-3081</years>
+		<ratingLevels>B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='FS.ACAD' name='Academy and Training Units' minor='false' clan='false' periphery='false'>
+		<years>2317-</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='LA.AlG' name='Alliance Guards' minor='false' clan='false' periphery='false'>
+		<years>3058-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>LA</parentFaction>
+	</faction>
+	<faction key='LA.AlJ' name='Alliance Jaegers' minor='false' clan='false' periphery='false'>
+		<nameChange year='3084'>Lyran Reserves</nameChange>
+		<years>3057-</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>LA</parentFaction>
+	</faction>
+	<faction key='RA.OA' name='Alliance Military Corps' minor='false' clan='false' periphery='true'>
+		<years>3083-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>OA</parentFaction>
+	</faction>
+	<faction key='DC.AR' name='Alshain Regulars' minor='false' clan='false' periphery='false'>
+		<nameChange year='3052'>Alshain Avengers</nameChange>
+		<years>3034-3064</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='DC.ALAG' name='Amphigean Light Assault Group' minor='false' clan='false' periphery='false'>
+		<years>2319-</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='DC.ATL' name='An Ting Legion' minor='false' clan='false' periphery='false'>
+		<years>2823-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='CC.AH' name='Andurien Hussars' minor='false' clan='false' periphery='false'>
+		<years>2556-3000</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='FS.AC' name='Arcadian Cuirassiers' minor='false' clan='false' periphery='false'>
+		<years>2317-2830</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='LA.AG' name='Arcturan Guards' minor='false' clan='false' periphery='false'>
+		<years>2341-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>LA</parentFaction>
+	</faction>
+	<faction key='DC.AL' name='Arkab Legions' minor='false' clan='false' periphery='false'>
+		<years>2479-</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='MSC.AD' name='Atrean Dragoons' minor='false' clan='false' periphery='false'>
+		<years>3082-3138</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>MSC</parentFaction>
+	</faction>
+	<faction key='FWL.AD' name='Atrean Dragoons' minor='false' clan='false' periphery='false'>
+		<years>2271-3079,3138-</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='MSC.AH' name='Atrean Hussars' minor='false' clan='false' periphery='false'>
+		<years>3082-3138</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>MSC</parentFaction>
+	</faction>
+	<faction key='FWL.AH' name='Atrean Hussars' minor='false' clan='false' periphery='false'>
+		<years>2923-3079</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='FS.AH' name='Avalon Hussars' minor='false' clan='false' periphery='false'>
+		<years>2317-</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='DC.BR' name='Benjamin Regulars' minor='false' clan='false' periphery='false'>
+		<years>2319-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='FWL.BD' name='Bolan Defenders' minor='false' clan='false' periphery='false'>
+		<years>2558-2950</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='MOC.CF' name='Canopian Fusiliers' minor='false' clan='false' periphery='true'>
+		<years>2530-</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>MOC</parentFaction>
+	</faction>
+	<faction key='CC.CB' name='Capellan Brigade' minor='false' clan='false' periphery='false'>
+		<years>3061-</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='CC.CC' name='Capellan Chargers' minor='false' clan='false' periphery='false'>
+		<years>2367-2835,3135-</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='CC.CDF' name='Capellan Defense Force' minor='false' clan='false' periphery='false'>
+		<years>3057-</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='CC.CHG' name='Capellan Home Guard' minor='false' clan='false' periphery='false'>
+		<years>2367-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='CC.CH' name='Capellan Hussars' minor='false' clan='false' periphery='false'>
+		<years>2367-</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='FS.CMB' name='Capellan March Brigade' minor='false' clan='false' periphery='false'>
+		<years>3079-</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='FS.CMM' name='Capellan March Militia' minor='false' clan='false' periphery='false'>
+		<years>2754-</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='Periphery.CM' name='Capellan Marches' minor='false' clan='false' periphery='true'>
+		<years>-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery</parentFaction>
+	</faction>
+	<faction key='FS.CH' name='Ceti Hussars' minor='false' clan='false' periphery='false'>
+		<years>2730-</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='MOC.CC' name='Chasseurs à Cheval' minor='false' clan='false' periphery='true'>
+		<years>2530-</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>MOC</parentFaction>
+	</faction>
+	<faction key='CC.CR' name='Chesterton Regulars' minor='false' clan='false' periphery='false'>
+		<nameChange year='2832'>Chesteron Reserves</nameChange>
+		<years>2832-3060</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='FS.CR' name='Chisholm&apos;s Raiders' minor='false' clan='false' periphery='false'>
+		<years>2897-3067</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='CC.CHO' name='Citizens&apos; Honored' minor='false' clan='false' periphery='false'>
+		<years>3060-</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='CLAN.HW' name='Clan - Homeworld' minor='false' clan='true' periphery='false'>
+		<years>3050-3085</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN</parentFaction>
+	</faction>
+	<faction key='CLAN.IS' name='Clan - Inner Sphere' minor='false' clan='true' periphery='false'>
+		<years>3050-</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CLAN</parentFaction>
+	</faction>
+	<faction key='FWL.CP' name='Clan Protectorate' minor='false' clan='true' periphery='false'>
+		<years>3139-</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CP</parentFaction>
+	</faction>
+	<faction key='CC.CRC' name='Confederation Reserve Cavalry' minor='false' clan='false' periphery='false'>
+		<years>2650-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='FWL.CG' name='Covenant Guards' minor='false' clan='false' periphery='false'>
+		<years>3139-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='FS.CL' name='Crucis Lancers' minor='false' clan='false' periphery='false'>
+		<years>2780-</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='FS.CrMM' name='Crucis March Militia' minor='false' clan='false' periphery='false'>
+		<years>2754-</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='FS.DBG' name='Davion Brigade of Guards' minor='false' clan='false' periphery='false'>
+		<years>2418-</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='CC.DC' name='Death Commandos' minor='false' clan='false' periphery='false'>
+		<years>2988-</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='Periphery.Deep' name='Deep Periphery' minor='false' clan='false' periphery='true'>
+		<years>-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction></parentFaction>
+	</faction>
+	<faction key='FWL.DA' name='Defenders of Andurien' minor='false' clan='false' periphery='false'>
+		<years>2514-3039</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='FS.DLC' name='Deneb Light Cavalry' minor='false' clan='false' periphery='false'>
+		<years>2780-3081</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='DC.DR' name='Dieron Regulars' minor='false' clan='false' periphery='false'>
+		<years>2319-3081,3135-</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='LA.DG' name='Donegal Guards' minor='false' clan='false' periphery='false'>
+		<years>2341-</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>LA</parentFaction>
+	</faction>
+	<faction key='Periphery.DD' name='Draconian Drift' minor='false' clan='false' periphery='true'>
+		<years>-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery</parentFaction>
+	</faction>
+	<faction key='FS.DMM' name='Draconis March Militia' minor='false' clan='false' periphery='false'>
+		<years>2754-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='FS.DL' name='Dragonlords' minor='false' clan='false' periphery='false'>
+		<years>2572-2870</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='MERC.ELH' name='Eridani Light Horse' minor='false' clan='false' periphery='false'>
+		<years>2780-3081</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>MERC</parentFaction>
+	</faction>
+	<faction key='CS.EC' name='Explorer Corps' minor='false' clan='false' periphery='false'>
+		<years>2959-</years>
+		<ratingLevels>B,A</ratingLevels>
+		<parentFaction>CS</parentFaction>
+	</faction>
+	<faction key='FC.FCC' name='Federated Commonwealth Corps' minor='false' clan='false' periphery='false'>
+		<years>3028-3057</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>FC</parentFaction>
+	</faction>
+	<faction key='MSC.FWG' name='Free Worlds Guards' minor='false' clan='false' periphery='false'>
+		<years>3082-3138</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>MSC</parentFaction>
+	</faction>
+	<faction key='FWL.FWG' name='Free Worlds Guards' minor='false' clan='false' periphery='false'>
+		<years>2426-3079,3138-</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='MSC.FWL' name='Free Worlds Legionnaires' minor='false' clan='false' periphery='false'>
+		<years>3082-3138</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>MSC</parentFaction>
+	</faction>
+	<faction key='FWL.FWL' name='Free Worlds Legionnaires' minor='false' clan='false' periphery='false'>
+		<years>3042-3079</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='OP.FO' name='Fusiliers of Oriente' minor='false' clan='false' periphery='false'>
+		<years>3086-3139</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>OP</parentFaction>
+	</faction>
+	<faction key='FWL.FO' name='Fusiliers of Oriente' minor='false' clan='false' periphery='false'>
+		<years>2485-3079,3139-</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='DC.GR' name='Galedon Regulars' minor='false' clan='false' periphery='false'>
+		<years>2319-</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='DC.GEN' name='Genyosha' minor='false' clan='false' periphery='false'>
+		<years>3027-</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='DC.GHO' name='Ghost Regiments' minor='false' clan='false' periphery='false'>
+		<years>3033-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='MERC.GDL' name='Gray Death Legion' minor='false' clan='false' periphery='false'>
+		<years>3024-3065</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>MERC</parentFaction>
+	</faction>
+	<faction key='LA.HG' name='Hesperus Guards' minor='false' clan='false' periphery='false'>
+		<years>2755-2950</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>LA</parentFaction>
+	</faction>
+	<faction key='Periphery.HR' name='Hyades Rim' minor='false' clan='false' periphery='true'>
+		<years>-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery</parentFaction>
+	</faction>
+	<faction key='DC.I' name='Izanagi Warriors' minor='false' clan='false' periphery='false'>
+		<years>3030-</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='MERC.KH' name='Kell Hounds' minor='false' clan='false' periphery='false'>
+		<years>3010-</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>MERC,LA</parentFaction>
+	</faction>
+	<faction key='CFM.BG' name='Kindraa Beyl-Grant' minor='false' clan='true' periphery='false'>
+		<years>2823-3066</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CFM</parentFaction>
+	</faction>
+	<faction key='CFM.FT' name='Kindraa Faraday-Tanaga' minor='false' clan='true' periphery='false'>
+		<years>2823-3073</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CFM</parentFaction>
+	</faction>
+	<faction key='CFM.Kl' name='Kindraa Kline' minor='false' clan='true' periphery='false'>
+		<years>2823-3067</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CFM</parentFaction>
+	</faction>
+	<faction key='CFM.MaC' name='Kindraa Mattila-Carrol' minor='false' clan='true' periphery='false'>
+		<years>2823-3073</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CFM</parentFaction>
+	</faction>
+	<faction key='CFM.MiKr' name='Kindraa Mick-Kreese' minor='false' clan='true' periphery='false'>
+		<years>2823-3067</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CFM</parentFaction>
+	</faction>
+	<faction key='CFM.MiKrKl' name='Kindraa Mick-Kreese-Kline' minor='false' clan='true' periphery='false'>
+		<years>3067-3073</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CFM</parentFaction>
+	</faction>
+	<faction key='CFM.P' name='Kindraa Payne' minor='false' clan='true' periphery='false'>
+		<years>2823-3066</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CFM</parentFaction>
+	</faction>
+	<faction key='CFM.PBG' name='Kindraa Payne-Beyl-Grant' minor='false' clan='true' periphery='false'>
+		<years>3066-3073</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CFM</parentFaction>
+	</faction>
+	<faction key='CFM.S' name='Kindraa Sainze' minor='false' clan='true' periphery='false'>
+		<years>2823-3073</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CFM</parentFaction>
+	</faction>
+	<faction key='CFM.SmJ' name='Kindraa Smythe-Jewel' minor='false' clan='true' periphery='false'>
+		<years>2823-2872</years>
+		<ratingLevels>Provisional Garrison,Solahma,Second Line,Front Line,Keshik</ratingLevels>
+		<parentFaction>CFM</parentFaction>
+	</faction>
+	<faction key='FWL.KIS' name='Knights of the Inner Sphere' minor='false' clan='false' periphery='false'>
+		<years>3055-3079</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='CGB.FRR' name='Kungsarmé' minor='false' clan='false' periphery='false'>
+		<years>3079-3103</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>FRR</parentFaction>
+	</faction>
+	<faction key='DC.LV' name='Legion of Vega' minor='false' clan='false' periphery='false'>
+		<years>3011-</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='CC.LCC' name='Liao Cháng-Chéng' minor='false' clan='false' periphery='false'>
+		<years>3061-</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='CC.LG' name='Liao Guards' minor='false' clan='false' periphery='false'>
+		<years>2367-2823,3113-</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='CC.LL' name='Liao Lancers' minor='false' clan='false' periphery='false'>
+		<years>2529-3000</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='LA.LG' name='Lyran Guards' minor='false' clan='false' periphery='false'>
+		<years>2341-</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>LA</parentFaction>
+	</faction>
+	<faction key='LA.LR' name='Lyran Regulars' minor='false' clan='false' periphery='false'>
+		<years>2341-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>LA</parentFaction>
+	</faction>
+	<faction key='MOC.MH' name='Magistracy Highlanders' minor='false' clan='false' periphery='true'>
+		<years>2755-</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>MOC</parentFaction>
+	</faction>
+	<faction key='MOC.MRG' name='Magristracy Royal Guard' minor='false' clan='false' periphery='true'>
+		<years>2530-</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>MOC</parentFaction>
+	</faction>
+	<faction key='Periphery.MW' name='March Worlds' minor='false' clan='false' periphery='true'>
+		<years>-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery</parentFaction>
+	</faction>
+	<faction key='Periphery.ME' name='Marik Expanses' minor='false' clan='false' periphery='true'>
+		<years>-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery</parentFaction>
+	</faction>
+	<faction key='FWL.MG' name='Marik Guard' minor='false' clan='false' periphery='false'>
+		<years>2246-3079</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='FWL.MM' name='Marik Militia' minor='false' clan='false' periphery='false'>
+		<years>2238-3079,3139-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='MSC.MM' name='Marik Militia' minor='false' clan='false' periphery='false'>
+		<years>3082-3138</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>MSC</parentFaction>
+	</faction>
+	<faction key='CC.MAC' name='McCarron&apos;s Armored Cavalry' minor='false' clan='false' periphery='false'>
+		<years>3060-</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='FS.NIC' name='New Ivaarsen Chasseurs' minor='false' clan='false' periphery='false'>
+		<years>3020-</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='DC.NSR' name='New Samarkand Regulars' minor='false' clan='false' periphery='false'>
+		<years>3082-</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='DC.NS' name='Night Stalkers' minor='false' clan='false' periphery='false'>
+		<years>3020-3076</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='MERC.NH' name='Northwind Highlanders' minor='false' clan='false' periphery='false'>
+		<years>-3081</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>MERC</parentFaction>
+	</faction>
+	<faction key='LA.OR' name='Odessa Regulars' minor='false' clan='false' periphery='false'>
+		<years>2755-2950</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>LA</parentFaction>
+	</faction>
+	<faction key='FWL.OH' name='Oriente Hussars' minor='false' clan='false' periphery='false'>
+		<years>2245-3079,3139-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='OP.OH' name='Oriente Hussars' minor='false' clan='false' periphery='false'>
+		<years>3086-3139</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>OP</parentFaction>
+	</faction>
+	<faction key='FWL.OG' name='Orloff Grenadiers' minor='false' clan='false' periphery='false'>
+		<years>2691-3079,3139-</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='OP.OG' name='Orloff Grenadiers' minor='false' clan='false' periphery='false'>
+		<years>3086-3139</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>OP</parentFaction>
+	</faction>
+	<faction key='DC.O' name='Otomo' minor='false' clan='false' periphery='false'>
+		<years>3000-</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='Periphery.OS' name='Outer Sphere' minor='false' clan='false' periphery='true'>
+		<years>-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery</parentFaction>
+	</faction>
+	<faction key='FS.PMG' name='Periphery March Guard' minor='false' clan='false' periphery='false'>
+		<years>3080-</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='FS.PMM' name='Periphery March Militia' minor='false' clan='false' periphery='false'>
+		<years>3080-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='DC.PR' name='Pesht Regulars' minor='false' clan='false' periphery='false'>
+		<years>2319-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='DC.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
+		<years>2319-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>DC,IS.pm</parentFaction>
+	</faction>
+	<faction key='MSC.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
+		<years>3082-3138</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>MSC,IS.pm</parentFaction>
+	</faction>
+	<faction key='FS.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
+		<years>2317-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>FS,IS.pm</parentFaction>
+	</faction>
+	<faction key='DA.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
+		<years>3079-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>DA,IS.pm</parentFaction>
+	</faction>
+	<faction key='RCM.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
+		<years>3075-3139</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>RCM,IS.pm</parentFaction>
+	</faction>
+	<faction key='FC.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
+		<years>3028-3057</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>FS.pm,LA.pm</parentFaction>
+	</faction>
+	<faction key='FWL.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
+		<years>2271-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>FWL,IS.pm</parentFaction>
+	</faction>
+	<faction key='RF.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
+		<years>3086-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>RF,IS.pm</parentFaction>
+	</faction>
+	<faction key='ROS.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
+		<years>3081-</years>
+		<ratingLevels>PG</ratingLevels>
+		<parentFaction>ROS,IS.pm</parentFaction>
+	</faction>
+	<faction key='LA.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
+		<years>2341-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>LA,IS.pm</parentFaction>
+	</faction>
+	<faction key='TC.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
+		<years>2335-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>TC</parentFaction>
+	</faction>
+	<faction key='IS.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
+		<years>-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='TH.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
+		<years>2315-2767</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>TH,IS.pm</parentFaction>
+	</faction>
+	<faction key='CC.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
+		<years>2367-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>CC,IS.pm</parentFaction>
+	</faction>
+	<faction key='DTA.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
+		<years>3071-3139</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>DTA,IS.pm</parentFaction>
+	</faction>
+	<faction key='MOC.pm' name='Planetary Militia' minor='false' clan='false' periphery='false'>
+		<years>2530-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>MO</parentFaction>
+	</faction>
+	<faction key='TC.PL' name='Pleiades Lancers' minor='false' clan='false' periphery='true'>
+		<years>2335-</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>TC</parentFaction>
+	</faction>
+	<faction key='DC.PH' name='Proserpina Hussars' minor='false' clan='false' periphery='false'>
+		<years>2319-3082</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='FWL.PG' name='Protectorate Guard' minor='false' clan='false' periphery='false'>
+		<years>3000-3079,3138-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='WOB.PM' name='Protectorate Militia' minor='false' clan='false' periphery='false'>
+		<years>3066-3078</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>WOB</parentFaction>
+	</faction>
+	<faction key='DC.RR' name='Rasalhague Regulars' minor='false' clan='false' periphery='false'>
+		<years>2730-3034</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='MOC.RC' name='Raventhir Footmen' minor='false' clan='false' periphery='true'>
+		<nameChange year='3063'>Raventhir Cuirassiers</nameChange>
+		<years>3055-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>MOC</parentFaction>
+	</faction>
+	<faction key='LA.M' name='Regional Militia' minor='false' clan='false' periphery='false'>
+		<years>2341-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>LA</parentFaction>
+	</faction>
+	<faction key='FWL.RH' name='Regulan Hussars' minor='false' clan='false' periphery='false'>
+		<years>2478-3079</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='FS.RG' name='Republican Guards' minor='false' clan='false' periphery='false'>
+		<years>3029-3067</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='FWL.RCG' name='Rim Commonality Guards' minor='false' clan='false' periphery='false'>
+		<years>3139-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='FS.RC' name='Robinson Chevaliers' minor='false' clan='false' periphery='false'>
+		<years>2540-2950</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='FS.RMB' name='Robinson March Brigade' minor='false' clan='false' periphery='false'>
+		<years>3080-</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='FS.RR' name='Robinson Rangers' minor='false' clan='false' periphery='false'>
+		<years>2780-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='LA.RG' name='Royal Guards' minor='false' clan='false' periphery='false'>
+		<years>2341-</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>LA</parentFaction>
+	</faction>
+	<faction key='DC.RYU' name='Ryuken' minor='false' clan='false' periphery='false'>
+		<years>3026-</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='CC.SSB' name='Sarna Sabres Brigade' minor='false' clan='false' periphery='false'>
+		<years>2367-2529</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='SL.2' name='Second Star League' minor='false' clan='false' periphery='false'>
+		<years>3058-3067</years>
+		<ratingLevels>C,B,A</ratingLevels>
+		<parentFaction>IS</parentFaction>
+	</faction>
+	<faction key='MERC.pm' name='Security Forces' minor='false' clan='false' periphery='false'>
+		<years>-</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>MERC,IS.pm</parentFaction>
+	</faction>
+	<faction key='WOB.SD' name='Shadow Divisions' minor='false' clan='false' periphery='false'>
+		<years>3067-3081</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>WOB</parentFaction>
+	</faction>
+	<faction key='DC.SHIN' name='Shin Legion' minor='false' clan='false' periphery='false'>
+		<years>3036-3061</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='CC.SD' name='Sian Lancers' minor='false' clan='false' periphery='false'>
+		<nameChange year='2485'>Sian Dragoons</nameChange>
+		<years>2367-3000</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='FWL.SHI' name='Silver Hawk Irregulars ' minor='false' clan='false' periphery='false'>
+		<years>3000-3081,3138-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='FWL.SL' name='Sirian Lancers' minor='false' clan='false' periphery='false'>
+		<years>2950-3079</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='LA.SR' name='Skye Rangers' minor='false' clan='false' periphery='false'>
+		<years>2341-3081</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>LA</parentFaction>
+	</faction>
+	<faction key='CC.SIAC' name='St Ives Armored Cavalry' minor='false' clan='false' periphery='false'>
+		<years>2367-</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='CC.SIJ' name='St Ives Janissaries' minor='false' clan='false' periphery='false'>
+		<years>3055-3079</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='CC.SIS' name='St Ives Sentinels' minor='false' clan='false' periphery='false'>
+		<years>3062-</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='SL.R' name='Star League Royal' minor='false' clan='false' periphery='false'>
+		<years>2571-2780</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>SL</parentFaction>
+	</faction>
+	<faction key='FWL.SD' name='Stewart Dragoons' minor='false' clan='false' periphery='false'>
+		<years>2293-3079</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='DC.SZC' name='Sun Zhang Academy' minor='false' clan='false' periphery='false'>
+		<years>2319-</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='DC.SL' name='Sword of Light' minor='false' clan='false' periphery='false'>
+		<years>2319-</years>
+		<ratingLevels>A</ratingLevels>
+		<parentFaction>DC</parentFaction>
+	</faction>
+	<faction key='FS.SF' name='Syrtis Fusiliers' minor='false' clan='false' periphery='false'>
+		<years>2418-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='FWL.TR' name='Tamarind Regulars' minor='false' clan='false' periphery='false'>
+		<years>3139-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>FWL</parentFaction>
+	</faction>
+	<faction key='FS.TL' name='Tancredi Loyalists' minor='false' clan='false' periphery='false'>
+		<years>2540-3000</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>FS</parentFaction>
+	</faction>
+	<faction key='Periphery.R' name='The Rift' minor='false' clan='false' periphery='true'>
+		<years>-</years>
+		<ratingLevels>F,D,C,B,A</ratingLevels>
+		<parentFaction>Periphery</parentFaction>
+	</faction>
+	<faction key='CC.TG' name='Tikonov Guards' minor='false' clan='false' periphery='false'>
+		<years>3134-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='CC.TL' name='Tikonov Lancers' minor='false' clan='false' periphery='false'>
+		<years>2367-3000</years>
+		<ratingLevels>D</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='LA.T' name='Training Units' minor='false' clan='false' periphery='false'>
+		<years>2341-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>LA</parentFaction>
+	</faction>
+	<faction key='CC.VCR' name='Victoria Commonality Rangers' minor='false' clan='false' periphery='false'>
+		<years>3060-</years>
+		<ratingLevels>C</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='CC.WHO' name='Warrior House Orders' minor='false' clan='false' periphery='false'>
+		<years>2864-</years>
+		<ratingLevels>B</ratingLevels>
+		<parentFaction>CC</parentFaction>
+	</faction>
+	<faction key='MERC.WD' name='Wolf&apos;s Dragoons' minor='false' clan='false' periphery='false'>
+		<years>3005-</years>
+		<ratingLevels></ratingLevels>
+		<parentFaction>MERC</parentFaction>
+	</faction>
+	<faction key='LA.YR' name='York Regulars' minor='false' clan='false' periphery='false'>
+		<years>2700-2950</years>
+		<ratingLevels>F</ratingLevels>
+		<parentFaction>LA</parentFaction>
+	</faction>
+</factions>

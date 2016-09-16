@@ -6,6 +6,11 @@ v0.41.23-GR (2016-08-26 03:00 UTC) GRAPHIC TEST RELEASE ONLY
 + Added option to toggle displaying of unit labels, default key is Y
 + Bug: IllegalFormatConversionException in ASFBay.getUnusedString
 + Issue #328: Out of control ASF has the "launch" button available
++ New (faster) scale method for certain zoom levels
++ New rotation operation for Entity icons, yielding smoother rotated units
++ Transparency now properly preserved in Unit icons, allowing shaded icons
++ Unit icon colors now preserved when camo is applied (only gray scale pixels
+    have camo applied to them)
 
 v0.41.22 (2016-08-26 03:00 UTC)
 + Issue #295: Roads not preventing swamp/rubble PSRs

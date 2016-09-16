@@ -11,7 +11,7 @@ Trinity Medium Battle Armor (Asterion)[PPC]|
 Asura Medium Battle Armor (Anti-Infantry)|
 Asura Medium Battle Armor (SRM)|
 Asura Medium Battle Armor (Standard)|
-Clan Medium Battle Armor (B‰r)|
+Clan Medium Battle Armor (B√§r)|
 Clan Medium Battle Armor (Rabid)|
 Clan Medium Battle Armor (Volk)|
 Corona Heavy Battle Armor (SRM)|
@@ -1143,7 +1143,7 @@ AA Jump Infantry 292nd League Regulars|
 AA Mechanized Infantry Mechanized AA Infantry|
 Anti-Infantry Unit Second Lyran Armored Infantry|
 Anti-'Mech Jump Infantry Third Ueda Infantry|
-Skaret Assassins J‡rnFÚlk|
+Skaret Assassins J√†rnF√≤lk|
 Bridge-builder Engineers Take the Time III-chi, Forty-eighth Division|
 Ceremonial Guard Otomo Guard|
 Clan Anti-Infantry Clan Jade Falcon Police|
@@ -4114,7 +4114,7 @@ Crab CRB-27sl|
 Dervish DV-6Md|
 Hammerhands HMH-3D (Kessem)|
 Lancelot LNC25-01sl|
-Mackie MSK-9HKR 'Kill-Royís Little Buddy'|
+Mackie MSK-9HKR 'Kill-RoyÔøΩs Little Buddy'|
 Phoenix Hawk PXH-1Kk|
 Stalker STK-3Fk|
 Thunderbolt TDR-5Sd|
@@ -5884,7 +5884,7 @@ Maxim Flanker (Standard)|
 Partisan Hull Defense (Standard)|
 Sea Skimmer Hydrofoil 'Sniper'|
 Skulker Wheeled Scout Tank X-5|
-SturmFeur ìKalkiî Cruise Missile Launcher (Standard)|
+SturmFeur ‚ÄúKalki‚Äù Cruise Missile Launcher (Standard)|
 Cavalry Attack Helicopter Cadence Rain|
 Challenger MBT XVc|
 Fulcrum Heavy HoverTank X|

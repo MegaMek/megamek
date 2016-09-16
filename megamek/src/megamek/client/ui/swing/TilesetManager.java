@@ -27,10 +27,10 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.Polygon;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
 import java.awt.image.MemoryImageSource;
 import java.awt.image.PixelGrabber;
 import java.io.File;
@@ -49,7 +49,6 @@ import megamek.client.ui.swing.boardview.BoardView1;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
-import megamek.client.ui.swing.util.RotateFilter;
 import megamek.common.Configuration;
 import megamek.common.Entity;
 import megamek.common.IBoard;
@@ -64,6 +63,7 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.DirectoryItems;
+import megamek.common.util.ImageUtil;
 
 /**
  * Handles loading and manipulating images from both the mech tileset and the
@@ -192,8 +192,8 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                     defaultEntry.loadImage(boardview);
                 }
                 if (defaultEntry.getImage() != null) {
-                    return defaultEntry.getImage().getScaledInstance(56, 48,
-                            Image.SCALE_SMOOTH);
+                    return ImageUtil.getScaledImage(defaultEntry.getImage(), 56,
+                            48);
                 } else {
                     return null;
                 }
@@ -648,20 +648,45 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             }
             base = applyColor(base);
 
-            icon = base.getScaledInstance(56, 48, Image.SCALE_SMOOTH);
+            icon = ImageUtil.getScaledImage(base,  56, 48);
             for (int i = 0; i < 6; i++) {
-                ImageProducer rotSource = new FilteredImageSource(base
-                        .getSource(), new RotateFilter((Math.PI / 3) * (6 - i)));
-                facings[i] = parent.createImage(rotSource);
+                double cx = base.getWidth(parent) / 2.0;
+                double cy = base.getHeight(parent) / 2.0;
+                AffineTransformOp xform = new AffineTransformOp(
+                        AffineTransform.getRotateInstance(
+                                (-Math.PI / 3) * (6 - i), cx, cy),
+                        AffineTransformOp.TYPE_BICUBIC);
+                BufferedImage src;
+                if (base instanceof BufferedImage) {
+                    src = (BufferedImage) base;
+                } else {
+                    src = ImageUtil.createAcceleratedImage(base);
+                }
+                BufferedImage dst = ImageUtil.createAcceleratedImage(
+                        src.getWidth(), src.getHeight());
+                xform.filter(src, dst);
+                facings[i] = dst;
             }
 
             if (wreck != null) {
                 wreck = applyColor(wreck);
                 for (int i = 0; i < 6; i++) {
-                    ImageProducer rotSource = new FilteredImageSource(wreck
-                            .getSource(), new RotateFilter((Math.PI / 3)
-                            * (6 - i)));
-                    wreckFacings[i] = parent.createImage(rotSource);
+                    double cx = base.getWidth(parent) / 2.0;
+                    double cy = base.getHeight(parent) / 2.0;
+                    AffineTransformOp xform = new AffineTransformOp(
+                            AffineTransform.getRotateInstance(
+                                    (-Math.PI / 3) * (6 - i), cx, cy),
+                            AffineTransformOp.TYPE_BICUBIC);
+                    BufferedImage src;
+                    if (wreck instanceof BufferedImage) {
+                        src = (BufferedImage) wreck;
+                    } else {
+                        src = ImageUtil.createAcceleratedImage(wreck);
+                    }
+                    BufferedImage dst = ImageUtil.createAcceleratedImage(
+                            src.getWidth(), src.getHeight());
+                    xform.filter(src, dst);
+                    wreckFacings[i] = dst;
                 }
             }
         }
@@ -705,13 +730,15 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
             try {
                 pgMech.grabPixels();
             } catch (InterruptedException e) {
-                System.err
-                        .println("EntityImage.applyColor(): Failed to grab pixels for mech image. " + e.getMessage()); //$NON-NLS-1$
+                System.err.println("EntityImage.applyColor(): " //$NON-NLS-1$
+                        + "Failed to grab pixels for mech image. " //$NON-NLS-1$
+                        + e.getMessage());
                 return image;
             }
             if ((pgMech.getStatus() & ImageObserver.ABORT) != 0) {
-                System.err
-                        .println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
+                System.err.println("EntityImage.applyColor(): " //$NON-NLS-1$
+                        + "Failed to grab pixels for mech image. " //$NON-NLS-1$
+                        + "ImageObserver aborted."); //$NON-NLS-1$
                 return image;
             }
 
@@ -721,13 +748,15 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                 try {
                     pgCamo.grabPixels();
                 } catch (InterruptedException e) {
-                    System.err
-                            .println("EntityImage.applyColor(): Failed to grab pixels for camo image. " + e.getMessage()); //$NON-NLS-1$
+                    System.err.println("EntityImage.applyColor(): " //$NON-NLS-1$
+                            + "Failed to grab pixels for camo image. " //$NON-NLS-1$
+                            + e.getMessage());
                     return image;
                 }
                 if ((pgCamo.getStatus() & ImageObserver.ABORT) != 0) {
-                    System.err
-                            .println("EntityImage.applyColor(): Failed to grab pixels for camo image. ImageObserver aborted."); //$NON-NLS-1$
+                    System.err.println("EntityImage.applyColor(): " //$NON-NLS-1$
+                            + "Failed to grab pixels for camo image. " //$NON-NLS-1$
+                            + "ImageObserver aborted."); //$NON-NLS-1$
                     return image;
                 }
             }
@@ -757,10 +786,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
                             | blue2;
                 }
             }
-
-            image = parent.createImage(new MemoryImageSource(IMG_WIDTH,
+            Image result = parent.createImage(new MemoryImageSource(IMG_WIDTH,
                     IMG_HEIGHT, pMech, 0, IMG_WIDTH));
-            return image;
+            return ImageUtil.createAcceleratedImage(result);
         }
     }
 

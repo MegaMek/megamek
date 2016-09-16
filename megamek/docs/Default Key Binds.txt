@@ -39,6 +39,7 @@ DIAGRAMS
 Show Movement Envelope----- R
 Toggle Field Of Fire----- Shift-R
 Toggle Iso Mode----- T
+Toggle Unit Labels-----Y
 Show Auto Arty Deploy Zone----- Shift-Spacebar
 
 UNIT OVERVIEW

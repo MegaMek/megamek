@@ -1,19 +1,17 @@
 package megamek.client.ui.swing.boardview;
 
 import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
-import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageObserver;
 
-import megamek.client.ui.swing.util.KeyAlphaFilter;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.util.ImageUtil;
 
 class MovingEntitySprite extends Sprite {
 
@@ -107,27 +105,11 @@ class MovingEntitySprite extends Sprite {
      */
     @Override
     public void prepare() {
-        // create image for buffer
-        Image tempImage;
-        Graphics graph;
-        try {
-            tempImage = bv.createImage(bounds.width, bounds.height);
-            graph = tempImage.getGraphics();
-        } catch (NullPointerException ex) {
-            // argh! but I want it!
-            return;
-        }
-
-        // fill with key color
-        graph.setColor(new Color(BoardView1.TRANSPARENT));
-        graph.fillRect(0, 0, bounds.width, bounds.height);
-        graph.drawImage(bv.tileManager.imageFor(entity, facing, -1), 0, 0, this);
-
-        // create final image
-        image = bv.getScaledImage(bv.createImage(new FilteredImageSource(
-                tempImage.getSource(), new KeyAlphaFilter(
-                        BoardView1.TRANSPARENT))), false);        
+        image = ImageUtil.createAcceleratedImage(bounds.width, bounds.height);
+        Graphics graph = image.getGraphics();
+        graph.drawImage(bv.tileManager.imageFor(entity, facing, -1), 0, 0,
+                this);
+        image = bv.getScaledImage(image, false);
         graph.dispose();
-        tempImage.flush();
     }
 }

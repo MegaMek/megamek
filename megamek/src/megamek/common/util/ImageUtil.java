@@ -19,14 +19,19 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
 import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.common.Coords;
 import sun.awt.image.ToolkitImage;
 
@@ -48,7 +53,10 @@ public final class ImageUtil {
         }
         GC = (null != gd) ? gd.getDefaultConfiguration() : null;
     }
-    
+
+    public static final int IMAGE_SCALE_BICUBIC = 1;
+    public static final int IMAGE_SCALE_AVG_FILTER = 2;
+
     /**
      * @return an image in a format best fitting for hardware acceleration, if
      *         possible, else just the image passed to it
@@ -76,6 +84,45 @@ public final class ImageUtil {
         }
         BufferedImage acceleratedImage = GC.createCompatibleImage(w, h, Transparency.TRANSLUCENT);
         return acceleratedImage;
+    }
+
+    /**
+     * Get a scaled version of the input image.
+     *
+     * @param img
+     * @return
+     */
+    public static BufferedImage getScaledImage(Image img, int newWidth,
+            int newHeight) {
+        return getScaledImage(img, newWidth, newHeight, IMAGE_SCALE_BICUBIC);
+    }
+
+    /**
+     * Get a scaled version of the input image, using the supplied type to
+     * select which scaling method to use.
+     *
+     * @param img
+     * @return
+     */
+    public static BufferedImage getScaledImage(Image img, int newWidth,
+            int newHeight, int scaleType) {
+        if (scaleType == IMAGE_SCALE_BICUBIC) {
+            BufferedImage scaled = createAcceleratedImage(newWidth, newHeight);
+            Graphics2D g2 = (Graphics2D) scaled.getGraphics();
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                    RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g2.drawImage(img, 0, 0, newWidth, newHeight, null);
+            return scaled;
+        } else {
+            ImageFilter filter;
+            filter = new ImprovedAveragingScaleFilter(img.getWidth(null),
+                    img.getHeight(null), newWidth, newHeight);
+
+            ImageProducer prod;
+            prod = new FilteredImageSource(img.getSource(), filter);
+            return ImageUtil.createAcceleratedImage(
+                    Toolkit.getDefaultToolkit().createImage(prod));
+        }
     }
 
     /** Image loaders */

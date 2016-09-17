@@ -512,9 +512,11 @@ public class FactionRecord {
 				salvage.put(era, new HashMap<String,Integer>());
 				String [] fields = wn.getTextContent().trim().split(",");
 				for (String field : fields) {
-					String[] subfields = field.split(":");
-					if (subfields.length == 2) {
-						salvage.get(era).put(subfields[0], Integer.parseInt(subfields[1]));
+					if (field.length() > 0) {
+						String[] subfields = field.split(":");
+						if (subfields.length == 2) {
+							salvage.get(era).put(subfields[0], Integer.parseInt(subfields[1]));
+						}
 					}
 				}				
 				break;

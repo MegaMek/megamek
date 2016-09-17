@@ -900,7 +900,8 @@ public class RATGenerator {
 				models.put(modelKey, mr);
 			}
 			if (mr == null) {
-				System.err.println(cr.getChassis() + " " + wn.getAttributes().getNamedItem("name").getTextContent() + " not found.");
+				System.err.println("RATGenerator: " + cr.getChassis() + " "
+						+ wn.getAttributes().getNamedItem("name").getTextContent() + " not found.");
 				return;
 			}
 		}

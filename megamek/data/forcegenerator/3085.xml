@@ -12118,12 +12118,15 @@
 	<chassis name='Thumper Artillery Vehicle' unitType='Tank'>
 		<availability>HL:3,IS:4,Periphery.Deep:8,Periphery:4</availability>
 		<model name='TAV-1'>
+			<roles>artillery</roles>
 			<availability>FWL:6,IS:5</availability>
 		</model>
 		<model name='(Standard)'>
+			<roles>artillery</roles>
 			<availability>General:5</availability>
 		</model>
 		<model name='Angel'>
+			<roles>artillery</roles>
 			<availability>DTA:5,LA:4,ROS:4,FWL:4,FS:4,DC:4</availability>
 		</model>
 	</chassis>

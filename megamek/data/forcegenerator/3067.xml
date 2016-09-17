@@ -10763,12 +10763,15 @@
 	<chassis name='Thumper Artillery Vehicle' unitType='Tank'>
 		<availability>HL:3,IS:4,Periphery.Deep:8,Periphery:4</availability>
 		<model name='TAV-2'>
+			<roles>artillery</roles>
 			<availability>WOB:4</availability>
 		</model>
 		<model name='TAV-1'>
+			<roles>artillery</roles>
 			<availability>FWL:4,WOB:6</availability>
 		</model>
 		<model name='(Standard)'>
+			<roles>artillery</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

@@ -2296,6 +2296,7 @@
 	<chassis name='Thumper Artillery Vehicle' unitType='Tank'>
 		<availability>IS:6,Periphery.Deep:7,Periphery:7</availability>
 		<model name='(Standard)'>
+			<roles>artillery</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

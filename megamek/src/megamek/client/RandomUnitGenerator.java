@@ -436,7 +436,7 @@ public class RandomUnitGenerator implements Serializable {
 
                         // If this is a RAT reference, roll the unit on the referenced RAT.
                         if (name.startsWith("@")) {
-                            units.addAll(generate(1, name.replaceFirst("@", "")));
+                            units.addAll(generate(1, name.replaceFirst("@", ""), filter));
                             continue;
                         }
 

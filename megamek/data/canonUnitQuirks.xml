@@ -6038,6 +6038,184 @@ Example: You can define quirks that affect all units of a given chassis and then
 			<weaponName>ISERLargeLaser</weaponName>
 		</weaponQuirk>
 	</unit>
+   	<unit>
+		<chassis>Colt Medium Fighter</chassis>
+		<model>(LRM)</model>
+		<unitType>Aero</unitType>
+		<quirk>atmo_flyer</quirk>
+		<quirk>difficult_eject</quirk>
+	</unit>
+	<unit>
+		<chassis>Wolverine</chassis>
+		<model>WVR-3R</model>
+		<unitType>Mech</unitType>
+		<quirk>pro_actuator</quirk>
+		<quirk>stable</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>3</slot>
+			<weaponName>Autocannon/5</weaponName>
+		</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Saturn Patrol Ship</chassis>
+		<model>(Standard)</model>
+		<unitType>Aero</unitType>
+		<quirk>imp_com</quirk>
+		<quirk>atmo_instability</quirk>
+	</unit>
+	<unit>
+		<chassis>Orion</chassis>
+		<model>ON1-H</model>
+		<unitType>Mech</unitType>
+		<quirk>easy_maintain</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>ammo_feed_problems</weaponQuirkName>
+			<location>RT</location>
+			<slot>0</slot>
+			<weaponName>Autocannon/10 Primitive</weaponName>
+		</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Phoenix</chassis>
+		<model>PX-1R</model>
+		<unitType>Mech</unitType>
+		<quirk>poor_work</quirk>
+		<quirk>weak_legs</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>em_interference</weaponQuirkName>
+			<location>RA</location>
+			<slot>2</slot>
+			<weaponName>PPC</weaponName>
+		</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Orion</chassis>
+		<model>ON1-C</model>
+		<unitType>Mech</unitType>
+		<quirk>easy_maintain</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>ammo_feed_problems</weaponQuirkName>
+			<location>RT</location>
+			<slot>0</slot>
+			<weaponName>Autocannon/5</weaponName>
+		</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Colt Medium Fighter</chassis>
+		<model>(SRM)</model>
+		<unitType>Aero</unitType>
+		<quirk>atmo_flyer</quirk>
+		<quirk>difficult_eject</quirk>
+	</unit>
+	<unit>
+		<chassis>Asher Hover Scout</chassis>
+		<model>(Standard)</model>
+		<unitType>Tank</unitType>
+		<quirk>hard_pilot</quirk>
+		<quirk>non_standard</quirk>
+	</unit>
+	<unit>
+		<chassis>Apostle Self-Propelled Artillery</chassis>
+		<model>(Standard)</model>
+		<unitType>Tank</unitType>
+		<quirk>imp_com</quirk>
+	</unit>
+	<unit>
+		<chassis>Reaper Self-Propelled Artillery</chassis>
+		<model>(Standard)</model>
+		<unitType>Tank</unitType>
+		<quirk>anti_air</quirk>
+		<quirk>poor_sealing</quirk>
+	</unit>
+	<unit>
+		<chassis>Ymir</chassis>
+		<model>BWP-X1</model>
+		<unitType>Mech</unitType>
+		<quirk>stable</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>poor_cooling</weaponQuirkName>
+			<location>RA</location>
+			<slot>3</slot>
+			<weaponName>Large Laser</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>poor_cooling</weaponQuirkName>
+			<location>RA</location>
+			<slot>5</slot>
+			<weaponName>Vehicle Flamer</weaponName>
+		</weaponQuirk>
+		<weaponQuirk>
+			<weaponQuirkName>poor_cooling</weaponQuirkName>
+			<location>RA</location>
+			<slot>6</slot>
+			<weaponName>Vehicle Flamer</weaponName>
+		</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Leviathan Jumpship</chassis>
+		<model>(Standard)</model>
+		<unitType>Aero</unitType>
+		<quirk>easy_maintain</quirk>
+		<quirk>bad_rep</quirk>
+	</unit>
+	<unit>
+		<chassis>RR-3 Recovery Vehicle</chassis>
+		<model>(Standard)</model>
+		<unitType>Tank</unitType>
+		<quirk>easy_maintain</quirk>
+		<quirk>gas_hog</quirk>
+	</unit>
+	<unit>
+		<chassis>Wolverine</chassis>
+		<model>WVR-1R</model>
+		<unitType>Mech</unitType>
+		<quirk>pro_actuator</quirk>
+		<quirk>stable</quirk>
+		<weaponQuirk>
+			<weaponQuirkName>jettison_capable</weaponQuirkName>
+			<location>RA</location>
+			<slot>3</slot>
+			<weaponName>Autocannon/5</weaponName>
+		</weaponQuirk>
+	</unit>
+	<unit>
+		<chassis>Trooper</chassis>
+		<model>TR-1R</model>
+		<unitType>Mech</unitType>
+		<quirk>easy_maintain</quirk>
+		<quirk>imp_life_support</quirk>
+		<quirk>mod_weapons</quirk>
+		<quirk>bad_rep</quirk>
+		<quirk>exp_actuator</quirk>
+		<quirk>no_arms</quirk>
+		<quirk>no_eject</quirk>
+		<quirk>weak_legs</quirk>
+	</unit>
+	<unit>
+		<chassis>UTR-588 Recovery Vehicle</chassis>
+		<model>(Standard)</model>
+		<unitType>Tank</unitType>
+		<quirk>poor_performance</quirk>
+	</unit>
+	<unit>
+		<chassis>Archer</chassis>
+		<model>ARC-1A</model>
+		<unitType>Mech</unitType>
+		<quirk>easy_maintain</quirk>
+		<quirk>ext_twist</quirk>
+		<quirk>stable</quirk>
+		<quirk>difficult_eject</quirk>
+	</unit>
+	<unit>
+		<chassis>Dunning Mobile Tactical Command Post</chassis>
+		<model>(Standard)</model>
+		<unitType>Tank</unitType>
+		<quirk>imp_com</quirk>
+		<quirk>difficult_maintain</quirk>
+	</unit>
+
 </unitQuirks>  
      
      

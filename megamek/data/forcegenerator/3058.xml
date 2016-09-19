@@ -5984,6 +5984,7 @@
 	<chassis name='J-37 Ordnance Transport' unitType='Tank'>
 		<availability>General:1,CLAN:1</availability>
 		<model name='(Original)'>
+			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
 	</chassis>

@@ -11054,9 +11054,11 @@
 	<chassis name='J-37 Ordnance Transport' unitType='Tank'>
 		<availability>General:3,CLAN:3</availability>
 		<model name='(Standard)'>
+			<roles>support</roles>
 			<availability>General:8</availability>
 		</model>
 		<model name='(Original)'>
+			<roles>support</roles>
 			<availability>General:3</availability>
 		</model>
 	</chassis>

@@ -1,0 +1,12 @@
+UNIT SHADING SCRIPTS
+Sept 17/2016
+
+These are the new scripts used in GIMP to convert any of the sprites to the new shaded look.
+The original unshaded Sprites are located in the data\unused\units_original folder. As new units are added shaded units will be used in game and unshaded units will be added that folder.
+
+NOTES ON USE:
+These go in C:\Program Files\GIMP 2\share\gimp\2.0\scripts
+
+You'll have to either restart gimp to get them to load or go to menu -> filters -> script fu -> refresh scripts.
+
+When you install those to the correct folder, they should appear in gimp under menu -> filters -> light and shadow.

@@ -2,18 +2,19 @@ Version:1.0
 Pouncer
 H
 
-Config:Biped
+Config:Biped Omnimech
 TechBase:Clan
 Era:3062
 Source:TRO 3055 - Civil War
 Rules Level:2
 
 Mass:40
-Engine:240 XL (Clan) Engine
-Structure:Endo Steel
+Engine:240 XL (Clan) Engine(IS)
+Structure:Clan Endo Steel
 Myomer:Standard
 
 Heat Sinks:15 Double
+Base Chassis Heat Sinks:9
 Walk MP:6
 Jump MP:5
 
@@ -51,7 +52,7 @@ CLHeavyMediumLaser
 CLHeavyMediumLaser
 CLHeavyMediumLaser
 CLHeavySmallLaser
-Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Arm:
 Shoulder
@@ -64,7 +65,7 @@ CLHeavyMediumLaser
 CLHeavyMediumLaser
 CLHeavyMediumLaser
 CLHeavyMediumLaser
-Ferro-Fibrous
+Clan Ferro-Fibrous
 -Empty-
 
 Left Torso:
@@ -77,9 +78,9 @@ Jump Jet
 CLStreakSRM6
 CLStreakSRM6
 CLTargeting Computer
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Right Torso:
 Fusion Engine
@@ -91,9 +92,9 @@ Jump Jet
 CLStreakSRM6
 CLStreakSRM6
 Clan Streak SRM 6 Ammo
-Endo Steel
-Ferro-Fibrous
-Ferro-Fibrous
+Clan Endo Steel
+Clan Ferro-Fibrous
+Clan Ferro-Fibrous
 
 Center Torso:
 Fusion Engine
@@ -107,13 +108,13 @@ Fusion Engine
 Fusion Engine
 Fusion Engine
 Jump Jet
-Endo Steel
+Clan Endo Steel
 
 Head:
 Life Support
 Sensors
 Cockpit
-Ferro-Fibrous
+Clan Ferro-Fibrous
 Sensors
 Life Support
 -Empty-
@@ -128,8 +129,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-
@@ -142,8 +143,8 @@ Hip
 Upper Leg Actuator
 Lower Leg Actuator
 Foot Actuator
-Endo Steel
-Endo Steel
+Clan Endo Steel
+Clan Endo Steel
 -Empty-
 -Empty-
 -Empty-

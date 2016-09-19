@@ -12,6 +12,10 @@ v0.41.23-GR (2016-08-26 03:00 UTC) GRAPHIC TEST RELEASE ONLY
 + Unit icon colors now preserved when camo is applied (only gray scale pixels
     have camo applied to them)
 + Added dynamic random assignment table generator.
++ Unit fixes and New Sprites.
++ New Map Pack - Derv's Map Pack the maker of the Jihad Pack Pack
++ Moving old unshaded sprites to unused folder and adding the GIMP files created 
+  by ColonelSandersLight in the widgets folder with some basic notes.
 
 v0.41.22 (2016-08-26 03:00 UTC)
 + Issue #295: Roads not preventing swamp/rubble PSRs

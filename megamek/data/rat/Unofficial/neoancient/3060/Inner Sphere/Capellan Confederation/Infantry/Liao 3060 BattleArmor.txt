@@ -1,9 +1,0 @@
-Neoancient Liao 3060 BattleArmor
-@Neoancient Clan Smoke Jaguar 3055 BattleArmor,1
-@Neoancient Davion 3055 BattleArmor,3
-@Neoancient Marik 3055 BattleArmor,1
-@Neoancient St. Ives 3055 BattleArmor,1
-IS Standard Battle Armor [Flamer],88
-IS Standard Battle Armor [Laser],75
-IS Standard Battle Armor [MG],100
-IS Standard Battle Armor [SRM],63

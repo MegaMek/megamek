@@ -1,8 +1,0 @@
-Neoancient Pirate 3055 BattleArmor
-@Neoancient Bandit Caste 3050 BattleArmor,3
-@Neoancient Davion 3050 BattleArmor,3
-@Neoancient Steiner 3050 BattleArmor,3
-IS Standard Battle Armor [Flamer],88
-IS Standard Battle Armor [Laser],75
-IS Standard Battle Armor [MG],100
-IS Standard Battle Armor [SRM],57

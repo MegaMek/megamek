@@ -1,8 +1,0 @@
-Neoancient Periphery 2700 Medium Aerospace Fighters A
-Hellcat HCT-213,42
-Hellcat HCT-213R,16
-Hellcat HCT-213S,21
-Lightning LTN-G14,14
-Lightning LTN-G15,28
-Lucifer LCF-R15,83
-Samurai SL-25,100

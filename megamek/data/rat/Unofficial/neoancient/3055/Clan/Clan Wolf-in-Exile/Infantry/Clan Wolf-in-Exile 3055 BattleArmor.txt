@@ -1,7 +1,0 @@
-Neoancient Clan Wolf-in-Exile 3055 BattleArmor
-@Neoancient Clan Jade Falcon 3050 BattleArmor,8
-@Neoancient Clan Wolf 3050 BattleArmor,2
-@Neoancient Steiner 3050 BattleArmor,4
-Elemental Battle Armor [Flamer],100
-Elemental Battle Armor [Laser],88
-Elemental Battle Armor [MG],100

@@ -1,8 +1,0 @@
-Neoancient Periphery 2780 Heavy Meks C
-Catapult CPLT-A1,12
-Catapult CPLT-C1,28
-Catapult CPLT-C4,12
-Dragon DRG-1N,100
-Grasshopper GHR-5H,67
-Orion ON1-K,89
-Quickdraw QKD-4G,89

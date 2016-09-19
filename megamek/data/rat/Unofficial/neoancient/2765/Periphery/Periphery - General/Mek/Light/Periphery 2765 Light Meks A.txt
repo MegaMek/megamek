@@ -1,7 +1,0 @@
-Neoancient Periphery 2765 Light Meks A
-Commando COM-2D,45
-Firestarter FS9-H,100
-Hermes HER-1S,19
-Javelin JVN-10N,60
-Panther PNT-9R,30
-Spider SDR-5V,34

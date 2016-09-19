@@ -16,6 +16,7 @@ v0.41.23-GR (2016-08-26 03:00 UTC) GRAPHIC TEST RELEASE ONLY
 + New Map Pack - Derv's Map Pack the maker of the Jihad Pack Pack
 + Moving old unshaded sprites to unused folder and adding the GIMP files created 
   by ColonelSandersLight in the widgets folder with some basic notes.
++ Removed obsolete Neoancient RATs, superceded by RAT Generator.
 
 v0.41.22 (2016-08-26 03:00 UTC)
 + Issue #295: Roads not preventing swamp/rubble PSRs

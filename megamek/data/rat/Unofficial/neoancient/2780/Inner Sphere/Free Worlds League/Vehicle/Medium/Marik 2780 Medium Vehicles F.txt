@@ -1,9 +1,0 @@
-Neoancient Marik 2780 Medium Vehicles F
-@Neoancient Liao 2765 Medium Vehicles F,5
-@Neoancient Steiner 2765 Medium Vehicles F,10
-Condor Heavy Hover Tank (Standard),67
-Kanga Medium Hovertank (Standard),89
-Maxim Heavy Hover Transport (Standard),100
-Thor Artillery Vehicle (Standard),33
-Zephyr Hovertank (SRM2),2
-Zephyr Hovertank (Standard),19

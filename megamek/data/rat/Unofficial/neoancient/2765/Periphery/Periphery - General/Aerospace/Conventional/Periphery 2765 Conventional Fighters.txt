@@ -1,7 +1,0 @@
-Neoancient Periphery 2765 Conventional Fighters
-Heavy Strike Fighter Meteor,5
-Light Strike Fighter Comet,2
-Light Strike Fighter Owl,2
-Light Strike Fighter Owl II,1
-Medium Strike Fighter Defender,4
-Medium Strike Fighter Steinadler (Golden Eagle),1

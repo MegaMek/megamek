@@ -1,6 +1,0 @@
-Neoancient Clan Hell's Horses 2815 Medium Vehicles
-Chaparral Missile Artillery Tank (Standard),79
-Kanga Medium Hovertank (Standard),59
-Thor Artillery Vehicle (Standard),28
-Zephyr Hovertank (Royal),100
-Zephyr Hovertank (SRM2),25

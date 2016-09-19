@@ -1,6 +1,0 @@
-Neoancient Outworlds 2700 Conventional Fighters
-@Neoancient Davion 2700 Conventional Fighters,8
-@Neoancient Kurita 2700 Conventional Fighters,3
-@Neoancient Star League 2700 Conventional Fighters,1
-Heavy Strike Fighter Meteor,100
-Light Strike Fighter Owl,56

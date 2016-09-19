@@ -1,9 +1,0 @@
-Neoancient Taurian 2700 Light Vehicles D
-@Neoancient Davion 2700 Light Vehicles F,7
-@Neoancient Liao 2700 Light Vehicles F,4
-@Neoancient Star League 2700 Light Vehicles C,1
-Armored Personnel Carrier (Hover Sensors),11
-Cyrano Gunship (Standard),100
-Flatbed Truck (AC),56
-Packrat LRPV PKR-T5,33
-Skulker Wheeled Scout Tank (Standard),33

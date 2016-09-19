@@ -1,7 +1,0 @@
-Neoancient Clan Fire Mandrill 3060 ProtoMeks
-Centaur (Standard),11
-Gorgon (Standard),56
-Harpy (Standard),31
-Hydra (Standard),100
-Minotaur (Standard),54
-Roc (Standard),47

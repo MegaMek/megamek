@@ -1,9 +1,0 @@
-Neoancient Canopus 2950 Medium Vehicles F
-@Neoancient Liao 2870 Medium Vehicles F,3
-@Neoancient Marik 2870 Medium Vehicles F,13
-Condor Heavy Hover Tank (Standard),41
-Goblin Medium Tank (Standard),30
-Hetzer Wheeled Assault Gun (Standard),82
-Korvin Tank KRV-3,12
-Maxim Heavy Hover Transport (Standard),42
-Vedette Medium Tank (Standard),100

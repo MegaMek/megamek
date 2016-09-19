@@ -1,9 +1,0 @@
-Neoancient Steiner 2780 Assault Vehicles F
-@Neoancient Kurita 2765 Assault Vehicles F,6
-@Neoancient Marik 2765 Assault Vehicles F,8
-Fury Command Tank (Fury II),26
-Fury Command Tank (Original),39
-Mobile Long Tom Artillery (Unofficial) (+ Carriage),16
-Puma Assault Tank PAT-005,100
-Rhino Fire Support Tank (MG),42
-Rhino Fire Support Tank (Standard),58

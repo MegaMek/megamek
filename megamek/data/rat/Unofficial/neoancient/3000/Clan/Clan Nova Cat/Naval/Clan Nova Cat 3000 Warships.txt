@@ -1,8 +1,0 @@
-Neoancient Clan Nova Cat 3000 Warships
-Aegis Heavy Cruiser (Clan),100
-Black Lion Battlecruiser (Clan),75
-Essex Destroyer (Clan),25
-Fredasa Corvette Raider (Standard),25
-Lola III Destroyer (Clan),75
-Vincent Corvette Mk 39,19
-Vincent Corvette Mk 42,19

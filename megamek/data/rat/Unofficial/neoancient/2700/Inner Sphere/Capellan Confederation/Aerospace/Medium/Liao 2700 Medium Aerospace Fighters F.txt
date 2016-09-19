@@ -1,8 +1,0 @@
-Neoancient Liao 2700 Medium Aerospace Fighters F
-@Neoancient Davion 2700 Medium Aerospace Fighters F,1
-@Neoancient Star League 2700 Medium Aerospace Fighters C,5
-Gotha GTHA-100,50
-Ironsides IRN-SD1,31
-Ironsides IRN-SD2,16
-Lightning LTN-G15,100
-Samurai SL-25,75

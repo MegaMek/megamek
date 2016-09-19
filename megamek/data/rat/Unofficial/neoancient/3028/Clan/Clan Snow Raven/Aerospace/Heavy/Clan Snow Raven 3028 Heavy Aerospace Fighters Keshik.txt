@@ -1,8 +1,0 @@
-Neoancient Clan Snow Raven 3028 Heavy Aerospace Fighters Keshik
-@Neoancient Clan Diamond Shark 3000 Heavy Aerospace Fighters Keshik,1
-Hydaspes (Standard),21
-Kirghiz A,88
-Kirghiz B,88
-Kirghiz C,50
-Kirghiz Prime,100
-Xerxes (Standard),21

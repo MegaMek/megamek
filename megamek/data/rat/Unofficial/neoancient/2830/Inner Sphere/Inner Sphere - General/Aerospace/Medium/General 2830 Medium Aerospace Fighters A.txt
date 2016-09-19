@@ -1,9 +1,0 @@
-Neoancient General 2830 Medium Aerospace Fighters A
-Gotha GTHA-100,55
-Hellcat II HCT-213B,86
-Hellcat II HCT-214,34
-Ironsides IRN-SD1,92
-Ironsides IRN-SD2,46
-Lightning LTN-G15,83
-Samurai SL-25,100
-Samurai SL-26,13

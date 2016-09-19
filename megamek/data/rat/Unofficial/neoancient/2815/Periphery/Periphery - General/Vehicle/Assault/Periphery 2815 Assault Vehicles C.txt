@@ -1,7 +1,0 @@
-Neoancient Periphery 2815 Assault Vehicles C
-Demolisher Heavy Tank (Standard Mk. I),3
-Partisan Heavy Tank (Standard),3
-Puma Assault Tank PAT-005,2
-Rhino Fire Support Tank (MG),1
-Rhino Fire Support Tank (Standard),2
-Schrek PPC Carrier (Standard),3

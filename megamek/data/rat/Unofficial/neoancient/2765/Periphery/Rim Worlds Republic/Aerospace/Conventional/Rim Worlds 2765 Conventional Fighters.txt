@@ -1,9 +1,0 @@
-Neoancient Rim Worlds 2765 Conventional Fighters
-@Neoancient Star League 2700 Conventional Fighters,4
-@Neoancient Steiner 2700 Conventional Fighters,22
-Heavy Strike Fighter Meteor,99
-Light Strike Fighter Comet,56
-Light Strike Fighter Owl,56
-Light Strike Fighter Owl II,28
-Medium Strike Fighter Defender,100
-Medium Strike Fighter Steinadler (Golden Eagle),17

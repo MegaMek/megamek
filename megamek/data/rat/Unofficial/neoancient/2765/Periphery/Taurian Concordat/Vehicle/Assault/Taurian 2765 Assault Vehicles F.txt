@@ -1,7 +1,0 @@
-Neoancient Taurian 2765 Assault Vehicles F
-@Neoancient Davion 2700 Assault Vehicles F,8
-@Neoancient Liao 2700 Assault Vehicles F,3
-@Neoancient Star League 2700 Assault Vehicles C,2
-Puma Assault Tank PAT-005,100
-Rhino Fire Support Tank (MG),58
-Rhino Fire Support Tank (Standard),82

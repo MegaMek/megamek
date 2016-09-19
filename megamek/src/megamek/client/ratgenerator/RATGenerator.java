@@ -787,7 +787,7 @@ public class RATGenerator {
 		}
 	}
 	
-	private void loadEra(int era) {
+	private synchronized void loadEra(int era) {
 		if (eraIsLoaded(era)) {
 			return;
 		}

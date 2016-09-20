@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.41.23-GR (2016-08-26 03:00 UTC) GRAPHIC TEST RELEASE ONLY
+v0.41.23 (2016-09-20 00:07 UTC)
 + Issue #323: Artefacting drawing the boardview background
 + Bug: Bot would fire at hidden units
 + Added option to toggle displaying of unit labels, default key is Y

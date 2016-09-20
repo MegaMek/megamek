@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.41.24-git
++Bug: RAT Generator incorrectly adjusting proportion of succession war/upgraded/Clan tech.
 
 v0.41.23 (2016-09-20 00:07 UTC)
 + Issue #323: Artefacting drawing the boardview background

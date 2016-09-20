@@ -367,7 +367,7 @@ public class RATGenerator {
 				double totalModelWeight = cRec.totalModelWeight(early,
 						cRec.isOmni()?user : fRec);
 				for (ModelRecord mRec : cRec.getModels()) {
-					if (mRec.getIntroYear() > year
+					if (mRec.getIntroYear() >= year
 							|| (weightClasses.size() > 0
 									&& !weightClasses.contains(mRec.getWeightClass()))
 							|| (networkMask & mRec.getNetworkMask()) != networkMask) {
@@ -577,7 +577,7 @@ public class RATGenerator {
 			Double techMargin = interpolate(fRec.getTechMargin(early),
 					fRec.getTechMargin(late),
 					early, late, year);
-			if (techMargin != null) {
+			if (techMargin != null && techMargin > 0) {
 				if (pctClan != null) {
 					double pct = 100.0 * totalClan / total;
 					if (pct < pctClan - techMargin) {
@@ -598,7 +598,7 @@ public class RATGenerator {
 			Double upgradeMargin = interpolate(fRec.getUpgradeMargin(early),
 					fRec.getUpgradeMargin(late),
 					early, late, year);
-			if (upgradeMargin != null) {
+			if (upgradeMargin != null && upgradeMargin > 0) {
 				double pct = 100.0 * (total - totalClan - totalSL) / total;
 				if (pct < pctOther - upgradeMargin) {
 					pctOther -= upgradeMargin;
@@ -655,25 +655,25 @@ public class RATGenerator {
 				}
 			}
 		}
+		double totalOther = total - totalClan - totalSL;
 		for (ModelRecord mRec : unitWeights.keySet()) {
 			if (pctOmni != null && mRec.isOmni() && totalOmni < total) {
-				unitWeights.put(mRec, unitWeights.get(mRec) * pctOmni * (total / totalOmni));
+				unitWeights.put(mRec, unitWeights.get(mRec) * (pctOmni / 100.0) * (total / totalOmni));
 			}
 			if (pctNonOmni != null && !mRec.isOmni() && totalOmni > 0) {
-				unitWeights.put(mRec, unitWeights.get(mRec) * pctNonOmni * (total / (total - totalOmni)));						
+				unitWeights.put(mRec, unitWeights.get(mRec) * (pctNonOmni / 100.0) * (total / (total - totalOmni)));						
 			}
 			if (pctSL != null && mRec.isSL()
 					&& totalSL > 0) {
-				unitWeights.put(mRec, unitWeights.get(mRec) * pctSL * (total / totalSL));
+				unitWeights.put(mRec, unitWeights.get(mRec) * (pctSL / 100.0) * (total / totalSL));
 			}
 			if (pctClan != null && mRec.isClan()
 					&& totalClan > 0) {
-				unitWeights.put(mRec, unitWeights.get(mRec) * pctClan * (total / totalClan));
+				unitWeights.put(mRec, unitWeights.get(mRec) * (pctClan / 100.0) * (total / totalClan));
 			}
-			if (pctOther != null && pctOther > 0 && !mRec.isClan() && !mRec.isSL()
-					&& totalClan > 0) {
-				unitWeights.put(mRec, unitWeights.get(mRec) * pctOther
-						* (total / pctOther));
+			if (pctOther != null && pctOther > 0 && !mRec.isClan() && !mRec.isSL()) {
+				unitWeights.put(mRec, unitWeights.get(mRec) * (pctOther / 100.0)
+						* (total / totalOther));
 			}
 		}
 		double multiplier = total / unitWeights.values().stream().mapToDouble(Double::doubleValue).sum();

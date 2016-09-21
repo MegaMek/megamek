@@ -117,6 +117,7 @@ public class SupportVTOL extends VTOL {
     }
 
     //FUEL CAPACITY TM 128
+    @Override
     public double getFuelTonnage() {
         return fuelTonnage;
     }

@@ -295,6 +295,7 @@ public class SupportTank extends Tank {
     }
 
     //FUEL CAPACITY TM 128
+    @Override
     public double getFuelTonnage() {
         return fuelTonnage;
     }

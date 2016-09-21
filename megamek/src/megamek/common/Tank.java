@@ -3648,6 +3648,15 @@ public class Tank extends Entity {
     }
 
     /**
+     * Returns a Support units fuel allotment.
+     * 
+     * @return fuel tonnage
+     */
+    public double getFuelTonnage() {
+        return 0;
+    }
+
+    /**
      * Tanks go Hull Down slightly differently, this method accounts for this
      *
      * @see megamek.common.Entity#setHullDown(boolean)

@@ -510,22 +510,38 @@ public class EntityListFile {
         output.write(CommonConstants.NL);
         output.write(CommonConstants.NL);
         output.write("<record version=\"" + MegaMek.VERSION + "\" >");
+        
+        ArrayList<Entity> living = new ArrayList<Entity>();
+        ArrayList<Entity> allied = new ArrayList<Entity>();
+        ArrayList<Entity> salvage = new ArrayList<Entity>();
+        ArrayList<Entity> devastated = new ArrayList<Entity>();
+        Hashtable<String, String> kills = new Hashtable<String, String>();        
 
-        // Make a list of the player's surviving units
-        ArrayList<Entity> living = client.getGame().getPlayerEntities(client.getLocalPlayer(), false);
-
-        // Be sure to include all units that have retreated.
-        for (Enumeration<Entity> iter = client.getGame().getRetreatedEntities(); iter.hasMoreElements(); ) {
-            Entity ent = iter.nextElement();
-            if (ent.getOwnerId() == client.getLocalPlayer().getId()) {
-                living.add(ent);
+        //Sort entities into player's, enemies, and allies and add to survivors, salvage, and allies.
+        Iterator<Entity> entities = client.getGame().getEntities();
+        while(entities.hasNext()) {
+            Entity entity = entities.next();
+            if (entity.getOwner().getId() == client.getLocalPlayer().getId()) {
+            	living.add(entity);
+            } else if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
+                 if(!entity.canEscape()) {
+                     kills.put(entity.getDisplayName(), "None");
+                 }
+                 salvage.add(entity);
+            } else {
+            	allied.add(entity);
             }
         }
 
-        // separate out salvage and devastated units and record kills if possible
-        ArrayList<Entity> salvage = new ArrayList<Entity>();
-        ArrayList<Entity> devastated = new ArrayList<Entity>();
-        Hashtable<String, String> kills = new Hashtable<String, String>();
+        // Be sure to include all units that have retreated in survivor and allied sections
+        for (Enumeration<Entity> iter = client.getGame().getRetreatedEntities(); iter.hasMoreElements(); ) {
+            Entity ent = iter.nextElement();
+            if (ent.getOwner().getId() == client.getLocalPlayer().getId()) {
+            	living.add(ent);
+            } else if (!ent.getOwner().isEnemyOf(client.getLocalPlayer())) {
+            	allied.add(ent);
+            }
+        }
 
         //salvageable stuff
         Enumeration<Entity> graveyard = client.getGame().getGraveyardEntities();
@@ -544,18 +560,6 @@ public class EntityListFile {
             salvage.add(entity);
         }
 
-        //look for surviving enemy entities and add them to the possible salvage
-        Iterator<Entity> entities = client.getGame().getEntities();
-        while(entities.hasNext()) {
-            Entity entity = entities.next();
-            if(entity.getOwner().isEnemyOf(client.getLocalPlayer())) {
-                 if(!entity.canEscape()) {
-                     kills.put(entity.getDisplayName(), "None");
-                 }
-                 salvage.add(entity);
-            }
-        }
-
         //devastated units
         Enumeration<Entity> devastation = client.getGame().getDevastatedEntities();
         while (devastation.hasMoreElements()) {
@@ -572,7 +576,7 @@ public class EntityListFile {
             }
             devastated.add(entity);
         }
-
+        
         if(!living.isEmpty()) {
             output.write(CommonConstants.NL);
             output.write(indentStr(1) + "<survivors>");
@@ -585,6 +589,21 @@ public class EntityListFile {
             }
             // Finish writing.
             output.write(indentStr(1) + "</survivors>");
+            output.write(CommonConstants.NL);
+        }
+
+        if(!allied.isEmpty()) {
+            output.write(CommonConstants.NL);
+            output.write(indentStr(1) + "<allies>");
+            output.write(CommonConstants.NL);
+            output.write(CommonConstants.NL);
+            try {
+                writeEntityList(output, allied);
+            } catch(IOException exception) {
+                throw exception;
+            }
+            // Finish writing.
+            output.write(indentStr(1) + "</allies>");
             output.write(CommonConstants.NL);
         }
 

@@ -964,9 +964,7 @@ public class FighterSquadron extends Aero {
     
     @Override
     public Engine getEngine() {
-        // The engine state variable will be null, so we'll just return the
-        //  engine of the first fighter in the squadron.
-        return getFighter(0).getEngine();
+        throw new UnsupportedOperationException("Fighter squadrons don't have a single engine");
     }
     
     /**

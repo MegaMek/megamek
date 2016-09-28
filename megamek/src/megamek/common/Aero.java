@@ -2686,8 +2686,10 @@ public class Aero extends Entity {
         cost += 25000 + (10 * getWeight());
 
         // engine
-        cost += (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
-
+        if(hasEngine()) {
+            cost += (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
+        }
+        
         // fuel tanks
         cost += (200 * getFuel()) / 80.0;
 
@@ -2769,6 +2771,9 @@ public class Aero extends Entity {
     }
 
     protected int calculateWalk() {
+        if(!hasEngine()) {
+            return 0;
+        }
         if (isPrimitive()) {
             double rating = getEngine().getRating();
             rating /= 1.2;

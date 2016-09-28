@@ -184,9 +184,8 @@ public class TestAero extends TestEntity {
         }
         
         // XXL engines take up extra space in the aft
-        if (a.getEngine() != null 
-                && a.getEngine().getEngineType() == Engine.XXL_ENGINE){
-            if (a.getEngine().hasFlag(Engine.CLAN_ENGINE)){
+        if (a.hasEngine() && (a.getEngine().getEngineType() == Engine.XXL_ENGINE)) {
+            if (a.getEngine().hasFlag(Engine.CLAN_ENGINE)) {
                 availSpace[Aero.LOC_AFT] -= 2;
             } else {
                 availSpace[Aero.LOC_AFT] -= 4;
@@ -266,11 +265,13 @@ public class TestAero extends TestEntity {
         float fuelPerTurn;
         if (aero.getEntityType() == Entity.ETYPE_CONV_FIGHTER){
             fuelPerTurn = aero.getWalkMP() * 0.5f;
-            if (aero.getEngine().isFusion()){
-                fuelPerTurn += (aero.getRunMP()-aero.getWalkMP()) * 2;
-            } else {
-                fuelPerTurn += (aero.getRunMP()-aero.getWalkMP());
-            }            
+            if(aero.hasEngine()) {
+                if(aero.getEngine().isFusion()) {
+                    fuelPerTurn += (aero.getRunMP()-aero.getWalkMP()) * 2;
+                } else {
+                    fuelPerTurn += (aero.getRunMP()-aero.getWalkMP());
+                }
+            }
         } else {
             fuelPerTurn = aero.getWalkMP() + 
                     (aero.getRunMP()-aero.getWalkMP()) * 2;
@@ -336,8 +337,8 @@ public class TestAero extends TestEntity {
     @Override
     public double getWeightPowerAmp() {
         // Conventional Fighters with ICE engines may need a power amp
-        if (aero.getEntityType() == Entity.ETYPE_CONV_FIGHTER &&
-                aero.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE){
+        if (aero.getEntityType() == Entity.ETYPE_CONV_FIGHTER && aero.hasEngine()
+                && (aero.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
             double weight = 0;
             for (Mounted m : aero.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();

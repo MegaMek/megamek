@@ -12547,10 +12547,8 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         // finish the max heat calculations
         if (this.getJumpMP() > 0) {
             totalHeat += getJumpHeat(getJumpMP());
-        } else {
-            if ((this instanceof Mech) && !((Mech) this).isIndustrial()) {
-                totalHeat += getEngine().getRunHeat(this);
-            }
+        } else if ((this instanceof Mech) && !((Mech) this).isIndustrial() && hasEngine()) {
+            totalHeat += getEngine().getRunHeat(this);
         }
 
         for (Mounted mount : getWeaponList()) {
@@ -12681,7 +12679,7 @@ public abstract class Entity extends TurnOrdered implements Transporter,
     public double getPowerAmplifierWeight() {
         // If we're fusion- or fission-powered, we need no amplifiers to begin
         // with.
-        if(!hasEngine() || getEngine().isFusion() || (getEngine().getEngineType() == Engine.FISSION)) {
+        if(hasEngine() && (getEngine().isFusion() || (getEngine().getEngineType() == Engine.FISSION))) {
             return 0.0;
         }
         // Otherwise we need to iterate over our weapons, find out which of them

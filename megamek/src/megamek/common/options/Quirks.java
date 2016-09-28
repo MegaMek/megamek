@@ -155,7 +155,7 @@ public class Quirks extends AbstractOptions {
     public static boolean isQuirkLegalFor(IOption quirk, Entity en) {
         String qName = quirk.getName();
         
-        if ((en.getEngine() != null) &&
+        if (en.hasEngine() &&
                 ((en.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) ||
                 (en.getEngine().getEngineType() == Engine.FUEL_CELL)) &&
                 qName.equals(OptionsConstants.QUIRK_NEG_GAS_HOG)) {
@@ -250,7 +250,7 @@ public class Quirks extends AbstractOptions {
                 return false;
             }
             
-            if(!en.getEngine().isFusion() && qName.equals(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)) {
+            if(en.hasEngine() && !en.getEngine().isFusion() && qName.equals(OptionsConstants.QUIRK_NEG_FRAGILE_FUEL)) {
                 return false;
             }
             

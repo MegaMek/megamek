@@ -7317,11 +7317,9 @@ public class Server implements Runnable {
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 // Unless we're an ICE- or fuel cell-powered IndustrialMech,
                 // standing up builds heat.
-                if ((entity instanceof Mech) && !(((Mech) entity).isIndustrial()
-                        && ((entity.getEngine()
-                                .getEngineType() == Engine.COMBUSTION_ENGINE)
-                                || (entity.getEngine()
-                                        .getEngineType() == Engine.FUEL_CELL)))) {
+                if ((entity instanceof Mech) && entity.hasEngine() && !(((Mech) entity).isIndustrial()
+                        && ((entity.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)
+                                || (entity.getEngine().getEngineType() == Engine.FUEL_CELL)))) {
                     entity.heatBuildup += 1;
                 }
                 entity.setProne(false);
@@ -9234,10 +9232,9 @@ public class Server implements Runnable {
         if (ram != null) {
             send(createAttackPacket(ram, 1));
         }
-        if ((entity instanceof Mech) && ((Mech) entity).isIndustrial()
+        if ((entity instanceof Mech) && entity.hasEngine() && ((Mech) entity).isIndustrial()
                 && !((Mech) entity).hasEnvironmentalSealing()
-                && (entity.getEngine()
-                        .getEngineType() == Engine.COMBUSTION_ENGINE)) {
+                && (entity.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE)) {
             if ((!entity.isProne()
                     && (game.getBoard().getHex(entity.getPosition())
                             .terrainLevel(Terrains.WATER) >= 2))
@@ -13570,7 +13567,7 @@ public class Server implements Runnable {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
         for (Entity e : game.getEntitiesVector()) {
-            if (e.getSelfDestructInitiated()) {
+            if (e.getSelfDestructInitiated() && e.hasEngine()) {
                 r = new Report(6166, Report.PUBLIC);
                 int target = e.getCrew().getPiloting();
                 int roll = e.getCrew().rollPilotingSkill();
@@ -22749,7 +22746,7 @@ public class Server implements Runnable {
 
                     int hitsToDestroy = 3;
                     if ((te instanceof Mech)
-                        && ((Mech) te).isSuperHeavy()
+                        && ((Mech) te).isSuperHeavy() && te.hasEngine()
                         && (te.getEngine().getEngineType() == Engine.COMPACT_ENGINE)) {
                         hitsToDestroy = 2;
                     }
@@ -22879,7 +22876,7 @@ public class Server implements Runnable {
      */
     private boolean checkEngineExplosion(Entity en, Vector<Report> vDesc,
             int hits) {
-        if (!(en instanceof Mech) && !(en instanceof QuadMech)
+        if(!(en instanceof Mech) && !(en instanceof QuadMech)
             && !(en instanceof BipedMech) && !(en instanceof Aero)
             && !(en instanceof Tank)) {
             return false;
@@ -22887,21 +22884,17 @@ public class Server implements Runnable {
         // If this method gets called for an entity that's already destroyed or
         // that hasn't taken any actual engine hits this phase yet, do nothing.
         if (en.isDestroyed() || (en.engineHitsThisPhase <= 0)
-                || en.getSelfDestructedThisTurn()) {
+                || en.getSelfDestructedThisTurn() || !en.hasEngine()) {
             return false;
         }
         int explosionBTH = 10;
         int hitsPerRound = 4;
-        Engine engine = null;
+        Engine engine = en.getEngine();
 
-        if (en instanceof Mech) {
-            engine = ((Mech) en).getEngine();
-        } else if (en instanceof Tank) {
+        if(en instanceof Tank) {
             explosionBTH = 12;
             hitsPerRound = 1;
-            engine = ((Tank) en).getEngine();
-        } else {
-            engine = ((Aero) en).getEngine();
+        } else if(!(en instanceof Mech)) {
             explosionBTH = 12;
             hitsPerRound = 1;
         }
@@ -24972,7 +24965,7 @@ public class Server implements Runnable {
                                                                       numEngineHits);
                         int hitsToDestroy = 3;
                         if ((en instanceof Mech)
-                            && ((Mech) en).isSuperHeavy()
+                            && ((Mech) en).isSuperHeavy() && en.hasEngine()
                             && (en.getEngine().getEngineType() == Engine.COMPACT_ENGINE)) {
                             hitsToDestroy = 2;
                         }
@@ -25510,7 +25503,7 @@ public class Server implements Runnable {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
-        if (en.getEngine().isFusion()) {
+        if(en.hasEngine() && en.getEngine().isFusion()) {
             // fusion engine, no effect
             r = new Report(6300);
             r.subject = en.getId();
@@ -25578,7 +25571,7 @@ public class Server implements Runnable {
         }
         vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0, critType),
                                       true, damage, false));
-        if ((critType != Tank.CRIT_NONE) && !t.getEngine().isFusion()
+        if ((critType != Tank.CRIT_NONE) && t.hasEngine() && !t.getEngine().isFusion()
             && t.hasQuirk("fragile_fuel") && (Compute.d6(2) > 9)) {
             // BOOM!!
             vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0,
@@ -26342,7 +26335,7 @@ public class Server implements Runnable {
 
             // Did the hull breach destroy the engine?
             int hitsToDestroy = 3;
-            if (mech.isSuperHeavy()
+            if (mech.isSuperHeavy() && mech.hasEngine()
                 && (mech.getEngine().getEngineType() == Engine.COMPACT_ENGINE)) {
                 hitsToDestroy = 2;
             }

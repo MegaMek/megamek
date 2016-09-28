@@ -2385,7 +2385,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
             return;
         }
 
-        setSelfDestructEnabled(ce.getEngine().isFusion()
+        setSelfDestructEnabled(ce.hasEngine() && ce.getEngine().isFusion()
                                && !ce.getSelfDestructing() && !ce.getSelfDestructInitiated());
     }
 

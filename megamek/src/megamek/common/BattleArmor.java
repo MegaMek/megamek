@@ -805,7 +805,7 @@ public class BattleArmor extends Infantry {
         if(!isInitialized) {
             return CLAN_NUM_OF_SLOTS;
         }
-        return Arrays.stream(crits).mapToInt((locSlots) -> (null != locSlots) ? locSlots.length : 0).toArray();
+        return Arrays.copyOf(isClan() ? CLAN_NUM_OF_SLOTS : IS_NUM_OF_SLOTS, troopers + 1);
     }
 
     /**

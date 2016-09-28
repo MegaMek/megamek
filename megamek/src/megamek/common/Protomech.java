@@ -2120,10 +2120,6 @@ public class Protomech extends Entity {
         return getRunMP(gravity, ignoreheat, ignoremodulararmor);
     }
 
-    public void setEngine(Engine engine) {
-        this.engine = engine;
-    }
-
     @Override
     /*
      * Each ProtoMech has 1 Structure point

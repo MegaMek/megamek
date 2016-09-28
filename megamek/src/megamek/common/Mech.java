@@ -928,7 +928,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getStandingHeat() {
-        return engine.getStandingHeat();
+        return hasEngine() ? getEngine().getStandingHeat() : 0;
     }
 
     /**
@@ -937,9 +937,10 @@ public abstract class Mech extends Entity {
      * @param e
      *            the <code>Engine</code> to set
      */
+    @Override
     public void setEngine(Engine e) {
-        engine = e;
-        if (e.engineValid) {
+        super.setEngine(e);
+        if(hasEngine() && getEngine().engineValid) {
             setOriginalWalkMP(calculateWalk());
         }
     }
@@ -971,7 +972,7 @@ public abstract class Mech extends Entity {
     @Override
     public int getWalkHeat() {
         int extra = bDamagedCoolantSystem?1:0;
-        return extra + engine.getWalkHeat(this);
+        return extra + (hasEngine() ? getEngine().getWalkHeat(this) : 0);
     }
 
     /**
@@ -1041,7 +1042,7 @@ public abstract class Mech extends Entity {
     @Override
     public int getRunHeat() {
         int extra = bDamagedCoolantSystem?1:0;
-        return extra + engine.getRunHeat(this);
+        return extra + (hasEngine() ? getEngine().getRunHeat(this) : 0);
     }
 
     /*
@@ -1146,7 +1147,7 @@ public abstract class Mech extends Entity {
     @Override
     public int getSprintHeat() {
         int extra = bDamagedCoolantSystem?1:0;
-        return extra + engine.getSprintHeat();
+        return extra + (hasEngine() ? getEngine().getSprintHeat() : 0);
     }
 
     /**
@@ -1367,17 +1368,17 @@ public abstract class Mech extends Entity {
 
         switch (getJumpType()) {
             case JUMP_IMPROVED:
-                return extra + engine.getJumpHeat((movedMP / 2) + (movedMP % 2));
+                return extra + (hasEngine() ? getEngine().getJumpHeat((movedMP / 2) + (movedMP % 2)) : 0);
             case JUMP_PROTOTYPE_IMPROVED:
                 // min 6 heat, otherwise 2xJumpMp, XTRO:Succession Wars pg17
-                return extra + Math.max(6, engine.getJumpHeat(movedMP * 2));
+                return extra + (hasEngine() ? Math.max(6, getEngine().getJumpHeat(movedMP * 2)) : 0);
             case JUMP_BOOSTER:
             case JUMP_DISPOSABLE:
                 return extra;
             case JUMP_NONE:
                 return 0;
             default:
-                return extra + engine.getJumpHeat(movedMP);
+                return extra + (hasEngine() ? getEngine().getJumpHeat(movedMP) : 0);
         }
     }
 
@@ -4356,6 +4357,7 @@ public abstract class Mech extends Entity {
 
             // sort the heat-using weapons by modified BV
             Collections.sort(heatBVs, new Comparator<ArrayList<Object>>() {
+                @Override
                 public int compare(ArrayList<Object> obj1,
                         ArrayList<Object> obj2) {
                     // first element in the the ArrayList is BV, second is heat
@@ -4919,7 +4921,9 @@ public abstract class Mech extends Entity {
         costs[i++] = muscCost * weight;// musculature
         costs[i++] = EquipmentType.getStructureCost(structureType) * weight;// IS
         costs[i++] = getActuatorCost();// arm and/or leg actuators
-        costs[i++] = (engine.getBaseCost() * engine.getRating() * weight) / 75.0;
+        if(hasEngine()) {
+            costs[i++] = (getEngine().getBaseCost() * getEngine().getRating() * weight) / 75.0;
+        }
         if (getGyroType() == Mech.GYRO_XL) {
             costs[i++] = 750000 * (int) Math
                     .ceil((getOriginalWalkMP() * weight) / 100f) * 0.5;
@@ -8468,6 +8472,7 @@ public abstract class Mech extends Entity {
      *
      * @return
      */
+    @Override
     public int getSpriteDrawPriority() {
         return 6;
     }

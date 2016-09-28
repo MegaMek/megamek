@@ -104,11 +104,6 @@ public class SmallCraft extends Aero {
         return 4;
     }
 
-    @Override
-    public void setEngine(Engine e) {
-        engine = e;
-    }
-
     // what is different - hit table is about it
     @Override
     public HitData rollHitLocation(int table, int side) {

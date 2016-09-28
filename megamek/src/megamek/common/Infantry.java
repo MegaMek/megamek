@@ -1745,6 +1745,11 @@ public class Infantry extends Entity {
         return false;
     }
 
+    @Override
+    public boolean hasEngine() {
+        return false;
+    }
+
     /**
      * Mounts the specified equipment in the specified location.
      */

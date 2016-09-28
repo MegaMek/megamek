@@ -2484,7 +2484,7 @@ public class Tank extends Entity {
             costs[i++] = 10000 * controlWeight;
         }
 
-        double freeHeatSinks = engine.getWeightFreeEngineHeatSinks();
+        double freeHeatSinks = hasEngine() ? getEngine().getWeightFreeEngineHeatSinks() : 0;
         int sinks = 0;
         double turretWeight = 0;
         double paWeight = 0;
@@ -2502,7 +2502,7 @@ public class Tank extends Entity {
             }
         }
         paWeight = Math.ceil(paWeight * 2) / 2;
-        if (engine.isFusion()) {
+        if(hasEngine() && getEngine().isFusion()) {
             paWeight = 0;
         }
         turretWeight = Math.ceil(turretWeight * 2) / 2;
@@ -2719,10 +2719,6 @@ public class Tank extends Entity {
 
     public boolean hasHeavyMovementDamage() {
         return heavyMovementDamage;
-    }
-
-    public void setEngine(Engine e) {
-        engine = e;
     }
 
     @Override

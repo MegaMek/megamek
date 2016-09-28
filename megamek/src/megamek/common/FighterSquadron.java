@@ -370,6 +370,7 @@ public class FighterSquadron extends Aero {
         return sinks;
     }
     
+    @Override
     public int getHeatCapacity(boolean includeRadicalHeatSink){
         if (includeRadicalHeatSink){
             return heatcap;
@@ -964,12 +965,18 @@ public class FighterSquadron extends Aero {
     
     @Override
     public Engine getEngine() {
-        throw new UnsupportedOperationException("Fighter squadrons don't have a single engine");
+        return null;
+    }
+    
+    @Override
+    public boolean hasEngine() {
+        return false;
     }
     
     /**
      * Get the movement mode of the entity, based on consensus.
      */
+    @Override
     public EntityMovementMode getMovementMode() {
         if (fighters.size() < 1) {
             return EntityMovementMode.NONE;

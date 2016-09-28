@@ -209,11 +209,6 @@ public class Jumpship extends Aero {
         return kf_integrity > 0;
     }
 
-    @Override
-    public void setEngine(Engine e) {
-        engine = e;
-    }
-
     // different firing arcs
     // different firing arcs
     @Override

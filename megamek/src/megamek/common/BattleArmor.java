@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
@@ -801,10 +802,10 @@ public class BattleArmor extends Infantry {
      */
     @Override
     protected int[] getNoOfSlots() {
-        if (!isInitialized || isClan()) {
+        if(!isInitialized) {
             return CLAN_NUM_OF_SLOTS;
         }
-        return IS_NUM_OF_SLOTS;
+        return Arrays.stream(crits).mapToInt((locSlots) -> (null != locSlots) ? locSlots.length : 0).toArray();
     }
 
     /**

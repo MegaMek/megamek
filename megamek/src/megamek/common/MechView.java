@@ -190,7 +190,7 @@ public class MechView {
         if (isMech || isVehicle
                 || (isAero && !isSmallCraft && !isJumpship && !isSquadron)) {
             sBasic.append(Messages.getString("MechView.Engine")); //$NON-NLS-1$
-            sBasic.append(entity.getEngine().getShortEngineName());
+            sBasic.append(entity.hasEngine() ? entity.getEngine().getShortEngineName() : "(none)");
             if (entity.getEngineHits() > 0) {
                 sBasic.append("<font color='red'> (" + entity.getEngineHits()
                         + " hits)</font>");

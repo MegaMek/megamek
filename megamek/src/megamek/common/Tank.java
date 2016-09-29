@@ -2413,35 +2413,37 @@ public class Tank extends Entity {
         }
 
         // Engine Costs
-        double engineCost;
-        if (isSupportVehicle()) {
-            engineCost = 5000 * getEngine().getWeightEngine(this);
-            switch (getEngine().getEngineType()) {
-                case Engine.STEAM:
-                    engineCost *= 0.8;
-                    break;
-                case Engine.COMBUSTION_ENGINE:
-                    engineCost *= 1.0;
-                    break;
-                case Engine.BATTERY:
-                    engineCost *= 1.2;
-                    break;
-                case Engine.FUEL_CELL:
-                    engineCost *= 1.4;
-                    break;
-                case Engine.SOLAR:
-                    engineCost *= 1.6;
-                    break;
-                case Engine.FISSION:
-                    engineCost *= 3;
-                    break;
-                case Engine.NORMAL_ENGINE:
-                    engineCost *= 2;
-                    break;
+        double engineCost = 0.0;
+        if(hasEngine()) {
+            if (isSupportVehicle()) {
+                engineCost = 5000 * getEngine().getWeightEngine(this);
+                switch (getEngine().getEngineType()) {
+                    case Engine.STEAM:
+                        engineCost *= 0.8;
+                        break;
+                    case Engine.COMBUSTION_ENGINE:
+                        engineCost *= 1.0;
+                        break;
+                    case Engine.BATTERY:
+                        engineCost *= 1.2;
+                        break;
+                    case Engine.FUEL_CELL:
+                        engineCost *= 1.4;
+                        break;
+                    case Engine.SOLAR:
+                        engineCost *= 1.6;
+                        break;
+                    case Engine.FISSION:
+                        engineCost *= 3;
+                        break;
+                    case Engine.NORMAL_ENGINE:
+                        engineCost *= 2;
+                        break;
+                }
+            } else {
+                engineCost = (getEngine().getBaseCost() *
+                        getEngine().getRating() * weight) / 75.0;
             }
-        } else {
-            engineCost = (getEngine().getBaseCost() *
-                    getEngine().getRating() * weight) / 75.0;
         }
         costs[i++] = engineCost;
 
@@ -2484,7 +2486,7 @@ public class Tank extends Entity {
             costs[i++] = 10000 * controlWeight;
         }
 
-        double freeHeatSinks = hasEngine() ? getEngine().getWeightFreeEngineHeatSinks() : 0;
+        double freeHeatSinks = (hasEngine() ? getEngine().getWeightFreeEngineHeatSinks() : 0);
         int sinks = 0;
         double turretWeight = 0;
         double paWeight = 0;
@@ -2848,7 +2850,7 @@ public class Tank extends Entity {
                         }
                     case 10:
                         if (!engineHit) {
-                            return CRIT_ENGINE;
+                            return (hasEngine() ? CRIT_ENGINE : CRIT_NONE);
                         }
                     case 11:
                         for (Mounted m : getAmmo()) {
@@ -2858,10 +2860,14 @@ public class Tank extends Entity {
                             }
                         }
                     case 12:
-                        if (getEngine().isFusion() && !engineHit) {
-                            return CRIT_ENGINE;
-                        } else if (!getEngine().isFusion()) {
-                            return CRIT_FUEL_TANK;
+                        if(hasEngine()) {
+                            if (getEngine().isFusion() && !engineHit) {
+                                return CRIT_ENGINE;
+                            } else if (!getEngine().isFusion()) {
+                                return CRIT_FUEL_TANK;
+                            }
+                        } else {
+                            return CRIT_NONE;
                         }
                 }
             } else if ((loc == getLocTurret()) || (loc == getLocTurret2())) {
@@ -2945,13 +2951,17 @@ public class Tank extends Entity {
                         }
                     case 11:
                         if (!engineHit) {
-                            return CRIT_ENGINE;
+                            return (hasEngine() ? CRIT_ENGINE : CRIT_NONE);
                         }
                     case 12:
-                        if (getEngine().isFusion() && !engineHit) {
-                            return CRIT_ENGINE;
-                        } else if (!getEngine().isFusion()) {
-                            return CRIT_FUEL_TANK;
+                        if(hasEngine()) {
+                            if (getEngine().isFusion() && !engineHit) {
+                                return CRIT_ENGINE;
+                            } else if (!getEngine().isFusion()) {
+                                return CRIT_FUEL_TANK;
+                            }
+                        } else {
+                            return CRIT_NONE;
                         }
                 }
             }
@@ -3224,7 +3234,7 @@ public class Tank extends Entity {
             usedSlots++;
         }
         // different engines take different amounts of slots
-        if (getEngine().isFusion()) {
+        if (hasEngine() && getEngine().isFusion()) {
             if (getEngine().getEngineType() == Engine.LIGHT_ENGINE) {
                 usedSlots++;
             }
@@ -3243,10 +3253,10 @@ public class Tank extends Entity {
                 }
             }
         }
-        if (getEngine().hasFlag(Engine.LARGE_ENGINE)) {
+        if (hasEngine() && getEngine().hasFlag(Engine.LARGE_ENGINE)) {
             usedSlots++;
         }
-        if (getEngine().getEngineType() == Engine.COMPACT_ENGINE) {
+        if (hasEngine() && getEngine().getEngineType() == Engine.COMPACT_ENGINE) {
             usedSlots--;
         }
         // for ammo, each type of ammo takes one slots, regardless of

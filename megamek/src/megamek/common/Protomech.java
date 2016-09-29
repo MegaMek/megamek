@@ -1953,7 +1953,7 @@ public class Protomech extends Entity {
         retVal += 540 * weight;
 
         // Engine cost is based on tonnage and rating.
-        if (getEngine() != null) {
+        if (hasEngine()) {
             retVal += (5000 * weight * getEngine().getRating()) / 75;
         }
 

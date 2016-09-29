@@ -197,7 +197,7 @@ public class UnitTable {
 			}
 		}
 		
-		if (salvageTotal + unitMapSize == 0) {
+		if (unitMapSize <= 0) {
 			return null;
 		}
 		roll = Compute.randomInt(unitMapSize);
@@ -255,7 +255,16 @@ public class UnitTable {
 				salvageCache.put(fRec.getKey(), salvage);
 				return salvage.generateUnit(filter);
 			} else {
-				salvageMap.remove(roll);
+				int index = -1;
+				for (int i = 0; i < table.size(); i++) {
+					if (!table.get(i).isUnit() && table.get(i).getSalvageFaction().getKey().equals(fRec.getKey())) {
+						index = i;
+						break;
+					}
+				}
+				if (index >= 0) {
+					table.remove(index);
+				}
 				/* Rebuild the table */
 				salvageMap.clear();
 				salvageTotal = 0;

@@ -2384,10 +2384,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
                 // Customizations to a Squadron can effect the fighters
                 if (entity instanceof FighterSquadron) {
-                    for (Aero fighter : ((FighterSquadron) entity)
-                            .getFighters()) {
-                        client.sendUpdateEntity(fighter);
-                    }
+                    entity.getSubEntities().ifPresent(ents -> ents.forEach(client::sendUpdateEntity));
                 }
             }
         }
@@ -2466,10 +2463,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
                 // Customizations to a Squadron can effect the fighters
                 if (entity instanceof FighterSquadron) {
-                    for (Aero fighter : ((FighterSquadron) entity)
-                            .getFighters()) {
-                        c.sendUpdateEntity(fighter);
-                    }
+                    entity.getSubEntities().ifPresent(ents -> ents.forEach(c::sendUpdateEntity));
                 }
 
                 // Do we need to update the members of our C3 network?

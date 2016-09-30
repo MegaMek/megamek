@@ -29,11 +29,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.common.Building.BasementType;
@@ -14063,6 +14065,44 @@ public abstract class Entity extends TurnOrdered implements Transporter,
         this.engineTechRating = engineTechRating;
     }
 
+    /**
+     * This method (and getActiveSubEntities()) is meant for groups of entities handled as a
+     * singular one. Examples include fighter squadrons on space maps or lances in BattleForce
+     * game modes.
+     * <p>
+     * To check if a given entity consists of multiple sub-entities, use
+     * <pre>
+     * if(entity.getSubEntities().isPresent()) {
+     *     ...
+     * }
+     * </pre>
+     * To iterate over entities (if present), use:
+     * <pre>
+     * entity.getSubEntities().ifPresent(entities -> entities.forEach(
+     *     subEntity -> {
+     *         ...
+     *     });
+     * </pre>
+     * 
+     * @return an optional collection of sub-entities, if this entity is considered a grouping of them.
+     */
+    public Optional<List<Entity>> getSubEntities() {
+        return Optional.empty();
+    }
+    
+    /**
+     * The default implementation calls getSubEntities(), then filters them. This might not be
+     * the optimal code for many applications, so feel free to override both if needed.
+     * 
+     * @return an optional collection of sub-entities, if this entity is considered a grouping of them,
+     *         pre-filtered to only contain active (non-destroyed and non-doomed) entities.
+     */
+    public Optional<List<Entity>> getActiveSubEntities() {
+        return getSubEntities().map(
+            ents -> ents.stream().filter(
+                ent -> !(ent.isDestroyed() || ent.isDoomed())).collect(Collectors.toList()));
+    }
+    
     /**
      * Used to determine the draw priority of different Entity subclasses.
      * This allows different unit types to always be draw above/below other

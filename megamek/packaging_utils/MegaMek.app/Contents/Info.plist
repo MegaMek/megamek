@@ -21,12 +21,12 @@
     <string>????</string>
     <key>CFBundleIconFile</key>
     <string>megamek.icns</string>
-    <key>Java</key>
+    <key>JavaX</key>
     <dict>
       <key>MainClass</key>
       <string>megamek.MegaMek</string>
       <key>JVMVersion</key>
-      <string>1.7+</string>
+      <string>1.8+</string>
       <key>ClassPath</key>
       <array>
         <string>$JAVAROOT/MegaMek.jar</string>

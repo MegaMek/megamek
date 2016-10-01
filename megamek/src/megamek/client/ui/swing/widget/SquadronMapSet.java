@@ -129,7 +129,6 @@ public class SquadronMapSet implements DisplayMapSet {
     }
 
     public void setEntity(Entity e) {
-        FighterSquadron fs = (FighterSquadron) e;
         List<Entity> fighters = e.getSubEntities().orElse(Collections.emptyList());
         for(int i = 0; i < max_size; ++ i) {
             final Aero fighter = (Aero) fighters.get(i);

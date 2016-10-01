@@ -82,7 +82,7 @@
 		<os family="mac" />
 	</condition>
 
-	<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="${util}/jarbundler-2.1.0.jar" />
+	<!-- <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="${util}/jarbundler-2.1.0.jar" /> -->
 
 	<!-- if we're using a Mac then we'll use the launch4j for Mac OS -->
 	<target name="checkOSMac" if="isOsMac">

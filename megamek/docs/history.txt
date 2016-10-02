@@ -3,23 +3,11 @@ VERSION HISTORY:
 v0.41.24-git
 + Refactored FighterSquadron's specific methods so that we can more easily support all composite entities.
   WARNING: This is an API change. The following methods are new in Entity:
-  
-  public Optional<List<Entity>> getSubEntities()
-  public Optional<List<Entity>> getActiveSubEntities()
-  
-  The following got removed from FighterSquadron (with replacements where available):
-  
-  public int getN0Fighters() -> getSubEntities().orElse(Collections.emptyList()).size()
-  public int getNFighters() -> getActiveSubEntities().orElse(Collections.emptyList()).size()
-  public Aero getFighter(int loc) -> getSubEntities().orElse(Collections.emptyList()).get(loc), with a cast and boundary checks
-  public Vector<Aero> getFighters() -> getSubEntities().orElse(Collections.emptyList())
-  public Vector<Integer> getFighterIds() -> getSubEntities().orElse(Collections.emptyList()).stream().map(ent -> ent.getId()).collect(Collectors.toList())
-    Don't ask my why you'd ever want to call this in the first place, it was only used internally.
-  public int getMaxSize() -> FighterSquadron.MAX_SIZE or FighterSquadron.ALTERNATE_MAX_SIZE, depending on game settings.
-    Usage of canLoad(...) is preferred to check if the squadron (or any other Entity) can actually load the supplied one.
-  
 +Bug: RAT Generator incorrectly adjusting proportion of succession war/upgraded/Clan tech.
 +Data: New Sprites
++Data: New Sprites
++Data: Changes to Field Gunners/Artillery intro dates and moving them
+   from Unofficial to Infantry.
 
 v0.41.23 (2016-09-20 00:07 UTC)
 + Issue #323: Artefacting drawing the boardview background

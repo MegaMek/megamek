@@ -1391,7 +1391,7 @@ public abstract class Mech extends Entity {
      */
     @Override
     public int getJumpMPWithTerrain() {
-        if ((getPosition() == null) || (getJumpType() == JUMP_BOOSTER)) {
+        if ((getPosition() == null) || (game.getBoard().getHex(getPosition()) == null) || (getJumpType() == JUMP_BOOSTER)) {
             return getJumpMP();
         }
         int waterLevel = 0;

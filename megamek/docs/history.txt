@@ -11,7 +11,7 @@ v0.41.24-git
 + Fixed Mac OSX Packaging (Hopefully for good this time!)
 
 v0.41.23 (2016-09-20 00:07 UTC)
-+ Issue #323: Artefacting drawing the boardview background
++ Issue #323: Artifacts when drawing the boardview background
 + Bug: Bot would fire at hidden units
 + Added option to toggle displaying of unit labels, default key is Y
 + Bug: IllegalFormatConversionException in ASFBay.getUnusedString

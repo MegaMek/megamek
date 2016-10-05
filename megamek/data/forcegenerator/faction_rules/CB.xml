@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE ruleset SYSTEM "rulesetEntities.dtd">
+
+<ruleset faction="CB" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="formationRulesetSchema.xsd">
+
+	<defaults>
+		<eschelon>&CLUSTER;</eschelon>
+		<rankSystem>&RANK_CLAN;</rankSystem>
+		<rating>FL</rating>
+	</defaults>
+	
+	<toc>
+		<unitType>
+			<option ifDateBetween="3061,">null,Mek,ProtoMek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter,Warship,Dropship,Jumpship</option>
+			<option ifDateBetween="2870,3060">null,Mek,Tank,VTOL,Infantry,BattleArmor,Aero,Conventional Fighter,Warship,Dropship,Jumpship</option>
+			<option ifDateBetween=",2869">null,Mek,Tank,VTOL,Infantry,Aero,Conventional Fighter,Warship,Dropship,Jumpship</option>
+		</unitType>
+		
+		<eschelon>
+			<option ifUnitType="">&TOUMAN;,&GALAXY;,&CLUSTER;</option>
+			<option ifUnitType="Mek" ifDateBetween="2870,">&TRINARY;^,&TRINARY;,&BINARY;^,&BINARY;,&STAR;^,&STAR;</option>
+			<option ifUnitType="Warship">&CLUSTER;</option>
+			<option ifUnitType="Dropship|Jumpship">&STAR;</option>
+			<option>&TRINARY;,&BINARY;,&STAR;</option>
+		</eschelon>
+		
+		<rating>
+			<option ifUnitType="Tank|VTOL">SL:Second Line,PG:Provisional Garrison,Sol:Solahma</option>
+			<option ifUnitType="Infantry" ifDateBetween="2900,">PG:Provisional Garrison,Sol:Solahma</option>
+			<option ifUnitType="Infantry">SL:Second Line,PG:Provisional Garrison,Sol:Solahma</option>
+			<option ifEschelon="Touman"></option>
+			<option ifEschelon="Galaxy">FL:Front Line,SL:Second Line</option>
+			<option>Keshik,FL:Front Line,SL:Second Line,PG:Provisional Garrison,Sol:Solahma</option>
+		</rating>
+		
+		<flags>
+			<option ifUnitType="null|Mek|BattleArmor" ifEschelon="Trinary|Binary">mixedMekBA</option>
+		</flags>
+	</toc>
+	
+	<!--The information gleaned from Operation Klondike and FM:CC
+	(particularly the Star Adder section) points to a Clan that
+	initially fielded mostly heavy and assault Meks but going into the
+	Golden Century rebuilt with a much lighter touman. A few unit
+	names can be gleaned from the Star Adder section of FM:CC,
+	but otherwise we just follow the generic Clan organization.-->
+	
+	<force eschName="Touman">
+		<eschelon>&TOUMAN;</eschelon>
+		<co>&KHAN;</co>
+		<xo>&SAKHAN;</xo>
+		
+		<subforces>
+			<subforce rating="Keshik"
+				ifDateBetween="2870,3059">&CLUSTER;</subforce>
+			<subforce name="Alpha Galaxy" rating="FL"
+				ifDateBetween=",3059">&GALAXY;</subforce>
+			<subforce name="Beta Galaxy" rating="FL"
+				ifDateBetween=",3059">&GALAXY;</subforce>
+			<subforce name="Gamma Galaxy" rating="FL"
+				ifDateBetween="2870,3059">&GALAXY;</subforce>
+			<subforce name="Delta Galaxy" rating="FL"
+				ifDateBetween="2950,3059">&GALAXY;</subforce>
+			<subforce name="Kappa Galaxy" rating="SL"
+				ifDateBetween=",3059">&GALAXY;</subforce>
+			<subforce name="Pi Galaxy" rating="SL"
+				ifDateBetween=",3059">&GALAXY;</subforce>
+			<subforce name="Zeta Galaxy" rating="FL"
+				ifDateBetween="3072,3074">&GALAXY;</subforce>
+			<subforce name="Omega Defense Galaxy" rating="SL"
+				ifDateBetween="3072,3074">&GALAXY;</subforce>
+		</subforces>
+		
+		<attachedForces>
+			<subforce unitType="Warship">&CLUSTER;</subforce>
+		</attachedForces>
+	</force>
+	
+	<force eschName="Galaxy">
+		<eschelon>&GALAXY;</eschelon>
+		<name>{greek} Galaxy</name>
+		<co>&GALAXY_CMDR;</co>
+		
+		<subforces ifRating="FL">
+			<subforceOption>
+				<option role="command" unitType="Mek"
+					weight="2">&TRINARY;</option>
+				<option role="command" unitType="Mek" ifDateBetween="2870,"
+					augmented="1" weight="1">&TRINARY;</option>
+			</subforceOption>
+			<subforceOption>
+				<option num="4">&CLUSTER;</option>
+				<option num="5">&CLUSTER;</option>
+			</subforceOption>
+		</subforces>
+		
+		<subforces ifRating="SL">
+			<subforceOption>
+				<option num="3">&CLUSTER;</option>
+				<option num="4">&CLUSTER;</option>
+			</subforceOption>
+			<subforceOption>
+				<option rating="PG" num="1">&CLUSTER;</option>
+				<option rating="PG" num="2">&CLUSTER;</option>
+				<option />
+			</subforceOption>
+		</subforces>
+	</force>
+	
+	<force eschName="Fleet" ifUnitType="Warship">
+		<eschelon>&CLUSTER;</eschelon>
+		<name>Naval Assets</name>
+		<co>&GALAXY_CMDR;</co>
+		
+		<subforces ifDateBetween=",3059">
+			<subforce chassis="Avatar Heavy Cruiser" ifDateBetween=",3024"
+				fluffName="CB Constantineau">&ELEMENT;</subforce>
+			<subforce chassis="Liberator Cruiser" ifDateBetween="3025,"
+				fluffName="CB Constantineau">&ELEMENT;</subforce>
+			<subforceOption>
+				<option num="4">&ELEMENT;</option>
+				<option num="5">&ELEMENT;</option>
+				<option num="6">&ELEMENT;</option>
+			</subforceOption>
+		</subforces>
+		
+		<subforces ifDateBetween="3072,3074">
+			<subforce fluffName="CB Tremor"
+				chassis="Cameron Battlecruiser">&ELEMENT;</subforce>
+			<subforce fluffName="CB Admiral Russell Nga"
+				chassis="Kimagure Pursuit Cruiser">&ELEMENT;</subforce>
+			<subforce fluffName="CB Rebirth"
+				chassis="Lola III Destroyer">&ELEMENT;</subforce>
+			<subforce fluffName="CB Hetherington"
+				chassis="Riga Frigate">&ELEMENT;</subforce>
+			<subforce fluffName="CB Stone Crab"
+				chassis="Mako Corvette">&ELEMENT;</subforce>
+			<subforce fluffName="CB Ingrid Bucharev"
+				chassis="Mako Corvette">&ELEMENT;</subforce>
+			<subforce fluffName="CB Second Coming"
+				chassis="McKenna Battleship">&ELEMENT;</subforce>
+		</subforces>
+	</force>
+	
+	<force eschName="Cluster">
+		<eschelon>&CLUSTER;</eschelon>
+		<name ifRating="Keshik">Keshik</name>
+		<name ifRating="FL"
+			ifWeightClass="A|H">Burrock Assault Cluster</name>
+		<name ifRating="FL" ifWeightClass="M">Burrock Battle Cluster</name>
+		<name ifRating="FL" ifWeightClass="L">Burrock Hussars</name>
+		<name ifRating="SL" ifDateBetween="3072,">Tanis Defenders</name>
+		<name ifRating="SL">Albion Defenders</name>
+		<name ifRating="PG">Warren Cluster</name>
+		<co>&STAR_COL;</co>
+		
+		<weightClass>
+			<option weight="1">H</option>
+			<option weight="2">M</option>
+			<option weight="1">L</option>
+			<option ifDateBetween=",2900">H</option>
+			<option ifDateBetween="2870,">L</option>
+		</weightClass>
+
+		<subforces>
+			<asParent />
+		</subforces>		
+	</force>
+	
+	<force eschName="Trinary" ifAugmented="0" ifUnitType="Mek">
+		<eschelon>&TRINARY;</eschelon>
+		<name ifRole="command">Command Trinary</name>
+		<name>Trinary {greek}</name>
+		<co>&STAR_CAPTAIN;</co>
+		
+		<changeEschelon ifFlags="testTrinary">
+			<option flags="-testTrinary" weight="6">&TRINARY;</option>
+			<option flags="-testTrinary" weight="3">&BINARY;</option>
+			<option flags="-testTrinary"
+				ifRating="FL|Keshik" ifDateBetween="2870,"
+				augmented="1" weight="2">&TRINARY;</option>
+			<option flags="-testTrinary"
+				ifRating="FL|Keshik" ifDateBetween="2870,"
+				augmented="1">&BINARY;</option>
+		</changeEschelon>
+		
+		<ruleGroup>
+			<weightClass>
+				<option weight="1">A</option>
+				<option weight="3">H</option>
+				<option weight="2">M</option>
+				<option weight="1">L</option>
+				<option ifRole="command" weight="1">H</option>
+				<option ifDateBetween="2870,">L</option>
+				<option ifDateBetween="2950,">M</option>
+				<option ifDateBetween="2950,">L</option>
+			</weightClass>
+		</ruleGroup>
+		
+		<subforces>
+			<asParent />
+		</subforces>
+	</force>
+
+	<force eschName="Supernova Trinary" ifAugmented="1" ifUnitType="Mek">
+		<eschelon>&TRINARY;</eschelon>
+		<name ifRole="command">Command Supernova Trinary</name>
+		<name>Trinary {greek}</name>
+		<co>&NOVA_CAPTAIN;</co>
+		
+		<changeEschelon ifDateBetween=",2869">
+			<option augmented="0">&TRINARY;</option>
+		</changeEschelon>
+		
+		<ruleGroup>
+			<weightClass>
+				<option weight="1">A</option>
+				<option weight="3">H</option>
+				<option weight="2">M</option>
+				<option weight="1">L</option>
+				<option ifRole="command" weight="1">H</option>
+				<option ifDateBetween="2870,">L</option>
+				<option ifDateBetween="2950,">M</option>
+				<option ifDateBetween="2950,">L</option>
+			</weightClass>
+		</ruleGroup>
+		
+		<subforces>
+			<asParent />
+		</subforces>
+	</force>
+	
+	<force eschName="Trinary" ifUnitType="Tank">
+		<eschelon>&TRINARY;</eschelon>
+		<name ifRole="command">Command Trinary</name>
+		<name>Trinary {greek}</name>
+		<co>&STAR_CAPTAIN;</co>
+		
+		<changeEschelon ifFlags="testTrinary">
+			<option flags="-testTrinary">&TRINARY;</option>
+			<option flags="-testTrinary">&BINARY;</option>
+		</changeEschelon>
+		
+		<ruleGroup>
+			<weightClass>
+				<option weight="2">A</option>
+				<option weight="3">H</option>
+				<option weight="1">M</option>
+				<option weight="2">L</option>
+				<option ifDateBetween="2870,">L</option>
+				<option ifDateBetween="2950,">M</option>
+				<option ifDateBetween="2950,">L</option>
+			</weightClass>
+		</ruleGroup>
+		
+		<subforces>
+			<asParent />
+		</subforces>
+	</force>
+
+	<force eschName="Binary" ifAugmented="0" ifUnitType="Mek">
+		<eschelon>&BINARY;</eschelon>
+		<name ifRole="command">Command Binary</name>
+		<name>Binary {greek}</name>
+		<co>&STAR_CAPTAIN;</co>
+		
+		<weightClass>
+			<option weight="1">A</option>
+			<option weight="3">H</option>
+			<option weight="2">M</option>
+			<option weight="1">L</option>
+			<option ifRole="command" weight="1">H</option>
+			<option ifDateBetween="2870,">L</option>
+			<option ifDateBetween="2950,">M</option>
+			<option ifDateBetween="2950,">L</option>
+		</weightClass>
+		
+		<subforces>
+			<asParent />
+		</subforces>
+	</force>
+
+	<force eschName="Supernova Binary" ifAugmented="1" ifUnitType="Mek">
+		<eschelon>&BINARY;</eschelon>
+		<name ifRole="command">Command Supernova Binary</name>
+		<name>Supernova Binary {greek}</name>
+		<co>&NOVA_CAPTAIN;</co>
+		
+		<changeEschelon ifDateBetween=",2869">
+			<option augmented="0">&BINARY;</option>
+		</changeEschelon>
+		
+		<ruleGroup>
+			<weightClass>
+				<option weight="1">A</option>
+				<option weight="3">H</option>
+				<option weight="2">M</option>
+				<option weight="1">L</option>
+				<option ifRole="command" weight="1">H</option>
+				<option ifDateBetween="2870,">L</option>
+				<option ifDateBetween="2950,">M</option>
+				<option ifDateBetween="2950,">L</option>
+			</weightClass>
+		</ruleGroup>
+		
+		<subforces>
+			<asParent />
+		</subforces>
+	</force>
+
+	<force eschName="Binary" ifUnitType="Tank">
+		<eschelon>&BINARY;</eschelon>
+		<name ifRole="command">Command Binary</name>
+		<name>Binary {greek}</name>
+		<co>&STAR_CAPTAIN;</co>
+		
+		<weightClass>
+			<option weight="2">A</option>
+			<option weight="3">H</option>
+			<option weight="1">M</option>
+			<option weight="2">L</option>
+			<option ifDateBetween="2870,">L</option>
+			<option ifDateBetween="2950,">M</option>
+			<option ifDateBetween="2950,">L</option>
+		</weightClass>
+		
+		<subforces>
+			<asParent />
+		</subforces>
+	</force>
+
+	<force eschName="Star" ifAugmented="0" ifUnitType="Mek">
+		<eschelon>&STAR;</eschelon>
+		<name>{phonetic} Star</name>
+		<co>&STAR_CMDR;</co>
+		
+		<weightClass>
+			<option weight="1">A</option>
+			<option weight="3">H</option>
+			<option weight="2">M</option>
+			<option weight="1">L</option>
+			<option ifRole="command" weight="1">H</option>
+			<option ifDateBetween="2870,">L</option>
+			<option ifDateBetween="2950,">M</option>
+			<option ifDateBetween="2950,">L</option>
+		</weightClass>
+
+		<subforces>
+			<asParent />
+		</subforces>
+	</force>
+	
+	<force eschName="Nova" ifAugmented="1" ifUnitType="Mek">
+		<eschelon>&STAR;</eschelon>
+		<name>{phonetic} Nova</name>
+		<co>&NOVA_CMDR;</co>
+		<xo unitType="other">&STAR_CMDR;</xo>
+		
+		<changeEschelon ifDateBetween=",2869">
+			<option augmented="0">&STAR;</option>
+		</changeEschelon>
+		
+		<weightClass>
+			<option weight="1">A</option>
+			<option weight="3">H</option>
+			<option weight="2">M</option>
+			<option weight="1">L</option>
+			<option ifRole="command" weight="1">H</option>
+			<option ifDateBetween="2870,">L</option>
+			<option ifDateBetween="2950,">M</option>
+			<option ifDateBetween="2950,">L</option>
+		</weightClass>
+		
+		<role>
+			<option>+mechanized_ba</option>
+		</role>
+
+		<subforces>
+			<asParent />
+		</subforces>
+	</force>
+
+	<force eschName="Star" ifUnitType="Tank">
+		<eschelon>&STAR;</eschelon>
+		<name>{phonetic} Star</name>
+		<co>&STAR_CMDR;</co>
+		
+		<weightClass>
+			<option weight="2">A</option>
+			<option weight="3">H</option>
+			<option weight="1">M</option>
+			<option weight="2">L</option>
+			<option ifDateBetween="2870,">L</option>
+			<option ifDateBetween="2950,">M</option>
+			<option ifDateBetween="2950,">L</option>
+		</weightClass>
+
+		<subforces>
+			<asParent />
+		</subforces>
+	</force>
+</ruleset>

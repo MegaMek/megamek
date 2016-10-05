@@ -82,7 +82,7 @@
 		<os family="mac" />
 	</condition>
 
-	<!-- <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" classpath="${util}/jarbundler-2.1.0.jar" /> -->
+	<taskdef name="jarbundler" classname="com.ultramixer.jarbundler.JarBundler" classpath="${util}/jarbundler-core-3.3.0.jar"/>
 
 	<!-- if we're using a Mac then we'll use the launch4j for Mac OS -->
 	<target name="checkOSMac" if="isOsMac">
@@ -188,31 +188,24 @@
 				<exclude name="**/*.psd"/>
 			</fileset>
 		</copy>
-		<mkdir dir="${osxdist}/MegaMek.app" />
-		<copy todir="${osxdist}/MegaMek.app" encoding="UTF-8">
-			<fileset dir="${util}/MegaMek.app">
-				<include name="**/*" />
-			</fileset>
-		</copy>
-		<copy file="${util}/JavaApplicationStub" todir="${osxdist}/MegaMek.app/Contents/MacOS/" encoding="UTF-8" />
-		<copy todir="${osxdist}/MegaMek.app/Contents/Resources/Java/" encoding="UTF-8">
-			<fileset dir="${pkgdir}">
-				<include name="${libdir}/*.jar" />
-				<include name="${jarfile}" />
-			</fileset>
-		</copy>
-		<!-- We are no longer going to use jarbundler directly, but rather a static app that
-	         we can copy new jars into. We are also moving the lib outside the app
-	         so that it is consistent with MekHQ
-		<jarbundler dir="${osxdist}" name="MegaMek" mainclass="megamek.MegaMek" stubfile="packaging_utils/JavaApplicationStub" icon="data/images/misc/megamek.icns" workingdirectory="$APP_PACKAGE/../" vmoptions="-Xmx256m">
-	   		<jarfileset dir="${pkgdir}">
-	     	 	<include name="**/*.jar" />
-	   			<exclude name="${util}/" />
-	      	</jarfileset>
-	      	<javaproperty name="apple.laf.useScreenMenuBar" value="true" />
-	      	<javaproperty name="apple.awt.brushMetal" value="true" />
-	   	</jarbundler>
-		-->
+        <jarbundler
+            dir="${osxdist}"
+            name="MegaMek"
+            mainclass="megamek.MegaMek"
+            stubfile="packaging_utils/JavaApplicationStub"
+            icon="data/images/misc/megamek.icns"
+            workingdirectory="$APP_PACKAGE/../"
+            useJavaXKey="true"
+            jvmversion="1.8+"
+            version="${version}"
+            vmoptions="-1024m">
+            <jarfileset dir="${pkgdir}">
+                <include name="**/*.jar" />
+                <exclude name="${util}/" />
+            </jarfileset>
+            <javaproperty name="apple.laf.useScreenMenuBar" value="true" />
+            <javaproperty name="apple.awt.brushMetal" value="true" />
+        </jarbundler>
 	</target>
 
 	<!-- I think this will only work on OS X systems -->

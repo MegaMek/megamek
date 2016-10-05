@@ -198,7 +198,7 @@
             useJavaXKey="true"
             jvmversion="1.8+"
             version="${version}"
-            vmoptions="-1024m">
+            vmoptions="-Xmx1024m">
             <jarfileset dir="${pkgdir}">
                 <include name="**/*.jar" />
                 <exclude name="${util}/" />

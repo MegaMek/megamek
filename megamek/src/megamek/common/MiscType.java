@@ -5399,6 +5399,7 @@ public class MiscType extends EquipmentType {
         misc.techLevel.put(3071, TechConstants.T_CLAN_TW);
         misc.industrial = true;
         misc.introDate = 2820;
+        misc.flags = misc.flags.or(F_INDUSTRIAL_STRUCTURE);
         misc.techLevel.put(2820, misc.techLevel.get(3071));
         misc.availRating = new int[] { EquipmentType.RATING_X,
                 EquipmentType.RATING_C, EquipmentType.RATING_C };

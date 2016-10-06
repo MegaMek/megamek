@@ -9,6 +9,7 @@ v0.41.24-git
 +Data: Changes to Field Gunners/Artillery intro dates and moving them
    from Unofficial to Infantry
 + Fixed Mac OSX Packaging (Hopefully for good this time!)
++ Clan Industrial structure was missing proper equipment flags
 
 v0.41.23 (2016-09-20 00:07 UTC)
 + Issue #323: Artifacts when drawing the boardview background

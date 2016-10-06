@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.41.24-git
+v0.41.24 (2016-10-06 03:15 UTC)
 + Refactored FighterSquadron's specific methods so that we can more easily support all composite entities.
   WARNING: This is an API change. The following methods are new in Entity:
 +Bug: RAT Generator incorrectly adjusting proportion of succession war/upgraded/Clan tech.

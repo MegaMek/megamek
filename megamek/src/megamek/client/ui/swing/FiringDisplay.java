@@ -21,6 +21,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -51,7 +52,6 @@ import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
-import megamek.common.FighterSquadron;
 import megamek.common.GameTurn;
 import megamek.common.HexTarget;
 import megamek.common.IAimingModes;
@@ -1309,10 +1309,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             }
         }
 
-        int numFighters = 0;
-        if (ce() instanceof FighterSquadron) {
-            numFighters = ((FighterSquadron) ce()).getNFighters();
-        }
+        int numFighters = ce().getActiveSubEntities().orElse(Collections.emptyList()).size();
         BombPayloadDialog bombsDialog = new BombPayloadDialog(
                 clientgui.frame,
                 Messages.getString("FiringDisplay.BombNumberDialog" + ".title"), //$NON-NLS-1$

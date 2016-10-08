@@ -21014,13 +21014,12 @@ public class Server implements Runnable {
         // if this is a fighter squadron then pick an active fighter and pass on
         // the damage
         if (te instanceof FighterSquadron) {
-            FighterSquadron fs = (FighterSquadron) te;
-            if (fs.getFighters().size() < 1) {
+            if(te.getActiveSubEntities().orElse(Collections.emptyList()).isEmpty()) {
                 return vDesc;
             }
-            Aero fighter = fs.getFighter(hit.getLocation());
-            HitData new_hit = fighter.rollHitLocation(ToHitData.HIT_NORMAL,
-                                                      ToHitData.SIDE_FRONT);
+            List<Entity> fighters = te.getSubEntities().orElse(Collections.emptyList());
+            Entity fighter = fighters.get(hit.getLocation());
+            HitData new_hit = fighter.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
             new_hit.setBoxCars(hit.rolledBoxCars());
             new_hit.setGeneralDamageType(hit.getGeneralDamageType());
             new_hit.setCapital(hit.isCapital());
@@ -26557,7 +26556,7 @@ public class Server implements Runnable {
                 // if this is the last fighter in a fighter squadron then remove
                 // the squadron
                 if ((transport instanceof FighterSquadron)
-                    && (((FighterSquadron) transport).getFighters().size() < 1)) {
+                    && transport.getSubEntities().orElse(Collections.emptyList()).isEmpty()) {
                     transport.setDestroyed(true);
                     // Can't remove this here, otherwise later attacks will fail
                     //game.moveToGraveyard(transport.getId());

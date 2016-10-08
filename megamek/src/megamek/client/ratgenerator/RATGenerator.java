@@ -37,6 +37,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import megamek.common.Configuration;
+import megamek.common.EntityMovementMode;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.UnitType;
@@ -297,7 +298,8 @@ public class RATGenerator {
 	}
 	
 	public List<UnitTable.TableEntry> generateTable(FactionRecord fRec, int unitType, int year,
-			String rating, Collection<Integer> weightClasses, int networkMask, Collection<String> subtypes,
+			String rating, Collection<Integer> weightClasses, int networkMask,
+			Collection<EntityMovementMode> movementModes,
 			Collection<MissionRole> roles, int roleStrictness,
 			FactionRecord user) {
 		HashMap<ModelRecord, Double> unitWeights = new HashMap<ModelRecord, Double>();
@@ -350,7 +352,7 @@ public class RATGenerator {
 			if (cRec.getUnitType() != unitType &&
 					!(unitType == UnitType.TANK
 						&& cRec.getUnitType() == UnitType.VTOL
-						&& subtypes.contains("VTOL"))) {
+						&& movementModes.contains(EntityMovementMode.VTOL))) {
 				continue;
 			}
 
@@ -373,7 +375,7 @@ public class RATGenerator {
 							|| (networkMask & mRec.getNetworkMask()) != networkMask) {
 						continue;
 					}
-					if (subtypes.size() > 0 && !subtypes.contains(mRec.getMechSummary().getUnitSubType())) {
+					if (movementModes.size() > 0 && !movementModes.contains(mRec.getMovementMode())) {
 						continue;
 					}
 					ar = findModelAvailabilityRecord(early,

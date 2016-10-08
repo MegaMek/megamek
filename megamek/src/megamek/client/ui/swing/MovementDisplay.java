@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -51,10 +52,10 @@ import megamek.common.Entity;
 import megamek.common.EntityMovementMode;
 import megamek.common.EntityMovementType;
 import megamek.common.EntitySelector;
-import megamek.common.FighterSquadron;
 import megamek.common.GameTurn;
 import megamek.common.IBoard;
 import megamek.common.IGame;
+import megamek.common.IGame.Phase;
 import megamek.common.IHex;
 import megamek.common.IPlayer;
 import megamek.common.Infantry;
@@ -64,7 +65,6 @@ import megamek.common.Minefield;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
-import megamek.common.IGame.Phase;
 import megamek.common.MovePath.MoveStepType;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
@@ -3517,10 +3517,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay {
         // bring up dialog to dump bombs, then make a control roll and report
         // success or failure
         // should update mp available
-        int numFighters = 0;
-        if (ce() instanceof FighterSquadron) {
-            numFighters = ((FighterSquadron) ce()).getNFighters();
-        }
+        int numFighters = ce().getActiveSubEntities().orElse(Collections.emptyList()).size();
         BombPayloadDialog dumpBombsDialog = new BombPayloadDialog(
                 clientgui.frame,
                 Messages.getString("MovementDisplay.BombDumpDialog.title"), //$NON-NLS-1$

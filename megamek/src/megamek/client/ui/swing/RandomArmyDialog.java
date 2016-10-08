@@ -76,6 +76,7 @@ import megamek.client.ratgenerator.RATGenerator;
 import megamek.client.ratgenerator.UnitTable;
 import megamek.client.ui.Messages;
 import megamek.common.Entity;
+import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
 import megamek.common.MechFileParser;
 import megamek.common.MechSearchFilter;
@@ -1507,31 +1508,36 @@ WindowListener, TreeSelectionListener, FocusListener {
 			
 			switch(unitType) {
 			case UnitType.TANK:
-				panMotive.add(createSubtypeCheck("Hover", true));
-				panMotive.add(createSubtypeCheck("Tracked", true));
-				panMotive.add(createSubtypeCheck("Wheeled", true));
-				panMotive.add(createSubtypeCheck("WiGE", true));
-				panMotive.add(createSubtypeCheck("VTOL", false));
+				panMotive.add(createSubtypeCheck("hover", true));
+				panMotive.add(createSubtypeCheck("tracked", true));
+				panMotive.add(createSubtypeCheck("wheeled", true));
+				panMotive.add(createSubtypeCheck("wige", true));
+				panMotive.add(createSubtypeCheck("vtol", false));
 				break;
 			case UnitType.INFANTRY:
-				panMotive.add(createSubtypeCheck("Leg", true));
-				panMotive.add(createSubtypeCheck("Jump", true));
-				panMotive.add(createSubtypeCheck("Motorized", true));
-				panMotive.add(createSubtypeCheck(Messages.getString("RandomArmyDialog.Mech.Hover"),
-						"Hover", true));
-				panMotive.add(createSubtypeCheck(Messages.getString("RandomArmyDialog.Mech.Tracked"),
-						"Tracked", true));
-				panMotive.add(createSubtypeCheck(Messages.getString("RandomArmyDialog.Mech.Wheeled"),
-						"Wheeled", true));
+				panMotive.add(createSubtypeCheck("leg", true));
+				panMotive.add(createSubtypeCheck("jump", true));
+				panMotive.add(createSubtypeCheck("motorized", true));
+				panMotive.add(createSubtypeCheck(Messages.getString("RandomArmyDialog.Mech.hover"),
+						"hover", true));
+				panMotive.add(createSubtypeCheck(Messages.getString("RandomArmyDialog.Mech.tracked"),
+						"tracked", true));
+				panMotive.add(createSubtypeCheck(Messages.getString("RandomArmyDialog.Mech.wheeled"),
+						"wheeled", true));
+				break;
+			case UnitType.BATTLE_ARMOR:
+				panMotive.add(createSubtypeCheck("leg", true));
+				panMotive.add(createSubtypeCheck("jump", true));
+				panMotive.add(createSubtypeCheck("umu", true));
 				break;
 			case UnitType.NAVAL:
-				panMotive.add(createSubtypeCheck("Naval", true));
-				panMotive.add(createSubtypeCheck("Hydrofoil", true));
-				panMotive.add(createSubtypeCheck("Submarine", true));
+				panMotive.add(createSubtypeCheck("naval", true));
+				panMotive.add(createSubtypeCheck("hydrofoil", true));
+				panMotive.add(createSubtypeCheck("submarine", true));
 				break;
 			case UnitType.DROPSHIP:
-				panMotive.add(createSubtypeCheck("Aerodyne", true));
-				panMotive.add(createSubtypeCheck("Spheroid", true));
+				panMotive.add(createSubtypeCheck("aerodyne", true));
+				panMotive.add(createSubtypeCheck("spheroid", true));
 				break;
 			}
     	}
@@ -1629,9 +1635,9 @@ WindowListener, TreeSelectionListener, FocusListener {
     		return ModelRecord.NETWORK_NONE;
     	}
     	
-    	public List<String> getMotiveTypes() {
+    	public List<EntityMovementMode> getMotiveTypes() {
     		return subtypeChecks.stream().filter(chk -> chk.isSelected())
-    				.map(chk -> chk.getName()).collect(Collectors.toList());
+    				.map(chk -> EntityMovementMode.getMode(chk.getName())).collect(Collectors.toList());
     	}
     }
 }

@@ -22,6 +22,7 @@ package megamek.common;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.Collections;
 import java.util.Iterator;
 
 import megamek.client.ui.Messages;
@@ -571,7 +572,7 @@ public class MechView {
         sIntArm.append("<br>"); //$NON-NLS-1$
 
         sIntArm.append(Messages.getString("MechView.ActiveFighters")) //$NON-NLS-1$
-                .append(fs.getNFighters());
+                .append(fs.getActiveSubEntities().orElse(Collections.emptyList()).size());
 
         sIntArm.append("<br>"); //$NON-NLS-1$
 

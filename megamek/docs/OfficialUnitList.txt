@@ -1540,6 +1540,41 @@ Mechanized Tracked Platoon (Rifle AA)|
 Jump Platoon (Gauss)|
 Foot Platoon (Gauss)|
 Motorized Platoon (Gauss)|
+Clan Field Artillery (Arrow IV)|
+Field Gunners (RAC5)|
+Clan Field Gunners (UAC10)|
+Field Gunners (UAC10)|
+Clan Field Gunners (LBX20)|
+Field Gunners (LBX2)|
+Field Artillery (Sniper)|
+Field Gunners (AC2)|
+Field Gunners (LBX10)|
+Field Gunners (Light Gauss)|
+Clan Field Gunners (RAC5)|
+Field Gunners (RAC2)|
+Clan Field Gunners (Gauss)|
+Field Artillery (Thumper)|
+Clan Field Gunners (UAC20)|
+Field Gunners (UAC5)|
+Field Gunners (AC5)|
+Field Gunners (LAC2)|
+Field Gunners (LBX20)|
+Field Gunners (AC20)|
+Clan Field Gunners (RAC2)|
+Field Artillery (Arrow IV)|
+Clan Field Gunners (LBX2)|
+Clan Field Gunners (UAC2)|
+Field Gunners (Gauss)|
+Clan Field Gunners (UAC5)|
+Clan Field Gunners (LBX10)|
+Clan Field Artillery (Thumper)|
+Clan Field Gunners (LBX5)|
+Field Gunners (UAC2)|
+Field Gunners (AC10)|
+Field Gunners (LBX5)|
+Field Gunners (UAC20)|
+Clan Field Artillery (Sniper)|
+Field Gunners (LAC5)|
 Motorized Platoon (Flechette)|
 Foot Platoon (Flechette)|
 Clan Mechanized Infantry Mimir/Watch Counter Insurgency Point|
@@ -3540,13 +3575,13 @@ Orion ON1-MD|
 Black Hawk (Nova) F|
 Ryoken (Stormcrow) D|
 Cicada CDA-3F|
-Urbanmech UM-R68|
 Man O' War (Gargoyle) Prime|
 Hunchback HBK-5P|
 Grand Dragon DRG-5K|
 Mercury MCY-97|
 Whitworth WTH-2A|
 Caesar CES-3R|
+UrbanMech UM-R68|
 Highlander HGN-734|
 Loki (Hellbringer) B|
 Sentinel STN-5WB|
@@ -3593,7 +3628,7 @@ Hatamoto-Hi HTM-C|
 Thor (Summoner) G|
 Masakari (Warhawk) C|
 Centurion CN9-D3D|
-Urbanmech UM-R69|
+UrbanMech UM-R69|
 Crab CRB-30|
 Caesar CES-3R (Gertrude)|
 Daishi (Dire Wolf) B|

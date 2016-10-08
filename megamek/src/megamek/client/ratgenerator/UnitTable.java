@@ -22,6 +22,7 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 
 import megamek.common.Compute;
+import megamek.common.EntityMovementMode;
 import megamek.common.MechSummary;
 
 /**
@@ -44,7 +45,7 @@ public class UnitTable {
 	private String rating;
 	private Collection<Integer> weightClasses;
 	private int networkMask;
-	private Collection<String> subtypes;
+	private Collection<EntityMovementMode> movementModes;
 	private Collection<MissionRole> roles;
 	private int roleStrictness;
 	private FactionRecord deployingFaction;
@@ -64,7 +65,8 @@ public class UnitTable {
 	int salvagePct;
 	
 	public UnitTable(FactionRecord faction, int unitType, int year,
-			String rating, Collection<Integer> weightClasses, int networkMask, Collection<String> subtypes,
+			String rating, Collection<Integer> weightClasses, int networkMask,
+			Collection<EntityMovementMode> movementModes,
 			Collection<MissionRole> roles, int roleStrictness, FactionRecord deployingFaction) {
 		this.faction = faction;
 		this.unitType = unitType;
@@ -72,7 +74,7 @@ public class UnitTable {
 		this.rating = rating;
 		this.weightClasses = weightClasses;
 		this.networkMask = networkMask;
-		this.subtypes = subtypes;
+		this.movementModes = movementModes;
 		this.roles = roles;
 		this.roleStrictness = roleStrictness;
 		this.deployingFaction = deployingFaction;
@@ -81,9 +83,9 @@ public class UnitTable {
 	
 	public UnitTable(FactionRecord faction, int unitType, int year,
 			String rating, Collection<Integer> weightClasses, int networkMask,
-			Collection<String> subtypes,
+			Collection<EntityMovementMode> movementModes,
 			Collection<MissionRole> roles, int roleStrictness) {
-		this(faction, unitType, year, rating, weightClasses, networkMask, subtypes,
+		this(faction, unitType, year, rating, weightClasses, networkMask, movementModes,
 				roles, roleStrictness, faction);
 	}
 	
@@ -96,7 +98,7 @@ public class UnitTable {
 			return;
 		}
 		table = RATGenerator.getInstance().generateTable(faction,
-				unitType, year, rating, weightClasses, networkMask, subtypes,
+				unitType, year, rating, weightClasses, networkMask, movementModes,
 				roles, roleStrictness, deployingFaction);
 		Collections.sort(table);
 		
@@ -248,7 +250,7 @@ public class UnitTable {
 			UnitTable salvage = salvageCache.get(fRec.getKey());
 			if (salvage == null) {
 				salvage = new UnitTable(fRec,
-						unitType, year - 5, rating, weightClasses, networkMask, subtypes,
+						unitType, year - 5, rating, weightClasses, networkMask, movementModes,
 						roles, roleStrictness, faction);
 			}
 			if (salvage.hasUnits()) {

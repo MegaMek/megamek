@@ -24,6 +24,7 @@ import java.util.Set;
 
 import megamek.client.ratgenerator.UnitTable;
 import megamek.common.Compute;
+import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
 import megamek.common.MechSummary;
 import megamek.common.UnitType;
@@ -82,7 +83,7 @@ public class ForceDescriptor {
 	private boolean augmented;
 	private Integer weightClass;
 	private Integer unitType;
-	private HashSet<String> motiveTypes;
+	private HashSet<EntityMovementMode> movementModes;
 	private HashSet<MissionRole> roles;
 	private String rating;
 	private Integer experience;
@@ -110,7 +111,7 @@ public class ForceDescriptor {
 	public ForceDescriptor() {
 		faction = "IS";
 		year = 3067;
-		motiveTypes = new HashSet<String>();
+		movementModes = new HashSet<EntityMovementMode>();
 		roles = new HashSet<MissionRole>();
 		experience = EXP_REGULAR;
 		models = new HashSet<String>();
@@ -360,11 +361,11 @@ public class ForceDescriptor {
 								if (weights.contains(EntityWeightClass.WEIGHT_ASSAULT)) {
 									break;
 								}
-								sub.getMotiveTypes().add(baseModel.getMechSummary().getUnitSubType());
+								sub.getMovementModes().add(baseModel.getMovementMode());
 							}
 						}
 					} else if (ut.equals("Infantry")) {
-						sub.getMotiveTypes().add(baseModel.getMechSummary().getUnitSubType());
+						sub.getMovementModes().add(baseModel.getMovementMode());
 					}
 				}
 			}
@@ -374,7 +375,7 @@ public class ForceDescriptor {
 				}
 				unit = sub.generate();
 				if (unit == null) {
-					sub.getMotiveTypes().clear();
+					sub.getMovementModes().clear();
 					sub.generate();
 				}
 				if (unit != null) {
@@ -399,8 +400,8 @@ public class ForceDescriptor {
 			weightClass = unit.getWeightClass();
 		}
 		element = true;
-		motiveTypes.clear();
-		motiveTypes.add(unit.getMechSummary().getUnitSubType());
+		movementModes.clear();
+		movementModes.add(unit.getMovementMode());
 		if ((unitType.equals("Mek") || unitType.equals("Aero")
 				|| unitType.equals("Tank"))
 				&&unit.isOmni()) {
@@ -471,12 +472,12 @@ public class ForceDescriptor {
 				//TODO: Add cache to UnitTable				
 				UnitTable table = new UnitTable(fd.getFactionRec(), fd.getUnitType(),
 						fd.getYear(), fd.getRating(), wcs, ModelRecord.NETWORK_NONE,
-						fd.getMotiveTypes(), roles, roleStrictness);
+						fd.getMovementModes(), roles, roleStrictness);
 				MechSummary ms = null;
-				if (fd.getMotiveTypes().isEmpty() && fd.getChassis().isEmpty() && fd.getModels().isEmpty()) {
+				if (fd.getMovementModes().isEmpty() && fd.getChassis().isEmpty() && fd.getModels().isEmpty()) {
 					ms = table.generateUnit();
 				} else {
-					ms = table.generateUnit(u -> (fd.getMotiveTypes().isEmpty() || fd.getMotiveTypes().contains(u.getUnitSubType()))
+					ms = table.generateUnit(u -> (fd.getMovementModes().isEmpty() || fd.getMovementModes().contains(u.getUnitSubType()))
 							&& (fd.getChassis().isEmpty() || fd.getChassis().contains(u.getChassis()))
 							&& (fd.getModels().isEmpty() || fd.getModels().contains(u.getName())));
 				}
@@ -487,8 +488,8 @@ public class ForceDescriptor {
 				if ((!useWeightClass() || wtIndex == 2) && fd.getRoles().size() > 0) {
 					fd.getRoles().clear();
 				} else if ((!useWeightClass() || wtIndex == 1)
-						&& fd.getMotiveTypes().size() > 0) {
-					fd.getMotiveTypes().clear();
+						&& fd.getMovementModes().size() > 0) {
+					fd.getMovementModes().clear();
 				} else {
 					if (useWeightClass() && weightClass != -1 && weightClass < altWeights.length && wtIndex < altWeights[weightClass].length) {
 						fd.setWeightClass(altWeights[weightClass][wtIndex]);
@@ -601,13 +602,13 @@ public class ForceDescriptor {
 			getXo().setTitle(xoNode.getTitle());
 		}
 		if (!element) {
-			motiveTypes.clear();
+			movementModes.clear();
 			boolean isOmni = true;
 			boolean isArtillery = true;
 			boolean isMissileArtillery = true;
 			boolean isFieldGun = true;
 			for (ForceDescriptor fd : subforces) {
-				motiveTypes.addAll(fd.getMotiveTypes());
+				movementModes.addAll(fd.getMovementModes());
 				if ((fd.getUnitType() == null ||
 						!(fd.getUnitType().equals("Mek") || fd.getUnitType().equals("Aero")
 						|| fd.getUnitType().equals("Tank"))) ||
@@ -975,8 +976,8 @@ public class ForceDescriptor {
 		this.unitType = unitType;
 	}
 
-	public HashSet<String> getMotiveTypes() {
-		return motiveTypes;
+	public HashSet<EntityMovementMode> getMovementModes() {
+		return movementModes;
 	}
 
 	public String getRating() {
@@ -1148,7 +1149,7 @@ public class ForceDescriptor {
 		retVal.year = year;
 		retVal.weightClass = weightClass;
 		retVal.unitType = unitType;
-		retVal.motiveTypes.addAll(motiveTypes);
+		retVal.movementModes.addAll(movementModes);
 		retVal.roles.addAll(roles);
 		retVal.roles.remove("command");
 		retVal.models.addAll(models);

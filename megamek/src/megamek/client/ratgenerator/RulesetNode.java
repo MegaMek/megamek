@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import megamek.common.EntityMovementMode;
 import megamek.common.UnitType;
 
 import org.w3c.dom.Node;
@@ -169,7 +170,9 @@ public class RulesetNode {
 				}
 				break;
 			case "ifMotive":
-				if (!collectionMatchesProperty(fd.getMotiveTypes(), predicates.getProperty((String)key))) {
+				//FIXME: EntityMovementType::toString does not match the property from the file
+				if (!collectionMatchesProperty(fd.getMovementModes().stream().map(mt -> mt.toString())
+						.collect(Collectors.toList()), predicates.getProperty((String)key))) {
 					return false;
 				}
 				break;
@@ -351,13 +354,13 @@ public class RulesetNode {
 				break;
 			case "motive":
 				if (!property.startsWith("+") && !property.startsWith("-")) {
-					fd.getMotiveTypes().clear();
+					fd.getMovementModes().clear();
 				}
 				for (String p : property.split(",")) {
 					if (p.startsWith("-")) {
-						fd.getMotiveTypes().remove(p.replace("-", ""));
+						fd.getMovementModes().remove(p.replace("-", ""));
 					} else {
-						fd.getMotiveTypes().add(p.replace("+", ""));
+						fd.getMovementModes().add(EntityMovementMode.getMode(p.replace("+", "")));
 					}
 				}
 				break;

@@ -15,6 +15,8 @@ package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
 
+import megamek.common.EntityMovementMode;
+
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -106,17 +108,17 @@ public class ForceNode extends RulesetNode {
 					String content = n.getContent();
 					if (content.startsWith("-")) {
 						for (String p : content.replaceFirst("\\-", "").split(",")) {
-							fd.getMotiveTypes().remove(p);
+							fd.getMovementModes().remove(p);
 						}
 						break;
 					}
 					if (content.startsWith("+")) {
 						content = content.replace("+", "");
 					} else {
-						fd.getMotiveTypes().clear();
+						fd.getMovementModes().clear();
 					}
 					for (String p : content.split(",")) {
-						fd.getMotiveTypes().add(p);
+						fd.getMovementModes().add(EntityMovementMode.getMode(p));
 					}
 					break;
 				case "role":

@@ -19,9 +19,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 import megamek.common.AmmoType;
+import megamek.common.EntityMovementMode;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
 import megamek.common.MechSummary;
+import megamek.common.MiscType;
+import megamek.common.UnitType;
 import megamek.common.WeaponType;
 
 /**
@@ -34,10 +37,10 @@ import megamek.common.WeaponType;
 public class ModelRecord extends AbstractUnitRecord {
 	public static final int NETWORK_NONE = 0;
 	public static final int NETWORK_C3_SLAVE = 1;
-	public static final int NETWORK_NAVAL_C3 = 1;
 	public static final int NETWORK_BA_C3 = 1;
 	public static final int NETWORK_C3_MASTER = 1 << 1;
 	public static final int NETWORK_C3I = 1 << 2;
+	public static final int NETWORK_NAVAL_C3 = 1 << 2;
 	public static final int NETWORK_NOVA = 1 << 3;
 	
 	public static final int NETWORK_BOOSTED = 1 << 4;
@@ -49,6 +52,7 @@ public class ModelRecord extends AbstractUnitRecord {
 	private MechSummary mechSummary;
 	private boolean starLeague;
 	private int weightClass;
+	private EntityMovementMode movementMode;
 	private HashSet<MissionRole> roles;
 	private ArrayList<String> deployedWith;
 	private ArrayList<String> requiredUnits;
@@ -79,6 +83,12 @@ public class ModelRecord extends AbstractUnitRecord {
 		mechSummary = ms;
 		unitType = parseUnitType(ms.getUnitType());
 		introYear = ms.getYear();
+		if (unitType == UnitType.MEK) {
+			//TODO: id quads and tripods
+			movementMode = EntityMovementMode.BIPED;
+		} else {
+			movementMode = EntityMovementMode.getMode(ms.getUnitSubType().toLowerCase());
+		}
 
     	double totalBV = 0.0;
     	double flakBV = 0.0;
@@ -96,13 +106,16 @@ public class ModelRecord extends AbstractUnitRecord {
     		}
     		if (eq instanceof megamek.common.weapons.Weapon) {
     			totalBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
-        		if (eq instanceof megamek.common.weapons.LBXACWeapon ||
-        				eq instanceof megamek.common.weapons.ArtilleryWeapon ||
-        				eq instanceof megamek.common.weapons.HAGWeapon ||
-        				eq instanceof megamek.common.weapons.ISSilverBulletGauss) {
-        			flakBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);	        			
-        		}
-        		if (eq instanceof megamek.common.weapons.FlamerWeapon) {
+    			switch (((megamek.common.weapons.Weapon)eq).getAmmoType()) {
+    				case AmmoType.T_AC_LBX:
+    				case AmmoType.T_HAG:
+    				case AmmoType.T_SBGAUSS:
+        				flakBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
+    			}
+    			if (eq.hasFlag(WeaponType.F_ARTILLERY)) {
+    				flakBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i) / 2.0;
+    			}
+        		if (eq.hasFlag(WeaponType.F_FLAMER) || eq.hasFlag(WeaponType.F_INFERNO)) {
         			incendiary = true;
         			apWeapons = true;
         		}
@@ -119,40 +132,31 @@ public class ModelRecord extends AbstractUnitRecord {
         		if (((WeaponType)eq).getLongRange() >= 20) {
         			lrBV += eq.getBV(null) * ms.getEquipmentQuantities().get(i);
         		}
-        		if (eq instanceof megamek.common.weapons.TAGWeapon) {
+        		if (eq.hasFlag(WeaponType.F_TAG)) {
         			roles.add(MissionRole.SPOTTER);
         		}
-        		if (eq instanceof megamek.common.weapons.ISC3M) {
+        		if (eq.hasFlag(WeaponType.F_C3M)) {
    					networkMask |= NETWORK_C3_MASTER;
    					if (ms.getEquipmentQuantities().get(i) > 1) {
    						networkMask |= NETWORK_COMPANY_COMMAND;
    					}
         		}
-        		if (eq instanceof megamek.common.weapons.ISC3MBS) {
+        		if (eq.hasFlag(WeaponType.F_C3MBS)) {
 					networkMask |= NETWORK_BOOSTED_MASTER;
    					if (ms.getEquipmentQuantities().get(i) > 1) {
    						networkMask |= NETWORK_COMPANY_COMMAND;
     				}        			
         		}
-    		} else {
-    			switch (eq.getInternalName()) {
-    			case "ISC3SlaveUnit":
-    			case "ISC3EmergencyMaster":
-    			case "ISNC3Unit":
-    			case "BattleArmorC3":
-    				networkMask |= NETWORK_C3_SLAVE;
-    				break;
-    			case "ISC3BoostedSystemSlaveUnit":
-    				networkMask |= NETWORK_BOOSTED_SLAVE;
-    				break;
-    			case "ISC3iUnit":
-    			case "ISBC3i":
-    				networkMask |= NETWORK_C3I;
-    				break;
-    			case megamek.common.Sensor.NOVA:
-    				networkMask |= NETWORK_NOVA;
-    				break;
-    			}
+    		} else if (eq.hasFlag(MiscType.F_UMU)){
+   				movementMode = EntityMovementMode.BIPED_SWIM;
+    		} else if (eq.hasFlag(MiscType.F_C3S)) {
+    			networkMask |= NETWORK_C3_SLAVE;
+    		} else if (eq.hasFlag(MiscType.F_C3I)) {
+    			networkMask |= NETWORK_C3I;
+    		} else if (eq.hasFlag(MiscType.F_C3SBS)) {
+    			networkMask |= NETWORK_BOOSTED_SLAVE;
+    		} else if (eq.hasFlag(MiscType.F_NOVA)) {
+    			networkMask |= NETWORK_NOVA;
     		}
     	}
 		if (totalBV > 0 &&
@@ -202,6 +206,9 @@ public class ModelRecord extends AbstractUnitRecord {
 		return weightClass;
 	}
 	
+	public EntityMovementMode getMovementMode() {
+		return movementMode;
+	}
 	
 	public boolean isClan() {
 		return clan;

@@ -1217,4 +1217,11 @@ public class Jumpship extends Aero {
         return Entity.ETYPE_AERO | Entity.ETYPE_JUMPSHIP;
     }
 
+    /**
+     * Do not recalculate walkMP when adding engine.
+     */
+    @Override
+    protected int calculateWalk() {
+    	return walkMP;
+    }
 }

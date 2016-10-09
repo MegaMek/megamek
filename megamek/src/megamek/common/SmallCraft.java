@@ -697,4 +697,12 @@ public class SmallCraft extends Aero {
     public long getEntityType(){
         return Entity.ETYPE_AERO | Entity.ETYPE_SMALL_CRAFT;
     }
+    
+    /**
+     * Do not recalculate walkMP when adding engine.
+     */
+    @Override
+    protected int calculateWalk() {
+    	return walkMP;
+    }
 }

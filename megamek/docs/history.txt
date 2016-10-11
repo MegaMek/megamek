@@ -3,6 +3,7 @@ VERSION HISTORY:
 v0.41.25-git
 + Added movement type filters to RAT Generator for BA.
 + Issue #356: Almost all dropships have 2/3 movement
++ Data: New Sprites
 
 v0.41.24 (2016-10-06 03:15 UTC)
 + Refactored FighterSquadron's specific methods so that we can more easily support all composite entities.

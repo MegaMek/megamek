@@ -238,6 +238,12 @@ public class WeatherProcessor extends DynamicTerrainProcessor {
                     }
                 }
 
+                if(currentHex.containsTerrain(Terrains.BLACK_ICE)
+                        && currentHex.containsTerrain(Terrains.FIRE) 
+                        && currentHex.getFireTurn() == 2) {
+                    currentHex.removeTerrain(Terrains.BLACK_ICE);
+                }
+
                 //check for rapids/torrents created by wind
                 //FIXME: This doesn't seem to be doing anything
                 if(conditions.getWindStrength() > PlanetaryConditions.WI_MOD_GALE

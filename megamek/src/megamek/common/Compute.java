@@ -490,6 +490,11 @@ public class Compute {
             return true;
         }
 
+        // check for black ice
+        if (destHex.containsTerrain(Terrains.BLACK_ICE)) {
+            return true;
+        }
+
         // Check for water unless we're a hovercraft or naval or using a bridge
         // or flying.
         if ((movementType != EntityMovementType.MOVE_JUMP)
@@ -520,6 +525,7 @@ public class Compute {
                 && ((movementType == EntityMovementType.MOVE_RUN)
                         || (movementType == EntityMovementType.MOVE_SPRINT)))
                         || ((srcHex.containsTerrain(Terrains.ICE))
+                                || (srcHex.containsTerrain(Terrains.BLACK_ICE))
                                 && (movementType != EntityMovementType.MOVE_JUMP)))
                 && (entity.getMovementMode() != EntityMovementMode.HOVER)
                 && (entity.getMovementMode() != EntityMovementMode.WIGE)

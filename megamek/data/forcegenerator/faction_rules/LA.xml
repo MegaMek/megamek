@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE ruleset SYSTEM "rulesetEntities.dtd">
+<!DOCTYPE ruleset SYSTEM "data/forcegenerator/faction_rules/rulesetEntities.dtd">
 
 <!-- The LCAF/LAAF is marked by a strong preference for heavy and assault machines. Units
 were reorganized into FS-style RCTs as part of the formation of the AFFC in the 3040s, and

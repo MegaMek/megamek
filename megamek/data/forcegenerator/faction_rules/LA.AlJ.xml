@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE ruleset SYSTEM "rulesetEntities.dtd">
+<!DOCTYPE ruleset SYSTEM "data/forcegenerator/faction_rules/rulesetEntities.dtd">
 
 <!-- The Alliance Jaegers are combined arms regiments. Unlike the Ceti Hussars and the Janissary
 Brigades, the combined arms nature is not for tactical purposes but because they combine troops

@@ -99,6 +99,7 @@ WindowListener, TreeSelectionListener, FocusListener {
     private ClientGUI m_clientgui;
     private Client m_client;
     AdvancedSearchDialog asd;
+    ForceGeneratorDialog fgd;
 
     private MechSearchFilter searchFilter;
 
@@ -484,11 +485,28 @@ WindowListener, TreeSelectionListener, FocusListener {
         c.gridx = 3;
         c.gridy = 0;
         c.gridwidth = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
+        c.fill = GridBagConstraints.NONE;
         c.anchor = GridBagConstraints.WEST;
         c.weightx = 0.0;
         c.weighty = 0.0;
         m_pRATGenOptions.add(m_tRGUnits, c);
+        
+        //FIXME: find a good place for this        
+        JButton btnForceGen = new JButton("Force Generator...");
+        c = new GridBagConstraints();
+        c.gridx = 4;
+        c.gridy = 0;
+        c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.WEST;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        m_pRATGenOptions.add(btnForceGen, c);
+        btnForceGen.addActionListener(ev -> {
+        	if (fgd == null) {
+        		fgd = new ForceGeneratorDialog(m_clientgui);
+        	}
+        	fgd.setVisible(true);
+        });
 
         c = new GridBagConstraints();
         c.gridx = 0;

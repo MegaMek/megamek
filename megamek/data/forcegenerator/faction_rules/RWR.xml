@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE ruleset SYSTEM "rulesetEntities.dtd">
+<!DOCTYPE ruleset SYSTEM "data/forcegenerator/faction_rules/rulesetEntities.dtd">
 
 <!-- Though the Rim Worlds Army was organized into divisions by the time of the Amaris
 Civil War, the standard operational unit was still the regiment and the brigades and

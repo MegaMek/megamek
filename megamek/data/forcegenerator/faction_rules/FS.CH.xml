@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE ruleset SYSTEM "rulesetEntities.dtd">
+<!DOCTYPE ruleset SYSTEM "data/forcegenerator/faction_rules/rulesetEntities.dtd">
 
 <!-- A Ceti Hussars RCT has the same number of regiments as others (1 Mek, 3 Armor, 5 Infantry),
 but rather than being organized into brigades they are organized into three combat commands,

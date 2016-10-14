@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE ruleset SYSTEM "rulesetEntities.dtd">
+<!DOCTYPE ruleset SYSTEM "data/forcegenerator/faction_rules/rulesetEntities.dtd">
 
 <!-- Capellan Warrior House Orders use a different rank system, organize at the battalion
 level rather than the regimental, and only have attached infantry and perhaps ASF. After

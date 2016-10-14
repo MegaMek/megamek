@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE ruleset SYSTEM "rulesetEntities.dtd">
+<!DOCTYPE ruleset SYSTEM "data/forcegenerator/faction_rules/rulesetEntities.dtd">
 
 <!-- Umayyad forces are organized into one corps 5 regiments and two of 3 regiments each.
 All units above lance/platoon size contain a mixture of Meks, vehicles, and infantry,

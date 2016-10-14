@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE ruleset SYSTEM "rulesetEntities.dtd">
+<!DOCTYPE ruleset SYSTEM "data/forcegenerator/faction_rules/rulesetEntities.dtd">
 
 <!-- CC regularly adds a command lance to regiments. Aerospace forces make use of both 2-fighter
 flights ("elements") and 3-fighter flights ("triples"). Around they started experimenting

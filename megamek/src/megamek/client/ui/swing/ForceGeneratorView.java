@@ -5,7 +5,6 @@ package megamek.client.ui.swing;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -18,6 +17,7 @@ import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
@@ -27,19 +27,14 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ListCellRenderer;
-import javax.swing.event.TreeExpansionEvent;
-import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import megamek.client.RandomSkillsGenerator;
 import megamek.client.ratgenerator.AbstractUnitRecord;
 import megamek.client.ratgenerator.FactionRecord;
 import megamek.client.ratgenerator.ForceDescriptor;
@@ -66,6 +61,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 	
 	private IGame game;
 	private int currentYear;
+	private Consumer<ForceDescriptor> onGenerate = null;
 
 	private ForceDescriptor forceDesc = new ForceDescriptor();
 	
@@ -112,15 +108,12 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 
 	private JButton btnGenerate;
 	
-	private JPanel panUnit;
-	private JScrollPane paneForceTree;
-	private JLabel lblOrganization;
-	private JLabel lblFaction;
-	private JLabel lblRating;
-	private JTree forceTree;
-		
-	public ForceGeneratorView(IGame game) {
+	public ForceGeneratorView(IGame game, Consumer<ForceDescriptor> onGenerate) {
 		this.game = game;
+		this.onGenerate = onGenerate;
+		if (!Ruleset.isInitialized()) {
+			Ruleset.loadData();
+		}
 		initUi();
 	}
 	
@@ -129,7 +122,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		RATGenerator rg = RATGenerator.getInstance();
 		rg.loadYear(currentYear);
 		
-		JPanel panOptions = new JPanel(new GridBagLayout());
+		setLayout(new GridBagLayout());
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -139,60 +132,58 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		
 		gbc.gridx = 0;
 		gbc.gridy = y;
-		panOptions.add(new JLabel("Year:"), gbc);
+		add(new JLabel("Year:"), gbc);
 		txtYear = new JTextField();
 		txtYear.setEditable(true);
 		txtYear.setText(Integer.toString(currentYear));
 		gbc.gridx = 1;
 		gbc.gridy = y++;
-		panOptions.add(txtYear, gbc);
+		add(txtYear, gbc);
 		txtYear.addFocusListener(this);
 		gbc.gridx = 0;
 		gbc.gridy = y;
-		panOptions.add(new JLabel("Faction:"), gbc);
+		add(new JLabel("Faction:"), gbc);
 		cbFaction = new KeyValueComboBox("General");
-		cbFaction.setRenderer(factionCbRenderer);
 		gbc.gridx = 1;
 		gbc.gridy = y;
-		panOptions.add(cbFaction, gbc);
+		add(cbFaction, gbc);
 		
 		gbc.gridx = 2;
 		gbc.gridy = y;
-		panOptions.add(new JLabel("Subfaction:"), gbc);
+		add(new JLabel("Subfaction:"), gbc);
 		cbSubfaction = new KeyValueComboBox("General");
-		cbSubfaction.setRenderer(factionCbRenderer);
 		gbc.gridx = 3;
 		gbc.gridy = y++;
-		panOptions.add(cbSubfaction, gbc);
+		add(cbSubfaction, gbc);
 		
 		gbc.gridx = 0;
 		gbc.gridy = y;
-		panOptions.add(new JLabel("Unit Type:"), gbc);
+		add(new JLabel("Unit Type:"), gbc);
 		cbUnitType = new JComboBox<String>();
 		cbUnitType.setRenderer(unitTypeCbRenderer);
 		gbc.gridx = 1;
 		gbc.gridy = y;
-		panOptions.add(cbUnitType, gbc);
+		add(cbUnitType, gbc);
 		
 		gbc.gridx = 2;
 		gbc.gridy = y;
-		panOptions.add(new JLabel("Formation:"), gbc);
+		add(new JLabel("Formation:"), gbc);
 		cbFormation = new KeyValueComboBox("Default");
 		gbc.gridx = 3;
 		gbc.gridy = y++;
-		panOptions.add(cbFormation, gbc);
+		add(cbFormation, gbc);
 		
 		gbc.gridx = 0;
 		gbc.gridy = y;
-		panOptions.add(new JLabel("Rating:"), gbc);
+		add(new JLabel("Rating:"), gbc);
 		cbRating = new KeyValueComboBox("Random");
 		gbc.gridx = 1;
 		gbc.gridy = y;
-		panOptions.add(cbRating, gbc);
+		add(cbRating, gbc);
 		
 		gbc.gridx = 2;
 		gbc.gridy = y;
-		panOptions.add(new JLabel("Weight:"), gbc);
+		add(new JLabel("Weight:"), gbc);
 		cbWeightClass = new JComboBox<String>();
 		cbWeightClass.addItem("Random");
 		cbWeightClass.addItem("Light");
@@ -201,19 +192,19 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		cbWeightClass.addItem("Assault");
 		gbc.gridx = 3;
 		gbc.gridy = y++;
-		panOptions.add(cbWeightClass, gbc);
+		add(cbWeightClass, gbc);
 		
 		gbc.gridx = 0;
 		gbc.gridy = y;
-		panOptions.add(new JLabel("Other:"), gbc);
+		add(new JLabel("Other:"), gbc);
 		cbFlags = new KeyValueComboBox("---");
 		gbc.gridx = 1;
 		gbc.gridy = y;
-		panOptions.add(cbFlags, gbc);
+		add(cbFlags, gbc);
 		
 		gbc.gridx = 2;
 		gbc.gridy = y;
-		panOptions.add(new JLabel("Experience:"), gbc);
+		add(new JLabel("Experience:"), gbc);
 		cbExperience = new JComboBox<String>();
 		cbExperience.addItem("Random");
 		cbExperience.addItem("Green");
@@ -222,24 +213,24 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		cbExperience.addItem("Elite");
 		gbc.gridx = 3;
 		gbc.gridy = y++;
-		panOptions.add(cbExperience, gbc);
+		add(cbExperience, gbc);
 		
 		gbc.gridwidth = 4;
 		panGroundRole = new JPanel(new GridBagLayout());
 		gbc.gridx = 0;
 		gbc.gridy = y++;
-		panOptions.add(panGroundRole, gbc);
+		add(panGroundRole, gbc);
 		
 		panInfRole = new JPanel(new GridBagLayout());
 		gbc.gridx = 0;
 		gbc.gridy = y++;
-		panOptions.add(panInfRole, gbc);
+		add(panInfRole, gbc);
 		panInfRole.setVisible(false);
 		
 		panAirRole = new JPanel(new GridBagLayout());
 		gbc.gridx = 0;
 		gbc.gridy = y++;
-		panOptions.add(panAirRole, gbc);
+		add(panAirRole, gbc);
 		panAirRole.setVisible(false);
 
 		gbc.gridwidth = 1;
@@ -247,13 +238,9 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		gbc.gridx = 0;
 		gbc.gridy = y;
 		gbc.gridwidth = 1;
-		panOptions.add(btnGenerate, gbc);
-		btnGenerate.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				generateForce();
-			}
-		});
+		gbc.weighty = 1.0;
+		add(btnGenerate, gbc);
+		btnGenerate.addActionListener(ev -> generateForce());
 
 		gbc = new GridBagConstraints();
 		gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -379,71 +366,6 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		gbc.gridy = 2;
 		panAirRole.add(chkRoleAirTransport, gbc);
 		
-		forceTree = new JTree(new ForceTreeModel(null));
-		forceTree.setCellRenderer(new UnitRenderer());
-		forceTree.setRowHeight(60);
-		forceTree.setVisibleRowCount(12);
-		forceTree.addTreeExpansionListener(new TreeExpansionListener() {
-			@Override
-			public void treeCollapsed(TreeExpansionEvent arg0) {
-			}
-
-			@Override
-			public void treeExpanded(TreeExpansionEvent arg0) {
-				if (forceTree.getPreferredSize().getWidth() > paneForceTree.getSize().getWidth()) {
-					panUnit.setMinimumSize(new Dimension(forceTree.getMinimumSize().width, panUnit.getMinimumSize().height));
-					panUnit.setPreferredSize(new Dimension(forceTree.getPreferredSize().width, panUnit.getPreferredSize().height));
-				}
-				panUnit.revalidate();
-			}
-		});
-		
-		panUnit = new JPanel(new GridBagLayout());
-		gbc = new GridBagConstraints();
-		gbc.anchor = GridBagConstraints.NORTHWEST;
-		gbc.fill = GridBagConstraints.NONE;
-		gbc.insets = new Insets(5, 5, 5, 5);
-		
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		panUnit.add(new JLabel("Organization:"), gbc);
-		lblOrganization = new JLabel();
-		gbc.gridx = 1;
-		gbc.gridy = 0;
-		panUnit.add(lblOrganization, gbc);
-
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		panUnit.add(new JLabel("Faction:"), gbc);
-		lblFaction = new JLabel();
-		gbc.gridx = 1;
-		gbc.gridy = 1;
-		panUnit.add(lblFaction, gbc);
-
-		gbc.gridx = 0;
-		gbc.gridy = 2;
-		panUnit.add(new JLabel("Rating:"), gbc);
-		lblRating = new JLabel();
-		gbc.gridx = 1;
-		gbc.gridy = 2;
-		panUnit.add(lblRating, gbc);
-		
-		gbc.gridx = 0;
-		gbc.gridy = 3;
-		gbc.gridwidth = 3;
-		gbc.weightx = 1.0;
-		gbc.weighty = 1.0;
-		paneForceTree = new JScrollPane();
-		paneForceTree.setViewportView(forceTree);
-		paneForceTree.setPreferredSize(new Dimension(600, 800));
-		paneForceTree.setMinimumSize(new Dimension(600, 800));
-		panUnit.add(paneForceTree, gbc);
-
-		JSplitPane panSplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panOptions, panUnit);
-		panSplit.setOneTouchExpandable(true);
-		panSplit.setResizeWeight(1.0);
-
-		add(panSplit);
 		refreshFactions();
 		addListeners();
 	}
@@ -535,21 +457,21 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		
 		Ruleset.findRuleset(fd).process(fd);
 
-		forceTree.setModel(new ForceTreeModel(fd));
-		
-		lblOrganization.setText(Ruleset.findRuleset(fd).getEschelonNames(UnitType.getTypeName(fd.getUnitType())).get(fd.getEschelonCode()));
-		lblFaction.setText(RATGenerator.getInstance().getFaction(fd.getFaction()).getName(fd.getYear()));
-		lblRating.setText(RandomSkillsGenerator.getLevelDisplayableName(fd.getExperience()) + "/"
-				+ ((fd.getRating() == null)?"":"/" + fd.getRating()));
-		
 		forceDesc = fd;
+		if (onGenerate != null) {
+			onGenerate.accept(fd);
+		}
+	}
+	
+	public ForceDescriptor getForceDescriptor() {
+		return forceDesc;
 	}
 	
 	private void refreshFactions() {
 		String oldFaction = forceDesc.getFaction();
 		cbFaction.removeAllItems();
 		for (FactionRecord fRec : RATGenerator.getInstance().getFactionList()) {
-			if (!fRec.getKey().contains(".") && fRec.getPctSalvage(currentYear) != null) {
+			if (!fRec.getKey().contains(".") && fRec.isActiveInYear(currentYear)) {
 				cbFaction.addItem(fRec.getKey(), fRec.getName(forceDesc.getYear()));
 			}
 		}
@@ -914,22 +836,6 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		}
 	};
 
-    private DefaultListCellRenderer factionCbRenderer = new DefaultListCellRenderer() {
-		private static final long serialVersionUID = -333065979253244440L;
-
-		@Override
-		public Component getListCellRendererComponent(JList<?> list,
-				Object value, int index, boolean isSelected,
-				boolean cellHasFocus) {
-			if (value == null) {
-				setText("General");
-			} else {
-				setText(((FactionRecord)value).getName(currentYear));
-			}
-			return this;
-		}    	
-    };
-    
     static class KeyValueComboBox extends JComboBox<Map.Entry<String, String>> {
     	
     	private static final long serialVersionUID = -2428807516349658212L;

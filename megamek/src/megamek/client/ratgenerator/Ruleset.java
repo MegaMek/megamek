@@ -35,7 +35,7 @@ import org.w3c.dom.NodeList;
  */
 public class Ruleset {
 	
-	private final static String directory = "data/templates";
+	private final static String directory = "data/forcegenerator/faction_rules";
 	
 	private static HashMap<String,Ruleset> rulesets;
 	private static boolean initialized;
@@ -76,12 +76,12 @@ public class Ruleset {
 		FactionRecord fRec = RATGenerator.getInstance().getFaction(faction);
 		if (fRec != null) {
 			if (fRec.isClan()) {
-				return findRuleset("CLAN");
+				return faction.equals("CLAN")?null:findRuleset("CLAN");
 			} else if (fRec.isPeriphery()) {
-				return findRuleset("Periphery");
+				return faction.equals("Periphery")?null:findRuleset("Periphery");
 			}
 		}
-		return findRuleset("IS");
+		return faction == null || faction.equals("IS")? null : findRuleset("IS");
 	}
 	
 	public int getCustomRankBase() {
@@ -236,6 +236,10 @@ public class Ruleset {
 		rulesets = new HashMap<String,Ruleset>();
 		
 		File dir = new File(directory);
+		if (!dir.exists()) {
+			System.err.println("Could not locate force generator faction rules.");
+			initializing = false;
+		}
 		for (File f : dir.listFiles()) {
 			if (!f.getPath().endsWith(".xml")) {
 				continue;

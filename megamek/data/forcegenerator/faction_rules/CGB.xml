@@ -21,7 +21,7 @@ but have a smaller aerospace arm than most other Clans. -->
 		<eschelon>
 			<option ifUnitType="">TOUMAN,GALAXY,CLUSTER</option>
 			<option ifUnitType="Warship">CLUSTER</option>
-			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
+			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
 			<option ifUnitType="Aero" ifDateBetween="3069,">GALAXY,CLUSTER,TRINARY,BINARY,STAR</option>
 			<option ifUnitType="BattleArmor">CLUSTER,TRINARY,BINARY,STAR</option>
 			<option>TRINARY,BINARY,STAR</option>
@@ -152,11 +152,11 @@ but have a smaller aerospace arm than most other Clans. -->
 		<co>GALAXY_CMDR</co>
 		
 		<subforces>
-			<subforce fluffName="CGB Dieronaposs Run" ifDateBetween=",3067"
+			<subforce fluffName="CGB Dieron&apos;s Run" ifDateBetween=",3067"
 				chassis="Cameron Battlecruiser">ELEMENT</subforce>
 			<subforce fluffName="CGB Ursa Major" ifDateBetween="2932,3100"
 				chassis="Nightlord Battleship">ELEMENT</subforce>
-			<subforce fluffName="CGB Bearaposs Den" ifDateBetween=",3066"
+			<subforce fluffName="CGB Bear&apos;s Den" ifDateBetween=",3066"
 				chassis="Black Lion Battlecruiser">ELEMENT</subforce>
 			<subforce fluffName="CGB Shining Claw" ifDateBetween=",3059"
 				chassis="Congress Frigate">ELEMENT</subforce>

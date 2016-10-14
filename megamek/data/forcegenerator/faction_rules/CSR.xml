@@ -18,7 +18,7 @@
 		<eschelon>
 			<option ifUnitType="">TOUMAN,GALAXY,CLUSTER,TRINARY</option>
 			<option ifUnitType="Warship">STAR</option>
-			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
+			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
 			<option ifUnitType="Aero">CLUSTER,TRINARY,BINARY,STAR</option>
 			<option>TRINARY,BINARY,STAR</option>
 		</eschelon>
@@ -713,7 +713,7 @@
 		<subforces ifFlags="beta">
 			<subforce fluffName="CSR Mountbatton" role="command" ifDateBetween=",3069"
 				chassis="Texas Battleship">ELEMENT</subforce>
-			<subforce fluffName="CSR Kerenskyaposs Hope"
+			<subforce fluffName="CSR Kerensky&apos;s Hope"
 				chassis="Cameron Battlecruiser">ELEMENT</subforce>
 			<subforce fluffName="CSR Ark Royal" ifDateBetween="3052,"
 				chassis="Conqueror Battlecruiser Carrier">ELEMENT</subforce>
@@ -814,11 +814,11 @@
 		<subforces ifName="Conqueror Naval Star">
 			<subforce fluffName="CSR Conqueror"
 				chassis="Conqueror Battlecruiser Carrier">ELEMENT</subforce>
-			<subforce fluffName="CSR Kerenskyaposs Hope"
+			<subforce fluffName="CSR Kerensky&apos;s Hope"
 				chassis="Cameron Battlecruiser">ELEMENT</subforce>
 			<subforce fluffName="CSR Storm Crow" ifDateBetween="3075,"
 				chassis="Sovetskii Soyuz Heavy Cruiser">ELEMENT</subforce>
-			<subforce fluffName="CSR Ravenaposs Nest" ifDateBetween="3077,"
+			<subforce fluffName="CSR Raven&apos;s Nest" ifDateBetween="3077,"
 				chassis="Thera Carrier">ELEMENT</subforce>
 			<subforce fluffName="CSR Lord Death"
 				chassis="Aegis Heavy Cruiser">ELEMENT</subforce>

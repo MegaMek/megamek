@@ -19,7 +19,7 @@
 			<option ifUnitType="">TOUMAN,GALAXY,CLUSTER</option>
 			<option ifUnitType="Warship">CLUSTER</option>
 			<option ifUnitType="Dropship|Jumpship">STAR</option>
-			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
+			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
 			<option>TRINARY,BINARY,STAR</option>
 		</eschelon>
 		
@@ -141,7 +141,7 @@
 			<subforce chassis="Liberator Cruiser" ifDateBetween="3059,3068"
 				fluffName="CSA Constantineau">ELEMENT</subforce>
 			<subforce chassis="Aegis Heavy Cruiser"
-				fluffName="CSA Aresaposs Might">ELEMENT</subforce>
+				fluffName="CSA Ares&apos;s Might">ELEMENT</subforce>
 			<subforce fluffName="CSA Absolute Truth" ifDateBetween="2932,"
 				chassis="Nightlord Battleship">ELEMENT</subforce>
 			<subforce fluffName="CSA Exodus Ranger" 
@@ -185,7 +185,7 @@
 				chassis="Volga Transport">ELEMENT</subforce>
 			<subforce fluffName="CSA Renown" ifDateBetween=",3062"
 				chassis="Potemkin Troop Cruiser">ELEMENT</subforce>
-			<subforce fluffName="CSA Cameronapos Flame" 
+			<subforce fluffName="CSA Cameron&apos; Flame" 
 				ifDateBetween=",3072"
 				chassis="Lola III Destroyer">ELEMENT</subforce>
 		</subforces>
@@ -336,9 +336,9 @@
 					unitType="Mek">TRINARY</option>
 			</subforceOption>
 			<subforceOption>
-				<option unitType="Aero" weightClass="H">TRINARY+</option>
-				<option unitType="Aero" weightClass="M">TRINARY+</option>
-				<option unitType="Aero" weightClass="L">TRINARY+</option>
+				<option unitType="Aero" weightClass="H">TRINARY^</option>
+				<option unitType="Aero" weightClass="M">TRINARY^</option>
+				<option unitType="Aero" weightClass="L">TRINARY^</option>
 			</subforceOption>		
 		</subforces>
 		

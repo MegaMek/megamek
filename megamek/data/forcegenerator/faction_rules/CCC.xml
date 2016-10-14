@@ -19,7 +19,7 @@
 			<option ifUnitType="">TOUMAN,GALAXY,CLUSTER</option>
 			<option ifUnitType="Warship">CLUSTER</option>
 			<option ifUnitType="Dropship|Jumpship">STAR</option>
-			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
+			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
 			<option>TRINARY,BINARY,STAR</option>
 		</eschelon>
 		
@@ -101,12 +101,12 @@
 				chassis="York Destroyer Carrier">ELEMENT</subforce>
 			<subforce fluffName="CCS Consequence" ifDateBetween=",3075"
 				chassis="Aegis Heavy Cruiser">ELEMENT</subforce>
-			<subforce fluffName="CCS Perditionaposs Flame"
+			<subforce fluffName="CCS Perdition&apos;s Flame"
 				ifDateBetween="2962,3075"
 				chassis="Fredasa Corvette Raider">ELEMENT</subforce>
 			<subforce fluffName="CCS Trump" ifDateBetween=",3070"
 				chassis="Vincent Corvette">ELEMENT</subforce>
-			<subforce fluffName="CCS Hertzogaposs Staff"
+			<subforce fluffName="CCS Hertzog&apos;s Staff"
 				ifDateBetween=",3075"
 				chassis="Vincent Corvette">ELEMENT</subforce>
 			<subforce fluffName="CCS Second Coming" ifDateBetween=",3073"

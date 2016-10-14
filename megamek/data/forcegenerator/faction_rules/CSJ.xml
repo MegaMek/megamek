@@ -22,7 +22,7 @@
 			<option ifUnitType="">TOUMAN,GALAXY,CLUSTER</option>
 			<option ifUnitType="Warship">CLUSTER</option>
 			<option ifUnitType="Dropship|Jumpship">STAR</option>
-			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
+			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
 			<option>TRINARY,BINARY,STAR</option>
 		</eschelon>
 		
@@ -122,11 +122,11 @@
 				chassis="Vincent Corvette">ELEMENT</subforce>
 			<subforce fluffName="CSJ Simas Osis"
 				chassis="Vincent Corvette">ELEMENT</subforce>
-			<subforce fluffName="CSJ Osisapos Pride"
+			<subforce fluffName="CSJ Osis&apos; Pride"
 				chassis="Potemkin Troop Cruiser">ELEMENT</subforce>
 			<subforce fluffName="CSJ Lioness" ifDateBetween=",3059"
 				chassis="York Destroyer Carrier">ELEMENT</subforce>
-			<subforce fluffName="CSJ Hunteraposs Pride"
+			<subforce fluffName="CSJ Hunter&apos;s Pride"
 				ifDateBetween="2950,3055"
 				chassis="Congress Frigate">ELEMENT</subforce>
 			<subforce fluffName="CSJ Hell Fury" ifDateBetween="2965,3053"

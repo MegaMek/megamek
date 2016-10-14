@@ -26,7 +26,7 @@
 			<option ifUnitType="">TOUMAN,GALAXY,CLUSTER</option>
 			<option ifUnitType="Warship">CLUSTER</option>
 			<option ifUnitType="Dropship|Jumpship">STAR</option>
-			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
+			<option ifUnitType="Mek" ifDateBetween="2870,">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
 			<option>TRINARY,BINARY,STAR</option>
 		</eschelon>
 		
@@ -142,11 +142,11 @@
 				chassis="Liberator Cruiser">ELEMENT</subforce>
 			<subforce fluffName="CJF Green Lantern" ifDateBetween=",3078"
 				chassis="Congress Frigate">ELEMENT</subforce>
-			<subforce fluffName="CJF Kerenskyaposs Pride"
+			<subforce fluffName="CJF Kerensky&apos;s Pride"
 				chassis="Congress Frigate">ELEMENT</subforce>
 			<subforce fluffName="CJF Emerald Tornado"
 				chassis="Whirlwind Destroyer">ELEMENT</subforce>
-			<subforce fluffName="CJF Kerenskyaposs Blues"
+			<subforce fluffName="CJF Kerensky&apos;s Blues"
 				ifDateBetween="2965,"
 				chassis="Fredasa Corvette Raider">ELEMENT</subforce>
 			<subforce fluffName="CJF Lightning Strike" ifDateBetween=",3072"

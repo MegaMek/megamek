@@ -18,7 +18,7 @@
 			<option ifUnitType="">TOUMAN,GALAXY,CLUSTER</option>
 			<option ifUnitType="Warship">CLUSTER</option>
 			<option ifUnitType="Jumpship|Dropship">STAR</option>
-			<option ifUnitType="Mek">TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
+			<option ifUnitType="Mek">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
 			<option>TRINARY,BINARY,STAR</option>
 		</eschelon>
 		
@@ -134,7 +134,7 @@
 				chassis="Congress Frigate">ELEMENT</subforce>
 			<subforce fluffName="CSV Sanra Mercer"
 				chassis="Sovetskii Soyuz Heavy Cruiser">ELEMENT</subforce>
-			<subforce fluffName="CSV Zalmanaposs Endeavor"
+			<subforce fluffName="CSV Zalman&apos;s Endeavor"
 				chassis="Cameron Battlecruiser">ELEMENT</subforce>
 			<subforce fluffName="CSV Ophidian" ifDateBetween=",3072"
 				chassis="Potemkin Troop Cruiser">ELEMENT</subforce>

@@ -22,7 +22,7 @@
 			<option ifUnitType="">TOUMAN,GALAXY,CLUSTER</option>
 			<option ifUnitType="Warship">CLUSTER</option>
 			<option ifUnitType="Jumpship|Dropship">STAR</option>
-			<option ifUnitType="Mek">TRINARY+,TRINARY,BINARY+,BINARY,STAR+,STAR</option>
+			<option ifUnitType="Mek">TRINARY^,TRINARY,BINARY^,BINARY,STAR^,STAR</option>
 			<option>TRINARY,BINARY,STAR</option>
 		</eschelon>
 		
@@ -114,7 +114,7 @@
 				chassis="Avatar Heavy Cruiser">ELEMENT</subforce>
 			<subforce fluffName="CWS Rogue"
 				chassis="Congress Frigate">ELEMENT</subforce>
-			<subforce fluffName="CWS Natureaposs Wrath"
+			<subforce fluffName="CWS Nature&apos;s Wrath"
 				ifDateBetween=",3081"
 				chassis="Lola III Destroyer">ELEMENT</subforce>
 			<subforce fluffName="CWS Relentless Pursuit"

@@ -54,13 +54,14 @@ import megamek.common.UnitType;
  */
 
 
-public class ForceGeneratorView extends JPanel implements FocusListener {
+public class ForceGeneratorView extends JPanel implements FocusListener, ActionListener {
 	
 	private static final long serialVersionUID = 5269823128861856001L;
 	
 	private IGame game;
 	private int currentYear;
 	private Consumer<ForceDescriptor> onGenerate = null;
+	private boolean ignoreActions;
 
 	private ForceDescriptor forceDesc = new ForceDescriptor();
 	
@@ -153,6 +154,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		gbc.gridx = 1;
 		gbc.gridy = y;
 		add(cbFaction, gbc);
+		cbFaction.addActionListener(this);
 		
 		gbc.gridx = 2;
 		gbc.gridy = y;
@@ -162,6 +164,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		gbc.gridx = 3;
 		gbc.gridy = y++;
 		add(cbSubfaction, gbc);
+		cbFaction.addActionListener(this);
 		
 		gbc.gridx = 0;
 		gbc.gridy = y;
@@ -379,7 +382,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		panAirRole.add(chkRoleAirTransport, gbc);
 		
 		refreshFactions();
-		addListeners();
+		ignoreActions = false;
 	}
 	
 	private void generateForce() {
@@ -482,7 +485,10 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 	private void refreshFactions() {
 		String oldFaction = forceDesc.getFaction();
 		cbFaction.removeAllItems();
-		for (FactionRecord fRec : RATGenerator.getInstance().getFactionList()) {
+		ArrayList<FactionRecord> sorted = new ArrayList<>();
+		sorted.addAll(RATGenerator.getInstance().getFactionList());
+		sorted.sort((fr1, fr2) -> fr1.getName(currentYear).compareTo(fr2.getName(currentYear)));
+		for (FactionRecord fRec : sorted) {
 			if (!fRec.getKey().contains(".") && fRec.isActiveInYear(currentYear)) {
 				cbFaction.addItem(fRec);
 			}
@@ -506,7 +512,10 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 			cbSubfaction.addItem(null);
 			if (cbFaction.getSelectedItem() != null) {
 				String currentFaction = ((FactionRecord)cbFaction.getSelectedItem()).getKey();
-				for (FactionRecord fRec : RATGenerator.getInstance().getFactionList()) {
+				ArrayList<FactionRecord> sorted = new ArrayList<>();
+				sorted.addAll(RATGenerator.getInstance().getFactionList());
+				sorted.sort((fr1, fr2) -> fr1.getName(currentYear).compareTo(fr2.getName(currentYear)));
+				for (FactionRecord fRec : sorted) {
 					if (fRec.getPctSalvage(currentYear) != null &&
 							fRec.getKey().startsWith(currentFaction + ".")) {
 						cbSubfaction.addItem(fRec);
@@ -714,40 +723,6 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		}
 	}
 	
-	private void removeListeners() {
-		cbFaction.removeActionListener(actionListener);
-		cbSubfaction.removeActionListener(actionListener);
-		cbUnitType.removeActionListener(actionListener);
-		cbFormation.removeActionListener(actionListener);
-		cbRating.removeActionListener(actionListener);
-		cbFlags.removeActionListener(actionListener);
-		cbWeightClass.removeActionListener(actionListener);
-	}
-	
-	private void addListeners() {
-		if (cbFaction.getActionListeners().length == 0) {
-			cbFaction.addActionListener(actionListener);
-		}
-		if (cbSubfaction.getActionListeners().length == 0) {
-			cbSubfaction.addActionListener(actionListener);
-		}
-		if (cbUnitType.getActionListeners().length == 0) {
-			cbUnitType.addActionListener(actionListener);
-		}
-		if (cbFormation.getActionListeners().length == 0) {
-			cbFormation.addActionListener(actionListener);
-		}
-		if (cbRating.getActionListeners().length == 0) {
-			cbRating.addActionListener(actionListener);
-		}
-		if (cbFlags.getActionListeners().length == 0) {
-			cbFlags.addActionListener(actionListener);
-		}
-		if (cbWeightClass.getActionListeners().length == 0) {
-			cbWeightClass.addActionListener(actionListener);
-		}
-	}
-	
 	private TOCNode findTOCNode() {
 		Ruleset rs = Ruleset.findRuleset(forceDesc);
 		TOCNode toc = null;
@@ -764,47 +739,48 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		return toc;
 	}
 
-	private ActionListener actionListener = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			removeListeners();
-			if (arg0.getSource() == cbFaction) {
-				if (cbFaction.getSelectedItem() != null) {
-					forceDesc.setFaction(((FactionRecord)cbFaction.getSelectedItem()).getKey());
-				}
-				refreshSubfactions();
-			} else if (arg0.getSource() == cbSubfaction) {
-				if (cbSubfaction.getSelectedItem() != null) {
-					forceDesc.setFaction(((FactionRecord)cbSubfaction.getSelectedItem()).getKey());
-				} else {
-					forceDesc.setFaction(((FactionRecord)cbFaction.getSelectedItem()).getKey());
-				}
-				refreshUnitTypes();
-			} else if (arg0.getSource() == cbUnitType) {
-				forceDesc.setUnitType(AbstractUnitRecord.parseUnitType((String)cbUnitType.getSelectedItem()));
-				refreshFormations();
-			} else if (arg0.getSource() == cbFormation) {
-				String esch = (String)cbFormation.getSelectedItem();
-				setFormation(esch);
-				refreshRatings();
-			} else if (arg0.getSource() == cbRating) {
-				forceDesc.setRating((String)cbRating.getSelectedItem());
-				refreshFlags();
-			} else if (arg0.getSource() == cbFlags) {
-				forceDesc.getFlags().clear();
-				if (cbFlags.getSelectedItem() != null) {
-					forceDesc.getFlags().add((String)cbFlags.getSelectedItem());
-				}
-			} else if (arg0.getSource() == cbWeightClass) {
-				if (cbWeightClass.getSelectedIndex() < 1) {
-					forceDesc.setWeightClass(null);
-				} else {
-					forceDesc.setWeightClass(cbWeightClass.getSelectedIndex());
-				}
-			}
-			addListeners();
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		if (ignoreActions) {
+			return;
 		}
-	};	
+		ignoreActions = true;
+		if (arg0.getSource() == cbFaction) {
+			if (cbFaction.getSelectedItem() != null) {
+				forceDesc.setFaction(((FactionRecord)cbFaction.getSelectedItem()).getKey());
+			}
+			refreshSubfactions();
+		} else if (arg0.getSource() == cbSubfaction) {
+			if (cbSubfaction.getSelectedItem() != null) {
+				forceDesc.setFaction(((FactionRecord)cbSubfaction.getSelectedItem()).getKey());
+			} else {
+				forceDesc.setFaction(((FactionRecord)cbFaction.getSelectedItem()).getKey());
+			}
+			refreshUnitTypes();
+		} else if (arg0.getSource() == cbUnitType) {
+			forceDesc.setUnitType(AbstractUnitRecord.parseUnitType((String)cbUnitType.getSelectedItem()));
+			refreshFormations();
+		} else if (arg0.getSource() == cbFormation) {
+			String esch = (String)cbFormation.getSelectedItem();
+			setFormation(esch);
+			refreshRatings();
+		} else if (arg0.getSource() == cbRating) {
+			forceDesc.setRating((String)cbRating.getSelectedItem());
+			refreshFlags();
+		} else if (arg0.getSource() == cbFlags) {
+			forceDesc.getFlags().clear();
+			if (cbFlags.getSelectedItem() != null) {
+				forceDesc.getFlags().add((String)cbFlags.getSelectedItem());
+			}
+		} else if (arg0.getSource() == cbWeightClass) {
+			if (cbWeightClass.getSelectedIndex() < 1) {
+				forceDesc.setWeightClass(null);
+			} else {
+				forceDesc.setWeightClass(cbWeightClass.getSelectedIndex());
+			}
+		}
+		ignoreActions = false;
+	}
 
 	private void setFormation(String esch) {
 		forceDesc.setEschelon(Ruleset.getConstantVal(esch.replaceAll("[^0-9A-Z]", "")));
@@ -837,6 +813,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		}
 		txtYear.setText(String.valueOf(currentYear));
 		RATGenerator.getInstance().loadYear(currentYear);
+		refreshFactions();
 	}
 
 	static class CBRenderer<T> extends DefaultListCellRenderer {
@@ -851,6 +828,7 @@ public class ForceGeneratorView extends JPanel implements FocusListener {
 		}
 		
 		public CBRenderer(String nullVal, Function<T,String> strConverter) {
+			this.nullVal = nullVal;
 			if (strConverter == null) {
 				toString = obj -> obj.toString();
 			} else {
